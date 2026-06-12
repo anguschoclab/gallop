@@ -49,8 +49,8 @@ export const energyPhase = {
     }
 
     const outpostMap = new Map<string, any>();
-    for (const s of (state.npcStables ?? [])) {
-      for (const o of ((s as any).outposts ?? [])) {
+    for (const s of state.npcStables ?? []) {
+      for (const o of (s as any).outposts ?? []) {
         outpostMap.set(o.id, o);
       }
     }

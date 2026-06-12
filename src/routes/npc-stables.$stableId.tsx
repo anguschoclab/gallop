@@ -1,9 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  ArrowLeft,
-  Globe,
-  Briefcase,
-} from "lucide-react";
+import { ArrowLeft, Globe, Briefcase } from "lucide-react";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/core/common/formatting";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -30,7 +26,7 @@ function NpcStableDetailPage() {
   const { tab } = Route.useSearch();
   const navigate = Route.useNavigate();
   const pageData = useNpcStableDetail(stableId);
-  const { stable, offerHorse, setOfferHorse, cash, horses } = pageData;  
+  const { stable, offerHorse, setOfferHorse, cash, horses } = pageData;
 
   if (!stable) {
     return (
@@ -132,7 +128,10 @@ function NpcStableDetailPage() {
               </TabsList>
             </div>
 
-            <TabsContent value="overview" className="mt-0 space-y-6 animate-in fade-in duration-300">
+            <TabsContent
+              value="overview"
+              className="mt-0 space-y-6 animate-in fade-in duration-300"
+            >
               <NpcStableOverviewTab stableId={stableId} pageData={pageData} />
             </TabsContent>
 

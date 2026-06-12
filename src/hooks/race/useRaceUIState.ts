@@ -16,8 +16,7 @@ export function useRaceUIState(
   const [minBeyer, setMinBeyer] = useState(0);
 
   const ownedRunnersTotal = runners.filter((r: any) => r.owned);
-  const defaultFollowTarget =
-    ownedRunnersTotal.length > 0 ? ownedRunnersTotal[0].horseId : null;
+  const defaultFollowTarget = ownedRunnersTotal.length > 0 ? ownedRunnersTotal[0].horseId : null;
   const [followTarget, setFollowTarget] = useState<string | null>(defaultFollowTarget);
 
   const [announcement, setAnnouncement] = useState<string>("");

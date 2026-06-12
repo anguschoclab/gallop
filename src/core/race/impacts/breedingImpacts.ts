@@ -4,7 +4,12 @@
  * Extracted from raceImpactGenerator.ts.
  */
 
-import type { AnyImpact, BlueHenImpact, StudCareerImpact, SyndicateSatisfactionImpact } from "@/core/resolver/impacts/index";
+import type {
+  AnyImpact,
+  BlueHenImpact,
+  StudCareerImpact,
+  SyndicateSatisfactionImpact,
+} from "@/core/resolver/impacts/index";
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { formatCurrency } from "@/core/common/formatting";

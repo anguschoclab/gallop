@@ -8,14 +8,24 @@ interface HorseActionFooterProps {
   onClickStopPropagation?: boolean;
 }
 
-export function HorseActionFooter({ horse, onClickStopPropagation = true }: HorseActionFooterProps) {
+export function HorseActionFooter({
+  horse,
+  onClickStopPropagation = true,
+}: HorseActionFooterProps) {
   if (!horse.owned) return null;
 
-  const stopProp = onClickStopPropagation ? (e: React.MouseEvent) => e.stopPropagation() : undefined;
+  const stopProp = onClickStopPropagation
+    ? (e: React.MouseEvent) => e.stopPropagation()
+    : undefined;
 
   return (
     <div className="p-3 bg-black/40 border-t border-white/5 flex gap-2">
-      <Link to="/stable/$horseId" params={{ horseId: horse.id }} className="flex-1" onClick={stopProp}>
+      <Link
+        to="/stable/$horseId"
+        params={{ horseId: horse.id }}
+        className="flex-1"
+        onClick={stopProp}
+      >
         <Button
           variant="outline"
           className="w-full h-8 text-[9px] font-black uppercase tracking-widest border-white/10 hover:bg-gold/10 hover:text-gold hover:border-gold/30 rounded-none text-cream/60"

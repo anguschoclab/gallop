@@ -27,9 +27,7 @@ export function BidInputPanel({ currentBid, nextMin, onBid }: BidInputPanelProps
 
   return (
     <div className="space-y-2">
-      <div className="text-[10px] uppercase font-bold text-muted-foreground ml-1">
-        Custom Bid
-      </div>
+      <div className="text-[10px] uppercase font-bold text-muted-foreground ml-1">Custom Bid</div>
       <div className="flex gap-2">
         <Input
           placeholder={`min ${formatCurrency(nextMin)}`}

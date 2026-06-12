@@ -1,4 +1,8 @@
-import { getTrackBackground, getSpriteUrl, isAnimatedSprite } from "@/components/race/raceVisualHelpers";
+import {
+  getTrackBackground,
+  getSpriteUrl,
+  isAnimatedSprite,
+} from "@/components/race/raceVisualHelpers";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import { HorseSprite } from "./HorseSprite";
 
@@ -134,11 +138,13 @@ export function Track({
                     OUTSIDE
                   </div>
                 )}
-                {r.jockeyInstructions?.ridingStyle === "closer" && r.jockeyInstructions?.moveTiming === "late" && r.draftingHorseId && (
-                  <div className="px-1.5 py-0.5 rounded-full bg-emerald-500/80 text-[8px] font-black text-white flex items-center gap-1">
-                    SAVING
-                  </div>
-                )}
+                {r.jockeyInstructions?.ridingStyle === "closer" &&
+                  r.jockeyInstructions?.moveTiming === "late" &&
+                  r.draftingHorseId && (
+                    <div className="px-1.5 py-0.5 rounded-full bg-emerald-500/80 text-[8px] font-black text-white flex items-center gap-1">
+                      SAVING
+                    </div>
+                  )}
                 {r.jockeyInstructions?.earlyPosition === "lead" && r.position >= leaderPos - 2 && (
                   <div className="px-1.5 py-0.5 rounded-full bg-gold/80 text-[8px] font-black text-t950 flex items-center gap-1">
                     LEADING

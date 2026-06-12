@@ -75,11 +75,7 @@ export function HorseCardFull({ horse, hookData, onClick, className = "" }: Hors
           isAdvanced={advancedMetrics}
         />
 
-        <HorseMetaPanel
-          horse={horse}
-          isAdvanced={advancedMetrics}
-          onToggleView={toggleAdvanced}
-        />
+        <HorseMetaPanel horse={horse} isAdvanced={advancedMetrics} onToggleView={toggleAdvanced} />
 
         <HorseActionFooter horse={horse} />
       </CardContent>

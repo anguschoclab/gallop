@@ -292,4 +292,3 @@ function LiveRace() {
     </div>
   );
 }
-

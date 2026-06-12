@@ -65,7 +65,8 @@ export const raceEntryResolutionPhase: PipelinePhase = {
         const isWinAndYouIn =
           race.graded.key &&
           horse.winAndYouInQualified?.some(
-            (q: { raceKey: string; year: number }) => q.raceKey === race.graded!.key && q.year === currentYear,
+            (q: { raceKey: string; year: number }) =>
+              q.raceKey === race.graded!.key && q.year === currentYear,
           );
         if (!isInvited && !isWinAndYouIn) continue;
       }

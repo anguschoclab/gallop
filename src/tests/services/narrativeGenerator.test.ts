@@ -52,7 +52,14 @@ function makeHorseEntity(overrides: Partial<Horse> = {}): Horse {
     gender: "colt",
     hemisphere: "Northern",
     silk: "",
-    stats: { speed: 50, stamina: 50, acceleration: 50, temperament: 50, conformation: 50, consistency: 50 },
+    stats: {
+      speed: 50,
+      stamina: 50,
+      acceleration: 50,
+      temperament: 50,
+      conformation: 50,
+      consistency: 50,
+    },
     genotype: {} as any,
     energy: 100,
     fitness: 50,
@@ -170,15 +177,33 @@ describe("NarrativeGenerator", () => {
     gen.update([runnerA, runnerB], 0.1);
 
     // Second tick: B takes lead past threshold
-    const lines1 = gen.update([{ ...runnerB, position: 110 }, { ...runnerA, position: 100 }], 1.0);
+    const lines1 = gen.update(
+      [
+        { ...runnerB, position: 110 },
+        { ...runnerA, position: 100 },
+      ],
+      1.0,
+    );
     expect(lines1.filter((l) => l.type === "LEAD_CHANGE")).toHaveLength(1);
 
     // Third tick: B stays leader — should NOT fire again for B within 15s cooldown
-    const lines2 = gen.update([{ ...runnerB, position: 120 }, { ...runnerA, position: 110 }], 2.0);
+    const lines2 = gen.update(
+      [
+        { ...runnerB, position: 120 },
+        { ...runnerA, position: 110 },
+      ],
+      2.0,
+    );
     expect(lines2.filter((l) => l.type === "LEAD_CHANGE")).toHaveLength(0);
 
     // Fourth tick: A takes lead back — different key, so allowed
-    const lines3 = gen.update([{ ...runnerA, position: 130 }, { ...runnerB, position: 120 }], 20.0);
+    const lines3 = gen.update(
+      [
+        { ...runnerA, position: 130 },
+        { ...runnerB, position: 120 },
+      ],
+      20.0,
+    );
     expect(lines3.filter((l) => l.type === "LEAD_CHANGE")).toHaveLength(1);
   });
 

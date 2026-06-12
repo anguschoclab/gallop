@@ -37,10 +37,7 @@ export function useLedgerTransactions(): LedgerData {
   const day = useGame((s) => s.day);
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodKey>("month");
 
-  const report = useMemo(
-    () => buildProfitLossReport(transactions, day),
-    [transactions, day],
-  );
+  const report = useMemo(() => buildProfitLossReport(transactions, day), [transactions, day]);
 
   const activePeriodData = useMemo(() => {
     switch (selectedPeriod) {

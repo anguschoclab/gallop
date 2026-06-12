@@ -87,10 +87,13 @@ export function StaffNegotiationDialog({ staff, isOpen, onClose }: StaffNegotiat
 
             {patience > 0 && (
               <div className="text-[9px] font-mono uppercase text-cream/30 tracking-widest">
-                Patience: {roundsLeft === 0 ? (
+                Patience:{" "}
+                {roundsLeft === 0 ? (
                   <span className="text-destructive">Final warning</span>
                 ) : (
-                  <span>{roundsLeft} counter{roundsLeft !== 1 ? "s" : ""} remaining</span>
+                  <span>
+                    {roundsLeft} counter{roundsLeft !== 1 ? "s" : ""} remaining
+                  </span>
                 )}
               </div>
             )}
@@ -113,9 +116,7 @@ export function StaffNegotiationDialog({ staff, isOpen, onClose }: StaffNegotiat
                 }}
                 className="bg-black/40 border-white/10 text-cream font-mono tabular-nums rounded-none"
               />
-              {offerError && (
-                <p className="text-xs text-destructive font-mono">{offerError}</p>
-              )}
+              {offerError && <p className="text-xs text-destructive font-mono">{offerError}</p>}
             </div>
           </div>
         </div>

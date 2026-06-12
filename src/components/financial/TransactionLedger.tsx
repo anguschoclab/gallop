@@ -86,7 +86,9 @@ export function TransactionLedger({ transactions, recentTransactions }: Transact
           </div>
           {transactions.length === 0 && (
             <div className="py-20 text-center border-dashed border-white/5 opacity-40">
-              <p className="font-mono text-xs uppercase tracking-widest">No Fiscal Events Recorded</p>
+              <p className="font-mono text-xs uppercase tracking-widest">
+                No Fiscal Events Recorded
+              </p>
             </div>
           )}
           <div className="p-4 bg-black/40 border-t border-white/5 flex items-center justify-between text-[9px] font-mono text-cream/20 uppercase tracking-widest">

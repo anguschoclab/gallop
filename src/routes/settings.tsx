@@ -1,9 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import {
-  Settings,
-  RotateCcw,
-} from "lucide-react";
+import { Settings, RotateCcw } from "lucide-react";
 import { useUserSettings, useSettingsActions } from "@/hooks/game/useSystemsState";
 import { useState } from "react";
 import { SaveLoadDialog } from "@/components/settings/SaveLoadDialog";
@@ -56,7 +53,10 @@ function SettingsPage() {
       <div className="grid gap-4 md:grid-cols-2">
         <DisplaySettingsCard settings={display ?? {}} onUpdate={updateDisplaySettings} />
         <GameplaySettingsCard settings={gameplay ?? {}} onUpdate={updateGameplaySettings} />
-        <NotificationSettingsCard settings={notifications ?? {}} onUpdate={updateNotificationSettings} />
+        <NotificationSettingsCard
+          settings={notifications ?? {}}
+          onUpdate={updateNotificationSettings}
+        />
         <AudioSettingsCard settings={audio ?? {}} onUpdate={updateAudioSettings} />
         <DataManagementCard
           lastModifiedDay={userSettings?.lastModified}

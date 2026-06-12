@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { getFilteredRaces, getRacesByTrack, getRacesByMonth } from "@/services/race/raceFilterService";
+import {
+  getFilteredRaces,
+  getRacesByTrack,
+  getRacesByMonth,
+} from "@/services/race/raceFilterService";
 import type { Race } from "@/game/types";
 
 function mkRace(overrides: Partial<Race> = {}): Race {

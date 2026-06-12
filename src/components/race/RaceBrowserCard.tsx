@@ -38,9 +38,7 @@ export function RaceBrowserCard({ race }: Props) {
               <span>· Day {race.day}</span>
               <span>
                 · Purse{" "}
-                <span className="font-medium text-cream">
-                  ${race.purse.toLocaleString()}
-                </span>
+                <span className="font-medium text-cream">${race.purse.toLocaleString()}</span>
               </span>
             </div>
             <div className="mt-2">

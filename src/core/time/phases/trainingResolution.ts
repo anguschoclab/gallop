@@ -58,12 +58,14 @@ export const trainingResolutionPhase: PipelinePhase = {
     const horseMap = new Map(state.horses.map((h) => [h.id, h]));
     const stableMap = new Map((state.npcStables ?? []).map((s) => [s.id, s]));
     const outpostMap = new Map<string, any>();
-    for (const s of (state.npcStables ?? [])) {
-      for (const o of ((s as any).outposts ?? [])) {
+    for (const s of state.npcStables ?? []) {
+      for (const o of (s as any).outposts ?? []) {
         outpostMap.set(o.id, o);
       }
     }
-    const playerOutpostMap = new Map<string, any>(((state as any).outposts ?? []).map((o: any) => [o.id, o]));
+    const playerOutpostMap = new Map<string, any>(
+      ((state as any).outposts ?? []).map((o: any) => [o.id, o]),
+    );
 
     const hiredStaffByStable = new Map<string, typeof state.hiredStaff>();
     if (state.hiredStaff) {
@@ -177,7 +179,8 @@ export const trainingResolutionPhase: PipelinePhase = {
       // Deduct energy (only for actual training, not rest)
       if (intent.trainingType !== "rest") {
         // Different workout types have different energy costs
-        const energyDelta = (TRAINING_ENERGY_MAP[intent.trainingType] ?? -18) * (1 - nutritionistBonus);
+        const energyDelta =
+          (TRAINING_ENERGY_MAP[intent.trainingType] ?? -18) * (1 - nutritionistBonus);
 
         impacts.push({
           id: generateUUID(),

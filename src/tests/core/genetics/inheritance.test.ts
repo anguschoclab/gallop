@@ -135,9 +135,11 @@ describe("inheritDNA — style locus chromosome linkage", () => {
       // Foal inherits one allele from sire (index 0) and one from dam (index 1).
       // Since dam is homozygous [1, 5] for accel/style, the foal's allele at index 0 comes from sire.
       // We check if the sire's inherited acceleration alleles are coupled with the sire's style allele.
-      const sireAccelsFromStrand0 = foal.stats.acceleration.filter((locus) => locus[0] === 5).length;
+      const sireAccelsFromStrand0 = foal.stats.acceleration.filter(
+        (locus) => locus[0] === 5,
+      ).length;
       const inheritedStrand0Accel = sireAccelsFromStrand0 >= 5; // Major portion inherited from Strand 0
-      const inheritedStrand0Style = foal.style[0] === 1;       // Inherited early style from Strand 0
+      const inheritedStrand0Style = foal.style[0] === 1; // Inherited early style from Strand 0
 
       if (inheritedStrand0Accel === inheritedStrand0Style) {
         coupledCount++;
@@ -145,7 +147,7 @@ describe("inheritDNA — style locus chromosome linkage", () => {
     }
 
     const coupledRatio = coupledCount / SAMPLES;
-    expect(coupledRatio).toBeGreaterThan(0.50);
+    expect(coupledRatio).toBeGreaterThan(0.5);
   });
 
   it("style locus is present on offspring genotype", () => {

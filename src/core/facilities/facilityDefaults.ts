@@ -16,10 +16,7 @@ import {
   FACILITY_UPGRADE_COSTS,
   FACILITY_ENABLED_WORKOUTS,
 } from "./facilityTypes";
-import {
-  FACILITY_UPGRADE_BASE_COST,
-  FACILITY_UPGRADE_MULTIPLIER,
-} from "@/constants";
+import { FACILITY_UPGRADE_BASE_COST, FACILITY_UPGRADE_MULTIPLIER } from "@/constants";
 
 /**
  * Create a default facility at a given level.

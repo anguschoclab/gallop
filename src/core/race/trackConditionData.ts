@@ -372,7 +372,7 @@ export const CLIMATE_DRYING_RATES: Record<ClimateZone, number> = {
 export const KOPPEN_CONDITION_BIAS: Record<KoppenCode, Record<TrackCondition, number>> = {
   Cfb: {
     // Temperate Oceanic (UK, Ireland, France) - frequent rain, moderate conditions
-    fast: 0.20,
+    fast: 0.2,
     good: 0.45,
     soft: 0.25,
     heavy: 0.08,
@@ -380,23 +380,23 @@ export const KOPPEN_CONDITION_BIAS: Record<KoppenCode, Record<TrackCondition, nu
   },
   Cfa: {
     // Humid Subtropical (Japan, eastern US) - summer rain peak
-    fast: 0.30,
+    fast: 0.3,
     good: 0.35,
     soft: 0.22,
-    heavy: 0.10,
+    heavy: 0.1,
     yielding: 0.03,
   },
   Csa: {
     // Mediterranean (Spain, Italy, SoCal) - dry summers, wet winters
-    fast: 0.60,
-    good: 0.30,
+    fast: 0.6,
+    good: 0.3,
     soft: 0.08,
     heavy: 0.02,
     yielding: 0,
   },
   Csb: {
     // Warm-Summer Mediterranean (Chile, Pacific NW) - milder summers
-    fast: 0.50,
+    fast: 0.5,
     good: 0.35,
     soft: 0.12,
     heavy: 0.03,
@@ -405,7 +405,7 @@ export const KOPPEN_CONDITION_BIAS: Record<KoppenCode, Record<TrackCondition, nu
   BWh: {
     // Hot Desert (UAE, Saudi Arabia) - minimal precipitation
     fast: 0.75,
-    good: 0.20,
+    good: 0.2,
     soft: 0.04,
     heavy: 0.01,
     yielding: 0,
@@ -413,9 +413,9 @@ export const KOPPEN_CONDITION_BIAS: Record<KoppenCode, Record<TrackCondition, nu
   Dfb: {
     // Humid Continental (Germany, Austria, Eastern Europe) - snowy winters
     fast: 0.25,
-    good: 0.40,
+    good: 0.4,
     soft: 0.22,
-    heavy: 0.10,
+    heavy: 0.1,
     yielding: 0.03,
   },
   Dfa: {
@@ -428,9 +428,9 @@ export const KOPPEN_CONDITION_BIAS: Record<KoppenCode, Record<TrackCondition, nu
   },
   Aw: {
     // Tropical Savanna (Florida, Hong Kong, Singapore) - wet summers
-    fast: 0.20,
-    good: 0.30,
-    soft: 0.30,
+    fast: 0.2,
+    good: 0.3,
+    soft: 0.3,
     heavy: 0.15,
     yielding: 0.05,
   },
@@ -439,20 +439,20 @@ export const KOPPEN_CONDITION_BIAS: Record<KoppenCode, Record<TrackCondition, nu
     fast: 0.15,
     good: 0.25,
     soft: 0.35,
-    heavy: 0.20,
+    heavy: 0.2,
     yielding: 0.05,
   },
   BSk: {
     // Cold Semi-Arid (Interior Spain, Turkey) - low precipitation
     fast: 0.55,
-    good: 0.30,
-    soft: 0.10,
+    good: 0.3,
+    soft: 0.1,
     heavy: 0.04,
     yielding: 0.01,
   },
   ET: {
     // Tundra - minimal precipitation, very cold
-    fast: 0.40,
+    fast: 0.4,
     good: 0.35,
     soft: 0.18,
     heavy: 0.06,
@@ -462,15 +462,15 @@ export const KOPPEN_CONDITION_BIAS: Record<KoppenCode, Record<TrackCondition, nu
 
 /** Drying rates by Koppen code - scientifically based on precipitation and temperature */
 export const KOPPEN_DRYING_RATES: Record<KoppenCode, number> = {
-  Cfb: 0.9,  // Oceanic - moderate, frequent light rain
-  Cfa: 1.0,  // Subtropical - moderate
-  Csa: 1.6,  // Mediterranean - hot dry summers dry quickly
-  Csb: 1.3,  // Warm Mediterranean - moderate drying
-  BWh: 2.5,  // Desert - extremely fast drying
-  Dfb: 0.8,  // Humid Continental - cold/snowy slows drying
-  Dfa: 1.1,  // Hot Continental - warm summers help drying
-  Aw: 0.6,   // Tropical Savanna - high humidity slows drying
-  Af: 0.4,   // Rainforest - constant humidity, very slow drying
-  BSk: 1.8,  // Cold Semi-Arid - low humidity, fast drying
-  ET: 0.5,   // Tundra - cold temperatures, very slow drying
+  Cfb: 0.9, // Oceanic - moderate, frequent light rain
+  Cfa: 1.0, // Subtropical - moderate
+  Csa: 1.6, // Mediterranean - hot dry summers dry quickly
+  Csb: 1.3, // Warm Mediterranean - moderate drying
+  BWh: 2.5, // Desert - extremely fast drying
+  Dfb: 0.8, // Humid Continental - cold/snowy slows drying
+  Dfa: 1.1, // Hot Continental - warm summers help drying
+  Aw: 0.6, // Tropical Savanna - high humidity slows drying
+  Af: 0.4, // Rainforest - constant humidity, very slow drying
+  BSk: 1.8, // Cold Semi-Arid - low humidity, fast drying
+  ET: 0.5, // Tundra - cold temperatures, very slow drying
 };

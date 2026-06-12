@@ -81,9 +81,7 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
             <div className="text-[9px] font-black uppercase text-cream/20 tracking-tighter mb-1">
               Potential
             </div>
-            <div className="text-2xl font-bold font-mono text-gold-bright">
-              {horse.potential}
-            </div>
+            <div className="text-2xl font-bold font-mono text-gold-bright">{horse.potential}</div>
           </div>
           <div className="bg-black/40 border border-white/5 p-3 text-center min-w-[100px]">
             <div className="text-[9px] font-black uppercase text-cream/20 tracking-tighter mb-1">

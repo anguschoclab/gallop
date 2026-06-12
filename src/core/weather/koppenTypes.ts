@@ -54,7 +54,17 @@ export interface ClimateProfile {
 
 /** All Koppen codes as array for iteration */
 export const ALL_KOPPEN_CODES: KoppenCode[] = [
-  "Cfb", "Cfa", "Csa", "Csb", "BWh", "Dfb", "Dfa", "Aw", "Af", "BSk", "ET",
+  "Cfb",
+  "Cfa",
+  "Csa",
+  "Csb",
+  "BWh",
+  "Dfb",
+  "Dfa",
+  "Aw",
+  "Af",
+  "BSk",
+  "ET",
 ];
 
 /** Human-readable descriptions */

@@ -23,10 +23,7 @@ export const nameReservationPhase: PipelinePhase = {
     const { state, newDay } = context;
 
     // Cleanup expired reservations
-    const cleanedReservations = cleanupExpiredReservations(
-      state.reservedHorseNames || [],
-      newDay,
-    );
+    const cleanedReservations = cleanupExpiredReservations(state.reservedHorseNames || [], newDay);
 
     return {
       ...context,

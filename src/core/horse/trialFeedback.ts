@@ -1,12 +1,9 @@
 import type { Horse } from "@/game/types";
 
-export function generateRiderFeedback(
-  horse: Horse,
-  distance: number,
-  surface: string,
-): string {
+export function generateRiderFeedback(horse: Horse, distance: number, surface: string): string {
   const preferredDistance = horse.distanceAptitude;
-  const preferredSurfaceAptitude = horse.surfaceAptitude[surface as "Turf" | "Dirt" | "Synthetic"] ?? 0.95;
+  const preferredSurfaceAptitude =
+    horse.surfaceAptitude[surface as "Turf" | "Dirt" | "Synthetic"] ?? 0.95;
 
   let feedback = "";
   if (preferredSurfaceAptitude < 0.95) {

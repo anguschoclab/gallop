@@ -28,23 +28,21 @@ export { toTrackWeatherPattern };
  */
 function getMonthFromDay(day: number, hemisphere: "Northern" | "Southern"): number {
   const dayOfYear = ((day - 1) % 365) + 1;
-  
+
   // For southern hemisphere, shift by 6 months (182 days)
-  const effectiveDay = hemisphere === "Southern" 
-    ? ((dayOfYear + 182 - 1) % 365) + 1 
-    : dayOfYear;
-  
+  const effectiveDay = hemisphere === "Southern" ? ((dayOfYear + 182 - 1) % 365) + 1 : dayOfYear;
+
   // Approximate month from day of year
   const monthLengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   let dayCount = 0;
-  
+
   for (let month = 0; month < 12; month++) {
     dayCount += monthLengths[month];
     if (effectiveDay <= dayCount) {
       return month + 1;
     }
   }
-  
+
   return 12;
 }
 
@@ -55,37 +53,40 @@ function getMonthFromDay(day: number, hemisphere: "Northern" | "Southern"): numb
 function generateMonthlyTransitions(koppen: KoppenCode, month: number): number[] {
   const profile = KOPPEN_PROFILES[koppen];
   const monthly = profile.monthly[month];
-  
+
   if (!monthly) {
     // Fallback: moderate probabilities
-    return [0.35, 0.30, 0.15, 0.12, 0.04, 0.04];
+    return [0.35, 0.3, 0.15, 0.12, 0.04, 0.04];
   }
-  
+
   // Calculate rain probability from precipDays
   // Average 30-day month, precipDays / 30 = daily rain probability
   const rainProb = Math.min(0.8, monthly.precipDays / 30);
   const clearProb = Math.max(0.1, 1 - rainProb - 0.1); // Reserve 10% for other
-  
+
   // Distribute rain probability across shower/rain/storm based on intensity
   const stormProb = monthly.thunderstormDays ? monthly.thunderstormDays / 30 : rainProb * 0.1;
   const snowProb = monthly.snowfallDays ? monthly.snowfallDays / 30 : 0;
   const regularRain = Math.max(0, rainProb - stormProb - snowProb);
-  
+
   // Split regular rain between shower and rain
   const showerProb = regularRain * 0.4;
   const heavyRainProb = regularRain * 0.6;
-  
+
   // Overcast is higher in humid climates, lower in dry
   const overcastProb = monthly.humidity > 0.7 ? 0.35 : monthly.humidity > 0.5 ? 0.25 : 0.15;
-  
+
   // Adjust clear to ensure sum = 1
-  const adjustedClear = Math.max(0.05, 1 - overcastProb - showerProb - heavyRainProb - snowProb - stormProb);
-  
+  const adjustedClear = Math.max(
+    0.05,
+    1 - overcastProb - showerProb - heavyRainProb - snowProb - stormProb,
+  );
+
   // Normalize to ensure sum = 1
   const raw = [adjustedClear, overcastProb, showerProb, heavyRainProb, snowProb, stormProb];
   const sum = raw.reduce((a, b) => a + b, 0);
-  
-  return raw.map(v => v / sum);
+
+  return raw.map((v) => v / sum);
 }
 
 /**
@@ -106,7 +107,7 @@ const WIND_RANGES: Record<SimWeatherPattern, [number, number]> = {
  */
 function getRegionalWindRange(koppen: KoppenCode, baseRange: [number, number]): [number, number] {
   const [min, max] = baseRange;
-  
+
   switch (koppen) {
     case "Cfb": // Oceanic - stronger westerlies
     case "Dfb":
@@ -140,17 +141,17 @@ function samplePattern(probs: number[], rng: { next: () => number }): SimWeather
  * Generate temperature from historical normals with daily variance.
  */
 function generateTemperature(
-  koppen: KoppenCode, 
-  month: number, 
+  koppen: KoppenCode,
+  month: number,
   pattern: SimWeatherPattern,
-  rng: { next: () => number }
+  rng: { next: () => number },
 ): number {
   const profile = KOPPEN_PROFILES[koppen].monthly[month];
   const { avgHigh, avgLow } = profile;
-  
+
   // Daily variance: ±3°C
   const variance = (rng.next() - 0.5) * 6;
-  
+
   // Pattern affects temperature: storms/rain cooler, clear warmer
   const patternMod = {
     clear: 2,
@@ -160,7 +161,7 @@ function generateTemperature(
     snow: -5,
     storm: -3,
   }[pattern];
-  
+
   // Use avgHigh as base, add variance and pattern modifier
   return Math.round((avgHigh + variance + patternMod) * 10) / 10;
 }
@@ -172,24 +173,24 @@ function generateHumidity(
   koppen: KoppenCode,
   month: number,
   pattern: SimWeatherPattern,
-  rng: { next: () => number }
+  rng: { next: () => number },
 ): number {
   const profile = KOPPEN_PROFILES[koppen].monthly[month];
   const baseHumidity = profile.humidity;
-  
+
   // Pattern-based adjustments
   const patternMod = {
     clear: -0.05,
     overcast: 0,
     shower: 0.05,
-    rain: 0.10,
+    rain: 0.1,
     snow: 0.08,
     storm: 0.15,
   }[pattern];
-  
+
   // Daily variance: ±5%
   const variance = (rng.next() - 0.5) * 0.1;
-  
+
   return Math.min(1, Math.max(0, baseHumidity + patternMod + variance));
 }
 
@@ -199,11 +200,11 @@ function generateHumidity(
 function generateWind(
   koppen: KoppenCode,
   pattern: SimWeatherPattern,
-  rng: { next: () => number }
+  rng: { next: () => number },
 ): number {
   const baseRange = WIND_RANGES[pattern];
   const [min, max] = getRegionalWindRange(koppen, baseRange);
-  
+
   return Math.round(min + rng.next() * (max - min));
 }
 
@@ -222,33 +223,33 @@ export function stepWeather(
   const koppen = getTrackKoppen(trackId);
   const hemisphere = getTrackHemisphere(trackId);
   const month = getMonthFromDay(day, hemisphere);
-  
+
   const rng = createRng(hashStr(`${trackId}:${day}`));
-  
+
   // Get base monthly transition probabilities
   const transitions = generateMonthlyTransitions(koppen, month);
-  
+
   // Adjust based on previous pattern (Markov property)
   const fromIdx = prev ? SIM_WEATHER_PATTERNS.indexOf(prev.pattern) : 0;
-  
+
   // Weight transitions based on previous state
   // Higher probability of staying in same weather or transitioning logically
   const adjustedTransitions = transitions.map((prob, idx) => {
     if (idx === fromIdx) return prob * 1.3; // Slight persistence bias
     return prob;
   });
-  
+
   // Normalize
   const sum = adjustedTransitions.reduce((a, b) => a + b, 0);
-  const normalizedTransitions = adjustedTransitions.map(p => p / sum);
-  
+  const normalizedTransitions = adjustedTransitions.map((p) => p / sum);
+
   const pattern = samplePattern(normalizedTransitions, rng);
-  
+
   // Generate weather values from historical climate data
   const tempC = generateTemperature(koppen, month, pattern, rng);
   const humidity = generateHumidity(koppen, month, pattern, rng);
   const windKph = generateWind(koppen, pattern, rng);
-  
+
   // Temperature-snow consistency check
   let finalPattern = pattern;
   if (pattern === "snow" && tempC > 2) {
@@ -257,12 +258,12 @@ export function stepWeather(
     finalPattern = "snow";
   }
 
-  return { 
-    trackId, 
-    day, 
-    pattern: finalPattern, 
-    tempC, 
-    humidity, 
+  return {
+    trackId,
+    day,
+    pattern: finalPattern,
+    tempC,
+    humidity,
     windKph,
   };
 }

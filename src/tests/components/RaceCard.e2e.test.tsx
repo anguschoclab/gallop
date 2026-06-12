@@ -115,7 +115,14 @@ describe("RaceCard — end-to-end integration with WeatherForecastStrip", () => 
     _mockForecast = { [STORM_TRACK_ID]: makeStormForecast(STORM_TRACK_ID, 7) };
     _mockWeatherByTrack = {
       [STORM_TRACK_ID]: [
-        { trackId: STORM_TRACK_ID, day: 50, pattern: "storm", tempC: 12, humidity: 0.95, windKph: 55 },
+        {
+          trackId: STORM_TRACK_ID,
+          day: 50,
+          pattern: "storm",
+          tempC: 12,
+          humidity: 0.95,
+          windKph: 55,
+        },
       ],
     };
 
@@ -136,7 +143,14 @@ describe("RaceCard — end-to-end integration with WeatherForecastStrip", () => 
     _mockForecast = { [STORM_TRACK_ID]: makeStormForecast(STORM_TRACK_ID, 7) };
     _mockWeatherByTrack = {
       [STORM_TRACK_ID]: [
-        { trackId: STORM_TRACK_ID, day: 50, pattern: "storm", tempC: 12, humidity: 0.95, windKph: 55 },
+        {
+          trackId: STORM_TRACK_ID,
+          day: 50,
+          pattern: "storm",
+          tempC: 12,
+          humidity: 0.95,
+          windKph: 55,
+        },
       ],
     };
 
@@ -170,8 +184,22 @@ describe("RaceCard — end-to-end integration with WeatherForecastStrip", () => 
     // Simulate: byTrack has yesterday=clear, today=storm (pattern jump occurred)
     _mockWeatherByTrack = {
       [STORM_TRACK_ID]: [
-        { trackId: STORM_TRACK_ID, day: 49, pattern: "clear", tempC: 20, humidity: 0.5, windKph: 12 },
-        { trackId: STORM_TRACK_ID, day: 50, pattern: "storm", tempC: 12, humidity: 0.95, windKph: 55 },
+        {
+          trackId: STORM_TRACK_ID,
+          day: 49,
+          pattern: "clear",
+          tempC: 20,
+          humidity: 0.5,
+          windKph: 12,
+        },
+        {
+          trackId: STORM_TRACK_ID,
+          day: 50,
+          pattern: "storm",
+          tempC: 12,
+          humidity: 0.95,
+          windKph: 55,
+        },
       ],
     };
     _mockForecast = { [STORM_TRACK_ID]: makeStormForecast(STORM_TRACK_ID, 7) };
@@ -236,7 +264,9 @@ describe("RaceCard — end-to-end integration with WeatherForecastStrip", () => 
         })),
       };
       _mockWeatherByTrack = {
-        [STORM_TRACK_ID]: [{ trackId: STORM_TRACK_ID, day: 50, pattern, tempC: 18, humidity: 0.6, windKph: 20 }],
+        [STORM_TRACK_ID]: [
+          { trackId: STORM_TRACK_ID, day: 50, pattern, tempC: 18, humidity: 0.6, windKph: 20 },
+        ],
       };
 
       const html = render(makeRace());

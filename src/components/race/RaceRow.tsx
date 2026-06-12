@@ -41,7 +41,10 @@ export function RaceRow({ race, onEnter }: RaceRowProps) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5 flex-wrap">
           {gradeLabel && (
-            <Badge variant="outline" className={cn("h-4 px-1 text-[9px] font-bold", gradeColorClass)}>
+            <Badge
+              variant="outline"
+              className={cn("h-4 px-1 text-[9px] font-bold", gradeColorClass)}
+            >
               {gradeLabel}
             </Badge>
           )}

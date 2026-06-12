@@ -40,7 +40,9 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
   if (currentYear > previousYear) {
     horses = horses.map((h) => {
       if (h.winAndYouInQualified) {
-        h.winAndYouInQualified = h.winAndYouInQualified.filter((q: { year: number }) => q.year >= currentYear);
+        h.winAndYouInQualified = h.winAndYouInQualified.filter(
+          (q: { year: number }) => q.year >= currentYear,
+        );
       }
       return h;
     });

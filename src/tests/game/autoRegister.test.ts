@@ -176,10 +176,7 @@ describe("calculateAutoRegisterEntries", () => {
   });
 
   it("respects budget constraints", () => {
-    const horses = [
-      createMockHorse({ id: "horse-1" }),
-      createMockHorse({ id: "horse-2" }),
-    ];
+    const horses = [createMockHorse({ id: "horse-1" }), createMockHorse({ id: "horse-2" })];
     const races: Race[] = [
       createMockRace({ id: "race-1", day: 5, entryFee: 1000 }),
       createMockRace({ id: "race-2", day: 6, entryFee: 1000 }),
@@ -197,13 +194,31 @@ describe("calculateAutoRegisterEntries", () => {
 
   it("calculates transport costs correctly for graded races", () => {
     const g1Race = createMockRace({
-      graded: { key: "g1-test", grade: "G1", track: "Test", trackId: "test-track", surface: "Turf" },
+      graded: {
+        key: "g1-test",
+        grade: "G1",
+        track: "Test",
+        trackId: "test-track",
+        surface: "Turf",
+      },
     });
     const g2Race = createMockRace({
-      graded: { key: "g2-test", grade: "G2", track: "Test", trackId: "test-track", surface: "Turf" },
+      graded: {
+        key: "g2-test",
+        grade: "G2",
+        track: "Test",
+        trackId: "test-track",
+        surface: "Turf",
+      },
     });
     const g3Race = createMockRace({
-      graded: { key: "g3-test", grade: "G3", track: "Test", trackId: "test-track", surface: "Turf" },
+      graded: {
+        key: "g3-test",
+        grade: "G3",
+        track: "Test",
+        trackId: "test-track",
+        surface: "Turf",
+      },
     });
     const ungradedRace = createMockRace();
 

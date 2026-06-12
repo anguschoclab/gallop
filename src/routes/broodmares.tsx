@@ -64,7 +64,8 @@ function BroodmaresPage() {
                       Bred to {pregnancy.sireName} · Conceived Day {pregnancy.conceivedDay}
                     </p>
                     <p className="text-xs text-cream-muted mt-1">
-                      Dam: {Math.round(dam?.distanceAptitude ?? 0)}m · Sire: {Math.round(sire?.distanceAptitude ?? 0)}m
+                      Dam: {Math.round(dam?.distanceAptitude ?? 0)}m · Sire:{" "}
+                      {Math.round(sire?.distanceAptitude ?? 0)}m
                     </p>
                     {dam?.blueHenStatus && (
                       <p className="text-xs text-cream-muted mt-1">

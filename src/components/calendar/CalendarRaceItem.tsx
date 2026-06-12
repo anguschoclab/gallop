@@ -36,9 +36,7 @@ export function CalendarRaceItem({ race, region }: CalendarRaceItemProps) {
               {region.specialFilterName}
             </Badge>
           )}
-          {hasOwnedEntry && (
-            <Badge className="bg-success text-success-foreground">Entered</Badge>
-          )}
+          {hasOwnedEntry && <Badge className="bg-success text-success-foreground">Entered</Badge>}
         </div>
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-cream-muted">
           <span>{race.graded?.track}</span>

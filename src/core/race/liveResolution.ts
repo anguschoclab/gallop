@@ -100,9 +100,8 @@ export function resolveLiveRaceWithImpacts(
   const runnerMap = new Map(runners.map((run) => [run.horseId, run]));
   const jockeyMap = new Map((jockeys || []).map((j) => [j.id, j]));
   const raceEntryMap = new Map(race.entries.map((e) => [e.horseId, e]));
-  const splitEntryMaps = race.sectionalSplits?.map((split) =>
-    new Map(split.entries.map((e) => [e.horseId, e])),
-  ) ?? [];
+  const splitEntryMaps =
+    race.sectionalSplits?.map((split) => new Map(split.entries.map((e) => [e.horseId, e]))) ?? [];
 
   // Generate per-horse impacts
   for (const r of result) {
@@ -237,11 +236,25 @@ export function resolveLiveRaceWithImpacts(
         }
         // Otherwise check race history
         const raceHistoryMap = new Map(
-          (horse.raceHistory as Array<{ raceId: string; raceName: string; position: number; day: number }>).map((rh) => [rh.raceId, rh]),
+          (
+            horse.raceHistory as Array<{
+              raceId: string;
+              raceName: string;
+              position: number;
+              day: number;
+            }>
+          ).map((rh) => [rh.raceId, rh]),
         );
         const historyEntry =
           raceHistoryMap.get(tcRace.key) ||
-          (horse.raceHistory as Array<{ raceId: string; raceName: string; position: number; day: number }>).find((rh) => rh.raceName === tcRace.name);
+          (
+            horse.raceHistory as Array<{
+              raceId: string;
+              raceName: string;
+              position: number;
+              day: number;
+            }>
+          ).find((rh) => rh.raceName === tcRace.name);
         return {
           raceKey: tcRace.key,
           position: historyEntry?.position ?? 999,

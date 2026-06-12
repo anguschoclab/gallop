@@ -1,10 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  FACILITY_ENABLED_WORKOUTS,
-  type FacilityType,
-} from "@/core/facilities";
+import { FACILITY_ENABLED_WORKOUTS, type FacilityType } from "@/core/facilities";
 import { ArrowUp, Check, HardDrive } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
 import { cn } from "@/lib/cn";
@@ -33,9 +30,7 @@ export function FacilityCategory({
     <section className="space-y-6">
       <div className="flex items-center gap-3 px-1 border-b border-white/5 pb-2">
         <Icon className={cn("h-4 w-4", color)} />
-        <h3 className="text-xs font-black uppercase tracking-[0.4em] text-cream/60">
-          {category}
-        </h3>
+        <h3 className="text-xs font-black uppercase tracking-[0.4em] text-cream/60">{category}</h3>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -114,25 +109,24 @@ export function FacilityCategory({
                   )}
                 </div>
 
-                {FACILITY_ENABLED_WORKOUTS[type] &&
-                  FACILITY_ENABLED_WORKOUTS[type].length > 0 && (
-                    <div className="space-y-2">
-                      <div className="text-[8px] font-black uppercase text-cream/20 tracking-[0.2em] flex items-center gap-1.5 px-1">
-                        <HardDrive className="h-2.5 w-2.5 opacity-40" />
-                        Enabled_Specs
-                      </div>
-                      <div className="flex flex-wrap gap-1">
-                        {FACILITY_ENABLED_WORKOUTS[type].map((workout: string) => (
-                          <div
-                            key={workout}
-                            className="px-2 py-0.5 bg-black/40 border border-white/5 text-[9px] font-mono text-cream/60 uppercase tracking-tighter rounded-sm"
-                          >
-                            {workout.replace("_", " ")}
-                          </div>
-                        ))}
-                      </div>
+                {FACILITY_ENABLED_WORKOUTS[type] && FACILITY_ENABLED_WORKOUTS[type].length > 0 && (
+                  <div className="space-y-2">
+                    <div className="text-[8px] font-black uppercase text-cream/20 tracking-[0.2em] flex items-center gap-1.5 px-1">
+                      <HardDrive className="h-2.5 w-2.5 opacity-40" />
+                      Enabled_Specs
                     </div>
-                  )}
+                    <div className="flex flex-wrap gap-1">
+                      {FACILITY_ENABLED_WORKOUTS[type].map((workout: string) => (
+                        <div
+                          key={workout}
+                          className="px-2 py-0.5 bg-black/40 border border-white/5 text-[9px] font-mono text-cream/60 uppercase tracking-tighter rounded-sm"
+                        >
+                          {workout.replace("_", " ")}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div className="pt-2">
                   {maxLevel ? (

@@ -61,7 +61,9 @@ export function RivalArchivesView({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate({ search: (p: any) => ({ ...p, rivalQ: "", rivalTier: "all" }) })}
+            onClick={() =>
+              navigate({ search: (p: any) => ({ ...p, rivalQ: "", rivalTier: "all" }) })
+            }
             className="h-10 gap-2 text-cream/40 hover:text-cream uppercase text-[10px] font-black tracking-widest"
           >
             <X className="w-3.5 h-3.5" />
@@ -144,9 +146,7 @@ export function RivalArchivesView({
                       <span className="text-cream/40">
                         Assets: <span className="text-cream">{stableHorseCount}</span>
                       </span>
-                      <span className="text-success font-bold">
-                        {formatCurrency(stable.cash)}
-                      </span>
+                      <span className="text-success font-bold">{formatCurrency(stable.cash)}</span>
                     </div>
                   </div>
                 </Link>

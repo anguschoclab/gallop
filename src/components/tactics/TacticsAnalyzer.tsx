@@ -39,11 +39,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
 
   if (!horse || !race) return null;
 
-  const styleBonus = calculateStyleBonus(
-    instructions,
-    horse.stats.speed,
-    horse.stats.stamina,
-  );
+  const styleBonus = calculateStyleBonus(instructions, horse.stats.speed, horse.stats.stamina);
 
   const handleSave = () => {
     // In a full implementation, this would save the tactics to the race entry
@@ -95,9 +91,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
               return (
                 <button
                   key={style.value}
-                  onClick={() =>
-                    setInstructions({ ...instructions, ridingStyle: style.value })
-                  }
+                  onClick={() => setInstructions({ ...instructions, ridingStyle: style.value })}
                   className={cn(
                     "p-2 border rounded-sm flex items-center gap-2 transition-all",
                     instructions.ridingStyle === style.value
@@ -125,9 +119,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
             {earlyPositions.map((pos) => (
               <button
                 key={pos.value}
-                onClick={() =>
-                  setInstructions({ ...instructions, earlyPosition: pos.value })
-                }
+                onClick={() => setInstructions({ ...instructions, earlyPosition: pos.value })}
                 className={cn(
                   "p-1.5 border rounded-sm text-[9px] font-black uppercase transition-all",
                   instructions.earlyPosition === pos.value
@@ -153,9 +145,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
             {moveTimings.map((timing) => (
               <button
                 key={timing.value}
-                onClick={() =>
-                  setInstructions({ ...instructions, moveTiming: timing.value })
-                }
+                onClick={() => setInstructions({ ...instructions, moveTiming: timing.value })}
                 className={cn(
                   "p-1.5 border rounded-sm text-[9px] font-black uppercase transition-all",
                   instructions.moveTiming === timing.value
@@ -184,9 +174,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
           </div>
           <Slider
             value={[instructions.aggressiveness]}
-            onValueChange={([value]) =>
-              setInstructions({ ...instructions, aggressiveness: value })
-            }
+            onValueChange={([value]) => setInstructions({ ...instructions, aggressiveness: value })}
             min={0}
             max={100}
             step={5}

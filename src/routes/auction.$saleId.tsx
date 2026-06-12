@@ -3,7 +3,10 @@ import { useGame, useGameWithShallow } from "@/game/store";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { HardDrive } from "lucide-react";
 import type { AuctionLot } from "@/game/types";
-import { auctionBrowseSearchSchema, type AuctionBrowseSearch } from "@/constants/auctionSearchSchema";
+import {
+  auctionBrowseSearchSchema,
+  type AuctionBrowseSearch,
+} from "@/constants/auctionSearchSchema";
 import { filterAndSortLots } from "@/services/auction/auctionLotFilter";
 import { getDisplayableStats } from "@/core/npc/scouting";
 import { AuctionTheater } from "@/components/auction/AuctionTheater";
@@ -61,7 +64,7 @@ function AuctionSalePage() {
   // Lot filtering
   const activeLots: AuctionLot[] = useMemo(
     () => (sale ? (sale.lots as AuctionLot[]).filter((l) => !l.withdrawn) : []),
-    [sale]
+    [sale],
   );
 
   const filteredLots = useMemo(
@@ -73,7 +76,7 @@ function AuctionSalePage() {
         sort,
         q,
       }),
-    [activeLots, horses, sex, ageBand, reserveBand, sort, q]
+    [activeLots, horses, sex, ageBand, reserveBand, sort, q],
   );
 
   const filterKey = `${sex ?? ""}|${ageBand ?? ""}|${reserveBand ?? ""}|${sort ?? ""}|${q ?? ""}`;
@@ -87,12 +90,15 @@ function AuctionSalePage() {
     sex !== undefined || ageBand !== undefined || reserveBand !== undefined || q !== undefined;
 
   const onUpdateFilter = useCallback(
-    (update: Partial<AuctionBrowseSearch> | ((prev: AuctionBrowseSearch) => AuctionBrowseSearch)) => {
+    (
+      update: Partial<AuctionBrowseSearch> | ((prev: AuctionBrowseSearch) => AuctionBrowseSearch),
+    ) => {
       navigate({
-        search: (prev: AuctionBrowseSearch) => (typeof update === "function" ? update(prev) : { ...prev, ...update }),
+        search: (prev: AuctionBrowseSearch) =>
+          typeof update === "function" ? update(prev) : { ...prev, ...update },
       });
     },
-    [navigate]
+    [navigate],
   );
 
   const onResetFilters = useCallback(() => navigate({ search: () => ({}) }), [navigate]);
@@ -150,7 +156,7 @@ function AuctionSalePage() {
         setMessage(result.reason ?? "Bid failed");
       }
     },
-    [currentLot, currentPrice, cash, placeBookBid, sale.id]
+    [currentLot, currentPrice, cash, placeBookBid, sale.id],
   );
 
   const handleMaxBid = useCallback(
@@ -161,7 +167,7 @@ function AuctionSalePage() {
       }
       if (max) handleBid(max);
     },
-    [currentPrice, handleBid]
+    [currentPrice, handleBid],
   );
 
   const handleWithdraw = useCallback(() => {
@@ -265,9 +271,7 @@ function AuctionSalePage() {
               </div>
             ) : null}
 
-            {isResolved && (
-              <ResolvedSaleSummary activeLots={activeLots} horseMap={horseMap} />
-            )}
+            {isResolved && <ResolvedSaleSummary activeLots={activeLots} horseMap={horseMap} />}
           </main>
         </div>
       )}

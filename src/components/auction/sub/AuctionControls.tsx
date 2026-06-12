@@ -101,7 +101,11 @@ export function AuctionControls({
       {!isPlayerConsignment && (
         <div className="grid grid-cols-2 gap-4">
           <BidInputPanel currentBid={currentBid} nextMin={nextMin} onBid={onBid} />
-          <MaxBidPanel currentBid={currentBid} playerMaxBid={playerMaxBid} onSetMaxBid={onSetMaxBid} />
+          <MaxBidPanel
+            currentBid={currentBid}
+            playerMaxBid={playerMaxBid}
+            onSetMaxBid={onSetMaxBid}
+          />
         </div>
       )}
 

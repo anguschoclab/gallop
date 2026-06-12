@@ -20,11 +20,7 @@ import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getFoalsBy } from "@/core/breeding/lineage";
 import { formatCurrency } from "@/core/common/formatting";
-import {
-  BREEDING_FEE,
-  GESTATION_DAYS,
-  LIVE_FOAL_GUARANTEE_FEE,
-} from "@/constants";
+import { BREEDING_FEE, GESTATION_DAYS, LIVE_FOAL_GUARANTEE_FEE } from "@/constants";
 
 /**
  * Helper function to get regional system from country string.
@@ -70,7 +66,8 @@ export function resolvePregnancies(
   const foals: Horse[] = [];
   let cashAdjustment = 0;
 
-  const parentNameBlendingEnabled = state?.userSettings?.gameplay?.parentNameBlendingEnabled ?? true;
+  const parentNameBlendingEnabled =
+    state?.userSettings?.gameplay?.parentNameBlendingEnabled ?? true;
 
   for (const p of pregnancies) {
     if (p.resolved) continue;

@@ -13,7 +13,12 @@ export function BeyerSparkline({ data, className }: BeyerSparklineProps) {
   }
 
   return (
-    <div className={cn("flex-1 min-h-[60px] relative bg-black/20 border border-white/5 rounded-sm p-1", className)}>
+    <div
+      className={cn(
+        "flex-1 min-h-[60px] relative bg-black/20 border border-white/5 rounded-sm p-1",
+        className,
+      )}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
           <YAxis domain={["dataMin - 5", "dataMax + 5"]} hide />

@@ -16,9 +16,7 @@ export function ApprenticeTracker() {
   const day = useGame((s) => s.day);
 
   // Filter for apprentices under contract with player
-  const apprentices = jockeys?.filter(
-    (j) => j.isApprentice && j.stableId === "player",
-  ) || [];
+  const apprentices = jockeys?.filter((j) => j.isApprentice && j.stableId === "player") || [];
 
   if (apprentices.length === 0) {
     return null;
@@ -72,10 +70,7 @@ export function ApprenticeTracker() {
             : 0;
 
           return (
-            <div
-              key={apprentice.id}
-              className="bg-black/40 border border-white/5 p-3 space-y-2"
-            >
+            <div key={apprentice.id} className="bg-black/40 border border-white/5 p-3 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-300 flex items-center justify-center text-xs font-black text-slate-950">

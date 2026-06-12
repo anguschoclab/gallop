@@ -46,11 +46,7 @@ export function createGeldingAIState(stable: Stable): GeldingAIState {
  * @param day - Current game day
  * @returns True if the stable should geld the horse
  */
-export function shouldGeldHorse(
-  aiState: GeldingAIState,
-  horse: Horse,
-  day: number,
-): boolean {
+export function shouldGeldHorse(aiState: GeldingAIState, horse: Horse, day: number): boolean {
   // Must be male and not already gelded
   if (horse.gender !== "colt" && horse.gender !== "horse") return false;
   if (horse.gelded) return false;
@@ -78,5 +74,5 @@ export function shouldGeldHorse(
   // Deterministic daily roll (approx 3.3% chance per day, once every 30 days)
   // This spaces out gelding decisions dynamically over time
   const hash = Math.abs(hashStr(horse.id + "_gelding"));
-  return (hash % 30) === (day % 30);
+  return hash % 30 === day % 30;
 }

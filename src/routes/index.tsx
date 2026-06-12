@@ -40,7 +40,10 @@ function Dashboard() {
             Command Center
           </h1>
           <div className="flex items-center gap-3">
-            <Badge variant="outline" className="border-gold/30 text-gold bg-gold/5 font-mono tracking-[0.2em] text-[10px] uppercase h-5">
+            <Badge
+              variant="outline"
+              className="border-gold/30 text-gold bg-gold/5 font-mono tracking-[0.2em] text-[10px] uppercase h-5"
+            >
               {gameCalendarDate(day)}
             </Badge>
             <ReputationBadge />
@@ -54,7 +57,10 @@ function Dashboard() {
             </Badge>
           )}
           {lowEnergyHorses.length > 0 && (
-            <Badge variant="destructive" className="gap-1.5 animate-pulse py-1 font-bold uppercase tracking-tighter">
+            <Badge
+              variant="destructive"
+              className="gap-1.5 animate-pulse py-1 font-bold uppercase tracking-tighter"
+            >
               <AlertCircle className="h-3 w-3" />
               {lowEnergyHorses.length} Fatigued
             </Badge>

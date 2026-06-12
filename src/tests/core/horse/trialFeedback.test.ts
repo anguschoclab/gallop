@@ -5,7 +5,14 @@ function makeHorse(overrides: any = {}) {
   return {
     id: "h1",
     name: "Test Horse",
-    stats: { speed: 50, stamina: 50, acceleration: 50, temperament: 50, conformation: 50, consistency: 50 },
+    stats: {
+      speed: 50,
+      stamina: 50,
+      acceleration: 50,
+      temperament: 50,
+      conformation: 50,
+      consistency: 50,
+    },
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 0.95, Dirt: 0.95, Synthetic: 0.95 },
     ...overrides,

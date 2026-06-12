@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 
 export function useAwardCeremony() {
-  const pendingCeremonies = useGameWithShallow(
-    (s: StoreType) => s.pendingAwardCeremonies,
-  );
+  const pendingCeremonies = useGameWithShallow((s: StoreType) => s.pendingAwardCeremonies);
   const clearPendingCeremonies = useGame((s: StoreType) => s.clearPendingCeremonies);
   const [showCeremony, setShowCeremony] = useState(false);
 

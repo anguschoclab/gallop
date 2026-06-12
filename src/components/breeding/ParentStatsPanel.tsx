@@ -37,9 +37,9 @@ export function ParentStatsPanel({ sire, dam }: ParentStatsPanelProps) {
   return (
     <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/5">
       {parents.map(({ h, role }) => {
-        const bestSurface = (
-          Object.entries(h.surfaceAptitude || {}) as [string, number][]
-        ).sort((a, b) => b[1] - a[1])[0];
+        const bestSurface = (Object.entries(h.surfaceAptitude || {}) as [string, number][]).sort(
+          (a, b) => b[1] - a[1],
+        )[0];
         return (
           <div key={role} className="bg-black/20 border border-white/5 p-3 space-y-1">
             <div className="text-[9px] font-black uppercase tracking-widest text-cream/30 mb-2">
@@ -52,11 +52,7 @@ export function ParentStatsPanel({ sire, dam }: ParentStatsPanelProps) {
               />
               <Row
                 label="Best Surface"
-                value={
-                  bestSurface
-                    ? `${bestSurface[0]} (${Math.round(bestSurface[1])})`
-                    : "—"
-                }
+                value={bestSurface ? `${bestSurface[0]} (${Math.round(bestSurface[1])})` : "—"}
               />
               <Row
                 label="Running Style"
@@ -64,19 +60,14 @@ export function ParentStatsPanel({ sire, dam }: ParentStatsPanelProps) {
               />
               <Row label="Stride" value={h.strideType || "—"} />
               <Row label="Peak Age" value={h.peakAge ?? "—"} />
-              <Row
-                label="Heart"
-                value={h.heartScore != null ? Math.round(h.heartScore) : "—"}
-              />
+              <Row label="Heart" value={h.heartScore != null ? Math.round(h.heartScore) : "—"} />
               <Row
                 label="Trainability"
                 value={h.trainability != null ? Math.round(h.trainability) : "—"}
               />
               <Row
                 label="Temperament"
-                value={
-                  h.stats?.temperament != null ? Math.round(h.stats.temperament) : "—"
-                }
+                value={h.stats?.temperament != null ? Math.round(h.stats.temperament) : "—"}
               />
               <Row
                 label="Spd / Sta / Acc"

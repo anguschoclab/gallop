@@ -30,7 +30,9 @@ export function FinancialSummaryCards({ cash, periodData }: FinancialSummaryCard
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0 border-t border-white/5 bg-black/20 py-2">
-          <div className="text-[8px] font-mono text-cream/20 uppercase tracking-widest">Global Cash Balance</div>
+          <div className="text-[8px] font-mono text-cream/20 uppercase tracking-widest">
+            Global Cash Balance
+          </div>
         </CardContent>
       </Card>
 
@@ -44,7 +46,9 @@ export function FinancialSummaryCards({ cash, periodData }: FinancialSummaryCard
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0 border-t border-white/5 bg-black/20 py-2">
-          <div className="text-[8px] font-mono text-cream/20 uppercase tracking-widest">{periodData.label}</div>
+          <div className="text-[8px] font-mono text-cream/20 uppercase tracking-widest">
+            {periodData.label}
+          </div>
         </CardContent>
       </Card>
 
@@ -58,7 +62,9 @@ export function FinancialSummaryCards({ cash, periodData }: FinancialSummaryCard
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0 border-t border-white/5 bg-black/20 py-2">
-          <div className="text-[8px] font-mono text-cream/20 uppercase tracking-widest">{periodData.label}</div>
+          <div className="text-[8px] font-mono text-cream/20 uppercase tracking-widest">
+            {periodData.label}
+          </div>
         </CardContent>
       </Card>
 
@@ -82,7 +88,9 @@ export function FinancialSummaryCards({ cash, periodData }: FinancialSummaryCard
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0 border-t border-white/5 bg-black/20 py-2 flex items-center justify-between">
-          <div className="text-[8px] font-mono text-cream/20 uppercase tracking-widest">Yield Performance</div>
+          <div className="text-[8px] font-mono text-cream/20 uppercase tracking-widest">
+            Yield Performance
+          </div>
           <Badge
             variant={periodData.netProfit >= 0 ? "default" : "destructive"}
             className="text-[8px] h-3.5 px-1 font-black uppercase rounded-none tracking-widest"

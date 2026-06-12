@@ -1,14 +1,7 @@
 import type { Horse, Race, Jockey, Stable } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
-import {
-  stepRunner,
-  computePaceContext,
-} from "@/core/race/engine/simulation";
-import {
-  buildRunner,
-  getConditionsModifier,
-  type Runner,
-} from "@/core/race/engine/runnerBuilder";
+import { stepRunner, computePaceContext } from "@/core/race/engine/simulation";
+import { buildRunner, getConditionsModifier, type Runner } from "@/core/race/engine/runnerBuilder";
 import type { CourseSpecification } from "@/data/tracks";
 import { generateHorse } from "@/core/horse/horseFactory";
 import { calculateClassBonus } from "@/core/common/classBonus";

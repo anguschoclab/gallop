@@ -36,9 +36,7 @@ export function HorseMetaPanel({ horse, isAdvanced, onToggleView }: HorseMetaPan
             >
               SURF:{" "}
               {(() => {
-                const best = Object.entries(horse.surfaceAptitude).sort(
-                  (a, b) => b[1] - a[1],
-                )[0];
+                const best = Object.entries(horse.surfaceAptitude).sort((a, b) => b[1] - a[1])[0];
                 return best ? `${best[0]} (${Math.round(best[1])})` : "—";
               })()}
             </Badge>

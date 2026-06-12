@@ -49,7 +49,7 @@ export function SaleHeader({
               "rounded-none font-black text-[10px] tracking-widest px-3 h-6",
               isResolved
                 ? "bg-slate-800 text-cream/40"
-                : "bg-gold text-slate-950 shadow-[0_0_15px_rgba(212,175,55,0.3)]"
+                : "bg-gold text-slate-950 shadow-[0_0_15px_rgba(212,175,55,0.3)]",
             )}
           >
             {isResolved ? "Resolved" : "Active"}

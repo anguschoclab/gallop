@@ -12,14 +12,8 @@ export const Route = createFileRoute("/awards")({
 });
 
 function AwardsPage() {
-  const {
-    year,
-    playerAwards,
-    awardsByRegion,
-    totalAwards,
-    hotyCount,
-    currentYearAwards,
-  } = useAwardsData();
+  const { year, playerAwards, awardsByRegion, totalAwards, hotyCount, currentYearAwards } =
+    useAwardsData();
 
   return (
     <div className="space-y-6">

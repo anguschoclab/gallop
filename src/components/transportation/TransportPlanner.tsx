@@ -3,7 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Truck, Plane, Train, X, CheckCircle, Clock } from "lucide-react";
 import { useGame, useGameWithShallow } from "@/game/store";
-import { formatTransportMode, type TransportRequest } from "@/core/transportation/transportationTypes";
+import {
+  formatTransportMode,
+  type TransportRequest,
+} from "@/core/transportation/transportationTypes";
 import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 
@@ -26,9 +29,7 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
   const cancelTransport = useGame((s) => s.cancelTransport);
 
   // Filter transports - if horseId provided, only show that horse's transports
-  const filteredTransports = horseId
-    ? transports.filter((t) => t.horseId === horseId)
-    : transports;
+  const filteredTransports = horseId ? transports.filter((t) => t.horseId === horseId) : transports;
 
   if (filteredTransports.length === 0) {
     return null;
@@ -101,18 +102,20 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
           const isPastDue = daysUntilArrival < 0;
 
           return (
-            <div
-              key={transport.id}
-              className="bg-black/40 border border-white/5 p-3 space-y-2"
-            >
+            <div key={transport.id} className="bg-black/40 border border-white/5 p-3 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   {getTransportIcon(transport.mode)}
-                  <span className="text-xs font-bold text-cream">{horse?.name || "Unknown Horse"}</span>
+                  <span className="text-xs font-bold text-cream">
+                    {horse?.name || "Unknown Horse"}
+                  </span>
                 </div>
                 <Badge
                   variant="outline"
-                  className={cn("text-[9px] font-black uppercase tracking-wider border-white/10", getStatusColor(transport.status))}
+                  className={cn(
+                    "text-[9px] font-black uppercase tracking-wider border-white/10",
+                    getStatusColor(transport.status),
+                  )}
                 >
                   {transport.status.replace("_", " ")}
                 </Badge>
@@ -155,7 +158,12 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
                   <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
                     Arrival
                   </span>
-                  <span className={cn("font-mono text-[10px]", isPastDue ? "text-red-400" : "text-cream/80")}>
+                  <span
+                    className={cn(
+                      "font-mono text-[10px]",
+                      isPastDue ? "text-red-400" : "text-cream/80",
+                    )}
+                  >
                     Day {transport.arrivalDay}
                     {isPastDue && " (Overdue)"}
                   </span>

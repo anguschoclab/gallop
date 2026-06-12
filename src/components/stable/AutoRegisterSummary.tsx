@@ -16,8 +16,8 @@ export function AutoRegisterSummary({ result, cash }: Props) {
         <span className="text-sm font-medium">
           {hasEntries ? (
             <>
-              <span className="text-primary font-bold">{result.entries.length}</span> horses
-              ready for registration
+              <span className="text-primary font-bold">{result.entries.length}</span> horses ready
+              for registration
             </>
           ) : (
             <span className="text-muted-foreground">No eligible registrations found</span>
@@ -33,15 +33,21 @@ export function AutoRegisterSummary({ result, cash }: Props) {
       {hasEntries && (
         <div className="grid grid-cols-3 gap-4 text-sm">
           <div className="bg-background rounded p-2 text-center">
-            <div className="text-muted-foreground text-[10px] uppercase tracking-wider">Total Cost</div>
+            <div className="text-muted-foreground text-[10px] uppercase tracking-wider">
+              Total Cost
+            </div>
             <div className="font-bold text-destructive">{formatCurrency(result.totalCost)}</div>
           </div>
           <div className="bg-background rounded p-2 text-center">
-            <div className="text-muted-foreground text-[10px] uppercase tracking-wider">Remaining</div>
+            <div className="text-muted-foreground text-[10px] uppercase tracking-wider">
+              Remaining
+            </div>
             <div className="font-bold text-success">{formatCurrency(result.remainingCash)}</div>
           </div>
           <div className="bg-background rounded p-2 text-center">
-            <div className="text-muted-foreground text-[10px] uppercase tracking-wider">Reserve</div>
+            <div className="text-muted-foreground text-[10px] uppercase tracking-wider">
+              Reserve
+            </div>
             <div className="font-bold text-muted-foreground">
               {formatCurrency(cash - result.remainingCash - result.totalCost)}
             </div>

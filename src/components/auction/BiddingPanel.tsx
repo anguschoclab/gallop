@@ -159,7 +159,7 @@ export function BiddingPanel({
               "p-3 text-center font-mono text-[10px] uppercase font-black tracking-widest border-t border-white/5",
               message.includes("placed")
                 ? "text-success bg-success/5"
-                : "text-destructive bg-destructive/5"
+                : "text-destructive bg-destructive/5",
             )}
           >
             {message}

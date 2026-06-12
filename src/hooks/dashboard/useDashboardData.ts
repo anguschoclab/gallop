@@ -2,16 +2,7 @@ import { useMemo, useCallback } from "react";
 import { useGame } from "@/game/store";
 
 export function useDashboardData() {
-  const {
-    day,
-    cash,
-    horses,
-    races,
-    auctions,
-    npcStables,
-    npcAIManager,
-    inbox,
-  } = useGame();
+  const { day, cash, horses, races, auctions, npcStables, npcAIManager, inbox } = useGame();
 
   const ownedHorses = horses.filter((h) => h.owned);
   const activeHorses = ownedHorses.filter((h) => h.lifecycleStatus === "active");

@@ -50,9 +50,7 @@ export function UrgentMessagesStrip({ messages }: UrgentMessagesStripProps) {
             <div
               className={cn(
                 "p-2 rounded-full shrink-0",
-                msg.priority === "urgent"
-                  ? "bg-red-500/10 text-red-500"
-                  : "bg-gold/10 text-gold",
+                msg.priority === "urgent" ? "bg-red-500/10 text-red-500" : "bg-gold/10 text-gold",
               )}
             >
               {msg.priority === "urgent" ? (

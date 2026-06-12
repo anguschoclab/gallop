@@ -124,4 +124,3 @@ const EntityLinkComponent: React.FC<{ link: EntityLink; className?: string }> = 
 function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
-

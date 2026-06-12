@@ -18,31 +18,31 @@ describe("Koppen Climate System", () => {
   describe("Track Mappings", () => {
     it("should have Koppen mappings for all tracks in tracks.json", () => {
       const missingTracks: string[] = [];
-      
+
       for (const track of TRACK_DATA) {
         if (!TRACK_KOPPEN_MAP[track.id]) {
           missingTracks.push(`${track.name} (${track.country})`);
         }
       }
-      
+
       expect(missingTracks).toEqual([]);
     });
 
     it("should have valid Koppen codes for all mapped tracks", () => {
       const invalidCodes: Array<{ trackId: string; code: string }> = [];
-      
+
       for (const [trackId, code] of Object.entries(TRACK_KOPPEN_MAP)) {
         if (!ALL_KOPPEN_CODES.includes(code)) {
           invalidCodes.push({ trackId, code });
         }
       }
-      
+
       expect(invalidCodes).toEqual([]);
     });
 
     it("should categorize tracks by country correctly", () => {
       const byCountry: Record<string, string[]> = {};
-      
+
       for (const track of TRACK_DATA) {
         const code = getTrackKoppen(track.id);
         if (!byCountry[track.country]) {
@@ -50,16 +50,16 @@ describe("Koppen Climate System", () => {
         }
         byCountry[track.country].push(code);
       }
-      
+
       // UK/Ireland should be Cfb (Temperate Oceanic)
-      expect(byCountry["Great Britain"]?.every(c => c === "Cfb")).toBe(true);
-      expect(byCountry["Ireland"]?.every(c => c === "Cfb")).toBe(true);
-      
+      expect(byCountry["Great Britain"]?.every((c) => c === "Cfb")).toBe(true);
+      expect(byCountry["Ireland"]?.every((c) => c === "Cfb")).toBe(true);
+
       // UAE/Saudi should be BWh (Hot Desert)
-      expect(byCountry["UAE"]?.every(c => c === "BWh")).toBe(true);
-      
+      expect(byCountry["UAE"]?.every((c) => c === "BWh")).toBe(true);
+
       // Chile should be Csb (Warm-Summer Mediterranean)
-      expect(byCountry["Chile"]?.every(c => c === "Csb")).toBe(true);
+      expect(byCountry["Chile"]?.every((c) => c === "Csb")).toBe(true);
     });
   });
 
@@ -68,7 +68,7 @@ describe("Koppen Climate System", () => {
       for (const code of ALL_KOPPEN_CODES) {
         const profile = KOPPEN_PROFILES[code];
         expect(profile).toBeDefined();
-        
+
         for (let month = 1; month <= 12; month++) {
           expect(profile.monthly[month]).toBeDefined();
         }
@@ -77,23 +77,23 @@ describe("Koppen Climate System", () => {
 
     it("should have realistic temperature ranges for each Koppen code", () => {
       const tempRanges: Record<string, { min: number; max: number }> = {
-        Cfb: { min: -5, max: 30 },  // Oceanic - mild
-        Cfa: { min: -5, max: 35 },  // Humid subtropical
-        Csa: { min: 0, max: 40 },   // Mediterranean
-        Csb: { min: 0, max: 35 },   // Warm Mediterranean
-        BWh: { min: 10, max: 50 },  // Hot desert
+        Cfb: { min: -5, max: 30 }, // Oceanic - mild
+        Cfa: { min: -5, max: 35 }, // Humid subtropical
+        Csa: { min: 0, max: 40 }, // Mediterranean
+        Csb: { min: 0, max: 35 }, // Warm Mediterranean
+        BWh: { min: 10, max: 50 }, // Hot desert
         Dfb: { min: -20, max: 30 }, // Humid continental
         Dfa: { min: -20, max: 35 }, // Hot continental
-        Aw: { min: 15, max: 40 },   // Tropical savanna
-        Af: { min: 20, max: 35 },   // Rainforest
+        Aw: { min: 15, max: 40 }, // Tropical savanna
+        Af: { min: 20, max: 35 }, // Rainforest
         BSk: { min: -10, max: 40 }, // Cold semi-arid
-        ET: { min: -25, max: 25 },  // Tundra
+        ET: { min: -25, max: 25 }, // Tundra
       };
 
       for (const code of ALL_KOPPEN_CODES) {
         const profile = KOPPEN_PROFILES[code];
         const range = tempRanges[code];
-        
+
         for (let month = 1; month <= 12; month++) {
           const monthly = profile.monthly[month];
           expect(monthly.avgLow).toBeGreaterThanOrEqual(range.min);
@@ -118,10 +118,10 @@ describe("Koppen Climate System", () => {
       const csa = KOPPEN_PROFILES.Csa;
       const summerMonths = [6, 7, 8]; // Jun-Aug
       const winterMonths = [12, 1, 2]; // Dec-Feb
-      
+
       const summerPrecip = summerMonths.reduce((sum, m) => sum + csa.monthly[m].precipDays, 0);
       const winterPrecip = winterMonths.reduce((sum, m) => sum + csa.monthly[m].precipDays, 0);
-      
+
       expect(summerPrecip).toBeLessThan(10);
       expect(winterPrecip).toBeGreaterThan(15);
     });
@@ -129,7 +129,7 @@ describe("Koppen Climate System", () => {
     it("should have realistic humidity ranges", () => {
       for (const code of ALL_KOPPEN_CODES) {
         const profile = KOPPEN_PROFILES[code];
-        
+
         for (let month = 1; month <= 12; month++) {
           const humidity = profile.monthly[month].humidity;
           expect(humidity).toBeGreaterThanOrEqual(0.3);
@@ -166,7 +166,7 @@ describe("Koppen Climate System", () => {
       // Australian tracks have different climates based on location
       // Melbourne (Flemington/Caulfield/Moonee Valley) - Cfb (Temperate Oceanic)
       // Sydney (Randwick/Rosehill) - Cfa (Humid Subtropical)
-      
+
       expect(getTrackKoppen("a1b2c3d4-e5f6-4a7b-8c9d-1e2f3a4b5c6d")).toBe("Cfb"); // Flemington
       expect(getTrackKoppen("b2c3d4e5-f6a7-4b8c-9d0e-2f3a4b5c6d7e")).toBe("Cfa"); // Randwick
     });

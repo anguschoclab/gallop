@@ -2,11 +2,7 @@ import { useState } from "react";
 import { useGame } from "@/game/store";
 import { toast } from "sonner";
 import { formatCurrency } from "@/core/common/formatting";
-import {
-  evaluateOffer,
-  PATIENCE_BY_TIER,
-  FLOOR_BY_TIER,
-} from "@/core/staff/staffNegotiation";
+import { evaluateOffer, PATIENCE_BY_TIER, FLOOR_BY_TIER } from "@/core/staff/staffNegotiation";
 import type { StaffMember } from "@/core/staff/staffTypes";
 
 export function useStaffNegotiation(staff: StaffMember, onClose: () => void) {
@@ -48,9 +44,7 @@ export function useStaffNegotiation(staff: StaffMember, onClose: () => void) {
         setOfferError(r.reason ?? "Hire failed.");
         return;
       }
-      toast.success(
-        `${staff.name} joins your stable at ${formatCurrency(amount)}/day.`,
-      );
+      toast.success(`${staff.name} joins your stable at ${formatCurrency(amount)}/day.`);
       handleClose();
     } else if (result.outcome === "counter") {
       const newRounds = roundsUsed + 1;

@@ -183,8 +183,10 @@ function calculateTargetLane(
 
   // Jockey instructions-based lane bias
   if (r.jockeyInstructions?.ridingStyle === "front_runner") targetLane = 0;
-  if (r.jockeyInstructions?.ridingStyle === "closer" && progress < OUTSIDE_PROGRESS_THRESHOLD) targetLane = 2;
-  if (r.jockeyInstructions?.earlyPosition === "lead" && progress < LEAD_PROGRESS_THRESHOLD) targetLane = 0;
+  if (r.jockeyInstructions?.ridingStyle === "closer" && progress < OUTSIDE_PROGRESS_THRESHOLD)
+    targetLane = 2;
+  if (r.jockeyInstructions?.earlyPosition === "lead" && progress < LEAD_PROGRESS_THRESHOLD)
+    targetLane = 0;
 
   if (sortedField && pace) {
     const laneIdx = Math.floor(r.lane / LANE_WIDTH);
@@ -350,7 +352,11 @@ function calculateStaminaMultiplier(
     }
 
     // "Save" tactics preservation (closer with late move timing)
-    if (r.jockeyInstructions?.ridingStyle === "closer" && r.jockeyInstructions?.moveTiming === "late" && progress < SAVE_TACTICS_PROGRESS_THRESHOLD) {
+    if (
+      r.jockeyInstructions?.ridingStyle === "closer" &&
+      r.jockeyInstructions?.moveTiming === "late" &&
+      progress < SAVE_TACTICS_PROGRESS_THRESHOLD
+    ) {
       effectiveStamina = clamp(effectiveStamina + SAVE_TACTICS_STAMINA_BONUS, 0, 1.1);
     }
 
@@ -517,7 +523,9 @@ function applyJockeyEffects(
         vigorBoost *= LATE_KICK_VIGOR_MULTIPLIER;
       }
       const speedCap =
-        r.jockeyInstructions?.moveTiming === "late" ? r.topSpeed * LATE_KICK_TOP_SPEED_MULTIPLIER : r.topSpeed;
+        r.jockeyInstructions?.moveTiming === "late"
+          ? r.topSpeed * LATE_KICK_TOP_SPEED_MULTIPLIER
+          : r.topSpeed;
       r.velocity = Math.min(r.velocity + vigorBoost * dt, speedCap);
     }
   } else {

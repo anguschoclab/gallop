@@ -9,7 +9,10 @@
  */
 
 import type { TransportRequest, TransportMode } from "@/core/transportation/transportationTypes";
-import { createTransportRequest, getTransportModeForDistance } from "@/core/transportation/transportationTypes";
+import {
+  createTransportRequest,
+  getTransportModeForDistance,
+} from "@/core/transportation/transportationTypes";
 import { generateUUID } from "@/core/uuid";
 import type { ActionResult, SliceCreator } from "../types";
 import { requireOwned, requireHorse } from "../guards";

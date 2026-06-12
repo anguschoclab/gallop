@@ -12,7 +12,12 @@ interface DataManagementCardProps {
   onLoad: () => void;
 }
 
-export function DataManagementCard({ lastModifiedDay, version, onSave, onLoad }: DataManagementCardProps) {
+export function DataManagementCard({
+  lastModifiedDay,
+  version,
+  onSave,
+  onLoad,
+}: DataManagementCardProps) {
   return (
     <Card className="md:col-span-2 border-gold-muted bg-slate-900/50">
       <CardHeader>

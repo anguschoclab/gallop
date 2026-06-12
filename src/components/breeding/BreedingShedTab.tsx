@@ -60,19 +60,12 @@ export function BreedingShedTab({ pageData }: BreedingShedTabProps) {
             onChange={setSireId}
             availableStallions={availableStallions}
           />
-          <DamSelector
-            damId={damId}
-            onChange={setDamId}
-            femalesToBreed={femalesToBreed}
-          />
+          <DamSelector damId={damId} onChange={setDamId} femalesToBreed={femalesToBreed} />
         </div>
         <Button
           onClick={onBreed}
           disabled={
-            !sireId ||
-            !damId ||
-            sireId === damId ||
-            cash < 2000 + (liveFoalGuarantee ? 1000 : 0)
+            !sireId || !damId || sireId === damId || cash < 2000 + (liveFoalGuarantee ? 1000 : 0)
           }
         >
           <Heart className="h-4 w-4 mr-1" /> Breed (
@@ -92,8 +85,8 @@ export function BreedingShedTab({ pageData }: BreedingShedTabProps) {
           </label>
         </div>
         <p className="text-xs text-cream-muted mt-1">
-          If foal is stillborn or unable to
-          stand/nurse, you get a free re-breeding (up to 3 attempts).
+          If foal is stillborn or unable to stand/nurse, you get a free re-breeding (up to 3
+          attempts).
         </p>
 
         {compatibility && <BreedingCompatibilityCard compatibility={compatibility} />}

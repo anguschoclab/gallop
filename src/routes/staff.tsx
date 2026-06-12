@@ -55,11 +55,17 @@ function StaffManagement() {
             Our Staff
           </h1>
           <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
-            <span>Active Team: <NumericValue value={myStaff.length} /></span>
+            <span>
+              Active Team: <NumericValue value={myStaff.length} />
+            </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span>Recruitment Pool: <NumericValue value={staffPool.length} /></span>
+            <span>
+              Recruitment Pool: <NumericValue value={staffPool.length} />
+            </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span>Season Day: <NumericValue value={day} /></span>
+            <span>
+              Season Day: <NumericValue value={day} />
+            </span>
           </div>
         </div>
         <div className="flex gap-2">
@@ -79,23 +85,20 @@ function StaffManagement() {
           showHonors={myStaff.some((s) => showHonors(s.role)) && stableG1Wins.length > 0}
           onFire={handleFire}
         />
-        <RecruitmentPool
-          staffPool={staffPool}
-          day={day}
-          onNegotiate={setNegotiatingId}
-        />
+        <RecruitmentPool staffPool={staffPool} day={day} onNegotiate={setNegotiatingId} />
       </div>
 
-      {negotiatingId && (() => {
-        const staff = staffPool.find((s) => s.id === negotiatingId);
-        return staff ? (
-          <StaffNegotiationDialog
-            staff={staff}
-            isOpen={true}
-            onClose={() => setNegotiatingId(null)}
-          />
-        ) : null;
-      })()}
+      {negotiatingId &&
+        (() => {
+          const staff = staffPool.find((s) => s.id === negotiatingId);
+          return staff ? (
+            <StaffNegotiationDialog
+              staff={staff}
+              isOpen={true}
+              onClose={() => setNegotiatingId(null)}
+            />
+          ) : null;
+        })()}
     </div>
   );
 }

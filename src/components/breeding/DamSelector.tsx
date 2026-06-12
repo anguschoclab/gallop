@@ -27,9 +27,8 @@ export function DamSelector({ damId, onChange, femalesToBreed }: DamSelectorProp
         <option value="">Select dam…</option>
         {femalesToBreed.map((h) => (
           <option key={h.id} value={h.id}>
-            {h.name} (age {Math.floor(h.age)})
-            {h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""} •{" "}
-            {Math.round(h.distanceAptitude)}m
+            {h.name} (age {Math.floor(h.age)}){h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""}{" "}
+            • {Math.round(h.distanceAptitude)}m
           </option>
         ))}
       </select>

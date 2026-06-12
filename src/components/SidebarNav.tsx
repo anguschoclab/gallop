@@ -8,8 +8,25 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Home, Trophy, Store, Calendar, Plus, Heart, Gavel, Settings, User, Baby,
-  DollarSign, Building2, Award, Users, Map, Clock, LayoutGrid, Star, Bell,
+  Home,
+  Trophy,
+  Store,
+  Calendar,
+  Plus,
+  Heart,
+  Gavel,
+  Settings,
+  User,
+  Baby,
+  DollarSign,
+  Building2,
+  Award,
+  Users,
+  Map,
+  Clock,
+  LayoutGrid,
+  Star,
+  Bell,
 } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
@@ -136,24 +153,62 @@ export function SidebarNav({
           </p>
           <p className="text-[10px] text-cream-muted/60 mt-1">{horseCount} horses</p>
           <div className="grid grid-cols-4 gap-1">
-            <Button onClick={onAdvanceDay} className="col-span-1" size="sm" variant="outline" aria-label="Advance 1 day">
+            <Button
+              onClick={onAdvanceDay}
+              className="col-span-1"
+              size="sm"
+              variant="outline"
+              aria-label="Advance 1 day"
+            >
               <Plus className="h-3 w-3" />
             </Button>
-            <Button onClick={onAdvanceWeek} className="col-span-1" size="sm" variant="outline" title="Advance 1 week" aria-label="Advance 1 week">
+            <Button
+              onClick={onAdvanceWeek}
+              className="col-span-1"
+              size="sm"
+              variant="outline"
+              title="Advance 1 week"
+              aria-label="Advance 1 week"
+            >
               7d
             </Button>
-            <Button onClick={onAdvanceMonth} className="col-span-1" size="sm" variant="outline" title="Advance 1 month" aria-label="Advance 1 month">
+            <Button
+              onClick={onAdvanceMonth}
+              className="col-span-1"
+              size="sm"
+              variant="outline"
+              title="Advance 1 month"
+              aria-label="Advance 1 month"
+            >
               30d
             </Button>
-            <Button onClick={onOpenAutoSim} className="col-span-1" size="sm" variant="outline" aria-label="AutoSim settings">
+            <Button
+              onClick={onOpenAutoSim}
+              className="col-span-1"
+              size="sm"
+              variant="outline"
+              aria-label="AutoSim settings"
+            >
               <Settings className="h-3 w-3" />
             </Button>
           </div>
           <div className="grid grid-cols-2 gap-1 mt-1">
-            <Button onClick={onSkipToAuction} size="sm" variant="outline" title="Skip to next auction" className="text-[10px]">
+            <Button
+              onClick={onSkipToAuction}
+              size="sm"
+              variant="outline"
+              title="Skip to next auction"
+              className="text-[10px]"
+            >
               <Gavel className="h-3 w-3 mr-1" /> Next Auction
             </Button>
-            <Button onClick={onSkipToRace} size="sm" variant="outline" title="Skip to next race" className="text-[10px]">
+            <Button
+              onClick={onSkipToRace}
+              size="sm"
+              variant="outline"
+              title="Skip to next race"
+              className="text-[10px]"
+            >
               <Trophy className="h-3 w-3 mr-1" /> Next Race
             </Button>
           </div>
@@ -171,7 +226,8 @@ export function SidebarNav({
             <DialogHeader>
               <DialogTitle>Start New Game</DialogTitle>
               <DialogDescription>
-                This will delete your current game progress and start a new one. This action cannot be undone.
+                This will delete your current game progress and start a new one. This action cannot
+                be undone.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>

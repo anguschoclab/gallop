@@ -8,13 +8,7 @@ import { NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/core/common/formatting";
 import { SyndicateMarket } from "@/components/market/SyndicateMarket";
 import { BloodstockGrid } from "@/components/market/BloodstockGrid";
-import {
-  Store,
-  ChevronRight,
-  TrendingUp,
-  Zap,
-  Target,
-} from "lucide-react";
+import { Store, ChevronRight, TrendingUp, Zap, Target } from "lucide-react";
 
 export const Route = createFileRoute("/market")({
   component: MarketPage,

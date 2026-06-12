@@ -90,12 +90,26 @@ describe("raceEntryResolutionPhase", () => {
       const weakHorse = createTestHorse({
         id: "weak-npc",
         stableId: "s-other",
-        stats: { speed: 50, stamina: 50, acceleration: 50, consistency: 50, temperament: 50, conformation: 50 },
+        stats: {
+          speed: 50,
+          stamina: 50,
+          acceleration: 50,
+          consistency: 50,
+          temperament: 50,
+          conformation: 50,
+        },
       });
       const challenger = createTestHorse({
         id: "strong-challenger",
         stableId: "s1",
-        stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 80, conformation: 80 },
+        stats: {
+          speed: 80,
+          stamina: 80,
+          acceleration: 80,
+          consistency: 80,
+          temperament: 80,
+          conformation: 80,
+        },
       });
       const state: GameState = {
         ...(makeGameState() as GameState),
@@ -145,12 +159,26 @@ describe("raceEntryResolutionPhase", () => {
       const weakHorse = createTestHorse({
         id: "weak-npc",
         stableId: "s-other",
-        stats: { speed: 65, stamina: 65, acceleration: 65, consistency: 65, temperament: 65, conformation: 65 },
+        stats: {
+          speed: 65,
+          stamina: 65,
+          acceleration: 65,
+          consistency: 65,
+          temperament: 65,
+          conformation: 65,
+        },
       });
       const challenger = createTestHorse({
         id: "challenger",
         stableId: "s1",
-        stats: { speed: 66, stamina: 66, acceleration: 66, consistency: 66, temperament: 66, conformation: 66 },
+        stats: {
+          speed: 66,
+          stamina: 66,
+          acceleration: 66,
+          consistency: 66,
+          temperament: 66,
+          conformation: 66,
+        },
       });
       const state: GameState = {
         ...(makeGameState() as GameState),
@@ -199,7 +227,14 @@ describe("raceEntryResolutionPhase", () => {
       const challenger = createTestHorse({
         id: "strong-challenger",
         stableId: "s1",
-        stats: { speed: 90, stamina: 90, acceleration: 90, consistency: 90, temperament: 90, conformation: 90 },
+        stats: {
+          speed: 90,
+          stamina: 90,
+          acceleration: 90,
+          consistency: 90,
+          temperament: 90,
+          conformation: 90,
+        },
       });
       const state: GameState = {
         ...(makeGameState() as GameState),

@@ -75,7 +75,9 @@ export function StallionCard({ stallion, stableName, day, mare, cash, onBook }: 
           <span className="text-cream-muted">Best Surface</span>
           <span className="text-cream">
             {(() => {
-              const best = Object.entries(stallion.surfaceAptitude || {}).sort((a, b) => b[1] - a[1])[0];
+              const best = Object.entries(stallion.surfaceAptitude || {}).sort(
+                (a, b) => b[1] - a[1],
+              )[0];
               return best ? `${best[0]} (${Math.round(best[1])})` : "—";
             })()}
           </span>

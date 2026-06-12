@@ -44,11 +44,7 @@ export type CoreSlice = CoreState & {
   enqueueIntent: (intent: AnyIntent) => void;
   enterRace: (raceId: string, horseId: string) => ActionResult;
   withdrawRace: (raceId: string, horseId: string) => ActionResult;
-  setRaceTactics: (
-    raceId: string,
-    horseId: string,
-    jockeyInstructions: JockeyInstructions,
-  ) => void;
+  setRaceTactics: (raceId: string, horseId: string, jockeyInstructions: JockeyInstructions) => void;
   resolveRaceWithImpacts: (
     raceId: string,
     result: { horseId: string; position: number; time: number }[],
@@ -56,7 +52,10 @@ export type CoreSlice = CoreState & {
   ) => void;
   submitClaim: (raceId: string, horseId: string) => ActionResult;
   withdrawClaim: (raceId: string, horseId: string) => ActionResult;
-  purchaseInsurance: (horseId: string, policyType: "injury_only" | "mortality_only" | "comprehensive") => ActionResult;
+  purchaseInsurance: (
+    horseId: string,
+    policyType: "injury_only" | "mortality_only" | "comprehensive",
+  ) => ActionResult;
   cancelInsurance: (horseId: string) => ActionResult;
   advanceDay: (
     progressCallback?: (stage: number, total: number, name: string) => void,
@@ -163,9 +162,7 @@ export function createCoreSlice(
         const isWinAndYouIn =
           race.graded.key &&
           horse!.winAndYouInQualified?.some(
-            (q) =>
-              q.raceKey === race.graded!.key &&
-              q.year === Math.floor((s.day - 1) / 365) + 1,
+            (q) => q.raceKey === race.graded!.key && q.year === Math.floor((s.day - 1) / 365) + 1,
           );
         if (!isInvited && !isWinAndYouIn) {
           return { ok: false, reason: "Invitation required for this race." };
@@ -188,7 +185,10 @@ export function createCoreSlice(
           }
         }
         if (!weakestHorseId || playerRating <= weakestRating + BUMP_RATING_MARGIN) {
-          return { ok: false, reason: "Race is full — your horse isn't rated high enough to bump an entry." };
+          return {
+            ok: false,
+            reason: "Race is full — your horse isn't rated high enough to bump an entry.",
+          };
         }
         bumpEntryHorseId = weakestHorseId;
       }
@@ -244,7 +244,10 @@ export function createCoreSlice(
       return { ok: true };
     },
 
-    purchaseInsurance: (horseId: string, policyType: "injury_only" | "mortality_only" | "comprehensive") => {
+    purchaseInsurance: (
+      horseId: string,
+      policyType: "injury_only" | "mortality_only" | "comprehensive",
+    ) => {
       const s = get();
       const horse = s.horses?.find((h: Horse) => h.id === horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };

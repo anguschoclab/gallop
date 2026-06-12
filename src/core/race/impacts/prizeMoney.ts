@@ -4,7 +4,11 @@
  * Extracted from raceImpactGenerator.ts.
  */
 
-import type { CashImpact, TransactionImpact, ReputationImpact } from "@/core/resolver/impacts/index";
+import type {
+  CashImpact,
+  TransactionImpact,
+  ReputationImpact,
+} from "@/core/resolver/impacts/index";
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { getOrdinalSuffix } from "@/core/common/ordinal";

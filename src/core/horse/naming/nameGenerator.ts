@@ -156,7 +156,8 @@ export function generateProceduralHorseName(
  */
 function pickStrategy(context: NamingContext, rng: Rng): NamingOptions["strategy"] {
   const r = rng.next();
-  if (context.sireName && context.damName && context.parentNameBlendingEnabled !== false && r < 0.4) return "pedigree";
+  if (context.sireName && context.damName && context.parentNameBlendingEnabled !== false && r < 0.4)
+    return "pedigree";
   if ((context.sireName || context.damName) && r < 0.6) return "ancestor";
   if (context.namingTheme && r < 0.85) return "thematic";
   if (context.region) return "regional";

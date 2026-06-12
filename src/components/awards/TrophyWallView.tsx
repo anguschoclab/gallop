@@ -13,7 +13,13 @@ interface TrophyWallViewProps {
   className?: string;
 }
 
-export function TrophyWallView({ awards, ownerName, totalAwards, hotyCount, className }: TrophyWallViewProps) {
+export function TrophyWallView({
+  awards,
+  ownerName,
+  totalAwards,
+  hotyCount,
+  className,
+}: TrophyWallViewProps) {
   const sortedAwards = [...awards].sort((a, b) => b.year - a.year);
 
   return (

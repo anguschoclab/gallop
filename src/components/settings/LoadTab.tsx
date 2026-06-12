@@ -9,7 +9,13 @@ interface LoadTabProps {
   LedgerEntryComponent: React.FC<any>;
 }
 
-export function LoadTab({ saves, onLoad, onDelete, isLoading, LedgerEntryComponent }: LoadTabProps) {
+export function LoadTab({
+  saves,
+  onLoad,
+  onDelete,
+  isLoading,
+  LedgerEntryComponent,
+}: LoadTabProps) {
   return (
     <div className="space-y-4">
       <div className="text-[10px] uppercase font-mono text-gold/40 border-b border-gold/10 pb-1 flex justify-between">

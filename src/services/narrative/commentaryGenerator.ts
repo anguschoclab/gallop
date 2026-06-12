@@ -67,7 +67,10 @@ export function generateCommentaryLine(
   text = text.replace("{trackName}", context.race.graded?.track || "the track");
   text = text.replace("{weather}", context.race.weather || "clear");
   text = text.replace("{trackCondition}", context.race.trackCondition || "good");
-  text = text.replace("{remaining}", (context.race.distance - (context.runner?.position || 0)).toFixed(0));
+  text = text.replace(
+    "{remaining}",
+    (context.race.distance - (context.runner?.position || 0)).toFixed(0),
+  );
 
   if (context.lengths) {
     text = text.replace("{lengths}", context.lengths);

@@ -84,7 +84,7 @@ describe("Seasonal Patterns", () => {
     it("should return monsoon modifiers for Japan in summer", () => {
       const juneModifiers = getSeasonalModifiers("Japan", 6);
       expect(juneModifiers.length).toBeGreaterThan(0);
-      
+
       const julyModifiers = getSeasonalModifiers("Japan", 7);
       expect(julyModifiers.length).toBeGreaterThan(0);
     });
@@ -92,13 +92,13 @@ describe("Seasonal Patterns", () => {
     it("should return Mediterranean dry modifiers for Spain in summer", () => {
       const julyModifiers = getSeasonalModifiers("Spain", 7);
       expect(julyModifiers.length).toBeGreaterThan(0);
-      expect(julyModifiers.some(m => m.rainSuppression !== undefined)).toBe(true);
+      expect(julyModifiers.some((m) => m.rainSuppression !== undefined)).toBe(true);
     });
 
     it("should not return Mediterranean dry modifiers for Spain in winter", () => {
       const januaryModifiers = getSeasonalModifiers("Spain", 1);
       // Should have no dry suppression in winter
-      expect(januaryModifiers.some(m => m.rainSuppression !== undefined)).toBe(false);
+      expect(januaryModifiers.some((m) => m.rainSuppression !== undefined)).toBe(false);
     });
   });
 
@@ -106,19 +106,19 @@ describe("Seasonal Patterns", () => {
     it("should boost rain probability correctly", () => {
       const base = { clear: 0.5, overcast: 0.2, shower: 0.15, rain: 0.1, snow: 0.03, storm: 0.02 };
       const modifier = { months: [6], rainBoost: 0.25 };
-      
+
       const result = applyModifiers(base, [modifier]);
-      
+
       expect(result.shower).toBeGreaterThan(base.shower);
       expect(result.rain).toBeGreaterThan(base.rain);
     });
 
     it("should suppress rain probability correctly", () => {
       const base = { clear: 0.5, overcast: 0.2, shower: 0.15, rain: 0.1, snow: 0.03, storm: 0.02 };
-      const modifier = { months: [7], rainSuppression: 0.80 };
-      
+      const modifier = { months: [7], rainSuppression: 0.8 };
+
       const result = applyModifiers(base, [modifier]);
-      
+
       expect(result.shower).toBeLessThan(base.shower);
       expect(result.rain).toBeLessThan(base.rain);
     });
@@ -126,22 +126,22 @@ describe("Seasonal Patterns", () => {
     it("should normalize probabilities to sum to 1", () => {
       const base = { clear: 0.5, overcast: 0.2, shower: 0.15, rain: 0.1, snow: 0.03, storm: 0.02 };
       const modifier = { months: [6], rainBoost: 0.5, clearBoost: 0.3 };
-      
+
       const result = applyModifiers(base, [modifier]);
       const sum = Object.values(result).reduce((a, b) => a + b, 0);
-      
+
       expect(Math.abs(sum - 1)).toBeLessThan(0.001);
     });
 
     it("should handle multiple modifiers correctly", () => {
       const base = { clear: 0.5, overcast: 0.2, shower: 0.15, rain: 0.1, snow: 0.03, storm: 0.02 };
       const modifiers = [
-        { months: [6], rainBoost: 0.20 },
+        { months: [6], rainBoost: 0.2 },
         { months: [6], stormBoost: 0.15 },
       ];
-      
+
       const result = applyModifiers(base, modifiers);
-      
+
       expect(result.shower).toBeGreaterThan(base.shower);
       expect(result.rain).toBeGreaterThan(base.rain);
       expect(result.storm).toBeGreaterThan(base.storm);
@@ -152,22 +152,22 @@ describe("Seasonal Patterns", () => {
     it("Japan: June-July should have rain boost (tsuyu)", () => {
       const june = getSeasonalModifiers("Japan", 6);
       const july = getSeasonalModifiers("Japan", 7);
-      
-      expect(june.some(m => m.rainBoost && m.rainBoost > 0.2)).toBe(true);
-      expect(july.some(m => m.rainBoost && m.rainBoost > 0.2)).toBe(true);
+
+      expect(june.some((m) => m.rainBoost && m.rainBoost > 0.2)).toBe(true);
+      expect(july.some((m) => m.rainBoost && m.rainBoost > 0.2)).toBe(true);
     });
 
     it("Spain: July-August should have dry suppression", () => {
       const july = getSeasonalModifiers("Spain", 7);
       const august = getSeasonalModifiers("Spain", 8);
-      
-      expect(july.some(m => m.rainSuppression && m.rainSuppression > 0.5)).toBe(true);
-      expect(august.some(m => m.rainSuppression && m.rainSuppression > 0.5)).toBe(true);
+
+      expect(july.some((m) => m.rainSuppression && m.rainSuppression > 0.5)).toBe(true);
+      expect(august.some((m) => m.rainSuppression && m.rainSuppression > 0.5)).toBe(true);
     });
 
     it("Florida: August-October should have hurricane/storm boost", () => {
       const august = getSeasonalModifiers("USA", 8); // Florida mapped in regional
-      
+
       // Note: USA defaults to northeast, not Florida
       // This test documents expected behavior
       expect(true).toBe(true);
@@ -175,7 +175,7 @@ describe("Seasonal Patterns", () => {
 
     it("Australia: December-February should have heat boost (bushfire)", () => {
       const january = getSeasonalModifiers("Australia", 1);
-      expect(january.some(m => m.heatBoost && m.heatBoost > 0)).toBe(true);
+      expect(january.some((m) => m.heatBoost && m.heatBoost > 0)).toBe(true);
     });
   });
 });

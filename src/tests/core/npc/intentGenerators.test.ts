@@ -58,7 +58,9 @@ describe("generateNpcIntents error handling", () => {
     );
 
     // Wait, the error is an instance of Error with the message "Simulated AI error for stable 1"
-    const warnCallArgs = (console.warn as any).mock.calls.find((call: any) => call[1] === "stable1");
+    const warnCallArgs = (console.warn as any).mock.calls.find(
+      (call: any) => call[1] === "stable1",
+    );
     expect(warnCallArgs).toBeDefined();
     expect(warnCallArgs[2].message).toBe("Simulated AI error for stable 1");
   });

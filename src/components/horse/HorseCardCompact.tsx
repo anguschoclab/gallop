@@ -18,7 +18,12 @@ interface HorseCardCompactProps {
   className?: string;
 }
 
-export function HorseCardCompact({ horse, hookData, onClick, className = "" }: HorseCardCompactProps) {
+export function HorseCardCompact({
+  horse,
+  hookData,
+  onClick,
+  className = "",
+}: HorseCardCompactProps) {
   const { ovr, genderColor, scoutStatus, simpleHorseCards } = hookData;
   const [isAdvanced] = useState(!simpleHorseCards);
 

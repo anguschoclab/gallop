@@ -4,10 +4,7 @@ const DEFAULT_SPEED = 1;
 const FAST_SPEED = 2;
 const STATS_UPDATE_MS = 100;
 
-export function useRaceReplay(
-  duration: number,
-  onComplete?: () => void,
-) {
+export function useRaceReplay(duration: number, onComplete?: () => void) {
   const timeRef = useRef(0);
   const progressBarRef = useRef<HTMLDivElement>(null);
   const timeLabelRef = useRef<HTMLSpanElement>(null);

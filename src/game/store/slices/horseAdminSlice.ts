@@ -105,11 +105,7 @@ export const createHorseAdminSlice: GameStateCreator<HorseAdminSlice> = (set, ge
     }
 
     // Check against reserved names (deceased horses within 25 years)
-    if (
-      s.reservedHorseNames?.some(
-        (r) => r.name === lowerNewName && s.day < r.releasedOnDay,
-      )
-    ) {
+    if (s.reservedHorseNames?.some((r) => r.name === lowerNewName && s.day < r.releasedOnDay)) {
       return { ok: false, reason: "Name is reserved for 25 years after the horse's death." };
     }
 

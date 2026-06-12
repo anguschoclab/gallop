@@ -10,7 +10,12 @@ export type DistanceFilter = "all" | "sprint" | "mile" | "classic" | "stayer";
 
 export const GRADE_OPTIONS: GradeFilter[] = ["all", "G1", "G2", "G3"];
 
-export const DISTANCE_OPTIONS: { value: DistanceFilter; label: string; min?: number; max?: number }[] = [
+export const DISTANCE_OPTIONS: {
+  value: DistanceFilter;
+  label: string;
+  min?: number;
+  max?: number;
+}[] = [
   { value: "all", label: "All distances" },
   { value: "sprint", label: "Sprint (< 1400m)", max: 1399 },
   { value: "mile", label: "Mile (1400-1800m)", min: 1400, max: 1800 },
@@ -34,9 +39,7 @@ export function useRaceBrowserFilters(races: Race[]) {
   const gradedRaces = useMemo(() => races.filter((r) => r.graded), [races]);
 
   const allCountries = useMemo(() => {
-    return Array.from(
-      new Set(gradedRaces.map((r) => getCountry(r.graded!.track))),
-    ).sort();
+    return Array.from(new Set(gradedRaces.map((r) => getCountry(r.graded!.track)))).sort();
   }, [gradedRaces]);
 
   const allTracks = useMemo(() => {

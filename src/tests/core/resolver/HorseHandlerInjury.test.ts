@@ -64,7 +64,9 @@ describe("HorseHandler - Injury Handling", () => {
   it("should NOT overwrite covering_sickness with an injury", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [{ id: "horse-1", name: "Star", healthStatus: "covering_sickness", healthStatusDay: 5 }],
+      horses: [
+        { id: "horse-1", name: "Star", healthStatus: "covering_sickness", healthStatusDay: 5 },
+      ],
     } as unknown as GameState;
 
     const impact: InjuryImpact = {
@@ -151,7 +153,9 @@ describe("HorseHandler - Injury Handling", () => {
   it("should NOT overwrite existing sickness via health_status_change impact", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [{ id: "horse-1", name: "Star", healthStatus: "covering_sickness", healthStatusDay: 5 }],
+      horses: [
+        { id: "horse-1", name: "Star", healthStatus: "covering_sickness", healthStatusDay: 5 },
+      ],
     } as unknown as GameState;
 
     const impact: HealthStatusImpact = {

@@ -5,12 +5,7 @@
 
 import { useSaveSlots } from "@/hooks/shared/useSaveSlots";
 import { LedgerEntry } from "./LedgerEntry";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { SaveTab } from "./SaveTab";
@@ -122,4 +117,3 @@ export function SaveLoadDialog({ open, onOpenChange, initialTab = "save" }: Save
     </Dialog>
   );
 }
-

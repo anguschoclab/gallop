@@ -45,11 +45,17 @@ export function JockeyRoster() {
             Jockeys
           </h1>
           <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
-            <span>Signed: <NumericValue value={myJockeys.length} /></span>
+            <span>
+              Signed: <NumericValue value={myJockeys.length} />
+            </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span>Available: <NumericValue value={market.length} /></span>
+            <span>
+              Available: <NumericValue value={market.length} />
+            </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span>Status: <span className="text-success font-black">Licensed</span></span>
+            <span>
+              Status: <span className="text-success font-black">Licensed</span>
+            </span>
           </div>
         </div>
         <div className="flex gap-2">

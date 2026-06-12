@@ -20,7 +20,6 @@ interface ResultOverlayProps {
   hideResults?: boolean;
 }
 
-
 /**
  * Component to display the final race results in a modal overlay.
  * Redesigned for the "Stable Ledger" aesthetic.

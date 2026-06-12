@@ -47,9 +47,13 @@ export function buildRetirementBody(
     recordParts.push(`${stats.g1Wins} G1 win${stats.g1Wins > 1 ? "s" : ""}`);
   }
   if (stats.gradedWins > stats.g1Wins) {
-    recordParts.push(`${stats.gradedWins - stats.g1Wins} other graded win${stats.gradedWins - stats.g1Wins > 1 ? "s" : ""}`);
+    recordParts.push(
+      `${stats.gradedWins - stats.g1Wins} other graded win${stats.gradedWins - stats.g1Wins > 1 ? "s" : ""}`,
+    );
   }
-  recordParts.push(`Lifetime Earnings: ${formatCurrency(stats.earnings || horse.lifetimeEarnings)}`);
+  recordParts.push(
+    `Lifetime Earnings: ${formatCurrency(stats.earnings || horse.lifetimeEarnings)}`,
+  );
   recordParts.push(`Fame: ${horse.fame}`);
 
   if (destination === "stud" && fee !== undefined) {
@@ -63,10 +67,7 @@ export function buildRetirementBody(
 /**
  * Build a formatted body string for a Hall of Fame induction inbox message.
  */
-export function buildHallOfFameBody(
-  horse: Horse,
-  achievements: string[],
-): string {
+export function buildHallOfFameBody(horse: Horse, achievements: string[]): string {
   const stats = getCareerStats(horse);
   const parts: string[] = [];
   parts.push(`Achievements: ${achievements.join(", ")}`);

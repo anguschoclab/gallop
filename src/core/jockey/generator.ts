@@ -136,7 +136,11 @@ export function generateJockey({
     (stats.pacing + stats.positioning + stats.vigor + stats.gateSkill + stats.temperament) / 5;
 
   const basePotential =
-    tier === "elite" ? 78 + rng.range(0, 20) : tier === "mid" ? 60 + rng.range(0, 20) : 40 + rng.range(0, 25);
+    tier === "elite"
+      ? 78 + rng.range(0, 20)
+      : tier === "mid"
+        ? 60 + rng.range(0, 20)
+        : 40 + rng.range(0, 25);
 
   const potential = Math.max(currentAbility, basePotential);
 

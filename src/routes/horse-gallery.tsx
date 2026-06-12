@@ -19,15 +19,8 @@ export const Route = createFileRoute("/horse-gallery")({
 });
 
 function HorseGalleryPage() {
-  const {
-    horses,
-    coatFilter,
-    setCoatFilter,
-    sortBy,
-    setSortBy,
-    filteredHorses,
-    coatCounts,
-  } = useGalleryFilters();
+  const { horses, coatFilter, setCoatFilter, sortBy, setSortBy, filteredHorses, coatCounts } =
+    useGalleryFilters();
 
   return (
     <div className="space-y-6">

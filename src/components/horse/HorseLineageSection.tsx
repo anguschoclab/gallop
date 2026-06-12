@@ -32,9 +32,7 @@ export function HorseLineageSection({
           {horse.sireId || horse.damId ? (
             <PedigreeTree horseId={horseId} />
           ) : (
-            <p className="text-xs text-cream/30 italic font-mono">
-              No pedigree data available.
-            </p>
+            <p className="text-xs text-cream/30 italic font-mono">No pedigree data available.</p>
           )}
 
           {progenyPregnancies.length > 0 && (
@@ -100,9 +98,7 @@ export function HorseLineageSection({
                     key={p.id}
                     className="flex items-center justify-between p-2 bg-black/20 border border-white/5 text-xs font-mono"
                   >
-                    <span className="text-cream/60">
-                      Attempts: {p.reBreedingAttempts ?? 0}
-                    </span>
+                    <span className="text-cream/60">Attempts: {p.reBreedingAttempts ?? 0}</span>
                     <Badge
                       variant="outline"
                       className="border-white/10 text-cream/40 text-[9px] rounded-none"

@@ -14,7 +14,13 @@ interface HorseStatsPanelProps {
   isAdvanced: boolean;
 }
 
-export function HorseStatsPanel({ horse, ovr, gradeColor, sparklineData, isAdvanced }: HorseStatsPanelProps) {
+export function HorseStatsPanel({
+  horse,
+  ovr,
+  gradeColor,
+  sparklineData,
+  isAdvanced,
+}: HorseStatsPanelProps) {
   return (
     <div className="p-5 flex-1 space-y-6">
       <div className="grid grid-cols-2 gap-4">
@@ -105,7 +111,9 @@ export function HorseStatsPanel({ horse, ovr, gradeColor, sparklineData, isAdvan
           <span className="text-[8px] font-black uppercase text-cream/30 tracking-widest">
             <JargonTooltip term="OVR">OVR</JargonTooltip> Rating
           </span>
-          <span className={cn("font-mono font-black text-cream", isAdvanced ? "text-lg" : "text-xl")}>
+          <span
+            className={cn("font-mono font-black text-cream", isAdvanced ? "text-lg" : "text-xl")}
+          >
             {isAdvanced ? ovr : scoutGrade(ovr)}
           </span>
         </div>

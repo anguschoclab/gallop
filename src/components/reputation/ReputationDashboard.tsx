@@ -85,9 +85,7 @@ export function ReputationDashboard() {
               <div className="text-[9px] text-cream/40 uppercase tracking-widest font-black">
                 Total Wins
               </div>
-              <div className="text-sm font-mono font-black text-cream">
-                {reputation.totalWins}
-              </div>
+              <div className="text-sm font-mono font-black text-cream">{reputation.totalWins}</div>
             </div>
             <div>
               <div className="text-[9px] text-cream/40 uppercase tracking-widest font-black">
@@ -157,12 +155,8 @@ export function ReputationDashboard() {
                     {getSourceIcon(event.source)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-[10px] text-cream/80 truncate">
-                      {event.description}
-                    </div>
-                    <div className="text-[8px] text-cream/40 font-mono">
-                      Day {event.day}
-                    </div>
+                    <div className="text-[10px] text-cream/80 truncate">{event.description}</div>
+                    <div className="text-[8px] text-cream/40 font-mono">Day {event.day}</div>
                   </div>
                   <div
                     className={cn(

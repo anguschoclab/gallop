@@ -36,7 +36,10 @@ export function ReviewStep({
 
   const entryFee = qualified ? 0 : race.entryFee;
   const totalDue =
-    entryFee + selectedJockey.ridingFee + transportCost + (wantToClaim && claimingPrice ? claimingPrice : 0);
+    entryFee +
+    selectedJockey.ridingFee +
+    transportCost +
+    (wantToClaim && claimingPrice ? claimingPrice : 0);
 
   return (
     <div className="space-y-6 animate-in zoom-in-95 duration-300">
@@ -49,8 +52,8 @@ export function ReviewStep({
           <AlertTriangle size={18} className="shrink-0 mt-0.5" />
           <p className="text-xs font-bold">
             <JargonTooltip term="Claiming">Claiming Race</JargonTooltip>: Any stable may purchase{" "}
-            {selectedHorse.name} for {formatCurrency(claimingPrice)} after the race. The transfer
-            is automatic. You may withdraw up to 1 day before the race.
+            {selectedHorse.name} for {formatCurrency(claimingPrice)} after the race. The transfer is
+            automatic. You may withdraw up to 1 day before the race.
           </p>
         </div>
       )}

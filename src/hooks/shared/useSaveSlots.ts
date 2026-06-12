@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { useGame } from "@/game/store";
-import { getSaveSlots, deleteSaveSlot, type SaveSlotMetadata } from "@/services/storage/saveManager";
+import {
+  getSaveSlots,
+  deleteSaveSlot,
+  type SaveSlotMetadata,
+} from "@/services/storage/saveManager";
 import { toast } from "sonner";
 
 export function useSaveSlots(initialTab: "save" | "load") {
@@ -46,7 +50,9 @@ export function useSaveSlots(initialTab: "save" | "load") {
   const handleLoad = useCallback(
     async (slotId: string) => {
       if (
-        !window.confirm("CONFIRM Load: Current live state will be overwritten by this ledger entry.")
+        !window.confirm(
+          "CONFIRM Load: Current live state will be overwritten by this ledger entry.",
+        )
       ) {
         return;
       }

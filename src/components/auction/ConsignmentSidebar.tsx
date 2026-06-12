@@ -43,10 +43,7 @@ export function ConsignmentSidebar({ consignablePairs, onConsign }: ConsignmentS
           <CardContent className="p-0">
             <div className="divide-y divide-white/5 max-h-[400px] overflow-y-auto custom-scrollbar">
               {consignablePairs.map(({ horse, sale }, i) => (
-                <div
-                  key={horse.id}
-                  className="p-4 hover:bg-white/[0.02] transition-colors group"
-                >
+                <div key={horse.id} className="p-4 hover:bg-white/[0.02] transition-colors group">
                   <div className="flex items-center justify-between gap-3 mb-2">
                     <div className="flex items-center gap-2">
                       <SilkDot color={horse.silk} size="sm" />

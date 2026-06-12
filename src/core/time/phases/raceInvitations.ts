@@ -31,9 +31,7 @@ function isWinAndYouInQualified(
   currentYear: number,
 ): boolean {
   if (!horse.winAndYouInQualified) return false;
-  return horse.winAndYouInQualified.some(
-    (q) => q.raceKey === raceKey && q.year === currentYear,
-  );
+  return horse.winAndYouInQualified.some((q) => q.raceKey === raceKey && q.year === currentYear);
 }
 
 /**
@@ -132,10 +130,7 @@ export const raceInvitationsPhase: PipelinePhase = {
         return a.distanceDiff - b.distanceDiff;
       });
 
-      const maxTotalInvites = Math.max(
-        race.fieldSize,
-        race.fieldSize * INVITE_AT_LARGE_MULTIPLIER,
-      );
+      const maxTotalInvites = Math.max(race.fieldSize, race.fieldSize * INVITE_AT_LARGE_MULTIPLIER);
       const atLargeSlots = Math.max(0, maxTotalInvites - autoInvites.length);
       const selectedAtLarge = atLargeCandidates.slice(0, atLargeSlots);
 
@@ -178,9 +173,7 @@ export const raceInvitationsPhase: PipelinePhase = {
       return {
         ...race,
         invitedHorseIds: allInvited,
-        graded: race.graded
-          ? { ...race.graded, invitedHorseIds: allInvited }
-          : race.graded,
+        graded: race.graded ? { ...race.graded, invitedHorseIds: allInvited } : race.graded,
       };
     });
 

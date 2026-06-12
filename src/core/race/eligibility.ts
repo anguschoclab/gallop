@@ -69,11 +69,7 @@ export function isHorseInvitedToRace(horse: Horse, race: Race, currentDay: numbe
   const raceKey = race.graded?.key;
   if (raceKey && horse.winAndYouInQualified) {
     const currentYear = getCurrentYear(currentDay);
-    if (
-      horse.winAndYouInQualified.some(
-        (q) => q.raceKey === raceKey && q.year === currentYear,
-      )
-    ) {
+    if (horse.winAndYouInQualified.some((q) => q.raceKey === raceKey && q.year === currentYear)) {
       return true;
     }
   }

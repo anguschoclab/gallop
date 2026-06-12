@@ -177,18 +177,18 @@ export function LotDetailPanel({
                 </h3>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                {(
-                  ["conformation", "temperament", "coatColor", "runningStyle"] as const
-                ).map((spec) => (
-                  <div key={spec} className="bg-black/20 p-3 border border-white/5">
-                    <div className="text-[8px] font-black uppercase text-cream/20 tracking-tighter mb-1 leading-none">
-                      {spec.replace(/([A-Z])/g, "_$1").toUpperCase()}
+                {(["conformation", "temperament", "coatColor", "runningStyle"] as const).map(
+                  (spec) => (
+                    <div key={spec} className="bg-black/20 p-3 border border-white/5">
+                      <div className="text-[8px] font-black uppercase text-cream/20 tracking-tighter mb-1 leading-none">
+                        {spec.replace(/([A-Z])/g, "_$1").toUpperCase()}
+                      </div>
+                      <div className="text-xs font-mono font-bold text-cream/80 uppercase">
+                        {horse[spec]?.toString().replace("-", " ") || "—"}
+                      </div>
                     </div>
-                    <div className="text-xs font-mono font-bold text-cream/80 uppercase">
-                      {horse[spec]?.toString().replace("-", " ") || "—"}
-                    </div>
-                  </div>
-                ))}
+                  ),
+                )}
                 <div className="bg-black/20 p-3 border border-white/5">
                   <div className="text-[8px] font-black uppercase text-cream/20 tracking-tighter mb-1 leading-none">
                     PREF_DISTANCE
@@ -203,7 +203,9 @@ export function LotDetailPanel({
                   </div>
                   <div className="text-xs font-mono font-bold text-cream/80 uppercase">
                     {(() => {
-                      const best = Object.entries(horse.surfaceAptitude || {} as Record<string, number>).sort((a, b) => b[1] - a[1])[0];
+                      const best = Object.entries(
+                        horse.surfaceAptitude || ({} as Record<string, number>),
+                      ).sort((a, b) => b[1] - a[1])[0];
                       return best ? `${best[0]} (${Math.round(best[1])})` : "—";
                     })()}
                   </div>

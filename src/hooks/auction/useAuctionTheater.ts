@@ -76,7 +76,7 @@ export function useAuctionTheater(saleId: string) {
     setActivePaddle: (id) => {
       setUiState((prev) => ({ ...prev, activePaddle: id }));
       timers.setActivePaddleFlash(id, (newId) =>
-        setUiState((prev) => ({ ...prev, activePaddle: newId }))
+        setUiState((prev) => ({ ...prev, activePaddle: newId })),
       );
     },
     setHammerFlash: (flash) => {
@@ -94,7 +94,7 @@ export function useAuctionTheater(saleId: string) {
     runnerRef,
     runnerRef.current?.currentLot()?.currentBid ?? 0,
     debitForLiveBid,
-    eventProcessor.stepAndRender
+    eventProcessor.stepAndRender,
   );
 
   // Initialize runner once per sale
@@ -112,7 +112,7 @@ export function useAuctionTheater(saleId: string) {
           }));
           timers.setBidError(
             `Auto-bid cancelled: ${result.reason ?? "insufficient funds"}`,
-            (err) => setUiState((p) => ({ ...p, bidError: err }))
+            (err) => setUiState((p) => ({ ...p, bidError: err })),
           );
           return false;
         }
@@ -217,16 +217,13 @@ export function useAuctionTheater(saleId: string) {
     done: theaterState.done,
     committed: theaterState.committed,
     paused: theaterState.paused,
-    setPaused: (value: boolean) =>
-      setTheaterState((prev) => ({ ...prev, paused: value })),
+    setPaused: (value: boolean) => setTheaterState((prev) => ({ ...prev, paused: value })),
     autoWatch: theaterState.autoWatch,
-    setAutoWatch: (value: boolean) =>
-      setTheaterState((prev) => ({ ...prev, autoWatch: value })),
+    setAutoWatch: (value: boolean) => setTheaterState((prev) => ({ ...prev, autoWatch: value })),
     playerMaxBidState: bidding.playerMaxBidState,
     setPlayerMaxBidState: bidding.setPlayerMaxBidState,
     historyOpen: uiState.historyOpen,
-    setHistoryOpen: (value: boolean) =>
-      setUiState((prev) => ({ ...prev, historyOpen: value })),
+    setHistoryOpen: (value: boolean) => setUiState((prev) => ({ ...prev, historyOpen: value })),
     bannerFlash: uiState.bannerFlash,
     winOverlay: uiState.winOverlay,
     bidError: bidding.bidError,

@@ -44,8 +44,24 @@ export function JockeyHelmet({ cap, secondary, stroke, strokeW }: JockeyHelmetPr
       {/* Goggles strap across helmet */}
       <rect x="22" y="44" width="56" height="3" fill="rgba(0,0,0,0.6)" />
       {/* Goggles lenses on visor edge */}
-      <ellipse cx="40" cy="49.5" rx="6" ry="3" fill="rgba(80,140,180,0.55)" stroke={stroke} strokeWidth={0.6} />
-      <ellipse cx="60" cy="49.5" rx="6" ry="3" fill="rgba(80,140,180,0.55)" stroke={stroke} strokeWidth={0.6} />
+      <ellipse
+        cx="40"
+        cy="49.5"
+        rx="6"
+        ry="3"
+        fill="rgba(80,140,180,0.55)"
+        stroke={stroke}
+        strokeWidth={0.6}
+      />
+      <ellipse
+        cx="60"
+        cy="49.5"
+        rx="6"
+        ry="3"
+        fill="rgba(80,140,180,0.55)"
+        stroke={stroke}
+        strokeWidth={0.6}
+      />
       <line x1="46" y1="49.5" x2="54" y2="49.5" stroke="rgba(0,0,0,0.6)" strokeWidth="1" />
 
       {/* Chin strap */}

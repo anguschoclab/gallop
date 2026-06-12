@@ -22,7 +22,8 @@ describe("calculateJockeyRating", () => {
     expect(calculateJockeyRating(mkJockey(50, 60, 70, 80, 90))).toBe(70));
   it("rounds correctly — 61+62+63+64+65 = 315/5 = 63", () =>
     expect(calculateJockeyRating(mkJockey(61, 62, 63, 64, 65))).toBe(63));
-  it("all-100 → 100", () => expect(calculateJockeyRating(mkJockey(100, 100, 100, 100, 100))).toBe(100));
+  it("all-100 → 100", () =>
+    expect(calculateJockeyRating(mkJockey(100, 100, 100, 100, 100))).toBe(100));
   it("all-1 → 1", () => expect(calculateJockeyRating(mkJockey(1, 1, 1, 1, 1))).toBe(1));
 });
 

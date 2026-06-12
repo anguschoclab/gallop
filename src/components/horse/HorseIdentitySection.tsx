@@ -53,9 +53,7 @@ export function HorseIdentitySection({ horse, peakingStatus }: HorseIdentitySect
                 >
                   SURF:{" "}
                   {(() => {
-                    const entries: [string, number][] = Object.entries(
-                      horse.surfaceAptitude || {},
-                    );
+                    const entries: [string, number][] = Object.entries(horse.surfaceAptitude || {});
                     const best = entries.sort((a, b) => b[1] - a[1])[0];
                     return best ? `${best[0]} (${Math.round(best[1])})` : "—";
                   })()}

@@ -53,7 +53,9 @@ export function AwardsGrid({ awards }: AwardsGridProps) {
                     {getRegionFlag(sample.region)}
                   </span>
                   <span>{getRegionCountryLabel(sample.region)}</span>
-                  <span className="tabular-nums">· Y{first}–Y{last}</span>
+                  <span className="tabular-nums">
+                    · Y{first}–Y{last}
+                  </span>
                 </div>
               </div>
             </div>,

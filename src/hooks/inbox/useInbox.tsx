@@ -1,14 +1,6 @@
 import { useState, useMemo } from "react";
 import { useGame, type StoreType } from "@/game/store";
-import {
-  Bell,
-  Baby,
-  Activity,
-  Gavel,
-  Calendar,
-  LogOut,
-  Award,
-} from "lucide-react";
+import { Bell, Baby, Activity, Gavel, Calendar, LogOut, Award } from "lucide-react";
 import type { InboxCategory, InboxPriority } from "@/core/inbox/inboxTypes";
 import type { ReactNode } from "react";
 

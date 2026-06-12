@@ -196,9 +196,7 @@ export function createAuctionSlice(
           case "horse_transfer": {
             const { horseId, toStableId } = anyImpact;
             newHorses = newHorses.map((horse) =>
-              horse.id === horseId
-                ? { ...horse, stableId: toStableId, owned: !toStableId }
-                : horse,
+              horse.id === horseId ? { ...horse, stableId: toStableId, owned: !toStableId } : horse,
             );
             break;
           }

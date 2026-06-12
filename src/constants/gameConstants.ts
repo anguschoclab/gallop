@@ -652,4 +652,3 @@ export const PREFERRED_DISTANCE_RANGE = 300; // ±300m from ideal
 export const DISTANCE_INVITE_THRESHOLD = 400; // meters — max distance from horse's aptitude for at-large invites
 export const DEFAULT_INVITE_DAYS_AHEAD = 30; // days before race day to send invites
 export const INVITE_AT_LARGE_MULTIPLIER = 2; // max total invites = fieldSize * multiplier
-

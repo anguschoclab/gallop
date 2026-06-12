@@ -3,10 +3,7 @@ import type { Horse, Race, Stable } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
 import type { NarrativeEvent, CommentaryLine } from "./types";
 import { TEMPLATES } from "@/assets/narrative/templates";
-import {
-  generateCommentaryLine,
-  generateExpertInsight,
-} from "./commentaryGenerator";
+import { generateCommentaryLine, generateExpertInsight } from "./commentaryGenerator";
 import {
   detectLeadChange,
   detectPositionChange,
@@ -124,11 +121,7 @@ export class NarrativeGenerator {
     }
   }
 
-  private checkGapAnnouncement(
-    sorted: Runner[],
-    simTime: number,
-    newLines: CommentaryLine[],
-  ) {
+  private checkGapAnnouncement(sorted: Runner[], simTime: number, newLines: CommentaryLine[]) {
     const event = detectGapAnnouncement(sorted, this.hasAnnouncedStart, this.hasAnnouncedFinish);
     if (event && event.data?.lengths) {
       if (
@@ -169,7 +162,12 @@ export class NarrativeGenerator {
   }
 
   private checkLeadChange(runners: Runner[], simTime: number, newLines: CommentaryLine[]) {
-    const event = detectLeadChange(runners, this.lastLeaderId, this.hasAnnouncedStart, this.hasAnnouncedFinish);
+    const event = detectLeadChange(
+      runners,
+      this.lastLeaderId,
+      this.hasAnnouncedStart,
+      this.hasAnnouncedFinish,
+    );
     if (event) {
       if (this.canAnnounce("LEAD_CHANGE", event.horseId!, simTime)) {
         const runner = runners.find((r) => r.horseId === event.horseId);

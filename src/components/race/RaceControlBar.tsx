@@ -98,7 +98,12 @@ export function RaceControlBar({
           </Select>
         )}
 
-        <Button size="sm" variant="ghost" onClick={onShowAllCards} title="Show all horse stat cards">
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={onShowAllCards}
+          title="Show all horse stat cards"
+        >
           Cards
         </Button>
 

@@ -12,11 +12,9 @@ export function usePlayerBidding(
   runnerRef: MutableRefObject<AuctionRunner | null>,
   currentBid: number,
   debitForLiveBid: (amount: number) => { ok: boolean; reason?: string },
-  stepAndRender: (playerBid?: number) => void
+  stepAndRender: (playerBid?: number) => void,
 ) {
-  const [playerMaxBidState, setPlayerMaxBidState] = useState<
-    number | undefined
-  >(undefined);
+  const [playerMaxBidState, setPlayerMaxBidState] = useState<number | undefined>(undefined);
   const [bidError, setBidError] = useState<string | null>(null);
 
   const handleBid = useCallback(
@@ -33,7 +31,7 @@ export function usePlayerBidding(
 
       stepAndRender(bidValue);
     },
-    [currentBid, debitForLiveBid, stepAndRender, runnerRef]
+    [currentBid, debitForLiveBid, stepAndRender, runnerRef],
   );
 
   const handlePass = useCallback(() => {

@@ -35,11 +35,17 @@ export function FinancialReport() {
             Financial Audit
           </h1>
           <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
-            <span>Audit Day: <NumericValue value={day} /></span>
+            <span>
+              Audit Day: <NumericValue value={day} />
+            </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span>Entries: <NumericValue value={transactions.length} /></span>
+            <span>
+              Entries: <NumericValue value={transactions.length} />
+            </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span>Status: <span className="text-success font-black">Healthy</span></span>
+            <span>
+              Status: <span className="text-success font-black">Healthy</span>
+            </span>
           </div>
         </div>
         <Tabs value={selectedPeriod} onValueChange={(v) => setSelectedPeriod(v as PeriodKey)}>

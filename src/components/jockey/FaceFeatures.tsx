@@ -47,8 +47,24 @@ export function FaceFeatures({
   return (
     <g>
       {/* Ears */}
-      <ellipse cx="29" cy="58" rx={earSize} ry={earSize + 1.5} fill={skin} stroke={stroke} strokeWidth={strokeW} />
-      <ellipse cx="71" cy="58" rx={earSize} ry={earSize + 1.5} fill={skin} stroke={stroke} strokeWidth={strokeW} />
+      <ellipse
+        cx="29"
+        cy="58"
+        rx={earSize}
+        ry={earSize + 1.5}
+        fill={skin}
+        stroke={stroke}
+        strokeWidth={strokeW}
+      />
+      <ellipse
+        cx="71"
+        cy="58"
+        rx={earSize}
+        ry={earSize + 1.5}
+        fill={skin}
+        stroke={stroke}
+        strokeWidth={strokeW}
+      />
 
       {/* Face */}
       <path d={facePath} fill={skin} stroke={stroke} strokeWidth={strokeW} />
@@ -75,7 +91,14 @@ export function FaceFeatures({
 
       {/* Eyebrows */}
       <rect x={38} y={54} width={eyeWidth + 4} height={browThickness} rx={1} fill={hair} />
-      <rect x={58 - (eyeWidth + 4 - 6)} y={54} width={eyeWidth + 4} height={browThickness} rx={1} fill={hair} />
+      <rect
+        x={58 - (eyeWidth + 4 - 6)}
+        y={54}
+        width={eyeWidth + 4}
+        height={browThickness}
+        rx={1}
+        fill={hair}
+      />
 
       {/* Eyes */}
       <ellipse cx={42} cy={60} rx={eyeWidth} ry={2} fill="#fff" stroke={stroke} strokeWidth={0.5} />
@@ -121,7 +144,13 @@ export function FaceFeatures({
           strokeLinecap="round"
         />
       ) : (
-        <path d={`M44 79 L56 79`} fill="none" stroke={stroke} strokeWidth={0.8} strokeLinecap="round" />
+        <path
+          d={`M44 79 L56 79`}
+          fill="none"
+          stroke={stroke}
+          strokeWidth={0.8}
+          strokeLinecap="round"
+        />
       )}
     </g>
   );

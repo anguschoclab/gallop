@@ -61,11 +61,17 @@ function RacesPage() {
             Race Schedule
           </h1>
           <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
-            <span>Races Listed: <NumericValue value={filteredRaces.length} /></span>
+            <span>
+              Races Listed: <NumericValue value={filteredRaces.length} />
+            </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span>Regions: <NumericValue value={countries.length} /></span>
+            <span>
+              Regions: <NumericValue value={countries.length} />
+            </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span>Season Day: <NumericValue value={day} /></span>
+            <span>
+              Season Day: <NumericValue value={day} />
+            </span>
           </div>
         </div>
 

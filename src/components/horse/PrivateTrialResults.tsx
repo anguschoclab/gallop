@@ -50,9 +50,7 @@ export function PrivateTrialResults({
             <div className="text-[10px] font-black uppercase tracking-widest text-cream/40 leading-none mb-1">
               Finish Position: {stat.position}
             </div>
-            <div className="text-sm font-black uppercase text-cream truncate">
-              {stat.name}
-            </div>
+            <div className="text-sm font-black uppercase text-cream truncate">{stat.name}</div>
             <div className="text-lg font-mono font-black text-gold mt-2">
               {stat.time.toFixed(2)}s
             </div>

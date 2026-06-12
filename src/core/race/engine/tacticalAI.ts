@@ -74,7 +74,10 @@ export function calculateTacticalAdjustment(
   }
 
   // 3. Jockey Instruction Specifics
-  if (runner.jockeyInstructions?.ridingStyle === "closer" && runner.jockeyInstructions?.moveTiming === "late") {
+  if (
+    runner.jockeyInstructions?.ridingStyle === "closer" &&
+    runner.jockeyInstructions?.moveTiming === "late"
+  ) {
     // Prioritize drafting and staying on rail (save energy)
     velocityMod *= 0.995;
     targetLane = 0;

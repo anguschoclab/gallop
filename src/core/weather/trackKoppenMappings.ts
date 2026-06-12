@@ -38,8 +38,8 @@ export const TRACK_KOPPEN_MAP: Record<string, KoppenCode> = {
   // ===========================================================================
   // BRAZIL (2 tracks) - Tropical Savanna/Rainforest
   // ===========================================================================
-  "ce7714db-fa90-4ded-8477-40eec676bb12": "Af",  // Hipódromo da Gávea (Rio) - Rainforest
-  "06b1dfcf-f3ae-4db3-ab25-04e29865ff8d": "Aw",  // Hipódromo Cidade Jardim (São Paulo) - Savanna
+  "ce7714db-fa90-4ded-8477-40eec676bb12": "Af", // Hipódromo da Gávea (Rio) - Rainforest
+  "06b1dfcf-f3ae-4db3-ab25-04e29865ff8d": "Aw", // Hipódromo Cidade Jardim (São Paulo) - Savanna
 
   // ===========================================================================
   // CHILE (3 tracks) - Warm-Summer Mediterranean
@@ -208,7 +208,7 @@ export const TRACK_KOPPEN_MAP: Record<string, KoppenCode> = {
   "b7a8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d": "Csa", // Del Mar (Southern California)
   "c8b9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e": "Dfa", // Aqueduct (NY)
   "d9c0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f": "Dfa", // Oaklawn Park (Arkansas)
-  "e0d1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a": "Aw",  // Gulfstream Park (Florida)
+  "e0d1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a": "Aw", // Gulfstream Park (Florida)
 
   // ===========================================================================
   // AUSTRALIA (5 tracks) - Humid Subtropical / Temperate Oceanic

@@ -50,9 +50,7 @@ export function useBreedingPage() {
   const activePregnancies = pregnancies.filter((p: any) => !p.resolved);
   const activePregnanciesCount = activePregnancies.length;
 
-  const femalesToBreed = adults.filter(
-    (h: Horse) => isFemaleHorse(h.gender) && h.id !== sireId,
-  );
+  const femalesToBreed = adults.filter((h: Horse) => isFemaleHorse(h.gender) && h.id !== sireId);
 
   return {
     horses,

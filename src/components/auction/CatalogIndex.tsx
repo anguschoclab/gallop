@@ -23,7 +23,7 @@ interface CatalogIndexProps {
   hasActiveFilters: boolean;
   onSelectLot: (index: number) => void;
   onUpdateFilter: (
-    update: Partial<AuctionBrowseSearch> | ((prev: AuctionBrowseSearch) => AuctionBrowseSearch)
+    update: Partial<AuctionBrowseSearch> | ((prev: AuctionBrowseSearch) => AuctionBrowseSearch),
   ) => void;
   onResetFilters: () => void;
   searchDraft: string;
@@ -105,7 +105,7 @@ export function CatalogIndex({
                     "px-4 py-3 cursor-pointer transition-all flex items-center justify-between group",
                     isActive
                       ? "bg-gold/10 border-l-2 border-l-gold"
-                      : "hover:bg-white/[0.02] border-l-2 border-l-transparent"
+                      : "hover:bg-white/[0.02] border-l-2 border-l-transparent",
                   )}
                 >
                   <div className="space-y-0.5">
@@ -116,7 +116,7 @@ export function CatalogIndex({
                       <span
                         className={cn(
                           "text-xs font-bold uppercase tracking-tight transition-colors",
-                          isActive ? "text-gold" : "text-cream/60 group-hover:text-cream"
+                          isActive ? "text-gold" : "text-cream/60 group-hover:text-cream",
                         )}
                       >
                         {lotHorse?.name || "Unknown"}
@@ -131,7 +131,7 @@ export function CatalogIndex({
                       <div
                         className={cn(
                           "text-[10px] font-mono font-bold tabular-nums",
-                          lot.passed ? "text-destructive/40" : "text-success/60"
+                          lot.passed ? "text-destructive/40" : "text-success/60",
                         )}
                       >
                         {formatCurrency(lot.hammerPrice)}

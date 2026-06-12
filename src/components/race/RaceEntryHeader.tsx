@@ -49,9 +49,7 @@ export function RaceEntryHeader({ race, raceWeather }: Props) {
         </Badge>
       )}
       {race.graded?.requiresInvitation && (
-        <Badge className="bg-amber-600 text-white text-[10px] h-4 px-1.5">
-          Invitation Only
-        </Badge>
+        <Badge className="bg-amber-600 text-white text-[10px] h-4 px-1.5">Invitation Only</Badge>
       )}
       <div className="ml-auto">
         <WeatherForecastStrip

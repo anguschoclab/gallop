@@ -89,15 +89,13 @@ describe("Weather Phase - Storm Jump Logic", () => {
 
   it("does NOT generate alert if the jump is < 2", () => {
     // Jump from clear (0) to overcast (1)
-    (stepWeatherSpy as any).mockImplementation(
-      (_last: any, trackId: string, day: number) => ({
-        trackId,
-        day,
-        pattern: "overcast",
-        tempC: 18,
-        humidity: 0.6,
-      }),
-    );
+    (stepWeatherSpy as any).mockImplementation((_last: any, trackId: string, day: number) => ({
+      trackId,
+      day,
+      pattern: "overcast",
+      tempC: 18,
+      humidity: 0.6,
+    }));
 
     const result = weatherPhase.execute(mockContext());
     const messages = result.impacts.filter((i) => i.type === "inbox_message");
@@ -106,7 +104,6 @@ describe("Weather Phase - Storm Jump Logic", () => {
 
   it("does NOT generate alert for non-graded races", () => {
     // Already set to storm in beforeEach
-
 
     const context = mockContext();
     // Remove grading from race 1

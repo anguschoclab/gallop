@@ -126,10 +126,7 @@ export function NpcStableOverviewTab({ stableId, pageData }: NpcStableOverviewTa
             </h3>
             <div className="space-y-2">
               {grudgeMatches.map((match: any) => (
-                <div
-                  key={match.id}
-                  className="bg-slate-950/30 border border-white/5 rounded p-3"
-                >
+                <div key={match.id} className="bg-slate-950/30 border border-white/5 rounded p-3">
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="text-xs font-bold text-cream/80">{match.headline}</div>

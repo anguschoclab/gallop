@@ -34,10 +34,7 @@ export function HorseRaceHistorySection({
             Service History
           </h2>
         </div>
-        <Select
-          value={String(raceHistoryLimit)}
-          onValueChange={(v) => onLimitChange(Number(v))}
-        >
+        <Select value={String(raceHistoryLimit)} onValueChange={(v) => onLimitChange(Number(v))}>
           <SelectTrigger className="h-7 w-20 text-[10px] font-mono border-white/10 bg-black/40 rounded-none">
             <SelectValue />
           </SelectTrigger>
@@ -96,13 +93,9 @@ export function HorseRaceHistorySection({
                     </Badge>
                   )}
                   {typeof r.beyer === "number" && (
-                    <span className="font-mono text-[10px] text-gold-bright">
-                      {r.beyer}
-                    </span>
+                    <span className="font-mono text-[10px] text-gold-bright">{r.beyer}</span>
                   )}
-                  <span className="text-[10px] font-mono text-cream/30">
-                    {r.surface ?? "—"}
-                  </span>
+                  <span className="text-[10px] font-mono text-cream/30">{r.surface ?? "—"}</span>
                 </div>
               ))}
             </div>

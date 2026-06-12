@@ -17,7 +17,9 @@ export function RevenueAnalysisPanel({ items, total }: RevenueAnalysisPanelProps
     <section className="space-y-4">
       <div className="flex items-center gap-2 mb-2 px-1">
         <TrendingUp className="h-3.5 w-3.5 text-success/60" />
-        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-cream/40">Revenue Analysis</h2>
+        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-cream/40">
+          Revenue Analysis
+        </h2>
       </div>
       <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl">
         <CardContent className="p-6">

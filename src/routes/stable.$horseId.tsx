@@ -19,15 +19,7 @@ import { StewardsPanel } from "@/components/stewards/StewardsPanel";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { useHorseActions } from "@/hooks/horse/useHorseActions";
 import { useHorseDetail } from "@/hooks/horse/useHorseDetail";
-import {
-  ArrowLeft,
-  Zap,
-  FileText,
-  Activity,
-  TrendingUp,
-  GitBranch,
-  History,
-} from "lucide-react";
+import { ArrowLeft, Zap, FileText, Activity, TrendingUp, GitBranch, History } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export const Route = createFileRoute("/stable/$horseId")({
@@ -50,14 +42,8 @@ export const Route = createFileRoute("/stable/$horseId")({
 function HorseDetail() {
   const { horseId } = Route.useParams();
   const router = useRouter();
-  const {
-    horse,
-    isConsigned,
-    canRetireToStud,
-    consignedSale,
-    eligibleSale,
-    day,
-  } = useHorseActions(horseId);
+  const { horse, isConsigned, canRetireToStud, consignedSale, eligibleSale, day } =
+    useHorseActions(horseId);
 
   const detail = useHorseDetail(horseId);
 

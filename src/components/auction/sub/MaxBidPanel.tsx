@@ -34,9 +34,7 @@ export function MaxBidPanel({ currentBid, playerMaxBid, onSetMaxBid }: MaxBidPan
       <div className="text-[10px] uppercase font-bold text-muted-foreground ml-1 flex justify-between">
         <span>Max Bid (Auto)</span>
         {playerMaxBid && (
-          <span className="text-primary animate-pulse">
-            SET: {formatCurrency(playerMaxBid)}
-          </span>
+          <span className="text-primary animate-pulse">SET: {formatCurrency(playerMaxBid)}</span>
         )}
       </div>
       <div className="flex gap-2">

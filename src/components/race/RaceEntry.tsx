@@ -104,10 +104,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
           )}
 
           {step === 3 && selectedHorse && (
-            <TacticsSelectionStep
-              selectedPreset={selectedPreset}
-              onSelect={setSelectedPreset}
-            />
+            <TacticsSelectionStep selectedPreset={selectedPreset} onSelect={setSelectedPreset} />
           )}
 
           {step === 4 && selectedHorse && selectedJockey && (
@@ -116,7 +113,19 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
               selectedHorse={selectedHorse}
               selectedJockey={selectedJockey}
               selectedInstructions={buildInstructions(
-                { id: selectedPreset, name: "", desc: "", instructions: { horseId: selectedHorse.id, raceId: race.id, ridingStyle: "tactical", earlyPosition: "midpack", moveTiming: "mid", aggressiveness: 50 } },
+                {
+                  id: selectedPreset,
+                  name: "",
+                  desc: "",
+                  instructions: {
+                    horseId: selectedHorse.id,
+                    raceId: race.id,
+                    ridingStyle: "tactical",
+                    earlyPosition: "midpack",
+                    moveTiming: "mid",
+                    aggressiveness: 50,
+                  },
+                },
                 selectedHorse.id,
                 race.id,
               )}

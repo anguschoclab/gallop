@@ -71,7 +71,15 @@ describe("isHorseInvitedToRace", () => {
   it("returns true when horse is in invitedHorseIds", () => {
     const horse = makeHorse({ id: "h1" });
     const race = makeRace({
-      graded: { key: "bc-classic", grade: "G1", track: "Keeneland", trackId: "t1", surface: "Dirt", requiresInvitation: true, invitedHorseIds: ["h1"] },
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+        invitedHorseIds: ["h1"],
+      },
     });
     expect(isHorseInvitedToRace(horse, race, 1)).toBe(true);
   });
@@ -82,7 +90,14 @@ describe("isHorseInvitedToRace", () => {
       winAndYouInQualified: [{ year: 1, raceId: "r1", raceKey: "bc-classic" }],
     });
     const race = makeRace({
-      graded: { key: "bc-classic", grade: "G1", track: "Keeneland", trackId: "t1", surface: "Dirt", requiresInvitation: true },
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+      },
     });
     expect(isHorseInvitedToRace(horse, race, 1)).toBe(true);
   });
@@ -90,7 +105,14 @@ describe("isHorseInvitedToRace", () => {
   it("returns false for uninvited horses in invite-only races", () => {
     const horse = makeHorse({ id: "h1" });
     const race = makeRace({
-      graded: { key: "bc-classic", grade: "G1", track: "Keeneland", trackId: "t1", surface: "Dirt", requiresInvitation: true },
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+      },
     });
     expect(isHorseInvitedToRace(horse, race, 1)).toBe(false);
   });
@@ -100,7 +122,14 @@ describe("isHorseEligibleForRace", () => {
   it("blocks uninvited horses from invite-only races when currentDay is provided", () => {
     const horse = makeHorse({ id: "h1", energy: 100 });
     const race = makeRace({
-      graded: { key: "bc-classic", grade: "G1", track: "Keeneland", trackId: "t1", surface: "Dirt", requiresInvitation: true },
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+      },
     });
     expect(isHorseEligibleForRace(horse, race, new Set(), 1)).toBe(false);
   });
@@ -108,7 +137,14 @@ describe("isHorseEligibleForRace", () => {
   it("allows invited horses into invite-only races", () => {
     const horse = makeHorse({ id: "h1", energy: 100 });
     const race = makeRace({
-      graded: { key: "bc-classic", grade: "G1", track: "Keeneland", trackId: "t1", surface: "Dirt", requiresInvitation: true },
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+      },
       invitedHorseIds: ["h1"],
     });
     expect(isHorseEligibleForRace(horse, race, new Set(), 1)).toBe(true);
@@ -121,7 +157,14 @@ describe("isHorseEligibleForRace", () => {
       winAndYouInQualified: [{ year: 1, raceId: "r1", raceKey: "bc-classic" }],
     });
     const race = makeRace({
-      graded: { key: "bc-classic", grade: "G1", track: "Keeneland", trackId: "t1", surface: "Dirt", requiresInvitation: true },
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+      },
     });
     expect(isHorseEligibleForRace(horse, race, new Set(), 1)).toBe(true);
   });
@@ -129,7 +172,14 @@ describe("isHorseEligibleForRace", () => {
   it("skips invite check when currentDay is omitted", () => {
     const horse = makeHorse({ id: "h1", energy: 100 });
     const race = makeRace({
-      graded: { key: "bc-classic", grade: "G1", track: "Keeneland", trackId: "t1", surface: "Dirt", requiresInvitation: true },
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+      },
     });
     expect(isHorseEligibleForRace(horse, race, new Set())).toBe(true);
   });
@@ -142,7 +192,14 @@ describe("RacingValidator — invitation gating", () => {
     const horse = makeHorse({ id: "h1", energy: 100 });
     const race = makeRace({
       id: "race-1",
-      graded: { key: "bc-classic", grade: "G1", track: "Keeneland", trackId: "t1", surface: "Dirt", requiresInvitation: true },
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+      },
     });
     const state = {
       day: 1,
@@ -151,7 +208,16 @@ describe("RacingValidator — invitation gating", () => {
     } as unknown as GameState;
 
     const result = validator.validate(
-      { type: "race_entry", raceId: "race-1", horseId: "h1", id: "i1", entityId: "h1", source: "player", day: 1, priority: 100 },
+      {
+        type: "race_entry",
+        raceId: "race-1",
+        horseId: "h1",
+        id: "i1",
+        entityId: "h1",
+        source: "player",
+        day: 1,
+        priority: 100,
+      },
       state,
     );
     expect(result.valid).toBe(false);
@@ -162,7 +228,15 @@ describe("RacingValidator — invitation gating", () => {
     const horse = makeHorse({ id: "h1", energy: 100 });
     const race = makeRace({
       id: "race-1",
-      graded: { key: "bc-classic", grade: "G1", track: "Keeneland", trackId: "t1", surface: "Dirt", requiresInvitation: true, invitedHorseIds: ["h1"] },
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+        invitedHorseIds: ["h1"],
+      },
     });
     const state = {
       day: 1,
@@ -171,7 +245,16 @@ describe("RacingValidator — invitation gating", () => {
     } as unknown as GameState;
 
     const result = validator.validate(
-      { type: "race_entry", raceId: "race-1", horseId: "h1", id: "i1", entityId: "h1", source: "player", day: 1, priority: 100 },
+      {
+        type: "race_entry",
+        raceId: "race-1",
+        horseId: "h1",
+        id: "i1",
+        entityId: "h1",
+        source: "player",
+        day: 1,
+        priority: 100,
+      },
       state,
     );
     expect(result.valid).toBe(true);
@@ -224,7 +307,14 @@ describe("raceInvitationsPhase", () => {
       id: "race-1",
       day: 50,
       distance: 1600,
-      graded: { key: "bc-classic", grade: "G1", track: "Keeneland", trackId: "t1", surface: "Dirt", requiresInvitation: true },
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+      },
     });
 
     const context: PipelineContext = {
@@ -258,7 +348,15 @@ describe("raceInvitationsPhase", () => {
       day: 50,
       distance: 1600,
       invitedHorseIds: ["h1"],
-      graded: { key: "bc-classic", grade: "G1", track: "Keeneland", trackId: "t1", surface: "Dirt", requiresInvitation: true, invitedHorseIds: ["h1"] },
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+        invitedHorseIds: ["h1"],
+      },
     });
 
     const context: PipelineContext = {
@@ -293,7 +391,14 @@ describe("raceInvitationsPhase", () => {
       id: "race-1",
       day: 50,
       distance: 1600,
-      graded: { key: "bc-classic", grade: "G1", track: "Keeneland", trackId: "t1", surface: "Dirt", requiresInvitation: true },
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+      },
     });
 
     const context: PipelineContext = {
@@ -330,7 +435,14 @@ describe("raceInvitationsPhase", () => {
       id: "race-1",
       day: 50,
       distance: 1600,
-      graded: { key: "bc-classic", grade: "G1", track: "Keeneland", trackId: "t1", surface: "Dirt", requiresInvitation: true },
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+      },
     });
 
     const context: PipelineContext = {

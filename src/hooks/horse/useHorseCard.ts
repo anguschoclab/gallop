@@ -9,7 +9,9 @@ import type { Horse } from "@/game/types";
 export function useHorseCard(horse: Horse, showScoutInfo = false) {
   const scoutReports = useGameSelector((s) => s.scoutReports);
   const day = useGameSelector((s) => s.day);
-  const simpleHorseCards = useGameSelector((s) => s.userSettings?.display?.simpleHorseCards ?? true);
+  const simpleHorseCards = useGameSelector(
+    (s) => s.userSettings?.display?.simpleHorseCards ?? true,
+  );
 
   const ovr = calculateOverallRating(horse);
 

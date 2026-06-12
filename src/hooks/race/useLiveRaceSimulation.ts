@@ -82,10 +82,7 @@ export function useLiveRaceSimulation({
         const pace = computePaceContext(runners, race.distance);
 
         if (narrativeRef.current) {
-          const newCommentary = narrativeRef.current.update(
-            runners,
-            simTimeRef.current,
-          );
+          const newCommentary = narrativeRef.current.update(runners, simTimeRef.current);
           if (newCommentary.length > 0) {
             messageQueue.current.push(...newCommentary);
           }

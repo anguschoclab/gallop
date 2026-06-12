@@ -61,7 +61,9 @@ export function evaluateOffer(
  * Returns true if the staff member is currently offended and the cooldown has not expired.
  */
 export function isOffended(staff: StaffMember, currentDay: number): boolean {
-  return !!staff.offended && (staff.offendedUntil === undefined || currentDay < staff.offendedUntil);
+  return (
+    !!staff.offended && (staff.offendedUntil === undefined || currentDay < staff.offendedUntil)
+  );
 }
 
 /**

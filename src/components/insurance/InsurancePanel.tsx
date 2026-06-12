@@ -65,9 +65,7 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
             <Shield className="h-4 w-4 text-blue-400" /> Insurance
           </CardTitle>
           {policy && policy.type !== "none" && (
-            <Badge className="bg-blue-400/10 text-blue-400 border-blue-400/30">
-              Active
-            </Badge>
+            <Badge className="bg-blue-400/10 text-blue-400 border-blue-400/30">Active</Badge>
           )}
         </div>
       </CardHeader>
@@ -87,9 +85,7 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
                 <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
                   Daily Premium
                 </span>
-                <span className="font-mono text-gold">
-                  {formatCurrency(policy.premiumPerDay)}
-                </span>
+                <span className="font-mono text-gold">{formatCurrency(policy.premiumPerDay)}</span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
@@ -103,9 +99,7 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
                 <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
                   Active Since
                 </span>
-                <span className="font-mono text-cream">
-                  Day {policy.activeSinceDay}
-                </span>
+                <span className="font-mono text-cream">Day {policy.activeSinceDay}</span>
               </div>
             </div>
 

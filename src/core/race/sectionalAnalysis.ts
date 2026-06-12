@@ -6,8 +6,8 @@ const SPLIT_LABELS = ["¼", "½", "¾", "Fin"];
 type SnapshotHorseMap = Map<string, { position: number }>;
 
 function buildSnapshotHorseMaps(snapshots: RaceSnapshot[]): SnapshotHorseMap[] {
-  return snapshots.map((snap) =>
-    new Map(snap.horses.map((h) => [h.horseId, { position: h.position }])),
+  return snapshots.map(
+    (snap) => new Map(snap.horses.map((h) => [h.horseId, { position: h.position }])),
   );
 }
 

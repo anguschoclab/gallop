@@ -29,12 +29,8 @@ export function AppShell() {
   const unreadCount = inbox?.filter((m) => !m.readAt).length ?? 0;
 
   const awards = useAwards();
-  const {
-    showCeremony,
-    setShowCeremony,
-    pendingCeremonies,
-    clearPendingCeremonies,
-  } = useAwardCeremony();
+  const { showCeremony, setShowCeremony, pendingCeremonies, clearPendingCeremonies } =
+    useAwardCeremony();
 
   const isRace = location.pathname.startsWith("/race/");
   const isStart = location.pathname === "/start";
@@ -62,7 +58,9 @@ export function AppShell() {
           onOpenAutoSim={() => setAutoSimOpen(true)}
           onSkipToAuction={() => skipToNext("auction")}
           onSkipToRace={() => skipToNext("race")}
-          onStartNewGame={() => { window.location.href = "/new-game"; }}
+          onStartNewGame={() => {
+            window.location.href = "/new-game";
+          }}
         />
       )}
       <main id="main-content" className="flex-1 overflow-auto">

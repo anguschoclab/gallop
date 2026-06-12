@@ -94,12 +94,7 @@ export const weatherPhase = {
       }
 
       // Regenerate 7-day forecast.
-      newForecast[trackId] = generateForecast(
-        today,
-        trackId,
-        newDay + 1,
-        WEATHER_FORECAST_DAYS,
-      );
+      newForecast[trackId] = generateForecast(today, trackId, newDay + 1, WEATHER_FORECAST_DAYS);
 
       // Drama: pattern severity jump ≥2 vs prior day on a Group/Graded race day.
       if (lastState && lastState.day === newDay - 1) {

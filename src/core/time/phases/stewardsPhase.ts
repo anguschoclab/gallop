@@ -31,9 +31,7 @@ export const stewardsPhase: PipelinePhase = {
     const impacts: AnyImpact[] = [];
 
     // Find races that were resolved today
-    const resolvedRaces = state.races.filter(
-      (r) => r.resolved && r.result && r.result.length > 0,
-    );
+    const resolvedRaces = state.races.filter((r) => r.resolved && r.result && r.result.length > 0);
 
     for (const race of resolvedRaces) {
       // Skip if race already has inquiries
@@ -76,12 +74,7 @@ export const stewardsPhase: PipelinePhase = {
       };
 
       // Auto-resolve inquiry immediately (for gameplay flow)
-      const outcomes: InquiryOutcome[] = [
-        "no_action",
-        "warning",
-        "fine",
-        "disqualification",
-      ];
+      const outcomes: InquiryOutcome[] = ["no_action", "warning", "fine", "disqualification"];
       const outcome = outcomes[Math.floor(rng.next() * outcomes.length)];
 
       let fineAmount: number | undefined;
@@ -115,24 +108,30 @@ export const stewardsPhase: PipelinePhase = {
 
       // If DQ, emit race result adjustment
       if (outcome === "disqualification" || outcome === "dq_placed_last") {
-        const originalResults = race.result!.map((r: { horseId: string; position: number; time: number }) => ({
-          horseId: r.horseId,
-          position: r.position,
-          time: r.time,
-        }));
+        const originalResults = race.result!.map(
+          (r: { horseId: string; position: number; time: number }) => ({
+            horseId: r.horseId,
+            position: r.position,
+            time: r.time,
+          }),
+        );
 
-        const adjustedResults = originalResults.map((r: { horseId: string; position: number; time: number }) => {
-          if (r.horseId === accusedHorseId) {
-            return {
-              ...r,
-              position: outcome === "dq_placed_last" ? originalResults.length : 99,
-            };
-          }
-          return r;
-        });
+        const adjustedResults = originalResults.map(
+          (r: { horseId: string; position: number; time: number }) => {
+            if (r.horseId === accusedHorseId) {
+              return {
+                ...r,
+                position: outcome === "dq_placed_last" ? originalResults.length : 99,
+              };
+            }
+            return r;
+          },
+        );
 
         // Re-rank non-DQ horses by position
-        const nonDq = adjustedResults.filter((r: { horseId: string }) => r.horseId !== accusedHorseId);
+        const nonDq = adjustedResults.filter(
+          (r: { horseId: string }) => r.horseId !== accusedHorseId,
+        );
         nonDq.sort((a: { time: number }, b: { time: number }) => a.time - b.time);
         nonDq.forEach((r: { position: number }, i: number) => {
           r.position = i + 1;
@@ -147,7 +146,10 @@ export const stewardsPhase: PipelinePhase = {
           type: "race_result_adjustment",
           raceId: race.id,
           originalResults,
-          adjustedResults: [...nonDq, adjustedResults.find((r: { horseId: string }) => r.horseId === accusedHorseId)!],
+          adjustedResults: [
+            ...nonDq,
+            adjustedResults.find((r: { horseId: string }) => r.horseId === accusedHorseId)!,
+          ],
           reason: `DQ adjustment for ${accusedHorseId}`,
         } as any);
       }

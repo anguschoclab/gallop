@@ -205,11 +205,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const impactAny = impact as any;
     const { name, deceasedOnDay } = impactAny;
     // Add to reserved names list (25-year reservation)
-    draft.reservedHorseNames = addReservedName(
-      name,
-      deceasedOnDay,
-      draft.reservedHorseNames || [],
-    );
+    draft.reservedHorseNames = addReservedName(name, deceasedOnDay, draft.reservedHorseNames || []);
     // Remove from active used names
     const lower = name.toLowerCase();
     draft.usedHorseNames = draft.usedHorseNames.filter((n) => n !== lower);

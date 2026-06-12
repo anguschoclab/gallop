@@ -80,13 +80,9 @@ export function useAuctionEventProcessor(options: UseAuctionEventProcessorOption
       for (const event of result.events) {
         const lot = lotMap.get(event.lotId);
         const horse = lot ? horseMap.get(lot.horseId) : undefined;
-        const consignor = lot?.consignorStableId
-          ? stableMap.get(lot.consignorStableId)
-          : undefined;
+        const consignor = lot?.consignorStableId ? stableMap.get(lot.consignorStableId) : undefined;
         const winner =
-          event.type === "SOLD" && event.toStableId
-            ? stableMap.get(event.toStableId)
-            : undefined;
+          event.type === "SOLD" && event.toStableId ? stableMap.get(event.toStableId) : undefined;
         const scouted = horse ? getDisplayableStats(horse, scoutReports, day) : null;
         let paddleNumber: number | undefined = undefined;
         if (event.type === "BID_RECEIVED" && event.stableId) {
@@ -104,23 +100,18 @@ export function useAuctionEventProcessor(options: UseAuctionEventProcessorOption
             paddleNumber,
             breezeSeconds: lot?.breezeSeconds,
           },
-          rngRef.current
+          rngRef.current,
         );
 
         // Type assignment for UI rendering
         const typedLine: AuctioneerLine = {
           ...line,
           type:
-            event.type === "SOLD"
-              ? "hammer"
-              : event.type === "BID_RECEIVED"
-              ? "chant"
-              : "other",
+            event.type === "SOLD" ? "hammer" : event.type === "BID_RECEIVED" ? "chant" : "other",
         };
         newLines.push(typedLine);
 
-        if (event.type === "BID_RECEIVED" && event.stableId)
-          flashStable = event.stableId;
+        if (event.type === "BID_RECEIVED" && event.stableId) flashStable = event.stableId;
         if (event.type === "SOLD" || event.type === "PASSED") sawHammer = true;
 
         if (event.type === "SOLD" && event.toStableId === undefined) {
@@ -163,7 +154,7 @@ export function useAuctionEventProcessor(options: UseAuctionEventProcessorOption
       setWinOverlay,
       setHistoryOpen,
       setPlayerMaxBid,
-    ]
+    ],
   );
 
   return {

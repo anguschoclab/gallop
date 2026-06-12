@@ -9,7 +9,14 @@
  */
 
 import { isMaleHorse, isFemaleHorse } from "@/core/horse/gender";
-import type { Horse, Pregnancy, Stable, AuctionLot, AuctionSale, AuctionSaleKind } from "@/game/types";
+import type {
+  Horse,
+  Pregnancy,
+  Stable,
+  AuctionLot,
+  AuctionSale,
+  AuctionSaleKind,
+} from "@/game/types";
 import { generateNpcHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { calculateNpcHorseValue } from "@/core/horse/pricing";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";

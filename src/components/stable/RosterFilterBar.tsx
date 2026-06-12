@@ -21,9 +21,27 @@ interface RosterFilterBarProps {
 }
 
 const STATUS_FILTERS = [
-  { key: "active", label: "Active", countKey: "active" as const, icon: Activity, color: "text-success" },
-  { key: "retired", label: "Retired", countKey: "retired" as const, icon: Heart, color: "text-pink-400" },
-  { key: "auctioned", label: "Archived", countKey: "auctioned" as const, icon: Tag, color: "text-warning" },
+  {
+    key: "active",
+    label: "Active",
+    countKey: "active" as const,
+    icon: Activity,
+    color: "text-success",
+  },
+  {
+    key: "retired",
+    label: "Retired",
+    countKey: "retired" as const,
+    icon: Heart,
+    color: "text-pink-400",
+  },
+  {
+    key: "auctioned",
+    label: "Archived",
+    countKey: "auctioned" as const,
+    icon: Tag,
+    color: "text-warning",
+  },
   { key: "all", label: "Global", countKey: "all" as const, icon: Users, color: "text-cream" },
 ] as const;
 

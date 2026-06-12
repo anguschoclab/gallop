@@ -83,9 +83,7 @@ export function JockeyRosterTabs({
                 jockey={j}
                 onAction={() => onHire(j.id)}
                 actionLabel="Sign"
-                onClick={() =>
-                  navigate({ to: "/jockey/$jockeyId", params: { jockeyId: j.id } })
-                }
+                onClick={() => navigate({ to: "/jockey/$jockeyId", params: { jockeyId: j.id } })}
               />
             ))}
           </div>

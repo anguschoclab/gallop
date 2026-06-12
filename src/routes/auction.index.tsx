@@ -99,11 +99,17 @@ function AuctionPage() {
             The Auction Block
           </h1>
           <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
-            <span>Active Windows: <NumericValue value={activeUpcoming.length} /></span>
+            <span>
+              Active Windows: <NumericValue value={activeUpcoming.length} />
+            </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span>Commission Rate: <NumericValue value={Math.round(CONSIGNMENT_COMMISSION * 100)} />%</span>
+            <span>
+              Commission Rate: <NumericValue value={Math.round(CONSIGNMENT_COMMISSION * 100)} />%
+            </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span>Exchange: <span className="text-success font-black">Open</span></span>
+            <span>
+              Exchange: <span className="text-success font-black">Open</span>
+            </span>
           </div>
         </div>
 

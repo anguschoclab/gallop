@@ -65,8 +65,8 @@ export function ConsignmentWithdrawal({
                   Confirm Withdrawal
                 </AlertDialogTitle>
                 <AlertDialogDescription className="text-cream/60 font-mono text-xs uppercase tracking-tighter">
-                  Removal of <strong>{horse.name}</strong> from catalog. No
-                  transaction proceeds will be generated.
+                  Removal of <strong>{horse.name}</strong> from catalog. No transaction proceeds
+                  will be generated.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

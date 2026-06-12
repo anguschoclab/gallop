@@ -49,9 +49,7 @@ export const Gazette: React.FC = () => {
         {/* Main Column - Primary News */}
         <main className="lg:col-span-8 space-y-6">
           {mainNews.length > 0 ? (
-            mainNews.map((item, index) => (
-              <NewsArticle key={`${item.id}-${index}`} item={item} />
-            ))
+            mainNews.map((item, index) => <NewsArticle key={`${item.id}-${index}`} item={item} />)
           ) : (
             <div className="p-32 text-center border-2 border-dashed border-white/5 bg-black/10">
               <Archive className="h-16 w-16 mx-auto mb-6 text-cream/5" />
@@ -140,4 +138,3 @@ export const Gazette: React.FC = () => {
     </div>
   );
 };
-

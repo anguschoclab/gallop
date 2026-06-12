@@ -32,7 +32,6 @@ export function StableRosterView({
   playerAwards,
   navigate,
 }: StableRosterViewProps) {
-
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       {playerAwards.length > 0 && <TrophyCase awards={playerAwards} variant="compact" />}
@@ -61,10 +60,7 @@ export function StableRosterView({
               {horses.map((h, i) => {
                 const ovrVal = overall(h);
                 return (
-                  <tr
-                    key={h.id}
-                    className="group hover:bg-white/[0.02] transition-colors relative"
-                  >
+                  <tr key={h.id} className="group hover:bg-white/[0.02] transition-colors relative">
                     <td className="px-6 py-4 font-mono text-[10px] text-cream/20 tabular-nums">
                       {String(i + 1).padStart(2, "0")}
                     </td>
@@ -92,11 +88,7 @@ export function StableRosterView({
                       <div
                         className={cn(
                           "inline-block font-mono font-black text-sm tabular-nums",
-                          ovrVal >= 80
-                            ? "text-fame"
-                            : ovrVal >= 70
-                              ? "text-success"
-                              : "text-cream",
+                          ovrVal >= 80 ? "text-fame" : ovrVal >= 70 ? "text-success" : "text-cream",
                         )}
                       >
                         {ovrVal}

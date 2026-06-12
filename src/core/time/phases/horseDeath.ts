@@ -13,7 +13,12 @@
 
 import { PHASE_ORDER_HORSE_DEATH } from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyImpact, HorseDeathImpact, LogImpact, NameReservationImpact } from "@/core/resolver/impacts/index";
+import type {
+  AnyImpact,
+  HorseDeathImpact,
+  LogImpact,
+  NameReservationImpact,
+} from "@/core/resolver/impacts/index";
 import { createRng, hashStr } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { INSURANCE_CONFIG } from "@/core/insurance/insuranceTypes";
@@ -80,7 +85,8 @@ export const horseDeathPhase: PipelinePhase = {
         // Insurance payout for mortality
         const policy = (horse as any).insurancePolicy;
         if (policy && (policy.type === "mortality_only" || policy.type === "comprehensive")) {
-          const coveragePercent = INSURANCE_CONFIG.COVERAGE[policy.type as keyof typeof INSURANCE_CONFIG.COVERAGE];
+          const coveragePercent =
+            INSURANCE_CONFIG.COVERAGE[policy.type as keyof typeof INSURANCE_CONFIG.COVERAGE];
           const horseValue = calculateBaseHorseValue(horse, "mid");
           const payout = Math.round(horseValue * coveragePercent);
           if (payout > 0) {
@@ -147,8 +153,14 @@ export const horseDeathPhase: PipelinePhase = {
 
           // Insurance payout for mortality
           const illnessPolicy = (horse as any).insurancePolicy;
-          if (illnessPolicy && (illnessPolicy.type === "mortality_only" || illnessPolicy.type === "comprehensive")) {
-            const coveragePercent = INSURANCE_CONFIG.COVERAGE[illnessPolicy.type as keyof typeof INSURANCE_CONFIG.COVERAGE];
+          if (
+            illnessPolicy &&
+            (illnessPolicy.type === "mortality_only" || illnessPolicy.type === "comprehensive")
+          ) {
+            const coveragePercent =
+              INSURANCE_CONFIG.COVERAGE[
+                illnessPolicy.type as keyof typeof INSURANCE_CONFIG.COVERAGE
+              ];
             const horseValue = calculateBaseHorseValue(horse, "mid");
             const payout = Math.round(horseValue * coveragePercent);
             if (payout > 0) {

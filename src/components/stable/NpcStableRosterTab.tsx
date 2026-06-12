@@ -34,10 +34,7 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
   const activeOffersMap = useMemo(() => {
     const map = new Map<string, PrivateSaleOffer>();
     privateSaleOffers.forEach((o: PrivateSaleOffer) => {
-      if (
-        o.fromStableId === undefined &&
-        (o.status === "pending" || o.status === "countered")
-      ) {
+      if (o.fromStableId === undefined && (o.status === "pending" || o.status === "countered")) {
         map.set(o.horseId, o);
       }
     });

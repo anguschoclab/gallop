@@ -49,7 +49,9 @@ export function PlayerRacePrompt() {
   if (!race) return null;
 
   const enteredHorse = horses.find(
-    (h: { owned: boolean; id: string }) => h.owned && race.entries.some((e: { horseId: string; owned: boolean }) => e.horseId === h.id && e.owned),
+    (h: { owned: boolean; id: string }) =>
+      h.owned &&
+      race.entries.some((e: { horseId: string; owned: boolean }) => e.horseId === h.id && e.owned),
   );
 
   function clearPending() {
@@ -65,7 +67,19 @@ export function PlayerRacePrompt() {
     // Set tactics before resolving
     if (enteredHorse) {
       const instructions = buildInstructions(
-        { id: selectedPreset, name: "", desc: "", instructions: { horseId: enteredHorse.id, raceId: race!.id, ridingStyle: "tactical", earlyPosition: "midpack", moveTiming: "mid", aggressiveness: 50 } },
+        {
+          id: selectedPreset,
+          name: "",
+          desc: "",
+          instructions: {
+            horseId: enteredHorse.id,
+            raceId: race!.id,
+            ridingStyle: "tactical",
+            earlyPosition: "midpack",
+            moveTiming: "mid",
+            aggressiveness: 50,
+          },
+        },
         enteredHorse.id,
         race!.id,
       );

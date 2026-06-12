@@ -59,7 +59,14 @@ describe("resolvePhenotype potential", () => {
   it("bumps potential when resolved stats exceed the rolled potential", () => {
     const h = createTestHorse({
       potential: 50,
-      stats: { speed: 0, stamina: 0, acceleration: 0, consistency: 0, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 0,
+        stamina: 0,
+        acceleration: 0,
+        consistency: 0,
+        temperament: 50,
+        conformation: 50,
+      },
       phenotypeResolved: false,
     });
     const resolved = resolvePhenotype(h);

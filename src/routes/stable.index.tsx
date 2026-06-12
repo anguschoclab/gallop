@@ -87,11 +87,17 @@ function StablePage() {
             Our Horses
           </h1>
           <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
-            <span>Live Count: <NumericValue value={counts.active} /></span>
+            <span>
+              Live Count: <NumericValue value={counts.active} />
+            </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span>Retired: <NumericValue value={counts.retired} /></span>
+            <span>
+              Retired: <NumericValue value={counts.retired} />
+            </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span>Archived: <NumericValue value={counts.auctioned} /></span>
+            <span>
+              Archived: <NumericValue value={counts.auctioned} />
+            </span>
           </div>
         </div>
 

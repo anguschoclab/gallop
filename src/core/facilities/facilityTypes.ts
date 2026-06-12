@@ -119,14 +119,7 @@ export const FACILITY_DESCRIPTIONS: Record<FacilityType, string> = {
  * Which workout types each facility enables
  */
 export const FACILITY_ENABLED_WORKOUTS: Record<FacilityType, string[]> = {
-  main_track: [
-    "speed",
-    "stamina",
-    "acceleration",
-    "bullet",
-    "breeze",
-    "gallop",
-  ],
+  main_track: ["speed", "stamina", "acceleration", "bullet", "breeze", "gallop"],
   barn: [], // Passive effect only
   exercise_pool: ["swimming"],
   treadmill: ["treadmill"],

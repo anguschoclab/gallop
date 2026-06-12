@@ -52,7 +52,9 @@ export function HorseManagementSection({
   };
 
   const handleUpdateStudFee = () => {
-    const newFee = prompt(`Enter new stud fee for ${horse.name} (current: $${horse.stud?.fee || 0}):`);
+    const newFee = prompt(
+      `Enter new stud fee for ${horse.name} (current: $${horse.stud?.fee || 0}):`,
+    );
     if (newFee && !isNaN(Number(newFee))) {
       const result = updateStudFee(horse.id, Number(newFee));
       if (result.ok) {

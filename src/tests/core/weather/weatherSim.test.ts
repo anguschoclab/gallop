@@ -16,7 +16,7 @@ describe("weatherSim — determinism", () => {
   const SARATOGA = "e4d5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a";
   const MEYDAN = "85a3d0b8-a4a9-4ff7-bc18-705874d8da31";
   const TOKYO = "09aea125-88e4-4e51-b8d7-0475869c6269";
-  
+
   it("stepWeather(undefined, trackId, day) is deterministic across runs", () => {
     const a = stepWeather(undefined, CHURCHILL_DOWNS, 100);
     const b = stepWeather(undefined, CHURCHILL_DOWNS, 100);
@@ -61,7 +61,7 @@ describe("weatherSim — Koppen climate patterns", () => {
   const MEYDAN = "85a3d0b8-a4a9-4ff7-bc18-705874d8da31"; // BWh - Hot Desert
   const ASCOT = "bf517cc6-2210-42ad-a6de-7115abc4ef08"; // Cfb - Temperate Oceanic
   const HONG_KONG = "62a59b6c-0230-4db7-ab2f-fb494d6dd2ec"; // Aw - Tropical
-  
+
   it("desert climate (BWh) trends dry over a 500-day window", () => {
     const samples = generateForecast(undefined, MEYDAN, 0, 500);
     const avgSeverity =
@@ -87,12 +87,12 @@ describe("weatherSim — Koppen climate patterns", () => {
   });
 
   it("temperature varies by Koppen climate type", () => {
-    const desertTemps = generateForecast(undefined, MEYDAN, 0, 30).map(w => w.tempC);
-    const oceanicTemps = generateForecast(undefined, ASCOT, 0, 30).map(w => w.tempC);
-    
+    const desertTemps = generateForecast(undefined, MEYDAN, 0, 30).map((w) => w.tempC);
+    const oceanicTemps = generateForecast(undefined, ASCOT, 0, 30).map((w) => w.tempC);
+
     const avgDesert = desertTemps.reduce((a, b) => a + b, 0) / desertTemps.length;
     const avgOceanic = oceanicTemps.reduce((a, b) => a + b, 0) / oceanicTemps.length;
-    
+
     // Desert should generally be warmer than oceanic
     expect(avgDesert).toBeGreaterThan(avgOceanic);
   });

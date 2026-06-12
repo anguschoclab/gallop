@@ -84,7 +84,9 @@ export function calculateOptimalTactics(
   const isSkilled = (jockey.stats.positioning + jockey.stats.pacing) / 2 > 70;
 
   // Calculate aggressiveness
-  const aggressiveness = Math.round(calculateJockeyAggressiveness(aiState, horse, race, jockey, stable) * 100);
+  const aggressiveness = Math.round(
+    calculateJockeyAggressiveness(aiState, horse, race, jockey, stable) * 100,
+  );
 
   // Dynamic Form: Check recoveryPoints - adjust tactics for fatigued horses
   const recoveryPoints = horse.recoveryPoints ?? 100;

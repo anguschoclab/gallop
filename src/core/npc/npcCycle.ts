@@ -516,4 +516,3 @@ export function runNpcCycle(
     return { horses, races, jockeys, aiManager, npcFacilities, newsItems: [] };
   }
 }
-

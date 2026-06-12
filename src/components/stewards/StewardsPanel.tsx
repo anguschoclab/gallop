@@ -2,7 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, CheckCircle, XCircle, DollarSign, Clock } from "lucide-react";
 import { useGame } from "@/game/store";
-import { formatInquiryType, formatInquiryOutcome, type StewardsInquiry } from "@/core/stewards/stewardTypes";
+import {
+  formatInquiryType,
+  formatInquiryOutcome,
+  type StewardsInquiry,
+} from "@/core/stewards/stewardTypes";
 import { cn } from "@/lib/cn";
 
 interface StewardsPanelProps {
@@ -79,10 +83,7 @@ export function StewardsPanel({ horseId }: StewardsPanelProps) {
       </CardHeader>
       <CardContent className="space-y-3">
         {inquiries.map((inquiry) => (
-          <div
-            key={inquiry.id}
-            className="bg-black/40 border border-white/5 p-3 space-y-2"
-          >
+          <div key={inquiry.id} className="bg-black/40 border border-white/5 p-3 space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {getStatusIcon(inquiry.status)}
@@ -94,8 +95,10 @@ export function StewardsPanel({ horseId }: StewardsPanelProps) {
                 variant="outline"
                 className={cn(
                   "text-[9px] font-black uppercase tracking-wider border-white/10",
-                  inquiry.status === "pending" && "bg-yellow-400/10 text-yellow-400 border-yellow-400/30",
-                  inquiry.status === "resolved" && "bg-green-400/10 text-green-400 border-green-400/30",
+                  inquiry.status === "pending" &&
+                    "bg-yellow-400/10 text-yellow-400 border-yellow-400/30",
+                  inquiry.status === "resolved" &&
+                    "bg-green-400/10 text-green-400 border-green-400/30",
                 )}
               >
                 {inquiry.status}
@@ -113,7 +116,12 @@ export function StewardsPanel({ horseId }: StewardsPanelProps) {
                   <span className="text-[9px] text-cream/40 uppercase tracking-widest font-black">
                     Outcome
                   </span>
-                  <span className={cn("text-[10px] font-mono font-black", getOutcomeColor(inquiry.outcome))}>
+                  <span
+                    className={cn(
+                      "text-[10px] font-mono font-black",
+                      getOutcomeColor(inquiry.outcome),
+                    )}
+                  >
                     {formatInquiryOutcome(inquiry.outcome)}
                   </span>
                 </div>

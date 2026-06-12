@@ -5,16 +5,17 @@ export type StaffSlice = {
   /** Flag a staff pool member as offended after a walk-away negotiation */
   flagStaffOffended: (staffId: string, until: number) => void;
   /** Hire a staff member at a negotiated salary and enqueue the intent */
-  hireAtNegotiatedSalary: (staffId: string, agreedSalary: number) => { ok: boolean; reason?: string };
+  hireAtNegotiatedSalary: (
+    staffId: string,
+    agreedSalary: number,
+  ) => { ok: boolean; reason?: string };
 };
 
 export const createStaffSlice: SliceCreator<StaffSlice> = (set, get) => ({
   flagStaffOffended: (staffId, until) => {
     set((state: any) => ({
       staffPool: (state.staffPool ?? []).map((s: any) =>
-        s.id === staffId
-          ? { ...s, offended: true, offendedUntil: until, negotiationRounds: 0 }
-          : s,
+        s.id === staffId ? { ...s, offended: true, offendedUntil: until, negotiationRounds: 0 } : s,
       ),
     }));
   },

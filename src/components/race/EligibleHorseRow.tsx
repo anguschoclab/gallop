@@ -103,9 +103,7 @@ export function EligibleHorseRow({
             Withdraw
           </Button>
         )}
-        {selectedHorseId === horse.id && !isEntered && (
-          <Check className="text-primary" size={20} />
-        )}
+        {selectedHorseId === horse.id && !isEntered && <Check className="text-primary" size={20} />}
       </div>
     </div>
   );

@@ -57,8 +57,7 @@ export function OperationsTicker() {
                   Mating
                 </span>
                 <span className="text-cream font-bold tabular-nums">
-                  {pregnancies?.length ?? 0}{" "}
-                  <span className="opacity-40 font-normal">/ 10</span>
+                  {pregnancies?.length ?? 0} <span className="opacity-40 font-normal">/ 10</span>
                 </span>
               </div>
               <div className="h-1 bg-white/5 rounded-full overflow-hidden">

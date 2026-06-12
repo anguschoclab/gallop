@@ -75,7 +75,19 @@ export function useRaceEntry(race: Race) {
       if (res.ok) {
         assignJockey(race.id, selectedHorseId, selectedJockeyId);
         const instructions = buildInstructions(
-          { id: selectedPreset, name: "", desc: "", instructions: { horseId: selectedHorseId, raceId: race.id, ridingStyle: "tactical", earlyPosition: "midpack", moveTiming: "mid", aggressiveness: 50 } },
+          {
+            id: selectedPreset,
+            name: "",
+            desc: "",
+            instructions: {
+              horseId: selectedHorseId,
+              raceId: race.id,
+              ridingStyle: "tactical",
+              earlyPosition: "midpack",
+              moveTiming: "mid",
+              aggressiveness: 50,
+            },
+          },
           selectedHorseId,
           race.id,
         );
@@ -96,9 +108,7 @@ export function useRaceEntry(race: Race) {
           );
         } else if (wasFull) {
           const horse = horses.find((h: Horse) => h.id === selectedHorseId);
-          toast.info(
-            `${horse?.name ?? "Horse"} bumped a weaker entry to join ${race.name}.`,
-          );
+          toast.info(`${horse?.name ?? "Horse"} bumped a weaker entry to join ${race.name}.`);
         }
 
         onClose();

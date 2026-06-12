@@ -43,16 +43,11 @@ export function RaceHistoryGroup({ entries, countryFor, yearFor }: RaceHistoryGr
                 <div className="truncate">{r.raceName}</div>
                 <div className="text-xs text-cream-muted flex items-center gap-1.5">
                   {flag && (
-                    <span
-                      title={country ?? "Unknown country"}
-                      className="text-sm leading-none"
-                    >
+                    <span title={country ?? "Unknown country"} className="text-sm leading-none">
                       {flag}
                     </span>
                   )}
-                  {r.grade === "G1" && (
-                    <span className="tabular-nums">Y{yearFor(r.day)}</span>
-                  )}
+                  {r.grade === "G1" && <span className="tabular-nums">Y{yearFor(r.day)}</span>}
                   {r.distance ? <span>· {r.distance}m</span> : null}
                   {r.surface ? <span>· {r.surface}</span> : null}
                   {r.fieldSize ? <span>· field of {r.fieldSize}</span> : null}
@@ -70,9 +65,7 @@ export function RaceHistoryGroup({ entries, countryFor, yearFor }: RaceHistoryGr
                 </span>
               )}
               <Badge
-                variant={
-                  r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"
-                }
+                variant={r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"}
               >
                 {r.position}
                 {getOrdinalSuffix(r.position)}

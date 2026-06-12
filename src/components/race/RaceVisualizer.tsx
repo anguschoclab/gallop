@@ -254,7 +254,6 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
     };
   }, [isPlaying, playbackSpeed, duration, renderFrame, onComplete]);
 
-
   return (
     <div className="race-visualizer-container">
       <canvas

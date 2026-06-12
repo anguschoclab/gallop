@@ -57,7 +57,14 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOp
     const activeHorses = horses.filter((h) => h.lifecycleStatus !== "deceased");
     const existingNames = new Set(activeHorses.map((h) => h.name));
     const suggestion = generateProceduralHorseName(
-      { sireName: foal.sireName, damName: foal.damName, existingNames, reservedNames, currentDay: day, parentNameBlendingEnabled },
+      {
+        sireName: foal.sireName,
+        damName: foal.damName,
+        existingNames,
+        reservedNames,
+        currentDay: day,
+        parentNameBlendingEnabled,
+      },
       rng,
     );
     setName(suggestion);

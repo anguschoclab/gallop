@@ -153,9 +153,8 @@ export function generateRaceImpacts({
       race.sectionalSplits = computeSectionalSplits(snapshots, race.distance);
     }
 
-    const splitEntryMaps = race.sectionalSplits?.map((split) =>
-      new Map(split.entries.map((e) => [e.horseId, e])),
-    ) ?? [];
+    const splitEntryMaps =
+      race.sectionalSplits?.map((split) => new Map(split.entries.map((e) => [e.horseId, e]))) ?? [];
 
     // 2. Process per-horse consequences
     for (const r of result) {
@@ -258,7 +257,14 @@ export function generateRaceImpacts({
       }
 
       // Trainer stats update (Phase 4: Relationship Enhancement)
-      const trainerImpact = generateTrainerStatsImpact(horse, r.position, race, hiredStaff, newDay, rng);
+      const trainerImpact = generateTrainerStatsImpact(
+        horse,
+        r.position,
+        race,
+        hiredStaff,
+        newDay,
+        rng,
+      );
       if (trainerImpact) {
         impacts.push(trainerImpact);
       }
@@ -288,12 +294,22 @@ export function generateRaceImpacts({
           if (jockeyFeeImpacts.transactionImpact) impacts.push(jockeyFeeImpacts.transactionImpact);
 
           // Affinity XP gain / penalty
-          impacts.push(generateJockeyAffinityImpact(horse, jockey, r.position, race, beyerValue, newDay, rng));
+          impacts.push(
+            generateJockeyAffinityImpact(horse, jockey, r.position, race, beyerValue, newDay, rng),
+          );
         }
       }
 
       // 5+6. Breeding: blue hen, stud career, syndicate satisfaction
-      for (const bi of generateBreedingImpacts(horse, r.position, race, horseMap, syndicates, newDay, rng)) {
+      for (const bi of generateBreedingImpacts(
+        horse,
+        r.position,
+        race,
+        horseMap,
+        syndicates,
+        newDay,
+        rng,
+      )) {
         impacts.push(bi);
       }
 

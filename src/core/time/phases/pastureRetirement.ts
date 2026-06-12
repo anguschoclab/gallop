@@ -16,7 +16,12 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 // Also deletes dead/retired horses with no wins to prevent array accumulation
 
 import { createRng, hashStr } from "@/core/common/rng";
-import { AGE_RETIREMENT_THRESHOLD, FAME_LOW_THRESHOLD, INACTIVITY_RETIREMENT_DAYS, PHASE_ORDER_PASTURE_RETIREMENT } from "@/constants";
+import {
+  AGE_RETIREMENT_THRESHOLD,
+  FAME_LOW_THRESHOLD,
+  INACTIVITY_RETIREMENT_DAYS,
+  PHASE_ORDER_PASTURE_RETIREMENT,
+} from "@/constants";
 import type {
   AnyImpact,
   PastureRetirementImpact,

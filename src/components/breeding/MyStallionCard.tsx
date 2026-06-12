@@ -13,7 +13,12 @@ interface MyStallionCardProps {
   onUpdateFee: (fee: number) => void;
 }
 
-export function MyStallionCard({ stallion, day, recommendedFee, onUpdateFee }: MyStallionCardProps) {
+export function MyStallionCard({
+  stallion,
+  day,
+  recommendedFee,
+  onUpdateFee,
+}: MyStallionCardProps) {
   const [feeInput, setFeeInput] = useState(stallion.stud!.standingFee.toString());
   const stud = stallion.stud!;
   const navigate = useNavigate();
@@ -56,7 +61,9 @@ export function MyStallionCard({ stallion, day, recommendedFee, onUpdateFee }: M
             <span className="text-cream-muted text-xs">Best Surface</span>
             <span className="text-cream font-mono">
               {(() => {
-                const best = Object.entries(stallion.surfaceAptitude || {}).sort((a, b) => b[1] - a[1])[0];
+                const best = Object.entries(stallion.surfaceAptitude || {}).sort(
+                  (a, b) => b[1] - a[1],
+                )[0];
                 return best ? `${best[0]} (${Math.round(best[1])})` : "—";
               })()}
             </span>

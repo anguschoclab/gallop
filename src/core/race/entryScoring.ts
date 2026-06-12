@@ -13,7 +13,10 @@ import type { Horse, Race, Stable, StableTier } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { isFemaleHorse } from "@/core/horse/gender";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
-import { isHorseEligibleForClaimingPrice, getSuggestedClaimingPriceRange } from "@/core/market/claiming";
+import {
+  isHorseEligibleForClaimingPrice,
+  getSuggestedClaimingPriceRange,
+} from "@/core/market/claiming";
 import { calculateTrackGeometryScore, calculateGradientScore } from "./trackGeometry";
 import {
   BASE_RACE_WEIGHT_LBS,

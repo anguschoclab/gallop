@@ -24,7 +24,13 @@ interface CampaignCardProps {
   onDismissFlag: (horseId: string, flagIndex: number) => void;
 }
 
-export function CampaignCard({ campaign, horse, getRace, onDelete, onDismissFlag }: CampaignCardProps) {
+export function CampaignCard({
+  campaign,
+  horse,
+  getRace,
+  onDelete,
+  onDismissFlag,
+}: CampaignCardProps) {
   const activeFlags = campaign.flags.filter((f: any) => !f.dismissed);
   const upcomingSlots = campaign.slots
     .filter((s: any) => s.status === "planned" || s.status === "entered")

@@ -26,11 +26,7 @@ export interface Outpost {
   acclimatizationDays: Record<string, number>; // horseId -> days remaining
 }
 
-import {
-  OUTPOST_BASE_SLOTS,
-  TRANSPORT_FATIGUE_SPIKE,
-  ACCLIMATIZATION_PERIOD,
-} from "@/constants";
+import { OUTPOST_BASE_SLOTS, TRANSPORT_FATIGUE_SPIKE, ACCLIMATIZATION_PERIOD } from "@/constants";
 
 export const OUTPOST_CONSTANTS = {
   BASE_SLOTS: OUTPOST_BASE_SLOTS,

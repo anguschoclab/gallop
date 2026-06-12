@@ -48,8 +48,16 @@ function JockeyPage() {
           <JockeyCard
             jockey={jockey}
             isRetained={isRetained}
-            actionLabel={isRetained ? "Release Jockey" : isApprentice ? "Hire Apprentice" : "Sign Retainer"}
-            onAction={isRetained ? (j) => releaseJockey(j.id) : isApprentice ? (j) => hireApprentice(j.id) : (j) => hireJockey(j.id, "retainer")}
+            actionLabel={
+              isRetained ? "Release Jockey" : isApprentice ? "Hire Apprentice" : "Sign Retainer"
+            }
+            onAction={
+              isRetained
+                ? (j) => releaseJockey(j.id)
+                : isApprentice
+                  ? (j) => hireApprentice(j.id)
+                  : (j) => hireJockey(j.id, "retainer")
+            }
           />
         </div>
       </div>

@@ -9,7 +9,11 @@ import {
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
 import type { Race } from "@/game/types";
 import { RACE_ENERGY_IMPACT, STAMINA_DRAIN_MAX } from "@/constants";
-import { AFFINITY_XP_PER_RACE, AFFINITY_XP_PER_WIN_BONUS, AFFINITY_XP_POOR_RACE_PENALTY } from "@/constants";
+import {
+  AFFINITY_XP_PER_RACE,
+  AFFINITY_XP_PER_WIN_BONUS,
+  AFFINITY_XP_POOR_RACE_PENALTY,
+} from "@/constants";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -167,20 +171,30 @@ describe("generateBeyerAndRecoveryImpacts", () => {
   it("emits beyer_update and recovery_change for every runner", () => {
     const horse = createTestColt({ id: "h1" });
     const impacts = runSingle(horse, 1, makeGradedRace());
-    expect(impacts.find((i) => i.type === "beyer_update" && (i as any).horseId === "h1")).toBeDefined();
-    expect(impacts.find((i) => i.type === "recovery_change" && (i as any).horseId === "h1")).toBeDefined();
+    expect(
+      impacts.find((i) => i.type === "beyer_update" && (i as any).horseId === "h1"),
+    ).toBeDefined();
+    expect(
+      impacts.find((i) => i.type === "recovery_change" && (i as any).horseId === "h1"),
+    ).toBeDefined();
   });
 
   it("recovery drain is never above STAMINA_DRAIN_MAX", () => {
     const horse = createTestColt({ id: "h1" });
     const impacts = runSingle(horse, 1, makeGradedRace({ distance: 99999 }));
-    const recovery = impacts.find((i) => i.type === "recovery_change" && (i as any).horseId === "h1");
+    const recovery = impacts.find(
+      (i) => i.type === "recovery_change" && (i as any).horseId === "h1",
+    );
     expect(Math.abs((recovery as any).delta)).toBeLessThanOrEqual(STAMINA_DRAIN_MAX);
   });
 
   it("inbreeding dampener reduces beyer relative to base", () => {
     const horseBase = createTestColt({ id: "base", coefficientOfInbreeding: 0, raceHistory: [] });
-    const horseInbred = createTestColt({ id: "inbred", coefficientOfInbreeding: 0.25, raceHistory: [] });
+    const horseInbred = createTestColt({
+      id: "inbred",
+      coefficientOfInbreeding: 0.25,
+      raceHistory: [],
+    });
     const race = makeGradedRace({ distance: 2000 });
 
     const impactsBase = generateRaceImpacts({
@@ -226,7 +240,9 @@ describe("generateRaceHistoryImpact", () => {
       } as any,
     });
     const impacts = runSingle(horse, 1, race);
-    const history = impacts.find((i) => i.type === "race_history" && (i as any).horseId === "h1") as any;
+    const history = impacts.find(
+      (i) => i.type === "race_history" && (i as any).horseId === "h1",
+    ) as any;
     expect(history?.raceHistoryEntry.winAndYouInQualified).toBeDefined();
     expect(history.raceHistoryEntry.winAndYouInQualified.raceKey).toBe("breeders-cup-classic");
   });
@@ -264,7 +280,9 @@ describe("generateRaceHistoryImpact", () => {
       newDay: 100,
       calibratedPars: {},
     });
-    const history = impacts.find((i) => i.type === "race_history" && (i as any).horseId === "h1") as any;
+    const history = impacts.find(
+      (i) => i.type === "race_history" && (i as any).horseId === "h1",
+    ) as any;
     expect(history?.raceHistoryEntry.fieldSize).toBe(2);
   });
 });
@@ -324,7 +342,9 @@ describe("generatePrizeMoneyImpacts", () => {
     const tx = impacts.find((i) => i.type === "transaction" && (i as any).amount > 0);
     expect(tx).toBeDefined();
 
-    const rep = impacts.find((i) => i.type === "reputation_change" && (i as any).source === "race_win");
+    const rep = impacts.find(
+      (i) => i.type === "reputation_change" && (i as any).source === "race_win",
+    );
     expect(rep).toBeDefined();
     expect((rep as any).delta).toBeGreaterThan(0);
   });
