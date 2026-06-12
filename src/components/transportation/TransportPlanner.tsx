@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +31,9 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
 
   // Filter transports - if horseId provided, only show that horse's transports
   const filteredTransports = horseId ? transports.filter((t) => t.horseId === horseId) : transports;
+
+  // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loops.
+  const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
 
   if (filteredTransports.length === 0) {
     return null;
@@ -97,7 +101,7 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
       </CardHeader>
       <CardContent className="space-y-3">
         {filteredTransports.map((transport) => {
-          const horse = horses.find((h) => h.id === transport.horseId);
+          const horse = horseMap.get(transport.horseId);
           const daysUntilArrival = transport.arrivalDay - day;
           const isPastDue = daysUntilArrival < 0;
 

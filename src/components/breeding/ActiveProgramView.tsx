@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,9 @@ export function ActiveProgramView() {
 
   const enrolledMares = horses.filter((h) => program.enrolledDamIds.includes(h.id));
   const progressPct = Math.round((1 - program.geneticDistance) * 100);
+
+  // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loops.
+  const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
 
   const handleEnroll = (damId: string) => {
     const result = enrollDamInProgram(damId);
@@ -221,7 +225,7 @@ export function ActiveProgramView() {
                 .reverse()
                 .slice(0, 6)
                 .map((entry, i) => {
-                  const horse = horses.find((h) => h.id === entry.horseId);
+                  const horse = horseMap.get(entry.horseId);
                   return (
                     <div
                       key={i}
