@@ -36,12 +36,14 @@ import { Route as BroodmaresRouteImport } from './routes/broodmares'
 import { Route as BreedingRouteImport } from './routes/breeding'
 import { Route as AwardsRouteImport } from './routes/awards'
 import { Route as AuctionRouteImport } from './routes/auction'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StableIndexRouteImport } from './routes/stable.index'
 import { Route as SireWatchIndexRouteImport } from './routes/sire-watch.index'
 import { Route as NpcStablesIndexRouteImport } from './routes/npc-stables.index'
 import { Route as CalendarIndexRouteImport } from './routes/calendar.index'
 import { Route as AuctionIndexRouteImport } from './routes/auction.index'
+import { Route as AnalyticsIndexRouteImport } from './routes/analytics.index'
 import { Route as StableHorseIdRouteImport } from './routes/stable.$horseId'
 import { Route as SireWatchStallionIdRouteImport } from './routes/sire-watch.$stallionId'
 import { Route as RaceRaceIdRouteImport } from './routes/race.$raceId'
@@ -49,6 +51,10 @@ import { Route as NpcStablesStableIdRouteImport } from './routes/npc-stables.$st
 import { Route as JockeyJockeyIdRouteImport } from './routes/jockey.$jockeyId'
 import { Route as CalendarRegionIdRouteImport } from './routes/calendar.$regionId'
 import { Route as AuctionSaleIdRouteImport } from './routes/auction.$saleId'
+import { Route as AnalyticsStableRouteImport } from './routes/analytics.stable'
+import { Route as AnalyticsRacingRouteImport } from './routes/analytics.racing'
+import { Route as AnalyticsFinanceRouteImport } from './routes/analytics.finance'
+import { Route as AnalyticsBreedingRouteImport } from './routes/analytics.breeding'
 
 const StartRoute = StartRouteImport.update({
   id: '/start',
@@ -185,6 +191,11 @@ const AuctionRoute = AuctionRouteImport.update({
   path: '/auction',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -214,6 +225,11 @@ const AuctionIndexRoute = AuctionIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuctionRoute,
+} as any)
+const AnalyticsIndexRoute = AnalyticsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AnalyticsRoute,
 } as any)
 const StableHorseIdRoute = StableHorseIdRouteImport.update({
   id: '/$horseId',
@@ -250,9 +266,30 @@ const AuctionSaleIdRoute = AuctionSaleIdRouteImport.update({
   path: '/$saleId',
   getParentRoute: () => AuctionRoute,
 } as any)
+const AnalyticsStableRoute = AnalyticsStableRouteImport.update({
+  id: '/stable',
+  path: '/stable',
+  getParentRoute: () => AnalyticsRoute,
+} as any)
+const AnalyticsRacingRoute = AnalyticsRacingRouteImport.update({
+  id: '/racing',
+  path: '/racing',
+  getParentRoute: () => AnalyticsRoute,
+} as any)
+const AnalyticsFinanceRoute = AnalyticsFinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
+  getParentRoute: () => AnalyticsRoute,
+} as any)
+const AnalyticsBreedingRoute = AnalyticsBreedingRouteImport.update({
+  id: '/breeding',
+  path: '/breeding',
+  getParentRoute: () => AnalyticsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRouteWithChildren
   '/auction': typeof AuctionRouteWithChildren
   '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
@@ -280,6 +317,10 @@ export interface FileRoutesByFullPath {
   '/staff': typeof StaffRoute
   '/stallions': typeof StallionsRoute
   '/start': typeof StartRoute
+  '/analytics/breeding': typeof AnalyticsBreedingRoute
+  '/analytics/finance': typeof AnalyticsFinanceRoute
+  '/analytics/racing': typeof AnalyticsRacingRoute
+  '/analytics/stable': typeof AnalyticsStableRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
@@ -287,6 +328,7 @@ export interface FileRoutesByFullPath {
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
+  '/analytics/': typeof AnalyticsIndexRoute
   '/auction/': typeof AuctionIndexRoute
   '/calendar/': typeof CalendarIndexRoute
   '/npc-stables/': typeof NpcStablesIndexRoute
@@ -317,6 +359,10 @@ export interface FileRoutesByTo {
   '/staff': typeof StaffRoute
   '/stallions': typeof StallionsRoute
   '/start': typeof StartRoute
+  '/analytics/breeding': typeof AnalyticsBreedingRoute
+  '/analytics/finance': typeof AnalyticsFinanceRoute
+  '/analytics/racing': typeof AnalyticsRacingRoute
+  '/analytics/stable': typeof AnalyticsStableRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
@@ -324,6 +370,7 @@ export interface FileRoutesByTo {
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
+  '/analytics': typeof AnalyticsIndexRoute
   '/auction': typeof AuctionIndexRoute
   '/calendar': typeof CalendarIndexRoute
   '/npc-stables': typeof NpcStablesIndexRoute
@@ -333,6 +380,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRouteWithChildren
   '/auction': typeof AuctionRouteWithChildren
   '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
@@ -360,6 +408,10 @@ export interface FileRoutesById {
   '/staff': typeof StaffRoute
   '/stallions': typeof StallionsRoute
   '/start': typeof StartRoute
+  '/analytics/breeding': typeof AnalyticsBreedingRoute
+  '/analytics/finance': typeof AnalyticsFinanceRoute
+  '/analytics/racing': typeof AnalyticsRacingRoute
+  '/analytics/stable': typeof AnalyticsStableRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
@@ -367,6 +419,7 @@ export interface FileRoutesById {
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
+  '/analytics/': typeof AnalyticsIndexRoute
   '/auction/': typeof AuctionIndexRoute
   '/calendar/': typeof CalendarIndexRoute
   '/npc-stables/': typeof NpcStablesIndexRoute
@@ -377,6 +430,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/analytics'
     | '/auction'
     | '/awards'
     | '/breeding'
@@ -404,6 +458,10 @@ export interface FileRouteTypes {
     | '/staff'
     | '/stallions'
     | '/start'
+    | '/analytics/breeding'
+    | '/analytics/finance'
+    | '/analytics/racing'
+    | '/analytics/stable'
     | '/auction/$saleId'
     | '/calendar/$regionId'
     | '/jockey/$jockeyId'
@@ -411,6 +469,7 @@ export interface FileRouteTypes {
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
+    | '/analytics/'
     | '/auction/'
     | '/calendar/'
     | '/npc-stables/'
@@ -441,6 +500,10 @@ export interface FileRouteTypes {
     | '/staff'
     | '/stallions'
     | '/start'
+    | '/analytics/breeding'
+    | '/analytics/finance'
+    | '/analytics/racing'
+    | '/analytics/stable'
     | '/auction/$saleId'
     | '/calendar/$regionId'
     | '/jockey/$jockeyId'
@@ -448,6 +511,7 @@ export interface FileRouteTypes {
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
+    | '/analytics'
     | '/auction'
     | '/calendar'
     | '/npc-stables'
@@ -456,6 +520,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/analytics'
     | '/auction'
     | '/awards'
     | '/breeding'
@@ -483,6 +548,10 @@ export interface FileRouteTypes {
     | '/staff'
     | '/stallions'
     | '/start'
+    | '/analytics/breeding'
+    | '/analytics/finance'
+    | '/analytics/racing'
+    | '/analytics/stable'
     | '/auction/$saleId'
     | '/calendar/$regionId'
     | '/jockey/$jockeyId'
@@ -490,6 +559,7 @@ export interface FileRouteTypes {
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
+    | '/analytics/'
     | '/auction/'
     | '/calendar/'
     | '/npc-stables/'
@@ -499,6 +569,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnalyticsRoute: typeof AnalyticsRouteWithChildren
   AuctionRoute: typeof AuctionRouteWithChildren
   AwardsRoute: typeof AwardsRoute
   BreedingRoute: typeof BreedingRoute
@@ -721,6 +792,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuctionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -762,6 +840,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auction/'
       preLoaderRoute: typeof AuctionIndexRouteImport
       parentRoute: typeof AuctionRoute
+    }
+    '/analytics/': {
+      id: '/analytics/'
+      path: '/'
+      fullPath: '/analytics/'
+      preLoaderRoute: typeof AnalyticsIndexRouteImport
+      parentRoute: typeof AnalyticsRoute
     }
     '/stable/$horseId': {
       id: '/stable/$horseId'
@@ -812,8 +897,56 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuctionSaleIdRouteImport
       parentRoute: typeof AuctionRoute
     }
+    '/analytics/stable': {
+      id: '/analytics/stable'
+      path: '/stable'
+      fullPath: '/analytics/stable'
+      preLoaderRoute: typeof AnalyticsStableRouteImport
+      parentRoute: typeof AnalyticsRoute
+    }
+    '/analytics/racing': {
+      id: '/analytics/racing'
+      path: '/racing'
+      fullPath: '/analytics/racing'
+      preLoaderRoute: typeof AnalyticsRacingRouteImport
+      parentRoute: typeof AnalyticsRoute
+    }
+    '/analytics/finance': {
+      id: '/analytics/finance'
+      path: '/finance'
+      fullPath: '/analytics/finance'
+      preLoaderRoute: typeof AnalyticsFinanceRouteImport
+      parentRoute: typeof AnalyticsRoute
+    }
+    '/analytics/breeding': {
+      id: '/analytics/breeding'
+      path: '/breeding'
+      fullPath: '/analytics/breeding'
+      preLoaderRoute: typeof AnalyticsBreedingRouteImport
+      parentRoute: typeof AnalyticsRoute
+    }
   }
 }
+
+interface AnalyticsRouteChildren {
+  AnalyticsBreedingRoute: typeof AnalyticsBreedingRoute
+  AnalyticsFinanceRoute: typeof AnalyticsFinanceRoute
+  AnalyticsRacingRoute: typeof AnalyticsRacingRoute
+  AnalyticsStableRoute: typeof AnalyticsStableRoute
+  AnalyticsIndexRoute: typeof AnalyticsIndexRoute
+}
+
+const AnalyticsRouteChildren: AnalyticsRouteChildren = {
+  AnalyticsBreedingRoute: AnalyticsBreedingRoute,
+  AnalyticsFinanceRoute: AnalyticsFinanceRoute,
+  AnalyticsRacingRoute: AnalyticsRacingRoute,
+  AnalyticsStableRoute: AnalyticsStableRoute,
+  AnalyticsIndexRoute: AnalyticsIndexRoute,
+}
+
+const AnalyticsRouteWithChildren = AnalyticsRoute._addFileChildren(
+  AnalyticsRouteChildren,
+)
 
 interface AuctionRouteChildren {
   AuctionSaleIdRoute: typeof AuctionSaleIdRoute
@@ -885,6 +1018,7 @@ const StableRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnalyticsRoute: AnalyticsRouteWithChildren,
   AuctionRoute: AuctionRouteWithChildren,
   AwardsRoute: AwardsRoute,
   BreedingRoute: BreedingRoute,
@@ -918,12 +1052,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
