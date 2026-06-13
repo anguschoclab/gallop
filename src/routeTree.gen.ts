@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TestJockeyAvatarRouteImport } from './routes/test-jockey-avatar'
 import { Route as StartRouteImport } from './routes/start'
 import { Route as StallionsRouteImport } from './routes/stallions'
 import { Route as StaffRouteImport } from './routes/staff'
@@ -51,11 +50,6 @@ import { Route as JockeyJockeyIdRouteImport } from './routes/jockey.$jockeyId'
 import { Route as CalendarRegionIdRouteImport } from './routes/calendar.$regionId'
 import { Route as AuctionSaleIdRouteImport } from './routes/auction.$saleId'
 
-const TestJockeyAvatarRoute = TestJockeyAvatarRouteImport.update({
-  id: '/test-jockey-avatar',
-  path: '/test-jockey-avatar',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const StartRoute = StartRouteImport.update({
   id: '/start',
   path: '/start',
@@ -286,7 +280,6 @@ export interface FileRoutesByFullPath {
   '/staff': typeof StaffRoute
   '/stallions': typeof StallionsRoute
   '/start': typeof StartRoute
-  '/test-jockey-avatar': typeof TestJockeyAvatarRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
@@ -324,7 +317,6 @@ export interface FileRoutesByTo {
   '/staff': typeof StaffRoute
   '/stallions': typeof StallionsRoute
   '/start': typeof StartRoute
-  '/test-jockey-avatar': typeof TestJockeyAvatarRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
@@ -368,7 +360,6 @@ export interface FileRoutesById {
   '/staff': typeof StaffRoute
   '/stallions': typeof StallionsRoute
   '/start': typeof StartRoute
-  '/test-jockey-avatar': typeof TestJockeyAvatarRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
@@ -413,7 +404,6 @@ export interface FileRouteTypes {
     | '/staff'
     | '/stallions'
     | '/start'
-    | '/test-jockey-avatar'
     | '/auction/$saleId'
     | '/calendar/$regionId'
     | '/jockey/$jockeyId'
@@ -451,7 +441,6 @@ export interface FileRouteTypes {
     | '/staff'
     | '/stallions'
     | '/start'
-    | '/test-jockey-avatar'
     | '/auction/$saleId'
     | '/calendar/$regionId'
     | '/jockey/$jockeyId'
@@ -494,7 +483,6 @@ export interface FileRouteTypes {
     | '/staff'
     | '/stallions'
     | '/start'
-    | '/test-jockey-avatar'
     | '/auction/$saleId'
     | '/calendar/$regionId'
     | '/jockey/$jockeyId'
@@ -538,20 +526,12 @@ export interface RootRouteChildren {
   StaffRoute: typeof StaffRoute
   StallionsRoute: typeof StallionsRoute
   StartRoute: typeof StartRoute
-  TestJockeyAvatarRoute: typeof TestJockeyAvatarRoute
   JockeyJockeyIdRoute: typeof JockeyJockeyIdRoute
   RaceRaceIdRoute: typeof RaceRaceIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/test-jockey-avatar': {
-      id: '/test-jockey-avatar'
-      path: '/test-jockey-avatar'
-      fullPath: '/test-jockey-avatar'
-      preLoaderRoute: typeof TestJockeyAvatarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/start': {
       id: '/start'
       path: '/start'
@@ -932,7 +912,6 @@ const rootRouteChildren: RootRouteChildren = {
   StaffRoute: StaffRoute,
   StallionsRoute: StallionsRoute,
   StartRoute: StartRoute,
-  TestJockeyAvatarRoute: TestJockeyAvatarRoute,
   JockeyJockeyIdRoute: JockeyJockeyIdRoute,
   RaceRaceIdRoute: RaceRaceIdRoute,
 }
