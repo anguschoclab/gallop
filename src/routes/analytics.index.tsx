@@ -1,6 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useAnalyticsData } from "@/hooks/analytics/useAnalyticsData";
 import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import {
   AreaTrend,
   ChartCard,
   DeltaPill,
@@ -229,17 +238,6 @@ function EarningsVsSpendChart({
 }: {
   data: { x: number; income: number; expense: number }[];
 }) {
-  // Inline dual-area chart, kept here to avoid yet another primitive file.
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const {
-    Area,
-    AreaChart,
-    CartesianGrid,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis,
-  } = require("recharts") as typeof import("recharts");
   return (
     <ResponsiveContainer width="100%" height="100%">
       <AreaChart data={data} margin={{ top: 6, right: 8, bottom: 4, left: 0 }}>
