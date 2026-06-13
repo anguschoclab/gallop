@@ -36,6 +36,7 @@ import { Route as BroodmaresRouteImport } from './routes/broodmares'
 import { Route as BreedingRouteImport } from './routes/breeding'
 import { Route as AwardsRouteImport } from './routes/awards'
 import { Route as AuctionRouteImport } from './routes/auction'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StableIndexRouteImport } from './routes/stable.index'
 import { Route as SireWatchIndexRouteImport } from './routes/sire-watch.index'
@@ -185,6 +186,11 @@ const AuctionRoute = AuctionRouteImport.update({
   path: '/auction',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -253,6 +259,7 @@ const AuctionSaleIdRoute = AuctionSaleIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
   '/auction': typeof AuctionRouteWithChildren
   '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
@@ -295,6 +302,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
   '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
@@ -333,6 +341,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
   '/auction': typeof AuctionRouteWithChildren
   '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
@@ -377,6 +386,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/analytics'
     | '/auction'
     | '/awards'
     | '/breeding'
@@ -419,6 +429,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/analytics'
     | '/awards'
     | '/breeding'
     | '/broodmares'
@@ -456,6 +467,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/analytics'
     | '/auction'
     | '/awards'
     | '/breeding'
@@ -499,6 +511,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnalyticsRoute: typeof AnalyticsRoute
   AuctionRoute: typeof AuctionRouteWithChildren
   AwardsRoute: typeof AwardsRoute
   BreedingRoute: typeof BreedingRoute
@@ -721,6 +734,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuctionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -885,6 +905,7 @@ const StableRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnalyticsRoute: AnalyticsRoute,
   AuctionRoute: AuctionRouteWithChildren,
   AwardsRoute: AwardsRoute,
   BreedingRoute: BreedingRoute,
