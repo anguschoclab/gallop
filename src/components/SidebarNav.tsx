@@ -41,6 +41,7 @@ const navSections = [
     items: [
       { to: "/", label: "Dashboard", icon: Home, exact: true },
       { to: "/inbox", label: "Inbox", icon: Bell, exact: false },
+      { to: "/analytics", label: "Analytics", icon: BarChart3, exact: false },
       { to: "/financial-report", label: "Finances", icon: DollarSign, exact: false },
       { to: "/facilities", label: "Facilities", icon: Building2, exact: false },
       { to: "/gazette", label: "Gazette", icon: Star, exact: false },
