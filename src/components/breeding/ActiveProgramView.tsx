@@ -2,6 +2,7 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { useMemo } from "react";
 import { cn } from "@/lib/cn";
 import { ALL_ARCHETYPES } from "@/core/breeding/archetypes";
 import { calculateGeneticDistance } from "@/core/breeding/programs";
@@ -26,6 +27,11 @@ export function ActiveProgramView() {
 
   const archetype = ALL_ARCHETYPES.find((a) => a.id === program.archetypeId);
   const meta = archetypeMeta(program.archetypeId);
+
+  // ⚡ Bolt Optimization:
+  // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loops.
+  // Impact: Reduces rendering complexity from O(N*M) to O(N+M) avoiding UI jank.
+  const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
 
   const eligibleMares = horses.filter(
     (h) =>
@@ -221,7 +227,7 @@ export function ActiveProgramView() {
                 .reverse()
                 .slice(0, 6)
                 .map((entry, i) => {
-                  const horse = horses.find((h) => h.id === entry.horseId);
+                  const horse = horseMap.get(entry.horseId);
                   return (
                     <div
                       key={i}

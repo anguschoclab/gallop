@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useMemo } from "react";
 import { Truck, Plane, Train, X, CheckCircle, Clock } from "lucide-react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import {
@@ -27,6 +28,11 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
   const horses = useGameWithShallow((s) => s.horses);
   const day = useGame((s) => s.day);
   const cancelTransport = useGame((s) => s.cancelTransport);
+
+  // ⚡ Bolt Optimization:
+  // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loops.
+  // Impact: Reduces rendering complexity from O(N*M) to O(N+M) avoiding UI jank.
+  const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
 
   // Filter transports - if horseId provided, only show that horse's transports
   const filteredTransports = horseId ? transports.filter((t) => t.horseId === horseId) : transports;
@@ -97,7 +103,7 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
       </CardHeader>
       <CardContent className="space-y-3">
         {filteredTransports.map((transport) => {
-          const horse = horses.find((h) => h.id === transport.horseId);
+          const horse = horseMap.get(transport.horseId);
           const daysUntilArrival = transport.arrivalDay - day;
           const isPastDue = daysUntilArrival < 0;
 
