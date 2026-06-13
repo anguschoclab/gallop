@@ -25,6 +25,7 @@ import {
   Map,
   Clock,
   LayoutGrid,
+  BarChart3,
   Star,
   Bell,
 } from "lucide-react";
