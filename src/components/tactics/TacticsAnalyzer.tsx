@@ -91,6 +91,8 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
               return (
                 <button
                   key={style.value}
+                  type="button"
+                  aria-pressed={instructions.ridingStyle === style.value}
                   onClick={() => setInstructions({ ...instructions, ridingStyle: style.value })}
                   className={cn(
                     "p-2 border rounded-sm flex items-center gap-2 transition-all",
@@ -119,6 +121,8 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
             {earlyPositions.map((pos) => (
               <button
                 key={pos.value}
+                type="button"
+                aria-pressed={instructions.earlyPosition === pos.value}
                 onClick={() => setInstructions({ ...instructions, earlyPosition: pos.value })}
                 className={cn(
                   "p-1.5 border rounded-sm text-[9px] font-black uppercase transition-all",
@@ -145,6 +149,8 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
             {moveTimings.map((timing) => (
               <button
                 key={timing.value}
+                type="button"
+                aria-pressed={instructions.moveTiming === timing.value}
                 onClick={() => setInstructions({ ...instructions, moveTiming: timing.value })}
                 className={cn(
                   "p-1.5 border rounded-sm text-[9px] font-black uppercase transition-all",

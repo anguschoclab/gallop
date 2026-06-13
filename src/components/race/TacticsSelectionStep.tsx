@@ -16,6 +16,8 @@ export function TacticsSelectionStep({ selectedPreset, onSelect }: Props) {
         {INSTRUCTION_PRESETS.map((opt) => (
           <button
             key={opt.id}
+            type="button"
+            aria-pressed={selectedPreset === opt.id}
             onClick={() => onSelect(opt.id)}
             className={`flex flex-col p-3 rounded-lg border text-left transition-all ${
               selectedPreset === opt.id

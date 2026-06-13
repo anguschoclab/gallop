@@ -1,0 +1,3 @@
+## 2024-06-13 - Custom Interactive Element Accessibility
+**Learning:** Found multiple instances where raw `<button>` elements were used for toggles, tabs, and selectors (e.g. in TacticsAnalyzer, RosterFilterBar) without explicit `type="button"` or state indicators like `aria-pressed`. This can cause unintentional form submissions if embedded and breaks screen reader understanding of selection states.
+**Action:** When creating custom `<button>` elements that act as selectors or toggles rather than standard actions, always ensure they have `type="button"` and an `aria-pressed={isActive}` property to properly communicate state.
