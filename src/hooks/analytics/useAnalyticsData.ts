@@ -5,6 +5,7 @@
 import { useMemo } from "react";
 import { useGame } from "@/game/store";
 import type { CashFlowEntry } from "@/core/financial/financialTypes";
+import { getCareerStats } from "@/core/horse/stats";
 
 export function useAnalyticsData() {
   const day = useGame((s) => s.day);
@@ -82,7 +83,7 @@ export function useAnalyticsData() {
 
     // Per-horse ROI (career-ish proxy): earnings vs expenses captured per horse
     const horseRoi = owned.map((h) => {
-      const earnings = h.earnings ?? 0;
+      const earnings = getCareerStats(h).earnings;
       const expense = transactions
         .filter((t) => t.horseId === h.id && t.amount < 0)
         .reduce((s, t) => s + -t.amount, 0);
