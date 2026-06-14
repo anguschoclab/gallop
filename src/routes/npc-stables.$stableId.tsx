@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Globe, Briefcase } from "lucide-react";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/core/common/formatting";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
