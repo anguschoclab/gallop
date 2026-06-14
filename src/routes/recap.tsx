@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { BeyerBadge } from "@/components/race/BeyerBadge";
 import { SectionalTimingTable } from "@/components/race/SectionalTimingTable";
 import { PaceGraph } from "@/components/race/PaceGraph";
-import { JockeyReportPanel } from "@/components/race/JockeyReportPanel";
 import { calculateBeyerForResult } from "@/core/race/beyer";
 import { gradeColor } from "@/core/common/uiTokens";
 import { calculateClassBonus } from "@/core/common/classBonus";
