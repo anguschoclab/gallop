@@ -185,7 +185,15 @@ function StablePage() {
           )}
         </div>
 
-        <TabsContent value="roster" className="mt-0">
+        <TabsContent value="roster" className="mt-0 space-y-3">
+          <PaceTendencyFilter
+            tendency={tendency}
+            onTendency={(t) => navigate({ search: (prev: any) => ({ ...prev, tendency: t }) })}
+            distance={trip}
+            onDistance={(d) => navigate({ search: (prev: any) => ({ ...prev, trip: d }) })}
+            surface={surface}
+            onSurface={(s) => navigate({ search: (prev: any) => ({ ...prev, surface: s }) })}
+          />
           <StableRosterView
             horses={filteredMyHorses}
             status={status}
