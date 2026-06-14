@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { PaceGraph } from "@/components/race/PaceGraph";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
+import type { SectionalSplit } from "@/core/race/types";
 import { generateJockeyFeedback } from "@/core/race/jockeyFeedback";
 import { formatCurrency } from "@/core/common/formatting";
 import { Trophy, ChevronRight } from "lucide-react";
