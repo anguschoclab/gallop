@@ -9,6 +9,7 @@ import { useLiveRaceSimulation } from "@/hooks/race/useLiveRaceSimulation";
 import { ResultOverlay } from "@/components/race/ResultOverlay";
 import { SectionalTimingTable } from "@/components/race/SectionalTimingTable";
 import { PaceGraph } from "@/components/race/PaceGraph";
+import { JockeyReportPanel } from "@/components/race/JockeyReportPanel";
 import { RaceControlBar } from "@/components/race/RaceControlBar";
 import { Track } from "@/components/race/Track";
 import { LiveSplitsTable } from "@/components/race/LiveSplitsTable";
