@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Globe, Briefcase } from "lucide-react";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/core/common/formatting";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -81,7 +82,14 @@ function NpcStableDetailPage() {
           </div>
         </div>
 
-        <div className="flex flex-col items-end gap-1">
+        <div className="flex flex-col items-end gap-2">
+          <BookmarkButton
+            type="stable"
+            id={stable.id}
+            label={stable.name}
+            subtitle={`${stable.country} · ${stable.personality}`}
+            variant="full"
+          />
           <div className="text-[10px] font-mono text-cream/20 uppercase tracking-widest">
             Liquid_Capital
           </div>

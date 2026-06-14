@@ -34,6 +34,7 @@ import { Route as FacilitiesRouteImport } from './routes/facilities'
 import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as BroodmaresRouteImport } from './routes/broodmares'
 import { Route as BreedingRouteImport } from './routes/breeding'
+import { Route as BookmarksRouteImport } from './routes/bookmarks'
 import { Route as AwardsRouteImport } from './routes/awards'
 import { Route as AuctionRouteImport } from './routes/auction'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
@@ -181,6 +182,11 @@ const BreedingRoute = BreedingRouteImport.update({
   path: '/breeding',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BookmarksRoute = BookmarksRouteImport.update({
+  id: '/bookmarks',
+  path: '/bookmarks',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AwardsRoute = AwardsRouteImport.update({
   id: '/awards',
   path: '/awards',
@@ -292,6 +298,7 @@ export interface FileRoutesByFullPath {
   '/analytics': typeof AnalyticsRouteWithChildren
   '/auction': typeof AuctionRouteWithChildren
   '/awards': typeof AwardsRoute
+  '/bookmarks': typeof BookmarksRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
   '/calendar': typeof CalendarRouteWithChildren
@@ -338,6 +345,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/awards': typeof AwardsRoute
+  '/bookmarks': typeof BookmarksRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
   '/facilities': typeof FacilitiesRoute
@@ -383,6 +391,7 @@ export interface FileRoutesById {
   '/analytics': typeof AnalyticsRouteWithChildren
   '/auction': typeof AuctionRouteWithChildren
   '/awards': typeof AwardsRoute
+  '/bookmarks': typeof BookmarksRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
   '/calendar': typeof CalendarRouteWithChildren
@@ -433,6 +442,7 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/auction'
     | '/awards'
+    | '/bookmarks'
     | '/breeding'
     | '/broodmares'
     | '/calendar'
@@ -479,6 +489,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/awards'
+    | '/bookmarks'
     | '/breeding'
     | '/broodmares'
     | '/facilities'
@@ -523,6 +534,7 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/auction'
     | '/awards'
+    | '/bookmarks'
     | '/breeding'
     | '/broodmares'
     | '/calendar'
@@ -572,6 +584,7 @@ export interface RootRouteChildren {
   AnalyticsRoute: typeof AnalyticsRouteWithChildren
   AuctionRoute: typeof AuctionRouteWithChildren
   AwardsRoute: typeof AwardsRoute
+  BookmarksRoute: typeof BookmarksRoute
   BreedingRoute: typeof BreedingRoute
   BroodmaresRoute: typeof BroodmaresRoute
   CalendarRoute: typeof CalendarRouteWithChildren
@@ -776,6 +789,13 @@ declare module '@tanstack/react-router' {
       path: '/breeding'
       fullPath: '/breeding'
       preLoaderRoute: typeof BreedingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bookmarks': {
+      id: '/bookmarks'
+      path: '/bookmarks'
+      fullPath: '/bookmarks'
+      preLoaderRoute: typeof BookmarksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/awards': {
@@ -1021,6 +1041,7 @@ const rootRouteChildren: RootRouteChildren = {
   AnalyticsRoute: AnalyticsRouteWithChildren,
   AuctionRoute: AuctionRouteWithChildren,
   AwardsRoute: AwardsRoute,
+  BookmarksRoute: BookmarksRoute,
   BreedingRoute: BreedingRoute,
   BroodmaresRoute: BroodmaresRoute,
   CalendarRoute: CalendarRouteWithChildren,

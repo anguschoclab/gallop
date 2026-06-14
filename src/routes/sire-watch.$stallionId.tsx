@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Trophy, TrendingUp, Zap } from "lucide-react";
 import { getSireAnalytics, type SireClassification } from "@/core/breeding/sireAnalytics";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 
 export const Route = createFileRoute("/sire-watch/$stallionId")({
   component: SireProfilePage,
@@ -61,10 +62,19 @@ function SireProfilePage() {
 
   return (
     <div className="space-y-6">
-      <Button variant="ghost" size="sm" onClick={() => window.history.back()}>
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Back
-      </Button>
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" size="sm" onClick={() => window.history.back()}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back
+        </Button>
+        <BookmarkButton
+          type="sire"
+          id={stallion.id}
+          label={stallion.name}
+          subtitle={`Sire · ${analytics.classification}`}
+          variant="full"
+        />
+      </div>
 
       <Card>
         <CardHeader>

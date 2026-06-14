@@ -14,6 +14,7 @@ import { LiveSplitsTable } from "@/components/race/LiveSplitsTable";
 import { Leaderboard } from "@/components/race/Leaderboard";
 import { RaceFieldDialog } from "@/components/race/RaceFieldDialog";
 import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { useRacePageData } from "@/hooks/race/useRacePageData";
 import { useRaceUIState } from "@/hooks/race/useRaceUIState";
 
@@ -156,6 +157,15 @@ function LiveRace() {
         onToggleHideResults={() => setHideUntilAllFinished((v: boolean) => !v)}
         onShowAllCards={() => setShowAllCards(true)}
       />
+
+      <div className="absolute top-2 right-2 z-30">
+        <BookmarkButton
+          type="race"
+          id={race.id}
+          label={race.name}
+          subtitle={`${race.graded ? "Graded" : "Race"} · ${race.surface ?? ""}`.trim()}
+        />
+      </div>
 
       {/* Weather Forecast Strip */}
       <div className="relative z-10 px-4">

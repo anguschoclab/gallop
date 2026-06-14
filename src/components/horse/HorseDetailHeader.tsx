@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { SilkDot } from "@/components/SilkDot";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { ShieldCheck, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -40,9 +41,18 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
               </Badge>
             )}
           </div>
-          <h1 className="text-5xl font-black tracking-tighter text-cream font-[family-name:var(--font-display)] uppercase">
-            {horse.name}
-          </h1>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-5xl font-black tracking-tighter text-cream font-[family-name:var(--font-display)] uppercase">
+              {horse.name}
+            </h1>
+            <BookmarkButton
+              type="horse"
+              id={horse.id}
+              label={horse.name}
+              subtitle={`Age ${Math.floor(horse.age)} · ${horse.gender}`}
+              variant="full"
+            />
+          </div>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2">
             <div className="space-y-0.5">
               <span className="block text-[9px] uppercase font-black tracking-widest text-cream/20 leading-none">

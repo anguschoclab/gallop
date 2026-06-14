@@ -26,6 +26,7 @@ import {
   Clock,
   LayoutGrid,
   BarChart3,
+  Bookmark,
   Star,
   Bell,
 } from "lucide-react";
@@ -41,6 +42,7 @@ const navSections = [
     items: [
       { to: "/", label: "Dashboard", icon: Home, exact: true },
       { to: "/inbox", label: "Inbox", icon: Bell, exact: false },
+      { to: "/bookmarks", label: "Bookmarks", icon: Bookmark, exact: false },
       { to: "/analytics", label: "Analytics", icon: BarChart3, exact: false },
       { to: "/financial-report", label: "Finances", icon: DollarSign, exact: false },
       { to: "/facilities", label: "Facilities", icon: Building2, exact: false },
