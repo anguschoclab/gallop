@@ -75,6 +75,15 @@ export function JockeyCard({
     >
       <div className="absolute top-0 left-0 w-full h-1 bg-blue-500/20 group-hover:bg-blue-500 transition-colors z-10" />
 
+      <div className="absolute top-2 right-2 z-20">
+        <BookmarkButton
+          type="jockey"
+          id={jockey.id}
+          label={jockey.name}
+          subtitle={(jockey as any).isApprentice ? "Apprentice" : "Jockey"}
+        />
+      </div>
+
       <CardHeader className="p-5 border-b border-white/5 bg-black/40">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-4 min-w-0">
