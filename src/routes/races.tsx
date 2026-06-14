@@ -8,6 +8,7 @@ import { GradeBreakdown } from "@/components/race/GradeBreakdown";
 import { RaceEntry } from "@/components/race/RaceEntry";
 import { RaceFilterPanel } from "@/components/race/RaceFilterPanel";
 import { RaceFeed } from "@/components/race/RaceFeed";
+import { RaceQuickFilters } from "@/components/race/RaceQuickFilters";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { useRaceFilters, type RaceFilters } from "@/hooks/race/useRaceFilters";
 import { useState } from "react";
@@ -23,6 +24,10 @@ export const Route = createFileRoute("/races")({
     owned: (search.owned as string) || "all",
     q: (search.q as string) || "",
     stableId: (search.stableId as string) || undefined,
+    window: (search.window as string) || "all",
+    trip: (search.trip as string) || "all",
+    eligibleOnly: (search.eligibleOnly as string) || undefined,
+    openOnly: (search.openOnly as string) || undefined,
   }),
   component: RacesPage,
 });
