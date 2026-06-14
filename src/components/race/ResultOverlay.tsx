@@ -152,6 +152,24 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                   );
                 })}
               </div>
+
+              {race.sectionalSplits && race.sectionalSplits.length > 0 && (
+                <div className="pt-4 border-t border-white/5 space-y-3">
+                  <div className="text-[10px] font-black uppercase text-gold/40 tracking-[0.3em]">
+                    Pace / Position Graph
+                  </div>
+                  <PaceGraph
+                    splits={race.sectionalSplits}
+                    runners={ordered.map((r) => ({
+                      horseId: r.horseId,
+                      name: r.name,
+                      silk: r.silk,
+                      owned: r.owned,
+                    }))}
+                    distance={race.distance}
+                  />
+                </div>
+              )}
             </>
           )}
         </div>
