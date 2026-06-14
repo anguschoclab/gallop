@@ -12,8 +12,13 @@ import { cn } from "@/lib/cn";
  * Props for the ResultOverlay component.
  */
 interface ResultOverlayProps {
-  /** The race metadata (name, purse). */
-  race: { name: string; purse: number };
+  /** The race metadata (name, purse, optional sectionals/distance). */
+  race: {
+    name: string;
+    purse: number;
+    sectionalSplits?: SectionalSplit[];
+    distance?: number;
+  };
   /** List of runners with their finish times and details. */
   runners: Runner[];
   /** Callback to close the overlay. */
