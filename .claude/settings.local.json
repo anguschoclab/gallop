@@ -103,7 +103,10 @@
       "Skill(superpowers:brainstorming)",
       "Skill(verify-spec)",
       "Bash(grep -E \"\\\\.ts$|\\\\.tsx$\")",
-      "Bash(cat /Users/amauricia/Documents/GitHub/gallop/src/routes/race.\\\\$raceId.tsx | grep -A 20 \"SectionalTimingTable\\\\|PaceGraph\\\\|LiveSplitsTable\" | head -60)"
+      "Bash(cat /Users/amauricia/Documents/GitHub/gallop/src/routes/race.\\\\$raceId.tsx | grep -A 20 \"SectionalTimingTable\\\\|PaceGraph\\\\|LiveSplitsTable\" | head -60)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(cd /Users/amauricia/Documents/GitHub/gallop; echo \"=== race.\\\\$raceId.tsx wiring ===\"; grep -n \"SpeedBreakdown\\\\|SectionalTimingTable\\\\|snapshots\" src/routes/race.\\\\$raceId.tsx; echo; echo \"=== ResultOverlay wiring ===\"; grep -n \"SpeedBreakdown\\\\|SectionalTimingTable\" src/components/race/ResultOverlay.tsx; echo; echo \"=== recap.tsx wiring ===\"; grep -n \"SpeedBreakdown\" src/routes/recap.tsx; echo; echo \"=== SpeedBreakdownTable head ===\"; sed -n '1,30p' src/components/race/SpeedBreakdownTable.tsx)",
+      "mcp__Claude_Preview__preview_start"
     ]
   },
   "hooks": {
