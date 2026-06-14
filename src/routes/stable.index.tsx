@@ -33,7 +33,7 @@ export const Route = createFileRoute("/stable/")({
 });
 
 function StablePage() {
-  const { tab, status, rivalQ, rivalTier, view } = Route.useSearch();
+  const { tab, status, rivalQ, rivalTier, view, tendency, trip, surface } = Route.useSearch();
   const navigate = Route.useNavigate();
   const horses = useHorses();
   const awards = useAwards();
@@ -58,8 +58,13 @@ function StablePage() {
     else if (status === "auctioned") result = myHorses.filter((h) => !!h.consignedSaleId);
     else if (status === "active")
       result = myHorses.filter((h) => h.lifecycleStatus === "active" && !h.consignedSaleId);
+    if (tendency !== "any") {
+      result = result.filter((h) =>
+        matchesTendency(h, tendency, { distance: trip, surface }),
+      );
+    }
     return result.sort((a, b) => overall(b) - overall(a));
-  }, [myHorses, status]);
+  }, [myHorses, status, tendency, trip, surface]);
 
   const horseCountsByStable = useMemo(() => {
     const counts = new Map<string, number>();
