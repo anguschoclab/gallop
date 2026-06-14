@@ -39,12 +39,21 @@ function JockeyPage() {
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto p-4 md:p-6 animate-in fade-in duration-500">
-      <Link to="/jockeys">
-        <Button variant="ghost" size="sm" className="mb-4 text-cream-muted hover:text-cream">
-          <ChevronLeft className="h-4 w-4 mr-2" />
-          Back to Roster
-        </Button>
-      </Link>
+      <div className="flex items-center justify-between mb-4">
+        <Link to="/jockeys">
+          <Button variant="ghost" size="sm" className="text-cream-muted hover:text-cream">
+            <ChevronLeft className="h-4 w-4 mr-2" />
+            Back to Roster
+          </Button>
+        </Link>
+        <BookmarkButton
+          type="jockey"
+          id={jockey.id}
+          label={jockey.name}
+          subtitle={isApprentice ? "Apprentice" : "Jockey"}
+          variant="full"
+        />
+      </div>
 
       <div className="flex justify-center">
         <div className="w-full max-w-md">
