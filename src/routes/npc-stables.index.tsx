@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { useNpcStablesFilters } from "@/hooks/stable/useNpcStablesFilters";
 import { getReputationStars } from "@/core/stable/uiHelpers";
 import { stableTierColor } from "@/core/common/uiTokens";
