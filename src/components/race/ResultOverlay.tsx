@@ -40,7 +40,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
 
   return (
     <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
-      <div className="bg-slate-900 border-2 border-gold/20 shadow-[0_0_50px_rgba(0,0,0,0.8)] max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-slate-900 border-2 border-gold/20 shadow-[0_0_50px_rgba(0,0,0,0.8)] max-w-3xl w-full overflow-hidden flex flex-col max-h-[90vh]">
         <div className="p-6 bg-black/40 border-b border-white/5 flex items-center justify-between">
           <div className="space-y-1">
             <div className="text-[10px] font-black uppercase text-gold/40 tracking-[0.3em]">
