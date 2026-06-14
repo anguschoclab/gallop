@@ -26,6 +26,7 @@ import {
   Clock,
   LayoutGrid,
   BarChart3,
+  Bookmark,
   Star,
   Bell,
 } from "lucide-react";
