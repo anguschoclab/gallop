@@ -45,13 +45,34 @@ function RacesPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [enteringRace, setEnteringRace] = useState<Race | null>(null);
 
-  const { filteredRaces, countries, tracks } = useRaceFilters(races, day, filters);
+  const { filteredRaces, countries, tracks } = useRaceFilters(races, day, filters, horses);
 
   const updateFilter = (key: keyof RaceFilters, value: string) => {
     navigate({
       search: (prev: RaceFilters) => ({ ...prev, [key]: value }),
     });
   };
+
+  const patchFilters = (patch: Partial<RaceFilters>) => {
+    navigate({ search: (prev: RaceFilters) => ({ ...prev, ...patch }) });
+  };
+
+  const resetAll = () =>
+    navigate({
+      search: {
+        grade: "all",
+        country: "all",
+        surface: "all",
+        track: "all",
+        owned: "all",
+        q: "",
+        stableId: undefined,
+        window: "all",
+        trip: "all",
+        eligibleOnly: undefined,
+        openOnly: undefined,
+      },
+    });
 
   return (
     <div className="space-y-6 pb-20 animate-fade-in">
