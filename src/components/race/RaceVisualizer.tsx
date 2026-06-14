@@ -68,8 +68,18 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
     toggleSpeed,
     toggleCamera,
   } = useRaceReplay(duration, onComplete);
-  const playerHorseId = useMemo(() => runners.find((r) => r.owned)?.horseId, [runners]);
-  const runnerMap = useMemo(() => new Map(runners.map((r) => [r.horseId, r])), [runners]);
+  // ⚡ Bolt: Iterate array once to conditionally assign player horse and build map
+  // Reduces two O(N) operations (.find and .map for Map) into a single O(N) traversal.
+  const { playerHorseId, runnerMap } = useMemo(() => {
+    let playerId: string | undefined;
+    const map = new Map<string, RunnerInfo>();
+    for (let i = 0; i < runners.length; i++) {
+      const r = runners[i];
+      if (r.owned && playerId === undefined) playerId = r.horseId;
+      map.set(r.horseId, r);
+    }
+    return { playerHorseId: playerId, runnerMap: map };
+  }, [runners]);
 
   // Build the static background (track, lanes, furlong markers without offset) once per
   // size/track/distance change. The dynamic offset is only applied to the finish line and

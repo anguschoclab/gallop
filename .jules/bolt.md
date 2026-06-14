@@ -27,3 +27,7 @@
 
 **Learning:** When searching for an item within an array in a render loop with multiple conditions (like `fromStableId === undefined && status === 'pending'`), using `array.find()` inside `.map()` is O(N^2).
 **Action:** Instead of just `new Map(arr.map(x => [x.id, x]))`, you can iterate the array once inside `useMemo` and conditionally `map.set()` the matched items by their target key (e.g., `horseId`). This allows O(1) conditional lookup inside the render loop without modifying global state or storing unneeded entries in the map.
+
+## 2026-06-14 - [O(N) Render Loop Optimization]
+**Learning:** Found multiple `O(N)` loops (`.find` and `.reduce`) iterating over the `runners` array inside `src/components/race/Track.tsx`. Because `Track.tsx` executes and recalculates per-frame during race simulations via requestAnimationFrame tick, these redundant loop allocations created compounding performance costs.
+**Action:** Combined multiple array iterations (`.find()` for target position, `.reduce()` for leader position) into a single, pre-allocated `for` loop within the render path to reduce loop overhead from `O(2N)` to `O(N)`. Next time, consider identifying component re-renders that occur on frequent game ticks and merging array iterations where possible.

@@ -31,18 +31,26 @@ export function Track({
   const trackBg = getTrackBackground(surface);
   const viewportWidth = distance * 0.6;
 
-  const cameraPos = (() => {
-    if (followTarget) {
-      const target = runners.find((r) => r.horseId === followTarget);
-      if (target) {
-        return Math.max(0, Math.min(distance - viewportWidth, target.position - viewportWidth / 2));
-      }
+  // ⚡ Bolt: Single pass over runners to find target position and leader position
+  // Reduces O(2N) array iterations to O(N) in a highly frequent render path (called per tick)
+  let targetPos: number | null = null;
+  let leaderPos = 0;
+  for (let i = 0; i < runners.length; i++) {
+    const r = runners[i];
+    if (followTarget && r.horseId === followTarget) {
+      targetPos = r.position;
     }
-    const leader = runners.reduce((max, r) => (r.position > max.position ? r : max), runners[0]);
-    return Math.max(0, Math.min(distance - viewportWidth, leader.position - viewportWidth / 2));
-  })();
+    if (r.position > leaderPos) {
+      leaderPos = r.position;
+    }
+  }
 
-  const leaderPos = runners.reduce((max, r) => Math.max(max, r.position), 0);
+  const cameraPos = (() => {
+    if (targetPos !== null) {
+      return Math.max(0, Math.min(distance - viewportWidth, targetPos - viewportWidth / 2));
+    }
+    return Math.max(0, Math.min(distance - viewportWidth, leaderPos - viewportWidth / 2));
+  })();
   const finishActive = leaderPos > distance - 100 && leaderPos < distance;
   const trackOffset = -(cameraPos % 512);
 
