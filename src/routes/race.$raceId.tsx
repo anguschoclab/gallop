@@ -14,6 +14,7 @@ import { LiveSplitsTable } from "@/components/race/LiveSplitsTable";
 import { Leaderboard } from "@/components/race/Leaderboard";
 import { RaceFieldDialog } from "@/components/race/RaceFieldDialog";
 import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { useRacePageData } from "@/hooks/race/useRacePageData";
 import { useRaceUIState } from "@/hooks/race/useRaceUIState";
 
