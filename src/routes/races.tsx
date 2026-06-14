@@ -125,6 +125,13 @@ function RacesPage() {
         </div>
       </div>
 
+      <RaceQuickFilters
+        filters={filters}
+        onPatch={patchFilters}
+        onReset={resetAll}
+        matchCount={filteredRaces.length}
+      />
+
       <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 items-start">
         <RaceFilterPanel
           q={q}
@@ -136,19 +143,7 @@ function RacesPage() {
           owned={owned}
           onOwnedChange={(v) => updateFilter("owned", v)}
           countries={countries}
-          onReset={() =>
-            navigate({
-              search: {
-                grade: "all",
-                country: "all",
-                surface: "all",
-                track: "all",
-                owned: "all",
-                q: "",
-                stableId: undefined,
-              },
-            })
-          }
+          onReset={resetAll}
         />
 
         <RaceFeed
