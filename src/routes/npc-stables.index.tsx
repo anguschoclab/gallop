@@ -233,5 +233,6 @@ function StableCard({ stable }: { stable: any }) {
         </CardContent>
       </Card>
     </Link>
+    </div>
   );
 }
