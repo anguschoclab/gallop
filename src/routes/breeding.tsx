@@ -138,6 +138,10 @@ function BreedingPage() {
           <BreedingHistoryTab pageData={pageData} />
         </TabsContent>
 
+        <TabsContent value="bred" className="space-y-4">
+          <BredHorsesTab />
+        </TabsContent>
+
         <TabsContent value="pedigree" className="space-y-4">
           <BreedingPedigreeTab pageData={pageData} />
         </TabsContent>
