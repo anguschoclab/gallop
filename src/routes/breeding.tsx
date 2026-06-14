@@ -22,6 +22,7 @@ import { BreedingShedTab } from "@/components/breeding/BreedingShedTab";
 import { BroodmaresTab } from "@/components/breeding/BroodmaresTab";
 import { BreedingHistoryTab } from "@/components/breeding/BreedingHistoryTab";
 import { BreedingPedigreeTab } from "@/components/breeding/BreedingPedigreeTab";
+import { BredHorsesTab } from "@/components/breeding/BredHorsesTab";
 
 export const Route = createFileRoute("/breeding")({
   component: BreedingPage,
@@ -111,6 +112,10 @@ function BreedingPage() {
             <FileText className="h-4 w-4" />
             History
           </TabsTrigger>
+          <TabsTrigger value="bred" className="gap-2">
+            <Baby className="h-4 w-4" />
+            Bred Horses
+          </TabsTrigger>
           <TabsTrigger value="pedigree" className="gap-2">
             <GitBranch className="h-4 w-4" />
             Pedigree
@@ -131,6 +136,10 @@ function BreedingPage() {
 
         <TabsContent value="history" className="space-y-4">
           <BreedingHistoryTab pageData={pageData} />
+        </TabsContent>
+
+        <TabsContent value="bred" className="space-y-4">
+          <BredHorsesTab />
         </TabsContent>
 
         <TabsContent value="pedigree" className="space-y-4">
