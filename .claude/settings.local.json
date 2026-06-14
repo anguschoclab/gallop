@@ -102,7 +102,8 @@
       "Bash(node *)",
       "Skill(superpowers:brainstorming)",
       "Skill(verify-spec)",
-      "Bash(grep -E \"\\\\.ts$|\\\\.tsx$\")"
+      "Bash(grep -E \"\\\\.ts$|\\\\.tsx$\")",
+      "Bash(cat /Users/amauricia/Documents/GitHub/gallop/src/routes/race.\\\\$raceId.tsx | grep -A 20 \"SectionalTimingTable\\\\|PaceGraph\\\\|LiveSplitsTable\" | head -60)"
     ]
   },
   "hooks": {

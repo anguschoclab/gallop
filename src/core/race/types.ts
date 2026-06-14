@@ -128,6 +128,8 @@ export type SectionalEntry = {
   cumulativeTime: number; // seconds from gate to this marker
   rank: number; // field position at this marker (1 = leading)
   velocityMs: number; // average m/s during this segment
+  avgSeekContribution?: number;
+  avgSpurtContribution?: number;
 };
 
 export type SectionalSplit = {

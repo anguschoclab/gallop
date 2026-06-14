@@ -9,6 +9,8 @@ import { useLiveRaceSimulation } from "@/hooks/race/useLiveRaceSimulation";
 import { ResultOverlay } from "@/components/race/ResultOverlay";
 import { SectionalTimingTable } from "@/components/race/SectionalTimingTable";
 import { PaceGraph } from "@/components/race/PaceGraph";
+import { SpeedBreakdownTable } from "@/components/race/SpeedBreakdownTable";
+import { SpeedBreakdownChart } from "@/components/race/SpeedBreakdownChart";
 import { JockeyReportPanel } from "@/components/race/JockeyReportPanel";
 import { RaceControlBar } from "@/components/race/RaceControlBar";
 import { Track } from "@/components/race/Track";
@@ -263,6 +265,41 @@ function LiveRace() {
                       distance={race.distance}
                     />
                   </div>
+                  {race.snapshots && race.snapshots.length > 0 && (
+                    <>
+                      <div>
+                        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-3">
+                          <span className="h-1 w-12 bg-broadcast-accent" />
+                          Speed Breakdown
+                        </h3>
+                        <SpeedBreakdownChart
+                          snapshots={race.snapshots}
+                          runners={runners.map((r) => ({
+                            horseId: r.horseId,
+                            name: r.name,
+                            silk: r.silk,
+                            owned: r.owned,
+                          }))}
+                          distance={race.distance}
+                        />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-3">
+                          <span className="h-1 w-12 bg-broadcast-accent" />
+                          Per-Runner Breakdown
+                        </h3>
+                        <SpeedBreakdownTable
+                          splits={race.sectionalSplits}
+                          runners={runners.map((r) => ({
+                            horseId: r.horseId,
+                            name: r.name,
+                            silk: r.silk,
+                            owned: r.owned,
+                          }))}
+                        />
+                      </div>
+                    </>
+                  )}
                   {runners.some((r) => r.owned && r.finishTime !== null) && (
                     <JockeyReportPanel
                       runners={runners}

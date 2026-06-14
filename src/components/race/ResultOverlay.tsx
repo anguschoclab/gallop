@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { PaceGraph } from "@/components/race/PaceGraph";
+import { SpeedBreakdownChart } from "@/components/race/SpeedBreakdownChart";
 import { JockeyReportPanel } from "@/components/race/JockeyReportPanel";
+import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { SectionalSplit } from "@/core/race/types";
 import { generateJockeyFeedback } from "@/core/race/jockeyFeedback";
@@ -19,6 +21,7 @@ interface ResultOverlayProps {
     purse: number;
     sectionalSplits?: SectionalSplit[];
     distance?: number;
+    snapshots?: RaceSnapshot[];
   };
   /** List of runners with their finish times and details. */
   runners: Runner[];
@@ -169,6 +172,18 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                     }))}
                     distance={race.distance}
                   />
+                  {race.snapshots && race.snapshots.length > 0 && (
+                    <SpeedBreakdownChart
+                      snapshots={race.snapshots}
+                      runners={ordered.map((r) => ({
+                        horseId: r.horseId,
+                        name: r.name,
+                        silk: r.silk,
+                        owned: r.owned,
+                      }))}
+                      distance={race.distance ?? 0}
+                    />
+                  )}
                 </div>
               )}
 

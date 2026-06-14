@@ -17,6 +17,8 @@ export interface HorseSnapshot {
   position: number;
   lane: number;
   velocity: number;
+  seekContribution?: number;
+  spurtContribution?: number;
 }
 
 /**

@@ -45,6 +45,57 @@ export function interpolateTimeAtDistance(
   return null;
 }
 
+type SegmentAccumulator = {
+  seekSum: number;
+  spurtSum: number;
+  count: number;
+};
+
+function computeSegmentAverages(
+  snapshots: RaceSnapshot[],
+  raceDistanceMeters: number,
+  horseIds: string[],
+  markers: number[],
+): Map<string, SegmentAccumulator[]> {
+  const result = new Map<string, SegmentAccumulator[]>();
+  for (const id of horseIds) {
+    const segs: SegmentAccumulator[] = [];
+    for (let i = 0; i < markers.length; i++) {
+      segs.push({ seekSum: 0, spurtSum: 0, count: 0 });
+    }
+    result.set(id, segs);
+  }
+
+  for (const snap of snapshots) {
+    const horseMap = new Map(snap.horses.map((h) => [h.horseId, h]));
+    for (const id of horseIds) {
+      const h = horseMap.get(id);
+      if (!h) continue;
+      const pos = h.position;
+      if (pos <= 0 || pos > raceDistanceMeters) continue;
+
+      // Determine segment index
+      let segIdx = -1;
+      for (let i = 0; i < markers.length; i++) {
+        if (pos < markers[i]) {
+          segIdx = i;
+          break;
+        }
+      }
+      // If pos >= last marker, assign to last segment
+      if (segIdx === -1) segIdx = markers.length - 1;
+
+      const acc = result.get(id);
+      if (!acc) continue;
+      acc[segIdx].seekSum += h.seekContribution ?? 0;
+      acc[segIdx].spurtSum += h.spurtContribution ?? 0;
+      acc[segIdx].count++;
+    }
+  }
+
+  return result;
+}
+
 /**
  * Compute quarter-point sectional splits for all horses in a race.
  * splitMarkers defaults to [0.25, 0.5, 0.75, 1.0] * raceDistanceMeters.
@@ -71,6 +122,9 @@ export function calculateSectionalSplits(
   const cumulativeTimes: (number | null)[][] = markers.map((marker) =>
     horseIds.map((id) => interpolateTimeAtDistance(snapshots, id, marker, snapshotMaps)),
   );
+
+  // Compute per-segment average seek/spurt contributions
+  const segmentAverages = computeSegmentAverages(snapshots, raceDistanceMeters, horseIds, markers);
 
   for (let mi = 0; mi < markers.length; mi++) {
     const distanceMeters = markers[mi];
@@ -101,13 +155,22 @@ export function calculateSectionalSplits(
     // Sort by cumulativeTime ascending to assign rank
     entriesRaw.sort((a, b) => a.cumulativeTime - b.cumulativeTime);
 
-    const entries: SectionalEntry[] = entriesRaw.map((e, idx) => ({
-      horseId: e.horseId,
-      splitTime: e.splitTime,
-      cumulativeTime: e.cumulativeTime,
-      rank: idx + 1,
-      velocityMs: e.velocityMs,
-    }));
+    const accs = segmentAverages;
+    const entries: SectionalEntry[] = entriesRaw.map((e, idx) => {
+      const horseAcc = accs.get(e.horseId);
+      const seg = horseAcc?.[mi];
+      const avgSeek = seg && seg.count > 0 ? seg.seekSum / seg.count : undefined;
+      const avgSpurt = seg && seg.count > 0 ? seg.spurtSum / seg.count : undefined;
+      return {
+        horseId: e.horseId,
+        splitTime: e.splitTime,
+        cumulativeTime: e.cumulativeTime,
+        rank: idx + 1,
+        velocityMs: e.velocityMs,
+        avgSeekContribution: avgSeek,
+        avgSpurtContribution: avgSpurt,
+      };
+    });
 
     splits.push({ label, distanceMeters, entries });
   }

@@ -61,6 +61,8 @@ export type Runner = {
   weight: number;
   jockeyInstructions?: JockeyInstructions;
   courseFamiliarityMultiplier?: number; // Multiplier based on course visits (1.0 = no bonus)
+  lastSeekContribution?: number;
+  lastSpurtContribution?: number;
 };
 
 export type ConditionsModifier = {
@@ -483,5 +485,7 @@ export function buildRunner(
     weight: assignedWeight,
     jockeyInstructions: entry?.jockeyInstructions,
     courseFamiliarityMultiplier,
+    lastSeekContribution: 0,
+    lastSpurtContribution: 0,
   };
 }

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { BeyerBadge } from "@/components/race/BeyerBadge";
 import { SectionalTimingTable } from "@/components/race/SectionalTimingTable";
 import { PaceGraph } from "@/components/race/PaceGraph";
+import { SpeedBreakdownChart } from "@/components/race/SpeedBreakdownChart";
 import { calculateBeyerForResult } from "@/core/race/beyer";
 import { gradeColor } from "@/core/common/uiTokens";
 import { calculateClassBonus } from "@/core/common/classBonus";
@@ -182,6 +183,21 @@ function RecapPage() {
                         })}
                         distance={race.distance}
                       />
+                      {race.snapshots && race.snapshots.length > 0 && (
+                        <SpeedBreakdownChart
+                          snapshots={race.snapshots}
+                          runners={race.result!.map((r: any) => {
+                            const horse = localHorseMap.get(r.horseId);
+                            return {
+                              horseId: r.horseId,
+                              name: horse?.name || "Unknown",
+                              silk: horse?.silk || "#000000",
+                              owned: horse?.owned || false,
+                            };
+                          })}
+                          distance={race.distance}
+                        />
+                      )}
                     </div>
                   )}
                 </CardContent>
