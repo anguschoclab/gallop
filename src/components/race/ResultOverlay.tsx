@@ -171,6 +171,16 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                   />
                 </div>
               )}
+
+              {ordered.some((r) => r.owned && r.finishTime !== null) && (
+                <div className="pt-4 border-t border-white/5">
+                  <JockeyReportPanel
+                    runners={ordered}
+                    ordered={ordered}
+                    sectionalSplits={race.sectionalSplits}
+                  />
+                </div>
+              )}
             </>
           )}
         </div>
