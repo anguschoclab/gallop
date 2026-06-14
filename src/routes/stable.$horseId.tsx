@@ -11,6 +11,7 @@ import { HorseDetailHeader } from "@/components/horse/HorseDetailHeader";
 import { HorseIdentitySection } from "@/components/horse/HorseIdentitySection";
 import { HorseConditionSection } from "@/components/horse/HorseConditionSection";
 import { HorseAnalyticsSection } from "@/components/horse/HorseAnalyticsSection";
+import { RunningStyleBreakdown } from "@/components/horse/RunningStyleBreakdown";
 import { HorseManagementSection } from "@/components/horse/HorseManagementSection";
 import { HorseLineageSection } from "@/components/horse/HorseLineageSection";
 import { HorseRaceHistorySection } from "@/components/horse/HorseRaceHistorySection";
