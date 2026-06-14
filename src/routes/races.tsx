@@ -8,6 +8,7 @@ import { GradeBreakdown } from "@/components/race/GradeBreakdown";
 import { RaceEntry } from "@/components/race/RaceEntry";
 import { RaceFilterPanel } from "@/components/race/RaceFilterPanel";
 import { RaceFeed } from "@/components/race/RaceFeed";
+import { RaceQuickFilters } from "@/components/race/RaceQuickFilters";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { useRaceFilters, type RaceFilters } from "@/hooks/race/useRaceFilters";
 import { useState } from "react";
@@ -23,6 +24,10 @@ export const Route = createFileRoute("/races")({
     owned: (search.owned as string) || "all",
     q: (search.q as string) || "",
     stableId: (search.stableId as string) || undefined,
+    window: (search.window as string) || "all",
+    trip: (search.trip as string) || "all",
+    eligibleOnly: (search.eligibleOnly as string) || undefined,
+    openOnly: (search.openOnly as string) || undefined,
   }),
   component: RacesPage,
 });
@@ -40,13 +45,34 @@ function RacesPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [enteringRace, setEnteringRace] = useState<Race | null>(null);
 
-  const { filteredRaces, countries, tracks } = useRaceFilters(races, day, filters);
+  const { filteredRaces, countries, tracks } = useRaceFilters(races, day, filters, horses);
 
   const updateFilter = (key: keyof RaceFilters, value: string) => {
     navigate({
       search: (prev: RaceFilters) => ({ ...prev, [key]: value }),
     });
   };
+
+  const patchFilters = (patch: Partial<RaceFilters>) => {
+    navigate({ search: (prev: RaceFilters) => ({ ...prev, ...patch }) });
+  };
+
+  const resetAll = () =>
+    navigate({
+      search: {
+        grade: "all",
+        country: "all",
+        surface: "all",
+        track: "all",
+        owned: "all",
+        q: "",
+        stableId: undefined,
+        window: "all",
+        trip: "all",
+        eligibleOnly: undefined,
+        openOnly: undefined,
+      },
+    });
 
   return (
     <div className="space-y-6 pb-20 animate-fade-in">
@@ -99,6 +125,13 @@ function RacesPage() {
         </div>
       </div>
 
+      <RaceQuickFilters
+        filters={filters}
+        onPatch={patchFilters}
+        onReset={resetAll}
+        matchCount={filteredRaces.length}
+      />
+
       <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 items-start">
         <RaceFilterPanel
           q={q}
@@ -110,19 +143,7 @@ function RacesPage() {
           owned={owned}
           onOwnedChange={(v) => updateFilter("owned", v)}
           countries={countries}
-          onReset={() =>
-            navigate({
-              search: {
-                grade: "all",
-                country: "all",
-                surface: "all",
-                track: "all",
-                owned: "all",
-                q: "",
-                stableId: undefined,
-              },
-            })
-          }
+          onReset={resetAll}
         />
 
         <RaceFeed
