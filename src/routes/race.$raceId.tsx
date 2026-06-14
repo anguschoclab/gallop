@@ -9,6 +9,7 @@ import { useLiveRaceSimulation } from "@/hooks/race/useLiveRaceSimulation";
 import { ResultOverlay } from "@/components/race/ResultOverlay";
 import { SectionalTimingTable } from "@/components/race/SectionalTimingTable";
 import { PaceGraph } from "@/components/race/PaceGraph";
+import { JockeyReportPanel } from "@/components/race/JockeyReportPanel";
 import { RaceControlBar } from "@/components/race/RaceControlBar";
 import { Track } from "@/components/race/Track";
 import { LiveSplitsTable } from "@/components/race/LiveSplitsTable";
@@ -262,6 +263,15 @@ function LiveRace() {
                       distance={race.distance}
                     />
                   </div>
+                  {runners.some((r) => r.owned && r.finishTime !== null) && (
+                    <JockeyReportPanel
+                      runners={runners}
+                      ordered={[...runners].sort(
+                        (a, b) => (a.finishTime ?? 999) - (b.finishTime ?? 999),
+                      )}
+                      sectionalSplits={race.sectionalSplits}
+                    />
+                  )}
                 </div>
               </TabsContent>
             )}

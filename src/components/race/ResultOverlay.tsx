@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { PaceGraph } from "@/components/race/PaceGraph";
+import { JockeyReportPanel } from "@/components/race/JockeyReportPanel";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { SectionalSplit } from "@/core/race/types";
 import { generateJockeyFeedback } from "@/core/race/jockeyFeedback";
@@ -167,6 +168,16 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                       owned: r.owned,
                     }))}
                     distance={race.distance}
+                  />
+                </div>
+              )}
+
+              {ordered.some((r) => r.owned && r.finishTime !== null) && (
+                <div className="pt-4 border-t border-white/5">
+                  <JockeyReportPanel
+                    runners={ordered}
+                    ordered={ordered}
+                    sectionalSplits={race.sectionalSplits}
                   />
                 </div>
               )}
