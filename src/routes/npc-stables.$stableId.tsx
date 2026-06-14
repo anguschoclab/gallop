@@ -82,7 +82,14 @@ function NpcStableDetailPage() {
           </div>
         </div>
 
-        <div className="flex flex-col items-end gap-1">
+        <div className="flex flex-col items-end gap-2">
+          <BookmarkButton
+            type="stable"
+            id={stable.id}
+            label={stable.name}
+            subtitle={`${stable.country} · ${stable.personality}`}
+            variant="full"
+          />
           <div className="text-[10px] font-mono text-cream/20 uppercase tracking-widest">
             Liquid_Capital
           </div>
