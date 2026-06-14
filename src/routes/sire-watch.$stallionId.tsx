@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Trophy, TrendingUp, Zap } from "lucide-react";
 import { getSireAnalytics, type SireClassification } from "@/core/breeding/sireAnalytics";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 
 export const Route = createFileRoute("/sire-watch/$stallionId")({
   component: SireProfilePage,
