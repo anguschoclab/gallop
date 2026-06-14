@@ -682,6 +682,49 @@ export function stepRunner(
   // Apply gradient stamina modifier
   staminaMul *= gradientStaminaMul;
 
+  // Early-race position seeking: in the first ~15% of the race, nudge each
+  // runner toward the field slot that matches their running style instead of
+  // letting front-runners dash far ahead when the rest of the field starts slow.
+  let seekMul = 1;
+  if (progress < POSITION_SEEK_PROGRESS && sortedField && sortedField.length > 1) {
+    const aliveField = sortedField.filter((o) => o.finishTime === null);
+    if (aliveField.length > 1) {
+      const rankFromFront = aliveField.findIndex((o) => o.horseId === r.horseId);
+      if (rankFromFront >= 0) {
+        const fieldFraction = rankFromFront / (aliveField.length - 1);
+        const preferred = preferredFieldFraction(r.runningStyle);
+        // Positive delta = horse is further forward than its preferred slot.
+        const delta = preferred - fieldFraction;
+        // Fade the effect linearly as we leave the opening.
+        const phase = 1 - progress / POSITION_SEEK_PROGRESS;
+        if (delta < 0) {
+          // ahead of preferred slot -> ease off
+          seekMul = 1 - Math.min(POSITION_SEEK_MAX_DAMPEN, -delta * 0.15) * phase;
+        } else if (delta > 0) {
+          // behind preferred slot -> small push to claim position
+          seekMul = 1 + Math.min(POSITION_SEEK_MAX_BOOST, delta * 0.08) * phase;
+        }
+      }
+    }
+  }
+
+  // Final-spurt buildup: gradually ramp velocity between 600m and 400m to go,
+  // so the closing kick isn't a hard switch at one progress threshold. Closers
+  // and stalkers get a slightly stronger ramp.
+  let spurtMul = 1;
+  const distanceRemaining = distance - r.position;
+  if (distanceRemaining <= SPURT_BUILDUP_START_M && distanceRemaining > 0) {
+    const ramp = clamp(
+      (SPURT_BUILDUP_START_M - distanceRemaining) /
+        (SPURT_BUILDUP_START_M - SPURT_BUILDUP_END_M),
+      0,
+      1,
+    );
+    const styleExtra =
+      r.runningStyle === "S" || r.runningStyle === "P" ? SPURT_BUILDUP_CLOSER_EXTRA : 0;
+    spurtMul = 1 + (SPURT_BUILDUP_PEAK + styleExtra) * ramp;
+  }
+
   // Calculate target speed
   const targetSpeed =
     r.topSpeed *
@@ -690,6 +733,8 @@ export function stepRunner(
     draftMul *
     turnSpeedMul *
     gradientSpeedMul *
+    seekMul *
+    spurtMul *
     (1 + (rng.next() - 0.5) * 0.08 * r.noise);
 
   // Update velocity towards target (deceleration is slower than acceleration)
