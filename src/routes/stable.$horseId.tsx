@@ -190,6 +190,8 @@ function HorseDetail() {
 
             <HorseAnalyticsSection horse={horse} peakingMultiplier={peakingMultiplier} />
 
+            <RunningStyleBreakdown horse={horse} />
+
             <HorseLineageSection
               horse={horse}
               horseId={horseId}
