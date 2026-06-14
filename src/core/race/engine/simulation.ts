@@ -163,6 +163,35 @@ const LATE_KICK_TOP_SPEED_MULTIPLIER = 1.04; // late kick can briefly exceed bas
 const MIN_BLOCK_GAP = 0.8; // min position gap (m) before blocking penalty applies
 const INSIDE_OVERTAKE_DENSITY_ADVANTAGE = 1; // prefer inside lane when it has this many fewer runners
 
+// Early-race position seeking (first ~15% of the race)
+const POSITION_SEEK_PROGRESS = 0.15;
+const POSITION_SEEK_MAX_DAMPEN = 0.04; // up to -4% velocity if well ahead of preferred slot
+const POSITION_SEEK_MAX_BOOST = 0.02; // up to +2% velocity if well behind preferred slot
+
+// Final-spurt buildup window (distance remaining, meters)
+const SPURT_BUILDUP_START_M = 600; // begin gradual buildup at 600m to go
+const SPURT_BUILDUP_END_M = 400; // full buildup reached at 400m to go
+const SPURT_BUILDUP_PEAK = 0.04; // base +4% velocity at peak buildup
+const SPURT_BUILDUP_CLOSER_EXTRA = 0.03; // closers get an extra +3% in the buildup
+
+/**
+ * Returns the preferred relative front-of-field position (0 = leader, 1 = last)
+ * for each running style. Used in the opening of the race so horses settle
+ * into their style instead of all sprinting from the gate.
+ */
+function preferredFieldFraction(style: "E" | "EP" | "P" | "S"): number {
+  switch (style) {
+    case "E":
+      return 0.08;
+    case "EP":
+      return 0.25;
+    case "P":
+      return 0.5;
+    case "S":
+      return 0.78;
+  }
+}
+
 /**
  * Calculates the target lane for a runner based on their running style, chosen tactics, and current race congestion.
  *
