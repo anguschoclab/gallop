@@ -22,6 +22,7 @@ import { BreedingShedTab } from "@/components/breeding/BreedingShedTab";
 import { BroodmaresTab } from "@/components/breeding/BroodmaresTab";
 import { BreedingHistoryTab } from "@/components/breeding/BreedingHistoryTab";
 import { BreedingPedigreeTab } from "@/components/breeding/BreedingPedigreeTab";
+import { BredHorsesTab } from "@/components/breeding/BredHorsesTab";
 
 export const Route = createFileRoute("/breeding")({
   component: BreedingPage,
