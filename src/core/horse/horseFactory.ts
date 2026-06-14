@@ -547,6 +547,8 @@ export function resolveFoaling(
     stableId: dam.stableId,
     createdAtDay: newDay,
   });
+  // Track breeder: player has no stableId on horses, NPCs do.
+  foal.bredByPlayer = !dam.stableId;
 
   // Set pedigree
   foal.pedigree = {
