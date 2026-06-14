@@ -116,15 +116,22 @@ const WEATHER_DRAIN_MUL: Record<string, number> = {
  * const mul = paceShapeMul("E", 0.5);
  */
 export function paceShapeMul(style: RunningStyleT, progress: number): number {
+  // Tamer early-race differential so front-runners seek the lead
+  // rather than dashing far ahead when the rest of the field starts slowly.
+  // Closers (S) still settle off the pace and build through the race.
   switch (style) {
     case "E":
-      return 1.05 - 0.07 * progress;
+      // Quick first-stride bias to claim the lead, then settle.
+      if (progress < 0.1) return 1.02 + 0.1 * progress; // 1.02 -> 1.03
+      return 1.04 - 0.06 * progress;
     case "EP":
+      if (progress < 0.1) return 1.0 + 0.1 * progress; // 1.00 -> 1.01
       return 1.01 - 0.02 * progress;
     case "P":
       return 0.98 + 0.04 * Math.sin(Math.PI * progress);
     case "S":
-      if (progress < 0.6) return 0.93 + 0.05 * progress;
+      if (progress < 0.1) return 0.95; // settle back early without lunging
+      if (progress < 0.6) return 0.94 + 0.04 * progress;
       return 0.96 + 0.11 * ((progress - 0.6) / 0.4);
   }
 }
