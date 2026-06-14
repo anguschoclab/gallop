@@ -263,6 +263,15 @@ function LiveRace() {
                       distance={race.distance}
                     />
                   </div>
+                  {runners.some((r) => r.owned && r.finishTime !== null) && (
+                    <JockeyReportPanel
+                      runners={runners}
+                      ordered={[...runners].sort(
+                        (a, b) => (a.finishTime ?? 999) - (b.finishTime ?? 999),
+                      )}
+                      sectionalSplits={race.sectionalSplits}
+                    />
+                  )}
                 </div>
               </TabsContent>
             )}
