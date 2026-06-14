@@ -35,8 +35,8 @@ export function HorseSelectionStep({
   onClose,
 }: Props) {
   const [tendency, setTendency] = useState<TendencyFilter>("any");
-  const raceDistance = (race as any).distance ?? race.graded?.distance;
-  const raceSurface = ((race as any).surface ?? race.graded?.surface) as
+  const raceDistance = (race as any).distance as number | undefined;
+  const raceSurface = (race as any).surface as
     | "Turf"
     | "Dirt"
     | "Synthetic"
