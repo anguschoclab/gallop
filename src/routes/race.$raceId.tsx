@@ -158,6 +158,15 @@ function LiveRace() {
         onShowAllCards={() => setShowAllCards(true)}
       />
 
+      <div className="absolute top-2 right-2 z-30">
+        <BookmarkButton
+          type="race"
+          id={race.id}
+          label={race.name}
+          subtitle={`${race.grade ?? "Race"} · ${race.surface ?? ""}`.trim()}
+        />
+      </div>
+
       {/* Weather Forecast Strip */}
       <div className="relative z-10 px-4">
         <WeatherForecastStrip trackId={race.trackId} trackCondition={race.trackCondition} />
