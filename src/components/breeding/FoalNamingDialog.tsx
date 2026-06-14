@@ -25,11 +25,12 @@ interface FoalNamingDialogProps {
 
 export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOpen, onClose }) => {
   const horses = useGallopStore((s) => s.horses);
+  const horseMap = useGallopStore((s) => s.horseMap);
   const renameHorse = useGallopStore((s) => s.renameHorse);
   const userSettings = useGallopStore((s) => s.userSettings);
   const reservedNames = useGallopStore((s) => s.reservedHorseNames);
   const day = useGallopStore((s) => s.day);
-  const foal = useMemo(() => horses.find((h) => h.id === foalId), [horses, foalId]);
+  const foal = useMemo(() => horseMap.get(foalId), [horseMap, foalId]);
 
   const [name, setName] = useState("");
   const [validation, setValidation] = useState<{ valid: boolean; reason?: string }>({

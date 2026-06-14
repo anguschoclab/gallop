@@ -16,7 +16,7 @@ import {
   type MoveTiming,
 } from "@/core/tactics/tacticsTypes";
 import { cn } from "@/lib/cn";
-import { useState } from "react";
+import { useState, type ComponentType } from "react";
 
 interface TacticsAnalyzerProps {
   horseId: string;
@@ -24,7 +24,7 @@ interface TacticsAnalyzerProps {
 }
 
 export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
-  const horse = useGame((s) => s.horses.find((h) => h.id === horseId));
+  const horse = useGame((s) => s.horseMap.get(horseId));
   const race = useGame((s) => s.races.find((r) => r.id === raceId));
   const assignJockey = useGame((s) => s.assignJockey);
 
@@ -43,11 +43,14 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
 
   const handleSave = () => {
     // In a full implementation, this would save the tactics to the race entry
-    // For now, we'll just log it
-    console.log("Saving tactics:", instructions);
+    // For now, this is a no-op until the store action is wired
   };
 
-  const ridingStyles: { value: RidingStyle; label: string; icon: any }[] = [
+  const ridingStyles: {
+    value: RidingStyle;
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+  }[] = [
     { value: "front_runner", label: "Front Runner", icon: Zap },
     { value: "stalker", label: "Stalker", icon: Wind },
     { value: "closer", label: "Closer", icon: Target },

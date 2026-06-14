@@ -39,12 +39,8 @@ function AnalyticsOverview() {
       ? (d.wpsRatio.wins + d.wpsRatio.places + d.wpsRatio.shows) / d.wpsRatio.runs
       : 0;
 
-  const totalIncome30 = d.earningsVsSpend
-    .slice(-4)
-    .reduce((s, b) => s + b.income, 0);
-  const totalSpend30 = d.earningsVsSpend
-    .slice(-4)
-    .reduce((s, b) => s + b.expense, 0);
+  const totalIncome30 = d.earningsVsSpend.slice(-4).reduce((s, b) => s + b.income, 0);
+  const totalSpend30 = d.earningsVsSpend.slice(-4).reduce((s, b) => s + b.expense, 0);
 
   return (
     <div className="space-y-6">
@@ -98,11 +94,7 @@ function AnalyticsOverview() {
                 {
                   key: "u",
                   label: "Unplaced",
-                  value:
-                    d.wpsRatio.runs -
-                    d.wpsRatio.wins -
-                    d.wpsRatio.places -
-                    d.wpsRatio.shows,
+                  value: d.wpsRatio.runs - d.wpsRatio.wins - d.wpsRatio.places - d.wpsRatio.shows,
                   color: chartColors.slate,
                 },
               ]}
@@ -141,7 +133,11 @@ function AnalyticsOverview() {
                 { label: "80–100", value: d.energyBuckets[4], color: chartColors.primary },
                 { label: "60–79", value: d.energyBuckets[3], color: chartColors.secondary },
                 { label: "40–59", value: d.energyBuckets[2], color: chartColors.tertiary },
-                { label: "0–39", value: d.energyBuckets[0] + d.energyBuckets[1], color: chartColors.negative },
+                {
+                  label: "0–39",
+                  value: d.energyBuckets[0] + d.energyBuckets[1],
+                  color: chartColors.negative,
+                },
               ]}
             />
           </div>

@@ -5,6 +5,7 @@ import type { Race } from "@/game/types";
  *
  * Centralised here to avoid duplication across autoRegister.ts,
  * RaceEntry.tsx, and race entry resolution logic.
+ * @param race
  */
 export function getTransportCostForRace(race: Race): number {
   if (!race.graded) return 150;

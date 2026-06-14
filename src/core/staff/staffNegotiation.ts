@@ -59,6 +59,8 @@ export function evaluateOffer(
 
 /**
  * Returns true if the staff member is currently offended and the cooldown has not expired.
+ * @param staff
+ * @param currentDay
  */
 export function isOffended(staff: StaffMember, currentDay: number): boolean {
   return (
@@ -68,6 +70,8 @@ export function isOffended(staff: StaffMember, currentDay: number): boolean {
 
 /**
  * Returns how many days remain in the offended cooldown, or 0 if not offended / expired.
+ * @param staff
+ * @param currentDay
  */
 export function offendedDaysRemaining(staff: StaffMember, currentDay: number): number {
   if (!isOffended(staff, currentDay)) return 0;

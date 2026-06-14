@@ -25,6 +25,8 @@ export { toTrackWeatherPattern };
 /**
  * Get month (1-12) from day of year, accounting for hemisphere.
  * Southern hemisphere has inverted seasons (day 1 = July 1).
+ * @param day
+ * @param hemisphere
  */
 function getMonthFromDay(day: number, hemisphere: "Northern" | "Southern"): number {
   const dayOfYear = ((day - 1) % 365) + 1;
@@ -49,6 +51,8 @@ function getMonthFromDay(day: number, hemisphere: "Northern" | "Southern"): numb
 /**
  * Generate monthly transition probabilities based on Koppen climate data.
  * Uses historical precipitation days to derive daily rain probability.
+ * @param koppen
+ * @param month
  */
 function generateMonthlyTransitions(koppen: KoppenCode, month: number): number[] {
   const profile = KOPPEN_PROFILES[koppen];
@@ -104,6 +108,8 @@ const WIND_RANGES: Record<SimWeatherPattern, [number, number]> = {
 
 /**
  * Apply regional wind modifiers based on Koppen code.
+ * @param koppen
+ * @param baseRange
  */
 function getRegionalWindRange(koppen: KoppenCode, baseRange: [number, number]): [number, number] {
   const [min, max] = baseRange;
@@ -126,6 +132,9 @@ function getRegionalWindRange(koppen: KoppenCode, baseRange: [number, number]): 
 
 /**
  * Seeded sample from a transition probability distribution.
+ * @param probs
+ * @param rng
+ * @param rng.next
  */
 function samplePattern(probs: number[], rng: { next: () => number }): SimWeatherPattern {
   const r = rng.next();
@@ -139,6 +148,11 @@ function samplePattern(probs: number[], rng: { next: () => number }): SimWeather
 
 /**
  * Generate temperature from historical normals with daily variance.
+ * @param koppen
+ * @param month
+ * @param pattern
+ * @param rng
+ * @param rng.next
  */
 function generateTemperature(
   koppen: KoppenCode,
@@ -168,6 +182,11 @@ function generateTemperature(
 
 /**
  * Generate humidity from historical normals with pattern-based adjustments.
+ * @param koppen
+ * @param month
+ * @param pattern
+ * @param rng
+ * @param rng.next
  */
 function generateHumidity(
   koppen: KoppenCode,
@@ -196,6 +215,10 @@ function generateHumidity(
 
 /**
  * Generate wind speed with regional and pattern-based adjustments.
+ * @param koppen
+ * @param pattern
+ * @param rng
+ * @param rng.next
  */
 function generateWind(
   koppen: KoppenCode,

@@ -64,6 +64,8 @@ export type AutoRegisterResult = {
 
 /**
  * Check if a horse is already entered in any race
+ * @param horse
+ * @param enteredHorseIds
  */
 function isHorseAlreadyEnteredInAnyRace(horse: Horse, enteredHorseIds: Set<string>): boolean {
   return enteredHorseIds.has(horse.id);
@@ -72,6 +74,7 @@ function isHorseAlreadyEnteredInAnyRace(horse: Horse, enteredHorseIds: Set<strin
 /**
  * Calculate transport cost for a race based on grade.
  * Thin re-export of the canonical utility in @/core/race/transportCost.
+ * @param race
  */
 export function calculateTransportCostForRace(race: Race): number {
   return getTransportCostForRace(race);
@@ -80,6 +83,8 @@ export function calculateTransportCostForRace(race: Race): number {
 /**
  * Select the best jockey for a horse
  * Pattern from src/game/npcRaceEntry.ts:191-194
+ * @param horse
+ * @param jockeys
  */
 function selectBestJockey(horse: Horse, jockeys: Jockey[]): Jockey | null {
   // Check for retained jockey (player's contracted jockey)

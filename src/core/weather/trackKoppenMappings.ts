@@ -225,7 +225,10 @@ export const TRACK_KOPPEN_MAP: Record<string, KoppenCode> = {
   "a7b8c9d0-e1f2-4a3b-4c5d-7e8f9a0b1c2d": "Af", // Kranji
 };
 
-/** Get Koppen code for a track ID */
+/**
+ * Get Koppen code for a track ID
+ * @param trackId
+ */
 export function getTrackKoppen(trackId: string | undefined): KoppenCode {
   if (!trackId) return "Cfb"; // Default to temperate oceanic
   return TRACK_KOPPEN_MAP[trackId] ?? "Cfb";

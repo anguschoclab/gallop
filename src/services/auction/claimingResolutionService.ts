@@ -25,6 +25,11 @@ export interface ProcessClaimingProps {
  * and losing claimant refunds.
  *
  * @param props - Properties object for claiming resolution
+ * @param props.race
+ * @param props.claimIntents
+ * @param props.horses
+ * @param props.newDay
+ * @param props.rng
  * @returns Object containing all generated Impacts
  */
 export function processClaimingResolution({

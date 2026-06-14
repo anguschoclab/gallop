@@ -29,6 +29,9 @@ export const BANISTER_CONSTANTS = {
 /**
  * Calculate the decayed value of a metric over time
  * Formula: value * e^(-days / timeConstant)
+ * @param initialValue
+ * @param daysPassed
+ * @param timeConstant
  */
 export function decayValue(initialValue: number, daysPassed: number, timeConstant: number): number {
   if (daysPassed === 0) return initialValue;

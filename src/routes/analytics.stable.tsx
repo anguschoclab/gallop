@@ -85,9 +85,7 @@ function AnalyticsStable() {
               .filter((h) => h.raceHistory.length > 0)
               .slice(0, 12)
               .map((h) => {
-                const series = h.raceHistory
-                  .slice(-10)
-                  .map((r) => (r.position <= 3 ? 1 : 0));
+                const series = h.raceHistory.slice(-10).map((r) => (r.position <= 3 ? 1 : 0));
                 return (
                   <div key={h.id} className="flex items-center gap-3">
                     <div className="w-32 text-[11px] truncate text-cream/80">{h.name}</div>

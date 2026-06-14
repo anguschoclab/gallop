@@ -56,6 +56,9 @@ export function getMinimumAgeForHemisphere(
  *
  * Horses are invited if they appear in race.invitedHorseIds or have a
  * matching Win-and-You're-In qualification for the current year.
+ * @param horse
+ * @param race
+ * @param currentDay
  */
 export function isHorseInvitedToRace(horse: Horse, race: Race, currentDay: number): boolean {
   // Not an invite-only race → always "invited"
@@ -86,6 +89,7 @@ export function isHorseInvitedToRace(horse: Horse, race: Race, currentDay: numbe
  * @param horse - The horse to check
  * @param race - The race to enter
  * @param pregnantHorseIds - Set of pregnant horse IDs
+ * @param currentDay
  * @returns True if the horse is eligible for the race
  *
  * @example

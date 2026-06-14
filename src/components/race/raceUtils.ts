@@ -5,6 +5,7 @@ import { BEYER_BASE, BEYER_FORMULA_SCALE } from "@/constants";
 /**
  * Format a time in seconds as a human-readable split string.
  * e.g. 62.3 → "1:02.3",  12.5 → "12.5s"
+ * @param seconds
  */
 export function formatSplitTime(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -15,6 +16,10 @@ export function formatSplitTime(seconds: number): string {
 /**
  * Estimate the expected split time for a horse at a given race-distance
  * fraction, based on its historical Beyer figures at similar distances.
+ * @param horse
+ * @param distance
+ * @param markerFraction
+ * @param calibratedPars
  */
 export function getTargetSplitTime(
   horse: Horse,

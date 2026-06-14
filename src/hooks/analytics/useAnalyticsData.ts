@@ -11,7 +11,9 @@ export function useAnalyticsData() {
   const day = useGame((s) => s.day);
   const cash = useGame((s) => s.cash);
   const horses = useGame((s) => s.horses);
-  const transactions = useGame((s) => (s as unknown as { transactions?: CashFlowEntry[] }).transactions ?? []);
+  const transactions = useGame(
+    (s) => (s as unknown as { transactions?: CashFlowEntry[] }).transactions ?? [],
+  );
   const sireLeaderboards = useGame((s) => s.sireLeaderboards);
   const sireTrendHistory = useGame((s) => s.sireTrendHistory ?? []);
 
@@ -27,7 +29,10 @@ export function useAnalyticsData() {
     if (cashPoints.length === 0) cashPoints.push({ x: day, y: cash });
 
     // Win/place/show from last 30 race results across owned horses
-    let wins = 0, places = 0, shows = 0, runs = 0;
+    let wins = 0,
+      places = 0,
+      shows = 0,
+      runs = 0;
     owned.forEach((h) => {
       h.raceHistory.slice(-30).forEach((r) => {
         runs++;

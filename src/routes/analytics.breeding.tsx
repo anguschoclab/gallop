@@ -44,10 +44,7 @@ function AnalyticsBreeding() {
           </div>
         </ChartCard>
 
-        <ChartCard
-          title="Top 5 · 60d AEI trend"
-          footnote="Each row independently scaled"
-        >
+        <ChartCard title="Top 5 · 60d AEI trend" footnote="Each row independently scaled">
           <div className="px-3 py-2 space-y-2">
             {rankings.slice(0, 5).map((r) => {
               const series = d.sireTrendHistory

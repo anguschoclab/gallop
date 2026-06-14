@@ -26,9 +26,7 @@ function AnalyticsFinance() {
       <BackLink />
       <header>
         <h1 className="font-display text-3xl text-cream">Finance analytics</h1>
-        <p className="text-cream-muted mt-1 text-sm">
-          Cash trajectory and where the money goes.
-        </p>
+        <p className="text-cream-muted mt-1 text-sm">Cash trajectory and where the money goes.</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -80,11 +78,7 @@ function AnalyticsFinance() {
           </div>
         </ChartCard>
 
-        <ChartCard
-          className="md:col-span-2"
-          title="Top expenses · 30d"
-          footnote="By subcategory"
-        >
+        <ChartCard className="md:col-span-2" title="Top expenses · 30d" footnote="By subcategory">
           <div className="px-3 py-2">
             {d.expenseRows.length > 0 ? (
               <MiniBar rows={d.expenseRows} format={formatCurrencyCompact} />

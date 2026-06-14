@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
+import { useMemo } from "react";
 import type { GameState } from "@/game/types";
 import { JockeyCard } from "@/components/jockey/JockeyCard";
 import { Button } from "@/components/ui/button";
@@ -25,14 +26,15 @@ function JockeyPage() {
   const hireApprentice = useGame((s) => s.hireApprentice);
   const releaseJockey = useGame((s) => s.releaseJockey);
 
-  const jockey = jockeys?.find((j: any) => j.id === jockeyId);
+  const jockeyMap = useMemo(() => new Map((jockeys ?? []).map((j) => [j.id, j])), [jockeys]);
+  const jockey = jockeyMap.get(jockeyId);
 
   if (!jockey) {
     throw notFound();
   }
 
   const isRetained = !!jockey.contractUntil;
-  const isApprentice = (jockey as any).isApprentice;
+  const isApprentice = jockey.isApprentice;
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto p-4 md:p-6 animate-in fade-in duration-500">

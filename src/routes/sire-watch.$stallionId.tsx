@@ -14,8 +14,9 @@ export const Route = createFileRoute("/sire-watch/$stallionId")({
 function SireProfilePage() {
   const { stallionId } = Route.useParams();
   const horses = useGame((s) => s.horses);
+  const horseMap = useGame((s) => s.horseMap);
 
-  const stallion = horses.find((h) => h.id === stallionId);
+  const stallion = horseMap.get(stallionId);
   const allStallions = horses.filter((h) => h.stud?.atStud);
   const industryMeanEarnings = useGame((s) => s.industryMeanEarnings ?? 0);
 

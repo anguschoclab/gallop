@@ -24,6 +24,10 @@ import { getCurrentYear } from "@/core/race/schedule";
 
 /**
  * Check if a horse has a Win-and-You're-In qualification for a specific race key.
+ * @param horse
+ * @param horse.winAndYouInQualified
+ * @param raceKey
+ * @param currentYear
  */
 function isWinAndYouInQualified(
   horse: { winAndYouInQualified?: { year: number; raceId: string; raceKey: string }[] },

@@ -3,6 +3,8 @@ import type { Horse, Jockey } from "@/game/types";
 /**
  * Compute the compatibility label between a horse's running style
  * and a jockey's archetype.
+ * @param horse
+ * @param jockey
  */
 export function getCompatibility(
   horse: Horse,

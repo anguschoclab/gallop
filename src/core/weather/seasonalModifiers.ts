@@ -242,7 +242,11 @@ export const COUNTRY_TO_REGION: Record<string, string> = {
   Belgium: "france", // Similar patterns
 };
 
-/** Get seasonal modifiers for a country and month */
+/**
+ * Get seasonal modifiers for a country and month
+ * @param country
+ * @param month
+ */
 export function getSeasonalModifiers(country: string, month: number): SeasonalModifier[] {
   const region = COUNTRY_TO_REGION[country] ?? "";
   const patternKeys = REGIONAL_PATTERNS[region] ?? [];
@@ -252,7 +256,11 @@ export function getSeasonalModifiers(country: string, month: number): SeasonalMo
     .filter((mod) => mod && mod.months.includes(month));
 }
 
-/** Apply modifiers to a transition matrix row */
+/**
+ * Apply modifiers to a transition matrix row
+ * @param base
+ * @param modifiers
+ */
 export function applyModifiers(
   base: Record<string, number>,
   modifiers: SeasonalModifier[],

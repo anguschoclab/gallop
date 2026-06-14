@@ -12,6 +12,7 @@ import { formatCurrency } from "@/core/common/formatting";
 /**
  * Returns true if a horse is considered "top" and deserves a commemorative inbox message on retirement.
  * Criteria: fame >= 60, or 1+ G1 win, or $250k+ lifetime earnings, or HOF-eligible.
+ * @param horse
  */
 export function isTopHorse(horse: Horse): boolean {
   if (horse.fame >= 60) return true;
@@ -24,6 +25,7 @@ export function isTopHorse(horse: Horse): boolean {
 /**
  * Returns true if a horse meets Hall of Fame eligibility criteria (fame >= 85, earnings >= $500k,
  * and 3+ G1 wins or 5+ graded wins).
+ * @param horse
  */
 export function isHallOfFameEligible(horse: Horse): boolean {
   if (horse.fame < 85) return false;
@@ -34,6 +36,9 @@ export function isHallOfFameEligible(horse: Horse): boolean {
 
 /**
  * Build a formatted body string for a retirement inbox message.
+ * @param horse
+ * @param destination
+ * @param fee
  */
 export function buildRetirementBody(
   horse: Horse,
@@ -66,6 +71,8 @@ export function buildRetirementBody(
 
 /**
  * Build a formatted body string for a Hall of Fame induction inbox message.
+ * @param horse
+ * @param achievements
  */
 export function buildHallOfFameBody(horse: Horse, achievements: string[]): string {
   const stats = getCareerStats(horse);

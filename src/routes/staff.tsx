@@ -22,6 +22,7 @@ function StaffManagement() {
   const [negotiatingId, setNegotiatingId] = useState<string | null>(null);
 
   const myStaff = hiredStaff?.filter((s) => s.stableId === "") ?? [];
+  const staffMap = useMemo(() => new Map(staffPool.map((s) => [s.id, s])), [staffPool]);
 
   const stableG1Wins = useMemo(
     () => getG1WinsForStable({ horses, races } as any, undefined),
@@ -90,7 +91,7 @@ function StaffManagement() {
 
       {negotiatingId &&
         (() => {
-          const staff = staffPool.find((s) => s.id === negotiatingId);
+          const staff = staffMap.get(negotiatingId);
           return staff ? (
             <StaffNegotiationDialog
               staff={staff}

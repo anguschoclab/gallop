@@ -22,9 +22,9 @@ type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
   impact: AnyImpact,
   lookupMaps?: {
-    horseMap: Map<string, WritableDraft<any>>;
-    stableMap: Map<string, WritableDraft<any>>;
-    campaignMap: Map<string, WritableDraft<any>>;
+    horseMap: Map<string, WritableDraft<GameState["horses"][number]>>;
+    stableMap: Map<string, WritableDraft<GameState["npcStables"][number]>>;
+    campaignMap: Map<string, WritableDraft<NonNullable<GameState["campaigns"]>[number]>>;
   },
 ) => void;
 
@@ -95,8 +95,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const campaign = campaignMap.get(horseId);
     if (campaign) {
       campaign.flags = campaign.flags.filter(
-        (f: any) =>
-          f.type !== flag.type || f.day !== flag.day || f.description !== flag.description,
+        (f) => f.type !== flag.type || f.day !== flag.day || f.message !== flag.message,
       );
     }
   },
@@ -142,7 +141,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const impactAny = impact as any;
     const { delta, reason, source, metadata } = impactAny;
     if (draft.reputation) {
-      const newEvent = createReputationEvent(source as any, delta, reason, impact.day, metadata);
+      const newEvent = createReputationEvent(source, delta, reason, impact.day, metadata);
       draft.reputation.events.push(newEvent);
       draft.reputation.score += delta;
       draft.reputation.tier = getReputationTier(draft.reputation.score);

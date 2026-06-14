@@ -18,6 +18,9 @@ export const NAME_RESERVATION_DAYS = 9125; // 25 years * 365 days
 
 /**
  * Check if a name is currently reserved (within the 25-year reservation period).
+ * @param name
+ * @param reservedNames
+ * @param currentDay
  */
 export function isNameReserved(
   name: string,
@@ -32,6 +35,7 @@ export function isNameReserved(
 
 /**
  * Calculate the release day for a name based on death day.
+ * @param deceasedOnDay
  */
 export function getReservationReleaseDay(deceasedOnDay: number): number {
   return deceasedOnDay + NAME_RESERVATION_DAYS;
@@ -40,6 +44,9 @@ export function getReservationReleaseDay(deceasedOnDay: number): number {
 /**
  * Add a name to the reserved list when a horse dies.
  * Prevents duplicate entries.
+ * @param name
+ * @param deceasedOnDay
+ * @param reservedNames
  */
 export function addReservedName(
   name: string,
@@ -63,6 +70,8 @@ export function addReservedName(
 
 /**
  * Remove expired reservations (names whose 25-year period has ended).
+ * @param reservedNames
+ * @param currentDay
  */
 export function cleanupExpiredReservations(
   reservedNames: ReservedNameEntry[],
@@ -73,6 +82,8 @@ export function cleanupExpiredReservations(
 
 /**
  * Get a Set of all currently reserved names for quick lookup.
+ * @param reservedNames
+ * @param currentDay
  */
 export function getReservedNamesSet(
   reservedNames: ReservedNameEntry[],

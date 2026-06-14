@@ -405,6 +405,7 @@ export function generateHorse(
  * @param {Horse["gender"]} [opts.forcedGender] - Fixed gender for the horse.
  * @param {string} [opts.forcedName] - Fixed name for the horse.
  * @param {Hemisphere} [opts.hemisphere] - Racing hemisphere.
+ * @param namingContext
  * @returns {Horse} An NPC-owned Horse object.
  */
 export function generateNpcHorse(

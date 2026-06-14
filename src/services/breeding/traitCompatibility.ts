@@ -13,11 +13,11 @@ export function calculateConformationCompatibility(
   sire: Horse,
   dam: Horse,
 ): { score: number; description: string } {
-  let sireRaw =
+  const sireRaw =
     typeof sire.conformation === "number"
       ? sire.conformation
       : TRAIT_SCORE[sire.conformation || "fair"];
-  let damRaw =
+  const damRaw =
     typeof dam.conformation === "number"
       ? dam.conformation
       : TRAIT_SCORE[dam.conformation || "fair"];
@@ -49,11 +49,11 @@ export function calculateTemperamentCompatibility(
   sire: Horse,
   dam: Horse,
 ): { score: number; description: string } {
-  let sireRaw =
+  const sireRaw =
     typeof sire.temperament === "number"
       ? sire.temperament
       : TRAIT_SCORE[sire.temperament || "fair"];
-  let damRaw =
+  const damRaw =
     typeof dam.temperament === "number" ? dam.temperament : TRAIT_SCORE[dam.temperament || "fair"];
 
   const sireValue = sireRaw > 1 ? sireRaw / 100 : sireRaw;

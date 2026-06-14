@@ -67,7 +67,10 @@ export function ChartCard({
 
   if (href) {
     return (
-      <Link to={href} className="block h-full focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--chart-1)] rounded-xl">
+      <Link
+        to={href}
+        className="block h-full focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--chart-1)] rounded-xl"
+      >
         {inner}
       </Link>
     );

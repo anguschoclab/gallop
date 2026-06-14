@@ -38,12 +38,19 @@ export function makeChartConfig(
 ): ChartConfig {
   const cfg: ChartConfig = {};
   series.forEach((s, i) => {
-    cfg[s.key] = { label: s.label, color: s.color ?? chartSeriesOrder[i % chartSeriesOrder.length] };
+    cfg[s.key] = {
+      label: s.label,
+      color: s.color ?? chartSeriesOrder[i % chartSeriesOrder.length],
+    };
   });
   return cfg;
 }
 
-/** Gradient stop helper for area charts; pass a unique id per chart. */
+/**
+ * Gradient stop helper for area charts; pass a unique id per chart.
+ * @param id
+ * @param color
+ */
 export function areaGradientStops(id: string, color: string = chartColors.primary) {
   return { id, color };
 }

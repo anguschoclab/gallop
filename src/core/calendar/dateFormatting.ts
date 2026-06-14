@@ -204,6 +204,8 @@ export function isValidDayOfYear(day: number): boolean {
 
 /**
  * Format a relative day label (e.g., "3 days ago", "in 2 days")
+ * @param targetDay
+ * @param referenceDay
  */
 export function relativeDayLabel(targetDay: number, referenceDay: number): string {
   const diff = targetDay - referenceDay;
@@ -216,6 +218,7 @@ export function relativeDayLabel(targetDay: number, referenceDay: number): strin
 
 /**
  * Format a day as a short date string (e.g., "D145 Y2")
+ * @param day
  */
 export function shortDayLabel(day: number): string {
   const year = gameYearNumber(day);

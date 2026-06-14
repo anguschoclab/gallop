@@ -91,6 +91,7 @@ export interface GenerateRaceImpactsProps {
  * @param props.snapshots - Optional detailed race snapshots for replay/summary purposes
  * @param props.calibratedPars - Speed pars for Beyer speed figure calculation, indexed by distance
  * @param props.raceWeatherState
+ * @param props.syndicates
  * @returns Array of impacts to be applied to the game state by the resolver
  */
 export function generateRaceImpacts({

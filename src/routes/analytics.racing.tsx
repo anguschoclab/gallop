@@ -26,7 +26,9 @@ function AnalyticsRacing() {
   });
 
   // Surface splits
-  let turf = 0, dirt = 0, syn = 0;
+  let turf = 0,
+    dirt = 0,
+    syn = 0;
   d.owned.forEach((h) => {
     h.raceHistory.forEach((r) => {
       const s = (r as { surface?: string }).surface;
@@ -91,8 +93,7 @@ function AnalyticsRacing() {
                 { label: "3rd (Show)", value: d.wpsRatio.shows, color: chartColors.tertiary },
                 {
                   label: "Unplaced",
-                  value:
-                    d.wpsRatio.runs - d.wpsRatio.wins - d.wpsRatio.places - d.wpsRatio.shows,
+                  value: d.wpsRatio.runs - d.wpsRatio.wins - d.wpsRatio.places - d.wpsRatio.shows,
                   color: chartColors.slate,
                 },
               ]}

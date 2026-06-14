@@ -49,6 +49,15 @@ export default tseslint.config(
       "react-hooks/rules-of-hooks": "off",
     },
   },
+  // Exclude hooks and component utilities from JSDoc — internal implementation
+  {
+    files: ["src/hooks/**/*.ts", "src/components/**/*.ts"],
+    rules: {
+      "jsdoc/require-jsdoc": "off",
+      "jsdoc/require-param": "off",
+      "jsdoc/require-returns": "off",
+    },
+  },
   // Exclude routes (routes often have conditional hook calls)
   {
     files: ["src/routes/**/*.tsx"],

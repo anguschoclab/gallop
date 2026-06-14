@@ -126,8 +126,9 @@ function AuctionSalePage() {
   const displayLots = isResolved ? activeLots : filteredLots;
   const currentLot = displayLots[lotIndex];
   const horse = currentLot ? horseMap.get(currentLot.horseId) : undefined;
+  const stableMap = useMemo(() => new Map(stables.map((s) => [s.id, s])), [stables]);
   const consignor = currentLot?.consignorStableId
-    ? stables.find((s) => s.id === currentLot.consignorStableId)
+    ? stableMap.get(currentLot.consignorStableId)
     : undefined;
   const displayStatsResult = horse ? getDisplayableStats(horse, scoutReports, day) : null;
   const currentPrice = currentLot?.hammerPrice ?? 0;

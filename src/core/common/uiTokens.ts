@@ -12,7 +12,10 @@ import type { StaffTier } from "@/core/staff/staffTypes";
 import type { TrackCondition } from "@/core/race/types";
 import type { ReputationTier } from "@/core/reputation/reputationTypes";
 
-/** Race grade color class (G1, G2, G3, etc.) */
+/**
+ * Race grade color class (G1, G2, G3, etc.)
+ * @param grade
+ */
 export function gradeColor(grade: string): string {
   const gradeMap: Record<string, string> = {
     G1: "text-yellow-400",
@@ -27,7 +30,10 @@ export function gradeColor(grade: string): string {
   return gradeMap[grade] || "text-gray-400";
 }
 
-/** Horse stat letter grade color class (S, A+, A, B+, etc.) */
+/**
+ * Horse stat letter grade color class (S, A+, A, B+, etc.)
+ * @param grade
+ */
 export function statGradeColor(grade: LetterGrade): string {
   const gradeMap: Record<LetterGrade, string> = {
     S: "text-fame font-black animate-pulse",
@@ -43,7 +49,10 @@ export function statGradeColor(grade: LetterGrade): string {
   return gradeMap[grade] || "text-gray-400";
 }
 
-/** Stable tier color class */
+/**
+ * Stable tier color class
+ * @param tier
+ */
 export function stableTierColor(tier: StableTier): string {
   const tierMap: Record<StableTier, string> = {
     elite: "text-yellow-400",
@@ -53,7 +62,10 @@ export function stableTierColor(tier: StableTier): string {
   return tierMap[tier] || "text-gray-400";
 }
 
-/** Staff tier color class */
+/**
+ * Staff tier color class
+ * @param tier
+ */
 export function staffTierColor(tier: StaffTier): string {
   const tierMap: Record<StaffTier, string> = {
     elite: "text-yellow-400",
@@ -63,7 +75,10 @@ export function staffTierColor(tier: StaffTier): string {
   return tierMap[tier] || "text-gray-400";
 }
 
-/** Track condition color class */
+/**
+ * Track condition color class
+ * @param condition
+ */
 export function conditionColor(condition: TrackCondition): string {
   const conditionMap: Record<TrackCondition, string> = {
     fast: "text-green-400",
@@ -75,7 +90,10 @@ export function conditionColor(condition: TrackCondition): string {
   return conditionMap[condition] || "text-gray-400";
 }
 
-/** Reputation tier color class */
+/**
+ * Reputation tier color class
+ * @param tier
+ */
 export function reputationColor(tier: ReputationTier): string {
   const tierMap: Record<ReputationTier, string> = {
     legendary: "text-yellow-400",

@@ -92,6 +92,9 @@ export type PresetId = (typeof INSTRUCTION_PRESETS)[number]["id"];
 
 /**
  * Fill in horseId and raceId for a preset to create a complete JockeyInstructions.
+ * @param preset
+ * @param horseId
+ * @param raceId
  */
 export function buildInstructions(
   preset: InstructionPreset,

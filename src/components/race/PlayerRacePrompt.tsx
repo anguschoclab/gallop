@@ -23,7 +23,7 @@ import { buildRaceField, rngForRace } from "@/services/race/raceSimulationServic
 import { runRaceToCompletion } from "@/core/race/engine/simulation";
 import { getCourseForRace } from "@/data/tracks";
 import { formatCurrency } from "@/core/common/formatting";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { INSTRUCTION_PRESETS, buildInstructions, type PresetId } from "./TacticOptions";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 
@@ -38,21 +38,22 @@ export function PlayerRacePrompt() {
   const navigate = useNavigate();
   const [selectedPreset, setSelectedPreset] = useState<PresetId>("default");
 
-  const race = races.find((r) => r.id === pendingRaceId);
+  const horseMap = useGame((s) => s.horseMap);
+  const raceMap = useMemo(() => new Map(races.map((r) => [r.id, r])), [races]);
+  const race = pendingRaceId ? raceMap.get(pendingRaceId) : undefined;
   const raceWeather = useGame((s) => {
     const trackId = race?.graded?.trackId ?? race?.trackId;
     if (!trackId) return undefined;
     const buf = s.weather?.byTrack?.[trackId];
     if (!buf || !buf.length) return undefined;
-    return buf.find((w: any) => w.day === race?.day) ?? buf[buf.length - 1];
+    return buf.find((w) => w.day === race?.day) ?? buf[buf.length - 1];
   });
   if (!race) return null;
 
-  const enteredHorse = horses.find(
-    (h: { owned: boolean; id: string }) =>
-      h.owned &&
-      race.entries.some((e: { horseId: string; owned: boolean }) => e.horseId === h.id && e.owned),
-  );
+  const enteredHorse = useMemo(() => {
+    const ownedEntry = race.entries.find((e) => e.owned);
+    return ownedEntry ? horseMap.get(ownedEntry.horseId) : undefined;
+  }, [race, horseMap]);
 
   function clearPending() {
     useGame.setState({ pendingPlayerRaceId: undefined });

@@ -138,7 +138,7 @@ export function generateTrackRaces(
       return generateAsianRaceCard(track, gameDay, numRaces, rng);
     case "south_america":
       return generateSouthAmericanRaceCard(track, gameDay, numRaces, rng);
-    default:
+    default: {
       // Fallback to generic generator if regional system is unknown
       const races: Race[] = [];
       const trackSurfaces = track.courses.map((c) => c.surface) as (
@@ -154,6 +154,7 @@ export function generateTrackRaces(
         races.push(race);
       }
       return races;
+    }
   }
 }
 

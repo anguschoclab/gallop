@@ -2,6 +2,9 @@ import type { Runner } from "@/core/race/engine/runnerBuilder";
 
 /**
  * Generate jockey feedback based on race performance.
+ * @param runner
+ * @param position
+ * @param ordered
  */
 export function generateJockeyFeedback(
   runner: Runner,

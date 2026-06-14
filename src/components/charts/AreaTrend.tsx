@@ -1,7 +1,15 @@
 /**
  * AreaTrend.tsx - Single-series area chart with axes + tooltip (modern-analytics look).
  */
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { useId } from "react";
 import { axisTickStyle, chartColors, gridStyle } from "./chartTheme";
 

@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
-import type { GameState, Horse } from "@/game/types";
+import { useMemo } from "react";
+import type { GameState, Horse, HorseCampaign } from "@/game/types";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { CalendarClock, Flag } from "lucide-react";
@@ -23,16 +24,18 @@ function SchedulerPage() {
   const deleteCampaign = useGame((s) => s.deleteCampaign);
   const dismissCampaignFlag = useGame((s) => s.dismissCampaignFlag);
 
-  const ownedHorses = horses.filter((h: Horse) => h.owned);
-  const horsesWithoutCampaign = ownedHorses.filter(
-    (h: Horse) => !campaigns.some((c: any) => c.horseId === h.id),
-  );
+  const raceMap = useMemo(() => new Map(races.map((r) => [r.id, r])), [races]);
+  const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
 
-  const getRace = (raceId: string) => races.find((r: any) => r.id === raceId);
-  const getHorse = (horseId: string) => horses.find((h: Horse) => h.id === horseId);
+  const ownedHorses = horses.filter((h: Horse) => h.owned);
+  const campaignHorseIds = new Set(campaigns.map((c: HorseCampaign) => c.horseId));
+  const horsesWithoutCampaign = ownedHorses.filter((h: Horse) => !campaignHorseIds.has(h.id));
+
+  const getRace = (raceId: string) => raceMap.get(raceId);
+  const getHorse = (horseId: string) => horseMap.get(horseId);
 
   const totalActiveFlags = campaigns.reduce(
-    (acc: number, c: any) => acc + c.flags.filter((f: any) => !f.dismissed).length,
+    (acc: number, c: HorseCampaign) => acc + c.flags.filter((f) => !f.dismissed).length,
     0,
   );
 
