@@ -9,6 +9,7 @@ import { cn } from "@/lib/cn";
 import type { Horse } from "@/game/types";
 import type { RegionalAward } from "@/core/awards/types";
 import { ChevronRight, Zap, Clock, Search } from "lucide-react";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 
 interface StableRosterViewProps {
   horses: Horse[];
