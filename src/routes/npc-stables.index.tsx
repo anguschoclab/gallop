@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { useNpcStablesFilters } from "@/hooks/stable/useNpcStablesFilters";
 import { getReputationStars } from "@/core/stable/uiHelpers";
 import { stableTierColor } from "@/core/common/uiTokens";
@@ -187,8 +188,17 @@ function NpcStablesPage() {
 
 function StableCard({ stable }: { stable: any }) {
   return (
-    <Link to="/npc-stables/$stableId" params={{ stableId: stable.id }}>
-      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-gold-muted">
+    <div className="relative h-full">
+      <div className="absolute top-2 right-2 z-10">
+        <BookmarkButton
+          type="stable"
+          id={stable.id}
+          label={stable.name}
+          subtitle={`${stable.country} · ${stable.tier}`}
+        />
+      </div>
+      <Link to="/npc-stables/$stableId" params={{ stableId: stable.id }}>
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-gold-muted">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
@@ -223,5 +233,6 @@ function StableCard({ stable }: { stable: any }) {
         </CardContent>
       </Card>
     </Link>
+    </div>
   );
 }
