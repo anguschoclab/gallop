@@ -163,7 +163,7 @@ function LiveRace() {
           type="race"
           id={race.id}
           label={race.name}
-          subtitle={`${race.grade ?? "Race"} · ${race.surface ?? ""}`.trim()}
+          subtitle={`${race.graded ? "Graded" : "Race"} · ${race.surface ?? ""}`.trim()}
         />
       </div>
 
