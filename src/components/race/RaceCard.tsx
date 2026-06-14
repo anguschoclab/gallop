@@ -29,10 +29,18 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
   return (
     <Card
       className={cn(
-        "overflow-hidden hover:bg-t700 transition-colors border-gold-muted",
+        "overflow-hidden hover:bg-t700 transition-colors border-gold-muted relative",
         ownedCount > 0 && "border-success/30 bg-success/5",
       )}
     >
+      <div className="absolute top-2 right-2 z-10">
+        <BookmarkButton
+          type="race"
+          id={race.id}
+          label={race.name}
+          subtitle={`${gradeLabel ?? "Race"} · ${race.graded?.track ?? ""}`.trim()}
+        />
+      </div>
       <CardContent className="p-0">
         <Link to="/race-browser" search={{ raceId: race.id }} className="block p-4 space-y-3">
           <div className="flex items-start justify-between">
