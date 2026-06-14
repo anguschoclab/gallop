@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import type { GameState } from "@/game/types";
 import { JockeyCard } from "@/components/jockey/JockeyCard";
 import { Button } from "@/components/ui/button";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { ChevronLeft } from "lucide-react";
 
 export const Route = createFileRoute("/jockey/$jockeyId")({
