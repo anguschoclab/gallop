@@ -17,6 +17,7 @@ import { JockeyStatsGrid } from "./JockeyStatsGrid";
 import { useGame } from "@/game/store";
 import { formatCurrency } from "@/core/common/formatting";
 import { Link } from "@tanstack/react-router";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { cn } from "@/lib/cn";
 
 interface JockeyCardProps {
