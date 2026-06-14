@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { PaceGraph } from "@/components/race/PaceGraph";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
+import type { SectionalSplit } from "@/core/race/types";
 import { generateJockeyFeedback } from "@/core/race/jockeyFeedback";
 import { formatCurrency } from "@/core/common/formatting";
 import { Trophy, ChevronRight } from "lucide-react";
@@ -10,8 +12,13 @@ import { cn } from "@/lib/cn";
  * Props for the ResultOverlay component.
  */
 interface ResultOverlayProps {
-  /** The race metadata (name, purse). */
-  race: { name: string; purse: number };
+  /** The race metadata (name, purse, optional sectionals/distance). */
+  race: {
+    name: string;
+    purse: number;
+    sectionalSplits?: SectionalSplit[];
+    distance?: number;
+  };
   /** List of runners with their finish times and details. */
   runners: Runner[];
   /** Callback to close the overlay. */
@@ -33,7 +40,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
 
   return (
     <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
-      <div className="bg-slate-900 border-2 border-gold/20 shadow-[0_0_50px_rgba(0,0,0,0.8)] max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-slate-900 border-2 border-gold/20 shadow-[0_0_50px_rgba(0,0,0,0.8)] max-w-3xl w-full overflow-hidden flex flex-col max-h-[90vh]">
         <div className="p-6 bg-black/40 border-b border-white/5 flex items-center justify-between">
           <div className="space-y-1">
             <div className="text-[10px] font-black uppercase text-gold/40 tracking-[0.3em]">
@@ -145,6 +152,24 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                   );
                 })}
               </div>
+
+              {race.sectionalSplits && race.sectionalSplits.length > 0 && (
+                <div className="pt-4 border-t border-white/5 space-y-3">
+                  <div className="text-[10px] font-black uppercase text-gold/40 tracking-[0.3em]">
+                    Pace / Position Graph
+                  </div>
+                  <PaceGraph
+                    splits={race.sectionalSplits}
+                    runners={ordered.map((r) => ({
+                      horseId: r.horseId,
+                      name: r.name,
+                      silk: r.silk,
+                      owned: r.owned,
+                    }))}
+                    distance={race.distance}
+                  />
+                </div>
+              )}
             </>
           )}
         </div>

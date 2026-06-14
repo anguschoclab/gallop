@@ -8,6 +8,7 @@ import { RaceVisualizer } from "@/components/race/RaceVisualizer";
 import { useLiveRaceSimulation } from "@/hooks/race/useLiveRaceSimulation";
 import { ResultOverlay } from "@/components/race/ResultOverlay";
 import { SectionalTimingTable } from "@/components/race/SectionalTimingTable";
+import { PaceGraph } from "@/components/race/PaceGraph";
 import { RaceControlBar } from "@/components/race/RaceControlBar";
 import { Track } from "@/components/race/Track";
 import { LiveSplitsTable } from "@/components/race/LiveSplitsTable";
@@ -228,21 +229,39 @@ function LiveRace() {
 
             {race.resolved && race.sectionalSplits && race.sectionalSplits.length > 0 && (
               <TabsContent value="sectionals" className="mt-0 focus-visible:outline-none">
-                <div className="border border-white/10 bg-black/20 p-6 rounded-lg">
-                  <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-3">
-                    <span className="h-1 w-12 bg-broadcast-accent" />
-                    Sectional Analysis
-                  </h3>
-                  <SectionalTimingTable
-                    splits={race.sectionalSplits}
-                    runners={runners.map((r) => ({
-                      horseId: r.horseId,
-                      name: r.name,
-                      silk: r.silk,
-                      owned: r.owned,
-                    }))}
-                    distance={race.distance}
-                  />
+                <div className="border border-white/10 bg-black/20 p-6 rounded-lg space-y-8">
+                  <div>
+                    <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-3">
+                      <span className="h-1 w-12 bg-broadcast-accent" />
+                      Pace / Position Graph
+                    </h3>
+                    <PaceGraph
+                      splits={race.sectionalSplits}
+                      runners={runners.map((r) => ({
+                        horseId: r.horseId,
+                        name: r.name,
+                        silk: r.silk,
+                        owned: r.owned,
+                      }))}
+                      distance={race.distance}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-3">
+                      <span className="h-1 w-12 bg-broadcast-accent" />
+                      Sectional Analysis
+                    </h3>
+                    <SectionalTimingTable
+                      splits={race.sectionalSplits}
+                      runners={runners.map((r) => ({
+                        horseId: r.horseId,
+                        name: r.name,
+                        silk: r.silk,
+                        owned: r.owned,
+                      }))}
+                      distance={race.distance}
+                    />
+                  </div>
                 </div>
               </TabsContent>
             )}
