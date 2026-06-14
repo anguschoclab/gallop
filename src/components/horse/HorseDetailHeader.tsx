@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { SilkDot } from "@/components/SilkDot";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { ShieldCheck, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/cn";
 
