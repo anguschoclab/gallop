@@ -22,6 +22,9 @@ const stableSearchSchema = z.object({
   rivalQ: fallback(z.string(), "").default(""),
   rivalTier: fallback(z.string(), "all").default("all"),
   view: fallback(z.enum(["ledger", "gallery"]), "ledger").default("ledger"),
+  tendency: fallback(z.enum(["any", "front", "mid", "off"]), "any").default("any"),
+  trip: fallback(z.enum(["any", "sprint", "mile", "route"]), "any").default("any"),
+  surface: fallback(z.enum(["any", "Turf", "Dirt", "Synthetic"]), "any").default("any"),
 });
 
 export const Route = createFileRoute("/stable/")({
