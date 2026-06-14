@@ -15,6 +15,8 @@ import { z } from "zod";
 import { useGame } from "@/game/store";
 import { overall } from "@/components/horse/HorseBits";
 import { Users, Clock, Heart, List, LayoutGrid } from "lucide-react";
+import { matchesTendency } from "@/core/horse/paceTendency";
+import { PaceTendencyFilter } from "@/components/horse/PaceTendencyFilter";
 
 const stableSearchSchema = z.object({
   tab: fallback(z.enum(["roster", "rivals"]), "roster").default("roster"),
@@ -22,6 +24,9 @@ const stableSearchSchema = z.object({
   rivalQ: fallback(z.string(), "").default(""),
   rivalTier: fallback(z.string(), "all").default("all"),
   view: fallback(z.enum(["ledger", "gallery"]), "ledger").default("ledger"),
+  tendency: fallback(z.enum(["any", "front", "mid", "off"]), "any").default("any"),
+  trip: fallback(z.enum(["any", "sprint", "mile", "route"]), "any").default("any"),
+  surface: fallback(z.enum(["any", "Turf", "Dirt", "Synthetic"]), "any").default("any"),
 });
 
 export const Route = createFileRoute("/stable/")({
@@ -30,7 +35,7 @@ export const Route = createFileRoute("/stable/")({
 });
 
 function StablePage() {
-  const { tab, status, rivalQ, rivalTier, view } = Route.useSearch();
+  const { tab, status, rivalQ, rivalTier, view, tendency, trip, surface } = Route.useSearch();
   const navigate = Route.useNavigate();
   const horses = useHorses();
   const awards = useAwards();
@@ -55,8 +60,13 @@ function StablePage() {
     else if (status === "auctioned") result = myHorses.filter((h) => !!h.consignedSaleId);
     else if (status === "active")
       result = myHorses.filter((h) => h.lifecycleStatus === "active" && !h.consignedSaleId);
+    if (tendency !== "any") {
+      result = result.filter((h) =>
+        matchesTendency(h, tendency, { distance: trip, surface }),
+      );
+    }
     return result.sort((a, b) => overall(b) - overall(a));
-  }, [myHorses, status]);
+  }, [myHorses, status, tendency, trip, surface]);
 
   const horseCountsByStable = useMemo(() => {
     const counts = new Map<string, number>();
@@ -175,7 +185,15 @@ function StablePage() {
           )}
         </div>
 
-        <TabsContent value="roster" className="mt-0">
+        <TabsContent value="roster" className="mt-0 space-y-3">
+          <PaceTendencyFilter
+            tendency={tendency}
+            onTendency={(t) => navigate({ search: (prev: any) => ({ ...prev, tendency: t }) })}
+            distance={trip}
+            onDistance={(d) => navigate({ search: (prev: any) => ({ ...prev, trip: d }) })}
+            surface={surface}
+            onSurface={(s) => navigate({ search: (prev: any) => ({ ...prev, surface: s }) })}
+          />
           <StableRosterView
             horses={filteredMyHorses}
             status={status}
