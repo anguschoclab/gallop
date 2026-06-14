@@ -173,6 +173,8 @@ export type Horse = {
   fame: number;
   owned: boolean;
   stableId?: string;
+  /** True if this horse was foaled while its dam was owned by the player's stable. Set at birth, never mutated. */
+  bredByPlayer?: boolean;
   consignedSaleId?: string;
   stud?: StudCareer;
   distanceAptitude: number;
