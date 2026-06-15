@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from "vitest";
 
 import * as opfsService from "@/services/storage/opfsService";
 import { checkOPFSAvailable } from "@/services/storage/opfsService";
@@ -75,6 +75,10 @@ function createMockWizardState(): storageAdapter.WizardState {
 }
 
 describe("storageAdapter", () => {
+  beforeAll(() => {
+    mockLocalStorage();
+  });
+
   beforeEach(() => {
     resetOPFSMocks();
     storageAdapter._resetStorageAdapterState();
@@ -82,18 +86,7 @@ describe("storageAdapter", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    // Restore a working localStorage mock for bun compatibility
-    const store = new Map<string, string>();
-    Object.defineProperty(globalThis, "localStorage", {
-      value: {
-        getItem: (key: string) => store.get(key) ?? null,
-        setItem: (key: string, value: string) => store.set(key, value),
-        removeItem: (key: string) => store.delete(key),
-        clear: () => store.clear(),
-      },
-      writable: true,
-      configurable: true,
-    });
+    mockLocalStorage();
   });
 
   // Test Suite 1: OPFS Game State Functions

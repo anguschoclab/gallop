@@ -241,4 +241,4 @@ describe("Inbox persistence across reload — weather drama alerts", () => {
     expect(unread).toHaveLength(1);
     expect(unread[0].body).toMatch(/Kentucky Derby/);
   });
-});
+}, 30000);

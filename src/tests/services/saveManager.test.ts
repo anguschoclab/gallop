@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from "vitest";
 import * as saveManager from "@/services/storage/saveManager";
 import * as opfsService from "@/services/storage/opfsService";
 import type { GameState } from "@/game/types";
@@ -20,6 +20,34 @@ describe("saveManager", () => {
     isAutoSave: false,
   };
 
+  const localStoreMap = new Map<string, string>();
+  const mockLocalStorageObj = {
+    getItem: (key: string) => localStoreMap.get(key) ?? null,
+    setItem: (key: string, value: string) => {
+      localStoreMap.set(key, value);
+    },
+    removeItem: (key: string) => {
+      localStoreMap.delete(key);
+    },
+    clear: () => {
+      localStoreMap.clear();
+    },
+    length: 0,
+    key: (index: number) => Array.from(localStoreMap.keys())[index] ?? null,
+  };
+
+  function setupMockLocalStorage() {
+    Object.defineProperty(globalThis, "localStorage", {
+      value: mockLocalStorageObj,
+      writable: true,
+      configurable: true,
+    });
+  }
+
+  beforeAll(() => {
+    setupMockLocalStorage();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
@@ -27,23 +55,8 @@ describe("saveManager", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    // Restore a working localStorage mock for bun compatibility
-    const store = new Map<string, string>();
-    Object.defineProperty(globalThis, "localStorage", {
-      value: {
-        getItem: (key: string) => store.get(key) ?? null,
-        setItem: (key: string, value: string) => store.set(key, value),
-        removeItem: (key: string) => store.delete(key),
-        clear: () => store.clear(),
-      },
-      writable: true,
-      configurable: true,
-    });
-    Object.defineProperty(globalThis, "location", {
-      value: undefined,
-      writable: true,
-      configurable: true,
-    });
+    setupMockLocalStorage();
+    delete (globalThis as any).location;
   });
 
   describe("getSaveSlots", () => {

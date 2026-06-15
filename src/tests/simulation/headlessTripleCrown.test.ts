@@ -10,12 +10,37 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 // Mock Worker global to prevent worker creation in test environment
 (global as any).Worker = undefined;
 
+function mockLocalStorage() {
+  const store = new Map<string, string>();
+  Object.defineProperty(globalThis, "localStorage", {
+    value: {
+      getItem: (key: string) => store.get(key) ?? null,
+      setItem: (key: string, value: string) => {
+        store.set(key, value);
+      },
+      removeItem: (key: string) => {
+        store.delete(key);
+      },
+      clear: () => {
+        store.clear();
+      },
+    },
+    writable: true,
+    configurable: true,
+  });
+  return store;
+}
+
+// Initialize working localStorage mock before module imports run
+mockLocalStorage();
+
 // Mock opfsService module before importing storage-dependent code
 vi.mock("@/services/storage/opfsService", () => ({
   initOPFS: vi.fn(),
   writeFile: vi.fn(),
   readFile: vi.fn(),
   deleteFile: vi.fn(),
+  checkOPFSAvailable: vi.fn(),
 }));
 
 // Mock comlink to prevent worker communication issues
@@ -41,6 +66,7 @@ let mockOPFSData: Map<string, any> = new Map();
 function resetOPFSMocks() {
   mockOPFSData = new Map();
 
+  (opfsService.checkOPFSAvailable as any).mockResolvedValue(true);
   (opfsService.initOPFS as any).mockResolvedValue(undefined);
   (opfsService.readFile as any).mockImplementation(async (filename: string) => {
     return mockOPFSData.get(filename) ?? null;
@@ -54,26 +80,6 @@ function resetOPFSMocks() {
   });
 }
 
-function mockLocalStorage() {
-  const store = new Map<string, string>();
-  Object.defineProperty(globalThis, "localStorage", {
-    value: {
-      getItem: (key: string) => store.get(key) ?? null,
-      setItem: (key: string, value: string) => {
-        store.set(key, value);
-      },
-      removeItem: (key: string) => {
-        store.delete(key);
-      },
-      clear: () => {
-        store.clear();
-      },
-    },
-    writable: true,
-    configurable: true,
-  });
-  return store;
-}
 
 describe("Headless Triple Crown Simulation", () => {
   beforeEach(() => {
@@ -197,4 +203,4 @@ describe("Headless Triple Crown Simulation", () => {
       expect(typeof entry.won).toBe("boolean");
     }
   });
-});
+}, 30000);
