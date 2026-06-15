@@ -206,6 +206,7 @@ export function SpeedBreakdownChart({
                 <li key={id}>
                   <button
                     type="button"
+                    aria-label={active ? `Unpin ${r.name}` : `Pin ${r.name}`}
                     onClick={() => togglePin(id)}
                     onMouseEnter={() => setHovered(id)}
                     onMouseLeave={() => setHovered(null)}

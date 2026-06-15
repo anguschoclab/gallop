@@ -26,3 +26,7 @@
 ## 2024-06-13 - Custom Interactive Element Accessibility
 **Learning:** Found multiple instances where raw `<button>` elements were used for toggles, tabs, and selectors (e.g. in TacticsAnalyzer, RosterFilterBar) without explicit `type="button"` or state indicators like `aria-pressed`. This can cause unintentional form submissions if embedded and breaks screen reader understanding of selection states.
 **Action:** When creating custom `<button>` elements that act as selectors or toggles rather than standard actions, always ensure they have `type="button"` and an `aria-pressed={isActive}` property to properly communicate state.
+
+## 2024-06-14 - Interactive Legend Accessibility
+**Learning:** In custom chart legends (like Speed Breakdown and Pace Graph), interactive toggle `<button>` elements representing items (like horses) relied on internal text for their accessible name, which didn't communicate the action (e.g., "Pin" or "Unpin").
+**Action:** Always provide an explicit dynamic `aria-label` for toggleable items in custom lists or legends that clarifies the action based on current state (e.g., `aria-label={active ? \`Unpin \${name}\` : \`Pin \${name}\`}`).
