@@ -225,6 +225,16 @@ export function resolveLiveRaceWithImpacts(
       const tcRaces = GRADED_RACES.filter((g) => g.triplecrownKey === triplecrownKey);
 
       // Check horse's race history for all legs
+      const raceHistoryMap = new Map(
+        (
+          horse.raceHistory as Array<{
+            raceId: string;
+            raceName: string;
+            position: number;
+            day: number;
+          }>
+        ).map((rh) => [rh.raceId, rh]),
+      );
       const legs = tcRaces.map((tcRace) => {
         // If this is the current race being resolved, use the current result
         if (tcRace.key === race.graded?.key) {
@@ -235,16 +245,6 @@ export function resolveLiveRaceWithImpacts(
           };
         }
         // Otherwise check race history
-        const raceHistoryMap = new Map(
-          (
-            horse.raceHistory as Array<{
-              raceId: string;
-              raceName: string;
-              position: number;
-              day: number;
-            }>
-          ).map((rh) => [rh.raceId, rh]),
-        );
         const historyEntry =
           raceHistoryMap.get(tcRace.key) ||
           (

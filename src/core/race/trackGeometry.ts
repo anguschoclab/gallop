@@ -28,12 +28,6 @@ export function calculateTrackGeometryScore(horse: Horse, race: Race): number {
   let score = 0;
 
   const trackId = race.graded?.trackId || race.trackId;
-  const course = race.graded
-    ? {
-        sections: [],
-        straightLength: race.distance > 2000 ? 500 : 350, // Fallback if no course data
-      }
-    : null; // In real use, we'd look up the track JSON here.
 
   // For this logic, we'll assume the sim has already resolved the course
   // If we can't find exact radii, we check the straightLength as a proxy for "Galloping" vs "Tight"

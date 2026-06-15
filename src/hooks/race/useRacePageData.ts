@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from "react";
+import { useRef, useMemo } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import type { GameState, Horse } from "@/game/types";
@@ -28,23 +28,23 @@ export function useRacePageData(raceId: string) {
     return buf.find((w: any) => w.day === race.day) ?? buf[buf.length - 1];
   });
 
-  const [runners] = useState<Runner[]>(() => {
+  const runners = useMemo<Runner[]>(() => {
     if (!race) return [];
     const deps: RaceSimulationDependencies = { race, horses, jockeys };
     const { runners: built } = buildRaceField(deps);
     return built;
-  });
+  }, [raceId, horses, jockeys]);
 
   const rngRef = useRef<any>(null);
-  if (!rngRef.current && race) {
-    rngRef.current = rngForRace(race);
-  }
-
   const narrativeRef = useRef<NarrativeGenerator | null>(null);
   const messageQueue = useRef<CommentaryLine[]>([]);
+  const lastRaceIdRef = useRef<string | null>(null);
 
-  if (!narrativeRef.current && race) {
-    narrativeRef.current = new NarrativeGenerator(race, horses, stables, rngRef.current);
+  if (lastRaceIdRef.current !== raceId) {
+    lastRaceIdRef.current = raceId;
+    rngRef.current = race ? rngForRace(race) : null;
+    narrativeRef.current = race ? new NarrativeGenerator(race, horses, stables, rngRef.current) : null;
+    messageQueue.current = [];
   }
 
   const localHorseMap = useMemo(

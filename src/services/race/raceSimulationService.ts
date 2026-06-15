@@ -87,8 +87,8 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   }
 
   // 2. Fill remaining spots with AI horses
+  const tier = getTierForRaceClass(race.raceClass);
   while (entriesData.length < race.fieldSize) {
-    const tier = getTierForRaceClass(race.raceClass);
     const aiHorse = generateHorse({ tier: tier as never }, rng);
     fillerHorses.push(aiHorse);
     const weight = calculateAssignedWeight(aiHorse, race);
@@ -98,7 +98,6 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   // Empty-field guard: always return at least 1 runner so downstream
   // simulation doesn't have to handle a completely empty field.
   if (entriesData.length === 0) {
-    const tier = getTierForRaceClass(race.raceClass);
     const aiHorse = generateHorse({ tier: tier as never }, rng);
     fillerHorses.push(aiHorse);
     const weight = calculateAssignedWeight(aiHorse, race);
@@ -198,6 +197,7 @@ export function simulateStep(
   distance: number,
   rng: Rng,
   course?: CourseSpecification,
+  windKph?: number,
 ): { stillRunning: boolean; finishOrder: SimulationResult[] } {
   const finishOrder: SimulationResult[] = [];
   let stillRunning = false;
@@ -231,6 +231,8 @@ export function simulateStep(
         pace,
         course,
         rankMap.get(runner.horseId),
+        aliveRank,
+        windKph,
       );
       if (runner.finishTime !== null) {
         finishOrder.push({

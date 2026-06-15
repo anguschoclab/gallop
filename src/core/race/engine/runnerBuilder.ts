@@ -348,10 +348,27 @@ export function buildRunner(
     courseFamiliarityMultiplier = getCourseMultiplier(visits);
   }
 
-  // Weather preference defaults (updated later when pattern/weather is known)
+  // Weather preference vs current race weather. Mismatch unsettles the horse
+  // (worsens temperament multiplier); match steadies them slightly.
   let weatherSpeedMod = 1.0;
   let weatherStaminaMod = 1.0;
   let weatherPrefMod = 1;
+  if (h.weatherPreference && h.weatherPreference !== "all") {
+    // Prefer granular SimWeatherPattern when available; fall back to coarse legacy enum.
+    const isWet = weatherPattern
+      ? ["shower", "rain", "snow", "storm"].includes(weatherPattern)
+      : race?.weather === "rainy";
+    const matches = (h.weatherPreference === "wet") === isWet;
+    if (matches) {
+      weatherPrefMod = 0.97; // steadier (lower noise)
+      weatherSpeedMod = 1.02; // direct speed bonus
+      weatherStaminaMod = 1.02; // direct stamina bonus
+    } else {
+      weatherPrefMod = 1.05; // more erratic (higher noise)
+      weatherSpeedMod = 0.98; // direct speed penalty
+      weatherStaminaMod = 0.98; // direct stamina penalty
+    }
+  }
 
   const rawTopSpeed =
     (12 + (h.stats.speed / 100) * 10) *
@@ -387,24 +404,6 @@ export function buildRunner(
       ? Math.round(h.temperament / 25)
       : TRAIT_VALUES[h.temperament || "fair"];
   const rawTemperamentMod = 1 + (tempVal - 2) * -0.1;
-  // Weather preference vs current race weather. Mismatch unsettles the horse
-  // (worsens temperament multiplier); match steadies them slightly.
-  if (h.weatherPreference && h.weatherPreference !== "all") {
-    // Prefer granular SimWeatherPattern when available; fall back to coarse legacy enum.
-    const isWet = weatherPattern
-      ? ["shower", "rain", "snow", "storm"].includes(weatherPattern)
-      : race?.weather === "rainy";
-    const matches = (h.weatherPreference === "wet") === isWet;
-    if (matches) {
-      weatherPrefMod = 0.97; // steadier (lower noise)
-      weatherSpeedMod = 1.02; // direct speed bonus
-      weatherStaminaMod = 1.02; // direct stamina bonus
-    } else {
-      weatherPrefMod = 1.05; // more erratic (higher noise)
-      weatherSpeedMod = 0.98; // direct speed penalty
-      weatherStaminaMod = 0.98; // direct stamina penalty
-    }
-  }
   // Removed Math.max(1.0, ...) floor so a matching preference actually reduces noise.
   const temperamentMod = rawTemperamentMod * weatherPrefMod + groomBonus;
   const confVal =

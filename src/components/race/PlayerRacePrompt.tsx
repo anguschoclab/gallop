@@ -97,6 +97,8 @@ export function PlayerRacePrompt() {
       DEFAULT_DT,
       defaultMaxTime(race!.distance),
       course,
+      true,
+      raceWeather?.windKph,
     );
     resolveRaceWithImpacts(race!.id, result.result);
     clearPending();

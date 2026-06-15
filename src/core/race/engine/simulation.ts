@@ -121,7 +121,7 @@ export function computePaceContext(
 
   // Find leader first (needed for lead group calculation)
   for (const r of runners) {
-    if (r.position > leaderPos) {
+    if (r.finishTime === null && r.position > leaderPos) {
       leaderPos = r.position;
       leaderVelocity = r.velocity;
     }
@@ -623,8 +623,9 @@ function getTrackSection(
  * @param {Runner[]} [sortedField] - The list of all runners sorted by position.
  * @param {PaceContext} [pace] - The current pace context.
  * @param {CourseSpecification} [course] - The track course specification.
- * @param rankFromFront
- * @param windKph
+ * @param {number} [rankFromFront] - Pre-computed rank from front (avoids O(n) per runner).
+ * @param {number} [aliveCount] - Pre-computed alive count (avoids O(n) per runner).
+ * @param {number} [windKph] - Wind speed in km/h for drag calculation.
  */
 export function stepRunner(
   r: Runner,
@@ -636,6 +637,7 @@ export function stepRunner(
   pace?: PaceContext,
   course?: CourseSpecification,
   rankFromFront?: number,
+  aliveCount?: number,
   windKph?: number,
 ) {
   if (r.finishTime !== null) return;
@@ -672,14 +674,14 @@ export function stepRunner(
   if (progress < POSITION_SEEK_PROGRESS && sortedField && sortedField.length > 1) {
     // Use pre-computed rank if provided (avoids O(n) filter+findIndex per runner)
     let rank = rankFromFront ?? -1;
-    let aliveCount = sortedField.filter((o) => o.finishTime === null).length;
+    let runnerAliveCount = aliveCount ?? sortedField.filter((o) => o.finishTime === null).length;
     if (rank < 0) {
       const aliveField = sortedField.filter((o) => o.finishTime === null);
-      aliveCount = aliveField.length;
+      runnerAliveCount = aliveField.length;
       rank = aliveField.findIndex((o) => o.horseId === r.horseId);
     }
-    if (rank >= 0 && aliveCount > 1) {
-      const fieldFraction = rank / (aliveCount - 1);
+    if (rank >= 0 && runnerAliveCount > 1) {
+      const fieldFraction = rank / (runnerAliveCount - 1);
       const preferred = profile.preferredFieldFraction;
       // Positive delta = horse is further forward than its preferred slot.
       const delta = preferred - fieldFraction;
@@ -750,7 +752,7 @@ export function stepRunner(
   // Tactical AI Integration (Throttle to ~1Hz)
   if (Math.floor(t / 1.0) !== Math.floor((t - dt) / 1.0) && pace) {
     const tactical = calculateTacticalAdjustment(r, pace, sortedField || []);
-    r.velocity *= 1 + (tactical.velocityMod - 1) * dt;
+    r.velocity *= tactical.velocityMod;
     r.lane += (tactical.targetLane - r.lane) * 0.1 * dt;
   }
 
@@ -837,6 +839,7 @@ export function runRaceToCompletion(
         pace,
         course,
         rankMap.get(r.horseId),
+        aliveRank,
         windKph,
       );
 

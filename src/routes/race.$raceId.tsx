@@ -21,6 +21,7 @@ import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { useRacePageData } from "@/hooks/race/useRacePageData";
 import { useRaceUIState } from "@/hooks/race/useRaceUIState";
+import { getCourseForRace } from "@/data/tracks";
 
 export const Route = createFileRoute("/race/$raceId")({
   component: LiveRace,
@@ -56,6 +57,8 @@ function LiveRace() {
     rngRef,
   } = useRacePageData(raceId);
 
+  const course = race ? getCourseForRace(race) : undefined;
+
   const { tick, speed, setSpeed, finished, paused, setPaused, simTime, liveSplits } =
     useLiveRaceSimulation({
       race,
@@ -64,6 +67,8 @@ function LiveRace() {
       narrativeRef,
       messageQueue,
       rngRef,
+      course,
+      windKph: raceWeather?.windKph,
     });
 
   const {

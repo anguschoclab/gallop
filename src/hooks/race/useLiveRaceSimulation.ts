@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { computePaceContext, stepRunner } from "@/core/race/engine/simulation";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
+import type { CourseSpecification } from "@/data/tracks";
 import type { NarrativeGenerator } from "@/services/narrative/narrativeService";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 
@@ -23,6 +24,8 @@ export function useLiveRaceSimulation({
   narrativeRef,
   messageQueue,
   rngRef,
+  course,
+  windKph,
 }: {
   race: any;
   runners: Runner[];
@@ -30,6 +33,8 @@ export function useLiveRaceSimulation({
   narrativeRef: React.MutableRefObject<NarrativeGenerator | null>;
   messageQueue: React.MutableRefObject<CommentaryLine[]>;
   rngRef: React.MutableRefObject<any>;
+  course?: CourseSpecification;
+  windKph?: number;
 }) {
   const [tick, setTick] = useState(0);
   const [speed, setSpeed] = useState(1);
@@ -113,8 +118,10 @@ export function useLiveRaceSimulation({
               rngRef.current!,
               sortedField,
               pace,
-              undefined,
+              course,
               rankMap.get(r.horseId),
+              aliveRank,
+              windKph,
             );
             // Track quarter-marker crossings with linear interpolation
             if (!splitCrossingsRef.current.has(r.horseId)) {
