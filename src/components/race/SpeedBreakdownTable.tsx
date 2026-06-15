@@ -62,15 +62,9 @@ export function SpeedBreakdownTable({ splits, runners, className }: SpeedBreakdo
                   return (
                     <td key={split.label} className="px-3 py-2 text-center align-top">
                       <div className="flex flex-col items-center gap-0.5">
-                        {seekStr && (
-                          <span className="text-blue-400 tabular-nums">{seekStr}</span>
-                        )}
-                        {spurtStr && (
-                          <span className="text-gold tabular-nums">{spurtStr}</span>
-                        )}
-                        {!seekStr && !spurtStr && (
-                          <span className="text-cream/20">—</span>
-                        )}
+                        {seekStr && <span className="text-blue-400 tabular-nums">{seekStr}</span>}
+                        {spurtStr && <span className="text-gold tabular-nums">{spurtStr}</span>}
+                        {!seekStr && !spurtStr && <span className="text-cream/20">—</span>}
                       </div>
                     </td>
                   );

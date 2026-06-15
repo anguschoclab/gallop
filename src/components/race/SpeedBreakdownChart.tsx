@@ -32,7 +32,12 @@ interface ChartRow {
   [key: string]: number;
 }
 
-export function SpeedBreakdownChart({ snapshots, runners, distance, className }: SpeedBreakdownChartProps) {
+export function SpeedBreakdownChart({
+  snapshots,
+  runners,
+  distance,
+  className,
+}: SpeedBreakdownChartProps) {
   const runnerMap = useMemo(() => new Map(runners.map((r) => [r.horseId, r])), [runners]);
 
   const [hovered, setHovered] = useState<string | null>(null);
@@ -94,10 +99,7 @@ export function SpeedBreakdownChart({ snapshots, runners, distance, className }:
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-4">
         <div className="h-72 bg-black/20 border border-white/5 p-3">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={data}
-              margin={{ top: 10, right: 12, bottom: 24, left: 0 }}
-            >
+            <LineChart data={data} margin={{ top: 10, right: 12, bottom: 24, left: 0 }}>
               <CartesianGrid stroke="var(--chart-grid)" strokeDasharray="3 3" />
               <XAxis
                 dataKey="distance"
@@ -139,7 +141,10 @@ export function SpeedBreakdownChart({ snapshots, runners, distance, className }:
                   const [horseId, kind] = key.split("_");
                   const r = runnerMap.get(horseId);
                   const label = kind === "seek" ? "Seek" : "Spurt";
-                  return [`${value >= 0 ? "+" : "−"}${Math.abs(value).toFixed(1)}%`, `${r?.name ?? horseId} · ${label}`];
+                  return [
+                    `${value >= 0 ? "+" : "−"}${Math.abs(value).toFixed(1)}%`,
+                    `${r?.name ?? horseId} · ${label}`,
+                  ];
                 }}
               />
               {markers.map((m) => (
@@ -225,9 +230,7 @@ export function SpeedBreakdownChart({ snapshots, runners, distance, className }:
                     <span
                       className={cn(
                         "h-2 w-2 rounded-full border",
-                        active
-                          ? "bg-gold border-gold"
-                          : "border-white/20 bg-transparent",
+                        active ? "bg-gold border-gold" : "border-white/20 bg-transparent",
                       )}
                       aria-hidden
                     />

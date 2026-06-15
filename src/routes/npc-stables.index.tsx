@@ -199,40 +199,40 @@ function StableCard({ stable }: { stable: any }) {
       </div>
       <Link to="/npc-stables/$stableId" params={{ stableId: stable.id }}>
         <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-gold-muted">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-2">
-              <div
-                className="w-8 h-8 rounded-full border-2"
-                style={{
-                  backgroundColor: stable.colors.primary,
-                  borderColor: stable.colors.secondary,
-                }}
-              />
-              <div>
-                <CardTitle className="text-lg font-[family-name:var(--font-display)]">
-                  {stable.name}
-                </CardTitle>
-                <p className="text-sm text-cream-muted">{stable.country}</p>
+          <CardHeader className="pb-3">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-8 h-8 rounded-full border-2"
+                  style={{
+                    backgroundColor: stable.colors.primary,
+                    borderColor: stable.colors.secondary,
+                  }}
+                />
+                <div>
+                  <CardTitle className="text-lg font-[family-name:var(--font-display)]">
+                    {stable.name}
+                  </CardTitle>
+                  <p className="text-sm text-cream-muted">{stable.country}</p>
+                </div>
               </div>
+              <Badge className={stableTierColor(stable.tier)}>{stable.tier}</Badge>
             </div>
-            <Badge className={stableTierColor(stable.tier)}>{stable.tier}</Badge>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-cream-muted mb-3 line-clamp-2">
-            {stable.description ||
-              `${stable.owner}'s racing operation with ${stable.horses.length} horses.`}
-          </p>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-cream-muted">{stable.horses.length} horses</span>
-            <span className="text-fame" title={`Reputation: ${stable.reputation}`}>
-              {getReputationStars(stable.reputation)}
-            </span>
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-cream-muted mb-3 line-clamp-2">
+              {stable.description ||
+                `${stable.owner}'s racing operation with ${stable.horses.length} horses.`}
+            </p>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-cream-muted">{stable.horses.length} horses</span>
+              <span className="text-fame" title={`Reputation: ${stable.reputation}`}>
+                {getReputationStars(stable.reputation)}
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      </Link>
     </div>
   );
 }

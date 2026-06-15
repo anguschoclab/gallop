@@ -12,7 +12,16 @@ import {
 const SEEDS = [1, 7, 42, 99];
 
 function buildSlowStartField(): Horse[] {
-  const base = { stats: { speed: 50, stamina: 60, acceleration: 40, consistency: 50, temperament: 50, conformation: 50 } };
+  const base = {
+    stats: {
+      speed: 50,
+      stamina: 60,
+      acceleration: 40,
+      consistency: 50,
+      temperament: 50,
+      conformation: 50,
+    },
+  };
   return [
     createTestHorse({ ...base, id: "slow1", name: "Slow 1", runningStyle: "P" as any }),
     createTestHorse({ ...base, id: "slow2", name: "Slow 2", runningStyle: "P" as any }),
@@ -22,13 +31,27 @@ function buildSlowStartField(): Horse[] {
       id: "front",
       name: "Front Runner",
       runningStyle: "E" as any,
-      stats: { speed: 75, stamina: 70, acceleration: 75, consistency: 60, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 75,
+        stamina: 70,
+        acceleration: 75,
+        consistency: 60,
+        temperament: 50,
+        conformation: 50,
+      },
     }),
     createTestHorse({
       id: "closer",
       name: "Closer",
       runningStyle: "S" as any,
-      stats: { speed: 65, stamina: 75, acceleration: 55, consistency: 60, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 65,
+        stamina: 75,
+        acceleration: 55,
+        consistency: 60,
+        temperament: 50,
+        conformation: 50,
+      },
     }),
   ];
 }
@@ -71,18 +94,14 @@ describe("Slow-start regression scenarios", () => {
       expect(snap).toBeDefined();
       if (!snap) continue;
 
-      const positions = [...snap.horses]
-        .map((h) => h.position)
-        .sort((a, b) => b - a);
+      const positions = [...snap.horses].map((h) => h.position).sort((a, b) => b - a);
       const leader = positions[0];
       const third = positions[2] ?? 0;
       const gap = leader - third;
       expect(gap).toBeLessThanOrEqual(distance * 0.1); // ~160m for 1600m race; measured ~72m
 
       // Early leader's seek contribution should be negative (dampener engaged)
-      const leaderHorse = snap.horses.reduce((best, h) =>
-        h.position > best.position ? h : best,
-      );
+      const leaderHorse = snap.horses.reduce((best, h) => (h.position > best.position ? h : best));
       expect(leaderHorse.seekContribution ?? 0).toBeLessThanOrEqual(0);
     }
   });
@@ -153,9 +172,7 @@ describe("Slow-start regression scenarios", () => {
       expect(run1.result.length).toBe(run2.result.length);
       for (let i = 0; i < run1.result.length; i++) {
         expect(run1.result[i].horseId).toBe(run2.result[i].horseId);
-        expect(Math.round(run1.result[i].time * 1000)).toBe(
-          Math.round(run2.result[i].time * 1000),
-        );
+        expect(Math.round(run1.result[i].time * 1000)).toBe(Math.round(run2.result[i].time * 1000));
       }
     }
   });

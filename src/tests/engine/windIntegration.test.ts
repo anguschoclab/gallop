@@ -12,7 +12,14 @@ function makeRunner(id: string, topSpeedOverride?: number) {
   const horse = createTestHorse({
     id,
     name: id,
-    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 80, temperament: 50, conformation: 50 },
+    stats: {
+      speed: 70,
+      stamina: 70,
+      acceleration: 70,
+      consistency: 80,
+      temperament: 50,
+      conformation: 50,
+    },
   });
   const runner = buildRunner(horse, false, distance, "Turf", conditions, 1);
   if (topSpeedOverride) {
@@ -26,15 +33,20 @@ const straightTrack: CourseSpecification = {
   circumference: 2000,
   straightLength: 1200,
   width: 20,
-  sections: [
-    { type: "straight", length: 1200, orientationDeg: 0 },
-  ],
+  sections: [{ type: "straight", length: 1200, orientationDeg: 0 }],
 };
 
 describe("wind integration", () => {
   it("headwind slows finish time vs no-wind baseline", () => {
     const rng = createRng(42);
-    const baseline = runRaceToCompletion([makeRunner("h1")], distance, rng, 0.1, 600, straightTrack);
+    const baseline = runRaceToCompletion(
+      [makeRunner("h1")],
+      distance,
+      rng,
+      0.1,
+      600,
+      straightTrack,
+    );
 
     const rng2 = createRng(42);
     const headwind = runRaceToCompletion(
@@ -54,7 +66,14 @@ describe("wind integration", () => {
 
   it("tailwind speeds finish time vs no-wind baseline", () => {
     const rng = createRng(42);
-    const baseline = runRaceToCompletion([makeRunner("h1")], distance, rng, 0.1, 600, straightTrack);
+    const baseline = runRaceToCompletion(
+      [makeRunner("h1")],
+      distance,
+      rng,
+      0.1,
+      600,
+      straightTrack,
+    );
 
     const rng2 = createRng(42);
     const tailwind = runRaceToCompletion(
@@ -74,7 +93,14 @@ describe("wind integration", () => {
 
   it("crosswind has minimal effect", () => {
     const rng = createRng(42);
-    const baseline = runRaceToCompletion([makeRunner("h1")], distance, rng, 0.1, 600, straightTrack);
+    const baseline = runRaceToCompletion(
+      [makeRunner("h1")],
+      distance,
+      rng,
+      0.1,
+      600,
+      straightTrack,
+    );
 
     const rng2 = createRng(42);
     const crosswind = runRaceToCompletion(
@@ -106,12 +132,8 @@ describe("wind integration", () => {
       sections: [section],
     };
 
-    const sprinterEffect = calculateWindEffect(
-      sprinter, course, 80, 0, section, 0.5,
-    );
-    const routerEffect = calculateWindEffect(
-      router, course, 80, 0, section, 0.5,
-    );
+    const sprinterEffect = calculateWindEffect(sprinter, course, 80, 0, section, 0.5);
+    const routerEffect = calculateWindEffect(router, course, 80, 0, section, 0.5);
 
     // Sprinter faces a stronger slowdown (lower speedMod)
     expect(sprinterEffect.speedMod).toBeLessThan(routerEffect.speedMod);

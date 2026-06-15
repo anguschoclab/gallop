@@ -63,8 +63,8 @@ describe("simulateRace executor correctness", () => {
 
     for (const r of result.result) {
       expect(Number.isFinite(r.time)).toBe(true);
-      expect(r.time).toBeGreaterThan(50);  // realistic lower bound
-      expect(r.time).toBeLessThan(180);    // realistic upper bound
+      expect(r.time).toBeGreaterThan(50); // realistic lower bound
+      expect(r.time).toBeLessThan(180); // realistic upper bound
     }
 
     // Positions should be 1..N with no gaps or duplicates
@@ -100,9 +100,7 @@ describe("simulateRace executor correctness", () => {
     const runA = simulateRace(race, horses, []);
     const runB = simulateRace(race, horses, []);
 
-    expect(runA.result.map((r) => r.horseId)).toEqual(
-      runB.result.map((r) => r.horseId),
-    );
+    expect(runA.result.map((r) => r.horseId)).toEqual(runB.result.map((r) => r.horseId));
     expect(runA.result.map((r) => Math.round(r.time * 1000))).toEqual(
       runB.result.map((r) => Math.round(r.time * 1000)),
     );

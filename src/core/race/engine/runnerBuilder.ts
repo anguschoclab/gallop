@@ -566,7 +566,9 @@ export function buildRunner(
     weight: assignedWeight,
     jockeyInstructions:
       entry?.jockeyInstructions ??
-      (jockey && !stable ? deriveDefaultInstructions(runningStyle, h.id, race?.id ?? "") : undefined),
+      (jockey && !stable
+        ? deriveDefaultInstructions(runningStyle, h.id, race?.id ?? "")
+        : undefined),
     courseFamiliarityMultiplier,
     lastSeekContribution: 0,
     lastSpurtContribution: 0,

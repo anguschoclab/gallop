@@ -677,11 +677,7 @@ export function calculateWindEffect(
   section: TrackSection | null,
   posWithinSection: number,
 ): { speedMod: number; staminaMod: number } {
-  if (
-    typeof windKph !== "number" ||
-    typeof windDirectionDeg !== "number" ||
-    !section
-  ) {
+  if (typeof windKph !== "number" || typeof windDirectionDeg !== "number" || !section) {
     return { speedMod: 1, staminaMod: 1 };
   }
 
@@ -692,16 +688,13 @@ export function calculateWindEffect(
 
   // Meteorological convention: windDirectionDeg is where the wind is COMING FROM.
   // cos(section - windDirection) → 1 = full headwind, -1 = full tailwind
-  const windComponent = Math.cos(
-    ((sectionOrientation - windDirectionDeg) * Math.PI) / 180,
-  );
+  const windComponent = Math.cos(((sectionOrientation - windDirectionDeg) * Math.PI) / 180);
 
   const baseEffect = windKph / WIND_EFFECT_SCALE;
 
   const isSprinter = r.topSpeed > 18;
   const isLongStraight =
-    section.type === "straight" &&
-    (course?.straightLength ?? 0) > LONG_STRAIGHT_THRESHOLD;
+    section.type === "straight" && (course?.straightLength ?? 0) > LONG_STRAIGHT_THRESHOLD;
   const sprinterMul = isSprinter && isLongStraight ? SPRINTER_WIND_MULTIPLIER : 1.0;
 
   let speedMod = 1 - baseEffect * windComponent * sprinterMul;

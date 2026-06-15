@@ -22,7 +22,14 @@ describe("hazard model dt-invariance", () => {
         id: "bleeder",
         name: "Bleeder",
         bleederRisk: 1.0, // max risk
-        stats: { speed: 70, stamina: 80, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+        stats: {
+          speed: 70,
+          stamina: 80,
+          acceleration: 70,
+          consistency: 70,
+          temperament: 50,
+          conformation: 50,
+        },
       });
       return buildRunner(horse, true, distance, "Turf", getConditionsModifier({}));
     }

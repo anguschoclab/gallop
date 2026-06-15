@@ -70,10 +70,7 @@ const EMPTY: TendencyStats = {
 };
 
 /** Compute tendency stats for a horse, optionally filtered to a trip+surface. */
-export function getHorseTendencyStats(
-  horse: Horse,
-  opts: TendencyFilterOpts = {},
-): TendencyStats {
+export function getHorseTendencyStats(horse: Horse, opts: TendencyFilterOpts = {}): TendencyStats {
   const { distance = "any", surface = "any" } = opts;
   const history = horse.raceHistory ?? [];
 

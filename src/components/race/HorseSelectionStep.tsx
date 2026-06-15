@@ -2,11 +2,7 @@ import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import type { Horse, Race } from "@/game/types";
 import { EligibleHorseRow } from "./EligibleHorseRow";
 import { PaceTendencyFilter } from "@/components/horse/PaceTendencyFilter";
-import {
-  distanceBucket,
-  matchesTendency,
-  type TendencyFilter,
-} from "@/core/horse/paceTendency";
+import { distanceBucket, matchesTendency, type TendencyFilter } from "@/core/horse/paceTendency";
 import { useMemo, useState } from "react";
 
 interface Props {
@@ -36,11 +32,7 @@ export function HorseSelectionStep({
 }: Props) {
   const [tendency, setTendency] = useState<TendencyFilter>("any");
   const raceDistance = (race as any).distance as number | undefined;
-  const raceSurface = (race as any).surface as
-    | "Turf"
-    | "Dirt"
-    | "Synthetic"
-    | undefined;
+  const raceSurface = (race as any).surface as "Turf" | "Dirt" | "Synthetic" | undefined;
 
   const eligibleHorses = useMemo(() => {
     const list = horses.map((h) => ({

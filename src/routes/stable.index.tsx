@@ -61,9 +61,7 @@ function StablePage() {
     else if (status === "active")
       result = myHorses.filter((h) => h.lifecycleStatus === "active" && !h.consignedSaleId);
     if (tendency !== "any") {
-      result = result.filter((h) =>
-        matchesTendency(h, tendency, { distance: trip, surface }),
-      );
+      result = result.filter((h) => matchesTendency(h, tendency, { distance: trip, surface }));
     }
     return result.sort((a, b) => overall(b) - overall(a));
   }, [myHorses, status, tendency, trip, surface]);

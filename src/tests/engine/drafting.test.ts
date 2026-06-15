@@ -17,7 +17,18 @@ describe("drafting physics", () => {
     const conditions = getConditionsModifier({});
 
     const leader = buildRunner(
-      createTestHorse({ id: "leader", name: "Leader", stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 80, temperament: 50, conformation: 50 } }),
+      createTestHorse({
+        id: "leader",
+        name: "Leader",
+        stats: {
+          speed: 70,
+          stamina: 70,
+          acceleration: 70,
+          consistency: 80,
+          temperament: 50,
+          conformation: 50,
+        },
+      }),
       false,
       distance,
       "Turf",
@@ -26,7 +37,18 @@ describe("drafting physics", () => {
     );
 
     const trailer = buildRunner(
-      createTestHorse({ id: "trailer", name: "Trailer", stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 80, temperament: 50, conformation: 50 } }),
+      createTestHorse({
+        id: "trailer",
+        name: "Trailer",
+        stats: {
+          speed: 70,
+          stamina: 70,
+          acceleration: 70,
+          consistency: 80,
+          temperament: 50,
+          conformation: 50,
+        },
+      }),
       false,
       distance,
       "Turf",

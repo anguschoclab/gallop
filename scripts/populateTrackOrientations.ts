@@ -132,10 +132,7 @@ function processTracks(tracks: Track[]): { tracks: Track[]; warnings: string[] }
         );
         continue;
       }
-      course.sections = deriveOvalOrientations(
-        course.sections,
-        course.homeStraightOrientationDeg,
-      );
+      course.sections = deriveOvalOrientations(course.sections, course.homeStraightOrientationDeg);
     }
   }
 

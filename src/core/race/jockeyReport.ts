@@ -147,7 +147,8 @@ function evalPositioning(runner: Runner, ranks: number[]): JockeyReportFacet {
   const score = clamp(70 - sd * 7 + improvement * 4 + (positioning - 50) * 0.3);
   let note: string;
   if (sd < 1) note = "Locked into a perfect spot — never shuffled back.";
-  else if (improvement >= 3) note = `Steady climb from ${ranks[0]}th to ${ranks[ranks.length - 1]}th.`;
+  else if (improvement >= 3)
+    note = `Steady climb from ${ranks[0]}th to ${ranks[ranks.length - 1]}th.`;
   else if (sd > 3) note = "Shuffled around the field — couldn't find a rhythm.";
   else note = "Held a workable spot for most of the trip.";
   return {
@@ -323,7 +324,8 @@ function evalOverall(
   let note: string;
   if (finishRank === 1) note = "Wire-to-wire decision-making delivered the win.";
   else if (finishRank <= 3) note = `Hit the board — ${finishRank} of ${fieldSize}.`;
-  else if (finishRank <= Math.ceil(fieldSize / 2)) note = "Competitive ride, just outside the money.";
+  else if (finishRank <= Math.ceil(fieldSize / 2))
+    note = "Competitive ride, just outside the money.";
   else note = "Off the board today; review the facets for what to fix.";
   return {
     id: "overall_ride",

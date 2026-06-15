@@ -58,13 +58,21 @@ describe("filler jockeys", () => {
     const aFillers = new Set(a.fillerHorses.map((h) => h.id));
     const bFillers = new Set(b.fillerHorses.map((h) => h.id));
 
-    const aWithJockey = a.runners.filter((r) => aFillers.has(r.horseId) && r.jockey !== undefined).length;
-    const bWithJockey = b.runners.filter((r) => bFillers.has(r.horseId) && r.jockey !== undefined).length;
+    const aWithJockey = a.runners.filter(
+      (r) => aFillers.has(r.horseId) && r.jockey !== undefined,
+    ).length;
+    const bWithJockey = b.runners.filter(
+      (r) => bFillers.has(r.horseId) && r.jockey !== undefined,
+    ).length;
     expect(aWithJockey).toBe(bWithJockey);
     expect(aWithJockey).toBe(a.fillerHorses.length); // all fillers have jockeys
 
-    const aWithInstructions = a.runners.filter((r) => aFillers.has(r.horseId) && r.jockeyInstructions !== undefined).length;
-    const bWithInstructions = b.runners.filter((r) => bFillers.has(r.horseId) && r.jockeyInstructions !== undefined).length;
+    const aWithInstructions = a.runners.filter(
+      (r) => aFillers.has(r.horseId) && r.jockeyInstructions !== undefined,
+    ).length;
+    const bWithInstructions = b.runners.filter(
+      (r) => bFillers.has(r.horseId) && r.jockeyInstructions !== undefined,
+    ).length;
     expect(aWithInstructions).toBe(bWithInstructions);
     expect(aWithInstructions).toBe(a.fillerHorses.length); // all fillers have instructions
   });

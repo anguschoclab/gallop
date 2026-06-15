@@ -35,7 +35,10 @@ interface RunningStyleBreakdownProps {
 
 const STYLE_META: Record<RunningStyle, { label: string; blurb: string }> = {
   E: { label: "Early Speed", blurb: "Breaks alertly and looks to make the lead from the gate." },
-  EP: { label: "Early / Presser", blurb: "Shows speed but is content tracking just off the leaders." },
+  EP: {
+    label: "Early / Presser",
+    blurb: "Shows speed but is content tracking just off the leaders.",
+  },
   P: { label: "Presser", blurb: "Settles mid-pack, then ranges up turning for home." },
   S: { label: "Stalker / Closer", blurb: "Drops out early and finishes hard from off the pace." },
 };
@@ -56,7 +59,7 @@ export function RunningStyleBreakdown({ horse }: RunningStyleBreakdownProps) {
   const [surface, setSurface] = useState<SurfaceFilter>("any");
 
   const compareHorse = useMemo(
-    () => (compareId ? allHorses.find((h) => h.id === compareId) ?? null : null),
+    () => (compareId ? (allHorses.find((h) => h.id === compareId) ?? null) : null),
     [allHorses, compareId],
   );
 
@@ -125,9 +128,7 @@ export function RunningStyleBreakdown({ horse }: RunningStyleBreakdownProps) {
 
       <div className={cn("grid gap-4", compareHorse ? "lg:grid-cols-2" : "grid-cols-1")}>
         <HorsePaceCard horse={horse} surface={surface} accent="gold" />
-        {compareHorse && (
-          <HorsePaceCard horse={compareHorse} surface={surface} accent="info" />
-        )}
+        {compareHorse && <HorsePaceCard horse={compareHorse} surface={surface} accent="info" />}
       </div>
     </section>
   );
@@ -146,16 +147,10 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
   const racesAll = (horse.raceHistory ?? []).filter(
     (r: any) => r.pacePositions && r.pacePositions.length > 0,
   );
-  const races =
-    surface === "any"
-      ? racesAll
-      : racesAll.filter((r: any) => r.surface === surface);
+  const races = surface === "any" ? racesAll : racesAll.filter((r: any) => r.surface === surface);
 
   // Avg position per call segment
-  const maxQuarters = races.reduce(
-    (m, r: any) => Math.max(m, r.pacePositions?.length ?? 0),
-    0,
-  );
+  const maxQuarters = races.reduce((m, r: any) => Math.max(m, r.pacePositions?.length ?? 0), 0);
   const avgPositions: number[] = [];
   for (let q = 0; q < maxQuarters; q++) {
     const ps = races
@@ -174,22 +169,24 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
     stats: getHorseTendencyStats(horse, { distance: b, surface }),
   }));
 
-  const accentLine =
-    accent === "gold" ? "border-l-gold" : "border-l-info";
+  const accentLine = accent === "gold" ? "border-l-gold" : "border-l-info";
   const accentText = accent === "gold" ? "text-gold" : "text-info";
   const accentBright = accent === "gold" ? "text-gold-bright" : "text-info";
   const accentBar = accent === "gold" ? "bg-gold-bright/80" : "bg-info/80";
   const accentBarSoft = accent === "gold" ? "bg-gold/30" : "bg-info/30";
 
   return (
-    <Card className={cn("bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4", accentLine)}>
+    <Card
+      className={cn("bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4", accentLine)}
+    >
       <CardContent className="p-5 space-y-5">
         <div className="flex items-baseline justify-between gap-2">
           <div className="text-[10px] font-black uppercase text-cream/30 tracking-widest">
             {horse.name}
           </div>
           <div className="text-[9px] font-mono uppercase text-cream/30 tabular-nums">
-            {races.length} race{races.length === 1 ? "" : "s"} · {surface === "any" ? "all surfaces" : surface}
+            {races.length} race{races.length === 1 ? "" : "s"} ·{" "}
+            {surface === "any" ? "all surfaces" : surface}
           </div>
         </div>
 
@@ -246,8 +243,14 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
                     {TENDENCY_LABEL[t].split("-")[0]}
                   </div>
                   <div className="flex-1 h-5 bg-black/40 border border-white/5 relative overflow-hidden">
-                    <div className={cn("absolute inset-y-0 left-0", accentBarSoft)} style={{ width: `${sharePct}%` }} />
-                    <div className={cn("absolute inset-y-0 left-0", accentBar)} style={{ width: `${sharePct * (winPct / 100)}%` }} />
+                    <div
+                      className={cn("absolute inset-y-0 left-0", accentBarSoft)}
+                      style={{ width: `${sharePct}%` }}
+                    />
+                    <div
+                      className={cn("absolute inset-y-0 left-0", accentBar)}
+                      style={{ width: `${sharePct * (winPct / 100)}%` }}
+                    />
                     <div className="absolute inset-0 flex items-center justify-between px-2 text-[9px] font-mono text-cream/80 tabular-nums">
                       <span>
                         {runs} · {sharePct.toFixed(0)}%
@@ -287,7 +290,9 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
                   const dominant = stats.dominant;
                   return (
                     <tr key={bucket} className={stats.sample === 0 ? "opacity-40" : ""}>
-                      <td className="px-2 py-1.5 text-cream/80 uppercase">{BUCKET_LABEL[bucket]}</td>
+                      <td className="px-2 py-1.5 text-cream/80 uppercase">
+                        {BUCKET_LABEL[bucket]}
+                      </td>
                       <td className="px-2 py-1.5 text-center text-cream/60 tabular-nums">
                         {stats.sample}
                       </td>
@@ -296,7 +301,9 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
                           key={t}
                           className={cn(
                             "px-2 py-1.5 text-center tabular-nums",
-                            dominant === t && stats.sample > 0 ? accentBright + " font-black" : "text-cream/50",
+                            dominant === t && stats.sample > 0
+                              ? accentBright + " font-black"
+                              : "text-cream/50",
                           )}
                         >
                           {stats.counts[t]}

@@ -130,8 +130,7 @@ export function BredHorsesTab() {
                         />
                       </td>
                       <td className="py-2 pr-3 text-cream-muted">
-                        {horse.pedigree?.sireName ?? "—"} ×{" "}
-                        {horse.pedigree?.damName ?? "—"}
+                        {horse.pedigree?.sireName ?? "—"} × {horse.pedigree?.damName ?? "—"}
                       </td>
                       <td className="py-2 pr-3 tabular-nums font-[family-name:var(--font-mono)]">
                         {horse.age}
@@ -145,10 +144,8 @@ export function BredHorsesTab() {
                           variant="outline"
                           className={cn(
                             "text-[10px] font-[family-name:var(--font-mono)]",
-                            ownerTone === "player" &&
-                              "border-gold/60 text-gold bg-gold/5",
-                            ownerTone === "npc" &&
-                              "border-cream-muted/40 text-cream-muted",
+                            ownerTone === "player" && "border-gold/60 text-gold bg-gold/5",
+                            ownerTone === "npc" && "border-cream-muted/40 text-cream-muted",
                             ownerTone === "retired" && "border-t700 text-cream-muted/70",
                           )}
                         >

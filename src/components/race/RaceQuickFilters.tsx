@@ -8,15 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/cn";
 import type { RaceFilters } from "@/hooks/race/useRaceFilters";
-import {
-  CalendarClock,
-  Zap,
-  Mountain,
-  Star,
-  Users,
-  CheckCircle2,
-  RotateCcw,
-} from "lucide-react";
+import { CalendarClock, Zap, Mountain, Star, Users, CheckCircle2, RotateCcw } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 interface RaceQuickFiltersProps {

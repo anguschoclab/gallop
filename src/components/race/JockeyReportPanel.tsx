@@ -2,11 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/cn";
-import {
-  generateJockeyReport,
-  gradeColorClass,
-  type JockeyReport,
-} from "@/core/race/jockeyReport";
+import { generateJockeyReport, gradeColorClass, type JockeyReport } from "@/core/race/jockeyReport";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { SectionalSplit } from "@/core/race/types";
 import {
@@ -59,21 +55,14 @@ export function JockeyReportPanel({
     [ownedRunners, ordered, sectionalSplits],
   );
 
-  const [selectedId, setSelectedId] = useState<string | null>(
-    reports[0]?.horseId ?? null,
-  );
+  const [selectedId, setSelectedId] = useState<string | null>(reports[0]?.horseId ?? null);
 
   if (reports.length === 0) return null;
 
   const active = reports.find((r) => r.horseId === selectedId) ?? reports[0];
 
   return (
-    <section
-      className={cn(
-        "border border-gold/20 bg-black/30 p-5 space-y-4",
-        className,
-      )}
-    >
+    <section className={cn("border border-gold/20 bg-black/30 p-5 space-y-4", className)}>
       <header className="flex flex-wrap items-end justify-between gap-3 border-b border-white/5 pb-3">
         <div>
           <div className="text-[10px] uppercase font-black tracking-[0.3em] text-gold/50">
@@ -95,9 +84,7 @@ export function JockeyReportPanel({
           >
             <span className="text-cream/40">Overall</span>
             <span className="text-base font-black tabular-nums">{active.averageGrade}</span>
-            <span className="text-cream/40 tabular-nums">
-              {active.averageScore.toFixed(0)}/100
-            </span>
+            <span className="text-cream/40 tabular-nums">{active.averageScore.toFixed(0)}/100</span>
           </div>
         </div>
       </header>

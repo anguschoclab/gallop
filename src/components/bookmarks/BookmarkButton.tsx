@@ -1,10 +1,7 @@
 import { Bookmark as BookmarkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
-import {
-  useBookmarks,
-  type BookmarkEntityType,
-} from "@/hooks/shared/useBookmarks";
+import { useBookmarks, type BookmarkEntityType } from "@/hooks/shared/useBookmarks";
 
 interface BookmarkButtonProps {
   type: BookmarkEntityType;
@@ -47,9 +44,7 @@ export function BookmarkButton({
         aria-pressed={active}
         aria-label={active ? "Remove bookmark" : "Add bookmark"}
       >
-        <BookmarkIcon
-          className={cn("h-3.5 w-3.5", active && "fill-gold text-gold")}
-        />
+        <BookmarkIcon className={cn("h-3.5 w-3.5", active && "fill-gold text-gold")} />
         {active ? "Saved" : "Save"}
       </Button>
     );

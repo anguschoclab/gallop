@@ -1,21 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  Bookmark as BookmarkIcon,
-  Trash2,
-  X,
-  Search,
-  Tag as TagIcon,
-  Plus,
-} from "lucide-react";
+import { Bookmark as BookmarkIcon, Trash2, X, Search, Tag as TagIcon, Plus } from "lucide-react";
 import { useMemo, useState, type KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/cn";
-import {
-  useBookmarks,
-  type Bookmark,
-  type BookmarkEntityType,
-} from "@/hooks/shared/useBookmarks";
+import { useBookmarks, type Bookmark, type BookmarkEntityType } from "@/hooks/shared/useBookmarks";
 
 export const Route = createFileRoute("/bookmarks")({
   component: BookmarksPage,
@@ -168,9 +157,7 @@ function BookmarksPage() {
             </div>
             <select
               value={typeFilter}
-              onChange={(e) =>
-                setTypeFilter(e.target.value as BookmarkEntityType | "all")
-              }
+              onChange={(e) => setTypeFilter(e.target.value as BookmarkEntityType | "all")}
               className="h-9 bg-slate-950/40 border border-white/10 text-cream text-xs font-mono uppercase tracking-widest px-3"
               aria-label="Filter by type"
             >
