@@ -1,4 +1,4 @@
-Aimport { useRef, useMemo } from "react";
+import { useRef, useMemo } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import type { GameState, Horse } from "@/game/types";
@@ -43,7 +43,9 @@ export function useRacePageData(raceId: string) {
   if (lastRaceIdRef.current !== raceId) {
     lastRaceIdRef.current = raceId;
     rngRef.current = race ? rngForRace(race) : null;
-    narrativeRef.current = race ? new NarrativeGenerator(race, horses, stables, rngRef.current) : null;
+    narrativeRef.current = race
+      ? new NarrativeGenerator(race, horses, stables, rngRef.current)
+      : null;
     messageQueue.current = [];
   }
 
