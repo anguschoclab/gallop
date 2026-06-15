@@ -23,6 +23,24 @@ import {
   SPURT_BUILDUP_END_M,
   SPURT_BUILDUP_PEAK,
 } from "./runningStyleProfiles";
+import {
+  BLEEDER_RISK_PER_SEC,
+  ROANER_RISK_PER_SEC,
+  BLEEDER_DISTANCE_THRESHOLD,
+  BLEEDER_PROGRESS_THRESHOLD,
+  BLEEDER_STAMINA_PENALTY,
+  ROANER_SPEED_THRESHOLD,
+  ROANER_STAMINA_PENALTY,
+  SAVE_TACTICS_PROGRESS_THRESHOLD,
+  SAVE_TACTICS_STAMINA_BONUS,
+  EARLY_SPEED_PENALTY_THRESHOLD,
+  EARLY_SPEED_LANE_THRESHOLD,
+  EARLY_SPEED_STAMINA_PENALTY,
+  PACE_PRESSURE_STAMINA_PENALTY,
+  STAMINA_FADE_START,
+  STAMINA_FADE_DURATION,
+  DRAFT_STAMINA_PRESERVE,
+} from "./constants";
 
 // Standardizing imports for relocated file
 import type { Race as RaceT } from "@/game/types";
@@ -33,14 +51,22 @@ import type { Race as RaceT } from "@/game/types";
  *
  * @param {Runner[]} runners - All runners currently in the race.
  * @param {number} distance - Total race distance in meters.
+ * @param laneDensityBuffer
  * @returns {PaceContext} The computed pace context.
  */
-export function computePaceContext(runners: Runner[], distance: number): PaceContext {
+export function computePaceContext(
+  runners: Runner[],
+  distance: number,
+  laneDensityBuffer?: number[],
+): PaceContext {
   let leaderPos = 0;
   let leaderVelocity = 0;
   let totalProgress = 0;
   let alive = 0;
-  const laneDensity = new Array(12).fill(0);
+  const laneDensity = laneDensityBuffer ?? new Array(12).fill(0);
+  if (laneDensityBuffer) {
+    laneDensityBuffer.fill(0);
+  }
 
   // Find leader first (needed for lead group calculation)
   for (const r of runners) {
@@ -90,7 +116,6 @@ export function computePaceContext(runners: Runner[], distance: number): PaceCon
 // Drafting constants
 const DRAFT_DISTANCE = 3;
 const DRAFT_SPEED_BONUS = 1.015;
-const DRAFT_STAMINA_PRESERVE = 0.5;
 
 // Track geometry constants
 const LANE_WIDTH = 1.2;
@@ -114,23 +139,6 @@ const AGILITY_MITIGATION_FACTOR = 0.6;
 const POSITIONING_SKILL_FACTOR = 0.5; // 1/200 of positioning stat
 const BULLRING_TRAIT_BONUS = 0.2;
 const MAX_TURN_PENALTY = 0.4;
-
-// Stamina constants
-const STAMINA_FADE_START = 0.6;
-const STAMINA_FADE_DURATION = 0.4;
-const PACE_PRESSURE_STAMINA_PENALTY = 0.08;
-const BLEEDER_DISTANCE_THRESHOLD = 1600;
-const BLEEDER_PROGRESS_THRESHOLD = 0.7;
-const BLEEDER_RISK_MULTIPLIER = 0.5;
-const BLEEDER_STAMINA_PENALTY = 0.2;
-const ROANER_SPEED_THRESHOLD = 0.95;
-const ROANER_RISK_MULTIPLIER = 0.3;
-const ROANER_STAMINA_PENALTY = 0.15;
-const SAVE_TACTICS_PROGRESS_THRESHOLD = 0.7;
-const SAVE_TACTICS_STAMINA_BONUS = 0.1;
-const EARLY_SPEED_PENALTY_THRESHOLD = 0.2;
-const EARLY_SPEED_LANE_THRESHOLD = 2.4;
-const EARLY_SPEED_STAMINA_PENALTY = 0.98;
 
 // Style and jockey constants
 const SHORT_STRAIGHT_THRESHOLD = 350;
@@ -169,7 +177,6 @@ const DECEL_FACTOR = 0.35; // deceleration is 35% as fast as acceleration
 const LATE_KICK_TOP_SPEED_MULTIPLIER = 1.04; // late kick can briefly exceed base topSpeed
 const MIN_BLOCK_GAP = 0.8; // min position gap (m) before blocking penalty applies
 const INSIDE_OVERTAKE_DENSITY_ADVANTAGE = 1; // prefer inside lane when it has this many fewer runners
-
 
 /**
  * Calculates the target lane for a runner based on their running style, chosen tactics, and current race congestion.
@@ -348,13 +355,19 @@ function calculateStaminaMultiplier(
       rng &&
       dt
     ) {
-      if (rng.next() < bleederRisk * dt * BLEEDER_RISK_MULTIPLIER) {
+      // dt-invariant per-second hazard: pTick = 1 - (1 - perSecRate)^dt
+      const bleederRatePerSec = bleederRisk * BLEEDER_RISK_PER_SEC;
+      const pTickBleeder = Math.min(1, 1 - Math.pow(1 - bleederRatePerSec, dt));
+      if (rng.next() < pTickBleeder) {
         effectiveStamina = clamp(effectiveStamina - BLEEDER_STAMINA_PENALTY, 0.1, 1);
       }
     }
     const roanerRisk = r.horse.roarerRisk ?? 0;
     if (roanerRisk > 0 && r.velocity > r.topSpeed * ROANER_SPEED_THRESHOLD && rng && dt) {
-      if (rng.next() < roanerRisk * dt * ROANER_RISK_MULTIPLIER) {
+      // dt-invariant per-second hazard
+      const roanerRatePerSec = roanerRisk * ROANER_RISK_PER_SEC;
+      const pTickRoaner = Math.min(1, 1 - Math.pow(1 - roanerRatePerSec, dt));
+      if (rng.next() < pTickRoaner) {
         effectiveStamina = clamp(effectiveStamina - ROANER_STAMINA_PENALTY, 0.1, 1);
       }
     }
@@ -624,6 +637,8 @@ function getTrackSection(
  * @param {Runner[]} [sortedField] - The list of all runners sorted by position.
  * @param {PaceContext} [pace] - The current pace context.
  * @param {CourseSpecification} [course] - The track course specification.
+ * @param rankFromFront
+ * @param windKph
  */
 export function stepRunner(
   r: Runner,
@@ -634,6 +649,8 @@ export function stepRunner(
   sortedField?: Runner[],
   pace?: PaceContext,
   course?: CourseSpecification,
+  rankFromFront?: number,
+  windKph?: number,
 ) {
   if (r.finishTime !== null) return;
   const progress = r.position / distance;
@@ -667,23 +684,27 @@ export function stepRunner(
   let seekMul = 1;
   const profile = getRunningStyleProfile(r.runningStyle);
   if (progress < POSITION_SEEK_PROGRESS && sortedField && sortedField.length > 1) {
-    const aliveField = sortedField.filter((o) => o.finishTime === null);
-    if (aliveField.length > 1) {
-      const rankFromFront = aliveField.findIndex((o) => o.horseId === r.horseId);
-      if (rankFromFront >= 0) {
-        const fieldFraction = rankFromFront / (aliveField.length - 1);
-        const preferred = profile.preferredFieldFraction;
-        // Positive delta = horse is further forward than its preferred slot.
-        const delta = preferred - fieldFraction;
-        // Fade the effect linearly as we leave the opening.
-        const phase = 1 - progress / POSITION_SEEK_PROGRESS;
-        if (delta < 0) {
-          // ahead of preferred slot -> ease off
-          seekMul = 1 - Math.min(profile.seekMaxDampen, -delta * profile.seekDampenSlope) * phase;
-        } else if (delta > 0) {
-          // behind preferred slot -> small push to claim position
-          seekMul = 1 + Math.min(profile.seekMaxBoost, delta * profile.seekBoostSlope) * phase;
-        }
+    // Use pre-computed rank if provided (avoids O(n) filter+findIndex per runner)
+    let rank = rankFromFront ?? -1;
+    let aliveCount = sortedField.filter((o) => o.finishTime === null).length;
+    if (rank < 0) {
+      const aliveField = sortedField.filter((o) => o.finishTime === null);
+      aliveCount = aliveField.length;
+      rank = aliveField.findIndex((o) => o.horseId === r.horseId);
+    }
+    if (rank >= 0 && aliveCount > 1) {
+      const fieldFraction = rank / (aliveCount - 1);
+      const preferred = profile.preferredFieldFraction;
+      // Positive delta = horse is further forward than its preferred slot.
+      const delta = preferred - fieldFraction;
+      // Fade the effect linearly as we leave the opening.
+      const phase = 1 - progress / POSITION_SEEK_PROGRESS;
+      if (delta < 0) {
+        // ahead of preferred slot -> ease off
+        seekMul = 1 - Math.min(profile.seekMaxDampen, -delta * profile.seekDampenSlope) * phase;
+      } else if (delta > 0) {
+        // behind preferred slot -> small push to claim position
+        seekMul = 1 + Math.min(profile.seekMaxBoost, delta * profile.seekBoostSlope) * phase;
       }
     }
   }
@@ -696,14 +717,20 @@ export function stepRunner(
   const distanceRemaining = distance - r.position;
   if (distanceRemaining <= SPURT_BUILDUP_START_M && distanceRemaining > 0) {
     const ramp = clamp(
-      (SPURT_BUILDUP_START_M - distanceRemaining) /
-        (SPURT_BUILDUP_START_M - SPURT_BUILDUP_END_M),
+      (SPURT_BUILDUP_START_M - distanceRemaining) / (SPURT_BUILDUP_START_M - SPURT_BUILDUP_END_M),
       0,
       1,
     );
     spurtMul = 1 + (SPURT_BUILDUP_PEAK + profile.spurtBuildupExtra) * ramp;
   }
   r.lastSpurtContribution = spurtMul - 1;
+
+  // Small wind drag: higher wind = slightly lower target speed.
+  // Sprinters (topSpeed > 18 m/s) face ~20% more drag.
+  const windDrag =
+    typeof windKph === "number" && windKph > 0
+      ? Math.max(0.95, 1 - (windKph / 2000) * (r.topSpeed > 18 ? 1.2 : 1))
+      : 1;
 
   // Calculate target speed
   const targetSpeed =
@@ -715,6 +742,7 @@ export function stepRunner(
     gradientSpeedMul *
     seekMul *
     spurtMul *
+    windDrag *
     (1 + (rng.next() - 0.5) * 0.08 * r.noise);
 
   // Update velocity towards target (deceleration is slower than acceleration)
@@ -766,6 +794,7 @@ export function stepRunner(
  * @param {number} [maxTime=600] - Maximum simulation duration in seconds.
  * @param {CourseSpecification} [course] - Track geometry and surface specifications.
  * @param {boolean} [recordSnapshots=false] - Whether to record per-tick snapshots for replay visualization.
+ * @param windKph
  * @returns {Object} Final race results and optional snapshots.
  */
 export function runRaceToCompletion(
@@ -776,6 +805,7 @@ export function runRaceToCompletion(
   maxTime: number = 600,
   course?: CourseSpecification,
   recordSnapshots: boolean = false,
+  windKph?: number,
 ): {
   result: { horseId: string; position: number; time: number }[];
   snapshots: RaceSnapshot[];
@@ -790,16 +820,39 @@ export function runRaceToCompletion(
     if (r.finishTime !== null) finishedCount++;
   }
 
+  const laneDensity = new Array(12).fill(0);
+
   while (finishedCount < numRunners && t < maxTime) {
-    const pace = computePaceContext(runners, distance);
+    const pace = computePaceContext(runners, distance, laneDensity);
 
     // Sort runners by position for faster spatial lookups in stepRunner
     const sortedField = [...runners].sort((a, b) => b.position - a.position);
 
+    // Compute rank-from-front once per tick to avoid O(n²) filter+findIndex
+    const rankMap = new Map<string, number>();
+    let aliveRank = 0;
+    for (const o of sortedField) {
+      if (o.finishTime === null) {
+        rankMap.set(o.horseId, aliveRank);
+        aliveRank++;
+      }
+    }
+
     for (const r of runners) {
       if (r.finishTime !== null) continue;
 
-      stepRunner(r, dt, t, distance, rng, sortedField, pace, course);
+      stepRunner(
+        r,
+        dt,
+        t,
+        distance,
+        rng,
+        sortedField,
+        pace,
+        course,
+        rankMap.get(r.horseId),
+        windKph,
+      );
 
       if (r.finishTime !== null) {
         finishedCount++;

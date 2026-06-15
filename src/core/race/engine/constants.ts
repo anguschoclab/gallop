@@ -1,0 +1,124 @@
+/**
+ * constants.ts — Race engine simulation constants
+ *
+ * Centralized tuning constants for the race simulation engine.
+ * Shared defaults to prevent divergence between background (executor)
+ * and watched (PlayerRacePrompt / live visualizer) entry points.
+ */
+
+/** Default simulation time step in seconds. */
+export const DEFAULT_DT = 0.1;
+
+/**
+ * Compute a safe maxTime (seconds) for a race of the given distance.
+ * Ensures long races (e.g. 2400m+) always have headroom to finish.
+ *
+ * @param distance — race distance in meters
+ * @returns maximum simulation duration in seconds
+ */
+export function defaultMaxTime(distance: number): number {
+  // Minimum 120s, plus linear headroom based on distance.
+  // At 1600m: max(120, 320+60) = 380s  (~6.3 min)
+  // At 2400m: max(120, 480+60) = 540s  (~9 min)
+  // At 3200m: max(120, 640+60) = 700s  (~11.7 min)
+  return Math.max(120, distance / 5 + 60);
+}
+
+/** Top-speed ceiling (m/s). */
+export const TOP_SPEED_CEILING = 22;
+
+/** Maximum form × energy multiplier. */
+export const MAX_FORM_ENERGY_MUL = 1.25;
+
+// --- Drafting constants ---
+export const DRAFT_DISTANCE = 3;
+export const DRAFT_SPEED_BONUS = 1.015;
+export const DRAFT_STAMINA_PRESERVE = 0.5;
+
+// --- Track geometry constants ---
+export const LANE_WIDTH = 1.2;
+export const MAX_LATERAL_SPEED = 2.0;
+
+// --- Lane change thresholds ---
+export const LANE_GAP_THRESHOLD = 0.8;
+export const POSITION_GAP_THRESHOLD = 2.5;
+export const LATERAL_DIFF_THRESHOLD = 0.01;
+
+// --- Progress thresholds for running styles ---
+export const STALKER_PROGRESS_THRESHOLD = 0.4;
+export const OUTSIDE_PROGRESS_THRESHOLD = 0.8;
+export const LEAD_PROGRESS_THRESHOLD = 0.2;
+export const CONGESTED_LANE_PROGRESS_THRESHOLD = 0.7;
+export const CONGESTED_LANE_DENSITY_THRESHOLD = 4;
+export const LANE_POSITION_GAP_THRESHOLD = 2;
+
+// --- Turn physics constants ---
+export const AGILITY_MITIGATION_FACTOR = 0.6;
+export const POSITIONING_SKILL_FACTOR = 0.5;
+export const BULLRING_TRAIT_BONUS = 0.2;
+export const MAX_TURN_PENALTY = 0.4;
+
+// --- Stamina constants ---
+export const STAMINA_FADE_START = 0.6;
+export const STAMINA_FADE_DURATION = 0.4;
+export const PACE_PRESSURE_STAMINA_PENALTY = 0.08;
+export const BLEEDER_DISTANCE_THRESHOLD = 1600;
+export const BLEEDER_PROGRESS_THRESHOLD = 0.7;
+
+/** Per-second bleeder hazard rate (was 0.5 per tick at dt=0.1). */
+export const BLEEDER_RISK_PER_SEC = 5.0; // 0.5 / 0.1 = 5.0 per second
+/** Per-second roarer hazard rate (was 0.3 per tick at dt=0.1). */
+export const ROANER_RISK_PER_SEC = 3.0; // 0.3 / 0.1 = 3.0 per second
+
+export const BLEEDER_STAMINA_PENALTY = 0.2;
+export const ROANER_SPEED_THRESHOLD = 0.95;
+export const ROANER_STAMINA_PENALTY = 0.15;
+export const SAVE_TACTICS_PROGRESS_THRESHOLD = 0.7;
+export const SAVE_TACTICS_STAMINA_BONUS = 0.1;
+export const EARLY_SPEED_PENALTY_THRESHOLD = 0.2;
+export const EARLY_SPEED_LANE_THRESHOLD = 2.4;
+export const EARLY_SPEED_STAMINA_PENALTY = 0.98;
+
+// --- Style and jockey constants ---
+export const SHORT_STRAIGHT_THRESHOLD = 350;
+export const LONG_STRAIGHT_THRESHOLD = 500;
+export const FRONT_RUNNER_PROGRESS_THRESHOLD = 0.8;
+export const CLOSER_PROGRESS_THRESHOLD = 0.7;
+export const LATE_KICK_PROGRESS_THRESHOLD = 0.85;
+export const LATE_KICK_BOOST_THRESHOLD = 0.92;
+export const FRONT_RUNNER_BONUS = 0.02;
+export const CLOSER_BONUS = 0.02;
+export const FRONT_RUNNER_STYLE_MULTIPLIER = 1.03;
+export const CLOSER_STYLE_MULTIPLIER = 1.02;
+export const LATE_KICK_MULTIPLIER = 1.08;
+export const POSITIONING_BONUS_FACTOR = 0.001;
+export const PACING_BONUS_FACTOR = 0.001;
+export const VIGOR_BONUS_FACTOR = 0.001;
+export const LONG_STRAIGHT_VIGOR_THRESHOLD = 0.85;
+export const LONG_STRAIGHT_VIGOR_FACTOR = 0.0025;
+export const PACE_PRESSURE_STYLE_BONUS = 0.05;
+export const STALKER_PACE_PRESSURE_THRESHOLD = 0.6;
+export const FRONT_RUNNER_PACE_THRESHOLD = 3;
+export const FRONT_RUNNER_STYLE_PENALTY = 0.98;
+export const POSITIONING_BONUS_TURN = 0.4;
+export const MATCHED_ARCHETYPE_PROGRESS_THRESHOLD = 0.4;
+export const PACING_STAMINA_BONUS_FACTOR = 0.0002;
+export const FRONT_RUNNER_STALKER_MISMATCH_VELOCITY_BONUS = 0.2;
+export const FRONT_RUNNER_STALKER_MISMATCH_STAMINA_PENALTY = 0.97;
+export const VIGOR_BOOST_FACTOR = 0.0003;
+export const VIGOR_PROGRESS_THRESHOLD = 0.8;
+export const LATE_KICK_VIGOR_MULTIPLIER = 1.5;
+export const GATE_SKILL_VELOCITY_BONUS = 0.005;
+export const GATE_SKILL_PROGRESS_THRESHOLD = 0.05;
+
+// --- Deceleration / stamina constants ---
+export const DECEL_FACTOR = 0.35;
+export const LATE_KICK_TOP_SPEED_MULTIPLIER = 1.04;
+export const MIN_BLOCK_GAP = 0.8;
+export const INSIDE_OVERTAKE_DENSITY_ADVANTAGE = 1;
+
+// --- Mud threshold ---
+/** Conditions with speedMul below this value trigger mud-aptitude bonuses. */
+export const HARSH_CONDITION_SPEED_THRESHOLD = 0.97;
+// soft (0.95), heavy (0.93), yielding (0.90) trigger it.
+// good (0.985) and fast (1.0) do NOT trigger it.

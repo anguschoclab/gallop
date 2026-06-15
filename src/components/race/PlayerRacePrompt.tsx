@@ -26,6 +26,7 @@ import { formatCurrency } from "@/core/common/formatting";
 import { useMemo, useState } from "react";
 import { INSTRUCTION_PRESETS, buildInstructions, type PresetId } from "./TacticOptions";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+import { DEFAULT_DT, defaultMaxTime } from "@/core/race/engine/constants";
 
 export function PlayerRacePrompt() {
   const pendingRaceId = useGame((s) => s.pendingPlayerRaceId);
@@ -93,8 +94,8 @@ export function PlayerRacePrompt() {
       runners,
       race!.distance,
       rngForRace(race!),
-      0.1,
-      600,
+      DEFAULT_DT,
+      defaultMaxTime(race!.distance),
       course,
     );
     resolveRaceWithImpacts(race!.id, result.result);

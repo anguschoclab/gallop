@@ -5,6 +5,7 @@ import type { Race, Horse, Jockey, Stable } from "@/game/types";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import { DEFAULT_DT, defaultMaxTime } from "@/core/race/engine/constants";
 
 export interface RaceSimulationResult {
   raceId: string;
@@ -33,6 +34,8 @@ export interface RaceSimulationResult {
  * @param npcAIManager - Optional AI manager for NPC decision making
  * @param currentDay - Current game day
  * @param recordSnapshots - Whether to record detailed race snapshots (default: only if player horse involved)
+ * @param weatherPattern
+ * @param windKph
  * @returns Race simulation result including final positions and optional snapshots
  */
 export function simulateRace(
@@ -44,6 +47,8 @@ export function simulateRace(
   npcAIManager?: NpcAIManager,
   currentDay?: number,
   recordSnapshots?: boolean,
+  weatherPattern?: import("@/core/weather/weatherTypes").SimWeatherPattern,
+  windKph?: number,
 ): RaceSimulationResult {
   const horsesArray = Array.isArray(horses) ? horses : Array.from(horses.values());
   const jockeysArray = Array.isArray(jockeys) ? jockeys : Array.from(jockeys.values());
@@ -61,6 +66,7 @@ export function simulateRace(
     npcStables: npcStablesArray,
     npcAIManager,
     currentDay,
+    weatherPattern,
   });
 
   const rng = rngForRace(race);
@@ -69,18 +75,30 @@ export function simulateRace(
   // Default to recording snapshots only if a player-owned horse is in the field
   const shouldRecord = recordSnapshots ?? runners.some((r) => r.owned);
 
-  // Use a larger time step for background simulations to increase performance
-  const dt = shouldRecord ? 0.1 : 5.0;
+  // Unified dt = 0.1 for all races so background results match watched races.
+  const dt = DEFAULT_DT;
+  const maxTime = defaultMaxTime(race.distance);
 
   const { result, snapshots } = runRaceToCompletion(
     runners,
     race.distance,
     rng,
     dt,
-    30,
+    maxTime,
     course,
     shouldRecord,
+    windKph,
   );
+
+  // Dev assertion: if any runner never finished, the maxTime bound is too tight.
+  if (import.meta.env?.DEV || process.env?.NODE_ENV === "development") {
+    const unfinished = result.filter((r) => !Number.isFinite(r.time));
+    if (unfinished.length > 0) {
+      console.warn(
+        `[raceSimulationExecutor] ${unfinished.length} runner(s) did not finish within maxTime=${maxTime}s for race ${race.id} (${race.distance}m).`,
+      );
+    }
+  }
 
   return {
     raceId: race.id,

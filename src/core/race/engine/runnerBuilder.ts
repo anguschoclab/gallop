@@ -27,6 +27,12 @@ import { calculateTheHandBonus } from "@/core/jockey/affinity";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 import { getClaimAllowance } from "@/core/apprentice/apprenticeTypes";
 import { getCourseMultiplier } from "@/core/race/sectionalAnalysis";
+import {
+  HARSH_CONDITION_SPEED_THRESHOLD,
+  MAX_FORM_ENERGY_MUL,
+  TOP_SPEED_CEILING,
+} from "./constants";
+import type { SimWeatherPattern } from "@/core/weather/weatherTypes";
 
 export type RunnerBonuses = {
   farrier?: number;
@@ -189,9 +195,6 @@ export function getConditionsModifier(
   };
 }
 
-const MAX_FORM_ENERGY_MUL = 1.25;
-const TOP_SPEED_CEILING = 22;
-
 /**
  * Build a race runner from horse data.
  *
@@ -213,6 +216,7 @@ const TOP_SPEED_CEILING = 22;
  * @param stable - The horse's stable
  * @param race - The race
  * @param bonuses - Optional runner bonuses
+ * @param weatherPattern
  * @returns Complete Runner object
  *
  * @example
@@ -233,6 +237,7 @@ export function buildRunner(
   stable?: StableT,
   race?: RaceT,
   bonuses?: RunnerBonuses,
+  weatherPattern?: SimWeatherPattern,
 ): Runner {
   h = ensurePhenotypeResolved(h);
   let claim = 0;
@@ -276,7 +281,7 @@ export function buildRunner(
     ? fiberDistanceModifier(h.fiberBias as "balanced" | "sprinter" | "stayer", raceDistance)
     : { speedMul: 1, staminaMul: 1 };
 
-  const conditionsHarsh = conditions.speedMul < 0.97;
+  const conditionsHarsh = conditions.speedMul < HARSH_CONDITION_SPEED_THRESHOLD;
   const mudMod = conditionsHarsh ? (h.mudAptitude ?? 1.0) * (1 + farrierBonus) : 1.0;
 
   const lineBias = h.bloodline ? REGIONAL_LINE_BIAS[h.bloodline as Bloodline] : undefined;
@@ -342,6 +347,11 @@ export function buildRunner(
     courseFamiliarityMultiplier = getCourseMultiplier(visits);
   }
 
+  // Weather preference defaults (updated later when pattern/weather is known)
+  let weatherSpeedMod = 1.0;
+  let weatherStaminaMod = 1.0;
+  let weatherPrefMod = 1;
+
   const rawTopSpeed =
     (12 + (h.stats.speed / 100) * 10) *
     formEnergy *
@@ -356,7 +366,8 @@ export function buildRunner(
     fatigueMod *
     bouncePenalty *
     courseFamiliarityMultiplier *
-    acclimatizationPenalty;
+    acclimatizationPenalty *
+    weatherSpeedMod;
   const topSpeed = clamp(rawTopSpeed, 5, TOP_SPEED_CEILING);
   const accel = (1.5 + (h.stats.acceleration / 100) * 3.5) * acclimatizationPenalty;
   const strideMod =
@@ -377,13 +388,24 @@ export function buildRunner(
   const rawTemperamentMod = 1 + (tempVal - 2) * -0.1;
   // Weather preference vs current race weather. Mismatch unsettles the horse
   // (worsens temperament multiplier); match steadies them slightly.
-  let weatherPrefMod = 1;
-  if (h.weatherPreference && h.weatherPreference !== "all" && race?.weather) {
-    const wet = race.weather === "rainy";
-    const matches = (h.weatherPreference === "wet") === wet;
-    weatherPrefMod = matches ? 0.97 : 1.05;
+  if (h.weatherPreference && h.weatherPreference !== "all") {
+    // Prefer granular SimWeatherPattern when available; fall back to coarse legacy enum.
+    const isWet = weatherPattern
+      ? ["shower", "rain", "snow", "storm"].includes(weatherPattern)
+      : race?.weather === "rainy";
+    const matches = (h.weatherPreference === "wet") === isWet;
+    if (matches) {
+      weatherPrefMod = 0.97; // steadier (lower noise)
+      weatherSpeedMod = 1.02; // direct speed bonus
+      weatherStaminaMod = 1.02; // direct stamina bonus
+    } else {
+      weatherPrefMod = 1.05; // more erratic (higher noise)
+      weatherSpeedMod = 0.98; // direct speed penalty
+      weatherStaminaMod = 0.98; // direct stamina penalty
+    }
   }
-  const temperamentMod = Math.max(1.0, rawTemperamentMod * weatherPrefMod + groomBonus);
+  // Removed Math.max(1.0, ...) floor so a matching preference actually reduces noise.
+  const temperamentMod = rawTemperamentMod * weatherPrefMod + groomBonus;
   const confVal =
     typeof h.conformation === "number"
       ? Math.round(h.conformation / 25)
@@ -391,7 +413,7 @@ export function buildRunner(
   const conformationMod = 1 + (confVal - 2) * -0.03;
 
   const conditionStamina = clamp(
-    1 - (1 - baseStamina) * conditions.staminaDrainMul * conformationMod,
+    1 - ((1 - baseStamina) * conditions.staminaDrainMul * conformationMod) / weatherStaminaMod,
     0.2,
     1,
   );

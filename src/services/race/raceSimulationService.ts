@@ -24,6 +24,8 @@ export interface RaceSimulationDependencies {
   npcAIManager?: NpcAIManager;
   currentDay?: number;
   hiredStaff?: StaffMember[];
+  /** Optional granular weather pattern (prefers SimWeatherPattern over legacy race.weather). */
+  weatherPattern?: import("@/core/weather/weatherTypes").SimWeatherPattern;
 }
 
 export interface SimulationResult {
@@ -59,7 +61,15 @@ export interface RaceFieldResult {
  * @returns {RaceFieldResult} An object containing the final list of runners and any generated filler horses.
  */
 export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFieldResult {
-  const { race, horses, npcStables, npcAIManager, currentDay, hiredStaff = [] } = dependencies;
+  const {
+    race,
+    horses,
+    npcStables,
+    npcAIManager,
+    currentDay,
+    hiredStaff = [],
+    weatherPattern,
+  } = dependencies;
   const conditions = getConditionsModifier(race);
   const fillerHorses: Horse[] = [];
   const surface = race.surface || race.graded?.surface;
@@ -160,6 +170,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
           stableObj,
           race,
           runnerBonuses,
+          weatherPattern,
         ),
       );
     }
@@ -195,9 +206,32 @@ export function simulateStep(
   // and closer bonuses work identically to runRaceToCompletion.
   const pace = computePaceContext(runners, distance);
 
+  // Sort runners by position for correct drafting / blocking lookups.
+  const sortedField = [...runners].sort((a, b) => b.position - a.position);
+
+  // Compute rank-from-front once per tick to avoid O(n²) per runner
+  const rankMap = new Map<string, number>();
+  let aliveRank = 0;
+  for (const o of sortedField) {
+    if (o.finishTime === null) {
+      rankMap.set(o.horseId, aliveRank);
+      aliveRank++;
+    }
+  }
+
   for (const runner of runners) {
     if (runner.finishTime === null) {
-      stepRunner(runner, dt, simTime, distance, rng, runners, pace, course);
+      stepRunner(
+        runner,
+        dt,
+        simTime,
+        distance,
+        rng,
+        sortedField,
+        pace,
+        course,
+        rankMap.get(runner.horseId),
+      );
       if (runner.finishTime !== null) {
         finishOrder.push({
           horseId: runner.horseId,

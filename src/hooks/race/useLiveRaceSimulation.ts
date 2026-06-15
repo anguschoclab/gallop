@@ -81,8 +81,22 @@ export function useLiveRaceSimulation({
 
         const pace = computePaceContext(runners, race.distance);
 
+        // Sort runners by position so drafting/blocking early-break
+        // optimisations work identically to runRaceToCompletion.
+        const sortedField = [...runners].sort((a, b) => b.position - a.position);
+
+        // Compute rank-from-front once per tick to avoid O(n²) per runner
+        const rankMap = new Map<string, number>();
+        let aliveRank = 0;
+        for (const o of sortedField) {
+          if (o.finishTime === null) {
+            rankMap.set(o.horseId, aliveRank);
+            aliveRank++;
+          }
+        }
+
         if (narrativeRef.current) {
-          const newCommentary = narrativeRef.current.update(runners, simTimeRef.current);
+          const newCommentary = narrativeRef.current.update(sortedField, simTimeRef.current);
           if (newCommentary.length > 0) {
             messageQueue.current.push(...newCommentary);
           }
@@ -97,8 +111,10 @@ export function useLiveRaceSimulation({
               simTimeRef.current,
               race.distance,
               rngRef.current!,
-              runners,
+              sortedField,
               pace,
+              undefined,
+              rankMap.get(r.horseId),
             );
             // Track quarter-marker crossings with linear interpolation
             if (!splitCrossingsRef.current.has(r.horseId)) {

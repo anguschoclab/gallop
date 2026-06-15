@@ -51,6 +51,14 @@ export const raceResolutionPhase: PipelinePhase = {
     for (const race of overdueRaces) {
       resolvedCount++;
 
+      // Look up current weather for this race's track BEFORE simulating
+      // so the granular SimWeatherPattern can be used for weather-preference bonuses.
+      const raceTrackId = race.graded?.trackId ?? race.trackId;
+      const weatherBuf = raceTrackId ? (state as any).weather?.byTrack?.[raceTrackId] : undefined;
+      const raceWeatherState = Array.isArray(weatherBuf)
+        ? (weatherBuf.find((w: any) => w.day === newDay) ?? weatherBuf[weatherBuf.length - 1])
+        : undefined;
+
       // Simulate race using service
       const { result, runners, snapshots } = simulateRace(
         race,
@@ -60,6 +68,9 @@ export const raceResolutionPhase: PipelinePhase = {
         npcStableMap,
         state.npcAIManager,
         newDay,
+        undefined,
+        raceWeatherState?.pattern,
+        raceWeatherState?.windKph,
       );
 
       const rng = rngForRace(race);
@@ -135,14 +146,6 @@ export const raceResolutionPhase: PipelinePhase = {
           }
         }
       }
-
-      // Look up current weather for this race's track (if available) so that
-      // storms, freezing/scorching temps, etc. can amplify injury risk.
-      const raceTrackId = race.graded?.trackId ?? race.trackId;
-      const weatherBuf = raceTrackId ? (state as any).weather?.byTrack?.[raceTrackId] : undefined;
-      const raceWeatherState = Array.isArray(weatherBuf)
-        ? (weatherBuf.find((w: any) => w.day === newDay) ?? weatherBuf[weatherBuf.length - 1])
-        : undefined;
 
       // Generate race impacts using service
       const raceImpacts = generateRaceImpacts({
