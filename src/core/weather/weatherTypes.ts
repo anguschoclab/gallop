@@ -40,6 +40,8 @@ export interface WeatherState {
   humidity: number;
   /** Sustained wind speed in km/h. */
   windKph: number;
+  /** Wind direction in degrees (meteorological: 0=from North, 90=from East). */
+  windDirectionDeg?: number;
 }
 
 /**

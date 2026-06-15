@@ -26,6 +26,7 @@ export function useLiveRaceSimulation({
   rngRef,
   course,
   windKph,
+  windDirectionDeg,
 }: {
   race: any;
   runners: Runner[];
@@ -35,6 +36,7 @@ export function useLiveRaceSimulation({
   rngRef: React.MutableRefObject<any>;
   course?: CourseSpecification;
   windKph?: number;
+  windDirectionDeg?: number;
 }) {
   const [tick, setTick] = useState(0);
   const [speed, setSpeed] = useState(1);
@@ -122,6 +124,7 @@ export function useLiveRaceSimulation({
               rankMap.get(r.horseId),
               aliveRank,
               windKph,
+              windDirectionDeg,
             );
             // Track quarter-marker crossings with linear interpolation
             if (!splitCrossingsRef.current.has(r.horseId)) {

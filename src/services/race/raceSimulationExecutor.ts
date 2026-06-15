@@ -36,6 +36,7 @@ export interface RaceSimulationResult {
  * @param recordSnapshots - Whether to record detailed race snapshots (default: only if player horse involved)
  * @param weatherPattern
  * @param windKph
+ * @param windDirectionDeg
  * @returns Race simulation result including final positions and optional snapshots
  */
 export function simulateRace(
@@ -49,6 +50,7 @@ export function simulateRace(
   recordSnapshots?: boolean,
   weatherPattern?: import("@/core/weather/weatherTypes").SimWeatherPattern,
   windKph?: number,
+  windDirectionDeg?: number,
 ): RaceSimulationResult {
   const horsesArray = Array.isArray(horses) ? horses : Array.from(horses.values());
   const jockeysArray = Array.isArray(jockeys) ? jockeys : Array.from(jockeys.values());
@@ -88,6 +90,7 @@ export function simulateRace(
     course,
     shouldRecord,
     windKph,
+    windDirectionDeg,
   );
 
   // Dev assertion: if any runner never finished, the maxTime bound is too tight.

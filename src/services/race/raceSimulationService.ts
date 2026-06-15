@@ -4,6 +4,7 @@ import { stepRunner, computePaceContext } from "@/core/race/engine/simulation";
 import { buildRunner, getConditionsModifier, type Runner } from "@/core/race/engine/runnerBuilder";
 import type { CourseSpecification } from "@/data/tracks";
 import { generateHorse } from "@/core/horse/horseFactory";
+import { generateJockey } from "@/core/jockey/generator";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { createRng, hashStr, type Rng } from "@/core/common/rng";
 import { calculateAssignedWeight } from "@/core/race/entryScoring";
@@ -72,6 +73,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   } = dependencies;
   const conditions = getConditionsModifier(race);
   const fillerHorses: Horse[] = [];
+  const fillerJockeys: Jockey[] = [];
   const surface = race.surface || race.graded?.surface;
   const rng = rngForRace(race);
 
@@ -91,8 +93,10 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   while (entriesData.length < race.fieldSize) {
     const aiHorse = generateHorse({ tier: tier as never }, rng);
     fillerHorses.push(aiHorse);
+    const jk = generateJockey({ tier: tier as never, rng });
+    fillerJockeys.push(jk);
     const weight = calculateAssignedWeight(aiHorse, race);
-    entriesData.push({ horseId: aiHorse.id, owned: false, weight });
+    entriesData.push({ horseId: aiHorse.id, owned: false, jockeyId: jk.id, weight });
   }
 
   // Empty-field guard: always return at least 1 runner so downstream
@@ -100,8 +104,10 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   if (entriesData.length === 0) {
     const aiHorse = generateHorse({ tier: tier as never }, rng);
     fillerHorses.push(aiHorse);
+    const jk = generateJockey({ tier: tier as never, rng });
+    fillerJockeys.push(jk);
     const weight = calculateAssignedWeight(aiHorse, race);
-    entriesData.push({ horseId: aiHorse.id, owned: false, weight });
+    entriesData.push({ horseId: aiHorse.id, owned: false, jockeyId: jk.id, weight });
   }
 
   // 3. Shuffle all entries to assign unique barriers (1 to N)
@@ -119,6 +125,9 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
     dependencies.jockeys instanceof Map
       ? (dependencies.jockeys as Map<string, Jockey>)
       : new Map(dependencies.jockeys.map((j) => [j.id, j]));
+  for (const jk of fillerJockeys) {
+    jockeyMap.set(jk.id, jk);
+  }
   const stableMap =
     npcStables instanceof Map
       ? (npcStables as Map<string, Stable>)
@@ -198,6 +207,7 @@ export function simulateStep(
   rng: Rng,
   course?: CourseSpecification,
   windKph?: number,
+  windDirectionDeg?: number,
 ): { stillRunning: boolean; finishOrder: SimulationResult[] } {
   const finishOrder: SimulationResult[] = [];
   let stillRunning = false;
@@ -233,6 +243,7 @@ export function simulateStep(
         rankMap.get(runner.horseId),
         aliveRank,
         windKph,
+        windDirectionDeg,
       );
       if (runner.finishTime !== null) {
         finishOrder.push({

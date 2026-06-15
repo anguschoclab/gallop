@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+Aimport { useRef, useMemo } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import type { GameState, Horse } from "@/game/types";

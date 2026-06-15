@@ -42,6 +42,64 @@ export type RunnerBonuses = {
   veterinarian?: number;
 };
 
+/**
+ * Derive default jockey instructions from a horse's genetic running style.
+ * Used for filler horses that have an ephemeral jockey but no entry instructions.
+ */
+function deriveDefaultInstructions(
+  runningStyle: RunningStyleT,
+  horseId: string,
+  raceId: string,
+): JockeyInstructions {
+  switch (runningStyle) {
+    case "E":
+      return {
+        horseId,
+        raceId,
+        ridingStyle: "front_runner",
+        earlyPosition: "lead",
+        moveTiming: "early",
+        aggressiveness: 90,
+      };
+    case "S":
+      return {
+        horseId,
+        raceId,
+        ridingStyle: "closer",
+        earlyPosition: "drop_back",
+        moveTiming: "late",
+        aggressiveness: 50,
+      };
+    case "P":
+      return {
+        horseId,
+        raceId,
+        ridingStyle: "tactical",
+        earlyPosition: "midpack",
+        moveTiming: "mid",
+        aggressiveness: 50,
+      };
+    case "EP":
+      return {
+        horseId,
+        raceId,
+        ridingStyle: "stalker",
+        earlyPosition: "press",
+        moveTiming: "mid",
+        aggressiveness: 60,
+      };
+    default:
+      return {
+        horseId,
+        raceId,
+        ridingStyle: "tactical",
+        earlyPosition: "midpack",
+        moveTiming: "mid",
+        aggressiveness: 50,
+      };
+  }
+}
+
 export type Runner = {
   horseId: string;
   name: string;
@@ -431,6 +489,8 @@ export function buildRunner(
     };
     runningStyle = styleMap[entry.jockeyInstructions.ridingStyle] || runningStyle;
   } else if (npcAIManager && currentDay && stable && jockey && race && !owned) {
+    // This path is for real NPC entries that lack pre-set jockeyInstructions.
+    // Fillers (no stable) get their instructions from deriveDefaultInstructions instead.
     const aiState = npcAIManager.stableStates[stable.id];
     if (aiState?.jockeyStrategyAI) {
       const optimalStyle = calculateOptimalRunningStyle(
@@ -504,7 +564,9 @@ export function buildRunner(
     jockey,
     jockeyName,
     weight: assignedWeight,
-    jockeyInstructions: entry?.jockeyInstructions,
+    jockeyInstructions:
+      entry?.jockeyInstructions ??
+      (jockey && !stable ? deriveDefaultInstructions(runningStyle, h.id, race?.id ?? "") : undefined),
     courseFamiliarityMultiplier,
     lastSeekContribution: 0,
     lastSpurtContribution: 0,

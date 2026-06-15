@@ -102,10 +102,10 @@ export const FRONT_RUNNER_PACE_THRESHOLD = 3;
 export const FRONT_RUNNER_STYLE_PENALTY = 0.98;
 export const POSITIONING_BONUS_TURN = 0.4;
 export const MATCHED_ARCHETYPE_PROGRESS_THRESHOLD = 0.4;
-export const PACING_STAMINA_BONUS_FACTOR = 0.0002;
+export const PACING_STAMINA_BONUS_FACTOR = 0.02;
 export const FRONT_RUNNER_STALKER_MISMATCH_VELOCITY_BONUS = 0.2;
 export const FRONT_RUNNER_STALKER_MISMATCH_STAMINA_PENALTY = 0.97;
-export const VIGOR_BOOST_FACTOR = 0.0003;
+export const VIGOR_BOOST_FACTOR = 0.03;
 export const VIGOR_PROGRESS_THRESHOLD = 0.8;
 export const LATE_KICK_VIGOR_MULTIPLIER = 1.5;
 export const GATE_SKILL_VELOCITY_BONUS = 0.005;
@@ -122,3 +122,19 @@ export const INSIDE_OVERTAKE_DENSITY_ADVANTAGE = 1;
 export const HARSH_CONDITION_SPEED_THRESHOLD = 0.97;
 // soft (0.95), heavy (0.93), yielding (0.90) trigger it.
 // good (0.985) and fast (1.0) do NOT trigger it.
+
+// --- Wind integration constants ---
+/** Scale factor: windKph / this = base speed mod.
+ *  At 80 kph: non-sprinter ~6.2%, sprinter (×1.3) ~8%.
+ */
+export const WIND_EFFECT_SCALE = 1300;
+/** Sprinters (topSpeed > 18) face amplified wind on long straights. */
+export const SPRINTER_WIND_MULTIPLIER = 1.3;
+/** Max positive speed mod from tailwind (1.08 = +8%). */
+export const MAX_WIND_SPEED_MOD = 1.08;
+/** Max negative speed mod from headwind (0.92 = -8%). */
+export const MIN_WIND_SPEED_MOD = 0.92;
+/** Stamina penalty multiplier for running into a headwind. */
+export const HEADWIND_STAMINA_PENALTY = 1.03;
+/** Stamina relief multiplier for running with a tailwind. */
+export const TAILWIND_STAMINA_RELIEF = 0.97;

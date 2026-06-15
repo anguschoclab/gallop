@@ -12,28 +12,35 @@
           {
             "type": "straight",
             "length": 390,
-            "gradient": 0
+            "gradient": 0,
+            "orientationDeg": 90
           },
           {
             "type": "turn",
             "length": 653,
             "radius": 208,
-            "gradient": 0
+            "gradient": 0,
+            "entryOrientationDeg": 90,
+            "exitOrientationDeg": 270
           },
           {
             "type": "straight",
             "length": 390,
-            "gradient": 0
+            "gradient": 0,
+            "orientationDeg": 270
           },
           {
             "type": "turn",
             "length": 653,
             "radius": 208,
-            "gradient": 0
+            "gradient": 0,
+            "entryOrientationDeg": 270,
+            "exitOrientationDeg": 90
           }
         ],
         "width": 27,
-        "name": "E.P. Taylor Turf Course"
+        "name": "E.P. Taylor Turf Course",
+        "homeStraightOrientationDeg": 90
       },
       {
         "surface": "Synthetic",
@@ -755,28 +762,35 @@
           {
             "type": "straight",
             "length": 526,
-            "gradient": 0.13
+            "gradient": 0.13,
+            "orientationDeg": 270
           },
           {
             "type": "turn",
             "length": 516,
             "radius": 164,
-            "gradient": -0.13
+            "gradient": -0.13,
+            "entryOrientationDeg": 270,
+            "exitOrientationDeg": 90
           },
           {
             "type": "straight",
             "length": 526,
-            "gradient": 0.13
+            "gradient": 0.13,
+            "orientationDeg": 90
           },
           {
             "type": "turn",
             "length": 516,
             "radius": 164,
-            "gradient": -0.13
+            "gradient": -0.13,
+            "entryOrientationDeg": 90,
+            "exitOrientationDeg": 270
           }
         ],
         "width": 31,
-        "name": "Turf Course"
+        "name": "Turf Course",
+        "homeStraightOrientationDeg": 270
       },
       {
         "surface": "Dirt",
@@ -786,28 +800,35 @@
           {
             "type": "straight",
             "length": 501,
-            "gradient": 0.13
+            "gradient": 0.13,
+            "orientationDeg": 270
           },
           {
             "type": "turn",
             "length": 448,
             "radius": 143,
-            "gradient": -0.13
+            "gradient": -0.13,
+            "entryOrientationDeg": 270,
+            "exitOrientationDeg": 90
           },
           {
             "type": "straight",
             "length": 501,
-            "gradient": 0.13
+            "gradient": 0.13,
+            "orientationDeg": 90
           },
           {
             "type": "turn",
             "length": 448,
             "radius": 143,
-            "gradient": -0.13
+            "gradient": -0.13,
+            "entryOrientationDeg": 90,
+            "exitOrientationDeg": 270
           }
         ],
         "width": 25,
-        "name": "Dirt Course"
+        "name": "Dirt Course",
+        "homeStraightOrientationDeg": 270
       }
     ],
     "dataSource": "official"

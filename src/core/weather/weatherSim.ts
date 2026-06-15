@@ -272,6 +272,7 @@ export function stepWeather(
   const tempC = generateTemperature(koppen, month, pattern, rng);
   const humidity = generateHumidity(koppen, month, pattern, rng);
   const windKph = generateWind(koppen, pattern, rng);
+  const windDirectionDeg = Math.floor(rng.next() * 360);
 
   // Temperature-snow consistency check
   let finalPattern = pattern;
@@ -288,6 +289,7 @@ export function stepWeather(
     tempC,
     humidity,
     windKph,
+    windDirectionDeg,
   };
 }
 

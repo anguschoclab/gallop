@@ -69,6 +69,7 @@ function LiveRace() {
       rngRef,
       course,
       windKph: raceWeather?.windKph,
+      windDirectionDeg: raceWeather?.windDirectionDeg,
     });
 
   const {

@@ -19,6 +19,12 @@ export type TrackSection = {
   radius?: number; // meters (for turns)
   gradient?: number; // % slope (uphill/downhill)
   banking?: number; // degrees
+  /** Bearing of the straight section in degrees (0=N, 90=E). Only for straights. */
+  orientationDeg?: number;
+  /** Bearing at the start of a turn in degrees. */
+  entryOrientationDeg?: number;
+  /** Bearing at the end of a turn in degrees. */
+  exitOrientationDeg?: number;
 };
 
 export type CourseSpecification = {
@@ -28,6 +34,10 @@ export type CourseSpecification = {
   straightLength: number; // home straight length
   width?: number; // meters
   sections: TrackSection[];
+  /** Bearing of the home straight (finish-line straight) in degrees.
+   *  Used by the orientation-population script to derive all section orientations for standard ovals.
+   */
+  homeStraightOrientationDeg?: number;
 };
 
 export type Track = {

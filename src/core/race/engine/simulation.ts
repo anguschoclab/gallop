@@ -91,6 +91,12 @@ import {
   LATE_KICK_TOP_SPEED_MULTIPLIER,
   MIN_BLOCK_GAP,
   INSIDE_OVERTAKE_DENSITY_ADVANTAGE,
+  WIND_EFFECT_SCALE,
+  SPRINTER_WIND_MULTIPLIER,
+  MAX_WIND_SPEED_MOD,
+  MIN_WIND_SPEED_MOD,
+  HEADWIND_STAMINA_PENALTY,
+  TAILWIND_STAMINA_RELIEF,
 } from "./constants";
 
 // Standardizing imports for relocated file
@@ -511,7 +517,7 @@ function applyJockeyEffects(
       (arch === "finisher" && r.runningStyle === "P");
 
     if (isMatched && progress > MATCHED_ARCHETYPE_PROGRESS_THRESHOLD) {
-      updatedStaminaMul *= 1 + (stats.pacing / 100) * PACING_STAMINA_BONUS_FACTOR * 100;
+      updatedStaminaMul *= 1 + (stats.pacing / 100) * PACING_STAMINA_BONUS_FACTOR;
     }
 
     if (
@@ -524,7 +530,7 @@ function applyJockeyEffects(
     }
 
     if (progress > VIGOR_PROGRESS_THRESHOLD) {
-      let vigorBoost = (stats.vigor / 100) * VIGOR_BOOST_FACTOR * 100;
+      let vigorBoost = (stats.vigor / 100) * VIGOR_BOOST_FACTOR;
       // "Late Kick" tactic bonus
       if (r.jockeyInstructions?.moveTiming === "late" && progress > LATE_KICK_BOOST_THRESHOLD) {
         vigorBoost *= LATE_KICK_VIGOR_MULTIPLIER;
@@ -612,6 +618,106 @@ function getTrackSection(
 }
 
 /**
+ * Retrieves the track section and progress within it for a given position.
+ */
+function getSectionAndProgress(
+  pos: number,
+  distance: number,
+  course?: CourseSpecification,
+): { section: TrackSection | null; posWithinSection: number } {
+  if (!course || !course.sections || course.sections.length === 0) {
+    return { section: null, posWithinSection: 0 };
+  }
+  const circ = course.circumference;
+  const startOffset = (circ - (distance % circ)) % circ;
+  const trackPos = (startOffset + pos) % circ;
+  let currentPos = 0;
+  for (const section of course.sections) {
+    if (trackPos >= currentPos && trackPos < currentPos + section.length) {
+      return { section, posWithinSection: (trackPos - currentPos) / section.length };
+    }
+    currentPos += section.length;
+  }
+  return { section: course.sections[0], posWithinSection: 0 };
+}
+
+/**
+ * Get the interpolated orientation of a section at a given progress through it.
+ */
+function getSectionOrientation(
+  section: TrackSection | null,
+  posWithinSection: number,
+): number | null {
+  if (!section) return null;
+  if (section.type === "straight" && section.orientationDeg !== undefined) {
+    return section.orientationDeg;
+  }
+  if (
+    section.type === "turn" &&
+    section.entryOrientationDeg !== undefined &&
+    section.exitOrientationDeg !== undefined
+  ) {
+    let diff = section.exitOrientationDeg - section.entryOrientationDeg;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+    return section.entryOrientationDeg + diff * posWithinSection;
+  }
+  return null;
+}
+
+/**
+ * Calculate wind effect on a runner based on section orientation and wind direction.
+ * Exported for unit testing.
+ */
+export function calculateWindEffect(
+  r: Runner,
+  course: CourseSpecification | undefined,
+  windKph: number | undefined,
+  windDirectionDeg: number | undefined,
+  section: TrackSection | null,
+  posWithinSection: number,
+): { speedMod: number; staminaMod: number } {
+  if (
+    typeof windKph !== "number" ||
+    typeof windDirectionDeg !== "number" ||
+    !section
+  ) {
+    return { speedMod: 1, staminaMod: 1 };
+  }
+
+  const sectionOrientation = getSectionOrientation(section, posWithinSection);
+  if (sectionOrientation === null) {
+    return { speedMod: 1, staminaMod: 1 };
+  }
+
+  // Meteorological convention: windDirectionDeg is where the wind is COMING FROM.
+  // cos(section - windDirection) → 1 = full headwind, -1 = full tailwind
+  const windComponent = Math.cos(
+    ((sectionOrientation - windDirectionDeg) * Math.PI) / 180,
+  );
+
+  const baseEffect = windKph / WIND_EFFECT_SCALE;
+
+  const isSprinter = r.topSpeed > 18;
+  const isLongStraight =
+    section.type === "straight" &&
+    (course?.straightLength ?? 0) > LONG_STRAIGHT_THRESHOLD;
+  const sprinterMul = isSprinter && isLongStraight ? SPRINTER_WIND_MULTIPLIER : 1.0;
+
+  let speedMod = 1 - baseEffect * windComponent * sprinterMul;
+  speedMod = Math.max(MIN_WIND_SPEED_MOD, Math.min(MAX_WIND_SPEED_MOD, speedMod));
+
+  let staminaMod = 1;
+  if (windComponent > 0.3) {
+    staminaMod = HEADWIND_STAMINA_PENALTY;
+  } else if (windComponent < -0.3) {
+    staminaMod = TAILWIND_STAMINA_RELIEF;
+  }
+
+  return { speedMod, staminaMod };
+}
+
+/**
  * Simulates a single time step for a runner, updating their physical and tactical state.
  * Handles position updates, velocity adjustments towards target speed, lane changes, and finish line detection.
  *
@@ -626,6 +732,7 @@ function getTrackSection(
  * @param {number} [rankFromFront] - Pre-computed rank from front (avoids O(n) per runner).
  * @param {number} [aliveCount] - Pre-computed alive count (avoids O(n) per runner).
  * @param {number} [windKph] - Wind speed in km/h for drag calculation.
+ * @param {number} [windDirectionDeg] - Wind direction in degrees (meteorological).
  */
 export function stepRunner(
   r: Runner,
@@ -639,6 +746,7 @@ export function stepRunner(
   rankFromFront?: number,
   aliveCount?: number,
   windKph?: number,
+  windDirectionDeg?: number,
 ) {
   if (r.finishTime !== null) return;
   const progress = r.position / distance;
@@ -713,12 +821,17 @@ export function stepRunner(
   }
   r.lastSpurtContribution = spurtMul - 1;
 
-  // Small wind drag: higher wind = slightly lower target speed.
-  // Sprinters (topSpeed > 18 m/s) face ~20% more drag.
-  const windDrag =
-    typeof windKph === "number" && windKph > 0
-      ? Math.max(0.95, 1 - (windKph / 2000) * (r.topSpeed > 18 ? 1.2 : 1))
-      : 1;
+  // Orientation-aware wind effect: headwind slows, tailwind speeds, crosswind is neutral.
+  const { section, posWithinSection } = getSectionAndProgress(r.position, distance, course);
+  const { speedMod: windSpeedMod, staminaMod: windStaminaMod } = calculateWindEffect(
+    r,
+    course,
+    windKph,
+    windDirectionDeg,
+    section,
+    posWithinSection,
+  );
+  staminaMul *= windStaminaMod;
 
   // Calculate target speed
   const targetSpeed =
@@ -730,7 +843,7 @@ export function stepRunner(
     gradientSpeedMul *
     seekMul *
     spurtMul *
-    windDrag *
+    windSpeedMod *
     (1 + (rng.next() - 0.5) * 0.08 * r.noise);
 
   // Update velocity towards target (deceleration is slower than acceleration)
@@ -783,6 +896,7 @@ export function stepRunner(
  * @param {CourseSpecification} [course] - Track geometry and surface specifications.
  * @param {boolean} [recordSnapshots=false] - Whether to record per-tick snapshots for replay visualization.
  * @param windKph
+ * @param windDirectionDeg
  * @returns {Object} Final race results and optional snapshots.
  */
 export function runRaceToCompletion(
@@ -794,6 +908,7 @@ export function runRaceToCompletion(
   course?: CourseSpecification,
   recordSnapshots: boolean = false,
   windKph?: number,
+  windDirectionDeg?: number,
 ): {
   result: { horseId: string; position: number; time: number }[];
   snapshots: RaceSnapshot[];
@@ -841,6 +956,7 @@ export function runRaceToCompletion(
         rankMap.get(r.horseId),
         aliveRank,
         windKph,
+        windDirectionDeg,
       );
 
       if (r.finishTime !== null) {

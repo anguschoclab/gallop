@@ -99,6 +99,7 @@ export function PlayerRacePrompt() {
       course,
       true,
       raceWeather?.windKph,
+      raceWeather?.windDirectionDeg,
     );
     resolveRaceWithImpacts(race!.id, result.result);
     clearPending();
