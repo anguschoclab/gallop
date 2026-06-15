@@ -31,6 +31,7 @@ import {
   HARSH_CONDITION_SPEED_THRESHOLD,
   MAX_FORM_ENERGY_MUL,
   TOP_SPEED_CEILING,
+  LANE_WIDTH,
 } from "./constants";
 import type { SimWeatherPattern } from "@/core/weather/weatherTypes";
 
@@ -480,7 +481,6 @@ export function buildRunner(
   const affinityBonus = jockey ? calculateTheHandBonus(jockey, h.id) : 0;
   const reducedNoise = noise * (1 - affinityBonus);
 
-  const LANE_WIDTH = 1.2;
   return {
     horseId: h.id,
     name: h.name,
