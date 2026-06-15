@@ -12,6 +12,7 @@
 
 import type { Horse, GameState } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
+import { nondeterministicRng } from "@/core/common/rng";
 import { findHorseByName } from "@/data/pedigreeData";
 
 // Bruce Lowe's "Figure System": every thoroughbred traces tail-female to one
@@ -130,7 +131,7 @@ const PROCEDURAL_FAMILIES = [
  * const family = rollProceduralFamily(rng);
  */
 export function rollProceduralFamily(rng?: Rng): number {
-  const _rng = rng || ({ next: () => Math.random() } as any); // Default mock RNG for testing
+  const _rng = rng || nondeterministicRng();
   const total = PROCEDURAL_FAMILIES.reduce((s, [, w]) => s + w, 0);
   let pick = _rng.next() * total;
   for (const [family, weight] of PROCEDURAL_FAMILIES) {

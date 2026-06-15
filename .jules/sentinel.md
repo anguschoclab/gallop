@@ -21,3 +21,9 @@
 **Vulnerability:** In `src/assets/horseRaceScript.js`, `setInterval()` was called with a string argument (`"TimerCallback()"`), acting as an implied eval.
 **Learning:** Passing a string to `setTimeout` or `setInterval` causes the JS engine to evaluate the string as code. This is an unsafe practice equivalent to `eval()`, posing a security risk (XSS) if any part of the string ever incorporates user input, and it violates modern Content Security Policies (CSP) like `unsafe-eval`.
 **Prevention:** Never pass strings to `setInterval` or `setTimeout`. Always pass direct function references or anonymous functions instead.
+
+## 2025-05-18 - Math.random() in Fallback RNG
+
+**Vulnerability:** The `nondeterministicRng` function in `src/core/common/rng.ts`, which generates fallback seeds for deterministic RNGs across the application, was using `Math.random()`. Several core files like `src/core/market/claiming.ts` and `src/core/breeding/bruceLowe.ts` also fell back to ad-hoc `Math.random()` mock objects when no seeded RNG was provided.
+**Learning:** While `Math.random()` is acceptable for pure visual logic, it lacks cryptographic entropy and is highly predictable. Using it to generate critical seed material undermines the determinism guarantees and creates vulnerabilities where the sequence of values can be anticipated or manipulated, risking potential exploits in offline simulation components.
+**Prevention:** Avoid `Math.random()` completely for seed generation and simulation fallbacks. Rely on `crypto.getRandomValues()` (via a centralized implementation like `nondeterministicRng()`) when generating random material to ensure secure, cryptographically sound entropy.
