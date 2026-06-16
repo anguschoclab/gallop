@@ -11,7 +11,7 @@
  */
 
 import type { Horse, GameState } from "@/game/types";
-import type { Rng } from "@/core/common/rng";
+import { nondeterministicRng, type Rng } from "@/core/common/rng";
 import { findHorseByName } from "@/data/pedigreeData";
 
 // Bruce Lowe's "Figure System": every thoroughbred traces tail-female to one
@@ -146,14 +146,14 @@ const PROCEDURAL_FAMILIES = [
  * frequencies (families 1-5 are most common). Used for NPC and market horses
  * that don't have full pedigrees.
  *
- * @param rng - Random number generator (optional, defaults to Math.random)
+ * @param rng - Random number generator (optional, defaults to nondeterministicRng())
  * @returns Bruce Lowe family number
  *
  * @example
  * const family = rollProceduralFamily(rng);
  */
 export function rollProceduralFamily(rng?: Rng): number {
-  const _rng = rng || ({ next: () => Math.random() } as any); // Default mock RNG for testing
+  const _rng = rng || nondeterministicRng(); // Default to nondeterministic RNG
   const total = PROCEDURAL_FAMILIES.reduce((s, [, w]) => s + w, 0);
   let pick = _rng.next() * total;
   for (const [family, weight] of PROCEDURAL_FAMILIES) {

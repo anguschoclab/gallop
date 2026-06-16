@@ -11,6 +11,7 @@
 import type { Genotype, Locus, MarkerGenotype } from "@/core/genetics/types";
 import type { StallionResearchData } from "@/data/stallionDNAData";
 import { generateDeterministicGenotype } from "@/core/genetics/generation";
+import { nondeterministicRng } from "@/core/common/rng";
 
 /**
  * Mapping functions to convert real-world research data to game DNA loci.
@@ -163,7 +164,7 @@ function mapGeneticMarkers(markers: StallionResearchData["geneticMarkers"]): Mar
     sensoryPerception: "good",
     signalTransduction: "good",
     immunity: "good",
-    geneticDiversity: 0.5 + Math.random() * 0.5,
+    geneticDiversity: 0.5 + nondeterministicRng().next() * 0.5,
     lethalCarriers: {
       csnb: markers?.lethalCarriers?.csnb || false,
       hypp: markers?.lethalCarriers?.hypp || false,
