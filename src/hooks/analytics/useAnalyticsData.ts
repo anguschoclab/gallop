@@ -3,7 +3,7 @@
  * Reads directly from the game store; no business-logic changes.
  */
 import { useMemo } from "react";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import type { CashFlowEntry } from "@/core/financial/financialTypes";
 import { getCareerStats } from "@/core/horse/stats";
 
@@ -11,11 +11,13 @@ export function useAnalyticsData() {
   const day = useGame((s) => s.day);
   const cash = useGame((s) => s.cash);
   const horses = useGame((s) => s.horses);
-  const transactions = useGame(
+  // useGameWithShallow for the `?? []` fallbacks: a default-equality selector
+  // returning a fresh array each render triggers an infinite re-render loop.
+  const transactions = useGameWithShallow(
     (s) => (s as unknown as { transactions?: CashFlowEntry[] }).transactions ?? [],
   );
   const sireLeaderboards = useGame((s) => s.sireLeaderboards);
-  const sireTrendHistory = useGame((s) => s.sireTrendHistory ?? []);
+  const sireTrendHistory = useGameWithShallow((s) => s.sireTrendHistory ?? []);
 
   return useMemo(() => {
     const owned = horses.filter((h) => h.owned);

@@ -26,9 +26,14 @@ interface Props {
   trackCondition?: TrackCondition;
 }
 
+// Stable fallback reference. Returning an inline `?? []` / `[]` from the
+// selector mints a new array every render, so Zustand's useSyncExternalStore
+// snapshot never compares equal and triggers an infinite re-render loop.
+const EMPTY_FORECAST: WeatherState[] = [];
+
 export function WeatherForecastStrip({ trackId, trackCondition }: Props) {
   const forecast = useGame((s) =>
-    trackId ? (s.weather?.forecast?.[trackId] ?? []) : ([] as WeatherState[]),
+    trackId ? (s.weather?.forecast?.[trackId] ?? EMPTY_FORECAST) : EMPTY_FORECAST,
   );
   const current = useGame((s) =>
     trackId ? s.weather?.byTrack?.[trackId]?.slice(-1)[0] : undefined,

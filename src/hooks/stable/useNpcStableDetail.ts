@@ -30,7 +30,9 @@ export function useNpcStableDetail(stableId: string) {
   const day = useDay();
   const cash = useCash();
   const awards = useAwards();
-  const news = useGame((s) => s.news ?? []);
+  // useGameWithShallow: the `?? []` fallback would otherwise return a fresh
+  // array each render and trigger an infinite re-render loop (see line 36).
+  const news = useGameWithShallow((s) => s.news ?? []);
   const scoutHorse = useGame((s) => s.scoutHorse);
   const respondToPrivateSale = useGame((s) => s.respondToPrivateSale);
   const privateSaleOffers = useGameWithShallow((s: GameState) => s.privateSaleOffers ?? []);
