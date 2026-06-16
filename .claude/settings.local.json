@@ -113,7 +113,8 @@
       "Bash(bunx tsc *)",
       "Bash(echo \"TSC_EXIT=$?\")",
       "Read(//Users/amauricia/Documents/GitHub/gallop/src/routes/**)",
-      "Bash(bun run *)"
+      "Bash(bun run *)",
+      "Bash(grep -E ''\\\\''/calendar'\\\\''|'\\\\''/calendar/'\\\\''|'\\\\''/calendar/\\\\$regionId'\\\\''' src/routeTree.gen.ts)"
     ]
   },
   "hooks": {
