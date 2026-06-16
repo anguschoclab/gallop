@@ -55,6 +55,14 @@ export function JockeyReportPanel({
     [ownedRunners, ordered, sectionalSplits],
   );
 
+  // ⚡ Bolt Optimization:
+  // Pre-calculate hash map for O(1) runner lookups instead of running O(N) .find() inside the map loops.
+  // Impact: Reduces component rendering complexity from O(N*M) to O(N+M) preventing potential UI jank on runner switch.
+  const ownedRunnersMap = useMemo(
+    () => new Map(ownedRunners.map((r) => [r.horseId, r])),
+    [ownedRunners],
+  );
+
   const [selectedId, setSelectedId] = useState<string | null>(reports[0]?.horseId ?? null);
 
   if (reports.length === 0) return null;
@@ -94,7 +102,7 @@ export function JockeyReportPanel({
         <div className="flex flex-wrap gap-2">
           {reports.map((r) => {
             const isActive = r.horseId === active.horseId;
-            const runner = ownedRunners.find((rr) => rr.horseId === r.horseId);
+            const runner = ownedRunnersMap.get(r.horseId);
             return (
               <button
                 key={r.horseId}
