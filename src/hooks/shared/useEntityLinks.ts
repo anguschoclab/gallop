@@ -1,14 +1,21 @@
 import { useMemo } from "react";
 import { useGame } from "@/game/store";
 import type { EntityLink } from "@/services/narrative/newsTypes";
+import type { Jockey } from "@/core/jockey/types";
 
 function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+// Stable reference for the optional `jockeys` slice. Returning an inline `?? []`
+// from the selector mints a new array each render, which makes Zustand's
+// useSyncExternalStore snapshot never compare equal and triggers an infinite
+// re-render loop. (`horses`/`npcStables` are non-optional, so they stay stable.)
+const EMPTY_JOCKEYS: Jockey[] = [];
+
 export function useEntityLinks(text: string, explicitLinks?: EntityLink[], autoDetect = true) {
   const horses = useGame((s) => s.horses);
-  const jockeys = useGame((s) => s.jockeys ?? []);
+  const jockeys = useGame((s) => s.jockeys ?? EMPTY_JOCKEYS);
   const npcStables = useGame((s) => s.npcStables);
 
   return useMemo(() => {
