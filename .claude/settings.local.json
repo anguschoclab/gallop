@@ -108,7 +108,12 @@
       "Bash(cd /Users/amauricia/Documents/GitHub/gallop; echo \"=== race.\\\\$raceId.tsx wiring ===\"; grep -n \"SpeedBreakdown\\\\|SectionalTimingTable\\\\|snapshots\" src/routes/race.\\\\$raceId.tsx; echo; echo \"=== ResultOverlay wiring ===\"; grep -n \"SpeedBreakdown\\\\|SectionalTimingTable\" src/components/race/ResultOverlay.tsx; echo; echo \"=== recap.tsx wiring ===\"; grep -n \"SpeedBreakdown\" src/routes/recap.tsx; echo; echo \"=== SpeedBreakdownTable head ===\"; sed -n '1,30p' src/components/race/SpeedBreakdownTable.tsx)",
       "mcp__Claude_Preview__preview_start",
       "Bash(awk '{print $NF}')",
-      "Bash(awk -F: '{s+=$2} END {print s\" test cases in src/tests\"}')"
+      "Bash(awk -F: '{s+=$2} END {print s\" test cases in src/tests\"}')",
+      "Bash(bunx vitest *)",
+      "Bash(bunx tsc *)",
+      "Bash(echo \"TSC_EXIT=$?\")",
+      "Read(//Users/amauricia/Documents/GitHub/gallop/src/routes/**)",
+      "Bash(bun run *)"
     ]
   },
   "hooks": {

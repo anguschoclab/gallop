@@ -13,6 +13,17 @@ const RACING_TABS = ["races", "calendar", "browser", "scheduler"] as const;
 export const Route = createFileRoute("/racing")({
   validateSearch: z.object({
     tab: z.enum(RACING_TABS).optional(),
+    grade: z.string().optional(),
+    country: z.string().optional(),
+    surface: z.string().optional(),
+    track: z.string().optional(),
+    owned: z.string().optional(),
+    q: z.string().optional(),
+    stableId: z.string().optional(),
+    window: z.string().optional(),
+    trip: z.string().optional(),
+    eligibleOnly: z.string().optional(),
+    openOnly: z.string().optional(),
   }),
   component: RacingPage,
 });

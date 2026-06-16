@@ -1,8 +1,6 @@
 import { useGame, useGameWithShallow } from "@/game/store";
-import { shallow } from "zustand/shallow";
 import type { GameState } from "@/game/types";
 import { useRaces, useHorses } from "@/hooks/game/useCoreState";
-import { Button } from "@/components/ui/button";
 import { RaceEntry } from "@/components/race/RaceEntry";
 import { RaceFilterPanel } from "@/components/race/RaceFilterPanel";
 import { RaceFeed } from "@/components/race/RaceFeed";
@@ -12,21 +10,28 @@ import { useRaceFilters, type RaceFilters } from "@/hooks/race/useRaceFilters";
 import { useState } from "react";
 import { Race } from "@/game/types";
 import { Globe } from "lucide-react";
+import { getRouteApi } from "@tanstack/react-router";
+
+const racingRouteApi = getRouteApi("/racing");
 
 export function RacesTab() {
+  const search = racingRouteApi.useSearch();
+  const navigate = racingRouteApi.useNavigate();
+
   const filters: RaceFilters = {
-    grade: "all",
-    country: "all",
-    surface: "all",
-    track: "all",
-    owned: "all",
-    q: "",
-    stableId: undefined,
-    window: "all",
-    trip: "all",
-    eligibleOnly: undefined,
-    openOnly: undefined,
+    grade: search.grade || "all",
+    country: search.country || "all",
+    surface: search.surface || "all",
+    track: search.track || "all",
+    owned: search.owned || "all",
+    q: search.q || "",
+    stableId: search.stableId || undefined,
+    window: search.window || "all",
+    trip: search.trip || "all",
+    eligibleOnly: search.eligibleOnly || undefined,
+    openOnly: search.openOnly || undefined,
   };
+
   const { grade, country, owned, q } = filters;
   const races = useRaces();
   const horses = useHorses();
@@ -38,6 +43,34 @@ export function RacesTab() {
   const [enteringRace, setEnteringRace] = useState<Race | null>(null);
 
   const { filteredRaces, countries, tracks } = useRaceFilters(races, day, filters, horses);
+
+  const updateFilter = (key: keyof RaceFilters, value: string) => {
+    navigate({
+      search: (prev: any) => ({ ...prev, [key]: value }),
+    });
+  };
+
+  const patchFilters = (patch: Partial<RaceFilters>) => {
+    navigate({ search: (prev: any) => ({ ...prev, ...patch }) });
+  };
+
+  const resetAll = () =>
+    navigate({
+      search: (prev: any) => ({
+        ...prev,
+        grade: "all",
+        country: "all",
+        surface: "all",
+        track: "all",
+        owned: "all",
+        q: "",
+        stableId: undefined,
+        window: "all",
+        trip: "all",
+        eligibleOnly: undefined,
+        openOnly: undefined,
+      }),
+    });
 
   return (
     <div className="space-y-6 pb-20 animate-fade-in">
@@ -68,23 +101,23 @@ export function RacesTab() {
 
       <RaceQuickFilters
         filters={filters}
-        onPatch={() => {}}
-        onReset={() => {}}
+        onPatch={patchFilters}
+        onReset={resetAll}
         matchCount={filteredRaces.length}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 items-start">
         <RaceFilterPanel
           q={q}
-          onSearchChange={() => {}}
+          onSearchChange={(v) => updateFilter("q", v)}
           grade={grade}
-          onGradeChange={() => {}}
+          onGradeChange={(v) => updateFilter("grade", v)}
           country={country}
-          onCountryChange={() => {}}
+          onCountryChange={(v) => updateFilter("country", v)}
           owned={owned}
-          onOwnedChange={() => {}}
+          onOwnedChange={(v) => updateFilter("owned", v)}
           countries={countries}
-          onReset={() => {}}
+          onReset={resetAll}
         />
 
         <RaceFeed

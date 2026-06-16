@@ -16,7 +16,7 @@ export function useTabParam<T extends string>(fallback: T, valid: readonly T[]) 
 
   const setTab = (next: T) => {
     navigate({
-      search: { tab: next } as any,
+      search: { ...search, tab: next } as any,
     });
   };
 
