@@ -15,12 +15,14 @@ import { RunningStyleBreakdown } from "@/components/horse/RunningStyleBreakdown"
 import { HorseManagementSection } from "@/components/horse/HorseManagementSection";
 import { HorseLineageSection } from "@/components/horse/HorseLineageSection";
 import { HorseRaceHistorySection } from "@/components/horse/HorseRaceHistorySection";
+import { HorseGeneticsSection } from "@/components/horse/HorseGeneticsSection";
+import { FoalInheritancePanel } from "@/components/horse/FoalInheritancePanel";
 import { InsurancePanel } from "@/components/insurance/InsurancePanel";
 import { StewardsPanel } from "@/components/stewards/StewardsPanel";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { useHorseActions } from "@/hooks/horse/useHorseActions";
 import { useHorseDetail } from "@/hooks/horse/useHorseDetail";
-import { ArrowLeft, Zap, FileText, Activity, TrendingUp, GitBranch, History } from "lucide-react";
+import { ArrowLeft, Zap, FileText, Activity, TrendingUp, GitBranch, History, Dna } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export const Route = createFileRoute("/stable/$horseId")({
@@ -61,6 +63,7 @@ function HorseDetail() {
     beyer: TrendingUp,
     lineage: GitBranch,
     history: History,
+    genetics: Dna,
   };
 
   return (
@@ -192,6 +195,8 @@ function HorseDetail() {
 
             <RunningStyleBreakdown horse={horse} />
 
+            <HorseGeneticsSection horse={horse} />
+
             <HorseLineageSection
               horse={horse}
               horseId={horseId}
@@ -199,6 +204,14 @@ function HorseDetail() {
               reBreedingPregnancies={detail.reBreedingPregnancies}
               localHorseMap={detail.localHorseMap}
             />
+
+            {(horse.sireId || horse.damId) && (
+              <FoalInheritancePanel
+                foal={horse}
+                sire={horse.sireId ? detail.localHorseMap?.get(horse.sireId) : undefined}
+                dam={horse.damId ? detail.localHorseMap?.get(horse.damId) : undefined}
+              />
+            )}
 
             <HorseRaceHistorySection
               horse={horse}

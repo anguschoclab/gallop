@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
 import { FoalNamingDialog } from "@/components/breeding/FoalNamingDialog";
+import { FoalInheritancePanel } from "@/components/horse/FoalInheritancePanel";
 import type { useBreedingPage } from "@/hooks/breeding/useBreedingPage";
 
 interface BreedingHistoryTabProps {
@@ -26,26 +27,30 @@ export function BreedingHistoryTab({ pageData }: BreedingHistoryTabProps) {
                 .filter((p: any) => p.resolved)
                 .map((p: any) => {
                   const foal = localHorseMap.get(p.foalId);
+                  const sire = foal?.sireId ? localHorseMap.get(foal.sireId) : undefined;
+                  const dam = foal?.damId ? localHorseMap.get(foal.damId) : undefined;
                   return (
-                    <div
-                      key={p.id}
-                      className="flex items-center justify-between border border-gold-muted rounded-md px-3 py-2 text-sm"
-                    >
-                      <span>
-                        {p.sireName} × {p.damName} →{" "}
-                        <span className="font-medium">{foal?.name ?? "(sold)"}</span>
-                        {foal?.name === "Unnamed Foal" && foal.owned && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-6 ml-2 text-info hover:text-white"
-                            onClick={() => setNamingFoalId(foal.id)}
-                          >
-                            Name Foal
-                          </Button>
-                        )}
-                      </span>
-                      <span className="text-cream-muted tabular-nums">Born day {p.dueDay}</span>
+                    <div key={p.id} className="space-y-2">
+                      <div className="flex items-center justify-between border border-gold-muted rounded-md px-3 py-2 text-sm">
+                        <span>
+                          {p.sireName} × {p.damName} →{" "}
+                          <span className="font-medium">{foal?.name ?? "(sold)"}</span>
+                          {foal?.name === "Unnamed Foal" && foal.owned && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-6 ml-2 text-info hover:text-white"
+                              onClick={() => setNamingFoalId(foal.id)}
+                            >
+                              Name Foal
+                            </Button>
+                          )}
+                        </span>
+                        <span className="text-cream-muted tabular-nums">Born day {p.dueDay}</span>
+                      </div>
+                      {foal && sire && dam && (
+                        <FoalInheritancePanel foal={foal} sire={sire} dam={dam} />
+                      )}
                     </div>
                   );
                 })}

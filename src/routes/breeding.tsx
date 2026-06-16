@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { z } from "zod";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,14 +24,27 @@ import { BroodmaresTab } from "@/components/breeding/BroodmaresTab";
 import { BreedingHistoryTab } from "@/components/breeding/BreedingHistoryTab";
 import { BreedingPedigreeTab } from "@/components/breeding/BreedingPedigreeTab";
 import { BredHorsesTab } from "@/components/breeding/BredHorsesTab";
+import { StallionsTab } from "@/components/breeding/StallionsTab";
+import { SireWatchTab } from "@/components/breeding/SireWatchTab";
+import { SireLeaderboardsTab } from "@/components/breeding/SireLeaderboardsTab";
+import { useTabParam } from "@/hooks/ui/useTabParam";
+
+const BREEDING_TABS = [
+  "shed", "broodmares", "history", "bred", "pedigree", "programs",
+  "stallions", "sire-watch", "sire-leaderboards",
+] as const;
 
 export const Route = createFileRoute("/breeding")({
+  validateSearch: z.object({
+    tab: z.enum(BREEDING_TABS).optional(),
+  }),
   component: BreedingPage,
 });
 
 function BreedingPage() {
   const pageData = useBreedingPage();
   const { activePregnanciesCount, seasonOpen, nextSeasonStart } = pageData;
+  const { tab, setTab } = useTabParam("shed", BREEDING_TABS);
 
   return (
     <div className="space-y-6">
@@ -60,40 +74,7 @@ function BreedingPage() {
         </Badge>
       </div>
 
-      <div className="flex flex-wrap gap-3">
-        <Link to="/stallions">
-          <Button
-            variant="outline"
-            className="h-10 px-5 gap-2 border-gold/30 text-cream hover:bg-gold/10 hover:border-gold/60 hover:text-gold transition-all font-[family-name:var(--font-display)] text-sm font-semibold"
-          >
-            <Users className="h-4 w-4 text-gold/60" />
-            Stallions at Stud
-            <ChevronRight className="h-3.5 w-3.5 opacity-40" />
-          </Button>
-        </Link>
-        <Link to="/sire-watch">
-          <Button
-            variant="outline"
-            className="h-10 px-5 gap-2 border-gold/30 text-cream hover:bg-gold/10 hover:border-gold/60 hover:text-gold transition-all font-[family-name:var(--font-display)] text-sm font-semibold"
-          >
-            <BarChart2 className="h-4 w-4 text-gold/60" />
-            Sire Watch
-            <ChevronRight className="h-3.5 w-3.5 opacity-40" />
-          </Button>
-        </Link>
-        <Link to="/sire-leaderboards">
-          <Button
-            variant="outline"
-            className="h-10 px-5 gap-2 border-gold/30 text-cream hover:bg-gold/10 hover:border-gold/60 hover:text-gold transition-all font-[family-name:var(--font-display)] text-sm font-semibold"
-          >
-            <Trophy className="h-4 w-4 text-gold/60" />
-            Sire Leaderboards
-            <ChevronRight className="h-3.5 w-3.5 opacity-40" />
-          </Button>
-        </Link>
-      </div>
-
-      <Tabs defaultValue="shed" className="space-y-4">
+      <Tabs value={tab} onValueChange={(v) => setTab(v as (typeof BREEDING_TABS)[number])} className="space-y-4">
         <TabsList>
           <TabsTrigger value="shed" className="gap-2">
             <Heart className="h-4 w-4" />
@@ -124,6 +105,18 @@ function BreedingPage() {
             <Target className="h-4 w-4" />
             Programs
           </TabsTrigger>
+          <TabsTrigger value="stallions" className="gap-2">
+            <Users className="h-4 w-4" />
+            Stallions
+          </TabsTrigger>
+          <TabsTrigger value="sire-watch" className="gap-2">
+            <BarChart2 className="h-4 w-4" />
+            Sire Watch
+          </TabsTrigger>
+          <TabsTrigger value="sire-leaderboards" className="gap-2">
+            <Trophy className="h-4 w-4" />
+            Leaderboards
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="shed" className="space-y-4">
@@ -148,6 +141,18 @@ function BreedingPage() {
 
         <TabsContent value="programs" className="space-y-4">
           <BreedingProgramPanel />
+        </TabsContent>
+
+        <TabsContent value="stallions" className="space-y-4">
+          <StallionsTab />
+        </TabsContent>
+
+        <TabsContent value="sire-watch" className="space-y-4">
+          <SireWatchTab />
+        </TabsContent>
+
+        <TabsContent value="sire-leaderboards" className="space-y-4">
+          <SireLeaderboardsTab />
         </TabsContent>
       </Tabs>
     </div>

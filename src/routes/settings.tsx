@@ -9,6 +9,7 @@ import { GameplaySettingsCard } from "@/components/settings/GameplaySettingsCard
 import { NotificationSettingsCard } from "@/components/settings/NotificationSettingsCard";
 import { AudioSettingsCard } from "@/components/settings/AudioSettingsCard";
 import { DataManagementCard } from "@/components/settings/DataManagementCard";
+import { GlossaryPanel } from "@/components/settings/GlossaryPanel";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -70,6 +71,7 @@ function SettingsPage() {
             setSaveDialogOpen(true);
           }}
         />
+        <GlossaryPanel />
       </div>
 
       <SaveLoadDialog

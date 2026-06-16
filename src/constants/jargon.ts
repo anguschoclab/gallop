@@ -53,6 +53,24 @@ export const JARGON_DEFINITIONS: Record<string, string> = {
     "The sire-line pedigree traced to 6 generations to identify founder ancestors (e.g., Northern Dancer, Mr. Prospector).",
   Inbreeding:
     "The measure of shared ancestors in a horse's pedigree, calculated to 8 generations with weighted contribution (near generations have stronger impact).",
+  "Dosage Index":
+    "A pedigree-derived number describing inherited speed-vs-stamina balance. Higher = bred more for speed/short distances; lower = bred for stamina/long distances.",
+  "Founder Effect":
+    "Loss of genetic variation when a line traces back to few unique ancestors. Strong founder effect means low diversity.",
+  "Bruce Lowe Family":
+    "A numbered classification of a horse's tail-female (bottom) line. Some families are historically associated with top runners, others with influential sires.",
+  "Mud Aptitude":
+    "How well a horse handles off (wet/soft) going. Above 1.0 = relishes the mud; below 1.0 = prefers firm ground.",
+  "Weather Preference":
+    "The going a horse is bred to prefer: dry, wet, or all-conditions.",
+  "Heart Score":
+    "A proxy for cardiovascular capacity and will to win. Higher means more late-race grit.",
+  "Foaling Ease":
+    "How safely a mare tends to deliver. Higher is easier and lower-risk for mare and foal.",
+  Trainability:
+    "How quickly a horse responds to training. Higher means faster improvement per session.",
+  "Peak Age":
+    "The age (3–7) at which a horse is expected to reach its physical prime.",
   Stud: "A retired male horse (stallion) available for breeding.",
 
   // Track conditions (dynamic weather)

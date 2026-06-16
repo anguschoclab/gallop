@@ -1,9 +1,7 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/calendar")({
-  component: CalendarLayout,
+  beforeLoad: () => {
+    throw redirect({ to: "/racing", search: { tab: "calendar" } });
+  },
 });
-
-function CalendarLayout() {
-  return <Outlet />;
-}

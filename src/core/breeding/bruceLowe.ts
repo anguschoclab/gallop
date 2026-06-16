@@ -53,6 +53,29 @@ export function familyRole(
   return "Standard";
 }
 
+/**
+ * Get the role of a Bruce Lowe family as a human-readable string.
+ *
+ * Returns whether a family is known for producing race winners, influential
+ * stallions, both, or is a standard family.
+ *
+ * @param family - The Bruce Lowe family number
+ * @returns Family role classification as a string
+ *
+ * @example
+ * const role = getBruceLoweRole(3);
+ * // Returns "Running & Sire line"
+ */
+export function getBruceLoweRole(family?: number): string {
+  if (family === undefined) return "Unclassified";
+  const running = RUNNING_FAMILIES.has(family);
+  const sire = SIRE_FAMILIES.has(family);
+  if (running && sire) return "Running & Sire line";
+  if (running) return "Running family";
+  if (sire) return "Sire line";
+  return "Standard family";
+}
+
 // Walk a horse's recorded pedigree (via Pedigree.damId chain in state.horses,
 // and falling back to the curated pedigreeData findHorseByName for foundation
 // stock) until we hit a mare with a known bruceLoweFamily number.

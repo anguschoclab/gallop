@@ -19,6 +19,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SchedulerRouteImport } from './routes/scheduler'
 import { Route as RecordsRouteImport } from './routes/records'
 import { Route as RecapRouteImport } from './routes/recap'
+import { Route as RacingRouteImport } from './routes/racing'
 import { Route as RacesRouteImport } from './routes/races'
 import { Route as RaceBrowserRouteImport } from './routes/race-browser'
 import { Route as NpcStablesRouteImport } from './routes/npc-stables'
@@ -27,6 +28,7 @@ import { Route as MarketRouteImport } from './routes/market'
 import { Route as JockeysRouteImport } from './routes/jockeys'
 import { Route as InboxRouteImport } from './routes/inbox'
 import { Route as HorseGalleryRouteImport } from './routes/horse-gallery'
+import { Route as HonorsRouteImport } from './routes/honors'
 import { Route as HallOfFameRouteImport } from './routes/hall-of-fame'
 import { Route as GazetteRouteImport } from './routes/gazette'
 import { Route as FinancialReportRouteImport } from './routes/financial-report'
@@ -107,6 +109,11 @@ const RecapRoute = RecapRouteImport.update({
   path: '/recap',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RacingRoute = RacingRouteImport.update({
+  id: '/racing',
+  path: '/racing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RacesRoute = RacesRouteImport.update({
   id: '/races',
   path: '/races',
@@ -145,6 +152,11 @@ const InboxRoute = InboxRouteImport.update({
 const HorseGalleryRoute = HorseGalleryRouteImport.update({
   id: '/horse-gallery',
   path: '/horse-gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HonorsRoute = HonorsRouteImport.update({
+  id: '/honors',
+  path: '/honors',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HallOfFameRoute = HallOfFameRouteImport.update({
@@ -306,6 +318,7 @@ export interface FileRoutesByFullPath {
   '/financial-report': typeof FinancialReportRoute
   '/gazette': typeof GazetteRoute
   '/hall-of-fame': typeof HallOfFameRoute
+  '/honors': typeof HonorsRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/inbox': typeof InboxRoute
   '/jockeys': typeof JockeysRoute
@@ -314,6 +327,7 @@ export interface FileRoutesByFullPath {
   '/npc-stables': typeof NpcStablesRouteWithChildren
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
+  '/racing': typeof RacingRoute
   '/recap': typeof RecapRoute
   '/records': typeof RecordsRoute
   '/scheduler': typeof SchedulerRoute
@@ -352,6 +366,7 @@ export interface FileRoutesByTo {
   '/financial-report': typeof FinancialReportRoute
   '/gazette': typeof GazetteRoute
   '/hall-of-fame': typeof HallOfFameRoute
+  '/honors': typeof HonorsRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/inbox': typeof InboxRoute
   '/jockeys': typeof JockeysRoute
@@ -359,6 +374,7 @@ export interface FileRoutesByTo {
   '/new-game': typeof NewGameRoute
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
+  '/racing': typeof RacingRoute
   '/recap': typeof RecapRoute
   '/records': typeof RecordsRoute
   '/scheduler': typeof SchedulerRoute
@@ -399,6 +415,7 @@ export interface FileRoutesById {
   '/financial-report': typeof FinancialReportRoute
   '/gazette': typeof GazetteRoute
   '/hall-of-fame': typeof HallOfFameRoute
+  '/honors': typeof HonorsRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/inbox': typeof InboxRoute
   '/jockeys': typeof JockeysRoute
@@ -407,6 +424,7 @@ export interface FileRoutesById {
   '/npc-stables': typeof NpcStablesRouteWithChildren
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
+  '/racing': typeof RacingRoute
   '/recap': typeof RecapRoute
   '/records': typeof RecordsRoute
   '/scheduler': typeof SchedulerRoute
@@ -450,6 +468,7 @@ export interface FileRouteTypes {
     | '/financial-report'
     | '/gazette'
     | '/hall-of-fame'
+    | '/honors'
     | '/horse-gallery'
     | '/inbox'
     | '/jockeys'
@@ -458,6 +477,7 @@ export interface FileRouteTypes {
     | '/npc-stables'
     | '/race-browser'
     | '/races'
+    | '/racing'
     | '/recap'
     | '/records'
     | '/scheduler'
@@ -496,6 +516,7 @@ export interface FileRouteTypes {
     | '/financial-report'
     | '/gazette'
     | '/hall-of-fame'
+    | '/honors'
     | '/horse-gallery'
     | '/inbox'
     | '/jockeys'
@@ -503,6 +524,7 @@ export interface FileRouteTypes {
     | '/new-game'
     | '/race-browser'
     | '/races'
+    | '/racing'
     | '/recap'
     | '/records'
     | '/scheduler'
@@ -542,6 +564,7 @@ export interface FileRouteTypes {
     | '/financial-report'
     | '/gazette'
     | '/hall-of-fame'
+    | '/honors'
     | '/horse-gallery'
     | '/inbox'
     | '/jockeys'
@@ -550,6 +573,7 @@ export interface FileRouteTypes {
     | '/npc-stables'
     | '/race-browser'
     | '/races'
+    | '/racing'
     | '/recap'
     | '/records'
     | '/scheduler'
@@ -592,6 +616,7 @@ export interface RootRouteChildren {
   FinancialReportRoute: typeof FinancialReportRoute
   GazetteRoute: typeof GazetteRoute
   HallOfFameRoute: typeof HallOfFameRoute
+  HonorsRoute: typeof HonorsRoute
   HorseGalleryRoute: typeof HorseGalleryRoute
   InboxRoute: typeof InboxRoute
   JockeysRoute: typeof JockeysRoute
@@ -600,6 +625,7 @@ export interface RootRouteChildren {
   NpcStablesRoute: typeof NpcStablesRouteWithChildren
   RaceBrowserRoute: typeof RaceBrowserRoute
   RacesRoute: typeof RacesRoute
+  RacingRoute: typeof RacingRoute
   RecapRoute: typeof RecapRoute
   RecordsRoute: typeof RecordsRoute
   SchedulerRoute: typeof SchedulerRoute
@@ -686,6 +712,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecapRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/racing': {
+      id: '/racing'
+      path: '/racing'
+      fullPath: '/racing'
+      preLoaderRoute: typeof RacingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/races': {
       id: '/races'
       path: '/races'
@@ -740,6 +773,13 @@ declare module '@tanstack/react-router' {
       path: '/horse-gallery'
       fullPath: '/horse-gallery'
       preLoaderRoute: typeof HorseGalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/honors': {
+      id: '/honors'
+      path: '/honors'
+      fullPath: '/honors'
+      preLoaderRoute: typeof HonorsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hall-of-fame': {
@@ -1049,6 +1089,7 @@ const rootRouteChildren: RootRouteChildren = {
   FinancialReportRoute: FinancialReportRoute,
   GazetteRoute: GazetteRoute,
   HallOfFameRoute: HallOfFameRoute,
+  HonorsRoute: HonorsRoute,
   HorseGalleryRoute: HorseGalleryRoute,
   InboxRoute: InboxRoute,
   JockeysRoute: JockeysRoute,
@@ -1057,6 +1098,7 @@ const rootRouteChildren: RootRouteChildren = {
   NpcStablesRoute: NpcStablesRouteWithChildren,
   RaceBrowserRoute: RaceBrowserRoute,
   RacesRoute: RacesRoute,
+  RacingRoute: RacingRoute,
   RecapRoute: RecapRoute,
   RecordsRoute: RecordsRoute,
   SchedulerRoute: SchedulerRoute,
@@ -1073,3 +1115,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
