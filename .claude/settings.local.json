@@ -114,7 +114,9 @@
       "Bash(echo \"TSC_EXIT=$?\")",
       "Read(//Users/amauricia/Documents/GitHub/gallop/src/routes/**)",
       "Bash(bun run *)",
-      "Bash(grep -E ''\\\\''/calendar'\\\\''|'\\\\''/calendar/'\\\\''|'\\\\''/calendar/\\\\$regionId'\\\\''' src/routeTree.gen.ts)"
+      "Bash(grep -E ''\\\\''/calendar'\\\\''|'\\\\''/calendar/'\\\\''|'\\\\''/calendar/\\\\$regionId'\\\\''' src/routeTree.gen.ts)",
+      "Bash(sed -n '45,62p' src/components/race/PlayerRacePrompt.tsx)",
+      "Bash(sed -n '30,48p' src/hooks/race/useRaceEntry.ts)"
     ]
   },
   "hooks": {
