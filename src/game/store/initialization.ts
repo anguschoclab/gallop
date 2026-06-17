@@ -179,6 +179,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
       news: [],
     },
     horseMap: new Map([...horses, ...npcHorses].map((h) => [h.id, h])),
+    raceMap: new Map(racesWithEntries.map((r) => [r.id, r])),
     activeBreedingProgram: null,
     paceSamples: {},
     calibratedPars: {},

@@ -39,6 +39,8 @@ export interface CoreState {
   horseMap: Map<string, Horse>;
   /** All scheduled races */
   races: Race[];
+  /** Optimized lookup map for races by ID */
+  raceMap: Map<string, Race>;
   /** Game log for significant events */
   log: { day: number; text: string }[];
   /** Structured news items for the Gallop Gazette */
@@ -93,6 +95,7 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
       horses: playerHorses,
       horseMap: new Map(playerHorses.map((h) => [h.id, h])),
       races: [],
+      raceMap: new Map(),
       log: [
         {
           day: 1,
@@ -130,6 +133,7 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
     horses: [],
     horseMap: new Map(),
     races: [],
+    raceMap: new Map(),
     log: [{ day: 1, text: "Welcome to Gallop! Your stable is now open for business." }],
     news: [
       {

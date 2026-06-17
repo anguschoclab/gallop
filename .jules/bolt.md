@@ -27,3 +27,8 @@
 
 **Learning:** When searching for an item within an array in a render loop with multiple conditions (like `fromStableId === undefined && status === 'pending'`), using `array.find()` inside `.map()` is O(N^2).
 **Action:** Instead of just `new Map(arr.map(x => [x.id, x]))`, you can iterate the array once inside `useMemo` and conditionally `map.set()` the matched items by their target key (e.g., `horseId`). This allows O(1) conditional lookup inside the render loop without modifying global state or storing unneeded entries in the map.
+
+## 2024-11-20 - [Optimizing O(N) array lookups for Core State Entities]
+
+**Learning:** Finding entities (like `races` or `horses`) within a large `GameState` array using `.find()` inside store actions or hooks degrades performance, especially since some collections grow substantially during a game session.
+**Action:** Always pre-calculate and maintain an O(1) hash map globally in `CoreState` alongside the arrays (e.g., `raceMap` alongside `races`, similar to `horseMap`). Ensure store reducers (like `setRaces`, `applyDayResult`) update both the array and the map, and rehydrate the maps during state initialization.

@@ -52,7 +52,7 @@ export function createPrivateSaleSlice(
   return {
     proposePrivateSale: (horseId, stableId, amount) => {
       const s = get();
-      const horse = s.horses.find((h: Horse) => h.id === horseId);
+      const horse = s.horseMap.get(horseId);
       if (!horse) return { ok: false, reason: "horse_not_found" };
       if (horse.stableId !== stableId) return { ok: false, reason: "horse_not_in_stable" };
       if (s.cash < amount) return { ok: false, reason: "insufficient_funds" };
@@ -100,10 +100,10 @@ export function createPrivateSaleSlice(
 
     enterClaimingRace: (raceId, horseId) => {
       const s = get();
-      const race: Race | undefined = s.races.find((r: Race) => r.id === raceId);
+      const race: Race | undefined = s.raceMap.get(raceId);
       if (!race) return { ok: false, reason: "race_not_found" };
       if (!race.claiming) return { ok: false, reason: "not_claiming_race" };
-      const horse = s.horses.find((h: Horse) => h.id === horseId);
+      const horse = s.horseMap.get(horseId);
       if (!horse) return { ok: false, reason: "horse_not_found" };
       if (!horse.owned) return { ok: false, reason: "not_owned" };
       if (s.day >= race.day) return { ok: false, reason: "entries_closed" };
@@ -124,7 +124,7 @@ export function createPrivateSaleSlice(
 
     withdrawFromClaimingRace: (raceId, horseId) => {
       const s = get();
-      const race: Race | undefined = s.races.find((r: Race) => r.id === raceId);
+      const race: Race | undefined = s.raceMap.get(raceId);
       if (!race) return;
       if (s.day >= race.day - 1) return;
 
@@ -142,10 +142,10 @@ export function createPrivateSaleSlice(
 
     fileClaim: (raceId, horseId) => {
       const s = get();
-      const race: Race | undefined = s.races.find((r: Race) => r.id === raceId);
+      const race: Race | undefined = s.raceMap.get(raceId);
       if (!race) return { ok: false, reason: "race_not_found" };
       if (!race.claiming) return { ok: false, reason: "not_claiming_race" };
-      const horse = s.horses.find((h: Horse) => h.id === horseId);
+      const horse = s.horseMap.get(horseId);
       if (!horse) return { ok: false, reason: "horse_not_found" };
       // Self-claim prohibited
       if (horse.owned) return { ok: false, reason: "self_claim_prohibited" };

@@ -332,10 +332,17 @@ export const useGame = create<StoreType>()(
       name: "gallop-game-state",
       storage: createOpfsStorage(),
       onRehydrateStorage: () => (state) => {
-        if (state && state.horses) {
-          useGame.setState({
-            horseMap: new Map(state.horses.map((h: any) => [h.id, h])),
-          });
+        if (state) {
+          const updates: any = {};
+          if (state.horses) {
+            updates.horseMap = new Map(state.horses.map((h: any) => [h.id, h]));
+          }
+          if (state.races) {
+            updates.raceMap = new Map(state.races.map((r: any) => [r.id, r]));
+          }
+          if (Object.keys(updates).length > 0) {
+            useGame.setState(updates);
+          }
         }
         hydrationComplete.value = true;
       },

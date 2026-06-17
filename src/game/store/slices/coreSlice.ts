@@ -126,6 +126,10 @@ export function createCoreSlice(
     if (finalState.horses) {
       update.horseMap = new Map(finalState.horses.map((h: Horse) => [h.id, h]));
     }
+    // Sync raceMap if races changed
+    if (finalState.races) {
+      update.raceMap = new Map(finalState.races.map((r: Race) => [r.id, r]));
+    }
 
     // Explicitly remove keys that shouldn't be in the store (e.g. worker-only metadata)
     delete update.lastFrameTime;
@@ -145,7 +149,7 @@ export function createCoreSlice(
 
     enterRace: (raceId: string, horseId: string) => {
       const s = get();
-      const race = s.races.find((r: Race) => r.id === raceId);
+      const race = s.raceMap.get(raceId);
       if (!race) return { ok: false, reason: "Race not found." };
       const horse = requireHorse(s.horses, horseId);
       const ownershipGuard = requireOwned(horse);
@@ -225,7 +229,7 @@ export function createCoreSlice(
 
     withdrawRace: (raceId: string, horseId: string) => {
       const s = get();
-      const race = s.races.find((r: Race) => r.id === raceId);
+      const race = s.raceMap.get(raceId);
       if (!race) return { ok: false, reason: "Race not found." };
       const entry = race.entries.find((e: { horseId: string }) => e.horseId === horseId);
       if (!entry) return { ok: false, reason: "Horse not entered in this race." };
@@ -306,9 +310,9 @@ export function createCoreSlice(
 
     submitClaim: (raceId: string, horseId: string) => {
       const s = get();
-      const race = s.races.find((r: Race) => r.id === raceId);
+      const race = s.raceMap.get(raceId);
       if (!race) return { ok: false, reason: "Race not found." };
-      const horse = s.horses.find((h: Horse) => h.id === horseId);
+      const horse = s.horseMap.get(horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (horse.owned) return { ok: false, reason: "Cannot claim your own horse." };
 
@@ -329,7 +333,7 @@ export function createCoreSlice(
 
     withdrawClaim: (raceId: string, horseId: string) => {
       const s = get();
-      const race = s.races.find((r: Race) => r.id === raceId);
+      const race = s.raceMap.get(raceId);
       if (!race) return { ok: false, reason: "Race not found." };
 
       enqueueIntent({
@@ -481,7 +485,10 @@ export function createCoreSlice(
     },
 
     setRaces: (races) => {
-      set({ races });
+      set({
+        races,
+        raceMap: new Map(races.map((r) => [r.id, r])),
+      });
     },
 
     setLog: (log) => {
