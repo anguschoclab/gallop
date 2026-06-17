@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getSkyBackground } from "@/components/race/raceVisualHelpers";
 import { BroadcastCommentary } from "@/components/race/BroadcastCommentary";
 import { RaceVisualizer } from "@/components/race/RaceVisualizer";
@@ -21,9 +21,16 @@ import {
 import { ChevronDown } from "lucide-react";
 import { useRacePageData } from "@/hooks/race/useRacePageData";
 import { useRaceUIState } from "@/hooks/race/useRaceUIState";
+import { useRacePhase } from "@/hooks/race/useRacePhase";
 import { getCourseForRace } from "@/data/tracks";
 
+type RaceSearch = { phase?: "preshow" | "live" | "review" };
+
 export const Route = createFileRoute("/race/$raceId")({
+  validateSearch: (raw: Record<string, unknown>): RaceSearch => {
+    const v = raw?.phase;
+    return v === "preshow" || v === "live" || v === "review" ? { phase: v } : {};
+  },
   component: LiveRace,
   notFoundComponent: () => (
     <div className="p-6">
