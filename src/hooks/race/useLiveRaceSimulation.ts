@@ -27,6 +27,7 @@ export function useLiveRaceSimulation({
   course,
   windKph,
   windDirectionDeg,
+  running = true,
 }: {
   race: any;
   runners: Runner[];
@@ -37,6 +38,7 @@ export function useLiveRaceSimulation({
   course?: CourseSpecification;
   windKph?: number;
   windDirectionDeg?: number;
+  running?: boolean;
 }) {
   const [tick, setTick] = useState(0);
   const [speed, setSpeed] = useState(1);
