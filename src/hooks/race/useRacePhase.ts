@@ -1,5 +1,6 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useCallback } from "react";
+import { toast } from "sonner";
 
 export type RacePhase = "preshow" | "live" | "review";
 
@@ -34,6 +35,12 @@ export function useRacePhase(resolved: boolean): {
         search: ((prev: Record<string, unknown> = {}) => ({ ...prev, phase: next })) as any,
         replace: true,
       } as any);
+
+      if (next === "live") {
+        toast.info("Race is live");
+      } else if (next === "review") {
+        toast.info("Results available");
+      }
     },
     [navigate],
   );
