@@ -168,7 +168,7 @@ export function useLiveRaceSimulation({
 
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [race, runners, resolveRaceWithImpacts, narrativeRef, messageQueue, rngRef]);
+  }, [race, runners, resolveRaceWithImpacts, narrativeRef, messageQueue, rngRef, running]);
 
   return {
     tick,
