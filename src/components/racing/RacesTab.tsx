@@ -46,17 +46,17 @@ export function RacesTab() {
 
   const updateFilter = (key: keyof RaceFilters, value: string) => {
     navigate({
-      search: (prev: any) => ({ ...prev, [key]: value }),
+      search: ((prev: any) => ({ ...prev, [key]: value })) as any,
     });
   };
 
   const patchFilters = (patch: Partial<RaceFilters>) => {
-    navigate({ search: (prev: any) => ({ ...prev, ...patch }) });
+    navigate({ search: ((prev: any) => ({ ...prev, ...patch })) as any });
   };
 
   const resetAll = () =>
     navigate({
-      search: (prev: any) => ({
+      search: ((prev: any) => ({
         ...prev,
         grade: "all",
         country: "all",
@@ -69,7 +69,7 @@ export function RacesTab() {
         trip: "all",
         eligibleOnly: undefined,
         openOnly: undefined,
-      }),
+      })) as any,
     });
 
   return (
