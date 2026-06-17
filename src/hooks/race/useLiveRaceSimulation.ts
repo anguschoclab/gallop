@@ -62,7 +62,7 @@ export function useLiveRaceSimulation({
   }, [paused]);
 
   useEffect(() => {
-    if (!race || race.resolved) return;
+    if (!race || race.resolved || !running) return;
 
     let raf = 0;
     let last = performance.now();
