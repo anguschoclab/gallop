@@ -22,7 +22,16 @@ import { StewardsPanel } from "@/components/stewards/StewardsPanel";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { useHorseActions } from "@/hooks/horse/useHorseActions";
 import { useHorseDetail } from "@/hooks/horse/useHorseDetail";
-import { ArrowLeft, Zap, FileText, Activity, TrendingUp, GitBranch, History, Dna } from "lucide-react";
+import {
+  ArrowLeft,
+  Zap,
+  FileText,
+  Activity,
+  TrendingUp,
+  GitBranch,
+  History,
+  Dna,
+} from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export const Route = createFileRoute("/stable/$horseId")({

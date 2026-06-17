@@ -30,7 +30,11 @@ function HonorsPage() {
         </p>
       </div>
 
-      <Tabs value={tab} onValueChange={(v) => setTab(v as (typeof HONORS_TABS)[number])} className="space-y-4">
+      <Tabs
+        value={tab}
+        onValueChange={(v) => setTab(v as (typeof HONORS_TABS)[number])}
+        className="space-y-4"
+      >
         <TabsList>
           <TabsTrigger value="hall-of-fame" className="gap-2">
             <Trophy className="h-4 w-4" />

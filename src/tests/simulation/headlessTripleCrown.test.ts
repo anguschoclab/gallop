@@ -80,7 +80,6 @@ function resetOPFSMocks() {
   });
 }
 
-
 describe("Headless Triple Crown Simulation", () => {
   beforeEach(() => {
     // Reset OPFS mocks and setup localStorage

@@ -116,7 +116,8 @@
       "Bash(bun run *)",
       "Bash(grep -E ''\\\\''/calendar'\\\\''|'\\\\''/calendar/'\\\\''|'\\\\''/calendar/\\\\$regionId'\\\\''' src/routeTree.gen.ts)",
       "Bash(sed -n '45,62p' src/components/race/PlayerRacePrompt.tsx)",
-      "Bash(sed -n '30,48p' src/hooks/race/useRaceEntry.ts)"
+      "Bash(sed -n '30,48p' src/hooks/race/useRaceEntry.ts)",
+      "Bash(cd /Users/amauricia/Documents/GitHub/gallop *)"
     ]
   },
   "hooks": {

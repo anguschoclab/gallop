@@ -9,10 +9,7 @@ export function GlossaryPanel() {
 
   const filteredTerms = Object.entries(JARGON_DEFINITIONS).filter(([term, definition]) => {
     const query = searchQuery.toLowerCase();
-    return (
-      term.toLowerCase().includes(query) ||
-      definition.toLowerCase().includes(query)
-    );
+    return term.toLowerCase().includes(query) || definition.toLowerCase().includes(query);
   });
 
   return (

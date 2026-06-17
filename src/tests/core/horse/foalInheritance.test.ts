@@ -2,7 +2,9 @@ import { describe, it, expect } from "vitest";
 import { deriveFoalInheritance } from "@/core/horse/foal-inheritance";
 import type { Horse } from "@/core/horse/types";
 
-function horseWith(stats: Partial<Record<"speed" | "stamina" | "acceleration" | "consistency", number>>): Horse {
+function horseWith(
+  stats: Partial<Record<"speed" | "stamina" | "acceleration" | "consistency", number>>,
+): Horse {
   return {
     stats: {
       speed: stats.speed ?? 50,

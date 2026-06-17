@@ -15,7 +15,12 @@ function makeHorse(overrides: Partial<Horse> = {}): Horse {
     bruceLoweFamily: 1,
     genotype: {
       color: { extension: hi, agouti: hi, gray: hi, cream: hi },
-      stats: { speed: [hi, hi, hi, hi, hi, hi, hi, hi, hi, hi], stamina: [hi, hi, hi, hi, hi, hi, hi, hi, hi, hi], acceleration: [hi, hi, hi, hi, hi, hi, hi, hi, hi, hi], consistency: [hi, hi, hi, hi, hi, hi, hi, hi, hi, hi] },
+      stats: {
+        speed: [hi, hi, hi, hi, hi, hi, hi, hi, hi, hi],
+        stamina: [hi, hi, hi, hi, hi, hi, hi, hi, hi, hi],
+        acceleration: [hi, hi, hi, hi, hi, hi, hi, hi, hi, hi],
+        consistency: [hi, hi, hi, hi, hi, hi, hi, hi, hi, hi],
+      },
       preferences: { distance: hi, surface: hi, climbing: hi, cornering: hi },
       style: makeLocus(1, 1), // avg 1 -> "E"
       mental: makeLocus(5, 5), // sum 10 -> excellent
@@ -55,13 +60,25 @@ function makeHorse(overrides: Partial<Horse> = {}): Horse {
     } as Horse["genotype"],
     id: "test-horse",
     name: "Test Horse",
-    pedigree: { sireId: undefined, damId: undefined, sireName: "Northern Dancer", damName: "Natalma" },
+    pedigree: {
+      sireId: undefined,
+      damId: undefined,
+      sireName: "Northern Dancer",
+      damName: "Natalma",
+    },
     birthDay: 0,
     age: 3,
     gender: "colt",
     hemisphere: "Northern",
     silk: "red",
-    stats: { speed: 50, stamina: 50, acceleration: 50, temperament: 50, conformation: 50, consistency: 50 },
+    stats: {
+      speed: 50,
+      stamina: 50,
+      acceleration: 50,
+      temperament: 50,
+      conformation: 50,
+      consistency: 50,
+    },
     energy: 100,
     fitness: 50,
     fatigue: 0,

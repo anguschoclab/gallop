@@ -48,11 +48,7 @@ export function HorseGeneticsSection({ horse }: { horse: Horse }) {
               value={g.dosage.index === Infinity ? "∞" : g.dosage.index.toFixed(2)}
             />
             <p className="text-xs text-cream/40 italic">{g.dosage.interpretation}</p>
-            <StatLine
-              label="Inbreeding"
-              term="Inbreeding"
-              value={g.inbreeding.description}
-            />
+            <StatLine label="Inbreeding" term="Inbreeding" value={g.inbreeding.description} />
             {g.inbreeding.warning && (
               <p className="text-xs text-red-300/80">{g.inbreeding.warning}</p>
             )}
@@ -67,18 +63,38 @@ export function HorseGeneticsSection({ horse }: { horse: Horse }) {
           <div className="space-y-2 pt-2 border-t border-white/5">
             <StatLine label="Temperament" value={g.traits.temperament} />
             <StatLine label="Constitution" value={g.traits.constitution} />
-            <StatLine label="Trainability" term="Trainability" value={`${g.traits.trainability.toFixed(2)}×`} />
-            <StatLine label="Heart Score" term="Heart Score" value={g.traits.heartScore.toFixed(2)} />
+            <StatLine
+              label="Trainability"
+              term="Trainability"
+              value={`${g.traits.trainability.toFixed(2)}×`}
+            />
+            <StatLine
+              label="Heart Score"
+              term="Heart Score"
+              value={g.traits.heartScore.toFixed(2)}
+            />
             <StatLine label="Peak Age" term="Peak Age" value={`${g.traits.peakAge} yo`} />
             {isMare && (
-              <StatLine label="Foaling Ease" term="Foaling Ease" value={g.traits.foalingEase.toFixed(2)} />
+              <StatLine
+                label="Foaling Ease"
+                term="Foaling Ease"
+                value={g.traits.foalingEase.toFixed(2)}
+              />
             )}
           </div>
 
           {/* Going / aptitude */}
           <div className="space-y-2 pt-2 border-t border-white/5">
-            <StatLine label="Mud Aptitude" term="Mud Aptitude" value={g.aptitude.mudAptitude.toFixed(2)} />
-            <StatLine label="Weather Preference" term="Weather Preference" value={g.aptitude.weatherPreference} />
+            <StatLine
+              label="Mud Aptitude"
+              term="Mud Aptitude"
+              value={g.aptitude.mudAptitude.toFixed(2)}
+            />
+            <StatLine
+              label="Weather Preference"
+              term="Weather Preference"
+              value={g.aptitude.weatherPreference}
+            />
             <StatLine label="Stride" value={g.aptitude.strideType} />
             <StatLine label="Track Hand" value={g.aptitude.trackPreference} />
           </div>

@@ -32,7 +32,11 @@ function AnalyticsPage() {
         </p>
       </div>
 
-      <Tabs value={tab} onValueChange={(v) => setTab(v as (typeof ANALYTICS_TABS)[number])} className="space-y-4">
+      <Tabs
+        value={tab}
+        onValueChange={(v) => setTab(v as (typeof ANALYTICS_TABS)[number])}
+        className="space-y-4"
+      >
         <TabsList>
           <TabsTrigger value="overview" className="gap-2">
             <BarChart3 className="h-4 w-4" />

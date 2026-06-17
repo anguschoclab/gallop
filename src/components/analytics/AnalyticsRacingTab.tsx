@@ -18,7 +18,9 @@ export function AnalyticsRacingTab() {
     });
   });
 
-  let turf = 0, dirt = 0, syn = 0;
+  let turf = 0,
+    dirt = 0,
+    syn = 0;
   d.owned.forEach((h) => {
     h.raceHistory.forEach((r) => {
       const s = (r as { surface?: string }).surface;

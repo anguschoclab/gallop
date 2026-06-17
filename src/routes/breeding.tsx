@@ -30,8 +30,15 @@ import { SireLeaderboardsTab } from "@/components/breeding/SireLeaderboardsTab";
 import { useTabParam } from "@/hooks/ui/useTabParam";
 
 const BREEDING_TABS = [
-  "shed", "broodmares", "history", "bred", "pedigree", "programs",
-  "stallions", "sire-watch", "sire-leaderboards",
+  "shed",
+  "broodmares",
+  "history",
+  "bred",
+  "pedigree",
+  "programs",
+  "stallions",
+  "sire-watch",
+  "sire-leaderboards",
 ] as const;
 
 export const Route = createFileRoute("/breeding")({
@@ -74,7 +81,11 @@ function BreedingPage() {
         </Badge>
       </div>
 
-      <Tabs value={tab} onValueChange={(v) => setTab(v as (typeof BREEDING_TABS)[number])} className="space-y-4">
+      <Tabs
+        value={tab}
+        onValueChange={(v) => setTab(v as (typeof BREEDING_TABS)[number])}
+        className="space-y-4"
+      >
         <TabsList>
           <TabsTrigger value="shed" className="gap-2">
             <Heart className="h-4 w-4" />

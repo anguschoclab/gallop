@@ -120,8 +120,8 @@ export function StallionsTab() {
           ))}
           {myStallions.length === 0 && (
             <p className="text-sm text-cream-muted col-span-full">
-              You don't have any stallions at stud. Retire a colt or horse to stud from their
-              stable page.
+              You don't have any stallions at stud. Retire a colt or horse to stud from their stable
+              page.
             </p>
           )}
         </div>

@@ -42,7 +42,11 @@ function RacingPage() {
         </p>
       </div>
 
-      <Tabs value={tab} onValueChange={(v) => setTab(v as (typeof RACING_TABS)[number])} className="space-y-4">
+      <Tabs
+        value={tab}
+        onValueChange={(v) => setTab(v as (typeof RACING_TABS)[number])}
+        className="space-y-4"
+      >
         <TabsList>
           <TabsTrigger value="races" className="gap-2">
             <Flag className="h-4 w-4" />

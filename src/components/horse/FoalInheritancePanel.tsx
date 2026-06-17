@@ -34,10 +34,18 @@ export function FoalInheritancePanel({
       <CardContent className="p-4">
         <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-x-4 gap-y-2 text-sm items-center">
           <span className="text-[10px] uppercase tracking-widest text-cream/30">Stat</span>
-          <span className="text-[10px] uppercase tracking-widest text-cream/30 text-right">Sire</span>
-          <span className="text-[10px] uppercase tracking-widest text-cream/30 text-right">Foal</span>
-          <span className="text-[10px] uppercase tracking-widest text-cream/30 text-right">Dam</span>
-          <span className="text-[10px] uppercase tracking-widest text-cream/30 text-right">Lean</span>
+          <span className="text-[10px] uppercase tracking-widest text-cream/30 text-right">
+            Sire
+          </span>
+          <span className="text-[10px] uppercase tracking-widest text-cream/30 text-right">
+            Foal
+          </span>
+          <span className="text-[10px] uppercase tracking-widest text-cream/30 text-right">
+            Dam
+          </span>
+          <span className="text-[10px] uppercase tracking-widest text-cream/30 text-right">
+            Lean
+          </span>
           {rows.map((r) => (
             <FoalRow {...r} key={r.key} />
           ))}
