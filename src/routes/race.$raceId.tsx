@@ -280,27 +280,32 @@ function LiveRace() {
           <BroadcastCommentary commentary={commentary} />
 
           {phase === "review" && (
-            <Collapsible open={analysisOpen} onOpenChange={setAnalysisOpen}>
-              <CollapsibleTrigger className="w-full flex items-center justify-between border border-white/10 bg-black/30 hover:bg-black/40 transition-colors px-4 py-3 rounded-lg">
-                <span className="text-xs font-black uppercase tracking-widest text-cream">
-                  Post-race analysis
-                </span>
-                <ChevronDown
-                  className={`h-4 w-4 text-cream-muted transition-transform ${
-                    analysisOpen ? "rotate-180" : ""
-                  }`}
-                />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="mt-3">
-                <PostRaceAnalysis
-                  race={race}
-                  runners={runners}
-                  liveSplits={liveSplits}
-                  localHorseMap={localHorseMap}
-                  calibratedPars={calibratedPars}
-                />
-              </CollapsibleContent>
-            </Collapsible>
+            <div ref={analysisRef}>
+              <Collapsible open={analysisOpen} onOpenChange={setAnalysisOpen}>
+                <CollapsibleTrigger
+                  data-analysis-trigger="true"
+                  className="w-full flex items-center justify-between border border-white/10 bg-black/30 hover:bg-black/40 transition-colors px-4 py-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-broadcast-accent"
+                >
+                  <span className="text-xs font-black uppercase tracking-widest text-cream">
+                    Post-race analysis
+                  </span>
+                  <ChevronDown
+                    className={`h-4 w-4 text-cream-muted transition-transform ${
+                      analysisOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-3">
+                  <PostRaceAnalysis
+                    race={race}
+                    runners={runners}
+                    liveSplits={liveSplits}
+                    localHorseMap={localHorseMap}
+                    calibratedPars={calibratedPars}
+                  />
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
           )}
         </div>
         <Leaderboard
