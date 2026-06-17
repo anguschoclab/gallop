@@ -43,8 +43,8 @@ function setup(running: boolean) {
 }
 
 describe("useLiveRaceSimulation — running gate", () => {
-  let rafSpy: ReturnType<typeof vi.spyOn>;
-  let cafSpy: ReturnType<typeof vi.spyOn>;
+  let rafSpy: any;
+  let cafSpy: any;
 
   beforeEach(() => {
     rafSpy = vi.spyOn(globalThis, "requestAnimationFrame").mockImplementation(() => 1 as any);
