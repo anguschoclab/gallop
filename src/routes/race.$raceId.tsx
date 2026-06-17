@@ -14,11 +14,7 @@ import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { RacePreShow } from "@/components/race/RacePreShow";
 import { PostRaceAnalysis } from "@/components/race/PostRaceAnalysis";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
 import { useRacePageData } from "@/hooks/race/useRacePageData";
 import { useRaceUIState } from "@/hooks/race/useRaceUIState";
@@ -64,6 +60,7 @@ function PhasePanel({
   isActive: boolean;
   isExiting: boolean;
 }) {
+  if (!isActive && !isExiting) return null;
   const base = "absolute inset-0 transition-all duration-300";
   const active =
     isActive && !isExiting
@@ -142,19 +139,18 @@ export function LiveRace() {
 
   const analysisRef = useRef<HTMLDivElement | null>(null);
 
-  const { tick, speed, setSpeed, finished, paused, setPaused, liveSplits } =
-    useLiveRaceSimulation({
-      race,
-      runners,
-      resolveRaceWithImpacts,
-      narrativeRef,
-      messageQueue,
-      rngRef,
-      course,
-      windKph: raceWeather?.windKph,
-      windDirectionDeg: raceWeather?.windDirectionDeg,
-      running: phase === "live",
-    });
+  const { tick, speed, setSpeed, finished, paused, setPaused, liveSplits } = useLiveRaceSimulation({
+    race,
+    runners,
+    resolveRaceWithImpacts,
+    narrativeRef,
+    messageQueue,
+    rngRef,
+    course,
+    windKph: raceWeather?.windKph,
+    windDirectionDeg: raceWeather?.windDirectionDeg,
+    running: phase === "live",
+  });
 
   // Advance to review when the run finishes.
   useEffect(() => {
@@ -224,7 +220,10 @@ export function LiveRace() {
 
   return (
     <div className="broadcast min-h-screen text-white bg-broadcast-track relative">
-      <PhasePanel isActive={displayedPhase === "preshow"} isExiting={isExiting && displayedPhase !== "preshow"}>
+      <PhasePanel
+        isActive={displayedPhase === "preshow"}
+        isExiting={isExiting && displayedPhase !== "preshow"}
+      >
         <RacePreShow
           race={race}
           runners={runners.map((r) => ({
@@ -238,7 +237,10 @@ export function LiveRace() {
         />
       </PhasePanel>
 
-      <PhasePanel isActive={displayedPhase === "broadcast"} isExiting={isExiting && displayedPhase !== "broadcast"}>
+      <PhasePanel
+        isActive={displayedPhase === "broadcast"}
+        isExiting={isExiting && displayedPhase !== "broadcast"}
+      >
         <div className="broadcast min-h-screen text-white bg-broadcast-track">
           <div
             className="fixed inset-0 pointer-events-none"
