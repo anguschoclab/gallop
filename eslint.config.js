@@ -200,5 +200,59 @@ export default tseslint.config(
       "jsdoc/require-returns": "off",
     },
   },
+  // Guardrail: ban unstable useGame selectors (fresh array/object each render
+  // → unstable useSyncExternalStore snapshot → infinite re-render loop).
+  // Use useGameWithShallow for `?? []`/`?? {}`, or a module-level stable const.
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/**/*.test.{ts,tsx}", "src/tests/**", "src/test-utils/**"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "CallExpression[callee.name='useGame'] > ArrowFunctionExpression > LogicalExpression[operator='??'][right.type='ArrayExpression']",
+          message:
+            "Unstable useGame selector: `?? []` returns a new array each render and causes an infinite re-render loop. Use useGameWithShallow, or a module-level EMPTY const.",
+        },
+        {
+          selector:
+            "CallExpression[callee.name='useGame'] > ArrowFunctionExpression > LogicalExpression[operator='??'][right.type='ObjectExpression']",
+          message:
+            "Unstable useGame selector: `?? {}` returns a new object each render and causes an infinite re-render loop. Use useGameWithShallow, or a module-level EMPTY const.",
+        },
+        {
+          selector:
+            "CallExpression[callee.name='useGame'] > ArrowFunctionExpression[body.type='ArrayExpression']",
+          message:
+            "Unstable useGame selector: returning an array literal creates a new reference each render. Use useGameWithShallow.",
+        },
+        {
+          selector:
+            "CallExpression[callee.name='useGame'] > ArrowFunctionExpression[body.type='ObjectExpression']",
+          message:
+            "Unstable useGame selector: returning an object literal creates a new reference each render. Use useGameWithShallow.",
+        },
+        {
+          selector:
+            "CallExpression[callee.name='useGame'] > ArrowFunctionExpression[body.type='CallExpression'][body.callee.type='MemberExpression'][body.callee.property.name=/^(map|filter|slice|sort|concat|reduce|flat|flatMap)$/]",
+          message:
+            "Unstable useGame selector: an array transform (.map/.filter/.slice/…) returns a new array each render. Select the raw value and transform in a useMemo, or use useGameWithShallow.",
+        },
+        {
+          selector:
+            "CallExpression[callee.name='useGame'] ArrowFunctionExpression BlockStatement ReturnStatement > LogicalExpression[operator='??'][right.type='ArrayExpression']",
+          message:
+            "Unstable useGame selector: `?? []` in a block-body return creates a new array each render. Use useGameWithShallow, or a module-level EMPTY const.",
+        },
+        {
+          selector:
+            "CallExpression[callee.name='useGame'] ArrowFunctionExpression BlockStatement ReturnStatement > LogicalExpression[operator='??'][right.type='ObjectExpression']",
+          message:
+            "Unstable useGame selector: `?? {}` in a block-body return creates a new object each render. Use useGameWithShallow, or a module-level EMPTY const.",
+        },
+      ],
+    },
+  },
   eslintPluginPrettier,
 );
