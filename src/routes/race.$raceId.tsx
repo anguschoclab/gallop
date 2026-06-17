@@ -1,24 +1,24 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
-import { useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect, useState } from "react";
 import { getSkyBackground } from "@/components/race/raceVisualHelpers";
 import { BroadcastCommentary } from "@/components/race/BroadcastCommentary";
 import { RaceVisualizer } from "@/components/race/RaceVisualizer";
 import { useLiveRaceSimulation } from "@/hooks/race/useLiveRaceSimulation";
 import { ResultOverlay } from "@/components/race/ResultOverlay";
-import { SectionalTimingTable } from "@/components/race/SectionalTimingTable";
-import { PaceGraph } from "@/components/race/PaceGraph";
-import { SpeedBreakdownTable } from "@/components/race/SpeedBreakdownTable";
-import { SpeedBreakdownChart } from "@/components/race/SpeedBreakdownChart";
-import { JockeyReportPanel } from "@/components/race/JockeyReportPanel";
 import { RaceControlBar } from "@/components/race/RaceControlBar";
 import { Track } from "@/components/race/Track";
-import { LiveSplitsTable } from "@/components/race/LiveSplitsTable";
 import { Leaderboard } from "@/components/race/Leaderboard";
 import { RaceFieldDialog } from "@/components/race/RaceFieldDialog";
 import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
+import { RacePreShow } from "@/components/race/RacePreShow";
+import { PostRaceAnalysis } from "@/components/race/PostRaceAnalysis";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ChevronDown } from "lucide-react";
 import { useRacePageData } from "@/hooks/race/useRacePageData";
 import { useRaceUIState } from "@/hooks/race/useRaceUIState";
 import { getCourseForRace } from "@/data/tracks";
@@ -59,7 +59,14 @@ function LiveRace() {
 
   const course = race ? getCourseForRace(race) : undefined;
 
-  const { tick, speed, setSpeed, finished, paused, setPaused, simTime, liveSplits } =
+  // Three-act broadcast: preshow → live → review.
+  // A revisited resolved race skips the preshow and opens in review.
+  const [phase, setPhase] = useState<"preshow" | "live" | "review">(
+    race?.resolved ? "review" : "preshow",
+  );
+  const [analysisOpen, setAnalysisOpen] = useState(false);
+
+  const { tick, speed, setSpeed, finished, paused, setPaused, liveSplits } =
     useLiveRaceSimulation({
       race,
       runners,
@@ -70,7 +77,13 @@ function LiveRace() {
       course,
       windKph: raceWeather?.windKph,
       windDirectionDeg: raceWeather?.windDirectionDeg,
+      running: phase === "live",
     });
+
+  // Advance to review when the run finishes.
+  useEffect(() => {
+    if (finished) setPhase("review");
+  }, [finished]);
 
   const {
     announcement,
@@ -113,6 +126,23 @@ function LiveRace() {
   }, [finished, paused, setPaused, setSpeed]);
 
   if (!race) throw notFound();
+
+  // Pre-race build-up: gated until the player presses Start Race.
+  if (phase === "preshow") {
+    return (
+      <RacePreShow
+        race={race}
+        runners={runners.map((r) => ({
+          horseId: r.horseId,
+          name: r.name,
+          silk: r.silk,
+          owned: r.owned,
+        }))}
+        runnerOdds={runnerOdds}
+        onStart={() => setPhase("live")}
+      />
+    );
+  }
 
   const hasReplay = race.resolved && race.snapshots && race.snapshots.length > 0;
 
@@ -177,158 +207,61 @@ function LiveRace() {
         />
       </div>
 
-      {/* Weather Forecast Strip */}
       <div className="relative z-10 px-4">
         <WeatherForecastStrip trackId={race.trackId} trackCondition={race.trackCondition} />
       </div>
 
       <div className="relative z-10 p-4 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4">
-        <div>
-          <Tabs defaultValue="visualizer" className="w-full">
-            <TabsList className="bg-broadcast-marquee border border-white/10 p-1 mb-4">
-              <TabsTrigger
-                value="visualizer"
-                className="text-[10px] font-black uppercase tracking-widest px-4 h-8 data-[state=active]:bg-broadcast-accent data-[state=active]:text-black"
-              >
-                Replay
-              </TabsTrigger>
-              <TabsTrigger
-                value="splits"
-                className="text-[10px] font-black uppercase tracking-widest px-4 h-8 data-[state=active]:bg-broadcast-accent data-[state=active]:text-black"
-              >
-                Splits
-              </TabsTrigger>
-              {race.resolved && race.sectionalSplits && race.sectionalSplits.length > 0 && (
-                <TabsTrigger
-                  value="sectionals"
-                  className="text-[10px] font-black uppercase tracking-widest px-4 h-8 data-[state=active]:bg-broadcast-accent data-[state=active]:text-black"
-                >
-                  Sectionals
-                </TabsTrigger>
-              )}
-            </TabsList>
+        <div className="space-y-4">
+          {hasReplay ? (
+            <RaceVisualizer
+              snapshots={race.snapshots!}
+              distance={race.distance}
+              runners={runners.map((r) => ({
+                horseId: r.horseId,
+                name: r.name,
+                silk: r.silk,
+                owned: r.owned,
+              }))}
+              trackType={race.surface}
+            />
+          ) : (
+            <Track
+              runners={runners}
+              distance={race.distance}
+              tick={tick}
+              surface={race.graded?.surface}
+              weather={race.weather}
+              followTarget={followTarget}
+              paused={paused}
+              subjectHorseId={subjectHorseId}
+            />
+          )}
+          <BroadcastCommentary commentary={commentary} />
 
-            <TabsContent value="visualizer" className="mt-0 focus-visible:outline-none">
-              {hasReplay ? (
-                <RaceVisualizer
-                  snapshots={race.snapshots!}
-                  distance={race.distance}
-                  runners={runners.map((r) => ({
-                    horseId: r.horseId,
-                    name: r.name,
-                    silk: r.silk,
-                    owned: r.owned,
-                  }))}
-                  trackType={race.surface}
+          {phase === "review" && (
+            <Collapsible open={analysisOpen} onOpenChange={setAnalysisOpen}>
+              <CollapsibleTrigger className="w-full flex items-center justify-between border border-white/10 bg-black/30 hover:bg-black/40 transition-colors px-4 py-3 rounded-lg">
+                <span className="text-xs font-black uppercase tracking-widest text-cream">
+                  Post-race analysis
+                </span>
+                <ChevronDown
+                  className={`h-4 w-4 text-cream-muted transition-transform ${
+                    analysisOpen ? "rotate-180" : ""
+                  }`}
                 />
-              ) : (
-                <Track
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-3">
+                <PostRaceAnalysis
+                  race={race}
                   runners={runners}
-                  distance={race.distance}
-                  tick={tick}
-                  surface={race.graded?.surface}
-                  weather={race.weather}
-                  followTarget={followTarget}
-                  paused={paused}
-                  subjectHorseId={subjectHorseId}
+                  liveSplits={liveSplits}
+                  localHorseMap={localHorseMap}
+                  calibratedPars={calibratedPars}
                 />
-              )}
-              <BroadcastCommentary commentary={commentary} />
-            </TabsContent>
-
-            {race.resolved && race.sectionalSplits && race.sectionalSplits.length > 0 && (
-              <TabsContent value="sectionals" className="mt-0 focus-visible:outline-none">
-                <div className="border border-white/10 bg-black/20 p-6 rounded-lg space-y-8">
-                  <div>
-                    <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-3">
-                      <span className="h-1 w-12 bg-broadcast-accent" />
-                      Pace / Position Graph
-                    </h3>
-                    <PaceGraph
-                      splits={race.sectionalSplits}
-                      runners={runners.map((r) => ({
-                        horseId: r.horseId,
-                        name: r.name,
-                        silk: r.silk,
-                        owned: r.owned,
-                      }))}
-                      distance={race.distance}
-                    />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-3">
-                      <span className="h-1 w-12 bg-broadcast-accent" />
-                      Sectional Analysis
-                    </h3>
-                    <SectionalTimingTable
-                      splits={race.sectionalSplits}
-                      runners={runners.map((r) => ({
-                        horseId: r.horseId,
-                        name: r.name,
-                        silk: r.silk,
-                        owned: r.owned,
-                      }))}
-                      distance={race.distance}
-                    />
-                  </div>
-                  {race.snapshots && race.snapshots.length > 0 && (
-                    <>
-                      <div>
-                        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-3">
-                          <span className="h-1 w-12 bg-broadcast-accent" />
-                          Speed Breakdown
-                        </h3>
-                        <SpeedBreakdownChart
-                          snapshots={race.snapshots}
-                          runners={runners.map((r) => ({
-                            horseId: r.horseId,
-                            name: r.name,
-                            silk: r.silk,
-                            owned: r.owned,
-                          }))}
-                          distance={race.distance}
-                        />
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-3">
-                          <span className="h-1 w-12 bg-broadcast-accent" />
-                          Per-Runner Breakdown
-                        </h3>
-                        <SpeedBreakdownTable
-                          splits={race.sectionalSplits}
-                          runners={runners.map((r) => ({
-                            horseId: r.horseId,
-                            name: r.name,
-                            silk: r.silk,
-                            owned: r.owned,
-                          }))}
-                        />
-                      </div>
-                    </>
-                  )}
-                  {runners.some((r) => r.owned && r.finishTime !== null) && (
-                    <JockeyReportPanel
-                      runners={runners}
-                      ordered={[...runners].sort(
-                        (a, b) => (a.finishTime ?? 999) - (b.finishTime ?? 999),
-                      )}
-                      sectionalSplits={race.sectionalSplits}
-                    />
-                  )}
-                </div>
-              </TabsContent>
-            )}
-
-            <TabsContent value="splits" className="mt-0 focus-visible:outline-none">
-              <LiveSplitsTable
-                runners={runners}
-                distance={race.distance}
-                liveSplits={liveSplits}
-                localHorseMap={localHorseMap}
-                calibratedPars={calibratedPars}
-              />
-            </TabsContent>
-          </Tabs>
+              </CollapsibleContent>
+            </Collapsible>
+          )}
         </div>
         <Leaderboard
           sorted={sorted}
