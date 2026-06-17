@@ -110,12 +110,16 @@ export function RaceControlBar({
         {!finished && (
           <Button
             size="sm"
-            variant={paused ? "secondary" : "ghost"}
+            variant={paused ? "default" : "secondary"}
             onClick={onTogglePause}
-            className="px-2"
+            className="gap-1.5"
             title="Spacebar to toggle"
+            aria-label={paused ? "Resume race" : "Pause race"}
           >
             {paused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
+            <span className="text-[11px] font-black uppercase tracking-widest">
+              {paused ? "Resume" : "Pause"}
+            </span>
           </Button>
         )}
 
