@@ -619,6 +619,10 @@ function getTrackSection(
 
 /**
  * Retrieves the track section and progress within it for a given position.
+ *
+ * @param pos - Current position along the track in metres.
+ * @param distance - Total race distance in metres.
+ * @param course - Optional track geometry specification.
  */
 function getSectionAndProgress(
   pos: number,
@@ -643,6 +647,9 @@ function getSectionAndProgress(
 
 /**
  * Get the interpolated orientation of a section at a given progress through it.
+ *
+ * @param section - The track section (null if unknown).
+ * @param posWithinSection - Progress through the section (0-1).
  */
 function getSectionOrientation(
   section: TrackSection | null,
@@ -668,6 +675,13 @@ function getSectionOrientation(
 /**
  * Calculate wind effect on a runner based on section orientation and wind direction.
  * Exported for unit testing.
+ *
+ * @param r - The runner to calculate wind effect for.
+ * @param course - Track geometry specification (optional).
+ * @param windKph - Wind speed in kilometres per hour (optional).
+ * @param windDirectionDeg - Wind direction in degrees (optional).
+ * @param section - Current track section (null if unknown).
+ * @param posWithinSection - Progress through the section (0-1).
  */
 export function calculateWindEffect(
   r: Runner,

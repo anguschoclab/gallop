@@ -24,7 +24,11 @@ export const DISTANCE_LABEL: Record<DistanceBucket, string> = {
   any: "Any Trip",
 };
 
-/** Bucket a distance in metres into a coarse trip category. */
+/**
+ * Bucket a distance in metres into a coarse trip category.
+ *
+ * @param distance - Distance in metres (optional).
+ */
 export function distanceBucket(distance?: number): DistanceBucket {
   if (!distance) return "any";
   if (distance <= 1400) return "sprint";
@@ -32,7 +36,12 @@ export function distanceBucket(distance?: number): DistanceBucket {
   return "route";
 }
 
-/** Classify a first-call position relative to field size into a tendency. */
+/**
+ * Classify a first-call position relative to field size into a tendency.
+ *
+ * @param firstCall - First call position.
+ * @param fieldSize - Total field size (optional, defaults to 8).
+ */
 export function classifyTendency(firstCall: number, fieldSize?: number): Tendency {
   const f = fieldSize ?? 8;
   if (firstCall <= Math.max(2, f * 0.25)) return "front";
@@ -69,7 +78,12 @@ const EMPTY: TendencyStats = {
   dominantShare: 0,
 };
 
-/** Compute tendency stats for a horse, optionally filtered to a trip+surface. */
+/**
+ * Compute tendency stats for a horse, optionally filtered to a trip+surface.
+ *
+ * @param horse - The horse to analyse.
+ * @param opts - Optional filter for distance bucket and surface.
+ */
 export function getHorseTendencyStats(horse: Horse, opts: TendencyFilterOpts = {}): TendencyStats {
   const { distance = "any", surface = "any" } = opts;
   const history = horse.raceHistory ?? [];
@@ -111,7 +125,13 @@ export function getHorseTendencyStats(horse: Horse, opts: TendencyFilterOpts = {
   };
 }
 
-/** Predicate: does a horse match the given tendency filter for a trip/surface? */
+/**
+ * Predicate: does a horse match the given tendency filter for a trip/surface?
+ *
+ * @param horse - The horse to check.
+ * @param tendency - The desired tendency filter.
+ * @param opts - Optional filter for distance bucket and surface.
+ */
 export function matchesTendency(
   horse: Horse,
   tendency: TendencyFilter,

@@ -197,6 +197,8 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
  * @param {number} distance - The total race distance in meters.
  * @param {Rng} rng - Seeded random number generator.
  * @param {CourseSpecification} [course] - Optional track geometry and turn specifications.
+ * @param {number} [windKph] - Optional wind speed in kilometres per hour.
+ * @param {number} [windDirectionDeg] - Optional wind direction in degrees.
  * @returns {Object} Status indicating if the race is still running and the latest finish order.
  */
 export function simulateStep(

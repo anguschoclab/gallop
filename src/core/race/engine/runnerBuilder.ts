@@ -45,6 +45,10 @@ export type RunnerBonuses = {
 /**
  * Derive default jockey instructions from a horse's genetic running style.
  * Used for filler horses that have an ephemeral jockey but no entry instructions.
+ *
+ * @param runningStyle - The horse's genetic running style.
+ * @param horseId - Unique horse identifier.
+ * @param raceId - Unique race identifier.
  */
 function deriveDefaultInstructions(
   runningStyle: RunningStyleT,
