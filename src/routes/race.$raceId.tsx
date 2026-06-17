@@ -66,12 +66,30 @@ function LiveRace() {
 
   const course = race ? getCourseForRace(race) : undefined;
 
-  // Three-act broadcast: preshow → live → review.
-  // A revisited resolved race skips the preshow and opens in review.
-  const [phase, setPhase] = useState<"preshow" | "live" | "review">(
-    race?.resolved ? "review" : "preshow",
-  );
-  const [analysisOpen, setAnalysisOpen] = useState(false);
+  // Three-act broadcast: preshow → live → review. Persisted in the URL via
+  // ?phase=… so refresh / share preserves the exact view.
+  const { phase, setPhase } = useRacePhase(!!race?.resolved);
+
+  // Per-race expand/collapse memory for the post-race analysis reveal.
+  const analysisStorageKey = `race-analysis-open:${raceId}`;
+  const [analysisOpen, setAnalysisOpen] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return window.localStorage.getItem(analysisStorageKey) === "1";
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem(analysisStorageKey, analysisOpen ? "1" : "0");
+    } catch {
+      /* ignore quota errors */
+    }
+  }, [analysisOpen, analysisStorageKey]);
+
+  const analysisRef = useRef<HTMLDivElement | null>(null);
 
   const { tick, speed, setSpeed, finished, paused, setPaused, liveSplits } =
     useLiveRaceSimulation({
@@ -89,8 +107,23 @@ function LiveRace() {
 
   // Advance to review when the run finishes.
   useEffect(() => {
-    if (finished) setPhase("review");
-  }, [finished]);
+    if (finished && phase !== "review") setPhase("review");
+  }, [finished, phase, setPhase]);
+
+  // After the finish overlay appears, scroll the analysis section into view
+  // and move focus to its toggle so keyboard users land there next.
+  useEffect(() => {
+    if (phase !== "review") return;
+    const el = analysisRef.current;
+    if (!el) return;
+    const trigger = el.querySelector<HTMLButtonElement>('[data-analysis-trigger="true"]');
+    // Defer until after the ResultOverlay paints.
+    const id = window.setTimeout(() => {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      trigger?.focus({ preventScroll: true });
+    }, 400);
+    return () => window.clearTimeout(id);
+  }, [phase]);
 
   const {
     announcement,
