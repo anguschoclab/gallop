@@ -27,6 +27,7 @@ export function useLiveRaceSimulation({
   course,
   windKph,
   windDirectionDeg,
+  running = true,
 }: {
   race: any;
   runners: Runner[];
@@ -37,6 +38,7 @@ export function useLiveRaceSimulation({
   course?: CourseSpecification;
   windKph?: number;
   windDirectionDeg?: number;
+  running?: boolean;
 }) {
   const [tick, setTick] = useState(0);
   const [speed, setSpeed] = useState(1);
@@ -60,7 +62,7 @@ export function useLiveRaceSimulation({
   }, [paused]);
 
   useEffect(() => {
-    if (!race || race.resolved) return;
+    if (!race || race.resolved || !running) return;
 
     let raf = 0;
     let last = performance.now();
@@ -166,7 +168,7 @@ export function useLiveRaceSimulation({
 
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [race, runners, resolveRaceWithImpacts, narrativeRef, messageQueue, rngRef]);
+  }, [race, runners, resolveRaceWithImpacts, narrativeRef, messageQueue, rngRef, running]);
 
   return {
     tick,
