@@ -88,6 +88,9 @@ function Dashboard() {
         </div>
       </div>
 
+      {/* Next action */}
+      <NextActionBanner action={nextAction} />
+
       {/* Urgent Messages */}
       <UrgentMessagesStrip messages={urgentMessages} />
 
