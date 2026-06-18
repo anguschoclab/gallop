@@ -38,6 +38,7 @@ import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/constants";
 import { NavSection } from "./NavSection";
 import { useState } from "react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const navSections = [
   {
@@ -205,66 +206,98 @@ export function SidebarNav({
             ${cash.toLocaleString()}
           </p>
           <p className="text-[10px] text-cream-muted/60 mt-1">{horseCount} horses</p>
-          <div className="grid grid-cols-4 gap-1">
-            <Button
-              onClick={onAdvanceDay}
-              className="col-span-1"
-              size="sm"
-              variant="outline"
-              aria-label="Advance 1 day"
-            >
-              <Plus className="h-3 w-3" />
-            </Button>
-            <Button
-              onClick={onAdvanceWeek}
-              className="col-span-1"
-              size="sm"
-              variant="outline"
-              title="Advance 1 week"
-              aria-label="Advance 1 week"
-            >
-              7d
-            </Button>
-            <Button
-              onClick={onAdvanceMonth}
-              className="col-span-1"
-              size="sm"
-              variant="outline"
-              title="Advance 1 month"
-              aria-label="Advance 1 month"
-            >
-              30d
-            </Button>
-            <Button
-              onClick={onOpenAutoSim}
-              className="col-span-1"
-              size="sm"
-              variant="outline"
-              aria-label="AutoSim settings"
-            >
-              <Settings className="h-3 w-3" />
-            </Button>
-          </div>
-          <div className="grid grid-cols-2 gap-1 mt-1">
-            <Button
-              onClick={onSkipToAuction}
-              size="sm"
-              variant="outline"
-              title="Skip to next auction"
-              className="text-[10px]"
-            >
-              <Gavel className="h-3 w-3 mr-1" /> Next Auction
-            </Button>
-            <Button
-              onClick={onSkipToRace}
-              size="sm"
-              variant="outline"
-              title="Skip to next race"
-              className="text-[10px]"
-            >
-              <Trophy className="h-3 w-3 mr-1" /> Next Race
-            </Button>
-          </div>
+          <TooltipProvider>
+            <div className="grid grid-cols-4 gap-1">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={onAdvanceDay}
+                    className="col-span-1"
+                    size="sm"
+                    variant="outline"
+                    aria-label="Advance 1 day"
+                  >
+                    <Plus className="h-3 w-3" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Advance 1 day</TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={onAdvanceWeek}
+                    className="col-span-1"
+                    size="sm"
+                    variant="outline"
+                    aria-label="Advance 1 week"
+                  >
+                    7d
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Advance 1 week</TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={onAdvanceMonth}
+                    className="col-span-1"
+                    size="sm"
+                    variant="outline"
+                    aria-label="Advance 1 month"
+                  >
+                    30d
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Advance 1 month</TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={onOpenAutoSim}
+                    className="col-span-1"
+                    size="sm"
+                    variant="outline"
+                    aria-label="AutoSim settings"
+                  >
+                    <Settings className="h-3 w-3" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>AutoSim settings</TooltipContent>
+              </Tooltip>
+            </div>
+            <div className="grid grid-cols-2 gap-1 mt-1">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={onSkipToAuction}
+                    size="sm"
+                    variant="outline"
+                    className="text-[10px]"
+                  >
+                    <Gavel className="h-3 w-3 mr-1" /> Next Auction
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Skip to next auction</TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={onSkipToRace}
+                    size="sm"
+                    variant="outline"
+                    className="text-[10px]"
+                  >
+                    <Trophy className="h-3 w-3 mr-1" /> Next Race
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Skip to next race</TooltipContent>
+              </Tooltip>
+            </div>
+          </TooltipProvider>
         </div>
         <Button
           onClick={() => setNewGameDialogOpen(true)}
