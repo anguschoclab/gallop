@@ -15,6 +15,9 @@ import { NewsFeedWidget } from "@/components/dashboard/NewsFeedWidget";
 import { LegacyAwardsWidget } from "@/components/dashboard/LegacyAwardsWidget";
 import { ReputationDashboard } from "@/components/reputation/ReputationDashboard";
 import { ApprenticeTracker } from "@/components/apprentice/ApprenticeTracker";
+import { NextActionBanner } from "@/components/dashboard/NextActionBanner";
+import { deriveNextAction } from "@/core/dashboard/nextAction";
+
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
