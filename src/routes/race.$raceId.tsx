@@ -139,23 +139,73 @@ export function LiveRace() {
 
   const analysisRef = useRef<HTMLDivElement | null>(null);
 
-  const { tick, speed, setSpeed, finished, paused, setPaused, liveSplits } = useLiveRaceSimulation({
-    race,
-    runners,
-    resolveRaceWithImpacts,
-    narrativeRef,
-    messageQueue,
-    rngRef,
-    course,
-    windKph: raceWeather?.windKph,
-    windDirectionDeg: raceWeather?.windDirectionDeg,
-    running: phase === "live",
-  });
+  // Persist live-sim progress per race so refresh in the live phase resumes
+  // from the same timestamp (and remembers paused/speed). Session storage so
+  // the resume window is the current browser tab.
+  const progressStorageKey = `race-sim-progress:${raceId}`;
+  const initialProgress = useRef<{ simTime: number; paused: boolean; speed: number }>(
+    (() => {
+      if (typeof window === "undefined") return { simTime: 0, paused: false, speed: 1 };
+      try {
+        const raw = window.sessionStorage.getItem(progressStorageKey);
+        if (!raw) return { simTime: 0, paused: false, speed: 1 };
+        const p = JSON.parse(raw);
+        return {
+          simTime: typeof p.simTime === "number" ? p.simTime : 0,
+          paused: !!p.paused,
+          speed: typeof p.speed === "number" ? p.speed : 1,
+        };
+      } catch {
+        return { simTime: 0, paused: false, speed: 1 };
+      }
+    })(),
+  ).current;
+
+  const { tick, speed, setSpeed, finished, paused, setPaused, simTime, liveSplits } =
+    useLiveRaceSimulation({
+      race,
+      runners,
+      resolveRaceWithImpacts,
+      narrativeRef,
+      messageQueue,
+      rngRef,
+      course,
+      windKph: raceWeather?.windKph,
+      windDirectionDeg: raceWeather?.windDirectionDeg,
+      running: phase === "live",
+      resumeAtSimTime: phase === "live" ? initialProgress.simTime : 0,
+      initialPaused: initialProgress.paused,
+      initialSpeed: initialProgress.speed,
+    });
+
+  // Persist progress while the live phase is active.
+  useEffect(() => {
+    if (phase !== "live" || finished || typeof window === "undefined") return;
+    try {
+      window.sessionStorage.setItem(
+        progressStorageKey,
+        JSON.stringify({ simTime, paused, speed }),
+      );
+    } catch {
+      /* ignore quota */
+    }
+  }, [tick, paused, speed, phase, finished, simTime, progressStorageKey]);
+
+  // Clear saved progress once the race ends (or when leaving live for review).
+  useEffect(() => {
+    if (!finished || typeof window === "undefined") return;
+    try {
+      window.sessionStorage.removeItem(progressStorageKey);
+    } catch {
+      /* ignore */
+    }
+  }, [finished, progressStorageKey]);
 
   // Advance to review when the run finishes.
   useEffect(() => {
     if (finished && phase !== "review") setPhase("review");
   }, [finished, phase, setPhase]);
+
 
   // After the finish overlay appears, scroll the analysis section into view
   // and move focus to its toggle so keyboard users land there next.
