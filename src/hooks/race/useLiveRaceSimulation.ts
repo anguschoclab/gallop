@@ -28,6 +28,9 @@ export function useLiveRaceSimulation({
   windKph,
   windDirectionDeg,
   running = true,
+  resumeAtSimTime = 0,
+  initialPaused = false,
+  initialSpeed,
 }: {
   race: any;
   runners: Runner[];
@@ -39,11 +42,15 @@ export function useLiveRaceSimulation({
   windKph?: number;
   windDirectionDeg?: number;
   running?: boolean;
+  resumeAtSimTime?: number;
+  initialPaused?: boolean;
+  initialSpeed?: number;
 }) {
   const [tick, setTick] = useState(0);
-  const [speed, setSpeed] = useState(1);
+  const [speed, setSpeed] = useState(initialSpeed ?? 1);
   const [finished, setFinished] = useState(false);
-  const [paused, setPaused] = useState(false);
+  const [paused, setPaused] = useState(initialPaused);
+
 
   const simTimeRef = useRef(0);
   const finishOrderRef = useRef<{ horseId: string; position: number; time: number }[]>([]);
