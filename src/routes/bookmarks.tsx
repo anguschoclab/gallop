@@ -52,6 +52,8 @@ function entityHref(b: Bookmark): {
       return { to: "/sire-watch/$stallionId", params: { stallionId: b.id } };
     case "race":
       return { to: "/race/$raceId", params: { raceId: b.id } };
+    default:
+      throw new Error(`Unhandled bookmark entity type: ${(b as any).type}`);
   }
 }
 

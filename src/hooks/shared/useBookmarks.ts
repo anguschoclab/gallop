@@ -17,8 +17,12 @@ type Listener = (bookmarks: Bookmark[]) => void;
 const listeners = new Set<Listener>();
 let cache: Bookmark[] | null = null;
 
+export function resetCache() {
+  cache = null;
+}
+
 function read(): Bookmark[] {
-  if (cache) return cache;
+  if (cache !== null) return cache;
   if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -69,8 +73,17 @@ export function useBookmarks() {
   useEffect(() => {
     const listener: Listener = (next) => setBookmarks(next);
     listeners.add(listener);
+
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== STORAGE_KEY) return;
+      cache = null;
+      setBookmarks(read());
+    };
+    window.addEventListener("storage", onStorage);
+
     return () => {
       listeners.delete(listener);
+      window.removeEventListener("storage", onStorage);
     };
   }, []);
 

@@ -1,4 +1,5 @@
 import { beforeEach } from "vitest";
+import { resetCache } from "@/hooks/shared/useBookmarks";
 
 // Mock localStorage globally for Node/JSDOM environment compatibility
 const store = new Map<string, string>();
@@ -17,4 +18,5 @@ Object.defineProperty(globalThis, "localStorage", {
 
 beforeEach(() => {
   store.clear();
+  resetCache();
 });

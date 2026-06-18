@@ -1,5 +1,6 @@
 import type { Horse } from "@/game/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { HorseCardHeader } from "./HorseCardHeader";
 import { HorseStatsPanel } from "./HorseStatsPanel";
 import { HorseMetaPanel } from "./HorseMetaPanel";
@@ -45,6 +46,15 @@ export function HorseCardFull({ horse, hookData, onClick, className = "" }: Hors
       onClick={onClick}
     >
       <div className="absolute top-0 left-0 w-full h-1 bg-gold/20 group-hover:bg-gold transition-colors z-10" />
+
+      <div className="absolute top-2 right-2 z-20">
+        <BookmarkButton
+          type="horse"
+          id={horse.id}
+          label={horse.name}
+          subtitle={`Age ${Math.floor(horse.age)} · ${horse.gender}`}
+        />
+      </div>
 
       <HorseCardHeader horse={horse} genderColor={genderColor} />
 

@@ -1,6 +1,7 @@
 import type { Horse } from "@/game/types";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle } from "lucide-react";
 import { scoutGrade } from "@/core/horse/grading";
@@ -79,6 +80,12 @@ export function HorseCardCompact({
           </div>
         </div>
         <div className="flex flex-col items-end gap-1 shrink-0">
+          <BookmarkButton
+            type="horse"
+            id={horse.id}
+            label={horse.name}
+            subtitle={`Age ${Math.floor(horse.age)} · ${horse.gender}`}
+          />
           <Badge
             className={cn(
               "text-[9px] font-mono h-4 rounded-none px-1 border border-white/5",

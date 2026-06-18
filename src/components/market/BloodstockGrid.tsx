@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { Badge } from "@/components/ui/badge";
 import { HorseStats, overall, NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/core/common/formatting";
@@ -33,6 +34,15 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
             onClick={() => navigate({ to: "/stable/$horseId", params: { horseId: h.id } })}
           >
             <div className="absolute top-0 left-0 w-full h-0.5 bg-white/5 group-hover:bg-success/40 transition-colors" />
+
+            <div className="absolute top-2 right-2 z-10">
+              <BookmarkButton
+                type="horse"
+                id={h.id}
+                label={h.name}
+                subtitle={`Age ${Math.floor(h.age)} · ${h.gender}`}
+              />
+            </div>
 
             <CardContent className="p-6 space-y-5">
               <div className="flex items-start justify-between gap-4">

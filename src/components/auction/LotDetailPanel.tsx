@@ -7,6 +7,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { FileText, TrendingUp, ShieldCheck } from "lucide-react";
 import { HorsePortrait } from "@/components/horse/HorsePortrait";
 import { genderSymbol } from "@/core/horse/gender";
@@ -74,6 +75,13 @@ export function LotDetailPanel({
         </div>
 
         <div className="flex items-center gap-2">
+          <BookmarkButton
+            type="horse"
+            id={horse.id}
+            label={horse.name}
+            subtitle={`Age ${Math.floor(horse.age)} · ${horse.gender}`}
+            variant="full"
+          />
           {lot.passed && (
             <Badge
               variant="secondary"
