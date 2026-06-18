@@ -34,6 +34,15 @@ function Dashboard() {
     calculateHeadToHead,
   } = useDashboardData();
 
+  const nextAction = deriveNextAction({
+    urgentMessageCount: urgentMessages.length,
+    nextOwnedRace: nextOwnedRace ? { id: nextOwnedRace.id, day: nextOwnedRace.day } : null,
+    lowEnergyCount: lowEnergyHorses.length,
+    openAuctionCount: activeAuctions.length,
+    day,
+  });
+
+
   return (
     <div className="space-y-6 animate-fade-in pb-10">
       {/* Header */}
