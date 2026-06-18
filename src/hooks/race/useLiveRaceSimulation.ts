@@ -51,7 +51,6 @@ export function useLiveRaceSimulation({
   const [finished, setFinished] = useState(false);
   const [paused, setPaused] = useState(initialPaused);
 
-
   const simTimeRef = useRef(0);
   const finishOrderRef = useRef<{ horseId: string; position: number; time: number }[]>([]);
   const speedRef = useRef(speed);
@@ -186,7 +185,6 @@ export function useLiveRaceSimulation({
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
   }, [race, runners, resolveRaceWithImpacts, narrativeRef, messageQueue, rngRef, running]);
-
 
   return {
     tick,

@@ -21,6 +21,9 @@ export interface NextAction {
  * Rank the single most important next decision for the player. Priority order:
  * urgent inbox > a race you're entered in > fatigued horses > open auction >
  * advance the day.
+ *
+ * @param input - derived dashboard signals
+ * @returns the top-priority action (never null; falls back to advance-day)
  */
 export function deriveNextAction(input: NextActionInput): NextAction {
   if (input.urgentMessageCount > 0) {

@@ -34,8 +34,7 @@ export function PostRaceAnalysis({
     owned: r.owned,
   }));
 
-  const hasSectionals =
-    race.resolved && race.sectionalSplits && race.sectionalSplits.length > 0;
+  const hasSectionals = race.resolved && race.sectionalSplits && race.sectionalSplits.length > 0;
 
   return (
     <div className="border border-white/10 bg-black/20 p-6 rounded-lg space-y-8">
@@ -81,19 +80,14 @@ export function PostRaceAnalysis({
                   <span className="h-1 w-12 bg-broadcast-accent" />
                   Per-Runner Breakdown
                 </h3>
-                <SpeedBreakdownTable
-                  splits={race.sectionalSplits}
-                  runners={runnerProps}
-                />
+                <SpeedBreakdownTable splits={race.sectionalSplits} runners={runnerProps} />
               </div>
             </>
           )}
           {runners.some((r) => r.owned && r.finishTime !== null) && (
             <JockeyReportPanel
               runners={runners}
-              ordered={[...runners].sort(
-                (a, b) => (a.finishTime ?? 999) - (b.finishTime ?? 999),
-              )}
+              ordered={[...runners].sort((a, b) => (a.finishTime ?? 999) - (b.finishTime ?? 999))}
               sectionalSplits={race.sectionalSplits}
             />
           )}

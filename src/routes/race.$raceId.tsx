@@ -55,12 +55,14 @@ function PhasePanel({
   children,
   isActive,
   isExiting,
+  isEntering,
 }: {
   children: React.ReactNode;
   isActive: boolean;
   isExiting: boolean;
+  isEntering: boolean;
 }) {
-  if (!isActive && !isExiting) return null;
+  if (!isActive && !isExiting && !isEntering) return null;
   const base = "absolute inset-0 transition-all duration-300";
   const active =
     isActive && !isExiting
@@ -182,10 +184,7 @@ export function LiveRace() {
   useEffect(() => {
     if (phase !== "live" || finished || typeof window === "undefined") return;
     try {
-      window.sessionStorage.setItem(
-        progressStorageKey,
-        JSON.stringify({ simTime, paused, speed }),
-      );
+      window.sessionStorage.setItem(progressStorageKey, JSON.stringify({ simTime, paused, speed }));
     } catch {
       /* ignore quota */
     }
@@ -205,7 +204,6 @@ export function LiveRace() {
   useEffect(() => {
     if (finished && phase !== "review") setPhase("review");
   }, [finished, phase, setPhase]);
-
 
   // After the finish overlay appears, scroll the analysis section into view
   // and move focus to its toggle so keyboard users land there next.
@@ -272,7 +270,8 @@ export function LiveRace() {
     <div className="broadcast min-h-screen text-white bg-broadcast-track relative">
       <PhasePanel
         isActive={displayedPhase === "preshow"}
-        isExiting={isExiting && displayedPhase !== "preshow"}
+        isExiting={isExiting && displayedPhase === "preshow"}
+        isEntering={isExiting && toDisplayPhase(phase) === "preshow"}
       >
         <RacePreShow
           race={race}
@@ -289,7 +288,8 @@ export function LiveRace() {
 
       <PhasePanel
         isActive={displayedPhase === "broadcast"}
-        isExiting={isExiting && displayedPhase !== "broadcast"}
+        isExiting={isExiting && displayedPhase === "broadcast"}
+        isEntering={isExiting && toDisplayPhase(phase) === "broadcast"}
       >
         <div className="broadcast min-h-screen text-white bg-broadcast-track">
           <div

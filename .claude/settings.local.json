@@ -120,7 +120,8 @@
       "Bash(cd /Users/amauricia/Documents/GitHub/gallop *)",
       "Bash(bunx eslint *)",
       "Bash(echo \"eslint exit \\(nonzero=violations found\\): $?\")",
-      "Bash(echo \"exit: $?\")"
+      "Bash(echo \"exit: $?\")",
+      "Bash(echo \"lint exit: $?\")"
     ]
   },
   "hooks": {

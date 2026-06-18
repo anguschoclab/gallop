@@ -48,10 +48,7 @@ export function RacePreShow({ race, runners, runnerOdds, onStart }: RacePreShowP
             {race.graded?.track ? ` · ${race.graded.track}` : ""}
           </p>
           <div className="pt-2">
-            <WeatherForecastStrip
-              trackId={race.trackId}
-              trackCondition={race.trackCondition}
-            />
+            <WeatherForecastStrip trackId={race.trackId} trackCondition={race.trackCondition} />
           </div>
         </div>
 
@@ -81,9 +78,7 @@ export function RacePreShow({ race, runners, runnerOdds, onStart }: RacePreShowP
                   </Badge>
                 )}
               </div>
-              <span className="text-right font-mono text-cream tabular-nums">
-                {r.oddsLabel}
-              </span>
+              <span className="text-right font-mono text-cream tabular-nums">{r.oddsLabel}</span>
             </div>
           ))}
         </div>

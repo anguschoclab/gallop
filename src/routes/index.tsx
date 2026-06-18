@@ -18,7 +18,6 @@ import { ApprenticeTracker } from "@/components/apprentice/ApprenticeTracker";
 import { NextActionBanner } from "@/components/dashboard/NextActionBanner";
 import { deriveNextAction } from "@/core/dashboard/nextAction";
 
-
 export const Route = createFileRoute("/")({
   component: Dashboard,
 });
@@ -41,7 +40,6 @@ function Dashboard() {
     openAuctionCount: activeAuctions.length,
     day,
   });
-
 
   return (
     <div className="space-y-6 animate-fade-in pb-10">

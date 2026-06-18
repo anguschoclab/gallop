@@ -1,5 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, Bell, Flag, BatteryLow, Gavel, CalendarClock, type LucideIcon } from "lucide-react";
+import {
+  ChevronRight,
+  Bell,
+  Flag,
+  BatteryLow,
+  Gavel,
+  CalendarClock,
+  type LucideIcon,
+} from "lucide-react";
 import type { NextAction, NextActionKind } from "@/core/dashboard/nextAction";
 
 const ICONS: Record<NextActionKind, LucideIcon> = {

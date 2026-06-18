@@ -21,6 +21,9 @@ export interface PreShowFieldRow extends PreShowRunner {
 /**
  * Parse a formatted morning-line label like "5-1" or "2-1" into a numeric value.
  * Returns Infinity when the label is missing/unparseable so those rows sort last.
+ *
+ * @param label - formatted odds label (e.g. "5-1"), or undefined
+ * @returns numeric odds value, or Infinity when missing/unparseable
  */
 function parseOdds(label: string | undefined): number {
   if (!label) return Infinity;
