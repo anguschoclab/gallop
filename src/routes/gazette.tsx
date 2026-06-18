@@ -1,6 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Gazette } from "@/components/narrative/Gazette";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/gazette")({
-  component: Gazette,
+  beforeLoad: () => {
+    throw redirect({ to: "/briefing", search: { tab: "gazette" } });
+  },
 });
