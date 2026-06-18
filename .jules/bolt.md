@@ -27,3 +27,8 @@
 
 **Learning:** When searching for an item within an array in a render loop with multiple conditions (like `fromStableId === undefined && status === 'pending'`), using `array.find()` inside `.map()` is O(N^2).
 **Action:** Instead of just `new Map(arr.map(x => [x.id, x]))`, you can iterate the array once inside `useMemo` and conditionally `map.set()` the matched items by their target key (e.g., `horseId`). This allows O(1) conditional lookup inside the render loop without modifying global state or storing unneeded entries in the map.
+
+## 2025-02-12 - Optimize O(N*M*P) nested render loop in SpeedBreakdownTable
+
+**Learning:** Found an O(N) array lookup (`split.entries.find()`) nested inside a double `.map()` loop during a React component render (`runners.map` -> `splits.map`) in `SpeedBreakdownTable.tsx`. This causes O(R * S * E) complexity during rendering, where R is runners, S is splits, and E is entries per split.
+**Action:** When rendering elements with double nested mapping over arrays that cross-reference other arrays, pre-calculate a nested hash map locally using `useMemo` (e.g. `Map<string, Map<string, Entry>>`) before the mapping phase to change the lookup complexity to O(1). This eliminates nested iterations and prevents performance degradation.

@@ -25,6 +25,19 @@ function fmtPct(v: number | undefined): string | null {
 export function SpeedBreakdownTable({ splits, runners, className }: SpeedBreakdownTableProps) {
   const runnerMap = useMemo(() => new Map(runners.map((r) => [r.horseId, r])), [runners]);
 
+  // Pre-calculate nested hash map for O(1) lookups instead of running O(N) .find() inside the double .map() loop.
+  const splitEntriesMap = useMemo(() => {
+    const map = new Map<string, Map<string, any>>();
+    for (const split of splits) {
+      const entryMap = new Map();
+      for (const entry of split.entries) {
+        entryMap.set(entry.horseId, entry);
+      }
+      map.set(split.label, entryMap);
+    }
+    return map;
+  }, [splits]);
+
   if (splits.length === 0 || runners.length === 0) return null;
 
   return (
@@ -56,7 +69,7 @@ export function SpeedBreakdownTable({ splits, runners, className }: SpeedBreakdo
                   </div>
                 </td>
                 {splits.map((split) => {
-                  const entry = split.entries.find((e) => e.horseId === r.horseId);
+                  const entry = splitEntriesMap.get(split.label)?.get(r.horseId);
                   const seekStr = fmtPct(entry?.avgSeekContribution);
                   const spurtStr = fmtPct(entry?.avgSpurtContribution);
                   return (
