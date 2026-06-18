@@ -21,3 +21,8 @@
 **Vulnerability:** In `src/assets/horseRaceScript.js`, `setInterval()` was called with a string argument (`"TimerCallback()"`), acting as an implied eval.
 **Learning:** Passing a string to `setTimeout` or `setInterval` causes the JS engine to evaluate the string as code. This is an unsafe practice equivalent to `eval()`, posing a security risk (XSS) if any part of the string ever incorporates user input, and it violates modern Content Security Policies (CSP) like `unsafe-eval`.
 **Prevention:** Never pass strings to `setInterval` or `setTimeout`. Always pass direct function references or anonymous functions instead.
+
+## 2024-05-24 - Fix weak random number generation entropy
+**Vulnerability:** Core logic relied on `Math.random()` directly or as a weak fallback inside `nondeterministicRng()`. This lacked cryptographic entropy, posing a potential vulnerability if random generation required true non-determinism or resistance to prediction.
+**Learning:** Even for game logic without strict security requirements, using `Math.random()` can cause statistical biases and is susceptible to PRNG state recovery attacks. We should use secure random sources when building utility RNG wrappers.
+**Prevention:** Always seed RNG implementations using `crypto.getRandomValues()` to extract non-deterministic entropy from the host environment, only falling back to `Math.random()` as an absolute last resort. Do not use inline `Math.random()` fallbacks; instead use the centralized `nondeterministicRng()` function.
