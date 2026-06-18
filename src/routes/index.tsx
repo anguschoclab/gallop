@@ -17,6 +17,7 @@ import { ReputationDashboard } from "@/components/reputation/ReputationDashboard
 import { ApprenticeTracker } from "@/components/apprentice/ApprenticeTracker";
 import { NextActionBanner } from "@/components/dashboard/NextActionBanner";
 import { deriveNextAction } from "@/core/dashboard/nextAction";
+import { useNextActionBanner } from "@/hooks/dashboard/useNextActionBanner";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
@@ -40,6 +41,8 @@ function Dashboard() {
     openAuctionCount: activeAuctions.length,
     day,
   });
+
+  const { isDismissed, dismiss, restore } = useNextActionBanner();
 
   return (
     <div className="space-y-6 animate-fade-in pb-10">
@@ -87,7 +90,19 @@ function Dashboard() {
       </div>
 
       {/* Next action */}
-      <NextActionBanner action={nextAction} />
+      {isDismissed ? (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={restore}
+            className="text-xs text-cream-muted hover:text-gold transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded px-2 py-1"
+          >
+            Show next action
+          </button>
+        </div>
+      ) : (
+        <NextActionBanner action={nextAction} onDismiss={dismiss} />
+      )}
 
       {/* Urgent Messages */}
       <UrgentMessagesStrip messages={urgentMessages} />

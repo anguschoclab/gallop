@@ -1,6 +1,8 @@
 // Settings Types - User preferences and game configuration
 // Stored in SystemsState for persistence
 
+import type { NextActionKind } from "@/core/dashboard/nextAction";
+
 /**
  * Display/visual settings
  */
@@ -21,6 +23,10 @@ export interface DisplaySettings {
   simpleHorseCards: boolean;
   /** Show advanced metrics: raw numerics, genotype string, chromosome breakdown */
   advancedMetrics: boolean;
+  /** Timestamp when the next-action banner was dismissed (null = visible) */
+  nextActionBannerDismissedAt: number | null;
+  /** Which action kind was dismissed (enables per-kind logic in future) */
+  nextActionBannerDismissedKind: NextActionKind | null;
 }
 
 /**
@@ -104,6 +110,8 @@ export function createDefaultUserSettings(currentDay: number = 1): UserSettings 
       highlightPendingActions: true,
       simpleHorseCards: true,
       advancedMetrics: false,
+      nextActionBannerDismissedAt: null,
+      nextActionBannerDismissedKind: null,
     },
     gameplay: {
       autoSimEnabled: true,
