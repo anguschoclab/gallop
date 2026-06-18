@@ -31,6 +31,7 @@ import {
   Star,
   Bell,
   Search,
+  Newspaper,
 } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
@@ -48,8 +49,7 @@ const navSections = [
       { to: "/analytics", label: "Analytics", icon: BarChart3, exact: false },
       { to: "/financial-report", label: "Finances", icon: DollarSign, exact: false },
       { to: "/facilities", label: "Facilities", icon: Building2, exact: false },
-      { to: "/gazette", label: "Gazette", icon: Star, exact: false },
-      { to: "/recap", label: "Recap", icon: Trophy, exact: false },
+      { to: "/briefing", label: "Briefing", icon: Newspaper, exact: false },
     ],
   },
   {
