@@ -38,10 +38,5 @@ src/**/*.js
 !src/assets/**/*.js
 coverage/
 
-# AI workspace artifacts
-.jules/
-.gemini/
-.claude/
-.lovable/
-.remember/
+
 
