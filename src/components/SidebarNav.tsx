@@ -211,6 +211,7 @@ export function SidebarNav({
               className="col-span-1"
               size="sm"
               variant="outline"
+              title="Advance 1 day"
               aria-label="Advance 1 day"
             >
               <Plus className="h-3 w-3" />
@@ -240,6 +241,7 @@ export function SidebarNav({
               className="col-span-1"
               size="sm"
               variant="outline"
+              title="AutoSim settings"
               aria-label="AutoSim settings"
             >
               <Settings className="h-3 w-3" />
@@ -251,6 +253,7 @@ export function SidebarNav({
               size="sm"
               variant="outline"
               title="Skip to next auction"
+              aria-label="Skip to next auction"
               className="text-[10px]"
             >
               <Gavel className="h-3 w-3 mr-1" /> Next Auction
@@ -260,6 +263,7 @@ export function SidebarNav({
               size="sm"
               variant="outline"
               title="Skip to next race"
+              aria-label="Skip to next race"
               className="text-[10px]"
             >
               <Trophy className="h-3 w-3 mr-1" /> Next Race
