@@ -17,6 +17,7 @@ import type { Claim } from "./types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { createRng, hashStr, type Rng } from "@/core/common/rng";
 import { formatCurrency } from "@/core/common/formatting";
+import { nondeterministicRng } from "@/core/common/rng";
 
 // Horse transfer result from a claiming race
 export type HorseTransfer = {
@@ -61,14 +62,7 @@ export function processClaims(
   const logs: string[] = [];
 
   // Fallback to nondeterministic RNG if none provided
-  const _rng = rng || {
-    next: () => Math.random(),
-    int: (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min,
-    range: (min: number, max: number) => min + Math.random() * (max - min),
-    pick: <T>(arr: readonly T[]) => arr[Math.floor(Math.random() * arr.length)],
-    gauss: (mean = 0, sd = 1) =>
-      mean + sd * (Math.random() + Math.random() + Math.random() + Math.random() - 2), // Rough approximation
-  };
+  const _rng = rng || nondeterministicRng();
 
   if (!race.claimingPrice || race.resolved === false) {
     return { transfers, logs };

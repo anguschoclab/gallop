@@ -106,5 +106,13 @@ export function hashStr(s: string): number {
  * @returns RNG interface with random seed
  */
 export function nondeterministicRng(): Rng {
-  return createRng((Math.random() * 0xffffffff) | 0);
+  let seed: number;
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    seed = array[0];
+  } else {
+    seed = (Math.random() * 0xffffffff) | 0;
+  }
+  return createRng(seed);
 }
