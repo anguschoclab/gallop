@@ -27,3 +27,8 @@
 
 **Learning:** When searching for an item within an array in a render loop with multiple conditions (like `fromStableId === undefined && status === 'pending'`), using `array.find()` inside `.map()` is O(N^2).
 **Action:** Instead of just `new Map(arr.map(x => [x.id, x]))`, you can iterate the array once inside `useMemo` and conditionally `map.set()` the matched items by their target key (e.g., `horseId`). This allows O(1) conditional lookup inside the render loop without modifying global state or storing unneeded entries in the map.
+
+## 2026-10-25 - Optimizing nested arrays with O(N*M*P) complexity
+
+**Learning:** Component rendering loops that iterate over multiple nested arrays and run `.find()` deep within the tree (e.g., mapping over `runners`, mapping over `splits`, and calling `.find()` on `split.entries`) cause O(N*M*P) rendering performance degradation which can be visible as severe jank, particularly for large races.
+**Action:** Always extract inner `.find()` loops in deeply nested map components (like `SpeedBreakdownTable`) into pre-calculated nested hash maps (e.g. `Map<string, Map<string, SplitEntry>>`) utilizing `useMemo`. This replaces O(N*M*P) computations inside the React render tree with O(1) Map lookups per element rendered, dropping total complexity to O(N*M).
