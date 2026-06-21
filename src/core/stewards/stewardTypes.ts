@@ -1,5 +1,6 @@
 // Stewards Inquiry Types - Race day inquiries and disqualifications
 import { generateUUID } from "@/core/uuid";
+import { nondeterministicRng } from "@/core/common/rng";
 
 /**
  * Inquiry type categories
@@ -101,15 +102,15 @@ export function generateRandomInquiry(
   day: number,
   horseIds: string[],
 ): StewardsInquiry | null {
+  const rng = nondeterministicRng();
+
   // 5% chance of an inquiry
-  if (Math.random() > 0.05) return null;
+  if (rng.next() > 0.05) return null;
 
   const types: InquiryType[] = ["interference", "improper_riding", "lane_violation"];
-  const type = types[Math.floor(Math.random() * types.length)];
-  const accusedHorseId = horseIds[Math.floor(Math.random() * horseIds.length)];
-  const reportingHorseId = horseIds.filter((h) => h !== accusedHorseId)[
-    Math.floor(Math.random() * (horseIds.length - 1))
-  ];
+  const type = rng.pick(types);
+  const accusedHorseId = rng.pick(horseIds);
+  const reportingHorseId = rng.pick(horseIds.filter((h) => h !== accusedHorseId));
 
   const descriptions: Record<InquiryType, string> = {
     interference: "Alleged interference in the stretch",

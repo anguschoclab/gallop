@@ -1,4 +1,5 @@
 import type { StaffMember, StaffTier } from "./staffTypes";
+import { nondeterministicRng } from "@/core/common/rng";
 
 export const PATIENCE_BY_TIER: Record<StaffTier, number> = {
   elite: 0,
@@ -52,7 +53,8 @@ export function evaluateOffer(
     return { outcome: "walkaway" };
   }
 
-  const bump = 0.05 + Math.random() * 0.1; // 5–15%
+  const rng = nondeterministicRng();
+  const bump = 0.05 + rng.next() * 0.1; // 5–15%
   const counter = Math.min(Math.round(offerSalary * (1 + bump)), askingSalary);
   return { outcome: "counter", counterSalary: counter };
 }
