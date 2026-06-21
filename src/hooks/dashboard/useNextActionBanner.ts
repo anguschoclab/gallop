@@ -5,9 +5,7 @@ export function useNextActionBanner() {
   const dismissedAt = useGame(
     (s: StoreType) => s.userSettings?.display?.nextActionBannerDismissedAt ?? null,
   );
-  const updateDisplaySettings = useGame(
-    (s: StoreType) => s.updateDisplaySettings,
-  );
+  const updateDisplaySettings = useGame((s: StoreType) => s.updateDisplaySettings);
 
   const isDismissed = dismissedAt !== null;
 

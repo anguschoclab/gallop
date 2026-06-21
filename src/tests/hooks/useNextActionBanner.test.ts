@@ -22,9 +22,7 @@ describe("useNextActionBanner", () => {
       } as any,
       updateDisplaySettings,
     };
-    (useGame as any).mockImplementation((selector: any) =>
-      selector(mockState),
-    );
+    (useGame as any).mockImplementation((selector: any) => selector(mockState));
   });
 
   it("returns isDismissed=false when dismissedAt is null", () => {
