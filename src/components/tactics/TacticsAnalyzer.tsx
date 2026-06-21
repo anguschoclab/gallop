@@ -25,7 +25,7 @@ interface TacticsAnalyzerProps {
 
 export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
   const horse = useGame((s) => s.horseMap.get(horseId));
-  const race = useGame((s) => s.races.find((r) => r.id === raceId));
+  const race = useGame((s) => s.raceMap.get(raceId));
   const assignJockey = useGame((s) => s.assignJockey);
 
   const [instructions, setInstructions] = useState<JockeyInstructions>({

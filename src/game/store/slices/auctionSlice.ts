@@ -93,7 +93,7 @@ export function createAuctionSlice(
 
     withdrawConsignment: (horseId) => {
       const s = get();
-      const horse = s.horses.find((h: Horse) => h.id === horseId);
+      const horse = s.horseMap.get(horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.consignedSaleId) return { ok: false, reason: "Horse not consigned." };
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === horse.consignedSaleId);

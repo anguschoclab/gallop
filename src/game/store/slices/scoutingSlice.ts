@@ -47,7 +47,7 @@ export function createScoutingSlice(
   return {
     scoutHorse: (horseId) => {
       const s = get();
-      const horse = s.horses.find((h: Horse) => h.id === horseId);
+      const horse = s.horseMap.get(horseId);
       if (!horse) {
         return { success: false, cost: 0, message: "Horse not found." };
       }

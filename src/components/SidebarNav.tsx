@@ -1,5 +1,11 @@
 import { Button } from "@/components/ui/button";
 import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -220,7 +226,6 @@ export function SidebarNav({
               className="col-span-1"
               size="sm"
               variant="outline"
-              title="Advance 1 week"
               aria-label="Advance 1 week"
             >
               7d
@@ -230,7 +235,6 @@ export function SidebarNav({
               className="col-span-1"
               size="sm"
               variant="outline"
-              title="Advance 1 month"
               aria-label="Advance 1 month"
             >
               30d
@@ -246,24 +250,38 @@ export function SidebarNav({
             </Button>
           </div>
           <div className="grid grid-cols-2 gap-1 mt-1">
-            <Button
-              onClick={onSkipToAuction}
-              size="sm"
-              variant="outline"
-              title="Skip to next auction"
-              className="text-[10px]"
-            >
-              <Gavel className="h-3 w-3 mr-1" /> Next Auction
-            </Button>
-            <Button
-              onClick={onSkipToRace}
-              size="sm"
-              variant="outline"
-              title="Skip to next race"
-              className="text-[10px]"
-            >
-              <Trophy className="h-3 w-3 mr-1" /> Next Race
-            </Button>
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={onSkipToAuction}
+                    size="sm"
+                    variant="outline"
+                    aria-label="Skip to next auction"
+                    className="text-[10px]"
+                  >
+                    <Gavel className="h-3 w-3 mr-1" /> Next Auction
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Skip to next auction</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={onSkipToRace}
+                    size="sm"
+                    variant="outline"
+                    aria-label="Skip to next race"
+                    className="text-[10px]"
+                  >
+                    <Trophy className="h-3 w-3 mr-1" /> Next Race
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Skip to next race</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
         <Button

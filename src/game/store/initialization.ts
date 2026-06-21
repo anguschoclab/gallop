@@ -144,6 +144,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     horses: [...horses, ...npcHorses],
     market,
     races: racesWithEntries,
+    raceMap: new Map(racesWithEntries.map((r) => [r.id, r])),
     trainingUsed: {},
     log: [{ day: 1, text: welcomeText }],
     pregnancies: [],

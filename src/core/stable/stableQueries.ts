@@ -11,6 +11,7 @@
 import type { Stable, StableTier } from "@/game/types";
 import type { PedigreeHorse } from "@/data/pedigreeData";
 import type { Rng } from "@/core/common/rng";
+import { nondeterministicRng } from "@/core/common/rng";
 import { STALLION_FARM_MAPPING } from "@/core/stable/stallionFarmMapping";
 
 /**
@@ -105,7 +106,8 @@ export function getTargetHorseCountForTier(tier: StableTier, isMajor: boolean, r
  * @param stables - Array of available stables
  * @returns Matching stable
  */
-export function mapStallionToStable(stallion: PedigreeHorse, stables: Stable[]): Stable {
+export function mapStallionToStable(stallion: PedigreeHorse, stables: Stable[], rng?: Rng): Stable {
+  const _rng = rng || nondeterministicRng();
   // Try exact match first
   const exactMatch = stables.find((s) => s.name === stallion.studFarm);
   if (exactMatch) return exactMatch;
@@ -128,8 +130,8 @@ export function mapStallionToStable(stallion: PedigreeHorse, stables: Stable[]):
   const tierStables = stables.filter((s) => s.tier === tier);
   if (tierStables.length === 0) {
     // If no stables of appropriate tier, return any stable
-    return stables[Math.floor(Math.random() * stables.length)];
+    return stables[Math.floor(_rng.next() * stables.length)];
   }
 
-  return tierStables[Math.floor(Math.random() * tierStables.length)];
+  return tierStables[Math.floor(_rng.next() * tierStables.length)];
 }

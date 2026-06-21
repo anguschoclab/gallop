@@ -64,7 +64,7 @@ export function createRacingSlice(
 
     trainHorse: (horseId, kind) => {
       const s = get();
-      const horse = s.horses.find((h: Horse) => h.id === horseId);
+      const horse = s.horseMap.get(horseId);
       if (!horse) return;
       if (!horse.owned) return;
       if (s.pregnancies.some((p) => !p.resolved && p.damId === horseId)) return;
@@ -134,7 +134,7 @@ export function createRacingSlice(
 
     runPrivateTrial: (horseId, opponentId, distance, surface) => {
       const s = get() as any;
-      const horse = s.horses.find((h: Horse) => h.id === horseId);
+      const horse = s.horseMap.get(horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You do not own this horse." };
 
@@ -164,7 +164,7 @@ export function createRacingSlice(
         opponent.name = "Pacemaker";
         opponent.id = "pacemaker_" + generateUUID();
       } else {
-        stablemate = s.horses.find((h: Horse) => h.id === opponentId);
+        stablemate = s.horseMap.get(opponentId);
         if (!stablemate) return { ok: false, reason: "Stablemate not found." };
         if (stablemate.energy < 15) {
           return {

@@ -24,6 +24,13 @@ function fmtPct(v: number | undefined): string | null {
 
 export function SpeedBreakdownTable({ splits, runners, className }: SpeedBreakdownTableProps) {
   const runnerMap = useMemo(() => new Map(runners.map((r) => [r.horseId, r])), [runners]);
+  const entryMap = useMemo(
+    () =>
+      new Map(
+        splits.map((s) => [s.label, new Map(s.entries.map((e) => [e.horseId, e]))]),
+      ),
+    [splits],
+  );
 
   if (splits.length === 0 || runners.length === 0) return null;
 
@@ -56,7 +63,7 @@ export function SpeedBreakdownTable({ splits, runners, className }: SpeedBreakdo
                   </div>
                 </td>
                 {splits.map((split) => {
-                  const entry = split.entries.find((e) => e.horseId === r.horseId);
+                  const entry = entryMap.get(split.label)?.get(r.horseId);
                   const seekStr = fmtPct(entry?.avgSeekContribution);
                   const spurtStr = fmtPct(entry?.avgSpurtContribution);
                   return (

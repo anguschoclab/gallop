@@ -14,7 +14,7 @@ import { NarrativeGenerator } from "@/services/narrative/narrativeService";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 
 export function useRacePageData(raceId: string) {
-  const race = useGameWithShallow((s: GameState) => s.races.find((r: any) => r.id === raceId));
+  const race = useGameWithShallow((s: GameState) => s.raceMap.get(raceId));
   const horses = useGameWithShallow((s: GameState) => s.horses);
   const jockeys = useGameWithShallow((s: GameState) => s.jockeys ?? []);
   const stables = useGameWithShallow((s: GameState) => s.npcStables);

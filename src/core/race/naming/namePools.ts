@@ -14,6 +14,7 @@
 
 import type { RegionalSystem } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
+import { nondeterministicRng } from "@/core/common/rng";
 import namePoolsData from "@/data/namePools.json";
 
 // Sponsor names for race naming
@@ -51,7 +52,7 @@ export const ADJECTIVES: Record<RegionalSystem, string[]> = namePoolsData.ADJECT
  * const item = randomFromArray(["a", "b", "c"], rng);
  */
 export function randomFromArray<T>(arr: T[], rng?: Rng): T {
-  const r = rng ? rng.next() : Math.random();
+  const r = rng ? rng.next() : nondeterministicRng().next();
   return arr[Math.floor(r * arr.length)];
 }
 

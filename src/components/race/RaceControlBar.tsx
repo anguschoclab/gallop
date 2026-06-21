@@ -6,6 +6,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 import { Camera, Pause, Play, Thermometer, Wind } from "lucide-react";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Race } from "@/game/types";
@@ -98,14 +104,21 @@ export function RaceControlBar({
           </Select>
         )}
 
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={onShowAllCards}
-          title="Show all horse stat cards"
-        >
-          Cards
-        </Button>
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onShowAllCards}
+                aria-label="Show all horse stat cards"
+              >
+                Cards
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Show all horse stat cards</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
         {!finished && (
           <Button
@@ -113,7 +126,6 @@ export function RaceControlBar({
             variant={paused ? "default" : "secondary"}
             onClick={onTogglePause}
             className="gap-1.5"
-            title="Spacebar to toggle"
             aria-label={paused ? "Resume race" : "Pause race"}
           >
             {paused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
@@ -129,7 +141,7 @@ export function RaceControlBar({
               size="sm"
               variant={speed === 1 ? "secondary" : "ghost"}
               onClick={() => onSetSpeed(1)}
-              title="Press 1"
+              aria-label="Set speed to 1x"
             >
               1x
             </Button>
@@ -137,7 +149,7 @@ export function RaceControlBar({
               size="sm"
               variant={speed === 2 ? "secondary" : "ghost"}
               onClick={() => onSetSpeed(2)}
-              title="Press 2"
+              aria-label="Set speed to 2x"
             >
               2x
             </Button>
@@ -145,7 +157,7 @@ export function RaceControlBar({
               size="sm"
               variant={speed === 4 ? "secondary" : "ghost"}
               onClick={() => onSetSpeed(4)}
-              title="Press 4"
+              aria-label="Set speed to 4x"
             >
               4x
             </Button>
@@ -157,7 +169,7 @@ export function RaceControlBar({
             size="sm"
             variant={hideUntilAllFinished ? "secondary" : "ghost"}
             onClick={onToggleHideResults}
-            title="Hide results until all horses finish"
+            aria-label="Hide results until all horses finish"
           >
             {hideUntilAllFinished ? "Revealing…" : "Hide Results"}
           </Button>

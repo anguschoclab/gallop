@@ -15,6 +15,7 @@
 import type { RaceClass, ClaimingPrice, WinCondition, RegionalSystem } from "@/game/types";
 import type { Track } from "@/data/tracks";
 import type { Rng } from "@/core/common/rng";
+import { nondeterministicRng } from "@/core/common/rng";
 import {
   getRandomSponsor,
   getRandomLocation,
@@ -174,7 +175,7 @@ function selectNamingPattern(
   hasWinCondition: boolean,
   hasClaimingPrice: boolean,
 ): NamingPattern {
-  const r = rng ? rng.next() : Math.random();
+  const r = rng ? rng.next() : nondeterministicRng().next();
 
   // North America: heavy use of price-based for claiming
   if (region === "north_america") {
@@ -340,7 +341,7 @@ const PATTERN_GENERATORS: Record<NamingPattern, PatternGenerator> = {
   class_location: (params, region) => {
     const { raceClass, rng } = params;
     // For European/Australian class-based naming
-    const classNum = Math.floor((rng ? rng.next() : Math.random()) * 6) + 1; // Class 1-6
+    const classNum = Math.floor((rng ? rng.next() : nondeterministicRng().next()) * 6) + 1; // Class 1-6
     const loc = getRandomLocation(region, rng);
     if (raceClass === "Handicap") {
       return `Class ${classNum} ${loc} Handicap`;

@@ -68,8 +68,14 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
     toggleSpeed,
     toggleCamera,
   } = useRaceReplay(duration, onComplete);
-  const playerHorseId = useMemo(() => runners.find((r) => r.owned)?.horseId, [runners]);
-  const runnerMap = useMemo(() => new Map(runners.map((r) => [r.horseId, r])), [runners]);
+  const { playerHorseId, runnerMap } = useMemo(() => {
+    const map = new Map(runners.map((r) => [r.horseId, r]));
+    let playerId: string | undefined;
+    for (const r of runners) {
+      if (r.owned) { playerId = r.horseId; break; }
+    }
+    return { playerHorseId: playerId, runnerMap: map };
+  }, [runners]);
 
   // Build the static background (track, lanes, furlong markers without offset) once per
   // size/track/distance change. The dynamic offset is only applied to the finish line and
@@ -290,7 +296,6 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
           className="race-control-btn"
           onClick={() => setIsPlaying((p) => !p)}
           aria-label={isPlaying ? "Pause race" : "Play race"}
-          title={isPlaying ? "Pause" : "Play"}
         >
           {isPlaying ? <Pause size={20} /> : <Play size={20} />}
         </button>
@@ -298,7 +303,6 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
           className="race-control-btn"
           onClick={restart}
           aria-label="Restart race"
-          title="Restart"
         >
           <RotateCcw size={20} />
         </button>
@@ -306,7 +310,6 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
           className="race-control-btn"
           onClick={toggleCamera}
           aria-label={`Toggle camera focus: currently following ${cameraMode}`}
-          title="Toggle Camera Focus"
         >
           <Camera size={20} color={cameraMode === "player" ? "#facc15" : "#fff"} />
         </button>
@@ -314,7 +317,6 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
           className="race-control-btn"
           onClick={toggleSpeed}
           aria-label={`Toggle playback speed: currently ${playbackSpeed}x`}
-          title={`Speed: ${playbackSpeed}x`}
         >
           <SkipForward size={20} color={playbackSpeed > 1 ? "#facc15" : "#fff"} />
         </button>

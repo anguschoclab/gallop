@@ -31,18 +31,22 @@ export function Track({
   const trackBg = getTrackBackground(surface);
   const viewportWidth = distance * 0.6;
 
-  const cameraPos = (() => {
-    if (followTarget) {
-      const target = runners.find((r) => r.horseId === followTarget);
-      if (target) {
-        return Math.max(0, Math.min(distance - viewportWidth, target.position - viewportWidth / 2));
-      }
+  const { cameraPos, leaderPos } = (() => {
+    let target: Runner | undefined;
+    let maxPos = 0;
+    for (const r of runners) {
+      if (followTarget && r.horseId === followTarget) target = r;
+      if (r.position > maxPos) maxPos = r.position;
     }
-    const leader = runners.reduce((max, r) => (r.position > max.position ? r : max), runners[0]);
-    return Math.max(0, Math.min(distance - viewportWidth, leader.position - viewportWidth / 2));
+    let cam: number;
+    if (target) {
+      cam = Math.max(0, Math.min(distance - viewportWidth, target.position - viewportWidth / 2));
+    } else {
+      const leader = runners.reduce((max, r) => (r.position > max.position ? r : max), runners[0]);
+      cam = Math.max(0, Math.min(distance - viewportWidth, leader.position - viewportWidth / 2));
+    }
+    return { cameraPos: cam, leaderPos: maxPos };
   })();
-
-  const leaderPos = runners.reduce((max, r) => Math.max(max, r.position), 0);
   const finishActive = leaderPos > distance - 100 && leaderPos < distance;
   const trackOffset = -(cameraPos % 512);
 

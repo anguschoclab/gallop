@@ -126,3 +126,21 @@ describe("rng.pick", () => {
     expect(seen.size).toBe(arr.length);
   });
 });
+
+describe("nondeterministicRng — crypto path", () => {
+  it("uses crypto.getRandomValues for seeding when available", () => {
+    const rng = nondeterministicRng();
+    expect(rng.next()).toBeGreaterThanOrEqual(0);
+    expect(rng.next()).toBeLessThan(1);
+  });
+
+  it("produces a valid Rng with all methods", () => {
+    const rng = nondeterministicRng();
+    expect(rng.int(1, 100)).toBeGreaterThanOrEqual(1);
+    expect(rng.int(1, 100)).toBeLessThanOrEqual(100);
+    expect(rng.range(0, 1)).toBeGreaterThanOrEqual(0);
+    expect(rng.range(0, 1)).toBeLessThan(1);
+    expect([1, 2, 3]).toContain(rng.pick([1, 2, 3]));
+    expect(Number.isFinite(rng.gauss(0, 1))).toBe(true);
+  });
+});

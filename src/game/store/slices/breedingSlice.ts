@@ -82,8 +82,8 @@ export function createBreedingSlice(
 
     breed: (sireId, damId, liveFoalGuarantee = false) => {
       const s = get();
-      const sire = s.horses.find((h: Horse) => h.id === sireId);
-      const dam = s.horses.find((h: Horse) => h.id === damId);
+      const sire = s.horseMap.get(sireId);
+      const dam = s.horseMap.get(damId);
       const fail = (reason: string): { ok: false; reason: string } => {
         set({ log: [{ day: s.day, text: `Breeding: ${reason}` }, ...s.log].slice(0, 50) });
         return { ok: false, reason };

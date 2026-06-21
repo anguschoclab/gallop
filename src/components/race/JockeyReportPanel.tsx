@@ -49,17 +49,25 @@ export function JockeyReportPanel({
     () => runners.filter((r) => r.owned && r.finishTime !== null),
     [runners],
   );
+  const ownedRunnerMap = useMemo(
+    () => new Map(ownedRunners.map((r) => [r.horseId, r])),
+    [ownedRunners],
+  );
 
   const reports = useMemo<JockeyReport[]>(
     () => ownedRunners.map((r) => generateJockeyReport(r, ordered, sectionalSplits)),
     [ownedRunners, ordered, sectionalSplits],
+  );
+  const reportMap = useMemo(
+    () => new Map(reports.map((r) => [r.horseId, r])),
+    [reports],
   );
 
   const [selectedId, setSelectedId] = useState<string | null>(reports[0]?.horseId ?? null);
 
   if (reports.length === 0) return null;
 
-  const active = reports.find((r) => r.horseId === selectedId) ?? reports[0];
+  const active = reportMap.get(selectedId ?? "") ?? reports[0];
 
   return (
     <section className={cn("border border-gold/20 bg-black/30 p-5 space-y-4", className)}>
@@ -94,7 +102,7 @@ export function JockeyReportPanel({
         <div className="flex flex-wrap gap-2">
           {reports.map((r) => {
             const isActive = r.horseId === active.horseId;
-            const runner = ownedRunners.find((rr) => rr.horseId === r.horseId);
+            const runner = ownedRunnerMap.get(r.horseId);
             return (
               <button
                 key={r.horseId}

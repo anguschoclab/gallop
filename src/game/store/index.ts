@@ -337,6 +337,11 @@ export const useGame = create<StoreType>()(
             horseMap: new Map(state.horses.map((h: any) => [h.id, h])),
           });
         }
+        if (state && state.races) {
+          useGame.setState({
+            raceMap: new Map(state.races.map((r: any) => [r.id, r])),
+          });
+        }
         hydrationComplete.value = true;
       },
       partialize: (state) => {

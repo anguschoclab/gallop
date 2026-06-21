@@ -33,7 +33,7 @@ export function generateFamousStallions(stables: Stable[], rng: Rng): Horse[] {
   const active = activeStallions2020s.filter((s) => s.currentStatus === "active");
 
   for (const data of active) {
-    const stable = mapStallionToStable(data, stables);
+    const stable = mapStallionToStable(data, stables, rng);
     const age = 2026 - (data.birthYear ?? 2020);
     const tier: StableTier =
       (data.studFee ?? 0) >= 100000 ? "elite" : (data.studFee ?? 0) >= 25000 ? "mid" : "budget";
