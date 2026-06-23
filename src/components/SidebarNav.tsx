@@ -23,22 +23,18 @@ import {
   Gavel,
   Settings,
   User,
-  Baby,
   DollarSign,
   Building2,
   Award,
   Users,
   Map,
-  Clock,
   LayoutGrid,
   BarChart3,
-  BarChart2,
   Bookmark,
-  Star,
   Bell,
-  Search,
   Newspaper,
 } from "lucide-react";
+
 import { formatCurrency } from "@/core/common/formatting";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/constants";
