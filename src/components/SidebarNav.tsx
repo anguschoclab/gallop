@@ -51,102 +51,31 @@ const navSections = [
     items: [
       { to: "/", label: "Dashboard", icon: Home, exact: true },
       { to: "/inbox", label: "Inbox", icon: Bell, exact: false },
-      { to: "/bookmarks", label: "Bookmarks", icon: Bookmark, exact: false },
+      { to: "/briefing", label: "Briefing", icon: Newspaper, exact: false },
       { to: "/analytics", label: "Analytics", icon: BarChart3, exact: false },
       { to: "/financial-report", label: "Finances", icon: DollarSign, exact: false },
-      { to: "/facilities", label: "Facilities", icon: Building2, exact: false },
-      { to: "/briefing", label: "Briefing", icon: Newspaper, exact: false },
+      { to: "/bookmarks", label: "Bookmarks", icon: Bookmark, exact: false },
     ],
   },
   {
     label: "My Stable",
     items: [
       { to: "/stable", label: "Stables", icon: Trophy, exact: false },
-      { to: "/horse-gallery", label: "Horse Gallery", icon: LayoutGrid, exact: false },
+      { to: "/horse-gallery", label: "Horses", icon: LayoutGrid, exact: false },
+      { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
       { to: "/staff", label: "Staff", icon: Users, exact: false },
       { to: "/jockeys", label: "Jockeys", icon: User, exact: false },
-      {
-        to: "/breeding",
-        label: "Breeding",
-        icon: Heart,
-        exact: false,
-        subItems: [
-          { to: "/breeding", label: "Mating", icon: Heart, exact: true, search: { tab: "shed" } },
-          {
-            to: "/breeding",
-            label: "Broodmares",
-            icon: Baby,
-            exact: false,
-            search: { tab: "broodmares" },
-          },
-          {
-            to: "/breeding",
-            label: "Stallions",
-            icon: Users,
-            exact: false,
-            search: { tab: "stallions" },
-          },
-          {
-            to: "/breeding",
-            label: "Sire Watch",
-            icon: BarChart2,
-            exact: false,
-            search: { tab: "sire-watch" },
-          },
-          {
-            to: "/breeding",
-            label: "Leaderboards",
-            icon: Trophy,
-            exact: false,
-            search: { tab: "sire-leaderboards" },
-          },
-        ],
-      },
-      { to: "/honors", label: "Honors", icon: Trophy, exact: false },
+      { to: "/facilities", label: "Facilities", icon: Building2, exact: false },
+      { to: "/honors", label: "Honors", icon: Award, exact: false },
     ],
   },
   {
     label: "The World",
     items: [
-      {
-        to: "/racing",
-        label: "Racing",
-        icon: Calendar,
-        exact: false,
-        subItems: [
-          {
-            to: "/racing",
-            label: "Calendar",
-            icon: Calendar,
-            exact: false,
-            search: { tab: "calendar" },
-          },
-          {
-            to: "/racing",
-            label: "Races",
-            icon: LayoutGrid,
-            exact: false,
-            search: { tab: "races" },
-          },
-          {
-            to: "/racing",
-            label: "Browser",
-            icon: Search,
-            exact: false,
-            search: { tab: "browser" },
-          },
-          {
-            to: "/racing",
-            label: "Scheduler",
-            icon: Clock,
-            exact: false,
-            search: { tab: "scheduler" },
-          },
-        ],
-      },
-      { to: "/market", label: "Horse Market", icon: Store, exact: false },
+      { to: "/racing", label: "Racing", icon: Calendar, exact: false },
+      { to: "/market", label: "Market", icon: Store, exact: false },
       { to: "/auction", label: "Auctions", icon: Gavel, exact: false },
-      { to: "/npc-stables", label: "NPC Stables", icon: Map, exact: false },
+      { to: "/npc-stables", label: "Stables", icon: Map, exact: false },
     ],
   },
   {
@@ -154,6 +83,7 @@ const navSections = [
     items: [{ to: "/settings", label: "Settings", icon: Settings, exact: false }],
   },
 ] as const;
+
 
 interface SidebarNavProps {
   day: number;
