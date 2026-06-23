@@ -27,9 +27,23 @@ interface NavSectionProps {
   defaultCollapsed?: boolean;
 }
 
+const STORAGE_PREFIX = "gallop_sidebar_section:";
+
 function isItemActive(pathname: string, to: string, exact?: boolean) {
   if (exact || to === "/") return pathname === to;
   return pathname === to || pathname.startsWith(to + "/");
+}
+
+function readStoredOpen(label: string): boolean | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const v = window.localStorage.getItem(STORAGE_PREFIX + label);
+    if (v === "1") return true;
+    if (v === "0") return false;
+  } catch {
+    /* ignore */
+  }
+  return null;
 }
 
 export function NavSection({ label, items, unreadCount, defaultCollapsed }: NavSectionProps) {
@@ -40,19 +54,38 @@ export function NavSection({ label, items, unreadCount, defaultCollapsed }: NavS
       item.subItems?.some((s) => isItemActive(pathname, s.to, s.exact)),
   );
 
-  const [open, setOpen] = useState(containsActive || !defaultCollapsed);
+  const [open, setOpen] = useState<boolean>(() => {
+    const stored = readStoredOpen(label);
+    if (stored !== null) return stored;
+    return containsActive || !defaultCollapsed;
+  });
 
   // Auto-open when active route lands inside this section
   useEffect(() => {
     if (containsActive) setOpen(true);
   }, [containsActive]);
 
+  // Persist open state
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(STORAGE_PREFIX + label, open ? "1" : "0");
+    } catch {
+      /* ignore */
+    }
+  }, [label, open]);
+
+  const focusRing =
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1 focus-visible:ring-offset-t950";
+
   return (
     <div>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between mb-2 group"
+        className={cn(
+          "w-full flex items-center justify-between mb-2 group rounded-md px-1 py-0.5 transition-colors hover:bg-cream/5",
+          focusRing,
+        )}
         aria-expanded={open}
       >
         <span
@@ -65,7 +98,8 @@ export function NavSection({ label, items, unreadCount, defaultCollapsed }: NavS
         </span>
         <ChevronDown
           className={cn(
-            "h-3 w-3 text-cream-muted transition-transform duration-200",
+            "h-3 w-3 transition-transform duration-200",
+            containsActive ? "text-gold" : "text-cream-muted",
             open ? "rotate-0" : "-rotate-90",
           )}
         />
@@ -81,15 +115,21 @@ export function NavSection({ label, items, unreadCount, defaultCollapsed }: NavS
                   search={item.search}
                   className={cn(
                     "relative flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors group",
+                    focusRing,
                     active
-                      ? "bg-gold/10 text-gold font-medium"
+                      ? "bg-gold/15 text-gold font-medium shadow-[inset_0_0_0_1px_rgba(212,175,55,0.25)]"
                       : "text-cream-muted hover:text-cream hover:bg-cream/5",
                   )}
                 >
                   {active && (
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[2px] rounded-full bg-gold" />
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-gold" />
                   )}
-                  <item.icon className={cn("h-4 w-4", active && "text-gold")} />
+                  <item.icon
+                    className={cn(
+                      "h-4 w-4 transition-colors",
+                      active ? "text-gold" : "text-cream-muted group-hover:text-cream",
+                    )}
+                  />
                   <span className="flex-1">{item.label}</span>
                   {item.label === "Inbox" && unreadCount > 0 && (
                     <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">
@@ -108,12 +148,15 @@ export function NavSection({ label, items, unreadCount, defaultCollapsed }: NavS
                           search={sub.search}
                           className={cn(
                             "flex items-center gap-2 rounded px-2 py-1 text-xs transition-colors",
+                            focusRing,
                             subActive
                               ? "text-gold font-medium bg-gold/10"
-                              : "text-cream-muted/70 hover:text-cream",
+                              : "text-cream-muted/70 hover:text-cream hover:bg-cream/5",
                           )}
                         >
-                          <sub.icon className="h-3 w-3" />
+                          <sub.icon
+                            className={cn("h-3 w-3", subActive && "text-gold")}
+                          />
                           <span>{sub.label}</span>
                         </Link>
                       );
