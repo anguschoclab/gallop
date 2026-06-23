@@ -27,3 +27,7 @@
 
 **Learning:** When searching for an item within an array in a render loop with multiple conditions (like `fromStableId === undefined && status === 'pending'`), using `array.find()` inside `.map()` is O(N^2).
 **Action:** Instead of just `new Map(arr.map(x => [x.id, x]))`, you can iterate the array once inside `useMemo` and conditionally `map.set()` the matched items by their target key (e.g., `horseId`). This allows O(1) conditional lookup inside the render loop without modifying global state or storing unneeded entries in the map.
+
+## 2025-03-09 - [Optimizing O(N) chained array lookups in report generation]
+**Learning:** Found an inefficient nested operation in `jockeyReport.ts` generating `ranksByHorse` that was doing `splits.map(s => s.entries.find(...)).filter(...)`. This meant looping over all splits to map them to an entry, then doing a `.find()` iteration over entries, and then looping over the mapped array to `.filter()` out undefineds. This degraded generation speed via O(3 * M * N) traversal.
+**Action:** When filtering or mapping data where nested `find` or multiple iterations occur, replace chained functional map/filter/find with a single traditional `for` loop with an early `break` for optimal execution.

@@ -61,9 +61,19 @@ function gradeFromScore(score: number): JockeyReportGrade {
 }
 
 function ranksByHorse(splits: SectionalSplit[], horseId: string): number[] {
-  return splits
-    .map((s) => s.entries.find((e) => e.horseId === horseId)?.rank)
-    .filter((v): v is number => typeof v === "number");
+  // Pre-calculate rank efficiently with a single O(N*M) pass using a standard for loop
+  // instead of chaining O(N) .map(), O(M) .find(), and O(N) .filter().
+  const ranks: number[] = [];
+  for (let i = 0; i < splits.length; i++) {
+    const entries = splits[i].entries;
+    for (let j = 0; j < entries.length; j++) {
+      if (entries[j].horseId === horseId) {
+        ranks.push(entries[j].rank);
+        break; // Found the horse in this split, move to the next split
+      }
+    }
+  }
+  return ranks;
 }
 
 function avg(xs: number[]): number {
