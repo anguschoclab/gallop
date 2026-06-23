@@ -127,6 +127,11 @@ export function createCoreSlice(
       update.horseMap = new Map(finalState.horses.map((h: Horse) => [h.id, h]));
     }
 
+    // Sync raceMap if races changed
+    if (finalState.races) {
+      update.raceMap = new Map(finalState.races.map((r: Race) => [r.id, r]));
+    }
+
     // Explicitly remove keys that shouldn't be in the store (e.g. worker-only metadata)
     delete update.lastFrameTime;
     delete update.isAdvancing;
