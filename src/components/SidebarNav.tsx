@@ -120,13 +120,14 @@ export function SidebarNav({
           {gameCalendarDate(day)}
         </p>
       </div>
-      <div className="p-3 border-t border-gold-muted space-y-4">
-        {navSections.map((section) => (
+      <div className="p-3 border-t border-gold-muted space-y-3 flex-1 overflow-y-auto">
+        {navSections.map((section, idx) => (
           <NavSection
             key={section.label}
             label={section.label}
             items={section.items as any}
             unreadCount={unreadCount}
+            defaultCollapsed={idx > 0}
           />
         ))}
       </div>
