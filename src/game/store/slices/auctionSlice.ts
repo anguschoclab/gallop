@@ -211,6 +211,10 @@ export function createAuctionSlice(
         }
       }
 
+      // ⚡ Bolt Optimization: Replaced O(N*M) nested array loop with O(N) hash map lookup.
+      // 📊 Expected Impact: O(1) lookup reduces time complexity for resolving auction sales with large numbers of lots.
+      const finalLotsMap = new Map(finalLots.map((fl) => [fl.id, fl]));
+
       set({
         cash: newCash,
         npcStables: newNpcStables,
@@ -222,7 +226,7 @@ export function createAuctionSlice(
                 ...a,
                 resolved: true,
                 lots: a.lots.map((l: AuctionLot) => {
-                  const finalLot = finalLots.find((fl: AuctionLot) => fl.id === l.id);
+                  const finalLot = finalLotsMap.get(l.id);
                   if (!finalLot) return l;
                   return { ...l, ...finalLot };
                 }),
