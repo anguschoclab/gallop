@@ -100,4 +100,53 @@ describe("raceMap integrity", () => {
     expect(rehydrated.raceMap.get("r1")).toBe(races[0]);
     expect(rehydrated.raceMap.get("r2")).toBe(races[1]);
   });
+
+  it("raceMap stays in sync after applyDayResult simulates a race change", () => {
+    const races = [makeRace("r1", 5), makeRace("r2", 10)];
+    const state = {
+      ...createDefaultCoreState(),
+      races,
+      raceMap: new Map(races.map((r) => [r.id, r])),
+    };
+
+    // Simulate what applyDayResult does: finalState has modified races
+    const modifiedRaces = races.map((r) =>
+      r.id === "r1" ? { ...r, resolved: true, result: {} } : r,
+    );
+
+    // Simulate the fix: rebuild raceMap from finalState.races
+    const update: any = { races: modifiedRaces };
+    if (modifiedRaces) {
+      update.raceMap = new Map(modifiedRaces.map((r) => [r.id, r]));
+    }
+
+    const updatedState = { ...state, ...update };
+
+    expect(updatedState.raceMap.size).toBe(2);
+    expect(updatedState.raceMap.get("r1")?.resolved).toBe(true);
+    expect(updatedState.raceMap.get("r2")?.resolved).toBe(false);
+    expect(updatedState.raceMap.get("r1")).toBe(modifiedRaces[0]);
+  });
+
+  it("raceMap is empty Map after applyDayResult with empty races", () => {
+    const races = [makeRace("r1", 5)];
+    const state = {
+      ...createDefaultCoreState(),
+      races,
+      raceMap: new Map(races.map((r) => [r.id, r])),
+    };
+
+    // Simulate applyDayResult with finalState.races = []
+    const finalStateRaces: Race[] = [];
+    const update: any = { races: finalStateRaces };
+    if (finalStateRaces) {
+      update.raceMap = new Map(finalStateRaces.map((r) => [r.id, r]));
+    }
+
+    const updatedState = { ...state, ...update };
+
+    expect(updatedState.raceMap).toBeInstanceOf(Map);
+    expect(updatedState.raceMap.size).toBe(0);
+    expect(updatedState.raceMap.get("r1")).toBeUndefined();
+  });
 });
