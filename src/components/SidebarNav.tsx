@@ -1,10 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import {
   Dialog,
   DialogContent,
@@ -80,7 +75,6 @@ const navSections = [
   },
 ] as const;
 
-
 interface SidebarNavProps {
   day: number;
   cash: number;
@@ -139,42 +133,73 @@ export function SidebarNav({
           </p>
           <p className="text-[10px] text-cream-muted/60 mt-1">{horseCount} horses</p>
           <div className="grid grid-cols-4 gap-1">
-            <Button
-              onClick={onAdvanceDay}
-              className="col-span-1"
-              size="sm"
-              variant="outline"
-              aria-label="Advance 1 day"
-            >
-              <Plus className="h-3 w-3" />
-            </Button>
-            <Button
-              onClick={onAdvanceWeek}
-              className="col-span-1"
-              size="sm"
-              variant="outline"
-              aria-label="Advance 1 week"
-            >
-              7d
-            </Button>
-            <Button
-              onClick={onAdvanceMonth}
-              className="col-span-1"
-              size="sm"
-              variant="outline"
-              aria-label="Advance 1 month"
-            >
-              30d
-            </Button>
-            <Button
-              onClick={onOpenAutoSim}
-              className="col-span-1"
-              size="sm"
-              variant="outline"
-              aria-label="AutoSim settings"
-            >
-              <Settings className="h-3 w-3" />
-            </Button>
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={onAdvanceDay}
+                    className="col-span-1"
+                    size="sm"
+                    variant="outline"
+                    aria-label="Advance 1 day"
+                  >
+                    <Plus className="h-3 w-3" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Advance 1 day</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={onAdvanceWeek}
+                    className="col-span-1"
+                    size="sm"
+                    variant="outline"
+                    aria-label="Advance 1 week"
+                  >
+                    7d
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Advance 1 week</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={onAdvanceMonth}
+                    className="col-span-1"
+                    size="sm"
+                    variant="outline"
+                    aria-label="Advance 1 month"
+                  >
+                    30d
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Advance 1 month</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={onOpenAutoSim}
+                    className="col-span-1"
+                    size="sm"
+                    variant="outline"
+                    aria-label="AutoSim settings"
+                  >
+                    <Settings className="h-3 w-3" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>AutoSim settings</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           <div className="grid grid-cols-2 gap-1 mt-1">
             <TooltipProvider delayDuration={300}>
