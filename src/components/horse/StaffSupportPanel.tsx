@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useGame } from "@/game/store";
 
 /**
@@ -16,13 +17,26 @@ interface StaffSupportPanelProps {
  */
 export function StaffSupportPanel({ stableId }: StaffSupportPanelProps) {
   const hiredStaff = useGame((s) => s.hiredStaff);
-  const staffForStable = hiredStaff?.filter((s) => s.stableId === stableId) ?? [];
+  // ⚡ Bolt Optimization:
+  // Calculate filter and hash map in a single pass to avoid unstable array reference on every render
+  // Impact: Reduces rendering complexity from O(N_filter + 5*N_find) to O(N_filter) with stable memoization
+  const staffRoleMap = useMemo(() => {
+    const map = new Map<string, any>();
+    if (!hiredStaff) return map;
+    for (let i = 0; i < hiredStaff.length; i++) {
+      const s = hiredStaff[i];
+      if (s.stableId === stableId) {
+        map.set(s.role, s);
+      }
+    }
+    return map;
+  }, [hiredStaff, stableId]);
 
-  const nutritionist = staffForStable.find((s) => s.role === "nutritionist");
-  const vet = staffForStable.find((s) => s.role === "veterinarian");
-  const trainer = staffForStable.find((s) => s.role === "trainer");
-  const farrier = staffForStable.find((s) => s.role === "farrier");
-  const groom = staffForStable.find((s) => s.role === "groom");
+  const nutritionist = staffRoleMap.get("nutritionist");
+  const vet = staffRoleMap.get("veterinarian");
+  const trainer = staffRoleMap.get("trainer");
+  const farrier = staffRoleMap.get("farrier");
+  const groom = staffRoleMap.get("groom");
 
   const bonuses = [
     nutritionist && {
