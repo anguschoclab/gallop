@@ -55,7 +55,7 @@ export function JockeyRosterTabs({
                   isRetained
                   actionLabel="Release"
                   onAction={() => onRelease(j.id)}
-                  onClick={() => (window.location.href = `/jockey/${j.id}`)}
+                  onClick={() => navigate({ to: "/jockey/$jockeyId", params: { jockeyId: j.id } })}
                 />
               ))}
             </div>
