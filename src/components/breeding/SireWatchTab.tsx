@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import {
 } from "@/core/breeding/sireAnalytics";
 
 export function SireWatchTab() {
+  const navigate = useNavigate();
   const horses = useGame((s) => s.horses);
   const industryMeanEarnings = useGame((s) => s.industryMeanEarnings ?? 0);
 
@@ -132,7 +134,7 @@ export function SireWatchTab() {
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={() => (window.location.href = `/sire-watch/${analytics.stallionId}`)}
+                    onClick={() => navigate({ to: "/sire-watch/$stallionId", params: { stallionId: analytics.stallionId } })}
                   >
                     View Profile
                   </Button>

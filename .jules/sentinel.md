@@ -21,3 +21,9 @@
 **Vulnerability:** In `src/assets/horseRaceScript.js`, `setInterval()` was called with a string argument (`"TimerCallback()"`), acting as an implied eval.
 **Learning:** Passing a string to `setTimeout` or `setInterval` causes the JS engine to evaluate the string as code. This is an unsafe practice equivalent to `eval()`, posing a security risk (XSS) if any part of the string ever incorporates user input, and it violates modern Content Security Policies (CSP) like `unsafe-eval`.
 **Prevention:** Never pass strings to `setInterval` or `setTimeout`. Always pass direct function references or anonymous functions instead.
+
+## 2025-05-18 - Direct Assignment of window.location.href
+
+**Vulnerability:** UI components (`AppShell`, `SireWatchTab`, `JockeyRosterTabs`) were directly assigning strings to `window.location.href` to trigger client-side navigation.
+**Learning:** Directly assigning to `window.location.href` bypasses the Single Page Application (SPA) router (causing full page reloads) and can lead to DOM Cross-Site Scripting (XSS) if the assigned URL is ever constructed using unsanitized user input. Although these specific instances were relatively safe as they relied on static strings or internal IDs, it establishes a dangerous pattern.
+**Prevention:** Use the routing library's tools (e.g., `@tanstack/react-router`'s `useNavigate` hook) for all client-side navigation. This ensures smooth SPA transitions and safely handles URL construction, mitigating potential DOM XSS vectors associated with manual URL manipulation.

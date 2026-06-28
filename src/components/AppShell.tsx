@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from "@tanstack/react-router";
+import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import { useDay, useCash, useHorses } from "@/hooks/game/useCoreState";
 import { useAwards } from "@/hooks/game/useSystemsState";
@@ -23,6 +23,7 @@ export function AppShell() {
   const skipToNext = useSkipToNext();
 
   const location = useLocation();
+  const navigate = useNavigate();
   const [autoSimOpen, setAutoSimOpen] = useState(false);
 
   const inbox = useGame((s: StoreType) => s.inbox);
@@ -59,7 +60,7 @@ export function AppShell() {
           onSkipToAuction={() => skipToNext("auction")}
           onSkipToRace={() => skipToNext("race")}
           onStartNewGame={() => {
-            window.location.href = "/new-game";
+            navigate({ to: "/new-game" });
           }}
         />
       )}
