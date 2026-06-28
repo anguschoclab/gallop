@@ -26,3 +26,6 @@
 ## 2024-06-13 - Custom Interactive Element Accessibility
 **Learning:** Found multiple instances where raw `<button>` elements were used for toggles, tabs, and selectors (e.g. in TacticsAnalyzer, RosterFilterBar) without explicit `type="button"` or state indicators like `aria-pressed`. This can cause unintentional form submissions if embedded and breaks screen reader understanding of selection states.
 **Action:** When creating custom `<button>` elements that act as selectors or toggles rather than standard actions, always ensure they have `type="button"` and an `aria-pressed={isActive}` property to properly communicate state.
+## 2024-06-28 - Accessible Tooltips for Icon Buttons
+**Learning:** Native `title` attributes on icon-only buttons (like bookmarks) often suffer from accessibility issues—they don't always appear consistently across browsers or screen readers, and they can't be easily styled or controlled via keyboard focus.
+**Action:** Replace native `title` attributes on icon-only buttons with the design system's `@/components/ui/tooltip` components (`TooltipProvider`, `Tooltip`, `TooltipTrigger`, `TooltipContent`) to ensure consistent, accessible, and styleable tooltips that trigger on both hover and keyboard focus.
