@@ -8,8 +8,13 @@ import { LotDetailPanel } from "@/components/auction/LotDetailPanel";
 import { BiddingPanel } from "@/components/auction/BiddingPanel";
 import { ConsignmentWithdrawal } from "@/components/auction/ConsignmentWithdrawal";
 import { ResolvedSaleSummary } from "@/components/auction/ResolvedSaleSummary";
+import {
+  AuctionLoadingState,
+  AuctionErrorState,
+} from "@/components/auction/AuctionStates";
 import { useAuctionSaleFilters } from "@/hooks/auction/useAuctionSaleFilters";
 import { useAuctionSaleData } from "@/hooks/auction/useAuctionSaleData";
+import { useStoreHydration } from "@/hooks/shared/useStoreHydration";
 
 export const Route = createFileRoute("/auction/$saleId")({
   validateSearch: auctionBrowseSearchSchema,
@@ -18,6 +23,7 @@ export const Route = createFileRoute("/auction/$saleId")({
 
 function AuctionSalePage() {
   const { saleId } = Route.useParams();
+  const isHydrated = useStoreHydration();
   const {
     filters,
     searchDraft,
@@ -48,18 +54,31 @@ function AuctionSalePage() {
     lotIndex,
     setLotIndex,
     message,
+    error,
+    dismissError,
+    retryLastBid,
+    canRetry,
     handleBid,
     handleMaxBid,
     handleWithdraw,
     handleBuyNow,
   } = useAuctionSaleData(saleId, filters);
 
+  // Loading: store still rehydrating from persisted storage
+  if (!isHydrated) {
+    return <AuctionLoadingState />;
+  }
+
+  // Not found: hydration complete and sale truly missing
   if (!sale) {
     return (
       <div className="p-12 text-center space-y-4">
         <h1 className="text-4xl font-black font-[family-name:var(--font-display)] text-cream">
           Sale not found
         </h1>
+        <p className="text-cream/50 text-sm">
+          The requested sale could not be located in the registry.
+        </p>
         <button
           onClick={() => navigate({ to: "/auction" })}
           className="text-gold uppercase font-mono text-xs tracking-widest hover:underline"
@@ -69,6 +88,7 @@ function AuctionSalePage() {
       </div>
     );
   }
+
 
   return (
     <div className="space-y-6 pb-20 animate-fade-in">
