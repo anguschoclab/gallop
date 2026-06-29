@@ -101,6 +101,16 @@ function AuctionSalePage() {
         onBack={() => navigate({ to: "/auction" })}
       />
 
+      {error && (
+        <AuctionErrorState
+          message={error}
+          onDismiss={dismissError}
+          onRetry={canRetry ? retryLastBid : undefined}
+        />
+      )}
+
+
+
       {isSaleDay && !isResolved ? (
         <AuctionTheater saleId={saleId} />
       ) : activeLots.length === 0 ? (
