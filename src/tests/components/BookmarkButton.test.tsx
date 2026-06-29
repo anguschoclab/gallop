@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { resetCache } from "@/hooks/shared/useBookmarks";
 
@@ -62,22 +63,30 @@ describe("BookmarkButton", () => {
     expect(btn.classList.contains("my-custom-class")).toBe(true);
   });
 
-  it("renders tooltip content text 'Add bookmark' when inactive", () => {
-    const { container } = render(
-      <BookmarkButton type="horse" id="h1" label="Thunder" />,
-    );
-    const tooltipContent = container.ownerDocument.body.querySelector("[role='tooltip']");
-    expect(tooltipContent).toBeTruthy();
+  it("renders tooltip content text 'Add bookmark' when inactive", async () => {
+    const user = userEvent.setup();
+    render(<BookmarkButton type="horse" id="h1" label="Thunder" />);
+    const btn = screen.getByRole("button");
+    await user.hover(btn);
+    await waitFor(() => {
+      const tooltipContent = document.body.querySelector("[role='tooltip']");
+      expect(tooltipContent).toBeTruthy();
+    });
+    const tooltipContent = document.body.querySelector("[role='tooltip']");
     expect(tooltipContent?.textContent).toContain("Add bookmark");
   });
 
-  it("renders tooltip content text 'Remove bookmark' after toggling active", () => {
-    const { container } = render(
-      <BookmarkButton type="horse" id="h1" label="Thunder" />,
-    );
+  it("renders tooltip content text 'Remove bookmark' after toggling active", async () => {
+    const user = userEvent.setup();
+    render(<BookmarkButton type="horse" id="h1" label="Thunder" />);
     const btn = screen.getByRole("button");
     fireEvent.click(btn);
-    const tooltipContent = container.ownerDocument.body.querySelector("[role='tooltip']");
+    await user.hover(btn);
+    await waitFor(() => {
+      const tooltipContent = document.body.querySelector("[role='tooltip']");
+      expect(tooltipContent).toBeTruthy();
+    });
+    const tooltipContent = document.body.querySelector("[role='tooltip']");
     expect(tooltipContent?.textContent).toContain("Remove bookmark");
   });
 
