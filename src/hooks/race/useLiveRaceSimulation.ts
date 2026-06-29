@@ -6,6 +6,76 @@ import type { NarrativeGenerator } from "@/services/narrative/narrativeService";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 
 /**
+ * Build a rank map from the current runner field, skipping already-finished runners.
+ *
+ * @param runners - All runners in the race (order does not matter)
+ * @returns rankMap keyed by horseId → 0-based rank among still-running horses,
+ *          and aliveRank = total count of still-running horses
+ */
+export function buildRankMap(
+  runners: Runner[],
+): { rankMap: Map<string, number>; aliveRank: number } {
+  const sorted = [...runners].sort((a, b) => b.position - a.position);
+  const rankMap = new Map<string, number>();
+  let aliveRank = 0;
+  for (const o of sorted) {
+    if (o.finishTime === null) {
+      rankMap.set(o.horseId, aliveRank);
+      aliveRank++;
+    }
+  }
+  return { rankMap, aliveRank };
+}
+
+/**
+ * Record a split crossing for a runner if it just passed its next marker.
+ * Uses linear interpolation to compute the exact crossing time.
+ *
+ * @param r - The runner whose position was just updated
+ * @param posBefore - The runner's position before the step
+ * @param splitMarkers - Ordered array of split positions in metres
+ * @param simTimeAfterStep - Current sim time after the step (i.e. += FIXED_DT already applied)
+ * @param FIXED_DT - The fixed time-step size in seconds
+ * @param crossings - Mutable array of already-recorded crossing times for this runner
+ */
+export function updateSplitCrossings(
+  r: Runner,
+  posBefore: number,
+  splitMarkers: number[],
+  simTimeAfterStep: number,
+  FIXED_DT: number,
+  crossings: number[],
+): void {
+  const nextMarkerIdx = crossings.length;
+  if (nextMarkerIdx >= splitMarkers.length) return;
+  const marker = splitMarkers[nextMarkerIdx];
+  if (r.position >= marker && posBefore < marker) {
+    const tBefore = simTimeAfterStep - FIXED_DT;
+    const frac = (marker - posBefore) / (r.position - posBefore);
+    crossings.push(tBefore + frac * FIXED_DT);
+  }
+}
+
+/**
+ * Append a finish-order entry for a runner if it has just crossed the line.
+ * Does nothing when finishTime is still null.
+ *
+ * @param r - The runner to check
+ * @param finishOrder - Mutable finish-order accumulator
+ */
+export function recordFinish(
+  r: Runner,
+  finishOrder: { horseId: string; position: number; time: number }[],
+): void {
+  if (r.finishTime === null) return;
+  finishOrder.push({
+    horseId: r.horseId,
+    position: finishOrder.length + 1,
+    time: r.finishTime,
+  });
+}
+
+/**
  * Hook to manage the complex race simulation loop using requestAnimationFrame.
  *
  * @param options - Simulation options
@@ -83,15 +153,7 @@ export function useLiveRaceSimulation({
 
       const pace = computePaceContext(runners, race.distance);
       const sortedField = [...runners].sort((a, b) => b.position - a.position);
-
-      const rankMap = new Map<string, number>();
-      let aliveRank = 0;
-      for (const o of sortedField) {
-        if (o.finishTime === null) {
-          rankMap.set(o.horseId, aliveRank);
-          aliveRank++;
-        }
-      }
+      const { rankMap, aliveRank } = buildRankMap(runners);
 
       if (!silent && narrativeRef.current) {
         const newCommentary = narrativeRef.current.update(sortedField, simTimeRef.current);
@@ -101,44 +163,37 @@ export function useLiveRaceSimulation({
       }
 
       for (const r of runners) {
-        if (r.finishTime === null) {
-          const posBefore = r.position;
-          stepRunner(
-            r,
-            FIXED_DT,
-            simTimeRef.current,
-            race.distance,
-            rngRef.current!,
-            sortedField,
-            pace,
-            course,
-            rankMap.get(r.horseId),
-            aliveRank,
-            windKph,
-            windDirectionDeg,
-          );
-          if (!splitCrossingsRef.current.has(r.horseId)) {
-            splitCrossingsRef.current.set(r.horseId, []);
-          }
-          const crossings = splitCrossingsRef.current.get(r.horseId)!;
-          const nextMarkerIdx = crossings.length;
-          if (nextMarkerIdx < splitMarkers.length) {
-            const marker = splitMarkers[nextMarkerIdx];
-            if (r.position >= marker && posBefore < marker) {
-              const tBefore = simTimeRef.current - FIXED_DT;
-              const frac = (marker - posBefore) / (r.position - posBefore);
-              crossings.push(tBefore + frac * FIXED_DT);
-            }
-          }
-          if (r.finishTime !== null) {
-            finishOrderRef.current.push({
-              horseId: r.horseId,
-              position: finishOrderRef.current.length + 1,
-              time: r.finishTime,
-            });
-          } else {
-            stillRunning = true;
-          }
+        if (r.finishTime !== null) continue;
+        const posBefore = r.position;
+        stepRunner(
+          r,
+          FIXED_DT,
+          simTimeRef.current,
+          race.distance,
+          rngRef.current!,
+          sortedField,
+          pace,
+          course,
+          rankMap.get(r.horseId),
+          aliveRank,
+          windKph,
+          windDirectionDeg,
+        );
+        if (!splitCrossingsRef.current.has(r.horseId)) {
+          splitCrossingsRef.current.set(r.horseId, []);
+        }
+        updateSplitCrossings(
+          r,
+          posBefore,
+          splitMarkers,
+          simTimeRef.current,
+          FIXED_DT,
+          splitCrossingsRef.current.get(r.horseId)!,
+        );
+        if (r.finishTime !== null) {
+          recordFinish(r, finishOrderRef.current);
+        } else {
+          stillRunning = true;
         }
       }
       return stillRunning;

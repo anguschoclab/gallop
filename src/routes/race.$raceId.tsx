@@ -1,24 +1,13 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
-import { getSkyBackground } from "@/components/race/raceVisualHelpers";
-import { BroadcastCommentary } from "@/components/race/BroadcastCommentary";
-import { RaceVisualizer } from "@/components/race/RaceVisualizer";
 import { useLiveRaceSimulation } from "@/hooks/race/useLiveRaceSimulation";
-import { ResultOverlay } from "@/components/race/ResultOverlay";
-import { RaceControlBar } from "@/components/race/RaceControlBar";
-import { Track } from "@/components/race/Track";
-import { Leaderboard } from "@/components/race/Leaderboard";
-import { RaceFieldDialog } from "@/components/race/RaceFieldDialog";
-import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
-import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { RacePreShow } from "@/components/race/RacePreShow";
-import { PostRaceAnalysis } from "@/components/race/PostRaceAnalysis";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown } from "lucide-react";
+import { RaceBroadcast } from "@/components/race/RaceBroadcast";
 import { useRacePageData } from "@/hooks/race/useRacePageData";
 import { useRaceUIState } from "@/hooks/race/useRaceUIState";
 import { useRacePhase, type RacePhase } from "@/hooks/race/useRacePhase";
+import { useRaceProgress } from "@/hooks/race/useRaceProgress";
 import { getCourseForRace } from "@/data/tracks";
 
 type DisplayPhase = "preshow" | "broadcast";
@@ -115,37 +104,13 @@ export function LiveRace() {
 
   const course = race ? getCourseForRace(race) : undefined;
 
-  // Three-act broadcast: preshow → live → review. Persisted in the URL via
-  // ?phase=… so refresh / share preserves the exact view.
   const { phase, setPhase } = useRacePhase(!!race?.resolved);
   const { displayedPhase, isExiting } = usePhaseTransition(phase);
 
-  // Per-race expand/collapse memory for the post-race analysis reveal.
-  const analysisStorageKey = `race-analysis-open:${raceId}`;
-  const [analysisOpen, setAnalysisOpen] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      return window.localStorage.getItem(analysisStorageKey) === "1";
-    } catch {
-      return false;
-    }
-  });
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      window.localStorage.setItem(analysisStorageKey, analysisOpen ? "1" : "0");
-    } catch {
-      /* ignore quota errors */
-    }
-  }, [analysisOpen, analysisStorageKey]);
-
-  const analysisRef = useRef<HTMLDivElement | null>(null);
-
-  // Persist live-sim progress per race so refresh in the live phase resumes
-  // from the same timestamp (and remembers paused/speed). Session storage so
-  // the resume window is the current browser tab.
+  // Read saved sim progress once (stable ref, same as the original IIFE pattern).
+  // This must happen before useLiveRaceSimulation so resumeAtSimTime is available.
   const progressStorageKey = `race-sim-progress:${raceId}`;
-  const initialProgress = useRef<{ simTime: number; paused: boolean; speed: number }>(
+  const savedProgress = useRef<{ simTime: number; paused: boolean; speed: number }>(
     (() => {
       if (typeof window === "undefined") return { simTime: 0, paused: false, speed: 1 };
       try {
@@ -175,50 +140,36 @@ export function LiveRace() {
       windKph: raceWeather?.windKph,
       windDirectionDeg: raceWeather?.windDirectionDeg,
       running: phase === "live",
-      resumeAtSimTime: phase === "live" ? initialProgress.simTime : 0,
-      initialPaused: initialProgress.paused,
-      initialSpeed: initialProgress.speed,
+      resumeAtSimTime: phase === "live" ? savedProgress.simTime : 0,
+      initialPaused: savedProgress.paused,
+      initialSpeed: savedProgress.speed,
     });
 
-  // Persist progress while the live phase is active.
-  useEffect(() => {
-    if (phase !== "live" || finished || typeof window === "undefined") return;
-    try {
-      window.sessionStorage.setItem(progressStorageKey, JSON.stringify({ simTime, paused, speed }));
-    } catch {
-      /* ignore quota */
-    }
-  }, [tick, paused, speed, phase, finished, simTime, progressStorageKey]);
+  const { analysisOpen, setAnalysisOpen, analysisRef } = useRaceProgress({
+    raceId,
+    phase,
+    finished,
+    simTime,
+    paused,
+    speed,
+    tick,
+  });
 
-  // Clear saved progress once the race ends (or when leaving live for review).
-  useEffect(() => {
-    if (!finished || typeof window === "undefined") return;
-    try {
-      window.sessionStorage.removeItem(progressStorageKey);
-    } catch {
-      /* ignore */
-    }
-  }, [finished, progressStorageKey]);
-
-  // Advance to review when the run finishes.
   useEffect(() => {
     if (finished && phase !== "review") setPhase("review");
   }, [finished, phase, setPhase]);
 
-  // After the finish overlay appears, scroll the analysis section into view
-  // and move focus to its toggle so keyboard users land there next.
   useEffect(() => {
     if (phase !== "review") return;
     const el = analysisRef.current;
     if (!el) return;
     const trigger = el.querySelector<HTMLButtonElement>('[data-analysis-trigger="true"]');
-    // Defer until after the ResultOverlay paints.
     const id = window.setTimeout(() => {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
       trigger?.focus({ preventScroll: true });
     }, 400);
     return () => window.clearTimeout(id);
-  }, [phase]);
+  }, [phase, analysisRef]);
 
   const {
     announcement,
@@ -243,7 +194,6 @@ export function LiveRace() {
   const allFinished = runners.every((r) => r.finishTime !== null);
   const anyFinished = runners.some((r) => r.finishTime !== null);
 
-  // Keyboard controls effect
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === "Space" && !finished) {
@@ -262,9 +212,11 @@ export function LiveRace() {
 
   if (!race) throw notFound();
 
-  const hasReplay = race.resolved && race.snapshots && race.snapshots.length > 0;
-
-  const skyBg = getSkyBackground(race.weather);
+  const navigateToRaces = () =>
+    navigate({
+      to: "/races",
+      search: { grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" },
+    });
 
   return (
     <div className="broadcast min-h-screen text-white bg-broadcast-track relative">
@@ -291,167 +243,46 @@ export function LiveRace() {
         isExiting={isExiting && displayedPhase === "broadcast"}
         isEntering={isExiting && toDisplayPhase(phase) === "broadcast"}
       >
-        <div className="broadcast min-h-screen text-white bg-broadcast-track">
-          <div
-            className="fixed inset-0 pointer-events-none"
-            style={{
-              backgroundImage: skyBg
-                ? `${skyBg}, linear-gradient(to bottom, var(--broadcast-sky-overlay), transparent)`
-                : undefined,
-              backgroundSize: "auto 200px, 100% 100%",
-              backgroundRepeat: "repeat-x, no-repeat",
-              backgroundPosition: "top, top",
-              zIndex: 0,
-            }}
-          />
-
-          <div aria-live="polite" aria-atomic="true" className="sr-only">
-            {announcement}
-          </div>
-
-          <RaceControlBar
-            race={race}
-            runners={runners}
-            finished={finished}
-            paused={paused}
-            speed={speed}
-            followTarget={followTarget}
-            anyFinished={anyFinished}
-            allFinished={allFinished}
-            hideUntilAllFinished={hideUntilAllFinished}
-            raceWeather={raceWeather}
-            onNavigateBack={() =>
-              navigate({
-                to: "/races",
-                search: {
-                  grade: "all",
-                  country: "all",
-                  surface: "all",
-                  track: "all",
-                  owned: "all",
-                  q: "",
-                },
-              })
-            }
-            onTogglePause={() => setPaused((p) => !p)}
-            onSetSpeed={setSpeed}
-            onSetFollowTarget={setFollowTarget}
-            onToggleHideResults={() => setHideUntilAllFinished((v: boolean) => !v)}
-            onShowAllCards={() => setShowAllCards(true)}
-          />
-
-          <div className="absolute top-2 right-2 z-30">
-            <BookmarkButton
-              type="race"
-              id={race.id}
-              label={race.name}
-              subtitle={`${race.graded ? "Graded" : "Race"} · ${race.surface ?? ""}`.trim()}
-            />
-          </div>
-
-          <div className="relative z-10 px-4">
-            <WeatherForecastStrip trackId={race.trackId} trackCondition={race.trackCondition} />
-          </div>
-
-          <div className="relative z-10 p-4 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4">
-            <div className="space-y-4">
-              {hasReplay ? (
-                <RaceVisualizer
-                  snapshots={race.snapshots!}
-                  distance={race.distance}
-                  runners={runners.map((r) => ({
-                    horseId: r.horseId,
-                    name: r.name,
-                    silk: r.silk,
-                    owned: r.owned,
-                  }))}
-                  trackType={race.surface}
-                />
-              ) : (
-                <Track
-                  runners={runners}
-                  distance={race.distance}
-                  tick={tick}
-                  surface={race.graded?.surface}
-                  weather={race.weather}
-                  followTarget={followTarget}
-                  paused={paused}
-                  subjectHorseId={subjectHorseId}
-                />
-              )}
-              <BroadcastCommentary commentary={commentary} />
-
-              {phase === "review" && (
-                <div ref={analysisRef}>
-                  <Collapsible open={analysisOpen} onOpenChange={setAnalysisOpen}>
-                    <CollapsibleTrigger
-                      data-analysis-trigger="true"
-                      className="w-full flex items-center justify-between border border-white/10 bg-black/30 hover:bg-black/40 transition-colors px-4 py-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-broadcast-accent"
-                    >
-                      <span className="text-xs font-black uppercase tracking-widest text-cream">
-                        Post-race analysis
-                      </span>
-                      <ChevronDown
-                        className={`h-4 w-4 text-cream-muted transition-transform ${
-                          analysisOpen ? "rotate-180" : ""
-                        }`}
-                      />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="mt-3">
-                      <PostRaceAnalysis
-                        race={race}
-                        runners={runners}
-                        liveSplits={liveSplits}
-                        localHorseMap={localHorseMap}
-                        calibratedPars={calibratedPars}
-                      />
-                    </CollapsibleContent>
-                  </Collapsible>
-                </div>
-              )}
-            </div>
-            <Leaderboard
-              sorted={sorted}
-              positionRank={positionRank}
-              runnerOdds={runnerOdds}
-              filter={filter}
-              sortBy={sortBy}
-              minBeyer={minBeyer}
-              onFilterChange={setFilter}
-              onSortByChange={setSortBy}
-              onMinBeyerChange={setMinBeyer}
-            />
-          </div>
-
-          {finished && (
-            <ResultOverlay
-              race={race}
-              runners={runners}
-              hideResults={hideUntilAllFinished}
-              onClose={() =>
-                navigate({
-                  to: "/races",
-                  search: {
-                    grade: "all",
-                    country: "all",
-                    surface: "all",
-                    track: "all",
-                    owned: "all",
-                    q: "",
-                  },
-                })
-              }
-            />
-          )}
-
-          <RaceFieldDialog
-            open={showAllCards}
-            onOpenChange={setShowAllCards}
-            raceName={race.name}
-            runners={runners}
-            localHorseMap={localHorseMap}
-          />
-        </div>
+        <RaceBroadcast
+          race={race}
+          runners={runners}
+          finished={finished}
+          paused={paused}
+          speed={speed}
+          tick={tick}
+          phase={phase}
+          raceWeather={raceWeather}
+          followTarget={followTarget}
+          anyFinished={anyFinished}
+          allFinished={allFinished}
+          hideUntilAllFinished={hideUntilAllFinished}
+          commentary={commentary}
+          subjectHorseId={subjectHorseId}
+          sorted={sorted}
+          positionRank={positionRank}
+          runnerOdds={runnerOdds}
+          filter={filter}
+          sortBy={sortBy}
+          minBeyer={minBeyer}
+          onFilterChange={setFilter}
+          onSortByChange={setSortBy}
+          onMinBeyerChange={setMinBeyer}
+          onTogglePause={() => setPaused((p) => !p)}
+          onSetSpeed={setSpeed}
+          onSetFollowTarget={setFollowTarget}
+          onToggleHideResults={() => setHideUntilAllFinished((v: boolean) => !v)}
+          onShowAllCards={() => setShowAllCards(true)}
+          onNavigateBack={navigateToRaces}
+          localHorseMap={localHorseMap}
+          calibratedPars={calibratedPars}
+          liveSplits={liveSplits}
+          analysisOpen={analysisOpen}
+          setAnalysisOpen={setAnalysisOpen}
+          analysisRef={analysisRef}
+          showAllCards={showAllCards}
+          setShowAllCards={setShowAllCards}
+          announcement={announcement}
+        />
       </PhasePanel>
     </div>
   );

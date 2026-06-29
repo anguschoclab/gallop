@@ -2,7 +2,6 @@ import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
 import type { NarrativeEvent, CommentaryLine } from "./types";
-import { TEMPLATES } from "@/assets/narrative/templates";
 import { generateCommentaryLine, generateExpertInsight } from "./commentaryGenerator";
 import {
   detectLeadChange,
@@ -16,6 +15,7 @@ import {
   detectAtmosphere,
 } from "./eventDetector";
 import { NARRATIVE_THRESHOLDS } from "@/constants/narrativeThresholds";
+import { NarrativeState } from "./narrativeState";
 
 /**
  * Orchestrates real-time race commentary generation.
@@ -24,22 +24,12 @@ import { NARRATIVE_THRESHOLDS } from "@/constants/narrativeThresholds";
  * and generates human-readable commentary using templates and expert insights.
  */
 export class NarrativeGenerator {
-  private lastRanks: Map<string, number> = new Map();
-  private lastLeaderId: string | null = null;
-  private cooldowns: Map<string, number> = new Map();
-  private commentary: CommentaryLine[] = [];
+  private state: NarrativeState;
   private race: Race;
-  private lineCounter = 0;
   private horses: Horse[];
   private horsesMap: Map<string, Horse>;
-  private stables: Stable[];
   private stablesMap: Map<string, Stable>;
   private rng: Rng;
-  private hasAnnouncedStart = false;
-  private hasAnnouncedFinish = false;
-  private hasAnnouncedStretch = false;
-  private hasAnnouncedBio: Set<string> = new Set();
-  private announcedMilestones: Set<number> = new Set();
 
   /**
    * Initialize the narrative generator for a specific race.
@@ -50,10 +40,10 @@ export class NarrativeGenerator {
    * @param rng - Random number generator for variety in commentary
    */
   constructor(race: Race, horses: Horse[], stables: Stable[], rng: Rng) {
+    this.state = new NarrativeState();
     this.race = race;
     this.horses = horses;
     this.horsesMap = new Map(horses.map((h) => [h.id, h]));
-    this.stables = stables;
     this.stablesMap = new Map(stables.map((s) => [s.id, s]));
     this.rng = rng;
   }
@@ -85,12 +75,12 @@ export class NarrativeGenerator {
     this.checkDrafting(runners, runnersMap, simTime, newLines);
     this.checkLaneWatch(runners, simTime, newLines);
 
-    this.commentary.push(...newLines);
+    this.state.push(...newLines);
     return newLines;
   }
 
   private checkRaceStart(runners: Runner[], simTime: number, newLines: CommentaryLine[]) {
-    if (simTime <= 0 || this.hasAnnouncedStart) return;
+    if (simTime <= 0 || this.state.hasAnnouncedStart) return;
     newLines.push(this.createLine("START", simTime));
     if (this.race.weather || this.race.trackCondition) {
       newLines.push(this.createLine("WEATHER_COMMENT", simTime));
@@ -99,39 +89,39 @@ export class NarrativeGenerator {
     const insight = this.generateExpertInsight(spotlightRunner);
     if (insight) {
       newLines.push({
-        id: `insight-${this.lineCounter++}`,
+        id: `insight-${this.state.nextId()}`,
         text: insight,
         timestamp: simTime,
         type: "EXPERT_INSIGHT",
         horseId: spotlightRunner.horseId,
       });
     }
-    this.hasAnnouncedStart = true;
+    this.state.hasAnnouncedStart = true;
   }
 
   private checkAtmosphere(simTime: number, newLines: CommentaryLine[]) {
-    const event = detectAtmosphere(simTime, this.hasAnnouncedStart, this.hasAnnouncedFinish);
+    const event = detectAtmosphere(simTime, this.state.hasAnnouncedStart, this.state.hasAnnouncedFinish);
     if (
       event &&
       this.rng.next() < NARRATIVE_THRESHOLDS.ATMOSPHERE_PROBABILITY &&
-      this.canAnnounce("ATMOSPHERE", "global", simTime, NARRATIVE_THRESHOLDS.ATMOSPHERE_COOLDOWN)
+      this.state.canAnnounce("ATMOSPHERE", "global", simTime, NARRATIVE_THRESHOLDS.ATMOSPHERE_COOLDOWN)
     ) {
       newLines.push(this.createLine("ATMOSPHERE", simTime));
-      this.setCooldown("ATMOSPHERE", "global", simTime, NARRATIVE_THRESHOLDS.ATMOSPHERE_COOLDOWN);
+      this.state.setCooldown("ATMOSPHERE", "global", simTime, NARRATIVE_THRESHOLDS.ATMOSPHERE_COOLDOWN);
     }
   }
 
   private checkGapAnnouncement(sorted: Runner[], simTime: number, newLines: CommentaryLine[]) {
-    const event = detectGapAnnouncement(sorted, this.hasAnnouncedStart, this.hasAnnouncedFinish);
+    const event = detectGapAnnouncement(sorted, this.state.hasAnnouncedStart, this.state.hasAnnouncedFinish);
     if (event && event.data?.lengths) {
       if (
-        this.canAnnounce("GAP_ANNOUNCEMENT", "leader", simTime, NARRATIVE_THRESHOLDS.GAP_COOLDOWN)
+        this.state.canAnnounce("GAP_ANNOUNCEMENT", "leader", simTime, NARRATIVE_THRESHOLDS.GAP_COOLDOWN)
       ) {
         const leader = sorted[0];
         newLines.push(
           this.createLine("GAP_ANNOUNCEMENT", simTime, leader, event.data.lengths as string),
         );
-        this.setCooldown("GAP_ANNOUNCEMENT", "leader", simTime, NARRATIVE_THRESHOLDS.GAP_COOLDOWN);
+        this.state.setCooldown("GAP_ANNOUNCEMENT", "leader", simTime, NARRATIVE_THRESHOLDS.GAP_COOLDOWN);
       }
     }
   }
@@ -141,7 +131,7 @@ export class NarrativeGenerator {
       const event = detectStableWatch(r, this.horsesMap, this.stablesMap, simTime);
       if (event) {
         if (
-          this.canAnnounce(
+          this.state.canAnnounce(
             "STABLE_WATCH",
             r.horseId,
             simTime,
@@ -149,7 +139,7 @@ export class NarrativeGenerator {
           )
         ) {
           newLines.push(this.createLine("STABLE_WATCH", simTime, r));
-          this.setCooldown(
+          this.state.setCooldown(
             "STABLE_WATCH",
             r.horseId,
             simTime,
@@ -164,18 +154,18 @@ export class NarrativeGenerator {
   private checkLeadChange(runners: Runner[], simTime: number, newLines: CommentaryLine[]) {
     const event = detectLeadChange(
       runners,
-      this.lastLeaderId,
-      this.hasAnnouncedStart,
-      this.hasAnnouncedFinish,
+      this.state.lastLeaderId,
+      this.state.hasAnnouncedStart,
+      this.state.hasAnnouncedFinish,
     );
     if (event) {
-      if (this.canAnnounce("LEAD_CHANGE", event.horseId!, simTime)) {
+      if (this.state.canAnnounce("LEAD_CHANGE", event.horseId!, simTime)) {
         const runner = runners.find((r) => r.horseId === event.horseId);
         if (runner) {
           const line = this.createLine("LEAD_CHANGE", simTime, runner);
           line.isHighImpact = true;
           newLines.push(line);
-          this.setCooldown(
+          this.state.setCooldown(
             "LEAD_CHANGE",
             event.horseId!,
             simTime,
@@ -185,31 +175,31 @@ export class NarrativeGenerator {
       }
     }
     const sorted = [...runners].sort((a, b) => b.position - a.position);
-    this.lastLeaderId = sorted[0]?.horseId ?? null;
+    this.state.lastLeaderId = sorted[0]?.horseId ?? null;
   }
 
   private checkStretchRun(currentLeader: Runner, simTime: number, newLines: CommentaryLine[]) {
     const event = detectStretch(
       currentLeader.position,
       this.race,
-      this.hasAnnouncedStretch,
-      this.hasAnnouncedFinish,
+      this.state.hasAnnouncedStretch,
+      this.state.hasAnnouncedFinish,
     );
     if (event) {
       const line = this.createLine("STRETCH", simTime);
       line.isHighImpact = true;
       newLines.push(line);
-      this.hasAnnouncedStretch = true;
+      this.state.hasAnnouncedStretch = true;
     }
   }
 
   private checkFinish(currentLeader: Runner, simTime: number, newLines: CommentaryLine[]) {
-    const event = detectFinish(currentLeader.finishTime, this.hasAnnouncedFinish);
+    const event = detectFinish(currentLeader.finishTime, this.state.hasAnnouncedFinish);
     if (event) {
       const line = this.createLine("FINISH", simTime, currentLeader);
       line.isHighImpact = true;
       newLines.push(line);
-      this.hasAnnouncedFinish = true;
+      this.state.hasAnnouncedFinish = true;
     }
   }
 
@@ -219,28 +209,28 @@ export class NarrativeGenerator {
     simTime: number,
     newLines: CommentaryLine[],
   ) {
-    if (!this.hasAnnouncedStart || this.hasAnnouncedFinish) return;
+    if (!this.state.hasAnnouncedStart || this.state.hasAnnouncedFinish) return;
     for (const r of runners) {
-      const lastRank = this.lastRanks.get(r.horseId);
+      const lastRank = this.state.lastRanks.get(r.horseId);
       const currentRank = ranks.get(r.horseId)!;
       const event = detectPositionChange(
         r,
         lastRank,
         currentRank,
         simTime,
-        this.hasAnnouncedStart,
-        this.hasAnnouncedFinish,
+        this.state.hasAnnouncedStart,
+        this.state.hasAnnouncedFinish,
       );
       if (event) {
-        if (event.type === "SURGE" && this.canAnnounce("SURGE", r.horseId, simTime)) {
+        if (event.type === "SURGE" && this.state.canAnnounce("SURGE", r.horseId, simTime)) {
           newLines.push(this.createLine("SURGE", simTime, r));
-          this.setCooldown("SURGE", r.horseId, simTime, NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN);
-        } else if (event.type === "FADE" && this.canAnnounce("FADE", r.horseId, simTime)) {
+          this.state.setCooldown("SURGE", r.horseId, simTime, NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN);
+        } else if (event.type === "FADE" && this.state.canAnnounce("FADE", r.horseId, simTime)) {
           newLines.push(this.createLine("FADE", simTime, r));
-          this.setCooldown("FADE", r.horseId, simTime, NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN);
+          this.state.setCooldown("FADE", r.horseId, simTime, NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN);
         }
       }
-      this.lastRanks.set(r.horseId, currentRank);
+      this.state.lastRanks.set(r.horseId, currentRank);
     }
   }
 
@@ -254,24 +244,24 @@ export class NarrativeGenerator {
       const event = detectDrafting(r, runnersMap);
       if (event && event.data?.otherName) {
         if (
-          this.canAnnounce("DRAFTING", r.horseId, simTime, NARRATIVE_THRESHOLDS.DRAFTING_COOLDOWN)
+          this.state.canAnnounce("DRAFTING", r.horseId, simTime, NARRATIVE_THRESHOLDS.DRAFTING_COOLDOWN)
         ) {
           const line = this.createLine("DRAFTING", simTime, r);
           line.text = line.text.replace("{other}", event.data.otherName as string);
           newLines.push(line);
-          this.setCooldown("DRAFTING", r.horseId, simTime, NARRATIVE_THRESHOLDS.DRAFTING_COOLDOWN);
+          this.state.setCooldown("DRAFTING", r.horseId, simTime, NARRATIVE_THRESHOLDS.DRAFTING_COOLDOWN);
         }
       }
     }
   }
 
   private checkLaneWatch(runners: Runner[], simTime: number, newLines: CommentaryLine[]) {
-    if (!this.hasAnnouncedStart || this.hasAnnouncedFinish) return;
+    if (!this.state.hasAnnouncedStart || this.state.hasAnnouncedFinish) return;
     for (const r of runners) {
-      const event = detectLaneWatch(r, this.race, this.hasAnnouncedStart, this.hasAnnouncedFinish);
+      const event = detectLaneWatch(r, this.race, this.state.hasAnnouncedStart, this.state.hasAnnouncedFinish);
       if (event) {
         if (
-          this.canAnnounce(
+          this.state.canAnnounce(
             "LANE_WATCH",
             r.horseId,
             simTime,
@@ -279,7 +269,7 @@ export class NarrativeGenerator {
           )
         ) {
           newLines.push(this.createLine("LANE_WATCH", simTime, r));
-          this.setCooldown(
+          this.state.setCooldown(
             "LANE_WATCH",
             r.horseId,
             simTime,
@@ -288,23 +278,6 @@ export class NarrativeGenerator {
         }
       }
     }
-  }
-
-  /**
-   * Determine if a horse at a specific position is currently in a turn.
-   *
-   * @param pos - Current position of the horse in meters
-   * @returns True if the horse is in a turn section of the track
-   */
-  private isInTurn(pos: number): boolean {
-    // Basic oval assumption: 400m home straight, 400m turn, 400m back straight, 400m turn
-    const distFromFinish = this.race.distance - pos;
-    const trackPos = distFromFinish % NARRATIVE_THRESHOLDS.TURN_SEGMENT_LENGTH;
-    return (
-      (trackPos > NARRATIVE_THRESHOLDS.TURN_SEGMENT_START &&
-        trackPos <= NARRATIVE_THRESHOLDS.TURN_SEGMENT_END) ||
-      trackPos > NARRATIVE_THRESHOLDS.TURN_SEGMENT_FINAL_START
-    );
   }
 
   /**
@@ -363,14 +336,14 @@ export class NarrativeGenerator {
     const milestones = this.generateDynamicMilestones();
 
     for (const m of milestones) {
-      if (leaderPos >= m.pos && !this.announcedMilestones.has(m.id)) {
+      if (leaderPos >= m.pos && !this.state.announcedMilestones.has(m.id)) {
         newLines.push({
           id: `milestone-${m.id}`,
           text: m.text,
           timestamp: simTime,
           type: "MILESTONE",
         });
-        this.announcedMilestones.add(m.id);
+        this.state.announcedMilestones.add(m.id);
       }
     }
   }
@@ -406,8 +379,8 @@ export class NarrativeGenerator {
   ): CommentaryLine {
     const horse = runner ? this.getHorse(runner.horseId) : undefined;
     const stable = horse?.stableId ? (this.getStable(horse.stableId) ?? null) : null;
-
-    return generateCommentaryLine(
+    const counter = { value: this.state.lineCounter };
+    const line = generateCommentaryLine(
       type,
       timestamp,
       {
@@ -417,11 +390,13 @@ export class NarrativeGenerator {
         stable,
         rng: this.rng,
         lengths,
-        hasAnnouncedBio: this.hasAnnouncedBio,
-        lastRanks: this.lastRanks,
+        hasAnnouncedBio: this.state.hasAnnouncedBio,
+        lastRanks: this.state.lastRanks,
       },
-      { value: this.lineCounter },
+      counter,
     );
+    this.state.lineCounter = counter.value;
+    return line;
   }
 
   /**
@@ -443,53 +418,11 @@ export class NarrativeGenerator {
   }
 
   /**
-   * Determine if a stable is considered a "major" player for commentary focus.
-   *
-   * @param id - Unique identifier for the stable
-   * @returns True if it is a major stable
-   */
-  private isMajorStable(id: string): boolean {
-    return this.getStable(id)?.isMajor || false;
-  }
-
-  /**
-   * Check if a specific event type can be announced (cooldown check).
-   *
-   * @param type - Narrative event type
-   * @param key - Context key for the cooldown (e.g. horse ID or "global")
-   * @param simTime - Current simulation time
-   * @param defaultCooldown - Cooldown duration in seconds (defaults to 10)
-   * @returns True if the event can be announced
-   */
-  private canAnnounce(
-    type: NarrativeEvent,
-    key: string,
-    simTime: number,
-    defaultCooldown: number = NARRATIVE_THRESHOLDS.DEFAULT_COOLDOWN,
-  ): boolean {
-    const cooldownKey = `${type}:${key}`;
-    const expiry = this.cooldowns.get(cooldownKey) || 0;
-    return simTime >= expiry;
-  }
-
-  /**
-   * Set a cooldown for a specific event type and context.
-   *
-   * @param type - Narrative event type
-   * @param key - Context key for the cooldown
-   * @param simTime - Current simulation time
-   * @param seconds - Cooldown duration in seconds
-   */
-  private setCooldown(type: NarrativeEvent, key: string, simTime: number, seconds: number) {
-    this.cooldowns.set(`${type}:${key}`, simTime + seconds);
-  }
-
-  /**
    * Get the full commentary history for the race.
    *
    * @returns Array of all generated CommentaryLine objects
    */
   public getHistory(): CommentaryLine[] {
-    return this.commentary;
+    return this.state.getCommentary();
   }
 }

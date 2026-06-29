@@ -87,7 +87,7 @@ export function createFacilityAIState(stable: Stable): FacilityAIState {
  * @param currentDay - Current game day
  * @returns Upgrade priority score (0-100+)
  */
-export function calculateFacilityUpgradePriority(
+function calculateFacilityUpgradePriority(
   aiState: FacilityAIState,
   facilityType: FacilityType,
   currentLevel: FacilityLevel,
