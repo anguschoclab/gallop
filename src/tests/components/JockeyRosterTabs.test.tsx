@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createElement, type ReactNode } from "react";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { screen, fireEvent, cleanup } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { renderWithStore } from "@/test-utils/renderWithStore";
 
 const navigate = vi.fn();
 
@@ -33,6 +35,13 @@ const defaultProps = {
   onHire: vi.fn(),
 };
 
+function findCard(name: RegExp): HTMLElement {
+  const cards = screen.getAllByRole("button", { name });
+  const card = cards.find((el) => el.tagName === "DIV");
+  if (!card) throw new Error(`Card element not found for ${name}`);
+  return card;
+}
+
 describe("JockeyRosterTabs", () => {
   beforeEach(() => {
     navigate.mockClear();
@@ -44,20 +53,26 @@ describe("JockeyRosterTabs", () => {
   });
 
   it("My Jockeys tab: clicking a jockey card calls navigate with correct route params", () => {
-    render(<JockeyRosterTabs {...defaultProps} />);
-    const cards = screen.getAllByText("Jockey j1");
-    fireEvent.click(cards[0]);
+    renderWithStore(<JockeyRosterTabs {...defaultProps} />);
+    fireEvent.click(findCard(/jockey j1/i));
     expect(navigate).toHaveBeenCalledWith({
       to: "/jockey/$jockeyId",
       params: { jockeyId: "j1" },
     });
   });
 
-  it("Available tab: clicking a jockey card calls navigate with correct route params", () => {
-    render(<JockeyRosterTabs {...defaultProps} />);
-    const marketTab = screen.getByText("Available");
-    fireEvent.click(marketTab);
-    const card = screen.getByText("Jockey j3");
+  it("Available tab: clicking a jockey card calls navigate with correct route params", async () => {
+    const user = userEvent.setup();
+    const marketOnlyProps = {
+      ...defaultProps,
+      myJockeys: [],
+      market: [mkJockey("j3")],
+    };
+    const { container } = renderWithStore(<JockeyRosterTabs {...marketOnlyProps} />);
+    const marketTabTrigger = screen.getByRole("tab", { name: /available/i });
+    await user.click(marketTabTrigger);
+    await screen.findByText("Sign");
+    const card = container.querySelector('[role="button"][tabindex="0"]') as HTMLElement;
     fireEvent.click(card);
     expect(navigate).toHaveBeenCalledWith({
       to: "/jockey/$jockeyId",
@@ -66,25 +81,47 @@ describe("JockeyRosterTabs", () => {
   });
 
   it("does NOT assign to window.location.href on My Jockeys tab", () => {
-    const originalHref = window.location.href;
-    render(<JockeyRosterTabs {...defaultProps} />);
-    const card = screen.getAllByText("Jockey j1")[0];
-    fireEvent.click(card);
-    expect(window.location.href).toBe(originalHref);
+    const originalLocation = window.location;
+    const mockLocation = { ...originalLocation, href: originalLocation.href };
+    let hrefAssigned = false;
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: new Proxy(mockLocation, {
+        set(target, prop, value) {
+          if (prop === "href") {
+            hrefAssigned = true;
+            return true;
+          }
+          (target as any)[prop] = value;
+          return true;
+        },
+      }),
+    });
+    renderWithStore(<JockeyRosterTabs {...defaultProps} />);
+    fireEvent.click(findCard(/jockey j1/i));
+    Object.defineProperty(window, "location", { configurable: true, value: originalLocation });
+    expect(hrefAssigned).toBe(false);
   });
 
   it("Release button calls onRelease with jockey ID", () => {
-    render(<JockeyRosterTabs {...defaultProps} />);
-    const releaseBtn = screen.getAllByText("Release")[0];
-    fireEvent.click(releaseBtn);
+    renderWithStore(<JockeyRosterTabs {...defaultProps} />);
+    const releaseBtns = screen.getAllByText("Release");
+    fireEvent.click(releaseBtns[0]);
     expect(defaultProps.onRelease).toHaveBeenCalledWith("j1");
   });
 
-  it("Sign button calls onHire with jockey ID", () => {
-    render(<JockeyRosterTabs {...defaultProps} />);
-    fireEvent.click(screen.getByText("Available"));
-    const signBtn = screen.getByText("Sign");
-    fireEvent.click(signBtn);
+  it("Sign button calls onHire with jockey ID", async () => {
+    const user = userEvent.setup();
+    const marketOnlyProps = {
+      ...defaultProps,
+      myJockeys: [],
+      market: [mkJockey("j3")],
+    };
+    renderWithStore(<JockeyRosterTabs {...marketOnlyProps} />);
+    const marketTabTrigger = screen.getByRole("tab", { name: /available/i });
+    await user.click(marketTabTrigger);
+    await screen.findByText("Sign");
+    fireEvent.click(screen.getByText("Sign"));
     expect(defaultProps.onHire).toHaveBeenCalledWith("j3");
   });
 });
