@@ -4,6 +4,7 @@ import { HorseCard } from "@/components/horse/HorseCard";
 import { HorseBit, overall } from "@/components/horse/HorseBits";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { RosterFilterBar } from "./RosterFilterBar";
 import { cn } from "@/lib/cn";
 import type { Horse } from "@/game/types";
@@ -136,28 +137,40 @@ export function StableRosterView({
                           label={h.name}
                           subtitle={`Age ${Math.floor(h.age)} · ${h.gender}`}
                         />
-                        <Link to="/stable/$horseId" params={{ horseId: h.id }} hash="training">
-                          <Button
-                            aria-label={`Open training room for ${h.name}`}
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 w-7 p-0 hover:bg-gold/10 hover:text-gold text-cream/20"
-                            title="Training Room"
-                          >
-                            <Zap className="h-3.5 w-3.5" />
-                          </Button>
-                        </Link>
-                        <Link to="/scheduler">
-                          <Button
-                            aria-label={`Open mission plan for ${h.name}`}
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 w-7 p-0 hover:bg-blue-400/10 hover:text-blue-400 text-cream/20"
-                            title="Race Plan"
-                          >
-                            <Clock className="h-3.5 w-3.5" />
-                          </Button>
-                        </Link>
+                        <TooltipProvider delayDuration={300}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Link to="/stable/$horseId" params={{ horseId: h.id }} hash="training">
+                                <Button
+                                  aria-label={`Open training room for ${h.name}`}
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 w-7 p-0 hover:bg-gold/10 hover:text-gold text-cream/20"
+                                >
+                                  <Zap className="h-3.5 w-3.5" />
+                                </Button>
+                              </Link>
+                            </TooltipTrigger>
+                            <TooltipContent>Training Room</TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        <TooltipProvider delayDuration={300}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Link to="/scheduler">
+                                <Button
+                                  aria-label={`Open mission plan for ${h.name}`}
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 w-7 p-0 hover:bg-blue-400/10 hover:text-blue-400 text-cream/20"
+                                >
+                                  <Clock className="h-3.5 w-3.5" />
+                                </Button>
+                              </Link>
+                            </TooltipTrigger>
+                            <TooltipContent>Race Plan</TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                         <Link to="/stable/$horseId" params={{ horseId: h.id }}>
                           <Button
                             variant="ghost"
