@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 interface NavSubItem {
@@ -25,9 +25,21 @@ interface NavSectionProps {
   items: NavItem[];
   unreadCount: number;
   defaultCollapsed?: boolean;
+  resetSignal?: number;
+  footer?: ReactNode;
 }
 
-const STORAGE_PREFIX = "gallop_sidebar_section:";
+export const STORAGE_PREFIX = "gallop_sidebar_section:";
+
+export function clearAllSidebarStorage(): void {
+  if (typeof window === "undefined") return;
+  try {
+    const keys = Object.keys(window.localStorage).filter((k) => k.startsWith(STORAGE_PREFIX));
+    keys.forEach((k) => window.localStorage.removeItem(k));
+  } catch {
+    /* ignore */
+  }
+}
 
 function isItemActive(pathname: string, to: string, exact?: boolean) {
   if (exact || to === "/") return pathname === to;
@@ -46,7 +58,7 @@ function readStoredOpen(label: string): boolean | null {
   return null;
 }
 
-export function NavSection({ label, items, unreadCount, defaultCollapsed }: NavSectionProps) {
+export function NavSection({ label, items, unreadCount, defaultCollapsed, resetSignal, footer }: NavSectionProps) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const containsActive = items.some(
     (item) =>
@@ -74,14 +86,48 @@ export function NavSection({ label, items, unreadCount, defaultCollapsed }: NavS
     }
   }, [label, open]);
 
+  // Reset to default state when resetSignal changes
+  useEffect(() => {
+    if (resetSignal && resetSignal > 0) {
+      setOpen(containsActive || !defaultCollapsed);
+    }
+  }, [resetSignal]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const focusRing =
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1 focus-visible:ring-offset-t950";
+
+  const headerId = `section-header-${label}`;
+  const contentId = `section-content-${label}`;
+
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      const container = e.currentTarget.closest("[data-accordion-container]");
+      if (!container) return;
+      const headers = Array.from(
+        container.querySelectorAll<HTMLElement>("[data-accordion-header]"),
+      );
+      const idx = headers.indexOf(e.currentTarget as HTMLElement);
+      if (idx === -1) return;
+      const nextIdx = e.key === "ArrowDown"
+        ? (idx + 1) % headers.length
+        : (idx - 1 + headers.length) % headers.length;
+      headers[nextIdx]?.focus();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setOpen(false);
+    }
+  }
 
   return (
     <div>
       <button
         type="button"
+        id={headerId}
+        data-accordion-header
+        aria-controls={contentId}
         onClick={() => setOpen((o) => !o)}
+        onKeyDown={handleKeyDown}
         className={cn(
           "w-full flex items-center justify-between mb-2 group rounded-md px-1 py-0.5 transition-colors hover:bg-cream/5",
           focusRing,
@@ -105,7 +151,12 @@ export function NavSection({ label, items, unreadCount, defaultCollapsed }: NavS
         />
       </button>
       {open && (
-        <div className="space-y-0.5 mb-1">
+        <div
+          id={contentId}
+          role="region"
+          aria-labelledby={headerId}
+          className="space-y-0.5 mb-1"
+        >
           {items.map((item) => {
             const active = isItemActive(pathname, item.to, item.exact);
             return (
@@ -166,6 +217,11 @@ export function NavSection({ label, items, unreadCount, defaultCollapsed }: NavS
               </div>
             );
           })}
+          {footer && (
+            <div className="pt-1.5 mt-1 border-t border-gold-muted/20">
+              {footer}
+            </div>
+          )}
         </div>
       )}
     </div>

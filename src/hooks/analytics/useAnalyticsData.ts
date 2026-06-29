@@ -80,20 +80,38 @@ export function useAnalyticsData() {
       energyBuckets[idx]++;
     });
 
+    // Pre-compute sire trend map (last 60d) for O(1) lookups
+    const sireTrendMap = new Map<string, number[]>();
+    const trendMinDay = day - 60;
+    for (let i = 0; i < sireTrendHistory.length; i++) {
+      const t = sireTrendHistory[i];
+      if (t.day < trendMinDay) continue;
+      const arr = sireTrendMap.get(t.stallionId);
+      if (arr) {
+        arr.push(t.aei);
+      } else {
+        sireTrendMap.set(t.stallionId, [t.aei]);
+      }
+    }
+
     // Top sire trend (last 60d)
     const topSire = sireLeaderboards?.overall?.rankings?.[0];
     const topSireTrend = topSire
-      ? sireTrendHistory
-          .filter((t) => t.stallionId === topSire.stallionId && t.day >= day - 60)
-          .map((t) => t.aei)
+      ? sireTrendMap.get(topSire.stallionId) ?? []
       : [];
+
+    // Pre-compute expense-by-horse map for O(1) lookups
+    const expenseByHorse = new Map<string, number>();
+    for (let i = 0; i < transactions.length; i++) {
+      const t = transactions[i];
+      if (t.amount >= 0 || !t.horseId) continue;
+      expenseByHorse.set(t.horseId, (expenseByHorse.get(t.horseId) ?? 0) + -t.amount);
+    }
 
     // Per-horse ROI (career-ish proxy): earnings vs expenses captured per horse
     const horseRoi = owned.map((h) => {
       const earnings = getCareerStats(h).earnings;
-      const expense = transactions
-        .filter((t) => t.horseId === h.id && t.amount < 0)
-        .reduce((s, t) => s + -t.amount, 0);
+      const expense = expenseByHorse.get(h.id) ?? 0;
       return { id: h.id, name: h.name, earnings, expense, net: earnings - expense };
     });
     const rankedRoi = [...horseRoi].sort((a, b) => b.net - a.net);

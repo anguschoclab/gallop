@@ -58,9 +58,17 @@ export function RunningStyleBreakdown({ horse }: RunningStyleBreakdownProps) {
   const [compareId, setCompareId] = useState<string | null>(null);
   const [surface, setSurface] = useState<SurfaceFilter>("any");
 
+  const horseMap = useMemo(() => {
+    const map = new Map<string, Horse>();
+    for (let i = 0; i < allHorses.length; i++) {
+      map.set(allHorses[i].id, allHorses[i]);
+    }
+    return map;
+  }, [allHorses]);
+
   const compareHorse = useMemo(
-    () => (compareId ? (allHorses.find((h) => h.id === compareId) ?? null) : null),
-    [allHorses, compareId],
+    () => (compareId ? (horseMap.get(compareId) ?? null) : null),
+    [horseMap, compareId],
   );
 
   const compareOptions = useMemo(

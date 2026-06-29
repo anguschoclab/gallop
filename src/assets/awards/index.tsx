@@ -2,27 +2,28 @@
 // Central export for all regional award icons
 
 import type { AwardRegion, RegionalAwardCategory } from "@/core/awards/types";
+import { REGION_AWARD_CONFIG, type SvgProps } from "./shared";
 
 // North America
-import * as naHoty from "./north-america/hoty";
-import * as naCategory from "./north-america/category";
+import { HotyIcon as NaHotyIcon } from "./north-america/hoty";
+import { CategoryIcon as NaCategoryIcon } from "./north-america/category";
 
 // Europe
-import * as euHoty from "./europe/hoty";
-import * as euCategory from "./europe/category";
+import { HotyIcon as EuHotyIcon } from "./europe/hoty";
+import { CategoryIcon as EuCategoryIcon } from "./europe/category";
 
 // Asia-Pacific
-import * as apacHoty from "./asia-pacific/hoty";
-import * as apacCategory from "./asia-pacific/category";
+import { HotyIcon as ApacHotyIcon } from "./asia-pacific/hoty";
+import { CategoryIcon as ApacCategoryIcon } from "./asia-pacific/category";
 
 // South America
-import * as saHoty from "./south-america/hoty";
-import * as saCategory from "./south-america/category";
+import { HotyIcon as SaHotyIcon } from "./south-america/hoty";
+import { CategoryIcon as SaCategoryIcon } from "./south-america/category";
 
 import type React from "react";
 
 export interface AwardSvgData {
-  Icon: React.ComponentType<{ width: number; height: number; className?: string }>;
+  Icon: React.ComponentType<SvgProps>;
   color: string;
   accent: string;
 }
@@ -30,35 +31,51 @@ export interface AwardSvgData {
 // Map of all award SVGs by region and category type
 const AWARD_SVGS: Record<AwardRegion, { hoty: AwardSvgData; category: AwardSvgData }> = {
   north_america: {
-    hoty: { Icon: naHoty.HotyIcon, color: naHoty.hotyColor, accent: naHoty.hotyAccent },
+    hoty: {
+      Icon: NaHotyIcon,
+      color: REGION_AWARD_CONFIG.north_america.hoty.primary,
+      accent: REGION_AWARD_CONFIG.north_america.hoty.accent,
+    },
     category: {
-      Icon: naCategory.CategoryIcon,
-      color: naCategory.categoryColor,
-      accent: naCategory.categoryAccent,
+      Icon: NaCategoryIcon,
+      color: REGION_AWARD_CONFIG.north_america.category.primary,
+      accent: REGION_AWARD_CONFIG.north_america.category.accent,
     },
   },
   europe: {
-    hoty: { Icon: euHoty.HotyIcon, color: euHoty.hotyColor, accent: euHoty.hotyAccent },
+    hoty: {
+      Icon: EuHotyIcon,
+      color: REGION_AWARD_CONFIG.europe.hoty.primary,
+      accent: REGION_AWARD_CONFIG.europe.hoty.accent,
+    },
     category: {
-      Icon: euCategory.CategoryIcon,
-      color: euCategory.categoryColor,
-      accent: euCategory.categoryAccent,
+      Icon: EuCategoryIcon,
+      color: REGION_AWARD_CONFIG.europe.category.primary,
+      accent: REGION_AWARD_CONFIG.europe.category.accent,
     },
   },
   asia_pacific: {
-    hoty: { Icon: apacHoty.HotyIcon, color: apacHoty.hotyColor, accent: apacHoty.hotyAccent },
+    hoty: {
+      Icon: ApacHotyIcon,
+      color: REGION_AWARD_CONFIG.asia_pacific.hoty.primary,
+      accent: REGION_AWARD_CONFIG.asia_pacific.hoty.accent,
+    },
     category: {
-      Icon: apacCategory.CategoryIcon,
-      color: apacCategory.categoryColor,
-      accent: apacCategory.categoryAccent,
+      Icon: ApacCategoryIcon,
+      color: REGION_AWARD_CONFIG.asia_pacific.category.primary,
+      accent: REGION_AWARD_CONFIG.asia_pacific.category.accent,
     },
   },
   south_america: {
-    hoty: { Icon: saHoty.HotyIcon, color: saHoty.hotyColor, accent: saHoty.hotyAccent },
+    hoty: {
+      Icon: SaHotyIcon,
+      color: REGION_AWARD_CONFIG.south_america.hoty.primary,
+      accent: REGION_AWARD_CONFIG.south_america.hoty.accent,
+    },
     category: {
-      Icon: saCategory.CategoryIcon,
-      color: saCategory.categoryColor,
-      accent: saCategory.categoryAccent,
+      Icon: SaCategoryIcon,
+      color: REGION_AWARD_CONFIG.south_america.category.primary,
+      accent: REGION_AWARD_CONFIG.south_america.category.accent,
     },
   },
 };

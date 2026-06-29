@@ -312,6 +312,50 @@ describe("generateJockeyReport", () => {
     expect(report.averageScore).toBeGreaterThanOrEqual(0);
     expect(report.averageScore).toBeLessThanOrEqual(100);
   });
+
+  it("returns finishPosition = 1 when runner not found in ordered (edge case)", () => {
+    const runner = makeRunner({ horseId: "hX" });
+    const ordered = [
+      makeRunner({ horseId: "h1", name: "First" }),
+      makeRunner({ horseId: "h2", name: "Second" }),
+    ];
+
+    const report = generateJockeyReport(runner, ordered, undefined);
+
+    expect(report.finishPosition).toBe(1);
+  });
+
+  it("correctly computes finishPosition for multiple runners in a .map() (regression for O(N²) fix)", () => {
+    const runners = [
+      makeRunner({ horseId: "h1", name: "First" }),
+      makeRunner({ horseId: "h2", name: "Second" }),
+      makeRunner({ horseId: "h3", name: "Third" }),
+      makeRunner({ horseId: "h4", name: "Fourth" }),
+    ];
+
+    const reports = runners.map((r) => generateJockeyReport(r, runners, undefined));
+
+    expect(reports[0].finishPosition).toBe(1);
+    expect(reports[1].finishPosition).toBe(2);
+    expect(reports[2].finishPosition).toBe(3);
+    expect(reports[3].finishPosition).toBe(4);
+  });
+
+  it("accepts optional finishPositionMap for O(1) finish position lookup", () => {
+    const runners = [
+      makeRunner({ horseId: "h1", name: "First" }),
+      makeRunner({ horseId: "h2", name: "Second" }),
+      makeRunner({ horseId: "h3", name: "Third" }),
+    ];
+    const finishPositionMap = new Map<string, number>();
+    for (let i = 0; i < runners.length; i++) {
+      finishPositionMap.set(runners[i].horseId, i + 1);
+    }
+
+    const report = generateJockeyReport(runners[2], runners, undefined, finishPositionMap);
+
+    expect(report.finishPosition).toBe(3);
+  });
 });
 
 describe("gradeColorClass", () => {

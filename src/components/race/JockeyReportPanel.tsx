@@ -49,19 +49,33 @@ export function JockeyReportPanel({
     () => runners.filter((r) => r.owned && r.finishTime !== null),
     [runners],
   );
-  const ownedRunnerMap = useMemo(
-    () => new Map(ownedRunners.map((r) => [r.horseId, r])),
-    [ownedRunners],
-  );
+  const ownedRunnerMap = useMemo(() => {
+    const map = new Map<string, Runner>();
+    for (let i = 0; i < ownedRunners.length; i++) {
+      map.set(ownedRunners[i].horseId, ownedRunners[i]);
+    }
+    return map;
+  }, [ownedRunners]);
+
+  const finishPositionMap = useMemo(() => {
+    const map = new Map<string, number>();
+    for (let i = 0; i < ordered.length; i++) {
+      map.set(ordered[i].horseId, i + 1);
+    }
+    return map;
+  }, [ordered]);
 
   const reports = useMemo<JockeyReport[]>(
-    () => ownedRunners.map((r) => generateJockeyReport(r, ordered, sectionalSplits)),
-    [ownedRunners, ordered, sectionalSplits],
+    () => ownedRunners.map((r) => generateJockeyReport(r, ordered, sectionalSplits, finishPositionMap)),
+    [ownedRunners, ordered, sectionalSplits, finishPositionMap],
   );
-  const reportMap = useMemo(
-    () => new Map(reports.map((r) => [r.horseId, r])),
-    [reports],
-  );
+  const reportMap = useMemo(() => {
+    const map = new Map<string, JockeyReport>();
+    for (let i = 0; i < reports.length; i++) {
+      map.set(reports[i].horseId, reports[i]);
+    }
+    return map;
+  }, [reports]);
 
   const [selectedId, setSelectedId] = useState<string | null>(reports[0]?.horseId ?? null);
 

@@ -353,9 +353,12 @@ export function generateJockeyReport(
   runner: Runner,
   ordered: Runner[],
   sectionalSplits: SectionalSplit[] | undefined,
+  finishPositionMap?: Map<string, number>,
 ): JockeyReport {
   const fieldSize = ordered.length;
-  const finishPosition = Math.max(1, ordered.findIndex((r) => r.horseId === runner.horseId) + 1);
+  const finishPosition = finishPositionMap
+    ? finishPositionMap.get(runner.horseId) ?? 1
+    : Math.max(1, ordered.findIndex((r) => r.horseId === runner.horseId) + 1);
   const ranks = sectionalSplits ? ranksByHorse(sectionalSplits, runner.horseId) : [];
 
   const facets: JockeyReportFacet[] = [];

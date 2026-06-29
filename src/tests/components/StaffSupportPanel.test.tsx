@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import { renderWithStore, seedStore } from "@/test-utils/renderWithStore";
 import { StaffSupportPanel } from "@/components/horse/StaffSupportPanel";
@@ -80,5 +80,36 @@ describe("StaffSupportPanel", () => {
     const staff = [mkStaff("groom", "stable1", 0.6)];
     renderWithStore(<StaffSupportPanel stableId="stable1" />, { hiredStaff: staff } as any);
     expect(screen.getByText("+60% Form")).toBeTruthy();
+  });
+
+  it("renders correct bonuses when roles are in non-standard order in the array", () => {
+    const staff: StaffMember[] = [
+      mkStaff("groom", "stable1", 0.15),
+      mkStaff("farrier", "stable1", 0.05),
+      mkStaff("trainer", "stable1", 0.3),
+      mkStaff("veterinarian", "stable1", 0.2),
+      mkStaff("nutritionist", "stable1", 0.1),
+    ];
+    renderWithStore(<StaffSupportPanel stableId="stable1" />, { hiredStaff: staff } as any);
+    expect(screen.getByText("Nutritionist")).toBeTruthy();
+    expect(screen.getByText("+10% Energy")).toBeTruthy();
+    expect(screen.getByText("Veterinarian")).toBeTruthy();
+    expect(screen.getByText("+20% Recovery")).toBeTruthy();
+    expect(screen.getByText("Trainer")).toBeTruthy();
+    expect(screen.getByText("+30% Efficiency")).toBeTruthy();
+    expect(screen.getByText("Farrier")).toBeTruthy();
+    expect(screen.getByText("+5% Aptitude")).toBeTruthy();
+    expect(screen.getByText("Groom")).toBeTruthy();
+    expect(screen.getByText("+15% Form")).toBeTruthy();
+  });
+
+  it("does not duplicate bonuses when multiple staff have same role", () => {
+    const staff: StaffMember[] = [
+      mkStaff("nutritionist", "stable1", 0.1),
+      mkStaff("nutritionist", "stable1", 0.25),
+    ];
+    renderWithStore(<StaffSupportPanel stableId="stable1" />, { hiredStaff: staff } as any);
+    const nutritionistElements = screen.getAllByText("Nutritionist");
+    expect(nutritionistElements).toHaveLength(1);
   });
 });

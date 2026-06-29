@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useAnalyticsData } from "@/hooks/analytics/useAnalyticsData";
 import { ChartCard, MiniBar, Sparkline, chartColors } from "@/components/charts";
 
@@ -5,6 +6,22 @@ export function AnalyticsBreedingTab() {
   const d = useAnalyticsData();
   const overall = d.sireLeaderboards?.overall;
   const rankings = overall?.rankings ?? [];
+
+  const sireTrendMap = useMemo(() => {
+    const map = new Map<string, number[]>();
+    const minDay = d.day - 60;
+    for (let i = 0; i < d.sireTrendHistory.length; i++) {
+      const t = d.sireTrendHistory[i];
+      if (t.day < minDay) continue;
+      const arr = map.get(t.stallionId);
+      if (arr) {
+        arr.push(t.aei);
+      } else {
+        map.set(t.stallionId, [t.aei]);
+      }
+    }
+    return map;
+  }, [d.sireTrendHistory, d.day]);
 
   return (
     <div className="space-y-6">
@@ -40,9 +57,7 @@ export function AnalyticsBreedingTab() {
         <ChartCard title="Top 5 · 60d AEI trend" footnote="Each row independently scaled">
           <div className="px-3 py-2 space-y-2">
             {rankings.slice(0, 5).map((r) => {
-              const series = d.sireTrendHistory
-                .filter((t) => t.stallionId === r.stallionId && t.day >= d.day - 60)
-                .map((t) => t.aei);
+              const series = sireTrendMap.get(r.stallionId) ?? [];
               return (
                 <div key={r.stallionId} className="flex items-center gap-3">
                   <div className="w-32 text-[11px] truncate text-cream/80">{r.stallionName}</div>

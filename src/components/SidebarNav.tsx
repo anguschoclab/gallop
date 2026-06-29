@@ -28,12 +28,13 @@ import {
   Bookmark,
   Bell,
   Newspaper,
+  RotateCcw,
 } from "lucide-react";
 
 import { formatCurrency } from "@/core/common/formatting";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/constants";
-import { NavSection } from "./NavSection";
+import { NavSection, clearAllSidebarStorage } from "./NavSection";
 import { useState } from "react";
 
 const navSections = [
@@ -103,6 +104,12 @@ export function SidebarNav({
   onStartNewGame,
 }: SidebarNavProps) {
   const [newGameDialogOpen, setNewGameDialogOpen] = useState(false);
+  const [resetSignal, setResetSignal] = useState(0);
+
+  function handleResetSidebar() {
+    clearAllSidebarStorage();
+    setResetSignal((n) => n + 1);
+  }
 
   return (
     <aside className="w-[248px] shrink-0 border-r border-gold-muted bg-t950 flex flex-col">
@@ -114,7 +121,10 @@ export function SidebarNav({
           {gameCalendarDate(day)}
         </p>
       </div>
-      <div className="p-3 border-t border-gold-muted space-y-3 flex-1 overflow-y-auto">
+      <div
+        className="p-3 border-t border-gold-muted space-y-3 flex-1 overflow-y-auto"
+        data-accordion-container
+      >
         {navSections.map((section, idx) => (
           <NavSection
             key={section.label}
@@ -122,6 +132,21 @@ export function SidebarNav({
             items={section.items as any}
             unreadCount={unreadCount}
             defaultCollapsed={idx > 0}
+            resetSignal={resetSignal}
+            footer={
+              idx === 3 ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleResetSidebar}
+                  aria-label="Reset sidebar layout"
+                  className="w-full justify-start text-[10px] text-cream-muted hover:text-cream"
+                >
+                  <RotateCcw className="h-3 w-3 mr-1.5" />
+                  Reset sidebar layout
+                </Button>
+              ) : undefined
+            }
           />
         ))}
       </div>

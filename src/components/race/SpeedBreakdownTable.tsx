@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/cn";
-import type { SectionalSplit } from "@/core/race/types";
+import type { SectionalSplit, SectionalEntry } from "@/core/race/types";
 
 interface SpeedBreakdownRunner {
   horseId: string;
@@ -23,14 +23,25 @@ function fmtPct(v: number | undefined): string | null {
 }
 
 export function SpeedBreakdownTable({ splits, runners, className }: SpeedBreakdownTableProps) {
-  const runnerMap = useMemo(() => new Map(runners.map((r) => [r.horseId, r])), [runners]);
-  const entryMap = useMemo(
-    () =>
-      new Map(
-        splits.map((s) => [s.label, new Map(s.entries.map((e) => [e.horseId, e]))]),
-      ),
-    [splits],
-  );
+  const runnerMap = useMemo(() => {
+    const map = new Map<string, SpeedBreakdownRunner>();
+    for (let i = 0; i < runners.length; i++) {
+      map.set(runners[i].horseId, runners[i]);
+    }
+    return map;
+  }, [runners]);
+  const entryMap = useMemo(() => {
+    const map = new Map<string, Map<string, SectionalEntry>>();
+    for (let i = 0; i < splits.length; i++) {
+      const split = splits[i];
+      const inner = new Map<string, SectionalEntry>();
+      for (let j = 0; j < split.entries.length; j++) {
+        inner.set(split.entries[j].horseId, split.entries[j]);
+      }
+      map.set(split.label, inner);
+    }
+    return map;
+  }, [splits]);
 
   if (splits.length === 0 || runners.length === 0) return null;
 
