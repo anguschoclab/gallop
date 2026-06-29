@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
-import { join, extname } from "node:path";
+import { join, extname, sep } from "node:path";
 
 const SRC_ROOT = join(process.cwd(), "src");
 
@@ -38,7 +38,8 @@ describe("Math.random elimination from core modules", () => {
     const violations: string[] = [];
 
     for (const file of files) {
-      const relative = file.replace(SRC_ROOT + "/", "");
+      // Normalise to forward slashes so isAllowed works on Windows and Unix.
+      const relative = file.replace(SRC_ROOT + sep, "").split(sep).join("/");
       if (isAllowed(relative)) continue;
 
       const content = readFileSync(file, "utf-8");
