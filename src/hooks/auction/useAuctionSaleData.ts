@@ -133,13 +133,26 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
     }
   }, [currentLot, withdrawConsignment]);
 
-  const handleBuyNow = useCallback(
-    () =>
-      sale && currentLot
-        ? buyNow(sale.id, currentLot.id)
-        : { ok: false as const, reason: "No active lot." },
-    [sale, currentLot, buyNow],
-  );
+  const handleBuyNow = useCallback(() => {
+    if (!sale || !currentLot) {
+      setError("No active lot.");
+      return { ok: false as const, reason: "No active lot." };
+    }
+    const result = buyNow(sale.id, currentLot.id);
+    if (result.ok) {
+      setError(null);
+      setMessage("Lot purchased.");
+    } else {
+      setError(result.reason ?? "Purchase failed");
+      setMessage("");
+    }
+    return result;
+  }, [sale, currentLot, buyNow]);
+
+  const dismissError = useCallback(() => setError(null), []);
+  const retryLastBid = useCallback(() => {
+    if (lastBidAttempt !== null) handleBid(lastBidAttempt);
+  }, [lastBidAttempt, handleBid]);
 
   return {
     sale,
@@ -162,6 +175,10 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
     lotIndex,
     setLotIndex,
     message,
+    error,
+    dismissError,
+    retryLastBid,
+    canRetry: lastBidAttempt !== null,
     handleBid,
     handleMaxBid,
     handleWithdraw,
