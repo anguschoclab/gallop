@@ -43,7 +43,9 @@ export const marketPhase = {
       // Clone the manager and stable map so we never mutate the original state.
       npcAIManager = {
         ...npcAIManager,
-        stableStates: { ...npcAIManager.stableStates },
+        stableStates: Object.fromEntries(
+          Object.entries(npcAIManager.stableStates).map(([id, s]) => [id, { ...s }]),
+        ),
       };
       const stableCashUpdates = new Map<string, number>();
 

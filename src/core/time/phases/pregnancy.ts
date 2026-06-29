@@ -56,7 +56,9 @@ export function buildNpcAIManagerUpdate(
 
   const nextManager: NpcAIManager = {
     ...npcAIManager,
-    stableStates: { ...npcAIManager.stableStates },
+    stableStates: Object.fromEntries(
+      Object.entries(npcAIManager.stableStates).map(([id, s]) => [id, { ...s }]),
+    ),
   };
 
   for (const foal of foals) {

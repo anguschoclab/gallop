@@ -57,6 +57,7 @@ export function runAutonomousBreeding(
 ): GameState {
   const { day, npcAIManager } = state;
   const updatedState = { ...state };
+  const newPregnancies: Pregnancy[] = [];
 
   // Northern/Southern hemisphere seasons differ
   const month = Math.floor(((day - 1) % 365) / 30) + 1;
@@ -154,7 +155,7 @@ export function runAutonomousBreeding(
           isPlayerOwned: false,
         };
 
-        updatedState.pregnancies.push(pregnancy);
+        newPregnancies.push(pregnancy);
         stableCash -= totalFee;
 
         // Record decision in AI state if possible
@@ -177,6 +178,7 @@ export function runAutonomousBreeding(
     }
   }
 
+  updatedState.pregnancies = [...(state.pregnancies || []), ...newPregnancies];
   return updatedState;
 }
 
@@ -188,19 +190,15 @@ export function runAutonomousBreeding(
  * @returns Object containing horses, npcStables, newPregnancies, and logs
  */
 export function runNpcBreeding(state: any, day: number, rng: Rng) {
-  // Temporarily set day
-  const originalDay = state.day;
-  state.day = day;
   const originalPregnanciesLength = state.pregnancies ? state.pregnancies.length : 0;
 
+  const tempState = { ...state, day };
   const updatedState = runAutonomousBreeding(
-    state as GameState,
+    tempState as GameState,
     state.npcStables || [],
     rng,
     state.sireLeaderboards,
   );
-
-  state.day = originalDay;
 
   return {
     horses: updatedState.horses || [],

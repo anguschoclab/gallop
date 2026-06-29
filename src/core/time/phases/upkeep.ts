@@ -130,7 +130,12 @@ export const upkeepPhase = {
     // Clone AI manager so upkeep learning updates do not mutate the original state.
     let npcAIManager = state.npcAIManager;
     if (npcAIManager) {
-      npcAIManager = { ...npcAIManager, stableStates: { ...npcAIManager.stableStates } };
+      npcAIManager = {
+        ...npcAIManager,
+        stableStates: Object.fromEntries(
+          Object.entries(npcAIManager.stableStates).map(([id, s]) => [id, { ...s }]),
+        ),
+      };
     }
 
     // Bankruptcy protection thresholds

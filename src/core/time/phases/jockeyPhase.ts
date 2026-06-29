@@ -71,7 +71,9 @@ export const jockeyPhase = {
             // NPC jockey contract expired - use AI to determine if should retain
             npcAIManager = {
               ...npcAIManager,
-              stableStates: { ...npcAIManager.stableStates },
+              stableStates: Object.fromEntries(
+                Object.entries(npcAIManager.stableStates).map(([id, s]) => [id, { ...s }]),
+              ),
             };
             const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
             const jockeyAI = stableAI.jockeyAI || (stableAI.jockeyAI = createJockeyAIState(stable));
@@ -109,7 +111,9 @@ export const jockeyPhase = {
           if (npcAIManager) {
             npcAIManager = {
               ...npcAIManager,
-              stableStates: { ...npcAIManager.stableStates },
+              stableStates: Object.fromEntries(
+                Object.entries(npcAIManager.stableStates).map(([id, s]) => [id, { ...s }]),
+              ),
             };
             const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
             const jockeyAI = stableAI.jockeyAI || (stableAI.jockeyAI = createJockeyAIState(stable));
