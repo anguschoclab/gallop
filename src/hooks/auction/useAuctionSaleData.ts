@@ -29,6 +29,8 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
 
   const [lotIndex, setLotIndex] = useState(0);
   const [message, setMessage] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [lastBidAttempt, setLastBidAttempt] = useState<number | null>(null);
 
   // Lot filtering
   const activeLots: AuctionLot[] = useMemo(
@@ -50,10 +52,11 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
 
   const filterKey = `${sex ?? ""}|${ageBand ?? ""}|${reserveBand ?? ""}|${sort ?? ""}|${q ?? ""}`;
 
-  // Reset lot/message when filters change
+  // Reset transient UI state when filters change
   useEffect(() => {
     setLotIndex(0);
     setMessage("");
+    setError(null);
   }, [filterKey]);
 
   const stableMap = useMemo(
@@ -83,16 +86,25 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
   const handleBid = useCallback(
     (amount: number) => {
       if (!sale || !currentLot) return;
+      setLastBidAttempt(amount);
       if (amount <= currentPrice) {
-        setMessage("Bid must exceed current price.");
+        setError("Bid must exceed current price.");
+        setMessage("");
         return;
       }
       if (amount > cash) {
-        setMessage("Insufficient funds.");
+        setError("Insufficient funds.");
+        setMessage("");
         return;
       }
       const result = placeBookBid(sale.id, currentLot.id, amount);
-      setMessage(result.ok ? "Bid placed." : result.reason ?? "Bid failed");
+      if (result.ok) {
+        setMessage("Bid placed.");
+        setError(null);
+      } else {
+        setError(result.reason ?? "Bid failed");
+        setMessage("");
+      }
     },
     [sale, currentLot, currentPrice, cash, placeBookBid],
   );
@@ -100,7 +112,8 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
   const handleMaxBid = useCallback(
     (max: number | undefined) => {
       if (max && max <= currentPrice) {
-        setMessage("Max bid must exceed current price.");
+        setError("Max bid must exceed current price.");
+        setMessage("");
         return;
       }
       if (max) handleBid(max);
@@ -112,16 +125,34 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
     if (!currentLot) return;
     setLotIndex(0);
     const result = withdrawConsignment(currentLot.horseId);
-    if (!result.ok) setMessage(result.reason ?? "Withdrawal failed");
+    if (!result.ok) {
+      setError(result.reason ?? "Withdrawal failed");
+      setMessage("");
+    } else {
+      setError(null);
+    }
   }, [currentLot, withdrawConsignment]);
 
-  const handleBuyNow = useCallback(
-    () =>
-      sale && currentLot
-        ? buyNow(sale.id, currentLot.id)
-        : { ok: false as const, reason: "No active lot." },
-    [sale, currentLot, buyNow],
-  );
+  const handleBuyNow = useCallback(() => {
+    if (!sale || !currentLot) {
+      setError("No active lot.");
+      return { ok: false as const, reason: "No active lot." };
+    }
+    const result = buyNow(sale.id, currentLot.id);
+    if (result.ok) {
+      setError(null);
+      setMessage("Lot purchased.");
+    } else {
+      setError(result.reason ?? "Purchase failed");
+      setMessage("");
+    }
+    return result;
+  }, [sale, currentLot, buyNow]);
+
+  const dismissError = useCallback(() => setError(null), []);
+  const retryLastBid = useCallback(() => {
+    if (lastBidAttempt !== null) handleBid(lastBidAttempt);
+  }, [lastBidAttempt, handleBid]);
 
   return {
     sale,
@@ -144,6 +175,10 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
     lotIndex,
     setLotIndex,
     message,
+    error,
+    dismissError,
+    retryLastBid,
+    canRetry: lastBidAttempt !== null,
     handleBid,
     handleMaxBid,
     handleWithdraw,
