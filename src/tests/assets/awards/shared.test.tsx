@@ -103,7 +103,13 @@ describe("REGION_AWARD_CONFIG", () => {
     for (const region of ALL_REGIONS) {
       for (const type of ["category", "hoty"] as const) {
         const scheme = REGION_AWARD_CONFIG[region][type];
-        for (const field of ["primary", "accent", "gradientFrom", "gradientTo", "circleStroke"] as const) {
+        for (const field of [
+          "primary",
+          "accent",
+          "gradientFrom",
+          "gradientTo",
+          "circleStroke",
+        ] as const) {
           expect(scheme[field]).toBeTruthy();
           expect(scheme[field]).toMatch(/^#[0-9A-Fa-f]{6}$/);
         }
@@ -139,14 +145,17 @@ describe("AwardSvgShell", () => {
 
   it("renders an <svg> element with passed width and height", () => {
     const html = renderToStaticMarkup(
-      createElement(AwardSvgShell, {
-        width: 48,
-        height: 48,
-        title: "Test Award",
-        gradientId: "test-grad",
-        colors: sampleColors,
-        children: null,
-      }),
+      createElement(
+        AwardSvgShell,
+        {
+          width: 48,
+          height: 48,
+          title: "Test Award",
+          gradientId: "test-grad",
+          colors: sampleColors,
+        },
+        null,
+      ),
     );
     expect(html).toContain("<svg");
     expect(html).toContain('width="48"');
@@ -155,14 +164,17 @@ describe("AwardSvgShell", () => {
 
   it("renders a <circle> with stroke matching config circleStroke", () => {
     const html = renderToStaticMarkup(
-      createElement(AwardSvgShell, {
-        width: 48,
-        height: 48,
-        title: "Test Award",
-        gradientId: "test-grad",
-        colors: sampleColors,
-        children: null,
-      }),
+      createElement(
+        AwardSvgShell,
+        {
+          width: 48,
+          height: 48,
+          title: "Test Award",
+          gradientId: "test-grad",
+          colors: sampleColors,
+        },
+        null,
+      ),
     );
     expect(html).toContain("<circle");
     expect(html).toContain('stroke="#FFFFFF"');
@@ -170,14 +182,17 @@ describe("AwardSvgShell", () => {
 
   it("renders <defs> with <linearGradient> containing correct stopColor values", () => {
     const html = renderToStaticMarkup(
-      createElement(AwardSvgShell, {
-        width: 48,
-        height: 48,
-        title: "Test Award",
-        gradientId: "test-grad",
-        colors: sampleColors,
-        children: null,
-      }),
+      createElement(
+        AwardSvgShell,
+        {
+          width: 48,
+          height: 48,
+          title: "Test Award",
+          gradientId: "test-grad",
+          colors: sampleColors,
+        },
+        null,
+      ),
     );
     expect(html).toContain("<linearGradient");
     expect(html).toContain('id="test-grad"');
@@ -187,14 +202,17 @@ describe("AwardSvgShell", () => {
 
   it("renders a <title> element with passed title text", () => {
     const html = renderToStaticMarkup(
-      createElement(AwardSvgShell, {
-        width: 48,
-        height: 48,
-        title: "My Custom Award Title",
-        gradientId: "test-grad",
-        colors: sampleColors,
-        children: null,
-      }),
+      createElement(
+        AwardSvgShell,
+        {
+          width: 48,
+          height: 48,
+          title: "My Custom Award Title",
+          gradientId: "test-grad",
+          colors: sampleColors,
+        },
+        null,
+      ),
     );
     expect(html).toContain("<title>");
     expect(html).toContain("My Custom Award Title");
@@ -220,29 +238,35 @@ describe("AwardSvgShell", () => {
 
   it("passes className through to the SVG element", () => {
     const html = renderToStaticMarkup(
-      createElement(AwardSvgShell, {
-        width: 48,
-        height: 48,
-        className: "my-custom-class",
-        title: "Test Award",
-        gradientId: "test-grad",
-        colors: sampleColors,
-        children: null,
-      }),
+      createElement(
+        AwardSvgShell,
+        {
+          width: 48,
+          height: 48,
+          className: "my-custom-class",
+          title: "Test Award",
+          gradientId: "test-grad",
+          colors: sampleColors,
+        },
+        null,
+      ),
     );
     expect(html).toContain('class="my-custom-class"');
   });
 
   it("renders viewBox 0 0 48 48", () => {
     const html = renderToStaticMarkup(
-      createElement(AwardSvgShell, {
-        width: 48,
-        height: 48,
-        title: "Test Award",
-        gradientId: "test-grad",
-        colors: sampleColors,
-        children: null,
-      }),
+      createElement(
+        AwardSvgShell,
+        {
+          width: 48,
+          height: 48,
+          title: "Test Award",
+          gradientId: "test-grad",
+          colors: sampleColors,
+        },
+        null,
+      ),
     );
     expect(html).toContain('viewBox="0 0 48 48"');
   });

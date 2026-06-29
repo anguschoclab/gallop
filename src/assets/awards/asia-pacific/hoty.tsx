@@ -26,7 +26,12 @@ export const HotyIcon = ({ width, height, className }: SvgProps) => {
       </g>
 
       {/* Modern angular trophy */}
-      <path d="M15 15 L17 28 L24 32 L31 28 L33 15 Z" stroke={colors.accent} strokeWidth="2" fill="none" />
+      <path
+        d="M15 15 L17 28 L24 32 L31 28 L33 15 Z"
+        stroke={colors.accent}
+        strokeWidth="2"
+        fill="none"
+      />
       <path d="M13 15 L35 15" stroke={colors.accent} strokeWidth="2" />
 
       {/* Angular handles */}

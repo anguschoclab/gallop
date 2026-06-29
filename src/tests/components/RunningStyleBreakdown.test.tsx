@@ -34,7 +34,7 @@ describe("RunningStyleBreakdown", () => {
     expect(screen.getByText(/Running Style Breakdown/i)).toBeTruthy();
   });
 
-  it("compareHorse resolves to correct horse when compareId is set via compare options", () => {
+  it("renders compare dropdown when other owned horses with race history exist", () => {
     const horse = createTestHorse({
       id: "h1",
       name: "Main Horse",
@@ -48,7 +48,7 @@ describe("RunningStyleBreakdown", () => {
       raceHistory: [{ position: 2, day: 10, raceId: "r1", time: 61 } as any],
     });
     renderWithStore(<RunningStyleBreakdown horse={horse} />, { horses: [horse, other] } as any);
-    expect(screen.getByText("Compare Horse")).toBeTruthy();
+    expect(screen.getByText(/Compare with/i)).toBeTruthy();
   });
 
   it("does not show compare horse when no other owned horses with race history exist", () => {

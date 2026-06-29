@@ -16,7 +16,15 @@ export const HotyIcon = ({ width, height, className }: SvgProps) => {
       colors={colors}
     >
       {/* Laurel wreath top */}
-      <ellipse cx="24" cy="10" rx="10" ry="4" fill="none" stroke={colors.accent} strokeWidth="1.5" />
+      <ellipse
+        cx="24"
+        cy="10"
+        rx="10"
+        ry="4"
+        fill="none"
+        stroke={colors.accent}
+        strokeWidth="1.5"
+      />
       <path d="M16 10 Q20 6 24 10 Q28 6 32 10" stroke={colors.accent} strokeWidth="1" fill="none" />
 
       {/* Ornate chalice trophy */}

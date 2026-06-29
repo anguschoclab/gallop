@@ -99,7 +99,7 @@ export function AwardSvgShell({
   title: string;
   gradientId: string;
   colors: RegionAwardColorScheme;
-  children: ReactNode;
+  children?: ReactNode;
 }) {
   return (
     <svg
@@ -144,14 +144,7 @@ export function HotyBanner({
   return (
     <>
       <rect x="19" y={rectY} width="10" height="4" rx="1" fill={fillColor} />
-      <text
-        x="24"
-        y={textY}
-        fontSize="3"
-        fill={textColor}
-        textAnchor="middle"
-        fontWeight="bold"
-      >
+      <text x="24" y={textY} fontSize="3" fill={textColor} textAnchor="middle" fontWeight="bold">
         HOTY
       </text>
     </>

@@ -11,13 +11,37 @@ import { CategoryIcon as SaCategoryIcon } from "@/assets/awards/south-america/ca
 import { HotyIcon as SaHotyIcon } from "@/assets/awards/south-america/hoty";
 
 const ICONS = [
-  { name: "APAC Category", Icon: ApacCategoryIcon, isHoty: false, gradFrom: "#006400", gradTo: "#004d00" },
+  {
+    name: "APAC Category",
+    Icon: ApacCategoryIcon,
+    isHoty: false,
+    gradFrom: "#006400",
+    gradTo: "#004d00",
+  },
   { name: "APAC HOTY", Icon: ApacHotyIcon, isHoty: true, gradFrom: "#006400", gradTo: "#004d00" },
-  { name: "EU Category", Icon: EuCategoryIcon, isHoty: false, gradFrom: "#4B0082", gradTo: "#2D0052" },
+  {
+    name: "EU Category",
+    Icon: EuCategoryIcon,
+    isHoty: false,
+    gradFrom: "#4B0082",
+    gradTo: "#2D0052",
+  },
   { name: "EU HOTY", Icon: EuHotyIcon, isHoty: true, gradFrom: "#4B0082", gradTo: "#2D0052" },
-  { name: "NA Category", Icon: NaCategoryIcon, isHoty: false, gradFrom: "#1E3A5F", gradTo: "#0D2137" },
+  {
+    name: "NA Category",
+    Icon: NaCategoryIcon,
+    isHoty: false,
+    gradFrom: "#1E3A5F",
+    gradTo: "#0D2137",
+  },
   { name: "NA HOTY", Icon: NaHotyIcon, isHoty: true, gradFrom: "#1E3A5F", gradTo: "#0D2137" },
-  { name: "SA Category", Icon: SaCategoryIcon, isHoty: false, gradFrom: "#8B0000", gradTo: "#5C0000" },
+  {
+    name: "SA Category",
+    Icon: SaCategoryIcon,
+    isHoty: false,
+    gradFrom: "#8B0000",
+    gradTo: "#5C0000",
+  },
   { name: "SA HOTY", Icon: SaHotyIcon, isHoty: true, gradFrom: "#8B0000", gradTo: "#5C0000" },
 ];
 
