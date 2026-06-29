@@ -276,8 +276,15 @@ function BookmarkCard({
     }
   };
 
+  // ⚡ Bolt Optimization:
+  // Pre-calculate lowercased tags for O(1) suggestion filtering instead of running O(N) .some() inside .filter()
+  // Impact: Reduces an O(N*M) array iteration with string operations into an O(N+M) set building and lookup
+  const bookmarkTagsLower = useMemo(() => {
+    return new Set((bookmark.tags ?? []).map((t) => t.toLowerCase()));
+  }, [bookmark.tags]);
+
   const availableSuggestions = suggestions.filter(
-    (s) => !(bookmark.tags ?? []).some((t) => t.toLowerCase() === s.toLowerCase()),
+    (s) => !bookmarkTagsLower.has(s.toLowerCase()),
   );
 
   return (
