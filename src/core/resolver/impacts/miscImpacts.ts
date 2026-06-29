@@ -11,6 +11,7 @@
 
 import type { Impact } from "./base";
 import type { ScoutReport } from "@/game/types";
+import type { ReputationSource } from "@/core/reputation";
 import type { NewsItem } from "@/services/narrative/newsTypes";
 import type { TrackRecord } from "../../history/historyTypes";
 
@@ -39,7 +40,7 @@ export interface ReputationImpact extends Impact {
   type: "reputation_change";
   delta: number;
   reason: string;
-  source: string; // e.g. "race_win", "graded_win"
+  source: ReputationSource;
   metadata?: Record<string, any>;
 }
 

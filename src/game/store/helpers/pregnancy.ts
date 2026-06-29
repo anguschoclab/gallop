@@ -4,7 +4,7 @@
  * This file provides pure business logic for resolving pregnancies and foaling,
  * including live foals, stillbirths, live foal guarantee retries, and cash adjustments.
  *
- * Dependencies: @/game/types (Horse, Pregnancy, Stable), @/core/horse/horseFactory (resolveFoaling), @/core/race/naming/raceNameGenerator (getRegionalSystem), @/core/stable/stableConfig (PERSONALITY_CONFIG), @/core/breeding/lineage (getFoalsBy), @/lib/formatting (formatCurrency), @/game/constants (BREEDING_FEE, GESTATION_DAYS, LIVE_FOAL_GUARANTEE_FEE)
+ * Dependencies: @/game/types (Horse, Pregnancy, Stable, BlueHenStatus, StudCareer), @/core/horse/horseFactory (resolveFoaling), @/core/race/naming/raceNameGenerator (getRegionalSystem), @/core/stable/stableConfig (PERSONALITY_CONFIG), @/lib/formatting (formatCurrency), @/game/constants (BREEDING_FEE, GESTATION_DAYS, LIVE_FOAL_GUARANTEE_FEE)
  * Related files: store/slices/breedingSlice.ts (uses pregnancy helpers)
  */
 
@@ -13,12 +13,18 @@
  * Pure business logic for resolving pregnancies and foaling
  */
 
-import type { Horse, Pregnancy, Stable, RegionalSystem, GameState } from "@/game/types";
-import type { Track } from "@/data/tracks";
+import type {
+  Horse,
+  Pregnancy,
+  Stable,
+  RegionalSystem,
+  GameState,
+  BlueHenStatus,
+  StudCareer,
+} from "@/game/types";
 import { resolveFoaling } from "@/core/horse/horseFactory";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
-import { getFoalsBy } from "@/core/breeding/lineage";
 import { formatCurrency } from "@/core/common/formatting";
 import { BREEDING_FEE, GESTATION_DAYS, LIVE_FOAL_GUARANTEE_FEE } from "@/constants";
 
@@ -38,11 +44,23 @@ export type PregnancyResult = {
   foals: Horse[];
   cashAdjustment: number;
   logs: { day: number; text: string }[];
+  mareFoalingUpdates: Array<{
+    horseId: string;
+    lastFoaledDay: number;
+    foalsProduced: string[];
+    blueHenStatus: BlueHenStatus;
+  }>;
+  studCareerUpdates: Array<{ horseId: string; studCareer: StudCareer }>;
+  usedNames: Set<string>;
 };
 
 /**
  * Resolves pregnancies that are due on the current day.
  * Handles live foals, stillbirths, and live foal guarantee retries.
+ *
+ * This function is pure: it does not mutate the input `horses` array or the
+ * input `usedNames` set. It returns descriptor objects for any horse updates
+ * so callers can apply them via impacts or direct state replacement.
  *
  * @param currentPregnancies - Current pregnancy records
  * @param horses - All horses in the game (for sire/dam lookup)
@@ -50,7 +68,7 @@ export type PregnancyResult = {
  * @param usedNames - Set of used names to avoid duplicates
  * @param newDay - Current simulation day
  * @param state
- * @returns Result object with updated pregnancies, new foals, cash adjustments, and logs
+ * @returns Result object with updated pregnancies, new foals, cash adjustments, logs, and horse update descriptors
  */
 export function resolvePregnancies(
   currentPregnancies: Pregnancy[],
@@ -65,6 +83,9 @@ export function resolvePregnancies(
   const damsById = new Map(horses.map((h) => [h.id, h]));
   const foals: Horse[] = [];
   let cashAdjustment = 0;
+  const mareFoalingUpdates: PregnancyResult["mareFoalingUpdates"] = [];
+  const studCareerUpdates: PregnancyResult["studCareerUpdates"] = [];
+  const nextUsedNames = new Set(usedNames);
 
   const parentNameBlendingEnabled =
     state?.userSettings?.gameplay?.parentNameBlendingEnabled ?? true;
@@ -85,7 +106,7 @@ export function resolvePregnancies(
 
     // Prepare naming context
     const namingContext: any = {
-      existingNames: usedNames,
+      existingNames: nextUsedNames,
       reservedNames: state?.reservedHorseNames,
       currentDay: newDay,
       parentNameBlendingEnabled,
@@ -104,49 +125,52 @@ export function resolvePregnancies(
 
     if (outcome.kind === "live") {
       const foal = outcome.foal;
-      if (dam) {
-        if (!dam.blueHenStatus) {
-          dam.blueHenStatus = {
-            isBlueHen: false,
-            stakesWinnersProduced: 0,
-            group1WinnersProduced: 0,
-            blueHenScore: 0,
-            foalsProduced: dam.foalsProduced?.length ?? 0,
-          };
-        }
-        dam.blueHenStatus.foalsProduced = (dam.foalsProduced?.length ?? 0) + 1;
-        const baseScore = Math.min(dam.blueHenStatus.stakesWinnersProduced * 15, 60);
-        const g1Bonus = dam.blueHenStatus.group1WinnersProduced * 20;
-        dam.blueHenStatus.blueHenScore = Math.min(baseScore + g1Bonus, 100);
-        if (
-          dam.blueHenStatus.stakesWinnersProduced >= 2 ||
-          dam.blueHenStatus.group1WinnersProduced >= 1
-        ) {
-          dam.blueHenStatus.isBlueHen = true;
-        }
-        if (!dam.foalsProduced) dam.foalsProduced = [];
-        dam.foalsProduced.push(foal.id);
-        dam.lastFoaledDay = newDay;
-      }
+      const previousFoals = dam.foalsProduced ?? [];
+      const newFoalsProduced = [...previousFoals, foal.id];
+      const previousBlueHen = dam.blueHenStatus ?? {
+        isBlueHen: false,
+        stakesWinnersProduced: 0,
+        group1WinnersProduced: 0,
+        blueHenScore: 0,
+        foalsProduced: previousFoals.length,
+      };
+      const blueHenScore = Math.min(
+        Math.min(previousBlueHen.stakesWinnersProduced * 15, 60) +
+          previousBlueHen.group1WinnersProduced * 20,
+        100,
+      );
+      const isBlueHen =
+        previousBlueHen.stakesWinnersProduced >= 2 || previousBlueHen.group1WinnersProduced >= 1;
 
-      // Update sire's lifetime foals count using lineage helper
-      // Clone sire to avoid mutating frozen/read-only objects
-      if (sire && sire.stud) {
-        const sireIndex = horses.findIndex((h) => h.id === sire.id);
-        if (sireIndex !== -1) {
-          horses[sireIndex] = {
-            ...sire,
-            stud: {
-              ...sire.stud,
-              lifetimeFoals: getFoalsBy({ horses: [...horses, foal] }, sire.id).length,
-            },
-          };
-        }
+      mareFoalingUpdates.push({
+        horseId: dam.id,
+        lastFoaledDay: newDay,
+        foalsProduced: newFoalsProduced,
+        blueHenStatus: {
+          ...previousBlueHen,
+          foalsProduced: newFoalsProduced.length,
+          blueHenScore,
+          isBlueHen,
+        },
+      });
+
+      // Compute sire's new lifetime foals count without mutating the input array.
+      if (sire.stud) {
+        const existingFoalsCount = horses.filter((h) => h.pedigree?.sireId === sire.id).length;
+        const newFoalsCount = foals.filter((f) => f.pedigree?.sireId === sire.id).length;
+        studCareerUpdates.push({
+          horseId: sire.id,
+          studCareer: {
+            ...sire.stud,
+            lifetimeFoals: existingFoalsCount + newFoalsCount + 1,
+          },
+        });
       }
 
       p.resolved = true;
       p.foalId = foal.id;
       foals.push(foal);
+      nextUsedNames.add(foal.name.toLowerCase());
 
       if (outcome.transmission) {
         foal.healthStatus = "covering_sickness";
@@ -187,5 +211,13 @@ export function resolvePregnancies(
     }
   }
 
-  return { pregnancies, foals, cashAdjustment, logs: newLogs };
+  return {
+    pregnancies,
+    foals,
+    cashAdjustment,
+    logs: newLogs,
+    mareFoalingUpdates,
+    studCareerUpdates,
+    usedNames: nextUsedNames,
+  };
 }

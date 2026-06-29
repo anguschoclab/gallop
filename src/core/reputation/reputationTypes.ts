@@ -19,6 +19,7 @@ export type ReputationTier =
  */
 export type ReputationSource =
   | "race_win"
+  | "race_loss"
   | "graded_stakes_win"
   | "breeding_success"
   | "stallion_quality"

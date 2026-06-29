@@ -80,7 +80,7 @@ export function generatePrizeMoneyImpacts(
         source: "race_win",
         reason: `Win in ${race.name}${race.graded ? ` (${race.graded.grade})` : ""}`,
         metadata: { horseId: horse.id, raceId: race.id },
-      } as ReputationImpact;
+      };
     } else {
       const fieldSize = race.entries?.length || position;
       const consecutiveLosses = horse.raceHistory
@@ -111,7 +111,7 @@ export function generatePrizeMoneyImpacts(
           source: "race_loss",
           reason: `Poor finish (${position}${getOrdinalSuffix(position)} of ${fieldSize}) in ${race.name}${race.graded ? ` (${race.graded.grade})` : ""}`,
           metadata: { horseId: horse.id, raceId: race.id },
-        } as ReputationImpact;
+        };
       }
     }
   }

@@ -249,6 +249,60 @@ describe("resolvePregnancies", () => {
     // Either way, should handle LFG correctly
     expect(result.logs.length).toBeGreaterThan(0);
   });
+
+  it("should not mutate the input horses array or usedNames set", () => {
+    const sire = generateHorse({ tier: "elite", owned: false });
+    sire.id = "sire-1";
+    sire.gender = "horse";
+    sire.age = 5;
+    sire.stud = {
+      atStud: true,
+      standingFee: 1000,
+      seasonBookings: 0,
+      bookSize: 40,
+      lifetimeStakesFoals: 0,
+      lifetimeG1Foals: 0,
+      lifetimeFoals: 0,
+      retiredOnDay: 0,
+    };
+
+    const dam = generateHorse({ tier: "elite", owned: true });
+    dam.id = "dam-1";
+    dam.gender = "mare";
+    dam.age = 3;
+
+    const pregnancy: Pregnancy = {
+      id: "preg-1",
+      sireId: sire.id,
+      damId: dam.id,
+      sireName: sire.name,
+      damName: dam.name,
+      conceivedDay: 1,
+      dueDay: 31,
+      resolved: false,
+      liveFoalGuarantee: false,
+      reBreedingAttempts: 0,
+      refunded: false,
+      isPlayerOwned: true,
+    };
+
+    const horses = [sire, dam];
+    const originalLifetimeFoals = sire.stud?.lifetimeFoals;
+    const originalFoalsProducedLength = dam.foalsProduced?.length ?? 0;
+    const usedNames = new Set<string>();
+    const result = resolvePregnancies([pregnancy], horses, [], usedNames, 31);
+
+    // Should not mutate the original array or the objects inside it
+    expect(sire.stud?.lifetimeFoals).toBe(originalLifetimeFoals);
+    expect(dam.lastFoaledDay).toBeUndefined();
+    expect(dam.foalsProduced?.length).toBe(originalFoalsProducedLength);
+    expect(usedNames.size).toBe(0);
+
+    // Result should carry the derived updates instead
+    expect(result.mareFoalingUpdates.length).toBeGreaterThan(0);
+    expect(result.studCareerUpdates.length).toBeGreaterThan(0);
+    expect(result.usedNames.size).toBeGreaterThan(0);
+  });
 });
 
 describe("maybeRecalibratePars", () => {

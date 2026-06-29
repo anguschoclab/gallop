@@ -11,10 +11,10 @@
 
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
-import type { AnyImpact } from "../impacts";
+import type { AnyImpact, ReputationImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
 import { distanceBucket } from "@/core/race/beyer";
-import { getReputationTier, createReputationEvent } from "@/core/reputation";
+import { getReputationTier, createReputationEvent, type ReputationSource } from "@/core/reputation";
 import { createTransaction } from "@/core/transactions";
 import { addReservedName } from "@/core/horse/naming/reservedNames";
 
@@ -138,8 +138,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   reputation_change: (draft, impact) => {
-    const impactAny = impact as any;
-    const { delta, reason, source, metadata } = impactAny;
+    const repImpact = impact as ReputationImpact;
+    const { delta, reason, source, metadata } = repImpact;
     if (draft.reputation) {
       const newEvent = createReputationEvent(source, delta, reason, impact.day, metadata);
       draft.reputation.events.push(newEvent);

@@ -19,6 +19,8 @@ import {
 } from "@/core/ai/jockeyAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS, PHASE_ORDER_JOCKEY_PHASE } from "@/constants";
+import { generateUUID } from "@/core/uuid";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
 
 /**
  * Phase: Jockey Management
@@ -32,41 +34,58 @@ export const jockeyPhase = {
     const { state, newDay } = context;
     const dailyRng = (context as any).dailyRng || createRng(hashStr(`jockey_phase_${newDay}`));
 
-    let jockeys = state.jockeys ?? [];
+    let jockeys = (state.jockeys ?? []).map((j) => ({ ...j }));
     let npcStables = state.npcStables;
-    const log = state.log;
-    const npcAIManager = state.npcAIManager;
+    let npcAIManager = state.npcAIManager;
+    const logs = [...context.logs];
+    const impacts: AnyImpact[] = [];
 
     // 1. Handle Contract Expirations & Imperial Field Initialization
     jockeys = jockeys.map((j) => {
-      // Defensive initialization for Imperial Expansion fields
-      if (!j.affinityMap) j.affinityMap = {};
-      if (j.stableAffinity === undefined) j.stableAffinity = 0;
-      if (j.isApprentice === undefined) j.isApprentice = false;
-      if (j.loyalty === undefined) j.loyalty = 100;
+      // Defensive initialization for Imperial Expansion fields (clone-on-write)
+      if (
+        !j.affinityMap ||
+        j.stableAffinity === undefined ||
+        j.isApprentice === undefined ||
+        j.loyalty === undefined
+      ) {
+        j = {
+          ...j,
+          affinityMap: j.affinityMap ?? {},
+          stableAffinity: j.stableAffinity ?? 0,
+          isApprentice: j.isApprentice ?? false,
+          loyalty: j.loyalty ?? 100,
+        };
+      }
 
       if (j.contractUntil && j.contractUntil < newDay) {
         if (j.stableId) {
           const stable = npcStables.find((s) => s.id === j.stableId);
           if (!stable) {
             // Player jockey contract expired
-            log.push({
+            logs.push({
               day: newDay,
               text: `Jockey contract expired: ${j.name} is now a free agent.`,
             });
           } else if (npcAIManager) {
             // NPC jockey contract expired - use AI to determine if should retain
+            npcAIManager = {
+              ...npcAIManager,
+              stableStates: { ...npcAIManager.stableStates },
+            };
             const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
             const jockeyAI = stableAI.jockeyAI || (stableAI.jockeyAI = createJockeyAIState(stable));
 
             if (!shouldRetainJockey(jockeyAI, j, stable, newDay)) {
-              log.push({
+              logs.push({
                 day: newDay,
                 text: `${stable.name} declined to renew contract for ${j.name}.`,
               });
+              npcAIManager.stableStates[stable.id] = stableAI;
               return { ...j, stableId: undefined, contractUntil: undefined, stableAffinity: 0 };
             } else {
               // Renew contract
+              npcAIManager.stableStates[stable.id] = stableAI;
               return { ...j, contractUntil: newDay + 90 };
             }
           }
@@ -78,6 +97,7 @@ export const jockeyPhase = {
 
     // 2. NPC Hiring & POACHING (Imperial Expansion)
     // Stables might try to hire or poach jockeys
+    const stableCashUpdates = new Map<string, number>();
     npcStables = npcStables.map((stable) => {
       const hasRetained = jockeys.some((j) => j.stableId === stable.id);
 
@@ -87,15 +107,21 @@ export const jockeyPhase = {
         if (freeAgents.length > 0) {
           let chosen = null;
           if (npcAIManager) {
+            npcAIManager = {
+              ...npcAIManager,
+              stableStates: { ...npcAIManager.stableStates },
+            };
             const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
             const jockeyAI = stableAI.jockeyAI || (stableAI.jockeyAI = createJockeyAIState(stable));
             chosen = selectBestJockey(jockeyAI, {} as any, freeAgents, stable);
+            npcAIManager.stableStates[stable.id] = stableAI;
           }
 
           if (chosen) {
             const signOnBonus = chosen.ridingFee * 20;
-            if (stable.cash >= signOnBonus) {
-              stable.cash -= signOnBonus;
+            const currentCash = stableCashUpdates.get(stable.id) ?? stable.cash;
+            if (currentCash >= signOnBonus) {
+              stableCashUpdates.set(stable.id, currentCash - signOnBonus);
               jockeys = jockeys.map((j) =>
                 j.id === chosen.id
                   ? {
@@ -106,6 +132,29 @@ export const jockeyPhase = {
                     }
                   : j,
               );
+              impacts.push({
+                id: generateUUID(dailyRng),
+                intentId: "",
+                day: newDay,
+                phase: "jockey",
+                logLevel: "conditional",
+                type: "cash_change",
+                entityId: stable.id,
+                amount: -signOnBonus,
+                reason: `Sign-on bonus for jockey ${chosen.name}`,
+              });
+              impacts.push({
+                id: generateUUID(dailyRng),
+                intentId: "",
+                day: newDay,
+                phase: "jockey",
+                logLevel: "conditional",
+                type: "jockey_contract",
+                jockeyId: chosen.id,
+                stableId: stable.id,
+                contractUntil: newDay + JOCKEY_CONTRACT_DAYS,
+                reason: `NPC stable ${stable.name} hired jockey ${chosen.name}`,
+              } as AnyImpact);
             }
           }
         }
@@ -130,7 +179,7 @@ export const jockeyPhase = {
 
           if (dailyRng.next() < poachSuccessChance) {
             // Poaching success!
-            log.push({
+            logs.push({
               day: newDay,
               text: `POACHED: ${stable.name} has signed your star jockey ${target.name} to a life-changing contract!`,
             });
@@ -145,9 +194,22 @@ export const jockeyPhase = {
                   }
                 : j,
             );
+            impacts.push({
+              id: generateUUID(dailyRng),
+              intentId: "",
+              day: newDay,
+              phase: "jockey",
+              logLevel: "conditional",
+              type: "jockey_contract",
+              jockeyId: target.id,
+              stableId: stable.id,
+              contractUntil: newDay + JOCKEY_RETAINER_DAYS,
+              loyalty: 100,
+              reason: `Elite stable ${stable.name} poached jockey ${target.name}`,
+            } as AnyImpact);
           } else if (dailyRng.next() < 0.2) {
             // Poaching attempt failed but loyalty dropped
-            log.push({
+            logs.push({
               day: newDay,
               text: `Rumors: ${stable.name} made a secret offer to ${target.name}. Your jockey remains for now, but seems unsettled.`,
             });
@@ -161,16 +223,26 @@ export const jockeyPhase = {
       return stable;
     });
 
+    // Apply accumulated cash updates to a fresh stables array.
+    if (stableCashUpdates.size > 0) {
+      npcStables = npcStables.map((stable) => {
+        const updatedCash = stableCashUpdates.get(stable.id);
+        return updatedCash === undefined ? stable : { ...stable, cash: updatedCash };
+      });
+    }
+
     // 3. Pool Refreshment
     // Ensure at least 20 free agents
     const freeAgents = jockeys.filter((j) => !j.stableId);
     if (freeAgents.length < 20) {
       const needed = 20 - freeAgents.length;
+      const newJockeys = [];
       for (let i = 0; i < needed; i++) {
         const r = dailyRng.next();
         const tier = r < 0.15 ? "elite" : r < 0.6 ? "mid" : "budget";
-        jockeys.push(generateJockey({ tier, rng: dailyRng }));
+        newJockeys.push(generateJockey({ tier, rng: dailyRng }));
       }
+      jockeys = [...jockeys, ...newJockeys];
     }
 
     return {
@@ -179,9 +251,10 @@ export const jockeyPhase = {
         ...state,
         jockeys,
         npcStables,
-        log,
         npcAIManager,
       },
+      logs,
+      impacts: [...context.impacts, ...impacts],
     };
   },
 };

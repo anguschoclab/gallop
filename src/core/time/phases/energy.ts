@@ -55,6 +55,9 @@ export const energyPhase = {
       }
     }
 
+    // Collect acclimatization decay updates per outpost without mutating state.
+    const acclimatizationUpdates = new Map<string, Map<string, number>>();
+
     const horses = state.horses.map((h) => {
       // Skip energy restoration for deceased horses
       if (h.lifecycleStatus === "deceased") return h;
@@ -148,7 +151,11 @@ export const energyPhase = {
       if (h.outpostId) {
         const outpost = outpostMap.get(h.outpostId);
         if (outpost && outpost.acclimatizationDays?.[h.id] > 0) {
-          outpost.acclimatizationDays[h.id]--;
+          const remainingDays = outpost.acclimatizationDays[h.id] - 1;
+          if (!acclimatizationUpdates.has(h.outpostId)) {
+            acclimatizationUpdates.set(h.outpostId, new Map<string, number>());
+          }
+          acclimatizationUpdates.get(h.outpostId)!.set(h.id, remainingDays);
         }
       }
       // --- END ACCLIMATIZATION ---
@@ -169,11 +176,32 @@ export const energyPhase = {
       };
     });
 
+    // Apply acclimatization decay updates to a fresh npcStables array.
+    let npcStables = state.npcStables;
+    if (acclimatizationUpdates.size > 0) {
+      npcStables = npcStables.map((stable) => {
+        const originalOutposts = (stable as any).outposts ?? [];
+        let outpostsChanged = false;
+        const updatedOutposts = originalOutposts.map((outpost: any) => {
+          const updates = acclimatizationUpdates.get(outpost.id);
+          if (!updates) return outpost;
+          const updatedDays = { ...outpost.acclimatizationDays };
+          for (const [horseId, days] of updates.entries()) {
+            updatedDays[horseId] = days;
+          }
+          outpostsChanged = true;
+          return { ...outpost, acclimatizationDays: updatedDays };
+        });
+        return outpostsChanged ? { ...stable, outposts: updatedOutposts } : stable;
+      });
+    }
+
     return {
       ...context,
       state: {
         ...state,
         horses,
+        npcStables,
       },
     };
   },

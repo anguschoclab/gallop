@@ -50,7 +50,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
     freeAgents.sort((a, b) => b.fame - a.fame);
 
     for (const intent of raceEntryIntents) {
-      const race = raceMap.get(intent.raceId);
+      let race = raceMap.get(intent.raceId);
       const horse = horseMap.get(intent.horseId);
 
       if (!race || !horse) continue;
@@ -66,7 +66,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
           race.graded.key &&
           horse.winAndYouInQualified?.some(
             (q: { raceKey: string; year: number }) =>
-              q.raceKey === race.graded!.key && q.year === currentYear,
+              q.raceKey === race!.graded!.key && q.year === currentYear,
           );
         if (!isInvited && !isWinAndYouIn) continue;
       }
@@ -99,7 +99,12 @@ export const raceEntryResolutionPhase: PipelinePhase = {
           }
           bumpEntryHorseId = race.entries[weakestIdx].horseId;
           // Update the local race snapshot so subsequent intents see the eviction
-          race.entries.splice(weakestIdx, 1);
+          // without mutating the original state.races array.
+          const updatedEntries = [...race.entries];
+          updatedEntries.splice(weakestIdx, 1);
+          const updatedRace = { ...race, entries: updatedEntries };
+          raceMap.set(race.id, updatedRace);
+          race = updatedRace;
         } else {
           continue; // full race, no bump applicable
         }

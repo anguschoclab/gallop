@@ -61,6 +61,16 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       horse.stud = studCareer;
     }
   },
+  mare_foaling_update: (draft, impact, lookupMaps) => {
+    const impactAny = impact as any;
+    const { horseId, lastFoaledDay, foalsProduced, blueHenStatus } = impactAny;
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    if (horse) {
+      horse.lastFoaledDay = lastFoaledDay;
+      horse.foalsProduced = foalsProduced;
+      horse.blueHenStatus = blueHenStatus;
+    }
+  },
   blue_hen_status: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
     const { horseId, blueHenStatus } = impactAny;
@@ -78,7 +88,8 @@ export class BreedingHandler implements ImpactHandler {
       "pregnancy_update",
       "pregnancy_deletion",
       "stud_career",
-      "blue hen_status",
+      "mare_foaling_update",
+      "blue_hen_status",
       "update_stud_fee",
     ].includes(type);
   }

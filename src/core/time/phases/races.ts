@@ -13,6 +13,7 @@ import type { PipelineContext } from "../pipeline";
 import { generateUpcomingRaces, pruneOldRaces } from "@/game/store/helpers/market";
 import { generateAnnualCalendar, getCurrentYear } from "@/core/race/schedule";
 import { generateUUID } from "@/core/uuid";
+import type { AnyImpact, InboxImpact } from "@/core/resolver/impacts/index";
 
 /**
  * Phase: Race Generation and Pruning
@@ -38,8 +39,8 @@ export const racesPhase = {
     races = generateUpcomingRaces(races, newDay, dailyRng);
     const pruned = pruneOldRaces(races, newDay);
 
-    // Push race deadline notifications for targeted races
-    const newInboxMessages = [...(state.inbox ?? [])];
+    // Emit race deadline notifications for targeted races as inbox impacts
+    const impacts: AnyImpact[] = [];
     if (state.campaigns) {
       for (const campaign of state.campaigns) {
         for (const slot of campaign.slots) {
@@ -54,21 +55,28 @@ export const racesPhase = {
           if (race && race.day === newDay + 7) {
             // Deadline is 7 days away
             const horse = state.horses.find((h) => h.id === campaign.horseId);
-            newInboxMessages.push({
+            impacts.push({
               id: generateUUID(),
+              intentId: "",
               day: newDay,
-              category: "deadline",
-              priority: "action",
-              title: `Race Deadline: ${race.name}`,
-              body: `The entry deadline for ${race.name} is in 7 days. ${
-                horse?.name || "Your horse"
-              } is targeted for this race.`,
-              cta: {
-                label: "View Race",
-                route: "race.$raceId",
-                params: { raceId: race.id },
+              phase: "races",
+              logLevel: "conditional",
+              type: "inbox_message",
+              message: {
+                day: newDay,
+                category: "deadline",
+                priority: "action",
+                title: `Race Deadline: ${race.name}`,
+                body: `The entry deadline for ${race.name} is in 7 days. ${
+                  horse?.name || "Your horse"
+                } is targeted for this race.`,
+                cta: {
+                  label: "View Race",
+                  route: "race.$raceId",
+                  params: { raceId: race.id },
+                },
               },
-            });
+            } as InboxImpact);
           }
         }
       }
@@ -79,8 +87,8 @@ export const racesPhase = {
       state: {
         ...state,
         races: pruned,
-        inbox: newInboxMessages,
       },
+      impacts: [...context.impacts, ...impacts],
     };
   },
 };

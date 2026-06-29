@@ -21,6 +21,8 @@ import {
 } from "@/core/ai/marketAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { generateStaffPool } from "@/core/staff/staffGenerator";
+import { generateUUID } from "@/core/uuid";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
 
 /**
  * Phase: Market Refresh
@@ -32,11 +34,19 @@ export const marketPhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, dailyRng, newDay } = context;
     let market = refreshMarket(state.market, dailyRng);
-    const npcStables = state.npcStables;
-    const npcAIManager = state.npcAIManager;
+    let npcStables = state.npcStables;
+    let npcAIManager = state.npcAIManager;
+    const impacts: AnyImpact[] = [];
 
     // NPC AI-driven market purchases
     if (npcAIManager && npcStables.length > 0) {
+      // Clone the manager and stable map so we never mutate the original state.
+      npcAIManager = {
+        ...npcAIManager,
+        stableStates: { ...npcAIManager.stableStates },
+      };
+      const stableCashUpdates = new Map<string, number>();
+
       for (const stable of npcStables) {
         const aiState = getOrCreateStableAIState(npcAIManager, stable, newDay);
         if (!aiState.marketAI) {
@@ -59,23 +69,56 @@ export const marketPhase = {
           if (shouldPurchase) {
             const maxPrice = calculateMaxPurchasePrice(aiState.marketAI, horse, stable);
 
-            if (estimatedPrice <= maxPrice && stable.cash >= estimatedPrice) {
-              // Purchase the horse
-              stable.cash -= estimatedPrice;
-              const purchasedHorse = { ...horse, stableId: stable.id };
-              state.horses.push(purchasedHorse);
+            const currentCash = stableCashUpdates.get(stable.id) ?? stable.cash;
+            if (estimatedPrice <= maxPrice && currentCash >= estimatedPrice) {
+              // Track cash update locally; impact resolver will commit it.
+              stableCashUpdates.set(stable.id, currentCash - estimatedPrice);
+
+              impacts.push({
+                id: generateUUID(dailyRng),
+                intentId: "",
+                day: newDay,
+                phase: "market",
+                logLevel: "conditional",
+                type: "horse_transfer",
+                horseId: horse.id,
+                fromStableId: undefined,
+                toStableId: stable.id,
+                price: estimatedPrice,
+                reason: `NPC stable ${stable.name} purchased ${horse.name} from market`,
+              });
+              impacts.push({
+                id: generateUUID(dailyRng),
+                intentId: "",
+                day: newDay,
+                phase: "market",
+                logLevel: "conditional",
+                type: "cash_change",
+                entityId: stable.id,
+                amount: -estimatedPrice,
+                reason: `Market purchase of ${horse.name}`,
+              });
 
               // Remove horse from market
               market = market.filter((h) => h.id !== horse.id);
 
               // Record purchase for AI learning
               recordMarketPurchase(aiState.marketAI, horse, estimatedPrice, stable, newDay);
+              npcAIManager.stableStates[stable.id] = aiState;
 
               // Only purchase one horse per stable per day
               break;
             }
           }
         }
+      }
+
+      // Apply accumulated cash updates to a fresh stables array.
+      if (stableCashUpdates.size > 0) {
+        npcStables = npcStables.map((stable) => {
+          const updatedCash = stableCashUpdates.get(stable.id);
+          return updatedCash === undefined ? stable : { ...stable, cash: updatedCash };
+        });
       }
     }
 
@@ -95,6 +138,7 @@ export const marketPhase = {
         npcAIManager,
         staffPool,
       },
+      impacts: [...context.impacts, ...impacts],
     };
   },
 };
