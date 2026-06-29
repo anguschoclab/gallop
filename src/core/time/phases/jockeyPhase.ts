@@ -223,14 +223,6 @@ export const jockeyPhase = {
       return stable;
     });
 
-    // Apply accumulated cash updates to a fresh stables array.
-    if (stableCashUpdates.size > 0) {
-      npcStables = npcStables.map((stable) => {
-        const updatedCash = stableCashUpdates.get(stable.id);
-        return updatedCash === undefined ? stable : { ...stable, cash: updatedCash };
-      });
-    }
-
     // 3. Pool Refreshment
     // Ensure at least 20 free agents
     const freeAgents = jockeys.filter((j) => !j.stableId);

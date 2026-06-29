@@ -34,7 +34,7 @@ export const marketPhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, dailyRng, newDay } = context;
     let market = refreshMarket(state.market, dailyRng);
-    let npcStables = state.npcStables;
+    const npcStables = state.npcStables;
     let npcAIManager = state.npcAIManager;
     const impacts: AnyImpact[] = [];
 
@@ -111,14 +111,6 @@ export const marketPhase = {
             }
           }
         }
-      }
-
-      // Apply accumulated cash updates to a fresh stables array.
-      if (stableCashUpdates.size > 0) {
-        npcStables = npcStables.map((stable) => {
-          const updatedCash = stableCashUpdates.get(stable.id);
-          return updatedCash === undefined ? stable : { ...stable, cash: updatedCash };
-        });
       }
     }
 

@@ -47,6 +47,11 @@ export const raceResolutionPhase: PipelinePhase = {
     const npcStableMap = new Map((state.npcStables || []).map((s) => [s.id, s]));
     const jockeyMap = new Map((state.jockeys || []).map((j) => [j.id, j]));
 
+    // Clone the AI manager so NPC learning updates are applied as a new object.
+    const npcAIManager = state.npcAIManager
+      ? { ...state.npcAIManager, stableStates: { ...state.npcAIManager.stableStates } }
+      : undefined;
+
     let resolvedCount = 0;
     for (const race of overdueRaces) {
       resolvedCount++;
@@ -66,7 +71,7 @@ export const raceResolutionPhase: PipelinePhase = {
         jockeyMap,
         state.hiredStaff,
         npcStableMap,
-        state.npcAIManager,
+        npcAIManager,
         newDay,
         undefined,
         raceWeatherState?.pattern,
@@ -82,13 +87,13 @@ export const raceResolutionPhase: PipelinePhase = {
       }
 
       // Record outcomes for NPC AI
-      if (state.npcAIManager) {
+      if (npcAIManager) {
         for (const res of result) {
           const horse = horseMap.get(res.horseId);
           if (horse && horse.stableId) {
             const stable = npcStableMap.get(horse.stableId);
             if (stable) {
-              const stableAI = getOrCreateStableAIState(state.npcAIManager, stable, newDay);
+              const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
 
               // 1. Learn from race entry performance
               if (stableAI.raceEntryAI) {
@@ -141,7 +146,7 @@ export const raceResolutionPhase: PipelinePhase = {
                 );
               }
 
-              state.npcAIManager.stableStates[stable.id] = stableAI;
+              npcAIManager.stableStates[stable.id] = stableAI;
             }
           }
         }
@@ -266,6 +271,7 @@ export const raceResolutionPhase: PipelinePhase = {
       state: {
         ...state,
         races: prunedRaces,
+        ...(npcAIManager && { npcAIManager }),
       },
       impacts: [...(context.impacts || []), ...impacts],
     };

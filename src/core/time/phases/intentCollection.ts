@@ -30,6 +30,7 @@ export const intentCollectionPhase: PipelinePhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const intents: AnyIntent[] = [];
+    const autoEntryLogs: { day: number; text: string }[] = [];
 
     // Collect player intents from pendingIntents queue
     if (state.pendingIntents && state.pendingIntents.length > 0) {
@@ -76,7 +77,7 @@ export const intentCollectionPhase: PipelinePhase = {
                   });
 
                   // Log the auto-entry
-                  context.logs.push({
+                  autoEntryLogs.push({
                     day: newDay,
                     text: `Auto-campaign: ${horse.name} entered in ${race.name || "race"} at ${race.graded?.track || race.trackId || "track"}.`,
                   });
@@ -95,6 +96,7 @@ export const intentCollectionPhase: PipelinePhase = {
         ...state,
         pendingIntents: [], // Clear pending intents after collection
       },
+      logs: [...autoEntryLogs, ...context.logs],
     };
   },
 };

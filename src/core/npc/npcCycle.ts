@@ -115,7 +115,7 @@ function calculateFameGainsForRaces(races: Race[]): Map<string, number> {
  * @param fameGains
  * @returns Updated horses array with applied fame changes.
  */
-function applyFameGainsToHorses(horses: Horse[], fameGains: Map<string, number>): Horse[] {
+export function applyFameGainsToHorses(horses: Horse[], fameGains: Map<string, number>): Horse[] {
   return horses.map((h) => {
     const gain = fameGains.get(h.id);
     if (gain) {
@@ -364,6 +364,8 @@ export interface NpcCycleResult {
   npcFacilities?: Record<string, Record<string, Facility>>;
   newsItems?: NewsItem[];
   reputationEvents?: ReputationEvent[];
+  cashChanges?: Array<{ stableId: string; amount: number; reason: string }>;
+  fameChanges?: Array<{ horseId: string; delta: number }>;
 }
 
 /**
@@ -401,20 +403,34 @@ export function runNpcCycle(
   try {
     // Skip if no NPC stables
     if (npcStables.length === 0) {
-      return { horses, races, jockeys, aiManager };
+      return { horses, races, jockeys, aiManager, cashChanges: [], fameChanges: [] };
     }
 
     // 1. NPC Training and 2. NPC Race Entry are now handled via the Intent/Impact pipeline
     const horsesAfterTraining = horses;
     const racesAfterEntry = races;
+    const cashChanges: Array<{ stableId: string; amount: number; reason: string }> = [];
+    let fameChanges: Array<{ horseId: string; delta: number }> = [];
 
-    // 3. Update fame for horses in yesterday's races
+    // Clone facilities to avoid mutating the input state.
+    let updatedNpcFacilities = npcFacilities;
+    if (npcFacilities) {
+      updatedNpcFacilities = {};
+      for (const stableId in npcFacilities) {
+        updatedNpcFacilities[stableId] = { ...npcFacilities[stableId] };
+      }
+    }
+
+    // 3. Calculate fame gains for horses in yesterday's races (do not mutate horses here).
     const yesterdayRaces = races.filter((r) => r.day === currentDay && r.resolved && r.result);
 
     if (yesterdayRaces.length > 0) {
       const fameGains = calculateFameGainsForRaces(yesterdayRaces);
       if (fameGains.size > 0) {
-        horses = applyFameGainsToHorses(horses, fameGains);
+        fameChanges = Array.from(fameGains.entries()).map(([horseId, delta]) => ({
+          horseId,
+          delta,
+        }));
       }
     }
 
@@ -455,8 +471,8 @@ export function runNpcCycle(
         }
 
         // AI-driven facility upgrades
-        if (npcFacilities && npcFacilities[stable.id]) {
-          const facilities = npcFacilities[stable.id];
+        if (updatedNpcFacilities && updatedNpcFacilities[stable.id]) {
+          const facilities = updatedNpcFacilities[stable.id];
           const facilityBudget = calculateFacilityBudget(
             stableAIState.facilityAI,
             stable,
@@ -474,7 +490,11 @@ export function runNpcCycle(
               const currentFacility = facilities[facilityToUpgrade];
               const upgraded = upgradeFacility(currentFacility, currentDay);
               if (upgraded) {
-                stable.cash -= upgraded.upgradeCost;
+                cashChanges.push({
+                  stableId: stable.id,
+                  amount: -upgraded.upgradeCost,
+                  reason: `Facility upgrade: ${facilityToUpgrade}`,
+                });
                 facilities[facilityToUpgrade] = upgraded;
                 stableAIState.facilityAI = recordFacilityInvestment(
                   stableAIState.facilityAI,
@@ -506,13 +526,24 @@ export function runNpcCycle(
       races: racesAfterEntry,
       jockeys,
       aiManager: updatedAiManager,
-      npcFacilities,
+      npcFacilities: updatedNpcFacilities,
       newsItems,
       reputationEvents: dominanceResult.reputationEvents,
+      cashChanges,
+      fameChanges,
     };
   } catch (error) {
     console.error("Error in runNpcCycle:", error);
     // Return original state on error to prevent corruption
-    return { horses, races, jockeys, aiManager, npcFacilities, newsItems: [] };
+    return {
+      horses,
+      races,
+      jockeys,
+      aiManager,
+      npcFacilities,
+      newsItems: [],
+      cashChanges: [],
+      fameChanges: [],
+    };
   }
 }

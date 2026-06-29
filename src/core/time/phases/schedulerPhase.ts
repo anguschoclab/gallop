@@ -21,6 +21,8 @@ import {
   updateCampaignAptitudes,
 } from "@/core/campaign/planner";
 import { runAutoEntries, reconcileSlotStatuses } from "@/core/campaign/autoEntry";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
+import { generateUUID } from "@/core/uuid";
 
 export const schedulerPhase = {
   name: "scheduler",
@@ -90,8 +92,12 @@ export const schedulerPhase = {
     });
 
     const entryLogs: { day: number; text: string }[] = [];
+    const autoEntryImpacts: AnyImpact[] = [];
     let cashDelta = 0;
-    const mutatedRaces = [...state.races];
+
+    // Maintain a mutable race snapshot so subsequent auto-entry calls see
+    // entries already committed by earlier campaigns, without touching state.races.
+    const currentRaces = new Map(state.races.map((r) => [r.id, { ...r, entries: [...r.entries] }]));
 
     for (let i = 0; i < updatedCampaigns.length; i++) {
       const campaign = updatedCampaigns[i];
@@ -102,17 +108,33 @@ export const schedulerPhase = {
       const result = runAutoEntries({
         horse,
         campaign,
-        races: mutatedRaces,
+        races: Array.from(currentRaces.values()),
         currentDay: newDay,
         cash: state.cash + cashDelta,
         enterRaceFn: (raceId, horseId) => {
-          const race = raceMap.get(raceId);
+          const race = currentRaces.get(raceId);
           if (!race) return { ok: false, reason: "Race not found" };
           if (race.entries.some((e) => e.horseId === horseId))
             return { ok: false, reason: "Already entered" };
-          race.entries.push({ horseId, owned: true, npc: false });
+          if (race.entries.length >= race.fieldSize) return { ok: false, reason: "Race full" };
+
+          currentRaces.set(raceId, {
+            ...race,
+            entries: [...race.entries, { horseId, owned: true, npc: false }],
+          });
           cashDelta -= race.entryFee;
           entryLogs.push({ day: newDay, text: `Auto-entered ${horse.name} in ${race.name}.` });
+          autoEntryImpacts.push({
+            id: generateUUID(),
+            intentId: "",
+            day: newDay,
+            phase: "scheduler",
+            logLevel: "always",
+            type: "race_entry",
+            raceId,
+            horseId,
+            reason: `Auto-campaign entry for ${horse.name}`,
+          } as AnyImpact);
           return { ok: true };
         },
       });
@@ -120,16 +142,29 @@ export const schedulerPhase = {
       updatedCampaigns[i] = { ...campaign, slots: result.updatedSlots };
     }
 
+    if (cashDelta < 0) {
+      autoEntryImpacts.push({
+        id: generateUUID(),
+        intentId: "",
+        day: newDay,
+        phase: "scheduler",
+        logLevel: "conditional",
+        type: "cash_change",
+        entityId: "player",
+        amount: cashDelta,
+        reason: "Auto-campaign race entry fees",
+      } as AnyImpact);
+    }
+
     const updatedLogs = [...entryLogs, ...context.logs];
 
     return {
       ...context,
       logs: updatedLogs,
+      impacts: [...context.impacts, ...autoEntryImpacts],
       state: {
         ...state,
         campaigns: updatedCampaigns,
-        cash: state.cash + cashDelta,
-        races: mutatedRaces,
       },
     };
   },

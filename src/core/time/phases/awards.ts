@@ -20,6 +20,7 @@ import { generateUUID } from "@/core/uuid";
 import type { AwardRegion, RegionalAward } from "@/core/awards/types";
 import { AWARD_CEREMONY_SCHEDULE } from "@/core/awards/types";
 import { PHASE_ORDER_AWARDS } from "@/constants";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
 
 export const awardsPhase = {
   name: "awards",
@@ -47,6 +48,7 @@ export const awardsPhase = {
     const updatedHorses = [...state.horses];
     const awardLogs: { day: number; text: string }[] = [];
     const updatedLastAwardYear = { ...lastAwardYear };
+    const impacts: AnyImpact[] = [];
 
     for (const ceremony of todayCeremonies) {
       const region = ceremony.region;
@@ -107,6 +109,17 @@ export const awardsPhase = {
             ...horse,
             fame: Math.min(100, horse.fame + fameBoost),
           };
+          impacts.push({
+            id: generateUUID(),
+            intentId: "",
+            day: newDay,
+            phase: "awards",
+            logLevel: "conditional",
+            type: "fame_change",
+            horseId: award.horseId,
+            delta: fameBoost,
+            reason: `${award.region} ${award.category} award fame bonus`,
+          } as AnyImpact);
         }
       }
 
@@ -133,6 +146,7 @@ export const awardsPhase = {
         pendingAwardCeremonies: [...(state.pendingAwardCeremonies || []), ...newCeremonies],
       },
       logs: [...logs, ...awardLogs],
+      impacts: [...context.impacts, ...impacts],
     };
   },
 };

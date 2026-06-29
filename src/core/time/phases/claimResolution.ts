@@ -15,6 +15,7 @@ import { hashStr } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { PHASE_ORDER_CLAIM_RESOLUTION } from "@/constants";
 import { formatCurrency } from "@/core/common/formatting";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
 
 /**
  * Phase: Claim Resolution
@@ -47,9 +48,7 @@ export const claimResolutionPhase = {
 
     if (claimsToday.length === 0) return context;
 
-    let horses: Horse[] = [...state.horses];
-    let npcStables: Stable[] = [...state.npcStables];
-    let playerCash = state.cash;
+    const impacts: AnyImpact[] = [];
     let privateSaleOffers = [...(state.privateSaleOffers ?? [])];
     const newLogs = [...logs];
     const newClaims: Claim[] = [...allClaims];
@@ -84,39 +83,79 @@ export const claimResolutionPhase = {
       const originalStableId = horse.stableId;
       const originalOwnerIsPlayer = !originalStableId;
 
-      horses = horses.map((h: Horse) =>
-        h.id === horseId
-          ? {
-              ...h,
-              stableId: winnerClaim.claimantStableId,
-              owned: !winnerClaim.claimantStableId,
-            }
-          : h,
-      );
+      impacts.push({
+        id: generateUUID(),
+        intentId: "",
+        day: newDay,
+        phase: "claimResolution",
+        logLevel: "always",
+        type: "horse_transfer",
+        horseId,
+        fromStableId: originalStableId,
+        toStableId: winnerClaim.claimantStableId,
+        price,
+        reason: `Claiming race resolution for ${race.name}`,
+      } as AnyImpact);
 
       // Cash flows
       if (winnerClaim.claimantStableId) {
         // NPC wins the claim — debit NPC cash
-        npcStables = npcStables.map((s: Stable) =>
-          s.id === winnerClaim.claimantStableId ? { ...s, cash: Math.max(0, s.cash - price) } : s,
-        );
+        impacts.push({
+          id: generateUUID(),
+          intentId: "",
+          day: newDay,
+          phase: "claimResolution",
+          logLevel: "conditional",
+          type: "cash_change",
+          entityId: winnerClaim.claimantStableId,
+          amount: -price,
+          reason: `Claim purchase of ${horse.name}`,
+        } as AnyImpact);
       } else {
         // Player wins the claim — debit player cash
-        playerCash = Math.max(0, playerCash - price);
+        impacts.push({
+          id: generateUUID(),
+          intentId: "",
+          day: newDay,
+          phase: "claimResolution",
+          logLevel: "conditional",
+          type: "cash_change",
+          entityId: "player",
+          amount: -price,
+          reason: `Claim purchase of ${horse.name}`,
+        } as AnyImpact);
       }
 
       // Credit original owner
       if (originalOwnerIsPlayer) {
-        playerCash += proceeds;
+        impacts.push({
+          id: generateUUID(),
+          intentId: "",
+          day: newDay,
+          phase: "claimResolution",
+          logLevel: "conditional",
+          type: "cash_change",
+          entityId: "player",
+          amount: proceeds,
+          reason: `Claim proceeds for ${horse.name}`,
+        } as AnyImpact);
         newLogs.push({
           day: newDay,
           text: `${horse.name} was claimed by ${winnerClaim.claimantStableId ? (stableMap.get(winnerClaim.claimantStableId)?.name ?? "an NPC") : "your stable"} for ${formatCurrency(price)} after ${race.name}. Net proceeds: ${formatCurrency(proceeds)}.`,
         });
       } else {
         // Credit NPC consignor
-        npcStables = npcStables.map((s: Stable) =>
-          s.id === originalStableId ? { ...s, cash: s.cash + proceeds } : s,
-        );
+        impacts.push({
+          id: generateUUID(),
+          intentId: "",
+          day: newDay,
+          phase: "claimResolution",
+          logLevel: "conditional",
+          type: "cash_change",
+          entityId: originalStableId,
+          amount: proceeds,
+          reason: `Claim proceeds for ${horse.name}`,
+        } as AnyImpact);
       }
 
       // If player won: log it
@@ -156,12 +195,10 @@ export const claimResolutionPhase = {
       ...context,
       state: {
         ...context.state,
-        horses,
-        npcStables,
-        cash: playerCash,
         claims: newClaims,
         privateSaleOffers,
       },
+      impacts: [...context.impacts, ...impacts],
       logs: newLogs,
     };
   },

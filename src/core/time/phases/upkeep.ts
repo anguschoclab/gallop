@@ -36,7 +36,9 @@ export const upkeepPhase = {
   name: "upkeep",
   order: PHASE_ORDER_UPKEEP,
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, newDay } = context;
+    const { state, newDay, dailyRng } = context;
+    const impacts: AnyImpact[] = [];
+
     const playerHorses = state.horses.filter(
       (h) => !h.stableId && (!h.lifecycleStatus || h.lifecycleStatus === "active"),
     );
@@ -80,24 +82,32 @@ export const upkeepPhase = {
       );
     });
 
-    // Record transaction entries for total upkeep (single transaction for the day)
-    const newTransactions: typeof state.transactions = [];
+    // Emit impacts for player upkeep cash and transaction recording.
     if (totalDailyCost > 0) {
-      newTransactions.push(
-        createTransaction(
-          "expense",
-          "upkeep",
-          -totalDailyCost,
-          `Daily upkeep: ${playerHorseCount} horses, facilities, and ${playerStaff.length} staff`,
-          newDay,
-          state.cash - totalDailyCost,
-          { recurring: true },
-        ),
-      );
+      impacts.push({
+        id: generateUUID(dailyRng),
+        intentId: "",
+        day: newDay,
+        phase: "upkeep",
+        logLevel: "conditional",
+        type: "cash_change",
+        entityId: "player",
+        amount: -totalDailyCost,
+        reason: `Daily upkeep: ${playerHorseCount} horses, facilities, and ${playerStaff.length} staff`,
+      } as AnyImpact);
+      impacts.push({
+        id: generateUUID(dailyRng),
+        intentId: "",
+        day: newDay,
+        phase: "upkeep",
+        logLevel: "conditional",
+        type: "transaction",
+        amount: -totalDailyCost,
+        category: "upkeep",
+        description: `Daily upkeep: ${playerHorseCount} horses, facilities, and ${playerStaff.length} staff`,
+        metadata: { recurring: true },
+      } as AnyImpact);
     }
-
-    // Charge each NPC stable for its own horses.
-    let npcStables = state.npcStables;
 
     // Pre-calculate counts and staff
     const horseCountsByStable = new Map<string, number>();
@@ -117,26 +127,38 @@ export const upkeepPhase = {
       }
     }
 
-    if (state.npcAIManager) {
-      const aiManager = state.npcAIManager; // Capture to satisfy TypeScript
-      npcStables = state.npcStables.map((stable) => {
-        const aiState = getOrCreateStableAIState(aiManager, stable, newDay);
-        if (!aiState.upkeepAI) {
-          aiState.upkeepAI = createUpkeepAIState(stable);
-        }
+    // Clone AI manager so upkeep learning updates do not mutate the original state.
+    let npcAIManager = state.npcAIManager;
+    if (npcAIManager) {
+      npcAIManager = { ...npcAIManager, stableStates: { ...npcAIManager.stableStates } };
+    }
 
-        const ownedCount = horseCountsByStable.get(stable.id) ?? 0;
-        const horseCost = ownedCount * UPKEEP_PER_HORSE;
+    // Bankruptcy protection thresholds
+    const BANKRUPTCY_THRESHOLD = -10000; // Allow some debt before intervention
+    const BANKRUPTCY_INJECTION = 50000; // Cash injection amount
+    const BANKRUPTCY_COOLDOWN_DAYS = 365; // One year between injections per stable
 
-        const stableStaff = staffByStable.get(stable.id) ?? [];
-        const staffSalaries = stableStaff.reduce((sum, s) => sum + s.salary, 0);
+    // Calculate NPC upkeep costs and emit cash_change impacts.
+    for (const stable of state.npcStables) {
+      const aiState = npcAIManager
+        ? getOrCreateStableAIState(npcAIManager, stable, newDay)
+        : undefined;
+      if (aiState && !aiState.upkeepAI) {
+        aiState.upkeepAI = createUpkeepAIState(stable);
+      }
 
-        const cost = horseCost + staffSalaries;
-        const monthlyExpenses = cost * 30; // Estimate monthly expenses
+      const ownedCount = horseCountsByStable.get(stable.id) ?? 0;
+      const horseCost = ownedCount * UPKEEP_PER_HORSE;
+      const stableStaff = staffByStable.get(stable.id) ?? [];
+      const staffSalaries = stableStaff.reduce((sum, s) => sum + s.salary, 0);
+      let actualCost = horseCost + staffSalaries;
+
+      if (aiState) {
+        const monthlyExpenses = actualCost * 30; // Estimate monthly expenses
 
         // Update reserve state based on current cash and expenses
         const updatedAIState = updateReserveState(
-          aiState.upkeepAI,
+          aiState.upkeepAI!,
           stable,
           monthlyExpenses,
           newDay,
@@ -146,14 +168,12 @@ export const upkeepPhase = {
         const shouldConserve = shouldConserveCash(updatedAIState, stable, monthlyExpenses);
 
         // If conserving cash and running low, reduce spending by not charging full upkeep
-        let actualCost = cost;
         if (shouldConserve && stable.cash < monthlyExpenses * 2) {
-          // Reduce upkeep by 50% when conserving and low on cash
-          actualCost = Math.floor(cost * 0.5);
+          actualCost = Math.floor(actualCost * 0.5);
         }
 
         // Record budget decision for AI learning
-        recordBudgetDecision(
+        aiState.upkeepAI = recordBudgetDecision(
           updatedAIState,
           monthlyExpenses,
           actualCost,
@@ -162,59 +182,65 @@ export const upkeepPhase = {
           newDay,
         );
 
-        return { ...stable, cash: stable.cash - actualCost };
-      });
-    } else {
-      npcStables = state.npcStables.map((stable) => {
-        const ownedCount = horseCountsByStable.get(stable.id) ?? 0;
-        const cost = ownedCount * UPKEEP_PER_HORSE;
-        return { ...stable, cash: stable.cash - cost };
-      });
-    }
+        npcAIManager!.stableStates[stable.id] = aiState;
+      }
 
-    // Bankruptcy protection: Inject cash to NPCs that have gone bankrupt
-    const BANKRUPTCY_THRESHOLD = -10000; // Allow some debt before intervention
-    const BANKRUPTCY_INJECTION = 50000; // Cash injection amount
-    const BANKRUPTCY_COOLDOWN_DAYS = 365; // One year between injections per stable
+      if (actualCost > 0) {
+        impacts.push({
+          id: generateUUID(dailyRng),
+          intentId: "",
+          day: newDay,
+          phase: "upkeep",
+          logLevel: "conditional",
+          type: "cash_change",
+          entityId: stable.id,
+          amount: -actualCost,
+          reason: "Daily NPC upkeep",
+        } as AnyImpact);
+      }
 
-    npcStables = npcStables.map((stable) => {
-      if (stable.cash < BANKRUPTCY_THRESHOLD) {
-        // Check if this stable recently received an injection
+      // Bankruptcy protection: emit cash injection if projected cash falls below threshold.
+      const projectedCash = stable.cash - actualCost;
+      if (projectedCash < BANKRUPTCY_THRESHOLD) {
         const lastInjectionDay = stable.lastBankruptcyInjectionDay || 0;
         const daysSinceInjection = newDay - lastInjectionDay;
 
         if (daysSinceInjection >= BANKRUPTCY_COOLDOWN_DAYS) {
-          return {
-            ...stable,
-            cash: stable.cash + BANKRUPTCY_INJECTION,
-            lastBankruptcyInjectionDay: newDay,
-          };
+          impacts.push({
+            id: generateUUID(dailyRng),
+            intentId: "",
+            day: newDay,
+            phase: "upkeep",
+            logLevel: "conditional",
+            type: "cash_change",
+            entityId: stable.id,
+            amount: BANKRUPTCY_INJECTION,
+            reason: "Bankruptcy protection cash injection",
+          } as AnyImpact);
         }
       }
-      return stable;
-    });
+    }
 
     return {
       ...context,
       state: {
         ...state,
-        cash: state.cash - totalDailyCost,
-        npcStables,
+        npcAIManager,
         expenses: [...(state.expenses ?? []), ...newExpenses].slice(-1000), // Cap at 1000 entries
-        transactions: [...(state.transactions ?? []), ...newTransactions].slice(-1000), // Cap at 1000 entries
       },
       impacts: [
-        ...(context.impacts || []),
-        ...(context.dailyRng.next() < 0.1
+        ...context.impacts,
+        ...impacts,
+        ...(dailyRng.next() < 0.1
           ? [
               {
-                id: generateUUID(context.dailyRng),
+                id: generateUUID(dailyRng),
                 intentId: "",
                 day: newDay,
                 phase: "upkeep",
                 logLevel: "always",
                 type: "news_item",
-                newsItem: generateFlavorNews(newDay, context.dailyRng),
+                newsItem: generateFlavorNews(newDay, dailyRng),
               } as AnyImpact,
             ]
           : []),

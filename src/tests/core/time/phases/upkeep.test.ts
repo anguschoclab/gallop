@@ -8,9 +8,10 @@ import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Stable } from "@/game/types";
+import type { CashImpact, TransactionImpact } from "@/core/resolver/impacts/financialImpacts";
 
 describe("upkeepPhase", () => {
-  it("should deduct $50 per player horse", () => {
+  it("should emit cash_change and transaction impacts for player upkeep", () => {
     const state: GameState = makeGameState({
       day: 1,
       cash: 10000,
@@ -41,7 +42,17 @@ describe("upkeepPhase", () => {
     }) as PipelineContext;
 
     const result = upkeepPhase.execute(context);
-    expect(result.state.cash).toBe(9900); // 10000 - (2 * 50)
+    const cashImpact = result.impacts.find(
+      (i): i is CashImpact => i.type === "cash_change" && i.entityId === "player",
+    );
+    const transactionImpact = result.impacts.find(
+      (i): i is TransactionImpact => i.type === "transaction",
+    );
+
+    expect(cashImpact).toBeDefined();
+    expect(cashImpact!.amount).toBe(-100); // 2 * 50
+    expect(transactionImpact).toBeDefined();
+    expect(transactionImpact!.amount).toBe(-100);
   });
 
   it("should not deduct for horses with stableId (NPC horses)", () => {
@@ -83,7 +94,7 @@ describe("upkeepPhase", () => {
     expect(result.state.cash).toBe(10000); // No deduction for NPC horse
   });
 
-  it("should deduct $50 per horse from each NPC stable", () => {
+  it("should emit cash_change impacts for each NPC stable", () => {
     const state: GameState = makeGameState({
       day: 1,
       cash: 10000,
@@ -138,8 +149,12 @@ describe("upkeepPhase", () => {
     }) as PipelineContext;
 
     const result = upkeepPhase.execute(context);
-    expect(result.state.npcStables[0].cash).toBe(4950); // 5000 - 50
-    expect(result.state.npcStables[1].cash).toBe(2950); // 3000 - 50
+    const npcImpacts = result.impacts.filter(
+      (i): i is CashImpact => i.type === "cash_change" && i.entityId !== "player",
+    );
+    expect(npcImpacts).toHaveLength(2);
+    expect(npcImpacts.find((i) => i.entityId === "npc-stable-1")?.amount).toBe(-50);
+    expect(npcImpacts.find((i) => i.entityId === "npc-stable-2")?.amount).toBe(-50);
   });
 
   it("should handle zero horses correctly", () => {

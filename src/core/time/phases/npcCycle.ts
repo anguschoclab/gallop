@@ -9,10 +9,11 @@
  */
 
 import type { PipelineContext } from "../pipeline";
-import { runNpcCycle } from "@/core/npc/npcCycle";
+import { runNpcCycle, applyFameGainsToHorses } from "@/core/npc/npcCycle";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
-import { getReputationTier } from "@/core/reputation";
 import { PHASE_ORDER_NPC_CYCLE } from "@/constants";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
+import { generateUUID } from "@/core/uuid";
 
 /**
  * Phase: NPC Cycle
@@ -46,6 +47,8 @@ export const npcCyclePhase = {
       aiManager: updatedAiManager,
       newsItems,
       reputationEvents,
+      cashChanges,
+      fameChanges,
     } = runNpcCycle(
       state.npcStables,
       state.horses,
@@ -58,40 +61,88 @@ export const npcCyclePhase = {
       aiManager,
     );
 
-    // Apply news items to state
-    const updatedNews = newsItems
-      ? [...(newsItems || []), ...(state.news || [])].slice(0, 500)
-      : state.news;
+    // Apply fame changes to horses and emit fame_change impacts.
+    let updatedHorses = horses;
+    if (fameChanges && fameChanges.length > 0) {
+      const fameMap = new Map(fameChanges.map((c) => [c.horseId, c.delta]));
+      updatedHorses = applyFameGainsToHorses(horses, fameMap);
+    }
 
-    // Apply reputation events
-    let updatedReputation = (state as any).reputation;
-    if (reputationEvents && reputationEvents.length > 0 && updatedReputation) {
-      const newScore = Math.max(
-        0,
-        Math.min(
-          1000,
-          updatedReputation.score + reputationEvents.reduce((acc, e) => acc + e.amount, 0),
-        ),
-      );
-      updatedReputation = {
-        ...updatedReputation,
-        score: newScore,
-        tier: getReputationTier(newScore),
-        events: [...reputationEvents, ...updatedReputation.events].slice(0, 100),
-      };
+    // Convert reputation events and news items to impacts.
+    const impacts: AnyImpact[] = [];
+    if (newsItems) {
+      for (const newsItem of newsItems) {
+        impacts.push({
+          id: newsItem.id,
+          intentId: "",
+          day: newDay,
+          phase: "npcCycle",
+          logLevel: "conditional",
+          type: "news_item",
+          newsItem,
+        } as AnyImpact);
+      }
+    }
+
+    if (reputationEvents) {
+      for (const event of reputationEvents) {
+        impacts.push({
+          id: event.id,
+          intentId: "",
+          day: newDay,
+          phase: "npcCycle",
+          logLevel: "conditional",
+          type: "reputation_change",
+          delta: event.amount,
+          reason: event.description,
+          source: event.source,
+          metadata: { horseId: event.horseId, raceId: event.raceId },
+        } as AnyImpact);
+      }
+    }
+
+    if (cashChanges) {
+      for (const change of cashChanges) {
+        impacts.push({
+          id: generateUUID(context.dailyRng),
+          intentId: "",
+          day: newDay,
+          phase: "npcCycle",
+          logLevel: "conditional",
+          type: "cash_change",
+          entityId: change.stableId,
+          amount: change.amount,
+          reason: change.reason,
+        } as AnyImpact);
+      }
+    }
+
+    if (fameChanges) {
+      for (const change of fameChanges) {
+        impacts.push({
+          id: generateUUID(context.dailyRng),
+          intentId: "",
+          day: newDay,
+          phase: "npcCycle",
+          logLevel: "conditional",
+          type: "fame_change",
+          horseId: change.horseId,
+          delta: change.delta,
+          reason: "Race performance fame gain",
+        } as AnyImpact);
+      }
     }
 
     return {
       ...context,
       state: {
         ...state,
-        horses,
+        horses: updatedHorses,
         races,
         jockeys,
         npcAIManager: updatedAiManager,
-        news: updatedNews,
-        reputation: updatedReputation,
       },
+      impacts: [...context.impacts, ...impacts],
     };
   },
 };

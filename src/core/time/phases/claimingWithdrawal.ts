@@ -28,20 +28,31 @@ export const claimingWithdrawalPhase: PipelinePhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, intents, newDay } = context;
     const impacts: AnyImpact[] = [];
+    const races = [...state.races];
+    let racesChanged = false;
 
     const withdrawalIntents = intents.filter(
       (i): i is WithdrawFromClaimingIntent => i.type === "withdraw_from_claiming",
     );
 
     for (const intent of withdrawalIntents) {
-      const race = state.races.find((r) => r.id === intent.raceId);
-      if (!race) continue;
+      const raceIndex = races.findIndex((r) => r.id === intent.raceId);
+      if (raceIndex === -1) continue;
+      const race = races[raceIndex];
 
-      const entry = race.entries.find((e) => e.horseId === intent.horseId);
-      if (!entry) continue;
+      const entryIndex = race.entries.findIndex((e) => e.horseId === intent.horseId);
+      if (entryIndex === -1) continue;
+      const entry = race.entries[entryIndex];
+      if (entry.withdrawnFromClaiming) continue;
 
-      // Mark entry as withdrawn from claiming
-      entry.withdrawnFromClaiming = true;
+      // Update the entry immutably within the races array.
+      races[raceIndex] = {
+        ...race,
+        entries: race.entries.map((e, i) =>
+          i === entryIndex ? { ...e, withdrawnFromClaiming: true } : e,
+        ),
+      };
+      racesChanged = true;
 
       // Log the withdrawal (race entry fee is lost as penalty)
       impacts.push({
@@ -58,6 +69,10 @@ export const claimingWithdrawalPhase: PipelinePhase = {
 
     return {
       ...context,
+      state: {
+        ...state,
+        races: racesChanged ? races : state.races,
+      },
       impacts: [...context.impacts, ...impacts],
     };
   },
