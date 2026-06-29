@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { resetCache } from "@/hooks/shared/useBookmarks";
 
@@ -7,6 +7,10 @@ describe("BookmarkButton", () => {
   beforeEach(() => {
     localStorage.clear();
     resetCache();
+  });
+
+  afterEach(() => {
+    cleanup();
   });
 
   it("renders icon variant by default", () => {
@@ -56,5 +60,30 @@ describe("BookmarkButton", () => {
     render(<BookmarkButton type="horse" id="h1" label="Thunder" className="my-custom-class" />);
     const btn = screen.getByRole("button");
     expect(btn.classList.contains("my-custom-class")).toBe(true);
+  });
+
+  it("renders tooltip content text 'Add bookmark' when inactive", () => {
+    const { container } = render(
+      <BookmarkButton type="horse" id="h1" label="Thunder" />,
+    );
+    const tooltipContent = container.ownerDocument.body.querySelector("[role='tooltip']");
+    expect(tooltipContent).toBeTruthy();
+    expect(tooltipContent?.textContent).toContain("Add bookmark");
+  });
+
+  it("renders tooltip content text 'Remove bookmark' after toggling active", () => {
+    const { container } = render(
+      <BookmarkButton type="horse" id="h1" label="Thunder" />,
+    );
+    const btn = screen.getByRole("button");
+    fireEvent.click(btn);
+    const tooltipContent = container.ownerDocument.body.querySelector("[role='tooltip']");
+    expect(tooltipContent?.textContent).toContain("Remove bookmark");
+  });
+
+  it("does not have a title attribute on the button (replaced by tooltip)", () => {
+    render(<BookmarkButton type="horse" id="h1" label="Thunder" />);
+    const btn = screen.getByRole("button");
+    expect(btn.getAttribute("title")).toBeNull();
   });
 });
