@@ -45,7 +45,6 @@ export const awardsPhase = {
 
     const newCeremonies: { region: AwardRegion; year: number; awards: RegionalAward[] }[] = [];
     let newAwards: RegionalAward[] = [];
-    const updatedHorses = [...state.horses];
     const awardLogs: { day: number; text: string }[] = [];
     const updatedLastAwardYear = { ...lastAwardYear };
     const impacts: AnyImpact[] = [];
@@ -98,17 +97,12 @@ export const awardsPhase = {
         });
       }
 
-      // Award bonuses to winning horses
+      // Award bonuses to winning horses — emit fame_change impacts only
       for (const award of regionAwards) {
-        const horseIndex = updatedHorses.findIndex((h) => h.id === award.horseId);
-        if (horseIndex !== -1) {
-          const horse = updatedHorses[horseIndex];
+        const horse = state.horses.find((h) => h.id === award.horseId);
+        if (horse) {
           // Fame boost: +25 for HOTY, +15 for category
           const fameBoost = award.category === "horse_of_the_year" ? 25 : 15;
-          updatedHorses[horseIndex] = {
-            ...horse,
-            fame: Math.min(100, horse.fame + fameBoost),
-          };
           impacts.push({
             id: generateUUID(),
             intentId: "",
@@ -140,7 +134,6 @@ export const awardsPhase = {
       ...context,
       state: {
         ...state,
-        horses: updatedHorses,
         awards: [...(state.awards || []), ...newAwards],
         lastAwardYear: updatedLastAwardYear,
         pendingAwardCeremonies: [...(state.pendingAwardCeremonies || []), ...newCeremonies],

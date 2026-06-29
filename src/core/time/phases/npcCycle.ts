@@ -9,7 +9,7 @@
  */
 
 import type { PipelineContext } from "../pipeline";
-import { runNpcCycle, applyFameGainsToHorses } from "@/core/npc/npcCycle";
+import { runNpcCycle } from "@/core/npc/npcCycle";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { PHASE_ORDER_NPC_CYCLE } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
@@ -61,12 +61,8 @@ export const npcCyclePhase = {
       aiManager,
     );
 
-    // Apply fame changes to horses and emit fame_change impacts.
-    let updatedHorses = horses;
-    if (fameChanges && fameChanges.length > 0) {
-      const fameMap = new Map(fameChanges.map((c) => [c.horseId, c.delta]));
-      updatedHorses = applyFameGainsToHorses(horses, fameMap);
-    }
+    // Fame changes are emitted as fame_change impacts only (applied by impactApplicationPhase).
+    const updatedHorses = horses;
 
     // Convert reputation events and news items to impacts.
     const impacts: AnyImpact[] = [];

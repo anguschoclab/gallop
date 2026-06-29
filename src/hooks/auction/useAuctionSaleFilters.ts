@@ -3,17 +3,15 @@
  *
  * EXTRACTED FROM: routes/auction.$saleId.tsx
  */
-import { getRouteApi } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import type { AuctionBrowseSearch } from "@/constants/auctionSearchSchema";
 
-const routeApi = getRouteApi("/auction/$saleId");
-
-type NavigateFn = ReturnType<typeof routeApi.useNavigate>;
+const ROUTE_PATH = "/auction/$saleId" as const;
 
 export function useAuctionSaleFilters() {
-  const navigate = routeApi.useNavigate();
-  const filters = routeApi.useSearch();
+  const navigate = useNavigate({ from: ROUTE_PATH });
+  const filters = useSearch({ from: ROUTE_PATH });
   const { sex, ageBand, reserveBand, q } = filters;
 
   const [searchDraft, setSearchDraft] = useState(q ?? "");
@@ -21,12 +19,11 @@ export function useAuctionSaleFilters() {
   // Debounced sync of search draft to URL
   useEffect(() => {
     const id = setTimeout(() => {
-      (navigate as NavigateFn)({
-        // Router's generic search type isn't inferable through getRouteApi here.
-        search: ((prev: AuctionBrowseSearch) => ({
+      navigate({
+        search: (prev: AuctionBrowseSearch) => ({
           ...prev,
           q: searchDraft.trim() || undefined,
-        })) as never,
+        }),
       });
     }, 200);
     return () => clearTimeout(id);
@@ -43,16 +40,16 @@ export function useAuctionSaleFilters() {
         | Partial<AuctionBrowseSearch>
         | ((prev: AuctionBrowseSearch) => AuctionBrowseSearch),
     ) => {
-      (navigate as NavigateFn)({
-        search: ((prev: AuctionBrowseSearch) =>
-          typeof update === "function" ? update(prev) : { ...prev, ...update }) as never,
+      navigate({
+        search: (prev: AuctionBrowseSearch) =>
+          typeof update === "function" ? update(prev) : { ...prev, ...update },
       });
     },
     [navigate],
   );
 
   const onResetFilters = useCallback(
-    () => (navigate as NavigateFn)({ search: (() => ({})) as never }),
+    () => navigate({ search: () => ({}) as AuctionBrowseSearch }),
     [navigate],
   );
 
