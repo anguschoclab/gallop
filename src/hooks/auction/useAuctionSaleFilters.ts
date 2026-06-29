@@ -9,6 +9,8 @@ import type { AuctionBrowseSearch } from "@/constants/auctionSearchSchema";
 
 const routeApi = getRouteApi("/auction/$saleId");
 
+type NavigateFn = ReturnType<typeof routeApi.useNavigate>;
+
 export function useAuctionSaleFilters() {
   const navigate = routeApi.useNavigate();
   const filters = routeApi.useSearch();
@@ -19,11 +21,12 @@ export function useAuctionSaleFilters() {
   // Debounced sync of search draft to URL
   useEffect(() => {
     const id = setTimeout(() => {
-      navigate({
-        search: (prev: AuctionBrowseSearch) => ({
+      (navigate as NavigateFn)({
+        // Router's generic search type isn't inferable through getRouteApi here.
+        search: ((prev: AuctionBrowseSearch) => ({
           ...prev,
           q: searchDraft.trim() || undefined,
-        }),
+        })) as never,
       });
     }, 200);
     return () => clearTimeout(id);
@@ -40,16 +43,16 @@ export function useAuctionSaleFilters() {
         | Partial<AuctionBrowseSearch>
         | ((prev: AuctionBrowseSearch) => AuctionBrowseSearch),
     ) => {
-      navigate({
-        search: (prev: AuctionBrowseSearch) =>
-          typeof update === "function" ? update(prev) : { ...prev, ...update },
+      (navigate as NavigateFn)({
+        search: ((prev: AuctionBrowseSearch) =>
+          typeof update === "function" ? update(prev) : { ...prev, ...update }) as never,
       });
     },
     [navigate],
   );
 
   const onResetFilters = useCallback(
-    () => navigate({ search: () => ({}) }),
+    () => (navigate as NavigateFn)({ search: (() => ({})) as never }),
     [navigate],
   );
 

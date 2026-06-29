@@ -115,10 +115,13 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
     if (!result.ok) setMessage(result.reason ?? "Withdrawal failed");
   }, [currentLot, withdrawConsignment]);
 
-  const handleBuyNow = useCallback(() => {
-    if (!sale || !currentLot) return;
-    buyNow(sale.id, currentLot.id);
-  }, [sale, currentLot, buyNow]);
+  const handleBuyNow = useCallback(
+    () =>
+      sale && currentLot
+        ? buyNow(sale.id, currentLot.id)
+        : { ok: false as const, reason: "No active lot." },
+    [sale, currentLot, buyNow],
+  );
 
   return {
     sale,
