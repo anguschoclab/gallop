@@ -146,7 +146,12 @@ function processRegionalDominance(
   rng: Rng,
 ): { aiManager: NpcAIManager; newsItems: NewsItem[]; reputationEvents: ReputationEvent[] } {
   try {
-    const updatedAiManager = { ...aiManager, stableStates: { ...aiManager.stableStates } };
+    const updatedAiManager = {
+      ...aiManager,
+      stableStates: Object.fromEntries(
+        Object.entries(aiManager.stableStates).map(([id, s]) => [id, { ...s }]),
+      ),
+    };
     const newsItems: NewsItem[] = [];
     const reputationEvents: ReputationEvent[] = [];
 
@@ -340,7 +345,12 @@ function processRegionalDominance(
  */
 function applyFrictionDecay(aiManager: NpcAIManager): NpcAIManager {
   try {
-    const updatedAiManager = { ...aiManager, stableStates: { ...aiManager.stableStates } };
+    const updatedAiManager = {
+      ...aiManager,
+      stableStates: Object.fromEntries(
+        Object.entries(aiManager.stableStates).map(([id, s]) => [id, { ...s }]),
+      ),
+    };
 
     for (const id in updatedAiManager.stableStates) {
       updatedAiManager.stableStates[id].friction *= RIVALRY_CONSTANTS.FRICTION.DECAY_RATE;
@@ -438,7 +448,9 @@ export function runNpcCycle(
     let updatedAiManager: NpcAIManager = {
       ...aiManager,
       globalDay: currentDay,
-      stableStates: { ...aiManager.stableStates },
+      stableStates: Object.fromEntries(
+        Object.entries(aiManager.stableStates).map(([id, s]) => [id, { ...s }]),
+      ),
       regionalKings: { ...(aiManager.regionalKings || {}) },
     };
 

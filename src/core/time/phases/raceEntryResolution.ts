@@ -19,7 +19,7 @@ import { createTransportRequest } from "@/core/transportation";
 import { createTransaction } from "@/core/transactions";
 import { generateUUID } from "@/core/uuid";
 import { selectBestJockey, createJockeyAIState } from "@/core/ai/jockeyAI";
-import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import { getOrCreateStableAIState, type NpcAIManager } from "@/core/ai/npcCycleAI";
 import { calculateOverallRating } from "@/core/horse/stats";
 
 /**
@@ -48,6 +48,17 @@ export const raceEntryResolutionPhase: PipelinePhase = {
 
     // Sort free agents by fame for fallback selection
     freeAgents.sort((a, b) => b.fame - a.fame);
+
+    // Clone NPC AI manager so jockey AI state updates never mutate input state.
+    const npcAIManager: NpcAIManager | undefined = state.npcAIManager
+      ? {
+          ...state.npcAIManager,
+          stableStates: Object.fromEntries(
+            Object.entries(state.npcAIManager.stableStates).map(([id, s]) => [id, { ...s }]),
+          ),
+        }
+      : undefined;
+    let npcAIManagerUpdated = false;
 
     for (const intent of raceEntryIntents) {
       let race = raceMap.get(intent.raceId);
@@ -122,14 +133,16 @@ export const raceEntryResolutionPhase: PipelinePhase = {
             jockeyId = retainer.id;
           } else if (freeAgents.length > 0) {
             // 2. Use AI to select best free agent
-            if (state.npcAIManager) {
-              const stableAI = getOrCreateStableAIState(state.npcAIManager, stable, newDay);
+            if (npcAIManager) {
+              const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
               const jockeyAI =
                 stableAI.jockeyAI || (stableAI.jockeyAI = createJockeyAIState(stable));
               const chosen = selectBestJockey(jockeyAI, horse, freeAgents, stable);
               if (chosen) {
                 jockeyId = chosen.id;
               }
+              npcAIManager.stableStates[stable.id] = stableAI;
+              npcAIManagerUpdated = true;
             }
 
             // 3. Fallback to best available if AI selection failed
@@ -214,6 +227,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
       impacts: [...context.impacts, ...impacts],
       state: {
         ...state,
+        npcAIManager: npcAIManagerUpdated ? npcAIManager : state.npcAIManager,
         transactions: [...(state.transactions ?? []), ...newTransactions],
         transports: newTransports,
       },

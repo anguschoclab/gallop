@@ -27,7 +27,7 @@ import { getFacilityBonus } from "@/core/facilities";
 import { createExpense } from "@/core/expenses";
 import { generateUUID } from "@/core/uuid";
 import { createTransaction } from "@/core/transactions";
-import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import { getOrCreateStableAIState, type NpcAIManager } from "@/core/ai/npcCycleAI";
 import { recordTrainingOutcome } from "@/core/ai/trainingAI";
 import { BANISTER_CONSTANTS, calculateImpulse } from "@/core/health/banister";
 import { getOutpostSpecialty } from "@/core/facilities/outpostTypes";
@@ -58,6 +58,17 @@ export const trainingResolutionPhase: PipelinePhase = {
     const horseMap = new Map(state.horses.map((h) => [h.id, h]));
     const stableMap = new Map((state.npcStables ?? []).map((s) => [s.id, s]));
     const outpostMap = new Map<string, any>();
+
+    // Clone NPC AI manager so we never mutate the input state's stableStates.
+    const aiManager: NpcAIManager = state.npcAIManager
+      ? {
+          ...state.npcAIManager,
+          stableStates: Object.fromEntries(
+            Object.entries(state.npcAIManager.stableStates).map(([id, s]) => [id, { ...s }]),
+          ),
+        }
+      : { stableStates: {}, globalDay: newDay, regionalKings: {} };
+    let aiManagerUpdated = false;
     for (const s of state.npcStables ?? []) {
       for (const o of (s as any).outposts ?? []) {
         outpostMap.set(o.id, o);
@@ -369,10 +380,10 @@ export const trainingResolutionPhase: PipelinePhase = {
       }
 
       // Record training outcome for NPC AI
-      if (state.npcAIManager && horse.stableId) {
+      if (aiManager && horse.stableId) {
         const stable = stableMap.get(horse.stableId);
         if (stable) {
-          const stableAI = getOrCreateStableAIState(state.npcAIManager, stable, newDay);
+          const stableAI = getOrCreateStableAIState(aiManager, stable, newDay);
           if (stableAI.trainingAI) {
             stableAI.trainingAI = recordTrainingOutcome(
               stableAI.trainingAI,
@@ -382,7 +393,8 @@ export const trainingResolutionPhase: PipelinePhase = {
               totalGain,
               newDay,
             );
-            state.npcAIManager.stableStates[stable.id] = stableAI;
+            aiManager.stableStates[stable.id] = stableAI;
+            aiManagerUpdated = true;
           }
         }
       }
@@ -399,6 +411,7 @@ export const trainingResolutionPhase: PipelinePhase = {
       ...context,
       state: {
         ...state,
+        npcAIManager: aiManagerUpdated ? aiManager : state.npcAIManager,
         trainingUsed: newTrainingUsed,
         expenses: [...(state.expenses ?? []), ...newExpenses],
         transactions: [...(state.transactions ?? []), ...newTransactions],

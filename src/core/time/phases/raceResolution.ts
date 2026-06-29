@@ -49,7 +49,12 @@ export const raceResolutionPhase: PipelinePhase = {
 
     // Clone the AI manager so NPC learning updates are applied as a new object.
     const npcAIManager = state.npcAIManager
-      ? { ...state.npcAIManager, stableStates: { ...state.npcAIManager.stableStates } }
+      ? {
+          ...state.npcAIManager,
+          stableStates: Object.fromEntries(
+            Object.entries(state.npcAIManager.stableStates).map(([id, s]) => [id, { ...s }]),
+          ),
+        }
       : undefined;
 
     let resolvedCount = 0;

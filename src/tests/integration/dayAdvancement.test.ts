@@ -8,6 +8,7 @@ import { executePipeline } from "@/core/time/pipeline";
 import { upkeepPhase } from "@/core/time/phases/upkeep";
 import { agingPhase } from "@/core/time/phases/aging";
 import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
+import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
 import { createRng } from "@/core/common/rng";
 import { createTestHorse } from "@/tests/helpers";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
@@ -87,7 +88,7 @@ describe("Day Advancement Pipeline Integration", () => {
   });
 
   it("should apply state mutations from all phases", () => {
-    const phases = [upkeepPhase];
+    const phases = [upkeepPhase, impactApplicationPhase];
 
     const horse = createTestHorse({
       id: "horse-1",
@@ -111,7 +112,7 @@ describe("Day Advancement Pipeline Integration", () => {
 
     const result = executePipeline(phases, context);
 
-    // Upkeep phase should deduct $50 per horse
+    // Upkeep phase emits a cash_change impact; impactApplicationPhase applies it.
     expect(result.state.cash).toBe(9950);
   });
 });
