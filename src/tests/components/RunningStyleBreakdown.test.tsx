@@ -11,10 +11,12 @@ vi.mock("@/core/horse/paceTendency", () => ({
   classifyTendency: vi.fn(() => "mid"),
   distanceBucket: vi.fn(() => "mile"),
   getHorseTendencyStats: vi.fn(() => ({
-    trips: 0,
-    byTendency: { front: 0, mid: 0, off: 0 },
-    byDistance: {},
-    bySurface: {},
+    sample: 0,
+    counts: { front: 0, mid: 0, off: 0 },
+    wins: { front: 0, mid: 0, off: 0 },
+    itm: { front: 0, mid: 0, off: 0 },
+    dominant: null,
+    dominantShare: 0,
   })),
   TENDENCY_LABEL: { front: "Front", mid: "Mid", off: "Off" },
 }));
