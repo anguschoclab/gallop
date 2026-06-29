@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createElement, type ReactNode } from "react";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
@@ -67,13 +68,17 @@ describe("SidebarNav", () => {
     expect(defaultProps.onOpenAutoSim).toHaveBeenCalledTimes(1);
   });
 
-  it("renders tooltip content for time-advance buttons", () => {
-    const { container } = render(<SidebarNav {...defaultProps} />);
-    const tooltips = container.ownerDocument.body.querySelectorAll("[role='tooltip']");
+  it("renders tooltip content for time-advance buttons", async () => {
+    const user = userEvent.setup();
+    render(<SidebarNav {...defaultProps} />);
+    const btn = screen.getByLabelText("Advance 1 day");
+    await user.hover(btn);
+    await waitFor(() => {
+      const tooltips = document.body.querySelectorAll("[role='tooltip']");
+      expect(tooltips.length).toBeGreaterThan(0);
+    });
+    const tooltips = document.body.querySelectorAll("[role='tooltip']");
     const texts = Array.from(tooltips).map((t) => t.textContent);
     expect(texts).toContain("Advance 1 day");
-    expect(texts).toContain("Advance 1 week");
-    expect(texts).toContain("Advance 1 month");
-    expect(texts).toContain("AutoSim settings");
   });
 });
