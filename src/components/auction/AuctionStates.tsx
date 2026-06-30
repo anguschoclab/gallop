@@ -47,12 +47,14 @@ interface AuctionErrorStateProps {
   message: string;
   onDismiss?: () => void;
   onRetry?: () => void;
+  retryLabel?: string;
 }
 
 export function AuctionErrorState({
   message,
   onDismiss,
   onRetry,
+  retryLabel = "Retry",
 }: AuctionErrorStateProps) {
   return (
     <div
@@ -70,9 +72,9 @@ export function AuctionErrorState({
           <button
             type="button"
             onClick={onRetry}
-            className="mt-3 text-gold uppercase font-mono text-[10px] tracking-widest hover:underline"
+            className="mt-3 inline-flex items-center gap-1.5 border border-gold/40 bg-gold/10 px-3 py-1.5 rounded text-gold uppercase font-mono text-[10px] tracking-widest hover:bg-gold/20 transition-colors"
           >
-            Retry
+            {retryLabel}
           </button>
         )}
       </div>

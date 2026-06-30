@@ -4,10 +4,14 @@
  * Extracted from AuctionControls.tsx.
  */
 
-import { useState } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/core/common/formatting";
+
+export type BidInputPanelHandle = {
+  focusAndScroll: (prefillAmount?: number) => void;
+};
 
 interface BidInputPanelProps {
   currentBid: number;
@@ -15,35 +19,51 @@ interface BidInputPanelProps {
   onBid: (amount: number) => void;
 }
 
-export function BidInputPanel({ currentBid, nextMin, onBid }: BidInputPanelProps) {
-  const [customBid, setCustomBid] = useState("");
+export const BidInputPanel = forwardRef<BidInputPanelHandle, BidInputPanelProps>(
+  function BidInputPanel({ currentBid, nextMin, onBid }, ref) {
+    const [customBid, setCustomBid] = useState("");
+    const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleCustomBid = () => {
-    const val = parseInt(customBid);
-    if (isNaN(val) || val <= currentBid) return;
-    onBid(val);
-    setCustomBid("");
-  };
+    useImperativeHandle(ref, () => ({
+      focusAndScroll: (prefillAmount?: number) => {
+        if (prefillAmount !== undefined) {
+          setCustomBid(String(prefillAmount));
+        }
+        inputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+        inputRef.current?.focus();
+      },
+    }));
 
-  return (
-    <div className="space-y-2">
-      <div className="text-[10px] uppercase font-bold text-muted-foreground ml-1">Custom Bid</div>
-      <div className="flex gap-2">
-        <Input
-          placeholder={`min ${formatCurrency(nextMin)}`}
-          className="rounded-xl h-12 bg-muted/30 border-muted"
-          value={customBid}
-          onChange={(e) => setCustomBid(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleCustomBid()}
-        />
-        <Button
-          variant="secondary"
-          className="h-12 px-4 rounded-xl font-bold"
-          onClick={handleCustomBid}
-        >
-          GO
-        </Button>
+    const handleCustomBid = () => {
+      const val = parseInt(customBid);
+      if (isNaN(val) || val <= currentBid) return;
+      onBid(val);
+      setCustomBid("");
+    };
+
+    return (
+      <div id="bid-input-panel" className="space-y-2">
+        <div className="text-[10px] uppercase font-bold text-muted-foreground ml-1">
+          Custom Bid
+        </div>
+        <div className="flex gap-2">
+          <Input
+            ref={inputRef}
+            placeholder={`min ${formatCurrency(nextMin)}`}
+            className="rounded-xl h-12 bg-muted/30 border-muted"
+            value={customBid}
+            onChange={(e) => setCustomBid(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleCustomBid()}
+          />
+          <Button
+            variant="secondary"
+            className="h-12 px-4 rounded-xl font-bold"
+            onClick={handleCustomBid}
+          >
+            GO
+          </Button>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  },
+);

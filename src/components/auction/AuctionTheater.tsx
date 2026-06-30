@@ -6,8 +6,9 @@
  * atomic sub-components for rendering.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGame } from "@/game/store";
+import { useRouter, useNavigate } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/core/common/formatting";
 import { useScoreboard } from "@/hooks/auction/useScoreboard";
@@ -20,11 +21,13 @@ import { AuctionControls } from "./sub/AuctionControls";
 import { AuctioneerChant } from "./sub/AuctioneerChant";
 import { AuctionScoreboard } from "./sub/AuctionScoreboard";
 import { AuctionSummary } from "./sub/AuctionSummary";
+import { AuctionErrorState } from "./AuctionStates";
 import { getDisplayableStats } from "@/core/npc/scouting";
 import { Sparkles, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
-import { useNavigate } from "@tanstack/react-router";
+import { nextBidAmount } from "@/core/auction/runner";
+import type { BidInputPanelHandle } from "./sub/BidInputPanel";
 
 interface AuctionTheaterProps {
   saleId: string;
@@ -32,6 +35,7 @@ interface AuctionTheaterProps {
 
 export function AuctionTheater({ saleId }: AuctionTheaterProps) {
   const navigate = useNavigate();
+  const router = useRouter();
   const day = useGame((s) => s.day);
   const cash = useGame((s) => s.cash);
   const scoutReports = useGame((s) => s.scoutReports);
@@ -63,11 +67,19 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
     bannerFlash,
     winOverlay,
     bidError,
+    dismissBidError,
+    retryBid,
+    canRetryBid,
+    dismissedErrors,
+    bidHistoryError,
+    retryBidHistory,
     handleBid,
     handlePass,
     handleSkip,
     handleCommit,
   } = useAuctionTheater(saleId);
+
+  const bidInputRef = useRef<BidInputPanelHandle>(null);
 
   const scoreboard = useScoreboard(saleId);
 
@@ -92,9 +104,20 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
   }, [done, paused, playerIsLeading, isPlayerConsignment, handleBid, setPaused]);
 
   if (!sale) {
+    if (dismissedErrors.isDismissed(saleId, "sale_not_found")) {
+      return null;
+    }
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-        <p className="text-muted-foreground animate-pulse font-bold">Sale not found...</p>
+        <AuctionErrorState
+          message="Sale not found in the registry."
+          onDismiss={() => dismissedErrors.dismissError(saleId, "sale_not_found")}
+          onRetry={() => {
+            dismissedErrors.clearDismissed(saleId, "sale_not_found");
+            router.invalidate();
+          }}
+          retryLabel="Reload Sale"
+        />
         <Button onClick={() => navigate({ to: "/auction" })}>Back to Sales</Button>
       </div>
     );
@@ -214,7 +237,10 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
             playerMaxBid={playerMaxBidState}
             onSetMaxBid={setPlayerMaxBidState}
             error={bidError}
+            onDismissError={dismissBidError}
+            onRetryBid={canRetryBid ? retryBid : undefined}
             isPlayerConsignment={isPlayerConsignment}
+            bidInputRef={bidInputRef}
           />
         </div>
 
@@ -269,7 +295,19 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
       </div>
 
       {/* Overlays */}
-      <BidHistoryPanel bidHistory={bidHistory} stables={stables} />
+      <BidHistoryPanel
+        bidHistory={bidHistory}
+        stables={stables}
+        historyOpen={historyOpen}
+        onHistoryOpenChange={setHistoryOpen}
+        error={bidHistoryError}
+        onRetry={retryBidHistory}
+        onPlaceBid={() => {
+          setHistoryOpen(false);
+          bidInputRef.current?.focusAndScroll(nextBidAmount(currentBid));
+        }}
+        canPlaceBid={!done && !playerIsLeading && !isPlayerConsignment}
+      />
 
       {winOverlay && (
         <WinOverlay horseName={winOverlay.horseName} hammerPrice={winOverlay.hammerPrice} />

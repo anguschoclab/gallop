@@ -3,12 +3,13 @@
  *
  * EXTRACTED FROM: routes/auction.$saleId.tsx
  */
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { AuctionLot } from "@/game/types";
 import type { AuctionBrowseSearch } from "@/constants/auctionSearchSchema";
 import { filterAndSortLots } from "@/services/auction/auctionLotFilter";
 import { getDisplayableStats } from "@/core/npc/scouting";
+import { useDismissedAuctionErrors, type AuctionErrorType } from "@/hooks/auction/useDismissedAuctionErrors";
 
 export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch) {
   const { sex, ageBand, reserveBand, sort, q } = filters;
@@ -30,7 +31,20 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
   const [lotIndex, setLotIndex] = useState(0);
   const [message, setMessage] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [errorType, setErrorType] = useState<AuctionErrorType | null>(null);
   const [lastBidAttempt, setLastBidAttempt] = useState<number | null>(null);
+  const [, forceTick] = useReducer((x: number) => x + 1, 0);
+
+  const { isDismissed, dismissError: dismissErrorPersisted, clearDismissed } =
+    useDismissedAuctionErrors();
+
+  const setAuctionError = useCallback(
+    (msg: string, type: AuctionErrorType) => {
+      setErrorType(type);
+      setError(msg);
+    },
+    [],
+  );
 
   // Lot filtering
   const activeLots: AuctionLot[] = useMemo(
@@ -57,6 +71,7 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
     setLotIndex(0);
     setMessage("");
     setError(null);
+    setErrorType(null);
   }, [filterKey]);
 
   const stableMap = useMemo(
@@ -88,12 +103,12 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
       if (!sale || !currentLot) return;
       setLastBidAttempt(amount);
       if (amount <= currentPrice) {
-        setError("Bid must exceed current price.");
+        setAuctionError("Bid must exceed current price.", "bid_error");
         setMessage("");
         return;
       }
       if (amount > cash) {
-        setError("Insufficient funds.");
+        setAuctionError("Insufficient funds.", "bid_error");
         setMessage("");
         return;
       }
@@ -101,8 +116,9 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
       if (result.ok) {
         setMessage("Bid placed.");
         setError(null);
+        setErrorType(null);
       } else {
-        setError(result.reason ?? "Bid failed");
+        setAuctionError(result.reason ?? "Bid failed", "bid_error");
         setMessage("");
       }
     },
@@ -112,7 +128,7 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
   const handleMaxBid = useCallback(
     (max: number | undefined) => {
       if (max && max <= currentPrice) {
-        setError("Max bid must exceed current price.");
+        setAuctionError("Max bid must exceed current price.", "bid_error");
         setMessage("");
         return;
       }
@@ -126,33 +142,52 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
     setLotIndex(0);
     const result = withdrawConsignment(currentLot.horseId);
     if (!result.ok) {
-      setError(result.reason ?? "Withdrawal failed");
+      setAuctionError(result.reason ?? "Withdrawal failed", "bid_error");
       setMessage("");
     } else {
       setError(null);
+      setErrorType(null);
     }
   }, [currentLot, withdrawConsignment]);
 
   const handleBuyNow = useCallback(() => {
     if (!sale || !currentLot) {
-      setError("No active lot.");
+      setAuctionError("No active lot.", "bid_error");
       return { ok: false as const, reason: "No active lot." };
     }
     const result = buyNow(sale.id, currentLot.id);
     if (result.ok) {
       setError(null);
+      setErrorType(null);
       setMessage("Lot purchased.");
     } else {
-      setError(result.reason ?? "Purchase failed");
+      setAuctionError(result.reason ?? "Purchase failed", "bid_error");
       setMessage("");
     }
     return result;
   }, [sale, currentLot, buyNow]);
 
-  const dismissError = useCallback(() => setError(null), []);
+  const dismissError = useCallback(() => {
+    if (errorType && saleId) {
+      dismissErrorPersisted(saleId, errorType);
+    }
+    setError(null);
+    setErrorType(null);
+  }, [errorType, saleId, dismissErrorPersisted]);
+
   const retryLastBid = useCallback(() => {
     if (lastBidAttempt !== null) handleBid(lastBidAttempt);
   }, [lastBidAttempt, handleBid]);
+
+  const refetchSaleData = useCallback(() => {
+    clearDismissed(saleId);
+    setError(null);
+    setErrorType(null);
+    forceTick();
+  }, [saleId, clearDismissed]);
+
+  const suppressedError =
+    error && errorType && saleId && isDismissed(saleId, errorType) ? null : error;
 
   return {
     sale,
@@ -175,9 +210,11 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
     lotIndex,
     setLotIndex,
     message,
-    error,
+    error: suppressedError,
+    errorType,
     dismissError,
     retryLastBid,
+    refetchSaleData,
     canRetry: lastBidAttempt !== null,
     handleBid,
     handleMaxBid,

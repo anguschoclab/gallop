@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { HardDrive } from "lucide-react";
 import { auctionBrowseSearchSchema } from "@/constants/auctionSearchSchema";
 import { AuctionTheater } from "@/components/auction/AuctionTheater";
@@ -15,6 +15,7 @@ import {
 import { useAuctionSaleFilters } from "@/hooks/auction/useAuctionSaleFilters";
 import { useAuctionSaleData } from "@/hooks/auction/useAuctionSaleData";
 import { useStoreHydration } from "@/hooks/shared/useStoreHydration";
+import { useDismissedAuctionErrors } from "@/hooks/auction/useDismissedAuctionErrors";
 
 export const Route = createFileRoute("/auction/$saleId")({
   validateSearch: auctionBrowseSearchSchema,
@@ -23,7 +24,9 @@ export const Route = createFileRoute("/auction/$saleId")({
 
 function AuctionSalePage() {
   const { saleId } = Route.useParams();
+  const router = useRouter();
   const isHydrated = useStoreHydration();
+  const dismissedErrors = useDismissedAuctionErrors();
   const {
     filters,
     searchDraft,
@@ -55,8 +58,10 @@ function AuctionSalePage() {
     setLotIndex,
     message,
     error,
+    errorType,
     dismissError,
     retryLastBid,
+    refetchSaleData,
     canRetry,
     handleBid,
     handleMaxBid,
@@ -71,14 +76,21 @@ function AuctionSalePage() {
 
   // Not found: hydration complete and sale truly missing
   if (!sale) {
+    if (dismissedErrors.isDismissed(saleId, "sale_not_found")) {
+      return null;
+    }
     return (
       <div className="p-12 text-center space-y-4">
-        <h1 className="text-4xl font-black font-[family-name:var(--font-display)] text-cream">
-          Sale not found
-        </h1>
-        <p className="text-cream/50 text-sm">
-          The requested sale could not be located in the registry.
-        </p>
+        <AuctionErrorState
+          message="The requested sale could not be located in the registry."
+          onDismiss={() => dismissedErrors.dismissError(saleId, "sale_not_found")}
+          onRetry={() => {
+            dismissedErrors.clearDismissed(saleId, "sale_not_found");
+            router.invalidate();
+            refetchSaleData();
+          }}
+          retryLabel="Reload Sale"
+        />
         <button
           onClick={() => navigate({ to: "/auction" })}
           className="text-gold uppercase font-mono text-xs tracking-widest hover:underline"
@@ -105,7 +117,8 @@ function AuctionSalePage() {
         <AuctionErrorState
           message={error}
           onDismiss={dismissError}
-          onRetry={canRetry ? retryLastBid : undefined}
+          onRetry={canRetry ? retryLastBid : refetchSaleData}
+          retryLabel={canRetry ? "Retry Bid" : "Reload Data"}
         />
       )}
 
@@ -183,14 +196,17 @@ function AuctionSalePage() {
                 )}
               </div>
             ) : displayLots.length > 0 && currentLot && !horse ? (
-              <div className="p-32 text-center border-2 border-dashed border-white/5 bg-black/10">
-                <HardDrive className="h-16 w-16 mx-auto mb-6 text-cream/5" />
-                <p className="font-bold text-cream/40 uppercase tracking-[0.3em] font-[family-name:var(--font-display)]">
-                  Data Unavailable
-                </p>
-                <p className="text-[10px] font-mono text-cream/10 uppercase mt-2">
-                  Central registry cannot identify lot data.
-                </p>
+              <div className="p-12 text-center space-y-4">
+                <AuctionErrorState
+                  message="Central registry cannot identify lot data."
+                  onDismiss={() => dismissedErrors.dismissError(saleId, "data_unavailable")}
+                  onRetry={() => {
+                    dismissedErrors.clearDismissed(saleId, "data_unavailable");
+                    router.invalidate();
+                    refetchSaleData();
+                  }}
+                  retryLabel="Reload Data"
+                />
               </div>
             ) : null}
 

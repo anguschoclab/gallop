@@ -4,12 +4,14 @@
  * Handles player bidding actions, custom bid input, and max bid (proxy) state.
  */
 
+import type { Ref } from "react";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/core/common/formatting";
 import { Gavel, Pause, Play, FastForward, X } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { nextBidAmount } from "@/core/auction/runner";
-import { BidInputPanel } from "./BidInputPanel";
+import { AuctionErrorState } from "@/components/auction/AuctionStates";
+import { BidInputPanel, type BidInputPanelHandle } from "./BidInputPanel";
 import { MaxBidPanel } from "./MaxBidPanel";
 
 interface AuctionControlsProps {
@@ -23,7 +25,10 @@ interface AuctionControlsProps {
   playerMaxBid: number | undefined;
   onSetMaxBid: (amount: number | undefined) => void;
   error?: string | null;
+  onDismissError?: () => void;
+  onRetryBid?: () => void;
   isPlayerConsignment?: boolean;
+  bidInputRef?: Ref<BidInputPanelHandle>;
 }
 
 export function AuctionControls({
@@ -38,6 +43,7 @@ export function AuctionControls({
   onSetMaxBid,
   error,
   isPlayerConsignment,
+  bidInputRef,
 }: AuctionControlsProps) {
   const nextMin = nextBidAmount(currentBid);
 
@@ -100,7 +106,7 @@ export function AuctionControls({
       {/* Advanced Bidding */}
       {!isPlayerConsignment && (
         <div className="grid grid-cols-2 gap-4">
-          <BidInputPanel currentBid={currentBid} nextMin={nextMin} onBid={onBid} />
+          <BidInputPanel ref={bidInputRef} currentBid={currentBid} nextMin={nextMin} onBid={onBid} />
           <MaxBidPanel
             currentBid={currentBid}
             playerMaxBid={playerMaxBid}

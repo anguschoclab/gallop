@@ -12,6 +12,7 @@ import { type AuctioneerLine } from "@/services/auction/auctioneerService";
 import { useAuctionTimers } from "./useAuctionTimers";
 import { useAuctionEventProcessor } from "./useAuctionEventProcessor";
 import { usePlayerBidding } from "./usePlayerBidding";
+import { useDismissedAuctionErrors } from "./useDismissedAuctionErrors";
 import type { AuctionBidRecord, AuctionLot } from "@/game/types";
 
 const TICK_MS = 1500;
@@ -50,12 +51,14 @@ export function useAuctionTheater(saleId: string) {
     bannerFlash: false,
     historyOpen: false,
     winOverlay: null as { horseName: string; hammerPrice: number } | null,
-    bidError: null as string | null,
+    bidHistoryError: null as string | null,
   });
 
   // Refs
   const runnerRef = useRef<AuctionRunner | null>(null);
   const prevLeadingRef = useRef<boolean | undefined>(undefined);
+
+  const dismissedErrors = useDismissedAuctionErrors();
 
   // Event processor hook
   const eventProcessor = useAuctionEventProcessor({
@@ -106,13 +109,10 @@ export function useAuctionTheater(saleId: string) {
         const result = debitForLiveBid(amount);
         if (!result.ok) {
           bidding.setPlayerMaxBidState(undefined);
-          setUiState((prev) => ({
-            ...prev,
-            bidError: `Auto-bid cancelled: ${result.reason ?? "insufficient funds"}`,
-          }));
+          bidding.setBidError(`Auto-bid cancelled: ${result.reason ?? "insufficient funds"}`);
           timers.setBidError(
             `Auto-bid cancelled: ${result.reason ?? "insufficient funds"}`,
-            (err) => setUiState((p) => ({ ...p, bidError: err })),
+            (err) => bidding.setBidError(err),
           );
           return false;
         }
@@ -151,6 +151,13 @@ export function useAuctionTheater(saleId: string) {
     leadingBidder === undefined &&
     lotState?.chant !== "open";
   const bidHistory: AuctionBidRecord[] = lotState?.bidHistory ?? [];
+
+  // Derive bid history error: runner has no current lot while sale is active
+  const activeLotCount = sale?.lots.filter((l: AuctionLot) => !l.withdrawn).length ?? 0;
+  const bidHistoryError =
+    !lotState && sale && !theaterState.done && activeLotCount > 0
+      ? "Failed to load bid history for this lot."
+      : uiState.bidHistoryError;
 
   // Banner flash effect when player takes the lead
   useEffect(() => {
@@ -200,6 +207,11 @@ export function useAuctionTheater(saleId: string) {
     setTheaterState((prev) => ({ ...prev, committed: true }));
   }, [commitAuctionResult, theaterState.committed, saleId, day]);
 
+  const retryBidHistory = useCallback(() => {
+    setUiState((prev) => ({ ...prev, bidHistoryError: null }));
+    forceTick();
+  }, []);
+
   return {
     sale,
     lotState,
@@ -227,6 +239,12 @@ export function useAuctionTheater(saleId: string) {
     bannerFlash: uiState.bannerFlash,
     winOverlay: uiState.winOverlay,
     bidError: bidding.bidError,
+    dismissBidError: bidding.dismissBidError,
+    retryBid: bidding.retryBid,
+    canRetryBid: bidding.canRetry,
+    dismissedErrors,
+    bidHistoryError,
+    retryBidHistory,
     handleBid: bidding.handleBid,
     handlePass: bidding.handlePass,
     handleSkip,

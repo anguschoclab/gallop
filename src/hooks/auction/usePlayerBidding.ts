@@ -16,6 +16,7 @@ export function usePlayerBidding(
 ) {
   const [playerMaxBidState, setPlayerMaxBidState] = useState<number | undefined>(undefined);
   const [bidError, setBidError] = useState<string | null>(null);
+  const [lastBidAmount, setLastBidAmount] = useState<number | undefined>(undefined);
 
   const handleBid = useCallback(
     (amount?: number) => {
@@ -23,12 +24,14 @@ export function usePlayerBidding(
       if (!runner) return;
 
       const bidValue = amount ?? nextBidAmount(currentBid);
+      setLastBidAmount(bidValue);
       const result = debitForLiveBid(bidValue);
       if (!result.ok) {
         setBidError(result.reason ?? "Bid failed");
         return;
       }
 
+      setBidError(null);
       stepAndRender(bidValue);
     },
     [currentBid, debitForLiveBid, stepAndRender, runnerRef],
@@ -47,11 +50,20 @@ export function usePlayerBidding(
     runner.finishSale();
   }, [runnerRef]);
 
+  const dismissBidError = useCallback(() => setBidError(null), []);
+
+  const retryBid = useCallback(() => {
+    if (lastBidAmount !== undefined) handleBid(lastBidAmount);
+  }, [lastBidAmount, handleBid]);
+
   return {
     playerMaxBidState,
     setPlayerMaxBidState,
     bidError,
     setBidError,
+    dismissBidError,
+    retryBid,
+    canRetry: lastBidAmount !== undefined,
     handleBid,
     handlePass,
     handleSkip,
