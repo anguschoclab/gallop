@@ -65,7 +65,7 @@ export type GradedRace = {
  * @param day - Day of month
  * @returns Day of the year
  */
-function doy(month: number, day: number): number {
+export function doy(month: number, day: number): number {
   const cum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
   return cum[month - 1] + day;
 }
@@ -288,7 +288,7 @@ export function getTrackContinent(track: string): Continent {
 }
 
 // Field size assignment helpers based on real-life research
-function getDefaultFieldSize(grade: Grade, country: string): number {
+export function getDefaultFieldSize(grade: Grade, country: string): number {
   // Region mapping for field size heuristics
   const region = getCountryRegion(country);
 
@@ -306,7 +306,7 @@ function getDefaultFieldSize(grade: Grade, country: string): number {
   return fieldSizeMatrix[region]?.[grade] ?? 12;
 }
 
-function getCountryRegion(country: string): string {
+export function getCountryRegion(country: string): string {
   const regionMap: Record<string, string> = {
     USA: "north_america",
     Canada: "north_america",
@@ -12543,7 +12543,7 @@ const GRADED_RACES_WITH_FIELD_SIZES: GradedRace[] = GRADED_RACES_BASE.map((race)
 export const GRADED_RACES = GRADED_RACES_WITH_FIELD_SIZES;
 
 // Duplicate detection check to ensure no race keys are duplicated across sources
-function validateNoDuplicateRaces() {
+export function validateNoDuplicateRaces() {
   const seenKeys = new Set<string>();
   const duplicates: Array<{ key: string; name: string; index: number }> = [];
 
