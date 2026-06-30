@@ -18,8 +18,12 @@ export function useSaveSlots(initialTab: "save" | "load") {
   const loadSlot = useGame((s) => s.loadSlot);
 
   const refreshSaves = useCallback(async () => {
-    const data = await getSaveSlots();
-    setSaves(data.sort((a, b) => b.timestamp - a.timestamp));
+    try {
+      const data = await getSaveSlots();
+      setSaves(data.sort((a, b) => b.timestamp - a.timestamp));
+    } catch (error) {
+      console.error("Failed to load save slots:", error);
+    }
   }, []);
 
   useEffect(() => {
@@ -75,8 +79,13 @@ export function useSaveSlots(initialTab: "save" | "load") {
         return;
       }
 
+      try {
       await deleteSaveSlot(slotId);
       await refreshSaves();
+    } catch (error) {
+      console.error("Failed to delete save slot:", error);
+      toast.error("Failed to delete save");
+    }
     },
     [refreshSaves],
   );
