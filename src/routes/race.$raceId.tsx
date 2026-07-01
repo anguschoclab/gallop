@@ -282,6 +282,7 @@ export function LiveRace() {
           showAllCards={showAllCards}
           setShowAllCards={setShowAllCards}
           announcement={announcement}
+          simTimeRef={simTimeRef}
         />
       </PhasePanel>
     </div>
