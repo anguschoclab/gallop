@@ -98,9 +98,10 @@ export function RaceBroadcast({
   showAllCards,
   setShowAllCards,
   announcement,
+  simTimeRef,
 }: RaceBroadcastProps) {
   const skyBg = getSkyBackground(race.weather);
-  const hasReplay = race.resolved && race.snapshots && race.snapshots.length > 0;
+  const showReplay = phase !== "live" && race.resolved && !!race.snapshots?.length;
 
   return (
     <div className="broadcast min-h-screen text-white bg-broadcast-track">
