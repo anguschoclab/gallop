@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import {
   getTrackBackground,
   getSpriteUrl,
@@ -15,6 +16,7 @@ interface TrackProps {
   followTarget?: string | null;
   paused?: boolean;
   subjectHorseId?: string | null;
+  simTimeRef?: React.MutableRefObject<number>;
 }
 
 export function Track({
@@ -25,11 +27,81 @@ export function Track({
   followTarget,
   paused,
   subjectHorseId,
+  simTimeRef,
 }: TrackProps) {
-  const laneHeight = 36;
+  const laneHeight = 48;
   const trackHeight = runners.length * laneHeight + 20;
   const trackBg = getTrackBackground(surface);
   const viewportWidth = distance * 0.6;
+
+  const progressBarRef = useRef<HTMLDivElement>(null);
+  const simTimeDisplayRef = useRef<HTMLSpanElement>(null);
+  const leaderDistDisplayRef = useRef<HTMLSpanElement>(null);
+  const horseElemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const velocityBadgeRefs = useRef<Map<string, HTMLSpanElement>>(new Map());
+  const finishedSetRef = useRef<Set<string>>(new Set());
+  const finishRankMapRef = useRef<Map<string, number>>(new Map());
+  const finishedCountRef = useRef(0);
+
+  useEffect(() => {
+    let frameId = 0;
+    const update = () => {
+      let maxPos = 0;
+      for (const r of runners) if (r.position > maxPos) maxPos = r.position;
+      const leaderProgress = Math.min(1, maxPos / distance);
+      if (progressBarRef.current) {
+        progressBarRef.current.style.width = `${leaderProgress * 100}%`;
+      }
+      if (simTimeDisplayRef.current && simTimeRef) {
+        simTimeDisplayRef.current.textContent = simTimeRef.current.toFixed(1) + "s";
+      }
+      if (leaderDistDisplayRef.current) {
+        leaderDistDisplayRef.current.textContent = `${Math.round(maxPos)}m / ${distance}m`;
+      }
+
+      // Velocity badges
+      for (const r of runners) {
+        const badgeEl = velocityBadgeRefs.current.get(r.horseId);
+        if (badgeEl) {
+          badgeEl.textContent = r.velocity.toFixed(1) + " m/s";
+          const color =
+            r.velocity > 17
+              ? "var(--color-success, #22c55e)"
+              : r.velocity > 14
+                ? "var(--color-warning, #f59e0b)"
+                : "oklch(0.65 0.2 25)";
+          badgeEl.style.color = color;
+        }
+      }
+
+      // Finish detection
+      let newFinisher = false;
+      for (const r of runners) {
+        if (r.finishTime !== null && !finishedSetRef.current.has(r.horseId)) {
+          finishedSetRef.current.add(r.horseId);
+          newFinisher = true;
+          const el = horseElemRefs.current.get(r.horseId);
+          if (el) {
+            el.classList.add("horse-finish-pop");
+            setTimeout(() => el.classList.remove("horse-finish-pop"), 500);
+          }
+        }
+      }
+      const currentFinished = runners.filter((r) => r.finishTime !== null);
+      if (newFinisher || currentFinished.length !== finishedCountRef.current) {
+        finishedCountRef.current = currentFinished.length;
+        finishRankMapRef.current = new Map(
+          [...currentFinished]
+            .sort((a, b) => (a.finishTime! - b.finishTime!))
+            .map((r, i) => [r.horseId, i + 1]),
+        );
+      }
+
+      frameId = requestAnimationFrame(update);
+    };
+    frameId = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(frameId);
+  }, [runners, distance, simTimeRef]);
 
   const { cameraPos, leaderPos } = (() => {
     let target: Runner | undefined;
@@ -52,22 +124,35 @@ export function Track({
 
   return (
     <div
-      className="relative rounded-lg overflow-hidden border border-white/10 shadow-2xl"
+      className="relative rounded-lg border border-white/10 shadow-2xl"
       style={{
         height: trackHeight,
         backgroundColor: "var(--broadcast-track)",
+        overflow: "visible",
       }}
     >
+      {/* Clipped background */}
       <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: trackBg,
-          backgroundSize: "auto 100%",
-          backgroundRepeat: "repeat-x",
-          backgroundPosition: `${trackOffset}px 0`,
-          willChange: "background-position",
-        }}
-      />
+        className="absolute inset-0 rounded-lg overflow-hidden pointer-events-none"
+        aria-hidden
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: trackBg,
+            backgroundSize: "auto 100%",
+            backgroundRepeat: "repeat-x",
+            backgroundPosition: `${trackOffset}px 0`,
+            willChange: "background-position",
+          }}
+        />
+      </div>
+
+      {/* Sim time + leader overlay */}
+      <div className="absolute top-1 right-2 z-20 flex gap-3 tabular-nums text-[10px] text-muted-foreground pointer-events-none font-mono">
+        <span ref={simTimeDisplayRef}>0.0s</span>
+        <span ref={leaderDistDisplayRef}>0m / {distance}m</span>
+      </div>
 
       {runners.map((_, i) => (
         <div
@@ -109,18 +194,26 @@ export function Track({
 
         const isRunning = tick > 0 && !paused && r.finishTime === null;
         const isSubject = r.horseId === subjectHorseId;
+        const isFading =
+          r.position / distance > 0.7 && r.velocity < r.topSpeed * 0.75 && r.finishTime === null;
+        const finishRank = r.finishTime !== null ? finishRankMapRef.current.get(r.horseId) : undefined;
 
         return (
           <div
             key={r.horseId}
+            ref={(el) => {
+              if (el) horseElemRefs.current.set(r.horseId, el);
+              else horseElemRefs.current.delete(r.horseId);
+            }}
             className="absolute transition-none"
             style={{
               left: `${screenPct}%`,
               top: 10 + i * laneHeight,
               zIndex: Math.round(r.position),
+              willChange: "left",
             }}
           >
-            <div className="relative">
+            <div className={`relative ${isFading ? "horse-fading" : ""}`}>
               {isSubject && (
                 <div className="absolute inset-0 -m-4 rounded-full bg-broadcast-accent/30 animate-ping pointer-events-none" />
               )}
@@ -192,10 +285,37 @@ export function Track({
                   </div>
                 )}
               </div>
+
+              {/* Velocity badge (RAF-updated) */}
+              <span
+                ref={(el) => {
+                  if (el) velocityBadgeRefs.current.set(r.horseId, el);
+                  else velocityBadgeRefs.current.delete(r.horseId);
+                }}
+                className="absolute -bottom-14 left-1/2 -translate-x-1/2 text-[9px] tabular-nums font-mono opacity-70 pointer-events-none whitespace-nowrap"
+              >
+                {r.velocity.toFixed(1)} m/s
+              </span>
+
+              {/* Finish position badge */}
+              {finishRank !== undefined && (
+                <div className="horse-finish-label absolute -bottom-10 left-1/2 -translate-x-1/2 px-1.5 py-0.5 rounded bg-broadcast-accent text-black text-[10px] font-black tabular-nums whitespace-nowrap">
+                  #{finishRank} · {r.finishTime!.toFixed(1)}s
+                </div>
+              )}
             </div>
           </div>
         );
       })}
+
+      {/* Live progress bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/5 rounded-b-lg overflow-hidden">
+        <div
+          ref={progressBarRef}
+          className="h-full bg-broadcast-accent transition-none"
+          style={{ width: "0%" }}
+        />
+      </div>
     </div>
   );
 }
