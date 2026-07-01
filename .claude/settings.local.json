@@ -121,7 +121,14 @@
       "Bash(bunx eslint *)",
       "Bash(echo \"eslint exit \\(nonzero=violations found\\): $?\")",
       "Bash(echo \"exit: $?\")",
-      "Bash(echo \"lint exit: $?\")"
+      "Bash(echo \"lint exit: $?\")",
+      "WebSearch",
+      "Bash(awk '{print $9}')",
+      "Bash(xargs basename -a)",
+      "Bash(grep -E \"\\\\.\\(tsx|ts\\)$\")",
+      "Bash(track)",
+      "Bash(sky\")",
+      "Bash(xargs grep -l \"RaceBroadcast\\\\|Broadcast\")"
     ]
   },
   "hooks": {
