@@ -23,7 +23,16 @@ function usePhaseTransition(phase: RacePhase) {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (displayPhase === displayedGroup) return;
+    if (displayPhase === displayedGroup) {
+      // Phase reversed back to the currently displayed group mid-transition:
+      // cancel the pending swap and clear the exit animation.
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      setIsExiting(false);
+      return;
+    }
 
     setIsExiting(true);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
