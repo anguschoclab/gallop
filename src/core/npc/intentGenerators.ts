@@ -220,13 +220,18 @@ function generateNpcTrainingIntents(
       ? (stableAI.trainingAI = createTrainingAIState(stable))
       : createTrainingAIState(stable));
 
+  const stableFacilities = state.npcFacilities?.[stable.id];
+  const availableTypes = stableFacilities
+    ? getAvailableTrainingTypes(stableFacilities)
+    : ["speed", "stamina", "acceleration", "rest"];
+
   for (const horse of ownedHorses) {
     // AI-driven training decision
     if (horse.energy >= 15 && !activePregnanciesByDam.has(horse.id)) {
       // Use AI to determine if horse should train today
       if (shouldTrainToday(trainingAI, horse, day)) {
         // Use AI to select training type
-        const trainingType = selectTrainingType(trainingAI, horse, day);
+        const trainingType = selectTrainingType(trainingAI, horse, day, availableTypes);
 
         intents.push({
           id: generateUUID(),
