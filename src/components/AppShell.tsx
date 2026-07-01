@@ -5,6 +5,7 @@ import { useAwards } from "@/hooks/game/useSystemsState";
 import { useAutoSave } from "@/hooks/game/useAutoSave";
 import { PlayerRacePrompt } from "@/components/race/PlayerRacePrompt";
 import { AutoSimPanel } from "@/components/race/AutoSimPanel";
+import { StewardsInquiryOverlay } from "@/components/race/StewardsInquiryOverlay";
 import { AwardCeremony } from "./awards";
 import { SidebarNav } from "./SidebarNav";
 import { useState } from "react";
@@ -71,6 +72,7 @@ export function AppShell() {
       </main>
       <PlayerRacePrompt />
       <AutoSimPanel open={autoSimOpen} onClose={() => setAutoSimOpen(false)} />
+      <StewardsInquiryOverlay />
       <AwardCeremony
         isOpen={showCeremony}
         onClose={() => setShowCeremony(false)}
