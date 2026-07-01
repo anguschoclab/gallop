@@ -56,6 +56,7 @@ export interface RaceBroadcastProps {
   showAllCards: boolean;
   setShowAllCards: (v: boolean) => void;
   announcement: string;
+  simTimeRef?: React.MutableRefObject<number>;
 }
 
 export function RaceBroadcast({
