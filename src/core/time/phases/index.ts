@@ -48,6 +48,7 @@ import { archivingPhase } from "./archivingPhase";
 import { impactApplicationPhase } from "./impactApplication";
 import { weatherPhase } from "./weatherPhase";
 import { raceInvitationsPhase } from "./raceInvitations";
+import { foalDevelopmentPhase } from "./foalDevelopmentPhase";
 
 /**
  * Shared array of all game pipeline phases in their correct order.
@@ -96,6 +97,8 @@ export const GAME_PIPELINE_PHASES = [
   // NPC claim filing (before raceResolution)
   npcClaimingPhase,
   raceResolutionPhase,
+  // Foal development milestone alerts (order 71) — emits inbox messages only.
+  foalDevelopmentPhase,
   // Stewards inquiry phase (after race resolution, before claim resolution)
   stewardsPhase,
   // Claim resolution (after raceResolution)

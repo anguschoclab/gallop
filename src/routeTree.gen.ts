@@ -53,6 +53,7 @@ import { Route as SireWatchStallionIdRouteImport } from './routes/sire-watch.$st
 import { Route as RaceRaceIdRouteImport } from './routes/race.$raceId'
 import { Route as NpcStablesStableIdRouteImport } from './routes/npc-stables.$stableId'
 import { Route as JockeyJockeyIdRouteImport } from './routes/jockey.$jockeyId'
+import { Route as FoalDevelopmentHorseIdRouteImport } from './routes/foal-development.$horseId'
 import { Route as CalendarRegionIdRouteImport } from './routes/calendar.$regionId'
 import { Route as AuctionSaleIdRouteImport } from './routes/auction.$saleId'
 import { Route as AnalyticsStableRouteImport } from './routes/analytics.stable'
@@ -280,6 +281,11 @@ const JockeyJockeyIdRoute = JockeyJockeyIdRouteImport.update({
   path: '/jockey/$jockeyId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FoalDevelopmentHorseIdRoute = FoalDevelopmentHorseIdRouteImport.update({
+  id: '/foal-development/$horseId',
+  path: '/foal-development/$horseId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CalendarRegionIdRoute = CalendarRegionIdRouteImport.update({
   id: '/$regionId',
   path: '/$regionId',
@@ -351,6 +357,7 @@ export interface FileRoutesByFullPath {
   '/analytics/stable': typeof AnalyticsStableRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
+  '/foal-development/$horseId': typeof FoalDevelopmentHorseIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
   '/race/$raceId': typeof RaceRaceIdRoute
@@ -397,6 +404,7 @@ export interface FileRoutesByTo {
   '/analytics/stable': typeof AnalyticsStableRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
+  '/foal-development/$horseId': typeof FoalDevelopmentHorseIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
   '/race/$raceId': typeof RaceRaceIdRoute
@@ -450,6 +458,7 @@ export interface FileRoutesById {
   '/analytics/stable': typeof AnalyticsStableRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
+  '/foal-development/$horseId': typeof FoalDevelopmentHorseIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
   '/race/$raceId': typeof RaceRaceIdRoute
@@ -504,6 +513,7 @@ export interface FileRouteTypes {
     | '/analytics/stable'
     | '/auction/$saleId'
     | '/calendar/$regionId'
+    | '/foal-development/$horseId'
     | '/jockey/$jockeyId'
     | '/npc-stables/$stableId'
     | '/race/$raceId'
@@ -550,6 +560,7 @@ export interface FileRouteTypes {
     | '/analytics/stable'
     | '/auction/$saleId'
     | '/calendar/$regionId'
+    | '/foal-development/$horseId'
     | '/jockey/$jockeyId'
     | '/npc-stables/$stableId'
     | '/race/$raceId'
@@ -602,6 +613,7 @@ export interface FileRouteTypes {
     | '/analytics/stable'
     | '/auction/$saleId'
     | '/calendar/$regionId'
+    | '/foal-development/$horseId'
     | '/jockey/$jockeyId'
     | '/npc-stables/$stableId'
     | '/race/$raceId'
@@ -649,6 +661,7 @@ export interface RootRouteChildren {
   StaffRoute: typeof StaffRoute
   StallionsRoute: typeof StallionsRoute
   StartRoute: typeof StartRoute
+  FoalDevelopmentHorseIdRoute: typeof FoalDevelopmentHorseIdRoute
   JockeyJockeyIdRoute: typeof JockeyJockeyIdRoute
   RaceRaceIdRoute: typeof RaceRaceIdRoute
 }
@@ -963,6 +976,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JockeyJockeyIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/foal-development/$horseId': {
+      id: '/foal-development/$horseId'
+      path: '/foal-development/$horseId'
+      fullPath: '/foal-development/$horseId'
+      preLoaderRoute: typeof FoalDevelopmentHorseIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/calendar/$regionId': {
       id: '/calendar/$regionId'
       path: '/$regionId'
@@ -1130,6 +1150,7 @@ const rootRouteChildren: RootRouteChildren = {
   StaffRoute: StaffRoute,
   StallionsRoute: StallionsRoute,
   StartRoute: StartRoute,
+  FoalDevelopmentHorseIdRoute: FoalDevelopmentHorseIdRoute,
   JockeyJockeyIdRoute: JockeyJockeyIdRoute,
   RaceRaceIdRoute: RaceRaceIdRoute,
 }

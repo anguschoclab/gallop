@@ -73,6 +73,7 @@ import {
   computeHeterozygosity,
 } from "@/core/genetics/phenotype";
 import { inheritDNA } from "@/core/genetics/inheritance";
+import { createDefaultFoalDevelopmentArc } from "@/core/horse/foalDevelopment";
 import {
   rollProceduralFamily,
   RUNNING_FAMILIES,
@@ -549,6 +550,11 @@ export function resolveFoaling(
   });
   // Track breeder: player has no stableId on horses, NPCs do.
   foal.bredByPlayer = !dam.stableId;
+  // Anchor birthDay so foal-development milestones fire on the correct future days.
+  if (typeof newDay === "number") {
+    foal.birthDay = newDay;
+  }
+  foal.developmentArc = createDefaultFoalDevelopmentArc(foal.birthDay);
 
   // Set pedigree
   foal.pedigree = {

@@ -226,4 +226,7 @@ export type Horse = {
   activeInjury?: ActiveInjury;
   courseVisits: Record<string, number>; // trackId -> visit count
   phenotypeResolved?: boolean;
+
+  /** Foal-to-racehorse development arc; set on birth via resolveFoaling. */
+  developmentArc?: import("./foalDevelopment").FoalDevelopmentArc;
 };

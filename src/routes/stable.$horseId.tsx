@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HorseAwardsPanel } from "@/components/awards";
 import { FounderLegacy } from "@/components/horse/FounderLegacy";
 import { TrainingPanel } from "@/components/horse/TrainingPanel";
+import { FoalDevelopmentPanel } from "@/components/horse/FoalDevelopmentPanel";
 import { PrivateTrialDialog } from "@/components/horse/PrivateTrialDialog";
 import { SyndicateDialog } from "@/components/market/SyndicateDialog";
 import { HorseDetailHeader } from "@/components/horse/HorseDetailHeader";
@@ -152,6 +153,7 @@ function HorseDetail() {
           {/* LEFT PILLAR */}
           <div className="lg:col-span-5 space-y-8">
             <HorseIdentitySection horse={horse} peakingStatus={peakingStatus} />
+            {horse.developmentArc && <FoalDevelopmentPanel horse={horse} />}
             <HorseConditionSection horse={horse} />
             <HorseManagementSection
               horse={horse}
