@@ -35,7 +35,7 @@ import { recordCampaignOutcome } from "@/core/ai/campaignAI";
 export const raceResolutionPhase: PipelinePhase = {
   name: "raceResolution",
   order: PHASE_ORDER_RACE_RESOLUTION,
-  skipIf: (context) => !!context.skipRaceResolution,
+  skipIf: (context) => !!context.skipRaceResolution || context.state.horses.length === 0,
   execute: (context: PipelineContext): PipelineContext => {
     const { intents, state, newDay } = context;
     const impacts: AnyImpact[] = [];

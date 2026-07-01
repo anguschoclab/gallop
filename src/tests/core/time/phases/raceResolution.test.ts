@@ -195,6 +195,7 @@ describe("raceResolutionPhase", () => {
   it("should not skip when skipRaceResolution is false or undefined", () => {
     const state: GameState = makeGameState({
       day: 10,
+      horses: [{ id: "h1" } as any],
       reputation: {
         score: 50,
         tier: "local",

@@ -122,6 +122,7 @@ describe("raceMap sync through store actions", () => {
       day: 1,
       races: [dueRace],
       raceMap: new Map([[dueRace.id, dueRace]]),
+      horses: [{ id: "h1" } as any],
     });
 
     await useGame.getState().advanceDay();
