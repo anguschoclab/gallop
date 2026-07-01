@@ -16,6 +16,7 @@ import {
   FACILITY_UPGRADE_COSTS,
   FACILITY_ENABLED_WORKOUTS,
 } from "./facilityTypes";
+import { TRAINING_FACILITY_REQUIREMENTS } from "@/constants/workoutConstants";
 import { FACILITY_UPGRADE_BASE_COST, FACILITY_UPGRADE_MULTIPLIER } from "@/constants";
 
 /**
