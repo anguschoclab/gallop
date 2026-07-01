@@ -114,7 +114,6 @@ describe("raceMap integrity", () => {
       r.id === "r1" ? { ...r, resolved: true, result: {} } : r,
     );
 
-    // Simulate the fix: rebuild raceMap from finalState.races
     const update: any = { races: modifiedRaces };
     if (modifiedRaces) {
       update.raceMap = new Map(modifiedRaces.map((r) => [r.id, r]));

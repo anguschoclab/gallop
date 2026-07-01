@@ -44,7 +44,6 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      // 🛡️ Sentinel Security Fix: Added Content-Security-Policy to enforce defense in depth against XSS and data exfiltration
       {
         httpEquiv: "Content-Security-Policy",
         content:
