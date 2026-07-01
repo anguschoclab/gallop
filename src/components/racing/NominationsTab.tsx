@@ -44,7 +44,7 @@ export function NominationsTab() {
   const withdrawNomination = useGame((s: any) => s.withdrawNomination);
 
   const playerHorses = useMemo(
-    () => horses.filter((h) => h.owned && h.status !== "retired" && h.status !== "deceased"),
+    () => horses.filter((h) => h.owned && h.lifecycleStatus === "active"),
     [horses],
   );
 
