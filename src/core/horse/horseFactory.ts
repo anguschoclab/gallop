@@ -73,6 +73,7 @@ import {
   computeHeterozygosity,
 } from "@/core/genetics/phenotype";
 import { inheritDNA } from "@/core/genetics/inheritance";
+import { createDefaultFoalDevelopmentArc } from "@/core/horse/foalDevelopment";
 import {
   rollProceduralFamily,
   RUNNING_FAMILIES,
