@@ -15,6 +15,7 @@ import type { Pregnancy } from "@/core/breeding/types";
 import type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import type { Syndicate } from "@/core/breeding/types";
+import type { InvestorRecord } from "@/core/breeding/investorTypes";
 
 /**
  * Breeding-related state for reproduction tracking and lineage.
@@ -28,6 +29,8 @@ export interface BreedingState {
   activeBreedingProgram: BreedingProgram | null;
   /** Stallion syndicates indexed by stallion ID */
   syndicates: Record<string, Syndicate>;
+  /** Player-facing syndication investors keyed by investor id */
+  syndicateInvestors: Record<string, InvestorRecord>;
 }
 
 /**
@@ -41,5 +44,6 @@ export function createDefaultBreedingState(): BreedingState {
     triplecrownHistory: [],
     activeBreedingProgram: null,
     syndicates: {},
+    syndicateInvestors: {},
   };
 }
