@@ -37,3 +37,8 @@
 
 **Learning:** When trying to eliminate consecutive `.find()` lookups over filtered arrays using a `Map`, beware of inline array filters (like `.filter() ?? []`) creating unstable references. Using an unstable array as a dependency in `useMemo` invalidates the cache on every render, resulting in worse performance due to object allocation overhead.
 **Action:** Compute the filter _and_ the HashMap in a single pass inside a `useMemo` that depends on stable source objects (e.g. `hiredStaff` and `stableId`) to avoid unstable reference invalidation.
+
+## 2026-07-01 - [Optimizing O(N*M) loop lookups with Set in React Renders]
+
+**Learning:** When filtering or mapping arrays (like `races` or `horses`) and checking membership in another array (e.g., `tracks.includes(...)` or `.some(...)`), React renders can suffer from O(N*M) performance bottlenecks if both arrays are large.
+**Action:** Replace `.includes()` and `.some()` inside `.filter()` or `.map()` loops with a pre-calculated `Set` using `useMemo` (e.g., `useMemo(() => new Set(arr), [arr])`) to perform O(1) membership checks, reducing overall complexity to O(N+M).
