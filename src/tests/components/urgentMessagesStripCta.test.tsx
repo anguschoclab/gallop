@@ -25,7 +25,8 @@ vi.mock("@tanstack/react-router", () => ({
     </a>
   ),
   Navigate: () => null,
-  createFileRoute: () => (_config: any) => ({
+  createFileRoute: () => (config: any) => ({
+    options: config,
     useParams: () => ({ horseId: "foal-1" }),
   }),
 }));
