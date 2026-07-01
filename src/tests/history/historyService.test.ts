@@ -116,6 +116,15 @@ describe("recordRaceHistory", () => {
     expect(result).toBeNull();
   });
 
+  it("accepts graded_override as a valid Race field", () => {
+    const race = createMockRace({
+      graded_override: { grade: "G1", surface: "Turf" },
+    });
+    expect(race.graded_override?.grade).toBe("G1");
+    expect(race.graded_override?.surface).toBe("Turf");
+  });
+
+
   it("returns null when no position-1 in results", () => {
     const race = createMockRace();
     const result = recordRaceHistory(
