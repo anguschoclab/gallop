@@ -250,6 +250,7 @@ export function useLiveRaceSimulation({
     paused,
     setPaused,
     simTime: simTimeRef.current,
+    simTimeRef,
     liveSplits: splitCrossingsRef.current,
   };
 }
