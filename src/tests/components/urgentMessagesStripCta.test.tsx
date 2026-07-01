@@ -112,6 +112,7 @@ describe("Foal development inbox CTA → route → back navigation", () => {
       owned: true,
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
+    const Comp = FoalDevelopmentRoute.options.component as React.ComponentType;
     renderWithStore(<Comp />, {
       horses: [horse],
       day: 18,
