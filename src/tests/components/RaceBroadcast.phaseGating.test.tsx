@@ -46,7 +46,7 @@ function computeShowReplay(
   resolved: boolean,
   hasSnapshots: boolean,
 ): boolean {
-  return phase !== "live" && resolved && hasSnapshots;
+  return phase === "review" && resolved && hasSnapshots;
 }
 
 /**
@@ -76,7 +76,16 @@ function usePhaseTransition(phase: RacePhase) {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (displayPhase === displayedGroup) return;
+    if (displayPhase === displayedGroup) {
+      // Phase reversed back to the currently displayed group mid-transition:
+      // cancel the pending swap and clear the exit animation.
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      setIsExiting(false);
+      return;
+    }
 
     setIsExiting(true);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -99,11 +108,11 @@ describe("computeShowReplay — full 12-combination truth table", () => {
   const phases: RacePhase[] = ["preshow", "live", "review"];
   const bools = [true, false];
 
-  // Expected: showReplay is true ONLY when phase !== "live" AND resolved AND hasSnapshots
+  // Expected: showReplay is true ONLY when phase === "review" AND resolved AND hasSnapshots
   for (const phase of phases) {
     for (const resolved of bools) {
       for (const hasSnapshots of bools) {
-        const expected = phase !== "live" && resolved && hasSnapshots;
+        const expected = phase === "review" && resolved && hasSnapshots;
         it(`phase=${phase} resolved=${resolved} hasSnapshots=${hasSnapshots} → ${expected}`, () => {
           expect(computeShowReplay(phase, resolved, hasSnapshots)).toBe(expected);
         });
@@ -317,23 +326,27 @@ describe("usePhaseTransition hook — 300ms cross-fade without blank frame", () 
     }
   });
 
-  it("rapid phase toggling: last transition wins, no double-blank", () => {
+  it("rapid phase toggling: reverting to current displayedGroup cancels transition immediately", () => {
     const { result, rerender } = renderHook(({ phase }) => usePhaseTransition(phase), {
       initialProps: { phase: "preshow" as RacePhase },
     });
 
-    // Rapid-fire two transitions without letting the first settle
+    // Start transition preshow → live
     act(() => { rerender({ phase: "live" }); });
-    act(() => { vi.advanceTimersByTime(100); }); // mid-transition
-    act(() => { rerender({ phase: "preshow" }); }); // reverse before timeout
-
-    // Should restart the transition back to preshow, not blank
     expect(result.current.isExiting).toBe(true);
-    expect(result.current.displayedPhase).toBe("broadcast"); // still in old phase during exit
+    expect(result.current.displayedPhase).toBe("preshow");
 
+    // Halfway through the 300ms window, reverse back to preshow
+    act(() => { vi.advanceTimersByTime(100); });
+    act(() => { rerender({ phase: "preshow" }); });
+
+    // The hook detects displayPhase === displayedGroup ("preshow" === "preshow"),
+    // cancels the pending timer, and clears isExiting immediately.
+    expect(result.current.isExiting).toBe(false);
+    expect(result.current.displayedPhase).toBe("preshow"); // never changed
+
+    // Advancing the clock further does nothing (timer was cancelled)
     act(() => { vi.advanceTimersByTime(300); });
-
-    // Now resolved to preshow
     expect(result.current.displayedPhase).toBe("preshow");
     expect(result.current.isExiting).toBe(false);
   });
