@@ -86,6 +86,16 @@ export type Race = {
     inviteDaysAhead?: number;
     invitedHorseIds?: string[];
   };
+  /** Manual override for graded race metadata (used by tests and custom races). */
+  graded_override?: Partial<{
+    key: string;
+    grade: "G1" | "G2" | "G3";
+    track: string;
+    trackId?: string;
+    surface: "Turf" | "Dirt" | "Synthetic";
+    country?: string;
+  }>;
+
   invitedHorseIds?: string[];
   claimingPrice?: ClaimingPrice;
   winCondition?: WinCondition;
