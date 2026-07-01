@@ -109,6 +109,10 @@ const PERSISTED_KEYS: (keyof GameState)[] = [
   "inbox" as keyof GameState,
   // Stewards inquiry system
   "stewardsInquiries" as keyof GameState,
+  // Stakes nomination system
+  "playerNominations" as keyof GameState,
+  // Player-facing syndication investors
+  "syndicateInvestors" as keyof GameState,
 ];
 
 /**

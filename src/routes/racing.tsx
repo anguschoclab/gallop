@@ -5,10 +5,11 @@ import { RacesTab } from "@/components/racing/RacesTab";
 import { CalendarTab } from "@/components/racing/CalendarTab";
 import { BrowserTab } from "@/components/racing/BrowserTab";
 import { SchedulerTab } from "@/components/racing/SchedulerTab";
+import { NominationsTab } from "@/components/racing/NominationsTab";
 import { useTabParam } from "@/hooks/ui/useTabParam";
-import { Calendar, Flag, Search, CalendarClock } from "lucide-react";
+import { Calendar, Flag, Search, CalendarClock, Award } from "lucide-react";
 
-const RACING_TABS = ["races", "calendar", "browser", "scheduler"] as const;
+const RACING_TABS = ["races", "calendar", "browser", "scheduler", "nominations"] as const;
 
 export const Route = createFileRoute("/racing")({
   validateSearch: z.object({
@@ -64,6 +65,10 @@ function RacingPage() {
             <CalendarClock className="h-4 w-4" />
             Scheduler
           </TabsTrigger>
+          <TabsTrigger value="nominations" className="gap-2">
+            <Award className="h-4 w-4" />
+            Nominations
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="races" className="space-y-4">
@@ -80,6 +85,10 @@ function RacingPage() {
 
         <TabsContent value="scheduler" className="space-y-4">
           <SchedulerTab />
+        </TabsContent>
+
+        <TabsContent value="nominations" className="space-y-4">
+          <NominationsTab />
         </TabsContent>
       </Tabs>
     </div>

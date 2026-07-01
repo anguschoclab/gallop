@@ -59,6 +59,11 @@ export type BreedingSlice = BreedingState & {
     shares: number,
     pricePerShare: number,
   ) => { ok: true } | { ok: false; reason: string };
+  solicitInvestor: (
+    syndicateId: string,
+    sharesOffered: number,
+  ) => { ok: true; investorId: string } | { ok: false; reason: string };
+  buyoutInvestor: (investorId: string) => { ok: true } | { ok: false; reason: string };
 };
 
 /**
@@ -266,6 +271,110 @@ export function createBreedingSlice(
       };
 
       enqueueIntent(intent);
+      return { ok: true };
+    },
+
+    solicitInvestor: (syndicateId: string, sharesOffered: number) => {
+      const s: any = get();
+      const syndicate = s.syndicates?.[syndicateId];
+      if (!syndicate) return { ok: false, reason: "Syndicate not found." };
+      if (sharesOffered <= 0) return { ok: false, reason: "Must offer at least one share." };
+
+      const playerShares = syndicate.shareHolders["player"] ?? 0;
+      if (playerShares < sharesOffered) {
+        return { ok: false, reason: "You don't own that many shares to sell." };
+      }
+
+      // Lazy import to avoid circular concerns
+      const {
+        pickPersonality,
+        generateInvestorName,
+        buildDefaultExpectations,
+      } = require("@/core/breeding/investorTypes") as typeof import("@/core/breeding/investorTypes");
+
+      const personality = pickPersonality();
+      const name = generateInvestorName();
+      const investorId = `inv-${generateUUID().slice(0, 8)}`;
+      const price = syndicate.sharePrice * sharesOffered;
+
+      const investor = {
+        id: investorId,
+        syndicateId,
+        name,
+        stableId: investorId,
+        personality,
+        shares: sharesOffered,
+        investedCash: price,
+        joinedDay: s.day,
+        satisfaction: 70,
+        expectations: buildDefaultExpectations(personality, sharesOffered, syndicate.sharePrice),
+      };
+
+      set((state: any) => ({
+        cash: state.cash + price,
+        syndicates: {
+          ...state.syndicates,
+          [syndicateId]: {
+            ...syndicate,
+            shareHolders: {
+              ...syndicate.shareHolders,
+              player: playerShares - sharesOffered,
+              [investorId]: (syndicate.shareHolders[investorId] ?? 0) + sharesOffered,
+            },
+          },
+        },
+        syndicateInvestors: {
+          ...(state.syndicateInvestors ?? {}),
+          [investorId]: investor,
+        },
+        log: [
+          {
+            day: state.day,
+            text: `${name} (${personality}) invested $${price.toLocaleString()} for ${sharesOffered} shares of ${syndicate.stallionName}.`,
+          },
+          ...state.log,
+        ].slice(0, 50),
+      }));
+
+      return { ok: true, investorId };
+    },
+
+    buyoutInvestor: (investorId: string) => {
+      const s: any = get();
+      const investor = s.syndicateInvestors?.[investorId];
+      if (!investor) return { ok: false, reason: "Investor not found." };
+      const syndicate = s.syndicates?.[investor.syndicateId];
+      if (!syndicate) return { ok: false, reason: "Syndicate not found." };
+
+      // Premium is proportional to (dis)satisfaction. Unhappy investors sell cheaper.
+      const satisfactionFactor = 0.8 + investor.satisfaction / 100; // 0.8 - 1.8
+      const price = Math.round(syndicate.sharePrice * investor.shares * satisfactionFactor);
+      if ((s.cash ?? 0) < price) {
+        return { ok: false, reason: `Insufficient cash. Buyout costs $${price.toLocaleString()}.` };
+      }
+
+      const nextInvestors = { ...(s.syndicateInvestors ?? {}) };
+      delete nextInvestors[investorId];
+      const nextHolders = { ...syndicate.shareHolders };
+      delete nextHolders[investorId];
+      nextHolders.player = (nextHolders.player ?? 0) + investor.shares;
+
+      set((state: any) => ({
+        cash: state.cash - price,
+        syndicateInvestors: nextInvestors,
+        syndicates: {
+          ...state.syndicates,
+          [investor.syndicateId]: { ...syndicate, shareHolders: nextHolders },
+        },
+        log: [
+          {
+            day: state.day,
+            text: `Bought out ${investor.name} for $${price.toLocaleString()} (${investor.shares} shares).`,
+          },
+          ...state.log,
+        ].slice(0, 50),
+      }));
+
       return { ok: true };
     },
   };

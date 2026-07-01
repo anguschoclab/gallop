@@ -12,6 +12,8 @@
 // Racing State - Performance analytics and training tracking
 // Includes pace samples, par times, and daily training limits
 
+import type { NominationRecord } from "@/core/racing/nominationFees";
+
 /**
  * Racing analytics state for performance tracking.
  * Most properties are computed/updated periodically.
@@ -25,6 +27,8 @@ export interface RacingState {
   lastCalibrationDay?: number;
   /** Training slots used per horse today (horseId -> count) */
   trainingUsed: Record<string, number>;
+  /** Player nominations for graded stakes races */
+  playerNominations: NominationRecord[];
 }
 
 /**
@@ -35,5 +39,6 @@ export interface RacingState {
 export function createDefaultRacingState(): RacingState {
   return {
     trainingUsed: {},
+    playerNominations: [],
   };
 }

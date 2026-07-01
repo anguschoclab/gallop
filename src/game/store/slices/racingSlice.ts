@@ -26,6 +26,13 @@ import type { AnyIntent } from "@/core/resolver/intents";
 import { simulateRace } from "@/services/race/raceSimulationExecutor";
 import { generateHorse } from "@/core/horse/horseFactory";
 import { createRng, hashStr } from "@/core/common/rng";
+import {
+  calculateNominationFee,
+  getNominationTier,
+  getRaceGrade,
+  type NominationRecord,
+  type NominationStatus,
+} from "@/core/racing/nominationFees";
 
 const TRAINING_SLOTS_PER_DAY = 2;
 
@@ -47,6 +54,8 @@ export type RacingSlice = RacingState & {
     milestoneKey: string,
     choiceKey: string,
   ) => { ok: boolean; reason?: string };
+  nominateHorse: (horseId: string, raceId: string) => { ok: boolean; reason?: string };
+  withdrawNomination: (nominationId: string) => void;
 };
 
 /**
@@ -326,6 +335,83 @@ export function createRacingSlice(
       });
 
       return { ok: true };
+    },
+
+    nominateHorse: (horseId: string, raceId: string) => {
+      const s = get() as any;
+      const race: Race | undefined = s.raceMap.get(raceId);
+      if (!race) return { ok: false, reason: "Race not found." };
+      const grade = getRaceGrade(race);
+      if (!grade) return { ok: false, reason: "Race is not a graded stakes race." };
+      const horse: Horse | undefined = s.horseMap.get(horseId);
+      if (!horse || !horse.owned) return { ok: false, reason: "You do not own this horse." };
+
+      const existing: NominationRecord[] = s.playerNominations ?? [];
+      if (
+        existing.some(
+          (n) => n.horseId === horseId && n.raceId === raceId && n.status === "active",
+        )
+      ) {
+        return { ok: false, reason: "Horse already nominated for this race." };
+      }
+
+      const daysUntilRace = race.day - s.day;
+      if (daysUntilRace < 0) return { ok: false, reason: "Nominations closed — race has passed." };
+      const tier = getNominationTier(daysUntilRace);
+      const fee = calculateNominationFee(grade, tier);
+      if (fee === null) {
+        set({
+          log: [
+            {
+              day: s.day,
+              text: `Late nominations for ${grade} races are not accepted.`,
+            },
+            ...s.log,
+          ].slice(0, 50),
+        });
+        return { ok: false, reason: `Late ${grade} nominations are closed.` };
+      }
+      if ((s.cash ?? 0) < fee) {
+        return { ok: false, reason: `Insufficient cash. Fee is $${fee.toLocaleString()}.` };
+      }
+
+      const nomination: NominationRecord = {
+        id: `nom-${horseId}-${raceId}-${s.day}-${generateUUID().slice(0, 6)}`,
+        horseId,
+        raceId,
+        raceName: race.name,
+        raceDay: race.day,
+        grade,
+        tier,
+        feePaid: fee,
+        nominatedDay: s.day,
+        status: "active",
+      };
+
+      set({
+        cash: s.cash - fee,
+        playerNominations: [...existing, nomination],
+        log: [
+          {
+            day: s.day,
+            text: `Nominated ${horse.name} for ${race.name} — ${tier} tier, fee $${fee.toLocaleString()}.`,
+          },
+          ...s.log,
+        ].slice(0, 50),
+      });
+      return { ok: true };
+    },
+
+    withdrawNomination: (nominationId: string) => {
+      set((state: any) => ({
+        playerNominations: (state.playerNominations ?? []).map((n: NominationRecord) =>
+          n.id === nominationId ? { ...n, status: "scratched" as NominationStatus } : n,
+        ),
+        log: [
+          { day: state.day, text: `Nomination withdrawn (fee non-refundable).` },
+          ...state.log,
+        ].slice(0, 50),
+      }));
     },
   };
 }
