@@ -48,6 +48,7 @@ import { Route as NpcStablesIndexRouteImport } from './routes/npc-stables.index'
 import { Route as CalendarIndexRouteImport } from './routes/calendar.index'
 import { Route as AuctionIndexRouteImport } from './routes/auction.index'
 import { Route as AnalyticsIndexRouteImport } from './routes/analytics.index'
+import { Route as SyndicateSyndicateIdRouteImport } from './routes/syndicate.$syndicateId'
 import { Route as StableHorseIdRouteImport } from './routes/stable.$horseId'
 import { Route as SireWatchStallionIdRouteImport } from './routes/sire-watch.$stallionId'
 import { Route as RaceRaceIdRouteImport } from './routes/race.$raceId'
@@ -256,6 +257,11 @@ const AnalyticsIndexRoute = AnalyticsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AnalyticsRoute,
 } as any)
+const SyndicateSyndicateIdRoute = SyndicateSyndicateIdRouteImport.update({
+  id: '/syndicate/$syndicateId',
+  path: '/syndicate/$syndicateId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StableHorseIdRoute = StableHorseIdRouteImport.update({
   id: '/$horseId',
   path: '/$horseId',
@@ -363,6 +369,7 @@ export interface FileRoutesByFullPath {
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
+  '/syndicate/$syndicateId': typeof SyndicateSyndicateIdRoute
   '/analytics/': typeof AnalyticsIndexRoute
   '/auction/': typeof AuctionIndexRoute
   '/calendar/': typeof CalendarIndexRoute
@@ -410,6 +417,7 @@ export interface FileRoutesByTo {
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
+  '/syndicate/$syndicateId': typeof SyndicateSyndicateIdRoute
   '/analytics': typeof AnalyticsIndexRoute
   '/auction': typeof AuctionIndexRoute
   '/calendar': typeof CalendarIndexRoute
@@ -464,6 +472,7 @@ export interface FileRoutesById {
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
+  '/syndicate/$syndicateId': typeof SyndicateSyndicateIdRoute
   '/analytics/': typeof AnalyticsIndexRoute
   '/auction/': typeof AuctionIndexRoute
   '/calendar/': typeof CalendarIndexRoute
@@ -519,6 +528,7 @@ export interface FileRouteTypes {
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
+    | '/syndicate/$syndicateId'
     | '/analytics/'
     | '/auction/'
     | '/calendar/'
@@ -566,6 +576,7 @@ export interface FileRouteTypes {
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
+    | '/syndicate/$syndicateId'
     | '/analytics'
     | '/auction'
     | '/calendar'
@@ -619,6 +630,7 @@ export interface FileRouteTypes {
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
+    | '/syndicate/$syndicateId'
     | '/analytics/'
     | '/auction/'
     | '/calendar/'
@@ -664,6 +676,7 @@ export interface RootRouteChildren {
   FoalDevelopmentHorseIdRoute: typeof FoalDevelopmentHorseIdRoute
   JockeyJockeyIdRoute: typeof JockeyJockeyIdRoute
   RaceRaceIdRoute: typeof RaceRaceIdRoute
+  SyndicateSyndicateIdRoute: typeof SyndicateSyndicateIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -941,6 +954,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnalyticsIndexRouteImport
       parentRoute: typeof AnalyticsRoute
     }
+    '/syndicate/$syndicateId': {
+      id: '/syndicate/$syndicateId'
+      path: '/syndicate/$syndicateId'
+      fullPath: '/syndicate/$syndicateId'
+      preLoaderRoute: typeof SyndicateSyndicateIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/stable/$horseId': {
       id: '/stable/$horseId'
       path: '/$horseId'
@@ -1153,6 +1173,7 @@ const rootRouteChildren: RootRouteChildren = {
   FoalDevelopmentHorseIdRoute: FoalDevelopmentHorseIdRoute,
   JockeyJockeyIdRoute: JockeyJockeyIdRoute,
   RaceRaceIdRoute: RaceRaceIdRoute,
+  SyndicateSyndicateIdRoute: SyndicateSyndicateIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
