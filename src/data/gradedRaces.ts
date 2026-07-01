@@ -167,6 +167,7 @@ function getCountry(track: string): string {
     Krefeld: "Germany",
     Hamburg: "Germany",
     Munich: "Germany",
+    Hoppegarten: "Germany",
     Dortmund: "Germany",
     // Turkey
     Veliefendi: "Turkey",
@@ -226,7 +227,6 @@ function getCountry(track: string): string {
     Kochi: "Japan",
     Oi: "Japan",
     "Urawa Kinen": "Japan",
-    Hoppegarten: "Germany",
   };
   return trackToCountry[track] || "Other";
 }

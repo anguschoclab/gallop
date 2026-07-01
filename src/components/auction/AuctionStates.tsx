@@ -5,16 +5,10 @@ import { AlertTriangle, Loader2, X } from "lucide-react";
 
 export function AuctionLoadingState() {
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      className="p-12 space-y-6 animate-fade-in"
-    >
+    <div role="status" aria-live="polite" className="p-12 space-y-6 animate-fade-in">
       <div className="flex items-center gap-3 text-cream/60">
         <Loader2 className="h-5 w-5 animate-spin text-gold" aria-hidden />
-        <p className="font-mono text-xs uppercase tracking-[0.3em]">
-          Loading sale catalog…
-        </p>
+        <p className="font-mono text-xs uppercase tracking-[0.3em]">Loading sale catalog…</p>
       </div>
 
       {/* Skeleton header */}

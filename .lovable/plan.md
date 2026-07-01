@@ -15,6 +15,7 @@ New `src/components/charts/` package. Every new chart in the game uses these pri
 - `useChartFormat.ts` — currency/number/date formatters with tabular-nums.
 
 Token updates in `src/styles.css`:
+
 - Refine `--chart-1..5` to: deep gold `#c9a84c`, light gold `#f0d78c`, cream `#f5f0e0`, slate `#2a2a32`, ember `#a8632a` (accent for negative/loss).
 - Add `--chart-grid`, `--chart-axis`, `--chart-tooltip-bg`, `--gradient-chart-area` (soft gold→transparent).
 
@@ -31,6 +32,7 @@ src/routes/
 ```
 
 Bento overview tiles (each links to a drill-down):
+
 - Stable KPI tile: active horses, avg form, low-energy count + 30d trend sparkline.
 - Cash tile: balance + 90d cash curve (area, gradient fill).
 - Win rate tile: rolling 30-race win/place/show donut-substitute (stacked bar — design bible bans pies).
@@ -41,6 +43,7 @@ Bento overview tiles (each links to a drill-down):
 - Foal pipeline tile: pregnancies by trimester, stacked bar.
 
 Drill-downs:
+
 - **Stable** — fleet composition (age/discipline), training load over time, energy distribution histogram, form heat strip per horse.
 - **Racing** — wins by class bar (reuse `GradedStatsChart`), Beyer distribution histogram, surface/distance scatter, last-30 results bumps chart.
 - **Finance** — extend existing FinancialReport with: cash curve, income vs expense stacked area, expense category breakdown (MiniBar list), per-horse ROI ranked bar.
@@ -51,16 +54,19 @@ Nav: add "Analytics" entry to the existing sidebar; remove no other entries.
 ## 3. Screen-level rollouts
 
 **Dashboard (`routes/index.tsx`)** — replace the current static KPI tiles with `ChartCard`s containing sparklines:
+
 - Cash sparkline (90d), win-rate sparkline (30 races), upcoming race countdown strip, urgent inbox heatcount.
 - Keep all existing data sources (`useDashboardData`); only the presentation changes.
 
 **Horse detail (`stable.$horseId.tsx` / `HorseAnalyticsSection`)** — add:
+
 - Energy/form dual-line over last 60 days.
 - Earnings cumulative curve.
 - Distance × surface performance matrix (small heatmap from `raceHistory`).
 - Pace profile chart (proper line chart, not just the existing text summary) when `pacePositions` exist.
 
 **Race results (`route race.$raceId.tsx`)** — add:
+
 - Sectional-time line per runner (top 5).
 - Position bumps chart across the call points.
 - Field strength bar (avg Beyer of field vs class median).
@@ -68,6 +74,7 @@ Nav: add "Analytics" entry to the existing sidebar; remove no other entries.
 **Finance (`routes/financial-report.tsx`)** — wrap existing report with cash curve + stacked income/expense area + ranked horse ROI list (covered by Finance drill-down above; same components reused inline).
 
 **Breeding (`routes/breeding.tsx`, `sire-leaderboards.tsx`, `sire-watch.$stallionId.tsx`)** — add:
+
 - Sire trend line on leaderboard rows (rank-change sparkline using `sireTrendHistory`).
 - Progeny earnings scatter on sire-watch detail.
 - Replace nothing; add as new sections.

@@ -143,9 +143,33 @@ describe("useSaveSlots", () => {
 
     it("populates saves from getSaveSlots on mount, sorted by timestamp descending", async () => {
       const slots = [
-        { id: "a", name: "A", timestamp: 100, gameDay: 1, stableName: "S", cash: 0, isAutoSave: false },
-        { id: "b", name: "B", timestamp: 300, gameDay: 2, stableName: "S", cash: 0, isAutoSave: false },
-        { id: "c", name: "C", timestamp: 200, gameDay: 3, stableName: "S", cash: 0, isAutoSave: false },
+        {
+          id: "a",
+          name: "A",
+          timestamp: 100,
+          gameDay: 1,
+          stableName: "S",
+          cash: 0,
+          isAutoSave: false,
+        },
+        {
+          id: "b",
+          name: "B",
+          timestamp: 300,
+          gameDay: 2,
+          stableName: "S",
+          cash: 0,
+          isAutoSave: false,
+        },
+        {
+          id: "c",
+          name: "C",
+          timestamp: 200,
+          gameDay: 3,
+          stableName: "S",
+          cash: 0,
+          isAutoSave: false,
+        },
       ];
       (getSaveSlots as any).mockResolvedValue(slots);
 
@@ -169,7 +193,10 @@ describe("useSaveSlots", () => {
       const { result } = renderHook(() => useSaveSlots("save"));
 
       await waitFor(() => {
-        expect(consoleErrorSpy).toHaveBeenCalledWith("Failed to load save slots:", expect.any(Error));
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          "Failed to load save slots:",
+          expect.any(Error),
+        );
       });
 
       expect(result.current.saves).toEqual([]);
@@ -190,7 +217,10 @@ describe("useSaveSlots", () => {
         await result.current.handleDelete("slot1", { stopPropagation: vi.fn() } as any);
       });
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Failed to delete save slot:", expect.any(Error));
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Failed to delete save slot:",
+        expect.any(Error),
+      );
       expect(toast.error).toHaveBeenCalledWith("Failed to delete save");
 
       consoleErrorSpy.mockRestore();

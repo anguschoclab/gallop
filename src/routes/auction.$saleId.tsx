@@ -8,10 +8,7 @@ import { LotDetailPanel } from "@/components/auction/LotDetailPanel";
 import { BiddingPanel } from "@/components/auction/BiddingPanel";
 import { ConsignmentWithdrawal } from "@/components/auction/ConsignmentWithdrawal";
 import { ResolvedSaleSummary } from "@/components/auction/ResolvedSaleSummary";
-import {
-  AuctionLoadingState,
-  AuctionErrorState,
-} from "@/components/auction/AuctionStates";
+import { AuctionLoadingState, AuctionErrorState } from "@/components/auction/AuctionStates";
 import { useAuctionSaleFilters } from "@/hooks/auction/useAuctionSaleFilters";
 import { useAuctionSaleData } from "@/hooks/auction/useAuctionSaleData";
 import { useStoreHydration } from "@/hooks/shared/useStoreHydration";
@@ -101,7 +98,6 @@ function AuctionSalePage() {
     );
   }
 
-
   return (
     <div className="space-y-6 pb-20 animate-fade-in">
       <SaleHeader
@@ -121,8 +117,6 @@ function AuctionSalePage() {
           retryLabel={canRetry ? "Retry Bid" : "Reload Data"}
         />
       )}
-
-
 
       {isSaleDay && !isResolved ? (
         <AuctionTheater saleId={saleId} />

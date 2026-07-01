@@ -10,7 +10,13 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Gavel, ArrowDownNarrowWide, ArrowUpNarrowWide, AlertCircle, RotateCcw } from "lucide-react";
+import {
+  Gavel,
+  ArrowDownNarrowWide,
+  ArrowUpNarrowWide,
+  AlertCircle,
+  RotateCcw,
+} from "lucide-react";
 
 const PAGE_SIZE = 10;
 
@@ -58,20 +64,13 @@ export function BidHistoryPanel({
 
   return (
     <Sheet open={historyOpen} onOpenChange={onHistoryOpenChange}>
-      <SheetContent
-        side="bottom"
-        className="max-h-[70vh] flex flex-col rounded-t-2xl"
-      >
+      <SheetContent side="bottom" className="max-h-[70vh] flex flex-col rounded-t-2xl">
         <SheetHeader>
           <SheetTitle className="flex items-center justify-between">
             <span>Bid History ({bidHistory.length})</span>
             <div className="flex items-center gap-2">
               {canPlaceBid && (
-                <Button
-                  size="sm"
-                  className="h-8 gap-1.5 font-bold"
-                  onClick={onPlaceBid}
-                >
+                <Button size="sm" className="h-8 gap-1.5 font-bold" onClick={onPlaceBid}>
                   <Gavel className="h-3.5 w-3.5" />
                   Place Bid
                 </Button>
@@ -114,21 +113,14 @@ export function BidHistoryPanel({
               <AlertCircle className="h-10 w-10 text-destructive/60" />
               <p className="text-sm text-destructive font-bold text-center">{error}</p>
               {onRetry && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-1.5"
-                  onClick={onRetry}
-                >
+                <Button variant="outline" size="sm" className="gap-1.5" onClick={onRetry}>
                   <RotateCcw className="h-3.5 w-3.5" />
                   Retry
                 </Button>
               )}
             </div>
           ) : bidHistory.length === 0 ? (
-            <p className="text-xs text-muted-foreground italic text-center py-8">
-              No bids yet
-            </p>
+            <p className="text-xs text-muted-foreground italic text-center py-8">No bids yet</p>
           ) : (
             <ul className="space-y-0.5">
               {visibleBids.map((record, idx) => {
@@ -137,10 +129,7 @@ export function BidHistoryPanel({
                     ? "YOU"
                     : (stableMap.get(record.stableId)?.name ?? record.stableId);
                 return (
-                  <li
-                    key={idx}
-                    className="flex items-baseline justify-between text-xs gap-3 py-1"
-                  >
+                  <li key={idx} className="flex items-baseline justify-between text-xs gap-3 py-1">
                     <span
                       className={cn(
                         "font-medium truncate",

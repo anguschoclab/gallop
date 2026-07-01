@@ -20,12 +20,12 @@ description: >-
 ## The core principle
 
 **Critique from evidence, not vibes.** An assessment is only worth something if
-it's grounded in what's actually true *right now* — not what the README claims,
+it's grounded in what's actually true _right now_ — not what the README claims,
 not what the code is supposed to do, not a polite read of the surface. Measure
 first, then opine. The most valuable thing you can give is the truth someone
 can't see because they're too close to it.
 
-Honesty cuts both ways: name what's genuinely good *and* what's broken. Don't
+Honesty cuts both ways: name what's genuinely good _and_ what's broken. Don't
 perform negativity, and don't sugarcoat. Don't catastrophize a small problem or
 hand-wave a large one.
 
@@ -33,7 +33,7 @@ hand-wave a large one.
 
 Do the boring measurement first. Depending on the project:
 
-- **Build/typecheck/lint:** run them and *count*. "1,433 type errors across 180
+- **Build/typecheck/lint:** run them and _count_. "1,433 type errors across 180
   files" is an assessment; "the types are a bit messy" is a vibe.
 - **Actually run it.** Start the app, click through the real screens, and see
   what renders vs. what white-screens. A feature that exists in code but crashes
@@ -79,6 +79,7 @@ unblocks everything else goes first.)
 ## Step 4 — Prioritize by leverage and reality
 
 Order improvements by what actually matters, not by what's fun:
+
 - A build that doesn't run beats gameplay polish. Table-stakes correctness before
   features.
 - The change that unblocks all the others (e.g. a CI build gate) ranks first.

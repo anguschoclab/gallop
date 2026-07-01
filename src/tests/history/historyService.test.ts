@@ -57,20 +57,42 @@ describe("recordRaceHistory", () => {
   // ── Guard tests (null returns) ──
 
   it("returns null for G2 race", () => {
-    const race = createMockRace({ graded: { key: "g2", grade: "G2", track: "T", trackId: "t", surface: "Dirt" } });
-    const result = recordRaceHistory(race, createMockResult("winner-1"), [createMockRunner("winner-1")], [baseHorse()], 100);
+    const race = createMockRace({
+      graded: { key: "g2", grade: "G2", track: "T", trackId: "t", surface: "Dirt" },
+    });
+    const result = recordRaceHistory(
+      race,
+      createMockResult("winner-1"),
+      [createMockRunner("winner-1")],
+      [baseHorse()],
+      100,
+    );
     expect(result).toBeNull();
   });
 
   it("returns null for G3 race", () => {
-    const race = createMockRace({ graded: { key: "g3", grade: "G3", track: "T", trackId: "t", surface: "Dirt" } });
-    const result = recordRaceHistory(race, createMockResult("winner-1"), [createMockRunner("winner-1")], [baseHorse()], 100);
+    const race = createMockRace({
+      graded: { key: "g3", grade: "G3", track: "T", trackId: "t", surface: "Dirt" },
+    });
+    const result = recordRaceHistory(
+      race,
+      createMockResult("winner-1"),
+      [createMockRunner("winner-1")],
+      [baseHorse()],
+      100,
+    );
     expect(result).toBeNull();
   });
 
   it("returns null for ungraded race (no graded field)", () => {
     const race = createMockRace({ graded: undefined });
-    const result = recordRaceHistory(race, createMockResult("winner-1"), [createMockRunner("winner-1")], [baseHorse()], 100);
+    const result = recordRaceHistory(
+      race,
+      createMockResult("winner-1"),
+      [createMockRunner("winner-1")],
+      [baseHorse()],
+      100,
+    );
     expect(result).toBeNull();
   });
 
@@ -78,7 +100,13 @@ describe("recordRaceHistory", () => {
     const race = createMockRace({
       graded: { key: "test", track: "T", trackId: "t", surface: "Dirt" } as any,
     });
-    const result = recordRaceHistory(race, createMockResult("winner-1"), [createMockRunner("winner-1")], [baseHorse()], 100);
+    const result = recordRaceHistory(
+      race,
+      createMockResult("winner-1"),
+      [createMockRunner("winner-1")],
+      [baseHorse()],
+      100,
+    );
     expect(result).toBeNull();
   });
 
@@ -90,7 +118,13 @@ describe("recordRaceHistory", () => {
 
   it("returns null when no position-1 in results", () => {
     const race = createMockRace();
-    const result = recordRaceHistory(race, [{ horseId: "h1", position: 2, time: 100 }], [createMockRunner("h1")], [baseHorse()], 100);
+    const result = recordRaceHistory(
+      race,
+      [{ horseId: "h1", position: 2, time: 100 }],
+      [createMockRunner("h1")],
+      [baseHorse()],
+      100,
+    );
     expect(result).toBeNull();
   });
 
@@ -102,7 +136,14 @@ describe("recordRaceHistory", () => {
     const runner = createMockRunner("winner-1", "j-42", "Top Jockey");
     const day = 100;
 
-    const record = recordRaceHistory(race, createMockResult("winner-1", 98.3), [runner], [horse], day, createTestRng("seed"));
+    const record = recordRaceHistory(
+      race,
+      createMockResult("winner-1", 98.3),
+      [runner],
+      [horse],
+      day,
+      createTestRng("seed"),
+    );
 
     expect(record).not.toBeNull();
     expect(record!.id).toMatch(UUID_REGEX);
@@ -127,7 +168,14 @@ describe("recordRaceHistory", () => {
     const horseMap = new Map([[horse.id, horse]]);
     const runner = createMockRunner("winner-1", "j-42", "Top Jockey");
 
-    const record = recordRaceHistory(race, createMockResult("winner-1"), [runner], horseMap, 100, createTestRng("seed"));
+    const record = recordRaceHistory(
+      race,
+      createMockResult("winner-1"),
+      [runner],
+      horseMap,
+      100,
+      createTestRng("seed"),
+    );
 
     expect(record).not.toBeNull();
     expect(record!.winnerName).toBe("Champ");
@@ -143,7 +191,14 @@ describe("recordRaceHistory", () => {
       { horseId: "winner-1", position: 1, time: 100 },
     ];
 
-    const record = recordRaceHistory(race, result, [createMockRunner("winner-1")], [horse], 100, createTestRng("seed"));
+    const record = recordRaceHistory(
+      race,
+      result,
+      [createMockRunner("winner-1")],
+      [horse],
+      100,
+      createTestRng("seed"),
+    );
 
     expect(record).not.toBeNull();
     expect(record!.winnerId).toBe("winner-1");
@@ -160,7 +215,14 @@ describe("recordRaceHistory", () => {
       { horseId: "h-b", position: 1, time: 100 },
     ];
 
-    const record = recordRaceHistory(race, result, [createMockRunner("h-a"), createMockRunner("h-b")], [horseA, horseB], 100, createTestRng("seed"));
+    const record = recordRaceHistory(
+      race,
+      result,
+      [createMockRunner("h-a"), createMockRunner("h-b")],
+      [horseA, horseB],
+      100,
+      createTestRng("seed"),
+    );
 
     expect(record).not.toBeNull();
     expect(record!.winnerId).toBe("h-a");
@@ -171,7 +233,14 @@ describe("recordRaceHistory", () => {
 
   it("falls back to Unknown name and #666 silk when horse not found in array", () => {
     const race = createMockRace();
-    const record = recordRaceHistory(race, createMockResult("missing-horse"), [createMockRunner("missing-horse")], [baseHorse()], 100, createTestRng("seed"));
+    const record = recordRaceHistory(
+      race,
+      createMockResult("missing-horse"),
+      [createMockRunner("missing-horse")],
+      [baseHorse()],
+      100,
+      createTestRng("seed"),
+    );
 
     expect(record).not.toBeNull();
     expect(record!.winnerName).toBe("Unknown");
@@ -183,7 +252,14 @@ describe("recordRaceHistory", () => {
     const race = createMockRace();
     const horseMap = new Map([[baseHorse().id, baseHorse()]]);
 
-    const record = recordRaceHistory(race, createMockResult("missing-horse"), [createMockRunner("missing-horse")], horseMap, 100, createTestRng("seed"));
+    const record = recordRaceHistory(
+      race,
+      createMockResult("missing-horse"),
+      [createMockRunner("missing-horse")],
+      horseMap,
+      100,
+      createTestRng("seed"),
+    );
 
     expect(record).not.toBeNull();
     expect(record!.winnerName).toBe("Unknown");
@@ -193,7 +269,14 @@ describe("recordRaceHistory", () => {
 
   it("falls back to 'unknown' jockeyId and 'Unknown' jockeyName when runner not found", () => {
     const race = createMockRace();
-    const record = recordRaceHistory(race, createMockResult("winner-1"), [], [baseHorse()], 100, createTestRng("seed"));
+    const record = recordRaceHistory(
+      race,
+      createMockResult("winner-1"),
+      [],
+      [baseHorse()],
+      100,
+      createTestRng("seed"),
+    );
 
     expect(record).not.toBeNull();
     expect(record!.jockeyId).toBe("unknown");
@@ -202,7 +285,14 @@ describe("recordRaceHistory", () => {
 
   it("falls back when runner found but missing jockeyId and jockeyName fields", () => {
     const race = createMockRace();
-    const record = recordRaceHistory(race, createMockResult("winner-1"), [{ horseId: "winner-1" }], [baseHorse()], 100, createTestRng("seed"));
+    const record = recordRaceHistory(
+      race,
+      createMockResult("winner-1"),
+      [{ horseId: "winner-1" }],
+      [baseHorse()],
+      100,
+      createTestRng("seed"),
+    );
 
     expect(record).not.toBeNull();
     expect(record!.jockeyId).toBe("unknown");
@@ -213,7 +303,14 @@ describe("recordRaceHistory", () => {
 
   it("calculates year 1 for day 1", () => {
     const race = createMockRace();
-    const record = recordRaceHistory(race, createMockResult("winner-1"), [createMockRunner("winner-1")], [baseHorse()], 1, createTestRng("seed"));
+    const record = recordRaceHistory(
+      race,
+      createMockResult("winner-1"),
+      [createMockRunner("winner-1")],
+      [baseHorse()],
+      1,
+      createTestRng("seed"),
+    );
     expect(record!.year).toBe(1);
   });
 
@@ -224,7 +321,14 @@ describe("recordRaceHistory", () => {
     [731, 3],
   ])("calculates year correctly for day %i", (day, expectedYear) => {
     const race = createMockRace();
-    const record = recordRaceHistory(race, createMockResult("winner-1"), [createMockRunner("winner-1")], [baseHorse()], day, createTestRng("seed"));
+    const record = recordRaceHistory(
+      race,
+      createMockResult("winner-1"),
+      [createMockRunner("winner-1")],
+      [baseHorse()],
+      day,
+      createTestRng("seed"),
+    );
     expect(record!.year).toBe(expectedYear);
   });
 
@@ -233,7 +337,14 @@ describe("recordRaceHistory", () => {
   it("sets isPlayerOwned to false when horse.owned is false", () => {
     const race = createMockRace();
     const horse = baseHorse({ owned: false });
-    const record = recordRaceHistory(race, createMockResult("winner-1"), [createMockRunner("winner-1")], [horse], 100, createTestRng("seed"));
+    const record = recordRaceHistory(
+      race,
+      createMockResult("winner-1"),
+      [createMockRunner("winner-1")],
+      [horse],
+      100,
+      createTestRng("seed"),
+    );
     expect(record!.isPlayerOwned).toBe(false);
   });
 
@@ -244,8 +355,22 @@ describe("recordRaceHistory", () => {
     const horse = baseHorse();
     const runner = createMockRunner("winner-1");
 
-    const record1 = recordRaceHistory(race, createMockResult("winner-1"), [runner], [horse], 100, createTestRng("deterministic-seed"));
-    const record2 = recordRaceHistory(race, createMockResult("winner-1"), [runner], [horse], 100, createTestRng("deterministic-seed"));
+    const record1 = recordRaceHistory(
+      race,
+      createMockResult("winner-1"),
+      [runner],
+      [horse],
+      100,
+      createTestRng("deterministic-seed"),
+    );
+    const record2 = recordRaceHistory(
+      race,
+      createMockResult("winner-1"),
+      [runner],
+      [horse],
+      100,
+      createTestRng("deterministic-seed"),
+    );
 
     expect(record1!.id).toBe(record2!.id);
     expect(isValidUUID(record1!.id)).toBe(true);
@@ -277,7 +402,13 @@ describe("checkTrackRecord", () => {
 
   it("returns null when trackId from graded but surface missing entirely", () => {
     const race = createMockRace({
-      graded: { key: "k", grade: "G1", track: "T", trackId: "graded-track", surface: "Dirt" } as any,
+      graded: {
+        key: "k",
+        grade: "G1",
+        track: "T",
+        trackId: "graded-track",
+        surface: "Dirt",
+      } as any,
       trackId: undefined,
       surface: undefined,
       graded_override: undefined,
@@ -420,7 +551,13 @@ describe("checkTrackRecord", () => {
     const race = createMockRace({
       trackId: "top-level-track",
       surface: "Turf",
-      graded: { key: "k", grade: "G1", track: "Graded Track", trackId: "graded-track", surface: "Dirt" },
+      graded: {
+        key: "k",
+        grade: "G1",
+        track: "Graded Track",
+        trackId: "graded-track",
+        surface: "Dirt",
+      },
     });
     const record = checkTrackRecord(race, "winner-1", "Champ", 100, 100);
     expect(record).not.toBeNull();
@@ -438,7 +575,13 @@ describe("checkTrackRecord", () => {
   it("falls back to graded.surface when race.surface absent", () => {
     const race = createMockRace({
       surface: undefined,
-      graded: { key: "k", grade: "G1", track: "Test Track", trackId: "test-track", surface: "Turf" },
+      graded: {
+        key: "k",
+        grade: "G1",
+        track: "Test Track",
+        trackId: "test-track",
+        surface: "Turf",
+      },
     });
     const record = checkTrackRecord(race, "winner-1", "Champ", 100, 100);
     expect(record).not.toBeNull();
@@ -449,7 +592,13 @@ describe("checkTrackRecord", () => {
     const race = createMockRace({
       trackId: "top-track",
       surface: undefined,
-      graded: { key: "k", grade: "G1", track: "Graded Track", trackId: "graded-track", surface: "Synthetic" },
+      graded: {
+        key: "k",
+        grade: "G1",
+        track: "Graded Track",
+        trackId: "graded-track",
+        surface: "Synthetic",
+      },
     });
     const record = checkTrackRecord(race, "winner-1", "Champ", 100, 100);
     expect(record).not.toBeNull();
@@ -461,7 +610,13 @@ describe("checkTrackRecord", () => {
     const race = createMockRace({
       trackId: undefined,
       surface: "Dirt",
-      graded: { key: "k", grade: "G1", track: "Graded Track", trackId: "graded-track", surface: "Turf" },
+      graded: {
+        key: "k",
+        grade: "G1",
+        track: "Graded Track",
+        trackId: "graded-track",
+        surface: "Turf",
+      },
     });
     const record = checkTrackRecord(race, "winner-1", "Champ", 100, 100);
     expect(record).not.toBeNull();
@@ -518,7 +673,13 @@ describe("checkTrackRecord", () => {
   it("different surface produces separate record (different key)", () => {
     const race = createMockRace({
       surface: "Turf",
-      graded: { key: "k", grade: "G1", track: "Test Track", trackId: "test-track", surface: "Turf" },
+      graded: {
+        key: "k",
+        grade: "G1",
+        track: "Test Track",
+        trackId: "test-track",
+        surface: "Turf",
+      },
     });
     const existing: Record<string, TrackRecord> = {
       "test-track_Dirt_1600": {

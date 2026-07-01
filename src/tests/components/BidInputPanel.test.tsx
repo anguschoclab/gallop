@@ -14,18 +14,14 @@ describe("BidInputPanel", () => {
 
   it("exposes focusAndScroll via ref", () => {
     const ref = createRef<BidInputPanelHandle>();
-    render(
-      <BidInputPanel ref={ref} currentBid={1000} nextMin={1300} onBid={vi.fn()} />,
-    );
+    render(<BidInputPanel ref={ref} currentBid={1000} nextMin={1300} onBid={vi.fn()} />);
     expect(ref.current).not.toBeNull();
     expect(typeof ref.current?.focusAndScroll).toBe("function");
   });
 
   it("focusAndScroll focuses the input element", () => {
     const ref = createRef<BidInputPanelHandle>();
-    render(
-      <BidInputPanel ref={ref} currentBid={1000} nextMin={1300} onBid={vi.fn()} />,
-    );
+    render(<BidInputPanel ref={ref} currentBid={1000} nextMin={1300} onBid={vi.fn()} />);
     ref.current!.focusAndScroll();
     const input = screen.getByRole("textbox");
     expect(document.activeElement).toBe(input);
@@ -33,9 +29,7 @@ describe("BidInputPanel", () => {
 
   it("focusAndScroll pre-fills the input with the given value", () => {
     const ref = createRef<BidInputPanelHandle>();
-    render(
-      <BidInputPanel ref={ref} currentBid={1000} nextMin={1300} onBid={vi.fn()} />,
-    );
+    render(<BidInputPanel ref={ref} currentBid={1000} nextMin={1300} onBid={vi.fn()} />);
     act(() => {
       ref.current!.focusAndScroll(5000);
     });
@@ -45,9 +39,7 @@ describe("BidInputPanel", () => {
 
   it("focusAndScroll scrolls the container into view", () => {
     const ref = createRef<BidInputPanelHandle>();
-    render(
-      <BidInputPanel ref={ref} currentBid={1000} nextMin={1300} onBid={vi.fn()} />,
-    );
+    render(<BidInputPanel ref={ref} currentBid={1000} nextMin={1300} onBid={vi.fn()} />);
     ref.current!.focusAndScroll();
     expect(Element.prototype.scrollIntoView).toHaveBeenCalled();
   });

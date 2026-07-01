@@ -10,10 +10,7 @@
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { PHASE_ORDER_STEWARDS } from "@/constants";
-import {
-  resolveInquiry,
-  type InquiryOutcome,
-} from "@/core/stewards/stewardTypes";
+import { resolveInquiry, type InquiryOutcome } from "@/core/stewards/stewardTypes";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import { createRng, hashStr } from "@/core/common/rng";

@@ -10,7 +10,9 @@ vi.mock("@tanstack/react-router", () => ({
   useNavigate: () => () => {},
   useSearch: () => ({}),
   useRouterState: ({ select }: { select?: (s: any) => any } = {}) =>
-    select ? select({ location: { pathname: mockPathname } }) : { location: { pathname: mockPathname } },
+    select
+      ? select({ location: { pathname: mockPathname } })
+      : { location: { pathname: mockPathname } },
 }));
 
 import { NavSection } from "@/components/NavSection";

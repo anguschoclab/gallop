@@ -32,13 +32,7 @@ export function getTrackClimate(trackId: string | undefined): ClimateZone {
 
 export type Hemisphere = "Northern" | "Southern";
 
-const SOUTHERN_COUNTRIES = new Set([
-  "Australia",
-  "New Zealand",
-  "Argentina",
-  "Brazil",
-  "Chile",
-]);
+const SOUTHERN_COUNTRIES = new Set(["Australia", "New Zealand", "Argentina", "Brazil", "Chile"]);
 
 export function getTrackHemisphere(trackId: string | undefined): Hemisphere {
   if (!trackId) return "Northern";

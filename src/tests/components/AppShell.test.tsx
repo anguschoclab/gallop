@@ -52,7 +52,15 @@ vi.mock("@/components/awards", () => ({
 
 vi.mock("@/components/SidebarNav", () => ({
   SidebarNav: (props: Record<string, unknown>) =>
-    createElement("div", { "data-testid": "sidebar" }, createElement("button", { onClick: props.onStartNewGame as () => void, "data-testid": "start-new-game" }, "Start new game")),
+    createElement(
+      "div",
+      { "data-testid": "sidebar" },
+      createElement(
+        "button",
+        { onClick: props.onStartNewGame as () => void, "data-testid": "start-new-game" },
+        "Start new game",
+      ),
+    ),
 }));
 
 import { useGame } from "@/game/store";

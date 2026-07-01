@@ -96,9 +96,7 @@ export function useAnalyticsData() {
 
     // Top sire trend (last 60d)
     const topSire = sireLeaderboards?.overall?.rankings?.[0];
-    const topSireTrend = topSire
-      ? sireTrendMap.get(topSire.stallionId) ?? []
-      : [];
+    const topSireTrend = topSire ? (sireTrendMap.get(topSire.stallionId) ?? []) : [];
 
     // Pre-compute expense-by-horse map for O(1) lookups
     const expenseByHorse = new Map<string, number>();

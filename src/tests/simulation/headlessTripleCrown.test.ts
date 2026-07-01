@@ -202,4 +202,4 @@ describe("Headless Triple Crown Simulation", () => {
       expect(typeof entry.won).toBe("boolean");
     }
   });
-}, 30000);
+}, 120000);

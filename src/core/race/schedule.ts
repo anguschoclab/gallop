@@ -135,6 +135,7 @@ export function generateTrackRaces(
     case "australia":
       return generateAustralianRaceCard(track, gameDay, numRaces, rng);
     case "asia":
+    case "japan":
       return generateAsianRaceCard(track, gameDay, numRaces, rng);
     case "south_america":
       return generateSouthAmericanRaceCard(track, gameDay, numRaces, rng);

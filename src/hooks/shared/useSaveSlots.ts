@@ -80,12 +80,12 @@ export function useSaveSlots(initialTab: "save" | "load") {
       }
 
       try {
-      await deleteSaveSlot(slotId);
-      await refreshSaves();
-    } catch (error) {
-      console.error("Failed to delete save slot:", error);
-      toast.error("Failed to delete save");
-    }
+        await deleteSaveSlot(slotId);
+        await refreshSaves();
+      } catch (error) {
+        console.error("Failed to delete save slot:", error);
+        toast.error("Failed to delete save");
+      }
     },
     [refreshSaves],
   );

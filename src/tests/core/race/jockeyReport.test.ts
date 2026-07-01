@@ -105,7 +105,13 @@ function makeHorse(overrides?: Partial<Horse>): Horse {
     recoveryRate: 1.0,
     fertility: 0.85,
     foalingEase: 0.9,
-    markings: { socks: "none", face: "none", silverDapple: false, sabino: false, splashWhite: false },
+    markings: {
+      socks: "none",
+      face: "none",
+      silverDapple: false,
+      sabino: false,
+      splashWhite: false,
+    },
     bleederRisk: 0.05,
     roarerRisk: 0.03,
     ocdRisk: 0.03,
@@ -228,10 +234,7 @@ describe("ranksByHorse (via generateJockeyReport)", () => {
   });
 
   it("handles splits with empty entries", () => {
-    const splits: SectionalSplit[] = [
-      makeSplit("¼", []),
-      makeSplit("½", []),
-    ];
+    const splits: SectionalSplit[] = [makeSplit("¼", []), makeSplit("½", [])];
     const runner = makeRunner({ horseId: "h1" });
     const ordered = [runner];
 

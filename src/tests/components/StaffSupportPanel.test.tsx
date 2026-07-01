@@ -6,11 +6,7 @@ import type { StaffMember } from "@/core/staff/staffTypes";
 import { createDefaultGameState } from "@/game/store/state";
 import { useGame } from "@/game/store";
 
-function mkStaff(
-  role: StaffMember["role"],
-  stableId: string,
-  bonusValue = 0.25,
-): StaffMember {
+function mkStaff(role: StaffMember["role"], stableId: string, bonusValue = 0.25): StaffMember {
   return {
     id: `staff-${role}-${stableId}`,
     name: `Test ${role}`,

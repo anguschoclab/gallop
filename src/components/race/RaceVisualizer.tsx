@@ -72,7 +72,10 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
     const map = new Map(runners.map((r) => [r.horseId, r]));
     let playerId: string | undefined;
     for (const r of runners) {
-      if (r.owned) { playerId = r.horseId; break; }
+      if (r.owned) {
+        playerId = r.horseId;
+        break;
+      }
     }
     return { playerHorseId: playerId, runnerMap: map };
   }, [runners]);
@@ -299,11 +302,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
         >
           {isPlaying ? <Pause size={20} /> : <Play size={20} />}
         </button>
-        <button
-          className="race-control-btn"
-          onClick={restart}
-          aria-label="Restart race"
-        >
+        <button className="race-control-btn" onClick={restart} aria-label="Restart race">
           <RotateCcw size={20} />
         </button>
         <button

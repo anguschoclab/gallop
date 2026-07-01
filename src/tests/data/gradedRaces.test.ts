@@ -233,8 +233,7 @@ describe("getTrackContinent", () => {
     expect(getTrackContinent("Hipódromo de San Isidro")).toBe("south_america"));
   it("UAE track → europe (per COUNTRY_TO_CONTINENT mapping)", () =>
     expect(getTrackContinent("Meydan")).toBe("europe"));
-  it("unknown track → europe (default)", () =>
-    expect(getTrackContinent("Nowhere")).toBe("europe"));
+  it("unknown track → europe (default)", () => expect(getTrackContinent("Nowhere")).toBe("europe"));
 
   it("all tracks in GRADED_RACES map to a known continent", () => {
     const valid: Continent[] = ["north_america", "europe", "asia_pacific", "south_america"];

@@ -38,7 +38,7 @@ For a transform on `SCREAMING_SNAKE` display strings, for example:
   status / modal-type string values used in `===` / `case`, property access
   (`.FOO_BAR`), imports, and **numeric separators (`1_000_000`)**.
 
-The discriminator is usually *context*, not the token itself — the same string can
+The discriminator is usually _context_, not the token itself — the same string can
 be a display label in one place and a key in another. That means you sometimes
 need occurrence-level handling, not token-level.
 
@@ -47,11 +47,11 @@ need occurrence-level handling, not token-level.
 Write a script (Python/node) rather than hand-editing dozens of files. The robust
 pattern:
 
-1. **First pass — build the keep-set.** Scan *all* files and collect every token
+1. **First pass — build the keep-set.** Scan _all_ files and collect every token
    that appears in a functional context (declaration, key, comparison, `case`,
    property access, call, index, import). These are off-limits.
 2. **Second pass — transform.** Replace the target pattern **only** when the token
-   is *not* in the keep-set. Add belt-and-suspenders local guards (skip if preceded
+   is _not_ in the keep-set. Add belt-and-suspenders local guards (skip if preceded
    by `.`, followed by `(` `[` `:`).
 3. **Require a discriminating feature** in the match regex to exclude footguns —
    e.g. require at least one letter so `1_000_000` numeric separators never match a
@@ -63,9 +63,8 @@ Print what changed and what was kept, so you can eyeball the decision.
 
 These bite every time:
 
-- **Numeric separators** (`1_000_000_000`) look like snake_case to a regex. A
-  letterless token must never be transformed. (Real incident: a `[A-Z0-9]+(_[A-Z0-9]+)+`
-  pattern turned `1_000_000_000` into `1 000 000 000` — invalid JS — across ~15
+- **Numeric separators** (`1_000_000_000`) look like snake*case to a regex. A
+  letterless token must never be transformed. (Real incident: a `[A-Z0-9]+(*[A-Z0-9]+)+`pattern turned`1_000_000_000`into`1 000 000 000` — invalid JS — across ~15
   files.)
 - **Enum / status / modal-type string literals** (`'ON_AIR'`, `'BIDDING_WAR'`)
   compared with `===` or in `case`. Changing the display but not the comparison (or
@@ -76,7 +75,7 @@ These bite every time:
   display occurrences specifically (verify they're display-only first).
 - **Conservative keep-sets over-protect.** Colons in JSX text (`OPENING_CASH:`) or
   `&` splits can make a display string look functional and get wrongly kept. Do a
-  small, allow-listed second pass for those — verifying each token has *zero*
+  small, allow-listed second pass for those — verifying each token has _zero_
   functional uses before touching it.
 
 ## Step 4 — Verify, every time
@@ -85,7 +84,7 @@ After the transform, prove you didn't break anything:
 
 - **Typecheck:** `tsc --noEmit` (or the project's typecheck). Specifically check
   for **new** corruption: `grep "Cannot find name '<TOKEN_SHAPE>'"`. Compare the
-  error *count* to a pre-transform baseline — it must not increase.
+  error _count_ to a pre-transform baseline — it must not increase.
 - **Lint** the changed files.
 - **Run the app / run the tests / screenshot.** A green typecheck doesn't prove the
   rendered output is right.
@@ -133,5 +132,5 @@ without touching code.
 
 Sweeping edits are where "it looked trivial" turns into a silently broken build that
 ships. The keep-set + verify + clean-redo discipline is what lets you move fast
-across hundreds of occurrences *and* trust the result — instead of trading an hour
+across hundreds of occurrences _and_ trust the result — instead of trading an hour
 saved for a day of debugging mystery corruption.

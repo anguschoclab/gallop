@@ -357,7 +357,7 @@ export function generateJockeyReport(
 ): JockeyReport {
   const fieldSize = ordered.length;
   const finishPosition = finishPositionMap
-    ? finishPositionMap.get(runner.horseId) ?? 1
+    ? (finishPositionMap.get(runner.horseId) ?? 1)
     : Math.max(1, ordered.findIndex((r) => r.horseId === runner.horseId) + 1);
   const ranks = sectionalSplits ? ranksByHorse(sectionalSplits, runner.horseId) : [];
 

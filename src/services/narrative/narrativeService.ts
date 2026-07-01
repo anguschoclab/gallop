@@ -100,28 +100,56 @@ export class NarrativeGenerator {
   }
 
   private checkAtmosphere(simTime: number, newLines: CommentaryLine[]) {
-    const event = detectAtmosphere(simTime, this.state.hasAnnouncedStart, this.state.hasAnnouncedFinish);
+    const event = detectAtmosphere(
+      simTime,
+      this.state.hasAnnouncedStart,
+      this.state.hasAnnouncedFinish,
+    );
     if (
       event &&
       this.rng.next() < NARRATIVE_THRESHOLDS.ATMOSPHERE_PROBABILITY &&
-      this.state.canAnnounce("ATMOSPHERE", "global", simTime, NARRATIVE_THRESHOLDS.ATMOSPHERE_COOLDOWN)
+      this.state.canAnnounce(
+        "ATMOSPHERE",
+        "global",
+        simTime,
+        NARRATIVE_THRESHOLDS.ATMOSPHERE_COOLDOWN,
+      )
     ) {
       newLines.push(this.createLine("ATMOSPHERE", simTime));
-      this.state.setCooldown("ATMOSPHERE", "global", simTime, NARRATIVE_THRESHOLDS.ATMOSPHERE_COOLDOWN);
+      this.state.setCooldown(
+        "ATMOSPHERE",
+        "global",
+        simTime,
+        NARRATIVE_THRESHOLDS.ATMOSPHERE_COOLDOWN,
+      );
     }
   }
 
   private checkGapAnnouncement(sorted: Runner[], simTime: number, newLines: CommentaryLine[]) {
-    const event = detectGapAnnouncement(sorted, this.state.hasAnnouncedStart, this.state.hasAnnouncedFinish);
+    const event = detectGapAnnouncement(
+      sorted,
+      this.state.hasAnnouncedStart,
+      this.state.hasAnnouncedFinish,
+    );
     if (event && event.data?.lengths) {
       if (
-        this.state.canAnnounce("GAP_ANNOUNCEMENT", "leader", simTime, NARRATIVE_THRESHOLDS.GAP_COOLDOWN)
+        this.state.canAnnounce(
+          "GAP_ANNOUNCEMENT",
+          "leader",
+          simTime,
+          NARRATIVE_THRESHOLDS.GAP_COOLDOWN,
+        )
       ) {
         const leader = sorted[0];
         newLines.push(
           this.createLine("GAP_ANNOUNCEMENT", simTime, leader, event.data.lengths as string),
         );
-        this.state.setCooldown("GAP_ANNOUNCEMENT", "leader", simTime, NARRATIVE_THRESHOLDS.GAP_COOLDOWN);
+        this.state.setCooldown(
+          "GAP_ANNOUNCEMENT",
+          "leader",
+          simTime,
+          NARRATIVE_THRESHOLDS.GAP_COOLDOWN,
+        );
       }
     }
   }
@@ -224,10 +252,20 @@ export class NarrativeGenerator {
       if (event) {
         if (event.type === "SURGE" && this.state.canAnnounce("SURGE", r.horseId, simTime)) {
           newLines.push(this.createLine("SURGE", simTime, r));
-          this.state.setCooldown("SURGE", r.horseId, simTime, NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN);
+          this.state.setCooldown(
+            "SURGE",
+            r.horseId,
+            simTime,
+            NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN,
+          );
         } else if (event.type === "FADE" && this.state.canAnnounce("FADE", r.horseId, simTime)) {
           newLines.push(this.createLine("FADE", simTime, r));
-          this.state.setCooldown("FADE", r.horseId, simTime, NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN);
+          this.state.setCooldown(
+            "FADE",
+            r.horseId,
+            simTime,
+            NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN,
+          );
         }
       }
       this.state.lastRanks.set(r.horseId, currentRank);
@@ -244,12 +282,22 @@ export class NarrativeGenerator {
       const event = detectDrafting(r, runnersMap);
       if (event && event.data?.otherName) {
         if (
-          this.state.canAnnounce("DRAFTING", r.horseId, simTime, NARRATIVE_THRESHOLDS.DRAFTING_COOLDOWN)
+          this.state.canAnnounce(
+            "DRAFTING",
+            r.horseId,
+            simTime,
+            NARRATIVE_THRESHOLDS.DRAFTING_COOLDOWN,
+          )
         ) {
           const line = this.createLine("DRAFTING", simTime, r);
           line.text = line.text.replace("{other}", event.data.otherName as string);
           newLines.push(line);
-          this.state.setCooldown("DRAFTING", r.horseId, simTime, NARRATIVE_THRESHOLDS.DRAFTING_COOLDOWN);
+          this.state.setCooldown(
+            "DRAFTING",
+            r.horseId,
+            simTime,
+            NARRATIVE_THRESHOLDS.DRAFTING_COOLDOWN,
+          );
         }
       }
     }
@@ -258,7 +306,12 @@ export class NarrativeGenerator {
   private checkLaneWatch(runners: Runner[], simTime: number, newLines: CommentaryLine[]) {
     if (!this.state.hasAnnouncedStart || this.state.hasAnnouncedFinish) return;
     for (const r of runners) {
-      const event = detectLaneWatch(r, this.race, this.state.hasAnnouncedStart, this.state.hasAnnouncedFinish);
+      const event = detectLaneWatch(
+        r,
+        this.race,
+        this.state.hasAnnouncedStart,
+        this.state.hasAnnouncedFinish,
+      );
       if (event) {
         if (
           this.state.canAnnounce(

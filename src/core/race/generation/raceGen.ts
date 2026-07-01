@@ -179,7 +179,7 @@ export function makeGradedRace(
       key: g.key,
       grade: g.grade,
       track: g.track,
-      trackId: g.trackId ?? "",
+      trackId: g.trackId,
       surface: g.surface,
       winAndYouInTarget: g.winAndYouInTarget,
       requiresInvitation: g.requiresInvitation ?? (g.bcKey === "breeders-cup" ? true : undefined),

@@ -11,13 +11,21 @@ import {
 import type { PlayerFacilities } from "@/core/facilities/facilityTypes";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 
-function makeState(personality = "aggressive" as Parameters<typeof createFacilityAIState>[0]["personality"]) {
+function makeState(
+  personality = "aggressive" as Parameters<typeof createFacilityAIState>[0]["personality"],
+) {
   return createFacilityAIState(createTestStable({ personality }));
 }
 
 function makeFacilities(overrides: Partial<PlayerFacilities> = {}): PlayerFacilities {
   const base: PlayerFacilities = {
-    main_track: { type: "main_track", level: "basic", maintenanceCost: 10, upgradeCost: 5000, builtDay: 1 },
+    main_track: {
+      type: "main_track",
+      level: "basic",
+      maintenanceCost: 10,
+      upgradeCost: 5000,
+      builtDay: 1,
+    },
     barn: { type: "barn", level: "basic", maintenanceCost: 10, upgradeCost: 5000, builtDay: 1 },
     exercise_pool: undefined,
     treadmill: undefined,
@@ -128,7 +136,13 @@ describe("selectFacilityToUpgrade", () => {
     const stable = createTestStable({ cash: 500_000 });
     const state = makeState();
     const eliteFacilities = makeFacilities({
-      main_track: { type: "main_track", level: "elite", maintenanceCost: 150, upgradeCost: 0, builtDay: 1 },
+      main_track: {
+        type: "main_track",
+        level: "elite",
+        maintenanceCost: 150,
+        upgradeCost: 0,
+        builtDay: 1,
+      },
       barn: { type: "barn", level: "elite", maintenanceCost: 150, upgradeCost: 0, builtDay: 1 },
     });
     const result = selectFacilityToUpgrade(state, eliteFacilities, stable, 1);
@@ -155,7 +169,15 @@ describe("recordFacilityInvestment", () => {
   it("adds investment to history", () => {
     const stable = createTestStable();
     const state = makeState();
-    const updated = recordFacilityInvestment(state, "main_track", "basic", "standard", 5000, stable, 10);
+    const updated = recordFacilityInvestment(
+      state,
+      "main_track",
+      "basic",
+      "standard",
+      5000,
+      stable,
+      10,
+    );
     expect(updated.investmentHistory).toHaveLength(1);
     expect(updated.investmentHistory[0].facilityType).toBe("main_track");
     expect(updated.investmentHistory[0].cost).toBe(5000);

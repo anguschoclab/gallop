@@ -134,7 +134,12 @@ export function SireWatchTab() {
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={() => navigate({ to: "/sire-watch/$stallionId", params: { stallionId: analytics.stallionId } })}
+                    onClick={() =>
+                      navigate({
+                        to: "/sire-watch/$stallionId",
+                        params: { stallionId: analytics.stallionId },
+                      })
+                    }
                   >
                     View Profile
                   </Button>

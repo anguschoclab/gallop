@@ -6,12 +6,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Camera, Pause, Play, Thermometer, Wind } from "lucide-react";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Race } from "@/game/types";

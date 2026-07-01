@@ -24,7 +24,11 @@ function collectTsFiles(dir: string, acc: string[] = []): string[] {
       collectTsFiles(fullPath, acc);
     } else {
       const ext = extname(entry.name);
-      if ((ext === ".ts" || ext === ".tsx") && !entry.name.endsWith(".test.ts") && !entry.name.endsWith(".test.tsx")) {
+      if (
+        (ext === ".ts" || ext === ".tsx") &&
+        !entry.name.endsWith(".test.ts") &&
+        !entry.name.endsWith(".test.tsx")
+      ) {
         acc.push(fullPath);
       }
     }
@@ -39,7 +43,10 @@ describe("Math.random elimination from core modules", () => {
 
     for (const file of files) {
       // Normalise to forward slashes so isAllowed works on Windows and Unix.
-      const relative = file.replace(SRC_ROOT + sep, "").split(sep).join("/");
+      const relative = file
+        .replace(SRC_ROOT + sep, "")
+        .split(sep)
+        .join("/");
       if (isAllowed(relative)) continue;
 
       const content = readFileSync(file, "utf-8");
@@ -49,7 +56,8 @@ describe("Math.random elimination from core modules", () => {
         const line = lines[i];
         // Skip comment lines
         const trimmed = line.trim();
-        if (trimmed.startsWith("//") || trimmed.startsWith("*") || trimmed.startsWith("/*")) continue;
+        if (trimmed.startsWith("//") || trimmed.startsWith("*") || trimmed.startsWith("/*"))
+          continue;
         if (trimmed.startsWith("*")) continue;
         // Check for Math.random() usage
         if (/\bMath\.random\s*\(/.test(line)) {

@@ -77,7 +77,7 @@ export type Race = {
     key: string;
     grade: "G1" | "G2" | "G3";
     track: string;
-    trackId: string;
+    trackId?: string;
     surface: "Turf" | "Dirt" | "Synthetic";
     country?: string;
     winAndYouInTarget?: string;
@@ -138,5 +138,11 @@ export type SectionalSplit = {
   entries: SectionalEntry[];
 };
 
-export type RegionalSystem = "north_america" | "europe" | "australia" | "asia" | "south_america";
+export type RegionalSystem =
+  | "north_america"
+  | "europe"
+  | "australia"
+  | "asia"
+  | "south_america"
+  | "japan";
 export type GradeLevel = "G1" | "G2" | "G3" | "Listed";

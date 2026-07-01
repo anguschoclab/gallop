@@ -66,7 +66,8 @@ export function JockeyReportPanel({
   }, [ordered]);
 
   const reports = useMemo<JockeyReport[]>(
-    () => ownedRunners.map((r) => generateJockeyReport(r, ordered, sectionalSplits, finishPositionMap)),
+    () =>
+      ownedRunners.map((r) => generateJockeyReport(r, ordered, sectionalSplits, finishPositionMap)),
     [ownedRunners, ordered, sectionalSplits, finishPositionMap],
   );
   const reportMap = useMemo(() => {

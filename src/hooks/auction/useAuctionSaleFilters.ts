@@ -36,9 +36,7 @@ export function useAuctionSaleFilters() {
 
   const onUpdateFilter = useCallback(
     (
-      update:
-        | Partial<AuctionBrowseSearch>
-        | ((prev: AuctionBrowseSearch) => AuctionBrowseSearch),
+      update: Partial<AuctionBrowseSearch> | ((prev: AuctionBrowseSearch) => AuctionBrowseSearch),
     ) => {
       navigate({
         search: (prev: AuctionBrowseSearch) =>
@@ -54,10 +52,7 @@ export function useAuctionSaleFilters() {
   );
 
   const hasActiveFilters =
-    sex !== undefined ||
-    ageBand !== undefined ||
-    reserveBand !== undefined ||
-    q !== undefined;
+    sex !== undefined || ageBand !== undefined || reserveBand !== undefined || q !== undefined;
 
   return {
     filters,

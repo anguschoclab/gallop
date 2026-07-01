@@ -87,7 +87,10 @@ describe("useRaceProgress — sim progress persistence (sessionStorage)", () => 
   });
 
   it("initialProgress reads parsed JSON from sessionStorage", () => {
-    ssStore.set("race-sim-progress:race-1", JSON.stringify({ simTime: 42, paused: true, speed: 2 }));
+    ssStore.set(
+      "race-sim-progress:race-1",
+      JSON.stringify({ simTime: 42, paused: true, speed: 2 }),
+    );
     const { result } = setup({});
     expect(result.current.initialProgress).toEqual({ simTime: 42, paused: true, speed: 2 });
   });
@@ -99,8 +102,23 @@ describe("useRaceProgress — sim progress persistence (sessionStorage)", () => 
   });
 
   it("persists { simTime, paused, speed } to sessionStorage while phase=live and not finished", () => {
-    const { rerender } = setup({ phase: "live", finished: false, simTime: 10, paused: false, speed: 2, tick: 1 });
-    rerender({ raceId: "race-1", phase: "live", finished: false, simTime: 10, paused: false, speed: 2, tick: 2 });
+    const { rerender } = setup({
+      phase: "live",
+      finished: false,
+      simTime: 10,
+      paused: false,
+      speed: 2,
+      tick: 1,
+    });
+    rerender({
+      raceId: "race-1",
+      phase: "live",
+      finished: false,
+      simTime: 10,
+      paused: false,
+      speed: 2,
+      tick: 2,
+    });
     const stored = JSON.parse(ssStore.get("race-sim-progress:race-1")!);
     expect(stored.simTime).toBe(10);
     expect(stored.speed).toBe(2);
@@ -117,14 +135,28 @@ describe("useRaceProgress — sim progress persistence (sessionStorage)", () => 
   });
 
   it("removes sessionStorage entry when finished transitions to true", () => {
-    ssStore.set("race-sim-progress:race-1", JSON.stringify({ simTime: 5, paused: false, speed: 1 }));
+    ssStore.set(
+      "race-sim-progress:race-1",
+      JSON.stringify({ simTime: 5, paused: false, speed: 1 }),
+    );
     const { rerender } = setup({ phase: "live", finished: false, tick: 1 });
-    rerender({ raceId: "race-1", phase: "live", finished: true, simTime: 90, paused: false, speed: 1, tick: 2 });
+    rerender({
+      raceId: "race-1",
+      phase: "live",
+      finished: true,
+      simTime: 90,
+      paused: false,
+      speed: 1,
+      tick: 2,
+    });
     expect(ssStore.has("race-sim-progress:race-1")).toBe(false);
   });
 
   it("does NOT remove sessionStorage entry when not finished", () => {
-    ssStore.set("race-sim-progress:race-1", JSON.stringify({ simTime: 5, paused: false, speed: 1 }));
+    ssStore.set(
+      "race-sim-progress:race-1",
+      JSON.stringify({ simTime: 5, paused: false, speed: 1 }),
+    );
     setup({ phase: "live", finished: false, tick: 1 });
     expect(ssStore.has("race-sim-progress:race-1")).toBe(true);
   });

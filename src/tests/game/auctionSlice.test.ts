@@ -56,9 +56,7 @@ describe("commitAuctionResult", () => {
     const sale = mkSale([lot]);
     seedStore({ auctions: [sale] });
 
-    const finalLots: AuctionLot[] = [
-      { ...lot, hammerPrice: 5000, soldToStableId: "buyer1" },
-    ];
+    const finalLots: AuctionLot[] = [{ ...lot, hammerPrice: 5000, soldToStableId: "buyer1" }];
     useGame.getState().commitAuctionResult("sale1", finalLots, []);
 
     const auctions = useGame.getState().auctions ?? [];
@@ -72,9 +70,7 @@ describe("commitAuctionResult", () => {
     const sale = mkSale([lot1, lot2]);
     seedStore({ auctions: [sale] });
 
-    const finalLots: AuctionLot[] = [
-      { ...lot1, hammerPrice: 3000, soldToStableId: "buyer1" },
-    ];
+    const finalLots: AuctionLot[] = [{ ...lot1, hammerPrice: 3000, soldToStableId: "buyer1" }];
     useGame.getState().commitAuctionResult("sale1", finalLots, []);
 
     const auctions = useGame.getState().auctions ?? [];

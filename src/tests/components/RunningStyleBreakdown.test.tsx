@@ -59,7 +59,12 @@ describe("RunningStyleBreakdown", () => {
 
   it("does not include non-owned horses in compare options", () => {
     const horse = createTestHorse({ id: "h1", name: "Owned", owned: true });
-    const npc = createTestHorse({ id: "h2", name: "Npc Horse", owned: false, raceHistory: [{ position: 1, day: 10, raceId: "r1", time: 60 } as any] });
+    const npc = createTestHorse({
+      id: "h2",
+      name: "Npc Horse",
+      owned: false,
+      raceHistory: [{ position: 1, day: 10, raceId: "r1", time: 60 } as any],
+    });
     renderWithStore(<RunningStyleBreakdown horse={horse} />, { horses: [horse, npc] } as any);
     expect(screen.queryByText("Npc Horse")).toBeNull();
   });

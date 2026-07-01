@@ -53,9 +53,7 @@ describe("useAuctionSaleFilters", () => {
 
   it("supports function-form updates", () => {
     const { result } = renderHook(() => useAuctionSaleFilters());
-    act(() =>
-      result.current.onUpdateFilter((prev) => ({ ...prev, sex: "filly" })),
-    );
+    act(() => result.current.onUpdateFilter((prev) => ({ ...prev, sex: "filly" })));
     const searchFn = navigate.mock.calls[0][0].search;
     expect(searchFn({ ageBand: "2yo" })).toEqual({ ageBand: "2yo", sex: "filly" });
   });

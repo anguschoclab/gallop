@@ -23,7 +23,7 @@ description: >-
 
 **Every string and number on screen must map to real state.** A data-driven UI's
 credibility comes from never showing the user something untrue or unreadable.
-Atmosphere should come from typography, color, spacing, and motion — *never* from
+Atmosphere should come from typography, color, spacing, and motion — _never_ from
 inventing facts. If a decorative string would mislead someone about the real
 state of their data, it fails.
 
@@ -35,7 +35,7 @@ clarity), then **lock it in** so it can't regress.
 
 Before changing anything, locate the project's design tokens and any UI style
 guide (CSS variables, Tailwind config, a `*Design*.md` / `UI*.md` doc). You are
-**not** reskinning — you're removing dishonesty and illegibility *within* the
+**not** reskinning — you're removing dishonesty and illegibility _within_ the
 existing aesthetic. A dark gold-on-black "institutional terminal" theme can be
 perfectly good; the problem is usually the fake copy and the styling drift, not
 the palette. Respect the established look; fix what lies and what can't be read.
@@ -47,12 +47,14 @@ rapidly-iterated UI.
 
 **A. Hardcoded values that pretend to be live** — the worst offense, because it's
 a lie. A label baked into JSX that shows regardless of actual state:
+
 - `<span>MAJOR CHALLENGER</span>` shown no matter the studio's real rank.
 - `MARKET POSITION: STABLE` with no binding to data.
 - Search: literal status/position/rank strings in JSX that aren't interpolations.
 
 **B. Fabricated decorative chrome** — invented ops-room/sci-fi flavor that carries
 zero information:
+
 - `SECTOR ALPHA-1`, `LIVE SECURE`, `GLOBAL SURVEILLANCE`, `REAL-TIME FEEDS`,
   fake telemetry, blinking "secure"/"online" indicators, "INITIALIZING..." text.
 - It feels like a Blade Runner skin on a spreadsheet. Delete it.
@@ -68,6 +70,7 @@ cash/capital share "market share", or "revenue" when it's bookings. Precision in
 labels is part of honesty.
 
 **E. Illegibility working against the data:**
+
 - Numbers in `italic` or with letter-spacing — figures must be upright and
   column-comparable (`not-italic`, `tabular-nums`).
 - `tracking` past ~`0.15em` on small labels — decorative, not readable.
@@ -79,8 +82,8 @@ labels is part of honesty.
 
 - **Derive, don't fake.** Replace a hardcoded label with a value computed from
   real state. If you can't derive it, don't show it. Prefer the metric the system
-  itself already uses (e.g. if an antitrust system measures dominance by *cash
-  share*, rank the player by cash share and label it honestly — don't invent a
+  itself already uses (e.g. if an antitrust system measures dominance by _cash
+  share_, rank the player by cash share and label it honestly — don't invent a
   "market share" the engine never computes).
 - **Legible numbers.** Upright, `tabular-nums`, `normal-case`, restrained size.
   Numbers are the hero of a numbers screen; let them carry it.

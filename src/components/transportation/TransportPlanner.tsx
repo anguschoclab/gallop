@@ -33,7 +33,7 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
   // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loops.
   // Impact: Reduces rendering complexity from O(N*M) to O(N+M) avoiding UI jank.
   const horseMap = useMemo(() => {
-    const map = new Map<string, typeof horses[number]>();
+    const map = new Map<string, (typeof horses)[number]>();
     for (let i = 0; i < horses.length; i++) {
       map.set(horses[i].id, horses[i]);
     }

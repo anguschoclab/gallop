@@ -3,7 +3,11 @@ import { render, cleanup } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { useAnalyticsData } from "@/hooks/analytics/useAnalyticsData";
 import { createTestHorse } from "@/tests/helpers";
-import type { Transaction, TransactionType, TransactionSubcategory } from "@/core/transactions/transactionTypes";
+import type {
+  Transaction,
+  TransactionType,
+  TransactionSubcategory,
+} from "@/core/transactions/transactionTypes";
 import type { SireRanking, Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
 import type { SireAnalytics } from "@/core/breeding/sireAnalytics";
 function mkSireAnalytics(stallionId: string): SireAnalytics {
@@ -37,12 +41,7 @@ function mkTrend(stallionId: string, day: number, aei: number): SireTrendData {
   return { stallionId, day, aei, ci: 1.5, stakesFoals: 3, g1Foals: 0 };
 }
 
-function mkTransaction(
-  id: string,
-  day: number,
-  amount: number,
-  horseId?: string,
-): Transaction {
+function mkTransaction(id: string, day: number, amount: number, horseId?: string): Transaction {
   return {
     id,
     day,
@@ -98,8 +97,18 @@ describe("useAnalyticsData", () => {
   });
 
   it("rankedRoi correctly aggregates expenses per horse from transactions", () => {
-    const h1 = createTestHorse({ id: "h1", name: "Horse 1", owned: true, lifecycleStatus: "active" });
-    const h2 = createTestHorse({ id: "h2", name: "Horse 2", owned: true, lifecycleStatus: "active" });
+    const h1 = createTestHorse({
+      id: "h1",
+      name: "Horse 1",
+      owned: true,
+      lifecycleStatus: "active",
+    });
+    const h2 = createTestHorse({
+      id: "h2",
+      name: "Horse 2",
+      owned: true,
+      lifecycleStatus: "active",
+    });
     const transactions: Transaction[] = [
       mkTransaction("t1", 95, -500, "h1"),
       mkTransaction("t2", 96, -300, "h1"),
@@ -120,7 +129,12 @@ describe("useAnalyticsData", () => {
   });
 
   it("rankedRoi handles horses with no transactions (zero expense)", () => {
-    const h1 = createTestHorse({ id: "h1", name: "Horse 1", owned: true, lifecycleStatus: "active" });
+    const h1 = createTestHorse({
+      id: "h1",
+      name: "Horse 1",
+      owned: true,
+      lifecycleStatus: "active",
+    });
     const { Probe, captured } = captureAnalyticsData();
     renderWithStore(<Probe />, {
       day: 100,
@@ -133,8 +147,18 @@ describe("useAnalyticsData", () => {
   });
 
   it("rankedRoi sorts by net descending", () => {
-    const h1 = createTestHorse({ id: "h1", name: "Horse 1", owned: true, lifecycleStatus: "active" });
-    const h2 = createTestHorse({ id: "h2", name: "Horse 2", owned: true, lifecycleStatus: "active" });
+    const h1 = createTestHorse({
+      id: "h1",
+      name: "Horse 1",
+      owned: true,
+      lifecycleStatus: "active",
+    });
+    const h2 = createTestHorse({
+      id: "h2",
+      name: "Horse 2",
+      owned: true,
+      lifecycleStatus: "active",
+    });
     const transactions: Transaction[] = [
       mkTransaction("t1", 95, -1000, "h1"),
       mkTransaction("t2", 96, -100, "h2"),

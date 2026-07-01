@@ -12,9 +12,10 @@ import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
  * @returns rankMap keyed by horseId → 0-based rank among still-running horses,
  *          and aliveRank = total count of still-running horses
  */
-export function buildRankMap(
-  runners: Runner[],
-): { rankMap: Map<string, number>; aliveRank: number } {
+export function buildRankMap(runners: Runner[]): {
+  rankMap: Map<string, number>;
+  aliveRank: number;
+} {
   const sorted = [...runners].sort((a, b) => b.position - a.position);
   const rankMap = new Map<string, number>();
   let aliveRank = 0;

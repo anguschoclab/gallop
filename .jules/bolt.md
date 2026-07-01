@@ -29,9 +29,11 @@
 **Action:** Instead of just `new Map(arr.map(x => [x.id, x]))`, you can iterate the array once inside `useMemo` and conditionally `map.set()` the matched items by their target key (e.g., `horseId`). This allows O(1) conditional lookup inside the render loop without modifying global state or storing unneeded entries in the map.
 
 ## 2025-03-09 - [Optimizing O(N) chained array lookups in report generation]
-**Learning:** Found an inefficient nested operation in `jockeyReport.ts` generating `ranksByHorse` that was doing `splits.map(s => s.entries.find(...)).filter(...)`. This meant looping over all splits to map them to an entry, then doing a `.find()` iteration over entries, and then looping over the mapped array to `.filter()` out undefineds. This degraded generation speed via O(3 * M * N) traversal.
+
+**Learning:** Found an inefficient nested operation in `jockeyReport.ts` generating `ranksByHorse` that was doing `splits.map(s => s.entries.find(...)).filter(...)`. This meant looping over all splits to map them to an entry, then doing a `.find()` iteration over entries, and then looping over the mapped array to `.filter()` out undefineds. This degraded generation speed via O(3 _ M _ N) traversal.
 **Action:** When filtering or mapping data where nested `find` or multiple iterations occur, replace chained functional map/filter/find with a single traditional `for` loop with an early `break` for optimal execution.
 
 ## 2024-05-18 - Optimize StaffSupportPanel lookups
+
 **Learning:** When trying to eliminate consecutive `.find()` lookups over filtered arrays using a `Map`, beware of inline array filters (like `.filter() ?? []`) creating unstable references. Using an unstable array as a dependency in `useMemo` invalidates the cache on every render, resulting in worse performance due to object allocation overhead.
-**Action:** Compute the filter *and* the HashMap in a single pass inside a `useMemo` that depends on stable source objects (e.g. `hiredStaff` and `stableId`) to avoid unstable reference invalidation.
+**Action:** Compute the filter _and_ the HashMap in a single pass inside a `useMemo` that depends on stable source objects (e.g. `hiredStaff` and `stableId`) to avoid unstable reference invalidation.

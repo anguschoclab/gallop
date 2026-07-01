@@ -58,7 +58,14 @@ function readStoredOpen(label: string): boolean | null {
   return null;
 }
 
-export function NavSection({ label, items, unreadCount, defaultCollapsed, resetSignal, footer }: NavSectionProps) {
+export function NavSection({
+  label,
+  items,
+  unreadCount,
+  defaultCollapsed,
+  resetSignal,
+  footer,
+}: NavSectionProps) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const containsActive = items.some(
     (item) =>
@@ -109,9 +116,10 @@ export function NavSection({ label, items, unreadCount, defaultCollapsed, resetS
       );
       const idx = headers.indexOf(e.currentTarget as HTMLElement);
       if (idx === -1) return;
-      const nextIdx = e.key === "ArrowDown"
-        ? (idx + 1) % headers.length
-        : (idx - 1 + headers.length) % headers.length;
+      const nextIdx =
+        e.key === "ArrowDown"
+          ? (idx + 1) % headers.length
+          : (idx - 1 + headers.length) % headers.length;
       headers[nextIdx]?.focus();
     } else if (e.key === "Escape") {
       e.preventDefault();
@@ -151,12 +159,7 @@ export function NavSection({ label, items, unreadCount, defaultCollapsed, resetS
         />
       </button>
       {open && (
-        <div
-          id={contentId}
-          role="region"
-          aria-labelledby={headerId}
-          className="space-y-0.5 mb-1"
-        >
+        <div id={contentId} role="region" aria-labelledby={headerId} className="space-y-0.5 mb-1">
           {items.map((item) => {
             const active = isItemActive(pathname, item.to, item.exact);
             return (
@@ -205,9 +208,7 @@ export function NavSection({ label, items, unreadCount, defaultCollapsed, resetS
                               : "text-cream-muted/70 hover:text-cream hover:bg-cream/5",
                           )}
                         >
-                          <sub.icon
-                            className={cn("h-3 w-3", subActive && "text-gold")}
-                          />
+                          <sub.icon className={cn("h-3 w-3", subActive && "text-gold")} />
                           <span>{sub.label}</span>
                         </Link>
                       );
@@ -217,11 +218,7 @@ export function NavSection({ label, items, unreadCount, defaultCollapsed, resetS
               </div>
             );
           })}
-          {footer && (
-            <div className="pt-1.5 mt-1 border-t border-gold-muted/20">
-              {footer}
-            </div>
-          )}
+          {footer && <div className="pt-1.5 mt-1 border-t border-gold-muted/20">{footer}</div>}
         </div>
       )}
     </div>

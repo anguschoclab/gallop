@@ -9,7 +9,10 @@ import type { AuctionLot } from "@/game/types";
 import type { AuctionBrowseSearch } from "@/constants/auctionSearchSchema";
 import { filterAndSortLots } from "@/services/auction/auctionLotFilter";
 import { getDisplayableStats } from "@/core/npc/scouting";
-import { useDismissedAuctionErrors, type AuctionErrorType } from "@/hooks/auction/useDismissedAuctionErrors";
+import {
+  useDismissedAuctionErrors,
+  type AuctionErrorType,
+} from "@/hooks/auction/useDismissedAuctionErrors";
 
 export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch) {
   const { sex, ageBand, reserveBand, sort, q } = filters;
@@ -35,16 +38,16 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
   const [lastBidAttempt, setLastBidAttempt] = useState<number | null>(null);
   const [, forceTick] = useReducer((x: number) => x + 1, 0);
 
-  const { isDismissed, dismissError: dismissErrorPersisted, clearDismissed } =
-    useDismissedAuctionErrors();
+  const {
+    isDismissed,
+    dismissError: dismissErrorPersisted,
+    clearDismissed,
+  } = useDismissedAuctionErrors();
 
-  const setAuctionError = useCallback(
-    (msg: string, type: AuctionErrorType) => {
-      setErrorType(type);
-      setError(msg);
-    },
-    [],
-  );
+  const setAuctionError = useCallback((msg: string, type: AuctionErrorType) => {
+    setErrorType(type);
+    setError(msg);
+  }, []);
 
   // Lot filtering
   const activeLots: AuctionLot[] = useMemo(
@@ -74,10 +77,7 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
     setErrorType(null);
   }, [filterKey]);
 
-  const stableMap = useMemo(
-    () => new Map(stables.map((s) => [s.id, s])),
-    [stables],
-  );
+  const stableMap = useMemo(() => new Map(stables.map((s) => [s.id, s])), [stables]);
 
   // Derived state (safe when !sale — consumer handles not-found)
   const isResolved = sale?.resolved ?? false;

@@ -224,14 +224,10 @@ describe("sanitizeAndRankResults", () => {
       { horseId: "h2", time: 70.0 },
     ];
     // Run with many different raceIds to find at least one that differs
-    const firstOrder = sanitizeAndRankResults(raw, "race-A").finishers.map(
-      (f) => f.horseId,
-    );
+    const firstOrder = sanitizeAndRankResults(raw, "race-A").finishers.map((f) => f.horseId);
     let foundDifferent = false;
     for (let i = 0; i < 50; i++) {
-      const order = sanitizeAndRankResults(raw, `race-${i}`).finishers.map(
-        (f) => f.horseId,
-      );
+      const order = sanitizeAndRankResults(raw, `race-${i}`).finishers.map((f) => f.horseId);
       if (order.join(",") !== firstOrder.join(",")) {
         foundDifferent = true;
         break;
@@ -272,26 +268,17 @@ describe("detectPhotoFinish", () => {
   }
 
   it("returns true when finishers are 0.03s apart", () => {
-    const finishers = [
-      mkFinisher("h1", 1, 70.0),
-      mkFinisher("h2", 2, 70.03),
-    ];
+    const finishers = [mkFinisher("h1", 1, 70.0), mkFinisher("h2", 2, 70.03)];
     expect(detectPhotoFinish(finishers)).toBe(true);
   });
 
   it("returns true when finishers are 0.049s apart (just under threshold)", () => {
-    const finishers = [
-      mkFinisher("h1", 1, 70.0),
-      mkFinisher("h2", 2, 70.049),
-    ];
+    const finishers = [mkFinisher("h1", 1, 70.0), mkFinisher("h2", 2, 70.049)];
     expect(detectPhotoFinish(finishers)).toBe(true);
   });
 
   it("returns true when finishers are 0.01s apart", () => {
-    const finishers = [
-      mkFinisher("h1", 1, 70.0),
-      mkFinisher("h2", 2, 70.01),
-    ];
+    const finishers = [mkFinisher("h1", 1, 70.0), mkFinisher("h2", 2, 70.01)];
     expect(detectPhotoFinish(finishers)).toBe(true);
   });
 
@@ -307,26 +294,17 @@ describe("detectPhotoFinish", () => {
 
   it("returns true at 0.05s boundary due to floating-point representation", () => {
     // 70.05 - 70.0 = 0.04999999999999716 in IEEE 754, which is < 0.05
-    const finishers = [
-      mkFinisher("h1", 1, 70.0),
-      mkFinisher("h2", 2, 70.05),
-    ];
+    const finishers = [mkFinisher("h1", 1, 70.0), mkFinisher("h2", 2, 70.05)];
     expect(detectPhotoFinish(finishers)).toBe(true);
   });
 
   it("returns false when finishers are 1.0s apart", () => {
-    const finishers = [
-      mkFinisher("h1", 1, 70.0),
-      mkFinisher("h2", 2, 71.0),
-    ];
+    const finishers = [mkFinisher("h1", 1, 70.0), mkFinisher("h2", 2, 71.0)];
     expect(detectPhotoFinish(finishers)).toBe(false);
   });
 
   it("returns false when finishers are 0.06s apart", () => {
-    const finishers = [
-      mkFinisher("h1", 1, 70.0),
-      mkFinisher("h2", 2, 70.06),
-    ];
+    const finishers = [mkFinisher("h1", 1, 70.0), mkFinisher("h2", 2, 70.06)];
     expect(detectPhotoFinish(finishers)).toBe(false);
   });
 
