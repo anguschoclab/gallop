@@ -273,6 +273,13 @@ export const trainingResolutionPhase: PipelinePhase = {
             injuryRisk: 0.7,
             gainBonus: 1.0,
           }, // Base building
+          treadmill: {
+            primary: "stamina",
+            secondary: "acceleration",
+            energyCost: -14,
+            injuryRisk: 0.2,
+            gainBonus: 0.95,
+          }, // Low-impact controlled environment
         };
 
         const config = workoutConfig[intent.trainingType] ?? workoutConfig.speed;

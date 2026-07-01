@@ -46,4 +46,11 @@ export const ADVANCED_WORKOUTS: AdvancedWorkout[] = [
     cost: TRAINING_COST_MAP.gallop,
     energy: Math.abs(TRAINING_ENERGY_MAP.gallop),
   },
+  {
+    key: "treadmill",
+    label: "Treadmill",
+    cost: TRAINING_COST_MAP.treadmill,
+    energy: Math.abs(TRAINING_ENERGY_MAP.treadmill),
+    stat: "stamina",
+  },
 ];
