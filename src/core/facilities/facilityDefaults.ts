@@ -244,3 +244,38 @@ export function facilityUpgradeCost(currentLevel: FacilityLevel): number {
   const rank = levelOrder.indexOf(currentLevel) + 1;
   return Math.floor(FACILITY_UPGRADE_BASE_COST * Math.pow(FACILITY_UPGRADE_MULTIPLIER, rank - 1));
 }
+
+/**
+ * Returns the list of training types available given the player's current facilities.
+ *
+ * Base types (speed, stamina, acceleration, rest) are always available.
+ * Advanced types are unlocked via TRAINING_FACILITY_REQUIREMENTS with additional barn-level gates.
+ */
+export function getAvailableTrainingTypes(facilities: PlayerFacilities): string[] {
+  const LEVEL_ORDER: FacilityLevel[] = ["basic", "standard", "premium", "elite"];
+
+  function meetsLevel(facilityType: FacilityType, minLevel: FacilityLevel): boolean {
+    const facility = facilities[facilityType];
+    if (!facility) return false;
+    return LEVEL_ORDER.indexOf(facility.level) >= LEVEL_ORDER.indexOf(minLevel);
+  }
+
+  const barnLevel = facilities.barn?.level ?? "basic";
+  const barnRank = LEVEL_ORDER.indexOf(barnLevel);
+
+  const available: string[] = ["speed", "stamina", "acceleration", "rest"];
+
+  for (const [trainingType, req] of Object.entries(TRAINING_FACILITY_REQUIREMENTS)) {
+    if (!meetsLevel(req.facilityType, req.minLevel)) continue;
+
+    if (trainingType === "gallop" && barnRank < LEVEL_ORDER.indexOf("standard")) continue;
+    if (trainingType === "breeze" && barnRank < LEVEL_ORDER.indexOf("premium")) continue;
+    if (trainingType === "gate_work" && barnRank < LEVEL_ORDER.indexOf("premium")) continue;
+    if (trainingType === "bullet" && barnRank < LEVEL_ORDER.indexOf("elite")) continue;
+    if (trainingType === "treadmill" && barnRank < LEVEL_ORDER.indexOf("elite")) continue;
+
+    available.push(trainingType);
+  }
+
+  return available;
+}
