@@ -128,7 +128,7 @@ export function LiveRace() {
     })(),
   ).current;
 
-  const { tick, speed, setSpeed, finished, paused, setPaused, simTime, liveSplits } =
+  const { tick, speed, setSpeed, finished, paused, setPaused, simTime, simTimeRef, liveSplits } =
     useLiveRaceSimulation({
       race,
       runners,
