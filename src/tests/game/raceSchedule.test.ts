@@ -16,6 +16,8 @@ import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { createRng } from "@/core/common/rng";
 import type { Race } from "@/game/types";
 import type { Track, TrackSchedule } from "@/data/tracks";
+import { TRACK_SCHEDULES } from "@/data/tracks";
+import { GRADED_RACES_BY_DAY_OF_YEAR } from "@/data/gradedRaces";
 
 describe("getCurrentYear", () => {
   it("should return year 1 for days 1-365", () => {
@@ -148,7 +150,7 @@ describe("generateTrackRaces", () => {
       regionalSystem: "north_america",
     };
 
-    const races = generateTrackRaces(track, schedule, 10, [], createRng("test"));
+    const races = generateTrackRaces(track, schedule, 10, createRng("test"));
     expect(races.length).toBeGreaterThan(0);
     expect(races.length).toBeLessThanOrEqual(10);
   });
@@ -180,7 +182,7 @@ describe("generateTrackRaces", () => {
       regionalSystem: "north_america",
     };
 
-    const races = generateTrackRaces(track, schedule, 10, [], createRng("test"));
+    const races = generateTrackRaces(track, schedule, 10, createRng("test"));
     expect(races.every((r) => r.trackId === "track-1")).toBe(true);
   });
 
@@ -211,7 +213,7 @@ describe("generateTrackRaces", () => {
       regionalSystem: "north_america",
     };
 
-    const races = generateTrackRaces(track, schedule, 10, [], createRng("test"));
+    const races = generateTrackRaces(track, schedule, 10, createRng("test"));
     expect(races.every((r) => r.day === 10)).toBe(true);
   });
 });
@@ -262,7 +264,7 @@ describe("generateUpcomingRaces", () => {
     const currentRaces: Race[] = [];
     const schedules: TrackSchedule[] = [];
 
-    const races = generateUpcomingRaces(currentRaces, 1, schedules, createRng("test"));
+    const races = generateUpcomingRaces(currentRaces, 1, schedules);
     expect(races.length).toBeGreaterThanOrEqual(currentRaces.length);
   });
 
@@ -282,7 +284,7 @@ describe("generateUpcomingRaces", () => {
     };
 
     const schedules: TrackSchedule[] = [];
-    const races = generateUpcomingRaces([existingRace], 1, schedules, createRng("test"));
+    const races = generateUpcomingRaces([existingRace], 1, schedules);
     expect(races).toContain(existingRace);
   });
 
@@ -302,9 +304,7 @@ describe("generateUpcomingRaces", () => {
     };
 
     const schedules: TrackSchedule[] = [];
-    const races = generateUpcomingRaces([existingRace], 1, schedules, createRng("test"));
-
-    // Count how many times the existing race appears
+    const races = generateUpcomingRaces([existingRace], 1, schedules);
     const count = races.filter((r) => r.id === existingRace.id).length;
     expect(count).toBe(1);
   });
@@ -374,5 +374,193 @@ describe("generateAnnualCalendar", () => {
       expect(doy).toBeGreaterThanOrEqual(1);
       expect(doy).toBeLessThanOrEqual(365);
     });
+  });
+});
+
+describe("generateTrackSchedule — optimized", () => {
+  it("with full TRACK_SCHEDULES (126), completes without timeout", () => {
+    const start = Date.now();
+    const result = generateTrackSchedule(10, [], TRACK_SCHEDULES, createRng("test"));
+    const elapsed = Date.now() - start;
+    expect(result).toBeDefined();
+    expect(elapsed).toBeLessThan(2000);
+  });
+
+  it("no duplicate graded races when same day generated twice", () => {
+    const day1 = generateTrackSchedule(10, [], TRACK_SCHEDULES, createRng("test"));
+    const day2 = generateTrackSchedule(10, day1, TRACK_SCHEDULES, createRng("test"));
+    const gradedRaces = day2.filter((r) => r.graded);
+    const keys = gradedRaces.map((r) => `${r.graded!.key}_${r.day}`);
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  it("graded races match GRADED_RACES_BY_DAY_OF_YEAR lookup", () => {
+    const doy = dayOfYear(10);
+    const expected = GRADED_RACES_BY_DAY_OF_YEAR.get(doy) ?? [];
+    const result = generateTrackSchedule(10, [], [], createRng("test"));
+    const gradedResult = result.filter((r) => r.graded);
+    expect(gradedResult.length).toBe(expected.length);
+    for (const r of gradedResult) {
+      expect(expected.some((g) => g.key === r.graded!.key)).toBe(true);
+    }
+  });
+
+  it("existing races preserved in output", () => {
+    const existing: Race = {
+      id: "preserve-1",
+      name: "Test",
+      day: 10,
+      distance: 2000,
+      raceClass: "Maiden",
+      entryFee: 500,
+      purse: 10000,
+      minStat: 70,
+      fieldSize: 8,
+      entries: [],
+      resolved: false,
+    };
+    const result = generateTrackSchedule(10, [existing], [], createRng("test"));
+    expect(result).toContain(existing);
+  });
+
+  it("empty schedules + no graded races on that day returns only existing", () => {
+    // Find a day with no graded races
+    const usedDays = new Set(GRADED_RACES_BY_DAY_OF_YEAR.keys());
+    let emptyDoy = 1;
+    while (usedDays.has(emptyDoy)) emptyDoy++;
+    // Convert doy to a game day (year 1)
+    const gameDay = emptyDoy;
+    const existing: Race = {
+      id: "only-1",
+      name: "Only Race",
+      day: gameDay,
+      distance: 2000,
+      raceClass: "Maiden",
+      entryFee: 500,
+      purse: 10000,
+      minStat: 70,
+      fieldSize: 8,
+      entries: [],
+      resolved: false,
+    };
+    const result = generateTrackSchedule(gameDay, [existing], [], createRng("test"));
+    expect(result).toEqual([existing]);
+  });
+});
+
+describe("generateUpcomingRaces — optimized", () => {
+  it("with full TRACK_SCHEDULES (126), completes in < 2s", () => {
+    const start = Date.now();
+    const result = generateUpcomingRaces([], 1, TRACK_SCHEDULES);
+    const elapsed = Date.now() - start;
+    expect(result).toBeDefined();
+    expect(elapsed).toBeLessThan(2000);
+  });
+
+  it("no duplicate race IDs in output", () => {
+    const result = generateUpcomingRaces([], 1, TRACK_SCHEDULES);
+    const ids = result.map((r) => r.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it("all generated races have day in (newDay, newDay+7]", () => {
+    const newDay = 10;
+    const result = generateUpcomingRaces([], newDay, TRACK_SCHEDULES);
+    for (const race of result) {
+      expect(race.day).toBeGreaterThan(newDay);
+      expect(race.day).toBeLessThanOrEqual(newDay + 7);
+    }
+  });
+
+  it("existing races preserved", () => {
+    const existing: Race = {
+      id: "existing-upcoming-1",
+      name: "Existing",
+      day: 1,
+      distance: 2000,
+      raceClass: "Maiden",
+      entryFee: 500,
+      purse: 10000,
+      minStat: 70,
+      fieldSize: 8,
+      entries: [],
+      resolved: false,
+    };
+    const result = generateUpcomingRaces([existing], 1, TRACK_SCHEDULES);
+    expect(result).toContain(existing);
+  });
+
+  it("deterministic: same inputs produce same race IDs", () => {
+    const r1 = generateUpcomingRaces([], 1, TRACK_SCHEDULES);
+    const r2 = generateUpcomingRaces([], 1, TRACK_SCHEDULES);
+    const ids1 = r1.map((r) => r.id).sort();
+    const ids2 = r2.map((r) => r.id).sort();
+    expect(ids1).toEqual(ids2);
+  });
+
+  it("with 10K pre-existing races, completes in < 5s (stress test)", () => {
+    const bigRaces: Race[] = [];
+    for (let i = 0; i < 10000; i++) {
+      bigRaces.push({
+        id: `stress-${i}`,
+        name: `Stress ${i}`,
+        day: i + 1,
+        distance: 2000,
+        raceClass: "Maiden",
+        entryFee: 500,
+        purse: 10000,
+        minStat: 70,
+        fieldSize: 8,
+        entries: [],
+        resolved: false,
+      });
+    }
+    const start = Date.now();
+    const result = generateUpcomingRaces(bigRaces, 1, TRACK_SCHEDULES);
+    const elapsed = Date.now() - start;
+    expect(result.length).toBeGreaterThan(bigRaces.length);
+    expect(elapsed).toBeLessThan(5000);
+  });
+});
+
+describe("generateAnnualCalendar — optimized", () => {
+  it("no duplicate races when called twice for same year", () => {
+    const r1 = generateAnnualCalendar(1, []);
+    const r2 = generateAnnualCalendar(1, r1);
+    expect(r2.length).toBe(r1.length);
+  });
+
+  it("existing races preserved", () => {
+    const existing: Race = {
+      id: "annual-existing-1",
+      name: "Annual Existing",
+      day: 10,
+      distance: 2000,
+      raceClass: "Maiden",
+      entryFee: 500,
+      purse: 10000,
+      minStat: 70,
+      fieldSize: 8,
+      entries: [],
+      resolved: false,
+    };
+    const result = generateAnnualCalendar(1, [existing]);
+    expect(result).toContain(existing);
+  });
+
+  it("all races within year 1 day range [1, 365]", () => {
+    const races = generateAnnualCalendar(1, []);
+    for (const race of races) {
+      expect(race.day).toBeGreaterThanOrEqual(1);
+      expect(race.day).toBeLessThanOrEqual(365);
+    }
+  });
+
+  it("all races within year 2 day range [366, 730]", () => {
+    const races = generateAnnualCalendar(2, []);
+    for (const race of races) {
+      expect(race.day).toBeGreaterThanOrEqual(366);
+      expect(race.day).toBeLessThanOrEqual(730);
+    }
   });
 });

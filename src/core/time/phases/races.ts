@@ -24,7 +24,7 @@ export const racesPhase = {
   name: "races",
   order: PHASE_ORDER_RACES,
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, previousDay, newDay, dailyRng } = context;
+    const { state, previousDay, newDay } = context;
 
     const prevYear = getCurrentYear(previousDay);
     const newYear = getCurrentYear(newDay);
@@ -36,7 +36,7 @@ export const racesPhase = {
       races = generateAnnualCalendar(newYear, races);
     }
 
-    races = generateUpcomingRaces(races, newDay, dailyRng);
+    races = generateUpcomingRaces(races, newDay);
     const pruned = pruneOldRaces(races, newDay);
 
     // Emit race deadline notifications for targeted races as inbox impacts

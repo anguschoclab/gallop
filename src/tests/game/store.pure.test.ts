@@ -53,7 +53,7 @@ describe("generateUpcomingRaces", () => {
   it("should generate races for upcoming days", () => {
     const currentRaces: Race[] = [];
     const newDay = 1;
-    const races = generateUpcomingRaces(currentRaces, newDay, createRng(hashStr("test")));
+    const races = generateUpcomingRaces(currentRaces, newDay);
     expect(races.length).toBeGreaterThan(0);
     expect(races.every((r) => r.day >= newDay)).toBe(true);
   });
@@ -62,7 +62,7 @@ describe("generateUpcomingRaces", () => {
     const existingRace = generateRace(1);
     const currentRaces = [existingRace];
     const newDay = 2;
-    const races = generateUpcomingRaces(currentRaces, newDay, createRng(hashStr("test")));
+    const races = generateUpcomingRaces(currentRaces, newDay);
     expect(races).toContain(existingRace);
   });
 });

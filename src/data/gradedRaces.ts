@@ -12560,6 +12560,16 @@ const GRADED_RACES_WITH_FIELD_SIZES: GradedRace[] = GRADED_RACES_BASE.map((race)
 
 export const GRADED_RACES = GRADED_RACES_WITH_FIELD_SIZES;
 
+export const GRADED_RACES_BY_DAY_OF_YEAR: Map<number, GradedRace[]> = (() => {
+  const map = new Map<number, GradedRace[]>();
+  for (const race of GRADED_RACES) {
+    const arr = map.get(race.dayOfYear);
+    if (arr) arr.push(race);
+    else map.set(race.dayOfYear, [race]);
+  }
+  return map;
+})();
+
 // Duplicate detection check to ensure no race keys are duplicated across sources
 export function validateNoDuplicateRaces() {
   const seenKeys = new Set<string>();

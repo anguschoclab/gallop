@@ -17,7 +17,7 @@ import type { Rng } from "@/core/common/types";
 import { createRng, hashStr } from "@/core/common/rng";
 import { getTrackById } from "@/data/tracks";
 import { generateRace, makeGradedRace } from "./generation/raceGen";
-import { GRADED_RACES } from "@/data/gradedRaces";
+import { GRADED_RACES, GRADED_RACES_BY_DAY_OF_YEAR } from "@/data/gradedRaces";
 import { generateNorthAmericanRaceCard } from "./generation/northAmerica";
 import { generateEuropeanRaceCard } from "./generation/europe";
 import { generateAustralianRaceCard } from "./generation/australia";
@@ -113,7 +113,6 @@ export function isTrackRacing(schedule: TrackSchedule, gameDay: number): boolean
  * @param track - Track to generate races for
  * @param schedule - Track schedule
  * @param gameDay - Current game day
- * @param existingRaces - Existing races to avoid conflicts
  * @param rng - Random number generator
  * @returns Array of generated races
  */
@@ -121,7 +120,6 @@ export function generateTrackRaces(
   track: Track,
   schedule: TrackSchedule,
   gameDay: number,
-  existingRaces: Race[],
   rng: Rng,
 ): Race[] {
   const numRaces = rng.int(schedule.racesPerDay[0], schedule.racesPerDay[1]);
@@ -176,28 +174,30 @@ export function generateTrackSchedule(
   schedules: TrackSchedule[],
   rng: Rng,
 ): Race[] {
-  const races = [...existingRaces];
   const doy = dayOfYear(gameDay);
+  const dow = getDayOfWeek(gameDay);
+  const newRaces: Race[] = [];
 
-  // Add graded stakes whose dayOfYear falls on this day
-  for (const g of GRADED_RACES) {
-    if (g.dayOfYear !== doy) continue;
-    if (races.some((r) => r.graded?.key === g.key && r.day === gameDay)) continue;
-    races.push(makeGradedRace(g, gameDay, rng));
+  // Indexed graded race lookup — O(1) instead of scanning 904 races
+  const gradedKeySet = new Set(
+    existingRaces.filter((r) => r.graded).map((r) => `${r.graded!.key}_${r.day}`),
+  );
+  for (const g of GRADED_RACES_BY_DAY_OF_YEAR.get(doy) ?? []) {
+    if (gradedKeySet.has(`${g.key}_${gameDay}`)) continue;
+    newRaces.push(makeGradedRace(g, gameDay, rng));
   }
 
-  // Generate track-specific races
+  // Pre-filter schedules by day-of-week before meet date check
   for (const schedule of schedules) {
+    if (!schedule.raceDays.includes(dow)) continue;
     const track = getTrackById(schedule.trackId);
     if (!track) continue;
-
     if (isTrackRacing(schedule, gameDay)) {
-      const trackRaces = generateTrackRaces(track, schedule, gameDay, races, rng);
-      races.push(...trackRaces);
+      newRaces.push(...generateTrackRaces(track, schedule, gameDay, rng));
     }
   }
 
-  return races;
+  return [...existingRaces, ...newRaces];
 }
 
 /**
@@ -218,6 +218,13 @@ export function generateAnnualCalendar(year: number, existingRaces: Race[]): Rac
   // Get Breeders' Cup track for this year
   const bcTrack = getBreedersCupTrack(year);
 
+  // Pre-build dedup set for O(1) lookup
+  const existingKeys = new Set(
+    existingRaces
+      .filter((r) => r.graded)
+      .map((r) => `${r.graded!.key}_${r.day}`),
+  );
+
   for (const g of GRADED_RACES) {
     const variance = g.dayOfYearVariance ?? 3;
     let jitter = 0;
@@ -228,16 +235,7 @@ export function generateAnnualCalendar(year: number, existingRaces: Race[]): Rac
     const clampedDoy = Math.max(1, Math.min(365, rawDoy));
     const gameDay = firstDayOfYear + clampedDoy - 1;
 
-    if (
-      races.some(
-        (r) =>
-          r.graded?.key === g.key &&
-          r.day >= firstDayOfYear &&
-          r.day < firstDayOfYear + DAYS_PER_YEAR,
-      )
-    ) {
-      continue;
-    }
+    if (existingKeys.has(`${g.key}_${gameDay}`)) continue;
 
     const raceRng = createRng(hashStr(`graded_${g.key}_${year}`));
     const race = makeGradedRace(g, gameDay, raceRng);
@@ -249,6 +247,7 @@ export function generateAnnualCalendar(year: number, existingRaces: Race[]): Rac
     }
 
     races.push(race);
+    existingKeys.add(`${g.key}_${gameDay}`);
   }
 
   return races;
@@ -263,31 +262,57 @@ export function generateAnnualCalendar(year: number, existingRaces: Race[]): Rac
  * @param currentRaces - Current races
  * @param newDay - Starting day for generation
  * @param schedules - Array of track schedules
- * @param baseRng - Base random number generator
  * @returns Array of upcoming races
  */
 export function generateUpcomingRaces(
   currentRaces: Race[],
   newDay: number,
   schedules: TrackSchedule[],
-  baseRng: Rng,
 ): Race[] {
   const races = [...currentRaces];
-  // We don't actually need baseRng if we derive daily seeds,
-  // but we'll keep it for interface consistency if needed.
+  const raceIdSet = new Set(races.map((r) => r.id));
+  const gradedKeySet = new Set(
+    races.filter((r) => r.graded).map((r) => `${r.graded!.key}_${r.day}`),
+  );
 
-  // Generate races for the next 7 days
+  // Build day-of-week index once for all 7 future days
+  const schedulesByDow = new Map<number, TrackSchedule[]>();
+  for (const s of schedules) {
+    for (const dow of s.raceDays) {
+      const arr = schedulesByDow.get(dow);
+      if (arr) arr.push(s);
+      else schedulesByDow.set(dow, [s]);
+    }
+  }
+
   for (let offset = 1; offset <= 7; offset++) {
     const futureDay = newDay + offset;
-    // Derive a unique seed for this specific day
     const dailyRng = createRng(hashStr(`raceGen_${futureDay}`));
+    const doy = dayOfYear(futureDay);
+    const dow = getDayOfWeek(futureDay);
 
-    const dayRaces = generateTrackSchedule(futureDay, races, schedules, dailyRng);
+    // Graded races via index
+    for (const g of GRADED_RACES_BY_DAY_OF_YEAR.get(doy) ?? []) {
+      const dedupKey = `${g.key}_${futureDay}`;
+      if (gradedKeySet.has(dedupKey)) continue;
+      const race = makeGradedRace(g, futureDay, dailyRng);
+      races.push(race);
+      raceIdSet.add(race.id);
+      gradedKeySet.add(dedupKey);
+    }
 
-    // Add only new races (avoid duplicates)
-    for (const race of dayRaces) {
-      if (!races.some((r) => r.id === race.id)) {
-        races.push(race);
+    // Track races via pre-filtered schedules
+    for (const schedule of schedulesByDow.get(dow) ?? []) {
+      const track = getTrackById(schedule.trackId);
+      if (!track) continue;
+      if (isTrackRacing(schedule, futureDay)) {
+        const trackRaces = generateTrackRaces(track, schedule, futureDay, dailyRng);
+        for (const race of trackRaces) {
+          if (!raceIdSet.has(race.id)) {
+            raceIdSet.add(race.id);
+            races.push(race);
+          }
+        }
       }
     }
   }
