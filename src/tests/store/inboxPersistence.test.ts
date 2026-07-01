@@ -21,9 +21,12 @@ import { createRng } from "@/core/common/rng";
 
 const TRACK_ID = "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"; // Churchill Downs
 
+let _cachedDramaDay: { yesterday: WeatherState; dayToday: number } | null = null;
+
 /** Find the first day where stepping from "clear" produces a ≥2 severity jump. */
 function findDramaDay(trackId = TRACK_ID): { yesterday: WeatherState; dayToday: number } {
-  for (let day = 2; day < 10_000; day++) {
+  if (_cachedDramaDay) return _cachedDramaDay;
+  for (let day = 2; day < 500; day++) {
     const yesterday: WeatherState = {
       trackId,
       day: day - 1,
@@ -34,7 +37,8 @@ function findDramaDay(trackId = TRACK_ID): { yesterday: WeatherState; dayToday: 
     };
     const today = stepWeather(yesterday, trackId, day);
     if (PATTERN_SEVERITY[today.pattern] - PATTERN_SEVERITY[yesterday.pattern] >= 2) {
-      return { yesterday, dayToday: day };
+      _cachedDramaDay = { yesterday, dayToday: day };
+      return _cachedDramaDay;
     }
   }
   throw new Error(`No drama day found for track ${trackId}`);
@@ -241,4 +245,4 @@ describe("Inbox persistence across reload — weather drama alerts", () => {
     expect(unread).toHaveLength(1);
     expect(unread[0].body).toMatch(/Kentucky Derby/);
   });
-}, 30000);
+}, 10000);

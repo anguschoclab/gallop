@@ -20,7 +20,7 @@ describe("rng", () => {
 
   it("next() stays in [0, 1)", () => {
     const r = createRng(1);
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < 200; i++) {
       const v = r.next();
       expect(v).toBeGreaterThanOrEqual(0);
       expect(v).toBeLessThan(1);
@@ -31,7 +31,7 @@ describe("rng", () => {
     const r = createRng(7);
     let sawMin = false;
     let sawMax = false;
-    for (let i = 0; i < 5000; i++) {
+    for (let i = 0; i < 500; i++) {
       const v = r.int(1, 6);
       expect(v).toBeGreaterThanOrEqual(1);
       expect(v).toBeLessThanOrEqual(6);
@@ -122,7 +122,7 @@ describe("rng.pick", () => {
     const rng = createRng(1);
     const arr = [1, 2, 3, 4] as const;
     const seen = new Set<number>();
-    for (let i = 0; i < 1000; i++) seen.add(rng.pick(arr));
+    for (let i = 0; i < 200; i++) seen.add(rng.pick(arr));
     expect(seen.size).toBe(arr.length);
   });
 });

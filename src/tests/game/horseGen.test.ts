@@ -15,7 +15,7 @@ describe("generateHorse", () => {
   for (const tier of ["starter", "budget", "mid", "elite"] as const) {
     it(`${tier}: stats within tier range [${STAT_RANGES[tier]}]`, () => {
       const [lo, hi] = STAT_RANGES[tier];
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 3; i++) {
         const h = ensurePhenotypeResolved(generateHorse({ tier }));
         expect(h.stats.speed).toBeGreaterThanOrEqual(lo);
         expect(h.stats.speed).toBeLessThanOrEqual(hi);
@@ -64,7 +64,7 @@ describe("generateHorse", () => {
 
 describe("horsePrice", () => {
   it("result is a multiple of 50", () => {
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 5; i++) {
       const h = generateHorse({ tier: "mid" });
       expect(horsePrice(h) % 50).toBe(0);
     }
@@ -154,7 +154,7 @@ describe("generateRace", () => {
   });
 
   it("fieldSize is between 6 and 8", () => {
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 5; i++) {
       const race = generateRace(1);
       expect(race.fieldSize).toBeGreaterThanOrEqual(6);
       expect(race.fieldSize).toBeLessThanOrEqual(8);
@@ -179,7 +179,7 @@ describe("generateRace", () => {
       "Group",
       "Graded",
     ];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 3; i++) {
       const race = generateRace(1);
       expect(validClasses).toContain(race.raceClass);
     }

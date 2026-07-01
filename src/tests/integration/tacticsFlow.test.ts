@@ -170,4 +170,36 @@ describe("Jockey Instructions Flow Integration", () => {
       expect((latest as any)?.jockeyInstructions?.ridingStyle).toBe(style);
     });
   });
+
+  it("should handle multiple horses in the same race with independent instructions", () => {
+    const raceId = "race-1";
+    const horse1Id = "horse-1";
+    const horse2Id = "horse-2";
+
+    useGame
+      .getState()
+      .setRaceTactics(
+        raceId,
+        horse1Id,
+        makeInstructions(raceId, horse1Id, { ridingStyle: "front_runner" }),
+      );
+    useGame
+      .getState()
+      .setRaceTactics(
+        raceId,
+        horse2Id,
+        makeInstructions(raceId, horse2Id, { ridingStyle: "closer" }),
+      );
+
+    const pendingIntents = useGame.getState().pendingIntents;
+    const tactics1 = pendingIntents?.find(
+      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horse1Id,
+    );
+    const tactics2 = pendingIntents?.find(
+      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horse2Id,
+    );
+
+    expect((tactics1 as any)?.jockeyInstructions?.ridingStyle).toBe("front_runner");
+    expect((tactics2 as any)?.jockeyInstructions?.ridingStyle).toBe("closer");
+  });
 });

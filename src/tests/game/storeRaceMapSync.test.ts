@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { useGame } from "@/game/store";
+import { createDefaultCoreState } from "@/game/store/state/coreState";
 import type { Race } from "@/core/race/types";
 
 function makeRace(id: string, day: number = 1, overrides?: Partial<Race>): Race {
@@ -17,6 +18,14 @@ function makeRace(id: string, day: number = 1, overrides?: Partial<Race>): Race 
     ...overrides,
   } as unknown as Race;
 }
+
+describe("createDefaultCoreState — raceMap initialization", () => {
+  it("raceMap is an empty Map by default", () => {
+    const state = createDefaultCoreState();
+    expect(state.raceMap).toBeInstanceOf(Map);
+    expect(state.raceMap.size).toBe(0);
+  });
+});
 
 describe("raceMap sync through store actions", () => {
   beforeEach(() => {

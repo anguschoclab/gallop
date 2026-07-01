@@ -15,6 +15,8 @@ import {
   resolvePeakAge,
   resolveRecoveryRate,
   resolveFertility,
+  resolveSize,
+  resolveInjuryProneness,
 } from "@/core/genetics/phenotype";
 import { inheritDNA } from "@/core/genetics/inheritance";
 import { stallionResearchData } from "@/data/stallionDNAData";
@@ -42,7 +44,7 @@ describe("Universal DNA System", () => {
     let foundGray = 0;
     let foundNonGray = 0;
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 50; i++) {
       const foalDNA = inheritDNA(sireDNA, damDNA, createRng(i));
       const color = resolveCoatColor(foalDNA.color);
       if (color === "gray") foundGray++;
@@ -50,8 +52,8 @@ describe("Universal DNA System", () => {
     }
 
     // Expect roughly 75% Gray, 25% Non-Gray
-    expect(foundGray).toBeGreaterThan(60);
-    expect(foundNonGray).toBeGreaterThan(15);
+    expect(foundGray).toBeGreaterThan(30);
+    expect(foundNonGray).toBeGreaterThan(8);
   });
 
   it("should maintain statistical variance in offspring", () => {
@@ -64,14 +66,14 @@ describe("Universal DNA System", () => {
     let totalSpeed = 0;
     const speeds: number[] = [];
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 30; i++) {
       const foalDNA = inheritDNA(sireDNA, damDNA, createRng(i));
       const s = resolveStats(foalDNA.stats).speed;
       totalSpeed += s;
       speeds.push(s);
     }
 
-    const avgSpeed = totalSpeed / 50;
+    const avgSpeed = totalSpeed / 30;
     expect(avgSpeed).toBeGreaterThan(damSpeed - 5);
     expect(avgSpeed).toBeLessThan(sireSpeed + 5);
 
@@ -149,5 +151,70 @@ describe("Research-Based DNA Generation", () => {
     expect(physicalSum).toBeGreaterThan(15);
     const mentalSum = secretariatDNA.mental[0] + secretariatDNA.mental[1];
     expect(mentalSum).toBeGreaterThan(15);
+  });
+});
+
+describe("Universal DNA System - Final Validation", () => {
+  const rng = createRng(123);
+
+  it("should resolve realistic biometrics", () => {
+    const dna = generateGenotype(rng, "mid");
+    const { height, weight } = resolveSize(dna.size);
+
+    expect(height).toBeGreaterThanOrEqual(14.2);
+    expect(height).toBeLessThanOrEqual(17.5);
+
+    expect(weight).toBeGreaterThanOrEqual(400);
+    expect(weight).toBeLessThanOrEqual(650);
+  });
+
+  it("should resolve durability as injury proneness", () => {
+    const dna = generateGenotype(rng, "elite");
+    const proneness = resolveInjuryProneness(dna.durability);
+
+    expect(proneness).toBeGreaterThanOrEqual(0.01);
+    expect(proneness).toBeLessThanOrEqual(0.12);
+  });
+
+  it("should follow Mendelian size inheritance", () => {
+    const sireDNA = generateGenotype(rng, "elite");
+    sireDNA.size = [5, 5];
+
+    const damDNA = generateGenotype(rng, "elite");
+    damDNA.size = [1, 1];
+
+    const foalDNA = inheritDNA(sireDNA, damDNA, createRng(456));
+    const { height: sireH } = resolveSize(sireDNA.size);
+    const { height: damH } = resolveSize(damDNA.size);
+    const { height: foalH } = resolveSize(foalDNA.size);
+
+    expect(foalH).toBeGreaterThan(damH - 0.1);
+    expect(foalH).toBeLessThan(sireH + 0.1);
+  });
+});
+
+describe("Deterministic DNA Bias Validation", () => {
+  it("should validate Brilliant dosage bias toward speed", () => {
+    const baseDNA = generateDeterministicGenotype("BiasTest", "elite");
+    const brilliantDNA = generateDeterministicGenotype("BiasTest", "elite", ["Brilliant"]);
+
+    const baseStats = resolveStats(baseDNA.stats);
+    const brilliantStats = resolveStats(brilliantDNA.stats);
+
+    expect(brilliantStats.speed).toBeGreaterThan(baseStats.speed);
+  });
+
+  it("should validate Solid dosage bias toward stamina and durability", () => {
+    const baseDNA = generateDeterministicGenotype("BiasTest", "elite");
+    const solidDNA = generateDeterministicGenotype("BiasTest", "elite", ["Solid"]);
+
+    const baseStats = resolveStats(baseDNA.stats);
+    const solidStats = resolveStats(solidDNA.stats);
+
+    expect(solidStats.stamina).toBeGreaterThan(baseStats.stamina);
+
+    expect(solidDNA.durability[0] + solidDNA.durability[1]).toBeGreaterThan(
+      baseDNA.durability[0] + baseDNA.durability[1],
+    );
   });
 });

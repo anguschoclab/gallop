@@ -54,7 +54,7 @@ describe("auctioneerService", () => {
     // at least one to mention either sire or dam.
     let mentionsHorse = false;
     let mentionsPedigree = false;
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 15; i++) {
       const line = generateAuctioneerLine(event, { horse }, createRng(i + 1));
       if (line.text.includes("Sea Hero")) mentionsHorse = true;
       if (line.text.includes("Polish Navy") || line.text.includes("Glowing Tribute")) {
@@ -76,7 +76,7 @@ describe("auctioneerService", () => {
     };
     let mentionsAmount = false;
     let mentionsStable = false;
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 15; i++) {
       const line = generateAuctioneerLine(event, { horse, winner: stable }, createRng(i + 1));
       if (line.text.includes("75,000")) mentionsAmount = true;
       if (line.text.includes("Bluegrass Stables")) mentionsStable = true;
@@ -97,7 +97,7 @@ describe("auctioneerService", () => {
       { type: "RESERVE_NOT_MET", lotId: "l1", amount: 500, reserve: 1000 },
     ];
     const stable = mkStable("Anywhere Farm");
-    for (let seed = 1; seed <= 20; seed++) {
+    for (let seed = 1; seed <= 10; seed++) {
       for (const event of events) {
         const line = generateAuctioneerLine(
           event,

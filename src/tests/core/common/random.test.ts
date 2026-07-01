@@ -3,12 +3,12 @@ import { rand, rollRunningStyle, randomWeather, randomSilk } from "@/core/common
 import { generateProceduralHorseName } from "@/core/horse/naming/nameGenerator";
 import { generateProceduralJockeyName } from "@/core/jockey/proceduralNaming";
 import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
-import { createRng, nondeterministicRng } from "@/core/common/rng";
+import { createRng } from "@/core/common/rng";
 import type { Track } from "@/data/tracks";
 
 describe("rand", () => {
   it("returns integer within range", () => {
-    const rng = nondeterministicRng();
+    const rng = createRng(42);
     for (let i = 0; i < 100; i++) {
       const result = rand(1, 10, rng);
       expect(result).toBeGreaterThanOrEqual(1);
@@ -21,21 +21,21 @@ describe("rand", () => {
 describe("rollRunningStyle", () => {
   it("returns valid running style", () => {
     const stats = { speed: 50, stamina: 50, acceleration: 50 };
-    const result = rollRunningStyle(stats, nondeterministicRng());
+    const result = rollRunningStyle(stats, createRng(42));
     expect(["E", "EP", "P", "S"]).toContain(result);
   });
 });
 
 describe("randomWeather", () => {
   it("returns valid weather condition", () => {
-    const result = randomWeather(nondeterministicRng());
+    const result = randomWeather(createRng(42));
     expect(["sunny", "cloudy", "rainy", "sunset", "night"]).toContain(result);
   });
 });
 
 describe("Procedural Horse Naming", () => {
   it("generates valid names", () => {
-    const name = generateProceduralHorseName({ existingNames: new Set() }, nondeterministicRng());
+    const name = generateProceduralHorseName({ existingNames: new Set() }, createRng(42));
     expect(name).toBeTruthy();
     expect(name.length).toBeLessThanOrEqual(18);
   });
@@ -59,7 +59,7 @@ describe("Procedural Race Naming", () => {
     const name = generateRaceName({
       track: mockTrack,
       raceClass: "Stakes",
-      rng: nondeterministicRng(),
+      rng: createRng(42),
     });
     expect(name).toBeTruthy();
     expect(name).not.toBe("Stakes"); // Should be more descriptive
@@ -68,7 +68,7 @@ describe("Procedural Race Naming", () => {
 
 describe("randomSilk", () => {
   it("returns HSL color", () => {
-    const silk = randomSilk(nondeterministicRng());
+    const silk = randomSilk(createRng(42));
     expect(silk).toMatch(/hsl\(\d+, \d+%, \d+%\)/);
   });
 });

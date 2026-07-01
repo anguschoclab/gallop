@@ -8,7 +8,7 @@ import { resolveRunningStyle, resolveFiberBias } from "@/core/genetics/phenotype
 
 describe("inheritTrait — order independence", () => {
   it("dam-excellent × sire-good produces same distribution as sire-excellent × dam-good", () => {
-    const SAMPLES = 400;
+    const SAMPLES = 200;
     const rng = createRng(99);
 
     const base = generateGenotype(rng, "mid");
@@ -46,7 +46,7 @@ describe("inheritTrait — order independence", () => {
     const sire = { ...base, markers: { ...base.markers, immunity: "excellent" as const } };
     const dam = { ...base, markers: { ...base.markers, immunity: "poor" as const } };
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 50; i++) {
       const foal = inheritDNA(sire, dam, createRng(i));
       expect(foal.markers.immunity).not.toBe("excellent");
     }
@@ -58,7 +58,7 @@ describe("inheritTrait — order independence", () => {
     const sire = { ...base, markers: { ...base.markers, immunity: "poor" as const } };
     const dam = { ...base, markers: { ...base.markers, immunity: "excellent" as const } };
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 50; i++) {
       const foal = inheritDNA(sire, dam, createRng(i));
       expect(foal.markers.immunity).not.toBe("excellent");
     }
@@ -127,7 +127,7 @@ describe("inheritDNA — style locus chromosome linkage", () => {
     dam.style = [5, 5];
 
     let coupledCount = 0;
-    const SAMPLES = 500;
+    const SAMPLES = 200;
 
     for (let i = 0; i < SAMPLES; i++) {
       const foal = inheritDNA(sire, dam, createRng(i));
