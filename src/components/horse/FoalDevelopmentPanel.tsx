@@ -26,10 +26,7 @@ function StatDeltaList({ delta }: { delta: MilestoneStatDelta }) {
       {entries.map(([stat, value]) => {
         const positive = value > 0;
         return (
-          <li
-            key={stat}
-            className={positive ? "text-emerald-400" : "text-rose-400"}
-          >
+          <li key={stat} className={positive ? "text-emerald-400" : "text-rose-400"}>
             {stat}: {positive ? "+" : ""}
             {value}
           </li>
@@ -102,7 +99,8 @@ export function FoalDevelopmentPanel({ horse }: Props) {
             <div className="flex items-start gap-3 p-3 border border-white/10 bg-slate-950/40 rounded">
               <Clock className="h-4 w-4 text-cream/60 mt-0.5 shrink-0" />
               <div className="text-xs text-cream/70">
-                Next milestone: <span className="text-cream font-semibold">{nextUpcoming.label}</span>
+                Next milestone:{" "}
+                <span className="text-cream font-semibold">{nextUpcoming.label}</span>
                 <span className="text-cream/40 font-mono ml-2">
                   Day {nextUpcoming.triggerDay} (in {nextUpcoming.triggerDay - currentDay}d)
                 </span>
