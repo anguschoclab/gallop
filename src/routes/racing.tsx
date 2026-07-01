@@ -86,6 +86,10 @@ function RacingPage() {
         <TabsContent value="scheduler" className="space-y-4">
           <SchedulerTab />
         </TabsContent>
+
+        <TabsContent value="nominations" className="space-y-4">
+          <NominationsTab />
+        </TabsContent>
       </Tabs>
     </div>
   );
