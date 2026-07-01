@@ -35,4 +35,5 @@ export {
   upgradeFacility,
   downgradeFacility,
   facilityUpgradeCost,
+  getAvailableTrainingTypes,
 } from "./facilityDefaults";
