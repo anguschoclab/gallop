@@ -549,6 +549,11 @@ export function resolveFoaling(
   });
   // Track breeder: player has no stableId on horses, NPCs do.
   foal.bredByPlayer = !dam.stableId;
+  // Anchor birthDay so foal-development milestones fire on the correct future days.
+  if (typeof newDay === "number") {
+    foal.birthDay = newDay;
+  }
+  foal.developmentArc = createDefaultFoalDevelopmentArc(foal.birthDay);
 
   // Set pedigree
   foal.pedigree = {
