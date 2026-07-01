@@ -95,7 +95,7 @@ describe("Foal development inbox CTA → route → back navigation", () => {
       owned: true,
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
-    renderWithStore(<FoalDevelopmentRoute.options.component />, {
+    renderWithStore(<Comp />, {
       horses: [horse],
       day: 18,
     } as any);
@@ -111,7 +111,7 @@ describe("Foal development inbox CTA → route → back navigation", () => {
       owned: true,
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
-    renderWithStore(<FoalDevelopmentRoute.options.component />, {
+    renderWithStore(<Comp />, {
       horses: [horse],
       day: 18,
     } as any);
