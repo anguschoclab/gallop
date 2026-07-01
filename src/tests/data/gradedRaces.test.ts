@@ -165,6 +165,7 @@ describe("GRADED_RACES data integrity", () => {
   it("all trackId values exist in TRACK_BY_ID", () => {
     for (const r of GRADED_RACES) {
       if (r.track === "Various") continue;
+      if (!r.trackId) continue;
       expect(TRACK_BY_ID[r.trackId]).toBeDefined();
     }
   });

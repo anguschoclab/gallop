@@ -2896,45 +2896,6 @@
     "dataSource": "researched"
   },
   {
-    "id": "9ed3a611-6bf3-4583-a002-70441a0fc3f4",
-    "name": "Longchamp",
-    "country": "Ireland",
-    "courses": [
-      {
-        "surface": "Turf",
-        "circumference": 2750,
-        "straightLength": 650,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 650,
-            "gradient": 0.11
-          },
-          {
-            "type": "turn",
-            "length": 725,
-            "radius": 231,
-            "gradient": -0.11
-          },
-          {
-            "type": "straight",
-            "length": 650,
-            "gradient": 0.11
-          },
-          {
-            "type": "turn",
-            "length": 725,
-            "radius": 231,
-            "gradient": -0.11
-          }
-        ],
-        "width": 30,
-        "name": "Grand Circuit"
-      }
-    ],
-    "dataSource": "official"
-  },
-  {
     "id": "f9e9b465-6bf9-4767-a866-588e17ecbdb0",
     "name": "Düsseldorf",
     "country": "Germany",
@@ -3617,40 +3578,6 @@
     "dataSource": "researched"
   },
   {
-    "id": "ae2104a8-5dc8-4609-9ee9-50b0aa4fadd4",
-    "name": "Prague",
-    "country": "Czech Republic",
-    "courses": [
-      {
-        "surface": "Turf",
-        "circumference": 1750,
-        "straightLength": 350,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 525,
-            "radius": 167
-          },
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 525,
-            "radius": 167
-          }
-        ],
-        "width": 18
-      }
-    ],
-    "dataSource": "researched"
-  },
-  {
     "id": "d0b902b9-a09f-440e-96f7-d3edbd5d7131",
     "name": "Kincsem Park",
     "country": "Hungary",
@@ -3785,84 +3712,6 @@
       }
     ],
     "dataSource": "researched"
-  },
-  {
-    "id": "a38d2b3b-b048-44a6-b344-6506490f7994",
-    "name": "Newmarket",
-    "country": "Great Britain",
-    "courses": [
-      {
-        "surface": "Turf",
-        "circumference": 3200,
-        "straightLength": 410,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 410,
-            "gradient": 0.06
-          },
-          {
-            "type": "turn",
-            "length": 1190,
-            "radius": 379,
-            "gradient": -0.06
-          },
-          {
-            "type": "straight",
-            "length": 410,
-            "gradient": 0.06
-          },
-          {
-            "type": "turn",
-            "length": 1190,
-            "radius": 379,
-            "gradient": -0.06
-          }
-        ],
-        "width": 30,
-        "name": "Rowley Mile"
-      }
-    ],
-    "dataSource": "official"
-  },
-  {
-    "id": "6aef6140-61e5-4262-806e-9cd9008457ba",
-    "name": "York",
-    "country": "Great Britain",
-    "courses": [
-      {
-        "surface": "Turf",
-        "circumference": 2085,
-        "straightLength": 400,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 400,
-            "gradient": 0.19
-          },
-          {
-            "type": "turn",
-            "length": 643,
-            "radius": 205,
-            "gradient": -0.19
-          },
-          {
-            "type": "straight",
-            "length": 400,
-            "gradient": 0.19
-          },
-          {
-            "type": "turn",
-            "length": 643,
-            "radius": 205,
-            "gradient": -0.19
-          }
-        ],
-        "width": 28,
-        "name": "York Course"
-      }
-    ],
-    "dataSource": "official"
   },
   {
     "id": "47d7eb08-478c-47ce-bca3-e1ff36affa9d",
@@ -4066,40 +3915,6 @@
           }
         ],
         "width": 20
-      }
-    ],
-    "dataSource": "researched"
-  },
-  {
-    "id": "8b562557-55ca-4d38-b59f-72fe64ef3861",
-    "name": "Saga",
-    "country": "Japan",
-    "courses": [
-      {
-        "surface": "Turf",
-        "circumference": 1300,
-        "straightLength": 260,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 260
-          },
-          {
-            "type": "turn",
-            "length": 390,
-            "radius": 124
-          },
-          {
-            "type": "straight",
-            "length": 260
-          },
-          {
-            "type": "turn",
-            "length": 390,
-            "radius": 124
-          }
-        ],
-        "width": 16
       }
     ],
     "dataSource": "researched"
@@ -5138,6 +4953,434 @@
         ],
         "width": 25,
         "name": "Kranji Polytrack"
+      }
+    ],
+    "dataSource": "official"
+  },
+  {
+    "id": "b53304b4-2747-a9df-c4e0-eae0a22d26d6",
+    "name": "Monmouth Park",
+    "country": "USA",
+    "courses": [
+      {
+        "surface": "Dirt",
+        "circumference": 1700,
+        "straightLength": 366,
+        "sections": [
+          {
+            "type": "straight",
+            "length": 366,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 484,
+            "radius": 154,
+            "gradient": 0
+          },
+          {
+            "type": "straight",
+            "length": 366,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 484,
+            "radius": 154,
+            "gradient": 0
+          }
+        ],
+        "width": 24,
+        "name": "Main Track"
+      },
+      {
+        "surface": "Turf",
+        "circumference": 1609,
+        "straightLength": 367,
+        "sections": [
+          {
+            "type": "straight",
+            "length": 367,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 438,
+            "radius": 139,
+            "gradient": 0
+          },
+          {
+            "type": "straight",
+            "length": 367,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 438,
+            "radius": 139,
+            "gradient": 0
+          }
+        ],
+        "width": 24,
+        "name": "Turf Course"
+      }
+    ],
+    "dataSource": "official"
+  },
+  {
+    "id": "17811b18-c6f8-189a-e337-3059c7141fc1",
+    "name": "Fair Grounds",
+    "country": "USA",
+    "courses": [
+      {
+        "surface": "Dirt",
+        "circumference": 1609,
+        "straightLength": 367,
+        "sections": [
+          {
+            "type": "straight",
+            "length": 367,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 438,
+            "radius": 139,
+            "gradient": 0
+          },
+          {
+            "type": "straight",
+            "length": 367,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 438,
+            "radius": 139,
+            "gradient": 0
+          }
+        ],
+        "width": 24,
+        "name": "Main Track"
+      },
+      {
+        "surface": "Turf",
+        "circumference": 1609,
+        "straightLength": 367,
+        "sections": [
+          {
+            "type": "straight",
+            "length": 367,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 438,
+            "radius": 139,
+            "gradient": 0
+          },
+          {
+            "type": "straight",
+            "length": 367,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 438,
+            "radius": 139,
+            "gradient": 0
+          }
+        ],
+        "width": 24,
+        "name": "Stall-Wilson Turf Course"
+      }
+    ],
+    "dataSource": "official"
+  },
+  {
+    "id": "8f50ddd3-8a52-3d59-1a7c-4dbcfc18f687",
+    "name": "Tampa Bay Downs",
+    "country": "USA",
+    "courses": [
+      {
+        "surface": "Dirt",
+        "circumference": 1609,
+        "straightLength": 367,
+        "sections": [
+          {
+            "type": "straight",
+            "length": 367,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 438,
+            "radius": 139,
+            "gradient": 0
+          },
+          {
+            "type": "straight",
+            "length": 367,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 438,
+            "radius": 139,
+            "gradient": 0
+          }
+        ],
+        "width": 24,
+        "name": "Main Track"
+      },
+      {
+        "surface": "Turf",
+        "circumference": 1408,
+        "straightLength": 305,
+        "sections": [
+          {
+            "type": "straight",
+            "length": 305,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 383,
+            "radius": 122,
+            "gradient": 0
+          },
+          {
+            "type": "straight",
+            "length": 305,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 383,
+            "radius": 122,
+            "gradient": 0
+          }
+        ],
+        "width": 22,
+        "name": "Turf Course"
+      }
+    ],
+    "dataSource": "official"
+  },
+  {
+    "id": "a3c468c5-780d-be43-eb9b-1c52fd9e5293",
+    "name": "Lone Star Park",
+    "country": "USA",
+    "courses": [
+      {
+        "surface": "Dirt",
+        "circumference": 1609,
+        "straightLength": 367,
+        "sections": [
+          {
+            "type": "straight",
+            "length": 367,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 438,
+            "radius": 139,
+            "gradient": 0
+          },
+          {
+            "type": "straight",
+            "length": 367,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 438,
+            "radius": 139,
+            "gradient": 0
+          }
+        ],
+        "width": 24,
+        "name": "Main Track"
+      },
+      {
+        "surface": "Turf",
+        "circumference": 1609,
+        "straightLength": 367,
+        "sections": [
+          {
+            "type": "straight",
+            "length": 367,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 438,
+            "radius": 139,
+            "gradient": 0
+          },
+          {
+            "type": "straight",
+            "length": 367,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 438,
+            "radius": 139,
+            "gradient": 0
+          }
+        ],
+        "width": 24,
+        "name": "Turf Course"
+      }
+    ],
+    "dataSource": "official"
+  },
+  {
+    "id": "a03edeab-959e-1f62-a2ab-fe5e4d872b7d",
+    "name": "Belmont at the Big A",
+    "country": "USA",
+    "courses": [
+      {
+        "surface": "Dirt",
+        "circumference": 1707,
+        "straightLength": 366,
+        "sections": [
+          {
+            "type": "straight",
+            "length": 366,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 488,
+            "radius": 155,
+            "gradient": 0
+          },
+          {
+            "type": "straight",
+            "length": 366,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 488,
+            "radius": 155,
+            "gradient": 0
+          }
+        ],
+        "width": 24,
+        "name": "Main Track"
+      },
+      {
+        "surface": "Turf",
+        "circumference": 1609,
+        "straightLength": 367,
+        "sections": [
+          {
+            "type": "straight",
+            "length": 367,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 438,
+            "radius": 139,
+            "gradient": 0
+          },
+          {
+            "type": "straight",
+            "length": 367,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 438,
+            "radius": 139,
+            "gradient": 0
+          }
+        ],
+        "width": 24,
+        "name": "Inner Turf Course"
+      }
+    ],
+    "dataSource": "official"
+  },
+  {
+    "id": "15077747-ba2f-c5e3-b512-df3dc38e5b48",
+    "name": "Eagle Farm",
+    "country": "Australia",
+    "courses": [
+      {
+        "surface": "Turf",
+        "circumference": 2000,
+        "straightLength": 400,
+        "sections": [
+          {
+            "type": "straight",
+            "length": 400,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 600,
+            "radius": 191,
+            "gradient": 0
+          },
+          {
+            "type": "straight",
+            "length": 400,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 600,
+            "radius": 191,
+            "gradient": 0
+          }
+        ],
+        "width": 25,
+        "name": "Main Track"
+      }
+    ],
+    "dataSource": "official"
+  },
+  {
+    "id": "af5bb92b-4c42-3ac2-8309-684ae631a644",
+    "name": "Morphettville",
+    "country": "Australia",
+    "courses": [
+      {
+        "surface": "Turf",
+        "circumference": 1800,
+        "straightLength": 350,
+        "sections": [
+          {
+            "type": "straight",
+            "length": 350,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 550,
+            "radius": 175,
+            "gradient": 0
+          },
+          {
+            "type": "straight",
+            "length": 350,
+            "gradient": 0
+          },
+          {
+            "type": "turn",
+            "length": 550,
+            "radius": 175,
+            "gradient": 0
+          }
+        ],
+        "width": 25,
+        "name": "Main Track"
       }
     ],
     "dataSource": "official"

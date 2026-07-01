@@ -56,7 +56,7 @@ export type TrackSchedule = {
   racesPerDay: [number, number]; // Min, max races per day
   meetStart?: number; // Day of year (1-365)
   meetEnd?: number; // Day of year (1-365)
-  regionalSystem: "north_america" | "europe" | "australia" | "asia" | "south_america";
+  regionalSystem: "north_america" | "europe" | "australia" | "asia" | "south_america" | "japan";
 };
 
 import TRACK_DATA from "./tracks.json";

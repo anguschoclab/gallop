@@ -1,96 +1,48 @@
 /**
- * trackClimate.ts — Map a trackId → ClimateZone.
+ * trackClimate.ts — Map a trackId → ClimateZone and Hemisphere.
  *
- * Lightweight default mapping. Unknown trackIds fall back to "temperate".
- * Substring matching keyed by region/country tokens commonly embedded in
- * trackIds across the codebase.
+ * Uses TRACK_KOPPEN_MAP for climate determination and TRACK_BY_ID for
+ * hemisphere determination via country lookup.
  */
 
 import type { ClimateZone } from "@/core/race/trackConditionData";
+import type { KoppenCode } from "./koppenTypes";
+import { getTrackKoppen } from "./trackKoppenMappings";
+import { TRACK_BY_ID } from "@/data/tracks";
 
-const SUBSTRING_RULES: Array<{ match: string; climate: ClimateZone }> = [
-  { match: "dubai", climate: "arid" },
-  { match: "saudi", climate: "arid" },
-  { match: "meydan", climate: "arid" },
-  { match: "santa-anita", climate: "arid" },
-  { match: "del-mar", climate: "arid" },
-  { match: "australia", climate: "humid" },
-  { match: "sydney", climate: "humid" },
-  { match: "melbourne", climate: "humid" },
-  { match: "japan", climate: "humid" },
-  { match: "tokyo", climate: "humid" },
-  { match: "hong-kong", climate: "tropical" },
-  { match: "sha-tin", climate: "tropical" },
-  { match: "singapore", climate: "tropical" },
-  { match: "brazil", climate: "tropical" },
-  { match: "uk", climate: "humid" },
-  { match: "ireland", climate: "humid" },
-  { match: "ascot", climate: "humid" },
-  { match: "epsom", climate: "humid" },
-  { match: "newmarket", climate: "humid" },
-  { match: "longchamp", climate: "temperate" },
-  { match: "france", climate: "temperate" },
-  { match: "germany", climate: "continental" },
-  { match: "canada", climate: "continental" },
-  { match: "woodbine", climate: "continental" },
-  { match: "churchill", climate: "humid" },
-  { match: "saratoga", climate: "humid" },
-  { match: "belmont", climate: "humid" },
-  { match: "aqueduct", climate: "humid" },
-  { match: "gulfstream", climate: "tropical" },
-  { match: "florida", climate: "tropical" },
-];
+const KOPPEN_TO_CLIMATE: Record<KoppenCode, ClimateZone> = {
+  Cfb: "temperate",
+  Cfa: "temperate",
+  Csa: "warm",
+  Csb: "warm",
+  BWh: "arid",
+  BSk: "arid",
+  Dfb: "continental",
+  Dfa: "continental",
+  Aw: "tropical",
+  Af: "tropical",
+  ET: "cool",
+};
 
 export function getTrackClimate(trackId: string | undefined): ClimateZone {
   if (!trackId) return "temperate";
-  const lower = trackId.toLowerCase();
-  for (const rule of SUBSTRING_RULES) {
-    if (lower.includes(rule.match)) return rule.climate;
-  }
-  return "temperate";
+  const koppen = getTrackKoppen(trackId);
+  return KOPPEN_TO_CLIMATE[koppen] ?? "temperate";
 }
 
 export type Hemisphere = "Northern" | "Southern";
 
-// Substrings that indicate a Southern-hemisphere track.
-const SOUTHERN_TOKENS = [
-  "australia",
-  "sydney",
-  "melbourne",
-  "flemington",
-  "randwick",
-  "caulfield",
-  "rosehill",
-  "brisbane",
-  "perth",
-  "new-zealand",
-  "newzealand",
-  "ellerslie",
-  "trentham",
-  "brazil",
-  "saopaulo",
-  "sao-paulo",
-  "rio",
-  "argentina",
-  "buenos-aires",
-  "san-isidro",
-  "palermo",
-  "chile",
-  "santiago",
-  "peru",
-  "uruguay",
-  "south-africa",
-  "southafrica",
-  "kenilworth",
-  "turffontein",
-  "greyville",
-];
+const SOUTHERN_COUNTRIES = new Set([
+  "Australia",
+  "New Zealand",
+  "Argentina",
+  "Brazil",
+  "Chile",
+]);
 
 export function getTrackHemisphere(trackId: string | undefined): Hemisphere {
   if (!trackId) return "Northern";
-  const lower = trackId.toLowerCase();
-  for (const t of SOUTHERN_TOKENS) {
-    if (lower.includes(t)) return "Southern";
-  }
-  return "Northern";
+  const track = TRACK_BY_ID[trackId];
+  if (!track) return "Northern";
+  return SOUTHERN_COUNTRIES.has(track.country) ? "Southern" : "Northern";
 }

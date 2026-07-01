@@ -16,6 +16,7 @@ const COUNTRY_TO_FLAG: Record<string, string> = {
   Italy: "🇮🇹",
   Spain: "🇪🇸",
   UAE: "🇦🇪",
+  "Saudi Arabia": "🇸🇦",
   Turkey: "🇹🇷",
   Austria: "🇦🇹",
   Belgium: "🇧🇪",

@@ -1,5 +1,5 @@
 /**
- * trackKoppenMappings.ts - Maps all 124 tracks to their Koppen climate codes
+ * trackKoppenMappings.ts - Maps all 126 tracks to their Koppen climate codes
  *
  * Based on real-world climate classification data.
  */
@@ -57,7 +57,7 @@ export const TRACK_KOPPEN_MAP: Record<string, KoppenCode> = {
   "ff31fa2d-9594-4cfd-bb3f-a4794eb3c435": "Cfb", // Jägersro (Sweden)
 
   // ===========================================================================
-  // JAPAN (28 tracks) - Mostly Humid Subtropical (Cfa), northern are Dfb
+  // JAPAN (25 tracks) - Mostly Humid Subtropical (Cfa), northern are Dfb
   // ===========================================================================
   "09aea125-88e4-4e51-b8d7-0475869c6269": "Cfa", // Tokyo
   "075b214f-ebc8-4d46-9e27-154723cedc2a": "Cfa", // Oi
@@ -71,19 +71,18 @@ export const TRACK_KOPPEN_MAP: Record<string, KoppenCode> = {
   "d11ab0e2-492a-4f90-9cd9-9323fece32f5": "Cfa", // Monbetsu (coastal, moderated)
   "5d64970b-7d53-4ce7-82eb-565519c87425": "Cfa", // Nagoya
   "e55abf82-49b9-4c1a-9d79-5387e123045a": "Dfb", // Sonoda (inland Kansai, colder)
-  "f5704159-e4e5-4966-88b3-ad6338f92a5f": "Dfb", // Morioka (northern, snowy)
-  "4ebe446a-b55d-43b3-b589-cf710de809a7": "Cfa", // Kawasaki
-  "19c425f0-da5c-49aa-b419-d51050c5984c": "Cfa", // Funabashi
-  "5417f98a-9404-41ac-8d94-9af57c227f47": "Dfb", // Urawa (northern Kanto)
-  "e252ed6b-94c0-4d5f-82a2-6325c312331a": "Dfb", // Ohi
-  "349564e3-4eff-425e-8207-21f181ee4fc9": "Dfb", // Saga (NAR, northern)
-  "e5575f66-1c09-4385-9b1a-83bf2d538d90": "Cfa", // Saga (southern)
+  "f5704159-e4e5-4966-88b3-ad6338f92a5f": "Dfb", // Sapporo (northern, snowy)
+  "4ebe446a-b55d-43b3-b589-cf710de809a7": "Cfa", // Kokura
+  "19c425f0-da5c-49aa-b419-d51050c5984c": "Cfa", // Fukushima
+  "5417f98a-9404-41ac-8d94-9af57c227f47": "Dfb", // Niigata (northern Honshu)
+  "e252ed6b-94c0-4d5f-82a2-6325c312331a": "Dfb", // Hakodate
+  "349564e3-4eff-425e-8207-21f181ee4fc9": "Dfb", // Kitakyushu (NAR, northern)
+  "e5575f66-1c09-4385-9b1a-83bf2d538d90": "Cfa", // Oi
   "838abcdc-ff27-44cf-9212-183e2edb66c0": "Cfa", // Kawasaki (central)
   "dc2854c2-b22e-4fde-8052-81b63b0ceb45": "Cfa", // Funabashi (central)
   "8b58953a-b5ad-41ec-a36c-b0feb5625370": "Cfa", // Urawa (central Kanto)
   "9c876506-79bd-4450-8321-a1d65a01658e": "Dfb", // Morioka (northern)
   "99a1a2ec-3ef9-4f65-9c5f-13650eb71d8b": "Cfa", // Various (default)
-  "8b562557-55ca-4d38-b59f-72fe64ef3861": "Cfa", // Saga (southern)
   "4e5db0cb-d4b2-4c6f-b675-903139668491": "Cfa", // Urawa Kinen
 
   // ===========================================================================
@@ -99,7 +98,7 @@ export const TRACK_KOPPEN_MAP: Record<string, KoppenCode> = {
   "352ca343-eb29-4910-bfa4-e78198d0dc8b": "Aw", // Happy Valley
 
   // ===========================================================================
-  // GREAT BRITAIN (19 tracks) - Temperate Oceanic
+  // GREAT BRITAIN (17 tracks) - Temperate Oceanic
   // ===========================================================================
   "e8a9c43d-0aa9-45ba-830d-c3ab0d328cbb": "Cfb", // Newmarket
   "30b245c0-68b9-47eb-aef1-03f3c3e4863a": "Cfb", // Newmarket (July)
@@ -112,8 +111,6 @@ export const TRACK_KOPPEN_MAP: Record<string, KoppenCode> = {
   "8c165617-0438-496a-9b10-9a941465b298": "Cfb", // Chester
   "3e89fd5e-9b6a-49e8-8cfd-81a2641bf583": "Cfb", // Doncaster
   "b4480660-0b69-4fd7-9cde-2f15a95c52d7": "Cfb", // Goodwood
-  "a38d2b3b-b048-44a6-b344-6506490f7994": "Cfb", // Newmarket
-  "6aef6140-61e5-4262-806e-9cd9008457ba": "Cfb", // York
   "47d7eb08-478c-47ce-bca3-e1ff36affa9d": "Cfb", // Newcastle
   "c2dadc93-81e8-4844-8b8c-380dfafb8726": "Cfb", // Ayr
   "a5b6c7d8-e9f0-4a1b-2c3d-4e5f6a7b8c9e": "Cfb", // Kempton
@@ -132,7 +129,7 @@ export const TRACK_KOPPEN_MAP: Record<string, KoppenCode> = {
   "f74061a1-adfd-4fb1-aded-843109961953": "Cfb", // Toulouse (south, transitional)
 
   // ===========================================================================
-  // IRELAND (10 tracks) - Temperate Oceanic
+  // IRELAND (8 tracks) - Temperate Oceanic
   // ===========================================================================
   "20175183-67a8-4d6b-9c4d-0942856f8860": "Cfb", // Curragh
   "73892381-380b-4362-bc0e-b499a31efe12": "Cfb", // Leopardstown
@@ -142,10 +139,9 @@ export const TRACK_KOPPEN_MAP: Record<string, KoppenCode> = {
   "94c11808-6b19-41fe-bf0b-b2f802d0f5c1": "Cfb", // Gowran Park
   "1ac5e4ac-7ddf-4b35-a28f-a2bc7a8107fd": "Cfb", // Fairyhouse
   "bbcc75ec-8d32-466c-9686-1b9deaa116f9": "Cfb", // Dundalk
-  "9ed3a611-6bf3-4583-a002-70441a0fc3f4": "Cfb", // Longchamp (Ireland entry - likely error in data)
 
   // ===========================================================================
-  // GERMANY (10 tracks) - Humid Continental
+  // GERMANY (9 tracks) - Humid Continental
   // ===========================================================================
   "f9e9b465-6bf9-4767-a866-588e17ecbdb0": "Dfb", // Düsseldorf
   "5921a518-0a80-4133-a438-86067989b1a5": "Dfb", // Cologne
@@ -177,12 +173,11 @@ export const TRACK_KOPPEN_MAP: Record<string, KoppenCode> = {
   "782f6731-c814-4ba3-b2b3-dac462f2890a": "Cfb", // Mons (inland)
 
   // ===========================================================================
-  // CZECH REPUBLIC (4 tracks) - Humid Continental
+  // CZECH REPUBLIC (3 tracks) - Humid Continental
   // ===========================================================================
   "d2e5c01a-fcd2-4500-9123-bd405ce2aaf0": "Dfb", // Prague
   "6a05c40a-eb0a-471d-9b6c-d090a38b5461": "Dfb", // Most
   "113463f4-3c75-4dfd-9c5b-8f40011dc83b": "Dfb", // Karlovy Vary
-  "ae2104a8-5dc8-4609-9ee9-50b0aa4fadd4": "Dfb", // Prague (duplicate?)
 
   // ===========================================================================
   // HUNGARY (1 track) - Humid Continental
@@ -197,7 +192,7 @@ export const TRACK_KOPPEN_MAP: Record<string, KoppenCode> = {
   "8c8eb875-9aa8-4d8b-90ff-066998e57e4f": "Csa", // Dos Hermanas (Andalusia, hotter)
 
   // ===========================================================================
-  // USA (10 tracks) - Mix of Cfa, Dfa, Csa, Aw
+  // USA (15 tracks) - Mix of Cfa, Dfa, Csa, Aw
   // ===========================================================================
   "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d": "Dfa", // Churchill Downs (Louisville)
   "c2b3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e": "Dfa", // Pimlico (Baltimore area)
@@ -209,15 +204,22 @@ export const TRACK_KOPPEN_MAP: Record<string, KoppenCode> = {
   "c8b9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e": "Dfa", // Aqueduct (NY)
   "d9c0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f": "Dfa", // Oaklawn Park (Arkansas)
   "e0d1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a": "Aw", // Gulfstream Park (Florida)
+  "b53304b4-2747-a9df-c4e0-eae0a22d26d6": "Cfa", // Monmouth Park (New Jersey)
+  "17811b18-c6f8-189a-e337-3059c7141fc1": "Cfa", // Fair Grounds (Louisiana)
+  "8f50ddd3-8a52-3d59-1a7c-4dbcfc18f687": "Cfa", // Tampa Bay Downs (Florida)
+  "a3c468c5-780d-be43-eb9b-1c52fd9e5293": "Cfa", // Lone Star Park (Texas)
+  "a03edeab-959e-1f62-a2ab-fe5e4d872b7d": "Cfa", // Belmont at the Big A (New York)
 
   // ===========================================================================
-  // AUSTRALIA (5 tracks) - Humid Subtropical / Temperate Oceanic
+  // AUSTRALIA (7 tracks) - Humid Subtropical / Temperate Oceanic
   // ===========================================================================
   "a1b2c3d4-e5f6-4a7b-8c9d-1e2f3a4b5c6d": "Cfb", // Flemington (Melbourne)
   "b2c3d4e5-f6a7-4b8c-9d0e-2f3a4b5c6d7e": "Cfa", // Randwick (Sydney)
   "c3d4e5f6-a7b8-4c9d-0e1f-3a4b5c6d7e8f": "Cfb", // Caulfield (Melbourne)
   "d4e5f6a7-b8c9-4d0e-1f2a-4b5c6d7e8f9a": "Cfb", // Moonee Valley (Melbourne)
   "e5f6a7b8-c9d0-4e1f-2a3b-5c6d7e8f9a0b": "Cfa", // Rosehill (Sydney)
+  "15077747-ba2f-c5e3-b512-df3dc38e5b48": "Cfa", // Eagle Farm (Brisbane)
+  "af5bb92b-4c42-3ac2-8309-684ae631a644": "Csb", // Morphettville (Adelaide)
 
   // ===========================================================================
   // SINGAPORE (1 track) - Tropical Rainforest

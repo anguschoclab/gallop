@@ -123,6 +123,7 @@ export const COUNTRY_TO_REGION: Record<string, AwardRegion> = {
   Italy: "europe",
   Spain: "europe",
   UAE: "europe",
+  "Saudi Arabia": "europe",
   Turkey: "europe",
   Austria: "europe",
   Belgium: "europe",

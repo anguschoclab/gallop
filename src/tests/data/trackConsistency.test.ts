@@ -19,6 +19,10 @@ describe("Track data consistency — F1: graded race trackIds match track names"
         }
         continue;
       }
+      if (!r.trackId) {
+        mismatches.push(`${r.key}: missing trackId`);
+        continue;
+      }
       const track = TRACK_BY_ID[r.trackId];
       if (!track) {
         mismatches.push(`${r.key}: trackId=${r.trackId} not in tracks.json`);
@@ -138,10 +142,10 @@ describe("Track data consistency — F8: getTrackClimate correctness", () => {
     expect(ascot).toBeDefined();
     expect(getTrackClimate(ascot!.id)).toBe("temperate");
 
-    // Find a track with Dfb (cold) — Düsseldorf
+    // Find a track with Dfb (continental) — Düsseldorf
     const dusseldorf = TRACKS.find((t) => t.name === "Düsseldorf");
     expect(dusseldorf).toBeDefined();
-    expect(getTrackClimate(dusseldorf!.id)).toBe("cold");
+    expect(getTrackClimate(dusseldorf!.id)).toBe("continental");
   });
 
   it("undefined trackId returns temperate", () => {

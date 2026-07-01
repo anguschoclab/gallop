@@ -224,6 +224,7 @@ export const COUNTRY_TO_REGION: Record<string, string> = {
   Chile: "chile",
   Argentina: "argentina",
   Australia: "australia_nsw", // Default, overridden by track
+  "New Zealand": "australia_nsw", // Similar Southern Hemisphere patterns
   UAE: "uae",
   "Saudi Arabia": "saudi_arabia",
   "Great Britain": "uk",
