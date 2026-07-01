@@ -26,6 +26,7 @@ import { generateUUID } from "@/core/uuid";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { isHorseEligibleForClaimingPrice } from "@/core/market/claiming";
 import { calculateOverallRating } from "@/core/horse/stats";
+import { getAvailableTrainingTypes } from "@/core/facilities";
 import {
   createTrainingAIState,
   selectTrainingType,
