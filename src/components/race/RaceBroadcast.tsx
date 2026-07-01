@@ -156,7 +156,7 @@ export function RaceBroadcast({
 
       <div className="relative z-10 p-4 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4">
         <div className="space-y-4">
-          {hasReplay ? (
+          {showReplay ? (
             <RaceVisualizer
               snapshots={race.snapshots!}
               distance={race.distance}
@@ -178,6 +178,7 @@ export function RaceBroadcast({
               followTarget={followTarget}
               paused={paused}
               subjectHorseId={subjectHorseId}
+              simTimeRef={simTimeRef}
             />
           )}
           <BroadcastCommentary commentary={commentary} />
