@@ -503,3 +503,40 @@
     transform: none;
   }
 }
+
+/* Race Track live-view enhancements */
+@keyframes finish-burst {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.35); }
+  60%  { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+@keyframes finish-label-pop {
+  0%   { opacity: 0; transform: translate(-50%, 4px) scale(0.8); }
+  60%  { opacity: 1; transform: translate(-50%, -2px) scale(1.05); }
+  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+.horse-finish-pop {
+  animation: finish-burst 0.45s ease-out;
+}
+
+.horse-finish-label {
+  animation: finish-label-pop 0.35s ease-out forwards;
+}
+
+.horse-fading {
+  filter: brightness(0.75) saturate(0.6);
+  transition: filter 1s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .horse-finish-pop,
+  .horse-finish-label,
+  .horse-fading {
+    animation: none !important;
+    transition: none !important;
+    filter: none !important;
+  }
+}
