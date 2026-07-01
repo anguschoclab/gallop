@@ -5,8 +5,9 @@
  * history.
  */
 
+import type React from "react";
 import { describe, it, expect, afterEach, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, screen } from "@testing-library/react";
 
 const navigateMock = vi.fn();
 const historyBackMock = vi.fn();
