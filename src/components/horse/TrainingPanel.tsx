@@ -139,6 +139,7 @@ export function TrainingPanelComponent({
               key={btn.key}
               onClick={btn.onClick}
               disabled={btn.disabled}
+              title={btn.unlockHint}
               className="w-full justify-between text-xs"
               variant="outline"
             >
