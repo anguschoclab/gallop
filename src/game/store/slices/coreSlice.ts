@@ -174,6 +174,24 @@ export function createCoreSlice(
         }
       }
 
+      // Stakes nomination guard — G1/G2/G3 races require pre-nomination.
+      const raceGrade = race.graded_override?.grade ?? race.graded?.grade ?? null;
+      let matchedNominationId: string | undefined;
+      if (raceGrade) {
+        const noms = (s as any).playerNominations ?? [];
+        const active = noms.find(
+          (n: any) =>
+            n.horseId === horseId && n.raceId === raceId && n.status === "active",
+        );
+        if (!active) {
+          return {
+            ok: false,
+            reason: `${horse!.name} must be nominated before entering a ${raceGrade} race.`,
+          };
+        }
+        matchedNominationId = active.id;
+      }
+
       let bumpEntryHorseId: string | undefined;
       if (race.entries.length >= race.fieldSize) {
         const playerRating = calculateOverallRating(horse!);
@@ -209,6 +227,15 @@ export function createCoreSlice(
         horseId,
         bumpEntryHorseId,
       });
+
+      // Mark the matching nomination as entered.
+      if (matchedNominationId) {
+        set((state: any) => ({
+          playerNominations: (state.playerNominations ?? []).map((n: any) =>
+            n.id === matchedNominationId ? { ...n, status: "entered" } : n,
+          ),
+        }));
+      }
 
       return { ok: true };
     },
