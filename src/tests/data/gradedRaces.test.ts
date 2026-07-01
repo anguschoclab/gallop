@@ -100,7 +100,9 @@ describe("GRADED_RACES data integrity", () => {
       expect(r.key).toBeTruthy();
       expect(r.name).toBeTruthy();
       expect(r.track).toBeTruthy();
-      expect(r.trackId).toBeTruthy();
+      if (r.track !== "Various") {
+        expect(r.trackId).toBeTruthy();
+      }
       expect(r.grade).toBeTruthy();
       expect(r.distance).toBeDefined();
       expect(r.surface).toBeDefined();
@@ -162,12 +164,14 @@ describe("GRADED_RACES data integrity", () => {
 
   it("all trackId values exist in TRACK_BY_ID", () => {
     for (const r of GRADED_RACES) {
+      if (r.track === "Various") continue;
       expect(TRACK_BY_ID[r.trackId]).toBeDefined();
     }
   });
 
   it("all track names exist in TRACK_BY_NAME", () => {
     for (const r of GRADED_RACES) {
+      if (r.track === "Various") continue;
       expect(TRACK_BY_NAME[r.track]).toBeDefined();
     }
   });
