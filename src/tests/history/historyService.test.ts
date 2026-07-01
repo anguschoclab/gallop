@@ -411,7 +411,6 @@ describe("checkTrackRecord", () => {
       } as any,
       trackId: undefined,
       surface: undefined,
-      graded_override: undefined,
     });
     // Remove graded.surface to simulate missing surface
     (race.graded as any) = { key: "k", grade: "G1", track: "T", trackId: "graded-track" };

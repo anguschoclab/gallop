@@ -1,3 +1,4 @@
+import { type MutableRefObject, type RefObject } from "react";
 import { cn } from "@/lib/cn";
 import { getSkyBackground } from "@/components/race/raceVisualHelpers";
 import { BroadcastCommentary } from "@/components/race/BroadcastCommentary";
@@ -52,11 +53,11 @@ export interface RaceBroadcastProps {
   liveSplits: Map<string, number[]>;
   analysisOpen: boolean;
   setAnalysisOpen: (v: boolean) => void;
-  analysisRef: React.RefObject<HTMLDivElement | null>;
+  analysisRef: RefObject<HTMLDivElement | null>;
   showAllCards: boolean;
   setShowAllCards: (v: boolean) => void;
   announcement: string;
-  simTimeRef?: React.MutableRefObject<number>;
+  simTimeRef?: MutableRefObject<number>;
 }
 
 export function RaceBroadcast({
@@ -101,7 +102,7 @@ export function RaceBroadcast({
   simTimeRef,
 }: RaceBroadcastProps) {
   const skyBg = getSkyBackground(race.weather);
-  const showReplay = phase !== "live" && race.resolved && !!race.snapshots?.length;
+  const showReplay = phase === "review" && race.resolved && !!race.snapshots?.length;
 
   return (
     <div className="broadcast min-h-screen text-white bg-broadcast-track">

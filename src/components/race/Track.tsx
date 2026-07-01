@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { type MutableRefObject, useEffect, useRef } from "react";
 import {
   getTrackBackground,
   getSpriteUrl,
@@ -16,7 +16,7 @@ interface TrackProps {
   followTarget?: string | null;
   paused?: boolean;
   subjectHorseId?: string | null;
-  simTimeRef?: React.MutableRefObject<number>;
+  simTimeRef?: MutableRefObject<number>;
 }
 
 export function Track({
