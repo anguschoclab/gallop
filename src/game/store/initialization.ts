@@ -193,6 +193,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     founders: {},
     lastFounderUpdateDay: 0,
     syndicates: {},
+    syndicateInvestors: {},
     staffPool: [],
     hiredStaff: [],
     breedingPrograms: [],
