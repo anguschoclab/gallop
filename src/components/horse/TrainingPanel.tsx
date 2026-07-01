@@ -2,7 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
 import { TRAINING_COST } from "@/constants";
 import { BASIC_TRAINING_TYPES, ADVANCED_WORKOUTS } from "@/constants/trainingTypes";
-import { isWorkoutEnabled } from "@/core/facilities";
+import { TRAINING_FACILITY_REQUIREMENTS } from "@/constants/workoutConstants";
+import { getAvailableTrainingTypes } from "@/core/facilities";
+import { FACILITY_NAMES } from "@/core/facilities/facilityTypes";
 import type { Horse, PlayerFacilities } from "@/game/types";
 import { useCallback, memo, useMemo } from "react";
 
