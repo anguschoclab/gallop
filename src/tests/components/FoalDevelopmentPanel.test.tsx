@@ -125,4 +125,72 @@ describe("FoalDevelopmentPanel", () => {
     expect(screen.getByText("Bold Approach")).toBeTruthy();
     expect(screen.getByText("Sprint Focus")).toBeTruthy();
   });
+
+  describe("countdown boundaries around the trigger day", () => {
+    it("day = triggerDay - 1: shows countdown 'in 1d' and no active decision", () => {
+      const horse = makeHorse();
+      renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
+        horses: [horse],
+        day: 17,
+      } as any);
+      expect(screen.queryByText(/awaiting your decision/i)).toBeNull();
+      expect(screen.getByText(/Day 18 \(in 1d\)/)).toBeTruthy();
+    });
+
+    it("day = triggerDay: activates the milestone (not the countdown)", () => {
+      const horse = makeHorse();
+      renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
+        horses: [horse],
+        day: 18,
+      } as any);
+      expect(screen.getByText(/Breaking In awaiting your decision/i)).toBeTruthy();
+      expect(screen.queryByText(/Next milestone:/i)).toBeNull();
+    });
+
+    it("day = triggerDay + 1: still active (past trigger, not yet resolved)", () => {
+      const horse = makeHorse();
+      renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
+        horses: [horse],
+        day: 19,
+      } as any);
+      expect(screen.getByText(/Breaking In awaiting your decision/i)).toBeTruthy();
+    });
+
+    it("after resolving breaking_in, day = early_workouts triggerDay - 1 shows 'in 1d'", () => {
+      const arc = createDefaultFoalDevelopmentArc(0);
+      arc.milestones[0].status = "resolved";
+      arc.milestones[0].resolvedChoiceKey = "bold_approach";
+      arc.milestones[0].resolvedOnDay = 18;
+      const horse = makeHorse({ developmentArc: arc });
+      renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
+        horses: [horse],
+        day: 23,
+      } as any);
+      expect(screen.getByText(/Day 24 \(in 1d\)/)).toBeTruthy();
+      expect(screen.queryByText(/awaiting your decision/i)).toBeNull();
+    });
+
+    it("after resolving breaking_in, day = early_workouts triggerDay activates it", () => {
+      const arc = createDefaultFoalDevelopmentArc(0);
+      arc.milestones[0].status = "resolved";
+      arc.milestones[0].resolvedChoiceKey = "bold_approach";
+      arc.milestones[0].resolvedOnDay = 18;
+      const horse = makeHorse({ developmentArc: arc });
+      renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
+        horses: [horse],
+        day: 24,
+      } as any);
+      expect(screen.getByText(/Early Workouts awaiting your decision/i)).toBeTruthy();
+    });
+
+    it("non-zero birthDay: countdown uses absolute trigger day, not offset", () => {
+      const horse = makeHorse({ developmentArc: createDefaultFoalDevelopmentArc(100) });
+      // breaking_in triggers at day 118. On day 116 -> in 2d.
+      renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
+        horses: [horse],
+        day: 116,
+      } as any);
+      expect(screen.getByText(/Day 118 \(in 2d\)/)).toBeTruthy();
+    });
+  });
 });
