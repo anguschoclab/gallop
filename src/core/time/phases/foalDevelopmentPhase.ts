@@ -45,7 +45,7 @@ export const foalDevelopmentPhase: PipelinePhase = {
             body: `${horse.name} is ready for ${milestone.label}. Choose an approach to shape early development.`,
             cta: {
               label: "Resolve Milestone",
-              route: "foal-development.$horseId",
+              route: "/foal-development/$horseId",
               params: { horseId: horse.id },
             },
           },
