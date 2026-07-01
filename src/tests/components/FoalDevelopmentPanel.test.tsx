@@ -61,19 +61,19 @@ describe("FoalDevelopmentPanel", () => {
     expect(screen.getByText(/Breaking In awaiting your decision/i)).toBeTruthy();
 
     // Bold Approach: speed +2, acceleration +2, stamina -1
-    const bold = screen.getByText("Bold Approach").closest("div")!;
+    const bold = screen.getByText("Bold Approach").parentElement!;
     expect(within(bold).getByText("speed: +2")).toBeTruthy();
     expect(within(bold).getByText("acceleration: +2")).toBeTruthy();
     expect(within(bold).getByText("stamina: -1")).toBeTruthy();
 
     // Patient Method: consistency +2, stamina +2, speed -1
-    const patient = screen.getByText("Patient Method").closest("div")!;
+    const patient = screen.getByText("Patient Method").parentElement!;
     expect(within(patient).getByText("consistency: +2")).toBeTruthy();
     expect(within(patient).getByText("stamina: +2")).toBeTruthy();
     expect(within(patient).getByText("speed: -1")).toBeTruthy();
 
     // Natural Progression: speed +1, stamina +1, acceleration +1
-    const natural = screen.getByText("Natural Progression").closest("div")!;
+    const natural = screen.getByText("Natural Progression").parentElement!;
     expect(within(natural).getByText("speed: +1")).toBeTruthy();
     expect(within(natural).getByText("stamina: +1")).toBeTruthy();
     expect(within(natural).getByText("acceleration: +1")).toBeTruthy();
