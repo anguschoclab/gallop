@@ -39,7 +39,8 @@ export interface TrainingIntent extends Intent {
     | "breeze"
     | "gate_work"
     | "swimming"
-    | "gallop";
+    | "gallop"
+    | "treadmill";
 }
 
 // Race entry intent

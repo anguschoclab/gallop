@@ -20,6 +20,7 @@ import { createDefaultRacingState } from "@/game/store/state/racingState";
 import type { TrainingIntent } from "@/core/resolver/intents";
 import { generateUUID } from "@/core/uuid";
 import { TRAINING_COST } from "@/constants";
+import { getAvailableTrainingTypes } from "@/core/facilities";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import { simulateRace } from "@/services/race/raceSimulationExecutor";
@@ -95,6 +96,23 @@ export function createRacingSlice(
       const isRest = kind === "rest";
       if (!isRest && s.cash < TRAINING_COST) return;
       if (!isRest && horse.energy < 15) return;
+
+      // Facility gate: reject if training type not unlocked
+      if (s.facilities) {
+        const available = getAvailableTrainingTypes(s.facilities);
+        if (!available.includes(kind)) {
+          set({
+            log: [
+              {
+                day: s.day,
+                text: `Training blocked: ${kind} is not available at your current facility level. Upgrade your barn or build the required facility.`,
+              },
+              ...s.log,
+            ].slice(0, 50),
+          });
+          return;
+        }
+      }
 
       // Enqueue TrainingIntent for next day advance
       const intent: TrainingIntent = {

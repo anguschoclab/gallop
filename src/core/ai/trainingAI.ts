@@ -137,18 +137,21 @@ export function selectTrainingType(
   aiState: TrainingAIState,
   horse: Horse,
   currentDay: number,
+  availableTypes?: string[],
 ): "speed" | "stamina" | "acceleration" {
-  const scores = {
+  const allScores: Record<string, number> = {
     speed: calculateTrainingPriority(aiState, horse, "speed", currentDay),
     stamina: calculateTrainingPriority(aiState, horse, "stamina", currentDay),
     acceleration: calculateTrainingPriority(aiState, horse, "acceleration", currentDay),
   };
 
-  // Select highest priority stat
-  return Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0] as
-    | "speed"
-    | "stamina"
-    | "acceleration";
+  const filtered = availableTypes
+    ? Object.entries(allScores).filter(([k]) => availableTypes.includes(k))
+    : Object.entries(allScores);
+
+  const pool = filtered.length > 0 ? filtered : Object.entries(allScores);
+
+  return pool.sort((a, b) => b[1] - a[1])[0][0] as "speed" | "stamina" | "acceleration";
 }
 
 /**

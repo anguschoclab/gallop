@@ -2,7 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
 import { TRAINING_COST } from "@/constants";
 import { BASIC_TRAINING_TYPES, ADVANCED_WORKOUTS } from "@/constants/trainingTypes";
-import { isWorkoutEnabled } from "@/core/facilities";
+import { TRAINING_FACILITY_REQUIREMENTS } from "@/constants/workoutConstants";
+import { getAvailableTrainingTypes } from "@/core/facilities";
+import { FACILITY_NAMES } from "@/core/facilities/facilityTypes";
 import type { Horse, PlayerFacilities } from "@/game/types";
 import { useCallback, memo, useMemo } from "react";
 
@@ -69,13 +71,26 @@ export function TrainingPanelComponent({
     [isPregnant, slotsLeft, cash, horse, handleTrainingClick],
   );
 
+  const availableTypes = useMemo(
+    () =>
+      facilities
+        ? getAvailableTrainingTypes(facilities)
+        : ["speed", "stamina", "acceleration", "rest"],
+    [facilities],
+  );
+
   // Memoize advanced workouts array to prevent recreation
   const advancedWorkoutButtons = useMemo(
     () =>
       ADVANCED_WORKOUTS.map((workout) => {
-        const isEnabled = facilities && isWorkoutEnabled(facilities, workout.key as any);
+        const isEnabled = availableTypes.includes(workout.key);
         const isStatCapped =
           workout.stat !== undefined && getStatValue(horse.stats, workout.stat) >= horse.potential;
+        const req = TRAINING_FACILITY_REQUIREMENTS[workout.key];
+        const unlockHint =
+          !isEnabled && req
+            ? `Requires ${FACILITY_NAMES[req.facilityType]} (${req.minLevel})`
+            : undefined;
 
         return {
           key: workout.key,
@@ -90,10 +105,11 @@ export function TrainingPanelComponent({
           label: workout.label,
           cost: workout.cost,
           isEnabled,
+          unlockHint,
           onClick: () => handleTrainingClick(workout.key),
         };
       }),
-    [facilities, horse, isPregnant, slotsLeft, cash, handleTrainingClick],
+    [availableTypes, horse, isPregnant, slotsLeft, cash, handleTrainingClick],
   );
 
   return (
@@ -123,6 +139,7 @@ export function TrainingPanelComponent({
               key={btn.key}
               onClick={btn.onClick}
               disabled={btn.disabled}
+              title={btn.unlockHint}
               className="w-full justify-between text-xs"
               variant="outline"
             >
