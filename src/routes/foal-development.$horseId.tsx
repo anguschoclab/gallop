@@ -1,7 +1,7 @@
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter, Navigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Sprout } from "lucide-react";
+import { ArrowLeft, Sprout, CheckCircle2, Clock } from "lucide-react";
 import { useGame } from "@/game/store";
 import { toast } from "sonner";
 import type { MilestoneChoice } from "@/core/horse/foalDevelopment";
@@ -14,8 +14,10 @@ function FoalDevelopmentPage() {
   const { horseId } = Route.useParams();
   const router = useRouter();
   const horse = useGame((s) => s.horses.find((h) => h.id === horseId));
+  const currentDay = useGame((s) => s.day);
   const resolveFoalMilestone = useGame((s) => s.resolveFoalMilestone);
 
+  // Guard: horse missing.
   if (!horse) {
     return (
       <div className="p-12 text-center space-y-4">
@@ -27,9 +29,18 @@ function FoalDevelopmentPage() {
     );
   }
 
+  // Guard: no arc → redirect back to the horse profile. Nothing to resolve here.
+  if (!horse.developmentArc) {
+    return <Navigate to="/stable/$horseId" params={{ horseId: horse.id }} replace />;
+  }
+
   const arc = horse.developmentArc;
-  const pending = arc?.milestones.filter((m) => m.status === "pending") ?? [];
-  const activeMilestone = pending[0];
+  const pending = arc.milestones.filter((m) => m.status === "pending");
+  const resolved = arc.milestones.filter((m) => m.status === "resolved");
+  const activeMilestone = pending.find((m) => m.triggerDay <= currentDay);
+  const upcoming = pending.find((m) => m.triggerDay > currentDay);
+  const isFullyResolved = pending.length === 0;
+  const isReadOnly = !activeMilestone; // resolved or waiting for a trigger day
 
   const handleChoose = (choice: MilestoneChoice) => {
     if (!activeMilestone) return;
@@ -61,17 +72,14 @@ function FoalDevelopmentPage() {
           <Sprout className="h-3 w-3" /> Pre-Race Preparation
         </div>
         <h1 className="text-4xl font-black text-cream">{horse.name}</h1>
+        {isReadOnly && (
+          <p className="text-xs text-cream/50 font-mono uppercase tracking-widest">
+            Read-only view
+          </p>
+        )}
       </header>
 
-      {!arc || !activeMilestone ? (
-        <Card className="bg-slate-900/40 border-white/5">
-          <CardContent className="p-8 text-center text-cream/70">
-            {arc
-              ? "All development milestones are complete. This horse is ready to train."
-              : "This horse has no development arc."}
-          </CardContent>
-        </Card>
-      ) : (
+      {activeMilestone ? (
         <>
           <Card className="bg-slate-900/40 border-white/5 border-l-4 border-l-gold">
             <CardHeader className="border-b border-white/5">
@@ -119,6 +127,55 @@ function FoalDevelopmentPage() {
             </p>
           )}
         </>
+      ) : (
+        <Card className="bg-slate-900/40 border-white/5">
+          <CardContent className="p-8 space-y-4">
+            {isFullyResolved ? (
+              <div className="flex items-center gap-3 text-cream">
+                <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                <span>All development milestones are complete. This horse is ready to train.</span>
+              </div>
+            ) : upcoming ? (
+              <div className="flex items-center gap-3 text-cream">
+                <Clock className="h-5 w-5 text-cream/60" />
+                <span>
+                  Next milestone <span className="font-semibold">{upcoming.label}</span> unlocks on
+                  day {upcoming.triggerDay} (in {upcoming.triggerDay - currentDay} day
+                  {upcoming.triggerDay - currentDay === 1 ? "" : "s"}).
+                </span>
+              </div>
+            ) : null}
+          </CardContent>
+        </Card>
+      )}
+
+      {resolved.length > 0 && (
+        <Card className="bg-slate-900/40 border-white/5">
+          <CardHeader className="border-b border-white/5 pb-2">
+            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-cream/40">
+              Resolved Milestones
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 space-y-2">
+            {resolved.map((m) => {
+              const chosen = m.choices.find((c) => c.key === m.resolvedChoiceKey);
+              return (
+                <div key={m.key} className="flex items-center gap-2 text-sm">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                  <span className="text-cream/40 uppercase tracking-widest font-mono text-[10px]">
+                    {m.label}
+                  </span>
+                  <span className="text-cream">{chosen?.label ?? m.resolvedChoiceKey}</span>
+                  {m.resolvedOnDay !== undefined && (
+                    <span className="ml-auto text-cream/40 font-mono text-[10px]">
+                      day {m.resolvedOnDay}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
       )}
     </div>
   );
