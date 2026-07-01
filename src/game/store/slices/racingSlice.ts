@@ -26,6 +26,13 @@ import type { AnyIntent } from "@/core/resolver/intents";
 import { simulateRace } from "@/services/race/raceSimulationExecutor";
 import { generateHorse } from "@/core/horse/horseFactory";
 import { createRng, hashStr } from "@/core/common/rng";
+import {
+  calculateNominationFee,
+  getNominationTier,
+  getRaceGrade,
+  type NominationRecord,
+  type NominationStatus,
+} from "@/core/racing/nominationFees";
 
 const TRAINING_SLOTS_PER_DAY = 2;
 
@@ -47,6 +54,8 @@ export type RacingSlice = RacingState & {
     milestoneKey: string,
     choiceKey: string,
   ) => { ok: boolean; reason?: string };
+  nominateHorse: (horseId: string, raceId: string) => { ok: boolean; reason?: string };
+  withdrawNomination: (nominationId: string) => void;
 };
 
 /**
