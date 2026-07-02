@@ -37,3 +37,7 @@
 
 **Learning:** When trying to eliminate consecutive `.find()` lookups over filtered arrays using a `Map`, beware of inline array filters (like `.filter() ?? []`) creating unstable references. Using an unstable array as a dependency in `useMemo` invalidates the cache on every render, resulting in worse performance due to object allocation overhead.
 **Action:** Compute the filter _and_ the HashMap in a single pass inside a `useMemo` that depends on stable source objects (e.g. `hiredStaff` and `stableId`) to avoid unstable reference invalidation.
+
+## 2024-05-19 - [O(N) Lookups in NominationsTab]
+**Learning:** Found an O(N) array lookup (`horses.find()`) inside a loop mapping over nominations in `src/components/racing/NominationsTab.tsx`. This causes O(M*N) complexity during rendering, degrading performance.
+**Action:** Always pre-calculate a local `useMemo`-backed hash map lookup for stable items (e.g. `horseMap = new Map(horses.map(h => [h.id, h]))`) to reduce complexity from O(M*N) to O(M+N). Avoid chaining array methods inline when possible.
