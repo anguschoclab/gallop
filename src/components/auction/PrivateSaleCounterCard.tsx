@@ -11,6 +11,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { formatCurrency } from "@/core/common/formatting";
 import { toast } from "sonner";
 import type { Horse, Stable, PrivateSaleOffer } from "@/game/types";
@@ -106,9 +107,20 @@ export function PrivateSaleCounterCard({
               </AlertDialogContent>
             </AlertDialog>
           ) : (
-            <Button size="sm" variant="outline" disabled title="Insufficient funds">
-              Accept {formatCurrency(counterAmt)}
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span tabIndex={0} className="inline-block cursor-not-allowed">
+                    <Button size="sm" variant="outline" disabled className="pointer-events-none">
+                      Accept {formatCurrency(counterAmt)}
+                    </Button>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Insufficient funds</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </div>
       </CardContent>

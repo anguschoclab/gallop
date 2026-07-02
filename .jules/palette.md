@@ -32,3 +32,8 @@
 
 **Learning:** Native `title` attributes on icon-only buttons (like bookmarks) often suffer from accessibility issues—they don't always appear consistently across browsers or screen readers, and they can't be easily styled or controlled via keyboard focus.
 **Action:** Replace native `title` attributes on icon-only buttons with the design system's `@/components/ui/tooltip` components (`TooltipProvider`, `Tooltip`, `TooltipTrigger`, `TooltipContent`) to ensure consistent, accessible, and styleable tooltips that trigger on both hover and keyboard focus.
+
+## 2024-06-29 - Accessible Tooltips on Disabled Buttons
+
+**Learning:** Found a disabled 'Accept' button in `PrivateSaleCounterCard` that used a native `title` attribute for its tooltip. Since disabled elements swallow pointer events, tooltips often fail to show up, rendering the reason for being disabled invisible to users (and screen readers). Adding a `Tooltip` component directly on the disabled button doesn't work either due to the same pointer event swallowing.
+**Action:** When applying `@/components/ui/tooltip` to a disabled `<Button>`, wrap the button in a `<span tabIndex={0} className="inline-block cursor-not-allowed">`, and add `className="pointer-events-none"` to the disabled `<Button>` itself. This shifts the pointer and focus target to the wrapper span, allowing the tooltip to trigger accessibly while maintaining the disabled visual cursor.
