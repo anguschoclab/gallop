@@ -54,9 +54,17 @@ import type { AnyIntent } from "@/core/resolver/intents";
 
 export type { StoreType, GameStateCreator } from "./types";
 
+/**
+ * Increment this when the persisted state shape changes in a way that is
+ * incompatible with previously-stored data. On a version mismatch the store
+ * resets to defaults, keeping only fields that are always safe to carry over
+ * (playerNominations, syndicateInvestors).
+ */
+export const STORE_STATE_VERSION = 1;
+
 // List of state keys that should be persisted to storage.
 // Any new game state fields should be added here to ensure they survive a refresh.
-const PERSISTED_KEYS: (keyof GameState)[] = [
+const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "day",
   "cash",
   "horses",
@@ -113,6 +121,8 @@ const PERSISTED_KEYS: (keyof GameState)[] = [
   "playerNominations" as keyof GameState,
   // Player-facing syndication investors
   "syndicateInvestors" as keyof GameState,
+  // Persisted state format version — used to detect incompatible stored data
+  "storeVersion" as any,
 ];
 
 /**
@@ -244,6 +254,9 @@ export function getInitializationWorker(): Remote<InitializationWorkerApi> {
 export const useGame = create<StoreType>()(
   persist(
     (set, get) => ({
+      // Persisted state version — checked on rehydration to detect incompatible stored data
+      storeVersion: STORE_STATE_VERSION,
+
       // Systems state properties (required fields from SystemsState)
       npcStables: [],
       breedingPrograms: [],
@@ -344,12 +357,40 @@ export const useGame = create<StoreType>()(
       name: "gallop-game-state",
       storage: createOpfsStorage(),
       onRehydrateStorage: () => (state) => {
-        if (state && state.horses) {
+        if (!state) {
+          hydrationComplete.value = true;
+          return;
+        }
+
+        // Version mismatch: stored data was written by an older/incompatible schema.
+        // Reset to default state but preserve fields that are always safe to carry over.
+        if ((state as any).storeVersion !== STORE_STATE_VERSION) {
+          const defaults = createInitialState({} as any);
+          useGame.setState({
+            ...defaults,
+            // These two fields are pure append-only lists with stable schemas —
+            // preserve them across version bumps so the player doesn't lose nominations
+            // or investor records on an upgrade.
+            playerNominations: Array.isArray((state as any).playerNominations)
+              ? (state as any).playerNominations
+              : [],
+            syndicateInvestors:
+              (state as any).syndicateInvestors &&
+              typeof (state as any).syndicateInvestors === "object"
+                ? (state as any).syndicateInvestors
+                : {},
+            storeVersion: STORE_STATE_VERSION,
+          } as any);
+          hydrationComplete.value = true;
+          return;
+        }
+
+        if (state.horses) {
           useGame.setState({
             horseMap: new Map(state.horses.map((h: any) => [h.id, h])),
           });
         }
-        if (state && state.races) {
+        if (state.races) {
           useGame.setState({
             raceMap: new Map(state.races.map((r: any) => [r.id, r])),
           });
