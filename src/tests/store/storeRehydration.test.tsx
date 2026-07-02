@@ -267,8 +267,8 @@ describe("Navigation simulation — state survives route changes", () => {
     useGame.setState({ ...createDefaultGameState(), ...persisted } as any);
 
     render(<StewardsInquiryOverlay />);
-    expect(screen.getByText("Stewards Inquiry")).toBeInTheDocument();
-    expect(screen.getByText("Midnight Comet")).toBeInTheDocument();
+    expect(screen.getByText("Stewards Inquiry")).toBeTruthy();
+    expect(screen.getByText("Midnight Comet")).toBeTruthy();
   });
 
   it("StewardsInquiryOverlay remains closed after reload on /syndicate/:id when dismissed key is set", () => {
