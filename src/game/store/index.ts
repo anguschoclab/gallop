@@ -320,6 +320,14 @@ export const useGame = create<StoreType>()(
       // Transport slice
       ...createTransportSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
+      // Stewards inquiry action — used by the useStewardsInquiry hook after
+      // the player watches a race complete in the UI.
+      addStewardsInquiry: (inquiry: any) => {
+        set((state: any) => ({
+          stewardsInquiries: [...(state.stewardsInquiries ?? []), inquiry],
+        }));
+      },
+
       // Start new game action
       startNewGame: async (options: NewGameOptions) => {
         // Initialize workers if not already initialized

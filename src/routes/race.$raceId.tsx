@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { useLiveRaceSimulation } from "@/hooks/race/useLiveRaceSimulation";
 import { RacePreShow } from "@/components/race/RacePreShow";
@@ -8,6 +8,7 @@ import { useRacePageData } from "@/hooks/race/useRacePageData";
 import { useRaceUIState } from "@/hooks/race/useRaceUIState";
 import { useRacePhase, type RacePhase } from "@/hooks/race/useRacePhase";
 import { useRaceProgress } from "@/hooks/race/useRaceProgress";
+import { useStewardsInquiry } from "@/hooks/race/useStewardsInquiry";
 import { getCourseForRace } from "@/data/tracks";
 
 type DisplayPhase = "preshow" | "broadcast";
@@ -101,7 +102,7 @@ export function LiveRace() {
     race,
     runners,
     raceWeather,
-    resolveRaceWithImpacts,
+    resolveRaceWithImpacts: resolveRaceBase,
     narrativeRef,
     messageQueue,
     localHorseMap,
@@ -110,6 +111,18 @@ export function LiveRace() {
     calibratedPars,
     rngRef,
   } = useRacePageData(raceId);
+
+  const triggerInquiry = useStewardsInquiry();
+
+  // Wrap resolveRaceWithImpacts so the stewards inquiry hook fires after the
+  // store resolves the race, giving the player a post-race inquiry notification.
+  const resolveRaceWithImpacts = useCallback(
+    (raceId: string, result: { horseId: string; position: number; time: number }[]) => {
+      resolveRaceBase(raceId, result);
+      if (race) triggerInquiry(race, result);
+    },
+    [resolveRaceBase, triggerInquiry, race],
+  );
 
   const course = race ? getCourseForRace(race) : undefined;
 

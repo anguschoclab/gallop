@@ -130,7 +130,9 @@
       "Bash(sky\")",
       "Bash(xargs grep -l \"RaceBroadcast\\\\|Broadcast\")",
       "Bash(grep -E \"\\\\.\\(ts|tsx\\)$\")",
-      "Bash(./node_modules/.bin/tsc --noEmit --skipLibCheck)"
+      "Bash(./node_modules/.bin/tsc --noEmit --skipLibCheck)",
+      "Bash(bun -e ' *)",
+      "Bash(bun test *)"
     ]
   },
   "hooks": {
