@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -106,9 +107,20 @@ export function PrivateSaleCounterCard({
               </AlertDialogContent>
             </AlertDialog>
           ) : (
-            <Button size="sm" variant="outline" disabled title="Insufficient funds">
-              Accept {formatCurrency(counterAmt)}
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span tabIndex={0} className="inline-block cursor-not-allowed">
+                    <Button size="sm" variant="outline" disabled className="pointer-events-none">
+                      Accept {formatCurrency(counterAmt)}
+                    </Button>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Insufficient funds</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </div>
       </CardContent>

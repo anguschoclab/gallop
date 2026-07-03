@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { AlertTriangle } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
 import {
@@ -93,20 +94,36 @@ export function ClaimingRacePanel({
                         Claim filed
                       </Button>
                     ) : (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        disabled={!canAfford}
-                        title={
-                          canAfford
-                            ? undefined
-                            : `You need ${formatCurrency(price - cash)} to file this claim.`
-                        }
-                        className="text-xs"
-                        onClick={() => setPendingClaimHorseId(entry.horseId)}
-                      >
-                        Claim {formatCurrency(price)}
-                      </Button>
+                      canAfford ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-xs"
+                          onClick={() => setPendingClaimHorseId(entry.horseId)}
+                        >
+                          Claim {formatCurrency(price)}
+                        </Button>
+                      ) : (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span tabIndex={0} className="inline-block cursor-not-allowed">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  disabled
+                                  className="text-xs pointer-events-none"
+                                >
+                                  Claim {formatCurrency(price)}
+                                </Button>
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>You need {formatCurrency(price - cash)} to file this claim.</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )
                     ))}
                 </div>
               </div>
