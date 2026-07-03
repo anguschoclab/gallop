@@ -50,7 +50,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     globals: true,
-    setupFiles: ["src/tests/setup.ts"],
+    setupFiles: ["@testing-library/jest-dom/vitest", "src/tests/setup.ts"],
     include: ["src/tests/**/*.test.ts", "src/tests/**/*.test.tsx"],
     coverage: {
       provider: "v8",
