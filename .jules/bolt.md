@@ -37,3 +37,8 @@
 
 **Learning:** When trying to eliminate consecutive `.find()` lookups over filtered arrays using a `Map`, beware of inline array filters (like `.filter() ?? []`) creating unstable references. Using an unstable array as a dependency in `useMemo` invalidates the cache on every render, resulting in worse performance due to object allocation overhead.
 **Action:** Compute the filter _and_ the HashMap in a single pass inside a `useMemo` that depends on stable source objects (e.g. `hiredStaff` and `stableId`) to avoid unstable reference invalidation.
+
+## 2024-05-20 - [Optimizing chained array lookups with sets in game event loops]
+
+**Learning:** When attempting to find intersections between two arrays (e.g. checking if a horse ID from the result array exists in an entry array), chaining \`.filter()\` and \`.some()\` operations results in O(N*M) complexity, creating significant bottlenecks in hot paths like the NPC logic cycle.
+**Action:** When filtering arrays using membership checks against another array, pre-calculate a \`Set\` and replace the \`.some()\` loop with a \`.has()\` check to enable O(1) lookups and change the operation from O(N*M) to O(N).
