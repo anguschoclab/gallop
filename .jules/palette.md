@@ -32,3 +32,7 @@
 
 **Learning:** Native `title` attributes on icon-only buttons (like bookmarks) often suffer from accessibility issues—they don't always appear consistently across browsers or screen readers, and they can't be easily styled or controlled via keyboard focus.
 **Action:** Replace native `title` attributes on icon-only buttons with the design system's `@/components/ui/tooltip` components (`TooltipProvider`, `Tooltip`, `TooltipTrigger`, `TooltipContent`) to ensure consistent, accessible, and styleable tooltips that trigger on both hover and keyboard focus.
+
+## 2024-07-03 - Accessible Tooltips for Disabled States
+**Learning:** Conditionally wrapping disabled buttons with `TooltipTrigger` components can result in an invalid or empty `aria-describedby` attribute being applied to the active button if the condition is not perfectly scoped to just the disabled state.
+**Action:** Unconditionally return the standard component when active, and only wrap the element in the `TooltipProvider/Tooltip/TooltipTrigger` hierarchy for the disabled state, taking care to wrap the disabled button in a `span` with `tabIndex={0}` and adding `pointer-events-none` to the button to ensure hover and focus events trigger the tooltip.
