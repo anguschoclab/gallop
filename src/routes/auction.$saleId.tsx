@@ -8,6 +8,7 @@ import { LotDetailPanel } from "@/components/auction/LotDetailPanel";
 import { BiddingPanel } from "@/components/auction/BiddingPanel";
 import { ConsignmentWithdrawal } from "@/components/auction/ConsignmentWithdrawal";
 import { ResolvedSaleSummary } from "@/components/auction/ResolvedSaleSummary";
+import { LotBidsPanel } from "@/components/auction/LotBidsPanel";
 import { AuctionLoadingState, AuctionErrorState } from "@/components/auction/AuctionStates";
 import { useAuctionSaleFilters } from "@/hooks/auction/useAuctionSaleFilters";
 import { useAuctionSaleData } from "@/hooks/auction/useAuctionSaleData";
@@ -39,6 +40,7 @@ function AuctionSalePage() {
     day,
     cash,
     horseMap,
+    stables,
     activeLots,
     displayLots,
     currentLot,
@@ -176,6 +178,13 @@ function AuctionSalePage() {
                     onSetMaxBid={handleMaxBid}
                     onBuyNow={handleBuyNow}
                     message={message}
+                  />
+                )}
+
+                {!isResolved && (
+                  <LotBidsPanel
+                    bidHistory={currentLot.bidHistory}
+                    stables={stables}
                   />
                 )}
 

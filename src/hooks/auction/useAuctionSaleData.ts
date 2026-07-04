@@ -194,6 +194,7 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
     day,
     cash,
     horseMap,
+    stables,
     activeLots,
     displayLots,
     currentLot,
