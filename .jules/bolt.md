@@ -42,3 +42,7 @@
 
 **Learning:** When filtering or mapping arrays (like `races` or `horses`) and checking membership in another array (e.g., `tracks.includes(...)` or `.some(...)`), React renders can suffer from O(N*M) performance bottlenecks if both arrays are large.
 **Action:** Replace `.includes()` and `.some()` inside `.filter()` or `.map()` loops with a pre-calculated `Set` using `useMemo` (e.g., `useMemo(() => new Set(arr), [arr])`) to perform O(1) membership checks, reducing overall complexity to O(N+M).
+
+## 2024-05-19 - [O(N) Lookups in NominationsTab]
+**Learning:** Found an O(N) array lookup (`horses.find()`) inside a loop mapping over nominations in `src/components/racing/NominationsTab.tsx`. This causes O(M*N) complexity during rendering, degrading performance.
+**Action:** Always pre-calculate a local `useMemo`-backed hash map lookup for stable items (e.g. `horseMap = new Map(horses.map(h => [h.id, h]))`) to reduce complexity from O(M*N) to O(M+N). Avoid chaining array methods inline when possible.

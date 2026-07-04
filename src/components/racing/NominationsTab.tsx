@@ -60,6 +60,8 @@ export function NominationsTab() {
   const activeNoms = noms.filter((n) => n.status !== "scratched");
   const paidTotal = activeNoms.reduce((sum, n) => sum + n.feePaid, 0);
 
+  const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-3 gap-4">
@@ -127,7 +129,7 @@ export function NominationsTab() {
               .slice()
               .sort((a, b) => a.raceDay - b.raceDay)
               .map((n) => {
-                const horse = horses.find((h) => h.id === n.horseId);
+                const horse = horseMap.get(n.horseId);
                 return (
                   <div
                     key={n.id}
