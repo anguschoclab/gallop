@@ -36,3 +36,8 @@
 ## 2024-07-03 - Accessible Tooltips for Disabled States
 **Learning:** Conditionally wrapping disabled buttons with `TooltipTrigger` components can result in an invalid or empty `aria-describedby` attribute being applied to the active button if the condition is not perfectly scoped to just the disabled state.
 **Action:** Unconditionally return the standard component when active, and only wrap the element in the `TooltipProvider/Tooltip/TooltipTrigger` hierarchy for the disabled state, taking care to wrap the disabled button in a `span` with `tabIndex={0}` and adding `pointer-events-none` to the button to ensure hover and focus events trigger the tooltip.
+
+## 2024-06-29 - Accessible Tooltips on Disabled Buttons
+
+**Learning:** Found a disabled 'Accept' button in `PrivateSaleCounterCard` that used a native `title` attribute for its tooltip. Since disabled elements swallow pointer events, tooltips often fail to show up, rendering the reason for being disabled invisible to users (and screen readers). Adding a `Tooltip` component directly on the disabled button doesn't work either due to the same pointer event swallowing.
+**Action:** When applying `@/components/ui/tooltip` to a disabled `<Button>`, wrap the button in a `<span tabIndex={0} className="inline-block cursor-not-allowed">`, and add `className="pointer-events-none"` to the disabled `<Button>` itself. This shifts the pointer and focus target to the wrapper span, allowing the tooltip to trigger accessibly while maintaining the disabled visual cursor.

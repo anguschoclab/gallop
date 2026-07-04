@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { formatCurrency } from "@/core/common/formatting";
 import { toast } from "sonner";
 import type { Horse, Stable, PrivateSaleOffer } from "@/game/types";
