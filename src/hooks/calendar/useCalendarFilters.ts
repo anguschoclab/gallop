@@ -16,9 +16,12 @@ export function useCalendarFilters(regionId: string, search: CalendarSearch) {
   const races = useGame((s) => s.races);
   const currentDay = useGame((s) => s.day);
 
+  const regionTracksSet = useMemo(() => new Set(region.tracks), [region.tracks]);
+
+  // ⚡ Bolt: Replace O(N*M) lookup with O(N+M) Set check
   const regionRaces = useMemo(
-    () => races.filter((race) => race.graded && region.tracks.includes(race.graded.track)),
-    [races, region.tracks],
+    () => races.filter((race) => race.graded && regionTracksSet.has(race.graded.track)),
+    [races, regionTracksSet],
   );
 
   const filteredRaces = useMemo(
