@@ -46,3 +46,8 @@
 ## 2024-05-19 - [O(N) Lookups in NominationsTab]
 **Learning:** Found an O(N) array lookup (`horses.find()`) inside a loop mapping over nominations in `src/components/racing/NominationsTab.tsx`. This causes O(M*N) complexity during rendering, degrading performance.
 **Action:** Always pre-calculate a local `useMemo`-backed hash map lookup for stable items (e.g. `horseMap = new Map(horses.map(h => [h.id, h]))`) to reduce complexity from O(M*N) to O(M+N). Avoid chaining array methods inline when possible.
+
+## 2024-05-20 - [Optimizing chained array lookups with sets in game event loops]
+
+**Learning:** When attempting to find intersections between two arrays (e.g. checking if a horse ID from the result array exists in an entry array), chaining `.filter()` and `.some()` operations results in O(N*M) complexity, creating significant bottlenecks in hot paths like the NPC logic cycle.
+**Action:** When filtering arrays using membership checks against another array, pre-calculate a `Set` and replace the `.some()` loop with a `.has()` check to enable O(1) lookups and change the operation from O(N*M) to O(N).

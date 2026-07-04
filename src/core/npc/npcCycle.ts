@@ -259,28 +259,28 @@ function processRegionalDominance(
               if (!rivalStable) continue;
 
               // Find best horses for headline
-              const playerEntries = race.entries.filter((e) => e.owned);
-              const rivalEntries = race.entries.filter((e) => e.stableId === rivalStableId);
+              // ⚡ Bolt: Replace O(N*M) lookups inside arrays (.filter/.find containing .some) with O(1) Set lookups
+              const playerHorseIds = new Set(race.entries.filter((e) => e.owned).map((e) => e.horseId));
+              const rivalHorseIds = new Set(
+                race.entries.filter((e) => e.stableId === rivalStableId).map((e) => e.horseId),
+              );
 
               const playerBestPos = Math.min(
                 ...race
-                  .result!.filter((r) => playerEntries.some((e) => e.horseId === r.horseId))
+                  .result!.filter((r) => playerHorseIds.has(r.horseId))
                   .map((r) => r.position),
               );
               const rivalBestPos = Math.min(
                 ...race
-                  .result!.filter((r) => rivalEntries.some((e) => e.horseId === r.horseId))
+                  .result!.filter((r) => rivalHorseIds.has(r.horseId))
                   .map((r) => r.position),
               );
 
               const playerHorseId = race.result!.find(
-                (r) =>
-                  r.position === playerBestPos &&
-                  playerEntries.some((e) => e.horseId === r.horseId),
+                (r) => r.position === playerBestPos && playerHorseIds.has(r.horseId),
               )?.horseId;
               const rivalHorseId = race.result!.find(
-                (r) =>
-                  r.position === rivalBestPos && rivalEntries.some((e) => e.horseId === r.horseId),
+                (r) => r.position === rivalBestPos && rivalHorseIds.has(r.horseId),
               )?.horseId;
 
               if (playerHorseId && rivalHorseId) {
