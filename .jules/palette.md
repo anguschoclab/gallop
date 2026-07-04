@@ -1,0 +1,1 @@
+## 2026-07-04 - Add explicit label association in StaffNegotiationDialog\n**Learning:** Found a missing htmlFor/id association in the staff negotiation dialog input, which reduces screen reader accessibility and clickable area.\n**Action:** Add id to inputs and htmlFor to labels to explicitly link them together for accessibility.
