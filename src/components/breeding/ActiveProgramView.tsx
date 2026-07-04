@@ -33,15 +33,20 @@ export function ActiveProgramView() {
   // Impact: Reduces rendering complexity from O(N*M) to O(N+M) avoiding UI jank.
   const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
 
+  // ⚡ Bolt Optimization:
+  // Pre-calculate a Set for O(1) membership checks instead of running O(M) .includes() inside the .filter() loop.
+  // Impact: Reduces complexity from O(N*M) to O(N+M), improving render performance when lists are large.
+  const enrolledDamSet = useMemo(() => new Set(program.enrolledDamIds), [program.enrolledDamIds]);
+
   const eligibleMares = horses.filter(
     (h) =>
       h.owned &&
       (h.gender === "mare" || h.gender === "filly") &&
       h.age >= 3 &&
-      !program.enrolledDamIds.includes(h.id),
+      !enrolledDamSet.has(h.id),
   );
 
-  const enrolledMares = horses.filter((h) => program.enrolledDamIds.includes(h.id));
+  const enrolledMares = horses.filter((h) => enrolledDamSet.has(h.id));
   const progressPct = Math.round((1 - program.geneticDistance) * 100);
 
   const handleEnroll = (damId: string) => {
