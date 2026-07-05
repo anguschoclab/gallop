@@ -5,6 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { cn } from "@/lib/cn";
 import { Building2, ChevronRight } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ReputationEvent {
   description: string;
@@ -27,16 +28,22 @@ export function HQOpsWidget() {
             H.Q. Ops
           </CardTitle>
         </div>
-        <Link to="/financial-report">
-          <Button
-            aria-label="Go to H.Q. Ops financial report"
-            size="icon"
-            variant="ghost"
-            className="h-8 w-8 text-cream-muted hover:text-gold group-hover:translate-x-0.5 transition-transform"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </Link>
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link to="/financial-report" aria-label="Go to H.Q. Ops financial report">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8 text-cream-muted hover:text-gold group-hover:translate-x-0.5 transition-transform"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>Go to H.Q. Ops financial report</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </CardHeader>
       <CardContent className="pt-4 flex-1 flex flex-col justify-between space-y-4">
         <div className="space-y-3">

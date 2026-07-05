@@ -12,6 +12,7 @@ import { FACILITY_NAMES, type FacilityType } from "@/core/facilities/facilityTyp
 import { MapPin, Users, Globe, Hammer, Zap, Heart, TrendingUp, ArrowRightLeft } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { formatCurrency } from "@/core/common/formatting";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function ImperialOutpostManager() {
   const [selectedOutpostId, setSelectedOutpostId] = useState<string | null>(null);
@@ -185,14 +186,21 @@ export function ImperialOutpostManager() {
                   <p className="text-sm font-bold text-cream">Marcus Sterling</p>
                   <p className="text-[10px] text-gold uppercase font-bold">Elite Strategist</p>
                 </div>
-                <Button
-                  aria-label="Swap head trainer"
-                  size="icon"
-                  variant="ghost"
-                  className="h-8 w-8 text-cream-muted"
-                >
-                  <ArrowRightLeft className="w-4 h-4" />
-                </Button>
+                <TooltipProvider delayDuration={300}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        aria-label="Swap head trainer"
+                        size="icon"
+                        variant="ghost"
+                        className="h-8 w-8 text-cream-muted"
+                      >
+                        <ArrowRightLeft className="w-4 h-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Swap head trainer</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </CardContent>
           </Card>
