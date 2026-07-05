@@ -51,3 +51,7 @@
 
 **Learning:** When attempting to find intersections between two arrays (e.g. checking if a horse ID from the result array exists in an entry array), chaining `.filter()` and `.some()` operations results in O(N*M) complexity, creating significant bottlenecks in hot paths like the NPC logic cycle.
 **Action:** When filtering arrays using membership checks against another array, pre-calculate a `Set` and replace the `.some()` loop with a `.has()` check to enable O(1) lookups and change the operation from O(N*M) to O(N).
+
+## 2024-07-06 - O(1) Lookups in Awards Scoring
+**Learning:** During the awards phase (`calculateAwardPoints`), checking category eligibility and calculating points iterates over each race in a horse's history, running an O(N) `.find()` on the global `races` array. Across multiple categories, regions, and horses, this results in an O(Regions * Categories * Horses * RacesHistory * TotalRaces) nested bottleneck.
+**Action:** Always prefer `Map` lookups (O(1)) over `Array.prototype.find()` inside deeply nested loops. When processing data that requires repeated lookups against a static array, precompute a `Map` structure at the outermost scope and pass it down the pipeline.
