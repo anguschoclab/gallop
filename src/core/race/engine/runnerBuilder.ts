@@ -314,13 +314,13 @@ export function buildRunner(
   }
 
   let jockeyName = jockey?.name;
-  if (jockey && (jockey as any).isApprentice && claim > 0) {
+  if (jockey && jockey.isApprentice && claim > 0) {
     jockeyName = `${jockey.name} (a${claim})`;
   }
 
   let acclimatizationPenalty = 1.0;
-  if (stable && (stable as any).outposts && h.outpostId) {
-    const outpost = (stable as any).outposts.find((o: any) => o.id === h.outpostId);
+  if (stable && stable.outposts && h.outpostId) {
+    const outpost = stable.outposts.find((o) => o.id === h.outpostId);
     if (outpost) {
       const daysLeft = outpost.acclimatizationDays?.[h.id] || 0;
       if (daysLeft > 0) {

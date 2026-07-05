@@ -117,6 +117,27 @@ describe("InfrastructureHandler", () => {
     expect(draft.outposts[0].name).toBe("East Coast Base");
   });
 
+  it("transport_horse with player horse updates draft.outposts acclimatization", () => {
+    const handler = new InfrastructureHandler();
+    const state = {
+      horses: [{ id: "h1", name: "Star", fatigue: 10, stableId: "" }],
+      npcStables: [],
+      outposts: [{ id: "outpost-1", name: "East", region: "NA", totalSlots: 12, facilities: {}, acclimatizationDays: {} }],
+    } as unknown as GameState;
+
+    const impact: TransportImpact = {
+      id: "imp-1", intentId: "", day: 10, phase: "managementResolution", logLevel: "always",
+      type: "transport_horse", horseId: "h1", fromOutpostId: "outpost-0", toOutpostId: "outpost-1",
+      fatigueSpike: 15, acclimatizationDays: 7, reason: "Transported",
+    };
+
+    const draft = JSON.parse(JSON.stringify(state));
+    handler.handle(draft, impact);
+
+    expect(draft.horses[0].outpostId).toBe("outpost-1");
+    expect(draft.outposts[0].acclimatizationDays["h1"]).toBe(7);
+  });
+
   it("canHandle returns true for infrastructure impact types only", () => {
     const handler = new InfrastructureHandler();
     expect(handler.canHandle("facility_upgrade")).toBe(true);

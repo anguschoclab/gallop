@@ -21,6 +21,7 @@ import type { AwardRegion, RegionalAward } from "@/core/awards/types";
 import { AWARD_CEREMONY_SCHEDULE } from "@/core/awards/types";
 import { PHASE_ORDER_AWARDS } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
+import type { FameImpact } from "@/core/resolver/impacts/index";
 
 export const awardsPhase = {
   name: "awards",
@@ -113,7 +114,7 @@ export const awardsPhase = {
             horseId: award.horseId,
             delta: fameBoost,
             reason: `${award.region} ${award.category} award fame bonus`,
-          } as AnyImpact);
+          } as FameImpact);
         }
       }
 

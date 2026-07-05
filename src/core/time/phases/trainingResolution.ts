@@ -22,6 +22,7 @@ import {
   TRAINING_MIN_ENERGY_THRESHOLD,
 } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
+import type { FitnessImpact, FatigueImpact, CashImpact } from "@/core/resolver/impacts/index";
 import { createRng, hashStr } from "@/core/common/rng";
 import { getFacilityBonus } from "@/core/facilities";
 import { createExpense } from "@/core/expenses";
@@ -70,12 +71,12 @@ export const trainingResolutionPhase: PipelinePhase = {
       : { stableStates: {}, globalDay: newDay, regionalKings: {} };
     let aiManagerUpdated = false;
     for (const s of state.npcStables ?? []) {
-      for (const o of (s as any).outposts ?? []) {
+      for (const o of s.outposts ?? []) {
         outpostMap.set(o.id, o);
       }
     }
     const playerOutpostMap = new Map<string, any>(
-      ((state as any).outposts ?? []).map((o: any) => [o.id, o]),
+      (state.outposts ?? []).map((o) => [o.id, o]),
     );
 
     const hiredStaffByStable = new Map<string, typeof state.hiredStaff>();
@@ -129,7 +130,7 @@ export const trainingResolutionPhase: PipelinePhase = {
           horseId: horse.id,
           delta: fitnessDelta,
           reason: `${intent.trainingType} training impulse`,
-        } as any);
+        } as FitnessImpact);
 
         impacts.push({
           id: generateUUID(),
@@ -141,11 +142,9 @@ export const trainingResolutionPhase: PipelinePhase = {
           horseId: horse.id,
           delta: fatigueDelta,
           reason: `${intent.trainingType} training impulse`,
-        } as any);
+        } as FatigueImpact);
       }
       // --- END BANISTER IMPULSES ---
-
-      // Record training expense (only for actual training, not rest)
       if (intent.trainingType !== "rest") {
         // Different workout types have different costs
         const cost = TRAINING_COST_MAP[intent.trainingType] ?? TRAINING_COST;
@@ -184,7 +183,7 @@ export const trainingResolutionPhase: PipelinePhase = {
           entityId: "player",
           amount: -cost,
           reason: `${intent.trainingType} training cost`,
-        } as any);
+        } as CashImpact);
       }
 
       // Deduct energy (only for actual training, not rest)

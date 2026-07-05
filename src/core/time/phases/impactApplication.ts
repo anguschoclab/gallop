@@ -71,7 +71,7 @@ export const impactApplicationPhase: PipelinePhase = {
       cleanedState.paceSamples = newPaceSamples;
     }
     if (cleanedState.hallOfFame && cleanedState.hallOfFame.length > HALL_OF_FAME_MAX_SIZE) {
-      cleanedState.hallOfFame = cleanedState.hallOfFame.slice(-HALL_OF_FAME_MAX_SIZE) as any;
+      cleanedState.hallOfFame = cleanedState.hallOfFame.slice(-HALL_OF_FAME_MAX_SIZE);
     }
 
     return {

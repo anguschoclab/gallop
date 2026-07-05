@@ -290,7 +290,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { horseId } = impact as InsuranceCancelImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
-      delete (horse as any).insurancePolicy;
+      horse.insurancePolicy = undefined;
     }
   },
 

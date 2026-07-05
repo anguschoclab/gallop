@@ -93,7 +93,7 @@ export function getHorseTendencyStats(horse: Horse, opts: TendencyFilterOpts = {
   const itm: Record<Tendency, number> = { front: 0, mid: 0, off: 0 };
   let sample = 0;
 
-  for (const r of history as any[]) {
+  for (const r of history) {
     if (!r.pacePositions || r.pacePositions.length === 0) continue;
     if (distance !== "any" && distanceBucket(r.distance) !== distance) continue;
     if (surface !== "any" && r.surface !== surface) continue;

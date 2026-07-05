@@ -13,6 +13,7 @@ import { runNpcCycle } from "@/core/npc/npcCycle";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { PHASE_ORDER_NPC_CYCLE } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
+import type { NewsImpact, ReputationImpact, CashImpact, FameImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 
 /**
@@ -76,7 +77,7 @@ export const npcCyclePhase = {
           logLevel: "conditional",
           type: "news_item",
           newsItem,
-        } as AnyImpact);
+        } as NewsImpact);
       }
     }
 
@@ -93,7 +94,7 @@ export const npcCyclePhase = {
           reason: event.description,
           source: event.source,
           metadata: { horseId: event.horseId, raceId: event.raceId },
-        } as AnyImpact);
+        } as ReputationImpact);
       }
     }
 
@@ -109,7 +110,7 @@ export const npcCyclePhase = {
           entityId: change.stableId,
           amount: change.amount,
           reason: change.reason,
-        } as AnyImpact);
+        } as CashImpact);
       }
     }
 
@@ -125,7 +126,7 @@ export const npcCyclePhase = {
           horseId: change.horseId,
           delta: change.delta,
           reason: "Race performance fame gain",
-        } as AnyImpact);
+        } as FameImpact);
       }
     }
 

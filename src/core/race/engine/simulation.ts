@@ -276,7 +276,7 @@ function calculateTrackGeometryModifiers(
 
   const gradientSpeedMul = 1 - gradient / 100;
   const isHillSpecialist = r.jockey?.traits.includes("hill_specialist");
-  const climbingApt = (r.horse as any)?.climbingAptitude ?? 1.0;
+  const climbingApt = r.horse?.climbingAptitude ?? 1.0;
 
   let gradientStaminaMul = gradient > 0 ? 1 - gradient / (200 * climbingApt) : 1;
   if (gradient > 0 && isHillSpecialist) {
@@ -287,7 +287,7 @@ function calculateTrackGeometryModifiers(
   if (radius !== Infinity) {
     const centrifugalPressure = (r.velocity * r.velocity) / (radius * 10);
     const agilityMitigation = (r.horse.stats.acceleration / 100) * AGILITY_MITIGATION_FACTOR;
-    const corneringApt = (r.horse as any)?.corneringAptitude ?? 1.0;
+    const corneringApt = r.horse?.corneringAptitude ?? 1.0;
     const isBullringExpert = r.jockey?.traits.includes("bullring_expert");
     const positioningSkill = (r.jockey?.stats.positioning ?? 50) * POSITIONING_SKILL_FACTOR;
     const traitBonus = isBullringExpert ? BULLRING_TRAIT_BONUS : 0;

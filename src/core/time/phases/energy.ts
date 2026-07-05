@@ -50,7 +50,7 @@ export const energyPhase = {
 
     const outpostMap = new Map<string, any>();
     for (const s of state.npcStables ?? []) {
-      for (const o of (s as any).outposts ?? []) {
+      for (const o of s.outposts ?? []) {
         outpostMap.set(o.id, o);
       }
     }
@@ -180,7 +180,7 @@ export const energyPhase = {
     let npcStables = state.npcStables;
     if (acclimatizationUpdates.size > 0) {
       npcStables = npcStables.map((stable) => {
-        const originalOutposts = (stable as any).outposts ?? [];
+        const originalOutposts = stable.outposts ?? [];
         let outpostsChanged = false;
         const updatedOutposts = originalOutposts.map((outpost: any) => {
           const updates = acclimatizationUpdates.get(outpost.id);

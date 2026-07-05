@@ -87,7 +87,7 @@ export function createJockeyAIState(stable: Stable): JockeyAIState {
 export function calculateJockeySuitability(
   aiState: JockeyAIState,
   jockey: Jockey,
-  horse: Horse,
+  horse: Horse | undefined,
   stable: Stable,
 ): number {
   let score = 0;
@@ -109,14 +109,14 @@ export function calculateJockeySuitability(
   const factors: Record<string, number> = {
     jockey_skill: avgStat,
     jockey_aggressiveness: jockey.stats.vigor,
-    horse_age: horse.age,
-    horse_energy: horse.energy,
+    horse_age: horse?.age ?? 4,
+    horse_energy: horse?.energy ?? 100,
   };
 
   score = calculateUtilityScore(aiState.personalityState, "jockey_selection", factors);
 
   // Learning-based adjustment
-  const contextKey = `${jockey.id}:${horse.age}`;
+  const contextKey = `${jockey.id}:${horse?.age ?? 4}`;
   const successRate = getSuccessRate(aiState.learningState, "jockey_selection", contextKey);
   const adaptiveBonus = (successRate - 0.5) * 10;
   score += adaptiveBonus;
@@ -138,7 +138,7 @@ export function calculateJockeySuitability(
  */
 export function selectBestJockey(
   aiState: JockeyAIState,
-  horse: Horse,
+  horse: Horse | undefined,
   availableJockeys: Jockey[],
   stable: Stable,
 ): Jockey | null {

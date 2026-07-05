@@ -61,7 +61,7 @@ export const weatherPhase = {
 
     // Collect every trackId that needs weather: existing buffers + upcoming
     // races within the forecast horizon.
-    const existing = ((state as any).weather?.byTrack ?? {}) as Record<string, WeatherState[]>;
+    const existing = (state.weather?.byTrack ?? {}) as Record<string, WeatherState[]>;
     const trackIds = new Set<string>(Object.keys(existing));
 
     for (const race of state.races) {
@@ -193,10 +193,7 @@ export const weatherPhase = {
       state: {
         ...state,
         races: updatedRaces,
-        // Cast: weather field is appended via slice; SystemsState declares it optional.
-        ...({
-          weather: { byTrack: newByTrack, forecast: newForecast },
-        } as any),
+        weather: { byTrack: newByTrack, forecast: newForecast },
         log: newLogs.length ? [...newLogs, ...state.log].slice(0, 200) : state.log,
       },
       impacts: [...context.impacts, ...newImpacts],

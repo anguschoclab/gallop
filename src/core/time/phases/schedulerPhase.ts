@@ -22,6 +22,7 @@ import {
 } from "@/core/campaign/planner";
 import { runAutoEntries, reconcileSlotStatuses } from "@/core/campaign/autoEntry";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
+import type { RaceEntryImpact, CashImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 
 export const schedulerPhase = {
@@ -133,8 +134,9 @@ export const schedulerPhase = {
             type: "race_entry",
             raceId,
             horseId,
+            entryFee: race.entryFee,
             reason: `Auto-campaign entry for ${horse.name}`,
-          } as AnyImpact);
+          } as RaceEntryImpact);
           return { ok: true };
         },
       });
@@ -153,7 +155,7 @@ export const schedulerPhase = {
         entityId: "player",
         amount: cashDelta,
         reason: "Auto-campaign race entry fees",
-      } as AnyImpact);
+      } as CashImpact);
     }
 
     const updatedLogs = [...entryLogs, ...context.logs];

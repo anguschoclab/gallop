@@ -16,6 +16,7 @@ import { generateUUID } from "@/core/uuid";
 import { PHASE_ORDER_CLAIM_RESOLUTION } from "@/constants";
 import { formatCurrency } from "@/core/common/formatting";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
+import type { HorseTransferImpact, CashImpact } from "@/core/resolver/impacts/index";
 
 /**
  * Phase: Claim Resolution
@@ -95,7 +96,7 @@ export const claimResolutionPhase = {
         toStableId: winnerClaim.claimantStableId,
         price,
         reason: `Claiming race resolution for ${race.name}`,
-      } as AnyImpact);
+      } as HorseTransferImpact);
 
       // Cash flows
       if (winnerClaim.claimantStableId) {
@@ -110,7 +111,7 @@ export const claimResolutionPhase = {
           entityId: winnerClaim.claimantStableId,
           amount: -price,
           reason: `Claim purchase of ${horse.name}`,
-        } as AnyImpact);
+        } as CashImpact);
       } else {
         // Player wins the claim — debit player cash
         impacts.push({
@@ -123,7 +124,7 @@ export const claimResolutionPhase = {
           entityId: "player",
           amount: -price,
           reason: `Claim purchase of ${horse.name}`,
-        } as AnyImpact);
+        } as CashImpact);
       }
 
       // Credit original owner
@@ -138,7 +139,7 @@ export const claimResolutionPhase = {
           entityId: "player",
           amount: proceeds,
           reason: `Claim proceeds for ${horse.name}`,
-        } as AnyImpact);
+        } as CashImpact);
         newLogs.push({
           day: newDay,
           text: `${horse.name} was claimed by ${winnerClaim.claimantStableId ? (stableMap.get(winnerClaim.claimantStableId)?.name ?? "an NPC") : "your stable"} for ${formatCurrency(price)} after ${race.name}. Net proceeds: ${formatCurrency(proceeds)}.`,
@@ -155,7 +156,7 @@ export const claimResolutionPhase = {
           entityId: originalStableId,
           amount: proceeds,
           reason: `Claim proceeds for ${horse.name}`,
-        } as AnyImpact);
+        } as CashImpact);
       }
 
       // If player won: log it

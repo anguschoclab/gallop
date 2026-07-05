@@ -40,6 +40,8 @@ import type { StaffMember } from "@/core/staff/staffTypes";
 import type { HallOfFameEntry, TrackRecord, FounderRecord } from "@/core/history/historyTypes";
 import type { ReservedNameEntry } from "@/core/horse/naming/reservedNames";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
+import type { Outpost } from "@/core/facilities/outpostTypes";
+import type { WeatherState } from "@/core/weather/weatherTypes";
 import { createFacility, createDefaultPlayerFacilities } from "@/core/facilities/facilityDefaults";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import { getReputationTier } from "@/core/reputation";
@@ -175,6 +177,17 @@ export interface SystemsState {
   staffPool: StaffMember[];
   /** All staff currently hired by any stable (player or NPC) */
   hiredStaff: StaffMember[];
+
+  // Imperial Expansion: Player outposts
+  /** Player-owned outposts for international operations */
+  outposts?: Outpost[];
+
+  // Weather system (per-track Markov sim)
+  /** Per-track rolling weather history and forecast */
+  weather?: {
+    byTrack: Record<string, WeatherState[]>;
+    forecast: Record<string, WeatherState[]>;
+  };
 }
 
 /**
@@ -238,6 +251,8 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
       stewardsInquiries: [],
       staffPool: [],
       hiredStaff: [],
+      outposts: [],
+      weather: { byTrack: {}, forecast: {} },
     };
   }
 
@@ -281,5 +296,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     stewardsInquiries: [],
     staffPool: [],
     hiredStaff: [],
+    outposts: [],
+    weather: { byTrack: {}, forecast: {} },
   };
 }

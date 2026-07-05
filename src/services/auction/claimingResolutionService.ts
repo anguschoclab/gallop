@@ -1,4 +1,5 @@
 import type { AnyImpact } from "@/core/resolver/impacts/index";
+import type { LogImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import type { ClaimingIntent } from "@/core/resolver/intents";
 import { processClaims, type ClaimAttempt } from "@/core/market/claiming";
@@ -83,7 +84,7 @@ export function processClaimingResolution({
         type: "log",
         text: log,
         reason: "Claiming result",
-      } as AnyImpact);
+      } as LogImpact);
     }
 
     const winningHorseIds = new Set(transfers.map((t) => t.horseId));

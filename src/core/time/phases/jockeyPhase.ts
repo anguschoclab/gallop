@@ -21,6 +21,7 @@ import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS, PHASE_ORDER_JOCKEY_PHASE } from "@/constants";
 import { generateUUID } from "@/core/uuid";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
+import type { JockeyContractImpact } from "@/core/resolver/impacts/index";
 
 /**
  * Phase: Jockey Management
@@ -32,7 +33,7 @@ export const jockeyPhase = {
   order: PHASE_ORDER_JOCKEY_PHASE, // After upkeep, before NPC cycle
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
-    const dailyRng = (context as any).dailyRng || createRng(hashStr(`jockey_phase_${newDay}`));
+    const dailyRng = context.dailyRng || createRng(hashStr(`jockey_phase_${newDay}`));
 
     let jockeys = (state.jockeys ?? []).map((j) => ({ ...j }));
     let npcStables = state.npcStables;
@@ -117,7 +118,7 @@ export const jockeyPhase = {
             };
             const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
             const jockeyAI = stableAI.jockeyAI || (stableAI.jockeyAI = createJockeyAIState(stable));
-            chosen = selectBestJockey(jockeyAI, {} as any, freeAgents, stable);
+            chosen = selectBestJockey(jockeyAI, undefined, freeAgents, stable);
             npcAIManager.stableStates[stable.id] = stableAI;
           }
 
@@ -158,7 +159,7 @@ export const jockeyPhase = {
                 stableId: stable.id,
                 contractUntil: newDay + JOCKEY_CONTRACT_DAYS,
                 reason: `NPC stable ${stable.name} hired jockey ${chosen.name}`,
-              } as AnyImpact);
+              } as JockeyContractImpact);
             }
           }
         }
@@ -210,7 +211,7 @@ export const jockeyPhase = {
               contractUntil: newDay + JOCKEY_RETAINER_DAYS,
               loyalty: 100,
               reason: `Elite stable ${stable.name} poached jockey ${target.name}`,
-            } as AnyImpact);
+            } as JockeyContractImpact);
           } else if (dailyRng.next() < 0.2) {
             // Poaching attempt failed but loyalty dropped
             logs.push({

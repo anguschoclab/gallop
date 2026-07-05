@@ -27,7 +27,9 @@ import type {
   PastureRetirementImpact,
   LogImpact,
   HorseDeletionImpact,
+  InboxImpact,
 } from "@/core/resolver/impacts/index";
+import type { PastureRetirementIntent } from "@/core/resolver/intents";
 import { generateUUID } from "@/core/uuid";
 import {
   isTopHorse,
@@ -52,7 +54,7 @@ export const pastureRetirementPhase: PipelinePhase = {
     // 1. Process player intents
     const retirementIntents = intents.filter((i) => i.type === "pasture_retirement");
     for (const intent of retirementIntents) {
-      const horse = state.horses.find((h) => h.id === (intent as any).horseId);
+      const horse = state.horses.find((h) => h.id === (intent as PastureRetirementIntent).horseId);
       if (horse && horse.lifecycleStatus === "active") {
         impacts.push({
           id: generateUUID(),
@@ -98,7 +100,7 @@ export const pastureRetirementPhase: PipelinePhase = {
                 params: { horseId: horse.id },
               },
             },
-          } as any);
+          } as InboxImpact);
         }
       }
     }

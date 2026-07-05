@@ -176,7 +176,9 @@ export function computeCoiFromSnapshot(
  * const coi = computeProspectiveCoi(sire, dam);
  */
 export function computeProspectiveCoi(sire: Horse, dam: Horse, maxDepth: number = 8): number {
-  const prospectivePedigree: any = {
+  const prospectivePedigree: Pedigree = {
+    name: `${sire.name} x ${dam.name}`,
+    generation: 0,
     sireId: sire.id,
     damId: dam.id,
     sirePedigree: sire.pedigree,

@@ -24,7 +24,7 @@ import {
   recordFacilityInvestment,
 } from "@/core/ai/facilityAI";
 import { upgradeFacility } from "@/core/facilities";
-import type { Facility } from "@/core/facilities/facilityTypes";
+import type { Facility, PlayerFacilities } from "@/core/facilities/facilityTypes";
 import { generateUUID } from "@/core/uuid";
 import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";
 import type { NewsItem } from "@/services/narrative/newsTypes";
@@ -161,7 +161,7 @@ function processRegionalDominance(
     for (const race of races) {
       if (!race.result || race.result.length === 0) continue;
       const winner = race.result[0];
-      const region = (race as any).country || "North America (East)";
+      const region = race.graded?.country || "North America (East)";
       const currentKingId = updatedAiManager.regionalKings[region];
 
       const winningHorse = horseMap.get(winner.horseId);
@@ -371,7 +371,7 @@ export interface NpcCycleResult {
   races: Race[];
   jockeys: Jockey[];
   aiManager: NpcAIManager;
-  npcFacilities?: Record<string, Record<string, Facility>>;
+  npcFacilities?: Record<string, PlayerFacilities>;
   newsItems?: NewsItem[];
   reputationEvents?: ReputationEvent[];
   cashChanges?: Array<{ stableId: string; amount: number; reason: string }>;
@@ -408,7 +408,7 @@ export function runNpcCycle(
   raceEntryDaysAhead: number = 3,
   pregnantIds: Set<string> = new Set(),
   aiManager: NpcAIManager = { stableStates: {}, globalDay: currentDay, regionalKings: {} },
-  npcFacilities?: Record<string, Record<string, Facility>>,
+  npcFacilities?: Record<string, PlayerFacilities>,
 ): NpcCycleResult {
   try {
     // Skip if no NPC stables
@@ -494,12 +494,13 @@ export function runNpcCycle(
           if (facilityBudget.upgradeBudget > 0 && stable.cash >= facilityBudget.upgradeBudget) {
             const facilityToUpgrade = selectFacilityToUpgrade(
               stableAIState.facilityAI,
-              facilities as any,
+              facilities,
               stable,
               currentDay,
             );
             if (facilityToUpgrade) {
               const currentFacility = facilities[facilityToUpgrade];
+              if (!currentFacility) continue;
               const upgraded = upgradeFacility(currentFacility, currentDay);
               if (upgraded) {
                 cashChanges.push({

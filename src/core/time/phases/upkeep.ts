@@ -15,6 +15,7 @@ import { calculateTotalMaintenance } from "@/core/facilities";
 import { generateFlavorNews } from "@/services/narrative/newsGenerator";
 import { generateUUID } from "@/core/uuid";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
+import type { CashImpact, TransactionImpact, NewsImpact } from "@/core/resolver/impacts/index";
 import {
   calculateMonthlyExpenseBudget,
   shouldConserveCash,
@@ -94,7 +95,7 @@ export const upkeepPhase = {
         entityId: "player",
         amount: -totalDailyCost,
         reason: `Daily upkeep: ${playerHorseCount} horses, facilities, and ${playerStaff.length} staff`,
-      } as AnyImpact);
+      } as CashImpact);
       impacts.push({
         id: generateUUID(dailyRng),
         intentId: "",
@@ -106,7 +107,7 @@ export const upkeepPhase = {
         category: "upkeep",
         description: `Daily upkeep: ${playerHorseCount} horses, facilities, and ${playerStaff.length} staff`,
         recurring: true,
-      } as AnyImpact);
+      } as TransactionImpact);
     }
 
     // Pre-calculate counts and staff
@@ -201,7 +202,7 @@ export const upkeepPhase = {
           entityId: stable.id,
           amount: -actualCost,
           reason: "Daily NPC upkeep",
-        } as AnyImpact);
+        } as CashImpact);
       }
 
       // Bankruptcy protection: emit cash injection if projected cash falls below threshold.
@@ -221,7 +222,7 @@ export const upkeepPhase = {
             entityId: stable.id,
             amount: BANKRUPTCY_INJECTION,
             reason: "Bankruptcy protection cash injection",
-          } as AnyImpact);
+          } as CashImpact);
         }
       }
     }
@@ -246,7 +247,7 @@ export const upkeepPhase = {
                 logLevel: "always",
                 type: "news_item",
                 newsItem: generateFlavorNews(newDay, dailyRng),
-              } as AnyImpact,
+              } as NewsImpact,
             ]
           : []),
       ],

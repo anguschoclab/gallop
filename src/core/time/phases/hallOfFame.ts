@@ -18,6 +18,7 @@ import type {
   AnyImpact,
   HallOfFameInductionImpact,
   LogImpact,
+  InboxImpact,
 } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import type { HallOfFameEntry } from "@/core/history/historyTypes";
@@ -135,7 +136,7 @@ export const hallOfFamePhase: PipelinePhase = {
               params: { horseId: horse.id },
             },
           },
-        } as any);
+        } as InboxImpact);
       }
     }
 

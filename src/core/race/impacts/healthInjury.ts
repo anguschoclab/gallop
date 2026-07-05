@@ -5,6 +5,7 @@
  */
 
 import type { AnyImpact } from "@/core/resolver/impacts/index";
+import type { InsurancePayoutImpact } from "@/core/resolver/impacts/index";
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { generateEnergyImpact } from "./energyFormFame";
@@ -49,7 +50,7 @@ export function generateHealthInjuryImpacts(
               horseId: horse.id,
               amount: payout,
               reason: `Insurance payout for ${horse.name} (${horse.insurancePolicy.type})`,
-            } as AnyImpact);
+            } as InsurancePayoutImpact);
           }
         }
       }

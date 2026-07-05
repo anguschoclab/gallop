@@ -274,7 +274,7 @@ export function buildPedigreeGraph(
     });
   }
 
-  const coi = horse.coefficientOfInbreeding ?? computeCoiFromSnapshot(horse.pedigree as any);
+  const coi = horse.coefficientOfInbreeding ?? computeCoiFromSnapshot(horse.pedigree);
   const coiLabel = coi > 0 ? `${(coi * 100).toFixed(1)}% COI · ${classifyCoi(coi)}` : "";
 
   const flowNodes: PedigreeFlowNode[] = rawNodes.map((n) => ({

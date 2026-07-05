@@ -11,6 +11,7 @@
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { PRIZE_SPLIT, PHASE_ORDER_RACE_RESOLUTION } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
+import type { TrackRecordImpact, SeasonHistoryImpact, HallOfFameInductionImpact } from "@/core/resolver/impacts/index";
 import { rngForRace } from "@/services/race/raceSimulationService";
 import type { Race } from "@/game/types";
 import type { ClaimingIntent } from "@/core/resolver/intents";
@@ -64,7 +65,7 @@ export const raceResolutionPhase: PipelinePhase = {
       // Look up current weather for this race's track BEFORE simulating
       // so the granular SimWeatherPattern can be used for weather-preference bonuses.
       const raceTrackId = race.graded?.trackId ?? race.trackId;
-      const weatherBuf = raceTrackId ? (state as any).weather?.byTrack?.[raceTrackId] : undefined;
+      const weatherBuf = raceTrackId ? state.weather?.byTrack?.[raceTrackId] : undefined;
       const raceWeatherState = Array.isArray(weatherBuf)
         ? (weatherBuf.find((w: any) => w.day === newDay) ?? weatherBuf[weatherBuf.length - 1])
         : undefined;
@@ -201,7 +202,7 @@ export const raceResolutionPhase: PipelinePhase = {
             type: "track_record",
             record: trackRecord,
             reason: "New track record set!",
-          } as any);
+          } as TrackRecordImpact);
         }
       }
 
@@ -216,7 +217,7 @@ export const raceResolutionPhase: PipelinePhase = {
             logLevel: "never",
             type: "season_history_record",
             record: historyRecord,
-          } as any);
+          } as SeasonHistoryImpact);
         }
 
         // Check winner for Hall of Fame induction
@@ -228,7 +229,7 @@ export const raceResolutionPhase: PipelinePhase = {
             ...winner,
             lifetimeEarnings: (winner.lifetimeEarnings ?? 0) + prizeMoney,
             careerWins: (winner.careerWins ?? 0) + 1,
-            raceHistory: [...winner.raceHistory, { grade: "G1", position: 1, day: newDay } as any],
+            raceHistory: [...winner.raceHistory, { raceId: race.id, raceName: race.name, grade: "G1", position: 1, day: newDay }],
           };
 
           const hofEntry = checkHallOfFameInduction(tempHorse, newDay);
@@ -242,7 +243,7 @@ export const raceResolutionPhase: PipelinePhase = {
               type: "hall_of_fame_induction",
               entry: hofEntry,
               reason: "G1 winner reached HoF criteria",
-            } as any);
+            } as HallOfFameInductionImpact);
           }
         }
       }

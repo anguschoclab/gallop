@@ -12,6 +12,7 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { PHASE_ORDER_STEWARDS } from "@/constants";
 import { resolveInquiry, type InquiryOutcome } from "@/core/stewards/stewardTypes";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
+import type { StewardsInquiryImpact, RaceResultAdjustmentImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import { createRng, hashStr } from "@/core/common/rng";
 
@@ -113,7 +114,7 @@ export const stewardsPhase: PipelinePhase = {
         type: "stewards_inquiry",
         inquiry: resolvedInquiry,
         reason: `Stewards inquiry: ${inquiry.description}`,
-      } as any);
+      } as StewardsInquiryImpact);
 
       // If DQ, emit race result adjustment
       if (outcome === "disqualification" || outcome === "dq_placed_last") {
@@ -160,7 +161,7 @@ export const stewardsPhase: PipelinePhase = {
             adjustedResults.find((r: { horseId: string }) => r.horseId === accusedHorseId)!,
           ],
           reason: `DQ adjustment for ${accusedHorseId}`,
-        } as any);
+        } as RaceResultAdjustmentImpact);
       }
     }
 

@@ -18,6 +18,7 @@ import type {
   HorseDeathImpact,
   LogImpact,
   NameReservationImpact,
+  InsurancePayoutImpact,
 } from "@/core/resolver/impacts/index";
 import { createRng, hashStr } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
@@ -83,7 +84,7 @@ export const horseDeathPhase: PipelinePhase = {
         }
 
         // Insurance payout for mortality
-        const policy = (horse as any).insurancePolicy;
+        const policy = horse.insurancePolicy;
         if (policy && (policy.type === "mortality_only" || policy.type === "comprehensive")) {
           const coveragePercent =
             INSURANCE_CONFIG.COVERAGE[policy.type as keyof typeof INSURANCE_CONFIG.COVERAGE];
@@ -100,7 +101,7 @@ export const horseDeathPhase: PipelinePhase = {
               horseId: horse.id,
               amount: payout,
               reason: `Insurance payout for ${horse.name} (${policy.type})`,
-            } as any);
+            } as InsurancePayoutImpact);
           }
         }
 
@@ -152,7 +153,7 @@ export const horseDeathPhase: PipelinePhase = {
           }
 
           // Insurance payout for mortality
-          const illnessPolicy = (horse as any).insurancePolicy;
+          const illnessPolicy = horse.insurancePolicy;
           if (
             illnessPolicy &&
             (illnessPolicy.type === "mortality_only" || illnessPolicy.type === "comprehensive")
@@ -174,7 +175,7 @@ export const horseDeathPhase: PipelinePhase = {
                 horseId: horse.id,
                 amount: payout,
                 reason: `Insurance payout for ${horse.name} (${illnessPolicy.type})`,
-              } as any);
+              } as InsurancePayoutImpact);
             }
           }
 

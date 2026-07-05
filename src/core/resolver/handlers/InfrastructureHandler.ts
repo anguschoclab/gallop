@@ -13,6 +13,7 @@ import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
 import type { FacilityType } from "@/core/facilities";
+import type { Outpost } from "@/core/facilities/outpostTypes";
 import type { FacilityUpgradeImpact, StaffImpact, TransportImpact, OutpostImpact } from "../impacts/miscImpacts";
 
 type ImpactHandlerFunction = (
@@ -76,14 +77,17 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
       // Add to outpost acclimatization list
       const stableId = horse.stableId || "player";
-      const stable =
-        lookupMaps?.stableMap.get(stableId) || draft.npcStables.find((s) => s.id === stableId);
-      if (stable && stable.outposts) {
-        const outpost = stable.outposts.find((o: any) => o.id === toOutpostId);
-        if (outpost) {
-          if (!outpost.acclimatizationDays) outpost.acclimatizationDays = {};
-          outpost.acclimatizationDays[horseId] = acclimatizationDays;
-        }
+      let outpost: any;
+      if (stableId === "player") {
+        outpost = draft.outposts?.find((o) => o.id === toOutpostId);
+      } else {
+        const stable =
+          lookupMaps?.stableMap.get(stableId) || draft.npcStables.find((s) => s.id === stableId);
+        outpost = stable?.outposts?.find((o: Outpost) => o.id === toOutpostId);
+      }
+      if (outpost) {
+        if (!outpost.acclimatizationDays) outpost.acclimatizationDays = {};
+        outpost.acclimatizationDays[horseId] = acclimatizationDays;
       }
     }
   },
@@ -91,9 +95,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   outpost_action: (draft, impact, lookupMaps) => {
     const { stableId, action, outpostId, metadata } = impact as OutpostImpact;
     const stable = stableId === "player" ? draft : draft.npcStables.find((s) => s.id === stableId);
-    if (stable && (stable as any).outposts) {
-      const outposts = (stable as any)
-        .outposts as import("@/core/facilities/outpostTypes").Outpost[];
+    if (stable && stable.outposts) {
+      const outposts = stable.outposts;
       if (action === "create") {
         outposts.push({
           id: outpostId,
