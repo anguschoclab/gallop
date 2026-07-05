@@ -13,6 +13,36 @@ import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact, ReputationImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
+import type {
+  HorseCreationImpact,
+  HorseDeletionImpact,
+  HallOfFameInductionImpact,
+  SeasonHistoryImpact,
+} from "../impacts/horseImpacts";
+import type {
+  CampaignSlotImpact,
+  CampaignFlagImpact,
+  CampaignFlagDismissalImpact,
+  CampaignCreationImpact,
+  CampaignDeletionImpact,
+  AutoManageToggleImpact,
+} from "../impacts/campaignImpacts";
+import type {
+  LogImpact,
+  NewsImpact,
+  TrackRecordImpact,
+  NameReservationImpact,
+  TrainerStatsImpact,
+} from "../impacts/miscImpacts";
+import type {
+  PaceSampleImpact,
+  InsurancePurchaseImpact,
+  InsuranceCancelImpact,
+  InsurancePayoutImpact,
+  StewardsInquiryImpact,
+  StewardsResolutionImpact,
+} from "../impacts/raceImpacts";
+import type { TransactionImpact } from "../impacts/financialImpacts";
 import { distanceBucket } from "@/core/race/beyer";
 import { getReputationTier, createReputationEvent, type ReputationSource } from "@/core/reputation";
 import { createTransaction } from "@/core/transactions";
@@ -30,15 +60,13 @@ type ImpactHandlerFunction = (
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   horse_creation: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horse } = impactAny;
+    const { horse } = impact as HorseCreationImpact;
     draft.horses.push(horse);
     if (lookupMaps) lookupMaps.horseMap.set(horse.id, horse);
   },
 
   horse_deletion: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId } = impactAny;
+    const { horseId } = impact as HorseDeletionImpact;
     const index = draft.horses.findIndex((h) => h.id === horseId);
     if (index !== -1) {
       draft.horses.splice(index, 1);
@@ -47,14 +75,12 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   log: (draft, impact) => {
-    const impactAny = impact as any;
-    const { text } = impactAny;
+    const { text } = impact as LogImpact;
     draft.log = [{ day: impact.day, text }, ...draft.log].slice(0, 500);
   },
 
   pace_sample: (draft, impact) => {
-    const impactAny = impact as any;
-    const { distance, time } = impactAny;
+    const { distance, time } = impact as PaceSampleImpact;
     if (!draft.paceSamples) {
       draft.paceSamples = {};
     }
@@ -66,8 +92,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   campaign_slot: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId, slotIndex, slot } = impactAny;
+    const { horseId, slotIndex, slot } = impact as CampaignSlotImpact;
     const campaignMap =
       lookupMaps?.campaignMap || new Map(draft.campaigns?.map((c) => [c.horseId, c]) || []);
     const campaign = campaignMap.get(horseId);
@@ -77,8 +102,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   campaign_flag: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId, flag } = impactAny;
+    const { horseId, flag } = impact as CampaignFlagImpact;
     const campaignMap =
       lookupMaps?.campaignMap || new Map(draft.campaigns?.map((c) => [c.horseId, c]) || []);
     const campaign = campaignMap.get(horseId);
@@ -88,32 +112,44 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   campaign_flag_dismissal: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId, flag } = impactAny;
+    const { horseId, flag, flagIndex } = impact as CampaignFlagDismissalImpact;
     const campaignMap =
       lookupMaps?.campaignMap || new Map(draft.campaigns?.map((c) => [c.horseId, c]) || []);
     const campaign = campaignMap.get(horseId);
     if (campaign) {
-      campaign.flags = campaign.flags.filter(
-        (f) => f.type !== flag.type || f.day !== flag.day || f.message !== flag.message,
-      );
+      if (flagIndex !== undefined) {
+        campaign.flags = campaign.flags.filter((_, i) => i !== flagIndex);
+      } else if (flag) {
+        campaign.flags = campaign.flags.filter(
+          (f) => f.type !== flag.type || f.day !== flag.day || f.message !== flag.message,
+        );
+      }
     }
   },
 
   campaign_creation: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { campaign } = impactAny;
+    const { horseId, goalType, targetRaceKey } = impact as CampaignCreationImpact;
     if (!draft.campaigns) draft.campaigns = [];
-    draft.campaigns.push(campaign);
-    const campaignMap =
-      lookupMaps?.campaignMap || new Map(draft.campaigns?.map((c) => [c.horseId, c]) || []);
-    campaignMap.set(campaign.horseId, campaign);
-    if (lookupMaps) lookupMaps.campaignMap.set(campaign.horseId, campaign);
+    const newCampaign = {
+      horseId,
+      goalType,
+      targetRaceKey,
+      slots: [],
+      flags: [],
+      autoManaged: false,
+      confirmedAptitudes: {
+        surfaceStarts: { Turf: 0, Dirt: 0, Synthetic: 0 },
+        distanceBandStarts: { sprint: 0, mile: 0, intermediate: 0, staying: 0 },
+      },
+      createdDay: impact.day,
+      lastReviewedDay: impact.day,
+    };
+    draft.campaigns.push(newCampaign);
+    if (lookupMaps) lookupMaps.campaignMap.set(horseId, newCampaign);
   },
 
   campaign_deletion: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId } = impactAny;
+    const { horseId } = impact as CampaignDeletionImpact;
     if (draft.campaigns) {
       const index = draft.campaigns.findIndex((c) => c.horseId === horseId);
       if (index !== -1) {
@@ -127,8 +163,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   auto_manage_toggle: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId, autoManaged } = impactAny;
+    const { horseId, autoManaged } = impact as AutoManageToggleImpact;
     const campaignMap =
       lookupMaps?.campaignMap || new Map(draft.campaigns?.map((c) => [c.horseId, c]) || []);
     const campaign = campaignMap.get(horseId);
@@ -152,32 +187,29 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   transaction: (draft, impact) => {
-    const impactAny = impact as any;
-    const { amount, category, description, metadata } = impactAny;
+    const { amount, category, description, horseId, raceId, recurring } = impact as TransactionImpact;
     if (!draft.transactions) draft.transactions = [];
     const type = amount >= 0 ? "income" : "expense";
     const newTransaction = createTransaction(
       type,
-      category as any,
+      category,
       amount,
       description,
       impact.day,
       draft.cash + amount,
-      metadata,
+      { horseId, raceId, recurring },
     );
     draft.transactions.push(newTransaction);
   },
 
   news_item: (draft, impact) => {
-    const impactAny = impact as any;
-    const { newsItem } = impactAny;
+    const { newsItem } = impact as NewsImpact;
     if (!draft.news) draft.news = [];
     draft.news = [newsItem, ...draft.news].slice(0, 500);
   },
 
   hall_of_fame_induction: (draft, impact) => {
-    const impactAny = impact as any;
-    const { entry } = impactAny;
+    const { entry } = impact as HallOfFameInductionImpact;
     if (!draft.hallOfFame) draft.hallOfFame = [];
     // Prevent duplicates using Set for O(1) lookup
     const existingIds = new Set(draft.hallOfFame.map((e) => e.horseId));
@@ -187,23 +219,20 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   season_history_record: (draft, impact) => {
-    const impactAny = impact as any;
-    const { record } = impactAny;
+    const { record } = impact as SeasonHistoryImpact;
     if (!draft.seasonRecords) draft.seasonRecords = [];
     draft.seasonRecords.push(record);
   },
 
   track_record: (draft, impact) => {
-    const impactAny = impact as any;
-    const { record } = impactAny;
+    const { record } = impact as TrackRecordImpact;
     if (!draft.trackRecords) draft.trackRecords = {};
     const key = `${record.trackId}_${record.surface}_${record.distance}`;
     draft.trackRecords[key] = record;
   },
 
   name_reservation: (draft, impact) => {
-    const impactAny = impact as any;
-    const { name, deceasedOnDay } = impactAny;
+    const { name, deceasedOnDay } = impact as NameReservationImpact;
     // Add to reserved names list (25-year reservation)
     draft.reservedHorseNames = addReservedName(name, deceasedOnDay, draft.reservedHorseNames || []);
     // Remove from active used names
@@ -212,8 +241,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   trainer_stats: (draft, impact) => {
-    const impactAny = impact as any;
-    const { staffId, raceRecord, fameDelta, specialty } = impactAny;
+    const { staffId, raceRecord, fameDelta, specialty } = impact as TrainerStatsImpact;
 
     // Find the staff member in hiredStaff
     const staffIndex = draft.hiredStaff?.findIndex((s) => s.id === staffId);
@@ -251,8 +279,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   insurance_purchase: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId, policy } = impactAny;
+    const { horseId, policy } = impact as InsurancePurchaseImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.insurancePolicy = policy;
@@ -260,8 +287,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   insurance_cancel: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId } = impactAny;
+    const { horseId } = impact as InsuranceCancelImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       delete (horse as any).insurancePolicy;
@@ -269,14 +295,12 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   insurance_payout: (draft, impact) => {
-    const impactAny = impact as any;
-    const { amount } = impactAny;
+    const { amount } = impact as InsurancePayoutImpact;
     draft.cash += amount;
   },
 
   stewards_inquiry: (draft, impact) => {
-    const impactAny = impact as any;
-    const { inquiry } = impactAny;
+    const { inquiry } = impact as StewardsInquiryImpact;
     if (!draft.stewardsInquiries) draft.stewardsInquiries = [];
     draft.stewardsInquiries.push(inquiry);
     // Also attach to the race
@@ -288,8 +312,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   stewards_resolution: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { inquiryId, outcome, fineAmount, suspensionDays } = impactAny;
+    const { inquiryId, outcome, fineAmount, suspensionDays } = impact as StewardsResolutionImpact;
     const inquiry = draft.stewardsInquiries?.find((i) => i.id === inquiryId);
     if (inquiry) {
       inquiry.status = "resolved";
@@ -322,7 +345,6 @@ export class SystemHandler implements ImpactHandler {
       "campaign_creation",
       "campaign_deletion",
       "auto_manage_toggle",
-      "claimResolution",
       "reputation_change",
       "transaction",
       "news_item",

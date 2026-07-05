@@ -15,6 +15,24 @@ import type { AnyImpact } from "../impacts";
 import { isMaleHorse } from "@/core/horse/gender";
 import type { ImpactHandler } from "./types";
 import { generateUUID } from "@/core/uuid";
+import type {
+  HorseCreationImpact,
+  HorseStatImpact,
+  EnergyImpact,
+  FormImpact,
+  FameImpact,
+  RenameImpact,
+  AgingImpact,
+  HealthStatusImpact,
+  PastureRetirementImpact,
+  HorseDeathImpact,
+  InjuryImpact,
+  RecoveryImpact,
+  FitnessImpact,
+  FatigueImpact,
+  PeakingIndexImpact,
+  BeyerImpact,
+} from "../impacts/horseImpacts";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -29,37 +47,32 @@ type ImpactHandlerFunction = (
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   horse_creation: (draft, impact, horse, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horse: horseData } = impactAny;
+    const { horse: horseData } = impact as HorseCreationImpact;
     if (horseData) {
       draft.horses.push(horseData);
       if (lookupMaps) lookupMaps.horseMap.set(horseData.id, horseData);
     }
   },
   horse_stat_change: (draft, impact, horse) => {
-    const impactAny = impact as any;
-    const { stat, delta } = impactAny;
+    const { stat, delta } = impact as HorseStatImpact;
     if (horse) {
       horse.stats[stat] = Math.min(horse.potential, Math.max(0, horse.stats[stat] + delta));
     }
   },
   energy_change: (draft, impact, horse) => {
-    const impactAny = impact as any;
-    const { delta } = impactAny;
+    const { delta } = impact as EnergyImpact;
     if (horse) {
       horse.energy = Math.min(100, Math.max(0, horse.energy + delta));
     }
   },
   form_change: (draft, impact, horse) => {
-    const impactAny = impact as any;
-    const { delta } = impactAny;
+    const { delta } = impact as FormImpact;
     if (horse) {
       horse.form = Math.min(10, Math.max(-10, horse.form + delta));
     }
   },
   fame_change: (draft, impact, horse) => {
-    const impactAny = impact as any;
-    const { delta } = impactAny;
+    const { delta } = impact as FameImpact;
     if (horse) {
       horse.fame = Math.min(100, Math.max(0, horse.fame + delta));
     }
@@ -71,22 +84,19 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     }
   },
   rename: (draft, impact, horse) => {
-    const impactAny = impact as any;
-    const { newName } = impactAny;
+    const { newName } = impact as RenameImpact;
     if (horse) {
       horse.name = newName;
     }
   },
   aging: (draft, impact, horse) => {
-    const impactAny = impact as any;
-    const { newAge } = impactAny;
+    const { newAge } = impact as AgingImpact;
     if (horse) {
       horse.age = newAge;
     }
   },
   health_status_change: (draft, impact, horse) => {
-    const impactAny = impact as any;
-    const { status } = impactAny;
+    const { status } = impact as HealthStatusImpact;
     // Defense-in-depth: only apply health status change if horse is currently healthy
     // Upstream guards (energy phase, training resolution) should prevent this,
     // but this ensures we never overwrite an existing sickness
@@ -96,16 +106,14 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     }
   },
   pasture_retirement: (draft, impact, horse) => {
-    const impactAny = impact as any;
-    const { retiredOnDay } = impactAny;
+    const { retiredOnDay } = impact as PastureRetirementImpact;
     if (horse) {
       horse.lifecycleStatus = "retired";
       horse.retiredOnDay = retiredOnDay;
     }
   },
   horse_death: (draft, impact, horse) => {
-    const impactAny = impact as any;
-    const { cause, deceasedOnDay } = impactAny;
+    const { cause, deceasedOnDay } = impact as HorseDeathImpact;
     if (horse) {
       horse.lifecycleStatus = "deceased";
       horse.deceasedOnDay = deceasedOnDay;
@@ -113,8 +121,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     }
   },
   injury: (draft, impact, horse) => {
-    const impactAny = impact as any;
-    const { severity, injuryType, recoveryDays } = impactAny;
+    const { severity, injuryType, recoveryDays } = impact as InjuryImpact;
     // Defense-in-depth: only apply injury if horse is currently healthy
     // Upstream guards (race entry checks, training phase) should prevent injuries to sick horses,
     // but this ensures we never overwrite an existing sickness
@@ -148,36 +155,31 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     }
   },
   recovery_change: (draft, impact, horse) => {
-    const impactAny = impact as any;
-    const { delta } = impactAny;
+    const { delta } = impact as RecoveryImpact;
     if (horse) {
       horse.recoveryPoints = Math.min(100, Math.max(0, (horse.recoveryPoints ?? 100) + delta));
     }
   },
   fitness_change: (draft, impact, horse) => {
-    const impactAny = impact as any;
-    const { delta } = impactAny;
+    const { delta } = impact as FitnessImpact;
     if (horse) {
       horse.fitness = Math.max(0, (horse.fitness ?? 0) + delta);
     }
   },
   fatigue_change: (draft, impact, horse) => {
-    const impactAny = impact as any;
-    const { delta } = impactAny;
+    const { delta } = impact as FatigueImpact;
     if (horse) {
       horse.fatigue = Math.max(0, (horse.fatigue ?? 0) + delta);
     }
   },
   peaking_index_update: (draft, impact, horse) => {
-    const impactAny = impact as any;
-    const { value } = impactAny;
+    const { value } = impact as PeakingIndexImpact;
     if (horse) {
       horse.peakingIndex = value;
     }
   },
   beyer_update: (draft, impact, horse) => {
-    const impactAny = impact as any;
-    const { beyer, raceDay } = impactAny;
+    const { beyer, raceDay } = impact as BeyerImpact;
     if (horse) {
       horse.lastBeyer = beyer;
       horse.lastRaceDay = raceDay;
@@ -217,9 +219,8 @@ export class HorseHandler implements ImpactHandler {
       campaignMap: Map<string, WritableDraft<any>>;
     },
   ): void {
-    const impactAny = impact as any;
-    const horseId = impactAny.horseId || impactAny.entityId;
-    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horseId = (impact as { horseId?: string; entityId?: string }).horseId || (impact as { entityId?: string }).entityId || "";
+    const horse = horseId ? (lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId)) : undefined;
 
     const handler = IMPACT_HANDLERS[impact.type];
     if (handler) {

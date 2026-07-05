@@ -76,6 +76,7 @@ export interface FacilityUpgradeImpact extends Impact {
   type: "facility_upgrade";
   facilityId: string;
   nextLevel: number;
+  cost?: number;
   reason: string;
 }
 

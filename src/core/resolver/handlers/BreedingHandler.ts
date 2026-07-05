@@ -12,6 +12,15 @@ import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
+import type {
+  PregnancyCreationImpact,
+  PregnancyUpdateImpact,
+  PregnancyDeletionImpact,
+  StudCareerImpact,
+  MareFoalingUpdateImpact,
+  UpdateStudFeeImpact,
+} from "../impacts/breedingImpacts";
+import type { BlueHenImpact } from "../impacts/horseImpacts";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -25,45 +34,39 @@ type ImpactHandlerFunction = (
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   update_stud_fee: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId, newFee } = impactAny;
+    const { horseId, newFee } = impact as UpdateStudFeeImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse && horse.stud) {
       horse.stud.standingFee = newFee;
     }
   },
   pregnancy_creation: (draft, impact) => {
-    const impactAny = impact as any;
-    const { pregnancy } = impactAny;
+    const { pregnancy } = impact as PregnancyCreationImpact;
     draft.pregnancies.push(pregnancy);
   },
   pregnancy_update: (draft, impact) => {
-    const impactAny = impact as any;
-    const { pregnancyId, updates } = impactAny;
+    const { pregnancyId, updates } = impact as PregnancyUpdateImpact;
     const index = draft.pregnancies.findIndex((p) => p.id === pregnancyId);
     if (index !== -1) {
       Object.assign(draft.pregnancies[index], updates);
     }
   },
   pregnancy_deletion: (draft, impact) => {
-    const impactAny = impact as any;
-    const { pregnancyId } = impactAny;
+    const { pregnancyId } = impact as PregnancyDeletionImpact;
     const index = draft.pregnancies.findIndex((p) => p.id === pregnancyId);
     if (index !== -1) {
       draft.pregnancies.splice(index, 1);
     }
   },
   stud_career: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId, studCareer } = impactAny;
+    const { horseId, studCareer } = impact as StudCareerImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.stud = studCareer;
     }
   },
   mare_foaling_update: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId, lastFoaledDay, foalsProduced, blueHenStatus } = impactAny;
+    const { horseId, lastFoaledDay, foalsProduced, blueHenStatus } = impact as MareFoalingUpdateImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.lastFoaledDay = lastFoaledDay;
@@ -72,8 +75,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     }
   },
   blue_hen_status: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId, blueHenStatus } = impactAny;
+    const { horseId, blueHenStatus } = impact as BlueHenImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.blueHenStatus = blueHenStatus;

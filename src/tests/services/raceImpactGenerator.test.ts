@@ -623,7 +623,7 @@ describe("generateBreedingImpacts", () => {
       newDay: 100,
       calibratedPars: {},
     });
-    expect(impacts.find((i) => i.type === "blue hen_status")).toBeUndefined();
+    expect(impacts.find((i) => i.type === "blue_hen_status")).toBeUndefined();
   });
 
   it("G1 winner → blue hen_status for dam when dam is present", () => {
@@ -641,7 +641,7 @@ describe("generateBreedingImpacts", () => {
       newDay: 100,
       calibratedPars: {},
     });
-    const bh = impacts.find((i) => i.type === "blue hen_status") as any;
+    const bh = impacts.find((i) => i.type === "blue_hen_status") as any;
     expect(bh).toBeDefined();
     expect(bh.horseId).toBe("dam-1");
     expect(bh.blueHenStatus.stakesWinnersProduced).toBe(1);
@@ -742,5 +742,294 @@ describe("generateRaceSummaryLog", () => {
     if (log) {
       expect(log.text).not.toContain("won");
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Integration regression — full pipeline impact type set
+// ---------------------------------------------------------------------------
+
+describe("generateRaceImpacts — integration regression", () => {
+  it("full G1 race with 2 owned horses + jockeys emits all expected impact types", () => {
+    const h1 = createTestColt({ id: "h1", owned: true });
+    const h2 = createTestColt({ id: "h2", owned: true });
+    const j1 = createTestJockey({ id: "j1" });
+    const j2 = createTestJockey({ id: "j2" });
+    const race = makeGradedRace({
+      purse: 1_000_000,
+      entries: [
+        { horseId: "h1", jockeyId: "j1", owned: true } as any,
+        { horseId: "h2", jockeyId: "j2", owned: true } as any,
+      ],
+    });
+    const impacts = generateRaceImpacts({
+      race,
+      result: [
+        { horseId: "h1", position: 1, time: 120 },
+        { horseId: "h2", position: 2, time: 121 },
+      ],
+      runners: [{ horseId: "h1" }, { horseId: "h2" }],
+      horses: [h1, h2],
+      jockeys: [j1, j2],
+      newDay: 100,
+      calibratedPars: {},
+    });
+
+    const types = new Set(impacts.map((i) => i.type));
+    expect(types.has("race_result")).toBe(true);
+    expect(types.has("energy_change")).toBe(true);
+    expect(types.has("form_change")).toBe(true);
+    expect(types.has("beyer_update")).toBe(true);
+    expect(types.has("recovery_change")).toBe(true);
+    expect(types.has("race_history")).toBe(true);
+    expect(types.has("cash_change")).toBe(true);
+    expect(types.has("pace_sample")).toBe(true);
+    expect(types.has("jockey_stats")).toBe(true);
+    expect(types.has("jockey_affinity_gain")).toBe(true);
+    // fame_change only for 1st/2nd/3rd
+    expect(types.has("fame_change")).toBe(true);
+    // transaction for player-owned horses
+    expect(types.has("transaction")).toBe(true);
+  });
+
+  it("open race with NPC horse, no jockey emits minimal impact set", () => {
+    const horse = createTestNpcHorse({ id: "h-npc", stableId: "stable-npc" });
+    const impacts = runSingle(horse, 5, makeOpenRace());
+
+    const types = new Set(impacts.map((i) => i.type));
+    expect(types.has("race_result")).toBe(true);
+    expect(types.has("energy_change")).toBe(true);
+    expect(types.has("form_change")).toBe(true);
+    expect(types.has("beyer_update")).toBe(true);
+    expect(types.has("recovery_change")).toBe(true);
+    expect(types.has("race_history")).toBe(true);
+    expect(types.has("pace_sample")).toBe(true);
+    // No jockey-related impacts
+    expect(types.has("jockey_stats")).toBe(false);
+    expect(types.has("jockey_affinity_gain")).toBe(false);
+    expect(types.has("transaction")).toBe(false);
+    // No fame for 5th
+    expect(types.has("fame_change")).toBe(false);
+    // No log for NPC-only
+    expect(types.has("log")).toBe(false);
+  });
+
+  it("pace_sample emitted with winner's time when result is non-empty", () => {
+    const h1 = createTestColt({ id: "h1" });
+    const race = makeOpenRace({ distance: 1600 });
+    const impacts = generateRaceImpacts({
+      race,
+      result: [{ horseId: "h1", position: 1, time: 95.5 }],
+      runners: [{ horseId: "h1" }],
+      horses: [h1],
+      jockeys: [],
+      newDay: 100,
+      calibratedPars: {},
+    });
+    const pace = impacts.find((i) => i.type === "pace_sample") as any;
+    expect(pace).toBeDefined();
+    expect(pace.distance).toBe(1600);
+    expect(pace.time).toBe(95.5);
+  });
+
+  it("pace_sample NOT emitted when result is empty", () => {
+    const impacts = generateRaceImpacts({
+      race: makeOpenRace(),
+      result: [],
+      runners: [],
+      horses: [],
+      jockeys: [],
+      newDay: 100,
+      calibratedPars: {},
+    });
+    expect(impacts.find((i) => i.type === "pace_sample")).toBeUndefined();
+  });
+
+  it("race_result impact contains all results and snapshots", () => {
+    const h1 = createTestColt({ id: "h1" });
+    const h2 = createTestColt({ id: "h2" });
+    const impacts = generateRaceImpacts({
+      race: makeOpenRace(),
+      result: [
+        { horseId: "h1", position: 1, time: 120 },
+        { horseId: "h2", position: 2, time: 121 },
+      ],
+      runners: [{ horseId: "h1" }, { horseId: "h2" }],
+      horses: [h1, h2],
+      jockeys: [],
+      newDay: 100,
+      calibratedPars: {},
+    });
+    const rr = impacts.find((i) => i.type === "race_result") as any;
+    expect(rr).toBeDefined();
+    expect(rr.results).toHaveLength(2);
+    expect(rr.results[0].horseId).toBe("h1");
+    expect(rr.results[1].horseId).toBe("h2");
+  });
+
+  it("jockey_stats careerStarts incremented by 1", () => {
+    const horse = createTestColt({ id: "h1", owned: true });
+    const jockey = createTestJockey({ id: "j1", careerStarts: 50, careerWins: 10 });
+    const race = makeOpenRace({
+      entries: [{ horseId: "h1", jockeyId: "j1", owned: true } as any],
+    });
+    const impacts = generateRaceImpacts({
+      race,
+      result: [{ horseId: "h1", position: 1, time: 120 }],
+      runners: [{ horseId: "h1" }],
+      horses: [horse],
+      jockeys: [jockey],
+      newDay: 100,
+      calibratedPars: {},
+    });
+    const js = impacts.find((i) => i.type === "jockey_stats") as any;
+    expect(js).toBeDefined();
+    expect(js.careerStarts).toBe(51);
+    expect(js.careerWins).toBe(11);
+    expect(js.fame).toBe(jockey.fame + 2);
+  });
+
+  it("jockey_stats fame +0.5 for 2nd place", () => {
+    const horse = createTestColt({ id: "h1", owned: true });
+    const jockey = createTestJockey({ id: "j1", careerStarts: 50, careerWins: 10, fame: 50 });
+    const race = makeGradedRace({
+      entries: [{ horseId: "h1", jockeyId: "j1", owned: true } as any],
+    });
+    const impacts = generateRaceImpacts({
+      race,
+      result: [{ horseId: "h1", position: 2, time: 121 }],
+      runners: [{ horseId: "h1" }],
+      horses: [horse],
+      jockeys: [jockey],
+      newDay: 100,
+      calibratedPars: {},
+    });
+    const js = impacts.find((i) => i.type === "jockey_stats") as any;
+    expect(js).toBeDefined();
+    expect(js.fame).toBe(50.5);
+  });
+
+  it("jockey_stats fame capped at MAX_FAME", () => {
+    const horse = createTestColt({ id: "h1", owned: true });
+    const jockey = createTestJockey({ id: "j1", careerStarts: 50, careerWins: 10, fame: 99 });
+    const race = makeOpenRace({
+      entries: [{ horseId: "h1", jockeyId: "j1", owned: true } as any],
+    });
+    const impacts = generateRaceImpacts({
+      race,
+      result: [{ horseId: "h1", position: 1, time: 120 }],
+      runners: [{ horseId: "h1" }],
+      horses: [horse],
+      jockeys: [jockey],
+      newDay: 100,
+      calibratedPars: {},
+    });
+    const js = impacts.find((i) => i.type === "jockey_stats") as any;
+    expect(js.fame).toBeLessThanOrEqual(100);
+  });
+
+  it("apprentice progression updated on win for apprentice jockey", () => {
+    const horse = createTestColt({ id: "h1", owned: true });
+    const jockey = createTestJockey({
+      id: "j1",
+      isApprentice: true,
+      apprenticeProgression: {
+        jockeyId: "j1",
+        status: "apprentice",
+        careerWins: 2,
+        apprenticeWins: 2,
+      } as any,
+    });
+    const race = makeOpenRace({
+      entries: [{ horseId: "h1", jockeyId: "j1", owned: true } as any],
+    });
+    const impacts = generateRaceImpacts({
+      race,
+      result: [{ horseId: "h1", position: 1, time: 120 }],
+      runners: [{ horseId: "h1" }],
+      horses: [horse],
+      jockeys: [jockey],
+      newDay: 100,
+      calibratedPars: {},
+    });
+    const js = impacts.find((i) => i.type === "jockey_stats") as any;
+    expect(js).toBeDefined();
+    expect(js.apprenticeProgression).toBeDefined();
+    expect(js.apprenticeProgression.careerWins).toBe(3);
+  });
+
+  it("no jockey_stats when position beyond prizeSplit length", () => {
+    const horse = createTestColt({ id: "h1", owned: true });
+    const jockey = createTestJockey({ id: "j1" });
+    const race = makeOpenRace({
+      entries: [{ horseId: "h1", jockeyId: "j1", owned: true } as any],
+    });
+    const impacts = generateRaceImpacts({
+      race,
+      result: [{ horseId: "h1", position: 10, time: 140 }],
+      runners: [{ horseId: "h1" }],
+      horses: [horse],
+      jockeys: [jockey],
+      newDay: 100,
+      calibratedPars: {},
+    });
+    expect(impacts.find((i) => i.type === "jockey_stats")).toBeUndefined();
+  });
+
+  it("percentage jockey fee emitted for placed jockey", () => {
+    const horse = createTestColt({ id: "h1", owned: true });
+    const jockey = createTestJockey({ id: "j1" });
+    const race = makeGradedRace({
+      purse: 1_000_000,
+      entries: [{ horseId: "h1", jockeyId: "j1", owned: true } as any],
+    });
+    const impacts = generateRaceImpacts({
+      race,
+      result: [{ horseId: "h1", position: 1, time: 120 }],
+      runners: [{ horseId: "h1" }],
+      horses: [horse],
+      jockeys: [jockey],
+      newDay: 100,
+      calibratedPars: {},
+    });
+    // Win amount = 0.7 * 1_000_000 = 700_000; percentage fee = 10% = 70_000
+    const percentageFee = impacts.find(
+      (i) =>
+        i.type === "cash_change" &&
+        (i as any).amount < 0 &&
+        (i as any).reason?.includes("Jockey fee for"),
+    ) as any;
+    expect(percentageFee).toBeDefined();
+    expect(percentageFee.amount).toBe(-70_000);
+  });
+
+  it("horse missing from horseMap is skipped (no crash)", () => {
+    const impacts = generateRaceImpacts({
+      race: makeOpenRace(),
+      result: [{ horseId: "ghost", position: 1, time: 120 }],
+      runners: [{ horseId: "ghost" }],
+      horses: [],
+      jockeys: [],
+      newDay: 100,
+      calibratedPars: {},
+    });
+    // Only race_result and pace_sample should be emitted (no per-horse impacts)
+    const types = new Set(impacts.map((i) => i.type));
+    expect(types.has("race_result")).toBe(true);
+    expect(types.has("energy_change")).toBe(false);
+  });
+
+  it("error returns empty impacts array", () => {
+    // Pass invalid data to trigger an error
+    const impacts = generateRaceImpacts({
+      race: null as any,
+      result: [],
+      runners: [],
+      horses: [],
+      jockeys: [],
+      newDay: 100,
+      calibratedPars: {},
+    });
+    expect(impacts).toEqual([]);
   });
 });

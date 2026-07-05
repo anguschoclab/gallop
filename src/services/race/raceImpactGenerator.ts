@@ -1,39 +1,22 @@
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type {
   AnyImpact,
   RaceResultImpact,
   PaceSampleImpact,
-  JockeyStatsImpact,
   NewsImpact,
 } from "@/core/resolver/impacts/index";
 import { computeSectionalSplits } from "@/core/race/sectionalAnalysis";
 import { generateRaceNews } from "@/services/narrative/newsGenerator";
-import { rollForInjury } from "@/core/health/healthSystem";
-import { updateApprenticeProgression } from "@/core/apprentice/apprenticeTypes";
-import { INSURANCE_CONFIG } from "@/core/insurance/insuranceTypes";
-import { calculateBaseHorseValue } from "@/core/horse/pricing";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { Rng } from "@/core/common/rng";
-import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { generateUUID } from "@/core/uuid";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import type { Race, Horse, Jockey } from "@/game/types";
-import { MAX_FAME, GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/constants";
 import {
-  generateEnergyImpact,
-  generateFormImpact,
-  generateFameImpact,
-  generateBeyerAndRecoveryImpacts,
-  generateRaceHistoryImpact,
-  generateTripleCrownProgressImpact,
-  generatePrizeMoneyImpacts,
-  generateJockeyFeeImpacts,
-  generatePercentageJockeyFeeImpacts,
-  generatePatternJumpImpact,
-  generateTrainerStatsImpact,
-  generateJockeyAffinityImpact,
-  generateBreedingImpacts,
+  generateHealthInjuryImpacts,
+  generatePerformanceCareerImpacts,
+  generateFinancialBreedingImpacts,
+  generateJockeyStatsTrackingImpacts,
   generateRaceSummaryLog,
 } from "@/core/race/impacts";
 
@@ -163,203 +146,26 @@ export function generateRaceImpacts({
       if (!horse) continue;
 
       const runner = runnersMap.get(r.horseId);
-
-      // Energy expenditure
-      impacts.push(generateEnergyImpact(horse.id, newDay, rng));
-
-      // Health: Roll for potential injuries
-      if (rng) {
-        const injury = rollForInjury(rng, horse, newDay, hiredStaff, injuryWeatherCtx);
-        if (injury) {
-          impacts.push(injury);
-          // Insurance payout for career-ending injuries
-          if (injury.severity === "career-ending" && horse.insurancePolicy) {
-            const coveragePercent = INSURANCE_CONFIG.COVERAGE[horse.insurancePolicy.type];
-            if (coveragePercent > 0) {
-              const horseValue = calculateBaseHorseValue(horse, "mid");
-              const payout = Math.round(horseValue * coveragePercent);
-              if (payout > 0) {
-                impacts.push({
-                  id: generateUUID(rng),
-                  intentId: "",
-                  day: newDay,
-                  phase: "raceResolution",
-                  logLevel: "always",
-                  type: "insurance_payout",
-                  horseId: horse.id,
-                  amount: payout,
-                  reason: `Insurance payout for ${horse.name} (${horse.insurancePolicy.type})`,
-                } as any);
-              }
-            }
-          }
-        }
-      }
-
-      // Form change
-      impacts.push(generateFormImpact(horse, r.position, newDay, hiredStaff, rng));
-
-      // Fame change
-      const fameImpact = generateFameImpact(horse, r.position, newDay, rng);
-      if (fameImpact) {
-        impacts.push(fameImpact);
-      }
-
-      // Beyer and recovery impacts
-      const { beyerImpact, recoveryImpact } = generateBeyerAndRecoveryImpacts(
-        horse,
-        r.position,
-        r.time,
-        race,
-        classBonus,
-        calibratedPars,
-        newDay,
-        rng,
-      );
-      impacts.push(beyerImpact, recoveryImpact);
-
-      // Store beyer for later use in affinity calculations
-      const beyerValue = beyerImpact.beyer;
-
-      // Pattern jump detection — inbox notification for Graded races
-      const patternJumpImpact = generatePatternJumpImpact(horse, beyerValue, race, newDay, rng);
-      if (patternJumpImpact) {
-        impacts.push(patternJumpImpact);
-      }
-
-      // Race history impact
-      const trackId = race.trackId || race.graded?.trackId;
-      const pacePositions = race.sectionalSplits?.map((split, i) => {
-        const entry = splitEntryMaps[i]?.get(horse.id);
-        return entry?.rank ?? 0;
-      });
-      // Store visits BEFORE this race; handler increments by 1 when applying
-      const courseVisitCount = trackId ? (horse.courseVisits?.[trackId] ?? 0) : undefined;
-
-      const historyImpact = generateRaceHistoryImpact(
-        horse,
-        r.position,
-        r.time,
-        race,
-        beyerImpact.beyer,
-        newDay,
-        runner,
-        rng,
-      );
-      historyImpact.raceHistoryEntry.fieldSize = result.length;
-      historyImpact.raceHistoryEntry.pacePositions = pacePositions;
-      historyImpact.raceHistoryEntry.courseVisitCount = courseVisitCount;
-      impacts.push(historyImpact);
-
-      // Triple Crown progress
-      const tcImpact = generateTripleCrownProgressImpact(horse, r.position, race, newDay, rng);
-      if (tcImpact) {
-        impacts.push(tcImpact);
-      }
-
-      // Trainer stats update (Phase 4: Relationship Enhancement)
-      const trainerImpact = generateTrainerStatsImpact(
-        horse,
-        r.position,
-        race,
-        hiredStaff,
-        newDay,
-        rng,
-      );
-      if (trainerImpact) {
-        impacts.push(trainerImpact);
-      }
-
-      // Prize money distribution
-      const prizeImpacts = generatePrizeMoneyImpacts(horse, r.position, race, newDay, rng);
-      if (prizeImpacts) {
-        impacts.push(prizeImpacts.cashImpact);
-        if (prizeImpacts.transactionImpact) impacts.push(prizeImpacts.transactionImpact);
-        if (prizeImpacts.reputationImpact) impacts.push(prizeImpacts.reputationImpact);
-      }
-
-      // Jockey riding fees
       const entry = entriesMap.get(horse.id);
-      if (entry?.jockeyId) {
-        const jockey = jockeyMap.get(entry.jockeyId);
-        if (jockey) {
-          const jockeyFeeImpacts = generateJockeyFeeImpacts(
-            horse,
-            jockey,
-            newDay,
-            horse.id,
-            race.id,
-            rng,
-          );
-          impacts.push(jockeyFeeImpacts.cashImpact);
-          if (jockeyFeeImpacts.transactionImpact) impacts.push(jockeyFeeImpacts.transactionImpact);
 
-          // Affinity XP gain / penalty
-          impacts.push(
-            generateJockeyAffinityImpact(horse, jockey, r.position, race, beyerValue, newDay, rng),
-          );
-        }
-      }
+      // Health & injury (energy, injury roll, insurance payout)
+      impacts.push(...generateHealthInjuryImpacts(horse, newDay, hiredStaff, injuryWeatherCtx, rng));
 
-      // 5+6. Breeding: blue hen, stud career, syndicate satisfaction
-      for (const bi of generateBreedingImpacts(
-        horse,
-        r.position,
-        race,
-        horseMap,
-        syndicates,
-        newDay,
-        rng,
-      )) {
-        impacts.push(bi);
-      }
+      // Performance & career (form, fame, beyer, recovery, pattern jump, race history, TC, trainer)
+      const { impacts: perfImpacts, beyerValue } = generatePerformanceCareerImpacts(
+        horse, r, race, runner, classBonus, calibratedPars, splitEntryMaps, result.length, newDay, hiredStaff, rng,
+      );
+      impacts.push(...perfImpacts);
 
-      // 7. Jockey performance and stats tracking
-      const raceEntry = entriesMap.get(horse.id);
-      const prizeSplit = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
-      if (raceEntry?.jockeyId && r.position - 1 < prizeSplit.length) {
-        const jockey = jockeyMap.get(raceEntry.jockeyId);
+      // Financial & breeding (prize money, jockey fees, affinity, breeding)
+      impacts.push(...generateFinancialBreedingImpacts(
+        horse, r, race, entry, jockeyMap, horseMap, syndicates, beyerValue, newDay, rng,
+      ));
 
-        if (jockey) {
-          const winAmount = prizeSplit[r.position - 1] * race.purse;
-
-          // Update apprentice progression if applicable
-          let apprenticeProgression = jockey.apprenticeProgression;
-          if (jockey.isApprentice && apprenticeProgression && r.position === 1) {
-            apprenticeProgression = updateApprenticeProgression(apprenticeProgression, false);
-          }
-
-          impacts.push({
-            id: generateUUID(rng),
-            intentId: "",
-            day: newDay,
-            phase: "raceResolution",
-            logLevel: "conditional",
-            type: "jockey_stats",
-            jockeyId: jockey.id,
-            careerStarts: jockey.careerStarts + 1,
-            careerWins: jockey.careerWins + (r.position === 1 ? 1 : 0),
-            fame: Math.min(
-              MAX_FAME,
-              jockey.fame + (r.position === 1 ? 2 : r.position <= 3 ? 0.5 : 0),
-            ),
-            apprenticeProgression,
-            reason: `Rode ${horse.name} to ${r.position}${getOrdinalSuffix(r.position)}`,
-          } as JockeyStatsImpact);
-
-          const percentageFeeImpact = generatePercentageJockeyFeeImpacts(
-            jockey,
-            winAmount,
-            newDay,
-            raceEntry.owned || false,
-            raceEntry.stableId,
-            rng,
-          );
-          if (percentageFeeImpact) {
-            impacts.push(percentageFeeImpact);
-          }
-        }
-      }
+      // Jockey stats & tracking (career stats, apprentice progression, percentage fees)
+      impacts.push(...generateJockeyStatsTrackingImpacts(
+        horse, r, race, entry, jockeyMap, newDay, rng,
+      ));
     }
 
     // 8. Analytics: Global pace samples for handicapping logic

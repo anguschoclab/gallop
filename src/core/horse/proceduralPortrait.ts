@@ -314,30 +314,11 @@ const PALETTES: Record<CoatColor, PortraitPalette> = {
  *
  * @example
  * const palette = getPalette("chestnut");
- * console.log(palette.body); // "#9c4520"
+ * // palette.body === "#9c4520"
  */
 export function getPalette(coat?: CoatColor): PortraitPalette {
-  const defaultPalette = PALETTES?.bay || {
-    body: "#7a3f1a",
-    bodyShade: "#4a2410",
-    bodyHighlight: "#9a5a2a",
-    points: "#1a0e08",
-    mane: "#140a06",
-    maneShade: "#080403",
-    muzzle: "#2a160a",
-    eye: "#1a0a04",
-    skin: "#3a1c10",
-    hoof: "#1a1410",
-    bg1: "#3a2418",
-    bg2: "#1a100a",
-    hasDapples: false,
-    hasRoanFleck: false,
-    hasDorsalStripe: false,
-    blueEye: false,
-  };
-
-  if (!coat || !PALETTES) return defaultPalette;
-  return PALETTES[coat] ?? defaultPalette;
+  if (!coat) return PALETTES.bay;
+  return PALETTES[coat] ?? PALETTES.bay;
 }
 
 // ---------------------------------------------------------------------------

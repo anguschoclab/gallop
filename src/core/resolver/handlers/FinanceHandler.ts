@@ -11,6 +11,8 @@ import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
+import type { CashImpact } from "../impacts/financialImpacts";
+import type { HorseTransferImpact } from "../impacts/horseImpacts";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -24,8 +26,7 @@ type ImpactHandlerFunction = (
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   cash_change: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { entityId, amount } = impactAny;
+    const { entityId, amount } = impact as CashImpact;
     if (entityId && entityId !== "player") {
       const stable =
         lookupMaps?.stableMap.get(entityId) || draft.npcStables.find((s) => s.id === entityId);
@@ -38,8 +39,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   horse_transfer: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId, toStableId } = impactAny;
+    const { horseId, toStableId } = impact as HorseTransferImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.stableId = toStableId;

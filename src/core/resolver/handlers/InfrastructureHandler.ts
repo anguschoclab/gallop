@@ -13,6 +13,7 @@ import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
 import type { FacilityType } from "@/core/facilities";
+import type { FacilityUpgradeImpact, StaffImpact, TransportImpact, OutpostImpact } from "../impacts/miscImpacts";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -31,8 +32,7 @@ type ImpactHandlerFunction = (
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   facility_upgrade: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { facilityId, nextLevel } = impactAny;
+    const { facilityId, nextLevel } = impact as FacilityUpgradeImpact;
     const facility =
       lookupMaps?.facilityMap.get(facilityId) ||
       (draft.facilities ? draft.facilities[facilityId as FacilityType] : undefined);
@@ -42,8 +42,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   staff: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { action, staffId, salary, stableId } = impactAny;
+    const { action, staffId, salary, stableId } = impact as StaffImpact;
     if (!draft.hiredStaff) draft.hiredStaff = [];
 
     if (action === "hire") {
@@ -69,8 +68,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   transport_horse: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId, toOutpostId, fatigueSpike, acclimatizationDays } = impactAny;
+    const { horseId, toOutpostId, fatigueSpike, acclimatizationDays } = impact as TransportImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.outpostId = toOutpostId;
@@ -91,8 +89,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   outpost_action: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { stableId, action, outpostId, metadata } = impactAny;
+    const { stableId, action, outpostId, metadata } = impact as OutpostImpact;
     const stable = stableId === "player" ? draft : draft.npcStables.find((s) => s.id === stableId);
     if (stable && (stable as any).outposts) {
       const outposts = (stable as any)

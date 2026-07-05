@@ -12,6 +12,7 @@ import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
+import type { ScoutReportImpact, ConsignmentImpact, ConsignmentWithdrawalImpact, AuctionResolutionImpact } from "../impacts/miscImpacts";
 import { generateUUID } from "@/core/uuid";
 import type { AuctionLot } from "@/core/market/types";
 
@@ -30,14 +31,12 @@ type ImpactHandlerFunction = (
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   scout_report: (draft, impact) => {
-    const impactAny = impact as any;
-    const { report } = impactAny;
+    const { report } = impact as ScoutReportImpact;
     draft.scoutReports.push(report);
   },
 
   consignment: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId, saleId, reservePrice, consignorStableId, breezeSeconds } = impactAny;
+    const { horseId, saleId, reservePrice, consignorStableId, breezeSeconds } = impact as ConsignmentImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.consignedSaleId = saleId;
@@ -59,8 +58,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   consignment_withdrawal: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId, saleId } = impactAny;
+    const { horseId, saleId } = impact as ConsignmentWithdrawalImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.consignedSaleId = undefined;
@@ -76,9 +74,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   auction_resolution: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
     const { saleId, lotId, hammerPrice, soldToStableId, passed, bidHistory, wasPlayerConsignment } =
-      impactAny;
+      impact as AuctionResolutionImpact;
     const auction =
       lookupMaps?.auctionMap.get(saleId) || draft.auctions?.find((a) => a.id === saleId);
     if (auction) {

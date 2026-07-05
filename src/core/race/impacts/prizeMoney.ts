@@ -64,8 +64,9 @@ export function generatePrizeMoneyImpacts(
       amount: prize,
       category: "prize_money",
       description: `Prize money: ${position}${getOrdinalSuffix(position)} in ${race.name}`,
-      metadata: { horseId: horse.id, raceId: race.id },
-    } as TransactionImpact;
+      horseId: horse.id,
+      raceId: race.id,
+    };
 
     if (position === 1) {
       const repGain = calculateRaceWinReputation(race.graded?.grade, race.purse);

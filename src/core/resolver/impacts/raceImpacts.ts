@@ -159,16 +159,6 @@ export interface PaceSampleImpact extends Impact {
   reason: string;
 }
 
-// Jockey feedback impact
-export interface JockeyFeedbackImpact extends Impact {
-  type: "jockey_feedback";
-  raceId: string;
-  horseId: string;
-  feedback: string;
-  position: number;
-  reason: string;
-}
-
 export type RaceImpact =
   | RaceEntryImpact
   | RaceWithdrawalImpact
@@ -178,7 +168,6 @@ export type RaceImpact =
   | ClaimResolutionImpact
   | TacticsImpact
   | PaceSampleImpact
-  | JockeyFeedbackImpact
   | InsurancePurchaseImpact
   | InsuranceCancelImpact
   | InsurancePayoutImpact

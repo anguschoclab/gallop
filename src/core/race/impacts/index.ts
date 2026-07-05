@@ -14,3 +14,7 @@ export { generateTrainerStatsImpact } from "./trainerStats";
 export { generateJockeyAffinityImpact } from "./jockeyAffinity";
 export { generateBreedingImpacts } from "./breedingImpacts";
 export { generateRaceSummaryLog } from "./summaryLog";
+export { generateHealthInjuryImpacts } from "./healthInjury";
+export { generatePerformanceCareerImpacts } from "./performanceCareer";
+export { generateFinancialBreedingImpacts } from "./financialBreeding";
+export { generateJockeyStatsTrackingImpacts } from "./jockeyStatsTracking";

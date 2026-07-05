@@ -9,7 +9,7 @@
  */
 
 import type { Impact } from "./base";
-import type { HorseCampaign, CampaignFlag } from "@/game/types";
+import type { CampaignFlag, CampaignGoalType } from "@/game/types";
 
 // Campaign slot impact
 export interface CampaignSlotImpact extends Impact {
@@ -43,14 +43,17 @@ export interface CampaignFlagImpact extends Impact {
 export interface CampaignFlagDismissalImpact extends Impact {
   type: "campaign_flag_dismissal";
   horseId: string;
-  flag: CampaignFlag;
+  flag?: CampaignFlag;
+  flagIndex?: number;
   reason: string;
 }
 
 // Campaign creation impact
 export interface CampaignCreationImpact extends Impact {
   type: "campaign_creation";
-  campaign: HorseCampaign;
+  horseId: string;
+  goalType: CampaignGoalType;
+  targetRaceKey?: string;
   reason: string;
 }
 

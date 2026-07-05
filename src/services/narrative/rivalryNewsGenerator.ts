@@ -8,23 +8,35 @@
  *
  * Dependencies: @/core/uuid, @/core/narrative/newsTypes, @/game/types, @/game/rng
  */
-import { generateUUID } from "@/core/uuid";
-import type { NewsItem, NewsCategory, NewsImportance } from "@/services/narrative/newsTypes";
+import { createNewsItem } from "@/services/narrative/newsGenerator";
+import type { NewsItem, NewsCategory, NewsImportance, EntityLink } from "@/services/narrative/newsTypes";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
 
 /**
- * Create a news item with a unique identifier.
+ * Build a rivalry news item from headline/body arrays with deterministic RNG selection.
  *
- * @param params - The news item parameters excluding the ID
- * @param rng - Optional seeded RNG for deterministic ID generation
- * @returns A complete NewsItem with a unique ID
+ * @param headlines - Array of possible headline strings
+ * @param bodies - Array of possible body strings
+ * @param fields - Common NewsItem fields (day, category, importance, entityLinks)
+ * @param rng - Seeded RNG for deterministic selection and ID generation
+ * @returns A complete NewsItem
  */
-function createNewsItem(params: Omit<NewsItem, "id">, rng?: Rng): NewsItem {
-  return {
-    id: generateUUID(rng),
-    ...params,
-  };
+function buildRivalryNews(
+  headlines: string[],
+  bodies: string[],
+  fields: {
+    day: number;
+    category: NewsCategory;
+    importance: NewsImportance;
+    entityLinks: EntityLink[];
+  },
+  rng: Rng,
+): NewsItem {
+  return createNewsItem(
+    { ...fields, headline: rng.pick(headlines), body: rng.pick(bodies) },
+    rng,
+  );
 }
 
 /**
@@ -56,20 +68,12 @@ export function generateRivalryEmergenceNews(
     `Tensions are running high as ${stable.name} steps up to challenge for dominance. This rivalry is one to watch.`,
   ];
 
-  const headline = rng.pick(headlines);
-  const body = rng.pick(bodies);
-
-  return createNewsItem(
-    {
-      day: currentDay,
-      category: "stable" as NewsCategory,
-      importance: "medium" as NewsImportance,
-      headline,
-      body,
-      entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
-    },
-    rng,
-  );
+  return buildRivalryNews(headlines, bodies, {
+    day: currentDay,
+    category: "stable",
+    importance: "medium",
+    entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
+  }, rng);
 }
 
 /**
@@ -120,25 +124,17 @@ export function generateGrudgeMatchNews(
         `A bitter defeat for ${playerHorse.name} as ${rivalHorse.name} takes the grudge match. This rivalry is far from over.`,
       ];
 
-  const headline = rng.pick(headlines);
-  const body = rng.pick(bodies);
-
-  return createNewsItem(
-    {
-      day: currentDay,
-      category: "racing" as NewsCategory,
-      importance: "high" as NewsImportance,
-      headline,
-      body,
-      entityLinks: [
-        { type: "horse", id: winner.id, name: winner.name },
-        { type: "horse", id: loser.id, name: loser.name },
-        { type: "race", id: race.id, name: race.name },
-        { type: "stable", id: rivalStable.id, name: rivalStable.name },
-      ],
-    },
-    rng,
-  );
+  return buildRivalryNews(headlines, bodies, {
+    day: currentDay,
+    category: "racing",
+    importance: "high",
+    entityLinks: [
+      { type: "horse", id: winner.id, name: winner.name },
+      { type: "horse", id: loser.id, name: loser.name },
+      { type: "race", id: race.id, name: race.name },
+      { type: "stable", id: rivalStable.id, name: rivalStable.name },
+    ],
+  }, rng);
 }
 
 /**
@@ -168,20 +164,12 @@ export function generateRegionLostNews(
     `The racing landscape in ${region} has changed as ${rivalStable.name} takes control as the new regional king. Competition in the region is about to intensify.`,
   ];
 
-  const headline = rng.pick(headlines);
-  const body = rng.pick(bodies);
-
-  return createNewsItem(
-    {
-      day: currentDay,
-      category: "stable" as NewsCategory,
-      importance: "high" as NewsImportance,
-      headline,
-      body,
-      entityLinks: [{ type: "stable", id: rivalStable.id, name: rivalStable.name }],
-    },
-    rng,
-  );
+  return buildRivalryNews(headlines, bodies, {
+    day: currentDay,
+    category: "stable",
+    importance: "high",
+    entityLinks: [{ type: "stable", id: rivalStable.id, name: rivalStable.name }],
+  }, rng);
 }
 
 /**
@@ -215,18 +203,10 @@ export function generateRivalryEscalationNews(
     `The situation with ${stable.name} has deteriorated. This is no longer friendly competition - this is a heated rivalry with real consequences.`,
   ];
 
-  const headline = rng.pick(headlines);
-  const body = rng.pick(bodies);
-
-  return createNewsItem(
-    {
-      day: currentDay,
-      category: "stable" as NewsCategory,
-      importance: "high" as NewsImportance,
-      headline,
-      body,
-      entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
-    },
-    rng,
-  );
+  return buildRivalryNews(headlines, bodies, {
+    day: currentDay,
+    category: "stable",
+    importance: "high",
+    entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
+  }, rng);
 }

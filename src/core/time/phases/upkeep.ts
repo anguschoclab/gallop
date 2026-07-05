@@ -105,7 +105,7 @@ export const upkeepPhase = {
         amount: -totalDailyCost,
         category: "upkeep",
         description: `Daily upkeep: ${playerHorseCount} horses, facilities, and ${playerStaff.length} staff`,
-        metadata: { recurring: true },
+        recurring: true,
       } as AnyImpact);
     }
 

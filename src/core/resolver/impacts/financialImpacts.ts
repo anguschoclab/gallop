@@ -8,7 +8,7 @@
  */
 
 import type { Impact } from "./base";
-import type { SystemsState } from "@/game/store/state/systemsState";
+import type { TransactionSubcategory } from "@/core/transactions/transactionTypes";
 
 // Cash impact
 export interface CashImpact extends Impact {
@@ -22,9 +22,11 @@ export interface CashImpact extends Impact {
 export interface TransactionImpact extends Impact {
   type: "transaction";
   amount: number;
-  category: string;
+  category: TransactionSubcategory;
   description: string;
-  metadata?: Record<string, any>;
+  horseId?: string;
+  raceId?: string;
+  recurring?: boolean;
 }
 
 // Expense impact - merged with CashImpact usage but sometimes defined separately in intent

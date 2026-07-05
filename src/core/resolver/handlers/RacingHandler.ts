@@ -13,6 +13,23 @@ import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
+import type {
+  RaceEntryImpact,
+  RaceWithdrawalImpact,
+  RaceResultImpact,
+  RaceHistoryImpact,
+  ClaimingImpact,
+  TacticsImpact,
+  RaceResultAdjustmentImpact,
+} from "../impacts/raceImpacts";
+import type {
+  JockeyContractImpact,
+  JockeyAssignmentImpact,
+  JockeySilkImpact,
+  JockeyStatsImpact,
+  JockeyAffinityImpact,
+} from "../impacts/jockeyImpacts";
+import type { TripleCrownProgressImpact } from "../impacts/campaignImpacts";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -28,8 +45,7 @@ type ImpactHandlerFunction = (
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   race_entry: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { raceId, horseId, jockeyId, weight, jockeyInstructions, bumpEntryHorseId } = impactAny;
+    const { raceId, horseId, jockeyId, weight, jockeyInstructions, bumpEntryHorseId } = impact as RaceEntryImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (race && horse) {
@@ -60,8 +76,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   race_withdrawal: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { raceId, horseId } = impactAny;
+    const { raceId, horseId } = impact as RaceWithdrawalImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
     if (race) {
       const index = race.entries.findIndex((e: any) => e.horseId === horseId);
@@ -72,8 +87,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   race_result: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { raceId, results, snapshots } = impactAny;
+    const { raceId, results, snapshots } = impact as RaceResultImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
     if (race) {
       race.result = results;
@@ -83,8 +97,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   jockey_contract: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { jockeyId, stableId, contractUntil, stableAffinity, isApprentice, loyalty } = impactAny;
+    const { jockeyId, stableId, contractUntil, stableAffinity, isApprentice, loyalty } = impact as JockeyContractImpact;
     const jockey =
       lookupMaps?.jockeyMap.get(jockeyId) || draft.jockeys?.find((j) => j.id === jockeyId);
     if (jockey) {
@@ -107,8 +120,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   jockey_assignment: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { raceId, horseId, jockeyId } = impactAny;
+    const { raceId, horseId, jockeyId } = impact as JockeyAssignmentImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
     if (race) {
       const entry = race.entries.find((e: any) => e.horseId === horseId);
@@ -119,8 +131,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   jockey_silk: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { jockeyId, silk } = impactAny;
+    const { jockeyId, silk } = impact as JockeySilkImpact;
     const jockey =
       lookupMaps?.jockeyMap.get(jockeyId) || draft.jockeys?.find((j) => j.id === jockeyId);
     if (jockey) {
@@ -129,8 +140,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   jockey_stats: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { jockeyId, careerStarts, careerWins, fame, apprenticeProgression } = impactAny;
+    const { jockeyId, careerStarts, careerWins, fame, apprenticeProgression } = impact as JockeyStatsImpact;
     const jockey =
       lookupMaps?.jockeyMap.get(jockeyId) || draft.jockeys?.find((j) => j.id === jockeyId);
     if (jockey) {
@@ -149,8 +159,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   race_history: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId, raceHistoryEntry } = impactAny;
+    const { horseId, raceHistoryEntry } = impact as RaceHistoryImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.raceHistory.push(raceHistoryEntry);
@@ -196,8 +205,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   claiming: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { horseId, toStableId } = impactAny;
+    const { horseId, toStableId } = impact as ClaimingImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.stableId = toStableId;
@@ -206,8 +214,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   triple_crown_progress: (draft, impact) => {
-    const impactAny = impact as any;
-    const { horseId, triplecrownKey, year, legs, won } = impactAny;
+    const { horseId, triplecrownKey, year, legs, won } = impact as TripleCrownProgressImpact;
     if (!draft.triplecrownHistory) draft.triplecrownHistory = [];
     const existing = draft.triplecrownHistory.find(
       (t) => t.horseId === horseId && t.triplecrownKey === triplecrownKey && t.year === year,
@@ -221,8 +228,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   tactics: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { raceId, horseId, jockeyInstructions } = impactAny;
+    const { raceId, horseId, jockeyInstructions } = impact as TacticsImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
     if (race) {
       const entry = race.entries.find((e: any) => e.horseId === horseId);
@@ -233,8 +239,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   race_result_adjustment: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { raceId, adjustedResults } = impactAny;
+    const { raceId, adjustedResults } = impact as RaceResultAdjustmentImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
     if (race && race.result) {
       // Apply adjusted results after stewards DQ
@@ -250,8 +255,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   jockey_affinity_gain: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { jockeyId, horseId, xp } = impactAny;
+    const { jockeyId, horseId, xp } = impact as JockeyAffinityImpact;
     const jockey =
       lookupMaps?.jockeyMap.get(jockeyId) || draft.jockeys?.find((j) => j.id === jockeyId);
     if (jockey) {

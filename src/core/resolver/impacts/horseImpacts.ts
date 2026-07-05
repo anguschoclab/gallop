@@ -146,7 +146,7 @@ export interface SeasonHistoryImpact extends Impact {
 
 // Blue hen status impact
 export interface BlueHenImpact extends Impact {
-  type: "blue hen_status";
+  type: "blue_hen_status";
   horseId: string;
   blueHenStatus: {
     isBlueHen: boolean;

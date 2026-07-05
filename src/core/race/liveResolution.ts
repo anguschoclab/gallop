@@ -330,7 +330,7 @@ export function resolveLiveRaceWithImpacts(
           day,
           phase: "raceResolution",
           logLevel: "conditional",
-          type: "blue hen_status",
+          type: "blue_hen_status",
           horseId: dam.id,
           blueHenStatus: {
             isBlueHen: dam.blueHenStatus?.isBlueHen || false,
@@ -338,12 +338,12 @@ export function resolveLiveRaceWithImpacts(
             group1WinnersProduced:
               race.graded?.grade === "G1"
                 ? (dam.blueHenStatus?.group1WinnersProduced ?? 0) + 1
-                : dam.blueHenStatus?.group1WinnersProduced,
+                : dam.blueHenStatus?.group1WinnersProduced ?? 0,
             blueHenScore: dam.blueHenStatus?.blueHenScore || 0,
             foalsProduced: dam.blueHenStatus?.foalsProduced || 0,
           },
           reason: `Stakes win by ${horse.name}`,
-        } as BlueHenImpact);
+        });
       }
 
       // Stud career impact for sire
@@ -387,7 +387,7 @@ export function resolveLiveRaceWithImpacts(
             lifetimeG1Foals: newG1Foals,
           },
           reason: `Stakes win by ${horse.name}${sire.stableId ? `. Fee: $${formatCurrency(previousFee)} → $${formatCurrency(newFee)}.` : ""}`,
-        } as StudCareerImpact);
+        });
       }
     }
 

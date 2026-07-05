@@ -14,6 +14,12 @@ import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
 import type { Syndicate } from "@/core/breeding/types";
 import { generateUUID } from "@/core/uuid";
+import type {
+  SyndicateCreationImpact,
+  ShareTransactionImpact,
+  SyndicateFeeDistributionImpact,
+  SyndicateSatisfactionImpact,
+} from "../impacts/breedingImpacts";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -29,9 +35,8 @@ type ImpactHandlerFunction = (
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   syndicate_creation: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
     const { syndicateId, stallionId, stallionName, totalShares, sharePrice, initialShareholders } =
-      impactAny;
+      impact as SyndicateCreationImpact;
 
     // Validate stallion exists and is a G1 winner
     const stallion =
@@ -65,8 +70,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   share_transaction: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { syndicateId, stableId, shares, pricePerShare } = impactAny;
+    const { syndicateId, stableId, shares, pricePerShare } = impact as ShareTransactionImpact;
 
     const syndicate = draft.syndicates?.[syndicateId];
     if (!syndicate) return;
@@ -106,8 +110,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   syndicate_fee_distribution: (draft, impact) => {
-    const impactAny = impact as any;
-    const { syndicateId, totalFee } = impactAny;
+    const { syndicateId, totalFee } = impact as SyndicateFeeDistributionImpact;
 
     const syndicate = draft.syndicates?.[syndicateId];
     if (!syndicate) return;
@@ -143,8 +146,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   syndicate_satisfaction: (draft, impact) => {
-    const impactAny = impact as any;
-    const { syndicateId, stableId, satisfactionDelta } = impactAny;
+    const { syndicateId, stableId, satisfactionDelta } = impact as SyndicateSatisfactionImpact;
 
     const syndicate = draft.syndicates?.[syndicateId];
     if (!syndicate) return;

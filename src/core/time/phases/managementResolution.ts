@@ -34,7 +34,27 @@ import type {
   CampaignDeletionIntent,
   InsuranceClaimIntent,
 } from "@/core/resolver/intents";
-import type { AnyImpact } from "@/core/resolver/impacts/index";
+import type {
+  AnyImpact,
+  CashImpact,
+  JockeyContractImpact,
+  JockeyAssignmentImpact,
+  JockeySilkImpact,
+  LogImpact,
+  ScoutReportImpact,
+  FacilityUpgradeImpact,
+  UpdateStudFeeImpact,
+  GeldingImpact,
+  RenameImpact,
+  TacticsImpact,
+  StudCareerImpact,
+  InboxImpact,
+  InsurancePayoutImpact,
+  CampaignSlotImpact,
+  CampaignFlagDismissalImpact,
+  CampaignCreationImpact,
+  CampaignDeletionImpact,
+} from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import { createRng, hashStr } from "@/core/common/rng";
 import { scoutHorse } from "@/core/npc/scouting";
@@ -74,7 +94,7 @@ export const managementResolutionPhase: PipelinePhase = {
             entityId: horse.stableId || "player",
             amount: -premium,
             reason: `Insurance premium for ${horse.name}`,
-          } as any);
+          } as CashImpact);
         }
       }
     }
@@ -94,7 +114,7 @@ export const managementResolutionPhase: PipelinePhase = {
             stableId: typedIntent.stableId,
             contractUntil: typedIntent.contractUntil,
             reason: "Contract signed",
-          } as any);
+          } as JockeyContractImpact);
 
           if (typedIntent.bonus && typedIntent.bonus > 0) {
             impacts.push({
@@ -107,7 +127,7 @@ export const managementResolutionPhase: PipelinePhase = {
               entityId: "player",
               amount: -typedIntent.bonus,
               reason: "Jockey sign-on bonus",
-            } as any);
+            } as CashImpact);
           }
           break;
         }
@@ -125,7 +145,7 @@ export const managementResolutionPhase: PipelinePhase = {
             horseId: typedIntent.horseId,
             jockeyId: typedIntent.jockeyId,
             reason: "Jockey assigned",
-          } as any);
+          } as JockeyAssignmentImpact);
           break;
         }
 
@@ -142,7 +162,7 @@ export const managementResolutionPhase: PipelinePhase = {
             nextLevel: typedIntent.nextLevel,
             cost: typedIntent.cost,
             reason: "Facility upgrade started",
-          } as any);
+          } as FacilityUpgradeImpact);
 
           if (typedIntent.cost && typedIntent.cost > 0) {
             impacts.push({
@@ -155,7 +175,7 @@ export const managementResolutionPhase: PipelinePhase = {
               entityId: "player",
               amount: -typedIntent.cost,
               reason: `Upgrade ${typedIntent.facilityId}`,
-            } as any);
+            } as CashImpact);
           }
           break;
         }
@@ -172,7 +192,7 @@ export const managementResolutionPhase: PipelinePhase = {
             horseId: typedIntent.horseId,
             newFee: typedIntent.newFee,
             reason: "Stud fee updated",
-          } as any);
+          } as UpdateStudFeeImpact);
           break;
         }
 
@@ -187,7 +207,7 @@ export const managementResolutionPhase: PipelinePhase = {
             type: "gelding",
             horseId: typedIntent.horseId,
             reason: "Gelded",
-          } as any);
+          } as GeldingImpact);
           break;
         }
 
@@ -206,7 +226,7 @@ export const managementResolutionPhase: PipelinePhase = {
             type: "log",
             text: `Rerolled silk for jockey ${typedIntent.jockeyId}.`,
             reason: "Silk reroll",
-          } as any);
+          } as LogImpact);
 
           impacts.push({
             id: generateUUID(context.dailyRng),
@@ -218,7 +238,7 @@ export const managementResolutionPhase: PipelinePhase = {
             entityId: "player",
             amount: -typedIntent.cost,
             reason: "Silk reroll cost",
-          } as any);
+          } as CashImpact);
 
           impacts.push({
             id: generateUUID(context.dailyRng),
@@ -230,7 +250,7 @@ export const managementResolutionPhase: PipelinePhase = {
             jockeyId: typedIntent.jockeyId,
             silk: newSilk,
             reason: "Silk rerolled",
-          } as any);
+          } as JockeySilkImpact);
           break;
         }
 
@@ -246,7 +266,7 @@ export const managementResolutionPhase: PipelinePhase = {
             horseId: typedIntent.horseId,
             newName: typedIntent.newName,
             reason: "Renamed",
-          } as any);
+          } as RenameImpact);
           break;
         }
 
@@ -263,7 +283,7 @@ export const managementResolutionPhase: PipelinePhase = {
             horseId: typedIntent.horseId,
             jockeyInstructions: typedIntent.jockeyInstructions,
             reason: "Tactics updated",
-          } as any);
+          } as TacticsImpact);
           break;
         }
 
@@ -285,7 +305,7 @@ export const managementResolutionPhase: PipelinePhase = {
               lifetimeFoals: 0,
             },
             reason: "Retired to stud",
-          } as any);
+          } as StudCareerImpact);
 
           const horse = state.horses.find((h) => h.id === typedIntent.horseId);
           if (horse && !horse.stableId && isTopHorse(horse)) {
@@ -309,7 +329,7 @@ export const managementResolutionPhase: PipelinePhase = {
                   params: { horseId: horse.id },
                 },
               },
-            } as any);
+            } as InboxImpact);
           }
           break;
         }
@@ -334,7 +354,7 @@ export const managementResolutionPhase: PipelinePhase = {
                 type: "scout_report",
                 report: result.report,
                 reason: result.message,
-              } as any);
+              } as ScoutReportImpact);
 
               impacts.push({
                 id: generateUUID(context.dailyRng),
@@ -346,7 +366,7 @@ export const managementResolutionPhase: PipelinePhase = {
                 entityId: "player",
                 amount: -result.cost,
                 reason: "Scouting cost",
-              } as any);
+              } as CashImpact);
             }
           }
           break;
@@ -365,7 +385,7 @@ export const managementResolutionPhase: PipelinePhase = {
             slotIndex: typedIntent.slotIndex,
             slot: typedIntent.slot,
             reason: "Campaign slot updated",
-          } as any);
+          } as CampaignSlotImpact);
           break;
         }
 
@@ -381,7 +401,7 @@ export const managementResolutionPhase: PipelinePhase = {
             horseId: typedIntent.horseId,
             flagIndex: typedIntent.flagIndex,
             reason: "Campaign flag dismissed",
-          } as any);
+          } as CampaignFlagDismissalImpact);
           break;
         }
 
@@ -398,7 +418,7 @@ export const managementResolutionPhase: PipelinePhase = {
             goalType: typedIntent.goalType,
             targetRaceKey: typedIntent.targetRaceKey,
             reason: "Campaign created",
-          } as any);
+          } as CampaignCreationImpact);
           break;
         }
 
@@ -413,7 +433,7 @@ export const managementResolutionPhase: PipelinePhase = {
             type: "campaign_deletion",
             horseId: typedIntent.horseId,
             reason: "Campaign deleted",
-          } as any);
+          } as CampaignDeletionImpact);
           break;
         }
 
@@ -431,7 +451,7 @@ export const managementResolutionPhase: PipelinePhase = {
               horseId: typedIntent.horseId,
               amount: typedIntent.payout,
               reason: `Insurance claim payout for ${horse.name}`,
-            } as any);
+            } as InsurancePayoutImpact);
           }
           break;
         }

@@ -11,6 +11,7 @@ import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
+import type { InboxImpact } from "../impacts/inboxImpacts";
 import { generateUUID } from "@/core/uuid";
 
 export class InboxHandler implements ImpactHandler {
@@ -27,12 +28,12 @@ export class InboxHandler implements ImpactHandler {
       campaignMap: Map<string, WritableDraft<any>>;
     },
   ): void {
-    const impactAny = impact as any;
+    const { message } = impact as InboxImpact;
     if (!draft.inbox) draft.inbox = [];
 
     // Push the message to the player's inbox
     draft.inbox.push({
-      ...impactAny.message,
+      ...message,
       id: generateUUID(),
       day: impact.day, // Use the impact day if available, otherwise fallback to message.day
     });

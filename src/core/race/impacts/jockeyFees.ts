@@ -45,8 +45,9 @@ export function generateJockeyFeeImpacts(
       amount: -ridingFee,
       category: "jockey_fee",
       description: `Jockey fee: ${jockey.name} for ${horse.name}`,
-      metadata: { horseId, raceId },
-    } as TransactionImpact;
+      horseId,
+      raceId,
+    };
   }
 
   return { cashImpact, transactionImpact };

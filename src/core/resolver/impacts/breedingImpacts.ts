@@ -10,6 +10,7 @@
 
 import type { Impact } from "./base";
 import type { BlueHenStatus, Pregnancy, StudCareer } from "@/game/types";
+import type { BlueHenImpact } from "./horseImpacts";
 
 // Pregnancy creation impact
 export interface PregnancyCreationImpact extends Impact {
@@ -48,6 +49,14 @@ export interface MareFoalingUpdateImpact extends Impact {
   lastFoaledDay: number;
   foalsProduced: string[];
   blueHenStatus: BlueHenStatus;
+  reason: string;
+}
+
+// Update stud fee impact
+export interface UpdateStudFeeImpact extends Impact {
+  type: "update_stud_fee";
+  horseId: string;
+  newFee: number;
   reason: string;
 }
 
@@ -97,6 +106,8 @@ export type BreedingImpact =
   | PregnancyDeletionImpact
   | StudCareerImpact
   | MareFoalingUpdateImpact
+  | UpdateStudFeeImpact
+  | BlueHenImpact
   | SyndicateCreationImpact
   | ShareTransactionImpact
   | SyndicateFeeDistributionImpact
