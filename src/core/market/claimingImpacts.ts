@@ -65,7 +65,7 @@ export function generateClaimTransferImpacts(
   for (const transfer of transfers) {
     impacts.push({
       id: generateUUID(rng),
-      intentId: intentMap.get(transfer.horseId)?.id || "",
+      intentId: intentMap.get(`${transfer.horseId}:${transfer.toStableId}`)?.id || "",
       day: newDay,
       phase: "raceResolution",
       logLevel: "always",

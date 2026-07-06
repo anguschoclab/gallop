@@ -69,7 +69,9 @@ export function processClaimingResolution({
       successful: false,
     }));
 
-    const intentMap = new Map(eligibleClaims.map((i) => [i.horseId, i]));
+    const intentMap = new Map(
+      eligibleClaims.map((i) => [`${i.horseId}:${i.claimantStableId || ""}`, i]),
+    );
     const { transfers, logs: claimLogs } = processClaims(race, claimAttempts, horses, newDay, rng);
 
     impacts.push(...generateClaimTransferImpacts(transfers, race, intentMap, newDay, rng));
@@ -87,8 +89,12 @@ export function processClaimingResolution({
       } as LogImpact);
     }
 
-    const winningHorseIds = new Set(transfers.map((t) => t.horseId));
-    const losingClaims = eligibleClaims.filter((i) => !winningHorseIds.has(i.horseId));
+    const winningClaimKeys = new Set(
+      transfers.map((t) => `${t.horseId}:${t.toStableId}`),
+    );
+    const losingClaims = eligibleClaims.filter(
+      (i) => !winningClaimKeys.has(`${i.horseId}:${i.claimantStableId || ""}`),
+    );
     impacts.push(...generateLosingClaimantRefunds(losingClaims, race, newDay, rng));
   }
 

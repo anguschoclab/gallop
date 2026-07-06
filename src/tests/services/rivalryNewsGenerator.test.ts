@@ -179,6 +179,36 @@ describe("generateGrudgeMatchNews", () => {
     const n2 = generateGrudgeMatchNews(race, playerHorse, rivalHorse, true, DAY, rng2, stable);
     expect(n1).toEqual(n2);
   });
+
+  it("produces different output with different seeds", () => {
+    const rng1 = createTestRng("grudge-seed-a");
+    const rng2 = createTestRng("grudge-seed-b");
+    const n1 = generateGrudgeMatchNews(race, playerHorse, rivalHorse, true, DAY, rng1, stable);
+    const n2 = generateGrudgeMatchNews(race, playerHorse, rivalHorse, true, DAY, rng2, stable);
+    expect(n1!.id).not.toBe(n2!.id);
+  });
+
+  it("entityLinks exact match on player win", () => {
+    const rng = createTestRng("grudge-exact-win");
+    const news = generateGrudgeMatchNews(race, playerHorse, rivalHorse, true, DAY, rng, stable);
+    expect(news!.entityLinks).toEqual([
+      { type: "horse", id: "ph-1", name: "Lightning Bolt" },
+      { type: "horse", id: "rh-1", name: "Dark Thunder" },
+      { type: "race", id: "race-1", name: "Grand Stakes" },
+      { type: "stable", id: "rival-1", name: "Bitter Creek Stables" },
+    ]);
+  });
+
+  it("entityLinks exact match on player loss", () => {
+    const rng = createTestRng("grudge-exact-loss");
+    const news = generateGrudgeMatchNews(race, playerHorse, rivalHorse, false, DAY, rng, stable);
+    expect(news!.entityLinks).toEqual([
+      { type: "horse", id: "rh-1", name: "Dark Thunder" },
+      { type: "horse", id: "ph-1", name: "Lightning Bolt" },
+      { type: "race", id: "race-1", name: "Grand Stakes" },
+      { type: "stable", id: "rival-1", name: "Bitter Creek Stables" },
+    ]);
+  });
 });
 
 describe("generateRegionLostNews", () => {
@@ -240,6 +270,21 @@ describe("generateRegionLostNews", () => {
     const n1 = generateRegionLostNews(region, stable, DAY, rng1);
     const n2 = generateRegionLostNews(region, stable, DAY, rng2);
     expect(n1).toEqual(n2);
+  });
+
+  it("produces different output with different seeds", () => {
+    const rng1 = createTestRng("region-seed-a");
+    const rng2 = createTestRng("region-seed-b");
+    const n1 = generateRegionLostNews(region, stable, DAY, rng1);
+    const n2 = generateRegionLostNews(region, stable, DAY, rng2);
+    expect(n1!.id).not.toBe(n2!.id);
+  });
+
+  it("handles empty region string", () => {
+    const rng = createTestRng("region-empty");
+    const news = generateRegionLostNews("", stable, DAY, rng);
+    expect(news).not.toBeNull();
+    expect(news!.body).toContain("Bitter Creek Stables");
   });
 });
 
@@ -314,5 +359,25 @@ describe("generateRivalryEscalationNews", () => {
     const n1 = generateRivalryEscalationNews(stable, 70, 85, DAY, rng1);
     const n2 = generateRivalryEscalationNews(stable, 70, 85, DAY, rng2);
     expect(n1).toEqual(n2);
+  });
+
+  it("produces different output with different seeds", () => {
+    const rng1 = createTestRng("esc-seed-a");
+    const rng2 = createTestRng("esc-seed-b");
+    const n1 = generateRivalryEscalationNews(stable, 70, 85, DAY, rng1);
+    const n2 = generateRivalryEscalationNews(stable, 70, 85, DAY, rng2);
+    expect(n1!.id).not.toBe(n2!.id);
+  });
+
+  it("handles extreme friction jump from 0 to 100", () => {
+    const rng = createTestRng("esc-extreme");
+    const news = generateRivalryEscalationNews(stable, 0, 100, DAY, rng);
+    expect(news).not.toBeNull();
+    expect(news!.headline).toContain("Bitter Creek Stables");
+  });
+
+  it("returns null when newFriction is exactly 79", () => {
+    const rng = createTestRng("esc-79");
+    expect(generateRivalryEscalationNews(stable, 50, 79, DAY, rng)).toBeNull();
   });
 });
