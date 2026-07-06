@@ -51,3 +51,8 @@
 
 **Learning:** When attempting to find intersections between two arrays (e.g. checking if a horse ID from the result array exists in an entry array), chaining `.filter()` and `.some()` operations results in O(N*M) complexity, creating significant bottlenecks in hot paths like the NPC logic cycle.
 **Action:** When filtering arrays using membership checks against another array, pre-calculate a `Set` and replace the `.some()` loop with a `.has()` check to enable O(1) lookups and change the operation from O(N*M) to O(N).
+
+## 2024-05-21 - [Optimizing O(N*M) loop lookups with Set in React Renders]
+
+**Learning:** When filtering or mapping arrays and checking membership in another array (e.g., `program.enrolledDamIds.includes(h.id)`), React renders can suffer from O(N*M) performance bottlenecks if both arrays are large, such as in `ActiveProgramView.tsx`.
+**Action:** Replace `.includes()` and `.some()` inside `.filter()` or `.map()` loops with a pre-calculated `Set` using `useMemo` (e.g., `useMemo(() => new Set(arr), [arr])`) to perform O(1) membership checks, reducing overall complexity to O(N+M).
