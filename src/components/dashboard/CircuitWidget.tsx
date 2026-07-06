@@ -6,6 +6,7 @@ import { useGame } from "@/game/store";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/core/common/formatting";
 import { Globe, ChevronRight, Store, Gavel } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function CircuitWidget() {
   const day = useGame((s) => s.day);
@@ -30,26 +31,33 @@ export function CircuitWidget() {
             The Circuit
           </CardTitle>
         </div>
-        <Link
-          to="/races"
-          search={{
-            grade: "all",
-            country: "all",
-            surface: "all",
-            track: "all",
-            owned: "all",
-            q: "",
-          }}
-        >
-          <Button
-            aria-label="Go to The Circuit races"
-            size="icon"
-            variant="ghost"
-            className="h-8 w-8 text-cream-muted hover:text-success group-hover:translate-x-0.5 transition-transform"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </Link>
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                to="/races"
+                search={{
+                  grade: "all",
+                  country: "all",
+                  surface: "all",
+                  track: "all",
+                  owned: "all",
+                  q: "",
+                }}
+                aria-label="Go to The Circuit races"
+              >
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8 text-cream-muted hover:text-success group-hover:translate-x-0.5 transition-transform"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>Go to The Circuit races</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </CardHeader>
       <CardContent className="pt-4 flex-1 flex flex-col justify-between space-y-4">
         <div className="space-y-3">

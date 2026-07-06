@@ -5,6 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { overall, NumericValue, HorseBit } from "@/components/horse/HorseBits";
 import { LayoutGrid, Users, Briefcase, ChevronRight } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function StableRosterWidget() {
   const horses = useGame((s) => s.horses);
@@ -28,16 +29,22 @@ export function StableRosterWidget() {
             Stable & Roster
           </CardTitle>
         </div>
-        <Link to="/stable">
-          <Button
-            aria-label="Go to Stable & Roster"
-            size="icon"
-            variant="ghost"
-            className="h-8 w-8 text-cream-muted hover:text-blue-400 group-hover:translate-x-0.5 transition-transform"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </Link>
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link to="/stable" aria-label="Go to Stable & Roster">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8 text-cream-muted hover:text-blue-400 group-hover:translate-x-0.5 transition-transform"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>Go to Stable & Roster</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </CardHeader>
       <CardContent className="pt-4 flex-1 flex flex-col justify-between space-y-4">
         <div className="space-y-3">
