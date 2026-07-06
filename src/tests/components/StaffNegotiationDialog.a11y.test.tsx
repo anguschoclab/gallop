@@ -37,31 +37,31 @@ const mkStaff = (overrides: Partial<StaffMember> = {}): StaffMember => ({
 describe("StaffNegotiationDialog — accessibility", () => {
   it("label has htmlFor='offerAmount' attribute", () => {
     const staff = mkStaff();
-    const { container } = renderWithStore(
+    renderWithStore(
       <StaffNegotiationDialog staff={staff} isOpen={true} onClose={vi.fn()} />,
       { cash: 100000, day: 1 },
     );
-    const label = container.querySelector('label[for="offerAmount"]');
+    const label = document.querySelector('label[for="offerAmount"]');
     expect(label).toBeTruthy();
   });
 
   it("input has id='offerAmount' attribute", () => {
     const staff = mkStaff();
-    const { container } = renderWithStore(
+    renderWithStore(
       <StaffNegotiationDialog staff={staff} isOpen={true} onClose={vi.fn()} />,
       { cash: 100000, day: 1 },
     );
-    const input = container.querySelector('input#offerAmount');
+    const input = document.querySelector('input#offerAmount');
     expect(input).toBeTruthy();
   });
 
   it("label text 'Your offer (per day)' is present", () => {
     const staff = mkStaff();
-    const { container } = renderWithStore(
+    renderWithStore(
       <StaffNegotiationDialog staff={staff} isOpen={true} onClose={vi.fn()} />,
       { cash: 100000, day: 1 },
     );
-    const label = container.querySelector('label[for="offerAmount"]');
+    const label = document.querySelector('label[for="offerAmount"]');
     expect(label?.textContent).toContain("Your offer");
   });
 });

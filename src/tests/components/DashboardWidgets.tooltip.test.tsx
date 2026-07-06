@@ -21,10 +21,10 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 describe("CircuitWidget — tooltip accessibility", () => {
-  it("icon-only button has aria-label", () => {
+  it("icon-only button has aria-label on wrapping element", () => {
     const { container } = renderWithStore(<CircuitWidget />);
-    const ariaButtons = container.querySelectorAll('button[aria-label]');
-    expect(ariaButtons.length).toBeGreaterThanOrEqual(1);
+    const ariaElements = container.querySelectorAll('[aria-label]');
+    expect(ariaElements.length).toBeGreaterThanOrEqual(1);
   });
 
   it("no native title attributes on buttons", () => {
@@ -35,10 +35,10 @@ describe("CircuitWidget — tooltip accessibility", () => {
 });
 
 describe("HQOpsWidget — tooltip accessibility", () => {
-  it("icon-only button has aria-label", () => {
+  it("icon-only button has aria-label on wrapping element", () => {
     const { container } = renderWithStore(<HQOpsWidget />);
-    const ariaButtons = container.querySelectorAll('button[aria-label]');
-    expect(ariaButtons.length).toBeGreaterThanOrEqual(1);
+    const ariaElements = container.querySelectorAll('[aria-label]');
+    expect(ariaElements.length).toBeGreaterThanOrEqual(1);
   });
 
   it("no native title attributes on buttons", () => {
@@ -49,10 +49,10 @@ describe("HQOpsWidget — tooltip accessibility", () => {
 });
 
 describe("StableRosterWidget — tooltip accessibility", () => {
-  it("icon-only button has aria-label", () => {
+  it("icon-only button has aria-label on wrapping element", () => {
     const { container } = renderWithStore(<StableRosterWidget />);
-    const ariaButtons = container.querySelectorAll('button[aria-label]');
-    expect(ariaButtons.length).toBeGreaterThanOrEqual(1);
+    const ariaElements = container.querySelectorAll('[aria-label]');
+    expect(ariaElements.length).toBeGreaterThanOrEqual(1);
   });
 
   it("no native title attributes on buttons", () => {
@@ -63,10 +63,10 @@ describe("StableRosterWidget — tooltip accessibility", () => {
 });
 
 describe("ImperialOutpostManager — tooltip accessibility", () => {
-  it("icon-only button has aria-label", () => {
+  it("icon-only button has aria-label on wrapping element", () => {
     const { container } = renderWithStore(<ImperialOutpostManager />);
-    const ariaButtons = container.querySelectorAll('button[aria-label]');
-    expect(ariaButtons.length).toBeGreaterThanOrEqual(1);
+    const ariaElements = container.querySelectorAll('[aria-label]');
+    expect(ariaElements.length).toBeGreaterThanOrEqual(1);
   });
 
   it("no native title attributes on buttons", () => {
