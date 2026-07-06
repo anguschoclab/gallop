@@ -50,6 +50,9 @@ export const awardsPhase = {
     const updatedLastAwardYear = { ...lastAwardYear };
     const impacts: AnyImpact[] = [];
 
+    // Pre-compute race map for O(1) lookups in awards scoring
+    const raceMap = new Map(state.races.map((r) => [r.id, r]));
+
     for (const ceremony of todayCeremonies) {
       const region = ceremony.region;
 
@@ -59,7 +62,7 @@ export const awardsPhase = {
       }
 
       // Determine winners for this region
-      const winners = determineRegionalWinners(state.horses, state.races, year, region);
+      const winners = determineRegionalWinners(state.horses, state.races, year, region, raceMap);
 
       if (winners.length === 0) {
         updatedLastAwardYear[region] = year;
