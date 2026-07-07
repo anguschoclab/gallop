@@ -19,7 +19,7 @@ function makeBaseAIState(stableId: string, friction: number): StableAIState {
   return {
     stableId,
     personalityState: { archetype: "aggressive", aggression: 0.8 } as any,
-    learningState: { observations: [], adaptations: {} } as any,
+    learningState: { outcomes: [], successRates: {} } as any,
     lastUpdateDay: DAY,
     friction,
     winsAgainstPlayer: 0,
