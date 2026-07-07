@@ -63,6 +63,14 @@ export function generateRivalryEmergenceNews(
     `Lines Drawn: ${stable.name} Issues a Warning`,
     `${stable.name} Throws Down the Gauntlet`,
     `Brewing Storm: ${stable.name} Steps Up`,
+    `Target Acquired: ${stable.name} Takes Aim`,
+    `${stable.name} Makes Their Move`,
+    `The Rivalry Begins: ${stable.name} Looks to Topple the Hierarchy`,
+    `A Rivalry is Born: ${stable.name} Sounds the Alarm`,
+    `Shots Fired: ${stable.name} Demands Respect`,
+    `Under Pressure: ${stable.name} Enters the Fray`,
+    `A New Adversary: ${stable.name} Emerges from the Pack`,
+    `Staking Their Claim: ${stable.name} Challenges the Status Quo`,
   ];
 
   const bodies = [
@@ -72,6 +80,14 @@ export function generateRivalryEmergenceNews(
     `Whispers in the paddock have turned to outright declarations. ${stable.name} has set their sights on taking you down.`,
     `The gloves are off. ${stable.name} is making moves that suggest they see you as their primary obstacle to the top.`,
     `It's no longer just business for ${stable.name}. They're targeting your runners specifically, signaling the start of a bitter feud.`,
+    `In a surprising development, ${stable.name} has begun actively shadowing your stable's entries, ensuring their top runners are present in your key races.`,
+    `The paddock chatter has focused heavily on ${stable.name} this week. They're making no secret of their ambition to unseat you as the top syndicate.`,
+    `${stable.name} has officially entered the conversation. Insiders suggest they've completely retooled their strategy to counter your stable's success.`,
+    `A palpable shift in paddock dynamics is underway. Representatives from ${stable.name} have been particularly vocal about their intent to challenge your reign.`,
+    `It appears ${stable.name} has decided that friendly competition is no longer enough. They're openly aiming to disrupt your campaign at every turn.`,
+    `Word on the backside is that ${stable.name} is building a war chest specifically to outbid and outrace your operation in the coming months.`,
+    `${stable.name} has clearly marked you as their primary target. Their recent string of entries suggests a calculated plan to contest your dominance.`,
+    `The competitive landscape has shifted as ${stable.name} steps into the role of primary antagonist. The rest of the season promises serious fireworks.`,
   ];
 
   return buildRivalryNews(headlines, bodies, {
@@ -114,6 +130,14 @@ export function generateGrudgeMatchNews(
         `Bragging Rights: ${playerHorse.name} Conquers ${rivalHorse.name}`,
         `Rivalry Settled: ${playerHorse.name} Outruns ${rivalHorse.name}`,
         `${playerHorse.name} Silences Critics, Beats ${rivalHorse.name}`,
+        `Dominance Reasserted: ${playerHorse.name} Leaves ${rivalHorse.name} Behind`,
+        `Sweet Victory: ${playerHorse.name} Dusts ${rivalHorse.name} in Feud`,
+        `Rivalry Update: ${playerHorse.name} Proves Too Much for ${rivalHorse.name}`,
+        `${playerHorse.name} Has the Final Word Against ${rivalHorse.name}`,
+        `Grudge Match Decided: ${playerHorse.name} Outclasses ${rivalHorse.name}`,
+        `Score Settled: ${playerHorse.name} Takes Down ${rivalHorse.name}`,
+        `Upper Hand: ${playerHorse.name} Eclipses ${rivalHorse.name}`,
+        `${playerHorse.name} Wins the Battle Against ${rivalHorse.name}`,
       ]
     : [
         `Grudge Match Defeat: ${rivalHorse.name} Tops ${playerHorse.name}`,
@@ -122,6 +146,14 @@ export function generateGrudgeMatchNews(
         `Rivalry Intensifies: ${rivalHorse.name} Beats ${playerHorse.name}`,
         `${rivalHorse.name} Takes the Spoils Against ${playerHorse.name}`,
         `Heartbreak: ${playerHorse.name} Edged Out by ${rivalHorse.name}`,
+        `Rivalry Stings: ${rivalHorse.name} Bested ${playerHorse.name}`,
+        `A Bitter Pill: ${playerHorse.name} Surrenders to ${rivalHorse.name}`,
+        `Bragging Rights Lost: ${rivalHorse.name} Takes Down ${playerHorse.name}`,
+        `${rivalHorse.name} Makes a Point Against ${playerHorse.name}`,
+        `Feud Escalates: ${rivalHorse.name} Trumps ${playerHorse.name}`,
+        `Tough Beat: ${playerHorse.name} Plays Second Fiddle to ${rivalHorse.name}`,
+        `Rivals Rejoice: ${rivalHorse.name} Defeats ${playerHorse.name}`,
+        `${rivalHorse.name} Turns the Tables on ${playerHorse.name}`,
       ];
 
   const bodies = playerWon
@@ -132,6 +164,14 @@ export function generateGrudgeMatchNews(
         `There was no love lost as ${playerHorse.name} crossed the wire ahead of ${rivalHorse.name}, securing ultimate bragging rights for the stable.`,
         `The tension was electric, but ${playerHorse.name} held their nerve to deliver a crushing blow to ${rivalHorse.name} in today's bitter contest.`,
         `${playerHorse.name} didn't just win today; they made sure ${rivalHorse.name} saw them do it, further fueling the fire between these camps.`,
+        `The grandstand erupted as ${playerHorse.name} put ${rivalHorse.name} firmly in the rearview mirror. It's a massive moral victory for the stable.`,
+        `Questions about who holds the upper hand were answered decisively today when ${playerHorse.name} dominated ${rivalHorse.name} in their head-to-head matchup.`,
+        `${playerHorse.name} showed incredible grit to hold off ${rivalHorse.name} in a race that felt more like a street fight than a sporting event.`,
+        `With bragging rights on the line, ${playerHorse.name} rose to the occasion, leaving a defeated ${rivalHorse.name} to wonder what went wrong.`,
+        `The tension in the paddock was thick, but ${playerHorse.name} let their performance do the talking, securing a sweet victory over rival ${rivalHorse.name}.`,
+        `It was billed as the matchup of the day, and ${playerHorse.name} delivered, ensuring ${rivalHorse.name} took second best in this ongoing feud.`,
+        `${playerHorse.name} executed the game plan flawlessly, neutralizing the threat from ${rivalHorse.name} and taking home the coveted victory.`,
+        `The rivalry took center stage, and ${playerHorse.name} absolutely shined, leaving ${rivalHorse.name} grasping at straws in the final furlongs.`,
       ]
     : [
         `In a stunning upset, ${rivalHorse.name} defeated ${playerHorse.name} in today's grudge match. The rivalry between these stables shows no sign of cooling down.`,
@@ -140,6 +180,14 @@ export function generateGrudgeMatchNews(
         `The hype was real, and unfortunately, ${rivalHorse.name} backed it up by leaving ${playerHorse.name} in their wake today.`,
         `It's a tough pill to swallow for the stable as ${rivalHorse.name} got the better of ${playerHorse.name} in a closely watched battle.`,
         `Tempers flared post-race after ${rivalHorse.name} managed to outclass ${playerHorse.name}, shifting the momentum squarely to the rival camp.`,
+        `Despite a valiant effort, ${playerHorse.name} couldn't overcome ${rivalHorse.name} today. The rival stable was quick to gloat in the winner's circle.`,
+        `A frustrating result for the stable as ${rivalHorse.name} had the perfect trip, denying ${playerHorse.name} the crucial victory in this grudge match.`,
+        `${rivalHorse.name} looked sharp from the break, ultimately putting away ${playerHorse.name} and taking the latest round of this bitter feud.`,
+        `The highly publicized showdown went the way of the rivals, with ${rivalHorse.name} finding an extra gear that ${playerHorse.name} simply didn't have today.`,
+        `It was a difficult watch for the stable connections as ${rivalHorse.name} effortlessly glided past ${playerHorse.name} to claim bragging rights.`,
+        `${rivalHorse.name} made a massive statement today, leaving ${playerHorse.name} with no excuses in a race that will undoubtedly sting.`,
+        `The rival camp executed perfectly, and unfortunately for ${playerHorse.name}, they ended up on the wrong side of the highlight reel against ${rivalHorse.name}.`,
+        `A bitter outcome in a race with so much pride on the line. ${rivalHorse.name} took the honors, sending ${playerHorse.name} back to the drawing board.`,
       ];
 
   return buildRivalryNews(headlines, bodies, {
@@ -177,6 +225,14 @@ export function generateRegionLostNews(
     `${region} Falls to ${rivalStable.name}`,
     `New Era in ${region}: ${rivalStable.name} Takes the Crown`,
     `${rivalStable.name} Claims the Throne in ${region}`,
+    `A New Sovereign: ${rivalStable.name} Rules ${region}`,
+    `${region} Dynasty Ends: ${rivalStable.name} Takes Over`,
+    `Tides Turn in ${region}: ${rivalStable.name} Assumes Control`,
+    `The Guard Changes in ${region} to ${rivalStable.name}`,
+    `Reign Interrupted: ${rivalStable.name} Conquers ${region}`,
+    `${region}'s Top Spot Seized by ${rivalStable.name}`,
+    `Usurped! ${rivalStable.name} Now Dominates ${region}`,
+    `End of an Era: ${rivalStable.name} is the New ${region} King`,
   ];
 
   const bodies = [
@@ -186,6 +242,14 @@ export function generateRegionLostNews(
     `Years of dominance have been upended as ${rivalStable.name} officially takes the reins in ${region}. Local syndicates are already rethinking their strategies.`,
     `The crown is heavy, but ${rivalStable.name} seems ready to wear it after forcefully seizing control of ${region}'s competitive circuit.`,
     `It's a tough day for the old guard. ${rivalStable.name} has marched into ${region} and completely rewritten the local hierarchy.`,
+    `The long-standing hierarchy in ${region} has finally cracked. ${rivalStable.name} has proven too strong, officially claiming the title of regional powerhouse.`,
+    `Local racing fans are still processing the shakeup. ${rivalStable.name} has systematically dismantled the competition to become the new undeniable king of ${region}.`,
+    `What seemed like an unshakeable grip on ${region} has slipped. ${rivalStable.name} has swooped in, accumulating the wins necessary to take the regional crown.`,
+    `The writing has been on the wall for weeks, but it's now official: ${rivalStable.name} rules ${region}. The former kings have been relegated to challengers.`,
+    `A seismic shift in the local racing economy today, as ${rivalStable.name} was formally recognized as the supreme stable operating within ${region}.`,
+    `Rival syndicates in ${region} will now have to answer to ${rivalStable.name}, who have forcefully evicted the previous leaders from the top of the regional standings.`,
+    `The takeover of ${region} by ${rivalStable.name} is complete. They've outmaneuvered the old establishment to usher in a new era of dominance.`,
+    `${rivalStable.name} threw everything they had into conquering ${region}, and the gamble paid off. The former regional king has been emphatically dethroned.`,
   ];
 
   return buildRivalryNews(headlines, bodies, {
@@ -222,6 +286,14 @@ export function generateRivalryEscalationNews(
     `Boiling Point: The Feud with ${stable.name} Worsens`,
     `Hostilities Increase Between You and ${stable.name}`,
     `War of Words: ${stable.name} Escalates the Feud`,
+    `Breaking Point: Hostility Peaks with ${stable.name}`,
+    `Outright Warfare: The ${stable.name} Feud Deepens`,
+    `Friction Hits Critical Mass with ${stable.name}`,
+    `Gloves Off: ${stable.name} Ignites a Bitter War`,
+    `The Animosity Grows: ${stable.name} Refuses to Back Down`,
+    `A Toxic Rivalry: Things Get Ugly with ${stable.name}`,
+    `Blood Feud: ${stable.name} Crosses the Line`,
+    `Bad Blood: ${stable.name} Strains Relations to the Limit`,
   ];
 
   const bodies = [
@@ -231,6 +303,14 @@ export function generateRivalryEscalationNews(
     `Recent comments to the press from ${stable.name} have thrown gasoline on the fire. This feud is rapidly spiraling out of control.`,
     `It's getting personal. The actions of ${stable.name} have crossed a line, turning this sporting rivalry into a bitter, all-out war.`,
     `Trackside officials are reportedly monitoring the situation as animosity with ${stable.name} reaches an unprecedented high this week.`,
+    `Any pretense of sportsmanship has vanished. The feud with ${stable.name} has turned remarkably sour, with both sides exchanging thinly veiled threats in the press.`,
+    `The paddock was buzzing this morning after a heated exchange between representatives from your stable and ${stable.name}. The rivalry has never been more intense.`,
+    `Industry insiders are shocked by how quickly the relationship with ${stable.name} has deteriorated. This is fast becoming one of the most toxic feuds in recent memory.`,
+    `Attempts to cool tensions have utterly failed. ${stable.name} appears entirely committed to a scorched-earth policy against your racing operation.`,
+    `The friction with ${stable.name} has officially hit critical mass. Associates are being warned to keep their distance as the bad blood threatens to spill over.`,
+    `It's open warfare on the track now. ${stable.name} has essentially declared that their primary goal for the season is to ensure your stable's failure.`,
+    `The feud has escalated beyond simple competition. ${stable.name} is making aggressive, calculated moves intended to directly damage your stable's reputation and success.`,
+    `Whatever mutual respect once existed is gone. ${stable.name} has ramped up hostilities, ensuring that every time your horses meet, it will be an absolute battle.`,
   ];
 
   return buildRivalryNews(headlines, bodies, {
