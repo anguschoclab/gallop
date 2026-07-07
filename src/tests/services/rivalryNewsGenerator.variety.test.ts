@@ -1,7 +1,7 @@
 /**
  * Tests for rivalry news template variety expansion (Herald branch).
  *
- * Validates that the template pools have been expanded from 3 to ≥ 6 items
+ * Validates that the template pools have been expanded to ≥ 14 items
  * by sweeping multiple RNG seeds and collecting unique outputs.
  */
 
@@ -34,8 +34,8 @@ const race = {
   graded: { key: "grand-stakes", grade: "G1", track: "Test Track", trackId: "tt-1", surface: "Dirt" },
 } as Race;
 
-// Sweep 20 seeds and collect unique headlines/bodies
-const SEED_COUNT = 20;
+// Sweep 30 seeds and collect unique headlines/bodies
+const SEED_COUNT = 30;
 
 function sweepHeadlines(
   fn: (rng: ReturnType<typeof createTestRng>) => string | null,
@@ -62,69 +62,151 @@ function sweepBodies(
 }
 
 describe("generateRivalryEmergenceNews — template variety", () => {
-  it("headline pool has at least 4 unique values across 20 seeds (≥6 templates)", () => {
+  it("headline pool has at least 8 unique values across 30 seeds (≥14 templates)", () => {
     const headlines = sweepHeadlines(
       (rng) => generateRivalryEmergenceNews(stable, 75, DAY, rng)?.headline ?? null,
     );
-    // With 3 templates: P(seeing ≤3 unique in 20 draws) is high but 3 is max.
-    // With 6 templates: we expect 4+ unique values.
-    expect(headlines.size).toBeGreaterThanOrEqual(4);
+    expect(headlines.size).toBeGreaterThanOrEqual(8);
   });
 
-  it("body pool has at least 4 unique values across 20 seeds (≥6 templates)", () => {
+  it("body pool has at least 6 unique values across 30 seeds (≥14 templates)", () => {
     const bodies = sweepBodies(
       (rng) => generateRivalryEmergenceNews(stable, 75, DAY, rng)?.body ?? null,
     );
-    expect(bodies.size).toBeGreaterThanOrEqual(4);
+    expect(bodies.size).toBeGreaterThanOrEqual(6);
+  });
+
+  it("headline pool size does not exceed 14", () => {
+    const headlines = sweepHeadlines(
+      (rng) => generateRivalryEmergenceNews(stable, 75, DAY, rng)?.headline ?? null,
+    );
+    expect(headlines.size).toBeLessThanOrEqual(14);
+  });
+
+  it("all headlines contain the stable name", () => {
+    const headlines = sweepHeadlines(
+      (rng) => generateRivalryEmergenceNews(stable, 75, DAY, rng)?.headline ?? null,
+    );
+    for (const h of headlines) {
+      expect(h).toContain("Bitter Creek Stables");
+    }
+  });
+
+  it("all bodies contain the stable name", () => {
+    const bodies = sweepBodies(
+      (rng) => generateRivalryEmergenceNews(stable, 75, DAY, rng)?.body ?? null,
+    );
+    for (const b of bodies) {
+      expect(b).toContain("Bitter Creek Stables");
+    }
   });
 });
 
 describe("generateGrudgeMatchNews — template variety (player win)", () => {
-  it("headline pool has at least 4 unique values (≥6 templates)", () => {
+  it("headline pool has at least 8 unique values (≥14 templates)", () => {
     const headlines = sweepHeadlines(
       (rng) => generateGrudgeMatchNews(race, playerHorse, rivalHorse, true, DAY, rng, stable)?.headline ?? null,
     );
-    expect(headlines.size).toBeGreaterThanOrEqual(4);
+    expect(headlines.size).toBeGreaterThanOrEqual(8);
   });
 
-  it("body pool has at least 4 unique values (≥6 templates)", () => {
+  it("body pool has at least 6 unique values (≥14 templates)", () => {
     const bodies = sweepBodies(
       (rng) => generateGrudgeMatchNews(race, playerHorse, rivalHorse, true, DAY, rng, stable)?.body ?? null,
     );
-    expect(bodies.size).toBeGreaterThanOrEqual(4);
+    expect(bodies.size).toBeGreaterThanOrEqual(6);
+  });
+
+  it("all headlines contain player horse or rival horse name", () => {
+    const headlines = sweepHeadlines(
+      (rng) => generateGrudgeMatchNews(race, playerHorse, rivalHorse, true, DAY, rng, stable)?.headline ?? null,
+    );
+    for (const h of headlines) {
+      expect(h.includes("Lightning Bolt") || h.includes("Dark Thunder")).toBe(true);
+    }
   });
 });
 
 describe("generateGrudgeMatchNews — template variety (player loss)", () => {
-  it("headline pool has at least 4 unique values (≥6 templates)", () => {
+  it("headline pool has at least 8 unique values (≥14 templates)", () => {
     const headlines = sweepHeadlines(
       (rng) => generateGrudgeMatchNews(race, playerHorse, rivalHorse, false, DAY, rng, stable)?.headline ?? null,
     );
-    expect(headlines.size).toBeGreaterThanOrEqual(4);
+    expect(headlines.size).toBeGreaterThanOrEqual(8);
   });
 
-  it("body pool has at least 4 unique values (≥6 templates)", () => {
+  it("body pool has at least 6 unique values (≥14 templates)", () => {
     const bodies = sweepBodies(
       (rng) => generateGrudgeMatchNews(race, playerHorse, rivalHorse, false, DAY, rng, stable)?.body ?? null,
     );
-    expect(bodies.size).toBeGreaterThanOrEqual(4);
+    expect(bodies.size).toBeGreaterThanOrEqual(6);
+  });
+
+  it("all headlines contain player horse or rival horse name", () => {
+    const headlines = sweepHeadlines(
+      (rng) => generateGrudgeMatchNews(race, playerHorse, rivalHorse, false, DAY, rng, stable)?.headline ?? null,
+    );
+    for (const h of headlines) {
+      expect(h.includes("Lightning Bolt") || h.includes("Dark Thunder")).toBe(true);
+    }
   });
 });
 
 describe("generateRegionLostNews — template variety", () => {
-  it("headline pool has at least 4 unique values (≥6 templates)", () => {
+  it("headline pool has at least 8 unique values (≥14 templates)", () => {
     const headlines = sweepHeadlines(
       (rng) => generateRegionLostNews("North America", stable, DAY, rng)?.headline ?? null,
     );
-    expect(headlines.size).toBeGreaterThanOrEqual(4);
+    expect(headlines.size).toBeGreaterThanOrEqual(8);
+  });
+
+  it("body pool has at least 6 unique values (≥14 templates)", () => {
+    const bodies = sweepBodies(
+      (rng) => generateRegionLostNews("North America", stable, DAY, rng)?.body ?? null,
+    );
+    expect(bodies.size).toBeGreaterThanOrEqual(6);
+  });
+
+  it("all headlines contain the region or stable name", () => {
+    const headlines = sweepHeadlines(
+      (rng) => generateRegionLostNews("North America", stable, DAY, rng)?.headline ?? null,
+    );
+    for (const h of headlines) {
+      expect(h.includes("North America") || h.includes("Bitter Creek Stables")).toBe(true);
+    }
   });
 });
 
 describe("generateRivalryEscalationNews — template variety", () => {
-  it("headline pool has at least 4 unique values (≥6 templates)", () => {
+  it("headline pool has at least 8 unique values (≥14 templates)", () => {
     const headlines = sweepHeadlines(
       (rng) => generateRivalryEscalationNews(stable, 70, 85, DAY, rng)?.headline ?? null,
     );
-    expect(headlines.size).toBeGreaterThanOrEqual(4);
+    expect(headlines.size).toBeGreaterThanOrEqual(8);
+  });
+
+  it("body pool has at least 6 unique values (≥14 templates)", () => {
+    const bodies = sweepBodies(
+      (rng) => generateRivalryEscalationNews(stable, 70, 85, DAY, rng)?.body ?? null,
+    );
+    expect(bodies.size).toBeGreaterThanOrEqual(6);
+  });
+
+  it("all headlines contain the stable name", () => {
+    const headlines = sweepHeadlines(
+      (rng) => generateRivalryEscalationNews(stable, 70, 85, DAY, rng)?.headline ?? null,
+    );
+    for (const h of headlines) {
+      expect(h).toContain("Bitter Creek Stables");
+    }
+  });
+
+  it("all bodies contain the stable name", () => {
+    const bodies = sweepBodies(
+      (rng) => generateRivalryEscalationNews(stable, 70, 85, DAY, rng)?.body ?? null,
+    );
+    for (const b of bodies) {
+      expect(b).toContain("Bitter Creek Stables");
+    }
   });
 });
