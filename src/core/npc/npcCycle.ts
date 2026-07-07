@@ -187,6 +187,17 @@ function processRegionalDominance(
                 kingAI.friction + RIVALRY_CONSTANTS.FRICTION.WIN_GRADED_RACE_OVER_NPC,
               );
 
+              // Check for rivalry escalation (friction crosses 80)
+              if (oldFriction < 80 && kingAI.friction >= 80) {
+                const kingStable = stableMap.get(currentKingId);
+                if (kingStable) {
+                  const escNews = generateRivalryEscalationNews(
+                    kingStable, oldFriction, kingAI.friction, currentDay, rng,
+                  );
+                  if (escNews) newsItems.push(escNews);
+                }
+              }
+
               // Player dominance tracking: If player wins 3 in a row against the king, they unseat them
               // Note: winsAgainstPlayer here is hijacked or we need a new field for player wins
               // For simplicity, let's use regionalKings updates directly for player too
@@ -313,6 +324,9 @@ function processRegionalDominance(
                     raceId: race.id,
                   });
 
+                  // Track pre-update friction for escalation check
+                  const preFriction = rivalAI.friction;
+
                   // Update friction based on grudge match outcome (Humiliation Path)
                   if (playerWon) {
                     // Beating a hated rival makes them angrier (humiliation)
@@ -321,6 +335,15 @@ function processRegionalDominance(
                     // Rival victory - they taunt you, friction increases
                     rivalAI.friction = Math.min(100, rivalAI.friction + 15);
                   }
+
+                  // Check for rivalry escalation (friction crosses 80)
+                  if (preFriction < 80 && rivalAI.friction >= 80) {
+                    const escNews = generateRivalryEscalationNews(
+                      rivalStable, preFriction, rivalAI.friction, currentDay, rng,
+                    );
+                    if (escNews) newsItems.push(escNews);
+                  }
+
                   // Update the aiManager state with new friction value
                   updatedAiManager.stableStates[rivalStableId!] = { ...rivalAI };
                 }
