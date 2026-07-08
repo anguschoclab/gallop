@@ -400,7 +400,7 @@ export const useGame = create<StoreType>()(
       partialize: (state) => {
         const partial: any = {};
         PERSISTED_KEYS.forEach((key) => {
-          partial[key] = state[key];
+          partial[key] = (state as any)[key];
         });
         return partial;
       },
