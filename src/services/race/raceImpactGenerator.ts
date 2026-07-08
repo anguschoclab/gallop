@@ -153,7 +153,7 @@ export function generateRaceImpacts({
 
       // Performance & career (form, fame, beyer, recovery, pattern jump, race history, TC, trainer)
       const { impacts: perfImpacts, beyerValue } = generatePerformanceCareerImpacts(
-        horse, r, race, runner, classBonus, calibratedPars, splitEntryMaps, result.length, newDay, hiredStaff, rng,
+        horse, r, race, runner, classBonus, calibratedPars, splitEntryMaps, result.length, newDay, hiredStaff, rng, entry,
       );
       impacts.push(...perfImpacts);
 
