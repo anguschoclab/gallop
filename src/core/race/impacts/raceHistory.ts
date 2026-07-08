@@ -62,6 +62,8 @@ export function generateRaceHistoryImpact(
       raceClass: race.raceClass,
       barrier: runner?.barrier,
       lane: runner?.lane,
+      jockeyId: raceEntry?.jockeyId,
+      stableId: raceEntry?.stableId ?? (raceEntry?.owned ? horse.stableId : horse.stableId),
       winAndYouInQualified,
     },
     reason: "Race completed",
