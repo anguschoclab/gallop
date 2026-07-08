@@ -212,6 +212,8 @@ export function resolveLiveRaceWithImpacts(
         winAndYouInQualified,
         pacePositions,
         courseVisitCount,
+        jockeyId: raceEntryMap.get(horse.id)?.jockeyId,
+        stableId: raceEntryMap.get(horse.id)?.stableId ?? horse.stableId,
       },
       reason: "Race completed",
     } as RaceHistoryImpact);
