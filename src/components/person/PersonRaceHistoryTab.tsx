@@ -8,7 +8,6 @@
 import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { useGameWithShallow } from "@/game/store";
-import { useGameWithShallow } from "@/game/store";
 import type { GameState, Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
