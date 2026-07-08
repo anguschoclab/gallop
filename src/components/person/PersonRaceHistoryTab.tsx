@@ -7,7 +7,7 @@
  */
 import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
-import { shallow } from "zustand/shallow";
+import { useGameWithShallow } from "@/game/store";
 import { useGameWithShallow } from "@/game/store";
 import type { GameState, Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,10 +31,8 @@ interface Row {
 }
 
 export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabProps) {
-  const { horses, staff } = useGameWithShallow(
-    (s: GameState) => ({ horses: s.horses, staff: (s as any).staff ?? [] }),
-    shallow,
-  );
+  const horses = useGameWithShallow((s: GameState) => s.horses);
+  const staff = useGameWithShallow((s: GameState) => (s as any).staff ?? []);
 
   // Trainer role: find stables where this staff member is/was a trainer.
   const trainerStableIds = useMemo(() => {
