@@ -169,6 +169,8 @@ export type Horse = {
     winAndYouInQualified?: { year: number; raceId: string; raceKey: string };
     pacePositions?: number[]; // Position at each quarter (1-indexed)
     courseVisitCount?: number; // Visit count at time of race
+    jockeyId?: string; // Jockey that rode the horse in this race
+    stableId?: string; // Owner stable at time of race
   }[];
   fame: number;
   owned: boolean;
