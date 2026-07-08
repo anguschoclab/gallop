@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   defaultStudParams,
-  initialStandingFee,
+  calculateRecommendedStudFee,
   recalcStandingFee,
   isStallionAvailable,
   shouldRetireAtStartup,
@@ -44,19 +44,19 @@ describe("defaultStudParams", () => {
   });
 });
 
-describe("initialStandingFee", () => {
+describe("calculateRecommendedStudFee", () => {
   it("higher tier produces higher fee for the same stat profile", () => {
     const h = mkHorse();
-    const eliteFee = initialStandingFee(h, "elite");
-    const midFee = initialStandingFee(h, "mid");
-    const budgetFee = initialStandingFee(h, "budget");
+    const eliteFee = calculateRecommendedStudFee(h, "elite");
+    const midFee = calculateRecommendedStudFee(h, "mid");
+    const budgetFee = calculateRecommendedStudFee(h, "budget");
     expect(eliteFee).toBeGreaterThan(midFee);
     expect(midFee).toBeGreaterThan(budgetFee);
   });
 
   it("rounds to nearest $100", () => {
     const h = mkHorse();
-    const fee = initialStandingFee(h, "mid");
+    const fee = calculateRecommendedStudFee(h, "mid");
     expect(fee % 100).toBe(0);
   });
 });

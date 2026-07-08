@@ -166,7 +166,7 @@ export function calculateRecommendedStudFee(
 /**
  * Alias for calculateRecommendedStudFee for backward compatibility.
  */
-export const initialStandingFee = calculateRecommendedStudFee;
+
 
 /**
  * Recalculate standing fee after new progeny results or major wins.

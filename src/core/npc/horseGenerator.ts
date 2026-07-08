@@ -4,7 +4,7 @@
  * This file generates horses for NPC stables based on tier, age categories, and
  * AI state, including initial fame calculation and stud fee determination.
  *
- * Dependencies: ./types (Horse, Stable, StableTier), ./rng (Rng), @/core/horse/horseFactory (generateNpcHorse), @/core/common/random (rand), @/core/breeding/stallions (shouldRetireAtStartup, initialStandingFee, defaultStudParams), @/core/ai/horseGenAI (shouldGenerateHorseOfAge, createHorseGenAIState, recordHorseGeneration), @/core/ai/npcCycleAI (NpcAIManager), ./npcHorseGenHelpers (AgeCategory, getAgeFromCategory, calculateStartingFame)
+ * Dependencies: ./types (Horse, Stable, StableTier), ./rng (Rng), @/core/horse/horseFactory (generateNpcHorse), @/core/common/random (rand), @/core/breeding/stallions (shouldRetireAtStartup, calculateRecommendedStudFee, defaultStudParams), @/core/ai/horseGenAI (shouldGenerateHorseOfAge, createHorseGenAIState, recordHorseGeneration), @/core/ai/npcCycleAI (NpcAIManager), ./npcHorseGenHelpers (AgeCategory, getAgeFromCategory, calculateStartingFame)
  * Related files: npcStables.ts (uses horse generation), npcHorseGenHelpers.ts (helper functions)
  */
 
@@ -14,7 +14,7 @@ import { generateNpcHorse as _generateNpcHorse } from "@/core/horse/horseFactory
 import { rand } from "@/core/common/random";
 import {
   shouldRetireAtStartup,
-  initialStandingFee,
+  calculateRecommendedStudFee,
   defaultStudParams,
 } from "@/core/breeding/stallions";
 import {
@@ -165,7 +165,7 @@ export function generateAllNpcHorses(
         const { bookSize } = defaultStudParams(stable.tier);
         horse.stud = {
           atStud: true,
-          standingFee: initialStandingFee(horse, stable.tier),
+          standingFee: calculateRecommendedStudFee(horse, stable.tier),
           bookSize,
           seasonBookings: 0,
           lifetimeFoals: 0,
