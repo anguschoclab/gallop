@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { ArrowLeft, Globe, Briefcase } from "lucide-react";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { NumericValue } from "@/components/horse/HorseBits";
@@ -6,8 +7,10 @@ import { formatCurrency } from "@/core/common/formatting";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PrivateSaleOfferDialog } from "@/components/auction/PrivateSaleOfferDialog";
+import { PersonRaceHistoryTab } from "@/components/person/PersonRaceHistoryTab";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
+import { useGame } from "@/game/store";
 import { useNpcStableDetail } from "@/hooks/stable/useNpcStableDetail";
 import { NpcStableOverviewTab } from "@/components/stable/NpcStableOverviewTab";
 import { NpcStableRosterTab } from "@/components/stable/NpcStableRosterTab";
@@ -28,6 +31,15 @@ function NpcStableDetailPage() {
   const navigate = Route.useNavigate();
   const pageData = useNpcStableDetail(stableId);
   const { stable, offerHorse, setOfferHorse, cash, horses } = pageData;
+  const hiredStaff = useGame((s) => s.hiredStaff);
+
+  const trainerStaffId = useMemo(
+    () =>
+      (hiredStaff ?? []).find(
+        (m) => m.role === "trainer" && m.stableId === stableId,
+      )?.id,
+    [hiredStaff, stableId],
+  );
 
   if (!stable) {
     return (
@@ -177,6 +189,12 @@ function NpcStableDetailPage() {
                   </div>
                 </CardContent>
               </Card>
+
+              {trainerStaffId && (
+                <div className="mt-6">
+                  <PersonRaceHistoryTab personId={trainerStaffId} roles={["trainer"]} />
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="history" className="mt-0 animate-in fade-in duration-300">
@@ -215,6 +233,10 @@ function NpcStableDetailPage() {
                   </div>
                 </CardContent>
               </Card>
+
+              <div className="mt-6">
+                <PersonRaceHistoryTab personId={stable.id} roles={["owner"]} />
+              </div>
             </TabsContent>
           </Tabs>
         </div>

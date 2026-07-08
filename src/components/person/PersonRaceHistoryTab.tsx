@@ -5,15 +5,23 @@
  * Scans every horse's raceHistory and surfaces entries where the person
  * participated in the given role.
  */
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useGameWithShallow } from "@/game/store";
 import type { GameState, Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { gradeColor } from "@/core/common/uiTokens";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
-import { History } from "lucide-react";
+import { History, ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export type PersonRole = "jockey" | "trainer" | "owner";
@@ -29,22 +37,30 @@ interface Row {
   role: PersonRole;
 }
 
+type GradeFilter = "all" | "G1" | "G2" | "G3";
+type SortDir = "desc" | "asc";
+
 export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabProps) {
   const horses = useGameWithShallow((s: GameState) => s.horses);
-  const staff = useGameWithShallow((s: GameState) => (s as any).staff ?? []);
+  const hiredStaff = useGameWithShallow((s: GameState) => s.hiredStaff ?? []);
+  const staffPool = useGameWithShallow((s: GameState) => s.staffPool ?? []);
+
+  const [gradeFilter, setGradeFilter] = useState<GradeFilter>("all");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
 
   // Trainer role: find stables where this staff member is/was a trainer.
   const trainerStableIds = useMemo(() => {
     if (!roles.includes("trainer")) return new Set<string>();
+    const allStaff = [...hiredStaff, ...staffPool];
     return new Set(
-      (staff as any[])
-        .filter((m) => m.id === personId && (m.role === "trainer" || m.type === "trainer"))
+      allStaff
+        .filter((m) => m.id === personId && m.role === "trainer")
         .map((m) => m.stableId)
         .filter(Boolean),
     );
-  }, [roles, staff, personId]);
+  }, [roles, hiredStaff, staffPool, personId]);
 
-  const rows = useMemo<Row[]>(() => {
+  const filteredRows = useMemo<Row[]>(() => {
     const out: Row[] = [];
     for (const horse of horses ?? []) {
       for (const entry of horse.raceHistory ?? []) {
@@ -65,15 +81,25 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
         }
       }
     }
-    return out.sort((a, b) => b.entry.day - a.entry.day);
-  }, [horses, personId, roles, trainerStableIds]);
+
+    const graded =
+      gradeFilter === "all"
+        ? out
+        : out.filter((r) => r.entry.grade === gradeFilter);
+
+    return graded.sort((a, b) =>
+      sortDir === "desc"
+        ? b.entry.day - a.entry.day
+        : a.entry.day - b.entry.day,
+    );
+  }, [horses, personId, roles, trainerStableIds, gradeFilter, sortDir]);
 
   const stats = useMemo(() => {
-    const starts = rows.length;
-    const wins = rows.filter((r) => r.entry.position === 1).length;
-    const podium = rows.filter((r) => r.entry.position <= 3).length;
+    const starts = filteredRows.length;
+    const wins = filteredRows.filter((r) => r.entry.position === 1).length;
+    const podium = filteredRows.filter((r) => r.entry.position <= 3).length;
     return { starts, wins, podium, winRate: starts ? (wins / starts) * 100 : 0 };
-  }, [rows]);
+  }, [filteredRows]);
 
   return (
     <div className="space-y-4">
@@ -84,6 +110,42 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
         <StatBox label="Win %" value={`${stats.winRate.toFixed(1)}%`} />
       </div>
 
+      <div className="flex items-center gap-2">
+        <Select
+          value={gradeFilter}
+          onValueChange={(v) => setGradeFilter(v as GradeFilter)}
+        >
+          <SelectTrigger data-testid="grade-filter" className="w-[140px] h-8 text-xs">
+            <SelectValue placeholder="Grade" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Grades</SelectItem>
+            <SelectItem value="G1">G1</SelectItem>
+            <SelectItem value="G2">G2</SelectItem>
+            <SelectItem value="G3">G3</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button
+          data-testid="sort-toggle"
+          variant="outline"
+          size="sm"
+          className="h-8 text-xs"
+          onClick={() => setSortDir((d) => (d === "desc" ? "asc" : "desc"))}
+        >
+          {sortDir === "desc" ? (
+            <>
+              <ArrowDownWideNarrow className="h-3.5 w-3.5 mr-1" />
+              Newest First
+            </>
+          ) : (
+            <>
+              <ArrowUpNarrowWide className="h-3.5 w-3.5 mr-1" />
+              Oldest First
+            </>
+          )}
+        </Button>
+      </div>
+
       <Card className="bg-slate-900/40 border-white/5 rounded-none border-l-4 border-l-gold">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.3em] text-cream">
@@ -92,15 +154,16 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          {rows.length === 0 ? (
+          {filteredRows.length === 0 ? (
             <div className="p-12 text-center text-[10px] font-mono text-cream/30 uppercase tracking-widest italic">
               No race records on file.
             </div>
           ) : (
             <div className="divide-y divide-white/5">
-              {rows.map(({ horse, entry, role }, i) => (
+              {filteredRows.map(({ horse, entry, role }, i) => (
                 <div
                   key={i}
+                  data-testid="race-row"
                   className="grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-3 items-center p-3 hover:bg-white/[0.02] transition-colors text-xs"
                 >
                   <span
@@ -125,7 +188,7 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
                     </div>
                   </div>
                   <Link
-                    to="/horse/$horseId"
+                    to="/stable/$horseId"
                     params={{ horseId: horse.id }}
                     className="text-[11px] text-gold hover:underline truncate max-w-[140px]"
                   >

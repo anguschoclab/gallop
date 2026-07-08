@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -87,9 +88,11 @@ export function StaffTeamList({ staff, honorCounts, showHonors, onFire }: StaffT
                 <div className="p-5 flex-1 space-y-4">
                   <div className="flex items-start justify-between gap-4">
                     <div className="space-y-0.5">
-                      <h3 className="text-lg font-bold text-cream uppercase tracking-tight group-hover:text-blue-400 transition-colors leading-none">
-                        {member.name}
-                      </h3>
+                      <Link to="/staff/$staffId" params={{ staffId: member.id }}>
+                        <h3 className="text-lg font-bold text-cream uppercase tracking-tight group-hover:text-blue-400 transition-colors leading-none hover:underline">
+                          {member.name}
+                        </h3>
+                      </Link>
                       <div className="flex items-center gap-2 pt-1">
                         <Badge
                           variant="outline"

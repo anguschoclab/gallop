@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -41,9 +42,11 @@ export function RecruitmentPool({ staffPool, day, onNegotiate }: RecruitmentPool
             <CardContent className="p-5">
               <div className="flex items-start justify-between gap-6 mb-4">
                 <div className="space-y-1">
-                  <h3 className="text-lg font-bold text-cream uppercase tracking-tight group-hover:text-gold transition-colors leading-none">
-                    {staff.name}
-                  </h3>
+                  <Link to="/staff/$staffId" params={{ staffId: staff.id }}>
+                    <h3 className="text-lg font-bold text-cream uppercase tracking-tight group-hover:text-gold transition-colors leading-none hover:underline">
+                      {staff.name}
+                    </h3>
+                  </Link>
                   <div className="flex items-center gap-2 pt-1">
                     <Badge
                       variant="secondary"
