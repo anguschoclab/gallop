@@ -42,19 +42,34 @@ export const racesPhase = {
     // Emit race deadline notifications for targeted races as inbox impacts
     const impacts: AnyImpact[] = [];
     if (state.campaigns) {
+      // ⚡ Bolt Optimization: Pre-calculate hash maps for O(1) lookups instead of running O(N) .find() inside nested loops
+      const raceById = new Map<string, typeof pruned[0]>();
+      const raceByKey = new Map<string, typeof pruned[0]>();
+      for (const r of pruned) {
+        if (!raceById.has(r.id)) raceById.set(r.id, r);
+        if (r.graded?.key && !raceByKey.has(r.graded.key)) raceByKey.set(r.graded.key, r);
+      }
+
+      const horseById = new Map<string, typeof state.horses[0]>();
+      for (const h of state.horses) {
+        if (!horseById.has(h.id)) horseById.set(h.id, h);
+      }
+
       for (const campaign of state.campaigns) {
         for (const slot of campaign.slots) {
           if (slot.status !== "planned") continue;
 
-          const race = pruned.find(
-            (r) =>
-              (slot.raceKey && r.graded?.key === slot.raceKey) ||
-              (slot.raceId && r.id === slot.raceId),
-          );
+          let race;
+          if (slot.raceId) {
+            race = raceById.get(slot.raceId);
+          }
+          if (!race && slot.raceKey) {
+            race = raceByKey.get(slot.raceKey);
+          }
 
           if (race && race.day === newDay + 7) {
             // Deadline is 7 days away
-            const horse = state.horses.find((h) => h.id === campaign.horseId);
+            const horse = horseById.get(campaign.horseId);
             impacts.push({
               id: generateUUID(),
               intentId: "",
