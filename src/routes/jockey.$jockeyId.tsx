@@ -1,12 +1,13 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { useMemo } from "react";
 import type { GameState } from "@/game/types";
 import { JockeyCard } from "@/components/jockey/JockeyCard";
 import { Button } from "@/components/ui/button";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
-import { ChevronLeft } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PersonRaceHistoryTab } from "@/components/person/PersonRaceHistoryTab";
+import { ChevronLeft, User, History } from "lucide-react";
 
 export const Route = createFileRoute("/jockey/$jockeyId")({
   component: JockeyPage,
@@ -38,7 +39,7 @@ function JockeyPage() {
   const isApprentice = jockey.isApprentice;
 
   return (
-    <div className="space-y-6 max-w-2xl mx-auto p-4 md:p-6 animate-in fade-in duration-500">
+    <div className="space-y-6 max-w-4xl mx-auto p-4 md:p-6 animate-in fade-in duration-500">
       <div className="flex items-center justify-between mb-4">
         <Link to="/jockeys">
           <Button variant="ghost" size="sm" className="text-cream-muted hover:text-cream">
@@ -55,24 +56,43 @@ function JockeyPage() {
         />
       </div>
 
-      <div className="flex justify-center">
-        <div className="w-full max-w-md">
-          <JockeyCard
-            jockey={jockey}
-            isRetained={isRetained}
-            actionLabel={
-              isRetained ? "Release Jockey" : isApprentice ? "Hire Apprentice" : "Sign Retainer"
-            }
-            onAction={
-              isRetained
-                ? (j) => releaseJockey(j.id)
-                : isApprentice
-                  ? (j) => hireApprentice(j.id)
-                  : (j) => hireJockey(j.id, "retainer")
-            }
-          />
-        </div>
-      </div>
+      <Tabs defaultValue="profile" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="profile" className="gap-2">
+            <User className="h-4 w-4" />
+            Profile
+          </TabsTrigger>
+          <TabsTrigger value="history" className="gap-2">
+            <History className="h-4 w-4" />
+            Race History
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="profile">
+          <div className="flex justify-center">
+            <div className="w-full max-w-md">
+              <JockeyCard
+                jockey={jockey}
+                isRetained={isRetained}
+                actionLabel={
+                  isRetained ? "Release Jockey" : isApprentice ? "Hire Apprentice" : "Sign Retainer"
+                }
+                onAction={
+                  isRetained
+                    ? (j) => releaseJockey(j.id)
+                    : isApprentice
+                      ? (j) => hireApprentice(j.id)
+                      : (j) => hireJockey(j.id, "retainer")
+                }
+              />
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="history">
+          <PersonRaceHistoryTab personId={jockey.id} roles={["jockey"]} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

@@ -20,8 +20,17 @@ export function generateRaceHistoryImpact(
   newDay: number,
   runner?: { horseId: string; barrier?: number; lane?: number },
   rng?: Rng,
+  raceEntry?: { jockeyId?: string; stableId?: string; owned?: boolean },
 ): RaceHistoryImpact {
   let winAndYouInQualified = undefined;
+  if (position === 1 && race.graded?.winAndYouInTarget) {
+    const currentYear = getCurrentYear(newDay);
+    winAndYouInQualified = {
+      year: currentYear,
+      raceId: race.id,
+      raceKey: race.graded.winAndYouInTarget,
+    };
+  }
   if (position === 1 && race.graded?.winAndYouInTarget) {
     const currentYear = getCurrentYear(newDay);
     winAndYouInQualified = {
@@ -53,6 +62,8 @@ export function generateRaceHistoryImpact(
       raceClass: race.raceClass,
       barrier: runner?.barrier,
       lane: runner?.lane,
+      jockeyId: raceEntry?.jockeyId,
+      stableId: raceEntry?.stableId ?? horse.stableId,
       winAndYouInQualified,
     },
     reason: "Race completed",

@@ -69,6 +69,8 @@ export interface RaceHistoryImpact extends Impact {
     winAndYouInQualified?: { year: number; raceId: string; raceKey: string };
     pacePositions?: number[]; // Position at each quarter (1-indexed)
     courseVisitCount?: number; // Visit count at time of race
+    jockeyId?: string;
+    stableId?: string;
   };
   reason: string;
 }

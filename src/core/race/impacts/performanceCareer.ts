@@ -35,6 +35,7 @@ export function generatePerformanceCareerImpacts(
   newDay: number,
   hiredStaff: StaffMember[],
   rng?: Rng,
+  raceEntry?: { jockeyId?: string; stableId?: string; owned?: boolean },
 ): { impacts: AnyImpact[]; beyerValue: number } {
   const impacts: AnyImpact[] = [];
 
@@ -85,6 +86,7 @@ export function generatePerformanceCareerImpacts(
     newDay,
     runner,
     rng,
+    raceEntry,
   );
   historyImpact.raceHistoryEntry.fieldSize = resultLength;
   historyImpact.raceHistoryEntry.pacePositions = pacePositions;
