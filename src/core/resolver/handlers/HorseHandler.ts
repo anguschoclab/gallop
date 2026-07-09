@@ -32,6 +32,7 @@ import type {
   FatigueImpact,
   PeakingIndexImpact,
   BeyerImpact,
+  DistanceAptitudeImpact,
 } from "../impacts/horseImpacts";
 
 type ImpactHandlerFunction = (
