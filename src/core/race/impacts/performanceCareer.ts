@@ -94,6 +94,28 @@ export function generatePerformanceCareerImpacts(
   historyImpact.raceHistoryEntry.courseVisitCount = courseVisitCount;
   impacts.push(historyImpact);
 
+  // Distance aptitude drift — preferred distance gradually shifts toward the
+  // distances the horse actually races at (5% of the gap per start, clamped
+  // to the aptitude range).
+  const currentApt = horse.distanceAptitude ?? 1600;
+  const shifted = currentApt + (race.distance - currentApt) * 0.05;
+  const newApt = Math.max(800, Math.min(3200, shifted));
+  const aptDelta = newApt - currentApt;
+  if (Math.abs(aptDelta) >= 1) {
+    impacts.push({
+      id: generateUUID(rng),
+      intentId: "",
+      day: newDay,
+      phase: "raceResolution",
+      logLevel: "conditional",
+      type: "distance_aptitude_shift",
+      horseId: horse.id,
+      delta: aptDelta,
+      newValue: newApt,
+      reason: "Race experience",
+    } as DistanceAptitudeImpact);
+  }
+
   // Triple Crown progress
   const tcImpact = generateTripleCrownProgressImpact(horse, r.position, race, newDay, rng);
   if (tcImpact) {
