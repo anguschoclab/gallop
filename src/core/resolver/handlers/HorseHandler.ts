@@ -214,6 +214,7 @@ export class HorseHandler implements ImpactHandler {
       "fatigue_change",
       "peaking_index_update",
       "beyer_update",
+      "distance_aptitude_shift",
     ].includes(type);
   }
 
