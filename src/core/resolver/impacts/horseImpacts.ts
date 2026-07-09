@@ -247,4 +247,5 @@ export type HorseImpact =
   | FitnessImpact
   | FatigueImpact
   | PeakingIndexImpact
-  | BeyerImpact;
+  | BeyerImpact
+  | DistanceAptitudeImpact;

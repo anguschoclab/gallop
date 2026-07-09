@@ -49,6 +49,7 @@ import { Route as CalendarIndexRouteImport } from './routes/calendar.index'
 import { Route as AuctionIndexRouteImport } from './routes/auction.index'
 import { Route as AnalyticsIndexRouteImport } from './routes/analytics.index'
 import { Route as SyndicateSyndicateIdRouteImport } from './routes/syndicate.$syndicateId'
+import { Route as StaffStaffIdRouteImport } from './routes/staff.$staffId'
 import { Route as StableHorseIdRouteImport } from './routes/stable.$horseId'
 import { Route as SireWatchStallionIdRouteImport } from './routes/sire-watch.$stallionId'
 import { Route as RaceRaceIdRouteImport } from './routes/race.$raceId'
@@ -262,6 +263,11 @@ const SyndicateSyndicateIdRoute = SyndicateSyndicateIdRouteImport.update({
   path: '/syndicate/$syndicateId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StaffStaffIdRoute = StaffStaffIdRouteImport.update({
+  id: '/$staffId',
+  path: '/$staffId',
+  getParentRoute: () => StaffRoute,
+} as any)
 const StableHorseIdRoute = StableHorseIdRouteImport.update({
   id: '/$horseId',
   path: '/$horseId',
@@ -354,7 +360,7 @@ export interface FileRoutesByFullPath {
   '/sire-leaderboards': typeof SireLeaderboardsRoute
   '/sire-watch': typeof SireWatchRouteWithChildren
   '/stable': typeof StableRouteWithChildren
-  '/staff': typeof StaffRoute
+  '/staff': typeof StaffRouteWithChildren
   '/stallions': typeof StallionsRoute
   '/start': typeof StartRoute
   '/analytics/breeding': typeof AnalyticsBreedingRoute
@@ -369,6 +375,7 @@ export interface FileRoutesByFullPath {
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
+  '/staff/$staffId': typeof StaffStaffIdRoute
   '/syndicate/$syndicateId': typeof SyndicateSyndicateIdRoute
   '/analytics/': typeof AnalyticsIndexRoute
   '/auction/': typeof AuctionIndexRoute
@@ -402,7 +409,7 @@ export interface FileRoutesByTo {
   '/scheduler': typeof SchedulerRoute
   '/settings': typeof SettingsRoute
   '/sire-leaderboards': typeof SireLeaderboardsRoute
-  '/staff': typeof StaffRoute
+  '/staff': typeof StaffRouteWithChildren
   '/stallions': typeof StallionsRoute
   '/start': typeof StartRoute
   '/analytics/breeding': typeof AnalyticsBreedingRoute
@@ -417,6 +424,7 @@ export interface FileRoutesByTo {
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
+  '/staff/$staffId': typeof StaffStaffIdRoute
   '/syndicate/$syndicateId': typeof SyndicateSyndicateIdRoute
   '/analytics': typeof AnalyticsIndexRoute
   '/auction': typeof AuctionIndexRoute
@@ -457,7 +465,7 @@ export interface FileRoutesById {
   '/sire-leaderboards': typeof SireLeaderboardsRoute
   '/sire-watch': typeof SireWatchRouteWithChildren
   '/stable': typeof StableRouteWithChildren
-  '/staff': typeof StaffRoute
+  '/staff': typeof StaffRouteWithChildren
   '/stallions': typeof StallionsRoute
   '/start': typeof StartRoute
   '/analytics/breeding': typeof AnalyticsBreedingRoute
@@ -472,6 +480,7 @@ export interface FileRoutesById {
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
+  '/staff/$staffId': typeof StaffStaffIdRoute
   '/syndicate/$syndicateId': typeof SyndicateSyndicateIdRoute
   '/analytics/': typeof AnalyticsIndexRoute
   '/auction/': typeof AuctionIndexRoute
@@ -528,6 +537,7 @@ export interface FileRouteTypes {
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
+    | '/staff/$staffId'
     | '/syndicate/$syndicateId'
     | '/analytics/'
     | '/auction/'
@@ -576,6 +586,7 @@ export interface FileRouteTypes {
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
+    | '/staff/$staffId'
     | '/syndicate/$syndicateId'
     | '/analytics'
     | '/auction'
@@ -630,6 +641,7 @@ export interface FileRouteTypes {
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
+    | '/staff/$staffId'
     | '/syndicate/$syndicateId'
     | '/analytics/'
     | '/auction/'
@@ -670,7 +682,7 @@ export interface RootRouteChildren {
   SireLeaderboardsRoute: typeof SireLeaderboardsRoute
   SireWatchRoute: typeof SireWatchRouteWithChildren
   StableRoute: typeof StableRouteWithChildren
-  StaffRoute: typeof StaffRoute
+  StaffRoute: typeof StaffRouteWithChildren
   StallionsRoute: typeof StallionsRoute
   StartRoute: typeof StartRoute
   FoalDevelopmentHorseIdRoute: typeof FoalDevelopmentHorseIdRoute
@@ -961,6 +973,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SyndicateSyndicateIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/staff/$staffId': {
+      id: '/staff/$staffId'
+      path: '/$staffId'
+      fullPath: '/staff/$staffId'
+      preLoaderRoute: typeof StaffStaffIdRouteImport
+      parentRoute: typeof StaffRoute
+    }
     '/stable/$horseId': {
       id: '/stable/$horseId'
       path: '/$horseId'
@@ -1136,6 +1155,16 @@ const StableRouteChildren: StableRouteChildren = {
 const StableRouteWithChildren =
   StableRoute._addFileChildren(StableRouteChildren)
 
+interface StaffRouteChildren {
+  StaffStaffIdRoute: typeof StaffStaffIdRoute
+}
+
+const StaffRouteChildren: StaffRouteChildren = {
+  StaffStaffIdRoute: StaffStaffIdRoute,
+}
+
+const StaffRouteWithChildren = StaffRoute._addFileChildren(StaffRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRouteWithChildren,
@@ -1167,7 +1196,7 @@ const rootRouteChildren: RootRouteChildren = {
   SireLeaderboardsRoute: SireLeaderboardsRoute,
   SireWatchRoute: SireWatchRouteWithChildren,
   StableRoute: StableRouteWithChildren,
-  StaffRoute: StaffRoute,
+  StaffRoute: StaffRouteWithChildren,
   StallionsRoute: StallionsRoute,
   StartRoute: StartRoute,
   FoalDevelopmentHorseIdRoute: FoalDevelopmentHorseIdRoute,
