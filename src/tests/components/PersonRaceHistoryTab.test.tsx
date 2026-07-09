@@ -41,7 +41,6 @@ function mkRaceEntry(partial: Partial<RaceEntry> & { raceId: string }): RaceEntr
     raceName: "Test Race",
     position: 1,
     day: 1,
-    raceId: partial.raceId,
     ...partial,
   } as RaceEntry;
 }
