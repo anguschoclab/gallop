@@ -51,4 +51,3 @@ export function HorseCard({
   );
 }
 
-export default HorseCard;
