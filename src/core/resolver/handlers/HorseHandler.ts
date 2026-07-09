@@ -186,6 +186,12 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       horse.lastRaceDay = raceDay;
     }
   },
+  distance_aptitude_shift: (_draft, impact, horse) => {
+    const { newValue } = impact as DistanceAptitudeImpact;
+    if (horse) {
+      horse.distanceAptitude = Math.max(800, Math.min(3200, newValue));
+    }
+  },
 };
 
 export class HorseHandler implements ImpactHandler {
