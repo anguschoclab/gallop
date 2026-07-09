@@ -69,6 +69,14 @@ export function generateRaceNews(
     `A Race to Remember: ${winner.name} Wins ${race.name}`,
     `${winner.name} Wows the Crowd in ${race.name}`,
     `Flawless Run Secures ${race.name} for ${winner.name}`,
+    `Sensational Win for ${winner.name} in the ${race.name}!`,
+    `${winner.name} Steals the Show in the ${race.name}.`,
+    `Brilliant Run Sees ${winner.name} Take the ${race.name}.`,
+    `The ${race.name} Belongs to ${winner.name}.`,
+    `${winner.name} Triumphs in a Thrilling ${race.name}.`,
+    `Unstoppable: ${winner.name} Captures the ${race.name}.`,
+    `${winner.name} Crowned Champion of the ${race.name}.`,
+    `No Catching ${winner.name} in the ${race.name}!`
   ];
 
   const bodies = [
@@ -86,6 +94,13 @@ export function generateRaceNews(
     `It was a tactical triumph as much as a physical one, with ${winner.name} finding the perfect trip to conquer the ${race.name}.`,
     `Bettors who backed ${winner.name} in the ${race.name} never had a moment of worry during a remarkably smooth trip to the winner's circle.`,
     `Few horses can do what ${winner.name} just did in the ${race.name}, leaving experts searching for new superlatives.`,
+    `Delivering on all expectations, ${winner.name} unleashed a powerful stretch run to take home the prize in the ${race.name}.`,
+    `It was a commanding performance from ${winner.name}, who dictated the pace and cruised to a memorable win in the ${race.name}.`,
+    `Spectators were treated to an absolute clinic today as ${winner.name} completely outclassed the field to win the ${race.name}.`,
+    `A tactical masterstroke paid off handsomely, allowing ${winner.name} to find daylight and spring an impressive upset in the ${race.name}.`,
+    `${winner.name} confirmed their status as a rising star with a gutsy, hard-fought triumph in today's feature event, the ${race.name}.`,
+    `Never in doubt from the start, ${winner.name} ran a picture-perfect race to emphatically capture the ${race.name}.`,
+    `Showing tremendous heart and determination, ${winner.name} fended off all challengers in the closing stages of the ${race.name}.`
   ];
 
   const headline = rng.pick(headlines);
@@ -130,6 +145,12 @@ export function generateMarketNews(horse: Horse, price: number, day: number, rng
     `Market Moves: ${horse.name} Secures $${formattedPrice} Deal`,
     `The Price is Right: ${horse.name} Goes for $${formattedPrice}`,
     `Stunning Purchase: ${horse.name} Sells at $${formattedPrice}`,
+    `Market Shock: ${horse.name} Commands $${formattedPrice}.`,
+    `Blockbuster Deal! ${horse.name} Fetches $${formattedPrice}.`,
+    `Massive Investment: ${horse.name} Acquired for $${formattedPrice}.`,
+    `Bidding War Ends: ${horse.name} Goes for $${formattedPrice}.`,
+    `${horse.name} Changes Hands in $${formattedPrice} Mega-Deal.`,
+    `Headline Transaction: ${horse.name} Secured for $${formattedPrice}.`,
   ];
 
   const bodies = [
@@ -143,8 +164,14 @@ export function generateMarketNews(horse: Horse, price: number, day: number, rng
     `Pockets were deep and bidding was fierce, but ultimately ${horse.name} found a new home. Expectations will be sky-high moving forward.`,
     `The hammer fell and the crowd gasped. The purchase of ${horse.name} is a high-risk, high-reward play that everyone will be watching.`,
     `With the sale of ${horse.name} now finalized, the pressure is immediately on the trainer to justify the breathtaking price tag.`,
+    `In a move that has the whole industry talking, ${horse.name} was acquired today. The new owners will be hoping for immediate returns on this massive investment.`,
+    `Deep pockets were required to secure ${horse.name} today. Observers are eager to see how this high-profile acquisition reshapes the competitive landscape.`,
+    `Following heated negotiations, ${horse.name} has officially joined a new stable. The staggering price tag brings with it sky-high expectations.`,
+    `A jaw-dropping figure was finalized today for ${horse.name}. It's a bold statement of intent from the new ownership group.`,
+    `The ink is dry on one of the season's biggest transactions. ${horse.name} is on the move, and the hefty price confirms their elite status.`,
+    `Speculation finally ended today as ${horse.name} was sold. The immense valuation reflects the immense potential seen in this remarkable athlete.`,
+    `It took a fortune, but a deal was struck for ${horse.name}. The pressure is now squarely on the new connections to make this massive investment pay off.`,
   ];
-
   return createNewsItem(
     {
       day,
@@ -235,6 +262,51 @@ export function generateFlavorNews(day: number, rng: Rng): NewsItem {
     {
       headline: "Morning Line Oddsmaker Retires",
       body: "The track's long-time oddsmaker has announced their retirement after three decades of setting the morning lines for the local racing circuit.",
+      category: "flavor" as NewsCategory,
+    },
+    {
+      headline: "Jockey Colony Sees Influx of Talent",
+      body: "A wave of promising apprentice riders has arrived on the circuit this week, eager to make their mark and challenge the established veterans.",
+      category: "flavor" as NewsCategory,
+    },
+    {
+      headline: "Historic Attendance Numbers Expected",
+      body: "Ticket sales are surging ahead of the upcoming festival weekend, with organizers preparing for what could be a record-breaking crowd.",
+      category: "flavor" as NewsCategory,
+    },
+    {
+      headline: "Debate Over Artificial Surfaces Reignites",
+      body: "A recent symposium on equine safety has once again sparked heated debates among trainers regarding the merits of synthetic racing surfaces.",
+      category: "flavor" as NewsCategory,
+    },
+    {
+      headline: "Equine Nutrition Seminar Draws Crowds",
+      body: "Top veterinary experts gathered today to discuss the latest advancements in racing diets, emphasizing customized nutrition plans for peak performance.",
+      category: "flavor" as NewsCategory,
+    },
+    {
+      headline: "Track Management Promises Increased Purses",
+      body: "Following a successful betting season, track administrators have committed to bumping up the purse structures for several upcoming mid-level allowance races.",
+      category: "flavor" as NewsCategory,
+    },
+    {
+      headline: "Charity Auction a Resounding Success",
+      body: "The annual racing community charity gala raised unprecedented funds last night, with a silent auction featuring historic racing memorabilia.",
+      category: "flavor" as NewsCategory,
+    },
+    {
+      headline: "Heavy Rains Threaten Turf Schedule",
+      body: "An unexpected storm system moving into the region has track superintendents working overtime to ensure the turf course remains safe for competition.",
+      category: "flavor" as NewsCategory,
+    },
+    {
+      headline: "Famed Announcer Announces Retirement",
+      body: "After three decades of calling the races, the beloved voice of the local track has confirmed this season will be their last in the booth.",
+      category: "flavor" as NewsCategory,
+    },
+    {
+      headline: "New Quarantine Protocols Implemented",
+      body: "In a proactive measure, racing authorities have introduced stricter travel guidelines for horses shipping in from out of state to ensure equine health.",
       category: "flavor" as NewsCategory,
     },
   ];
