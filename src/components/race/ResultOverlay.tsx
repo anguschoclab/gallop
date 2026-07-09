@@ -3,12 +3,13 @@ import { Button } from "@/components/ui/button";
 import { PaceGraph } from "@/components/race/PaceGraph";
 import { SpeedBreakdownChart } from "@/components/race/SpeedBreakdownChart";
 import { JockeyReportPanel } from "@/components/race/JockeyReportPanel";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { SectionalSplit } from "@/core/race/types";
 import { generateJockeyFeedback } from "@/core/race/jockeyFeedback";
 import { formatCurrency } from "@/core/common/formatting";
-import { Trophy, ChevronRight } from "lucide-react";
+import { Trophy, ChevronRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 /**
@@ -151,6 +152,47 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                           <span className="font-black not-italic text-blue-400 mr-2">LOG:</span>{" "}
                           {feedback}
                         </div>
+                      )}
+
+                      {r.distanceMod !== undefined && r.distanceStaminaMul !== undefined && (
+                        <Collapsible className="mt-2 ml-10">
+                          <CollapsibleTrigger className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-widest text-gold/40 hover:text-gold transition-colors">
+                            <ChevronDown className="h-2.5 w-2.5" />
+                            DIST_SCALING
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <div className="mt-2 p-3 bg-black/30 border border-white/5 grid grid-cols-3 gap-x-4 gap-y-2 text-[9px] font-mono">
+                              <div>
+                                <span className="text-cream/20 uppercase">Pref:</span>{" "}
+                                <span className="text-cream/60 tabular-nums">{r.preferredDistance}m</span>
+                              </div>
+                              <div>
+                                <span className="text-cream/20 uppercase">Race:</span>{" "}
+                                <span className="text-cream/60 tabular-nums">{race.distance}m</span>
+                              </div>
+                              <div>
+                                <span className="text-cream/20 uppercase">Ratio:</span>{" "}
+                                <span className="text-cream/60 tabular-nums">{r.distanceRatio?.toFixed(2)}</span>
+                              </div>
+                              <div>
+                                <span className="text-cream/20 uppercase">Dev:</span>{" "}
+                                <span className="text-cream/60 tabular-nums">{r.distanceDeviation?.toFixed(2)}</span>
+                              </div>
+                              <div>
+                                <span className="text-cream/20 uppercase">Spd_Mod:</span>{" "}
+                                <span className={cn("tabular-nums font-bold", r.distanceMod < 1 ? "text-red-400/70" : "text-cream/60")}>
+                                  ×{r.distanceMod.toFixed(3)}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-cream/20 uppercase">Sta_Mul:</span>{" "}
+                                <span className={cn("tabular-nums font-bold", r.distanceStaminaMul > 1 ? "text-amber-400/70" : "text-cream/60")}>
+                                  ×{r.distanceStaminaMul.toFixed(3)}
+                                </span>
+                              </div>
+                            </div>
+                          </CollapsibleContent>
+                        </Collapsible>
                       )}
                     </div>
                   );

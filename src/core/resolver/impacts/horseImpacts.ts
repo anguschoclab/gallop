@@ -206,6 +206,12 @@ export interface DistanceAptitudeImpact extends Impact {
   delta: number;
   newValue: number;
   reason: string;
+  preferredDistance?: number;
+  raceDistance?: number;
+  distanceRatio?: number;
+  distanceDeviation?: number;
+  distanceMod?: number;
+  distanceStaminaMul?: number;
 }
 
 // Type guards for discriminating impact types

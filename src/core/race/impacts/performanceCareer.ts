@@ -7,6 +7,7 @@
 import type { AnyImpact, DistanceAptitudeImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import type { Rng } from "@/core/common/rng";
+import { computeDistanceScaling } from "@/core/race/engine/runnerBuilder";
 import {
   generateFormImpact,
   generateFameImpact,
@@ -102,6 +103,7 @@ export function generatePerformanceCareerImpacts(
   const newApt = Math.max(800, Math.min(3200, shifted));
   const aptDelta = newApt - currentApt;
   if (Math.abs(aptDelta) >= 1) {
+    const scaling = computeDistanceScaling(currentApt, race.distance);
     impacts.push({
       id: generateUUID(rng),
       intentId: "",
@@ -113,6 +115,12 @@ export function generatePerformanceCareerImpacts(
       delta: aptDelta,
       newValue: newApt,
       reason: "Race experience",
+      preferredDistance: scaling.preferredDistance,
+      raceDistance: race.distance,
+      distanceRatio: scaling.distanceRatio,
+      distanceDeviation: scaling.distanceDeviation,
+      distanceMod: scaling.distanceMod,
+      distanceStaminaMul: scaling.distanceStaminaMul,
     } as DistanceAptitudeImpact);
   }
 

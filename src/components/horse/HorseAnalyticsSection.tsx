@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Activity } from "lucide-react";
 import { BeyerChart } from "@/components/race/BeyerChart";
 import { PaceProfileSummary } from "@/components/race/PaceProfileSummary";
+import { DistanceAptitudeDrift } from "@/components/horse/DistanceAptitudeDrift";
 
 interface HorseAnalyticsSectionProps {
   horse: any;
@@ -39,6 +40,15 @@ export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyti
                 Pace Profile
               </div>
               <PaceProfileSummary horse={horse} />
+            </div>
+          )}
+
+          {(horse.raceHistory ?? []).length > 0 && (
+            <div className="pt-4 border-t border-white/5 space-y-2">
+              <div className="text-[10px] font-black uppercase text-fame/40 tracking-widest">
+                Distance Aptitude Drift
+              </div>
+              <DistanceAptitudeDrift horse={horse} />
             </div>
           )}
         </CardContent>
