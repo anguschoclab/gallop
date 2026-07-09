@@ -483,7 +483,9 @@ export function buildRunner(
   const conformationMod = 1 + (confVal - 2) * -0.03;
 
   const conditionStamina = clamp(
-    1 - ((1 - baseStamina) * conditions.staminaDrainMul * conformationMod) / weatherStaminaMod,
+    1 -
+      ((1 - baseStamina) * conditions.staminaDrainMul * conformationMod * distanceStaminaMul) /
+        weatherStaminaMod,
     0.2,
     1,
   );
