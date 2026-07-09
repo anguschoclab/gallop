@@ -199,6 +199,15 @@ export interface BeyerImpact extends Impact {
   reason: string;
 }
 
+// Distance aptitude shift - drift toward races the horse actually runs
+export interface DistanceAptitudeImpact extends Impact {
+  type: "distance_aptitude_shift";
+  horseId: string;
+  delta: number;
+  newValue: number;
+  reason: string;
+}
+
 // Type guards for discriminating impact types
 export function isHorseStatImpact(impact: Impact): impact is HorseStatImpact {
   return impact.type === "horse_stat_change";
@@ -238,4 +247,5 @@ export type HorseImpact =
   | FitnessImpact
   | FatigueImpact
   | PeakingIndexImpact
-  | BeyerImpact;
+  | BeyerImpact
+  | DistanceAptitudeImpact;

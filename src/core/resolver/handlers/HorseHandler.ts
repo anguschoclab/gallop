@@ -32,6 +32,7 @@ import type {
   FatigueImpact,
   PeakingIndexImpact,
   BeyerImpact,
+  DistanceAptitudeImpact,
 } from "../impacts/horseImpacts";
 
 type ImpactHandlerFunction = (
@@ -185,6 +186,12 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       horse.lastRaceDay = raceDay;
     }
   },
+  distance_aptitude_shift: (_draft, impact, horse) => {
+    const { newValue } = impact as DistanceAptitudeImpact;
+    if (horse) {
+      horse.distanceAptitude = Math.max(800, Math.min(3200, newValue));
+    }
+  },
 };
 
 export class HorseHandler implements ImpactHandler {
@@ -207,6 +214,7 @@ export class HorseHandler implements ImpactHandler {
       "fatigue_change",
       "peaking_index_update",
       "beyer_update",
+      "distance_aptitude_shift",
     ].includes(type);
   }
 

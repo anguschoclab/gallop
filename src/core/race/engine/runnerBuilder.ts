@@ -336,8 +336,16 @@ export function buildRunner(
   const energyMod = 0.8 + (h.energy / 100) * 0.2;
   const formEnergy = clamp(formMod * energyMod, 0.5, MAX_FORM_ENERGY_MUL);
 
-  const distDiff = Math.abs(h.distanceAptitude - raceDistance);
-  const distanceMod = 1 - Math.min(0.1, Math.max(0, distDiff - 400) / 8000);
+  // Distance-vs-aptitude scaling: max pace falls off symmetrically as the
+  // race distance drifts from the horse's preferred distance, and stamina
+  // burn accelerates when the race is longer than preferred.
+  const preferredDistance = Math.max(200, h.distanceAptitude || 1600);
+  const distanceRatio = raceDistance / preferredDistance;
+  const distanceDeviation = Math.log2(distanceRatio); // 0 = match, +1 = 2x, -1 = 0.5x
+  const distanceMod = 1 - Math.min(0.15, Math.abs(distanceDeviation) * 0.08);
+  // Longer than preferred → higher stamina drain multiplier (>1 amplifies burn).
+  const distanceStaminaMul =
+    distanceDeviation > 0 ? 1 + Math.min(0.25, distanceDeviation * 0.2) : 1;
   const surfaceMod = surface ? (h.surfaceAptitude[surface] ?? 0.95) * (1 + farrierBonus) : 1.0;
 
   const fiberMods = h.fiberBias
@@ -475,7 +483,9 @@ export function buildRunner(
   const conformationMod = 1 + (confVal - 2) * -0.03;
 
   const conditionStamina = clamp(
-    1 - ((1 - baseStamina) * conditions.staminaDrainMul * conformationMod) / weatherStaminaMod,
+    1 -
+      ((1 - baseStamina) * conditions.staminaDrainMul * conformationMod * distanceStaminaMul) /
+        weatherStaminaMod,
     0.2,
     1,
   );
