@@ -4,7 +4,8 @@
  * Extracted from raceImpactGenerator.ts.
  */
 
-import type { AnyImpact } from "@/core/resolver/impacts/index";
+import type { AnyImpact, DistanceAptitudeImpact } from "@/core/resolver/impacts/index";
+import { generateUUID } from "@/core/uuid";
 import type { Rng } from "@/core/common/rng";
 import {
   generateFormImpact,
