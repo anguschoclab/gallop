@@ -7,6 +7,8 @@ import { getAvailableTrainingTypes } from "@/core/facilities";
 import { FACILITY_NAMES } from "@/core/facilities/facilityTypes";
 import type { Horse, PlayerFacilities } from "@/game/types";
 import { useCallback, memo, useMemo } from "react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/cn";
 
 interface TrainingPanelProps {
   horse: Horse;
@@ -27,6 +29,33 @@ function getStatValue(stats: Horse["stats"], key: string): number {
 
 const ADVANCED_WORKOUTS_LABEL = "Advanced Workouts";
 const REST_LABEL = "Rest (+30 energy)";
+
+
+// Helper to conditionally wrap button with tooltip if disabled
+function DisabledTooltipWrapper({
+  disabled,
+  reason,
+  children,
+}: {
+  disabled: boolean;
+  reason?: string;
+  children: React.ReactNode;
+}) {
+  if (!disabled || !reason) return <>{children}</>;
+
+  return (
+    <TooltipProvider delayDuration={300}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span tabIndex={0} className="inline-block w-full cursor-not-allowed">
+            {children}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>{reason}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
 
 export function TrainingPanelComponent({
   horse,
@@ -62,6 +91,11 @@ export function TrainingPanelComponent({
             cash < TRAINING_COST ||
             horse.energy < 15 ||
             val >= horse.potential,
+          disabledReason: isPregnant ? "Horse is pregnant" :
+                         slotsLeft <= 0 ? "No training slots left today" :
+                         cash < TRAINING_COST ? "Not enough cash" :
+                         horse.energy < 15 ? "Not enough energy" :
+                         val >= horse.potential ? "Maximum potential reached" : undefined,
           label: k,
           nextValue: Math.min(horse.potential, val + 1),
           currentValue: val,
@@ -102,6 +136,12 @@ export function TrainingPanelComponent({
             horse.energy < workout.energy ||
             isStatCapped ||
             !isEnabled,
+          disabledReason: !isEnabled ? unlockHint :
+                         isPregnant ? "Horse is pregnant" :
+                         slotsLeft <= 0 ? "No training slots left today" :
+                         cash < workout.cost ? "Not enough cash" :
+                         horse.energy < workout.energy ? "Not enough energy" :
+                         isStatCapped ? "Maximum potential reached" : undefined,
           label: workout.label,
           cost: workout.cost,
           isEnabled,
@@ -116,18 +156,19 @@ export function TrainingPanelComponent({
     <div className="space-y-2">
       {/* Basic training types */}
       {basicTrainingButtons.map((btn) => (
-        <Button
-          key={btn.key}
-          onClick={btn.onClick}
-          disabled={btn.disabled}
-          className="w-full justify-between"
-          variant="outline"
-        >
-          <span className="capitalize">{btn.label} work</span>
-          <span className="text-cream-muted">
-            {btn.currentValue} → {btn.nextValue}
-          </span>
-        </Button>
+        <DisabledTooltipWrapper key={btn.key} disabled={btn.disabled} reason={btn.disabledReason}>
+          <Button
+            onClick={btn.onClick}
+            disabled={btn.disabled}
+            className={cn("w-full justify-between", btn.disabled && "pointer-events-none")}
+            variant="outline"
+          >
+            <span className="capitalize">{btn.label} work</span>
+            <span className="text-cream-muted">
+              {btn.currentValue} → {btn.nextValue}
+            </span>
+          </Button>
+        </DisabledTooltipWrapper>
       ))}
 
       {/* Advanced workout types */}
@@ -135,32 +176,43 @@ export function TrainingPanelComponent({
         <p className="text-xs text-cream-muted mb-2">{ADVANCED_WORKOUTS_LABEL}</p>
         <div className="grid grid-cols-2 gap-2">
           {advancedWorkoutButtons.map((btn) => (
-            <Button
-              key={btn.key}
-              onClick={btn.onClick}
-              disabled={btn.disabled}
-              title={btn.unlockHint}
-              className="w-full justify-between text-xs"
-              variant="outline"
-            >
-              <div className="flex items-center gap-1">
-                {!btn.isEnabled ? <Lock className="h-3 w-3" /> : null}
-                <span>{btn.label}</span>
-              </div>
-              <span className="text-cream-muted">${btn.cost}</span>
-            </Button>
+            <DisabledTooltipWrapper key={btn.key} disabled={btn.disabled} reason={btn.disabledReason}>
+              <Button
+                onClick={btn.onClick}
+                disabled={btn.disabled}
+                className={cn("w-full justify-between text-xs", btn.disabled && "pointer-events-none")}
+                variant="outline"
+              >
+                <div className="flex items-center gap-1">
+                  {!btn.isEnabled ? <Lock className="h-3 w-3" /> : null}
+                  <span>{btn.label}</span>
+                </div>
+                <span className="text-cream-muted">${btn.cost}</span>
+              </Button>
+            </DisabledTooltipWrapper>
           ))}
         </div>
       </div>
 
-      <Button
-        onClick={handleRest}
+
+      <DisabledTooltipWrapper
         disabled={isPregnant || slotsLeft <= 0 || horse.energy >= 100}
-        className="w-full"
-        variant="secondary"
+        reason={
+          isPregnant ? "Horse is pregnant" :
+          slotsLeft <= 0 ? "No training slots left today" :
+          horse.energy >= 100 ? "Horse is fully rested" : undefined
+        }
       >
-        {REST_LABEL}
-      </Button>
+        <Button
+          onClick={handleRest}
+          disabled={isPregnant || slotsLeft <= 0 || horse.energy >= 100}
+          className={cn("w-full", (isPregnant || slotsLeft <= 0 || horse.energy >= 100) && "pointer-events-none")}
+          variant="secondary"
+        >
+          {REST_LABEL}
+        </Button>
+      </DisabledTooltipWrapper>
+
     </div>
   );
 }
