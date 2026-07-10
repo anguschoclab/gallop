@@ -265,6 +265,13 @@ export interface TacticsIntent extends Intent {
   jockeyInstructions: JockeyInstructions;
 }
 
+// Transport intent
+export interface TransportIntent extends Intent {
+  type: "transport";
+  transportId: string;
+  cost: number;
+}
+
 // Staff intent
 export interface StaffIntent extends Intent {
   type: "staff";
@@ -392,6 +399,7 @@ export type AnyIntent =
   | ClaimingIntent
   | WithdrawFromClaimingIntent
   | TacticsIntent
+  | TransportIntent
   | StaffIntent
   | FacilityUpgradeIntent
   | PastureRetirementIntent

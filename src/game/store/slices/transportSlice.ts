@@ -74,7 +74,7 @@ export const createTransportSlice: SliceCreator<TransportSlice> = (set, get) => 
       type: "transport",
       transportId: transport.id,
       cost: transport.cost,
-    } as any);
+    });
 
     return { ok: true, transportId: transport.id };
   },
