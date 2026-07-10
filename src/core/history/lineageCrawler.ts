@@ -32,23 +32,27 @@ export function computeFounderInfluence(
   founder: Horse,
   allHorses: Horse[],
   currentDay: number,
+  horseMap?: Map<string, Horse>,
+  parentToChildrenMap?: Map<string, string[]>
 ): FounderRecord {
   const descendants = new Set<string>();
   const queue: { id: string; gen: number }[] = [{ id: founder.id, gen: 0 }];
   let maxGen = 0;
 
   // Map of parentId -> childrenIds for fast lookup
-  const parentToChildren = new Map<string, string[]>();
-  for (const h of allHorses) {
-    if (h.pedigree?.sireId) {
-      const children = parentToChildren.get(h.pedigree.sireId) || [];
-      children.push(h.id);
-      parentToChildren.set(h.pedigree.sireId, children);
-    }
-    if (h.pedigree?.damId) {
-      const children = parentToChildren.get(h.pedigree.damId) || [];
-      children.push(h.id);
-      parentToChildren.set(h.pedigree.damId, children);
+  const parentToChildren = parentToChildrenMap || new Map<string, string[]>();
+  if (!parentToChildrenMap) {
+    for (const h of allHorses) {
+      if (h.pedigree?.sireId) {
+        const children = parentToChildren.get(h.pedigree.sireId) || [];
+        children.push(h.id);
+        parentToChildren.set(h.pedigree.sireId, children);
+      }
+      if (h.pedigree?.damId) {
+        const children = parentToChildren.get(h.pedigree.damId) || [];
+        children.push(h.id);
+        parentToChildren.set(h.pedigree.damId, children);
+      }
     }
   }
 
@@ -65,7 +69,8 @@ export function computeFounderInfluence(
       descendants.add(id);
       maxGen = Math.max(maxGen, gen);
 
-      const horse = allHorses.find((h) => h.id === id);
+      // Performance: use passed horseMap or find linearly
+      const horse = horseMap ? horseMap.get(id) : allHorses.find((h) => h.id === id);
       if (horse) {
         const stats = getCareerStats(horse);
         totalEarnings += stats.earnings;

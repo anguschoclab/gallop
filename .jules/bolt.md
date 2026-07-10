@@ -60,3 +60,7 @@
 ## 2024-07-06 - O(1) Lookups in Awards Scoring
 **Learning:** During the awards phase (`calculateAwardPoints`), checking category eligibility and calculating points iterates over each race in a horse's history, running an O(N) `.find()` on the global `races` array. Across multiple categories, regions, and horses, this results in an O(Regions * Categories * Horses * RacesHistory * TotalRaces) nested bottleneck.
 **Action:** Always prefer `Map` lookups (O(1)) over `Array.prototype.find()` inside deeply nested loops. When processing data that requires repeated lookups against a static array, precompute a `Map` structure at the outermost scope and pass it down the pipeline.
+
+## 2024-07-28 - [Optimizing O(N) Lookups in Pipeline Phases]
+**Learning:** Functions invoked during pipeline phases over multiple entities, like `computeFounderInfluence`, when iterated over arrays of candidates, can result in serious bottlenecks if they individually recreate temporary maps or rely on nested `.find()` searches against large arrays (like `allHorses`).
+**Action:** Lift the initialization of necessary hash maps (like `horseMap` or `parentToChildrenMap`) outside the loop in the calling context (e.g., inside the phase executor) and pass them as optional arguments to the lower-level processing functions to ensure O(1) lookups and single-allocation mapping.
