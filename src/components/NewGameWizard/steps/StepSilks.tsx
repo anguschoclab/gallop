@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -20,6 +21,8 @@ interface StepSilksProps {
 }
 
 export function StepSilks({ silk, setSilk }: StepSilksProps) {
+  const patternId = useId();
+
   const setColor = (key: "primary" | "secondary" | "cap", value: string) =>
     setSilk({ ...silk, [key]: value });
 
@@ -85,7 +88,9 @@ export function StepSilks({ silk, setSilk }: StepSilksProps) {
         <div className="space-y-2">
           <Tooltip>
             <TooltipTrigger asChild>
-              <label className="text-sm font-medium text-cream cursor-help">Pattern</label>
+              <label htmlFor={patternId} className="text-sm font-medium text-cream cursor-help">
+                Pattern
+              </label>
             </TooltipTrigger>
             <TooltipContent>How the colors are arranged on the silks.</TooltipContent>
           </Tooltip>
@@ -93,7 +98,7 @@ export function StepSilks({ silk, setSilk }: StepSilksProps) {
             value={silk.pattern}
             onValueChange={(v) => setSilk({ ...silk, pattern: v as JockeySilkPattern })}
           >
-            <SelectTrigger>
+            <SelectTrigger id={patternId}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

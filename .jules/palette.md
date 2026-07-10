@@ -5,3 +5,7 @@
 ## 2024-07-06 - Accessible Icon Buttons Require Tooltips
 **Learning:** Found multiple icon-only `Button` elements with `size="icon"` in widgets and cards (e.g. `CircuitWidget`, `StableRosterWidget`, `HQOpsWidget`, `ImperialOutpostManager`) that have `aria-label`s for screen readers but lack visual `Tooltip`s for sighted users. Sighted users need visual explanations for generic or obscure icons like `ChevronRight` or `ArrowRightLeft`.
 **Action:** Always wrap `size="icon"` Buttons in `@/components/ui/tooltip` (`TooltipProvider`, `Tooltip`, `TooltipTrigger`, `TooltipContent`) to provide visual hover context, mapping the `aria-label` text to the tooltip content.
+
+## 2024-07-10 - Dynamic Label Association with useId
+**Learning:** In reusable form components (like `FieldWithRandom` in wizards) where fields can be rendered multiple times, static string IDs risk collisions. React's `useId()` safely generates unique IDs to bind `<label htmlFor>` to inputs or triggers, ensuring robust screen reader compatibility and expanding the clickable hit area without hardcoded values.
+**Action:** Use `useId()` when tying labels to form elements inside mapped arrays or generic wrapper components to maintain strong accessibility relationships dynamically.

@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -61,12 +62,16 @@ function FieldWithRandom({
   maxLength,
   placeholder,
 }: FieldWithRandomProps) {
+  const inputId = useId();
+
   return (
     <div className="space-y-2">
       <div className="flex items-baseline justify-between">
         <Tooltip>
           <TooltipTrigger asChild>
-            <label className="text-sm font-medium text-cream cursor-help">{label}</label>
+            <label htmlFor={inputId} className="text-sm font-medium text-cream cursor-help">
+              {label}
+            </label>
           </TooltipTrigger>
           <TooltipContent>{tooltip}</TooltipContent>
         </Tooltip>
@@ -76,6 +81,7 @@ function FieldWithRandom({
       </div>
       <div className="flex gap-2">
         <Input
+          id={inputId}
           value={value}
           onChange={(e) => onChange(e.target.value.slice(0, maxLength))}
           placeholder={placeholder}
