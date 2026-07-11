@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isLotEligible } from "@/core/auction/engine";
+import { isLotEligible } from "./engine";
 import type { Horse, AuctionSaleKind } from "@/game/types";
 
 // Helper to create a dummy horse for testing
