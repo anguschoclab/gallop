@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, CheckCheck, Trash2, Pin, Bell, ExternalLink } from "lucide-react";
@@ -119,25 +120,37 @@ function InboxPage() {
                   </div>
                   <div className="flex gap-1">
                     {!msg.readAt && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        title="Mark as read"
-                        aria-label={"Mark '" + msg.title + "' as read"}
-                        onClick={() => markRead(msg.id)}
-                      >
-                        <Check className="h-4 w-4" />
-                      </Button>
+                      <TooltipProvider delayDuration={300}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              aria-label={"Mark '" + msg.title + "' as read"}
+                              onClick={() => markRead(msg.id)}
+                            >
+                              <Check className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Mark as read</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     )}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      title="Dismiss"
-                      aria-label={"Dismiss message '" + msg.title + "'"}
-                      onClick={() => dismiss(msg.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <TooltipProvider delayDuration={300}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={"Dismiss message '" + msg.title + "'"}
+                            onClick={() => dismiss(msg.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Dismiss</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
               </CardHeader>
