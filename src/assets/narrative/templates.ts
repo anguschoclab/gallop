@@ -79,7 +79,7 @@ export const EXPERT_INSIGHT_TEMPLATES = {
     "The big question is whether {horse} has the tank for this {distance}m.",
     "It's an ambitious ask to run {distance}m for the very first time, but {horse} tries today.",
     "Can {horse} handle the transition to {distance}m? The pedigree suggests maybe.",
-    "We're going to learn a lot about {horse}'s versatility at this new {distance}m distance.",
+    "We're going to learn a lot about {horse}'s versatility at this new {distance}m trip.",
     "Uncharted waters for {horse} at {distance}m, they'll need every ounce of grit.",
     "{horse} steps into the great unknown trying {distance}m for the first time.",
     "It's a gamble running {horse} at {distance}m today, let's see if it pays off.",
