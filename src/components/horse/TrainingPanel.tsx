@@ -176,7 +176,7 @@ export function TrainingPanelComponent({
         <p className="text-xs text-cream-muted mb-2">{ADVANCED_WORKOUTS_LABEL}</p>
         <div className="grid grid-cols-2 gap-2">
           {advancedWorkoutButtons.map((btn) => (
-            <DisabledTooltipWrapper key={btn.key} disabled={btn.disabled} reason={btn.disabledReason}>
+            <DisabledTooltipWrapper key={btn.key} reason={btn.disabledReason}>
               <Button
                 onClick={btn.onClick}
                 disabled={btn.disabled}
@@ -190,7 +190,6 @@ export function TrainingPanelComponent({
                 <span className="text-cream-muted">${btn.cost}</span>
               </Button>
             </DisabledTooltipWrapper>
-          ))}
         </div>
       </div>
 
