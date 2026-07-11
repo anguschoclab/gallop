@@ -3,7 +3,7 @@ import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { useAuctions } from "@/hooks/game/useMarketState";
 import type { GameState } from "@/game/types";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { SALE_TRIGGERS } from "@/core/auction/data";
@@ -44,42 +44,60 @@ function AuctionPage() {
     null,
   );
 
-  const activeUpcoming = auctions.filter((a) => !a.resolved).sort((a, b) => a.day - b.day);
-  const todaysSales = activeUpcoming.filter((s) => s.day === day);
+  const activeUpcoming = useMemo(
+    () => auctions.filter((a) => !a.resolved).sort((a, b) => a.day - b.day),
+    [auctions],
+  );
 
-  const allUpcoming: SaleDisplay[] = SALE_TRIGGERS.map((t) => {
-    const actual = activeUpcoming.find((a) => a.kind === t.kind);
-    if (actual) return actual;
+  const todaysSales = useMemo(
+    () => activeUpcoming.filter((s) => s.day === day),
+    [activeUpcoming, day]
+  );
 
-    const currentDoy = dayOfYear(day);
-    const daysAway = t.doy >= currentDoy ? t.doy - currentDoy : 365 - currentDoy + t.doy;
-    const futureDay = day + daysAway;
+  const allUpcoming: SaleDisplay[] = useMemo(() => {
+    return SALE_TRIGGERS.map((t) => {
+      const actual = activeUpcoming.find((a) => a.kind === t.kind);
+      if (actual) return actual;
 
-    return {
-      id: `scheduled-${t.kind}`,
-      name: t.name,
-      kind: t.kind,
-      day: futureDay,
-      lots: [],
-      resolved: false,
-      isScheduled: true,
-    };
-  }).sort((a, b) => a.day - b.day);
+      const currentDoy = dayOfYear(day);
+      const daysAway = t.doy >= currentDoy ? t.doy - currentDoy : 365 - currentDoy + t.doy;
+      const futureDay = day + daysAway;
 
-  const past = auctions
-    .filter((a) => a.resolved)
-    .sort((a, b) => b.day - a.day)
-    .slice(0, 10);
+      return {
+        id: `scheduled-${t.kind}`,
+        name: t.name,
+        kind: t.kind,
+        day: futureDay,
+        lots: [],
+        resolved: false,
+        isScheduled: true,
+      };
+    }).sort((a, b) => a.day - b.day);
+  }, [activeUpcoming, day]);
 
-  const playerHorses = horses.filter((h: Horse) => h.owned && !h.consignedSaleId);
+  const past = useMemo(
+    () =>
+      auctions
+        .filter((a) => a.resolved)
+        .sort((a, b) => b.day - a.day)
+        .slice(0, 10),
+    [auctions],
+  );
 
-  function findEligibleSale(horse: Horse): AuctionSale | undefined {
-    return activeUpcoming.find((sale) => isLotEligible(horse, sale.kind));
-  }
+  // ⚡ Bolt Optimization:
+  // Pre-calculate array mapping in useMemo using stable dependencies (horses, activeUpcoming)
+  // instead of inline mapping where O(N*M) calculation happens on every render.
+  // Impact: Reduces main-thread blocking when rendering or interacting with components on the page.
+  const consignablePairs = useMemo(() => {
+    function findEligibleSale(horse: Horse): AuctionSale | undefined {
+      return activeUpcoming.find((sale) => isLotEligible(horse, sale.kind));
+    }
 
-  const consignablePairs = playerHorses
-    .map((h: Horse) => ({ horse: h, sale: findEligibleSale(h) }))
-    .filter((p: any): p is { horse: Horse; sale: AuctionSale } => p.sale !== undefined);
+    return horses
+      .filter((h: Horse) => h.owned && !h.consignedSaleId)
+      .map((h: Horse) => ({ horse: h, sale: findEligibleSale(h) }))
+      .filter((p: any): p is { horse: Horse; sale: AuctionSale } => p.sale !== undefined);
+  }, [horses, activeUpcoming]);
 
   function openConsign(horse: Horse, sale: AuctionSale) {
     setConsignTarget({ horse, sale });

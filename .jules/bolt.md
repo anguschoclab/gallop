@@ -60,3 +60,8 @@
 ## 2024-07-06 - O(1) Lookups in Awards Scoring
 **Learning:** During the awards phase (`calculateAwardPoints`), checking category eligibility and calculating points iterates over each race in a horse's history, running an O(N) `.find()` on the global `races` array. Across multiple categories, regions, and horses, this results in an O(Regions * Categories * Horses * RacesHistory * TotalRaces) nested bottleneck.
 **Action:** Always prefer `Map` lookups (O(1)) over `Array.prototype.find()` inside deeply nested loops. When processing data that requires repeated lookups against a static array, precompute a `Map` structure at the outermost scope and pass it down the pipeline.
+
+## 2024-05-22 - [Optimizing O(N*M) derived arrays with unstable dependencies]
+
+**Learning:** When trying to memoize an O(N*M) array derivation (like `consignablePairs` using `horses.map(h => find(activeUpcoming))`), using an inline derived array (like `activeUpcoming` initialized via `.filter().sort().slice()`) as a `useMemo` dependency causes the hook to fail its equality check on every render. This turns the optimization into a regression because the application pays the overhead of the `useMemo` hook without reaping its caching benefits.
+**Action:** Always verify that all variables in a `useMemo` dependency array are referentially stable. If a dependency is a dynamically derived array, move its derivation inside the `useMemo` block and depend on the stable root source (e.g. `auctions` instead of `activeUpcoming`).
