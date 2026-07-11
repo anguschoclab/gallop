@@ -156,7 +156,7 @@ export function TrainingPanelComponent({
     <div className="space-y-2">
       {/* Basic training types */}
       {basicTrainingButtons.map((btn) => (
-        <DisabledTooltipWrapper key={btn.key} disabled={btn.disabled} reason={btn.disabledReason}>
+        <DisabledTooltipWrapper key={btn.key} reason={btn.disabledReason}>
           <Button
             onClick={btn.onClick}
             disabled={btn.disabled}
