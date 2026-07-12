@@ -26,6 +26,7 @@ import type {
   HealthStatusImpact,
   PastureRetirementImpact,
   HorseDeathImpact,
+  HorseDeletionImpact,
   InjuryImpact,
   RecoveryImpact,
   FitnessImpact,
@@ -52,6 +53,14 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     if (horseData) {
       draft.horses.push(horseData);
       if (lookupMaps) lookupMaps.horseMap.set(horseData.id, horseData);
+    }
+  },
+  horse_deletion: (draft, impact, horse, lookupMaps) => {
+    const { horseId } = impact as HorseDeletionImpact;
+    const index = draft.horses.findIndex((h) => h.id === horseId);
+    if (index !== -1) {
+      draft.horses.splice(index, 1);
+      if (lookupMaps) lookupMaps.horseMap.delete(horseId);
     }
   },
   horse_stat_change: (draft, impact, horse) => {
@@ -209,6 +218,7 @@ export class HorseHandler implements ImpactHandler {
       "horse_death",
       "injury",
       "horse_creation",
+      "horse_deletion",
       "recovery_change",
       "fitness_change",
       "fatigue_change",

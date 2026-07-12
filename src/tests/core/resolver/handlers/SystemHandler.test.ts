@@ -206,7 +206,6 @@ describe("SystemHandler", () => {
     const handler = new SystemHandler();
     expect(handler.canHandle("log")).toBe(true);
     expect(handler.canHandle("transaction")).toBe(true);
-    expect(handler.canHandle("horse_creation")).toBe(true);
     expect(handler.canHandle("campaign_creation")).toBe(true);
     expect(handler.canHandle("reputation_change")).toBe(true);
     expect(handler.canHandle("news_item")).toBe(true);

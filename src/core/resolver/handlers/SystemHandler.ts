@@ -14,8 +14,6 @@ import type { GameState } from "@/game/types";
 import type { AnyImpact, ReputationImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
 import type {
-  HorseCreationImpact,
-  HorseDeletionImpact,
   HallOfFameInductionImpact,
   SeasonHistoryImpact,
 } from "../impacts/horseImpacts";
@@ -59,21 +57,6 @@ type ImpactHandlerFunction = (
 ) => void;
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
-  horse_creation: (draft, impact, lookupMaps) => {
-    const { horse } = impact as HorseCreationImpact;
-    draft.horses.push(horse);
-    if (lookupMaps) lookupMaps.horseMap.set(horse.id, horse);
-  },
-
-  horse_deletion: (draft, impact, lookupMaps) => {
-    const { horseId } = impact as HorseDeletionImpact;
-    const index = draft.horses.findIndex((h) => h.id === horseId);
-    if (index !== -1) {
-      draft.horses.splice(index, 1);
-      if (lookupMaps) lookupMaps.horseMap.delete(horseId);
-    }
-  },
-
   log: (draft, impact) => {
     const { text } = impact as LogImpact;
     draft.log = [{ day: impact.day, text }, ...draft.log].slice(0, 500);
@@ -335,8 +318,6 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 export class SystemHandler implements ImpactHandler {
   canHandle(type: string): boolean {
     return [
-      "horse_creation",
-      "horse_deletion",
       "log",
       "pace_sample",
       "campaign_slot",
