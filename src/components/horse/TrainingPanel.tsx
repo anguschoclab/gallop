@@ -33,15 +33,13 @@ const REST_LABEL = "Rest (+30 energy)";
 
 // Helper to conditionally wrap button with tooltip if disabled
 function DisabledTooltipWrapper({
-  disabled,
   reason,
   children,
 }: {
-  disabled: boolean;
   reason?: string;
   children: React.ReactNode;
 }) {
-  if (!disabled || !reason) return <>{children}</>;
+  if (!reason) return <>{children}</>;
 
   return (
     <TooltipProvider delayDuration={300}>
@@ -190,12 +188,12 @@ export function TrainingPanelComponent({
                 <span className="text-cream-muted">${btn.cost}</span>
               </Button>
             </DisabledTooltipWrapper>
+          ))}
         </div>
       </div>
 
 
       <DisabledTooltipWrapper
-        disabled={isPregnant || slotsLeft <= 0 || horse.energy >= 100}
         reason={
           isPregnant ? "Horse is pregnant" :
           slotsLeft <= 0 ? "No training slots left today" :
