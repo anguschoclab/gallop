@@ -11,11 +11,7 @@ export function useHorseDetail(horseId: string) {
   const trainingUsed = useGameWithShallow((s) => s.trainingUsed[horseId] ?? 0);
   const cash = useGame((s) => s.cash);
   const horses = useGame((s) => s.horses);
-
-  const localHorseMap = useMemo(
-    () => new Map<string, any>((horses ?? []).map((h: any) => [h.id, h])),
-    [horses],
-  );
+  const localHorseMap = useGame((s) => s.horseMap);
 
   const retireToStud = useGame((s) => s.retireToStud);
   const retireToPasture = useGame((s) => s.retireToPasture);

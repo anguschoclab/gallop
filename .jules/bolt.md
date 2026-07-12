@@ -69,3 +69,7 @@
 
 **Learning:** When trying to memoize an O(N*M) array derivation (like `consignablePairs` using `horses.map(h => find(activeUpcoming))`), using an inline derived array (like `activeUpcoming` initialized via `.filter().sort().slice()`) as a `useMemo` dependency causes the hook to fail its equality check on every render. This turns the optimization into a regression because the application pays the overhead of the `useMemo` hook without reaping its caching benefits.
 **Action:** Always verify that all variables in a `useMemo` dependency array are referentially stable. If a dependency is a dynamically derived array, move its derivation inside the `useMemo` block and depend on the stable root source (e.g. `auctions` instead of `activeUpcoming`).
+
+## 2024-05-23 - [Avoid Recreating horseMap]
+**Learning:** The global `GameState` maintains a synced `horseMap: Map<string, Horse>` for O(1) lookups. Recreating this map locally via `new Map(horses.map(...))` inside React components (like `useHorseDetail`) causes unnecessary O(N) memory allocation and iteration on every state change.
+**Action:** Always consume `s.horseMap` from `useGame` directly instead of deriving local lookups from the `horses` array.
