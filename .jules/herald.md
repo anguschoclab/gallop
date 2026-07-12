@@ -9,3 +9,7 @@
 ## 2026-07-06 - Commentary Variety Gap
 **Learning:** Core race commentary events like START, STRETCH, FINISH, and GAP_ANNOUNCEMENT had few templates (4-8 each), causing noticeable repetition when players watch multiple races.
 **Action:** Always maintain at least 8-12 variants for high-frequency events in generators to sustain immersion across many sessions.
+
+## 2026-07-09 - Expanded Race Commentary Templates
+**Learning:** Mid-race commentary arrays like POSITION_CHECK, DRAFTING, HOT_PACE, WEATHER_COMMENT, STABLE_WATCH, MILESTONE, ATMOSPHERE, and LANE_WATCH had very few entries (under 8), causing high repetition during the core gameplay loop as multiple races are watched.
+**Action:** Expanded these arrays directly in src/assets/narrative/templates.ts to ensure high-frequency text events stay fresh.
