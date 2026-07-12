@@ -67,6 +67,11 @@ export const TEMPLATES: Record<NarrativeEvent, string[]> = {
     "They burst out of the stalls for the {raceName}!",
     "It's a level start for this {raceClass} field!",
     "Underway in the {raceName}!",
+    "The flag is down and we are racing!",
+    "They've left the stalls in the {raceName}!",
+    "A level break for all runners today!",
+    "We're underway in this highly anticipated {raceClass}!",
+    "The starter lets them go at {trackName}!"
   ],
   LEAD_CHANGE: [
     "{horse} takes the lead!",
@@ -113,6 +118,11 @@ export const TEMPLATES: Record<NarrativeEvent, string[]> = {
     "It's a sprint to the finish in the {raceName}!",
     "They've hit the top of the straight!",
     "Every jockey asking for maximum effort now!",
+    "The whips are out as they drive for the finish!",
+    "The field straightens for the final drive!",
+    "It's a desperate drive to the line now!",
+    "Who wants this {raceName} the most?",
+    "A true test of stamina awaits them in the stretch!"
   ],
   FINISH: [
     "{horse} wins it!",
@@ -130,6 +140,11 @@ export const TEMPLATES: Record<NarrativeEvent, string[]> = {
     "A masterclass performance from {horse} to win it!",
     "{horse} strikes gold in the {raceName}!",
     "A memorable victory for {horse}!",
+    "An absolute masterclass from {horse} today!",
+    "{horse} claims the prize with authority!",
+    "Nobody was catching {horse} in this form!",
+    "A gutsy, hard-fought triumph for {horse}!",
+    "{horse} secures the glory in the shadow of the post!"
   ],
   POSITION_CHECK: [
     "{horse} is running well in {rank}.",
@@ -178,6 +193,10 @@ export const TEMPLATES: Record<NarrativeEvent, string[]> = {
     "{horse} has a {lengths} length advantage at the front.",
     "{horse} is pulling away! The gap is now {lengths} lengths.",
     "A dominant display from {horse}, clear by {lengths}!",
+    "{horse} is absolutely bounding away, a {lengths} length margin!",
+    "The rest of the field is struggling to close a {lengths} length gap!",
+    "{horse} has opened up a commanding {lengths} length lead!",
+    "Look at the separation! {horse} is out by {lengths} lengths!"
   ],
   ATMOSPHERE: [
     "The roar of the crowd is deafening!",
