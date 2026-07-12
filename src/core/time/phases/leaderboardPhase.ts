@@ -53,8 +53,32 @@ export const leaderboardPhase = {
     if (shouldUpdateFounders) {
       const candidates = identifyFounders(state.horses);
       const newFounders: Record<string, FounderRecord> = {};
+
+      // Pre-calculate hash maps for O(1) horse lookups and parent->children relations
+      // instead of running O(N) operations inside the loop.
+      const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+      const parentToChildren = new Map<string, string[]>();
+      for (const h of state.horses) {
+        if (h.pedigree?.sireId) {
+          const children = parentToChildren.get(h.pedigree.sireId) || [];
+          children.push(h.id);
+          parentToChildren.set(h.pedigree.sireId, children);
+        }
+        if (h.pedigree?.damId) {
+          const children = parentToChildren.get(h.pedigree.damId) || [];
+          children.push(h.id);
+          parentToChildren.set(h.pedigree.damId, children);
+        }
+      }
+
       for (const candidate of candidates) {
-        newFounders[candidate.id] = computeFounderInfluence(candidate, state.horses, newDay);
+        newFounders[candidate.id] = computeFounderInfluence(
+          candidate,
+          state.horses,
+          newDay,
+          horseMap,
+          parentToChildren
+        );
       }
       updatedFounders = newFounders;
     }
