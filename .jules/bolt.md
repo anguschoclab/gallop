@@ -64,3 +64,8 @@
 ## 2024-07-28 - [Optimizing O(N) Lookups in Pipeline Phases]
 **Learning:** Functions invoked during pipeline phases over multiple entities, like `computeFounderInfluence`, when iterated over arrays of candidates, can result in serious bottlenecks if they individually recreate temporary maps or rely on nested `.find()` searches against large arrays (like `allHorses`).
 **Action:** Lift the initialization of necessary hash maps (like `horseMap` or `parentToChildrenMap`) outside the loop in the calling context (e.g., inside the phase executor) and pass them as optional arguments to the lower-level processing functions to ensure O(1) lookups and single-allocation mapping.
+
+## 2024-05-22 - [Optimizing O(N*M) derived arrays with unstable dependencies]
+
+**Learning:** When trying to memoize an O(N*M) array derivation (like `consignablePairs` using `horses.map(h => find(activeUpcoming))`), using an inline derived array (like `activeUpcoming` initialized via `.filter().sort().slice()`) as a `useMemo` dependency causes the hook to fail its equality check on every render. This turns the optimization into a regression because the application pays the overhead of the `useMemo` hook without reaping its caching benefits.
+**Action:** Always verify that all variables in a `useMemo` dependency array are referentially stable. If a dependency is a dynamically derived array, move its derivation inside the `useMemo` block and depend on the stable root source (e.g. `auctions` instead of `activeUpcoming`).
