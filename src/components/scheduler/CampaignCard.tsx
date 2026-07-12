@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Flag, Trash2, X } from "lucide-react";
 import type { CampaignGoalType, Horse } from "@/game/types";
 import { CampaignSlotList } from "./CampaignSlotList";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const GOAL_LABELS: Record<CampaignGoalType, string> = {
   chase_g1: "Chase G1",
@@ -69,16 +70,20 @@ export function CampaignCard({
                 {activeFlags.length}
               </Badge>
             )}
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-7 w-7 text-cream-muted"
-              onClick={() => onDelete(campaign.horseId)}
-              title="Delete campaign"
-              aria-label={`Delete campaign for ${horse.name}`}
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-7 w-7 text-cream-muted"
+                  onClick={() => onDelete(campaign.horseId)}
+                  aria-label={`Delete campaign for ${horse.name}`}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Delete campaign</TooltipContent>
+            </Tooltip>
           </div>
         </div>
       </CardHeader>
@@ -95,15 +100,20 @@ export function CampaignCard({
                   <Flag className="h-3.5 w-3.5 text-warning mt-0.5 shrink-0" />
                   <p className="text-xs text-cream">{flag.message}</p>
                 </div>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="h-5 w-5 shrink-0 text-warning hover:text-cream"
-                  onClick={() => onDismissFlag(campaign.horseId, fi)}
-                  aria-label={`Dismiss flag: ${flag.message}`}
-                >
-                  <X className="h-3 w-3" />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-5 w-5 shrink-0 text-warning hover:text-cream"
+                      onClick={() => onDismissFlag(campaign.horseId, fi)}
+                      aria-label={`Dismiss flag: ${flag.message}`}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Dismiss flag</TooltipContent>
+                </Tooltip>
               </div>
             ))}
           </div>
