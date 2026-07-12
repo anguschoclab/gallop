@@ -63,14 +63,16 @@ export function computeFounderInfluence(
 
   const visited = new Set<string>([founder.id]);
 
+  // Pre-calculate local horseMap if not provided for O(1) lookups
+  const localHorseMap = horseMap || new Map(allHorses.map((h) => [h.id, h]));
+
   while (queue.length > 0) {
     const { id, gen } = queue.shift()!;
     if (gen > 0) {
       descendants.add(id);
       maxGen = Math.max(maxGen, gen);
 
-      // Performance: use passed horseMap or find linearly
-      const horse = horseMap ? horseMap.get(id) : allHorses.find((h) => h.id === id);
+      const horse = localHorseMap.get(id);
       if (horse) {
         const stats = getCareerStats(horse);
         totalEarnings += stats.earnings;
