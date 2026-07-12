@@ -3,6 +3,7 @@ import { NarrativeGenerator } from "@/services/narrative/narrativeService";
 import type { Race, Horse, Stable } from "@/game/types";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import { createRng, hashStr } from "@/core/common/rng";
+import { TEMPLATES, EXPERT_INSIGHT_TEMPLATES } from "@/assets/narrative/templates";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {
@@ -220,5 +221,42 @@ describe("NarrativeGenerator", () => {
     const lines = gen.update([runner], 80.0);
 
     expect(lines.some((l) => l.type === "STRETCH")).toBe(true);
+  });
+});
+
+describe("template variety (herald branches)", () => {
+  it("START templates contain at least 5 entries", () => {
+    expect(TEMPLATES.START.length).toBeGreaterThanOrEqual(5);
+  });
+
+  it("STRETCH templates contain at least 8 entries", () => {
+    expect(TEMPLATES.STRETCH.length).toBeGreaterThanOrEqual(8);
+  });
+
+  it("FINISH templates contain at least 7 entries", () => {
+    expect(TEMPLATES.FINISH.length).toBeGreaterThanOrEqual(7);
+  });
+
+  it("GAP_ANNOUNCEMENT templates contain at least 4 entries", () => {
+    expect(TEMPLATES.GAP_ANNOUNCEMENT.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it("EXPERT_INSIGHT_TEMPLATES have expanded entries", () => {
+    expect(EXPERT_INSIGHT_TEMPLATES.POSITIVE_FORM.length).toBeGreaterThanOrEqual(4);
+    expect(EXPERT_INSIGHT_TEMPLATES.NEGATIVE_FORM.length).toBeGreaterThanOrEqual(4);
+    expect(EXPERT_INSIGHT_TEMPLATES.DISTANCE_FIT.length).toBeGreaterThanOrEqual(4);
+    expect(EXPERT_INSIGHT_TEMPLATES.NEW_DISTANCE.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it("no STRETCH template contains 'Nothing separates'", () => {
+    for (const t of TEMPLATES.STRETCH) {
+      expect(t).not.toContain("Nothing separates");
+    }
+  });
+
+  it("no FINISH template contains 'clings on'", () => {
+    for (const t of TEMPLATES.FINISH) {
+      expect(t).not.toContain("clings on");
+    }
   });
 });
