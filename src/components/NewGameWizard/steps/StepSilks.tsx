@@ -86,21 +86,21 @@ export function StepSilks({ silk, setSilk }: StepSilksProps) {
           onChange={(v) => setColor("cap", v)}
         />
         <div className="space-y-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <label htmlFor={patternId} className="text-sm font-medium text-cream cursor-help">
-                Pattern
-              </label>
-            </TooltipTrigger>
-            <TooltipContent>How the colors are arranged on the silks.</TooltipContent>
-          </Tooltip>
+          <label htmlFor={patternId} className="text-sm font-medium text-cream cursor-help">
+            Pattern
+          </label>
           <Select
             value={silk.pattern}
             onValueChange={(v) => setSilk({ ...silk, pattern: v as JockeySilkPattern })}
           >
-            <SelectTrigger id={patternId}>
-              <SelectValue />
-            </SelectTrigger>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SelectTrigger id={patternId}>
+                  <SelectValue />
+                </SelectTrigger>
+              </TooltipTrigger>
+              <TooltipContent>How the colors are arranged on the silks.</TooltipContent>
+            </Tooltip>
             <SelectContent>
               {SILK_PATTERNS.map((p) => (
                 <SelectItem key={p} value={p}>

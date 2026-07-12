@@ -67,26 +67,26 @@ function FieldWithRandom({
   return (
     <div className="space-y-2">
       <div className="flex items-baseline justify-between">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <label htmlFor={inputId} className="text-sm font-medium text-cream cursor-help">
-              {label}
-            </label>
-          </TooltipTrigger>
-          <TooltipContent>{tooltip}</TooltipContent>
-        </Tooltip>
+        <label htmlFor={inputId} className="text-sm font-medium text-cream cursor-help">
+          {label}
+        </label>
         <span className="text-xs text-cream-muted tabular-nums">
           {value.length}/{maxLength}
         </span>
       </div>
       <div className="flex gap-2">
-        <Input
-          id={inputId}
-          value={value}
-          onChange={(e) => onChange(e.target.value.slice(0, maxLength))}
-          placeholder={placeholder}
-          maxLength={maxLength}
-        />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Input
+              id={inputId}
+              value={value}
+              onChange={(e) => onChange(e.target.value.slice(0, maxLength))}
+              placeholder={placeholder}
+              maxLength={maxLength}
+            />
+          </TooltipTrigger>
+          <TooltipContent>{tooltip}</TooltipContent>
+        </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
