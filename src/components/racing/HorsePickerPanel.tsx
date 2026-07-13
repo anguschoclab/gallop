@@ -1,6 +1,6 @@
 import type { Horse } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { CheckCircle2 } from "lucide-react";
 
 interface HorsePickerPanelProps {
