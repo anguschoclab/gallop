@@ -14,22 +14,18 @@ import { formatCurrency } from "@/core/common/formatting";
 import { calculateLotValuation } from "@/core/auction/engine";
 import type { Horse, Stable } from "@/game/types";
 
-/**
- * Helper to get a flavored decline message based on stable personality.
- */
-function getDeclineFlavour(personality: string, stableName: string): string {
-  switch (personality) {
-    case "aggressive":
-      return "Not for sale at that price. Try harder.";
-    case "prestige":
-      return "This horse is not for sale to just anyone.";
-    case "conservative":
-      return "We don't sell below market.";
-    case "breeder":
-      return "We intend to breed from this horse.";
-    default:
-      return `${stableName} declined your offer.`;
+function getOfferErrorMessage(
+  amount: number,
+  cash: number,
+  result: { ok: boolean; reason?: string },
+): string | null {
+  if (!amount || amount <= 0) return "Please enter a valid offer amount.";
+  if (cash < amount) return `Insufficient funds. You need ${formatCurrency(amount - cash)} more.`;
+  if (!result.ok) {
+    if (result.reason === "insufficient_funds") return "Insufficient funds.";
+    return result.reason ?? "Offer failed.";
   }
+  return null;
 }
 
 /**
@@ -73,49 +69,27 @@ export function PrivateSaleOfferDialog({
 
   const handleSubmitOffer = () => {
     const amount = Number(offerAmount.replace(/,/g, "").replace(/\$/g, ""));
-    if (!amount || amount <= 0) {
-      setOfferError("Please enter a valid offer amount.");
-      return;
-    }
-    if (cash < amount) {
-      setOfferError(`Insufficient funds. You need ${formatCurrency(amount - cash)} more.`);
+
+    const preValidation = getOfferErrorMessage(amount, cash, { ok: true });
+    if (preValidation) {
+      setOfferError(preValidation);
       return;
     }
 
     const result = proposePrivateSale(horse.id, stable.id, amount);
-    if (!result.ok) {
-      if (result.reason === "insufficient_funds") {
-        setOfferError(`Insufficient funds.`);
-      } else {
-        setOfferError(result.reason ?? "Offer failed.");
-      }
+    const error = getOfferErrorMessage(amount, cash, result);
+    if (error) {
+      setOfferError(error);
       return;
     }
 
-    // Close dialog
     setOfferAmount("");
     setOfferError("");
     onClose();
 
-    // Show outcome toast
-    const status = result.reason;
-    if (status === "accepted") {
-      toast.success(
-        `${stable.name} accepted your offer of ${formatCurrency(amount)} for ${horse.name}. They join your stable.`,
-      );
-    } else if (status === "countered") {
-      // Read the fresh store state synchronously to get counter amount
-      const freshOffers = (useGame.getState() as any).privateSaleOffers ?? [];
-      const counterOffer = freshOffers.find(
-        (o: any) => o.horseId === horse.id && o.status === "countered",
-      );
-      const counterAmt = counterOffer?.counterAmount ?? 0;
-      toast.info(
-        `${stable.name} countered at ${formatCurrency(counterAmt)}. Go to Rival Stables to respond.`,
-      );
-    } else {
-      toast.error(getDeclineFlavour(stable.personality, stable.name));
-    }
+    toast.success(
+      `Offer of ${formatCurrency(amount)} submitted for ${horse.name}. ${stable.name} will respond next day.`,
+    );
   };
 
   return (

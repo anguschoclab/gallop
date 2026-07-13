@@ -14,6 +14,19 @@ import { Zap } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
 import { toast } from "sonner";
 
+function showBuyNowResult(
+  result: { ok: boolean; reason?: string },
+  horseName: string,
+) {
+  if (result.ok) {
+    toast.success(`${horseName ?? "Horse"} joins your stable.`);
+  } else if (result.reason === "buy_now_unavailable") {
+    toast.info("Buy-now removed — bidding is active.");
+  } else {
+    toast.error(`Buy Now failed: ${result.reason}`);
+  }
+}
+
 interface BuyNowDialogProps {
   horseName: string;
   buyNowPrice: number;
@@ -30,7 +43,6 @@ export function BuyNowDialog({
   disabled = false,
 }: BuyNowDialogProps) {
   const formatted = formatCurrency(buyNowPrice);
-  const canAfford = cash >= buyNowPrice;
 
   if (disabled) {
     return (
@@ -67,18 +79,7 @@ export function BuyNowDialog({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={() => {
-              const result = onBuyNow();
-              if (result.ok) {
-                toast.success(`${horseName ?? "Horse"} joins your stable.`);
-              } else {
-                if (result.reason === "buy_now_unavailable") {
-                  toast.info("Buy-now removed — bidding is active.");
-                } else {
-                  toast.error(`Buy Now failed: ${result.reason}`);
-                }
-              }
-            }}
+            onClick={() => showBuyNowResult(onBuyNow(), horseName)}
           >
             Buy Now
           </AlertDialogAction>

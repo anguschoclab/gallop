@@ -18,6 +18,54 @@ interface HorseAwardsPanelProps {
 
 const COMPACT_THRESHOLD = 5;
 
+function renderCompactCategory(category: RegionalAwardCategory, sorted: RegionalAward[]) {
+  const first = sorted[sorted.length - 1].year;
+  const last = sorted[0].year;
+  return (
+    <div
+      key={category}
+      className="flex items-center justify-between gap-2 p-2 rounded-md border border-gold/20 bg-card"
+    >
+      <div className="flex items-center gap-2 min-w-0">
+        <AwardIcon region={sorted[0].region} category={category} size="tiny" />
+        <div className="min-w-0">
+          <div className="text-sm font-medium truncate">
+            {CATEGORY_DISPLAY_NAMES[category]}
+          </div>
+          <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+            <span title={getRegionCountryLabel(sorted[0].region)}>
+              {getRegionFlag(sorted[0].region)}
+            </span>
+            <span>
+              Y{first}–Y{last}
+            </span>
+          </div>
+        </div>
+      </div>
+      <Badge variant="secondary" className="font-mono tabular-nums shrink-0">
+        ×{sorted.length}
+      </Badge>
+    </div>
+  );
+}
+
+function renderExpandedAwards(sorted: RegionalAward[]) {
+  return sorted.map((award) => (
+    <div key={award.id} className="flex items-center justify-between gap-2">
+      <AwardBadge award={award} variant="inline" showYear />
+      <span
+        className="text-xs text-muted-foreground flex items-center gap-1 shrink-0"
+        title={getRegionCountryLabel(award.region)}
+      >
+        <span>{getRegionFlag(award.region)}</span>
+        <span className="hidden sm:inline">
+          {getRegionCountryLabel(award.region)}
+        </span>
+      </span>
+    </div>
+  ));
+}
+
 export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
   const awards = useGame((s) => s.awards);
 
@@ -107,49 +155,9 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
               {Array.from(byCategory.entries()).map(([category, list]) => {
                 const sorted = [...list].sort((a, b) => b.year - a.year);
                 if (sorted.length > COMPACT_THRESHOLD) {
-                  const first = sorted[sorted.length - 1].year;
-                  const last = sorted[0].year;
-                  return (
-                    <div
-                      key={category}
-                      className="flex items-center justify-between gap-2 p-2 rounded-md border border-gold/20 bg-card"
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <AwardIcon region={sorted[0].region} category={category} size="tiny" />
-                        <div className="min-w-0">
-                          <div className="text-sm font-medium truncate">
-                            {CATEGORY_DISPLAY_NAMES[category]}
-                          </div>
-                          <div className="text-[10px] text-muted-foreground flex items-center gap-1">
-                            <span title={getRegionCountryLabel(sorted[0].region)}>
-                              {getRegionFlag(sorted[0].region)}
-                            </span>
-                            <span>
-                              Y{first}–Y{last}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <Badge variant="secondary" className="font-mono tabular-nums shrink-0">
-                        ×{sorted.length}
-                      </Badge>
-                    </div>
-                  );
+                  return renderCompactCategory(category, sorted);
                 }
-                return sorted.map((award) => (
-                  <div key={award.id} className="flex items-center justify-between gap-2">
-                    <AwardBadge award={award} variant="inline" showYear />
-                    <span
-                      className="text-xs text-muted-foreground flex items-center gap-1 shrink-0"
-                      title={getRegionCountryLabel(award.region)}
-                    >
-                      <span>{getRegionFlag(award.region)}</span>
-                      <span className="hidden sm:inline">
-                        {getRegionCountryLabel(award.region)}
-                      </span>
-                    </span>
-                  </div>
-                ));
+                return renderExpandedAwards(sorted);
               })}
             </div>
           </div>

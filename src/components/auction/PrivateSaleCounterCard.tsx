@@ -16,6 +16,73 @@ import { formatCurrency } from "@/core/common/formatting";
 import { toast } from "sonner";
 import type { Horse, Stable, PrivateSaleOffer } from "@/game/types";
 
+function AcceptCounterDialog({
+  offer,
+  horse,
+  counterAmt,
+  onRespond,
+}: {
+  offer: PrivateSaleOffer;
+  horse: Horse;
+  counterAmt: number;
+  onRespond: (offerId: string, accept: boolean) => { ok: boolean; reason?: string };
+}) {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button size="sm" variant="outline">
+          Accept {formatCurrency(counterAmt)}
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Accept counter offer?</AlertDialogTitle>
+          <AlertDialogDescription>
+            You will pay {formatCurrency(counterAmt)} for {horse.name}. This cannot be
+            undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => {
+              const r = onRespond(offer.id, true);
+              if (r.ok) {
+                toast.success(
+                  `${horse.name} joins your stable for ${formatCurrency(counterAmt)}.`,
+                );
+              } else {
+                toast.error(r.reason ?? "Could not accept.");
+              }
+            }}
+          >
+            Accept
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+function DisabledAcceptButton({ counterAmt }: { counterAmt: number }) {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span tabIndex={0} className="inline-block cursor-not-allowed">
+            <Button size="sm" variant="outline" disabled className="pointer-events-none">
+              Accept {formatCurrency(counterAmt)}
+            </Button>
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Insufficient funds</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
 /**
  * Props for the PrivateSaleCounterCard component.
  */
@@ -73,54 +140,14 @@ export function PrivateSaleCounterCard({
             Decline
           </Button>
           {canAffordCounter ? (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button size="sm" variant="outline">
-                  Accept {formatCurrency(counterAmt)}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Accept counter offer?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    You will pay {formatCurrency(counterAmt)} for {horse.name}. This cannot be
-                    undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => {
-                      const r = onRespond(offer.id, true);
-                      if (r.ok) {
-                        toast.success(
-                          `${horse.name} joins your stable for ${formatCurrency(counterAmt)}.`,
-                        );
-                      } else {
-                        toast.error(r.reason ?? "Could not accept.");
-                      }
-                    }}
-                  >
-                    Accept
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <AcceptCounterDialog
+              offer={offer}
+              horse={horse}
+              counterAmt={counterAmt}
+              onRespond={onRespond}
+            />
           ) : (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span tabIndex={0} className="inline-block cursor-not-allowed">
-                    <Button size="sm" variant="outline" disabled className="pointer-events-none">
-                      Accept {formatCurrency(counterAmt)}
-                    </Button>
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Insufficient funds</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <DisabledAcceptButton counterAmt={counterAmt} />
           )}
         </div>
       </CardContent>

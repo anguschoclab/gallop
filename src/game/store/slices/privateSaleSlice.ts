@@ -57,15 +57,19 @@ export function createPrivateSaleSlice(
       if (horse.stableId !== stableId) return { ok: false, reason: "horse_not_in_stable" };
       if (s.cash < amount) return { ok: false, reason: "insufficient_funds" };
 
-      enqueueIntent({
+      const offer: PrivateSaleOffer = {
         id: generateUUID(),
-        entityId: horseId,
-        source: "player",
-        day: s.day,
-        priority: 100,
-        type: "purchase",
         horseId,
-        price: amount,
+        fromStableId: undefined,
+        toStableId: stableId,
+        amount,
+        status: "pending",
+        createdDay: s.day,
+        expiresDay: s.day + 3,
+      };
+
+      set({
+        privateSaleOffers: [...(s.privateSaleOffers ?? []), offer],
       });
 
       return { ok: true, reason: "offer_submitted" };
@@ -83,19 +87,33 @@ export function createPrivateSaleSlice(
         const finalAmount = offer.counterAmount ?? offer.amount;
         if (s.cash < finalAmount) return { ok: false, reason: "insufficient_funds" };
 
-        enqueueIntent({
-          id: generateUUID(),
-          entityId: offer.horseId,
-          source: "player",
-          day: s.day,
-          priority: 100,
-          type: "purchase",
-          horseId: offer.horseId,
-          price: finalAmount,
-        });
-      }
+        const horse = s.horseMap.get(offer.horseId);
+        if (!horse) return { ok: false, reason: "horse_not_found" };
 
-      return { ok: true };
+        const updatedHorse: Horse = { ...horse, owned: true, stableId: undefined as any };
+        const updatedHorseMap = new Map(s.horseMap);
+        updatedHorseMap.set(offer.horseId, updatedHorse);
+
+        const updatedOffers = (s.privateSaleOffers ?? []).map((o: PrivateSaleOffer) =>
+          o.id === offerId ? { ...o, status: "accepted" as const } : o,
+        );
+
+        set({
+          cash: s.cash - finalAmount,
+          horseMap: updatedHorseMap,
+          horses: s.horses.map((h: Horse) => (h.id === offer.horseId ? updatedHorse : h)),
+          privateSaleOffers: updatedOffers,
+        });
+
+        return { ok: true };
+      } else {
+        const updatedOffers = (s.privateSaleOffers ?? []).map((o: PrivateSaleOffer) =>
+          o.id === offerId ? { ...o, status: "declined" as const } : o,
+        );
+
+        set({ privateSaleOffers: updatedOffers });
+        return { ok: true };
+      }
     },
 
     enterClaimingRace: (raceId, horseId) => {

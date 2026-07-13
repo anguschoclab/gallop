@@ -12,6 +12,7 @@
 import { intentCollectionPhase } from "./intentCollection";
 import { intentValidationPhase } from "./intentValidation";
 import { privateSaleExpiryPhase } from "./privateSaleExpiry";
+import { privateSaleResolutionPhase } from "./privateSaleResolution";
 import { upkeepPhase } from "./upkeep";
 import { agingPhase } from "./aging";
 import { breedingSeasonPhase } from "./breedingSeason";
@@ -61,6 +62,8 @@ export const GAME_PIPELINE_PHASES = [
   intentValidationPhase,
   // D2 — Private sale offer expiry (very early, order 3)
   privateSaleExpiryPhase,
+  // Private sale NPC decision (order 34, before purchase resolution)
+  privateSaleResolutionPhase,
   // Existing phases
   upkeepPhase,
   agingPhase,
