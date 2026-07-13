@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 import type { Syndicate } from "@/core/breeding/types";
 import type { InvestorRecord } from "@/core/breeding/investorTypes";
@@ -22,7 +22,7 @@ function SyndicatePage() {
   const syndicate = useGame(
     (s: GameState) => (s.syndicates ?? {})[syndicateId] as Syndicate | undefined,
   );
-  const investorsRecord = useGame((s: GameState) => (s as any).syndicateInvestors ?? {}) as Record<
+  const investorsRecord = useGameWithShallow((s: any) => s.syndicateInvestors ?? {}) as Record<
     string,
     InvestorRecord
   >;

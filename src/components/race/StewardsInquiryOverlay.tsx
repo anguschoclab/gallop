@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 import { formatInquiryOutcome } from "@/core/stewards/stewardTypes";
@@ -30,9 +30,7 @@ function saveDismissed(s: Set<string>) {
  * has been recorded and hasn't been acknowledged.
  */
 export function StewardsInquiryOverlay() {
-  const inquiries = useGame(
-    (s: GameState) => (s as any).stewardsInquiries ?? [],
-  ) as StewardsInquiry[];
+  const inquiries = useGameWithShallow((s: any) => s.stewardsInquiries ?? []) as StewardsInquiry[];
   const horses = useGame((s: GameState) => s.horses);
   const [dismissed, setDismissed] = useState<Set<string>>(() => loadDismissed());
 

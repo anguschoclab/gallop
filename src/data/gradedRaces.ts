@@ -308,7 +308,16 @@ export function getTrackContinent(track: string): Continent {
   return COUNTRY_TO_CONTINENT[country] || "europe";
 }
 
-// Field size assignment helpers based on real-life research
+/**
+ * Returns the default field size for a graded race based on grade and country.
+ *
+ * Uses a heuristic matrix derived from real-life field size research across
+ * different racing regions (North America, Europe, Asia-Pacific, Japan, etc.).
+ *
+ * @param grade - The race grade (G1, G2, or G3)
+ * @param country - The country where the race takes place
+ * @returns Default field size number, defaults to 12 if region/grade not found
+ */
 export function getDefaultFieldSize(grade: Grade, country: string): number {
   // Region mapping for field size heuristics
   const region = getCountryRegion(country);
@@ -327,6 +336,12 @@ export function getDefaultFieldSize(grade: Grade, country: string): number {
   return fieldSizeMatrix[region]?.[grade] ?? 12;
 }
 
+/**
+ * Maps a country name to its racing region identifier.
+ *
+ * @param country - The country name (e.g. "USA", "Japan", "Great Britain")
+ * @returns Region string (north_america, europe, asia_pacific, japan, hong_kong, uae, south_america)
+ */
 export function getCountryRegion(country: string): string {
   const regionMap: Record<string, string> = {
     USA: "north_america",
@@ -12600,7 +12615,14 @@ export const GRADED_RACES_BY_BC_KEY: Map<string, GradedRace[]> = (() => {
   return map;
 })();
 
-// Duplicate detection check to ensure no race keys are duplicated across sources
+/**
+ * Validates that no race keys are duplicated across all graded race sources.
+ *
+ * Scans the GRADED_RACES array for duplicate keys and throws an Error listing
+ * all duplicates if any are found. Called at module initialization.
+ *
+ * @throws Error with duplicate details if any race keys appear more than once
+ */
 export function validateNoDuplicateRaces() {
   const seenKeys = new Set<string>();
   const duplicates: Array<{ key: string; name: string; index: number }> = [];

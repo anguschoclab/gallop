@@ -31,6 +31,11 @@ import type {
 } from "@/core/resolver/intents";
 import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/constants";
 import { formatCurrency } from "@/core/common/formatting";
+import {
+  pickPersonality,
+  generateInvestorName,
+  buildDefaultExpectations,
+} from "@/core/breeding/investorTypes";
 import { requireOwned, requireHorse } from "../guards";
 import type { StoreSet, StoreGet } from "../types";
 
@@ -284,10 +289,6 @@ export function createBreedingSlice(
       if (playerShares < sharesOffered) {
         return { ok: false, reason: "You don't own that many shares to sell." };
       }
-
-      // Lazy import to avoid circular concerns
-      const { pickPersonality, generateInvestorName, buildDefaultExpectations } =
-        require("@/core/breeding/investorTypes") as typeof import("@/core/breeding/investorTypes");
 
       const personality = pickPersonality();
       const name = generateInvestorName();
