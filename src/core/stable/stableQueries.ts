@@ -104,6 +104,7 @@ export function getTargetHorseCountForTier(tier: StableTier, isMajor: boolean, r
  *
  * @param stallion - Pedigree horse data with stud farm information
  * @param stables - Array of available stables
+ * @param rng
  * @returns Matching stable
  */
 export function mapStallionToStable(stallion: PedigreeHorse, stables: Stable[], rng?: Rng): Stable {

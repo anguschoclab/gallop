@@ -63,13 +63,19 @@ export function StableRosterView({
                 <div className="flex items-center justify-center gap-3">
                   <Link
                     to="/market"
-                    className={cn(buttonVariants({ variant: "outline", size: "sm" }), "font-mono text-xs uppercase font-bold tracking-tighter")}
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "sm" }),
+                      "font-mono text-xs uppercase font-bold tracking-tighter",
+                    )}
                   >
                     Go to Market
                   </Link>
                   <Link
                     to="/auction"
-                    className={cn(buttonVariants({ variant: "outline", size: "sm" }), "font-mono text-xs uppercase font-bold tracking-tighter")}
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "sm" }),
+                      "font-mono text-xs uppercase font-bold tracking-tighter",
+                    )}
                   >
                     View Auctions
                   </Link>

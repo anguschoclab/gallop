@@ -359,6 +359,7 @@ export function getOptimalMajorRaceTarget(
  * @param stable - The stable making the decision
  * @param currentDay - Current game day
  * @param triplecrownHistory
+ * @param tcHistoryMap
  * @returns Race target score (0-100+)
  */
 function calculateRaceTargetScore(

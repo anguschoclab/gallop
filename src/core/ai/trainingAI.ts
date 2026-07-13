@@ -131,6 +131,7 @@ export function calculateTrainingPriority(
  * @param aiState - Current training AI state
  * @param horse - The horse to select training for
  * @param currentDay - Current game day
+ * @param availableTypes
  * @returns Optimal training type (speed, stamina, or acceleration)
  */
 export function selectTrainingType(

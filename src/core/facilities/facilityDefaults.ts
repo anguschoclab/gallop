@@ -250,6 +250,7 @@ export function facilityUpgradeCost(currentLevel: FacilityLevel): number {
  *
  * Base types (speed, stamina, acceleration, rest) are always available.
  * Advanced types are unlocked via TRAINING_FACILITY_REQUIREMENTS with additional barn-level gates.
+ * @param facilities
  */
 export function getAvailableTrainingTypes(facilities: PlayerFacilities): string[] {
   const LEVEL_ORDER: FacilityLevel[] = ["basic", "standard", "premium", "elite"];

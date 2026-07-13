@@ -24,6 +24,10 @@ import type { Rng } from "@/core/common/rng";
  * @param headlines - Array of possible headline strings
  * @param bodies - Array of possible body strings
  * @param fields - Common NewsItem fields (day, category, importance, entityLinks)
+ * @param fields.day
+ * @param fields.category
+ * @param fields.importance
+ * @param fields.entityLinks
  * @param rng - Seeded RNG for deterministic selection and ID generation
  * @returns A complete NewsItem
  */

@@ -26,6 +26,8 @@ export interface PedigreeFounderInfluence {
  * @param founder - The horse to analyze as a founder
  * @param allHorses - The complete database of horses
  * @param currentDay - Current game day
+ * @param horseMap
+ * @param parentToChildrenMap
  * @returns A FounderRecord summarizing the horse's historical impact
  */
 export function computeFounderInfluence(

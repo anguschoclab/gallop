@@ -91,6 +91,7 @@ export function createStewardsInquiry(
  * @param raceId - Unique identifier for the race
  * @param day - Game day
  * @param horseIds - Array of horse IDs in the race
+ * @param rng
  * @returns StewardsInquiry or null if no inquiry generated
  */
 export function generateRandomInquiry(
