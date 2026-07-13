@@ -23,9 +23,9 @@ export class BreedingValidator implements IntentValidator {
     cache?: ValidationCache,
   ): { valid: boolean; reason?: string } {
     const sire =
-      cache?.horseMap?.get(intent.sireId) || state.horses.find((h) => h.id === intent.sireId);
+      cache?.horseMap?.get(intent.sireId) || state.horses[intent.sireId];
     const dam =
-      cache?.horseMap?.get(intent.damId) || state.horses.find((h) => h.id === intent.damId);
+      cache?.horseMap?.get(intent.damId) || state.horses[intent.damId];
 
     if (!sire) return { valid: false, reason: "Sire not found" };
     if (!dam) return { valid: false, reason: "Dam not found" };

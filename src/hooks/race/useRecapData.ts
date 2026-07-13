@@ -9,12 +9,12 @@ export function useRecapData() {
   const calibratedPars = useGameWithShallow((s: GameState) => s.calibratedPars);
   const day = useGame((s: GameState) => s.day);
 
-  const localHorseMap = useMemo(() => new Map(horses.map((h: Horse) => [h.id, h])), [horses]);
+  const localHorseMap = useMemo(() => new Map(Object.entries(horses)), [horses]);
 
   const weekAgo = day - 7;
   const recentGradedRaces = useMemo(
     () =>
-      races
+      Object.values(races)
         .filter(
           (r: any) =>
             r.resolved &&

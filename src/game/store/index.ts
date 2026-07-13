@@ -358,9 +358,10 @@ export const useGame = create<StoreType>()(
         // Force an immediate, awaited save so the state is on disk before navigation.
         // The persist middleware's setItem is async and not awaited by set(),
         // so we call saveGameState directly to guarantee persistence.
-        const partial: any = { storeVersion: STORE_STATE_VERSION };
+        const storeState = get() as any;
+        const partial: any = {};
         PERSISTED_KEYS.forEach((key) => {
-          partial[key] = (newState as any)[key];
+          partial[key] = storeState[key];
         });
         await saveGameState(partial);
         saveExists.value = true;

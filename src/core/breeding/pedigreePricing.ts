@@ -34,7 +34,7 @@ import type { Horse, GameState } from "@/game/types";
  */
 export function pedigreeMultiplier(
   horse: Horse,
-  state: { horses: readonly Horse[] },
+  state: { horses: Record<string, Horse> },
   horseMap?: Map<string, Horse>,
 ): number {
   if (!horse.pedigree) return 1;
@@ -46,12 +46,8 @@ export function pedigreeMultiplier(
     sire = horse.pedigree.sireId ? horseMap.get(horse.pedigree.sireId) : undefined;
     dam = horse.pedigree.damId ? horseMap.get(horse.pedigree.damId) : undefined;
   } else {
-    sire = horse.pedigree.sireId
-      ? state.horses.find((h) => h.id === horse.pedigree!.sireId)
-      : undefined;
-    dam = horse.pedigree.damId
-      ? state.horses.find((h) => h.id === horse.pedigree!.damId)
-      : undefined;
+    sire = horse.pedigree.sireId ? state.horses[horse.pedigree.sireId] : undefined;
+    dam = horse.pedigree.damId ? state.horses[horse.pedigree.damId] : undefined;
   }
 
   // Normalize sire fee against the upper end of the elite range ($250k).

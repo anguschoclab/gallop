@@ -47,7 +47,7 @@ export function resolveSyndicationIntent(
       const syndicateIntent = intent as SyndicateCreationIntent;
       const stallion =
         horseMap?.get(syndicateIntent.stallionId) ||
-        state.horses.find((h) => h.id === syndicateIntent.stallionId);
+        Object.values(state.horses).find((h) => h.id === syndicateIntent.stallionId);
 
       if (!stallion) return [];
 

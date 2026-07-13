@@ -49,7 +49,7 @@ export function getFoalsBy(state: Pick<GameState, "horses">, stallionId: string)
   if (foalsCache.has(cacheKey)) {
     return foalsCache.get(cacheKey)!;
   }
-  const foals = state.horses.filter((h) => h.pedigree?.sireId === stallionId);
+  const foals = Object.values(state.horses).filter((h) => h.pedigree?.sireId === stallionId);
   foalsCache.set(cacheKey, foals);
   return foals;
 }
@@ -67,7 +67,7 @@ export function getFoalsBy(state: Pick<GameState, "horses">, stallionId: string)
  * const foals = getFoalsOf(gameState, dam.id);
  */
 export function getFoalsOf(state: Pick<GameState, "horses">, damId: string): Horse[] {
-  return state.horses.filter((h) => h.pedigree?.damId === damId);
+  return Object.values(state.horses).filter((h) => h.pedigree?.damId === damId);
 }
 
 // "Is this foal a stakes winner?" — true if any race in their history has a

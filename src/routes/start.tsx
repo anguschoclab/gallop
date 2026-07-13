@@ -23,7 +23,7 @@ export const Route = createFileRoute("/start")({
 
 const BANNERS = [heroGrandstand, heroDashboard, heroRaces, heroStable];
 
-function StartScreen() {
+export function StartScreen() {
   const playerProfile = useGame((s) => s.playerProfile);
   const day = useGame((s) => s.day);
   const horses = useGame((s) => s.horses);
@@ -34,7 +34,7 @@ function StartScreen() {
     return () => clearInterval(id);
   }, []);
 
-  const hasSave = !!playerProfile;
+  const hasSave = saveExists.value;
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-t950 text-cream">

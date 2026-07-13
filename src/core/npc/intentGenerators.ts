@@ -72,9 +72,9 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
   const aiManager = state.npcAIManager;
 
   // Index horses by stable for fast lookup
-  const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+  const horseMap = new Map(Object.entries(state.horses));
   const horsesByStable = new Map<string, Horse[]>();
-  for (const horse of state.horses) {
+  for (const horse of Object.values(state.horses)) {
     if (horse.stableId) {
       if (!horsesByStable.has(horse.stableId)) horsesByStable.set(horse.stableId, []);
       horsesByStable.get(horse.stableId)!.push(horse);
@@ -90,7 +90,7 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
   }
 
   // Cache upcoming races and index them by region
-  const upcomingRaces = state.races.filter((r) => !r.resolved && r.day >= day && r.day <= day + 7);
+  const upcomingRaces = Object.values(state.races).filter((r) => !r.resolved && r.day >= day && r.day <= day + 7);
 
   const racesByRegion = new Map<string, Race[]>();
   const globalGradedRaces: Race[] = [];
@@ -411,7 +411,7 @@ function generateNpcClaimingIntents(
       const friction = stableAI?.friction ?? 0;
       if (shouldClaimHorse(claimingAI, horse, race, stable, day, friction)) {
         // Check horse eligibility
-        if (!isHorseEligibleForClaimingPrice(horse, race.claimingPrice, state.horses)) continue;
+        if (!isHorseEligibleForClaimingPrice(horse, race.claimingPrice, Object.values(state.horses))) continue;
 
         // Record claiming decision for learning
         recordClaimingDecision(claimingAI, horse, race, stable, day);

@@ -32,7 +32,7 @@ export class SyndicationValidator implements IntentValidator {
         const syndicateIntent = intent as SyndicateCreationIntent;
         const stallion =
           cache?.horseMap?.get(syndicateIntent.stallionId) ||
-          state.horses.find((h) => h.id === syndicateIntent.stallionId);
+          state.horses[syndicateIntent.stallionId];
 
         if (!stallion) return { valid: false, reason: "Stallion not found" };
 

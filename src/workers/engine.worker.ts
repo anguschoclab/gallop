@@ -38,14 +38,14 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
   // Clean up expired Win and You're In qualifications at year boundary
   let horses = state.horses;
   if (currentYear > previousYear) {
-    horses = horses.map((h) => {
-      if (h.winAndYouInQualified) {
-        h.winAndYouInQualified = h.winAndYouInQualified.filter(
-          (q: { year: number }) => q.year >= currentYear,
-        );
-      }
-      return h;
-    });
+    horses = Object.fromEntries(
+      Object.values(horses).map((h) => {
+        if (h.winAndYouInQualified) {
+          return [h.id, { ...h, winAndYouInQualified: h.winAndYouInQualified.filter((q: { year: number }) => q.year >= currentYear) }];
+        }
+        return [h.id, h];
+      }),
+    );
   }
 
   // Setup initial state for produceWithPatches
@@ -63,8 +63,8 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
       intents: draft.pendingIntents || [],
       impacts: [],
       impactLog: [],
-      horseMap: new Map(draftState.horses.map((h) => [h.id, h])),
-      raceMap: new Map(draftState.races.map((r) => [r.id, r])),
+      horseMap: new Map(Object.values(draftState.horses).map((h) => [h.id, h])),
+      raceMap: new Map(Object.values(draftState.races).map((r) => [r.id, r])),
       stableMap: new Map((draftState.npcStables ?? []).map((s) => [s.id, s])),
       jockeyMap: new Map((draftState.jockeys ?? []).map((j) => [j.id, j])),
     };

@@ -30,8 +30,8 @@ import { DEFAULT_DT, defaultMaxTime } from "@/core/race/engine/constants";
 
 export function PlayerRacePrompt() {
   const pendingRaceId = useGame((s) => s.pendingPlayerRaceId);
-  const races = useGameWithShallow((s) => s.races ?? []);
-  const horses = useGameWithShallow((s) => s.horses ?? []);
+  const races = useGameWithShallow((s) => s.races ?? {});
+  const horses = useGameWithShallow((s) => s.horses ?? {});
   const jockeys = useGameWithShallow((s) => s.jockeys ?? []);
   const day = useGame((s) => s.day);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
@@ -39,9 +39,7 @@ export function PlayerRacePrompt() {
   const navigate = useNavigate();
   const [selectedPreset, setSelectedPreset] = useState<PresetId>("default");
 
-  const horseMap = useGame((s) => s.horseMap);
-  const raceMap = useMemo(() => new Map(races.map((r) => [r.id, r])), [races]);
-  const race = pendingRaceId ? raceMap.get(pendingRaceId) : undefined;
+  const race = pendingRaceId ? races[pendingRaceId] : undefined;
   const raceWeather = useGame((s) => {
     const trackId = race?.graded?.trackId ?? race?.trackId;
     if (!trackId) return undefined;
@@ -53,8 +51,8 @@ export function PlayerRacePrompt() {
 
   const enteredHorse = useMemo(() => {
     const ownedEntry = race.entries.find((e) => e.owned);
-    return ownedEntry ? horseMap.get(ownedEntry.horseId) : undefined;
-  }, [race, horseMap]);
+    return ownedEntry ? horses[ownedEntry.horseId] : undefined;
+  }, [race, horses]);
 
   function clearPending() {
     useGame.setState({ pendingPlayerRaceId: undefined });
@@ -88,7 +86,7 @@ export function PlayerRacePrompt() {
       setRaceTactics(race!.id, enteredHorse.id, instructions);
     }
 
-    const { runners } = buildRaceField({ race: race!, horses, jockeys });
+    const { runners } = buildRaceField({ race: race!, horses: Object.values(horses), jockeys });
     const course = getCourseForRace(race!);
     const result = runRaceToCompletion(
       runners,

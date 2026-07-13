@@ -37,10 +37,10 @@ export class MarketValidator implements IntentValidator {
         const claimingIntent = intent as ClaimingIntent;
         const race =
           cache?.raceMap?.get(claimingIntent.raceId) ||
-          state.races.find((r) => r.id === claimingIntent.raceId);
+          state.races[claimingIntent.raceId];
         const horse =
           cache?.horseMap?.get(claimingIntent.horseId) ||
-          state.horses.find((h) => h.id === claimingIntent.horseId);
+          state.horses[claimingIntent.horseId];
 
         if (!race) return { valid: false, reason: "Race not found" };
         if (!horse) return { valid: false, reason: "Horse not found" };
@@ -69,7 +69,7 @@ export class MarketValidator implements IntentValidator {
         }
 
         // Check horse eligibility for claiming price
-        if (!isHorseEligibleForClaimingPrice(horse, race.claimingPrice, state.horses)) {
+        if (!isHorseEligibleForClaimingPrice(horse, race.claimingPrice, Object.values(state.horses))) {
           return { valid: false, reason: "Horse is not eligible for this claiming price" };
         }
         break;

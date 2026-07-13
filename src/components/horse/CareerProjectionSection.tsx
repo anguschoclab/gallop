@@ -10,12 +10,12 @@ import type { Horse } from "@/game/types";
 
 interface CareerProjectionSectionProps {
   horse: Horse;
-  horses: Horse[];
+  horses: Record<string, Horse>;
 }
 
 export function CareerProjectionSection({ horse, horses }: CareerProjectionSectionProps) {
   const valuation = useMemo(
-    () => horseCareerValuation(horse, horses),
+    () => horseCareerValuation(horse, Object.values(horses)),
     [horse, horses],
   );
 

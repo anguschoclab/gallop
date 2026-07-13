@@ -61,7 +61,7 @@ export function advanceMultipleDaysWithRaceDetection(
     const nextDay = currentDay + 1;
 
     // Check for player race on next day
-    const playerRace = state.races.find(
+    const playerRace = Object.values(state.races).find(
       (r) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned),
     );
 
