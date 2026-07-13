@@ -28,6 +28,7 @@ export const stallionRetirementPhase: PipelinePhase = {
 
     // Only run for NPC horses
     const npcHorses = state.horses.filter((h) => h.stableId);
+    const stableMap = new Map(state.npcStables.map((s) => [s.id, s]));
 
     for (const horse of npcHorses) {
       // 1. Basic eligibility
@@ -48,7 +49,7 @@ export const stallionRetirementPhase: PipelinePhase = {
       const inactive = newDay - lastRaceDay > 60;
 
       if ((isLegend && inactive) || isOld) {
-        const stable = state.npcStables.find((s) => s.id === horse.stableId);
+        const stable = stableMap.get(horse.stableId!);
         const fee = calculateRecommendedStudFee(horse, stable?.tier || "mid");
 
         impacts.push({

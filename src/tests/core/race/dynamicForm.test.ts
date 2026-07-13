@@ -9,7 +9,14 @@ import {
 } from "@/constants";
 import type { Race, Horse } from "@/game/types";
 
-const BASE_STATS = { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 };
+const BASE_STATS = {
+  speed: 80,
+  stamina: 80,
+  acceleration: 80,
+  consistency: 80,
+  temperament: 50,
+  conformation: 50,
+};
 const CONDITIONS = { speedMul: 1, staminaDrainMul: 1 };
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
@@ -88,14 +95,36 @@ describe("bouncePenalty — lastBeyer spike within 28 days reduces topSpeed", ()
       id: "bounced",
       lastBeyer: 100,
       lastRaceDay: 80,
-      raceHistory: [
-        { raceId: "r0", raceName: "Old", position: 3, day: 60, beyer: 80 } as any,
-      ],
+      raceHistory: [{ raceId: "r0", raceName: "Old", position: 3, day: 60, beyer: 80 } as any],
     });
     const normal = mkHorse({ id: "normal" });
 
-    const bouncedRunner = buildRunner(bounced, false, 1600, "Turf", CONDITIONS, 1, undefined, undefined, undefined, undefined, 100);
-    const normalRunner = buildRunner(normal, false, 1600, "Turf", CONDITIONS, 1, undefined, undefined, undefined, undefined, 100);
+    const bouncedRunner = buildRunner(
+      bounced,
+      false,
+      1600,
+      "Turf",
+      CONDITIONS,
+      1,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      100,
+    );
+    const normalRunner = buildRunner(
+      normal,
+      false,
+      1600,
+      "Turf",
+      CONDITIONS,
+      1,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      100,
+    );
 
     expect(bouncedRunner.topSpeed).toBeLessThan(normalRunner.topSpeed);
   });
@@ -105,14 +134,36 @@ describe("bouncePenalty — lastBeyer spike within 28 days reduces topSpeed", ()
       id: "not-bounced",
       lastBeyer: 90,
       lastRaceDay: 80,
-      raceHistory: [
-        { raceId: "r0", raceName: "Old", position: 3, day: 60, beyer: 80 } as any,
-      ],
+      raceHistory: [{ raceId: "r0", raceName: "Old", position: 3, day: 60, beyer: 80 } as any],
     });
     const normal = mkHorse({ id: "normal2" });
 
-    const notBouncedRunner = buildRunner(notBounced, false, 1600, "Turf", CONDITIONS, 1, undefined, undefined, undefined, undefined, 100);
-    const normalRunner = buildRunner(normal, false, 1600, "Turf", CONDITIONS, 1, undefined, undefined, undefined, undefined, 100);
+    const notBouncedRunner = buildRunner(
+      notBounced,
+      false,
+      1600,
+      "Turf",
+      CONDITIONS,
+      1,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      100,
+    );
+    const normalRunner = buildRunner(
+      normal,
+      false,
+      1600,
+      "Turf",
+      CONDITIONS,
+      1,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      100,
+    );
 
     expect(notBouncedRunner.topSpeed).toBe(normalRunner.topSpeed);
   });
@@ -122,14 +173,36 @@ describe("bouncePenalty — lastBeyer spike within 28 days reduces topSpeed", ()
       id: "old-race",
       lastBeyer: 100,
       lastRaceDay: 70,
-      raceHistory: [
-        { raceId: "r0", raceName: "Old", position: 3, day: 50, beyer: 80 } as any,
-      ],
+      raceHistory: [{ raceId: "r0", raceName: "Old", position: 3, day: 50, beyer: 80 } as any],
     });
     const normal = mkHorse({ id: "normal3" });
 
-    const oldRaceRunner = buildRunner(oldRace, false, 1600, "Turf", CONDITIONS, 1, undefined, undefined, undefined, undefined, 100);
-    const normalRunner = buildRunner(normal, false, 1600, "Turf", CONDITIONS, 1, undefined, undefined, undefined, undefined, 100);
+    const oldRaceRunner = buildRunner(
+      oldRace,
+      false,
+      1600,
+      "Turf",
+      CONDITIONS,
+      1,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      100,
+    );
+    const normalRunner = buildRunner(
+      normal,
+      false,
+      1600,
+      "Turf",
+      CONDITIONS,
+      1,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      100,
+    );
 
     expect(oldRaceRunner.topSpeed).toBe(normalRunner.topSpeed);
   });
@@ -140,15 +213,7 @@ describe("recoveryDrain — stamina drain formula via generateBeyerAndRecoveryIm
     const horse = mkHorse({ id: "drain-test" });
     const race = mkRace({ distance: 2000 });
 
-    const { recoveryImpact } = generateBeyerAndRecoveryImpacts(
-      horse,
-      1,
-      90.0,
-      race,
-      0,
-      {},
-      100,
-    );
+    const { recoveryImpact } = generateBeyerAndRecoveryImpacts(horse, 1, 90.0, race, 0, {}, 100);
 
     expect(recoveryImpact.delta).toBeLessThan(0);
   });
@@ -157,15 +222,7 @@ describe("recoveryDrain — stamina drain formula via generateBeyerAndRecoveryIm
     const horse = mkHorse({ id: "cap-test" });
     const race = mkRace({ distance: 5000 });
 
-    const { recoveryImpact } = generateBeyerAndRecoveryImpacts(
-      horse,
-      1,
-      80.0,
-      race,
-      0,
-      {},
-      100,
-    );
+    const { recoveryImpact } = generateBeyerAndRecoveryImpacts(horse, 1, 80.0, race, 0, {}, 100);
 
     expect(recoveryImpact.delta).toBeGreaterThanOrEqual(-STAMINA_DRAIN_MAX);
   });

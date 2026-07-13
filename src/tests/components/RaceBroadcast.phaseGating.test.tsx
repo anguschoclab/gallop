@@ -41,11 +41,7 @@ function toDisplayPhase(phase: RacePhase): DisplayPhase {
  * Captured here verbatim so any future refactor that breaks the contract
  * also breaks this test.
  */
-function computeShowReplay(
-  phase: RacePhase,
-  resolved: boolean,
-  hasSnapshots: boolean,
-): boolean {
+function computeShowReplay(phase: RacePhase, resolved: boolean, hasSnapshots: boolean): boolean {
   return phase === "review" && resolved && hasSnapshots;
 }
 
@@ -164,7 +160,7 @@ describe("monotonic showReplay — live→review transition never reverts", () =
     const timeline: Array<{ phase: RacePhase; resolved: boolean; hasSnapshots: boolean }> = [
       { phase: "live", resolved: false, hasSnapshots: false }, // race ticking
       { phase: "live", resolved: false, hasSnapshots: false }, // mid-race
-      { phase: "live", resolved: true,  hasSnapshots: true  }, // resolveRaceWithImpacts fired
+      { phase: "live", resolved: true, hasSnapshots: true }, // resolveRaceWithImpacts fired
       { phase: "review", resolved: true, hasSnapshots: true }, // setPhase("review") called
       { phase: "review", resolved: true, hasSnapshots: true }, // user reads results
     ];
@@ -186,7 +182,7 @@ describe("monotonic showReplay — live→review transition never reverts", () =
   it("never true if snapshots are missing when phase advances to review", () => {
     // Edge case: race resolved but snapshot array wasn't populated yet
     const timeline = [
-      { phase: "live"   as RacePhase, resolved: true, hasSnapshots: false },
+      { phase: "live" as RacePhase, resolved: true, hasSnapshots: false },
       { phase: "review" as RacePhase, resolved: true, hasSnapshots: false },
     ];
     const results = timeline.map(({ phase, resolved, hasSnapshots }) =>
@@ -226,7 +222,12 @@ describe("PhasePanel exclusion invariant — never both invisible simultaneously
       for (const phase of phases) {
         it(`displayedGroup=${displayedGroup} isExiting=${isExiting} phase=${phase} → at least one panel visible`, () => {
           const preshowVisible = isPhasePanelVisible("preshow", displayedGroup, isExiting, phase);
-          const broadcastVisible = isPhasePanelVisible("broadcast", displayedGroup, isExiting, phase);
+          const broadcastVisible = isPhasePanelVisible(
+            "broadcast",
+            displayedGroup,
+            isExiting,
+            phase,
+          );
           expect(preshowVisible || broadcastVisible).toBe(true);
         });
       }
@@ -312,13 +313,19 @@ describe("usePhaseTransition hook — 300ms cross-fade without blank frame", () 
     // Snapshot displayedPhase at each step of the transition
     const snapshots: DisplayPhase[] = [result.current.displayedPhase];
 
-    act(() => { rerender({ phase: "live" }); });
+    act(() => {
+      rerender({ phase: "live" });
+    });
     snapshots.push(result.current.displayedPhase);
 
-    act(() => { vi.advanceTimersByTime(150); });
+    act(() => {
+      vi.advanceTimersByTime(150);
+    });
     snapshots.push(result.current.displayedPhase);
 
-    act(() => { vi.advanceTimersByTime(150); });
+    act(() => {
+      vi.advanceTimersByTime(150);
+    });
     snapshots.push(result.current.displayedPhase);
 
     for (const snap of snapshots) {
@@ -332,13 +339,19 @@ describe("usePhaseTransition hook — 300ms cross-fade without blank frame", () 
     });
 
     // Start transition preshow → live
-    act(() => { rerender({ phase: "live" }); });
+    act(() => {
+      rerender({ phase: "live" });
+    });
     expect(result.current.isExiting).toBe(true);
     expect(result.current.displayedPhase).toBe("preshow");
 
     // Halfway through the 300ms window, reverse back to preshow
-    act(() => { vi.advanceTimersByTime(100); });
-    act(() => { rerender({ phase: "preshow" }); });
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+    act(() => {
+      rerender({ phase: "preshow" });
+    });
 
     // The hook detects displayPhase === displayedGroup ("preshow" === "preshow"),
     // cancels the pending timer, and clears isExiting immediately.
@@ -346,7 +359,9 @@ describe("usePhaseTransition hook — 300ms cross-fade without blank frame", () 
     expect(result.current.displayedPhase).toBe("preshow"); // never changed
 
     // Advancing the clock further does nothing (timer was cancelled)
-    act(() => { vi.advanceTimersByTime(300); });
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
     expect(result.current.displayedPhase).toBe("preshow");
     expect(result.current.isExiting).toBe(false);
   });
@@ -363,7 +378,9 @@ describe("usePhaseTransition hook — 300ms cross-fade without blank frame", () 
     expect(result.current.displayedPhase).toBe("broadcast");
     expect(result.current.isExiting).toBe(false);
 
-    act(() => { rerender({ phase: "review" }); });
+    act(() => {
+      rerender({ phase: "review" });
+    });
 
     // No transition — same display group
     expect(result.current.displayedPhase).toBe("broadcast");

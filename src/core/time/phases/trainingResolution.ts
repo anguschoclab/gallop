@@ -75,16 +75,16 @@ export const trainingResolutionPhase: PipelinePhase = {
         outpostMap.set(o.id, o);
       }
     }
-    const playerOutpostMap = new Map<string, any>(
-      (state.outposts ?? []).map((o) => [o.id, o]),
-    );
+    const playerOutpostMap = new Map<string, any>((state.outposts ?? []).map((o) => [o.id, o]));
 
-    const hiredStaffByStable = new Map<string, typeof state.hiredStaff>();
+    const hiredStaffByStableAndRole = new Map<string, Map<string, any>>();
     if (state.hiredStaff) {
       for (const staff of state.hiredStaff) {
         if (!staff.stableId) continue;
-        if (!hiredStaffByStable.has(staff.stableId)) hiredStaffByStable.set(staff.stableId, []);
-        hiredStaffByStable.get(staff.stableId)!.push(staff);
+        if (!hiredStaffByStableAndRole.has(staff.stableId)) {
+          hiredStaffByStableAndRole.set(staff.stableId, new Map());
+        }
+        hiredStaffByStableAndRole.get(staff.stableId)!.set(staff.role, staff);
       }
     }
 
@@ -106,12 +106,12 @@ export const trainingResolutionPhase: PipelinePhase = {
 
       // Get staff bonuses for this stable
       const stableId = horse.stableId ?? "";
-      const staffForStable = hiredStaffByStable.get(stableId) || [];
+      const roleMap = hiredStaffByStableAndRole.get(stableId);
 
-      const trainer = staffForStable.find((s) => s.role === "trainer");
+      const trainer = roleMap?.get("trainer");
       const trainerBonus = trainer ? trainer.bonusValue : 0;
 
-      const nutritionist = staffForStable.find((s) => s.role === "nutritionist");
+      const nutritionist = roleMap?.get("nutritionist");
       const nutritionistBonus = nutritionist ? nutritionist.bonusValue : 0;
 
       // --- BANISTER IMPULSES ---

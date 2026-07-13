@@ -23,6 +23,7 @@ The pipeline phase order for reference: `retirementPhase=30`, `auctionPhase=50`,
 ## File Structure
 
 **New files:**
+
 - `src/types/foalDevelopment.ts` — `FoalDevelopmentArc`, `FoalMilestone`, `MilestoneChoice` types
 - `src/core/time/phases/foalDevelopmentPhase.ts` — pipeline phase that emits inbox messages at milestone days
 - `src/routes/foal-development.$horseId.tsx` — TanStack Router route for resolution UI
@@ -30,6 +31,7 @@ The pipeline phase order for reference: `retirementPhase=30`, `auctionPhase=50`,
 - `src/tests/core/time/phases/foalDevelopment.test.ts` — unit tests for the phase
 
 **Modified files:**
+
 - `src/types/horse.ts` — add `developmentArc?: FoalDevelopmentArc` to `Horse`
 - `src/core/breeding/foalFactory.ts` — initialize `developmentArc` when a foal is born
 - `src/game/store/slices/racingSlice.ts` — add `resolveFoalMilestone` action
@@ -55,6 +57,7 @@ The pipeline phase order for reference: `retirementPhase=30`, `auctionPhase=50`,
 ## Task 1: Define FoalDevelopmentArc types and constants
 
 **Files:**
+
 - Create: `src/types/foalDevelopment.ts`
 - Modify: `src/types/horse.ts`
 - Modify: `src/constants/gameConstants.ts`
@@ -62,6 +65,7 @@ The pipeline phase order for reference: `retirementPhase=30`, `auctionPhase=50`,
 - [ ] **Step 1: Create foalDevelopment types**
 
 Create `src/types/foalDevelopment.ts`:
+
 ```typescript
 export type MilestoneStatus = "pending" | "resolved" | "expired";
 
@@ -94,6 +98,7 @@ export interface FoalDevelopmentArc {
 - [ ] **Step 2: Add developmentArc to Horse type**
 
 In `src/types/horse.ts`, add:
+
 ```typescript
 developmentArc?: FoalDevelopmentArc;
 ```
@@ -101,12 +106,14 @@ developmentArc?: FoalDevelopmentArc;
 - [ ] **Step 3: Add milestone offset constants**
 
 In `src/constants/gameConstants.ts`, add:
+
 ```typescript
 export const FOAL_BREAKING_IN_DAY = 18;
 export const FOAL_EARLY_WORKOUTS_DAY = 24;
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/types/foalDevelopment.ts src/types/horse.ts src/constants/gameConstants.ts
 git commit -m "feat(foal): define FoalDevelopmentArc types and milestone offset constants"
@@ -117,6 +124,7 @@ git commit -m "feat(foal): define FoalDevelopmentArc types and milestone offset 
 ## Task 2: Initialize development arc in foalFactory
 
 **Files:**
+
 - Modify: `src/core/breeding/foalFactory.ts`
 
 - [ ] **Step 1: Build default milestone choices**
@@ -185,6 +193,7 @@ function createDefaultMilestones(birthDay: number): FoalMilestone[] {
 - [ ] **Step 2: Attach arc to born foals**
 
 In `createFoal(...)`, after assigning `birthDay`, add:
+
 ```typescript
 developmentArc: {
   milestones: createDefaultMilestones(birthDay),
@@ -192,6 +201,7 @@ developmentArc: {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/core/breeding/foalFactory.ts
 git commit -m "feat(foal): initialize FoalDevelopmentArc with Breaking In and Early Workouts milestones on foal birth"
@@ -202,12 +212,14 @@ git commit -m "feat(foal): initialize FoalDevelopmentArc with Breaking In and Ea
 ## Task 3: Implement foalDevelopmentPhase pipeline phase
 
 **Files:**
+
 - Create: `src/core/time/phases/foalDevelopmentPhase.ts`
 - Modify: `src/core/time/pipeline.ts`
 
 - [ ] **Step 1: Write the failing test first**
 
 Create `src/tests/core/time/phases/foalDevelopment.test.ts`:
+
 ```typescript
 import { describe, it, expect } from "vitest";
 import { foalDevelopmentPhase } from "@/core/time/phases/foalDevelopmentPhase";
@@ -273,6 +285,7 @@ describe("foalDevelopmentPhase", () => {
 - [ ] **Step 2: Implement foalDevelopmentPhase**
 
 Create `src/core/time/phases/foalDevelopmentPhase.ts`:
+
 ```typescript
 import type { GameState } from "@/types/state";
 import type { InboxMessage } from "@/types/inbox";
@@ -306,6 +319,7 @@ export function foalDevelopmentPhase(state: GameState): { inbox: InboxMessage[] 
 - [ ] **Step 3: Register in pipeline**
 
 In `src/core/time/pipeline.ts`, import and register:
+
 ```typescript
 import { foalDevelopmentPhase } from "./phases/foalDevelopmentPhase";
 
@@ -314,11 +328,13 @@ import { foalDevelopmentPhase } from "./phases/foalDevelopmentPhase";
 ```
 
 - [ ] **Run tests:**
+
 ```bash
 bun test src/tests/core/time/phases/foalDevelopment.test.ts
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/core/time/phases/foalDevelopmentPhase.ts src/core/time/pipeline.ts src/tests/core/time/phases/foalDevelopment.test.ts
 git commit -m "feat(foal): add foalDevelopmentPhase at pipeline order 71 — emits inbox message at milestone trigger days"
@@ -329,6 +345,7 @@ git commit -m "feat(foal): add foalDevelopmentPhase at pipeline order 71 — emi
 ## Task 4: Add resolveFoalMilestone store action
 
 **Files:**
+
 - Modify: `src/game/store/slices/racingSlice.ts`
 
 - [ ] **Step 1: Implement resolveFoalMilestone**
@@ -390,6 +407,7 @@ resolveFoalMilestone: (horseId: string, milestoneKey: string, choiceKey: string)
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/game/store/slices/racingSlice.ts
 git commit -m "feat(foal): add resolveFoalMilestone store action with stat delta application and idempotent guard"
@@ -400,6 +418,7 @@ git commit -m "feat(foal): add resolveFoalMilestone store action with stat delta
 ## Task 5: Build FoalDevelopmentPanel component
 
 **Files:**
+
 - Create: `src/components/horse/FoalDevelopmentPanel.tsx`
 
 - [ ] **Step 1: Build the panel**
@@ -449,6 +468,7 @@ export function FoalDevelopmentPanel({ horse }: Props) {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/components/horse/FoalDevelopmentPanel.tsx
 git commit -m "feat(foal): add FoalDevelopmentPanel showing open milestones and resolution history"
@@ -459,6 +479,7 @@ git commit -m "feat(foal): add FoalDevelopmentPanel showing open milestones and 
 ## Task 6: Build the /foal-development/$horseId route
 
 **Files:**
+
 - Create: `src/routes/foal-development.$horseId.tsx`
 
 - [ ] **Step 1: Create the route component**
@@ -481,9 +502,7 @@ function FoalDevelopmentPage() {
   if (!horse) return <div>Horse not found.</div>;
   if (!horse.developmentArc) return <div>No development arc for this horse.</div>;
 
-  const pendingMilestones = horse.developmentArc.milestones.filter(
-    (m) => m.status === "pending",
-  );
+  const pendingMilestones = horse.developmentArc.milestones.filter((m) => m.status === "pending");
 
   if (pendingMilestones.length === 0) {
     return (
@@ -529,6 +548,7 @@ function FoalDevelopmentPage() {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/routes/foal-development.$horseId.tsx
 git commit -m "feat(foal): add /foal-development/$horseId route for milestone resolution UI"
@@ -539,18 +559,23 @@ git commit -m "feat(foal): add /foal-development/$horseId route for milestone re
 ## Task 7: Mount FoalDevelopmentPanel on stable page
 
 **Files:**
+
 - Modify: `src/components/horse/StableHorseDetail.tsx`
 
 - [ ] **Step 1: Conditionally mount the panel**
 
 Import `FoalDevelopmentPanel` and add:
+
 ```tsx
-{horse.developmentArc && <FoalDevelopmentPanel horse={horse} />}
+{
+  horse.developmentArc && <FoalDevelopmentPanel horse={horse} />;
+}
 ```
 
 Place it near the top of the horse detail view, above the training assignment section.
 
 - [ ] **Commit:**
+
 ```bash
 git add src/components/horse/StableHorseDetail.tsx
 git commit -m "feat(foal): mount FoalDevelopmentPanel on stable detail page for horses with an open development arc"
@@ -561,16 +586,19 @@ git commit -m "feat(foal): mount FoalDevelopmentPanel on stable detail page for 
 ## Task 8: Handle inbox message link and navigation
 
 **Files:**
+
 - Modify: `src/components/inbox/InboxItem.tsx` (or equivalent)
 
 - [ ] **Step 1: Ensure InboxMessage.link is rendered as a navigable link**
 
 The inbox item renderer should detect `message.link` and render a `<Link>` or navigate on click. If the `InboxMessage` type does not have a `link` field, add it:
+
 ```typescript
 link?: string;
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git commit -m "feat(foal): ensure InboxMessage.link navigates to foal development route"
 ```
@@ -580,6 +608,7 @@ git commit -m "feat(foal): ensure InboxMessage.link navigates to foal developmen
 ## Task 9: Add CSS for foal development UI
 
 **Files:**
+
 - Modify: `src/styles.css`
 
 - [ ] **Step 1: Add base styles for foal development components**
@@ -630,6 +659,7 @@ git commit -m "feat(foal): ensure InboxMessage.link navigates to foal developmen
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/styles.css
 git commit -m "feat(foal): add CSS for foal development panel and milestone resolution page"
@@ -640,6 +670,7 @@ git commit -m "feat(foal): add CSS for foal development panel and milestone reso
 ## Task 10: Integration tests and verification
 
 **Files:**
+
 - Modify: `src/tests/core/time/phases/foalDevelopment.test.ts`
 - Modify: `src/tests/game/store/foalMilestone.test.ts` (create)
 
@@ -667,6 +698,7 @@ bun test src/tests/core/time/phases/foalDevelopment.test.ts src/tests/game/store
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/tests/game/store/foalMilestone.test.ts
 git commit -m "test(foal): add store action tests for resolveFoalMilestone idempotency and stat delta"

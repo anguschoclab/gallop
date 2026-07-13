@@ -99,6 +99,9 @@ export const managementResolutionPhase: PipelinePhase = {
       }
     }
 
+    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+    const stableMap = new Map((state.npcStables ?? []).map((s) => [s.id, s]));
+
     for (const intent of intents) {
       switch (intent.type) {
         case "jockey_contract": {
@@ -307,7 +310,7 @@ export const managementResolutionPhase: PipelinePhase = {
             reason: "Retired to stud",
           } as StudCareerImpact);
 
-          const horse = state.horses.find((h) => h.id === typedIntent.horseId);
+          const horse = horseMap.get(typedIntent.horseId);
           if (horse && !horse.stableId && isTopHorse(horse)) {
             const hofEligible = isHallOfFameEligible(horse);
             impacts.push({
@@ -336,8 +339,8 @@ export const managementResolutionPhase: PipelinePhase = {
 
         case "scout": {
           const typedIntent = intent as ScoutIntent;
-          const horse = state.horses.find((h) => h.id === typedIntent.horseId);
-          const stable = state.npcStables.find((s) => s.id === typedIntent.stableId);
+          const horse = horseMap.get(typedIntent.horseId);
+          const stable = stableMap.get(typedIntent.stableId);
 
           if (horse && stable) {
             const resolvedHorse = ensurePhenotypeResolved(horse);
@@ -439,7 +442,7 @@ export const managementResolutionPhase: PipelinePhase = {
 
         case "insurance_claim": {
           const typedIntent = intent as InsuranceClaimIntent;
-          const horse = state.horses.find((h) => h.id === typedIntent.horseId);
+          const horse = horseMap.get(typedIntent.horseId);
           if (horse && horse.insurancePolicy && horse.insurancePolicy.type !== "none") {
             impacts.push({
               id: generateUUID(context.dailyRng),
@@ -459,7 +462,7 @@ export const managementResolutionPhase: PipelinePhase = {
         case "syndicate_creation":
         case "share_purchase":
         case "share_sale": {
-          const syndicateImpacts = resolveSyndicationIntent(intent, state, newDay);
+          const syndicateImpacts = resolveSyndicationIntent(intent, state, newDay, horseMap);
           impacts.push(...syndicateImpacts);
           break;
         }

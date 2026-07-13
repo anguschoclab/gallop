@@ -9,7 +9,7 @@
  */
 
 import type { Race } from "@/game/types";
-import { GRADED_RACES } from "@/data/gradedRaces";
+import { GRADED_RACES_BY_TRIPLECROWN_KEY } from "@/data/gradedRaces";
 
 /**
  * Pure race filtering logic
@@ -65,9 +65,7 @@ export function filterRacesByCriteria(
 
     // Filter by triple crown
     if (filters.tripleCrown !== "all" && filters.tripleCrown !== undefined) {
-      const tripleCrownKeys = new Set(
-        GRADED_RACES.filter((r) => r.triplecrownKey).map((r) => r.triplecrownKey),
-      );
+      const tripleCrownKeys = new Set(GRADED_RACES_BY_TRIPLECROWN_KEY.keys());
       const isTripleCrown = race.graded && tripleCrownKeys.has(race.graded.triplecrownKey || "");
       if (filters.tripleCrown && !isTripleCrown) return false;
       if (!filters.tripleCrown && isTripleCrown) return false;

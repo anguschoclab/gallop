@@ -34,10 +34,7 @@ function NpcStableDetailPage() {
   const hiredStaff = useGame((s) => s.hiredStaff);
 
   const trainerStaffId = useMemo(
-    () =>
-      (hiredStaff ?? []).find(
-        (m) => m.role === "trainer" && m.stableId === stableId,
-      )?.id,
+    () => (hiredStaff ?? []).find((m) => m.role === "trainer" && m.stableId === stableId)?.id,
     [hiredStaff, stableId],
   );
 

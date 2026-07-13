@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  buildFinancialPeriod,
-  buildProfitLossReport,
-} from "@/core/financial/reportBuilder";
+import { buildFinancialPeriod, buildProfitLossReport } from "@/core/financial/reportBuilder";
 import { createTransaction } from "@/core/transactions/transactionTypes";
 
 describe("financial report builder", () => {

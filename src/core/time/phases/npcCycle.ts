@@ -13,7 +13,12 @@ import { runNpcCycle } from "@/core/npc/npcCycle";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { PHASE_ORDER_NPC_CYCLE } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
-import type { NewsImpact, ReputationImpact, CashImpact, FameImpact } from "@/core/resolver/impacts/index";
+import type {
+  NewsImpact,
+  ReputationImpact,
+  CashImpact,
+  FameImpact,
+} from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 
 /**

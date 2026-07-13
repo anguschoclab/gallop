@@ -14,7 +14,7 @@ export interface InquiryContext {
 }
 
 const BASE = 0.05;
-const PHOTO_FINISH_BONUS = 0.10;
+const PHOTO_FINISH_BONUS = 0.1;
 const G1_BONUS = 0.15;
 const G2_BONUS = 0.08;
 const G3_BONUS = 0.05;

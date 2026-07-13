@@ -3,7 +3,7 @@ import { TrophyCase } from "@/components/awards";
 import { HorseCard } from "@/components/horse/HorseCard";
 import { HorseBit, overall } from "@/components/horse/HorseBits";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { RosterFilterBar } from "./RosterFilterBar";
 import { cn } from "@/lib/cn";
@@ -61,12 +61,18 @@ export function StableRosterView({
                   </p>
                 </div>
                 <div className="flex items-center justify-center gap-3">
-                  <Button variant="outline" size="sm" className="font-mono text-xs uppercase font-bold tracking-tighter" asChild>
-                    <Link to="/market">Go to Market</Link>
-                  </Button>
-                  <Button variant="outline" size="sm" className="font-mono text-xs uppercase font-bold tracking-tighter" asChild>
-                    <Link to="/auction">View Auctions</Link>
-                  </Button>
+                  <Link
+                    to="/market"
+                    className={cn(buttonVariants({ variant: "outline", size: "sm" }), "font-mono text-xs uppercase font-bold tracking-tighter")}
+                  >
+                    Go to Market
+                  </Link>
+                  <Link
+                    to="/auction"
+                    className={cn(buttonVariants({ variant: "outline", size: "sm" }), "font-mono text-xs uppercase font-bold tracking-tighter")}
+                  >
+                    View Auctions
+                  </Link>
                 </div>
               </div>
             </>
@@ -182,7 +188,11 @@ export function StableRosterView({
                         <TooltipProvider delayDuration={300}>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Link to="/stable/$horseId" params={{ horseId: h.id }} hash="training">
+                              <Link
+                                to="/stable/$horseId"
+                                params={{ horseId: h.id }}
+                                hash="training"
+                              >
                                 <Button
                                   aria-label={`Open training room for ${h.name}`}
                                   variant="ghost"

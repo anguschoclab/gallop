@@ -70,8 +70,9 @@ describe("calculateAwardPoints", () => {
         },
       },
     ];
+    const raceMap = new Map(races.map((r) => [r.id, r]));
 
-    const points = calculateAwardPoints(horse, races, 1, "north_america", "horse_of_the_year");
+    const points = calculateAwardPoints(horse, 1, "north_america", "horse_of_the_year", raceMap);
     expect(points).toBe(0);
   });
 
@@ -132,8 +133,9 @@ describe("calculateAwardPoints", () => {
         },
       },
     ];
+    const raceMap = new Map(races.map((r) => [r.id, r]));
 
-    const points = calculateAwardPoints(horse, races, 1, "north_america", "horse_of_the_year");
+    const points = calculateAwardPoints(horse, 1, "north_america", "horse_of_the_year", raceMap);
     expect(points).toBe(0);
   });
 
@@ -194,8 +196,9 @@ describe("calculateAwardPoints", () => {
         },
       },
     ];
+    const raceMap = new Map(races.map((r) => [r.id, r]));
 
-    const points = calculateAwardPoints(horse, races, 1, "north_america", "horse_of_the_year");
+    const points = calculateAwardPoints(horse, 1, "north_america", "horse_of_the_year", raceMap);
     expect(points).toBe(0);
   });
 
@@ -258,9 +261,10 @@ describe("calculateAwardPoints", () => {
         },
       },
     ];
+    const raceMap = new Map(races.map((r) => [r.id, r]));
 
     // 2-year-old category - horse is 3, should get 0 points
-    const points = calculateAwardPoints(horse, races, 1, "north_america", "champion_2yo_male");
+    const points = calculateAwardPoints(horse, 1, "north_america", "champion_2yo_male", raceMap);
     expect(points).toBe(0);
   });
 
@@ -286,7 +290,72 @@ describe("calculateAwardPoints", () => {
       raceHistory: [],
     });
 
-    const points = calculateAwardPoints(horse, [], 1, "north_america", "horse_of_the_year");
+    const raceMap = new Map<string, Race>();
+    const points = calculateAwardPoints(horse, 1, "north_america", "horse_of_the_year", raceMap);
+    expect(points).toBe(0);
+  });
+
+  it("should return 0 when race not in raceMap", () => {
+    const horse = createTestHorse({
+      id: "horse-1",
+      name: "Test Horse",
+      age: 3,
+      gender: "colt",
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
+      potential: 90,
+      energy: 100,
+      form: 0,
+      owned: true,
+      fame: 50,
+      raceHistory: [
+        {
+          raceId: "missing-race",
+          raceName: "Missing Race",
+          position: 1,
+          day: 100,
+          beyer: 115,
+          grade: "G1",
+          distance: 2000,
+          surface: "Dirt",
+          purse: 1000000,
+          fieldSize: 8,
+        },
+      ],
+    });
+
+    const races: Race[] = [
+      {
+        id: "race-1",
+        name: "Test Race",
+        day: 100,
+        distance: 2000,
+        raceClass: "Graded",
+        entryFee: 500,
+        purse: 1000000,
+        minStat: 80,
+        fieldSize: 8,
+        entries: [],
+        resolved: true,
+        graded: {
+          key: "test-race",
+          grade: "G1",
+          track: "Churchill Downs",
+          trackId: "track-1",
+          surface: "Dirt",
+        },
+      },
+    ];
+    const raceMap = new Map(races.map((r) => [r.id, r]));
+
+    // Race in history is not in raceMap — should return 0 with no fallback
+    const points = calculateAwardPoints(horse, 1, "north_america", "horse_of_the_year", raceMap);
     expect(points).toBe(0);
   });
 });
@@ -314,7 +383,8 @@ describe("determineRegionalWinners", () => {
       raceHistory: [],
     });
 
-    const winners = determineRegionalWinners([horse], [], 1, "north_america");
+    const raceMap = new Map<string, Race>();
+    const winners = determineRegionalWinners([horse], 1, "north_america", raceMap);
     expect(winners.every((w) => w.category !== "award_of_merit")).toBe(true);
     expect(winners.every((w) => w.category !== "champion_international")).toBe(true);
     expect(winners.every((w) => w.category !== "champion_trainer")).toBe(true);
@@ -342,7 +412,8 @@ describe("determineRegionalWinners", () => {
       raceHistory: [],
     });
 
-    const winners = determineRegionalWinners([horse], [], 1, "north_america");
+    const raceMap = new Map<string, Race>();
+    const winners = determineRegionalWinners([horse], 1, "north_america", raceMap);
     expect(winners).toEqual([]);
   });
 });

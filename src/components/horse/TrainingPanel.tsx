@@ -30,7 +30,6 @@ function getStatValue(stats: Horse["stats"], key: string): number {
 const ADVANCED_WORKOUTS_LABEL = "Advanced Workouts";
 const REST_LABEL = "Rest (+30 energy)";
 
-
 // Helper to conditionally wrap button with tooltip if disabled
 function DisabledTooltipWrapper({
   reason,
@@ -89,11 +88,17 @@ export function TrainingPanelComponent({
             cash < TRAINING_COST ||
             horse.energy < 15 ||
             val >= horse.potential,
-          disabledReason: isPregnant ? "Horse is pregnant" :
-                         slotsLeft <= 0 ? "No training slots left today" :
-                         cash < TRAINING_COST ? "Not enough cash" :
-                         horse.energy < 15 ? "Not enough energy" :
-                         val >= horse.potential ? "Maximum potential reached" : undefined,
+          disabledReason: isPregnant
+            ? "Horse is pregnant"
+            : slotsLeft <= 0
+              ? "No training slots left today"
+              : cash < TRAINING_COST
+                ? "Not enough cash"
+                : horse.energy < 15
+                  ? "Not enough energy"
+                  : val >= horse.potential
+                    ? "Maximum potential reached"
+                    : undefined,
           label: k,
           nextValue: Math.min(horse.potential, val + 1),
           currentValue: val,
@@ -134,12 +139,19 @@ export function TrainingPanelComponent({
             horse.energy < workout.energy ||
             isStatCapped ||
             !isEnabled,
-          disabledReason: !isEnabled ? unlockHint :
-                         isPregnant ? "Horse is pregnant" :
-                         slotsLeft <= 0 ? "No training slots left today" :
-                         cash < workout.cost ? "Not enough cash" :
-                         horse.energy < workout.energy ? "Not enough energy" :
-                         isStatCapped ? "Maximum potential reached" : undefined,
+          disabledReason: !isEnabled
+            ? unlockHint
+            : isPregnant
+              ? "Horse is pregnant"
+              : slotsLeft <= 0
+                ? "No training slots left today"
+                : cash < workout.cost
+                  ? "Not enough cash"
+                  : horse.energy < workout.energy
+                    ? "Not enough energy"
+                    : isStatCapped
+                      ? "Maximum potential reached"
+                      : undefined,
           label: workout.label,
           cost: workout.cost,
           isEnabled,
@@ -178,7 +190,10 @@ export function TrainingPanelComponent({
               <Button
                 onClick={btn.onClick}
                 disabled={btn.disabled}
-                className={cn("w-full justify-between text-xs", btn.disabled && "pointer-events-none")}
+                className={cn(
+                  "w-full justify-between text-xs",
+                  btn.disabled && "pointer-events-none",
+                )}
                 variant="outline"
               >
                 <div className="flex items-center gap-1">
@@ -192,24 +207,29 @@ export function TrainingPanelComponent({
         </div>
       </div>
 
-
       <DisabledTooltipWrapper
         reason={
-          isPregnant ? "Horse is pregnant" :
-          slotsLeft <= 0 ? "No training slots left today" :
-          horse.energy >= 100 ? "Horse is fully rested" : undefined
+          isPregnant
+            ? "Horse is pregnant"
+            : slotsLeft <= 0
+              ? "No training slots left today"
+              : horse.energy >= 100
+                ? "Horse is fully rested"
+                : undefined
         }
       >
         <Button
           onClick={handleRest}
           disabled={isPregnant || slotsLeft <= 0 || horse.energy >= 100}
-          className={cn("w-full", (isPregnant || slotsLeft <= 0 || horse.energy >= 100) && "pointer-events-none")}
+          className={cn(
+            "w-full",
+            (isPregnant || slotsLeft <= 0 || horse.energy >= 100) && "pointer-events-none",
+          )}
           variant="secondary"
         >
           {REST_LABEL}
         </Button>
       </DisabledTooltipWrapper>
-
     </div>
   );
 }

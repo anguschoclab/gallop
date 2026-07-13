@@ -209,6 +209,69 @@ describe("processClaims", () => {
     expect(result.transfers).toEqual([]);
     expect(result.logs).toEqual([]);
   });
+
+  it("should process multiple claims on different horses", () => {
+    const race: Race = {
+      id: "race-1",
+      name: "Test Claiming Race",
+      day: 10,
+      distance: 2000,
+      raceClass: "Claiming",
+      entryFee: 500,
+      purse: 10000,
+      minStat: 70,
+      fieldSize: 8,
+      entries: [],
+      resolved: true,
+      claimingPrice: 10000,
+    };
+
+    const horse1 = createTestHorse({ id: "horse-1", stableId: "stable-1", owned: false });
+    const horse2 = createTestHorse({ id: "horse-2", stableId: "stable-1", owned: false });
+
+    const claims: ClaimAttempt[] = [
+      { claimantStableId: "stable-2", horseId: "horse-1", claimingPrice: 10000, successful: false },
+      { claimantStableId: "stable-3", horseId: "horse-2", claimingPrice: 10000, successful: false },
+    ];
+
+    const result = processClaims(race, claims, [horse1, horse2], 10, createRng("test"));
+    expect(result.transfers).toHaveLength(2);
+    expect(result.transfers[0].horseId).toBe("horse-1");
+    expect(result.transfers[1].horseId).toBe("horse-2");
+  });
+
+  it("should skip claim for horse not in horses array", () => {
+    const race: Race = {
+      id: "race-1",
+      name: "Test Claiming Race",
+      day: 10,
+      distance: 2000,
+      raceClass: "Claiming",
+      entryFee: 500,
+      purse: 10000,
+      minStat: 70,
+      fieldSize: 8,
+      entries: [],
+      resolved: true,
+      claimingPrice: 10000,
+    };
+
+    const horse1 = createTestHorse({ id: "horse-1", stableId: "stable-1", owned: false });
+
+    const claims: ClaimAttempt[] = [
+      { claimantStableId: "stable-2", horseId: "horse-1", claimingPrice: 10000, successful: false },
+      {
+        claimantStableId: "stable-3",
+        horseId: "nonexistent",
+        claimingPrice: 10000,
+        successful: false,
+      },
+    ];
+
+    const result = processClaims(race, claims, [horse1], 10, createRng("test"));
+    expect(result.transfers).toHaveLength(1);
+    expect(result.transfers[0].horseId).toBe("horse-1");
+  });
 });
 
 describe("isHorseEligibleForClaimingPrice", () => {

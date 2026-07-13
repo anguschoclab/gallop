@@ -14,7 +14,7 @@
  */
 
 import type { PipelineContext } from "../pipeline";
-import { determineAllRegionalWinners, determineRegionalWinners } from "@/core/awards/scoring";
+import { determineRegionalWinners } from "@/core/awards/scoring";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { generateUUID } from "@/core/uuid";
 import type { AwardRegion, RegionalAward } from "@/core/awards/types";
@@ -50,8 +50,9 @@ export const awardsPhase = {
     const updatedLastAwardYear = { ...lastAwardYear };
     const impacts: AnyImpact[] = [];
 
-    // Pre-compute race map for O(1) lookups in awards scoring
+    // Pre-compute race and horse maps for O(1) lookups
     const raceMap = new Map(state.races.map((r) => [r.id, r]));
+    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
 
     for (const ceremony of todayCeremonies) {
       const region = ceremony.region;
@@ -62,7 +63,7 @@ export const awardsPhase = {
       }
 
       // Determine winners for this region
-      const winners = determineRegionalWinners(state.horses, state.races, year, region, raceMap);
+      const winners = determineRegionalWinners(state.horses, year, region, raceMap);
 
       if (winners.length === 0) {
         updatedLastAwardYear[region] = year;
@@ -103,7 +104,7 @@ export const awardsPhase = {
 
       // Award bonuses to winning horses — emit fame_change impacts only
       for (const award of regionAwards) {
-        const horse = state.horses.find((h) => h.id === award.horseId);
+        const horse = horseMap.get(award.horseId);
         if (horse) {
           // Fame boost: +25 for HOTY, +15 for category
           const fameBoost = award.category === "horse_of_the_year" ? 25 : 15;

@@ -8,10 +8,7 @@ import type { AnyImpact, DistanceAptitudeImpact } from "@/core/resolver/impacts/
 import { generateUUID } from "@/core/uuid";
 import type { Rng } from "@/core/common/rng";
 import { computeDistanceScaling } from "@/core/race/engine/runnerBuilder";
-import {
-  generateFormImpact,
-  generateFameImpact,
-} from "./energyFormFame";
+import { generateFormImpact, generateFameImpact } from "./energyFormFame";
 import { generateBeyerAndRecoveryImpacts } from "./beyerRecovery";
 import { generatePatternJumpImpact } from "./patternJump";
 import { generateRaceHistoryImpact, generateTripleCrownProgressImpact } from "./raceHistory";

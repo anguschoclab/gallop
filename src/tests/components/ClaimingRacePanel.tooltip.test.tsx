@@ -11,29 +11,31 @@ vi.mock("@tanstack/react-router", () => ({
 import { ClaimingRacePanel } from "@/components/race/ClaimingRacePanel";
 import type { Race, Horse, Claim } from "@/game/types";
 
-const mkHorse = (overrides: Partial<Horse> = {}): Horse => ({
-  id: "h1",
-  name: "Thunder",
-  age: 3,
-  gender: "colt",
-  ...overrides,
-} as Horse);
+const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
+  ({
+    id: "h1",
+    name: "Thunder",
+    age: 3,
+    gender: "colt",
+    ...overrides,
+  }) as Horse;
 
-const mkRace = (overrides: Partial<Race> = {}): Race => ({
-  id: "race1",
-  name: "Test Claiming Race",
-  day: 10,
-  distance: 2000,
-  raceClass: "Maiden",
-  entryFee: 500,
-  purse: 10000,
-  minStat: 70,
-  fieldSize: 8,
-  entries: [{ horseId: "h1", owned: false, stableId: "s1" }],
-  resolved: false,
-  claiming: { price: 5000 },
-  ...overrides,
-} as Race);
+const mkRace = (overrides: Partial<Race> = {}): Race =>
+  ({
+    id: "race1",
+    name: "Test Claiming Race",
+    day: 10,
+    distance: 2000,
+    raceClass: "Maiden",
+    entryFee: 500,
+    purse: 10000,
+    minStat: 70,
+    fieldSize: 8,
+    entries: [{ horseId: "h1", owned: false, stableId: "s1" }],
+    resolved: false,
+    claiming: { price: 5000 },
+    ...overrides,
+  }) as Race;
 
 describe("ClaimingRacePanel — tooltip on disabled claim button", () => {
   it("renders tooltip wrapper when cannot afford claim", () => {

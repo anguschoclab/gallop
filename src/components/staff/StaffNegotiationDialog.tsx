@@ -99,7 +99,10 @@ export function StaffNegotiationDialog({ staff, isOpen, onClose }: StaffNegotiat
             )}
 
             <div className="space-y-1">
-              <label htmlFor="offerAmount" className="text-[10px] font-black uppercase text-cream/50 tracking-widest">
+              <label
+                htmlFor="offerAmount"
+                className="text-[10px] font-black uppercase text-cream/50 tracking-widest"
+              >
                 Your offer (per day)
               </label>
               <Input

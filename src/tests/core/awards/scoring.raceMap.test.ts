@@ -1,8 +1,8 @@
 /**
- * Tests for awards scoring raceMap optimization (Bolt-2 branch).
+ * Tests for awards scoring raceMap optimization.
  *
- * Validates that the optional raceMap parameter produces identical results
- * to the linear search fallback, and that backward compatibility is maintained.
+ * Validates that the required raceMap parameter produces correct results
+ * for award point calculations.
  */
 
 import { describe, it, expect } from "vitest";
@@ -82,75 +82,38 @@ describe("calculateAwardPoints with raceMap", () => {
   const raceMap = new Map(races.map((r) => [r.id, r]));
   const horse = mkHorseWithRace("h1", "race-1", "Churchill Downs", "Dirt");
 
-  it("returns same result with and without raceMap", () => {
-    const pointsWithoutMap = calculateAwardPoints(
-      horse,
-      races,
-      1,
-      "north_america",
-      "horse_of_the_year",
-    );
-    const pointsWithMap = calculateAwardPoints(
-      horse,
-      races,
-      1,
-      "north_america",
-      "horse_of_the_year",
-      raceMap,
-    );
-    expect(pointsWithMap).toBe(pointsWithoutMap);
-  });
-
-  it("with raceMap and empty races array returns 0", () => {
-    const emptyMap = new Map<string, Race>();
-    const points = calculateAwardPoints(
-      horse,
-      [],
-      1,
-      "north_america",
-      "horse_of_the_year",
-      emptyMap,
-    );
-    expect(points).toBe(0);
-  });
-
-  it("without raceMap still works (backward compat)", () => {
-    const points = calculateAwardPoints(
-      horse,
-      races,
-      1,
-      "north_america",
-      "horse_of_the_year",
-    );
+  it("returns correct points with raceMap", () => {
+    const points = calculateAwardPoints(horse, 1, "north_america", "horse_of_the_year", raceMap);
     // G1_WIN(10) + BEYER_110_PLUS(6) = 16
     expect(points).toBe(16);
   });
 
-  it("with raceMap handles race not in map (returns 0 since no fallback)", () => {
-    // Pass a raceMap that doesn't contain the race — raceMap.get() returns undefined
+  it("with empty raceMap returns 0", () => {
+    const emptyMap = new Map<string, Race>();
+    const points = calculateAwardPoints(horse, 1, "north_america", "horse_of_the_year", emptyMap);
+    expect(points).toBe(0);
+  });
+
+  it("handles race not in map (returns 0 since no fallback)", () => {
     const incompleteMap = new Map<string, Race>();
     const points = calculateAwardPoints(
       horse,
-      races,
       1,
       "north_america",
       "horse_of_the_year",
       incompleteMap,
     );
-    // No fallback to races.find() when raceMap is provided
     expect(points).toBe(0);
   });
 
   it("correctly filters by region when using raceMap", () => {
     const euroRace = mkRace("race-eu", "Ascot", "Turf");
-    const euroRaces: Race[] = [euroRace];
-    const euroMap = new Map(euroRaces.map((r) => [r.id, r]));
+    const euroMap = new Map([[euroRace.id, euroRace]]);
     const euroHorse = mkHorseWithRace("h-eu", "race-eu", "Ascot", "Turf");
 
     // European race should not score for north_america
     const points = calculateAwardPoints(
       euroHorse,
-      euroRaces,
       1,
       "north_america",
       "horse_of_the_year",
@@ -166,30 +129,17 @@ describe("determineRegionalWinners with raceMap", () => {
   const raceMap = new Map(races.map((r) => [r.id, r]));
   const horse = mkHorseWithRace("h1", "race-1", "Churchill Downs", "Dirt");
 
-  it("returns same result with and without raceMap", () => {
-    const winnersWithoutMap = determineRegionalWinners([horse], races, 1, "north_america");
-    const winnersWithMap = determineRegionalWinners(
-      [horse],
-      races,
-      1,
-      "north_america",
-      raceMap,
-    );
-    expect(winnersWithMap).toEqual(winnersWithoutMap);
-  });
-
-  it("without raceMap still works (backward compat)", () => {
-    const winners = determineRegionalWinners([horse], races, 1, "north_america");
+  it("returns correct winners with raceMap", () => {
+    const winners = determineRegionalWinners([horse], 1, "north_america", raceMap);
     expect(winners.length).toBeGreaterThan(0);
     expect(winners.some((w) => w.horseId === "h1")).toBe(true);
   });
 });
 
 describe("determineAllRegionalWinners with raceMap", () => {
-  it("returns same result with and without raceMap", () => {
+  it("returns correct results", () => {
     const race = mkRace("race-1", "Churchill Downs", "Dirt");
     const races: Race[] = [race];
-    const raceMap = new Map(races.map((r) => [r.id, r]));
     const horse = mkHorseWithRace("h1", "race-1", "Churchill Downs", "Dirt");
 
     // determineAllRegionalWinners creates its own raceMap internally,

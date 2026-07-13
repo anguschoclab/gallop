@@ -30,7 +30,9 @@ function saveDismissed(s: Set<string>) {
  * has been recorded and hasn't been acknowledged.
  */
 export function StewardsInquiryOverlay() {
-  const inquiries = useGame((s: GameState) => (s as any).stewardsInquiries ?? []) as StewardsInquiry[];
+  const inquiries = useGame(
+    (s: GameState) => (s as any).stewardsInquiries ?? [],
+  ) as StewardsInquiry[];
   const horses = useGame((s: GameState) => s.horses);
   const [dismissed, setDismissed] = useState<Set<string>>(() => loadDismissed());
 
@@ -42,10 +44,7 @@ export function StewardsInquiryOverlay() {
   const pending = useMemo(
     () =>
       inquiries.filter(
-        (i) =>
-          i.accusedHorseId &&
-          playerHorseIds.has(i.accusedHorseId) &&
-          !dismissed.has(i.id),
+        (i) => i.accusedHorseId && playerHorseIds.has(i.accusedHorseId) && !dismissed.has(i.id),
       ),
     [inquiries, playerHorseIds, dismissed],
   );
@@ -60,8 +59,7 @@ export function StewardsInquiryOverlay() {
   if (!current) return null;
 
   const horse = horses.find((h) => h.id === current.accusedHorseId);
-  const isFavorable =
-    current.outcome === "no_action" || current.outcome === "warning";
+  const isFavorable = current.outcome === "no_action" || current.outcome === "warning";
 
   return (
     <Dialog

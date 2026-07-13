@@ -16,7 +16,6 @@ import type { Race } from "@/core/race/types";
 import type { AwardRegion, RegionalAwardCategory, RegionalAward } from "./types";
 import {
   REGIONAL_SCORING,
-  COUNTRY_TO_REGION,
   NORTH_AMERICAN_CATEGORIES,
   EUROPEAN_CATEGORIES,
   ASIA_PACIFIC_CATEGORIES,
@@ -183,20 +182,18 @@ function isEligibleForCategory(
  * and sums points based on race performance (grade wins, places, Beyer bonuses).
  *
  * @param horse - The horse to calculate points for
- * @param races - All races in the game
  * @param year - Award year
  * @param region - Award region
  * @param category - Award category
- * @param raceMap
+ * @param raceMap - Pre-computed Map of race ID to Race for O(1) lookups
  * @returns Total points earned in this category
  */
 export function calculateAwardPoints(
   horse: Horse,
-  races: Race[],
   year: number,
   region: AwardRegion,
   category: RegionalAwardCategory,
-  raceMap?: Map<string, Race>,
+  raceMap: Map<string, Race>,
 ): number {
   const weights = REGIONAL_SCORING[region];
   let totalPoints = 0;
@@ -212,9 +209,7 @@ export function calculateAwardPoints(
     }
 
     // Check if race is in this region (by track)
-    const race = raceMap
-      ? raceMap.get(historyEntry.raceId)
-      : races.find((r) => r.id === historyEntry.raceId);
+    const race = raceMap.get(historyEntry.raceId);
     if (!race?.graded?.track) continue;
 
     const trackContinent = getTrackContinent(race.graded.track);
@@ -239,20 +234,17 @@ export function calculateAwardPoints(
  * the highest-scoring horse as the winner.
  *
  * @param horses - All horses in the game
- * @param races - All races in the game
  * @param year - Award year
  * @param region - Award region
- * @param raceMap
+ * @param raceMap - Pre-computed Map of race ID to Race for O(1) lookups
  * @returns Array of regional award winners without ID and ceremony day
  */
 export function determineRegionalWinners(
   horses: Horse[],
-  races: Race[],
   year: number,
   region: AwardRegion,
-  raceMap?: Map<string, Race>,
+  raceMap: Map<string, Race>,
 ): Omit<RegionalAward, "id" | "ceremonyDay">[] {
-  const currentRaceMap = raceMap || new Map(races.map((r) => [r.id, r]));
   const categories = getCategoriesForRegion(region);
   const winners: Omit<RegionalAward, "id" | "ceremonyDay">[] = [];
 
@@ -269,7 +261,7 @@ export function determineRegionalWinners(
     // Calculate points for all eligible horses
     const horsePoints: Array<{ horse: Horse; points: number }> = [];
     for (const horse of horses) {
-      const points = calculateAwardPoints(horse, races, year, region, category, currentRaceMap);
+      const points = calculateAwardPoints(horse, year, region, category, raceMap);
       if (points > 0) {
         horsePoints.push({ horse, points });
       }
@@ -324,7 +316,7 @@ export function determineAllRegionalWinners(
   let allWinners: Omit<RegionalAward, "id" | "ceremonyDay">[] = [];
 
   for (const region of regions) {
-    const regionalWinners = determineRegionalWinners(horses, races, year, region, raceMap);
+    const regionalWinners = determineRegionalWinners(horses, year, region, raceMap);
     allWinners = allWinners.concat(regionalWinners);
   }
 

@@ -252,9 +252,14 @@ export function getSeasonalModifiers(country: string, month: number): SeasonalMo
   const region = COUNTRY_TO_REGION[country] ?? "";
   const patternKeys = REGIONAL_PATTERNS[region] ?? [];
 
-  return patternKeys
-    .map((key) => SEASONAL_MODIFIERS[key])
-    .filter((mod) => mod && mod.months.includes(month));
+  const result: SeasonalModifier[] = [];
+  for (const key of patternKeys) {
+    const mod = SEASONAL_MODIFIERS[key];
+    if (mod && mod.months.includes(month)) {
+      result.push(mod);
+    }
+  }
+  return result;
 }
 
 /**

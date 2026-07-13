@@ -5,7 +5,11 @@ import {
   generateFinancialBreedingImpacts,
   generateJockeyStatsTrackingImpacts,
 } from "@/core/race/impacts";
-import { createTestColt, createTestNpcHorse, createTestMare } from "@/tests/helpers/createTestHorse";
+import {
+  createTestColt,
+  createTestNpcHorse,
+  createTestMare,
+} from "@/tests/helpers/createTestHorse";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
 import { createTestRng } from "@/tests/helpers/createTestRng";
 import { RACE_ENERGY_IMPACT, MAX_FAME, GRADED_PRIZE_SPLIT } from "@/constants";
@@ -78,7 +82,12 @@ describe("generateHealthInjuryImpacts", () => {
   it("does not emit insurance_payout when no injury occurs", () => {
     const horse = createTestColt({
       id: "h1",
-      insurancePolicy: { type: "comprehensive", premiumPerDay: 100, coveragePercent: 0.75, activeSinceDay: 1 },
+      insurancePolicy: {
+        type: "comprehensive",
+        premiumPerDay: 100,
+        coveragePercent: 0.75,
+        activeSinceDay: 1,
+      },
     });
     const rng = createTestRng("no-injury");
     const impacts = generateHealthInjuryImpacts(horse, 100, [], { weather: "sunny" }, rng);
@@ -97,7 +106,13 @@ describe("generateHealthInjuryImpacts", () => {
   it("emits energy_change for every call regardless of rng", () => {
     const horse = createTestColt({ id: "h1" });
     const withoutRng = generateHealthInjuryImpacts(horse, 100, [], { weather: "sunny" });
-    const withRng = generateHealthInjuryImpacts(horse, 100, [], { weather: "sunny" }, createTestRng());
+    const withRng = generateHealthInjuryImpacts(
+      horse,
+      100,
+      [],
+      { weather: "sunny" },
+      createTestRng(),
+    );
     expect(withoutRng.find((i) => i.type === "energy_change")).toBeDefined();
     expect(withRng.find((i) => i.type === "energy_change")).toBeDefined();
   });
@@ -588,9 +603,7 @@ describe("generateJockeyStatsTrackingImpacts", () => {
       100,
     );
     // Win amount = 0.7 * 1_000_000 = 700_000; percentage fee = 10% = 70_000
-    const fee = impacts.find(
-      (i) => i.type === "cash_change" && (i as any).amount < 0,
-    ) as any;
+    const fee = impacts.find((i) => i.type === "cash_change" && (i as any).amount < 0) as any;
     expect(fee).toBeDefined();
     expect(fee.amount).toBe(-70_000);
   });
@@ -610,9 +623,7 @@ describe("generateJockeyStatsTrackingImpacts", () => {
       100,
     );
     // With purse 0, winAmount = 0, so no percentage fee
-    const fee = impacts.find(
-      (i) => i.type === "cash_change" && (i as any).amount < 0,
-    );
+    const fee = impacts.find((i) => i.type === "cash_change" && (i as any).amount < 0);
     // jockey_stats should still be emitted (position 1 is within split)
     expect(impacts.find((i) => i.type === "jockey_stats")).toBeDefined();
     // But no negative cash_change (percentage fee)

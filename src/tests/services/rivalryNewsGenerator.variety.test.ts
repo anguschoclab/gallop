@@ -31,15 +31,19 @@ const race = {
   fieldSize: 8,
   entries: [],
   resolved: true,
-  graded: { key: "grand-stakes", grade: "G1", track: "Test Track", trackId: "tt-1", surface: "Dirt" },
+  graded: {
+    key: "grand-stakes",
+    grade: "G1",
+    track: "Test Track",
+    trackId: "tt-1",
+    surface: "Dirt",
+  },
 } as Race;
 
 // Sweep 30 seeds and collect unique headlines/bodies
 const SEED_COUNT = 30;
 
-function sweepHeadlines(
-  fn: (rng: ReturnType<typeof createTestRng>) => string | null,
-): Set<string> {
+function sweepHeadlines(fn: (rng: ReturnType<typeof createTestRng>) => string | null): Set<string> {
   const unique = new Set<string>();
   for (let i = 0; i < SEED_COUNT; i++) {
     const rng = createTestRng(`sweep-${i}`);
@@ -49,9 +53,7 @@ function sweepHeadlines(
   return unique;
 }
 
-function sweepBodies(
-  fn: (rng: ReturnType<typeof createTestRng>) => string | null,
-): Set<string> {
+function sweepBodies(fn: (rng: ReturnType<typeof createTestRng>) => string | null): Set<string> {
   const unique = new Set<string>();
   for (let i = 0; i < SEED_COUNT; i++) {
     const rng = createTestRng(`sweep-body-${i}`);
@@ -105,21 +107,27 @@ describe("generateRivalryEmergenceNews — template variety", () => {
 describe("generateGrudgeMatchNews — template variety (player win)", () => {
   it("headline pool has at least 8 unique values (≥14 templates)", () => {
     const headlines = sweepHeadlines(
-      (rng) => generateGrudgeMatchNews(race, playerHorse, rivalHorse, true, DAY, rng, stable)?.headline ?? null,
+      (rng) =>
+        generateGrudgeMatchNews(race, playerHorse, rivalHorse, true, DAY, rng, stable)?.headline ??
+        null,
     );
     expect(headlines.size).toBeGreaterThanOrEqual(8);
   });
 
   it("body pool has at least 6 unique values (≥14 templates)", () => {
     const bodies = sweepBodies(
-      (rng) => generateGrudgeMatchNews(race, playerHorse, rivalHorse, true, DAY, rng, stable)?.body ?? null,
+      (rng) =>
+        generateGrudgeMatchNews(race, playerHorse, rivalHorse, true, DAY, rng, stable)?.body ??
+        null,
     );
     expect(bodies.size).toBeGreaterThanOrEqual(6);
   });
 
   it("all headlines contain player horse or rival horse name", () => {
     const headlines = sweepHeadlines(
-      (rng) => generateGrudgeMatchNews(race, playerHorse, rivalHorse, true, DAY, rng, stable)?.headline ?? null,
+      (rng) =>
+        generateGrudgeMatchNews(race, playerHorse, rivalHorse, true, DAY, rng, stable)?.headline ??
+        null,
     );
     for (const h of headlines) {
       expect(h.includes("Lightning Bolt") || h.includes("Dark Thunder")).toBe(true);
@@ -130,21 +138,27 @@ describe("generateGrudgeMatchNews — template variety (player win)", () => {
 describe("generateGrudgeMatchNews — template variety (player loss)", () => {
   it("headline pool has at least 8 unique values (≥14 templates)", () => {
     const headlines = sweepHeadlines(
-      (rng) => generateGrudgeMatchNews(race, playerHorse, rivalHorse, false, DAY, rng, stable)?.headline ?? null,
+      (rng) =>
+        generateGrudgeMatchNews(race, playerHorse, rivalHorse, false, DAY, rng, stable)?.headline ??
+        null,
     );
     expect(headlines.size).toBeGreaterThanOrEqual(8);
   });
 
   it("body pool has at least 6 unique values (≥14 templates)", () => {
     const bodies = sweepBodies(
-      (rng) => generateGrudgeMatchNews(race, playerHorse, rivalHorse, false, DAY, rng, stable)?.body ?? null,
+      (rng) =>
+        generateGrudgeMatchNews(race, playerHorse, rivalHorse, false, DAY, rng, stable)?.body ??
+        null,
     );
     expect(bodies.size).toBeGreaterThanOrEqual(6);
   });
 
   it("all headlines contain player horse or rival horse name", () => {
     const headlines = sweepHeadlines(
-      (rng) => generateGrudgeMatchNews(race, playerHorse, rivalHorse, false, DAY, rng, stable)?.headline ?? null,
+      (rng) =>
+        generateGrudgeMatchNews(race, playerHorse, rivalHorse, false, DAY, rng, stable)?.headline ??
+        null,
     );
     for (const h of headlines) {
       expect(h.includes("Lightning Bolt") || h.includes("Dark Thunder")).toBe(true);

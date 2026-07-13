@@ -72,25 +72,16 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
           out.push({ horse, entry, role: "owner" });
           continue;
         }
-        if (
-          roles.includes("trainer") &&
-          entry.stableId &&
-          trainerStableIds.has(entry.stableId)
-        ) {
+        if (roles.includes("trainer") && entry.stableId && trainerStableIds.has(entry.stableId)) {
           out.push({ horse, entry, role: "trainer" });
         }
       }
     }
 
-    const graded =
-      gradeFilter === "all"
-        ? out
-        : out.filter((r) => r.entry.grade === gradeFilter);
+    const graded = gradeFilter === "all" ? out : out.filter((r) => r.entry.grade === gradeFilter);
 
     return graded.sort((a, b) =>
-      sortDir === "desc"
-        ? b.entry.day - a.entry.day
-        : a.entry.day - b.entry.day,
+      sortDir === "desc" ? b.entry.day - a.entry.day : a.entry.day - b.entry.day,
     );
   }, [horses, personId, roles, trainerStableIds, gradeFilter, sortDir]);
 
@@ -111,10 +102,7 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
       </div>
 
       <div className="flex items-center gap-2">
-        <Select
-          value={gradeFilter}
-          onValueChange={(v) => setGradeFilter(v as GradeFilter)}
-        >
+        <Select value={gradeFilter} onValueChange={(v) => setGradeFilter(v as GradeFilter)}>
           <SelectTrigger data-testid="grade-filter" className="w-[140px] h-8 text-xs">
             <SelectValue placeholder="Grade" />
           </SelectTrigger>
@@ -198,7 +186,10 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
                     {role}
                   </Badge>
                   {entry.grade ? (
-                    <Badge variant="outline" className={cn("text-[9px] rounded-none", gradeColor(entry.grade))}>
+                    <Badge
+                      variant="outline"
+                      className={cn("text-[9px] rounded-none", gradeColor(entry.grade))}
+                    >
                       {entry.grade}
                     </Badge>
                   ) : (

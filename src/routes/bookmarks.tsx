@@ -283,9 +283,7 @@ function BookmarkCard({
     return new Set((bookmark.tags ?? []).map((t) => t.toLowerCase()));
   }, [bookmark.tags]);
 
-  const availableSuggestions = suggestions.filter(
-    (s) => !bookmarkTagsLower.has(s.toLowerCase()),
-  );
+  const availableSuggestions = suggestions.filter((s) => !bookmarkTagsLower.has(s.toLowerCase()));
 
   return (
     <li className="group relative border border-white/10 bg-slate-950/40 hover:border-gold/40 transition-colors p-3 space-y-3">

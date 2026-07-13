@@ -89,9 +89,7 @@ export function processClaimingResolution({
       } as LogImpact);
     }
 
-    const winningClaimKeys = new Set(
-      transfers.map((t) => `${t.horseId}:${t.toStableId}`),
-    );
+    const winningClaimKeys = new Set(transfers.map((t) => `${t.horseId}:${t.toStableId}`));
     const losingClaims = eligibleClaims.filter(
       (i) => !winningClaimKeys.has(`${i.horseId}:${i.claimantStableId || ""}`),
     );

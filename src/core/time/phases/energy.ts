@@ -36,15 +36,15 @@ export const energyPhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
 
-    // Index staff by stableId for fast lookup
-    const staffByStable = new Map<string, any[]>();
+    // Index staff by stableId and role for fast lookup
+    const staffByStableAndRole = new Map<string, Map<string, any>>();
     if (state.hiredStaff) {
       for (const staff of state.hiredStaff) {
         const stableId = staff.stableId ?? "";
-        if (!staffByStable.has(stableId)) {
-          staffByStable.set(stableId, []);
+        if (!staffByStableAndRole.has(stableId)) {
+          staffByStableAndRole.set(stableId, new Map());
         }
-        staffByStable.get(staff.stableId ?? "")!.push(staff);
+        staffByStableAndRole.get(stableId)!.set(staff.role, staff);
       }
     }
 
@@ -64,12 +64,12 @@ export const energyPhase = {
 
       // Get staff bonuses for this stable
       const stableId = h.stableId ?? "";
-      const staffForStable = staffByStable.get(stableId) ?? [];
+      const roleMap = staffByStableAndRole.get(stableId);
 
-      const nutritionist = staffForStable.find((s) => s.role === "nutritionist");
+      const nutritionist = roleMap?.get("nutritionist");
       const nutritionistBonus = nutritionist ? nutritionist.bonusValue : 0;
 
-      const vet = staffForStable.find((s) => s.role === "veterinarian");
+      const vet = roleMap?.get("veterinarian");
       const vetBonus = vet ? vet.bonusValue : 0;
 
       // Health status recovery logic

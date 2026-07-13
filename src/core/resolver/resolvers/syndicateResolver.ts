@@ -9,7 +9,7 @@
  * Related files: ../resolver.ts (uses resolver), ../handlers/SyndicationHandler.ts (handles impacts)
  */
 
-import type { GameState } from "@/game/types";
+import type { GameState, Horse } from "@/game/types";
 import type {
   AnyIntent,
   SyndicateCreationIntent,
@@ -33,17 +33,21 @@ import { generateUUID } from "@/core/uuid";
  * @param intent - The syndication intent to resolve
  * @param state - Current game state
  * @param day - Current game day
+ * @param horseMap - Optional pre-built map of horses for O(1) lookup
  * @returns Array of impacts to apply
  */
 export function resolveSyndicationIntent(
   intent: AnyIntent,
   state: GameState,
   day: number,
+  horseMap?: Map<string, Horse>,
 ): (SyndicateCreationImpact | ShareTransactionImpact | SyndicateFeeDistributionImpact)[] {
   switch (intent.type) {
     case "syndicate_creation": {
       const syndicateIntent = intent as SyndicateCreationIntent;
-      const stallion = state.horses.find((h) => h.id === syndicateIntent.stallionId);
+      const stallion =
+        horseMap?.get(syndicateIntent.stallionId) ||
+        state.horses.find((h) => h.id === syndicateIntent.stallionId);
 
       if (!stallion) return [];
 

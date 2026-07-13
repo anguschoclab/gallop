@@ -18,16 +18,20 @@ vi.mock("@tanstack/react-router", () => ({
 // Mock Radix-based Select with native HTML select for JSDOM compatibility
 vi.mock("@/components/ui/select", () => ({
   Select: ({ value, onValueChange }: any) =>
-    createElement("select", {
-      "data-testid": "grade-filter",
-      value,
-      onChange: (e: any) => onValueChange?.(e.target.value),
-    }, [
-      createElement("option", { key: "all", value: "all" }, "All Grades"),
-      createElement("option", { key: "G1", value: "G1" }, "G1"),
-      createElement("option", { key: "G2", value: "G2" }, "G2"),
-      createElement("option", { key: "G3", value: "G3" }, "G3"),
-    ]),
+    createElement(
+      "select",
+      {
+        "data-testid": "grade-filter",
+        value,
+        onChange: (e: any) => onValueChange?.(e.target.value),
+      },
+      [
+        createElement("option", { key: "all", value: "all" }, "All Grades"),
+        createElement("option", { key: "G1", value: "G1" }, "G1"),
+        createElement("option", { key: "G2", value: "G2" }, "G2"),
+        createElement("option", { key: "G3", value: "G3" }, "G3"),
+      ],
+    ),
   SelectTrigger: () => null,
   SelectContent: () => null,
   SelectItem: () => null,
@@ -134,9 +138,7 @@ describe("PersonRaceHistoryTab", () => {
         mkRaceEntry({ raceId: "r-3", jockeyId: "other", stableId: "s-1", position: 3, day: 30 }),
       ]),
     ];
-    const hiredStaff: StaffMember[] = [
-      mkStaff("t-1", "trainer", "s-1"),
-    ];
+    const hiredStaff: StaffMember[] = [mkStaff("t-1", "trainer", "s-1")];
 
     renderWithStore(
       <PersonRaceHistoryTab personId="t-1" roles={["jockey", "owner", "trainer"]} />,
@@ -260,9 +262,27 @@ describe("PersonRaceHistoryTab", () => {
     const user = userEvent.setup();
     const horses: Horse[] = [
       mkHorseWithHistory("h-1", "Horse 1", [
-        mkRaceEntry({ raceId: "r-1", jockeyId: "j-1", position: 1, day: 10, raceName: "Day 10 Race" }),
-        mkRaceEntry({ raceId: "r-2", jockeyId: "j-1", position: 2, day: 30, raceName: "Day 30 Race" }),
-        mkRaceEntry({ raceId: "r-3", jockeyId: "j-1", position: 3, day: 20, raceName: "Day 20 Race" }),
+        mkRaceEntry({
+          raceId: "r-1",
+          jockeyId: "j-1",
+          position: 1,
+          day: 10,
+          raceName: "Day 10 Race",
+        }),
+        mkRaceEntry({
+          raceId: "r-2",
+          jockeyId: "j-1",
+          position: 2,
+          day: 30,
+          raceName: "Day 30 Race",
+        }),
+        mkRaceEntry({
+          raceId: "r-3",
+          jockeyId: "j-1",
+          position: 3,
+          day: 20,
+          raceName: "Day 20 Race",
+        }),
       ]),
     ];
 
@@ -299,9 +319,7 @@ describe("PersonRaceHistoryTab", () => {
         mkRaceEntry({ raceId: "r-4", stableId: "s-other", position: 1, day: 40 }),
       ]),
     ];
-    const hiredStaff: StaffMember[] = [
-      mkStaff("t-1", "trainer", "s-1"),
-    ];
+    const hiredStaff: StaffMember[] = [mkStaff("t-1", "trainer", "s-1")];
 
     renderWithStore(<PersonRaceHistoryTab personId="t-1" roles={["trainer"]} />, {
       horses,

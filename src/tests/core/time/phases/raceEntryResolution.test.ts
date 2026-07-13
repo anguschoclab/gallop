@@ -362,4 +362,166 @@ describe("raceEntryResolutionPhase", () => {
       expect(result.impacts.filter((i) => i.type === "race_entry")).toHaveLength(0);
     });
   });
+
+  describe("NPC jockey assignment via stableMap and jockeysByStableId", () => {
+    it("should assign retained jockey for NPC entry", () => {
+      const npcHorse = createTestHorse({ id: "npc-horse", stableId: "s-npc" });
+      const state: GameState = {
+        ...createTestState(),
+        horses: [npcHorse],
+        races: [
+          {
+            id: "race-1",
+            name: "Test Race",
+            day: 5,
+            distance: 2000,
+            raceClass: "Maiden",
+            entryFee: 500,
+            purse: 10000,
+            minStat: 70,
+            fieldSize: 8,
+            entries: [],
+            resolved: false,
+          },
+        ],
+        npcStables: [{ id: "s-npc", name: "NPC Stable", horses: [npcHorse] } as any],
+        jockeys: [
+          {
+            id: "j-retainer",
+            name: "Retainer",
+            stableId: "s-npc",
+            fame: 50,
+            lastRaceDay: 0,
+          } as any,
+        ],
+      };
+
+      const intent: RaceEntryIntent = {
+        id: "intent-1",
+        day: 1,
+        type: "race_entry",
+        entityId: "npc-horse",
+        priority: 100,
+        source: "npc",
+        sourceId: "s-npc",
+        horseId: "npc-horse",
+        raceId: "race-1",
+      };
+
+      const context = createTestContext(state, [intent]);
+      const result = raceEntryResolutionPhase.execute(context);
+
+      const entryImpact = result.impacts.find((i) => i.type === "race_entry") as any;
+      expect(entryImpact).toBeDefined();
+      expect(entryImpact.jockeyId).toBe("j-retainer");
+    });
+
+    it("should handle NPC entry from non-existent stable gracefully", () => {
+      const npcHorse = createTestHorse({ id: "npc-horse", stableId: "s-nonexistent" });
+      const state: GameState = {
+        ...createTestState(),
+        horses: [npcHorse],
+        races: [
+          {
+            id: "race-1",
+            name: "Test Race",
+            day: 5,
+            distance: 2000,
+            raceClass: "Maiden",
+            entryFee: 500,
+            purse: 10000,
+            minStat: 70,
+            fieldSize: 8,
+            entries: [],
+            resolved: false,
+          },
+        ],
+        npcStables: [],
+        jockeys: [],
+      };
+
+      const intent: RaceEntryIntent = {
+        id: "intent-1",
+        day: 1,
+        type: "race_entry",
+        entityId: "npc-horse",
+        priority: 100,
+        source: "npc",
+        sourceId: "s-nonexistent",
+        horseId: "npc-horse",
+        raceId: "race-1",
+      };
+
+      const context = createTestContext(state, [intent]);
+      const result = raceEntryResolutionPhase.execute(context);
+
+      const entryImpact = result.impacts.find((i) => i.type === "race_entry") as any;
+      expect(entryImpact).toBeDefined();
+    });
+
+    it("should process multiple NPC entries from different stables with retainers", () => {
+      const h1 = createTestHorse({ id: "npc-h1", stableId: "s-a" });
+      const h2 = createTestHorse({ id: "npc-h2", stableId: "s-b" });
+      const state: GameState = {
+        ...createTestState(),
+        horses: [h1, h2],
+        races: [
+          {
+            id: "race-1",
+            name: "Test Race",
+            day: 5,
+            distance: 2000,
+            raceClass: "Maiden",
+            entryFee: 500,
+            purse: 10000,
+            minStat: 70,
+            fieldSize: 8,
+            entries: [],
+            resolved: false,
+          },
+        ],
+        npcStables: [
+          { id: "s-a", name: "Stable A", horses: [h1] } as any,
+          { id: "s-b", name: "Stable B", horses: [h2] } as any,
+        ],
+        jockeys: [
+          { id: "j-a", name: "Jockey A", stableId: "s-a", fame: 50, lastRaceDay: 0 } as any,
+          { id: "j-b", name: "Jockey B", stableId: "s-b", fame: 60, lastRaceDay: 0 } as any,
+        ],
+      };
+
+      const intents: RaceEntryIntent[] = [
+        {
+          id: "i1",
+          day: 1,
+          type: "race_entry",
+          entityId: "npc-h1",
+          priority: 100,
+          source: "npc",
+          sourceId: "s-a",
+          horseId: "npc-h1",
+          raceId: "race-1",
+        },
+        {
+          id: "i2",
+          day: 1,
+          type: "race_entry",
+          entityId: "npc-h2",
+          priority: 100,
+          source: "npc",
+          sourceId: "s-b",
+          horseId: "npc-h2",
+          raceId: "race-1",
+        },
+      ];
+
+      const context = createTestContext(state, intents);
+      const result = raceEntryResolutionPhase.execute(context);
+
+      const entryImpacts = result.impacts.filter((i) => i.type === "race_entry");
+      expect(entryImpacts).toHaveLength(2);
+      const jockeyIds = entryImpacts.map((e: any) => e.jockeyId).sort();
+      expect(jockeyIds).toEqual(["j-a", "j-b"]);
+    });
+  });
 });

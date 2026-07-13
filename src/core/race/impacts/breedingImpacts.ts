@@ -47,7 +47,7 @@ export function generateBreedingImpacts(
         group1WinnersProduced:
           race.graded?.grade === "G1"
             ? (dam.blueHenStatus?.group1WinnersProduced ?? 0) + 1
-            : dam.blueHenStatus?.group1WinnersProduced ?? 0,
+            : (dam.blueHenStatus?.group1WinnersProduced ?? 0),
         blueHenScore: dam.blueHenStatus?.blueHenScore || 0,
         foalsProduced: dam.blueHenStatus?.foalsProduced || 0,
       },

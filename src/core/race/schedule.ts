@@ -141,9 +141,7 @@ export function generateTrackRaces(
       // Fallback to generic generator if regional system is unknown
       const races: Race[] = [];
       const trackSurfaces = track.courses.map((c) => c.surface) as (
-        | "Turf"
-        | "Dirt"
-        | "Synthetic"
+        "Turf" | "Dirt" | "Synthetic"
       )[];
       const availableSurfaces = trackSurfaces.length > 0 ? trackSurfaces : ["Dirt" as const];
       for (let i = 0; i < numRaces; i++) {
@@ -220,9 +218,7 @@ export function generateAnnualCalendar(year: number, existingRaces: Race[]): Rac
 
   // Pre-build dedup set for O(1) lookup
   const existingKeys = new Set(
-    existingRaces
-      .filter((r) => r.graded)
-      .map((r) => `${r.graded!.key}_${r.day}`),
+    existingRaces.filter((r) => r.graded).map((r) => `${r.graded!.key}_${r.day}`),
   );
 
   for (const g of GRADED_RACES) {

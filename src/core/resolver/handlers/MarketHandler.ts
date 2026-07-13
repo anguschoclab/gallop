@@ -12,7 +12,12 @@ import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
-import type { ScoutReportImpact, ConsignmentImpact, ConsignmentWithdrawalImpact, AuctionResolutionImpact } from "../impacts/miscImpacts";
+import type {
+  ScoutReportImpact,
+  ConsignmentImpact,
+  ConsignmentWithdrawalImpact,
+  AuctionResolutionImpact,
+} from "../impacts/miscImpacts";
 import { generateUUID } from "@/core/uuid";
 import type { AuctionLot } from "@/core/market/types";
 
@@ -36,7 +41,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   consignment: (draft, impact, lookupMaps) => {
-    const { horseId, saleId, reservePrice, consignorStableId, breezeSeconds } = impact as ConsignmentImpact;
+    const { horseId, saleId, reservePrice, consignorStableId, breezeSeconds } =
+      impact as ConsignmentImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.consignedSaleId = saleId;

@@ -9,7 +9,12 @@
  * Dependencies: @/core/uuid, @/core/narrative/newsTypes, @/game/types, @/game/rng
  */
 import { createNewsItem } from "@/services/narrative/newsGenerator";
-import type { NewsItem, NewsCategory, NewsImportance, EntityLink } from "@/services/narrative/newsTypes";
+import type {
+  NewsItem,
+  NewsCategory,
+  NewsImportance,
+  EntityLink,
+} from "@/services/narrative/newsTypes";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
 
@@ -33,10 +38,7 @@ function buildRivalryNews(
   },
   rng: Rng,
 ): NewsItem {
-  return createNewsItem(
-    { ...fields, headline: rng.pick(headlines), body: rng.pick(bodies) },
-    rng,
-  );
+  return createNewsItem({ ...fields, headline: rng.pick(headlines), body: rng.pick(bodies) }, rng);
 }
 
 /**
@@ -90,12 +92,17 @@ export function generateRivalryEmergenceNews(
     `The competitive landscape has shifted as ${stable.name} steps into the role of primary antagonist. The rest of the season promises serious fireworks.`,
   ];
 
-  return buildRivalryNews(headlines, bodies, {
-    day: currentDay,
-    category: "stable",
-    importance: "medium",
-    entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
-  }, rng);
+  return buildRivalryNews(
+    headlines,
+    bodies,
+    {
+      day: currentDay,
+      category: "stable",
+      importance: "medium",
+      entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
+    },
+    rng,
+  );
 }
 
 /**
@@ -190,17 +197,22 @@ export function generateGrudgeMatchNews(
         `A bitter outcome in a race with so much pride on the line. ${rivalHorse.name} took the honors, sending ${playerHorse.name} back to the drawing board.`,
       ];
 
-  return buildRivalryNews(headlines, bodies, {
-    day: currentDay,
-    category: "racing",
-    importance: "high",
-    entityLinks: [
-      { type: "horse", id: winner.id, name: winner.name },
-      { type: "horse", id: loser.id, name: loser.name },
-      { type: "race", id: race.id, name: race.name },
-      { type: "stable", id: rivalStable.id, name: rivalStable.name },
-    ],
-  }, rng);
+  return buildRivalryNews(
+    headlines,
+    bodies,
+    {
+      day: currentDay,
+      category: "racing",
+      importance: "high",
+      entityLinks: [
+        { type: "horse", id: winner.id, name: winner.name },
+        { type: "horse", id: loser.id, name: loser.name },
+        { type: "race", id: race.id, name: race.name },
+        { type: "stable", id: rivalStable.id, name: rivalStable.name },
+      ],
+    },
+    rng,
+  );
 }
 
 /**
@@ -252,12 +264,17 @@ export function generateRegionLostNews(
     `${rivalStable.name} threw everything they had into conquering ${region}, and the gamble paid off. The former regional king has been emphatically dethroned.`,
   ];
 
-  return buildRivalryNews(headlines, bodies, {
-    day: currentDay,
-    category: "stable",
-    importance: "high",
-    entityLinks: [{ type: "stable", id: rivalStable.id, name: rivalStable.name }],
-  }, rng);
+  return buildRivalryNews(
+    headlines,
+    bodies,
+    {
+      day: currentDay,
+      category: "stable",
+      importance: "high",
+      entityLinks: [{ type: "stable", id: rivalStable.id, name: rivalStable.name }],
+    },
+    rng,
+  );
 }
 
 /**
@@ -313,10 +330,15 @@ export function generateRivalryEscalationNews(
     `Whatever mutual respect once existed is gone. ${stable.name} has ramped up hostilities, ensuring that every time your horses meet, it will be an absolute battle.`,
   ];
 
-  return buildRivalryNews(headlines, bodies, {
-    day: currentDay,
-    category: "stable",
-    importance: "high",
-    entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
-  }, rng);
+  return buildRivalryNews(
+    headlines,
+    bodies,
+    {
+      day: currentDay,
+      category: "stable",
+      importance: "high",
+      entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
+    },
+    rng,
+  );
 }

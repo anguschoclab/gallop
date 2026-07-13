@@ -173,12 +173,7 @@ export interface CampaignCreationIntent extends Intent {
   type: "campaign_creation";
   horseId: string;
   goalType:
-    | "chase_g1"
-    | "chase_g2"
-    | "chase_g3"
-    | "maximize_earnings"
-    | "develop_maiden"
-    | "free_run";
+    "chase_g1" | "chase_g2" | "chase_g3" | "maximize_earnings" | "develop_maiden" | "free_run";
   targetRaceKey?: string;
 }
 

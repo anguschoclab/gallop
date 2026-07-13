@@ -11,16 +11,17 @@ vi.mock("@tanstack/react-router", () => ({
 import { StableRosterView } from "@/components/stable/StableRosterView";
 import type { Horse } from "@/game/types";
 
-const mkHorse = (overrides: Partial<Horse> = {}): Horse => ({
-  id: "h1",
-  name: "Thunder",
-  age: 3,
-  gender: "colt",
-  energy: 80,
-  peakingIndex: 0,
-  stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70 } as any,
-  ...overrides,
-} as Horse);
+const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
+  ({
+    id: "h1",
+    name: "Thunder",
+    age: 3,
+    gender: "colt",
+    energy: 80,
+    peakingIndex: 0,
+    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70 } as any,
+    ...overrides,
+  }) as Horse;
 
 describe("StableRosterView — tooltip replacement of native title", () => {
   it("no native title attributes remain on action buttons", () => {
@@ -34,7 +35,7 @@ describe("StableRosterView — tooltip replacement of native title", () => {
         navigate={vi.fn()}
       />,
     );
-    const titledButtons = container.querySelectorAll('button[title]');
+    const titledButtons = container.querySelectorAll("button[title]");
     expect(titledButtons).toHaveLength(0);
   });
 
@@ -50,7 +51,7 @@ describe("StableRosterView — tooltip replacement of native title", () => {
       />,
     );
     // The Zap icon is inside the tooltip trigger for Training Room
-    const zapIcons = container.querySelectorAll('svg.lucide-zap');
+    const zapIcons = container.querySelectorAll("svg.lucide-zap");
     expect(zapIcons.length).toBeGreaterThanOrEqual(1);
   });
 
@@ -65,7 +66,7 @@ describe("StableRosterView — tooltip replacement of native title", () => {
         navigate={vi.fn()}
       />,
     );
-    const clockIcons = container.querySelectorAll('svg.lucide-clock');
+    const clockIcons = container.querySelectorAll("svg.lucide-clock");
     expect(clockIcons.length).toBeGreaterThanOrEqual(1);
   });
 });

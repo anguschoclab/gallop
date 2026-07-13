@@ -26,7 +26,12 @@ import {
   getAdaptiveThreshold,
   type LearningState,
 } from "./learningModule";
-import { GRADED_RACES } from "@/data/gradedRaces";
+import {
+  GRADED_RACES,
+  GRADED_RACES_BY_KEY,
+  GRADED_RACES_BY_TRIPLECROWN_KEY,
+  GRADED_RACES_BY_BC_KEY,
+} from "@/data/gradedRaces";
 import { calculateOverallRating, calculateRaceRating } from "@/core/horse/stats";
 import { getTripleCrownKeysForArchetype } from "@/core/breeding/archetypes";
 
@@ -182,7 +187,7 @@ export function detectContender(
 
   // Triple Crown contender criteria - evaluate all series or target series if specified
   if (horse.age === 3 && avgStat > 70) {
-    const tcRaces = GRADED_RACES.filter((r) => r.triplecrownKey);
+    const tcRaces = Array.from(GRADED_RACES_BY_TRIPLECROWN_KEY.values()).flat();
     for (const race of tcRaces) {
       // If stable has breeding archetype, only evaluate matching series
       if (targetSeriesKeys.length > 0 && !targetSeriesKeys.includes(race.triplecrownKey || "")) {
@@ -227,7 +232,7 @@ export function detectContender(
 
   // Breeders Cup contender criteria
   if (horse.age >= 3 && horseRating > 65) {
-    const bcRaces = GRADED_RACES.filter((r) => r.bcKey === "breeders-cup");
+    const bcRaces = GRADED_RACES_BY_BC_KEY.get("breeders-cup") ?? [];
     for (const race of bcRaces) {
       if (
         horse.distanceAptitude > race.distance - 300 &&
@@ -245,7 +250,7 @@ export function detectContender(
 
   // Dubai World Cup contender criteria
   if (horse.age >= 4 && horseRating > 75) {
-    const dwcRace = GRADED_RACES.find((r) => r.key === "dubai-world-cup");
+    const dwcRace = GRADED_RACES_BY_KEY.get("dubai-world-cup");
     if (
       dwcRace &&
       horse.distanceAptitude > dwcRace.distance - 300 &&
@@ -319,21 +324,19 @@ export function getOptimalMajorRaceTarget(
   const contenderStatus = aiState.contenderTracking[horse.id];
   if (!contenderStatus || !contenderStatus.isContender) return null;
 
+  const tcHistoryMap = new Map<string, TripleCrownProgress>();
+  for (const p of triplecrownHistory) {
+    tcHistoryMap.set(`${p.horseId}:${p.triplecrownKey}`, p);
+  }
+
   let bestRaceKey: string | null = null;
   let bestScore = 0;
 
   for (const raceKey of contenderStatus.targetRaces) {
-    const race = GRADED_RACES.find((r) => r.key === raceKey);
+    const race = GRADED_RACES_BY_KEY.get(raceKey);
     if (!race) continue;
 
-    const score = calculateRaceTargetScore(
-      aiState,
-      horse,
-      race,
-      stable,
-      currentDay,
-      triplecrownHistory,
-    );
+    const score = calculateRaceTargetScore(aiState, horse, race, stable, currentDay, tcHistoryMap);
     if (score > bestScore) {
       bestScore = score;
       bestRaceKey = raceKey;
@@ -364,7 +367,7 @@ function calculateRaceTargetScore(
   race: GradedRace,
   stable: Stable,
   currentDay: number,
-  triplecrownHistory: TripleCrownProgress[] = [],
+  tcHistoryMap: Map<string, TripleCrownProgress>,
 ): number {
   let score = 0;
 
@@ -392,9 +395,7 @@ function calculateRaceTargetScore(
     }
 
     // Bonus for series progress
-    const progress = triplecrownHistory.find(
-      (p) => p.horseId === horse.id && p.triplecrownKey === race.triplecrownKey,
-    );
+    const progress = tcHistoryMap.get(`${horse.id}:${race.triplecrownKey}`);
     if (progress && progress.legs.length > 0) {
       // If won previous legs, high bonus to keep chasing
       const wins = progress.legs.filter((l) => l.position === 1).length;
@@ -494,15 +495,13 @@ export function shouldTargetMajorRace(
     return false;
   }
 
+  const tcHistoryMap = new Map<string, TripleCrownProgress>();
+  for (const p of triplecrownHistory) {
+    tcHistoryMap.set(`${p.horseId}:${p.triplecrownKey}`, p);
+  }
+
   // Calculate target score
-  const score = calculateRaceTargetScore(
-    aiState,
-    horse,
-    race,
-    stable,
-    currentDay,
-    triplecrownHistory,
-  );
+  const score = calculateRaceTargetScore(aiState, horse, race, stable, currentDay, tcHistoryMap);
 
   // Get adaptive threshold
   const contextKey = `${stable.personality}:${race.key}`;
@@ -574,7 +573,7 @@ export function getPrepRaceStrategy(
 
   // Series-specific prep strategies based on actual day gaps
   if (targetRace.triplecrownKey) {
-    const seriesRaces = GRADED_RACES.filter((r) => r.triplecrownKey === targetRace.triplecrownKey);
+    const seriesRaces = GRADED_RACES_BY_TRIPLECROWN_KEY.get(targetRace.triplecrownKey) ?? [];
     if (seriesRaces.length >= 2) {
       // Sort by dayOfYear to find gaps
       const sortedRaces = seriesRaces.sort((a, b) => a.dayOfYear - b.dayOfYear);

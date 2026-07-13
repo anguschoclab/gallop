@@ -78,9 +78,7 @@ function StaffDetailPage() {
                   <span className="text-[9px] font-black uppercase tracking-widest text-cream/40 flex items-center gap-2">
                     <Briefcase className="h-3 w-3" /> Name
                   </span>
-                  <span className="text-xs font-bold text-cream uppercase">
-                    {staff.name}
-                  </span>
+                  <span className="text-xs font-bold text-cream uppercase">{staff.name}</span>
                 </div>
                 <div className="flex items-center justify-between p-4">
                   <span className="text-[9px] font-black uppercase tracking-widest text-cream/40">
@@ -168,7 +166,9 @@ function StaffDetailPage() {
                     <div className="grid grid-cols-4 gap-2">
                       <div className="text-center">
                         <div className="text-[8px] font-mono uppercase text-cream/30">Starts</div>
-                        <div className="text-sm font-black text-cream">{staff.raceRecord.starts}</div>
+                        <div className="text-sm font-black text-cream">
+                          {staff.raceRecord.starts}
+                        </div>
                       </div>
                       <div className="text-center">
                         <div className="text-[8px] font-mono uppercase text-cream/30">Wins</div>
@@ -176,11 +176,15 @@ function StaffDetailPage() {
                       </div>
                       <div className="text-center">
                         <div className="text-[8px] font-mono uppercase text-cream/30">Places</div>
-                        <div className="text-sm font-black text-cream/70">{staff.raceRecord.places}</div>
+                        <div className="text-sm font-black text-cream/70">
+                          {staff.raceRecord.places}
+                        </div>
                       </div>
                       <div className="text-center">
                         <div className="text-[8px] font-mono uppercase text-cream/30">Shows</div>
-                        <div className="text-sm font-black text-cream/70">{staff.raceRecord.shows}</div>
+                        <div className="text-sm font-black text-cream/70">
+                          {staff.raceRecord.shows}
+                        </div>
                       </div>
                     </div>
                   </div>

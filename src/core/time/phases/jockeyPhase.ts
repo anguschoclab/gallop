@@ -37,6 +37,7 @@ export const jockeyPhase = {
 
     let jockeys = (state.jockeys ?? []).map((j) => ({ ...j }));
     let npcStables = state.npcStables;
+    const stableMap = new Map(npcStables.map((s) => [s.id, s]));
     let npcAIManager = state.npcAIManager;
     const logs = [...context.logs];
     const impacts: AnyImpact[] = [];
@@ -61,7 +62,7 @@ export const jockeyPhase = {
 
       if (j.contractUntil && j.contractUntil < newDay) {
         if (j.stableId) {
-          const stable = npcStables.find((s) => s.id === j.stableId);
+          const stable = stableMap.get(j.stableId);
           if (!stable) {
             // Player jockey contract expired
             logs.push({

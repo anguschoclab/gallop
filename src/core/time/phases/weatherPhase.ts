@@ -79,6 +79,15 @@ export const weatherPhase = {
     const newImpacts: any[] = [];
     const dramaTrackIds = new Set<string>(); // Track IDs with severe weather drama
 
+    // Pre-index today's graded races by trackId for O(1) drama lookup
+    const todaysGradedRacesByTrackId = new Map<string, (typeof state.races)[number]>();
+    for (const race of state.races) {
+      if (!race.resolved && race.day === newDay && race.graded?.grade) {
+        const tid = raceTrackId(race);
+        if (tid) todaysGradedRacesByTrackId.set(tid, race);
+      }
+    }
+
     for (const trackId of trackIds) {
       const buf = newByTrack[trackId] ?? [];
       const lastState = buf[buf.length - 1];
@@ -100,9 +109,7 @@ export const weatherPhase = {
       if (lastState && lastState.day === newDay - 1) {
         const jump = PATTERN_SEVERITY[today.pattern] - PATTERN_SEVERITY[lastState.pattern];
         if (jump >= 2) {
-          const dramaRace = state.races.find(
-            (r) => !r.resolved && r.day === newDay && r.graded?.grade && raceTrackId(r) === trackId,
-          );
+          const dramaRace = todaysGradedRacesByTrackId.get(trackId);
           if (dramaRace) {
             // All drama jumps (≥2 severity) guarantee track degradation
             dramaTrackIds.add(trackId);

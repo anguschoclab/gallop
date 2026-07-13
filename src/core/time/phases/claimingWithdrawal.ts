@@ -35,10 +35,11 @@ export const claimingWithdrawalPhase: PipelinePhase = {
       (i): i is WithdrawFromClaimingIntent => i.type === "withdraw_from_claiming",
     );
 
+    const raceMap = new Map(races.map((r) => [r.id, r]));
+
     for (const intent of withdrawalIntents) {
-      const raceIndex = races.findIndex((r) => r.id === intent.raceId);
-      if (raceIndex === -1) continue;
-      const race = races[raceIndex];
+      const race = raceMap.get(intent.raceId);
+      if (!race) continue;
 
       const entryIndex = race.entries.findIndex((e) => e.horseId === intent.horseId);
       if (entryIndex === -1) continue;
@@ -46,6 +47,7 @@ export const claimingWithdrawalPhase: PipelinePhase = {
       if (entry.withdrawnFromClaiming) continue;
 
       // Update the entry immutably within the races array.
+      const raceIndex = races.indexOf(race);
       races[raceIndex] = {
         ...race,
         entries: race.entries.map((e, i) =>

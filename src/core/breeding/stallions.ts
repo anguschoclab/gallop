@@ -167,7 +167,6 @@ export function calculateRecommendedStudFee(
  * Alias for calculateRecommendedStudFee for backward compatibility.
  */
 
-
 /**
  * Recalculate standing fee after new progeny results or major wins.
  *

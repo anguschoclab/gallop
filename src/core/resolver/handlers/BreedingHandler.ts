@@ -66,7 +66,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     }
   },
   mare_foaling_update: (draft, impact, lookupMaps) => {
-    const { horseId, lastFoaledDay, foalsProduced, blueHenStatus } = impact as MareFoalingUpdateImpact;
+    const { horseId, lastFoaledDay, foalsProduced, blueHenStatus } =
+      impact as MareFoalingUpdateImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.lastFoaledDay = lastFoaledDay;

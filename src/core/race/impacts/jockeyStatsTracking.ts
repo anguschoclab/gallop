@@ -60,10 +60,7 @@ export function generateJockeyStatsTrackingImpacts(
         jockeyId: jockey.id,
         careerStarts: jockey.careerStarts + 1,
         careerWins: jockey.careerWins + (r.position === 1 ? 1 : 0),
-        fame: Math.min(
-          MAX_FAME,
-          jockey.fame + (r.position === 1 ? 2 : r.position <= 3 ? 0.5 : 0),
-        ),
+        fame: Math.min(MAX_FAME, jockey.fame + (r.position === 1 ? 2 : r.position <= 3 ? 0.5 : 0)),
         apprenticeProgression,
         reason: `Rode ${horse.name} to ${r.position}${getOrdinalSuffix(r.position)}`,
       } as JockeyStatsImpact);

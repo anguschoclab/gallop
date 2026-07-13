@@ -81,6 +81,14 @@ export function resolvePregnancies(
   const newLogs: { day: number; text: string }[] = [];
   const pregnancies = currentPregnancies.map((p) => ({ ...p }));
   const damsById = new Map(horses.map((h) => [h.id, h]));
+  const stableMap = new Map(stables.map((s) => [s.id, s]));
+  const existingFoalsBySireId = new Map<string, number>();
+  for (const h of horses) {
+    const sireId = h.pedigree?.sireId;
+    if (sireId) {
+      existingFoalsBySireId.set(sireId, (existingFoalsBySireId.get(sireId) ?? 0) + 1);
+    }
+  }
   const foals: Horse[] = [];
   let cashAdjustment = 0;
   const mareFoalingUpdates: PregnancyResult["mareFoalingUpdates"] = [];
@@ -113,7 +121,7 @@ export function resolvePregnancies(
     };
 
     if (dam?.stableId) {
-      const stable = stables.find((s) => s.id === dam.stableId);
+      const stable = stableMap.get(dam.stableId);
       if (stable) {
         const regionalSystem = getRegionalSystemFromCountry(stable.country || "USA");
         namingContext.region = regionalSystem;
@@ -156,7 +164,7 @@ export function resolvePregnancies(
 
       // Compute sire's new lifetime foals count without mutating the input array.
       if (sire.stud) {
-        const existingFoalsCount = horses.filter((h) => h.pedigree?.sireId === sire.id).length;
+        const existingFoalsCount = existingFoalsBySireId.get(sire.id) ?? 0;
         const newFoalsCount = foals.filter((f) => f.pedigree?.sireId === sire.id).length;
         studCareerUpdates.push({
           horseId: sire.id,

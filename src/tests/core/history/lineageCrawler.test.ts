@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { computePedigreeFounderInfluence, computeFounderInfluence } from "@/core/history/lineageCrawler";
+import {
+  computePedigreeFounderInfluence,
+  computeFounderInfluence,
+} from "@/core/history/lineageCrawler";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { PedigreeNode } from "@/core/breeding/types";
 
@@ -113,7 +116,13 @@ describe("lineageCrawler", () => {
       const child = createTestHorse({
         id: "c1",
         name: "Child",
-        pedigree: { name: "Child", generation: 1, sireId: "f1", sireName: "Founder", damName: "Dam" },
+        pedigree: {
+          name: "Child",
+          generation: 1,
+          sireId: "f1",
+          sireName: "Founder",
+          damName: "Dam",
+        },
       });
       const result = computeFounderInfluence(founder, [founder, child], 100);
       expect(result.descendantCount).toBe(1);
@@ -125,12 +134,24 @@ describe("lineageCrawler", () => {
       const child = createTestHorse({
         id: "c1",
         name: "Child",
-        pedigree: { name: "Child", generation: 1, sireId: "f1", sireName: "Founder", damName: "Dam" },
+        pedigree: {
+          name: "Child",
+          generation: 1,
+          sireId: "f1",
+          sireName: "Founder",
+          damName: "Dam",
+        },
       });
       const grandchild = createTestHorse({
         id: "g1",
         name: "Grandchild",
-        pedigree: { name: "Grandchild", generation: 2, sireId: "c1", sireName: "Child", damName: "Dam2" },
+        pedigree: {
+          name: "Grandchild",
+          generation: 2,
+          sireId: "c1",
+          sireName: "Child",
+          damName: "Dam2",
+        },
       });
       const result = computeFounderInfluence(founder, [founder, child, grandchild], 100);
       expect(result.descendantCount).toBe(2);
@@ -142,7 +163,13 @@ describe("lineageCrawler", () => {
       const child = createTestHorse({
         id: "c1",
         name: "Child",
-        pedigree: { name: "Child", generation: 1, sireId: "f1", sireName: "Founder", damName: "Dam" },
+        pedigree: {
+          name: "Child",
+          generation: 1,
+          sireId: "f1",
+          sireName: "Founder",
+          damName: "Dam",
+        },
       });
       const allHorses = [founder, child];
 
@@ -157,7 +184,13 @@ describe("lineageCrawler", () => {
           parentToChildrenMap.set(h.pedigree.sireId, arr);
         }
       }
-      const withMaps = computeFounderInfluence(founder, allHorses, 100, horseMap, parentToChildrenMap);
+      const withMaps = computeFounderInfluence(
+        founder,
+        allHorses,
+        100,
+        horseMap,
+        parentToChildrenMap,
+      );
 
       expect(withMaps).toEqual(withoutMaps);
     });
@@ -170,9 +203,26 @@ describe("lineageCrawler", () => {
         lifetimeEarnings: 50000,
         careerWins: 5,
         raceHistory: [
-          { raceId: "r1", raceName: "Test Race", day: 1, position: 1, grade: "G1", beyer: 90, surface: "Turf", distance: 1600, purse: 30000, purseEarned: 30000 },
+          {
+            raceId: "r1",
+            raceName: "Test Race",
+            day: 1,
+            position: 1,
+            grade: "G1",
+            beyer: 90,
+            surface: "Turf",
+            distance: 1600,
+            purse: 30000,
+            purseEarned: 30000,
+          },
         ],
-        pedigree: { name: "Child", generation: 1, sireId: "f1", sireName: "Founder", damName: "Dam" },
+        pedigree: {
+          name: "Child",
+          generation: 1,
+          sireId: "f1",
+          sireName: "Founder",
+          damName: "Dam",
+        },
       });
       const result = computeFounderInfluence(founder, [founder, child], 100);
       expect(result.totalEarnings).toBeGreaterThan(0);

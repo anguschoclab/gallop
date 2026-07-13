@@ -13,6 +13,7 @@
 ## Context
 
 Existing constants in `src/constants/gameConstants.ts`:
+
 - `OUTPOST_BASE_SLOTS = 12`
 - `TRANSPORT_FATIGUE_SPIKE = 40`
 - `ACCLIMATIZATION_PERIOD = 7`
@@ -28,6 +29,7 @@ The reputation system already has a numeric score (0–1000). Requiring ≥ 300 
 ## File Structure
 
 **New files:**
+
 - `src/types/outpost.ts` — `Outpost`, `OutpostFacility`, `OutpostTrainer` types
 - `src/game/store/slices/outpostSlice.ts` — `establishOutpost`, `shipHorseToOutpost`, `assignOutpostTrainer` actions
 - `src/routes/outposts.tsx` — `/outposts/` index route (grid of outpost cards)
@@ -37,6 +39,7 @@ The reputation system already has a numeric score (0–1000). Requiring ≥ 300 
 - `src/tests/game/store/outpostActions.test.ts` — unit tests for store actions
 
 **Modified files:**
+
 - `src/types/state.ts` — add `playerOutposts: Outpost[]` to `SystemsState`
 - `src/game/store/index.ts` — merge `outpostSlice` into store
 - `src/core/resolver/handlers/infrastructureHandler.ts` — replace `(state as any).outposts` with `state.playerOutposts`
@@ -63,6 +66,7 @@ The reputation system already has a numeric score (0–1000). Requiring ≥ 300 
 ## Task 1: Define Outpost types and add playerOutposts to state
 
 **Files:**
+
 - Create: `src/types/outpost.ts`
 - Modify: `src/types/state.ts`
 - Modify: `src/constants/gameConstants.ts`
@@ -70,6 +74,7 @@ The reputation system already has a numeric score (0–1000). Requiring ≥ 300 
 - [ ] **Step 1: Create outpost types**
 
 Create `src/types/outpost.ts`:
+
 ```typescript
 export interface OutpostFacility {
   type: string;
@@ -88,7 +93,7 @@ export interface Outpost {
   name: string;
   region: string;
   establishedDay: number;
-  maxSlots: number;        // default: OUTPOST_BASE_SLOTS
+  maxSlots: number; // default: OUTPOST_BASE_SLOTS
   facilities: OutpostFacility[];
   trainerId?: string;
   trainer?: OutpostTrainer;
@@ -99,6 +104,7 @@ export interface Outpost {
 - [ ] **Step 2: Add playerOutposts to SystemsState**
 
 In `src/types/state.ts`, add:
+
 ```typescript
 playerOutposts: Outpost[];
 ```
@@ -106,20 +112,23 @@ playerOutposts: Outpost[];
 - [ ] **Step 3: Add establishment constants**
 
 In `src/constants/gameConstants.ts`:
+
 ```typescript
 export const OUTPOST_ESTABLISHMENT_COST = 50000;
-export const OUTPOST_MIN_REPUTATION     = 300;
+export const OUTPOST_MIN_REPUTATION = 300;
 ```
 
 - [ ] **Step 4: Add acclimatization fields to Horse**
 
 In `src/types/horse.ts`, add optional fields:
+
 ```typescript
 currentOutpostId?: string;
 acclimatizationDaysRemaining?: number;
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/types/outpost.ts src/types/state.ts src/types/horse.ts src/constants/gameConstants.ts
 git commit -m "feat(outpost): define Outpost type, add playerOutposts to SystemsState, add horse transport fields"
@@ -130,6 +139,7 @@ git commit -m "feat(outpost): define Outpost type, add playerOutposts to Systems
 ## Task 2: Implement outpostSlice store actions
 
 **Files:**
+
 - Create: `src/game/store/slices/outpostSlice.ts`
 - Modify: `src/game/store/index.ts`
 
@@ -238,6 +248,7 @@ assignOutpostTrainer: (outpostId: string, trainer: OutpostTrainer) => {
 - [ ] **Step 4: Merge outpostSlice into store**
 
 In `src/game/store/index.ts`, import and spread `outpostSlice`:
+
 ```typescript
 import { createOutpostSlice } from "./slices/outpostSlice";
 // In create():
@@ -245,6 +256,7 @@ import { createOutpostSlice } from "./slices/outpostSlice";
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/game/store/slices/outpostSlice.ts src/game/store/index.ts
 git commit -m "feat(outpost): add outpostSlice with establishOutpost/shipHorseToOutpost/assignOutpostTrainer actions"
@@ -255,21 +267,25 @@ git commit -m "feat(outpost): add outpostSlice with establishOutpost/shipHorseTo
 ## Task 3: Fix InfrastructureHandler cast
 
 **Files:**
+
 - Modify: `src/core/resolver/handlers/infrastructureHandler.ts`
 
 - [ ] **Step 1: Replace (state as any).outposts with state.playerOutposts**
 
 Find:
+
 ```typescript
-(state as any).outposts ?? []
+(state as any).outposts ?? [];
 ```
 
 Replace with:
+
 ```typescript
-state.playerOutposts ?? []
+state.playerOutposts ?? [];
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/core/resolver/handlers/infrastructureHandler.ts
 git commit -m "fix(outpost): replace (state as any).outposts cast with state.playerOutposts in InfrastructureHandler"
@@ -280,11 +296,13 @@ git commit -m "fix(outpost): replace (state as any).outposts cast with state.pla
 ## Task 4: Add acclimatization decay to energy phase
 
 **Files:**
+
 - Modify: `src/core/time/phases/energy.ts` (or the fatigue decay module)
 
 - [ ] **Step 1: Add acclimatization decay**
 
 In the daily energy/fatigue tick, after existing fatigue recovery logic, add:
+
 ```typescript
 for (const horse of state.playerHorses) {
   if ((horse.acclimatizationDaysRemaining ?? 0) > 0) {
@@ -298,6 +316,7 @@ for (const horse of state.playerHorses) {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/core/time/phases/energy.ts
 git commit -m "feat(outpost): add acclimatization decay to energy phase — removes transport fatigue after ACCLIMATIZATION_PERIOD days"
@@ -308,16 +327,29 @@ git commit -m "feat(outpost): add acclimatization decay to energy phase — remo
 ## Task 5: Build EstablishOutpostDialog component
 
 **Files:**
+
 - Create: `src/components/outpost/EstablishOutpostDialog.tsx`
 
 A dialog with:
+
 1. Outpost name input
 2. Region selector (dropdown of available regions: UK, USA, Japan, France, Australia, UAE, etc.)
 3. Cost summary ($50,000) and reputation check warning
 4. Confirm/Cancel buttons
 
 ```tsx
-const AVAILABLE_REGIONS = ["UK", "USA", "Japan", "France", "Australia", "UAE", "Dubai", "Ireland", "Germany", "Hong Kong"];
+const AVAILABLE_REGIONS = [
+  "UK",
+  "USA",
+  "Japan",
+  "France",
+  "Australia",
+  "UAE",
+  "Dubai",
+  "Ireland",
+  "Germany",
+  "Hong Kong",
+];
 
 export function EstablishOutpostDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [name, setName] = useState("");
@@ -336,28 +368,54 @@ export function EstablishOutpostDialog({ open, onClose }: { open: boolean; onClo
     <dialog open className="establish-outpost-dialog">
       <h2>Establish New Outpost</h2>
 
-      <label>Outpost Name
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g., Tokyo Training Centre" />
+      <label>
+        Outpost Name
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="e.g., Tokyo Training Centre"
+        />
       </label>
 
-      <label>Region
+      <label>
+        Region
         <select value={region} onChange={(e) => setRegion(e.target.value)}>
-          {AVAILABLE_REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
+          {AVAILABLE_REGIONS.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
         </select>
       </label>
 
       <div className="cost-summary">
-        <p>Establishment cost: <strong>${OUTPOST_ESTABLISHMENT_COST.toLocaleString()}</strong></p>
-        <p>Base capacity: <strong>{OUTPOST_BASE_SLOTS} horses</strong></p>
-        {!hasReputation && <p className="warning">Requires reputation ≥ {OUTPOST_MIN_REPUTATION} (you have {reputation})</p>}
-        {!canAfford && <p className="warning">Requires ${OUTPOST_ESTABLISHMENT_COST.toLocaleString()} (you have ${cash.toLocaleString()})</p>}
+        <p>
+          Establishment cost: <strong>${OUTPOST_ESTABLISHMENT_COST.toLocaleString()}</strong>
+        </p>
+        <p>
+          Base capacity: <strong>{OUTPOST_BASE_SLOTS} horses</strong>
+        </p>
+        {!hasReputation && (
+          <p className="warning">
+            Requires reputation ≥ {OUTPOST_MIN_REPUTATION} (you have {reputation})
+          </p>
+        )}
+        {!canAfford && (
+          <p className="warning">
+            Requires ${OUTPOST_ESTABLISHMENT_COST.toLocaleString()} (you have $
+            {cash.toLocaleString()})
+          </p>
+        )}
       </div>
 
       <div className="dialog-actions">
         <button onClick={onClose}>Cancel</button>
         <button
           disabled={!canEstablish}
-          onClick={() => { establishOutpost(name.trim(), region); onClose(); }}
+          onClick={() => {
+            establishOutpost(name.trim(), region);
+            onClose();
+          }}
           className="btn-primary"
         >
           Establish Outpost
@@ -369,6 +427,7 @@ export function EstablishOutpostDialog({ open, onClose }: { open: boolean; onClo
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/components/outpost/EstablishOutpostDialog.tsx
 git commit -m "feat(outpost): add EstablishOutpostDialog with name/region inputs, cost summary, and reputation gate"
@@ -379,6 +438,7 @@ git commit -m "feat(outpost): add EstablishOutpostDialog with name/region inputs
 ## Task 6: Build OutpostCard component
 
 **Files:**
+
 - Create: `src/components/outpost/OutpostCard.tsx`
 
 ```tsx
@@ -387,7 +447,9 @@ export function OutpostCard({ outpost, horseCount }: { outpost: Outpost; horseCo
     <Link to="/outposts/$outpostId" params={{ outpostId: outpost.id }} className="outpost-card">
       <h3>{outpost.name}</h3>
       <p className="outpost-region">{outpost.region}</p>
-      <p>{horseCount} / {outpost.maxSlots} horses</p>
+      <p>
+        {horseCount} / {outpost.maxSlots} horses
+      </p>
       <p>{outpost.trainer ? `Trainer: ${outpost.trainer.name}` : "No trainer assigned"}</p>
     </Link>
   );
@@ -395,6 +457,7 @@ export function OutpostCard({ outpost, horseCount }: { outpost: Outpost; horseCo
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/components/outpost/OutpostCard.tsx
 git commit -m "feat(outpost): add OutpostCard component with horse count and trainer display"
@@ -405,6 +468,7 @@ git commit -m "feat(outpost): add OutpostCard component with horse count and tra
 ## Task 7: Build /outposts/ index route
 
 **Files:**
+
 - Create: `src/routes/outposts.tsx`
 
 ```tsx
@@ -430,7 +494,9 @@ function OutpostsIndexPage() {
         <div className="outposts-empty">
           <p>You have no outposts yet.</p>
           <p>Establish your first outpost to send horses to train in other regions.</p>
-          <p><strong>Requirements:</strong> Reputation ≥ 300 and $50,000</p>
+          <p>
+            <strong>Requirements:</strong> Reputation ≥ 300 and $50,000
+          </p>
         </div>
       ) : (
         <div className="outpost-grid">
@@ -448,6 +514,7 @@ function OutpostsIndexPage() {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/routes/outposts.tsx
 git commit -m "feat(outpost): add /outposts/ index route with outpost grid and establish dialog"
@@ -458,6 +525,7 @@ git commit -m "feat(outpost): add /outposts/ index route with outpost grid and e
 ## Task 8: Build /outposts/$outpostId route
 
 **Files:**
+
 - Create: `src/routes/outposts.$outpostId.tsx`
 
 3 tabs: **Roster**, **Facilities**, **Logistics**.
@@ -472,7 +540,9 @@ type Tab = "roster" | "facilities" | "logistics";
 function OutpostDetailPage() {
   const { outpostId } = Route.useParams();
   const outpost = useRacingStore((s) => (s.playerOutposts ?? []).find((o) => o.id === outpostId));
-  const horses = useRacingStore((s) => s.playerHorses.filter((h) => h.currentOutpostId === outpostId));
+  const horses = useRacingStore((s) =>
+    s.playerHorses.filter((h) => h.currentOutpostId === outpostId),
+  );
   const homeHorses = useRacingStore((s) => s.playerHorses.filter((h) => !h.currentOutpostId));
   const shipHorse = useRacingStore((s) => s.shipHorseToOutpost);
   const [activeTab, setActiveTab] = useState<Tab>("roster");
@@ -484,26 +554,25 @@ function OutpostDetailPage() {
       <header>
         <h1>{outpost.name}</h1>
         <span className="outpost-region-tag">{outpost.region}</span>
-        <span>{horses.length} / {outpost.maxSlots} horses</span>
+        <span>
+          {horses.length} / {outpost.maxSlots} horses
+        </span>
       </header>
 
       <nav className="tab-nav">
         {(["roster", "facilities", "logistics"] as Tab[]).map((tab) => (
-          <button key={tab} className={activeTab === tab ? "tab-active" : ""} onClick={() => setActiveTab(tab)}>
+          <button
+            key={tab}
+            className={activeTab === tab ? "tab-active" : ""}
+            onClick={() => setActiveTab(tab)}
+          >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
           </button>
         ))}
       </nav>
 
-      {activeTab === "roster" && (
-        <OutpostRoster
-          horses={horses}
-          outpostId={outpostId}
-        />
-      )}
-      {activeTab === "facilities" && (
-        <OutpostFacilities outpost={outpost} />
-      )}
+      {activeTab === "roster" && <OutpostRoster horses={horses} outpostId={outpostId} />}
+      {activeTab === "facilities" && <OutpostFacilities outpost={outpost} />}
       {activeTab === "logistics" && (
         <OutpostLogistics
           outpost={outpost}
@@ -517,6 +586,7 @@ function OutpostDetailPage() {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/routes/outposts.$outpostId.tsx
 git commit -m "feat(outpost): add /outposts/$outpostId route with Roster/Facilities/Logistics tabs"
@@ -527,11 +597,13 @@ git commit -m "feat(outpost): add /outposts/$outpostId route with Roster/Facilit
 ## Task 9: Add Outposts entry to Sidebar navigation
 
 **Files:**
+
 - Modify: `src/components/layout/Sidebar.tsx`
 
 - [ ] **Step 1: Add nav entry**
 
 Add under the existing facility/infrastructure grouping:
+
 ```tsx
 <Link to="/outposts/" className="sidebar-link">
   Outposts
@@ -539,6 +611,7 @@ Add under the existing facility/infrastructure grouping:
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/components/layout/Sidebar.tsx
 git commit -m "feat(outpost): add Outposts entry to sidebar navigation"
@@ -549,6 +622,7 @@ git commit -m "feat(outpost): add Outposts entry to sidebar navigation"
 ## Task 10: Add CSS for outpost pages and initialize state
 
 **Files:**
+
 - Modify: `src/styles.css`
 - Modify: `src/game/store/initialState.ts`
 
@@ -597,6 +671,7 @@ playerOutposts: [],
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/styles.css src/game/store/initialState.ts
 git commit -m "feat(outpost): add outpost CSS and initialize playerOutposts in game state"

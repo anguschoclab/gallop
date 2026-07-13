@@ -6,7 +6,11 @@ const invalidate = vi.fn();
 const reset = vi.fn();
 
 vi.mock("@tanstack/react-router", () => ({
-  Link: ({ children, to, ...props }: { children?: ReactNode; to?: string } & Record<string, unknown>) =>
+  Link: ({
+    children,
+    to,
+    ...props
+  }: { children?: ReactNode; to?: string } & Record<string, unknown>) =>
     createElement("a", { href: to, ...props }, children),
   useRouter: () => ({ invalidate }),
 }));

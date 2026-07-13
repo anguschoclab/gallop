@@ -11,7 +11,8 @@ import { createRng, hashStr } from "@/core/common/rng";
 import type { KoppenCode } from "./koppenTypes";
 import { KOPPEN_PROFILES } from "./koppenProfiles";
 import { getTrackKoppen } from "./trackKoppenMappings";
-import { getTrackHemisphere } from "./trackClimate";
+import { getTrackHemisphere, getTrackCountry } from "./trackClimate";
+import { getSeasonalModifiers, applyModifiers } from "./seasonalModifiers";
 import {
   type SimWeatherPattern,
   SIM_WEATHER_PATTERNS,
@@ -21,6 +22,22 @@ import {
 } from "./weatherTypes";
 
 export { toTrackWeatherPattern };
+
+/**
+ * Get the actual calendar month (1-12) from a day number, without hemisphere shift.
+ * Used for seasonal modifier lookup since modifiers are defined in real-world months.
+ * @param day
+ */
+function getCalendarMonth(day: number): number {
+  const dayOfYear = ((day - 1) % 365) + 1;
+  const monthLengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  let dayCount = 0;
+  for (let month = 0; month < 12; month++) {
+    dayCount += monthLengths[month];
+    if (dayOfYear <= dayCount) return month + 1;
+  }
+  return 12;
+}
 
 /**
  * Get month (1-12) from day of year, accounting for hemisphere.
@@ -250,7 +267,21 @@ export function stepWeather(
   const rng = createRng(hashStr(`${trackId}:${day}`));
 
   // Get base monthly transition probabilities
-  const transitions = generateMonthlyTransitions(koppen, month);
+  let transitions = generateMonthlyTransitions(koppen, month);
+
+  // Apply seasonal modifiers (monsoons, dry seasons, hurricane seasons, etc.)
+  const calendarMonth = getCalendarMonth(day);
+  const country = getTrackCountry(trackId);
+  const modifiers = getSeasonalModifiers(country, calendarMonth);
+
+  if (modifiers.length > 0) {
+    const record: Record<string, number> = {};
+    for (let i = 0; i < SIM_WEATHER_PATTERNS.length; i++) {
+      record[SIM_WEATHER_PATTERNS[i]] = transitions[i];
+    }
+    const modified = applyModifiers(record, modifiers);
+    transitions = SIM_WEATHER_PATTERNS.map((p) => modified[p] ?? 0);
+  }
 
   // Adjust based on previous pattern (Markov property)
   const fromIdx = prev ? SIM_WEATHER_PATTERNS.indexOf(prev.pattern) : 0;

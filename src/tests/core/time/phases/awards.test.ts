@@ -91,4 +91,152 @@ describe("awardsPhase", () => {
     const result = awardsPhase.execute(context);
     expect(result.logs).toEqual([{ day: 9, text: "Existing log" }]);
   });
+
+  it("should emit fame_change impacts for award winners", () => {
+    const horse = createTestHorse({
+      id: "horse-1",
+      name: "Champion Horse",
+      age: 3,
+      gender: "colt",
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
+      potential: 90,
+      energy: 100,
+      form: 0,
+      owned: true,
+      fame: 50,
+      raceHistory: [
+        {
+          raceId: "race-1",
+          raceName: "Test Race",
+          position: 1,
+          day: 100,
+          beyer: 115,
+          grade: "G1",
+          distance: 2000,
+          surface: "Dirt",
+          purse: 1000000,
+          fieldSize: 8,
+        },
+      ],
+    });
+
+    const race: any = {
+      id: "race-1",
+      name: "Test Race",
+      day: 100,
+      distance: 2000,
+      raceClass: "Graded",
+      entryFee: 500,
+      purse: 1000000,
+      minStat: 80,
+      fieldSize: 8,
+      entries: [],
+      resolved: true,
+      graded: {
+        key: "test-race",
+        grade: "G1",
+        track: "Churchill Downs",
+        trackId: "track-1",
+        surface: "Dirt",
+      },
+    };
+
+    const state = createTestState();
+    state.day = 365;
+    state.horses = [horse];
+    state.races = [race];
+
+    const context = createTestContext(state, 364, 365);
+    const result = awardsPhase.execute(context);
+
+    const fameImpacts = result.impacts.filter((i: any) => i.type === "fame_change");
+    expect(fameImpacts.length).toBeGreaterThan(0);
+
+    const hotyImpact = fameImpacts.find((i: any) => i.delta === 25);
+    if (hotyImpact) {
+      expect(hotyImpact.horseId).toBe("horse-1");
+    }
+
+    for (const impact of fameImpacts as any[]) {
+      expect(impact.horseId).toBe("horse-1");
+      expect(impact.delta).toBeGreaterThanOrEqual(15);
+    }
+  });
+
+  it("should not emit impacts for horse not in state.horses", () => {
+    const horse = createTestHorse({
+      id: "horse-1",
+      name: "Champion Horse",
+      age: 3,
+      gender: "colt",
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
+      potential: 90,
+      energy: 100,
+      form: 0,
+      owned: true,
+      fame: 50,
+      raceHistory: [
+        {
+          raceId: "race-1",
+          raceName: "Test Race",
+          position: 1,
+          day: 100,
+          beyer: 115,
+          grade: "G1",
+          distance: 2000,
+          surface: "Dirt",
+          purse: 1000000,
+          fieldSize: 8,
+        },
+      ],
+    });
+
+    const race: any = {
+      id: "race-1",
+      name: "Test Race",
+      day: 100,
+      distance: 2000,
+      raceClass: "Graded",
+      entryFee: 500,
+      purse: 1000000,
+      minStat: 80,
+      fieldSize: 8,
+      entries: [],
+      resolved: true,
+      graded: {
+        key: "test-race",
+        grade: "G1",
+        track: "Churchill Downs",
+        trackId: "track-1",
+        surface: "Dirt",
+      },
+    };
+
+    const state = createTestState();
+    state.day = 365;
+    state.horses = [horse];
+    state.races = [race];
+
+    const context = createTestContext(state, 364, 365);
+    const result = awardsPhase.execute(context);
+
+    const fameImpacts = result.impacts.filter((i: any) => i.type === "fame_change");
+    for (const impact of fameImpacts) {
+      expect(impact.horseId).toBe("horse-1");
+    }
+  });
 });

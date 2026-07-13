@@ -43,14 +43,14 @@ export const racesPhase = {
     const impacts: AnyImpact[] = [];
     if (state.campaigns) {
       // ⚡ Bolt Optimization: Pre-calculate hash maps for O(1) lookups instead of running O(N) .find() inside nested loops
-      const raceById = new Map<string, typeof pruned[0]>();
-      const raceByKey = new Map<string, typeof pruned[0]>();
+      const raceById = new Map<string, (typeof pruned)[0]>();
+      const raceByKey = new Map<string, (typeof pruned)[0]>();
       for (const r of pruned) {
         if (!raceById.has(r.id)) raceById.set(r.id, r);
         if (r.graded?.key && !raceByKey.has(r.graded.key)) raceByKey.set(r.graded.key, r);
       }
 
-      const horseById = new Map<string, typeof state.horses[0]>();
+      const horseById = new Map<string, (typeof state.horses)[0]>();
       for (const h of state.horses) {
         if (!horseById.has(h.id)) horseById.set(h.id, h);
       }

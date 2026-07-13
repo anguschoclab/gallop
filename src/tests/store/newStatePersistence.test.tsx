@@ -58,9 +58,7 @@ const investor: InvestorRecord = {
   investedCash: 40000,
   joinedDay: 5,
   satisfaction: 72,
-  expectations: [
-    { kind: "dividend", target: 1000, horizonDays: 30, history: ["met"] },
-  ],
+  expectations: [{ kind: "dividend", target: 1000, horizonDays: 30, history: ["met"] }],
 };
 
 const inquiry: StewardsInquiry = {
@@ -114,9 +112,7 @@ describe("Persistence of nominations / investors / stewards inquiries", () => {
     it("StewardsInquiryOverlay opens for a rehydrated inquiry involving a player horse", () => {
       const base = createDefaultGameState();
       const seededState: Partial<GameState> = {
-        horses: [
-          { id: "horse-1", name: "Silver Comet", owned: true } as any,
-        ],
+        horses: [{ id: "horse-1", name: "Silver Comet", owned: true } as any],
         playerNominations: [nomination],
         syndicateInvestors: { "synd-1": investor },
         stewardsInquiries: [inquiry],
@@ -131,9 +127,7 @@ describe("Persistence of nominations / investors / stewards inquiries", () => {
       render(<StewardsInquiryOverlay />);
       expect(screen.getByText("Stewards Inquiry")).toBeInTheDocument();
       expect(screen.getByText("Silver Comet")).toBeInTheDocument();
-      expect(
-        screen.getByText(/Bumped rival in the stretch/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Bumped rival in the stretch/i)).toBeInTheDocument();
 
       // Store state also carries the other two persisted fields.
       const s = useGame.getState() as GameState;

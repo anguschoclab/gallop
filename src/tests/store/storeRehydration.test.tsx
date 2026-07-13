@@ -80,9 +80,7 @@ function simulateVersionMismatchRehydration(
   if ((stored as any).storeVersion !== STORE_STATE_VERSION) {
     return {
       ...defaults,
-      playerNominations: Array.isArray(stored.playerNominations)
-        ? stored.playerNominations
-        : [],
+      playerNominations: Array.isArray(stored.playerNominations) ? stored.playerNominations : [],
       syndicateInvestors:
         stored.syndicateInvestors && typeof stored.syndicateInvestors === "object"
           ? stored.syndicateInvestors
@@ -232,7 +230,10 @@ describe("Navigation simulation — state survives route changes", () => {
     // Simulate a reload: persist → JSON → rehydrate
     const s = useGame.getState() as any;
     const persisted = JSON.parse(
-      JSON.stringify({ playerNominations: s.playerNominations, syndicateInvestors: s.syndicateInvestors }),
+      JSON.stringify({
+        playerNominations: s.playerNominations,
+        syndicateInvestors: s.syndicateInvestors,
+      }),
     );
 
     useGame.setState({
@@ -273,10 +274,7 @@ describe("Navigation simulation — state survives route changes", () => {
 
   it("StewardsInquiryOverlay remains closed after reload on /syndicate/:id when dismissed key is set", () => {
     // Mark the inquiry as already dismissed in localStorage
-    localStorage.setItem(
-      "stewards.inquiries.dismissed.v1",
-      JSON.stringify(["inq-overlay"]),
-    );
+    localStorage.setItem("stewards.inquiries.dismissed.v1", JSON.stringify(["inq-overlay"]));
 
     useGame.setState({
       ...createDefaultGameState(),

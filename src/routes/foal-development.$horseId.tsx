@@ -105,10 +105,7 @@ function FoalDevelopmentPage() {
                       const d = delta as number;
                       const positive = d > 0;
                       return (
-                        <li
-                          key={stat}
-                          className={positive ? "text-emerald-400" : "text-rose-400"}
-                        >
+                        <li key={stat} className={positive ? "text-emerald-400" : "text-rose-400"}>
                           {stat}: {positive ? "+" : ""}
                           {d}
                         </li>

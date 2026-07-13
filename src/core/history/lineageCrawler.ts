@@ -33,7 +33,7 @@ export function computeFounderInfluence(
   allHorses: Horse[],
   currentDay: number,
   horseMap?: Map<string, Horse>,
-  parentToChildrenMap?: Map<string, string[]>
+  parentToChildrenMap?: Map<string, string[]>,
 ): FounderRecord {
   const descendants = new Set<string>();
   const queue: { id: string; gen: number }[] = [{ id: founder.id, gen: 0 }];

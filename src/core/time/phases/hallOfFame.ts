@@ -41,10 +41,17 @@ export const hallOfFamePhase: PipelinePhase = {
 
     // Check if Hall of Fame exists in state
     const existingHallOfFame = state.hallOfFame || [];
+    const inductedIds = new Set(existingHallOfFame.map((h) => h.horseId));
+    const hotyAwardsByHorseId = new Map<string, number>();
+    for (const a of state.awards || []) {
+      if (a.category === "horse_of_the_year") {
+        hotyAwardsByHorseId.set(a.horseId, (hotyAwardsByHorseId.get(a.horseId) ?? 0) + 1);
+      }
+    }
 
     for (const horse of state.horses) {
       // Skip if already inducted
-      if (existingHallOfFame.some((h) => h.horseId === horse.id)) continue;
+      if (inductedIds.has(horse.id)) continue;
 
       // Skip if not retired or deceased
       if (horse.lifecycleStatus !== "retired" && horse.lifecycleStatus !== "deceased") continue;
@@ -57,9 +64,7 @@ export const hallOfFamePhase: PipelinePhase = {
       const gradedWins = stats.gradedWins;
 
       // Check for Horse of the Year awards
-      const horseOfTheYearAwards = (state.awards || []).filter(
-        (a) => a.horseId === horse.id && a.category === "horse_of_the_year",
-      ).length;
+      const horseOfTheYearAwards = hotyAwardsByHorseId.get(horse.id) ?? 0;
 
       // Check earnings threshold
       if (horse.lifetimeEarnings < 500000) continue;

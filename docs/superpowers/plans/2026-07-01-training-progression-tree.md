@@ -26,9 +26,11 @@ The `treadmill` training type is listed in `FACILITY_ENABLED_WORKOUTS` but is NO
 ## File Structure
 
 **New files:**
+
 - `src/tests/core/facilities/trainingGating.test.ts` — unit tests for `getAvailableTrainingTypes` and `TRAINING_FACILITY_REQUIREMENTS` (written before implementation)
 
 **Modified files:**
+
 - `src/constants/workoutConstants.ts` — add `treadmill` to `TRAINING_COST_MAP`, `TRAINING_ENERGY_MAP`, `WORKOUT_INTENSITIES`; add `TRAINING_FACILITY_REQUIREMENTS` constant
 - `src/constants/trainingTypes.ts` — add `treadmill` to `ADVANCED_WORKOUTS` array
 - `src/core/resolver/intents.ts` — add `"treadmill"` to `TrainingIntent.trainingType` union
@@ -57,6 +59,7 @@ The `treadmill` training type is listed in `FACILITY_ENABLED_WORKOUTS` but is NO
 ## Task 1: Add `treadmill` as a full training type
 
 **Files:**
+
 - Modify: `src/constants/workoutConstants.ts`
 - Modify: `src/constants/trainingTypes.ts`
 - Modify: `src/core/resolver/intents.ts`
@@ -69,6 +72,7 @@ In `src/constants/workoutConstants.ts`, add `treadmill: 85` to `TRAINING_COST_MA
 - [ ] **Step 2: Add treadmill to ADVANCED_WORKOUTS**
 
 In `src/constants/trainingTypes.ts`, append to the `ADVANCED_WORKOUTS` array:
+
 ```typescript
 {
   key: "treadmill",
@@ -82,6 +86,7 @@ In `src/constants/trainingTypes.ts`, append to the `ADVANCED_WORKOUTS` array:
 - [ ] **Step 3: Add treadmill to TrainingIntent union**
 
 In `src/core/resolver/intents.ts`, add `"treadmill"` to the `TrainingIntent.trainingType` union:
+
 ```typescript
 trainingType:
   | "speed"
@@ -99,6 +104,7 @@ trainingType:
 - [ ] **Step 4: Add treadmill workoutConfig entry to trainingResolution**
 
 In `src/core/time/phases/trainingResolution.ts`, inside the `workoutConfig` object add:
+
 ```typescript
 treadmill: {
   primary: "stamina",
@@ -110,6 +116,7 @@ treadmill: {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/constants/workoutConstants.ts src/constants/trainingTypes.ts src/core/resolver/intents.ts src/core/time/phases/trainingResolution.ts
 git commit -m "feat(training): add treadmill as a full training type with cost, energy, and resolution config"
@@ -120,6 +127,7 @@ git commit -m "feat(training): add treadmill as a full training type with cost, 
 ## Task 2: Add `TRAINING_FACILITY_REQUIREMENTS` constant
 
 **Files:**
+
 - Modify: `src/constants/workoutConstants.ts`
 
 - [ ] **Step 1: Write the failing test first**
@@ -223,6 +231,7 @@ describe("getAvailableTrainingTypes", () => {
 - [ ] **Step 2: Add TRAINING_FACILITY_REQUIREMENTS to workoutConstants**
 
 Append to `src/constants/workoutConstants.ts`:
+
 ```typescript
 import type { FacilityType, FacilityLevel } from "@/core/facilities/facilityTypes";
 
@@ -236,16 +245,17 @@ export interface TrainingFacilityRequirement {
  * Training types absent from this map (speed, stamina, acceleration, rest) are always available.
  */
 export const TRAINING_FACILITY_REQUIREMENTS: Record<string, TrainingFacilityRequirement> = {
-  gallop:    { facilityType: "barn",           minLevel: "standard" },
-  swimming:  { facilityType: "exercise_pool",  minLevel: "standard" },
-  breeze:    { facilityType: "barn",           minLevel: "premium"  },
+  gallop: { facilityType: "barn", minLevel: "standard" },
+  swimming: { facilityType: "exercise_pool", minLevel: "standard" },
+  breeze: { facilityType: "barn", minLevel: "premium" },
   gate_work: { facilityType: "starting_gates", minLevel: "standard" },
-  bullet:    { facilityType: "barn",           minLevel: "elite"    },
-  treadmill: { facilityType: "treadmill",      minLevel: "standard" },
+  bullet: { facilityType: "barn", minLevel: "elite" },
+  treadmill: { facilityType: "treadmill", minLevel: "standard" },
 };
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/constants/workoutConstants.ts src/tests/core/facilities/trainingGating.test.ts
 git commit -m "test(training): add failing tests for TRAINING_FACILITY_REQUIREMENTS and getAvailableTrainingTypes"
@@ -256,6 +266,7 @@ git commit -m "test(training): add failing tests for TRAINING_FACILITY_REQUIREME
 ## Task 3: Implement `getAvailableTrainingTypes` helper
 
 **Files:**
+
 - Modify: `src/core/facilities/facilityDefaults.ts`
 - Modify: `src/core/facilities/index.ts`
 
@@ -298,11 +309,11 @@ export function getAvailableTrainingTypes(facilities: PlayerFacilities): string[
   for (const [trainingType, req] of Object.entries(TRAINING_FACILITY_REQUIREMENTS)) {
     if (!meetsLevel(req.facilityType, req.minLevel)) continue;
 
-    if (trainingType === "gallop"    && barnRank < LEVEL_ORDER.indexOf("standard")) continue;
-    if (trainingType === "breeze"    && barnRank < LEVEL_ORDER.indexOf("premium"))  continue;
-    if (trainingType === "gate_work" && barnRank < LEVEL_ORDER.indexOf("premium"))  continue;
-    if (trainingType === "bullet"    && barnRank < LEVEL_ORDER.indexOf("elite"))    continue;
-    if (trainingType === "treadmill" && barnRank < LEVEL_ORDER.indexOf("elite"))    continue;
+    if (trainingType === "gallop" && barnRank < LEVEL_ORDER.indexOf("standard")) continue;
+    if (trainingType === "breeze" && barnRank < LEVEL_ORDER.indexOf("premium")) continue;
+    if (trainingType === "gate_work" && barnRank < LEVEL_ORDER.indexOf("premium")) continue;
+    if (trainingType === "bullet" && barnRank < LEVEL_ORDER.indexOf("elite")) continue;
+    if (trainingType === "treadmill" && barnRank < LEVEL_ORDER.indexOf("elite")) continue;
 
     available.push(trainingType);
   }
@@ -322,6 +333,7 @@ bun test src/tests/core/facilities/trainingGating.test.ts
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/core/facilities/facilityDefaults.ts src/core/facilities/index.ts
 git commit -m "feat(training): implement getAvailableTrainingTypes gating logic with barn-level and facility-presence rules"
@@ -332,16 +344,19 @@ git commit -m "feat(training): implement getAvailableTrainingTypes gating logic 
 ## Task 4: Enforce gating in the store's `trainHorse` action
 
 **Files:**
+
 - Modify: `src/game/store/slices/racingSlice.ts`
 
 - [ ] **Step 1: Import and apply the gate in trainHorse**
 
 In `src/game/store/slices/racingSlice.ts`, add:
+
 ```typescript
 import { getAvailableTrainingTypes } from "@/core/facilities";
 ```
 
 Inside `trainHorse`, after the existing health/slot/energy checks, add:
+
 ```typescript
 if (s.facilities) {
   const available = getAvailableTrainingTypes(s.facilities);
@@ -361,6 +376,7 @@ if (s.facilities) {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/game/store/slices/racingSlice.ts
 git commit -m "feat(training): enforce facility gate in trainHorse store action with user-facing log message"
@@ -371,17 +387,22 @@ git commit -m "feat(training): enforce facility gate in trainHorse store action 
 ## Task 5: Update TrainingPanel UI to show facility-gated state
 
 **Files:**
+
 - Modify: `src/components/horse/TrainingPanel.tsx`
 
 - [ ] **Step 1: Replace isWorkoutEnabled with getAvailableTrainingTypes**
 
 Replace the import and derive `availableTypes` via `useMemo`:
+
 ```typescript
 import { getAvailableTrainingTypes } from "@/core/facilities";
 import { TRAINING_FACILITY_REQUIREMENTS } from "@/constants/workoutConstants";
 
 const availableTypes = useMemo(
-  () => (facilities ? getAvailableTrainingTypes(facilities) : ["speed", "stamina", "acceleration", "rest"]),
+  () =>
+    facilities
+      ? getAvailableTrainingTypes(facilities)
+      : ["speed", "stamina", "acceleration", "rest"],
   [facilities],
 );
 ```
@@ -389,16 +410,17 @@ const availableTypes = useMemo(
 - [ ] **Step 2: Update advanced workout buttons to show unlock hint**
 
 When `!isEnabled`, compute `unlockHint`:
+
 ```typescript
 const req = TRAINING_FACILITY_REQUIREMENTS[workout.key];
-const unlockHint = !isEnabled && req
-  ? `Requires ${FACILITY_NAMES[req.facilityType]} (${req.minLevel})`
-  : undefined;
+const unlockHint =
+  !isEnabled && req ? `Requires ${FACILITY_NAMES[req.facilityType]} (${req.minLevel})` : undefined;
 ```
 
 Render a `<Lock>` icon and `title={btn.unlockHint}` on locked buttons.
 
 - [ ] **Commit:**
+
 ```bash
 git add src/components/horse/TrainingPanel.tsx
 git commit -m "feat(training): update TrainingPanel to gate advanced workouts by facility level with unlock hints"
@@ -409,6 +431,7 @@ git commit -m "feat(training): update TrainingPanel to gate advanced workouts by
 ## Task 6: Update NPC training AI to respect facility gates
 
 **Files:**
+
 - Modify: `src/core/ai/trainingAI.ts`
 - Modify: `src/core/npc/intentGenerators.ts`
 
@@ -429,6 +452,7 @@ const trainingType = selectTrainingType(trainingAI, horse, day, availableTypes);
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/core/ai/trainingAI.ts src/core/npc/intentGenerators.ts
 git commit -m "feat(training): make NPC training AI respect facility-gated training type availability"
@@ -439,6 +463,7 @@ git commit -m "feat(training): make NPC training AI respect facility-gated train
 ## Task 7: Update FACILITY_ENABLED_WORKOUTS
 
 **Files:**
+
 - Modify: `src/core/facilities/facilityTypes.ts`
 
 - [ ] **Step 1: Move barn workouts to barn key**
@@ -459,6 +484,7 @@ export const FACILITY_ENABLED_WORKOUTS: Record<FacilityType, string[]> = {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/core/facilities/facilityTypes.ts
 git commit -m "feat(training): move gallop/breeze/bullet to barn in FACILITY_ENABLED_WORKOUTS to match barn-level gate design"
@@ -469,6 +495,7 @@ git commit -m "feat(training): move gallop/breeze/bullet to barn in FACILITY_ENA
 ## Task 8: Integration test and final wiring verification
 
 **Files:**
+
 - Modify: `src/tests/core/time/phases/trainingResolution.test.ts`
 - Modify: `src/tests/core/facilities/trainingGating.test.ts`
 
@@ -493,6 +520,7 @@ bun test src/tests/core/facilities/ src/tests/core/time/phases/trainingResolutio
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/tests/core/time/phases/trainingResolution.test.ts src/tests/core/facilities/trainingGating.test.ts
 git commit -m "test(training): add treadmill resolution test and swimming-without-upgrade edge case"

@@ -227,8 +227,13 @@ export class HorseHandler implements ImpactHandler {
       campaignMap: Map<string, WritableDraft<any>>;
     },
   ): void {
-    const horseId = (impact as { horseId?: string; entityId?: string }).horseId || (impact as { entityId?: string }).entityId || "";
-    const horse = horseId ? (lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId)) : undefined;
+    const horseId =
+      (impact as { horseId?: string; entityId?: string }).horseId ||
+      (impact as { entityId?: string }).entityId ||
+      "";
+    const horse = horseId
+      ? lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId)
+      : undefined;
 
     const handler = IMPACT_HANDLERS[impact.type];
     if (handler) {

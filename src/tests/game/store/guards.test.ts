@@ -18,11 +18,7 @@ describe("requireHorse", () => {
   });
 
   it("returns correct horse from array of multiple", () => {
-    const horses = [
-      makeHorse("h1", true),
-      makeHorse("h2", false),
-      makeHorse("h3", true),
-    ];
+    const horses = [makeHorse("h1", true), makeHorse("h2", false), makeHorse("h3", true)];
     expect(requireHorse(horses, "h2")).toBe(horses[1]);
   });
 

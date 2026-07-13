@@ -65,10 +65,7 @@ export type SouthAmericanCategory =
   | "campeon_fondo"; // Stayer
 
 export type RegionalAwardCategory =
-  | NorthAmericanCategory
-  | EuropeanCategory
-  | AsiaPacificCategory
-  | SouthAmericanCategory;
+  NorthAmericanCategory | EuropeanCategory | AsiaPacificCategory | SouthAmericanCategory;
 
 export interface RegionalAward {
   id: string;

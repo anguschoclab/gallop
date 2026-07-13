@@ -43,7 +43,12 @@ export const raceEntryResolutionPhase: PipelinePhase = {
 
     const horseMap = new Map(state.horses.map((h) => [h.id, h]));
     const raceMap = new Map(state.races.map((r) => [r.id, r]));
+    const stableMap = new Map(state.npcStables.map((s) => [s.id, s]));
     const jockeys = state.jockeys ?? [];
+    const jockeysByStableId = new Map<string, (typeof jockeys)[number]>();
+    for (const j of jockeys) {
+      if (j.stableId) jockeysByStableId.set(j.stableId, j);
+    }
     const freeAgents = jockeys.filter((j) => !j.stableId && j.lastRaceDay !== newDay);
 
     // Sort free agents by fame for fallback selection
@@ -125,10 +130,10 @@ export const raceEntryResolutionPhase: PipelinePhase = {
 
       // Automatically assign jockey for NPC entries if not specified
       if (!jockeyId && intent.source === "npc" && intent.sourceId) {
-        const stable = state.npcStables.find((s) => s.id === intent.sourceId);
+        const stable = stableMap.get(intent.sourceId);
         if (stable) {
           // 1. Check for retainer
-          const retainer = jockeys.find((j) => j.stableId === stable.id);
+          const retainer = jockeysByStableId.get(stable.id);
           if (retainer) {
             jockeyId = retainer.id;
           } else if (freeAgents.length > 0) {

@@ -93,4 +93,78 @@ describe("purchaseResolutionPhase", () => {
   it("should have correct name", () => {
     expect(purchaseResolutionPhase.name).toBe("purchaseResolution");
   });
+
+  it("should process multiple purchase intents targeting different horses", () => {
+    const horse1 = createTestHorse({ id: "horse-1" });
+    const horse2 = createTestHorse({ id: "horse-2" });
+    const state: GameState = {
+      ...createTestState(),
+      horses: [],
+      market: [horse1, horse2],
+    };
+
+    const intents: PurchaseIntent[] = [
+      {
+        id: "i1",
+        day: 1,
+        type: "purchase",
+        entityId: "player",
+        priority: 100,
+        source: "player",
+        horseId: "horse-1",
+        price: 5000,
+      },
+      {
+        id: "i2",
+        day: 1,
+        type: "purchase",
+        entityId: "player",
+        priority: 100,
+        source: "player",
+        horseId: "horse-2",
+        price: 3000,
+      },
+    ];
+
+    const result = purchaseResolutionPhase.execute(createTestContext(state, intents));
+    expect(result.impacts).toHaveLength(2);
+    expect(result.state.market).toHaveLength(0);
+  });
+
+  it("should skip intent targeting non-existent horse", () => {
+    const horse1 = createTestHorse({ id: "horse-1" });
+    const state: GameState = {
+      ...createTestState(),
+      horses: [],
+      market: [horse1],
+    };
+
+    const intents: PurchaseIntent[] = [
+      {
+        id: "i1",
+        day: 1,
+        type: "purchase",
+        entityId: "player",
+        priority: 100,
+        source: "player",
+        horseId: "horse-1",
+        price: 5000,
+      },
+      {
+        id: "i2",
+        day: 1,
+        type: "purchase",
+        entityId: "player",
+        priority: 100,
+        source: "player",
+        horseId: "nonexistent",
+        price: 1000,
+      },
+    ];
+
+    const result = purchaseResolutionPhase.execute(createTestContext(state, intents));
+    expect(result.impacts).toHaveLength(1);
+    expect(result.impacts[0].type).toBe("horse_transfer");
+    expect(result.state.market).toHaveLength(0);
+  });
 });

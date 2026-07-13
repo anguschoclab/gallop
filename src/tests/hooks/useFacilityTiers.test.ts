@@ -48,18 +48,14 @@ describe("useFacilityTiers - each level", () => {
 
   it("currentLevelIndex matches expected index", () => {
     levels.forEach((level, i) => {
-      const { result } = renderHook(() =>
-        useFacilityTiers(makeFacility(level, 5000), 10000),
-      );
+      const { result } = renderHook(() => useFacilityTiers(makeFacility(level, 5000), 10000));
       expect(result.current.currentLevelIndex).toBe(i);
     });
   });
 
   it("maxLevel is true only for elite", () => {
     levels.forEach((level) => {
-      const { result } = renderHook(() =>
-        useFacilityTiers(makeFacility(level, 5000), 10000),
-      );
+      const { result } = renderHook(() => useFacilityTiers(makeFacility(level, 5000), 10000));
       expect(result.current.maxLevel).toBe(level === "elite");
     });
   });
@@ -72,9 +68,7 @@ describe("useFacilityTiers - each level", () => {
       elite: 4,
     };
     levels.forEach((level) => {
-      const { result } = renderHook(() =>
-        useFacilityTiers(makeFacility(level, 5000), 10000),
-      );
+      const { result } = renderHook(() => useFacilityTiers(makeFacility(level, 5000), 10000));
       expect(result.current.rankVal).toBe(expected[level]);
     });
   });
@@ -82,23 +76,17 @@ describe("useFacilityTiers - each level", () => {
 
 describe("useFacilityTiers - canAfford boundary", () => {
   it("canAfford is true when cash === upgradeCost (exact)", () => {
-    const { result } = renderHook(() =>
-      useFacilityTiers(makeFacility("basic", 5000), 5000),
-    );
+    const { result } = renderHook(() => useFacilityTiers(makeFacility("basic", 5000), 5000));
     expect(result.current.canAfford).toBe(true);
   });
 
   it("canAfford is false when cash < upgradeCost", () => {
-    const { result } = renderHook(() =>
-      useFacilityTiers(makeFacility("basic", 5000), 4999),
-    );
+    const { result } = renderHook(() => useFacilityTiers(makeFacility("basic", 5000), 4999));
     expect(result.current.canAfford).toBe(false);
   });
 
   it("canAfford is true when cash > upgradeCost", () => {
-    const { result } = renderHook(() =>
-      useFacilityTiers(makeFacility("basic", 5000), 5001),
-    );
+    const { result } = renderHook(() => useFacilityTiers(makeFacility("basic", 5000), 5001));
     expect(result.current.canAfford).toBe(true);
   });
 });

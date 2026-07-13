@@ -149,23 +149,47 @@ export function generateRaceImpacts({
       const entry = entriesMap.get(horse.id);
 
       // Health & injury (energy, injury roll, insurance payout)
-      impacts.push(...generateHealthInjuryImpacts(horse, newDay, hiredStaff, injuryWeatherCtx, rng));
+      impacts.push(
+        ...generateHealthInjuryImpacts(horse, newDay, hiredStaff, injuryWeatherCtx, rng),
+      );
 
       // Performance & career (form, fame, beyer, recovery, pattern jump, race history, TC, trainer)
       const { impacts: perfImpacts, beyerValue } = generatePerformanceCareerImpacts(
-        horse, r, race, runner, classBonus, calibratedPars, splitEntryMaps, result.length, newDay, hiredStaff, rng, entry,
+        horse,
+        r,
+        race,
+        runner,
+        classBonus,
+        calibratedPars,
+        splitEntryMaps,
+        result.length,
+        newDay,
+        hiredStaff,
+        rng,
+        entry,
       );
       impacts.push(...perfImpacts);
 
       // Financial & breeding (prize money, jockey fees, affinity, breeding)
-      impacts.push(...generateFinancialBreedingImpacts(
-        horse, r, race, entry, jockeyMap, horseMap, syndicates, beyerValue, newDay, rng,
-      ));
+      impacts.push(
+        ...generateFinancialBreedingImpacts(
+          horse,
+          r,
+          race,
+          entry,
+          jockeyMap,
+          horseMap,
+          syndicates,
+          beyerValue,
+          newDay,
+          rng,
+        ),
+      );
 
       // Jockey stats & tracking (career stats, apprentice progression, percentage fees)
-      impacts.push(...generateJockeyStatsTrackingImpacts(
-        horse, r, race, entry, jockeyMap, newDay, rng,
-      ));
+      impacts.push(
+        ...generateJockeyStatsTrackingImpacts(horse, r, race, entry, jockeyMap, newDay, rng),
+      );
     }
 
     // 8. Analytics: Global pace samples for handicapping logic

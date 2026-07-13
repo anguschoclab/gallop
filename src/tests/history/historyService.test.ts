@@ -124,7 +124,6 @@ describe("recordRaceHistory", () => {
     expect(race.graded_override?.surface).toBe("Turf");
   });
 
-
   it("returns null when no position-1 in results", () => {
     const race = createMockRace();
     const result = recordRaceHistory(

@@ -21,7 +21,7 @@ import type {
   ConfirmedAptitudes,
   Stable,
 } from "@/game/types";
-import { GRADED_RACES } from "@/data/gradedRaces";
+import { GRADED_RACES_BY_KEY } from "@/data/gradedRaces";
 import type { GradedRace } from "@/data/gradedRaces";
 import { getCurrentYear } from "@/core/race/schedule";
 import {
@@ -163,7 +163,7 @@ export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
           input.triplecrownHistory ?? [],
         );
         if (optimalTarget) {
-          const targetGraded = GRADED_RACES.find((g) => g.key === optimalTarget);
+          const targetGraded = GRADED_RACES_BY_KEY.get(optimalTarget);
           if (targetGraded) {
             return buildPrepChain(
               targetGraded,
@@ -182,7 +182,7 @@ export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
 
   // If targeting a specific graded race key, build a prep chain
   if (targetRaceKey) {
-    const targetGraded = GRADED_RACES.find((g) => g.key === targetRaceKey);
+    const targetGraded = GRADED_RACES_BY_KEY.get(targetRaceKey);
     if (targetGraded) {
       return buildPrepChain(
         targetGraded,
@@ -266,10 +266,7 @@ function buildPrepChain(
         role: "prep",
         constraintDistance: prep.distance,
         constraintSurface: (prep.graded?.surface ?? prep.surface) as
-          | "Turf"
-          | "Dirt"
-          | "Synthetic"
-          | undefined,
+          "Turf" | "Dirt" | "Synthetic" | undefined,
         status: "planned",
       });
     }

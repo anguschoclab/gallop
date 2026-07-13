@@ -12570,6 +12570,36 @@ export const GRADED_RACES_BY_DAY_OF_YEAR: Map<number, GradedRace[]> = (() => {
   return map;
 })();
 
+export const GRADED_RACES_BY_KEY: Map<string, GradedRace> = (() => {
+  const map = new Map<string, GradedRace>();
+  for (const race of GRADED_RACES) {
+    map.set(race.key, race);
+  }
+  return map;
+})();
+
+export const GRADED_RACES_BY_TRIPLECROWN_KEY: Map<string, GradedRace[]> = (() => {
+  const map = new Map<string, GradedRace[]>();
+  for (const race of GRADED_RACES) {
+    if (!race.triplecrownKey) continue;
+    const arr = map.get(race.triplecrownKey);
+    if (arr) arr.push(race);
+    else map.set(race.triplecrownKey, [race]);
+  }
+  return map;
+})();
+
+export const GRADED_RACES_BY_BC_KEY: Map<string, GradedRace[]> = (() => {
+  const map = new Map<string, GradedRace[]>();
+  for (const race of GRADED_RACES) {
+    if (!race.bcKey) continue;
+    const arr = map.get(race.bcKey);
+    if (arr) arr.push(race);
+    else map.set(race.bcKey, [race]);
+  }
+  return map;
+})();
+
 // Duplicate detection check to ensure no race keys are duplicated across sources
 export function validateNoDuplicateRaces() {
   const seenKeys = new Set<string>();

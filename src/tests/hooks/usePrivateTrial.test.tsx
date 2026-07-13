@@ -60,9 +60,7 @@ describe("usePrivateTrial", () => {
 
   describe("initial state", () => {
     it("starts with correct defaults", () => {
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       expect(result.current.isOpen).toBe(false);
       expect(result.current.distance).toBe(1200);
       expect(result.current.surface).toBe("Turf");
@@ -78,9 +76,7 @@ describe("usePrivateTrial", () => {
       runPrivateTrialMock.mockImplementation(() => {
         throw new Error("boom");
       });
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       await act(async () => {
         await result.current.handleStartTrial();
       });
@@ -92,9 +88,7 @@ describe("usePrivateTrial", () => {
       runPrivateTrialMock.mockImplementation(() => {
         throw new Error("");
       });
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       await act(async () => {
         await result.current.handleStartTrial();
       });
@@ -106,9 +100,7 @@ describe("usePrivateTrial", () => {
       runPrivateTrialMock.mockImplementation(() => {
         throw {};
       });
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       await act(async () => {
         await result.current.handleStartTrial();
       });
@@ -121,9 +113,7 @@ describe("usePrivateTrial", () => {
         ok: false,
         reason: "Not enough cash.",
       });
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       await act(async () => {
         await result.current.handleStartTrial();
       });
@@ -132,9 +122,7 @@ describe("usePrivateTrial", () => {
 
     it("falls back to 'Failed to start trial.' when ok:false with no reason", async () => {
       runPrivateTrialMock.mockReturnValue({ ok: false });
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       await act(async () => {
         await result.current.handleStartTrial();
       });
@@ -143,9 +131,7 @@ describe("usePrivateTrial", () => {
 
     it("sets trialResult and keeps error null on success", async () => {
       runPrivateTrialMock.mockReturnValue({ ok: true, result: mockTrialResult });
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       await act(async () => {
         await result.current.handleStartTrial();
       });
@@ -155,9 +141,7 @@ describe("usePrivateTrial", () => {
 
     it("resets loading to false after successful trial", async () => {
       runPrivateTrialMock.mockReturnValue({ ok: true, result: mockTrialResult });
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       await act(async () => {
         await result.current.handleStartTrial();
       });
@@ -168,9 +152,7 @@ describe("usePrivateTrial", () => {
   describe("handleReset", () => {
     it("clears error after error state", async () => {
       runPrivateTrialMock.mockReturnValue({ ok: false, reason: "err" });
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       await act(async () => {
         await result.current.handleStartTrial();
       });
@@ -183,9 +165,7 @@ describe("usePrivateTrial", () => {
 
     it("clears trialResult after successful trial", async () => {
       runPrivateTrialMock.mockReturnValue({ ok: true, result: mockTrialResult });
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       await act(async () => {
         await result.current.handleStartTrial();
       });
@@ -198,9 +178,7 @@ describe("usePrivateTrial", () => {
 
     it("clears both error and trialResult simultaneously", async () => {
       runPrivateTrialMock.mockReturnValue({ ok: true, result: mockTrialResult });
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       await act(async () => {
         await result.current.handleStartTrial();
       });
@@ -215,9 +193,7 @@ describe("usePrivateTrial", () => {
   describe("handleOpenChange", () => {
     it("resets error and trialResult when closing", async () => {
       runPrivateTrialMock.mockReturnValue({ ok: true, result: mockTrialResult });
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       await act(async () => {
         await result.current.handleStartTrial();
       });
@@ -230,9 +206,7 @@ describe("usePrivateTrial", () => {
     });
 
     it("sets isOpen to true without resetting", () => {
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       act(() => {
         result.current.setIsOpen(true);
       });
@@ -246,9 +220,7 @@ describe("usePrivateTrial", () => {
         makeHorse({ id: "h2", owned: false, energy: 50 }),
         makeHorse({ id: "h3", owned: true, energy: 50 }),
       ];
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), horses, 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), horses, 10000));
       expect(result.current.eligibleOpponents).toHaveLength(1);
       expect(result.current.eligibleOpponents[0].id).toBe("h3");
     });
@@ -258,9 +230,7 @@ describe("usePrivateTrial", () => {
         makeHorse({ id: "h2", owned: true, energy: 14 }),
         makeHorse({ id: "h3", owned: true, energy: 15 }),
       ];
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), horses, 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), horses, 10000));
       expect(result.current.eligibleOpponents).toHaveLength(1);
       expect(result.current.eligibleOpponents[0].id).toBe("h3");
     });
@@ -270,9 +240,7 @@ describe("usePrivateTrial", () => {
         makeHorse({ id: "h1", owned: true, energy: 50 }),
         makeHorse({ id: "h2", owned: true, energy: 50 }),
       ];
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse({ id: "h1" }), horses, 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse({ id: "h1" }), horses, 10000));
       expect(result.current.eligibleOpponents).toHaveLength(1);
       expect(result.current.eligibleOpponents[0].id).toBe("h2");
     });
@@ -284,33 +252,22 @@ describe("usePrivateTrial", () => {
         makeHorse({ id: "h4", owned: false, energy: 100 }),
         makeHorse({ id: "h5", owned: true, energy: 10 }),
       ];
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse({ id: "h1" }), horses, 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse({ id: "h1" }), horses, 10000));
       expect(result.current.eligibleOpponents).toHaveLength(2);
-      expect(result.current.eligibleOpponents.map((h) => h.id)).toEqual([
-        "h2",
-        "h3",
-      ]);
+      expect(result.current.eligibleOpponents.map((h) => h.id)).toEqual(["h2", "h3"]);
     });
   });
 
   describe("opponentName", () => {
     it("returns Pacemaker when opponentId is pacemaker", () => {
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       expect(result.current.opponentId).toBe("pacemaker");
       expect(result.current.opponentName).toBe("Pacemaker");
     });
 
     it("returns opponent horse name when matched", () => {
-      const horses = [
-        makeHorse({ id: "h2", name: "Lightning", owned: true, energy: 50 }),
-      ];
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse({ id: "h1" }), horses, 10000),
-      );
+      const horses = [makeHorse({ id: "h2", name: "Lightning", owned: true, energy: 50 })];
+      const { result } = renderHook(() => usePrivateTrial(makeHorse({ id: "h1" }), horses, 10000));
       act(() => {
         result.current.setOpponentId("h2");
       });
@@ -318,9 +275,7 @@ describe("usePrivateTrial", () => {
     });
 
     it("returns Opponent when opponentId does not match any eligible opponent", () => {
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       act(() => {
         result.current.setOpponentId("nonexistent");
       });
@@ -330,9 +285,7 @@ describe("usePrivateTrial", () => {
 
   describe("chartData", () => {
     it("returns empty array when no trialResult", () => {
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       expect(result.current.chartData).toEqual([]);
     });
 
@@ -351,9 +304,7 @@ describe("usePrivateTrial", () => {
     });
 
     it("uses horse.name for player and opponentName for opponent", async () => {
-      const horses = [
-        makeHorse({ id: "h2", name: "Lightning", owned: true, energy: 50 }),
-      ];
+      const horses = [makeHorse({ id: "h2", name: "Lightning", owned: true, energy: 50 })];
       runPrivateTrialMock.mockReturnValue({
         ok: true,
         result: {
@@ -388,9 +339,7 @@ describe("usePrivateTrial", () => {
 
   describe("runnerStats", () => {
     it("returns empty array when no trialResult", () => {
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       expect(result.current.runnerStats).toEqual([]);
     });
 
@@ -432,17 +381,13 @@ describe("usePrivateTrial", () => {
 
   describe("feedback", () => {
     it("returns empty string when no trialResult", () => {
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       expect(result.current.feedback).toBe("");
     });
 
     it("returns generateRiderFeedback output when trialResult exists", async () => {
       runPrivateTrialMock.mockReturnValue({ ok: true, result: mockTrialResult });
-      const { result } = renderHook(() =>
-        usePrivateTrial(makeHorse(), [], 10000),
-      );
+      const { result } = renderHook(() => usePrivateTrial(makeHorse(), [], 10000));
       await act(async () => {
         await result.current.handleStartTrial();
       });

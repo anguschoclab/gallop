@@ -15,19 +15,21 @@ const mkOffer = (overrides: Partial<PrivateSaleOffer> = {}): PrivateSaleOffer =>
   ...overrides,
 });
 
-const mkHorse = (overrides: Partial<Horse> = {}): Horse => ({
-  id: "h1",
-  name: "Thunder",
-  age: 3,
-  gender: "colt",
-  ...overrides,
-} as Horse);
+const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
+  ({
+    id: "h1",
+    name: "Thunder",
+    age: 3,
+    gender: "colt",
+    ...overrides,
+  }) as Horse;
 
-const mkStable = (overrides: Partial<Stable> = {}): Stable => ({
-  id: "s1",
-  name: "Rival Stable",
-  ...overrides,
-} as Stable);
+const mkStable = (overrides: Partial<Stable> = {}): Stable =>
+  ({
+    id: "s1",
+    name: "Rival Stable",
+    ...overrides,
+  }) as Stable;
 
 describe("PrivateSaleCounterCard — tooltip on disabled button", () => {
   it("renders tooltip wrapper when cash is insufficient", () => {

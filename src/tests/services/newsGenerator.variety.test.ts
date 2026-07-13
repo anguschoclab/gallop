@@ -89,9 +89,7 @@ describe("newsGenerator template variety (herald union)", () => {
       for (let i = 0; i < 100; i++) {
         const rng = createTestRng(`seed-${i}`);
         const news = generateMarketNews(horse, 750000, 10, rng);
-        expect(
-          news.headline.includes("Thunder") || news.headline.includes("750,000"),
-        ).toBe(true);
+        expect(news.headline.includes("Thunder") || news.headline.includes("750,000")).toBe(true);
       }
     });
 

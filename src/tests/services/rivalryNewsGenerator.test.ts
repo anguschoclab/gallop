@@ -26,7 +26,13 @@ const race = {
   fieldSize: 8,
   entries: [],
   resolved: true,
-  graded: { key: "grand-stakes", grade: "G1", track: "Test Track", trackId: "tt-1", surface: "Dirt" },
+  graded: {
+    key: "grand-stakes",
+    grade: "G1",
+    track: "Test Track",
+    trackId: "tt-1",
+    surface: "Dirt",
+  },
 } as Race;
 
 describe("generateRivalryEmergenceNews", () => {
@@ -70,7 +76,9 @@ describe("generateRivalryEmergenceNews", () => {
   it("entityLinks contains the stable", () => {
     const rng = createTestRng("emergence-links");
     const news = generateRivalryEmergenceNews(stable, 60, DAY, rng);
-    expect(news!.entityLinks).toEqual([{ type: "stable", id: "rival-1", name: "Bitter Creek Stables" }]);
+    expect(news!.entityLinks).toEqual([
+      { type: "stable", id: "rival-1", name: "Bitter Creek Stables" },
+    ]);
   });
 
   it("day matches currentDay", () => {
@@ -150,12 +158,28 @@ describe("generateGrudgeMatchNews", () => {
 
   it("entityLinks winner is playerHorse on win, rivalHorse on loss", () => {
     const rngWin = createTestRng("grudge-winner-win");
-    const newsWin = generateGrudgeMatchNews(race, playerHorse, rivalHorse, true, DAY, rngWin, stable);
+    const newsWin = generateGrudgeMatchNews(
+      race,
+      playerHorse,
+      rivalHorse,
+      true,
+      DAY,
+      rngWin,
+      stable,
+    );
     const winLinks = newsWin!.entityLinks!.filter((l) => l.type === "horse");
     expect(winLinks[0]).toEqual({ type: "horse", id: "ph-1", name: "Lightning Bolt" });
 
     const rngLoss = createTestRng("grudge-winner-loss");
-    const newsLoss = generateGrudgeMatchNews(race, playerHorse, rivalHorse, false, DAY, rngLoss, stable);
+    const newsLoss = generateGrudgeMatchNews(
+      race,
+      playerHorse,
+      rivalHorse,
+      false,
+      DAY,
+      rngLoss,
+      stable,
+    );
     const lossLinks = newsLoss!.entityLinks!.filter((l) => l.type === "horse");
     expect(lossLinks[0]).toEqual({ type: "horse", id: "rh-1", name: "Dark Thunder" });
   });
@@ -249,7 +273,9 @@ describe("generateRegionLostNews", () => {
   it("entityLinks contains the stable", () => {
     const rng = createTestRng("region-links");
     const news = generateRegionLostNews(region, stable, DAY, rng);
-    expect(news!.entityLinks).toEqual([{ type: "stable", id: "rival-1", name: "Bitter Creek Stables" }]);
+    expect(news!.entityLinks).toEqual([
+      { type: "stable", id: "rival-1", name: "Bitter Creek Stables" },
+    ]);
   });
 
   it("day matches currentDay", () => {
@@ -338,7 +364,9 @@ describe("generateRivalryEscalationNews", () => {
   it("entityLinks contains the stable", () => {
     const rng = createTestRng("esc-links");
     const news = generateRivalryEscalationNews(stable, 70, 85, DAY, rng);
-    expect(news!.entityLinks).toEqual([{ type: "stable", id: "rival-1", name: "Bitter Creek Stables" }]);
+    expect(news!.entityLinks).toEqual([
+      { type: "stable", id: "rival-1", name: "Bitter Creek Stables" },
+    ]);
   });
 
   it("day matches currentDay", () => {

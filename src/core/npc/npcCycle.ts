@@ -192,7 +192,11 @@ function processRegionalDominance(
                 const kingStable = stableMap.get(currentKingId);
                 if (kingStable) {
                   const escNews = generateRivalryEscalationNews(
-                    kingStable, oldFriction, kingAI.friction, currentDay, rng,
+                    kingStable,
+                    oldFriction,
+                    kingAI.friction,
+                    currentDay,
+                    rng,
                   );
                   if (escNews) newsItems.push(escNews);
                 }
@@ -271,20 +275,18 @@ function processRegionalDominance(
 
               // Find best horses for headline
               // ⚡ Bolt: Replace O(N*M) lookups inside arrays (.filter/.find containing .some) with O(1) Set lookups
-              const playerHorseIds = new Set(race.entries.filter((e) => e.owned).map((e) => e.horseId));
+              const playerHorseIds = new Set(
+                race.entries.filter((e) => e.owned).map((e) => e.horseId),
+              );
               const rivalHorseIds = new Set(
                 race.entries.filter((e) => e.stableId === rivalStableId).map((e) => e.horseId),
               );
 
               const playerBestPos = Math.min(
-                ...race
-                  .result!.filter((r) => playerHorseIds.has(r.horseId))
-                  .map((r) => r.position),
+                ...race.result!.filter((r) => playerHorseIds.has(r.horseId)).map((r) => r.position),
               );
               const rivalBestPos = Math.min(
-                ...race
-                  .result!.filter((r) => rivalHorseIds.has(r.horseId))
-                  .map((r) => r.position),
+                ...race.result!.filter((r) => rivalHorseIds.has(r.horseId)).map((r) => r.position),
               );
 
               const playerHorseId = race.result!.find(
@@ -339,7 +341,11 @@ function processRegionalDominance(
                   // Check for rivalry escalation (friction crosses 80)
                   if (preFriction < 80 && rivalAI.friction >= 80) {
                     const escNews = generateRivalryEscalationNews(
-                      rivalStable, preFriction, rivalAI.friction, currentDay, rng,
+                      rivalStable,
+                      preFriction,
+                      rivalAI.friction,
+                      currentDay,
+                      rng,
                     );
                     if (escNews) newsItems.push(escNews);
                   }

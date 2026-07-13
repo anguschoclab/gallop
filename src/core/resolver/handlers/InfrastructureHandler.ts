@@ -14,7 +14,12 @@ import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
 import type { FacilityType } from "@/core/facilities";
 import type { Outpost } from "@/core/facilities/outpostTypes";
-import type { FacilityUpgradeImpact, StaffImpact, TransportImpact, OutpostImpact } from "../impacts/miscImpacts";
+import type {
+  FacilityUpgradeImpact,
+  StaffImpact,
+  TransportImpact,
+  OutpostImpact,
+} from "../impacts/miscImpacts";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,

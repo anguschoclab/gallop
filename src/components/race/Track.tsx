@@ -92,7 +92,7 @@ export function Track({
         finishedCountRef.current = currentFinished.length;
         finishRankMapRef.current = new Map(
           [...currentFinished]
-            .sort((a, b) => (a.finishTime! - b.finishTime!))
+            .sort((a, b) => a.finishTime! - b.finishTime!)
             .map((r, i) => [r.horseId, i + 1]),
         );
       }
@@ -132,10 +132,7 @@ export function Track({
       }}
     >
       {/* Clipped background */}
-      <div
-        className="absolute inset-0 rounded-lg overflow-hidden pointer-events-none"
-        aria-hidden
-      >
+      <div className="absolute inset-0 rounded-lg overflow-hidden pointer-events-none" aria-hidden>
         <div
           className="absolute inset-0"
           style={{
@@ -196,7 +193,8 @@ export function Track({
         const isSubject = r.horseId === subjectHorseId;
         const isFading =
           r.position / distance > 0.7 && r.velocity < r.topSpeed * 0.75 && r.finishTime === null;
-        const finishRank = r.finishTime !== null ? finishRankMapRef.current.get(r.horseId) : undefined;
+        const finishRank =
+          r.finishTime !== null ? finishRankMapRef.current.get(r.horseId) : undefined;
 
         return (
           <div

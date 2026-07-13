@@ -93,37 +93,35 @@ export function ClaimingRacePanel({
                       <Button size="sm" variant="ghost" disabled className="text-xs">
                         Claim filed
                       </Button>
+                    ) : canAfford ? (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs"
+                        onClick={() => setPendingClaimHorseId(entry.horseId)}
+                      >
+                        Claim {formatCurrency(price)}
+                      </Button>
                     ) : (
-                      canAfford ? (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-xs"
-                          onClick={() => setPendingClaimHorseId(entry.horseId)}
-                        >
-                          Claim {formatCurrency(price)}
-                        </Button>
-                      ) : (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <span tabIndex={0} className="inline-block cursor-not-allowed">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  disabled
-                                  className="text-xs pointer-events-none"
-                                >
-                                  Claim {formatCurrency(price)}
-                                </Button>
-                              </span>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>You need {formatCurrency(price - cash)} to file this claim.</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      )
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span tabIndex={0} className="inline-block cursor-not-allowed">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                disabled
+                                className="text-xs pointer-events-none"
+                              >
+                                Claim {formatCurrency(price)}
+                              </Button>
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>You need {formatCurrency(price - cash)} to file this claim.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     ))}
                 </div>
               </div>

@@ -28,13 +28,15 @@ export const privateSaleExpiryPhase = {
     if (offers.length === 0) return context;
 
     const newLogs = [...logs];
+    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+    const stableMap = new Map(state.npcStables.map((s) => [s.id, s]));
     const updatedOffers = offers
       .map((o) => {
         // Expire pending/countered offers that have hit their expiry day
         if ((o.status === "pending" || o.status === "countered") && newDay >= o.expiresDay) {
           // Find horse name for the toast/log
-          const horse = state.horses.find((h) => h.id === o.horseId);
-          const stable = state.npcStables.find((s) => s.id === o.toStableId);
+          const horse = horseMap.get(o.horseId);
+          const stable = o.toStableId ? stableMap.get(o.toStableId) : undefined;
           const horseName = horse?.name ?? "horse";
           const stableName = stable?.name ?? "stable";
           newLogs.push({

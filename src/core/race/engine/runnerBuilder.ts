@@ -344,13 +344,8 @@ export function buildRunner(
   // Distance-vs-aptitude scaling: max pace falls off symmetrically as the
   // race distance drifts from the horse's preferred distance, and stamina
   // burn accelerates when the race is longer than preferred.
-  const {
-    preferredDistance,
-    distanceRatio,
-    distanceDeviation,
-    distanceMod,
-    distanceStaminaMul,
-  } = computeDistanceScaling(h.distanceAptitude, raceDistance);
+  const { preferredDistance, distanceRatio, distanceDeviation, distanceMod, distanceStaminaMul } =
+    computeDistanceScaling(h.distanceAptitude, raceDistance);
   const surfaceMod = surface ? (h.surfaceAptitude[surface] ?? 0.95) * (1 + farrierBonus) : 1.0;
 
   const fiberMods = h.fiberBias

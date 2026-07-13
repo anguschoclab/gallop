@@ -13,11 +13,13 @@
 ## Context
 
 The existing code has:
+
 - `StewardsInquiry` type with `reason`, `affectedHorseIds`, `outcome: "no_change" | "demotion" | "disqualification"`, and `severity`
 - `stewardsPhase` in the pipeline that auto-resolves inquiries for NPC races
 - `useLiveRaceSimulation` hook with an `onRaceComplete` callback
 
 What is missing:
+
 - `inquiryProbability.ts` — pure probability logic
 - `PendingInquiry` in state — the "under review" record while the UI shows the inquiry
 - `useStewardsInquiry` hook — fires after player race completes, holds UI in reviewing state, then calls `dismissInquiry`
@@ -32,12 +34,14 @@ What is missing:
 ## File Structure
 
 **New files:**
+
 - `src/core/racing/inquiryProbability.ts` — pure `calculateInquiryProbability(race, horseId): number` function
 - `src/components/race/StewardsInquiryOverlay.tsx` — reviewing beat + outcome reveal UI
 - `src/hooks/useStewardsInquiry.ts` — React hook that fires after live race completion
 - `src/tests/core/racing/inquiryProbability.test.ts` — pure function tests
 
 **Modified files:**
+
 - `src/types/state.ts` — add `pendingInquiry?: PendingInquiry` to `SystemsState`
 - `src/types/race.ts` — add `PendingInquiry` type
 - `src/game/store/slices/racingSlice.ts` — add `setPendingInquiry`, `dismissInquiry` actions
@@ -62,12 +66,14 @@ What is missing:
 ## Task 1: Define PendingInquiry type and add to state
 
 **Files:**
+
 - Modify: `src/types/race.ts`
 - Modify: `src/types/state.ts`
 
 - [ ] **Step 1: Add PendingInquiry type**
 
 In `src/types/race.ts`:
+
 ```typescript
 export type InquiryStatus = "reviewing" | "announced";
 export type InquiryOutcome = "no_change" | "demotion" | "disqualification";
@@ -89,11 +95,13 @@ export interface PendingInquiry {
 - [ ] **Step 2: Add to SystemsState**
 
 In `src/types/state.ts`, add to `SystemsState`:
+
 ```typescript
 pendingInquiry?: PendingInquiry;
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/types/race.ts src/types/state.ts
 git commit -m "feat(stewards): add PendingInquiry type and pendingInquiry field to SystemsState"
@@ -104,6 +112,7 @@ git commit -m "feat(stewards): add PendingInquiry type and pendingInquiry field 
 ## Task 2: Implement inquiryProbability pure function
 
 **Files:**
+
 - Create: `src/core/racing/inquiryProbability.ts`
 - Create: `src/tests/core/racing/inquiryProbability.test.ts`
 
@@ -124,7 +133,7 @@ describe("calculateInquiryProbability", () => {
   it("adds 10% for a photo finish", () => {
     const race = createTestRace({ isPhotoFinish: true });
     const p = calculateInquiryProbability(race, "horse-1");
-    expect(p).toBeGreaterThan(0.10);
+    expect(p).toBeGreaterThan(0.1);
   });
 
   it("adds 15% for G1 grade", () => {
@@ -151,31 +160,33 @@ export interface InquiryContext {
 }
 
 const BASE_INQUIRY_PROBABILITY = 0.05;
-const PHOTO_FINISH_MODIFIER    = 0.10;
-const GRADE_G1_MODIFIER        = 0.15;
-const GRADE_G2_MODIFIER        = 0.08;
-const GRADE_G3_MODIFIER        = 0.05;
-const FOUL_FLAG_MODIFIER        = 0.25;
+const PHOTO_FINISH_MODIFIER = 0.1;
+const GRADE_G1_MODIFIER = 0.15;
+const GRADE_G2_MODIFIER = 0.08;
+const GRADE_G3_MODIFIER = 0.05;
+const FOUL_FLAG_MODIFIER = 0.25;
 
 export function calculateInquiryProbability(context: InquiryContext, _horseId?: string): number {
   let probability = BASE_INQUIRY_PROBABILITY;
 
-  if (context.isPhotoFinish)     probability += PHOTO_FINISH_MODIFIER;
-  if (context.grade === "G1")    probability += GRADE_G1_MODIFIER;
+  if (context.isPhotoFinish) probability += PHOTO_FINISH_MODIFIER;
+  if (context.grade === "G1") probability += GRADE_G1_MODIFIER;
   else if (context.grade === "G2") probability += GRADE_G2_MODIFIER;
   else if (context.grade === "G3") probability += GRADE_G3_MODIFIER;
-  if (context.hasFoulFlag)       probability += FOUL_FLAG_MODIFIER;
+  if (context.hasFoulFlag) probability += FOUL_FLAG_MODIFIER;
 
   return Math.min(1.0, probability);
 }
 ```
 
 - [ ] **Run tests:**
+
 ```bash
 bun test src/tests/core/racing/inquiryProbability.test.ts
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/core/racing/inquiryProbability.ts src/tests/core/racing/inquiryProbability.test.ts
 git commit -m "feat(stewards): implement calculateInquiryProbability with grade, photo finish, and foul modifiers"
@@ -186,6 +197,7 @@ git commit -m "feat(stewards): implement calculateInquiryProbability with grade,
 ## Task 3: Add setPendingInquiry and dismissInquiry store actions
 
 **Files:**
+
 - Modify: `src/game/store/slices/racingSlice.ts`
 
 - [ ] **Step 1: Add setPendingInquiry**
@@ -237,6 +249,7 @@ dismissInquiry: (raceId: string, outcome: InquiryOutcome) => {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/game/store/slices/racingSlice.ts
 git commit -m "feat(stewards): add setPendingInquiry and dismissInquiry store actions with atomic outcome application"
@@ -247,6 +260,7 @@ git commit -m "feat(stewards): add setPendingInquiry and dismissInquiry store ac
 ## Task 4: Implement useStewardsInquiry hook
 
 **Files:**
+
 - Create: `src/hooks/useStewardsInquiry.ts`
 
 - [ ] **Step 1: Build the hook**
@@ -263,9 +277,7 @@ export function useStewardsInquiry(raceId: string | null) {
     (result: RaceResult) => {
       if (!race || !raceId) return;
 
-      const playerEntry = result.positions.find(
-        (p) => playerHorseIds.has(p.horseId),
-      );
+      const playerEntry = result.positions.find((p) => playerHorseIds.has(p.horseId));
       if (!playerEntry) return;
 
       const context: InquiryContext = {
@@ -306,6 +318,7 @@ export function useStewardsInquiry(raceId: string | null) {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/hooks/useStewardsInquiry.ts
 git commit -m "feat(stewards): add useStewardsInquiry hook — fires after live race, sets pendingInquiry in store"
@@ -316,21 +329,23 @@ git commit -m "feat(stewards): add useStewardsInquiry hook — fires after live 
 ## Task 5: Build StewardsInquiryOverlay component
 
 **Files:**
+
 - Create: `src/components/race/StewardsInquiryOverlay.tsx`
 
 States:
+
 1. **Reviewing** (2500ms): "Stewards are reviewing the race result" with pulsing animation
 2. **Announced** (2000ms, then auto-dismiss): outcome card (no change / demotion / disqualification)
 
 - [ ] **Step 1: Build the overlay**
 
 ```tsx
-const REVIEW_DURATION_MS   = 2500;
+const REVIEW_DURATION_MS = 2500;
 const ANNOUNCE_DURATION_MS = 2000;
 
 const OUTCOME_MESSAGES: Record<InquiryOutcome, { title: string; className: string }> = {
-  no_change:        { title: "RESULT STANDS",    className: "outcome-clear"  },
-  demotion:         { title: "DEMOTION",          className: "outcome-warn"   },
+  no_change: { title: "RESULT STANDS", className: "outcome-clear" },
+  demotion: { title: "DEMOTION", className: "outcome-warn" },
   disqualification: { title: "DISQUALIFICATION", className: "outcome-severe" },
 };
 
@@ -348,8 +363,7 @@ export function StewardsInquiryOverlay({
     const reviewTimer = setTimeout(() => {
       const roll = Math.random();
       const resolved: InquiryOutcome =
-        roll < 0.6 ? "no_change" :
-        roll < 0.85 ? "demotion" : "disqualification";
+        roll < 0.6 ? "no_change" : roll < 0.85 ? "demotion" : "disqualification";
 
       setOutcome(resolved);
       setPhase("announced");
@@ -374,10 +388,14 @@ export function StewardsInquiryOverlay({
       {phase === "announced" && outcome && (
         <div className={`inquiry-outcome ${OUTCOME_MESSAGES[outcome].className}`}>
           <h2>{OUTCOME_MESSAGES[outcome].title}</h2>
-          <p>{inquiry.inquiredHorseName} — {inquiry.raceName}</p>
+          <p>
+            {inquiry.inquiredHorseName} — {inquiry.raceName}
+          </p>
           {outcome !== "no_change" && (
             <p className="outcome-detail">
-              {outcome === "demotion" ? "Horse demoted one position." : "Horse disqualified. Prize money forfeited."}
+              {outcome === "demotion"
+                ? "Horse demoted one position."
+                : "Horse disqualified. Prize money forfeited."}
             </p>
           )}
         </div>
@@ -388,6 +406,7 @@ export function StewardsInquiryOverlay({
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/components/race/StewardsInquiryOverlay.tsx
 git commit -m "feat(stewards): add StewardsInquiryOverlay with 2500ms review beat and outcome reveal animation"
@@ -398,6 +417,7 @@ git commit -m "feat(stewards): add StewardsInquiryOverlay with 2500ms review bea
 ## Task 6: Mount hook and overlay in race page
 
 **Files:**
+
 - Modify: `src/routes/race.$raceId.tsx`
 
 - [ ] **Step 1: Wire up the hook**
@@ -418,15 +438,18 @@ useLiveRaceSimulation({
 - [ ] **Step 2: Render overlay**
 
 ```tsx
-{pendingInquiry && pendingInquiry.raceId === raceId && (
-  <StewardsInquiryOverlay
-    inquiry={pendingInquiry}
-    onDismiss={(outcome) => dismissInquiry(raceId, outcome)}
-  />
-)}
+{
+  pendingInquiry && pendingInquiry.raceId === raceId && (
+    <StewardsInquiryOverlay
+      inquiry={pendingInquiry}
+      onDismiss={(outcome) => dismissInquiry(raceId, outcome)}
+    />
+  );
+}
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/routes/race.$raceId.tsx
 git commit -m "feat(stewards): mount useStewardsInquiry and StewardsInquiryOverlay in race page"
@@ -437,6 +460,7 @@ git commit -m "feat(stewards): mount useStewardsInquiry and StewardsInquiryOverl
 ## Task 7: Guard stewardsPhase in pipeline
 
 **Files:**
+
 - Modify: `src/core/time/phases/stewardsPhase.ts`
 
 - [ ] **Step 1: Add hasPlayerEntry check**
@@ -455,6 +479,7 @@ export function stewardsPhase(state: GameState): void {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/core/time/phases/stewardsPhase.ts
 git commit -m "feat(stewards): guard stewardsPhase — skip races with player entries to prevent double-resolution"
@@ -465,6 +490,7 @@ git commit -m "feat(stewards): guard stewardsPhase — skip races with player en
 ## Task 8: Auto-sim path — inbox message for auto-resolved races
 
 **Files:**
+
 - Modify: `src/core/time/phases/stewardsPhase.ts`
 
 - [ ] **Step 1: When auto-resolving a player race (no live viewer)**
@@ -474,7 +500,10 @@ When the player has advanced days without watching a race (auto-sim), the pipeli
 ```typescript
 // Auto-resolve path for player races that weren't watched live
 if (hasPlayerEntry && !state.pendingInquiry) {
-  const probability = calculateInquiryProbability({ grade: race.grade, isPhotoFinish: race.isPhotoFinish });
+  const probability = calculateInquiryProbability({
+    grade: race.grade,
+    isPhotoFinish: race.isPhotoFinish,
+  });
   if (Math.random() < probability) {
     // auto-resolve with random outcome
     const outcome = resolveOutcomeRandom();
@@ -489,6 +518,7 @@ if (hasPlayerEntry && !state.pendingInquiry) {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/core/time/phases/stewardsPhase.ts
 git commit -m "feat(stewards): add auto-sim path for player races — auto-resolve inquiry and post inbox message"
@@ -499,6 +529,7 @@ git commit -m "feat(stewards): add auto-sim path for player races — auto-resol
 ## Task 9: Add CSS animations for inquiry overlay
 
 **Files:**
+
 - Modify: `src/styles.css`
 
 - [ ] **Step 1: Add overlay styles and reviewing animation**
@@ -516,8 +547,14 @@ git commit -m "feat(stewards): add auto-sim path for player races — auto-resol
 }
 
 @keyframes inquiry-appear {
-  from { opacity: 0; transform: scale(0.95); }
-  to   { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .inquiry-reviewing h2 {
@@ -532,16 +569,29 @@ git commit -m "feat(stewards): add auto-sim path for player races — auto-resol
 }
 
 @keyframes dots-pulse {
-  0%, 100% { opacity: 0.3; }
-  50%       { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
-.outcome-clear   { color: #22c55e; }
-.outcome-warn    { color: #f59e0b; }
-.outcome-severe  { color: #ef4444; animation: finish-flash 0.5s 3; }
+.outcome-clear {
+  color: #22c55e;
+}
+.outcome-warn {
+  color: #f59e0b;
+}
+.outcome-severe {
+  color: #ef4444;
+  animation: finish-flash 0.5s 3;
+}
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/styles.css
 git commit -m "feat(stewards): add CSS animations for inquiry overlay — reviewing pulse and outcome color coding"
@@ -552,6 +602,7 @@ git commit -m "feat(stewards): add CSS animations for inquiry overlay — review
 ## Task 10: Integration tests
 
 **Files:**
+
 - Create: `src/tests/core/racing/inquiryProbability.test.ts` (already in Task 2)
 - Create: `src/tests/game/store/stewardsActions.test.ts`
 
@@ -571,6 +622,7 @@ bun test src/tests/core/racing/inquiryProbability.test.ts src/tests/game/store/s
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/tests/game/store/stewardsActions.test.ts
 git commit -m "test(stewards): add dismissInquiry idempotency and disqualification reputation tests"

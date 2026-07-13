@@ -16,16 +16,17 @@ vi.mock("@tanstack/react-router", () => ({
 import { StableRosterView } from "@/components/stable/StableRosterView";
 import type { Horse } from "@/game/types";
 
-const mkHorse = (overrides: Partial<Horse> = {}): Horse => ({
-  id: "h1",
-  name: "Thunder",
-  age: 3,
-  gender: "colt",
-  energy: 80,
-  peakingIndex: 0,
-  stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70 } as any,
-  ...overrides,
-} as Horse);
+const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
+  ({
+    id: "h1",
+    name: "Thunder",
+    age: 3,
+    gender: "colt",
+    energy: 80,
+    peakingIndex: 0,
+    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70 } as any,
+    ...overrides,
+  }) as Horse;
 
 describe("StableRosterView empty states", () => {
   it("shows 'Stable is Empty' with onboarding links when horses=[] and counts.all=0", () => {

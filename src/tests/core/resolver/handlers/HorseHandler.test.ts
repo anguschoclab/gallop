@@ -20,12 +20,34 @@ describe("HorseHandler", () => {
   it("horse_stat_change clamps to potential", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [{ id: "h1", name: "Star", potential: 80, stats: { speed: 70, stamina: 60, acceleration: 50, temperament: 40, conformation: 30, consistency: 20 } }],
+      horses: [
+        {
+          id: "h1",
+          name: "Star",
+          potential: 80,
+          stats: {
+            speed: 70,
+            stamina: 60,
+            acceleration: 50,
+            temperament: 40,
+            conformation: 30,
+            consistency: 20,
+          },
+        },
+      ],
     } as unknown as GameState;
 
     const impact: HorseStatImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "trainingResolution", logLevel: "always",
-      type: "horse_stat_change", horseId: "h1", stat: "speed", delta: 20, reason: "Training gain",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "trainingResolution",
+      logLevel: "always",
+      type: "horse_stat_change",
+      horseId: "h1",
+      stat: "speed",
+      delta: 20,
+      reason: "Training gain",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
@@ -37,12 +59,34 @@ describe("HorseHandler", () => {
   it("horse_stat_change does not go below 0", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [{ id: "h1", name: "Star", potential: 80, stats: { speed: 5, stamina: 60, acceleration: 50, temperament: 40, conformation: 30, consistency: 20 } }],
+      horses: [
+        {
+          id: "h1",
+          name: "Star",
+          potential: 80,
+          stats: {
+            speed: 5,
+            stamina: 60,
+            acceleration: 50,
+            temperament: 40,
+            conformation: 30,
+            consistency: 20,
+          },
+        },
+      ],
     } as unknown as GameState;
 
     const impact: HorseStatImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "trainingResolution", logLevel: "always",
-      type: "horse_stat_change", horseId: "h1", stat: "speed", delta: -20, reason: "Decline",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "trainingResolution",
+      logLevel: "always",
+      type: "horse_stat_change",
+      horseId: "h1",
+      stat: "speed",
+      delta: -20,
+      reason: "Decline",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
@@ -56,8 +100,15 @@ describe("HorseHandler", () => {
     const state = { horses: [{ id: "h1", name: "Star", energy: 90 }] } as unknown as GameState;
 
     const impact: EnergyImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "raceResolution", logLevel: "always",
-      type: "energy_change", horseId: "h1", delta: 50, reason: "Energy gain",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "energy_change",
+      horseId: "h1",
+      delta: 50,
+      reason: "Energy gain",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
@@ -71,8 +122,15 @@ describe("HorseHandler", () => {
     const state = { horses: [{ id: "h1", name: "Star", energy: 10 }] } as unknown as GameState;
 
     const impact: EnergyImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "raceResolution", logLevel: "always",
-      type: "energy_change", horseId: "h1", delta: -50, reason: "Energy loss",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "energy_change",
+      horseId: "h1",
+      delta: -50,
+      reason: "Energy loss",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
@@ -86,8 +144,15 @@ describe("HorseHandler", () => {
     const state = { horses: [{ id: "h1", name: "Star", form: 8 }] } as unknown as GameState;
 
     const impact: FormImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "raceResolution", logLevel: "always",
-      type: "form_change", horseId: "h1", delta: 5, reason: "Good race",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "form_change",
+      horseId: "h1",
+      delta: 5,
+      reason: "Good race",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
@@ -101,8 +166,15 @@ describe("HorseHandler", () => {
     const state = { horses: [{ id: "h1", name: "Star", fame: 95 }] } as unknown as GameState;
 
     const impact: FameImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "raceResolution", logLevel: "always",
-      type: "fame_change", horseId: "h1", delta: 10, reason: "G1 win",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "fame_change",
+      horseId: "h1",
+      delta: 10,
+      reason: "G1 win",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
@@ -116,8 +188,15 @@ describe("HorseHandler", () => {
     const state = { horses: [{ id: "h1", name: "Old Name" }] } as unknown as GameState;
 
     const impact: RenameImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "managementResolution", logLevel: "always",
-      type: "rename", horseId: "h1", newName: "New Name", reason: "Renamed",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "managementResolution",
+      logLevel: "always",
+      type: "rename",
+      horseId: "h1",
+      newName: "New Name",
+      reason: "Renamed",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
@@ -131,8 +210,16 @@ describe("HorseHandler", () => {
     const state = { horses: [{ id: "h1", name: "Star", age: 3 }] } as unknown as GameState;
 
     const impact: AgingImpact = {
-      id: "imp-1", intentId: "", day: 365, phase: "seasonResolution", logLevel: "always",
-      type: "aging", horseId: "h1", newAge: 4, previousAge: 3, reason: "New year",
+      id: "imp-1",
+      intentId: "",
+      day: 365,
+      phase: "seasonResolution",
+      logLevel: "always",
+      type: "aging",
+      horseId: "h1",
+      newAge: 4,
+      previousAge: 3,
+      reason: "New year",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
@@ -146,8 +233,15 @@ describe("HorseHandler", () => {
     const state = { horses: [{ id: "h1", name: "Star" }] } as unknown as GameState;
 
     const impact: PastureRetirementImpact = {
-      id: "imp-1", intentId: "", day: 100, phase: "managementResolution", logLevel: "always",
-      type: "pasture_retirement", horseId: "h1", retiredOnDay: 100, reason: "Retired",
+      id: "imp-1",
+      intentId: "",
+      day: 100,
+      phase: "managementResolution",
+      logLevel: "always",
+      type: "pasture_retirement",
+      horseId: "h1",
+      retiredOnDay: 100,
+      reason: "Retired",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
@@ -162,8 +256,16 @@ describe("HorseHandler", () => {
     const state = { horses: [{ id: "h1", name: "Star" }] } as unknown as GameState;
 
     const impact: HorseDeathImpact = {
-      id: "imp-1", intentId: "", day: 200, phase: "raceResolution", logLevel: "always",
-      type: "horse_death", horseId: "h1", cause: "colic", deceasedOnDay: 200, reason: "Passed away",
+      id: "imp-1",
+      intentId: "",
+      day: 200,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "horse_death",
+      horseId: "h1",
+      cause: "colic",
+      deceasedOnDay: 200,
+      reason: "Passed away",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
@@ -176,11 +278,20 @@ describe("HorseHandler", () => {
 
   it("recovery_change clamps 0-100", () => {
     const handler = new HorseHandler();
-    const state = { horses: [{ id: "h1", name: "Star", recoveryPoints: 10 }] } as unknown as GameState;
+    const state = {
+      horses: [{ id: "h1", name: "Star", recoveryPoints: 10 }],
+    } as unknown as GameState;
 
     const impact: RecoveryImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "trainingResolution", logLevel: "always",
-      type: "recovery_change", horseId: "h1", delta: -50, reason: "Recovery used",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "trainingResolution",
+      logLevel: "always",
+      type: "recovery_change",
+      horseId: "h1",
+      delta: -50,
+      reason: "Recovery used",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
@@ -194,8 +305,15 @@ describe("HorseHandler", () => {
     const state = { horses: [{ id: "h1", name: "Star", fitness: 30 }] } as unknown as GameState;
 
     const impact: FitnessImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "raceResolution", logLevel: "always",
-      type: "fitness_change", horseId: "h1", delta: -50, reason: "Race fatigue",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "fitness_change",
+      horseId: "h1",
+      delta: -50,
+      reason: "Race fatigue",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
@@ -209,8 +327,15 @@ describe("HorseHandler", () => {
     const state = { horses: [{ id: "h1", name: "Star" }] } as unknown as GameState;
 
     const impact: PeakingIndexImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "trainingResolution", logLevel: "always",
-      type: "peaking_index_update", horseId: "h1", value: 75, reason: "Peaking update",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "trainingResolution",
+      logLevel: "always",
+      type: "peaking_index_update",
+      horseId: "h1",
+      value: 75,
+      reason: "Peaking update",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
@@ -224,8 +349,16 @@ describe("HorseHandler", () => {
     const state = { horses: [{ id: "h1", name: "Star" }] } as unknown as GameState;
 
     const impact: BeyerImpact = {
-      id: "imp-1", intentId: "", day: 50, phase: "raceResolution", logLevel: "always",
-      type: "beyer_update", horseId: "h1", beyer: 92, raceDay: 50, reason: "Race result",
+      id: "imp-1",
+      intentId: "",
+      day: 50,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "beyer_update",
+      horseId: "h1",
+      beyer: 92,
+      raceDay: 50,
+      reason: "Race result",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
@@ -240,8 +373,15 @@ describe("HorseHandler", () => {
     const state = { horses: [{ id: "h1", name: "Star", energy: 50 }] } as unknown as GameState;
 
     const impact = {
-      id: "imp-1", intentId: "", day: 10, phase: "raceResolution", logLevel: "always",
-      type: "energy_change", entityId: "h1", delta: 20, reason: "Energy gain",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "energy_change",
+      entityId: "h1",
+      delta: 20,
+      reason: "Energy gain",
     } as any;
 
     const draft = JSON.parse(JSON.stringify(state));

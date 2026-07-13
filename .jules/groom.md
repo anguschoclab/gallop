@@ -6,6 +6,6 @@
 
 ## 2024-07-28 - Tooltips on disabled elements
 
-**Learning:** Disabled elements (like buttons with \`disabled\` prop) swallow mouse events, preventing standard \`TooltipTrigger\` from working. If we want a disabled button to explain *why* it's disabled, we must wrap it in a focusable span with \`cursor-not-allowed\` and add \`pointer-events-none\` to the button itself, or similar techniques, so the wrapper can trigger the tooltip.
+**Learning:** Disabled elements (like buttons with \`disabled\` prop) swallow mouse events, preventing standard \`TooltipTrigger\` from working. If we want a disabled button to explain _why_ it's disabled, we must wrap it in a focusable span with \`cursor-not-allowed\` and add \`pointer-events-none\` to the button itself, or similar techniques, so the wrapper can trigger the tooltip.
 
 **Action:** When adding tooltips to explain disabled states, use the \`DisabledTooltipWrapper\` pattern or wrap the button in \`<span tabIndex={0} className="inline-block cursor-not-allowed">\` and add \`pointer-events-none\` to the disabled button.

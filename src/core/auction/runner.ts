@@ -161,9 +161,10 @@ export function createAuctionRunner(
 
   // Proxy bid cap — cleared per lot and on cancel.
   let playerMaxBid: number | undefined = undefined;
-  const lots: LotState[] = sale.lots
-    .filter((l) => !l.withdrawn)
-    .map((l) => ({
+  const lots: LotState[] = [];
+  for (const l of sale.lots) {
+    if (l.withdrawn) continue;
+    lots.push({
       lot: { ...l },
       currentBid: l.hammerPrice ?? 0,
       leadingBidder: l.soldToStableId,
@@ -171,7 +172,8 @@ export function createAuctionRunner(
       chant: "open",
       silentSteps: 0,
       consecutiveBidders: [],
-    }));
+    });
+  }
 
   const bidderStables = stables.filter((s) => s.isMajor);
   const log: string[] = [];
@@ -560,8 +562,9 @@ export function createAuctionRunner(
     }
 
     // Handle passed lots for player consignor.
-    const resolvedLots = lots.map((l) => l.lot);
-    for (const lot of resolvedLots.filter((l) => l.passed)) {
+    for (const entry of lots) {
+      const lot = entry.lot;
+      if (!lot.passed) continue;
       if (lot.consignorStableId === "") {
         // Player's horse passed.
         const horse = horseMap.get(lot.horseId);

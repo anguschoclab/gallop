@@ -51,7 +51,7 @@ function AuctionPage() {
 
   const todaysSales = useMemo(
     () => activeUpcoming.filter((s) => s.day === day),
-    [activeUpcoming, day]
+    [activeUpcoming, day],
   );
 
   const allUpcoming: SaleDisplay[] = useMemo(() => {

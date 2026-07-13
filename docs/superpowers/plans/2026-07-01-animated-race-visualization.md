@@ -13,6 +13,7 @@
 ## Context
 
 `RaceBroadcast` gates between two visualizers:
+
 - `hasReplay = race.resolved && race.snapshots && race.snapshots.length > 0` — shows the canvas-based `RaceVisualizer` (snapshot replay).
 - Otherwise — shows the DOM-based `Track` (live sim, `Runner[]` direct mutation).
 
@@ -31,6 +32,7 @@ The plan addresses these gaps in three focused tasks.
 **New files** — none required
 
 **Modified files:**
+
 - `src/components/race/Track.tsx` — primary target: add live progress bar, finish burst indicators, velocity readout badges, refine sprite animation speed binding
 - `src/styles.css` — add `@keyframes finish-burst`, `@keyframes runner-finish-label`, and `.horse-finished` CSS classes
 - `src/hooks/race/useLiveRaceSimulation.ts` — expose `simTimeRef` as a stable ref (already done via `simTime: simTimeRef.current`; confirm it is adequate or switch to exposing the ref directly)
@@ -59,6 +61,7 @@ The plan addresses these gaps in three focused tasks.
 ## Task 1: Expose simTime to Track and add a live progress bar
 
 **Files:**
+
 - Modify: `src/hooks/race/useLiveRaceSimulation.ts`
 - Modify: `src/components/race/RaceBroadcast.tsx`
 - Modify: `src/routes/race.$raceId.tsx`
@@ -81,7 +84,7 @@ The live progress bar mirrors what `RaceVisualizer` has (`race-progress-bar`) bu
     paused,
     setPaused,
     simTime: simTimeRef.current,
-    simTimeRef,          // <-- add this
+    simTimeRef, // <-- add this
     liveSplits: splitCrossingsRef.current,
   };
   ```
@@ -131,7 +134,7 @@ The live progress bar mirrors what `RaceVisualizer` has (`race-progress-bar`) bu
         progressBarRef.current.style.width = `${leaderProgress * 100}%`;
       }
       if (simTimeDisplayRef.current && simTimeRef) {
-        simTimeDisplayRef.current.textContent = simTimeRef.current.toFixed(1) + 's';
+        simTimeDisplayRef.current.textContent = simTimeRef.current.toFixed(1) + "s";
       }
       frameId = requestAnimationFrame(update);
     };
@@ -143,22 +146,28 @@ The live progress bar mirrors what `RaceVisualizer` has (`race-progress-bar`) bu
   - Add the progress bar DOM element inside the Track outer `div`:
 
   ```tsx
-  {/* Live progress bar — bottom of track */}
+  {
+    /* Live progress bar — bottom of track */
+  }
   <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/5">
     <div
       ref={progressBarRef}
       className="h-full bg-broadcast-accent transition-none"
-      style={{ width: '0%' }}
+      style={{ width: "0%" }}
     />
-  </div>
+  </div>;
 
-  {/* Sim time + leader distance overlay */}
+  {
+    /* Sim time + leader distance overlay */
+  }
   <div className="absolute top-1 right-2 flex gap-3 tabular-nums text-[10px] text-muted-foreground pointer-events-none">
     <span>
       <span ref={simTimeDisplayRef}>0.0s</span>
     </span>
-    <span>{Math.round(leaderPos)}m / {distance}m</span>
-  </div>
+    <span>
+      {Math.round(leaderPos)}m / {distance}m
+    </span>
+  </div>;
   ```
 
 - [ ] **Commit:**
@@ -172,6 +181,7 @@ The live progress bar mirrors what `RaceVisualizer` has (`race-progress-bar`) bu
 ## Task 2: Velocity-aware sprite animation and finish-line crossing burst
 
 **Files:**
+
 - Modify: `src/components/race/Track.tsx`
 - Modify: `src/styles.css`
 
@@ -182,16 +192,33 @@ When a horse crosses the finish line, the current code simply stops the sprite a
   ```css
   /* Finish crossing celebration */
   @keyframes finish-burst {
-    0%   { transform: scale(1); }
-    30%  { transform: scale(1.35); }
-    60%  { transform: scale(0.95); }
-    100% { transform: scale(1); }
+    0% {
+      transform: scale(1);
+    }
+    30% {
+      transform: scale(1.35);
+    }
+    60% {
+      transform: scale(0.95);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
 
   @keyframes finish-label-pop {
-    0%   { opacity: 0; transform: translateY(4px) scale(0.8); }
-    60%  { opacity: 1; transform: translateY(-2px) scale(1.05); }
-    100% { opacity: 1; transform: translateY(0) scale(1); }
+    0% {
+      opacity: 0;
+      transform: translateY(4px) scale(0.8);
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(-2px) scale(1.05);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
 
   .horse-finish-pop {
@@ -211,7 +238,7 @@ When a horse crosses the finish line, the current code simply stops the sprite a
   }
   ```
 
-- [ ] **Step 2: Track which horses have *just* finished to trigger the burst once**
+- [ ] **Step 2: Track which horses have _just_ finished to trigger the burst once**
 
   The challenge is that `r.finishTime` transitions from `null` to a number once per runner. We need to detect this transition to fire the one-shot CSS animation. Use a `useRef<Set<string>>` to track IDs that already fired:
 
@@ -233,9 +260,9 @@ When a horse crosses the finish line, the current code simply stops the sprite a
       finishedSetRef.current.add(r.horseId);
       const el = horseElemRefs.current.get(r.horseId);
       if (el) {
-        el.classList.add('horse-finish-pop');
+        el.classList.add("horse-finish-pop");
         // Remove the class after animation so it can re-trigger if needed
-        setTimeout(() => el.classList.remove('horse-finish-pop'), 500);
+        setTimeout(() => el.classList.remove("horse-finish-pop"), 500);
       }
     }
   }
@@ -270,13 +297,13 @@ When a horse crosses the finish line, the current code simply stops the sprite a
   const finishRankMapRef = useRef<Map<string, number>>(new Map());
 
   // In the RAF loop:
-  const currentFinished = runners.filter(r => r.finishTime !== null);
+  const currentFinished = runners.filter((r) => r.finishTime !== null);
   if (currentFinished.length !== finishedCountRef.current) {
     finishedCountRef.current = currentFinished.length;
     finishRankMapRef.current = new Map(
       [...currentFinished]
         .sort((a, b) => a.finishTime! - b.finishTime!)
-        .map((r, i) => [r.horseId, i + 1])
+        .map((r, i) => [r.horseId, i + 1]),
     );
   }
   ```
@@ -284,11 +311,13 @@ When a horse crosses the finish line, the current code simply stops the sprite a
   Then in the runner JSX, below the name label:
 
   ```tsx
-  {r.finishTime !== null && finishRankMapRef.current.has(r.horseId) && (
-    <div className="horse-finish-label absolute -bottom-10 left-1/2 -translate-x-1/2 px-1.5 py-0.5 rounded bg-broadcast-accent text-black text-[10px] font-black tabular-nums">
-      #{finishRankMapRef.current.get(r.horseId)} · {r.finishTime.toFixed(1)}s
-    </div>
-  )}
+  {
+    r.finishTime !== null && finishRankMapRef.current.has(r.horseId) && (
+      <div className="horse-finish-label absolute -bottom-10 left-1/2 -translate-x-1/2 px-1.5 py-0.5 rounded bg-broadcast-accent text-black text-[10px] font-black tabular-nums">
+        #{finishRankMapRef.current.get(r.horseId)} · {r.finishTime.toFixed(1)}s
+      </div>
+    );
+  }
   ```
 
 - [ ] **Step 5: Enhance finish line glow when `finishActive`**
@@ -312,6 +341,7 @@ When a horse crosses the finish line, the current code simply stops the sprite a
 ## Task 3: Velocity readout badges and sprite animation speed sync
 
 **Files:**
+
 - Modify: `src/components/race/Track.tsx`
 - Modify: `src/styles.css`
 
@@ -329,12 +359,13 @@ When a horse crosses the finish line, the current code simply stops the sprite a
   for (const r of runners) {
     const badgeEl = velocityBadgeRefs.current.get(r.horseId);
     if (badgeEl) {
-      badgeEl.textContent = r.velocity.toFixed(1) + ' m/s';
-      const color = r.velocity > 17
-        ? 'var(--color-success)'
-        : r.velocity > 14
-          ? 'var(--color-warning)'
-          : 'oklch(0.65 0.2 25)';
+      badgeEl.textContent = r.velocity.toFixed(1) + " m/s";
+      const color =
+        r.velocity > 17
+          ? "var(--color-success)"
+          : r.velocity > 14
+            ? "var(--color-warning)"
+            : "oklch(0.65 0.2 25)";
       badgeEl.style.color = color;
     }
   }
@@ -343,7 +374,9 @@ When a horse crosses the finish line, the current code simply stops the sprite a
 - [ ] **Step 2: Add velocity badge span in the runner render JSX**
 
   ```tsx
-  {/* Velocity badge — updated imperatively by RAF, no React re-render */}
+  {
+    /* Velocity badge — updated imperatively by RAF, no React re-render */
+  }
   <span
     ref={(el) => {
       if (el) velocityBadgeRefs.current.set(r.horseId, el);
@@ -352,7 +385,7 @@ When a horse crosses the finish line, the current code simply stops the sprite a
     className="absolute -bottom-14 left-1/2 -translate-x-1/2 text-[9px] tabular-nums font-mono opacity-70 pointer-events-none"
   >
     {r.velocity.toFixed(1)} m/s
-  </span>
+  </span>;
   ```
 
 - [ ] **Step 3: Add a "fading" visual indicator**
@@ -400,6 +433,7 @@ When a horse crosses the finish line, the current code simply stops the sprite a
 ## Task 4: Fix `RaceBroadcast` gate — prevent blank flash on race resolve
 
 **Files:**
+
 - Modify: `src/components/race/RaceBroadcast.tsx`
 
 - [ ] **Step 1: Guard against blank-flash with phase-aware visualizer selection**
@@ -412,6 +446,7 @@ When a horse crosses the finish line, the current code simply stops the sprite a
   ```
 
   Then:
+
   ```tsx
   {showReplay ? (
     <RaceVisualizer ... />
@@ -431,6 +466,7 @@ When a horse crosses the finish line, the current code simply stops the sprite a
 ## Task 5: Overflow fix and compositor hints
 
 **Files:**
+
 - Modify: `src/components/race/Track.tsx`
 - Modify: `src/styles.css`
 

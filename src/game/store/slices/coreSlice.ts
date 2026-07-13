@@ -180,8 +180,7 @@ export function createCoreSlice(
       if (raceGrade) {
         const noms = (s as any).playerNominations ?? [];
         const active = noms.find(
-          (n: any) =>
-            n.horseId === horseId && n.raceId === raceId && n.status === "active",
+          (n: any) => n.horseId === horseId && n.raceId === raceId && n.status === "active",
         );
         if (!active) {
           return {

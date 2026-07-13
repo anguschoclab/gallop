@@ -42,8 +42,7 @@ export function useStewardsInquiry() {
 
       // Detect photo finish: margin between 1st and 2nd < 0.05 s
       const sorted = [...result].sort((a, b) => a.position - b.position);
-      const isPhotoFinish =
-        sorted.length >= 2 && Math.abs(sorted[0].time - sorted[1].time) < 0.05;
+      const isPhotoFinish = sorted.length >= 2 && Math.abs(sorted[0].time - sorted[1].time) < 0.05;
 
       const probability = calculateInquiryProbability({
         isPhotoFinish,
@@ -86,10 +85,8 @@ export function useStewardsInquiry() {
       // Auto-resolve immediately (same as the pipeline phase)
       const outcomes: InquiryOutcome[] = ["no_action", "warning", "fine", "disqualification"];
       const outcome = outcomes[Math.floor(rng.next() * outcomes.length)];
-      const fineAmount =
-        outcome === "fine" ? Math.round(500 + rng.next() * 4500) : undefined;
-      const suspensionDays =
-        outcome === "suspension" ? Math.round(3 + rng.next() * 27) : undefined;
+      const fineAmount = outcome === "fine" ? Math.round(500 + rng.next() * 4500) : undefined;
+      const suspensionDays = outcome === "suspension" ? Math.round(3 + rng.next() * 27) : undefined;
 
       const resolved = {
         ...resolveInquiry(baseInquiry, outcome, fineAmount, suspensionDays),

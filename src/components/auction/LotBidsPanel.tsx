@@ -20,10 +20,7 @@ interface LotBidsPanelProps {
 }
 
 export function LotBidsPanel({ bidHistory, stables, isLoading }: LotBidsPanelProps) {
-  const stableMap = useMemo(
-    () => new Map(stables.map((s) => [s.id, s])),
-    [stables],
-  );
+  const stableMap = useMemo(() => new Map(stables.map((s) => [s.id, s])), [stables]);
 
   const showSkeleton = isLoading || bidHistory === undefined;
   const isEmpty = !showSkeleton && (bidHistory?.length ?? 0) === 0;
@@ -65,10 +62,7 @@ export function LotBidsPanel({ bidHistory, stables, isLoading }: LotBidsPanelPro
                   className="flex items-baseline justify-between gap-3 px-4 py-2 text-xs"
                 >
                   <span
-                    className={cn(
-                      "font-medium truncate",
-                      isYou ? "text-gold" : "text-cream/80",
-                    )}
+                    className={cn("font-medium truncate", isYou ? "text-gold" : "text-cream/80")}
                   >
                     {label}
                   </span>
@@ -90,16 +84,9 @@ export function LotBidsPanel({ bidHistory, stables, isLoading }: LotBidsPanelPro
 
 function BidSkeletonRows() {
   return (
-    <ul
-      role="status"
-      aria-label="Loading bids"
-      className="divide-y divide-white/5"
-    >
+    <ul role="status" aria-label="Loading bids" className="divide-y divide-white/5">
       {Array.from({ length: 4 }).map((_, i) => (
-        <li
-          key={i}
-          className="flex items-baseline justify-between gap-3 px-4 py-3"
-        >
+        <li key={i} className="flex items-baseline justify-between gap-3 px-4 py-3">
           <span
             className="h-3 w-24 bg-white/5 rounded animate-pulse"
             style={{ animationDelay: `${i * 80}ms` }}
@@ -123,17 +110,13 @@ function BidEmptyState() {
     <div className="flex flex-col items-center justify-center py-10 px-6 text-center gap-3">
       <div className="relative">
         <Inbox className="h-10 w-10 text-cream/20" aria-hidden />
-        <Gavel
-          className="h-5 w-5 text-gold/60 absolute -bottom-1 -right-1"
-          aria-hidden
-        />
+        <Gavel className="h-5 w-5 text-gold/60 absolute -bottom-1 -right-1" aria-hidden />
       </div>
       <p className="font-bold text-cream/70 uppercase tracking-[0.25em] text-xs font-[family-name:var(--font-display)]">
         No bids yet
       </p>
       <p className="text-[11px] text-cream/40 max-w-xs leading-relaxed">
-        The book is open. Place the opening bid to set the pace — your offer
-        will appear here.
+        The book is open. Place the opening bid to set the pace — your offer will appear here.
       </p>
     </div>
   );

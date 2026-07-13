@@ -45,7 +45,8 @@ type ImpactHandlerFunction = (
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   race_entry: (draft, impact, lookupMaps) => {
-    const { raceId, horseId, jockeyId, weight, jockeyInstructions, bumpEntryHorseId } = impact as RaceEntryImpact;
+    const { raceId, horseId, jockeyId, weight, jockeyInstructions, bumpEntryHorseId } =
+      impact as RaceEntryImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (race && horse) {
@@ -55,7 +56,9 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         if (bumpIdx !== -1) {
           const bumped = race.entries[bumpIdx];
           if (bumped.stableId) {
-            const bumpedStable = draft.npcStables.find((s: any) => s.id === bumped.stableId);
+            const bumpedStable =
+              lookupMaps?.stableMap.get(bumped.stableId) ||
+              draft.npcStables.find((s: any) => s.id === bumped.stableId);
             if (bumpedStable) {
               bumpedStable.cash = bumpedStable.cash + race.entryFee;
             }
@@ -97,7 +100,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   jockey_contract: (draft, impact, lookupMaps) => {
-    const { jockeyId, stableId, contractUntil, stableAffinity, isApprentice, loyalty } = impact as JockeyContractImpact;
+    const { jockeyId, stableId, contractUntil, stableAffinity, isApprentice, loyalty } =
+      impact as JockeyContractImpact;
     const jockey =
       lookupMaps?.jockeyMap.get(jockeyId) || draft.jockeys?.find((j) => j.id === jockeyId);
     if (jockey) {
@@ -140,7 +144,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   jockey_stats: (draft, impact, lookupMaps) => {
-    const { jockeyId, careerStarts, careerWins, fame, apprenticeProgression } = impact as JockeyStatsImpact;
+    const { jockeyId, careerStarts, careerWins, fame, apprenticeProgression } =
+      impact as JockeyStatsImpact;
     const jockey =
       lookupMaps?.jockeyMap.get(jockeyId) || draft.jockeys?.find((j) => j.id === jockeyId);
     if (jockey) {
@@ -178,10 +183,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         // Surface preference drift: racing on a surface nudges that aptitude up,
         // and the other surfaces drift slightly down. Bigger boost on strong finishes.
         const surface = (race.surface || raceHistoryEntry.surface) as
-          | "Turf"
-          | "Dirt"
-          | "Synthetic"
-          | undefined;
+          "Turf" | "Dirt" | "Synthetic" | undefined;
         if (surface && horse.surfaceAptitude && horse.surfaceAptitude[surface] !== undefined) {
           const pos = raceHistoryEntry.position ?? 99;
           const performanceBoost = pos === 1 ? 0.012 : pos <= 3 ? 0.008 : pos <= 6 ? 0.005 : 0.003;
@@ -216,9 +218,11 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   triple_crown_progress: (draft, impact) => {
     const { horseId, triplecrownKey, year, legs, won } = impact as TripleCrownProgressImpact;
     if (!draft.triplecrownHistory) draft.triplecrownHistory = [];
-    const existing = draft.triplecrownHistory.find(
-      (t) => t.horseId === horseId && t.triplecrownKey === triplecrownKey && t.year === year,
-    );
+    const tcHistoryMap = new Map<string, any>();
+    for (const t of draft.triplecrownHistory) {
+      tcHistoryMap.set(`${t.horseId}:${t.triplecrownKey}:${t.year}`, t);
+    }
+    const existing = tcHistoryMap.get(`${horseId}:${triplecrownKey}:${year}`);
     if (existing) {
       existing.legs = legs;
       existing.won = won;

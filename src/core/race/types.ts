@@ -149,10 +149,5 @@ export type SectionalSplit = {
 };
 
 export type RegionalSystem =
-  | "north_america"
-  | "europe"
-  | "australia"
-  | "asia"
-  | "south_america"
-  | "japan";
+  "north_america" | "europe" | "australia" | "asia" | "south_america" | "japan";
 export type GradeLevel = "G1" | "G2" | "G3" | "Listed";

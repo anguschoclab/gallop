@@ -103,7 +103,7 @@ export const TEMPLATES: Record<NarrativeEvent, string[]> = {
     "They've left the stalls in the {raceName}!",
     "A level break for all runners today!",
     "We're underway in this highly anticipated {raceClass}!",
-    "The starter lets them go at {trackName}!"
+    "The starter lets them go at {trackName}!",
   ],
   LEAD_CHANGE: [
     "{horse} takes the lead!",
@@ -154,7 +154,7 @@ export const TEMPLATES: Record<NarrativeEvent, string[]> = {
     "The field straightens for the final drive!",
     "It's a desperate drive to the line now!",
     "Who wants this {raceName} the most?",
-    "A true test of stamina awaits them in the stretch!"
+    "A true test of stamina awaits them in the stretch!",
   ],
   FINISH: [
     "{horse} wins it!",
@@ -176,7 +176,7 @@ export const TEMPLATES: Record<NarrativeEvent, string[]> = {
     "{horse} claims the prize with authority!",
     "Nobody was catching {horse} in this form!",
     "A gutsy, hard-fought triumph for {horse}!",
-    "{horse} secures the glory in the shadow of the post!"
+    "{horse} secures the glory in the shadow of the post!",
   ],
   POSITION_CHECK: [
     "{horse} is running well in {rank}.",
@@ -228,7 +228,7 @@ export const TEMPLATES: Record<NarrativeEvent, string[]> = {
     "{horse} is absolutely bounding away, a {lengths} length margin!",
     "The rest of the field is struggling to close a {lengths} length gap!",
     "{horse} has opened up a commanding {lengths} length lead!",
-    "Look at the separation! {horse} is out by {lengths} lengths!"
+    "Look at the separation! {horse} is out by {lengths} lengths!",
   ],
   ATMOSPHERE: [
     "The roar of the crowd is deafening!",

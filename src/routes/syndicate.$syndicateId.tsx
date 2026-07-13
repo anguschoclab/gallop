@@ -22,9 +22,10 @@ function SyndicatePage() {
   const syndicate = useGame(
     (s: GameState) => (s.syndicates ?? {})[syndicateId] as Syndicate | undefined,
   );
-  const investorsRecord = useGame(
-    (s: GameState) => (s as any).syndicateInvestors ?? {},
-  ) as Record<string, InvestorRecord>;
+  const investorsRecord = useGame((s: GameState) => (s as any).syndicateInvestors ?? {}) as Record<
+    string,
+    InvestorRecord
+  >;
   const cash = useGame((s: GameState) => s.cash);
   const solicit = useGame((s: any) => s.solicitInvestor);
   const buyout = useGame((s: any) => s.buyoutInvestor);
@@ -68,10 +69,7 @@ function SyndicatePage() {
         <StatCard label="Your shares" value={`${playerShares}/${syndicate.totalShares}`} />
         <StatCard label="Share price" value={`$${syndicate.sharePrice.toLocaleString()}`} />
         <StatCard label="Stud fee" value={`$${syndicate.studFee.toLocaleString()}`} />
-        <StatCard
-          label="Investor sentiment"
-          value={avgSat != null ? `${avgSat}%` : "—"}
-        />
+        <StatCard label="Investor sentiment" value={avgSat != null ? `${avgSat}%` : "—"} />
       </div>
 
       <Card>
@@ -139,10 +137,7 @@ function SyndicatePage() {
                 >
                   <div className="flex flex-wrap items-center gap-3">
                     <div className="text-cream font-medium">{inv.name}</div>
-                    <Badge
-                      style={{ borderColor: meta.color, color: meta.color }}
-                      variant="outline"
-                    >
+                    <Badge style={{ borderColor: meta.color, color: meta.color }} variant="outline">
                       {meta.label}
                     </Badge>
                     <Badge variant="outline" className="text-cream border-cream/30">

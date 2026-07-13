@@ -50,4 +50,3 @@ export function HorseCard({
     <HorseCardFull horse={horse} hookData={hookData} onClick={onClick} className={className} />
   );
 }
-

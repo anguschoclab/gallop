@@ -39,7 +39,7 @@ import {
 } from "@/core/breeding/populationGenetics";
 import { recalcStandingFee } from "@/core/breeding/stallions";
 import { getCurrentYear } from "@/core/race/schedule";
-import { GRADED_RACES } from "@/data/gradedRaces";
+import { GRADED_RACES_BY_TRIPLECROWN_KEY } from "@/data/gradedRaces";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { generateUUID } from "@/core/uuid";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
@@ -224,7 +224,7 @@ export function resolveLiveRaceWithImpacts(
       const triplecrownKey = race.graded.triplecrownKey;
 
       // Get all races for this triple crown series
-      const tcRaces = GRADED_RACES.filter((g) => g.triplecrownKey === triplecrownKey);
+      const tcRaces = GRADED_RACES_BY_TRIPLECROWN_KEY.get(triplecrownKey) ?? [];
 
       // Check horse's race history for all legs
       const raceHistoryMap = new Map(
@@ -340,7 +340,7 @@ export function resolveLiveRaceWithImpacts(
             group1WinnersProduced:
               race.graded?.grade === "G1"
                 ? (dam.blueHenStatus?.group1WinnersProduced ?? 0) + 1
-                : dam.blueHenStatus?.group1WinnersProduced ?? 0,
+                : (dam.blueHenStatus?.group1WinnersProduced ?? 0),
             blueHenScore: dam.blueHenStatus?.blueHenScore || 0,
             foalsProduced: dam.blueHenStatus?.foalsProduced || 0,
           },

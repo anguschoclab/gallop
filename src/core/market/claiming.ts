@@ -76,9 +76,12 @@ export function processClaims(
     claimsByHorse.get(claim.horseId)!.push(claim);
   }
 
+  // Index horses for O(1) lookup
+  const horseMap = new Map(horses.map((h) => [h.id, h]));
+
   // Process each horse's claims
   for (const [horseId, horseClaims] of claimsByHorse) {
-    const horse = horses.find((h) => h.id === horseId);
+    const horse = horseMap.get(horseId);
     if (!horse || !horse.stableId) continue;
 
     if (horseClaims.length === 0) continue;

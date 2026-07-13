@@ -348,9 +348,7 @@ export function createRacingSlice(
 
       const existing: NominationRecord[] = s.playerNominations ?? [];
       if (
-        existing.some(
-          (n) => n.horseId === horseId && n.raceId === raceId && n.status === "active",
-        )
+        existing.some((n) => n.horseId === horseId && n.raceId === raceId && n.status === "active")
       ) {
         return { ok: false, reason: "Horse already nominated for this race." };
       }

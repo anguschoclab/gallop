@@ -33,8 +33,10 @@ export const purchaseResolutionPhase: PipelinePhase = {
     // Filter for purchase intents
     const purchaseIntents = intents.filter((i): i is PurchaseIntent => i.type === "purchase");
 
+    const marketMap = new Map(state.market.map((h) => [h.id, h]));
+
     for (const intent of purchaseIntents) {
-      const horse = state.market.find((h) => h.id === intent.horseId);
+      const horse = marketMap.get(intent.horseId);
       if (!horse) continue;
 
       // Generate horse transfer impact

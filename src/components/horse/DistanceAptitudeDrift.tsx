@@ -140,10 +140,7 @@ export function DistanceAptitudeDrift({ horse }: DistanceAptitudeDriftProps) {
           .slice()
           .reverse()
           .map((d, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-3 py-1.5 px-1 text-[9px] font-mono"
-            >
+            <div key={i} className="flex items-center gap-3 py-1.5 px-1 text-[9px] font-mono">
               <span className="text-cream/20 tabular-nums w-10">D{d.day}</span>
               <span className="text-cream/50 truncate flex-1">{d.raceName}</span>
               <span className="text-cream/30 tabular-nums w-12 text-right">{d.distance}m</span>

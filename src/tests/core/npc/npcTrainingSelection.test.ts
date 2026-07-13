@@ -47,9 +47,7 @@ function makeState(
 }
 
 function trainingIntentsFrom(state: GameState): TrainingIntent[] {
-  return generateNpcIntents(state, 1).filter(
-    (i): i is TrainingIntent => i.type === "training",
-  );
+  return generateNpcIntents(state, 1).filter((i): i is TrainingIntent => i.type === "training");
 }
 
 // ─── Budget tier — only basic types ─────────────────────────────────────────
@@ -194,7 +192,12 @@ describe("stable with no npcFacilities entry — falls back to basic types", () 
   it("never selects any advanced type when facilities are absent", () => {
     const state = {
       horses: [
-        createTestHorse({ id: "no-fac-horse", stableId: "no-fac-stable", owned: false, energy: 100 }),
+        createTestHorse({
+          id: "no-fac-horse",
+          stableId: "no-fac-stable",
+          owned: false,
+          energy: 100,
+        }),
       ],
       npcStables: [createTestStable({ id: "no-fac-stable" })],
       pregnancies: [],

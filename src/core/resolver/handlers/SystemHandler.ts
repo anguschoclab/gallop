@@ -55,6 +55,7 @@ type ImpactHandlerFunction = (
     horseMap: Map<string, WritableDraft<GameState["horses"][number]>>;
     stableMap: Map<string, WritableDraft<GameState["npcStables"][number]>>;
     campaignMap: Map<string, WritableDraft<NonNullable<GameState["campaigns"]>[number]>>;
+    raceMap?: Map<string, WritableDraft<any>>;
   },
 ) => void;
 
@@ -187,7 +188,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   transaction: (draft, impact) => {
-    const { amount, category, description, horseId, raceId, recurring } = impact as TransactionImpact;
+    const { amount, category, description, horseId, raceId, recurring } =
+      impact as TransactionImpact;
     if (!draft.transactions) draft.transactions = [];
     const type = amount >= 0 ? "income" : "expense";
     const newTransaction = createTransaction(
@@ -299,12 +301,13 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     draft.cash += amount;
   },
 
-  stewards_inquiry: (draft, impact) => {
+  stewards_inquiry: (draft, impact, lookupMaps) => {
     const { inquiry } = impact as StewardsInquiryImpact;
     if (!draft.stewardsInquiries) draft.stewardsInquiries = [];
     draft.stewardsInquiries.push(inquiry);
     // Also attach to the race
-    const race = draft.races.find((r) => r.id === inquiry.raceId);
+    const race =
+      lookupMaps?.raceMap?.get(inquiry.raceId) || draft.races.find((r) => r.id === inquiry.raceId);
     if (race) {
       if (!race.inquiries) race.inquiries = [];
       race.inquiries.push(inquiry);
@@ -368,6 +371,7 @@ export class SystemHandler implements ImpactHandler {
       horseMap: Map<string, WritableDraft<any>>;
       stableMap: Map<string, WritableDraft<any>>;
       campaignMap: Map<string, WritableDraft<any>>;
+      raceMap?: Map<string, WritableDraft<any>>;
     },
   ): void {
     const handler = IMPACT_HANDLERS[impact.type];

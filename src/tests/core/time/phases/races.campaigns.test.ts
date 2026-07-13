@@ -26,9 +26,7 @@ function mkRace(overrides: Partial<Race> = {}): Race {
   } as Race;
 }
 
-function mkCampaign(
-  overrides: Partial<HorseCampaign> = {},
-): HorseCampaign {
+function mkCampaign(overrides: Partial<HorseCampaign> = {}): HorseCampaign {
   return {
     horseId: "horse-1",
     goalType: "chase_g1",

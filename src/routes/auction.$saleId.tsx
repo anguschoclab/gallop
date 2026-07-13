@@ -182,10 +182,7 @@ function AuctionSalePage() {
                 )}
 
                 {!isResolved && (
-                  <LotBidsPanel
-                    bidHistory={currentLot.bidHistory}
-                    stables={stables}
-                  />
+                  <LotBidsPanel bidHistory={currentLot.bidHistory} stables={stables} />
                 )}
 
                 {isPlayerConsigned && !isResolved && (

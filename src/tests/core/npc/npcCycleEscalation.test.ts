@@ -27,7 +27,10 @@ function makeBaseAIState(stableId: string, friction: number): StableAIState {
   };
 }
 
-function makeAIManager(stableStates: Record<string, StableAIState>, regionalKings: Record<string, string> = {}): NpcAIManager {
+function makeAIManager(
+  stableStates: Record<string, StableAIState>,
+  regionalKings: Record<string, string> = {},
+): NpcAIManager {
   return {
     stableStates,
     globalDay: DAY,
@@ -103,7 +106,10 @@ describe("npcCycle — rivalry escalation news (grudge match path)", () => {
     );
 
     const escalationNews = result.newsItems?.find(
-      (n) => n.category === "stable" && n.importance === "high" && n.headline.includes("Bitter Creek Stables"),
+      (n) =>
+        n.category === "stable" &&
+        n.importance === "high" &&
+        n.headline.includes("Bitter Creek Stables"),
     );
     expect(escalationNews).toBeDefined();
     expect(escalationNews!.entityLinks).toEqual([
@@ -135,7 +141,10 @@ describe("npcCycle — rivalry escalation news (grudge match path)", () => {
     );
 
     const escalationNews = result.newsItems?.find(
-      (n) => n.category === "stable" && n.importance === "high" && n.headline.includes("Bitter Creek Stables"),
+      (n) =>
+        n.category === "stable" &&
+        n.importance === "high" &&
+        n.headline.includes("Bitter Creek Stables"),
     );
     expect(escalationNews).toBeDefined();
   });
@@ -159,7 +168,10 @@ describe("npcCycle — rivalry escalation news (grudge match path)", () => {
     );
 
     const escalationNews = result.newsItems?.filter(
-      (n) => n.importance === "high" && n.category === "stable" && n.headline.includes("Bitter Creek Stables"),
+      (n) =>
+        n.importance === "high" &&
+        n.category === "stable" &&
+        n.headline.includes("Bitter Creek Stables"),
     );
     // May have grudge match news but should NOT have escalation news
     // Escalation news headlines contain "Escalates" or "Heated" or "Boiling" etc.
@@ -188,7 +200,10 @@ describe("npcCycle — rivalry escalation news (grudge match path)", () => {
     );
 
     const escalationNews = result.newsItems?.filter(
-      (n) => n.importance === "high" && n.category === "stable" && n.headline.includes("Bitter Creek Stables"),
+      (n) =>
+        n.importance === "high" &&
+        n.category === "stable" &&
+        n.headline.includes("Bitter Creek Stables"),
     );
     const hasEscalation = escalationNews?.some((n) =>
       /escalat|heated|boiling|hostilit|war of words|no love lost/i.test(n.headline),
@@ -225,13 +240,9 @@ describe("npcCycle — rivalry escalation news (regional dominance path)", () =>
       entryFee: 500,
       purse: 50000,
       fieldSize: 8,
-      entries: [
-        { horseId: "player-horse", owned: true, stableId: "player" } as any,
-      ],
+      entries: [{ horseId: "player-horse", owned: true, stableId: "player" } as any],
       resolved: true,
-      result: [
-        { horseId: "player-horse", position: 1, time: 120 },
-      ],
+      result: [{ horseId: "player-horse", position: 1, time: 120 }],
       graded: { grade: "G1", country: REGION },
     } as Race;
   });
@@ -256,7 +267,10 @@ describe("npcCycle — rivalry escalation news (regional dominance path)", () =>
     );
 
     const escalationNews = result.newsItems?.find(
-      (n) => n.category === "stable" && n.importance === "high" && n.headline.includes("Bitter Creek Stables"),
+      (n) =>
+        n.category === "stable" &&
+        n.importance === "high" &&
+        n.headline.includes("Bitter Creek Stables"),
     );
     expect(escalationNews).toBeDefined();
     expect(escalationNews!.entityLinks).toEqual([

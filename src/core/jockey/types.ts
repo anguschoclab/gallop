@@ -19,21 +19,10 @@ export type JockeyStats = {
 };
 
 export type JockeyTrait =
-  | "bullring_expert"
-  | "hill_specialist"
-  | "long_straight_pro"
-  | "gate_master";
+  "bullring_expert" | "hill_specialist" | "long_straight_pro" | "gate_master";
 
 export type JockeySilkPattern =
-  | "solid"
-  | "stripes"
-  | "halves"
-  | "quarters"
-  | "chevron"
-  | "diamond"
-  | "star"
-  | "sash"
-  | "hoops";
+  "solid" | "stripes" | "halves" | "quarters" | "chevron" | "diamond" | "star" | "sash" | "hoops";
 
 export type JockeySilk = {
   pattern: JockeySilkPattern;

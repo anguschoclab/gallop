@@ -286,11 +286,8 @@ export function createBreedingSlice(
       }
 
       // Lazy import to avoid circular concerns
-      const {
-        pickPersonality,
-        generateInvestorName,
-        buildDefaultExpectations,
-      } = require("@/core/breeding/investorTypes") as typeof import("@/core/breeding/investorTypes");
+      const { pickPersonality, generateInvestorName, buildDefaultExpectations } =
+        require("@/core/breeding/investorTypes") as typeof import("@/core/breeding/investorTypes");
 
       const personality = pickPersonality();
       const name = generateInvestorName();

@@ -506,16 +506,33 @@
 
 /* Race Track live-view enhancements */
 @keyframes finish-burst {
-  0%   { transform: scale(1); }
-  30%  { transform: scale(1.35); }
-  60%  { transform: scale(0.95); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.35);
+  }
+  60% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes finish-label-pop {
-  0%   { opacity: 0; transform: translate(-50%, 4px) scale(0.8); }
-  60%  { opacity: 1; transform: translate(-50%, -2px) scale(1.05); }
-  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 4px) scale(0.8);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(-50%, -2px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
 }
 
 .horse-finish-pop {

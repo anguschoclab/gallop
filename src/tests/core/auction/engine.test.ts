@@ -24,9 +24,7 @@ describe("isLotEligible", () => {
   it("applies broodmare specific rules (only mares/fillies, boundary ages)", () => {
     expect(isLotEligible(createTestHorse({ age: 5, gender: "mare" }), "broodmare")).toBe(true);
     expect(isLotEligible(createTestHorse({ age: 5, gender: "filly" }), "broodmare")).toBe(true);
-    expect(
-      isLotEligible(createTestHorse({ age: 5, gender: "horse" }), "broodmare"),
-    ).toBe(false);
+    expect(isLotEligible(createTestHorse({ age: 5, gender: "horse" }), "broodmare")).toBe(false);
     expect(isLotEligible(createTestHorse({ age: 5, gender: "colt" }), "broodmare")).toBe(false);
 
     // Boundary ages: ELIGIBLE_AGES_BY_KIND.broodmare = [4..20]
@@ -70,11 +68,11 @@ describe("isLotEligible", () => {
   });
 
   it("applies 2yo_training specific rules (must be racingViable)", () => {
-    expect(
-      isLotEligible(createTestHorse({ age: 2, racingViable: true }), "2yo_training"),
-    ).toBe(true);
-    expect(
-      isLotEligible(createTestHorse({ age: 2, racingViable: false }), "2yo_training"),
-    ).toBe(false);
+    expect(isLotEligible(createTestHorse({ age: 2, racingViable: true }), "2yo_training")).toBe(
+      true,
+    );
+    expect(isLotEligible(createTestHorse({ age: 2, racingViable: false }), "2yo_training")).toBe(
+      false,
+    );
   });
 });

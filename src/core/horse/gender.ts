@@ -18,13 +18,7 @@ import type { Rng } from "@/core/common/rng";
  */
 
 type GenderRestriction =
-  | "colt"
-  | "filly"
-  | "mares"
-  | "fillies-and-mares"
-  | "colts-and-fillies"
-  | "horses"
-  | undefined;
+  "colt" | "filly" | "mares" | "fillies-and-mares" | "colts-and-fillies" | "horses" | undefined;
 
 /**
  * Check if a horse's gender matches the race's gender restriction.

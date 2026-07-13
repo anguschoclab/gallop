@@ -177,9 +177,17 @@ export async function clearAll(): Promise<void> {
         fileNames.push(entry.name);
       }
     }
-    // Then delete them
-    for (const name of fileNames) {
-      await opfsRoot.removeEntry(name);
+    // Then delete them in parallel — allSettled so one failure doesn't skip remaining files
+    const results = await Promise.allSettled(fileNames.map((name) => opfsRoot!.removeEntry(name)));
+    for (let i = 0; i < results.length; i++) {
+      const result = results[i];
+      if (result.status === "rejected") {
+        const error = result.reason;
+        if (error instanceof DOMException && error.name === "NotFoundError") {
+          continue;
+        }
+        console.error(`Failed to delete file ${fileNames[i]}:`, error);
+      }
     }
   } catch (error) {
     console.error("Failed to clear OPFS:", error);

@@ -232,13 +232,15 @@ grep -n "System Day" src/routes/staff.tsx
 - [ ] **Step 2: Apply replacements**
 
 In `market.tsx`:
-| Find | Replace |
-|---|---|
+
+| Find                         | Replace        |
+| ---------------------------- | -------------- |
 | `Asset Procurement Division` | `Horse Market` |
 
 In `staff.tsx`:
-| Find | Replace |
-|---|---|
+
+| Find          | Replace       |
+| ------------- | ------------- |
 | `System Day:` | `Season Day:` |
 
 - [ ] **Step 3: Verify**
@@ -327,38 +329,45 @@ grep -n "Assets" src/components/SaveLoadDialog.tsx
 - [ ] **Step 2: Apply replacements per file**
 
 `GradedStatsChart.tsx`:
-| Find | Replace |
-|---|---|
+
+| Find                            | Replace              |
+| ------------------------------- | -------------------- |
 | `Deployment_Performance_Matrix` | `Graded Race Record` |
 
 `JockeyRoster.tsx`:
-| Find | Replace |
-|---|---|
+
+| Find                  | Replace         |
+| --------------------- | --------------- |
 | `Reset Intel Filters` | `Reset Filters` |
 
 `FinancialReport.tsx`:
-| Find | Replace |
-|---|---|
+
+| Find            | Replace        |
+| --------------- | -------------- |
 | `Liquid_Assets` | `Cash on Hand` |
 
 `HorseCard.tsx`:
-| Find | Replace |
-|---|---|
+
+| Find            | Replace         |
+| --------------- | --------------- |
 | `Asset Dossier` | `Horse Profile` |
 
 `SaveLoadDialog.tsx`:
-| Find | Replace |
-|---|---|
+
+| Find                                                             | Replace  |
+| ---------------------------------------------------------------- | -------- |
 | `Assets` (the user-visible label in the save/load stats section) | `Horses` |
 
 `ResultOverlay.tsx`:
-| Find | Replace |
-|---|---|
+
+| Find            | Replace          |
+| --------------- | ---------------- |
 | `Asset / Rider` | `Horse / Jockey` |
 
 `Gazette.tsx`:
-| Find | Replace |
-|---|---|
+
+| Find                 | Replace       |
+| -------------------- | ------------- |
 | `Intelligence Brief` | `Latest News` |
 
 - [ ] **Step 3: Verify**

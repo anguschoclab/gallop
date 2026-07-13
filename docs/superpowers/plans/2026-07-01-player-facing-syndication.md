@@ -17,6 +17,7 @@ The current `Syndicate` type has `shares`, `ownershipPct`, `revenue`, and `expen
 The existing reputation system (0–1000 scale, 7 tiers: `unknown → legendary`) is already implemented and will be used as the stake-in-ground for investor attraction and expectation outcomes.
 
 **Key constraints:**
+
 - Player must retain ≥ 51% (`SYNDICATE_MIN_PLAYER_OWNERSHIP_PCT = 0.51`)
 - Investors have personalities that determine what they expect: `conservative` investors expect minimal dividend + stable ROI, `aggressive` investors expect prize money, `speculator` investors expect asset appreciation
 - Missing expectations triggers a reputation hit; exceeding them gives a reputation bonus
@@ -27,6 +28,7 @@ The existing reputation system (0–1000 scale, 7 tiers: `unknown → legendary`
 ## File Structure
 
 **New files:**
+
 - `src/types/investor.ts` — `InvestorRecord`, `InvestorExpectation`, `InvestorPersonality` types
 - `src/core/syndicate/investorGenerator.ts` — NPC investor generation by personality
 - `src/core/syndicate/expectationChecker.ts` — pure function `checkExpectation(investor, syndicateResult): ExpectationOutcome`
@@ -37,6 +39,7 @@ The existing reputation system (0–1000 scale, 7 tiers: `unknown → legendary`
 - `src/tests/core/syndicate/expectationChecker.test.ts` — pure function tests
 
 **Modified files:**
+
 - `src/types/syndicate.ts` — add `investors: InvestorRecord[]`, `totalShares: number`
 - `src/game/store/slices/syndicateSlice.ts` — add `solicitInvestors`, `handleInvestorExpectationCheck`, `disbandInvestor`
 - `src/core/resolver/intents.ts` — add `InvestorBidIntent`, `InvestorExpectationCheckIntent`
@@ -61,6 +64,7 @@ The existing reputation system (0–1000 scale, 7 tiers: `unknown → legendary`
 ## Task 1: Define investor types and constants
 
 **Files:**
+
 - Create: `src/types/investor.ts`
 - Modify: `src/types/syndicate.ts`
 - Modify: `src/constants/gameConstants.ts`
@@ -68,6 +72,7 @@ The existing reputation system (0–1000 scale, 7 tiers: `unknown → legendary`
 - [ ] **Step 1: Create investor types**
 
 Create `src/types/investor.ts`:
+
 ```typescript
 export type InvestorPersonality = "conservative" | "aggressive" | "speculator";
 
@@ -75,8 +80,8 @@ export type ExpectationMetric = "prize_money" | "dividend" | "asset_appreciation
 
 export interface InvestorExpectation {
   metric: ExpectationMetric;
-  targetAmount: number;      // amount expected per period
-  periodDays: number;        // 30 by default
+  targetAmount: number; // amount expected per period
+  periodDays: number; // 30 by default
   lastCheckedDay: number;
 }
 
@@ -84,7 +89,7 @@ export interface InvestorRecord {
   id: string;
   name: string;
   personality: InvestorPersonality;
-  sharesPct: number;         // fraction of syndicate (0–1, e.g. 0.1 = 10%)
+  sharesPct: number; // fraction of syndicate (0–1, e.g. 0.1 = 10%)
   capitalContributed: number;
   joinedDay: number;
   expectation: InvestorExpectation;
@@ -96,6 +101,7 @@ export interface InvestorRecord {
 - [ ] **Step 2: Extend Syndicate type**
 
 In `src/types/syndicate.ts`, add:
+
 ```typescript
 investors: InvestorRecord[];       // default: []
 totalShares: number;               // 100 by default (100%)
@@ -114,6 +120,7 @@ export const INVESTOR_REPUTATION_GAIN_EXCEED = 3;
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/types/investor.ts src/types/syndicate.ts src/constants/gameConstants.ts
 git commit -m "feat(syndicate): define InvestorRecord/InvestorExpectation types and investor management constants"
@@ -124,6 +131,7 @@ git commit -m "feat(syndicate): define InvestorRecord/InvestorExpectation types 
 ## Task 2: NPC investor generator
 
 **Files:**
+
 - Create: `src/core/syndicate/investorGenerator.ts`
 
 - [ ] **Step 1: Implement generator**
@@ -138,22 +146,22 @@ export function generateInvestor(
 ): InvestorRecord {
   const NAMES_BY_PERSONALITY: Record<InvestorPersonality, string[]> = {
     conservative: ["Reginald Hartley", "Margaret Fenn", "Victor Solano", "Helen Chu"],
-    aggressive:   ["Brent Carver", "Talia Sharp", "Mick Bauer", "Jasmine Webb"],
-    speculator:   ["Dallas O'Brien", "Krys Endo", "Fabian Marsh", "Priya Lal"],
+    aggressive: ["Brent Carver", "Talia Sharp", "Mick Bauer", "Jasmine Webb"],
+    speculator: ["Dallas O'Brien", "Krys Endo", "Fabian Marsh", "Priya Lal"],
   };
   const namePool = NAMES_BY_PERSONALITY[personality];
   const nameIndex = Math.abs(seed.charCodeAt(0) + seed.charCodeAt(1)) % namePool.length;
 
   const METRIC_BY_PERSONALITY: Record<InvestorPersonality, ExpectationMetric> = {
     conservative: "dividend",
-    aggressive:   "prize_money",
-    speculator:   "asset_appreciation",
+    aggressive: "prize_money",
+    speculator: "asset_appreciation",
   };
 
   const TARGET_MULTIPLIER: Record<InvestorPersonality, number> = {
     conservative: 0.06, // 6% return per period on capital
-    aggressive:   0.12, // 12% in prize money share
-    speculator:   0.15, // 15% asset appreciation
+    aggressive: 0.12, // 12% in prize money share
+    speculator: 0.15, // 15% asset appreciation
   };
 
   const capital = sharesPct * capitalPerPct;
@@ -179,6 +187,7 @@ export function generateInvestor(
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/core/syndicate/investorGenerator.ts
 git commit -m "feat(syndicate): add NPC investor generator with personality-driven expectations"
@@ -189,6 +198,7 @@ git commit -m "feat(syndicate): add NPC investor generator with personality-driv
 ## Task 3: Expectation checker pure function
 
 **Files:**
+
 - Create: `src/core/syndicate/expectationChecker.ts`
 - Create: `src/tests/core/syndicate/expectationChecker.test.ts`
 
@@ -197,7 +207,10 @@ git commit -m "feat(syndicate): add NPC investor generator with personality-driv
 ```typescript
 describe("checkExpectation", () => {
   it("returns 'exceeded' when prize money > targetAmount * 1.2", () => {
-    const investor = createTestInvestor({ personality: "aggressive", expectation: { metric: "prize_money", targetAmount: 1000 } });
+    const investor = createTestInvestor({
+      personality: "aggressive",
+      expectation: { metric: "prize_money", targetAmount: 1000 },
+    });
     const result = checkExpectation(investor, { prizeMoney: 1300, dividend: 0, assetGain: 0 });
     expect(result.outcome).toBe("exceeded");
   });
@@ -213,7 +226,10 @@ describe("checkExpectation", () => {
   });
 
   it("conservative investor uses dividend metric", () => {
-    const investor = createTestInvestor({ personality: "conservative", expectation: { metric: "dividend", targetAmount: 500 } });
+    const investor = createTestInvestor({
+      personality: "conservative",
+      expectation: { metric: "dividend", targetAmount: 500 },
+    });
     const result = checkExpectation(investor, { prizeMoney: 0, dividend: 600, assetGain: 0 });
     expect(result.outcome).toBe("exceeded");
   });
@@ -242,8 +258,8 @@ export function checkExpectation(
   result: PeriodResult,
 ): ExpectationCheckResult {
   const METRIC_VALUE: Record<ExpectationMetric, number> = {
-    prize_money:        result.prizeMoney * investor.sharesPct,
-    dividend:           result.dividend * investor.sharesPct,
+    prize_money: result.prizeMoney * investor.sharesPct,
+    dividend: result.dividend * investor.sharesPct,
     asset_appreciation: result.assetGain * investor.sharesPct,
   };
 
@@ -251,21 +267,31 @@ export function checkExpectation(
   const target = investor.expectation.targetAmount;
 
   if (actual >= target * 1.2) {
-    return { outcome: "exceeded", reputationDelta: INVESTOR_REPUTATION_GAIN_EXCEED, satisfactionDelta: 10 };
+    return {
+      outcome: "exceeded",
+      reputationDelta: INVESTOR_REPUTATION_GAIN_EXCEED,
+      satisfactionDelta: 10,
+    };
   } else if (actual >= target) {
     return { outcome: "met", reputationDelta: 0, satisfactionDelta: 2 };
   } else {
-    return { outcome: "missed", reputationDelta: -INVESTOR_REPUTATION_HIT_MISS, satisfactionDelta: -15 };
+    return {
+      outcome: "missed",
+      reputationDelta: -INVESTOR_REPUTATION_HIT_MISS,
+      satisfactionDelta: -15,
+    };
   }
 }
 ```
 
 - [ ] **Run tests:**
+
 ```bash
 bun test src/tests/core/syndicate/expectationChecker.test.ts
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/core/syndicate/expectationChecker.ts src/tests/core/syndicate/expectationChecker.test.ts
 git commit -m "feat(syndicate): add checkExpectation pure function with exceeded/met/missed outcomes"
@@ -276,6 +302,7 @@ git commit -m "feat(syndicate): add checkExpectation pure function with exceeded
 ## Task 4: Investor expectation pipeline phase
 
 **Files:**
+
 - Create: `src/core/time/phases/investorExpectationPhase.ts`
 - Modify: `src/core/time/pipeline.ts`
 
@@ -314,6 +341,7 @@ export function investorExpectationPhase(state: GameState): InvestorExpectationC
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/core/time/phases/investorExpectationPhase.ts src/core/time/pipeline.ts
 git commit -m "feat(syndicate): add investorExpectationPhase at pipeline order 62 — emits expectation check intents"
@@ -324,6 +352,7 @@ git commit -m "feat(syndicate): add investorExpectationPhase at pipeline order 6
 ## Task 5: InvestorExpectationCheck intent handler
 
 **Files:**
+
 - Modify: `src/core/resolver/intents.ts`
 - Modify: `src/core/resolver/handlers/` (add `investorExpectationHandler.ts`)
 
@@ -343,6 +372,7 @@ export interface InvestorExpectationCheckIntent {
 The handler builds the `PeriodResult` from the syndicate's `revenue` and `expenses` over the period, calls `checkExpectation`, and emits reputation/satisfaction mutations.
 
 - [ ] **Commit:**
+
 ```bash
 git commit -m "feat(syndicate): add InvestorExpectationCheckIntent handler applying reputation and satisfaction deltas"
 ```
@@ -352,6 +382,7 @@ git commit -m "feat(syndicate): add InvestorExpectationCheckIntent handler apply
 ## Task 6: solicitInvestors store action
 
 **Files:**
+
 - Modify: `src/game/store/slices/syndicateSlice.ts`
 
 - [ ] **Step 1: Implement solicitInvestors action**
@@ -398,6 +429,7 @@ solicitInvestors: (syndicateId: string, slots: Array<{ personality: InvestorPers
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/game/store/slices/syndicateSlice.ts
 git commit -m "feat(syndicate): add solicitInvestors store action with 51% player ownership guard"
@@ -408,9 +440,11 @@ git commit -m "feat(syndicate): add solicitInvestors store action with 51% playe
 ## Task 7: Build SolicitationWizard component
 
 **Files:**
+
 - Create: `src/components/syndicate/SolicitationWizard.tsx`
 
 3-step wizard:
+
 1. **Select Syndicate** — dropdown of player's syndicates
 2. **Configure Ask** — number of investor slots (1–3), personality per slot, share % per slot
 3. **Review Terms** — display projected capital raise and expected obligations; confirm button
@@ -423,9 +457,9 @@ The wizard is a controlled component with local `step: 1 | 2 | 3` state. On step
 export function SolicitationWizard({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [syndicateId, setSyndicateId] = useState<string>("");
-  const [slots, setSlots] = useState<Array<{ personality: InvestorPersonality; sharesPct: number }>>([
-    { personality: "conservative", sharesPct: 0.1 },
-  ]);
+  const [slots, setSlots] = useState<
+    Array<{ personality: InvestorPersonality; sharesPct: number }>
+  >([{ personality: "conservative", sharesPct: 0.1 }]);
   const solicitInvestors = useRacingStore((s) => s.solicitInvestors);
   const syndicates = useRacingStore((s) => s.playerSyndicates ?? []);
 
@@ -434,22 +468,42 @@ export function SolicitationWizard({ open, onClose }: { open: boolean; onClose: 
   return (
     <dialog open className="solicitation-wizard">
       <h2>Solicit Investors — Step {step} of 3</h2>
-      {step === 1 && <StepSelectSyndicate syndicates={syndicates} value={syndicateId} onChange={setSyndicateId} onNext={() => setStep(2)} />}
-      {step === 2 && <StepConfigureAsk slots={slots} onChange={setSlots} onBack={() => setStep(1)} onNext={() => setStep(3)} />}
+      {step === 1 && (
+        <StepSelectSyndicate
+          syndicates={syndicates}
+          value={syndicateId}
+          onChange={setSyndicateId}
+          onNext={() => setStep(2)}
+        />
+      )}
+      {step === 2 && (
+        <StepConfigureAsk
+          slots={slots}
+          onChange={setSlots}
+          onBack={() => setStep(1)}
+          onNext={() => setStep(3)}
+        />
+      )}
       {step === 3 && (
         <StepReviewTerms
           slots={slots}
           onBack={() => setStep(2)}
-          onConfirm={() => { solicitInvestors(syndicateId, slots); onClose(); }}
+          onConfirm={() => {
+            solicitInvestors(syndicateId, slots);
+            onClose();
+          }}
         />
       )}
-      <button onClick={onClose} className="btn-ghost">Cancel</button>
+      <button onClick={onClose} className="btn-ghost">
+        Cancel
+      </button>
     </dialog>
   );
 }
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/components/syndicate/SolicitationWizard.tsx
 git commit -m "feat(syndicate): add 3-step SolicitationWizard for player investor solicitation"
@@ -460,19 +514,26 @@ git commit -m "feat(syndicate): add 3-step SolicitationWizard for player investo
 ## Task 8: Build InvestorList component
 
 **Files:**
+
 - Create: `src/components/syndicate/InvestorList.tsx`
 
 Table showing: Name | Personality | Shares | Capital | Satisfaction | Status | Expectation
 
 ```tsx
 export function InvestorList({ investors }: { investors: InvestorRecord[] }) {
-  if (!investors.length) return <p>No investors yet. Use "Solicit Investors" to bring in partners.</p>;
+  if (!investors.length)
+    return <p>No investors yet. Use "Solicit Investors" to bring in partners.</p>;
   return (
     <table className="investor-table">
       <thead>
         <tr>
-          <th>Name</th><th>Type</th><th>Shares</th><th>Capital</th>
-          <th>Satisfaction</th><th>Status</th><th>Expecting</th>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Shares</th>
+          <th>Capital</th>
+          <th>Satisfaction</th>
+          <th>Status</th>
+          <th>Expecting</th>
         </tr>
       </thead>
       <tbody>
@@ -482,9 +543,16 @@ export function InvestorList({ investors }: { investors: InvestorRecord[] }) {
             <td>{inv.personality}</td>
             <td>{(inv.sharesPct * 100).toFixed(1)}%</td>
             <td>${inv.capitalContributed.toLocaleString()}</td>
-            <td><SatisfactionBar score={inv.satisfactionScore} /></td>
-            <td><StatusBadge status={inv.status} /></td>
-            <td>{inv.expectation.metric.replace("_", " ")} ≥ ${inv.expectation.targetAmount.toFixed(0)}/mo</td>
+            <td>
+              <SatisfactionBar score={inv.satisfactionScore} />
+            </td>
+            <td>
+              <StatusBadge status={inv.status} />
+            </td>
+            <td>
+              {inv.expectation.metric.replace("_", " ")} ≥ $
+              {inv.expectation.targetAmount.toFixed(0)}/mo
+            </td>
           </tr>
         ))}
       </tbody>
@@ -494,6 +562,7 @@ export function InvestorList({ investors }: { investors: InvestorRecord[] }) {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/components/syndicate/InvestorList.tsx
 git commit -m "feat(syndicate): add InvestorList component with satisfaction bar and status badge"
@@ -504,6 +573,7 @@ git commit -m "feat(syndicate): add InvestorList component with satisfaction bar
 ## Task 9: Build /syndicate/$syndicateId route
 
 **Files:**
+
 - Create: `src/routes/syndicate.$syndicateId.tsx`
 
 3 tabs: Overview, Investors, Financials.
@@ -519,7 +589,9 @@ type Tab = "overview" | "investors" | "financials";
 
 function SyndicatePage() {
   const { syndicateId } = Route.useParams();
-  const syndicate = useRacingStore((s) => (s.playerSyndicates ?? []).find((syn) => syn.id === syndicateId));
+  const syndicate = useRacingStore((s) =>
+    (s.playerSyndicates ?? []).find((syn) => syn.id === syndicateId),
+  );
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [wizardOpen, setWizardOpen] = useState(false);
 
@@ -533,14 +605,18 @@ function SyndicatePage() {
       </header>
       <nav className="tab-nav">
         {(["overview", "investors", "financials"] as Tab[]).map((tab) => (
-          <button key={tab} className={activeTab === tab ? "tab-active" : ""} onClick={() => setActiveTab(tab)}>
+          <button
+            key={tab}
+            className={activeTab === tab ? "tab-active" : ""}
+            onClick={() => setActiveTab(tab)}
+          >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
           </button>
         ))}
       </nav>
-      {activeTab === "overview"    && <SyndicateOverview syndicate={syndicate} />}
-      {activeTab === "investors"   && <InvestorList investors={syndicate.investors} />}
-      {activeTab === "financials"  && <SyndicateFinancials syndicate={syndicate} />}
+      {activeTab === "overview" && <SyndicateOverview syndicate={syndicate} />}
+      {activeTab === "investors" && <InvestorList investors={syndicate.investors} />}
+      {activeTab === "financials" && <SyndicateFinancials syndicate={syndicate} />}
       <SolicitationWizard open={wizardOpen} onClose={() => setWizardOpen(false)} />
     </div>
   );
@@ -548,6 +624,7 @@ function SyndicatePage() {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/routes/syndicate.$syndicateId.tsx
 git commit -m "feat(syndicate): add /syndicate/$syndicateId route with Overview/Investors/Financials tabs"
@@ -558,6 +635,7 @@ git commit -m "feat(syndicate): add /syndicate/$syndicateId route with Overview/
 ## Task 10: Wire navigation from existing syndicates list
 
 **Files:**
+
 - Modify: `src/routes/syndicates.tsx` or equivalent syndicates index page
 
 - [ ] **Step 1: Add Link to syndicate page**
@@ -565,6 +643,7 @@ git commit -m "feat(syndicate): add /syndicate/$syndicateId route with Overview/
 Each syndicate card should have `<Link to="/syndicate/$syndicateId" params={{ syndicateId: s.id }}>Manage</Link>`.
 
 - [ ] **Commit:**
+
 ```bash
 git commit -m "feat(syndicate): add Manage link to syndicate cards navigating to /syndicate/$syndicateId"
 ```
@@ -574,6 +653,7 @@ git commit -m "feat(syndicate): add Manage link to syndicate cards navigating to
 ## Task 11: Add disbandInvestor action
 
 **Files:**
+
 - Modify: `src/game/store/slices/syndicateSlice.ts`
 
 - [ ] **Step 1: Implement disbandInvestor**
@@ -591,6 +671,7 @@ disbandInvestor: (syndicateId: string, investorId: string, forced: boolean) => {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git commit -m "feat(syndicate): add disbandInvestor action with optional forced removal and reputation penalty"
 ```
@@ -600,6 +681,7 @@ git commit -m "feat(syndicate): add disbandInvestor action with optional forced 
 ## Task 12: Integration tests
 
 **Files:**
+
 - Create: `src/tests/core/syndicate/expectationChecker.test.ts` (already in Task 3)
 - Modify: `src/tests/game/store/syndicateActions.test.ts` (create)
 
@@ -619,6 +701,7 @@ bun test src/tests/core/syndicate/ src/tests/game/store/syndicateActions.test.ts
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/tests/game/store/syndicateActions.test.ts
 git commit -m "test(syndicate): add solicitInvestors guard tests and expectation period integration test"

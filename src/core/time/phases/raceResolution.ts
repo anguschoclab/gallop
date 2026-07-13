@@ -11,7 +11,11 @@
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { PRIZE_SPLIT, PHASE_ORDER_RACE_RESOLUTION } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
-import type { TrackRecordImpact, SeasonHistoryImpact, HallOfFameInductionImpact } from "@/core/resolver/impacts/index";
+import type {
+  TrackRecordImpact,
+  SeasonHistoryImpact,
+  HallOfFameInductionImpact,
+} from "@/core/resolver/impacts/index";
 import { rngForRace } from "@/services/race/raceSimulationService";
 import type { Race } from "@/game/types";
 import type { ClaimingIntent } from "@/core/resolver/intents";
@@ -47,6 +51,7 @@ export const raceResolutionPhase: PipelinePhase = {
     const horseMap = new Map(state.horses.map((h) => [h.id, h]));
     const npcStableMap = new Map((state.npcStables || []).map((s) => [s.id, s]));
     const jockeyMap = new Map((state.jockeys || []).map((j) => [j.id, j]));
+    const hallOfFameIds = new Set((state.hallOfFame ?? []).map((e) => e.horseId));
 
     // Clone the AI manager so NPC learning updates are applied as a new object.
     const npcAIManager = state.npcAIManager
@@ -94,6 +99,7 @@ export const raceResolutionPhase: PipelinePhase = {
 
       // Record outcomes for NPC AI
       if (npcAIManager) {
+        const runnerByHorseId = new Map(runners.map((r) => [r.horseId, r]));
         for (const res of result) {
           const horse = horseMap.get(res.horseId);
           if (horse && horse.stableId) {
@@ -115,7 +121,7 @@ export const raceResolutionPhase: PipelinePhase = {
 
               // 2. Learn from jockey performance
               if (stableAI.jockeyAI) {
-                const runner = runners.find((r) => r.horseId === res.horseId);
+                const runner = runnerByHorseId.get(res.horseId);
                 if (runner && runner.jockeyId) {
                   // Calculate prize money for learning
                   const prize =
@@ -229,11 +235,14 @@ export const raceResolutionPhase: PipelinePhase = {
             ...winner,
             lifetimeEarnings: (winner.lifetimeEarnings ?? 0) + prizeMoney,
             careerWins: (winner.careerWins ?? 0) + 1,
-            raceHistory: [...winner.raceHistory, { raceId: race.id, raceName: race.name, grade: "G1", position: 1, day: newDay }],
+            raceHistory: [
+              ...winner.raceHistory,
+              { raceId: race.id, raceName: race.name, grade: "G1", position: 1, day: newDay },
+            ],
           };
 
           const hofEntry = checkHallOfFameInduction(tempHorse, newDay);
-          if (hofEntry && !state.hallOfFame.find((e) => e.horseId === winner.id)) {
+          if (hofEntry && !hallOfFameIds.has(winner.id)) {
             impacts.push({
               id: generateUUID(),
               intentId: race.id,

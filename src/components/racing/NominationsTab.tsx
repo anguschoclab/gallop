@@ -93,7 +93,9 @@ export function NominationsTab() {
         </CardHeader>
         <CardContent className="space-y-2">
           {gradedRaces.length === 0 ? (
-            <div className="text-cream-muted text-sm">No upcoming graded stakes on the calendar.</div>
+            <div className="text-cream-muted text-sm">
+              No upcoming graded stakes on the calendar.
+            </div>
           ) : (
             gradedRaces.map((race) => (
               <RaceNominationRow
@@ -161,11 +163,7 @@ export function NominationsTab() {
                       {n.status}
                     </Badge>
                     {n.status === "active" && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => withdrawNomination(n.id)}
-                      >
+                      <Button size="sm" variant="ghost" onClick={() => withdrawNomination(n.id)}>
                         Withdraw
                       </Button>
                     )}

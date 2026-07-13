@@ -13,12 +13,23 @@ describe("SyndicationHandler", () => {
     const handler = new SyndicationHandler();
     const state = {
       cash: 1000,
-      horses: [{ id: "h1", name: "Champion", raceHistory: [{ grade: "G1", position: 1 }], stud: { standingFee: 20000 } }],
+      horses: [
+        {
+          id: "h1",
+          name: "Champion",
+          raceHistory: [{ grade: "G1", position: 1 }],
+          stud: { standingFee: 20000 },
+        },
+      ],
       syndicates: {},
     } as unknown as GameState;
 
     const impact: SyndicateCreationImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "managementResolution", logLevel: "always",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "managementResolution",
+      logLevel: "always",
       type: "syndicate_creation",
       syndicateId: "syn-1",
       stallionId: "h1",
@@ -47,7 +58,11 @@ describe("SyndicationHandler", () => {
     } as unknown as GameState;
 
     const impact: SyndicateCreationImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "managementResolution", logLevel: "always",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "managementResolution",
+      logLevel: "always",
       type: "syndicate_creation",
       syndicateId: "syn-1",
       stallionId: "h1",
@@ -71,16 +86,26 @@ describe("SyndicationHandler", () => {
       horses: [],
       syndicates: {
         "syn-1": {
-          id: "syn-1", stallionId: "h1", stallionName: "Champ",
-          totalShares: 40, shareHolders: { player: 10 }, sharePrice: 5000,
-          studFee: 20000, isPublic: true, lifetimeEarnings: 0,
+          id: "syn-1",
+          stallionId: "h1",
+          stallionName: "Champ",
+          totalShares: 40,
+          shareHolders: { player: 10 },
+          sharePrice: 5000,
+          studFee: 20000,
+          isPublic: true,
+          lifetimeEarnings: 0,
         },
       },
       shareTransactions: [],
     } as unknown as GameState;
 
     const impact: ShareTransactionImpact = {
-      id: "imp-1", intentId: "", day: 15, phase: "managementResolution", logLevel: "always",
+      id: "imp-1",
+      intentId: "",
+      day: 15,
+      phase: "managementResolution",
+      logLevel: "always",
       type: "share_transaction",
       syndicateId: "syn-1",
       stableId: "stable-2",
@@ -103,16 +128,26 @@ describe("SyndicationHandler", () => {
       horses: [],
       syndicates: {
         "syn-1": {
-          id: "syn-1", stallionId: "h1", stallionName: "Champ",
-          totalShares: 40, shareHolders: { player: 10, "stable-2": 5 }, sharePrice: 5000,
-          studFee: 20000, isPublic: true, lifetimeEarnings: 0,
+          id: "syn-1",
+          stallionId: "h1",
+          stallionName: "Champ",
+          totalShares: 40,
+          shareHolders: { player: 10, "stable-2": 5 },
+          sharePrice: 5000,
+          studFee: 20000,
+          isPublic: true,
+          lifetimeEarnings: 0,
         },
       },
       shareTransactions: [],
     } as unknown as GameState;
 
     const impact: ShareTransactionImpact = {
-      id: "imp-1", intentId: "", day: 15, phase: "managementResolution", logLevel: "always",
+      id: "imp-1",
+      intentId: "",
+      day: 15,
+      phase: "managementResolution",
+      logLevel: "always",
       type: "share_transaction",
       syndicateId: "syn-1",
       stableId: "stable-2",
@@ -135,15 +170,25 @@ describe("SyndicationHandler", () => {
       npcStables: [{ id: "stable-2", cash: 0 }],
       syndicates: {
         "syn-1": {
-          id: "syn-1", stallionId: "h1", stallionName: "Champ",
-          totalShares: 40, shareHolders: { player: 10, "stable-2": 10 }, sharePrice: 5000,
-          studFee: 20000, isPublic: true, lifetimeEarnings: 0,
+          id: "syn-1",
+          stallionId: "h1",
+          stallionName: "Champ",
+          totalShares: 40,
+          shareHolders: { player: 10, "stable-2": 10 },
+          sharePrice: 5000,
+          studFee: 20000,
+          isPublic: true,
+          lifetimeEarnings: 0,
         },
       },
     } as unknown as GameState;
 
     const impact: SyndicateFeeDistributionImpact = {
-      id: "imp-1", intentId: "", day: 20, phase: "breedingResolution", logLevel: "always",
+      id: "imp-1",
+      intentId: "",
+      day: 20,
+      phase: "breedingResolution",
+      logLevel: "always",
       type: "syndicate_fee_distribution",
       syndicateId: "syn-1",
       totalFee: 10000,
@@ -166,15 +211,25 @@ describe("SyndicationHandler", () => {
       horses: [],
       syndicates: {
         "syn-1": {
-          id: "syn-1", stallionId: "h1", stallionName: "Champ",
-          totalShares: 40, shareHolders: { player: 10 }, sharePrice: 5000,
-          studFee: 20000, isPublic: true, lifetimeEarnings: 0,
+          id: "syn-1",
+          stallionId: "h1",
+          stallionName: "Champ",
+          totalShares: 40,
+          shareHolders: { player: 10 },
+          sharePrice: 5000,
+          studFee: 20000,
+          isPublic: true,
+          lifetimeEarnings: 0,
         },
       },
     } as unknown as GameState;
 
     const impact: SyndicateSatisfactionImpact = {
-      id: "imp-1", intentId: "", day: 30, phase: "breedingResolution", logLevel: "always",
+      id: "imp-1",
+      intentId: "",
+      day: 30,
+      phase: "breedingResolution",
+      logLevel: "always",
       type: "syndicate_satisfaction",
       syndicateId: "syn-1",
       stableId: "player",

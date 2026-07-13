@@ -49,9 +49,7 @@ describe("stewardsPhase — player-entry guard", () => {
       ],
     });
 
-    const horses = [
-      makeOwned("player-horse"),
-    ] as Horse[];
+    const horses = [makeOwned("player-horse")] as Horse[];
 
     const ctx = makePipelineContext({
       newDay: 1,
@@ -99,10 +97,7 @@ describe("stewardsPhase — player-entry guard", () => {
     const race = makeResolvedRace({
       id: "already-inquired",
       inquiries: [{ id: "existing", type: "interference" }] as any,
-      entries: [
-        { horseId: "h1", owned: false } as any,
-        { horseId: "h2", owned: false } as any,
-      ],
+      entries: [{ horseId: "h1", owned: false } as any, { horseId: "h2", owned: false } as any],
     });
 
     const ctx = makePipelineContext({

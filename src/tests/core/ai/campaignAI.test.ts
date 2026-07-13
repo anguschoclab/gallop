@@ -16,6 +16,7 @@ import {
 } from "@/core/ai/campaignAI";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { GradedRace } from "@/data/gradedRaces";
+import type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 
 // Mock data setup
@@ -247,6 +248,68 @@ describe("getOptimalMajorRaceTarget", () => {
     const target = getOptimalMajorRaceTarget(updatedState, horse, stable, currentDay);
     expect(target).toBeDefined();
     expect(typeof target).toBe("string");
+  });
+
+  it("should resolve all target races via map lookup and return a valid key", () => {
+    const state = createCampaignAIState(createMockStable());
+    const horse = createMockHorse({
+      stats: {
+        speed: 85,
+        stamina: 85,
+        acceleration: 85,
+        consistency: 85,
+        temperament: 50,
+        conformation: 50,
+      },
+      distanceAptitude: 2000,
+    });
+    const stable = createMockStable();
+    const currentDay = 100;
+
+    const updatedState = detectContender(state, horse, currentDay, stable);
+    const status = updatedState.contenderTracking[horse.id];
+    expect(status).toBeDefined();
+    expect(status.isContender).toBe(true);
+    expect(status.targetRaces.length).toBeGreaterThanOrEqual(2);
+
+    const target = getOptimalMajorRaceTarget(updatedState, horse, stable, currentDay);
+    expect(target).not.toBeNull();
+    expect(status.targetRaces).toContain(target);
+  });
+
+  it("should gracefully skip invalid keys in targetRaces without crashing", () => {
+    const stable = createMockStable();
+    const state = createCampaignAIState(stable);
+    const horse = createMockHorse({
+      stats: {
+        speed: 85,
+        stamina: 85,
+        acceleration: 85,
+        consistency: 85,
+        temperament: 50,
+        conformation: 50,
+      },
+      distanceAptitude: 2000,
+    });
+
+    const updatedState = detectContender(state, horse, 100, stable);
+    const status = updatedState.contenderTracking[horse.id];
+    expect(status).toBeDefined();
+
+    const stateWithInvalidKey = {
+      ...updatedState,
+      contenderTracking: {
+        ...updatedState.contenderTracking,
+        [horse.id]: {
+          ...status,
+          targetRaces: [...status.targetRaces, "nonexistent-race-key-xyz"],
+        },
+      },
+    };
+
+    const target = getOptimalMajorRaceTarget(stateWithInvalidKey, horse, stable, 100);
+    expect(target).not.toBeNull();
+    expect(status.targetRaces).toContain(target);
   });
 });
 

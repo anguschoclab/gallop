@@ -6,14 +6,14 @@
 
 import { describe, it, expect } from "vitest";
 import { generateRaceImpacts } from "@/services/race/raceImpactGenerator";
-import { GRADED_RACES } from "@/data/gradedRaces";
+import { GRADED_RACES, GRADED_RACES_BY_KEY } from "@/data/gradedRaces";
 import type { Race, Jockey } from "@/game/types";
 import { createTestColt } from "@/tests/helpers/createTestHorse";
 
 describe("Triple Crown Detection", () => {
   it("should detect triple crown progress when horse wins a triple crown leg", () => {
     // Create a mock triple crown race (Kentucky Derby)
-    const kentuckyDerby = GRADED_RACES.find((r) => r.key === "usa-kentucky-derby");
+    const kentuckyDerby = GRADED_RACES_BY_KEY.get("usa-kentucky-derby");
     expect(kentuckyDerby).toBeDefined();
     expect(kentuckyDerby?.triplecrownKey).toBe("usa-tc");
 
@@ -73,8 +73,8 @@ describe("Triple Crown Detection", () => {
 
   it("should detect triple crown winner when horse wins all three legs", () => {
     // Get the actual graded race data for Preakness and Belmont
-    const preakness = GRADED_RACES.find((r) => r.key === "usa-preakness");
-    const belmont = GRADED_RACES.find((r) => r.key === "usa-belmont-stakes");
+    const preakness = GRADED_RACES_BY_KEY.get("usa-preakness");
+    const belmont = GRADED_RACES_BY_KEY.get("usa-belmont-stakes");
 
     // Create a horse that has already won the first two legs
     const horse = createTestColt({
@@ -107,7 +107,7 @@ describe("Triple Crown Detection", () => {
     });
 
     // Simulate winning the Kentucky Derby (third leg)
-    const kentuckyDerby = GRADED_RACES.find((r) => r.key === "usa-kentucky-derby");
+    const kentuckyDerby = GRADED_RACES_BY_KEY.get("usa-kentucky-derby");
     const race: Race = {
       id: "kentucky-derby",
       name: kentuckyDerby?.name || "Kentucky Derby",
@@ -197,7 +197,7 @@ describe("Triple Crown Detection", () => {
   });
 
   it("should not generate triple crown impact when horse doesn't win", () => {
-    const kentuckyDerby = GRADED_RACES.find((r) => r.key === "usa-kentucky-derby");
+    const kentuckyDerby = GRADED_RACES_BY_KEY.get("usa-kentucky-derby");
     const race: Race = {
       id: "race-1",
       name: kentuckyDerby?.name || "Kentucky Derby",

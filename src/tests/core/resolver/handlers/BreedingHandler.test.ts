@@ -135,7 +135,19 @@ describe("BreedingHandler", () => {
     const handler = new BreedingHandler();
     const state = {
       horses: [],
-      pregnancies: [{ id: "preg-1", sireId: "h2", damId: "h1", sireName: "S", damName: "D", conceivedDay: 10, dueDay: 335, resolved: false, isPlayerOwned: true }],
+      pregnancies: [
+        {
+          id: "preg-1",
+          sireId: "h2",
+          damId: "h1",
+          sireName: "S",
+          damName: "D",
+          conceivedDay: 10,
+          dueDay: 335,
+          resolved: false,
+          isPlayerOwned: true,
+        },
+      ],
     } as unknown as GameState;
 
     const impact: PregnancyUpdateImpact = {
@@ -161,8 +173,28 @@ describe("BreedingHandler", () => {
     const state = {
       horses: [],
       pregnancies: [
-        { id: "preg-1", sireId: "h2", damId: "h1", sireName: "S", damName: "D", conceivedDay: 10, dueDay: 335, resolved: false, isPlayerOwned: true },
-        { id: "preg-2", sireId: "h4", damId: "h3", sireName: "S", damName: "D", conceivedDay: 10, dueDay: 335, resolved: false, isPlayerOwned: true },
+        {
+          id: "preg-1",
+          sireId: "h2",
+          damId: "h1",
+          sireName: "S",
+          damName: "D",
+          conceivedDay: 10,
+          dueDay: 335,
+          resolved: false,
+          isPlayerOwned: true,
+        },
+        {
+          id: "preg-2",
+          sireId: "h4",
+          damId: "h3",
+          sireName: "S",
+          damName: "D",
+          conceivedDay: 10,
+          dueDay: 335,
+          resolved: false,
+          isPlayerOwned: true,
+        },
       ],
     } as unknown as GameState;
 
@@ -201,7 +233,13 @@ describe("BreedingHandler", () => {
       horseId: "horse-1",
       lastFoaledDay: 30,
       foalsProduced: ["foal-1", "foal-2", "foal-3", "foal-4", "foal-5"],
-      blueHenStatus: { isBlueHen: true, stakesWinnersProduced: 2, group1WinnersProduced: 2, blueHenScore: 50, foalsProduced: 5 },
+      blueHenStatus: {
+        isBlueHen: true,
+        stakesWinnersProduced: 2,
+        group1WinnersProduced: 2,
+        blueHenScore: 50,
+        foalsProduced: 5,
+      },
       reason: "Mare foaled",
     };
 
@@ -209,8 +247,20 @@ describe("BreedingHandler", () => {
     handler.handle(draft, impact);
 
     expect(draft.horses[0].lastFoaledDay).toBe(30);
-    expect(draft.horses[0].foalsProduced).toEqual(["foal-1", "foal-2", "foal-3", "foal-4", "foal-5"]);
-    expect(draft.horses[0].blueHenStatus).toEqual({ isBlueHen: true, stakesWinnersProduced: 2, group1WinnersProduced: 2, blueHenScore: 50, foalsProduced: 5 });
+    expect(draft.horses[0].foalsProduced).toEqual([
+      "foal-1",
+      "foal-2",
+      "foal-3",
+      "foal-4",
+      "foal-5",
+    ]);
+    expect(draft.horses[0].blueHenStatus).toEqual({
+      isBlueHen: true,
+      stakesWinnersProduced: 2,
+      group1WinnersProduced: 2,
+      blueHenScore: 50,
+      foalsProduced: 5,
+    });
   });
 
   it("blue_hen_status (underscore) updates horse.blueHenStatus — regression test for type string fix", () => {
@@ -228,14 +278,26 @@ describe("BreedingHandler", () => {
       logLevel: "always",
       type: "blue_hen_status",
       horseId: "horse-1",
-      blueHenStatus: { isBlueHen: true, stakesWinnersProduced: 3, group1WinnersProduced: 3, blueHenScore: 75, foalsProduced: 5 },
+      blueHenStatus: {
+        isBlueHen: true,
+        stakesWinnersProduced: 3,
+        group1WinnersProduced: 3,
+        blueHenScore: 75,
+        foalsProduced: 5,
+      },
       reason: "Blue hen status updated",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].blueHenStatus).toEqual({ isBlueHen: true, stakesWinnersProduced: 3, group1WinnersProduced: 3, blueHenScore: 75, foalsProduced: 5 });
+    expect(draft.horses[0].blueHenStatus).toEqual({
+      isBlueHen: true,
+      stakesWinnersProduced: 3,
+      group1WinnersProduced: 3,
+      blueHenScore: 75,
+      foalsProduced: 5,
+    });
   });
 
   it("canHandle returns true for all breeding impact types", () => {

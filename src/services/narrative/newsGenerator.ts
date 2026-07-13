@@ -76,7 +76,7 @@ export function generateRaceNews(
     `${winner.name} Triumphs in a Thrilling ${race.name}.`,
     `Unstoppable: ${winner.name} Captures the ${race.name}.`,
     `${winner.name} Crowned Champion of the ${race.name}.`,
-    `No Catching ${winner.name} in the ${race.name}!`
+    `No Catching ${winner.name} in the ${race.name}!`,
   ];
 
   const bodies = [
@@ -100,7 +100,7 @@ export function generateRaceNews(
     `A tactical masterstroke paid off handsomely, allowing ${winner.name} to find daylight and spring an impressive upset in the ${race.name}.`,
     `${winner.name} confirmed their status as a rising star with a gutsy, hard-fought triumph in today's feature event, the ${race.name}.`,
     `Never in doubt from the start, ${winner.name} ran a picture-perfect race to emphatically capture the ${race.name}.`,
-    `Showing tremendous heart and determination, ${winner.name} fended off all challengers in the closing stages of the ${race.name}.`
+    `Showing tremendous heart and determination, ${winner.name} fended off all challengers in the closing stages of the ${race.name}.`,
   ];
 
   const headline = rng.pick(headlines);

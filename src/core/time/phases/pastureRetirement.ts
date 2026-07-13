@@ -15,7 +15,6 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 // Automatically retires NPC horses to pasture based on age and inactivity
 // Also deletes dead/retired horses with no wins to prevent array accumulation
 
-import { createRng, hashStr } from "@/core/common/rng";
 import {
   AGE_RETIREMENT_THRESHOLD,
   FAME_LOW_THRESHOLD,
@@ -52,9 +51,10 @@ export const pastureRetirementPhase: PipelinePhase = {
     const impacts: AnyImpact[] = [];
 
     // 1. Process player intents
+    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
     const retirementIntents = intents.filter((i) => i.type === "pasture_retirement");
     for (const intent of retirementIntents) {
-      const horse = state.horses.find((h) => h.id === (intent as PastureRetirementIntent).horseId);
+      const horse = horseMap.get((intent as PastureRetirementIntent).horseId);
       if (horse && horse.lifecycleStatus === "active") {
         impacts.push({
           id: generateUUID(),
@@ -126,7 +126,7 @@ export const pastureRetirementPhase: PipelinePhase = {
       const isOld = horse.age >= 8;
       const isOldAndInactive =
         horse.age >= AGE_RETIREMENT_THRESHOLD && inactiveDays > INACTIVITY_RETIREMENT_DAYS;
-      const isLowAchiever = horse.age >= 5 && horse.fame < 20 && gradedWins === 0;
+      const isLowAchiever = horse.age >= 5 && horse.fame < FAME_LOW_THRESHOLD && gradedWins === 0;
 
       if (isOld || isOldAndInactive || isLowAchiever) {
         let reason = "";

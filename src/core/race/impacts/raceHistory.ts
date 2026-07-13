@@ -8,7 +8,7 @@ import type { RaceHistoryImpact, TripleCrownProgressImpact } from "@/core/resolv
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { getCurrentYear } from "@/core/race/schedule";
-import { GRADED_RACES } from "@/data/gradedRaces";
+import { GRADED_RACES_BY_TRIPLECROWN_KEY } from "@/data/gradedRaces";
 import type { Race, Horse } from "@/game/types";
 
 export function generateRaceHistoryImpact(
@@ -80,7 +80,7 @@ export function generateTripleCrownProgressImpact(
   if (position === 1 && race.graded?.triplecrownKey) {
     const currentYear = getCurrentYear(newDay);
     const triplecrownKey = race.graded.triplecrownKey;
-    const tcRaces = GRADED_RACES.filter((g) => g.triplecrownKey === triplecrownKey);
+    const tcRaces = GRADED_RACES_BY_TRIPLECROWN_KEY.get(triplecrownKey) ?? [];
 
     const legs = tcRaces.map((tcRace) => {
       if (tcRace.key === race.graded?.key) {

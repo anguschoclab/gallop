@@ -173,13 +173,7 @@ export const DAILY_RECOVERY_RATES: Record<TrackCondition, number> = {
 
 /** Available track maintenance actions */
 export type MaintenanceAction =
-  | "harrow"
-  | "water"
-  | "roll"
-  | "seal"
-  | "turf_cutter"
-  | "rail_move"
-  | "rest_day";
+  "harrow" | "water" | "roll" | "seal" | "turf_cutter" | "rail_move" | "rest_day";
 
 /** Maintenance action configuration */
 export interface MaintenanceConfig {
@@ -285,13 +279,7 @@ export const TRACK_BASE_CHARACTERISTICS: Record<string, TrackBaseCharacteristics
 
 /** Climate zones affecting track behavior */
 export type ClimateZone =
-  | "arid"
-  | "temperate"
-  | "humid"
-  | "tropical"
-  | "continental"
-  | "cool"
-  | "warm";
+  "arid" | "temperate" | "humid" | "tropical" | "continental" | "cool" | "warm";
 
 /** Base probability distribution for track conditions by climate */
 export const CLIMATE_CONDITION_BIAS: Record<ClimateZone, Record<TrackCondition, number>> = {

@@ -23,13 +23,13 @@ vi.mock("@tanstack/react-router", () => ({
 describe("CircuitWidget — tooltip accessibility", () => {
   it("icon-only button has aria-label on wrapping element", () => {
     const { container } = renderWithStore(<CircuitWidget />);
-    const ariaElements = container.querySelectorAll('[aria-label]');
+    const ariaElements = container.querySelectorAll("[aria-label]");
     expect(ariaElements.length).toBeGreaterThanOrEqual(1);
   });
 
   it("no native title attributes on buttons", () => {
     const { container } = renderWithStore(<CircuitWidget />);
-    const titledButtons = container.querySelectorAll('button[title]');
+    const titledButtons = container.querySelectorAll("button[title]");
     expect(titledButtons).toHaveLength(0);
   });
 });
@@ -37,13 +37,13 @@ describe("CircuitWidget — tooltip accessibility", () => {
 describe("HQOpsWidget — tooltip accessibility", () => {
   it("icon-only button has aria-label on wrapping element", () => {
     const { container } = renderWithStore(<HQOpsWidget />);
-    const ariaElements = container.querySelectorAll('[aria-label]');
+    const ariaElements = container.querySelectorAll("[aria-label]");
     expect(ariaElements.length).toBeGreaterThanOrEqual(1);
   });
 
   it("no native title attributes on buttons", () => {
     const { container } = renderWithStore(<HQOpsWidget />);
-    const titledButtons = container.querySelectorAll('button[title]');
+    const titledButtons = container.querySelectorAll("button[title]");
     expect(titledButtons).toHaveLength(0);
   });
 });
@@ -51,13 +51,13 @@ describe("HQOpsWidget — tooltip accessibility", () => {
 describe("StableRosterWidget — tooltip accessibility", () => {
   it("icon-only button has aria-label on wrapping element", () => {
     const { container } = renderWithStore(<StableRosterWidget />);
-    const ariaElements = container.querySelectorAll('[aria-label]');
+    const ariaElements = container.querySelectorAll("[aria-label]");
     expect(ariaElements.length).toBeGreaterThanOrEqual(1);
   });
 
   it("no native title attributes on buttons", () => {
     const { container } = renderWithStore(<StableRosterWidget />);
-    const titledButtons = container.querySelectorAll('button[title]');
+    const titledButtons = container.querySelectorAll("button[title]");
     expect(titledButtons).toHaveLength(0);
   });
 });
@@ -65,13 +65,13 @@ describe("StableRosterWidget — tooltip accessibility", () => {
 describe("ImperialOutpostManager — tooltip accessibility", () => {
   it("icon-only button has aria-label on wrapping element", () => {
     const { container } = renderWithStore(<ImperialOutpostManager />);
-    const ariaElements = container.querySelectorAll('[aria-label]');
+    const ariaElements = container.querySelectorAll("[aria-label]");
     expect(ariaElements.length).toBeGreaterThanOrEqual(1);
   });
 
   it("no native title attributes on buttons", () => {
     const { container } = renderWithStore(<ImperialOutpostManager />);
-    const titledButtons = container.querySelectorAll('button[title]');
+    const titledButtons = container.querySelectorAll("button[title]");
     expect(titledButtons).toHaveLength(0);
   });
 });

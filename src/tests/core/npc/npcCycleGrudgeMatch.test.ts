@@ -18,9 +18,7 @@ interface MockRace {
 }
 
 function processGrudgeMatch(race: MockRace, rivalStableId: string) {
-  const playerHorseIds = new Set(
-    race.entries.filter((e) => e.owned).map((e) => e.horseId),
-  );
+  const playerHorseIds = new Set(race.entries.filter((e) => e.owned).map((e) => e.horseId));
   const rivalHorseIds = new Set(
     race.entries.filter((e) => e.stableId === rivalStableId).map((e) => e.horseId),
   );
@@ -52,10 +50,7 @@ function processGrudgeMatch(race: MockRace, rivalStableId: string) {
 }
 
 describe("npcCycle — Set-based grudge match lookup", () => {
-  const mkRace = (
-    entries: MockEntry[],
-    result: MockResult[],
-  ): MockRace => ({ entries, result });
+  const mkRace = (entries: MockEntry[], result: MockResult[]): MockRace => ({ entries, result });
 
   it("correctly identifies player best position", () => {
     const race = mkRace(

@@ -17,6 +17,7 @@ Currently the player can enter any eligible race without pre-commitment. For gra
 The existing race schedule generates races 90+ days in advance. The `Race` type has a `raceDay` field (absolute game day) and a `grade` field. The player's stable has a `cash` field in the Zustand store.
 
 **Key fee schedule:**
+
 - G1 early: $2,000 | G1 standard: $5,000 | G1 late: not available
 - G2 early: $800  | G2 standard: $2,000 | G2 late: $10,000
 - G3 early: $400  | G3 standard: $1,000 | G3 late: $5,000
@@ -26,12 +27,14 @@ The existing race schedule generates races 90+ days in advance. The `Race` type 
 ## File Structure
 
 **New files:**
+
 - `src/core/racing/nominationFees.ts` — `calculateNominationFee(grade, tier)` pure function
 - `src/core/time/phases/nominationPhase.ts` — pipeline phase at order 84 that resolves `NominationIntent`
 - `src/components/racing/NominationsTab.tsx` — tab component for the Racing page
 - `src/tests/core/racing/nominationFees.test.ts` — unit tests for the pure fee function
 
 **Modified files:**
+
 - `src/types/race.ts` — add `NominationRecord` type; add `nominations?: NominationRecord[]` to `Race`
 - `src/types/state.ts` — add `playerNominations: NominationRecord[]` to game state
 - `src/core/resolver/intents.ts` — add `NominationIntent`
@@ -58,6 +61,7 @@ The existing race schedule generates races 90+ days in advance. The `Race` type 
 ## Task 1: Define fee schedule constants and calculateNominationFee
 
 **Files:**
+
 - Modify: `src/constants/gameConstants.ts`
 - Create: `src/core/racing/nominationFees.ts`
 - Create: `src/tests/core/racing/nominationFees.test.ts`
@@ -66,25 +70,26 @@ The existing race schedule generates races 90+ days in advance. The `Race` type 
 
 ```typescript
 // Stakes Nomination Fees
-export const NOMINATION_FEE_G1_EARLY    = 2000;
+export const NOMINATION_FEE_G1_EARLY = 2000;
 export const NOMINATION_FEE_G1_STANDARD = 5000;
-export const NOMINATION_FEE_G1_LATE     = null; // not available
+export const NOMINATION_FEE_G1_LATE = null; // not available
 
-export const NOMINATION_FEE_G2_EARLY    = 800;
+export const NOMINATION_FEE_G2_EARLY = 800;
 export const NOMINATION_FEE_G2_STANDARD = 2000;
-export const NOMINATION_FEE_G2_LATE     = 10000;
+export const NOMINATION_FEE_G2_LATE = 10000;
 
-export const NOMINATION_FEE_G3_EARLY    = 400;
+export const NOMINATION_FEE_G3_EARLY = 400;
 export const NOMINATION_FEE_G3_STANDARD = 1000;
-export const NOMINATION_FEE_G3_LATE     = 5000;
+export const NOMINATION_FEE_G3_LATE = 5000;
 
-export const NOMINATION_TIER_EARLY_DAYS_THRESHOLD    = 90;
+export const NOMINATION_TIER_EARLY_DAYS_THRESHOLD = 90;
 export const NOMINATION_TIER_STANDARD_DAYS_THRESHOLD = 30;
 ```
 
 - [ ] **Step 2: Write failing tests for calculateNominationFee**
 
 Create `src/tests/core/racing/nominationFees.test.ts`:
+
 ```typescript
 import { describe, it, expect } from "vitest";
 import { calculateNominationFee, getNominationTier } from "@/core/racing/nominationFees";
@@ -136,6 +141,7 @@ describe("calculateNominationFee", () => {
 - [ ] **Step 3: Implement calculateNominationFee**
 
 Create `src/core/racing/nominationFees.ts`:
+
 ```typescript
 export type NominationTier = "early" | "standard" | "late";
 
@@ -146,9 +152,17 @@ export function getNominationTier(daysUntilRace: number): NominationTier {
 }
 
 const FEE_TABLE: Record<string, Record<NominationTier, number | null>> = {
-  G1: { early: NOMINATION_FEE_G1_EARLY,    standard: NOMINATION_FEE_G1_STANDARD, late: null },
-  G2: { early: NOMINATION_FEE_G2_EARLY,    standard: NOMINATION_FEE_G2_STANDARD, late: NOMINATION_FEE_G2_LATE },
-  G3: { early: NOMINATION_FEE_G3_EARLY,    standard: NOMINATION_FEE_G3_STANDARD, late: NOMINATION_FEE_G3_LATE },
+  G1: { early: NOMINATION_FEE_G1_EARLY, standard: NOMINATION_FEE_G1_STANDARD, late: null },
+  G2: {
+    early: NOMINATION_FEE_G2_EARLY,
+    standard: NOMINATION_FEE_G2_STANDARD,
+    late: NOMINATION_FEE_G2_LATE,
+  },
+  G3: {
+    early: NOMINATION_FEE_G3_EARLY,
+    standard: NOMINATION_FEE_G3_STANDARD,
+    late: NOMINATION_FEE_G3_LATE,
+  },
 };
 
 export function calculateNominationFee(
@@ -161,11 +175,13 @@ export function calculateNominationFee(
 ```
 
 - [ ] **Run tests:**
+
 ```bash
 bun test src/tests/core/racing/nominationFees.test.ts
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/constants/gameConstants.ts src/core/racing/nominationFees.ts src/tests/core/racing/nominationFees.test.ts
 git commit -m "feat(nomination): add calculateNominationFee pure function and fee schedule constants — tests passing"
@@ -176,6 +192,7 @@ git commit -m "feat(nomination): add calculateNominationFee pure function and fe
 ## Task 2: Add NominationRecord type and NominationIntent
 
 **Files:**
+
 - Modify: `src/types/race.ts`
 - Modify: `src/types/state.ts`
 - Modify: `src/core/resolver/intents.ts`
@@ -183,6 +200,7 @@ git commit -m "feat(nomination): add calculateNominationFee pure function and fe
 - [ ] **Step 1: Add NominationRecord to race types**
 
 In `src/types/race.ts`:
+
 ```typescript
 export type NominationStatus = "active" | "scratched" | "entered";
 export type NominationTier = "early" | "standard" | "late";
@@ -204,6 +222,7 @@ export interface NominationRecord {
 - [ ] **Step 2: Add playerNominations to state**
 
 In `src/types/state.ts`, add:
+
 ```typescript
 playerNominations: NominationRecord[];
 ```
@@ -211,6 +230,7 @@ playerNominations: NominationRecord[];
 - [ ] **Step 3: Add NominationIntent**
 
 In `src/core/resolver/intents.ts`:
+
 ```typescript
 export interface NominationIntent {
   type: "Nomination";
@@ -221,6 +241,7 @@ export interface NominationIntent {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/types/race.ts src/types/state.ts src/core/resolver/intents.ts
 git commit -m "feat(nomination): add NominationRecord type, playerNominations state field, NominationIntent"
@@ -231,6 +252,7 @@ git commit -m "feat(nomination): add NominationRecord type, playerNominations st
 ## Task 3: Add nominateHorse and withdrawNomination store actions
 
 **Files:**
+
 - Modify: `src/game/store/slices/racingSlice.ts`
 
 - [ ] **Step 1: Implement nominateHorse**
@@ -302,6 +324,7 @@ withdrawNomination: (nominationId: string) => {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/game/store/slices/racingSlice.ts
 git commit -m "feat(nomination): add nominateHorse and withdrawNomination store actions with fee deduction and guards"
@@ -312,18 +335,28 @@ git commit -m "feat(nomination): add nominateHorse and withdrawNomination store 
 ## Task 4: Guard enterRace for graded races
 
 **Files:**
+
 - Modify: `src/game/store/slices/racingSlice.ts`
 
 - [ ] **Step 1: Add nomination guard to enterRace**
 
 In the existing `enterRace` action, before allowing entry for G1/G2/G3 races, add:
+
 ```typescript
 if (race.grade) {
   const hasNomination = (s.playerNominations ?? []).some(
     (n) => n.horseId === horseId && n.raceId === raceId && n.status === "active",
   );
   if (!hasNomination) {
-    set({ log: [{ day: s.day, text: `${horse.name} must be nominated before entering a ${race.grade} race.` }, ...s.log].slice(0, 50) });
+    set({
+      log: [
+        {
+          day: s.day,
+          text: `${horse.name} must be nominated before entering a ${race.grade} race.`,
+        },
+        ...s.log,
+      ].slice(0, 50),
+    });
     return;
   }
 }
@@ -332,6 +365,7 @@ if (race.grade) {
 Also guard in `raceEntryResolutionPhase` for player horses (NPC entry is unaffected).
 
 - [ ] **Commit:**
+
 ```bash
 git add src/game/store/slices/racingSlice.ts
 git commit -m "feat(nomination): guard enterRace for graded races — nomination required before entry"
@@ -342,6 +376,7 @@ git commit -m "feat(nomination): guard enterRace for graded races — nomination
 ## Task 5: Implement nominationPhase pipeline phase
 
 **Files:**
+
 - Create: `src/core/time/phases/nominationPhase.ts`
 - Modify: `src/core/time/pipeline.ts`
 
@@ -373,6 +408,7 @@ export function nominationPhase(state: GameState): void {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/core/time/phases/nominationPhase.ts src/core/time/pipeline.ts
 git commit -m "feat(nomination): add nominationPhase at pipeline order 84 — marks active nominations as entered on race day"
@@ -383,9 +419,11 @@ git commit -m "feat(nomination): add nominationPhase at pipeline order 84 — ma
 ## Task 6: Build NominationsTab component
 
 **Files:**
+
 - Create: `src/components/racing/NominationsTab.tsx`
 
 Shows:
+
 - Active upcoming graded races with nomination button (and fee display based on current day)
 - Player's existing nominations with status and fee paid
 - Option to withdraw (scratched)
@@ -420,9 +458,13 @@ export function NominationsTab() {
             <div key={race.id} className="race-nomination-row">
               <span className="race-grade">{race.grade}</span>
               <span className="race-name">{race.name}</span>
-              <span className="race-day">Day {race.raceDay} ({daysOut}d away)</span>
+              <span className="race-day">
+                Day {race.raceDay} ({daysOut}d away)
+              </span>
               <span className="nomination-tier">{tier}</span>
-              <span className="nomination-fee">{fee != null ? `$${fee.toLocaleString()}` : "Not available"}</span>
+              <span className="nomination-fee">
+                {fee != null ? `$${fee.toLocaleString()}` : "Not available"}
+              </span>
               {!alreadyNominated && fee != null && (
                 <select
                   defaultValue=""
@@ -430,7 +472,9 @@ export function NominationsTab() {
                 >
                   <option value="">Select horse...</option>
                   {horses.map((h) => (
-                    <option key={h.id} value={h.id}>{h.name}</option>
+                    <option key={h.id} value={h.id}>
+                      {h.name}
+                    </option>
                   ))}
                 </select>
               )}
@@ -443,18 +487,24 @@ export function NominationsTab() {
       <section className="my-nominations">
         <h2>My Nominations</h2>
         {nominations.length === 0 && <p>No nominations yet.</p>}
-        {nominations.filter((n) => n.status !== "scratched").map((nom) => (
-          <div key={nom.id} className="nomination-row">
-            <span>{horses.find((h) => h.id === nom.horseId)?.name ?? nom.horseId}</span>
-            <span>{nom.grade} — {nom.raceName}</span>
-            <span>Day {nom.raceDay}</span>
-            <span>{nom.tier} tier — ${nom.feePaid.toLocaleString()} paid</span>
-            <span className={`status-${nom.status}`}>{nom.status}</span>
-            {nom.status === "active" && (
-              <button onClick={() => withdrawNomination(nom.id)}>Withdraw</button>
-            )}
-          </div>
-        ))}
+        {nominations
+          .filter((n) => n.status !== "scratched")
+          .map((nom) => (
+            <div key={nom.id} className="nomination-row">
+              <span>{horses.find((h) => h.id === nom.horseId)?.name ?? nom.horseId}</span>
+              <span>
+                {nom.grade} — {nom.raceName}
+              </span>
+              <span>Day {nom.raceDay}</span>
+              <span>
+                {nom.tier} tier — ${nom.feePaid.toLocaleString()} paid
+              </span>
+              <span className={`status-${nom.status}`}>{nom.status}</span>
+              {nom.status === "active" && (
+                <button onClick={() => withdrawNomination(nom.id)}>Withdraw</button>
+              )}
+            </div>
+          ))}
       </section>
     </div>
   );
@@ -462,6 +512,7 @@ export function NominationsTab() {
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/components/racing/NominationsTab.tsx
 git commit -m "feat(nomination): add NominationsTab showing upcoming graded races with fee tiers and existing nominations"
@@ -472,6 +523,7 @@ git commit -m "feat(nomination): add NominationsTab showing upcoming graded race
 ## Task 7: Mount NominationsTab in Racing page
 
 **Files:**
+
 - Modify: `src/routes/racing.tsx` or `src/components/racing/RacingPage.tsx`
 
 - [ ] **Step 1: Add Nominations tab**
@@ -479,6 +531,7 @@ git commit -m "feat(nomination): add NominationsTab showing upcoming graded race
 Add a "Nominations" tab alongside existing tabs (Races, Entries, Results, etc.). Mount `<NominationsTab />` when active.
 
 - [ ] **Commit:**
+
 ```bash
 git commit -m "feat(nomination): mount NominationsTab in Racing page navigation"
 ```
@@ -488,6 +541,7 @@ git commit -m "feat(nomination): mount NominationsTab in Racing page navigation"
 ## Task 8: Initialize playerNominations in state defaults
 
 **Files:**
+
 - Modify: `src/game/store/initialState.ts` (or equivalent)
 
 - [ ] **Step 1: Add empty array to initial state**
@@ -497,6 +551,7 @@ playerNominations: [],
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/game/store/initialState.ts
 git commit -m "feat(nomination): initialize playerNominations as empty array in game initial state"
@@ -507,6 +562,7 @@ git commit -m "feat(nomination): initialize playerNominations as empty array in 
 ## Task 9: Add nomination fee CSS
 
 **Files:**
+
 - Modify: `src/styles.css`
 
 ```css
@@ -537,12 +593,21 @@ git commit -m "feat(nomination): initialize playerNominations as empty array in 
   font-size: 0.8em;
 }
 
-.status-entered  { color: var(--color-success, #22c55e); font-weight: 600; }
-.status-scratched { color: var(--color-muted, #888); text-decoration: line-through; }
-.status-active   { color: var(--color-primary, #6366f1); }
+.status-entered {
+  color: var(--color-success, #22c55e);
+  font-weight: 600;
+}
+.status-scratched {
+  color: var(--color-muted, #888);
+  text-decoration: line-through;
+}
+.status-active {
+  color: var(--color-primary, #6366f1);
+}
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/styles.css
 git commit -m "feat(nomination): add CSS for nominations tab, tier badges, and status indicators"
@@ -553,6 +618,7 @@ git commit -m "feat(nomination): add CSS for nominations tab, tier badges, and s
 ## Task 10: Integration tests
 
 **Files:**
+
 - Create: `src/tests/game/store/nominationActions.test.ts`
 
 - [ ] **Step 1: Write nomination action tests**
@@ -573,6 +639,7 @@ bun test src/tests/core/racing/nominationFees.test.ts src/tests/game/store/nomin
 ```
 
 - [ ] **Commit:**
+
 ```bash
 git add src/tests/game/store/nominationActions.test.ts
 git commit -m "test(nomination): add integration tests for nominateHorse actions and enterRace guard"

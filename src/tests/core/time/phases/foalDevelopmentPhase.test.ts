@@ -54,9 +54,7 @@ describe("foalDevelopmentPhase — inbox CTA emission", () => {
     const ctx = makeContext({ horses: [horse] }, 18); // breaking_in trigger.
     const out = foalDevelopmentPhase.execute(ctx);
 
-    const inbox = out.impacts.filter(
-      (i): i is InboxImpact => i.type === "inbox_message",
-    );
+    const inbox = out.impacts.filter((i): i is InboxImpact => i.type === "inbox_message");
     expect(inbox).toHaveLength(1);
 
     const cta = inbox[0].message.cta;

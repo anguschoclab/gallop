@@ -3,8 +3,21 @@ import { filterAndSortLots } from "@/services/auction/auctionLotFilter";
 import { createTestHorse } from "@/tests/helpers";
 import type { AuctionLot, Horse } from "@/game/types";
 
-function mkLot(id: string, horseId: string, reservePrice: number, overrides?: Partial<AuctionLot>): AuctionLot {
-  return { id, horseId, saleId: "sale-1", reservePrice, passed: false, withdrawn: false, ...overrides };
+function mkLot(
+  id: string,
+  horseId: string,
+  reservePrice: number,
+  overrides?: Partial<AuctionLot>,
+): AuctionLot {
+  return {
+    id,
+    horseId,
+    saleId: "sale-1",
+    reservePrice,
+    passed: false,
+    withdrawn: false,
+    ...overrides,
+  };
 }
 
 function mkHorse(id: string, overrides?: Partial<Horse>): Horse {
@@ -19,7 +32,12 @@ const horses: Horse[] = [
   mkHorse("h5", { gender: "colt", age: 3, name: "Epsilon", sireName: "Warrior" }),
   mkHorse("h6", { gender: "filly", age: 0, name: "Zeta", sireName: "Legend" }),
   mkHorse("h7", { gender: "gelding", age: 1, name: "Eta", sireName: "Nova" }),
-  mkHorse("h8", { gender: "mare", age: 10, name: "Theta", sireName: undefined as unknown as string }),
+  mkHorse("h8", {
+    gender: "mare",
+    age: 10,
+    name: "Theta",
+    sireName: undefined as unknown as string,
+  }),
 ];
 
 const lots: AuctionLot[] = [
@@ -41,7 +59,13 @@ describe("filterAndSortLots — no filters", () => {
   });
 
   it("options with all undefined fields returns all lots", () => {
-    const result = filterAndSortLots(lots, horses, { sex: undefined, ageBand: undefined, reserveBand: undefined, sort: undefined, q: undefined });
+    const result = filterAndSortLots(lots, horses, {
+      sex: undefined,
+      ageBand: undefined,
+      reserveBand: undefined,
+      sort: undefined,
+      q: undefined,
+    });
     expect(result).toHaveLength(8);
   });
 
@@ -221,7 +245,11 @@ describe("filterAndSortLots — combinations", () => {
   });
 
   it("sex: mare + ageBand: 3yo+ + sort: reserve-asc returns L8 then L4", () => {
-    const result = filterAndSortLots(lots, horses, { sex: "mare", ageBand: "3yo+", sort: "reserve-asc" });
+    const result = filterAndSortLots(lots, horses, {
+      sex: "mare",
+      ageBand: "3yo+",
+      sort: "reserve-asc",
+    });
     expect(result.map((l) => l.id)).toEqual(["l8", "l4"]);
   });
 });

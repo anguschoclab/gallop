@@ -17,8 +17,15 @@ describe("InfrastructureHandler", () => {
     } as unknown as GameState;
 
     const impact: FacilityUpgradeImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "managementResolution", logLevel: "always",
-      type: "facility_upgrade", facilityId: "training_track", nextLevel: 2, cost: 50000,
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "managementResolution",
+      logLevel: "always",
+      type: "facility_upgrade",
+      facilityId: "training_track",
+      nextLevel: 2,
+      cost: 50000,
       reason: "Facility upgrade started",
     };
 
@@ -38,8 +45,18 @@ describe("InfrastructureHandler", () => {
     } as unknown as GameState;
 
     const impact: StaffImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "managementResolution", logLevel: "always",
-      type: "staff", action: "hire", staffId: "staff-1", role: "trainer", tier: "mid", salary: 2000, stableId: "",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "managementResolution",
+      logLevel: "always",
+      type: "staff",
+      action: "hire",
+      staffId: "staff-1",
+      role: "trainer",
+      tier: "mid",
+      salary: 2000,
+      stableId: "",
       reason: "Hired trainer",
     };
 
@@ -63,8 +80,18 @@ describe("InfrastructureHandler", () => {
     } as unknown as GameState;
 
     const impact: StaffImpact = {
-      id: "imp-1", intentId: "", day: 15, phase: "managementResolution", logLevel: "always",
-      type: "staff", action: "fire", staffId: "staff-1", role: "trainer", tier: "mid", salary: 2000, stableId: "",
+      id: "imp-1",
+      intentId: "",
+      day: 15,
+      phase: "managementResolution",
+      logLevel: "always",
+      type: "staff",
+      action: "fire",
+      staffId: "staff-1",
+      role: "trainer",
+      tier: "mid",
+      salary: 2000,
+      stableId: "",
       reason: "Fired trainer",
     };
 
@@ -82,9 +109,18 @@ describe("InfrastructureHandler", () => {
     } as unknown as GameState;
 
     const impact: TransportImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "managementResolution", logLevel: "always",
-      type: "transport_horse", horseId: "h1", fromOutpostId: "outpost-0", toOutpostId: "outpost-1",
-      fatigueSpike: 15, acclimatizationDays: 7, reason: "Transported",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "managementResolution",
+      logLevel: "always",
+      type: "transport_horse",
+      horseId: "h1",
+      fromOutpostId: "outpost-0",
+      toOutpostId: "outpost-1",
+      fatigueSpike: 15,
+      acclimatizationDays: 7,
+      reason: "Transported",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
@@ -103,8 +139,15 @@ describe("InfrastructureHandler", () => {
     } as unknown as GameState;
 
     const impact: OutpostImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "managementResolution", logLevel: "always",
-      type: "outpost_action", stableId: "player", action: "create", outpostId: "outpost-1",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "managementResolution",
+      logLevel: "always",
+      type: "outpost_action",
+      stableId: "player",
+      action: "create",
+      outpostId: "outpost-1",
       metadata: { name: "East Coast Base", region: "North America (East)" },
       reason: "Outpost created",
     };
@@ -122,13 +165,31 @@ describe("InfrastructureHandler", () => {
     const state = {
       horses: [{ id: "h1", name: "Star", fatigue: 10, stableId: "" }],
       npcStables: [],
-      outposts: [{ id: "outpost-1", name: "East", region: "NA", totalSlots: 12, facilities: {}, acclimatizationDays: {} }],
+      outposts: [
+        {
+          id: "outpost-1",
+          name: "East",
+          region: "NA",
+          totalSlots: 12,
+          facilities: {},
+          acclimatizationDays: {},
+        },
+      ],
     } as unknown as GameState;
 
     const impact: TransportImpact = {
-      id: "imp-1", intentId: "", day: 10, phase: "managementResolution", logLevel: "always",
-      type: "transport_horse", horseId: "h1", fromOutpostId: "outpost-0", toOutpostId: "outpost-1",
-      fatigueSpike: 15, acclimatizationDays: 7, reason: "Transported",
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "managementResolution",
+      logLevel: "always",
+      type: "transport_horse",
+      horseId: "h1",
+      fromOutpostId: "outpost-0",
+      toOutpostId: "outpost-1",
+      fatigueSpike: 15,
+      acclimatizationDays: 7,
+      reason: "Transported",
     };
 
     const draft = JSON.parse(JSON.stringify(state));

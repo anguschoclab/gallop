@@ -77,7 +77,7 @@ export const leaderboardPhase = {
           state.horses,
           newDay,
           horseMap,
-          parentToChildren
+          parentToChildren,
         );
       }
       updatedFounders = newFounders;

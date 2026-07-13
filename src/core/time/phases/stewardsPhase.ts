@@ -12,7 +12,10 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { PHASE_ORDER_STEWARDS } from "@/constants";
 import { resolveInquiry, type InquiryOutcome } from "@/core/stewards/stewardTypes";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
-import type { StewardsInquiryImpact, RaceResultAdjustmentImpact } from "@/core/resolver/impacts/index";
+import type {
+  StewardsInquiryImpact,
+  RaceResultAdjustmentImpact,
+} from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import { createRng, hashStr } from "@/core/common/rng";
 
@@ -33,17 +36,15 @@ export const stewardsPhase: PipelinePhase = {
     // Build a set of player-owned horse IDs so we can skip their races.
     // Player races are handled by the useStewardsInquiry hook in the UI,
     // which gives the player a contextual post-race notification instead.
-    const playerHorseIds = new Set(
-      state.horses.filter((h) => h.owned).map((h) => h.id),
-    );
+    const playerHorseIds = new Set(state.horses.filter((h) => h.owned).map((h) => h.id));
 
     for (const race of resolvedRaces) {
       // Skip if race already has inquiries
       if (race.inquiries && race.inquiries.length > 0) continue;
 
       // Skip races with a player-entered horse — the UI hook handles those.
-      const hasPlayerEntry = race.entries.some(
-        (e: { horseId: string }) => playerHorseIds.has(e.horseId),
+      const hasPlayerEntry = race.entries.some((e: { horseId: string }) =>
+        playerHorseIds.has(e.horseId),
       );
       if (hasPlayerEntry) continue;
 

@@ -20,7 +20,13 @@ describe("MarketHandler", () => {
       phase: "managementResolution",
       logLevel: "always",
       type: "scout_report",
-      report: { horseId: "horse-1", stableId: "stable-1", day: 10, rating: 85, notes: "Good horse" } as any,
+      report: {
+        horseId: "horse-1",
+        stableId: "stable-1",
+        day: 10,
+        rating: 85,
+        notes: "Good horse",
+      } as any,
       reason: "Scout report",
     };
 
@@ -68,7 +74,14 @@ describe("MarketHandler", () => {
     const state = {
       scoutReports: [],
       horses: [{ id: "horse-1", name: "Star", consignedSaleId: "sale-1" }],
-      auctions: [{ id: "sale-1", lots: [{ id: "lot-1", horseId: "horse-1", saleId: "sale-1", passed: false, withdrawn: false }] }],
+      auctions: [
+        {
+          id: "sale-1",
+          lots: [
+            { id: "lot-1", horseId: "horse-1", saleId: "sale-1", passed: false, withdrawn: false },
+          ],
+        },
+      ],
     } as unknown as GameState;
 
     const impact: ConsignmentWithdrawalImpact = {
@@ -95,10 +108,14 @@ describe("MarketHandler", () => {
     const state = {
       scoutReports: [],
       horses: [],
-      auctions: [{
-        id: "sale-1",
-        lots: [{ id: "lot-1", horseId: "horse-1", saleId: "sale-1", passed: false, withdrawn: false }],
-      }],
+      auctions: [
+        {
+          id: "sale-1",
+          lots: [
+            { id: "lot-1", horseId: "horse-1", saleId: "sale-1", passed: false, withdrawn: false },
+          ],
+        },
+      ],
     } as unknown as GameState;
 
     const impact: AuctionResolutionImpact = {
@@ -113,7 +130,10 @@ describe("MarketHandler", () => {
       hammerPrice: 75000,
       soldToStableId: "stable-2",
       passed: false,
-      bidHistory: [{ stableId: "s1", amount: 70000, tick: 1 }, { stableId: "stable-2", amount: 75000, tick: 2 }],
+      bidHistory: [
+        { stableId: "s1", amount: 70000, tick: 1 },
+        { stableId: "stable-2", amount: 75000, tick: 2 },
+      ],
       wasPlayerConsignment: false,
       reason: "Auction resolved",
     };
@@ -133,10 +153,14 @@ describe("MarketHandler", () => {
     const state = {
       scoutReports: [],
       horses: [{ id: "horse-1", name: "Star", consignedSaleId: "sale-1" }],
-      auctions: [{
-        id: "sale-1",
-        lots: [{ id: "lot-1", horseId: "horse-1", saleId: "sale-1", passed: false, withdrawn: false }],
-      }],
+      auctions: [
+        {
+          id: "sale-1",
+          lots: [
+            { id: "lot-1", horseId: "horse-1", saleId: "sale-1", passed: false, withdrawn: false },
+          ],
+        },
+      ],
     } as unknown as GameState;
 
     const impact: AuctionResolutionImpact = {
