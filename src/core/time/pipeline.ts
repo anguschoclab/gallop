@@ -9,6 +9,10 @@
  */
 
 import type { GameState } from "@/game/types";
+import type { Horse } from "@/core/horse/types";
+import type { Race } from "@/core/race/types";
+import type { Stable } from "@/game/types";
+import type { Jockey } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
@@ -25,6 +29,11 @@ export interface PipelineContext {
   intents: AnyIntent[];
   impacts: AnyImpact[];
   impactLog: ImpactLogEntry[];
+  /** Pre-built lookup maps — built once at pipeline entry, shared across all phases */
+  horseMap: Map<string, Horse>;
+  raceMap: Map<string, Race>;
+  stableMap: Map<string, Stable>;
+  jockeyMap: Map<string, Jockey>;
 }
 
 export interface PipelinePhase {

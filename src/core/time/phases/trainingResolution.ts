@@ -56,8 +56,7 @@ export const trainingResolutionPhase: PipelinePhase = {
     // Filter for training intents
     const trainingIntents = intents.filter((i): i is TrainingIntent => i.type === "training");
 
-    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
-    const stableMap = new Map((state.npcStables ?? []).map((s) => [s.id, s]));
+    const { horseMap, stableMap } = context;
     const outpostMap = new Map<string, any>();
 
     // Clone NPC AI manager so we never mutate the input state's stableStates.

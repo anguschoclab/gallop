@@ -45,7 +45,7 @@ export const breedingResolutionPhase: PipelinePhase = {
     // Filter for breeding intents
     const breedingIntents = intents.filter((i): i is BreedingIntent => i.type === "breeding");
 
-    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+    const { horseMap } = context;
 
     for (const intent of breedingIntents) {
       const sire = horseMap.get(intent.sireId);

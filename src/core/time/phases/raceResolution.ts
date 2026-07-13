@@ -47,10 +47,9 @@ export const raceResolutionPhase: PipelinePhase = {
     const updatedRaces: typeof state.races = [...state.races];
     const overdueRaces = state.races.filter((r) => !r.resolved && r.day <= newDay);
 
-    // PRE-INDEX: Create maps for O(1) lookups during resolution
-    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
-    const npcStableMap = new Map((state.npcStables || []).map((s) => [s.id, s]));
-    const jockeyMap = new Map((state.jockeys || []).map((j) => [j.id, j]));
+    // PRE-INDEX: Use shared context maps built at pipeline entry
+    const { horseMap, jockeyMap } = context;
+    const npcStableMap = context.stableMap;
     const hallOfFameIds = new Set((state.hallOfFame ?? []).map((e) => e.horseId));
 
     // Clone the AI manager so NPC learning updates are applied as a new object.

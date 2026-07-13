@@ -33,7 +33,7 @@ export const consignmentResolutionPhase: PipelinePhase = {
       (i): i is ConsignmentWithdrawalIntent => i.type === "consignment_withdrawal",
     );
 
-    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+    const { horseMap } = context;
     const auctionMap = new Map((state.auctions ?? []).map((a) => [a.id, a]));
 
     for (const intent of consignmentIntents) {

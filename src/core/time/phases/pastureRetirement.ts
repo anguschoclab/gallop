@@ -51,7 +51,7 @@ export const pastureRetirementPhase: PipelinePhase = {
     const impacts: AnyImpact[] = [];
 
     // 1. Process player intents
-    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+    const { horseMap } = context;
     const retirementIntents = intents.filter((i) => i.type === "pasture_retirement");
     for (const intent of retirementIntents) {
       const horse = horseMap.get((intent as PastureRetirementIntent).horseId);

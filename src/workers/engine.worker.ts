@@ -52,16 +52,21 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
   const initialState = { ...state, horses };
 
   const [_, patches] = produceWithPatches(initialState, (draft) => {
-    // Setup pipeline context using the draft state
+    const draftState = draft as GameState;
+    // Build shared lookup maps once at pipeline entry — phases read from context
     const pipelineContext: PipelineContext = {
       previousDay,
       newDay,
-      state: draft as GameState,
+      state: draftState,
       logs: [],
       dailyRng: createRng(hashStr("daily_" + newDay)),
       intents: draft.pendingIntents || [],
       impacts: [],
       impactLog: [],
+      horseMap: new Map(draftState.horses.map((h) => [h.id, h])),
+      raceMap: new Map(draftState.races.map((r) => [r.id, r])),
+      stableMap: new Map((draftState.npcStables ?? []).map((s) => [s.id, s])),
+      jockeyMap: new Map((draftState.jockeys ?? []).map((j) => [j.id, j])),
     };
 
     // Execute pipeline with progress callbacks

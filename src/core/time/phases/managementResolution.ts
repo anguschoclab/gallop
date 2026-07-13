@@ -99,8 +99,7 @@ export const managementResolutionPhase: PipelinePhase = {
       }
     }
 
-    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
-    const stableMap = new Map((state.npcStables ?? []).map((s) => [s.id, s]));
+    const { horseMap, stableMap } = context;
 
     for (const intent of intents) {
       switch (intent.type) {

@@ -56,7 +56,7 @@ export const leaderboardPhase = {
 
       // Pre-calculate hash maps for O(1) horse lookups and parent->children relations
       // instead of running O(N) operations inside the loop.
-      const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+      const { horseMap } = context;
       const parentToChildren = new Map<string, string[]>();
       for (const h of state.horses) {
         if (h.pedigree?.sireId) {

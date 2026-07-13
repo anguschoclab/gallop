@@ -422,25 +422,31 @@ export function createCoreSlice(
         }
 
         // Execute pipeline for all phases
+        const syncState = {
+          ...s,
+          horses,
+          npcAIManager: s.npcAIManager
+            ? {
+                ...s.npcAIManager,
+                stableStates: { ...s.npcAIManager.stableStates },
+              }
+            : undefined,
+        };
         const pipelineContext: PipelineContext = {
           previousDay: s.day,
           newDay,
-          state: {
-            ...s,
-            horses,
-            npcAIManager: s.npcAIManager
-              ? {
-                  ...s.npcAIManager,
-                  stableStates: { ...s.npcAIManager.stableStates },
-                }
-              : undefined,
-          },
+          state: syncState,
           logs: [],
           dailyRng: createRng(hashStr("daily_" + newDay)),
           // Intent/impact resolver fields
           intents: s.pendingIntents || [],
           impacts: [],
           impactLog: [],
+          // Build shared lookup maps once at pipeline entry
+          horseMap: new Map(syncState.horses.map((h: Horse) => [h.id, h])),
+          raceMap: new Map(syncState.races.map((r: Race) => [r.id, r])),
+          stableMap: new Map((syncState.npcStables ?? []).map((s: any) => [s.id, s])),
+          jockeyMap: new Map((syncState.jockeys ?? []).map((j: any) => [j.id, j])),
         };
 
         const updatedContext = executePipeline(GAME_PIPELINE_PHASES, pipelineContext);

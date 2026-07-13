@@ -33,15 +33,24 @@ export interface TestBreedingState {
 export function createMockPipelineContext(
   overrides: Partial<PipelineContext> = {},
 ): PipelineContext {
+  const state: GameState = overrides.state ?? ({} as any);
+  const horses: Horse[] = Array.isArray((state as any).horses) ? (state as any).horses : [];
+  const races: Race[] = Array.isArray((state as any).races) ? (state as any).races : [];
+  const stables: any[] = Array.isArray((state as any).npcStables) ? (state as any).npcStables : [];
+  const jockeys: any[] = Array.isArray((state as any).jockeys) ? (state as any).jockeys : [];
   return {
     previousDay: 0,
     newDay: 1,
-    state: {} as any,
+    state,
     logs: [],
     dailyRng: createRng(0),
     intents: [],
     impacts: [],
     impactLog: [],
+    horseMap: new Map(horses.map((h) => [h.id, h])),
+    raceMap: new Map(races.map((r) => [r.id, r])),
+    stableMap: new Map(stables.map((s) => [s.id, s])),
+    jockeyMap: new Map(jockeys.map((j) => [j.id, j])),
     ...overrides,
   };
 }

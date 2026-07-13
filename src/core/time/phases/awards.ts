@@ -50,9 +50,7 @@ export const awardsPhase = {
     const updatedLastAwardYear = { ...lastAwardYear };
     const impacts: AnyImpact[] = [];
 
-    // Pre-compute race and horse maps for O(1) lookups
-    const raceMap = new Map(state.races.map((r) => [r.id, r]));
-    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+    const { horseMap, raceMap } = context;
 
     for (const ceremony of todayCeremonies) {
       const region = ceremony.region;

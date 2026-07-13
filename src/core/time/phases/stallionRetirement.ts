@@ -28,7 +28,7 @@ export const stallionRetirementPhase: PipelinePhase = {
 
     // Only run for NPC horses
     const npcHorses = state.horses.filter((h) => h.stableId);
-    const stableMap = new Map(state.npcStables.map((s) => [s.id, s]));
+    const { stableMap } = context;
 
     for (const horse of npcHorses) {
       // 1. Basic eligibility

@@ -38,9 +38,7 @@ export const claimResolutionPhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay, logs } = context;
     const allClaims: Claim[] = state.claims ?? [];
-    const raceMap = new Map(state.races.map((r: Race) => [r.id, r]));
-    const horseMap = new Map(state.horses.map((h: Horse) => [h.id, h]));
-    const stableMap = new Map((state.npcStables ?? []).map((s: Stable) => [s.id, s]));
+    const { horseMap, raceMap, stableMap } = context;
 
     const claimsToday = allClaims.filter((c: Claim) => {
       const race = raceMap.get(c.raceId);

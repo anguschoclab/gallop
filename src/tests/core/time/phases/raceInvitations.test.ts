@@ -332,6 +332,10 @@ describe("raceInvitationsPhase", () => {
       intents: [],
       impacts: [],
       impactLog: [],
+      horseMap: new Map([[horse.id, horse]]),
+      raceMap: new Map([[race.id, race]]),
+      stableMap: new Map(),
+      jockeyMap: new Map(),
     };
 
     const result = raceInvitationsPhase.execute(context);
@@ -374,6 +378,10 @@ describe("raceInvitationsPhase", () => {
       intents: [],
       impacts: [],
       impactLog: [],
+      horseMap: new Map([[horse.id, horse]]),
+      raceMap: new Map([[race.id, race]]),
+      stableMap: new Map(),
+      jockeyMap: new Map(),
     };
 
     const result = raceInvitationsPhase.execute(context);
@@ -416,6 +424,10 @@ describe("raceInvitationsPhase", () => {
       intents: [],
       impacts: [],
       impactLog: [],
+      horseMap: new Map([[closeHorse.id, closeHorse], [farHorse.id, farHorse]]),
+      raceMap: new Map([[race.id, race]]),
+      stableMap: new Map(),
+      jockeyMap: new Map(),
     };
 
     const result = raceInvitationsPhase.execute(context);
@@ -460,6 +472,10 @@ describe("raceInvitationsPhase", () => {
       intents: [],
       impacts: [],
       impactLog: [],
+      horseMap: new Map([[horse.id, horse]]),
+      raceMap: new Map([[race.id, race]]),
+      stableMap: new Map(),
+      jockeyMap: new Map(),
     };
 
     const result = raceInvitationsPhase.execute(context);

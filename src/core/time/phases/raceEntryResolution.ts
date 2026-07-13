@@ -41,9 +41,9 @@ export const raceEntryResolutionPhase: PipelinePhase = {
     // Filter for race entry intents
     const raceEntryIntents = intents.filter((i): i is RaceEntryIntent => i.type === "race_entry");
 
-    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
-    const raceMap = new Map(state.races.map((r) => [r.id, r]));
-    const stableMap = new Map(state.npcStables.map((s) => [s.id, s]));
+    const { horseMap, stableMap } = context;
+    // Clone raceMap locally: NPC bump eviction mutates entries to track ejections
+    const raceMap = new Map(context.raceMap);
     const jockeys = state.jockeys ?? [];
     const jockeysByStableId = new Map<string, (typeof jockeys)[number]>();
     for (const j of jockeys) {

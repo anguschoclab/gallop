@@ -63,7 +63,7 @@ export const raceInvitationsPhase: PipelinePhase = {
       }
     }
 
-    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+    const { horseMap } = context;
 
     // Find all unresolved invite-only races that are upcoming
     const inviteRaces = state.races.filter(

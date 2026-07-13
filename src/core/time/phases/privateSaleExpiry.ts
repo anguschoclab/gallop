@@ -28,8 +28,7 @@ export const privateSaleExpiryPhase = {
     if (offers.length === 0) return context;
 
     const newLogs = [...logs];
-    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
-    const stableMap = new Map(state.npcStables.map((s) => [s.id, s]));
+    const { horseMap, stableMap } = context;
     const updatedOffers = offers
       .map((o) => {
         // Expire pending/countered offers that have hit their expiry day

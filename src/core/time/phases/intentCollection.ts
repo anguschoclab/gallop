@@ -47,8 +47,7 @@ export const intentCollectionPhase: PipelinePhase = {
 
     // Collect system intents: auto-managed campaign race entries
     if (state.campaigns) {
-      const horseMap = new Map(state.horses.map((h) => [h.id, h]));
-      const raceMap = new Map(state.races.map((r) => [r.id, r]));
+      const { horseMap, raceMap } = context;
       for (const campaign of state.campaigns) {
         if (!campaign.autoManaged) continue;
 

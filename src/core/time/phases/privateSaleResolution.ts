@@ -56,9 +56,7 @@ export const privateSaleResolutionPhase: PipelinePhase = {
     const offers: PrivateSaleOffer[] = state.privateSaleOffers ?? [];
     if (offers.length === 0) return context;
 
-    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
-    const stableMap = new Map(state.npcStables.map((s) => [s.id, s]));
-
+    const { horseMap, stableMap } = context;
     const newLogs = [...logs];
     const newImpacts = [...impacts];
     const updatedOffers: PrivateSaleOffer[] = [];
