@@ -24,7 +24,7 @@ import { netProceeds } from "@/core/auction/engine";
 import { CONSIGNMENT_COMMISSION, DEFAULT_PLAYER_RESERVE_RATIO } from "@/constants";
 import { KIND_LABELS } from "@/core/auction/data";
 import { formatCurrency } from "@/core/common/formatting";
-import { horsePriceWithPedigree } from "@/core/horse/pricing";
+import { horseMarketValue } from "@/core/horse/pricing";
 import type { Horse, AuctionSale } from "@/game/types";
 
 type Props = {
