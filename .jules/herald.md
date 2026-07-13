@@ -12,3 +12,8 @@
 
 **Learning:** Core race commentary events like START, STRETCH, FINISH, and GAP_ANNOUNCEMENT had few templates (4-8 each), causing noticeable repetition when players watch multiple races.
 **Action:** Always maintain at least 8-12 variants for high-frequency events in generators to sustain immersion across many sessions.
+
+## 2026-07-13 - Expanded Mid-Race Commentary Variety Gap
+
+**Learning:** Core mid-race events like `LEAD_CHANGE`, `SURGE`, `FADE`, and `GAP_ANNOUNCEMENT`, as well as `BIOGRAPHICAL_TEMPLATES` had fewer than 10 templates, causing repetition during dense parts of a race replay.
+**Action:** Expanded these arrays in `src/assets/narrative/templates.ts` to ~16 templates each to sustain variety across multiple races without needing generator logic changes.
