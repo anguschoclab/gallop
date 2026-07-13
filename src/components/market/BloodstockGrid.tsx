@@ -5,7 +5,8 @@ import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { Badge } from "@/components/ui/badge";
 import { HorseStats, overall, NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/core/common/formatting";
-import { horsePrice } from "@/core/horse/pricing";
+import { horseMarketValue } from "@/core/horse/pricing";
+import { useGameWithShallow } from "@/game/store";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/cn";
 import type { Horse, GameState } from "@/game/types";
@@ -19,11 +20,12 @@ interface BloodstockGridProps {
 
 export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) {
   const navigate = useNavigate();
+  const allHorses = useGameWithShallow((s: GameState) => s.horses);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {market.map((h: Horse) => {
-        const price = horsePrice(h);
+        const price = horseMarketValue(h, allHorses);
         const ovr = overall(h);
         const canAfford = cash >= price;
 

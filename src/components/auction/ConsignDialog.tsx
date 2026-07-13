@@ -24,7 +24,7 @@ import { netProceeds } from "@/core/auction/engine";
 import { CONSIGNMENT_COMMISSION, DEFAULT_PLAYER_RESERVE_RATIO } from "@/constants";
 import { KIND_LABELS } from "@/core/auction/data";
 import { formatCurrency } from "@/core/common/formatting";
-import { horsePriceWithPedigree } from "@/core/horse/pricing";
+import { horseMarketValue } from "@/core/horse/pricing";
 import type { Horse, AuctionSale } from "@/game/types";
 
 type Props = {
@@ -38,7 +38,7 @@ export function ConsignDialog({ horse, sale, open, onOpenChange }: Props) {
   const horses = useGameWithShallow((s) => s.horses);
   const consignHorse = useGame((s) => s.consignHorse);
 
-  const baseValue = useMemo(() => horsePriceWithPedigree(horse, horses), [horse, horses]);
+  const baseValue = useMemo(() => horseMarketValue(horse, horses), [horse, horses]);
   // Slider is a percentage of base value (50–100%), default 70%.
   const [reservePct, setReservePct] = useState(Math.round(DEFAULT_PLAYER_RESERVE_RATIO * 100));
   const reservePrice = Math.round(baseValue * (reservePct / 100));
