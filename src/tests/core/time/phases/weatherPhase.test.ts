@@ -7,6 +7,7 @@ import { weatherPhase } from "@/core/time/phases/weatherPhase";
 import { createRng } from "@/core/common/rng";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Race } from "@/game/types";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("weatherPhase", () => {
   const createMockRace = (overrides: Partial<Race> = {}): Race => ({
@@ -30,11 +31,11 @@ describe("weatherPhase", () => {
     ({
       day: 10,
       cash: 10000,
-      horses: [],
+      horses: {},
       horseMap: new Map(),
       npcStables: [],
       pregnancies: [],
-      races: [],
+      races: {},
       awards: [],
       market: [],
       auctions: [],
@@ -72,7 +73,7 @@ describe("weatherPhase", () => {
   });
 
   it("should initialize weather state when no races exist", () => {
-    const state = createMockState({ races: [] });
+    const state = createMockState({ races: {} });
     const context = createMockContext(state, 10);
 
     const result = weatherPhase.execute(context);
@@ -84,7 +85,7 @@ describe("weatherPhase", () => {
 
   it("should generate weather for tracks with races", () => {
     const race = createMockRace({ day: 10, trackId: "churchill-downs" });
-    const state = createMockState({ races: [race] });
+    const state = createMockState({ races: r2r([race]) });
     const context = createMockContext(state, 10);
 
     const result = weatherPhase.execute(context);
@@ -98,12 +99,12 @@ describe("weatherPhase", () => {
 
   it("should be deterministic for same trackId and day", () => {
     const race = createMockRace({ day: 10, trackId: "test-track-1" });
-    const state1 = createMockState({ races: [race] });
+    const state1 = createMockState({ races: r2r([race]) });
     const context1 = createMockContext(state1, 10);
 
     const result1 = weatherPhase.execute(context1);
 
-    const state2 = createMockState({ races: [race] });
+    const state2 = createMockState({ races: r2r([race]) });
     const context2 = createMockContext(state2, 10);
 
     const result2 = weatherPhase.execute(context2);
@@ -119,7 +120,7 @@ describe("weatherPhase", () => {
 
   it("should update trackCondition for races scheduled today", () => {
     const race = createMockRace({ day: 10, trackId: "test-track", trackCondition: "fast" });
-    const state = createMockState({ races: [race] });
+    const state = createMockState({ races: r2r([race]) });
     const context = createMockContext(state, 10);
 
     const result = weatherPhase.execute(context);
@@ -132,7 +133,7 @@ describe("weatherPhase", () => {
 
   it("should update race.weather using toRaceWeather mapping", () => {
     const race = createMockRace({ day: 10, trackId: "test-track" });
-    const state = createMockState({ races: [race] });
+    const state = createMockState({ races: r2r([race]) });
     const context = createMockContext(state, 10);
 
     const result = weatherPhase.execute(context);
@@ -144,7 +145,7 @@ describe("weatherPhase", () => {
 
   it("should maintain rolling 14-day buffer", () => {
     const race = createMockRace({ day: 1, trackId: "test-track" });
-    let state = createMockState({ races: [race] });
+    let state = createMockState({ races: r2r([race]) });
 
     // Run weather phase for 20 days
     for (let day = 1; day <= 20; day++) {
@@ -159,7 +160,7 @@ describe("weatherPhase", () => {
 
   it("should be idempotent for same day", () => {
     const race = createMockRace({ day: 10, trackId: "test-track" });
-    const state = createMockState({ races: [race] });
+    const state = createMockState({ races: r2r([race]) });
     const context = createMockContext(state, 10);
 
     const result1 = weatherPhase.execute(context);
@@ -175,7 +176,7 @@ describe("weatherPhase", () => {
   it("should handle multiple tracks", () => {
     const race1 = createMockRace({ id: "race-1", day: 10, trackId: "track-a" });
     const race2 = createMockRace({ id: "race-2", day: 10, trackId: "track-b" });
-    const state = createMockState({ races: [race1, race2] });
+    const state = createMockState({ races: r2r([race1, race2]) });
     const context = createMockContext(state, 10);
 
     const result = weatherPhase.execute(context);
@@ -189,7 +190,7 @@ describe("weatherPhase", () => {
   it("should only generate forecast for races within horizon", () => {
     const raceNear = createMockRace({ day: 10, trackId: "track-near" });
     const raceFar = createMockRace({ day: 15, trackId: "track-far" }); // Within 7-day forecast horizon
-    const state = createMockState({ races: [raceNear, raceFar] });
+    const state = createMockState({ races: r2r([raceNear, raceFar]) });
     const context = createMockContext(state, 10);
 
     const result = weatherPhase.execute(context);
@@ -214,7 +215,7 @@ describe("weatherPhase", () => {
 
     // Pre-populate with severe weather to trigger jump detection
     const state = createMockState({
-      races: [race],
+      races: r2r([race]),
     } as any);
     (state as any).weather = {
       byTrack: {
@@ -243,7 +244,7 @@ describe("weatherPhase", () => {
 
   it("should use climate zone based on trackId", () => {
     const raceDubai = createMockRace({ day: 10, trackId: "meydan" });
-    const state = createMockState({ races: [raceDubai] });
+    const state = createMockState({ races: r2r([raceDubai]) });
     const context = createMockContext(state, 10);
 
     const result = weatherPhase.execute(context);
@@ -255,7 +256,7 @@ describe("weatherPhase", () => {
 
   it("should handle unknown trackIds with temperate fallback", () => {
     const race = createMockRace({ day: 10, trackId: "unknown-track-xyz" });
-    const state = createMockState({ races: [race] });
+    const state = createMockState({ races: r2r([race]) });
     const context = createMockContext(state, 10);
 
     const result = weatherPhase.execute(context);
@@ -267,7 +268,7 @@ describe("weatherPhase", () => {
 
   it("should not update resolved races", () => {
     const race = createMockRace({ day: 10, trackId: "test-track", resolved: true });
-    const state = createMockState({ races: [race] });
+    const state = createMockState({ races: r2r([race]) });
     const context = createMockContext(state, 10);
 
     const result = weatherPhase.execute(context);
@@ -279,9 +280,9 @@ describe("weatherPhase", () => {
   it("should preserve other state properties", () => {
     const race = createMockRace({ day: 10, trackId: "test-track" });
     const state = createMockState({
-      races: [race],
+      races: r2r([race]),
       cash: 50000,
-      horses: [],
+      horses: {},
     });
     const context = createMockContext(state, 10);
 
@@ -295,7 +296,7 @@ describe("weatherPhase", () => {
   it("should preserve logs", () => {
     const race = createMockRace({ day: 10, trackId: "test-track" });
     const state = createMockState({
-      races: [race],
+      races: r2r([race]),
       log: [{ day: 9, text: "Existing log" }],
     });
     const context = createMockContext(state, 10);
@@ -307,7 +308,7 @@ describe("weatherPhase", () => {
 
   it("should handle races with no trackId gracefully", () => {
     const race = createMockRace({ day: 10, trackId: undefined, graded: undefined });
-    const state = createMockState({ races: [race] });
+    const state = createMockState({ races: r2r([race]) });
     const context = createMockContext(state, 10);
 
     const result = weatherPhase.execute(context);
@@ -328,7 +329,7 @@ describe("weatherPhase", () => {
         surface: "Turf",
       },
     });
-    const state = createMockState({ races: [race] });
+    const state = createMockState({ races: r2r([race]) });
     const context = createMockContext(state, 10);
 
     const result = weatherPhase.execute(context);
@@ -350,7 +351,7 @@ describe("weatherPhase", () => {
     });
     // Override to test the fallback behavior
     (race as any).graded.trackId = undefined;
-    const state = createMockState({ races: [race] });
+    const state = createMockState({ races: r2r([race]) });
     const context = createMockContext(state, 10);
 
     const result = weatherPhase.execute(context);

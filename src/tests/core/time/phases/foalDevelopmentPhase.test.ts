@@ -19,11 +19,12 @@ import { createRng } from "@/core/common/rng";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import type { InboxImpact } from "@/core/resolver/impacts/index";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function makeContext(state: Partial<GameState>, newDay: number): PipelineContext {
   const fullState: GameState = {
     day: newDay,
-    horses: [],
+    horses: {},
     npcStables: [],
     ...(state as any),
   } as GameState;
@@ -56,7 +57,7 @@ describe("foalDevelopmentPhase — inbox CTA emission", () => {
       owned: true,
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
-    const ctx = makeContext({ horses: [horse] }, 18); // breaking_in trigger.
+    const ctx = makeContext({ horses: h2r([horse]) }, 18); // breaking_in trigger.
     const out = foalDevelopmentPhase.execute(ctx);
 
     const inbox = out.impacts.filter((i): i is InboxImpact => i.type === "inbox_message");
@@ -78,7 +79,7 @@ describe("foalDevelopmentPhase — inbox CTA emission", () => {
       owned: true,
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
-    const ctx = makeContext({ horses: [horse] }, 24);
+    const ctx = makeContext({ horses: h2r([horse]) }, 24);
     const out = foalDevelopmentPhase.execute(ctx);
 
     const inbox = out.impacts.filter((i) => i.type === "inbox_message");
@@ -93,7 +94,7 @@ describe("foalDevelopmentPhase — inbox CTA emission", () => {
       owned: true,
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
-    const ctx = makeContext({ horses: [horse] }, 17);
+    const ctx = makeContext({ horses: h2r([horse]) }, 17);
     const out = foalDevelopmentPhase.execute(ctx);
     expect(out.impacts.filter((i) => i.type === "inbox_message")).toHaveLength(0);
   });
@@ -104,14 +105,14 @@ describe("foalDevelopmentPhase — inbox CTA emission", () => {
       owned: false,
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
-    const ctx = makeContext({ horses: [horse] }, 18);
+    const ctx = makeContext({ horses: h2r([horse]) }, 18);
     const out = foalDevelopmentPhase.execute(ctx);
     expect(out.impacts).toHaveLength(0);
   });
 
   it("skips horses without a development arc", () => {
     const horse = createTestHorse({ id: "h", owned: true, developmentArc: undefined });
-    const ctx = makeContext({ horses: [horse] }, 18);
+    const ctx = makeContext({ horses: h2r([horse]) }, 18);
     const out = foalDevelopmentPhase.execute(ctx);
     expect(out.impacts).toHaveLength(0);
   });
@@ -121,7 +122,7 @@ describe("foalDevelopmentPhase — inbox CTA emission", () => {
     arc.milestones[0].status = "resolved";
     arc.milestones[0].resolvedChoiceKey = "bold_approach";
     const horse = createTestHorse({ id: "foal-1", owned: true, developmentArc: arc });
-    const ctx = makeContext({ horses: [horse] }, 18);
+    const ctx = makeContext({ horses: h2r([horse]) }, 18);
     const out = foalDevelopmentPhase.execute(ctx);
     expect(out.impacts).toHaveLength(0);
   });
@@ -137,7 +138,7 @@ describe("foalDevelopmentPhase — inbox CTA emission", () => {
       owned: true,
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
-    const ctx = makeContext({ horses: [a, b] }, 18);
+    const ctx = makeContext({ horses: h2r([a, b]) }, 18);
     const out = foalDevelopmentPhase.execute(ctx);
 
     const urls = out.impacts

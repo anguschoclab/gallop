@@ -7,10 +7,20 @@
  */
 
 import type { BreedingProgram } from "@/core/breeding/programs";
-import type { GameState, Horse } from "@/game/types";
+import type { GameState, Horse, Race } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 import { createBreedingProgram } from "@/core/breeding/programs";
 import { createRng } from "@/core/common/rng";
+
+/** Converts a Horse array to Record<string, Horse> for use in test state fixtures. */
+export function h2r(horses: Horse[]): Record<string, Horse> {
+  return Object.fromEntries(horses.map((h) => [h.id, h]));
+}
+
+/** Converts a Race array to Record<string, Race> for use in test state fixtures. */
+export function r2r(races: Race[]): Record<string, Race> {
+  return Object.fromEntries(races.map((r) => [r.id, r]));
+}
 
 /**
  * Default appearance DNA used by portrait/export tests.
@@ -82,9 +92,8 @@ export function makeGameState(overrides: Partial<GameState> = {}): Partial<GameS
   return {
     day: 1,
     cash: 100000,
-    horses: [],
-    horseMap: new Map(),
-    races: [],
+    horses: {} as Record<string, Horse>,
+    races: {} as Record<string, any>,
     log: [],
     news: [],
     inbox: [],
@@ -127,8 +136,8 @@ export function makePipelineContext(
   overrides: Partial<PipelineContext> = {},
 ): Partial<PipelineContext> {
   const state = makeGameState(overrides.state as any);
-  const horses = Array.isArray(state.horses) ? state.horses : [];
-  const races = Array.isArray(state.races) ? state.races : [];
+  const horses = state.horses ? Object.values(state.horses) : [];
+  const races = state.races ? Object.values(state.races) : [];
   const stables = Array.isArray(state.npcStables) ? state.npcStables : [];
   const jockeys = Array.isArray(state.jockeys) ? state.jockeys : [];
   return {

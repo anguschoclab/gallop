@@ -8,6 +8,7 @@ import { generateTrackSchedule } from "@/core/race/schedule";
 import { createRng } from "@/core/common/rng";
 import type { GameState, Race, Horse } from "@/game/types";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("Race Lifecycle Integration", () => {
   it("should generate races for a track", () => {
@@ -40,7 +41,7 @@ describe("Race Lifecycle Integration", () => {
     const state: GameState = makeGameState({
       day: 10,
       cash: 10000,
-      races: [existingRace],
+      races: r2r([existingRace]),
     }) as GameState;
 
     const result = generateTrackSchedule(10, state.races, [], createRng("test"));

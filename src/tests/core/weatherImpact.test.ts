@@ -59,7 +59,7 @@ describe("Weather Phase - Storm Jump Logic", () => {
         forecast: {},
       },
       log: [],
-      horses: [],
+      horses: {},
     } as any,
     impacts: [],
     horseMap: new Map(),

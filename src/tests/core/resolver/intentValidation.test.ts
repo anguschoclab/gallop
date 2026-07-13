@@ -14,6 +14,7 @@ import type {
 } from "@/core/resolver/intents";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("validateIntent", () => {
   const createTestState = (): GameState =>
@@ -26,7 +27,7 @@ describe("validateIntent", () => {
     const horse = createTestHorse({ id: "horse-1", energy: 80 });
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
     };
 
     const intent: TrainingIntent = {
@@ -67,7 +68,7 @@ describe("validateIntent", () => {
     const horse = createTestHorse({ id: "horse-1", energy: 10 });
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
     };
 
     const intent: TrainingIntent = {
@@ -90,7 +91,7 @@ describe("validateIntent", () => {
     const horse = createTestHorse({ id: "horse-1", energy: 80 });
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
       races: [
         {
           id: "race-1",
@@ -163,7 +164,7 @@ describe("validateIntent", () => {
     const horse = createTestHorse({ id: "horse-1", energy: 80 });
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
     };
 
     const intent: RaceEntryIntent = {
@@ -186,7 +187,7 @@ describe("validateIntent", () => {
     const horse = createTestHorse({ id: "horse-1", energy: 80 });
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
       races: [
         {
           id: "race-1",
@@ -224,7 +225,7 @@ describe("validateIntent", () => {
     const horse = createTestHorse({ id: "horse-1", energy: 30 });
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
       races: [
         {
           id: "race-1",
@@ -264,7 +265,7 @@ describe("validateIntent", () => {
     const state: GameState = {
       ...createTestState(),
       cash: 5000,
-      horses: [sire, dam],
+      horses: h2r([sire, dam]),
     };
 
     const intent: BreedingIntent = {
@@ -288,7 +289,7 @@ describe("validateIntent", () => {
     const state: GameState = {
       ...createTestState(),
       cash: 5000,
-      horses: [dam],
+      horses: h2r([dam]),
     };
 
     const intent: BreedingIntent = {
@@ -313,7 +314,7 @@ describe("validateIntent", () => {
     const state: GameState = {
       ...createTestState(),
       cash: 5000,
-      horses: [sire],
+      horses: h2r([sire]),
     };
 
     const intent: BreedingIntent = {
@@ -339,7 +340,7 @@ describe("validateIntent", () => {
     const state: GameState = {
       ...createTestState(),
       cash: 5000,
-      horses: [sire, dam],
+      horses: h2r([sire, dam]),
     };
 
     const intent: BreedingIntent = {
@@ -365,7 +366,7 @@ describe("validateIntent", () => {
     const state: GameState = {
       ...createTestState(),
       cash: 5000,
-      horses: [sire, dam],
+      horses: h2r([sire, dam]),
     };
 
     const intent: BreedingIntent = {
@@ -391,7 +392,7 @@ describe("validateIntent", () => {
     const state: GameState = {
       ...createTestState(),
       cash: 1000,
-      horses: [sire, dam],
+      horses: h2r([sire, dam]),
     };
 
     const intent: BreedingIntent = {

@@ -9,6 +9,7 @@ import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import type { GameState, PrivateSaleOffer } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("privateSaleExpiryPhase", () => {
   const createTestState = (): GameState => makeGameState({ day: 10 }) as GameState;
@@ -34,7 +35,7 @@ describe("privateSaleExpiryPhase", () => {
   it("should expire pending offers past their expiry day", () => {
     const state: GameState = {
       ...createTestState(),
-      horses: [createTestHorse({ id: "horse-1", name: "Thunder" })],
+      horses: h2r([createTestHorse({ id: "horse-1", name: "Thunder" })]),
       npcStables: [{ id: "stable-1", name: "Green Acres" } as any],
       privateSaleOffers: [makeOffer({ status: "pending", expiresDay: 9 })],
     };
@@ -47,7 +48,7 @@ describe("privateSaleExpiryPhase", () => {
   it("should expire countered offers past their expiry day", () => {
     const state: GameState = {
       ...createTestState(),
-      horses: [createTestHorse({ id: "horse-1" })],
+      horses: h2r([createTestHorse({ id: "horse-1" })]),
       npcStables: [{ id: "stable-1", name: "Green Acres" } as any],
       privateSaleOffers: [makeOffer({ status: "countered", expiresDay: 9 })],
     };
@@ -59,7 +60,7 @@ describe("privateSaleExpiryPhase", () => {
   it("should not expire offers not yet past expiry day", () => {
     const state: GameState = {
       ...createTestState(),
-      horses: [createTestHorse({ id: "horse-1" })],
+      horses: h2r([createTestHorse({ id: "horse-1" })]),
       npcStables: [{ id: "stable-1", name: "Green Acres" } as any],
       privateSaleOffers: [makeOffer({ status: "pending", expiresDay: 15 })],
     };
@@ -98,7 +99,7 @@ describe("privateSaleExpiryPhase", () => {
   it("should handle offer with non-existent horse gracefully", () => {
     const state: GameState = {
       ...createTestState(),
-      horses: [],
+      horses: {},
       npcStables: [{ id: "stable-1", name: "Green Acres" } as any],
       privateSaleOffers: [makeOffer({ horseId: "nonexistent", expiresDay: 9 })],
     };
@@ -111,7 +112,7 @@ describe("privateSaleExpiryPhase", () => {
   it("should handle offer with non-existent stable gracefully", () => {
     const state: GameState = {
       ...createTestState(),
-      horses: [createTestHorse({ id: "horse-1", name: "Thunder" })],
+      horses: h2r([createTestHorse({ id: "horse-1", name: "Thunder" })]),
       npcStables: [],
       privateSaleOffers: [makeOffer({ toStableId: "nonexistent", expiresDay: 9 })],
     };
@@ -135,7 +136,7 @@ describe("privateSaleExpiryPhase", () => {
   it("should prune expired offers older than 7 days", () => {
     const state: GameState = {
       ...createTestState(),
-      horses: [createTestHorse({ id: "horse-1" })],
+      horses: h2r([createTestHorse({ id: "horse-1" })]),
       npcStables: [{ id: "stable-1", name: "Green Acres" } as any],
       privateSaleOffers: [
         makeOffer({ id: "old", status: "expired", createdDay: 1, expiresDay: 2 }),

@@ -5,7 +5,7 @@ import { createTestHorse } from "@/tests/helpers";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 
 const mockState = makeGameState({
-  horses: [],
+  horses: {},
   npcStables: [],
 }) as GameState;
 

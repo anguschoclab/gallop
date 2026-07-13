@@ -10,6 +10,7 @@ import type { AnyIntent, TrainingIntent } from "@/core/resolver/intents";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createRng } from "@/core/common/rng";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("intentCollectionPhase", () => {
   const createTestState = (): GameState =>
@@ -37,7 +38,7 @@ describe("intentCollectionPhase", () => {
     const horse = createTestHorse({ id: "horse-1", energy: 80 });
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
       pendingIntents: [
         {
           id: "intent-1",
@@ -64,7 +65,7 @@ describe("intentCollectionPhase", () => {
     const horse = createTestHorse({ id: "horse-1", energy: 80 });
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
       pendingIntents: [
         {
           id: "intent-1",
@@ -90,7 +91,7 @@ describe("intentCollectionPhase", () => {
     const horse2 = createTestHorse({ id: "horse-2", energy: 80 });
     const state: GameState = {
       ...createTestState(),
-      horses: [horse1, horse2],
+      horses: h2r([horse1, horse2]),
       pendingIntents: [
         {
           id: "intent-1",
@@ -133,7 +134,7 @@ describe("intentCollectionPhase", () => {
     const horse = createTestHorse({ id: "horse-1", energy: 80 });
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
       pendingIntents: [
         {
           id: "intent-1",

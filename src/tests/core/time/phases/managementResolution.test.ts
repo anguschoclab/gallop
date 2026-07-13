@@ -11,6 +11,7 @@ import { createRng } from "@/core/common/rng";
 import type { GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { StudRetirementIntent, InsuranceClaimIntent } from "@/core/resolver/intents";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("managementResolutionPhase — N+1 optimization coverage", () => {
   const createTestState = (): GameState => makeGameState({ day: 10, cash: 100000 }) as GameState;
@@ -30,7 +31,7 @@ describe("managementResolutionPhase — N+1 optimization coverage", () => {
       const h2 = createTestHorse({ id: "h2", name: "Stallion Two", gender: "horse", age: 5 });
       const state: GameState = {
         ...createTestState(),
-        horses: [h1, h2],
+        horses: h2r([h1, h2]),
       };
 
       const intents: StudRetirementIntent[] = [
@@ -68,7 +69,7 @@ describe("managementResolutionPhase — N+1 optimization coverage", () => {
     it("should process stud_retirement intent for non-existent horse without inbox", () => {
       const state: GameState = {
         ...createTestState(),
-        horses: [],
+        horses: {},
       };
 
       const intent: StudRetirementIntent = {
@@ -105,7 +106,7 @@ describe("managementResolutionPhase — N+1 optimization coverage", () => {
       });
       const state: GameState = {
         ...createTestState(),
-        horses: [h1, h2],
+        horses: h2r([h1, h2]),
       };
 
       const intents: InsuranceClaimIntent[] = [
@@ -142,7 +143,7 @@ describe("managementResolutionPhase — N+1 optimization coverage", () => {
       const h1 = createTestHorse({ id: "h1", name: "Uninsured" });
       const state: GameState = {
         ...createTestState(),
-        horses: [h1],
+        horses: h2r([h1]),
       };
 
       const intent: InsuranceClaimIntent = {
@@ -164,7 +165,7 @@ describe("managementResolutionPhase — N+1 optimization coverage", () => {
     it("should skip insurance_claim for non-existent horse", () => {
       const state: GameState = {
         ...createTestState(),
-        horses: [],
+        horses: {},
       };
 
       const intent: InsuranceClaimIntent = {
@@ -194,7 +195,7 @@ describe("managementResolutionPhase — N+1 optimization coverage", () => {
       });
       const state: GameState = {
         ...createTestState(),
-        horses: [h1, h2],
+        horses: h2r([h1, h2]),
       };
 
       const intents: any[] = [

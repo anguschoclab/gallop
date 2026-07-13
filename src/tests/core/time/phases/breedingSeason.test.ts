@@ -8,6 +8,7 @@ import { createTestHorse } from "@/tests/helpers";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Horse } from "@/game/types";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("breedingSeasonPhase", () => {
   it("should not reset bookings when not breeding season start", () => {
@@ -31,7 +32,7 @@ describe("breedingSeasonPhase", () => {
 
     const state: GameState = makeGameState({
       day: 10,
-      horses: [stallion],
+      horses: h2r([stallion]),
     }) as GameState;
 
     const context: PipelineContext = makePipelineContext({
@@ -83,7 +84,7 @@ describe("breedingSeasonPhase", () => {
 
     const state: GameState = makeGameState({
       day: 1, // Northern breeding season start
-      horses: [northernStallion, southernStallion],
+      horses: h2r([northernStallion, southernStallion]),
     }) as GameState;
 
     const context: PipelineContext = makePipelineContext({
@@ -141,7 +142,7 @@ describe("breedingSeasonPhase", () => {
 
     const state: GameState = makeGameState({
       day: 213, // Southern breeding season start
-      horses: [northernStallion, southernStallion],
+      horses: h2r([northernStallion, southernStallion]),
     }) as GameState;
 
     const context: PipelineContext = makePipelineContext({
@@ -172,7 +173,7 @@ describe("breedingSeasonPhase", () => {
 
     const state: GameState = makeGameState({
       day: 1,
-      horses: [horse],
+      horses: h2r([horse]),
     }) as GameState;
 
     const context: PipelineContext = makePipelineContext({

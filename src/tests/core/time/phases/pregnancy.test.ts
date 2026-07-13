@@ -15,6 +15,7 @@ import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Pregnancy, Horse } from "@/game/types";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import type { AnyImpact } from "@/core/resolver/impacts";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function createLiveFoalScenario(
   overrides: {
@@ -93,7 +94,7 @@ describe("pregnancyPhase", () => {
     const state: GameState = makeGameState({
       day: 31,
       cash: 10000,
-      horses: [sire, dam],
+      horses: h2r([sire, dam]),
       npcStables: [],
       pregnancies: [pregnancy],
       usedHorseNames: [],
@@ -135,7 +136,7 @@ describe("pregnancyPhase", () => {
     const state: GameState = makeGameState({
       day: 31,
       cash: 10000,
-      horses: [sire, dam],
+      horses: h2r([sire, dam]),
       npcStables: [],
       pregnancies: [pregnancy],
       usedHorseNames: [],
@@ -206,7 +207,7 @@ describe("pregnancyPhase", () => {
     const { sire, dam, pregnancy } = createLiveFoalScenario();
     const state: GameState = makeGameState({
       day: 31,
-      horses: [sire, dam],
+      horses: h2r([sire, dam]),
       npcStables: [],
       pregnancies: [pregnancy],
       usedHorseNames: ["existing-name"],
@@ -230,7 +231,7 @@ describe("pregnancyPhase", () => {
     const state: GameState = makeGameState({
       day: 31,
       cash: 10000,
-      horses: [sire, dam],
+      horses: h2r([sire, dam]),
       npcStables: [],
       pregnancies: [pregnancy],
       usedHorseNames: [],
@@ -259,7 +260,7 @@ describe("pregnancyPhase", () => {
 
     const state: GameState = makeGameState({
       day: 31,
-      horses: [sire, dam],
+      horses: h2r([sire, dam]),
       npcStables: [npcStable],
       pregnancies: [pregnancy],
       usedHorseNames: [],

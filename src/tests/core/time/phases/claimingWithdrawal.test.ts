@@ -9,6 +9,7 @@ import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import type { GameState, Race } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { AnyIntent, WithdrawFromClaimingIntent } from "@/core/resolver/intents";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("claimingWithdrawalPhase", () => {
   const createTestState = (): GameState => makeGameState({ day: 10 }) as GameState;
@@ -53,7 +54,7 @@ describe("claimingWithdrawalPhase", () => {
   it("should process withdrawal intent and mark entry as withdrawn", () => {
     const state: GameState = {
       ...createTestState(),
-      races: [makeRace({})],
+      races: r2r([makeRace({})]),
     };
 
     const result = claimingWithdrawalPhase.execute(
@@ -69,7 +70,7 @@ describe("claimingWithdrawalPhase", () => {
   it("should skip withdrawal for non-existent race", () => {
     const state: GameState = {
       ...createTestState(),
-      races: [makeRace({ id: "race-2" })],
+      races: r2r([makeRace({ id: "race-2" })]),
     };
 
     const result = claimingWithdrawalPhase.execute(
@@ -82,7 +83,7 @@ describe("claimingWithdrawalPhase", () => {
   it("should skip withdrawal for non-existent entry", () => {
     const state: GameState = {
       ...createTestState(),
-      races: [makeRace({})],
+      races: r2r([makeRace({})]),
     };
 
     const result = claimingWithdrawalPhase.execute(

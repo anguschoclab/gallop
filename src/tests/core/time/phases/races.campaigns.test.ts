@@ -9,6 +9,7 @@ import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameSt
 import { createTestHorse } from "@/tests/helpers";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Race, HorseCampaign } from "@/game/types";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function mkRace(overrides: Partial<Race> = {}): Race {
   return {
@@ -70,8 +71,8 @@ describe("racesPhase campaign deadline notifications", () => {
 
     const state = makeGameState({
       day: 10,
-      races: [race],
-      horses: [horse],
+      races: r2r([race]),
+      horses: h2r([horse]),
       campaigns: [campaign],
     }) as GameState;
 
@@ -106,8 +107,8 @@ describe("racesPhase campaign deadline notifications", () => {
 
     const state = makeGameState({
       day: 10,
-      races: [race],
-      horses: [horse],
+      races: r2r([race]),
+      horses: h2r([horse]),
       campaigns: [campaign],
     }) as GameState;
 
@@ -140,8 +141,8 @@ describe("racesPhase campaign deadline notifications", () => {
 
     const state = makeGameState({
       day: 10,
-      races: [race],
-      horses: [horse],
+      races: r2r([race]),
+      horses: h2r([horse]),
       campaigns: [campaign],
     }) as GameState;
 
@@ -174,8 +175,8 @@ describe("racesPhase campaign deadline notifications", () => {
 
     const state = makeGameState({
       day: 10,
-      races: [race],
-      horses: [horse],
+      races: r2r([race]),
+      horses: h2r([horse]),
       campaigns: [campaign],
     }) as GameState;
 
@@ -220,8 +221,8 @@ describe("racesPhase campaign deadline notifications", () => {
 
     const state = makeGameState({
       day: 10,
-      races: [race],
-      horses: [horse],
+      races: r2r([race]),
+      horses: h2r([horse]),
       campaigns: [campaign],
     }) as GameState;
 
@@ -254,8 +255,8 @@ describe("racesPhase campaign deadline notifications", () => {
 
     const state = makeGameState({
       day: 10,
-      races: [race],
-      horses: [],
+      races: r2r([race]),
+      horses: {},
       campaigns: [campaign],
     }) as GameState;
 

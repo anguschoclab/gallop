@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { stewardsPhase } from "@/core/time/phases/stewardsPhase";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import type { Race, Horse } from "@/game/types";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function makeResolvedRace(overrides: Partial<Race> = {}): Race {
   return {
@@ -53,7 +54,7 @@ describe("stewardsPhase — player-entry guard", () => {
 
     const ctx = makePipelineContext({
       newDay: 1,
-      state: makeGameState({ races: [race], horses }) as any,
+      state: makeGameState({ races: r2r([race]), horses }) as any,
     });
 
     const result = stewardsPhase.execute(ctx as any);
@@ -82,7 +83,7 @@ describe("stewardsPhase — player-entry guard", () => {
 
       const ctx = makePipelineContext({
         newDay: raceNum + 1,
-        state: makeGameState({ races: [race], horses: [] }) as any,
+        state: makeGameState({ races: r2r([race]), horses: {} }) as any,
       });
 
       const result = stewardsPhase.execute(ctx as any);
@@ -102,7 +103,7 @@ describe("stewardsPhase — player-entry guard", () => {
 
     const ctx = makePipelineContext({
       newDay: 1,
-      state: makeGameState({ races: [race], horses: [] }) as any,
+      state: makeGameState({ races: r2r([race]), horses: {} }) as any,
     });
 
     const result = stewardsPhase.execute(ctx as any);
@@ -114,7 +115,7 @@ describe("stewardsPhase — player-entry guard", () => {
     const race = makeResolvedRace({ resolved: false, result: [] });
     const ctx = makePipelineContext({
       newDay: 1,
-      state: makeGameState({ races: [race], horses: [] }) as any,
+      state: makeGameState({ races: r2r([race]), horses: {} }) as any,
     });
     const result = stewardsPhase.execute(ctx as any);
     expect(result.impacts.filter((i: any) => i.type === "stewards_inquiry")).toHaveLength(0);

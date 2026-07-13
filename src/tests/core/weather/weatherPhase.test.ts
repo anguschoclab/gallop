@@ -12,6 +12,7 @@ import { weatherPhase } from "@/core/time/phases/weatherPhase";
 import { stepWeather, PATTERN_SEVERITY, type WeatherState } from "@/core/weather";
 import type { Race } from "@/core/race/types";
 import { createRng } from "@/core/common/rng";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 const TRACK_ID = "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"; // Churchill Downs
 
@@ -62,7 +63,7 @@ function buildContext(dramaDay: number, yesterday: WeatherState) {
     newDay: dramaDay,
     state: {
       day: dramaDay,
-      races: [race],
+      races: r2r([race]),
       log: [],
       weather: { byTrack: { [TRACK_ID]: [yesterday] }, forecast: {} },
     } as any,

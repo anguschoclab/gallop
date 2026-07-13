@@ -4,6 +4,7 @@ import { createDefaultGameState } from "@/game/store/state";
 import { useHorseDetail } from "@/hooks/horse/useHorseDetail";
 import { renderHook } from "@testing-library/react";
 import type { Horse } from "@/game/types";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 // Mock IntersectionObserver (used by useHorseDetail's scroll section tracking)
 class MockIntersectionObserver {
@@ -87,7 +88,7 @@ describe("useHorseDetail — horseMap optimization", () => {
     const state = createDefaultGameState();
     useGame.setState({
       ...state,
-      horses: [horse1, horse2],
+      horses: h2r([horse1, horse2]),
       horseMap: new Map([
         ["h1", horse1],
         ["h2", horse2],

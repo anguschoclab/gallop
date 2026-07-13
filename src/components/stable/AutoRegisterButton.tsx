@@ -25,7 +25,7 @@ import { AutoRegisterSkippedList } from "./AutoRegisterSkippedList";
 export function AutoRegisterButton() {
   const [isOpen, setIsOpen] = useState(false);
   const cash = useCash();
-  const { result, isProcessing, execute, eligibleCount, hasEntries, isDisabled, buttonTooltip } =
+  const { result, isProcessing, execute, eligibleCount, hasEntries, hasEligibleHorses, isDisabled, buttonTooltip } =
     useAutoRegister();
 
   const handleConfirm = async () => {
@@ -47,7 +47,7 @@ export function AutoRegisterButton() {
         Auto-Register
         {eligibleCount > 0 && (
           <Badge variant="secondary" className="ml-1 text-[9px] px-1.5 py-0">
-            {Math.min(result.affordableCount, eligibleCount)}
+            {eligibleCount}
           </Badge>
         )}
       </Button>

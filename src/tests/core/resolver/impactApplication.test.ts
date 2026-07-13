@@ -7,6 +7,7 @@ import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
 import type { GameState } from "@/game/types";
 import { createDefaultGameState } from "@/game/store/state";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import type {
   AnyImpact,
   CashImpact,
@@ -134,7 +135,7 @@ describe("applyImpacts", () => {
 
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
     };
 
     const impact: HorseStatImpact = {
@@ -178,7 +179,7 @@ describe("applyImpacts", () => {
 
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
     };
 
     const impact: HorseStatImpact = {
@@ -223,7 +224,7 @@ describe("applyImpacts", () => {
 
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
     };
 
     const impact: EnergyImpact = {
@@ -267,7 +268,7 @@ describe("applyImpacts", () => {
 
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
     };
 
     const impact1: EnergyImpact = {
@@ -374,7 +375,7 @@ describe("applyImpacts", () => {
 
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
     };
 
     const impact: HorseTransferImpact = {
@@ -420,7 +421,7 @@ describe("applyImpacts", () => {
 
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
     };
 
     const impacts: AnyImpact[] = [

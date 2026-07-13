@@ -11,6 +11,7 @@ import { useGame } from "@/game/store";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createDefaultFoalDevelopmentArc } from "@/core/horse/foalDevelopment";
 import type { Horse } from "@/core/horse/types";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function seedHorse(overrides: Partial<Horse> = {}) {
   const horse = createTestHorse({
@@ -25,13 +26,13 @@ function seedHorse(overrides: Partial<Horse> = {}) {
     } as Horse["stats"],
     ...overrides,
   });
-  useGame.setState({ horses: [horse], day: 20, log: [] } as any);
+  useGame.setState({ horses: h2r([horse]), day: 20, log: [] } as any);
   return horse;
 }
 
 describe("resolveFoalMilestone", () => {
   beforeEach(() => {
-    useGame.setState({ horses: [], day: 0, log: [] } as any);
+    useGame.setState({ horses: {}, day: 0, log: [] } as any);
   });
 
   it("applies stat deltas from the chosen option", () => {

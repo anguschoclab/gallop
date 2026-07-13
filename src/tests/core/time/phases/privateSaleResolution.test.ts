@@ -4,6 +4,7 @@ import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import type { GameState, PrivateSaleOffer, Horse, Stable } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 const mkOffer = (overrides: Partial<PrivateSaleOffer> = {}): PrivateSaleOffer => ({
   id: "offer-1",
@@ -26,7 +27,7 @@ const mkStable = (overrides: Partial<Stable> = {}): Stable =>
     reputation: 50,
     founded: 1,
     cash: 100000,
-    horses: ["horse-1"],
+    horses: h2r(["horse-1"]),
     isMajor: false,
     colors: { primary: "#000", secondary: "#fff" },
     personality: "aggressive",
@@ -70,7 +71,7 @@ describe("privateSaleResolutionPhase", () => {
   it("returns context unchanged when no pending offers", async () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const ctx = createContext({
-      horses: [mkHorse()],
+      horses: h2r([mkHorse()]),
       npcStables: [mkStable()],
       privateSaleOffers: [],
     });
@@ -87,7 +88,7 @@ describe("privateSaleResolutionPhase", () => {
     const offerAmount = Math.round(valuation * 0.75);
 
     const ctx = createContext({
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: offerAmount })],
     });
@@ -112,7 +113,7 @@ describe("privateSaleResolutionPhase", () => {
     const offerAmount = Math.round(valuation * 0.55);
 
     const ctx = createContext({
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: offerAmount })],
     });
@@ -131,7 +132,7 @@ describe("privateSaleResolutionPhase", () => {
     const offerAmount = Math.round(valuation * 0.4);
 
     const ctx = createContext({
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: offerAmount })],
     });
@@ -150,7 +151,7 @@ describe("privateSaleResolutionPhase", () => {
     const offerAmount = Math.round(valuation * 1.05);
 
     const ctx = createContext({
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: offerAmount })],
     });
@@ -167,7 +168,7 @@ describe("privateSaleResolutionPhase", () => {
     const offerAmount = Math.round(valuation * 0.85);
 
     const ctx = createContext({
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: offerAmount })],
     });
@@ -185,7 +186,7 @@ describe("privateSaleResolutionPhase", () => {
     const offerAmount = Math.round(valuation * 0.5);
 
     const ctx = createContext({
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: offerAmount })],
     });
@@ -201,14 +202,14 @@ describe("privateSaleResolutionPhase", () => {
     const valuation = calculateNpcHorseValue(horse, stable.tier);
 
     const ctx1 = createContext({
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ id: "o1", amount: Math.round(valuation * 1.2) })],
     });
     expect(mod.privateSaleResolutionPhase.execute(ctx1).state.privateSaleOffers![0].status).not.toBe("accepted");
 
     const ctx2 = createContext({
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ id: "o2", amount: Math.round(valuation * 1.35) })],
     });
@@ -223,7 +224,7 @@ describe("privateSaleResolutionPhase", () => {
     const valuation = calculateNpcHorseValue(horse, stable.tier);
 
     const ctx = createContext({
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: Math.round(valuation * 1.15) })],
     });
@@ -238,7 +239,7 @@ describe("privateSaleResolutionPhase", () => {
     const valuation = calculateNpcHorseValue(horse, stable.tier);
 
     const ctx = createContext({
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: Math.round(valuation * 0.85) })],
     });
@@ -253,7 +254,7 @@ describe("privateSaleResolutionPhase", () => {
     const valuation = calculateNpcHorseValue(horse, stable.tier);
 
     const ctx = createContext({
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: Math.round(valuation * 0.95) })],
     });
@@ -268,7 +269,7 @@ describe("privateSaleResolutionPhase", () => {
     const valuation = calculateNpcHorseValue(horse, stable.tier);
 
     const ctx = createContext({
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: Math.round(valuation * 1.05) })],
     });
@@ -283,7 +284,7 @@ describe("privateSaleResolutionPhase", () => {
     const valuation = calculateNpcHorseValue(horse, stable.tier);
 
     const ctx = createContext({
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: Math.round(valuation * 1.05) })],
     });
@@ -293,7 +294,7 @@ describe("privateSaleResolutionPhase", () => {
   it("non-pending offers are not processed", async () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const ctx = createContext({
-      horses: [mkHorse()],
+      horses: h2r([mkHorse()]),
       npcStables: [mkStable()],
       privateSaleOffers: [
         mkOffer({ id: "c1", status: "countered", counterAmount: 60000 }),
@@ -319,7 +320,7 @@ describe("privateSaleResolutionPhase", () => {
     const offerAmount = Math.round(valuation * 0.75);
 
     const ctx = createContext({
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: offerAmount })],
     });
@@ -353,7 +354,7 @@ describe("privateSaleResolutionPhase", () => {
     const offerAmount = Math.round(valuation * 0.55);
 
     const ctx = createContext({
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: offerAmount })],
     });
@@ -365,12 +366,12 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse1 = mkHorse({ id: "horse-1", name: "Thunder" });
     const horse2 = mkHorse({ id: "horse-2", name: "Lightning" });
-    const stable = mkStable({ personality: "aggressive", horses: ["horse-1", "horse-2"] });
+    const stable = mkStable({ personality: "aggressive", horses: h2r(["horse-1", "horse-2"]) });
     const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
     const valuation = calculateNpcHorseValue(horse1, stable.tier);
 
     const ctx = createContext({
-      horses: [horse1, horse2],
+      horses: h2r([horse1, horse2]),
       npcStables: [stable],
       privateSaleOffers: [
         mkOffer({ id: "o1", horseId: "horse-1", amount: Math.round(valuation * 0.75) }),
@@ -387,7 +388,7 @@ describe("privateSaleResolutionPhase", () => {
   it("horse not found — offer skipped, remains pending", async () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const ctx = createContext({
-      horses: [],
+      horses: {},
       npcStables: [mkStable()],
       privateSaleOffers: [mkOffer({ horseId: "nonexistent" })],
     });
@@ -398,7 +399,7 @@ describe("privateSaleResolutionPhase", () => {
   it("stable not found — offer skipped, remains pending", async () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const ctx = createContext({
-      horses: [mkHorse()],
+      horses: h2r([mkHorse()]),
       npcStables: [],
       privateSaleOffers: [mkOffer({ toStableId: "nonexistent" })],
     });
@@ -410,7 +411,7 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse = mkHorse({ stableId: "different-stable" });
     const ctx = createContext({
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [mkStable()],
       privateSaleOffers: [mkOffer({ toStableId: "stable-1" })],
     });
@@ -422,12 +423,12 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse1 = mkHorse({ id: "horse-1", name: "Thunder" });
     const horse2 = mkHorse({ id: "horse-2", name: "Lightning" });
-    const stable = mkStable({ horses: ["horse-1", "horse-2"] });
+    const stable = mkStable({ horses: h2r(["horse-1", "horse-2"]) });
     const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
     const valuation = calculateNpcHorseValue(horse1, stable.tier);
 
     const ctx = createContext({
-      horses: [horse1, horse2],
+      horses: h2r([horse1, horse2]),
       npcStables: [stable],
       privateSaleOffers: [
         mkOffer({ id: "o1", horseId: "horse-1", amount: Math.round(valuation * 0.75) }),

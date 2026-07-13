@@ -14,6 +14,7 @@ import { createTestHorse } from "@/tests/helpers";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("Day Advancement Pipeline Integration", () => {
   it("should execute phases in correct order", () => {
@@ -109,7 +110,7 @@ describe("Day Advancement Pipeline Integration", () => {
       gender: "colt",
     });
 
-    const state: GameState = makeGameState({ day: 10, cash: 10000, horses: [horse] }) as GameState;
+    const state: GameState = makeGameState({ day: 10, cash: 10000, horses: h2r([horse]) }) as GameState;
 
     const context: PipelineContext = {
       previousDay: 9,

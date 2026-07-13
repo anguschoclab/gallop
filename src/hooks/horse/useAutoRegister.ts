@@ -26,14 +26,12 @@ export function useAutoRegister() {
   const eligibleCount = result.entries.length + result.skipped.length;
   const hasEntries = result.entries.length > 0;
   const hasBudget = result.affordableCount > 0;
-  const isDisabled = eligibleCount === 0 || !hasBudget;
+  const hasEligibleHorses = eligibleCount > 0;
+  const isDisabled = !hasEligibleHorses;
 
-  const buttonTooltip =
-    eligibleCount === 0
-      ? "No eligible horses for auto-registration"
-      : !hasBudget
-        ? "Insufficient budget for any entries"
-        : undefined;
+  const buttonTooltip = !hasEligibleHorses
+    ? "No eligible horses for auto-registration"
+    : undefined;
 
   const execute = useCallback(async () => {
     setIsProcessing(true);
@@ -94,6 +92,7 @@ export function useAutoRegister() {
     eligibleCount,
     hasEntries,
     hasBudget,
+    hasEligibleHorses,
     isDisabled,
     buttonTooltip,
   };

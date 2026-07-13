@@ -164,7 +164,7 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
     const state = makeGameState({
       day: 1,
       cash: 5000,
-      races: [],
+      races: {},
     }) as GameState;
 
     const advanceDayFn = vi.fn();
@@ -306,7 +306,7 @@ describe("Year Advance Integration", () => {
     const state = makeGameState({
       day: 1,
       cash: 5000,
-      races: [],
+      races: {},
     }) as GameState;
 
     const advanceDayFn = vi.fn();

@@ -161,7 +161,7 @@ describe("upkeepPhase", () => {
     const state: GameState = makeGameState({
       day: 1,
       cash: 10000,
-      horses: [],
+      horses: {},
       npcStables: [
         createTestStable({
           id: "npc-stable-1",

@@ -10,6 +10,7 @@ import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import type { BreedingIntent } from "@/core/resolver/intents";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("breedingResolutionPhase", () => {
   const createTestState = (): GameState =>
@@ -43,7 +44,7 @@ describe("breedingResolutionPhase", () => {
     const state: GameState = {
       ...createTestState(),
       cash: 5000,
-      horses: [sire, dam],
+      horses: h2r([sire, dam]),
       npcStables: [
         createTestStable({
           id: "npc-stable-1",
@@ -99,7 +100,7 @@ describe("breedingResolutionPhase", () => {
     const state: GameState = {
       ...createTestState(),
       cash: 5000,
-      horses: [sire, dam],
+      horses: h2r([sire, dam]),
       npcStables: [
         createTestStable({
           id: "npc-stable-1",
@@ -137,7 +138,7 @@ describe("breedingResolutionPhase", () => {
     const horse = createTestHorse({ id: "horse-1" });
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
     };
 
     const context = createTestContext(state, [] as any);

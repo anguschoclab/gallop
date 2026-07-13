@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { useGame } from "@/game/store";
 import { createDefaultCoreState } from "@/game/store/state/coreState";
 import type { Race } from "@/core/race/types";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function makeRace(id: string, day: number = 1, overrides?: Partial<Race>): Race {
   return {
@@ -31,10 +32,10 @@ describe("raceMap sync through store actions", () => {
   beforeEach(() => {
     useGame.setState({
       day: 1,
-      races: [],
+      races: {},
       raceMap: new Map(),
       pendingIntents: [],
-      horses: [],
+      horses: {},
       horseMap: new Map(),
       npcStables: [],
       jockeys: [],
@@ -56,7 +57,7 @@ describe("raceMap sync through store actions", () => {
   it("raceMap is rebuilt when races change during day advancement", async () => {
     const initialRace = makeRace("r-initial", 1, { resolved: true });
     useGame.setState({
-      races: [initialRace],
+      races: r2r([initialRace]),
       raceMap: new Map([[initialRace.id, initialRace]]),
     });
 
@@ -81,7 +82,7 @@ describe("raceMap sync through store actions", () => {
 
     useGame.setState({
       day: 1,
-      races: [oldResolvedRace, oldGradedRace],
+      races: r2r([oldResolvedRace, oldGradedRace]),
       raceMap: new Map([
         [oldResolvedRace.id, oldResolvedRace],
         [oldGradedRace.id, oldGradedRace],
@@ -110,7 +111,7 @@ describe("raceMap sync through store actions", () => {
   it("raceMap contains newly generated races after day advancement", async () => {
     useGame.setState({
       day: 1,
-      races: [],
+      races: {},
       raceMap: new Map(),
     });
 
@@ -129,9 +130,9 @@ describe("raceMap sync through store actions", () => {
     const dueRace = makeRace("r-due", 1, { resolved: false });
     useGame.setState({
       day: 1,
-      races: [dueRace],
+      races: r2r([dueRace]),
       raceMap: new Map([[dueRace.id, dueRace]]),
-      horses: [{ id: "h1" } as any],
+      horses: h2r([{ id: "h1" } as any]),
     });
 
     await useGame.getState().advanceDay();

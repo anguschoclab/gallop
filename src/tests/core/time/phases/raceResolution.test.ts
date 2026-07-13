@@ -7,6 +7,7 @@ import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Race } from "@/game/types";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("raceResolutionPhase", () => {
   it("should identify overdue races (day <= current day)", () => {
@@ -40,7 +41,7 @@ describe("raceResolutionPhase", () => {
 
     const state: GameState = makeGameState({
       day: 10,
-      races: [race1, race2],
+      races: r2r([race1, race2]),
       reputation: {
         score: 50,
         tier: "local",
@@ -93,7 +94,7 @@ describe("raceResolutionPhase", () => {
 
     const state: GameState = makeGameState({
       day: 10,
-      races: [race1, race2],
+      races: r2r([race1, race2]),
       reputation: {
         score: 50,
         tier: "local",
@@ -132,7 +133,7 @@ describe("raceResolutionPhase", () => {
 
     const state: GameState = makeGameState({
       day: 10,
-      races: [race],
+      races: r2r([race]),
       reputation: {
         score: 50,
         tier: "local",
@@ -170,7 +171,7 @@ describe("raceResolutionPhase", () => {
 
     const state: GameState = makeGameState({
       day: 10,
-      races: [race],
+      races: r2r([race]),
       reputation: {
         score: 50,
         tier: "local",
@@ -195,7 +196,7 @@ describe("raceResolutionPhase", () => {
   it("should not skip when skipRaceResolution is false or undefined", () => {
     const state: GameState = makeGameState({
       day: 10,
-      horses: [{ id: "h1" } as any],
+      horses: h2r([{ id: "h1" } as any]),
       reputation: {
         score: 50,
         tier: "local",

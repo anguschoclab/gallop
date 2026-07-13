@@ -32,8 +32,8 @@ describe("Jockey Instructions Flow Integration", () => {
     useGame.setState({
       pendingPlayerRaceId: undefined,
       pendingIntents: [],
-      races: [],
-      horses: [],
+      races: {},
+      horses: {},
       jockeys: [],
       day: 1,
     });

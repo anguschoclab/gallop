@@ -13,6 +13,7 @@ import type { NominationRecord } from "@/core/racing/nominationFees";
 import type { InvestorRecord } from "@/core/breeding/investorTypes";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 import { StewardsInquiryOverlay } from "@/components/race/StewardsInquiryOverlay";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 // Persisted keys must mirror src/game/store/index.ts PERSISTED_KEYS.
 const PERSISTED_KEYS = [
@@ -78,7 +79,7 @@ describe("Persistence of nominations / investors / stewards inquiries", () => {
     const state = {
       day: 15,
       cash: 100000,
-      horses: [],
+      horses: {},
       playerNominations: [nomination],
       syndicateInvestors: { "synd-1": investor },
       stewardsInquiries: [inquiry],
@@ -112,7 +113,7 @@ describe("Persistence of nominations / investors / stewards inquiries", () => {
     it("StewardsInquiryOverlay opens for a rehydrated inquiry involving a player horse", () => {
       const base = createDefaultGameState();
       const seededState: Partial<GameState> = {
-        horses: [{ id: "horse-1", name: "Silver Comet", owned: true } as any],
+        horses: h2r([{ id: "horse-1", name: "Silver Comet", owned: true } as any]),
         playerNominations: [nomination],
         syndicateInvestors: { "synd-1": investor },
         stewardsInquiries: [inquiry],

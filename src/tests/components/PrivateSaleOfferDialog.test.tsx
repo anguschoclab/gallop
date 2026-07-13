@@ -15,6 +15,7 @@ vi.mock("sonner", () => ({
 }));
 
 import { toast } from "sonner";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   createTestNpcHorse({
@@ -33,7 +34,7 @@ const mkStable = (overrides: Partial<Stable> = {}): Stable =>
     reputation: 50,
     founded: 1,
     cash: 100000,
-    horses: ["h1"],
+    horses: h2r(["h1"]),
     isMajor: false,
     colors: { primary: "#000", secondary: "#fff" },
     personality: "aggressive",
@@ -139,7 +140,7 @@ describe("PrivateSaleOfferDialog", () => {
       />,
       {
         cash: 100000,
-        horses: [horse],
+        horses: h2r([horse]),
         horseMap: new Map([[horse.id, horse]]),
         npcStables: [mkStable()],
         privateSaleOffers: [],
@@ -164,7 +165,7 @@ describe("PrivateSaleOfferDialog", () => {
       />,
       {
         cash: 100000,
-        horses: [horse],
+        horses: h2r([horse]),
         horseMap: new Map([[horse.id, horse]]),
         npcStables: [mkStable({ name: "Green Acres", personality: "aggressive" })],
         privateSaleOffers: [],
@@ -191,7 +192,7 @@ describe("PrivateSaleOfferDialog", () => {
       />,
       {
         cash: 100,
-        horses: [horse],
+        horses: h2r([horse]),
         horseMap: new Map([[horse.id, horse]]),
         npcStables: [mkStable()],
         privateSaleOffers: [],

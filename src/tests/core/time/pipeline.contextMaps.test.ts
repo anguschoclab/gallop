@@ -13,6 +13,7 @@ import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import type { GameState } from "@/game/types";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("PipelineContext shared maps", () => {
   const horse1 = createTestHorse({ id: "h1", name: "Alpha" });
@@ -35,8 +36,8 @@ describe("PipelineContext shared maps", () => {
 
   const makeState = (): GameState =>
     makeGameState({
-      horses: [horse1, horse2],
-      races: [race1],
+      horses: h2r([horse1, horse2]),
+      races: r2r([race1]),
       npcStables: [stable1],
       jockeys: [jockey1],
     }) as GameState;
@@ -132,7 +133,7 @@ describe("PipelineContext shared maps", () => {
   });
 
   it("empty state produces empty maps", () => {
-    const state = makeGameState({ horses: [], races: [], npcStables: [], jockeys: [] }) as GameState;
+    const state = makeGameState({ horses: {}, races: {}, npcStables: [], jockeys: [] }) as GameState;
     const ctx = createMockPipelineContext({ state });
     expect(ctx.horseMap.size).toBe(0);
     expect(ctx.raceMap.size).toBe(0);

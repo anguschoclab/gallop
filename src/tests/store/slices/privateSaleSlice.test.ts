@@ -3,6 +3,7 @@ import { seedStore } from "@/test-utils/renderWithStore";
 import { useGame } from "@/game/store";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import type { GameState, PrivateSaleOffer, Horse, Stable } from "@/game/types";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 const mkOffer = (overrides: Partial<PrivateSaleOffer> = {}): PrivateSaleOffer => ({
   id: "offer-1",
@@ -34,7 +35,7 @@ const mkStable = (overrides: Partial<Stable> = {}): Stable =>
     reputation: 50,
     founded: 1,
     cash: 100000,
-    horses: ["horse-1"],
+    horses: h2r(["horse-1"]),
     isMajor: false,
     colors: { primary: "#000", secondary: "#fff" },
     personality: "aggressive",
@@ -53,7 +54,7 @@ describe("privateSaleSlice", () => {
     const stable = mkStable();
     seedStore({
       cash: 100000,
-      horses: [horse],
+      horses: h2r([horse]),
       horseMap: new Map([[horse.id, horse]]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer()],
@@ -76,7 +77,7 @@ describe("privateSaleSlice", () => {
     const stable = mkStable();
     seedStore({
       cash: 50000,
-      horses: [horse],
+      horses: h2r([horse]),
       horseMap: new Map([[horse.id, horse]]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ counterAmount: 60000 })],
@@ -97,7 +98,7 @@ describe("privateSaleSlice", () => {
     const stable = mkStable();
     seedStore({
       cash: 100000,
-      horses: [horse],
+      horses: h2r([horse]),
       horseMap: new Map([[horse.id, horse]]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer()],
@@ -117,7 +118,7 @@ describe("privateSaleSlice", () => {
     const stable = mkStable();
     seedStore({
       cash: 100000,
-      horses: [horse],
+      horses: h2r([horse]),
       horseMap: new Map([[horse.id, horse]]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ status: "pending", counterAmount: undefined })],
@@ -144,7 +145,7 @@ describe("privateSaleSlice", () => {
     const stable = mkStable();
     seedStore({
       cash: 100000,
-      horses: [horse],
+      horses: h2r([horse]),
       horseMap: new Map([[horse.id, horse]]),
       npcStables: [stable],
       privateSaleOffers: [],
@@ -169,7 +170,7 @@ describe("privateSaleSlice", () => {
     const stable = mkStable();
     seedStore({
       cash: 100,
-      horses: [horse],
+      horses: h2r([horse]),
       horseMap: new Map([[horse.id, horse]]),
       npcStables: [stable],
       privateSaleOffers: [],
@@ -188,7 +189,7 @@ describe("privateSaleSlice", () => {
     const stable = mkStable();
     seedStore({
       cash: 100000,
-      horses: [horse],
+      horses: h2r([horse]),
       horseMap: new Map([[horse.id, horse]]),
       npcStables: [stable],
       privateSaleOffers: [],

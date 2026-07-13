@@ -18,6 +18,7 @@ import { createRng } from "@/core/common/rng";
 import type { GameState, Horse, HorseGender, Pregnancy } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
 import { createTestStable } from "@/tests/helpers/createTestStable";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 // Helper to create minimal valid Horse objects for testing
 function mockHorse(
@@ -145,7 +146,7 @@ function mockHorse(
 describe("runNpcBreeding", () => {
   it("should return unchanged state when not breeding season start", () => {
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
-      horses: [],
+      horses: {},
       npcStables: [],
       pregnancies: [],
       day: 50, // Not breeding season start
@@ -167,7 +168,7 @@ describe("runNpcBreeding", () => {
     });
 
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
-      horses: [],
+      horses: {},
       npcStables: [stable],
       pregnancies: [],
       day: 1, // Breeding season start
@@ -246,7 +247,7 @@ describe("runNpcBreeding", () => {
     });
 
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
-      horses: [mare, stallion],
+      horses: h2r([mare, stallion]),
       npcStables: [breederStable, sireStable],
       pregnancies: [],
       day: 1, // Breeding season start
@@ -347,7 +348,7 @@ describe("runNpcBreeding", () => {
     });
 
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
-      horses: [youngMare, oldMare, stallion],
+      horses: h2r([youngMare, oldMare, stallion]),
       npcStables: [stable, sireStable],
       pregnancies: [],
       day: 1,
@@ -440,7 +441,7 @@ describe("runNpcBreeding", () => {
     });
 
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
-      horses: [mare, stallion],
+      horses: h2r([mare, stallion]),
       npcStables: [stable, sireStable],
       pregnancies: [existingPregnancy],
       day: 1,
@@ -518,7 +519,7 @@ describe("runNpcBreeding", () => {
     });
 
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
-      horses: [mare, stallion],
+      horses: h2r([mare, stallion]),
       npcStables: [breederStable, sireStable],
       pregnancies: [],
       day: 1,
@@ -602,7 +603,7 @@ describe("runNpcBreeding", () => {
     });
 
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
-      horses: [mare, stallion],
+      horses: h2r([mare, stallion]),
       npcStables: [stable, sireStable],
       pregnancies: [],
       day: 1,
@@ -684,7 +685,7 @@ describe("runNpcBreeding", () => {
     });
 
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
-      horses: [mare, stallion],
+      horses: h2r([mare, stallion]),
       npcStables: [stable, sireStable],
       pregnancies: [],
       day: 10,
@@ -765,7 +766,7 @@ describe("runNpcBreeding", () => {
     });
 
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
-      horses: [mare, stallion],
+      horses: h2r([mare, stallion]),
       npcStables: [stable, sireStable],
       pregnancies: [],
       day: 10,

@@ -10,6 +10,7 @@ import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import type { PurchaseIntent } from "@/core/resolver/intents";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("purchaseResolutionPhase", () => {
   const createTestState = (): GameState =>
@@ -26,7 +27,7 @@ describe("purchaseResolutionPhase", () => {
     const horse = createTestHorse({ id: "horse-1" });
     const state: GameState = {
       ...createTestState(),
-      horses: [],
+      horses: {},
       market: [horse],
     };
 
@@ -52,7 +53,7 @@ describe("purchaseResolutionPhase", () => {
     const horse = createTestHorse({ id: "horse-1" });
     const state: GameState = {
       ...createTestState(),
-      horses: [],
+      horses: {},
       market: [horse],
     };
 
@@ -77,7 +78,7 @@ describe("purchaseResolutionPhase", () => {
     const horse = createTestHorse({ id: "horse-1" });
     const state: GameState = {
       ...createTestState(),
-      horses: [horse],
+      horses: h2r([horse]),
     };
 
     const context = createTestContext(state, [] as any);
@@ -99,7 +100,7 @@ describe("purchaseResolutionPhase", () => {
     const horse2 = createTestHorse({ id: "horse-2" });
     const state: GameState = {
       ...createTestState(),
-      horses: [],
+      horses: {},
       market: [horse1, horse2],
     };
 
@@ -135,7 +136,7 @@ describe("purchaseResolutionPhase", () => {
     const horse1 = createTestHorse({ id: "horse-1" });
     const state: GameState = {
       ...createTestState(),
-      horses: [],
+      horses: {},
       market: [horse1],
     };
 

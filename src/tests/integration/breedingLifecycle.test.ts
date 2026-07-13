@@ -9,6 +9,7 @@ import { createRng } from "@/core/common/rng";
 import { createDefaultGameState } from "@/game/store/state";
 import type { GameState, Horse, HorseGender, Stable } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 // Helper to create minimal valid Horse objects for testing
 function mockHorse(
@@ -83,7 +84,7 @@ describe("Breeding Lifecycle Integration", () => {
       ...createDefaultGameState(),
       day: 1,
       cash: 10000,
-      horses: [stallion, mare],
+      horses: h2r([stallion, mare]),
       npcStables: [
         {
           id: "stable-1",
@@ -94,7 +95,7 @@ describe("Breeding Lifecycle Integration", () => {
           tier: "elite",
           owner: "Owner 1",
           founded: 1,
-          horses: [],
+          horses: {},
           isMajor: false,
           colors: { primary: "#FF0000", secondary: "#FFFFFF" },
           staff: {
@@ -155,7 +156,7 @@ describe("Breeding Lifecycle Integration", () => {
       ...createDefaultGameState(),
       day: 1,
       cash: 10000,
-      horses: [stallion],
+      horses: h2r([stallion]),
       npcStables: [
         {
           id: "stable-1",
@@ -166,7 +167,7 @@ describe("Breeding Lifecycle Integration", () => {
           tier: "elite",
           owner: "Owner 1",
           founded: 1,
-          horses: [],
+          horses: {},
           isMajor: false,
           colors: { primary: "#FF0000", secondary: "#FFFFFF" },
           staff: {
@@ -194,7 +195,7 @@ describe("Breeding Lifecycle Integration", () => {
       ...createDefaultGameState(),
       day: 10,
       cash: 10000,
-      horses: [],
+      horses: {},
       npcStables: [
         {
           id: "stable-1",
@@ -205,7 +206,7 @@ describe("Breeding Lifecycle Integration", () => {
           tier: "elite",
           owner: "Owner 1",
           founded: 1,
-          horses: [],
+          horses: {},
           isMajor: false,
           colors: { primary: "#FF0000", secondary: "#FFFFFF" },
           staff: {
@@ -233,7 +234,7 @@ describe("Breeding Lifecycle Integration", () => {
       ...createDefaultGameState(),
       day: 1,
       cash: 10000,
-      horses: [],
+      horses: {},
       npcStables: [
         {
           id: "stable-1",
@@ -244,7 +245,7 @@ describe("Breeding Lifecycle Integration", () => {
           tier: "elite",
           owner: "Owner 1",
           founded: 1,
-          horses: [],
+          horses: {},
           isMajor: false,
           colors: { primary: "#FF0000", secondary: "#FFFFFF" },
           staff: {

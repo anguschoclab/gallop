@@ -10,6 +10,7 @@ import { makeGradedRace } from "@/core/race/generation/raceGen";
 import type { Horse, Race, GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GradedRace } from "@/data/gradedRaces";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function makeHorse(overrides: Partial<Horse> = {}): Horse {
   return {
@@ -203,8 +204,8 @@ describe("RacingValidator — invitation gating", () => {
     });
     const state = {
       day: 1,
-      horses: [horse],
-      races: [race],
+      horses: h2r([horse]),
+      races: r2r([race]),
     } as unknown as GameState;
 
     const result = validator.validate(
@@ -240,8 +241,8 @@ describe("RacingValidator — invitation gating", () => {
     });
     const state = {
       day: 1,
-      horses: [horse],
-      races: [race],
+      horses: h2r([horse]),
+      races: r2r([race]),
     } as unknown as GameState;
 
     const result = validator.validate(
@@ -322,8 +323,8 @@ describe("raceInvitationsPhase", () => {
       newDay: 20,
       state: {
         day: 20,
-        horses: [horse],
-        races: [race],
+        horses: h2r([horse]),
+        races: r2r([race]),
         inbox: [],
         pregnancies: [],
       } as unknown as GameState,
@@ -368,8 +369,8 @@ describe("raceInvitationsPhase", () => {
       newDay: 20,
       state: {
         day: 20,
-        horses: [horse],
-        races: [race],
+        horses: h2r([horse]),
+        races: r2r([race]),
         inbox: [],
         pregnancies: [],
       } as unknown as GameState,
@@ -414,8 +415,8 @@ describe("raceInvitationsPhase", () => {
       newDay: 20,
       state: {
         day: 20,
-        horses: [closeHorse, farHorse],
-        races: [race],
+        horses: h2r([closeHorse, farHorse]),
+        races: r2r([race]),
         inbox: [],
         pregnancies: [],
       } as unknown as GameState,
@@ -462,8 +463,8 @@ describe("raceInvitationsPhase", () => {
       newDay: 20,
       state: {
         day: 20,
-        horses: [horse],
-        races: [race],
+        horses: h2r([horse]),
+        races: r2r([race]),
         inbox: [],
         pregnancies: [],
       } as unknown as GameState,
