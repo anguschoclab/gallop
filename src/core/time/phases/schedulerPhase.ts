@@ -42,7 +42,7 @@ export const schedulerPhase = {
       if (!horse || !horse.owned) return campaign;
 
       // Reconcile slot statuses from resolved races
-      const reconciledSlots = reconcileSlotStatuses(campaign, state.races);
+      const reconciledSlots = reconcileSlotStatuses(campaign, Object.values(state.races));
       let updated: HorseCampaign = { ...campaign, slots: reconciledSlots };
 
       // Update aptitudes from newly resolved races
@@ -73,7 +73,7 @@ export const schedulerPhase = {
         const newSlots = buildCampaignSlots({
           horse,
           campaign: updated,
-          races: state.races,
+          races: Object.values(state.races),
           currentDay: newDay,
         });
         const newFlags = generateCampaignFlags(horse, updated, newDay);
@@ -94,7 +94,7 @@ export const schedulerPhase = {
 
     // Maintain a mutable race snapshot so subsequent auto-entry calls see
     // entries already committed by earlier campaigns, without touching state.races.
-    const currentRaces = new Map(state.races.map((r) => [r.id, { ...r, entries: [...r.entries] }]));
+    const currentRaces = new Map(Object.values(state.races).map((r) => [r.id, { ...r, entries: [...r.entries] }]));
 
     for (let i = 0; i < updatedCampaigns.length; i++) {
       const campaign = updatedCampaigns[i];

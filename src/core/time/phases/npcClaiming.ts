@@ -26,15 +26,14 @@ export const npcClaimingPhase = {
   order: PHASE_ORDER_NPC_CLAIMING, // Just before raceResolution (order ~65)
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
-    const claimingRaces: Race[] = state.races.filter(
+    const claimingRaces: Race[] = Object.values(state.races).filter(
       (r: Race) => r.claiming && !r.resolved && r.day === newDay,
     );
     if (claimingRaces.length === 0) return context;
 
     const newClaims: Claim[] = [...(state.claims ?? [])];
     const npcStables: Stable[] = state.npcStables;
-    const allHorses: Horse[] = state.horses;
-    const horseMap = new Map(allHorses.map((h) => [h.id, h]));
+    const horseMap = context.horseMap;
 
     for (const race of claimingRaces) {
       const price = race.claiming!.price;
@@ -55,7 +54,7 @@ export const npcClaimingPhase = {
           );
           if (alreadyClaimed) continue;
 
-          const valuation = calculateLotValuation(horse, stable, "racing_age", allHorses, horseMap);
+          const valuation = calculateLotValuation(horse, stable, "racing_age", Object.values(state.horses), horseMap);
           if (price <= valuation * 0.85 && stable.cash >= price) {
             newClaims.push({
               id: generateUUID(),

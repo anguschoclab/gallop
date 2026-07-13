@@ -15,6 +15,7 @@ import { PHASE_ORDER_CLAIMING_WITHDRAWAL } from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, WithdrawFromClaimingIntent } from "@/core/resolver/intents";
 import type { AnyImpact, LogImpact } from "@/core/resolver/impacts/index";
+import type { Race } from "@/core/race/types";
 import { generateUUID } from "@/core/uuid";
 
 /**
@@ -28,17 +29,15 @@ export const claimingWithdrawalPhase: PipelinePhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, intents, newDay } = context;
     const impacts: AnyImpact[] = [];
-    const races = [...state.races];
+    const races: Record<string, Race> = { ...state.races };
     let racesChanged = false;
 
     const withdrawalIntents = intents.filter(
       (i): i is WithdrawFromClaimingIntent => i.type === "withdraw_from_claiming",
     );
 
-    const raceMap = new Map(races.map((r) => [r.id, r]));
-
     for (const intent of withdrawalIntents) {
-      const race = raceMap.get(intent.raceId);
+      const race = races[intent.raceId];
       if (!race) continue;
 
       const entryIndex = race.entries.findIndex((e) => e.horseId === intent.horseId);
@@ -46,9 +45,7 @@ export const claimingWithdrawalPhase: PipelinePhase = {
       const entry = race.entries[entryIndex];
       if (entry.withdrawnFromClaiming) continue;
 
-      // Update the entry immutably within the races array.
-      const raceIndex = races.indexOf(race);
-      races[raceIndex] = {
+      races[intent.raceId] = {
         ...race,
         entries: race.entries.map((e, i) =>
           i === entryIndex ? { ...e, withdrawnFromClaiming: true } : e,

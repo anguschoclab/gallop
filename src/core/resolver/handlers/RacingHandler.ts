@@ -47,8 +47,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   race_entry: (draft, impact, lookupMaps) => {
     const { raceId, horseId, jockeyId, weight, jockeyInstructions, bumpEntryHorseId } =
       impact as RaceEntryImpact;
-    const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
-    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
     if (race && horse) {
       // Evict the bumped entry and refund its stable before adding the challenger
       if (bumpEntryHorseId) {
@@ -80,7 +80,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
   race_withdrawal: (draft, impact, lookupMaps) => {
     const { raceId, horseId } = impact as RaceWithdrawalImpact;
-    const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
+    const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     if (race) {
       const index = race.entries.findIndex((e: any) => e.horseId === horseId);
       if (index !== -1) {
@@ -91,7 +91,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
   race_result: (draft, impact, lookupMaps) => {
     const { raceId, results, snapshots } = impact as RaceResultImpact;
-    const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
+    const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     if (race) {
       race.result = results;
       race.resolved = true;
@@ -125,7 +125,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
   jockey_assignment: (draft, impact, lookupMaps) => {
     const { raceId, horseId, jockeyId } = impact as JockeyAssignmentImpact;
-    const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
+    const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     if (race) {
       const entry = race.entries.find((e: any) => e.horseId === horseId);
       if (entry) {
@@ -165,14 +165,14 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
   race_history: (draft, impact, lookupMaps) => {
     const { horseId, raceHistoryEntry } = impact as RaceHistoryImpact;
-    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
     if (horse) {
       horse.raceHistory.push(raceHistoryEntry);
 
       // Update courseVisits if trackId available
       const race =
         lookupMaps?.raceMap.get(raceHistoryEntry.raceId) ||
-        draft.races.find((r) => r.id === raceHistoryEntry.raceId);
+        draft.races[raceHistoryEntry.raceId];
       if (race) {
         const trackId = race.trackId || race.graded?.trackId;
         if (trackId && raceHistoryEntry.courseVisitCount !== undefined) {
@@ -208,7 +208,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
   claiming: (draft, impact, lookupMaps) => {
     const { horseId, toStableId } = impact as ClaimingImpact;
-    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
     if (horse) {
       horse.stableId = toStableId;
       horse.owned = !toStableId;
@@ -233,7 +233,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
   tactics: (draft, impact, lookupMaps) => {
     const { raceId, horseId, jockeyInstructions } = impact as TacticsImpact;
-    const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
+    const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     if (race) {
       const entry = race.entries.find((e: any) => e.horseId === horseId);
       if (entry) {
@@ -244,7 +244,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
   race_result_adjustment: (draft, impact, lookupMaps) => {
     const { raceId, adjustedResults } = impact as RaceResultAdjustmentImpact;
-    const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
+    const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     if (race && race.result) {
       // Apply adjusted results after stewards DQ
       for (const adj of adjustedResults) {

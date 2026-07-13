@@ -21,7 +21,7 @@ export const foalDevelopmentPhase: PipelinePhase = {
     const { state, newDay } = context;
     const impacts: AnyImpact[] = [];
 
-    for (const horse of state.horses) {
+    for (const horse of Object.values(state.horses)) {
       if (!horse.owned) continue;
       const arc = horse.developmentArc;
       if (!arc) continue;

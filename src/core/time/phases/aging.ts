@@ -30,22 +30,24 @@ export const agingPhase = {
       return context;
     }
 
-    const horses = state.horses.map((h) => {
-      const ticks =
-        (h.hemisphere === "Northern" && northernTick) ||
-        (h.hemisphere === "Southern" && southernTick);
-      if (!ticks) return h;
-      const newAge = h.age + 1;
-      const newGender =
-        newAge >= 3
-          ? h.gender === "colt"
-            ? "horse"
-            : h.gender === "filly"
-              ? "mare"
-              : h.gender
-          : h.gender;
-      return { ...h, age: newAge, gender: newGender };
-    });
+    const horses = Object.fromEntries(
+      Object.values(state.horses).map((h) => {
+        const ticks =
+          (h.hemisphere === "Northern" && northernTick) ||
+          (h.hemisphere === "Southern" && southernTick);
+        if (!ticks) return [h.id, h];
+        const newAge = h.age + 1;
+        const newGender =
+          newAge >= 3
+            ? h.gender === "colt"
+              ? "horse"
+              : h.gender === "filly"
+                ? "mare"
+                : h.gender
+            : h.gender;
+        return [h.id, { ...h, age: newAge, gender: newGender }];
+      }),
+    );
 
     return {
       ...context,

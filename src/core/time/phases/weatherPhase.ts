@@ -64,7 +64,7 @@ export const weatherPhase = {
     const existing = (state.weather?.byTrack ?? {}) as Record<string, WeatherState[]>;
     const trackIds = new Set<string>(Object.keys(existing));
 
-    for (const race of state.races) {
+    for (const race of Object.values(state.races)) {
       if (race.resolved) continue;
       if (race.day < newDay || race.day > newDay + WEATHER_FORECAST_DAYS) continue;
       const tid = raceTrackId(race);
@@ -80,8 +80,8 @@ export const weatherPhase = {
     const dramaTrackIds = new Set<string>(); // Track IDs with severe weather drama
 
     // Pre-index today's graded races by trackId for O(1) drama lookup
-    const todaysGradedRacesByTrackId = new Map<string, (typeof state.races)[number]>();
-    for (const race of state.races) {
+    const todaysGradedRacesByTrackId = new Map<string, Race>();
+    for (const race of Object.values(state.races)) {
       if (!race.resolved && race.day === newDay && race.graded?.grade) {
         const tid = raceTrackId(race);
         if (tid) todaysGradedRacesByTrackId.set(tid, race);
@@ -147,21 +147,21 @@ export const weatherPhase = {
 
     // Track conditions progress race-by-race sequentially
     const trackCurrentCondition: Record<string, TrackCondition> = {};
-    const updatedRaces: Race[] = [];
+    const updatedRaces: Record<string, Race> = {};
 
-    for (const race of state.races) {
+    for (const race of Object.values(state.races)) {
       if (race.resolved || race.day !== newDay) {
-        updatedRaces.push(race);
+        updatedRaces[race.id] = race;
         continue;
       }
       const tid = raceTrackId(race);
       if (!tid) {
-        updatedRaces.push(race);
+        updatedRaces[race.id] = race;
         continue;
       }
       const todays = newByTrack[tid]?.slice(-1)[0];
       if (!todays) {
-        updatedRaces.push(race);
+        updatedRaces[race.id] = race;
         continue;
       }
 
@@ -188,11 +188,11 @@ export const weatherPhase = {
       }
       trackCurrentCondition[tid] = nextCondition;
 
-      updatedRaces.push({
+      updatedRaces[race.id] = {
         ...race,
         trackCondition: nextCondition,
         weather: race.weather ?? toRaceWeather(todays.pattern),
-      });
+      };
     }
 
     return {

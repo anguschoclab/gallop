@@ -31,7 +31,7 @@ export const industryMetricsPhase = {
 
     if (!shouldRecompute) return context;
 
-    const industryMean = computeIndustryMeanEarnings(state.horses);
+    const industryMean = computeIndustryMeanEarnings(Object.values(state.horses));
 
     return {
       ...context,

@@ -238,23 +238,20 @@ export const pregnancyPhase = {
     const { state, newDay } = context;
     const usedNamesSet = new Set(state.usedHorseNames);
 
+    const horsesArray = Object.values(state.horses);
     const pregResult = resolvePregnancies(
       state.pregnancies,
-      state.horses,
+      horsesArray,
       state.npcStables,
       usedNamesSet,
       newDay,
-      {
-        horses: state.horses,
-        userSettings: state.userSettings,
-        reservedHorseNames: state.reservedHorseNames,
-      },
+      state,
     );
 
     const updatedNpcAIManager = buildNpcAIManagerUpdate(
       pregResult.foals,
       pregResult.pregnancies,
-      state.horses,
+      horsesArray,
       state.npcStables,
       state.npcAIManager,
       newDay,
@@ -264,7 +261,7 @@ export const pregnancyPhase = {
       ...buildPregnancyImpacts(
         pregResult.foals,
         pregResult.pregnancies,
-        state.horses,
+        horsesArray,
         newDay,
         pregResult.cashAdjustment,
       ),

@@ -42,7 +42,7 @@ export const horseDeathPhase: PipelinePhase = {
     // Generate RNG for this phase
     const rng = createRng(hashStr(`horse_death_${newDay}`));
 
-    for (const horse of state.horses) {
+    for (const horse of Object.values(state.horses)) {
       // Skip already deceased horses
       if (horse.lifecycleStatus === "deceased") continue;
 

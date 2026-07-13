@@ -53,7 +53,7 @@ export const auctionsPhase = {
         // generateAuctionLots may push fresh NPC horses into the working
         // horses array (for thin-inventory consignors). We pass a working
         // copy and emit horse-creation impacts for any newcomers.
-        const horsesForGen = [...state.horses];
+        const horsesForGen = Object.values(state.horses);
         const beforeCount = horsesForGen.length;
         const newSale = generateAuctionLots(
           saleDay,
@@ -115,7 +115,7 @@ export const auctionsPhase = {
       // Build a horses snapshot that includes any freshly created consignment
       // horses from earlier this turn (so the runner can find them).
       const horsesIncludingFresh = [
-        ...state.horses,
+        ...Object.values(state.horses),
         ...(impacts
           .filter((i) => i.type === "horse_creation")
           .map((i) => (i as { horse: unknown }).horse) as never),

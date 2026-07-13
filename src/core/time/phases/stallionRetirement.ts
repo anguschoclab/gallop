@@ -27,7 +27,7 @@ export const stallionRetirementPhase: PipelinePhase = {
     const impacts = [...context.impacts];
 
     // Only run for NPC horses
-    const npcHorses = state.horses.filter((h) => h.stableId);
+    const npcHorses = Object.values(state.horses).filter((h) => h.stableId);
     const { stableMap } = context;
 
     for (const horse of npcHorses) {

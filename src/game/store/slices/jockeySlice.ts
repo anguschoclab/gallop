@@ -143,7 +143,7 @@ export const createJockeySlice: SliceCreator<JockeySlice> = (set, get) => ({
 
   assignJockey: (raceId: string, horseId: string, jockeyId: string) => {
     const s = get();
-    const race = s.raceMap.get(raceId);
+    const race = s.races[raceId];
     if (!race) return { ok: false, reason: "Race not found." };
     const horse = requireHorse(s.horses, horseId);
     const ownershipGuard = requireOwned(horse);

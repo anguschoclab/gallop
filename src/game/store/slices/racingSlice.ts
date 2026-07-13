@@ -79,7 +79,7 @@ export function createRacingSlice(
 
     trainHorse: (horseId, kind) => {
       const s = get();
-      const horse = s.horseMap.get(horseId);
+      const horse = s.horses[horseId];
       if (!horse) return;
       if (!horse.owned) return;
       if (s.pregnancies.some((p) => !p.resolved && p.damId === horseId)) return;
@@ -166,7 +166,7 @@ export function createRacingSlice(
 
     runPrivateTrial: (horseId, opponentId, distance, surface) => {
       const s = get() as any;
-      const horse = s.horseMap.get(horseId);
+      const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You do not own this horse." };
 
@@ -196,7 +196,7 @@ export function createRacingSlice(
         opponent.name = "Pacemaker";
         opponent.id = "pacemaker_" + generateUUID();
       } else {
-        stablemate = s.horseMap.get(opponentId);
+        stablemate = s.horses[opponentId];
         if (!stablemate) return { ok: false, reason: "Stablemate not found." };
         if (stablemate.energy < 15) {
           return {
@@ -339,11 +339,11 @@ export function createRacingSlice(
 
     nominateHorse: (horseId: string, raceId: string) => {
       const s = get() as any;
-      const race: Race | undefined = s.raceMap.get(raceId);
+      const race: Race | undefined = s.races[raceId];
       if (!race) return { ok: false, reason: "Race not found." };
       const grade = getRaceGrade(race);
       if (!grade) return { ok: false, reason: "Race is not a graded stakes race." };
-      const horse: Horse | undefined = s.horseMap.get(horseId);
+      const horse: Horse | undefined = s.horses[horseId];
       if (!horse || !horse.owned) return { ok: false, reason: "You do not own this horse." };
 
       const existing: NominationRecord[] = s.playerNominations ?? [];

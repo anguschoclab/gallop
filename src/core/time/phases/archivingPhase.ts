@@ -24,27 +24,27 @@ export const archivingPhase: PipelinePhase = {
     const { state, newDay } = context;
 
     // 1. Archive deceased horses
-    const activeHorses: Horse[] = [];
+    const activeHorses: Record<string, Horse> = {};
     const archivedHorses: Horse[] = [...(state.archive?.horses || [])];
 
-    for (const horse of state.horses) {
+    for (const horse of Object.values(state.horses)) {
       if (horse.lifecycleStatus === "deceased") {
         archivedHorses.push(horse);
       } else {
-        activeHorses.push(horse);
+        activeHorses[horse.id] = horse;
       }
     }
 
     // 2. Archive old resolved races (older than 30 days)
-    const activeRaces: Race[] = [];
+    const activeRaces: Record<string, Race> = {};
     const archivedRaces: Race[] = [...(state.archive?.races || [])];
     const RACE_ARCHIVE_DAYS = 30;
 
-    for (const race of state.races) {
+    for (const race of Object.values(state.races)) {
       if (race.resolved && newDay - race.day > RACE_ARCHIVE_DAYS) {
         archivedRaces.push(race);
       } else {
-        activeRaces.push(race);
+        activeRaces[race.id] = race;
       }
     }
 

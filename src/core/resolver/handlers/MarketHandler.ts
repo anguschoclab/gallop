@@ -43,7 +43,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   consignment: (draft, impact, lookupMaps) => {
     const { horseId, saleId, reservePrice, consignorStableId, breezeSeconds } =
       impact as ConsignmentImpact;
-    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
     if (horse) {
       horse.consignedSaleId = saleId;
     }
@@ -65,7 +65,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
   consignment_withdrawal: (draft, impact, lookupMaps) => {
     const { horseId, saleId } = impact as ConsignmentWithdrawalImpact;
-    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
     if (horse) {
       horse.consignedSaleId = undefined;
     }
@@ -93,7 +93,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         if (bidHistory) lot.bidHistory = bidHistory;
         if (wasPlayerConsignment) {
           const horse =
-            lookupMaps?.horseMap.get(lot.horseId) || draft.horses.find((h) => h.id === lot.horseId);
+            lookupMaps?.horseMap.get(lot.horseId) || draft.horses[lot.horseId];
           if (horse) horse.consignedSaleId = undefined;
         }
       }

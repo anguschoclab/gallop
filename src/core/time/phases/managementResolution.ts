@@ -80,7 +80,7 @@ export const managementResolutionPhase: PipelinePhase = {
     const impacts: AnyImpact[] = [];
 
     // Insurance premium deduction - all insured horses pay daily premium
-    for (const horse of state.horses) {
+    for (const horse of Object.values(state.horses)) {
       if (horse.insurancePolicy) {
         const horseValue = calculateBaseHorseValue(horse, "mid");
         const premium = calculateDailyPremium(horse.insurancePolicy.type, horseValue);

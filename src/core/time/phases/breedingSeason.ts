@@ -27,16 +27,17 @@ export const breedingSeasonPhase = {
     const southernStart = isBreedingSeasonStart(newDay, "Southern");
     if (!northernStart && !southernStart) return context;
 
-    const horses = state.horses.map((h) => {
-      if (!h.stud?.atStud) return h;
-      // Skip deceased stallions
-      if (h.lifecycleStatus === "deceased") return h;
-      const reset =
-        (h.hemisphere === "Northern" && northernStart) ||
-        (h.hemisphere === "Southern" && southernStart);
-      if (!reset) return h;
-      return { ...h, stud: { ...h.stud, seasonBookings: 0 } };
-    });
+    const horses = Object.fromEntries(
+      Object.values(state.horses).map((h) => {
+        if (!h.stud?.atStud) return [h.id, h] as const;
+        if (h.lifecycleStatus === "deceased") return [h.id, h] as const;
+        const reset =
+          (h.hemisphere === "Northern" && northernStart) ||
+          (h.hemisphere === "Southern" && southernStart);
+        if (!reset) return [h.id, h] as const;
+        return [h.id, { ...h, stud: { ...h.stud, seasonBookings: 0 } }] as const;
+      }),
+    );
 
     return {
       ...context,

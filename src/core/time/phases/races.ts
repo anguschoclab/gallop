@@ -10,6 +10,7 @@
 
 import { PHASE_ORDER_RACES } from "@/constants";
 import type { PipelineContext } from "../pipeline";
+import type { Race } from "@/core/race/types";
 import { generateUpcomingRaces, pruneOldRaces } from "@/game/store/helpers/market";
 import { generateAnnualCalendar, getCurrentYear } from "@/core/race/schedule";
 import { generateUUID } from "@/core/uuid";
@@ -30,30 +31,28 @@ export const racesPhase = {
     const newYear = getCurrentYear(newDay);
     const isYearTransition = newYear > prevYear;
 
-    let races = state.races;
+    let racesArray = Object.values(state.races);
 
     if (isYearTransition) {
-      races = generateAnnualCalendar(newYear, races);
+      racesArray = generateAnnualCalendar(newYear, racesArray);
     }
 
-    races = generateUpcomingRaces(races, newDay);
-    const pruned = pruneOldRaces(races, newDay);
+    racesArray = generateUpcomingRaces(racesArray, newDay);
+    const prunedArray = pruneOldRaces(racesArray, newDay);
+    const pruned = prunedArray;
 
     // Emit race deadline notifications for targeted races as inbox impacts
     const impacts: AnyImpact[] = [];
     if (state.campaigns) {
       // ⚡ Bolt Optimization: Pre-calculate hash maps for O(1) lookups instead of running O(N) .find() inside nested loops
-      const raceById = new Map<string, (typeof pruned)[0]>();
-      const raceByKey = new Map<string, (typeof pruned)[0]>();
-      for (const r of pruned) {
+      const raceById = new Map<string, Race>();
+      const raceByKey = new Map<string, Race>();
+      for (const r of prunedArray) {
         if (!raceById.has(r.id)) raceById.set(r.id, r);
         if (r.graded?.key && !raceByKey.has(r.graded.key)) raceByKey.set(r.graded.key, r);
       }
 
-      const horseById = new Map<string, (typeof state.horses)[0]>();
-      for (const h of state.horses) {
-        if (!horseById.has(h.id)) horseById.set(h.id, h);
-      }
+      const horseById = context.horseMap;
 
       for (const campaign of state.campaigns) {
         for (const slot of campaign.slots) {
@@ -101,7 +100,7 @@ export const racesPhase = {
       ...context,
       state: {
         ...state,
-        races: pruned,
+        races: Object.fromEntries(prunedArray.map((r) => [r.id, r])),
       },
       impacts: [...context.impacts, ...impacts],
     };

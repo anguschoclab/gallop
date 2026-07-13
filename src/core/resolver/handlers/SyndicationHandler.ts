@@ -40,7 +40,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
     // Validate stallion exists and is a G1 winner
     const stallion =
-      lookupMaps?.horseMap.get(stallionId) || draft.horses.find((h) => h.id === stallionId);
+      lookupMaps?.horseMap.get(stallionId) || draft.horses[stallionId];
     if (!stallion) return;
 
     // Check if stallion is a G1 winner

@@ -58,9 +58,10 @@ export const energyPhase = {
     // Collect acclimatization decay updates per outpost without mutating state.
     const acclimatizationUpdates = new Map<string, Map<string, number>>();
 
-    const horses = state.horses.map((h) => {
+    const horses = Object.fromEntries(
+      Object.values(state.horses).map((h) => {
       // Skip energy restoration for deceased horses
-      if (h.lifecycleStatus === "deceased") return h;
+      if (h.lifecycleStatus === "deceased") return [h.id, h] as const;
 
       // Get staff bonuses for this stable
       const stableId = h.stableId ?? "";
@@ -160,7 +161,7 @@ export const energyPhase = {
       }
       // --- END ACCLIMATIZATION ---
 
-      return {
+      return [h.id, {
         ...h,
         energy: newEnergy,
         recoveryPoints: newRecoveryPoints,
@@ -173,8 +174,9 @@ export const energyPhase = {
             ? newDay
             : h.healthStatusDay,
         activeInjury: newHealthStatus === "healthy" ? undefined : h.activeInjury,
-      };
-    });
+      }] as const;
+    }),
+    );
 
     // Apply acclimatization decay updates to a fresh npcStables array.
     let npcStables = state.npcStables;

@@ -52,7 +52,7 @@ export function createPrivateSaleSlice(
   return {
     proposePrivateSale: (horseId, stableId, amount) => {
       const s = get();
-      const horse = s.horseMap.get(horseId);
+      const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "horse_not_found" };
       if (horse.stableId !== stableId) return { ok: false, reason: "horse_not_in_stable" };
       if (s.cash < amount) return { ok: false, reason: "insufficient_funds" };
@@ -87,12 +87,10 @@ export function createPrivateSaleSlice(
         const finalAmount = offer.counterAmount ?? offer.amount;
         if (s.cash < finalAmount) return { ok: false, reason: "insufficient_funds" };
 
-        const horse = s.horseMap.get(offer.horseId);
+        const horse = s.horses[offer.horseId];
         if (!horse) return { ok: false, reason: "horse_not_found" };
 
         const updatedHorse: Horse = { ...horse, owned: true, stableId: undefined as any };
-        const updatedHorseMap = new Map(s.horseMap);
-        updatedHorseMap.set(offer.horseId, updatedHorse);
 
         const updatedOffers = (s.privateSaleOffers ?? []).map((o: PrivateSaleOffer) =>
           o.id === offerId ? { ...o, status: "accepted" as const } : o,
@@ -100,8 +98,7 @@ export function createPrivateSaleSlice(
 
         set({
           cash: s.cash - finalAmount,
-          horseMap: updatedHorseMap,
-          horses: s.horses.map((h: Horse) => (h.id === offer.horseId ? updatedHorse : h)),
+          horses: { ...s.horses, [offer.horseId]: updatedHorse },
           privateSaleOffers: updatedOffers,
         });
 
@@ -118,10 +115,10 @@ export function createPrivateSaleSlice(
 
     enterClaimingRace: (raceId, horseId) => {
       const s = get();
-      const race: Race | undefined = s.raceMap.get(raceId);
+      const race: Race | undefined = s.races[raceId];
       if (!race) return { ok: false, reason: "race_not_found" };
       if (!race.claiming) return { ok: false, reason: "not_claiming_race" };
-      const horse = s.horseMap.get(horseId);
+      const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "horse_not_found" };
       if (!horse.owned) return { ok: false, reason: "not_owned" };
       if (s.day >= race.day) return { ok: false, reason: "entries_closed" };
@@ -142,7 +139,7 @@ export function createPrivateSaleSlice(
 
     withdrawFromClaimingRace: (raceId, horseId) => {
       const s = get();
-      const race: Race | undefined = s.raceMap.get(raceId);
+      const race: Race | undefined = s.races[raceId];
       if (!race) return;
       if (s.day >= race.day - 1) return;
 
@@ -160,10 +157,10 @@ export function createPrivateSaleSlice(
 
     fileClaim: (raceId, horseId) => {
       const s = get();
-      const race: Race | undefined = s.raceMap.get(raceId);
+      const race: Race | undefined = s.races[raceId];
       if (!race) return { ok: false, reason: "race_not_found" };
       if (!race.claiming) return { ok: false, reason: "not_claiming_race" };
-      const horse = s.horseMap.get(horseId);
+      const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "horse_not_found" };
       // Self-claim prohibited
       if (horse.owned) return { ok: false, reason: "self_claim_prohibited" };

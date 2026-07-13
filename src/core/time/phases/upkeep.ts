@@ -40,7 +40,7 @@ export const upkeepPhase = {
     const { state, newDay, dailyRng } = context;
     const impacts: AnyImpact[] = [];
 
-    const playerHorses = state.horses.filter(
+    const playerHorses = Object.values(state.horses).filter(
       (h) => !h.stableId && (!h.lifecycleStatus || h.lifecycleStatus === "active"),
     );
     const playerHorseCount = playerHorses.length;
@@ -112,7 +112,7 @@ export const upkeepPhase = {
 
     // Pre-calculate counts and staff
     const horseCountsByStable = new Map<string, number>();
-    for (const h of state.horses) {
+    for (const h of Object.values(state.horses)) {
       const isActive = !h.lifecycleStatus || h.lifecycleStatus === "active";
       if (h.stableId && isActive) {
         horseCountsByStable.set(h.stableId, (horseCountsByStable.get(h.stableId) ?? 0) + 1);

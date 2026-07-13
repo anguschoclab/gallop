@@ -36,14 +36,15 @@ export const leaderboardPhase = {
     if (!shouldUpdate) return context;
 
     const industryMean = state.industryMeanEarnings ?? 0;
+    const horsesArray = Object.values(state.horses);
     const leaderboards = computeAllLeaderboards(
-      state.horses,
+      horsesArray,
       industryMean,
       newDay,
       state.sireTrendHistory,
     );
 
-    const horseLeaderboards = computeProgenyLeaderboards(state.horses, newDay);
+    const horseLeaderboards = computeProgenyLeaderboards(horsesArray, newDay);
 
     // Update founder records once a season (30 days) to save performance
     let updatedFounders = state.founders || {};
@@ -51,14 +52,14 @@ export const leaderboardPhase = {
       !state.lastFounderUpdateDay || newDay - state.lastFounderUpdateDay >= SEASON_DAYS;
 
     if (shouldUpdateFounders) {
-      const candidates = identifyFounders(state.horses);
+      const candidates = identifyFounders(horsesArray);
       const newFounders: Record<string, FounderRecord> = {};
 
       // Pre-calculate hash maps for O(1) horse lookups and parent->children relations
       // instead of running O(N) operations inside the loop.
       const { horseMap } = context;
       const parentToChildren = new Map<string, string[]>();
-      for (const h of state.horses) {
+      for (const h of horsesArray) {
         if (h.pedigree?.sireId) {
           const children = parentToChildren.get(h.pedigree.sireId) || [];
           children.push(h.id);
@@ -74,7 +75,7 @@ export const leaderboardPhase = {
       for (const candidate of candidates) {
         newFounders[candidate.id] = computeFounderInfluence(
           candidate,
-          state.horses,
+          horsesArray,
           newDay,
           horseMap,
           parentToChildren,

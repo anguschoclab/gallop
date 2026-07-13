@@ -75,7 +75,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
   transport_horse: (draft, impact, lookupMaps) => {
     const { horseId, toOutpostId, fatigueSpike, acclimatizationDays } = impact as TransportImpact;
-    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
     if (horse) {
       horse.outpostId = toOutpostId;
       horse.fatigue = (horse.fatigue ?? 0) + fatigueSpike;

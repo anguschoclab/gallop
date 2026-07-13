@@ -49,7 +49,7 @@ export const hallOfFamePhase: PipelinePhase = {
       }
     }
 
-    for (const horse of state.horses) {
+    for (const horse of Object.values(state.horses)) {
       // Skip if already inducted
       if (inductedIds.has(horse.id)) continue;
 

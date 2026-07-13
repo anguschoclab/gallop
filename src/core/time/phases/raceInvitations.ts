@@ -18,6 +18,7 @@ import {
 } from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyImpact, InboxImpact } from "@/core/resolver/impacts/index";
+import type { Race } from "@/core/race/types";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { generateUUID } from "@/core/uuid";
 import { getCurrentYear } from "@/core/race/schedule";
@@ -66,7 +67,7 @@ export const raceInvitationsPhase: PipelinePhase = {
     const { horseMap } = context;
 
     // Find all unresolved invite-only races that are upcoming
-    const inviteRaces = state.races.filter(
+    const inviteRaces = Object.values(state.races).filter(
       (r) => !r.resolved && (r.graded?.requiresInvitation || false) && r.day > newDay,
     );
 
@@ -83,16 +84,19 @@ export const raceInvitationsPhase: PipelinePhase = {
       }
     }
 
-    const updatedRaces = state.races.map((race) => {
+    const updatedRaces: Record<string, Race> = {};
+    for (const race of Object.values(state.races)) {
       // Only process invite-only races that are upcoming
       if (race.resolved || !(race.graded?.requiresInvitation || false) || race.day <= newDay) {
-        return race;
+        updatedRaces[race.id] = race;
+        continue;
       }
 
       const inviteDaysAhead = race.graded?.inviteDaysAhead ?? DEFAULT_INVITE_DAYS_AHEAD;
       // Only process if we're within the invite window (today or before)
       if (race.day - newDay > inviteDaysAhead) {
-        return race;
+        updatedRaces[race.id] = race;
+        continue;
       }
 
       const raceKey = race.graded?.key;
@@ -100,7 +104,7 @@ export const raceInvitationsPhase: PipelinePhase = {
       const autoInvites: string[] = [];
       const atLargeCandidates: { horseId: string; fame: number; distanceDiff: number }[] = [];
 
-      for (const horse of state.horses) {
+      for (const horse of Object.values(state.horses)) {
         // Skip if already invited
         if (invited.has(horse.id)) continue;
 
@@ -125,7 +129,8 @@ export const raceInvitationsPhase: PipelinePhase = {
       }
 
       if (autoInvites.length === 0 && atLargeCandidates.length === 0) {
-        return race;
+        updatedRaces[race.id] = race;
+        continue;
       }
 
       // Sort at-large by fame descending, then by distance closeness
@@ -174,12 +179,12 @@ export const raceInvitationsPhase: PipelinePhase = {
 
       const allInvited = Array.from(new Set([...invited, ...newlyInvited]));
 
-      return {
+      updatedRaces[race.id] = {
         ...race,
         invitedHorseIds: allInvited,
         graded: race.graded ? { ...race.graded, invitedHorseIds: allInvited } : race.graded,
       };
-    });
+    }
 
     return {
       ...context,

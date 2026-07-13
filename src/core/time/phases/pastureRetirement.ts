@@ -106,7 +106,7 @@ export const pastureRetirementPhase: PipelinePhase = {
     }
 
     // 2. Automatic NPC retirement
-    const npcHorses = state.horses.filter((h) => h.stableId && h.lifecycleStatus === "active");
+    const npcHorses = Object.values(state.horses).filter((h) => h.stableId && h.lifecycleStatus === "active");
 
     for (const horse of npcHorses) {
       // Skip if already at stud (stud retirement handles that)
@@ -162,7 +162,7 @@ export const pastureRetirementPhase: PipelinePhase = {
     }
 
     // 3. Delete dead/retired horses with no wins to prevent array accumulation
-    const horsesToDelete = state.horses.filter(
+    const horsesToDelete = Object.values(state.horses).filter(
       (h) =>
         (h.lifecycleStatus === "deceased" || h.lifecycleStatus === "retired") && h.careerWins === 0,
     );

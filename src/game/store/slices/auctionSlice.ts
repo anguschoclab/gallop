@@ -73,7 +73,7 @@ export function createAuctionSlice(
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === saleId);
       if (!sale) return { ok: false, reason: "Sale not found." };
       if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
-      const baseValue = horseMarketValue(horse!, s.horses);
+      const baseValue = horseMarketValue(horse!, Object.values(s.horses));
       const finalReserve = Math.round(reservePrice ?? baseValue * DEFAULT_PLAYER_RESERVE_RATIO);
 
       enqueueIntent({
@@ -93,7 +93,7 @@ export function createAuctionSlice(
 
     withdrawConsignment: (horseId) => {
       const s = get();
-      const horse = s.horseMap.get(horseId);
+      const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.consignedSaleId) return { ok: false, reason: "Horse not consigned." };
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === horse.consignedSaleId);
@@ -170,7 +170,7 @@ export function createAuctionSlice(
       // Apply auction impacts directly (live Theater path, outside pipeline)
       let newCash = s.cash;
       let newNpcStables = [...s.npcStables];
-      let newHorses = [...s.horses];
+      let newHorses: Record<string, import("@/game/types").Horse> = { ...s.horses };
       let newInbox = [...(s.inbox ?? [])];
 
       for (const impact of impacts ?? []) {
@@ -194,10 +194,10 @@ export function createAuctionSlice(
           }
 
           case "horse_transfer": {
-            const { horseId, toStableId } = anyImpact;
-            newHorses = newHorses.map((horse) =>
-              horse.id === horseId ? { ...horse, stableId: toStableId, owned: !toStableId } : horse,
-            );
+            const { horseId: transferId, toStableId } = anyImpact;
+            if (newHorses[transferId]) {
+              newHorses = { ...newHorses, [transferId]: { ...newHorses[transferId], stableId: toStableId, owned: !toStableId } };
+            }
             break;
           }
 

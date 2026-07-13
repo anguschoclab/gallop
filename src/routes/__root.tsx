@@ -7,9 +7,9 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { AppShell } from "../components/AppShell";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { rehydrateStore, useGame } from "@/game/store";
-import { hydrationComplete } from "@/game/store/storage";
+import { saveExists, hydrationComplete } from "@/game/store/storage";
 import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
@@ -98,32 +98,68 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-function RootComponent() {
+export function RootComponent() {
   const [isHydrated, setIsHydrated] = useState(false);
-  const playerProfile = useGame((s) => s.playerProfile);
+  const [rehydrateError, setRehydrateError] = useState<Error | null>(null);
+  const [timedOut, setTimedOut] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Rehydrate store on client mount
+  const doRehydrate = useCallback(() => {
+    setRehydrateError(null);
+    setTimedOut(false);
+    setIsHydrated(false);
+
+    const timeout = setTimeout(() => {
+      if (!hydrationComplete.value) setTimedOut(true);
+    }, 5000);
+
     rehydrateStore(useGame)
+      .then(() => {
+        setIsHydrated(true);
+      })
       .catch((error) => {
-        console.error("Failed to rehydrate store:", error);
+        setRehydrateError(error);
       })
       .finally(() => {
-        setIsHydrated(true);
+        clearTimeout(timeout);
       });
   }, []);
 
   useEffect(() => {
-    // Redirect to start screen on fresh load when no profile exists
-    if (isHydrated && !playerProfile) {
+    doRehydrate();
+  }, [doRehydrate]);
+
+  useEffect(() => {
+    if (isHydrated && !saveExists.value) {
       navigate({ to: "/start" }).catch((error) => {
         console.error("Navigation error:", error);
       });
     }
-  }, [isHydrated, playerProfile, navigate]);
+  }, [isHydrated, saveExists.value, navigate]);
 
-  // Show loading state while hydrating
+  if (rehydrateError || timedOut) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background px-4">
+        <div className="max-w-md text-center">
+          <h2 className="text-2xl font-bold text-cream font-[family-name:var(--font-display)] mb-4">
+            {timedOut ? "Loading timed out" : "Failed to load"}
+          </h2>
+          <p className="text-sm text-cream-muted font-[family-name:var(--font-body)] mb-6">
+            {rehydrateError
+              ? rehydrateError.message
+              : "The game took too long to load. This might be a storage issue."}
+          </p>
+          <button
+            onClick={doRehydrate}
+            className="inline-flex items-center justify-center rounded-md bg-gold px-6 py-2 text-sm font-bold text-slate-950 transition-colors hover:bg-gold/90"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (!isHydrated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">

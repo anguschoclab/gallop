@@ -99,9 +99,14 @@ export function useNewGameWizard() {
       },
       backstory: selectedBackstory,
     };
-    await startNewGame(options);
-    clearWizardState();
-    navigate({ to: "/", replace: true });
+    try {
+      await startNewGame(options);
+      clearWizardState();
+      navigate({ to: "/", replace: true });
+    } catch (error) {
+      console.error("Failed to start new game:", error);
+      setSubmitting(false);
+    }
   }, [selectedBackstory, silkValid, stableName, ownerName, silk, startNewGame, navigate]);
 
   return {

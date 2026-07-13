@@ -66,8 +66,8 @@ export type CoreSlice = CoreState & {
   advanceYear: (headless?: boolean) => Promise<void>;
   setDay: (day: number) => void;
   setCash: (cash: number) => void;
-  setHorses: (horses: Horse[]) => void;
-  setRaces: (races: Race[]) => void;
+  setHorses: (horses: Record<string, Horse>) => void;
+  setRaces: (races: Record<string, Race>) => void;
   setLog: (log: { day: number; text: string }[]) => void;
   setPlayerProfile: (profile: PlayerProfile) => void;
   addLogEntry: (entry: { day: number; text: string }) => void;
@@ -122,16 +122,6 @@ export function createCoreSlice(
     // Build the update by merging finalState and overrides
     const update: any = { ...finalState, ...overrides };
 
-    // Sync horseMap if horses changed
-    if (finalState.horses) {
-      update.horseMap = new Map(finalState.horses.map((h: Horse) => [h.id, h]));
-    }
-
-    // Sync raceMap if races changed
-    if (finalState.races) {
-      update.raceMap = new Map(finalState.races.map((r: Race) => [r.id, r]));
-    }
-
     // Explicitly remove keys that shouldn't be in the store (e.g. worker-only metadata)
     delete update.lastFrameTime;
     delete update.isAdvancing;
@@ -150,7 +140,7 @@ export function createCoreSlice(
 
     enterRace: (raceId: string, horseId: string) => {
       const s = get();
-      const race = s.raceMap.get(raceId);
+      const race = s.races[raceId];
       if (!race) return { ok: false, reason: "Race not found." };
       const horse = requireHorse(s.horses, horseId);
       const ownershipGuard = requireOwned(horse);
@@ -198,7 +188,7 @@ export function createCoreSlice(
         let weakestRating = Infinity;
         for (const entry of race.entries) {
           if (entry.owned) continue; // never bump player's own entries
-          const entryHorse = s.horseMap.get(entry.horseId);
+          const entryHorse = s.horses[entry.horseId];
           if (!entryHorse) continue;
           const r = calculateOverallRating(entryHorse);
           if (r < weakestRating) {
@@ -256,7 +246,7 @@ export function createCoreSlice(
 
     withdrawRace: (raceId: string, horseId: string) => {
       const s = get();
-      const race = s.raceMap.get(raceId);
+      const race = s.races[raceId];
       if (!race) return { ok: false, reason: "Race not found." };
       const entry = race.entries.find((e: { horseId: string }) => e.horseId === horseId);
       if (!entry) return { ok: false, reason: "Horse not entered in this race." };
@@ -280,7 +270,7 @@ export function createCoreSlice(
       policyType: "injury_only" | "mortality_only" | "comprehensive",
     ) => {
       const s = get();
-      const horse = s.horses?.find((h: Horse) => h.id === horseId);
+      const horse = s.horses?.[horseId];
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "Horse not owned." };
       if (horse.insurancePolicy) return { ok: false, reason: "Horse already has insurance." };
@@ -301,7 +291,7 @@ export function createCoreSlice(
 
     cancelInsurance: (horseId: string) => {
       const s = get();
-      const horse = s.horses?.find((h: Horse) => h.id === horseId);
+      const horse = s.horses?.[horseId];
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.insurancePolicy) return { ok: false, reason: "Horse has no insurance to cancel." };
 
@@ -337,9 +327,9 @@ export function createCoreSlice(
 
     submitClaim: (raceId: string, horseId: string) => {
       const s = get();
-      const race = s.raceMap.get(raceId);
+      const race = s.races[raceId];
       if (!race) return { ok: false, reason: "Race not found." };
-      const horse = s.horseMap.get(horseId);
+      const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (horse.owned) return { ok: false, reason: "Cannot claim your own horse." };
 
@@ -360,7 +350,7 @@ export function createCoreSlice(
 
     withdrawClaim: (raceId: string, horseId: string) => {
       const s = get();
-      const race = s.raceMap.get(raceId);
+      const race = s.races[raceId];
       if (!race) return { ok: false, reason: "Race not found." };
 
       enqueueIntent({
@@ -386,15 +376,17 @@ export function createCoreSlice(
       // Clean up expired Win and You're In qualifications at year boundary
       let horses = s.horses;
       if (currentYear > previousYear) {
-        horses = horses.map((h: Horse) => {
-          if (h.winAndYouInQualified) {
-            h.winAndYouInQualified = h.winAndYouInQualified.filter((q) => q.year >= currentYear);
-          }
-          return h;
-        });
+        horses = Object.fromEntries(
+          Object.values(s.horses).map((h: Horse) => {
+            if (h.winAndYouInQualified) {
+              return [h.id, { ...h, winAndYouInQualified: h.winAndYouInQualified.filter((q) => q.year >= currentYear) }];
+            }
+            return [h.id, h];
+          }),
+        );
       }
 
-      const playerHorseCount = horses.filter((h: Horse) => !h.stableId).length;
+      const playerHorseCount = Object.values(horses).filter((h: Horse) => !h.stableId).length;
       const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
 
       // Try to use engine worker if available (browser context)
@@ -443,8 +435,8 @@ export function createCoreSlice(
           impacts: [],
           impactLog: [],
           // Build shared lookup maps once at pipeline entry
-          horseMap: new Map(syncState.horses.map((h: Horse) => [h.id, h])),
-          raceMap: new Map(syncState.races.map((r: Race) => [r.id, r])),
+          horseMap: new Map(Object.values(syncState.horses).map((h: Horse) => [h.id, h])),
+          raceMap: new Map(Object.values(syncState.races).map((r: Race) => [r.id, r])),
           stableMap: new Map((syncState.npcStables ?? []).map((s: any) => [s.id, s])),
           jockeyMap: new Map((syncState.jockeys ?? []).map((j: any) => [j.id, j])),
         };
@@ -461,7 +453,7 @@ export function createCoreSlice(
     advanceMultipleDays: async (n: number, headless?: boolean) => {
       const s = get();
       // Pre-compute player race days for O(1) lookup
-      const playerRaceDays = computePlayerRaceDays(s.races, s.day + 1, s.day + n);
+      const playerRaceDays = computePlayerRaceDays(Object.values(s.races), s.day + 1, s.day + n);
 
       // Batch size - yield control every 5 days to balance performance and responsiveness
       const batchSize = 5;
@@ -472,7 +464,7 @@ export function createCoreSlice(
 
         // O(1) lookup instead of O(n) array.find
         if (playerRaceDays.has(nextDay) && !headless) {
-          const playerRace = currentS.races.find(
+          const playerRace = Object.values(currentS.races).find(
             (r: Race) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned),
           );
           if (playerRace) {
@@ -511,14 +503,11 @@ export function createCoreSlice(
     },
 
     setHorses: (horses) => {
-      set({
-        horses,
-        horseMap: new Map(horses.map((h) => [h.id, h])),
-      });
+      set({ horses });
     },
 
     setRaces: (races) => {
-      set({ races, raceMap: new Map(races.map((r) => [r.id, r])) });
+      set({ races });
     },
 
     setLog: (log) => {
@@ -537,14 +526,11 @@ export function createCoreSlice(
 
     resolveHorsePhenotype: (horseId) => {
       const s = get();
-      const idx = s.horses.findIndex((h: Horse) => h.id === horseId);
-      if (idx === -1) return;
-      const horse = s.horses[idx];
+      const horse = s.horses[horseId];
+      if (!horse) return;
       if (horse.phenotypeResolved !== false) return;
       const resolved = resolvePhenotype(horse);
-      const horses = [...s.horses];
-      horses[idx] = resolved;
-      set({ horses });
+      set({ horses: { ...s.horses, [horseId]: resolved } });
     },
   };
 }

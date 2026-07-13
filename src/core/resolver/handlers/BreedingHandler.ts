@@ -35,7 +35,7 @@ type ImpactHandlerFunction = (
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   update_stud_fee: (draft, impact, lookupMaps) => {
     const { horseId, newFee } = impact as UpdateStudFeeImpact;
-    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
     if (horse && horse.stud) {
       horse.stud.standingFee = newFee;
     }
@@ -60,7 +60,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
   stud_career: (draft, impact, lookupMaps) => {
     const { horseId, studCareer } = impact as StudCareerImpact;
-    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
     if (horse) {
       horse.stud = studCareer;
     }
@@ -68,7 +68,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   mare_foaling_update: (draft, impact, lookupMaps) => {
     const { horseId, lastFoaledDay, foalsProduced, blueHenStatus } =
       impact as MareFoalingUpdateImpact;
-    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
     if (horse) {
       horse.lastFoaledDay = lastFoaledDay;
       horse.foalsProduced = foalsProduced;
@@ -77,7 +77,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
   blue_hen_status: (draft, impact, lookupMaps) => {
     const { horseId, blueHenStatus } = impact as BlueHenImpact;
-    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
     if (horse) {
       horse.blueHenStatus = blueHenStatus;
     }

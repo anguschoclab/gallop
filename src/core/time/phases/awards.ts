@@ -61,7 +61,7 @@ export const awardsPhase = {
       }
 
       // Determine winners for this region
-      const winners = determineRegionalWinners(state.horses, year, region, raceMap);
+      const winners = determineRegionalWinners(Object.values(state.horses), year, region, raceMap);
 
       if (winners.length === 0) {
         updatedLastAwardYear[region] = year;

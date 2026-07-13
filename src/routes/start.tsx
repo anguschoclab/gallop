@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
+import { saveExists } from "@/game/store/storage";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Play, Sparkles } from "lucide-react";
 import heroDashboard from "@/assets/hero-racetrack-dashboard.jpg";

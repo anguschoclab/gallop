@@ -58,6 +58,20 @@ export const hydrationComplete = {
   },
 };
 
+let _saveExists = false;
+export const saveExists = {
+  get value() {
+    return _saveExists;
+  },
+  set value(v: boolean) {
+    _saveExists = v;
+  },
+};
+
+export function _resetSaveExists(): void {
+  _saveExists = false;
+}
+
 /**
  * Creates a rehydrate function that can be called with the store instance.
  *
@@ -78,6 +92,7 @@ export function createRehydrateStore(initialState: any, useGameStore: any) {
     }
 
     const state = await loadGameState();
+    saveExists.value = !!state;
     if (state) {
       // Use the persist middleware's built-in rehydrate
       // This will call getItem from our custom storage

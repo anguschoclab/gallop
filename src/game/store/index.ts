@@ -38,7 +38,7 @@ import { createInboxSlice } from "./slices/inboxSlice";
 import { createStaffSlice } from "./slices/staffSlice";
 import { createInsuranceSlice } from "./slices/insuranceSlice";
 import { createTransportSlice, type TransportSlice } from "./slices/transportSlice";
-import { createOpfsStorage, hydrationComplete, createRehydrateStore } from "./storage";
+import { createOpfsStorage, hydrationComplete, saveExists, createRehydrateStore } from "./storage";
 import { createInitialState } from "./initialization";
 import type { CoreState } from "@/game/store/state/coreState";
 
@@ -60,7 +60,7 @@ export type { StoreType, GameStateCreator } from "./types";
  * resets to defaults, keeping only fields that are always safe to carry over
  * (playerNominations, syndicateInvestors).
  */
-export const STORE_STATE_VERSION = 1;
+export const STORE_STATE_VERSION = 2;
 
 // List of state keys that should be persisted to storage.
 // Any new game state fields should be added here to ensure they survive a refresh.
@@ -349,8 +349,21 @@ export const useGame = create<StoreType>()(
         await initInitializationWorker();
 
         // Clear OPFS storage when starting a new game
-        await (await import("@/services/storage/storageAdapter")).clearGameState();
-        set({ ...createInitialState(options) } as any);
+        const { clearGameState, saveGameState } = await import("@/services/storage/storageAdapter");
+        await clearGameState();
+
+        const newState = createInitialState(options);
+        set({ ...newState } as any);
+
+        // Force an immediate, awaited save so the state is on disk before navigation.
+        // The persist middleware's setItem is async and not awaited by set(),
+        // so we call saveGameState directly to guarantee persistence.
+        const partial: any = { storeVersion: STORE_STATE_VERSION };
+        PERSISTED_KEYS.forEach((key) => {
+          partial[key] = (newState as any)[key];
+        });
+        await saveGameState(partial);
+        saveExists.value = true;
       },
     }),
     {
@@ -385,16 +398,6 @@ export const useGame = create<StoreType>()(
           return;
         }
 
-        if (state.horses) {
-          useGame.setState({
-            horseMap: new Map(state.horses.map((h: any) => [h.id, h])),
-          });
-        }
-        if (state.races) {
-          useGame.setState({
-            raceMap: new Map(state.races.map((r: any) => [r.id, r])),
-          });
-        }
         hydrationComplete.value = true;
       },
       partialize: (state) => {
@@ -414,8 +417,8 @@ export const rehydrateStoreMain = createRehydrateStore(createInitialState, useGa
 // Export as rehydrateStore for backwards compatibility
 export { rehydrateStoreMain as rehydrateStore };
 
-// Export hydrationComplete for external consumers
-export { hydrationComplete };
+// Export hydrationComplete and saveExists for external consumers
+export { hydrationComplete, saveExists };
 
 // Export shallow for use in components that need to compare object/array selectors
 export { shallow };

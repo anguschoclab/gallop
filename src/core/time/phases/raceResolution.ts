@@ -40,12 +40,12 @@ import { recordCampaignOutcome } from "@/core/ai/campaignAI";
 export const raceResolutionPhase: PipelinePhase = {
   name: "raceResolution",
   order: PHASE_ORDER_RACE_RESOLUTION,
-  skipIf: (context) => !!context.skipRaceResolution || context.state.horses.length === 0,
+  skipIf: (context) => !!context.skipRaceResolution || Object.keys(context.state.horses).length === 0,
   execute: (context: PipelineContext): PipelineContext => {
     const { intents, state, newDay } = context;
     const impacts: AnyImpact[] = [];
-    const updatedRaces: typeof state.races = [...state.races];
-    const overdueRaces = state.races.filter((r) => !r.resolved && r.day <= newDay);
+    const updatedRaces: Record<string, Race> = { ...state.races };
+    const overdueRaces = Object.values(state.races).filter((r) => !r.resolved && r.day <= newDay);
 
     // PRE-INDEX: Use shared context maps built at pipeline entry
     const { horseMap, jockeyMap } = context;
@@ -90,11 +90,8 @@ export const raceResolutionPhase: PipelinePhase = {
 
       const rng = rngForRace(race);
 
-      // Update race in the updatedRaces array
-      const raceIndex = updatedRaces.findIndex((r) => r.id === race.id);
-      if (raceIndex !== -1) {
-        updatedRaces[raceIndex] = { ...race, resolved: true, result, snapshots };
-      }
+      // Update race in the updatedRaces Record
+      updatedRaces[race.id] = { ...race, resolved: true, result, snapshots };
 
       // Record outcomes for NPC AI
       if (npcAIManager) {
@@ -266,7 +263,7 @@ export const raceResolutionPhase: PipelinePhase = {
           const { impacts: claimingImpacts } = processClaimingResolution({
             race,
             claimIntents,
-            horses: state.horses,
+            horses: Object.values(state.horses),
             newDay,
             rng,
           });
@@ -278,7 +275,11 @@ export const raceResolutionPhase: PipelinePhase = {
     }
 
     // Cleanup
-    const prunedRaces = updatedRaces.filter((r) => !r.resolved || r.day >= newDay - 30);
+    const prunedRaces = Object.fromEntries(
+      Object.values(updatedRaces)
+        .filter((r) => !r.resolved || r.day >= newDay - 30)
+        .map((r) => [r.id, r]),
+    );
 
     return {
       ...context,

@@ -51,16 +51,13 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   horse_creation: (draft, impact, horse, lookupMaps) => {
     const { horse: horseData } = impact as HorseCreationImpact;
     if (horseData) {
-      draft.horses.push(horseData);
+      draft.horses[horseData.id] = horseData;
       if (lookupMaps) lookupMaps.horseMap.set(horseData.id, horseData);
     }
   },
   horse_deletion: (draft, impact, horse, lookupMaps) => {
     const { horseId } = impact as HorseDeletionImpact;
-    const index = draft.horses.findIndex((h) => h.id === horseId);
-    if (index !== -1) {
-      draft.horses.splice(index, 1);
-    }
+    delete draft.horses[horseId];
     if (lookupMaps) {
       lookupMaps.horseMap.delete(horseId);
     }
@@ -244,7 +241,7 @@ export class HorseHandler implements ImpactHandler {
       (impact as { entityId?: string }).entityId ||
       "";
     const horse = horseId
-      ? lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId)
+      ? lookupMaps?.horseMap.get(horseId) || draft.horses[horseId]
       : undefined;
 
     const handler = IMPACT_HANDLERS[impact.type];

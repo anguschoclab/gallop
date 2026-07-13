@@ -265,7 +265,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
   insurance_purchase: (draft, impact, lookupMaps) => {
     const { horseId, policy } = impact as InsurancePurchaseImpact;
-    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
     if (horse) {
       horse.insurancePolicy = policy;
     }
@@ -273,7 +273,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
   insurance_cancel: (draft, impact, lookupMaps) => {
     const { horseId } = impact as InsuranceCancelImpact;
-    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
     if (horse) {
       horse.insurancePolicy = undefined;
     }
@@ -290,7 +290,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     draft.stewardsInquiries.push(inquiry);
     // Also attach to the race
     const race =
-      lookupMaps?.raceMap?.get(inquiry.raceId) || draft.races.find((r) => r.id === inquiry.raceId);
+      lookupMaps?.raceMap?.get(inquiry.raceId) || draft.races[inquiry.raceId];
     if (race) {
       if (!race.inquiries) race.inquiries = [];
       race.inquiries.push(inquiry);

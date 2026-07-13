@@ -31,12 +31,12 @@ export const stewardsPhase: PipelinePhase = {
     const impacts: AnyImpact[] = [];
 
     // Find races that were resolved today
-    const resolvedRaces = state.races.filter((r) => r.resolved && r.result && r.result.length > 0);
+    const resolvedRaces = Object.values(state.races).filter((r) => r.resolved && r.result && r.result.length > 0);
 
     // Build a set of player-owned horse IDs so we can skip their races.
     // Player races are handled by the useStewardsInquiry hook in the UI,
     // which gives the player a contextual post-race notification instead.
-    const playerHorseIds = new Set(state.horses.filter((h) => h.owned).map((h) => h.id));
+    const playerHorseIds = new Set(Object.values(state.horses).filter((h) => h.owned).map((h) => h.id));
 
     for (const race of resolvedRaces) {
       // Skip if race already has inquiries

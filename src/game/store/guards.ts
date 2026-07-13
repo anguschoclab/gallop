@@ -17,8 +17,8 @@ import type { Horse } from "@/game/types";
  * @param id - Horse ID to look up
  * @returns Horse if found, undefined otherwise
  */
-export function requireHorse(horses: Horse[], id: string): Horse | undefined {
-  return horses.find((h) => h.id === id);
+export function requireHorse(horses: Record<string, Horse>, id: string): Horse | undefined {
+  return horses[id];
 }
 
 /**

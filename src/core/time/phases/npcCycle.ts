@@ -57,9 +57,9 @@ export const npcCyclePhase = {
       fameChanges,
     } = runNpcCycle(
       state.npcStables,
-      state.horses,
+      Object.values(state.horses),
       state.jockeys ?? [],
-      state.races,
+      Object.values(state.races),
       newDay,
       context.dailyRng,
       3,
@@ -67,8 +67,8 @@ export const npcCyclePhase = {
       aiManager,
     );
 
-    // Fame changes are emitted as fame_change impacts only (applied by impactApplicationPhase).
-    const updatedHorses = horses;
+    const updatedHorses = Object.fromEntries(horses.map((h) => [h.id, h]));
+    const updatedRaces = Object.fromEntries(races.map((r) => [r.id, r]));
 
     // Convert reputation events and news items to impacts.
     const impacts: AnyImpact[] = [];
@@ -140,7 +140,7 @@ export const npcCyclePhase = {
       state: {
         ...state,
         horses: updatedHorses,
-        races,
+        races: updatedRaces,
         jockeys,
         npcAIManager: updatedAiManager,
       },
