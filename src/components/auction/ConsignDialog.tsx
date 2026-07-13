@@ -38,7 +38,7 @@ export function ConsignDialog({ horse, sale, open, onOpenChange }: Props) {
   const horses = useGameWithShallow((s) => s.horses);
   const consignHorse = useGame((s) => s.consignHorse);
 
-  const baseValue = useMemo(() => horsePriceWithPedigree(horse, horses), [horse, horses]);
+  const baseValue = useMemo(() => horseMarketValue(horse, horses), [horse, horses]);
   // Slider is a percentage of base value (50–100%), default 70%.
   const [reservePct, setReservePct] = useState(Math.round(DEFAULT_PLAYER_RESERVE_RATIO * 100));
   const reservePrice = Math.round(baseValue * (reservePct / 100));
