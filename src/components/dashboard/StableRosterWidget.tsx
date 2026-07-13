@@ -12,7 +12,7 @@ export function StableRosterWidget() {
   const jockeys = useGame((s) => s.jockeys);
   const hiredStaff = useGame((s) => s.hiredStaff);
 
-  const activeHorses = horses.filter((h) => h.owned && h.lifecycleStatus === "active");
+  const activeHorses = Object.values(horses).filter((h) => h.owned && h.lifecycleStatus === "active");
   const topHorses = activeHorses
     .slice()
     .sort((a, b) => overall(b) - overall(a))

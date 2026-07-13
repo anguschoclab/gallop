@@ -20,7 +20,6 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
   // Store selectors
   const auctions = useGameWithShallow((s) => s.auctions ?? []);
   const horses = useGame((s) => s.horses);
-  const horseMap = useGameWithShallow((s) => s.horseMap ?? new Map());
   const cash = useGame((s) => s.cash);
   const stables = useGame((s) => s.npcStables);
   const scoutReports = useGame((s) => s.scoutReports);
@@ -57,7 +56,7 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
 
   const filteredLots = useMemo(
     () =>
-      filterAndSortLots(activeLots, horses, {
+      filterAndSortLots(activeLots, Object.values(horses), {
         sex,
         ageBand,
         reserveBand,
@@ -84,7 +83,7 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
   const isSaleDay = sale ? sale.day === day : false;
   const displayLots = isResolved ? activeLots : filteredLots;
   const currentLot = displayLots[lotIndex];
-  const horse = currentLot ? horseMap.get(currentLot.horseId) : undefined;
+  const horse = currentLot ? horses[currentLot.horseId] : undefined;
   const consignor = currentLot?.consignorStableId
     ? stableMap.get(currentLot.consignorStableId)
     : undefined;
@@ -193,7 +192,7 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
     sale,
     day,
     cash,
-    horseMap,
+    horseMap: new Map(Object.entries(horses)),
     stables,
     activeLots,
     displayLots,

@@ -20,7 +20,7 @@ export function useAutoRegister() {
   const setRaceTactics = useGame((s) => s.setRaceTactics);
 
   const result = useMemo(() => {
-    return calculateAutoRegisterEntries(horses, races, jockeys, cash, day);
+    return calculateAutoRegisterEntries(Object.values(horses), Object.values(races), jockeys, cash, day);
   }, [horses, races, jockeys, cash, day]);
 
   const eligibleCount = result.entries.length + result.skipped.length;

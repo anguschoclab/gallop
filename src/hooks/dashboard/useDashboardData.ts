@@ -4,11 +4,11 @@ import { useGame } from "@/game/store";
 export function useDashboardData() {
   const { day, cash, horses, races, auctions, npcStables, npcAIManager, inbox } = useGame();
 
-  const ownedHorses = horses.filter((h) => h.owned);
+  const ownedHorses = Object.values(horses).filter((h) => h.owned);
   const activeHorses = ownedHorses.filter((h) => h.lifecycleStatus === "active");
   const lowEnergyHorses = activeHorses.filter((h) => h.energy < 40);
 
-  const upcoming = races
+  const upcoming = Object.values(races)
     .filter((r) => !r.resolved && r.day >= day)
     .sort((a, b) => a.day - b.day)
     .slice(0, 8);
@@ -30,7 +30,7 @@ export function useDashboardData() {
     .sort((a, b) => b.friction - a.friction)
     .slice(0, 3);
 
-  const raceMap = useMemo(() => new Map(races.map((r: any) => [r.id, r])), [races]);
+  const raceMap = races;
 
   const calculateHeadToHead = useCallback(
     (stableId: string) => {
@@ -41,7 +41,7 @@ export function useDashboardData() {
         horse.raceHistory
           .filter((r: { day: number }) => r.day >= thirtyDaysAgo)
           .forEach((raceResult: { raceId: string; position: number }) => {
-            const race = raceMap.get(raceResult.raceId);
+            const race = raceMap[raceResult.raceId];
             if (race) {
               const hadRivalEntry = race.entries.some((e: any) => e.stableId === stableId);
               if (hadRivalEntry) {

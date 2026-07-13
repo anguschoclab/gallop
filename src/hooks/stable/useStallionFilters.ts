@@ -16,7 +16,7 @@ export function useStallionFilters() {
   const [hemisphere, setHemisphere] = useState<Hemisphere | "all">("all");
   const [selectedMareId, setSelectedMareId] = useState<string>("");
 
-  const stallions = horses.filter((h: Horse) => h.stud?.atStud);
+  const stallions = Object.values(horses).filter((h: Horse) => h.stud?.atStud);
   const myStallions = stallions.filter((h: Horse) => h.owned);
   const rosterStallions = stallions.filter((h: Horse) => !h.owned || h.stableId === undefined);
 
@@ -30,7 +30,7 @@ export function useStallionFilters() {
 
   const eligibleMares = useMemo(
     () =>
-      horses.filter(
+      Object.values(horses).filter(
         (h: Horse) =>
           h.owned &&
           (h.gender === "mare" || h.gender === "filly") &&

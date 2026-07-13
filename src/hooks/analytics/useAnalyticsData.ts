@@ -20,7 +20,7 @@ export function useAnalyticsData() {
   const sireTrendHistory = useGameWithShallow((s) => s.sireTrendHistory ?? []);
 
   return useMemo(() => {
-    const owned = horses.filter((h) => h.owned);
+    const owned = Object.values(horses).filter((h) => h.owned);
     const active = owned.filter((h) => h.lifecycleStatus === "active");
 
     // Cash curve (last 90 days) from transactions balanceAfter

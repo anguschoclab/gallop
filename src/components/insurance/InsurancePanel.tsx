@@ -19,7 +19,7 @@ interface InsurancePanelProps {
 }
 
 export function InsurancePanel({ horseId }: InsurancePanelProps) {
-  const horse = useGame((s) => s.horseMap.get(horseId));
+  const horse = useGame((s) => s.horses[horseId]);
   const cash = useGame((s) => s.cash);
   const purchaseInsurance = useGame((s) => s.purchaseInsurance);
   const cancelInsurance = useGame((s) => s.cancelInsurance);

@@ -15,10 +15,9 @@ export const Route = createFileRoute("/sire-watch/$stallionId")({
 function SireProfilePage() {
   const { stallionId } = Route.useParams();
   const horses = useGame((s) => s.horses);
-  const horseMap = useGame((s) => s.horseMap);
 
-  const stallion = horseMap.get(stallionId);
-  const allStallions = horses.filter((h) => h.stud?.atStud);
+  const stallion = horses[stallionId];
+  const allStallions = Object.values(horses).filter((h) => h.stud?.atStud);
   const industryMeanEarnings = useGame((s) => s.industryMeanEarnings ?? 0);
 
   if (!stallion || !stallion.stud?.atStud) {
@@ -41,7 +40,7 @@ function SireProfilePage() {
     );
   }
 
-  const analytics = getSireAnalytics(stallion, horses, industryMeanEarnings);
+  const analytics = getSireAnalytics(stallion, Object.values(horses), industryMeanEarnings);
 
   const getClassificationColor = (classification: SireClassification) => {
     switch (classification) {

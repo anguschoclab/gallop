@@ -18,15 +18,12 @@ export function SchedulerTab() {
   const deleteCampaign = useGame((s) => s.deleteCampaign);
   const dismissCampaignFlag = useGame((s) => s.dismissCampaignFlag);
 
-  const raceMap = useMemo(() => new Map(races.map((r) => [r.id, r])), [races]);
-  const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
-
-  const ownedHorses = horses.filter((h: Horse) => h.owned);
+  const ownedHorses = Object.values(horses).filter((h: Horse) => h.owned);
   const campaignHorseIds = new Set(campaigns.map((c: HorseCampaign) => c.horseId));
   const horsesWithoutCampaign = ownedHorses.filter((h: Horse) => !campaignHorseIds.has(h.id));
 
-  const getRace = (raceId: string) => raceMap.get(raceId);
-  const getHorse = (horseId: string) => horseMap.get(horseId);
+  const getRace = (raceId: string) => races[raceId];
+  const getHorse = (horseId: string) => horses[horseId];
 
   const totalActiveFlags = campaigns.reduce(
     (acc: number, c: HorseCampaign) => acc + c.flags.filter((f) => !f.dismissed).length,

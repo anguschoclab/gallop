@@ -10,7 +10,7 @@ export function useHorseDetail(horseId: string) {
   const withdrawConsignment = useGame((s) => s.withdrawConsignment);
   const trainingUsed = useGameWithShallow((s) => s.trainingUsed[horseId] ?? 0);
   const cash = useGame((s) => s.cash);
-  const localHorseMap = useGame((s) => s.horseMap);
+  const horses = useGame((s) => s.horses);
 
   const retireToStud = useGame((s) => s.retireToStud);
   const retireToPasture = useGame((s) => s.retireToPasture);
@@ -34,7 +34,7 @@ export function useHorseDetail(horseId: string) {
   const [syndicateDialogOpen, setSyndicateDialogOpen] = useState(false);
   const syndicates = useGameWithShallow((s) => s.syndicates || {});
   const races = useGameWithShallow((s) => s.races);
-  const currentRace = races?.find((r: any) =>
+  const currentRace = Object.values(races ?? {}).find((r: any) =>
     r.entries.some((e: any) => e.horseId === horseId && !r.resolved),
   );
   const assignedJockeyId = currentRace?.entries.find((e: any) => e.horseId === horseId)?.jockeyId;
@@ -103,7 +103,7 @@ export function useHorseDetail(horseId: string) {
 
   const isSyndicated = !!syndicates[horseId];
 
-  const horse = localHorseMap.get(horseId);
+  const horse = horses[horseId];
   const peakingMultiplier = getPeakingBeyerMultiplier(horse?.peakingIndex ?? 0);
   const peakingStatus =
     (horse?.peakingIndex ?? 0) > 20
@@ -122,7 +122,7 @@ export function useHorseDetail(horseId: string) {
     withdrawConsignment,
     trainingUsed,
     cash,
-    localHorseMap,
+    localHorseMap: new Map(Object.entries(horses)),
     retireToStud,
     retireToPasture,
     facilities,

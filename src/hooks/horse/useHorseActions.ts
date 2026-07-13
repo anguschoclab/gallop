@@ -14,7 +14,7 @@ export function useHorseActions(horseId: string) {
   const auctions = useGameWithShallow((s) => s.auctions ?? []);
   const day = useGame((s) => s.day);
 
-  const horse = useMemo(() => horses.find((h: any) => h.id === horseId), [horses, horseId]);
+  const horse = useMemo(() => horses[horseId], [horses, horseId]);
   const resolveHorsePhenotype = useGame((s: any) => s.resolveHorsePhenotype);
 
   useEffect(() => {

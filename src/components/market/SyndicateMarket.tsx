@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 export function SyndicateMarket() {
   const syndicates = useGameWithShallow((s: StoreType) => s.syndicates || {});
-  const horseMap = useGameWithShallow((s: StoreType) => s.horseMap);
+  const horses = useGameWithShallow((s: StoreType) => s.horses);
   const purchaseShares = useGame((s: StoreType) => s.purchaseShares);
   const sellShares = useGame((s: StoreType) => s.sellShares);
   const cash = useGame((s: StoreType) => s.cash);
@@ -19,7 +19,7 @@ export function SyndicateMarket() {
   // Impact: Reduces rendering complexity of the syndicate list from O(N^2) to O(N).
   const syndicateList = useMemo(() => {
     return Object.entries(syndicates).map(([stallionId, syndicate]: [string, Syndicate]) => {
-      const stallion = horseMap.get(stallionId);
+      const stallion = horses[stallionId];
       return {
         syndicate,
         stallion,
@@ -27,7 +27,7 @@ export function SyndicateMarket() {
         ownershipPercent: ((syndicate.shareHolders["player"] || 0) / syndicate.totalShares) * 100,
       };
     });
-  }, [syndicates, horseMap]);
+  }, [syndicates, horses]);
 
   const handlePurchase = (syndicateId: string, sharePrice: number) => {
     const shares = 1;

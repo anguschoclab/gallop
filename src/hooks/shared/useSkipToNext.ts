@@ -15,7 +15,7 @@ export function useSkipToNext() {
           .map((a) => a.day);
         nextDay = days.length ? Math.min(...days) : undefined;
       } else {
-        const days = (state.races ?? [])
+        const days = Object.values(state.races ?? {})
           .filter((r: any) => r.day > currentDay)
           .map((r: any) => r.day);
         nextDay = days.length ? Math.min(...days) : undefined;

@@ -42,7 +42,7 @@ export function useNpcStableDetail(stableId: string) {
 
   const stable = getStableById(npcStables, stableId);
 
-  const stableHorses = stable ? horses.filter((h: Horse) => h.stableId === stableId) : [];
+  const stableHorses = stable ? Object.values(horses).filter((h: Horse) => h.stableId === stableId) : [];
   const activeHorses = stableHorses.filter(
     (h: Horse) => !h.healthStatus || h.healthStatus === "healthy",
   );
@@ -52,10 +52,9 @@ export function useNpcStableDetail(stableId: string) {
   const stableAI = npcAIManager?.stableStates?.[stableId];
   const friction = stableAI?.friction ?? 0;
 
-  const raceMap = useMemo(() => new Map(races.map((r: any) => [r.id, r])), [races]);
 
   const headToHead = useMemo(() => {
-    const ownedHorses = horses.filter((h) => h.owned);
+    const ownedHorses = Object.values(horses).filter((h) => h.owned);
     const thirtyDaysAgo = day - 30;
     let wins = 0;
     let losses = 0;
@@ -63,7 +62,7 @@ export function useNpcStableDetail(stableId: string) {
       horse.raceHistory
         .filter((r: { day: number }) => r.day >= thirtyDaysAgo)
         .forEach((raceResult: { raceId: string; position: number }) => {
-          const race = raceMap.get(raceResult.raceId);
+          const race = races[raceResult.raceId];
           if (race && race.graded) {
             const hadRivalEntry = race.entries.some((e: any) => e.stableId === stableId);
             if (hadRivalEntry) {
@@ -74,7 +73,7 @@ export function useNpcStableDetail(stableId: string) {
         });
     });
     return { wins, losses };
-  }, [day, horses, raceMap, stableId]);
+  }, [day, horses, races, stableId]);
 
   const grudgeMatches = news
     ? news

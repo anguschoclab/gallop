@@ -22,7 +22,7 @@ export function useEntityLinks(text: string, explicitLinks?: EntityLink[], autoD
     const combined: EntityLink[] = [...(explicitLinks || [])];
 
     if (autoDetect) {
-      horses.forEach((h) => {
+      Object.values(horses).forEach((h) => {
         const regex = new RegExp(`\\b${escapeRegExp(h.name)}\\b`, "g");
         if (regex.test(text) && !combined.some((l) => l.name === h.name)) {
           combined.push({ type: "horse", id: h.id, name: h.name });

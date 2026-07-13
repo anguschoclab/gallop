@@ -25,12 +25,11 @@ interface FoalNamingDialogProps {
 
 export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOpen, onClose }) => {
   const horses = useGallopStore((s) => s.horses);
-  const horseMap = useGallopStore((s) => s.horseMap);
   const renameHorse = useGallopStore((s) => s.renameHorse);
   const userSettings = useGallopStore((s) => s.userSettings);
   const reservedNames = useGallopStore((s) => s.reservedHorseNames);
   const day = useGallopStore((s) => s.day);
-  const foal = useMemo(() => horseMap.get(foalId), [horseMap, foalId]);
+  const foal = useMemo(() => horses[foalId], [horses, foalId]);
 
   const [name, setName] = useState("");
   const [validation, setValidation] = useState<{ valid: boolean; reason?: string }>({
@@ -55,8 +54,8 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOp
     if (!foal) return;
     const rng = createRng(`foal-name-${foal.id}-${Date.now()}`);
     // Only check against active (non-deceased) horses
-    const activeHorses = horses.filter((h) => h.lifecycleStatus !== "deceased");
-    const existingNames = new Set(activeHorses.map((h) => h.name));
+    const activeHorses = Object.values(horses).filter((h) => h.lifecycleStatus !== "deceased");
+    const existingNames = new Set<string>(activeHorses.map((h) => h.name));
     const suggestion = generateProceduralHorseName(
       {
         sireName: foal.sireName,
@@ -77,8 +76,8 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOp
     const newName = e.target.value;
     setName(newName);
     // Only check against active (non-deceased) horses
-    const activeHorses = horses.filter((h) => h.lifecycleStatus !== "deceased");
-    const existingNames = new Set(activeHorses.map((h) => h.name));
+    const activeHorses = Object.values(horses).filter((h) => h.lifecycleStatus !== "deceased");
+    const existingNames = new Set<string>(activeHorses.map((h) => h.name));
     const validation = validateHorseName(newName, existingNames, reservedNames, day);
     setValidation({ valid: validation.isValid, reason: validation.reason });
   };

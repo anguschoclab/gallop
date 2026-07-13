@@ -6,8 +6,6 @@ import type { Race } from "@/game/types";
 export function useRaceCardOdds(race: Race) {
   const horses = useGameWithShallow((s) => s.horses);
 
-  const localHorseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
-
   const classBonus = useGame((s) => {
     if (race.graded?.grade) {
       const grade = race.graded.grade;
@@ -24,7 +22,7 @@ export function useRaceCardOdds(race: Race) {
     let bestProbability = 0;
 
     for (const entry of race.entries) {
-      const horse = localHorseMap.get(entry.horseId);
+      const horse = horses[entry.horseId];
       if (horse) {
         const probability = calculateWinProbability(
           horse.stats.speed,
@@ -42,7 +40,7 @@ export function useRaceCardOdds(race: Race) {
     }
 
     return bestOdds;
-  }, [race.entries, localHorseMap, classBonus]);
+  }, [race.entries, horses, classBonus]);
 
   return favoriteOdds;
 }

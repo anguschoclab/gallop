@@ -65,7 +65,7 @@ export function useAuctionTheater(saleId: string) {
     saleId,
     sale,
     stables,
-    horses,
+    horses: Object.values(horses),
     scoutReports,
     day,
     runnerRef,
@@ -103,7 +103,7 @@ export function useAuctionTheater(saleId: string) {
   // Initialize runner once per sale
   useEffect(() => {
     if (!sale) return;
-    runnerRef.current = createAuctionRunner(sale, stables, horses, undefined, {
+    runnerRef.current = createAuctionRunner(sale, stables, Object.values(horses), undefined, {
       liveMode: true,
       onAutoRaise: (amount) => {
         const result = debitForLiveBid(amount);

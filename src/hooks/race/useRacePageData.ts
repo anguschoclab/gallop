@@ -14,7 +14,7 @@ import { NarrativeGenerator } from "@/services/narrative/narrativeService";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 
 export function useRacePageData(raceId: string) {
-  const race = useGameWithShallow((s: GameState) => s.raceMap.get(raceId));
+  const race = useGameWithShallow((s: GameState) => s.races[raceId]);
   const horses = useGameWithShallow((s: GameState) => s.horses);
   const jockeys = useGameWithShallow((s: GameState) => s.jockeys ?? []);
   const stables = useGameWithShallow((s: GameState) => s.npcStables);
@@ -30,7 +30,7 @@ export function useRacePageData(raceId: string) {
 
   const runners = useMemo<Runner[]>(() => {
     if (!race) return [];
-    const deps: RaceSimulationDependencies = { race, horses, jockeys };
+    const deps: RaceSimulationDependencies = { race, horses: Object.values(horses) as any, jockeys };
     const { runners: built } = buildRaceField(deps);
     return built;
   }, [raceId, horses, jockeys]);
@@ -44,22 +44,19 @@ export function useRacePageData(raceId: string) {
     lastRaceIdRef.current = raceId;
     rngRef.current = race ? rngForRace(race) : null;
     narrativeRef.current = race
-      ? new NarrativeGenerator(race, horses, stables, rngRef.current)
+      ? new NarrativeGenerator(race, Object.values(horses) as any, stables, rngRef.current)
       : null;
     messageQueue.current = [];
   }
 
-  const localHorseMap = useMemo(
-    () => new Map<string, Horse>(horses.map((h: Horse) => [h.id, h])),
-    [horses],
-  );
+  const localHorseMap = useMemo(() => new Map<string, Horse>(Object.entries(horses)), [horses]);
 
   const classBonus = race ? calculateClassBonus(race.graded?.grade, race.raceClass) : 0;
 
   const runnerOdds = useMemo(() => {
     const oddsMap = new Map<string, string>();
     for (const runner of runners) {
-      const horse = localHorseMap.get(runner.horseId);
+      const horse = horses[runner.horseId];
       if (horse) {
         const probability = calculateWinProbability(
           horse.stats.speed,

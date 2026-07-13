@@ -13,8 +13,8 @@ import type { Horse } from "@/game/types";
 export function useBreedingCompatibility(sireId: string, damId: string) {
   const horses = useGame((s) => s.horses);
 
-  const sire = useMemo(() => horses.find((h) => h.id === sireId), [horses, sireId]);
-  const dam = useMemo(() => horses.find((h) => h.id === damId), [horses, damId]);
+  const sire = useMemo(() => (sireId ? horses[sireId] : undefined), [horses, sireId]);
+  const dam = useMemo(() => (damId ? horses[damId] : undefined), [horses, damId]);
 
   const compatibility = useMemo(
     () => (sire && dam ? calculateBreedingCompatibility(sire, dam) : null),

@@ -21,10 +21,7 @@ export function useBreedingPage() {
   const [liveFoalGuarantee, setLiveFoalGuarantee] = useState(false);
   const [namingFoalId, setNamingFoalId] = useState<string | null>(null);
 
-  const localHorseMap = useMemo(
-    () => new Map<string, Horse>(horses.map((h: Horse) => [h.id, h])),
-    [horses],
-  );
+  const localHorseMap = useMemo(() => new Map<string, Horse>(Object.entries(horses)), [horses]);
 
   const { sire, dam, compatibility } = useBreedingCompatibility(sireId, damId);
 
@@ -39,10 +36,10 @@ export function useBreedingPage() {
     return shared.size > 0 ? shared : undefined;
   }, [sireId, damId, localHorseMap]);
 
-  const adults = horses.filter((h: Horse) => h.age >= 3);
+  const adults = Object.values(horses).filter((h: Horse) => h.age >= 3);
   const breedLogs = log.filter((l: any) => /Mated|Foal/.test(l.text));
   const selectedMare = localHorseMap.get(damId);
-  const availableStallions = getAvailableStallions(horses, selectedMare);
+  const availableStallions = getAvailableStallions(Object.values(horses), selectedMare);
 
   const seasonOpen = inBreedingSeason(day, "Northern");
   const nextSeasonStart = nextBreedingSeasonStart(day, "Northern");

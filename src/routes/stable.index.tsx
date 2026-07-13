@@ -42,7 +42,7 @@ function StablePage() {
   const npcStables = useNpcStables();
   const npcAIManager = useGame((s) => (s as any).npcAIManager);
 
-  const myHorses = useMemo(() => horses.filter((h) => h.owned), [horses]);
+  const myHorses = useMemo(() => Object.values(horses).filter((h) => h.owned), [horses]);
   const playerAwards = useMemo(() => awards.filter((a) => !a.stableId), [awards]);
 
   const counts = useMemo(() => {

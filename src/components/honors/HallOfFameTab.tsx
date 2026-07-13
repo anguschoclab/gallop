@@ -12,9 +12,7 @@ export function HallOfFameTab() {
   const hallOfFame = useGameWithShallow((s: GameState) => s.hallOfFame || []);
   const horses = useGame((s: GameState) => s.horses);
 
-  const horsesMap = useMemo(() => {
-    return new Map(horses.map((h: Horse) => [h.id, h]));
-  }, [horses]);
+  const horsesMap = useMemo(() => new Map(Object.entries(horses)), [horses]);
 
   return (
     <div className="space-y-6">

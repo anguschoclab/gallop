@@ -15,7 +15,7 @@ export function useRaceEntry(race: Race) {
   const [wantToClaim, setWantToClaim] = useState(false);
 
   const allHorses = useGameWithShallow((s) => s.horses);
-  const horses = useMemo(() => allHorses.filter((h: Horse) => h.owned), [allHorses]);
+  const horses = useMemo(() => Object.values(allHorses) as Horse[], [allHorses]);
   const jockeys = useGameWithShallow((s) => s.jockeys ?? []);
   const enterRace = useGame((s) => s.enterRace);
   const enterClaimingRace = useGame((s) => s.enterClaimingRace);
@@ -39,8 +39,8 @@ export function useRaceEntry(race: Race) {
   const claimingPrice = race.claiming?.price ?? race.claimingPrice;
 
   const selectedHorse = useMemo(
-    () => horses.find((h: Horse) => h.id === selectedHorseId),
-    [horses, selectedHorseId],
+    () => (selectedHorseId ? allHorses[selectedHorseId] : undefined),
+    [allHorses, selectedHorseId],
   );
   const selectedJockey = useMemo(
     () => jockeys.find((j: Jockey) => j.id === selectedJockeyId),
@@ -56,7 +56,7 @@ export function useRaceEntry(race: Race) {
   };
 
   const eligibleHorses = useMemo(() => {
-    return horses.map((h: Horse) => ({
+    return horses.filter((h) => h.owned).map((h: Horse) => ({
       horse: h,
       eligible: isHorseEligibleForRace(h, race, new Set(), day),
     }));

@@ -38,14 +38,11 @@ export function BreedingTimeline({ horseId }: BreedingTimelineProps) {
     });
   }
 
-  // Create a map for O(1) horse lookups
-  const horseMap = new Map(horses.map((h) => [h.id, h]));
-
   // Add conception events where this horse was sire or dam
   relatedPregnancies.forEach((p) => {
     const isSire = p.sireId === horseId;
     const partnerName = isSire ? p.damName : p.sireName;
-    const partnerHorse = horseMap.get(isSire ? p.damId : p.sireId);
+    const partnerHorse = horses[isSire ? p.damId : p.sireId];
 
     events.push({
       type: "conception",
@@ -57,7 +54,7 @@ export function BreedingTimeline({ horseId }: BreedingTimelineProps) {
 
     // Add foal birth event if pregnancy is resolved
     if (p.resolved && p.foalId) {
-      const foal = horseMap.get(p.foalId);
+      const foal = p.foalId ? horses[p.foalId] : undefined;
       if (foal) {
         events.push({
           type: "foal_birth",

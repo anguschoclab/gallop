@@ -54,7 +54,8 @@ export function PedigreeTree({
   className,
 }: PedigreeTreeProps) {
   const [generations, setGenerations] = useState<3 | 4 | 5>(initialGens);
-  const horseMap = useGame((s) => s.horseMap);
+  const horses = useGame((s) => s.horses);
+  const horseMap = useMemo(() => new Map(Object.entries(horses)), [horses]);
 
   const { rawNodes, rawEdges, coi, coiLabel } = useMemo(() => {
     const graph = buildPedigreeGraph(horseId, horseMap, generations);
