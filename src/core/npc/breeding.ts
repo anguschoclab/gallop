@@ -75,7 +75,7 @@ export function runAutonomousBreeding(
     const minMareQuality = MIN_MARE_OVERALL[stable.personality] || 50;
     const maxCoi = MAX_COI[stable.personality] || 0.1;
 
-    const candidateMares = state.horses
+    const candidateMares = Object.values(state.horses)
       .filter(
         (h) =>
           h.stableId === stable.id &&
@@ -101,7 +101,7 @@ export function runAutonomousBreeding(
 
       // Identify candidate stallions within budget
       const maxFeePerMare = stableCash * (SINGLE_FEE_CAP_FRACTION[stable.personality] || 0.1);
-      const stallions = getAvailableStallions(state.horses, mare)
+      const stallions = getAvailableStallions(Object.values(state.horses), mare)
         .filter((s) => s.stableId !== stable.id)
         .map(ensurePhenotypeResolved)
         .filter((s) => s.stud!.standingFee <= maxFeePerMare);

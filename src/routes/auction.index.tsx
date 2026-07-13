@@ -93,7 +93,7 @@ function AuctionPage() {
       return activeUpcoming.find((sale) => isLotEligible(horse, sale.kind));
     }
 
-    return horses
+    return Object.values(horses)
       .filter((h: Horse) => h.owned && !h.consignedSaleId)
       .map((h: Horse) => ({ horse: h, sale: findEligibleSale(h) }))
       .filter((p): p is { horse: Horse; sale: AuctionSale } => p.sale !== undefined);

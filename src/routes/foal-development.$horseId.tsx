@@ -13,7 +13,7 @@ export const Route = createFileRoute("/foal-development/$horseId")({
 function FoalDevelopmentPage() {
   const { horseId } = Route.useParams();
   const router = useRouter();
-  const horse = useGame((s) => s.horses.find((h) => h.id === horseId));
+  const horse = useGame((s) => s.horses[horseId]);
   const currentDay = useGame((s) => s.day);
   const resolveFoalMilestone = useGame((s) => s.resolveFoalMilestone);
 

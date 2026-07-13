@@ -20,7 +20,7 @@ export function BrowserTab() {
     filteredRaces,
     reset,
     gradeLabel,
-  } = useRaceBrowserFilters(races);
+  } = useRaceBrowserFilters(Object.values(races));
 
   return (
     <div className="space-y-6">
@@ -49,7 +49,7 @@ export function BrowserTab() {
       />
 
       <div className="text-sm text-cream-muted">
-        Showing {filteredRaces.length} of {races.filter((r) => r.graded).length} graded stakes races
+        Showing {filteredRaces.length} of {Object.values(races).filter((r) => r.graded).length} graded stakes races
       </div>
 
       <div className="space-y-3">

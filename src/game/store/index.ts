@@ -60,10 +60,12 @@ export type { StoreType, GameStateCreator } from "./types";
  * resets to defaults, keeping only fields that are always safe to carry over
  * (playerNominations, syndicateInvestors).
  */
-export const STORE_STATE_VERSION = 2;
+export const STORE_STATE_VERSION = 3;
 
 // List of state keys that should be persisted to storage.
-// Any new game state fields should be added here to ensure they survive a refresh.
+// NOTE: "horses" is handled specially by the storage adapter (split into
+// player horses + NPC summaries). It remains here so partialize includes it
+// in the state passed to setItem, where the splitting occurs.
 const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "day",
   "cash",
@@ -348,9 +350,9 @@ export const useGame = create<StoreType>()(
         await initStorageWorker();
         await initInitializationWorker();
 
-        // Clear OPFS storage when starting a new game
-        const { clearGameState, saveGameState } = await import("@/services/storage/storageAdapter");
-        await clearGameState();
+        // Clear IndexedDB storage when starting a new game
+        const { clearDatabase: clearIDB } = await import("@/services/storage/indexedDbService");
+        await clearIDB();
 
         const newState = createInitialState(options);
         set({ ...newState } as any);
@@ -363,7 +365,9 @@ export const useGame = create<StoreType>()(
         PERSISTED_KEYS.forEach((key) => {
           partial[key] = storeState[key];
         });
-        await saveGameState(partial);
+        // Use the new IDB-based save path
+        const { saveGameStateToIDB } = await import("./storage");
+        await saveGameStateToIDB(partial);
         saveExists.value = true;
       },
     }),
@@ -377,22 +381,11 @@ export const useGame = create<StoreType>()(
         }
 
         // Version mismatch: stored data was written by an older/incompatible schema.
-        // Reset to default state but preserve fields that are always safe to carry over.
+        // No backward compatibility for v3 — reset to defaults.
         if ((state as any).storeVersion !== STORE_STATE_VERSION) {
           const defaults = createInitialState({} as any);
           useGame.setState({
             ...defaults,
-            // These two fields are pure append-only lists with stable schemas —
-            // preserve them across version bumps so the player doesn't lose nominations
-            // or investor records on an upgrade.
-            playerNominations: Array.isArray((state as any).playerNominations)
-              ? (state as any).playerNominations
-              : [],
-            syndicateInvestors:
-              (state as any).syndicateInvestors &&
-              typeof (state as any).syndicateInvestors === "object"
-                ? (state as any).syndicateInvestors
-                : {},
             storeVersion: STORE_STATE_VERSION,
           } as any);
           hydrationComplete.value = true;

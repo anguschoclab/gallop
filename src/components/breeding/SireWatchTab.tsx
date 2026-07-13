@@ -16,8 +16,9 @@ export function SireWatchTab() {
   const industryMeanEarnings = useGame((s) => s.industryMeanEarnings ?? 0);
 
   // Get all stallions at stud
-  const stallions = horses.filter((h) => h.stud?.atStud);
-  const sireAnalytics = stallions.map((s) => getSireAnalytics(s, horses, industryMeanEarnings));
+  const stallions = Object.values(horses).filter((h) => h.stud?.atStud);
+  const horseList = Object.values(horses);
+  const sireAnalytics = stallions.map((s) => getSireAnalytics(s, horseList, industryMeanEarnings));
 
   // Sort by AEI (descending)
   const sortedSires = sireAnalytics.sort((a, b) => b.aei - a.aei);

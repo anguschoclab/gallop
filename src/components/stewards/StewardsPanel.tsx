@@ -19,7 +19,7 @@ export function StewardsPanel({ horseId }: StewardsPanelProps) {
 
   // Find all inquiries involving this horse
   const inquiries: StewardsInquiry[] = [];
-  for (const race of races) {
+  for (const race of Object.values(races)) {
     if (race.inquiries) {
       for (const inquiry of race.inquiries) {
         if (inquiry.accusedHorseId === horseId || inquiry.reportingHorseId === horseId) {

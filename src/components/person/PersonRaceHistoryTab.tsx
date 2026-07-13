@@ -62,7 +62,7 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
 
   const filteredRows = useMemo<Row[]>(() => {
     const out: Row[] = [];
-    for (const horse of horses ?? []) {
+    for (const horse of Object.values(horses ?? {})) {
       for (const entry of horse.raceHistory ?? []) {
         if (roles.includes("jockey") && entry.jockeyId === personId) {
           out.push({ horse, entry, role: "jockey" });

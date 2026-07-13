@@ -80,7 +80,7 @@ export function applyImpacts(context: ResolverContext): ResolverContext {
     // Note: We use the DRAFT as source, but once a horse is modified,
     // the proxy stays the same in the map, so it's safe.
     const horseMap = new Map<string, WritableDraft<Horse>>();
-    for (const h of draft.horses) {
+    for (const h of Object.values(draft.horses)) {
       horseMap.set(h.id, h);
     }
 
@@ -97,7 +97,7 @@ export function applyImpacts(context: ResolverContext): ResolverContext {
     }
 
     const raceMap = new Map<string, WritableDraft<any>>();
-    for (const r of draft.races) {
+    for (const r of Object.values(draft.races)) {
       raceMap.set(r.id, r);
     }
 

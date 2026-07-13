@@ -48,6 +48,8 @@ export type PedigreeNode = {
   damName?: string;
   sirePedigree?: PedigreeNode;
   damPedigree?: PedigreeNode;
+  /** True when this node is a pruned placeholder for a deeper ancestor. */
+  isStub?: boolean;
 };
 
 export interface ShareTransaction {

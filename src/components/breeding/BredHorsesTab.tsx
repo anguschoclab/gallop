@@ -31,7 +31,7 @@ export function BredHorsesTab() {
   );
 
   const rows: Row[] = useMemo(() => {
-    return horses
+    return Object.values(horses)
       .filter((h) => h.bredByPlayer)
       .map((h) => {
         let ownerLabel = "Sold / Unknown";

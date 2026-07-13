@@ -42,7 +42,7 @@ export function RacesTab() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [enteringRace, setEnteringRace] = useState<Race | null>(null);
 
-  const { filteredRaces, countries, tracks } = useRaceFilters(races, day, filters, horses);
+  const { filteredRaces, countries, tracks } = useRaceFilters(Object.values(races), day, filters, Object.values(horses));
 
   const updateFilter = (key: keyof RaceFilters, value: string) => {
     navigate({
@@ -125,7 +125,7 @@ export function RacesTab() {
           viewMode={viewMode}
           onViewModeChange={setViewMode}
           onEnterRace={setEnteringRace}
-          horses={horses}
+          horses={Object.values(horses)}
           claims={claims}
           cash={cash}
           fileClaim={fileClaim}

@@ -35,7 +35,7 @@ export function StewardsInquiryOverlay() {
   const [dismissed, setDismissed] = useState<Set<string>>(() => loadDismissed());
 
   const playerHorseIds = useMemo(
-    () => new Set(horses.filter((h) => h.owned).map((h) => h.id)),
+    () => new Set(Object.values(horses).filter((h) => h.owned).map((h) => h.id)),
     [horses],
   );
 
@@ -56,7 +56,7 @@ export function StewardsInquiryOverlay() {
 
   if (!current) return null;
 
-  const horse = horses.find((h) => h.id === current.accusedHorseId);
+  const horse = current.accusedHorseId ? horses[current.accusedHorseId] : undefined;
   const isFavorable = current.outcome === "no_action" || current.outcome === "warning";
 
   return (

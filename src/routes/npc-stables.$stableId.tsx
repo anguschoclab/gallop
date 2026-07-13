@@ -248,7 +248,7 @@ function NpcStableDetailPage() {
           isOpen={!!offerHorse}
           onClose={() => setOfferHorse(null)}
           cash={cash}
-          allHorses={horses}
+          allHorses={Object.values(horses)}
         />
       )}
     </div>

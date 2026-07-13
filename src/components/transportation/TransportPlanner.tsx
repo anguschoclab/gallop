@@ -32,13 +32,7 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
   // ⚡ Bolt Optimization:
   // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loops.
   // Impact: Reduces rendering complexity from O(N*M) to O(N+M) avoiding UI jank.
-  const horseMap = useMemo(() => {
-    const map = new Map<string, (typeof horses)[number]>();
-    for (let i = 0; i < horses.length; i++) {
-      map.set(horses[i].id, horses[i]);
-    }
-    return map;
-  }, [horses]);
+  const horseMap = horses;
 
   // Filter transports - if horseId provided, only show that horse's transports
   const filteredTransports = horseId ? transports.filter((t) => t.horseId === horseId) : transports;
@@ -109,7 +103,7 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
       </CardHeader>
       <CardContent className="space-y-3">
         {filteredTransports.map((transport) => {
-          const horse = horseMap.get(transport.horseId);
+          const horse = horseMap[transport.horseId];
           const daysUntilArrival = transport.arrivalDay - day;
           const isPastDue = daysUntilArrival < 0;
 

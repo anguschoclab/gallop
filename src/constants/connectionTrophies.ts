@@ -36,13 +36,13 @@ const isWinningG1 = (r: Horse["raceHistory"][number]) =>
  */
 export function getG1WinsForJockey(state: GameState, jockeyId: string): G1WinEntry[] {
   if (!jockeyId) return [];
-  const races = state.races || [];
-  const raceById = new Map<string, Race>(races.map((r) => [r.id, r]));
+  const races = state.races || {};
+  const raceById = state.races;
   const out: G1WinEntry[] = [];
-  for (const horse of state.horses || []) {
+  for (const horse of Object.values(state.horses || {})) {
     for (const r of horse.raceHistory || []) {
       if (!isWinningG1(r)) continue;
-      const race = r.raceId ? raceById.get(r.raceId) : undefined;
+      const race = r.raceId ? raceById[r.raceId] : undefined;
       const entry = race?.entries?.find((e) => e.horseId === horse.id);
       if (entry?.jockeyId !== jockeyId) continue;
       out.push({
@@ -72,7 +72,7 @@ export function getG1WinsForJockey(state: GameState, jockeyId: string): G1WinEnt
 export function getG1WinsForStable(state: GameState, stableId: string | undefined): G1WinEntry[] {
   const out: G1WinEntry[] = [];
   const wantPlayer = !stableId;
-  for (const horse of state.horses || []) {
+  for (const horse of Object.values(state.horses || {})) {
     const horseStable = (horse as Horse).stableId;
     if (wantPlayer ? horseStable : horseStable !== stableId) continue;
     for (const r of horse.raceHistory || []) {

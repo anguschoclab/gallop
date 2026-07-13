@@ -44,13 +44,13 @@ export function NominationsTab() {
   const withdrawNomination = useGame((s: any) => s.withdrawNomination);
 
   const playerHorses = useMemo(
-    () => horses.filter((h) => h.owned && h.lifecycleStatus === "active"),
+    () => Object.values(horses).filter((h) => h.owned && h.lifecycleStatus === "active"),
     [horses],
   );
 
   const gradedRaces = useMemo(
     () =>
-      races
+      Object.values(races)
         .filter((r) => getRaceGrade(r) && r.day > day && !r.resolved)
         .sort((a, b) => a.day - b.day)
         .slice(0, 60),
@@ -60,7 +60,7 @@ export function NominationsTab() {
   const activeNoms = noms.filter((n) => n.status !== "scratched");
   const paidTotal = activeNoms.reduce((sum, n) => sum + n.feePaid, 0);
 
-  const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
+  const horseMap = horses;
 
   return (
     <div className="space-y-6">
@@ -131,7 +131,7 @@ export function NominationsTab() {
               .slice()
               .sort((a, b) => a.raceDay - b.raceDay)
               .map((n) => {
-                const horse = horseMap.get(n.horseId);
+                const horse = horseMap[n.horseId];
                 return (
                   <div
                     key={n.id}

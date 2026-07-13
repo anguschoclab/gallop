@@ -75,7 +75,7 @@ export function resolveLiveRaceWithImpacts(
 ): ResolverContext {
   if (race.resolved) {
     return {
-      state: { horses, jockeys, npcStables, races: [race] } as GameState,
+      state: { horses: Object.fromEntries(horses.map(h => [h.id, h])), jockeys, npcStables, races: { [race.id]: race } } as unknown as GameState,
       intents: [],
       impacts: [],
       impactLog: [],
@@ -495,7 +495,7 @@ export function resolveLiveRaceWithImpacts(
 
   // Apply impacts to state
   const resolverContext: ResolverContext = {
-    state: { horses, jockeys, npcStables, races: [race] } as GameState,
+    state: { horses: Object.fromEntries(horses.map(h => [h.id, h])), jockeys, npcStables, races: { [race.id]: race } } as unknown as GameState,
     intents: [],
     impacts,
     impactLog: [],

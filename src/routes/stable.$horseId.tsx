@@ -200,7 +200,7 @@ function HorseDetail() {
                     onTrain={detail.handleTrain}
                   />
                   <div className="mt-4 pt-4 border-t border-white/5">
-                    <PrivateTrialDialog horse={horse} horses={horses} cash={detail.cash} />
+                    <PrivateTrialDialog horse={horse} horses={Object.values(horses)} cash={detail.cash} />
                   </div>
                 </CardContent>
               </Card>

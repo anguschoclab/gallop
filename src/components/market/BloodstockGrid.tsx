@@ -28,7 +28,7 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {market.map((h: Horse) => {
-        const price = horseMarketValue(h, allHorses);
+        const price = horseMarketValue(h, Object.values(allHorses));
         const ovr = overall(h);
         const canAfford = cash >= price;
 
@@ -101,7 +101,7 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
               {expandedId === h.id && (
                 <div className="bg-black/40 p-3 rounded border border-white/5">
                   <CareerValuationBreakdown
-                    valuation={horseCareerValuation(h, allHorses)}
+                    valuation={horseCareerValuation(h, Object.values(allHorses))}
                   />
                 </div>
               )}

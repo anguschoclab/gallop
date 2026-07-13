@@ -195,6 +195,99 @@ export async function clearAll(): Promise<void> {
 }
 
 /**
+ * Check if the CompressionStream API is available (for gzip-compressed OPFS writes).
+ */
+function isCompressionSupported(): boolean {
+  return typeof CompressionStream !== "undefined";
+}
+
+/**
+ * Write JSON-serializable data to OPFS with optional gzip compression.
+ *
+ * Uses CompressionStream when available; falls back to plain JSON otherwise.
+ *
+ * @param filename - The name of the file to write to.
+ * @param data - The data to be serialized and stored.
+ * @throws {Error} If OPFS is not available or if the storage quota is exceeded.
+ * @returns {Promise<void>} A promise that resolves when the write completes.
+ */
+export async function writeCompressedFile(filename: string, data: unknown): Promise<void> {
+  if (!isOPFSAvailable || !opfsRoot) {
+    throw new Error("OPFS not available");
+  }
+
+  try {
+    const fileHandle = await opfsRoot.getFileHandle(filename, { create: true });
+    const writable = await fileHandle.createWritable();
+    const json = JSON.stringify(data);
+
+    if (isCompressionSupported()) {
+      const cs = new CompressionStream("gzip");
+      const writer = writable.getWriter();
+      const reader = new Blob([json]).stream().pipeThrough(cs).getReader();
+
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        await writer.write(value);
+      }
+      await writer.close();
+    } else {
+      await writable.write(json);
+      await writable.close();
+    }
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "QuotaExceededError") {
+      throw new Error("Storage quota exceeded");
+    }
+    throw error;
+  }
+}
+
+/**
+ * Read and parse data from a compressed or plain OPFS file.
+ *
+ * Automatically detects gzip-compressed files by attempting DecompressionStream;
+ * falls back to plain JSON parse if decompression fails.
+ *
+ * @template T
+ * @param filename - The name of the file to read.
+ * @returns {Promise<T | null>} The parsed data, or null if the file is missing.
+ */
+export async function readCompressedFile<T>(filename: string): Promise<T | null> {
+  if (!isOPFSAvailable || !opfsRoot) {
+    return null;
+  }
+
+  try {
+    const fileHandle = await opfsRoot.getFileHandle(filename);
+    const file = await fileHandle.getFile();
+    const arrayBuffer = await file.arrayBuffer();
+
+    if (isCompressionSupported()) {
+      try {
+        const ds = new DecompressionStream("gzip");
+        const decompressed = new Blob([arrayBuffer]).stream().pipeThrough(ds);
+        const text = await new Response(decompressed).text();
+        return JSON.parse(text) as T;
+      } catch {
+        // Not compressed — fall through to plain text parse
+      }
+    }
+
+    const text = new TextDecoder().decode(arrayBuffer);
+    return JSON.parse(text) as T;
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "NotFoundError") {
+      return null;
+    }
+    console.error(`Failed to read compressed file ${filename}:`, error);
+    return null;
+  }
+}
+
+/**
  * Reset the internal module state.
  *
  * Internal helper intended for use in test suites to ensure a clean state between tests.

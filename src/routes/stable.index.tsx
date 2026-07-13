@@ -68,7 +68,7 @@ function StablePage() {
 
   const horseCountsByStable = useMemo(() => {
     const counts = new Map<string, number>();
-    horses.forEach((h) => {
+    Object.values(horses).forEach((h) => {
       if (h.stableId) counts.set(h.stableId, (counts.get(h.stableId) || 0) + 1);
     });
     return counts;

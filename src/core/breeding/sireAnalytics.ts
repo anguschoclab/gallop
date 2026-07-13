@@ -34,7 +34,7 @@ export function calculateAei(
 ): number {
   if (!stallion.stud || !stallion.stud.lifetimeFoals) return 0;
 
-  const runners = getRunnersBy({ horses: allHorses }, stallion.id);
+  const runners = getRunnersBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, stallion.id);
 
   if (runners.length === 0) return 0;
 
@@ -167,7 +167,7 @@ export function getSireSurfaceBias(
    */
   allHorses: Horse[],
 ): SurfaceBias {
-  const runners = getRunnersBy({ horses: allHorses }, stallion.id);
+  const runners = getRunnersBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, stallion.id);
   if (runners.length < 5) {
     // Fallback to bloodline-based for insufficient data
     if (stallion.bloodline) {
@@ -233,7 +233,7 @@ export type DistancePreference = "sprint" | "classic" | "stayer" | "versatile";
  * @returns Distance preference classification
  */
 export function getSireDistancePreference(stallion: Horse, allHorses: Horse[]): DistancePreference {
-  const runners = getRunnersBy({ horses: allHorses }, stallion.id);
+  const runners = getRunnersBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, stallion.id);
   if (runners.length < 5) return "versatile";
 
   let sprintWins = 0,
@@ -375,7 +375,7 @@ export type CropTier =
  */
 export function classifyStallion(stallion: Horse, allHorses: Horse[]): CropTier {
   if (!stallion.stud?.atStud) return "unproven";
-  const foals = getFoalsBy({ horses: allHorses }, stallion.id);
+  const foals = getFoalsBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, stallion.id);
   if (foals.length === 0) return "unproven";
 
   const racingAgeFoals = foals.filter((f) => f.age >= 2);

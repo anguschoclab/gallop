@@ -52,7 +52,7 @@ export function AppShell() {
         <SidebarNav
           day={day}
           cash={cash}
-          horseCount={horses.length}
+          horseCount={Object.keys(horses).length}
           unreadCount={unreadCount}
           onAdvanceDay={() => advanceDay()}
           onAdvanceWeek={() => setTimeout(() => advanceMultipleDays(DAYS_PER_WEEK), 0)}

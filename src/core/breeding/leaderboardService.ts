@@ -334,7 +334,7 @@ function computeStakesLeaderboard(
 ): Leaderboard {
   const rankings = stallions
     .map((s) => {
-      const stakesFoals = getStakesFoalsBy({ horses: allHorses }, s.id);
+      const stakesFoals = getStakesFoalsBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, s.id);
       const analytics = getSireAnalytics(s, allHorses, 0); // industryMean not needed for this
       return {
         stallionId: s.id,
@@ -372,7 +372,7 @@ function computeG1Leaderboard(
 ): Leaderboard {
   const rankings = stallions
     .map((s) => {
-      const g1Foals = getG1FoalsBy({ horses: allHorses }, s.id);
+      const g1Foals = getG1FoalsBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, s.id);
       const analytics = getSireAnalytics(s, allHorses, 0);
       return {
         stallionId: s.id,
@@ -410,7 +410,7 @@ function computeTurfLeaderboard(
 ): Leaderboard {
   const rankings = stallions
     .map((s) => {
-      const runners = getRunnersBy({ horses: allHorses }, s.id);
+      const runners = getRunnersBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, s.id);
       let turfWins = 0,
         turfStarts = 0;
       for (const foal of runners) {
@@ -458,7 +458,7 @@ function computeDirtLeaderboard(
 ): Leaderboard {
   const rankings = stallions
     .map((s) => {
-      const runners = getRunnersBy({ horses: allHorses }, s.id);
+      const runners = getRunnersBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, s.id);
       let dirtWins = 0,
         dirtStarts = 0;
       for (const foal of runners) {
@@ -506,7 +506,7 @@ function computeSprintLeaderboard(
 ): Leaderboard {
   const rankings = stallions
     .map((s) => {
-      const runners = getRunnersBy({ horses: allHorses }, s.id);
+      const runners = getRunnersBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, s.id);
       let sprintWins = 0,
         sprintStarts = 0;
       for (const foal of runners) {
@@ -554,7 +554,7 @@ function computeStayingLeaderboard(
 ): Leaderboard {
   const rankings = stallions
     .map((s) => {
-      const runners = getRunnersBy({ horses: allHorses }, s.id);
+      const runners = getRunnersBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, s.id);
       let stayerWins = 0,
         stayerStarts = 0;
       for (const foal of runners) {
@@ -645,7 +645,7 @@ function computeFreshmanLeaderboard(
 ): Leaderboard {
   const rankings = stallions
     .map((s) => {
-      const foals = getFoalsBy({ horses: allHorses }, s.id);
+      const foals = getFoalsBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, s.id);
       const racingAgeFoals = foals.filter((f) => f.age >= 2);
       const oldestFoalAge = foals.length > 0 ? Math.max(...foals.map((f) => f.age)) : 0;
 

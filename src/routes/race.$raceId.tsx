@@ -129,26 +129,30 @@ export function LiveRace() {
   const { phase, setPhase } = useRacePhase(!!race?.resolved);
   const { displayedPhase, isExiting } = usePhaseTransition(phase);
 
-  // Read saved sim progress once (stable ref, same as the original IIFE pattern).
-  // This must happen before useLiveRaceSimulation so resumeAtSimTime is available.
+  // Read saved sim progress after hydration to avoid SSR mismatch.
+  // Default values are used during SSR and first client render; the real
+  // values from sessionStorage are applied in a useEffect.
   const progressStorageKey = `race-sim-progress:${raceId}`;
-  const savedProgress = useRef<{ simTime: number; paused: boolean; speed: number }>(
-    (() => {
-      if (typeof window === "undefined") return { simTime: 0, paused: false, speed: 1 };
-      try {
-        const raw = window.sessionStorage.getItem(progressStorageKey);
-        if (!raw) return { simTime: 0, paused: false, speed: 1 };
-        const p = JSON.parse(raw);
-        return {
-          simTime: typeof p.simTime === "number" ? p.simTime : 0,
-          paused: !!p.paused,
-          speed: typeof p.speed === "number" ? p.speed : 1,
-        };
-      } catch {
-        return { simTime: 0, paused: false, speed: 1 };
-      }
-    })(),
-  ).current;
+  const [savedProgress, setSavedProgress] = useState<{
+    simTime: number;
+    paused: boolean;
+    speed: number;
+  }>({ simTime: 0, paused: false, speed: 1 });
+
+  useEffect(() => {
+    try {
+      const raw = window.sessionStorage.getItem(progressStorageKey);
+      if (!raw) return;
+      const p = JSON.parse(raw);
+      setSavedProgress({
+        simTime: typeof p.simTime === "number" ? p.simTime : 0,
+        paused: !!p.paused,
+        speed: typeof p.speed === "number" ? p.speed : 1,
+      });
+    } catch {
+      // noop — keep defaults
+    }
+  }, [progressStorageKey]);
 
   const { tick, speed, setSpeed, finished, paused, setPaused, simTime, simTimeRef, liveSplits } =
     useLiveRaceSimulation({
