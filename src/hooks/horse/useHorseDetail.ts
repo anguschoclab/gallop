@@ -10,12 +10,7 @@ export function useHorseDetail(horseId: string) {
   const withdrawConsignment = useGame((s) => s.withdrawConsignment);
   const trainingUsed = useGameWithShallow((s) => s.trainingUsed[horseId] ?? 0);
   const cash = useGame((s) => s.cash);
-  const horses = useGame((s) => s.horses);
-
-  const localHorseMap = useMemo(
-    () => new Map<string, any>((horses ?? []).map((h: any) => [h.id, h])),
-    [horses],
-  );
+  const localHorseMap = useGame((s) => s.horseMap);
 
   const retireToStud = useGame((s) => s.retireToStud);
   const retireToPasture = useGame((s) => s.retireToPasture);
@@ -76,7 +71,7 @@ export function useHorseDetail(horseId: string) {
       { threshold: 0.5 },
     );
 
-    ["stats", "health", "training", "beyer", "genetics", "lineage", "history"].forEach((id) => {
+    ["stats", "health", "training", "beyer", "genetics", "lineage", "projection", "history"].forEach((id) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
@@ -92,6 +87,7 @@ export function useHorseDetail(horseId: string) {
       { id: "beyer", label: "Analytics" },
       { id: "genetics", label: "Genetics" },
       { id: "lineage", label: "Heritage" },
+      { id: "projection", label: "Projection" },
       { id: "history", label: "Race History" },
     ],
     [],
@@ -126,7 +122,6 @@ export function useHorseDetail(horseId: string) {
     withdrawConsignment,
     trainingUsed,
     cash,
-    horses,
     localHorseMap,
     retireToStud,
     retireToPasture,

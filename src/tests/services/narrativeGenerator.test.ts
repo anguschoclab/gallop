@@ -161,7 +161,13 @@ describe("NarrativeGenerator", () => {
     const lines = gen.update([runner], 10.0);
 
     expect(lines.some((l) => l.type === "MILESTONE")).toBe(true);
-    expect(lines.find((l) => l.type === "MILESTONE")!.text).toContain("halfway");
+    const milestoneText = lines.find((l) => l.type === "MILESTONE")!.text;
+    const isFromTemplate = TEMPLATES.MILESTONE.some((t) => {
+      let expected = t.replace("{remaining}", (1600 - 800).toString());
+      expected = expected.replace("{raceName}", "Test Race");
+      return expected === milestoneText;
+    });
+    expect(isFromTemplate).toBe(true);
   });
 
   it("prevents duplicate LEAD_CHANGE for the same new leader within cooldown", () => {

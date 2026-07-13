@@ -44,6 +44,10 @@ export const NARRATIVE_THRESHOLDS = {
   TURN_SEGMENT_FINAL_START: 1200,
   // Milestone positions
   HALFWAY_POSITION: 0.5,
+  // Hot pace detection
+  HOT_PACE_THRESHOLD: 1.1,
+  HOT_PACE_MAX_PROGRESS: 0.6,
+  HOT_PACE_COOLDOWN: 30,
   // Default cooldown
   DEFAULT_COOLDOWN: 10,
 } as const;

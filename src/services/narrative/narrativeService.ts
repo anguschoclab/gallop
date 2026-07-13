@@ -1,4 +1,5 @@
 import type { Runner } from "@/core/race/engine/runnerBuilder";
+import { computePaceContext } from "@/core/race/engine/simulation";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
 import type { NarrativeEvent, CommentaryLine } from "./types";
@@ -64,7 +65,8 @@ export class NarrativeGenerator {
 
     // Event priority order is significant; do not reorder.
     this.checkRaceStart(runners, simTime, newLines);
-    this.checkMilestones(newLines, currentLeader.position, simTime);
+    this.checkMilestones(newLines, currentLeader.position, simTime, currentLeader);
+    this.checkHotPace(runners, simTime, newLines);
     this.checkAtmosphere(simTime, newLines);
     this.checkGapAnnouncement(sorted, simTime, newLines);
     this.checkStableWatch(runners, simTime, newLines);
@@ -335,17 +337,16 @@ export class NarrativeGenerator {
 
   /**
    * Generate dynamic milestones based on race distance.
-   * @returns Array of milestone objects with position, id, and text.
+   * @returns Array of milestone objects with position and id.
    */
-  private generateDynamicMilestones(): Array<{ pos: number; id: number; text: string }> {
+  private generateDynamicMilestones(): Array<{ pos: number; id: number }> {
     const distance = this.race.distance;
-    const milestones: Array<{ pos: number; id: number; text: string }> = [];
+    const milestones: Array<{ pos: number; id: number }> = [];
 
     // Halfway point (always included)
     milestones.push({
       pos: distance * NARRATIVE_THRESHOLDS.HALFWAY_POSITION,
       id: 50,
-      text: "Passing the halfway point now.",
     });
 
     // Final 400m (only if race is long enough)
@@ -353,7 +354,6 @@ export class NarrativeGenerator {
       milestones.push({
         pos: distance - NARRATIVE_THRESHOLDS.MILESTONE_FINAL_400M,
         id: 400,
-        text: "Entering the final 400 meters!",
       });
     }
 
@@ -362,7 +362,6 @@ export class NarrativeGenerator {
       milestones.push({
         pos: distance - NARRATIVE_THRESHOLDS.MILESTONE_FINAL_200M,
         id: 200,
-        text: "Just 200 meters to the wire!",
       });
     }
 
@@ -371,7 +370,6 @@ export class NarrativeGenerator {
       milestones.push({
         pos: distance - NARRATIVE_THRESHOLDS.MILESTONE_FINAL_100M,
         id: 100,
-        text: "They're inside the final 100! Who wants it more?",
       });
     }
 
@@ -385,18 +383,50 @@ export class NarrativeGenerator {
    * @param leaderPos - Current position of the race leader
    * @param simTime - Current elapsed simulation time
    */
-  private checkMilestones(newLines: CommentaryLine[], leaderPos: number, simTime: number) {
+  private checkMilestones(newLines: CommentaryLine[], leaderPos: number, simTime: number, leader?: Runner) {
     const milestones = this.generateDynamicMilestones();
 
     for (const m of milestones) {
       if (leaderPos >= m.pos && !this.state.announcedMilestones.has(m.id)) {
-        newLines.push({
-          id: `milestone-${m.id}`,
-          text: m.text,
-          timestamp: simTime,
-          type: "MILESTONE",
-        });
+        newLines.push(this.createLine("MILESTONE", simTime, leader));
         this.state.announcedMilestones.add(m.id);
+      }
+    }
+  }
+
+  /**
+   * Check for hot pace conditions and generate commentary.
+   *
+   * Detects when the leader's velocity is significantly above the expected pace
+   * for the race distance. Only fires early in the race (before 60% progress)
+   * and respects a cooldown to avoid repetitive announcements.
+   *
+   * @param runners - Current state of all runners
+   * @param simTime - Current elapsed simulation time in seconds
+   * @param newLines - Accumulator for new commentary lines
+   */
+  private checkHotPace(runners: Runner[], simTime: number, newLines: CommentaryLine[]) {
+    if (!this.state.hasAnnouncedStart || this.state.hasAnnouncedFinish) return;
+
+    const pace = computePaceContext(runners, this.race.distance);
+    if (pace.progress > NARRATIVE_THRESHOLDS.HOT_PACE_MAX_PROGRESS) return;
+
+    if (pace.paceRating > NARRATIVE_THRESHOLDS.HOT_PACE_THRESHOLD) {
+      if (
+        this.state.canAnnounce(
+          "HOT_PACE",
+          "global",
+          simTime,
+          NARRATIVE_THRESHOLDS.HOT_PACE_COOLDOWN,
+        )
+      ) {
+        newLines.push(this.createLine("HOT_PACE", simTime));
+        this.state.setCooldown(
+          "HOT_PACE",
+          "global",
+          simTime,
+          NARRATIVE_THRESHOLDS.HOT_PACE_COOLDOWN,
+        );
       }
     }
   }

@@ -401,6 +401,7 @@ describe("HorseHandler", () => {
     expect(handler.canHandle("aging")).toBe(true);
     expect(handler.canHandle("injury")).toBe(true);
     expect(handler.canHandle("beyer_update")).toBe(true);
+    expect(handler.canHandle("horse_deletion")).toBe(true);
     expect(handler.canHandle("cash_change")).toBe(false);
   });
 });

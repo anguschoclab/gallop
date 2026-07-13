@@ -17,12 +17,14 @@ import { HorseManagementSection } from "@/components/horse/HorseManagementSectio
 import { HorseLineageSection } from "@/components/horse/HorseLineageSection";
 import { HorseRaceHistorySection } from "@/components/horse/HorseRaceHistorySection";
 import { HorseGeneticsSection } from "@/components/horse/HorseGeneticsSection";
+import { CareerProjectionSection } from "@/components/horse/CareerProjectionSection";
 import { FoalInheritancePanel } from "@/components/horse/FoalInheritancePanel";
 import { InsurancePanel } from "@/components/insurance/InsurancePanel";
 import { StewardsPanel } from "@/components/stewards/StewardsPanel";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { useHorseActions } from "@/hooks/horse/useHorseActions";
 import { useHorseDetail } from "@/hooks/horse/useHorseDetail";
+import { useHorses } from "@/hooks/game/useCoreState";
 import {
   ArrowLeft,
   Zap,
@@ -59,6 +61,7 @@ function HorseDetail() {
     useHorseActions(horseId);
 
   const detail = useHorseDetail(horseId);
+  const horses = useHorses();
 
   if (!horse) throw notFound();
 
@@ -72,6 +75,7 @@ function HorseDetail() {
     training: Zap,
     beyer: TrendingUp,
     lineage: GitBranch,
+    projection: TrendingUp,
     history: History,
     genetics: Dna,
   };
@@ -196,7 +200,7 @@ function HorseDetail() {
                     onTrain={detail.handleTrain}
                   />
                   <div className="mt-4 pt-4 border-t border-white/5">
-                    <PrivateTrialDialog horse={horse} horses={detail.horses} cash={detail.cash} />
+                    <PrivateTrialDialog horse={horse} horses={horses} cash={detail.cash} />
                   </div>
                 </CardContent>
               </Card>
@@ -223,6 +227,8 @@ function HorseDetail() {
                 dam={horse.damId ? detail.localHorseMap?.get(horse.damId) : undefined}
               />
             )}
+
+            <CareerProjectionSection horse={horse} horses={horses} />
 
             <HorseRaceHistorySection
               horse={horse}
