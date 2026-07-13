@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { weatherPhase } from "@/core/time/phases/weatherPhase";
 import * as weatherSim from "@/core/weather";
 import type { PipelineContext } from "@/core/time/pipeline";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("Weather Phase - Storm Jump Logic", () => {
   let stepWeatherSpy: ReturnType<typeof vi.spyOn>;
@@ -31,7 +32,7 @@ describe("Weather Phase - Storm Jump Logic", () => {
     newDay: 10,
     state: {
       day: 9,
-      races: [
+      races: r2r([
         {
           id: "race-1",
           name: "The G1 Storm Stakes",
@@ -50,7 +51,7 @@ describe("Weather Phase - Storm Jump Logic", () => {
           entries: [],
           resolved: false,
         },
-      ],
+      ]),
       weather: {
         byTrack: {
           "track-1": [{ day: 9, pattern: "clear", trackId: "track-1", tempC: 20, humidity: 0.5 }],
@@ -62,8 +63,8 @@ describe("Weather Phase - Storm Jump Logic", () => {
       horses: {},
     } as any,
     impacts: [],
-    horseMap: new Map(),
-    raceMap: new Map(),
+    horses: {},
+    races: {},
     stableMap: new Map(),
     jockeyMap: new Map(),
     ...overrides,

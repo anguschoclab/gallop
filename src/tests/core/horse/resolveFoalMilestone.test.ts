@@ -39,7 +39,7 @@ describe("resolveFoalMilestone", () => {
     seedHorse();
     const res = useGame.getState().resolveFoalMilestone("foal-1", "breaking_in", "bold_approach");
     expect(res.ok).toBe(true);
-    const horse = useGame.getState().horses.find((h) => h.id === "foal-1")!;
+    const horse = useGame.getState().horses["foal-1"]!;
     expect(horse.stats.speed).toBe(52);
     expect(horse.stats.acceleration).toBe(52);
     expect(horse.stats.stamina).toBe(49);
@@ -50,7 +50,7 @@ describe("resolveFoalMilestone", () => {
     seedHorse();
     useGame.setState({ day: 42 } as any);
     useGame.getState().resolveFoalMilestone("foal-1", "breaking_in", "patient_method");
-    const horse = useGame.getState().horses.find((h) => h.id === "foal-1")!;
+    const horse = useGame.getState().horses["foal-1"]!;
     const milestone = horse.developmentArc!.milestones.find((m) => m.key === "breaking_in")!;
     expect(milestone.status).toBe("resolved");
     expect(milestone.resolvedChoiceKey).toBe("patient_method");
@@ -60,7 +60,7 @@ describe("resolveFoalMilestone", () => {
   it("leaves other milestones untouched", () => {
     seedHorse();
     useGame.getState().resolveFoalMilestone("foal-1", "breaking_in", "natural_progression");
-    const horse = useGame.getState().horses.find((h) => h.id === "foal-1")!;
+    const horse = useGame.getState().horses["foal-1"]!;
     const other = horse.developmentArc!.milestones.find((m) => m.key === "early_workouts")!;
     expect(other.status).toBe("pending");
     expect(other.resolvedChoiceKey).toBeUndefined();
@@ -76,7 +76,7 @@ describe("resolveFoalMilestone", () => {
       .resolveFoalMilestone("foal-1", "breaking_in", "patient_method");
     expect(second.ok).toBe(false);
     expect(second.reason).toMatch(/already resolved/i);
-    const horse = useGame.getState().horses.find((h) => h.id === "foal-1")!;
+    const horse = useGame.getState().horses["foal-1"]!;
     expect(horse.stats).toEqual(statsAfterFirst);
     const milestone = horse.developmentArc!.milestones.find((m) => m.key === "breaking_in")!;
     expect(milestone.resolvedChoiceKey).toBe("bold_approach");
@@ -94,7 +94,7 @@ describe("resolveFoalMilestone", () => {
     useGame.setState({ day: 25 } as any);
     const res = useGame.getState().resolveFoalMilestone("foal-1", "early_workouts", "sprint_focus");
     expect(res.ok).toBe(true);
-    const horse = useGame.getState().horses.find((h) => h.id === "foal-1")!;
+    const horse = useGame.getState().horses["foal-1"]!;
     expect(horse.stats.speed).toBe(100);
     expect(horse.stats.stamina).toBe(0);
   });

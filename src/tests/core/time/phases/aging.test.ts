@@ -5,6 +5,7 @@ import { createTestHorse } from "@/tests/helpers";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import { createDefaultGameState } from "@/game/store/state";
+import { h2r } from "@/tests/helpers/sampleGameState";
 
 describe("agingPhase", () => {
   const createTestState = (): GameState => ({
@@ -22,8 +23,8 @@ describe("agingPhase", () => {
     impacts: [],
     impactLog: [],
     dailyRng: createRng(1),
-    horseMap: new Map((state.horses ?? []).map((h) => [h.id, h])),
-    raceMap: new Map((state.races ?? []).map((r) => [r.id, r])),
+    horseMap: new Map(Object.entries(state.horses ?? {}).map(([k, v]) => [k, v])),
+    raceMap: new Map(Object.entries(state.races ?? {}).map(([k, v]) => [k, v])),
     stableMap: new Map((state.npcStables ?? []).map((s) => [s.id, s])),
     jockeyMap: new Map((state.jockeys ?? []).map((j) => [j.id, j])),
   });
@@ -37,11 +38,11 @@ describe("agingPhase", () => {
 
     const state = createTestState();
     state.day = 10;
-    state.horses = [horse];
+    state.horses = h2r([horse]);
 
     const context = createTestContext(state, 9, 10);
     const result = agingPhase.execute(context);
-    expect(result.state.horses[0].age).toBe(2); // No change
+    expect(Object.values(result.state.horses)[0].age).toBe(2); // No change
   });
 
   it("should age Northern hemisphere horses on Jan 1 (day 1)", () => {
@@ -60,12 +61,12 @@ describe("agingPhase", () => {
 
     const state = createTestState();
     state.day = 1;
-    state.horses = [h1, h2];
+    state.horses = h2r([h1, h2]);
 
     const context = createTestContext(state, 0, 1);
     const result = agingPhase.execute(context);
-    expect(result.state.horses[0].age).toBe(3); // Northern horse aged
-    expect(result.state.horses[1].age).toBe(3); // Southern horse not aged
+    expect(result.state.horses["horse-1"].age).toBe(3); // Northern horse aged
+    expect(result.state.horses["horse-2"].age).toBe(3); // Southern horse not aged
   });
 
   it("should age Southern hemisphere horses on Aug 1 (day 213)", () => {
@@ -82,12 +83,12 @@ describe("agingPhase", () => {
 
     const state = createTestState();
     state.day = 213;
-    state.horses = [h1, h2];
+    state.horses = h2r([h1, h2]);
 
     const context = createTestContext(state, 212, 213);
     const result = agingPhase.execute(context);
-    expect(result.state.horses[0].age).toBe(2); // Northern horse not aged
-    expect(result.state.horses[1].age).toBe(4); // Southern horse aged
+    expect(result.state.horses["horse-1"].age).toBe(2); // Northern horse not aged
+    expect(result.state.horses["horse-2"].age).toBe(4); // Southern horse aged
   });
 
   it("should convert colt to horse at age 3", () => {
@@ -100,12 +101,12 @@ describe("agingPhase", () => {
 
     const state = createTestState();
     state.day = 1;
-    state.horses = [horse];
+    state.horses = h2r([horse]);
 
     const context = createTestContext(state, 0, 1);
     const result = agingPhase.execute(context);
-    expect(result.state.horses[0].age).toBe(3);
-    expect(result.state.horses[0].gender).toBe("horse");
+    expect(result.state.horses["horse-1"].age).toBe(3);
+    expect(result.state.horses["horse-1"].gender).toBe("horse");
   });
 
   it("should convert filly to mare at age 3", () => {
@@ -118,12 +119,12 @@ describe("agingPhase", () => {
 
     const state = createTestState();
     state.day = 1;
-    state.horses = [horse];
+    state.horses = h2r([horse]);
 
     const context = createTestContext(state, 0, 1);
     const result = agingPhase.execute(context);
-    expect(result.state.horses[0].age).toBe(3);
-    expect(result.state.horses[0].gender).toBe("mare");
+    expect(result.state.horses["horse-1"].age).toBe(3);
+    expect(result.state.horses["horse-1"].gender).toBe("mare");
   });
 
   it("should not change gender if already horse/mare", () => {
@@ -136,12 +137,12 @@ describe("agingPhase", () => {
 
     const state = createTestState();
     state.day = 1;
-    state.horses = [horse];
+    state.horses = h2r([horse]);
 
     const context = createTestContext(state, 0, 1);
     const result = agingPhase.execute(context);
-    expect(result.state.horses[0].age).toBe(5);
-    expect(result.state.horses[0].gender).toBe("horse");
+    expect(result.state.horses["horse-1"].age).toBe(5);
+    expect(result.state.horses["horse-1"].gender).toBe("horse");
   });
 
   it("should preserve other context properties", () => {

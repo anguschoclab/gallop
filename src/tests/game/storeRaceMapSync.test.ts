@@ -20,60 +20,56 @@ function makeRace(id: string, day: number = 1, overrides?: Partial<Race>): Race 
   } as unknown as Race;
 }
 
-describe("createDefaultCoreState — raceMap initialization", () => {
-  it("raceMap is an empty Map by default", () => {
+describe("createDefaultCoreState — races initialization", () => {
+  it("races is an empty Record by default", () => {
     const state = createDefaultCoreState();
-    expect(state.raceMap).toBeInstanceOf(Map);
-    expect(state.raceMap.size).toBe(0);
+    expect(state.races).toEqual({});
+    expect(Object.keys(state.races).length).toBe(0);
   });
 });
 
-describe("raceMap sync through store actions", () => {
+describe("races Record sync through store actions", () => {
   beforeEach(() => {
     useGame.setState({
       day: 1,
       races: {},
-      raceMap: new Map(),
       pendingIntents: [],
       horses: {},
-      horseMap: new Map(),
       npcStables: [],
       jockeys: [],
       cash: 100000,
     });
   });
 
-  it("raceMap is in sync after setRaces", () => {
+  it("races Record is in sync after setRaces", () => {
     const races = [makeRace("r1", 5), makeRace("r2", 10), makeRace("r3", 15)];
-    useGame.getState().setRaces(races);
+    useGame.getState().setRaces(r2r(races));
 
     const state = useGame.getState();
-    expect(state.raceMap.size).toBe(3);
-    expect(state.raceMap.get("r1")).toBe(races[0]);
-    expect(state.raceMap.get("r2")).toBe(races[1]);
-    expect(state.raceMap.get("r3")).toBe(races[2]);
+    expect(Object.keys(state.races).length).toBe(3);
+    expect(state.races["r1"]).toBe(races[0]);
+    expect(state.races["r2"]).toBe(races[1]);
+    expect(state.races["r3"]).toBe(races[2]);
   });
 
-  it("raceMap is rebuilt when races change during day advancement", async () => {
+  it("races Record is rebuilt when races change during day advancement", async () => {
     const initialRace = makeRace("r-initial", 1, { resolved: true });
     useGame.setState({
       races: r2r([initialRace]),
-      raceMap: new Map([[initialRace.id, initialRace]]),
     });
 
     await useGame.getState().advanceDay();
 
     const state = useGame.getState();
     expect(state.day).toBe(2);
-    expect(state.raceMap).toBeInstanceOf(Map);
 
-    for (const race of state.races) {
-      expect(state.raceMap.get(race.id)).toBe(race);
+    for (const race of Object.values(state.races)) {
+      expect(state.races[race.id]).toBe(race);
     }
-    expect(state.raceMap.size).toBe(state.races.length);
+    expect(Object.keys(state.races).length).toBe(Object.keys(state.races).length);
   });
 
-  it("raceMap does not contain stale entries after race pruning", async () => {
+  it("races Record does not contain stale entries after race pruning", async () => {
     const oldResolvedRace = makeRace("r-old", 1, { resolved: true });
     const oldGradedRace = makeRace("r-graded", 1, {
       resolved: true,
@@ -83,10 +79,6 @@ describe("raceMap sync through store actions", () => {
     useGame.setState({
       day: 1,
       races: r2r([oldResolvedRace, oldGradedRace]),
-      raceMap: new Map([
-        [oldResolvedRace.id, oldResolvedRace],
-        [oldGradedRace.id, oldGradedRace],
-      ]),
     });
 
     // Advance to day 35 — ungraded resolved races older than 30 days should be pruned
@@ -96,62 +88,56 @@ describe("raceMap sync through store actions", () => {
     const state = useGame.getState();
     expect(state.day).toBe(35);
 
-    // The ungraded race should be pruned from both races array and raceMap
-    const ungradedInArray = state.races.find((r) => r.id === "r-old");
-    expect(ungradedInArray).toBeUndefined();
-    expect(state.raceMap.get("r-old")).toBeUndefined();
+    // The ungraded race should be pruned from races Record
+    expect(state.races["r-old"]).toBeUndefined();
 
     // Graded race should still exist (kept for 365 days)
-    const gradedInArray = state.races.find((r) => r.id === "r-graded");
-    if (gradedInArray) {
-      expect(state.raceMap.get("r-graded")).toBe(gradedInArray);
+    const gradedRace = state.races["r-graded"];
+    if (gradedRace) {
+      expect(gradedRace.resolved).toBe(true);
     }
   });
 
-  it("raceMap contains newly generated races after day advancement", async () => {
+  it("races Record contains newly generated races after day advancement", async () => {
     useGame.setState({
       day: 1,
       races: {},
-      raceMap: new Map(),
     });
 
     await useGame.getState().advanceDay();
 
     const state = useGame.getState();
     expect(state.day).toBe(2);
-    expect(state.races.length).toBeGreaterThan(0);
+    expect(Object.keys(state.races).length).toBeGreaterThan(0);
 
-    for (const race of state.races) {
-      expect(state.raceMap.get(race.id)).toBe(race);
+    for (const race of Object.values(state.races)) {
+      expect(state.races[race.id]).toBe(race);
     }
   });
 
-  it("raceMap entries reflect resolved status after race resolution", async () => {
+  it("races Record entries reflect resolved status after race resolution", async () => {
     const dueRace = makeRace("r-due", 1, { resolved: false });
     useGame.setState({
       day: 1,
       races: r2r([dueRace]),
-      raceMap: new Map([[dueRace.id, dueRace]]),
       horses: h2r([{ id: "h1" } as any]),
     });
 
     await useGame.getState().advanceDay();
 
     const state = useGame.getState();
-    const resolvedFromMap = state.raceMap.get("r-due");
-    const resolvedFromArray = state.races.find((r) => r.id === "r-due");
+    const resolvedRace = state.races["r-due"];
 
-    if (resolvedFromArray) {
-      expect(resolvedFromArray.resolved).toBe(true);
-      expect(resolvedFromMap).toBe(resolvedFromArray);
-      expect(resolvedFromMap?.resolved).toBe(true);
+    if (resolvedRace) {
+      expect(resolvedRace.resolved).toBe(true);
     }
   });
 
-  it("raceMap is a Map instance after day advancement", async () => {
+  it("races Record is a plain object after day advancement", async () => {
     await useGame.getState().advanceDay();
 
     const state = useGame.getState();
-    expect(state.raceMap).toBeInstanceOf(Map);
+    expect(typeof state.races).toBe("object");
+    expect(state.races).not.toBeNull();
   });
 });

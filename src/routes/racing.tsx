@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RaceCenterTab } from "@/components/racing/RaceCenterTab";
 import { RacesTab } from "@/components/racing/RacesTab";
 import { CalendarTab } from "@/components/racing/CalendarTab";
 import { BrowserTab } from "@/components/racing/BrowserTab";
@@ -9,7 +10,7 @@ import { NominationsTab } from "@/components/racing/NominationsTab";
 import { useTabParam } from "@/hooks/ui/useTabParam";
 import { Calendar, Flag, Search, CalendarClock, Award } from "lucide-react";
 
-const RACING_TABS = ["races", "calendar", "browser", "scheduler", "nominations"] as const;
+const RACING_TABS = ["center", "races", "calendar", "browser", "scheduler", "nominations"] as const;
 
 export const Route = createFileRoute("/racing")({
   validateSearch: z.object({
@@ -30,7 +31,7 @@ export const Route = createFileRoute("/racing")({
 });
 
 function RacingPage() {
-  const { tab, setTab } = useTabParam("races", RACING_TABS);
+  const { tab, setTab } = useTabParam("center", RACING_TABS);
 
   return (
     <div className="space-y-6">
@@ -49,9 +50,13 @@ function RacingPage() {
         className="space-y-4"
       >
         <TabsList>
+          <TabsTrigger value="center" className="gap-2">
+            <Flag className="h-4 w-4" />
+            Race Center
+          </TabsTrigger>
           <TabsTrigger value="races" className="gap-2">
             <Flag className="h-4 w-4" />
-            Races
+            All Races
           </TabsTrigger>
           <TabsTrigger value="calendar" className="gap-2">
             <Calendar className="h-4 w-4" />
@@ -70,6 +75,10 @@ function RacingPage() {
             Nominations
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="center" className="space-y-4">
+          <RaceCenterTab />
+        </TabsContent>
 
         <TabsContent value="races" className="space-y-4">
           <RacesTab />

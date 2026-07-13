@@ -42,7 +42,7 @@ describe("PipelineContext shared maps", () => {
       jockeys: [jockey1],
     }) as GameState;
 
-  it("horseMap in context matches new Map(state.horses.map(...))", () => {
+  it("horseMap in context matches new Map(Object.values(state.horses).map(...))", () => {
     const state = makeState();
     const ctx = createMockPipelineContext({ state });
     expect(ctx.horseMap.get("h1")).toEqual(horse1);
@@ -50,11 +50,11 @@ describe("PipelineContext shared maps", () => {
     expect(ctx.horseMap.size).toBe(2);
   });
 
-  it("raceMap in context matches new Map(state.races.map(...))", () => {
+  it("raceMap in context matches new Map(Object.values(state.races).map(...))", () => {
     const state = makeState();
     const ctx = createMockPipelineContext({ state });
-    expect(ctx.raceMap.get("r1")).toEqual(race1);
-    expect(ctx.raceMap.size).toBe(1);
+    expect(ctx.races.get("r1")).toEqual(race1);
+    expect(ctx.races.size).toBe(1);
   });
 
   it("stableMap in context matches new Map(state.npcStables.map(...))", () => {
@@ -75,7 +75,7 @@ describe("PipelineContext shared maps", () => {
     const state = makeState();
     const ctx = createMockPipelineContext({ state });
     expect(ctx.horseMap).toBeInstanceOf(Map);
-    expect(ctx.raceMap).toBeInstanceOf(Map);
+    expect(ctx.races).toBeInstanceOf(Map);
     expect(ctx.stableMap).toBeInstanceOf(Map);
     expect(ctx.jockeyMap).toBeInstanceOf(Map);
   });
@@ -98,7 +98,7 @@ describe("PipelineContext shared maps", () => {
       execute: (ctx) => {
         receivedMaps.push({
           horse: ctx.horseMap instanceof Map,
-          race: ctx.raceMap instanceof Map,
+          race: ctx.races instanceof Map,
           stable: ctx.stableMap instanceof Map,
           jockey: ctx.jockeyMap instanceof Map,
         });
@@ -136,7 +136,7 @@ describe("PipelineContext shared maps", () => {
     const state = makeGameState({ horses: {}, races: {}, npcStables: [], jockeys: [] }) as GameState;
     const ctx = createMockPipelineContext({ state });
     expect(ctx.horseMap.size).toBe(0);
-    expect(ctx.raceMap.size).toBe(0);
+    expect(ctx.races.size).toBe(0);
     expect(ctx.stableMap.size).toBe(0);
     expect(ctx.jockeyMap.size).toBe(0);
   });

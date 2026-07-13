@@ -81,7 +81,7 @@ function makeHorse(id: string, name: string): Horse {
   } as Horse;
 }
 
-describe("useHorseDetail — horseMap optimization", () => {
+describe("useHorseDetail — horses Record optimization", () => {
   beforeEach(() => {
     const horse1 = makeHorse("h1", "Star");
     const horse2 = makeHorse("h2", "Comet");
@@ -89,10 +89,6 @@ describe("useHorseDetail — horseMap optimization", () => {
     useGame.setState({
       ...state,
       horses: h2r([horse1, horse2]),
-      horseMap: new Map([
-        ["h1", horse1],
-        ["h2", horse2],
-      ]),
     } as any);
   });
 
@@ -103,14 +99,14 @@ describe("useHorseDetail — horseMap optimization", () => {
     expect(result.current.localHorseMap.get("h2")?.name).toBe("Comet");
   });
 
-  it("does not return horses array (uses store horseMap instead)", () => {
+  it("does not return horses array (uses store horses Record instead)", () => {
     const { result } = renderHook(() => useHorseDetail("h1"));
     expect((result.current as any).horses).toBeUndefined();
   });
 
-  it("localHorseMap is the same reference as the store horseMap", () => {
-    const storeHorseMap = useGame.getState().horseMap;
+  it("localHorseMap is derived from the store horses Record", () => {
+    const storeHorses = useGame.getState().horses;
     const { result } = renderHook(() => useHorseDetail("h1"));
-    expect(result.current.localHorseMap).toBe(storeHorseMap);
+    expect(result.current.localHorseMap.get("h1")).toBe(storeHorses["h1"]);
   });
 });

@@ -9,13 +9,14 @@ import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameSt
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Stable } from "@/game/types";
 import type { CashImpact, TransactionImpact } from "@/core/resolver/impacts/financialImpacts";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("upkeepPhase", () => {
   it("should emit cash_change and transaction impacts for player upkeep", () => {
     const state: GameState = makeGameState({
       day: 1,
       cash: 10000,
-      horses: [
+      horses: h2r([
         createTestHorse({
           id: "horse-1",
           name: "Horse 1",
@@ -32,7 +33,7 @@ describe("upkeepPhase", () => {
           hemisphere: "Northern",
           owned: true,
         }),
-      ],
+      ]),
     }) as GameState;
 
     const context: PipelineContext = makePipelineContext({
@@ -59,7 +60,7 @@ describe("upkeepPhase", () => {
     const state: GameState = makeGameState({
       day: 1,
       cash: 10000,
-      horses: [
+      horses: h2r([
         createTestHorse({
           id: "horse-1",
           name: "Horse 1",
@@ -69,7 +70,7 @@ describe("upkeepPhase", () => {
           owned: false,
           stableId: "npc-stable-1",
         }),
-      ],
+      ]),
       npcStables: [
         createTestStable({
           id: "npc-stable-1",
@@ -98,7 +99,7 @@ describe("upkeepPhase", () => {
     const state: GameState = makeGameState({
       day: 1,
       cash: 10000,
-      horses: [
+      horses: h2r([
         createTestHorse({
           id: "horse-1",
           name: "Horse 1",
@@ -117,7 +118,7 @@ describe("upkeepPhase", () => {
           owned: false,
           stableId: "npc-stable-2",
         }),
-      ],
+      ]),
       npcStables: [
         createTestStable({
           id: "npc-stable-1",

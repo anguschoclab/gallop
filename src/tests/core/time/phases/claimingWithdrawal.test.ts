@@ -96,10 +96,10 @@ describe("claimingWithdrawalPhase", () => {
   it("should process multiple withdrawal intents for different races", () => {
     const state: GameState = {
       ...createTestState(),
-      races: [
+      races: r2r([
         makeRace({ id: "race-1", entries: [{ horseId: "horse-1", owned: true } as any] }),
         makeRace({ id: "race-2", entries: [{ horseId: "horse-2", owned: true } as any] }),
-      ],
+      ]),
     };
 
     const intents: WithdrawFromClaimingIntent[] = [
@@ -116,11 +116,11 @@ describe("claimingWithdrawalPhase", () => {
   it("should skip already withdrawn entries", () => {
     const state: GameState = {
       ...createTestState(),
-      races: [
+      races: r2r([
         makeRace({
           entries: [{ horseId: "horse-1", owned: true, withdrawnFromClaiming: true } as any],
         }),
-      ],
+      ]),
     };
 
     const result = claimingWithdrawalPhase.execute(

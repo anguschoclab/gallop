@@ -72,10 +72,10 @@ describe("privateSaleExpiryPhase", () => {
   it("should handle multiple expired offers with correct horse/stable names", () => {
     const state: GameState = {
       ...createTestState(),
-      horses: [
+      horses: h2r([
         createTestHorse({ id: "horse-1", name: "Thunder" }),
         createTestHorse({ id: "horse-2", name: "Lightning" }),
-      ],
+      ]),
       npcStables: [
         { id: "stable-1", name: "Green Acres" } as any,
         { id: "stable-2", name: "Blue Hills" } as any,

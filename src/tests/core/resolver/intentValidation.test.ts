@@ -92,7 +92,7 @@ describe("validateIntent", () => {
     const state: GameState = {
       ...createTestState(),
       horses: h2r([horse]),
-      races: [
+      races: r2r([
         {
           id: "race-1",
           name: "Test Race",
@@ -106,7 +106,7 @@ describe("validateIntent", () => {
           entries: [],
           resolved: false,
         },
-      ],
+      ]),
     };
 
     const intent: RaceEntryIntent = {
@@ -127,7 +127,7 @@ describe("validateIntent", () => {
   it("should reject race entry intent for non-existent horse", () => {
     const state: GameState = {
       ...createTestState(),
-      races: [
+      races: r2r([
         {
           id: "race-1",
           name: "Test Race",
@@ -141,7 +141,7 @@ describe("validateIntent", () => {
           entries: [],
           resolved: false,
         },
-      ],
+      ]),
     };
 
     const intent: RaceEntryIntent = {
@@ -188,7 +188,7 @@ describe("validateIntent", () => {
     const state: GameState = {
       ...createTestState(),
       horses: h2r([horse]),
-      races: [
+      races: r2r([
         {
           id: "race-1",
           name: "Test Race",
@@ -202,7 +202,7 @@ describe("validateIntent", () => {
           entries: [],
           resolved: true,
         },
-      ],
+      ]),
     };
 
     const intent: RaceEntryIntent = {
@@ -226,7 +226,7 @@ describe("validateIntent", () => {
     const state: GameState = {
       ...createTestState(),
       horses: h2r([horse]),
-      races: [
+      races: r2r([
         {
           id: "race-1",
           name: "Test Race",
@@ -240,7 +240,7 @@ describe("validateIntent", () => {
           entries: [],
           resolved: false,
         },
-      ],
+      ]),
     };
 
     const intent: RaceEntryIntent = {

@@ -141,7 +141,6 @@ describe("PrivateSaleOfferDialog", () => {
       {
         cash: 100000,
         horses: h2r([horse]),
-        horseMap: new Map([[horse.id, horse]]),
         npcStables: [mkStable()],
         privateSaleOffers: [],
       },
@@ -166,7 +165,6 @@ describe("PrivateSaleOfferDialog", () => {
       {
         cash: 100000,
         horses: h2r([horse]),
-        horseMap: new Map([[horse.id, horse]]),
         npcStables: [mkStable({ name: "Green Acres", personality: "aggressive" })],
         privateSaleOffers: [],
       },
@@ -193,7 +191,6 @@ describe("PrivateSaleOfferDialog", () => {
       {
         cash: 100,
         horses: h2r([horse]),
-        horseMap: new Map([[horse.id, horse]]),
         npcStables: [mkStable()],
         privateSaleOffers: [],
       },

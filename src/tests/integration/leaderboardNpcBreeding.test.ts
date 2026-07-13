@@ -3,6 +3,7 @@ import type { Horse, Stable, GameState } from "@/game/types";
 import { runNpcBreeding } from "@/core/npc/breeding";
 import { createRng } from "@/core/common/rng";
 import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("leaderboardNpcBreeding integration", () => {
   let state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day" | "sireLeaderboards">;
@@ -121,7 +122,7 @@ describe("leaderboardNpcBreeding integration", () => {
 
     state = {
       day: 36,
-      horses: [
+      horses: h2r([
         {
           id: "sire1",
           name: "Top Sire",
@@ -203,7 +204,7 @@ describe("leaderboardNpcBreeding integration", () => {
           energy: 100,
           form: 100,
         },
-      ] as unknown as Horse[],
+      ]) as unknown as Horse[],
       npcStables: [
         {
           id: "stable1",

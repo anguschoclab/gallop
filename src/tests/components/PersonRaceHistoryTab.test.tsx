@@ -5,6 +5,7 @@ import { createElement } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { PersonRaceHistoryTab } from "@/components/person/PersonRaceHistoryTab";
 import { createTestHorse } from "@/tests/helpers";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import { useGame } from "@/game/store";
 import { createDefaultGameState } from "@/game/store/state";
 import type { Horse, GameState } from "@/game/types";
@@ -116,9 +117,7 @@ describe("PersonRaceHistoryTab", () => {
       ]),
     ];
 
-    renderWithStore(<PersonRaceHistoryTab personId="j-1" roles={["jockey"]} />, {
-      horses,
-    } as Partial<GameState>);
+    renderWithStore(<PersonRaceHistoryTab personId="j-1" roles={["jockey"]} />, ({ horses: h2r(horses) } as unknown as Partial<GameState>));
 
     const rows = screen.getAllByTestId("race-row");
     expect(rows).toHaveLength(6);
@@ -142,7 +141,7 @@ describe("PersonRaceHistoryTab", () => {
 
     renderWithStore(
       <PersonRaceHistoryTab personId="t-1" roles={["jockey", "owner", "trainer"]} />,
-      { horses, hiredStaff } as Partial<GameState>,
+      ({ horses: h2r(horses), hiredStaff } as unknown as Partial<GameState>),
     );
 
     const rows = screen.getAllByTestId("race-row");
@@ -175,9 +174,7 @@ describe("PersonRaceHistoryTab", () => {
       ]),
     ];
 
-    renderWithStore(<PersonRaceHistoryTab personId="j-1" roles={["jockey"]} />, {
-      horses,
-    } as Partial<GameState>);
+    renderWithStore(<PersonRaceHistoryTab personId="j-1" roles={["jockey"]} />, ({ horses: h2r(horses) } as unknown as Partial<GameState>));
 
     const rows = screen.getAllByTestId("race-row");
 
@@ -205,9 +202,7 @@ describe("PersonRaceHistoryTab", () => {
       ]),
     ];
 
-    renderWithStore(<PersonRaceHistoryTab personId="j-1" roles={["jockey"]} />, {
-      horses,
-    } as Partial<GameState>);
+    renderWithStore(<PersonRaceHistoryTab personId="j-1" roles={["jockey"]} />, ({ horses: h2r(horses) } as unknown as Partial<GameState>));
 
     // Stats are inside StatBox components — use getAllByText since position
     // values in race rows can collide with stat values
@@ -237,9 +232,7 @@ describe("PersonRaceHistoryTab", () => {
       ]),
     ];
 
-    renderWithStore(<PersonRaceHistoryTab personId="j-1" roles={["jockey"]} />, {
-      horses,
-    } as Partial<GameState>);
+    renderWithStore(<PersonRaceHistoryTab personId="j-1" roles={["jockey"]} />, ({ horses: h2r(horses) } as unknown as Partial<GameState>));
 
     // All 5 rows initially
     expect(screen.getAllByTestId("race-row")).toHaveLength(5);
@@ -286,9 +279,7 @@ describe("PersonRaceHistoryTab", () => {
       ]),
     ];
 
-    renderWithStore(<PersonRaceHistoryTab personId="j-1" roles={["jockey"]} />, {
-      horses,
-    } as Partial<GameState>);
+    renderWithStore(<PersonRaceHistoryTab personId="j-1" roles={["jockey"]} />, ({ horses: h2r(horses) } as unknown as Partial<GameState>));
 
     const rows = screen.getAllByTestId("race-row");
     // Default: newest first (day 30, 20, 10)
@@ -321,10 +312,7 @@ describe("PersonRaceHistoryTab", () => {
     ];
     const hiredStaff: StaffMember[] = [mkStaff("t-1", "trainer", "s-1")];
 
-    renderWithStore(<PersonRaceHistoryTab personId="t-1" roles={["trainer"]} />, {
-      horses,
-      hiredStaff,
-    } as Partial<GameState>);
+    renderWithStore(<PersonRaceHistoryTab personId="t-1" roles={["trainer"]} />, ({ horses: h2r(horses), hiredStaff } as unknown as Partial<GameState>));
 
     const rows = screen.getAllByTestId("race-row");
     expect(rows).toHaveLength(3);
@@ -348,9 +336,7 @@ describe("PersonRaceHistoryTab", () => {
       ]),
     ];
 
-    renderWithStore(<PersonRaceHistoryTab personId="stable-1" roles={["owner"]} />, {
-      horses,
-    } as Partial<GameState>);
+    renderWithStore(<PersonRaceHistoryTab personId="stable-1" roles={["owner"]} />, ({ horses: h2r(horses) } as unknown as Partial<GameState>));
 
     const rows = screen.getAllByTestId("race-row");
     expect(rows).toHaveLength(3);
@@ -367,9 +353,7 @@ describe("PersonRaceHistoryTab", () => {
       ]),
     ];
 
-    renderWithStore(<PersonRaceHistoryTab personId="j-1" roles={["jockey"]} />, {
-      horses,
-    } as Partial<GameState>);
+    renderWithStore(<PersonRaceHistoryTab personId="j-1" roles={["jockey"]} />, ({ horses: h2r(horses) } as unknown as Partial<GameState>));
 
     expect(screen.getByText(/No race records on file/i)).toBeTruthy();
     expect(screen.queryByTestId("race-row")).toBeNull();
@@ -383,9 +367,7 @@ describe("PersonRaceHistoryTab", () => {
       ]),
     ];
 
-    renderWithStore(<PersonRaceHistoryTab personId="j-1" roles={["jockey"]} />, {
-      horses,
-    } as Partial<GameState>);
+    renderWithStore(<PersonRaceHistoryTab personId="j-1" roles={["jockey"]} />, ({ horses: h2r(horses) } as unknown as Partial<GameState>));
 
     const link = screen.getByRole("link", { name: "Horse 1" });
     expect(link.getAttribute("href")).toContain("/stable/h-1");

@@ -99,7 +99,7 @@ describe("weatherPhase — drama alert end-to-end", () => {
     const ctx = buildContext(dayToday, yesterday);
 
     const out = weatherPhase.execute(ctx);
-    const race = out.state.races.find((r: any) => r.id === "race-derby");
+    const race = Object.values(out.state.races).find((r: any) => r.id === "race-derby");
     expect(race).toBeDefined();
     // Drama jump → wet weather → fast track should degrade off "fast"
     const tiers = ["fast", "good", "soft", "heavy", "yielding"];

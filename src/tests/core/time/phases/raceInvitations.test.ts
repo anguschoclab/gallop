@@ -340,7 +340,7 @@ describe("raceInvitationsPhase", () => {
     };
 
     const result = raceInvitationsPhase.execute(context);
-    const updatedRace = result.state.races.find((r) => r.id === "race-1")!;
+    const updatedRace = result.state.races["race-1"]!;
     expect(updatedRace.invitedHorseIds).toContain("h1");
     expect(result.impacts.length).toBeGreaterThan(0);
     expect(result.impacts[0].type).toBe("inbox_message");
@@ -386,7 +386,7 @@ describe("raceInvitationsPhase", () => {
     };
 
     const result = raceInvitationsPhase.execute(context);
-    const updatedRace = result.state.races.find((r) => r.id === "race-1")!;
+    const updatedRace = result.state.races["race-1"]!;
     expect(updatedRace.invitedHorseIds).toEqual(["h1"]);
     // No new inbox message should be generated
     const inboxImpacts = result.impacts.filter((i) => i.type === "inbox_message");
@@ -432,7 +432,7 @@ describe("raceInvitationsPhase", () => {
     };
 
     const result = raceInvitationsPhase.execute(context);
-    const updatedRace = result.state.races.find((r) => r.id === "race-1")!;
+    const updatedRace = result.state.races["race-1"]!;
     expect(updatedRace.invitedHorseIds).toContain("h-close");
     expect(updatedRace.invitedHorseIds).not.toContain("h-far");
   });
@@ -480,7 +480,7 @@ describe("raceInvitationsPhase", () => {
     };
 
     const result = raceInvitationsPhase.execute(context);
-    const updatedRace = result.state.races.find((r) => r.id === "race-1")!;
+    const updatedRace = result.state.races["race-1"]!;
     expect(updatedRace.invitedHorseIds).toContain("h-wyi");
   });
 });

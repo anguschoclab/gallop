@@ -7,9 +7,15 @@ interface HorsePickerPanelProps {
   horses: Horse[];
   selectedHorseId: string | null;
   onSelect: (horseId: string) => void;
+  enteredHorseIds: Set<string>;
 }
 
-export function HorsePickerPanel({ horses, selectedHorseId, onSelect }: HorsePickerPanelProps) {
+export function HorsePickerPanel({
+  horses,
+  selectedHorseId,
+  onSelect,
+  enteredHorseIds,
+}: HorsePickerPanelProps) {
   const eligible = horses.filter(
     (h) =>
       h.owned &&
@@ -18,17 +24,9 @@ export function HorsePickerPanel({ horses, selectedHorseId, onSelect }: HorsePic
       !h.activeInjury,
   );
 
-  const enteredIds = new Set<string>();
-  for (const h of eligible) {
-    // A horse is "entered" if it appears in any race's entries
-  }
-  // We need races to check entries, but we don't have them here.
-  // The parent will pass enteredHorseIds if needed — for now we derive from horse data only.
-  // The "Entered" badge will be handled by the parent passing a Set<string>.
-
   const sorted = [...eligible].sort((a, b) => {
-    const aEntered = enteredIds.has(a.id) ? 1 : 0;
-    const bEntered = enteredIds.has(b.id) ? 1 : 0;
+    const aEntered = enteredHorseIds.has(a.id) ? 1 : 0;
+    const bEntered = enteredHorseIds.has(b.id) ? 1 : 0;
     if (aEntered !== bEntered) return aEntered - bEntered;
     return calculateOverallRating(b) - calculateOverallRating(a);
   });
@@ -46,6 +44,7 @@ export function HorsePickerPanel({ horses, selectedHorseId, onSelect }: HorsePic
       {sorted.map((horse) => {
         const ovr = calculateOverallRating(horse);
         const isSelected = horse.id === selectedHorseId;
+        const isEntered = enteredHorseIds.has(horse.id);
         const energyColor =
           horse.energy >= 80
             ? "bg-success"
@@ -86,7 +85,7 @@ export function HorsePickerPanel({ horses, selectedHorseId, onSelect }: HorsePic
                   </span>
                 </div>
               </div>
-              {enteredIds.has(horse.id) && (
+              {isEntered && (
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
               )}
             </div>

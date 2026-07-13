@@ -32,7 +32,6 @@ describe("weatherPhase", () => {
       day: 10,
       cash: 10000,
       horses: {},
-      horseMap: new Map(),
       npcStables: [],
       pregnancies: [],
       races: {},
@@ -58,8 +57,8 @@ describe("weatherPhase", () => {
     intents: [],
     impacts: [],
     impactLog: [],
-    horseMap: new Map((state.horses ?? []).map((h) => [h.id, h])),
-    raceMap: new Map((state.races ?? []).map((r) => [r.id, r])),
+    horseMap: new Map(Object.entries(state.horses ?? {}).map(([k, v]) => [k, v])),
+    raceMap: new Map(Object.entries(state.races ?? {}).map(([k, v]) => [k, v])),
     stableMap: new Map((state.npcStables ?? []).map((s) => [s.id, s])),
     jockeyMap: new Map((state.jockeys ?? []).map((j) => [j.id, j])),
   });

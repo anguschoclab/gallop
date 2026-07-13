@@ -7,6 +7,7 @@ import { computePlayerRaceDays, advanceMultipleDaysWithRaceDetection } from "@/c
 import { getCurrentYear } from "@/core/race/schedule";
 import type { GameState, Race, Horse } from "@/game/types";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("computePlayerRaceDays", () => {
   it("should return empty set when no races have player entries", () => {
@@ -179,7 +180,7 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
     const state = makeGameState({
       day: 1,
       cash: 5000,
-      races: [
+      races: r2r([
         {
           id: "race-1",
           name: "Test Race",
@@ -193,7 +194,7 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
           entries: [{ horseId: "horse-1", owned: true, npc: false }],
           resolved: false,
         },
-      ],
+      ]),
     }) as GameState;
 
     const advanceDayFn = vi.fn();
@@ -209,7 +210,7 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
     const state = makeGameState({
       day: 1,
       cash: 5000,
-      races: [
+      races: r2r([
         {
           id: "race-1",
           name: "Test Race",
@@ -223,7 +224,7 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
           entries: [{ horseId: "horse-1", owned: true, npc: false }],
           resolved: false,
         },
-      ],
+      ]),
     }) as GameState;
 
     const advanceDayFn = vi.fn();
@@ -238,7 +239,7 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
     const state = makeGameState({
       day: 1,
       cash: 5000,
-      races: [
+      races: r2r([
         {
           id: "race-1",
           name: "Test Race",
@@ -252,7 +253,7 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
           entries: [{ horseId: "horse-1", owned: true, npc: false }],
           resolved: true,
         },
-      ],
+      ]),
     }) as GameState;
 
     const advanceDayFn = vi.fn();
@@ -267,7 +268,7 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
     const state = makeGameState({
       day: 1,
       cash: 5000,
-      races: [
+      races: r2r([
         {
           id: "race-1",
           name: "Test Race",
@@ -281,7 +282,7 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
           entries: [{ horseId: "horse-1", owned: false, npc: true }],
           resolved: false,
         },
-      ],
+      ]),
     }) as GameState;
 
     const advanceDayFn = vi.fn();
@@ -321,7 +322,7 @@ describe("Year Advance Integration", () => {
     const state = makeGameState({
       day: 360, // Near end of year 1
       cash: 5000,
-      races: [
+      races: r2r([
         {
           id: "race-1",
           name: "Test Race",
@@ -335,7 +336,7 @@ describe("Year Advance Integration", () => {
           entries: [{ horseId: "horse-1", owned: true, npc: false }],
           resolved: false,
         },
-      ],
+      ]),
     }) as GameState;
 
     const advanceDayFn = vi.fn(() => {
@@ -353,7 +354,7 @@ describe("Year Advance Integration", () => {
     const state = makeGameState({
       day: 360, // Near end of year 1
       cash: 5000,
-      races: [
+      races: r2r([
         {
           id: "race-1",
           name: "Test Race",
@@ -367,7 +368,7 @@ describe("Year Advance Integration", () => {
           entries: [{ horseId: "horse-1", owned: true, npc: false }],
           resolved: false,
         },
-      ],
+      ]),
     }) as GameState;
 
     const advanceDayFn = vi.fn();

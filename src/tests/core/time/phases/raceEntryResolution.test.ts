@@ -29,7 +29,7 @@ describe("raceEntryResolutionPhase", () => {
     const state: GameState = {
       ...createTestState(),
       horses: h2r([horse]),
-      races: [
+      races: r2r([
         {
           id: "race-1",
           name: "Test Race",
@@ -43,7 +43,7 @@ describe("raceEntryResolutionPhase", () => {
           entries: [],
           resolved: false,
         },
-      ],
+      ]),
     };
 
     const intent: RaceEntryIntent = {
@@ -119,7 +119,7 @@ describe("raceEntryResolutionPhase", () => {
           { id: "s1", name: "S1", cash: 10000, horses: h2r(["strong-challenger"]) } as any,
           { id: "s-other", name: "S-other", cash: 10000, horses: h2r(["weak-npc"]) } as any,
         ],
-        races: [
+        races: r2r([
           {
             id: "race-1",
             name: "Test Race",
@@ -132,7 +132,7 @@ describe("raceEntryResolutionPhase", () => {
             entries: [{ horseId: "weak-npc", owned: false, stableId: "s-other", npc: true }],
             resolved: false,
           },
-        ],
+        ]),
         jockeys: [{ id: "j1", name: "J", fame: 50, ridingFee: 100 } as any],
       };
 
@@ -188,7 +188,7 @@ describe("raceEntryResolutionPhase", () => {
           { id: "s1", name: "S1", cash: 10000, horses: h2r(["challenger"]) } as any,
           { id: "s-other", name: "S-other", cash: 10000, horses: h2r(["weak-npc"]) } as any,
         ],
-        races: [
+        races: r2r([
           {
             id: "race-1",
             name: "Test Race",
@@ -201,7 +201,7 @@ describe("raceEntryResolutionPhase", () => {
             entries: [{ horseId: "weak-npc", owned: false, stableId: "s-other", npc: true }],
             resolved: false,
           },
-        ],
+        ]),
         jockeys: [{ id: "j1", name: "J", fame: 50, ridingFee: 100 } as any],
       };
 
@@ -241,7 +241,7 @@ describe("raceEntryResolutionPhase", () => {
         ...(makeGameState() as GameState),
         horses: h2r([playerHorse, challenger]),
         npcStables: [{ id: "s1", name: "S1", cash: 10000, horses: h2r(["strong-challenger"]) } as any],
-        races: [
+        races: r2r([
           {
             id: "race-1",
             name: "Test Race",
@@ -254,7 +254,7 @@ describe("raceEntryResolutionPhase", () => {
             entries: [{ horseId: "player-horse", owned: true, npc: false }],
             resolved: false,
           },
-        ],
+        ]),
         jockeys: [{ id: "j1", name: "J", fame: 50, ridingFee: 100 } as any],
       };
 
@@ -285,7 +285,7 @@ describe("raceEntryResolutionPhase", () => {
         ...(makeGameState() as GameState),
         horses: h2r([npcHorse, playerHorse]),
         npcStables: [{ id: "s-npc", name: "S-NPC", cash: 10000, horses: h2r(["npc-weak"]) } as any],
-        races: [
+        races: r2r([
           {
             id: "race-1",
             name: "Test Race",
@@ -298,7 +298,7 @@ describe("raceEntryResolutionPhase", () => {
             entries: [{ horseId: "npc-weak", owned: false, stableId: "s-npc", npc: true }],
             resolved: false,
           },
-        ],
+        ]),
       };
 
       const intent: RaceEntryIntent = {
@@ -329,7 +329,7 @@ describe("raceEntryResolutionPhase", () => {
         ...(makeGameState() as GameState),
         horses: h2r([npcHorse, playerHorse]),
         npcStables: [],
-        races: [
+        races: r2r([
           {
             id: "race-1",
             name: "Test Race",
@@ -342,7 +342,7 @@ describe("raceEntryResolutionPhase", () => {
             entries: [{ horseId: "npc-horse", owned: false, stableId: "s-npc", npc: true }],
             resolved: false,
           },
-        ],
+        ]),
       };
 
       const intent: RaceEntryIntent = {
@@ -370,7 +370,7 @@ describe("raceEntryResolutionPhase", () => {
       const state: GameState = {
         ...createTestState(),
         horses: h2r([npcHorse]),
-        races: [
+        races: r2r([
           {
             id: "race-1",
             name: "Test Race",
@@ -384,7 +384,7 @@ describe("raceEntryResolutionPhase", () => {
             entries: [],
             resolved: false,
           },
-        ],
+        ]),
         npcStables: [{ id: "s-npc", name: "NPC Stable", horses: h2r([npcHorse]) } as any],
         jockeys: [
           {
@@ -422,7 +422,7 @@ describe("raceEntryResolutionPhase", () => {
       const state: GameState = {
         ...createTestState(),
         horses: h2r([npcHorse]),
-        races: [
+        races: r2r([
           {
             id: "race-1",
             name: "Test Race",
@@ -436,7 +436,7 @@ describe("raceEntryResolutionPhase", () => {
             entries: [],
             resolved: false,
           },
-        ],
+        ]),
         npcStables: [],
         jockeys: [],
       };
@@ -466,7 +466,7 @@ describe("raceEntryResolutionPhase", () => {
       const state: GameState = {
         ...createTestState(),
         horses: h2r([h1, h2]),
-        races: [
+        races: r2r([
           {
             id: "race-1",
             name: "Test Race",
@@ -480,7 +480,7 @@ describe("raceEntryResolutionPhase", () => {
             entries: [],
             resolved: false,
           },
-        ],
+        ]),
         npcStables: [
           { id: "s-a", name: "Stable A", horses: h2r([h1]) } as any,
           { id: "s-b", name: "Stable B", horses: h2r([h2]) } as any,
