@@ -73,7 +73,7 @@ export function createAuctionSlice(
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === saleId);
       if (!sale) return { ok: false, reason: "Sale not found." };
       if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
-      const baseValue = horsePriceWithPedigree(horse!, s.horses);
+      const baseValue = horseMarketValue(horse!, s.horses);
       const finalReserve = Math.round(reservePrice ?? baseValue * DEFAULT_PLAYER_RESERVE_RATIO);
 
       enqueueIntent({
