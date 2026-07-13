@@ -5,7 +5,7 @@ import { Race, Horse } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
 
 // Mock simulateRace to return a G1 win
-vi.mock("@/services/raceSimulationExecutor", () => ({
+vi.mock("@/services/race/raceSimulationExecutor", () => ({
   simulateRace: vi.fn((race) => ({
     result: [{ horseId: "winner-1", position: 1, time: 100.5 }],
     runners: [
@@ -51,6 +51,10 @@ describe("Race Resolution History Collection", () => {
       } as any,
       intents: [],
       impacts: [],
+      horseMap: new Map([[horse.id, horse as Horse]]),
+      raceMap: new Map([[race.id!, race as Race]]),
+      stableMap: new Map(),
+      jockeyMap: new Map(),
     };
 
     const result = raceResolutionPhase.execute(context as PipelineContext);
@@ -94,6 +98,10 @@ describe("Race Resolution History Collection", () => {
       } as any,
       intents: [],
       impacts: [],
+      horseMap: new Map([[horse.id, horse as Horse]]),
+      raceMap: new Map([[race.id!, race as Race]]),
+      stableMap: new Map(),
+      jockeyMap: new Map(),
     };
 
     const result = raceResolutionPhase.execute(context as PipelineContext);
