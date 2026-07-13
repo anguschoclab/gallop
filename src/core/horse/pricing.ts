@@ -1,14 +1,17 @@
 /**
  * pricing.ts - Horse valuation and pricing
  *
- * This file provides functions for calculating horse values, stud fees, and broodmare
- * fees based on stats, age, fame, and tier.
+ * Provides functions for valuing horses through the full lifecycle: pre-career
+ * (yearling projection from pedigree + potential), current market value
+ * (racing form + partial breeding upside), and post-career residual (breeding
+ * value once retired). Breeding value factors gender, stud fee capitalization
+ * for stallions, and blue-hen / production record for mares.
  *
  * Dependencies: @/game/types (Horse, StableTier, GameState, Stable), ./stats (calculateOverallRating), ../breeding/pedigreePricing (pedigreeMultiplier)
- * Related files: stallions.ts (uses for stud fee calculation), market.ts (uses for horse pricing)
+ * Related files: stallions.ts (uses for stud fee calculation), market.ts (uses for horse pricing), auction (ConsignDialog / auctionSlice)
  */
 
-import type { Horse, StableTier, GameState, Stable } from "@/game/types";
+import type { Horse, StableTier, Stable } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
 import {
@@ -21,13 +24,6 @@ import {
 
 /**
  * Canonical base valuation formula shared by horsePrice() and stallions.valueOf().
- *
- * Calculates horse value based on overall rating, age, fame, and stable tier.
- * Avoids circular dependency issues.
- *
- * @param horse - The horse to value
- * @param tier - The stable tier for valuation
- * @returns Base horse value
  */
 export function calculateBaseHorseValue(horse: Horse, tier: StableTier): number {
   const overall = calculateOverallRating(horse);
@@ -40,12 +36,6 @@ export function calculateBaseHorseValue(horse: Horse, tier: StableTier): number 
 
 /**
  * NPC Stable valuation alias.
- *
- * Calculates horse value for NPC stables using the base valuation formula.
- *
- * @param horse - The horse to value
- * @param tier - The NPC stable tier
- * @returns Horse value for NPC stable
  */
 export function calculateNpcHorseValue(horse: Horse, tier: StableTier): number {
   return calculateBaseHorseValue(horse, tier);
@@ -53,12 +43,6 @@ export function calculateNpcHorseValue(horse: Horse, tier: StableTier): number {
 
 /**
  * Get stud fee for a horse based on its value.
- *
- * Returns the stud fee for a stallion or colt age 4+. Returns 0 for other genders or younger horses.
- *
- * @param horse - The horse to calculate stud fee for
- * @param stable - The stable with tier information
- * @returns Stud fee value
  */
 export function getStudFee(horse: Horse, stable: Pick<Stable, "tier">): number {
   if (horse.gender !== "horse" && horse.gender !== "colt") return 0;
@@ -68,12 +52,6 @@ export function getStudFee(horse: Horse, stable: Pick<Stable, "tier">): number {
 
 /**
  * Get broodmare fee for a horse based on its value.
- *
- * Returns the broodmare fee for a mare or filly age 3+. Returns 0 for other genders or younger horses.
- *
- * @param horse - The horse to calculate broodmare fee for
- * @param stable - The stable with tier information
- * @returns Broodmare fee value
  */
 export function getBroodmareFee(horse: Horse, stable: Pick<Stable, "tier">): number {
   if (horse.gender !== "mare" && horse.gender !== "filly") return 0;
@@ -82,13 +60,8 @@ export function getBroodmareFee(horse: Horse, stable: Pick<Stable, "tier">): num
 }
 
 /**
- * Market price for a player-owned horse (no tier context needed).
- *
- * Calculates market price based on overall rating, age, potential, conformation,
- * temperament, and injury proneness. Used in the horse market and consignment reserve pricing.
- *
- * @param h - The horse to price
- * @returns Market price
+ * Market price for a player-owned horse (racing-based, no tier context needed).
+ * Kept backward compatible – reflects racing form and biological quality only.
  */
 export function horsePrice(h: Horse): number {
   const overall = calculateOverallRating(h);
@@ -111,16 +84,172 @@ export function horsePrice(h: Horse): number {
 }
 
 /**
- * Pedigree-aware market price.
- *
- * When a horses[] context is available, applies the same multiplier the auction uses
- * so reserve and mental price track each other.
- *
- * @param h - The horse to price
- * @param allHorses - All horses in the game for pedigree context
- * @returns Pedigree-adjusted market price
+ * Pedigree-aware racing market price.
+ * Backward-compatible: without a pedigree context, returns horsePrice(h).
  */
 export function horsePriceWithPedigree(h: Horse, allHorses: Horse[]): number {
   const base = horsePrice(h);
   return Math.round((base * pedigreeMultiplier(h, { horses: allHorses })) / 50) * 50;
+}
+
+// -----------------------------------------------------------------------------
+// Breeding value & full-career valuation
+// -----------------------------------------------------------------------------
+
+/** Reproductive prime window for stallions (years). */
+const STALLION_PRIME_START = 4;
+const STALLION_PRIME_END = 18;
+/** Reproductive prime window for mares (years). */
+const MARE_PRIME_START = 3;
+const MARE_PRIME_END = 16;
+
+function stallionAgeCurve(age: number): number {
+  if (age < STALLION_PRIME_START) return 0.3 + 0.15 * Math.max(0, age - 1);
+  if (age <= STALLION_PRIME_END) return 1.0;
+  return Math.max(0.15, 1 - (age - STALLION_PRIME_END) * 0.15);
+}
+
+function mareAgeCurve(age: number): number {
+  if (age < MARE_PRIME_START) return 0.4 + 0.2 * Math.max(0, age - 1);
+  if (age <= MARE_PRIME_END) return 1.0;
+  return Math.max(0.1, 1 - (age - MARE_PRIME_END) * 0.2);
+}
+
+/**
+ * Estimate a horse's breeding-market value.
+ *
+ * Geldings return 0. Stallions capitalize their stud fee (fee × book × fill × discounted years)
+ * when at stud; otherwise a projected value is derived from racing accomplishments, pedigree,
+ * and potential. Mares blend production record (blue-hen score, stakes/G1 winners, foals),
+ * fertility, and pedigree.
+ */
+export function estimateBreedingValue(h: Horse, allHorses: Horse[] = []): number {
+  if (h.gender === "gelding" || h.gelded) return 0;
+
+  const overall = calculateOverallRating(h);
+  const potMod = 0.5 + (h.potential ?? 50) / 100;
+  const pedMul = pedigreeMultiplier(h, { horses: allHorses });
+  const winRate = h.careerStarts > 0 ? h.careerWins / h.careerStarts : 0;
+  const fameBoost = 1 + (h.fame ?? 0) / 150;
+
+  const male = h.gender === "colt" || h.gender === "horse";
+  if (male) {
+    let base: number;
+    const stud = h.stud;
+    if (stud?.atStud && stud.standingFee > 0) {
+      // Capitalize expected stud revenue over remaining prime years.
+      const bookSize = stud.bookSize > 0 ? stud.bookSize : 100;
+      const yearsRemaining = Math.max(1, STALLION_PRIME_END - h.age + 2);
+      const fillRate = 0.65;
+      const annual = stud.standingFee * bookSize * fillRate;
+      // Simple present-value factor: capped multi-year multiplier.
+      const pvYears = Math.min(6, yearsRemaining * 0.6);
+      base = annual * pvYears;
+      // Sire production quality lifts perceived value.
+      const stakesRate =
+        stud.lifetimeFoals > 0 ? stud.lifetimeStakesFoals / stud.lifetimeFoals : 0;
+      base *= 1 + stakesRate * 1.2 + (stud.lifetimeG1Foals ?? 0) * 0.05;
+    } else {
+      // Projected stud value for racing / unproven males.
+      base = overall * overall * 6 * potMod * pedMul * fameBoost;
+      base *= 1 + winRate * 0.6;
+    }
+    const val = base * stallionAgeCurve(h.age);
+    return Math.max(0, Math.round(val / 100) * 100);
+  }
+
+  // Filly / mare
+  let base = overall * 220 * potMod * pedMul * fameBoost;
+  const bh = h.blueHenStatus;
+  const blueHen = bh?.blueHenScore ?? 0;
+  const stakesWinners = bh?.stakesWinnersProduced ?? 0;
+  const g1Winners = bh?.group1WinnersProduced ?? 0;
+  const foals = bh?.foalsProduced ?? h.foalsProduced?.length ?? 0;
+  base *= 1 + blueHen / 150 + stakesWinners * 0.15 + g1Winners * 0.35;
+  if (h.isBlueHen || bh?.isBlueHen) base *= 1.5;
+  // Foals produced compound record over expectation
+  if (foals > 0) base *= 1 + Math.min(0.4, foals * 0.03);
+  // Fertility & foaling ease temper the value.
+  const fert = h.fertility ?? 0.9;
+  const ease = h.foalingEase ?? 1.0;
+  base *= 0.6 + fert * 0.35 + Math.max(0, (ease - 0.8) * 0.05);
+  const val = base * mareAgeCurve(h.age);
+  return Math.max(0, Math.round(val / 100) * 100);
+}
+
+/**
+ * Blended market value combining racing form and breeding upside.
+ * Weight shifts with age, gender, and racing viability.
+ */
+export function horseMarketValue(h: Horse, allHorses: Horse[] = []): number {
+  const racing = horsePriceWithPedigree(h, allHorses);
+  const breeding = estimateBreedingValue(h, allHorses);
+
+  if (h.gender === "gelding" || h.gelded) return racing;
+
+  const retired = h.lifecycleStatus === "retired" || h.racingViable === false;
+  if (retired) {
+    // Post-career: value is almost entirely reproductive.
+    return Math.round((racing * 0.15 + breeding * 0.9) / 50) * 50;
+  }
+  if (h.age <= 1) {
+    // Yearling / pre-career: pedigree + upside dominate.
+    return Math.round((racing * 0.5 + breeding * 0.5) / 50) * 50;
+  }
+  if (h.age <= 6) {
+    // Racing prime: racing value leads, breeding is optionality.
+    return Math.round((racing + breeding * 0.35) / 50) * 50;
+  }
+  // Older but still active: breeding takes over.
+  return Math.round((racing * 0.4 + breeding * 0.8) / 50) * 50;
+}
+
+export interface HorseCareerValuation {
+  /** Racing-only market value with pedigree adjustment. */
+  racing: number;
+  /** Estimated breeding-market value at current age. */
+  breeding: number;
+  /** Current blended market value (racing + breeding weighted). */
+  current: number;
+  /** Projected value at yearling age from pedigree + potential (before any racing record). */
+  preCareer: number;
+  /** Projected residual value once retired to stud/broodmare band (peak breeding age). */
+  postCareer: number;
+}
+
+/**
+ * Full-career valuation: pre-career (yearling), current, and post-career (retired residual).
+ * Useful for market screens, auction reserves, and stallion/broodmare planning.
+ */
+export function horseCareerValuation(h: Horse, allHorses: Horse[] = []): HorseCareerValuation {
+  const racing = horsePriceWithPedigree(h, allHorses);
+  const breeding = estimateBreedingValue(h, allHorses);
+  const current = horseMarketValue(h, allHorses);
+
+  // Pre-career: recompute as if the horse were a yearling — potential and pedigree drive it.
+  const overall = calculateOverallRating(h);
+  const potMod = 0.5 + (h.potential ?? 50) / 100;
+  const pedMul = pedigreeMultiplier(h, { horses: allHorses });
+  const yearlingRacing = Math.round((overall * 80 * 1.2 * potMod) / 50) * 50;
+  const yearlingPed = Math.round((yearlingRacing * pedMul) / 50) * 50;
+  // Include a slice of gender-specific breeding upside since sales rings price yearlings on it.
+  const breedingUpside =
+    h.gender === "gelding" || h.gelded
+      ? 0
+      : Math.round(estimateBreedingValueAtAge(h, allHorses, 5) * 0.25);
+  const preCareer = Math.round((yearlingPed + breedingUpside) / 50) * 50;
+
+  // Post-career: value at prime breeding age, essentially pure breeding value.
+  const postCareer =
+    h.gender === "gelding" || h.gelded
+      ? Math.round(racing * 0.1) // salvage / retirement value only
+      : Math.round(estimateBreedingValueAtAge(h, allHorses, h.gender === "mare" || h.gender === "filly" ? 6 : 7) / 100) *
+        100;
+
+  return { racing, breeding, current, preCareer, postCareer };
+}
+
+/** Internal: estimate breeding value assuming a specific age (for pre/post-career projections). */
+function estimateBreedingValueAtAge(h: Horse, allHorses: Horse[], age: number): number {
+  return estimateBreedingValue({ ...h, age }, allHorses);
 }
