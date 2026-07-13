@@ -1,16 +1,18 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { Badge } from "@/components/ui/badge";
 import { HorseStats, overall, NumericValue } from "@/components/horse/HorseBits";
+import { CareerValuationBreakdown } from "@/components/horse/CareerValuationBreakdown";
 import { formatCurrency } from "@/core/common/formatting";
-import { horseMarketValue } from "@/core/horse/pricing";
+import { horseMarketValue, horseCareerValuation } from "@/core/horse/pricing";
 import { useGameWithShallow } from "@/game/store";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/cn";
 import type { Horse, GameState } from "@/game/types";
-import { HardDrive } from "lucide-react";
+import { HardDrive, ChevronDown, ChevronUp } from "lucide-react";
 
 interface BloodstockGridProps {
   market: Horse[];
@@ -21,6 +23,7 @@ interface BloodstockGridProps {
 export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) {
   const navigate = useNavigate();
   const allHorses = useGameWithShallow((s: GameState) => s.horses);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -79,6 +82,29 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
               <div className="bg-black/40 p-3 rounded border border-white/5">
                 <HorseStats horse={h} />
               </div>
+
+              {/* Expandable career valuation */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpandedId(expandedId === h.id ? null : h.id);
+                }}
+                className="flex items-center justify-between w-full text-[10px] font-black uppercase tracking-widest text-cream/40 hover:text-cream/70 transition-colors"
+              >
+                <span>Valuation</span>
+                {expandedId === h.id ? (
+                  <ChevronUp className="h-3 w-3" />
+                ) : (
+                  <ChevronDown className="h-3 w-3" />
+                )}
+              </button>
+              {expandedId === h.id && (
+                <div className="bg-black/40 p-3 rounded border border-white/5">
+                  <CareerValuationBreakdown
+                    valuation={horseCareerValuation(h, allHorses)}
+                  />
+                </div>
+              )}
 
               <Button
                 onClick={(e) => {

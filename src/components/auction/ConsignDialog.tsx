@@ -24,7 +24,8 @@ import { netProceeds } from "@/core/auction/engine";
 import { CONSIGNMENT_COMMISSION, DEFAULT_PLAYER_RESERVE_RATIO } from "@/constants";
 import { KIND_LABELS } from "@/core/auction/data";
 import { formatCurrency } from "@/core/common/formatting";
-import { horseMarketValue } from "@/core/horse/pricing";
+import { horseMarketValue, horseCareerValuation } from "@/core/horse/pricing";
+import { CareerValuationBreakdown } from "@/components/horse/CareerValuationBreakdown";
 import type { Horse, AuctionSale } from "@/game/types";
 
 type Props = {
@@ -39,6 +40,10 @@ export function ConsignDialog({ horse, sale, open, onOpenChange }: Props) {
   const consignHorse = useGame((s) => s.consignHorse);
 
   const baseValue = useMemo(() => horseMarketValue(horse, horses), [horse, horses]);
+  const careerValuation = useMemo(
+    () => horseCareerValuation(horse, horses),
+    [horse, horses],
+  );
   // Slider is a percentage of base value (50–100%), default 70%.
   const [reservePct, setReservePct] = useState(Math.round(DEFAULT_PLAYER_RESERVE_RATIO * 100));
   const reservePrice = Math.round(baseValue * (reservePct / 100));
@@ -77,6 +82,18 @@ export function ConsignDialog({ horse, sale, open, onOpenChange }: Props) {
             </div>
             <p className="text-xs text-muted-foreground">
               Based on stats, age, and pedigree. The market may pay above or below.
+            </p>
+          </div>
+
+          {/* Career valuation breakdown */}
+          <div className="rounded-lg border bg-muted/20 p-3 space-y-2">
+            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Career Valuation
+            </div>
+            <CareerValuationBreakdown valuation={careerValuation} />
+            <p className="text-[10px] text-muted-foreground pt-1">
+              Pre-career = yearling projection from pedigree &amp; potential · Post-career = breeding
+              residual at prime reproductive age
             </p>
           </div>
 
