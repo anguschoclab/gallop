@@ -20,11 +20,12 @@ interface BloodstockGridProps {
 
 export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) {
   const navigate = useNavigate();
+  const allHorses = useGameWithShallow((s: GameState) => s.horses);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {market.map((h: Horse) => {
-        const price = horsePrice(h);
+        const price = horseMarketValue(h, allHorses);
         const ovr = overall(h);
         const canAfford = cash >= price;
 
