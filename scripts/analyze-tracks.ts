@@ -125,4 +125,4 @@ console.log("  tracks-needing-update.json - Tracks to process via OSM");
 console.log("  tracks-with-existing-data.json - Tracks that will be skipped");
 
 console.log("\n=== Next Step ===");
-console.log("Run: npx tsx scripts/ingest-empty-tracks.ts");
+console.log("Run: bunx tsx scripts/ingest-empty-tracks.ts");

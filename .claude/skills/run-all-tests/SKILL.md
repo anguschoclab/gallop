@@ -10,4 +10,4 @@ Run the complete test suite to verify codebase integrity:
 cd "/Users/amauricia/Documents/GitHub/gallop" && bunx vitest run
 ```
 
-This executes all unit tests (471+ tests) to ensure codebase integrity. This is the standard test command used throughout the codebase.
+This executes all unit tests (3100+ tests) to ensure codebase integrity. This is the standard test command used throughout the codebase.

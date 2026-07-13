@@ -14,11 +14,8 @@
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
       "Bash(git worktree *)",
-      "Bash(npx vitest *)",
-      "Bash(npm install *)",
-      "Bash(npm list *)",
-      "Bash(npx tsc *)",
-      "Bash(npm run *)",
+      "Bash(bunx vitest *)",
+      "Bash(bunx tsc *)",
       "mcp__plugin_playwright_playwright__browser_navigate",
       "mcp__plugin_playwright_playwright__browser_take_screenshot",
       "mcp__plugin_playwright_playwright__browser_console_messages",
@@ -27,7 +24,7 @@
       "Bash(jobs -l)",
       "Bash(curl -s \"http://localhost:5173/src/main.tsx\")",
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('scripts',{}\\), indent=2\\)\\)\")",
-      "Bash(npx vite *)",
+      "Bash(bunx vite *)",
       "Bash(curl -sv http://localhost:5173/)",
       "Bash(curl -sv http://localhost:8083/)",
       "Bash(node -e ' *)",
@@ -97,7 +94,6 @@
       "Bash(python3 *)",
       "Bash(open *)",
       "Bash(git *)",
-      "Bash(npm cache *)",
       "Bash(bun add *)",
       "Bash(node *)",
       "Skill(superpowers:brainstorming)",
@@ -131,8 +127,7 @@
       "Bash(xargs grep -l \"RaceBroadcast\\\\|Broadcast\")",
       "Bash(grep -E \"\\\\.\\(ts|tsx\\)$\")",
       "Bash(./node_modules/.bin/tsc --noEmit --skipLibCheck)",
-      "Bash(bun -e ' *)",
-      "Bash(bun test *)"
+      "Bash(bun -e ' *)"
     ]
   },
   "hooks": {

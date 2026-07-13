@@ -73,6 +73,6 @@ try {
   main().catch(console.error);
 } catch (err) {
   console.log("Canvas library not installed. Installing...");
-  console.log("Run: npm install canvas");
+  console.log("Run: bun add canvas");
   console.log("\nOr manually convert the SVGs using an online tool or graphics software.");
 }

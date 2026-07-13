@@ -329,7 +329,7 @@ In `src/core/facilities/index.ts`, add `getAvailableTrainingTypes` to the export
 - [ ] **Step 3: Run the tests to confirm they pass**
 
 ```bash
-bun test src/tests/core/facilities/trainingGating.test.ts
+bunx vitest run src/tests/core/facilities/trainingGating.test.ts
 ```
 
 - [ ] **Commit:**
@@ -516,7 +516,7 @@ it("basic exercise_pool does NOT unlock swimming", () => {
 - [ ] **Step 3: Run all related tests**
 
 ```bash
-bun test src/tests/core/facilities/ src/tests/core/time/phases/trainingResolution.test.ts src/tests/game/store/
+bunx vitest run src/tests/core/facilities/ src/tests/core/time/phases/trainingResolution.test.ts src/tests/game/store/
 ```
 
 - [ ] **Commit:**
@@ -530,10 +530,10 @@ git commit -m "test(training): add treadmill resolution test and swimming-withou
 
 ## Verification (whole-plan)
 
-- [ ] `bun test src/tests/core/facilities/` — all `getAvailableTrainingTypes` and `TRAINING_FACILITY_REQUIREMENTS` tests pass
-- [ ] `bun test src/tests/core/time/phases/trainingResolution.test.ts` — existing tests still pass, new treadmill test passes
-- [ ] `bun test src/tests/game/store/` — facility gate store test passes
-- [ ] `bun typecheck` — no TypeScript errors
+- [ ] `bunx vitest run src/tests/core/facilities/` — all `getAvailableTrainingTypes` and `TRAINING_FACILITY_REQUIREMENTS` tests pass
+- [ ] `bunx vitest run src/tests/core/time/phases/trainingResolution.test.ts` — existing tests still pass, new treadmill test passes
+- [ ] `bunx vitest run src/tests/game/store/` — facility gate store test passes
+- [ ] `bun run typecheck` — no TypeScript errors
 - [ ] Manual — start with a new game (all `basic` facilities). Navigate to `stable/$horseId`. Confirm only Speed/Stamina/Acceleration/Rest are clickable; all advanced workout buttons show the Lock icon and `title` tooltip.
 - [ ] Manual — upgrade barn to `standard` via Facilities screen. Advance day. Return to horse — confirm Gallop button is now unlocked.
 - [ ] Manual — upgrade `exercise_pool` to `standard`. Confirm Swimming unlocks.

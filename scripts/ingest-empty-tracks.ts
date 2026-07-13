@@ -252,7 +252,7 @@ async function run() {
   if (results.notFound.length > 0) {
     fs.writeFileSync("tracks-not-found-in-osm.json", JSON.stringify(results.notFound, null, 2));
     console.log(`\n📄 tracks-not-found-in-osm.json created for Phase 4 (internet research)`);
-    console.log(`Run: npx tsx scripts/research-tracks.ts`);
+    console.log(`Run: bunx tsx scripts/research-tracks.ts`);
   }
 }
 

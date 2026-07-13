@@ -105,7 +105,7 @@ Order improvements by what actually matters, not by what's fun:
 > market position, no fabricated "SECTOR ALPHA-1" chrome. Credit where due.
 >
 > **The brutal truth (measured):** we polished the lobby of a building that's on
-> fire. `npm run typecheck` → **1,433 errors across 180 files**. Multiple tabs
+> fire. `bun run typecheck` → **1,433 errors across 180 files**. Multiple tabs
 > white-screen at runtime (`PiracyImpactMonitor.tsx` references `Globe` but never
 > imports it — same bug class as the `Star` crash). The hub/visualization screens
 > still crash on missing `selectors.ts` exports. None of the actual game-design

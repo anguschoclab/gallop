@@ -5,7 +5,7 @@
  * for standard oval track layouts.
  *
  * Usage:
- *   npx tsx scripts/populateTrackOrientations.ts
+ *   bunx tsx scripts/populateTrackOrientations.ts
  *
  * Rules:
  * - For each course with `homeStraightOrientationDeg`:

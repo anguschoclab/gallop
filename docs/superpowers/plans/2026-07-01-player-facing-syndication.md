@@ -287,7 +287,7 @@ export function checkExpectation(
 - [ ] **Run tests:**
 
 ```bash
-bun test src/tests/core/syndicate/expectationChecker.test.ts
+bunx vitest run src/tests/core/syndicate/expectationChecker.test.ts
 ```
 
 - [ ] **Commit:**
@@ -697,7 +697,7 @@ it("solicitInvestors blocks when player ownership would fall below 51%", () => {
 - [ ] **Step 2: Run full test suite**
 
 ```bash
-bun test src/tests/core/syndicate/ src/tests/game/store/syndicateActions.test.ts
+bunx vitest run src/tests/core/syndicate/ src/tests/game/store/syndicateActions.test.ts
 ```
 
 - [ ] **Commit:**
@@ -711,9 +711,9 @@ git commit -m "test(syndicate): add solicitInvestors guard tests and expectation
 
 ## Verification (whole-plan)
 
-- [ ] `bun test src/tests/core/syndicate/` — all pure function tests pass
-- [ ] `bun test src/tests/game/store/syndicateActions.test.ts` — all store action tests pass
-- [ ] `bun typecheck` — no TypeScript errors
+- [ ] `bunx vitest run src/tests/core/syndicate/` — all pure function tests pass
+- [ ] `bunx vitest run src/tests/game/store/syndicateActions.test.ts` — all store action tests pass
+- [ ] `bun run typecheck` — no TypeScript errors
 - [ ] Manual — navigate to existing syndicate. Confirm "Manage" link appears and navigates to `/syndicate/$syndicateId`.
 - [ ] Manual — open SolicitationWizard. Complete all 3 steps and confirm. Verify investor appears in the Investors tab.
 - [ ] Manual — confirm player shares % updated correctly and is still ≥ 51%.

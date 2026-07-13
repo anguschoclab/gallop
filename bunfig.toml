@@ -1,5 +1,2 @@
 [install]
 saveTextLockfile = false
-
-[test]
-preload = ["./src/test-utils/setup-happy-dom.ts"]

@@ -681,8 +681,8 @@ git commit -m "feat(outpost): add outpost CSS and initialize playerOutposts in g
 
 ## Verification (whole-plan)
 
-- [ ] `bun typecheck` — no TypeScript errors (especially no `(state as any)` in InfrastructureHandler)
-- [ ] `bun test src/tests/game/store/outpostActions.test.ts` — all store action tests pass
+- [ ] `bun run typecheck` — no TypeScript errors (especially no `(state as any)` in InfrastructureHandler)
+- [ ] `bunx vitest run src/tests/game/store/outpostActions.test.ts` — all store action tests pass
 - [ ] Manual — navigate to `/outposts/` in the app. Confirm the page loads with empty state.
 - [ ] Manual — confirm "Establish New Outpost" button opens the dialog.
 - [ ] Manual — attempt to establish with < 300 reputation. Confirm warning message appears and button is disabled.

@@ -7,7 +7,7 @@ disable-model-invocation: true
 Analyze bundle size and composition to identify optimization opportunities:
 
 ```bash
-cd "/Users/amauricia/Documents/GitHub/gallop" && bun run analyze
+cd "/Users/amauricia/Documents/GitHub/gallop" && bun run build
 ```
 
-This visualizes bundle composition to identify large dependencies and optimization opportunities for performance.
+This builds the application for production, which surfaces bundle composition and large dependencies through Vite's build output.

@@ -177,7 +177,7 @@ export function calculateNominationFee(
 - [ ] **Run tests:**
 
 ```bash
-bun test src/tests/core/racing/nominationFees.test.ts
+bunx vitest run src/tests/core/racing/nominationFees.test.ts
 ```
 
 - [ ] **Commit:**
@@ -635,7 +635,7 @@ it("withdrawNomination sets status to scratched without refunding fee", () => { 
 - [ ] **Run all nomination tests**
 
 ```bash
-bun test src/tests/core/racing/nominationFees.test.ts src/tests/game/store/nominationActions.test.ts
+bunx vitest run src/tests/core/racing/nominationFees.test.ts src/tests/game/store/nominationActions.test.ts
 ```
 
 - [ ] **Commit:**
@@ -649,9 +649,9 @@ git commit -m "test(nomination): add integration tests for nominateHorse actions
 
 ## Verification (whole-plan)
 
-- [ ] `bun test src/tests/core/racing/nominationFees.test.ts` — all pure function tests pass
-- [ ] `bun test src/tests/game/store/nominationActions.test.ts` — all store tests pass
-- [ ] `bun typecheck` — no TypeScript errors
+- [ ] `bunx vitest run src/tests/core/racing/nominationFees.test.ts` — all pure function tests pass
+- [ ] `bunx vitest run src/tests/game/store/nominationActions.test.ts` — all store tests pass
+- [ ] `bun run typecheck` — no TypeScript errors
 - [ ] Manual — navigate to Racing → Nominations tab. Confirm upcoming G1/G2/G3 races are listed with correct fee amounts.
 - [ ] Manual — nominate a horse for a G1 90+ days away. Confirm $2,000 deducted from cash.
 - [ ] Manual — attempt to nominate for G1 race that's 20 days away. Confirm "Late nominations for G1 races are not accepted" message.

@@ -20,13 +20,13 @@ Run from the repo root, in this order. Each catches a different class of problem
 
 ```bash
 bunx tsc --noEmit          # types — must be clean
-bun run test               # full vitest suite (currently ~1600 tests). Note: stderr from saveManager error-path tests is expected, not a failure
+bun run test               # full vitest suite (currently ~3200 tests). Note: stderr from saveManager error-path tests is expected, not a failure
 bun run lint               # eslint — 0 errors required; react-hooks/react-refresh WARNINGS are pre-existing and don't block
 ```
 
 Notes that save time:
 
-- The suite is large but fast (~25s). Run the whole thing for a regression check; run one file with `bunx vitest run <path>` while iterating.
+- The suite is large but fast (~45s). Run the whole thing for a regression check; run one file with `bunx vitest run <path>` while iterating.
 - `bun run build` additionally validates the auto-generated `routeTree.gen.ts` — run it after adding/removing/redirecting routes, and confirm `routeTree.gen.ts` is committed (not left dirty).
 - A lint run that's red on `prettier/prettier` is usually just formatting: `bun run format` fixes it. `jsdoc/require-param` / `jsdoc/require-returns` errors mean an exported (or JSDoc-commented) function in a `.ts` file is missing `@param`/`@returns` — add them.
 

@@ -330,7 +330,7 @@ import { foalDevelopmentPhase } from "./phases/foalDevelopmentPhase";
 - [ ] **Run tests:**
 
 ```bash
-bun test src/tests/core/time/phases/foalDevelopment.test.ts
+bunx vitest run src/tests/core/time/phases/foalDevelopment.test.ts
 ```
 
 - [ ] **Commit:**
@@ -694,7 +694,7 @@ it("resolveFoalMilestone is idempotent — second call for same milestone is a n
 - [ ] **Step 2: Run full test suite for foal-related modules**
 
 ```bash
-bun test src/tests/core/time/phases/foalDevelopment.test.ts src/tests/game/store/foalMilestone.test.ts
+bunx vitest run src/tests/core/time/phases/foalDevelopment.test.ts src/tests/game/store/foalMilestone.test.ts
 ```
 
 - [ ] **Commit:**
@@ -708,9 +708,9 @@ git commit -m "test(foal): add store action tests for resolveFoalMilestone idemp
 
 ## Verification (whole-plan)
 
-- [ ] `bun test src/tests/core/time/phases/foalDevelopment.test.ts` — all phase tests pass
-- [ ] `bun test src/tests/game/store/foalMilestone.test.ts` — all store tests pass
-- [ ] `bun typecheck` — no TypeScript errors
+- [ ] `bunx vitest run src/tests/core/time/phases/foalDevelopment.test.ts` — all phase tests pass
+- [ ] `bunx vitest run src/tests/game/store/foalMilestone.test.ts` — all store tests pass
+- [ ] `bun run typecheck` — no TypeScript errors
 - [ ] Manual — breed a foal in game. Advance 18 days. Confirm inbox message appears: "[Horse Name] is ready for Breaking In."
 - [ ] Manual — click the inbox link. Confirm the `/foal-development/$horseId` page loads with 3 choice cards.
 - [ ] Manual — select a choice. Confirm the horse's stats update in the stable page and the `FoalDevelopmentPanel` shows the resolved choice.

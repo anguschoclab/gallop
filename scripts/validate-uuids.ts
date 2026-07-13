@@ -8,7 +8,7 @@
  * - Duplicates across all files
  * - Suspicious patterns (all-zero segments, etc.)
  *
- * Run with: npx tsx scripts/validate-uuids.ts
+ * Run with: bunx tsx scripts/validate-uuids.ts
  */
 
 import fs from "fs";

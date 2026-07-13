@@ -108,8 +108,8 @@ The spec frames `resolveDnaTraits` (16 fields) as the expensive part, but `creat
 
 ### Phase 6: Testing & verification
 
-21. **`npx tsc --noEmit`** — TypeScript clean.
-22. **Run existing test suite** — `npx vitest run` to catch regressions.
+21. **`bunx tsc --noEmit`** — TypeScript clean.
+22. **Run existing test suite** — `bunx vitest run` to catch regressions.
 23. **Manual verification** per spec:
     - Advance through breeding season (no freeze)
     - Open newborn foal detail page (traits appear)

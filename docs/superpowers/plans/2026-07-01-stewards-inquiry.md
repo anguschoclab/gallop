@@ -182,7 +182,7 @@ export function calculateInquiryProbability(context: InquiryContext, _horseId?: 
 - [ ] **Run tests:**
 
 ```bash
-bun test src/tests/core/racing/inquiryProbability.test.ts
+bunx vitest run src/tests/core/racing/inquiryProbability.test.ts
 ```
 
 - [ ] **Commit:**
@@ -618,7 +618,7 @@ it("setPendingInquiry sets pendingInquiry in state", () => { ... });
 - [ ] **Run all stewards tests**
 
 ```bash
-bun test src/tests/core/racing/inquiryProbability.test.ts src/tests/game/store/stewardsActions.test.ts
+bunx vitest run src/tests/core/racing/inquiryProbability.test.ts src/tests/game/store/stewardsActions.test.ts
 ```
 
 - [ ] **Commit:**
@@ -632,9 +632,9 @@ git commit -m "test(stewards): add dismissInquiry idempotency and disqualificati
 
 ## Verification (whole-plan)
 
-- [ ] `bun test src/tests/core/racing/inquiryProbability.test.ts` — all probability tests pass
-- [ ] `bun test src/tests/game/store/stewardsActions.test.ts` — all store action tests pass
-- [ ] `bun typecheck` — no TypeScript errors
+- [ ] `bunx vitest run src/tests/core/racing/inquiryProbability.test.ts` — all probability tests pass
+- [ ] `bunx vitest run src/tests/game/store/stewardsActions.test.ts` — all store action tests pass
+- [ ] `bun run typecheck` — no TypeScript errors
 - [ ] Manual — watch a live race. After completion, verify the 2500ms "Reviewing" overlay appears ~5% of the time (or more for G1/photo finish).
 - [ ] Manual — wait for "RESULT STANDS" announcement and auto-dismiss. Confirm race result is unchanged.
 - [ ] Manual — trigger a disqualification. Confirm reputation drops by 10 and a log message appears.
