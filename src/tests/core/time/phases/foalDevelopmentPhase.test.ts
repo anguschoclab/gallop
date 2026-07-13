@@ -21,20 +21,25 @@ import type { GameState } from "@/game/types";
 import type { InboxImpact } from "@/core/resolver/impacts/index";
 
 function makeContext(state: Partial<GameState>, newDay: number): PipelineContext {
+  const fullState: GameState = {
+    day: newDay,
+    horses: [],
+    npcStables: [],
+    ...(state as any),
+  } as GameState;
   return {
     previousDay: newDay - 1,
     newDay,
-    state: {
-      day: newDay,
-      horses: [],
-      npcStables: [],
-      ...(state as any),
-    } as GameState,
+    state: fullState,
     logs: [],
     dailyRng: createRng("test"),
     intents: [],
     impacts: [],
     impactLog: [],
+    horseMap: new Map((fullState.horses ?? []).map((h) => [h.id, h])),
+    raceMap: new Map((fullState.races ?? []).map((r) => [r.id, r])),
+    stableMap: new Map((fullState.npcStables ?? []).map((s) => [s.id, s])),
+    jockeyMap: new Map((fullState.jockeys ?? []).map((j) => [j.id, j])),
   };
 }
 

@@ -127,6 +127,10 @@ export function makePipelineContext(
   overrides: Partial<PipelineContext> = {},
 ): Partial<PipelineContext> {
   const state = makeGameState(overrides.state as any);
+  const horses = Array.isArray(state.horses) ? state.horses : [];
+  const races = Array.isArray(state.races) ? state.races : [];
+  const stables = Array.isArray(state.npcStables) ? state.npcStables : [];
+  const jockeys = Array.isArray(state.jockeys) ? state.jockeys : [];
   return {
     previousDay: 0,
     newDay: 1,
@@ -136,6 +140,10 @@ export function makePipelineContext(
     intents: [],
     impacts: [],
     impactLog: [],
+    horseMap: new Map(horses.map((h) => [h.id, h])),
+    raceMap: new Map(races.map((r) => [r.id, r])),
+    stableMap: new Map(stables.map((s) => [s.id, s])),
+    jockeyMap: new Map(jockeys.map((j) => [j.id, j])),
     ...overrides,
   };
 }

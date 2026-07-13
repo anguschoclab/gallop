@@ -62,6 +62,10 @@ describe("Weather Phase - Storm Jump Logic", () => {
       horses: [],
     } as any,
     impacts: [],
+    horseMap: new Map(),
+    raceMap: new Map(),
+    stableMap: new Map(),
+    jockeyMap: new Map(),
     ...overrides,
   });
 
