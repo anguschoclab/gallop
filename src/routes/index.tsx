@@ -130,6 +130,7 @@ function Dashboard() {
 
       {/* Bottom Row */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4">
+        <SeasonStandingsWidget />
         <NewsFeedWidget />
         <LegacyAwardsWidget />
       </div>
