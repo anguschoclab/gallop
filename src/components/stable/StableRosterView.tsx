@@ -1,16 +1,21 @@
+import { useState, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { TrophyCase } from "@/components/awards";
 import { HorseCard } from "@/components/horse/HorseCard";
 import { HorseBit, overall } from "@/components/horse/HorseBits";
+import { HorseCompare } from "@/components/horse/HorseCompare";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { RosterFilterBar } from "./RosterFilterBar";
 import { cn } from "@/lib/cn";
 import type { Horse } from "@/game/types";
 import type { RegionalAward } from "@/core/awards/types";
-import { ChevronRight, Zap, Clock, Search } from "lucide-react";
+import { ChevronRight, Zap, Clock, Search, GitCompare, X } from "lucide-react";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
+
+const MAX_COMPARE = 3;
 
 interface StableRosterViewProps {
   horses: Horse[];
@@ -34,6 +39,22 @@ export function StableRosterView({
   playerAwards,
   navigate,
 }: StableRosterViewProps) {
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [compareOpen, setCompareOpen] = useState(false);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      if (prev.includes(id)) return prev.filter((x) => x !== id);
+      if (prev.length >= MAX_COMPARE) return prev;
+      return [...prev, id];
+    });
+  };
+
+  const selectedHorses = useMemo(
+    () => selectedIds.map((id) => horses.find((h) => h.id === id)).filter(Boolean) as Horse[],
+    [selectedIds, horses],
+  );
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       {playerAwards.length > 0 && <TrophyCase awards={playerAwards} variant="compact" />}
@@ -103,7 +124,8 @@ export function StableRosterView({
           <table className="w-full text-left border-collapse">
             <thead className="bg-black/40 border-b border-white/10">
               <tr className="font-mono text-[10px] uppercase tracking-[0.2em] text-gold-muted/60">
-                <th className="px-6 py-3 font-black w-1">#</th>
+                <th className="px-3 py-3 font-black w-1"></th>
+                <th className="px-3 py-3 font-black w-1">#</th>
                 <th className="px-4 py-3 font-black">Horse</th>
                 <th className="px-4 py-3 font-black text-center">Age</th>
                 <th className="px-4 py-3 font-black text-center">Rating</th>
@@ -115,9 +137,25 @@ export function StableRosterView({
             <tbody className="divide-y divide-white/5">
               {horses.map((h, i) => {
                 const ovrVal = overall(h);
+                const isSelected = selectedIds.includes(h.id);
+                const disableCheck = !isSelected && selectedIds.length >= MAX_COMPARE;
                 return (
-                  <tr key={h.id} className="group hover:bg-white/[0.02] transition-colors relative">
-                    <td className="px-6 py-4 font-mono text-[10px] text-cream/20 tabular-nums">
+                  <tr
+                    key={h.id}
+                    className={cn(
+                      "group hover:bg-white/[0.02] transition-colors relative",
+                      isSelected && "bg-gold/5",
+                    )}
+                  >
+                    <td className="px-3 py-4">
+                      <Checkbox
+                        aria-label={`Select ${h.name} to compare`}
+                        checked={isSelected}
+                        disabled={disableCheck}
+                        onCheckedChange={() => toggleSelect(h.id)}
+                      />
+                    </td>
+                    <td className="px-3 py-4 font-mono text-[10px] text-cream/20 tabular-nums">
                       {String(i + 1).padStart(2, "0")}
                     </td>
                     <td className="px-4 py-4">
@@ -248,16 +286,63 @@ export function StableRosterView({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {horses.map((h) => (
-            <HorseCard
-              key={h.id}
-              horse={h}
-              variant="full"
-              onClick={() => navigate({ to: "/stable/$horseId", params: { horseId: h.id } })}
-            />
-          ))}
+          {horses.map((h) => {
+            const isSelected = selectedIds.includes(h.id);
+            const disableCheck = !isSelected && selectedIds.length >= MAX_COMPARE;
+            return (
+              <div key={h.id} className="relative">
+                <div className="absolute top-2 left-2 z-10 bg-slate-950/80 backdrop-blur rounded p-1">
+                  <Checkbox
+                    aria-label={`Select ${h.name} to compare`}
+                    checked={isSelected}
+                    disabled={disableCheck}
+                    onCheckedChange={() => toggleSelect(h.id)}
+                  />
+                </div>
+                <HorseCard
+                  horse={h}
+                  variant="full"
+                  onClick={() => navigate({ to: "/stable/$horseId", params: { horseId: h.id } })}
+                />
+              </div>
+            );
+          })}
         </div>
       )}
+
+      {/* Floating compare action bar */}
+      {selectedIds.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 bg-slate-900 border border-gold/30 shadow-2xl rounded-lg px-4 py-3 animate-in slide-in-from-bottom-4 duration-200">
+          <span className="font-mono text-[10px] uppercase tracking-widest text-cream/60">
+            {selectedIds.length}/{MAX_COMPARE} selected
+          </span>
+          <Button
+            size="sm"
+            className="gap-2 bg-gold text-slate-950 hover:bg-gold/90 font-bold uppercase text-[10px] tracking-widest"
+            disabled={selectedIds.length < 2}
+            onClick={() => setCompareOpen(true)}
+          >
+            <GitCompare className="h-3.5 w-3.5" />
+            Compare
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 w-8 p-0 text-cream/60 hover:text-cream"
+            onClick={() => setSelectedIds([])}
+            aria-label="Clear selection"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+
+      <HorseCompare
+        horses={selectedHorses}
+        allHorses={horses}
+        open={compareOpen}
+        onOpenChange={setCompareOpen}
+      />
     </div>
   );
 }
