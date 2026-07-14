@@ -53,7 +53,7 @@ const mockRace: Race = {
   name: "Test Stakes",
   day: 1,
   distance: 1600,
-  raceClass: "stakes",
+  raceClass: "Stakes",
   entryFee: 500,
   purse: 10000,
   fieldSize: 8,

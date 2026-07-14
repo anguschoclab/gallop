@@ -12,15 +12,18 @@
 # Error details
 
 ```
+Test timeout of 30000ms exceeded.
+```
+
+```
 Error: expect(locator).toBeVisible() failed
 
 Locator: getByText('Race Schedule')
 Expected: visible
-Timeout: 5000ms
 Error: element(s) not found
 
 Call log:
-  - Expect "toBeVisible" with timeout 5000ms
+  - Expect "toBeVisible" with timeout 15000ms
   - waiting for getByText('Race Schedule')
 
 ```
@@ -89,7 +92,7 @@ Call log:
   138 |   }) => {
   139 |     await page.goto("/racing?tab=races");
   140 | 
-  141 |     await expect(page.getByText("Race Schedule")).toBeVisible();
+  141 |     await expect(page.getByText("Race Schedule")).toBeVisible({ timeout: 15_000 });
   142 | 
   143 |     const forecast = page.locator('[aria-label="7-day forecast"]');
   144 |     await expect(forecast).toBeVisible();
@@ -101,7 +104,7 @@ Call log:
   150 |   test("Weather Alert in Inbox after storm", async ({ page }) => {
   151 |     await page.goto("/inbox");
   152 | 
-  153 |     await expect(page.getByText("Message Center")).toBeVisible();
+  153 |     await expect(page.getByText("Message Center")).toBeVisible({ timeout: 15_000 });
   154 | 
   155 |     await expect(page.getByText("Weather Alert")).toBeVisible();
   156 |     await expect(
@@ -115,7 +118,7 @@ Call log:
   164 |   test("Weather forecast icons render correct patterns", async ({ page }) => {
   165 |     await page.goto("/racing?tab=races");
   166 | 
-  167 |     await expect(page.getByText("Race Schedule")).toBeVisible();
+  167 |     await expect(page.getByText("Race Schedule")).toBeVisible({ timeout: 15_000 });
   168 | 
   169 |     const forecastContainer = page.locator('[aria-label="7-day forecast"]');
   170 |     await expect(forecastContainer).toBeVisible();
@@ -133,7 +136,7 @@ Call log:
   182 |   test("Track condition badge displays correct text", async ({ page }) => {
   183 |     await page.goto("/racing?tab=races");
   184 | 
-> 185 |     await expect(page.getByText("Race Schedule")).toBeVisible();
+> 185 |     await expect(page.getByText("Race Schedule")).toBeVisible({ timeout: 15_000 });
       |                                                   ^ Error: expect(locator).toBeVisible() failed
   186 | 
   187 |     const badge = page.locator(".badge", { hasText: "heavy" });
@@ -146,7 +149,7 @@ Call log:
   194 |   test("Weather pattern tooltips are present", async ({ page }) => {
   195 |     await page.goto("/racing?tab=races");
   196 | 
-  197 |     await expect(page.getByText("Race Schedule")).toBeVisible();
+  197 |     await expect(page.getByText("Race Schedule")).toBeVisible({ timeout: 15_000 });
   198 | 
   199 |     const forecastContainer = page.locator('[aria-label="7-day forecast"]');
   200 |     await expect(forecastContainer).toBeVisible();
@@ -168,12 +171,12 @@ Call log:
   216 |   test("Storm alert persists across page reload", async ({ page }) => {
   217 |     await page.goto("/inbox");
   218 | 
-  219 |     await expect(page.getByText("Message Center")).toBeVisible();
+  219 |     await expect(page.getByText("Message Center")).toBeVisible({ timeout: 15_000 });
   220 |     await expect(page.getByText("Weather Alert")).toBeVisible();
   221 | 
   222 |     await page.reload();
   223 | 
-  224 |     await expect(page.getByText("Message Center")).toBeVisible();
+  224 |     await expect(page.getByText("Message Center")).toBeVisible({ timeout: 15_000 });
   225 |     await expect(page.getByText("Weather Alert")).toBeVisible();
   226 |     await expect(
   227 |       page.getByText("Storm forecast at Test Track"),

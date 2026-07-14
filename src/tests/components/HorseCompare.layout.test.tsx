@@ -169,14 +169,12 @@ describe("HorseCompare responsive layout", () => {
     const h1 = mkHorse({ id: "h1" });
     const h2 = mkHorse({ id: "h2" });
     render(<HorseCompare horses={[h1, h2]} {...baseProps} />);
-    const h2h = screen.getByTestId("head-to-head-section");
-    // The sim results grid only renders after clicking "Run Simulation"
-    const runButton = h2h.querySelector("button");
+    const runButton = screen.getByText("Run Simulation (50×)");
     expect(runButton).toBeTruthy();
-    fireEvent.click(runButton!);
-    // After sim runs (async via setTimeout), the sim results grid should appear
+    fireEvent.click(runButton);
     await waitFor(() => {
-      const grids = h2h.querySelectorAll(".grid");
+      const freshH2h = screen.getByTestId("head-to-head-section");
+      const grids = freshH2h.querySelectorAll(".grid");
       const simGrid = Array.from(grids).find((g) => g.textContent?.includes("Sim Win %"));
       expect(simGrid).toBeTruthy();
       expect(simGrid!.className).toContain("grid-cols-1");

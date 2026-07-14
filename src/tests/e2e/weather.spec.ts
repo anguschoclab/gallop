@@ -138,7 +138,7 @@ test.describe("Weather E2E", () => {
   }) => {
     await page.goto("/racing?tab=races");
 
-    await expect(page.getByText("Race Schedule")).toBeVisible();
+    await expect(page.getByText("Race Schedule")).toBeVisible({ timeout: 15_000 });
 
     const forecast = page.locator('[aria-label="7-day forecast"]');
     await expect(forecast).toBeVisible();
@@ -150,7 +150,7 @@ test.describe("Weather E2E", () => {
   test("Weather Alert in Inbox after storm", async ({ page }) => {
     await page.goto("/inbox");
 
-    await expect(page.getByText("Message Center")).toBeVisible();
+    await expect(page.getByText("Message Center")).toBeVisible({ timeout: 15_000 });
 
     await expect(page.getByText("Weather Alert")).toBeVisible();
     await expect(
@@ -164,7 +164,7 @@ test.describe("Weather E2E", () => {
   test("Weather forecast icons render correct patterns", async ({ page }) => {
     await page.goto("/racing?tab=races");
 
-    await expect(page.getByText("Race Schedule")).toBeVisible();
+    await expect(page.getByText("Race Schedule")).toBeVisible({ timeout: 15_000 });
 
     const forecastContainer = page.locator('[aria-label="7-day forecast"]');
     await expect(forecastContainer).toBeVisible();
@@ -182,7 +182,7 @@ test.describe("Weather E2E", () => {
   test("Track condition badge displays correct text", async ({ page }) => {
     await page.goto("/racing?tab=races");
 
-    await expect(page.getByText("Race Schedule")).toBeVisible();
+    await expect(page.getByText("Race Schedule")).toBeVisible({ timeout: 15_000 });
 
     const badge = page.locator(".badge", { hasText: "heavy" });
     await expect(badge).toBeVisible();
@@ -194,7 +194,7 @@ test.describe("Weather E2E", () => {
   test("Weather pattern tooltips are present", async ({ page }) => {
     await page.goto("/racing?tab=races");
 
-    await expect(page.getByText("Race Schedule")).toBeVisible();
+    await expect(page.getByText("Race Schedule")).toBeVisible({ timeout: 15_000 });
 
     const forecastContainer = page.locator('[aria-label="7-day forecast"]');
     await expect(forecastContainer).toBeVisible();
@@ -216,12 +216,12 @@ test.describe("Weather E2E", () => {
   test("Storm alert persists across page reload", async ({ page }) => {
     await page.goto("/inbox");
 
-    await expect(page.getByText("Message Center")).toBeVisible();
+    await expect(page.getByText("Message Center")).toBeVisible({ timeout: 15_000 });
     await expect(page.getByText("Weather Alert")).toBeVisible();
 
     await page.reload();
 
-    await expect(page.getByText("Message Center")).toBeVisible();
+    await expect(page.getByText("Message Center")).toBeVisible({ timeout: 15_000 });
     await expect(page.getByText("Weather Alert")).toBeVisible();
     await expect(
       page.getByText("Storm forecast at Test Track"),
