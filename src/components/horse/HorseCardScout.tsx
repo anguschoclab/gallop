@@ -34,44 +34,42 @@ export function HorseCardScout({ horse, hookData, className = "" }: HorseCardSco
         <Eye className="h-32 w-32 -rotate-12" />
       </div>
       <CardHeader className="pb-3 border-b border-white/5 bg-black/20">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
-            <HorsePortraitBadge
-              id={horse.id}
-              coatColor={horse.coatColor}
-              markings={horse.markings}
-              gender={horse.gender}
-              appearance={horse.appearance}
-              size="md"
-            />
-            <SilkDot color={getCoatColor(horse.coatColor)} size="md" />
-            <div className="space-y-0.5 min-w-0 flex-1">
-              <div className="flex items-center gap-2 min-w-0">
-                <span className={cn(genderColor, "text-sm shrink-0")}>{genderSymbol(horse.gender)}</span>
-                <span className="font-bold text-lg text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-blue-400 transition-colors truncate min-w-0 flex-1">
-                  {horse.name}
-                </span>
-              </div>
-              <div className="text-[9px] text-cream/40 font-mono uppercase tracking-widest flex items-center gap-2">
-                <span>Age {Math.floor(horse.age)}</span>
-                <span className="w-1 h-1 bg-white/20 rounded-full" />
-                <span className="text-fame flex items-center gap-1">
-                  <Trophy className="h-2.5 w-2.5" /> {horse.fame}
-                </span>
-              </div>
+        <div className="flex items-start gap-3">
+          <HorsePortraitBadge
+            id={horse.id}
+            coatColor={horse.coatColor}
+            markings={horse.markings}
+            gender={horse.gender}
+            appearance={horse.appearance}
+            size="md"
+          />
+          <SilkDot color={getCoatColor(horse.coatColor)} size="md" />
+          <div className="space-y-1 min-w-0 flex-1">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className={cn(genderColor, "text-sm shrink-0")}>{genderSymbol(horse.gender)}</span>
+              <span className="font-bold text-lg text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-blue-400 transition-colors truncate min-w-0 flex-1">
+                {horse.name}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-[9px] text-cream/40 font-mono uppercase tracking-widest">
+              <span>Age {Math.floor(horse.age)}</span>
+              <span className="w-1 h-1 bg-white/20 rounded-full" />
+              <span className="text-fame flex items-center gap-1">
+                <Trophy className="h-2.5 w-2.5" /> {horse.fame}
+              </span>
+              {scoutStatus && (
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    "rounded-none text-[8px] font-black tracking-widest uppercase h-5 shrink-0 ml-auto",
+                    scoutStatus.color,
+                  )}
+                >
+                  {scoutStatus.icon} {scoutStatus.label}
+                </Badge>
+              )}
             </div>
           </div>
-          {scoutStatus && (
-            <Badge
-              variant="outline"
-              className={cn(
-                "rounded-none text-[8px] font-black tracking-widest uppercase h-5 shrink-0",
-                scoutStatus.color,
-              )}
-            >
-              {scoutStatus.icon} {scoutStatus.label}
-            </Badge>
-          )}
         </div>
       </CardHeader>
       <CardContent className="pt-4 space-y-4">

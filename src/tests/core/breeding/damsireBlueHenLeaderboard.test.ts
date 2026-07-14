@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import type { Horse } from "@/game/types";
 import { computeDamsireLeaderboard } from "@/core/breeding/damsireLeaderboard";
 import { computeBlueHenLeaderboard } from "@/core/breeding/blueHenLeaderboard";
@@ -237,6 +237,10 @@ describe("blueHenLeaderboard", () => {
     const horses: Horse[] = [];
 
     // Mare "m1" — excellent producer with stakes and G1 winners
+    horses.push(makeHorse({ id: "m1", name: "Mare 1", gender: "filly", age: 12 }));
+    horses.push(makeHorse({ id: "m2", name: "Mare 2", gender: "filly", age: 10 }));
+
+    // Mare "m1" foals
     for (let i = 0; i < 5; i++) {
       horses.push(
         makeHorse({
@@ -300,6 +304,8 @@ describe("blueHenLeaderboard", () => {
 
   it("only counts racing-age foals in stats", () => {
     const horses: Horse[] = [];
+
+    horses.push(makeHorse({ id: "m-mixed", name: "Mixed Mare", gender: "filly", age: 10 }));
 
     // One yearling + one racer
     horses.push(
@@ -372,6 +378,9 @@ describe("blueHenLeaderboard", () => {
     const horses: Horse[] = [];
 
     // Create 3 mares with varying produce quality
+    for (let m = 0; m < 3; m++) {
+      horses.push(makeHorse({ id: `m-rank-${m}`, name: `Mare ${m}`, gender: "filly", age: 10 + m }));
+    }
     for (let m = 0; m < 3; m++) {
       const mareId = `m-rank-${m}`;
       const earnings = (3 - m) * 100000;

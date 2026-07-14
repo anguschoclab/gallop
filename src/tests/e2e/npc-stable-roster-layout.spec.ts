@@ -76,15 +76,6 @@ for (const vp of VIEWPORTS) {
       if (nameBox && badgeBox) {
         const horizontalOverlap = nameBox.x < badgeBox.x + badgeBox.width && badgeBox.x < nameBox.x + nameBox.width;
         const verticalOverlap = nameBox.y < badgeBox.y + badgeBox.height && badgeBox.y < nameBox.y + nameBox.height;
-        if (horizontalOverlap && verticalOverlap) {
-          console.log("OVERLAP DETECTED:", {
-            name: await nameSpan.textContent(),
-            nameBox,
-            badgeBox,
-            badgeText: await scoutBadge.textContent(),
-            badgeClass: await scoutBadge.getAttribute("class"),
-          });
-        }
         expect(!horizontalOverlap || !verticalOverlap).toBe(true);
       }
     });
