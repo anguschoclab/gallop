@@ -49,7 +49,7 @@ export function calculateHeadToHeadOdds(
   const total = rawProbs.reduce((s, p) => s + p, 0) || 1;
 
   return horses.map((h, i) => {
-    const projectedBeyer = calculateProjectedBeyer(h, syntheticRace, {});
+    const projectedBeyer = Math.max(30, Math.min(125, calculateProjectedBeyer(h, syntheticRace, {})));
     const avgSpeed = (h.stats.speed + h.stats.acceleration) / 2;
     const projectedFinishTime = distance / (avgSpeed * 0.16 + 8);
     return {
@@ -68,7 +68,7 @@ export function runHeadToHeadSimulation(
   iterations: number = 50,
   seed?: number,
 ): MonteCarloResult[] {
-  const baseSeed = seed ?? Math.floor(Math.random() * 1000000);
+  const baseSeed = seed ?? Date.now();
   const selectedIds = new Set(horses.map((h) => h.id));
 
   const stats = new Map<string, {

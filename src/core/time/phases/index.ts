@@ -46,6 +46,7 @@ import { raceResolutionPhase } from "./raceResolution";
 import { stewardsPhase } from "./stewardsPhase";
 import { claimResolutionPhase } from "./claimResolution";
 import { archivingPhase } from "./archivingPhase";
+import { seasonStandingsPhase } from "./seasonStandingsPhase";
 import { impactApplicationPhase } from "./impactApplication";
 import { weatherPhase } from "./weatherPhase";
 import { raceInvitationsPhase } from "./raceInvitations";
@@ -108,6 +109,8 @@ export const GAME_PIPELINE_PHASES = [
   claimResolutionPhase,
   // Archiving phase (before impact application)
   archivingPhase,
+  // Season standings notification (order 195, before impact application)
+  seasonStandingsPhase,
   // Impact application phase (final)
   impactApplicationPhase,
 ];
