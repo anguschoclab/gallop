@@ -14,7 +14,7 @@
  */
 
 import { createRng, hashStr, type Rng } from "@/core/common/rng";
-import { PRIZE_SPLIT } from "@/constants";
+import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/constants";
 
 export type RankedResult = { horseId: string; position: number; time: number; dnf: boolean };
 
@@ -22,18 +22,20 @@ export type RankedResult = { horseId: string; position: number; time: number; dn
  * Computes prize money payout splits for a race
  * @param purse - Total prize purse for the race
  * @param finisherCount - Number of horses that finished the race
+ * @param isGraded - Whether the race is graded (uses GRADED_PRIZE_SPLIT)
  * @returns Array of prize amounts for each finishing position
  */
-export function computePayoutSplits(purse: number, finisherCount: number): number[] {
+export function computePayoutSplits(purse: number, finisherCount: number, isGraded?: boolean): number[] {
+  const split = isGraded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
   const splits: number[] = [];
   let runningPaid = 0;
-  for (let i = 0; i < Math.min(PRIZE_SPLIT.length, finisherCount); i++) {
-    const pay = Math.round(purse * PRIZE_SPLIT[i]);
+  for (let i = 0; i < Math.min(split.length, finisherCount); i++) {
+    const pay = Math.round(purse * split[i]);
     splits.push(pay);
     runningPaid += pay;
   }
   // Route any unpaid remainder to the last paid finisher
-  if (splits.length > 0 && runningPaid < purse && finisherCount >= PRIZE_SPLIT.length) {
+  if (splits.length > 0 && runningPaid < purse && finisherCount >= split.length) {
     splits[splits.length - 1] += purse - runningPaid;
   }
   return splits;

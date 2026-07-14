@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -35,6 +36,9 @@ export function RaceFilterPanel({
   countries,
   onReset,
 }: RaceFilterPanelProps) {
+  const searchId = useId();
+  const gradeId = useId();
+  const regionId = useId();
   return (
     <aside className="space-y-8 sticky top-6">
       <section className="space-y-4">
@@ -47,12 +51,13 @@ export function RaceFilterPanel({
         <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-2 border-l-success/40">
           <CardContent className="p-5 space-y-5">
             <div className="space-y-1.5">
-              <label className="text-[9px] uppercase font-black text-success/40 tracking-widest px-1">
+              <label htmlFor={searchId} className="text-[9px] uppercase font-black text-success/40 tracking-widest px-1">
                 Race Name
               </label>
               <div className="relative">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream/20" />
                 <Input
+                  id={searchId}
                   placeholder="Search races..."
                   className="h-9 bg-slate-950/60 border-white/5 text-xs font-mono pl-8 uppercase tracking-tighter focus-visible:ring-success/30"
                   value={q}
@@ -62,11 +67,11 @@ export function RaceFilterPanel({
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[9px] uppercase font-black text-success/40 tracking-widest px-1">
+              <label htmlFor={gradeId} className="text-[9px] uppercase font-black text-success/40 tracking-widest px-1">
                 Grade
               </label>
               <Select value={grade} onValueChange={onGradeChange}>
-                <SelectTrigger className="h-9 bg-slate-950/60 border-white/5 text-[10px] font-bold uppercase rounded-none tracking-widest">
+                <SelectTrigger id={gradeId} className="h-9 bg-slate-950/60 border-white/5 text-[10px] font-bold uppercase rounded-none tracking-widest">
                   <SelectValue placeholder="All Grades" />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-950 border-white/10">
@@ -81,11 +86,11 @@ export function RaceFilterPanel({
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[9px] uppercase font-black text-success/40 tracking-widest px-1">
+              <label htmlFor={regionId} className="text-[9px] uppercase font-black text-success/40 tracking-widest px-1">
                 Region
               </label>
               <Select value={country} onValueChange={onCountryChange}>
-                <SelectTrigger className="h-9 bg-slate-950/60 border-white/5 text-[10px] font-bold uppercase rounded-none tracking-widest">
+                <SelectTrigger id={regionId} className="h-9 bg-slate-950/60 border-white/5 text-[10px] font-bold uppercase rounded-none tracking-widest">
                   <SelectValue placeholder="All Regions" />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-950 border-white/10">

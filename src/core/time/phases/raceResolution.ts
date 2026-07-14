@@ -9,7 +9,7 @@
  */
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import { PRIZE_SPLIT, PHASE_ORDER_RACE_RESOLUTION } from "@/constants";
+import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT, PHASE_ORDER_RACE_RESOLUTION } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type {
   TrackRecordImpact,
@@ -120,9 +120,10 @@ export const raceResolutionPhase: PipelinePhase = {
                 const runner = runnerByHorseId.get(res.horseId);
                 if (runner && runner.jockeyId) {
                   // Calculate prize money for learning
+                  const prizeSplit = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
                   const prize =
-                    res.position <= PRIZE_SPLIT.length
-                      ? Math.round(race.purse * PRIZE_SPLIT[res.position - 1])
+                    res.position <= prizeSplit.length
+                      ? Math.round(race.purse * prizeSplit[res.position - 1])
                       : 0;
 
                   stableAI.jockeyAI = recordJockeyOutcome(
@@ -139,9 +140,10 @@ export const raceResolutionPhase: PipelinePhase = {
 
               // 3. Learn from campaign targeting
               if (stableAI.campaignAI && race.graded?.key) {
+                const prizeSplit = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
                 const prize =
-                  res.position <= PRIZE_SPLIT.length
-                    ? Math.round(race.purse * PRIZE_SPLIT[res.position - 1])
+                  res.position <= prizeSplit.length
+                    ? Math.round(race.purse * prizeSplit[res.position - 1])
                     : 0;
 
                 stableAI.campaignAI = recordCampaignOutcome(

@@ -10,11 +10,12 @@
  */
 
 import type { Horse, GameState } from "@/game/types";
-import { PRIZE_SPLIT } from "@/constants";
+import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/constants";
 import { getCareerStats } from "@/core/horse/stats";
 
 // Memoization cache for lineage lookups
 const foalsCache = new Map<string, Horse[]>();
+const damFoalsCache = new Map<string, Horse[]>();
 const stakesCache = new Map<string, number>();
 const g1Cache = new Map<string, number>();
 const earningsCache = new Map<string, number>();
@@ -26,6 +27,7 @@ const runnersCache = new Map<string, Horse[]>();
  */
 export function clearLineageCache(): void {
   foalsCache.clear();
+  damFoalsCache.clear();
   stakesCache.clear();
   g1Cache.clear();
   earningsCache.clear();
@@ -67,7 +69,13 @@ export function getFoalsBy(state: Pick<GameState, "horses">, stallionId: string)
  * const foals = getFoalsOf(gameState, dam.id);
  */
 export function getFoalsOf(state: Pick<GameState, "horses">, damId: string): Horse[] {
-  return Object.values(state.horses).filter((h) => h.pedigree?.damId === damId);
+  const cacheKey = damId;
+  if (damFoalsCache.has(cacheKey)) {
+    return damFoalsCache.get(cacheKey)!;
+  }
+  const foals = Object.values(state.horses).filter((h) => h.pedigree?.damId === damId);
+  damFoalsCache.set(cacheKey, foals);
+  return foals;
 }
 
 // "Is this foal a stakes winner?" — true if any race in their history has a
@@ -174,8 +182,13 @@ export function getG1FoalsBy(state: Pick<GameState, "horses">, stallionId: strin
 export function foalLifetimeEarnings(foal: Horse): number {
   let total = 0;
   for (const r of foal.raceHistory) {
-    if (r.position - 1 < PRIZE_SPLIT.length && r.purse) {
-      total += Math.round(r.purse * PRIZE_SPLIT[r.position - 1]);
+    if (r.purseEarned !== undefined) {
+      total += r.purseEarned;
+    } else if (r.position >= 1 && r.purse) {
+      const split = r.grade ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
+      if (r.position - 1 < split.length) {
+        total += Math.round(r.purse * split[r.position - 1]);
+      }
     }
   }
   return total;

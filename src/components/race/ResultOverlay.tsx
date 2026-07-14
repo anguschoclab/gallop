@@ -9,6 +9,7 @@ import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { SectionalSplit } from "@/core/race/types";
 import { generateJockeyFeedback } from "@/core/race/jockeyFeedback";
 import { formatCurrency } from "@/core/common/formatting";
+import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/constants";
 import { Trophy, ChevronRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -20,6 +21,7 @@ interface ResultOverlayProps {
   race: {
     name: string;
     purse: number;
+    graded?: unknown;
     sectionalSplits?: SectionalSplit[];
     distance?: number;
     snapshots?: RaceSnapshot[];
@@ -37,7 +39,7 @@ interface ResultOverlayProps {
  * Redesigned for the "Stable Ledger" aesthetic.
  */
 export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOverlayProps) {
-  const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
+  const prizeSplit = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
   const ordered = [...runners].sort((a, b) => (a.finishTime ?? 999) - (b.finishTime ?? 999));
   const finishedCount = runners.filter((r) => r.finishTime !== null).length;
   const allFinished = finishedCount === runners.length;
@@ -83,7 +85,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
               <div className="divide-y divide-white/5">
                 {ordered.map((r, i) => {
                   const prize =
-                    i < PRIZE_SPLIT.length ? Math.round(race.purse * PRIZE_SPLIT[i]) : 0;
+                    i < prizeSplit.length ? Math.round(race.purse * prizeSplit[i]) : 0;
                   const feedback = r.owned ? generateJockeyFeedback(r, i + 1, ordered) : null;
 
                   return (

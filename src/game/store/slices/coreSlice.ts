@@ -38,6 +38,7 @@ import { requireOwned, requireHorse } from "../guards";
 import { getEngineWorker } from "@/game/store";
 import { generateUUID } from "@/core/uuid";
 import { resolvePhenotype } from "@/core/horse/horseFactory";
+import { clearLineageCache } from "@/core/breeding/lineage";
 import type { StoreSet, StoreGet } from "../types";
 
 export type CoreSlice = CoreState & {
@@ -126,6 +127,7 @@ export function createCoreSlice(
     delete update.lastFrameTime;
     delete update.isAdvancing;
 
+    clearLineageCache();
     set(update);
   };
 
