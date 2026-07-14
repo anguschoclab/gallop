@@ -12,3 +12,8 @@
 
 **Learning:** In reusable form components (like `FieldWithRandom` in wizards) where fields can be rendered multiple times, static string IDs risk collisions. React's `useId()` safely generates unique IDs to bind `<label htmlFor>` to inputs or triggers, ensuring robust screen reader compatibility and expanding the clickable hit area without hardcoded values.
 **Action:** Use `useId()` when tying labels to form elements inside mapped arrays or generic wrapper components to maintain strong accessibility relationships dynamically.
+
+## 2026-07-28 - Missing label association in Filter Panels
+
+**Learning:** Reusable filter panels (like `JockeyFilterPanel`) often use a `<label>` to describe what the user should search for, but fail to explicitly link the label to the `<Input>` using `htmlFor` and `id`. This creates a broken association for screen readers. Using `useId()` generates a robust and unique identifier that perfectly bridges this gap and ensures reliable screen-reader compatibility without risking ID collisions when components are rendered multiple times or dynamically.
+**Action:** When updating or building filter forms/panels with `<Input>`, always associate `<label>` and `<Input>` explicitely via `useId()`.

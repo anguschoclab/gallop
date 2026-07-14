@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,6 +63,7 @@ export function JockeyFilterPanel({
   onColorChange,
   onReset,
 }: JockeyFilterPanelProps) {
+  const searchId = useId();
   return (
     <aside className="lg:col-span-3 space-y-8 lg:sticky lg:top-6">
       <section className="space-y-4">
@@ -74,12 +76,13 @@ export function JockeyFilterPanel({
         <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-2 border-l-blue-400/40">
           <CardContent className="p-5 space-y-5">
             <div className="space-y-1.5">
-              <label className="text-[9px] uppercase font-black text-blue-400/40 tracking-widest px-1">
+              <label htmlFor={searchId} className="text-[9px] uppercase font-black text-blue-400/40 tracking-widest px-1">
                 Name
               </label>
               <div className="relative">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream/20" />
                 <Input
+                  id={searchId}
                   placeholder="Jockey name..."
                   value={search}
                   onChange={(e) => onSearchChange(e.target.value)}
