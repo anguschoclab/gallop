@@ -74,7 +74,7 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
                   />
                 </Link>
 
-                <div className="absolute top-4 right-4 flex gap-2 z-20">
+                <div className="mt-2 flex gap-2 justify-end">
                   <Button
                     size="sm"
                     variant="outline"
@@ -98,7 +98,7 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
                       className="h-7 px-3 text-[9px] font-black uppercase tracking-widest border-white/10 hover:bg-blue-400/10 hover:text-blue-400 hover:border-blue-400/30 rounded-none bg-slate-950/80 backdrop-blur-sm text-cream/60"
                     >
                       <Eye className="w-3 h-3 mr-1.5" />
-                      SCOUT_[-${formatCurrency(scoutCost).replace("$", "")}]
+                      SCOUT · -{formatCurrency(scoutCost)}
                     </Button>
                   )}
                 </div>
