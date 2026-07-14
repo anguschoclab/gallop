@@ -62,7 +62,7 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
             };
 
             return (
-              <div key={horse.id} className="relative group">
+              <div key={horse.id} className="relative group min-w-0">
                 <div className="absolute top-0 left-0 w-1 h-full bg-blue-500/10 group-hover:bg-blue-500 transition-colors z-10" />
 
                 <Link to="/stable/$horseId" params={{ horseId: horse.id }} className="block">
@@ -74,7 +74,7 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
                   />
                 </Link>
 
-                <div className="mt-2 flex gap-2 justify-end">
+                <div className="mt-2 flex flex-wrap gap-2 justify-end">
                   <Button
                     size="sm"
                     variant="outline"

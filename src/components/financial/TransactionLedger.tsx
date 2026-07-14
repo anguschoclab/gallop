@@ -26,7 +26,7 @@ export function TransactionLedger({ transactions, recentTransactions }: Transact
             Cash Movement Log
           </div>
           <div className="flex items-center gap-4 px-4">
-            <span className="text-[10px] font-mono text-cream/20 uppercase">SAMPLE_50</span>
+            <span className="text-[10px] font-mono text-cream/20 uppercase">Sample 50</span>
             <Badge
               variant="outline"
               className="border-white/10 text-cream/40 font-mono text-[9px] h-5 rounded-none"
@@ -40,11 +40,11 @@ export function TransactionLedger({ transactions, recentTransactions }: Transact
             <table className="w-full text-left border-collapse">
               <thead className="bg-black/20 border-b border-white/5">
                 <tr className="font-mono text-[9px] uppercase tracking-[0.2em] text-cream/30">
-                  <th className="px-8 py-3 font-black w-1">D.OY</th>
+                  <th className="px-8 py-3 font-black w-1">Day</th>
                   <th className="px-4 py-3 font-black w-1">Date</th>
                   <th className="px-4 py-3 font-black">Sector</th>
                   <th className="px-4 py-3 font-black text-right">Amount</th>
-                  <th className="px-8 py-3 font-black">Operational_Description</th>
+                  <th className="px-8 py-3 font-black">Transaction Detail</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -92,8 +92,8 @@ export function TransactionLedger({ transactions, recentTransactions }: Transact
             </div>
           )}
           <div className="p-4 bg-black/40 border-t border-white/5 flex items-center justify-between text-[9px] font-mono text-cream/20 uppercase tracking-widest">
-            <span>Secured_Audit_Log</span>
-            <span>End_Of_Ledger</span>
+            <span>Audit Trail</span>
+            <span>End of Ledger</span>
           </div>
         </CardContent>
       </Card>

@@ -37,7 +37,7 @@ export function HorseStatsRadar({ horse }: HorseStatsRadarProps) {
           />
           <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
           <Radar
-            name="OPERATIONAL_SPEC"
+            name="Stat Profile"
             dataKey="value"
             stroke="#d4af37" // Gold
             strokeWidth={2}

@@ -142,7 +142,7 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto w-[95vw]">
         <DialogHeader>
           <DialogTitle className="font-[family-name:var(--font-display)] uppercase tracking-widest text-sm text-gold">
             Compare Horses · {horses.length}
@@ -158,15 +158,15 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
             {/* Header row: silk + name + age/gender */}
             <div
               className={cn(
-                "grid gap-4 border-b border-white/10 pb-4",
-                horses.length === 2 ? "grid-cols-[1fr_1fr]" : "grid-cols-[1fr_1fr_1fr]",
+                "grid gap-2 sm:gap-4 border-b border-white/10 pb-4",
+                horses.length === 2 ? "grid-cols-1 sm:grid-cols-[1fr_1fr]" : "grid-cols-1 sm:grid-cols-[1fr_1fr_1fr]",
               )}
             >
               {horses.map((h) => (
-                <div key={h.id} className="space-y-1">
+                <div key={h.id} className="space-y-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <SilkDot color={h.silk} />
-                    <span className="font-bold font-[family-name:var(--font-display)]">
+                    <span className="font-bold font-[family-name:var(--font-display)] truncate">
                       {h.name}
                     </span>
                   </div>
@@ -190,15 +190,15 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
             </div>
 
             {/* Metric table */}
-            <div className="rounded border border-white/5 overflow-hidden">
+            <div className="rounded border border-white/5 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-white/10">
-                    <th className="px-3 py-2 text-[11px] uppercase tracking-widest font-mono text-cream/50 w-40 text-left">
+                    <th className="px-2 py-1.5 sm:px-3 sm:py-2 text-[11px] uppercase tracking-widest font-mono text-cream/50 w-28 sm:w-40 text-left">
                       Metric
                     </th>
                     {horses.map((h) => (
-                      <th key={h.id} className="px-3 py-2 text-left">
+                      <th key={h.id} className="px-2 py-1.5 sm:px-3 sm:py-2 text-left">
                         <div className="flex items-center gap-1.5">
                           <SilkDot color={h.silk} size="sm" />
                           <span className="font-bold font-[family-name:var(--font-display)] text-xs text-cream">
@@ -217,20 +217,20 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
                         : -1;
                     return (
                       <tr key={row.label} className="hover:bg-white/[0.02]">
-                        <td className="px-3 py-2 text-[11px] uppercase tracking-widest font-mono text-cream/50 w-40">
+                        <td className="px-2 py-1.5 sm:px-3 sm:py-2 text-[11px] uppercase tracking-widest font-mono text-cream/50 w-28 sm:w-40">
                           {row.label}
                         </td>
                         {row.values.map((v, i) => (
                           <td
                             key={i}
                             className={cn(
-                              "px-3 py-2 font-mono tabular-nums",
+                              "px-2 py-1.5 sm:px-3 sm:py-2 font-mono tabular-nums",
                               winner === i
                                 ? "bg-gold/10 text-gold font-bold"
                                 : "text-cream/80",
                             )}
                           >
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 hidden sm:flex">
                               <span>{v}</span>
                               {row.barValues && row.barValues[i] !== undefined && (
                                 <Progress
@@ -255,8 +255,7 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
               </h4>
               <div
                 className={cn(
-                  "grid gap-4",
-                  horses.length === 2 ? "grid-cols-2" : "grid-cols-3",
+                  "grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
                 )}
               >
                 {horses.map((h) => (
@@ -286,8 +285,7 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
               </h4>
               <div
                 className={cn(
-                  "grid gap-4",
-                  horses.length === 2 ? "grid-cols-2" : "grid-cols-3",
+                  "grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
                 )}
               >
                 {horses.map((h) => (
@@ -348,7 +346,7 @@ function HeadToHeadSection({ horses }: { horses: Horse[] }) {
       </h4>
 
       {/* Selectors */}
-      <div className="flex flex-wrap items-center gap-3 mb-4">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4">
         <div className="flex items-center gap-1.5">
           <span className="text-[10px] uppercase tracking-widest font-mono text-cream/40">Distance</span>
           <select
@@ -385,7 +383,7 @@ function HeadToHeadSection({ horses }: { horses: Horse[] }) {
       </div>
 
       {/* Lightweight odds */}
-      <div className={cn("grid gap-3 mb-4", horses.length === 2 ? "grid-cols-2" : "grid-cols-3")}>
+      <div className={cn("grid gap-3 mb-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3")}>
         {horses.map((h) => {
           const o = odds.find((r) => r.horseId === h.id);
           if (!o) return null;
@@ -432,7 +430,7 @@ function HeadToHeadSection({ horses }: { horses: Horse[] }) {
       </div>
 
       {simResults && (
-        <div className={cn("grid gap-3", horses.length === 2 ? "grid-cols-2" : "grid-cols-3")}>
+        <div className={cn("grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3")}>
           {horses.map((h) => {
             const r = simResults.find((s) => s.horseId === h.id);
             if (!r) return null;

@@ -53,7 +53,7 @@ export function FinancialChart({ transactions, day, period }: FinancialChartProp
     <div className="space-y-4">
       <div className="flex items-center gap-2 px-1">
         <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gold-muted/60">
-          Fiscal_Flow_Analysis
+          Fiscal Flow Analysis
         </div>
       </div>
 
@@ -131,7 +131,7 @@ export function FinancialChart({ transactions, day, period }: FinancialChartProp
             <Area
               type="stepAfter"
               dataKey="income"
-              name="REVENUE"
+              name="Revenue"
               stroke="#22c55e"
               fillOpacity={1}
               fill="url(#colorIncome)"
@@ -140,7 +140,7 @@ export function FinancialChart({ transactions, day, period }: FinancialChartProp
             <Area
               type="stepAfter"
               dataKey="expenses"
-              name="OUTFLOW"
+              name="Outflow"
               stroke="#ef4444"
               fillOpacity={1}
               fill="url(#colorExpenses)"

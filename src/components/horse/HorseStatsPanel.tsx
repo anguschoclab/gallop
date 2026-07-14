@@ -26,7 +26,7 @@ export function HorseStatsPanel({
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-3">
           <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest flex items-center gap-1">
-            <ShieldCheck className="h-3 w-3" /> Core_Specs
+            <ShieldCheck className="h-3 w-3" /> Core Stats
           </div>
           {isAdvanced ? (
             <div className="space-y-2">
@@ -67,7 +67,7 @@ export function HorseStatsPanel({
 
         <div className="space-y-3 pl-4 border-l border-white/5 flex flex-col">
           <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest flex items-center gap-1">
-            <Activity className="h-3 w-3" /> Perf_Telemetry
+            <Activity className="h-3 w-3" /> Race Form
           </div>
 
           {sparklineData.length > 2 ? (

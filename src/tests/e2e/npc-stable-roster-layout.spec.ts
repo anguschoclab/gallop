@@ -1,0 +1,113 @@
+import { test, expect } from "@playwright/test";
+
+const VIEWPORTS = [
+  { width: 375, height: 812, name: "mobile" },
+  { width: 768, height: 1024, name: "tablet" },
+];
+
+for (const vp of VIEWPORTS) {
+  test.describe(`NPC Stable Roster layout at ${vp.name} (${vp.width}px)`, () => {
+    test.use({ viewport: { width: vp.width, height: vp.height } });
+
+    test("horse name and scout-status badge do not overlap", async ({ page }) => {
+      await page.goto("/");
+
+      // Navigate to stable rivals page to find NPC stables
+      const stableLink = page.locator('a[href*="/stable"]').first();
+      await expect(stableLink).toBeVisible({ timeout: 5000 }).catch(() => {
+        test.skip(true, "No game state found");
+      });
+
+      await stableLink.click();
+      await page.waitForURL(/\/stable/);
+
+      // Look for NPC stable links
+      const npcStableLinks = page.locator('a[href*="/npc-stables/"]');
+      const linkCount = await npcStableLinks.count();
+
+      if (linkCount === 0) {
+        test.skip(true, "No NPC stable links found");
+      }
+
+      // Navigate to first NPC stable
+      await npcStableLinks.first().click();
+      await page.waitForURL(/\/npc-stables\//);
+
+      // Click roster tab if not already active
+      const rosterTab = page.locator('[role="tab"]', { hasText: /roster/i }).first();
+      await expect(rosterTab).toBeVisible({ timeout: 3000 }).catch(() => {
+        test.skip(true, "No roster tab found");
+      });
+      await rosterTab.click();
+
+      // Find horse cards in the roster
+      const cards = page.locator(".relative.group");
+      const cardCount = await cards.count();
+
+      if (cardCount === 0) {
+        test.skip(true, "No horse cards in NPC stable roster");
+      }
+
+      // Check first card for name/badge overlap
+      const firstCard = cards.first();
+      const nameSpan = firstCard.locator("span.text-lg").first();
+      const scoutBadge = firstCard.locator('[class*="tracking-widest"]').filter({ hasText: /scout|known/i }).first();
+
+      const nameBox = await nameSpan.boundingBox();
+      const badgeBox = await scoutBadge.boundingBox();
+
+      if (nameBox && badgeBox) {
+        const horizontalOverlap = nameBox.x < badgeBox.x + badgeBox.width && badgeBox.x < nameBox.x + nameBox.width;
+        const verticalOverlap = nameBox.y < badgeBox.y + badgeBox.height && badgeBox.y < nameBox.y + nameBox.height;
+        expect(!horizontalOverlap || !verticalOverlap).toBe(true);
+      }
+    });
+
+    test("OFFER and SCOUT buttons do not overlap each other", async ({ page }) => {
+      await page.goto("/");
+
+      const stableLink = page.locator('a[href*="/stable"]').first();
+      await expect(stableLink).toBeVisible({ timeout: 5000 }).catch(() => {
+        test.skip(true, "No game state found");
+      });
+
+      await stableLink.click();
+      await page.waitForURL(/\/stable/);
+
+      const npcStableLinks = page.locator('a[href*="/npc-stables/"]');
+      const linkCount = await npcStableLinks.count();
+      if (linkCount === 0) {
+        test.skip(true, "No NPC stable links found");
+      }
+
+      await npcStableLinks.first().click();
+      await page.waitForURL(/\/npc-stables\//);
+
+      const rosterTab = page.locator('[role="tab"]', { hasText: /roster/i }).first();
+      await expect(rosterTab).toBeVisible({ timeout: 3000 }).catch(() => {
+        test.skip(true, "No roster tab found");
+      });
+      await rosterTab.click();
+
+      const cards = page.locator(".relative.group");
+      const cardCount = await cards.count();
+      if (cardCount === 0) {
+        test.skip(true, "No horse cards in NPC stable roster");
+      }
+
+      const firstCard = cards.first();
+      const buttons = firstCard.locator("button", { hasText: /OFFER|SCOUT/i });
+      const btnCount = await buttons.count();
+
+      if (btnCount >= 2) {
+        const box1 = await buttons.nth(0).boundingBox();
+        const box2 = await buttons.nth(1).boundingBox();
+        if (box1 && box2) {
+          const horizontalOverlap = box1.x < box2.x + box2.width && box2.x < box1.x + box1.width;
+          const verticalOverlap = box1.y < box2.y + box2.height && box2.y < box1.y + box1.height;
+          expect(!horizontalOverlap || !verticalOverlap).toBe(true);
+        }
+      }
+    });
+  });
+}

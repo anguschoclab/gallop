@@ -37,7 +37,7 @@ export function LiveExchangeFloor({ sales }: LiveExchangeFloorProps) {
             <CardContent className="p-8 flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
               <div className="space-y-2 text-center md:text-left">
                 <Badge className="bg-success text-slate-950 font-black uppercase text-[10px] tracking-[0.2em] rounded-none px-3">
-                  Active_Ring
+                  Active Ring
                 </Badge>
                 <h3 className="text-4xl font-black text-cream font-[family-name:var(--font-display)] uppercase tracking-tight">
                   {sale.name}

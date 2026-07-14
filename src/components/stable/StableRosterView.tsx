@@ -139,7 +139,7 @@ export function StableRosterView({
           )}
         </div>
       ) : view === "ledger" ? (
-        <div className="border border-white/5 bg-slate-900/20 overflow-hidden shadow-2xl">
+        <div className="border border-white/5 bg-slate-900/20 overflow-x-auto shadow-2xl">
           <table className="w-full text-left border-collapse">
             <thead className="bg-black/40 border-b border-white/10">
               <tr className="font-mono text-[10px] uppercase tracking-[0.2em] text-gold-muted/60">
@@ -331,7 +331,7 @@ export function StableRosterView({
 
       {/* Floating compare action bar */}
       {selectedIds.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 bg-slate-900 border border-gold/30 shadow-2xl rounded-lg px-4 py-3 animate-in slide-in-from-bottom-4 duration-200">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 bg-slate-900 border border-gold/30 shadow-2xl rounded-lg px-4 py-3 animate-in slide-in-from-bottom-4 duration-200 max-w-[95vw] flex-wrap">
           <span className="font-mono text-[10px] uppercase tracking-widest text-cream/60 whitespace-nowrap">
             {selectedIds.length}/{MAX_COMPARE} selected
           </span>

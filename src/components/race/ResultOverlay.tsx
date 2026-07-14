@@ -49,7 +49,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
         <div className="p-6 bg-black/40 border-b border-white/5 flex items-center justify-between">
           <div className="space-y-1">
             <div className="text-[10px] font-black uppercase text-gold/40 tracking-[0.3em]">
-              Official_Resolution
+              Official Resolution
             </div>
             <h2 className="text-2xl font-black text-cream uppercase tracking-tight font-[family-name:var(--font-display)]">
               {race.name}
@@ -62,7 +62,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
           {showWaiting ? (
             <div className="flex flex-col items-center justify-center py-12 gap-4 text-center">
               <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-gold/40">
-                Awaiting_Runners
+                Awaiting Runners
               </div>
               <div className="text-4xl font-black text-cream tabular-nums">
                 {finishedCount} / {runners.length}
@@ -158,7 +158,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                         <Collapsible className="mt-2 ml-10">
                           <CollapsibleTrigger className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-widest text-gold/40 hover:text-gold transition-colors">
                             <ChevronDown className="h-2.5 w-2.5" />
-                            DIST_SCALING
+                            Distance Scaling
                           </CollapsibleTrigger>
                           <CollapsibleContent>
                             <div className="mt-2 p-3 bg-black/30 border border-white/5 grid grid-cols-3 gap-x-4 gap-y-2 text-[9px] font-mono">
@@ -185,7 +185,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                                 </span>
                               </div>
                               <div>
-                                <span className="text-cream/20 uppercase">Spd_Mod:</span>{" "}
+                                <span className="text-cream/20 uppercase">Spd Mod:</span>{" "}
                                 <span
                                   className={cn(
                                     "tabular-nums font-bold",
@@ -196,7 +196,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                                 </span>
                               </div>
                               <div>
-                                <span className="text-cream/20 uppercase">Sta_Mul:</span>{" "}
+                                <span className="text-cream/20 uppercase">Sta Mul:</span>{" "}
                                 <span
                                   className={cn(
                                     "tabular-nums font-bold",
@@ -265,7 +265,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
             onClick={onClose}
             className="w-full h-12 bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-widest text-xs rounded-none shadow-lg"
           >
-            DISMISS_RECORDS
+            Dismiss Records
           </Button>
         </div>
       </div>

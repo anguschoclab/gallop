@@ -35,7 +35,7 @@ export function HorseCardScout({ horse, hookData, className = "" }: HorseCardSco
       </div>
       <CardHeader className="pb-3 border-b border-white/5 bg-black/20">
         <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <HorsePortraitBadge
               id={horse.id}
               coatColor={horse.coatColor}
@@ -45,10 +45,10 @@ export function HorseCardScout({ horse, hookData, className = "" }: HorseCardSco
               size="md"
             />
             <SilkDot color={getCoatColor(horse.coatColor)} size="md" />
-            <div className="space-y-0.5">
+            <div className="space-y-0.5 min-w-0">
               <div className="flex items-center gap-2">
                 <span className={cn(genderColor, "text-sm")}>{genderSymbol(horse.gender)}</span>
-                <span className="font-bold text-lg text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-blue-400 transition-colors">
+                <span className="font-bold text-lg text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-blue-400 transition-colors truncate">
                   {horse.name}
                 </span>
               </div>

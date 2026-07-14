@@ -49,7 +49,7 @@ function MarketPage() {
 
         <div className="flex flex-col items-end gap-1">
           <div className="text-[10px] font-mono text-cream/20 uppercase tracking-widest">
-            Available_Capital
+            Available Capital
           </div>
           <div className="text-2xl font-black font-mono text-success tabular-nums tracking-tighter">
             {formatCurrency(cash)}

@@ -173,7 +173,7 @@ export function JockeyCard({
                 )}
               >
                 <ShieldCheck className="h-2.5 w-2.5" />{" "}
-                {(jockey as any).isApprentice ? "ACTIVE_ACADEMY" : "ACTIVE_PRO"}
+                {(jockey as any).isApprentice ? "Academy" : "Pro"}
               </span>
             </div>
             <Link
@@ -182,7 +182,7 @@ export function JockeyCard({
               onClick={(e) => e.stopPropagation()}
             >
               <span className="text-[8px] font-black text-blue-400/60 hover:text-blue-400 uppercase tracking-widest flex items-center gap-1">
-                VIEW_BIO <ChevronRight className="h-2.5 w-2.5" />
+                VIEW BIO <ChevronRight className="h-2.5 w-2.5" />
               </span>
             </Link>
           </div>

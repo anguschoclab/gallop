@@ -89,7 +89,7 @@ export function JockeyReportPanel({
       <header className="flex flex-wrap items-end justify-between gap-3 border-b border-white/5 pb-3">
         <div>
           <div className="text-[10px] uppercase font-black tracking-[0.3em] text-gold/50">
-            Stable_Intelligence
+            Stable Intelligence
           </div>
           <h3 className="text-lg font-black text-cream uppercase tracking-tight font-[family-name:var(--font-display)]">
             Jockey Report

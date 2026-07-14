@@ -39,7 +39,7 @@ export function FinancialSummaryCards({ cash, periodData }: FinancialSummaryCard
       <Card className="bg-slate-900/40 border border-white/5 rounded-none shadow-xl border-l-2 border-l-success/40">
         <CardHeader className="pb-2">
           <CardDescription className="text-[9px] uppercase font-black tracking-[0.2em] text-success/60 flex items-center gap-1.5">
-            <TrendingUp className="h-3 w-3" /> Period_Income
+            <TrendingUp className="h-3 w-3" /> Period Income
           </CardDescription>
           <CardTitle className="text-2xl font-black text-success font-mono tracking-tighter tabular-nums pt-1">
             {formatCurrency(periodData.income.total)}
@@ -55,7 +55,7 @@ export function FinancialSummaryCards({ cash, periodData }: FinancialSummaryCard
       <Card className="bg-slate-900/40 border border-white/5 rounded-none shadow-xl border-l-2 border-l-destructive/40">
         <CardHeader className="pb-2">
           <CardDescription className="text-[9px] uppercase font-black tracking-[0.2em] text-destructive/60 flex items-center gap-1.5">
-            <TrendingDown className="h-3 w-3" /> Period_Outflow
+            <TrendingDown className="h-3 w-3" /> Period Outflow
           </CardDescription>
           <CardTitle className="text-2xl font-black text-destructive font-mono tracking-tighter tabular-nums pt-1">
             {formatCurrency(periodData.expenses.total)}
@@ -76,7 +76,7 @@ export function FinancialSummaryCards({ cash, periodData }: FinancialSummaryCard
       >
         <CardHeader className="pb-2">
           <CardDescription className="text-[9px] uppercase font-black tracking-[0.2em] text-cream/40 flex items-center gap-1.5">
-            <Activity className="h-3 w-3" /> Net_Yield
+            <Activity className="h-3 w-3" /> Net Yield
           </CardDescription>
           <CardTitle
             className={cn(
