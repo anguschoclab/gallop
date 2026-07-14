@@ -193,6 +193,10 @@ export interface SystemsState {
   // Career arc system (optional)
   /** Per-horse career arc states for narrative tracking */
   narrativeArcs?: Record<string, CareerArcState>;
+
+  // Season standings notification system
+  /** Player's rank in the top 10 at last check (for change detection) */
+  lastTopTenRank?: number;
 }
 
 /**

@@ -125,6 +125,8 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "syndicateInvestors" as keyof GameState,
   // Persisted state format version — used to detect incompatible stored data
   "storeVersion" as any,
+  // Season standings — last top-10 rank for change detection
+  "lastTopTenRank" as keyof GameState,
 ];
 
 /**
