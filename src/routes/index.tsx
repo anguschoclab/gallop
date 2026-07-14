@@ -13,6 +13,7 @@ import { StableRosterWidget } from "@/components/dashboard/StableRosterWidget";
 import { CircuitWidget } from "@/components/dashboard/CircuitWidget";
 import { NewsFeedWidget } from "@/components/dashboard/NewsFeedWidget";
 import { LegacyAwardsWidget } from "@/components/dashboard/LegacyAwardsWidget";
+import { SeasonStandingsWidget } from "@/components/dashboard/SeasonStandingsWidget";
 import { ReputationDashboard } from "@/components/reputation/ReputationDashboard";
 import { ApprenticeTracker } from "@/components/apprentice/ApprenticeTracker";
 import { NextActionBanner } from "@/components/dashboard/NextActionBanner";
