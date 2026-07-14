@@ -32,9 +32,9 @@ describe("generateNpcIntents error handling", () => {
     shouldThrowForStable1 = true;
 
     const mockState = {
-      horses: [],
+      horses: {},
       pregnancies: [],
-      races: [],
+      races: {},
       npcStables: [
         createTestStable({ id: "stable1", country: "USA", personality: "aggressive" }),
         createTestStable({ id: "stable2", country: "USA", personality: "conservative" }),

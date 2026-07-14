@@ -35,7 +35,7 @@ const mkStable = (overrides: Partial<Stable> = {}): Stable =>
     reputation: 50,
     founded: 1,
     cash: 100000,
-    horses: h2r(["horse-1"]),
+    horses: ["horse-1"],
     isMajor: false,
     colors: { primary: "#000", secondary: "#fff" },
     personality: "aggressive",
@@ -55,7 +55,6 @@ describe("privateSaleSlice", () => {
     seedStore({
       cash: 100000,
       horses: h2r([horse]),
-      horseMap: new Map([[horse.id, horse]]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer()],
     });
@@ -78,7 +77,6 @@ describe("privateSaleSlice", () => {
     seedStore({
       cash: 50000,
       horses: h2r([horse]),
-      horseMap: new Map([[horse.id, horse]]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ counterAmount: 60000 })],
     });
@@ -99,7 +97,6 @@ describe("privateSaleSlice", () => {
     seedStore({
       cash: 100000,
       horses: h2r([horse]),
-      horseMap: new Map([[horse.id, horse]]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer()],
     });
@@ -119,7 +116,6 @@ describe("privateSaleSlice", () => {
     seedStore({
       cash: 100000,
       horses: h2r([horse]),
-      horseMap: new Map([[horse.id, horse]]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ status: "pending", counterAmount: undefined })],
     });
@@ -146,7 +142,6 @@ describe("privateSaleSlice", () => {
     seedStore({
       cash: 100000,
       horses: h2r([horse]),
-      horseMap: new Map([[horse.id, horse]]),
       npcStables: [stable],
       privateSaleOffers: [],
     });
@@ -171,7 +166,6 @@ describe("privateSaleSlice", () => {
     seedStore({
       cash: 100,
       horses: h2r([horse]),
-      horseMap: new Map([[horse.id, horse]]),
       npcStables: [stable],
       privateSaleOffers: [],
     });
@@ -190,7 +184,6 @@ describe("privateSaleSlice", () => {
     seedStore({
       cash: 100000,
       horses: h2r([horse]),
-      horseMap: new Map([[horse.id, horse]]),
       npcStables: [stable],
       privateSaleOffers: [],
     });

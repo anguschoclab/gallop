@@ -28,7 +28,7 @@ describe("SystemsState types", () => {
         label: "The Inheritor",
         blurb: "Test",
         startingCash: 100000,
-        horses: [],
+        horses: {},
         facilityUpgrades: {},
         facilities: {},
         reputationScore: 50,

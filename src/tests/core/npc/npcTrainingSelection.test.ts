@@ -16,6 +16,7 @@ import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import type { GameState } from "@/game/types";
 import type { TrainingIntent } from "@/core/resolver/intents";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 const ADVANCED_TYPES = ["gallop", "swimming", "breeze", "gate_work", "bullet", "treadmill"];
 const BASIC_TYPES = ["speed", "stamina", "acceleration", "rest"];
@@ -35,10 +36,10 @@ function makeState(
   });
 
   return {
-    horses: [horse],
+    horses: h2r([horse]),
     npcStables: [stable],
     pregnancies: [],
-    races: [],
+    races: {},
     npcFacilities: {
       [stableId]: createNPCFacilities(facilityTier, 1),
     },
@@ -122,7 +123,7 @@ describe("mid stable — picks from mid available set, not premium/elite types",
       horses,
       npcStables: [createTestStable({ id: "mid-stable", tier: "mid" })],
       pregnancies: [],
-      races: [],
+      races: {},
       npcFacilities: { "mid-stable": createNPCFacilities("mid", 1) },
       npcAIManager: { stableStates: {} },
     } as unknown as GameState;
@@ -166,7 +167,7 @@ describe("elite stable — only picks from its full unlocked set", () => {
       horses,
       npcStables: [createTestStable({ id: "elite-stable", tier: "elite" })],
       pregnancies: [],
-      races: [],
+      races: {},
       npcFacilities: { "elite-stable": createNPCFacilities("elite", 1) },
       npcAIManager: { stableStates: {} },
     } as unknown as GameState;
@@ -191,17 +192,17 @@ describe("elite stable — only picks from its full unlocked set", () => {
 describe("stable with no npcFacilities entry — falls back to basic types", () => {
   it("never selects any advanced type when facilities are absent", () => {
     const state = {
-      horses: [
+      horses: h2r([
         createTestHorse({
           id: "no-fac-horse",
           stableId: "no-fac-stable",
           owned: false,
           energy: 100,
         }),
-      ],
+      ]),
       npcStables: [createTestStable({ id: "no-fac-stable" })],
       pregnancies: [],
-      races: [],
+      races: {},
       npcFacilities: {}, // no entry for this stable
       npcAIManager: { stableStates: {} },
     } as unknown as GameState;
@@ -237,16 +238,16 @@ describe("multiple stables in one state — each uses its own facility set", () 
     const eliteFacilities = createNPCFacilities("elite", 1);
 
     const state = {
-      horses: [
+      horses: h2r([
         createTestHorse({ id: "b-horse", stableId: "b-stable", owned: false, energy: 100 }),
         createTestHorse({ id: "e-horse", stableId: "e-stable", owned: false, energy: 100 }),
-      ],
+      ]),
       npcStables: [
         createTestStable({ id: "b-stable", tier: "budget" }),
         createTestStable({ id: "e-stable", tier: "elite" }),
       ],
       pregnancies: [],
-      races: [],
+      races: {},
       npcFacilities: {
         "b-stable": budgetFacilities,
         "e-stable": eliteFacilities,

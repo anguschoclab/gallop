@@ -2,12 +2,13 @@ import { describe, it, expect } from "vitest";
 import { HorseHandler } from "@/core/resolver/handlers/HorseHandler";
 import type { GameState } from "@/game/store/state";
 import type { InjuryImpact, HealthStatusImpact } from "@/core/resolver/impacts/index";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("HorseHandler - Injury Handling", () => {
   it("should update horse health status when injured", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [{ id: "horse-1", name: "Star", healthStatus: "healthy" }],
+      horses: h2r([{ id: "horse-1", name: "Star", healthStatus: "healthy" }]),
     } as unknown as GameState;
 
     const impact: InjuryImpact = {
@@ -37,7 +38,7 @@ describe("HorseHandler - Injury Handling", () => {
   it("should mark horse as other_illness for career-ending injuries", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [{ id: "horse-1", name: "Star", healthStatus: "healthy" }],
+      horses: h2r([{ id: "horse-1", name: "Star", healthStatus: "healthy" }]),
     } as unknown as GameState;
 
     const impact: InjuryImpact = {
@@ -64,9 +65,9 @@ describe("HorseHandler - Injury Handling", () => {
   it("should NOT overwrite covering_sickness with an injury", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [
+      horses: h2r([
         { id: "horse-1", name: "Star", healthStatus: "covering_sickness", healthStatusDay: 5 },
-      ],
+      ]),
     } as unknown as GameState;
 
     const impact: InjuryImpact = {
@@ -95,7 +96,7 @@ describe("HorseHandler - Injury Handling", () => {
   it("should NOT overwrite other_illness with an injury", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [{ id: "horse-1", name: "Star", healthStatus: "other_illness", healthStatusDay: 3 }],
+      horses: h2r([{ id: "horse-1", name: "Star", healthStatus: "other_illness", healthStatusDay: 3 }]),
     } as unknown as GameState;
 
     const impact: InjuryImpact = {
@@ -124,7 +125,7 @@ describe("HorseHandler - Injury Handling", () => {
   it("should NOT overwrite recovering status with an injury", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [{ id: "horse-1", name: "Star", healthStatus: "recovering", healthStatusDay: 8 }],
+      horses: h2r([{ id: "horse-1", name: "Star", healthStatus: "recovering", healthStatusDay: 8 }]),
     } as unknown as GameState;
 
     const impact: InjuryImpact = {
@@ -153,9 +154,9 @@ describe("HorseHandler - Injury Handling", () => {
   it("should NOT overwrite existing sickness via health_status_change impact", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [
+      horses: h2r([
         { id: "horse-1", name: "Star", healthStatus: "covering_sickness", healthStatusDay: 5 },
-      ],
+      ]),
     } as unknown as GameState;
 
     const impact: HealthStatusImpact = {

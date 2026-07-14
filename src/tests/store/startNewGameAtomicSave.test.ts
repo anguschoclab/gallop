@@ -22,6 +22,7 @@ import { useGame, STORE_STATE_VERSION } from "@/game/store";
 import { saveGameState, clearGameState } from "@/services/storage/storageAdapter";
 import { saveExists, _resetSaveExists } from "@/game/store/storage";
 import type { NewGameOptions } from "@/game/store/state";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 const mockProfile = {
   stableName: "Test Stable",
@@ -38,7 +39,7 @@ const mockBackstory = {
   startingCash: 100000,
   reputationScore: 50,
   facilityUpgrades: {},
-  horses: [{ tier: "elite" as const, count: 2 }],
+  horses: h2r([{ tier: "elite" as const, count: 2 }]),
 };
 
 const mockOptions: NewGameOptions = {

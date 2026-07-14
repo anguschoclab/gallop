@@ -17,6 +17,7 @@ vi.mock("@/services/auction/auctionLotFilter", () => ({
 import { useAuctionSaleData } from "@/hooks/auction/useAuctionSaleData";
 import { createDefaultGameState } from "@/game/store/state";
 import { createTestStable } from "@/tests/helpers";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 let mockState: any;
 
@@ -58,7 +59,7 @@ beforeEach(() => {
   mockState = {
     ...createDefaultGameState(),
     auctions: [mkSale([mkLot()])],
-    horses: [mkHorse()],
+    horses: h2r([mkHorse()]),
     horseMap: new Map([["h1", mkHorse()]]),
     cash: 100000,
     day: 10,

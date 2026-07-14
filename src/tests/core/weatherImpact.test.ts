@@ -38,7 +38,7 @@ describe("Weather Phase - Storm Jump Logic", () => {
           name: "The G1 Storm Stakes",
           day: 10,
           trackId: "track-1",
-          graded: { grade: "G1", track: "Track 1" },
+          graded: { grade: "G1", track: "Track 1" } as any,
           entries: [],
           resolved: false,
         },
@@ -47,11 +47,11 @@ describe("Weather Phase - Storm Jump Logic", () => {
           name: "The G2 Thunder Plate",
           day: 10,
           trackId: "track-2",
-          graded: { grade: "G2", track: "Track 2" },
+          graded: { grade: "G2", track: "Track 2" } as any,
           entries: [],
           resolved: false,
         },
-      ]),
+      ] as any),
       weather: {
         byTrack: {
           "track-1": [{ day: 9, pattern: "clear", trackId: "track-1", tempC: 20, humidity: 0.5 }],
@@ -63,8 +63,8 @@ describe("Weather Phase - Storm Jump Logic", () => {
       horses: {},
     } as any,
     impacts: [],
-    horses: {},
-    races: {},
+    horseMap: new Map(),
+    raceMap: new Map(),
     stableMap: new Map(),
     jockeyMap: new Map(),
     ...overrides,
@@ -112,9 +112,10 @@ describe("Weather Phase - Storm Jump Logic", () => {
 
     const context = mockContext();
     // Remove grading from race 1
-    delete context.state.races[0].graded;
+    const racesArr = Object.values(context.state.races);
+    delete racesArr[0].graded;
     // Remove race 2
-    context.state.races = [context.state.races[0]];
+    context.state.races = r2r([racesArr[0]]);
 
     const result = weatherPhase.execute(context);
     const messages = result.impacts.filter((i) => i.type === "inbox_message");

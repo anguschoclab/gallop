@@ -12,6 +12,7 @@ import { weatherPhase } from "@/core/time/phases/weatherPhase";
 import { InboxHandler } from "@/core/resolver/handlers/InboxHandler";
 import { stepWeather, PATTERN_SEVERITY, type WeatherState } from "@/core/weather";
 import { createRng } from "@/core/common/rng";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 const TRACK_ID = "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"; // Churchill Downs
 
@@ -54,7 +55,7 @@ describe("Inbox drama-alert flow — weatherPhase → InboxHandler → /inbox st
             body: "Old news.",
           },
         ],
-        races: [
+        races: r2r([
           {
             id: "race-derby",
             name: "Kentucky Derby",
@@ -76,7 +77,7 @@ describe("Inbox drama-alert flow — weatherPhase → InboxHandler → /inbox st
               surface: "Dirt",
             },
           },
-        ],
+        ]),
         log: [],
         weather: { byTrack: { [TRACK_ID]: [yesterday] }, forecast: {} },
       },

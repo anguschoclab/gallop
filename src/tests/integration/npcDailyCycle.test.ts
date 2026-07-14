@@ -20,7 +20,7 @@ describe("NPC Daily Cycle Integration", () => {
         tier: "elite" as const,
         owner: "Owner 1",
         founded: 1,
-        horses: [],
+        horses: {},
         isMajor: false,
         colors: { primary: "#FF0000", secondary: "#FFFFFF" },
         staff: {

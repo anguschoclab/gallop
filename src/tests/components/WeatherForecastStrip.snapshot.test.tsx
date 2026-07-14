@@ -38,7 +38,7 @@ vi.mock("@/game/store", () => {
       return selector(mockState);
     },
     useGameWithShallow: (selector: (s: any) => any) => {
-      return selector({ horses: [] });
+      return selector({ horses: {} });
     },
     useGallopStore: (selector: (s: any) => any) => {
       const mockState = { weather: { byTrack: {}, forecast: {} } };

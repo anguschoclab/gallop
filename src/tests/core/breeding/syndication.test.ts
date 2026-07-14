@@ -15,6 +15,7 @@ import { SyndicationValidator } from "@/core/resolver/validators/SyndicationVali
 import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
 import { SyndicationHandler } from "@/core/resolver/handlers/SyndicationHandler";
 import { generateUUID } from "@/core/uuid";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("SyndicationValidator", () => {
   let validator: SyndicationValidator;
@@ -23,7 +24,7 @@ describe("SyndicationValidator", () => {
   beforeEach(() => {
     validator = new SyndicationValidator();
     mockState = {
-      horses: [
+      horses: h2r([
         {
           id: "stallion1",
           name: "Test Stallion",
@@ -62,7 +63,7 @@ describe("SyndicationValidator", () => {
           bleederRisk: 0.5,
           roarerRisk: 0.5,
         },
-      ],
+      ] as unknown as Horse[])),
       cash: 1000000,
       syndicates: {},
     } as any;
@@ -303,7 +304,7 @@ describe("resolveSyndicationIntent", () => {
 
   beforeEach(() => {
     mockState = {
-      horses: [
+      horses: h2r([
         {
           id: "stallion1",
           name: "Test Stallion",
@@ -342,7 +343,7 @@ describe("resolveSyndicationIntent", () => {
           bleederRisk: 0.5,
           roarerRisk: 0.5,
         },
-      ],
+      ] as unknown as Horse[])),
       cash: 1000000,
       syndicates: {
         syndicate_stallion1: {
@@ -428,7 +429,7 @@ describe("SyndicationHandler", () => {
   beforeEach(() => {
     handler = new SyndicationHandler();
     mockState = {
-      horses: [
+      horses: h2r([
         {
           id: "stallion1",
           name: "Test Stallion",
@@ -467,7 +468,7 @@ describe("SyndicationHandler", () => {
           bleederRisk: 0.5,
           roarerRisk: 0.5,
         },
-      ],
+      ] as unknown as Horse[])),
       cash: 1000000,
       syndicates: {},
       shareTransactions: [],

@@ -40,6 +40,7 @@ import { Route as FoalDevelopmentRoute } from "@/routes/foal-development.$horseI
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { createTestHorse } from "@/tests/helpers";
 import { createDefaultFoalDevelopmentArc } from "@/core/horse/foalDevelopment";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("Foal development inbox CTA → route → back navigation", () => {
   afterEach(() => {
@@ -99,7 +100,7 @@ describe("Foal development inbox CTA → route → back navigation", () => {
     });
     const Comp = FoalDevelopmentRoute.options.component as React.ComponentType;
     renderWithStore(<Comp />, {
-      horses: [horse],
+      horses: h2r([horse]),
       day: 18,
     } as any);
 
@@ -116,7 +117,7 @@ describe("Foal development inbox CTA → route → back navigation", () => {
     });
     const Comp = FoalDevelopmentRoute.options.component as React.ComponentType;
     renderWithStore(<Comp />, {
-      horses: [horse],
+      horses: h2r([horse]),
       day: 18,
     } as any);
 

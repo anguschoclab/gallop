@@ -11,6 +11,7 @@ import { createTestHorse, createTestNpcHorse } from "@/tests/helpers/createTestH
 import { makePipelineContext } from "@/tests/helpers/sampleGameState";
 import { createRng } from "@/core/common/rng";
 import type { PipelineContext } from "@/core/time/pipeline";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 const G1_RACE = {
   raceId: "g1-test",
@@ -88,7 +89,7 @@ function findInboxMessages(impacts: any[]) {
 describe("Pasture Retirement — commemorative inbox", () => {
   it("creates an inbox_message for a top player-owned horse", () => {
     const horse = topPlayerHorse();
-    const ctx = makeContext({ horses: [horse] }, [
+    const ctx = makeContext({ horses: h2r([horse]) }, [
       { type: "pasture_retirement", horseId: horse.id },
     ]);
     const out = pastureRetirementPhase.execute(ctx);
@@ -105,7 +106,7 @@ describe("Pasture Retirement — commemorative inbox", () => {
 
   it("does NOT create an inbox_message for a non-top player-owned horse", () => {
     const horse = nonTopPlayerHorse();
-    const ctx = makeContext({ horses: [horse] }, [
+    const ctx = makeContext({ horses: h2r([horse]) }, [
       { type: "pasture_retirement", horseId: horse.id },
     ]);
     const out = pastureRetirementPhase.execute(ctx);
@@ -123,7 +124,7 @@ describe("Pasture Retirement — commemorative inbox", () => {
       raceHistory: [G1_RACE],
       lifecycleStatus: "active" as const,
     });
-    const ctx = makeContext({ horses: [horse] }, [
+    const ctx = makeContext({ horses: h2r([horse]) }, [
       { type: "pasture_retirement", horseId: horse.id },
     ]);
     const out = pastureRetirementPhase.execute(ctx);
@@ -136,7 +137,7 @@ describe("Pasture Retirement — commemorative inbox", () => {
 describe("Stud Retirement — commemorative inbox", () => {
   it("creates an inbox_message for a top player-owned horse", () => {
     const horse = topPlayerHorse();
-    const ctx = makeContext({ horses: [horse] }, [
+    const ctx = makeContext({ horses: h2r([horse]) }, [
       {
         type: "stud_retirement",
         horseId: horse.id,
@@ -156,7 +157,7 @@ describe("Stud Retirement — commemorative inbox", () => {
 
   it("does NOT create an inbox_message for a non-top player-owned horse", () => {
     const horse = nonTopPlayerHorse();
-    const ctx = makeContext({ horses: [horse] }, [
+    const ctx = makeContext({ horses: h2r([horse]) }, [
       {
         type: "stud_retirement",
         horseId: horse.id,
@@ -174,7 +175,7 @@ describe("Stud Retirement — commemorative inbox", () => {
 describe("Hall of Fame — commemorative inbox", () => {
   it("creates an inbox_message for a player-owned HOF-eligible horse", () => {
     const horse = hofEligiblePlayerHorse();
-    const ctx = makeContext({ horses: [horse], hallOfFame: [] });
+    const ctx = makeContext({ horses: h2r([horse]), hallOfFame: [] });
     const out = hallOfFamePhase.execute(ctx);
     const inboxMsgs = findInboxMessages(out.impacts);
 
@@ -201,7 +202,7 @@ describe("Hall of Fame — commemorative inbox", () => {
       ],
       lifecycleStatus: "retired" as const,
     });
-    const ctx = makeContext({ horses: [horse], hallOfFame: [] });
+    const ctx = makeContext({ horses: h2r([horse]), hallOfFame: [] });
     const out = hallOfFamePhase.execute(ctx);
     const inboxMsgs = findInboxMessages(out.impacts);
 

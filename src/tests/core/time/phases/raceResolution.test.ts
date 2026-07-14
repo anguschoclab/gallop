@@ -59,8 +59,8 @@ describe("raceResolutionPhase", () => {
     }) as PipelineContext;
 
     const result = raceResolutionPhase.execute(context);
-    expect(result.state.races[0].resolved).toBe(true);
-    expect(result.state.races[1].resolved).toBe(true);
+    expect(Object.values(result.state.races)[0].resolved).toBe(true);
+    expect(Object.values(result.state.races)[1].resolved).toBe(true);
   });
 
   it("should skip already resolved races", () => {
@@ -112,8 +112,8 @@ describe("raceResolutionPhase", () => {
     }) as PipelineContext;
 
     const result = raceResolutionPhase.execute(context);
-    expect(result.state.races[1].resolved).toBe(true);
-    expect(result.state.races[0].resolved).toBe(true);
+    expect(Object.values(result.state.races)[1].resolved).toBe(true);
+    expect(Object.values(result.state.races)[0].resolved).toBe(true);
   });
 
   it("should skip races in the future", () => {
@@ -151,7 +151,7 @@ describe("raceResolutionPhase", () => {
     }) as PipelineContext;
 
     const result = raceResolutionPhase.execute(context);
-    expect(result.state.races[0].resolved).toBe(false);
+    expect(Object.values(result.state.races)[0].resolved).toBe(false);
   });
 
   it("should skip when skipRaceResolution is true", () => {

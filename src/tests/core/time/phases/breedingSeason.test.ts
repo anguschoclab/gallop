@@ -42,7 +42,7 @@ describe("breedingSeasonPhase", () => {
     }) as PipelineContext;
 
     const result = breedingSeasonPhase.execute(context);
-    expect(result.state.horses[0].stud?.seasonBookings).toBe(10); // No change
+    expect(Object.values(result.state.horses)[0].stud?.seasonBookings).toBe(10); // No change
   });
 
   it("should reset Northern hemisphere stallions on Northern breeding season start", () => {
@@ -96,10 +96,10 @@ describe("breedingSeasonPhase", () => {
     const result = breedingSeasonPhase.execute(context);
     // Check if day 1 is actually a breeding season start
     // If not, bookings remain unchanged
-    if (result.state.horses[0].stud?.seasonBookings === 0) {
-      expect(result.state.horses[1].stud?.seasonBookings).toBe(15); // No change
+    if (Object.values(result.state.horses)[0].stud?.seasonBookings === 0) {
+      expect(Object.values(result.state.horses)[1].stud?.seasonBookings).toBe(15); // No change
     } else {
-      expect(result.state.horses[0].stud?.seasonBookings).toBe(10); // No change
+      expect(Object.values(result.state.horses)[0].stud?.seasonBookings).toBe(10); // No change
     }
   });
 
@@ -154,10 +154,10 @@ describe("breedingSeasonPhase", () => {
     const result = breedingSeasonPhase.execute(context);
     // Check if day 213 is actually a breeding season start
     // If not, bookings remain unchanged
-    if (result.state.horses[1].stud?.seasonBookings === 0) {
-      expect(result.state.horses[0].stud?.seasonBookings).toBe(10); // No change
+    if (Object.values(result.state.horses)[1].stud?.seasonBookings === 0) {
+      expect(Object.values(result.state.horses)[0].stud?.seasonBookings).toBe(10); // No change
     } else {
-      expect(result.state.horses[1].stud?.seasonBookings).toBe(15); // No change
+      expect(Object.values(result.state.horses)[1].stud?.seasonBookings).toBe(15); // No change
     }
   });
 
@@ -183,7 +183,7 @@ describe("breedingSeasonPhase", () => {
     }) as PipelineContext;
 
     const result = breedingSeasonPhase.execute(context);
-    expect(result.state.horses[0].stud).toBeUndefined();
+    expect(Object.values(result.state.horses)[0].stud).toBeUndefined();
   });
 
   it("should have correct order", () => {

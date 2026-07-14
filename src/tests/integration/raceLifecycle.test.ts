@@ -14,7 +14,7 @@ describe("Race Lifecycle Integration", () => {
   it("should generate races for a track", () => {
     const state: GameState = makeGameState({ day: 10, cash: 10000 }) as GameState;
 
-    const result = generateTrackSchedule(10, state.races, [], createRng("test"));
+    const result = generateTrackSchedule(10, Object.values(state.races), [], createRng("test"));
 
     // Verify races were generated
     expect(result).toBeDefined();
@@ -44,7 +44,7 @@ describe("Race Lifecycle Integration", () => {
       races: r2r([existingRace]),
     }) as GameState;
 
-    const result = generateTrackSchedule(10, state.races, [], createRng("test"));
+    const result = generateTrackSchedule(10, Object.values(state.races), [], createRng("test"));
 
     // Should preserve existing race
     expect(result).toContainEqual(existingRace);
@@ -53,7 +53,7 @@ describe("Race Lifecycle Integration", () => {
   it("should handle empty state gracefully", () => {
     const state: GameState = makeGameState({ day: 10, cash: 10000 }) as GameState;
 
-    const result = generateTrackSchedule(10, state.races, [], createRng("test"));
+    const result = generateTrackSchedule(10, Object.values(state.races), [], createRng("test"));
 
     // Should not crash with empty state
     expect(result).toBeDefined();
@@ -62,7 +62,7 @@ describe("Race Lifecycle Integration", () => {
   it("should generate races with valid structure", () => {
     const state: GameState = makeGameState({ day: 10, cash: 10000 }) as GameState;
 
-    const result = generateTrackSchedule(10, state.races, [], createRng("test"));
+    const result = generateTrackSchedule(10, Object.values(state.races), [], createRng("test"));
 
     // Check that generated races have required fields
     for (const race of result) {

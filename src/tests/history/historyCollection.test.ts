@@ -3,6 +3,7 @@ import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
 import { PipelineContext } from "@/core/time/pipeline";
 import { Race, Horse } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 // Mock simulateRace to return a G1 win
 vi.mock("@/services/race/raceSimulationExecutor", () => ({
@@ -44,8 +45,8 @@ describe("Race Resolution History Collection", () => {
     const context: Partial<PipelineContext> = {
       newDay: 100,
       state: {
-        races: [race as Race],
-        horses: [horse as Horse],
+        races: r2r([race as Race]),
+        horses: h2r([horse as Horse]),
         hallOfFame: [],
         seasonRecords: [],
       } as any,
@@ -91,8 +92,8 @@ describe("Race Resolution History Collection", () => {
     const context: Partial<PipelineContext> = {
       newDay: 100,
       state: {
-        races: [race as Race],
-        horses: [horse as Horse],
+        races: r2r([race as Race]),
+        horses: h2r([horse as Horse]),
         hallOfFame: [],
         seasonRecords: [],
       } as any,

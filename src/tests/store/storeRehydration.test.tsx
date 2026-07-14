@@ -20,6 +20,7 @@ import type { NominationRecord } from "@/core/racing/nominationFees";
 import type { InvestorRecord } from "@/core/breeding/investorTypes";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 import { StewardsInquiryOverlay } from "@/components/race/StewardsInquiryOverlay";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 // ── Fixtures ─────────────────────────────────────────────────────────────────
 
@@ -107,7 +108,7 @@ describe("Version-key rehydration guard", () => {
       storeVersion: STORE_STATE_VERSION - 1, // incompatible
       day: 999,
       cash: 1,
-      horses: [{ id: "stale-horse", name: "Old Timer", owned: true }],
+      horses: h2r([{ id: "stale-horse", name: "Old Timer", owned: true }]),
       playerNominations: [nomination],
       syndicateInvestors: { "synd-v": investor },
     };
@@ -201,7 +202,7 @@ describe("Empty localStorage — UI renders with default empty state", () => {
     useGame.setState({
       ...createDefaultGameState(),
       // No owned horses — inquiry is for an NPC horse
-      horses: [{ id: "npc-horse", name: "Rival", owned: false } as any],
+      horses: h2r([{ id: "npc-horse", name: "Rival", owned: false } as any]),
       stewardsInquiries: [
         {
           ...inquiry,
@@ -251,7 +252,7 @@ describe("Navigation simulation — state survives route changes", () => {
     // Simulate state present while watching a race with an active unacknowledged inquiry
     useGame.setState({
       ...createDefaultGameState(),
-      horses: [playerHorse as any],
+      horses: h2r([playerHorse as any]),
       stewardsInquiries: [inquiry],
     } as any);
 
@@ -278,7 +279,7 @@ describe("Navigation simulation — state survives route changes", () => {
 
     useGame.setState({
       ...createDefaultGameState(),
-      horses: [playerHorse as any],
+      horses: h2r([playerHorse as any]),
       stewardsInquiries: [inquiry],
     } as any);
 

@@ -16,6 +16,7 @@ import { weatherPhase } from "@/core/time/phases/weatherPhase";
 import { InboxHandler } from "@/core/resolver/handlers/InboxHandler";
 import { stepWeather, PATTERN_SEVERITY, type WeatherState } from "@/core/weather";
 import { createRng } from "@/core/common/rng";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -59,7 +60,7 @@ function buildContext(
     state: {
       day: dramaDay,
       inbox: preExistingInbox,
-      races: [
+      races: r2r([
         {
           id: raceId,
           name: raceName,
@@ -81,7 +82,7 @@ function buildContext(
             surface: "Dirt",
           },
         },
-      ],
+      ]),
       log: [],
       weather: { byTrack: { [trackId]: [yesterday] }, forecast: {} },
     } as any,

@@ -79,7 +79,7 @@ export function makeBreedingProgramState(
     breedingPrograms: overrides.breedingPrograms ?? [],
     stable: { id: "stable-test", name: "Test Stable" },
     currentDay: 0,
-    horses: [] as unknown[],
+    horses: {} as unknown[],
   };
 }
 

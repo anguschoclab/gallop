@@ -4,6 +4,7 @@ import { createTestRng, createTestHorse } from "@/tests/helpers";
 import { isValidUUID } from "@/core/uuid";
 import type { Race, Horse } from "@/game/types";
 import type { ClaimingIntent } from "@/core/resolver/intents";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 const DAY = 10;
 
@@ -50,7 +51,7 @@ describe("processClaimingResolution — empty / early return", () => {
     const result = processClaimingResolution({
       race,
       claimIntents: [],
-      horses: [],
+      horses: {},
       newDay: DAY,
       rng: createTestRng("empty"),
     });
@@ -63,7 +64,7 @@ describe("processClaimingResolution — empty / early return", () => {
     const result = processClaimingResolution({
       race,
       claimIntents: [intent],
-      horses: [mkClaimedHorse("h-orphan", "stable-old")],
+      horses: h2r([mkClaimedHorse("h-orphan", "stable-old")]),
       newDay: DAY,
       rng: createTestRng("orphan"),
     });
@@ -87,7 +88,7 @@ describe("processClaimingResolution — withdrawn claims", () => {
     const result = processClaimingResolution({
       race,
       claimIntents: [intent],
-      horses: [mkClaimedHorse("h1", "stable-old")],
+      horses: h2r([mkClaimedHorse("h1", "stable-old")]),
       newDay: DAY,
       rng: createTestRng("withdrawn-single"),
     });
@@ -112,7 +113,7 @@ describe("processClaimingResolution — withdrawn claims", () => {
     const result = processClaimingResolution({
       race,
       claimIntents: intents,
-      horses: [mkClaimedHorse("h1", "s-old"), mkClaimedHorse("h2", "s-old")],
+      horses: h2r([mkClaimedHorse("h1", "s-old"), mkClaimedHorse("h2", "s-old")]),
       newDay: DAY,
       rng: createTestRng("withdrawn-multi"),
     });
@@ -132,7 +133,7 @@ describe("processClaimingResolution — withdrawn claims", () => {
     const result = processClaimingResolution({
       race,
       claimIntents: [intent],
-      horses: [mkClaimedHorse("h1", "s-old")],
+      horses: h2r([mkClaimedHorse("h1", "s-old")]),
       newDay: DAY,
       rng: createTestRng("withdrawn-no-stable"),
     });
@@ -541,7 +542,7 @@ describe("processClaimingResolution — race not resolved / no claimingPrice", (
     const result = processClaimingResolution({
       race,
       claimIntents: [intent],
-      horses: [mkClaimedHorse("h1", "stable-old")],
+      horses: h2r([mkClaimedHorse("h1", "stable-old")]),
       newDay: DAY,
       rng: createTestRng("not-resolved"),
     });
@@ -567,7 +568,7 @@ describe("processClaimingResolution — race not resolved / no claimingPrice", (
     const result = processClaimingResolution({
       race,
       claimIntents: [intent],
-      horses: [mkClaimedHorse("h1", "stable-old")],
+      horses: h2r([mkClaimedHorse("h1", "stable-old")]),
       newDay: DAY,
       rng: createTestRng("no-price"),
     });
@@ -590,7 +591,7 @@ describe("processClaimingResolution — horse edge cases", () => {
     const result = processClaimingResolution({
       race,
       claimIntents: [intent],
-      horses: [],
+      horses: {},
       newDay: DAY,
       rng: createTestRng("horse-missing"),
     });
@@ -615,7 +616,7 @@ describe("processClaimingResolution — horse edge cases", () => {
     const result = processClaimingResolution({
       race,
       claimIntents: [intent],
-      horses: [mkClaimedHorse("h1", undefined)],
+      horses: h2r([mkClaimedHorse("h1", undefined)]),
       newDay: DAY,
       rng: createTestRng("no-stable"),
     });
@@ -649,7 +650,7 @@ describe("processClaimingResolution — mixed scenarios", () => {
     const result = processClaimingResolution({
       race,
       claimIntents: intents,
-      horses: [mkClaimedHorse("h-w", "s-old-w"), mkClaimedHorse("h-e", "s-old-e")],
+      horses: h2r([mkClaimedHorse("h-w", "s-old-w"), mkClaimedHorse("h-e", "s-old-e")]),
       newDay: DAY,
       rng: createTestRng("mixed"),
     });
@@ -685,7 +686,7 @@ describe("processClaimingResolution — mixed scenarios", () => {
     const result = processClaimingResolution({
       race,
       claimIntents: intents,
-      horses: [mkClaimedHorse("h-w", "s-old-w"), mkClaimedHorse("h-e", "s-old-e")],
+      horses: h2r([mkClaimedHorse("h-w", "s-old-w"), mkClaimedHorse("h-e", "s-old-e")]),
       newDay: DAY,
       rng: createTestRng("mixed-order"),
     });
@@ -713,7 +714,7 @@ describe("processClaimingResolution — impact structure validation", () => {
     const result = processClaimingResolution({
       race,
       claimIntents: [intent],
-      horses: [mkClaimedHorse("h1", "stable-old")],
+      horses: h2r([mkClaimedHorse("h1", "stable-old")]),
       newDay: DAY,
       rng: createTestRng("structure"),
     });
@@ -748,7 +749,7 @@ describe("processClaimingResolution — impact structure validation", () => {
     const result = processClaimingResolution({
       race,
       claimIntents: intents,
-      horses: [mkClaimedHorse("h-w", "s-old-w"), mkClaimedHorse("h-e", "s-old-e")],
+      horses: h2r([mkClaimedHorse("h-w", "s-old-w"), mkClaimedHorse("h-e", "s-old-e")]),
       newDay: DAY,
       rng: createTestRng("unique-ids"),
     });

@@ -54,7 +54,7 @@ describe("stewardsPhase — player-entry guard", () => {
 
     const ctx = makePipelineContext({
       newDay: 1,
-      state: makeGameState({ races: r2r([race]), horses }) as any,
+      state: makeGameState({ races: r2r([race]), horses: h2r(horses) }) as any,
     });
 
     const result = stewardsPhase.execute(ctx as any);

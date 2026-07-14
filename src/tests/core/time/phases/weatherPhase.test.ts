@@ -124,7 +124,7 @@ describe("weatherPhase", () => {
 
     const result = weatherPhase.execute(context);
 
-    const updatedRace = result.state.races[0];
+    const updatedRace = Object.values(result.state.races)[0];
     // Track condition may change based on weather
     expect(updatedRace.trackCondition).toBeDefined();
     expect(updatedRace.weather).toBeDefined();
@@ -137,7 +137,7 @@ describe("weatherPhase", () => {
 
     const result = weatherPhase.execute(context);
 
-    const updatedRace = result.state.races[0];
+    const updatedRace = Object.values(result.state.races)[0];
     expect(updatedRace.weather).toBeDefined();
     expect(["sunny", "cloudy", "rainy"]).toContain(updatedRace.weather);
   });
@@ -272,7 +272,7 @@ describe("weatherPhase", () => {
 
     const result = weatherPhase.execute(context);
 
-    const updatedRace = result.state.races[0];
+    const updatedRace = Object.values(result.state.races)[0];
     expect(updatedRace.resolved).toBe(true);
   });
 
@@ -288,7 +288,7 @@ describe("weatherPhase", () => {
     const result = weatherPhase.execute(context);
 
     expect(result.state.cash).toBe(50000);
-    expect(result.state.horses).toEqual([]);
+    expect(result.state.horses).toEqual({});
     expect(result.state.day).toBe(10);
   });
 

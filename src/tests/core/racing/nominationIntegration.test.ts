@@ -20,6 +20,7 @@ import {
   NOMINATION_FEE_G3_STANDARD,
   NOMINATION_FEE_G3_LATE,
 } from "@/core/racing/nominationFees";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function makeGradedRace(
   id: string,
@@ -46,17 +47,15 @@ function makeGradedRace(
 function setState(state: {
   day?: number;
   cash?: number;
-  horses?: Horse[];
-  races?: Race[];
+  horses?: Record<string, Horse>;
+  races?: Record<string, Race>;
   playerNominations?: any[];
 }) {
   useGame.setState({
     day: state.day ?? 10,
     cash: state.cash ?? 100000,
-    horses: state.horses ?? [],
-    horseMap: new Map((state.horses ?? []).map((h) => [h.id, h])),
-    races: state.races ?? [],
-    raceMap: new Map((state.races ?? []).map((r) => [r.id, r])),
+    horses: state.horses ?? {},
+    races: state.races ?? {},
     playerNominations: state.playerNominations ?? [],
     log: [],
   } as any);
@@ -68,7 +67,7 @@ describe("nominateHorse — success cases", () => {
   it("succeeds for G1 early tier with sufficient cash", () => {
     const horse = createTestHorse({ id: "h1", name: "Runner", owned: true });
     const race = makeGradedRace("r1", 110, "G1");
-    setState({ day: 10, cash: 100000, horses: [horse], races: [race] });
+    setState({ day: 10, cash: 100000, horses: h2r([horse]), races: r2r([race]) });
 
     const result = useGame.getState().nominateHorse("h1", "r1");
     expect(result.ok).toBe(true);
@@ -83,7 +82,7 @@ describe("nominateHorse — success cases", () => {
   it("succeeds for G2 standard tier", () => {
     const horse = createTestHorse({ id: "h1", name: "Runner", owned: true });
     const race = makeGradedRace("r1", 50, "G2");
-    setState({ day: 10, cash: 100000, horses: [horse], races: [race] });
+    setState({ day: 10, cash: 100000, horses: h2r([horse]), races: r2r([race]) });
 
     const result = useGame.getState().nominateHorse("h1", "r1");
     expect(result.ok).toBe(true);
@@ -97,7 +96,7 @@ describe("nominateHorse — success cases", () => {
   it("succeeds for G3 late tier", () => {
     const horse = createTestHorse({ id: "h1", name: "Runner", owned: true });
     const race = makeGradedRace("r1", 20, "G3");
-    setState({ day: 10, cash: 100000, horses: [horse], races: [race] });
+    setState({ day: 10, cash: 100000, horses: h2r([horse]), races: r2r([race]) });
 
     const result = useGame.getState().nominateHorse("h1", "r1");
     expect(result.ok).toBe(true);
@@ -114,7 +113,7 @@ describe("nominateHorse — failure cases", () => {
 
   it("fails when race not found", () => {
     const horse = createTestHorse({ id: "h1", name: "Runner", owned: true });
-    setState({ horses: [horse], races: [] });
+    setState({ horses: h2r([horse]), races: {} });
 
     const result = useGame.getState().nominateHorse("h1", "nonexistent");
     expect(result.ok).toBe(false);
@@ -124,7 +123,7 @@ describe("nominateHorse — failure cases", () => {
   it("fails when race is not graded", () => {
     const horse = createTestHorse({ id: "h1", name: "Runner", owned: true });
     const race = makeGradedRace("r1", 50, "G1", { graded: undefined });
-    setState({ horses: [horse], races: [race] });
+    setState({ horses: h2r([horse]), races: r2r([race]) });
 
     const result = useGame.getState().nominateHorse("h1", "r1");
     expect(result.ok).toBe(false);
@@ -134,7 +133,7 @@ describe("nominateHorse — failure cases", () => {
   it("fails when horse not owned", () => {
     const horse = createTestHorse({ id: "h1", name: "Runner", owned: false });
     const race = makeGradedRace("r1", 50, "G1");
-    setState({ horses: [horse], races: [race] });
+    setState({ horses: h2r([horse]), races: r2r([race]) });
 
     const result = useGame.getState().nominateHorse("h1", "r1");
     expect(result.ok).toBe(false);
@@ -147,8 +146,8 @@ describe("nominateHorse — failure cases", () => {
     setState({
       day: 10,
       cash: 100000,
-      horses: [horse],
-      races: [race],
+      horses: h2r([horse]),
+      races: r2r([race]),
       playerNominations: [
         {
           id: "nom-existing",
@@ -173,7 +172,7 @@ describe("nominateHorse — failure cases", () => {
   it("fails when race day has passed", () => {
     const horse = createTestHorse({ id: "h1", name: "Runner", owned: true });
     const race = makeGradedRace("r1", 5, "G1");
-    setState({ day: 10, cash: 100000, horses: [horse], races: [race] });
+    setState({ day: 10, cash: 100000, horses: h2r([horse]), races: r2r([race]) });
 
     const result = useGame.getState().nominateHorse("h1", "r1");
     expect(result.ok).toBe(false);
@@ -183,7 +182,7 @@ describe("nominateHorse — failure cases", () => {
   it("fails for G1 late tier (null fee)", () => {
     const horse = createTestHorse({ id: "h1", name: "Runner", owned: true });
     const race = makeGradedRace("r1", 20, "G1");
-    setState({ day: 10, cash: 100000, horses: [horse], races: [race] });
+    setState({ day: 10, cash: 100000, horses: h2r([horse]), races: r2r([race]) });
 
     const result = useGame.getState().nominateHorse("h1", "r1");
     expect(result.ok).toBe(false);
@@ -193,7 +192,7 @@ describe("nominateHorse — failure cases", () => {
   it("fails with insufficient cash", () => {
     const horse = createTestHorse({ id: "h1", name: "Runner", owned: true });
     const race = makeGradedRace("r1", 110, "G1");
-    setState({ day: 10, cash: 100, horses: [horse], races: [race] });
+    setState({ day: 10, cash: 100, horses: h2r([horse]), races: r2r([race]) });
 
     const result = useGame.getState().nominateHorse("h1", "r1");
     expect(result.ok).toBe(false);
@@ -207,7 +206,7 @@ describe("nominateHorse — side effects", () => {
   it("deducts correct fee from cash", () => {
     const horse = createTestHorse({ id: "h1", name: "Runner", owned: true });
     const race = makeGradedRace("r1", 110, "G1");
-    setState({ day: 10, cash: 100000, horses: [horse], races: [race] });
+    setState({ day: 10, cash: 100000, horses: h2r([horse]), races: r2r([race]) });
 
     useGame.getState().nominateHorse("h1", "r1");
     expect((useGame.getState() as any).cash).toBe(100000 - NOMINATION_FEE_G1_EARLY);
@@ -216,7 +215,7 @@ describe("nominateHorse — side effects", () => {
   it("creates NominationRecord with correct fields", () => {
     const horse = createTestHorse({ id: "h1", name: "Runner", owned: true });
     const race = makeGradedRace("r1", 110, "G2");
-    setState({ day: 10, cash: 100000, horses: [horse], races: [race] });
+    setState({ day: 10, cash: 100000, horses: h2r([horse]), races: r2r([race]) });
 
     useGame.getState().nominateHorse("h1", "r1");
     const nom = (useGame.getState() as any).playerNominations[0];

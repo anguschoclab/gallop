@@ -10,6 +10,7 @@ vi.mock("@/core/calendar/regions", () => ({
 }));
 
 import { useCalendarFilters } from "@/hooks/calendar/useCalendarFilters";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 let mockState: any;
 let mockRegion: any;
@@ -22,12 +23,12 @@ beforeEach(() => {
     specialRaceKeys: new Set<string>(),
   };
   mockState = {
-    races: [
+    races: r2r([
       { id: "r1", graded: { track: "Ascot", grade: "G1" }, resolved: false, day: 10 },
       { id: "r2", graded: { track: "Epsom", grade: "G2" }, resolved: false, day: 10 },
       { id: "r3", graded: { track: "Churchill Downs", grade: "G1" }, resolved: false, day: 10 },
       { id: "r4", resolved: false, day: 10 },
-    ],
+    ] as unknown as Race[])),
     day: 1,
   };
 });

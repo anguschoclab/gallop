@@ -41,7 +41,7 @@ describe("racesPhase", () => {
 
     const result = racesPhase.execute(context);
     expect(result.state.cash).toBe(10000);
-    expect(result.state.horses).toEqual([]);
+    expect(result.state.horses).toEqual({});
   });
 
   it("should have correct order", () => {

@@ -14,6 +14,7 @@ import {
   AFFINITY_XP_PER_WIN_BONUS,
   AFFINITY_XP_POOR_RACE_PENALTY,
 } from "@/constants";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 // ---------------------------------------------------------------------------
 // Helpers

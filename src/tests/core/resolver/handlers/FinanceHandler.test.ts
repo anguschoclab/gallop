@@ -2,11 +2,12 @@ import { describe, it, expect } from "vitest";
 import { FinanceHandler } from "@/core/resolver/handlers/FinanceHandler";
 import type { GameState } from "@/game/store/state";
 import type { CashImpact, HorseTransferImpact } from "@/core/resolver/impacts/index";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("FinanceHandler", () => {
   it("cash_change with entityId='player' updates draft.cash", () => {
     const handler = new FinanceHandler();
-    const state = { cash: 1000, horses: [], npcStables: [] } as unknown as GameState;
+    const state = { cash: 1000, horses: {}, npcStables: [] } as unknown as GameState;
 
     const impact: CashImpact = {
       id: "imp-1",
@@ -30,7 +31,7 @@ describe("FinanceHandler", () => {
     const handler = new FinanceHandler();
     const state = {
       cash: 1000,
-      horses: [],
+      horses: {},
       npcStables: [{ id: "stable-1", cash: 200 }],
     } as unknown as GameState;
 
@@ -55,7 +56,7 @@ describe("FinanceHandler", () => {
 
   it("cash_change prevents cash from going negative", () => {
     const handler = new FinanceHandler();
-    const state = { cash: 100, horses: [], npcStables: [] } as unknown as GameState;
+    const state = { cash: 100, horses: {}, npcStables: [] } as unknown as GameState;
 
     const impact: CashImpact = {
       id: "imp-1",
@@ -79,7 +80,7 @@ describe("FinanceHandler", () => {
     const handler = new FinanceHandler();
     const state = {
       cash: 1000,
-      horses: [{ id: "horse-1", name: "Star", stableId: "player", owned: true }],
+      horses: h2r([{ id: "horse-1", name: "Star", stableId: "player", owned: true }] as unknown as Horse[])),
       npcStables: [],
     } as unknown as GameState;
 
@@ -107,7 +108,7 @@ describe("FinanceHandler", () => {
     const handler = new FinanceHandler();
     const state = {
       cash: 1000,
-      horses: [{ id: "horse-1", name: "Star", stableId: "stable-2", owned: false }],
+      horses: h2r([{ id: "horse-1", name: "Star", stableId: "stable-2", owned: false }] as unknown as Horse[])),
       npcStables: [],
     } as unknown as GameState;
 

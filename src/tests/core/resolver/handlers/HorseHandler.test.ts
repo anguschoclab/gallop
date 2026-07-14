@@ -15,12 +15,13 @@ import type {
   PeakingIndexImpact,
   BeyerImpact,
 } from "@/core/resolver/impacts/index";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("HorseHandler", () => {
   it("horse_stat_change clamps to potential", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [
+      horses: h2r([
         {
           id: "h1",
           name: "Star",
@@ -34,7 +35,7 @@ describe("HorseHandler", () => {
             consistency: 20,
           },
         },
-      ],
+      ]),
     } as unknown as GameState;
 
     const impact: HorseStatImpact = {
@@ -59,7 +60,7 @@ describe("HorseHandler", () => {
   it("horse_stat_change does not go below 0", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [
+      horses: h2r([
         {
           id: "h1",
           name: "Star",
@@ -73,7 +74,7 @@ describe("HorseHandler", () => {
             consistency: 20,
           },
         },
-      ],
+      ]),
     } as unknown as GameState;
 
     const impact: HorseStatImpact = {
@@ -97,7 +98,7 @@ describe("HorseHandler", () => {
 
   it("energy_change clamps 0-100", () => {
     const handler = new HorseHandler();
-    const state = { horses: [{ id: "h1", name: "Star", energy: 90 }] } as unknown as GameState;
+    const state = { horses: h2r([{ id: "h1", name: "Star", energy: 90 }]) } as unknown as GameState;
 
     const impact: EnergyImpact = {
       id: "imp-1",
@@ -119,7 +120,7 @@ describe("HorseHandler", () => {
 
   it("energy_change does not go below 0", () => {
     const handler = new HorseHandler();
-    const state = { horses: [{ id: "h1", name: "Star", energy: 10 }] } as unknown as GameState;
+    const state = { horses: h2r([{ id: "h1", name: "Star", energy: 10 }]) } as unknown as GameState;
 
     const impact: EnergyImpact = {
       id: "imp-1",
@@ -141,7 +142,7 @@ describe("HorseHandler", () => {
 
   it("form_change clamps -10 to 10", () => {
     const handler = new HorseHandler();
-    const state = { horses: [{ id: "h1", name: "Star", form: 8 }] } as unknown as GameState;
+    const state = { horses: h2r([{ id: "h1", name: "Star", form: 8 }]) } as unknown as GameState;
 
     const impact: FormImpact = {
       id: "imp-1",
@@ -163,7 +164,7 @@ describe("HorseHandler", () => {
 
   it("fame_change clamps 0-100", () => {
     const handler = new HorseHandler();
-    const state = { horses: [{ id: "h1", name: "Star", fame: 95 }] } as unknown as GameState;
+    const state = { horses: h2r([{ id: "h1", name: "Star", fame: 95 }]) } as unknown as GameState;
 
     const impact: FameImpact = {
       id: "imp-1",
@@ -185,7 +186,7 @@ describe("HorseHandler", () => {
 
   it("rename updates name", () => {
     const handler = new HorseHandler();
-    const state = { horses: [{ id: "h1", name: "Old Name" }] } as unknown as GameState;
+    const state = { horses: h2r([{ id: "h1", name: "Old Name" }]) } as unknown as GameState;
 
     const impact: RenameImpact = {
       id: "imp-1",
@@ -207,7 +208,7 @@ describe("HorseHandler", () => {
 
   it("aging updates age", () => {
     const handler = new HorseHandler();
-    const state = { horses: [{ id: "h1", name: "Star", age: 3 }] } as unknown as GameState;
+    const state = { horses: h2r([{ id: "h1", name: "Star", age: 3 }]) } as unknown as GameState;
 
     const impact: AgingImpact = {
       id: "imp-1",
@@ -230,7 +231,7 @@ describe("HorseHandler", () => {
 
   it("pasture_retirement sets lifecycleStatus", () => {
     const handler = new HorseHandler();
-    const state = { horses: [{ id: "h1", name: "Star" }] } as unknown as GameState;
+    const state = { horses: h2r([{ id: "h1", name: "Star" }]) } as unknown as GameState;
 
     const impact: PastureRetirementImpact = {
       id: "imp-1",
@@ -253,7 +254,7 @@ describe("HorseHandler", () => {
 
   it("horse_death sets lifecycleStatus, cause, day", () => {
     const handler = new HorseHandler();
-    const state = { horses: [{ id: "h1", name: "Star" }] } as unknown as GameState;
+    const state = { horses: h2r([{ id: "h1", name: "Star" }]) } as unknown as GameState;
 
     const impact: HorseDeathImpact = {
       id: "imp-1",
@@ -279,7 +280,7 @@ describe("HorseHandler", () => {
   it("recovery_change clamps 0-100", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [{ id: "h1", name: "Star", recoveryPoints: 10 }],
+      horses: h2r([{ id: "h1", name: "Star", recoveryPoints: 10 }]),
     } as unknown as GameState;
 
     const impact: RecoveryImpact = {
@@ -302,7 +303,7 @@ describe("HorseHandler", () => {
 
   it("fitness_change does not go below 0", () => {
     const handler = new HorseHandler();
-    const state = { horses: [{ id: "h1", name: "Star", fitness: 30 }] } as unknown as GameState;
+    const state = { horses: h2r([{ id: "h1", name: "Star", fitness: 30 }]) } as unknown as GameState;
 
     const impact: FitnessImpact = {
       id: "imp-1",
@@ -324,7 +325,7 @@ describe("HorseHandler", () => {
 
   it("peaking_index_update sets value", () => {
     const handler = new HorseHandler();
-    const state = { horses: [{ id: "h1", name: "Star" }] } as unknown as GameState;
+    const state = { horses: h2r([{ id: "h1", name: "Star" }]) } as unknown as GameState;
 
     const impact: PeakingIndexImpact = {
       id: "imp-1",
@@ -346,7 +347,7 @@ describe("HorseHandler", () => {
 
   it("beyer_update sets lastBeyer and lastRaceDay", () => {
     const handler = new HorseHandler();
-    const state = { horses: [{ id: "h1", name: "Star" }] } as unknown as GameState;
+    const state = { horses: h2r([{ id: "h1", name: "Star" }]) } as unknown as GameState;
 
     const impact: BeyerImpact = {
       id: "imp-1",
@@ -370,7 +371,7 @@ describe("HorseHandler", () => {
 
   it("handle() resolves horse by entityId when horseId is absent", () => {
     const handler = new HorseHandler();
-    const state = { horses: [{ id: "h1", name: "Star", energy: 50 }] } as unknown as GameState;
+    const state = { horses: h2r([{ id: "h1", name: "Star", energy: 50 }]) } as unknown as GameState;
 
     const impact = {
       id: "imp-1",

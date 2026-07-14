@@ -7,6 +7,7 @@ import type { GameState } from "@/game/types";
 import { createDefaultGameState } from "@/game/store/state";
 import type { TrainingIntent } from "@/core/resolver/intents";
 import { isEnergyImpact } from "@/core/resolver/impacts/horseImpacts";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("trainingResolutionPhase", () => {
   const createTestState = (): GameState => ({
@@ -51,7 +52,7 @@ describe("trainingResolutionPhase", () => {
       trainability: 1.0,
     });
     const state = createTestState();
-    state.horses = [horse];
+    state.horses = h2r([horse]);
 
     const intent: TrainingIntent = {
       id: "intent-1",
@@ -81,7 +82,7 @@ describe("trainingResolutionPhase", () => {
       energy: 80,
     });
     const state = createTestState();
-    state.horses = [horse];
+    state.horses = h2r([horse]);
 
     const intent: TrainingIntent = {
       id: "intent-1",
@@ -110,7 +111,7 @@ describe("trainingResolutionPhase", () => {
       energy: 50,
     });
     const state = createTestState();
-    state.horses = [horse];
+    state.horses = h2r([horse]);
 
     const intent: TrainingIntent = {
       id: "intent-1",
@@ -136,7 +137,7 @@ describe("trainingResolutionPhase", () => {
   it("should skip non-training intents", () => {
     const horse = createTestHorse({ id: "horse-1" });
     const state = createTestState();
-    state.horses = [horse];
+    state.horses = h2r([horse]);
 
     const context = createTestContext(state, []);
     const result = trainingResolutionPhase.execute(context);
@@ -150,7 +151,7 @@ describe("trainingResolutionPhase", () => {
       energy: 80,
     });
     const state = createTestState();
-    state.horses = [horse];
+    state.horses = h2r([horse]);
 
     const intent: TrainingIntent = {
       id: "intent-1",

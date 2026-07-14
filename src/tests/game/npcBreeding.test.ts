@@ -153,7 +153,7 @@ describe("runNpcBreeding", () => {
     };
 
     const result = runNpcBreeding(state as any, 50, createRng(1));
-    expect(result.horses).toEqual([]);
+    expect(result.horses).toEqual({});
     expect(result.npcStables).toEqual([]);
     expect(result.newPregnancies).toEqual([]);
     expect(result.logs).toEqual([]);

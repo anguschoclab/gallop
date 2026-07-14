@@ -160,7 +160,7 @@ describe("applyImpacts", () => {
     };
 
     const result = applyImpacts(context);
-    expect(result.state.horses[0].stats.speed).toBe(85);
+    expect(Object.values(result.state.horses)[0].stats.speed).toBe(85);
   });
 
   it("should clamp horse stat to potential", () => {
@@ -204,7 +204,7 @@ describe("applyImpacts", () => {
     };
 
     const result = applyImpacts(context);
-    expect(result.state.horses[0].stats.speed).toBe(90);
+    expect(Object.values(result.state.horses)[0].stats.speed).toBe(90);
   });
 
   it("should apply energy change impact", () => {
@@ -248,7 +248,7 @@ describe("applyImpacts", () => {
     };
 
     const result = applyImpacts(context);
-    expect(result.state.horses[0].energy).toBe(55);
+    expect(Object.values(result.state.horses)[0].energy).toBe(55);
   });
 
   it("should clamp energy between 0 and 100", () => {
@@ -304,7 +304,7 @@ describe("applyImpacts", () => {
     };
 
     const result1 = applyImpacts(context1);
-    expect(result1.state.horses[0].energy).toBe(0);
+    expect(result1.Object.values(state.horses)[0].energy).toBe(0);
 
     const context2: ResolverContext = {
       state,
@@ -315,7 +315,7 @@ describe("applyImpacts", () => {
     };
 
     const result2 = applyImpacts(context2);
-    expect(result2.state.horses[0].energy).toBe(100);
+    expect(result2.Object.values(state.horses)[0].energy).toBe(100);
   });
 
   it("should apply horse creation impact", () => {
@@ -353,8 +353,8 @@ describe("applyImpacts", () => {
     };
 
     const result = applyImpacts(context);
-    expect(result.state.horses).toHaveLength(1);
-    expect(result.state.horses[0].id).toBe("horse-1");
+    expect(Object.keys(result.state.horses)).toHaveLength(1);
+    expect(Object.values(result.state.horses)[0].id).toBe("horse-1");
   });
 
   it("should apply horse transfer impact", () => {
@@ -401,8 +401,8 @@ describe("applyImpacts", () => {
     };
 
     const result = applyImpacts(context);
-    expect(result.state.horses[0].stableId).toBe("npc-1");
-    expect(result.state.horses[0].owned).toBe(false);
+    expect(Object.values(result.state.horses)[0].stableId).toBe("npc-1");
+    expect(Object.values(result.state.horses)[0].owned).toBe(false);
   });
 
   it("should apply multiple impacts in order", () => {
@@ -459,8 +459,8 @@ describe("applyImpacts", () => {
     };
 
     const result = applyImpacts(context);
-    expect(result.state.horses[0].energy).toBe(75);
-    expect(result.state.horses[0].stats.speed).toBe(82);
+    expect(Object.values(result.state.horses)[0].energy).toBe(75);
+    expect(Object.values(result.state.horses)[0].stats.speed).toBe(82);
     expect(result.impactLog).toHaveLength(2);
   });
 

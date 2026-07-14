@@ -10,12 +10,13 @@ import type {
   MareFoalingUpdateImpact,
 } from "@/core/resolver/impacts/index";
 import type { BlueHenImpact } from "@/core/resolver/impacts/index";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("BreedingHandler", () => {
   it("update_stud_fee sets horse.stud.standingFee", () => {
     const handler = new BreedingHandler();
     const state = {
-      horses: [{ id: "horse-1", name: "Star", stud: { standingFee: 5000, atStud: true } }],
+      horses: h2r([{ id: "horse-1", name: "Star", stud: { standingFee: 5000, atStud: true } }] as unknown as Horse[])),
       pregnancies: [],
     } as unknown as GameState;
 
@@ -40,7 +41,7 @@ describe("BreedingHandler", () => {
   it("update_stud_fee does nothing if horse has no stud career", () => {
     const handler = new BreedingHandler();
     const state = {
-      horses: [{ id: "horse-1", name: "Star" }],
+      horses: h2r([{ id: "horse-1", name: "Star" }] as unknown as Horse[])),
       pregnancies: [],
     } as unknown as GameState;
 
@@ -65,7 +66,7 @@ describe("BreedingHandler", () => {
   it("stud_career sets horse.stud", () => {
     const handler = new BreedingHandler();
     const state = {
-      horses: [{ id: "horse-1", name: "Star" }],
+      horses: h2r([{ id: "horse-1", name: "Star" }] as unknown as Horse[])),
       pregnancies: [],
     } as unknown as GameState;
 
@@ -99,7 +100,7 @@ describe("BreedingHandler", () => {
 
   it("pregnancy_creation pushes pregnancy to draft.pregnancies", () => {
     const handler = new BreedingHandler();
-    const state = { horses: [], pregnancies: [] } as unknown as GameState;
+    const state = { horses: {}, pregnancies: [] } as unknown as GameState;
 
     const pregnancy = {
       id: "preg-1",
@@ -134,7 +135,7 @@ describe("BreedingHandler", () => {
   it("pregnancy_update updates existing pregnancy", () => {
     const handler = new BreedingHandler();
     const state = {
-      horses: [],
+      horses: {},
       pregnancies: [
         {
           id: "preg-1",
@@ -171,7 +172,7 @@ describe("BreedingHandler", () => {
   it("pregnancy_deletion removes pregnancy", () => {
     const handler = new BreedingHandler();
     const state = {
-      horses: [],
+      horses: {},
       pregnancies: [
         {
           id: "preg-1",
@@ -219,7 +220,7 @@ describe("BreedingHandler", () => {
   it("mare_foaling_update sets fields on horse", () => {
     const handler = new BreedingHandler();
     const state = {
-      horses: [{ id: "horse-1", name: "Star" }],
+      horses: h2r([{ id: "horse-1", name: "Star" }] as unknown as Horse[])),
       pregnancies: [],
     } as unknown as GameState;
 
@@ -266,7 +267,7 @@ describe("BreedingHandler", () => {
   it("blue_hen_status (underscore) updates horse.blueHenStatus — regression test for type string fix", () => {
     const handler = new BreedingHandler();
     const state = {
-      horses: [{ id: "horse-1", name: "Star" }],
+      horses: h2r([{ id: "horse-1", name: "Star" }] as unknown as Horse[])),
       pregnancies: [],
     } as unknown as GameState;
 

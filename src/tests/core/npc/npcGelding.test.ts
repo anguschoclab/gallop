@@ -8,6 +8,7 @@ import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import type { GameState, Horse, Stable } from "@/game/types";
 import { produce } from "immer";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("NPC Gelding AI & Intent Generation", () => {
   it("should evaluate gelding eligibility based on stable personality and horse potential", () => {
@@ -124,9 +125,9 @@ describe("NPC Gelding AI & Intent Generation", () => {
 
     const gameState: GameState = {
       day: 1,
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [stable],
-      races: [],
+      races: {},
       pregnancies: [],
       jockeys: [],
       npcAIManager: {
@@ -162,7 +163,7 @@ describe("BreedingValidator Fixes", () => {
   it("should reject gelding as sire", () => {
     const sire = createTestHorse({ id: "sire-1", gender: "gelding", age: 5 });
     const dam = createTestHorse({ id: "dam-1", gender: "mare", age: 5 });
-    const state: GameState = { cash: 5000, horses: [sire, dam] } as any;
+    const state: GameState = { cash: 5000, horses: h2r([sire, dam]) } as any;
 
     const intent = {
       type: "breeding",
@@ -178,7 +179,7 @@ describe("BreedingValidator Fixes", () => {
   it("should allow colt as sire and filly as dam", () => {
     const sire = createTestHorse({ id: "sire-2", gender: "colt", age: 3 });
     const dam = createTestHorse({ id: "dam-2", gender: "filly", age: 3 });
-    const state: GameState = { cash: 5000, horses: [sire, dam] } as any;
+    const state: GameState = { cash: 5000, horses: h2r([sire, dam]) } as any;
 
     const intent = {
       type: "breeding",
@@ -200,7 +201,7 @@ describe("HorseHandler Gelding Impact Resolution", () => {
     });
 
     const state: GameState = {
-      horses: [horse],
+      horses: h2r([horse]),
       npcStables: [],
     } as any;
 

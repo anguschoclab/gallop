@@ -7,6 +7,7 @@ import { createRng } from "@/core/common/rng";
 import { intentCollectionPhase } from "@/core/time/phases/intentCollection";
 import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
 import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("Intent/Resolution Pipeline Integration", () => {
   const createTestState = (): GameState => ({
@@ -24,8 +25,8 @@ describe("Intent/Resolution Pipeline Integration", () => {
     impacts: [],
     impactLog: [],
     dailyRng: createRng(1),
-    horseMap: new Map((state.horses ?? []).map((h) => [h.id, h])),
-    raceMap: new Map((state.races ?? []).map((r) => [r.id, r])),
+    horseMap: new Map(Object.values(state.horses ?? {}).map((h) => [h.id, h])),
+    raceMap: new Map(Object.values(state.races ?? {}).map((r) => [r.id, r])),
     stableMap: new Map((state.npcStables ?? []).map((s) => [s.id, s])),
     jockeyMap: new Map((state.jockeys ?? []).map((j) => [j.id, j])),
   });
@@ -35,7 +36,7 @@ describe("Intent/Resolution Pipeline Integration", () => {
     const stable = createTestStable({ id: "s1", cash: 10000 });
 
     const state = createTestState();
-    state.horses = [horse];
+    state.horses = h2r([horse]);
     state.npcStables = [stable];
 
     // Add manual intent
@@ -60,6 +61,6 @@ describe("Intent/Resolution Pipeline Integration", () => {
     const result = executePipeline(phases, context);
 
     expect(result.state.cash).toBeLessThan(originalCash);
-    expect(result.state.horses[0].energy).toBeLessThan(originalEnergy);
+    expect(Object.values(result.state.horses)[0].energy).toBeLessThan(originalEnergy);
   });
 });

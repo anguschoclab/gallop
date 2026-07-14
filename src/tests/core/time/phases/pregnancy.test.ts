@@ -178,7 +178,7 @@ describe("pregnancyPhase", () => {
     const state: GameState = makeGameState({
       day: 31,
       cash: 10000,
-      horses: initialHorses,
+      horses: h2r(initialHorses),
       npcStables: [],
       pregnancies: [pregnancy],
       usedHorseNames: [],

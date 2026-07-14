@@ -5,6 +5,7 @@ import { createTestHorse } from "@/tests/helpers";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import { createDefaultGameState } from "@/game/store/state";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("awardsPhase", () => {
   const createTestState = (): GameState => ({
@@ -22,8 +23,8 @@ describe("awardsPhase", () => {
     impacts: [],
     impactLog: [],
     dailyRng: createRng(1),
-    horseMap: new Map((state.horses ?? []).map((h) => [h.id, h])),
-    raceMap: new Map((state.races ?? []).map((r) => [r.id, r])),
+    horseMap: new Map(Object.values(state.horses ?? {}).map((h) => [h.id, h])),
+    raceMap: new Map(Object.values(state.races ?? {}).map((r) => [r.id, r])),
     stableMap: new Map((state.npcStables ?? []).map((s) => [s.id, s])),
     jockeyMap: new Map((state.jockeys ?? []).map((j) => [j.id, j])),
   });
@@ -68,7 +69,7 @@ describe("awardsPhase", () => {
 
     const state = createTestState();
     state.day = 365;
-    state.horses = [horse];
+    state.horses = h2r([horse]);
 
     const context = createTestContext(state, 364, 365);
     const result = awardsPhase.execute(context);
@@ -154,8 +155,8 @@ describe("awardsPhase", () => {
 
     const state = createTestState();
     state.day = 365;
-    state.horses = [horse];
-    state.races = [race];
+    state.horses = h2r([horse]);
+    state.races = r2r([race]);
 
     const context = createTestContext(state, 364, 365);
     const result = awardsPhase.execute(context);
@@ -232,8 +233,8 @@ describe("awardsPhase", () => {
 
     const state = createTestState();
     state.day = 365;
-    state.horses = [horse];
-    state.races = [race];
+    state.horses = h2r([horse]);
+    state.races = r2r([race]);
 
     const context = createTestContext(state, 364, 365);
     const result = awardsPhase.execute(context);

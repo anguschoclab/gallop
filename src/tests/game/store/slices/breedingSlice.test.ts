@@ -7,7 +7,7 @@ function makeMockState(overrides: Record<string, any> = {}) {
   return {
     day: 10,
     cash: 500000,
-    horses: [],
+    horses: {},
     horseMap: new Map(),
     log: [],
     syndicates: {

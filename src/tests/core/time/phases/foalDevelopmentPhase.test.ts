@@ -37,8 +37,8 @@ function makeContext(state: Partial<GameState>, newDay: number): PipelineContext
     intents: [],
     impacts: [],
     impactLog: [],
-    horseMap: new Map((fullState.horses ?? []).map((h) => [h.id, h])),
-    raceMap: new Map((fullState.races ?? []).map((r) => [r.id, r])),
+    horseMap: new Map(Object.values(fullState.horses ?? {}).map((h) => [h.id, h])),
+    raceMap: new Map(Object.values(fullState.races ?? {}).map((r) => [r.id, r])),
     stableMap: new Map((fullState.npcStables ?? []).map((s) => [s.id, s])),
     jockeyMap: new Map((fullState.jockeys ?? []).map((j) => [j.id, j])),
   };

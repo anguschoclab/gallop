@@ -7,20 +7,21 @@ import type {
   SyndicateFeeDistributionImpact,
   SyndicateSatisfactionImpact,
 } from "@/core/resolver/impacts/index";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("SyndicationHandler", () => {
   it("syndicate_creation creates syndicate for G1 winner", () => {
     const handler = new SyndicationHandler();
     const state = {
       cash: 1000,
-      horses: [
+      horses: h2r([
         {
           id: "h1",
           name: "Champion",
           raceHistory: [{ grade: "G1", position: 1 }],
           stud: { standingFee: 20000 },
         },
-      ],
+      ] as unknown as Horse[])),
       syndicates: {},
     } as unknown as GameState;
 
@@ -53,7 +54,7 @@ describe("SyndicationHandler", () => {
     const handler = new SyndicationHandler();
     const state = {
       cash: 1000,
-      horses: [{ id: "h1", name: "NonWinner", raceHistory: [{ grade: "G2", position: 1 }] }],
+      horses: h2r([{ id: "h1", name: "NonWinner", raceHistory: [{ grade: "G2", position: 1 }] }] as unknown as Horse[])),
       syndicates: {},
     } as unknown as GameState;
 
@@ -83,7 +84,7 @@ describe("SyndicationHandler", () => {
     const handler = new SyndicationHandler();
     const state = {
       cash: 1000,
-      horses: [],
+      horses: {},
       syndicates: {
         "syn-1": {
           id: "syn-1",
@@ -125,7 +126,7 @@ describe("SyndicationHandler", () => {
     const handler = new SyndicationHandler();
     const state = {
       cash: 1000,
-      horses: [],
+      horses: {},
       syndicates: {
         "syn-1": {
           id: "syn-1",
@@ -166,7 +167,7 @@ describe("SyndicationHandler", () => {
     const handler = new SyndicationHandler();
     const state = {
       cash: 1000,
-      horses: [],
+      horses: {},
       npcStables: [{ id: "stable-2", cash: 0 }],
       syndicates: {
         "syn-1": {
@@ -208,7 +209,7 @@ describe("SyndicationHandler", () => {
     const handler = new SyndicationHandler();
     const state = {
       cash: 1000,
-      horses: [],
+      horses: {},
       syndicates: {
         "syn-1": {
           id: "syn-1",

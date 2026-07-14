@@ -63,7 +63,7 @@ describe("claimingWithdrawalPhase", () => {
 
     expect(result.impacts).toHaveLength(1);
     expect(result.impacts[0].type).toBe("log");
-    const race = result.state.races[0];
+    const race = Object.values(result.state.races)[0];
     expect(race.entries[0].withdrawnFromClaiming).toBe(true);
   });
 
@@ -109,8 +109,8 @@ describe("claimingWithdrawalPhase", () => {
 
     const result = claimingWithdrawalPhase.execute(createContext(state, intents));
     expect(result.impacts).toHaveLength(2);
-    expect(result.state.races[0].entries[0].withdrawnFromClaiming).toBe(true);
-    expect(result.state.races[1].entries[0].withdrawnFromClaiming).toBe(true);
+    expect(Object.values(result.state.races)[0].entries[0].withdrawnFromClaiming).toBe(true);
+    expect(Object.values(result.state.races)[1].entries[0].withdrawnFromClaiming).toBe(true);
   });
 
   it("should skip already withdrawn entries", () => {

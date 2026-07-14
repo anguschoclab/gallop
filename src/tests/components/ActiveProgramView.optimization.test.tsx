@@ -12,6 +12,7 @@ import { renderWithStore } from "@/test-utils/renderWithStore";
 import { ActiveProgramView } from "@/components/breeding/ActiveProgramView";
 import { createTestHorse, createTestMare, createTestFilly, createTestColt } from "@/tests/helpers";
 import type { BreedingProgram } from "@/core/breeding/programs";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
@@ -44,7 +45,7 @@ describe("ActiveProgramView — Set-based mare filtering", () => {
     const program = mkProgram();
     renderWithStore(<ActiveProgramView />, {
       activeBreedingProgram: program,
-      horses: [],
+      horses: {},
     } as any);
     expect(screen.getByText("Elite Turf Stayer")).toBeTruthy();
   });
@@ -53,7 +54,7 @@ describe("ActiveProgramView — Set-based mare filtering", () => {
     const mare1 = createTestMare({ id: "mare-1", name: "Thunder Belle", owned: true });
     renderWithStore(<ActiveProgramView />, {
       activeBreedingProgram: mkProgram({ enrolledDamIds: [] }),
-      horses: [mare1],
+      horses: h2r([mare1]),
     } as any);
     expect(screen.getByText("Thunder Belle")).toBeTruthy();
   });
@@ -62,7 +63,7 @@ describe("ActiveProgramView — Set-based mare filtering", () => {
     const mare2 = createTestMare({ id: "mare-2", name: "Lightning Grace", owned: true });
     renderWithStore(<ActiveProgramView />, {
       activeBreedingProgram: mkProgram({ enrolledDamIds: ["mare-2"] }),
-      horses: [mare2],
+      horses: h2r([mare2]),
     } as any);
     // Enrolled mare should appear (in the enrolled section, not the add section)
     expect(screen.getByText("Lightning Grace")).toBeTruthy();
@@ -75,7 +76,7 @@ describe("ActiveProgramView — Set-based mare filtering", () => {
     const mare = createTestMare({ id: "mare-1", name: "Eligible Mare", owned: true });
     renderWithStore(<ActiveProgramView />, {
       activeBreedingProgram: mkProgram({ enrolledDamIds: [] }),
-      horses: [colt, mare],
+      horses: h2r([colt, mare]),
     } as any);
     // Colt should not appear in the eligible list
     expect(screen.queryByText("Should Not Appear")).toBeNull();
@@ -88,7 +89,7 @@ describe("ActiveProgramView — Set-based mare filtering", () => {
     const ownedMare = createTestMare({ id: "mare-1", name: "Owned Mare", owned: true });
     renderWithStore(<ActiveProgramView />, {
       activeBreedingProgram: mkProgram({ enrolledDamIds: [] }),
-      horses: [unownedMare, ownedMare],
+      horses: h2r([unownedMare, ownedMare]),
     } as any);
     expect(screen.queryByText("Unowned Mare")).toBeNull();
     expect(screen.getByText("Owned Mare")).toBeTruthy();

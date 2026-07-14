@@ -26,6 +26,7 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 import { FoalDevelopmentPanel } from "@/components/horse/FoalDevelopmentPanel";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function makeHorse(overrides: Partial<Horse> = {}) {
   return createTestHorse({
@@ -43,7 +44,7 @@ describe("FoalDevelopmentPanel", () => {
   it("returns nothing when the horse has no development arc", () => {
     const horse = makeHorse({ developmentArc: undefined });
     const { container } = renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
-      horses: [horse],
+      horses: h2r([horse]),
       day: 20,
     } as any);
     expect(container.firstChild).toBeNull();
@@ -53,7 +54,7 @@ describe("FoalDevelopmentPanel", () => {
     const horse = makeHorse();
     // birthDay=0, breaking_in triggers at day 18.
     renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
-      horses: [horse],
+      horses: h2r([horse]),
       day: 18,
     } as any);
 
@@ -88,7 +89,7 @@ describe("FoalDevelopmentPanel", () => {
     const horse = makeHorse();
     // Day 10: breaking_in (day 18) is 8 days away, no active milestone.
     renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
-      horses: [horse],
+      horses: h2r([horse]),
       day: 10,
     } as any);
 
@@ -100,7 +101,7 @@ describe("FoalDevelopmentPanel", () => {
   it("does not render choice deltas outside an active milestone", () => {
     const horse = makeHorse();
     renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
-      horses: [horse],
+      horses: h2r([horse]),
       day: 5,
     } as any);
     expect(screen.queryByText(/awaiting your decision/i)).toBeNull();
@@ -118,7 +119,7 @@ describe("FoalDevelopmentPanel", () => {
     const horse = makeHorse({ developmentArc: arc });
 
     renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
-      horses: [horse],
+      horses: h2r([horse]),
       day: 30,
     } as any);
     expect(screen.getByText(/All development milestones complete/i)).toBeTruthy();
@@ -130,7 +131,7 @@ describe("FoalDevelopmentPanel", () => {
     it("day = triggerDay - 1: shows countdown 'in 1d' and no active decision", () => {
       const horse = makeHorse();
       renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
-        horses: [horse],
+        horses: h2r([horse]),
         day: 17,
       } as any);
       expect(screen.queryByText(/awaiting your decision/i)).toBeNull();
@@ -140,7 +141,7 @@ describe("FoalDevelopmentPanel", () => {
     it("day = triggerDay: activates the milestone (not the countdown)", () => {
       const horse = makeHorse();
       renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
-        horses: [horse],
+        horses: h2r([horse]),
         day: 18,
       } as any);
       expect(screen.getByText(/Breaking In awaiting your decision/i)).toBeTruthy();
@@ -150,7 +151,7 @@ describe("FoalDevelopmentPanel", () => {
     it("day = triggerDay + 1: still active (past trigger, not yet resolved)", () => {
       const horse = makeHorse();
       renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
-        horses: [horse],
+        horses: h2r([horse]),
         day: 19,
       } as any);
       expect(screen.getByText(/Breaking In awaiting your decision/i)).toBeTruthy();
@@ -163,7 +164,7 @@ describe("FoalDevelopmentPanel", () => {
       arc.milestones[0].resolvedOnDay = 18;
       const horse = makeHorse({ developmentArc: arc });
       renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
-        horses: [horse],
+        horses: h2r([horse]),
         day: 23,
       } as any);
       expect(screen.getByText(/Day 24 \(in 1d\)/)).toBeTruthy();
@@ -177,7 +178,7 @@ describe("FoalDevelopmentPanel", () => {
       arc.milestones[0].resolvedOnDay = 18;
       const horse = makeHorse({ developmentArc: arc });
       renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
-        horses: [horse],
+        horses: h2r([horse]),
         day: 24,
       } as any);
       expect(screen.getByText(/Early Workouts awaiting your decision/i)).toBeTruthy();
@@ -187,7 +188,7 @@ describe("FoalDevelopmentPanel", () => {
       const horse = makeHorse({ developmentArc: createDefaultFoalDevelopmentArc(100) });
       // breaking_in triggers at day 118. On day 116 -> in 2d.
       renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
-        horses: [horse],
+        horses: h2r([horse]),
         day: 116,
       } as any);
       expect(screen.getByText(/Day 118 \(in 2d\)/)).toBeTruthy();

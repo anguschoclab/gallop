@@ -11,6 +11,7 @@ import { makePipelineContext } from "@/tests/helpers/sampleGameState";
 import { createRng } from "@/core/common/rng";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 const G1_RACE = {
   raceId: "g1-test",
@@ -48,7 +49,7 @@ function findImpacts(impacts: AnyImpact[], type: string) {
 describe("Pasture Retirement — Section 1: Player Intent Processing", () => {
   it("retires an active horse via intent and emits pasture_retirement + log impacts", () => {
     const horse = createTestHorse({ id: "h1", name: "Speedy", lifecycleStatus: "active" });
-    const ctx = makeContext({ horses: [horse] }, [
+    const ctx = makeContext({ horses: h2r([horse]) }, [
       { id: "intent-1", type: "pasture_retirement", horseId: "h1" },
     ]);
     const out = pastureRetirementPhase.execute(ctx);
@@ -66,7 +67,7 @@ describe("Pasture Retirement — Section 1: Player Intent Processing", () => {
   });
 
   it("skips intent for non-existent horseId — no impacts", () => {
-    const ctx = makeContext({ horses: [] }, [
+    const ctx = makeContext({ horses: {} }, [
       { id: "intent-1", type: "pasture_retirement", horseId: "ghost" },
     ]);
     const out = pastureRetirementPhase.execute(ctx);
@@ -75,7 +76,7 @@ describe("Pasture Retirement — Section 1: Player Intent Processing", () => {
 
   it("skips intent for already-retired horse — no impacts", () => {
     const horse = createTestHorse({ id: "h1", name: "Old Timer", lifecycleStatus: "retired" });
-    const ctx = makeContext({ horses: [horse] }, [
+    const ctx = makeContext({ horses: h2r([horse]) }, [
       { id: "intent-1", type: "pasture_retirement", horseId: "h1" },
     ]);
     const out = pastureRetirementPhase.execute(ctx);
@@ -84,7 +85,7 @@ describe("Pasture Retirement — Section 1: Player Intent Processing", () => {
 
   it("skips intent for deceased horse — no impacts", () => {
     const horse = createTestHorse({ id: "h1", name: "Ghost", lifecycleStatus: "deceased" });
-    const ctx = makeContext({ horses: [horse] }, [
+    const ctx = makeContext({ horses: h2r([horse]) }, [
       { id: "intent-1", type: "pasture_retirement", horseId: "h1" },
     ]);
     const out = pastureRetirementPhase.execute(ctx);
@@ -103,7 +104,7 @@ describe("Pasture Retirement — Section 1: Player Intent Processing", () => {
       gender: "horse" as const,
       age: 5,
     });
-    const ctx = makeContext({ horses: [horse] }, [
+    const ctx = makeContext({ horses: h2r([horse]) }, [
       { id: "intent-1", type: "pasture_retirement", horseId: "top-horse" },
     ]);
     const out = pastureRetirementPhase.execute(ctx);
@@ -123,7 +124,7 @@ describe("Pasture Retirement — Section 1: Player Intent Processing", () => {
       careerWins: 1,
       raceHistory: [],
     });
-    const ctx = makeContext({ horses: [horse] }, [
+    const ctx = makeContext({ horses: h2r([horse]) }, [
       { id: "intent-1", type: "pasture_retirement", horseId: "avg-horse" },
     ]);
     const out = pastureRetirementPhase.execute(ctx);
@@ -139,7 +140,7 @@ describe("Pasture Retirement — Section 1: Player Intent Processing", () => {
       raceHistory: [G1_RACE],
       lifecycleStatus: "active" as const,
     });
-    const ctx = makeContext({ horses: [horse] }, [
+    const ctx = makeContext({ horses: h2r([horse]) }, [
       { id: "intent-1", type: "pasture_retirement", horseId: "npc-horse" },
     ]);
     const out = pastureRetirementPhase.execute(ctx);
@@ -149,7 +150,7 @@ describe("Pasture Retirement — Section 1: Player Intent Processing", () => {
   it("processes multiple intents in one call", () => {
     const h1 = createTestHorse({ id: "h1", name: "Horse One", lifecycleStatus: "active" });
     const h2 = createTestHorse({ id: "h2", name: "Horse Two", lifecycleStatus: "active" });
-    const ctx = makeContext({ horses: [h1, h2] }, [
+    const ctx = makeContext({ horses: h2r([h1, h2]) }, [
       { id: "i1", type: "pasture_retirement", horseId: "h1" },
       { id: "i2", type: "pasture_retirement", horseId: "h2" },
     ]);
@@ -171,7 +172,7 @@ describe("Pasture Retirement — Section 2: NPC Auto-Retirement", () => {
       lifecycleStatus: "active" as const,
       raceHistory: [{ ...G1_RACE, raceId: "r1", day: 195, position: 5 }],
     });
-    const ctx = makeContext({ horses: [horse] }, [], 200);
+    const ctx = makeContext({ horses: h2r([horse]) }, [], 200);
     const out = pastureRetirementPhase.execute(ctx);
 
     const retireImpacts = findImpacts(out.impacts, "pasture_retirement");
@@ -188,7 +189,7 @@ describe("Pasture Retirement — Section 2: NPC Auto-Retirement", () => {
       lifecycleStatus: "active" as const,
       raceHistory: [{ ...G1_RACE, raceId: "r1", day: 100, position: 3 }],
     });
-    const ctx = makeContext({ horses: [horse] }, [], 200);
+    const ctx = makeContext({ horses: h2r([horse]) }, [], 200);
     const out = pastureRetirementPhase.execute(ctx);
 
     const retireImpacts = findImpacts(out.impacts, "pasture_retirement");
@@ -205,7 +206,7 @@ describe("Pasture Retirement — Section 2: NPC Auto-Retirement", () => {
       lifecycleStatus: "active" as const,
       raceHistory: [{ ...G1_RACE, raceId: "r1", day: 195, position: 5 }],
     });
-    const ctx = makeContext({ horses: [horse] }, [], 200);
+    const ctx = makeContext({ horses: h2r([horse]) }, [], 200);
     const out = pastureRetirementPhase.execute(ctx);
 
     const retireImpacts = findImpacts(out.impacts, "pasture_retirement");
@@ -222,7 +223,7 @@ describe("Pasture Retirement — Section 2: NPC Auto-Retirement", () => {
       lifecycleStatus: "active" as const,
       stud: { atStud: true, studFee: 5000, seasonStart: 1, bookSize: 0, totalBookings: 0 } as any,
     });
-    const ctx = makeContext({ horses: [horse] }, [], 200);
+    const ctx = makeContext({ horses: h2r([horse]) }, [], 200);
     const out = pastureRetirementPhase.execute(ctx);
     expect(findImpacts(out.impacts, "pasture_retirement").length).toBe(0);
   });
@@ -236,7 +237,7 @@ describe("Pasture Retirement — Section 2: NPC Auto-Retirement", () => {
       lifecycleStatus: "active" as const,
       raceHistory: [{ ...G1_RACE, raceId: "r1", day: 195, position: 2 }],
     });
-    const ctx = makeContext({ horses: [horse] }, [], 200);
+    const ctx = makeContext({ horses: h2r([horse]) }, [], 200);
     const out = pastureRetirementPhase.execute(ctx);
     expect(findImpacts(out.impacts, "pasture_retirement").length).toBe(0);
   });
@@ -250,7 +251,7 @@ describe("Pasture Retirement — Section 2: NPC Auto-Retirement", () => {
       lifecycleStatus: "active" as const,
       raceHistory: [{ ...G1_RACE, raceId: "r1", day: 195, position: 1, grade: "G3" as const }],
     });
-    const ctx = makeContext({ horses: [horse] }, [], 200);
+    const ctx = makeContext({ horses: h2r([horse]) }, [], 200);
     const out = pastureRetirementPhase.execute(ctx);
     expect(findImpacts(out.impacts, "pasture_retirement").length).toBe(0);
   });
@@ -263,7 +264,7 @@ describe("Pasture Retirement — Section 2: NPC Auto-Retirement", () => {
       fame: 10,
       lifecycleStatus: "active" as const,
     });
-    const ctx = makeContext({ horses: [horse] }, [], 200);
+    const ctx = makeContext({ horses: h2r([horse]) }, [], 200);
     const out = pastureRetirementPhase.execute(ctx);
     expect(findImpacts(out.impacts, "pasture_retirement").length).toBe(0);
   });
@@ -280,7 +281,7 @@ describe("Pasture Retirement — Section 3: Horse Deletion", () => {
       lifecycleStatus: "deceased",
       careerWins: 0,
     });
-    const ctx = makeContext({ horses: [horse] }, []);
+    const ctx = makeContext({ horses: h2r([horse]) }, []);
     const out = pastureRetirementPhase.execute(ctx);
     const deletions = findImpacts(out.impacts, "horse_deletion");
     expect(deletions.length).toBe(1);
@@ -294,7 +295,7 @@ describe("Pasture Retirement — Section 3: Horse Deletion", () => {
       lifecycleStatus: "retired",
       careerWins: 0,
     });
-    const ctx = makeContext({ horses: [horse] }, []);
+    const ctx = makeContext({ horses: h2r([horse]) }, []);
     const out = pastureRetirementPhase.execute(ctx);
     expect(findImpacts(out.impacts, "horse_deletion").length).toBe(1);
   });
@@ -306,7 +307,7 @@ describe("Pasture Retirement — Section 3: Horse Deletion", () => {
       lifecycleStatus: "deceased",
       careerWins: 3,
     });
-    const ctx = makeContext({ horses: [horse] }, []);
+    const ctx = makeContext({ horses: h2r([horse]) }, []);
     const out = pastureRetirementPhase.execute(ctx);
     expect(findImpacts(out.impacts, "horse_deletion").length).toBe(0);
   });
@@ -318,7 +319,7 @@ describe("Pasture Retirement — Section 3: Horse Deletion", () => {
       lifecycleStatus: "active",
       careerWins: 0,
     });
-    const ctx = makeContext({ horses: [horse] }, []);
+    const ctx = makeContext({ horses: h2r([horse]) }, []);
     const out = pastureRetirementPhase.execute(ctx);
     expect(findImpacts(out.impacts, "horse_deletion").length).toBe(0);
   });
@@ -329,7 +330,7 @@ describe("Pasture Retirement — Section 3: Horse Deletion", () => {
 // ---------------------------------------------------------------------------
 describe("Pasture Retirement — Integration", () => {
   it("empty horses + empty intents → no impacts, context preserved", () => {
-    const ctx = makeContext({ horses: [] }, []);
+    const ctx = makeContext({ horses: {} }, []);
     const out = pastureRetirementPhase.execute(ctx);
     expect(out.impacts.length).toBe(0);
     expect(out.newDay).toBe(ctx.newDay);
@@ -339,7 +340,7 @@ describe("Pasture Retirement — Integration", () => {
   it("preserves existing context.impacts and appends new ones", () => {
     const horse = createTestHorse({ id: "h1", name: "Speedy", lifecycleStatus: "active" });
     const existingImpact = { id: "old-1", type: "log", text: "pre-existing" } as any;
-    const ctx = makeContext({ horses: [horse] }, [
+    const ctx = makeContext({ horses: h2r([horse]) }, [
       { id: "intent-1", type: "pasture_retirement", horseId: "h1" },
     ]);
     ctx.impacts = [existingImpact];

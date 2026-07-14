@@ -7,11 +7,12 @@ import type {
   ConsignmentWithdrawalImpact,
   AuctionResolutionImpact,
 } from "@/core/resolver/impacts/index";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("MarketHandler", () => {
   it("scout_report pushes report to draft.scoutReports", () => {
     const handler = new MarketHandler();
-    const state = { scoutReports: [], horses: [] } as unknown as GameState;
+    const state = { scoutReports: [], horses: {} } as unknown as GameState;
 
     const impact: ScoutReportImpact = {
       id: "imp-1",
@@ -41,7 +42,7 @@ describe("MarketHandler", () => {
     const handler = new MarketHandler();
     const state = {
       scoutReports: [],
-      horses: [{ id: "horse-1", name: "Star" }],
+      horses: h2r([{ id: "horse-1", name: "Star" }] as unknown as Horse[])),
       auctions: [{ id: "sale-1", lots: [] }],
     } as unknown as GameState;
 
@@ -73,7 +74,7 @@ describe("MarketHandler", () => {
     const handler = new MarketHandler();
     const state = {
       scoutReports: [],
-      horses: [{ id: "horse-1", name: "Star", consignedSaleId: "sale-1" }],
+      horses: h2r([{ id: "horse-1", name: "Star", consignedSaleId: "sale-1" }] as unknown as Horse[])),
       auctions: [
         {
           id: "sale-1",
@@ -107,7 +108,7 @@ describe("MarketHandler", () => {
     const handler = new MarketHandler();
     const state = {
       scoutReports: [],
-      horses: [],
+      horses: {},
       auctions: [
         {
           id: "sale-1",
@@ -152,7 +153,7 @@ describe("MarketHandler", () => {
     const handler = new MarketHandler();
     const state = {
       scoutReports: [],
-      horses: [{ id: "horse-1", name: "Star", consignedSaleId: "sale-1" }],
+      horses: h2r([{ id: "horse-1", name: "Star", consignedSaleId: "sale-1" }] as unknown as Horse[])),
       auctions: [
         {
           id: "sale-1",

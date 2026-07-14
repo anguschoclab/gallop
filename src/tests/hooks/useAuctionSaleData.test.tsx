@@ -16,6 +16,7 @@ vi.mock("@/services/auction/auctionLotFilter", () => ({
 
 import { useAuctionSaleData } from "@/hooks/auction/useAuctionSaleData";
 import { createDefaultGameState } from "@/game/store/state";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 let mockState: any;
 
@@ -56,7 +57,7 @@ beforeEach(() => {
   sessionStorage.clear();
   seedState({
     auctions: [mkSale([mkLot()])],
-    horses: [mkHorse()],
+    horses: h2r([mkHorse()]),
     horseMap: new Map([["h1", mkHorse()]]),
     cash: 100000,
     day: 10,
@@ -83,7 +84,7 @@ describe("useAuctionSaleData", () => {
   it("handleBid with amount > cash sets error", () => {
     seedState({
       auctions: [mkSale([mkLot()])],
-      horses: [mkHorse()],
+      horses: h2r([mkHorse()]),
       horseMap: new Map([["h1", mkHorse()]]),
       cash: 500,
       day: 10,
@@ -124,7 +125,7 @@ describe("useAuctionSaleData", () => {
     const placeBookBid = vi.fn(() => ({ ok: true }));
     seedState({
       auctions: [mkSale([mkLot()])],
-      horses: [mkHorse()],
+      horses: h2r([mkHorse()]),
       horseMap: new Map([["h1", mkHorse()]]),
       cash: 100000,
       day: 10,
@@ -163,7 +164,7 @@ describe("useAuctionSaleData", () => {
   it("handleBuyNow sets error on failure", () => {
     seedState({
       auctions: [mkSale([mkLot()])],
-      horses: [mkHorse()],
+      horses: h2r([mkHorse()]),
       horseMap: new Map([["h1", mkHorse()]]),
       cash: 100000,
       day: 10,
@@ -181,7 +182,7 @@ describe("useAuctionSaleData", () => {
   it("handleWithdraw sets error on failure", () => {
     seedState({
       auctions: [mkSale([mkLot()])],
-      horses: [mkHorse()],
+      horses: h2r([mkHorse()]),
       horseMap: new Map([["h1", mkHorse()]]),
       cash: 100000,
       day: 10,

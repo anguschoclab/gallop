@@ -24,7 +24,7 @@ function makeTestStable(): Stable {
     reputation: 50,
     founded: 1,
     cash: 100000,
-    horses: {},
+    horses: [],
     isMajor: true,
     colors: { primary: "#ff0000", secondary: "#00ff00" },
     personality: "conservative",

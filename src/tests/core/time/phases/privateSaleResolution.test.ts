@@ -366,7 +366,7 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse1 = mkHorse({ id: "horse-1", name: "Thunder" });
     const horse2 = mkHorse({ id: "horse-2", name: "Lightning" });
-    const stable = mkStable({ personality: "aggressive", horses: h2r(["horse-1", "horse-2"]) });
+    const stable = mkStable({ personality: "aggressive", horses: ["horse-1", "horse-2"] });
     const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
     const valuation = calculateNpcHorseValue(horse1, stable.tier);
 
@@ -423,7 +423,7 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse1 = mkHorse({ id: "horse-1", name: "Thunder" });
     const horse2 = mkHorse({ id: "horse-2", name: "Lightning" });
-    const stable = mkStable({ horses: h2r(["horse-1", "horse-2"]) });
+    const stable = mkStable({ horses: ["horse-1", "horse-2"] });
     const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
     const valuation = calculateNpcHorseValue(horse1, stable.tier);
 

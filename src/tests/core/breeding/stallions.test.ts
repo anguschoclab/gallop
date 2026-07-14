@@ -8,6 +8,7 @@ import {
 } from "@/core/breeding/stallions";
 import type { Horse, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -76,7 +77,7 @@ describe("recalcStandingFee", () => {
       },
       raceHistory: [],
     });
-    const state = { horses: [horse], npcStables: [] };
+    const state = { horses: h2r([horse]), npcStables: [] };
     const base = recalcStandingFee(horse, state as any);
 
     // Add a stakes win

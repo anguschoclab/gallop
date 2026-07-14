@@ -15,6 +15,7 @@ import { weatherPhase } from "@/core/time/phases/weatherPhase";
 import { InboxHandler } from "@/core/resolver/handlers/InboxHandler";
 import { stepWeather, PATTERN_SEVERITY, type WeatherState } from "@/core/weather";
 import { createRng } from "@/core/common/rng";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -237,7 +238,7 @@ describe("Multiple storm jumps on the same day — unread badge + Action Require
       state: {
         day: dayToday,
         inbox: [],
-        races: [
+        races: r2r([
           {
             id: "race-maiden",
             name: "Maiden Sprint",
@@ -253,7 +254,7 @@ describe("Multiple storm jumps on the same day — unread badge + Action Require
             trackCondition: "good",
             // No `graded` field — should not trigger drama alert.
           },
-        ],
+        ]),
         log: [],
         weather: {
           byTrack: { "churchill-downs": [{ ...yesterday, day: dayToday - 1 }] },

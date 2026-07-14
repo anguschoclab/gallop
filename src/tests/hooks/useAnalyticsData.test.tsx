@@ -10,6 +10,7 @@ import type {
 } from "@/core/transactions/transactionTypes";
 import type { SireRanking, Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
 import type { SireAnalytics } from "@/core/breeding/sireAnalytics";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 function mkSireAnalytics(stallionId: string): SireAnalytics {
   return {
     stallionId,
@@ -88,7 +89,7 @@ describe("useAnalyticsData", () => {
     renderWithStore(<Probe />, {
       day: 100,
       cash: 100000,
-      horses: [],
+      horses: {},
       transactions: [],
       sireLeaderboards: { overall },
       sireTrendHistory: trends,
@@ -118,7 +119,7 @@ describe("useAnalyticsData", () => {
     renderWithStore(<Probe />, {
       day: 100,
       cash: 100000,
-      horses: [h1, h2],
+      horses: h2r([h1, h2]),
       transactions,
     } as any);
     const roi = captured[0].rankedRoi;
@@ -139,7 +140,7 @@ describe("useAnalyticsData", () => {
     renderWithStore(<Probe />, {
       day: 100,
       cash: 100000,
-      horses: [h1],
+      horses: h2r([h1]),
       transactions: [],
     } as any);
     const roi = captured[0].rankedRoi;
@@ -167,7 +168,7 @@ describe("useAnalyticsData", () => {
     renderWithStore(<Probe />, {
       day: 100,
       cash: 100000,
-      horses: [h1, h2],
+      horses: h2r([h1, h2]),
       transactions,
     } as any);
     const roi = captured[0].rankedRoi;

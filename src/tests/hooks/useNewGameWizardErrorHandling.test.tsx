@@ -39,7 +39,7 @@ vi.mock("@/core/common/backstories", () => ({
       startingCash: 100000,
       reputationScore: 50,
       facilityUpgrades: {},
-      horses: [{ tier: "elite", count: 2 }],
+      horses: h2r([{ tier: "elite", count: 2 }]),
     },
   ],
 }));
@@ -50,6 +50,7 @@ vi.mock("@/components/NewGameWizard/steps/helpers", () => ({
 
 import { useNewGameWizard } from "@/hooks/shared/useNewGameWizard";
 import { useGame } from "@/game/store";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function setupStore(startNewGameImpl: any) {
   (useGame as any).mockImplementation((selector: any) =>

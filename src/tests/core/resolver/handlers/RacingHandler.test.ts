@@ -18,13 +18,14 @@ import type {
   JockeyAffinityImpact,
 } from "@/core/resolver/impacts/index";
 import type { TripleCrownProgressImpact } from "@/core/resolver/impacts/index";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("RacingHandler", () => {
   it("race_entry adds entry to race", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: [{ id: "h1", name: "Star", stableId: "" }],
-      races: [{ id: "race-1", entries: [], entryFee: 1000 }],
+      horses: h2r([{ id: "h1", name: "Star", stableId: "" }] as unknown as Horse[])),
+      races: r2r([{ id: "race-1", entries: [], entryFee: 1000 }]),
     } as unknown as GameState;
 
     const impact: RaceEntryImpact = {
@@ -45,7 +46,7 @@ describe("RacingHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.races[0].entries).toHaveLength(1);
+    expect(Object.keys(draft.races[0].entries)).toHaveLength(1);
     expect(draft.races[0].entries[0].horseId).toBe("h1");
     expect(draft.races[0].entries[0].jockeyId).toBe("j1");
     expect(draft.races[0].entries[0].owned).toBe(true);
@@ -54,8 +55,8 @@ describe("RacingHandler", () => {
   it("race_withdrawal removes entry from race", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: [],
-      races: [{ id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] }],
+      horses: {},
+      races: r2r([{ id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] }]),
     } as unknown as GameState;
 
     const impact: RaceWithdrawalImpact = {
@@ -74,18 +75,18 @@ describe("RacingHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.races[0].entries).toHaveLength(0);
+    expect(Object.keys(draft.races[0].entries)).toHaveLength(0);
   });
 
   it("race_result sets result, resolved, and snapshots", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: [],
-      races: [{ id: "race-1", entries: [], resolved: false }],
+      horses: {},
+      races: r2r([{ id: "race-1", entries: [], resolved: false }]),
     } as unknown as GameState;
 
     const results = [{ horseId: "h1", position: 1, time: 90.5 }];
-    const snapshots = [{ t: 0, horses: [] }];
+    const snapshots = [{ t: 0, horses: {} }];
 
     const impact: RaceResultImpact = {
       id: "imp-1",
@@ -111,8 +112,8 @@ describe("RacingHandler", () => {
   it("jockey_contract sets stableId and contractUntil", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: [],
-      races: [],
+      horses: {},
+      races: {},
       jockeys: [{ id: "j1", name: "Bob", careerWins: 0 }],
     } as unknown as GameState;
 
@@ -139,8 +140,8 @@ describe("RacingHandler", () => {
   it("jockey_assignment updates entry jockeyId", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: [],
-      races: [{ id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] }],
+      horses: {},
+      races: r2r([{ id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] }]),
     } as unknown as GameState;
 
     const impact: JockeyAssignmentImpact = {
@@ -165,8 +166,8 @@ describe("RacingHandler", () => {
   it("jockey_silk updates jockey silk", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: [],
-      races: [],
+      horses: {},
+      races: {},
       jockeys: [{ id: "j1", name: "Bob" }],
     } as unknown as GameState;
 
@@ -191,8 +192,8 @@ describe("RacingHandler", () => {
   it("jockey_stats updates stats and handles apprenticeProgression", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: [],
-      races: [],
+      horses: {},
+      races: {},
       jockeys: [{ id: "j1", name: "Bob", careerWins: 5, isApprentice: true }],
     } as unknown as GameState;
 
@@ -230,8 +231,8 @@ describe("RacingHandler", () => {
   it("claiming transfers horse ownership", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: [{ id: "h1", name: "Star", stableId: "stable-1", owned: false }],
-      races: [],
+      horses: h2r([{ id: "h1", name: "Star", stableId: "stable-1", owned: false }] as unknown as Horse[])),
+      races: {},
     } as unknown as GameState;
 
     const impact: ClaimingImpact = {
@@ -258,8 +259,8 @@ describe("RacingHandler", () => {
   it("triple_crown_progress creates new entry", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: [],
-      races: [],
+      horses: {},
+      races: {},
       triplecrownHistory: [],
     } as unknown as GameState;
 
@@ -289,8 +290,8 @@ describe("RacingHandler", () => {
   it("triple_crown_progress updates existing entry", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: [],
-      races: [],
+      horses: {},
+      races: {},
       triplecrownHistory: [
         { horseId: "h1", triplecrownKey: "us_3yo", year: 2024, legs: 2, won: false },
       ],
@@ -326,8 +327,8 @@ describe("RacingHandler", () => {
   it("triple_crown_progress finds existing entry by composite key when multiple entries exist", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: [],
-      races: [],
+      horses: {},
+      races: {},
       triplecrownHistory: [
         {
           horseId: "h1",
@@ -397,8 +398,8 @@ describe("RacingHandler", () => {
   it("tactics updates entry jockeyInstructions", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: [],
-      races: [{ id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] }],
+      horses: {},
+      races: r2r([{ id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] }]),
     } as unknown as GameState;
 
     const impact: TacticsImpact = {
@@ -430,8 +431,8 @@ describe("RacingHandler", () => {
   it("race_result_adjustment adjusts and re-sorts results", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: [],
-      races: [
+      horses: {},
+      races: r2r([
         {
           id: "race-1",
           entries: [],
@@ -441,7 +442,7 @@ describe("RacingHandler", () => {
             { horseId: "h2", position: 2, time: 91 },
           ],
         },
-      ],
+      ]),
     } as unknown as GameState;
 
     const impact: RaceResultAdjustmentImpact = {
@@ -475,8 +476,8 @@ describe("RacingHandler", () => {
   it("jockey_affinity_gain updates affinity map", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: [],
-      races: [],
+      horses: {},
+      races: {},
       jockeys: [{ id: "j1", name: "Bob" }],
     } as unknown as GameState;
 

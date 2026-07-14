@@ -22,6 +22,7 @@ vi.mock("@/core/horse/paceTendency", () => ({
 }));
 
 import { RunningStyleBreakdown } from "@/components/horse/RunningStyleBreakdown";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("RunningStyleBreakdown", () => {
   afterEach(() => {
@@ -30,7 +31,7 @@ describe("RunningStyleBreakdown", () => {
 
   it("renders the section header", () => {
     const horse = createTestHorse({ id: "h1", name: "Test Horse", owned: true });
-    renderWithStore(<RunningStyleBreakdown horse={horse} />, { horses: [horse] } as any);
+    renderWithStore(<RunningStyleBreakdown horse={horse} />, { horses: h2r([horse]) } as any);
     expect(screen.getByText(/Running Style Breakdown/i)).toBeTruthy();
   });
 
@@ -47,13 +48,13 @@ describe("RunningStyleBreakdown", () => {
       owned: true,
       raceHistory: [{ position: 2, day: 10, raceId: "r1", time: 61 } as any],
     });
-    renderWithStore(<RunningStyleBreakdown horse={horse} />, { horses: [horse, other] } as any);
+    renderWithStore(<RunningStyleBreakdown horse={horse} />, { horses: h2r([horse, other]) } as any);
     expect(screen.getByText(/Compare with/i)).toBeTruthy();
   });
 
   it("does not show compare horse when no other owned horses with race history exist", () => {
     const horse = createTestHorse({ id: "h1", name: "Solo Horse", owned: true });
-    renderWithStore(<RunningStyleBreakdown horse={horse} />, { horses: [horse] } as any);
+    renderWithStore(<RunningStyleBreakdown horse={horse} />, { horses: h2r([horse]) } as any);
     expect(screen.queryByText("Exit Compare")).toBeNull();
   });
 
@@ -65,7 +66,7 @@ describe("RunningStyleBreakdown", () => {
       owned: false,
       raceHistory: [{ position: 1, day: 10, raceId: "r1", time: 60 } as any],
     });
-    renderWithStore(<RunningStyleBreakdown horse={horse} />, { horses: [horse, npc] } as any);
+    renderWithStore(<RunningStyleBreakdown horse={horse} />, { horses: h2r([horse, npc]) } as any);
     expect(screen.queryByText("Npc Horse")).toBeNull();
   });
 });

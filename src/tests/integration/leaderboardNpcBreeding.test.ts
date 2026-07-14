@@ -204,7 +204,7 @@ describe("leaderboardNpcBreeding integration", () => {
           energy: 100,
           form: 100,
         },
-      ]) as unknown as Horse[],
+      ] as unknown as Horse[]),
       npcStables: [
         {
           id: "stable1",

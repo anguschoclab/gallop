@@ -34,7 +34,7 @@ const mkStable = (overrides: Partial<Stable> = {}): Stable =>
     reputation: 50,
     founded: 1,
     cash: 100000,
-    horses: h2r(["h1"]),
+    horses: ["h1"],
     isMajor: false,
     colors: { primary: "#000", secondary: "#fff" },
     personality: "aggressive",

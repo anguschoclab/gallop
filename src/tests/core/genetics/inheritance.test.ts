@@ -87,7 +87,7 @@ describe("breedingSimulator — RNG diversity", () => {
     // Test objects with genotype property (not on Horse type)
     const sireHorse = { id: "s1", genotype: sire, pedigree: undefined } as any;
     const damHorse = { id: "d1", genotype: dam, pedigree: undefined } as any;
-    const state = { horses: [], npcStables: [] } as any;
+    const state = { horses: {}, npcStables: [] } as any;
 
     const result = runBreedingSimulation(sireHorse, damHorse, state, rng);
 

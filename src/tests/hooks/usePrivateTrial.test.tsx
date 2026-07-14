@@ -13,6 +13,7 @@ vi.mock("@/core/horse/trialFeedback", () => ({
 import { usePrivateTrial } from "@/hooks/race/usePrivateTrial";
 import { useGame } from "@/game/store";
 import { generateRiderFeedback } from "@/core/horse/trialFeedback";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function makeHorse(overrides: any = {}): Horse {
   return {
@@ -28,17 +29,17 @@ const mockTrialResult = {
   snapshots: [
     {
       t: 1.0,
-      horses: [
+      horses: h2r([
         { horseId: "h1", velocity: 10 },
         { horseId: "h2", velocity: 9 },
-      ],
+      ] as unknown as Horse[])),
     },
     {
       t: 2.0,
-      horses: [
+      horses: h2r([
         { horseId: "h1", velocity: 12 },
         { horseId: "h2", velocity: 11 },
-      ],
+      ] as unknown as Horse[])),
     },
   ],
   result: [
@@ -311,10 +312,10 @@ describe("usePrivateTrial", () => {
           snapshots: [
             {
               t: 1.0,
-              horses: [
+              horses: h2r([
                 { horseId: "h1", velocity: 10 },
                 { horseId: "h2", velocity: 9 },
-              ],
+              ] as unknown as Horse[])),
             },
           ],
           result: [

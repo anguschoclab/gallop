@@ -7,12 +7,13 @@ import type {
   TransportImpact,
   OutpostImpact,
 } from "@/core/resolver/impacts/index";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("InfrastructureHandler", () => {
   it("facility_upgrade updates facility level", () => {
     const handler = new InfrastructureHandler();
     const state = {
-      horses: [],
+      horses: {},
       facilities: { training_track: { level: 1 } },
     } as unknown as GameState;
 
@@ -39,7 +40,7 @@ describe("InfrastructureHandler", () => {
     const handler = new InfrastructureHandler();
     const state = {
       cash: 10000,
-      horses: [],
+      horses: {},
       staffPool: [{ id: "staff-1", name: "Bob", role: "trainer" }],
       hiredStaff: [],
     } as unknown as GameState;
@@ -74,7 +75,7 @@ describe("InfrastructureHandler", () => {
     const handler = new InfrastructureHandler();
     const state = {
       cash: 10000,
-      horses: [],
+      horses: {},
       staffPool: [],
       hiredStaff: [{ id: "staff-1", name: "Bob", role: "trainer", salary: 2000, stableId: "" }],
     } as unknown as GameState;
@@ -104,7 +105,7 @@ describe("InfrastructureHandler", () => {
   it("transport_horse updates outpost and fatigue", () => {
     const handler = new InfrastructureHandler();
     const state = {
-      horses: [{ id: "h1", name: "Star", fatigue: 10, stableId: "" }],
+      horses: h2r([{ id: "h1", name: "Star", fatigue: 10, stableId: "" }] as unknown as Horse[])),
       npcStables: [],
     } as unknown as GameState;
 
@@ -133,7 +134,7 @@ describe("InfrastructureHandler", () => {
   it("outpost_action create adds a new outpost", () => {
     const handler = new InfrastructureHandler();
     const state = {
-      horses: [],
+      horses: {},
       npcStables: [],
       outposts: [],
     } as unknown as GameState;
@@ -163,7 +164,7 @@ describe("InfrastructureHandler", () => {
   it("transport_horse with player horse updates draft.outposts acclimatization", () => {
     const handler = new InfrastructureHandler();
     const state = {
-      horses: [{ id: "h1", name: "Star", fatigue: 10, stableId: "" }],
+      horses: h2r([{ id: "h1", name: "Star", fatigue: 10, stableId: "" }] as unknown as Horse[])),
       npcStables: [],
       outposts: [
         {

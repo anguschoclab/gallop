@@ -8,6 +8,7 @@ import {
 } from "@/core/breeding/bruceLowe";
 import type { Horse } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function mkHorse(over: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -47,18 +48,18 @@ describe("familyRole", () => {
 describe("resolveBruceLoweFamily", () => {
   it("returns the cached value when set on the horse", () => {
     const h = mkHorse({ bruceLoweFamily: 7 });
-    expect(resolveBruceLoweFamily(h, { horses: [h] } as any)).toBe(7);
+    expect(resolveBruceLoweFamily(h, { horses: h2r([h]) } as any)).toBe(7);
   });
 
   it("walks up to the dam to find the family", () => {
     const dam = mkHorse({ id: "dam", bruceLoweFamily: 12 });
     const foal = mkHorse({ id: "foal", pedigree: { name: "Foal", generation: 0, damId: "dam" } });
-    expect(resolveBruceLoweFamily(foal, { horses: [dam, foal] } as any)).toBe(12);
+    expect(resolveBruceLoweFamily(foal, { horses: h2r([dam, foal]) } as any)).toBe(12);
   });
 
   it("undefined when no chain hits a known family", () => {
     const foal = mkHorse({ id: "x" });
-    expect(resolveBruceLoweFamily(foal, { horses: [foal] } as any)).toBeUndefined();
+    expect(resolveBruceLoweFamily(foal, { horses: h2r([foal]) } as any)).toBeUndefined();
   });
 });
 

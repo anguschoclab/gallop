@@ -21,8 +21,8 @@ describe("auctionsPhase", () => {
     impacts: [],
     impactLog: [],
     dailyRng: createRng(1),
-    horseMap: new Map((state.horses ?? []).map((h) => [h.id, h])),
-    raceMap: new Map((state.races ?? []).map((r) => [r.id, r])),
+    horseMap: new Map(Object.values(state.horses ?? {}).map((h) => [h.id, h])),
+    raceMap: new Map(Object.values(state.races ?? {}).map((r) => [r.id, r])),
     stableMap: new Map((state.npcStables ?? []).map((s) => [s.id, s])),
     jockeyMap: new Map((state.jockeys ?? []).map((j) => [j.id, j])),
   });

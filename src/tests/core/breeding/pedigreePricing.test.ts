@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
 import type { Horse } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function mkHorse(over: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -16,7 +17,7 @@ function mkHorse(over: Partial<Horse> = {}): Horse {
 describe("pedigreeMultiplier", () => {
   it("returns 1 when no pedigree", () => {
     const horse = mkHorse();
-    expect(pedigreeMultiplier(horse, { horses: [horse] } as any)).toBe(1);
+    expect(pedigreeMultiplier(horse, { horses: h2r([horse]) } as any)).toBe(1);
   });
 
   it("yearling by elite stallion + blue-hen dam → multiplier > 1.2", () => {
@@ -59,7 +60,7 @@ describe("pedigreeMultiplier", () => {
         damName: "Dam",
       },
     });
-    const mul = pedigreeMultiplier(yearling, { horses: [sire, dam, yearling] } as any);
+    const mul = pedigreeMultiplier(yearling, { horses: h2r([sire, dam, yearling]) } as any);
     expect(mul).toBeGreaterThan(1.2);
   });
 

@@ -34,7 +34,7 @@ function setupStore(overrides: Record<string, unknown> = {}) {
     selector({
       playerProfile: null,
       day: 1,
-      horses: [],
+      horses: {},
       ...overrides,
     }),
   );

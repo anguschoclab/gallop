@@ -11,7 +11,7 @@ import type {
 describe("SystemHandler", () => {
   it("log pushes entry to draft.log", () => {
     const handler = new SystemHandler();
-    const state = { log: [], horses: [] } as unknown as GameState;
+    const state = { log: [], horses: {} } as unknown as GameState;
 
     const impact: LogImpact = {
       id: "imp-1",
@@ -34,7 +34,7 @@ describe("SystemHandler", () => {
 
   it("transaction creates a transaction entry with correct type", () => {
     const handler = new SystemHandler();
-    const state = { cash: 1000, transactions: [], horses: [] } as unknown as GameState;
+    const state = { cash: 1000, transactions: [], horses: {} } as unknown as GameState;
 
     const impact: TransactionImpact = {
       id: "imp-1",
@@ -59,7 +59,7 @@ describe("SystemHandler", () => {
 
   it("transaction with negative amount creates expense type", () => {
     const handler = new SystemHandler();
-    const state = { cash: 1000, transactions: [], horses: [] } as unknown as GameState;
+    const state = { cash: 1000, transactions: [], horses: {} } as unknown as GameState;
 
     const impact: TransactionImpact = {
       id: "imp-1",
@@ -83,7 +83,7 @@ describe("SystemHandler", () => {
 
   it("campaign_creation creates a new campaign from horseId+goalType — regression test for shape fix", () => {
     const handler = new SystemHandler();
-    const state = { horses: [], campaigns: [] } as unknown as GameState;
+    const state = { horses: {}, campaigns: [] } as unknown as GameState;
 
     const impact: CampaignCreationImpact = {
       id: "imp-1",
@@ -114,7 +114,7 @@ describe("SystemHandler", () => {
   it("campaign_flag_dismissal with flagIndex removes flag by index — regression test for shape fix", () => {
     const handler = new SystemHandler();
     const state = {
-      horses: [],
+      horses: {},
       campaigns: [
         {
           horseId: "horse-1",
@@ -157,7 +157,7 @@ describe("SystemHandler", () => {
   it("campaign_flag_dismissal with flag object removes matching flag", () => {
     const handler = new SystemHandler();
     const state = {
-      horses: [],
+      horses: {},
       campaigns: [
         {
           horseId: "horse-1",

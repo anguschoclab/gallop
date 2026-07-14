@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { HorseHandler } from "@/core/resolver/handlers/HorseHandler";
 import type { GameState } from "@/game/store/state";
 import type { HorseDeletionImpact } from "@/core/resolver/impacts/horseImpacts";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function makeHorse(id: string, name: string): any {
   return {
@@ -28,7 +29,7 @@ describe("HorseHandler — horse_deletion", () => {
   it("removes horse from draft.horses", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [makeHorse("h1", "Star"), makeHorse("h2", "Comet")],
+      horses: h2r([makeHorse("h1", "Star"), makeHorse("h2", "Comet")]),
     } as unknown as GameState;
 
     const impact: HorseDeletionImpact = {
@@ -54,7 +55,7 @@ describe("HorseHandler — horse_deletion", () => {
 
     handler.handle(draft, impact, lookupMaps);
 
-    expect(draft.horses).toHaveLength(1);
+    expect(Object.keys(draft.horses)).toHaveLength(1);
     expect(draft.horses.find((h: any) => h.id === "h1")).toBeUndefined();
     expect(draft.horses.find((h: any) => h.id === "h2")).toBeDefined();
   });
@@ -62,7 +63,7 @@ describe("HorseHandler — horse_deletion", () => {
   it("removes horse from lookupMaps.horseMap", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [makeHorse("h1", "Star"), makeHorse("h2", "Comet")],
+      horses: h2r([makeHorse("h1", "Star"), makeHorse("h2", "Comet")]),
     } as unknown as GameState;
 
     const impact: HorseDeletionImpact = {
@@ -96,7 +97,7 @@ describe("HorseHandler — horse_deletion", () => {
   it("is a no-op when horseId does not exist", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [makeHorse("h1", "Star")],
+      horses: h2r([makeHorse("h1", "Star")]),
     } as unknown as GameState;
 
     const impact: HorseDeletionImpact = {
@@ -119,7 +120,7 @@ describe("HorseHandler — horse_deletion", () => {
 
     handler.handle(draft, impact, lookupMaps);
 
-    expect(draft.horses).toHaveLength(1);
+    expect(Object.keys(draft.horses)).toHaveLength(1);
     expect(draft.horses[0].id).toBe("h1");
   });
 });

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { requireHorse, requireOwned } from "@/game/store/guards";
 import type { Horse } from "@/game/types";
+import { h2r } from "@/tests/helpers/sampleGameState";
 
 function makeHorse(id: string, owned: boolean): Horse {
   return { id, owned, name: id } as unknown as Horse;
@@ -8,22 +9,22 @@ function makeHorse(id: string, owned: boolean): Horse {
 
 describe("requireHorse", () => {
   it("returns horse when id matches", () => {
-    const horses = [makeHorse("h1", true), makeHorse("h2", false)];
-    expect(requireHorse(horses, "h1")).toBe(horses[0]);
+    const horses = h2r([makeHorse("h1", true), makeHorse("h2", false)]);
+    expect(requireHorse(horses, "h1")).toBe(horses["h1"]);
   });
 
   it("returns undefined when no horse matches", () => {
-    const horses = [makeHorse("h1", true)];
+    const horses = h2r([makeHorse("h1", true)]);
     expect(requireHorse(horses, "h99")).toBeUndefined();
   });
 
   it("returns correct horse from array of multiple", () => {
-    const horses = [makeHorse("h1", true), makeHorse("h2", false), makeHorse("h3", true)];
-    expect(requireHorse(horses, "h2")).toBe(horses[1]);
+    const horses = h2r([makeHorse("h1", true), makeHorse("h2", false), makeHorse("h3", true)]);
+    expect(requireHorse(horses, "h2")).toBe(horses["h2"]);
   });
 
-  it("returns undefined for empty array", () => {
-    expect(requireHorse([], "h1")).toBeUndefined();
+  it("returns undefined for empty Record", () => {
+    expect(requireHorse({}, "h1")).toBeUndefined();
   });
 });
 

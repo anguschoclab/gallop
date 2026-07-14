@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { cn } from "@/lib/cn";
 import { groupRacesByDate } from "@/core/race/groupRacesByDate";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("utils", () => {
   describe("cn", () => {
@@ -41,14 +42,14 @@ describe("utils", () => {
       const result = groupRacesByDate(races);
 
       expect(result).toEqual([
-        { day: 1, races: [{ id: 4, day: 1 }] },
-        { day: 2, races: [{ id: 2, day: 2 }] },
+        { day: 1, races: r2r([{ id: 4, day: 1 }] as unknown as Race[])) },
+        { day: 2, races: r2r([{ id: 2, day: 2 }] as unknown as Race[])) },
         {
           day: 5,
-          races: [
+          races: r2r([
             { id: 1, day: 5 },
             { id: 3, day: 5 },
-          ],
+          ] as unknown as Race[])),
         },
       ]);
     });

@@ -15,6 +15,7 @@ vi.mock("@tanstack/react-router", () => ({
 
 import { SireWatchTab } from "@/components/breeding/SireWatchTab";
 import { createTestHorse } from "@/tests/helpers";
+import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function mkStud(overrides: Partial<StudCareer> = {}): StudCareer {
   return {
@@ -50,19 +51,19 @@ describe("SireWatchTab", () => {
   });
 
   it("renders empty state when no stallions are at stud", () => {
-    renderWithStore(<SireWatchTab />, { horses: [] } as any);
+    renderWithStore(<SireWatchTab />, { horses: {} } as any);
     expect(screen.getByText(/no stallions at stud/i)).toBeTruthy();
   });
 
   it("renders stallion cards when horses have stud.atStud", () => {
     const stallion = mkStallion("s1");
-    renderWithStore(<SireWatchTab />, { horses: [stallion] } as any);
+    renderWithStore(<SireWatchTab />, { horses: h2r([stallion]) } as any);
     expect(screen.getByText("Stallion s1")).toBeTruthy();
   });
 
   it("View Profile button calls navigate with correct route params", () => {
     const stallion = mkStallion("s1");
-    renderWithStore(<SireWatchTab />, { horses: [stallion] } as any);
+    renderWithStore(<SireWatchTab />, { horses: h2r([stallion]) } as any);
     const btn = screen.getByText("View Profile");
     fireEvent.click(btn);
     expect(navigate).toHaveBeenCalledTimes(1);
@@ -75,7 +76,7 @@ describe("SireWatchTab", () => {
   it("does NOT assign to window.location.href", () => {
     const stallion = mkStallion("s1");
     const originalHref = window.location.href;
-    renderWithStore(<SireWatchTab />, { horses: [stallion] } as any);
+    renderWithStore(<SireWatchTab />, { horses: h2r([stallion]) } as any);
     fireEvent.click(screen.getByText("View Profile"));
     expect(window.location.href).toBe(originalHref);
   });
