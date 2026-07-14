@@ -22,6 +22,8 @@ export {
   FACILITY_NAMES,
   FACILITY_DESCRIPTIONS,
   FACILITY_ENABLED_WORKOUTS,
+  FACILITY_TIER_LABELS,
+  facilityLevelToTierLabel,
 } from "./facilityTypes";
 
 // Function exports

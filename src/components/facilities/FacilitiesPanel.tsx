@@ -2,6 +2,52 @@ import { useGame, useGameWithShallow } from "@/game/store";
 import { FacilityCategory } from "./FacilityCategory";
 import { Dumbbell, ShieldCheck, Activity, Package } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
+import {
+  FACILITY_BONUSES,
+  FACILITY_MAINTENANCE_COSTS,
+  FACILITY_UPGRADE_COSTS,
+  FACILITY_TIER_LABELS,
+  type FacilityLevel,
+} from "@/core/facilities";
+import { FACILITY_LEVELS } from "@/hooks/facilities/useFacilityTiers";
+
+function TierLegend() {
+  const tiers = FACILITY_LEVELS;
+
+  return (
+    <div className="bg-black/40 border border-white/5 p-4">
+      <div className="text-[8px] font-black uppercase text-cream/20 tracking-[0.3em] mb-3">
+        Tier Reference
+      </div>
+      <div className="grid grid-cols-4 gap-2">
+        {tiers.map((level) => {
+          const bonus = FACILITY_BONUSES[level];
+          const maintenance = FACILITY_MAINTENANCE_COSTS[level];
+          const upgradeCost = FACILITY_UPGRADE_COSTS[level];
+          return (
+            <div
+              key={level}
+              className="border border-white/5 p-2 space-y-1"
+            >
+              <div className="text-[9px] font-black uppercase text-gold tracking-widest">
+                {FACILITY_TIER_LABELS[level]}
+              </div>
+              <div className="text-[8px] font-mono text-cream/60 tabular-nums">
+                {bonus === 0 ? "0%" : `+${bonus * 100}%`}
+              </div>
+              <div className="text-[8px] font-mono text-cream/40 tabular-nums">
+                {formatCurrency(maintenance)}/day
+              </div>
+              <div className="text-[8px] font-mono text-cream/40 tabular-nums">
+                {upgradeCost === null ? "Max" : formatCurrency(upgradeCost)}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 /**
  * Facilities Panel Component
@@ -66,6 +112,8 @@ export function FacilitiesPanel() {
           </div>
         </div>
       </div>
+
+      <TierLegend />
 
       {facilityCategories.map((cat) => (
         <FacilityCategory

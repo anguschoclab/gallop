@@ -86,4 +86,11 @@ export const JARGON_DEFINITIONS: Record<string, string> = {
   shower: "Brief light rain — track condition softens by one tier.",
   rain: "Sustained rainfall — turf yields, dirt turns muddy.",
   storm: "Heavy rain and wind — surface degrades sharply; expect a downgrade.",
+
+  // Facility tiers
+  Tier: "Infrastructure performance tier (01–04). Higher tiers unlock greater training bonuses but cost more to maintain and upgrade.",
+  "Regimens Unlocked":
+    "Training regimens enabled by this facility at its current tier. Upgrade to unlock additional workout types.",
+  Commission:
+    "Commission an infrastructure upgrade to the next performance tier, increasing effectiveness and unlocking new capabilities.",
 };

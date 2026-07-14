@@ -65,7 +65,7 @@ describe("HorseCompare styling improvements", () => {
     const h1 = mkHorse({ id: "h1", name: "Strong", stats: { speed: 90, stamina: 90, acceleration: 90, temperament: 70, durability: 70, consistency: 70 } as any });
     const h2 = mkHorse({ id: "h2", name: "Weak", stats: { speed: 50, stamina: 50, acceleration: 50, temperament: 70, durability: 70, consistency: 70 } as any });
     const { container } = render(<HorseCompare horses={[h1, h2]} {...baseProps} />);
-    const goldCells = container.querySelectorAll(".bg-gold\\/10, [class*='bg-gold']");
+    const goldCells = container.querySelectorAll("[class*='bg-gold']");
     expect(goldCells.length).toBeGreaterThan(0);
   });
 
@@ -82,7 +82,7 @@ describe("HorseCompare styling improvements", () => {
     const h2 = mkHorse({ id: "h2" });
     const { container } = render(<HorseCompare horses={[h1, h2]} {...baseProps} />);
     const table = screen.getByRole("table");
-    const progressBars = container.querySelectorAll("[role='progressbar'], .h-1");
+    const progressBars = within(table).getAllByRole("progressbar");
     expect(progressBars.length).toBeGreaterThan(0);
   });
 
@@ -90,7 +90,7 @@ describe("HorseCompare styling improvements", () => {
     const h1 = mkHorse({ id: "h1" });
     const h2 = mkHorse({ id: "h2" });
     render(<HorseCompare horses={[h1, h2]} {...baseProps} />);
-    expect(screen.getByText(/head-to-head/i) || screen.getByText(/projection/i) || screen.getByText(/head to head/i)).toBeTruthy();
+    expect(screen.getByTestId("head-to-head-section")).toBeTruthy();
   });
 
   it("horse order in dialog matches horses prop order", () => {

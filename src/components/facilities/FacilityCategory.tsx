@@ -6,6 +6,9 @@ import { ArrowUp, Check, HardDrive } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
 import { cn } from "@/lib/cn";
 import { useFacilityTiers } from "@/hooks/facilities/useFacilityTiers";
+import { JargonTooltip } from "@/components/ui/JargonTooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { JARGON_DEFINITIONS } from "@/constants/jargon";
 
 interface FacilityCategoryProps {
   category: string;
@@ -76,7 +79,9 @@ export function FacilityCategory({
                         : "border-white/10 text-cream/40",
                     )}
                   >
-                    Tier 0{rankVal}
+                    <JargonTooltip term="Tier" className="no-underline decoration-none">
+                      Tier 0{rankVal}
+                    </JargonTooltip>
                   </Badge>
                 </div>
               </CardHeader>
@@ -113,7 +118,9 @@ export function FacilityCategory({
                   <div className="space-y-2">
                     <div className="text-[8px] font-black uppercase text-cream/20 tracking-[0.2em] flex items-center gap-1.5 px-1">
                       <HardDrive className="h-2.5 w-2.5 opacity-40" />
-                      Regimens Unlocked
+                      <JargonTooltip term="Regimens Unlocked" className="no-underline decoration-none">
+                        Regimens Unlocked
+                      </JargonTooltip>
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {FACILITY_ENABLED_WORKOUTS[type].map((workout: string) => (
@@ -138,20 +145,29 @@ export function FacilityCategory({
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <Button
-                        onClick={() => onUpgrade(type)}
-                        disabled={!canAfford}
-                        variant={canAfford ? "default" : "outline"}
-                        className={cn(
-                          "w-full h-10 uppercase text-[10px] font-black tracking-[0.2em] rounded-none transition-all",
-                          canAfford
-                            ? "bg-gold hover:bg-gold-bright text-slate-950 shadow-lg"
-                            : "border-white/5 text-cream/20 bg-transparent",
-                        )}
-                      >
-                        <ArrowUp className="h-3 w-3 mr-2" />
-                        Commission Tier 0{rankVal + 1}
-                      </Button>
+                      <TooltipProvider delayDuration={300}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              onClick={() => onUpgrade(type)}
+                              disabled={!canAfford}
+                              variant={canAfford ? "default" : "outline"}
+                              className={cn(
+                                "w-full h-10 uppercase text-[10px] font-black tracking-[0.2em] rounded-none transition-all",
+                                canAfford
+                                  ? "bg-gold hover:bg-gold-bright text-slate-950 shadow-lg"
+                                  : "border-white/5 text-cream/20 bg-transparent",
+                              )}
+                            >
+                              <ArrowUp className="h-3 w-3 mr-2" />
+                              Commission Tier 0{rankVal + 1}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-[200px] text-center">
+                            {JARGON_DEFINITIONS["Commission"]}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                       {!canAfford && (
                         <p className="text-center text-[8px] font-black uppercase text-destructive/40 tracking-tighter animate-pulse">
                           Insufficient Capital Reserves

@@ -130,3 +130,14 @@ export const FACILITY_ENABLED_WORKOUTS: Record<FacilityType, string[]> = {
   nutrition_lab: [],
   rehab_center: [],
 };
+
+export const FACILITY_TIER_LABELS: Record<FacilityLevel, string> = {
+  basic: "Tier 01",
+  standard: "Tier 02",
+  premium: "Tier 03",
+  elite: "Tier 04",
+};
+
+export function facilityLevelToTierLabel(level: FacilityLevel): string {
+  return FACILITY_TIER_LABELS[level] ?? "Tier 00";
+}

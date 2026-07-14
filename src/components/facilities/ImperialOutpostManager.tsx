@@ -8,7 +8,7 @@ import {
   type Outpost,
   type FacilityBranch,
 } from "@/core/facilities/outpostTypes";
-import { FACILITY_NAMES, type FacilityType } from "@/core/facilities/facilityTypes";
+import { FACILITY_NAMES, facilityLevelToTierLabel, type FacilityType } from "@/core/facilities/facilityTypes";
 import { MapPin, Users, Globe, Hammer, Zap, Heart, TrendingUp, ArrowRightLeft } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { formatCurrency } from "@/core/common/formatting";
@@ -148,7 +148,7 @@ export function ImperialOutpostManager() {
                         {FACILITY_NAMES[facilityAtSlot.type].split(" ")[0]}
                       </span>
                       <Badge className="h-3 text-[8px] px-1 bg-t700 text-gold-muted">
-                        {facilityAtSlot.level}
+                        {facilityLevelToTierLabel(facilityAtSlot.level)}
                       </Badge>
                     </div>
                   );
@@ -244,7 +244,7 @@ export function ImperialOutpostManager() {
               </div>
               <div className="flex justify-between items-center text-xs">
                 <span className="text-cream-muted">Transport Fleet</span>
-                <span className="text-cream">Elite (Level 4)</span>
+                <span className="text-cream">Tier 04</span>
               </div>
             </CardContent>
           </Card>

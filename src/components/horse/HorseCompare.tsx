@@ -340,7 +340,7 @@ function HeadToHeadSection({ horses }: { horses: Horse[] }) {
   };
 
   return (
-    <div className="border-t border-white/10 pt-4">
+    <div className="border-t border-white/10 pt-4" data-testid="head-to-head-section">
       <h4 className="text-[11px] uppercase tracking-widest font-mono text-cream/50 mb-3">
         Head-to-Head Projection
       </h4>

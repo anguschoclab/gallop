@@ -4,7 +4,7 @@ import { TRAINING_COST } from "@/constants";
 import { BASIC_TRAINING_TYPES, ADVANCED_WORKOUTS } from "@/constants/trainingTypes";
 import { TRAINING_FACILITY_REQUIREMENTS } from "@/constants/workoutConstants";
 import { getAvailableTrainingTypes } from "@/core/facilities";
-import { FACILITY_NAMES } from "@/core/facilities/facilityTypes";
+import { FACILITY_NAMES, facilityLevelToTierLabel } from "@/core/facilities/facilityTypes";
 import type { Horse, PlayerFacilities } from "@/game/types";
 import { useCallback, memo, useMemo } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -126,7 +126,7 @@ export function TrainingPanelComponent({
         const req = TRAINING_FACILITY_REQUIREMENTS[workout.key];
         const unlockHint =
           !isEnabled && req
-            ? `Requires ${FACILITY_NAMES[req.facilityType]} (${req.minLevel})`
+            ? `Requires ${FACILITY_NAMES[req.facilityType]} (${facilityLevelToTierLabel(req.minLevel)})`
             : undefined;
 
         return {

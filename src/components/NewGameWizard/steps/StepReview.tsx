@@ -1,5 +1,6 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { formatCurrency } from "@/core/common/formatting";
+import { facilityLevelToTierLabel, type FacilityLevel } from "@/core/facilities";
 import type { JockeySilk } from "@/game/types";
 import type { Backstory } from "@/core/common/backstories";
 import { SilkPreview } from "../SilkPreview";
@@ -54,14 +55,14 @@ export function StepReview({ stableName, ownerName, silk, backstory }: StepRevie
               <dt className="text-cream-muted cursor-help">Facility upgrades</dt>
             </TooltipTrigger>
             <TooltipContent>
-              You always start with all facilities at "basic"; these are upgrades on top.
+              You always start with all facilities at Tier 01; these are upgrades on top.
             </TooltipContent>
           </Tooltip>
           <dd className="text-cream">
             {Object.entries(backstory.facilityUpgrades).length === 0
               ? "—"
               : Object.entries(backstory.facilityUpgrades)
-                  .map(([type, level]) => `${type.replace("_", " ")} (${level})`)
+                  .map(([type, level]) => `${type.replace(/_/g, " ")} (${facilityLevelToTierLabel(level as FacilityLevel)})`)
                   .join(", ")}
           </dd>
 

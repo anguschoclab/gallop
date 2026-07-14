@@ -81,7 +81,7 @@ describe("SeasonStandingsWidget", () => {
       } as any],
     } as Partial<GameState>);
     render(<SeasonStandingsWidget />);
-    expect(screen.getByText(/rank/i) || screen.getByTestId("standings-badge") || screen.getByText(/!/)).toBeTruthy();
+    expect(screen.getByTestId("standings-badge")).toBeTruthy();
   });
 
   it("clicking a row opens the stable details panel", () => {
