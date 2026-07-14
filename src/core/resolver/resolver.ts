@@ -40,32 +40,6 @@ export interface ResolverContext {
 }
 
 /**
- * Applies a single state impact to the game state using Immer for immutability.
- * Iterates through all registered handlers to find the appropriate one for the impact type.
- *
- * @param {GameState} state - The current game state.
- * @param {AnyImpact} impact - The impact to apply.
- * @returns {GameState} The updated game state.
- */
-function applyImpact(state: GameState, impact: AnyImpact): GameState {
-  return produce(state, (draft) => {
-    let handled = false;
-    for (const handler of ALL_HANDLERS) {
-      if (handler.canHandle(impact.type)) {
-        handler.handle(draft, impact);
-        handled = true;
-        break;
-      }
-    }
-
-    if (!handled) {
-      // Unknown impact type - log warning
-      console.warn(`Unknown impact type: ${impact.type}`);
-    }
-  });
-}
-
-/**
  * Applies a collection of impacts to the state in sequential order.
  * Processes all impacts within the resolver context and creates pre-indexed maps for efficient entity lookups during resolution.
  *

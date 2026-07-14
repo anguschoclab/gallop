@@ -208,34 +208,6 @@ export function createHorseGenAIState(stable: Stable): HorseGenAIState {
 }
 
 /**
- * Calculate target age distribution based on personality.
- *
- * Returns a distribution of horses by age based on personality preferences.
- *
- * @param personality - The stable personality
- * @param targetCount - Target total horse count
- * @returns Object mapping age to target count
- */
-function calculateTargetAgeDistribution(
-  personality: Stable["personality"],
-  targetCount: number,
-): Record<number, number> {
-  return HORSE_GEN_STRATEGIES[personality].ageDistribution(targetCount);
-}
-
-/**
- * Calculate target quality level based on personality.
- *
- * Returns the target overall rating for horses based on personality.
- *
- * @param personality - The stable personality
- * @returns Target quality level (rating 0-100)
- */
-function calculateTargetQualityLevel(personality: Stable["personality"]): number {
-  return HORSE_GEN_STRATEGIES[personality].targetQualityLevel;
-}
-
-/**
  * Calculate generation priority for a horse age.
  *
  * Evaluates the priority of generating a horse of a specific age

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,8 +42,15 @@ export function AwardCeremony({ isOpen, onClose, ceremonies, onComplete }: Award
   const playerAwards = awards.filter((a) => !a.stableId);
   const hasPlayerWins = playerAwards.length > 0;
 
+  useEffect(() => {
+    if (hasPlayerWins) {
+      setShowConfetti(true);
+    }
+  }, [currentIndex, hasPlayerWins]);
+
   const handleNext = () => {
     if (isLast) {
+      setShowConfetti(false);
       onComplete?.();
       onClose();
     } else {
@@ -58,6 +65,7 @@ export function AwardCeremony({ isOpen, onClose, ceremonies, onComplete }: Award
         className={cn("bg-gradient-to-b from-card to-muted", "border-2")}
         style={{ borderColor: colors.accent }}
       >
+        <Confetti active={showConfetti} />
         <DialogHeader className="text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Trophy className="w-6 h-6" style={{ color: colors.accent }} />
@@ -191,7 +199,7 @@ function Confetti({ active }: { active: boolean }) {
   if (!active) return null;
 
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div data-testid="confetti-overlay" className="absolute inset-0 pointer-events-none overflow-hidden">
       {[...Array(20)].map((_, i) => (
         <div
           key={i}
