@@ -257,6 +257,9 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
       if (progressBarRef.current && duration > 0) {
         progressBarRef.current.style.width = `${(t / duration) * 100}%`;
       }
+      if (scrubberRef.current && document.activeElement !== scrubberRef.current) {
+        scrubberRef.current.value = t.toFixed(2);
+      }
     };
 
     // Initial paint so static frame is correct even when paused.
@@ -267,6 +270,46 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
       cancelAnimationFrame(frameId);
     };
   }, [isPlaying, playbackSpeed, duration, renderFrame, onComplete]);
+
+  // Keyboard shortcuts: Space play/pause, arrows step, Shift = larger step, Home/End jump.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA")) return;
+      switch (e.key) {
+        case " ":
+          e.preventDefault();
+          setIsPlaying((p) => !p);
+          break;
+        case "ArrowLeft":
+          e.preventDefault();
+          step(e.shiftKey ? -5 : -1);
+          break;
+        case "ArrowRight":
+          e.preventDefault();
+          step(e.shiftKey ? 5 : 1);
+          break;
+        case "Home":
+          e.preventDefault();
+          setIsPlaying(false);
+          seek(0);
+          break;
+        case "End":
+          e.preventDefault();
+          setIsPlaying(false);
+          seek(duration);
+          break;
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [step, seek, duration, setIsPlaying]);
+
+  // Re-render one frame after any seek while paused so the canvas reflects the new time.
+  useEffect(() => {
+    if (!isPlaying) renderFrame();
+  }, [isPlaying, renderFrame]);
+
 
   return (
     <div className="race-visualizer-container">
