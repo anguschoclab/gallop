@@ -9,6 +9,7 @@ import {
   createTestStallion,
   createTestMare,
   createTestGelding,
+  createTestFilly,
 } from "@/tests/helpers/createTestHorse";
 import type { Horse, AuctionSale } from "@/game/types";
 
@@ -107,7 +108,7 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
 
     const valuation = horseCareerValuation(gelding, [gelding]);
     expect(valuation.breeding).toBe(0);
-    expect(valuation.postCareer).toBe(Math.round(valuation.racing * 0.1));
+    expect(valuation.postCareer).toBe(Math.round((valuation.racing * 0.1) / 100) * 100);
 
     const expectedBase = horseMarketValue(gelding, [gelding]);
     const expectedReserve = Math.round(expectedBase * DEFAULT_PLAYER_RESERVE_RATIO);
@@ -258,6 +259,99 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
 
       // Clear for next iteration
       useGame.setState({ pendingIntents: [] } as any);
+    }
+  });
+
+  // ---------------------------------------------------------------------------
+  // 12: Filly (age 3) default reserve
+  // ---------------------------------------------------------------------------
+  it("filly (age 3) default reserve ≈ horseMarketValue * 0.7", () => {
+    const filly = createTestFilly({ id: "h1", age: 3, owned: true });
+    seedStore([filly]);
+
+    const expectedBase = horseMarketValue(filly, [filly]);
+    const expectedReserve = Math.round(expectedBase * DEFAULT_PLAYER_RESERVE_RATIO);
+
+    const result = useGame.getState().consignHorse("h1", "sale1");
+    expect(result.ok).toBe(true);
+
+    const intent = getLastConsignmentIntent();
+    expect(intent.reservePrice).toBe(expectedReserve);
+  });
+
+  // ---------------------------------------------------------------------------
+  // 13: Older active stallion (age 8) reserve
+  // ---------------------------------------------------------------------------
+  it("older active stallion (age 8) default reserve ≈ horseMarketValue * 0.7", () => {
+    const stallion = createTestStallion({ id: "h1", age: 8, owned: true });
+    seedStore([stallion]);
+
+    const expectedBase = horseMarketValue(stallion, [stallion]);
+    const expectedReserve = Math.round(expectedBase * DEFAULT_PLAYER_RESERVE_RATIO);
+
+    const result = useGame.getState().consignHorse("h1", "sale1");
+    expect(result.ok).toBe(true);
+
+    const intent = getLastConsignmentIntent();
+    expect(intent.reservePrice).toBe(expectedReserve);
+  });
+
+  // ---------------------------------------------------------------------------
+  // 14: Retired stallion at stud reserve
+  // ---------------------------------------------------------------------------
+  it("retired stallion at stud default reserve ≈ horseMarketValue * 0.7", () => {
+    const stallion = createTestStallion({
+      id: "h1",
+      age: 10,
+      owned: true,
+      lifecycleStatus: "retired",
+      racingViable: false,
+      stud: {
+        atStud: true,
+        standingFee: 100000,
+        bookSize: 120,
+        seasonBookings: 0,
+        lifetimeFoals: 50,
+        lifetimeStakesFoals: 10,
+        lifetimeG1Foals: 3,
+      },
+    });
+    seedStore([stallion]);
+
+    const expectedBase = horseMarketValue(stallion, [stallion]);
+    const expectedReserve = Math.round(expectedBase * DEFAULT_PLAYER_RESERVE_RATIO);
+
+    const result = useGame.getState().consignHorse("h1", "sale1");
+    expect(result.ok).toBe(true);
+
+    const intent = getLastConsignmentIntent();
+    expect(intent.reservePrice).toBe(expectedReserve);
+
+    // Retired stallion at stud should have higher base value than a plain retired stallion
+    const plainRetired = createTestStallion({
+      age: 10,
+      lifecycleStatus: "retired",
+      racingViable: false,
+    });
+    expect(expectedBase).toBeGreaterThan(horseMarketValue(plainRetired, [plainRetired]));
+  });
+
+  // ---------------------------------------------------------------------------
+  // 15: horseCareerValuation.current === horseMarketValue for all genders
+  // ---------------------------------------------------------------------------
+  it("horseCareerValuation.current equals horseMarketValue for all genders", () => {
+    const horses = [
+      createTestColt({ id: "colt1", age: 1, owned: true }),
+      createTestFilly({ id: "filly1", age: 3, owned: true }),
+      createTestStallion({ id: "stallion1", age: 5, owned: true }),
+      createTestMare({ id: "mare1", age: 6, owned: true }),
+      createTestGelding({ id: "gelding1", age: 4, owned: true }),
+    ];
+
+    for (const horse of horses) {
+      const valuation = horseCareerValuation(horse, [horse]);
+      const marketValue = horseMarketValue(horse, [horse]);
+      expect(valuation.current).toBe(marketValue);
     }
   });
 });

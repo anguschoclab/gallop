@@ -288,4 +288,115 @@ describe("estimateBreedingValue", () => {
     const ratio = estimateBreedingValue(blueHen) / estimateBreedingValue(base);
     expect(ratio).toBeCloseTo(1.5, 1);
   });
+
+  // ---------------------------------------------------------------------------
+  // 21: Stallion at prime boundary age 4 (curve = 1.0)
+  // ---------------------------------------------------------------------------
+  it("stallion at prime boundary age 4 has curve = 1.0 (equals age 7 value)", () => {
+    const at4 = createTestStallion({ age: 4 });
+    const at7 = createTestStallion({ age: 7 });
+    expect(estimateBreedingValue(at4)).toBe(estimateBreedingValue(at7));
+  });
+
+  // ---------------------------------------------------------------------------
+  // 22: Mare at prime boundary age 3 (curve = 1.0)
+  // ---------------------------------------------------------------------------
+  it("mare at prime boundary age 3 has curve = 1.0 (equals age 6 value)", () => {
+    const at3 = createTestMare({ age: 3 });
+    const at6 = createTestMare({ age: 6 });
+    expect(estimateBreedingValue(at3)).toBe(estimateBreedingValue(at6));
+  });
+
+  // ---------------------------------------------------------------------------
+  // 23: Mare at prime boundary age 16 (curve = 1.0)
+  // ---------------------------------------------------------------------------
+  it("mare at prime boundary age 16 has curve = 1.0 (equals age 6 value)", () => {
+    const at16 = createTestMare({ age: 16 });
+    const at6 = createTestMare({ age: 6 });
+    expect(estimateBreedingValue(at16)).toBe(estimateBreedingValue(at6));
+  });
+
+  // ---------------------------------------------------------------------------
+  // 24: Stallion at age 25 (curve floor = 0.15)
+  // ---------------------------------------------------------------------------
+  it("stallion at age 25 has curve floor = 0.15", () => {
+    const at25 = createTestStallion({ age: 25 });
+    const atPrime = createTestStallion({ age: 7 });
+    const ratio = estimateBreedingValue(at25) / estimateBreedingValue(atPrime);
+    expect(ratio).toBeCloseTo(0.15, 1);
+  });
+
+  // ---------------------------------------------------------------------------
+  // 25: Mare at age 22 (curve floor = 0.1)
+  // ---------------------------------------------------------------------------
+  it("mare at age 22 has curve floor = 0.1", () => {
+    const at22 = createTestMare({ age: 22 });
+    const atPrime = createTestMare({ age: 6 });
+    const ratio = estimateBreedingValue(at22) / estimateBreedingValue(atPrime);
+    expect(ratio).toBeCloseTo(0.1, 1);
+  });
+
+  // ---------------------------------------------------------------------------
+  // 26: Stallion at stud with standingFee=0 falls to projected path
+  // ---------------------------------------------------------------------------
+  it("stallion at stud with standingFee=0 uses projected path (not capitalization)", () => {
+    const studZeroFee = createTestStallion({
+      age: 5,
+      stud: {
+        atStud: true,
+        standingFee: 0,
+        bookSize: 100,
+        seasonBookings: 0,
+        lifetimeFoals: 0,
+        lifetimeStakesFoals: 0,
+        lifetimeG1Foals: 0,
+      },
+    });
+    const projected = createTestStallion({ age: 5 });
+    // With standingFee=0, the capitalization branch produces 0, so it falls
+    // through to the projected path (same as a stallion without stud career)
+    expect(estimateBreedingValue(studZeroFee)).toBe(estimateBreedingValue(projected));
+  });
+
+  // ---------------------------------------------------------------------------
+  // 27: Stallion at stud with bookSize=0 defaults to 100
+  // ---------------------------------------------------------------------------
+  it("stallion at stud with bookSize=0 defaults bookSize to 100", () => {
+    const studZeroBook = createTestStallion({
+      age: 5,
+      stud: {
+        atStud: true,
+        standingFee: 50000,
+        bookSize: 0,
+        seasonBookings: 0,
+        lifetimeFoals: 0,
+        lifetimeStakesFoals: 0,
+        lifetimeG1Foals: 0,
+      },
+    });
+    const stud100Book = createTestStallion({
+      age: 5,
+      stud: {
+        atStud: true,
+        standingFee: 50000,
+        bookSize: 100,
+        seasonBookings: 0,
+        lifetimeFoals: 0,
+        lifetimeStakesFoals: 0,
+        lifetimeG1Foals: 0,
+      },
+    });
+    expect(estimateBreedingValue(studZeroBook)).toBe(estimateBreedingValue(stud100Book));
+  });
+
+  // ---------------------------------------------------------------------------
+  // 28: Stallion age 1 (curve = 0.3, minimum pre-prime)
+  // ---------------------------------------------------------------------------
+  it("stallion age 1 has minimum pre-prime curve (0.3) but value > 0", () => {
+    const at1 = createTestStallion({ age: 1 });
+    const atPrime = createTestStallion({ age: 7 });
+    const ratio = estimateBreedingValue(at1) / estimateBreedingValue(atPrime);
+    expect(ratio).toBeCloseTo(0.3, 1);
+    expect(estimateBreedingValue(at1)).toBeGreaterThan(0);
+  });
 });

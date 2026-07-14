@@ -229,7 +229,7 @@ export function horseCareerValuation(h: Horse, allHorses: Horse[] = []): HorseCa
   // Pre-career: recompute as if the horse were a yearling — potential and pedigree drive it.
   const overall = calculateOverallRating(h);
   const potMod = 0.5 + (h.potential ?? 50) / 100;
-  const pedMul = pedigreeMultiplier(h, { horses: Object.fromEntries(allHorses.map(h => [h.id, h])) });
+  const pedMul = pedigreeMultiplier({ ...h, age: 1 }, { horses: Object.fromEntries(allHorses.map(h => [h.id, h])) });
   const yearlingRacing = Math.round((overall * 80 * 1.2 * potMod) / 50) * 50;
   const yearlingPed = Math.round((yearlingRacing * pedMul) / 50) * 50;
   // Include a slice of gender-specific breeding upside since sales rings price yearlings on it.
@@ -242,7 +242,7 @@ export function horseCareerValuation(h: Horse, allHorses: Horse[] = []): HorseCa
   // Post-career: value at prime breeding age, essentially pure breeding value.
   const postCareer =
     h.gender === "gelding" || h.gelded
-      ? Math.round(racing * 0.1) // salvage / retirement value only
+      ? Math.round((racing * 0.1) / 100) * 100 // salvage / retirement value only
       : Math.round(estimateBreedingValueAtAge(h, allHorses, h.gender === "mare" || h.gender === "filly" ? 6 : 7) / 100) *
         100;
 
