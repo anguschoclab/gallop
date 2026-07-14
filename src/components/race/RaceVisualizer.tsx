@@ -342,15 +342,52 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
         style={{ width: "0%" }}
       />
 
+      <div className="race-scrubber">
+        <input
+          ref={scrubberRef}
+          type="range"
+          min={0}
+          max={duration}
+          step={0.01}
+          defaultValue={0}
+          onInput={(e) => {
+            setIsPlaying(false);
+            seek(parseFloat((e.target as HTMLInputElement).value));
+          }}
+          aria-label="Race timeline scrubber"
+          className="race-scrubber-input"
+        />
+      </div>
+
       <div className="race-controls">
+        <button
+          className="race-control-btn"
+          onClick={() => step(-1)}
+          aria-label="Step back 1 second"
+          title="Step back (←)"
+        >
+          <ChevronLeft size={20} />
+        </button>
         <button
           className="race-control-btn"
           onClick={() => setIsPlaying((p) => !p)}
           aria-label={isPlaying ? "Pause race" : "Play race"}
+          title="Play/Pause (space)"
         >
           {isPlaying ? <Pause size={20} /> : <Play size={20} />}
         </button>
+        <button
+          className="race-control-btn"
+          onClick={() => step(1)}
+          aria-label="Step forward 1 second"
+          title="Step forward (→)"
+        >
+          <ChevronRight size={20} />
+        </button>
         <button className="race-control-btn" onClick={restart} aria-label="Restart race">
+          <RotateCcw size={20} />
+        </button>
+
           <RotateCcw size={20} />
         </button>
         <button
