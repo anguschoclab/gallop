@@ -17,3 +17,7 @@
 
 **Learning:** Reusable filter panels (like `JockeyFilterPanel`) often use a `<label>` to describe what the user should search for, but fail to explicitly link the label to the `<Input>` using `htmlFor` and `id`. This creates a broken association for screen readers. Using `useId()` generates a robust and unique identifier that perfectly bridges this gap and ensures reliable screen-reader compatibility without risking ID collisions when components are rendered multiple times or dynamically.
 **Action:** When updating or building filter forms/panels with `<Input>`, always associate `<label>` and `<Input>` explicitely via `useId()`.
+
+## 2024-07-15 - Tooltips on Disabled Elements
+**Learning:** Native `disabled` attributes on HTML elements swallow pointer events, preventing Radix UI tooltips from triggering when users hover over them.
+**Action:** When adding tooltips to disabled elements (like buttons), wrap the element in a `<span tabIndex={0} className="inline-block cursor-not-allowed">` and add `className="pointer-events-none"` to the button itself. This allows the tooltip to remain accessible and provide context on why the action is unavailable.

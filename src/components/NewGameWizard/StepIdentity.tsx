@@ -140,9 +140,24 @@ export function StepIdentity({ stableName, ownerName, onChange, onNext }: StepId
       </div>
 
       <div className="flex justify-end">
-        <Button onClick={handleNext} disabled={!isValid}>
-          Next
-        </Button>
+        {!isValid ? (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span tabIndex={0} className="inline-block cursor-not-allowed">
+                  <Button onClick={handleNext} disabled className="pointer-events-none">
+                    Next
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Please fill in both stable name and owner name.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          <Button onClick={handleNext}>Next</Button>
+        )}
       </div>
     </div>
   );
