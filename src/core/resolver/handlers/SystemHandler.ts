@@ -193,6 +193,13 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     draft.news = [newsItem, ...draft.news].slice(0, 500);
   },
 
+  narrative_arc_update: (draft, impact) => {
+    const arcState = (impact as any).arcState;
+    if (!arcState) return;
+    if (!draft.narrativeArcs) draft.narrativeArcs = {};
+    draft.narrativeArcs[arcState.horseId] = arcState;
+  },
+
   hall_of_fame_induction: (draft, impact) => {
     const { entry } = impact as HallOfFameInductionImpact;
     if (!draft.hallOfFame) draft.hallOfFame = [];
@@ -332,6 +339,7 @@ export class SystemHandler implements ImpactHandler {
       "reputation_change",
       "transaction",
       "news_item",
+      "narrative_arc_update",
       "hall_of_fame_induction",
       "season_history_record",
       "track_record",

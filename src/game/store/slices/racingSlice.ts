@@ -209,15 +209,13 @@ export function createRacingSlice(
 
       // Charge cash & energy
       set((state: any) => {
-        const newHorses = state.horses.map((h: Horse) => {
-          if (h.id === horseId) {
-            return { ...h, energy: Math.max(0, h.energy - 20) };
-          }
-          if (stablemate && h.id === stablemate.id) {
-            return { ...h, energy: Math.max(0, h.energy - 15) };
-          }
-          return h;
-        });
+        const newHorses = { ...state.horses };
+        if (newHorses[horseId]) {
+          newHorses[horseId] = { ...newHorses[horseId], energy: Math.max(0, newHorses[horseId].energy - 20) };
+        }
+        if (stablemate && newHorses[stablemate.id]) {
+          newHorses[stablemate.id] = { ...newHorses[stablemate.id], energy: Math.max(0, newHorses[stablemate.id].energy - 15) };
+        }
 
         // Add a log entry for the trial
         const logEntry = {
@@ -278,7 +276,7 @@ export function createRacingSlice(
 
     resolveFoalMilestone: (horseId, milestoneKey, choiceKey) => {
       const s = get() as any;
-      const horse = s.horses.find((h: Horse) => h.id === horseId);
+      const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You do not own this horse." };
       const arc = horse.developmentArc;
@@ -292,36 +290,38 @@ export function createRacingSlice(
       if (!choice) return { ok: false, reason: "Choice not found." };
 
       set((state: any) => {
-        const newHorses = state.horses.map((h: Horse) => {
-          if (h.id !== horseId) return h;
+        const newHorses = { ...state.horses };
+        const h = newHorses[horseId];
+        if (h) {
           const currentArc = h.developmentArc;
-          if (!currentArc) return h;
-          const targetMilestone = currentArc.milestones.find((m) => m.key === milestoneKey);
-          if (!targetMilestone || targetMilestone.status !== "pending") return h;
+          if (currentArc) {
+            const targetMilestone = currentArc.milestones.find((m: any) => m.key === milestoneKey);
+            if (targetMilestone && targetMilestone.status === "pending") {
+              const nextStats = { ...h.stats };
+              for (const [stat, delta] of Object.entries(choice.delta) as [
+                keyof typeof nextStats,
+                number,
+              ][]) {
+                if (typeof delta !== "number") continue;
+                const current = nextStats[stat] ?? 0;
+                nextStats[stat] = Math.max(0, Math.min(100, current + delta));
+              }
 
-          const nextStats = { ...h.stats };
-          for (const [stat, delta] of Object.entries(choice.delta) as [
-            keyof typeof nextStats,
-            number,
-          ][]) {
-            if (typeof delta !== "number") continue;
-            const current = nextStats[stat] ?? 0;
-            nextStats[stat] = Math.max(0, Math.min(100, current + delta));
+              const nextMilestones = currentArc.milestones.map((m: any) =>
+                m.key === milestoneKey
+                  ? {
+                      ...m,
+                      status: "resolved" as const,
+                      resolvedChoiceKey: choiceKey,
+                      resolvedOnDay: state.day,
+                    }
+                  : m,
+              );
+
+              newHorses[horseId] = { ...h, stats: nextStats, developmentArc: { milestones: nextMilestones } };
+            }
           }
-
-          const nextMilestones = currentArc.milestones.map((m) =>
-            m.key === milestoneKey
-              ? {
-                  ...m,
-                  status: "resolved" as const,
-                  resolvedChoiceKey: choiceKey,
-                  resolvedOnDay: state.day,
-                }
-              : m,
-          );
-
-          return { ...h, stats: nextStats, developmentArc: { milestones: nextMilestones } };
-        });
+        }
 
         const logEntry = {
           day: state.day,

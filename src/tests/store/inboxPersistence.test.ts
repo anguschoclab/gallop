@@ -66,7 +66,7 @@ function buildContext(
           name: raceName,
           day: dramaDay,
           distance: 2000,
-          raceClass: "G1",
+          raceClass: "G1" as any,
           entryFee: 0,
           purse: 3_000_000,
           fieldSize: 12,

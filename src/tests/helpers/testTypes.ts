@@ -34,8 +34,8 @@ export function createMockPipelineContext(
   overrides: Partial<PipelineContext> = {},
 ): PipelineContext {
   const state: GameState = overrides.state ?? ({} as any);
-  const horses: Horse[] = Array.isArray((state as any).horses) ? (state as any).horses : [];
-  const races: Race[] = Array.isArray((state as any).races) ? (state as any).races : [];
+  const horses: Horse[] = Object.values((state as any).horses ?? {});
+  const races: Race[] = Object.values((state as any).races ?? {});
   const stables: any[] = Array.isArray((state as any).npcStables) ? (state as any).npcStables : [];
   const jockeys: any[] = Array.isArray((state as any).jockeys) ? (state as any).jockeys : [];
   return {

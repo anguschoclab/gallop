@@ -7,6 +7,7 @@ import type {
 } from "@/core/resolver/impacts/index";
 import { computeSectionalSplits } from "@/core/race/sectionalAnalysis";
 import { generateRaceNews, generateG1SpotlightNews, generateFollowUpRaceNews } from "@/services/narrative/newsGenerator";
+import { checkCareerArcTrigger, type CareerArcState } from "@/services/narrative/careerArcGenerator";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
@@ -48,6 +49,8 @@ export interface GenerateRaceImpactsProps {
   raceWeatherState?: import("@/core/weather/weatherTypes").WeatherState;
   /** Active syndicates for shareholder satisfaction tracking (Phase 5) */
   syndicates?: Record<string, import("@/core/breeding/types").Syndicate>;
+  /** Per-horse career arc states for narrative tracking */
+  narrativeArcs?: Record<string, CareerArcState>;
 }
 
 /**
@@ -90,6 +93,7 @@ export function generateRaceImpacts({
   calibratedPars,
   raceWeatherState,
   syndicates,
+  narrativeArcs,
 }: GenerateRaceImpactsProps): AnyImpact[] {
   try {
     const impacts: AnyImpact[] = [];
@@ -263,6 +267,36 @@ export function generateRaceImpacts({
             type: "news_item",
             newsItem: followUpNews,
           } as NewsImpact);
+        }
+      }
+
+      // 10d. Narrative: Career arc triggers for player-owned horses
+      for (const r of ownedHorses) {
+        const horse = horseMap.get(r.horseId);
+        if (!horse) continue;
+        const arcState = narrativeArcs?.[horse.id];
+        const { newsItem: arcNews, newArcState } = checkCareerArcTrigger(horse, arcState, race, r.position, newDay, rng);
+        if (arcNews) {
+          impacts.push({
+            id: generateUUID(rng),
+            intentId: "",
+            day: newDay,
+            phase: "raceResolution",
+            logLevel: "always",
+            type: "news_item",
+            newsItem: arcNews,
+          } as NewsImpact);
+        }
+        if (newArcState !== arcState) {
+          impacts.push({
+            id: generateUUID(rng),
+            intentId: "",
+            day: newDay,
+            phase: "raceResolution",
+            logLevel: "always",
+            type: "narrative_arc_update" as any,
+            arcState: newArcState,
+          } as any);
         }
       }
     }

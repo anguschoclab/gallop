@@ -25,10 +25,11 @@ function mkSale(overrides: Partial<AuctionSale> = {}): AuctionSale {
 }
 
 function seedStore(horses: Horse[], overrides: Record<string, unknown> = {}) {
+  const horseRecord: Record<string, Horse> = {};
+  for (const h of horses) horseRecord[h.id] = h;
   useGame.setState({
     ...createDefaultGameState(),
-    horses,
-    horseMap: new Map(horses.map((h) => [h.id, h])),
+    horses: horseRecord,
     auctions: [mkSale()],
     pendingIntents: [],
     ...overrides,

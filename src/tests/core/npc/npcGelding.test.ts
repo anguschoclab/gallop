@@ -221,7 +221,7 @@ describe("HorseHandler Gelding Impact Resolution", () => {
       handler.handle(draft, impact, lookupMaps);
     });
 
-    const updatedHorse = nextState.horses[0];
+    const updatedHorse = nextState.horses["horse-1"];
     expect(updatedHorse.gender).toBe("gelding");
     expect(updatedHorse.gelded).toBe(true);
   });

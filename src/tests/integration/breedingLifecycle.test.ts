@@ -95,7 +95,7 @@ describe("Breeding Lifecycle Integration", () => {
           tier: "elite",
           owner: "Owner 1",
           founded: 1,
-          horses: {},
+          horses: [],
           isMajor: false,
           colors: { primary: "#FF0000", secondary: "#FFFFFF" },
           staff: {
@@ -167,7 +167,7 @@ describe("Breeding Lifecycle Integration", () => {
           tier: "elite",
           owner: "Owner 1",
           founded: 1,
-          horses: {},
+          horses: [],
           isMajor: false,
           colors: { primary: "#FF0000", secondary: "#FFFFFF" },
           staff: {
@@ -185,9 +185,9 @@ describe("Breeding Lifecycle Integration", () => {
 
     const result = runNpcBreeding(state, 1, createRng(1));
 
-    // Verify horses array is returned
+    // Verify horses Record is returned
     expect(result.horses).toBeDefined();
-    expect(Array.isArray(result.horses)).toBe(true);
+    expect(typeof result.horses).toBe("object");
   });
 
   it("should handle empty state gracefully", () => {
@@ -206,7 +206,7 @@ describe("Breeding Lifecycle Integration", () => {
           tier: "elite",
           owner: "Owner 1",
           founded: 1,
-          horses: {},
+          horses: [],
           isMajor: false,
           colors: { primary: "#FF0000", secondary: "#FFFFFF" },
           staff: {
@@ -245,7 +245,7 @@ describe("Breeding Lifecycle Integration", () => {
           tier: "elite",
           owner: "Owner 1",
           founded: 1,
-          horses: {},
+          horses: [],
           isMajor: false,
           colors: { primary: "#FF0000", secondary: "#FFFFFF" },
           staff: {

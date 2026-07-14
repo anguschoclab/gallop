@@ -174,6 +174,7 @@ export const raceResolutionPhase: PipelinePhase = {
         calibratedPars: state.calibratedPars || {},
         raceWeatherState,
         syndicates: state.syndicates,
+        narrativeArcs: state.narrativeArcs,
       });
 
       for (const impact of raceImpacts) {

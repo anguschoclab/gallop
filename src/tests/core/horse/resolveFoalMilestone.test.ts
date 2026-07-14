@@ -70,7 +70,7 @@ describe("resolveFoalMilestone", () => {
     seedHorse();
     const first = useGame.getState().resolveFoalMilestone("foal-1", "breaking_in", "bold_approach");
     expect(first.ok).toBe(true);
-    const statsAfterFirst = { ...useGame.getState().horses[0].stats };
+    const statsAfterFirst = { ...useGame.getState().horses["foal-1"].stats };
     const second = useGame
       .getState()
       .resolveFoalMilestone("foal-1", "breaking_in", "patient_method");

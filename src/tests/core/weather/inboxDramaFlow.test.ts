@@ -61,7 +61,7 @@ describe("Inbox drama-alert flow — weatherPhase → InboxHandler → /inbox st
             name: "Kentucky Derby",
             day: dayToday,
             distance: 2000,
-            raceClass: "G1",
+            raceClass: "G1" as any,
             entryFee: 0,
             purse: 3_000_000,
             fieldSize: 12,

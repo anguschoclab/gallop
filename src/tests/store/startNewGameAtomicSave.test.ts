@@ -39,7 +39,7 @@ const mockBackstory = {
   startingCash: 100000,
   reputationScore: 50,
   facilityUpgrades: {},
-  horses: h2r([{ tier: "elite" as const, count: 2 }]),
+  horses: [{ tier: "elite" as const, count: 2 }],
 };
 
 const mockOptions: NewGameOptions = {

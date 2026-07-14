@@ -69,7 +69,7 @@ describe("buildRaceField", () => {
       fieldSize: 6,
       entries: [{ horseId: "h1", owned: true }],
     });
-    const { runners } = buildRaceField({ race, horses: [horse]), jockeys: [] });
+    const { runners } = buildRaceField({ race, horses: [horse], jockeys: [] });
     const ownedRunner = runners.find((r) => r.horseId === "h1");
     expect(ownedRunner).toBeDefined();
     expect(ownedRunner!.owned).toBe(true);

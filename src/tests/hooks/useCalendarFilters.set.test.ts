@@ -11,6 +11,7 @@ vi.mock("@/core/calendar/regions", () => ({
 
 import { useCalendarFilters } from "@/hooks/calendar/useCalendarFilters";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import type { Race } from "@/game/types";
 
 let mockState: any;
 let mockRegion: any;

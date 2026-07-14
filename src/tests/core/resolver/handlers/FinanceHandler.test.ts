@@ -100,8 +100,8 @@ describe("FinanceHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].stableId).toBe("stable-2");
-    expect(draft.horses[0].owned).toBe(false);
+    expect(draft.horses["horse-1"].stableId).toBe("stable-2");
+    expect(draft.horses["horse-1"].owned).toBe(false);
   });
 
   it("horse_transfer to empty stableId sets owned=true", () => {
@@ -128,8 +128,8 @@ describe("FinanceHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].stableId).toBe("");
-    expect(draft.horses[0].owned).toBe(true);
+    expect(draft.horses["horse-1"].stableId).toBe("");
+    expect(draft.horses["horse-1"].owned).toBe(true);
   });
 
   it("canHandle returns true for cash_change and horse_transfer only", () => {
@@ -140,3 +140,4 @@ describe("FinanceHandler", () => {
     expect(handler.canHandle("unknown_type")).toBe(false);
   });
 });
+import type { Horse } from "@/game/types";

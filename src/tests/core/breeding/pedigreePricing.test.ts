@@ -90,7 +90,7 @@ describe("pedigreeMultiplier", () => {
       age: 5,
       pedigree: { name: "V", generation: 0, sireId: "sire", damId: "dam" },
     });
-    const horses = [sire, dam, yearling, veteran];
+    const horses = h2r([sire, dam, yearling, veteran]);
     expect(pedigreeMultiplier(yearling, { horses } as any)).toBeGreaterThan(
       pedigreeMultiplier(veteran, { horses } as any),
     );

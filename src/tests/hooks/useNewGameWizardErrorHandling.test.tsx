@@ -39,7 +39,7 @@ vi.mock("@/core/common/backstories", () => ({
       startingCash: 100000,
       reputationScore: 50,
       facilityUpgrades: {},
-      horses: h2r([{ tier: "elite", count: 2 }]),
+      horses: [{ tier: "elite", count: 2 }],
     },
   ],
 }));

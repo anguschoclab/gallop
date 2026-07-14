@@ -46,8 +46,8 @@ describe("HorseHandler — horse_deletion", () => {
     const draft = JSON.parse(JSON.stringify(state));
     const lookupMaps = {
       horseMap: new Map([
-        ["h1", draft.horses[0]],
-        ["h2", draft.horses[1]],
+        ["h1", draft.horses["h1"]],
+        ["h2", draft.horses["h2"]],
       ]),
       stableMap: new Map(),
       campaignMap: new Map(),
@@ -56,8 +56,8 @@ describe("HorseHandler — horse_deletion", () => {
     handler.handle(draft, impact, lookupMaps);
 
     expect(Object.keys(draft.horses)).toHaveLength(1);
-    expect(draft.horses.find((h: any) => h.id === "h1")).toBeUndefined();
-    expect(draft.horses.find((h: any) => h.id === "h2")).toBeDefined();
+    expect(draft.horses["h1"]).toBeUndefined();
+    expect(draft.horses["h2"]).toBeDefined();
   });
 
   it("removes horse from lookupMaps.horseMap", () => {
@@ -79,8 +79,8 @@ describe("HorseHandler — horse_deletion", () => {
 
     const draft = JSON.parse(JSON.stringify(state));
     const horseMap = new Map([
-      ["h1", draft.horses[0]],
-      ["h2", draft.horses[1]],
+      ["h1", draft.horses["h1"]],
+      ["h2", draft.horses["h2"]],
     ]);
     const lookupMaps = {
       horseMap,
@@ -113,7 +113,7 @@ describe("HorseHandler — horse_deletion", () => {
 
     const draft = JSON.parse(JSON.stringify(state));
     const lookupMaps = {
-      horseMap: new Map([["h1", draft.horses[0]]]),
+      horseMap: new Map([["h1", draft.horses["h1"]]]),
       stableMap: new Map(),
       campaignMap: new Map(),
     };
@@ -121,6 +121,6 @@ describe("HorseHandler — horse_deletion", () => {
     handler.handle(draft, impact, lookupMaps);
 
     expect(Object.keys(draft.horses)).toHaveLength(1);
-    expect(draft.horses[0].id).toBe("h1");
+    expect(draft.horses["h1"].id).toBe("h1");
   });
 });

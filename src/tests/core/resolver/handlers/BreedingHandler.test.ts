@@ -35,7 +35,7 @@ describe("BreedingHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].stud.standingFee).toBe(7500);
+    expect(draft.horses["horse-1"].stud.standingFee).toBe(7500);
   });
 
   it("update_stud_fee does nothing if horse has no stud career", () => {
@@ -60,7 +60,7 @@ describe("BreedingHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].stud).toBeUndefined();
+    expect(draft.horses["horse-1"].stud).toBeUndefined();
   });
 
   it("stud_career sets horse.stud", () => {
@@ -95,7 +95,7 @@ describe("BreedingHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].stud).toEqual(studCareer);
+    expect(draft.horses["horse-1"].stud).toEqual(studCareer);
   });
 
   it("pregnancy_creation pushes pregnancy to draft.pregnancies", () => {
@@ -247,15 +247,15 @@ describe("BreedingHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].lastFoaledDay).toBe(30);
-    expect(draft.horses[0].foalsProduced).toEqual([
+    expect(draft.horses["horse-1"].lastFoaledDay).toBe(30);
+    expect(draft.horses["horse-1"].foalsProduced).toEqual([
       "foal-1",
       "foal-2",
       "foal-3",
       "foal-4",
       "foal-5",
     ]);
-    expect(draft.horses[0].blueHenStatus).toEqual({
+    expect(draft.horses["horse-1"].blueHenStatus).toEqual({
       isBlueHen: true,
       stakesWinnersProduced: 2,
       group1WinnersProduced: 2,
@@ -292,7 +292,7 @@ describe("BreedingHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].blueHenStatus).toEqual({
+    expect(draft.horses["horse-1"].blueHenStatus).toEqual({
       isBlueHen: true,
       stakesWinnersProduced: 3,
       group1WinnersProduced: 3,
@@ -313,3 +313,4 @@ describe("BreedingHandler", () => {
     expect(handler.canHandle("cash_change")).toBe(false);
   });
 });
+import type { Horse } from "@/game/types";

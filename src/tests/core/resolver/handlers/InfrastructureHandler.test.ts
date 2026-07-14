@@ -8,6 +8,7 @@ import type {
   OutpostImpact,
 } from "@/core/resolver/impacts/index";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import type { Horse } from "@/game/types";
 
 describe("InfrastructureHandler", () => {
   it("facility_upgrade updates facility level", () => {
@@ -127,8 +128,8 @@ describe("InfrastructureHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].outpostId).toBe("outpost-1");
-    expect(draft.horses[0].fatigue).toBe(25);
+    expect(draft.horses["h1"].outpostId).toBe("outpost-1");
+    expect(draft.horses["h1"].fatigue).toBe(25);
   });
 
   it("outpost_action create adds a new outpost", () => {
@@ -196,7 +197,7 @@ describe("InfrastructureHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].outpostId).toBe("outpost-1");
+    expect(draft.horses["h1"].outpostId).toBe("outpost-1");
     expect(draft.outposts[0].acclimatizationDays["h1"]).toBe(7);
   });
 

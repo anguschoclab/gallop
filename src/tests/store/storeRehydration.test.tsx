@@ -21,6 +21,7 @@ import type { InvestorRecord } from "@/core/breeding/investorTypes";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 import { StewardsInquiryOverlay } from "@/components/race/StewardsInquiryOverlay";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import type { Horse } from "@/game/types";
 
 // ── Fixtures ─────────────────────────────────────────────────────────────────
 
@@ -108,7 +109,7 @@ describe("Version-key rehydration guard", () => {
       storeVersion: STORE_STATE_VERSION - 1, // incompatible
       day: 999,
       cash: 1,
-      horses: h2r([{ id: "stale-horse", name: "Old Timer", owned: true }]),
+      horses: h2r([{ id: "stale-horse", name: "Old Timer", owned: true }] as unknown as Horse[]),
       playerNominations: [nomination],
       syndicateInvestors: { "synd-v": investor },
     };

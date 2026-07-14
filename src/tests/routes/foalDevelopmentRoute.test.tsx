@@ -57,7 +57,9 @@ const FoalDevelopmentPage = () => {
 };
 
 function seed(horses: Horse[], day = 20) {
-  useGame.setState({ ...createDefaultGameState(), horses, day } as any);
+  const horseRecord: Record<string, Horse> = {};
+  for (const h of horses) horseRecord[h.id] = h;
+  useGame.setState({ ...createDefaultGameState(), horses: horseRecord, day } as any);
 }
 
 describe("/foal-development/$horseId route guard", () => {

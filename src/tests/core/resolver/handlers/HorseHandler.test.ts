@@ -16,6 +16,7 @@ import type {
   BeyerImpact,
 } from "@/core/resolver/impacts/index";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import type { Horse } from "@/game/types";
 
 describe("HorseHandler", () => {
   it("horse_stat_change clamps to potential", () => {
@@ -54,7 +55,7 @@ describe("HorseHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].stats.speed).toBe(80);
+    expect(draft.horses["h1"].stats.speed).toBe(80);
   });
 
   it("horse_stat_change does not go below 0", () => {
@@ -93,7 +94,7 @@ describe("HorseHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].stats.speed).toBe(0);
+    expect(draft.horses["h1"].stats.speed).toBe(0);
   });
 
   it("energy_change clamps 0-100", () => {
@@ -115,7 +116,7 @@ describe("HorseHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].energy).toBe(100);
+    expect(draft.horses["h1"].energy).toBe(100);
   });
 
   it("energy_change does not go below 0", () => {
@@ -137,7 +138,7 @@ describe("HorseHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].energy).toBe(0);
+    expect(draft.horses["h1"].energy).toBe(0);
   });
 
   it("form_change clamps -10 to 10", () => {
@@ -159,7 +160,7 @@ describe("HorseHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].form).toBe(10);
+    expect(draft.horses["h1"].form).toBe(10);
   });
 
   it("fame_change clamps 0-100", () => {
@@ -181,7 +182,7 @@ describe("HorseHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].fame).toBe(100);
+    expect(draft.horses["h1"].fame).toBe(100);
   });
 
   it("rename updates name", () => {
@@ -203,7 +204,7 @@ describe("HorseHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].name).toBe("New Name");
+    expect(draft.horses["h1"].name).toBe("New Name");
   });
 
   it("aging updates age", () => {
@@ -226,7 +227,7 @@ describe("HorseHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].age).toBe(4);
+    expect(draft.horses["h1"].age).toBe(4);
   });
 
   it("pasture_retirement sets lifecycleStatus", () => {
@@ -248,8 +249,8 @@ describe("HorseHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].lifecycleStatus).toBe("retired");
-    expect(draft.horses[0].retiredOnDay).toBe(100);
+    expect(draft.horses["h1"].lifecycleStatus).toBe("retired");
+    expect(draft.horses["h1"].retiredOnDay).toBe(100);
   });
 
   it("horse_death sets lifecycleStatus, cause, day", () => {
@@ -272,9 +273,9 @@ describe("HorseHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].lifecycleStatus).toBe("deceased");
-    expect(draft.horses[0].deceasedOnDay).toBe(200);
-    expect(draft.horses[0].causeOfDeath).toBe("colic");
+    expect(draft.horses["h1"].lifecycleStatus).toBe("deceased");
+    expect(draft.horses["h1"].deceasedOnDay).toBe(200);
+    expect(draft.horses["h1"].causeOfDeath).toBe("colic");
   });
 
   it("recovery_change clamps 0-100", () => {
@@ -298,7 +299,7 @@ describe("HorseHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].recoveryPoints).toBe(0);
+    expect(draft.horses["h1"].recoveryPoints).toBe(0);
   });
 
   it("fitness_change does not go below 0", () => {
@@ -320,7 +321,7 @@ describe("HorseHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].fitness).toBe(0);
+    expect(draft.horses["h1"].fitness).toBe(0);
   });
 
   it("peaking_index_update sets value", () => {
@@ -342,7 +343,7 @@ describe("HorseHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].peakingIndex).toBe(75);
+    expect(draft.horses["h1"].peakingIndex).toBe(75);
   });
 
   it("beyer_update sets lastBeyer and lastRaceDay", () => {
@@ -365,8 +366,8 @@ describe("HorseHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].lastBeyer).toBe(92);
-    expect(draft.horses[0].lastRaceDay).toBe(50);
+    expect(draft.horses["h1"].lastBeyer).toBe(92);
+    expect(draft.horses["h1"].lastRaceDay).toBe(50);
   });
 
   it("handle() resolves horse by entityId when horseId is absent", () => {
@@ -388,7 +389,7 @@ describe("HorseHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].energy).toBe(70);
+    expect(draft.horses["h1"].energy).toBe(70);
   });
 
   it("canHandle returns true for known horse impact types", () => {

@@ -173,12 +173,12 @@ describe("pregnancyPhase", () => {
 
   it("should not directly mutate state.horses, state.reputation, state.inbox, or state.cash", () => {
     const { sire, dam, pregnancy } = createLiveFoalScenario({ damOwned: true });
-    const initialHorses = [sire, dam];
+    const initialHorses = h2r([sire, dam]);
     const initialInbox: any[] = [];
     const state: GameState = makeGameState({
       day: 31,
       cash: 10000,
-      horses: h2r(initialHorses),
+      horses: initialHorses,
       npcStables: [],
       pregnancies: [pregnancy],
       usedHorseNames: [],

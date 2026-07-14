@@ -73,7 +73,7 @@ describe("awardsPhase", () => {
 
     const context = createTestContext(state, 364, 365);
     const result = awardsPhase.execute(context);
-    expect(result.state.horses).toEqual([horse]);
+    expect(result.state.horses).toEqual(h2r([horse]));
     expect(result.state.awards).toEqual([]);
   });
 

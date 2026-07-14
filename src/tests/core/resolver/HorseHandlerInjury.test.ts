@@ -28,7 +28,7 @@ describe("HorseHandler - Injury Handling", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    const horse = draft.horses[0];
+    const horse = draft.horses["horse-1"];
     expect(horse.healthStatus).toBe("recovering");
     expect(horse.activeInjury).toBeDefined();
     expect(horse.activeInjury.type).toBe("Sore shins");
@@ -58,7 +58,7 @@ describe("HorseHandler - Injury Handling", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    const horse = draft.horses[0];
+    const horse = draft.horses["horse-1"];
     expect(horse.healthStatus).toBe("other_illness");
   });
 
@@ -87,7 +87,7 @@ describe("HorseHandler - Injury Handling", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    const horse = draft.horses[0];
+    const horse = draft.horses["horse-1"];
     expect(horse.healthStatus).toBe("covering_sickness");
     expect(horse.healthStatusDay).toBe(5);
     expect(horse.activeInjury).toBeUndefined();
@@ -116,7 +116,7 @@ describe("HorseHandler - Injury Handling", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    const horse = draft.horses[0];
+    const horse = draft.horses["horse-1"];
     expect(horse.healthStatus).toBe("other_illness");
     expect(horse.healthStatusDay).toBe(3);
     expect(horse.activeInjury).toBeUndefined();
@@ -145,7 +145,7 @@ describe("HorseHandler - Injury Handling", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    const horse = draft.horses[0];
+    const horse = draft.horses["horse-1"];
     expect(horse.healthStatus).toBe("recovering");
     expect(horse.healthStatusDay).toBe(8);
     expect(horse.activeInjury).toBeUndefined();
@@ -175,8 +175,9 @@ describe("HorseHandler - Injury Handling", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    const horse = draft.horses[0];
+    const horse = draft.horses["horse-1"];
     expect(horse.healthStatus).toBe("covering_sickness");
     expect(horse.healthStatusDay).toBe(5);
   });
 });
+import type { Horse } from "@/game/types";

@@ -17,6 +17,7 @@ import type {
 } from "@/services/narrative/newsTypes";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
+import type { CareerArcState } from "@/services/narrative/careerArcGenerator";
 
 /**
  * Build a rivalry news item from headline/body arrays with deterministic RNG selection.
@@ -129,6 +130,7 @@ export function generateGrudgeMatchNews(
   currentDay: number,
   rng: Rng,
   rivalStable: Stable,
+  arcContext?: { horseName: string; arcStage: CareerArcState["stage"] },
 ): NewsItem | null {
   const winner = playerWon ? playerHorse : rivalHorse;
   const loser = playerWon ? rivalHorse : playerHorse;
@@ -200,6 +202,44 @@ export function generateGrudgeMatchNews(
         `The rival camp executed perfectly, and unfortunately for ${playerHorse.name}, they ended up on the wrong side of the highlight reel against ${rivalHorse.name}.`,
         `A bitter outcome in a race with so much pride on the line. ${rivalHorse.name} took the honors, sending ${playerHorse.name} back to the drawing board.`,
       ];
+
+  // Arc-aware body variants: inject career arc context when available
+  if (arcContext) {
+    const { horseName, arcStage } = arcContext;
+    if (arcStage === "champion_or_bust") {
+      if (playerWon) {
+        bodies.push(
+          `${horseName} wasn't just racing for pride today — a championship legacy was on the line. Defeating ${rivalHorse.name} in this grudge match sends a message that the champion's resolve is unbreakable.`,
+          `The championship dream lives on. ${horseName} overcame ${rivalHorse.name} in a grudge match that felt like a title defense. This victory could define the season.`,
+        );
+      } else {
+        bodies.push(
+          `A devastating blow to ${horseName}'s championship aspirations. Losing to ${rivalHorse.name} in this grudge match raises serious questions about whether the title bid can survive.`,
+          `The championship arc hangs by a thread after ${horseName} fell to ${rivalHorse.name}. This wasn't just a grudge match — it was a potential turning point in a career.`,
+        );
+      }
+    } else if (arcStage === "contender") {
+      if (playerWon) {
+        bodies.push(
+          `${horseName}'s contender status was validated in the fire of this grudge match. Beating ${rivalHorse.name} proves the horse has the mettle for the biggest stages.`,
+        );
+      } else {
+        bodies.push(
+          `A setback for ${horseName}'s contender campaign. Losing to ${rivalHorse.name} in this grudge match will test the horse's resilience and the stable's confidence.`,
+        );
+      }
+    } else if (arcStage === "rising_star") {
+      if (playerWon) {
+        bodies.push(
+          `Rising star ${horseName} passed the grudge match test with flying colors. Beating ${rivalHorse.name} confirms the hype is real and the trajectory is still pointing up.`,
+        );
+      } else {
+        bodies.push(
+          `A reality check for rising star ${horseName}. ${rivalHorse.name} proved too tough in this grudge match, but how the young horse responds will define the career arc.`,
+        );
+      }
+    }
+  }
 
   return buildRivalryNews(
     headlines,
@@ -297,6 +337,7 @@ export function generateRivalryEscalationNews(
   newFriction: number,
   currentDay: number,
   rng: Rng,
+  arcContext?: { horseName: string; arcStage: CareerArcState["stage"] },
 ): NewsItem | null {
   if (newFriction < 80 || oldFriction >= 80) return null;
 
@@ -333,6 +374,28 @@ export function generateRivalryEscalationNews(
     `The feud has escalated beyond simple competition. ${stable.name} is making aggressive, calculated moves intended to directly damage your stable's reputation and success.`,
     `Whatever mutual respect once existed is gone. ${stable.name} has ramped up hostilities, ensuring that every time your horses meet, it will be an absolute battle.`,
   ];
+
+  // Arc-aware body variants: inject career arc context when available
+  if (arcContext) {
+    const { horseName, arcStage } = arcContext;
+    if (arcStage === "champion_or_bust") {
+      bodies.push(
+        `The feud with ${stable.name} has reached a boiling point, and ${horseName} — fighting to cement a championship legacy — finds itself in the crosshairs. Every race against this rival now carries the weight of a career.`,
+        `As ${horseName} chases championship glory, ${stable.name} has made it their mission to play the spoiler. The escalation is personal, and the stakes couldn't be higher.`,
+        `${horseName}'s championship bid is under direct threat. ${stable.name} has escalated hostilities to a level that suggests they'd rather deny your horse glory than win for themselves.`,
+      );
+    } else if (arcStage === "contender") {
+      bodies.push(
+        `With ${horseName} rising as a genuine contender, ${stable.name} has turned up the heat. The rivalry is no longer just about pride — it's about who gets to contend at the highest level.`,
+        `${horseName}'s ascent has clearly rattled ${stable.name}, who have escalated their attacks. The contender's momentum is being directly challenged by a rival with nothing to lose.`,
+      );
+    } else if (arcStage === "rising_star") {
+      bodies.push(
+        `The rising star ${horseName} has become a particular target of ${stable.name}'s escalation. The rival stable seems determined to snuff out the momentum before it becomes unstoppable.`,
+        `${stable.name} has singled out rising star ${horseName} as the focal point of their escalated hostilities. It's a calculated move — take out the brightest light before it shines too bright.`,
+      );
+    }
+  }
 
   return buildRivalryNews(
     headlines,

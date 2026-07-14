@@ -35,7 +35,7 @@ describe("Auction Lifecycle Integration", () => {
         tier: "elite" as const,
         owner: "Owner 1",
         founded: 1,
-        horses: {},
+        horses: [],
         isMajor: false,
         colors: { primary: "#FF0000", secondary: "#FFFFFF" },
         staff: {
@@ -99,7 +99,7 @@ describe("Auction Lifecycle Integration", () => {
         tier: "elite" as const,
         owner: "Owner 1",
         founded: 1,
-        horses: {},
+        horses: [],
         isMajor: false,
         colors: { primary: "#FF0000", secondary: "#FFFFFF" },
         staff: {
@@ -120,7 +120,7 @@ describe("Auction Lifecycle Integration", () => {
         tier: "elite" as const,
         owner: "Owner 2",
         founded: 1,
-        horses: {},
+        horses: [],
         isMajor: false,
         colors: { primary: "#0000FF", secondary: "#FFFFFF" },
         staff: {
@@ -233,7 +233,7 @@ describe("Auction Lifecycle Integration", () => {
         tier: "elite" as const,
         owner: "Owner 2",
         founded: 1,
-        horses: {},
+        horses: [],
         isMajor: true,
         colors: { primary: "#0000FF", secondary: "#FFFFFF" },
         country: "USA",

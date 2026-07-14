@@ -19,13 +19,14 @@ import type {
 } from "@/core/resolver/impacts/index";
 import type { TripleCrownProgressImpact } from "@/core/resolver/impacts/index";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import type { Race } from "@/game/types";
 
 describe("RacingHandler", () => {
   it("race_entry adds entry to race", () => {
     const handler = new RacingHandler();
     const state = {
       horses: h2r([{ id: "h1", name: "Star", stableId: "" }] as unknown as Horse[]),
-      races: r2r([{ id: "race-1", entries: [], entryFee: 1000 }]),
+      races: r2r([{ id: "race-1", entries: [], entryFee: 1000 }] as unknown as Race[]),
     } as unknown as GameState;
 
     const impact: RaceEntryImpact = {
@@ -46,17 +47,17 @@ describe("RacingHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(Object.keys(draft.races[0].entries)).toHaveLength(1);
-    expect(draft.races[0].entries[0].horseId).toBe("h1");
-    expect(draft.races[0].entries[0].jockeyId).toBe("j1");
-    expect(draft.races[0].entries[0].owned).toBe(true);
+    expect(Object.keys(draft.races["race-1"].entries)).toHaveLength(1);
+    expect(draft.races["race-1"].entries[0].horseId).toBe("h1");
+    expect(draft.races["race-1"].entries[0].jockeyId).toBe("j1");
+    expect(draft.races["race-1"].entries[0].owned).toBe(true);
   });
 
   it("race_withdrawal removes entry from race", () => {
     const handler = new RacingHandler();
     const state = {
       horses: {},
-      races: r2r([{ id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] }]),
+      races: r2r([{ id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] }] as unknown as Race[]),
     } as unknown as GameState;
 
     const impact: RaceWithdrawalImpact = {
@@ -75,18 +76,18 @@ describe("RacingHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(Object.keys(draft.races[0].entries)).toHaveLength(0);
+    expect(Object.keys(draft.races["race-1"].entries)).toHaveLength(0);
   });
 
   it("race_result sets result, resolved, and snapshots", () => {
     const handler = new RacingHandler();
     const state = {
       horses: {},
-      races: r2r([{ id: "race-1", entries: [], resolved: false }]),
+      races: r2r([{ id: "race-1", entries: [], resolved: false }] as unknown as Race[]),
     } as unknown as GameState;
 
     const results = [{ horseId: "h1", position: 1, time: 90.5 }];
-    const snapshots = [{ t: 0, horses: {} }];
+    const snapshots = [{ t: 0, horses: [] }];
 
     const impact: RaceResultImpact = {
       id: "imp-1",
@@ -104,9 +105,9 @@ describe("RacingHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.races[0].resolved).toBe(true);
-    expect(draft.races[0].result).toEqual(results);
-    expect(draft.races[0].snapshots).toEqual(snapshots);
+    expect(draft.races["race-1"].resolved).toBe(true);
+    expect(draft.races["race-1"].result).toEqual(results);
+    expect(draft.races["race-1"].snapshots).toEqual(snapshots);
   });
 
   it("jockey_contract sets stableId and contractUntil", () => {
@@ -141,7 +142,7 @@ describe("RacingHandler", () => {
     const handler = new RacingHandler();
     const state = {
       horses: {},
-      races: r2r([{ id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] }]),
+      races: r2r([{ id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] }] as unknown as Race[]),
     } as unknown as GameState;
 
     const impact: JockeyAssignmentImpact = {
@@ -160,7 +161,7 @@ describe("RacingHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.races[0].entries[0].jockeyId).toBe("j2");
+    expect(draft.races["race-1"].entries[0].jockeyId).toBe("j2");
   });
 
   it("jockey_silk updates jockey silk", () => {
@@ -252,8 +253,8 @@ describe("RacingHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].stableId).toBe("");
-    expect(draft.horses[0].owned).toBe(true);
+    expect(draft.horses["h1"].stableId).toBe("");
+    expect(draft.horses["h1"].owned).toBe(true);
   });
 
   it("triple_crown_progress creates new entry", () => {
@@ -399,7 +400,7 @@ describe("RacingHandler", () => {
     const handler = new RacingHandler();
     const state = {
       horses: {},
-      races: r2r([{ id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] }]),
+      races: r2r([{ id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] }] as unknown as Race[]),
     } as unknown as GameState;
 
     const impact: TacticsImpact = {
@@ -425,7 +426,7 @@ describe("RacingHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.races[0].entries[0].jockeyInstructions.ridingStyle).toBe("front_runner");
+    expect(draft.races["race-1"].entries[0].jockeyInstructions.ridingStyle).toBe("front_runner");
   });
 
   it("race_result_adjustment adjusts and re-sorts results", () => {
@@ -442,7 +443,7 @@ describe("RacingHandler", () => {
             { horseId: "h2", position: 2, time: 91 },
           ],
         },
-      ]),
+      ] as unknown as Race[]),
     } as unknown as GameState;
 
     const impact: RaceResultAdjustmentImpact = {
@@ -467,10 +468,10 @@ describe("RacingHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.races[0].result[0].horseId).toBe("h2");
-    expect(draft.races[0].result[0].position).toBe(1);
-    expect(draft.races[0].result[1].horseId).toBe("h1");
-    expect(draft.races[0].result[1].position).toBe(2);
+    expect(draft.races["race-1"].result[0].horseId).toBe("h2");
+    expect(draft.races["race-1"].result[0].position).toBe(1);
+    expect(draft.races["race-1"].result[1].horseId).toBe("h1");
+    expect(draft.races["race-1"].result[1].position).toBe(2);
   });
 
   it("jockey_affinity_gain updates affinity map", () => {
@@ -518,3 +519,4 @@ describe("RacingHandler", () => {
     expect(handler.canHandle("cash_change")).toBe(false);
   });
 });
+import type { Horse } from "@/game/types";

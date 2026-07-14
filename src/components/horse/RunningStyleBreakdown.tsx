@@ -54,7 +54,7 @@ const BUCKET_LABEL: Record<DistanceBucket, string> = {
 const SURFACES: SurfaceFilter[] = ["any", "Turf", "Dirt", "Synthetic"];
 
 export function RunningStyleBreakdown({ horse }: RunningStyleBreakdownProps) {
-  const allHorses = useGameWithShallow((s: any) => s.horses ?? []) as Horse[];
+  const allHorses = useGameWithShallow((s: any) => Object.values(s.horses ?? {})) as Horse[];
   const [compareId, setCompareId] = useState<string | null>(null);
   const [surface, setSurface] = useState<SurfaceFilter>("any");
 

@@ -64,7 +64,7 @@ describe("privateSaleSlice", () => {
 
     const state = useGame.getState() as any;
     expect(state.cash).toBe(40000);
-    const updatedHorse = state.horseMap.get("horse-1");
+    const updatedHorse = state.horses["horse-1"];
     expect(updatedHorse.owned).toBe(true);
     expect(updatedHorse.stableId).toBeUndefined();
     const offer = state.privateSaleOffers.find((o: PrivateSaleOffer) => o.id === "offer-1");

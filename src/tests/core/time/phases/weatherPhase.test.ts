@@ -187,8 +187,8 @@ describe("weatherPhase", () => {
   });
 
   it("should only generate forecast for races within horizon", () => {
-    const raceNear = createMockRace({ day: 10, trackId: "track-near" });
-    const raceFar = createMockRace({ day: 15, trackId: "track-far" }); // Within 7-day forecast horizon
+    const raceNear = createMockRace({ id: "race-near", day: 10, trackId: "track-near" });
+    const raceFar = createMockRace({ id: "race-far", day: 15, trackId: "track-far" }); // Within 7-day forecast horizon
     const state = createMockState({ races: r2r([raceNear, raceFar]) });
     const context = createMockContext(state, 10);
 

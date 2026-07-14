@@ -8,6 +8,7 @@ import type {
   AuctionResolutionImpact,
 } from "@/core/resolver/impacts/index";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import type { Horse } from "@/game/types";
 
 describe("MarketHandler", () => {
   it("scout_report pushes report to draft.scoutReports", () => {
@@ -64,7 +65,7 @@ describe("MarketHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].consignedSaleId).toBe("sale-1");
+    expect(draft.horses["horse-1"].consignedSaleId).toBe("sale-1");
     expect(draft.auctions[0].lots).toHaveLength(1);
     expect(draft.auctions[0].lots[0].horseId).toBe("horse-1");
     expect(draft.auctions[0].lots[0].reservePrice).toBe(50000);
@@ -100,7 +101,7 @@ describe("MarketHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].consignedSaleId).toBeUndefined();
+    expect(draft.horses["horse-1"].consignedSaleId).toBeUndefined();
     expect(draft.auctions[0].lots).toHaveLength(0);
   });
 
@@ -183,7 +184,7 @@ describe("MarketHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses[0].consignedSaleId).toBeUndefined();
+    expect(draft.horses["horse-1"].consignedSaleId).toBeUndefined();
     expect(draft.auctions[0].lots[0].passed).toBe(true);
   });
 

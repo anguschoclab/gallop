@@ -16,6 +16,7 @@ import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateRes
 import { SyndicationHandler } from "@/core/resolver/handlers/SyndicationHandler";
 import { generateUUID } from "@/core/uuid";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import type { Horse } from "@/game/types";
 
 describe("SyndicationValidator", () => {
   let validator: SyndicationValidator;
@@ -109,11 +110,11 @@ describe("SyndicationValidator", () => {
 
     it("should reject if stallion is not a G1 winner", () => {
       const nonG1Stallion = {
-        ...mockState.horses[0],
+        ...mockState.horses["stallion1"],
         id: "stallion2",
         raceHistory: [],
       };
-      mockState.horses = [mockState.horses[0], nonG1Stallion] as any;
+      mockState.horses = { ...mockState.horses, stallion2: nonG1Stallion };
 
       const intent: SyndicateCreationIntent = {
         id: generateUUID(),

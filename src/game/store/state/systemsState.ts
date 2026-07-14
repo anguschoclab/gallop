@@ -42,6 +42,7 @@ import type { ReservedNameEntry } from "@/core/horse/naming/reservedNames";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 import type { Outpost } from "@/core/facilities/outpostTypes";
 import type { WeatherState } from "@/core/weather/weatherTypes";
+import type { CareerArcState } from "@/services/narrative/careerArcGenerator";
 import { createFacility, createDefaultPlayerFacilities } from "@/core/facilities/facilityDefaults";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import { getReputationTier } from "@/core/reputation";
@@ -188,6 +189,10 @@ export interface SystemsState {
     byTrack: Record<string, WeatherState[]>;
     forecast: Record<string, WeatherState[]>;
   };
+
+  // Career arc system (optional)
+  /** Per-horse career arc states for narrative tracking */
+  narrativeArcs?: Record<string, CareerArcState>;
 }
 
 /**

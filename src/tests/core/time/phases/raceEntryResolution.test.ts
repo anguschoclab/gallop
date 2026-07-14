@@ -116,8 +116,8 @@ describe("raceEntryResolutionPhase", () => {
         ...(makeGameState() as GameState),
         horses: h2r([weakHorse, challenger]),
         npcStables: [
-          { id: "s1", name: "S1", cash: 10000, horses: h2r(["strong-challenger"]) } as any,
-          { id: "s-other", name: "S-other", cash: 10000, horses: h2r(["weak-npc"]) } as any,
+          { id: "s1", name: "S1", cash: 10000, horses: ["strong-challenger"] } as any,
+          { id: "s-other", name: "S-other", cash: 10000, horses: ["weak-npc"] } as any,
         ],
         races: r2r([
           {
@@ -185,8 +185,8 @@ describe("raceEntryResolutionPhase", () => {
         ...(makeGameState() as GameState),
         horses: h2r([weakHorse, challenger]),
         npcStables: [
-          { id: "s1", name: "S1", cash: 10000, horses: h2r(["challenger"]) } as any,
-          { id: "s-other", name: "S-other", cash: 10000, horses: h2r(["weak-npc"]) } as any,
+          { id: "s1", name: "S1", cash: 10000, horses: ["challenger"] } as any,
+          { id: "s-other", name: "S-other", cash: 10000, horses: ["weak-npc"] } as any,
         ],
         races: r2r([
           {
@@ -240,7 +240,7 @@ describe("raceEntryResolutionPhase", () => {
       const state: GameState = {
         ...(makeGameState() as GameState),
         horses: h2r([playerHorse, challenger]),
-        npcStables: [{ id: "s1", name: "S1", cash: 10000, horses: h2r(["strong-challenger"]) } as any],
+        npcStables: [{ id: "s1", name: "S1", cash: 10000, horses: ["strong-challenger"] } as any],
         races: r2r([
           {
             id: "race-1",
@@ -284,7 +284,7 @@ describe("raceEntryResolutionPhase", () => {
       const state: GameState = {
         ...(makeGameState() as GameState),
         horses: h2r([npcHorse, playerHorse]),
-        npcStables: [{ id: "s-npc", name: "S-NPC", cash: 10000, horses: h2r(["npc-weak"]) } as any],
+        npcStables: [{ id: "s-npc", name: "S-NPC", cash: 10000, horses: ["npc-weak"] } as any],
         races: r2r([
           {
             id: "race-1",
