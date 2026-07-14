@@ -1,0 +1,87 @@
+import { describe, it, expect } from "vitest";
+import { createInitialState } from "@/game/store/initialization";
+import { calculateOverallRating } from "@/core/horse/stats";
+import type { NewGameOptions } from "@/game/store/state";
+
+const mockProfile = {
+  stableName: "Test Stable",
+  ownerName: "Test Owner",
+  silk: { pattern: "solid" as const, primary: "#FF0000", secondary: "#0000FF", cap: "#00FF00" },
+  backstoryId: "wealthy_dilettante" as const,
+  founded: 1,
+};
+
+const mockBackstory = {
+  id: "wealthy_dilettante" as const,
+  name: "Wealthy Dilettante",
+  description: "A wealthy owner with a passion for racing.",
+  startingCash: 100000,
+  reputationScore: 50,
+  facilityUpgrades: {},
+  horses: [{ tier: "elite" as const, count: 2 }],
+};
+
+const mockOptions: NewGameOptions = {
+  profile: mockProfile as any,
+  backstory: mockBackstory as any,
+};
+
+describe("createInitialState player horse phenotype resolution", () => {
+  it("resolves all player-owned horses", () => {
+    const state = createInitialState(mockOptions);
+    const playerHorses = Object.values(state.horses).filter((h) => h.owned);
+    expect(playerHorses.length).toBeGreaterThan(0);
+    for (const horse of playerHorses) {
+      expect(horse.phenotypeResolved).toBe(true);
+    }
+  });
+
+  it("gives player horses non-zero stats and OVR", () => {
+    const state = createInitialState(mockOptions);
+    const playerHorses = Object.values(state.horses).filter((h) => h.owned);
+    expect(playerHorses.length).toBeGreaterThan(0);
+    for (const horse of playerHorses) {
+      expect(horse.stats.speed).toBeGreaterThan(0);
+      expect(horse.stats.stamina).toBeGreaterThan(0);
+      expect(horse.stats.acceleration).toBeGreaterThan(0);
+      expect(horse.stats.consistency).toBeGreaterThan(0);
+      expect(calculateOverallRating(horse)).toBeGreaterThan(0);
+    }
+  });
+
+  it("gives player horses defined coat colors", () => {
+    const state = createInitialState(mockOptions);
+    const playerHorses = Object.values(state.horses).filter((h) => h.owned);
+    for (const horse of playerHorses) {
+      expect(horse.coatColor).toBeDefined();
+      expect(horse.coatColor).not.toBe("unknown");
+    }
+  });
+
+  it("leaves market horses unresolved (lazy)", () => {
+    const state = createInitialState(mockOptions);
+    expect(state.market.length).toBeGreaterThan(0);
+    for (const horse of state.market) {
+      expect(horse.phenotypeResolved).toBe(false);
+    }
+  });
+
+  it("leaves NPC horses unresolved (lazy)", () => {
+    const state = createInitialState(mockOptions);
+    const npcHorses = Object.values(state.horses).filter((h) => !h.owned && h.stableId);
+    expect(npcHorses.length).toBeGreaterThan(0);
+    for (const horse of npcHorses) {
+      expect(horse.phenotypeResolved).toBe(false);
+    }
+  });
+
+  it("resolves default starter horses when no options are provided", () => {
+    const state = createInitialState();
+    const playerHorses = Object.values(state.horses).filter((h) => h.owned);
+    expect(playerHorses.length).toBeGreaterThan(0);
+    for (const horse of playerHorses) {
+      expect(horse.phenotypeResolved).toBe(true);
+      expect(calculateOverallRating(horse)).toBeGreaterThan(0);
+    }
+  });
+});

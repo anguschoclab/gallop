@@ -29,13 +29,17 @@ describe("ReputationBadge", () => {
   });
 
   it("renders tier derived from score and point total", () => {
-    renderWithStore(<ReputationBadge />, { reputation: mkReputation({ score: 150, tier: "unknown" }) });
+    renderWithStore(<ReputationBadge />, {
+      reputation: mkReputation({ score: 150, tier: "unknown" }),
+    });
     expect(screen.getByText("Local")).toBeTruthy();
     expect(screen.getByText("150 pts")).toBeTruthy();
   });
 
   it("fixes stale stored tier by deriving it from score", () => {
-    renderWithStore(<ReputationBadge />, { reputation: mkReputation({ score: 300, tier: "unknown" }) });
+    renderWithStore(<ReputationBadge />, {
+      reputation: mkReputation({ score: 300, tier: "unknown" }),
+    });
     expect(screen.getByText("Regional")).toBeTruthy();
     expect(screen.queryByText("Unknown")).toBeNull();
   });

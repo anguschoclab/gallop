@@ -15,7 +15,7 @@
 
 import type { GameState, Horse, Race } from "@/game/types";
 import type { NewGameOptions } from "@/game/store/state";
-import { generateHorse } from "@/core/horse/horseFactory";
+import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { generateRace, makeGradedRace } from "@/core/race/generation/raceGen";
 import { generateInitialJockeys } from "@/core/jockey/generator";
 import { generateAllStables } from "@/core/npc/stables";
@@ -51,9 +51,11 @@ export function createInitialState(options?: NewGameOptions): GameState {
   const usedNames = new Set<string>();
   for (const spec of playerHorseSpecs) {
     for (let i = 0; i < spec.count; i++) {
-      const h = generateHorse({ tier: spec.tier, owned: true }, setupRng, {
-        existingNames: usedNames,
-      });
+      const h = ensurePhenotypeResolved(
+        generateHorse({ tier: spec.tier, owned: true }, setupRng, {
+          existingNames: usedNames,
+        }),
+      );
       if (playerSilkColor) h.silk = playerSilkColor;
       horses.push(h);
       usedNames.add(h.name.toLowerCase());

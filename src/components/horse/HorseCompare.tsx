@@ -1,12 +1,14 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { Horse } from "@/game/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import { SilkDot } from "@/components/SilkDot";
 import { NumericValue, formatCurrency, HorseStats } from "@/components/horse/HorseBits";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { horseMarketValue } from "@/core/horse/pricing";
+import { calculateHeadToHeadOdds, runHeadToHeadSimulation } from "@/core/race/headToHead";
 import { cn } from "@/lib/cn";
 
 interface HorseCompareProps {
@@ -22,6 +24,8 @@ interface RowData {
   /** Optional: for numeric rows, pass the raw numbers to highlight the winner. */
   numeric?: number[];
   higherIsBetter?: boolean;
+  /** Optional: raw stat values (0-100) for inline stat bar rendering */
+  barValues?: number[];
 }
 
 function beyerSummary(h: Horse) {
@@ -53,6 +57,10 @@ function bestIdx(nums: number[], higher: boolean): number {
   for (let i = 1; i < nums.length; i++) {
     if (higher ? nums[i] > nums[best] : nums[i] < nums[best]) best = i;
   }
+  // Tie detection: if any other value equals the best, return -1
+  for (let i = 0; i < nums.length; i++) {
+    if (i !== best && nums[i] === nums[best]) return -1;
+  }
   return best;
 }
 
@@ -70,24 +78,28 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
         values: ovr,
         numeric: ovr,
         higherIsBetter: true,
+        barValues: ovr,
       },
       {
         label: "Potential",
         values: horses.map((h) => h.potential),
         numeric: horses.map((h) => h.potential),
         higherIsBetter: true,
+        barValues: horses.map((h) => h.potential),
       },
       {
         label: "Energy",
         values: horses.map((h) => `${h.energy}/100`),
         numeric: horses.map((h) => h.energy),
         higherIsBetter: true,
+        barValues: horses.map((h) => h.energy),
       },
       {
         label: "Form",
         values: horses.map((h) => (h.form > 0 ? `+${h.form}` : `${h.form}`)),
         numeric: horses.map((h) => h.form),
         higherIsBetter: true,
+        barValues: horses.map((h) => Math.max(0, Math.min(100, h.form))),
       },
       {
         label: "Valuation",
@@ -180,6 +192,23 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
             {/* Metric table */}
             <div className="rounded border border-white/5 overflow-hidden">
               <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="px-3 py-2 text-[11px] uppercase tracking-widest font-mono text-cream/50 w-40 text-left">
+                      Metric
+                    </th>
+                    {horses.map((h) => (
+                      <th key={h.id} className="px-3 py-2 text-left">
+                        <div className="flex items-center gap-1.5">
+                          <SilkDot color={h.silk} size="sm" />
+                          <span className="font-bold font-[family-name:var(--font-display)] text-xs text-cream">
+                            {h.name}
+                          </span>
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
                 <tbody className="divide-y divide-white/5">
                   {rows.map((row) => {
                     const winner =
@@ -197,11 +226,19 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
                             className={cn(
                               "px-3 py-2 font-mono tabular-nums",
                               winner === i
-                                ? "text-success font-bold"
+                                ? "bg-gold/10 text-gold font-bold"
                                 : "text-cream/80",
                             )}
                           >
-                            {v}
+                            <div className="flex items-center gap-2">
+                              <span>{v}</span>
+                              {row.barValues && row.barValues[i] !== undefined && (
+                                <Progress
+                                  value={row.barValues[i]}
+                                  className="h-1 w-16"
+                                />
+                              )}
+                            </div>
                           </td>
                         ))}
                       </tr>
@@ -261,6 +298,9 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
                 ))}
               </div>
             </div>
+
+            {/* Head-to-Head Projection */}
+            <HeadToHeadSection horses={horses} />
           </div>
         )}
       </DialogContent>

@@ -1,10 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useGame } from "@/game/store";
 import { formatReputationTier, getReputationTier } from "@/core/reputation";
 import { reputationColor } from "@/core/common/uiTokens";
