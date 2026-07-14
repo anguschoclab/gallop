@@ -76,7 +76,7 @@ export function FacilityCategory({
                         : "border-white/10 text-cream/40",
                     )}
                   >
-                    RANK_0{rankVal}
+                    Tier 0{rankVal}
                   </Badge>
                 </div>
               </CardHeader>
