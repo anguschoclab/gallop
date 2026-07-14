@@ -1,25 +1,20 @@
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { SilkDot } from "@/components/SilkDot";
 import { useGame } from "@/game/store";
+import { useSeasonStandings } from "@/hooks/dashboard/useSeasonStandings";
+import { StableDetailsPanel } from "@/components/dashboard/StableDetailsPanel";
 import { formatCurrency } from "@/core/common/formatting";
 import { cn } from "@/lib/cn";
-import { Trophy } from "lucide-react";
+import { Trophy, Bell } from "lucide-react";
 
-const PLAYER_ID = "__player__";
-const WINDOW_DAYS = 30;
-
-interface Standing {
-  id: string;
-  name: string;
-  isPlayer: boolean;
-  silkColor?: string;
-  seasonEarnings: number;
-  daily: number[]; // length WINDOW_DAYS, oldest → newest
-  prestige: number; // sum of regional prestige (NPCs only)
-  winsVsPlayer: number;
-}
+const RANGES = [
+  { label: "7D", days: 7 },
+  { label: "30D", days: 30 },
+  { label: "90D", days: 90 },
+];
 
 function Sparkline({ data, positive = true }: { data: number[]; positive?: boolean }) {
   const w = 80;
@@ -48,86 +43,22 @@ function Sparkline({ data, positive = true }: { data: number[]; positive?: boole
 }
 
 export function SeasonStandingsWidget() {
-  const day = useGame((s) => s.day);
-  const horses = useGame((s) => s.horses);
-  const npcStables = useGame((s) => s.npcStables);
-  const npcAIManager = useGame((s) => (s as any).npcAIManager);
-  const playerProfile = useGame((s) => (s as any).playerProfile);
+  const [rangeDays, setRangeDays] = useState(30);
+  const [selectedStableId, setSelectedStableId] = useState<string | null>(null);
 
-  const standings = useMemo<Standing[]>(() => {
-    const windowStart = day - WINDOW_DAYS + 1;
-    const totals = new Map<string, { season: number; daily: number[] }>();
+  const { standings, playerRank } = useSeasonStandings(rangeDays);
 
-    const bucket = (id: string) => {
-      let b = totals.get(id);
-      if (!b) {
-        b = { season: 0, daily: new Array(WINDOW_DAYS).fill(0) };
-        totals.set(id, b);
-      }
-      return b;
-    };
+  const inbox = useGame((s) => (s as any).inbox ?? []);
+  const standingsMessages = useMemo(
+    () => inbox.filter((m: any) => m.category === "standings" && !m.readAt),
+    [inbox],
+  );
 
-    for (const h of Object.values(horses) as any[]) {
-      for (const r of h.raceHistory ?? []) {
-        const earned = r.purseEarned ?? 0;
-        if (!earned) continue;
-        // NPC horses have stableId; player horses do not.
-        const key = r.stableId || (h.owned ? PLAYER_ID : null);
-        if (!key) continue;
-        const b = bucket(key);
-        if (r.day >= windowStart && r.day <= day) {
-          const idx = Math.min(WINDOW_DAYS - 1, Math.max(0, r.day - windowStart));
-          b.daily[idx] += earned;
-          b.season += earned;
-        }
-      }
-    }
-
-    const list: Standing[] = [];
-
-    // Player
-    const playerBucket = totals.get(PLAYER_ID);
-    list.push({
-      id: PLAYER_ID,
-      name: playerProfile?.stableName ?? "Your stable",
-      isPlayer: true,
-      silkColor: playerProfile?.silk?.primary,
-      seasonEarnings: playerBucket?.season ?? 0,
-      daily: playerBucket?.daily ?? new Array(WINDOW_DAYS).fill(0),
-      prestige: 0,
-      winsVsPlayer: 0,
-    });
-
-    // NPCs
-    for (const s of npcStables ?? []) {
-      const b = totals.get(s.id);
-      const ai = npcAIManager?.stableStates?.[s.id];
-      const prestige = ai?.regionalPrestige
-        ? Object.values(ai.regionalPrestige).reduce(
-            (acc: number, v: any) => acc + (Number(v) || 0),
-            0,
-          )
-        : 0;
-      list.push({
-        id: s.id,
-        name: s.name,
-        isPlayer: false,
-        silkColor: s.colors?.primary,
-        seasonEarnings: b?.season ?? 0,
-        daily: b?.daily ?? new Array(WINDOW_DAYS).fill(0),
-        prestige,
-        winsVsPlayer: ai?.winsAgainstPlayer ?? 0,
-      });
-    }
-
-    list.sort((a, b) => b.seasonEarnings - a.seasonEarnings);
-    return list;
-  }, [day, horses, npcStables, npcAIManager, playerProfile]);
-
-  const playerRank = standings.findIndex((s) => s.isPlayer) + 1;
   const top10 = standings.slice(0, 10);
   const playerInTop = top10.some((s) => s.isPlayer);
-  const rows = playerInTop ? top10 : [...top10, standings[playerRank - 1]];
+  const rows = playerInTop ? top10 : [...top10, standings[playerRank - 1]].filter(Boolean);
+
+  const selectedStable = standings.find((s) => s.stableId === selectedStableId) ?? null;
 
   return (
     <Card className="border-gold-muted bg-slate-900/20 group hover:border-gold/40 transition-all duration-300 lg:col-span-6">
@@ -139,6 +70,14 @@ export function SeasonStandingsWidget() {
           <CardTitle className="text-xl font-bold font-[family-name:var(--font-display)] text-cream tracking-tight">
             Season Standings
           </CardTitle>
+          {standingsMessages.length > 0 && (
+            <div data-testid="standings-badge" className="relative">
+              <Bell className="h-4 w-4 text-gold" />
+              <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-gold text-[8px] flex items-center justify-center text-slate-950 font-bold">
+                {standingsMessages.length}
+              </span>
+            </div>
+          )}
         </div>
         <Badge
           variant="outline"
@@ -148,81 +87,107 @@ export function SeasonStandingsWidget() {
         </Badge>
       </CardHeader>
       <CardContent className="pt-3">
-        {standings.length === 0 ? (
+        {/* Time-range selector */}
+        <div className="flex items-center gap-1 mb-3">
+          {RANGES.map((r) => (
+            <Button
+              key={r.label}
+              size="sm"
+              variant="ghost"
+              className={cn(
+                "h-6 px-2 text-[10px] font-mono uppercase tracking-wider",
+                rangeDays === r.days
+                  ? "bg-gold/20 text-gold border border-gold/30"
+                  : "text-cream/40 border border-white/5",
+              )}
+              onClick={() => setRangeDays(r.days)}
+            >
+              {r.label}
+            </Button>
+          ))}
+        </div>
+
+        {standings.length === 0 || (standings.length === 1 && standings[0].rangePrizeMoney === 0) ? (
           <p className="text-xs text-cream/30 italic text-center py-6">
             No prize money earned yet this season.
           </p>
         ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="font-mono text-[9px] uppercase tracking-[0.2em] text-cream/40 border-b border-white/5">
-                <th className="py-2 px-2 w-8 text-right">#</th>
-                <th className="py-2 px-2 text-left">Stable</th>
-                <th className="py-2 px-2 text-right">30D Earnings</th>
-                <th className="py-2 px-2 text-right">Trend</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {rows.map((s, i) => {
-                if (!s) return null;
-                const rank = s.isPlayer && !playerInTop ? playerRank : i + 1;
-                const showDivider = s.isPlayer && !playerInTop && i === top10.length;
-                return (
-                  <tr
-                    key={s.id}
-                    className={cn(
-                      "transition-colors",
-                      s.isPlayer
-                        ? "bg-gold/10 hover:bg-gold/15"
-                        : "hover:bg-white/[0.02]",
-                      showDivider && "border-t-2 border-dashed border-white/10",
-                    )}
-                  >
-                    <td
+          <div className="space-y-3">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="font-mono text-[9px] uppercase tracking-[0.2em] text-cream/40 border-b border-white/5">
+                  <th className="py-2 px-2 w-8 text-right">#</th>
+                  <th className="py-2 px-2 text-left">Stable</th>
+                  <th className="py-2 px-2 text-right">{RANGES.find((r) => r.days === rangeDays)?.label} Earnings</th>
+                  <th className="py-2 px-2 text-right">Trend</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {rows.map((s, i) => {
+                  if (!s) return null;
+                  const rank = s.isPlayer && !playerInTop ? playerRank : i + 1;
+                  const showDivider = s.isPlayer && !playerInTop && i === top10.length;
+                  return (
+                    <tr
+                      key={s.stableId}
                       className={cn(
-                        "py-2 px-2 text-right font-mono tabular-nums text-xs",
-                        rank === 1 ? "text-fame font-black" : "text-cream/50",
+                        "transition-colors cursor-pointer",
+                        s.isPlayer
+                          ? "bg-gold/10 hover:bg-gold/15"
+                          : "hover:bg-white/[0.02]",
+                        showDivider && "border-t-2 border-dashed border-white/10",
+                        selectedStableId === s.stableId && "ring-1 ring-gold/30",
                       )}
+                      onClick={() => setSelectedStableId(s.stableId)}
                     >
-                      {rank}
-                    </td>
-                    <td className="py-2 px-2">
-                      <div className="flex items-center gap-2">
-                        {s.silkColor && <SilkDot color={s.silkColor} size="sm" />}
-                        <span
-                          className={cn(
-                            "text-xs truncate max-w-[180px]",
-                            s.isPlayer
-                              ? "font-black text-gold"
-                              : "font-medium text-cream/80",
-                          )}
-                        >
-                          {s.name}
-                        </span>
-                        {!s.isPlayer && s.winsVsPlayer > 0 && (
-                          <Badge
-                            variant="outline"
-                            className="text-[8px] h-3.5 px-1 border-destructive/40 text-destructive"
-                            title="Recent wins against you"
-                          >
-                            ×{s.winsVsPlayer}
-                          </Badge>
+                      <td
+                        className={cn(
+                          "py-2 px-2 text-right font-mono tabular-nums text-xs",
+                          rank === 1 ? "text-fame font-black" : "text-cream/50",
                         )}
-                      </div>
-                    </td>
-                    <td className="py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/80">
-                      {formatCurrency(s.seasonEarnings)}
-                    </td>
-                    <td className="py-2 px-2">
-                      <div className="flex justify-end">
-                        <Sparkline data={s.daily} positive={s.isPlayer} />
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      >
+                        {rank}
+                      </td>
+                      <td className="py-2 px-2">
+                        <div className="flex items-center gap-2">
+                          {s.silkColor && <SilkDot color={s.silkColor} size="sm" />}
+                          <span
+                            className={cn(
+                              "text-xs truncate max-w-[180px]",
+                              s.isPlayer
+                                ? "font-black text-gold"
+                                : "font-medium text-cream/80",
+                            )}
+                          >
+                            {s.name}
+                          </span>
+                          {!s.isPlayer && s.winsVsPlayer > 0 && (
+                            <Badge
+                              variant="outline"
+                              className="text-[8px] h-3.5 px-1 border-destructive/40 text-destructive"
+                              title="Recent wins against you"
+                            >
+                              ×{s.winsVsPlayer}
+                            </Badge>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/80">
+                        {formatCurrency(s.rangePrizeMoney)}
+                      </td>
+                      <td className="py-2 px-2">
+                        <div className="flex justify-end">
+                          <Sparkline data={s.sparkline} positive={s.isPlayer} />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+
+            {selectedStable && <StableDetailsPanel stable={selectedStable} />}
+          </div>
         )}
       </CardContent>
     </Card>

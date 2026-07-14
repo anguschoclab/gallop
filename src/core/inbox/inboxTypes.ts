@@ -14,7 +14,8 @@ export type InboxCategory =
   | "auction"
   | "system"
   | "retirement"
-  | "hall_of_fame";
+  | "hall_of_fame"
+  | "standings";
 
 export type InboxPriority = "info" | "action" | "urgent";
 
