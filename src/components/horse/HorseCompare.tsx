@@ -300,6 +300,8 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
             </div>
           </div>
         )}
+
+        {horses.length >= 2 && <HeadToHeadSection horses={horses} />}
       </DialogContent>
     </Dialog>
   );

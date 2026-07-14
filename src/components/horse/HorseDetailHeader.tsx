@@ -67,7 +67,7 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
                 Pedigree Family
               </span>
               <span className="text-xs font-mono text-cream/60">
-                BL_{horse.bruceLoweFamily ?? "NA"}
+                Family {horse.bruceLoweFamily ?? "—"}
               </span>
             </div>
             <div className="space-y-0.5">

@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FACILITY_ENABLED_WORKOUTS, type FacilityType } from "@/core/facilities";
+import { FACILITY_ENABLED_WORKOUTS, FACILITY_NAMES, type FacilityType } from "@/core/facilities";
 import { ArrowUp, Check, HardDrive } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
 import { cn } from "@/lib/cn";
@@ -54,7 +54,7 @@ export function FacilityCategory({
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
                     <CardTitle className="text-sm font-black uppercase tracking-tight text-cream group-hover:text-gold transition-colors leading-none">
-                      {type.replace(/_/g, " ")}
+                      {FACILITY_NAMES[type]}
                     </CardTitle>
                     <div className="flex gap-1 pt-1">
                       {[1, 2, 3, 4].map((i) => (

@@ -62,8 +62,8 @@ function buildSeasonOpener(
   day: number,
   rng: Rng,
 ): NewsItem {
-  const stableName = playerProfile?.stableName ?? "a new racing operation";
-  const ownerName = playerProfile?.ownerName ?? "a daring newcomer";
+  const stableName = playerProfile?.stableName || "A New Racing Operation";
+  const ownerName = playerProfile?.ownerName || "A Daring Newcomer";
 
   const headlines = [
     `A New Era Begins: ${stableName} Opens Its Doors`,

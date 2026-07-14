@@ -64,16 +64,16 @@ describe("HorseCompare styling improvements", () => {
   it("best-value cell has gold background class", () => {
     const h1 = mkHorse({ id: "h1", name: "Strong", stats: { speed: 90, stamina: 90, acceleration: 90, temperament: 70, durability: 70, consistency: 70 } as any });
     const h2 = mkHorse({ id: "h2", name: "Weak", stats: { speed: 50, stamina: 50, acceleration: 50, temperament: 70, durability: 70, consistency: 70 } as any });
-    const { container } = render(<HorseCompare horses={[h1, h2]} {...baseProps} />);
-    const goldCells = container.querySelectorAll("[class*='bg-gold']");
+    render(<HorseCompare horses={[h1, h2]} {...baseProps} />);
+    const goldCells = document.body.querySelectorAll("[class*='bg-gold']");
     expect(goldCells.length).toBeGreaterThan(0);
   });
 
   it("tied values do not get gold highlight", () => {
     const h1 = mkHorse({ id: "h1", name: "Equal1", stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70, consistency: 70 } as any });
     const h2 = mkHorse({ id: "h2", name: "Equal2", stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70, consistency: 70 } as any });
-    const { container } = render(<HorseCompare horses={[h1, h2]} {...baseProps} />);
-    const goldCells = container.querySelectorAll("[class*='bg-gold']");
+    render(<HorseCompare horses={[h1, h2]} {...baseProps} />);
+    const goldCells = document.body.querySelectorAll("td[class*='bg-gold']");
     expect(goldCells.length).toBe(0);
   });
 

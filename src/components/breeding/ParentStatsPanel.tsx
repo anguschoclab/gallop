@@ -78,7 +78,7 @@ export function ParentStatsPanel({ sire, dam }: ParentStatsPanelProps) {
                 }
               />
               {h.bruceLoweFamily != null && (
-                <Row label="Bruce Lowe" value={`BL${h.bruceLoweFamily}`} />
+                <Row label="Bruce Lowe" value={`Family ${h.bruceLoweFamily}`} />
               )}
             </div>
           </div>

@@ -5,6 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { cn } from "@/lib/cn";
 import { Building2, ChevronRight } from "lucide-react";
+import { FACILITY_NAMES, type FacilityType } from "@/core/facilities";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ReputationEvent {
@@ -60,8 +61,8 @@ export function HQOpsWidget() {
                     key={key}
                     className="flex items-center justify-between text-xs bg-black/20 p-2 border border-white/5 rounded hover:bg-black/40 transition-colors"
                   >
-                    <span className="text-cream/80 font-medium capitalize">
-                      {key.replace(/([A-Z])/g, " $1")}
+                    <span className="text-cream/80 font-medium">
+                      {FACILITY_NAMES[key as FacilityType] ?? key}
                     </span>
                     <Badge className="bg-gold-subtle text-gold text-[10px] h-4 font-bold border border-gold/20">
                       LVL {f?.rank ?? 1}

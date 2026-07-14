@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { screen } from "@testing-library/react";
 import { render } from "@testing-library/react";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { StepReview } from "@/components/NewGameWizard/steps/StepReview";
 import type { Backstory } from "@/core/common/backstories";
 import type { PlayerProfile, BackstoryId } from "@/game/types";
@@ -33,26 +34,30 @@ const mockProfile: PlayerProfile = {
 describe("StepReview — facility upgrade display", () => {
   it("renders Tier 0 in facility upgrades list (not raw level strings)", () => {
     render(
-      <StepReview
-        stableName="Test Stables"
-        ownerName="Test Owner"
-        silk={{ pattern: "solid", primaryColor: "#ff0000" } as any}
-        backstory={mockBackstory}
-      />,
+      <TooltipProvider>
+        <StepReview
+          stableName="Test Stables"
+          ownerName="Test Owner"
+          silk={{ pattern: "solid", primaryColor: "#ff0000" } as any}
+          backstory={mockBackstory}
+        />
+      </TooltipProvider>,
     );
 
-    const dd = screen.getByText(/Tier 0/i);
-    expect(dd).toBeTruthy();
+    const dd = screen.getAllByText(/Tier 0/i);
+    expect(dd.length).toBeGreaterThanOrEqual(1);
   });
 
   it("does NOT render raw 'standard' as a facility level label", () => {
     const { container } = render(
-      <StepReview
-        stableName="Test Stables"
-        ownerName="Test Owner"
-        silk={{ pattern: "solid", primaryColor: "#ff0000" } as any}
-        backstory={mockBackstory}
-      />,
+      <TooltipProvider>
+        <StepReview
+          stableName="Test Stables"
+          ownerName="Test Owner"
+          silk={{ pattern: "solid", primaryColor: "#ff0000" } as any}
+          backstory={mockBackstory}
+        />
+      </TooltipProvider>,
     );
 
     const allText = container.textContent ?? "";

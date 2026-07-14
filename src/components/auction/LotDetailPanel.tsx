@@ -166,7 +166,7 @@ export function LotDetailPanel({
                         Bruce Lowe Family
                       </div>
                       <div className="text-xs font-mono font-bold text-pink-400">
-                        FAMILY_0{horse.bruceLoweFamily}
+                        Family {horse.bruceLoweFamily}
                       </div>
                     </div>
                   )}
