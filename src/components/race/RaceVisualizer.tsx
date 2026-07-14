@@ -65,9 +65,12 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
     cameraMode,
     setCameraMode,
     restart,
+    seek,
+    step,
     toggleSpeed,
     toggleCamera,
   } = useRaceReplay(duration, onComplete);
+
   const { playerHorseId, runnerMap } = useMemo(() => {
     const map = new Map(runners.map((r) => [r.horseId, r]));
     let playerId: string | undefined;
