@@ -49,7 +49,9 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
   onComplete,
   trackType = "Turf",
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const scrubberRef = useRef<HTMLInputElement>(null);
+  const duration = useMemo(() => getReplayDuration(snapshots), [snapshots]);
+
   const bgCanvasRef = useRef<HTMLCanvasElement | null>(null); // static lane/track background
 
   const duration = useMemo(() => getReplayDuration(snapshots), [snapshots]);
