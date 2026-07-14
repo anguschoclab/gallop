@@ -298,9 +298,6 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
                 ))}
               </div>
             </div>
-
-            {/* Head-to-Head Projection */}
-            <HeadToHeadSection horses={horses} />
           </div>
         )}
       </DialogContent>
