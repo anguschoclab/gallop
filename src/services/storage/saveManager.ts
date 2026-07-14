@@ -8,6 +8,16 @@
 import { writeFile, readFile, deleteFile, checkOPFSAvailable } from "./opfsService";
 import { STORAGE_KEYS } from "./storageAdapter";
 import type { GameState } from "@/game/types";
+import { safeParseJson, gameStateSchema, saveSlotMetadataArraySchema } from "./schemas";
+
+function validateGameState(data: unknown): GameState | null {
+  const result = gameStateSchema.safeParse(data);
+  if (!result.success) {
+    console.error("GameState validation failed:", result.error.issues);
+    return null;
+  }
+  return result.data as GameState;
+}
 
 export interface SaveSlotMetadata {
   id: string;
@@ -34,7 +44,7 @@ export async function getSaveSlots(): Promise<SaveSlotMetadata[]> {
   if (!opfsAvailable) {
     try {
       const stored = localStorage.getItem(METADATA_STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
+      return stored ? (safeParseJson(stored, saveSlotMetadataArraySchema) ?? []) : [];
     } catch (e) {
       console.error("Failed to load save metadata from localStorage:", e);
       return [];
@@ -134,12 +144,12 @@ export async function loadFromSlot(slotId: string): Promise<void> {
   if (!opfsAvailable) {
     try {
       const stored = localStorage.getItem(storageKey);
-      state = stored ? JSON.parse(stored) : null;
+      state = stored ? (safeParseJson(stored, gameStateSchema) as GameState | null) : null;
     } catch (e) {
       console.error("Failed to read save from localStorage:", e);
     }
   } else {
-    state = await readFile<GameState>(filename);
+    state = await readFile<GameState>(filename, validateGameState);
   }
 
   if (!state) {

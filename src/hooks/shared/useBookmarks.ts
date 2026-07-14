@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { safeParseJson, bookmarkArraySchema } from "@/services/storage/schemas";
 
 export type BookmarkEntityType = "horse" | "jockey" | "stable" | "race" | "sire";
 
@@ -26,7 +27,7 @@ function read(): Bookmark[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    cache = raw ? (JSON.parse(raw) as Bookmark[]) : [];
+    cache = raw ? (safeParseJson(raw, bookmarkArraySchema) ?? []) : [];
   } catch {
     cache = [];
   }

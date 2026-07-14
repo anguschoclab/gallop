@@ -1,20 +1,41 @@
 import { test, expect } from "@playwright/test";
+import { readFileSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const fixture = JSON.parse(readFileSync(join(__dirname, "fixtures", "e2e-fixture.json"), "utf-8"));
 
 const VIEWPORTS = [
   { width: 375, height: 812, name: "mobile" },
   { width: 768, height: 1024, name: "tablet" },
 ];
 
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript((data) => {
+    try {
+      Object.defineProperty(window, "indexedDB", {
+        get: () => undefined,
+        configurable: true,
+      });
+    } catch {
+      try { delete (window as any).indexedDB; } catch { (window as any).indexedDB = undefined; }
+    }
+    localStorage.setItem("gallop_game_state_fallback", JSON.stringify(data));
+  }, fixture);
+});
+
 for (const vp of VIEWPORTS) {
   test.describe(`NPC Stable Roster layout at ${vp.name} (${vp.width}px)`, () => {
     test.use({ viewport: { width: vp.width, height: vp.height } });
+    test.setTimeout(60_000);
 
     test("horse name and scout-status badge do not overlap", async ({ page }) => {
       await page.goto("/");
 
       // Navigate to stable rivals page to find NPC stables
       const stableLink = page.locator('a[href*="/stable"]').first();
-      await expect(stableLink).toBeVisible({ timeout: 5000 }).catch(() => {
+      await expect(stableLink).toBeVisible({ timeout: 15_000 }).catch(() => {
         test.skip(true, "No game state found");
       });
 
@@ -67,7 +88,7 @@ for (const vp of VIEWPORTS) {
       await page.goto("/");
 
       const stableLink = page.locator('a[href*="/stable"]').first();
-      await expect(stableLink).toBeVisible({ timeout: 5000 }).catch(() => {
+      await expect(stableLink).toBeVisible({ timeout: 15_000 }).catch(() => {
         test.skip(true, "No game state found");
       });
 

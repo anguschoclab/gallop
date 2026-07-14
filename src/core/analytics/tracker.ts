@@ -1,3 +1,5 @@
+import { safeParseJson, analyticsEventArraySchema } from "@/services/storage/schemas";
+
 const ANALYTICS_KEY = "gallop_analytics_events";
 const MAX_EVENTS = 100;
 
@@ -24,7 +26,7 @@ export function flushEvents(): AnalyticsEvent[] {
 function loadQueue(): AnalyticsEvent[] {
   try {
     const raw = localStorage.getItem(ANALYTICS_KEY);
-    return raw ? JSON.parse(raw) : [];
+    return raw ? (safeParseJson(raw, analyticsEventArraySchema) ?? []) : [];
   } catch {
     return [];
   }

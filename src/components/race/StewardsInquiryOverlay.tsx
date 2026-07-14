@@ -7,12 +7,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Gavel, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { safeParseJson, dismissedInquiriesSchema } from "@/services/storage/schemas";
 
 const DISMISSED_KEY = "stewards.inquiries.dismissed.v1";
 
 function loadDismissed(): Set<string> {
   try {
-    return new Set(JSON.parse(localStorage.getItem(DISMISSED_KEY) ?? "[]"));
+    const ids = safeParseJson(localStorage.getItem(DISMISSED_KEY) ?? "", dismissedInquiriesSchema);
+    return new Set(ids ?? []);
   } catch {
     return new Set();
   }
@@ -35,7 +37,12 @@ export function StewardsInquiryOverlay() {
   const [dismissed, setDismissed] = useState<Set<string>>(() => loadDismissed());
 
   const playerHorseIds = useMemo(
-    () => new Set(Object.values(horses).filter((h) => h.owned).map((h) => h.id)),
+    () =>
+      new Set(
+        Object.values(horses)
+          .filter((h) => h.owned)
+          .map((h) => h.id),
+      ),
     [horses],
   );
 

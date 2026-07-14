@@ -10,6 +10,7 @@ import { useRacePhase, type RacePhase } from "@/hooks/race/useRacePhase";
 import { useRaceProgress } from "@/hooks/race/useRaceProgress";
 import { useStewardsInquiry } from "@/hooks/race/useStewardsInquiry";
 import { getCourseForRace } from "@/data/tracks";
+import { safeParseJson, raceProgressSchema } from "@/services/storage/schemas";
 
 type DisplayPhase = "preshow" | "broadcast";
 
@@ -143,12 +144,9 @@ export function LiveRace() {
     try {
       const raw = window.sessionStorage.getItem(progressStorageKey);
       if (!raw) return;
-      const p = JSON.parse(raw);
-      setSavedProgress({
-        simTime: typeof p.simTime === "number" ? p.simTime : 0,
-        paused: !!p.paused,
-        speed: typeof p.speed === "number" ? p.speed : 1,
-      });
+      const p = safeParseJson(raw, raceProgressSchema);
+      if (!p) return;
+      setSavedProgress(p);
     } catch {
       // noop — keep defaults
     }

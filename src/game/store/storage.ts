@@ -30,6 +30,7 @@ import {
 } from "@/core/persistence/npcCompression";
 import { prunePedigree } from "@/core/persistence/pedigreePrune";
 import { STORAGE_KEYS } from "@/services/storage/storageAdapter";
+import { safeParseJson, bucketPayloadSchema } from "@/services/storage/schemas";
 
 /**
  * Creates the OPFS storage adapter for Zustand persist.
@@ -65,16 +66,53 @@ export function createOpfsStorage() {
  * Keys that go into the "meta" bucket (everything except horses, races, npcStables).
  */
 const META_KEYS: (keyof GameState)[] = [
-  "day", "cash", "market", "trainingUsed", "log", "news", "archive",
-  "pregnancies", "activeBreedingProgram", "triplecrownHistory", "paceSamples",
-  "calibratedPars", "lastCalibrationDay", "npcAIManager", "scoutReports",
-  "auctions", "jockeys", "awards", "campaigns", "expenses", "transactions",
-  "replays", "reputation", "transports", "userSettings", "facilities",
-  "npcFacilities", "playerProfile", "privateSaleOffers", "claims",
-  "breedingPrograms", "usedHorseNames", "usedJockeyNames", "reservedHorseNames",
-  "seasonRecords", "hallOfFame", "trackRecords", "horseLeaderboards",
-  "founders", "lastFounderUpdateDay", "syndicates", "staffPool", "hiredStaff",
-  "weather", "inbox", "stewardsInquiries", "playerNominations",
+  "day",
+  "cash",
+  "market",
+  "trainingUsed",
+  "log",
+  "news",
+  "archive",
+  "pregnancies",
+  "activeBreedingProgram",
+  "triplecrownHistory",
+  "paceSamples",
+  "calibratedPars",
+  "lastCalibrationDay",
+  "npcAIManager",
+  "scoutReports",
+  "auctions",
+  "jockeys",
+  "awards",
+  "campaigns",
+  "expenses",
+  "transactions",
+  "replays",
+  "reputation",
+  "transports",
+  "userSettings",
+  "facilities",
+  "npcFacilities",
+  "playerProfile",
+  "privateSaleOffers",
+  "claims",
+  "breedingPrograms",
+  "usedHorseNames",
+  "usedJockeyNames",
+  "reservedHorseNames",
+  "seasonRecords",
+  "hallOfFame",
+  "trackRecords",
+  "horseLeaderboards",
+  "founders",
+  "lastFounderUpdateDay",
+  "syndicates",
+  "staffPool",
+  "hiredStaff",
+  "weather",
+  "inbox",
+  "stewardsInquiries",
+  "playerNominations",
   "syndicateInvestors",
 ];
 
@@ -136,7 +174,8 @@ export async function loadGameStateFromIDB(): Promise<GameState | null> {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.GAME_STATE_FALLBACK);
       if (!stored) return null;
-      const payload = JSON.parse(stored);
+      const payload = safeParseJson(stored, bucketPayloadSchema) as any;
+      if (!payload) return null;
       return reassembleState(payload);
     } catch (e) {
       console.error("Failed to load game state from localStorage:", e);

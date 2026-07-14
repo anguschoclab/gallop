@@ -5,6 +5,16 @@
 
 import { initOPFS, writeFile, readFile, deleteFile, checkOPFSAvailable } from "./opfsService";
 import type { GameState } from "@/game/types";
+import { safeParseJson, gameStateSchema, raceFiltersSchema, wizardStateSchema } from "./schemas";
+
+function validateGameState(data: unknown): GameState | null {
+  const result = gameStateSchema.safeParse(data);
+  if (!result.success) {
+    console.error("GameState validation failed:", result.error.issues);
+    return null;
+  }
+  return result.data as GameState;
+}
 
 export const STORAGE_KEYS = {
   GAME_STATE: "gallop_game_state",
@@ -60,7 +70,7 @@ export async function loadGameState(): Promise<GameState | null> {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.GAME_STATE_FALLBACK);
       if (stored) {
-        return JSON.parse(stored) as GameState;
+        return safeParseJson(stored, gameStateSchema) as GameState | null;
       }
     } catch (error) {
       console.error("Failed to load game state from localStorage:", error);
@@ -69,7 +79,7 @@ export async function loadGameState(): Promise<GameState | null> {
   }
 
   try {
-    return await readFile<GameState>(GAME_STATE_FILENAME);
+    return await readFile<GameState>(GAME_STATE_FILENAME, validateGameState);
   } catch (error) {
     console.error("Failed to load game state from OPFS:", error);
     return null;
@@ -139,7 +149,7 @@ export function loadRaceFilters(): Record<string, string> {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.RACE_FILTERS);
     if (stored) {
-      return JSON.parse(stored);
+      return safeParseJson(stored, raceFiltersSchema) ?? {};
     }
   } catch (error) {
     console.error("Failed to load race filters from localStorage:", error);
@@ -273,7 +283,7 @@ export function loadWizardState(): WizardState | null {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.NEW_GAME_WIZARD);
     if (stored) {
-      return JSON.parse(stored) as WizardState;
+      return safeParseJson(stored, wizardStateSchema) as WizardState | null;
     }
   } catch (error) {
     console.error("Failed to load wizard state from localStorage:", error);

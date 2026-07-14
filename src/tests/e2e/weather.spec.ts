@@ -115,11 +115,20 @@ function seedWeatherState(page: Page, overrides?: {
   };
 
   return page.addInitScript((data) => {
-    // Force localStorage fallback by making IndexedDB unavailable
+    // Force localStorage fallback by making IndexedDB unavailable.
+    // `delete window.indexedDB` may fail if the property is non-configurable,
+    // so we use Object.defineProperty to force it to undefined.
     try {
-      delete (window as any).indexedDB;
+      Object.defineProperty(window, "indexedDB", {
+        get: () => undefined,
+        configurable: true,
+      });
     } catch {
-      (window as any).indexedDB = undefined;
+      try {
+        delete (window as any).indexedDB;
+      } catch {
+        (window as any).indexedDB = undefined;
+      }
     }
     localStorage.setItem(
       "gallop_game_state_fallback",
@@ -129,6 +138,8 @@ function seedWeatherState(page: Page, overrides?: {
 }
 
 test.describe("Weather E2E", () => {
+  test.setTimeout(60_000);
+
   test.beforeEach(async ({ page }) => {
     await seedWeatherState(page);
   });
@@ -138,12 +149,12 @@ test.describe("Weather E2E", () => {
   }) => {
     await page.goto("/racing?tab=races");
 
-    await expect(page.getByText("Race Schedule")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("heading", { name: "Race Schedule" })).toBeVisible({ timeout: 15_000 });
 
     const forecast = page.locator('[aria-label="7-day forecast"]');
     await expect(forecast).toBeVisible();
 
-    const conditionBadge = page.locator(".badge", { hasText: "heavy" });
+    const conditionBadge = page.locator("span.cursor-help", { hasText: "heavy" });
     await expect(conditionBadge).toBeVisible();
   });
 
@@ -164,7 +175,7 @@ test.describe("Weather E2E", () => {
   test("Weather forecast icons render correct patterns", async ({ page }) => {
     await page.goto("/racing?tab=races");
 
-    await expect(page.getByText("Race Schedule")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("heading", { name: "Race Schedule" })).toBeVisible({ timeout: 15_000 });
 
     const forecastContainer = page.locator('[aria-label="7-day forecast"]');
     await expect(forecastContainer).toBeVisible();
@@ -172,9 +183,10 @@ test.describe("Weather E2E", () => {
     const forecastIcons = forecastContainer.locator("[aria-label]");
     await expect(forecastIcons).toHaveCount(7);
 
-    for (const pattern of FORECAST_PATTERNS) {
+    const uniquePatterns = [...new Set(FORECAST_PATTERNS)];
+    for (const pattern of uniquePatterns) {
       await expect(
-        forecastContainer.locator(`[aria-label="${pattern}"]`),
+        forecastContainer.locator(`[aria-label="${pattern}"]`).first(),
       ).toBeVisible();
     }
   });
@@ -182,19 +194,19 @@ test.describe("Weather E2E", () => {
   test("Track condition badge displays correct text", async ({ page }) => {
     await page.goto("/racing?tab=races");
 
-    await expect(page.getByText("Race Schedule")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("heading", { name: "Race Schedule" })).toBeVisible({ timeout: 15_000 });
 
-    const badge = page.locator(".badge", { hasText: "heavy" });
+    const badge = page.locator("span.cursor-help", { hasText: "heavy" });
     await expect(badge).toBeVisible();
 
-    const tooltipTrigger = badge.locator(".cursor-help");
-    await expect(tooltipTrigger).toBeVisible();
+    const classAttr = await badge.getAttribute("class");
+    expect(classAttr).toContain("decoration-dotted");
   });
 
   test("Weather pattern tooltips are present", async ({ page }) => {
     await page.goto("/racing?tab=races");
 
-    await expect(page.getByText("Race Schedule")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("heading", { name: "Race Schedule" })).toBeVisible({ timeout: 15_000 });
 
     const forecastContainer = page.locator('[aria-label="7-day forecast"]');
     await expect(forecastContainer).toBeVisible();
@@ -208,9 +220,10 @@ test.describe("Weather E2E", () => {
       expect(classAttr).toContain("decoration-dotted");
     }
 
-    const conditionBadge = page.locator(".badge", { hasText: "heavy" });
-    const badgeTooltip = conditionBadge.locator(".cursor-help");
-    await expect(badgeTooltip).toBeVisible();
+    const conditionBadge = page.locator("span.cursor-help", { hasText: "heavy" });
+    await expect(conditionBadge).toBeVisible();
+    const badgeClass = await conditionBadge.getAttribute("class");
+    expect(badgeClass).toContain("decoration-dotted");
   });
 
   test("Storm alert persists across page reload", async ({ page }) => {

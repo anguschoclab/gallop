@@ -89,9 +89,13 @@ export async function writeFile(filename: string, data: unknown): Promise<void> 
  *
  * @template T
  * @param {string} filename - The name of the file to read.
+ * @param validator
  * @returns {Promise<T | null>} The parsed data, or null if the file is missing or OPFS is unavailable.
  */
-export async function readFile<T>(filename: string): Promise<T | null> {
+export async function readFile<T>(
+  filename: string,
+  validator?: (data: unknown) => T | null,
+): Promise<T | null> {
   if (!isOPFSAvailable || !opfsRoot) {
     return null;
   }
@@ -100,7 +104,11 @@ export async function readFile<T>(filename: string): Promise<T | null> {
     const fileHandle = await opfsRoot.getFileHandle(filename);
     const file = await fileHandle.getFile();
     const text = await file.text();
-    return JSON.parse(text) as T;
+    const parsed: unknown = JSON.parse(text);
+    if (validator) {
+      return validator(parsed);
+    }
+    return parsed as T;
   } catch (error) {
     if (error instanceof DOMException && error.name === "NotFoundError") {
       return null;
@@ -196,6 +204,8 @@ export async function clearAll(): Promise<void> {
 
 /**
  * Check if the CompressionStream API is available (for gzip-compressed OPFS writes).
+ *
+ * @returns True if CompressionStream is defined in the global scope.
  */
 function isCompressionSupported(): boolean {
   return typeof CompressionStream !== "undefined";
@@ -226,7 +236,6 @@ export async function writeCompressedFile(filename: string, data: unknown): Prom
       const writer = writable.getWriter();
       const reader = new Blob([json]).stream().pipeThrough(cs).getReader();
 
-      // eslint-disable-next-line no-constant-condition
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -253,9 +262,13 @@ export async function writeCompressedFile(filename: string, data: unknown): Prom
  *
  * @template T
  * @param filename - The name of the file to read.
+ * @param validator
  * @returns {Promise<T | null>} The parsed data, or null if the file is missing.
  */
-export async function readCompressedFile<T>(filename: string): Promise<T | null> {
+export async function readCompressedFile<T>(
+  filename: string,
+  validator?: (data: unknown) => T | null,
+): Promise<T | null> {
   if (!isOPFSAvailable || !opfsRoot) {
     return null;
   }
@@ -265,19 +278,28 @@ export async function readCompressedFile<T>(filename: string): Promise<T | null>
     const file = await fileHandle.getFile();
     const arrayBuffer = await file.arrayBuffer();
 
+    let parsed: unknown;
+
     if (isCompressionSupported()) {
       try {
         const ds = new DecompressionStream("gzip");
         const decompressed = new Blob([arrayBuffer]).stream().pipeThrough(ds);
         const text = await new Response(decompressed).text();
-        return JSON.parse(text) as T;
+        parsed = JSON.parse(text);
       } catch {
         // Not compressed — fall through to plain text parse
+        const text = new TextDecoder().decode(arrayBuffer);
+        parsed = JSON.parse(text);
       }
+    } else {
+      const text = new TextDecoder().decode(arrayBuffer);
+      parsed = JSON.parse(text);
     }
 
-    const text = new TextDecoder().decode(arrayBuffer);
-    return JSON.parse(text) as T;
+    if (validator) {
+      return validator(parsed);
+    }
+    return parsed as T;
   } catch (error) {
     if (error instanceof DOMException && error.name === "NotFoundError") {
       return null;

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import type { RacePhase } from "@/hooks/race/useRacePhase";
+import { safeParseJson, raceProgressSchema } from "@/services/storage/schemas";
 
 export interface RaceProgressState {
   simTime: number;
@@ -75,12 +76,8 @@ export function useRaceProgress({
       try {
         const raw = window.sessionStorage.getItem(progressStorageKey);
         if (!raw) return { simTime: 0, paused: false, speed: 1 };
-        const p = JSON.parse(raw);
-        return {
-          simTime: typeof p.simTime === "number" ? p.simTime : 0,
-          paused: !!p.paused,
-          speed: typeof p.speed === "number" ? p.speed : 1,
-        };
+        const p = safeParseJson(raw, raceProgressSchema);
+        return p ?? { simTime: 0, paused: false, speed: 1 };
       } catch {
         return { simTime: 0, paused: false, speed: 1 };
       }

@@ -2,9 +2,11 @@ import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from "vite
 import * as saveManager from "@/services/storage/saveManager";
 import * as opfsService from "@/services/storage/opfsService";
 import type { GameState } from "@/game/types";
+import { createDefaultGameState } from "@/game/store/state";
 
 describe("saveManager", () => {
   const mockGameState: GameState = {
+    ...createDefaultGameState(),
     day: 42,
     cash: 100000,
     playerProfile: { stableName: "Test Stable" },
@@ -86,7 +88,7 @@ describe("saveManager", () => {
 
       expect(slots).toEqual([]);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "Failed to load save metadata from localStorage:",
+        "safeParseJson: JSON.parse failed:",
         expect.any(Error),
       );
     });
@@ -232,9 +234,8 @@ describe("saveManager", () => {
 
       await saveManager.loadFromSlot("slot1");
 
-      expect(localStorage.getItem("gallop_game_state_fallback")).toBe(
-        JSON.stringify(mockGameState),
-      );
+      const stored = localStorage.getItem("gallop_game_state_fallback");
+      expect(JSON.parse(stored!)).toEqual(mockGameState);
       expect(reloadSpy).toHaveBeenCalled();
     });
 

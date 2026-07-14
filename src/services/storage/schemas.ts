@@ -2,6 +2,13 @@ import { z } from "zod";
 
 // ─── Helper ──────────────────────────────────────────────────────────────────
 
+/**
+ * Parse JSON and validate against a Zod schema. Returns null on parse or validation failure.
+ *
+ * @param raw - Raw JSON string to parse.
+ * @param schema - Zod schema to validate the parsed data against.
+ * @returns Validated data of type T, or null if parsing or validation fails.
+ */
 export function safeParseJson<T>(raw: string, schema: z.ZodSchema<T>): T | null {
   let parsed: unknown;
   try {
