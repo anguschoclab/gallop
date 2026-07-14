@@ -21,9 +21,30 @@ export function useRaceReplay(duration: number, onComplete?: () => void) {
     setIsPlaying(true);
   }, []);
 
+  const seek = useCallback(
+    (t: number) => {
+      const clamped = Math.max(0, Math.min(duration, t));
+      timeRef.current = clamped;
+      if (timeLabelRef.current) timeLabelRef.current.textContent = clamped.toFixed(2);
+      if (progressBarRef.current && duration > 0) {
+        progressBarRef.current.style.width = `${(clamped / duration) * 100}%`;
+      }
+    },
+    [duration],
+  );
+
+  const step = useCallback(
+    (delta: number) => {
+      setIsPlaying(false);
+      seek(timeRef.current + delta);
+    },
+    [seek],
+  );
+
   const toggleSpeed = useCallback(() => {
     setPlaybackSpeed((s) => (s === DEFAULT_SPEED ? FAST_SPEED : DEFAULT_SPEED));
   }, []);
+
 
   const toggleCamera = useCallback(() => {
     setCameraMode((m) => (m === "leader" ? "player" : "leader"));
