@@ -100,7 +100,7 @@ function NpcStableDetailPage() {
             variant="full"
           />
           <div className="text-[10px] font-mono text-cream/20 uppercase tracking-widest">
-            Liquid_Capital
+            Liquid Capital
           </div>
           <div className="text-2xl font-black font-mono text-success tabular-nums tracking-tighter">
             {formatCurrency(stable.cash)}
