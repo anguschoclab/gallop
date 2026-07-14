@@ -387,9 +387,6 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
         <button className="race-control-btn" onClick={restart} aria-label="Restart race">
           <RotateCcw size={20} />
         </button>
-
-          <RotateCcw size={20} />
-        </button>
         <button
           className="race-control-btn"
           onClick={toggleCamera}
