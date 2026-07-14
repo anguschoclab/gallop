@@ -32,19 +32,14 @@ for (const vp of VIEWPORTS) {
     test.setTimeout(60_000);
 
     test("horse name columns do not overlap in compare dialog", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("/stable");
 
-      // Skip if no game state (no horses available)
-      const stableLink = page.locator('a[href*="/stable"]').first();
-      await expect(stableLink).toBeVisible({ timeout: 15_000 }).catch(() => {
+      // Wait for the roster table to load
+      const checkboxes = page.locator('input[type="checkbox"]');
+      await expect(checkboxes.first()).toBeVisible({ timeout: 15_000 }).catch(() => {
         test.skip(true, "No game state found");
       });
 
-      await stableLink.click();
-      await page.waitForURL(/\/stable/);
-
-      // Look for compare checkboxes in the roster
-      const checkboxes = page.locator('input[type="checkbox"]');
       const count = await checkboxes.count();
 
       if (count < 2) {
@@ -91,17 +86,13 @@ for (const vp of VIEWPORTS) {
     });
 
     test("table rows occupy distinct vertical bands", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("/stable");
 
-      const stableLink = page.locator('a[href*="/stable"]').first();
-      await expect(stableLink).toBeVisible({ timeout: 15_000 }).catch(() => {
+      const checkboxes = page.locator('input[type="checkbox"]');
+      await expect(checkboxes.first()).toBeVisible({ timeout: 15_000 }).catch(() => {
         test.skip(true, "No game state found");
       });
 
-      await stableLink.click();
-      await page.waitForURL(/\/stable/);
-
-      const checkboxes = page.locator('input[type="checkbox"]');
       const count = await checkboxes.count();
       if (count < 2) {
         test.skip(true, "Not enough horses with compare checkboxes");

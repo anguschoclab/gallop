@@ -43,8 +43,13 @@ import { GRADED_RACES_BY_TRIPLECROWN_KEY } from "@/data/gradedRaces";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { generateUUID } from "@/core/uuid";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
-import { PRIZE_SPLIT } from "@/constants/gameConstants";
+import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/constants/gameConstants";
 import { getPeakingBeyerMultiplier } from "@/core/health/banister";
+
+function getPrizeSplitForRace(race: Race): number[] {
+  if (race.graded) return GRADED_PRIZE_SPLIT;
+  return PRIZE_SPLIT;
+}
 
 /**
  * Resolves a race and applies impacts for live race simulation.
@@ -85,6 +90,7 @@ export function resolveLiveRaceWithImpacts(
 
   const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
   const impacts: AnyImpact[] = [];
+  const prizeSplit = getPrizeSplitForRace(race);
 
   // Mark race as resolved
   race.resolved = true;
@@ -167,6 +173,11 @@ export function resolveLiveRaceWithImpacts(
     const peakingMultiplier = getPeakingBeyerMultiplier(horse.peakingIndex ?? 0);
     const adjustedBeyer = Math.max(0, Math.round((beyer - dampener) * peakingMultiplier));
 
+    // Calculate purse earned for this position
+    const purseEarned = r.position - 1 < prizeSplit.length
+      ? Math.round(race.purse * prizeSplit[r.position - 1])
+      : 0;
+
     // Win and You're In qualification
     let winAndYouInQualified = undefined;
     if (r.position === 1 && race.graded?.winAndYouInTarget) {
@@ -205,6 +216,7 @@ export function resolveLiveRaceWithImpacts(
         distance: race.distance,
         surface: race.graded?.surface,
         purse: race.purse,
+        purseEarned,
         fieldSize: result.length,
         raceClass: race.raceClass,
         barrier: runner?.barrier,
@@ -286,10 +298,9 @@ export function resolveLiveRaceWithImpacts(
     }
 
     // Prize money impact
-    if (r.position - 1 < PRIZE_SPLIT.length) {
-      const prize = Math.round(race.purse * PRIZE_SPLIT[r.position - 1]);
-      if (prize > 0) {
-        if (horse.stableId) {
+    if (purseEarned > 0) {
+      const prize = purseEarned;
+      if (horse.stableId) {
           // NPC stable gets prize money
           impacts.push({
             id: generateUUID(),
@@ -316,7 +327,6 @@ export function resolveLiveRaceWithImpacts(
             reason: `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
           } as CashImpact);
         }
-      }
     }
 
     // Blue hen impact for graded stakes winners
@@ -395,10 +405,10 @@ export function resolveLiveRaceWithImpacts(
 
     // Jockey stats impact
     const raceEntry = raceEntryMap.get(horse.id);
-    if (raceEntry?.jockeyId && r.position - 1 < PRIZE_SPLIT.length) {
+    if (raceEntry?.jockeyId && r.position - 1 < prizeSplit.length) {
       const jockey = jockeyMap.get(raceEntry.jockeyId);
       if (jockey) {
-        const winAmount = PRIZE_SPLIT[r.position - 1] * race.purse;
+        const winAmount = prizeSplit[r.position - 1] * race.purse;
         const jockeyFee = Math.round(winAmount * 0.1);
 
         impacts.push({
@@ -476,8 +486,8 @@ export function resolveLiveRaceWithImpacts(
       })
       .join(", ");
     const prize = ownedHorses.reduce((sum, r) => {
-      if (r.position - 1 < PRIZE_SPLIT.length) {
-        return sum + Math.round(race.purse * PRIZE_SPLIT[r.position - 1]);
+      if (r.position - 1 < prizeSplit.length) {
+        return sum + Math.round(race.purse * prizeSplit[r.position - 1]);
       }
       return sum;
     }, 0);
@@ -495,7 +505,7 @@ export function resolveLiveRaceWithImpacts(
 
   // Apply impacts to state
   const resolverContext: ResolverContext = {
-    state: { horses: Object.fromEntries(horses.map(h => [h.id, h])), jockeys, npcStables, races: { [race.id]: race } } as unknown as GameState,
+    state: { horses: Object.fromEntries(horses.map(h => [h.id, h])), jockeys, npcStables, races: { [race.id]: race }, log: [] } as unknown as GameState,
     intents: [],
     impacts,
     impactLog: [],

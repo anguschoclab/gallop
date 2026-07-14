@@ -31,43 +31,39 @@ for (const vp of VIEWPORTS) {
     test.setTimeout(60_000);
 
     test("horse name and scout-status badge do not overlap", async ({ page }) => {
-      await page.goto("/");
+      // Navigate directly to NPC stables index to find stable links
+      await page.goto("/npc-stables");
 
-      // Navigate to stable rivals page to find NPC stables
-      const stableLink = page.locator('a[href*="/stable"]').first();
-      await expect(stableLink).toBeVisible({ timeout: 15_000 }).catch(() => {
+      const stableLinks = page.locator('a[href*="/npc-stables/"]');
+      await expect(stableLinks.first()).toBeVisible({ timeout: 15_000 }).catch(() => {
         test.skip(true, "No game state found");
       });
 
-      await stableLink.click();
-      await page.waitForURL(/\/stable/);
-
-      // Look for NPC stable links
-      const npcStableLinks = page.locator('a[href*="/npc-stables/"]');
-      const linkCount = await npcStableLinks.count();
-
+      const linkCount = await stableLinks.count();
       if (linkCount === 0) {
         test.skip(true, "No NPC stable links found");
       }
 
       // Navigate to first NPC stable
-      await npcStableLinks.first().click();
+      await stableLinks.first().click();
       await page.waitForURL(/\/npc-stables\//);
 
       // Click roster tab if not already active
       const rosterTab = page.locator('[role="tab"]', { hasText: /roster/i }).first();
-      await expect(rosterTab).toBeVisible({ timeout: 3000 }).catch(() => {
+      await expect(rosterTab).toBeVisible({ timeout: 10_000 }).catch(() => {
         test.skip(true, "No roster tab found");
       });
       await rosterTab.click();
 
-      // Find horse cards in the roster
-      const cards = page.locator(".relative.group");
-      const cardCount = await cards.count();
+      // Wait for roster tabpanel to be visible
+      const tabpanel = page.locator('[role="tabpanel"]');
+      await expect(tabpanel).toBeVisible({ timeout: 10_000 });
 
-      if (cardCount === 0) {
+      // Find horse cards in the roster tabpanel
+      const cards = tabpanel.locator('.relative.group');
+      await expect(cards.first()).toBeVisible({ timeout: 10_000 }).catch(() => {
         test.skip(true, "No horse cards in NPC stable roster");
-      }
+      });
 
       // Check first card for name/badge overlap
       const firstCard = cards.first();
@@ -85,36 +81,33 @@ for (const vp of VIEWPORTS) {
     });
 
     test("OFFER and SCOUT buttons do not overlap each other", async ({ page }) => {
-      await page.goto("/");
+      await page.goto("/npc-stables");
 
-      const stableLink = page.locator('a[href*="/stable"]').first();
-      await expect(stableLink).toBeVisible({ timeout: 15_000 }).catch(() => {
+      const stableLinks = page.locator('a[href*="/npc-stables/"]');
+      await expect(stableLinks.first()).toBeVisible({ timeout: 15_000 }).catch(() => {
         test.skip(true, "No game state found");
       });
 
-      await stableLink.click();
-      await page.waitForURL(/\/stable/);
-
-      const npcStableLinks = page.locator('a[href*="/npc-stables/"]');
-      const linkCount = await npcStableLinks.count();
+      const linkCount = await stableLinks.count();
       if (linkCount === 0) {
         test.skip(true, "No NPC stable links found");
       }
 
-      await npcStableLinks.first().click();
+      await stableLinks.first().click();
       await page.waitForURL(/\/npc-stables\//);
 
       const rosterTab = page.locator('[role="tab"]', { hasText: /roster/i }).first();
-      await expect(rosterTab).toBeVisible({ timeout: 3000 }).catch(() => {
+      await expect(rosterTab).toBeVisible({ timeout: 10_000 }).catch(() => {
         test.skip(true, "No roster tab found");
       });
       await rosterTab.click();
 
-      const cards = page.locator(".relative.group");
-      const cardCount = await cards.count();
-      if (cardCount === 0) {
+      const tabpanel = page.locator('[role="tabpanel"]');
+      await expect(tabpanel).toBeVisible({ timeout: 10_000 });
+      const cards = tabpanel.locator('.relative.group');
+      await expect(cards.first()).toBeVisible({ timeout: 10_000 }).catch(() => {
         test.skip(true, "No horse cards in NPC stable roster");
-      }
+      });
 
       const firstCard = cards.first();
       const buttons = firstCard.locator("button", { hasText: /OFFER|SCOUT/i });

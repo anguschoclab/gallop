@@ -32,14 +32,6 @@ export function generateRaceHistoryImpact(
       raceKey: race.graded.winAndYouInTarget,
     };
   }
-  if (position === 1 && race.graded?.winAndYouInTarget) {
-    const currentYear = getCurrentYear(newDay);
-    winAndYouInQualified = {
-      year: currentYear,
-      raceId: race.id,
-      raceKey: race.graded.winAndYouInTarget,
-    };
-  }
 
   const prizeSplit = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
   const purseEarned = position - 1 < prizeSplit.length

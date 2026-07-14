@@ -1,0 +1,2428 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: npc-stable-roster-layout.spec.ts >> NPC Stable Roster layout at tablet (768px) >> horse name and scout-status badge do not overlap
+- Location: src/tests/e2e/npc-stable-roster-layout.spec.ts:33:5
+
+# Error details
+
+```
+Test timeout of 60000ms exceeded.
+```
+
+```
+Error: locator.boundingBox: Test timeout of 60000ms exceeded.
+Call log:
+  - waiting for locator('.relative.group').first().locator('span.text-lg').first()
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#main-content"
+    - complementary [ref=e4]:
+      - generic [ref=e5]:
+        - heading "Gallop" [level=1] [ref=e6]
+        - paragraph [ref=e7]: Jan 2, 2026
+      - generic [ref=e8]:
+        - generic [ref=e9]:
+          - button "Headquarters" [expanded] [ref=e10]:
+            - generic [ref=e11]: Headquarters
+            - img [ref=e12]
+          - region "Headquarters" [ref=e14]:
+            - link "Dashboard" [ref=e16] [cursor=pointer]:
+              - /url: /
+              - img [ref=e17]
+              - generic [ref=e20]: Dashboard
+            - link "Inbox" [ref=e22] [cursor=pointer]:
+              - /url: /inbox
+              - img [ref=e23]
+              - generic [ref=e26]: Inbox
+            - link "Briefing" [ref=e28] [cursor=pointer]:
+              - /url: /briefing
+              - img [ref=e29]
+              - generic [ref=e32]: Briefing
+            - link "Analytics" [ref=e34] [cursor=pointer]:
+              - /url: /analytics
+              - img [ref=e35]
+              - generic [ref=e37]: Analytics
+            - link "Finances" [ref=e39] [cursor=pointer]:
+              - /url: /financial-report
+              - img [ref=e40]
+              - generic [ref=e42]: Finances
+            - link "Bookmarks" [ref=e44] [cursor=pointer]:
+              - /url: /bookmarks
+              - img [ref=e45]
+              - generic [ref=e47]: Bookmarks
+        - button "My Stable" [ref=e49]:
+          - generic [ref=e50]: My Stable
+          - img [ref=e51]
+        - generic [ref=e53]:
+          - button "The World" [expanded] [ref=e54]:
+            - generic [ref=e55]: The World
+            - img [ref=e56]
+          - region [ref=e58]:
+            - link "Racing" [ref=e60] [cursor=pointer]:
+              - /url: /racing
+              - img [ref=e61]
+              - generic [ref=e63]: Racing
+            - link "Market" [ref=e65] [cursor=pointer]:
+              - /url: /market
+              - img [ref=e66]
+              - generic [ref=e70]: Market
+            - link "Auctions" [ref=e72] [cursor=pointer]:
+              - /url: /auction
+              - img [ref=e73]
+              - generic [ref=e79]: Auctions
+            - link "Stables" [ref=e81] [cursor=pointer]:
+              - /url: /npc-stables
+              - img [ref=e83]
+              - generic [ref=e85]: Stables
+        - button "Configuration" [ref=e87]:
+          - generic [ref=e88]: Configuration
+          - img [ref=e89]
+      - generic [ref=e91]:
+        - generic [ref=e92]:
+          - paragraph [ref=e93]: Cash
+          - paragraph [ref=e94]: $100,000
+          - paragraph [ref=e95]: 2247 horses
+          - generic [ref=e96]:
+            - button "Advance 1 day" [ref=e97]:
+              - img
+            - button "Advance 1 week" [ref=e98]: 7d
+            - button "Advance 1 month" [ref=e99]: 30d
+            - button "AutoSim settings" [ref=e100]:
+              - img
+          - generic [ref=e101]:
+            - button "Skip to next auction" [ref=e102]:
+              - img
+              - text: Next Auction
+            - button "Skip to next race" [ref=e103]:
+              - img
+              - text: Next Race
+        - button "Start new game" [ref=e104]
+    - main [ref=e105]:
+      - generic [ref=e107]:
+        - generic [ref=e108]:
+          - generic [ref=e109]:
+            - button "Stables" [ref=e110]:
+              - img [ref=e111]
+              - text: Stables
+            - heading "Hill 'n' Dale Farms" [level=1] [ref=e115]
+            - generic [ref=e116]:
+              - generic [ref=e117]:
+                - img [ref=e118]
+                - text: USA
+              - generic [ref=e122]: "Horses: 45"
+              - generic [ref=e124]: "Type: specialist"
+          - generic [ref=e125]:
+            - button "Add bookmark" [ref=e126]:
+              - img
+              - text: Save
+            - generic [ref=e127]: Liquid Capital
+            - generic [ref=e128]: $663,519
+        - generic [ref=e129]:
+          - generic [ref=e131]:
+            - tablist [ref=e133]:
+              - tab "Overview" [ref=e134]
+              - tab "Roster" [active] [selected] [ref=e135]
+              - tab "Staff" [ref=e136]
+              - tab "History" [ref=e137]
+            - tabpanel "Roster" [ref=e138]:
+              - generic [ref=e140]:
+                - generic [ref=e141]:
+                  - link "Horse portrait ♀ Del Mar Star Age 2 28 ❓ Unknown spe F sta --- acc --- con --- OVR Estimate ~-3 Form Trend +50" [ref=e143] [cursor=pointer]:
+                    - /url: /stable/82696705-d780-450d-a533-bafdb401ec87
+                    - generic [ref=e144]:
+                      - generic:
+                        - img
+                      - generic [ref=e146]:
+                        - generic [ref=e147]:
+                          - img "Horse portrait" [ref=e149]
+                          - generic:
+                            - generic:
+                              - generic [ref=e174]: ♀
+                              - generic: Del Mar Star
+                            - generic:
+                              - generic [ref=e175]: Age 2
+                              - generic [ref=e176]:
+                                - img [ref=e177]
+                                - text: "28"
+                        - generic [ref=e183]: ❓ Unknown
+                      - generic [ref=e184]:
+                        - generic [ref=e185]:
+                          - generic [ref=e187]:
+                            - generic [ref=e188]: spe
+                            - generic [ref=e189]: F
+                          - generic [ref=e193]:
+                            - generic [ref=e194]: sta
+                            - generic [ref=e195]: "---"
+                          - generic [ref=e198]:
+                            - generic [ref=e199]: acc
+                            - generic [ref=e200]: "---"
+                          - generic [ref=e203]:
+                            - generic [ref=e204]: con
+                            - generic [ref=e205]: "---"
+                        - generic [ref=e207]:
+                          - generic [ref=e208]:
+                            - generic [ref=e209]: OVR Estimate
+                            - generic [ref=e210]: ~-3
+                          - generic [ref=e211]:
+                            - generic [ref=e212]: Form Trend
+                            - generic [ref=e213]: "+50"
+                  - generic [ref=e214]:
+                    - button "OFFER" [ref=e215]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$914" [ref=e216]:
+                      - img
+                      - text: SCOUT · -$914
+                - generic [ref=e217]:
+                  - link "Horse portrait ♀ Oaklawn Man o' War Age 2 35 ❓ Unknown spe F sta --- acc --- con --- OVR Estimate ~-2 Form Trend +50" [ref=e219] [cursor=pointer]:
+                    - /url: /stable/8553e6e8-0cea-439c-90b3-855496daab73
+                    - generic [ref=e220]:
+                      - generic:
+                        - img
+                      - generic [ref=e222]:
+                        - generic [ref=e223]:
+                          - img "Horse portrait" [ref=e225]
+                          - generic:
+                            - generic:
+                              - generic [ref=e250]: ♀
+                              - generic: Oaklawn Man o' War
+                            - generic:
+                              - generic [ref=e251]: Age 2
+                              - generic [ref=e252]:
+                                - img [ref=e253]
+                                - text: "35"
+                        - generic [ref=e259]: ❓ Unknown
+                      - generic [ref=e260]:
+                        - generic [ref=e261]:
+                          - generic [ref=e263]:
+                            - generic [ref=e264]: spe
+                            - generic [ref=e265]: F
+                          - generic [ref=e269]:
+                            - generic [ref=e270]: sta
+                            - generic [ref=e271]: "---"
+                          - generic [ref=e274]:
+                            - generic [ref=e275]: acc
+                            - generic [ref=e276]: "---"
+                          - generic [ref=e279]:
+                            - generic [ref=e280]: con
+                            - generic [ref=e281]: "---"
+                        - generic [ref=e283]:
+                          - generic [ref=e284]:
+                            - generic [ref=e285]: OVR Estimate
+                            - generic [ref=e286]: ~-2
+                          - generic [ref=e287]:
+                            - generic [ref=e288]: Form Trend
+                            - generic [ref=e289]: "+50"
+                  - generic [ref=e290]:
+                    - button "OFFER" [ref=e291]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$900" [ref=e292]:
+                      - img
+                      - text: SCOUT · -$900
+                - generic [ref=e293]:
+                  - link "Horse portrait ♂ Washington Persona Age 2 22 ❓ Unknown spe --- sta F acc --- con --- OVR Estimate ~-5 Form Trend +50" [ref=e295] [cursor=pointer]:
+                    - /url: /stable/9a4df8c0-2220-4316-889e-ab59947f67a6
+                    - generic [ref=e296]:
+                      - generic:
+                        - img
+                      - generic [ref=e298]:
+                        - generic [ref=e299]:
+                          - img "Horse portrait" [ref=e301]
+                          - generic:
+                            - generic:
+                              - generic [ref=e326]: ♂
+                              - generic: Washington Persona
+                            - generic:
+                              - generic [ref=e327]: Age 2
+                              - generic [ref=e328]:
+                                - img [ref=e329]
+                                - text: "22"
+                        - generic [ref=e335]: ❓ Unknown
+                      - generic [ref=e336]:
+                        - generic [ref=e337]:
+                          - generic [ref=e339]:
+                            - generic [ref=e340]: spe
+                            - generic [ref=e341]: "---"
+                          - generic [ref=e344]:
+                            - generic [ref=e345]: sta
+                            - generic [ref=e346]: F
+                          - generic [ref=e350]:
+                            - generic [ref=e351]: acc
+                            - generic [ref=e352]: "---"
+                          - generic [ref=e355]:
+                            - generic [ref=e356]: con
+                            - generic [ref=e357]: "---"
+                        - generic [ref=e359]:
+                          - generic [ref=e360]:
+                            - generic [ref=e361]: OVR Estimate
+                            - generic [ref=e362]: ~-5
+                          - generic [ref=e363]:
+                            - generic [ref=e364]: Form Trend
+                            - generic [ref=e365]: "+50"
+                  - generic [ref=e366]:
+                    - button "OFFER" [ref=e367]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$926" [ref=e368]:
+                      - img
+                      - text: SCOUT · -$926
+                - generic [ref=e369]:
+                  - link "Horse portrait ♂ Pride of Texas Age 2 40 🔍 Well Known spe F sta --- acc F con --- OVR Estimate ~-1 Form Trend +50" [ref=e371] [cursor=pointer]:
+                    - /url: /stable/1ee2f6c0-3352-4ca7-aac8-430239d591d9
+                    - generic [ref=e372]:
+                      - generic:
+                        - img
+                      - generic [ref=e374]:
+                        - generic [ref=e375]:
+                          - img "Horse portrait" [ref=e377]
+                          - generic:
+                            - generic:
+                              - generic [ref=e402]: ♂
+                              - generic: Pride of Texas
+                            - generic:
+                              - generic [ref=e403]: Age 2
+                              - generic [ref=e404]:
+                                - img [ref=e405]
+                                - text: "40"
+                        - generic [ref=e411]: 🔍 Well Known
+                      - generic [ref=e412]:
+                        - generic [ref=e413]:
+                          - generic [ref=e415]:
+                            - generic [ref=e416]: spe
+                            - generic [ref=e417]: F
+                          - generic [ref=e421]:
+                            - generic [ref=e422]: sta
+                            - generic [ref=e423]: "---"
+                          - generic [ref=e426]:
+                            - generic [ref=e427]: acc
+                            - generic [ref=e428]: F
+                          - generic [ref=e432]:
+                            - generic [ref=e433]: con
+                            - generic [ref=e434]: "---"
+                        - generic [ref=e436]:
+                          - generic [ref=e437]:
+                            - generic [ref=e438]: OVR Estimate
+                            - generic [ref=e439]: ~-1
+                          - generic [ref=e440]:
+                            - generic [ref=e441]: Form Trend
+                            - generic [ref=e442]: "+50"
+                  - generic [ref=e443]:
+                    - button "OFFER" [ref=e444]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$890" [ref=e445]:
+                      - img
+                      - text: SCOUT · -$890
+                - generic [ref=e446]:
+                  - link "Horse portrait ♂ New York Star Age 2 29 ❓ Unknown spe --- sta --- acc F con --- OVR Estimate ~-1 Form Trend +50" [ref=e448] [cursor=pointer]:
+                    - /url: /stable/6c1d0dfe-b9de-4c9e-9cc4-ef31c1d57dab
+                    - generic [ref=e449]:
+                      - generic:
+                        - img
+                      - generic [ref=e451]:
+                        - generic [ref=e452]:
+                          - img "Horse portrait" [ref=e454]
+                          - generic:
+                            - generic:
+                              - generic [ref=e479]: ♂
+                              - generic: New York Star
+                            - generic:
+                              - generic [ref=e480]: Age 2
+                              - generic [ref=e481]:
+                                - img [ref=e482]
+                                - text: "29"
+                        - generic [ref=e488]: ❓ Unknown
+                      - generic [ref=e489]:
+                        - generic [ref=e490]:
+                          - generic [ref=e492]:
+                            - generic [ref=e493]: spe
+                            - generic [ref=e494]: "---"
+                          - generic [ref=e497]:
+                            - generic [ref=e498]: sta
+                            - generic [ref=e499]: "---"
+                          - generic [ref=e502]:
+                            - generic [ref=e503]: acc
+                            - generic [ref=e504]: F
+                          - generic [ref=e508]:
+                            - generic [ref=e509]: con
+                            - generic [ref=e510]: "---"
+                        - generic [ref=e512]:
+                          - generic [ref=e513]:
+                            - generic [ref=e514]: OVR Estimate
+                            - generic [ref=e515]: ~-1
+                          - generic [ref=e516]:
+                            - generic [ref=e517]: Form Trend
+                            - generic [ref=e518]: "+50"
+                  - generic [ref=e519]:
+                    - button "OFFER" [ref=e520]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$912" [ref=e521]:
+                      - img
+                      - text: SCOUT · -$912
+                - generic [ref=e522]:
+                  - link "Horse portrait ♀ New York Star Age 2 28 ❓ Unknown spe --- sta --- acc F con --- OVR Estimate ~-1 Form Trend +50" [ref=e524] [cursor=pointer]:
+                    - /url: /stable/611bf215-28ef-45b6-a6e4-91b10224db43
+                    - generic [ref=e525]:
+                      - generic:
+                        - img
+                      - generic [ref=e527]:
+                        - generic [ref=e528]:
+                          - img "Horse portrait" [ref=e530]
+                          - generic:
+                            - generic:
+                              - generic [ref=e555]: ♀
+                              - generic: New York Star
+                            - generic:
+                              - generic [ref=e556]: Age 2
+                              - generic [ref=e557]:
+                                - img [ref=e558]
+                                - text: "28"
+                        - generic [ref=e564]: ❓ Unknown
+                      - generic [ref=e565]:
+                        - generic [ref=e566]:
+                          - generic [ref=e568]:
+                            - generic [ref=e569]: spe
+                            - generic [ref=e570]: "---"
+                          - generic [ref=e573]:
+                            - generic [ref=e574]: sta
+                            - generic [ref=e575]: "---"
+                          - generic [ref=e578]:
+                            - generic [ref=e579]: acc
+                            - generic [ref=e580]: F
+                          - generic [ref=e584]:
+                            - generic [ref=e585]: con
+                            - generic [ref=e586]: "---"
+                        - generic [ref=e588]:
+                          - generic [ref=e589]:
+                            - generic [ref=e590]: OVR Estimate
+                            - generic [ref=e591]: ~-1
+                          - generic [ref=e592]:
+                            - generic [ref=e593]: Form Trend
+                            - generic [ref=e594]: "+50"
+                  - generic [ref=e595]:
+                    - button "OFFER" [ref=e596]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$914" [ref=e597]:
+                      - img
+                      - text: SCOUT · -$914
+                - generic [ref=e598]:
+                  - link "Horse portrait ♂ Blue Grass Stakes Age 2 38 ❓ Unknown spe F sta --- acc --- con --- OVR Estimate ~-1 Form Trend +50" [ref=e600] [cursor=pointer]:
+                    - /url: /stable/d9511e60-7ea5-47f2-b882-95a765bd6332
+                    - generic [ref=e601]:
+                      - generic:
+                        - img
+                      - generic [ref=e603]:
+                        - generic [ref=e604]:
+                          - img "Horse portrait" [ref=e606]
+                          - generic:
+                            - generic:
+                              - generic [ref=e631]: ♂
+                              - generic: Blue Grass Stakes
+                            - generic:
+                              - generic [ref=e632]: Age 2
+                              - generic [ref=e633]:
+                                - img [ref=e634]
+                                - text: "38"
+                        - generic [ref=e640]: ❓ Unknown
+                      - generic [ref=e641]:
+                        - generic [ref=e642]:
+                          - generic [ref=e644]:
+                            - generic [ref=e645]: spe
+                            - generic [ref=e646]: F
+                          - generic [ref=e650]:
+                            - generic [ref=e651]: sta
+                            - generic [ref=e652]: "---"
+                          - generic [ref=e655]:
+                            - generic [ref=e656]: acc
+                            - generic [ref=e657]: "---"
+                          - generic [ref=e660]:
+                            - generic [ref=e661]: con
+                            - generic [ref=e662]: "---"
+                        - generic [ref=e664]:
+                          - generic [ref=e665]:
+                            - generic [ref=e666]: OVR Estimate
+                            - generic [ref=e667]: ~-1
+                          - generic [ref=e668]:
+                            - generic [ref=e669]: Form Trend
+                            - generic [ref=e670]: "+50"
+                  - generic [ref=e671]:
+                    - button "OFFER" [ref=e672]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$894" [ref=e673]:
+                      - img
+                      - text: SCOUT · -$894
+                - generic [ref=e674]:
+                  - link "Horse portrait ♂ Pride of Californi Age 2 34 ❓ Unknown spe --- sta --- acc F con --- OVR Estimate ~-2 Form Trend +50" [ref=e676] [cursor=pointer]:
+                    - /url: /stable/2ad9ceea-0bbf-430e-997d-002a8496cf04
+                    - generic [ref=e677]:
+                      - generic:
+                        - img
+                      - generic [ref=e679]:
+                        - generic [ref=e680]:
+                          - img "Horse portrait" [ref=e682]
+                          - generic:
+                            - generic:
+                              - generic [ref=e707]: ♂
+                              - generic: Pride of Californi
+                            - generic:
+                              - generic [ref=e708]: Age 2
+                              - generic [ref=e709]:
+                                - img [ref=e710]
+                                - text: "34"
+                        - generic [ref=e716]: ❓ Unknown
+                      - generic [ref=e717]:
+                        - generic [ref=e718]:
+                          - generic [ref=e720]:
+                            - generic [ref=e721]: spe
+                            - generic [ref=e722]: "---"
+                          - generic [ref=e725]:
+                            - generic [ref=e726]: sta
+                            - generic [ref=e727]: "---"
+                          - generic [ref=e730]:
+                            - generic [ref=e731]: acc
+                            - generic [ref=e732]: F
+                          - generic [ref=e736]:
+                            - generic [ref=e737]: con
+                            - generic [ref=e738]: "---"
+                        - generic [ref=e740]:
+                          - generic [ref=e741]:
+                            - generic [ref=e742]: OVR Estimate
+                            - generic [ref=e743]: ~-2
+                          - generic [ref=e744]:
+                            - generic [ref=e745]: Form Trend
+                            - generic [ref=e746]: "+50"
+                  - generic [ref=e747]:
+                    - button "OFFER" [ref=e748]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$902" [ref=e749]:
+                      - img
+                      - text: SCOUT · -$902
+                - generic [ref=e750]:
+                  - link "Horse portrait ♀ Pride of New York Age 2 28 ❓ Unknown spe F sta --- acc --- con --- OVR Estimate ~-3 Form Trend +50" [ref=e752] [cursor=pointer]:
+                    - /url: /stable/4729d69e-b5f2-49e8-8696-f8d3df86a6da
+                    - generic [ref=e753]:
+                      - generic:
+                        - img
+                      - generic [ref=e755]:
+                        - generic [ref=e756]:
+                          - img "Horse portrait" [ref=e758]
+                          - generic:
+                            - generic:
+                              - generic [ref=e783]: ♀
+                              - generic: Pride of New York
+                            - generic:
+                              - generic [ref=e784]: Age 2
+                              - generic [ref=e785]:
+                                - img [ref=e786]
+                                - text: "28"
+                        - generic [ref=e792]: ❓ Unknown
+                      - generic [ref=e793]:
+                        - generic [ref=e794]:
+                          - generic [ref=e796]:
+                            - generic [ref=e797]: spe
+                            - generic [ref=e798]: F
+                          - generic [ref=e802]:
+                            - generic [ref=e803]: sta
+                            - generic [ref=e804]: "---"
+                          - generic [ref=e807]:
+                            - generic [ref=e808]: acc
+                            - generic [ref=e809]: "---"
+                          - generic [ref=e812]:
+                            - generic [ref=e813]: con
+                            - generic [ref=e814]: "---"
+                        - generic [ref=e816]:
+                          - generic [ref=e817]:
+                            - generic [ref=e818]: OVR Estimate
+                            - generic [ref=e819]: ~-3
+                          - generic [ref=e820]:
+                            - generic [ref=e821]: Form Trend
+                            - generic [ref=e822]: "+50"
+                  - generic [ref=e823]:
+                    - button "OFFER" [ref=e824]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$914" [ref=e825]:
+                      - img
+                      - text: SCOUT · -$914
+                - generic [ref=e826]:
+                  - link "Horse portrait ♂ Sunland Derby of P Age 3 32 ❓ Unknown spe --- sta --- acc --- con F OVR Estimate ~-3 Form Trend +50" [ref=e828] [cursor=pointer]:
+                    - /url: /stable/3f60b4d3-4f0d-4b8b-8dca-bd1453fabec0
+                    - generic [ref=e829]:
+                      - generic:
+                        - img
+                      - generic [ref=e831]:
+                        - generic [ref=e832]:
+                          - img "Horse portrait" [ref=e834]
+                          - generic:
+                            - generic:
+                              - generic [ref=e859]: ♂
+                              - generic: Sunland Derby of P
+                            - generic:
+                              - generic [ref=e860]: Age 3
+                              - generic [ref=e861]:
+                                - img [ref=e862]
+                                - text: "32"
+                        - generic [ref=e868]: ❓ Unknown
+                      - generic [ref=e869]:
+                        - generic [ref=e870]:
+                          - generic [ref=e872]:
+                            - generic [ref=e873]: spe
+                            - generic [ref=e874]: "---"
+                          - generic [ref=e877]:
+                            - generic [ref=e878]: sta
+                            - generic [ref=e879]: "---"
+                          - generic [ref=e882]:
+                            - generic [ref=e883]: acc
+                            - generic [ref=e884]: "---"
+                          - generic [ref=e887]:
+                            - generic [ref=e888]: con
+                            - generic [ref=e889]: F
+                        - generic [ref=e892]:
+                          - generic [ref=e893]:
+                            - generic [ref=e894]: OVR Estimate
+                            - generic [ref=e895]: ~-3
+                          - generic [ref=e896]:
+                            - generic [ref=e897]: Form Trend
+                            - generic [ref=e898]: "+50"
+                  - generic [ref=e899]:
+                    - button "OFFER" [ref=e900]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$906" [ref=e901]:
+                      - img
+                      - text: SCOUT · -$906
+                - generic [ref=e902]:
+                  - link "Horse portrait ♂ Remington Pacific Age 4 33 ❓ Unknown spe --- sta F acc --- con --- OVR Estimate ~-2 Form Trend +50" [ref=e904] [cursor=pointer]:
+                    - /url: /stable/9e1a65d9-05d9-436e-9e89-8a73f582a9d3
+                    - generic [ref=e905]:
+                      - generic:
+                        - img
+                      - generic [ref=e907]:
+                        - generic [ref=e908]:
+                          - img "Horse portrait" [ref=e910]
+                          - generic:
+                            - generic:
+                              - generic [ref=e935]: ♂
+                              - generic: Remington Pacific
+                            - generic:
+                              - generic [ref=e936]: Age 4
+                              - generic [ref=e937]:
+                                - img [ref=e938]
+                                - text: "33"
+                        - generic [ref=e944]: ❓ Unknown
+                      - generic [ref=e945]:
+                        - generic [ref=e946]:
+                          - generic [ref=e948]:
+                            - generic [ref=e949]: spe
+                            - generic [ref=e950]: "---"
+                          - generic [ref=e953]:
+                            - generic [ref=e954]: sta
+                            - generic [ref=e955]: F
+                          - generic [ref=e959]:
+                            - generic [ref=e960]: acc
+                            - generic [ref=e961]: "---"
+                          - generic [ref=e964]:
+                            - generic [ref=e965]: con
+                            - generic [ref=e966]: "---"
+                        - generic [ref=e968]:
+                          - generic [ref=e969]:
+                            - generic [ref=e970]: OVR Estimate
+                            - generic [ref=e971]: ~-2
+                          - generic [ref=e972]:
+                            - generic [ref=e973]: Form Trend
+                            - generic [ref=e974]: "+50"
+                  - generic [ref=e975]:
+                    - button "OFFER" [ref=e976]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$904" [ref=e977]:
+                      - img
+                      - text: SCOUT · -$904
+                - generic [ref=e978]:
+                  - link "Horse portrait ♀ Pennsylvania Star Age 4 27 ❓ Unknown spe --- sta --- acc --- con F OVR Estimate ~-4 Form Trend +50" [ref=e980] [cursor=pointer]:
+                    - /url: /stable/3c85304a-ae1f-421d-a0ef-acc16e642340
+                    - generic [ref=e981]:
+                      - generic:
+                        - img
+                      - generic [ref=e983]:
+                        - generic [ref=e984]:
+                          - img "Horse portrait" [ref=e986]
+                          - generic:
+                            - generic:
+                              - generic [ref=e1011]: ♀
+                              - generic: Pennsylvania Star
+                            - generic:
+                              - generic [ref=e1012]: Age 4
+                              - generic [ref=e1013]:
+                                - img [ref=e1014]
+                                - text: "27"
+                        - generic [ref=e1020]: ❓ Unknown
+                      - generic [ref=e1021]:
+                        - generic [ref=e1022]:
+                          - generic [ref=e1024]:
+                            - generic [ref=e1025]: spe
+                            - generic [ref=e1026]: "---"
+                          - generic [ref=e1029]:
+                            - generic [ref=e1030]: sta
+                            - generic [ref=e1031]: "---"
+                          - generic [ref=e1034]:
+                            - generic [ref=e1035]: acc
+                            - generic [ref=e1036]: "---"
+                          - generic [ref=e1039]:
+                            - generic [ref=e1040]: con
+                            - generic [ref=e1041]: F
+                        - generic [ref=e1044]:
+                          - generic [ref=e1045]:
+                            - generic [ref=e1046]: OVR Estimate
+                            - generic [ref=e1047]: ~-4
+                          - generic [ref=e1048]:
+                            - generic [ref=e1049]: Form Trend
+                            - generic [ref=e1050]: "+50"
+                  - generic [ref=e1051]:
+                    - button "OFFER" [ref=e1052]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$916" [ref=e1053]:
+                      - img
+                      - text: SCOUT · -$916
+                - generic [ref=e1054]:
+                  - link "Horse portrait ♀ Woodward of Fair G Age 3 25 ❓ Unknown spe --- sta --- acc --- con F OVR Estimate ~-4 Form Trend +50" [ref=e1056] [cursor=pointer]:
+                    - /url: /stable/7e2e4583-85ec-4199-a861-941c40153ddb
+                    - generic [ref=e1057]:
+                      - generic:
+                        - img
+                      - generic [ref=e1059]:
+                        - generic [ref=e1060]:
+                          - img "Horse portrait" [ref=e1062]
+                          - generic:
+                            - generic:
+                              - generic [ref=e1087]: ♀
+                              - generic: Woodward of Fair G
+                            - generic:
+                              - generic [ref=e1088]: Age 3
+                              - generic [ref=e1089]:
+                                - img [ref=e1090]
+                                - text: "25"
+                        - generic [ref=e1096]: ❓ Unknown
+                      - generic [ref=e1097]:
+                        - generic [ref=e1098]:
+                          - generic [ref=e1100]:
+                            - generic [ref=e1101]: spe
+                            - generic [ref=e1102]: "---"
+                          - generic [ref=e1105]:
+                            - generic [ref=e1106]: sta
+                            - generic [ref=e1107]: "---"
+                          - generic [ref=e1110]:
+                            - generic [ref=e1111]: acc
+                            - generic [ref=e1112]: "---"
+                          - generic [ref=e1115]:
+                            - generic [ref=e1116]: con
+                            - generic [ref=e1117]: F
+                        - generic [ref=e1120]:
+                          - generic [ref=e1121]:
+                            - generic [ref=e1122]: OVR Estimate
+                            - generic [ref=e1123]: ~-4
+                          - generic [ref=e1124]:
+                            - generic [ref=e1125]: Form Trend
+                            - generic [ref=e1126]: "+50"
+                  - generic [ref=e1127]:
+                    - button "OFFER" [ref=e1128]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$920" [ref=e1129]:
+                      - img
+                      - text: SCOUT · -$920
+                - generic [ref=e1130]:
+                  - link "Horse portrait ♀ California Star Age 4 30 ❓ Unknown spe F sta --- acc --- con --- OVR Estimate ~-3 Form Trend +50" [ref=e1132] [cursor=pointer]:
+                    - /url: /stable/4d189a13-31ab-40df-98b7-dde63beb0e0b
+                    - generic [ref=e1133]:
+                      - generic:
+                        - img
+                      - generic [ref=e1135]:
+                        - generic [ref=e1136]:
+                          - img "Horse portrait" [ref=e1138]
+                          - generic:
+                            - generic:
+                              - generic [ref=e1163]: ♀
+                              - generic: California Star
+                            - generic:
+                              - generic [ref=e1164]: Age 4
+                              - generic [ref=e1165]:
+                                - img [ref=e1166]
+                                - text: "30"
+                        - generic [ref=e1172]: ❓ Unknown
+                      - generic [ref=e1173]:
+                        - generic [ref=e1174]:
+                          - generic [ref=e1176]:
+                            - generic [ref=e1177]: spe
+                            - generic [ref=e1178]: F
+                          - generic [ref=e1182]:
+                            - generic [ref=e1183]: sta
+                            - generic [ref=e1184]: "---"
+                          - generic [ref=e1187]:
+                            - generic [ref=e1188]: acc
+                            - generic [ref=e1189]: "---"
+                          - generic [ref=e1192]:
+                            - generic [ref=e1193]: con
+                            - generic [ref=e1194]: "---"
+                        - generic [ref=e1196]:
+                          - generic [ref=e1197]:
+                            - generic [ref=e1198]: OVR Estimate
+                            - generic [ref=e1199]: ~-3
+                          - generic [ref=e1200]:
+                            - generic [ref=e1201]: Form Trend
+                            - generic [ref=e1202]: "+50"
+                  - generic [ref=e1203]:
+                    - button "OFFER" [ref=e1204]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$910" [ref=e1205]:
+                      - img
+                      - text: SCOUT · -$910
+                - generic [ref=e1206]:
+                  - link "Horse portrait ♂ Haskell of Aqueduc Age 3 36 ❓ Unknown spe --- sta --- acc F con --- OVR Estimate LOCKED Form Trend +50" [ref=e1208] [cursor=pointer]:
+                    - /url: /stable/6cacbbfc-42a9-4059-ae88-7e82b00c1f54
+                    - generic [ref=e1209]:
+                      - generic:
+                        - img
+                      - generic [ref=e1211]:
+                        - generic [ref=e1212]:
+                          - img "Horse portrait" [ref=e1214]
+                          - generic:
+                            - generic:
+                              - generic [ref=e1239]: ♂
+                              - generic: Haskell of Aqueduc
+                            - generic:
+                              - generic [ref=e1240]: Age 3
+                              - generic [ref=e1241]:
+                                - img [ref=e1242]
+                                - text: "36"
+                        - generic [ref=e1248]: ❓ Unknown
+                      - generic [ref=e1249]:
+                        - generic [ref=e1250]:
+                          - generic [ref=e1252]:
+                            - generic [ref=e1253]: spe
+                            - generic [ref=e1254]: "---"
+                          - generic [ref=e1257]:
+                            - generic [ref=e1258]: sta
+                            - generic [ref=e1259]: "---"
+                          - generic [ref=e1262]:
+                            - generic [ref=e1263]: acc
+                            - generic [ref=e1264]: F
+                          - generic [ref=e1268]:
+                            - generic [ref=e1269]: con
+                            - generic [ref=e1270]: "---"
+                        - generic [ref=e1272]:
+                          - generic [ref=e1273]:
+                            - generic [ref=e1274]: OVR Estimate
+                            - generic [ref=e1275]: LOCKED
+                          - generic [ref=e1276]:
+                            - generic [ref=e1277]: Form Trend
+                            - generic [ref=e1278]: "+50"
+                  - generic [ref=e1279]:
+                    - button "OFFER" [ref=e1280]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$898" [ref=e1281]:
+                      - img
+                      - text: SCOUT · -$898
+                - generic [ref=e1282]:
+                  - link "Horse portrait ♀ Illinois Pegasus Age 3 42 🔍 Well Known spe F sta --- acc F con --- OVR Estimate ~-1 Form Trend +50" [ref=e1284] [cursor=pointer]:
+                    - /url: /stable/ce464b83-6d96-421a-95b9-64561c8dde14
+                    - generic [ref=e1285]:
+                      - generic:
+                        - img
+                      - generic [ref=e1287]:
+                        - generic [ref=e1288]:
+                          - img "Horse portrait" [ref=e1290]
+                          - generic:
+                            - generic:
+                              - generic [ref=e1315]: ♀
+                              - generic: Illinois Pegasus
+                            - generic:
+                              - generic [ref=e1316]: Age 3
+                              - generic [ref=e1317]:
+                                - img [ref=e1318]
+                                - text: "42"
+                        - generic [ref=e1324]: 🔍 Well Known
+                      - generic [ref=e1325]:
+                        - generic [ref=e1326]:
+                          - generic [ref=e1328]:
+                            - generic [ref=e1329]: spe
+                            - generic [ref=e1330]: F
+                          - generic [ref=e1334]:
+                            - generic [ref=e1335]: sta
+                            - generic [ref=e1336]: "---"
+                          - generic [ref=e1339]:
+                            - generic [ref=e1340]: acc
+                            - generic [ref=e1341]: F
+                          - generic [ref=e1345]:
+                            - generic [ref=e1346]: con
+                            - generic [ref=e1347]: "---"
+                        - generic [ref=e1349]:
+                          - generic [ref=e1350]:
+                            - generic [ref=e1351]: OVR Estimate
+                            - generic [ref=e1352]: ~-1
+                          - generic [ref=e1353]:
+                            - generic [ref=e1354]: Form Trend
+                            - generic [ref=e1355]: "+50"
+                  - generic [ref=e1356]:
+                    - button "OFFER" [ref=e1357]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$886" [ref=e1358]:
+                      - img
+                      - text: SCOUT · -$886
+                - generic [ref=e1359]:
+                  - link "Horse portrait ♀ Pennsylvania Star Age 4 43 🔍 Well Known spe --- sta F acc --- con F OVR Estimate LOCKED Form Trend +50" [ref=e1361] [cursor=pointer]:
+                    - /url: /stable/7fff3b47-0192-4d07-b4d0-bbcda46df025
+                    - generic [ref=e1362]:
+                      - generic:
+                        - img
+                      - generic [ref=e1364]:
+                        - generic [ref=e1365]:
+                          - img "Horse portrait" [ref=e1367]
+                          - generic:
+                            - generic:
+                              - generic [ref=e1392]: ♀
+                              - generic: Pennsylvania Star
+                            - generic:
+                              - generic [ref=e1393]: Age 4
+                              - generic [ref=e1394]:
+                                - img [ref=e1395]
+                                - text: "43"
+                        - generic [ref=e1401]: 🔍 Well Known
+                      - generic [ref=e1402]:
+                        - generic [ref=e1403]:
+                          - generic [ref=e1405]:
+                            - generic [ref=e1406]: spe
+                            - generic [ref=e1407]: "---"
+                          - generic [ref=e1410]:
+                            - generic [ref=e1411]: sta
+                            - generic [ref=e1412]: F
+                          - generic [ref=e1416]:
+                            - generic [ref=e1417]: acc
+                            - generic [ref=e1418]: "---"
+                          - generic [ref=e1421]:
+                            - generic [ref=e1422]: con
+                            - generic [ref=e1423]: F
+                        - generic [ref=e1426]:
+                          - generic [ref=e1427]:
+                            - generic [ref=e1428]: OVR Estimate
+                            - generic [ref=e1429]: LOCKED
+                          - generic [ref=e1430]:
+                            - generic [ref=e1431]: Form Trend
+                            - generic [ref=e1432]: "+50"
+                  - generic [ref=e1433]:
+                    - button "OFFER" [ref=e1434]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$884" [ref=e1435]:
+                      - img
+                      - text: SCOUT · -$884
+                - generic [ref=e1436]:
+                  - link "Horse portrait ♀ Spiral Stakes of C Age 3 23 ❓ Unknown spe F sta --- acc --- con --- OVR Estimate ~-4 Form Trend +50" [ref=e1438] [cursor=pointer]:
+                    - /url: /stable/405c34df-14ed-4e36-9e49-c372b57250f2
+                    - generic [ref=e1439]:
+                      - generic:
+                        - img
+                      - generic [ref=e1441]:
+                        - generic [ref=e1442]:
+                          - img "Horse portrait" [ref=e1444]
+                          - generic:
+                            - generic:
+                              - generic [ref=e1469]: ♀
+                              - generic: Spiral Stakes of C
+                            - generic:
+                              - generic [ref=e1470]: Age 3
+                              - generic [ref=e1471]:
+                                - img [ref=e1472]
+                                - text: "23"
+                        - generic [ref=e1478]: ❓ Unknown
+                      - generic [ref=e1479]:
+                        - generic [ref=e1480]:
+                          - generic [ref=e1482]:
+                            - generic [ref=e1483]: spe
+                            - generic [ref=e1484]: F
+                          - generic [ref=e1488]:
+                            - generic [ref=e1489]: sta
+                            - generic [ref=e1490]: "---"
+                          - generic [ref=e1493]:
+                            - generic [ref=e1494]: acc
+                            - generic [ref=e1495]: "---"
+                          - generic [ref=e1498]:
+                            - generic [ref=e1499]: con
+                            - generic [ref=e1500]: "---"
+                        - generic [ref=e1502]:
+                          - generic [ref=e1503]:
+                            - generic [ref=e1504]: OVR Estimate
+                            - generic [ref=e1505]: ~-4
+                          - generic [ref=e1506]:
+                            - generic [ref=e1507]: Form Trend
+                            - generic [ref=e1508]: "+50"
+                  - generic [ref=e1509]:
+                    - button "OFFER" [ref=e1510]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$924" [ref=e1511]:
+                      - img
+                      - text: SCOUT · -$924
+                - generic [ref=e1512]:
+                  - link "Horse portrait ♂ Arlington Star Age 3 25 ❓ Unknown spe --- sta --- acc F con --- OVR Estimate ~-4 Form Trend +50" [ref=e1514] [cursor=pointer]:
+                    - /url: /stable/be20910d-6b95-4b69-b72b-6c57b03e7f92
+                    - generic [ref=e1515]:
+                      - generic:
+                        - img
+                      - generic [ref=e1517]:
+                        - generic [ref=e1518]:
+                          - img "Horse portrait" [ref=e1520]
+                          - generic:
+                            - generic:
+                              - generic [ref=e1545]: ♂
+                              - generic: Arlington Star
+                            - generic:
+                              - generic [ref=e1546]: Age 3
+                              - generic [ref=e1547]:
+                                - img [ref=e1548]
+                                - text: "25"
+                        - generic [ref=e1554]: ❓ Unknown
+                      - generic [ref=e1555]:
+                        - generic [ref=e1556]:
+                          - generic [ref=e1558]:
+                            - generic [ref=e1559]: spe
+                            - generic [ref=e1560]: "---"
+                          - generic [ref=e1563]:
+                            - generic [ref=e1564]: sta
+                            - generic [ref=e1565]: "---"
+                          - generic [ref=e1568]:
+                            - generic [ref=e1569]: acc
+                            - generic [ref=e1570]: F
+                          - generic [ref=e1574]:
+                            - generic [ref=e1575]: con
+                            - generic [ref=e1576]: "---"
+                        - generic [ref=e1578]:
+                          - generic [ref=e1579]:
+                            - generic [ref=e1580]: OVR Estimate
+                            - generic [ref=e1581]: ~-4
+                          - generic [ref=e1582]:
+                            - generic [ref=e1583]: Form Trend
+                            - generic [ref=e1584]: "+50"
+                  - generic [ref=e1585]:
+                    - button "OFFER" [ref=e1586]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$920" [ref=e1587]:
+                      - img
+                      - text: SCOUT · -$920
+                - generic [ref=e1588]:
+                  - link "Horse portrait ♀ Arlington Woodward Age 3 23 ❓ Unknown spe --- sta --- acc --- con F OVR Estimate ~-4 Form Trend +50" [ref=e1590] [cursor=pointer]:
+                    - /url: /stable/c6fc181f-7b1d-428e-8e40-735086daeb85
+                    - generic [ref=e1591]:
+                      - generic:
+                        - img
+                      - generic [ref=e1593]:
+                        - generic [ref=e1594]:
+                          - img "Horse portrait" [ref=e1596]
+                          - generic:
+                            - generic:
+                              - generic [ref=e1621]: ♀
+                              - generic: Arlington Woodward
+                            - generic:
+                              - generic [ref=e1622]: Age 3
+                              - generic [ref=e1623]:
+                                - img [ref=e1624]
+                                - text: "23"
+                        - generic [ref=e1630]: ❓ Unknown
+                      - generic [ref=e1631]:
+                        - generic [ref=e1632]:
+                          - generic [ref=e1634]:
+                            - generic [ref=e1635]: spe
+                            - generic [ref=e1636]: "---"
+                          - generic [ref=e1639]:
+                            - generic [ref=e1640]: sta
+                            - generic [ref=e1641]: "---"
+                          - generic [ref=e1644]:
+                            - generic [ref=e1645]: acc
+                            - generic [ref=e1646]: "---"
+                          - generic [ref=e1649]:
+                            - generic [ref=e1650]: con
+                            - generic [ref=e1651]: F
+                        - generic [ref=e1654]:
+                          - generic [ref=e1655]:
+                            - generic [ref=e1656]: OVR Estimate
+                            - generic [ref=e1657]: ~-4
+                          - generic [ref=e1658]:
+                            - generic [ref=e1659]: Form Trend
+                            - generic [ref=e1660]: "+50"
+                  - generic [ref=e1661]:
+                    - button "OFFER" [ref=e1662]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$924" [ref=e1663]:
+                      - img
+                      - text: SCOUT · -$924
+                - generic [ref=e1664]:
+                  - link "Horse portrait ♀ Maryland Star Age 4 39 ❓ Unknown spe --- sta --- acc --- con F OVR Estimate ~-1 Form Trend +50" [ref=e1666] [cursor=pointer]:
+                    - /url: /stable/77905de8-56b1-4341-a62d-f6a36f2134ae
+                    - generic [ref=e1667]:
+                      - generic:
+                        - img
+                      - generic [ref=e1669]:
+                        - generic [ref=e1670]:
+                          - img "Horse portrait" [ref=e1672]
+                          - generic:
+                            - generic:
+                              - generic [ref=e1697]: ♀
+                              - generic: Maryland Star
+                            - generic:
+                              - generic [ref=e1698]: Age 4
+                              - generic [ref=e1699]:
+                                - img [ref=e1700]
+                                - text: "39"
+                        - generic [ref=e1706]: ❓ Unknown
+                      - generic [ref=e1707]:
+                        - generic [ref=e1708]:
+                          - generic [ref=e1710]:
+                            - generic [ref=e1711]: spe
+                            - generic [ref=e1712]: "---"
+                          - generic [ref=e1715]:
+                            - generic [ref=e1716]: sta
+                            - generic [ref=e1717]: "---"
+                          - generic [ref=e1720]:
+                            - generic [ref=e1721]: acc
+                            - generic [ref=e1722]: "---"
+                          - generic [ref=e1725]:
+                            - generic [ref=e1726]: con
+                            - generic [ref=e1727]: F
+                        - generic [ref=e1730]:
+                          - generic [ref=e1731]:
+                            - generic [ref=e1732]: OVR Estimate
+                            - generic [ref=e1733]: ~-1
+                          - generic [ref=e1734]:
+                            - generic [ref=e1735]: Form Trend
+                            - generic [ref=e1736]: "+50"
+                  - generic [ref=e1737]:
+                    - button "OFFER" [ref=e1738]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$892" [ref=e1739]:
+                      - img
+                      - text: SCOUT · -$892
+                - generic [ref=e1740]:
+                  - link "Horse portrait ♂ Metropolitan of Ma Age 3 36 ❓ Unknown spe --- sta F acc --- con --- OVR Estimate ~-2 Form Trend +50" [ref=e1742] [cursor=pointer]:
+                    - /url: /stable/1a3ac4be-9e5a-4ffa-a671-79ec5ee642d4
+                    - generic [ref=e1743]:
+                      - generic:
+                        - img
+                      - generic [ref=e1745]:
+                        - generic [ref=e1746]:
+                          - img "Horse portrait" [ref=e1748]
+                          - generic:
+                            - generic:
+                              - generic [ref=e1773]: ♂
+                              - generic: Metropolitan of Ma
+                            - generic:
+                              - generic [ref=e1774]: Age 3
+                              - generic [ref=e1775]:
+                                - img [ref=e1776]
+                                - text: "36"
+                        - generic [ref=e1782]: ❓ Unknown
+                      - generic [ref=e1783]:
+                        - generic [ref=e1784]:
+                          - generic [ref=e1786]:
+                            - generic [ref=e1787]: spe
+                            - generic [ref=e1788]: "---"
+                          - generic [ref=e1791]:
+                            - generic [ref=e1792]: sta
+                            - generic [ref=e1793]: F
+                          - generic [ref=e1797]:
+                            - generic [ref=e1798]: acc
+                            - generic [ref=e1799]: "---"
+                          - generic [ref=e1802]:
+                            - generic [ref=e1803]: con
+                            - generic [ref=e1804]: "---"
+                        - generic [ref=e1806]:
+                          - generic [ref=e1807]:
+                            - generic [ref=e1808]: OVR Estimate
+                            - generic [ref=e1809]: ~-2
+                          - generic [ref=e1810]:
+                            - generic [ref=e1811]: Form Trend
+                            - generic [ref=e1812]: "+50"
+                  - generic [ref=e1813]:
+                    - button "OFFER" [ref=e1814]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$898" [ref=e1815]:
+                      - img
+                      - text: SCOUT · -$898
+                - generic [ref=e1816]:
+                  - link "Horse portrait ♂ Texas Star Age 3 32 ❓ Unknown spe F sta --- acc --- con --- OVR Estimate ~-3 Form Trend +50" [ref=e1818] [cursor=pointer]:
+                    - /url: /stable/82a0fef9-9d86-4665-a66c-05ef531211af
+                    - generic [ref=e1819]:
+                      - generic:
+                        - img
+                      - generic [ref=e1821]:
+                        - generic [ref=e1822]:
+                          - img "Horse portrait" [ref=e1824]
+                          - generic:
+                            - generic:
+                              - generic [ref=e1849]: ♂
+                              - generic: Texas Star
+                            - generic:
+                              - generic [ref=e1850]: Age 3
+                              - generic [ref=e1851]:
+                                - img [ref=e1852]
+                                - text: "32"
+                        - generic [ref=e1858]: ❓ Unknown
+                      - generic [ref=e1859]:
+                        - generic [ref=e1860]:
+                          - generic [ref=e1862]:
+                            - generic [ref=e1863]: spe
+                            - generic [ref=e1864]: F
+                          - generic [ref=e1868]:
+                            - generic [ref=e1869]: sta
+                            - generic [ref=e1870]: "---"
+                          - generic [ref=e1873]:
+                            - generic [ref=e1874]: acc
+                            - generic [ref=e1875]: "---"
+                          - generic [ref=e1878]:
+                            - generic [ref=e1879]: con
+                            - generic [ref=e1880]: "---"
+                        - generic [ref=e1882]:
+                          - generic [ref=e1883]:
+                            - generic [ref=e1884]: OVR Estimate
+                            - generic [ref=e1885]: ~-3
+                          - generic [ref=e1886]:
+                            - generic [ref=e1887]: Form Trend
+                            - generic [ref=e1888]: "+50"
+                  - generic [ref=e1889]:
+                    - button "OFFER" [ref=e1890]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$906" [ref=e1891]:
+                      - img
+                      - text: SCOUT · -$906
+                - generic [ref=e1892]:
+                  - link "Horse portrait ♀ Woodbine Star Age 3 33 ❓ Unknown spe --- sta F acc --- con --- OVR Estimate ~-2 Form Trend +50" [ref=e1894] [cursor=pointer]:
+                    - /url: /stable/a7f41b7e-68fa-4c9a-8ad5-105abbb7c4e2
+                    - generic [ref=e1895]:
+                      - generic:
+                        - img
+                      - generic [ref=e1897]:
+                        - generic [ref=e1898]:
+                          - img "Horse portrait" [ref=e1900]
+                          - generic:
+                            - generic:
+                              - generic [ref=e1925]: ♀
+                              - generic: Woodbine Star
+                            - generic:
+                              - generic [ref=e1926]: Age 3
+                              - generic [ref=e1927]:
+                                - img [ref=e1928]
+                                - text: "33"
+                        - generic [ref=e1934]: ❓ Unknown
+                      - generic [ref=e1935]:
+                        - generic [ref=e1936]:
+                          - generic [ref=e1938]:
+                            - generic [ref=e1939]: spe
+                            - generic [ref=e1940]: "---"
+                          - generic [ref=e1943]:
+                            - generic [ref=e1944]: sta
+                            - generic [ref=e1945]: F
+                          - generic [ref=e1949]:
+                            - generic [ref=e1950]: acc
+                            - generic [ref=e1951]: "---"
+                          - generic [ref=e1954]:
+                            - generic [ref=e1955]: con
+                            - generic [ref=e1956]: "---"
+                        - generic [ref=e1958]:
+                          - generic [ref=e1959]:
+                            - generic [ref=e1960]: OVR Estimate
+                            - generic [ref=e1961]: ~-2
+                          - generic [ref=e1962]:
+                            - generic [ref=e1963]: Form Trend
+                            - generic [ref=e1964]: "+50"
+                  - generic [ref=e1965]:
+                    - button "OFFER" [ref=e1966]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$904" [ref=e1967]:
+                      - img
+                      - text: SCOUT · -$904
+                - generic [ref=e1968]:
+                  - link "Horse portrait ♂ Woodbine Las Virge Age 6 49 🔍 Well Known spe --- sta F acc --- con F OVR Estimate ~1 Form Trend +50" [ref=e1970] [cursor=pointer]:
+                    - /url: /stable/a24dd6de-e340-4753-81ba-f487153a3ced
+                    - generic [ref=e1971]:
+                      - generic:
+                        - img
+                      - generic [ref=e1973]:
+                        - generic [ref=e1974]:
+                          - img "Horse portrait" [ref=e1976]
+                          - generic:
+                            - generic:
+                              - generic [ref=e2001]: ♂
+                              - generic: Woodbine Las Virge
+                            - generic:
+                              - generic [ref=e2002]: Age 6
+                              - generic [ref=e2003]:
+                                - img [ref=e2004]
+                                - text: "49"
+                        - generic [ref=e2010]: 🔍 Well Known
+                      - generic [ref=e2011]:
+                        - generic [ref=e2012]:
+                          - generic [ref=e2014]:
+                            - generic [ref=e2015]: spe
+                            - generic [ref=e2016]: "---"
+                          - generic [ref=e2019]:
+                            - generic [ref=e2020]: sta
+                            - generic [ref=e2021]: F
+                          - generic [ref=e2025]:
+                            - generic [ref=e2026]: acc
+                            - generic [ref=e2027]: "---"
+                          - generic [ref=e2030]:
+                            - generic [ref=e2031]: con
+                            - generic [ref=e2032]: F
+                        - generic [ref=e2035]:
+                          - generic [ref=e2036]:
+                            - generic [ref=e2037]: OVR Estimate
+                            - generic [ref=e2038]: ~1
+                          - generic [ref=e2039]:
+                            - generic [ref=e2040]: Form Trend
+                            - generic [ref=e2041]: "+50"
+                  - generic [ref=e2042]:
+                    - button "OFFER" [ref=e2043]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$872" [ref=e2044]:
+                      - img
+                      - text: SCOUT · -$872
+                - generic [ref=e2045]:
+                  - link "Horse portrait ♂ Louisiana Star Age 5 40 🔍 Well Known spe --- sta F acc --- con F OVR Estimate ~-1 Form Trend +50" [ref=e2047] [cursor=pointer]:
+                    - /url: /stable/05e508ec-a7ad-4042-b0b7-49c615de596a
+                    - generic [ref=e2048]:
+                      - generic:
+                        - img
+                      - generic [ref=e2050]:
+                        - generic [ref=e2051]:
+                          - img "Horse portrait" [ref=e2053]
+                          - generic:
+                            - generic:
+                              - generic [ref=e2078]: ♂
+                              - generic: Louisiana Star
+                            - generic:
+                              - generic [ref=e2079]: Age 5
+                              - generic [ref=e2080]:
+                                - img [ref=e2081]
+                                - text: "40"
+                        - generic [ref=e2087]: 🔍 Well Known
+                      - generic [ref=e2088]:
+                        - generic [ref=e2089]:
+                          - generic [ref=e2091]:
+                            - generic [ref=e2092]: spe
+                            - generic [ref=e2093]: "---"
+                          - generic [ref=e2096]:
+                            - generic [ref=e2097]: sta
+                            - generic [ref=e2098]: F
+                          - generic [ref=e2102]:
+                            - generic [ref=e2103]: acc
+                            - generic [ref=e2104]: "---"
+                          - generic [ref=e2107]:
+                            - generic [ref=e2108]: con
+                            - generic [ref=e2109]: F
+                        - generic [ref=e2112]:
+                          - generic [ref=e2113]:
+                            - generic [ref=e2114]: OVR Estimate
+                            - generic [ref=e2115]: ~-1
+                          - generic [ref=e2116]:
+                            - generic [ref=e2117]: Form Trend
+                            - generic [ref=e2118]: "+50"
+                  - generic [ref=e2119]:
+                    - button "OFFER" [ref=e2120]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$890" [ref=e2121]:
+                      - img
+                      - text: SCOUT · -$890
+                - generic [ref=e2122]:
+                  - link "Horse portrait ♂ Man o' War of Kent Age 5 42 🔍 Well Known spe --- sta F acc --- con F OVR Estimate LOCKED Form Trend +50" [ref=e2124] [cursor=pointer]:
+                    - /url: /stable/fec322fe-25ef-406a-92d9-bfae957471c6
+                    - generic [ref=e2125]:
+                      - generic:
+                        - img
+                      - generic [ref=e2127]:
+                        - generic [ref=e2128]:
+                          - img "Horse portrait" [ref=e2130]
+                          - generic:
+                            - generic:
+                              - generic [ref=e2155]: ♂
+                              - generic: Man o' War of Kent
+                            - generic:
+                              - generic [ref=e2156]: Age 5
+                              - generic [ref=e2157]:
+                                - img [ref=e2158]
+                                - text: "42"
+                        - generic [ref=e2164]: 🔍 Well Known
+                      - generic [ref=e2165]:
+                        - generic [ref=e2166]:
+                          - generic [ref=e2168]:
+                            - generic [ref=e2169]: spe
+                            - generic [ref=e2170]: "---"
+                          - generic [ref=e2173]:
+                            - generic [ref=e2174]: sta
+                            - generic [ref=e2175]: F
+                          - generic [ref=e2179]:
+                            - generic [ref=e2180]: acc
+                            - generic [ref=e2181]: "---"
+                          - generic [ref=e2184]:
+                            - generic [ref=e2185]: con
+                            - generic [ref=e2186]: F
+                        - generic [ref=e2189]:
+                          - generic [ref=e2190]:
+                            - generic [ref=e2191]: OVR Estimate
+                            - generic [ref=e2192]: LOCKED
+                          - generic [ref=e2193]:
+                            - generic [ref=e2194]: Form Trend
+                            - generic [ref=e2195]: "+50"
+                  - generic [ref=e2196]:
+                    - button "OFFER" [ref=e2197]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$886" [ref=e2198]:
+                      - img
+                      - text: SCOUT · -$886
+                - generic [ref=e2199]:
+                  - link "Horse portrait ♂ Man O' War of Parx Age 6 40 🔍 Well Known spe --- sta F acc --- con F OVR Estimate ~-1 Form Trend +50" [ref=e2201] [cursor=pointer]:
+                    - /url: /stable/a81771c1-d10b-4316-9c81-79448929a805
+                    - generic [ref=e2202]:
+                      - generic:
+                        - img
+                      - generic [ref=e2204]:
+                        - generic [ref=e2205]:
+                          - img "Horse portrait" [ref=e2207]
+                          - generic:
+                            - generic:
+                              - generic [ref=e2232]: ♂
+                              - generic: Man O' War of Parx
+                            - generic:
+                              - generic [ref=e2233]: Age 6
+                              - generic [ref=e2234]:
+                                - img [ref=e2235]
+                                - text: "40"
+                        - generic [ref=e2241]: 🔍 Well Known
+                      - generic [ref=e2242]:
+                        - generic [ref=e2243]:
+                          - generic [ref=e2245]:
+                            - generic [ref=e2246]: spe
+                            - generic [ref=e2247]: "---"
+                          - generic [ref=e2250]:
+                            - generic [ref=e2251]: sta
+                            - generic [ref=e2252]: F
+                          - generic [ref=e2256]:
+                            - generic [ref=e2257]: acc
+                            - generic [ref=e2258]: "---"
+                          - generic [ref=e2261]:
+                            - generic [ref=e2262]: con
+                            - generic [ref=e2263]: F
+                        - generic [ref=e2266]:
+                          - generic [ref=e2267]:
+                            - generic [ref=e2268]: OVR Estimate
+                            - generic [ref=e2269]: ~-1
+                          - generic [ref=e2270]:
+                            - generic [ref=e2271]: Form Trend
+                            - generic [ref=e2272]: "+50"
+                  - generic [ref=e2273]:
+                    - button "OFFER" [ref=e2274]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$890" [ref=e2275]:
+                      - img
+                      - text: SCOUT · -$890
+                - generic [ref=e2276]:
+                  - link "Horse portrait ♂ Ashland of Illinoi Age 5 46 🔍 Well Known spe F sta --- acc F con --- OVR Estimate ~2 Form Trend +50" [ref=e2278] [cursor=pointer]:
+                    - /url: /stable/6f2d9f09-d671-431d-9c27-268c233317cf
+                    - generic [ref=e2279]:
+                      - generic:
+                        - img
+                      - generic [ref=e2281]:
+                        - generic [ref=e2282]:
+                          - img "Horse portrait" [ref=e2284]
+                          - generic:
+                            - generic:
+                              - generic [ref=e2309]: ♂
+                              - generic: Ashland of Illinoi
+                            - generic:
+                              - generic [ref=e2310]: Age 5
+                              - generic [ref=e2311]:
+                                - img [ref=e2312]
+                                - text: "46"
+                        - generic [ref=e2318]: 🔍 Well Known
+                      - generic [ref=e2319]:
+                        - generic [ref=e2320]:
+                          - generic [ref=e2322]:
+                            - generic [ref=e2323]: spe
+                            - generic [ref=e2324]: F
+                          - generic [ref=e2328]:
+                            - generic [ref=e2329]: sta
+                            - generic [ref=e2330]: "---"
+                          - generic [ref=e2333]:
+                            - generic [ref=e2334]: acc
+                            - generic [ref=e2335]: F
+                          - generic [ref=e2339]:
+                            - generic [ref=e2340]: con
+                            - generic [ref=e2341]: "---"
+                        - generic [ref=e2343]:
+                          - generic [ref=e2344]:
+                            - generic [ref=e2345]: OVR Estimate
+                            - generic [ref=e2346]: ~2
+                          - generic [ref=e2347]:
+                            - generic [ref=e2348]: Form Trend
+                            - generic [ref=e2349]: "+50"
+                  - generic [ref=e2350]:
+                    - button "OFFER" [ref=e2351]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$878" [ref=e2352]:
+                      - img
+                      - text: SCOUT · -$878
+                - generic [ref=e2353]:
+                  - link "Horse portrait ♀ Churchill Star Age 5 39 ❓ Unknown spe --- sta --- acc F con --- OVR Estimate LOCKED Form Trend +50" [ref=e2355] [cursor=pointer]:
+                    - /url: /stable/f27311e2-fef6-49c0-be9a-04112242f6a5
+                    - generic [ref=e2356]:
+                      - generic:
+                        - img
+                      - generic [ref=e2358]:
+                        - generic [ref=e2359]:
+                          - img "Horse portrait" [ref=e2361]
+                          - generic:
+                            - generic:
+                              - generic [ref=e2386]: ♀
+                              - generic: Churchill Star
+                            - generic:
+                              - generic [ref=e2387]: Age 5
+                              - generic [ref=e2388]:
+                                - img [ref=e2389]
+                                - text: "39"
+                        - generic [ref=e2395]: ❓ Unknown
+                      - generic [ref=e2396]:
+                        - generic [ref=e2397]:
+                          - generic [ref=e2399]:
+                            - generic [ref=e2400]: spe
+                            - generic [ref=e2401]: "---"
+                          - generic [ref=e2404]:
+                            - generic [ref=e2405]: sta
+                            - generic [ref=e2406]: "---"
+                          - generic [ref=e2409]:
+                            - generic [ref=e2410]: acc
+                            - generic [ref=e2411]: F
+                          - generic [ref=e2415]:
+                            - generic [ref=e2416]: con
+                            - generic [ref=e2417]: "---"
+                        - generic [ref=e2419]:
+                          - generic [ref=e2420]:
+                            - generic [ref=e2421]: OVR Estimate
+                            - generic [ref=e2422]: LOCKED
+                          - generic [ref=e2423]:
+                            - generic [ref=e2424]: Form Trend
+                            - generic [ref=e2425]: "+50"
+                  - generic [ref=e2426]:
+                    - button "OFFER" [ref=e2427]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$892" [ref=e2428]:
+                      - img
+                      - text: SCOUT · -$892
+                - generic [ref=e2429]:
+                  - link "Horse portrait ♂ Man o' War of Wash Age 7 54 🔍 Well Known spe --- sta F acc --- con F OVR Estimate ~4 Form Trend +50" [ref=e2431] [cursor=pointer]:
+                    - /url: /stable/63b4a0a4-1198-4bfa-85d3-02f527f74a3b
+                    - generic [ref=e2432]:
+                      - generic:
+                        - img
+                      - generic [ref=e2434]:
+                        - generic [ref=e2435]:
+                          - img "Horse portrait" [ref=e2437]
+                          - generic:
+                            - generic:
+                              - generic [ref=e2462]: ♂
+                              - generic: Man o' War of Wash
+                            - generic:
+                              - generic [ref=e2463]: Age 7
+                              - generic [ref=e2464]:
+                                - img [ref=e2465]
+                                - text: "54"
+                        - generic [ref=e2471]: 🔍 Well Known
+                      - generic [ref=e2472]:
+                        - generic [ref=e2473]:
+                          - generic [ref=e2475]:
+                            - generic [ref=e2476]: spe
+                            - generic [ref=e2477]: "---"
+                          - generic [ref=e2480]:
+                            - generic [ref=e2481]: sta
+                            - generic [ref=e2482]: F
+                          - generic [ref=e2486]:
+                            - generic [ref=e2487]: acc
+                            - generic [ref=e2488]: "---"
+                          - generic [ref=e2491]:
+                            - generic [ref=e2492]: con
+                            - generic [ref=e2493]: F
+                        - generic [ref=e2496]:
+                          - generic [ref=e2497]:
+                            - generic [ref=e2498]: OVR Estimate
+                            - generic [ref=e2499]: ~4
+                          - generic [ref=e2500]:
+                            - generic [ref=e2501]: Form Trend
+                            - generic [ref=e2502]: "+50"
+                  - generic [ref=e2503]:
+                    - button "OFFER" [ref=e2504]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$862" [ref=e2505]:
+                      - img
+                      - text: SCOUT · -$862
+                - generic [ref=e2506]:
+                  - link "Horse portrait ♀ New York Man O' Wa Age 10 58 🔍 Well Known spe --- sta F acc --- con F OVR Estimate ~3 Form Trend +50" [ref=e2508] [cursor=pointer]:
+                    - /url: /stable/cbd6665f-e3e8-4bd2-bf39-5b44337ddcd4
+                    - generic [ref=e2509]:
+                      - generic:
+                        - img
+                      - generic [ref=e2511]:
+                        - generic [ref=e2512]:
+                          - img "Horse portrait" [ref=e2514]
+                          - generic:
+                            - generic:
+                              - generic [ref=e2539]: ♀
+                              - generic: New York Man O' Wa
+                            - generic:
+                              - generic [ref=e2540]: Age 10
+                              - generic [ref=e2541]:
+                                - img [ref=e2542]
+                                - text: "58"
+                        - generic [ref=e2548]: 🔍 Well Known
+                      - generic [ref=e2549]:
+                        - generic [ref=e2550]:
+                          - generic [ref=e2552]:
+                            - generic [ref=e2553]: spe
+                            - generic [ref=e2554]: "---"
+                          - generic [ref=e2557]:
+                            - generic [ref=e2558]: sta
+                            - generic [ref=e2559]: F
+                          - generic [ref=e2563]:
+                            - generic [ref=e2564]: acc
+                            - generic [ref=e2565]: "---"
+                          - generic [ref=e2568]:
+                            - generic [ref=e2569]: con
+                            - generic [ref=e2570]: F
+                        - generic [ref=e2573]:
+                          - generic [ref=e2574]:
+                            - generic [ref=e2575]: OVR Estimate
+                            - generic [ref=e2576]: ~3
+                          - generic [ref=e2577]:
+                            - generic [ref=e2578]: Form Trend
+                            - generic [ref=e2579]: "+50"
+                  - generic [ref=e2580]:
+                    - button "OFFER" [ref=e2581]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$854" [ref=e2582]:
+                      - img
+                      - text: SCOUT · -$854
+                - generic [ref=e2583]:
+                  - link "Horse portrait ♀ Parx Metropolitan Age 9 41 🔍 Well Known spe --- sta F acc --- con F OVR Estimate ~-1 Form Trend +50" [ref=e2585] [cursor=pointer]:
+                    - /url: /stable/076b760e-76e8-40b0-927b-494a0a220b7c
+                    - generic [ref=e2586]:
+                      - generic:
+                        - img
+                      - generic [ref=e2588]:
+                        - generic [ref=e2589]:
+                          - img "Horse portrait" [ref=e2591]
+                          - generic:
+                            - generic:
+                              - generic [ref=e2616]: ♀
+                              - generic: Parx Metropolitan
+                            - generic:
+                              - generic [ref=e2617]: Age 9
+                              - generic [ref=e2618]:
+                                - img [ref=e2619]
+                                - text: "41"
+                        - generic [ref=e2625]: 🔍 Well Known
+                      - generic [ref=e2626]:
+                        - generic [ref=e2627]:
+                          - generic [ref=e2629]:
+                            - generic [ref=e2630]: spe
+                            - generic [ref=e2631]: "---"
+                          - generic [ref=e2634]:
+                            - generic [ref=e2635]: sta
+                            - generic [ref=e2636]: F
+                          - generic [ref=e2640]:
+                            - generic [ref=e2641]: acc
+                            - generic [ref=e2642]: "---"
+                          - generic [ref=e2645]:
+                            - generic [ref=e2646]: con
+                            - generic [ref=e2647]: F
+                        - generic [ref=e2650]:
+                          - generic [ref=e2651]:
+                            - generic [ref=e2652]: OVR Estimate
+                            - generic [ref=e2653]: ~-1
+                          - generic [ref=e2654]:
+                            - generic [ref=e2655]: Form Trend
+                            - generic [ref=e2656]: "+50"
+                  - generic [ref=e2657]:
+                    - button "OFFER" [ref=e2658]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$888" [ref=e2659]:
+                      - img
+                      - text: SCOUT · -$888
+                - generic [ref=e2660]:
+                  - link "Horse portrait ♂ Gun Runner Age 12 86 👁️ Fully Scouted spe F sta F acc F con F OVR Estimate F Form Trend +50" [ref=e2662] [cursor=pointer]:
+                    - /url: /stable/fd585682-371a-4653-917c-0a9410df9ebd
+                    - generic [ref=e2663]:
+                      - generic:
+                        - img
+                      - generic [ref=e2665]:
+                        - generic [ref=e2666]:
+                          - img "Horse portrait" [ref=e2668]
+                          - generic:
+                            - generic:
+                              - generic [ref=e2693]: ♂
+                              - generic: Gun Runner
+                            - generic:
+                              - generic [ref=e2694]: Age 12
+                              - generic [ref=e2695]:
+                                - img [ref=e2696]
+                                - text: "86"
+                        - generic [ref=e2702]: 👁️ Fully Scouted
+                      - generic [ref=e2703]:
+                        - generic [ref=e2704]:
+                          - generic [ref=e2706]:
+                            - generic [ref=e2707]: spe
+                            - generic [ref=e2708]: F
+                          - generic [ref=e2711]:
+                            - generic [ref=e2712]: sta
+                            - generic [ref=e2713]: F
+                          - generic [ref=e2716]:
+                            - generic [ref=e2717]: acc
+                            - generic [ref=e2718]: F
+                          - generic [ref=e2721]:
+                            - generic [ref=e2722]: con
+                            - generic [ref=e2723]: F
+                        - generic [ref=e2725]:
+                          - generic [ref=e2726]:
+                            - generic [ref=e2727]: OVR Estimate
+                            - generic [ref=e2728]: F
+                          - generic [ref=e2729]:
+                            - generic [ref=e2730]: Form Trend
+                            - generic [ref=e2731]: "+50"
+                  - generic [ref=e2732]:
+                    - button "OFFER" [ref=e2733]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$798" [ref=e2734]:
+                      - img
+                      - text: SCOUT · -$798
+                - generic [ref=e2735]:
+                  - link "Horse portrait ♂ Curlin Age 22 86 👁️ Fully Scouted spe F sta F acc F con F OVR Estimate F Form Trend +50" [ref=e2737] [cursor=pointer]:
+                    - /url: /stable/a06e76af-0507-4796-8a6c-b0766aaffe88
+                    - generic [ref=e2738]:
+                      - generic:
+                        - img
+                      - generic [ref=e2740]:
+                        - generic [ref=e2741]:
+                          - img "Horse portrait" [ref=e2743]
+                          - generic:
+                            - generic:
+                              - generic [ref=e2768]: ♂
+                              - generic: Curlin
+                            - generic:
+                              - generic [ref=e2769]: Age 22
+                              - generic [ref=e2770]:
+                                - img [ref=e2771]
+                                - text: "86"
+                        - generic [ref=e2777]: 👁️ Fully Scouted
+                      - generic [ref=e2778]:
+                        - generic [ref=e2779]:
+                          - generic [ref=e2781]:
+                            - generic [ref=e2782]: spe
+                            - generic [ref=e2783]: F
+                          - generic [ref=e2786]:
+                            - generic [ref=e2787]: sta
+                            - generic [ref=e2788]: F
+                          - generic [ref=e2791]:
+                            - generic [ref=e2792]: acc
+                            - generic [ref=e2793]: F
+                          - generic [ref=e2796]:
+                            - generic [ref=e2797]: con
+                            - generic [ref=e2798]: F
+                        - generic [ref=e2800]:
+                          - generic [ref=e2801]:
+                            - generic [ref=e2802]: OVR Estimate
+                            - generic [ref=e2803]: F
+                          - generic [ref=e2804]:
+                            - generic [ref=e2805]: Form Trend
+                            - generic [ref=e2806]: "+50"
+                  - generic [ref=e2807]:
+                    - button "OFFER" [ref=e2808]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$798" [ref=e2809]:
+                      - img
+                      - text: SCOUT · -$798
+                - generic [ref=e2810]:
+                  - link "Horse portrait ♂ Sea the Stars Age 20 100 👁️ Fully Scouted spe F sta F acc F con F OVR Estimate F Form Trend +50" [ref=e2812] [cursor=pointer]:
+                    - /url: /stable/d26cc2c9-e02b-4ba1-a724-2764dbec0c39
+                    - generic [ref=e2813]:
+                      - generic:
+                        - img
+                      - generic [ref=e2815]:
+                        - generic [ref=e2816]:
+                          - img "Horse portrait" [ref=e2818]
+                          - generic:
+                            - generic:
+                              - generic [ref=e2843]: ♂
+                              - generic: Sea the Stars
+                            - generic:
+                              - generic [ref=e2844]: Age 20
+                              - generic [ref=e2845]:
+                                - img [ref=e2846]
+                                - text: "100"
+                        - generic [ref=e2852]: 👁️ Fully Scouted
+                      - generic [ref=e2853]:
+                        - generic [ref=e2854]:
+                          - generic [ref=e2856]:
+                            - generic [ref=e2857]: spe
+                            - generic [ref=e2858]: F
+                          - generic [ref=e2861]:
+                            - generic [ref=e2862]: sta
+                            - generic [ref=e2863]: F
+                          - generic [ref=e2866]:
+                            - generic [ref=e2867]: acc
+                            - generic [ref=e2868]: F
+                          - generic [ref=e2871]:
+                            - generic [ref=e2872]: con
+                            - generic [ref=e2873]: F
+                        - generic [ref=e2875]:
+                          - generic [ref=e2876]:
+                            - generic [ref=e2877]: OVR Estimate
+                            - generic [ref=e2878]: F
+                          - generic [ref=e2879]:
+                            - generic [ref=e2880]: Form Trend
+                            - generic [ref=e2881]: "+50"
+                  - generic [ref=e2882]:
+                    - button "OFFER" [ref=e2883]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$770" [ref=e2884]:
+                      - img
+                      - text: SCOUT · -$770
+                - generic [ref=e2885]:
+                  - link "Horse portrait ♂ Deep Impact Age 24 100 👁️ Fully Scouted spe F sta F acc F con F OVR Estimate F Form Trend +50" [ref=e2887] [cursor=pointer]:
+                    - /url: /stable/293ac6ca-e46a-42e6-a71d-44364629312a
+                    - generic [ref=e2888]:
+                      - generic:
+                        - img
+                      - generic [ref=e2890]:
+                        - generic [ref=e2891]:
+                          - img "Horse portrait" [ref=e2893]
+                          - generic:
+                            - generic:
+                              - generic [ref=e2918]: ♂
+                              - generic: Deep Impact
+                            - generic:
+                              - generic [ref=e2919]: Age 24
+                              - generic [ref=e2920]:
+                                - img [ref=e2921]
+                                - text: "100"
+                        - generic [ref=e2927]: 👁️ Fully Scouted
+                      - generic [ref=e2928]:
+                        - generic [ref=e2929]:
+                          - generic [ref=e2931]:
+                            - generic [ref=e2932]: spe
+                            - generic [ref=e2933]: F
+                          - generic [ref=e2936]:
+                            - generic [ref=e2937]: sta
+                            - generic [ref=e2938]: F
+                          - generic [ref=e2941]:
+                            - generic [ref=e2942]: acc
+                            - generic [ref=e2943]: F
+                          - generic [ref=e2946]:
+                            - generic [ref=e2947]: con
+                            - generic [ref=e2948]: F
+                        - generic [ref=e2950]:
+                          - generic [ref=e2951]:
+                            - generic [ref=e2952]: OVR Estimate
+                            - generic [ref=e2953]: F
+                          - generic [ref=e2954]:
+                            - generic [ref=e2955]: Form Trend
+                            - generic [ref=e2956]: "+50"
+                  - generic [ref=e2957]:
+                    - button "OFFER" [ref=e2958]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$770" [ref=e2959]:
+                      - img
+                      - text: SCOUT · -$770
+                - generic [ref=e2960]:
+                  - link "Horse portrait ♂ Kizuna Age 16 74 👁️ Fully Scouted spe F sta F acc F con F OVR Estimate F Form Trend +50" [ref=e2962] [cursor=pointer]:
+                    - /url: /stable/c81d9915-bbe7-4a03-889d-faf0124def6f
+                    - generic [ref=e2963]:
+                      - generic:
+                        - img
+                      - generic [ref=e2965]:
+                        - generic [ref=e2966]:
+                          - img "Horse portrait" [ref=e2968]
+                          - generic:
+                            - generic:
+                              - generic [ref=e2993]: ♂
+                              - generic: Kizuna
+                            - generic:
+                              - generic [ref=e2994]: Age 16
+                              - generic [ref=e2995]:
+                                - img [ref=e2996]
+                                - text: "74"
+                        - generic [ref=e3002]: 👁️ Fully Scouted
+                      - generic [ref=e3003]:
+                        - generic [ref=e3004]:
+                          - generic [ref=e3006]:
+                            - generic [ref=e3007]: spe
+                            - generic [ref=e3008]: F
+                          - generic [ref=e3011]:
+                            - generic [ref=e3012]: sta
+                            - generic [ref=e3013]: F
+                          - generic [ref=e3016]:
+                            - generic [ref=e3017]: acc
+                            - generic [ref=e3018]: F
+                          - generic [ref=e3021]:
+                            - generic [ref=e3022]: con
+                            - generic [ref=e3023]: F
+                        - generic [ref=e3025]:
+                          - generic [ref=e3026]:
+                            - generic [ref=e3027]: OVR Estimate
+                            - generic [ref=e3028]: F
+                          - generic [ref=e3029]:
+                            - generic [ref=e3030]: Form Trend
+                            - generic [ref=e3031]: "+50"
+                  - generic [ref=e3032]:
+                    - button "OFFER" [ref=e3033]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$822" [ref=e3034]:
+                      - img
+                      - text: SCOUT · -$822
+                - generic [ref=e3035]:
+                  - link "Horse portrait ♂ Tiz the Law Age 9 60 🔍 Well Known spe --- sta F acc --- con F OVR Estimate ~3 Form Trend +50" [ref=e3037] [cursor=pointer]:
+                    - /url: /stable/dc86e6b7-a853-4962-8b6a-9b36a1db3493
+                    - generic [ref=e3038]:
+                      - generic:
+                        - img
+                      - generic [ref=e3040]:
+                        - generic [ref=e3041]:
+                          - img "Horse portrait" [ref=e3043]
+                          - generic:
+                            - generic:
+                              - generic [ref=e3068]: ♂
+                              - generic: Tiz the Law
+                            - generic:
+                              - generic [ref=e3069]: Age 9
+                              - generic [ref=e3070]:
+                                - img [ref=e3071]
+                                - text: "60"
+                        - generic [ref=e3077]: 🔍 Well Known
+                      - generic [ref=e3078]:
+                        - generic [ref=e3079]:
+                          - generic [ref=e3081]:
+                            - generic [ref=e3082]: spe
+                            - generic [ref=e3083]: "---"
+                          - generic [ref=e3086]:
+                            - generic [ref=e3087]: sta
+                            - generic [ref=e3088]: F
+                          - generic [ref=e3092]:
+                            - generic [ref=e3093]: acc
+                            - generic [ref=e3094]: "---"
+                          - generic [ref=e3097]:
+                            - generic [ref=e3098]: con
+                            - generic [ref=e3099]: F
+                        - generic [ref=e3102]:
+                          - generic [ref=e3103]:
+                            - generic [ref=e3104]: OVR Estimate
+                            - generic [ref=e3105]: ~3
+                          - generic [ref=e3106]:
+                            - generic [ref=e3107]: Form Trend
+                            - generic [ref=e3108]: "+50"
+                  - generic [ref=e3109]:
+                    - button "OFFER" [ref=e3110]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$850" [ref=e3111]:
+                      - img
+                      - text: SCOUT · -$850
+                - generic [ref=e3112]:
+                  - link "Horse portrait ♂ Justify Age 11 84 👁️ Fully Scouted spe F sta F acc F con F OVR Estimate F Form Trend +50" [ref=e3114] [cursor=pointer]:
+                    - /url: /stable/2f65dd68-6f9e-4a25-bddb-137eceb668c5
+                    - generic [ref=e3115]:
+                      - generic:
+                        - img
+                      - generic [ref=e3117]:
+                        - generic [ref=e3118]:
+                          - img "Horse portrait" [ref=e3120]
+                          - generic:
+                            - generic:
+                              - generic [ref=e3145]: ♂
+                              - generic: Justify
+                            - generic:
+                              - generic [ref=e3146]: Age 11
+                              - generic [ref=e3147]:
+                                - img [ref=e3148]
+                                - text: "84"
+                        - generic [ref=e3154]: 👁️ Fully Scouted
+                      - generic [ref=e3155]:
+                        - generic [ref=e3156]:
+                          - generic [ref=e3158]:
+                            - generic [ref=e3159]: spe
+                            - generic [ref=e3160]: F
+                          - generic [ref=e3163]:
+                            - generic [ref=e3164]: sta
+                            - generic [ref=e3165]: F
+                          - generic [ref=e3168]:
+                            - generic [ref=e3169]: acc
+                            - generic [ref=e3170]: F
+                          - generic [ref=e3173]:
+                            - generic [ref=e3174]: con
+                            - generic [ref=e3175]: F
+                        - generic [ref=e3177]:
+                          - generic [ref=e3178]:
+                            - generic [ref=e3179]: OVR Estimate
+                            - generic [ref=e3180]: F
+                          - generic [ref=e3181]:
+                            - generic [ref=e3182]: Form Trend
+                            - generic [ref=e3183]: "+50"
+                  - generic [ref=e3184]:
+                    - button "OFFER" [ref=e3185]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$802" [ref=e3186]:
+                      - img
+                      - text: SCOUT · -$802
+                - generic [ref=e3187]:
+                  - link "Horse portrait ♂ Galileo Age 28 100 👁️ Fully Scouted spe F sta F acc F con F OVR Estimate F Form Trend +50" [ref=e3189] [cursor=pointer]:
+                    - /url: /stable/f6299627-c53b-4559-8cd1-aae1a842c383
+                    - generic [ref=e3190]:
+                      - generic:
+                        - img
+                      - generic [ref=e3192]:
+                        - generic [ref=e3193]:
+                          - img "Horse portrait" [ref=e3195]
+                          - generic:
+                            - generic:
+                              - generic [ref=e3220]: ♂
+                              - generic: Galileo
+                            - generic:
+                              - generic [ref=e3221]: Age 28
+                              - generic [ref=e3222]:
+                                - img [ref=e3223]
+                                - text: "100"
+                        - generic [ref=e3229]: 👁️ Fully Scouted
+                      - generic [ref=e3230]:
+                        - generic [ref=e3231]:
+                          - generic [ref=e3233]:
+                            - generic [ref=e3234]: spe
+                            - generic [ref=e3235]: F
+                          - generic [ref=e3238]:
+                            - generic [ref=e3239]: sta
+                            - generic [ref=e3240]: F
+                          - generic [ref=e3243]:
+                            - generic [ref=e3244]: acc
+                            - generic [ref=e3245]: F
+                          - generic [ref=e3248]:
+                            - generic [ref=e3249]: con
+                            - generic [ref=e3250]: F
+                        - generic [ref=e3252]:
+                          - generic [ref=e3253]:
+                            - generic [ref=e3254]: OVR Estimate
+                            - generic [ref=e3255]: F
+                          - generic [ref=e3256]:
+                            - generic [ref=e3257]: Form Trend
+                            - generic [ref=e3258]: "+50"
+                  - generic [ref=e3259]:
+                    - button "OFFER" [ref=e3260]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$770" [ref=e3261]:
+                      - img
+                      - text: SCOUT · -$770
+                - generic [ref=e3262]:
+                  - link "Horse portrait ♂ Gun Runner Age 13 88 👁️ Fully Scouted spe F sta F acc F con F OVR Estimate F Form Trend +50" [ref=e3264] [cursor=pointer]:
+                    - /url: /stable/ee473a8f-3771-4962-ba1b-c4e3095569da
+                    - generic [ref=e3265]:
+                      - generic:
+                        - img
+                      - generic [ref=e3267]:
+                        - generic [ref=e3268]:
+                          - img "Horse portrait" [ref=e3270]
+                          - generic:
+                            - generic:
+                              - generic [ref=e3295]: ♂
+                              - generic: Gun Runner
+                            - generic:
+                              - generic [ref=e3296]: Age 13
+                              - generic [ref=e3297]:
+                                - img [ref=e3298]
+                                - text: "88"
+                        - generic [ref=e3304]: 👁️ Fully Scouted
+                      - generic [ref=e3305]:
+                        - generic [ref=e3306]:
+                          - generic [ref=e3308]:
+                            - generic [ref=e3309]: spe
+                            - generic [ref=e3310]: F
+                          - generic [ref=e3313]:
+                            - generic [ref=e3314]: sta
+                            - generic [ref=e3315]: F
+                          - generic [ref=e3318]:
+                            - generic [ref=e3319]: acc
+                            - generic [ref=e3320]: F
+                          - generic [ref=e3323]:
+                            - generic [ref=e3324]: con
+                            - generic [ref=e3325]: F
+                        - generic [ref=e3327]:
+                          - generic [ref=e3328]:
+                            - generic [ref=e3329]: OVR Estimate
+                            - generic [ref=e3330]: F
+                          - generic [ref=e3331]:
+                            - generic [ref=e3332]: Form Trend
+                            - generic [ref=e3333]: "+50"
+                  - generic [ref=e3334]:
+                    - button "OFFER" [ref=e3335]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$794" [ref=e3336]:
+                      - img
+                      - text: SCOUT · -$794
+                - generic [ref=e3337]:
+                  - link "Horse portrait ♂ Giant's Causeway Age 29 100 👁️ Fully Scouted spe F sta F acc F con F OVR Estimate F Form Trend +50" [ref=e3339] [cursor=pointer]:
+                    - /url: /stable/a6d8b801-8f44-40d1-8a42-19ae0bc169e6
+                    - generic [ref=e3340]:
+                      - generic:
+                        - img
+                      - generic [ref=e3342]:
+                        - generic [ref=e3343]:
+                          - img "Horse portrait" [ref=e3345]
+                          - generic:
+                            - generic:
+                              - generic [ref=e3370]: ♂
+                              - generic: Giant's Causeway
+                            - generic:
+                              - generic [ref=e3371]: Age 29
+                              - generic [ref=e3372]:
+                                - img [ref=e3373]
+                                - text: "100"
+                        - generic [ref=e3379]: 👁️ Fully Scouted
+                      - generic [ref=e3380]:
+                        - generic [ref=e3381]:
+                          - generic [ref=e3383]:
+                            - generic [ref=e3384]: spe
+                            - generic [ref=e3385]: F
+                          - generic [ref=e3388]:
+                            - generic [ref=e3389]: sta
+                            - generic [ref=e3390]: F
+                          - generic [ref=e3393]:
+                            - generic [ref=e3394]: acc
+                            - generic [ref=e3395]: F
+                          - generic [ref=e3398]:
+                            - generic [ref=e3399]: con
+                            - generic [ref=e3400]: F
+                        - generic [ref=e3402]:
+                          - generic [ref=e3403]:
+                            - generic [ref=e3404]: OVR Estimate
+                            - generic [ref=e3405]: F
+                          - generic [ref=e3406]:
+                            - generic [ref=e3407]: Form Trend
+                            - generic [ref=e3408]: "+50"
+                  - generic [ref=e3409]:
+                    - button "OFFER" [ref=e3410]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$770" [ref=e3411]:
+                      - img
+                      - text: SCOUT · -$770
+                - generic [ref=e3412]:
+                  - link "Horse portrait ♂ Storm Cat Age 43 100 👁️ Fully Scouted spe F sta F acc F con F OVR Estimate F Form Trend +50" [ref=e3414] [cursor=pointer]:
+                    - /url: /stable/824f85e7-719c-4fa1-8d84-74db074e8661
+                    - generic [ref=e3415]:
+                      - generic:
+                        - img
+                      - generic [ref=e3417]:
+                        - generic [ref=e3418]:
+                          - img "Horse portrait" [ref=e3420]
+                          - generic:
+                            - generic:
+                              - generic [ref=e3445]: ♂
+                              - generic: Storm Cat
+                            - generic:
+                              - generic [ref=e3446]: Age 43
+                              - generic [ref=e3447]:
+                                - img [ref=e3448]
+                                - text: "100"
+                        - generic [ref=e3454]: 👁️ Fully Scouted
+                      - generic [ref=e3455]:
+                        - generic [ref=e3456]:
+                          - generic [ref=e3458]:
+                            - generic [ref=e3459]: spe
+                            - generic [ref=e3460]: F
+                          - generic [ref=e3463]:
+                            - generic [ref=e3464]: sta
+                            - generic [ref=e3465]: F
+                          - generic [ref=e3468]:
+                            - generic [ref=e3469]: acc
+                            - generic [ref=e3470]: F
+                          - generic [ref=e3473]:
+                            - generic [ref=e3474]: con
+                            - generic [ref=e3475]: F
+                        - generic [ref=e3477]:
+                          - generic [ref=e3478]:
+                            - generic [ref=e3479]: OVR Estimate
+                            - generic [ref=e3480]: F
+                          - generic [ref=e3481]:
+                            - generic [ref=e3482]: Form Trend
+                            - generic [ref=e3483]: "+50"
+                  - generic [ref=e3484]:
+                    - button "OFFER" [ref=e3485]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$770" [ref=e3486]:
+                      - img
+                      - text: SCOUT · -$770
+                - generic [ref=e3487]:
+                  - link "Horse portrait ♂ Good Magic Age 11 44 🔍 Well Known spe --- sta F acc --- con F OVR Estimate LOCKED Form Trend +50" [ref=e3489] [cursor=pointer]:
+                    - /url: /stable/7ba96812-f4a6-4aed-8718-f80368efb829
+                    - generic [ref=e3490]:
+                      - generic:
+                        - img
+                      - generic [ref=e3492]:
+                        - generic [ref=e3493]:
+                          - img "Horse portrait" [ref=e3495]
+                          - generic:
+                            - generic:
+                              - generic [ref=e3520]: ♂
+                              - generic: Good Magic
+                            - generic:
+                              - generic [ref=e3521]: Age 11
+                              - generic [ref=e3522]:
+                                - img [ref=e3523]
+                                - text: "44"
+                        - generic [ref=e3529]: 🔍 Well Known
+                      - generic [ref=e3530]:
+                        - generic [ref=e3531]:
+                          - generic [ref=e3533]:
+                            - generic [ref=e3534]: spe
+                            - generic [ref=e3535]: "---"
+                          - generic [ref=e3538]:
+                            - generic [ref=e3539]: sta
+                            - generic [ref=e3540]: F
+                          - generic [ref=e3544]:
+                            - generic [ref=e3545]: acc
+                            - generic [ref=e3546]: "---"
+                          - generic [ref=e3549]:
+                            - generic [ref=e3550]: con
+                            - generic [ref=e3551]: F
+                        - generic [ref=e3554]:
+                          - generic [ref=e3555]:
+                            - generic [ref=e3556]: OVR Estimate
+                            - generic [ref=e3557]: LOCKED
+                          - generic [ref=e3558]:
+                            - generic [ref=e3559]: Form Trend
+                            - generic [ref=e3560]: "+50"
+                  - generic [ref=e3561]:
+                    - button "OFFER" [ref=e3562]:
+                      - img
+                      - text: OFFER
+                    - button "SCOUT · -$882" [ref=e3563]:
+                      - img
+                      - text: SCOUT · -$882
+          - complementary [ref=e3564]:
+            - generic [ref=e3565]:
+              - generic [ref=e3567]: Entity Brief
+              - generic [ref=e3569]:
+                - generic [ref=e3570]:
+                  - generic [ref=e3571]: Tier
+                  - generic [ref=e3572]: elite
+                - generic [ref=e3573]:
+                  - generic [ref=e3574]: Relation
+                  - generic [ref=e3575]: NEUTRAL
+                - generic [ref=e3576]:
+                  - generic [ref=e3577]: Reputation
+                  - generic [ref=e3578]:
+                    - img [ref=e3579]
+                    - img [ref=e3585]
+                    - img [ref=e3591]
+                    - img [ref=e3597]
+                    - img [ref=e3603]
+            - generic [ref=e3609]:
+              - generic [ref=e3611]: Quick Access
+              - generic [ref=e3613]:
+                - button "Horse Roster 45" [ref=e3614]:
+                  - generic [ref=e3615]:
+                    - img [ref=e3616]
+                    - text: Horse Roster
+                  - generic [ref=e3619]: "45"
+                - button "Personnel" [ref=e3620]:
+                  - generic [ref=e3621]:
+                    - img [ref=e3622]
+                    - text: Personnel
+                - button "Records" [ref=e3627]:
+                  - generic [ref=e3628]:
+                    - img [ref=e3629]
+                    - text: Records
+                - link "Schedule" [ref=e3633] [cursor=pointer]:
+                  - /url: /races?grade=all&country=all&surface=all&track=all&owned=all&q=&stableId=c488b416-4157-4870-b400-5935f90bdc04
+                  - generic [ref=e3634]:
+                    - img [ref=e3635]
+                    - text: Schedule
+  - region "Notifications alt+T"
+```
+
+# Test source
+
+```ts
+  1   | import { test, expect } from "@playwright/test";
+  2   | import { readFileSync } from "fs";
+  3   | import { join, dirname } from "path";
+  4   | import { fileURLToPath } from "url";
+  5   | 
+  6   | const __dirname = dirname(fileURLToPath(import.meta.url));
+  7   | const fixture = JSON.parse(readFileSync(join(__dirname, "fixtures", "e2e-fixture.json"), "utf-8"));
+  8   | 
+  9   | const VIEWPORTS = [
+  10  |   { width: 375, height: 812, name: "mobile" },
+  11  |   { width: 768, height: 1024, name: "tablet" },
+  12  | ];
+  13  | 
+  14  | test.beforeEach(async ({ page }) => {
+  15  |   await page.addInitScript((data) => {
+  16  |     try {
+  17  |       Object.defineProperty(window, "indexedDB", {
+  18  |         get: () => undefined,
+  19  |         configurable: true,
+  20  |       });
+  21  |     } catch {
+  22  |       try { delete (window as any).indexedDB; } catch { (window as any).indexedDB = undefined; }
+  23  |     }
+  24  |     localStorage.setItem("gallop_game_state_fallback", JSON.stringify(data));
+  25  |   }, fixture);
+  26  | });
+  27  | 
+  28  | for (const vp of VIEWPORTS) {
+  29  |   test.describe(`NPC Stable Roster layout at ${vp.name} (${vp.width}px)`, () => {
+  30  |     test.use({ viewport: { width: vp.width, height: vp.height } });
+  31  |     test.setTimeout(60_000);
+  32  | 
+  33  |     test("horse name and scout-status badge do not overlap", async ({ page }) => {
+  34  |       // Navigate directly to NPC stables index to find stable links
+  35  |       await page.goto("/npc-stables");
+  36  | 
+  37  |       const stableLinks = page.locator('a[href*="/npc-stables/"]');
+  38  |       await expect(stableLinks.first()).toBeVisible({ timeout: 15_000 }).catch(() => {
+  39  |         test.skip(true, "No game state found");
+  40  |       });
+  41  | 
+  42  |       const linkCount = await stableLinks.count();
+  43  |       if (linkCount === 0) {
+  44  |         test.skip(true, "No NPC stable links found");
+  45  |       }
+  46  | 
+  47  |       // Navigate to first NPC stable
+  48  |       await stableLinks.first().click();
+  49  |       await page.waitForURL(/\/npc-stables\//);
+  50  | 
+  51  |       // Click roster tab if not already active
+  52  |       const rosterTab = page.locator('[role="tab"]', { hasText: /roster/i }).first();
+  53  |       await expect(rosterTab).toBeVisible({ timeout: 3000 }).catch(() => {
+  54  |         test.skip(true, "No roster tab found");
+  55  |       });
+  56  |       await rosterTab.click();
+  57  | 
+  58  |       // Find horse cards in the roster
+  59  |       const cards = page.locator(".relative.group");
+  60  |       const cardCount = await cards.count();
+  61  | 
+  62  |       if (cardCount === 0) {
+  63  |         test.skip(true, "No horse cards in NPC stable roster");
+  64  |       }
+  65  | 
+  66  |       // Check first card for name/badge overlap
+  67  |       const firstCard = cards.first();
+  68  |       const nameSpan = firstCard.locator("span.text-lg").first();
+  69  |       const scoutBadge = firstCard.locator('[class*="tracking-widest"]').filter({ hasText: /scout|known/i }).first();
+  70  | 
+> 71  |       const nameBox = await nameSpan.boundingBox();
+      |                                      ^ Error: locator.boundingBox: Test timeout of 60000ms exceeded.
+  72  |       const badgeBox = await scoutBadge.boundingBox();
+  73  | 
+  74  |       if (nameBox && badgeBox) {
+  75  |         const horizontalOverlap = nameBox.x < badgeBox.x + badgeBox.width && badgeBox.x < nameBox.x + nameBox.width;
+  76  |         const verticalOverlap = nameBox.y < badgeBox.y + badgeBox.height && badgeBox.y < nameBox.y + nameBox.height;
+  77  |         expect(!horizontalOverlap || !verticalOverlap).toBe(true);
+  78  |       }
+  79  |     });
+  80  | 
+  81  |     test("OFFER and SCOUT buttons do not overlap each other", async ({ page }) => {
+  82  |       await page.goto("/npc-stables");
+  83  | 
+  84  |       const stableLinks = page.locator('a[href*="/npc-stables/"]');
+  85  |       await expect(stableLinks.first()).toBeVisible({ timeout: 15_000 }).catch(() => {
+  86  |         test.skip(true, "No game state found");
+  87  |       });
+  88  | 
+  89  |       const linkCount = await stableLinks.count();
+  90  |       if (linkCount === 0) {
+  91  |         test.skip(true, "No NPC stable links found");
+  92  |       }
+  93  | 
+  94  |       await stableLinks.first().click();
+  95  |       await page.waitForURL(/\/npc-stables\//);
+  96  | 
+  97  |       const rosterTab = page.locator('[role="tab"]', { hasText: /roster/i }).first();
+  98  |       await expect(rosterTab).toBeVisible({ timeout: 3000 }).catch(() => {
+  99  |         test.skip(true, "No roster tab found");
+  100 |       });
+  101 |       await rosterTab.click();
+  102 | 
+  103 |       const cards = page.locator(".relative.group");
+  104 |       const cardCount = await cards.count();
+  105 |       if (cardCount === 0) {
+  106 |         test.skip(true, "No horse cards in NPC stable roster");
+  107 |       }
+  108 | 
+  109 |       const firstCard = cards.first();
+  110 |       const buttons = firstCard.locator("button", { hasText: /OFFER|SCOUT/i });
+  111 |       const btnCount = await buttons.count();
+  112 | 
+  113 |       if (btnCount >= 2) {
+  114 |         const box1 = await buttons.nth(0).boundingBox();
+  115 |         const box2 = await buttons.nth(1).boundingBox();
+  116 |         if (box1 && box2) {
+  117 |           const horizontalOverlap = box1.x < box2.x + box2.width && box2.x < box1.x + box1.width;
+  118 |           const verticalOverlap = box1.y < box2.y + box2.height && box2.y < box1.y + box1.height;
+  119 |           expect(!horizontalOverlap || !verticalOverlap).toBe(true);
+  120 |         }
+  121 |       }
+  122 |     });
+  123 |   });
+  124 | }
+  125 | 
+```

@@ -12,7 +12,8 @@ import {
   getRunnersBy,
 } from "@/core/breeding/lineage";
 import { createTestHorse } from "@/tests/helpers";
-import { PRIZE_SPLIT } from "@/constants";
+import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/constants";
+import type { GameState } from "@/game/types";
 
 describe("breeding lineage utils", () => {
   beforeEach(() => {
@@ -66,7 +67,9 @@ describe("breeding lineage utils", () => {
     ],
   });
 
-  const gameState = { horses: [foal1, foal2, foal3] };
+  const gameState: Pick<GameState, "horses"> = {
+    horses: Object.fromEntries([foal1, foal2, foal3].map((h) => [h.id, h])),
+  };
 
   describe("getFoalsBy and getFoalsOf", () => {
     it("should return foals matching sireId", () => {
@@ -122,8 +125,8 @@ describe("breeding lineage utils", () => {
       // populate cache
       getStakesFoalsBy(gameState, sireId);
       // mutate state to prove it reads from cache
-      const alteredState = { horses: [] };
-      expect(getStakesFoalsBy(alteredState as any, sireId)).toBe(1);
+      const alteredState: Pick<GameState, "horses"> = { horses: {} };
+      expect(getStakesFoalsBy(alteredState, sireId)).toBe(1);
     });
   });
 

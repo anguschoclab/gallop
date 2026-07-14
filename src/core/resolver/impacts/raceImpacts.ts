@@ -62,6 +62,7 @@ export interface RaceHistoryImpact extends Impact {
     distance?: number;
     surface?: string;
     purse?: number;
+    purseEarned?: number;
     fieldSize?: number;
     raceClass?: RaceClass;
     barrier?: number;
