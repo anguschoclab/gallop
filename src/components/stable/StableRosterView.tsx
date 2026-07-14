@@ -12,7 +12,7 @@ import { RosterFilterBar } from "./RosterFilterBar";
 import { cn } from "@/lib/cn";
 import type { Horse } from "@/game/types";
 import type { RegionalAward } from "@/core/awards/types";
-import { ChevronRight, Zap, Clock, Search, GitCompare, X } from "lucide-react";
+import { ChevronRight, Zap, Clock, Search, GitCompare, X, ChevronLeft } from "lucide-react";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 
 const MAX_COMPARE = 3;
@@ -29,6 +29,8 @@ interface StableRosterViewProps {
   };
   playerAwards: RegionalAward[];
   navigate: any;
+  compareIds?: string[];
+  onCompareIdsChange?: (ids: string[]) => void;
 }
 
 export function StableRosterView({
@@ -38,16 +40,33 @@ export function StableRosterView({
   counts,
   playerAwards,
   navigate,
+  compareIds: externalCompareIds,
+  onCompareIdsChange,
 }: StableRosterViewProps) {
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [internalSelectedIds, setInternalSelectedIds] = useState<string[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
 
+  const selectedIds = externalCompareIds ?? internalSelectedIds;
+
   const toggleSelect = (id: string) => {
-    setSelectedIds((prev) => {
+    const update = (prev: string[]) => {
       if (prev.includes(id)) return prev.filter((x) => x !== id);
       if (prev.length >= MAX_COMPARE) return prev;
       return [...prev, id];
-    });
+    };
+    if (onCompareIdsChange) {
+      onCompareIdsChange(update(selectedIds));
+    } else {
+      setInternalSelectedIds(update);
+    }
+  };
+
+  const setSelectedIds = (ids: string[]) => {
+    if (onCompareIdsChange) {
+      onCompareIdsChange(ids);
+    } else {
+      setInternalSelectedIds(ids);
+    }
   };
 
   const selectedHorses = useMemo(
@@ -312,10 +331,61 @@ export function StableRosterView({
 
       {/* Floating compare action bar */}
       {selectedIds.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 bg-slate-900 border border-gold/30 shadow-2xl rounded-lg px-4 py-3 animate-in slide-in-from-bottom-4 duration-200">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-cream/60">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 bg-slate-900 border border-gold/30 shadow-2xl rounded-lg px-4 py-3 animate-in slide-in-from-bottom-4 duration-200">
+          <span className="font-mono text-[10px] uppercase tracking-widest text-cream/60 whitespace-nowrap">
             {selectedIds.length}/{MAX_COMPARE} selected
           </span>
+          {/* Horse name chips with reorder controls */}
+          <div className="flex items-center gap-1.5">
+            {selectedIds.map((id, idx) => {
+              const h = horses.find((x) => x.id === id);
+              if (!h) return null;
+              return (
+                <div key={id} className="flex items-center gap-0.5 bg-white/5 rounded px-1.5 py-1">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-5 w-5 p-0 text-cream/40 hover:text-cream"
+                    disabled={idx === 0}
+                    onClick={() => {
+                      const next = [...selectedIds];
+                      [next[idx - 1], next[idx]] = [next[idx], next[idx - 1]];
+                      setSelectedIds(next);
+                    }}
+                    aria-label={`Move ${h.name} left`}
+                  >
+                    <ChevronLeft className="h-3 w-3" />
+                  </Button>
+                  <span className="text-[10px] font-mono font-bold text-cream/80 max-w-[80px] truncate">
+                    {h.name}
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-5 w-5 p-0 text-cream/40 hover:text-cream"
+                    disabled={idx === selectedIds.length - 1}
+                    onClick={() => {
+                      const next = [...selectedIds];
+                      [next[idx + 1], next[idx]] = [next[idx], next[idx + 1]];
+                      setSelectedIds(next);
+                    }}
+                    aria-label={`Move ${h.name} right`}
+                  >
+                    <ChevronRight className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-5 w-5 p-0 text-cream/40 hover:text-destructive"
+                    onClick={() => toggleSelect(id)}
+                    aria-label={`Remove ${h.name} from compare`}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
           <Button
             size="sm"
             className="gap-2 bg-gold text-slate-950 hover:bg-gold/90 font-bold uppercase text-[10px] tracking-widest"

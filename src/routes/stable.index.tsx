@@ -27,6 +27,7 @@ const stableSearchSchema = z.object({
   tendency: fallback(z.enum(["any", "front", "mid", "off"]), "any").default("any"),
   trip: fallback(z.enum(["any", "sprint", "mile", "route"]), "any").default("any"),
   surface: fallback(z.enum(["any", "Turf", "Dirt", "Synthetic"]), "any").default("any"),
+  compareIds: fallback(z.array(z.string()), []).default([]),
 });
 
 export const Route = createFileRoute("/stable/")({
@@ -35,7 +36,7 @@ export const Route = createFileRoute("/stable/")({
 });
 
 function StablePage() {
-  const { tab, status, rivalQ, rivalTier, view, tendency, trip, surface } = Route.useSearch();
+  const { tab, status, rivalQ, rivalTier, view, tendency, trip, surface, compareIds } = Route.useSearch();
   const navigate = Route.useNavigate();
   const horses = useHorses();
   const awards = useAwards();
@@ -199,6 +200,10 @@ function StablePage() {
             counts={counts}
             playerAwards={playerAwards}
             navigate={navigate}
+            compareIds={compareIds}
+            onCompareIdsChange={(ids) =>
+              navigate({ search: (prev: any) => ({ ...prev, compareIds: ids }) })
+            }
           />
         </TabsContent>
 

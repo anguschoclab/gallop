@@ -9,6 +9,7 @@ import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { getCurrentYear } from "@/core/race/schedule";
 import { GRADED_RACES_BY_TRIPLECROWN_KEY } from "@/data/gradedRaces";
+import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/constants";
 import type { Race, Horse } from "@/game/types";
 
 export function generateRaceHistoryImpact(
@@ -40,6 +41,11 @@ export function generateRaceHistoryImpact(
     };
   }
 
+  const prizeSplit = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
+  const purseEarned = position - 1 < prizeSplit.length
+    ? Math.round(race.purse * prizeSplit[position - 1])
+    : 0;
+
   return {
     id: generateUUID(rng),
     intentId: "",
@@ -58,6 +64,7 @@ export function generateRaceHistoryImpact(
       distance: race.distance,
       surface: race.graded?.surface,
       purse: race.purse,
+      purseEarned,
       fieldSize: 0,
       raceClass: race.raceClass,
       barrier: runner?.barrier,
