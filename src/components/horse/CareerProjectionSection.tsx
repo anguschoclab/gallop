@@ -37,6 +37,13 @@ export function CareerProjectionSection({ horse, horses }: CareerProjectionSecti
     { label: "Potential", value: String(horse.potential ?? 50) },
   ];
 
+  if (horse.stud?.atStud) {
+    factors.push({ label: "Stud Fee", value: formatCurrency(horse.stud.standingFee) });
+  }
+  if (horse.blueHenStatus) {
+    factors.push({ label: "Blue-Hen Score", value: String(horse.blueHenStatus.blueHenScore) });
+  }
+
   return (
     <section id="projection" className="space-y-4 pt-4">
       <div className="flex items-center gap-2 mb-2">

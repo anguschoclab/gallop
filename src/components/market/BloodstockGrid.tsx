@@ -99,10 +99,14 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
                 )}
               </button>
               {expandedId === h.id && (
-                <div className="bg-black/40 p-3 rounded border border-white/5">
+                <div className="bg-black/40 p-3 rounded border border-white/5 space-y-2">
                   <CareerValuationBreakdown
                     valuation={horseCareerValuation(h, Object.values(allHorses))}
                   />
+                  <p className="text-[10px] text-muted-foreground pt-1">
+                    Pre-career = yearling projection from pedigree &amp; potential · Post-career =
+                    breeding residual at prime reproductive age
+                  </p>
                 </div>
               )}
 
