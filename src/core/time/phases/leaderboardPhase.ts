@@ -10,6 +10,8 @@
 
 import type { PipelineContext } from "../pipeline";
 import { computeAllLeaderboards } from "@/core/breeding/leaderboardService";
+import { computeDamsireLeaderboard } from "@/core/breeding/damsireLeaderboard";
+import { computeBlueHenLeaderboard } from "@/core/breeding/blueHenLeaderboard";
 import { PHASE_ORDER_LEADERBOARD } from "@/constants";
 import { computeProgenyLeaderboards } from "@/core/breeding/progenyLeaderboards";
 import { identifyFounders, computeFounderInfluence } from "@/core/history/lineageCrawler";
@@ -45,6 +47,9 @@ export const leaderboardPhase = {
     );
 
     const horseLeaderboards = computeProgenyLeaderboards(horsesArray, newDay);
+
+    const damsireLeaderboard = computeDamsireLeaderboard(horsesArray, newDay);
+    const blueHenLeaderboard = computeBlueHenLeaderboard(horsesArray, newDay);
 
     // Update founder records once a season (30 days) to save performance
     let updatedFounders = state.founders || {};
@@ -106,6 +111,8 @@ export const leaderboardPhase = {
         ...state,
         sireLeaderboards: leaderboards,
         horseLeaderboards,
+        damsireLeaderboard,
+        blueHenLeaderboard,
         founders: updatedFounders,
         sireTrendHistory: trendHistory,
         leaderboardsUpdatedDay: newDay,

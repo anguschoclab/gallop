@@ -89,6 +89,76 @@ export type ProgenyRanking = {
   };
 };
 
+// ─── Damsire (Broodmare Sire) Leaderboard Types ───
+
+/**
+ * Analytics for a damsire (sire of dams) based on grandfoal performance.
+ * Tracks how well a stallion's daughters produce as broodmares.
+ */
+export type DamsireAnalytics = {
+  damsireId: string;
+  damsireName: string;
+  daughtersBred: number;
+  totalFoals: number;
+  stakesFoals: number;
+  g1Foals: number;
+  totalEarnings: number;
+  avgEarningsPerFoal: number;
+  blueHenScore: number;
+};
+
+export type DamsireRanking = {
+  damsireId: string;
+  damsireName: string;
+  rank: number;
+  value: number;
+  metrics: DamsireAnalytics;
+};
+
+export type DamsireLeaderboard = {
+  type: "damsire_rankings";
+  title: string;
+  description: string;
+  rankings: DamsireRanking[];
+  lastUpdated: number;
+};
+
+// ─── Blue Hen Mare Leaderboard Types ───
+
+/**
+ * Analytics for a broodmare based on her produce record.
+ * Uses the blueHenStatus field plus computed racing stats of her foals.
+ */
+export type MareAnalytics = {
+  mareId: string;
+  mareName: string;
+  foalsProduced: number;
+  stakesWinnersProduced: number;
+  g1WinnersProduced: number;
+  totalFoalEarnings: number;
+  avgFoalEarnings: number;
+  blueHenScore: number;
+  isBlueHen: boolean;
+};
+
+export type MareRanking = {
+  mareId: string;
+  mareName: string;
+  rank: number;
+  value: number;
+  metrics: MareAnalytics;
+};
+
+export type BlueHenLeaderboard = {
+  type: "blue_hen";
+  title: string;
+  description: string;
+  rankings: MareRanking[];
+  lastUpdated: number;
+};
+
+// ─── Progeny Leaderboard Types ───
+
 /**
  * Progeny leaderboard type
  */

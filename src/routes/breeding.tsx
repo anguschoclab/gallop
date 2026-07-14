@@ -13,6 +13,7 @@ import {
   BarChart2,
   Trophy,
   GitBranch,
+  Sparkles,
 } from "lucide-react";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { cn } from "@/lib/cn";
@@ -27,6 +28,8 @@ import { BredHorsesTab } from "@/components/breeding/BredHorsesTab";
 import { StallionsTab } from "@/components/breeding/StallionsTab";
 import { SireWatchTab } from "@/components/breeding/SireWatchTab";
 import { SireLeaderboardsTab } from "@/components/breeding/SireLeaderboardsTab";
+import { DamsireLeaderboardTab } from "@/components/breeding/DamsireLeaderboardTab";
+import { BlueHenLeaderboardTab } from "@/components/breeding/BlueHenLeaderboardTab";
 import { useTabParam } from "@/hooks/ui/useTabParam";
 
 const BREEDING_TABS = [
@@ -39,6 +42,8 @@ const BREEDING_TABS = [
   "stallions",
   "sire-watch",
   "sire-leaderboards",
+  "damsire-leaderboard",
+  "blue-hen-leaderboard",
 ] as const;
 
 export const Route = createFileRoute("/breeding")({
@@ -126,7 +131,15 @@ function BreedingPage() {
           </TabsTrigger>
           <TabsTrigger value="sire-leaderboards" className="gap-2">
             <Trophy className="h-4 w-4" />
-            Leaderboards
+            Sire Leaderboards
+          </TabsTrigger>
+          <TabsTrigger value="damsire-leaderboard" className="gap-2">
+            <Heart className="h-4 w-4" />
+            Broodmare Sires
+          </TabsTrigger>
+          <TabsTrigger value="blue-hen-leaderboard" className="gap-2">
+            <Sparkles className="h-4 w-4" />
+            Blue Hens
           </TabsTrigger>
         </TabsList>
 
@@ -164,6 +177,14 @@ function BreedingPage() {
 
         <TabsContent value="sire-leaderboards" className="space-y-4">
           <SireLeaderboardsTab />
+        </TabsContent>
+
+        <TabsContent value="damsire-leaderboard" className="space-y-4">
+          <DamsireLeaderboardTab />
+        </TabsContent>
+
+        <TabsContent value="blue-hen-leaderboard" className="space-y-4">
+          <BlueHenLeaderboardTab />
         </TabsContent>
       </Tabs>
     </div>

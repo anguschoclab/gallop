@@ -24,6 +24,8 @@ import type {
   SireTrendData,
   ProgenyLeaderboard,
   ProgenyLeaderboardType,
+  DamsireLeaderboard,
+  BlueHenLeaderboard,
 } from "@/core/breeding/leaderboardTypes";
 import type { Syndicate } from "@/core/breeding/types";
 import type { AnyIntent } from "@/core/resolver/intents";
@@ -94,6 +96,10 @@ export interface SystemsState {
   sireTrendHistory?: SireTrendData[];
   /** Day when leaderboards were last updated */
   leaderboardsUpdatedDay?: number;
+  /** Damsire (broodmare sire) leaderboard */
+  damsireLeaderboard?: DamsireLeaderboard;
+  /** Blue Hen mare leaderboard */
+  blueHenLeaderboard?: BlueHenLeaderboard;
 
   // Campaign planner system (optional)
   /** Active horse campaign plans */
