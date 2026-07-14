@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { SilkDot } from "@/components/SilkDot";
 import { useGame } from "@/game/store";
 import { useSeasonStandings } from "@/hooks/dashboard/useSeasonStandings";
@@ -107,84 +108,97 @@ export function SeasonStandingsWidget() {
           ))}
         </div>
 
-        {standings.length === 0 || (standings.length === 1 && standings[0].rangePrizeMoney === 0) ? (
+        {standings.length === 0 ? (
+          <div className="space-y-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-2 py-2">
+                <Skeleton className="w-6 h-6" />
+                <Skeleton className="h-4 flex-1 max-w-[180px]" />
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-5 w-20" />
+              </div>
+            ))}
+          </div>
+        ) : standings.length === 1 && standings[0].rangePrizeMoney === 0 ? (
           <p className="text-xs text-cream/30 italic text-center py-6">
             No prize money earned yet this season.
           </p>
         ) : (
           <div className="space-y-3">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="font-mono text-[9px] uppercase tracking-[0.2em] text-cream/40 border-b border-white/5">
-                  <th className="py-2 px-2 w-8 text-right">#</th>
-                  <th className="py-2 px-2 text-left">Stable</th>
-                  <th className="py-2 px-2 text-right">{RANGES.find((r) => r.days === rangeDays)?.label} Earnings</th>
-                  <th className="py-2 px-2 text-right">Trend</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {rows.map((s, i) => {
-                  if (!s) return null;
-                  const rank = s.isPlayer && !playerInTop ? playerRank : i + 1;
-                  const showDivider = s.isPlayer && !playerInTop && i === top10.length;
-                  return (
-                    <tr
-                      key={s.stableId}
-                      className={cn(
-                        "transition-colors cursor-pointer",
-                        s.isPlayer
-                          ? "bg-gold/10 hover:bg-gold/15"
-                          : "hover:bg-white/[0.02]",
-                        showDivider && "border-t-2 border-dashed border-white/10",
-                        selectedStableId === s.stableId && "ring-1 ring-gold/30",
-                      )}
-                      onClick={() => setSelectedStableId(s.stableId)}
-                    >
-                      <td
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="font-mono text-[9px] uppercase tracking-[0.2em] text-cream/40 border-b border-white/5">
+                    <th className="py-2 px-2 w-8 text-right">#</th>
+                    <th className="py-2 px-2 text-left">Stable</th>
+                    <th className="py-2 px-2 text-right">{RANGES.find((r) => r.days === rangeDays)?.label} Earnings</th>
+                    <th className="py-2 px-2 text-right hidden sm:table-cell">Trend</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {rows.map((s, i) => {
+                    if (!s) return null;
+                    const rank = s.isPlayer && !playerInTop ? playerRank : i + 1;
+                    const showDivider = s.isPlayer && !playerInTop && i === top10.length;
+                    return (
+                      <tr
+                        key={s.stableId}
                         className={cn(
-                          "py-2 px-2 text-right font-mono tabular-nums text-xs",
-                          rank === 1 ? "text-fame font-black" : "text-cream/50",
+                          "transition-colors cursor-pointer min-h-[44px]",
+                          s.isPlayer
+                            ? "bg-gold/10 hover:bg-gold/15"
+                            : "hover:bg-white/[0.02]",
+                          showDivider && "border-t-2 border-dashed border-white/10",
+                          selectedStableId === s.stableId && "ring-1 ring-gold/30",
                         )}
+                        onClick={() => setSelectedStableId(s.stableId)}
                       >
-                        {rank}
-                      </td>
-                      <td className="py-2 px-2">
-                        <div className="flex items-center gap-2">
-                          {s.silkColor && <SilkDot color={s.silkColor} size="sm" />}
-                          <span
-                            className={cn(
-                              "text-xs truncate max-w-[180px]",
-                              s.isPlayer
-                                ? "font-black text-gold"
-                                : "font-medium text-cream/80",
-                            )}
-                          >
-                            {s.name}
-                          </span>
-                          {!s.isPlayer && s.winsVsPlayer > 0 && (
-                            <Badge
-                              variant="outline"
-                              className="text-[8px] h-3.5 px-1 border-destructive/40 text-destructive"
-                              title="Recent wins against you"
-                            >
-                              ×{s.winsVsPlayer}
-                            </Badge>
+                        <td
+                          className={cn(
+                            "py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs",
+                            rank === 1 ? "text-fame font-black" : "text-cream/50",
                           )}
-                        </div>
-                      </td>
-                      <td className="py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/80">
-                        {formatCurrency(s.rangePrizeMoney)}
-                      </td>
-                      <td className="py-2 px-2">
-                        <div className="flex justify-end">
-                          <Sparkline data={s.sparkline} positive={s.isPlayer} />
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        >
+                          {rank}
+                        </td>
+                        <td className="py-2.5 sm:py-2 px-2">
+                          <div className="flex items-center gap-2">
+                            {s.silkColor && <SilkDot color={s.silkColor} size="sm" />}
+                            <span
+                              className={cn(
+                                "text-xs truncate max-w-[120px] sm:max-w-[180px]",
+                                s.isPlayer
+                                  ? "font-black text-gold"
+                                  : "font-medium text-cream/80",
+                              )}
+                            >
+                              {s.name}
+                            </span>
+                            {!s.isPlayer && s.winsVsPlayer > 0 && (
+                              <Badge
+                                variant="outline"
+                                className="text-[8px] h-3.5 px-1 border-destructive/40 text-destructive"
+                                title="Recent wins against you"
+                              >
+                                ×{s.winsVsPlayer}
+                              </Badge>
+                            )}
+                          </div>
+                        </td>
+                        <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/80">
+                          {formatCurrency(s.rangePrizeMoney)}
+                        </td>
+                        <td className="py-2.5 sm:py-2 px-2 hidden sm:table-cell">
+                          <div className="flex justify-end">
+                            <Sparkline data={s.sparkline} positive={s.isPlayer} />
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
 
             {selectedStable && <StableDetailsPanel stable={selectedStable} />}
           </div>

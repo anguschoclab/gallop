@@ -1,13 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
+import {
+  LeaderboardControlsBar,
+  LeaderboardEmpty,
+  LeaderboardSkeleton,
+} from "@/components/leaderboard/LeaderboardPrimitives";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 
 interface LeaderboardProps {
@@ -21,6 +19,18 @@ interface LeaderboardProps {
   onSortByChange: (val: "position" | "beyer" | "velocity") => void;
   onMinBeyerChange: (val: number) => void;
 }
+
+const SORT_OPTIONS = [
+  { value: "position", label: "Position" },
+  { value: "beyer", label: "Proj. Beyer" },
+  { value: "velocity", label: "Velocity" },
+];
+
+const FILTER_OPTIONS = [
+  { value: "all", label: "All runners" },
+  { value: "owned", label: "My horses" },
+  { value: "top5", label: "Top 5" },
+];
 
 export function Leaderboard({
   sorted,
@@ -37,29 +47,15 @@ export function Leaderboard({
     <div className="bg-broadcast-marquee rounded-lg p-3 space-y-3 backdrop-blur-md border border-white/5">
       <div>
         <p className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Live order</p>
-        <div className="grid grid-cols-2 gap-2">
-          <Select value={sortBy} onValueChange={(v) => onSortByChange(v as typeof sortBy)}>
-            <SelectTrigger className="h-8 text-xs bg-muted border-border text-foreground">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="position">Position</SelectItem>
-              <SelectItem value="beyer">Proj. Beyer</SelectItem>
-              <SelectItem value="velocity">Velocity</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={filter} onValueChange={(v) => onFilterChange(v as typeof filter)}>
-            <SelectTrigger className="h-8 text-xs bg-muted border-border text-foreground">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All runners</SelectItem>
-              <SelectItem value="owned">My horses</SelectItem>
-              <SelectItem value="top5">Top 5</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="mt-2">
+        <LeaderboardControlsBar
+          sortOptions={SORT_OPTIONS}
+          sortValue={sortBy}
+          onSortChange={(v) => onSortByChange(v as typeof sortBy)}
+          filterOptions={FILTER_OPTIONS}
+          filterValue={filter}
+          onFilterChange={(v) => onFilterChange(v as typeof filter)}
+        />
+        <div className="mt-2 px-3 sm:px-6">
           <label className="text-[10px] uppercase tracking-wide text-muted-foreground flex justify-between items-center mb-1">
             <span>
               Min <JargonTooltip term="Beyer">Beyer</JargonTooltip>
@@ -77,44 +73,43 @@ export function Leaderboard({
         </div>
       </div>
       <div className="space-y-1">
-        {sorted.map(({ r, beyer }) => (
-          <div
-            key={r.horseId}
-            className="flex items-center gap-2 text-sm py-1 border-b border-white/5 last:border-0"
-          >
-            <span className="w-5 text-muted-foreground tabular-nums">
-              {positionRank.get(r.horseId)}
-            </span>
+        {sorted.length === 0 ? (
+          <LeaderboardEmpty message="No runners match the current filters." />
+        ) : (
+          sorted.map(({ r, beyer }) => (
             <div
-              className="h-4 w-4 rounded-full border border-white/40 shadow-sm"
-              style={{ backgroundColor: r.silk }}
-            />
-            <Link
-              to="/stable/$horseId"
-              params={{ horseId: r.horseId }}
-              className={`flex-1 truncate hover:underline ${r.owned ? "font-bold text-broadcast-accent" : ""}`}
+              key={r.horseId}
+              className="flex items-center gap-2 text-sm py-1.5 sm:py-1 border-b border-white/5 last:border-0 min-h-[36px]"
             >
-              {r.name}
-            </Link>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-foreground tabular-nums font-bold">
-              {runnerOdds.get(r.horseId) ?? "N/A"}
-            </span>
-            {beyer !== null && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-broadcast-accent/20 text-broadcast-accent tabular-nums font-bold">
-                {beyer}
+              <span className="w-5 text-muted-foreground tabular-nums shrink-0">
+                {positionRank.get(r.horseId)}
               </span>
-            )}
-            {r.finishTime !== null && (
-              <span className="text-xs text-muted-foreground tabular-nums">
-                {r.finishTime.toFixed(1)}s
+              <div
+                className="h-4 w-4 rounded-full border border-white/40 shadow-sm shrink-0"
+                style={{ backgroundColor: r.silk }}
+              />
+              <Link
+                to="/stable/$horseId"
+                params={{ horseId: r.horseId }}
+                className={`flex-1 truncate hover:underline ${r.owned ? "font-bold text-broadcast-accent" : ""}`}
+              >
+                {r.name}
+              </Link>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-foreground tabular-nums font-bold shrink-0">
+                {runnerOdds.get(r.horseId) ?? "N/A"}
               </span>
-            )}
-          </div>
-        ))}
-        {sorted.length === 0 && (
-          <p className="text-xs text-muted-foreground italic py-2">
-            No runners match the current filters.
-          </p>
+              {beyer !== null && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-broadcast-accent/20 text-broadcast-accent tabular-nums font-bold shrink-0">
+                  {beyer}
+                </span>
+              )}
+              {r.finishTime !== null && (
+                <span className="text-xs text-muted-foreground tabular-nums shrink-0 hidden sm:inline">
+                  {r.finishTime.toFixed(1)}s
+                </span>
+              )}
+            </div>
+          ))
         )}
       </div>
     </div>

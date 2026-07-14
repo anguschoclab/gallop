@@ -1,70 +1,83 @@
 import { Link } from "@tanstack/react-router";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  LeaderboardControlsBar,
+  LeaderboardEmpty,
+  LeaderboardRow,
+  LeaderboardShell,
+  LeaderboardSkeleton,
+} from "@/components/leaderboard/LeaderboardPrimitives";
+import { useLeaderboardControls } from "@/hooks/leaderboard/useLeaderboardControls";
 
-export function LeaderboardTable({ leaderboard, icon, valueFormatter }: any) {
-  if (!leaderboard || !leaderboard.rankings || leaderboard.rankings.length === 0) {
+interface LeaderboardTableProps {
+  leaderboard: any;
+  icon: React.ReactNode;
+  valueFormatter: (val: any) => string;
+  valueLabel?: string;
+}
+
+const SORT_OPTIONS = [
+  { value: "rank", label: "Rank" },
+  { value: "value", label: "Value" },
+  { value: "wins", label: "Wins" },
+  { value: "starts", label: "Starts" },
+];
+
+const SORT_FNS: Record<string, (a: any, b: any) => number> = {
+  rank: (a, b) => a.rank - b.rank,
+  value: (a, b) => b.value - a.value,
+  wins: (a, b) => b.metrics.wins - a.metrics.wins,
+  starts: (a, b) => b.metrics.starts - a.metrics.starts,
+};
+
+export function LeaderboardTable({ leaderboard, icon, valueFormatter, valueLabel = "Value" }: LeaderboardTableProps) {
+  const { sortValue, setSortValue, processed } = useLeaderboardControls<any>({
+    items: leaderboard?.rankings ?? [],
+    sortOptions: SORT_OPTIONS,
+    sortFns: SORT_FNS,
+    defaultSort: "rank",
+  });
+
+  if (!leaderboard) {
+    return <LeaderboardSkeleton rows={5} />;
+  }
+
+  if (!leaderboard.rankings || leaderboard.rankings.length === 0) {
     return (
-      <Card className="bg-card border-white/5">
-        <CardContent className="py-12 text-center text-muted-foreground uppercase font-black text-xs tracking-widest">
-          No records found yet. Keep racing to populate the leaderboards.
-        </CardContent>
-      </Card>
+      <LeaderboardEmpty message="No records found yet. Keep racing to populate the leaderboards." />
     );
   }
 
   return (
-    <Card className="bg-card border-white/5 overflow-hidden">
-      <CardHeader className="bg-muted/30 border-b border-white/5">
-        <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-          {icon}
-          {leaderboard.title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-muted/50 text-[10px] uppercase font-black tracking-widest text-muted-foreground border-b border-white/5">
-              <tr>
-                <th className="px-6 py-3 w-16">Rank</th>
-                <th className="px-6 py-3">Horse</th>
-                <th className="px-6 py-3">Sire</th>
-                <th className="px-6 py-3 text-right">Metric</th>
-                <th className="px-6 py-3 text-right">Wins/Starts</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {leaderboard.rankings.map((entry: any) => (
-                <tr key={entry.horseId} className="hover:bg-primary/5 transition-colors group">
-                  <td className="px-6 py-4 font-black italic text-primary group-hover:text-gold transition-colors tabular-nums">
-                    #{entry.rank}
-                  </td>
-                  <td className="px-6 py-4">
-                    <Link
-                      to="/stable/$horseId"
-                      params={{ horseId: entry.horseId }}
-                      className="font-bold uppercase tracking-tight hover:text-gold transition-colors"
-                    >
-                      {entry.horseName}
-                    </Link>
-                    <div className="text-[10px] text-muted-foreground uppercase tracking-widest">
-                      Age {entry.metrics.age}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-xs text-muted-foreground">
-                    {entry.sireName || "Unknown"}
-                  </td>
-                  <td className="px-6 py-4 text-right font-black tabular-nums text-primary group-hover:text-gold transition-colors">
-                    {valueFormatter(entry.value)}
-                  </td>
-                  <td className="px-6 py-4 text-right text-xs tabular-nums text-muted-foreground">
-                    {entry.metrics.wins} / {entry.metrics.starts}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </CardContent>
-    </Card>
+    <LeaderboardShell title={leaderboard.title} icon={icon}>
+      <LeaderboardControlsBar
+        sortOptions={SORT_OPTIONS}
+        sortValue={sortValue}
+        onSortChange={setSortValue}
+      />
+      {processed.map((entry: any) => (
+        <LeaderboardRow
+          key={entry.horseId}
+          rank={entry.rank}
+          name={
+            <Link
+              to="/stable/$horseId"
+              params={{ horseId: entry.horseId }}
+              className="font-bold uppercase tracking-tight hover:text-gold transition-colors"
+            >
+              {entry.horseName}
+            </Link>
+          }
+          meta={`Age ${entry.metrics.age} · ${entry.sireName || "Unknown"}`}
+          badges={
+            <Badge variant="outline" className="text-xs">
+              {entry.metrics.wins}W / {entry.metrics.starts}S
+            </Badge>
+          }
+          value={valueFormatter(entry.value)}
+          valueLabel={valueLabel}
+        />
+      ))}
+    </LeaderboardShell>
   );
 }

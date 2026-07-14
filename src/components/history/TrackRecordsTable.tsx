@@ -1,77 +1,90 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Timer } from "lucide-react";
 import { formatTime } from "@/core/common/formatting";
+import {
+  LeaderboardControlsBar,
+  LeaderboardEmpty,
+  LeaderboardRow,
+  LeaderboardShell,
+} from "@/components/leaderboard/LeaderboardPrimitives";
+import { useLeaderboardControls } from "@/hooks/leaderboard/useLeaderboardControls";
+
+const SORT_OPTIONS = [
+  { value: "track", label: "Track Name" },
+  { value: "time", label: "Time (Fastest)" },
+  { value: "distance", label: "Distance" },
+  { value: "year", label: "Year" },
+];
+
+const FILTER_OPTIONS = [
+  { value: "all", label: "All" },
+  { value: "Turf", label: "Turf" },
+  { value: "Dirt", label: "Dirt" },
+  { value: "Synthetic", label: "Synthetic" },
+];
+
+const SORT_FNS: Record<string, (a: any, b: any) => number> = {
+  track: (a, b) => a.trackName.localeCompare(b.trackName),
+  time: (a, b) => a.time - b.time,
+  distance: (a, b) => a.distance - b.distance,
+  year: (a, b) => b.year - a.year,
+};
+
+const FILTER_FNS: Record<string, (item: any) => boolean> = {
+  all: () => true,
+  Turf: (r) => r.surface === "Turf",
+  Dirt: (r) => r.surface === "Dirt",
+  Synthetic: (r) => r.surface === "Synthetic",
+};
+
+const surfaceColor = (surface: string) => {
+  if (surface === "Turf") return "bg-green-500/20 text-green-500";
+  if (surface === "Dirt") return "bg-amber-900/30 text-amber-600";
+  return "bg-blue-500/20 text-blue-500";
+};
 
 export function TrackRecordsTable({ records }: { records: any[] }) {
+  const { sortValue, setSortValue, filterValue, setFilterValue, processed } = useLeaderboardControls<any>({
+    items: records,
+    sortOptions: SORT_OPTIONS,
+    filterOptions: FILTER_OPTIONS,
+    sortFns: SORT_FNS,
+    filterFns: FILTER_FNS,
+    defaultSort: "track",
+    defaultFilter: "all",
+  });
+
   if (records.length === 0) {
     return (
-      <Card className="bg-card border-white/5">
-        <CardContent className="py-12 text-center text-muted-foreground uppercase font-black text-xs tracking-widest">
-          No track records set yet. Records are established by winning horses.
-        </CardContent>
-      </Card>
+      <LeaderboardEmpty message="No track records set yet. Records are established by winning horses." />
     );
   }
 
   return (
-    <Card className="bg-card border-white/5 overflow-hidden">
-      <CardHeader className="bg-muted/30 border-b border-white/5">
-        <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-          <Timer className="text-primary" />
-          All-Time Track Records
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-muted/50 text-[10px] uppercase font-black tracking-widest text-muted-foreground border-b border-white/5">
-              <tr>
-                <th className="px-6 py-3">Track</th>
-                <th className="px-6 py-3">Surface</th>
-                <th className="px-6 py-3">Distance</th>
-                <th className="px-6 py-3 text-right">Time</th>
-                <th className="px-6 py-3">Holder</th>
-                <th className="px-6 py-3 text-right">Year</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {records.map((record: any) => (
-                <tr
-                  key={`${record.trackId}_${record.surface}_${record.distance}`}
-                  className="hover:bg-primary/5 transition-colors group"
-                >
-                  <td className="px-6 py-4 font-bold uppercase tracking-tight group-hover:text-gold transition-colors">
-                    {record.trackName}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`text-[10px] px-2 py-0.5 rounded font-black uppercase tracking-widest ${
-                        record.surface === "Turf"
-                          ? "bg-green-500/20 text-green-500"
-                          : record.surface === "Dirt"
-                            ? "bg-amber-900/30 text-amber-600"
-                            : "bg-blue-500/20 text-blue-500"
-                      }`}
-                    >
-                      {record.surface}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-xs tabular-nums font-bold">{record.distance}m</td>
-                  <td className="px-6 py-4 text-right font-black tabular-nums text-primary group-hover:text-gold transition-colors">
-                    {formatTime(record.time)}
-                  </td>
-                  <td className="px-6 py-4 text-xs font-bold uppercase tracking-tighter">
-                    {record.horseName}
-                  </td>
-                  <td className="px-6 py-4 text-right text-xs tabular-nums text-muted-foreground">
-                    Year {record.year}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </CardContent>
-    </Card>
+    <LeaderboardShell title="All-Time Track Records" icon={<Timer className="h-4 w-4 text-primary" />}>
+      <LeaderboardControlsBar
+        sortOptions={SORT_OPTIONS}
+        sortValue={sortValue}
+        onSortChange={setSortValue}
+        filterOptions={FILTER_OPTIONS}
+        filterValue={filterValue}
+        onFilterChange={setFilterValue}
+      />
+      {processed.map((record: any, index: number) => (
+        <LeaderboardRow
+          key={`${record.trackId}_${record.surface}_${record.distance}`}
+          rank={index + 1}
+          name={record.trackName}
+          meta={`${record.distance}m · ${record.horseName} · Year ${record.year}`}
+          badges={
+            <Badge variant="outline" className={`text-xs ${surfaceColor(record.surface)}`}>
+              {record.surface}
+            </Badge>
+          }
+          value={formatTime(record.time)}
+          valueLabel="Time"
+        />
+      ))}
+    </LeaderboardShell>
   );
 }
