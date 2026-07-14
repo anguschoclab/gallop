@@ -121,7 +121,7 @@ export function FacilityCategory({
                           key={workout}
                           className="px-2 py-0.5 bg-black/40 border border-white/5 text-[9px] font-mono text-cream/60 uppercase tracking-tighter rounded-sm"
                         >
-                          {workout.replace("_", " ")}
+                          {workout.replace(/_/g, " ")}
                         </div>
                       ))}
                     </div>
