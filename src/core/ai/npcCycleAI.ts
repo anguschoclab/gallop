@@ -46,6 +46,7 @@ export interface StableAIState {
   winsAgainstPlayer: number; // Streak tracking for unseating
   regionalPrestige: Record<string, number>; // Prestige per region
   rivalryAnnouncedDay?: number; // Day rivalry was announced (prevents duplicate news)
+  introPublishedDay?: number; // Day stable intro was published (prevents duplicate intro news)
 
   // Subsystem-specific AI states
   trainingAI?: TrainingAIState;

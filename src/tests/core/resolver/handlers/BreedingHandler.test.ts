@@ -16,7 +16,7 @@ describe("BreedingHandler", () => {
   it("update_stud_fee sets horse.stud.standingFee", () => {
     const handler = new BreedingHandler();
     const state = {
-      horses: h2r([{ id: "horse-1", name: "Star", stud: { standingFee: 5000, atStud: true } }] as unknown as Horse[])),
+      horses: h2r([{ id: "horse-1", name: "Star", stud: { standingFee: 5000, atStud: true } }] as unknown as Horse[]),
       pregnancies: [],
     } as unknown as GameState;
 
@@ -41,7 +41,7 @@ describe("BreedingHandler", () => {
   it("update_stud_fee does nothing if horse has no stud career", () => {
     const handler = new BreedingHandler();
     const state = {
-      horses: h2r([{ id: "horse-1", name: "Star" }] as unknown as Horse[])),
+      horses: h2r([{ id: "horse-1", name: "Star" }] as unknown as Horse[]),
       pregnancies: [],
     } as unknown as GameState;
 
@@ -66,7 +66,7 @@ describe("BreedingHandler", () => {
   it("stud_career sets horse.stud", () => {
     const handler = new BreedingHandler();
     const state = {
-      horses: h2r([{ id: "horse-1", name: "Star" }] as unknown as Horse[])),
+      horses: h2r([{ id: "horse-1", name: "Star" }] as unknown as Horse[]),
       pregnancies: [],
     } as unknown as GameState;
 
@@ -220,7 +220,7 @@ describe("BreedingHandler", () => {
   it("mare_foaling_update sets fields on horse", () => {
     const handler = new BreedingHandler();
     const state = {
-      horses: h2r([{ id: "horse-1", name: "Star" }] as unknown as Horse[])),
+      horses: h2r([{ id: "horse-1", name: "Star" }] as unknown as Horse[]),
       pregnancies: [],
     } as unknown as GameState;
 
@@ -267,7 +267,7 @@ describe("BreedingHandler", () => {
   it("blue_hen_status (underscore) updates horse.blueHenStatus — regression test for type string fix", () => {
     const handler = new BreedingHandler();
     const state = {
-      horses: h2r([{ id: "horse-1", name: "Star" }] as unknown as Horse[])),
+      horses: h2r([{ id: "horse-1", name: "Star" }] as unknown as Horse[]),
       pregnancies: [],
     } as unknown as GameState;
 

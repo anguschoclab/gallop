@@ -32,14 +32,14 @@ const mockTrialResult = {
       horses: h2r([
         { horseId: "h1", velocity: 10 },
         { horseId: "h2", velocity: 9 },
-      ] as unknown as Horse[])),
+      ] as unknown as Horse[]),
     },
     {
       t: 2.0,
       horses: h2r([
         { horseId: "h1", velocity: 12 },
         { horseId: "h2", velocity: 11 },
-      ] as unknown as Horse[])),
+      ] as unknown as Horse[]),
     },
   ],
   result: [
@@ -315,7 +315,7 @@ describe("usePrivateTrial", () => {
               horses: h2r([
                 { horseId: "h1", velocity: 10 },
                 { horseId: "h2", velocity: 9 },
-              ] as unknown as Horse[])),
+              ] as unknown as Horse[]),
             },
           ],
           result: [

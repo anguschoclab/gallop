@@ -24,7 +24,7 @@ describe("RacingHandler", () => {
   it("race_entry adds entry to race", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: h2r([{ id: "h1", name: "Star", stableId: "" }] as unknown as Horse[])),
+      horses: h2r([{ id: "h1", name: "Star", stableId: "" }] as unknown as Horse[]),
       races: r2r([{ id: "race-1", entries: [], entryFee: 1000 }]),
     } as unknown as GameState;
 
@@ -231,7 +231,7 @@ describe("RacingHandler", () => {
   it("claiming transfers horse ownership", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: h2r([{ id: "h1", name: "Star", stableId: "stable-1", owned: false }] as unknown as Horse[])),
+      horses: h2r([{ id: "h1", name: "Star", stableId: "stable-1", owned: false }] as unknown as Horse[]),
       races: {},
     } as unknown as GameState;
 

@@ -28,7 +28,7 @@ beforeEach(() => {
       { id: "r2", graded: { track: "Epsom", grade: "G2" }, resolved: false, day: 10 },
       { id: "r3", graded: { track: "Churchill Downs", grade: "G1" }, resolved: false, day: 10 },
       { id: "r4", resolved: false, day: 10 },
-    ] as unknown as Race[])),
+    ] as unknown as Race[]),
     day: 1,
   };
 });

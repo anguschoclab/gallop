@@ -42,14 +42,14 @@ describe("utils", () => {
       const result = groupRacesByDate(races);
 
       expect(result).toEqual([
-        { day: 1, races: r2r([{ id: 4, day: 1 }] as unknown as Race[])) },
-        { day: 2, races: r2r([{ id: 2, day: 2 }] as unknown as Race[])) },
+        { day: 1, races: r2r([{ id: 4, day: 1 }] as unknown as Race[]) },
+        { day: 2, races: r2r([{ id: 2, day: 2 }] as unknown as Race[]) },
         {
           day: 5,
           races: r2r([
             { id: 1, day: 5 },
             { id: 3, day: 5 },
-          ] as unknown as Race[])),
+          ] as unknown as Race[]),
         },
       ]);
     });

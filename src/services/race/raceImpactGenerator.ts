@@ -6,7 +6,7 @@ import type {
   NewsImpact,
 } from "@/core/resolver/impacts/index";
 import { computeSectionalSplits } from "@/core/race/sectionalAnalysis";
-import { generateRaceNews } from "@/services/narrative/newsGenerator";
+import { generateRaceNews, generateG1SpotlightNews, generateFollowUpRaceNews } from "@/services/narrative/newsGenerator";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
@@ -231,6 +231,39 @@ export function generateRaceImpacts({
           type: "news_item",
           newsItem,
         } as NewsImpact);
+      }
+
+      // 10b. Narrative: G1 Spotlight News for elite-rated G1 winners
+      const spotlightNews = generateG1SpotlightNews(race, result, Array.from(horseMap.values()), newDay, rng);
+      if (spotlightNews) {
+        impacts.push({
+          id: generateUUID(rng),
+          intentId: "",
+          day: newDay,
+          phase: "raceResolution",
+          logLevel: "always",
+          type: "news_item",
+          newsItem: spotlightNews,
+        } as NewsImpact);
+      }
+
+      // 10c. Narrative: Follow-up news for player-owned G1/G2 podium finishers
+      for (const r of ownedHorses) {
+        if (r.position < 1 || r.position > 3) continue;
+        const horse = horseMap.get(r.horseId);
+        if (!horse) continue;
+        const followUpNews = generateFollowUpRaceNews(race, horse, r.position, newDay, rng);
+        if (followUpNews) {
+          impacts.push({
+            id: generateUUID(rng),
+            intentId: "",
+            day: newDay,
+            phase: "raceResolution",
+            logLevel: "always",
+            type: "news_item",
+            newsItem: followUpNews,
+          } as NewsImpact);
+        }
       }
     }
 

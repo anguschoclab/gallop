@@ -1,4 +1,5 @@
 import { generateUUID } from "@/core/uuid";
+import { calculateOverallRating } from "@/core/horse/stats";
 import type { NewsItem, NewsCategory, NewsImportance } from "@/services/narrative/newsTypes";
 import type { Race, Horse } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
@@ -318,6 +319,203 @@ export function generateFlavorNews(day: number, rng: Rng): NewsItem {
       day,
       importance: "low",
       ...story,
+    },
+    rng,
+  );
+}
+
+/**
+ * Generates a spotlight news item when a horse with an overall rating of 90+
+ * wins a Grade 1 race. The news highlights the horse's achievement and mentions
+ * its overall rating.
+ *
+ * @param {Race} race - The completed G1 race.
+ * @param {Array<{horseId: string, position: number}>} result - Race finishing positions.
+ * @param {Horse[] | Map<string, Horse>} horses - Collection of horses for looking up winner.
+ * @param {number} day - The current simulation day.
+ * @param {Rng} rng - Seeded random number generator.
+ * @returns {NewsItem | null} A spotlight news item if conditions are met, otherwise null.
+ */
+export function generateG1SpotlightNews(
+  race: Race,
+  result: { horseId: string; position: number }[],
+  horses: Horse[] | Map<string, Horse>,
+  day: number,
+  rng: Rng,
+): NewsItem | null {
+  if (race.graded?.grade !== "G1") return null;
+
+  const winnerEntry = result.find((r) => r.position === 1);
+  if (!winnerEntry) return null;
+
+  const winner =
+    horses instanceof Map
+      ? (horses as Map<string, Horse>).get(winnerEntry.horseId)
+      : horses.find((h) => h.id === winnerEntry.horseId);
+  if (!winner) return null;
+
+  const overallRating = calculateOverallRating(winner);
+  if (overallRating < 90) return null;
+
+  const headlines = [
+    `${winner.name} Proves Elite Status with ${overallRating}-Rated G1 Triumph`,
+    `Rating ${overallRating}: ${winner.name} Dominates ${race.name}`,
+    `${overallRating}-Rated ${winner.name} Captures G1 Glory in ${race.name}`,
+    `Superstar Status: ${winner.name} (${overallRating} OVR) Wins ${race.name}`,
+    `${winner.name} Lives Up to ${overallRating} Rating in ${race.name} Masterclass`,
+    `Elite Company: ${winner.name} and His ${overallRating} Rating Shine in ${race.name}`,
+    `No Doubts About ${overallRating}: ${winner.name} Delivers in ${race.name}`,
+    `${winner.name} (${overallRating} OVR) Proves the Numbers Right in ${race.name}`,
+    `Champion Calibre: ${winner.name} Brings ${overallRating} Rating to ${race.name} Victory`,
+    `The ${overallRating}-Rated King: ${winner.name} Rules the ${race.name}`,
+    `${winner.name} Shows Why the ${overallRating} Rating Fits in ${race.name}`,
+    `G1 Glory for ${overallRating}-Rated Phenomenon ${winner.name}`,
+  ];
+
+  const bodies = [
+    `With an overall rating of ${overallRating}, ${winner.name} proved exactly why they belong at the pinnacle of the sport, capturing the ${race.name} with authority and cementing their status as one of the game's true elite.`,
+    `${winner.name} entered the ${race.name} carrying a lofty ${overallRating} overall rating — and left having justified every point of it with a breathtaking performance that left rivals in the dust.`,
+    `It was a championship-calibre display from ${winner.name}, whose ${overallRating} overall rating marks them as a once-in-a-generation talent. The ${race.name} was their stage, and they owned every inch of it.`,
+    `The ${overallRating}-rated ${winner.name} delivered a performance worthy of the number in the ${race.name}, proving that elite ratings are not just numbers but a reflection of true greatness on the track.`,
+    `Few horses carry a ${overallRating} overall rating, and ${winner.name} showed exactly why they deserve it, sweeping aside the competition in the ${race.name} with a display of raw power and class.`,
+    `${winner.name} and their ${overallRating} overall rating were the story of the ${race.name}, as the superstar left no doubt about who is the dominant force in Grade 1 racing right now.`,
+    `A ${overallRating} overall rating doesn't come easy, and ${winner.name} made it look earned with a tour de force in the ${race.name} that will be replayed for years to come.`,
+    `The numbers don't lie: ${winner.name} carries an ${overallRating} overall rating, and after that performance in the ${race.name}, nobody is questioning the math.`,
+    `In a race full of champions, ${winner.name} stood apart — a horse whose ${overallRating} overall rating marks them as something special, and whose ${race.name} victory was a masterclass in every sense.`,
+    `${winner.name} has long been regarded as one of the best, and their ${overallRating} overall rating was on full display in the ${race.name}, where they simply outclassed a field of elite contenders.`,
+    `With the ${race.name} now in the books, ${winner.name} and that remarkable ${overallRating} overall rating will be the talk of the racing world for weeks. This is a horse at the absolute peak of their powers.`,
+    `An ${overallRating} overall rating. A Grade 1 victory in the ${race.name}. ${winner.name} is not just living up to expectations — they're redefining them.`,
+  ];
+
+  const headline = rng.pick(headlines);
+  const body = rng.pick(bodies);
+
+  return createNewsItem(
+    {
+      day,
+      category: "racing",
+      importance: "high",
+      headline,
+      body,
+      entityLinks: [
+        { type: "horse", id: winner.id, name: winner.name },
+        { type: "race", id: race.id, name: race.name },
+      ],
+    },
+    rng,
+  );
+}
+
+/**
+ * Generates a weekly flavor news item that references world data.
+ * Injects the top-earning horse's name into the body for world-awareness.
+ */
+export function generateWeeklyFlavorNews(horses: Horse[], day: number, rng: Rng): NewsItem {
+  const topEarner = horses.length > 0
+    ? [...horses].sort((a, b) => (b.lifetimeEarnings ?? 0) - (a.lifetimeEarnings ?? 0))[0]
+    : null;
+
+  const headlines = [
+    `Week in Review: The State of Racing`,
+    `Weekly Wrap: Talking Points from the Track`,
+    `This Week in Racing: Stories and Speculation`,
+    `The Weekly Digest: News from the Backstretch`,
+    `Seven Days of Racing: What We Learned`,
+    `Weekly Roundup: Horses, Handlers, and Headlines`,
+    `The Track Beat: Weekly Racing Bulletin`,
+    `From the Paddock: Weekly Racing Notes`,
+  ];
+
+  const bodiesWithHorse = topEarner
+    ? [
+        `It's been a busy week on the racing circuit, and ${topEarner.name} continues to lead the earnings charts with $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} in lifetime earnings. The question on everyone's mind: what's next for the season's top earner?`,
+        `As the week wraps up, all eyes remain on ${topEarner.name}, whose career earnings of $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} place them at the top of the leaderboard. Connections are plotting their next move carefully.`,
+        `The weekly wrap focuses on ${topEarner.name}, the sport's leading earner with $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} in the bank. Will we see them in action again soon, or is a well-earned rest on the cards?`,
+        `Track insiders are buzzing about ${topEarner.name} this week. With $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} in career earnings, the pressure is on to maintain that winning momentum.`,
+        `It was a quieter week on the racing front, but ${topEarner.name} remains the talk of the town. The leading earner with $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} is reportedly in fine form at home.`,
+        `The backstretch chatter this week centered on ${topEarner.name}, whose $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} in earnings makes them the horse to beat. Pundits are already speculating about their next target.`,
+        `As another week passes, ${topEarner.name} sits atop the earnings tree with $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()}. The racing world waits with bated breath for their next appearance.`,
+        `From morning workouts to evening gallops, the week belonged to ${topEarner.name} in the headlines. With $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} in career earnings, every move is scrutinized.`,
+      ]
+    : [];
+
+  const genericBodies = [
+    `It's been a quiet week on the racing front, with trainers using the lull to fine-tune their charges ahead of upcoming stakes engagements. The backstretch is humming with quiet anticipation.`,
+    `A relatively uneventful week draws to a close, though seasoned observers know that calm before the storm often precedes the biggest racing days. Connections are biding their time.`,
+    `The weekly roundup finds the racing world in a contemplative mood. With no major stakes contested, attention turns to morning works and the promise of future contests.`,
+    `Another week in the books, and the racing community is already looking ahead. Trainers report good weather conditions and healthy strings as the season progresses.`,
+    `It was a steady week on the circuit with little fanfare, but the groundwork being laid in morning workouts will soon pay dividends on race day.`,
+    `The racing world caught its breath this week, with a lull in major action giving handlers a chance to assess their options and plan their next moves.`,
+    `A peaceful week at the track, all things considered. The quiet routines of grooming, galloping, and grazing continue as the sport awaits its next big moment.`,
+    `No fireworks this week, but the steady rhythm of the racing life carries on. The best is yet to come, and everyone on the backstretch knows it.`,
+  ];
+
+  const bodies = topEarner ? bodiesWithHorse : genericBodies;
+
+  return createNewsItem(
+    {
+      day,
+      category: "flavor",
+      importance: "low",
+      headline: rng.pick(headlines),
+      body: rng.pick(bodies),
+    },
+    rng,
+  );
+}
+
+/**
+ * Generates a follow-up news item for a player-owned horse that finished
+ * in the top 3 of a G1 or G2 race. The article discusses what might be next.
+ */
+export function generateFollowUpRaceNews(
+  race: Race,
+  horse: Horse,
+  position: number,
+  day: number,
+  rng: Rng,
+): NewsItem | null {
+  const grade = race.graded?.grade;
+  if (grade !== "G1" && grade !== "G2") return null;
+  if (position < 1 || position > 3) return null;
+  if (horse.stableId) return null;
+
+  const positionLabel = position === 1 ? "victory" : position === 2 ? "runner-up finish" : "third-place finish";
+  const positionLabelShort = position === 1 ? "win" : position === 2 ? "second" : "third";
+
+  const headlines = [
+    `What's Next for ${horse.name} After ${race.name}?`,
+    `${horse.name} Shines in ${race.name} — Connections Plot Next Move`,
+    `After ${race.name}: ${horse.name}'s Road Ahead`,
+    `${horse.name} Impresses in ${race.name}, Eyes Bigger Prizes`,
+    `The Future Looks Bright for ${horse.name} Post-${race.name}`,
+    `${horse.name}'s ${race.name} Performance: Where to Now?`,
+    `Post-${race.name} Plans for ${horse.name} Taking Shape`,
+    `${horse.name} Turns Heads in ${race.name} — Next Target Awaited`,
+  ];
+
+  const bodies = [
+    `Following a ${positionLabel} in the ${race.name} (${grade}), ${horse.name} has the racing world speculating about the next target. Connections are reportedly weighing several options for the horse's next start.`,
+    `${horse.name}'s ${positionLabelShort} in the ${grade} ${race.name} has cemented their reputation as a top-class performer. The question now is whether to step up in distance, drop back, or tackle another grade-one contest.`,
+    `The dust has barely settled on the ${race.name}, but ${horse.name}'s camp is already mapping out the next chapter. A ${positionLabel} in a ${grade} race opens plenty of doors for the rest of the season.`,
+    `After a ${positionLabel} in the ${race.name}, ${horse.name} is firmly in the spotlight. Trainers are keeping their cards close to their chest, but the racing public is eager to see what comes next.`,
+    `${horse.name} proved their mettle with a ${positionLabel} in the ${grade} ${race.name}. With confidence high, the team is considering all options — from a well-earned rest to another crack at top-level competition.`,
+    `A ${positionLabel} in the ${race.name} (${grade}) has put ${horse.name} in the conversation for the season's remaining big prizes. The next entry decision could define the campaign.`,
+    `The ${race.name} is in the books, and ${horse.name}'s ${positionLabel} has fans and pundits alike looking ahead. Will connections target another ${grade}, or test the waters at the highest level?`,
+    `${horse.name} came away from the ${race.name} with a ${positionLabel}, and the racing world is watching closely. The horse's next start could be the defining moment of the season.`,
+  ];
+
+  return createNewsItem(
+    {
+      day,
+      category: "racing",
+      importance: "medium",
+      headline: rng.pick(headlines),
+      body: rng.pick(bodies),
+      entityLinks: [
+        { type: "horse", id: horse.id, name: horse.name },
+        { type: "race", id: race.id, name: race.name },
+      ],
     },
     rng,
   );

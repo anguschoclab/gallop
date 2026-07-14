@@ -346,3 +346,52 @@ export function generateRivalryEscalationNews(
     rng,
   );
 }
+
+/**
+ * Generate a stable intro news item. Used for retroactive introductions
+ * when a rivalry emerges and the stable was never previously introduced.
+ *
+ * @param stable - The stable to introduce
+ * @param day - Current simulation day
+ * @param rng - Seeded RNG for deterministic selection
+ * @returns A stable intro NewsItem
+ */
+export function generateStableIntroNews(stable: Stable, day: number, rng: Rng): NewsItem {
+  const country = stable.country ?? "parts unknown";
+  const description = stable.description ?? "a stable with a reputation that precedes it";
+  const tier = stable.tier ?? "mid";
+
+  const headlines = [
+    `Who Is ${stable.name}?`,
+    `Stable Profile: ${stable.name}`,
+    `Getting to Know ${stable.name}`,
+    `Inside ${stable.name}`,
+    `Meet the Competition: ${stable.name}`,
+    `Stable Spotlight: ${stable.name}`,
+    `${stable.name}: A Closer Look`,
+    `Introducing ${stable.name}`,
+  ];
+
+  const bodies = [
+    `Based in ${country}, ${stable.name} is operated by ${stable.owner}. ${description} As a ${tier} tier operation, they're a name worth remembering.`,
+    `${stable.name}, led by ${stable.owner}, hails from ${country}. ${description} Their ${tier} tier status marks them as a serious player in the racing world.`,
+    `From ${country} comes ${stable.name}, the brainchild of ${stable.owner}. ${description} This ${tier} tier stable is one to watch.`,
+    `${stable.owner}'s ${stable.name} is a name that commands respect in ${country}. ${description} As a ${tier} tier operation, they mean business.`,
+    `Operating out of ${country}, ${stable.name} under ${stable.owner} has built a growing reputation. ${description} Their ${tier} tier standing speaks for itself.`,
+    `${stable.name} — ${stable.owner}'s pride and joy from ${country}. ${description} A ${tier} tier stable with ambitions to match.`,
+    `The story of ${stable.name} is one of ambition and grit. Founded by ${stable.owner} in ${country}, ${description} Their ${tier} tier status cements their place among the racing elite.`,
+    `In the competitive world of ${country} racing, ${stable.name} stands tall. ${stable.owner}'s operation is defined by ${description} A ${tier} tier stable through and through.`,
+  ];
+
+  return buildRivalryNews(
+    headlines,
+    bodies,
+    {
+      day,
+      category: "stable",
+      importance: "low",
+      entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
+    },
+    rng,
+  );
+}

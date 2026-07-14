@@ -12,7 +12,7 @@ import type { PipelineContext } from "../pipeline";
 import { createExpense } from "@/core/expenses";
 import { createTransaction } from "@/core/transactions";
 import { calculateTotalMaintenance } from "@/core/facilities";
-import { generateFlavorNews } from "@/services/narrative/newsGenerator";
+import { generateFlavorNews, generateWeeklyFlavorNews } from "@/services/narrative/newsGenerator";
 import { generateUUID } from "@/core/uuid";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { CashImpact, TransactionImpact, NewsImpact } from "@/core/resolver/impacts/index";
@@ -247,6 +247,19 @@ export const upkeepPhase = {
                 logLevel: "always",
                 type: "news_item",
                 newsItem: generateFlavorNews(newDay, dailyRng),
+              } as NewsImpact,
+            ]
+          : []),
+        ...(newDay % 7 === 0
+          ? [
+              {
+                id: generateUUID(dailyRng),
+                intentId: "",
+                day: newDay,
+                phase: "upkeep",
+                logLevel: "always",
+                type: "news_item",
+                newsItem: generateWeeklyFlavorNews(Object.values(state.horses), newDay, dailyRng),
               } as NewsImpact,
             ]
           : []),

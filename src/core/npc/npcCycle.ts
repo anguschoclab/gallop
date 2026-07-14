@@ -33,6 +33,7 @@ import {
   generateGrudgeMatchNews,
   generateRegionLostNews,
   generateRivalryEscalationNews,
+  generateStableIntroNews,
 } from "@/services/narrative/rivalryNewsGenerator";
 import {
   FAME_GAIN_G1_WIN,
@@ -245,6 +246,15 @@ function processRegionalDominance(
 
             // Check for rivalry emergence (friction crosses 60)
             if (oldFriction < 60 && stableAI.friction >= 60 && !stableAI.rivalryAnnouncedDay) {
+              // Retroactive intro if never published
+              if (!stableAI.introPublishedDay) {
+                const introNews = generateStableIntroNews(stable, currentDay, rng);
+                if (introNews) {
+                  newsItems.push(introNews);
+                  stableAI.introPublishedDay = currentDay;
+                }
+              }
+              // Emergence article
               const news = generateRivalryEmergenceNews(stable, stableAI.friction, currentDay, rng);
               if (news) {
                 newsItems.push(news);

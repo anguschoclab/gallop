@@ -105,7 +105,7 @@ describe("InfrastructureHandler", () => {
   it("transport_horse updates outpost and fatigue", () => {
     const handler = new InfrastructureHandler();
     const state = {
-      horses: h2r([{ id: "h1", name: "Star", fatigue: 10, stableId: "" }] as unknown as Horse[])),
+      horses: h2r([{ id: "h1", name: "Star", fatigue: 10, stableId: "" }] as unknown as Horse[]),
       npcStables: [],
     } as unknown as GameState;
 
@@ -164,7 +164,7 @@ describe("InfrastructureHandler", () => {
   it("transport_horse with player horse updates draft.outposts acclimatization", () => {
     const handler = new InfrastructureHandler();
     const state = {
-      horses: h2r([{ id: "h1", name: "Star", fatigue: 10, stableId: "" }] as unknown as Horse[])),
+      horses: h2r([{ id: "h1", name: "Star", fatigue: 10, stableId: "" }] as unknown as Horse[]),
       npcStables: [],
       outposts: [
         {

@@ -63,7 +63,7 @@ describe("SyndicationValidator", () => {
           bleederRisk: 0.5,
           roarerRisk: 0.5,
         },
-      ] as unknown as Horse[])),
+      ] as unknown as Horse[]),
       cash: 1000000,
       syndicates: {},
     } as any;
@@ -343,7 +343,7 @@ describe("resolveSyndicationIntent", () => {
           bleederRisk: 0.5,
           roarerRisk: 0.5,
         },
-      ] as unknown as Horse[])),
+      ] as unknown as Horse[]),
       cash: 1000000,
       syndicates: {
         syndicate_stallion1: {
@@ -468,7 +468,7 @@ describe("SyndicationHandler", () => {
           bleederRisk: 0.5,
           roarerRisk: 0.5,
         },
-      ] as unknown as Horse[])),
+      ] as unknown as Horse[]),
       cash: 1000000,
       syndicates: {},
       shareTransactions: [],

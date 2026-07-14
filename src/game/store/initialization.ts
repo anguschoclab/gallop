@@ -27,6 +27,8 @@ import { GRADED_RACES } from "@/data/gradedRaces";
 import { createDefaultPlayerFacilities, createFacility } from "@/core/facilities";
 import type { FacilityLevel } from "@/core/facilities";
 import { STARTING_CASH } from "@/constants";
+import { seedGazetteNews } from "@/services/narrative/seedNewsGenerator";
+import { createStableAIState } from "@/core/ai/npcCycleAI";
 
 /**
  * Creates the initial game state for a new game.
@@ -138,6 +140,27 @@ export function createInitialState(options?: NewGameOptions): GameState {
     ? `${options.profile.stableName} opens its doors. Welcome, ${options.profile.ownerName}.`
     : "Welcome to your stable. Train your horses and enter them in races.";
 
+  // Generate Day 1 Seed Gazette
+  const gazetteRng = createRng(hashStr(`gazette_${profileSeed}`));
+  const { news: seedNews, introStableIds } = seedGazetteNews(
+    updatedStables,
+    npcHorses,
+    racesWithEntries,
+    options?.profile,
+    gazetteRng,
+  );
+
+  // Build npcAIManager with intro marks for seed-gazette'd stables
+  const npcAIManager = { stableStates: {} as Record<string, ReturnType<typeof createStableAIState>>, globalDay: 1, regionalKings: {} as Record<string, string> };
+  for (const stableId of introStableIds) {
+    const stable = updatedStables.find((s) => s.id === stableId);
+    if (stable) {
+      const aiState = createStableAIState(stable, 1);
+      aiState.introPublishedDay = 1;
+      npcAIManager.stableStates[stableId] = aiState;
+    }
+  }
+
   return {
     day: 1,
     cash: startingCash,
@@ -149,7 +172,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     log: [{ day: 1, text: welcomeText }],
     pregnancies: [],
     npcStables: updatedStables,
-    npcAIManager: { stableStates: {}, globalDay: 1, regionalKings: {} },
+    npcAIManager,
     scoutReports: [],
     auctions: [],
     jockeys,
@@ -171,7 +194,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     hallOfFame: [],
     transactions: [],
     expenses: [],
-    news: [],
+    news: seedNews,
     inbox: [],
     archive: {
       horses: [],

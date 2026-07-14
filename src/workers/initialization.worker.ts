@@ -16,6 +16,8 @@ import { runNpcRaceEntry } from "@/core/npc/raceEntry";
 import { createRng, hashStr, type Rng } from "@/core/common/rng";
 import { GRADED_RACES } from "@/data/gradedRaces";
 import { createDefaultPlayerFacilities, createFacility } from "@/core/facilities";
+import { seedGazetteNews } from "@/services/narrative/seedNewsGenerator";
+import { createStableAIState } from "@/core/ai/npcCycleAI";
 import {
   STARTING_CASH,
   INITIALIZATION_BUDGET_TIER_THRESHOLD,
@@ -148,6 +150,27 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
     ? `${options.profile.stableName} opens its doors. Welcome, ${options.profile.ownerName}.`
     : "Welcome to your stable. Train your horses and enter them in races.";
 
+  // Generate Day 1 Seed Gazette
+  const gazetteRng = createRng(hashStr(`gazette_${profileSeed}`));
+  const { news: seedNews, introStableIds } = seedGazetteNews(
+    updatedStables,
+    npcHorses,
+    racesWithEntries,
+    options?.profile,
+    gazetteRng,
+  );
+
+  // Build npcAIManager with intro marks for seed-gazette'd stables
+  const npcAIManager = { stableStates: {} as Record<string, ReturnType<typeof createStableAIState>>, globalDay: 1, regionalKings: {} as Record<string, string> };
+  for (const stableId of introStableIds) {
+    const stable = updatedStables.find((s) => s.id === stableId);
+    if (stable) {
+      const aiState = createStableAIState(stable, 1);
+      aiState.introPublishedDay = 1;
+      npcAIManager.stableStates[stableId] = aiState;
+    }
+  }
+
   const state: any = {
     day: 1,
     cash: startingCash,
@@ -172,7 +195,7 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
       tier: "unknown",
     },
     playerProfile: options?.profile,
-    news: [],
+    news: seedNews,
     archive: {
       horses: [],
       races: [],
@@ -184,7 +207,7 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
     paceSamples: {},
     calibratedPars: {},
     lastCalibrationDay: 0,
-    npcAIManager: { stableStates: {}, globalDay: 1, regionalKings: {} },
+    npcAIManager,
     campaigns: [],
     expenses: [],
     transactions: [],
