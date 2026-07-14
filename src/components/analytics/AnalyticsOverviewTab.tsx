@@ -114,11 +114,15 @@ export function AnalyticsOverviewTab() {
           subtitle={String(d.active.length)}
           footnote={`${d.owned.length} owned`}
         >
-          <div className="h-full px-3 pb-3 flex items-end">
+          <div className="h-full px-3 pb-2 flex items-end">
             <MiniBar
+              className="w-full"
               rows={[
-                { label: "80–100", value: d.energyBuckets[4], color: chartColors.primary },
-                { label: "60–79", value: d.energyBuckets[3], color: chartColors.secondary },
+                {
+                  label: "60+",
+                  value: d.energyBuckets[3] + d.energyBuckets[4],
+                  color: chartColors.primary,
+                },
                 { label: "40–59", value: d.energyBuckets[2], color: chartColors.tertiary },
                 {
                   label: "0–39",
