@@ -105,7 +105,11 @@ export function useRaceReplay(duration: number, onComplete?: () => void) {
     cameraMode,
     setCameraMode,
     restart,
+    seek,
+    step,
+    duration,
     toggleSpeed,
     toggleCamera,
+
   };
 }
