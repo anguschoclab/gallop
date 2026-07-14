@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useMemo, useCallback } from "react";
-import { Play, Pause, RotateCcw, Camera, SkipForward } from "lucide-react";
+import { Play, Pause, RotateCcw, Camera, SkipForward, ChevronLeft, ChevronRight } from "lucide-react";
 import { interpolateSnapshots, getReplayDuration } from "@/services/race/racePlaybackService";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import { useRaceReplay } from "@/hooks/race/useRaceReplay";
