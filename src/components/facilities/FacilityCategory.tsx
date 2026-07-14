@@ -150,7 +150,7 @@ export function FacilityCategory({
                         )}
                       >
                         <ArrowUp className="h-3 w-3 mr-2" />
-                        Provision Level_{rankVal + 1}
+                        Commission Tier 0{rankVal + 1}
                       </Button>
                       {!canAfford && (
                         <p className="text-center text-[8px] font-black uppercase text-destructive/40 tracking-tighter animate-pulse">
