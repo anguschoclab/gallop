@@ -12,14 +12,10 @@
 # Error details
 
 ```
-Test timeout of 60000ms exceeded.
-```
+Error: expect(received).toBe(expected) // Object.is equality
 
-```
-Error: locator.boundingBox: Test timeout of 60000ms exceeded.
-Call log:
-  - waiting for locator('.relative.group').first().locator('span.text-lg').first()
-
+Expected: true
+Received: false
 ```
 
 # Page snapshot
@@ -2351,78 +2347,90 @@ Call log:
   50  | 
   51  |       // Click roster tab if not already active
   52  |       const rosterTab = page.locator('[role="tab"]', { hasText: /roster/i }).first();
-  53  |       await expect(rosterTab).toBeVisible({ timeout: 3000 }).catch(() => {
+  53  |       await expect(rosterTab).toBeVisible({ timeout: 10_000 }).catch(() => {
   54  |         test.skip(true, "No roster tab found");
   55  |       });
   56  |       await rosterTab.click();
   57  | 
-  58  |       // Find horse cards in the roster
-  59  |       const cards = page.locator(".relative.group");
-  60  |       const cardCount = await cards.count();
+  58  |       // Wait for roster tabpanel to be visible
+  59  |       const tabpanel = page.getByRole('tabpanel', { name: 'Roster' });
+  60  |       await expect(tabpanel).toBeVisible({ timeout: 10_000 });
   61  | 
-  62  |       if (cardCount === 0) {
-  63  |         test.skip(true, "No horse cards in NPC stable roster");
-  64  |       }
-  65  | 
-  66  |       // Check first card for name/badge overlap
-  67  |       const firstCard = cards.first();
-  68  |       const nameSpan = firstCard.locator("span.text-lg").first();
-  69  |       const scoutBadge = firstCard.locator('[class*="tracking-widest"]').filter({ hasText: /scout|known/i }).first();
-  70  | 
-> 71  |       const nameBox = await nameSpan.boundingBox();
-      |                                      ^ Error: locator.boundingBox: Test timeout of 60000ms exceeded.
-  72  |       const badgeBox = await scoutBadge.boundingBox();
-  73  | 
-  74  |       if (nameBox && badgeBox) {
-  75  |         const horizontalOverlap = nameBox.x < badgeBox.x + badgeBox.width && badgeBox.x < nameBox.x + nameBox.width;
-  76  |         const verticalOverlap = nameBox.y < badgeBox.y + badgeBox.height && badgeBox.y < nameBox.y + nameBox.height;
-  77  |         expect(!horizontalOverlap || !verticalOverlap).toBe(true);
-  78  |       }
-  79  |     });
-  80  | 
-  81  |     test("OFFER and SCOUT buttons do not overlap each other", async ({ page }) => {
-  82  |       await page.goto("/npc-stables");
-  83  | 
-  84  |       const stableLinks = page.locator('a[href*="/npc-stables/"]');
-  85  |       await expect(stableLinks.first()).toBeVisible({ timeout: 15_000 }).catch(() => {
-  86  |         test.skip(true, "No game state found");
-  87  |       });
-  88  | 
-  89  |       const linkCount = await stableLinks.count();
-  90  |       if (linkCount === 0) {
-  91  |         test.skip(true, "No NPC stable links found");
-  92  |       }
-  93  | 
-  94  |       await stableLinks.first().click();
-  95  |       await page.waitForURL(/\/npc-stables\//);
-  96  | 
-  97  |       const rosterTab = page.locator('[role="tab"]', { hasText: /roster/i }).first();
-  98  |       await expect(rosterTab).toBeVisible({ timeout: 3000 }).catch(() => {
-  99  |         test.skip(true, "No roster tab found");
-  100 |       });
-  101 |       await rosterTab.click();
-  102 | 
-  103 |       const cards = page.locator(".relative.group");
-  104 |       const cardCount = await cards.count();
-  105 |       if (cardCount === 0) {
-  106 |         test.skip(true, "No horse cards in NPC stable roster");
-  107 |       }
-  108 | 
-  109 |       const firstCard = cards.first();
-  110 |       const buttons = firstCard.locator("button", { hasText: /OFFER|SCOUT/i });
-  111 |       const btnCount = await buttons.count();
-  112 | 
-  113 |       if (btnCount >= 2) {
-  114 |         const box1 = await buttons.nth(0).boundingBox();
-  115 |         const box2 = await buttons.nth(1).boundingBox();
-  116 |         if (box1 && box2) {
-  117 |           const horizontalOverlap = box1.x < box2.x + box2.width && box2.x < box1.x + box1.width;
-  118 |           const verticalOverlap = box1.y < box2.y + box2.height && box2.y < box1.y + box1.height;
-  119 |           expect(!horizontalOverlap || !verticalOverlap).toBe(true);
-  120 |         }
-  121 |       }
-  122 |     });
-  123 |   });
-  124 | }
-  125 | 
+  62  |       // Find horse cards in the roster tabpanel
+  63  |       const cards = tabpanel.locator('.relative.group');
+  64  |       await expect(cards.first()).toBeVisible({ timeout: 10_000 }).catch(() => {
+  65  |         test.skip(true, "No horse cards in NPC stable roster");
+  66  |       });
+  67  | 
+  68  |       // Check first card for name/badge overlap
+  69  |       const firstCard = cards.first();
+  70  |       const nameSpan = firstCard.locator("span.text-lg").first();
+  71  |       const scoutBadge = firstCard.locator('div[class*="tracking-widest"]').filter({ hasText: /unknown|known|scouted/i }).first();
+  72  | 
+  73  |       const nameBox = await nameSpan.boundingBox();
+  74  |       const badgeBox = await scoutBadge.boundingBox();
+  75  | 
+  76  |       if (nameBox && badgeBox) {
+  77  |         const horizontalOverlap = nameBox.x < badgeBox.x + badgeBox.width && badgeBox.x < nameBox.x + nameBox.width;
+  78  |         const verticalOverlap = nameBox.y < badgeBox.y + badgeBox.height && badgeBox.y < nameBox.y + nameBox.height;
+  79  |         if (horizontalOverlap && verticalOverlap) {
+  80  |           console.log("OVERLAP DETECTED:", {
+  81  |             name: await nameSpan.textContent(),
+  82  |             nameBox,
+  83  |             badgeBox,
+  84  |             badgeText: await scoutBadge.textContent(),
+  85  |             badgeClass: await scoutBadge.getAttribute("class"),
+  86  |           });
+  87  |         }
+> 88  |         expect(!horizontalOverlap || !verticalOverlap).toBe(true);
+      |                                                        ^ Error: expect(received).toBe(expected) // Object.is equality
+  89  |       }
+  90  |     });
+  91  | 
+  92  |     test("OFFER and SCOUT buttons do not overlap each other", async ({ page }) => {
+  93  |       await page.goto("/npc-stables");
+  94  | 
+  95  |       const stableLinks = page.locator('a[href*="/npc-stables/"]');
+  96  |       await expect(stableLinks.first()).toBeVisible({ timeout: 15_000 }).catch(() => {
+  97  |         test.skip(true, "No game state found");
+  98  |       });
+  99  | 
+  100 |       const linkCount = await stableLinks.count();
+  101 |       if (linkCount === 0) {
+  102 |         test.skip(true, "No NPC stable links found");
+  103 |       }
+  104 | 
+  105 |       await stableLinks.first().click();
+  106 |       await page.waitForURL(/\/npc-stables\//);
+  107 | 
+  108 |       const rosterTab = page.locator('[role="tab"]', { hasText: /roster/i }).first();
+  109 |       await expect(rosterTab).toBeVisible({ timeout: 10_000 }).catch(() => {
+  110 |         test.skip(true, "No roster tab found");
+  111 |       });
+  112 |       await rosterTab.click();
+  113 | 
+  114 |       const tabpanel = page.getByRole('tabpanel', { name: 'Roster' });
+  115 |       await expect(tabpanel).toBeVisible({ timeout: 10_000 });
+  116 |       const cards = tabpanel.locator('.relative.group');
+  117 |       await expect(cards.first()).toBeVisible({ timeout: 10_000 }).catch(() => {
+  118 |         test.skip(true, "No horse cards in NPC stable roster");
+  119 |       });
+  120 | 
+  121 |       const firstCard = cards.first();
+  122 |       const buttons = firstCard.locator("button", { hasText: /OFFER|SCOUT/i });
+  123 |       const btnCount = await buttons.count();
+  124 | 
+  125 |       if (btnCount >= 2) {
+  126 |         const box1 = await buttons.nth(0).boundingBox();
+  127 |         const box2 = await buttons.nth(1).boundingBox();
+  128 |         if (box1 && box2) {
+  129 |           const horizontalOverlap = box1.x < box2.x + box2.width && box2.x < box1.x + box1.width;
+  130 |           const verticalOverlap = box1.y < box2.y + box2.height && box2.y < box1.y + box1.height;
+  131 |           expect(!horizontalOverlap || !verticalOverlap).toBe(true);
+  132 |         }
+  133 |       }
+  134 |     });
+  135 |   });
+  136 | }
+  137 | 
 ```

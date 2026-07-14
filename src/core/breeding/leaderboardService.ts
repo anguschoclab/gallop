@@ -1,37 +1,19 @@
 /**
  * leaderboardService.ts - Sire leaderboard computation
  *
- * This file provides functions for computing all sire leaderboards including AEI, CI,
- * stakes producers, G1 producers, and various specialty rankings.
+ * Computes all 13 sire leaderboards in a single pass using a pre-indexed horsesBySire map.
+ * All specialist leaderboards (turf, dirt, sprint, stayer, freshman, rising stars, regional)
+ * are computed inline from accumulated stats — no O(N²) patterns or external function calls.
  *
- * Dependencies: @/game/types (Horse), ./sireAnalytics (getSireAnalytics, getSireSurfaceBias, getSireDistancePreference), ./lineage (getRunnersBy, getStakesFoalsBy, getG1FoalsBy, getFoalsBy), ./leaderboardTypes (Leaderboard, LeaderboardType, SireRanking, SireTrendData)
- * Related files: leaderboardPhase.ts (uses this service), leaderboardTypes.ts (type definitions)
+ * Dependencies: @/game/types (Horse), @/core/horse/stats (getCareerStats), ./sireAnalytics (types only), ./leaderboardTypes (types only)
+ * Related files: leaderboardPhase.ts (calls computeAllLeaderboards), leaderboardTypes.ts (type definitions)
  */
 
 import type { Horse } from "@/game/types";
 import { getCareerStats } from "@/core/horse/stats";
-import {
-  getSireAnalytics,
-  getSireSurfaceBias,
-  getSireDistancePreference,
-  type SireAnalytics,
-} from "./sireAnalytics";
-import { getRunnersBy, getStakesFoalsBy, getG1FoalsBy, getFoalsBy } from "./lineage";
-import type { Leaderboard, LeaderboardType, SireRanking, SireTrendData } from "./leaderboardTypes";
+import type { SireAnalytics, SurfaceBias, DistancePreference } from "./sireAnalytics";
+import type { Leaderboard, LeaderboardType, SireTrendData } from "./leaderboardTypes";
 
-/**
- * Compute all leaderboards for the current game state.
- *
- * Calculates stallion leaderboards (AEI, CI, classification), progeny leaderboards
- * (Beyer, earnings, stakes winners), and sire trend data. Pre-indexes horses by sire
- * for efficient analytics calculation.
- *
- * @param horses - All horses in the game state
- * @param industryMeanEarnings - Industry mean earnings for AEI calculation
- * @param currentDay - Current simulation day
- * @param trendHistory - Optional historical trend data for sires
- * @returns Record of all leaderboard types with their computed rankings
- */
 export function computeAllLeaderboards(
   horses: Horse[],
   industryMeanEarnings: number,
@@ -40,86 +22,139 @@ export function computeAllLeaderboards(
 ): Record<LeaderboardType, Leaderboard> {
   const stallions = horses.filter((h) => h.stud?.atStud);
 
-  // Pre-index horses by sire
+  // Pre-index horses by sire (Bug 1 fix: use pedigree.sireId, not h.sireId)
   const horsesBySire = new Map<string, Horse[]>();
   for (const h of horses) {
-    if (h.sireId) {
-      if (!horsesBySire.has(h.sireId)) horsesBySire.set(h.sireId, []);
-      horsesBySire.get(h.sireId)!.push(h);
+    const sireId = h.pedigree?.sireId;
+    if (sireId) {
+      if (!horsesBySire.has(sireId)) horsesBySire.set(sireId, []);
+      horsesBySire.get(sireId)!.push(h);
     }
   }
+
+  // Per-stallion surface/distance stat accumulators
+  const surfaceStats = new Map<
+    string,
+    { turfWins: number; turfStarts: number; dirtWins: number; dirtStarts: number; syntheticWins: number; syntheticStarts: number }
+  >();
+  const distanceStats = new Map<
+    string,
+    { sprintWins: number; sprintStarts: number; classicWins: number; classicStarts: number; stayerWins: number; stayerStarts: number }
+  >();
 
   // Calculate analytics for all stallions ONCE
   const stallionAnalytics = new Map<string, SireAnalytics>();
 
-  // First pass: Calculate basic metrics and AEI
+  // First pass: Calculate basic metrics, AEI, and accumulate surface/distance stats
   for (const s of stallions) {
-    const runners = horsesBySire.get(s.id) || [];
+    const allFoals = horsesBySire.get(s.id) || [];
+    // Bug 2 fix: filter to racing-age runners only (matches getRunnersBy semantics)
+    const runners = allFoals.filter((h) => h.age >= 2 && h.raceHistory.length > 0);
+
     const totalProgenyEarnings = runners.reduce((sum, f) => {
-      // Inline foalLifetimeEarnings to avoid imports/lookups
       return sum + (f.lifetimeEarnings || 0);
     }, 0);
     const avgProgenyEarnings = runners.length > 0 ? totalProgenyEarnings / runners.length : 0;
     const aei = industryMeanEarnings > 0 ? (avgProgenyEarnings / industryMeanEarnings) * 100 : 0;
 
-    // Stakes/G1 foals
-    let stakesFoals = 0;
-    let g1Foals = 0;
+    // Accumulate surface and distance stats from runners
+    let turfWins = 0, turfStarts = 0, dirtWins = 0, dirtStarts = 0;
+    let syntheticWins = 0, syntheticStarts = 0;
+    let sprintWins = 0, sprintStarts = 0, classicWins = 0, classicStarts = 0;
+    let stayerWins = 0, stayerStarts = 0;
+
     for (const r of runners) {
       const cs = getCareerStats(r);
-      if (cs.stakesWins > 0 || cs.gradedWins > 0) stakesFoals++;
-      if (cs.g1Wins > 0) g1Foals++;
+      turfWins += cs.turfWins; turfStarts += cs.turfStarts;
+      dirtWins += cs.dirtWins; dirtStarts += cs.dirtStarts;
+      syntheticWins += cs.syntheticWins; syntheticStarts += cs.syntheticStarts;
+      sprintWins += cs.sprintWins; sprintStarts += cs.sprintStarts;
+      classicWins += cs.classicWins; classicStarts += cs.classicStarts;
+      stayerWins += cs.stayerWins; stayerStarts += cs.stayerStarts;
     }
+
+    surfaceStats.set(s.id, { turfWins, turfStarts, dirtWins, dirtStarts, syntheticWins, syntheticStarts });
+    distanceStats.set(s.id, { sprintWins, sprintStarts, classicWins, classicStarts, stayerWins, stayerStarts });
+
+    // Phase 4: Compute surfaceBias inline (ported from getSireSurfaceBias)
+    const surfaceBias: SurfaceBias = (() => {
+      if (runners.length < 5) {
+        if (s.bloodline) {
+          const bl = s.bloodline.toLowerCase();
+          if (bl.includes("northern dancer") || bl.includes("sadler's wells")) return "turf";
+          if (bl.includes("mr. prospector") || bl.includes("storm cat")) return "dirt";
+        }
+        return "balanced";
+      }
+      const turfRate = turfStarts > 0 ? turfWins / turfStarts : 0;
+      const dirtRate = dirtStarts > 0 ? dirtWins / dirtStarts : 0;
+      const syntheticRate = syntheticStarts > 0 ? syntheticWins / syntheticStarts : 0;
+      if (turfRate > 0.25 && turfRate > dirtRate * 1.5) return "turf";
+      if (dirtRate > 0.25 && dirtRate > turfRate * 1.5) return "dirt";
+      if (syntheticRate > 0.25) return "synthetic";
+      return "balanced";
+    })();
+
+    // Phase 4: Compute distancePreference inline (ported from getSireDistancePreference)
+    const distancePreference: DistancePreference = (() => {
+      if (runners.length < 5) return "versatile";
+      const sprintRate = sprintStarts > 0 ? sprintWins / sprintStarts : 0;
+      const classicRate = classicStarts > 0 ? classicWins / classicStarts : 0;
+      const stayerRate = stayerStarts > 0 ? stayerWins / stayerStarts : 0;
+      if (sprintRate > 0.2 && sprintRate > classicRate * 1.3) return "sprint";
+      if (stayerRate > 0.2 && stayerRate > classicRate * 1.3) return "stayer";
+      if (classicRate > 0.15) return "classic";
+      return "versatile";
+    })();
+
+    // Phase 5: Use stud record for lifetime stakes/G1 foals (includes historical foals)
+    const lifetimeFoals = s.stud?.lifetimeFoals || 0;
+    const lifetimeStakesFoals = s.stud?.lifetimeStakesFoals || 0;
+    const lifetimeG1Foals = s.stud?.lifetimeG1Foals || 0;
+
+    // progenyWinPercentage (ported from calculateProgenyWinPercentage)
+    const progenyWinPercentage = lifetimeFoals > 0
+      ? Math.round((lifetimeStakesFoals / lifetimeFoals) * 100 * 10) / 10
+      : 0;
 
     stallionAnalytics.set(s.id, {
       stallionId: s.id,
       stallionName: s.name,
       aei: Math.round(aei * 10) / 10,
-      ci: 0, // Calculate in second pass
+      ci: 0,
       classification: "unproven",
-      surfaceBias: "balanced",
-      distancePreference: "versatile",
-      progenyWinPercentage: 0,
-      lifetimeFoals: s.stud?.lifetimeFoals || 0,
-      lifetimeStakesFoals: stakesFoals,
-      lifetimeG1Foals: g1Foals,
+      surfaceBias,
+      distancePreference,
+      progenyWinPercentage,
+      lifetimeFoals,
+      lifetimeStakesFoals,
+      lifetimeG1Foals,
       standingFee: s.stud?.standingFee || 0,
     });
   }
 
-  // Second pass: Calculate CI and finalize
+  // Second pass: Calculate CI and finalize classification
   const avgAei =
     stallions.length > 0
       ? Array.from(stallionAnalytics.values()).reduce((sum, a) => sum + a.aei, 0) / stallions.length
       : 0;
 
-  for (const [id, a] of stallionAnalytics) {
+  for (const [, a] of stallionAnalytics) {
     a.ci = avgAei > 0 ? Math.round((a.aei / avgAei) * 1000) / 10 : 0;
-    // Classification simplified for leaderboard speed
     if (a.aei > 2.0 && a.ci > 1.0) a.classification = "elite";
     else if (a.aei > 1.5) a.classification = "premium";
     else if (a.aei > 1.0) a.classification = "solid";
+    else if (a.aei > 0.5 && a.ci > 0.3) a.classification = "developing";
   }
 
-  // Helper to get analytics
   const getA = (sId: string) => stallionAnalytics.get(sId)!;
 
-  /**
-   * Generic helper to create leaderboard rankings.
-   *
-   * @param valueGetter - Function to extract the ranking value from analytics
-   * @param filterFn - Optional filter function for rankings
-   * @param leaderboardType - Type identifier for the leaderboard
-   * @param title - Display title for the leaderboard
-   * @param description - Description for the leaderboard
-   * @returns Leaderboard object with rankings
-   */
   const createLeaderboardRankings = (
     valueGetter: (analytics: SireAnalytics) => number,
-    filterFn?: (ranking: { metrics: SireAnalytics; value: number }) => boolean,
-    leaderboardType?: LeaderboardType,
-    title?: string,
-    description: string = "",
+    filterFn: (ranking: { metrics: SireAnalytics; value: number }) => boolean,
+    leaderboardType: LeaderboardType,
+    title: string,
+    description: string,
   ): Leaderboard => {
     const rankings = stallions
       .map((s) => ({
@@ -128,14 +163,126 @@ export function computeAllLeaderboards(
         value: valueGetter(getA(s.id)),
         metrics: getA(s.id),
       }))
-      .filter(filterFn || (() => true))
+      .filter(filterFn)
       .sort((a, b) => b.value - a.value)
       .map((r, i) => ({ ...r, rank: i + 1 }));
 
+    return { type: leaderboardType, title, description, lastUpdated: currentDay, rankings };
+  };
+
+  // ─── 8 specialist leaderboards ported inline ───
+
+  // Turf specialists
+  const turfRankings = stallions
+    .map((s) => {
+      const ss = surfaceStats.get(s.id)!;
+      const turfRate = ss.turfStarts > 0 ? ss.turfWins / ss.turfStarts : 0;
+      return { stallionId: s.id, stallionName: s.name, value: turfRate, metrics: getA(s.id) };
+    })
+    .filter((r) => r.metrics.surfaceBias === "turf" && r.value > 0)
+    .sort((a, b) => b.value - a.value)
+    .map((r, i) => ({ ...r, rank: i + 1 }));
+
+  // Dirt specialists
+  const dirtRankings = stallions
+    .map((s) => {
+      const ss = surfaceStats.get(s.id)!;
+      const dirtRate = ss.dirtStarts > 0 ? ss.dirtWins / ss.dirtStarts : 0;
+      return { stallionId: s.id, stallionName: s.name, value: dirtRate, metrics: getA(s.id) };
+    })
+    .filter((r) => r.metrics.surfaceBias === "dirt" && r.value > 0)
+    .sort((a, b) => b.value - a.value)
+    .map((r, i) => ({ ...r, rank: i + 1 }));
+
+  // Sprint sires
+  const sprintRankings = stallions
+    .map((s) => {
+      const ds = distanceStats.get(s.id)!;
+      const sprintRate = ds.sprintStarts > 0 ? ds.sprintWins / ds.sprintStarts : 0;
+      return { stallionId: s.id, stallionName: s.name, value: sprintRate, metrics: getA(s.id) };
+    })
+    .filter((r) => r.metrics.distancePreference === "sprint" && r.value > 0)
+    .sort((a, b) => b.value - a.value)
+    .map((r, i) => ({ ...r, rank: i + 1 }));
+
+  // Staying sires
+  const stayerRankings = stallions
+    .map((s) => {
+      const ds = distanceStats.get(s.id)!;
+      const stayerRate = ds.stayerStarts > 0 ? ds.stayerWins / ds.stayerStarts : 0;
+      return { stallionId: s.id, stallionName: s.name, value: stayerRate, metrics: getA(s.id) };
+    })
+    .filter((r) => r.metrics.distancePreference === "stayer" && r.value > 0)
+    .sort((a, b) => b.value - a.value)
+    .map((r, i) => ({ ...r, rank: i + 1 }));
+
+  // Freshman watch
+  const freshmanRankings = stallions
+    .map((s) => {
+      const foals = horsesBySire.get(s.id) || [];
+      const racingAgeFoals = foals.filter((f) => f.age >= 2);
+      const oldestFoalAge = foals.length > 0 ? Math.max(...foals.map((f) => f.age)) : 0;
+      const isFreshman = oldestFoalAge <= 3 && racingAgeFoals.length > 0;
+      return {
+        stallionId: s.id,
+        stallionName: s.name,
+        value: getA(s.id).lifetimeStakesFoals,
+        metrics: getA(s.id),
+        isFreshman,
+      };
+    })
+    .filter((r) => r.isFreshman)
+    .sort((a, b) => b.value - a.value)
+    .map((r, i) => ({ stallionId: r.stallionId, stallionName: r.stallionName, rank: i + 1, value: r.value, metrics: r.metrics }));
+
+  // Rising stars
+  let risingStarsRankings: { stallionId: string; stallionName: string; rank: number; value: number; metrics: SireAnalytics }[];
+  if (!trendHistory || trendHistory.length === 0) {
+    // Fallback: top 20 by lifetimeStakesFoals
+    risingStarsRankings = stallions
+      .map((s) => ({
+        stallionId: s.id,
+        stallionName: s.name,
+        value: getA(s.id).lifetimeStakesFoals,
+        metrics: getA(s.id),
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 20)
+      .map((r, i) => ({ ...r, rank: i + 1 }));
+  } else {
+    risingStarsRankings = stallions
+      .map((s) => {
+        const history = trendHistory.filter((t) => t.stallionId === s.id);
+        if (history.length < 2) return null;
+        const recent = history[history.length - 1];
+        const previous = history[history.length - 2];
+        const aeiChange = recent.aei - previous.aei;
+        const stakesGrowth = recent.stakesFoals - previous.stakesFoals;
+        const trendScore = aeiChange * 10 + stakesGrowth * 5;
+        return { stallionId: s.id, stallionName: s.name, value: trendScore, metrics: getA(s.id) };
+      })
+      .filter((r): r is NonNullable<typeof r> => r !== null && r.value > 0)
+      .sort((a, b) => b.value - a.value)
+      .map((r, i) => ({ ...r, rank: i + 1 }));
+  }
+
+  // Regional leaderboards
+  const makeRegional = (hemisphere: "Northern" | "Southern"): Leaderboard => {
+    const rankings = stallions
+      .filter((s) => s.hemisphere === hemisphere)
+      .map((s) => ({
+        stallionId: s.id,
+        stallionName: s.name,
+        value: getA(s.id).aei,
+        metrics: getA(s.id),
+      }))
+      .filter((r) => r.metrics.lifetimeFoals >= 5)
+      .sort((a, b) => b.value - a.value)
+      .map((r, i) => ({ ...r, rank: i + 1 }));
     return {
-      type: leaderboardType || "overall",
-      title: title || "Rankings",
-      description,
+      type: hemisphere === "Northern" ? "regional_north" : "regional_south",
+      title: `${hemisphere} Hemisphere Rankings`,
+      description: `Ranked by AEI for ${hemisphere.toLowerCase()} hemisphere sires`,
       lastUpdated: currentDay,
       rankings,
     };
@@ -158,46 +305,45 @@ export function computeAllLeaderboards(
     ),
     stakes_producers: createLeaderboardRankings(
       (a) => a.lifetimeStakesFoals,
-      undefined,
+      () => true,
       "stakes_producers",
       "Stakes Producers",
       "Ranked by Stakes winners",
     ),
     g1_producers: createLeaderboardRankings(
       (a) => a.lifetimeG1Foals,
-      undefined,
+      () => true,
       "g1_producers",
       "G1 Producers",
       "Ranked by G1 winners",
     ),
-    // Simplified specialists for leaderboard speed (no nested loops)
     turf_specialists: {
       type: "turf_specialists",
       title: "Turf Specialists",
       description: "Ranked by turf progeny win rate",
       lastUpdated: currentDay,
-      rankings: [],
+      rankings: turfRankings,
     },
     dirt_specialists: {
       type: "dirt_specialists",
       title: "Dirt Specialists",
       description: "Ranked by dirt progeny win rate",
       lastUpdated: currentDay,
-      rankings: [],
+      rankings: dirtRankings,
     },
     sprint_sires: {
       type: "sprint_sires",
       title: "Sprint Sires",
       description: "Ranked by sprint progeny win rate",
       lastUpdated: currentDay,
-      rankings: [],
+      rankings: sprintRankings,
     },
     staying_sires: {
       type: "staying_sires",
       title: "Staying Sires",
       description: "Ranked by staying progeny win rate",
       lastUpdated: currentDay,
-      rankings: [],
+      rankings: stayerRankings,
     },
     value_sires: createLeaderboardRankings(
       (a) => a.aei / ((a.standingFee || 1) / 1000),
@@ -211,601 +357,16 @@ export function computeAllLeaderboards(
       title: "Freshman Watch",
       description: "First crop sires ranked by stakes winners",
       lastUpdated: currentDay,
-      rankings: [],
+      rankings: freshmanRankings,
     },
     rising_stars: {
       type: "rising_stars",
       title: "Rising Stars",
       description: "Sires with improving progeny performance",
       lastUpdated: currentDay,
-      rankings: [],
+      rankings: risingStarsRankings,
     },
-    regional_north: {
-      type: "regional_north",
-      title: "North Hemisphere",
-      description: "Ranked by AEI for northern hemisphere sires",
-      lastUpdated: currentDay,
-      rankings: [],
-    },
-    regional_south: {
-      type: "regional_south",
-      title: "South Hemisphere",
-      description: "Ranked by AEI for southern hemisphere sires",
-      lastUpdated: currentDay,
-      rankings: [],
-    },
-  };
-}
-
-/**
- * Overall leaderboard ranked by AEI.
- *
- * Computes the overall sire leaderboard ranked by Average Earnings Index (AEI).
- *
- * @param stallions - All stallions in the game state
- * @param allHorses - All horses in the game state
- * @param industryMeanEarnings - Industry mean earnings for AEI calculation
- * @param currentDay - Current simulation day
- * @returns Overall leaderboard with AEI rankings
- */
-function computeOverallLeaderboard(
-  stallions: Horse[],
-  allHorses: Horse[],
-  industryMeanEarnings: number,
-  currentDay: number,
-): Leaderboard {
-  const rankings = stallions
-    .map((s) => {
-      const analytics = getSireAnalytics(s, allHorses, industryMeanEarnings);
-      return {
-        stallionId: s.id,
-        stallionName: s.name,
-        value: analytics.aei,
-        metrics: analytics,
-      };
-    })
-    .filter((s) => s.metrics.lifetimeFoals >= 5) // Minimum foals for ranking
-    .sort((a, b) => b.value - a.value)
-    .map((s, i) => ({ ...s, rank: i + 1 }));
-
-  return {
-    type: "overall",
-    title: "Overall Sire Rankings",
-    description: "Ranked by Average Earnings Index (AEI)",
-    rankings,
-    lastUpdated: currentDay,
-  };
-}
-
-/**
- * CI leaderboard ranked by Comparable Index.
- *
- * Computes the sire leaderboard ranked by Comparable Index (CI).
- *
- * @param stallions - All stallions in the game state
- * @param allHorses - All horses in the game state
- * @param industryMeanEarnings - Industry mean earnings for CI calculation
- * @param currentDay - Current simulation day
- * @returns CI leaderboard with rankings
- */
-function computeCiLeaderboard(
-  stallions: Horse[],
-  allHorses: Horse[],
-  industryMeanEarnings: number,
-  currentDay: number,
-): Leaderboard {
-  const rankings = stallions
-    .map((s) => {
-      const analytics = getSireAnalytics(s, allHorses, industryMeanEarnings);
-      return {
-        stallionId: s.id,
-        stallionName: s.name,
-        value: analytics.ci,
-        metrics: analytics,
-      };
-    })
-    .filter((s) => s.metrics.lifetimeFoals >= 5)
-    .sort((a, b) => b.value - a.value)
-    .map((s, i) => ({ ...s, rank: i + 1 }));
-
-  return {
-    type: "ci",
-    title: "Comparable Index Rankings",
-    description: "Ranked by Comparable Index (CI)",
-    rankings,
-    lastUpdated: currentDay,
-  };
-}
-
-/**
- * Stakes producers leaderboard.
- *
- * Computes the leaderboard ranking sires by total stakes winners.
- *
- * @param stallions - All stallions in the game state
- * @param allHorses - All horses in the game state
- * @param currentDay - Current simulation day
- * @returns Stakes producers leaderboard
- */
-function computeStakesLeaderboard(
-  stallions: Horse[],
-  allHorses: Horse[],
-  currentDay: number,
-): Leaderboard {
-  const rankings = stallions
-    .map((s) => {
-      const stakesFoals = getStakesFoalsBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, s.id);
-      const analytics = getSireAnalytics(s, allHorses, 0); // industryMean not needed for this
-      return {
-        stallionId: s.id,
-        stallionName: s.name,
-        value: stakesFoals,
-        metrics: analytics,
-      };
-    })
-    .sort((a, b) => b.value - a.value)
-    .map((s, i) => ({ ...s, rank: i + 1 }));
-
-  return {
-    type: "stakes_producers",
-    title: "Stakes Producers",
-    description: "Ranked by total stakes winners",
-    rankings,
-    lastUpdated: currentDay,
-  };
-}
-
-/**
- * G1 producers leaderboard.
- *
- * Computes the leaderboard ranking sires by total Group 1 winners.
- *
- * @param stallions - All stallions in the game state
- * @param allHorses - All horses in the game state
- * @param currentDay - Current simulation day
- * @returns G1 producers leaderboard
- */
-function computeG1Leaderboard(
-  stallions: Horse[],
-  allHorses: Horse[],
-  currentDay: number,
-): Leaderboard {
-  const rankings = stallions
-    .map((s) => {
-      const g1Foals = getG1FoalsBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, s.id);
-      const analytics = getSireAnalytics(s, allHorses, 0);
-      return {
-        stallionId: s.id,
-        stallionName: s.name,
-        value: g1Foals,
-        metrics: analytics,
-      };
-    })
-    .sort((a, b) => b.value - a.value)
-    .map((s, i) => ({ ...s, rank: i + 1 }));
-
-  return {
-    type: "g1_producers",
-    title: "Group 1 Producers",
-    description: "Ranked by total Group 1 winners",
-    rankings,
-    lastUpdated: currentDay,
-  };
-}
-
-/**
- * Turf specialists leaderboard.
- *
- * Computes the leaderboard ranking sires by turf progeny win rate.
- *
- * @param stallions - All stallions in the game state
- * @param allHorses - All horses in the game state
- * @param currentDay - Current simulation day
- * @returns Turf specialists leaderboard
- */
-function computeTurfLeaderboard(
-  stallions: Horse[],
-  allHorses: Horse[],
-  currentDay: number,
-): Leaderboard {
-  const rankings = stallions
-    .map((s) => {
-      const runners = getRunnersBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, s.id);
-      let turfWins = 0,
-        turfStarts = 0;
-      for (const foal of runners) {
-        const cs = getCareerStats(foal);
-        turfWins += cs.turfWins;
-        turfStarts += cs.turfStarts;
-      }
-      const turfRate = turfStarts > 0 ? turfWins / turfStarts : 0;
-      const analytics = getSireAnalytics(s, allHorses, 0);
-
-      return {
-        stallionId: s.id,
-        stallionName: s.name,
-        value: turfRate,
-        metrics: analytics,
-      };
-    })
-    .filter((s) => s.metrics.surfaceBias === "turf" && s.value > 0)
-    .sort((a, b) => b.value - a.value)
-    .map((s, i) => ({ ...s, rank: i + 1 }));
-
-  return {
-    type: "turf_specialists",
-    title: "Turf Specialists",
-    description: "Ranked by turf progeny win rate",
-    rankings,
-    lastUpdated: currentDay,
-  };
-}
-
-/**
- * Dirt specialists leaderboard.
- *
- * Computes the leaderboard ranking sires by dirt progeny win rate.
- *
- * @param stallions - All stallions in the game state
- * @param allHorses - All horses in the game state
- * @param currentDay - Current simulation day
- * @returns Dirt specialists leaderboard
- */
-function computeDirtLeaderboard(
-  stallions: Horse[],
-  allHorses: Horse[],
-  currentDay: number,
-): Leaderboard {
-  const rankings = stallions
-    .map((s) => {
-      const runners = getRunnersBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, s.id);
-      let dirtWins = 0,
-        dirtStarts = 0;
-      for (const foal of runners) {
-        const cs = getCareerStats(foal);
-        dirtWins += cs.dirtWins;
-        dirtStarts += cs.dirtStarts;
-      }
-      const dirtRate = dirtStarts > 0 ? dirtWins / dirtStarts : 0;
-      const analytics = getSireAnalytics(s, allHorses, 0);
-
-      return {
-        stallionId: s.id,
-        stallionName: s.name,
-        value: dirtRate,
-        metrics: analytics,
-      };
-    })
-    .filter((s) => s.metrics.surfaceBias === "dirt" && s.value > 0)
-    .sort((a, b) => b.value - a.value)
-    .map((s, i) => ({ ...s, rank: i + 1 }));
-
-  return {
-    type: "dirt_specialists",
-    title: "Dirt Specialists",
-    description: "Ranked by dirt progeny win rate",
-    rankings,
-    lastUpdated: currentDay,
-  };
-}
-
-/**
- * Sprint sires leaderboard.
- *
- * Computes the leaderboard ranking sires by sprint progeny win rate.
- *
- * @param stallions - All stallions in the game state
- * @param allHorses - All horses in the game state
- * @param currentDay - Current simulation day
- * @returns Sprint sires leaderboard
- */
-function computeSprintLeaderboard(
-  stallions: Horse[],
-  allHorses: Horse[],
-  currentDay: number,
-): Leaderboard {
-  const rankings = stallions
-    .map((s) => {
-      const runners = getRunnersBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, s.id);
-      let sprintWins = 0,
-        sprintStarts = 0;
-      for (const foal of runners) {
-        const cs = getCareerStats(foal);
-        sprintWins += cs.sprintWins;
-        sprintStarts += cs.sprintStarts;
-      }
-      const sprintRate = sprintStarts > 0 ? sprintWins / sprintStarts : 0;
-      const analytics = getSireAnalytics(s, allHorses, 0);
-
-      return {
-        stallionId: s.id,
-        stallionName: s.name,
-        value: sprintRate,
-        metrics: analytics,
-      };
-    })
-    .filter((s) => s.metrics.distancePreference === "sprint" && s.value > 0)
-    .sort((a, b) => b.value - a.value)
-    .map((s, i) => ({ ...s, rank: i + 1 }));
-
-  return {
-    type: "sprint_sires",
-    title: "Sprint Sires",
-    description: "Ranked by sprint progeny win rate",
-    rankings,
-    lastUpdated: currentDay,
-  };
-}
-
-/**
- * Staying sires leaderboard.
- *
- * Computes the leaderboard ranking sires by staying progeny win rate.
- *
- * @param stallions - All stallions in the game state
- * @param allHorses - All horses in the game state
- * @param currentDay - Current simulation day
- * @returns Staying sires leaderboard
- */
-function computeStayingLeaderboard(
-  stallions: Horse[],
-  allHorses: Horse[],
-  currentDay: number,
-): Leaderboard {
-  const rankings = stallions
-    .map((s) => {
-      const runners = getRunnersBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, s.id);
-      let stayerWins = 0,
-        stayerStarts = 0;
-      for (const foal of runners) {
-        const cs = getCareerStats(foal);
-        stayerWins += cs.stayerWins;
-        stayerStarts += cs.stayerStarts;
-      }
-      const stayerRate = stayerStarts > 0 ? stayerWins / stayerStarts : 0;
-      const analytics = getSireAnalytics(s, allHorses, 0);
-
-      return {
-        stallionId: s.id,
-        stallionName: s.name,
-        value: stayerRate,
-        metrics: analytics,
-      };
-    })
-    .filter((s) => s.metrics.distancePreference === "stayer" && s.value > 0)
-    .sort((a, b) => b.value - a.value)
-    .map((s, i) => ({ ...s, rank: i + 1 }));
-
-  return {
-    type: "staying_sires",
-    title: "Staying Sires",
-    description: "Ranked by staying progeny win rate",
-    rankings,
-    lastUpdated: currentDay,
-  };
-}
-
-/**
- * Value sires leaderboard (AEI per $1,000 of fee).
- *
- * Computes the leaderboard ranking sires by AEI relative to stud fee.
- *
- * @param stallions - All stallions in the game state
- * @param allHorses - All horses in the game state
- * @param industryMeanEarnings - Industry mean earnings for AEI calculation
- * @param currentDay - Current simulation day
- * @returns Value sires leaderboard
- */
-function computeValueLeaderboard(
-  stallions: Horse[],
-  allHorses: Horse[],
-  industryMeanEarnings: number,
-  currentDay: number,
-): Leaderboard {
-  const rankings = stallions
-    .map((s) => {
-      const analytics = getSireAnalytics(s, allHorses, industryMeanEarnings);
-      const fee = analytics.standingFee || 1;
-      const valueRatio = analytics.aei / (fee / 1000); // AEI per $1,000
-
-      return {
-        stallionId: s.id,
-        stallionName: s.name,
-        value: valueRatio,
-        metrics: analytics,
-      };
-    })
-    .filter((s) => s.metrics.lifetimeFoals >= 5)
-    .sort((a, b) => b.value - a.value)
-    .map((s, i) => ({ ...s, rank: i + 1 }));
-
-  return {
-    type: "value_sires",
-    title: "Value Sires",
-    description: "Ranked by AEI per $1,000 of stud fee",
-    rankings,
-    lastUpdated: currentDay,
-  };
-}
-
-/**
- * Freshman watch leaderboard (first crop sires).
- *
- * Computes the leaderboard for sires with their first crop racing.
- *
- * @param stallions - All stallions in the game state
- * @param allHorses - All horses in the game state
- * @param currentDay - Current simulation day
- * @returns Freshman watch leaderboard
- */
-function computeFreshmanLeaderboard(
-  stallions: Horse[],
-  allHorses: Horse[],
-  currentDay: number,
-): Leaderboard {
-  const rankings = stallions
-    .map((s) => {
-      const foals = getFoalsBy({ horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, s.id);
-      const racingAgeFoals = foals.filter((f) => f.age >= 2);
-      const oldestFoalAge = foals.length > 0 ? Math.max(...foals.map((f) => f.age)) : 0;
-
-      const isFreshman = oldestFoalAge <= 3 && racingAgeFoals.length > 0;
-      const analytics = getSireAnalytics(s, allHorses, 0);
-
-      return {
-        stallionId: s.id,
-        stallionName: s.name,
-        value: analytics.lifetimeStakesFoals,
-        metrics: analytics,
-        isFreshman,
-      };
-    })
-    .filter((s): s is typeof s & { isFreshman: true } => s.isFreshman)
-    .sort((a, b) => b.value - a.value)
-    .map((s, i) => ({ ...s, rank: i + 1 }));
-
-  return {
-    type: "freshman_watch",
-    title: "Freshman Watch",
-    description: "First crop sires ranked by stakes winners",
-    rankings,
-    lastUpdated: currentDay,
-  };
-}
-
-/**
- * Rising stars leaderboard (trending upward).
- *
- * Computes the leaderboard for sires with improving progeny performance.
- *
- * @param stallions - All stallions in the game state
- * @param allHorses - All horses in the game state
- * @param currentDay - Current simulation day
- * @param trendHistory - Optional historical trend data for sires
- * @returns Rising stars leaderboard
- */
-function computeRisingStarsLeaderboard(
-  stallions: Horse[],
-  allHorses: Horse[],
-  currentDay: number,
-  trendHistory?: SireTrendData[],
-): Leaderboard {
-  if (!trendHistory || trendHistory.length === 0) {
-    // Fallback: rank by recent stakes winners
-    return computeRecentStakesLeaderboard(stallions, allHorses, currentDay);
-  }
-
-  const rankings = stallions
-    .map((s) => {
-      const history = trendHistory.filter((t) => t.stallionId === s.id);
-      if (history.length < 2) return null;
-
-      const recent = history[history.length - 1];
-      const previous = history[history.length - 2];
-
-      const aeiChange = recent.aei - previous.aei;
-      const stakesGrowth = recent.stakesFoals - previous.stakesFoals;
-
-      // Trend score: AEI improvement + recent stakes production
-      const trendScore = aeiChange * 10 + stakesGrowth * 5;
-
-      const analytics = getSireAnalytics(s, allHorses, 0);
-
-      return {
-        stallionId: s.id,
-        stallionName: s.name,
-        value: trendScore,
-        metrics: analytics,
-      };
-    })
-    .filter((s): s is NonNullable<typeof s> => s !== null && s.value > 0)
-    .sort((a, b) => b.value - a.value)
-    .map((s, i) => ({ ...s, rank: i + 1 }));
-
-  return {
-    type: "rising_stars",
-    title: "Rising Stars",
-    description: "Sires with improving progeny performance",
-    rankings,
-    lastUpdated: currentDay,
-  };
-}
-
-/**
- * Fallback for rising stars when no trend history exists.
- *
- * Computes a fallback leaderboard ranking sires by recent stakes production.
- *
- * @param stallions - All stallions in the game state
- * @param allHorses - All horses in the game state
- * @param currentDay - Current simulation day
- * @returns Rising stars fallback leaderboard
- */
-function computeRecentStakesLeaderboard(
-  stallions: Horse[],
-  allHorses: Horse[],
-  currentDay: number,
-): Leaderboard {
-  const rankings = stallions
-    .map((s) => {
-      const analytics = getSireAnalytics(s, allHorses, 0);
-      return {
-        stallionId: s.id,
-        stallionName: s.name,
-        value: analytics.lifetimeStakesFoals,
-        metrics: analytics,
-      };
-    })
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 20) // Top 20
-    .map((s, i) => ({ ...s, rank: i + 1 }));
-
-  return {
-    type: "rising_stars",
-    title: "Rising Stars",
-    description: "Sires with recent stakes production",
-    rankings,
-    lastUpdated: currentDay,
-  };
-}
-
-/**
- * Regional leaderboard by hemisphere.
- *
- * Computes the leaderboard ranking sires by AEI within a specific hemisphere.
- *
- * @param stallions - All stallions in the game state
- * @param allHorses - All horses in the game state
- * @param hemisphere - Hemisphere to filter by (Northern or Southern)
- * @param currentDay - Current simulation day
- * @returns Regional leaderboard
- */
-function computeRegionalLeaderboard(
-  stallions: Horse[],
-  allHorses: Horse[],
-  hemisphere: "Northern" | "Southern",
-  currentDay: number,
-): Leaderboard {
-  const rankings = stallions
-    .filter((s) => s.hemisphere === hemisphere)
-    .map((s) => {
-      const analytics = getSireAnalytics(s, allHorses, 0);
-      return {
-        stallionId: s.id,
-        stallionName: s.name,
-        value: analytics.aei,
-        metrics: analytics,
-      };
-    })
-    .filter((s) => s.metrics.lifetimeFoals >= 5)
-    .sort((a, b) => b.value - a.value)
-    .map((s, i) => ({ ...s, rank: i + 1 }));
-
-  return {
-    type: hemisphere === "Northern" ? "regional_north" : "regional_south",
-    title: `${hemisphere} Hemisphere Rankings`,
-    description: `Ranked by AEI for ${hemisphere.toLowerCase()} hemisphere sires`,
-    rankings,
-    lastUpdated: currentDay,
+    regional_north: makeRegional("Northern"),
+    regional_south: makeRegional("Southern"),
   };
 }

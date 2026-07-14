@@ -56,7 +56,7 @@ for (const vp of VIEWPORTS) {
       await rosterTab.click();
 
       // Wait for roster tabpanel to be visible
-      const tabpanel = page.locator('[role="tabpanel"]');
+      const tabpanel = page.getByRole('tabpanel', { name: 'Roster' });
       await expect(tabpanel).toBeVisible({ timeout: 10_000 });
 
       // Find horse cards in the roster tabpanel
@@ -68,7 +68,7 @@ for (const vp of VIEWPORTS) {
       // Check first card for name/badge overlap
       const firstCard = cards.first();
       const nameSpan = firstCard.locator("span.text-lg").first();
-      const scoutBadge = firstCard.locator('[class*="tracking-widest"]').filter({ hasText: /scout|known/i }).first();
+      const scoutBadge = firstCard.locator('div[class*="tracking-widest"]').filter({ hasText: /unknown|known|scouted/i }).first();
 
       const nameBox = await nameSpan.boundingBox();
       const badgeBox = await scoutBadge.boundingBox();
@@ -76,6 +76,15 @@ for (const vp of VIEWPORTS) {
       if (nameBox && badgeBox) {
         const horizontalOverlap = nameBox.x < badgeBox.x + badgeBox.width && badgeBox.x < nameBox.x + nameBox.width;
         const verticalOverlap = nameBox.y < badgeBox.y + badgeBox.height && badgeBox.y < nameBox.y + nameBox.height;
+        if (horizontalOverlap && verticalOverlap) {
+          console.log("OVERLAP DETECTED:", {
+            name: await nameSpan.textContent(),
+            nameBox,
+            badgeBox,
+            badgeText: await scoutBadge.textContent(),
+            badgeClass: await scoutBadge.getAttribute("class"),
+          });
+        }
         expect(!horizontalOverlap || !verticalOverlap).toBe(true);
       }
     });
@@ -102,7 +111,7 @@ for (const vp of VIEWPORTS) {
       });
       await rosterTab.click();
 
-      const tabpanel = page.locator('[role="tabpanel"]');
+      const tabpanel = page.getByRole('tabpanel', { name: 'Roster' });
       await expect(tabpanel).toBeVisible({ timeout: 10_000 });
       const cards = tabpanel.locator('.relative.group');
       await expect(cards.first()).toBeVisible({ timeout: 10_000 }).catch(() => {

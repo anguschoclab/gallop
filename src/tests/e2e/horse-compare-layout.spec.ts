@@ -34,8 +34,8 @@ for (const vp of VIEWPORTS) {
     test("horse name columns do not overlap in compare dialog", async ({ page }) => {
       await page.goto("/stable");
 
-      // Wait for the roster table to load
-      const checkboxes = page.locator('input[type="checkbox"]');
+      // Wait for the roster table to load — Radix checkboxes render as button[role="checkbox"]
+      const checkboxes = page.getByRole('checkbox');
       await expect(checkboxes.first()).toBeVisible({ timeout: 15_000 }).catch(() => {
         test.skip(true, "No game state found");
       });
@@ -47,12 +47,12 @@ for (const vp of VIEWPORTS) {
       }
 
       // Select first 2 checkboxes
-      await checkboxes.nth(0).check();
-      await checkboxes.nth(1).check();
+      await checkboxes.nth(0).click();
+      await checkboxes.nth(1).click();
 
       // Click compare button
-      const compareBtn = page.locator("button", { hasText: /compare/i }).first();
-      await expect(compareBtn).toBeVisible({ timeout: 3000 }).catch(() => {
+      const compareBtn = page.getByRole('button', { name: /^Compare$/ }).first();
+      await expect(compareBtn).toBeVisible({ timeout: 5000 }).catch(() => {
         test.skip(true, "No compare button found");
       });
       await compareBtn.click();
@@ -88,7 +88,7 @@ for (const vp of VIEWPORTS) {
     test("table rows occupy distinct vertical bands", async ({ page }) => {
       await page.goto("/stable");
 
-      const checkboxes = page.locator('input[type="checkbox"]');
+      const checkboxes = page.getByRole('checkbox');
       await expect(checkboxes.first()).toBeVisible({ timeout: 15_000 }).catch(() => {
         test.skip(true, "No game state found");
       });
@@ -98,11 +98,11 @@ for (const vp of VIEWPORTS) {
         test.skip(true, "Not enough horses with compare checkboxes");
       }
 
-      await checkboxes.nth(0).check();
-      await checkboxes.nth(1).check();
+      await checkboxes.nth(0).click();
+      await checkboxes.nth(1).click();
 
-      const compareBtn = page.locator("button", { hasText: /compare/i }).first();
-      await expect(compareBtn).toBeVisible({ timeout: 3000 }).catch(() => {
+      const compareBtn = page.getByRole('button', { name: /^Compare$/ }).first();
+      await expect(compareBtn).toBeVisible({ timeout: 5000 }).catch(() => {
         test.skip(true, "No compare button found");
       });
       await compareBtn.click();
