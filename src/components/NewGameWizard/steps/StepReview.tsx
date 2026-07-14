@@ -70,7 +70,8 @@ export function StepReview({ stableName, ownerName, silk, backstory }: StepRevie
               <dt className="text-cream-muted cursor-help">Reputation</dt>
             </TooltipTrigger>
             <TooltipContent>
-              0–1000 score. Affects scouting access and future race invitations.
+              Initial industry reputation (0–1000). Grows with wins, graded stakes, breeding
+              success, and rivalry victories; used to resist rival jockey poaching.
             </TooltipContent>
           </Tooltip>
           <dd className="text-cream">{backstory.reputationScore}</dd>
