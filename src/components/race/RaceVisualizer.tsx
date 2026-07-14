@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useMemo, useCallback } from "react";
-import { Play, Pause, RotateCcw, Camera, SkipForward } from "lucide-react";
+import { Play, Pause, RotateCcw, Camera, SkipForward, ChevronLeft, ChevronRight } from "lucide-react";
 import { interpolateSnapshots, getReplayDuration } from "@/services/race/racePlaybackService";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import { useRaceReplay } from "@/hooks/race/useRaceReplay";
@@ -51,8 +51,10 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bgCanvasRef = useRef<HTMLCanvasElement | null>(null); // static lane/track background
+  const scrubberRef = useRef<HTMLInputElement>(null);
 
   const duration = useMemo(() => getReplayDuration(snapshots), [snapshots]);
+
 
   const {
     timeRef,
@@ -65,9 +67,12 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
     cameraMode,
     setCameraMode,
     restart,
+    seek,
+    step,
     toggleSpeed,
     toggleCamera,
   } = useRaceReplay(duration, onComplete);
+
   const { playerHorseId, runnerMap } = useMemo(() => {
     const map = new Map(runners.map((r) => [r.horseId, r]));
     let playerId: string | undefined;
@@ -252,6 +257,9 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
       if (progressBarRef.current && duration > 0) {
         progressBarRef.current.style.width = `${(t / duration) * 100}%`;
       }
+      if (scrubberRef.current && document.activeElement !== scrubberRef.current) {
+        scrubberRef.current.value = t.toFixed(2);
+      }
     };
 
     // Initial paint so static frame is correct even when paused.
@@ -262,6 +270,46 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
       cancelAnimationFrame(frameId);
     };
   }, [isPlaying, playbackSpeed, duration, renderFrame, onComplete]);
+
+  // Keyboard shortcuts: Space play/pause, arrows step, Shift = larger step, Home/End jump.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA")) return;
+      switch (e.key) {
+        case " ":
+          e.preventDefault();
+          setIsPlaying((p) => !p);
+          break;
+        case "ArrowLeft":
+          e.preventDefault();
+          step(e.shiftKey ? -5 : -1);
+          break;
+        case "ArrowRight":
+          e.preventDefault();
+          step(e.shiftKey ? 5 : 1);
+          break;
+        case "Home":
+          e.preventDefault();
+          setIsPlaying(false);
+          seek(0);
+          break;
+        case "End":
+          e.preventDefault();
+          setIsPlaying(false);
+          seek(duration);
+          break;
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [step, seek, duration, setIsPlaying]);
+
+  // Re-render one frame after any seek while paused so the canvas reflects the new time.
+  useEffect(() => {
+    if (!isPlaying) renderFrame();
+  }, [isPlaying, renderFrame]);
+
 
   return (
     <div className="race-visualizer-container">
@@ -294,13 +342,47 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
         style={{ width: "0%" }}
       />
 
+      <div className="race-scrubber">
+        <input
+          ref={scrubberRef}
+          type="range"
+          min={0}
+          max={duration}
+          step={0.01}
+          defaultValue={0}
+          onInput={(e) => {
+            setIsPlaying(false);
+            seek(parseFloat((e.target as HTMLInputElement).value));
+          }}
+          aria-label="Race timeline scrubber"
+          className="race-scrubber-input"
+        />
+      </div>
+
       <div className="race-controls">
+        <button
+          className="race-control-btn"
+          onClick={() => step(-1)}
+          aria-label="Step back 1 second"
+          title="Step back (←)"
+        >
+          <ChevronLeft size={20} />
+        </button>
         <button
           className="race-control-btn"
           onClick={() => setIsPlaying((p) => !p)}
           aria-label={isPlaying ? "Pause race" : "Play race"}
+          title="Play/Pause (space)"
         >
           {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+        </button>
+        <button
+          className="race-control-btn"
+          onClick={() => step(1)}
+          aria-label="Step forward 1 second"
+          title="Step forward (→)"
+        >
+          <ChevronRight size={20} />
         </button>
         <button className="race-control-btn" onClick={restart} aria-label="Restart race">
           <RotateCcw size={20} />
