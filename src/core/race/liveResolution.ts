@@ -80,7 +80,12 @@ export function resolveLiveRaceWithImpacts(
 ): ResolverContext {
   if (race.resolved) {
     return {
-      state: { horses: Object.fromEntries(horses.map(h => [h.id, h])), jockeys, npcStables, races: { [race.id]: race } } as unknown as GameState,
+      state: {
+        horses: Object.fromEntries(horses.map((h) => [h.id, h])),
+        jockeys,
+        npcStables,
+        races: { [race.id]: race },
+      } as unknown as GameState,
       intents: [],
       impacts: [],
       impactLog: [],
@@ -174,9 +179,8 @@ export function resolveLiveRaceWithImpacts(
     const adjustedBeyer = Math.max(0, Math.round((beyer - dampener) * peakingMultiplier));
 
     // Calculate purse earned for this position
-    const purseEarned = r.position - 1 < prizeSplit.length
-      ? Math.round(race.purse * prizeSplit[r.position - 1])
-      : 0;
+    const purseEarned =
+      r.position - 1 < prizeSplit.length ? Math.round(race.purse * prizeSplit[r.position - 1]) : 0;
 
     // Win and You're In qualification
     let winAndYouInQualified = undefined;
@@ -301,32 +305,32 @@ export function resolveLiveRaceWithImpacts(
     if (purseEarned > 0) {
       const prize = purseEarned;
       if (horse.stableId) {
-          // NPC stable gets prize money
-          impacts.push({
-            id: generateUUID(),
-            intentId: "",
-            day,
-            phase: "raceResolution",
-            logLevel: "conditional",
-            type: "cash_change",
-            entityId: horse.stableId,
-            amount: prize,
-            reason: `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
-          } as CashImpact);
-        } else {
-          // Player gets prize money
-          impacts.push({
-            id: generateUUID(),
-            intentId: "",
-            day,
-            phase: "raceResolution",
-            logLevel: "conditional",
-            type: "cash_change",
-            entityId: "",
-            amount: prize,
-            reason: `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
-          } as CashImpact);
-        }
+        // NPC stable gets prize money
+        impacts.push({
+          id: generateUUID(),
+          intentId: "",
+          day,
+          phase: "raceResolution",
+          logLevel: "conditional",
+          type: "cash_change",
+          entityId: horse.stableId,
+          amount: prize,
+          reason: `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
+        } as CashImpact);
+      } else {
+        // Player gets prize money
+        impacts.push({
+          id: generateUUID(),
+          intentId: "",
+          day,
+          phase: "raceResolution",
+          logLevel: "conditional",
+          type: "cash_change",
+          entityId: "",
+          amount: prize,
+          reason: `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
+        } as CashImpact);
+      }
     }
 
     // Blue hen impact for graded stakes winners
@@ -505,7 +509,13 @@ export function resolveLiveRaceWithImpacts(
 
   // Apply impacts to state
   const resolverContext: ResolverContext = {
-    state: { horses: Object.fromEntries(horses.map(h => [h.id, h])), jockeys, npcStables, races: { [race.id]: race }, log: [] } as unknown as GameState,
+    state: {
+      horses: Object.fromEntries(horses.map((h) => [h.id, h])),
+      jockeys,
+      npcStables,
+      races: { [race.id]: race },
+      log: [],
+    } as unknown as GameState,
     intents: [],
     impacts,
     impactLog: [],

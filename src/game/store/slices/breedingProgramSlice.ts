@@ -38,9 +38,9 @@ export const createBreedingProgramSlice: GameStateCreator<BreedingProgramSlice> 
     const stableId = "player";
     const day = state.day;
     const program = buildBreedingProgram(stableId, archetypeId, day);
-    set((s: any) => ({
+    set((s) => ({
       activeBreedingProgram: program,
-      breedingPrograms: [...(s.breedingPrograms ?? []), program],
+      breedingPrograms: [...s.breedingPrograms, program],
     }));
     return { ok: true };
   },
@@ -60,9 +60,9 @@ export const createBreedingProgramSlice: GameStateCreator<BreedingProgramSlice> 
       ...program,
       enrolledDamIds: [...program.enrolledDamIds, damId],
     };
-    set((s: any) => ({
+    set((s) => ({
       activeBreedingProgram: updated,
-      breedingPrograms: (s.breedingPrograms ?? []).map((p: BreedingProgram) =>
+      breedingPrograms: s.breedingPrograms.map((p: BreedingProgram) =>
         p.id === updated.id ? updated : p,
       ),
     }));
@@ -70,7 +70,7 @@ export const createBreedingProgramSlice: GameStateCreator<BreedingProgramSlice> 
   },
 
   unenrollDamFromProgram: (damId) => {
-    set((s: any) => {
+    set((s) => {
       const program: BreedingProgram | null = s.activeBreedingProgram;
       if (!program) return {};
       const updated: BreedingProgram = {
@@ -79,7 +79,7 @@ export const createBreedingProgramSlice: GameStateCreator<BreedingProgramSlice> 
       };
       return {
         activeBreedingProgram: updated,
-        breedingPrograms: (s.breedingPrograms ?? []).map((p: BreedingProgram) =>
+        breedingPrograms: s.breedingPrograms.map((p: BreedingProgram) =>
           p.id === updated.id ? updated : p,
         ),
       };
@@ -87,14 +87,14 @@ export const createBreedingProgramSlice: GameStateCreator<BreedingProgramSlice> 
   },
 
   createBreedingProgram: (program) => {
-    set((s: any) => ({
-      breedingPrograms: [...(s.breedingPrograms ?? []), program],
+    set((s) => ({
+      breedingPrograms: [...s.breedingPrograms, program],
     }));
   },
 
   updateBreedingProgram: (program) => {
-    set((s: any) => ({
-      breedingPrograms: (s.breedingPrograms ?? []).map((p: BreedingProgram) =>
+    set((s) => ({
+      breedingPrograms: s.breedingPrograms.map((p: BreedingProgram) =>
         p.id === program.id ? program : p,
       ),
       activeBreedingProgram:
@@ -103,10 +103,8 @@ export const createBreedingProgramSlice: GameStateCreator<BreedingProgramSlice> 
   },
 
   deleteBreedingProgram: (programId) => {
-    set((s: any) => ({
-      breedingPrograms: (s.breedingPrograms ?? []).filter(
-        (p: BreedingProgram) => p.id !== programId,
-      ),
+    set((s) => ({
+      breedingPrograms: s.breedingPrograms.filter((p: BreedingProgram) => p.id !== programId),
       activeBreedingProgram:
         s.activeBreedingProgram?.id === programId ? null : s.activeBreedingProgram,
     }));

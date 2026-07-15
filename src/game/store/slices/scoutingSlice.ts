@@ -11,7 +11,8 @@ import type { Horse, ScoutReport, Stable } from "@/game/types";
 import { calculateScoutCost } from "@/core/npc/scouting";
 import { generateUUID } from "@/core/uuid";
 import { formatCurrency } from "@/core/common/formatting";
-import type { StoreGet } from "../types";
+import type { StoreSet, StoreGet } from "../types";
+import type { AnyIntent } from "@/core/resolver/intents";
 
 export type ScoutingSlice = {
   /**
@@ -40,9 +41,9 @@ export type ScoutingSlice = {
  * @returns Scouting slice with actions
  */
 export function createScoutingSlice(
-  set: any,
+  set: StoreSet,
   get: StoreGet,
-  enqueueIntent: (intent: any) => void,
+  enqueueIntent: (intent: AnyIntent) => void,
 ): ScoutingSlice {
   return {
     scoutHorse: (horseId) => {

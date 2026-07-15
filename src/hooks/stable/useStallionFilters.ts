@@ -35,7 +35,7 @@ export function useStallionFilters() {
           h.owned &&
           (h.gender === "mare" || h.gender === "filly") &&
           h.age >= 3 &&
-          !pregnancies.some((p: any) => !p.resolved && p.damId === h.id),
+          !pregnancies.some((p) => !p.resolved && p.damId === h.id),
       ),
     [horses, pregnancies],
   );
@@ -44,7 +44,7 @@ export function useStallionFilters() {
 
   const stableNameFor = (stableId?: string): string => {
     if (!stableId) return "Owned";
-    return npcStables.find((s: any) => s.id === stableId)?.name ?? "Unknown stable";
+    return npcStables.find((s) => s.id === stableId)?.name ?? "Unknown stable";
   };
 
   return {

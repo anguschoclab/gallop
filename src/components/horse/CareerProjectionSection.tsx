@@ -23,8 +23,10 @@ export function CareerProjectionSection({ horse, horses }: CareerProjectionSecti
   const careerStats = getCareerStats(horse);
   const pedMul = pedigreeMultiplier(horse, { horses });
   const isGelding = horse.gender === "gelding" || horse.gelded;
-  const g1Production = horse.stud?.lifetimeG1Foals ?? horse.blueHenStatus?.group1WinnersProduced ?? 0;
-  const stakesProduction = horse.stud?.lifetimeStakesFoals ?? horse.blueHenStatus?.stakesWinnersProduced ?? 0;
+  const g1Production =
+    horse.stud?.lifetimeG1Foals ?? horse.blueHenStatus?.group1WinnersProduced ?? 0;
+  const stakesProduction =
+    horse.stud?.lifetimeStakesFoals ?? horse.blueHenStatus?.stakesWinnersProduced ?? 0;
 
   const factors: { label: string; value: string }[] = [
     { label: "OVR", value: String(overall) },
@@ -64,14 +66,9 @@ export function CareerProjectionSection({ horse, horses }: CareerProjectionSecti
             </div>
             <div className="grid grid-cols-2 gap-x-4 gap-y-2">
               {factors.map((f) => (
-                <div
-                  key={f.label}
-                  className="flex items-center justify-between text-xs"
-                >
+                <div key={f.label} className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">{f.label}</span>
-                  <span className="font-mono font-bold text-cream/80 tabular-nums">
-                    {f.value}
-                  </span>
+                  <span className="font-mono font-bold text-cream/80 tabular-nums">{f.value}</span>
                 </div>
               ))}
             </div>
@@ -83,13 +80,13 @@ export function CareerProjectionSection({ horse, horses }: CareerProjectionSecti
               How the Model Works
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              <span className="text-cream/70 font-semibold">Pre-career</span> projects the
-              horse's value as a yearling, before any race record — driven by pedigree multiplier,
+              <span className="text-cream/70 font-semibold">Pre-career</span> projects the horse's
+              value as a yearling, before any race record — driven by pedigree multiplier,
               potential, and a slice of breeding upside.
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              <span className="text-cream/70 font-semibold">Current</span> blends racing form
-              with breeding optionality. The weight shifts from racing-heavy (young, active) to
+              <span className="text-cream/70 font-semibold">Current</span> blends racing form with
+              breeding optionality. The weight shifts from racing-heavy (young, active) to
               breeding-heavy (older, retired).
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -99,8 +96,8 @@ export function CareerProjectionSection({ horse, horses }: CareerProjectionSecti
             </p>
             {isGelding && (
               <p className="text-xs text-muted-foreground leading-relaxed">
-                <span className="text-cream/70 font-semibold">Geldings</span> return zero
-                breeding value — post-career is salvage value only (10% of racing).
+                <span className="text-cream/70 font-semibold">Geldings</span> return zero breeding
+                value — post-career is salvage value only (10% of racing).
               </p>
             )}
           </div>

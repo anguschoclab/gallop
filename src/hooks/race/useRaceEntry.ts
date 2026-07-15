@@ -56,10 +56,12 @@ export function useRaceEntry(race: Race) {
   };
 
   const eligibleHorses = useMemo(() => {
-    return horses.filter((h) => h.owned).map((h: Horse) => ({
-      horse: h,
-      eligible: isHorseEligibleForRace(h, race, new Set(), day),
-    }));
+    return horses
+      .filter((h) => h.owned)
+      .map((h: Horse) => ({
+        horse: h,
+        eligible: isHorseEligibleForRace(h, race, new Set(), day),
+      }));
   }, [horses, race, day]);
 
   const marketJockeys = useMemo(() => {

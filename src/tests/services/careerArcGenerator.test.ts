@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { checkCareerArcTrigger, type CareerArcState } from "@/services/narrative/careerArcGenerator";
+import {
+  checkCareerArcTrigger,
+  type CareerArcState,
+} from "@/services/narrative/careerArcGenerator";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
 import { isValidUUID } from "@/core/uuid";
 import type { Race } from "@/game/types";
@@ -82,7 +85,12 @@ describe("checkCareerArcTrigger", () => {
     it("15.3 — Stage 1 does NOT re-fire if already rising_star", () => {
       const horse = createPlayerHorse(2);
       const race = createNonGradedRace();
-      const existing: CareerArcState = { horseId: horse.id, stage: "rising_star", stage1Day: 5, consecutiveLosses: 0 };
+      const existing: CareerArcState = {
+        horseId: horse.id,
+        stage: "rising_star",
+        stage1Day: 5,
+        consecutiveLosses: 0,
+      };
       const result = checkCareerArcTrigger(horse, existing, race, 1, 10, createTestRng());
       expect(result.newsItem).toBeNull();
     });
@@ -90,7 +98,12 @@ describe("checkCareerArcTrigger", () => {
     it("15.4 — Stage 2 fires on 5th win (careerWins=4, position 1 → computed 5)", () => {
       const horse = createPlayerHorse(4);
       const race = createNonGradedRace();
-      const existing: CareerArcState = { horseId: horse.id, stage: "rising_star", stage1Day: 5, consecutiveLosses: 0 };
+      const existing: CareerArcState = {
+        horseId: horse.id,
+        stage: "rising_star",
+        stage1Day: 5,
+        consecutiveLosses: 0,
+      };
       const result = checkCareerArcTrigger(horse, existing, race, 1, 10, createTestRng());
       expect(result.newsItem).not.toBeNull();
       expect(result.newArcState.stage).toBe("contender");
@@ -99,7 +112,12 @@ describe("checkCareerArcTrigger", () => {
     it("15.5 — Stage 2 fires on first graded win (even if careerWins < 5)", () => {
       const horse = createPlayerHorse(3);
       const race = createG2Race();
-      const existing: CareerArcState = { horseId: horse.id, stage: "rising_star", stage1Day: 5, consecutiveLosses: 0 };
+      const existing: CareerArcState = {
+        horseId: horse.id,
+        stage: "rising_star",
+        stage1Day: 5,
+        consecutiveLosses: 0,
+      };
       const result = checkCareerArcTrigger(horse, existing, race, 1, 10, createTestRng());
       expect(result.newsItem).not.toBeNull();
       expect(result.newArcState.stage).toBe("contender");
@@ -108,7 +126,13 @@ describe("checkCareerArcTrigger", () => {
     it("15.6 — Stage 2 does NOT re-fire if already contender", () => {
       const horse = createPlayerHorse(4);
       const race = createNonGradedRace();
-      const existing: CareerArcState = { horseId: horse.id, stage: "contender", stage1Day: 5, stage2Day: 8, consecutiveLosses: 0 };
+      const existing: CareerArcState = {
+        horseId: horse.id,
+        stage: "contender",
+        stage1Day: 5,
+        stage2Day: 8,
+        consecutiveLosses: 0,
+      };
       const result = checkCareerArcTrigger(horse, existing, race, 1, 10, createTestRng());
       expect(result.newsItem).toBeNull();
     });
@@ -116,7 +140,13 @@ describe("checkCareerArcTrigger", () => {
     it("15.7 — Stage 3 champion path fires on first G1 win", () => {
       const horse = createPlayerHorse(5);
       const race = createG1Race();
-      const existing: CareerArcState = { horseId: horse.id, stage: "contender", stage1Day: 5, stage2Day: 8, consecutiveLosses: 0 };
+      const existing: CareerArcState = {
+        horseId: horse.id,
+        stage: "contender",
+        stage1Day: 5,
+        stage2Day: 8,
+        consecutiveLosses: 0,
+      };
       const result = checkCareerArcTrigger(horse, existing, race, 1, 10, createTestRng());
       expect(result.newsItem).not.toBeNull();
       expect(result.newArcState.stage).toBe("champion_or_bust");
@@ -126,7 +156,13 @@ describe("checkCareerArcTrigger", () => {
     it("15.8 — Stage 3 bust path fires on 3rd consecutive loss at contender", () => {
       const horse = createPlayerHorse(5);
       const race = createNonGradedRace();
-      const existing: CareerArcState = { horseId: horse.id, stage: "contender", stage1Day: 5, stage2Day: 8, consecutiveLosses: 2 };
+      const existing: CareerArcState = {
+        horseId: horse.id,
+        stage: "contender",
+        stage1Day: 5,
+        stage2Day: 8,
+        consecutiveLosses: 2,
+      };
       const result = checkCareerArcTrigger(horse, existing, race, 2, 10, createTestRng());
       expect(result.newsItem).not.toBeNull();
       expect(result.newArcState.stage).toBe("champion_or_bust");
@@ -136,7 +172,13 @@ describe("checkCareerArcTrigger", () => {
     it("15.9 — Stage 3 bust path does NOT fire on 2nd consecutive loss", () => {
       const horse = createPlayerHorse(5);
       const race = createNonGradedRace();
-      const existing: CareerArcState = { horseId: horse.id, stage: "contender", stage1Day: 5, stage2Day: 8, consecutiveLosses: 1 };
+      const existing: CareerArcState = {
+        horseId: horse.id,
+        stage: "contender",
+        stage1Day: 5,
+        stage2Day: 8,
+        consecutiveLosses: 1,
+      };
       const result = checkCareerArcTrigger(horse, existing, race, 2, 10, createTestRng());
       expect(result.newsItem).toBeNull();
       expect(result.newArcState.consecutiveLosses).toBe(2);
@@ -145,7 +187,14 @@ describe("checkCareerArcTrigger", () => {
     it("15.10 — complete stage: no articles, no transitions", () => {
       const horse = createPlayerHorse(10);
       const race = createG1Race();
-      const existing: CareerArcState = { horseId: horse.id, stage: "complete", stage1Day: 5, stage2Day: 8, stage3Day: 12, consecutiveLosses: 0 };
+      const existing: CareerArcState = {
+        horseId: horse.id,
+        stage: "complete",
+        stage1Day: 5,
+        stage2Day: 8,
+        stage3Day: 12,
+        consecutiveLosses: 0,
+      };
       const result = checkCareerArcTrigger(horse, existing, race, 1, 10, createTestRng());
       expect(result.newsItem).toBeNull();
       expect(result.newArcState.stage).toBe("complete");
@@ -154,7 +203,13 @@ describe("checkCareerArcTrigger", () => {
     it("15.11 — consecutiveLosses resets to 0 on win at any stage", () => {
       const horse = createPlayerHorse(5);
       const race = createNonGradedRace();
-      const existing: CareerArcState = { horseId: horse.id, stage: "contender", stage1Day: 5, stage2Day: 8, consecutiveLosses: 2 };
+      const existing: CareerArcState = {
+        horseId: horse.id,
+        stage: "contender",
+        stage1Day: 5,
+        stage2Day: 8,
+        consecutiveLosses: 2,
+      };
       const result = checkCareerArcTrigger(horse, existing, race, 1, 10, createTestRng());
       expect(result.newArcState.consecutiveLosses).toBe(0);
     });

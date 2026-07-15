@@ -107,7 +107,9 @@ export function LeaderboardRow({
             {badges}
           </div>
           {meta && (
-            <p className="text-[11px] text-cream-muted mt-0.5 uppercase tracking-wide line-clamp-1 sm:line-clamp-none">{meta}</p>
+            <p className="text-[11px] text-cream-muted mt-0.5 uppercase tracking-wide line-clamp-1 sm:line-clamp-none">
+              {meta}
+            </p>
           )}
         </div>
       </div>

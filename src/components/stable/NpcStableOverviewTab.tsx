@@ -142,7 +142,7 @@ export function NpcStableOverviewTab({ stableId, pageData }: NpcStableOverviewTa
       )}
 
       <TrophyCase
-        awards={awards?.filter((a: any) => a.stableId === stableId) ?? []}
+        awards={awards.filter((a) => a.stableId === stableId)}
         ownerName={stable.name}
         variant="compact"
       />

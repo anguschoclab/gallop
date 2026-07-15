@@ -29,9 +29,7 @@ function renderCompactCategory(category: RegionalAwardCategory, sorted: Regional
       <div className="flex items-center gap-2 min-w-0">
         <AwardIcon region={sorted[0].region} category={category} size="tiny" />
         <div className="min-w-0">
-          <div className="text-sm font-medium truncate">
-            {CATEGORY_DISPLAY_NAMES[category]}
-          </div>
+          <div className="text-sm font-medium truncate">{CATEGORY_DISPLAY_NAMES[category]}</div>
           <div className="text-[10px] text-muted-foreground flex items-center gap-1">
             <span title={getRegionCountryLabel(sorted[0].region)}>
               {getRegionFlag(sorted[0].region)}
@@ -58,9 +56,7 @@ function renderExpandedAwards(sorted: RegionalAward[]) {
         title={getRegionCountryLabel(award.region)}
       >
         <span>{getRegionFlag(award.region)}</span>
-        <span className="hidden sm:inline">
-          {getRegionCountryLabel(award.region)}
-        </span>
+        <span className="hidden sm:inline">{getRegionCountryLabel(award.region)}</span>
       </span>
     </div>
   ));

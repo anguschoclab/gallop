@@ -32,11 +32,7 @@ describe("Age display floor", () => {
     } as unknown as Stable;
 
     const { container } = render(
-      <PlayerConsignmentsPanel
-        playerConsignedLots={[lot]}
-        horses={[horse]}
-        stables={[stable]}
-      />,
+      <PlayerConsignmentsPanel playerConsignedLots={[lot]} horses={[horse]} stables={[stable]} />,
     );
 
     const text = container.textContent ?? "";
@@ -66,11 +62,7 @@ describe("Age display floor", () => {
     } as unknown as Stable;
 
     const { container } = render(
-      <PlayerConsignmentsPanel
-        playerConsignedLots={[lot]}
-        horses={[horse]}
-        stables={[stable]}
-      />,
+      <PlayerConsignmentsPanel playerConsignedLots={[lot]} horses={[horse]} stables={[stable]} />,
     );
 
     const text = container.textContent ?? "";

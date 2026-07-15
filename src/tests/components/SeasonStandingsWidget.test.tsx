@@ -13,7 +13,14 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     gender: "colt",
     energy: 80,
     peakingIndex: 0,
-    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70, consistency: 70 } as any,
+    stats: {
+      speed: 70,
+      stamina: 70,
+      acceleration: 70,
+      temperament: 70,
+      durability: 70,
+      consistency: 70,
+    } as any,
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
@@ -34,7 +41,7 @@ describe("SeasonStandingsWidget", () => {
     seedStore({ ...createDefaultGameState() });
     render(<SeasonStandingsWidget />);
     const btn30 = screen.getByText("30D");
-    expect(btn30.className).toContain("bg-gold") ;
+    expect(btn30.className).toContain("bg-gold");
   });
 
   it("clicking 7D changes the selected range", () => {
@@ -48,19 +55,39 @@ describe("SeasonStandingsWidget", () => {
   it("shows empty state when no prize money earned", () => {
     seedStore({ ...createDefaultGameState() });
     render(<SeasonStandingsWidget />);
-    expect(screen.getByText(/no prize money/i) || screen.getByText(/no earnings/i) || screen.getByText(/—/)).toBeTruthy();
+    expect(
+      screen.getByText(/no prize money/i) ||
+        screen.getByText(/no earnings/i) ||
+        screen.getByText(/—/),
+    ).toBeTruthy();
   });
 
   it("renders standings rows when race history exists", () => {
     const h1 = mkHorse({
-      id: "h1", owned: true,
-      raceHistory: [{ raceId: "r1", raceName: "Test", position: 1, day: 55, beyer: 80, purse: 100000, purseEarned: 60000, surface: "Turf", distance: 1600 } as any],
+      id: "h1",
+      owned: true,
+      raceHistory: [
+        {
+          raceId: "r1",
+          raceName: "Test",
+          position: 1,
+          day: 55,
+          beyer: 80,
+          purse: 100000,
+          purseEarned: 60000,
+          surface: "Turf",
+          distance: 1600,
+        } as any,
+      ],
     });
     seedStore({
       ...createDefaultGameState(),
       day: 60,
       horses: { h1 },
-      playerProfile: { stableName: "My Stable", silk: { primary: "#ff0000", secondary: "#0000ff" } } as any,
+      playerProfile: {
+        stableName: "My Stable",
+        silk: { primary: "#ff0000", secondary: "#0000ff" },
+      } as any,
     });
     render(<SeasonStandingsWidget />);
     expect(screen.getByText("My Stable")).toBeTruthy();
@@ -68,17 +95,36 @@ describe("SeasonStandingsWidget", () => {
 
   it("shows notification badge when inbox has standings messages", () => {
     const h1 = mkHorse({
-      id: "h1", owned: true,
-      raceHistory: [{ raceId: "r1", raceName: "Test", position: 1, day: 55, beyer: 80, purse: 100000, purseEarned: 60000, surface: "Turf", distance: 1600 } as any],
+      id: "h1",
+      owned: true,
+      raceHistory: [
+        {
+          raceId: "r1",
+          raceName: "Test",
+          position: 1,
+          day: 55,
+          beyer: 80,
+          purse: 100000,
+          purseEarned: 60000,
+          surface: "Turf",
+          distance: 1600,
+        } as any,
+      ],
     });
     seedStore({
       ...createDefaultGameState(),
       day: 60,
       horses: { h1 },
-      inbox: [{
-        id: "msg1", day: 55, category: "standings", priority: "info",
-        title: "Rank changed!", body: "You moved up to #3",
-      } as any],
+      inbox: [
+        {
+          id: "msg1",
+          day: 55,
+          category: "standings",
+          priority: "info",
+          title: "Rank changed!",
+          body: "You moved up to #3",
+        } as any,
+      ],
     } as Partial<GameState>);
     render(<SeasonStandingsWidget />);
     expect(screen.getByTestId("standings-badge")).toBeTruthy();
@@ -86,14 +132,30 @@ describe("SeasonStandingsWidget", () => {
 
   it("clicking a row opens the stable details panel", () => {
     const h1 = mkHorse({
-      id: "h1", owned: true,
-      raceHistory: [{ raceId: "r1", raceName: "Test", position: 1, day: 55, beyer: 80, purse: 100000, purseEarned: 60000, surface: "Turf", distance: 1600 } as any],
+      id: "h1",
+      owned: true,
+      raceHistory: [
+        {
+          raceId: "r1",
+          raceName: "Test",
+          position: 1,
+          day: 55,
+          beyer: 80,
+          purse: 100000,
+          purseEarned: 60000,
+          surface: "Turf",
+          distance: 1600,
+        } as any,
+      ],
     });
     seedStore({
       ...createDefaultGameState(),
       day: 60,
       horses: { h1 },
-      playerProfile: { stableName: "My Stable", silk: { primary: "#ff0000", secondary: "#0000ff" } } as any,
+      playerProfile: {
+        stableName: "My Stable",
+        silk: { primary: "#ff0000", secondary: "#0000ff" },
+      } as any,
     });
     render(<SeasonStandingsWidget />);
     const row = screen.getByText("My Stable");

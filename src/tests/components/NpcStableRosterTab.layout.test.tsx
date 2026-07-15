@@ -12,7 +12,10 @@ vi.mock("@/hooks/horse/useHorseCard", () => ({
     ovr: 70,
     simpleHorseCards: false,
     scoutStatus: { label: "Fully Scouted", icon: "✓", color: "text-success" },
-    displayStats: { stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, overallEstimate: 70 },
+    displayStats: {
+      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      overallEstimate: 70,
+    },
     genderColor: "text-blue-400",
     gradeColor: () => "text-gold",
     sparklineData: [],
@@ -21,7 +24,10 @@ vi.mock("@/hooks/horse/useHorseCard", () => ({
 
 vi.mock("@/core/npc/scouting", () => ({
   calculateScoutCost: () => 100,
-  getDisplayableStats: () => ({ stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, overallEstimate: 70 }),
+  getDisplayableStats: () => ({
+    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+    overallEstimate: 70,
+  }),
   getScoutStatus: () => ({ label: "Fully Scouted", icon: "✓", color: "text-success" }),
 }));
 
@@ -65,7 +71,14 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     form: 50,
     potential: 75,
     fame: 10,
-    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70, consistency: 70 } as any,
+    stats: {
+      speed: 70,
+      stamina: 70,
+      acceleration: 70,
+      temperament: 70,
+      durability: 70,
+      consistency: 70,
+    } as any,
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
@@ -76,7 +89,17 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   }) as Horse;
 
 const mkPageData = (overrides: any = {}): ReturnType<typeof useNpcStableDetail> => ({
-  stable: { id: "npc1", name: "Test Stable", country: "USA", personality: "bold_approach", cash: 100000, colors: { primary: "#ff0000", secondary: "#00ff00" }, staff: {}, reputation: 50, founded: 2020 } as any,
+  stable: {
+    id: "npc1",
+    name: "Test Stable",
+    country: "USA",
+    personality: "bold_approach",
+    cash: 100000,
+    colors: { primary: "#ff0000", secondary: "#00ff00" },
+    staff: {},
+    reputation: 50,
+    founded: 2020,
+  } as any,
   stableHorses: [mkHorse()],
   day: 10,
   cash: 50000,

@@ -411,9 +411,10 @@ export function generateG1SpotlightNews(
  * Injects the top-earning horse's name into the body for world-awareness.
  */
 export function generateWeeklyFlavorNews(horses: Horse[], day: number, rng: Rng): NewsItem {
-  const topEarner = horses.length > 0
-    ? [...horses].sort((a, b) => (b.lifetimeEarnings ?? 0) - (a.lifetimeEarnings ?? 0))[0]
-    : null;
+  const topEarner =
+    horses.length > 0
+      ? [...horses].sort((a, b) => (b.lifetimeEarnings ?? 0) - (a.lifetimeEarnings ?? 0))[0]
+      : null;
 
   const headlines = [
     `Week in Review: The State of Racing`,
@@ -444,8 +445,8 @@ export function generateWeeklyFlavorNews(horses: Horse[], day: number, rng: Rng)
         `From morning workouts to evening gallops, the week belonged to ${topEarner.name} in the headlines. With $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} in career earnings, every move is scrutinized.`,
         `The racing world took a breath this week, but ${topEarner.name} remains the undisputed heavyweight with $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} earned. Every trainer is wondering how to beat them.`,
         `It was another week of speculation surrounding ${topEarner.name}. Boasting $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} in lifetime earnings, the superstar is the benchmark for success this season.`,
-        `All conversations trackside eventually turn to ${topEarner.name}. The leading earner's $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} bankroll is a testament to their dominance, and fans are eager for their next start.`,
-        `While the week was light on major stakes action, ${topEarner.name} and their $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} bankroll dominated the headlines. The sport is waiting to see where they will run next.`,
+        `All conversations trackside eventually turn to ${topEarner.name}. The leading earner's $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} in career earnings is a testament to their dominance, and fans are eager for their next start.`,
+        `While the week was light on major stakes action, ${topEarner.name} and their $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} in career earnings dominated the headlines. The sport is waiting to see where they will run next.`,
         `The week concludes with ${topEarner.name} firmly entrenched as the sport's top earner. With $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} to their name, the pressure to perform remains immense.`,
         `Whispers on the backstretch continue to focus on ${topEarner.name}. Having amassed $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} in earnings, the horse is setting the standard for greatness.`,
       ]
@@ -498,7 +499,8 @@ export function generateFollowUpRaceNews(
   if (position < 1 || position > 3) return null;
   if (horse.stableId) return null;
 
-  const positionLabel = position === 1 ? "victory" : position === 2 ? "runner-up finish" : "third-place finish";
+  const positionLabel =
+    position === 1 ? "victory" : position === 2 ? "runner-up finish" : "third-place finish";
   const positionLabelShort = position === 1 ? "win" : position === 2 ? "second" : "third";
 
   const headlines = [

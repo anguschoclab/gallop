@@ -20,7 +20,14 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     form: 50,
     potential: 75,
     fame: 10,
-    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70, consistency: 70 } as any,
+    stats: {
+      speed: 70,
+      stamina: 70,
+      acceleration: 70,
+      temperament: 70,
+      durability: 70,
+      consistency: 70,
+    } as any,
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
@@ -29,7 +36,9 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     ...overrides,
   }) as Horse;
 
-const mkHookData = (overrides: Partial<ReturnType<typeof useHorseCard>> = {}): ReturnType<typeof useHorseCard> => ({
+const mkHookData = (
+  overrides: Partial<ReturnType<typeof useHorseCard>> = {},
+): ReturnType<typeof useHorseCard> => ({
   ovr: 70,
   simpleHorseCards: false,
   scoutStatus: { label: "Fully Scouted", icon: "✓", color: "text-success" } as any,

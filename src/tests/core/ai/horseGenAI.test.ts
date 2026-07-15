@@ -41,17 +41,13 @@ describe("createHorseGenAIState", () => {
     it(`${personality}: targetQualityLevel matches strategy`, () => {
       const stable = createTestStable({ personality });
       const state = createHorseGenAIState(stable);
-      expect(state.rosterComposition.targetQualityLevel).toBe(
-        EXPECTED_QUALITY[personality],
-      );
+      expect(state.rosterComposition.targetQualityLevel).toBe(EXPECTED_QUALITY[personality]);
     });
 
     it(`${personality}: targetHorseCount matches strategy`, () => {
       const stable = createTestStable({ personality });
       const state = createHorseGenAIState(stable);
-      expect(state.rosterComposition.targetHorseCount).toBe(
-        EXPECTED_HORSE_COUNT[personality],
-      );
+      expect(state.rosterComposition.targetHorseCount).toBe(EXPECTED_HORSE_COUNT[personality]);
     });
 
     it(`${personality}: targetAgeDistribution sums to targetHorseCount`, () => {
@@ -90,18 +86,14 @@ describe("createHorseGenAIState", () => {
   it("prestige: targetAgeDistribution has ages 2-6", () => {
     const stable = createTestStable({ personality: "prestige" });
     const state = createHorseGenAIState(stable);
-    const ages = Object.keys(state.rosterComposition.targetAgeDistribution)
-      .map(Number)
-      .sort();
+    const ages = Object.keys(state.rosterComposition.targetAgeDistribution).map(Number).sort();
     expect(ages).toEqual([2, 3, 4, 5, 6]);
   });
 
   it("win-now: targetAgeDistribution has ages 3-6 (no 2yo)", () => {
     const stable = createTestStable({ personality: "win-now" });
     const state = createHorseGenAIState(stable);
-    const ages = Object.keys(state.rosterComposition.targetAgeDistribution)
-      .map(Number)
-      .sort();
+    const ages = Object.keys(state.rosterComposition.targetAgeDistribution).map(Number).sort();
     expect(ages).toEqual([3, 4, 5, 6]);
   });
 });

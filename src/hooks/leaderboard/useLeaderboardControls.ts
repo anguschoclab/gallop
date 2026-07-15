@@ -44,7 +44,9 @@ export function useLeaderboardControls<T>({
   filterFns,
 }: UseLeaderboardControlsConfig<T>): UseLeaderboardControlsResult<T> {
   const [sortValue, setSortValue] = useState(defaultSort ?? sortOptions[0]?.value ?? "");
-  const [filterValue, setFilterValue] = useState(defaultFilter ?? filterOptions?.[0]?.value ?? "all");
+  const [filterValue, setFilterValue] = useState(
+    defaultFilter ?? filterOptions?.[0]?.value ?? "all",
+  );
   const [searchQuery, setSearchQuery] = useState("");
 
   const processed = useMemo(() => {

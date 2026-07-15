@@ -46,7 +46,9 @@ export function HorseCardScout({ horse, hookData, className = "" }: HorseCardSco
           <SilkDot color={getCoatColor(horse.coatColor)} size="md" />
           <div className="space-y-1 min-w-0 flex-1">
             <div className="flex items-center gap-2 min-w-0">
-              <span className={cn(genderColor, "text-sm shrink-0")}>{genderSymbol(horse.gender)}</span>
+              <span className={cn(genderColor, "text-sm shrink-0")}>
+                {genderSymbol(horse.gender)}
+              </span>
               <span className="font-bold text-lg text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-blue-400 transition-colors truncate min-w-0 flex-1">
                 {horse.name}
               </span>

@@ -1,6 +1,11 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { formatCurrency } from "@/core/common/formatting";
-import { facilityLevelToTierLabel, FACILITY_NAMES, type FacilityLevel, type FacilityType } from "@/core/facilities";
+import {
+  facilityLevelToTierLabel,
+  FACILITY_NAMES,
+  type FacilityLevel,
+  type FacilityType,
+} from "@/core/facilities";
 import type { JockeySilk } from "@/game/types";
 import type { Backstory } from "@/core/common/backstories";
 import { SilkPreview } from "../SilkPreview";
@@ -62,7 +67,10 @@ export function StepReview({ stableName, ownerName, silk, backstory }: StepRevie
             {Object.entries(backstory.facilityUpgrades).length === 0
               ? "—"
               : Object.entries(backstory.facilityUpgrades)
-                  .map(([type, level]) => `${FACILITY_NAMES[type as FacilityType] ?? type} (${facilityLevelToTierLabel(level as FacilityLevel)})`)
+                  .map(
+                    ([type, level]) =>
+                      `${FACILITY_NAMES[type as FacilityType] ?? type} (${facilityLevelToTierLabel(level as FacilityLevel)})`,
+                  )
                   .join(", ")}
           </dd>
 

@@ -10,6 +10,7 @@
 
 import type { Stable, PlayerProfile, GameState } from "@/game/types";
 import type { ManagerReputation } from "@/core/reputation";
+import type { CoreState } from "@/game/store/state/coreState";
 import type { SystemsState } from "@/game/store/state/systemsState";
 import type { UserSettings } from "@/core/settings/settingsTypes";
 import type { GameStateCreator } from "../types";
@@ -21,9 +22,9 @@ export type UtilitySlice = {
   /** Sets the global user settings */
   setUserSettings: (settings: UserSettings) => void;
   /** Sets the collection of historical expenses */
-  setExpenses: (expenses: SystemsState["expenses"]) => void;
+  setExpenses: (expenses: CoreState["expenses"]) => void;
   /** Sets the collection of financial transactions */
-  setTransactions: (transactions: SystemsState["transactions"]) => void;
+  setTransactions: (transactions: CoreState["transactions"]) => void;
   /** Sets the collection of race replays */
   setReplays: (replays: SystemsState["replays"]) => void;
   /** Sets the player's reputation state */

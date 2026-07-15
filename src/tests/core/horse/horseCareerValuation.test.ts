@@ -107,7 +107,10 @@ describe("horseCareerValuation", () => {
     const v = horseCareerValuation(gelding, [gelding]);
     const overall = calculateOverallRating(gelding);
     const potMod = 0.5 + (gelding.potential ?? 50) / 100;
-    const pedMul = pedigreeMultiplier({ ...gelding, age: 1 }, { horses: { [gelding.id]: gelding } });
+    const pedMul = pedigreeMultiplier(
+      { ...gelding, age: 1 },
+      { horses: { [gelding.id]: gelding } },
+    );
     const yearlingRacing = Math.round((overall * 80 * 1.2 * potMod) / 50) * 50;
     const yearlingPed = Math.round((yearlingRacing * pedMul) / 50) * 50;
     expect(v.preCareer).toBe(yearlingPed);
@@ -128,7 +131,8 @@ describe("horseCareerValuation", () => {
   it("postCareer for stallion equals estimateBreedingValue at age 7 (rounded to 100)", () => {
     const stallion = createTestStallion({ age: 5 });
     const v = horseCareerValuation(stallion, [stallion]);
-    const projected = Math.round(estimateBreedingValue({ ...stallion, age: 7 }, [stallion]) / 100) * 100;
+    const projected =
+      Math.round(estimateBreedingValue({ ...stallion, age: 7 }, [stallion]) / 100) * 100;
     expect(v.postCareer).toBe(projected);
   });
 
@@ -197,13 +201,11 @@ describe("horseCareerValuation", () => {
     const potMod = 0.5 + (colt.potential ?? 50) / 100;
     const yearlingPedMul = pedigreeMultiplier(
       { ...colt, age: 1 },
-      { horses: Object.fromEntries(allHorses.map(h => [h.id, h])) },
+      { horses: Object.fromEntries(allHorses.map((h) => [h.id, h])) },
     );
     const yearlingRacing = Math.round((overall * 80 * 1.2 * potMod) / 50) * 50;
     const yearlingPed = Math.round((yearlingRacing * yearlingPedMul) / 50) * 50;
-    const breedingUpside = Math.round(
-      estimateBreedingValue({ ...colt, age: 5 }, allHorses) * 0.25,
-    );
+    const breedingUpside = Math.round(estimateBreedingValue({ ...colt, age: 5 }, allHorses) * 0.25);
     const expectedPreCareer = Math.round((yearlingPed + breedingUpside) / 50) * 50;
     expect(v.preCareer).toBe(expectedPreCareer);
   });

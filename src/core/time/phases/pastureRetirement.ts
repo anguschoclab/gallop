@@ -106,7 +106,9 @@ export const pastureRetirementPhase: PipelinePhase = {
     }
 
     // 2. Automatic NPC retirement
-    const npcHorses = Object.values(state.horses).filter((h) => h.stableId && h.lifecycleStatus === "active");
+    const npcHorses = Object.values(state.horses).filter(
+      (h) => h.stableId && h.lifecycleStatus === "active",
+    );
 
     for (const horse of npcHorses) {
       // Skip if already at stud (stud retirement handles that)

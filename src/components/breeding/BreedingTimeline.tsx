@@ -19,7 +19,7 @@ export function BreedingTimeline({ horseId }: BreedingTimelineProps) {
   const birthPregnancy = pregnancies.find((p) => p.foalId === horseId);
 
   // Build timeline events
-  const events: Array<{
+  let events: Array<{
     type: "birth" | "conception" | "foal_birth";
     day: number;
     title: string;
@@ -68,7 +68,7 @@ export function BreedingTimeline({ horseId }: BreedingTimelineProps) {
   });
 
   // Sort events by day (most recent first)
-  events.sort((a, b) => b.day - a.day);
+  events = [...events].sort((a, b) => b.day - a.day);
 
   if (events.length === 0) {
     return (

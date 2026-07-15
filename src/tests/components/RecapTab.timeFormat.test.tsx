@@ -9,7 +9,22 @@ vi.mock("@tanstack/react-router", () => ({
 vi.mock("@/hooks/race/useRecapData", () => ({
   useRecapData: () => ({
     localHorseMap: new Map([
-      ["h1", { id: "h1", name: "Speedy", age: 4, stats: { speed: 60, stamina: 50, acceleration: 55, temperament: 40, conformation: 35, consistency: 30 } }],
+      [
+        "h1",
+        {
+          id: "h1",
+          name: "Speedy",
+          age: 4,
+          stats: {
+            speed: 60,
+            stamina: 50,
+            acceleration: 55,
+            temperament: 40,
+            conformation: 35,
+            consistency: 30,
+          },
+        },
+      ],
     ]),
     recentGradedRaces: [
       {
@@ -20,9 +35,7 @@ vi.mock("@/hooks/race/useRecapData", () => ({
         purse: 50000,
         graded: { grade: "G1", track: "Test Track", surface: "Turf" },
         raceClass: "stakes",
-        result: [
-          { horseId: "h1", time: 92.41598732105, position: 1 },
-        ],
+        result: [{ horseId: "h1", time: 92.41598732105, position: 1 }],
       },
     ],
     calibratedPars: {},

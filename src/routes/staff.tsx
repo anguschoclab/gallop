@@ -7,6 +7,8 @@ import { Users } from "lucide-react";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { useMemo, useState } from "react";
 import { getG1WinsForStable, countByGrade } from "@/constants/connectionTrophies";
+import { generateUUID } from "@/core/uuid";
+import type { StaffRole, StaffTier } from "@/core/staff/staffTypes";
 import { StaffNegotiationDialog } from "@/components/staff/StaffNegotiationDialog";
 import { StaffTeamList } from "@/components/staff/StaffTeamList";
 import { RecruitmentPool } from "@/components/staff/RecruitmentPool";
@@ -31,16 +33,21 @@ function StaffManagement() {
   const honorCounts = useMemo(() => countByGrade(stableG1Wins), [stableG1Wins]);
   const showHonors = (role: string) => role === "trainer" || role === "groom";
 
-  const handleFire = (staff: any) => {
+  const handleFire = (staff: { id: string; role: string; tier: string; salary: number }) => {
     enqueueIntent({
+      id: generateUUID(),
+      entityId: staff.id,
+      source: "player",
+      day,
+      priority: 100,
       type: "staff",
       action: "fire",
       stableId: "",
       staffId: staff.id,
-      role: staff.role,
-      tier: staff.tier,
+      role: staff.role as StaffRole,
+      tier: staff.tier as StaffTier,
       salary: staff.salary,
-    } as any);
+    });
   };
 
   return (

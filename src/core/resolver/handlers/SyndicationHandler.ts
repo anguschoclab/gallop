@@ -39,8 +39,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       impact as SyndicateCreationImpact;
 
     // Validate stallion exists and is a G1 winner
-    const stallion =
-      lookupMaps?.horseMap.get(stallionId) || draft.horses[stallionId];
+    const stallion = lookupMaps?.horseMap.get(stallionId) || draft.horses[stallionId];
     if (!stallion) return;
 
     // Check if stallion is a G1 winner

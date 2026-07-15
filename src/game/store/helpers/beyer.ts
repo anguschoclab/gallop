@@ -40,10 +40,10 @@ export function maybeRecalibratePars(
     return { calibratedPars: currentPars, lastCalibrationDay, log: null };
   }
   const recomputed = recomputePars(paceSamples ?? {});
-  if (Object.keys(recomputed).length === 0) {
+  const buckets = Object.keys(recomputed).length;
+  if (buckets === 0) {
     return { calibratedPars: currentPars, lastCalibrationDay, log: null };
   }
-  const buckets = Object.keys(recomputed).length;
   return {
     calibratedPars: recomputed,
     lastCalibrationDay: newDay,

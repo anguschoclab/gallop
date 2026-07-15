@@ -4,10 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, TrendingUp } from "lucide-react";
-import {
-  getSireAnalytics,
-  type SireClassification,
-} from "@/core/breeding/sireAnalytics";
+import { getSireAnalytics, type SireClassification } from "@/core/breeding/sireAnalytics";
 import {
   LeaderboardControlsBar,
   LeaderboardEmpty,
@@ -63,15 +60,16 @@ export function SireWatchTab() {
   const horseList = Object.values(horses);
   const sireAnalytics = stallions.map((s) => getSireAnalytics(s, horseList, industryMeanEarnings));
 
-  const { sortValue, setSortValue, filterValue, setFilterValue, processed } = useLeaderboardControls<SireAnalyticsWithId>({
-    items: sireAnalytics,
-    sortOptions: SORT_OPTIONS,
-    filterOptions: FILTER_OPTIONS,
-    sortFns: SORT_FNS,
-    filterFns: FILTER_FNS,
-    defaultSort: "aei",
-    defaultFilter: "all",
-  });
+  const { sortValue, setSortValue, filterValue, setFilterValue, processed } =
+    useLeaderboardControls<SireAnalyticsWithId>({
+      items: sireAnalytics,
+      sortOptions: SORT_OPTIONS,
+      filterOptions: FILTER_OPTIONS,
+      sortFns: SORT_FNS,
+      filterFns: FILTER_FNS,
+      defaultSort: "aei",
+      defaultFilter: "all",
+    });
 
   const getClassificationColor = (classification: SireClassification) => {
     switch (classification) {
@@ -93,7 +91,10 @@ export function SireWatchTab() {
   if (!horses) {
     return (
       <div className="space-y-6">
-        <LeaderboardHeading title="Sire Watch" description="Analytics and performance metrics for active stallions." />
+        <LeaderboardHeading
+          title="Sire Watch"
+          description="Analytics and performance metrics for active stallions."
+        />
         <LeaderboardSkeleton rows={3} />
       </div>
     );

@@ -56,7 +56,11 @@ export function SaveLoadDialog({ open, onOpenChange, initialTab = "save" }: Save
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as "save" | "load")}
+          className="w-full"
+        >
           <div className="px-6 py-2 bg-slate-900/30 border-b border-gold/10">
             <TabsList className="h-10 bg-transparent gap-8 p-0">
               <TabsTrigger

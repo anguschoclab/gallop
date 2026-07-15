@@ -45,7 +45,6 @@ export function useRaceReplay(duration: number, onComplete?: () => void) {
     setPlaybackSpeed((s) => (s === DEFAULT_SPEED ? FAST_SPEED : DEFAULT_SPEED));
   }, []);
 
-
   const toggleCamera = useCallback(() => {
     setCameraMode((m) => (m === "leader" ? "player" : "leader"));
   }, []);
@@ -110,6 +109,5 @@ export function useRaceReplay(duration: number, onComplete?: () => void) {
     duration,
     toggleSpeed,
     toggleCamera,
-
   };
 }

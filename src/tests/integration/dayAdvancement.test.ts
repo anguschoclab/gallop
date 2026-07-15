@@ -110,7 +110,11 @@ describe("Day Advancement Pipeline Integration", () => {
       gender: "colt",
     });
 
-    const state: GameState = makeGameState({ day: 10, cash: 10000, horses: h2r([horse]) }) as GameState;
+    const state: GameState = makeGameState({
+      day: 10,
+      cash: 10000,
+      horses: h2r([horse]),
+    }) as GameState;
 
     const context: PipelineContext = {
       previousDay: 9,

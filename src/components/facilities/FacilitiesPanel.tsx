@@ -8,6 +8,7 @@ import {
   FACILITY_UPGRADE_COSTS,
   FACILITY_TIER_LABELS,
   type FacilityLevel,
+  type FacilityType,
 } from "@/core/facilities";
 import { FACILITY_LEVELS } from "@/hooks/facilities/useFacilityTiers";
 
@@ -25,10 +26,7 @@ function TierLegend() {
           const maintenance = FACILITY_MAINTENANCE_COSTS[level];
           const upgradeCost = FACILITY_UPGRADE_COSTS[level];
           return (
-            <div
-              key={level}
-              className="border border-white/5 p-2 space-y-1"
-            >
+            <div key={level} className="border border-white/5 p-2 space-y-1">
               <div className="text-[9px] font-black uppercase text-gold tracking-widest">
                 {FACILITY_TIER_LABELS[level]}
               </div>
@@ -62,28 +60,33 @@ export function FacilitiesPanel() {
     return null;
   }
 
-  const facilityCategories = [
+  const facilityCategories: {
+    name: string;
+    types: FacilityType[];
+    icon: React.ElementType;
+    color: string;
+  }[] = [
     {
       name: "Physical Optimization",
-      types: ["main_track", "starting_gates", "treadmill", "exercise_pool"] as const,
+      types: ["main_track", "starting_gates", "treadmill", "exercise_pool"],
       icon: Dumbbell,
       color: "text-gold",
     },
     {
       name: "Medical & Wellness",
-      types: ["veterinary_clinic", "rehab_center", "spa", "nutrition_lab"] as const,
+      types: ["veterinary_clinic", "rehab_center", "spa", "nutrition_lab"],
       icon: Activity,
       color: "text-blue-400",
     },
     {
       name: "Logistics & Housing",
-      types: ["barn", "transport"] as const,
+      types: ["barn", "transport"],
       icon: Package,
       color: "text-success",
     },
   ];
 
-  const handleUpgrade = (facilityType: any) => {
+  const handleUpgrade = (facilityType: FacilityType) => {
     const result = upgradeFacility(facilityType);
     if (!result.ok) {
       alert(result.reason);
@@ -121,7 +124,7 @@ export function FacilitiesPanel() {
           category={cat.name}
           icon={cat.icon}
           color={cat.color}
-          types={cat.types as any}
+          types={cat.types}
           facilities={facilities}
           cash={cash}
           onUpgrade={handleUpgrade}

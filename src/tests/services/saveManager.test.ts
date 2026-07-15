@@ -1,13 +1,18 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from "vitest";
 
-const { mockSaveSlotState, mockLoadSlotState, mockDeleteSlotState, mockIsIndexedDbAvailable, mockSaveGameStateToIDB } =
-  vi.hoisted(() => ({
-    mockSaveSlotState: vi.fn(),
-    mockLoadSlotState: vi.fn(),
-    mockDeleteSlotState: vi.fn(),
-    mockIsIndexedDbAvailable: vi.fn(),
-    mockSaveGameStateToIDB: vi.fn(),
-  }));
+const {
+  mockSaveSlotState,
+  mockLoadSlotState,
+  mockDeleteSlotState,
+  mockIsIndexedDbAvailable,
+  mockSaveGameStateToIDB,
+} = vi.hoisted(() => ({
+  mockSaveSlotState: vi.fn(),
+  mockLoadSlotState: vi.fn(),
+  mockDeleteSlotState: vi.fn(),
+  mockIsIndexedDbAvailable: vi.fn(),
+  mockSaveGameStateToIDB: vi.fn(),
+}));
 
 vi.mock("@/services/storage/indexedDbService", () => ({
   saveSlotState: mockSaveSlotState,
@@ -116,10 +121,7 @@ describe("saveManager", () => {
 
     it("returns metadata array when localStorage has valid data", async () => {
       const meta2 = { ...mockMetadata, id: "slot2", name: "Second Save" };
-      localStorage.setItem(
-        "gallop_saves_metadata",
-        JSON.stringify([mockMetadata, meta2]),
-      );
+      localStorage.setItem("gallop_saves_metadata", JSON.stringify([mockMetadata, meta2]));
 
       const slots = await saveManager.getSaveSlots();
 
@@ -172,9 +174,9 @@ describe("saveManager", () => {
     it("throws when saveSlotState rejects", async () => {
       mockSaveSlotState.mockRejectedValue(new Error("IDB write failed"));
 
-      await expect(
-        saveManager.saveToSlot("slot1", "Test Save", mockGameState),
-      ).rejects.toThrow("IDB write failed");
+      await expect(saveManager.saveToSlot("slot1", "Test Save", mockGameState)).rejects.toThrow(
+        "IDB write failed",
+      );
     });
 
     it("uses 'Unknown Stable' when playerProfile missing", async () => {
@@ -277,10 +279,7 @@ describe("saveManager", () => {
         ...mockMetadata,
         id: "slot2",
       };
-      localStorage.setItem(
-        "gallop_saves_metadata",
-        JSON.stringify([mockMetadata, otherMetadata]),
-      );
+      localStorage.setItem("gallop_saves_metadata", JSON.stringify([mockMetadata, otherMetadata]));
 
       await saveManager.deleteSaveSlot("slot1");
 

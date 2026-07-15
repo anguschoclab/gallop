@@ -31,8 +31,8 @@ export function HorseSelectionStep({
   onClose,
 }: Props) {
   const [tendency, setTendency] = useState<TendencyFilter>("any");
-  const raceDistance = (race as any).distance as number | undefined;
-  const raceSurface = (race as any).surface as "Turf" | "Dirt" | "Synthetic" | undefined;
+  const raceDistance = race.distance;
+  const raceSurface = race.surface;
 
   const eligibleHorses = useMemo(() => {
     const list = horses.map((h) => ({

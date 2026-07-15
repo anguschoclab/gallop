@@ -16,7 +16,9 @@ describe("BreedingHandler", () => {
   it("update_stud_fee sets horse.stud.standingFee", () => {
     const handler = new BreedingHandler();
     const state = {
-      horses: h2r([{ id: "horse-1", name: "Star", stud: { standingFee: 5000, atStud: true } }] as unknown as Horse[]),
+      horses: h2r([
+        { id: "horse-1", name: "Star", stud: { standingFee: 5000, atStud: true } },
+      ] as unknown as Horse[]),
       pregnancies: [],
     } as unknown as GameState;
 

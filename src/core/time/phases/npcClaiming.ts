@@ -54,7 +54,13 @@ export const npcClaimingPhase = {
           );
           if (alreadyClaimed) continue;
 
-          const valuation = calculateLotValuation(horse, stable, "racing_age", Object.values(state.horses), horseMap);
+          const valuation = calculateLotValuation(
+            horse,
+            stable,
+            "racing_age",
+            Object.values(state.horses),
+            horseMap,
+          );
           if (price <= valuation * 0.85 && stable.cash >= price) {
             newClaims.push({
               id: generateUUID(),

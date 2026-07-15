@@ -14,10 +14,7 @@ import { Zap } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
 import { toast } from "sonner";
 
-function showBuyNowResult(
-  result: { ok: boolean; reason?: string },
-  horseName: string,
-) {
+function showBuyNowResult(result: { ok: boolean; reason?: string }, horseName: string) {
   if (result.ok) {
     toast.success(`${horseName ?? "Horse"} joins your stable.`);
   } else if (result.reason === "buy_now_unavailable") {
@@ -78,9 +75,7 @@ export function BuyNowDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={() => showBuyNowResult(onBuyNow(), horseName)}
-          >
+          <AlertDialogAction onClick={() => showBuyNowResult(onBuyNow(), horseName)}>
             Buy Now
           </AlertDialogAction>
         </AlertDialogFooter>

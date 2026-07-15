@@ -30,7 +30,11 @@ export function useRacePageData(raceId: string) {
 
   const runners = useMemo<Runner[]>(() => {
     if (!race) return [];
-    const deps: RaceSimulationDependencies = { race, horses: Object.values(horses) as any, jockeys };
+    const deps: RaceSimulationDependencies = {
+      race,
+      horses: Object.values(horses) as any,
+      jockeys,
+    };
     const { runners: built } = buildRaceField(deps);
     return built;
   }, [raceId, horses, jockeys]);
@@ -44,7 +48,7 @@ export function useRacePageData(raceId: string) {
     lastRaceIdRef.current = raceId;
     rngRef.current = race ? rngForRace(race) : null;
     narrativeRef.current = race
-      ? new NarrativeGenerator(race, Object.values(horses) as any, stables, rngRef.current)
+      ? new NarrativeGenerator(race, Object.values(horses), stables, rngRef.current)
       : null;
     messageQueue.current = [];
   }

@@ -56,7 +56,9 @@ export function ChartCard({
           ) : null}
         </div>
       </header>
-      <div className={cn("flex-1 min-h-0 px-2 pb-2 overflow-hidden", bodyClassName)}>{children}</div>
+      <div className={cn("flex-1 min-h-0 px-2 pb-2 overflow-hidden", bodyClassName)}>
+        {children}
+      </div>
       {footnote ? (
         <div className="px-4 pb-3 pt-1 text-[10px] font-mono uppercase tracking-wider text-cream/40">
           {footnote}

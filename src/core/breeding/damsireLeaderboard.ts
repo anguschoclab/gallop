@@ -26,10 +26,7 @@ import type { DamsireLeaderboard, DamsireAnalytics } from "./leaderboardTypes";
  * @param currentDay - Current simulation day
  * @returns Damsire leaderboard with rankings
  */
-export function computeDamsireLeaderboard(
-  horses: Horse[],
-  currentDay: number,
-): DamsireLeaderboard {
+export function computeDamsireLeaderboard(horses: Horse[], currentDay: number): DamsireLeaderboard {
   // Build a map from horse ID → horse for dam lookups
   const horseMap = new Map<string, Horse>();
   for (const h of horses) horseMap.set(h.id, h);
@@ -99,9 +96,7 @@ export function computeDamsireLeaderboard(
     // Blue hen score: weighted composite of daughters' produce
     // 40% earnings, 35% stakes, 25% G1
     const blueHenScore = Math.round(
-      (Math.min(totalEarnings / 1_000_000, 100) * 0.4) +
-      (stakesFoals * 7 * 0.35) +
-      (g1Foals * 15 * 0.25),
+      Math.min(totalEarnings / 1_000_000, 100) * 0.4 + stakesFoals * 7 * 0.35 + g1Foals * 15 * 0.25,
     );
 
     analytics.push({

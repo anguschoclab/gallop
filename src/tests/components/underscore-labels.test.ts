@@ -2,8 +2,7 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-const src = (rel: string) =>
-  readFileSync(resolve(import.meta.dirname, "..", "..", rel), "utf-8");
+const src = (rel: string) => readFileSync(resolve(import.meta.dirname, "..", "..", rel), "utf-8");
 
 describe("underscore labels removed from UI text", () => {
   it("HorseStatsPanel.tsx: no Core_Specs", () => {
@@ -31,7 +30,9 @@ describe("underscore labels removed from UI text", () => {
   });
 
   it("TransactionLedger.tsx: no Operational_Description", () => {
-    expect(src("components/financial/TransactionLedger.tsx")).not.toContain("Operational_Description");
+    expect(src("components/financial/TransactionLedger.tsx")).not.toContain(
+      "Operational_Description",
+    );
   });
 
   it("TransactionLedger.tsx: no Secured_Audit_Log", () => {

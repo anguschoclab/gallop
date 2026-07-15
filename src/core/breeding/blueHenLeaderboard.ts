@@ -27,10 +27,7 @@ import type { BlueHenLeaderboard, MareAnalytics } from "./leaderboardTypes";
  * @param currentDay - Current simulation day
  * @returns Blue Hen leaderboard with mare rankings
  */
-export function computeBlueHenLeaderboard(
-  horses: Horse[],
-  currentDay: number,
-): BlueHenLeaderboard {
+export function computeBlueHenLeaderboard(horses: Horse[], currentDay: number): BlueHenLeaderboard {
   // Index foals by dam ID
   const foalsByDam = new Map<string, Horse[]>();
   for (const h of horses) {
@@ -75,9 +72,9 @@ export function computeBlueHenLeaderboard(
     // Blue hen score: weighted composite
     // 35% earnings, 35% stakes winners, 30% G1 winners
     const blueHenScore = Math.round(
-      (Math.min(totalFoalEarnings / 500_000, 100) * 0.35) +
-      (stakesWinnersProduced * 10 * 0.35) +
-      (g1WinnersProduced * 20 * 0.30),
+      Math.min(totalFoalEarnings / 500_000, 100) * 0.35 +
+        stakesWinnersProduced * 10 * 0.35 +
+        g1WinnersProduced * 20 * 0.3,
     );
 
     analytics.push({

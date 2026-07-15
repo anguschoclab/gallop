@@ -228,9 +228,7 @@ describe("leaderboardService", () => {
     }
 
     const leaderboards = computeAllLeaderboards(horses, industryMeanEarnings, currentDay);
-    const sireRanking = leaderboards.overall.rankings.find(
-      (r) => r.stallionId === "sire-filter",
-    );
+    const sireRanking = leaderboards.overall.rankings.find((r) => r.stallionId === "sire-filter");
 
     // AEI should be based on 3 runners, not 5 foals
     // avg = (3 * 100000) / 3 = 100000; AEI = (100000 / 100000) * 100 = 100
@@ -656,9 +654,7 @@ describe("leaderboardService", () => {
 
     const leaderboards = computeAllLeaderboards(horses, industryMeanEarnings, currentDay);
 
-    const ranking = leaderboards.overall.rankings.find(
-      (r) => r.stallionId === "turf-bias-sire",
-    );
+    const ranking = leaderboards.overall.rankings.find((r) => r.stallionId === "turf-bias-sire");
     expect(ranking).toBeDefined();
     expect(ranking!.metrics.surfaceBias).toBe("turf");
   });
@@ -686,9 +682,7 @@ describe("leaderboardService", () => {
 
     const leaderboards = computeAllLeaderboards(horses, industryMeanEarnings, currentDay);
 
-    const ranking = leaderboards.overall.rankings.find(
-      (r) => r.stallionId === "bloodline-sire",
-    );
+    const ranking = leaderboards.overall.rankings.find((r) => r.stallionId === "bloodline-sire");
     expect(ranking).toBeDefined();
     // Northern Dancer bloodline → turf
     expect(ranking!.metrics.surfaceBias).toBe("turf");
@@ -716,9 +710,7 @@ describe("leaderboardService", () => {
 
     const leaderboards = computeAllLeaderboards(horses, industryMeanEarnings, currentDay);
 
-    const ranking = leaderboards.overall.rankings.find(
-      (r) => r.stallionId === "sprint-bias-sire",
-    );
+    const ranking = leaderboards.overall.rankings.find((r) => r.stallionId === "sprint-bias-sire");
     expect(ranking).toBeDefined();
     expect(ranking!.metrics.distancePreference).toBe("sprint");
   });
@@ -744,9 +736,7 @@ describe("leaderboardService", () => {
 
     const leaderboards = computeAllLeaderboards(horses, industryMeanEarnings, currentDay);
 
-    const ranking = leaderboards.overall.rankings.find(
-      (r) => r.stallionId === "versatile-sire",
-    );
+    const ranking = leaderboards.overall.rankings.find((r) => r.stallionId === "versatile-sire");
     expect(ranking).toBeDefined();
     expect(ranking!.metrics.distancePreference).toBe("versatile");
   });
@@ -771,9 +761,7 @@ describe("leaderboardService", () => {
 
     const leaderboards = computeAllLeaderboards(horses, industryMeanEarnings, currentDay);
 
-    const ranking = leaderboards.overall.rankings.find(
-      (r) => r.stallionId === "pwp-sire",
-    );
+    const ranking = leaderboards.overall.rankings.find((r) => r.stallionId === "pwp-sire");
     expect(ranking).toBeDefined();
     // progenyWinPercentage = (5 / 20) * 100 = 25
     expect(ranking!.metrics.progenyWinPercentage).toBe(25);
@@ -853,9 +841,7 @@ describe("leaderboardService", () => {
       );
     }
 
-    const eliteRanking = leaderboards.overall.rankings.find(
-      (r) => r.stallionId === "elite-sire",
-    );
+    const eliteRanking = leaderboards.overall.rankings.find((r) => r.stallionId === "elite-sire");
     expect(eliteRanking).toBeDefined();
     // With 5 runners each earning 400k, avg = 400k, AEI = (400k/100k)*100 = 400 → elite
     expect(eliteRanking!.metrics.classification).toBe("elite");

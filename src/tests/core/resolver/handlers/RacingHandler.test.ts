@@ -57,7 +57,9 @@ describe("RacingHandler", () => {
     const handler = new RacingHandler();
     const state = {
       horses: {},
-      races: r2r([{ id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] }] as unknown as Race[]),
+      races: r2r([
+        { id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] },
+      ] as unknown as Race[]),
     } as unknown as GameState;
 
     const impact: RaceWithdrawalImpact = {
@@ -142,7 +144,9 @@ describe("RacingHandler", () => {
     const handler = new RacingHandler();
     const state = {
       horses: {},
-      races: r2r([{ id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] }] as unknown as Race[]),
+      races: r2r([
+        { id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] },
+      ] as unknown as Race[]),
     } as unknown as GameState;
 
     const impact: JockeyAssignmentImpact = {
@@ -232,7 +236,9 @@ describe("RacingHandler", () => {
   it("claiming transfers horse ownership", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: h2r([{ id: "h1", name: "Star", stableId: "stable-1", owned: false }] as unknown as Horse[]),
+      horses: h2r([
+        { id: "h1", name: "Star", stableId: "stable-1", owned: false },
+      ] as unknown as Horse[]),
       races: {},
     } as unknown as GameState;
 
@@ -400,7 +406,9 @@ describe("RacingHandler", () => {
     const handler = new RacingHandler();
     const state = {
       horses: {},
-      races: r2r([{ id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] }] as unknown as Race[]),
+      races: r2r([
+        { id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] },
+      ] as unknown as Race[]),
     } as unknown as GameState;
 
     const impact: TacticsImpact = {

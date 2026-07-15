@@ -178,7 +178,7 @@ function NpcStableDetailPage() {
                         </span>
                       </div>
                     ))}
-                    {Object.keys(stable.staff || {}).length === 0 && (
+                    {(!stable.staff || Object.keys(stable.staff).length === 0) && (
                       <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
                         No personnel records found.
                       </div>

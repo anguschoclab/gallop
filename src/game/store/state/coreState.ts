@@ -18,6 +18,7 @@ import type { Transaction } from "@/core/transactions/transactionTypes";
 import type { Expense } from "@/core/expenses/expenseTypes";
 import type { NewsItem } from "@/services/narrative/newsTypes";
 import type { HallOfFameEntry, SeasonRecord } from "@/core/history/historyTypes";
+import type { Pregnancy } from "@/core/breeding/types";
 import type { InboxMessage } from "@/core/inbox/inboxTypes";
 import { generateUUID } from "@/core/uuid";
 import { createRng, hashStr } from "@/core/common/rng";
@@ -51,7 +52,7 @@ export interface CoreState {
   archive: {
     horses: Horse[];
     races: Race[];
-    pregnancies: any[];
+    pregnancies: Pregnancy[];
     news: NewsItem[];
   };
   /** Comprehensive ledger of all financial events */

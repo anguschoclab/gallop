@@ -133,7 +133,12 @@ describe("PipelineContext shared maps", () => {
   });
 
   it("empty state produces empty maps", () => {
-    const state = makeGameState({ horses: {}, races: {}, npcStables: [], jockeys: [] }) as GameState;
+    const state = makeGameState({
+      horses: {},
+      races: {},
+      npcStables: [],
+      jockeys: [],
+    }) as GameState;
     const ctx = createMockPipelineContext({ state });
     expect(ctx.horseMap.size).toBe(0);
     expect(ctx.raceMap.size).toBe(0);

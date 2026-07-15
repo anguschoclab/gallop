@@ -25,8 +25,16 @@ import { AutoRegisterSkippedList } from "./AutoRegisterSkippedList";
 export function AutoRegisterButton() {
   const [isOpen, setIsOpen] = useState(false);
   const cash = useCash();
-  const { result, isProcessing, execute, eligibleCount, hasEntries, hasEligibleHorses, isDisabled, buttonTooltip } =
-    useAutoRegister();
+  const {
+    result,
+    isProcessing,
+    execute,
+    eligibleCount,
+    hasEntries,
+    hasEligibleHorses,
+    isDisabled,
+    buttonTooltip,
+  } = useAutoRegister();
 
   const handleConfirm = async () => {
     await execute();

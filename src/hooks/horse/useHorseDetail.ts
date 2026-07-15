@@ -71,7 +71,16 @@ export function useHorseDetail(horseId: string) {
       { threshold: 0.5 },
     );
 
-    ["stats", "health", "training", "beyer", "genetics", "lineage", "projection", "history"].forEach((id) => {
+    [
+      "stats",
+      "health",
+      "training",
+      "beyer",
+      "genetics",
+      "lineage",
+      "projection",
+      "history",
+    ].forEach((id) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });

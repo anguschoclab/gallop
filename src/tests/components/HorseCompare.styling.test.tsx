@@ -7,8 +7,22 @@ vi.mock("@/core/race/headToHead", () => ({
     { horseId: "h2", winPct: 0.4, projectedBeyer: 78, projectedFinishTime: 98 },
   ]),
   runHeadToHeadSimulation: vi.fn(() => [
-    { horseId: "h1", winPct: 0.58, avgFinishPosition: 1.4, avgFinishTime: 96, beyerRange: [80, 90], finishTimeRange: [93, 99] },
-    { horseId: "h2", winPct: 0.42, avgFinishPosition: 1.6, avgFinishTime: 97, beyerRange: [73, 83], finishTimeRange: [94, 100] },
+    {
+      horseId: "h1",
+      winPct: 0.58,
+      avgFinishPosition: 1.4,
+      avgFinishTime: 96,
+      beyerRange: [80, 90],
+      finishTimeRange: [93, 99],
+    },
+    {
+      horseId: "h2",
+      winPct: 0.42,
+      avgFinishPosition: 1.6,
+      avgFinishTime: 97,
+      beyerRange: [73, 83],
+      finishTimeRange: [94, 100],
+    },
   ]),
 }));
 
@@ -25,7 +39,14 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     peakingIndex: 0,
     form: 50,
     potential: 75,
-    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70, consistency: 70 } as any,
+    stats: {
+      speed: 70,
+      stamina: 70,
+      acceleration: 70,
+      temperament: 70,
+      durability: 70,
+      consistency: 70,
+    } as any,
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
@@ -62,16 +83,60 @@ describe("HorseCompare styling improvements", () => {
   });
 
   it("best-value cell has gold background class", () => {
-    const h1 = mkHorse({ id: "h1", name: "Strong", stats: { speed: 90, stamina: 90, acceleration: 90, temperament: 70, durability: 70, consistency: 70 } as any });
-    const h2 = mkHorse({ id: "h2", name: "Weak", stats: { speed: 50, stamina: 50, acceleration: 50, temperament: 70, durability: 70, consistency: 70 } as any });
+    const h1 = mkHorse({
+      id: "h1",
+      name: "Strong",
+      stats: {
+        speed: 90,
+        stamina: 90,
+        acceleration: 90,
+        temperament: 70,
+        durability: 70,
+        consistency: 70,
+      } as any,
+    });
+    const h2 = mkHorse({
+      id: "h2",
+      name: "Weak",
+      stats: {
+        speed: 50,
+        stamina: 50,
+        acceleration: 50,
+        temperament: 70,
+        durability: 70,
+        consistency: 70,
+      } as any,
+    });
     render(<HorseCompare horses={[h1, h2]} {...baseProps} />);
     const goldCells = document.body.querySelectorAll("[class*='bg-gold']");
     expect(goldCells.length).toBeGreaterThan(0);
   });
 
   it("tied values do not get gold highlight", () => {
-    const h1 = mkHorse({ id: "h1", name: "Equal1", stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70, consistency: 70 } as any });
-    const h2 = mkHorse({ id: "h2", name: "Equal2", stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70, consistency: 70 } as any });
+    const h1 = mkHorse({
+      id: "h1",
+      name: "Equal1",
+      stats: {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        temperament: 70,
+        durability: 70,
+        consistency: 70,
+      } as any,
+    });
+    const h2 = mkHorse({
+      id: "h2",
+      name: "Equal2",
+      stats: {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        temperament: 70,
+        durability: 70,
+        consistency: 70,
+      } as any,
+    });
     render(<HorseCompare horses={[h1, h2]} {...baseProps} />);
     const goldCells = document.body.querySelectorAll("td[class*='bg-gold']");
     expect(goldCells.length).toBe(0);

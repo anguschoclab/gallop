@@ -18,7 +18,12 @@ vi.mock("@/services/storage/storageAdapter", () => ({
 }));
 
 vi.mock("@/core/jockey/generator", () => ({
-  generateSilk: vi.fn(() => ({ pattern: "solid", primary: "#FF0000", secondary: "#0000FF", cap: "#00FF00" })),
+  generateSilk: vi.fn(() => ({
+    pattern: "solid",
+    primary: "#FF0000",
+    secondary: "#0000FF",
+    cap: "#00FF00",
+  })),
 }));
 
 vi.mock("@/data/jockeys", () => ({

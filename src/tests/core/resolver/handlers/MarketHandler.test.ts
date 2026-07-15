@@ -75,7 +75,9 @@ describe("MarketHandler", () => {
     const handler = new MarketHandler();
     const state = {
       scoutReports: [],
-      horses: h2r([{ id: "horse-1", name: "Star", consignedSaleId: "sale-1" }] as unknown as Horse[]),
+      horses: h2r([
+        { id: "horse-1", name: "Star", consignedSaleId: "sale-1" },
+      ] as unknown as Horse[]),
       auctions: [
         {
           id: "sale-1",
@@ -154,7 +156,9 @@ describe("MarketHandler", () => {
     const handler = new MarketHandler();
     const state = {
       scoutReports: [],
-      horses: h2r([{ id: "horse-1", name: "Star", consignedSaleId: "sale-1" }] as unknown as Horse[]),
+      horses: h2r([
+        { id: "horse-1", name: "Star", consignedSaleId: "sale-1" },
+      ] as unknown as Horse[]),
       auctions: [
         {
           id: "sale-1",

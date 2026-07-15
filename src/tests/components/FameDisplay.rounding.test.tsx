@@ -16,9 +16,7 @@ describe("Fame display rounding", () => {
     ) as unknown as Horse;
     horse.fame = 12.5;
 
-    const { container } = render(
-      <HorseCardHeader horse={horse} genderColor="text-blue-400" />,
-    );
+    const { container } = render(<HorseCardHeader horse={horse} genderColor="text-blue-400" />);
 
     const text = container.textContent ?? "";
     expect(text).toContain("Fame 13");

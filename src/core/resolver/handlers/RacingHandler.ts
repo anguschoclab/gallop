@@ -171,8 +171,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
       // Update courseVisits if trackId available
       const race =
-        lookupMaps?.raceMap.get(raceHistoryEntry.raceId) ||
-        draft.races[raceHistoryEntry.raceId];
+        lookupMaps?.raceMap.get(raceHistoryEntry.raceId) || draft.races[raceHistoryEntry.raceId];
       if (race) {
         const trackId = race.trackId || race.graded?.trackId;
         if (trackId && raceHistoryEntry.courseVisitCount !== undefined) {

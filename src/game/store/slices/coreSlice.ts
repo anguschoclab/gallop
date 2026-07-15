@@ -39,7 +39,7 @@ import { getEngineWorker } from "@/game/store";
 import { generateUUID } from "@/core/uuid";
 import { resolvePhenotype } from "@/core/horse/horseFactory";
 import { clearLineageCache } from "@/core/breeding/lineage";
-import type { StoreSet, StoreGet } from "../types";
+import type { StoreSet, StoreGet, StoreType } from "../types";
 
 export type CoreSlice = CoreState & {
   enqueueIntent: (intent: AnyIntent) => void;
@@ -101,7 +101,7 @@ export function createCoreSlice(
    * @param newDay - The new day number
    */
   const applyDayResult = (
-    finalState: any,
+    finalState: Partial<StoreType>,
     newLogs: { day: number; text: string }[],
     playerUpkeep: number,
     newDay: number,
@@ -121,21 +121,21 @@ export function createCoreSlice(
     };
 
     // Build the update by merging finalState and overrides
-    const update: any = { ...finalState, ...overrides };
+    const update: Record<string, unknown> = { ...finalState, ...overrides };
 
     // Explicitly remove keys that shouldn't be in the store (e.g. worker-only metadata)
     delete update.lastFrameTime;
     delete update.isAdvancing;
 
     clearLineageCache();
-    set(update);
+    set(update as Partial<StoreType>);
   };
 
   return {
     ...createDefaultCoreState(),
 
     enqueueIntent: (intent) => {
-      set((state: any) => ({
+      set((state) => ({
         pendingIntents: [...(state.pendingIntents || []), intent],
       }));
     },
@@ -170,7 +170,7 @@ export function createCoreSlice(
       const raceGrade = race.graded_override?.grade ?? race.graded?.grade ?? null;
       let matchedNominationId: string | undefined;
       if (raceGrade) {
-        const noms = (s as any).playerNominations ?? [];
+        const noms = s.playerNominations;
         const active = noms.find(
           (n: any) => n.horseId === horseId && n.raceId === raceId && n.status === "active",
         );
@@ -221,8 +221,8 @@ export function createCoreSlice(
 
       // Mark the matching nomination as entered.
       if (matchedNominationId) {
-        set((state: any) => ({
-          playerNominations: (state.playerNominations ?? []).map((n: any) =>
+        set((state) => ({
+          playerNominations: (state.playerNominations ?? []).map((n) =>
             n.id === matchedNominationId ? { ...n, status: "entered" } : n,
           ),
         }));
@@ -381,7 +381,13 @@ export function createCoreSlice(
         horses = Object.fromEntries(
           Object.values(s.horses).map((h: Horse) => {
             if (h.winAndYouInQualified) {
-              return [h.id, { ...h, winAndYouInQualified: h.winAndYouInQualified.filter((q) => q.year >= currentYear) }];
+              return [
+                h.id,
+                {
+                  ...h,
+                  winAndYouInQualified: h.winAndYouInQualified.filter((q) => q.year >= currentYear),
+                },
+              ];
             }
             return [h.id, h];
           }),

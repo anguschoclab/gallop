@@ -47,14 +47,28 @@ describe("breeding lineage utils", () => {
   const foal2 = createTestHorse({
     id: "f2",
     age: 1, // yearling
-    pedigree: { sireId, sireName: "Sire", damId: "other-dam", damName: "Dam2", name: "F2", generation: 1 },
+    pedigree: {
+      sireId,
+      sireName: "Sire",
+      damId: "other-dam",
+      damName: "Dam2",
+      name: "F2",
+      generation: 1,
+    },
     raceHistory: [], // no races yet
   });
 
   const foal3 = createTestHorse({
     id: "f3",
     age: 4,
-    pedigree: { sireId: "other-sire", sireName: "Sire2", damId, damName: "Dam", name: "F3", generation: 1 },
+    pedigree: {
+      sireId: "other-sire",
+      sireName: "Sire2",
+      damId,
+      damName: "Dam",
+      name: "F3",
+      generation: 1,
+    },
     raceHistory: [
       {
         raceId: "r2",

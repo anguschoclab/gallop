@@ -55,7 +55,9 @@ describe("SyndicationHandler", () => {
     const handler = new SyndicationHandler();
     const state = {
       cash: 1000,
-      horses: h2r([{ id: "h1", name: "NonWinner", raceHistory: [{ grade: "G2", position: 1 }] }] as unknown as Horse[]),
+      horses: h2r([
+        { id: "h1", name: "NonWinner", raceHistory: [{ grade: "G2", position: 1 }] },
+      ] as unknown as Horse[]),
       syndicates: {},
     } as unknown as GameState;
 

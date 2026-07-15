@@ -89,7 +89,9 @@ describe("CampaignCard — tooltip replacement of native title", () => {
     );
     // Radix Tooltip Root renders a data-state attribute on its trigger
     // The TooltipProvider wraps everything — check for tooltip content elements
-    const tooltipContent = container.querySelectorAll("[data-radix-tooltip-content-transform-origin]");
+    const tooltipContent = container.querySelectorAll(
+      "[data-radix-tooltip-content-transform-origin]",
+    );
     // Tooltips are portaled so may not be in container directly.
     // Instead, verify no title attributes and that buttons have aria-labels
     const deleteBtn = container.querySelector("button[aria-label*='Delete campaign']");

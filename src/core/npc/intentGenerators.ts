@@ -90,7 +90,9 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
   }
 
   // Cache upcoming races and index them by region
-  const upcomingRaces = Object.values(state.races).filter((r) => !r.resolved && r.day >= day && r.day <= day + 7);
+  const upcomingRaces = Object.values(state.races).filter(
+    (r) => !r.resolved && r.day >= day && r.day <= day + 7,
+  );
 
   const racesByRegion = new Map<string, Race[]>();
   const globalGradedRaces: Race[] = [];
@@ -411,7 +413,10 @@ function generateNpcClaimingIntents(
       const friction = stableAI?.friction ?? 0;
       if (shouldClaimHorse(claimingAI, horse, race, stable, day, friction)) {
         // Check horse eligibility
-        if (!isHorseEligibleForClaimingPrice(horse, race.claimingPrice, Object.values(state.horses))) continue;
+        if (
+          !isHorseEligibleForClaimingPrice(horse, race.claimingPrice, Object.values(state.horses))
+        )
+          continue;
 
         // Record claiming decision for learning
         recordClaimingDecision(claimingAI, horse, race, stable, day);

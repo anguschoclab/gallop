@@ -18,7 +18,7 @@ export function StewardsPanel({ horseId }: StewardsPanelProps) {
   const day = useGame((s) => s.day);
 
   // Find all inquiries involving this horse
-  const inquiries: StewardsInquiry[] = [];
+  let inquiries: StewardsInquiry[] = [];
   for (const race of Object.values(races)) {
     if (race.inquiries) {
       for (const inquiry of race.inquiries) {
@@ -30,7 +30,7 @@ export function StewardsPanel({ horseId }: StewardsPanelProps) {
   }
 
   // Sort by day (most recent first)
-  inquiries.sort((a, b) => b.day - a.day);
+  inquiries = [...inquiries].sort((a, b) => b.day - a.day);
 
   if (inquiries.length === 0) {
     return null;

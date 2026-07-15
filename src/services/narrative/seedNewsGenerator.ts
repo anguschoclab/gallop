@@ -154,11 +154,7 @@ function buildRivalIntros(
   return results;
 }
 
-function buildPowerRankings(
-  horses: Horse[],
-  day: number,
-  rng: Rng,
-): NewsItem | null {
+function buildPowerRankings(horses: Horse[], day: number, rng: Rng): NewsItem | null {
   const npcHorses = horses.filter((h) => !h.owned && h.stableId);
   if (npcHorses.length === 0) return null;
 
@@ -201,20 +197,18 @@ function buildPowerRankings(
       importance: "high",
       headline: rng.pick(headlines),
       body: rng.pick(bodies),
-      entityLinks: top5.map((entry) => ({ type: "horse" as const, id: entry.horse.id, name: entry.horse.name })),
+      entityLinks: top5.map((entry) => ({
+        type: "horse" as const,
+        id: entry.horse.id,
+        name: entry.horse.name,
+      })),
     },
     rng,
   );
 }
 
-function buildG1Spotlight(
-  races: Race[],
-  day: number,
-  rng: Rng,
-): NewsItem | null {
-  const g1Races = races
-    .filter((r) => r.graded?.grade === "G1")
-    .sort((a, b) => a.day - b.day);
+function buildG1Spotlight(races: Race[], day: number, rng: Rng): NewsItem | null {
+  const g1Races = races.filter((r) => r.graded?.grade === "G1").sort((a, b) => a.day - b.day);
 
   if (g1Races.length === 0) return null;
 
@@ -255,15 +249,8 @@ function buildG1Spotlight(
   );
 }
 
-function buildGradedPreview(
-  races: Race[],
-  g1Day: number,
-  day: number,
-  rng: Rng,
-): NewsItem | null {
-  const gradedAfterG1 = races.filter(
-    (r) => r.graded && r.day > g1Day,
-  );
+function buildGradedPreview(races: Race[], g1Day: number, day: number, rng: Rng): NewsItem | null {
+  const gradedAfterG1 = races.filter((r) => r.graded && r.day > g1Day);
 
   if (gradedAfterG1.length === 0) return null;
 
@@ -314,11 +301,7 @@ function buildGradedPreview(
   );
 }
 
-function buildBloodlineInsight(
-  horses: Horse[],
-  day: number,
-  rng: Rng,
-): NewsItem | null {
+function buildBloodlineInsight(horses: Horse[], day: number, rng: Rng): NewsItem | null {
   const npcHorses = horses.filter((h) => !h.owned && h.stableId);
   if (npcHorses.length === 0) return null;
 
@@ -371,11 +354,7 @@ function buildBloodlineInsight(
   );
 }
 
-function buildVeteranChampion(
-  horses: Horse[],
-  day: number,
-  rng: Rng,
-): NewsItem | null {
+function buildVeteranChampion(horses: Horse[], day: number, rng: Rng): NewsItem | null {
   const veterans = horses.filter((h) => h.age >= 6);
   if (veterans.length === 0) return null;
 

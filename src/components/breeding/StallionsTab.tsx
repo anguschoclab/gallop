@@ -11,6 +11,7 @@ import { useStallionFilters } from "@/hooks/stable/useStallionFilters";
 import { MyStallionCard } from "@/components/breeding/MyStallionCard";
 import { StallionCard } from "@/components/breeding/StallionCard";
 import { calculateRecommendedStudFee } from "@/core/breeding/stallions";
+import type { Horse, Hemisphere } from "@/core/horse/types";
 
 export function StallionsTab() {
   const {
@@ -48,7 +49,10 @@ export function StallionsTab() {
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label className="text-xs text-cream-muted">Hemisphere</label>
-              <Select value={hemisphere} onValueChange={(v) => setHemisphere(v as any)}>
+              <Select
+                value={hemisphere}
+                onValueChange={(v) => setHemisphere(v as Hemisphere | "all")}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -66,7 +70,7 @@ export function StallionsTab() {
                   <SelectValue placeholder="Select a mare to book…" />
                 </SelectTrigger>
                 <SelectContent>
-                  {eligibleMares.map((m: any) => (
+                  {eligibleMares.map((m: Horse) => (
                     <SelectItem key={m.id} value={m.id}>
                       {m.name} (age {m.age}, {m.hemisphere}, {Math.round(m.distanceAptitude)}m)
                     </SelectItem>
@@ -78,7 +82,7 @@ export function StallionsTab() {
         </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filtered.map((stallion: any) => (
+          {filtered.map((stallion: Horse) => (
             <StallionCard
               key={stallion.id}
               stallion={stallion}
@@ -103,15 +107,12 @@ export function StallionsTab() {
 
       <TabsContent value="manage" className="space-y-6 mt-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {myStallions.map((stallion: any) => (
+          {myStallions.map((stallion: Horse) => (
             <MyStallionCard
               key={stallion.id}
               stallion={stallion}
               day={day}
-              recommendedFee={calculateRecommendedStudFee(stallion, {
-                horses,
-                npcStables,
-              } as any)}
+              recommendedFee={calculateRecommendedStudFee(stallion)}
               onUpdateFee={(fee) => {
                 const result = updateStudFee(stallion.id, fee);
                 if (!result.ok) alert(result.reason);

@@ -101,15 +101,7 @@ describe("calculateAutoRegisterEntries", () => {
     const race = mkRace({ day: baseDay + 3, entryFee: 300 });
     const jockey = mkJockey({ ridingFee: 100 });
     // cash=500, entryFee=300, jockeyFee=100, transport=150 → total=550, 500-550=-50 < 5000
-    const result = calculateAutoRegisterEntries(
-      [horse],
-      [race],
-      [jockey],
-      500,
-      baseDay,
-      7,
-      5000,
-    );
+    const result = calculateAutoRegisterEntries([horse], [race], [jockey], 500, baseDay, 7, 5000);
     expect(result.entries.length).toBe(0);
     expect(result.skipped.some((s) => s.reason === "Budget constraint")).toBe(true);
   });
@@ -170,7 +162,9 @@ describe("calculateAutoRegisterEntries", () => {
   });
 
   it("skips injured horses (activeInjury set)", () => {
-    const horse = mkHorse({ activeInjury: { type: "tendon", severity: 0.5, recoveryDays: 30, onsetDay: 1 } });
+    const horse = mkHorse({
+      activeInjury: { type: "tendon", severity: 0.5, recoveryDays: 30, onsetDay: 1 },
+    });
     const race = mkRace({ day: baseDay + 3 });
     const jockey = mkJockey();
     const result = calculateAutoRegisterEntries([horse], [race], [jockey], 100000, baseDay);
@@ -229,12 +223,40 @@ describe("calculateAutoRegisterEntries", () => {
   });
 
   it("sorts candidates by suitability score descending", () => {
-    const horse1 = mkHorse({ id: "h1", name: "Strong", stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 } });
-    const horse2 = mkHorse({ id: "h2", name: "Weak", stats: { speed: 50, stamina: 50, acceleration: 50, consistency: 50, temperament: 50, conformation: 50 } });
+    const horse1 = mkHorse({
+      id: "h1",
+      name: "Strong",
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
+    const horse2 = mkHorse({
+      id: "h2",
+      name: "Weak",
+      stats: {
+        speed: 50,
+        stamina: 50,
+        acceleration: 50,
+        consistency: 50,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
     const race1 = mkRace({ id: "r1", day: baseDay + 3, purse: 50000 });
     const race2 = mkRace({ id: "r2", day: baseDay + 4, purse: 5000 });
     const jockey = mkJockey();
-    const result = calculateAutoRegisterEntries([horse1, horse2], [race1, race2], [jockey], 1000000, baseDay);
+    const result = calculateAutoRegisterEntries(
+      [horse1, horse2],
+      [race1, race2],
+      [jockey],
+      1000000,
+      baseDay,
+    );
     expect(result.entries.length).toBe(2);
     // Higher-rated horse should get the better race (higher purse → higher score)
     expect(result.entries[0].horseId).toBe("h1");
@@ -245,7 +267,13 @@ describe("calculateAutoRegisterEntries", () => {
     const race = mkRace({ day: baseDay + 3 });
     const retained = mkJockey({ id: "retained", stableId: "player", ridingFee: 200 });
     const freelance = mkJockey({ id: "freelance", ridingFee: 50, fame: 99 });
-    const result = calculateAutoRegisterEntries([horse], [race], [retained, freelance], 100000, baseDay);
+    const result = calculateAutoRegisterEntries(
+      [horse],
+      [race],
+      [retained, freelance],
+      100000,
+      baseDay,
+    );
     expect(result.entries[0].jockeyId).toBe("retained");
   });
 
@@ -254,7 +282,13 @@ describe("calculateAutoRegisterEntries", () => {
     const race = mkRace({ day: baseDay + 3 });
     const frontRunner = mkJockey({ id: "ft", archetype: "front_runner", fame: 30 });
     const versatile = mkJockey({ id: "v", archetype: "versatile", fame: 90 });
-    const result = calculateAutoRegisterEntries([horse], [race], [frontRunner, versatile], 100000, baseDay);
+    const result = calculateAutoRegisterEntries(
+      [horse],
+      [race],
+      [frontRunner, versatile],
+      100000,
+      baseDay,
+    );
     expect(result.entries[0].jockeyId).toBe("ft");
   });
 

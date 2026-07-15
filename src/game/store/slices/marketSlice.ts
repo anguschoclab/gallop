@@ -13,7 +13,8 @@ import type { MarketState } from "@/game/store/state/marketState";
 import { createDefaultMarketState } from "@/game/store/state/marketState";
 import { horsePrice } from "@/core/horse/pricing";
 import { generateUUID } from "@/core/uuid";
-import type { StoreGet } from "../types";
+import type { StoreSet, StoreGet } from "../types";
+import type { AnyIntent } from "@/core/resolver/intents";
 
 export type MarketSlice = MarketState & {
   /**
@@ -37,9 +38,9 @@ export type MarketSlice = MarketState & {
  * @returns Market slice with state and actions
  */
 export function createMarketSlice(
-  set: any,
+  set: StoreSet,
   get: StoreGet,
-  enqueueIntent: (intent: any) => void,
+  enqueueIntent: (intent: AnyIntent) => void,
 ): MarketSlice {
   return {
     ...createDefaultMarketState(),

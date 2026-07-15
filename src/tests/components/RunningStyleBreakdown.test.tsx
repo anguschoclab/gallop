@@ -48,7 +48,9 @@ describe("RunningStyleBreakdown", () => {
       owned: true,
       raceHistory: [{ position: 2, day: 10, raceId: "r1", time: 61 } as any],
     });
-    renderWithStore(<RunningStyleBreakdown horse={horse} />, { horses: h2r([horse, other]) } as any);
+    renderWithStore(<RunningStyleBreakdown horse={horse} />, {
+      horses: h2r([horse, other]),
+    } as any);
     expect(screen.getByText(/Compare with/i)).toBeTruthy();
   });
 

@@ -59,19 +59,35 @@ vi.mock("@/game/store/storage", () => {
       removeItem: async (_name: string) => {},
     }),
     hydrationComplete: {
-      get value() { return _hydrationComplete; },
-      set value(v: boolean) { _hydrationComplete = v; },
+      get value() {
+        return _hydrationComplete;
+      },
+      set value(v: boolean) {
+        _hydrationComplete = v;
+      },
     },
     saveExists: {
-      get value() { return _saveExists; },
-      set value(v: boolean) { _saveExists = v; },
+      get value() {
+        return _saveExists;
+      },
+      set value(v: boolean) {
+        _saveExists = v;
+      },
     },
     persistenceEnabled: {
-      get value() { return _persistenceEnabled; },
-      set value(v: boolean) { _persistenceEnabled = v; },
+      get value() {
+        return _persistenceEnabled;
+      },
+      set value(v: boolean) {
+        _persistenceEnabled = v;
+      },
     },
-    _resetSaveExists: () => { _saveExists = false; },
-    _resetPersistenceEnabled: () => { _persistenceEnabled = false; },
+    _resetSaveExists: () => {
+      _saveExists = false;
+    },
+    _resetPersistenceEnabled: () => {
+      _persistenceEnabled = false;
+    },
     saveGameStateToIDB: vi.fn().mockResolvedValue(undefined),
     loadGameStateFromIDB,
     createRehydrateStore: (initialState: any, useGameStore: any) => {

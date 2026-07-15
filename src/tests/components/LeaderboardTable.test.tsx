@@ -47,8 +47,22 @@ describe("LeaderboardTable", () => {
         leaderboard={{
           title: "Top Earnings",
           rankings: [
-            { horseId: "h1", horseName: "Thunder", rank: 1, value: 500000, sireName: "Sire A", metrics: { age: 4, wins: 5, starts: 10 } },
-            { horseId: "h2", horseName: "Lightning", rank: 2, value: 300000, sireName: "Sire B", metrics: { age: 3, wins: 3, starts: 8 } },
+            {
+              horseId: "h1",
+              horseName: "Thunder",
+              rank: 1,
+              value: 500000,
+              sireName: "Sire A",
+              metrics: { age: 4, wins: 5, starts: 10 },
+            },
+            {
+              horseId: "h2",
+              horseName: "Lightning",
+              rank: 2,
+              value: 300000,
+              sireName: "Sire B",
+              metrics: { age: 3, wins: 3, starts: 8 },
+            },
           ],
         }}
         icon={<span data-testid="icon" />}
@@ -66,7 +80,14 @@ describe("LeaderboardTable", () => {
         leaderboard={{
           title: "Top Earnings",
           rankings: [
-            { horseId: "h1", horseName: "Thunder", rank: 1, value: 500000, sireName: "Sire A", metrics: { age: 4, wins: 5, starts: 10 } },
+            {
+              horseId: "h1",
+              horseName: "Thunder",
+              rank: 1,
+              value: 500000,
+              sireName: "Sire A",
+              metrics: { age: 4, wins: 5, starts: 10 },
+            },
           ],
         }}
         icon={<span />}

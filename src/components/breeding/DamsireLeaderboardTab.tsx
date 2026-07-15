@@ -66,15 +66,16 @@ export function DamsireLeaderboardTab() {
 }
 
 function DamsireLeaderboardContent({ leaderboard }: { leaderboard: any }) {
-  const { sortValue, setSortValue, filterValue, setFilterValue, processed } = useLeaderboardControls<DamsireRanking>({
-    items: leaderboard.rankings,
-    sortOptions: SORT_OPTIONS,
-    filterOptions: FILTER_OPTIONS,
-    sortFns: SORT_FNS,
-    filterFns: FILTER_FNS,
-    defaultSort: "score",
-    defaultFilter: "all",
-  });
+  const { sortValue, setSortValue, filterValue, setFilterValue, processed } =
+    useLeaderboardControls<DamsireRanking>({
+      items: leaderboard.rankings,
+      sortOptions: SORT_OPTIONS,
+      filterOptions: FILTER_OPTIONS,
+      sortFns: SORT_FNS,
+      filterFns: FILTER_FNS,
+      defaultSort: "score",
+      defaultFilter: "all",
+    });
 
   return (
     <LeaderboardShell

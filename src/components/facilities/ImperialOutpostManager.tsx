@@ -3,13 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useGame, useGameWithShallow } from "@/game/store";
-import {
-  OUTPOST_CONSTANTS,
-  type Outpost,
-  type FacilityBranch,
-} from "@/core/facilities/outpostTypes";
-import { FACILITY_NAMES, facilityLevelToTierLabel, type FacilityType } from "@/core/facilities/facilityTypes";
-import { MapPin, Users, Globe, Hammer, Zap, Heart, TrendingUp, ArrowRightLeft } from "lucide-react";
+import { OUTPOST_CONSTANTS } from "@/core/facilities/outpostTypes";
+import { FACILITY_NAMES, facilityLevelToTierLabel } from "@/core/facilities/facilityTypes";
+import { MapPin, Users, Globe, Hammer, ArrowRightLeft } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { formatCurrency } from "@/core/common/formatting";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -17,49 +13,23 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 export function ImperialOutpostManager() {
   const [selectedOutpostId, setSelectedOutpostId] = useState<string | null>(null);
 
-  // Note: For now we'll assume player outposts are stored in a new state field
-  // or we'll mock them from existing root facilities for this demo component.
-  const outposts = (useGameWithShallow((s) => (s as any).playerOutposts) as Outpost[]) || [
-    {
-      id: "main",
-      name: "Main Farm",
-      region: "North America (East)",
-      totalSlots: 12,
-      facilities: {
-        0: {
-          type: "main_track",
-          level: "elite",
-          branch: "turf",
-          maintenanceCost: 150,
-          upgradeCost: 0,
-          builtDay: 1,
-        },
-        4: {
-          type: "barn",
-          level: "premium",
-          branch: "neutral",
-          maintenanceCost: 60,
-          upgradeCost: 0,
-          builtDay: 1,
-        },
-        6: {
-          type: "starting_gates",
-          level: "standard",
-          branch: "neutral",
-          maintenanceCost: 25,
-          upgradeCost: 0,
-          builtDay: 10,
-        },
-      },
-      headTrainerId: "trainer-1",
-      acclimatizationDays: {},
-    },
-  ];
+  const outposts = useGameWithShallow((s) => s.outposts ?? []);
 
-  const selectedOutpost = useMemo(
-    () => outposts.find((o) => o.id === (selectedOutpostId || outposts[0].id)) || outposts[0],
-    [outposts, selectedOutpostId],
-  );
+  if (outposts.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center py-20 border-2 border-dashed border-white/5 rounded-xl">
+          <Globe size={48} className="mx-auto text-white/10 mb-4" />
+          <p className="text-cream-muted">
+            No outposts established yet. Expand to new regions to begin.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const selectedOutpost =
+    outposts.find((o) => o.id === (selectedOutpostId || outposts[0].id)) || outposts[0];
   const cash = useGame((s) => s.cash);
 
   // Calculate used slots
@@ -183,8 +153,12 @@ export function ImperialOutpostManager() {
                   <Users className="w-6 h-6 text-gold-muted" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-bold text-cream">Marcus Sterling</p>
-                  <p className="text-[10px] text-gold uppercase font-bold">Elite Strategist</p>
+                  <p className="text-sm font-bold text-cream">
+                    {selectedOutpost.headTrainerId
+                      ? `Trainer ${selectedOutpost.headTrainerId}`
+                      : "No trainer assigned"}
+                  </p>
+                  <p className="text-[10px] text-gold uppercase font-bold">Unassigned</p>
                 </div>
                 <TooltipProvider delayDuration={300}>
                   <Tooltip>
@@ -215,10 +189,10 @@ export function ImperialOutpostManager() {
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center text-xs">
                   <span className="text-cream-muted">Current Focus</span>
-                  <Badge className="bg-green-700 text-cream">TURF CATHEDRAL</Badge>
+                  <Badge className="bg-t700 text-cream-muted">Not Set</Badge>
                 </div>
                 <p className="text-[10px] text-cream-muted italic">
-                  +20% Stamina gains, +15% Recovery speed. -5% Dirt Beyer Figure.
+                  No specialization assigned. Manage the tech tree to configure bonuses.
                 </p>
               </div>
 
@@ -240,11 +214,19 @@ export function ImperialOutpostManager() {
             <CardContent className="space-y-3">
               <div className="flex justify-between items-center text-xs">
                 <span className="text-cream-muted">Daily Upkeep</span>
-                <span className="font-mono text-red-400">-{formatCurrency(450)}</span>
+                <span className="font-mono text-red-400">
+                  -
+                  {formatCurrency(
+                    Object.values(selectedOutpost.facilities).reduce(
+                      (sum, f) => sum + (f.maintenanceCost || 0),
+                      0,
+                    ),
+                  )}
+                </span>
               </div>
               <div className="flex justify-between items-center text-xs">
                 <span className="text-cream-muted">Transport Fleet</span>
-                <span className="text-cream">Tier 04</span>
+                <span className="text-cream">Not Deployed</span>
               </div>
             </CardContent>
           </Card>

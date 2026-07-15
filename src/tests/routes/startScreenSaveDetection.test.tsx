@@ -4,8 +4,7 @@ import { render, screen, cleanup } from "@testing-library/react";
 
 vi.mock("@tanstack/react-router", () => ({
   createFileRoute: () => (opts: any) => opts,
-  Link: ({ children, ...props }: { children?: ReactNode }) =>
-    createElement("a", props, children),
+  Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
 }));
 
 vi.mock("@/game/store", () => ({

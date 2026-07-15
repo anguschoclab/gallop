@@ -65,7 +65,9 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   horse_stat_change: (draft, impact, horse) => {
     const { stat, delta } = impact as HorseStatImpact;
     if (horse) {
-      horse.stats[stat] = Math.round(Math.min(horse.potential, Math.max(0, horse.stats[stat] + delta)));
+      horse.stats[stat] = Math.round(
+        Math.min(horse.potential, Math.max(0, horse.stats[stat] + delta)),
+      );
     }
   },
   energy_change: (draft, impact, horse) => {
@@ -166,7 +168,9 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   recovery_change: (draft, impact, horse) => {
     const { delta } = impact as RecoveryImpact;
     if (horse) {
-      horse.recoveryPoints = Math.round(Math.min(100, Math.max(0, (horse.recoveryPoints ?? 100) + delta)));
+      horse.recoveryPoints = Math.round(
+        Math.min(100, Math.max(0, (horse.recoveryPoints ?? 100) + delta)),
+      );
     }
   },
   fitness_change: (draft, impact, horse) => {
@@ -240,9 +244,7 @@ export class HorseHandler implements ImpactHandler {
       (impact as { horseId?: string; entityId?: string }).horseId ||
       (impact as { entityId?: string }).entityId ||
       "";
-    const horse = horseId
-      ? lookupMaps?.horseMap.get(horseId) || draft.horses[horseId]
-      : undefined;
+    const horse = horseId ? lookupMaps?.horseMap.get(horseId) || draft.horses[horseId] : undefined;
 
     const handler = IMPACT_HANDLERS[impact.type];
     if (handler) {

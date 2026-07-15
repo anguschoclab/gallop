@@ -25,12 +25,8 @@ export class RacingValidator implements IntentValidator {
     switch (intent.type) {
       case "race_entry": {
         const raceIntent = intent as RaceEntryIntent;
-        const horse =
-          cache?.horseMap?.get(raceIntent.horseId) ||
-          state.horses[raceIntent.horseId];
-        const race =
-          cache?.raceMap?.get(raceIntent.raceId) ||
-          state.races[raceIntent.raceId];
+        const horse = cache?.horseMap?.get(raceIntent.horseId) || state.horses[raceIntent.horseId];
+        const race = cache?.raceMap?.get(raceIntent.raceId) || state.races[raceIntent.raceId];
 
         if (!horse) return { valid: false, reason: "Horse not found" };
         if (horse.consignedSaleId)
@@ -59,11 +55,9 @@ export class RacingValidator implements IntentValidator {
       case "withdraw_from_claiming": {
         const withdrawIntent = intent as WithdrawFromClaimingIntent;
         const race =
-          cache?.raceMap?.get(withdrawIntent.raceId) ||
-          state.races[withdrawIntent.raceId];
+          cache?.raceMap?.get(withdrawIntent.raceId) || state.races[withdrawIntent.raceId];
         const horse =
-          cache?.horseMap?.get(withdrawIntent.horseId) ||
-          state.horses[withdrawIntent.horseId];
+          cache?.horseMap?.get(withdrawIntent.horseId) || state.horses[withdrawIntent.horseId];
 
         if (!race) return { valid: false, reason: "Race not found" };
         if (!horse) return { valid: false, reason: "Horse not found" };

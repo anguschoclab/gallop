@@ -28,13 +28,7 @@ vi.mock("@/components/ui/dialog", () => ({
 }));
 
 vi.mock("@/components/ui/button", () => ({
-  Button: ({
-    children,
-    onClick,
-  }: {
-    children: React.ReactNode;
-    onClick?: () => void;
-  }) => (
+  Button: ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
     <button data-testid="next-btn" onClick={onClick}>
       {children}
     </button>
@@ -98,44 +92,20 @@ describe("AwardCeremony", () => {
   });
 
   it("renders confetti overlay when player has wins", () => {
-    const ceremony = mkCeremony([
-      mkAward({ id: "a1", stableId: undefined }),
-    ]);
-    render(
-      <AwardCeremony
-        isOpen={true}
-        onClose={() => {}}
-        ceremonies={[ceremony]}
-      />,
-    );
+    const ceremony = mkCeremony([mkAward({ id: "a1", stableId: undefined })]);
+    render(<AwardCeremony isOpen={true} onClose={() => {}} ceremonies={[ceremony]} />);
     expect(screen.getByTestId("confetti-overlay")).toBeTruthy();
   });
 
   it("does NOT render confetti when player has no wins", () => {
-    const ceremony = mkCeremony([
-      mkAward({ id: "a1", stableId: "npc-1" }),
-    ]);
-    render(
-      <AwardCeremony
-        isOpen={true}
-        onClose={() => {}}
-        ceremonies={[ceremony]}
-      />,
-    );
+    const ceremony = mkCeremony([mkAward({ id: "a1", stableId: "npc-1" })]);
+    render(<AwardCeremony isOpen={true} onClose={() => {}} ceremonies={[ceremony]} />);
     expect(screen.queryByTestId("confetti-overlay")).toBeNull();
   });
 
   it("does NOT render confetti when dialog is closed", () => {
-    const ceremony = mkCeremony([
-      mkAward({ id: "a1", stableId: undefined }),
-    ]);
-    render(
-      <AwardCeremony
-        isOpen={false}
-        onClose={() => {}}
-        ceremonies={[ceremony]}
-      />,
-    );
+    const ceremony = mkCeremony([mkAward({ id: "a1", stableId: undefined })]);
+    render(<AwardCeremony isOpen={false} onClose={() => {}} ceremonies={[ceremony]} />);
     expect(screen.queryByTestId("confetti-overlay")).toBeNull();
   });
 
@@ -144,13 +114,7 @@ describe("AwardCeremony", () => {
       mkCeremony([mkAward({ id: "a1", stableId: undefined })]),
       mkCeremony([mkAward({ id: "a2", stableId: "npc-1" })], "europe"),
     ];
-    render(
-      <AwardCeremony
-        isOpen={true}
-        onClose={() => {}}
-        ceremonies={ceremonies}
-      />,
-    );
+    render(<AwardCeremony isOpen={true} onClose={() => {}} ceremonies={ceremonies} />);
 
     expect(screen.getByTestId("confetti-overlay")).toBeTruthy();
 
@@ -164,13 +128,7 @@ describe("AwardCeremony", () => {
       mkCeremony([mkAward({ id: "a1", stableId: "npc-1" })]),
       mkCeremony([mkAward({ id: "a2", stableId: undefined })], "europe"),
     ];
-    render(
-      <AwardCeremony
-        isOpen={true}
-        onClose={() => {}}
-        ceremonies={ceremonies}
-      />,
-    );
+    render(<AwardCeremony isOpen={true} onClose={() => {}} ceremonies={ceremonies} />);
 
     expect(screen.queryByTestId("confetti-overlay")).toBeNull();
 

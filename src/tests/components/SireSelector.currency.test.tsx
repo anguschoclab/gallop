@@ -18,11 +18,7 @@ describe("SireSelector — currency formatting", () => {
     } as any;
 
     const { container } = render(
-      <SireSelector
-        sireId=""
-        onChange={vi.fn()}
-        availableStallions={[stallion]}
-      />,
+      <SireSelector sireId="" onChange={vi.fn()} availableStallions={[stallion]} />,
     );
 
     const text = container.textContent ?? "";

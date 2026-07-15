@@ -379,7 +379,9 @@ describe("blueHenLeaderboard", () => {
 
     // Create 3 mares with varying produce quality
     for (let m = 0; m < 3; m++) {
-      horses.push(makeHorse({ id: `m-rank-${m}`, name: `Mare ${m}`, gender: "filly", age: 10 + m }));
+      horses.push(
+        makeHorse({ id: `m-rank-${m}`, name: `Mare ${m}`, gender: "filly", age: 10 + m }),
+      );
     }
     for (let m = 0; m < 3; m++) {
       const mareId = `m-rank-${m}`;

@@ -41,7 +41,15 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
     horses = Object.fromEntries(
       Object.values(horses).map((h) => {
         if (h.winAndYouInQualified) {
-          return [h.id, { ...h, winAndYouInQualified: h.winAndYouInQualified.filter((q: { year: number }) => q.year >= currentYear) }];
+          return [
+            h.id,
+            {
+              ...h,
+              winAndYouInQualified: h.winAndYouInQualified.filter(
+                (q: { year: number }) => q.year >= currentYear,
+              ),
+            },
+          ];
         }
         return [h.id, h];
       }),

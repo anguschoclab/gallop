@@ -73,7 +73,15 @@ describe("lineage cache invalidation", () => {
       age: 3,
       pedigree: { sireId, sireName: "S", damId, damName: "D", name: "F", generation: 1 },
       raceHistory: [
-        { raceId: "r1", raceName: "Test", day: 10, position: 1, grade: "G1", purse: 100000, purseEarned: 70000 },
+        {
+          raceId: "r1",
+          raceName: "Test",
+          day: 10,
+          position: 1,
+          grade: "G1",
+          purse: 100000,
+          purseEarned: 70000,
+        },
       ],
     });
     const state = makeState([foal]);

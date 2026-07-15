@@ -15,10 +15,7 @@ const ROWS: { key: keyof HorseCareerValuation; label: string; highlight?: boolea
   { key: "postCareer", label: "Post-Career" },
 ];
 
-export function CareerValuationBreakdown({
-  valuation,
-  className,
-}: CareerValuationBreakdownProps) {
+export function CareerValuationBreakdown({ valuation, className }: CareerValuationBreakdownProps) {
   return (
     <div className={cn("space-y-1", className)}>
       {ROWS.map(({ key, label, highlight }) => (
@@ -29,12 +26,7 @@ export function CareerValuationBreakdown({
             highlight && "border-t border-white/10 pt-1 mt-1",
           )}
         >
-          <span
-            className={cn(
-              "text-muted-foreground",
-              highlight && "font-semibold text-cream",
-            )}
-          >
+          <span className={cn("text-muted-foreground", highlight && "font-semibold text-cream")}>
             {label}
           </span>
           <span

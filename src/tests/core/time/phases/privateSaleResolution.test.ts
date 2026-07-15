@@ -44,10 +44,7 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     ...overrides,
   });
 
-const createContext = (
-  state: Partial<GameState>,
-  newDay = 10,
-): PipelineContext =>
+const createContext = (state: Partial<GameState>, newDay = 10): PipelineContext =>
   createMockPipelineContext({
     state: { ...makeGameState(), ...state } as GameState,
     newDay,
@@ -206,14 +203,18 @@ describe("privateSaleResolutionPhase", () => {
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ id: "o1", amount: Math.round(valuation * 1.2) })],
     });
-    expect(mod.privateSaleResolutionPhase.execute(ctx1).state.privateSaleOffers![0].status).not.toBe("accepted");
+    expect(
+      mod.privateSaleResolutionPhase.execute(ctx1).state.privateSaleOffers![0].status,
+    ).not.toBe("accepted");
 
     const ctx2 = createContext({
       horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ id: "o2", amount: Math.round(valuation * 1.35) })],
     });
-    expect(mod.privateSaleResolutionPhase.execute(ctx2).state.privateSaleOffers![0].status).toBe("accepted");
+    expect(mod.privateSaleResolutionPhase.execute(ctx2).state.privateSaleOffers![0].status).toBe(
+      "accepted",
+    );
   });
 
   it("breeder: only accepts >= 1.1x valuation", async () => {
@@ -228,7 +229,9 @@ describe("privateSaleResolutionPhase", () => {
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: Math.round(valuation * 1.15) })],
     });
-    expect(mod.privateSaleResolutionPhase.execute(ctx).state.privateSaleOffers![0].status).toBe("accepted");
+    expect(mod.privateSaleResolutionPhase.execute(ctx).state.privateSaleOffers![0].status).toBe(
+      "accepted",
+    );
   });
 
   it("trader: accepts >= 0.8x valuation", async () => {
@@ -243,7 +246,9 @@ describe("privateSaleResolutionPhase", () => {
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: Math.round(valuation * 0.85) })],
     });
-    expect(mod.privateSaleResolutionPhase.execute(ctx).state.privateSaleOffers![0].status).toBe("accepted");
+    expect(mod.privateSaleResolutionPhase.execute(ctx).state.privateSaleOffers![0].status).toBe(
+      "accepted",
+    );
   });
 
   it("developer: accepts >= 0.9x valuation", async () => {
@@ -258,7 +263,9 @@ describe("privateSaleResolutionPhase", () => {
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: Math.round(valuation * 0.95) })],
     });
-    expect(mod.privateSaleResolutionPhase.execute(ctx).state.privateSaleOffers![0].status).toBe("accepted");
+    expect(mod.privateSaleResolutionPhase.execute(ctx).state.privateSaleOffers![0].status).toBe(
+      "accepted",
+    );
   });
 
   it("win-now: accepts >= 1.0x valuation", async () => {
@@ -273,7 +280,9 @@ describe("privateSaleResolutionPhase", () => {
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: Math.round(valuation * 1.05) })],
     });
-    expect(mod.privateSaleResolutionPhase.execute(ctx).state.privateSaleOffers![0].status).toBe("accepted");
+    expect(mod.privateSaleResolutionPhase.execute(ctx).state.privateSaleOffers![0].status).toBe(
+      "accepted",
+    );
   });
 
   it("specialist: accepts >= 1.0x valuation", async () => {
@@ -288,7 +297,9 @@ describe("privateSaleResolutionPhase", () => {
       npcStables: [stable],
       privateSaleOffers: [mkOffer({ amount: Math.round(valuation * 1.05) })],
     });
-    expect(mod.privateSaleResolutionPhase.execute(ctx).state.privateSaleOffers![0].status).toBe("accepted");
+    expect(mod.privateSaleResolutionPhase.execute(ctx).state.privateSaleOffers![0].status).toBe(
+      "accepted",
+    );
   });
 
   it("non-pending offers are not processed", async () => {

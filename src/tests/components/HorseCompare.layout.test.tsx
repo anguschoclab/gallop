@@ -7,8 +7,22 @@ vi.mock("@/core/race/headToHead", () => ({
     { horseId: "h2", winPct: 0.4, projectedBeyer: 78, projectedFinishTime: 98 },
   ]),
   runHeadToHeadSimulation: vi.fn(() => [
-    { horseId: "h1", winPct: 0.58, avgFinishPosition: 1.4, avgFinishTime: 96, beyerRange: [80, 90], finishTimeRange: [93, 99] },
-    { horseId: "h2", winPct: 0.42, avgFinishPosition: 1.6, avgFinishTime: 97, beyerRange: [73, 83], finishTimeRange: [94, 100] },
+    {
+      horseId: "h1",
+      winPct: 0.58,
+      avgFinishPosition: 1.4,
+      avgFinishTime: 96,
+      beyerRange: [80, 90],
+      finishTimeRange: [93, 99],
+    },
+    {
+      horseId: "h2",
+      winPct: 0.42,
+      avgFinishPosition: 1.6,
+      avgFinishTime: 97,
+      beyerRange: [73, 83],
+      finishTimeRange: [94, 100],
+    },
   ]),
 }));
 
@@ -25,7 +39,14 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     peakingIndex: 0,
     form: 50,
     potential: 75,
-    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70, consistency: 70 } as any,
+    stats: {
+      speed: 70,
+      stamina: 70,
+      acceleration: 70,
+      temperament: 70,
+      durability: 70,
+      consistency: 70,
+    } as any,
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
@@ -130,8 +151,11 @@ describe("HorseCompare responsive layout", () => {
     render(<HorseCompare horses={[h1, h2]} {...baseProps} />);
     const dialog = getDialogContent();
     const grids = dialog.querySelectorAll(".grid");
-    const surfaceGrid = Array.from(grids).find((g) =>
-      g.className.includes("grid-cols-1") && g.className.includes("sm:grid-cols-2") && g.querySelector(".text-xs.font-medium"),
+    const surfaceGrid = Array.from(grids).find(
+      (g) =>
+        g.className.includes("grid-cols-1") &&
+        g.className.includes("sm:grid-cols-2") &&
+        g.querySelector(".text-xs.font-medium"),
     );
     expect(surfaceGrid).toBeTruthy();
     expect(surfaceGrid!.className).toContain("grid-cols-1");

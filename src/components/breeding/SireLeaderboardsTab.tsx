@@ -116,16 +116,23 @@ export function SireLeaderboardsTab() {
   );
 }
 
-function LeaderboardView({ leaderboard, icon }: { leaderboard: Leaderboard; icon: React.ReactNode }) {
-  const { sortValue, setSortValue, filterValue, setFilterValue, processed } = useLeaderboardControls<SireRanking>({
-    items: leaderboard?.rankings ?? [],
-    sortOptions: SORT_OPTIONS,
-    filterOptions: FILTER_OPTIONS,
-    sortFns: SORT_FNS,
-    filterFns: FILTER_FNS,
-    defaultSort: "score",
-    defaultFilter: "all",
-  });
+function LeaderboardView({
+  leaderboard,
+  icon,
+}: {
+  leaderboard: Leaderboard;
+  icon: React.ReactNode;
+}) {
+  const { sortValue, setSortValue, filterValue, setFilterValue, processed } =
+    useLeaderboardControls<SireRanking>({
+      items: leaderboard?.rankings ?? [],
+      sortOptions: SORT_OPTIONS,
+      filterOptions: FILTER_OPTIONS,
+      sortFns: SORT_FNS,
+      filterFns: FILTER_FNS,
+      defaultSort: "score",
+      defaultFilter: "all",
+    });
 
   if (!leaderboard || leaderboard.rankings.length === 0) {
     return <LeaderboardEmpty message="No rankings available yet." />;

@@ -48,9 +48,7 @@ describe("ensureMaidenRaces", () => {
     const result = ensureMaidenRaces(races, 2, 7, createRng("test"));
     for (let d = 2; d <= 7; d++) {
       const dayRaces = result.filter((r) => r.day === d);
-      const hasMaiden = dayRaces.some(
-        (r) => r.raceClass === "Maiden" && r.minStat === undefined,
-      );
+      const hasMaiden = dayRaces.some((r) => r.raceClass === "Maiden" && r.minStat === undefined);
       expect(hasMaiden).toBe(true);
     }
   });
@@ -83,9 +81,7 @@ describe("ensureMaidenRaces", () => {
   it("added maiden has no minStat", () => {
     const races: Race[] = [];
     const result = ensureMaidenRaces(races, 2, 3, createRng("test"));
-    const addedMaidens = result.filter(
-      (r) => r.raceClass === "Maiden" && !races.includes(r),
-    );
+    const addedMaidens = result.filter((r) => r.raceClass === "Maiden" && !races.includes(r));
     for (const m of addedMaidens) {
       expect(m.minStat).toBeUndefined();
     }
@@ -101,9 +97,7 @@ describe("ensureMaidenRaces", () => {
   });
 
   it("adds maiden even when MaidenSpecialWeight (minStat=40) exists", () => {
-    const races: Race[] = [
-      mkRace({ day: 3, raceClass: "MaidenSpecialWeight", minStat: 40 }),
-    ];
+    const races: Race[] = [mkRace({ day: 3, raceClass: "MaidenSpecialWeight", minStat: 40 })];
     const result = ensureMaidenRaces(races, 3, 3, createRng("test"));
     const day3Maidens = result.filter(
       (r) => r.day === 3 && r.raceClass === "Maiden" && r.minStat === undefined,
@@ -112,15 +106,10 @@ describe("ensureMaidenRaces", () => {
   });
 
   it("does not add maiden when MaidenClaiming (no minStat) already exists", () => {
-    const races: Race[] = [
-      mkRace({ day: 3, raceClass: "MaidenClaiming" }),
-    ];
+    const races: Race[] = [mkRace({ day: 3, raceClass: "MaidenClaiming" })];
     const result = ensureMaidenRaces(races, 3, 3, createRng("test"));
     const day3NoMinStatMaidens = result.filter(
-      (r) =>
-        r.day === 3 &&
-        r.raceClass.toLowerCase().includes("maiden") &&
-        r.minStat === undefined,
+      (r) => r.day === 3 && r.raceClass.toLowerCase().includes("maiden") && r.minStat === undefined,
     );
     expect(day3NoMinStatMaidens.length).toBe(1);
   });
@@ -131,9 +120,7 @@ describe("ensureMaidenInCard", () => {
     const card: Race[] = [mkRace({ day: 30, raceClass: "Allowance" })];
     const track = mkTrack();
     const result = ensureMaidenInCard(card, 30, track, createRng("test"));
-    const hasMaiden = result.some(
-      (r) => r.raceClass === "Maiden" && r.minStat === undefined,
-    );
+    const hasMaiden = result.some((r) => r.raceClass === "Maiden" && r.minStat === undefined);
     expect(hasMaiden).toBe(true);
   });
 
@@ -156,9 +143,7 @@ describe("ensureMaidenInCard", () => {
     const card: Race[] = [mkRace({ day: 30, raceClass: "Stakes", minStat: 65 })];
     const track = mkTrack();
     const result = ensureMaidenInCard(card, 30, track, createRng("test"));
-    const added = result.find(
-      (r) => r.raceClass === "Maiden" && !card.includes(r),
-    );
+    const added = result.find((r) => r.raceClass === "Maiden" && !card.includes(r));
     expect(added).toBeDefined();
     expect(added!.minStat).toBeUndefined();
   });
@@ -167,9 +152,7 @@ describe("ensureMaidenInCard", () => {
     const card: Race[] = [mkRace({ day: 30, raceClass: "Allowance" })];
     const track = mkTrack({ id: "my-track-id" });
     const result = ensureMaidenInCard(card, 30, track, createRng("test"));
-    const added = result.find(
-      (r) => r.raceClass === "Maiden" && !card.includes(r),
-    );
+    const added = result.find((r) => r.raceClass === "Maiden" && !card.includes(r));
     expect(added).toBeDefined();
     expect(added!.trackId).toBe("my-track-id");
   });

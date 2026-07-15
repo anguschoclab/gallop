@@ -20,7 +20,8 @@ export function useCalendarFilters(regionId: string, search: CalendarSearch) {
 
   // ⚡ Bolt: Replace O(N*M) lookup with O(N+M) Set check
   const regionRaces = useMemo(
-    () => Object.values(races).filter((race) => race.graded && regionTracksSet.has(race.graded.track)),
+    () =>
+      Object.values(races).filter((race) => race.graded && regionTracksSet.has(race.graded.track)),
     [races, regionTracksSet],
   );
 

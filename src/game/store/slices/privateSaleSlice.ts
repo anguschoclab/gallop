@@ -10,7 +10,8 @@
 
 import type { Horse, PrivateSaleOffer, Claim, Race } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
-import type { StoreGet } from "../types";
+import type { StoreSet, StoreGet } from "../types";
+import type { AnyIntent } from "@/core/resolver/intents";
 
 export type PrivateSaleSlice = {
   /** Proposes a private sale offer to an NPC stable for one of its horses */
@@ -45,9 +46,9 @@ export type PrivateSaleSlice = {
  * @returns Private sale slice with actions
  */
 export function createPrivateSaleSlice(
-  set: any,
+  set: StoreSet,
   get: StoreGet,
-  enqueueIntent: (intent: any) => void,
+  enqueueIntent: (intent: AnyIntent) => void,
 ): PrivateSaleSlice {
   return {
     proposePrivateSale: (horseId, stableId, amount) => {
@@ -69,7 +70,7 @@ export function createPrivateSaleSlice(
       };
 
       set({
-        privateSaleOffers: [...(s.privateSaleOffers ?? []), offer],
+        privateSaleOffers: [...s.privateSaleOffers, offer],
       });
 
       return { ok: true, reason: "offer_submitted" };
@@ -77,7 +78,7 @@ export function createPrivateSaleSlice(
 
     respondToPrivateSale: (offerId, accept) => {
       const s = get();
-      const offer: PrivateSaleOffer | undefined = (s.privateSaleOffers ?? []).find(
+      const offer: PrivateSaleOffer | undefined = s.privateSaleOffers.find(
         (o: PrivateSaleOffer) => o.id === offerId,
       );
       if (!offer) return { ok: false, reason: "offer_not_found" };
@@ -90,9 +91,9 @@ export function createPrivateSaleSlice(
         const horse = s.horses[offer.horseId];
         if (!horse) return { ok: false, reason: "horse_not_found" };
 
-        const updatedHorse: Horse = { ...horse, owned: true, stableId: undefined as any };
+        const updatedHorse: Horse = { ...horse, owned: true, stableId: undefined };
 
-        const updatedOffers = (s.privateSaleOffers ?? []).map((o: PrivateSaleOffer) =>
+        const updatedOffers = s.privateSaleOffers.map((o: PrivateSaleOffer) =>
           o.id === offerId ? { ...o, status: "accepted" as const } : o,
         );
 
@@ -104,7 +105,7 @@ export function createPrivateSaleSlice(
 
         return { ok: true };
       } else {
-        const updatedOffers = (s.privateSaleOffers ?? []).map((o: PrivateSaleOffer) =>
+        const updatedOffers = s.privateSaleOffers.map((o: PrivateSaleOffer) =>
           o.id === offerId ? { ...o, status: "declined" as const } : o,
         );
 

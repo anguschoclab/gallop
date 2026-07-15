@@ -11,7 +11,7 @@ interface NavSubItem {
   search?: Record<string, string>;
 }
 
-interface NavItem {
+export interface NavItem {
   to: string;
   label: string;
   icon: React.ElementType;

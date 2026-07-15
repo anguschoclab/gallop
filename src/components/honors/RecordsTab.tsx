@@ -4,14 +4,21 @@ import { LeaderboardTable } from "@/components/history/LeaderboardTable";
 import { TrackRecordsTable } from "@/components/history/TrackRecordsTable";
 import { DollarSign, Zap, Timer } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
+import type { TrackRecord } from "@/core/history/historyTypes";
+import type { ProgenyLeaderboard } from "@/core/breeding/leaderboardTypes";
 
-const EMPTY_OBJECT = {};
+const EMPTY_OBJECT = {} as Record<string, never>;
 
 export function RecordsTab() {
-  const horseLeaderboards = useGameWithShallow((s) => s.horseLeaderboards || EMPTY_OBJECT) as any;
-  const trackRecords = useGameWithShallow((s) => s.trackRecords || EMPTY_OBJECT) as any;
+  const horseLeaderboards = useGameWithShallow(
+    (s) => s.horseLeaderboards ?? EMPTY_OBJECT,
+  ) as Record<string, ProgenyLeaderboard>;
+  const trackRecords = useGameWithShallow((s) => s.trackRecords ?? EMPTY_OBJECT) as Record<
+    string,
+    TrackRecord
+  >;
 
-  const trackRecordsList = Object.values(trackRecords).sort((a: any, b: any) => {
+  const trackRecordsList = Object.values(trackRecords).sort((a, b) => {
     if (a.trackName !== b.trackName) return a.trackName.localeCompare(b.trackName);
     if (a.surface !== b.surface) return a.surface.localeCompare(b.surface);
     return a.distance - b.distance;

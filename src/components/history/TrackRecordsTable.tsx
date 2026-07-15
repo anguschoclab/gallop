@@ -44,15 +44,16 @@ const surfaceColor = (surface: string) => {
 };
 
 export function TrackRecordsTable({ records }: { records: any[] }) {
-  const { sortValue, setSortValue, filterValue, setFilterValue, processed } = useLeaderboardControls<any>({
-    items: records,
-    sortOptions: SORT_OPTIONS,
-    filterOptions: FILTER_OPTIONS,
-    sortFns: SORT_FNS,
-    filterFns: FILTER_FNS,
-    defaultSort: "track",
-    defaultFilter: "all",
-  });
+  const { sortValue, setSortValue, filterValue, setFilterValue, processed } =
+    useLeaderboardControls<any>({
+      items: records,
+      sortOptions: SORT_OPTIONS,
+      filterOptions: FILTER_OPTIONS,
+      sortFns: SORT_FNS,
+      filterFns: FILTER_FNS,
+      defaultSort: "track",
+      defaultFilter: "all",
+    });
 
   if (records.length === 0) {
     return (
@@ -61,7 +62,10 @@ export function TrackRecordsTable({ records }: { records: any[] }) {
   }
 
   return (
-    <LeaderboardShell title="All-Time Track Records" icon={<Timer className="h-4 w-4 text-primary" />}>
+    <LeaderboardShell
+      title="All-Time Track Records"
+      icon={<Timer className="h-4 w-4 text-primary" />}
+    >
       <LeaderboardControlsBar
         sortOptions={SORT_OPTIONS}
         sortValue={sortValue}

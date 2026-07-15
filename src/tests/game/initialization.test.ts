@@ -94,9 +94,7 @@ describe("createInitialState race generation for starter eligibility", () => {
       const dayRaces = races.filter((r) => r.day === d);
       const hasStarterMaiden = dayRaces.some(
         (r) =>
-          r.raceClass.toLowerCase().includes("maiden") &&
-          r.minStat === undefined &&
-          !r.resolved,
+          r.raceClass.toLowerCase().includes("maiden") && r.minStat === undefined && !r.resolved,
       );
       expect(hasStarterMaiden).toBe(true);
     }
@@ -106,9 +104,7 @@ describe("createInitialState race generation for starter eligibility", () => {
     const state = createInitialState();
     const races = Object.values(state.races);
     for (let d = 2; d <= 8; d++) {
-      const dayTrackRaces = races.filter(
-        (r) => r.day === d && r.trackId !== undefined,
-      );
+      const dayTrackRaces = races.filter((r) => r.day === d && r.trackId !== undefined);
       // Days 2-3 are Monday/Tuesday with no track races (F-13)
       // Days 4+ should have track races
       if (d >= 5) {
@@ -128,12 +124,8 @@ describe("createInitialState race generation for starter eligibility", () => {
     const state = createInitialState();
     const races = Object.values(state.races);
     // Day 2 = Monday (dow 1), Day 3 = Tuesday (dow 2) — no tracks race
-    const day2TrackRaces = races.filter(
-      (r) => r.day === 2 && r.trackId !== undefined,
-    );
-    const day3TrackRaces = races.filter(
-      (r) => r.day === 3 && r.trackId !== undefined,
-    );
+    const day2TrackRaces = races.filter((r) => r.day === 2 && r.trackId !== undefined);
+    const day3TrackRaces = races.filter((r) => r.day === 3 && r.trackId !== undefined);
     expect(day2TrackRaces.length).toBe(0);
     expect(day3TrackRaces.length).toBe(0);
   });

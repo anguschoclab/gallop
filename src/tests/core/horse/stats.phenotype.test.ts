@@ -8,7 +8,14 @@ describe("calculateOverallRating — phenotype interaction", () => {
     const horse: Horse = {
       id: "h1",
       name: "Unresolved",
-      stats: { speed: 0, stamina: 0, acceleration: 0, temperament: 0, conformation: 0, consistency: 0 },
+      stats: {
+        speed: 0,
+        stamina: 0,
+        acceleration: 0,
+        temperament: 0,
+        conformation: 0,
+        consistency: 0,
+      },
       potential: 0,
       phenotypeResolved: false,
     } as unknown as Horse;

@@ -19,9 +19,7 @@ describe("ImperialOutpostManager — tier label display", () => {
   it("renders Tier 0 pattern in facility slot badges", () => {
     const { container } = renderWithStore(<ImperialOutpostManager />);
     const badges = container.querySelectorAll(".bg-t700");
-    const tierBadges = Array.from(badges).filter((b) =>
-      /Tier 0/i.test(b.textContent ?? ""),
-    );
+    const tierBadges = Array.from(badges).filter((b) => /Tier 0/i.test(b.textContent ?? ""));
     expect(tierBadges.length).toBeGreaterThanOrEqual(1);
   });
 

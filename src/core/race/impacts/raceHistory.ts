@@ -34,9 +34,8 @@ export function generateRaceHistoryImpact(
   }
 
   const prizeSplit = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
-  const purseEarned = position - 1 < prizeSplit.length
-    ? Math.round(race.purse * prizeSplit[position - 1])
-    : 0;
+  const purseEarned =
+    position - 1 < prizeSplit.length ? Math.round(race.purse * prizeSplit[position - 1]) : 0;
 
   return {
     id: generateUUID(rng),

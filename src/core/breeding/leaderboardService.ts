@@ -35,11 +35,25 @@ export function computeAllLeaderboards(
   // Per-stallion surface/distance stat accumulators
   const surfaceStats = new Map<
     string,
-    { turfWins: number; turfStarts: number; dirtWins: number; dirtStarts: number; syntheticWins: number; syntheticStarts: number }
+    {
+      turfWins: number;
+      turfStarts: number;
+      dirtWins: number;
+      dirtStarts: number;
+      syntheticWins: number;
+      syntheticStarts: number;
+    }
   >();
   const distanceStats = new Map<
     string,
-    { sprintWins: number; sprintStarts: number; classicWins: number; classicStarts: number; stayerWins: number; stayerStarts: number }
+    {
+      sprintWins: number;
+      sprintStarts: number;
+      classicWins: number;
+      classicStarts: number;
+      stayerWins: number;
+      stayerStarts: number;
+    }
   >();
 
   // Calculate analytics for all stallions ONCE
@@ -58,23 +72,51 @@ export function computeAllLeaderboards(
     const aei = industryMeanEarnings > 0 ? (avgProgenyEarnings / industryMeanEarnings) * 100 : 0;
 
     // Accumulate surface and distance stats from runners
-    let turfWins = 0, turfStarts = 0, dirtWins = 0, dirtStarts = 0;
-    let syntheticWins = 0, syntheticStarts = 0;
-    let sprintWins = 0, sprintStarts = 0, classicWins = 0, classicStarts = 0;
-    let stayerWins = 0, stayerStarts = 0;
+    let turfWins = 0,
+      turfStarts = 0,
+      dirtWins = 0,
+      dirtStarts = 0;
+    let syntheticWins = 0,
+      syntheticStarts = 0;
+    let sprintWins = 0,
+      sprintStarts = 0,
+      classicWins = 0,
+      classicStarts = 0;
+    let stayerWins = 0,
+      stayerStarts = 0;
 
     for (const r of runners) {
       const cs = getCareerStats(r);
-      turfWins += cs.turfWins; turfStarts += cs.turfStarts;
-      dirtWins += cs.dirtWins; dirtStarts += cs.dirtStarts;
-      syntheticWins += cs.syntheticWins; syntheticStarts += cs.syntheticStarts;
-      sprintWins += cs.sprintWins; sprintStarts += cs.sprintStarts;
-      classicWins += cs.classicWins; classicStarts += cs.classicStarts;
-      stayerWins += cs.stayerWins; stayerStarts += cs.stayerStarts;
+      turfWins += cs.turfWins;
+      turfStarts += cs.turfStarts;
+      dirtWins += cs.dirtWins;
+      dirtStarts += cs.dirtStarts;
+      syntheticWins += cs.syntheticWins;
+      syntheticStarts += cs.syntheticStarts;
+      sprintWins += cs.sprintWins;
+      sprintStarts += cs.sprintStarts;
+      classicWins += cs.classicWins;
+      classicStarts += cs.classicStarts;
+      stayerWins += cs.stayerWins;
+      stayerStarts += cs.stayerStarts;
     }
 
-    surfaceStats.set(s.id, { turfWins, turfStarts, dirtWins, dirtStarts, syntheticWins, syntheticStarts });
-    distanceStats.set(s.id, { sprintWins, sprintStarts, classicWins, classicStarts, stayerWins, stayerStarts });
+    surfaceStats.set(s.id, {
+      turfWins,
+      turfStarts,
+      dirtWins,
+      dirtStarts,
+      syntheticWins,
+      syntheticStarts,
+    });
+    distanceStats.set(s.id, {
+      sprintWins,
+      sprintStarts,
+      classicWins,
+      classicStarts,
+      stayerWins,
+      stayerStarts,
+    });
 
     // Phase 4: Compute surfaceBias inline (ported from getSireSurfaceBias)
     const surfaceBias: SurfaceBias = (() => {
@@ -113,9 +155,8 @@ export function computeAllLeaderboards(
     const lifetimeG1Foals = s.stud?.lifetimeG1Foals || 0;
 
     // progenyWinPercentage (ported from calculateProgenyWinPercentage)
-    const progenyWinPercentage = lifetimeFoals > 0
-      ? Math.round((lifetimeStakesFoals / lifetimeFoals) * 100 * 10) / 10
-      : 0;
+    const progenyWinPercentage =
+      lifetimeFoals > 0 ? Math.round((lifetimeStakesFoals / lifetimeFoals) * 100 * 10) / 10 : 0;
 
     stallionAnalytics.set(s.id, {
       stallionId: s.id,
@@ -233,10 +274,22 @@ export function computeAllLeaderboards(
     })
     .filter((r) => r.isFreshman)
     .sort((a, b) => b.value - a.value)
-    .map((r, i) => ({ stallionId: r.stallionId, stallionName: r.stallionName, rank: i + 1, value: r.value, metrics: r.metrics }));
+    .map((r, i) => ({
+      stallionId: r.stallionId,
+      stallionName: r.stallionName,
+      rank: i + 1,
+      value: r.value,
+      metrics: r.metrics,
+    }));
 
   // Rising stars
-  let risingStarsRankings: { stallionId: string; stallionName: string; rank: number; value: number; metrics: SireAnalytics }[];
+  let risingStarsRankings: {
+    stallionId: string;
+    stallionName: string;
+    rank: number;
+    value: number;
+    metrics: SireAnalytics;
+  }[];
   if (!trendHistory || trendHistory.length === 0) {
     // Fallback: top 20 by lifetimeStakesFoals
     risingStarsRankings = stallions

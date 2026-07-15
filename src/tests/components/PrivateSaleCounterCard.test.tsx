@@ -174,9 +174,7 @@ describe("PrivateSaleCounterCard", () => {
     );
     fireEvent.click(screen.getByRole("button", { name: /Accept \$8,000/i }));
     fireEvent.click(screen.getByRole("button", { name: /^Accept$/i }));
-    expect(toast.success).toHaveBeenCalledWith(
-      "Lightning joins your stable for $8,000.",
-    );
+    expect(toast.success).toHaveBeenCalledWith("Lightning joins your stable for $8,000.");
   });
 
   it("accept failure shows error toast with reason", () => {

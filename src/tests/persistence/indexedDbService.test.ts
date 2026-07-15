@@ -94,7 +94,15 @@ class MockDatabase {
   private stores: Record<string, MockObjectStore> = {};
 
   constructor() {
-    for (const name of ["meta", "horses", "races", "npcStables", "market", "history", "saveSlots"]) {
+    for (const name of [
+      "meta",
+      "horses",
+      "races",
+      "npcStables",
+      "market",
+      "history",
+      "saveSlots",
+    ]) {
       this.stores[name] = new MockObjectStore();
     }
   }
@@ -149,11 +157,11 @@ describe("indexedDbService", () => {
     const buckets: Partial<AllBuckets> = {
       meta: { day: 42, cash: 100000 },
       horses: {
-        playerHorses: { "h1": { id: "h1", name: "Test" } as any },
+        playerHorses: { h1: { id: "h1", name: "Test" } as any },
         npcSummaries: [],
       },
-      races: { "r1": { id: "r1" } as any },
-      npcStables: { "s1": { id: "s1" } as any },
+      races: { r1: { id: "r1" } as any },
+      npcStables: { s1: { id: "s1" } as any },
       market: { auctions: [] },
       history: { log: [{ day: 1, text: "test" }] },
     };

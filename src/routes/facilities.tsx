@@ -13,7 +13,9 @@ export const Route = createFileRoute("/facilities")({
 
 function FacilitiesPage() {
   const facilities = useGame((s) => s.facilities);
+  const outposts = useGame((s) => s.outposts ?? []);
   const facilityCount = Object.keys(facilities || {}).length;
+  const outpostCount = outposts.length;
 
   return (
     <div className="space-y-6 pb-20 animate-fade-in">
@@ -33,7 +35,7 @@ function FacilitiesPage() {
             </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
             <span>
-              Global Outposts: <NumericValue value={1} />
+              Global Outposts: <NumericValue value={outpostCount} />
             </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
             <span>

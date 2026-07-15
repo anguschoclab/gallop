@@ -30,7 +30,12 @@ const SORT_FNS: Record<string, (a: any, b: any) => number> = {
   starts: (a, b) => b.metrics.starts - a.metrics.starts,
 };
 
-export function LeaderboardTable({ leaderboard, icon, valueFormatter, valueLabel = "Value" }: LeaderboardTableProps) {
+export function LeaderboardTable({
+  leaderboard,
+  icon,
+  valueFormatter,
+  valueLabel = "Value",
+}: LeaderboardTableProps) {
   const { sortValue, setSortValue, processed } = useLeaderboardControls<any>({
     items: leaderboard?.rankings ?? [],
     sortOptions: SORT_OPTIONS,

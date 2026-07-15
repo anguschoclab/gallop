@@ -11,7 +11,11 @@ import type { Stable, StableTier } from "@/core/stable/types";
 import { createRng, hashStr, type Rng } from "@/core/common/rng";
 import { generateNpcHorse } from "@/core/horse/horseFactory";
 import { calculateStartingFame } from "@/core/npc/horseGenHelpers";
-import { shouldRetireAtStartup, calculateRecommendedStudFee, defaultStudParams } from "@/core/breeding/stallions";
+import {
+  shouldRetireAtStartup,
+  calculateRecommendedStudFee,
+  defaultStudParams,
+} from "@/core/breeding/stallions";
 
 export interface NpcHorseSummary {
   id: string;
@@ -44,7 +48,10 @@ export interface NpcHorseSummary {
  * @param horses - All horses in the game
  * @returns Array of NPC horse summaries
  */
-export function compressNpcHorses(stables: Stable[], horses: Record<string, Horse>): NpcHorseSummary[] {
+export function compressNpcHorses(
+  stables: Stable[],
+  horses: Record<string, Horse>,
+): NpcHorseSummary[] {
   const stableMap = new Map(stables.map((s) => [s.id, s]));
   const summaries: NpcHorseSummary[] = [];
 
@@ -90,10 +97,7 @@ export function compressNpcHorses(stables: Stable[], horses: Record<string, Hors
  * @param stables - All NPC stables (for stable reference)
  * @returns Array of regenerated Horse objects
  */
-export function regenerateNpcHorses(
-  summaries: NpcHorseSummary[],
-  stables: Stable[],
-): Horse[] {
+export function regenerateNpcHorses(summaries: NpcHorseSummary[], stables: Stable[]): Horse[] {
   const stableMap = new Map(stables.map((s) => [s.id, s]));
   const horses: Horse[] = [];
 
@@ -104,18 +108,12 @@ export function regenerateNpcHorses(
     // Deterministic RNG from horse ID
     const rng = createRng(summary.seed);
 
-    const horse = generateNpcHorse(
-      stable,
-      rng,
-      undefined,
-      undefined,
-      {
-        tier: summary.tier,
-        forcedAge: summary.age,
-        forcedGender: summary.gender,
-        forcedName: summary.name,
-      },
-    );
+    const horse = generateNpcHorse(stable, rng, undefined, undefined, {
+      tier: summary.tier,
+      forcedAge: summary.age,
+      forcedGender: summary.gender,
+      forcedName: summary.name,
+    });
 
     // Force the ID to match the summary
     horse.id = summary.id;

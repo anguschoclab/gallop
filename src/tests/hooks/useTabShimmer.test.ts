@@ -41,10 +41,9 @@ describe("useTabShimmer", () => {
 
   it("supports custom duration", () => {
     vi.useFakeTimers();
-    const { result, rerender } = renderHook(
-      ({ tab }) => useTabShimmer(tab, 500),
-      { initialProps: { tab: "tab1" } },
-    );
+    const { result, rerender } = renderHook(({ tab }) => useTabShimmer(tab, 500), {
+      initialProps: { tab: "tab1" },
+    });
     act(() => {
       rerender({ tab: "tab2" });
     });
@@ -86,10 +85,9 @@ describe("useTabShimmer", () => {
 
   it("cleans up timeout on unmount", () => {
     vi.useFakeTimers();
-    const { result, rerender, unmount } = renderHook(
-      ({ tab }) => useTabShimmer(tab),
-      { initialProps: { tab: "tab1" } },
-    );
+    const { result, rerender, unmount } = renderHook(({ tab }) => useTabShimmer(tab), {
+      initialProps: { tab: "tab1" },
+    });
     act(() => {
       rerender({ tab: "tab2" });
     });

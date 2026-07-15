@@ -80,7 +80,9 @@ describe("FinanceHandler", () => {
     const handler = new FinanceHandler();
     const state = {
       cash: 1000,
-      horses: h2r([{ id: "horse-1", name: "Star", stableId: "player", owned: true }] as unknown as Horse[]),
+      horses: h2r([
+        { id: "horse-1", name: "Star", stableId: "player", owned: true },
+      ] as unknown as Horse[]),
       npcStables: [],
     } as unknown as GameState;
 
@@ -108,7 +110,9 @@ describe("FinanceHandler", () => {
     const handler = new FinanceHandler();
     const state = {
       cash: 1000,
-      horses: h2r([{ id: "horse-1", name: "Star", stableId: "stable-2", owned: false }] as unknown as Horse[]),
+      horses: h2r([
+        { id: "horse-1", name: "Star", stableId: "stable-2", owned: false },
+      ] as unknown as Horse[]),
       npcStables: [],
     } as unknown as GameState;
 

@@ -6,7 +6,12 @@
  * Save slot state is persisted in IndexedDB; metadata is kept in localStorage.
  */
 
-import { saveSlotState, loadSlotState, deleteSlotState, isIndexedDbAvailable } from "./indexedDbService";
+import {
+  saveSlotState,
+  loadSlotState,
+  deleteSlotState,
+  isIndexedDbAvailable,
+} from "./indexedDbService";
 import { saveGameStateToIDB } from "@/game/store/storage";
 import type { GameState } from "@/game/types";
 import { safeParseJson, gameStateSchema, saveSlotMetadataArraySchema } from "./schemas";

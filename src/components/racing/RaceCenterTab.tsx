@@ -35,18 +35,12 @@ export function RaceCenterTab() {
     [horses, selectedHorseId],
   );
 
-  const eligibleRows = useHorseEligibleRaces(
-    selectedHorse,
-    races,
-    jockeys,
-    cash,
-    day,
-    30,
-  );
+  const eligibleRows = useHorseEligibleRaces(selectedHorse, races, jockeys, cash, day, 30);
 
   const racesArray = useMemo(() => Object.values(races), [races]);
   const firstEligibleRace = useMemo(
-    () => (eligibleRows.length === 0 ? findFirstEligibleRace(selectedHorse, racesArray, day) : undefined),
+    () =>
+      eligibleRows.length === 0 ? findFirstEligibleRace(selectedHorse, racesArray, day) : undefined,
     [eligibleRows.length, selectedHorse, racesArray, day],
   );
 
@@ -60,11 +54,7 @@ export function RaceCenterTab() {
   const autoSelectFirst = useMemo(() => {
     if (selectedHorseId) return null;
     const firstEligible = horseList.find(
-      (h) =>
-        h.owned &&
-        h.lifecycleStatus === "active" &&
-        !h.consignedSaleId &&
-        !h.activeInjury,
+      (h) => h.owned && h.lifecycleStatus === "active" && !h.consignedSaleId && !h.activeInjury,
     );
     return firstEligible?.id ?? null;
   }, [horseList, selectedHorseId]);

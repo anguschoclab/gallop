@@ -17,11 +17,7 @@ export function HorsePickerPanel({
   enteredHorseIds,
 }: HorsePickerPanelProps) {
   const eligible = horses.filter(
-    (h) =>
-      h.owned &&
-      h.lifecycleStatus === "active" &&
-      !h.consignedSaleId &&
-      !h.activeInjury,
+    (h) => h.owned && h.lifecycleStatus === "active" && !h.consignedSaleId && !h.activeInjury,
   );
 
   const sorted = [...eligible].sort((a, b) => {
@@ -66,9 +62,7 @@ export function HorsePickerPanel({
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold text-sm text-cream truncate">
-                    {horse.name}
-                  </span>
+                  <span className="font-semibold text-sm text-cream truncate">{horse.name}</span>
                   <span className="shrink-0 rounded bg-muted/40 px-1.5 py-0.5 text-[10px] font-mono font-bold text-cream/60">
                     {ovr} OVR
                   </span>
@@ -85,9 +79,7 @@ export function HorsePickerPanel({
                   </span>
                 </div>
               </div>
-              {isEntered && (
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
-              )}
+              {isEntered && <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />}
             </div>
           </button>
         );

@@ -34,6 +34,21 @@ describe("oddsTypes", () => {
       expect(probabilityToMorningLine(0.2)).toBe(4);
       expect(probabilityToMorningLine(0.04)).toBe(30);
     });
+
+    it("covers all 12 conditional branches", () => {
+      expect(probabilityToMorningLine(0.5)).toBe(1);
+      expect(probabilityToMorningLine(0.33)).toBe(2);
+      expect(probabilityToMorningLine(0.25)).toBe(3);
+      expect(probabilityToMorningLine(0.2)).toBe(4);
+      expect(probabilityToMorningLine(0.17)).toBe(5);
+      expect(probabilityToMorningLine(0.14)).toBe(6);
+      expect(probabilityToMorningLine(0.12)).toBe(8);
+      expect(probabilityToMorningLine(0.1)).toBe(10);
+      expect(probabilityToMorningLine(0.08)).toBe(12);
+      expect(probabilityToMorningLine(0.06)).toBe(15);
+      expect(probabilityToMorningLine(0.05)).toBe(20);
+      expect(probabilityToMorningLine(0.01)).toBe(30);
+    });
   });
 
   describe("formatOdds", () => {
@@ -55,42 +70,38 @@ describe("oddsTypes", () => {
   describe("createBettingPool", () => {
     it("creates a pool from horse probabilities", () => {
       const pool = createBettingPool("race-1", {
-        "h1": 0.5,
-        "h2": 0.2,
+        h1: 0.5,
+        h2: 0.5,
       });
 
       expect(pool.raceId).toBe("race-1");
-      // Simulated pool hardcodes totalPool to 10000
+      // totalPool equals sum of horseBets (10000 * 0.5 + 10000 * 0.5 = 10000)
       expect(pool.totalPool).toBe(10000);
 
-      // total simulated pool 10000 * 0.5 = 5000
       expect(pool.horseBets["h1"]).toBe(5000);
-      expect(pool.horseBets["h2"]).toBe(2000);
+      expect(pool.horseBets["h2"]).toBe(5000);
 
-      expect(pool.odds.find(o => o.horseId === "h1")?.winProbability).toBe(0.5);
-      expect(pool.odds.find(o => o.horseId === "h1")?.morningLine).toBe(1);
+      expect(pool.odds.find((o) => o.horseId === "h1")?.winProbability).toBe(0.5);
+      expect(pool.odds.find((o) => o.horseId === "h1")?.morningLine).toBe(1);
     });
 
-    it("documents latent bug where total pool doesn't match sum of horseBets if prob doesn't sum to 1", () => {
-      // In a real pari-mutuel system, the total win pool = sum(all horse win bets).
-      // Here, totalPool is arbitrarily hardcoded to 10000 on init, but the internal bets
-      // only add up to 3000.
-      const pool = createBettingPool("race-buggy", {
-        "h1": 0.1,
-        "h2": 0.2,
+    it("totalPool equals sum of horseBets even when probabilities don't sum to 1", () => {
+      const pool = createBettingPool("race-partial", {
+        h1: 0.1,
+        h2: 0.2,
       });
 
-      expect(pool.totalPool).toBe(10000);
       const sumOfBets = Object.values(pool.horseBets).reduce((a, b) => a + b, 0);
-      expect(sumOfBets).toBe(3000); // Mismatch!
+      expect(pool.totalPool).toBe(sumOfBets);
+      expect(sumOfBets).toBe(3000);
     });
   });
 
   describe("updateOdds", () => {
     it("updates pool and recalculates currentOdds based on pool share", () => {
       const initialPool = createBettingPool("race-1", {
-        "h1": 0.5, // starts at 5000 bet
-        "h2": 0.5, // starts at 5000 bet
+        h1: 0.5, // starts at 5000 bet
+        h2: 0.5, // starts at 5000 bet
       });
 
       // Bet an enormous amount on h2 to heavily skew the pool
@@ -100,8 +111,8 @@ describe("oddsTypes", () => {
       expect(updated.horseBets["h2"]).toBe(95000); // 5000 + 90000
       expect(updated.horseBets["h1"]).toBe(5000);
 
-      const oddsH2 = updated.odds.find(o => o.horseId === "h2");
-      const oddsH1 = updated.odds.find(o => o.horseId === "h1");
+      const oddsH2 = updated.odds.find((o) => o.horseId === "h2");
+      const oddsH1 = updated.odds.find((o) => o.horseId === "h1");
 
       // H2 now has 95% of pool, share = 0.95 => 1-1 odds
       expect(oddsH2?.currentOdds).toBe(1);

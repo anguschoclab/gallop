@@ -94,7 +94,9 @@ export const schedulerPhase = {
 
     // Maintain a mutable race snapshot so subsequent auto-entry calls see
     // entries already committed by earlier campaigns, without touching state.races.
-    const currentRaces = new Map(Object.values(state.races).map((r) => [r.id, { ...r, entries: [...r.entries] }]));
+    const currentRaces = new Map(
+      Object.values(state.races).map((r) => [r.id, { ...r, entries: [...r.entries] }]),
+    );
 
     for (let i = 0; i < updatedCampaigns.length; i++) {
       const campaign = updatedCampaigns[i];

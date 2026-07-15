@@ -304,7 +304,7 @@ describe("applyImpacts", () => {
     };
 
     const result1 = applyImpacts(context1);
-    expect(Object.values(result1.state.horses)[0]).toHaveProperty('energy', 0);
+    expect(Object.values(result1.state.horses)[0]).toHaveProperty("energy", 0);
 
     const context2: ResolverContext = {
       state,
@@ -315,7 +315,7 @@ describe("applyImpacts", () => {
     };
 
     const result2 = applyImpacts(context2);
-    expect(Object.values(result2.state.horses)[0]).toHaveProperty('energy', 100);
+    expect(Object.values(result2.state.horses)[0]).toHaveProperty("energy", 100);
   });
 
   it("should apply horse creation impact", () => {

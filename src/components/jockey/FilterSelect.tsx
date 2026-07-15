@@ -17,7 +17,10 @@ export function FilterSelect({ label, value, options, onChange }: FilterSelectPr
   const id = useId();
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="text-[9px] uppercase font-black text-blue-400/40 tracking-widest px-1">
+      <label
+        htmlFor={id}
+        className="text-[9px] uppercase font-black text-blue-400/40 tracking-widest px-1"
+      >
         {label}
       </label>
       <select

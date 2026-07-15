@@ -19,11 +19,17 @@ function mkState(horse: Partial<Horse>): GameState {
   } as unknown as GameState;
 }
 
-function mkImpact<T extends { id: string; intentId: string; day: number; phase: string; logLevel: string; type: string; horseId: string }>(
-  type: string,
-  horseId: string,
-  extra: Record<string, unknown>,
-): T {
+function mkImpact<
+  T extends {
+    id: string;
+    intentId: string;
+    day: number;
+    phase: string;
+    logLevel: string;
+    type: string;
+    horseId: string;
+  },
+>(type: string, horseId: string, extra: Record<string, unknown>): T {
   return {
     id: "imp-1",
     intentId: "",
@@ -41,9 +47,20 @@ describe("HorseHandler — stat rounding", () => {
     const handler = new HorseHandler();
     const state = mkState({
       potential: 100,
-      stats: { speed: 38.395981615409255, stamina: 60, acceleration: 50, temperament: 40, conformation: 30, consistency: 20 },
+      stats: {
+        speed: 38.395981615409255,
+        stamina: 60,
+        acceleration: 50,
+        temperament: 40,
+        conformation: 30,
+        consistency: 20,
+      },
     });
-    const impact = mkImpact<HorseStatImpact>("horse_stat_change", "h1", { stat: "speed", delta: 1, reason: "Training" });
+    const impact = mkImpact<HorseStatImpact>("horse_stat_change", "h1", {
+      stat: "speed",
+      delta: 1,
+      reason: "Training",
+    });
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
     expect(draft.horses["h1"].stats.speed).toBe(39);
@@ -53,9 +70,20 @@ describe("HorseHandler — stat rounding", () => {
     const handler = new HorseHandler();
     const state = mkState({
       potential: 100,
-      stats: { speed: 50, stamina: 60, acceleration: 50, temperament: 40, conformation: 30, consistency: 20 },
+      stats: {
+        speed: 50,
+        stamina: 60,
+        acceleration: 50,
+        temperament: 40,
+        conformation: 30,
+        consistency: 20,
+      },
     });
-    const impact = mkImpact<HorseStatImpact>("horse_stat_change", "h1", { stat: "speed", delta: 1.7, reason: "Training" });
+    const impact = mkImpact<HorseStatImpact>("horse_stat_change", "h1", {
+      stat: "speed",
+      delta: 1.7,
+      reason: "Training",
+    });
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
     expect(draft.horses["h1"].stats.speed).toBe(52);
@@ -65,9 +93,20 @@ describe("HorseHandler — stat rounding", () => {
     const handler = new HorseHandler();
     const state = mkState({
       potential: 80,
-      stats: { speed: 79, stamina: 60, acceleration: 50, temperament: 40, conformation: 30, consistency: 20 },
+      stats: {
+        speed: 79,
+        stamina: 60,
+        acceleration: 50,
+        temperament: 40,
+        conformation: 30,
+        consistency: 20,
+      },
     });
-    const impact = mkImpact<HorseStatImpact>("horse_stat_change", "h1", { stat: "speed", delta: 2, reason: "Training" });
+    const impact = mkImpact<HorseStatImpact>("horse_stat_change", "h1", {
+      stat: "speed",
+      delta: 2,
+      reason: "Training",
+    });
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
     expect(draft.horses["h1"].stats.speed).toBe(80);
@@ -76,7 +115,10 @@ describe("HorseHandler — stat rounding", () => {
   it("rounds energy when delta is a float", () => {
     const handler = new HorseHandler();
     const state = mkState({ energy: 80 });
-    const impact = mkImpact<EnergyImpact>("energy_change", "h1", { delta: -15.3, reason: "Training" });
+    const impact = mkImpact<EnergyImpact>("energy_change", "h1", {
+      delta: -15.3,
+      reason: "Training",
+    });
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
     expect(draft.horses["h1"].energy).toBe(65);
@@ -103,7 +145,10 @@ describe("HorseHandler — stat rounding", () => {
   it("rounds fitness after applying delta", () => {
     const handler = new HorseHandler();
     const state = mkState({ fitness: 50 });
-    const impact = mkImpact<FitnessImpact>("fitness_change", "h1", { delta: 12.0, reason: "Training" });
+    const impact = mkImpact<FitnessImpact>("fitness_change", "h1", {
+      delta: 12.0,
+      reason: "Training",
+    });
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
     expect(draft.horses["h1"].fitness).toBe(62);
@@ -121,7 +166,10 @@ describe("HorseHandler — stat rounding", () => {
   it("rounds recoveryPoints after applying delta", () => {
     const handler = new HorseHandler();
     const state = mkState({ recoveryPoints: 50 });
-    const impact = mkImpact<RecoveryImpact>("recovery_change", "h1", { delta: 15.7, reason: "Recovery" });
+    const impact = mkImpact<RecoveryImpact>("recovery_change", "h1", {
+      delta: 15.7,
+      reason: "Recovery",
+    });
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
     expect(draft.horses["h1"].recoveryPoints).toBe(66);
@@ -131,9 +179,20 @@ describe("HorseHandler — stat rounding", () => {
     const handler = new HorseHandler();
     const state = mkState({
       potential: 100,
-      stats: { speed: 50, stamina: 60, acceleration: 50, temperament: 40, conformation: 30, consistency: 20 },
+      stats: {
+        speed: 50,
+        stamina: 60,
+        acceleration: 50,
+        temperament: 40,
+        conformation: 30,
+        consistency: 20,
+      },
     });
-    const impact = mkImpact<HorseStatImpact>("horse_stat_change", "h1", { stat: "speed", delta: 5, reason: "Training" });
+    const impact = mkImpact<HorseStatImpact>("horse_stat_change", "h1", {
+      stat: "speed",
+      delta: 5,
+      reason: "Training",
+    });
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
     expect(draft.horses["h1"].stats.speed).toBe(55);

@@ -199,7 +199,10 @@ function Confetti({ active }: { active: boolean }) {
   if (!active) return null;
 
   return (
-    <div data-testid="confetti-overlay" className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div
+      data-testid="confetti-overlay"
+      className="absolute inset-0 pointer-events-none overflow-hidden"
+    >
       {[...Array(20)].map((_, i) => (
         <div
           key={i}

@@ -383,7 +383,12 @@ export class NarrativeGenerator {
    * @param leaderPos - Current position of the race leader
    * @param simTime - Current elapsed simulation time
    */
-  private checkMilestones(newLines: CommentaryLine[], leaderPos: number, simTime: number, leader?: Runner) {
+  private checkMilestones(
+    newLines: CommentaryLine[],
+    leaderPos: number,
+    simTime: number,
+    leader?: Runner,
+  ) {
     const milestones = this.generateDynamicMilestones();
 
     for (const m of milestones) {

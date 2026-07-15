@@ -265,7 +265,13 @@ export function calculateLotValuation(
   allHorses?: readonly Horse[],
   horseMap?: Map<string, Horse>,
 ): number {
-  const pedigreeMul = allHorses ? pedigreeMultiplier(horse, { horses: Object.fromEntries(allHorses.map(h => [h.id, h])) }, horseMap) : 1;
+  const pedigreeMul = allHorses
+    ? pedigreeMultiplier(
+        horse,
+        { horses: Object.fromEntries(allHorses.map((h) => [h.id, h])) },
+        horseMap,
+      )
+    : 1;
   const base = Math.round(calculateNpcHorseValue(horse, stable.tier) * pedigreeMul);
 
   const p = stable.personality;
@@ -735,7 +741,9 @@ export function generateAuctionLots(
 
     for (let horse of policy.consign) {
       horse = ensurePhenotypeResolved(horse);
-      const pedigreeMul = pedigreeMultiplier(horse, { horses: Object.fromEntries(allHorses.map(h => [h.id, h])) });
+      const pedigreeMul = pedigreeMultiplier(horse, {
+        horses: Object.fromEntries(allHorses.map((h) => [h.id, h])),
+      });
       const baseValue = calculateNpcHorseValue(horse, stable.tier) * pedigreeMul;
       const breezeSeconds = kind === "2yo_training" ? generateBreezeSeconds(horse, rng) : undefined;
       lots.push({
@@ -761,7 +769,9 @@ export function generateAuctionLots(
       if (!isLotEligible(freshHorse, kind)) continue;
       const resolvedFresh = ensurePhenotypeResolved(freshHorse);
       allHorses.push(resolvedFresh);
-      const pedigreeMul = pedigreeMultiplier(resolvedFresh, { horses: Object.fromEntries(allHorses.map(h => [h.id, h])) });
+      const pedigreeMul = pedigreeMultiplier(resolvedFresh, {
+        horses: Object.fromEntries(allHorses.map((h) => [h.id, h])),
+      });
       const baseValue = calculateNpcHorseValue(resolvedFresh, stable.tier) * pedigreeMul;
       const breezeSeconds =
         kind === "2yo_training" ? generateBreezeSeconds(resolvedFresh, rng) : undefined;

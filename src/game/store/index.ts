@@ -38,7 +38,13 @@ import { createInboxSlice } from "./slices/inboxSlice";
 import { createStaffSlice } from "./slices/staffSlice";
 import { createInsuranceSlice } from "./slices/insuranceSlice";
 import { createTransportSlice, type TransportSlice } from "./slices/transportSlice";
-import { createIdbStorage, hydrationComplete, saveExists, persistenceEnabled, createRehydrateStore } from "./storage";
+import {
+  createIdbStorage,
+  hydrationComplete,
+  saveExists,
+  persistenceEnabled,
+  createRehydrateStore,
+} from "./storage";
 import { createInitialState } from "./initialization";
 import type { CoreState } from "@/game/store/state/coreState";
 
@@ -51,6 +57,7 @@ import { clearDatabase } from "@/services/storage/indexedDbService";
 import type { StoreType, ActionResult, GameStateCreator } from "./types";
 import type { NewGameOptions } from "@/game/store/state";
 import type { AnyIntent } from "@/core/resolver/intents";
+import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 
 export type { StoreType, GameStateCreator } from "./types";
 
@@ -235,74 +242,70 @@ export const useGame = create<StoreType>()(
       npcAIManager: { stableStates: {}, globalDay: 1, regionalKings: {} },
 
       // Core slice
-      ...createCoreSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createCoreSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Racing slice
-      ...createRacingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createRacingSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Market slice
-      ...createMarketSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createMarketSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Scouting slice
-      ...createScoutingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createScoutingSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Auction slice
-      ...createAuctionSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createAuctionSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Private sale slice
-      ...createPrivateSaleSlice(set as any, get, (intent: AnyIntent) =>
-        get().enqueueIntent(intent),
-      ),
+      ...createPrivateSaleSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Breeding slice
-      ...createBreedingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createBreedingSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Campaign slice
-      ...createCampaignSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createCampaignSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Jockey slice
-      ...createJockeySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createJockeySlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Facility slice
-      ...createFacilitySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createFacilitySlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Settings slice
-      ...createSettingsSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createSettingsSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Breeding program slice
-      ...createBreedingProgramSlice(set as any, get, (intent: AnyIntent) =>
-        get().enqueueIntent(intent),
-      ),
+      ...createBreedingProgramSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Horse admin slice
-      ...createHorseAdminSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createHorseAdminSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Award slice
-      ...createAwardSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createAwardSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Utility slice
-      ...createUtilitySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createUtilitySlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Weather slice (per-track Markov sim, populated by weatherPhase)
-      ...createWeatherSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createWeatherSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Inbox slice (Message Center)
-      ...createInboxSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createInboxSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Staff negotiation slice
-      ...createStaffSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createStaffSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Insurance slice
-      ...createInsuranceSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createInsuranceSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Transport slice
-      ...createTransportSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createTransportSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Stewards inquiry action — used by the useStewardsInquiry hook after
       // the player watches a race complete in the UI.
-      addStewardsInquiry: (inquiry: any) => {
-        set((state: any) => ({
-          stewardsInquiries: [...(state.stewardsInquiries ?? []), inquiry],
+      addStewardsInquiry: (inquiry: StewardsInquiry) => {
+        set((state) => ({
+          stewardsInquiries: [...state.stewardsInquiries, inquiry],
         }));
       },
 
@@ -326,7 +329,7 @@ export const useGame = create<StoreType>()(
           // Worker not available (e.g. test environment) — use main thread
           newState = createInitialState(options);
         }
-        set({ ...newState } as any);
+        set({ ...newState } as Partial<StoreType>);
 
         // Enable persistence before saving
         persistenceEnabled.value = true;
@@ -334,10 +337,10 @@ export const useGame = create<StoreType>()(
         // Force an immediate, awaited save so the state is on disk before navigation.
         // The persist middleware's setItem is async and not awaited by set(),
         // so we call saveGameState directly to guarantee persistence.
-        const storeState = get() as any;
-        const partial: any = {};
+        const storeState = get();
+        const partial = {} as GameState;
         PERSISTED_KEYS.forEach((key) => {
-          partial[key] = storeState[key];
+          (partial as unknown as Record<string, unknown>)[key] = storeState[key];
         });
         // Use the new IDB-based save path
         const { saveGameStateToIDB } = await import("./storage");
@@ -356,7 +359,7 @@ export const useGame = create<StoreType>()(
 
         // Version mismatch: stored data was written by an older/incompatible schema.
         // No backward compatibility for v3 — wipe the save and reset.
-        if ((state as any).storeVersion !== STORE_STATE_VERSION) {
+        if (state?.storeVersion !== STORE_STATE_VERSION) {
           clearDatabase();
           saveExists.value = false;
           persistenceEnabled.value = false;
@@ -367,9 +370,9 @@ export const useGame = create<StoreType>()(
         hydrationComplete.value = true;
       },
       partialize: (state) => {
-        const partial: any = {};
+        const partial = {} as GameState;
         PERSISTED_KEYS.forEach((key) => {
-          partial[key] = (state as any)[key];
+          (partial as unknown as Record<string, unknown>)[key] = state[key];
         });
         return partial;
       },

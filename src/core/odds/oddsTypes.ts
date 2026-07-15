@@ -118,9 +118,12 @@ export function createBettingPool(
     });
   }
 
+  // Ensure the pari-mutuel invariant: totalPool === sum(horseBets)
+  const actualTotal = Object.values(horseBets).reduce((a, b) => a + b, 0);
+
   return {
     raceId,
-    totalPool: totalSimulatedPool,
+    totalPool: actualTotal,
     horseBets,
     odds,
   };

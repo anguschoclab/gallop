@@ -118,7 +118,10 @@ export function FacilityCategory({
                   <div className="space-y-2">
                     <div className="text-[8px] font-black uppercase text-cream/20 tracking-[0.2em] flex items-center gap-1.5 px-1">
                       <HardDrive className="h-2.5 w-2.5 opacity-40" />
-                      <JargonTooltip term="Regimens Unlocked" className="no-underline decoration-none">
+                      <JargonTooltip
+                        term="Regimens Unlocked"
+                        className="no-underline decoration-none"
+                      >
                         Regimens Unlocked
                       </JargonTooltip>
                     </div>

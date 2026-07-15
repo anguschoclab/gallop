@@ -13,7 +13,7 @@ export const seasonStandingsPhase: PipelinePhase = {
 
     const { standings, playerRank } = computeSeasonStandings(state, 30);
 
-    const prevRank = (state as any).lastTopTenRank;
+    const prevRank = state.lastTopTenRank;
     const currentTopTenRank = playerRank > 0 && playerRank <= 10 ? playerRank : 0;
 
     if (prevRank !== undefined && prevRank > 0) {

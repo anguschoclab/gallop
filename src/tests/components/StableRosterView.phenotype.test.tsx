@@ -22,10 +22,7 @@ function buildResolvedPlayerHorse(name: string) {
 
 describe("StableRosterView phenotype display", () => {
   it("shows non-zero OVR and a real coat color for resolved player horses", () => {
-    const horses = [
-      buildResolvedPlayerHorse("Alpha"),
-      buildResolvedPlayerHorse("Beta"),
-    ];
+    const horses = [buildResolvedPlayerHorse("Alpha"), buildResolvedPlayerHorse("Beta")];
     const { container } = render(
       <StableRosterView
         horses={horses}

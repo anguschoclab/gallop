@@ -76,7 +76,10 @@ export function JockeyFilterPanel({
         <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-2 border-l-blue-400/40">
           <CardContent className="p-5 space-y-5">
             <div className="space-y-1.5">
-              <label htmlFor={searchId} className="text-[9px] uppercase font-black text-blue-400/40 tracking-widest px-1">
+              <label
+                htmlFor={searchId}
+                className="text-[9px] uppercase font-black text-blue-400/40 tracking-widest px-1"
+              >
                 Name
               </label>
               <div className="relative">

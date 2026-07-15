@@ -60,9 +60,7 @@ export function deriveEligibleRaces(
 
   if (horse.energy < 50) return [];
 
-  const upcoming = races.filter(
-    (r) => !r.resolved && r.day > day && r.day <= day + daysAhead,
-  );
+  const upcoming = races.filter((r) => !r.resolved && r.day > day && r.day <= day + daysAhead);
 
   const rows: EligibleRaceRow[] = [];
 
@@ -115,9 +113,7 @@ export function findFirstEligibleRace(
   if (!horse) return undefined;
   if (horse.energy < 50) return undefined;
 
-  const upcoming = races
-    .filter((r) => !r.resolved && r.day > day)
-    .sort((a, b) => a.day - b.day);
+  const upcoming = races.filter((r) => !r.resolved && r.day > day).sort((a, b) => a.day - b.day);
 
   for (const race of upcoming) {
     if (isHorseEligibleForRace(horse, race, new Set(), day)) {

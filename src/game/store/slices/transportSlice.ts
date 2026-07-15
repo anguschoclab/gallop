@@ -58,7 +58,7 @@ export const createTransportSlice: SliceCreator<TransportSlice> = (set, get) => 
     }
 
     // Add transport to state
-    set((state: any) => ({
+    set((state) => ({
       ...state,
       transports: [...(state.transports || []), transport],
       cash: state.cash - transport.cost,
@@ -92,9 +92,9 @@ export const createTransportSlice: SliceCreator<TransportSlice> = (set, get) => 
     }
 
     // Refund the cost
-    set((state: any) => ({
+    set((state) => ({
       ...state,
-      transports: state.transports?.filter((t: any) => t.id !== transportId),
+      transports: state.transports?.filter((t) => t.id !== transportId),
       cash: state.cash + transport.cost,
     }));
 
@@ -110,9 +110,9 @@ export const createTransportSlice: SliceCreator<TransportSlice> = (set, get) => 
     }
 
     // Update transport status to arrived
-    set((state: any) => ({
+    set((state) => ({
       ...state,
-      transports: state.transports?.map((t: any) =>
+      transports: state.transports?.map((t) =>
         t.id === transportId ? { ...t, status: "arrived" } : t,
       ),
     }));

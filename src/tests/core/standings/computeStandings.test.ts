@@ -15,7 +15,14 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     gender: "colt",
     energy: 80,
     peakingIndex: 0,
-    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70, consistency: 70 } as any,
+    stats: {
+      speed: 70,
+      stamina: 70,
+      acceleration: 70,
+      temperament: 70,
+      durability: 70,
+      consistency: 70,
+    } as any,
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
@@ -41,7 +48,16 @@ describe("computeSeasonStandings", () => {
       id: "h1",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "Test", position: 1, day: 50, purse: 100000, purseEarned: 60000, surface: "Turf", distance: 1600 },
+        {
+          raceId: "r1",
+          raceName: "Test",
+          position: 1,
+          day: 50,
+          purse: 100000,
+          purseEarned: 60000,
+          surface: "Turf",
+          distance: 1600,
+        },
       ],
     });
     const s: GameState = mkState({ day: 60, horses: { h1 } });
@@ -55,8 +71,26 @@ describe("computeSeasonStandings", () => {
       id: "h1",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "Old", position: 1, day: 10, purse: 100000, purseEarned: 60000, surface: "Turf", distance: 1600 },
-        { raceId: "r2", raceName: "Recent", position: 1, day: 55, purse: 100000, purseEarned: 50000, surface: "Turf", distance: 1600 },
+        {
+          raceId: "r1",
+          raceName: "Old",
+          position: 1,
+          day: 10,
+          purse: 100000,
+          purseEarned: 60000,
+          surface: "Turf",
+          distance: 1600,
+        },
+        {
+          raceId: "r2",
+          raceName: "Recent",
+          position: 1,
+          day: 55,
+          purse: 100000,
+          purseEarned: 50000,
+          surface: "Turf",
+          distance: 1600,
+        },
       ],
     });
     const s: GameState = mkState({ day: 60, horses: { h1 } });
@@ -70,7 +104,15 @@ describe("computeSeasonStandings", () => {
       id: "h1",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "Fallback", position: 1, day: 50, purse: 100000, surface: "Turf", distance: 1600 },
+        {
+          raceId: "r1",
+          raceName: "Fallback",
+          position: 1,
+          day: 50,
+          purse: 100000,
+          surface: "Turf",
+          distance: 1600,
+        },
       ],
     });
     const s: GameState = mkState({ day: 60, horses: { h1 } });
@@ -85,7 +127,16 @@ describe("computeSeasonStandings", () => {
       id: "h1",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "G1 Race", position: 1, day: 50, purse: 100000, grade: "G1", surface: "Turf", distance: 1600 },
+        {
+          raceId: "r1",
+          raceName: "G1 Race",
+          position: 1,
+          day: 50,
+          purse: 100000,
+          grade: "G1",
+          surface: "Turf",
+          distance: 1600,
+        },
       ],
     });
     const s: GameState = mkState({ day: 60, horses: { h1 } });
@@ -100,7 +151,17 @@ describe("computeSeasonStandings", () => {
       id: "h1",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "Race", position: 1, day: 50, purse: 100000, purseEarned: 60000, surface: "Turf", distance: 1600, stableId: "__player__" },
+        {
+          raceId: "r1",
+          raceName: "Race",
+          position: 1,
+          day: 50,
+          purse: 100000,
+          purseEarned: 60000,
+          surface: "Turf",
+          distance: 1600,
+          stableId: "__player__",
+        },
       ],
     });
     const h2 = mkHorse({
@@ -108,7 +169,17 @@ describe("computeSeasonStandings", () => {
       owned: false,
       stableId: "npc1",
       raceHistory: [
-        { raceId: "r2", raceName: "NPC Race", position: 1, day: 50, purse: 100000, purseEarned: 80000, surface: "Turf", distance: 1600, stableId: "npc1" },
+        {
+          raceId: "r2",
+          raceName: "NPC Race",
+          position: 1,
+          day: 50,
+          purse: 100000,
+          purseEarned: 80000,
+          surface: "Turf",
+          distance: 1600,
+          stableId: "npc1",
+        },
       ],
     });
     const s: GameState = mkState({
@@ -128,7 +199,17 @@ describe("computeSeasonStandings", () => {
       id: "h1",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "Race", position: 1, day: 50, purse: 100000, purseEarned: 30000, surface: "Turf", distance: 1600, stableId: "__player__" },
+        {
+          raceId: "r1",
+          raceName: "Race",
+          position: 1,
+          day: 50,
+          purse: 100000,
+          purseEarned: 30000,
+          surface: "Turf",
+          distance: 1600,
+          stableId: "__player__",
+        },
       ],
     });
     const h2 = mkHorse({
@@ -136,7 +217,17 @@ describe("computeSeasonStandings", () => {
       owned: false,
       stableId: "npc1",
       raceHistory: [
-        { raceId: "r2", raceName: "NPC Race", position: 1, day: 50, purse: 100000, purseEarned: 90000, surface: "Turf", distance: 1600, stableId: "npc1" },
+        {
+          raceId: "r2",
+          raceName: "NPC Race",
+          position: 1,
+          day: 50,
+          purse: 100000,
+          purseEarned: 90000,
+          surface: "Turf",
+          distance: 1600,
+          stableId: "npc1",
+        },
       ],
     });
     const s: GameState = mkState({
@@ -155,7 +246,17 @@ describe("computeSeasonStandings", () => {
       id: "h1",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "Race", position: 1, day: 50, purse: 100000, purseEarned: 30000, surface: "Turf", distance: 1600, stableId: "__player__" },
+        {
+          raceId: "r1",
+          raceName: "Race",
+          position: 1,
+          day: 50,
+          purse: 100000,
+          purseEarned: 30000,
+          surface: "Turf",
+          distance: 1600,
+          stableId: "__player__",
+        },
       ],
     });
     const h2 = mkHorse({
@@ -163,7 +264,17 @@ describe("computeSeasonStandings", () => {
       owned: false,
       stableId: "npc1",
       raceHistory: [
-        { raceId: "r2", raceName: "NPC Race", position: 1, day: 50, purse: 100000, purseEarned: 90000, surface: "Turf", distance: 1600, stableId: "npc1" },
+        {
+          raceId: "r2",
+          raceName: "NPC Race",
+          position: 1,
+          day: 50,
+          purse: 100000,
+          purseEarned: 90000,
+          surface: "Turf",
+          distance: 1600,
+          stableId: "npc1",
+        },
       ],
     });
     const s: GameState = mkState({
@@ -180,7 +291,16 @@ describe("computeSeasonStandings", () => {
       id: "h1",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "Race", position: 1, day: 55, purse: 100000, purseEarned: 60000, surface: "Turf", distance: 1600 },
+        {
+          raceId: "r1",
+          raceName: "Race",
+          position: 1,
+          day: 55,
+          purse: 100000,
+          purseEarned: 60000,
+          surface: "Turf",
+          distance: 1600,
+        },
       ],
     });
     const s: GameState = mkState({ day: 60, horses: { h1 } });
@@ -194,7 +314,16 @@ describe("computeSeasonStandings", () => {
       id: "h1",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "Race", position: 1, day: 55, purse: 100000, purseEarned: 60000, surface: "Turf", distance: 1600 },
+        {
+          raceId: "r1",
+          raceName: "Race",
+          position: 1,
+          day: 55,
+          purse: 100000,
+          purseEarned: 60000,
+          surface: "Turf",
+          distance: 1600,
+        },
       ],
     });
     const s: GameState = mkState({ day: 60, horses: { h1 } });
@@ -227,7 +356,10 @@ describe("computeSeasonStandings", () => {
 
   it("uses playerProfile.stableName for player entry name", () => {
     const s: GameState = mkState({
-      playerProfile: { stableName: "Thunder Ranch", silk: { primary: "#ff0000", secondary: "#0000ff" } } as any,
+      playerProfile: {
+        stableName: "Thunder Ranch",
+        silk: { primary: "#ff0000", secondary: "#0000ff" },
+      } as any,
     });
     const result = computeSeasonStandings(s, 30);
     const player = result.standings.find((e) => e.isPlayer)!;
@@ -236,7 +368,10 @@ describe("computeSeasonStandings", () => {
 
   it("uses playerProfile silk color for player entry", () => {
     const s: GameState = mkState({
-      playerProfile: { stableName: "My Stable", silk: { primary: "#ff0000", secondary: "#0000ff" } } as any,
+      playerProfile: {
+        stableName: "My Stable",
+        silk: { primary: "#ff0000", secondary: "#0000ff" },
+      } as any,
     });
     const result = computeSeasonStandings(s, 30);
     const player = result.standings.find((e) => e.isPlayer)!;
@@ -249,7 +384,17 @@ describe("computeSeasonStandings", () => {
       owned: false,
       stableId: "npc1",
       raceHistory: [
-        { raceId: "r2", raceName: "NPC Race", position: 1, day: 50, purse: 100000, purseEarned: 50000, surface: "Turf", distance: 1600, stableId: "npc1" },
+        {
+          raceId: "r2",
+          raceName: "NPC Race",
+          position: 1,
+          day: 50,
+          purse: 100000,
+          purseEarned: 50000,
+          surface: "Turf",
+          distance: 1600,
+          stableId: "npc1",
+        },
       ],
     });
     const s: GameState = mkState({

@@ -14,7 +14,7 @@ export function TrackView({ races, region }: TrackViewProps) {
     (acc, track) => {
       const trackRaces = races.filter((r) => r.graded?.track === track);
       if (trackRaces.length > 0) {
-        acc[track] = trackRaces.sort((a, b) => a.day - b.day);
+        acc[track] = [...trackRaces].sort((a, b) => a.day - b.day);
       }
       return acc;
     },

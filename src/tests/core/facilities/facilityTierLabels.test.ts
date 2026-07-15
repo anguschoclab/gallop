@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  FACILITY_TIER_LABELS,
-  facilityLevelToTierLabel,
-} from "@/core/facilities/facilityTypes";
+import { FACILITY_TIER_LABELS, facilityLevelToTierLabel } from "@/core/facilities/facilityTypes";
 import type { FacilityLevel } from "@/core/facilities";
 
 describe("FACILITY_TIER_LABELS", () => {

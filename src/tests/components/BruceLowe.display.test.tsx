@@ -84,11 +84,7 @@ describe("Bruce Lowe family display — no raw codes", () => {
         stud: { standingFee: 50000 } as any,
       });
       const { container } = render(
-        <SireSelector
-          sireId=""
-          onChange={() => {}}
-          availableStallions={[stallion]}
-        />,
+        <SireSelector sireId="" onChange={() => {}} availableStallions={[stallion]} />,
       );
       const allText = container.textContent ?? "";
       expect(allText).toContain("Family 4");
@@ -104,11 +100,7 @@ describe("Bruce Lowe family display — no raw codes", () => {
         bruceLoweFamily: 6,
       });
       const { container } = render(
-        <DamSelector
-          damId=""
-          onChange={() => {}}
-          femalesToBreed={[mare]}
-        />,
+        <DamSelector damId="" onChange={() => {}} femalesToBreed={[mare]} />,
       );
       const allText = container.textContent ?? "";
       expect(allText).toContain("Family 6");

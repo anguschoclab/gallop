@@ -34,10 +34,10 @@ import {
 import { formatCurrency } from "@/core/common/formatting";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/constants";
-import { NavSection, clearAllSidebarStorage } from "./NavSection";
+import { NavSection, type NavItem, clearAllSidebarStorage } from "./NavSection";
 import { useState } from "react";
 
-const navSections = [
+const navSections: { label: string; items: NavItem[] }[] = [
   {
     label: "Headquarters",
     items: [
@@ -129,7 +129,7 @@ export function SidebarNav({
           <NavSection
             key={section.label}
             label={section.label}
-            items={section.items as any}
+            items={section.items}
             unreadCount={unreadCount}
             defaultCollapsed={idx > 0}
             resetSignal={resetSignal}

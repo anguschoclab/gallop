@@ -27,9 +27,7 @@ describe("GradeBreakdown — projection rounding", () => {
     const horse = mkHorse("h1", 50.7, 40.3);
     const race = mkRace("r1", "G1", "h1");
 
-    const { container } = render(
-      <GradeBreakdown races={[race]} horses={[horse]} day={1} />,
-    );
+    const { container } = render(<GradeBreakdown races={[race]} horses={[horse]} day={1} />);
 
     const text = container.textContent ?? "";
     // 50.7 + 40.3 = 91.0 → Math.round → 91

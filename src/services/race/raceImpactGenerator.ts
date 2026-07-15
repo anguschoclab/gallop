@@ -6,8 +6,15 @@ import type {
   NewsImpact,
 } from "@/core/resolver/impacts/index";
 import { computeSectionalSplits } from "@/core/race/sectionalAnalysis";
-import { generateRaceNews, generateG1SpotlightNews, generateFollowUpRaceNews } from "@/services/narrative/newsGenerator";
-import { checkCareerArcTrigger, type CareerArcState } from "@/services/narrative/careerArcGenerator";
+import {
+  generateRaceNews,
+  generateG1SpotlightNews,
+  generateFollowUpRaceNews,
+} from "@/services/narrative/newsGenerator";
+import {
+  checkCareerArcTrigger,
+  type CareerArcState,
+} from "@/services/narrative/careerArcGenerator";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
@@ -238,7 +245,13 @@ export function generateRaceImpacts({
       }
 
       // 10b. Narrative: G1 Spotlight News for elite-rated G1 winners
-      const spotlightNews = generateG1SpotlightNews(race, result, Array.from(horseMap.values()), newDay, rng);
+      const spotlightNews = generateG1SpotlightNews(
+        race,
+        result,
+        Array.from(horseMap.values()),
+        newDay,
+        rng,
+      );
       if (spotlightNews) {
         impacts.push({
           id: generateUUID(rng),
@@ -275,7 +288,14 @@ export function generateRaceImpacts({
         const horse = horseMap.get(r.horseId);
         if (!horse) continue;
         const arcState = narrativeArcs?.[horse.id];
-        const { newsItem: arcNews, newArcState } = checkCareerArcTrigger(horse, arcState, race, r.position, newDay, rng);
+        const { newsItem: arcNews, newArcState } = checkCareerArcTrigger(
+          horse,
+          arcState,
+          race,
+          r.position,
+          newDay,
+          rng,
+        );
         if (arcNews) {
           impacts.push({
             id: generateUUID(rng),

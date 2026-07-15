@@ -15,6 +15,7 @@
  */
 
 import type { HorseCampaign } from "@/game/types";
+import type { CampaignGoalType } from "@/core/calendar/campaignTypes";
 import type { AnyIntent } from "@/core/resolver/intents";
 import { generateUUID } from "@/core/uuid";
 
@@ -30,7 +31,11 @@ export type CampaignSlice = {
   ) => void;
   dismissCampaignFlag: (horseId: string, flagIndex: number) => void;
   deleteCampaign: (horseId: string) => void;
-  generateAutoCampaign: (horseId: string, goalType: string, targetRaceKey?: string) => void;
+  generateAutoCampaign: (
+    horseId: string,
+    goalType: CampaignGoalType,
+    targetRaceKey?: string,
+  ) => void;
   setCampaigns: (campaigns: HorseCampaign[]) => void;
 };
 
@@ -47,9 +52,9 @@ export type CampaignSlice = {
  * @returns Campaign slice with state and actions
  */
 export function createCampaignSlice(
-  set: any,
+  set: StoreSet,
   get: StoreGet,
-  enqueueIntent: (intent: any) => void,
+  enqueueIntent: (intent: AnyIntent) => void,
 ): CampaignSlice {
   return {
     campaigns: [],
@@ -124,7 +129,7 @@ export function createCampaignSlice(
       });
     },
 
-    generateAutoCampaign: (horseId: string, goalType: any, targetRaceKey?: string) => {
+    generateAutoCampaign: (horseId: string, goalType: CampaignGoalType, targetRaceKey?: string) => {
       const s = get();
       enqueueIntent({
         id: generateUUID(),

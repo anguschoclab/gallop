@@ -38,8 +38,7 @@ function AcceptCounterDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Accept counter offer?</AlertDialogTitle>
           <AlertDialogDescription>
-            You will pay {formatCurrency(counterAmt)} for {horse.name}. This cannot be
-            undone.
+            You will pay {formatCurrency(counterAmt)} for {horse.name}. This cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -48,9 +47,7 @@ function AcceptCounterDialog({
             onClick={() => {
               const r = onRespond(offer.id, true);
               if (r.ok) {
-                toast.success(
-                  `${horse.name} joins your stable for ${formatCurrency(counterAmt)}.`,
-                );
+                toast.success(`${horse.name} joins your stable for ${formatCurrency(counterAmt)}.`);
               } else {
                 toast.error(r.reason ?? "Could not accept.");
               }

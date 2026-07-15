@@ -31,7 +31,11 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   }) as Horse;
 
 describe("StableRosterView compare persistence + reordering", () => {
-  const baseProps = (horses: Horse[], compareIds: string[], onCompareIdsChange: ReturnType<typeof vi.fn>) => ({
+  const baseProps = (
+    horses: Horse[],
+    compareIds: string[],
+    onCompareIdsChange: ReturnType<typeof vi.fn>,
+  ) => ({
     horses,
     status: "active" as const,
     view: "ledger" as const,
@@ -50,7 +54,11 @@ describe("StableRosterView compare persistence + reordering", () => {
       <StableRosterView {...baseProps([h1, h2], ["h1", "h2"], onCompareIdsChange)} />,
     );
     const checkboxes = container.querySelectorAll('[role="checkbox"]');
-    const checked = Array.from(checkboxes).filter((cb) => (cb as HTMLElement).getAttribute('aria-checked') === 'true' || (cb as HTMLElement).getAttribute('data-state') === 'checked');
+    const checked = Array.from(checkboxes).filter(
+      (cb) =>
+        (cb as HTMLElement).getAttribute("aria-checked") === "true" ||
+        (cb as HTMLElement).getAttribute("data-state") === "checked",
+    );
     expect(checked.length).toBeGreaterThanOrEqual(2);
   });
 
@@ -63,7 +71,9 @@ describe("StableRosterView compare persistence + reordering", () => {
       <StableRosterView {...baseProps([h1, h2, h3], ["h1", "h2"], onCompareIdsChange)} />,
     );
     const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-    const h3Checkbox = Array.from(checkboxes).find((cb) => cb.getAttribute("value") === "h3" || cb.id === "h3");
+    const h3Checkbox = Array.from(checkboxes).find(
+      (cb) => cb.getAttribute("value") === "h3" || cb.id === "h3",
+    );
     if (h3Checkbox) {
       fireEvent.click(h3Checkbox);
       expect(onCompareIdsChange).toHaveBeenCalledWith(["h1", "h2", "h3"]);
@@ -78,7 +88,9 @@ describe("StableRosterView compare persistence + reordering", () => {
       <StableRosterView {...baseProps([h1, h2], ["h1", "h2"], onCompareIdsChange)} />,
     );
     const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-    const h1Checkbox = Array.from(checkboxes).find((cb) => cb.getAttribute("value") === "h1" || cb.id === "h1");
+    const h1Checkbox = Array.from(checkboxes).find(
+      (cb) => cb.getAttribute("value") === "h1" || cb.id === "h1",
+    );
     if (h1Checkbox) {
       fireEvent.click(h1Checkbox);
       expect(onCompareIdsChange).toHaveBeenCalledWith(["h2"]);
@@ -86,13 +98,20 @@ describe("StableRosterView compare persistence + reordering", () => {
   });
 
   it("enforces max 3 by ignoring toggle when 3 already selected", () => {
-    const horses = [mkHorse({ id: "h1" }), mkHorse({ id: "h2" }), mkHorse({ id: "h3" }), mkHorse({ id: "h4" })];
+    const horses = [
+      mkHorse({ id: "h1" }),
+      mkHorse({ id: "h2" }),
+      mkHorse({ id: "h3" }),
+      mkHorse({ id: "h4" }),
+    ];
     const onCompareIdsChange = vi.fn();
     const { container } = render(
       <StableRosterView {...baseProps(horses, ["h1", "h2", "h3"], onCompareIdsChange)} />,
     );
     const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-    const h4Checkbox = Array.from(checkboxes).find((cb) => cb.getAttribute("value") === "h4" || cb.id === "h4");
+    const h4Checkbox = Array.from(checkboxes).find(
+      (cb) => cb.getAttribute("value") === "h4" || cb.id === "h4",
+    );
     if (h4Checkbox) {
       fireEvent.click(h4Checkbox);
       expect(onCompareIdsChange).not.toHaveBeenCalled();
@@ -122,7 +141,7 @@ describe("StableRosterView compare persistence + reordering", () => {
     const leftButtons = container.querySelectorAll('button[aria-label*="left" i]');
     expect(leftButtons.length).toBeGreaterThan(0);
     // First left button is disabled (index 0), click the second one (index 1)
-    const enabledLeft = Array.from(leftButtons).filter((b) => !b.hasAttribute('disabled'));
+    const enabledLeft = Array.from(leftButtons).filter((b) => !b.hasAttribute("disabled"));
     expect(enabledLeft.length).toBeGreaterThan(0);
     fireEvent.click(enabledLeft[0]);
     expect(onCompareIdsChange).toHaveBeenCalled();
@@ -137,7 +156,9 @@ describe("StableRosterView compare persistence + reordering", () => {
     );
     const rightButtons = container.querySelectorAll('button[aria-label*="right" i]');
     // Filter out the "View Record" button which also has ChevronRight
-    const reorderRight = Array.from(rightButtons).filter((b) => b.getAttribute('aria-label')?.includes('right'));
+    const reorderRight = Array.from(rightButtons).filter((b) =>
+      b.getAttribute("aria-label")?.includes("right"),
+    );
     expect(reorderRight.length).toBeGreaterThan(0);
     fireEvent.click(reorderRight[0]);
     expect(onCompareIdsChange).toHaveBeenCalled();

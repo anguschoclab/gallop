@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { generateWeeklyFlavorNews, generateFollowUpRaceNews } from "@/services/narrative/newsGenerator";
+import {
+  generateWeeklyFlavorNews,
+  generateFollowUpRaceNews,
+} from "@/services/narrative/newsGenerator";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
 import { isValidUUID } from "@/core/uuid";
 import type { Race, Horse } from "@/game/types";
@@ -137,8 +140,12 @@ describe("generateFollowUpRaceNews", () => {
     expect(news).not.toBeNull();
     expect(news!.entityLinks).toBeDefined();
     expect(news!.entityLinks).toHaveLength(2);
-    expect(news!.entityLinks).toContainEqual(expect.objectContaining({ type: "horse", id: "h-123", name: "Champion X" }));
-    expect(news!.entityLinks).toContainEqual(expect.objectContaining({ type: "race", id: "race-g1-1", name: "Kentucky Derby" }));
+    expect(news!.entityLinks).toContainEqual(
+      expect.objectContaining({ type: "horse", id: "h-123", name: "Champion X" }),
+    );
+    expect(news!.entityLinks).toContainEqual(
+      expect.objectContaining({ type: "race", id: "race-g1-1", name: "Kentucky Derby" }),
+    );
   });
 
   it("12.8 — category === 'racing', importance === 'medium'", () => {

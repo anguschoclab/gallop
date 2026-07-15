@@ -11,7 +11,14 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     energy: 80,
     peakingIndex: 0,
     form: 50,
-    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70, consistency: 70 } as any,
+    stats: {
+      speed: 70,
+      stamina: 70,
+      acceleration: 70,
+      temperament: 70,
+      durability: 70,
+      consistency: 70,
+    } as any,
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
@@ -29,8 +36,28 @@ describe("calculateHeadToHeadOdds (lightweight)", () => {
   });
 
   it("horse with higher stats has higher win probability", () => {
-    const h1 = mkHorse({ id: "h1", stats: { speed: 80, stamina: 80, acceleration: 80, temperament: 70, durability: 70, consistency: 70 } as any });
-    const h2 = mkHorse({ id: "h2", stats: { speed: 60, stamina: 60, acceleration: 60, temperament: 70, durability: 70, consistency: 70 } as any });
+    const h1 = mkHorse({
+      id: "h1",
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        temperament: 70,
+        durability: 70,
+        consistency: 70,
+      } as any,
+    });
+    const h2 = mkHorse({
+      id: "h2",
+      stats: {
+        speed: 60,
+        stamina: 60,
+        acceleration: 60,
+        temperament: 70,
+        durability: 70,
+        consistency: 70,
+      } as any,
+    });
     const results = calculateHeadToHeadOdds([h1, h2], 1600, "Turf");
     const r1 = results.find((r) => r.horseId === "h1")!;
     const r2 = results.find((r) => r.horseId === "h2")!;

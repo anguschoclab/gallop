@@ -14,6 +14,8 @@ interface PoolMember {
   tier: string;
   salary: number;
   bonusValue: number;
+  offended?: boolean;
+  offendedUntil?: number;
 }
 
 interface RecruitmentPoolProps {
@@ -87,12 +89,20 @@ export function RecruitmentPool({ staffPool, day, onNegotiate }: RecruitmentPool
                 </div>
               </div>
 
-              {isOffended(staff as any, day) ? (
+              {isOffended(
+                staff as unknown as import("@/core/staff/staffTypes").StaffMember,
+                day,
+              ) ? (
                 <div
                   className="w-full h-10 flex items-center justify-center gap-2 border border-destructive/20 bg-destructive/5 text-destructive/60 text-[9px] font-mono uppercase tracking-widest"
-                  title={`Offended — willing to talk again in ${offendedDaysRemaining(staff as any, day)} day(s)`}
+                  title={`Offended — willing to talk again in ${offendedDaysRemaining(staff as unknown as import("@/core/staff/staffTypes").StaffMember, day)} day(s)`}
                 >
-                  Not interested · {offendedDaysRemaining(staff as any, day)}d
+                  Not interested ·{" "}
+                  {offendedDaysRemaining(
+                    staff as unknown as import("@/core/staff/staffTypes").StaffMember,
+                    day,
+                  )}
+                  d
                 </div>
               ) : (
                 <Button

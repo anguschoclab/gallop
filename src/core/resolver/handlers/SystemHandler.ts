@@ -13,10 +13,7 @@ import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact, ReputationImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
-import type {
-  HallOfFameInductionImpact,
-  SeasonHistoryImpact,
-} from "../impacts/horseImpacts";
+import type { HallOfFameInductionImpact, SeasonHistoryImpact } from "../impacts/horseImpacts";
 import type {
   CampaignSlotImpact,
   CampaignFlagImpact,
@@ -296,8 +293,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     if (!draft.stewardsInquiries) draft.stewardsInquiries = [];
     draft.stewardsInquiries.push(inquiry);
     // Also attach to the race
-    const race =
-      lookupMaps?.raceMap?.get(inquiry.raceId) || draft.races[inquiry.raceId];
+    const race = lookupMaps?.raceMap?.get(inquiry.raceId) || draft.races[inquiry.raceId];
     if (race) {
       if (!race.inquiries) race.inquiries = [];
       race.inquiries.push(inquiry);

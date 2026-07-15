@@ -28,9 +28,7 @@ describe("Energy display rounding", () => {
     ) as unknown as Horse;
     horse.energy = 84.7;
 
-    const { container } = render(
-      <HorseCardCompact horse={horse} hookData={{} as any} />,
-    );
+    const { container } = render(<HorseCardCompact horse={horse} hookData={{} as any} />);
 
     const text = container.textContent ?? "";
     expect(text).toContain("E:85%");

@@ -23,7 +23,8 @@ import { TRAINING_COST } from "@/constants";
 import { getAvailableTrainingTypes } from "@/core/facilities";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
-import { simulateRace } from "@/services/race/raceSimulationExecutor";
+import type { Transaction } from "@/core/transactions/transactionTypes";
+import { simulateRace, type RaceSimulationResult } from "@/services/race/raceSimulationExecutor";
 import { generateHorse } from "@/core/horse/horseFactory";
 import { createRng, hashStr } from "@/core/common/rng";
 import {
@@ -48,7 +49,7 @@ export type RacingSlice = RacingState & {
     opponentId: string,
     distance: number,
     surface: "Turf" | "Dirt" | "Synthetic",
-  ) => { ok: boolean; result?: any; reason?: string };
+  ) => { ok: boolean; result?: RaceSimulationResult; reason?: string };
   resolveFoalMilestone: (
     horseId: string,
     milestoneKey: string,
@@ -70,9 +71,9 @@ export type RacingSlice = RacingState & {
  * @returns Racing slice with state and actions
  */
 export function createRacingSlice(
-  set: any,
+  set: StoreSet,
   get: StoreGet,
-  enqueueIntent: (intent: any) => void,
+  enqueueIntent: (intent: AnyIntent) => void,
 ): RacingSlice {
   return {
     ...createDefaultRacingState(),
@@ -143,7 +144,7 @@ export function createRacingSlice(
     },
 
     setTrainingUsed: (horseId, count) => {
-      set((state: any) => ({
+      set((state) => ({
         trainingUsed: { ...state.trainingUsed, [horseId]: count },
       }));
     },
@@ -165,7 +166,7 @@ export function createRacingSlice(
     },
 
     runPrivateTrial: (horseId, opponentId, distance, surface) => {
-      const s = get() as any;
+      const s = get();
       const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You do not own this horse." };
@@ -208,13 +209,19 @@ export function createRacingSlice(
       }
 
       // Charge cash & energy
-      set((state: any) => {
+      set((state) => {
         const newHorses = { ...state.horses };
         if (newHorses[horseId]) {
-          newHorses[horseId] = { ...newHorses[horseId], energy: Math.max(0, newHorses[horseId].energy - 20) };
+          newHorses[horseId] = {
+            ...newHorses[horseId],
+            energy: Math.max(0, newHorses[horseId].energy - 20),
+          };
         }
         if (stablemate && newHorses[stablemate.id]) {
-          newHorses[stablemate.id] = { ...newHorses[stablemate.id], energy: Math.max(0, newHorses[stablemate.id].energy - 15) };
+          newHorses[stablemate.id] = {
+            ...newHorses[stablemate.id],
+            energy: Math.max(0, newHorses[stablemate.id].energy - 15),
+          };
         }
 
         // Add a log entry for the trial
@@ -224,13 +231,15 @@ export function createRacingSlice(
         };
 
         // Add a transaction for the trial expense
-        const transaction = {
+        const transaction: Transaction = {
           id: generateUUID(),
           day: state.day,
-          type: "other",
+          type: "expense",
+          subcategory: "other_expense",
           amount: -trialCost,
           description: `Private trial: ${horse.name}`,
           balanceAfter: state.cash - trialCost,
+          recurring: false,
         };
 
         return {
@@ -252,8 +261,8 @@ export function createRacingSlice(
         purse: 0,
         fieldSize: 2,
         entries: [
-          { horseId: horse.id, owned: true, weight: 126 } as any,
-          { horseId: opponent.id, owned: opponent.owned, weight: 126 } as any,
+          { horseId: horse.id, owned: true, weight: 126 },
+          { horseId: opponent.id, owned: opponent.owned, weight: 126 },
         ],
         resolved: false,
         trackId: "trial_track",
@@ -289,7 +298,7 @@ export function createRacingSlice(
       const choice = milestone.choices.find((c: any) => c.key === choiceKey);
       if (!choice) return { ok: false, reason: "Choice not found." };
 
-      set((state: any) => {
+      set((state) => {
         const newHorses = { ...state.horses };
         const h = newHorses[horseId];
         if (h) {
@@ -318,7 +327,11 @@ export function createRacingSlice(
                   : m,
               );
 
-              newHorses[horseId] = { ...h, stats: nextStats, developmentArc: { milestones: nextMilestones } };
+              newHorses[horseId] = {
+                ...h,
+                stats: nextStats,
+                developmentArc: { milestones: nextMilestones },
+              };
             }
           }
         }
@@ -338,7 +351,7 @@ export function createRacingSlice(
     },
 
     nominateHorse: (horseId: string, raceId: string) => {
-      const s = get() as any;
+      const s = get();
       const race: Race | undefined = s.races[raceId];
       if (!race) return { ok: false, reason: "Race not found." };
       const grade = getRaceGrade(race);
@@ -346,7 +359,7 @@ export function createRacingSlice(
       const horse: Horse | undefined = s.horses[horseId];
       if (!horse || !horse.owned) return { ok: false, reason: "You do not own this horse." };
 
-      const existing: NominationRecord[] = s.playerNominations ?? [];
+      const existing: NominationRecord[] = s.playerNominations;
       if (
         existing.some((n) => n.horseId === horseId && n.raceId === raceId && n.status === "active")
       ) {
@@ -401,7 +414,7 @@ export function createRacingSlice(
     },
 
     withdrawNomination: (nominationId: string) => {
-      set((state: any) => ({
+      set((state) => ({
         playerNominations: (state.playerNominations ?? []).map((n: NominationRecord) =>
           n.id === nominationId ? { ...n, status: "scratched" as NominationStatus } : n,
         ),

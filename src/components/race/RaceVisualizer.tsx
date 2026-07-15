@@ -1,5 +1,13 @@
 import React, { useRef, useEffect, useState, useMemo, useCallback } from "react";
-import { Play, Pause, RotateCcw, Camera, SkipForward, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Play,
+  Pause,
+  RotateCcw,
+  Camera,
+  SkipForward,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { interpolateSnapshots, getReplayDuration } from "@/services/race/racePlaybackService";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import { useRaceReplay } from "@/hooks/race/useRaceReplay";
@@ -54,7 +62,6 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
   const scrubberRef = useRef<HTMLInputElement>(null);
 
   const duration = useMemo(() => getReplayDuration(snapshots), [snapshots]);
-
 
   const {
     timeRef,
@@ -309,7 +316,6 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
   useEffect(() => {
     if (!isPlaying) renderFrame();
   }, [isPlaying, renderFrame]);
-
 
   return (
     <div className="race-visualizer-container">

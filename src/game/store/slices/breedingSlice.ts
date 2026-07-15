@@ -28,6 +28,7 @@ import type {
   SharePurchaseIntent,
   ShareSaleIntent,
   SyndicateFeeDistributionIntent,
+  AnyIntent,
 } from "@/core/resolver/intents";
 import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/constants";
 import { formatCurrency } from "@/core/common/formatting";
@@ -83,9 +84,9 @@ export type BreedingSlice = BreedingState & {
  * @returns Breeding slice with state and actions
  */
 export function createBreedingSlice(
-  set: any,
+  set: StoreSet,
   get: StoreGet,
-  enqueueIntent: (intent: any) => void,
+  enqueueIntent: (intent: AnyIntent) => void,
 ): BreedingSlice {
   return {
     ...createDefaultBreedingState(),
@@ -207,7 +208,7 @@ export function createBreedingSlice(
 
       // Validate stallion is a G1 winner
       const g1Wins =
-        stallion.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
+        stallion.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1).length || 0;
       if (g1Wins === 0) return { ok: false, reason: "Stallion must be a G1 winner to syndicate." };
 
       // Check if syndicate already exists
@@ -280,7 +281,7 @@ export function createBreedingSlice(
     },
 
     solicitInvestor: (syndicateId: string, sharesOffered: number) => {
-      const s: any = get();
+      const s = get();
       const syndicate = s.syndicates?.[syndicateId];
       if (!syndicate) return { ok: false, reason: "Syndicate not found." };
       if (sharesOffered <= 0) return { ok: false, reason: "Must offer at least one share." };
@@ -308,7 +309,7 @@ export function createBreedingSlice(
         expectations: buildDefaultExpectations(personality, sharesOffered, syndicate.sharePrice),
       };
 
-      set((state: any) => ({
+      set((state) => ({
         cash: state.cash + price,
         syndicates: {
           ...state.syndicates,
@@ -338,7 +339,7 @@ export function createBreedingSlice(
     },
 
     buyoutInvestor: (investorId: string) => {
-      const s: any = get();
+      const s = get();
       const investor = s.syndicateInvestors?.[investorId];
       if (!investor) return { ok: false, reason: "Investor not found." };
       const syndicate = s.syndicates?.[investor.syndicateId];
@@ -357,7 +358,7 @@ export function createBreedingSlice(
       delete nextHolders[investorId];
       nextHolders.player = (nextHolders.player ?? 0) + investor.shares;
 
-      set((state: any) => ({
+      set((state) => ({
         cash: state.cash - price,
         syndicateInvestors: nextInvestors,
         syndicates: {

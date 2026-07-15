@@ -92,8 +92,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         lot.passed = passed;
         if (bidHistory) lot.bidHistory = bidHistory;
         if (wasPlayerConsignment) {
-          const horse =
-            lookupMaps?.horseMap.get(lot.horseId) || draft.horses[lot.horseId];
+          const horse = lookupMaps?.horseMap.get(lot.horseId) || draft.horses[lot.horseId];
           if (horse) horse.consignedSaleId = undefined;
         }
       }

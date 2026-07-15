@@ -63,7 +63,7 @@ export const PedigreeNodeCard = memo(function PedigreeNodeCard({
                     : "text-pink-400/60",
                 )}
               >
-                {genderSymbol(data.gender as any)}
+                {genderSymbol(data.gender)}
               </span>
             )}
             <span className="opacity-60">{data.isSire ? "S" : "D"}</span>

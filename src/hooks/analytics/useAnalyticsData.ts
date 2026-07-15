@@ -4,18 +4,14 @@
  */
 import { useMemo } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
-import type { CashFlowEntry } from "@/core/financial/financialTypes";
+import type { Transaction } from "@/core/transactions/transactionTypes";
 import { getCareerStats } from "@/core/horse/stats";
 
 export function useAnalyticsData() {
   const day = useGame((s) => s.day);
   const cash = useGame((s) => s.cash);
   const horses = useGame((s) => s.horses);
-  // useGameWithShallow for the `?? []` fallbacks: a default-equality selector
-  // returning a fresh array each render triggers an infinite re-render loop.
-  const transactions = useGameWithShallow(
-    (s) => (s as unknown as { transactions?: CashFlowEntry[] }).transactions ?? [],
-  );
+  const transactions = useGameWithShallow((s) => s.transactions);
   const sireLeaderboards = useGame((s) => s.sireLeaderboards);
   const sireTrendHistory = useGameWithShallow((s) => s.sireTrendHistory ?? []);
 
@@ -64,7 +60,7 @@ export function useAnalyticsData() {
     transactions.forEach((t) => {
       if (t.day < day - 30) return;
       if (t.amount < 0) {
-        const key = t.subcategory || t.category || "other";
+        const key = t.subcategory || t.type || "other";
         recentExpenses.set(key, (recentExpenses.get(key) ?? 0) + -t.amount);
       }
     });

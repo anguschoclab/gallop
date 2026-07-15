@@ -8,13 +8,15 @@ import { CLASS_CONFIG } from "@/core/race/generation/raceGen";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 
 function isStarterEligibleMaiden(race: Race): boolean {
-  return (
-    race.raceClass.toLowerCase().includes("maiden") &&
-    race.minStat === undefined
-  );
+  return race.raceClass.toLowerCase().includes("maiden") && race.minStat === undefined;
 }
 
-function createMaidenRace(day: number, rng: Rng, trackId?: string, surface?: "Turf" | "Dirt" | "Synthetic"): Race {
+function createMaidenRace(
+  day: number,
+  rng: Rng,
+  trackId?: string,
+  surface?: "Turf" | "Dirt" | "Synthetic",
+): Race {
   const cfg = CLASS_CONFIG["Maiden"];
   const distance = rand(cfg.dist[0] / 100, cfg.dist[1] / 100, rng) * 100;
   return {
@@ -36,12 +38,7 @@ function createMaidenRace(day: number, rng: Rng, trackId?: string, surface?: "Tu
   };
 }
 
-export function ensureMaidenRaces(
-  races: Race[],
-  fromDay: number,
-  toDay: number,
-  rng: Rng,
-): Race[] {
+export function ensureMaidenRaces(races: Race[], fromDay: number, toDay: number, rng: Rng): Race[] {
   const result = [...races];
   for (let d = fromDay; d <= toDay; d++) {
     const hasMaiden = result.some((r) => r.day === d && isStarterEligibleMaiden(r));
@@ -52,12 +49,7 @@ export function ensureMaidenRaces(
   return result;
 }
 
-export function ensureMaidenInCard(
-  races: Race[],
-  day: number,
-  track: Track,
-  rng: Rng,
-): Race[] {
+export function ensureMaidenInCard(races: Race[], day: number, track: Track, rng: Rng): Race[] {
   const doy = dayOfYear(day);
   if (doy > 60) return races;
 

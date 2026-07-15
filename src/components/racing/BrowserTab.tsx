@@ -49,7 +49,8 @@ export function BrowserTab() {
       />
 
       <div className="text-sm text-cream-muted">
-        Showing {filteredRaces.length} of {Object.values(races).filter((r) => r.graded).length} graded stakes races
+        Showing {filteredRaces.length} of {Object.values(races).filter((r) => r.graded).length}{" "}
+        graded stakes races
       </div>
 
       <div className="space-y-3">

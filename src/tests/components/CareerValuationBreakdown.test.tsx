@@ -34,9 +34,7 @@ describe("CareerValuationBreakdown", () => {
   });
 
   it("highlights the Current row with border-t and bold styling", () => {
-    const { container } = render(
-      <CareerValuationBreakdown valuation={sampleValuation} />,
-    );
+    const { container } = render(<CareerValuationBreakdown valuation={sampleValuation} />);
 
     const currentLabel = screen.getByText("Current");
     const currentRow = currentLabel.closest("div");

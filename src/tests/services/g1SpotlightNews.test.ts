@@ -42,7 +42,10 @@ function createG2Race(): Race {
   });
 }
 
-function createEliteHorse(id = "elite-horse", name = "Thunder Strike"): ReturnType<typeof createTestHorse> {
+function createEliteHorse(
+  id = "elite-horse",
+  name = "Thunder Strike",
+): ReturnType<typeof createTestHorse> {
   return createTestHorse({
     id,
     name,
@@ -57,7 +60,10 @@ function createEliteHorse(id = "elite-horse", name = "Thunder Strike"): ReturnTy
   });
 }
 
-function createAverageHorse(id = "avg-horse", name = "Average Joe"): ReturnType<typeof createTestHorse> {
+function createAverageHorse(
+  id = "avg-horse",
+  name = "Average Joe",
+): ReturnType<typeof createTestHorse> {
   return createTestHorse({
     id,
     name,

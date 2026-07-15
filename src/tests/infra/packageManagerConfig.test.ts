@@ -65,9 +65,7 @@ describe("package manager configuration", () => {
 
   it("no npx tsx in scripts", () => {
     const scriptsDir = path.join(repoRoot, "scripts");
-    const tsFiles = fs
-      .readdirSync(scriptsDir)
-      .filter((f) => f.endsWith(".ts"));
+    const tsFiles = fs.readdirSync(scriptsDir).filter((f) => f.endsWith(".ts"));
     for (const file of tsFiles) {
       const content = fs.readFileSync(path.join(scriptsDir, file), "utf-8");
       expect(content).not.toContain("npx tsx");

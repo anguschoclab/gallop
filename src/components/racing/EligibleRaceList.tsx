@@ -35,7 +35,8 @@ export function EligibleRaceList({
         {firstEligibleRace && onAdvanceToDay ? (
           <div className="mt-4 rounded-lg border border-success/20 bg-success/5 p-4">
             <p className="text-sm text-cream/70">
-              First eligible race: <span className="font-semibold text-cream">{firstEligibleRace.name}</span>
+              First eligible race:{" "}
+              <span className="font-semibold text-cream">{firstEligibleRace.name}</span>
             </p>
             <p className="text-xs text-cream/50 mt-1">
               Day {firstEligibleRace.day} ({gameCalendarDate(firstEligibleRace.day)})
@@ -105,22 +106,14 @@ export function EligibleRaceList({
                     <span>Day {row.race.day}</span>
                     <span>{row.race.distance}m</span>
                     {row.race.surface && <span>{row.race.surface}</span>}
-                    <span className="text-cream/40">
-                      Purse {formatCurrency(row.race.purse)}
-                    </span>
+                    <span className="text-cream/40">Purse {formatCurrency(row.race.purse)}</span>
                   </div>
                   <div className="mt-1.5 flex items-center gap-2 text-[10px] font-mono text-cream/40">
-                    <span>
-                      Entry {formatCurrency(row.entryFee)}
-                    </span>
+                    <span>Entry {formatCurrency(row.entryFee)}</span>
                     <span>·</span>
-                    <span>
-                      Jockey {formatCurrency(row.estimatedJockeyFee)}
-                    </span>
+                    <span>Jockey {formatCurrency(row.estimatedJockeyFee)}</span>
                     <span>·</span>
-                    <span>
-                      Transport {formatCurrency(row.transportCost)}
-                    </span>
+                    <span>Transport {formatCurrency(row.transportCost)}</span>
                     <span className="text-cream/60 font-bold">
                       = {formatCurrency(row.totalCost)}
                     </span>
@@ -129,12 +122,7 @@ export function EligibleRaceList({
 
                 <div className="shrink-0">
                   {row.isEntered ? (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      disabled
-                      className="gap-1.5 text-success"
-                    >
+                    <Button size="sm" variant="ghost" disabled className="gap-1.5 text-success">
                       <CheckCircle2 className="h-4 w-4" />
                       Entered
                     </Button>
@@ -149,11 +137,7 @@ export function EligibleRaceList({
                       Open
                     </Button>
                   ) : (
-                    <Button
-                      size="sm"
-                      onClick={() => handleEnter(row)}
-                      className="gap-1.5"
-                    >
+                    <Button size="sm" onClick={() => handleEnter(row)} className="gap-1.5">
                       <LogIn className="h-3.5 w-3.5" />
                       Enter
                     </Button>
@@ -166,11 +150,7 @@ export function EligibleRaceList({
       </div>
 
       {dialogRace && (
-        <RaceEntry
-          race={dialogRace}
-          isOpen={!!dialogRace}
-          onClose={() => setDialogRace(null)}
-        />
+        <RaceEntry race={dialogRace} isOpen={!!dialogRace} onClose={() => setDialogRace(null)} />
       )}
     </>
   );

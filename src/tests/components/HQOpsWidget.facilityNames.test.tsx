@@ -7,18 +7,13 @@ import type { PlayerFacilities, FacilityType } from "@/core/facilities";
 import { createFacility } from "@/core/facilities";
 
 vi.mock("@tanstack/react-router", () => ({
-  Link: ({ children, ...props }: { children?: ReactNode }) =>
-    createElement("a", props, children),
+  Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
   useNavigate: () => () => {},
   useSearch: () => ({}),
 }));
 
 function makeFacilities(): PlayerFacilities {
-  const types: FacilityType[] = [
-    "main_track",
-    "barn",
-    "exercise_pool",
-  ];
+  const types: FacilityType[] = ["main_track", "barn", "exercise_pool"];
   const facilities = {} as PlayerFacilities;
   for (const t of types) {
     facilities[t] = createFacility(t, "basic", 1);

@@ -49,9 +49,9 @@ export function SeasonStandingsWidget() {
 
   const { standings, playerRank } = useSeasonStandings(rangeDays);
 
-  const inbox = useGame((s) => (s as any).inbox ?? []);
+  const inbox = useGame((s) => s.inbox);
   const standingsMessages = useMemo(
-    () => inbox.filter((m: any) => m.category === "standings" && !m.readAt),
+    () => inbox.filter((m) => m.category === "standings" && !m.readAt),
     [inbox],
   );
 
@@ -131,7 +131,9 @@ export function SeasonStandingsWidget() {
                   <tr className="font-mono text-[9px] uppercase tracking-[0.2em] text-cream/40 border-b border-white/5">
                     <th className="py-2 px-2 w-8 text-right">#</th>
                     <th className="py-2 px-2 text-left">Stable</th>
-                    <th className="py-2 px-2 text-right">{RANGES.find((r) => r.days === rangeDays)?.label} Earnings</th>
+                    <th className="py-2 px-2 text-right">
+                      {RANGES.find((r) => r.days === rangeDays)?.label} Earnings
+                    </th>
                     <th className="py-2 px-2 text-right hidden sm:table-cell">Trend</th>
                   </tr>
                 </thead>
@@ -145,9 +147,7 @@ export function SeasonStandingsWidget() {
                         key={s.stableId}
                         className={cn(
                           "transition-colors cursor-pointer min-h-[44px]",
-                          s.isPlayer
-                            ? "bg-gold/10 hover:bg-gold/15"
-                            : "hover:bg-white/[0.02]",
+                          s.isPlayer ? "bg-gold/10 hover:bg-gold/15" : "hover:bg-white/[0.02]",
                           showDivider && "border-t-2 border-dashed border-white/10",
                           selectedStableId === s.stableId && "ring-1 ring-gold/30",
                         )}
@@ -167,9 +167,7 @@ export function SeasonStandingsWidget() {
                             <span
                               className={cn(
                                 "text-xs truncate max-w-[120px] sm:max-w-[180px]",
-                                s.isPlayer
-                                  ? "font-black text-gold"
-                                  : "font-medium text-cream/80",
+                                s.isPlayer ? "font-black text-gold" : "font-medium text-cream/80",
                               )}
                             >
                               {s.name}

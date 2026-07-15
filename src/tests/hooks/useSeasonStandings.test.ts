@@ -13,7 +13,14 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     gender: "colt",
     energy: 80,
     peakingIndex: 0,
-    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70, consistency: 70 } as any,
+    stats: {
+      speed: 70,
+      stamina: 70,
+      acceleration: 70,
+      temperament: 70,
+      durability: 70,
+      consistency: 70,
+    } as any,
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
@@ -35,14 +42,27 @@ describe("useSeasonStandings", () => {
       id: "h1",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "Test Race", position: 1, day: 50, beyer: 80, purse: 100000, purseEarned: 60000, surface: "Turf", distance: 1600 } as any,
+        {
+          raceId: "r1",
+          raceName: "Test Race",
+          position: 1,
+          day: 50,
+          beyer: 80,
+          purse: 100000,
+          purseEarned: 60000,
+          surface: "Turf",
+          distance: 1600,
+        } as any,
       ],
     });
     seedStore({
       ...createDefaultGameState(),
       day: 60,
       horses: { h1 },
-      playerProfile: { stableName: "My Stable", silk: { primary: "#ff0000", secondary: "#0000ff" } } as any,
+      playerProfile: {
+        stableName: "My Stable",
+        silk: { primary: "#ff0000", secondary: "#0000ff" },
+      } as any,
     });
     const { result } = renderHook(() => useSeasonStandings(30));
     const player = result.current.standings.find((s) => s.isPlayer);
@@ -56,8 +76,28 @@ describe("useSeasonStandings", () => {
       id: "h1",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "Old Race", position: 1, day: 10, beyer: 80, purse: 100000, purseEarned: 60000, surface: "Turf", distance: 1600 } as any,
-        { raceId: "r2", raceName: "Recent Race", position: 1, day: 55, beyer: 85, purse: 100000, purseEarned: 60000, surface: "Turf", distance: 1600 } as any,
+        {
+          raceId: "r1",
+          raceName: "Old Race",
+          position: 1,
+          day: 10,
+          beyer: 80,
+          purse: 100000,
+          purseEarned: 60000,
+          surface: "Turf",
+          distance: 1600,
+        } as any,
+        {
+          raceId: "r2",
+          raceName: "Recent Race",
+          position: 1,
+          day: 55,
+          beyer: 85,
+          purse: 100000,
+          purseEarned: 60000,
+          surface: "Turf",
+          distance: 1600,
+        } as any,
       ],
     });
     seedStore({
@@ -76,7 +116,18 @@ describe("useSeasonStandings", () => {
       id: "h1",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "Race", position: 1, day: 50, beyer: 80, purse: 100000, purseEarned: 60000, surface: "Turf", distance: 1600, stableId: "__player__" } as any,
+        {
+          raceId: "r1",
+          raceName: "Race",
+          position: 1,
+          day: 50,
+          beyer: 80,
+          purse: 100000,
+          purseEarned: 60000,
+          surface: "Turf",
+          distance: 1600,
+          stableId: "__player__",
+        } as any,
       ],
     });
     const h2 = mkHorse({
@@ -84,7 +135,18 @@ describe("useSeasonStandings", () => {
       owned: false,
       stableId: "npc1",
       raceHistory: [
-        { raceId: "r2", raceName: "NPC Race", position: 1, day: 50, beyer: 75, purse: 100000, purseEarned: 60000, surface: "Turf", distance: 1600, stableId: "npc1" } as any,
+        {
+          raceId: "r2",
+          raceName: "NPC Race",
+          position: 1,
+          day: 50,
+          beyer: 75,
+          purse: 100000,
+          purseEarned: 60000,
+          surface: "Turf",
+          distance: 1600,
+          stableId: "npc1",
+        } as any,
       ],
     });
     seedStore({
@@ -105,7 +167,18 @@ describe("useSeasonStandings", () => {
       id: "h1",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "Race", position: 1, day: 50, beyer: 80, purse: 100000, purseEarned: 100000, surface: "Turf", distance: 1600, stableId: "__player__" } as any,
+        {
+          raceId: "r1",
+          raceName: "Race",
+          position: 1,
+          day: 50,
+          beyer: 80,
+          purse: 100000,
+          purseEarned: 100000,
+          surface: "Turf",
+          distance: 1600,
+          stableId: "__player__",
+        } as any,
       ],
     });
     const h2 = mkHorse({
@@ -113,7 +186,18 @@ describe("useSeasonStandings", () => {
       owned: false,
       stableId: "npc1",
       raceHistory: [
-        { raceId: "r2", raceName: "NPC Race", position: 1, day: 50, beyer: 75, purse: 100000, purseEarned: 50000, surface: "Turf", distance: 1600, stableId: "npc1" } as any,
+        {
+          raceId: "r2",
+          raceName: "NPC Race",
+          position: 1,
+          day: 50,
+          beyer: 75,
+          purse: 100000,
+          purseEarned: 50000,
+          surface: "Turf",
+          distance: 1600,
+          stableId: "npc1",
+        } as any,
       ],
     });
     seedStore({
@@ -133,7 +217,18 @@ describe("useSeasonStandings", () => {
       id: "h1",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "Race", position: 1, day: 50, beyer: 80, purse: 100000, purseEarned: 30000, surface: "Turf", distance: 1600, stableId: "__player__" } as any,
+        {
+          raceId: "r1",
+          raceName: "Race",
+          position: 1,
+          day: 50,
+          beyer: 80,
+          purse: 100000,
+          purseEarned: 30000,
+          surface: "Turf",
+          distance: 1600,
+          stableId: "__player__",
+        } as any,
       ],
     });
     const h2 = mkHorse({
@@ -141,7 +236,18 @@ describe("useSeasonStandings", () => {
       owned: false,
       stableId: "npc1",
       raceHistory: [
-        { raceId: "r2", raceName: "NPC Race", position: 1, day: 50, beyer: 75, purse: 100000, purseEarned: 80000, surface: "Turf", distance: 1600, stableId: "npc1" } as any,
+        {
+          raceId: "r2",
+          raceName: "NPC Race",
+          position: 1,
+          day: 50,
+          beyer: 75,
+          purse: 100000,
+          purseEarned: 80000,
+          surface: "Turf",
+          distance: 1600,
+          stableId: "npc1",
+        } as any,
       ],
     });
     seedStore({
@@ -160,7 +266,17 @@ describe("useSeasonStandings", () => {
       id: "h1",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "Race", position: 1, day: 55, beyer: 80, purse: 100000, purseEarned: 60000, surface: "Turf", distance: 1600 } as any,
+        {
+          raceId: "r1",
+          raceName: "Race",
+          position: 1,
+          day: 55,
+          beyer: 80,
+          purse: 100000,
+          purseEarned: 60000,
+          surface: "Turf",
+          distance: 1600,
+        } as any,
       ],
     });
     seedStore({
@@ -178,8 +294,28 @@ describe("useSeasonStandings", () => {
       id: "h1",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "Race", position: 1, day: 10, beyer: 80, purse: 100000, purseEarned: 60000, surface: "Turf", distance: 1600 } as any,
-        { raceId: "r2", raceName: "Recent", position: 1, day: 55, beyer: 85, purse: 100000, purseEarned: 50000, surface: "Turf", distance: 1600 } as any,
+        {
+          raceId: "r1",
+          raceName: "Race",
+          position: 1,
+          day: 10,
+          beyer: 80,
+          purse: 100000,
+          purseEarned: 60000,
+          surface: "Turf",
+          distance: 1600,
+        } as any,
+        {
+          raceId: "r2",
+          raceName: "Recent",
+          position: 1,
+          day: 55,
+          beyer: 85,
+          purse: 100000,
+          purseEarned: 50000,
+          surface: "Turf",
+          distance: 1600,
+        } as any,
       ],
     });
     seedStore({

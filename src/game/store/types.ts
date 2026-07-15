@@ -12,6 +12,8 @@ import type { StateCreator } from "zustand";
 import type { CoreState } from "@/game/store/state/coreState";
 import type { SystemsState } from "@/game/store/state/systemsState";
 import type { NewGameOptions } from "@/game/store/state";
+import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
+import type { AnyIntent } from "@/core/resolver/intents";
 import type { RacingSlice } from "./slices/racingSlice";
 import type { MarketSlice } from "./slices/marketSlice";
 import type { ScoutingSlice } from "./slices/scoutingSlice";
@@ -63,17 +65,20 @@ export type StoreType = CoreState &
   StaffSlice &
   InsuranceSlice &
   TransportSlice & {
+    storeVersion: number;
     startNewGame: (options: NewGameOptions) => Promise<void>;
+    addStewardsInquiry: (inquiry: StewardsInquiry) => void;
   };
 
 /**
  * Helper type for creating store slices with full store access
  * Matches Zustand's actual set function signature with persist middleware
  */
-export type StoreSet = (
+export type StoreSet = ((
   partial: StoreType | Partial<StoreType> | ((state: StoreType) => StoreType | Partial<StoreType>),
-  replace?: boolean,
-) => void;
+  replace?: false,
+) => void) &
+  ((partial: StoreType | ((state: StoreType) => StoreType), replace: true) => void);
 
 export type StoreGet = () => StoreType;
 
@@ -81,9 +86,9 @@ export type StoreGet = () => StoreType;
  * Slice creator type that matches Zustand's actual signature with persist middleware
  */
 export type SliceCreator<TSlice> = (
-  set: any,
+  set: StoreSet,
   get: StoreGet,
-  enqueueIntent: (intent: any) => void,
+  enqueueIntent: (intent: AnyIntent) => void,
 ) => TSlice;
 
 /**

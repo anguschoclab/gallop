@@ -89,7 +89,13 @@ export function horsePrice(h: Horse): number {
  */
 export function horsePriceWithPedigree(h: Horse, allHorses: Horse[]): number {
   const base = horsePrice(h);
-  return Math.round((base * pedigreeMultiplier(h, { horses: Object.fromEntries(allHorses.map(h => [h.id, h])) })) / 50) * 50;
+  return (
+    Math.round(
+      (base *
+        pedigreeMultiplier(h, { horses: Object.fromEntries(allHorses.map((h) => [h.id, h])) })) /
+        50,
+    ) * 50
+  );
 }
 
 // -----------------------------------------------------------------------------
@@ -128,7 +134,9 @@ export function estimateBreedingValue(h: Horse, allHorses: Horse[] = []): number
 
   const overall = calculateOverallRating(h);
   const potMod = 0.5 + (h.potential ?? 50) / 100;
-  const pedMul = pedigreeMultiplier(h, { horses: Object.fromEntries(allHorses.map(h => [h.id, h])) });
+  const pedMul = pedigreeMultiplier(h, {
+    horses: Object.fromEntries(allHorses.map((h) => [h.id, h])),
+  });
   const winRate = h.careerStarts > 0 ? h.careerWins / h.careerStarts : 0;
   const fameBoost = 1 + (h.fame ?? 0) / 150;
 
@@ -146,8 +154,7 @@ export function estimateBreedingValue(h: Horse, allHorses: Horse[] = []): number
       const pvYears = Math.min(6, yearsRemaining * 0.6);
       base = annual * pvYears;
       // Sire production quality lifts perceived value.
-      const stakesRate =
-        stud.lifetimeFoals > 0 ? stud.lifetimeStakesFoals / stud.lifetimeFoals : 0;
+      const stakesRate = stud.lifetimeFoals > 0 ? stud.lifetimeStakesFoals / stud.lifetimeFoals : 0;
       base *= 1 + stakesRate * 1.2 + (stud.lifetimeG1Foals ?? 0) * 0.05;
     } else {
       // Projected stud value for racing / unproven males.
@@ -229,7 +236,10 @@ export function horseCareerValuation(h: Horse, allHorses: Horse[] = []): HorseCa
   // Pre-career: recompute as if the horse were a yearling — potential and pedigree drive it.
   const overall = calculateOverallRating(h);
   const potMod = 0.5 + (h.potential ?? 50) / 100;
-  const pedMul = pedigreeMultiplier({ ...h, age: 1 }, { horses: Object.fromEntries(allHorses.map(h => [h.id, h])) });
+  const pedMul = pedigreeMultiplier(
+    { ...h, age: 1 },
+    { horses: Object.fromEntries(allHorses.map((h) => [h.id, h])) },
+  );
   const yearlingRacing = Math.round((overall * 80 * 1.2 * potMod) / 50) * 50;
   const yearlingPed = Math.round((yearlingRacing * pedMul) / 50) * 50;
   // Include a slice of gender-specific breeding upside since sales rings price yearlings on it.
@@ -243,8 +253,13 @@ export function horseCareerValuation(h: Horse, allHorses: Horse[] = []): HorseCa
   const postCareer =
     h.gender === "gelding" || h.gelded
       ? Math.round((racing * 0.1) / 100) * 100 // salvage / retirement value only
-      : Math.round(estimateBreedingValueAtAge(h, allHorses, h.gender === "mare" || h.gender === "filly" ? 6 : 7) / 100) *
-        100;
+      : Math.round(
+          estimateBreedingValueAtAge(
+            h,
+            allHorses,
+            h.gender === "mare" || h.gender === "filly" ? 6 : 7,
+          ) / 100,
+        ) * 100;
 
   return { racing, breeding, current, preCareer, postCareer };
 }

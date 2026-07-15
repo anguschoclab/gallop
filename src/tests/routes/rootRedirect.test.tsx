@@ -51,9 +51,7 @@ describe("RootComponent redirect and error handling", () => {
   });
 
   it("shows loading spinner while not hydrated", () => {
-    (rehydrateStore as any).mockImplementation(
-      () => new Promise(() => {}),
-    );
+    (rehydrateStore as any).mockImplementation(() => new Promise(() => {}));
 
     render(<RootComponent />);
     expect(screen.getByText("Loading...")).toBeTruthy();
@@ -102,9 +100,7 @@ describe("RootComponent redirect and error handling", () => {
   });
 
   it("shows timeout UI after 5s if not hydrated", async () => {
-    (rehydrateStore as any).mockImplementation(
-      () => new Promise(() => {}),
-    );
+    (rehydrateStore as any).mockImplementation(() => new Promise(() => {}));
 
     render(<RootComponent />);
 

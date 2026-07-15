@@ -40,7 +40,7 @@ export function JockeyCard({
   const rerollJockeySilk = useGame((s) => s.rerollJockeySilk);
 
   let claim = 0;
-  if ((jockey as any).isApprentice) {
+  if (jockey.isApprentice) {
     const wins = jockey.careerWins ?? 0;
     if (wins < 5) claim = 7;
     else if (wins < 15) claim = 5;
@@ -80,7 +80,7 @@ export function JockeyCard({
           type="jockey"
           id={jockey.id}
           label={jockey.name}
-          subtitle={(jockey as any).isApprentice ? "Apprentice" : "Jockey"}
+          subtitle={jockey.isApprentice ? "Apprentice" : "Jockey"}
         />
       </div>
 
@@ -117,7 +117,7 @@ export function JockeyCard({
                 >
                   {jockey.archetype.replace("_", " ")}
                 </Badge>
-                {(jockey as any).isApprentice && (
+                {jockey.isApprentice && (
                   <Badge className="bg-amber-600 text-cream text-[9px] font-black uppercase tracking-widest h-4 px-1.5 rounded-none border-none">
                     Apprentice {claim > 0 ? `(-${claim} lbs)` : ""}
                   </Badge>
@@ -169,11 +169,10 @@ export function JockeyCard({
               <span
                 className={cn(
                   "text-[9px] font-mono font-bold tracking-widest uppercase flex items-center gap-1.5",
-                  (jockey as any).isApprentice ? "text-amber-500/60" : "text-success/60",
+                  jockey.isApprentice ? "text-amber-500/60" : "text-success/60",
                 )}
               >
-                <ShieldCheck className="h-2.5 w-2.5" />{" "}
-                {(jockey as any).isApprentice ? "Academy" : "Pro"}
+                <ShieldCheck className="h-2.5 w-2.5" /> {jockey.isApprentice ? "Academy" : "Pro"}
               </span>
             </div>
             <Link

@@ -60,12 +60,7 @@ describe("BuyNowDialog", () => {
 
   it("renders trigger button with formatted price when enabled", () => {
     render(
-      <BuyNowDialog
-        horseName="Thunder"
-        buyNowPrice={50000}
-        cash={100000}
-        onBuyNow={vi.fn()}
-      />,
+      <BuyNowDialog horseName="Thunder" buyNowPrice={50000} cash={100000} onBuyNow={vi.fn()} />,
     );
     const btn = screen.getByRole("button", { name: /Buy Now/i });
     expect(btn.textContent).toContain("$50,000");
@@ -73,12 +68,7 @@ describe("BuyNowDialog", () => {
 
   it("opens dialog on click when enabled", async () => {
     render(
-      <BuyNowDialog
-        horseName="Thunder"
-        buyNowPrice={50000}
-        cash={100000}
-        onBuyNow={vi.fn()}
-      />,
+      <BuyNowDialog horseName="Thunder" buyNowPrice={50000} cash={100000} onBuyNow={vi.fn()} />,
     );
     fireEvent.click(screen.getByRole("button", { name: /Buy Now/i }));
     expect(screen.getByText(/Buy Thunder now for/i)).toBeTruthy();
@@ -86,12 +76,7 @@ describe("BuyNowDialog", () => {
 
   it("shows correct description with amount and horse name", async () => {
     render(
-      <BuyNowDialog
-        horseName="Thunder"
-        buyNowPrice={50000}
-        cash={100000}
-        onBuyNow={vi.fn()}
-      />,
+      <BuyNowDialog horseName="Thunder" buyNowPrice={50000} cash={100000} onBuyNow={vi.fn()} />,
     );
     fireEvent.click(screen.getByRole("button", { name: /Buy Now/i }));
     expect(screen.getAllByText(/\$50,000/i).length).toBeGreaterThan(0);
@@ -102,12 +87,7 @@ describe("BuyNowDialog", () => {
   it("shows success toast on successful buy", async () => {
     const onBuyNow = vi.fn(() => ({ ok: true }));
     render(
-      <BuyNowDialog
-        horseName="Thunder"
-        buyNowPrice={50000}
-        cash={100000}
-        onBuyNow={onBuyNow}
-      />,
+      <BuyNowDialog horseName="Thunder" buyNowPrice={50000} cash={100000} onBuyNow={onBuyNow} />,
     );
     fireEvent.click(screen.getByRole("button", { name: /Buy Now/i }));
     fireEvent.click(screen.getByRole("button", { name: /^Buy Now$/i }));
@@ -117,12 +97,7 @@ describe("BuyNowDialog", () => {
   it("shows info toast when buy_now_unavailable", async () => {
     const onBuyNow = vi.fn(() => ({ ok: false, reason: "buy_now_unavailable" }));
     render(
-      <BuyNowDialog
-        horseName="Thunder"
-        buyNowPrice={50000}
-        cash={100000}
-        onBuyNow={onBuyNow}
-      />,
+      <BuyNowDialog horseName="Thunder" buyNowPrice={50000} cash={100000} onBuyNow={onBuyNow} />,
     );
     fireEvent.click(screen.getByRole("button", { name: /Buy Now/i }));
     fireEvent.click(screen.getByRole("button", { name: /^Buy Now$/i }));
@@ -132,12 +107,7 @@ describe("BuyNowDialog", () => {
   it("shows error toast with reason on other failure", async () => {
     const onBuyNow = vi.fn(() => ({ ok: false, reason: "insufficient_funds" }));
     render(
-      <BuyNowDialog
-        horseName="Thunder"
-        buyNowPrice={50000}
-        cash={100000}
-        onBuyNow={onBuyNow}
-      />,
+      <BuyNowDialog horseName="Thunder" buyNowPrice={50000} cash={100000} onBuyNow={onBuyNow} />,
     );
     fireEvent.click(screen.getByRole("button", { name: /Buy Now/i }));
     fireEvent.click(screen.getByRole("button", { name: /^Buy Now$/i }));

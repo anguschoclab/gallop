@@ -36,13 +36,15 @@ export function useNpcStableDetail(stableId: string) {
   const scoutHorse = useGame((s) => s.scoutHorse);
   const respondToPrivateSale = useGame((s) => s.respondToPrivateSale);
   const privateSaleOffers = useGameWithShallow((s: GameState) => s.privateSaleOffers ?? []);
-  const npcAIManager = useGame((s) => (s as any).npcAIManager);
+  const npcAIManager = useGame((s) => s.npcAIManager);
 
   const [offerHorse, setOfferHorse] = useState<Horse | null>(null);
 
   const stable = getStableById(npcStables, stableId);
 
-  const stableHorses = stable ? Object.values(horses).filter((h: Horse) => h.stableId === stableId) : [];
+  const stableHorses = stable
+    ? Object.values(horses).filter((h: Horse) => h.stableId === stableId)
+    : [];
   const activeHorses = stableHorses.filter(
     (h: Horse) => !h.healthStatus || h.healthStatus === "healthy",
   );
@@ -51,7 +53,6 @@ export function useNpcStableDetail(stableId: string) {
 
   const stableAI = npcAIManager?.stableStates?.[stableId];
   const friction = stableAI?.friction ?? 0;
-
 
   const headToHead = useMemo(() => {
     const ownedHorses = Object.values(horses).filter((h) => h.owned);

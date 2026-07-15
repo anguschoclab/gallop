@@ -37,14 +37,21 @@ export const Route = createFileRoute("/stable/")({
 });
 
 function StablePage() {
-  const { tab, status, rivalQ, rivalTier, view, tendency, trip, surface, compareIds } = Route.useSearch();
+  const { tab, status, rivalQ, rivalTier, view, tendency, trip, surface, compareIds } =
+    Route.useSearch();
   const navigate = Route.useNavigate();
   const horses = useHorses();
   const awards = useAwards();
   const npcStables = useNpcStables();
-  const npcAIManager = useGame((s) => (s as any).npcAIManager);
+  const npcAIManager = useGame((s) => s.npcAIManager);
 
-  const myHorses = useMemo(() => Object.values(horses).filter((h) => h.owned).map(ensurePhenotypeResolved), [horses]);
+  const myHorses = useMemo(
+    () =>
+      Object.values(horses)
+        .filter((h) => h.owned)
+        .map(ensurePhenotypeResolved),
+    [horses],
+  );
   const playerAwards = useMemo(() => awards.filter((a) => !a.stableId), [awards]);
 
   const counts = useMemo(() => {

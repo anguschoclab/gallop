@@ -596,9 +596,7 @@ describe("generateTrackRaces — winter maiden guarantee", () => {
     // Day 30 = dayOfYear 30 (winter, within meet)
     const races = generateTrackRaces(track, schedule, 30, createRng("winter-test"));
     const hasStarterMaiden = races.some(
-      (r) =>
-        r.raceClass.toLowerCase().includes("maiden") &&
-        r.minStat === undefined,
+      (r) => r.raceClass.toLowerCase().includes("maiden") && r.minStat === undefined,
     );
     expect(hasStarterMaiden).toBe(true);
   });

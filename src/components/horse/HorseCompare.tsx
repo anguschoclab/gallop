@@ -29,7 +29,9 @@ interface RowData {
 }
 
 function beyerSummary(h: Horse) {
-  const beyers = h.raceHistory.map((r) => r.beyer).filter((b): b is number => typeof b === "number");
+  const beyers = h.raceHistory
+    .map((r) => r.beyer)
+    .filter((b): b is number => typeof b === "number");
   if (beyers.length === 0) return { min: null, avg: null, max: null };
   const min = Math.min(...beyers);
   const max = Math.max(...beyers);
@@ -159,7 +161,9 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
             <div
               className={cn(
                 "grid gap-2 sm:gap-4 border-b border-white/10 pb-4",
-                horses.length === 2 ? "grid-cols-1 sm:grid-cols-[1fr_1fr]" : "grid-cols-1 sm:grid-cols-[1fr_1fr_1fr]",
+                horses.length === 2
+                  ? "grid-cols-1 sm:grid-cols-[1fr_1fr]"
+                  : "grid-cols-1 sm:grid-cols-[1fr_1fr_1fr]",
               )}
             >
               {horses.map((h) => (
@@ -225,18 +229,13 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
                             key={i}
                             className={cn(
                               "px-2 py-1.5 sm:px-3 sm:py-2 font-mono tabular-nums",
-                              winner === i
-                                ? "bg-gold/10 text-gold font-bold"
-                                : "text-cream/80",
+                              winner === i ? "bg-gold/10 text-gold font-bold" : "text-cream/80",
                             )}
                           >
                             <div className="flex items-center gap-2 hidden sm:flex">
                               <span>{v}</span>
                               {row.barValues && row.barValues[i] !== undefined && (
-                                <Progress
-                                  value={row.barValues[i]}
-                                  className="h-1 w-16"
-                                />
+                                <Progress value={row.barValues[i]} className="h-1 w-16" />
                               )}
                             </div>
                           </td>
@@ -253,11 +252,7 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
               <h4 className="text-[11px] uppercase tracking-widest font-mono text-cream/50 mb-2">
                 Surface aptitude
               </h4>
-              <div
-                className={cn(
-                  "grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
-                )}
-              >
+              <div className={cn("grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3")}>
                 {horses.map((h) => (
                   <div key={h.id} className="space-y-2">
                     <div className="text-xs font-medium text-cream/70">{h.name}</div>
@@ -283,11 +278,7 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
               <h4 className="text-[11px] uppercase tracking-widest font-mono text-cream/50 mb-2">
                 Stats
               </h4>
-              <div
-                className={cn(
-                  "grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
-                )}
-              >
+              <div className={cn("grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3")}>
                 {horses.map((h) => (
                   <div key={h.id} className="space-y-2">
                     <div className="text-xs font-medium text-cream/70">{h.name}</div>
@@ -322,7 +313,9 @@ const SURFACE_OPTIONS: Array<{ label: string; value: "Turf" | "Dirt" | "Syntheti
 function HeadToHeadSection({ horses }: { horses: Horse[] }) {
   const [distance, setDistance] = useState(1600);
   const [surface, setSurface] = useState<"Turf" | "Dirt" | "Synthetic">("Turf");
-  const [simResults, setSimResults] = useState<ReturnType<typeof runHeadToHeadSimulation> | null>(null);
+  const [simResults, setSimResults] = useState<ReturnType<typeof runHeadToHeadSimulation> | null>(
+    null,
+  );
   const [simRunning, setSimRunning] = useState(false);
 
   const odds = useMemo(
@@ -348,19 +341,28 @@ function HeadToHeadSection({ horses }: { horses: Horse[] }) {
       {/* Selectors */}
       <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4">
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] uppercase tracking-widest font-mono text-cream/40">Distance</span>
+          <span className="text-[10px] uppercase tracking-widest font-mono text-cream/40">
+            Distance
+          </span>
           <select
             value={distance}
-            onChange={(e) => { setDistance(Number(e.target.value)); setSimResults(null); }}
+            onChange={(e) => {
+              setDistance(Number(e.target.value));
+              setSimResults(null);
+            }}
             className="bg-slate-900 border border-white/10 rounded px-2 py-1 text-xs font-mono text-cream"
           >
             {DISTANCE_OPTIONS.map((d) => (
-              <option key={d.value} value={d.value}>{d.label}</option>
+              <option key={d.value} value={d.value}>
+                {d.label}
+              </option>
             ))}
           </select>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] uppercase tracking-widest font-mono text-cream/40">Surface</span>
+          <span className="text-[10px] uppercase tracking-widest font-mono text-cream/40">
+            Surface
+          </span>
           <div className="flex gap-1">
             {SURFACE_OPTIONS.map((s) => (
               <Button
@@ -373,7 +375,10 @@ function HeadToHeadSection({ horses }: { horses: Horse[] }) {
                     ? "bg-gold/20 text-gold border border-gold/30"
                     : "text-cream/50 border border-white/5",
                 )}
-                onClick={() => { setSurface(s.value); setSimResults(null); }}
+                onClick={() => {
+                  setSurface(s.value);
+                  setSimResults(null);
+                }}
               >
                 {s.label}
               </Button>
@@ -396,7 +401,11 @@ function HeadToHeadSection({ horses }: { horses: Horse[] }) {
               <div className="space-y-1">
                 <div className="flex justify-between text-xs">
                   <span className="text-cream/50">Win %</span>
-                  <NumericValue value={(o.winPct * 100).toFixed(1)} suffix="%" className="text-gold font-bold" />
+                  <NumericValue
+                    value={(o.winPct * 100).toFixed(1)}
+                    suffix="%"
+                    className="text-gold font-bold"
+                  />
                 </div>
                 <Progress value={o.winPct * 100} className="h-1.5" />
                 <div className="flex justify-between text-xs">
@@ -405,7 +414,11 @@ function HeadToHeadSection({ horses }: { horses: Horse[] }) {
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-cream/50">Finish Time</span>
-                  <NumericValue value={o.projectedFinishTime.toFixed(1)} suffix="s" className="text-cream/80" />
+                  <NumericValue
+                    value={o.projectedFinishTime.toFixed(1)}
+                    suffix="s"
+                    className="text-cream/80"
+                  />
                 </div>
               </div>
             </div>
@@ -443,19 +456,33 @@ function HeadToHeadSection({ horses }: { horses: Horse[] }) {
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs">
                     <span className="text-cream/50">Sim Win %</span>
-                    <NumericValue value={(r.winPct * 100).toFixed(1)} suffix="%" className="text-gold font-bold" />
+                    <NumericValue
+                      value={(r.winPct * 100).toFixed(1)}
+                      suffix="%"
+                      className="text-gold font-bold"
+                    />
                   </div>
                   <div className="flex justify-between text-xs">
                     <span className="text-cream/50">Avg Finish</span>
-                    <NumericValue value={r.avgFinishPosition.toFixed(2)} className="text-cream/80" />
+                    <NumericValue
+                      value={r.avgFinishPosition.toFixed(2)}
+                      className="text-cream/80"
+                    />
                   </div>
                   <div className="flex justify-between text-xs">
                     <span className="text-cream/50">Avg Time</span>
-                    <NumericValue value={r.avgFinishTime.toFixed(1)} suffix="s" className="text-cream/80" />
+                    <NumericValue
+                      value={r.avgFinishTime.toFixed(1)}
+                      suffix="s"
+                      className="text-cream/80"
+                    />
                   </div>
                   <div className="flex justify-between text-xs">
                     <span className="text-cream/50">Beyer Range</span>
-                    <NumericValue value={`${r.beyerRange[0]}–${r.beyerRange[1]}`} className="text-cream/80" />
+                    <NumericValue
+                      value={`${r.beyerRange[0]}–${r.beyerRange[1]}`}
+                      className="text-cream/80"
+                    />
                   </div>
                 </div>
               </div>

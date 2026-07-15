@@ -131,10 +131,7 @@ describe("NarrativeGenerator — HOT_PACE detection", () => {
     gen.update([makeRunner({ velocity: HOT_VELOCITY })], 0.1);
 
     // Second tick with hot pace
-    const lines = gen.update(
-      [makeRunner({ velocity: HOT_VELOCITY, position: 50 })],
-      1.0,
-    );
+    const lines = gen.update([makeRunner({ velocity: HOT_VELOCITY, position: 50 })], 1.0);
 
     expect(lines.some((l) => l.type === "HOT_PACE")).toBe(true);
   });
@@ -148,10 +145,7 @@ describe("NarrativeGenerator — HOT_PACE detection", () => {
 
     gen.update([makeRunner({ velocity: NORMAL_VELOCITY })], 0.1);
 
-    const lines = gen.update(
-      [makeRunner({ velocity: NORMAL_VELOCITY, position: 50 })],
-      1.0,
-    );
+    const lines = gen.update([makeRunner({ velocity: NORMAL_VELOCITY, position: 50 })], 1.0);
 
     expect(lines.some((l) => l.type === "HOT_PACE")).toBe(false);
   });
@@ -166,17 +160,11 @@ describe("NarrativeGenerator — HOT_PACE detection", () => {
     gen.update([makeRunner({ velocity: HOT_VELOCITY })], 0.1);
 
     // First hot pace emission
-    const lines1 = gen.update(
-      [makeRunner({ velocity: HOT_VELOCITY, position: 50 })],
-      1.0,
-    );
+    const lines1 = gen.update([makeRunner({ velocity: HOT_VELOCITY, position: 50 })], 1.0);
     expect(lines1.some((l) => l.type === "HOT_PACE")).toBe(true);
 
     // Second tick shortly after — should NOT emit again (within cooldown)
-    const lines2 = gen.update(
-      [makeRunner({ velocity: HOT_VELOCITY, position: 100 })],
-      2.0,
-    );
+    const lines2 = gen.update([makeRunner({ velocity: HOT_VELOCITY, position: 100 })], 2.0);
     expect(lines2.some((l) => l.type === "HOT_PACE")).toBe(false);
   });
 
@@ -217,10 +205,7 @@ describe("NarrativeGenerator — HOT_PACE detection", () => {
     gen.update([makeRunner({ velocity: HOT_VELOCITY })], 0.1);
 
     // At 70% of race distance with hot velocity — should not trigger
-    const lines = gen.update(
-      [makeRunner({ velocity: HOT_VELOCITY, position: 1120 })],
-      50.0,
-    );
+    const lines = gen.update([makeRunner({ velocity: HOT_VELOCITY, position: 1120 })], 50.0);
 
     expect(lines.some((l) => l.type === "HOT_PACE")).toBe(false);
   });

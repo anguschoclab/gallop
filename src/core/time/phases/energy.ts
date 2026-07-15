@@ -60,122 +60,125 @@ export const energyPhase = {
 
     const horses = Object.fromEntries(
       Object.values(state.horses).map((h) => {
-      // Skip energy restoration for deceased horses
-      if (h.lifecycleStatus === "deceased") return [h.id, h] as const;
+        // Skip energy restoration for deceased horses
+        if (h.lifecycleStatus === "deceased") return [h.id, h] as const;
 
-      // Get staff bonuses for this stable
-      const stableId = h.stableId ?? "";
-      const roleMap = staffByStableAndRole.get(stableId);
+        // Get staff bonuses for this stable
+        const stableId = h.stableId ?? "";
+        const roleMap = staffByStableAndRole.get(stableId);
 
-      const nutritionist = roleMap?.get("nutritionist");
-      const nutritionistBonus = nutritionist ? nutritionist.bonusValue : 0;
+        const nutritionist = roleMap?.get("nutritionist");
+        const nutritionistBonus = nutritionist ? nutritionist.bonusValue : 0;
 
-      const vet = roleMap?.get("veterinarian");
-      const vetBonus = vet ? vet.bonusValue : 0;
+        const vet = roleMap?.get("veterinarian");
+        const vetBonus = vet ? vet.bonusValue : 0;
 
-      // Health status recovery logic
-      let newHealthStatus = h.healthStatus;
-      if (h.healthStatus === "covering_sickness" && h.healthStatusDay) {
-        const daysSinceOnset = newDay - h.healthStatusDay;
-        const effectiveDuration = COVERING_SICKNESS_DURATION * (1 - vetBonus);
-        if (daysSinceOnset >= effectiveDuration) {
-          newHealthStatus = "recovering";
-        }
-      } else if (h.healthStatus === "recovering" && h.healthStatusDay) {
-        const daysSinceOnset = newDay - h.healthStatusDay;
-        const effectiveDuration = (COVERING_SICKNESS_DURATION + RECOVERY_DAYS) * (1 - vetBonus);
-        if (daysSinceOnset >= effectiveDuration) {
-          newHealthStatus = "healthy";
-        }
-      } else if (h.healthStatus === "other_illness" && h.healthStatusDay) {
-        const daysSinceOnset = newDay - h.healthStatusDay;
-        const minDuration = ILLNESS_DURATION_MIN * (1 - vetBonus);
-        const maxDuration = ILLNESS_DURATION_MAX * (1 - vetBonus);
-        if (daysSinceOnset >= minDuration && daysSinceOnset <= maxDuration) {
-          if (context.dailyRng.next() < 0.3 + vetBonus) {
+        // Health status recovery logic
+        let newHealthStatus = h.healthStatus;
+        if (h.healthStatus === "covering_sickness" && h.healthStatusDay) {
+          const daysSinceOnset = newDay - h.healthStatusDay;
+          const effectiveDuration = COVERING_SICKNESS_DURATION * (1 - vetBonus);
+          if (daysSinceOnset >= effectiveDuration) {
             newHealthStatus = "recovering";
           }
-        } else if (daysSinceOnset > maxDuration) {
-          newHealthStatus = "recovering";
-        }
-      }
-
-      // Illness check system (only for healthy horses)
-      if (newHealthStatus === "healthy" && h.genotype && h.genotype.health) {
-        const immunityTier = h.genotype.markers.immunity;
-        const epmRisk = resolveEpmRisk(h.genotype.health.epm);
-
-        // EPM susceptibility: treat immunity as one tier lower for illness check
-        let effectiveImmunityTier = immunityTier;
-        if (epmRisk > 0) {
-          if (immunityTier === "excellent") effectiveImmunityTier = "good";
-          else if (immunityTier === "good") effectiveImmunityTier = "fair";
-          else if (immunityTier === "fair") effectiveImmunityTier = "poor";
-        }
-
-        // Daily illness chance based on immunity tier
-        const illnessChance: Record<"excellent" | "good" | "fair" | "poor", number> = {
-          excellent: 0.001, // 0.1%
-          good: 0.003, // 0.3%
-          fair: 0.006, // 0.6%
-          poor: 0.01, // 1.0%
-        };
-
-        if (context.dailyRng.next() < illnessChance[effectiveImmunityTier]) {
-          newHealthStatus = "other_illness";
-          // healthStatusDay will be set below
-        }
-      }
-
-      // Energy restoration (modified by recoveryRate, barn facility, and nutritionist staff)
-      const barnBonus = state.facilities ? getFacilityBonus(state.facilities, "barn") : 0;
-      const baseEnergyGain = 35 * (1 + barnBonus + nutritionistBonus);
-      const energyGain = baseEnergyGain * (h.recoveryRate || 1.0);
-      const newEnergy = Math.min(100, h.energy + energyGain);
-
-      // Dynamic Form: Recovery points regeneration (small daily recovery)
-      const currentRecoveryPoints = h.recoveryPoints ?? 100;
-      const baseRecoveryGain = 10 * (1 + barnBonus + nutritionistBonus);
-      const recoveryGain = baseRecoveryGain * (h.recoveryRate || 1.0);
-      const newRecoveryPoints = Math.min(100, currentRecoveryPoints + recoveryGain);
-
-      // --- BANISTER DECAY ---
-      const currentFitness = h.fitness ?? 0;
-      const currentFatigue = h.fatigue ?? 0;
-
-      const newFitness = decayValue(currentFitness, 1, BANISTER_CONSTANTS.FITNESS_TAU);
-      const newFatigue = decayValue(currentFatigue, 1, BANISTER_CONSTANTS.FATIGUE_TAU);
-      const newPeakingIndex = calculatePeakingIndex(newFitness, newFatigue);
-      // --- END BANISTER DECAY ---
-
-      // --- ACCLIMATIZATION DECAY ---
-      if (h.outpostId) {
-        const outpost = outpostMap.get(h.outpostId);
-        if (outpost && outpost.acclimatizationDays?.[h.id] > 0) {
-          const remainingDays = outpost.acclimatizationDays[h.id] - 1;
-          if (!acclimatizationUpdates.has(h.outpostId)) {
-            acclimatizationUpdates.set(h.outpostId, new Map<string, number>());
+        } else if (h.healthStatus === "recovering" && h.healthStatusDay) {
+          const daysSinceOnset = newDay - h.healthStatusDay;
+          const effectiveDuration = (COVERING_SICKNESS_DURATION + RECOVERY_DAYS) * (1 - vetBonus);
+          if (daysSinceOnset >= effectiveDuration) {
+            newHealthStatus = "healthy";
           }
-          acclimatizationUpdates.get(h.outpostId)!.set(h.id, remainingDays);
+        } else if (h.healthStatus === "other_illness" && h.healthStatusDay) {
+          const daysSinceOnset = newDay - h.healthStatusDay;
+          const minDuration = ILLNESS_DURATION_MIN * (1 - vetBonus);
+          const maxDuration = ILLNESS_DURATION_MAX * (1 - vetBonus);
+          if (daysSinceOnset >= minDuration && daysSinceOnset <= maxDuration) {
+            if (context.dailyRng.next() < 0.3 + vetBonus) {
+              newHealthStatus = "recovering";
+            }
+          } else if (daysSinceOnset > maxDuration) {
+            newHealthStatus = "recovering";
+          }
         }
-      }
-      // --- END ACCLIMATIZATION ---
 
-      return [h.id, {
-        ...h,
-        energy: newEnergy,
-        recoveryPoints: newRecoveryPoints,
-        fitness: newFitness,
-        fatigue: newFatigue,
-        peakingIndex: newPeakingIndex,
-        healthStatus: newHealthStatus,
-        healthStatusDay:
-          newHealthStatus !== h.healthStatus && newHealthStatus !== "healthy"
-            ? newDay
-            : h.healthStatusDay,
-        activeInjury: newHealthStatus === "healthy" ? undefined : h.activeInjury,
-      }] as const;
-    }),
+        // Illness check system (only for healthy horses)
+        if (newHealthStatus === "healthy" && h.genotype && h.genotype.health) {
+          const immunityTier = h.genotype.markers.immunity;
+          const epmRisk = resolveEpmRisk(h.genotype.health.epm);
+
+          // EPM susceptibility: treat immunity as one tier lower for illness check
+          let effectiveImmunityTier = immunityTier;
+          if (epmRisk > 0) {
+            if (immunityTier === "excellent") effectiveImmunityTier = "good";
+            else if (immunityTier === "good") effectiveImmunityTier = "fair";
+            else if (immunityTier === "fair") effectiveImmunityTier = "poor";
+          }
+
+          // Daily illness chance based on immunity tier
+          const illnessChance: Record<"excellent" | "good" | "fair" | "poor", number> = {
+            excellent: 0.001, // 0.1%
+            good: 0.003, // 0.3%
+            fair: 0.006, // 0.6%
+            poor: 0.01, // 1.0%
+          };
+
+          if (context.dailyRng.next() < illnessChance[effectiveImmunityTier]) {
+            newHealthStatus = "other_illness";
+            // healthStatusDay will be set below
+          }
+        }
+
+        // Energy restoration (modified by recoveryRate, barn facility, and nutritionist staff)
+        const barnBonus = state.facilities ? getFacilityBonus(state.facilities, "barn") : 0;
+        const baseEnergyGain = 35 * (1 + barnBonus + nutritionistBonus);
+        const energyGain = baseEnergyGain * (h.recoveryRate || 1.0);
+        const newEnergy = Math.min(100, h.energy + energyGain);
+
+        // Dynamic Form: Recovery points regeneration (small daily recovery)
+        const currentRecoveryPoints = h.recoveryPoints ?? 100;
+        const baseRecoveryGain = 10 * (1 + barnBonus + nutritionistBonus);
+        const recoveryGain = baseRecoveryGain * (h.recoveryRate || 1.0);
+        const newRecoveryPoints = Math.min(100, currentRecoveryPoints + recoveryGain);
+
+        // --- BANISTER DECAY ---
+        const currentFitness = h.fitness ?? 0;
+        const currentFatigue = h.fatigue ?? 0;
+
+        const newFitness = decayValue(currentFitness, 1, BANISTER_CONSTANTS.FITNESS_TAU);
+        const newFatigue = decayValue(currentFatigue, 1, BANISTER_CONSTANTS.FATIGUE_TAU);
+        const newPeakingIndex = calculatePeakingIndex(newFitness, newFatigue);
+        // --- END BANISTER DECAY ---
+
+        // --- ACCLIMATIZATION DECAY ---
+        if (h.outpostId) {
+          const outpost = outpostMap.get(h.outpostId);
+          if (outpost && outpost.acclimatizationDays?.[h.id] > 0) {
+            const remainingDays = outpost.acclimatizationDays[h.id] - 1;
+            if (!acclimatizationUpdates.has(h.outpostId)) {
+              acclimatizationUpdates.set(h.outpostId, new Map<string, number>());
+            }
+            acclimatizationUpdates.get(h.outpostId)!.set(h.id, remainingDays);
+          }
+        }
+        // --- END ACCLIMATIZATION ---
+
+        return [
+          h.id,
+          {
+            ...h,
+            energy: newEnergy,
+            recoveryPoints: newRecoveryPoints,
+            fitness: newFitness,
+            fatigue: newFatigue,
+            peakingIndex: newPeakingIndex,
+            healthStatus: newHealthStatus,
+            healthStatusDay:
+              newHealthStatus !== h.healthStatus && newHealthStatus !== "healthy"
+                ? newDay
+                : h.healthStatusDay,
+            activeInjury: newHealthStatus === "healthy" ? undefined : h.activeInjury,
+          },
+        ] as const;
+      }),
     );
 
     // Apply acclimatization decay updates to a fresh npcStables array.

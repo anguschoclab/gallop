@@ -13,7 +13,8 @@ import { horseMarketValue } from "@/core/horse/pricing";
 import { generateUUID } from "@/core/uuid";
 import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/constants";
 import { formatCurrency } from "@/core/common/formatting";
-import type { StoreGet } from "../types";
+import type { StoreSet, StoreGet } from "../types";
+import type { AnyIntent } from "@/core/resolver/intents";
 import { requireHorse, requireOwned } from "../guards";
 
 export type AuctionSlice = {
@@ -58,9 +59,9 @@ export type AuctionSlice = {
  * @returns Auction slice with actions
  */
 export function createAuctionSlice(
-  set: any,
+  set: StoreSet,
   get: StoreGet,
-  enqueueIntent: (intent: any) => void,
+  enqueueIntent: (intent: AnyIntent) => void,
 ): AuctionSlice {
   return {
     consignHorse: (horseId, saleId, reservePrice) => {
@@ -136,7 +137,7 @@ export function createAuctionSlice(
                         ...l,
                         bidHistory: [
                           ...(l.bidHistory || []),
-                          { bidderId: "player", amount, day: s.day },
+                          { stableId: "player", amount, tick: s.day },
                         ],
                       }
                     : l,
@@ -171,7 +172,7 @@ export function createAuctionSlice(
       let newCash = s.cash;
       let newNpcStables = [...s.npcStables];
       let newHorses: Record<string, import("@/game/types").Horse> = { ...s.horses };
-      let newInbox = [...(s.inbox ?? [])];
+      let newInbox = [...s.inbox];
 
       for (const impact of impacts ?? []) {
         const anyImpact = impact as any;
@@ -196,7 +197,14 @@ export function createAuctionSlice(
           case "horse_transfer": {
             const { horseId: transferId, toStableId } = anyImpact;
             if (newHorses[transferId]) {
-              newHorses = { ...newHorses, [transferId]: { ...newHorses[transferId], stableId: toStableId, owned: !toStableId } };
+              newHorses = {
+                ...newHorses,
+                [transferId]: {
+                  ...newHorses[transferId],
+                  stableId: toStableId,
+                  owned: !toStableId,
+                },
+              };
             }
             break;
           }

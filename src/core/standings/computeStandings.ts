@@ -25,17 +25,25 @@ export interface ComputeStandingsResult {
   playerRank: number;
 }
 
+export type StandingsState = Pick<
+  GameState,
+  "day" | "horses" | "npcStables" | "npcAIManager" | "playerProfile"
+>;
+
 export function computeSeasonStandings(
-  state: GameState,
+  state: StandingsState,
   rangeDays: number,
 ): ComputeStandingsResult {
   const day = state.day;
   const windowStart = day - rangeDays + 1;
-  const totals = new Map<string, {
-    range: number;
-    sparkline: number[];
-    recent: { raceName: string; position: number; day: number; purseEarned: number }[];
-  }>();
+  const totals = new Map<
+    string,
+    {
+      range: number;
+      sparkline: number[];
+      recent: { raceName: string; position: number; day: number; purseEarned: number }[];
+    }
+  >();
 
   const bucket = (id: string) => {
     let b = totals.get(id);
@@ -58,7 +66,12 @@ export function computeSeasonStandings(
         b.sparkline[idx] += earned;
         b.range += earned;
       }
-      b.recent.push({ raceName: r.raceName, position: r.position, day: r.day, purseEarned: earned });
+      b.recent.push({
+        raceName: r.raceName,
+        position: r.position,
+        day: r.day,
+        purseEarned: earned,
+      });
     }
   }
 
@@ -75,19 +88,14 @@ export function computeSeasonStandings(
     sparkline: playerBucket?.sparkline ?? new Array(rangeDays).fill(0),
     prestige: 0,
     winsVsPlayer: 0,
-    recentResults: (playerBucket?.recent ?? [])
-      .sort((a, b) => b.day - a.day)
-      .slice(0, 5),
+    recentResults: (playerBucket?.recent ?? []).sort((a, b) => b.day - a.day).slice(0, 5),
   });
 
   for (const s of state.npcStables ?? []) {
     const b = totals.get(s.id);
     const ai = state.npcAIManager?.stableStates?.[s.id];
     const prestige = ai?.regionalPrestige
-      ? Object.values(ai.regionalPrestige).reduce(
-          (acc: number, v: number) => acc + (Number(v) || 0),
-          0,
-        )
+      ? Object.values(ai.regionalPrestige).reduce((acc, v) => acc + (v || 0), 0)
       : 0;
     list.push({
       stableId: s.id,
@@ -98,9 +106,7 @@ export function computeSeasonStandings(
       sparkline: b?.sparkline ?? new Array(rangeDays).fill(0),
       prestige,
       winsVsPlayer: ai?.winsAgainstPlayer ?? 0,
-      recentResults: (b?.recent ?? [])
-        .sort((a, c) => c.day - a.day)
-        .slice(0, 5),
+      recentResults: (b?.recent ?? []).sort((a, c) => c.day - a.day).slice(0, 5),
     });
   }
 
@@ -111,7 +117,9 @@ export function computeSeasonStandings(
   return { standings: list, playerRank };
 }
 
-function computeFallbackPurse(r: NonNullable<import("@/game/types").Horse["raceHistory"]>[number]): number {
+function computeFallbackPurse(
+  r: NonNullable<GameState["horses"][string]["raceHistory"]>[number],
+): number {
   if (!r.purse || !r.position || r.position < 1) return 0;
   const split = r.grade ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
   if (r.position - 1 >= split.length) return 0;

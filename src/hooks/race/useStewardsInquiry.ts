@@ -31,8 +31,8 @@ type FinishEntry = { horseId: string; position: number; time: number };
  * and push to the store if one fires.
  */
 export function useStewardsInquiry() {
-  const addStewardsInquiry = useGame((s: any) => s.addStewardsInquiry);
-  const day = useGame((s: any) => s.day);
+  const addStewardsInquiry = useGame((s) => s.addStewardsInquiry);
+  const day = useGame((s) => s.day);
 
   return useCallback(
     (race: Race, result: FinishEntry[]) => {

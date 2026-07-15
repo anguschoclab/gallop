@@ -145,9 +145,7 @@ describe("useLeaderboardControls", () => {
   });
 
   it("applies default sort on init", () => {
-    const { result } = renderHook(() =>
-      useLeaderboardControls({ items, sortOptions, sortFns }),
-    );
+    const { result } = renderHook(() => useLeaderboardControls({ items, sortOptions, sortFns }));
     expect(result.current.sortValue).toBe("asc");
   });
 

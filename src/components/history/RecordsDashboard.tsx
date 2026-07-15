@@ -8,8 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Link } from "@tanstack/react-router";
 
 export const RecordsDashboard: React.FC = () => {
-  const hallOfFame = useGame((s) => s.hallOfFame || []);
-  const seasonRecords = useGame((s) => s.seasonRecords || []);
+  const hallOfFame = useGame((s) => s.hallOfFame);
+  const seasonRecords = useGame((s) => s.seasonRecords);
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredHOF = hallOfFame.filter((e) =>
@@ -153,7 +153,7 @@ export const RecordsDashboard: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="text-sm">
-                      {seasonRecords
+                      {[...seasonRecords]
                         .sort((a, b) => b.day - a.day)
                         .map((record) => (
                           <tr

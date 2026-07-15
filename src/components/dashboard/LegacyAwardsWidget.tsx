@@ -5,8 +5,8 @@ import { Trophy, ChevronRight } from "lucide-react";
 
 export function LegacyAwardsWidget() {
   const awards = useGame((s) => s.awards);
-  const playerAwards = awards?.filter((a: any) => !a.stableId) ?? [];
-  const g1Wins = awards?.filter((a: any) => a.grade === "G1").length ?? 0;
+  const playerAwards = awards.filter((a) => !a.stableId);
+  const g1Wins = awards.filter((a) => a.isHistoric).length;
 
   return (
     <Card className="lg:col-span-4 border-gold-muted bg-slate-900/40 flex flex-col relative overflow-hidden">

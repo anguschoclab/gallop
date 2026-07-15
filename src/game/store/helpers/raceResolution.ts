@@ -25,7 +25,11 @@ export type RankedResult = { horseId: string; position: number; time: number; dn
  * @param isGraded - Whether the race is graded (uses GRADED_PRIZE_SPLIT)
  * @returns Array of prize amounts for each finishing position
  */
-export function computePayoutSplits(purse: number, finisherCount: number, isGraded?: boolean): number[] {
+export function computePayoutSplits(
+  purse: number,
+  finisherCount: number,
+  isGraded?: boolean,
+): number[] {
   const split = isGraded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
   const splits: number[] = [];
   let runningPaid = 0;

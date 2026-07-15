@@ -259,7 +259,9 @@ describe("bucketPayloadSchema", () => {
 
 describe("raceProgressSchema", () => {
   it("accepts valid progress object", () => {
-    expect(raceProgressSchema.safeParse({ simTime: 5, paused: false, speed: 2 }).success).toBe(true);
+    expect(raceProgressSchema.safeParse({ simTime: 5, paused: false, speed: 2 }).success).toBe(
+      true,
+    );
   });
 
   it("rejects simTime as string", () => {

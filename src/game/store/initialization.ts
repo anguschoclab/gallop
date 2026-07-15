@@ -161,7 +161,11 @@ export function createInitialState(options?: NewGameOptions): GameState {
   );
 
   // Build npcAIManager with intro marks for seed-gazette'd stables
-  const npcAIManager = { stableStates: {} as Record<string, ReturnType<typeof createStableAIState>>, globalDay: 1, regionalKings: {} as Record<string, string> };
+  const npcAIManager = {
+    stableStates: {} as Record<string, ReturnType<typeof createStableAIState>>,
+    globalDay: 1,
+    regionalKings: {} as Record<string, string>,
+  };
   for (const stableId of introStableIds) {
     const stable = updatedStables.find((s) => s.id === stableId);
     if (stable) {
@@ -225,6 +229,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     lastFounderUpdateDay: 0,
     syndicates: {},
     syndicateInvestors: {},
+    shareTransactions: [],
     staffPool: [],
     hiredStaff: [],
     breedingPrograms: [],

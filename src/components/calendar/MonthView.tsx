@@ -30,7 +30,7 @@ export function MonthView({ races, region, currentDay }: MonthViewProps) {
             <CardTitle className="text-xl">{month}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            {monthRaces
+            {[...monthRaces]
               .sort((a, b) => a.day - b.day)
               .map((race) => (
                 <CalendarRaceItem key={race.id} race={race} region={region} />

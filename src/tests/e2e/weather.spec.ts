@@ -21,11 +21,14 @@ function buildWeatherState(trackId: string, day: number, pattern: string) {
   };
 }
 
-function seedWeatherState(page: Page, overrides?: {
-  withInbox?: boolean;
-  withForecast?: boolean;
-  withCurrentWeather?: boolean;
-}) {
+function seedWeatherState(
+  page: Page,
+  overrides?: {
+    withInbox?: boolean;
+    withForecast?: boolean;
+    withCurrentWeather?: boolean;
+  },
+) {
   const opts = {
     withInbox: true,
     withForecast: true,
@@ -43,9 +46,7 @@ function seedWeatherState(page: Page, overrides?: {
   }
   if (opts.withForecast) {
     weather.forecast = {
-      [trackId]: FORECAST_PATTERNS.map((p, i) =>
-        buildWeatherState(trackId, 6 + i, p),
-      ),
+      [trackId]: FORECAST_PATTERNS.map((p, i) => buildWeatherState(trackId, 6 + i, p)),
     };
   }
 
@@ -130,10 +131,7 @@ function seedWeatherState(page: Page, overrides?: {
         (window as any).indexedDB = undefined;
       }
     }
-    localStorage.setItem(
-      "gallop_game_state_fallback",
-      JSON.stringify(data),
-    );
+    localStorage.setItem("gallop_game_state_fallback", JSON.stringify(data));
   }, payload);
 }
 
@@ -144,12 +142,12 @@ test.describe("Weather E2E", () => {
     await seedWeatherState(page);
   });
 
-  test("RaceCard renders weather forecast strip and condition badge", async ({
-    page,
-  }) => {
+  test("RaceCard renders weather forecast strip and condition badge", async ({ page }) => {
     await page.goto("/racing?tab=races");
 
-    await expect(page.getByRole("heading", { name: "Race Schedule" })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("heading", { name: "Race Schedule" })).toBeVisible({
+      timeout: 15_000,
+    });
 
     const forecast = page.locator('[aria-label="7-day forecast"]');
     await expect(forecast).toBeVisible();
@@ -164,9 +162,7 @@ test.describe("Weather E2E", () => {
     await expect(page.getByText("Message Center")).toBeVisible({ timeout: 15_000 });
 
     await expect(page.getByText("Weather Alert")).toBeVisible();
-    await expect(
-      page.getByText("Storm forecast at Test Track"),
-    ).toBeVisible();
+    await expect(page.getByText("Storm forecast at Test Track")).toBeVisible();
 
     const unreadDot = page.locator(".bg-gold.animate-pulse");
     await expect(unreadDot).toBeVisible();
@@ -175,7 +171,9 @@ test.describe("Weather E2E", () => {
   test("Weather forecast icons render correct patterns", async ({ page }) => {
     await page.goto("/racing?tab=races");
 
-    await expect(page.getByRole("heading", { name: "Race Schedule" })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("heading", { name: "Race Schedule" })).toBeVisible({
+      timeout: 15_000,
+    });
 
     const forecastContainer = page.locator('[aria-label="7-day forecast"]');
     await expect(forecastContainer).toBeVisible();
@@ -185,16 +183,16 @@ test.describe("Weather E2E", () => {
 
     const uniquePatterns = [...new Set(FORECAST_PATTERNS)];
     for (const pattern of uniquePatterns) {
-      await expect(
-        forecastContainer.locator(`[aria-label="${pattern}"]`).first(),
-      ).toBeVisible();
+      await expect(forecastContainer.locator(`[aria-label="${pattern}"]`).first()).toBeVisible();
     }
   });
 
   test("Track condition badge displays correct text", async ({ page }) => {
     await page.goto("/racing?tab=races");
 
-    await expect(page.getByRole("heading", { name: "Race Schedule" })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("heading", { name: "Race Schedule" })).toBeVisible({
+      timeout: 15_000,
+    });
 
     const badge = page.locator("span.cursor-help", { hasText: "heavy" });
     await expect(badge).toBeVisible();
@@ -206,7 +204,9 @@ test.describe("Weather E2E", () => {
   test("Weather pattern tooltips are present", async ({ page }) => {
     await page.goto("/racing?tab=races");
 
-    await expect(page.getByRole("heading", { name: "Race Schedule" })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("heading", { name: "Race Schedule" })).toBeVisible({
+      timeout: 15_000,
+    });
 
     const forecastContainer = page.locator('[aria-label="7-day forecast"]');
     await expect(forecastContainer).toBeVisible();
@@ -236,9 +236,7 @@ test.describe("Weather E2E", () => {
 
     await expect(page.getByText("Message Center")).toBeVisible({ timeout: 15_000 });
     await expect(page.getByText("Weather Alert")).toBeVisible();
-    await expect(
-      page.getByText("Storm forecast at Test Track"),
-    ).toBeVisible();
+    await expect(page.getByText("Storm forecast at Test Track")).toBeVisible();
 
     const inboxLink = page.getByRole("link", { name: /Inbox/ });
     const unreadBadge = inboxLink.locator(".bg-red-600");

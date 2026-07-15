@@ -28,7 +28,7 @@ export function AppShell() {
   const [autoSimOpen, setAutoSimOpen] = useState(false);
 
   const inbox = useGame((s: StoreType) => s.inbox);
-  const unreadCount = inbox?.filter((m) => !m.readAt).length ?? 0;
+  const unreadCount = inbox.filter((m) => !m.readAt).length;
 
   const awards = useAwards();
   const { showCeremony, setShowCeremony, pendingCeremonies, clearPendingCeremonies } =

@@ -14,11 +14,7 @@ import {
 vi.mock("@/components/ui/select", () => {
   return {
     Select: ({ value, onValueChange, children }: any) => (
-      <select
-        data-testid="select"
-        value={value}
-        onChange={(e) => onValueChange?.(e.target.value)}
-      >
+      <select data-testid="select" value={value} onChange={(e) => onValueChange?.(e.target.value)}>
         {children}
       </select>
     ),
@@ -192,9 +188,7 @@ describe("LeaderboardPrimitives", () => {
 
   describe("LeaderboardRow mobile classes", () => {
     it("has responsive padding classes", () => {
-      const { container } = render(
-        <LeaderboardRow rank={1} name="Test" value="100" />,
-      );
+      const { container } = render(<LeaderboardRow rank={1} name="Test" value="100" />);
       const row = container.firstChild as HTMLElement;
       expect(row.className).toContain("px-3");
       expect(row.className).toContain("sm:px-6");
@@ -211,9 +205,7 @@ describe("LeaderboardPrimitives", () => {
     });
 
     it("does not have min-h-[44px] when onClick not provided", () => {
-      const { container } = render(
-        <LeaderboardRow rank={1} name="Test" value="100" />,
-      );
+      const { container } = render(<LeaderboardRow rank={1} name="Test" value="100" />);
       const row = container.firstChild as HTMLElement;
       expect(row.className).not.toContain("min-h-[44px]");
     });
@@ -231,12 +223,7 @@ describe("LeaderboardPrimitives", () => {
     });
 
     it("renders rightSlot when provided", () => {
-      render(
-        <LeaderboardHeading
-          title="Test"
-          rightSlot={<button>Action</button>}
-        />,
-      );
+      render(<LeaderboardHeading title="Test" rightSlot={<button>Action</button>} />);
       expect(screen.getByText("Action")).toBeTruthy();
     });
   });
@@ -256,9 +243,7 @@ describe("LeaderboardPrimitives", () => {
   describe("LeaderboardEmpty", () => {
     it("renders default message", () => {
       render(<LeaderboardEmpty />);
-      expect(
-        screen.getByText(/No records found yet/),
-      ).toBeTruthy();
+      expect(screen.getByText(/No records found yet/)).toBeTruthy();
     });
 
     it("renders custom message", () => {

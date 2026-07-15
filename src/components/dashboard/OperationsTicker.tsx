@@ -10,7 +10,9 @@ export function OperationsTicker() {
   const hiredStaff = useGame((s) => s.hiredStaff);
   const syndicates = useGame((s) => s.syndicates);
 
-  const activeHorses = Object.values(horses).filter((h) => h.owned && h.lifecycleStatus === "active");
+  const activeHorses = Object.values(horses).filter(
+    (h) => h.owned && h.lifecycleStatus === "active",
+  );
   const playerSyndicates = Array.isArray(syndicates)
     ? syndicates.filter((s: any) => s.ownerId === "player")
     : [];

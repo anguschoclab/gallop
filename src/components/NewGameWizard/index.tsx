@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useNewGameWizard, type Step } from "@/hooks/shared/useNewGameWizard";
 import { StepIdentity } from "./steps/StepIdentity";
 import { StepSilks } from "./steps/StepSilks";
@@ -79,12 +79,19 @@ export function NewGameWizard() {
               Back
             </Button>
             {step < 3 ? (
-              <Button
-                disabled={!canProceed || submitting}
-                onClick={() => setStep((s) => Math.min(3, s + 1) as Step)}
-              >
-                Continue
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span tabIndex={canProceed ? -1 : 0} className="inline-flex">
+                    <Button
+                      disabled={!canProceed || submitting}
+                      onClick={() => setStep((s) => Math.min(3, s + 1) as Step)}
+                    >
+                      Continue
+                    </Button>
+                  </span>
+                </TooltipTrigger>
+                {!canProceed && <TooltipContent>Complete this step to continue</TooltipContent>}
+              </Tooltip>
             ) : (
               <Button
                 disabled={!selectedBackstory || !silkValid || submitting}

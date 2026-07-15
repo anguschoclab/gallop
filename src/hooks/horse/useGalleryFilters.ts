@@ -24,7 +24,13 @@ export const COAT_COLORS = [
 
 export function useGalleryFilters() {
   const allHorses = useGameWithShallow((s) => s.horses);
-  const horses = useMemo(() => Object.values(allHorses).filter((h: any) => h.owned).map(ensurePhenotypeResolved), [allHorses]);
+  const horses = useMemo(
+    () =>
+      Object.values(allHorses)
+        .filter((h: any) => h.owned)
+        .map(ensurePhenotypeResolved),
+    [allHorses],
+  );
   const [coatFilter, setCoatFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"ovr" | "age" | "name">("ovr");
 

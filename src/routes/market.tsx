@@ -57,7 +57,11 @@ function MarketPage() {
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={(v) => setActiveTab(v as "bloodstock" | "syndicate")}
+        className="space-y-6"
+      >
         <div className="flex items-center justify-between bg-slate-900/40 p-1 border border-white/5 rounded-lg">
           <TabsList className="bg-transparent h-10 gap-2">
             <TabsTrigger

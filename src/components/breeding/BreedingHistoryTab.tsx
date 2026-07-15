@@ -78,27 +78,28 @@ export function BreedingHistoryTab({ pageData }: BreedingHistoryTabProps) {
       };
     });
 
-  const { sortValue, setSortValue, filterValue, setFilterValue, processed } = useLeaderboardControls<FoalRecord>({
-    items: foalRecords,
-    sortOptions: SORT_OPTIONS,
-    filterOptions: FILTER_OPTIONS,
-    sortFns: SORT_FNS,
-    filterFns: FILTER_FNS,
-    defaultSort: "recent",
-    defaultFilter: "all",
-  });
+  const { sortValue, setSortValue, filterValue, setFilterValue, processed } =
+    useLeaderboardControls<FoalRecord>({
+      items: foalRecords,
+      sortOptions: SORT_OPTIONS,
+      filterOptions: FILTER_OPTIONS,
+      sortFns: SORT_FNS,
+      filterFns: FILTER_FNS,
+      defaultSort: "recent",
+      defaultFilter: "all",
+    });
 
   return (
     <div className="space-y-4">
-      <LeaderboardHeading
-        title="Past Foals"
-        description="Breeding records and foal outcomes."
-      />
+      <LeaderboardHeading title="Past Foals" description="Breeding records and foal outcomes." />
 
       {foalRecords.length === 0 ? (
         <LeaderboardEmpty message="No foals born yet." />
       ) : (
-        <LeaderboardShell title="Foaling Records" icon={<FileText className="h-4 w-4 text-primary" />}>
+        <LeaderboardShell
+          title="Foaling Records"
+          icon={<FileText className="h-4 w-4 text-primary" />}
+        >
           <LeaderboardControlsBar
             sortOptions={SORT_OPTIONS}
             sortValue={sortValue}
@@ -128,15 +129,15 @@ export function BreedingHistoryTab({ pageData }: BreedingHistoryTabProps) {
                         Name Foal
                       </Button>
                     ) : record.foalId === null ? (
-                      <Badge variant="outline" className="text-xs">Sold</Badge>
+                      <Badge variant="outline" className="text-xs">
+                        Sold
+                      </Badge>
                     ) : undefined
                   }
                   value={`D${record.dueDay}`}
                   valueLabel="Born"
                 />
-                {foal && sire && dam && (
-                  <FoalInheritancePanel foal={foal} sire={sire} dam={dam} />
-                )}
+                {foal && sire && dam && <FoalInheritancePanel foal={foal} sire={sire} dam={dam} />}
               </div>
             );
           })}
