@@ -424,6 +424,12 @@ export function generateWeeklyFlavorNews(horses: Horse[], day: number, rng: Rng)
     `Weekly Roundup: Horses, Handlers, and Headlines`,
     `The Track Beat: Weekly Racing Bulletin`,
     `From the Paddock: Weekly Racing Notes`,
+    `The Week That Was: Highlights from the Circuit`,
+    `Racing Review: This Week's Major Talking Points`,
+    `Trackside Chatter: Weekly Racing News`,
+    `The Monday Morning Gallop: Weekly Recap`,
+    `Hoofbeats and Headlines: Weekly Review`,
+    `The Racing Week: Winners, Losers, and News`,
   ];
 
   const bodiesWithHorse = topEarner
@@ -436,6 +442,12 @@ export function generateWeeklyFlavorNews(horses: Horse[], day: number, rng: Rng)
         `The backstretch chatter this week centered on ${topEarner.name}, whose $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} in earnings makes them the horse to beat. Pundits are already speculating about their next target.`,
         `As another week passes, ${topEarner.name} sits atop the earnings tree with $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()}. The racing world waits with bated breath for their next appearance.`,
         `From morning workouts to evening gallops, the week belonged to ${topEarner.name} in the headlines. With $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} in career earnings, every move is scrutinized.`,
+        `The racing world took a breath this week, but ${topEarner.name} remains the undisputed heavyweight with $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} earned. Every trainer is wondering how to beat them.`,
+        `It was another week of speculation surrounding ${topEarner.name}. Boasting $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} in lifetime earnings, the superstar is the benchmark for success this season.`,
+        `All conversations trackside eventually turn to ${topEarner.name}. The leading earner's $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} bankroll is a testament to their dominance, and fans are eager for their next start.`,
+        `While the week was light on major stakes action, ${topEarner.name} and their $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} bankroll dominated the headlines. The sport is waiting to see where they will run next.`,
+        `The week concludes with ${topEarner.name} firmly entrenched as the sport's top earner. With $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} to their name, the pressure to perform remains immense.`,
+        `Whispers on the backstretch continue to focus on ${topEarner.name}. Having amassed $${(topEarner.lifetimeEarnings ?? 0).toLocaleString()} in earnings, the horse is setting the standard for greatness.`,
       ]
     : [];
 
@@ -448,6 +460,12 @@ export function generateWeeklyFlavorNews(horses: Horse[], day: number, rng: Rng)
     `The racing world caught its breath this week, with a lull in major action giving handlers a chance to assess their options and plan their next moves.`,
     `A peaceful week at the track, all things considered. The quiet routines of grooming, galloping, and grazing continue as the sport awaits its next big moment.`,
     `No fireworks this week, but the steady rhythm of the racing life carries on. The best is yet to come, and everyone on the backstretch knows it.`,
+    `A relatively calm week of racing has come to an end. Stables are quietly preparing their contenders for the major battles that lie ahead on the calendar.`,
+    `The week passed without major incident, allowing trainers to focus on the day-to-day grind. The calm atmosphere won't last long as the big race days approach.`,
+    `It's been a week of maintenance and preparation on the backstretch. With no major upsets or controversies, the focus is squarely on the upcoming stakes schedule.`,
+    `The racing circuit enjoyed a quiet week, a rare commodity in this sport. Connections are using the time to carefully plot their next moves on the chessboard.`,
+    `A tranquil week at the track. The mornings have been crisp and the work steady, with trainers keeping their powder dry for the upcoming feature events.`,
+    `No major headlines this week, just the steady rhythm of horses training and stables going about their business. The anticipation for the next big weekend is palpable.`,
   ];
 
   const bodies = topEarner ? bodiesWithHorse : genericBodies;

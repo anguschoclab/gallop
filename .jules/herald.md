@@ -17,3 +17,7 @@
 
 **Learning:** Core mid-race events like `LEAD_CHANGE`, `SURGE`, `FADE`, and `GAP_ANNOUNCEMENT`, as well as `BIOGRAPHICAL_TEMPLATES` had fewer than 10 templates, causing repetition during dense parts of a race replay.
 **Action:** Expanded these arrays in `src/assets/narrative/templates.ts` to ~16 templates each to sustain variety across multiple races without needing generator logic changes.
+## 2026-07-16 - Expanded Weekly News Variety Gap
+
+**Learning:** The weekly flavor news generator (`generateWeeklyFlavorNews`) only had 8 variants each for headlines, generic bodies, and bodies featuring the top earner. This caused rapid repetition during long play sessions where this low-importance news item frequently appears.
+**Action:** Expanded the `headlines`, `bodiesWithHorse`, and `genericBodies` arrays in `src/services/narrative/newsGenerator.ts` to 14 variants each to sustain narrative depth and immersion.
