@@ -179,7 +179,7 @@ describe("BreedingValidator Fixes", () => {
   it("should allow colt as sire and filly as dam", () => {
     const sire = createTestHorse({ id: "sire-2", gender: "colt", age: 3 });
     const dam = createTestHorse({ id: "dam-2", gender: "filly", age: 3 });
-    const state: GameState = { cash: 5000, horses: h2r([sire, dam]) } as any;
+    const state: GameState = { day: 50, cash: 5000, horses: h2r([sire, dam]) } as any;
 
     const intent = {
       type: "breeding",
