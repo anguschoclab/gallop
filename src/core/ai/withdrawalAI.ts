@@ -39,9 +39,11 @@ export interface WithdrawalDecision {
   raceId: string;
   stableId: string;
   personality: Stable["personality"];
+  horseAge: number;
   day: number;
   withdrew: boolean;
   reason?: string;
+  riskScore?: number;
   outcome?: {
     horseResult?: number;
     alternativeRaceResult?: number;
@@ -284,14 +286,17 @@ export function recordWithdrawalDecision(
   reason: string | undefined,
   currentDay: number,
 ): WithdrawalAIState {
+  const riskScore = calculateWithdrawalRisk(aiState, horse, race, stable);
   const decision: WithdrawalDecision = {
     horseId: horse.id,
     raceId: race.id,
     stableId: stable.id,
     personality: stable.personality,
+    horseAge: horse.age,
     day: currentDay,
     withdrew,
     reason,
+    riskScore,
   };
 
   const newHistory = [...aiState.withdrawalHistory, decision];
@@ -300,32 +305,9 @@ export function recordWithdrawalDecision(
   const trimmedHistory =
     newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
-  const contextKey = `${horse.age}`;
-  const value = withdrew ? -1 : 1;
-  const newLearningState = recordLearningOutcome(
-    aiState.learningState,
-    "withdrawal",
-    contextKey,
-    true,
-    value,
-    currentDay,
-    aiState.personalityState.memoryDepth,
-  );
-
-  const newPersonalityState = recordOutcome(
-    aiState.personalityState,
-    "withdrawal",
-    { raceId: race.id, horseId: horse.id },
-    true,
-    value,
-    currentDay,
-  );
-
   return {
     ...aiState,
     withdrawalHistory: trimmedHistory,
-    learningState: newLearningState,
-    personalityState: newPersonalityState,
   };
 }
 
@@ -365,25 +347,39 @@ export function recordWithdrawalOutcome(
     const newHistory = [...aiState.withdrawalHistory];
     newHistory[decisionIndex] = decision;
 
-    const contextKey = decision.personality;
+    const contextKey = `${decision.horseAge}`;
     const success = decision.withdrew
-      ? (alternativeRaceResult || 0) > (horseResult || 0)
+      ? (alternativeRaceResult || 0) < (horseResult || 0)
       : (horseResult || 0) <= 3;
+
+    const value = decision.withdrew
+      ? (horseResult || 0) - (alternativeRaceResult || 0)
+      : horseResult || 0;
 
     const newLearningState = recordLearningOutcome(
       aiState.learningState,
       "withdrawal",
       contextKey,
       success,
-      decision.withdrew ? (alternativeRaceResult || 0) - (horseResult || 0) : horseResult || 0,
+      value,
       currentDay,
       aiState.personalityState.memoryDepth,
+    );
+
+    const newPersonalityState = recordOutcome(
+      aiState.personalityState,
+      "withdrawal",
+      { raceId: decision.raceId, horseId: decision.horseId },
+      success,
+      value,
+      currentDay,
     );
 
     return {
       ...aiState,
       withdrawalHistory: newHistory,
       learningState: newLearningState,
+      personalityState: newPersonalityState,
     };
   }
 
@@ -416,7 +412,11 @@ export function getWithdrawalInsights(
   const withdrawalRate = totalDecisions > 0 ? withdrawals / totalDecisions : 0;
 
   const withdrawalDecisions = stableHistory.filter((d) => d.withdrew);
-  const avgRiskScore = withdrawalDecisions.length > 0 ? 60 : 40;
+  const decisionsWithRisk = withdrawalDecisions.filter((d) => d.riskScore !== undefined);
+  const avgRiskScore =
+    decisionsWithRisk.length > 0
+      ? decisionsWithRisk.reduce((sum, d) => sum + (d.riskScore || 0), 0) / decisionsWithRisk.length
+      : 0;
 
   const successfulWithdrawals = stableHistory.filter(
     (d) =>

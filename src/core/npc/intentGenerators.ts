@@ -393,7 +393,7 @@ function generateNpcClaimingIntents(
   const intents: ClaimingIntent[] = [];
 
   // Use persisted AI state if available, otherwise fallback to temporary state
-  const claimingAI =
+  let claimingAI =
     stableAI?.claimingAI ||
     (stableAI
       ? (stableAI.claimingAI = createClaimingAIState(stable))
@@ -419,7 +419,7 @@ function generateNpcClaimingIntents(
           continue;
 
         // Record claiming decision for learning
-        recordClaimingDecision(claimingAI, horse, race, stable, day);
+        claimingAI = recordClaimingDecision(claimingAI, horse, race, stable, day);
 
         intents.push({
           id: generateUUID(),
@@ -465,7 +465,7 @@ function generateNpcWithdrawalIntents(
   const intents: WithdrawFromClaimingIntent[] = [];
 
   // Use persisted AI state if available, otherwise fallback to temporary state
-  const withdrawalAI =
+  let withdrawalAI =
     stableAI?.withdrawalAI ||
     (stableAI
       ? (stableAI.withdrawalAI = createWithdrawalAIState(stable))
@@ -492,7 +492,7 @@ function generateNpcWithdrawalIntents(
 
       if (shouldWithdraw) {
         // Record the decision
-        recordWithdrawalDecision(
+        withdrawalAI = recordWithdrawalDecision(
           withdrawalAI,
           horse,
           race,

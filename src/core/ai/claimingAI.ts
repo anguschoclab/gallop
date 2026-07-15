@@ -32,9 +32,11 @@ export interface ClaimingDecision {
   horseRating: number;
   stableId: string;
   personality: Stable["personality"];
+  horseAge: number;
   day: number;
   success?: boolean;
   value?: number;
+  riskScore?: number;
 }
 
 /**
@@ -225,6 +227,7 @@ export function recordClaimingDecision(
   stable: Stable,
   currentDay: number,
 ): ClaimingAIState {
+  const riskScore = calculateClaimingRisk(aiState, horse, race);
   const decision: ClaimingDecision = {
     horseId: horse.id,
     raceId: race.id,
@@ -232,7 +235,9 @@ export function recordClaimingDecision(
     horseRating: calculateOverallRating(horse),
     stableId: stable.id,
     personality: stable.personality,
+    horseAge: horse.age,
     day: currentDay,
+    riskScore,
   };
 
   const newHistory = [...aiState.claimingHistory, decision];
@@ -283,10 +288,11 @@ export function recordClaimingOutcome(
     newHistory[decisionIndex] = decision;
 
     // Update learning state
+    const contextKey = `${decision.horseAge}:${decision.claimingPrice}`;
     const newLearningState = recordLearningOutcome(
       aiState.learningState,
       "claiming",
-      `${raceId}:${horseId}`,
+      contextKey,
       success,
       value,
       currentDay,
@@ -331,8 +337,12 @@ export function getClaimingInsights(
   const avgValue =
     totalClaims > 0 ? stableHistory.reduce((sum, d) => sum + (d.value || 0), 0) / totalClaims : 0;
 
-  // Calculate average risk (simplified)
-  const avgRisk = successRate < 0.5 ? 60 : 40;
+  // Calculate average risk from actual riskScore values
+  const decisionsWithRisk = stableHistory.filter((d) => d.riskScore !== undefined);
+  const avgRisk =
+    decisionsWithRisk.length > 0
+      ? decisionsWithRisk.reduce((sum, d) => sum + (d.riskScore || 0), 0) / decisionsWithRisk.length
+      : 0;
 
   return {
     totalClaims,

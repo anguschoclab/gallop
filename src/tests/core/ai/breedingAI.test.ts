@@ -281,7 +281,7 @@ describe("getProgenyTripleCrownSuccess", () => {
 });
 
 describe("adaptBreedingStrategy", () => {
-  it("BUG: mutates aiState directly instead of returning new state", () => {
+  it("does not mutate original state — returns new state", () => {
     const stable = createMockStable();
     let state = createBreedingAIState(stable);
 
@@ -294,10 +294,11 @@ describe("adaptBreedingStrategy", () => {
     const originalConfidence = state.personalityState.strategyConfidence;
     const returnedState = adaptBreedingStrategy(state, 200);
 
-    // BUG: The function mutates the original state AND returns it
-    // Verify the mutation occurred (current behavior)
-    expect(state.personalityState.strategyConfidence).not.toBe(originalConfidence);
-    expect(returnedState).toBe(state); // Returns same reference
+    // Original state should be unchanged
+    expect(state.personalityState.strategyConfidence).toBe(originalConfidence);
+    // Returned state should be a new reference with decreased confidence
+    expect(returnedState).not.toBe(state);
+    expect(returnedState.personalityState.strategyConfidence).toBe(originalConfidence - 0.05);
   });
 
   it("decreases confidence by 0.05 when > 10 decisions and successRate < 0.4", () => {
@@ -310,8 +311,8 @@ describe("adaptBreedingStrategy", () => {
     }
 
     const originalConfidence = state.personalityState.strategyConfidence;
-    adaptBreedingStrategy(state, 200);
-    expect(state.personalityState.strategyConfidence).toBe(originalConfidence - 0.05);
+    const returnedState = adaptBreedingStrategy(state, 200);
+    expect(returnedState.personalityState.strategyConfidence).toBe(originalConfidence - 0.05);
   });
 
   it("does not reduce confidence below 0.3", () => {
@@ -324,9 +325,15 @@ describe("adaptBreedingStrategy", () => {
     }
 
     // Set confidence near floor
-    state.personalityState.strategyConfidence = 0.32;
-    adaptBreedingStrategy(state, 200);
-    expect(state.personalityState.strategyConfidence).toBe(0.3);
+    state = {
+      ...state,
+      personalityState: {
+        ...state.personalityState,
+        strategyConfidence: 0.32,
+      },
+    };
+    const returnedState = adaptBreedingStrategy(state, 200);
+    expect(returnedState.personalityState.strategyConfidence).toBe(0.3);
   });
 
   it("increases confidence by 0.05 when > 10 decisions and successRate > 0.7", () => {
@@ -339,8 +346,8 @@ describe("adaptBreedingStrategy", () => {
     }
 
     const originalConfidence = state.personalityState.strategyConfidence;
-    adaptBreedingStrategy(state, 200);
-    expect(state.personalityState.strategyConfidence).toBe(originalConfidence + 0.05);
+    const returnedState = adaptBreedingStrategy(state, 200);
+    expect(returnedState.personalityState.strategyConfidence).toBe(originalConfidence + 0.05);
   });
 
   it("does not increase confidence above 1.0", () => {
@@ -352,16 +359,21 @@ describe("adaptBreedingStrategy", () => {
       state = recordBreedingOutcome(state, `sire-${i}`, `dam-${i}`, `foal-${i}`, 80, true, 200);
     }
 
-    state.personalityState.strategyConfidence = 0.98;
-    adaptBreedingStrategy(state, 200);
-    expect(state.personalityState.strategyConfidence).toBe(1.0);
+    state = {
+      ...state,
+      personalityState: {
+        ...state.personalityState,
+        strategyConfidence: 0.98,
+      },
+    };
+    const returnedState = adaptBreedingStrategy(state, 200);
+    expect(returnedState.personalityState.strategyConfidence).toBe(1.0);
   });
 
   it("no change when <= 10 decisions", () => {
     const stable = createMockStable();
     const state = createBreedingAIState(stable);
-    const originalConfidence = state.personalityState.strategyConfidence;
-    adaptBreedingStrategy(state, 200);
-    expect(state.personalityState.strategyConfidence).toBe(originalConfidence);
+    const returnedState = adaptBreedingStrategy(state, 200);
+    expect(returnedState).toBe(state);
   });
 });

@@ -355,6 +355,15 @@ describe("recordRaceEntryOutcome", () => {
     expect(newState.personalityState.learningState.outcomes.length).toBeGreaterThan(0);
   });
 
+  it("records to aiState.learningState (top-level)", () => {
+    const stable = createMockStable();
+    const state = createRaceEntryAIState(stable);
+    const horse = createMockHorse();
+    const race = createMockRace();
+    const newState = recordRaceEntryOutcome(state, horse, race, 100, true, 1);
+    expect(newState.learningState.outcomes.length).toBeGreaterThan(0);
+  });
+
   it("value = (10 - position) * 10 when success && position", () => {
     const stable = createMockStable();
     const state = createRaceEntryAIState(stable);
@@ -476,7 +485,7 @@ describe("adaptStrategy", () => {
     expect(newState).toBe(state);
   });
 
-  it("BUG: adaptStrategy reads aiState.learningState but recordRaceEntryOutcome only writes to personalityState.learningState", () => {
+  it("adaptStrategy reduces confidence when > 10 failed outcomes (learningState now populated)", () => {
     const stable = createMockStable();
     const state = createRaceEntryAIState(stable);
     const horse = createMockHorse();
@@ -488,16 +497,13 @@ describe("adaptStrategy", () => {
       currentState = recordRaceEntryOutcome(currentState, horse, race, i + 1, false, undefined);
     }
 
-    // BUG: recordRaceEntryOutcome only updates personalityState.learningState,
-    // but adaptStrategy reads from aiState.learningState.outcomes which stays empty.
-    // So adaptStrategy sees 0 outcomes and returns unchanged state.
     const originalConfidence = currentState.personalityState.strategyConfidence;
     const newState = adaptStrategy(currentState, 100);
-    expect(newState.personalityState.strategyConfidence).toBe(originalConfidence);
-    expect(newState).toBe(currentState); // Unchanged because learningState.outcomes is empty
+    expect(newState.personalityState.strategyConfidence).toBe(originalConfidence - 0.1);
+    expect(newState).not.toBe(currentState);
   });
 
-  it("BUG: does not reduce strategyConfidence below 0.3 (never triggers due to learningState bug)", () => {
+  it("does not reduce strategyConfidence below 0.3", () => {
     const stable = createMockStable();
     const state = createRaceEntryAIState(stable);
     const horse = createMockHorse();
@@ -517,10 +523,8 @@ describe("adaptStrategy", () => {
       },
     };
 
-    // BUG: adaptStrategy reads aiState.learningState.outcomes which is empty,
-    // so it never triggers the confidence reduction.
     const newState = adaptStrategy(currentState, 100);
-    expect(newState.personalityState.strategyConfidence).toBe(0.32);
+    expect(newState.personalityState.strategyConfidence).toBe(0.3);
   });
 
   it("returns unchanged when > 10 outcomes but successRate >= 0.4", () => {

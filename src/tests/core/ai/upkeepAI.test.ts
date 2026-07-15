@@ -147,37 +147,41 @@ describe("calculateMonthlyExpenseBudget", () => {
 
 describe("shouldSpendOnCategory", () => {
   it("returns false when cash < reserveTarget", () => {
-    const stable = createMockStable({ cash: 100, personality: "conservative" });
+    const stable = createMockStable({ cash: 100, id: "stable-1", personality: "conservative" });
     const state = createUpkeepAIState(stable);
-    // No horses → monthlyExpenses = 0, reserveTarget = 0
-    // cash 100 >= 0 → passes cash check
-    // Actually with 0 horses, reserveTarget = 0, so cash >= 0 always passes
-    // Need to test with horses
-    const stableWithHorses = createMockStable({ cash: 100, id: "stable-1", personality: "conservative" });
-    const stateWithHorses = createUpkeepAIState(stableWithHorses);
     const horses = [createMockHorse({ stableId: "stable-1" })];
-    // monthlyExpenses = 500, reserveTarget = 500 * 6 = 3000, cash = 100 < 3000
-    const result = shouldSpendOnCategory(stateWithHorses, "feed", 10, stableWithHorses, 1);
+    // 1 horse: monthlyExpenses = 500, reserveTarget = 500 * 6 = 3000, cash = 100 < 3000
+    const result = shouldSpendOnCategory(state, "feed", 10, stable, horses, 1);
     expect(result).toBe(false);
   });
 
   it("returns true when amount within budget and propensity", () => {
-    // shouldSpendOnCategory calls calculateMonthlyExpenseBudget with [] horses,
-    // so categoryBudget = 0, budgetRatio = amount / (0 || 1) = amount.
-    // Need amount <= spendingPropensity (aggressive base = 0.8)
     const stable = createMockStable({ cash: 1000000, id: "stable-1", personality: "aggressive" });
     const state = createUpkeepAIState(stable);
-    // amount = 0.5, budgetRatio = 0.5 <= 0.8 → true
-    const result = shouldSpendOnCategory(state, "feed", 0.5, stable, 1);
+    const horses = [createMockHorse({ stableId: "stable-1" })];
+    // 1 horse: totalBudget = 650, feed budget = 195, propensity = 0.8
+    // budgetRatio = 100 / 195 ≈ 0.51 <= 0.8 → true
+    const result = shouldSpendOnCategory(state, "feed", 100, stable, horses, 1);
     expect(result).toBe(true);
+  });
+
+  it("returns false when amount exceeds category budget", () => {
+    const stable = createMockStable({ cash: 1000000, id: "stable-1", personality: "aggressive" });
+    const state = createUpkeepAIState(stable);
+    const horses = [createMockHorse({ stableId: "stable-1" })];
+    // feed budget = 195, propensity = 0.8, max amount = 195 * 0.8 = 156
+    // amount = 200 → budgetRatio = 200/195 ≈ 1.03 > 0.8 → false
+    const result = shouldSpendOnCategory(state, "feed", 200, stable, horses, 1);
+    expect(result).toBe(false);
   });
 
   it("win-now: categoryPropensity for training = 0.9", () => {
     const stable = createMockStable({ cash: 1000000, id: "stable-1", personality: "win-now" });
     const state = createUpkeepAIState(stable);
-    // shouldSpendOnCategory uses [] horses → categoryBudget = 0, budgetRatio = amount / 1
-    // propensity for training = 0.9, amount = 0.5 → 0.5 <= 0.9 → true
-    const result = shouldSpendOnCategory(state, "training", 0.5, stable, 1);
+    const horses = [createMockHorse({ stableId: "stable-1" })];
+    // 1 horse: totalBudget = 500, training = 125 * 1.3 = 162.5, propensity = 0.9
+    // budgetRatio = 100 / 162.5 ≈ 0.615 <= 0.9 → true
+    const result = shouldSpendOnCategory(state, "training", 100, stable, horses, 1);
     expect(result).toBe(true);
   });
 });
@@ -274,24 +278,20 @@ describe("recordBudgetDecision", () => {
     expect(currentState.budgetHistory.length).toBe(memoryDepth);
   });
 
-  it("BUG: success field is computed but not set on BudgetDecision (spent <= totalBudget * 1.1)", () => {
+  it("success field set on BudgetDecision when spent <= totalBudget * 1.1", () => {
     const stable = createMockStable();
     const state = createUpkeepAIState(stable);
     const newState = recordBudgetDecision(state, 1000, 800, {}, stable, 1);
-    // BUG: recordBudgetDecision computes `success` but never assigns it to the decision object
-    expect(newState.budgetHistory[0].success).toBeUndefined();
-    // The learning state does record success correctly
+    expect(newState.budgetHistory[0].success).toBe(true);
     expect(newState.learningState.outcomes.length).toBeGreaterThan(0);
     expect(newState.learningState.outcomes[0].success).toBe(true);
   });
 
-  it("BUG: success field not set on BudgetDecision (spent > totalBudget * 1.1)", () => {
+  it("success field set to false on BudgetDecision when spent > totalBudget * 1.1", () => {
     const stable = createMockStable();
     const state = createUpkeepAIState(stable);
     const newState = recordBudgetDecision(state, 1000, 1200, {}, stable, 1);
-    // BUG: success is not assigned to the decision object
-    expect(newState.budgetHistory[0].success).toBeUndefined();
-    // The learning state does record failure correctly
+    expect(newState.budgetHistory[0].success).toBe(false);
     expect(newState.learningState.outcomes[0].success).toBe(false);
   });
 
@@ -328,20 +328,17 @@ describe("getBudgetInsights", () => {
     const insights = getBudgetInsights(stateWithDecision, "stable-1");
     expect(insights.totalBudgets).toBe(1);
     expect(insights.avgSpending).toBe(800);
-    // BUG: BudgetDecision.success is undefined, so filter(b => b.success) returns 0
-    expect(insights.budgetAdherence).toBe(0);
+    expect(insights.budgetAdherence).toBe(1);
   });
 
-  it("BUG: budgetAdherence = 0 due to success field not set on BudgetDecision", () => {
+  it("budgetAdherence calculates correctly from success field", () => {
     const stable = createMockStable({ id: "stable-1" });
     const state = createUpkeepAIState(stable);
     let currentState = state;
-    // 1 success, 1 failure (in learning state, but not on BudgetDecision)
-    currentState = recordBudgetDecision(currentState, 1000, 800, {}, stable, 1); // success in learning
-    currentState = recordBudgetDecision(currentState, 1000, 1200, {}, stable, 2); // failure in learning
+    currentState = recordBudgetDecision(currentState, 1000, 800, {}, stable, 1); // success
+    currentState = recordBudgetDecision(currentState, 1000, 1200, {}, stable, 2); // failure
     const insights = getBudgetInsights(currentState, "stable-1");
     expect(insights.totalBudgets).toBe(2);
-    // BUG: BudgetDecision.success is undefined for both, so successes = 0
-    expect(insights.budgetAdherence).toBe(0);
+    expect(insights.budgetAdherence).toBe(0.5);
   });
 });

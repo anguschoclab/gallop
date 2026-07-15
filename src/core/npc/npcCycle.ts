@@ -57,7 +57,7 @@ import {
  * @param races
  * @returns A map of horseId to fame gain amount.
  */
-function calculateFameGainsForRaces(races: Race[]): Map<string, number> {
+export function calculateFameGainsForRaces(races: Race[]): Map<string, number> {
   try {
     const fameGains = new Map<string, number>();
 

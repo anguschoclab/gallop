@@ -231,10 +231,11 @@ export function shouldSpendOnCategory(
   category: string,
   amount: number,
   stable: Stable,
+  horses: Horse[],
   currentDay: number,
 ): boolean {
   // Basic cash check
-  const monthlyBudget = calculateMonthlyExpenseBudget(aiState, stable, [], currentDay);
+  const monthlyBudget = calculateMonthlyExpenseBudget(aiState, stable, horses, currentDay);
   if (stable.cash < monthlyBudget.reserveTarget) {
     return false;
   }
@@ -340,6 +341,7 @@ export function recordBudgetDecision(
   stable: Stable,
   currentDay: number,
 ): UpkeepAIState {
+  const success = spent <= totalBudget * 1.1;
   const decision: BudgetDecision = {
     day: currentDay,
     totalBudget,
@@ -348,6 +350,7 @@ export function recordBudgetDecision(
     categorySpending,
     stableId: stable.id,
     personality: stable.personality,
+    success,
   };
 
   const newBudgetHistory = [...aiState.budgetHistory, decision];
@@ -358,7 +361,6 @@ export function recordBudgetDecision(
     newBudgetHistory.length > maxHistory ? newBudgetHistory.slice(-maxHistory) : newBudgetHistory;
 
   // Update learning state
-  const success = spent <= totalBudget * 1.1;
   const value = totalBudget - spent;
   const newPersonalityState = recordOutcome(
     aiState.personalityState,
@@ -371,7 +373,7 @@ export function recordBudgetDecision(
   const newLearningState = recordLearningOutcome(
     aiState.learningState,
     "upkeep_spending",
-    "budget",
+    `${stable.personality}`,
     success,
     value,
     currentDay,

@@ -412,19 +412,24 @@ export function adaptBreedingStrategy(
   aiState: BreedingAIState,
   currentDay: number,
 ): BreedingAIState {
-  // Adjust strategy confidence based on success
   const insights = getBreedingInsights(aiState, aiState.breedingHistory[0]?.stableId || "");
   if (insights.totalDecisions > 10) {
     if (insights.successRate < 0.4) {
-      aiState.personalityState.strategyConfidence = Math.max(
-        0.3,
-        aiState.personalityState.strategyConfidence - 0.05,
-      );
+      return {
+        ...aiState,
+        personalityState: {
+          ...aiState.personalityState,
+          strategyConfidence: Math.max(0.3, aiState.personalityState.strategyConfidence - 0.05),
+        },
+      };
     } else if (insights.successRate > 0.7) {
-      aiState.personalityState.strategyConfidence = Math.min(
-        1.0,
-        aiState.personalityState.strategyConfidence + 0.05,
-      );
+      return {
+        ...aiState,
+        personalityState: {
+          ...aiState.personalityState,
+          strategyConfidence: Math.min(1.0, aiState.personalityState.strategyConfidence + 0.05),
+        },
+      };
     }
   }
 

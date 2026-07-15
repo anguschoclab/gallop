@@ -12,7 +12,7 @@ import type { Horse, Race, Stable } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { RECENT_RACES_MAX_COUNT } from "@/constants";
 import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
-import { createLearningState, getSuccessRate, type LearningState } from "./learningModule";
+import { createLearningState, getSuccessRate, recordOutcome as recordLearningOutcome, type LearningState } from "./learningModule";
 import { calculateRaceSuitability } from "@/core/race/entryScoring";
 import { calculateTrackGeometryScore, calculateGradientScore } from "@/core/race/trackGeometry";
 import { applyPersonalityModifiers } from "@/core/stable/personalityModifiers";
@@ -272,9 +272,20 @@ export function recordRaceEntryOutcome(
     currentDay,
   );
 
+  const newLearningState = recordLearningOutcome(
+    aiState.learningState,
+    "race_entry",
+    contextKey,
+    success,
+    value,
+    currentDay,
+    aiState.personalityState.memoryDepth,
+  );
+
   return {
     ...aiState,
     personalityState: newPersonalityState,
+    learningState: newLearningState,
   };
 }
 

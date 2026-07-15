@@ -322,7 +322,7 @@ describe("getClaimingInsights", () => {
     expect(insights.totalClaims).toBe(0);
     expect(insights.successRate).toBe(0.5);
     expect(insights.avgValue).toBe(0);
-    expect(insights.avgRisk).toBe(40); // successRate 0.5 >= 0.5 → 40
+    expect(insights.avgRisk).toBe(0);
   });
 
   it("filters by stableId and success !== undefined", () => {
@@ -343,18 +343,20 @@ describe("getClaimingInsights", () => {
     expect(insights.successRate).toBe(1.0);
   });
 
-  it("avgRisk is hardcoded: <0.5 successRate → 60, else 40", () => {
+  it("avgRisk computed from actual riskScore values", () => {
     const stable = createMockStable({ id: "stable-1" });
     const state = createClaimingAIState(stable);
     const horse = createMockHorse();
     const race = createMockRace();
 
-    // Record a failed outcome (successRate = 0 < 0.5 → avgRisk = 60)
+    // Record a failed outcome
     const stateWithDecision = recordClaimingDecision(state, horse, race, stable, 100);
     const stateWithOutcome = recordClaimingOutcome(stateWithDecision, horse.id, race.id, false, -100, 200);
 
     const insights = getClaimingInsights(stateWithOutcome, "stable-1");
     expect(insights.successRate).toBe(0);
-    expect(insights.avgRisk).toBe(60);
+    // avgRisk should be the actual riskScore from the decision, not hardcoded 60
+    const expectedRisk = stateWithOutcome.claimingHistory[0].riskScore!;
+    expect(insights.avgRisk).toBe(expectedRisk);
   });
 });
