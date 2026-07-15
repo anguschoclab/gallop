@@ -7,9 +7,12 @@ import {
   getBreedingInsights,
   getProgenyTripleCrownSuccess,
   adaptBreedingStrategy,
+  selectSireForDam,
 } from "@/core/ai/breedingAI";
-import type { Horse, Stable } from "@/game/types";
+import type { Horse, Stable, GameState } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
+import { makeGameState } from "@/tests/helpers/sampleGameState";
+import { createRng } from "@/core/common/rng";
 
 function createMockStallion(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -375,5 +378,82 @@ describe("adaptBreedingStrategy", () => {
     const state = createBreedingAIState(stable);
     const returnedState = adaptBreedingStrategy(state, 200);
     expect(returnedState).toBe(state);
+  });
+
+  it("does not mutate original state when adapting strategy", () => {
+    const stable = createMockStable();
+    let state = createBreedingAIState(stable);
+
+    for (let i = 0; i < 11; i++) {
+      state = recordBreedingDecision(state, `sire-${i}`, `dam-${i}`, "S", "D", "stable-1", "breeder", i, 50);
+      state = recordBreedingOutcome(state, `sire-${i}`, `dam-${i}`, `foal-${i}`, 80, true, 200);
+    }
+
+    const originalConfidence = state.personalityState.strategyConfidence;
+    const returnedState = adaptBreedingStrategy(state, 200);
+
+    // Original state should be unchanged
+    expect(state.personalityState.strategyConfidence).toBe(originalConfidence);
+    // Returned state should have updated confidence
+    expect(returnedState.personalityState.strategyConfidence).toBe(originalConfidence + 0.05);
+    // They should be different objects
+    expect(returnedState).not.toBe(state);
+    expect(returnedState.personalityState).not.toBe(state.personalityState);
+  });
+});
+
+describe("selectSireForDam", () => {
+  function mkGameState(horses: Horse[]): GameState {
+    return {
+      ...makeGameState(),
+      horses: Object.fromEntries(horses.map((h) => [h.id, h])),
+    } as GameState;
+  }
+
+  it("filters out stallions that would produce high COI", () => {
+    const dam = createMockMare({ id: "mare-1", sireId: "shared-sire" });
+    const siblingStallion = createMockStallion({
+      id: "stallion-sib",
+      sireId: "shared-sire",
+    });
+    const unrelatedStallion = createMockStallion({
+      id: "stallion-ok",
+      sireId: "different-sire",
+    });
+    const stable = createMockStable({ cash: 1000000 });
+    const rng = createRng(1);
+    const gameState = mkGameState([dam, siblingStallion, unrelatedStallion]);
+
+    const result = selectSireForDam(
+      dam,
+      [siblingStallion, unrelatedStallion],
+      stable,
+      gameState,
+      rng,
+    );
+
+    // Should not select the sibling stallion
+    expect(result?.id).not.toBe("stallion-sib");
+  });
+
+  it("returns null when all candidates are related", () => {
+    const dam = createMockMare({ id: "mare-1", sireId: "shared-sire" });
+    const siblingStallion = createMockStallion({
+      id: "stallion-sib",
+      sireId: "shared-sire",
+    });
+    const stable = createMockStable({ cash: 1000000 });
+    const rng = createRng(1);
+    const gameState = mkGameState([dam, siblingStallion]);
+
+    const result = selectSireForDam(
+      dam,
+      [siblingStallion],
+      stable,
+      gameState,
+      rng,
+    );
+
+    expect(result).toBeNull();
   });
 });

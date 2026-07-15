@@ -782,3 +782,472 @@ describe("runNpcBreeding", () => {
     }
   });
 });
+
+describe("runNpcBreeding — COI and eligibility checks", () => {
+  it("does not breed mare when all stallions exceed COI cap", () => {
+    const mare = mockHorse(
+      "mare-1",
+      "Test Mare",
+      "mare",
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      { stableId: "stable-1", silk: "blue" },
+    );
+
+    // Stallion that shares a parent with the mare (high COI)
+    const stallion = mockHorse(
+      "stallion-1",
+      "Test Stallion",
+      "colt",
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        stableId: "stable-2",
+        silk: "red",
+        potential: 85,
+        fame: 60,
+        sireId: "shared-sire",
+        stud: {
+          atStud: true,
+          standingFee: 5000,
+          seasonBookings: 0,
+          bookSize: 50,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 0,
+        },
+      },
+    );
+    // Give mare the same sire
+    (mare as any).sireId = "shared-sire";
+
+    const breederStable = createTestStable({
+      id: "stable-1",
+      name: "Breeder Stable",
+      cash: 20000,
+      personality: "breeder",
+      reputation: 70,
+      tier: "elite",
+    });
+
+    const sireStable = createTestStable({
+      id: "stable-2",
+      name: "Sire Stable",
+      cash: 0,
+      personality: "breeder",
+      reputation: 60,
+      tier: "mid",
+    });
+
+    const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
+      horses: h2r([mare, stallion]),
+      npcStables: [breederStable, sireStable],
+      pregnancies: [],
+      day: 100,
+    };
+
+    const result = runNpcBreeding(state as any, 100, createRng(1));
+    // With only a sibling stallion available, COI should block breeding
+    expect(result.newPregnancies).toEqual([]);
+  });
+
+  it("does not breed mare with her sire (parent-child)", () => {
+    const mare = mockHorse(
+      "mare-1",
+      "Test Mare",
+      "mare",
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      { stableId: "stable-1", silk: "blue", sireId: "stallion-1", sireName: "Test Stallion" },
+    );
+
+    const stallion = mockHorse(
+      "stallion-1",
+      "Test Stallion",
+      "colt",
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        stableId: "stable-2",
+        silk: "red",
+        potential: 85,
+        fame: 60,
+        stud: {
+          atStud: true,
+          standingFee: 5000,
+          seasonBookings: 0,
+          bookSize: 50,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 0,
+        },
+      },
+    );
+
+    const breederStable = createTestStable({
+      id: "stable-1",
+      name: "Breeder Stable",
+      cash: 20000,
+      personality: "breeder",
+      reputation: 70,
+      tier: "elite",
+    });
+
+    const sireStable = createTestStable({
+      id: "stable-2",
+      name: "Sire Stable",
+      cash: 0,
+      personality: "breeder",
+      reputation: 60,
+      tier: "mid",
+    });
+
+    const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
+      horses: h2r([mare, stallion]),
+      npcStables: [breederStable, sireStable],
+      pregnancies: [],
+      day: 100,
+    };
+
+    const result = runNpcBreeding(state as any, 100, createRng(1));
+    // No pregnancy should be created with the sire (parent-child)
+    const parentChildPreg = result.newPregnancies.find(
+      (p: any) => p.sireId === "stallion-1" && p.damId === "mare-1",
+    );
+    expect(parentChildPreg).toBeUndefined();
+  });
+
+  it("does not breed mare in covering sickness", () => {
+    const mare = mockHorse(
+      "mare-1",
+      "Test Mare",
+      "mare",
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      { stableId: "stable-1", silk: "blue", healthStatus: "covering_sickness" },
+    );
+
+    const stallion = mockHorse(
+      "stallion-1",
+      "Test Stallion",
+      "colt",
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        stableId: "stable-2",
+        silk: "red",
+        potential: 85,
+        fame: 60,
+        stud: {
+          atStud: true,
+          standingFee: 5000,
+          seasonBookings: 0,
+          bookSize: 50,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 0,
+        },
+      },
+    );
+
+    const breederStable = createTestStable({
+      id: "stable-1",
+      name: "Breeder Stable",
+      cash: 20000,
+      personality: "breeder",
+      reputation: 70,
+      tier: "elite",
+    });
+
+    const sireStable = createTestStable({
+      id: "stable-2",
+      name: "Sire Stable",
+      cash: 0,
+      personality: "breeder",
+      reputation: 60,
+      tier: "mid",
+    });
+
+    const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
+      horses: h2r([mare, stallion]),
+      npcStables: [breederStable, sireStable],
+      pregnancies: [],
+      day: 100,
+    };
+
+    const result = runNpcBreeding(state as any, 100, createRng(1));
+    expect(result.newPregnancies).toEqual([]);
+  });
+
+  it("does not breed mare still in recovery", () => {
+    const mare = mockHorse(
+      "mare-1",
+      "Test Mare",
+      "mare",
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      { stableId: "stable-1", silk: "blue", lastFoaledDay: 95 },
+    );
+
+    const stallion = mockHorse(
+      "stallion-1",
+      "Test Stallion",
+      "colt",
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        stableId: "stable-2",
+        silk: "red",
+        potential: 85,
+        fame: 60,
+        stud: {
+          atStud: true,
+          standingFee: 5000,
+          seasonBookings: 0,
+          bookSize: 50,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 0,
+        },
+      },
+    );
+
+    const breederStable = createTestStable({
+      id: "stable-1",
+      name: "Breeder Stable",
+      cash: 20000,
+      personality: "breeder",
+      reputation: 70,
+      tier: "elite",
+    });
+
+    const sireStable = createTestStable({
+      id: "stable-2",
+      name: "Sire Stable",
+      cash: 0,
+      personality: "breeder",
+      reputation: 60,
+      tier: "mid",
+    });
+
+    // Day 100, mare foaled on day 95 — only 5 days ago
+    const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
+      horses: h2r([mare, stallion]),
+      npcStables: [breederStable, sireStable],
+      pregnancies: [],
+      day: 100,
+    };
+
+    const result = runNpcBreeding(state as any, 100, createRng(1));
+    expect(result.newPregnancies).toEqual([]);
+  });
+});
+
+describe("runNpcBreeding — all 8 personalities breed", () => {
+  function setupStableWithMareAndStallion(personality: string) {
+    const mare = mockHorse(
+      "mare-1",
+      "Test Mare",
+      "mare",
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      { stableId: "stable-1", silk: "blue" },
+    );
+
+    const stallion = mockHorse(
+      "stallion-1",
+      "Test Stallion",
+      "colt",
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        stableId: "stable-2",
+        silk: "red",
+        potential: 85,
+        fame: 60,
+        stud: {
+          atStud: true,
+          standingFee: 5000,
+          seasonBookings: 0,
+          bookSize: 50,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 0,
+        },
+      },
+    );
+
+    const breederStable = createTestStable({
+      id: "stable-1",
+      name: `${personality} Stable`,
+      cash: 20000,
+      personality: personality as any,
+      reputation: 70,
+      tier: "elite",
+    });
+
+    const sireStable = createTestStable({
+      id: "stable-2",
+      name: "Sire Stable",
+      cash: 0,
+      personality: "breeder",
+      reputation: 60,
+      tier: "mid",
+    });
+
+    const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
+      horses: h2r([mare, stallion]),
+      npcStables: [breederStable, sireStable],
+      pregnancies: [],
+      day: 100,
+    };
+
+    return { state, mare, stallion };
+  }
+
+  it("aggressive personality breeds", () => {
+    const { state } = setupStableWithMareAndStallion("aggressive");
+    const result = runNpcBreeding(state as any, 100, createRng(1));
+    expect(result.newPregnancies.length).toBeGreaterThan(0);
+  });
+
+  it("conservative personality breeds with high mare quality floor", () => {
+    // Conservative has MIN_MARE_OVERALL = 55, so a 70-stat mare should pass
+    const { state } = setupStableWithMareAndStallion("conservative");
+    const result = runNpcBreeding(state as any, 100, createRng(1));
+    expect(result.newPregnancies.length).toBeGreaterThan(0);
+  });
+
+  it("win-now personality breeds", () => {
+    const { state } = setupStableWithMareAndStallion("win-now");
+    const result = runNpcBreeding(state as any, 100, createRng(1));
+    expect(result.newPregnancies.length).toBeGreaterThan(0);
+  });
+
+  it("trader personality breeds", () => {
+    const { state } = setupStableWithMareAndStallion("trader");
+    const result = runNpcBreeding(state as any, 100, createRng(1));
+    expect(result.newPregnancies.length).toBeGreaterThan(0);
+  });
+});
+
+describe("runNpcBreeding — book size and hemisphere checks", () => {
+  it("does not overbook stallion at bookSize limit", () => {
+    const mare = mockHorse(
+      "mare-1",
+      "Test Mare",
+      "mare",
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      { stableId: "stable-1", silk: "blue" },
+    );
+
+    const stallion = mockHorse(
+      "stallion-1",
+      "Test Stallion",
+      "colt",
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        stableId: "stable-2",
+        silk: "red",
+        potential: 85,
+        fame: 60,
+        stud: {
+          atStud: true,
+          standingFee: 5000,
+          seasonBookings: 50,
+          bookSize: 50,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 0,
+        },
+      },
+    );
+
+    const breederStable = createTestStable({
+      id: "stable-1",
+      name: "Breeder Stable",
+      cash: 20000,
+      personality: "breeder",
+      reputation: 70,
+      tier: "elite",
+    });
+
+    const sireStable = createTestStable({
+      id: "stable-2",
+      name: "Sire Stable",
+      cash: 0,
+      personality: "breeder",
+      reputation: 60,
+      tier: "mid",
+    });
+
+    const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
+      horses: h2r([mare, stallion]),
+      npcStables: [breederStable, sireStable],
+      pregnancies: [],
+      day: 100,
+    };
+
+    const result = runNpcBreeding(state as any, 100, createRng(1));
+    expect(result.newPregnancies).toEqual([]);
+  });
+
+  it("does not create cross-hemisphere pregnancy", () => {
+    const mare = mockHorse(
+      "mare-1",
+      "Test Mare",
+      "mare",
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      { stableId: "stable-1", silk: "blue", hemisphere: "Northern" },
+    );
+
+    const stallion = mockHorse(
+      "stallion-1",
+      "Test Stallion",
+      "colt",
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        stableId: "stable-2",
+        silk: "red",
+        potential: 85,
+        fame: 60,
+        hemisphere: "Southern",
+        stud: {
+          atStud: true,
+          standingFee: 5000,
+          seasonBookings: 0,
+          bookSize: 50,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 0,
+        },
+      },
+    );
+
+    const breederStable = createTestStable({
+      id: "stable-1",
+      name: "Breeder Stable",
+      cash: 20000,
+      personality: "breeder",
+      reputation: 70,
+      tier: "elite",
+    });
+
+    const sireStable = createTestStable({
+      id: "stable-2",
+      name: "Sire Stable",
+      cash: 0,
+      personality: "breeder",
+      reputation: 60,
+      tier: "mid",
+    });
+
+    // Day 100 = Northern breeding season. Northern mare + Southern stallion should be blocked.
+    const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
+      horses: h2r([mare, stallion]),
+      npcStables: [breederStable, sireStable],
+      pregnancies: [],
+      day: 100,
+    };
+
+    const result = runNpcBreeding(state as any, 100, createRng(1));
+    expect(result.newPregnancies).toEqual([]);
+  });
+});

@@ -500,4 +500,95 @@ describe("validateIntent", () => {
     const result = validateIntent(intent, state);
     expect(result.valid).toBe(true);
   });
+
+  it("rejects breeding intent for parent-child pair (by ID)", () => {
+    const sire = createTestHorse({ id: "sire-1", gender: "horse", age: 5 });
+    const dam = createTestHorse({
+      id: "dam-1",
+      gender: "mare",
+      age: 5,
+      sireId: "sire-1",
+      sireName: "Sire",
+    });
+    const state: GameState = {
+      ...createTestState(),
+      cash: 5000,
+      horses: h2r([sire, dam]),
+    };
+
+    const intent: BreedingIntent = {
+      id: "intent-pc",
+      day: 1,
+      type: "breeding",
+      entityId: "player",
+      priority: 100,
+      source: "player",
+      sireId: "sire-1",
+      damId: "dam-1",
+      liveFoalGuarantee: false,
+    };
+
+    const result = validateIntent(intent, state);
+    expect(result.valid).toBe(false);
+  });
+
+  it("rejects breeding intent for half-siblings (shared sireId)", () => {
+    const sire = createTestHorse({
+      id: "sire-1",
+      gender: "horse",
+      age: 5,
+      sireId: "common-sire",
+    });
+    const dam = createTestHorse({
+      id: "dam-1",
+      gender: "mare",
+      age: 5,
+      sireId: "common-sire",
+    });
+    const state: GameState = {
+      ...createTestState(),
+      cash: 5000,
+      horses: h2r([sire, dam]),
+    };
+
+    const intent: BreedingIntent = {
+      id: "intent-sib",
+      day: 1,
+      type: "breeding",
+      entityId: "player",
+      priority: 100,
+      source: "player",
+      sireId: "sire-1",
+      damId: "dam-1",
+      liveFoalGuarantee: false,
+    };
+
+    const result = validateIntent(intent, state);
+    expect(result.valid).toBe(false);
+  });
+
+  it("existing valid breeding intent test still passes", () => {
+    const sire = createTestHorse({ id: "sire-1", gender: "horse", age: 5 });
+    const dam = createTestHorse({ id: "dam-1", gender: "mare", age: 5 });
+    const state: GameState = {
+      ...createTestState(),
+      cash: 5000,
+      horses: h2r([sire, dam]),
+    };
+
+    const intent: BreedingIntent = {
+      id: "intent-1",
+      day: 1,
+      type: "breeding",
+      entityId: "player",
+      priority: 100,
+      source: "player",
+      sireId: "sire-1",
+      damId: "dam-1",
+      liveFoalGuarantee: false,
+    };
+
+    const result = validateIntent(intent, state);
+    expect(result.valid).toBe(true);
+  });
 });
