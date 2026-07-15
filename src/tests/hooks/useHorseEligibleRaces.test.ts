@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { deriveEligibleRaces } from "@/hooks/race/useHorseEligibleRaces";
+import { deriveEligibleRaces, findFirstEligibleRace } from "@/hooks/race/useHorseEligibleRaces";
 import type { Horse, Race, Jockey } from "@/game/types";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
 

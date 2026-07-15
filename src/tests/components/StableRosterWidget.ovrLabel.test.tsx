@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { screen, cleanup } from "@testing-library/react";
 import { StableRosterWidget } from "@/components/dashboard/StableRosterWidget";
 import { renderWithStore } from "@/test-utils/renderWithStore";
@@ -6,6 +6,11 @@ import { createDefaultGameState } from "@/game/store/state";
 import { useGame } from "@/game/store";
 import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import type { Horse } from "@/game/types";
+
+vi.mock("@tanstack/react-router", () => ({
+  Link: ({ children, ...props }: any) => children,
+  useNavigate: () => () => {},
+}));
 
 describe("StableRosterWidget — OVR label", () => {
   beforeEach(() => {

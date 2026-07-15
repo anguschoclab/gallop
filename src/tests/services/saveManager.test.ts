@@ -1,10 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from "vitest";
 
-const mockSaveSlotState = vi.fn();
-const mockLoadSlotState = vi.fn();
-const mockDeleteSlotState = vi.fn();
-const mockIsIndexedDbAvailable = vi.fn();
-const mockSaveGameStateToIDB = vi.fn();
+const { mockSaveSlotState, mockLoadSlotState, mockDeleteSlotState, mockIsIndexedDbAvailable, mockSaveGameStateToIDB } =
+  vi.hoisted(() => ({
+    mockSaveSlotState: vi.fn(),
+    mockLoadSlotState: vi.fn(),
+    mockDeleteSlotState: vi.fn(),
+    mockIsIndexedDbAvailable: vi.fn(),
+    mockSaveGameStateToIDB: vi.fn(),
+  }));
 
 vi.mock("@/services/storage/indexedDbService", () => ({
   saveSlotState: mockSaveSlotState,

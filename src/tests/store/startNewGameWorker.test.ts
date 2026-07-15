@@ -58,7 +58,6 @@ vi.mock("@/game/store/storage", () => {
 
 const mockWorkerCreateInitialState = vi.fn();
 vi.mock("@/workers/engine.worker", () => ({}));
-vi.mock("@/workers/storage.worker", () => ({}));
 vi.mock("@/workers/initialization.worker", () => ({}));
 
 vi.mock("comlink", () => ({

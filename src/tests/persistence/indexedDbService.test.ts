@@ -61,6 +61,12 @@ class MockObjectStore {
     setTimeout(() => req._fireSuccess(), 0);
     return req;
   }
+  delete(key: string): MockIDBRequest {
+    this.data.delete(key);
+    const req = new MockIDBRequest(undefined);
+    setTimeout(() => req._fireSuccess(), 0);
+    return req;
+  }
 }
 
 class MockTransaction {
@@ -88,7 +94,7 @@ class MockDatabase {
   private stores: Record<string, MockObjectStore> = {};
 
   constructor() {
-    for (const name of ["meta", "horses", "races", "npcStables", "market", "history"]) {
+    for (const name of ["meta", "horses", "races", "npcStables", "market", "history", "saveSlots"]) {
       this.stores[name] = new MockObjectStore();
     }
   }

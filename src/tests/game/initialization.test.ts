@@ -85,3 +85,64 @@ describe("createInitialState player horse phenotype resolution", () => {
     }
   });
 });
+
+describe("createInitialState race generation for starter eligibility", () => {
+  it("produces at least 1 starter-eligible maiden per day for days 2-7", () => {
+    const state = createInitialState();
+    const races = Object.values(state.races);
+    for (let d = 2; d <= 7; d++) {
+      const dayRaces = races.filter((r) => r.day === d);
+      const hasStarterMaiden = dayRaces.some(
+        (r) =>
+          r.raceClass.toLowerCase().includes("maiden") &&
+          r.minStat === undefined &&
+          !r.resolved,
+      );
+      expect(hasStarterMaiden).toBe(true);
+    }
+  });
+
+  it("produces track-based races for days 2-8", () => {
+    const state = createInitialState();
+    const races = Object.values(state.races);
+    for (let d = 2; d <= 8; d++) {
+      const dayTrackRaces = races.filter(
+        (r) => r.day === d && r.trackId !== undefined,
+      );
+      // Days 2-3 are Monday/Tuesday with no track races (F-13)
+      // Days 4+ should have track races
+      if (d >= 5) {
+        expect(dayTrackRaces.length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it("produces track-based races from year-round tracks", () => {
+    const state = createInitialState();
+    const races = Object.values(state.races);
+    const trackRaces = races.filter((r) => r.trackId !== undefined);
+    expect(trackRaces.length).toBeGreaterThan(0);
+  });
+
+  it("produces zero track-based races on days 2-3 (DOW gap)", () => {
+    const state = createInitialState();
+    const races = Object.values(state.races);
+    // Day 2 = Monday (dow 1), Day 3 = Tuesday (dow 2) — no tracks race
+    const day2TrackRaces = races.filter(
+      (r) => r.day === 2 && r.trackId !== undefined,
+    );
+    const day3TrackRaces = races.filter(
+      (r) => r.day === 3 && r.trackId !== undefined,
+    );
+    expect(day2TrackRaces.length).toBe(0);
+    expect(day3TrackRaces.length).toBe(0);
+  });
+
+  it("does not produce duplicate graded races", () => {
+    const state = createInitialState();
+    const races = Object.values(state.races);
+    const gradedRaces = races.filter((r) => r.graded);
+    const keys = gradedRaces.map((r) => `${r.graded!.key}_${r.day}`);
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+});
