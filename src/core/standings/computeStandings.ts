@@ -46,7 +46,7 @@ export function computeSeasonStandings(
     return b;
   };
 
-  for (const h of Object.values(state.horses) as any[]) {
+  for (const h of Object.values(state.horses)) {
     for (const r of h.raceHistory ?? []) {
       const earned = r.purseEarned ?? computeFallbackPurse(r);
       if (!earned) continue;
@@ -65,7 +65,7 @@ export function computeSeasonStandings(
   const list: StandingEntry[] = [];
 
   const playerBucket = totals.get(PLAYER_ID);
-  const playerProfile = (state as any).playerProfile;
+  const playerProfile = state.playerProfile;
   list.push({
     stableId: PLAYER_ID,
     name: playerProfile?.stableName ?? "Your stable",
@@ -80,12 +80,12 @@ export function computeSeasonStandings(
       .slice(0, 5),
   });
 
-  for (const s of (state as any).npcStables ?? []) {
+  for (const s of state.npcStables ?? []) {
     const b = totals.get(s.id);
-    const ai = (state as any).npcAIManager?.stableStates?.[s.id];
+    const ai = state.npcAIManager?.stableStates?.[s.id];
     const prestige = ai?.regionalPrestige
       ? Object.values(ai.regionalPrestige).reduce(
-          (acc: number, v: any) => acc + (Number(v) || 0),
+          (acc: number, v: number) => acc + (Number(v) || 0),
           0,
         )
       : 0;
@@ -111,7 +111,7 @@ export function computeSeasonStandings(
   return { standings: list, playerRank };
 }
 
-function computeFallbackPurse(r: any): number {
+function computeFallbackPurse(r: NonNullable<import("@/game/types").Horse["raceHistory"]>[number]): number {
   if (!r.purse || !r.position || r.position < 1) return 0;
   const split = r.grade ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
   if (r.position - 1 >= split.length) return 0;
