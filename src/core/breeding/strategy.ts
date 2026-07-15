@@ -14,11 +14,15 @@ import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
 import { calculateBreedingCompatibility } from "@/core/breeding/compatibility";
 
 // How much program archetype fit contributes to stallion score per personality.
-const PROGRAM_WEIGHT: Partial<Record<Stable["personality"], number>> = {
+const PROGRAM_WEIGHT: Record<Stable["personality"], number> = {
   breeder: 0.2,
   developer: 0.1,
   prestige: 0.3,
   specialist: 0.4,
+  aggressive: 0.05,
+  conservative: 0.1,
+  "win-now": 0.05,
+  trader: 0.1,
 };
 
 /**
@@ -32,6 +36,10 @@ export const BREEDING_PERSONALITIES: readonly Stable["personality"][] = [
   "developer",
   "prestige",
   "specialist",
+  "aggressive",
+  "conservative",
+  "win-now",
+  "trader",
 ];
 
 // Per-personality budget: max share of stable's cash to spend on a single
@@ -42,10 +50,10 @@ export const SINGLE_FEE_CAP_FRACTION: Record<Stable["personality"], number> = {
   developer: 0.2,
   prestige: 0.5,
   specialist: 0.3,
-  aggressive: 0,
-  conservative: 0,
-  "win-now": 0,
-  trader: 0,
+  aggressive: 0.25,
+  conservative: 0.15,
+  "win-now": 0.3,
+  trader: 0.2,
 };
 
 // Mare-quality floor — below this overall ability, the stable doesn't bother
@@ -55,10 +63,10 @@ export const MIN_MARE_OVERALL: Record<Stable["personality"], number> = {
   developer: 35,
   prestige: 60,
   specialist: 45,
-  aggressive: 0,
-  conservative: 0,
-  "win-now": 0,
-  trader: 0,
+  aggressive: 40,
+  conservative: 55,
+  "win-now": 50,
+  trader: 30,
 };
 
 // Inbreeding tolerance — max COI before the stable refuses the cross. Prestige
@@ -68,10 +76,10 @@ export const MAX_COI: Record<Stable["personality"], number> = {
   developer: 0.05,
   prestige: 0.1,
   specialist: 0.0625,
-  aggressive: 1,
-  conservative: 1,
-  "win-now": 1,
-  trader: 1,
+  aggressive: 0.15,
+  conservative: 0.03,
+  "win-now": 0.08,
+  trader: 0.0625,
 };
 
 /**
@@ -140,11 +148,42 @@ const SCORING_STRATEGIES: Record<Stable["personality"], ScoringStrategy> = {
     );
   },
 
-  // Fallbacks for personalities that don't typically breed but might in edge cases
-  aggressive: (ctx) => ctx.compat + ctx.leaderboardBonus * 0.1,
-  conservative: (ctx) => ctx.compat + ctx.leaderboardBonus * 0.1,
-  "win-now": (ctx) => ctx.compat + ctx.leaderboardBonus * 0.1,
-  trader: (ctx) => ctx.compat + ctx.leaderboardBonus * 0.1,
+  // Personalities with distinct breeding priorities
+  aggressive: (ctx) =>
+    ctx.compat * 0.3 +
+    ctx.stakesRate * 0.3 +
+    ctx.fameBonus * 0.15 +
+    (1 - ctx.feeNorm) * 0.1 +
+    ctx.fertilityBonus * 0.05 +
+    ctx.leaderboardBonus * 0.1 +
+    ctx.programTerm,
+
+  conservative: (ctx) =>
+    ctx.compat * 0.4 +
+    (1 - ctx.feeNorm) * 0.25 +
+    ctx.stakesRate * 0.1 +
+    ctx.fertilityBonus * 0.15 +
+    ctx.fameBonus * 0.05 +
+    ctx.leaderboardBonus * 0.05 +
+    ctx.programTerm,
+
+  "win-now": (ctx) =>
+    ctx.compat * 0.2 +
+    ctx.stakesRate * 0.35 +
+    ctx.fameBonus * 0.2 +
+    ctx.feeNorm * 0.1 +
+    ctx.fertilityBonus * 0.05 +
+    ctx.leaderboardBonus * 0.1 +
+    ctx.programTerm,
+
+  trader: (ctx) =>
+    ctx.compat * 0.25 +
+    (1 - ctx.feeNorm) * 0.3 +
+    ctx.fertilityBonus * 0.15 +
+    ctx.stakesRate * 0.1 +
+    ctx.fameBonus * 0.1 +
+    ctx.leaderboardBonus * 0.1 +
+    ctx.programTerm,
 };
 
 /**

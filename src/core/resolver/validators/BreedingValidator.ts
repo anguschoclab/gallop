@@ -11,6 +11,7 @@
 import type { GameState } from "@/game/types";
 import type { AnyIntent, BreedingIntent } from "../intents";
 import type { IntentValidator, ValidationCache } from "./types";
+import { canBreed } from "@/core/breeding/eligibility";
 
 export class BreedingValidator implements IntentValidator {
   canValidate(type: AnyIntent["type"]): boolean {
@@ -32,6 +33,11 @@ export class BreedingValidator implements IntentValidator {
     if (dam.gender !== "mare" && dam.gender !== "filly")
       return { valid: false, reason: "Invalid dam gender (must be mare or filly)" };
     if (state.cash < 2000) return { valid: false, reason: "Insufficient funds for breeding" };
+
+    const pregnancies = state.pregnancies ?? [];
+    const breedCheck = canBreed(sire, dam, state.day ?? 1, pregnancies);
+    if (!breedCheck.ok) return { valid: false, reason: breedCheck.reason };
+
     return { valid: true };
   }
 }

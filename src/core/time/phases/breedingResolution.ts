@@ -27,6 +27,7 @@ import { generateUUID } from "@/core/uuid";
 import type { Pregnancy } from "@/game/types";
 import { GESTATION_DAYS, PHASE_ORDER_BREEDING_RESOLUTION } from "@/constants";
 import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
+import { canBreed } from "@/core/breeding/eligibility";
 
 /**
  * Breeding Resolution Phase (Order 25)
@@ -46,12 +47,19 @@ export const breedingResolutionPhase: PipelinePhase = {
     const breedingIntents = intents.filter((i): i is BreedingIntent => i.type === "breeding");
 
     const { horseMap } = context;
+    const existingPregnancies = state.pregnancies ?? [];
+    const newPregnancies: Pregnancy[] = [];
 
     for (const intent of breedingIntents) {
       const sire = horseMap.get(intent.sireId);
       const dam = horseMap.get(intent.damId);
 
       if (!sire || !dam) continue;
+
+      // Re-validate eligibility at resolution time
+      const allPregnancies = [...existingPregnancies, ...newPregnancies];
+      const breedCheck = canBreed(sire, dam, newDay, allPregnancies);
+      if (!breedCheck.ok) continue;
 
       // Check if sire is external (belongs to a different stable than the breeder)
       const isExternal =
@@ -141,6 +149,7 @@ export const breedingResolutionPhase: PipelinePhase = {
         pregnancy,
         reason: "Breeding",
       });
+      newPregnancies.push(pregnancy);
 
       // Deduct fee from breeder (player)
       if (intent.source === "player" && intent.fee && intent.fee > 0) {

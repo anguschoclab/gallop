@@ -77,12 +77,26 @@ export function canBreed(
     return { ok: false, reason: `Dam is past breeding age (over ${MAX_DAM_AGE}).` };
   }
 
-  // Parent–child: catch the obvious case via recorded sireName/damName.
-  if (dam.sireName && dam.sireName === sire.name) {
+  // Parent–child: use IDs as primary, names as fallback.
+  if (sire.id && dam.sireId && sire.id === dam.sireId) {
     return { ok: false, reason: "Cannot breed parent to offspring." };
   }
-  if (sire.damName && sire.damName === dam.name) {
+  if (dam.id && sire.damId && dam.id === sire.damId) {
     return { ok: false, reason: "Cannot breed parent to offspring." };
+  }
+  if (!dam.sireId && dam.sireName && dam.sireName === sire.name) {
+    return { ok: false, reason: "Cannot breed parent to offspring." };
+  }
+  if (!sire.damId && sire.damName && sire.damName === dam.name) {
+    return { ok: false, reason: "Cannot breed parent to offspring." };
+  }
+
+  // Sibling check: block half-siblings sharing a parent.
+  if (sire.sireId && dam.sireId && sire.sireId === dam.sireId) {
+    return { ok: false, reason: "Cannot breed siblings." };
+  }
+  if (sire.damId && dam.damId && sire.damId === dam.damId) {
+    return { ok: false, reason: "Cannot breed siblings." };
   }
 
   if (sire.healthStatus === "covering_sickness" || dam.healthStatus === "covering_sickness") {
