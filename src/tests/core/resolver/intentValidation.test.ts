@@ -19,7 +19,7 @@ import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 describe("validateIntent", () => {
   const createTestState = (): GameState =>
     makeGameState({
-      day: 1,
+      day: 50,
       cash: 10000,
     }) as GameState;
 

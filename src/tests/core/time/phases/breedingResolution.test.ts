@@ -15,13 +15,13 @@ import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 describe("breedingResolutionPhase", () => {
   const createTestState = (): GameState =>
     makeGameState({
-      day: 1,
+      day: 50,
       cash: 10000,
       pendingIntents: [],
     }) as GameState;
 
   const createTestContext = (state: GameState, intents: BreedingIntent[] = []): PipelineContext =>
-    createMockPipelineContext({ state, intents });
+    createMockPipelineContext({ state, intents, newDay: 50 });
 
   it("should process breeding intent and generate pregnancy creation impact", () => {
     const sire = createTestHorse({

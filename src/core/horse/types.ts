@@ -151,6 +151,13 @@ export type Horse = {
   geneticMarkers?: GeneticMarkers;
   fertility?: number;
   coefficientOfInbreeding?: number;
+  genomeModifiers?: {
+    prepotency: number;
+    depressionPenalty: number;
+    vigorBonus: number;
+    longevityBonus: number;
+    ffs1RiskMultiplier: number;
+  };
   raceHistory: {
     raceId: string;
     raceName: string;

@@ -397,23 +397,25 @@ export function calculateBreedingCompatibility(
   const blueHen = calculateBlueHenContribution(dam);
   const crossFamily = calculateCrossFamilyAffinity(sire, dam);
 
-  // Calculate inbreeding score (inverse of coefficient - lower is better)
-  const inbreedingScore = Math.max(0, 1 - inbreeding.coefficient * 4); // Penalize high inbreeding
+  // Calculate inbreeding score with a steeper penalty curve:
+  // COI >= 0.125 (12.5%) → score 0; COI 0 → score 1.
+  // Linear between, so 0.0625 → 0.5, 0.03 → 0.76, etc.
+  const inbreedingScore = Math.max(0, 1 - inbreeding.coefficient * 8);
 
-  // Weighted overall score (11 factors, sums to 1.0). Cross-family takes 5%
-  // pulled proportionally from the larger factors.
+  // Weighted overall score (11 factors, sums to 1.0). Inbreeding weight raised
+  // to 0.20 (from 0.13) to better penalize close inbreeding. Cross-family 5%.
   const weights = {
     nicking: 0.07,
     dosage: 0.07,
-    inbreeding: 0.13,
-    parentPerformance: 0.15,
-    conformation: 0.07,
+    inbreeding: 0.20,
+    parentPerformance: 0.12,
+    conformation: 0.06,
     temperament: 0.05,
-    foundationStock: 0.09,
-    founderEffect: 0.09,
-    genetic: 0.11,
-    blueHen: 0.11,
-    crossFamily: 0.06,
+    foundationStock: 0.08,
+    founderEffect: 0.08,
+    genetic: 0.10,
+    blueHen: 0.10,
+    crossFamily: 0.07,
   };
 
   const overallScore =

@@ -591,6 +591,42 @@ export function resolveFoaling(
 
   foal.pedigree.name = foal.name;
 
+  // Compute COI from the foal's pedigree snapshot
+  const coi = computeCoiFromSnapshot(foal.pedigree);
+  foal.coefficientOfInbreeding = coi;
+
+  // Compute AHC if we have state with horses for ancestor lookup
+  if (state) {
+    const horseMap = new Map(Object.values(state.horses).map((h) => [h.id, h]));
+    const ahc = computeAhc(foal.pedigree, horseMap);
+    foal.ancestralHistoryCoefficient = ahc;
+
+    // Apply genome modifiers based on COI and AHC
+    const modifiers = computeGenomeModifiers(coi, ahc);
+    foal.genomeModifiers = modifiers;
+
+    // Apply stat adjustments from genome modifiers
+    if (foal.stats) {
+      // Depression penalty reduces durability/consistency
+      foal.stats.consistency = Math.max(1, Math.round(foal.stats.consistency * modifiers.depressionPenalty));
+    }
+    // Vigor bonus improves recovery and trainability
+    if (foal.recoveryRate !== undefined) {
+      foal.recoveryRate = Math.min(2.0, foal.recoveryRate + modifiers.vigorBonus);
+    }
+    if (foal.trainability !== undefined) {
+      foal.trainability = Math.min(2.0, foal.trainability + modifiers.vigorBonus);
+    }
+    // Longevity bonus extends peak age
+    if (foal.peakAge !== undefined) {
+      foal.peakAge = Math.round(foal.peakAge + modifiers.longevityBonus);
+    }
+  } else {
+    // Without state, still compute AHC from pedigree alone (less accurate)
+    foal.ancestralHistoryCoefficient = 0;
+    foal.genomeModifiers = computeGenomeModifiers(coi, 0);
+  }
+
   const resolvedFoal = resolvePhenotype(foal);
 
   return { kind: "live", foal: resolvedFoal };

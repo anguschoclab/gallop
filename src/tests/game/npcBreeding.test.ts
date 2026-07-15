@@ -1075,7 +1075,7 @@ describe("runNpcBreeding — all 8 personalities breed", () => {
     const breederStable = createTestStable({
       id: "stable-1",
       name: `${personality} Stable`,
-      cash: 20000,
+      cash: 50000,
       personality: personality as any,
       reputation: 70,
       tier: "elite",

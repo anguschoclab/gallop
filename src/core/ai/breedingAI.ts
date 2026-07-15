@@ -20,6 +20,8 @@ import { getArchetypeById, getTripleCrownKeysForArchetype } from "@/core/breedin
 import { calculateGeneticDistance } from "@/core/breeding/programs";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import { createRng, hashStr, type Rng } from "@/core/common/rng";
+import { computeProspectiveCoi } from "@/core/breeding/populationGenetics";
+import { canBreed } from "@/core/breeding/eligibility";
 
 /**
  * Breeding AI System
@@ -457,18 +459,30 @@ export function selectSireForDam(
   gameState: GameState,
   rng: Rng,
 ): Horse | null {
+  // Pre-filter: remove stallions that would produce high COI or fail canBreed
+  const eligibleSires = candidateSires.filter((sire) => {
+    const coi = computeProspectiveCoi(sire, dam);
+    if (coi > 0.125) return false; // 12.5% COI hard cap
+    const pregnancies = gameState.pregnancies ?? [];
+    const breedCheck = canBreed(sire, dam, gameState.day ?? 1, pregnancies);
+    if (!breedCheck.ok) return false;
+    return true;
+  });
+
+  if (eligibleSires.length === 0) return null;
+
   // If stable has a breeding program, use breeding simulator
   if (stable.breedingArchetype) {
     const archetype = getArchetypeById(stable.breedingArchetype);
     if (!archetype) {
       // Fall back to traditional scoring if archetype not found
-      return selectSireByTraditionalScoring(dam, candidateSires, stable, gameState);
+      return selectSireByTraditionalScoring(dam, eligibleSires, stable, gameState);
     }
 
     let bestSire: Horse | null = null;
     let bestDistance = 1.0;
 
-    for (const sire of candidateSires) {
+    for (const sire of eligibleSires) {
       // Run a quick sim to get a representative foal, then measure archetype distance
       const simulation = cachedSimulation(sire.id, dam.id, () => {
         const simRng = createRng(hashStr(`breeding-sim:${sire.id}:${dam.id}`));
@@ -497,7 +511,7 @@ export function selectSireForDam(
   }
 
   // Fall back to traditional scoring
-  return selectSireByTraditionalScoring(dam, candidateSires, stable, gameState);
+  return selectSireByTraditionalScoring(dam, eligibleSires, stable, gameState);
 }
 
 /**

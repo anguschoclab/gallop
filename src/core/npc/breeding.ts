@@ -72,8 +72,8 @@ export function runAutonomousBreeding(
     // Try to breed if in season
 
     // Identify candidate mares (not pregnant, eligible age)
-    const minMareQuality = MIN_MARE_OVERALL[stable.personality] || 50;
-    const maxCoi = MAX_COI[stable.personality] || 0.1;
+    const minMareQuality = MIN_MARE_OVERALL[stable.personality] ?? 50;
+    const maxCoi = MAX_COI[stable.personality] ?? 0.1;
 
     const candidateMares = Object.values(state.horses)
       .filter(
@@ -100,22 +100,25 @@ export function runAutonomousBreeding(
       if (stableCash < BREEDING_FEE) break;
 
       // Identify candidate stallions within budget
-      const maxFeePerMare = stableCash * (SINGLE_FEE_CAP_FRACTION[stable.personality] || 0.1);
+      const maxFeePerMare = stableCash * (SINGLE_FEE_CAP_FRACTION[stable.personality] ?? 0.1);
       const stallions = getAvailableStallions(Object.values(state.horses), mare)
         .filter((s) => s.stableId !== stable.id)
         .map(ensurePhenotypeResolved)
-        .filter((s) => s.stud!.standingFee <= maxFeePerMare);
+        .filter((s) => s.stud!.standingFee <= maxFeePerMare)
+        .filter((s) => s.stud!.seasonBookings < s.stud!.bookSize)
+        .filter((s) => s.hemisphere === mare.hemisphere);
 
       if (stallions.length === 0) continue;
 
       // Inbreeding-tolerance pre-filter — refuse stallions whose pairing
-      // would exceed the personality's COI cap.
-      const toleratedStallions = stallions.filter((stallion) => {
+      // would exceed the personality's COI cap. No fallback: if no stallion
+      // passes the COI filter, skip this mare entirely.
+      const candidates = stallions.filter((stallion) => {
         const coi = computeProspectiveCoi(stallion, mare);
         return coi <= maxCoi;
       });
 
-      const candidates = toleratedStallions.length > 0 ? toleratedStallions : stallions;
+      if (candidates.length === 0) continue;
       const maxFee = Math.max(...candidates.map((s) => s.stud!.standingFee));
 
       // Score and pick the best stallion using AI-enhanced scoring
@@ -139,6 +142,12 @@ export function runAutonomousBreeding(
       if (best && bestScore > 0.1) {
         // Minimum suitability threshold
         const sire = best;
+
+        // Final eligibility check via canBreed
+        const allPregnancies = [...(state.pregnancies || []), ...newPregnancies];
+        const breedCheck = canBreed(sire, mare, day, allPregnancies);
+        if (!breedCheck.ok) continue;
+
         const totalFee = sire.stud!.standingFee + BREEDING_FEE;
 
         // Create the pregnancy
