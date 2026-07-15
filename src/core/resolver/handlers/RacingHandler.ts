@@ -30,6 +30,7 @@ import type {
   JockeyAffinityImpact,
 } from "../impacts/jockeyImpacts";
 import type { TripleCrownProgressImpact } from "../impacts/campaignImpacts";
+import type { RaceEntry, RaceResult } from "@/core/race/types";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -52,7 +53,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     if (race && horse) {
       // Evict the bumped entry and refund its stable before adding the challenger
       if (bumpEntryHorseId) {
-        const bumpIdx = race.entries.findIndex((e: any) => e.horseId === bumpEntryHorseId);
+        const bumpIdx = race.entries.findIndex((e: RaceEntry) => e.horseId === bumpEntryHorseId);
         if (bumpIdx !== -1) {
           const bumped = race.entries[bumpIdx];
           if (bumped.stableId) {
@@ -82,7 +83,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { raceId, horseId } = impact as RaceWithdrawalImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     if (race) {
-      const index = race.entries.findIndex((e: any) => e.horseId === horseId);
+      const index = race.entries.findIndex((e: RaceEntry) => e.horseId === horseId);
       if (index !== -1) {
         race.entries.splice(index, 1);
       }
@@ -127,7 +128,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { raceId, horseId, jockeyId } = impact as JockeyAssignmentImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     if (race) {
-      const entry = race.entries.find((e: any) => e.horseId === horseId);
+      const entry = race.entries.find((e: RaceEntry) => e.horseId === horseId);
       if (entry) {
         entry.jockeyId = jockeyId;
       }
@@ -234,7 +235,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { raceId, horseId, jockeyInstructions } = impact as TacticsImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     if (race) {
-      const entry = race.entries.find((e: any) => e.horseId === horseId);
+      const entry = race.entries.find((e: RaceEntry) => e.horseId === horseId);
       if (entry) {
         entry.jockeyInstructions = jockeyInstructions;
       }
@@ -247,13 +248,13 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     if (race && race.result) {
       // Apply adjusted results after stewards DQ
       for (const adj of adjustedResults) {
-        const resultEntry = race.result.find((r: any) => r.horseId === adj.horseId);
+        const resultEntry = race.result.find((r: RaceResult) => r.horseId === adj.horseId);
         if (resultEntry) {
           resultEntry.position = adj.position;
         }
       }
       // Re-sort results by position
-      race.result.sort((a: any, b: any) => a.position - b.position);
+      race.result.sort((a: RaceResult, b: RaceResult) => a.position - b.position);
     }
   },
 

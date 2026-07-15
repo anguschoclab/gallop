@@ -7,3 +7,8 @@
 
 **Learning:** `computeStandings.ts` had multiple `any` casts (e.g. `(state as any).npcStables`) masking the lack of proper typing of GameState properties in this core logic module. This completely defeated the compiler's ability to check for property existence and type correctness when accessing state properties like `horses`, `npcStables`, and `playerProfile`.
 **Action:** When working with core state logic, directly rely on correctly typed state interfaces. If properties are valid members of the interface (like `npcStables` on `GameState`), accessing them directly preserves type safety without `any` casts.
+
+## 2025-03-03 - Extract inline types to remove `any` casting
+
+**Learning:** `src/core/race/types.ts` used inline object types for `entries` and `result` arrays in the `Race` type. This led to people resorting to `(e: any)` and `(r: any)` casting in loops and `.find` in `RacingHandler.ts` to skip type errors when interacting with these arrays.
+**Action:** Extract inline object array types into explicitly named exported interfaces (like `RaceEntry`, `RaceResult`). Doing so allows other modules to easily type check those objects or let TypeScript naturally infer them from the parent property, eliminating the need for `any` casting.

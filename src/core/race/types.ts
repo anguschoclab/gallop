@@ -42,6 +42,24 @@ export type Weather = "sunny" | "cloudy" | "rainy" | "sunset" | "night";
 
 export type TrackCondition = "fast" | "good" | "soft" | "heavy" | "yielding";
 
+export type RaceEntry = {
+  horseId: string;
+  owned: boolean;
+  stableId?: string;
+  npc?: boolean;
+  barrier?: number;
+  jockeyId?: string;
+  weight?: number;
+  withdrawnFromClaiming?: boolean;
+  jockeyInstructions?: JockeyInstructions;
+};
+
+export type RaceResult = {
+  horseId: string;
+  position: number;
+  time: number;
+};
+
 /**
  * Main Race type definition.
  *
@@ -58,20 +76,10 @@ export type Race = {
   purse: number;
   minStat?: number;
   fieldSize: number;
-  entries: {
-    horseId: string;
-    owned: boolean;
-    stableId?: string;
-    npc?: boolean;
-    barrier?: number;
-    jockeyId?: string;
-    weight?: number;
-    withdrawnFromClaiming?: boolean;
-    jockeyInstructions?: JockeyInstructions;
-  }[];
+  entries: RaceEntry[];
   inquiries?: StewardsInquiry[];
   resolved: boolean;
-  result?: { horseId: string; position: number; time: number }[];
+  result?: RaceResult[];
   snapshots?: RaceSnapshot[];
   graded?: {
     key: string;
