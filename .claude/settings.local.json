@@ -130,7 +130,9 @@
       "Bash(bun -e ' *)",
       "Bash(curl -s -o /dev/null -w \"%{http_code} %{time_total}s\\\\n\" --max-time 120 \"http://localhost:8080/src/workers/initialization.worker?worker_file&type=module\")",
       "Bash(curl -s -o /dev/null -w \"engine: %{http_code}\\\\n\" \"http://localhost:8080/src/workers/engine.worker?worker_file&type=module\")",
-      "Bash(curl -s -o /dev/null -w \"with-ext: %{http_code}\\\\n\" \"http://localhost:8080/src/workers/initialization.worker.ts?worker_file&type=module\")"
+      "Bash(curl -s -o /dev/null -w \"with-ext: %{http_code}\\\\n\" \"http://localhost:8080/src/workers/initialization.worker.ts?worker_file&type=module\")",
+      "Bash(curl -s -o /dev/null -w \"init: %{http_code}\\\\n\" \"http://localhost:8080/src/workers/initialization.worker.ts?worker_file&type=module\")",
+      "Bash(curl -s -o /dev/null -w \"engine: %{http_code}\\\\n\" \"http://localhost:8080/src/workers/engine.worker.ts?worker_file&type=module\")"
     ]
   },
   "hooks": {
