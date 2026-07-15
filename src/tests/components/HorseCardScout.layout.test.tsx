@@ -55,7 +55,7 @@ describe("HorseCardScout responsive layout", () => {
   it("name container div has min-w-0 class", () => {
     const horse = mkHorse();
     const { container } = render(<HorseCardScout horse={horse} hookData={mkHookData()} />);
-    const nameContainer = container.querySelector(".space-y-0\\.5");
+    const nameContainer = container.querySelector(".space-y-1");
     expect(nameContainer).toBeTruthy();
     expect(nameContainer!.className).toContain("min-w-0");
   });
@@ -63,9 +63,9 @@ describe("HorseCardScout responsive layout", () => {
   it("header flex container has min-w-0 on left side", () => {
     const horse = mkHorse();
     const { container } = render(<HorseCardScout horse={horse} hookData={mkHookData()} />);
-    const headerFlex = container.querySelector(".flex.items-start.justify-between");
+    const headerFlex = container.querySelector(".flex.items-start.gap-3");
     expect(headerFlex).toBeTruthy();
-    const leftSide = headerFlex!.querySelector(".flex.items-center.gap-3");
+    const leftSide = headerFlex!.querySelector(".flex.items-center.gap-2");
     expect(leftSide).toBeTruthy();
     expect(leftSide!.className).toContain("min-w-0");
   });

@@ -38,7 +38,7 @@ import { createInboxSlice } from "./slices/inboxSlice";
 import { createStaffSlice } from "./slices/staffSlice";
 import { createInsuranceSlice } from "./slices/insuranceSlice";
 import { createTransportSlice, type TransportSlice } from "./slices/transportSlice";
-import { createOpfsStorage, hydrationComplete, saveExists, createRehydrateStore } from "./storage";
+import { createOpfsStorage, hydrationComplete, saveExists, persistenceEnabled, createRehydrateStore } from "./storage";
 import { createInitialState } from "./initialization";
 import type { CoreState } from "@/game/store/state/coreState";
 
@@ -48,6 +48,7 @@ import { wrap, expose, type Remote } from "comlink";
 import type { EngineWorkerApi } from "@/workers/engine.worker";
 import type { StorageWorkerApi } from "@/workers/storage.worker";
 import type { InitializationWorkerApi } from "@/workers/initialization.worker";
+import { clearDatabase } from "@/services/storage/indexedDbService";
 import type { StoreType, ActionResult, GameStateCreator } from "./types";
 import type { NewGameOptions } from "@/game/store/state";
 import type { AnyIntent } from "@/core/resolver/intents";
@@ -356,8 +357,20 @@ export const useGame = create<StoreType>()(
         const { clearDatabase: clearIDB } = await import("@/services/storage/indexedDbService");
         await clearIDB();
 
-        const newState = createInitialState(options);
+        // Route through initialization worker if available, fall back to main thread
+        let newState: GameState;
+        try {
+          const worker = getInitializationWorker();
+          const result = await worker.createInitialState({ options });
+          newState = result.state;
+        } catch {
+          // Worker not available (e.g. test environment) — use main thread
+          newState = createInitialState(options);
+        }
         set({ ...newState } as any);
+
+        // Enable persistence before saving
+        persistenceEnabled.value = true;
 
         // Force an immediate, awaited save so the state is on disk before navigation.
         // The persist middleware's setItem is async and not awaited by set(),
@@ -383,13 +396,11 @@ export const useGame = create<StoreType>()(
         }
 
         // Version mismatch: stored data was written by an older/incompatible schema.
-        // No backward compatibility for v3 — reset to defaults.
+        // No backward compatibility for v3 — wipe the save and reset.
         if ((state as any).storeVersion !== STORE_STATE_VERSION) {
-          const defaults = createInitialState({} as any);
-          useGame.setState({
-            ...defaults,
-            storeVersion: STORE_STATE_VERSION,
-          } as any);
+          clearDatabase();
+          saveExists.value = false;
+          persistenceEnabled.value = false;
           hydrationComplete.value = true;
           return;
         }
@@ -414,7 +425,7 @@ export const rehydrateStoreMain = createRehydrateStore(createInitialState, useGa
 export { rehydrateStoreMain as rehydrateStore };
 
 // Export hydrationComplete and saveExists for external consumers
-export { hydrationComplete, saveExists };
+export { hydrationComplete, saveExists, persistenceEnabled };
 
 // Export shallow for use in components that need to compare object/array selectors
 export { shallow };

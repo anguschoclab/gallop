@@ -40,14 +40,24 @@ import { safeParseJson, bucketPayloadSchema } from "@/services/storage/schemas";
  *
  * @returns Zustand persist storage adapter with getItem, setItem, and removeItem methods
  */
+// Module-level cache for loadGameStateFromIDB result to avoid double-read
+let cachedLoadResult: GameState | null | undefined = undefined;
+
 export function createOpfsStorage() {
   return {
     getItem: async (_name: string) => {
+      if (cachedLoadResult !== undefined) {
+        const cached = cachedLoadResult;
+        cachedLoadResult = undefined;
+        if (!cached) return null;
+        return { state: cached, version: 0 };
+      }
       const state = await loadGameStateFromIDB();
       if (!state) return null;
       return { state, version: 0 };
     },
     setItem: async (_name: string, value: { state: GameState }) => {
+      if (!persistenceEnabled.value) return;
       try {
         await saveGameStateToIDB(value.state);
       } catch (error) {
@@ -114,6 +124,7 @@ const META_KEYS: (keyof GameState)[] = [
   "stewardsInquiries",
   "playerNominations",
   "syndicateInvestors",
+  "lastTopTenRank",
 ];
 
 export async function saveGameStateToIDB(state: GameState): Promise<void> {
@@ -241,6 +252,20 @@ export function _resetSaveExists(): void {
   _saveExists = false;
 }
 
+let _persistenceEnabled = false;
+export const persistenceEnabled = {
+  get value() {
+    return _persistenceEnabled;
+  },
+  set value(v: boolean) {
+    _persistenceEnabled = v;
+  },
+};
+
+export function _resetPersistenceEnabled(): void {
+  _persistenceEnabled = false;
+}
+
 /**
  * Creates a rehydrate function that can be called with the store instance.
  *
@@ -263,6 +288,10 @@ export function createRehydrateStore(initialState: any, useGameStore: any) {
     const state = await loadGameStateFromIDB();
     saveExists.value = !!state;
     if (state) {
+      // Cache the result so getItem doesn't re-read from IndexedDB
+      cachedLoadResult = state;
+      // Enable persistence before rehydrate so persist middleware can write
+      persistenceEnabled.value = true;
       // Use the persist middleware's built-in rehydrate
       // This will call getItem from our custom storage
       if (store.persist) {
@@ -275,8 +304,7 @@ export function createRehydrateStore(initialState: any, useGameStore: any) {
       }
       hydrationComplete.value = true;
     } else {
-      // No saved state, initialize with default
-      store.setState(initialState());
+      // No saved state — do NOT call setState, do NOT enable persistence
       hydrationComplete.value = true;
     }
   };

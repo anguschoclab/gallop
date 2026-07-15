@@ -18,7 +18,11 @@ let opfsInitialized = false;
 async function initializeStorage(): Promise<void> {
   if (opfsInitialized) return;
 
-  await initOPFS();
+  try {
+    await initOPFS();
+  } catch (error) {
+    console.error("Failed to initialize OPFS in storage worker:", error);
+  }
   opfsInitialized = true;
 }
 

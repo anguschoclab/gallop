@@ -1,13 +1,49 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@/services/storage/storageAdapter", () => ({
-  clearGameState: vi.fn(),
-  saveGameState: vi.fn(),
-  loadGameState: vi.fn(),
-  initializeStorage: vi.fn(),
-  useLocalStorageFallback: false,
-  _resetStorageAdapterState: vi.fn(),
+vi.mock("@/services/storage/indexedDbService", () => ({
+  clearDatabase: vi.fn().mockResolvedValue(undefined),
+  isIndexedDbAvailable: vi.fn(() => false),
+  saveBuckets: vi.fn().mockResolvedValue(undefined),
+  loadBuckets: vi.fn().mockResolvedValue(null),
 }));
+
+vi.mock("@/game/store/storage", () => {
+  let _saveExistsValue = false;
+  let _persistenceEnabledValue = false;
+  return {
+    createOpfsStorage: () => ({
+      getItem: vi.fn().mockResolvedValue(null),
+      setItem: vi.fn().mockResolvedValue(undefined),
+      removeItem: vi.fn().mockResolvedValue(undefined),
+    }),
+    hydrationComplete: { value: false },
+    saveExists: {
+      get value() {
+        return _saveExistsValue;
+      },
+      set value(v: boolean) {
+        _saveExistsValue = v;
+      },
+    },
+    persistenceEnabled: {
+      get value() {
+        return _persistenceEnabledValue;
+      },
+      set value(v: boolean) {
+        _persistenceEnabledValue = v;
+      },
+    },
+    createRehydrateStore: vi.fn(() => vi.fn().mockResolvedValue(undefined)),
+    saveGameStateToIDB: vi.fn().mockResolvedValue(undefined),
+    loadGameStateFromIDB: vi.fn().mockResolvedValue(null),
+    _resetSaveExists: () => {
+      _saveExistsValue = false;
+    },
+    _resetPersistenceEnabled: () => {
+      _persistenceEnabledValue = false;
+    },
+  };
+});
 
 vi.mock("@/workers/engine.worker", () => ({}));
 vi.mock("@/workers/storage.worker", () => ({}));
@@ -19,10 +55,9 @@ vi.mock("comlink", () => ({
 }));
 
 import { useGame, STORE_STATE_VERSION } from "@/game/store";
-import { saveGameState, clearGameState } from "@/services/storage/storageAdapter";
-import { saveExists, _resetSaveExists } from "@/game/store/storage";
+import { saveGameStateToIDB, saveExists, _resetSaveExists } from "@/game/store/storage";
+import { clearDatabase } from "@/services/storage/indexedDbService";
 import type { NewGameOptions } from "@/game/store/state";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 const mockProfile = {
   stableName: "Test Stable",
@@ -51,51 +86,47 @@ describe("startNewGame atomic save", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     _resetSaveExists();
-    (saveGameState as any).mockResolvedValue(undefined);
-    (clearGameState as any).mockResolvedValue(undefined);
+    (saveGameStateToIDB as any).mockResolvedValue(undefined);
+    (clearDatabase as any).mockResolvedValue(undefined);
     useGame.setState({ playerProfile: undefined } as any);
   });
 
-  it("calls clearGameState before saveGameState", async () => {
+  it("calls clearDatabase before saveGameStateToIDB", async () => {
     const callOrder: string[] = [];
-    (clearGameState as any).mockImplementation(async () => {
+    (clearDatabase as any).mockImplementation(async () => {
       callOrder.push("clear");
     });
-    (saveGameState as any).mockImplementation(async () => {
+    (saveGameStateToIDB as any).mockImplementation(async () => {
       callOrder.push("save");
     });
 
     await useGame.getState().startNewGame(mockOptions);
 
-    // The persist middleware may also call saveGameState, but our direct call
-    // must come after clearGameState. Check that clear comes before any save.
     expect(callOrder[0]).toBe("clear");
     expect(callOrder.filter((c) => c === "save").length).toBeGreaterThanOrEqual(1);
   });
 
-  it("calls saveGameState with state including playerProfile", async () => {
+  it("calls saveGameStateToIDB with state including playerProfile", async () => {
     await useGame.getState().startNewGame(mockOptions);
 
-    // The persist middleware may call saveGameState first with a partial state.
-    // Our direct call should include playerProfile. Find the call that has it.
-    const allCalls = (saveGameState as any).mock.calls.map((c: any) => c[0]);
+    const allCalls = (saveGameStateToIDB as any).mock.calls.map((c: any) => c[0]);
     const profileCall = allCalls.find((s: any) => s.playerProfile);
     expect(profileCall).toBeDefined();
     expect(profileCall.playerProfile.stableName).toBe("Test Stable");
     expect(profileCall.playerProfile.ownerName).toBe("Test Owner");
   });
 
-  it("calls saveGameState with state including storeVersion", async () => {
+  it("calls saveGameStateToIDB with state including storeVersion", async () => {
     await useGame.getState().startNewGame(mockOptions);
 
-    const allCalls = (saveGameState as any).mock.calls.map((c: any) => c[0]);
+    const allCalls = (saveGameStateToIDB as any).mock.calls.map((c: any) => c[0]);
     const versionedCall = allCalls.find((s: any) => s.storeVersion === STORE_STATE_VERSION);
     expect(versionedCall).toBeDefined();
   });
 
-  it("does not resolve until saveGameState resolves", async () => {
+  it("does not resolve until saveGameStateToIDB resolves", async () => {
     let saveResolved = false;
-    (saveGameState as any).mockImplementation(async () => {
+    (saveGameStateToIDB as any).mockImplementation(async () => {
       await new Promise((r) => setTimeout(r, 50));
       saveResolved = true;
     });
@@ -105,10 +136,10 @@ describe("startNewGame atomic save", () => {
     expect(saveResolved).toBe(true);
   });
 
-  it("throws if saveGameState throws (does not swallow)", async () => {
-    (saveGameState as any).mockRejectedValue(new Error("OPFS write failed"));
+  it("throws if saveGameStateToIDB throws (does not swallow)", async () => {
+    (saveGameStateToIDB as any).mockRejectedValue(new Error("IDB write failed"));
 
-    await expect(useGame.getState().startNewGame(mockOptions)).rejects.toThrow("OPFS write failed");
+    await expect(useGame.getState().startNewGame(mockOptions)).rejects.toThrow("IDB write failed");
   });
 
   it("sets saveExists to true after successful save", async () => {
@@ -119,8 +150,8 @@ describe("startNewGame atomic save", () => {
     expect(saveExists.value).toBe(true);
   });
 
-  it("does not set saveExists to true if saveGameState throws", async () => {
-    (saveGameState as any).mockRejectedValue(new Error("OPFS write failed"));
+  it("does not set saveExists to true if saveGameStateToIDB throws", async () => {
+    (saveGameStateToIDB as any).mockRejectedValue(new Error("IDB write failed"));
 
     await expect(useGame.getState().startNewGame(mockOptions)).rejects.toThrow();
 

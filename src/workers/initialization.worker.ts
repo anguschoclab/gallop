@@ -2,27 +2,16 @@
  * Initialization Worker
  * Handles game initialization in a Web Worker to offload CPU-intensive operations
  * like horse generation, race generation, and NPC setup from the main thread.
+ *
+ * This worker is a thin wrapper around the main-thread createInitialState function
+ * from @/game/store/initialization. Keeping a single source of truth ensures
+ * worker output and main-thread output always match.
  */
 
 import { expose } from "comlink";
-import type { GameState, Horse, Race } from "@/game/types";
+import type { GameState } from "@/game/types";
 import type { NewGameOptions } from "@/game/store/state";
-import { generateHorse } from "@/core/horse/horseFactory";
-import { generateRace, makeGradedRace } from "@/core/race/generation/raceGen";
-import { generateInitialJockeys } from "@/core/jockey/generator";
-import { generateAllStables } from "@/core/npc/stables";
-import { generateAllNpcHorses } from "@/core/npc/horseGenerator";
-import { runNpcRaceEntry } from "@/core/npc/raceEntry";
-import { createRng, hashStr, type Rng } from "@/core/common/rng";
-import { GRADED_RACES } from "@/data/gradedRaces";
-import { createDefaultPlayerFacilities, createFacility } from "@/core/facilities";
-import { seedGazetteNews } from "@/services/narrative/seedNewsGenerator";
-import { createStableAIState } from "@/core/ai/npcCycleAI";
-import {
-  STARTING_CASH,
-  INITIALIZATION_BUDGET_TIER_THRESHOLD,
-  INITIALIZATION_HORSE_COUNT_THRESHOLD,
-} from "@/constants";
+import { createInitialState as createInitialStateMain } from "@/game/store/initialization";
 
 export type InitializeInput = {
   options?: NewGameOptions;
@@ -34,206 +23,13 @@ export type InitializeOutput = {
 };
 
 /**
- * Creates the initial game state for a new game in the worker
+ * Creates the initial game state for a new game in the worker.
+ * Delegates to the main-thread createInitialState to ensure output parity.
  */
 async function createInitialState(input: InitializeInput): Promise<InitializeOutput> {
-  const { options, progressCallback } = input;
-  const totalStages = 7;
-
-  // Stage 1: Generate player horses
-  if (progressCallback) {
-    progressCallback(1, totalStages, "Generating player horses");
-  }
-
-  const profileSeed = options?.profile.stableName ?? "initial_setup";
-  const setupRng = createRng(hashStr(profileSeed));
-
-  const playerHorseSpecs = options?.backstory.horses ?? [{ tier: "starter" as const, count: 2 }];
-  const playerSilkColor = options?.profile.silk.primary;
-  const horses: Horse[] = [];
-  for (const spec of playerHorseSpecs) {
-    for (let i = 0; i < spec.count; i++) {
-      const h = generateHorse({ tier: spec.tier, owned: true }, setupRng);
-      if (playerSilkColor) h.silk = playerSilkColor;
-      horses.push(h);
-    }
-  }
-
-  // Stage 2: Generate market horses
-  if (progressCallback) {
-    progressCallback(2, totalStages, "Generating market horses");
-  }
-
-  const market: Horse[] = Array.from({ length: 5 }, () => {
-    const r = setupRng.next();
-    const tier: "starter" | "budget" | "mid" | "elite" =
-      r < INITIALIZATION_BUDGET_TIER_THRESHOLD ? "budget" : "mid";
-    return generateHorse({ tier }, setupRng);
-  });
-
-  // Stage 3: Generate races
-  if (progressCallback) {
-    progressCallback(3, totalStages, "Generating races");
-  }
-
-  const races: Race[] = [];
-  for (let d = 1; d <= 7; d++) {
-    const dayRng = createRng(hashStr(`raceGen_${d}`));
-    const count = dayRng.next() < INITIALIZATION_HORSE_COUNT_THRESHOLD ? 2 : 3;
-    for (let i = 0; i < count; i++) races.push(generateRace(d, dayRng));
-  }
-  for (const g of GRADED_RACES) {
-    const gradedRng = createRng(hashStr(`graded_${g.key}`));
-    races.push(makeGradedRace(g, g.dayOfYear, gradedRng));
-  }
-
-  // Stage 4: Generate NPC stables and horses
-  if (progressCallback) {
-    progressCallback(4, totalStages, "Generating NPC stables and horses");
-  }
-
-  const stableRng = createRng(hashStr("initial_stables"));
-  const npcStables = generateAllStables(1, stableRng);
-  const npcHorseRng = createRng(hashStr("initial_npc_horses"));
-  const { stables: updatedStables, horses: npcHorses } = generateAllNpcHorses(
-    npcStables,
-    npcHorseRng,
-  );
-
-  // Stage 5: Generate jockeys
-  if (progressCallback) {
-    progressCallback(5, totalStages, "Generating jockeys");
-  }
-
-  const jockeyRng = createRng(hashStr("initial_jockeys"));
-  const jockeys = generateInitialJockeys(jockeyRng);
-
-  // Stage 6: Run initial NPC race entry
-  if (progressCallback) {
-    progressCallback(6, totalStages, "Running initial NPC race entry");
-  }
-
-  const pregnantIds = new Set<string>();
-  const entryRng = createRng(hashStr("initial_entry"));
-  const racesWithEntries = runNpcRaceEntry(
-    updatedStables,
-    npcHorses,
-    jockeys,
-    races,
-    1,
-    entryRng,
-    7,
-    pregnantIds,
-  );
-
-  // Stage 7: Setup facilities and final state
-  if (progressCallback) {
-    progressCallback(7, totalStages, "Finalizing game state");
-  }
-
-  const facilities = createDefaultPlayerFacilities(1);
-  if (options) {
-    for (const [type, level] of Object.entries(options.backstory.facilityUpgrades)) {
-      if (level) {
-        facilities[type as keyof typeof facilities] = createFacility(
-          type as Parameters<typeof createFacility>[0],
-          level as unknown as any,
-          1,
-        );
-      }
-    }
-  }
-
-  const reputationScore = options?.backstory.reputationScore ?? 0;
-  const startingCash = options?.backstory.startingCash ?? STARTING_CASH;
-  const welcomeText = options
-    ? `${options.profile.stableName} opens its doors. Welcome, ${options.profile.ownerName}.`
-    : "Welcome to your stable. Train your horses and enter them in races.";
-
-  // Generate Day 1 Seed Gazette
-  const gazetteRng = createRng(hashStr(`gazette_${profileSeed}`));
-  const { news: seedNews, introStableIds } = seedGazetteNews(
-    updatedStables,
-    npcHorses,
-    racesWithEntries,
-    options?.profile,
-    gazetteRng,
-  );
-
-  // Build npcAIManager with intro marks for seed-gazette'd stables
-  const npcAIManager = { stableStates: {} as Record<string, ReturnType<typeof createStableAIState>>, globalDay: 1, regionalKings: {} as Record<string, string> };
-  for (const stableId of introStableIds) {
-    const stable = updatedStables.find((s) => s.id === stableId);
-    if (stable) {
-      const aiState = createStableAIState(stable, 1);
-      aiState.introPublishedDay = 1;
-      npcAIManager.stableStates[stableId] = aiState;
-    }
-  }
-
-  const state: any = {
-    day: 1,
-    cash: startingCash,
-    horses: Object.fromEntries([...horses, ...npcHorses].map((h) => [h.id, h])),
-    market,
-    races: Object.fromEntries(racesWithEntries.map((r) => [r.id, r])),
-    trainingUsed: {},
-    log: [{ day: 1, text: welcomeText }],
-    pregnancies: [],
-    npcStables: updatedStables,
-    scoutReports: [],
-    auctions: [],
-    jockeys: generateInitialJockeys(createRng(hashStr("initial_jockeys")), 25),
-    awards: [],
-    facilities,
-    reputation: {
-      score: reputationScore,
-      events: [],
-      gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 },
-      totalWins: 0,
-      yearsActive: 0,
-      tier: "unknown",
-    },
-    playerProfile: options?.profile,
-    news: seedNews,
-    archive: {
-      horses: [],
-      races: [],
-      pregnancies: [],
-      news: [],
-    },
-    activeBreedingProgram: undefined,
-    triplecrownHistory: [],
-    paceSamples: {},
-    calibratedPars: {},
-    lastCalibrationDay: 0,
-    npcAIManager,
-    campaigns: [],
-    expenses: [],
-    transactions: [],
-    replays: [],
-    transports: [],
-    hallOfFame: [],
-    trackRecords: {},
-    horseLeaderboards: {},
-    founders: {},
-    lastFounderUpdateDay: 0,
-    syndicates: {},
-    staffPool: [],
-    hiredStaff: [],
-    breedingPrograms: [],
-    usedHorseNames: [],
-    usedJockeyNames: [],
-    seasonRecords: [],
-    privateSaleOffers: [],
-    claims: [],
-    breedingProgramProgress: {},
-    awardsHistory: {},
-  };
-
-  return {
-    state: state as GameState,
-  };
+  const { options } = input;
+  const state = createInitialStateMain(options);
+  return { state };
 }
 
 /**
