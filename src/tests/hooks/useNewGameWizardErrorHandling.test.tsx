@@ -67,7 +67,7 @@ describe("useNewGameWizard error handling", () => {
   });
 
   it("resets submitting to false if startNewGame throws", async () => {
-    const startNewGame = vi.fn().mockRejectedValue(new Error("OPFS write failed"));
+    const startNewGame = vi.fn().mockRejectedValue(new Error("IndexedDB write failed"));
     setupStore(startNewGame);
 
     const { result } = renderHook(() => useNewGameWizard());
@@ -87,7 +87,7 @@ describe("useNewGameWizard error handling", () => {
   });
 
   it("does not navigate if startNewGame throws", async () => {
-    const startNewGame = vi.fn().mockRejectedValue(new Error("OPFS write failed"));
+    const startNewGame = vi.fn().mockRejectedValue(new Error("IndexedDB write failed"));
     setupStore(startNewGame);
 
     const { result } = renderHook(() => useNewGameWizard());

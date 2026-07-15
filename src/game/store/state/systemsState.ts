@@ -16,7 +16,7 @@
 import type { Stable, PlayerProfile } from "@/core/stable/types";
 import type { ScoutReport } from "@/core/market/types";
 import type { Jockey } from "@/core/jockey/types";
-import type { HorseCampaign, TripleCrownProgress } from "@/core/calendar/campaignTypes";
+import type { HorseCampaign } from "@/core/calendar/campaignTypes";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import type { RegionalAward, AwardRegion } from "@/core/awards/types";
 import type {
@@ -27,19 +27,16 @@ import type {
   DamsireLeaderboard,
   BlueHenLeaderboard,
 } from "@/core/breeding/leaderboardTypes";
-import type { Syndicate } from "@/core/breeding/types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { FacilityType, FacilityLevel } from "@/core/facilities";
 import type { PlayerFacilities } from "@/core/facilities";
 import type { UserSettings } from "@/core/settings/settingsTypes";
-import type { Expense } from "@/core/expenses";
-import type { Transaction } from "@/core/transactions";
 import type { RaceReplay } from "@/core/replays";
 import type { ManagerReputation } from "@/core/reputation";
 import type { TransportRequest } from "@/core/transportation";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import type { StaffMember } from "@/core/staff/staffTypes";
-import type { HallOfFameEntry, TrackRecord, FounderRecord } from "@/core/history/historyTypes";
+import type { TrackRecord, FounderRecord } from "@/core/history/historyTypes";
 import type { ReservedNameEntry } from "@/core/horse/naming/reservedNames";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 import type { Outpost } from "@/core/facilities/outpostTypes";
@@ -104,8 +101,6 @@ export interface SystemsState {
   // Campaign planner system (optional)
   /** Active horse campaign plans */
   campaigns?: HorseCampaign[];
-  /** Historical Triple Crown attempts */
-  triplecrownHistory?: TripleCrownProgress[];
 
   // Facility/infrastructure system (optional)
   /** Player's stable facilities - affects training, recovery, and operations */
@@ -116,14 +111,6 @@ export interface SystemsState {
   // User settings (optional)
   /** Player preferences and game configuration */
   userSettings?: UserSettings;
-
-  // Expense tracking (optional)
-  /** Historical expense records by category */
-  expenses?: Expense[];
-
-  // Transaction tracking (optional)
-  /** Complete cash flow transaction history */
-  transactions?: Transaction[];
 
   // Race replay storage (optional)
   /** Stored race replays for viewing past races */
@@ -145,10 +132,6 @@ export interface SystemsState {
   /** Set when a player race interrupts auto-advance */
   pendingPlayerRaceId?: string;
 
-  // Hall of Fame system (optional)
-  /** Legendary horses inducted into Hall of Fame */
-  hallOfFame?: HallOfFameEntry[];
-
   // Global historical records (optional)
   /** Lifetime track records keyed by trackId_surface_distance */
   trackRecords?: Record<string, TrackRecord>;
@@ -158,11 +141,6 @@ export interface SystemsState {
   founders?: Record<string, FounderRecord>;
   /** Day of last founder analysis update */
   lastFounderUpdateDay?: number;
-  /** Stallion syndicates keyed by stallionId */
-  syndicates?: Record<string, Syndicate>;
-  /** Share transaction history for syndicates */
-  shareTransactions?: any[];
-
   // Player profile (optional - set after completing new game wizard)
   /** Player's stable identity from the new game wizard */
   playerProfile?: PlayerProfile;
@@ -237,12 +215,9 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
       jockeys: [],
       awards: [],
       campaigns: [],
-      triplecrownHistory: [],
       facilities: facilities as PlayerFacilities,
       npcFacilities: {},
       userSettings: createDefaultUserSettings(1),
-      expenses: [],
-      transactions: [],
       replays: [],
       reputation: {
         score: backstory.reputationScore,
@@ -254,12 +229,9 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
       },
       transports: [],
       playerProfile: profile,
-      hallOfFame: [],
       trackRecords: {},
       horseLeaderboards: {},
       founders: {},
-      syndicates: {},
-      shareTransactions: [],
       usedHorseNames: [],
       usedJockeyNames: [],
       reservedHorseNames: [],
@@ -283,12 +255,9 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     jockeys: [],
     awards: [],
     campaigns: [],
-    triplecrownHistory: [],
     facilities: createDefaultPlayerFacilities(1),
     npcFacilities: {},
     userSettings: createDefaultUserSettings(1),
-    expenses: [],
-    transactions: [],
     replays: [],
     reputation: {
       score: 0,
@@ -299,12 +268,9 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
       yearsActive: 0,
     },
     transports: [],
-    hallOfFame: [],
     trackRecords: {},
     horseLeaderboards: {},
     founders: {},
-    syndicates: {},
-    shareTransactions: [],
     usedHorseNames: [],
     usedJockeyNames: [],
     reservedHorseNames: [],

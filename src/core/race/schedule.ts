@@ -23,6 +23,7 @@ import { generateEuropeanRaceCard } from "./generation/europe";
 import { generateAustralianRaceCard } from "./generation/australia";
 import { generateAsianRaceCard } from "./generation/asia";
 import { generateSouthAmericanRaceCard } from "./generation/southAmerica";
+import { ensureMaidenInCard } from "./maidenGuarantee";
 
 // Breeders' Cup rotation pool
 const BREEDERS_CUP_TRACKS = [
@@ -124,22 +125,29 @@ export function generateTrackRaces(
 ): Race[] {
   const numRaces = rng.int(schedule.racesPerDay[0], schedule.racesPerDay[1]);
 
+  let races: Race[];
+
   // Use regional-specific generator based on track's regional system
   switch (schedule.regionalSystem) {
     case "north_america":
-      return generateNorthAmericanRaceCard(track, gameDay, numRaces, rng);
+      races = generateNorthAmericanRaceCard(track, gameDay, numRaces, rng);
+      break;
     case "europe":
-      return generateEuropeanRaceCard(track, gameDay, numRaces, rng);
+      races = generateEuropeanRaceCard(track, gameDay, numRaces, rng);
+      break;
     case "australia":
-      return generateAustralianRaceCard(track, gameDay, numRaces, rng);
+      races = generateAustralianRaceCard(track, gameDay, numRaces, rng);
+      break;
     case "asia":
     case "japan":
-      return generateAsianRaceCard(track, gameDay, numRaces, rng);
+      races = generateAsianRaceCard(track, gameDay, numRaces, rng);
+      break;
     case "south_america":
-      return generateSouthAmericanRaceCard(track, gameDay, numRaces, rng);
+      races = generateSouthAmericanRaceCard(track, gameDay, numRaces, rng);
+      break;
     default: {
       // Fallback to generic generator if regional system is unknown
-      const races: Race[] = [];
+      races = [];
       const trackSurfaces = track.courses.map((c) => c.surface) as (
         "Turf" | "Dirt" | "Synthetic"
       )[];
@@ -150,9 +158,11 @@ export function generateTrackRaces(
         race.surface = rng.pick(availableSurfaces);
         races.push(race);
       }
-      return races;
+      break;
     }
   }
+
+  return ensureMaidenInCard(races, gameDay, track, rng);
 }
 
 /**

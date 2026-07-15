@@ -77,7 +77,7 @@ export function generateAsianRace(
     raceClass,
     entryFee: Math.round(cfg.entry * 1.5),
     purse: Math.round(cfg.purse * 2.0), // Asian racing (Japan/HK/UAE) has much higher purses
-    minStat: (cfg.minStat ?? 70) + 10, // Higher standard of competition
+    minStat: cfg.minStat !== undefined ? cfg.minStat + 10 : undefined, // Higher standard for classes with minStat; Maiden stays open
     fieldSize: rand(10, 16, rng),
     entries: [],
     resolved: false,

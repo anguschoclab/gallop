@@ -6,7 +6,7 @@
  * program, horse admin, award, and utility slices. It also manages worker initialization
  * and storage operations.
  *
- * Dependencies: zustand (create, persist, shallow), ./types (StoreType, NewGameOptions), ./slices/* (all slice creators), ./storage (createOpfsStorage, hydrationComplete, createRehydrateStore), ./initialization (createInitialState), comlink (wrap, expose), @/workers/engine.worker (EngineWorkerApi), @/workers/initialization.worker (InitializationWorkerApi), @/core/resolver/intents (AnyIntent)
+ * Dependencies: zustand (create, persist, shallow), ./types (StoreType, NewGameOptions), ./slices/* (all slice creators), ./storage (createIdbStorage, hydrationComplete, createRehydrateStore), ./initialization (createInitialState), comlink (wrap, expose), @/workers/engine.worker (EngineWorkerApi), @/workers/initialization.worker (InitializationWorkerApi), @/core/resolver/intents (AnyIntent)
  * Related files: All slice files in store/slices/, storage.ts (storage operations)
  */
 
@@ -38,7 +38,7 @@ import { createInboxSlice } from "./slices/inboxSlice";
 import { createStaffSlice } from "./slices/staffSlice";
 import { createInsuranceSlice } from "./slices/insuranceSlice";
 import { createTransportSlice, type TransportSlice } from "./slices/transportSlice";
-import { createOpfsStorage, hydrationComplete, saveExists, persistenceEnabled, createRehydrateStore } from "./storage";
+import { createIdbStorage, hydrationComplete, saveExists, persistenceEnabled, createRehydrateStore } from "./storage";
 import { createInitialState } from "./initialization";
 import type { CoreState } from "@/game/store/state/coreState";
 
@@ -347,7 +347,7 @@ export const useGame = create<StoreType>()(
     }),
     {
       name: "gallop-game-state",
-      storage: createOpfsStorage(),
+      storage: createIdbStorage(),
       onRehydrateStorage: () => (state) => {
         if (!state) {
           hydrationComplete.value = true;

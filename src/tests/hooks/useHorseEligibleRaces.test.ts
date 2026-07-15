@@ -250,3 +250,51 @@ describe("deriveEligibleRaces", () => {
     expect(result.length).toBe(1);
   });
 });
+
+describe("findFirstEligibleRace", () => {
+  it("returns nearest eligible maiden for starter horse", () => {
+    const horse = mkHorse({
+      age: 3,
+      hemisphere: "Northern",
+      raceHistory: [],
+      stats: { speed: 40, stamina: 40, acceleration: 40, consistency: 40, temperament: 50, conformation: 50 },
+    });
+    const stakes = mkRace({ id: "r-stakes", day: baseDay + 5, raceClass: "Stakes", minStat: 65 });
+    const maiden = mkRace({ id: "r-maiden", day: baseDay + 10, raceClass: "Maiden" });
+    const result = findFirstEligibleRace(horse, [stakes, maiden], baseDay);
+    expect(result).toBeDefined();
+    expect(result!.id).toBe("r-maiden");
+  });
+
+  it("returns undefined when no eligible races exist", () => {
+    const horse = mkHorse({
+      raceHistory: [{ raceId: "old", raceName: "Old", position: 1, day: 1 }],
+    });
+    const maiden = mkRace({ day: baseDay + 5, raceClass: "Maiden" });
+    const result = findFirstEligibleRace(horse, [maiden], baseDay);
+    expect(result).toBeUndefined();
+  });
+
+  it("ignores resolved races", () => {
+    const horse = mkHorse({ raceHistory: [] });
+    const resolved = mkRace({ id: "r-resolved", day: baseDay + 3, raceClass: "Maiden", resolved: true });
+    const upcoming = mkRace({ id: "r-upcoming", day: baseDay + 5, raceClass: "Maiden" });
+    const result = findFirstEligibleRace(horse, [resolved, upcoming], baseDay);
+    expect(result).toBeDefined();
+    expect(result!.id).toBe("r-upcoming");
+  });
+
+  it("ignores races on or before current day", () => {
+    const horse = mkHorse({ raceHistory: [] });
+    const today = mkRace({ id: "r-today", day: baseDay, raceClass: "Maiden" });
+    const result = findFirstEligibleRace(horse, [today], baseDay);
+    expect(result).toBeUndefined();
+  });
+
+  it("returns undefined when energy < 50", () => {
+    const horse = mkHorse({ energy: 49, raceHistory: [] });
+    const maiden = mkRace({ day: baseDay + 10, raceClass: "Maiden" });
+    const result = findFirstEligibleRace(horse, [maiden], baseDay);
+    expect(result).toBeUndefined();
+  });
+});

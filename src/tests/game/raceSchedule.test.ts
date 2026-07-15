@@ -564,3 +564,42 @@ describe("generateAnnualCalendar — optimized", () => {
     }
   });
 });
+
+describe("generateTrackRaces — winter maiden guarantee", () => {
+  it("includes at least 1 starter-eligible maiden on a winter day (dayOfYear <= 60)", () => {
+    const track: Track = {
+      id: "track-winter-test",
+      name: "Winter Test Track",
+      country: "USA",
+      courses: [
+        {
+          surface: "Dirt",
+          circumference: 2000,
+          straightLength: 400,
+          sections: [
+            { type: "straight", length: 400 },
+            { type: "turn", length: 600, radius: 191 },
+            { type: "straight", length: 400 },
+            { type: "turn", length: 600, radius: 191 },
+          ],
+        },
+      ],
+    };
+
+    const schedule: TrackSchedule = {
+      trackId: "track-winter-test",
+      raceDays: [0, 1, 2, 3, 4, 5, 6],
+      racesPerDay: [8, 10],
+      regionalSystem: "north_america",
+    };
+
+    // Day 30 = dayOfYear 30 (winter, within meet)
+    const races = generateTrackRaces(track, schedule, 30, createRng("winter-test"));
+    const hasStarterMaiden = races.some(
+      (r) =>
+        r.raceClass.toLowerCase().includes("maiden") &&
+        r.minStat === undefined,
+    );
+    expect(hasStarterMaiden).toBe(true);
+  });
+});

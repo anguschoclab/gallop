@@ -2,20 +2,29 @@ import { useState } from "react";
 import type { EligibleRaceRow } from "@/hooks/race/useHorseEligibleRaces";
 import type { Race } from "@/game/types";
 import { formatCurrency } from "@/core/common/formatting";
+import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RaceEntry } from "@/components/race/RaceEntry";
 import { cn } from "@/lib/cn";
-import { CheckCircle2, LogIn, ArrowUpRight, Search } from "lucide-react";
+import { CheckCircle2, LogIn, ArrowUpRight, Search, FastForward } from "lucide-react";
 import { toast } from "sonner";
 
 interface EligibleRaceListProps {
   rows: EligibleRaceRow[];
   horseName: string;
   onEnterRace: (raceId: string) => { ok: boolean; reason?: string };
+  firstEligibleRace?: Race;
+  onAdvanceToDay?: (targetDay: number) => void;
 }
 
-export function EligibleRaceList({ rows, horseName, onEnterRace }: EligibleRaceListProps) {
+export function EligibleRaceList({
+  rows,
+  horseName,
+  onEnterRace,
+  firstEligibleRace,
+  onAdvanceToDay,
+}: EligibleRaceListProps) {
   const [dialogRace, setDialogRace] = useState<Race | null>(null);
 
   if (rows.length === 0) {
@@ -23,9 +32,28 @@ export function EligibleRaceList({ rows, horseName, onEnterRace }: EligibleRaceL
       <div className="rounded-lg border border-muted/40 p-8 text-center">
         <Search className="h-10 w-10 mx-auto mb-3 text-muted-foreground/40" />
         <p className="font-medium text-cream">No eligible races in the next 30 days</p>
-        <p className="text-sm mt-1 text-muted-foreground">
-          Check energy levels or try the Race Browser for a wider view.
-        </p>
+        {firstEligibleRace && onAdvanceToDay ? (
+          <div className="mt-4 rounded-lg border border-success/20 bg-success/5 p-4">
+            <p className="text-sm text-cream/70">
+              First eligible race: <span className="font-semibold text-cream">{firstEligibleRace.name}</span>
+            </p>
+            <p className="text-xs text-cream/50 mt-1">
+              Day {firstEligibleRace.day} ({gameCalendarDate(firstEligibleRace.day)})
+            </p>
+            <Button
+              size="sm"
+              className="mt-3 gap-1.5"
+              onClick={() => onAdvanceToDay(firstEligibleRace.day)}
+            >
+              <FastForward className="h-3.5 w-3.5" />
+              Advance to Day {firstEligibleRace.day}
+            </Button>
+          </div>
+        ) : (
+          <p className="text-sm mt-1 text-muted-foreground">
+            Check energy levels or try the Race Browser for a wider view.
+          </p>
+        )}
       </div>
     );
   }

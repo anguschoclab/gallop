@@ -106,3 +106,23 @@ export function useHorseEligibleRaces(
     [horse, racesArray, jockeys, cash, day, daysAhead],
   );
 }
+
+export function findFirstEligibleRace(
+  horse: Horse | undefined,
+  races: Race[],
+  day: number,
+): Race | undefined {
+  if (!horse) return undefined;
+  if (horse.energy < 50) return undefined;
+
+  const upcoming = races
+    .filter((r) => !r.resolved && r.day > day)
+    .sort((a, b) => a.day - b.day);
+
+  for (const race of upcoming) {
+    if (isHorseEligibleForRace(horse, race, new Set(), day)) {
+      return race;
+    }
+  }
+  return undefined;
+}

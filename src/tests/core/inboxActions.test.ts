@@ -41,7 +41,7 @@ describe("Inbox Persistence & State", () => {
   });
 
   it("verifies that inbox is intended to be persisted", async () => {
-    // We can't easily test the OPFS persistence in jsdom, but we can verify the configuration
+    // We can't easily test the IndexedDB persistence in jsdom, but we can verify the configuration
     // by checking the partialize function of the persist middleware if we had access to it,
     // or simply by checking the source file (which we did).
 

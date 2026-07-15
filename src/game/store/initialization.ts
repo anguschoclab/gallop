@@ -29,6 +29,8 @@ import type { FacilityLevel } from "@/core/facilities";
 import { STARTING_CASH } from "@/constants";
 import { seedGazetteNews } from "@/services/narrative/seedNewsGenerator";
 import { createStableAIState } from "@/core/ai/npcCycleAI";
+import { generateUpcomingRaces } from "@/game/store/helpers/market";
+import { ensureMaidenRaces } from "@/core/race/maidenGuarantee";
 
 /**
  * Creates the initial game state for a new game.
@@ -82,6 +84,12 @@ export function createInitialState(options?: NewGameOptions): GameState {
     races.push(makeGradedRace(g, g.dayOfYear, gradedRng));
   }
 
+  // Generate track-based races for days 2-8 (graded dedup prevents duplicates)
+  const racesWithTrack = generateUpcomingRaces(races, 1);
+
+  // Guarantee starter-eligible maiden races for days 2-7
+  const racesWithMaidens = ensureMaidenRaces(racesWithTrack, 2, 7, setupRng);
+
   // Generate NPC stables and horses
   const stableRng = createRng(hashStr("initial_stables"));
   const npcStables = generateAllStables(1, stableRng);
@@ -112,7 +120,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     updatedStables,
     npcHorses,
     jockeys,
-    races,
+    racesWithMaidens,
     1,
     entryRng,
     7,

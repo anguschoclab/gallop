@@ -1,7 +1,7 @@
 /**
  * indexedDbService.ts - IndexedDB-based structured storage for hot game-state buckets.
  *
- * Replaces the monolithic OPFS JSON blob with per-bucket object stores so that
+ * Replaces the former monolithic OPFS JSON blob with per-bucket object stores so that
  * load/save can target only the data that changed, reducing parse time and
  * payload size.
  */

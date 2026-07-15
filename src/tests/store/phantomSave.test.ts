@@ -41,7 +41,7 @@ vi.mock("@/game/store/storage", () => {
   const loadGameStateFromIDB = vi.fn();
 
   return {
-    createOpfsStorage: () => ({
+    createIdbStorage: () => ({
       getItem: async (_name: string) => {
         if (_cachedLoadResult !== undefined) {
           const cached = _cachedLoadResult;
@@ -103,7 +103,7 @@ import {
   saveExists,
   _resetSaveExists,
   hydrationComplete,
-  createOpfsStorage,
+  createIdbStorage,
   createRehydrateStore,
   loadGameStateFromIDB,
 } from "@/game/store/storage";
@@ -127,34 +127,34 @@ describe("persistenceEnabled flag", () => {
     expect(persistenceEnabled.value).toBe(false);
   });
 
-  it("createOpfsStorage.setItem is a no-op when persistenceEnabled === false", async () => {
-    const storage = createOpfsStorage();
+  it("createIdbStorage.setItem is a no-op when persistenceEnabled === false", async () => {
+    const storage = createIdbStorage();
     const state = { day: 1 } as any;
     await storage.setItem("test", { state });
   });
 
-  it("createOpfsStorage.setItem writes when persistenceEnabled === true", async () => {
+  it("createIdbStorage.setItem writes when persistenceEnabled === true", async () => {
     persistenceEnabled.value = true;
-    const storage = createOpfsStorage();
+    const storage = createIdbStorage();
     const state = { day: 1, horses: {}, npcStables: [] } as any;
     await storage.setItem("test", { state });
   });
 
-  it("createOpfsStorage.getItem works regardless of flag", async () => {
+  it("createIdbStorage.getItem works regardless of flag", async () => {
     (loadGameStateFromIDB as any).mockResolvedValue(null);
-    const storage = createOpfsStorage();
+    const storage = createIdbStorage();
     const result = await storage.getItem("test");
     expect(result).toBeNull();
   });
 
-  it("createOpfsStorage.removeItem works regardless of flag", async () => {
-    const storage = createOpfsStorage();
+  it("createIdbStorage.removeItem works regardless of flag", async () => {
+    const storage = createIdbStorage();
     await storage.removeItem("test");
   });
 
-  it("createOpfsStorage.getItem returns cached result when available (no second loadGameStateFromIDB call)", async () => {
+  it("createIdbStorage.getItem returns cached result when available (no second loadGameStateFromIDB call)", async () => {
     (loadGameStateFromIDB as any).mockResolvedValue({ day: 5 } as any);
-    const storage = createOpfsStorage();
+    const storage = createIdbStorage();
     const result = await storage.getItem("test");
     expect(result).not.toBeNull();
     expect((result as any).state.day).toBe(5);
@@ -162,7 +162,7 @@ describe("persistenceEnabled flag", () => {
 
   it("cachedLoadResult is cleared after getItem consumes it", async () => {
     (loadGameStateFromIDB as any).mockResolvedValue({ day: 5 } as any);
-    const storage = createOpfsStorage();
+    const storage = createIdbStorage();
     await storage.getItem("test");
     (loadGameStateFromIDB as any).mockClear();
     (loadGameStateFromIDB as any).mockResolvedValue(null);

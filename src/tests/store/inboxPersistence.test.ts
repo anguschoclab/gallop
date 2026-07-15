@@ -114,7 +114,7 @@ function simulateReload(state: any, persistedKeys: string[]): any {
   for (const key of persistedKeys) {
     if (key in state) partial[key] = state[key];
   }
-  // Full JSON round-trip — exactly what OPFS / localStorage persist does.
+  // Full JSON round-trip — exactly what IndexedDB / localStorage persist does.
   return JSON.parse(JSON.stringify(partial));
 }
 

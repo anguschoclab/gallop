@@ -6,7 +6,7 @@
  * are compressed to summaries before persistence and regenerated on load.
  *
  * Dependencies: @/game/types (GameState), @/services/storage/indexedDbService, @/core/persistence/npcCompression, @/core/persistence/pedigreePrune
- * Related files: store/index.ts (uses storage adapter), storageAdapter.ts (legacy save slots)
+ * Related files: store/index.ts (uses storage adapter), saveManager.ts (save slot management)
  */
 
 /**
@@ -33,9 +33,9 @@ import { STORAGE_KEYS } from "@/services/storage/storageAdapter";
 import { safeParseJson, bucketPayloadSchema } from "@/services/storage/schemas";
 
 /**
- * Creates the OPFS storage adapter for Zustand persist.
+ * Creates the IndexedDB storage adapter for Zustand persist.
  *
- * Provides custom storage implementation using OPFS for game state persistence.
+ * Provides custom storage implementation using IndexedDB for game state persistence.
  * Handles loading, saving, and removing game state.
  *
  * @returns Zustand persist storage adapter with getItem, setItem, and removeItem methods
@@ -43,7 +43,7 @@ import { safeParseJson, bucketPayloadSchema } from "@/services/storage/schemas";
 // Module-level cache for loadGameStateFromIDB result to avoid double-read
 let cachedLoadResult: GameState | null | undefined = undefined;
 
-export function createOpfsStorage() {
+export function createIdbStorage() {
   return {
     getItem: async (_name: string) => {
       if (cachedLoadResult !== undefined) {

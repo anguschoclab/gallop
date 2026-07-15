@@ -35,7 +35,7 @@ beforeEach(() => {
 describe("useAutoSave", () => {
   describe("auto-save error path", () => {
     it("calls console.error with auto-save prefix when saveToSlot rejects", async () => {
-      (saveToSlot as any).mockRejectedValue(new Error("OPFS write failed"));
+      (saveToSlot as any).mockRejectedValue(new Error("IndexedDB write failed"));
       const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const { rerender } = renderHook(() => useAutoSave());

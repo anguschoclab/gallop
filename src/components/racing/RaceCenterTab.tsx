@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useGame } from "@/game/store";
 import { useHorses, useRaces, useCash, useDay } from "@/hooks/game/useCoreState";
 import { useJockeys } from "@/hooks/game/useSystemsState";
-import { useHorseEligibleRaces } from "@/hooks/race/useHorseEligibleRaces";
+import { useHorseEligibleRaces, findFirstEligibleRace } from "@/hooks/race/useHorseEligibleRaces";
 import { HorsePickerPanel } from "./HorsePickerPanel";
 import { EligibleRaceList } from "./EligibleRaceList";
 import { Flag } from "lucide-react";
@@ -14,6 +14,7 @@ export function RaceCenterTab() {
   const cash = useCash();
   const day = useDay();
   const enterRace = useGame((s) => s.enterRace);
+  const advanceMultipleDays = useGame((s) => s.advanceMultipleDays);
 
   const [selectedHorseId, setSelectedHorseId] = useState<string | null>(null);
 
@@ -41,6 +42,19 @@ export function RaceCenterTab() {
     cash,
     day,
     30,
+  );
+
+  const racesArray = useMemo(() => Object.values(races), [races]);
+  const firstEligibleRace = useMemo(
+    () => (eligibleRows.length === 0 ? findFirstEligibleRace(selectedHorse, racesArray, day) : undefined),
+    [eligibleRows.length, selectedHorse, racesArray, day],
+  );
+
+  const onAdvanceToDay = useMemo(
+    () => (targetDay: number) => {
+      advanceMultipleDays(targetDay - day);
+    },
+    [advanceMultipleDays, day],
   );
 
   const autoSelectFirst = useMemo(() => {
@@ -86,6 +100,8 @@ export function RaceCenterTab() {
               rows={eligibleRows}
               horseName={horses[effectiveHorseId].name}
               onEnterRace={(raceId) => enterRace(raceId, effectiveHorseId)}
+              firstEligibleRace={firstEligibleRace}
+              onAdvanceToDay={onAdvanceToDay}
             />
           ) : (
             <div className="rounded-lg border border-muted/40 p-8 text-center">

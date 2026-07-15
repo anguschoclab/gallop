@@ -25,7 +25,7 @@ vi.mock("@/game/store/storage", () => {
   const loadGameStateFromIDB = vi.fn();
 
   return {
-    createOpfsStorage: () => ({
+    createIdbStorage: () => ({
       getItem: vi.fn().mockResolvedValue(null),
       setItem: vi.fn().mockResolvedValue(undefined),
       removeItem: vi.fn().mockResolvedValue(undefined),

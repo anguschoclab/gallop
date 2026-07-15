@@ -177,4 +177,45 @@ describe("trainingResolutionPhase", () => {
   it("should have correct name", () => {
     expect(trainingResolutionPhase.name).toBe("trainingResolution");
   });
+
+  it("secondary stat gain is always an integer (0 or 1)", () => {
+    const horse = createTestHorse({
+      id: "horse-1",
+      stats: {
+        speed: 40,
+        stamina: 40,
+        acceleration: 40,
+        consistency: 40,
+        temperament: 50,
+        conformation: 50,
+      },
+      energy: 80,
+      potential: 90,
+      age: 4,
+      peakAge: 4,
+      trainability: 100.0,
+    });
+    const state = createTestState();
+    state.horses = h2r([horse]);
+
+    const intent: TrainingIntent = {
+      id: "intent-1",
+      day: 1,
+      type: "training",
+      entityId: "horse-1",
+      priority: 100,
+      source: "player",
+      horseId: "horse-1",
+      trainingType: "speed",
+    };
+
+    const context = createTestContext(state, [intent]);
+    const result = trainingResolutionPhase.execute(context);
+
+    const statImpacts = result.impacts.filter((i) => i.type === "horse_stat_change");
+    for (const imp of statImpacts) {
+      const delta = (imp as any).delta;
+      expect(Number.isInteger(delta)).toBe(true);
+    }
+  });
 });

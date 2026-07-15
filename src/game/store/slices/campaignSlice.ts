@@ -14,7 +14,7 @@
  * Campaign planning and management state
  */
 
-import type { HorseCampaign, TripleCrownProgress } from "@/game/types";
+import type { HorseCampaign } from "@/game/types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import { generateUUID } from "@/core/uuid";
 
@@ -22,7 +22,6 @@ import type { StoreSet, StoreGet } from "../types";
 
 export type CampaignSlice = {
   campaigns?: HorseCampaign[];
-  triplecrownHistory?: TripleCrownProgress[];
   setCampaign: (campaign: HorseCampaign) => void;
   updateCampaignSlot: (
     horseId: string,
@@ -33,7 +32,6 @@ export type CampaignSlice = {
   deleteCampaign: (horseId: string) => void;
   generateAutoCampaign: (horseId: string, goalType: string, targetRaceKey?: string) => void;
   setCampaigns: (campaigns: HorseCampaign[]) => void;
-  setTriplecrownHistory: (history: TripleCrownProgress[]) => void;
 };
 
 /**
@@ -55,7 +53,6 @@ export function createCampaignSlice(
 ): CampaignSlice {
   return {
     campaigns: [],
-    triplecrownHistory: [],
 
     setCampaign: (campaign: HorseCampaign) => {
       const s = get();
@@ -150,10 +147,6 @@ export function createCampaignSlice(
 
     setCampaigns: (campaigns) => {
       set({ campaigns });
-    },
-
-    setTriplecrownHistory: (history) => {
-      set({ triplecrownHistory: history });
     },
   };
 }

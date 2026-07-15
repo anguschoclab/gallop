@@ -11,7 +11,7 @@
 // Breeding State - Reproduction and lineage tracking
 // Includes pregnancies, stud careers, and breeding history
 
-import type { Pregnancy } from "@/core/breeding/types";
+import type { Pregnancy, ShareTransaction } from "@/core/breeding/types";
 import type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import type { Syndicate } from "@/core/breeding/types";
@@ -31,6 +31,8 @@ export interface BreedingState {
   syndicates: Record<string, Syndicate>;
   /** Player-facing syndication investors keyed by investor id */
   syndicateInvestors: Record<string, InvestorRecord>;
+  /** Share transaction history for syndicates */
+  shareTransactions: ShareTransaction[];
 }
 
 /**
@@ -45,5 +47,6 @@ export function createDefaultBreedingState(): BreedingState {
     activeBreedingProgram: null,
     syndicates: {},
     syndicateInvestors: {},
+    shareTransactions: [],
   };
 }
