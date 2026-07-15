@@ -22,3 +22,8 @@
 
 **Learning:** The weekly flavor news generator (`generateWeeklyFlavorNews`) only had 8 variants each for headlines, generic bodies, and bodies featuring the top earner. This caused rapid repetition during long play sessions where this low-importance news item frequently appears.
 **Action:** Expanded the `headlines`, `bodiesWithHorse`, and `genericBodies` arrays in `src/services/narrative/newsGenerator.ts` to 14 variants each to sustain narrative depth and immersion.
+
+## 2026-07-20 - Expanded Follow-Up Race News Variety Gap
+
+**Learning:** The follow-up race news generator (`generateFollowUpRaceNews`) had only 8 variants for headlines and bodies, leading to repetition.
+**Action:** Expanded the `headlines` and `bodies` arrays in `src/services/narrative/newsGenerator.ts` to 14 variants each to increase variety and immersion.
