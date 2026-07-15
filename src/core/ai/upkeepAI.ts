@@ -223,6 +223,7 @@ export function calculateMonthlyExpenseBudget(
  * @param category - The spending category
  * @param amount - The amount to spend
  * @param stable - The stable making the decision
+ * @param horses
  * @param currentDay - Current game day
  * @returns True if stable should spend on the category
  */

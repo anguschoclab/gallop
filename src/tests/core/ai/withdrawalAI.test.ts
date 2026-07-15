@@ -120,7 +120,9 @@ describe("calculateWithdrawalRisk", () => {
     const stable = createMockStable();
     const state = createWithdrawalAIState(stable);
     const horse = createMockHorse();
-    const race = createMockRace({ graded: { key: "test", grade: "G1", track: "T", trackId: "t1", surface: "Dirt" } });
+    const race = createMockRace({
+      graded: { key: "test", grade: "G1", track: "T", trackId: "t1", surface: "Dirt" },
+    });
     const risk = calculateWithdrawalRisk(state, horse, race, stable);
     expect(risk).toBe(10);
   });
@@ -129,7 +131,9 @@ describe("calculateWithdrawalRisk", () => {
     const stable = createMockStable();
     const state = createWithdrawalAIState(stable);
     const horse = createMockHorse();
-    const race = createMockRace({ graded: { key: "test", grade: "G2", track: "T", trackId: "t1", surface: "Dirt" } });
+    const race = createMockRace({
+      graded: { key: "test", grade: "G2", track: "T", trackId: "t1", surface: "Dirt" },
+    });
     const risk = calculateWithdrawalRisk(state, horse, race, stable);
     expect(risk).toBe(5);
   });
@@ -315,7 +319,14 @@ describe("isWithdrawalStrategic", () => {
       energy: 20,
       form: 60,
       healthStatus: "healthy",
-      stats: { speed: 90, stamina: 90, acceleration: 90, consistency: 90, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 90,
+        stamina: 90,
+        acceleration: 90,
+        consistency: 90,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const race = createMockRace({ entryFee: 500 });
     // cost = 500 + 500 + 90*100*0.1 = 500+500+900 = 1900, *1.2 = 2280
@@ -337,7 +348,15 @@ describe("recordWithdrawalDecision", () => {
     const memoryDepth = state.personalityState.memoryDepth;
     let currentState = state;
     for (let i = 0; i < memoryDepth + 3; i++) {
-      currentState = recordWithdrawalDecision(currentState, horse, race, stable, true, "health_concern", i + 1);
+      currentState = recordWithdrawalDecision(
+        currentState,
+        horse,
+        race,
+        stable,
+        true,
+        "health_concern",
+        i + 1,
+      );
     }
     expect(currentState.withdrawalHistory.length).toBe(memoryDepth);
   });
@@ -347,7 +366,15 @@ describe("recordWithdrawalDecision", () => {
     const state = createWithdrawalAIState(stable);
     const horse = createMockHorse({ id: "h-1", age: 5 });
     const race = createMockRace({ id: "r-1" });
-    const newState = recordWithdrawalDecision(state, horse, race, stable, true, "health_concern", 100);
+    const newState = recordWithdrawalDecision(
+      state,
+      horse,
+      race,
+      stable,
+      true,
+      "health_concern",
+      100,
+    );
     expect(newState.withdrawalHistory[0].horseId).toBe("h-1");
     expect(newState.withdrawalHistory[0].raceId).toBe("r-1");
     expect(newState.withdrawalHistory[0].stableId).toBe("stable-1");
@@ -364,7 +391,15 @@ describe("recordWithdrawalDecision", () => {
     const state = createWithdrawalAIState(stable);
     const horse = createMockHorse();
     const race = createMockRace();
-    const newState = recordWithdrawalDecision(state, horse, race, stable, true, "health_concern", 100);
+    const newState = recordWithdrawalDecision(
+      state,
+      horse,
+      race,
+      stable,
+      true,
+      "health_concern",
+      100,
+    );
     // Decision should be in history but learning should NOT happen yet
     expect(newState.withdrawalHistory.length).toBe(1);
     expect(newState.learningState.outcomes.length).toBe(0);
@@ -378,7 +413,15 @@ describe("recordWithdrawalOutcome", () => {
     const state = createWithdrawalAIState(stable);
     const horse = createMockHorse({ id: "h-1" });
     const race = createMockRace({ id: "r-1" });
-    const stateWithDecision = recordWithdrawalDecision(state, horse, race, stable, true, "health_concern", 100);
+    const stateWithDecision = recordWithdrawalDecision(
+      state,
+      horse,
+      race,
+      stable,
+      true,
+      "health_concern",
+      100,
+    );
     const newState = recordWithdrawalOutcome(stateWithDecision, "h-1", "r-1", 5, 2, 200);
     expect(newState.withdrawalHistory[0].outcome).toBeDefined();
     expect(newState.withdrawalHistory[0].outcome?.horseResult).toBe(5);
@@ -397,7 +440,15 @@ describe("recordWithdrawalOutcome", () => {
     const state = createWithdrawalAIState(stable);
     const horse = createMockHorse({ id: "h-1" });
     const race = createMockRace({ id: "r-1" });
-    const stateWithDecision = recordWithdrawalDecision(state, horse, race, stable, true, "health_concern", 100);
+    const stateWithDecision = recordWithdrawalDecision(
+      state,
+      horse,
+      race,
+      stable,
+      true,
+      "health_concern",
+      100,
+    );
     const newState = recordWithdrawalOutcome(stateWithDecision, "h-1", "r-1", 5, 2, 200);
     // Lower position is better in racing: alternative=2 < horse=5 → success
     const lastOutcome = newState.learningState.outcomes[newState.learningState.outcomes.length - 1];
@@ -409,7 +460,15 @@ describe("recordWithdrawalOutcome", () => {
     const state = createWithdrawalAIState(stable);
     const horse = createMockHorse({ id: "h-1" });
     const race = createMockRace({ id: "r-1" });
-    const stateWithDecision = recordWithdrawalDecision(state, horse, race, stable, true, "health_concern", 100);
+    const stateWithDecision = recordWithdrawalDecision(
+      state,
+      horse,
+      race,
+      stable,
+      true,
+      "health_concern",
+      100,
+    );
     const newState = recordWithdrawalOutcome(stateWithDecision, "h-1", "r-1", 2, 5, 200);
     // alternative=5 >= horse=2 → not a success (withdrawal was wrong)
     const lastOutcome = newState.learningState.outcomes[newState.learningState.outcomes.length - 1];
@@ -421,7 +480,15 @@ describe("recordWithdrawalOutcome", () => {
     const state = createWithdrawalAIState(stable);
     const horse = createMockHorse({ id: "h-1" });
     const race = createMockRace({ id: "r-1" });
-    const stateWithDecision = recordWithdrawalDecision(state, horse, race, stable, true, "health_concern", 100);
+    const stateWithDecision = recordWithdrawalDecision(
+      state,
+      horse,
+      race,
+      stable,
+      true,
+      "health_concern",
+      100,
+    );
     const newState = recordWithdrawalOutcome(stateWithDecision, "h-1", "r-1", 3, 3, 200);
     // alternative=3 = horse=3 → not strictly better → false
     const lastOutcome = newState.learningState.outcomes[newState.learningState.outcomes.length - 1];
@@ -433,7 +500,15 @@ describe("recordWithdrawalOutcome", () => {
     const state = createWithdrawalAIState(stable);
     const horse = createMockHorse({ id: "h-1" });
     const race = createMockRace({ id: "r-1" });
-    const stateWithDecision = recordWithdrawalDecision(state, horse, race, stable, false, undefined, 100);
+    const stateWithDecision = recordWithdrawalDecision(
+      state,
+      horse,
+      race,
+      stable,
+      false,
+      undefined,
+      100,
+    );
     const newState = recordWithdrawalOutcome(stateWithDecision, "h-1", "r-1", 2, undefined, 200);
     // withdrew=false, horseResult=2 <= 3 → success
     const lastOutcome = newState.learningState.outcomes[newState.learningState.outcomes.length - 1];
@@ -445,10 +520,21 @@ describe("recordWithdrawalOutcome", () => {
     const state = createWithdrawalAIState(stable);
     const horse = createMockHorse({ id: "h-1" });
     const race = createMockRace({ id: "r-1" });
-    const stateWithDecision = recordWithdrawalDecision(state, horse, race, stable, true, "health_concern", 100);
+    const stateWithDecision = recordWithdrawalDecision(
+      state,
+      horse,
+      race,
+      stable,
+      true,
+      "health_concern",
+      100,
+    );
     const newState = recordWithdrawalOutcome(stateWithDecision, "h-1", "r-1", 5, 2, 200);
     expect(newState.personalityState.learningState.outcomes.length).toBeGreaterThan(0);
-    const lastPersonalityOutcome = newState.personalityState.learningState.outcomes[newState.personalityState.learningState.outcomes.length - 1];
+    const lastPersonalityOutcome =
+      newState.personalityState.learningState.outcomes[
+        newState.personalityState.learningState.outcomes.length - 1
+      ];
     expect(lastPersonalityOutcome.success).toBe(true);
   });
 
@@ -457,7 +543,15 @@ describe("recordWithdrawalOutcome", () => {
     const state = createWithdrawalAIState(stable);
     const horse = createMockHorse({ id: "h-1" });
     const race = createMockRace({ id: "r-1" });
-    const stateWithDecision = recordWithdrawalDecision(state, horse, race, stable, true, "health_concern", 100);
+    const stateWithDecision = recordWithdrawalDecision(
+      state,
+      horse,
+      race,
+      stable,
+      true,
+      "health_concern",
+      100,
+    );
     const newState = recordWithdrawalOutcome(stateWithDecision, "h-1", "r-1", 5, 2, 200);
     // horse=5, alternative=2 → value = 5-2 = 3 (positive = good decision)
     const lastOutcome = newState.learningState.outcomes[newState.learningState.outcomes.length - 1];
@@ -469,7 +563,15 @@ describe("recordWithdrawalOutcome", () => {
     const state = createWithdrawalAIState(stable);
     const horse = createMockHorse({ id: "h-1" });
     const race = createMockRace({ id: "r-1" });
-    const stateWithDecision = recordWithdrawalDecision(state, horse, race, stable, true, "health_concern", 100);
+    const stateWithDecision = recordWithdrawalDecision(
+      state,
+      horse,
+      race,
+      stable,
+      true,
+      "health_concern",
+      100,
+    );
     const newState = recordWithdrawalOutcome(stateWithDecision, "h-1", "r-1", 2, 5, 200);
     // horse=2, alternative=5 → value = 2-5 = -3 (negative = bad decision)
     const lastOutcome = newState.learningState.outcomes[newState.learningState.outcomes.length - 1];
@@ -494,7 +596,15 @@ describe("getWithdrawalInsights", () => {
     const state = createWithdrawalAIState(stable);
     const horse = createMockHorse();
     const race = createMockRace();
-    const stateWithWithdrawal = recordWithdrawalDecision(state, horse, race, stable, true, "health_concern", 100);
+    const stateWithWithdrawal = recordWithdrawalDecision(
+      state,
+      horse,
+      race,
+      stable,
+      true,
+      "health_concern",
+      100,
+    );
     const insights = getWithdrawalInsights(stateWithWithdrawal, "stable-1");
     // avgRiskScore should be the actual riskScore from the decision, not hardcoded 60
     const expectedRisk = stateWithWithdrawal.withdrawalHistory[0].riskScore!;
@@ -507,8 +617,24 @@ describe("getWithdrawalInsights", () => {
     const horse = createMockHorse();
     const race = createMockRace();
     let currentState = state;
-    currentState = recordWithdrawalDecision(currentState, horse, race, stable, true, "health_concern", 100);
-    currentState = recordWithdrawalDecision(currentState, horse, race, stable, true, "low_energy", 101);
+    currentState = recordWithdrawalDecision(
+      currentState,
+      horse,
+      race,
+      stable,
+      true,
+      "health_concern",
+      100,
+    );
+    currentState = recordWithdrawalDecision(
+      currentState,
+      horse,
+      race,
+      stable,
+      true,
+      "low_energy",
+      101,
+    );
     const insights = getWithdrawalInsights(currentState, "stable-1");
     expect(insights.commonReasons["health_concern"]).toBe(1);
     expect(insights.commonReasons["low_energy"]).toBe(1);
@@ -519,7 +645,15 @@ describe("getWithdrawalInsights", () => {
     const state = createWithdrawalAIState(stable);
     const horse = createMockHorse();
     const race = createMockRace();
-    const stateWithDecision = recordWithdrawalDecision(state, horse, race, stable, true, "health_concern", 100);
+    const stateWithDecision = recordWithdrawalDecision(
+      state,
+      horse,
+      race,
+      stable,
+      true,
+      "health_concern",
+      100,
+    );
     const insights = getWithdrawalInsights(stateWithDecision, "other-stable");
     expect(insights.totalDecisions).toBe(0);
   });

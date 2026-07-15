@@ -120,6 +120,9 @@ export function generateRivalryEmergenceNews(
  * @param currentDay - The current game day for the news timestamp
  * @param rng - Seeded RNG for deterministic flavor text selection and ID generation
  * @param rivalStable - The rival stable involved in the confrontation
+ * @param arcContext
+ * @param arcContext.horseName
+ * @param arcContext.arcStage
  * @returns A NewsItem summarizing the grudge match outcome, or null if generation fails
  */
 export function generateGrudgeMatchNews(
@@ -329,6 +332,9 @@ export function generateRegionLostNews(
  * @param newFriction - The newly updated friction value
  * @param currentDay - The current game day for the news timestamp
  * @param rng - Seeded RNG for deterministic flavor text selection and ID generation
+ * @param arcContext
+ * @param arcContext.horseName
+ * @param arcContext.arcStage
  * @returns A NewsItem if the escalation meets the threshold, otherwise null
  */
 export function generateRivalryEscalationNews(

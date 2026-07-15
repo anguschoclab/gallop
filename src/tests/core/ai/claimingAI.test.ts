@@ -91,11 +91,25 @@ describe("calculateClaimingValue", () => {
     const stable = createMockStable();
     const state = createClaimingAIState(stable);
     const undervaluedHorse = createMockHorse({
-      stats: { speed: 90, stamina: 90, acceleration: 90, consistency: 90, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 90,
+        stamina: 90,
+        acceleration: 90,
+        consistency: 90,
+        temperament: 50,
+        conformation: 50,
+      },
       form: 100,
     });
     const overvaluedHorse = createMockHorse({
-      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 30,
+        stamina: 30,
+        acceleration: 30,
+        consistency: 30,
+        temperament: 50,
+        conformation: 50,
+      },
       form: 0,
     });
     const cheapRace = createMockRace({ claimingPrice: 2000 });
@@ -168,8 +182,17 @@ describe("calculateClaimingRisk", () => {
     const stable = createMockStable();
     const state = createClaimingAIState(stable);
     const horse = createMockHorse({
-      age: 4, energy: 80, healthStatus: "healthy",
-      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30, temperament: 50, conformation: 50 },
+      age: 4,
+      energy: 80,
+      healthStatus: "healthy",
+      stats: {
+        speed: 30,
+        stamina: 30,
+        acceleration: 30,
+        consistency: 30,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const race = createMockRace({ claimingPrice: 100000 });
     const risk = calculateClaimingRisk(state, horse, race);
@@ -181,8 +204,17 @@ describe("calculateClaimingRisk", () => {
     const stable = createMockStable();
     const state = createClaimingAIState(stable);
     const horse = createMockHorse({
-      age: 10, energy: 0, healthStatus: "other_illness",
-      stats: { speed: 10, stamina: 10, acceleration: 10, consistency: 10, temperament: 50, conformation: 50 },
+      age: 10,
+      energy: 0,
+      healthStatus: "other_illness",
+      stats: {
+        speed: 10,
+        stamina: 10,
+        acceleration: 10,
+        consistency: 10,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const race = createMockRace({ claimingPrice: 100000 });
     const risk = calculateClaimingRisk(state, horse, race);
@@ -332,10 +364,23 @@ describe("getClaimingInsights", () => {
     const race = createMockRace();
 
     const stateWithDecision = recordClaimingDecision(state, horse, race, stable, 100);
-    const stateWithOutcome = recordClaimingOutcome(stateWithDecision, horse.id, race.id, true, 500, 200);
+    const stateWithOutcome = recordClaimingOutcome(
+      stateWithDecision,
+      horse.id,
+      race.id,
+      true,
+      500,
+      200,
+    );
 
     // Record another decision without outcome (should be excluded)
-    const stateWithSecondDecision = recordClaimingDecision(stateWithOutcome, horse, race, stable, 101);
+    const stateWithSecondDecision = recordClaimingDecision(
+      stateWithOutcome,
+      horse,
+      race,
+      stable,
+      101,
+    );
 
     const insights = getClaimingInsights(stateWithSecondDecision, "stable-1");
     // Only the one with outcome counts
@@ -351,7 +396,14 @@ describe("getClaimingInsights", () => {
 
     // Record a failed outcome
     const stateWithDecision = recordClaimingDecision(state, horse, race, stable, 100);
-    const stateWithOutcome = recordClaimingOutcome(stateWithDecision, horse.id, race.id, false, -100, 200);
+    const stateWithOutcome = recordClaimingOutcome(
+      stateWithDecision,
+      horse.id,
+      race.id,
+      false,
+      -100,
+      200,
+    );
 
     const insights = getClaimingInsights(stateWithOutcome, "stable-1");
     expect(insights.successRate).toBe(0);

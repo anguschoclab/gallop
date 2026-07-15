@@ -1,8 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Activity } from "lucide-react";
+import { Activity, Lightbulb } from "lucide-react";
 import { BeyerChart } from "@/components/race/BeyerChart";
 import { PaceProfileSummary } from "@/components/race/PaceProfileSummary";
 import { DistanceAptitudeDrift } from "@/components/horse/DistanceAptitudeDrift";
+import { getHorseInsight } from "@/core/horse/insights";
 
 interface HorseAnalyticsSectionProps {
   horse: any;
@@ -10,6 +11,7 @@ interface HorseAnalyticsSectionProps {
 }
 
 export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyticsSectionProps) {
+  const insight = getHorseInsight(horse);
   return (
     <section id="beyer" className="space-y-4 pt-4">
       <div className="flex items-center gap-2 mb-2">
@@ -30,6 +32,20 @@ export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyti
               </div>
             </div>
           </div>
+
+          {insight && (
+            <div className="bg-gold/10 border border-gold/20 p-3 flex gap-3 items-start rounded-sm mb-4">
+              <Lightbulb className="h-4 w-4 text-gold mt-0.5 shrink-0" />
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-gold/80 mb-0.5">
+                  Tipster Insight: {insight.label}
+                </div>
+                <div className="text-sm font-bold text-cream">{insight.value}</div>
+                <div className="text-[10px] font-mono text-cream/60 mt-1">{insight.context}</div>
+              </div>
+            </div>
+          )}
+
           <BeyerChart history={horse.raceHistory ?? []} />
 
           {(horse.raceHistory ?? []).some(

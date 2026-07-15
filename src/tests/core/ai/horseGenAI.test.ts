@@ -297,7 +297,14 @@ describe("updateRosterComposition", () => {
     const stable = createMockStable();
     const state = createHorseGenAIState(stable);
     const horse = createMockHorse({
-      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const newState = updateRosterComposition(state, horse);
     // initial quality = 50, new horse rating = 80, count = 1

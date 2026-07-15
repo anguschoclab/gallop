@@ -111,14 +111,25 @@ describe("canBreed", () => {
   });
 
   it("rejects parent-child by sireId (dam.sireId === sire.id)", () => {
-    const offspring = mkHorse({ id: "kid", gender: "mare", sireId: "sire", sireName: "Different Name" });
+    const offspring = mkHorse({
+      id: "kid",
+      gender: "mare",
+      sireId: "sire",
+      sireName: "Different Name",
+    });
     const r = canBreed(sire, offspring, 100, []);
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.reason).toMatch(/parent/i);
   });
 
   it("rejects parent-child by damId (sire.damId === dam.id)", () => {
-    const sireWithDam = mkHorse({ id: "sire2", name: "Sire2", gender: "horse", damId: "dam", damName: "Different" });
+    const sireWithDam = mkHorse({
+      id: "sire2",
+      name: "Sire2",
+      gender: "horse",
+      damId: "dam",
+      damName: "Different",
+    });
     const r = canBreed(sireWithDam, dam, 100, []);
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.reason).toMatch(/parent/i);
@@ -148,7 +159,12 @@ describe("canBreed", () => {
   });
 
   it("allows unrelated horses with different parent IDs", () => {
-    const unrelatedSire = mkHorse({ id: "sire3", gender: "horse", sireId: "dad-a", damId: "mom-a" });
+    const unrelatedSire = mkHorse({
+      id: "sire3",
+      gender: "horse",
+      sireId: "dad-a",
+      damId: "mom-a",
+    });
     const unrelatedDam = mkHorse({ id: "dam3", gender: "mare", sireId: "dad-b", damId: "mom-b" });
     const r = canBreed(unrelatedSire, unrelatedDam, 100, []);
     expect(r.ok).toBe(true);

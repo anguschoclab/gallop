@@ -608,7 +608,10 @@ export function resolveFoaling(
     // Apply stat adjustments from genome modifiers
     if (foal.stats) {
       // Depression penalty reduces durability/consistency
-      foal.stats.consistency = Math.max(1, Math.round(foal.stats.consistency * modifiers.depressionPenalty));
+      foal.stats.consistency = Math.max(
+        1,
+        Math.round(foal.stats.consistency * modifiers.depressionPenalty),
+      );
     }
     // Vigor bonus improves recovery and trainability
     if (foal.recoveryRate !== undefined) {

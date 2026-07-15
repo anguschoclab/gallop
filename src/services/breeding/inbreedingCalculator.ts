@@ -54,12 +54,7 @@ export function checkDirectInbreeding(
 
   // Fallback only when IDs are unavailable: compare names, but never treat
   // placeholder names as inbreeding.
-  if (
-    sireName &&
-    damName &&
-    sireName === damName &&
-    !isPlaceholderName(sireName)
-  ) {
+  if (sireName && damName && sireName === damName && !isPlaceholderName(sireName)) {
     return {
       score: 0,
       description: "Direct inbreeding detected",
