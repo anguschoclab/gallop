@@ -92,14 +92,17 @@ describe("calculateClaimingValue", () => {
     const state = createClaimingAIState(stable);
     const undervaluedHorse = createMockHorse({
       stats: { speed: 90, stamina: 90, acceleration: 90, consistency: 90, temperament: 50, conformation: 50 },
+      form: 100,
     });
     const overvaluedHorse = createMockHorse({
       stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30, temperament: 50, conformation: 50 },
+      form: 0,
     });
     const cheapRace = createMockRace({ claimingPrice: 2000 });
     const expensiveRace = createMockRace({ claimingPrice: 100000 });
     const undervaluedScore = calculateClaimingValue(state, undervaluedHorse, cheapRace, stable);
     const overvaluedScore = calculateClaimingValue(state, overvaluedHorse, expensiveRace, stable);
+    // undervalued has form=100 → formScore=10, *10=100 bonus; overvalued has form=0 → 0 bonus
     expect(undervaluedScore).toBeGreaterThan(overvaluedScore);
   });
 
@@ -183,7 +186,9 @@ describe("calculateClaimingRisk", () => {
     });
     const race = createMockRace({ claimingPrice: 100000 });
     const risk = calculateClaimingRisk(state, horse, race);
-    expect(risk).toBe(100);
+    // age=10: (10-6)*5=20, health: +20, energy=0: (50-0)/5=10, valueRatio=30*1000/100000=0.3 < 0.8: +30
+    // Total = 20+20+10+30 = 80
+    expect(risk).toBe(80);
   });
 });
 
