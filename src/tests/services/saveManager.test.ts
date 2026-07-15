@@ -1,6 +1,23 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from "vitest";
+
+const mockSaveSlotState = vi.fn();
+const mockLoadSlotState = vi.fn();
+const mockDeleteSlotState = vi.fn();
+const mockIsIndexedDbAvailable = vi.fn();
+const mockSaveGameStateToIDB = vi.fn();
+
+vi.mock("@/services/storage/indexedDbService", () => ({
+  saveSlotState: mockSaveSlotState,
+  loadSlotState: mockLoadSlotState,
+  deleteSlotState: mockDeleteSlotState,
+  isIndexedDbAvailable: mockIsIndexedDbAvailable,
+}));
+
+vi.mock("@/game/store/storage", () => ({
+  saveGameStateToIDB: mockSaveGameStateToIDB,
+}));
+
 import * as saveManager from "@/services/storage/saveManager";
-import * as opfsService from "@/services/storage/opfsService";
 import type { GameState } from "@/game/types";
 import { createDefaultGameState } from "@/game/store/state";
 
@@ -52,7 +69,12 @@ describe("saveManager", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorage.clear();
+    localStoreMap.clear();
+    mockIsIndexedDbAvailable.mockReturnValue(true);
+    mockSaveSlotState.mockResolvedValue(undefined);
+    mockLoadSlotState.mockResolvedValue(null);
+    mockDeleteSlotState.mockResolvedValue(undefined);
+    mockSaveGameStateToIDB.mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -62,16 +84,13 @@ describe("saveManager", () => {
   });
 
   describe("getSaveSlots", () => {
-    it("returns empty array when OPFS unavailable and localStorage empty", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
-
+    it("returns empty array when localStorage empty", async () => {
       const slots = await saveManager.getSaveSlots();
 
       expect(slots).toEqual([]);
     });
 
-    it("returns metadata from localStorage when OPFS unavailable", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
+    it("returns metadata from localStorage", async () => {
       localStorage.setItem("gallop_saves_metadata", JSON.stringify([mockMetadata]));
 
       const slots = await saveManager.getSaveSlots();
@@ -80,7 +99,6 @@ describe("saveManager", () => {
     });
 
     it("handles localStorage parse error gracefully", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
       localStorage.setItem("gallop_saves_metadata", "invalid json");
       const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -93,64 +111,37 @@ describe("saveManager", () => {
       );
     });
 
-    it("returns metadata from OPFS when available", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(true);
-      vi.spyOn(opfsService, "readFile").mockResolvedValue([mockMetadata]);
-
-      const slots = await saveManager.getSaveSlots();
-
-      expect(slots).toEqual([mockMetadata]);
-      expect(opfsService.readFile).toHaveBeenCalledWith("savesMetadata.json");
-    });
-
-    it("handles OPFS read error gracefully", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(true);
-      vi.spyOn(opfsService, "readFile").mockRejectedValue(new Error("OPFS error"));
-      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-
-      const slots = await saveManager.getSaveSlots();
-
-      expect(slots).toEqual([]);
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "Failed to load save metadata from OPFS:",
-        expect.any(Error),
+    it("returns metadata array when localStorage has valid data", async () => {
+      const meta2 = { ...mockMetadata, id: "slot2", name: "Second Save" };
+      localStorage.setItem(
+        "gallop_saves_metadata",
+        JSON.stringify([mockMetadata, meta2]),
       );
-    });
-
-    it("returns empty array when OPFS returns null", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(true);
-      vi.spyOn(opfsService, "readFile").mockResolvedValue(null);
 
       const slots = await saveManager.getSaveSlots();
 
-      expect(slots).toEqual([]);
+      expect(slots).toHaveLength(2);
+      expect(slots).toEqual([mockMetadata, meta2]);
     });
   });
 
   describe("saveToSlot", () => {
-    it("saves to localStorage when OPFS unavailable", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
-      vi.spyOn(opfsService, "readFile").mockResolvedValue([]);
-
+    it("saves state to IDB via saveSlotState when IDB available", async () => {
       await saveManager.saveToSlot("slot1", "Test Save", mockGameState);
 
-      expect(localStorage.getItem("gallop_save_slot1")).toBe(JSON.stringify(mockGameState));
-      expect(localStorage.getItem("gallop_saves_metadata")).toBeTruthy();
+      expect(mockSaveSlotState).toHaveBeenCalledWith("slot1", mockGameState);
     });
 
-    it("saves to OPFS when available", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(true);
-      vi.spyOn(opfsService, "readFile").mockResolvedValue([]);
-      const writeFileSpy = vi.spyOn(opfsService, "writeFile").mockResolvedValue();
+    it("saves state to localStorage fallback when IDB unavailable", async () => {
+      mockIsIndexedDbAvailable.mockReturnValue(false);
 
       await saveManager.saveToSlot("slot1", "Test Save", mockGameState);
 
-      expect(writeFileSpy).toHaveBeenCalledWith("save_slot1.json", mockGameState);
-      expect(writeFileSpy).toHaveBeenCalledWith("savesMetadata.json", expect.any(Array));
+      expect(mockSaveSlotState).not.toHaveBeenCalled();
+      expect(localStorage.getItem("gallop_save_slot1")).toBe(JSON.stringify(mockGameState));
     });
 
     it("updates existing slot metadata", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
       localStorage.setItem("gallop_saves_metadata", JSON.stringify([mockMetadata]));
 
       await saveManager.saveToSlot("slot1", "Updated Name", mockGameState);
@@ -161,9 +152,6 @@ describe("saveManager", () => {
     });
 
     it("creates new slot metadata when slot does not exist", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
-      vi.spyOn(opfsService, "readFile").mockResolvedValue([]);
-
       await saveManager.saveToSlot("slot2", "New Save", mockGameState);
 
       const metadata = JSON.parse(localStorage.getItem("gallop_saves_metadata")!);
@@ -172,47 +160,22 @@ describe("saveManager", () => {
     });
 
     it("marks autosave correctly in metadata", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
-      vi.spyOn(opfsService, "readFile").mockResolvedValue([]);
-
       await saveManager.saveToSlot("autosave1", "Auto Save", mockGameState, true);
 
       const metadata = JSON.parse(localStorage.getItem("gallop_saves_metadata")!);
       expect(metadata[0].isAutoSave).toBe(true);
     });
 
-    it("throws error when localStorage save fails", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
-      vi.spyOn(opfsService, "readFile").mockResolvedValue([]);
-      const setItemSpy = vi.fn().mockImplementation(() => {
-        throw new Error("Storage quota exceeded");
-      });
-      Object.defineProperty(globalThis, "localStorage", {
-        value: { ...window.localStorage, setItem: setItemSpy },
-        writable: true,
-        configurable: true,
-      });
+    it("throws when saveSlotState rejects", async () => {
+      mockSaveSlotState.mockRejectedValue(new Error("IDB write failed"));
 
-      await expect(saveManager.saveToSlot("slot1", "Test Save", mockGameState)).rejects.toThrow(
-        "Storage quota exceeded",
-      );
-      setItemSpy.mockRestore();
-    });
-
-    it("throws error when OPFS save fails", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(true);
-      vi.spyOn(opfsService, "readFile").mockResolvedValue([]);
-      vi.spyOn(opfsService, "writeFile").mockRejectedValue(new Error("OPFS write failed"));
-
-      await expect(saveManager.saveToSlot("slot1", "Test Save", mockGameState)).rejects.toThrow(
-        "OPFS write failed",
-      );
+      await expect(
+        saveManager.saveToSlot("slot1", "Test Save", mockGameState),
+      ).rejects.toThrow("IDB write failed");
     });
 
     it("uses 'Unknown Stable' when playerProfile missing", async () => {
       const stateWithoutProfile = { ...mockGameState, playerProfile: undefined } as GameState;
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
-      vi.spyOn(opfsService, "readFile").mockResolvedValue([]);
 
       await saveManager.saveToSlot("slot1", "Test Save", stateWithoutProfile);
 
@@ -222,8 +185,24 @@ describe("saveManager", () => {
   });
 
   describe("loadFromSlot", () => {
-    it("loads from localStorage and reloads page", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
+    it("loads from IDB via loadSlotState, calls saveGameStateToIDB, then reloads", async () => {
+      mockLoadSlotState.mockResolvedValue(mockGameState);
+      const reloadSpy = vi.fn();
+      Object.defineProperty(globalThis, "location", {
+        value: { reload: reloadSpy },
+        writable: true,
+        configurable: true,
+      });
+
+      await saveManager.loadFromSlot("slot1");
+
+      expect(mockLoadSlotState).toHaveBeenCalledWith("slot1");
+      expect(mockSaveGameStateToIDB).toHaveBeenCalledWith(mockGameState);
+      expect(reloadSpy).toHaveBeenCalled();
+    });
+
+    it("loads from localStorage fallback when IDB unavailable, calls saveGameStateToIDB, then reloads", async () => {
+      mockIsIndexedDbAvailable.mockReturnValue(false);
       localStorage.setItem("gallop_save_slot1", JSON.stringify(mockGameState));
       const reloadSpy = vi.fn();
       Object.defineProperty(globalThis, "location", {
@@ -234,40 +213,21 @@ describe("saveManager", () => {
 
       await saveManager.loadFromSlot("slot1");
 
-      const stored = localStorage.getItem("gallop_game_state_fallback");
-      expect(JSON.parse(stored!)).toEqual(mockGameState);
+      expect(mockLoadSlotState).not.toHaveBeenCalled();
+      expect(mockSaveGameStateToIDB).toHaveBeenCalledWith(mockGameState);
       expect(reloadSpy).toHaveBeenCalled();
     });
 
-    it("loads from OPFS and reloads page", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(true);
-      vi.spyOn(opfsService, "readFile").mockResolvedValue(mockGameState);
-      const writeFileSpy = vi.spyOn(opfsService, "writeFile").mockResolvedValue();
-      const reloadSpy = vi.fn();
-      Object.defineProperty(globalThis, "location", {
-        value: { reload: reloadSpy },
-        writable: true,
-        configurable: true,
-      });
-
-      await saveManager.loadFromSlot("slot1");
-
-      expect(writeFileSpy).toHaveBeenCalledWith("gameState.json", mockGameState);
-      expect(reloadSpy).toHaveBeenCalled();
-    });
-
-    it("throws error when save slot not found in localStorage", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
-      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    it("throws when slot not found in IDB (loadSlotState returns null)", async () => {
+      mockLoadSlotState.mockResolvedValue(null);
 
       await expect(saveManager.loadFromSlot("nonexistent")).rejects.toThrow(
         "Save slot nonexistent not found or empty.",
       );
     });
 
-    it("throws error when save slot not found in OPFS", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(true);
-      vi.spyOn(opfsService, "readFile").mockResolvedValue(null);
+    it("throws when slot not found in localStorage", async () => {
+      mockIsIndexedDbAvailable.mockReturnValue(false);
 
       await expect(saveManager.loadFromSlot("nonexistent")).rejects.toThrow(
         "Save slot nonexistent not found or empty.",
@@ -275,7 +235,7 @@ describe("saveManager", () => {
     });
 
     it("handles localStorage parse error", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
+      mockIsIndexedDbAvailable.mockReturnValue(false);
       localStorage.setItem("gallop_save_slot1", "invalid json");
       const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -286,28 +246,27 @@ describe("saveManager", () => {
   });
 
   describe("deleteSaveSlot", () => {
-    it("deletes from localStorage when OPFS unavailable", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
+    it("deletes from IDB via deleteSlotState when IDB available", async () => {
+      localStorage.setItem("gallop_saves_metadata", JSON.stringify([mockMetadata]));
+
+      await saveManager.deleteSaveSlot("slot1");
+
+      expect(mockDeleteSlotState).toHaveBeenCalledWith("slot1");
+      const metadata = JSON.parse(localStorage.getItem("gallop_saves_metadata")!);
+      expect(metadata).toEqual([]);
+    });
+
+    it("deletes from localStorage fallback when IDB unavailable", async () => {
+      mockIsIndexedDbAvailable.mockReturnValue(false);
       localStorage.setItem("gallop_saves_metadata", JSON.stringify([mockMetadata]));
       localStorage.setItem("gallop_save_slot1", JSON.stringify(mockGameState));
 
       await saveManager.deleteSaveSlot("slot1");
 
+      expect(mockDeleteSlotState).not.toHaveBeenCalled();
       expect(localStorage.getItem("gallop_save_slot1")).toBeNull();
       const metadata = JSON.parse(localStorage.getItem("gallop_saves_metadata")!);
       expect(metadata).toEqual([]);
-    });
-
-    it("deletes from OPFS when available", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(true);
-      vi.spyOn(opfsService, "readFile").mockResolvedValue([mockMetadata]);
-      const deleteFileSpy = vi.spyOn(opfsService, "deleteFile").mockResolvedValue();
-      const writeFileSpy = vi.spyOn(opfsService, "writeFile").mockResolvedValue();
-
-      await saveManager.deleteSaveSlot("slot1");
-
-      expect(deleteFileSpy).toHaveBeenCalledWith("save_slot1.json");
-      expect(writeFileSpy).toHaveBeenCalledWith("savesMetadata.json", []);
     });
 
     it("removes slot from metadata while preserving other slots", async () => {
@@ -315,8 +274,10 @@ describe("saveManager", () => {
         ...mockMetadata,
         id: "slot2",
       };
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
-      localStorage.setItem("gallop_saves_metadata", JSON.stringify([mockMetadata, otherMetadata]));
+      localStorage.setItem(
+        "gallop_saves_metadata",
+        JSON.stringify([mockMetadata, otherMetadata]),
+      );
 
       await saveManager.deleteSaveSlot("slot1");
 
@@ -325,7 +286,6 @@ describe("saveManager", () => {
     });
 
     it("handles deleting non-existent slot gracefully", async () => {
-      vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
       localStorage.setItem("gallop_saves_metadata", JSON.stringify([mockMetadata]));
 
       await saveManager.deleteSaveSlot("nonexistent");

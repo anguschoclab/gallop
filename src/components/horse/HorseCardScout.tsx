@@ -55,7 +55,7 @@ export function HorseCardScout({ horse, hookData, className = "" }: HorseCardSco
               <span>Age {Math.floor(horse.age)}</span>
               <span className="w-1 h-1 bg-white/20 rounded-full" />
               <span className="text-fame flex items-center gap-1">
-                <Trophy className="h-2.5 w-2.5" /> {horse.fame}
+                <Trophy className="h-2.5 w-2.5" /> {Math.round(horse.fame)}
               </span>
               {scoutStatus && (
                 <Badge

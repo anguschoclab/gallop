@@ -29,7 +29,9 @@ export function ReputationBadge() {
               <Trophy className="h-3 w-3 mr-1" />
               {formatReputationTier(tier)}
             </Badge>
-            <span className="text-sm text-cream-muted">{reputation.score} pts</span>
+            {reputation.score > 0 && (
+              <span className="text-sm text-cream-muted">{reputation.score} pts</span>
+            )}
           </div>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-xs">
@@ -42,7 +44,7 @@ export function ReputationBadge() {
               stables less likely to poach your jockeys.
             </p>
             <ul className="text-[10px] space-y-0.5 text-cream/80">
-              <li>Unknown: 0–149</li>
+              <li>Unranked: 0–149</li>
               <li>Local: 150–299</li>
               <li>Regional: 300–449</li>
               <li>National: 450–599</li>

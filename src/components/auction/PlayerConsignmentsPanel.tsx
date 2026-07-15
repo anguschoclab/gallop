@@ -74,7 +74,7 @@ export function PlayerConsignmentsPanel({
                       <p className="font-semibold text-cream">{lotHorse?.name ?? "Unknown"}</p>
                       <p className="text-xs text-cream-muted">
                         {lotHorse
-                          ? `${lotHorse.gender.charAt(0).toUpperCase() + lotHorse.gender.slice(1)} · Age ${lotHorse.age}${lotHorse.hemisphere === "Southern" ? " · Southern" : ""}`
+                          ? `${lotHorse.gender.charAt(0).toUpperCase() + lotHorse.gender.slice(1)} · Age ${Math.floor(lotHorse.age)}${lotHorse.hemisphere === "Southern" ? " · Southern" : ""}`
                           : ""}
                       </p>
                     </div>

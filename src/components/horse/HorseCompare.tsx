@@ -74,7 +74,7 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
 
     return [
       {
-        label: "Rating (OVR)",
+        label: "OVR",
         values: ovr,
         numeric: ovr,
         higherIsBetter: true,
@@ -89,7 +89,7 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
       },
       {
         label: "Energy",
-        values: horses.map((h) => `${h.energy}/100`),
+        values: horses.map((h) => `${Math.round(h.energy)}/100`),
         numeric: horses.map((h) => h.energy),
         higherIsBetter: true,
         barValues: horses.map((h) => h.energy),

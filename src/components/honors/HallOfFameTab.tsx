@@ -97,7 +97,7 @@ export function HallOfFameTab() {
                     {horse && (
                       <div className="pt-2 border-t border-gold-muted/30">
                         <p className="text-xs text-cream-muted">
-                          Fame: <NumericValue value={horse.fame} suffix="/100" />
+                          Fame: <NumericValue value={Math.round(horse.fame)} suffix="/100" />
                         </p>
                       </div>
                     )}

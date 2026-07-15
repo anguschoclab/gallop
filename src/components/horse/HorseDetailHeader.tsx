@@ -103,7 +103,7 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
                 horse.energy > 50 ? "text-success" : "text-warning",
               )}
             >
-              {horse.energy}%
+              {Math.round(horse.energy)}%
             </div>
           </div>
         </div>

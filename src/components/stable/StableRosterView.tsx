@@ -147,7 +147,7 @@ export function StableRosterView({
                 <th className="px-3 py-3 font-black w-1">#</th>
                 <th className="px-4 py-3 font-black">Horse</th>
                 <th className="px-4 py-3 font-black text-center">Age</th>
-                <th className="px-4 py-3 font-black text-center">Rating</th>
+                <th className="px-4 py-3 font-black text-center">OVR</th>
                 <th className="px-4 py-3 font-black text-center">Condition</th>
                 <th className="px-4 py-3 font-black text-center">Peaking</th>
                 <th className="px-6 py-3 font-black text-right">Actions</th>
@@ -223,7 +223,7 @@ export function StableRosterView({
                           />
                         </div>
                         <span className="text-[9px] font-mono text-cream/40 uppercase">
-                          E:{h.energy}%
+                          E:{Math.round(h.energy)}%
                         </span>
                       </div>
                     </td>

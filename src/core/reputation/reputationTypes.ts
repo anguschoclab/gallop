@@ -186,7 +186,7 @@ export function calculateBreedingReputation(foalQuality: number): number {
  */
 export function formatReputationTier(tier: ReputationTier): string {
   const labels: Record<ReputationTier, string> = {
-    unknown: "Unknown",
+    unknown: "Unranked",
     local: "Local",
     regional: "Regional",
     national: "National",

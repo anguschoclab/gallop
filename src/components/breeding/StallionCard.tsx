@@ -64,7 +64,7 @@ export function StallionCard({ stallion, stableName, day, mare, cash, onBook }: 
         <div className="flex justify-between">
           <span className="text-cream-muted">Age · Fame</span>
           <span className="text-cream">
-            {stallion.age} · {stallion.fame}
+            {stallion.age} · {Math.round(stallion.fame)}
           </span>
         </div>
         <div className="flex justify-between">

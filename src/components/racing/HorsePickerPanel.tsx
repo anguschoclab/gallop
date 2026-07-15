@@ -81,7 +81,7 @@ export function HorsePickerPanel({
                     />
                   </div>
                   <span className="shrink-0 text-[10px] font-mono text-cream/40">
-                    {horse.energy}%
+                    {Math.round(horse.energy)}%
                   </span>
                 </div>
               </div>

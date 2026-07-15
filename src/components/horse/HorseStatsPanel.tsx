@@ -82,7 +82,7 @@ export function HorseStatsPanel({
                     horse.energy > 50 ? "text-success" : "text-warning",
                   )}
                 >
-                  {horse.energy}%
+                  {Math.round(horse.energy)}%
                 </span>
               </div>
               <div className="flex justify-between items-end">
@@ -109,7 +109,7 @@ export function HorseStatsPanel({
       <div className="flex items-center justify-between bg-black/40 p-2 rounded-sm border border-white/5">
         <div className="flex items-center gap-2">
           <span className="text-[8px] font-black uppercase text-cream/30 tracking-widest">
-            <JargonTooltip term="OVR">OVR</JargonTooltip> Rating
+            <JargonTooltip term="OVR">OVR</JargonTooltip>
           </span>
           <span
             className={cn("font-mono font-black text-cream", isAdvanced ? "text-lg" : "text-xl")}

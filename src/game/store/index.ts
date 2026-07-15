@@ -46,7 +46,6 @@ import { shallow } from "zustand/shallow";
 import { useShallow } from "zustand/react/shallow";
 import { wrap, expose, type Remote } from "comlink";
 import type { EngineWorkerApi } from "@/workers/engine.worker";
-import type { StorageWorkerApi } from "@/workers/storage.worker";
 import type { InitializationWorkerApi } from "@/workers/initialization.worker";
 import { clearDatabase } from "@/services/storage/indexedDbService";
 import type { StoreType, ActionResult, GameStateCreator } from "./types";
@@ -134,7 +133,6 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
  * Worker instances
  */
 let engineWorker: Remote<EngineWorkerApi> | null = null;
-let storageWorker: Remote<StorageWorkerApi> | null = null;
 let initializationWorker: Remote<InitializationWorkerApi> | null = null;
 
 /**
@@ -158,29 +156,6 @@ export async function initEngineWorker(): Promise<void> {
     type: "module",
   });
   engineWorker = wrap<EngineWorkerApi>(worker);
-}
-
-/**
- * Initialize storage worker.
- *
- * Creates and wraps the storage worker for persistence operations.
- * Only initializes in browser context where Worker API is available.
- *
- * @returns Promise that resolves when worker is initialized
- */
-export async function initStorageWorker(): Promise<void> {
-  if (storageWorker) return;
-
-  // Only initialize workers in browser context where Worker API is available
-  if (typeof Worker === "undefined") {
-    console.warn("Worker API not available, skipping storage worker initialization");
-    return;
-  }
-
-  const worker = new Worker(new URL("@/workers/storage.worker", import.meta.url), {
-    type: "module",
-  });
-  storageWorker = wrap<StorageWorkerApi>(worker);
 }
 
 /**
@@ -219,21 +194,6 @@ export function getEngineWorker(): Remote<EngineWorkerApi> {
     throw new Error("Engine worker not initialized. Call initEngineWorker() first.");
   }
   return engineWorker;
-}
-
-/**
- * Get storage worker instance.
- *
- * Returns the initialized storage worker. Throws error if not initialized.
- *
- * @returns Storage worker remote instance
- * @throws Error if storage worker not initialized
- */
-export function getStorageWorker(): Remote<StorageWorkerApi> {
-  if (!storageWorker) {
-    throw new Error("Storage worker not initialized. Call initStorageWorker() first.");
-  }
-  return storageWorker;
 }
 
 /**
@@ -350,7 +310,6 @@ export const useGame = create<StoreType>()(
       startNewGame: async (options: NewGameOptions) => {
         // Initialize workers if not already initialized
         await initEngineWorker();
-        await initStorageWorker();
         await initInitializationWorker();
 
         // Clear IndexedDB storage when starting a new game

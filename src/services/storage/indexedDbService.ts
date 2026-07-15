@@ -10,9 +10,10 @@ import type { Horse } from "@/core/horse/types";
 import type { Stable } from "@/core/stable/types";
 import type { Race } from "@/core/race/types";
 import type { NpcHorseSummary } from "@/core/persistence/npcCompression";
+import type { GameState } from "@/game/types";
 
 const DB_NAME = "gallop_state_v3";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 export interface MetaBucket {
   [key: string]: unknown;
@@ -48,9 +49,9 @@ export interface AllBuckets {
   history: HistoryBucket;
 }
 
-type StoreName = "meta" | "horses" | "races" | "npcStables" | "market" | "history";
+type StoreName = "meta" | "horses" | "races" | "npcStables" | "market" | "history" | "saveSlots";
 
-const STORE_NAMES: StoreName[] = ["meta", "horses", "races", "npcStables", "market", "history"];
+const STORE_NAMES: StoreName[] = ["meta", "horses", "races", "npcStables", "market", "history", "saveSlots"];
 
 let dbInstance: IDBDatabase | null = null;
 let dbInitPromise: Promise<IDBDatabase> | null = null;
@@ -232,6 +233,31 @@ export async function hasSavedState(): Promise<boolean> {
 export function _resetForTest(): void {
   dbInstance = null;
   dbInitPromise = null;
+}
+
+function txDelete(storeName: StoreName, key: string): Promise<void> {
+  return openDatabase().then(
+    (db) =>
+      new Promise<void>((resolve, reject) => {
+        const tx = db.transaction(storeName, "readwrite");
+        tx.objectStore(storeName).delete(key);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      }),
+  );
+}
+
+export async function saveSlotState(slotId: string, state: GameState): Promise<void> {
+  await txPut("saveSlots", slotId, state);
+}
+
+export async function loadSlotState<T = GameState>(slotId: string): Promise<T | null> {
+  const result = await txGet<T>("saveSlots", slotId);
+  return result ?? null;
+}
+
+export async function deleteSlotState(slotId: string): Promise<void> {
+  await txDelete("saveSlots", slotId);
 }
 
 export { isIndexedDBAvailable as isIndexedDbAvailable };

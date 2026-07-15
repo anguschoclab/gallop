@@ -1,38 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from "vitest";
 
-import * as opfsService from "@/services/storage/opfsService";
-import { checkOPFSAvailable } from "@/services/storage/opfsService";
-
-vi.mock("@/services/storage/opfsService", () => ({
-  initOPFS: vi.fn(),
-  writeFile: vi.fn(),
-  readFile: vi.fn(),
-  deleteFile: vi.fn(),
-  checkOPFSAvailable: vi.fn(),
-}));
 import * as storageAdapter from "@/services/storage/storageAdapter";
-import type { GameState } from "@/game/types";
-import { createDefaultGameState } from "@/game/store/state";
-
-// Mock helpers
-let mockOPFSData: Map<string, any> = new Map();
-
-function resetOPFSMocks() {
-  (checkOPFSAvailable as any).mockResolvedValue(true);
-  mockOPFSData = new Map();
-
-  (opfsService.initOPFS as any).mockResolvedValue(undefined);
-  (opfsService.readFile as any).mockImplementation(async (filename: string) => {
-    return mockOPFSData.get(filename) ?? null;
-  });
-  (opfsService.writeFile as any).mockImplementation(async (filename: string, data: any) => {
-    mockOPFSData.set(filename, JSON.parse(JSON.stringify(data)));
-  });
-  (opfsService.deleteFile as any).mockImplementation(async (filename: string) => {
-    mockOPFSData.delete(filename);
-  });
-  (checkOPFSAvailable as any).mockResolvedValue(true);
-}
 
 function mockLocalStorage() {
   const store = new Map<string, string>();
@@ -53,10 +21,6 @@ function mockLocalStorage() {
     configurable: true,
   });
   return store;
-}
-
-function createMockGameState(): GameState {
-  return createDefaultGameState();
 }
 
 function createMockWizardState(): storageAdapter.WizardState {
@@ -80,157 +44,12 @@ describe("storageAdapter", () => {
   });
 
   beforeEach(() => {
-    resetOPFSMocks();
-    storageAdapter._resetStorageAdapterState();
+    mockLocalStorage();
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
     mockLocalStorage();
-  });
-
-  // Test Suite 1: OPFS Game State Functions
-  describe("OPFS Game State Functions", () => {
-    describe("loadGameState", () => {
-      it("successfully loads game state from OPFS", async () => {
-        const mockState = createMockGameState();
-
-        // First save the state
-        await storageAdapter.saveGameState(mockState);
-
-        // Then load it
-        const loaded = await storageAdapter.loadGameState();
-
-        expect(loaded).toEqual(JSON.parse(JSON.stringify(mockState)));
-      });
-
-      describe("when OPFS is unavailable (fallback)", () => {
-        beforeEach(() => {
-          mockLocalStorage();
-          (checkOPFSAvailable as any).mockResolvedValue(false);
-        });
-
-        it("loads game state from localStorage fallback", async () => {
-          const mockState = createMockGameState();
-          localStorage.setItem("gallop_game_state_fallback", JSON.stringify(mockState));
-
-          const loaded = await storageAdapter.loadGameState();
-          expect(loaded).toEqual(JSON.parse(JSON.stringify(mockState)));
-          expect(storageAdapter.useLocalStorageFallback).toBe(true);
-        });
-
-        it("returns null and handles parsing errors", async () => {
-          localStorage.setItem("gallop_game_state_fallback", "{ invalid }");
-          const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-
-          const loaded = await storageAdapter.loadGameState();
-
-          expect(loaded).toBeNull();
-          expect(consoleErrorSpy).toHaveBeenCalled();
-          consoleErrorSpy.mockRestore();
-        });
-      });
-
-      it("returns null when file is not found", async () => {
-        const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-
-        const loaded = await storageAdapter.loadGameState();
-
-        expect(loaded).toBeNull();
-        consoleErrorSpy.mockRestore();
-      });
-    });
-
-    describe("saveGameState", () => {
-      it("successfully saves game state to OPFS", async () => {
-        const mockState = createMockGameState();
-
-        await storageAdapter.saveGameState(mockState);
-
-        const loaded = await storageAdapter.loadGameState();
-        expect(loaded).toEqual(JSON.parse(JSON.stringify(mockState)));
-      });
-
-      describe("when OPFS is unavailable (fallback)", () => {
-        beforeEach(() => {
-          mockLocalStorage();
-          (checkOPFSAvailable as any).mockResolvedValue(false);
-        });
-
-        it("saves game state to localStorage fallback", async () => {
-          const mockState = createMockGameState();
-
-          await storageAdapter.saveGameState(mockState);
-
-          const stored = localStorage.getItem("gallop_game_state_fallback");
-          expect(stored).toBe(JSON.stringify(mockState));
-          expect(storageAdapter.useLocalStorageFallback).toBe(true);
-        });
-
-        it("handles localStorage exceptions", async () => {
-          const mockState = createMockGameState();
-          vi.spyOn(localStorage, "setItem").mockImplementation(() => {
-            throw new Error("localStorage quota exceeded");
-          });
-          const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-
-          await expect(storageAdapter.saveGameState(mockState)).rejects.toThrow(
-            "localStorage quota exceeded",
-          );
-
-          expect(consoleErrorSpy).toHaveBeenCalled();
-          consoleErrorSpy.mockRestore();
-        });
-      });
-
-      it("successfully saves large game state objects", async () => {
-        const largeState = createMockGameState();
-        // Add a large array to simulate large state
-        largeState.horses = Array.from({ length: 1000 }, (_, i) => ({
-          id: `horse-${i}`,
-          name: `Horse ${i}`,
-          gender: "horse" as const,
-          age: 3,
-        })) as any;
-
-        await storageAdapter.saveGameState(largeState);
-
-        const loaded = await storageAdapter.loadGameState();
-        expect(loaded?.horses.length).toBe(1000);
-      });
-    });
-
-    describe("clearGameState", () => {
-      it("successfully deletes game state file", async () => {
-        const mockState = createMockGameState();
-
-        await storageAdapter.saveGameState(mockState);
-        await storageAdapter.clearGameState();
-
-        const loaded = await storageAdapter.loadGameState();
-        expect(loaded).toBeNull();
-      });
-
-      describe("when OPFS is unavailable (fallback)", () => {
-        beforeEach(() => {
-          mockLocalStorage();
-          (checkOPFSAvailable as any).mockResolvedValue(false);
-        });
-
-        it("clears game state from localStorage fallback", async () => {
-          const mockState = createMockGameState();
-          localStorage.setItem("gallop_game_state_fallback", JSON.stringify(mockState));
-
-          // First set the useLocalStorageFallback flag by initializing storage
-          await storageAdapter.loadGameState();
-
-          await storageAdapter.clearGameState();
-
-          const stored = localStorage.getItem("gallop_game_state_fallback");
-          expect(stored).toBeNull();
-        });
-      });
-    });
   });
 
   // Test Suite 2: localStorage Settings Functions
@@ -589,47 +408,6 @@ describe("storageAdapter", () => {
     });
   });
 
-  // Test Suite 4: Composite Functions
-  describe("Composite Functions", () => {
-    describe("clearAllGameData", () => {
-      it("successfully clears both OPFS game state and localStorage settings", async () => {
-        mockLocalStorage();
-
-        // Save game state
-        await storageAdapter.saveGameState(createMockGameState());
-        localStorage.setItem("gallop_race_filters", "{}");
-
-        await storageAdapter.clearAllGameData();
-
-        const loaded = await storageAdapter.loadGameState();
-        expect(loaded).toBeNull();
-        expect(localStorage.getItem("gallop_race_filters")).toBeNull();
-      });
-
-      it("logs error when localStorage fails but OPFS succeeds", async () => {
-        mockLocalStorage();
-
-        await storageAdapter.saveGameState(createMockGameState());
-
-        // Mock localStorage to throw
-        const localStorageMock = (global as any).localStorage;
-        const originalRemoveItem = localStorageMock.removeItem;
-        localStorageMock.removeItem = () => {
-          throw new Error("localStorage disabled");
-        };
-        const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-
-        await storageAdapter.clearAllGameData();
-
-        const loaded = await storageAdapter.loadGameState();
-        expect(loaded).toBeNull(); // OPFS should still be cleared
-        expect(consoleErrorSpy).toHaveBeenCalled();
-        localStorageMock.removeItem = originalRemoveItem;
-        consoleErrorSpy.mockRestore();
-      });
-    });
-  });
-
   // Test Suite 5: Integration Scenarios
   describe("Integration Scenarios", () => {
     describe("Error Handling Consistency", () => {
@@ -651,15 +429,6 @@ describe("storageAdapter", () => {
     });
 
     describe("Data Integrity", () => {
-      it("round-trip: saveGameState then loadGameState returns identical data", async () => {
-        const mockState = createMockGameState();
-
-        await storageAdapter.saveGameState(mockState);
-        const loaded = await storageAdapter.loadGameState();
-
-        expect(loaded).toEqual(JSON.parse(JSON.stringify(mockState)));
-      });
-
       it("wizard state round-trip returns identical data", () => {
         mockLocalStorage();
         const mockState = createMockWizardState();

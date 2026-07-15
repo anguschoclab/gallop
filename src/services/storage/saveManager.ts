@@ -3,21 +3,13 @@
  *
  * This file provides functions for managing manual and automatic save slots,
  * including saving to slots, loading from slots, and metadata management.
+ * Save slot state is persisted in IndexedDB; metadata is kept in localStorage.
  */
 
-import { writeFile, readFile, deleteFile, checkOPFSAvailable } from "./opfsService";
-import { STORAGE_KEYS } from "./storageAdapter";
+import { saveSlotState, loadSlotState, deleteSlotState, isIndexedDbAvailable } from "./indexedDbService";
+import { saveGameStateToIDB } from "@/game/store/storage";
 import type { GameState } from "@/game/types";
 import { safeParseJson, gameStateSchema, saveSlotMetadataArraySchema } from "./schemas";
-
-function validateGameState(data: unknown): GameState | null {
-  const result = gameStateSchema.safeParse(data);
-  if (!result.success) {
-    console.error("GameState validation failed:", result.error.issues);
-    return null;
-  }
-  return result.data as GameState;
-}
 
 export interface SaveSlotMetadata {
   id: string;
@@ -29,40 +21,26 @@ export interface SaveSlotMetadata {
   isAutoSave: boolean;
 }
 
-const METADATA_FILENAME = "savesMetadata.json";
 const METADATA_STORAGE_KEY = "gallop_saves_metadata";
 
 /**
- * Retrieves all available save slots and their associated metadata.
- * Defaults to localStorage if the Origin Private File System (OPFS) is unavailable.
+ * Retrieves all available save slots and their associated metadata from localStorage.
  *
  * @returns {Promise<SaveSlotMetadata[]>} A promise resolving to an array of save slot metadata.
  */
 export async function getSaveSlots(): Promise<SaveSlotMetadata[]> {
-  const opfsAvailable = await checkOPFSAvailable();
-
-  if (!opfsAvailable) {
-    try {
-      const stored = localStorage.getItem(METADATA_STORAGE_KEY);
-      return stored ? (safeParseJson(stored, saveSlotMetadataArraySchema) ?? []) : [];
-    } catch (e) {
-      console.error("Failed to load save metadata from localStorage:", e);
-      return [];
-    }
-  }
-
   try {
-    const metadata = await readFile<SaveSlotMetadata[]>(METADATA_FILENAME);
-    return metadata || [];
+    const stored = localStorage.getItem(METADATA_STORAGE_KEY);
+    return stored ? (safeParseJson(stored, saveSlotMetadataArraySchema) ?? []) : [];
   } catch (e) {
-    console.error("Failed to load save metadata from OPFS:", e);
+    console.error("Failed to load save metadata from localStorage:", e);
     return [];
   }
 }
 
 /**
  * Persists the current game state to a specific save slot.
- * Updates both the state file and the global save metadata list.
+ * Updates both the slot state in IndexedDB and the metadata in localStorage.
  *
  * @param {string} slotId - The unique identifier for the save slot.
  * @param {string} name - The human-readable name for the save.
@@ -76,23 +54,16 @@ export async function saveToSlot(
   state: GameState,
   isAutoSave: boolean = false,
 ): Promise<void> {
-  const opfsAvailable = await checkOPFSAvailable();
-  const filename = `save_${slotId}.json`;
   const storageKey = `gallop_save_${slotId}`;
 
-  // 1. Save the state file
-  if (!opfsAvailable) {
+  // 1. Save the state
+  if (isIndexedDbAvailable()) {
+    await saveSlotState(slotId, state);
+  } else {
     try {
       localStorage.setItem(storageKey, JSON.stringify(state));
     } catch (e) {
       console.error("Failed to save state to localStorage:", e);
-      throw e;
-    }
-  } else {
-    try {
-      await writeFile(filename, state);
-    } catch (e) {
-      console.error("Failed to save state to OPFS:", e);
       throw e;
     }
   }
@@ -118,80 +89,62 @@ export async function saveToSlot(
   }
 
   // 3. Save metadata list
-  if (!opfsAvailable) {
-    localStorage.setItem(METADATA_STORAGE_KEY, JSON.stringify(slots));
-  } else {
-    await writeFile(METADATA_FILENAME, slots);
-  }
+  localStorage.setItem(METADATA_STORAGE_KEY, JSON.stringify(slots));
 }
 
 /**
- * Loads a game state from a specific slot and overwrites the active working state.
- * Triggers a full application reload to rehydrate the state from storage.
+ * Loads a game state from a specific slot, writes it to the main IndexedDB stores,
+ * and triggers a full application reload to rehydrate from storage.
  *
  * @param {string} slotId - The unique identifier of the slot to load from.
  * @returns {Promise<void>} A promise that resolves when the state has been successfully swapped.
  */
 export async function loadFromSlot(slotId: string): Promise<void> {
-  const opfsAvailable = await checkOPFSAvailable();
-  const filename = `save_${slotId}.json`;
   const storageKey = `gallop_save_${slotId}`;
-  const workingStateFilename = "gameState.json"; // Matches gameConstants or storageAdapter usage
 
   let state: GameState | null = null;
 
   // 1. Read from slot
-  if (!opfsAvailable) {
+  if (isIndexedDbAvailable()) {
+    state = await loadSlotState<GameState>(slotId);
+  } else {
     try {
       const stored = localStorage.getItem(storageKey);
       state = stored ? (safeParseJson(stored, gameStateSchema) as GameState | null) : null;
     } catch (e) {
       console.error("Failed to read save from localStorage:", e);
     }
-  } else {
-    state = await readFile<GameState>(filename, validateGameState);
   }
 
   if (!state) {
     throw new Error(`Save slot ${slotId} not found or empty.`);
   }
 
-  // 2. Overwrite working state
-  if (!opfsAvailable) {
-    localStorage.setItem(STORAGE_KEYS.GAME_STATE_FALLBACK, JSON.stringify(state));
-  } else {
-    await writeFile(workingStateFilename, state);
-  }
+  // 2. Write to main IndexedDB stores so the app rehydrates from it on reload
+  await saveGameStateToIDB(state);
 
   // 3. Reload application to rehydrate from the new working state
   window.location.reload();
 }
 
 /**
- * Deletes a save slot, its associated state file, and its entry in the metadata list.
+ * Deletes a save slot, its associated state in IndexedDB, and its entry in the metadata list.
  *
  * @param {string} slotId - The unique identifier of the slot to delete.
  * @returns {Promise<void>} A promise that resolves when deletion is complete.
  */
 export async function deleteSaveSlot(slotId: string): Promise<void> {
-  const opfsAvailable = await checkOPFSAvailable();
-  const filename = `save_${slotId}.json`;
   const storageKey = `gallop_save_${slotId}`;
 
-  // 1. Delete state file
-  if (!opfsAvailable) {
-    localStorage.removeItem(storageKey);
+  // 1. Delete state
+  if (isIndexedDbAvailable()) {
+    await deleteSlotState(slotId);
   } else {
-    await deleteFile(filename);
+    localStorage.removeItem(storageKey);
   }
 
   // 2. Update and save metadata
   const slots = await getSaveSlots();
   const filtered = slots.filter((s) => s.id !== slotId);
-
-  if (!opfsAvailable) {
-    localStorage.setItem(METADATA_STORAGE_KEY, JSON.stringify(filtered));
-  } else {
-    await writeFile(METADATA_FILENAME, filtered);
-  }
+  localStorage.setItem(METADATA_STORAGE_KEY, JSON.stringify(filtered));
 }

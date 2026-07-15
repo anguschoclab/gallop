@@ -105,7 +105,7 @@ export function RecapTab() {
                         </Link>
                         <div className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
                           <NumericValue
-                            value={finisher.result.time}
+                            value={finisher.result.time.toFixed(2)}
                             suffix="s"
                             className="font-[family-name:var(--font-mono)] tabular-nums"
                           />{" "}

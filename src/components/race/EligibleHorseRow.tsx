@@ -70,7 +70,7 @@ export function EligibleHorseRow({
             <TrackVisitsBadge horse={horse} race={race} />
           </div>
           <div className="text-[10px] uppercase text-muted-foreground">
-            Rating {calculateOverallRating(horse)} · Energy {horse.energy}%
+            OVR {calculateOverallRating(horse)} · Energy {Math.round(horse.energy)}%
           </div>
         </div>
       </button>

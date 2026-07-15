@@ -304,7 +304,7 @@ export function createRacingSlice(
               ][]) {
                 if (typeof delta !== "number") continue;
                 const current = nextStats[stat] ?? 0;
-                nextStats[stat] = Math.max(0, Math.min(100, current + delta));
+                nextStats[stat] = Math.round(Math.max(0, Math.min(100, current + delta)));
               }
 
               const nextMilestones = currentArc.milestones.map((m: any) =>

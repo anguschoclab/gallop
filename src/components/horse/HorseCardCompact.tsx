@@ -92,7 +92,7 @@ export function HorseCardCompact({
               horse.energy > 50 ? "bg-success/10 text-success" : "bg-warning/10 text-warning",
             )}
           >
-            E:{horse.energy}%
+            E:{Math.round(horse.energy)}%
           </Badge>
           {scoutStatus && (
             <Badge

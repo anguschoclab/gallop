@@ -32,7 +32,7 @@ export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
         for (const id of ownedIds) {
           const horse = horsesById.get(id);
           if (horse) {
-            const proj = horse.stats.speed + horse.stats.acceleration; // Simple proj Beyer
+            const proj = Math.round(horse.stats.speed + horse.stats.acceleration); // Simple proj Beyer
             allOwnedProjs.push(proj);
             if (!topProj || proj > topProj.proj) {
               topProj = { name: horse.name, proj };

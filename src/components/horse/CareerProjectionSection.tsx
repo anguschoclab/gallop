@@ -27,7 +27,7 @@ export function CareerProjectionSection({ horse, horses }: CareerProjectionSecti
   const stakesProduction = horse.stud?.lifetimeStakesFoals ?? horse.blueHenStatus?.stakesWinnersProduced ?? 0;
 
   const factors: { label: string; value: string }[] = [
-    { label: "Overall Rating", value: String(overall) },
+    { label: "OVR", value: String(overall) },
     { label: "Stakes Wins", value: String(careerStats.stakesWins) },
     { label: "G1 Production", value: String(g1Production) },
     { label: "Stakes Production", value: String(stakesProduction) },

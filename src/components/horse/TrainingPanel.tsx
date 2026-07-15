@@ -100,8 +100,8 @@ export function TrainingPanelComponent({
                     ? "Maximum potential reached"
                     : undefined,
           label: k,
-          nextValue: Math.min(horse.potential, val + 1),
-          currentValue: val,
+          nextValue: Math.min(horse.potential, Math.round(val) + 1),
+          currentValue: Math.round(val),
           onClick: () => handleTrainingClick(k),
         };
       }),

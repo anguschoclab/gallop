@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { HorsePortrait } from "@/components/horse/HorsePortrait";
 import { calculateOverallRating } from "@/core/horse/stats";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { Zap, TrendingUp, Filter } from "lucide-react";
 import { useGalleryFilters, COAT_COLORS } from "@/hooks/horse/useGalleryFilters";
 
@@ -87,7 +88,8 @@ function HorseGalleryPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredHorses.map((horse) => {
-            const ovr = calculateOverallRating(horse);
+            const resolved = ensurePhenotypeResolved(horse);
+            const ovr = calculateOverallRating(resolved);
             return (
               <Link
                 key={horse.id}

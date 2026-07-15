@@ -1,20 +1,10 @@
 /**
  * Unified Storage Adapter
- * Routes game state to OPFS and settings to localStorage
+ * Provides localStorage-based settings persistence (race filters, wizard state, etc.)
+ * and exports STORAGE_KEYS for use by other modules.
  */
 
-import { initOPFS, writeFile, readFile, deleteFile, checkOPFSAvailable } from "./opfsService";
-import type { GameState } from "@/game/types";
-import { safeParseJson, gameStateSchema, raceFiltersSchema, wizardStateSchema } from "./schemas";
-
-function validateGameState(data: unknown): GameState | null {
-  const result = gameStateSchema.safeParse(data);
-  if (!result.success) {
-    console.error("GameState validation failed:", result.error.issues);
-    return null;
-  }
-  return result.data as GameState;
-}
+import { safeParseJson, raceFiltersSchema, wizardStateSchema } from "./schemas";
 
 export const STORAGE_KEYS = {
   GAME_STATE: "gallop_game_state",
@@ -24,121 +14,6 @@ export const STORAGE_KEYS = {
   RACES_DAY_JUMP: "gallop_races_day_jump",
   NEW_GAME_WIZARD: "gallop_new_game_wizard",
 } as const;
-
-const GAME_STATE_FILENAME = "gameState.json";
-
-let opfsInitialized = false;
-export let useLocalStorageFallback = false;
-
-/**
- * Reset storage adapter state (for testing purposes only)
- * @returns void
- */
-export function _resetStorageAdapterState(): void {
-  opfsInitialized = false;
-  useLocalStorageFallback = false;
-}
-
-/**
- * Initialize storage adapter.
- *
- * @returns Promise resolving when OPFS is initialized
- */
-async function initializeStorage(): Promise<void> {
-  if (opfsInitialized) return;
-
-  const opfsAvailable = await checkOPFSAvailable();
-  if (!opfsAvailable) {
-    useLocalStorageFallback = true;
-    opfsInitialized = true; // Mark initialized to avoid repeatedly checking
-    return;
-  }
-
-  await initOPFS();
-  opfsInitialized = true;
-}
-
-/**
- * Load game state from OPFS.
- *
- * @returns Promise resolving to GameState or null if load fails
- */
-export async function loadGameState(): Promise<GameState | null> {
-  await initializeStorage();
-
-  if (useLocalStorageFallback) {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEYS.GAME_STATE_FALLBACK);
-      if (stored) {
-        return safeParseJson(stored, gameStateSchema) as GameState | null;
-      }
-    } catch (error) {
-      console.error("Failed to load game state from localStorage:", error);
-    }
-    return null;
-  }
-
-  try {
-    return await readFile<GameState>(GAME_STATE_FILENAME, validateGameState);
-  } catch (error) {
-    console.error("Failed to load game state from OPFS:", error);
-    return null;
-  }
-}
-
-/**
- * Save game state to OPFS.
- *
- * @param state - The game state object to persist
- * @returns Promise resolving when save is complete
- */
-export async function saveGameState(state: GameState): Promise<void> {
-  await initializeStorage();
-
-  if (useLocalStorageFallback) {
-    try {
-      const serialized = JSON.stringify(state);
-      localStorage.setItem(STORAGE_KEYS.GAME_STATE_FALLBACK, serialized);
-    } catch (e) {
-      console.error("Failed to save game state to localStorage:", e);
-      throw e;
-    }
-    return;
-  }
-
-  try {
-    await writeFile(GAME_STATE_FILENAME, state);
-  } catch (error) {
-    console.error("Failed to save game state to OPFS:", error);
-    throw error;
-  }
-}
-
-/**
- * Clear game state from OPFS.
- *
- * @returns Promise resolving when state is deleted
- */
-export async function clearGameState(): Promise<void> {
-  await initializeStorage();
-
-  if (useLocalStorageFallback) {
-    try {
-      localStorage.removeItem(STORAGE_KEYS.GAME_STATE_FALLBACK);
-    } catch (e) {
-      console.error("Failed to clear game state from localStorage:", e);
-      throw e;
-    }
-    return;
-  }
-
-  try {
-    await deleteFile(GAME_STATE_FILENAME);
-  } catch (error) {
-    console.error("Failed to clear game state from OPFS:", error);
-    throw error;
-  }
-}
 
 /**
  * Load race filters from localStorage (always localStorage).
@@ -248,16 +123,6 @@ export function clearSettings(): void {
   } catch (error) {
     console.error("Failed to clear settings from localStorage:", error);
   }
-}
-
-/**
- * Clear all game data (both OPFS and localStorage).
- *
- * @returns Promise resolving when all data is cleared
- */
-export async function clearAllGameData(): Promise<void> {
-  await clearGameState();
-  clearSettings();
 }
 
 // Wizard state type

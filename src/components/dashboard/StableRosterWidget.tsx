@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { overall, NumericValue, HorseBit } from "@/components/horse/HorseBits";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { LayoutGrid, Users, Briefcase, ChevronRight } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -12,7 +13,7 @@ export function StableRosterWidget() {
   const jockeys = useGame((s) => s.jockeys);
   const hiredStaff = useGame((s) => s.hiredStaff);
 
-  const activeHorses = Object.values(horses).filter((h) => h.owned && h.lifecycleStatus === "active");
+  const activeHorses = Object.values(horses).filter((h) => h.owned && h.lifecycleStatus === "active").map(ensurePhenotypeResolved);
   const topHorses = activeHorses
     .slice()
     .sort((a, b) => overall(b) - overall(a))
@@ -50,7 +51,7 @@ export function StableRosterWidget() {
         <div className="space-y-3">
           <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-400/60 mb-2 px-1 flex justify-between">
             <span>Top Stable Stars</span>
-            <span>Rating</span>
+            <span>OVR</span>
           </div>
           <div className="space-y-2">
             {topHorses.map((h) => (
@@ -68,7 +69,7 @@ export function StableRosterWidget() {
                       className="text-xs font-bold text-cream-muted group-hover/item:text-blue-400 transition-colors"
                     />
                     <Badge className="bg-black/40 text-cream text-[9px] h-4 px-1.5 font-mono border border-white/5">
-                      E{h.energy}
+                      E{Math.round(h.energy)}
                     </Badge>
                   </div>
                 </div>

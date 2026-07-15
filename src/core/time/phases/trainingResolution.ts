@@ -345,7 +345,7 @@ export const trainingResolutionPhase: PipelinePhase = {
           if (config.secondary && trainingRng.next() < 0.4) {
             const secondaryGap = effectivePotential - horse.stats[config.secondary];
             if (secondaryGap > 0) {
-              const secondaryGain = Math.min(secondaryGap, 1);
+              const secondaryGain = Math.round(Math.min(secondaryGap, 1));
               totalGain += secondaryGain;
               impacts.push({
                 id: generateUUID(),

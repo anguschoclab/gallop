@@ -65,25 +65,25 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   horse_stat_change: (draft, impact, horse) => {
     const { stat, delta } = impact as HorseStatImpact;
     if (horse) {
-      horse.stats[stat] = Math.min(horse.potential, Math.max(0, horse.stats[stat] + delta));
+      horse.stats[stat] = Math.round(Math.min(horse.potential, Math.max(0, horse.stats[stat] + delta)));
     }
   },
   energy_change: (draft, impact, horse) => {
     const { delta } = impact as EnergyImpact;
     if (horse) {
-      horse.energy = Math.min(100, Math.max(0, horse.energy + delta));
+      horse.energy = Math.round(Math.min(100, Math.max(0, horse.energy + delta)));
     }
   },
   form_change: (draft, impact, horse) => {
     const { delta } = impact as FormImpact;
     if (horse) {
-      horse.form = Math.min(10, Math.max(-10, horse.form + delta));
+      horse.form = Math.round(Math.min(10, Math.max(-10, horse.form + delta)));
     }
   },
   fame_change: (draft, impact, horse) => {
     const { delta } = impact as FameImpact;
     if (horse) {
-      horse.fame = Math.min(100, Math.max(0, horse.fame + delta));
+      horse.fame = Math.round(Math.min(100, Math.max(0, horse.fame + delta)));
     }
   },
   gelding: (draft, impact, horse) => {
@@ -166,19 +166,19 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   recovery_change: (draft, impact, horse) => {
     const { delta } = impact as RecoveryImpact;
     if (horse) {
-      horse.recoveryPoints = Math.min(100, Math.max(0, (horse.recoveryPoints ?? 100) + delta));
+      horse.recoveryPoints = Math.round(Math.min(100, Math.max(0, (horse.recoveryPoints ?? 100) + delta)));
     }
   },
   fitness_change: (draft, impact, horse) => {
     const { delta } = impact as FitnessImpact;
     if (horse) {
-      horse.fitness = Math.max(0, (horse.fitness ?? 0) + delta);
+      horse.fitness = Math.round(Math.max(0, (horse.fitness ?? 0) + delta));
     }
   },
   fatigue_change: (draft, impact, horse) => {
     const { delta } = impact as FatigueImpact;
     if (horse) {
-      horse.fatigue = Math.max(0, (horse.fatigue ?? 0) + delta);
+      horse.fatigue = Math.round(Math.max(0, (horse.fatigue ?? 0) + delta));
     }
   },
   peaking_index_update: (draft, impact, horse) => {

@@ -34,15 +34,6 @@ function mockLocalStorage() {
 // Initialize working localStorage mock before module imports run
 mockLocalStorage();
 
-// Mock opfsService module before importing storage-dependent code
-vi.mock("@/services/storage/opfsService", () => ({
-  initOPFS: vi.fn(),
-  writeFile: vi.fn(),
-  readFile: vi.fn(),
-  deleteFile: vi.fn(),
-  checkOPFSAvailable: vi.fn(),
-}));
-
 // Mock comlink to prevent worker communication issues
 vi.mock("comlink", () => ({
   wrap: () => ({
@@ -57,33 +48,11 @@ vi.mock("comlink", () => ({
 import { createDefaultGameState } from "@/game/store/state";
 import { useGame } from "@/game/store";
 import type { Horse } from "@/game/types";
-import * as opfsService from "@/services/storage/opfsService";
 import { DAYS_PER_MONTH } from "@/constants";
-
-// Mock helpers
-let mockOPFSData: Map<string, any> = new Map();
-
-function resetOPFSMocks() {
-  mockOPFSData = new Map();
-
-  (opfsService.checkOPFSAvailable as any).mockResolvedValue(true);
-  (opfsService.initOPFS as any).mockResolvedValue(undefined);
-  (opfsService.readFile as any).mockImplementation(async (filename: string) => {
-    return mockOPFSData.get(filename) ?? null;
-  });
-  (opfsService.writeFile as any).mockImplementation(async (filename: string, data: any) => {
-    mockOPFSData.set(filename, data);
-  });
-  (opfsService.deleteFile as any).mockImplementation(async (filename: string) => {
-    mockOPFSData.delete(filename);
-    return true;
-  });
-}
 
 describe("Headless Triple Crown Simulation", () => {
   beforeEach(() => {
-    // Reset OPFS mocks and setup localStorage
-    resetOPFSMocks();
+    // Setup localStorage
     mockLocalStorage();
     // Reset store before each test
     useGame.setState(createDefaultGameState());

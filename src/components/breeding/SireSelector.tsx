@@ -29,7 +29,7 @@ export function SireSelector({ sireId, onChange, availableStallions }: SireSelec
         {availableStallions.map((h) => (
           <option key={h.id} value={h.id}>
             {h.name} (age {Math.floor(h.age)}){h.bruceLoweFamily ? ` • Family ${h.bruceLoweFamily}` : ""}{" "}
-            • {Math.round(h.distanceAptitude)}m • ${formatCurrency(h.stud?.standingFee || 0)}
+            • {Math.round(h.distanceAptitude)}m • {formatCurrency(h.stud?.standingFee || 0)}
           </option>
         ))}
       </select>

@@ -133,7 +133,7 @@ export function BredHorsesTab() {
                         {horse.pedigree?.sireName ?? "—"} × {horse.pedigree?.damName ?? "—"}
                       </td>
                       <td className="py-2 pr-3 tabular-nums font-[family-name:var(--font-mono)]">
-                        {horse.age}
+                        {Math.floor(horse.age)}
                       </td>
                       <td className="py-2 pr-3 capitalize text-cream-muted">{horse.gender}</td>
                       <td className="py-2 pr-3 tabular-nums font-[family-name:var(--font-mono)] text-cream-muted">
