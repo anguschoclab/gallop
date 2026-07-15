@@ -1,7 +1,17 @@
 import { describe, it, expect } from "vitest";
-import { createHorseGenAIState } from "@/core/ai/horseGenAI";
-import { createTestStable } from "@/tests/helpers";
+import {
+  createHorseGenAIState,
+  calculateAgeGenerationPriority,
+  calculateQualityGenerationPriority,
+  shouldGenerateHorseOfAge,
+  updateRosterComposition,
+  recordHorseGeneration,
+  recordHorseCareerOutcome,
+  getGenerationInsights,
+} from "@/core/ai/horseGenAI";
+import { createTestHorse, createTestStable } from "@/tests/helpers";
 import type { StablePersonality } from "@/core/stable/types";
+import type { Horse, Stable } from "@/game/types";
 
 const ALL_PERSONALITIES: StablePersonality[] = [
   "prestige",

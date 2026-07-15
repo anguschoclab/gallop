@@ -61,6 +61,8 @@ function makeHorse(overrides: Partial<Horse> = {}): Horse {
     id: "test-horse",
     name: "Test Horse",
     pedigree: {
+      name: "Test Horse",
+      generation: 0,
       sireId: undefined,
       damId: undefined,
       sireName: "Northern Dancer",
@@ -149,5 +151,40 @@ describe("deriveHorseGenetics", () => {
     const g = deriveHorseGenetics(makeHorse());
     expect(g.inbreeding.description.length).toBeGreaterThan(0);
     expect(g.inbreeding.score).toBeGreaterThanOrEqual(0);
+  });
+
+  it("treats Unknown parents as unknown pedigree, not direct inbreeding", () => {
+    const g = deriveHorseGenetics(
+      makeHorse({ sireName: "Unknown", damName: "Unknown" }),
+    );
+    expect(g.inbreeding.description).toBe("Unknown pedigree");
+    expect(g.inbreeding.warning).toBeUndefined();
+  });
+
+  it("does not flag direct inbreeding when parents have different IDs, even with the same name", () => {
+    const g = deriveHorseGenetics(
+      makeHorse({
+        sireId: "sire-1",
+        damId: "dam-1",
+        sireName: "Shared Name",
+        damName: "Shared Name",
+      }),
+    );
+    expect(g.inbreeding.description).not.toBe("Direct inbreeding detected");
+    expect(g.inbreeding.warning).toBeUndefined();
+  });
+
+  it("flags direct inbreeding when sireId and damId are identical", () => {
+    const g = deriveHorseGenetics(
+      makeHorse({
+        sireId: "same-parent",
+        damId: "same-parent",
+        sireName: "Same Parent",
+        damName: "Same Parent",
+      }),
+    );
+    expect(g.inbreeding.description).toBe("Direct inbreeding detected");
+    expect(g.inbreeding.warning).toBe("Sire and dam are the same individual");
+    expect(g.inbreeding.score).toBe(0);
   });
 });

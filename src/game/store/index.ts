@@ -162,6 +162,10 @@ export async function initEngineWorker(): Promise<void> {
   const worker = new Worker(new URL("../../workers/engine.worker.ts", import.meta.url), {
     type: "module",
   });
+  worker.addEventListener("error", (e) => {
+    console.error("Engine worker failed to load:", e.message, e.filename, e.lineno);
+    engineWorker = null;
+  });
   engineWorker = wrap<EngineWorkerApi>(worker);
 }
 
@@ -184,6 +188,10 @@ export async function initInitializationWorker(): Promise<void> {
 
   const worker = new Worker(new URL("../../workers/initialization.worker.ts", import.meta.url), {
     type: "module",
+  });
+  worker.addEventListener("error", (e) => {
+    console.error("Initialization worker failed to load:", e.message, e.filename, e.lineno);
+    initializationWorker = null;
   });
   initializationWorker = wrap<InitializationWorkerApi>(worker);
 }
@@ -323,10 +331,19 @@ export const useGame = create<StoreType>()(
         let newState: GameState;
         try {
           const worker = getInitializationWorker();
-          const result = await worker.createInitialState({ options });
+          const result = await Promise.race([
+            worker.createInitialState({ options }),
+            new Promise<never>((_, reject) =>
+              setTimeout(
+                () => reject(new Error("Worker initialization timed out")),
+                15000,
+              ),
+            ),
+          ]);
           newState = result.state;
         } catch {
-          // Worker not available (e.g. test environment) — use main thread
+          // Worker not available, timed out, or failed — use main thread
+          console.warn("Falling back to main-thread state initialization");
           newState = createInitialState(options);
         }
         set({ ...newState } as Partial<StoreType>);

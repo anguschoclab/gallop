@@ -18,7 +18,12 @@ export const Route = createFileRoute("/staff")({
 });
 
 function StaffManagement() {
-  const { hiredStaff, staffPool, enqueueIntent, day } = useGame();
+  const enqueueIntent = useGame((s) => s.enqueueIntent);
+  const day = useGame((s) => s.day);
+  const { hiredStaff, staffPool } = useGameWithShallow((s) => ({
+    hiredStaff: s.hiredStaff,
+    staffPool: s.staffPool,
+  }));
   const horses = useGameWithShallow((s) => s.horses);
   const races = useGameWithShallow((s) => s.races);
   const [negotiatingId, setNegotiatingId] = useState<string | null>(null);

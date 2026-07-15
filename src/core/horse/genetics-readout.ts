@@ -18,7 +18,10 @@ import {
   resolveWeatherPreference,
 } from "@/core/genetics/phenotype/aptitude";
 import { calculateDosageMetrics, interpretDosageIndex } from "@/core/race/dosage";
-import { calculateFounderEffect } from "@/services/breeding/inbreedingCalculator";
+import {
+  calculateFounderEffect,
+  checkDirectInbreeding,
+} from "@/services/breeding/inbreedingCalculator";
 import { getBruceLoweRole } from "@/core/breeding/bruceLowe";
 
 export type TraitRating = "excellent" | "good" | "fair" | "poor";
@@ -75,7 +78,15 @@ function classifyHealthRisk(locus: Locus): HealthReadout["risk"] {
 export function deriveHorseGenetics(horse: Horse): HorseGeneticsReadout {
   const g = horse.genotype;
   const dosageMetrics = calculateDosageMetrics(horse.sireName);
-  const founder = calculateFounderEffect(horse.sireName ?? "", horse.damName ?? "");
+  const directInbreeding = checkDirectInbreeding(
+    horse.sireId,
+    horse.damId,
+    horse.sireName ?? "",
+    horse.damName ?? "",
+  );
+  const founder =
+    directInbreeding ??
+    calculateFounderEffect(horse.sireName ?? "", horse.damName ?? "");
 
   return {
     traits: {

@@ -384,4 +384,29 @@ describe("calculateBreedingCompatibility", () => {
     const badScore = calculateBreedingCompatibility(poorSire, poorDam).overallScore;
     expect(goodScore).toBeGreaterThan(badScore);
   });
+
+  it("does not flag direct inbreeding from shared grand-sire names alone", () => {
+    const sire = mkHorse({
+      sireName: "Grandsire A",
+      pedigree: { name: "Sire Pedigree", generation: 1, sireId: "gs-a-1", damId: "d-1" },
+    });
+    const dam = mkMare({
+      sireName: "Grandsire A",
+      pedigree: { name: "Dam Pedigree", generation: 1, sireId: "gs-a-2", damId: "d-2" },
+    });
+    const result = calculateBreedingCompatibility(sire, dam);
+    expect(result.factors.founderEffect.description).not.toBe("Direct inbreeding detected");
+    expect(result.factors.founderEffect.warning).toBeUndefined();
+  });
+
+  it("still flags high inbreeding for a sire-to-daughter mating via COI", () => {
+    const sire = mkHorse({ id: "father" });
+    const dam = mkMare({
+      id: "daughter",
+      pedigree: { name: "Daughter", generation: 1, sireId: "father", damId: "mother" },
+    });
+    const result = calculateBreedingCompatibility(sire, dam);
+    expect(result.factors.inbreeding.description).toContain("25.0%");
+    expect(result.factors.inbreeding.warning).toContain("High inbreeding");
+  });
 });

@@ -1,8 +1,17 @@
 import { useMemo, useCallback } from "react";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 
 export function useDashboardData() {
-  const { day, cash, horses, races, auctions, npcStables, npcAIManager, inbox } = useGame();
+  const day = useGame((s) => s.day);
+  const cash = useGame((s) => s.cash);
+  const { horses, races, auctions, npcStables, npcAIManager, inbox } = useGameWithShallow((s) => ({
+    horses: s.horses,
+    races: s.races,
+    auctions: s.auctions,
+    npcStables: s.npcStables,
+    npcAIManager: s.npcAIManager,
+    inbox: s.inbox,
+  }));
 
   const ownedHorses = Object.values(horses).filter((h) => h.owned);
   const activeHorses = ownedHorses.filter((h) => h.lifecycleStatus === "active");

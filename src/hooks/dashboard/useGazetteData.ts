@@ -1,7 +1,8 @@
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 
 export function useGazetteData() {
-  const { news, day } = useGame();
+  const day = useGame((s) => s.day);
+  const { news } = useGameWithShallow((s) => ({ news: s.news }));
 
   const highImportance = news.filter((n) => n.importance === "high");
   const mediumImportance = news.filter((n) => n.importance === "medium");

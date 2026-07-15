@@ -9,6 +9,67 @@ import {
   INBREEDING_SCORE_BONUS,
 } from "@/constants";
 
+export type DirectInbreedingResult = {
+  score: 0;
+  description: "Direct inbreeding detected";
+  warning: string;
+};
+
+const UNKNOWN_PEDIGREE_NAMES = new Set(["Unknown", "Unnamed", ""]);
+
+function isPlaceholderName(name: string): boolean {
+  return UNKNOWN_PEDIGREE_NAMES.has(name);
+}
+
+/**
+ * Check whether two parents represent the same individual.
+ *
+ * Uses IDs when available, and falls back to names only when IDs are missing.
+ * Treats placeholder names ("Unknown", "Unnamed", empty) as unknown pedigree,
+ * never as direct inbreeding.
+ *
+ * @param sireId - Optional sire UUID
+ * @param damId - Optional dam UUID
+ * @param sireName - Sire display name (used as fallback)
+ * @param damName - Dam display name (used as fallback)
+ * @returns DirectInbreedingResult if the parents are the same individual, otherwise null
+ */
+export function checkDirectInbreeding(
+  sireId: string | undefined,
+  damId: string | undefined,
+  sireName: string,
+  damName: string,
+): DirectInbreedingResult | null {
+  // Identity-based check: UUIDs are the source of truth.
+  if (sireId && damId) {
+    if (sireId === damId) {
+      return {
+        score: 0,
+        description: "Direct inbreeding detected",
+        warning: "Sire and dam are the same individual",
+      };
+    }
+    return null;
+  }
+
+  // Fallback only when IDs are unavailable: compare names, but never treat
+  // placeholder names as inbreeding.
+  if (
+    sireName &&
+    damName &&
+    sireName === damName &&
+    !isPlaceholderName(sireName)
+  ) {
+    return {
+      score: 0,
+      description: "Direct inbreeding detected",
+      warning: "Sire and dam have identical names and no recorded IDs - possible direct inbreeding",
+    };
+  }
+
+  return null;
+}
+
 /**
  * Calculate founder effect score.
  *
@@ -23,13 +84,9 @@ export function calculateFounderEffect(
   sireName: string,
   damName: string,
 ): { score: number; description: string; warning?: string } {
-  // Explicit check for identical names (direct inbreeding)
-  if (sireName === damName && sireName !== "") {
-    return {
-      score: 0,
-      description: "Direct inbreeding detected",
-      warning: "Sire and dam have identical names - this represents direct inbreeding",
-    };
+  // Placeholder parents mean no usable pedigree data.
+  if (isPlaceholderName(sireName) || isPlaceholderName(damName)) {
+    return { score: DEFAULT_GENETIC_DIVERSITY, description: "Unknown pedigree" };
   }
 
   const sire = findHorseByName(sireName);
