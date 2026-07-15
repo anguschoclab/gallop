@@ -19,20 +19,20 @@ export function useRacePageData(raceId: string) {
   const jockeys = useGameWithShallow((s: GameState) => s.jockeys ?? []);
   const stables = useGameWithShallow((s: GameState) => s.npcStables);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
-  const raceWeather = useGameWithShallow((s: any) => {
+  const raceWeather = useGameWithShallow((s) => {
     if (!race) return undefined;
     const trackId = race.graded?.trackId ?? race.trackId;
     if (!trackId) return undefined;
     const buf = s.weather?.byTrack?.[trackId];
     if (!buf || !buf.length) return undefined;
-    return buf.find((w: any) => w.day === race.day) ?? buf[buf.length - 1];
+    return buf.find((w) => w.day === race.day) ?? buf[buf.length - 1];
   });
 
   const runners = useMemo<Runner[]>(() => {
     if (!race) return [];
     const deps: RaceSimulationDependencies = {
       race,
-      horses: Object.values(horses) as any,
+      horses: Object.values(horses),
       jockeys,
     };
     const { runners: built } = buildRaceField(deps);

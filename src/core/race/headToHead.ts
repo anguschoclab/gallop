@@ -1,4 +1,4 @@
-import type { Horse } from "@/game/types";
+import type { Horse, Race } from "@/game/types";
 import { calculateWinProbability } from "@/core/odds/oddsTypes";
 import { computeDistanceScaling, buildRunner } from "@/core/race/engine/runnerBuilder";
 import { runRaceToCompletion } from "@/core/race/engine/simulation";
@@ -31,7 +31,7 @@ export function calculateHeadToHeadOdds(
     distance,
     raceClass: "Allowance",
     graded: { surface, grade: undefined },
-  } as any;
+  } as unknown as Race;
 
   const rawProbs = horses.map((h) => {
     const baseProb = calculateWinProbability(

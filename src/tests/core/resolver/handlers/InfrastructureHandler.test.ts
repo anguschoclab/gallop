@@ -26,7 +26,7 @@ describe("InfrastructureHandler", () => {
       logLevel: "always",
       type: "facility_upgrade",
       facilityId: "training_track",
-      nextLevel: 2,
+      nextLevel: "premium",
       cost: 50000,
       reason: "Facility upgrade started",
     };
@@ -34,7 +34,7 @@ describe("InfrastructureHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.facilities.training_track.level).toBe(2);
+    expect(draft.facilities.training_track.level).toBe("premium");
   });
 
   it("staff hire moves staff from pool to hiredStaff and deducts salary", () => {

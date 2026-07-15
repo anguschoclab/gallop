@@ -39,7 +39,7 @@ export const createStaffSlice: SliceCreator<StaffSlice> = (set, get) => ({
       role: staff.role,
       tier: staff.tier,
       salary: agreedSalary,
-    } as any);
+    });
 
     return { ok: true };
   },

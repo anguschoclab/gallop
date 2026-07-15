@@ -9,9 +9,12 @@ import {
   CartesianGrid,
 } from "recharts";
 import { cn } from "@/lib/cn";
+import type { Horse } from "@/core/horse/types";
+
+type RaceHistoryEntry = Horse["raceHistory"][number];
 
 interface DistanceAptitudeDriftProps {
-  horse: any;
+  horse: Horse;
 }
 
 interface DriftPoint {
@@ -26,8 +29,11 @@ interface DriftPoint {
 export function DistanceAptitudeDrift({ horse }: DistanceAptitudeDriftProps) {
   const driftData = useMemo<DriftPoint[]>(() => {
     const history = [...(horse.raceHistory ?? [])]
-      .filter((r: any) => typeof r.distance === "number" && typeof r.day === "number")
-      .sort((a: any, b: any) => a.day - b.day);
+      .filter(
+        (r): r is RaceHistoryEntry & { distance: number; day: number } =>
+          typeof r.distance === "number" && typeof r.day === "number",
+      )
+      .sort((a, b) => a.day - b.day);
 
     if (history.length === 0) return [];
 
@@ -42,7 +48,7 @@ export function DistanceAptitudeDrift({ horse }: DistanceAptitudeDriftProps) {
       apt = Math.max(800, Math.min(3200, prevApt));
     }
 
-    return history.map((r: any, i: number) => {
+    return history.map((r, i) => {
       const after = aptAfter[i];
       const before = i === 0 ? apt : aptAfter[i - 1];
       return {

@@ -28,6 +28,7 @@ import type {
   TrackRecordImpact,
   NameReservationImpact,
   TrainerStatsImpact,
+  NarrativeArcUpdateImpact,
 } from "../impacts/miscImpacts";
 import type {
   PaceSampleImpact,
@@ -191,7 +192,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   narrative_arc_update: (draft, impact) => {
-    const arcState = (impact as any).arcState;
+    const { arcState } = impact as NarrativeArcUpdateImpact;
     if (!arcState) return;
     if (!draft.narrativeArcs) draft.narrativeArcs = {};
     draft.narrativeArcs[arcState.horseId] = arcState;

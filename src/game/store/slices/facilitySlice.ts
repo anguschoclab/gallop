@@ -59,7 +59,7 @@ export const createFacilitySlice: GameStateCreator<FacilitySlice> = (set, get) =
       priority: 100,
       type: "facility_upgrade",
       facilityId: facilityType,
-      nextLevel: nextLevel as any,
+      nextLevel,
       cost,
     });
 

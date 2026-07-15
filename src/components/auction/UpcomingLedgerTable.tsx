@@ -12,7 +12,7 @@ interface UpcomingSale {
   kind: string;
   day: number;
   lots: Array<{ consignorStableId?: string; withdrawn?: boolean }>;
-  resolved: false;
+  resolved: boolean;
   isScheduled?: true;
 }
 

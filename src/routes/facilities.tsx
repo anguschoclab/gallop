@@ -14,7 +14,7 @@ export const Route = createFileRoute("/facilities")({
 function FacilitiesPage() {
   const facilities = useGame((s) => s.facilities);
   const outposts = useGame((s) => s.outposts ?? []);
-  const facilityCount = Object.keys(facilities || {}).length;
+  const facilityCount = Object.keys(facilities ?? {}).length;
   const outpostCount = outposts.length;
 
   return (

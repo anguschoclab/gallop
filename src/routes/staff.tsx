@@ -26,10 +26,7 @@ function StaffManagement() {
   const myStaff = hiredStaff?.filter((s) => s.stableId === "") ?? [];
   const staffMap = useMemo(() => new Map(staffPool.map((s) => [s.id, s])), [staffPool]);
 
-  const stableG1Wins = useMemo(
-    () => getG1WinsForStable({ horses, races } as any, undefined),
-    [horses, races],
-  );
+  const stableG1Wins = useMemo(() => getG1WinsForStable({ horses }, undefined), [horses, races]);
   const honorCounts = useMemo(() => countByGrade(stableG1Wins), [stableG1Wins]);
   const showHonors = (role: string) => role === "trainer" || role === "groom";
 

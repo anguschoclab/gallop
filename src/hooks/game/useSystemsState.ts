@@ -13,7 +13,7 @@ import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 
-const EMPTY_ARRAY: any[] = [];
+const EMPTY_ARRAY: never[] = [];
 
 /**
  * Systems state selectors for optional subsystems and advanced features.

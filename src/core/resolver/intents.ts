@@ -13,6 +13,7 @@
 
 import type { Horse, Race, Jockey } from "@/game/types";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+import type { FacilityLevel } from "@/core/facilities";
 import type { InsurancePolicyType } from "@/core/insurance/insuranceTypes";
 import type { InquiryType } from "@/core/stewards/stewardTypes";
 
@@ -282,7 +283,7 @@ export interface StaffIntent extends Intent {
 export interface FacilityUpgradeIntent extends Intent {
   type: "facility_upgrade";
   facilityId: string;
-  nextLevel: number;
+  nextLevel: FacilityLevel;
   cost: number;
 }
 

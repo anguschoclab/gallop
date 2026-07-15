@@ -65,7 +65,7 @@ export function TransactionLedger({ transactions, recentTransactions }: Transact
                     </td>
                     <td className="px-4 py-3">
                       <span className="text-[9px] font-black uppercase text-cream/40 tracking-widest px-1.5 py-0.5 border border-white/5 bg-black/40 rounded-sm">
-                        {formatTransactionSubcategory(t.subcategory as any).toUpperCase()}
+                        {formatTransactionSubcategory(t.subcategory).toUpperCase()}
                       </span>
                     </td>
                     <td

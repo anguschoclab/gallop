@@ -149,7 +149,7 @@ function AuctionPage() {
 
         <main className="lg:col-span-8 space-y-8">
           <LiveExchangeFloor sales={todaysSales} />
-          <UpcomingLedgerTable sales={allUpcoming as any} currentDay={day} />
+          <UpcomingLedgerTable sales={allUpcoming} currentDay={day} />
         </main>
       </div>
 

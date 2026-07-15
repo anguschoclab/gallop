@@ -53,7 +53,7 @@ function entityHref(b: Bookmark): {
     case "race":
       return { to: "/race/$raceId", params: { raceId: b.id } };
     default:
-      throw new Error(`Unhandled bookmark entity type: ${(b as any).type}`);
+      throw new Error(`Unhandled bookmark entity type: ${String(b)}`);
   }
 }
 

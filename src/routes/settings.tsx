@@ -61,7 +61,7 @@ function SettingsPage() {
         <AudioSettingsCard settings={audio ?? {}} onUpdate={updateAudioSettings} />
         <DataManagementCard
           lastModifiedDay={userSettings?.lastModified}
-          version={(userSettings as any)?.version}
+          version={undefined}
           onSave={() => {
             setSaveDialogTab("save");
             setSaveDialogOpen(true);

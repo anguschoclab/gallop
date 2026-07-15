@@ -13,7 +13,9 @@ import type { Impact } from "./base";
 import type { ScoutReport } from "@/game/types";
 import type { ReputationSource } from "@/core/reputation";
 import type { NewsItem } from "@/services/narrative/newsTypes";
+import type { FacilityLevel } from "@/core/facilities";
 import type { TrackRecord } from "../../history/historyTypes";
+import type { CareerArcState } from "@/services/narrative/careerArcGenerator";
 
 // News impact
 export interface NewsImpact extends Impact {
@@ -75,7 +77,7 @@ export interface TrainerStatsImpact extends Impact {
 export interface FacilityUpgradeImpact extends Impact {
   type: "facility_upgrade";
   facilityId: string;
-  nextLevel: number;
+  nextLevel: FacilityLevel;
   cost?: number;
   reason: string;
 }
@@ -148,6 +150,12 @@ export interface NameReservationImpact extends Impact {
   reason: string;
 }
 
+// Narrative arc update impact
+export interface NarrativeArcUpdateImpact extends Impact {
+  type: "narrative_arc_update";
+  arcState: CareerArcState;
+}
+
 export type MiscImpact =
   | NewsImpact
   | TrackRecordImpact
@@ -162,4 +170,5 @@ export type MiscImpact =
   | AuctionResolutionImpact
   | TransportImpact
   | OutpostImpact
-  | NameReservationImpact;
+  | NameReservationImpact
+  | NarrativeArcUpdateImpact;

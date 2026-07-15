@@ -70,7 +70,7 @@ export const RecordsDashboard: React.FC = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredHOF
+                {[...filteredHOF]
                   .sort((a, b) => b.inductionDay - a.inductionDay)
                   .map((entry) => (
                     <Card

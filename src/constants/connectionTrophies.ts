@@ -69,7 +69,10 @@ export function getG1WinsForJockey(state: GameState, jockeyId: string): G1WinEnt
  * @param stableId
  * @returns Array of G1 win entries
  */
-export function getG1WinsForStable(state: GameState, stableId: string | undefined): G1WinEntry[] {
+export function getG1WinsForStable(
+  state: Pick<GameState, "horses">,
+  stableId: string | undefined,
+): G1WinEntry[] {
   const out: G1WinEntry[] = [];
   const wantPlayer = !stableId;
   for (const horse of Object.values(state.horses || {})) {

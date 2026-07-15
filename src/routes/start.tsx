@@ -131,7 +131,7 @@ export function StartScreen() {
               </div>
               <div>
                 <div className="text-2xl font-bold text-cream tabular-nums">
-                  {horses ? Object.keys(horses).length : 0}
+                  {Object.keys(horses).length}
                 </div>
                 <div className="text-[9px] font-mono uppercase tracking-widest text-cream-muted mt-1">
                   Horses

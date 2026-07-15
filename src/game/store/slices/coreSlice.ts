@@ -172,7 +172,7 @@ export function createCoreSlice(
       if (raceGrade) {
         const noms = s.playerNominations;
         const active = noms.find(
-          (n: any) => n.horseId === horseId && n.raceId === raceId && n.status === "active",
+          (n) => n.horseId === horseId && n.raceId === raceId && n.status === "active",
         );
         if (!active) {
           return {
@@ -222,7 +222,7 @@ export function createCoreSlice(
       // Mark the matching nomination as entered.
       if (matchedNominationId) {
         set((state) => ({
-          playerNominations: (state.playerNominations ?? []).map((n) =>
+          playerNominations: state.playerNominations.map((n) =>
             n.id === matchedNominationId ? { ...n, status: "entered" } : n,
           ),
         }));

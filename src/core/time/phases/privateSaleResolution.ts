@@ -14,6 +14,7 @@ import { calculateNpcHorseValue } from "@/core/horse/pricing";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import type { PrivateSaleOffer, Horse, Stable, StablePersonality } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
+import type { HorseTransferImpact, CashImpact } from "@/core/resolver/impacts";
 
 const ACCEPT_THRESHOLDS: Record<StablePersonality, number> = {
   aggressive: 0.7,
@@ -116,7 +117,7 @@ export const privateSaleResolutionPhase: PipelinePhase = {
           price: offer.amount,
           reason: "private_sale_accept",
           logLevel: "always",
-        } as any);
+        } as HorseTransferImpact);
 
         newImpacts.push({
           id: generateUUID(),
@@ -128,7 +129,7 @@ export const privateSaleResolutionPhase: PipelinePhase = {
           amount: -offer.amount,
           reason: "private_sale_purchase",
           logLevel: "always",
-        } as any);
+        } as CashImpact);
 
         newImpacts.push({
           id: generateUUID(),
@@ -140,7 +141,7 @@ export const privateSaleResolutionPhase: PipelinePhase = {
           amount: offer.amount,
           reason: "private_sale_sale",
           logLevel: "always",
-        } as any);
+        } as CashImpact);
 
         newLogs.push({
           day: newDay,

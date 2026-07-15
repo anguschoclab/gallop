@@ -415,7 +415,7 @@ export function createRacingSlice(
 
     withdrawNomination: (nominationId: string) => {
       set((state) => ({
-        playerNominations: (state.playerNominations ?? []).map((n: NominationRecord) =>
+        playerNominations: state.playerNominations.map((n) =>
           n.id === nominationId ? { ...n, status: "scratched" as NominationStatus } : n,
         ),
         log: [

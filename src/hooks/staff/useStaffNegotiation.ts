@@ -6,7 +6,10 @@ import { evaluateOffer, PATIENCE_BY_TIER, FLOOR_BY_TIER } from "@/core/staff/sta
 import type { StaffMember } from "@/core/staff/staffTypes";
 
 export function useStaffNegotiation(staff: StaffMember, onClose: () => void) {
-  const { day, cash, hireAtNegotiatedSalary, flagStaffOffended } = useGame() as any;
+  const day = useGame((s) => s.day);
+  const cash = useGame((s) => s.cash);
+  const hireAtNegotiatedSalary = useGame((s) => s.hireAtNegotiatedSalary);
+  const flagStaffOffended = useGame((s) => s.flagStaffOffended);
   const [offerAmount, setOfferAmount] = useState(String(staff.salary));
   const [offerError, setOfferError] = useState("");
   const [roundsUsed, setRoundsUsed] = useState(staff.negotiationRounds ?? 0);

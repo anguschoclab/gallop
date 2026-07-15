@@ -131,7 +131,7 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   // Player-facing syndication investors
   "syndicateInvestors" as keyof GameState,
   // Persisted state format version — used to detect incompatible stored data
-  "storeVersion" as any,
+  "storeVersion" as keyof GameState,
   // Season standings — last top-10 rank for change detection
   "lastTopTenRank" as keyof GameState,
 ];
@@ -159,7 +159,7 @@ export async function initEngineWorker(): Promise<void> {
     return;
   }
 
-  const worker = new Worker(new URL("@/workers/engine.worker", import.meta.url), {
+  const worker = new Worker(new URL("../../workers/engine.worker.ts", import.meta.url), {
     type: "module",
   });
   engineWorker = wrap<EngineWorkerApi>(worker);
@@ -182,7 +182,7 @@ export async function initInitializationWorker(): Promise<void> {
     return;
   }
 
-  const worker = new Worker(new URL("@/workers/initialization.worker", import.meta.url), {
+  const worker = new Worker(new URL("../../workers/initialization.worker.ts", import.meta.url), {
     type: "module",
   });
   initializationWorker = wrap<InitializationWorkerApi>(worker);

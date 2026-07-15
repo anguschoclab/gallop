@@ -3,13 +3,15 @@ import { Badge } from "@/components/ui/badge";
 import { GitBranch } from "lucide-react";
 import { PedigreeTree } from "@/components/breeding/PedigreeTree";
 import { Link } from "@tanstack/react-router";
+import type { Horse } from "@/core/horse/types";
+import type { Pregnancy } from "@/core/breeding/types";
 
 interface HorseLineageSectionProps {
-  horse: any;
+  horse: Horse;
   horseId: string;
-  progenyPregnancies: any[];
-  reBreedingPregnancies: any[];
-  localHorseMap: Map<string, any>;
+  progenyPregnancies: Pregnancy[];
+  reBreedingPregnancies: Pregnancy[];
+  localHorseMap: Map<string, Horse>;
 }
 
 export function HorseLineageSection({
@@ -41,7 +43,7 @@ export function HorseLineageSection({
                 Progeny
               </div>
               <div className="space-y-1">
-                {progenyPregnancies.map((p: any) => {
+                {progenyPregnancies.map((p) => {
                   const sire = localHorseMap.get(p.sireId);
                   const dam = localHorseMap.get(p.damId);
                   return (
@@ -93,7 +95,7 @@ export function HorseLineageSection({
                 Re-Breeding History
               </div>
               <div className="space-y-1">
-                {reBreedingPregnancies.map((p: any) => (
+                {reBreedingPregnancies.map((p) => (
                   <div
                     key={p.id}
                     className="flex items-center justify-between p-2 bg-black/20 border border-white/5 text-xs font-mono"

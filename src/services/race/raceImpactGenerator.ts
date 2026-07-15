@@ -4,6 +4,7 @@ import type {
   RaceResultImpact,
   PaceSampleImpact,
   NewsImpact,
+  NarrativeArcUpdateImpact,
 } from "@/core/resolver/impacts/index";
 import { computeSectionalSplits } from "@/core/race/sectionalAnalysis";
 import {
@@ -314,9 +315,9 @@ export function generateRaceImpacts({
             day: newDay,
             phase: "raceResolution",
             logLevel: "always",
-            type: "narrative_arc_update" as any,
+            type: "narrative_arc_update",
             arcState: newArcState,
-          } as any);
+          } as NarrativeArcUpdateImpact);
         }
       }
     }

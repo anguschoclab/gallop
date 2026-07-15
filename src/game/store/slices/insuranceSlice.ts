@@ -54,7 +54,7 @@ export const createInsuranceSlice: SliceCreator<InsuranceSlice> = (set, get) => 
       type: "insurance_claim",
       horseId,
       payout,
-    } as any);
+    });
 
     return { ok: true };
   },
