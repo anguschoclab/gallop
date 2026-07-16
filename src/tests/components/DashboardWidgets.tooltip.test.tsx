@@ -69,10 +69,18 @@ describe("ImperialOutpostManager — tooltip accessibility", () => {
         {
           id: "op1",
           name: "Test Outpost",
-          region: "eu",
+          region: "Europe (UK)",
           totalSlots: 10,
+          acclimatizationDays: {},
           facilities: {
-            0: { id: "f1", type: "main_track", level: "basic", condition: 100 },
+            0: {
+              type: "main_track",
+              level: "basic",
+              maintenanceCost: 0,
+              upgradeCost: 0,
+              builtDay: 0,
+              branch: "neutral",
+            },
           },
         },
       ],
@@ -87,10 +95,18 @@ describe("ImperialOutpostManager — tooltip accessibility", () => {
         {
           id: "op1",
           name: "Test Outpost",
-          region: "eu",
+          region: "Europe (UK)",
           totalSlots: 10,
+          acclimatizationDays: {},
           facilities: {
-            0: { id: "f1", type: "main_track", level: "basic", condition: 100 },
+            0: {
+              type: "main_track",
+              level: "basic",
+              maintenanceCost: 0,
+              upgradeCost: 0,
+              builtDay: 0,
+              branch: "neutral",
+            },
           },
         },
       ],
