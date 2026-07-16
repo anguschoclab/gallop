@@ -512,6 +512,12 @@ export function generateFollowUpRaceNews(
     `${horse.name}'s ${race.name} Performance: Where to Now?`,
     `Post-${race.name} Plans for ${horse.name} Taking Shape`,
     `${horse.name} Turns Heads in ${race.name} — Next Target Awaited`,
+    `Connections Ponder Next Target for ${horse.name}`,
+    `Decisions Loom for ${horse.name} Following ${race.name}`,
+    `All Eyes on ${horse.name}'s Next Entry After ${race.name}`,
+    `${horse.name} Exits ${race.name} in Top Form, What's Next?`,
+    `The Racing World Awaits ${horse.name}'s Next Move`,
+    `Plotting the Course for ${horse.name} Post-${race.name}`,
   ];
 
   const bodies = [
@@ -523,6 +529,12 @@ export function generateFollowUpRaceNews(
     `A ${positionLabel} in the ${race.name} (${grade}) has put ${horse.name} in the conversation for the season's remaining big prizes. The next entry decision could define the campaign.`,
     `The ${race.name} is in the books, and ${horse.name}'s ${positionLabel} has fans and pundits alike looking ahead. Will connections target another ${grade}, or test the waters at the highest level?`,
     `${horse.name} came away from the ${race.name} with a ${positionLabel}, and the racing world is watching closely. The horse's next start could be the defining moment of the season.`,
+    `With a hard-fought ${positionLabel} in the ${race.name} behind them, the team surrounding ${horse.name} is meticulously plotting their next move. Expect a carefully considered entry for their upcoming start.`,
+    `${horse.name} emerged from the ${grade} ${race.name} with enormous credit after a gallant ${positionLabel}. Trackside rumors suggest several high-profile targets are currently under discussion.`,
+    `The racing calendar offers plenty of tempting options for ${horse.name} following a solid ${positionLabel} in the ${race.name}. Connections will be weighing distance and surface before committing.`,
+    `A stellar ${positionLabel} effort in the ${race.name} has ${horse.name} perfectly positioned for a late-season push. The trainer's next move will be analyzed by racing pundits everywhere.`,
+    `Having proven their class with a ${positionLabel} in the ${race.name} (${grade}), ${horse.name} now faces the enviable problem of having multiple prestigious races to choose from.`,
+    `The immediate aftermath of the ${race.name} has left connections of ${horse.name} thrilled with their ${positionLabelShort}. Now, the strategic challenge begins as they map out the optimal path forward.`,
   ];
 
   return createNewsItem(
