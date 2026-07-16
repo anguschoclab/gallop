@@ -11,7 +11,7 @@
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
-import type { ImpactHandler } from "./types";
+import type { ImpactHandler, LookupMaps } from "./types";
 import type { Syndicate } from "@/core/breeding/types";
 import { generateUUID } from "@/core/uuid";
 import type {
@@ -24,13 +24,7 @@ import type {
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
   impact: AnyImpact,
-  lookupMaps?: {
-    horseMap: Map<string, WritableDraft<any>>;
-    stableMap: Map<string, WritableDraft<any>>;
-    campaignMap: Map<string, WritableDraft<any>>;
-    raceMap: Map<string, WritableDraft<any>>;
-    jockeyMap: Map<string, WritableDraft<any>>;
-  },
+  lookupMaps?: LookupMaps,
 ) => void;
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
@@ -44,7 +38,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
     // Check if stallion is a G1 winner
     const g1Wins =
-      stallion.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
+      stallion.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1).length || 0;
     if (g1Wins === 0) return; // Only G1 winners can be syndicated
 
     // Check if syndicate already exists
@@ -108,7 +102,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     draft.shareTransactions.push(transaction);
   },
 
-  syndicate_fee_distribution: (draft, impact) => {
+  syndicate_fee_distribution: (draft, impact, lookupMaps) => {
     const { syndicateId, totalFee } = impact as SyndicateFeeDistributionImpact;
 
     const syndicate = draft.syndicates?.[syndicateId];
@@ -119,13 +113,12 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
     // Distribute fee among shareowners
     const shareCount = Object.values(syndicate.shareHolders).reduce(
-      (sum: number, count: number) => sum + count,
+      (sum, count) => sum + count,
       0,
     );
     if (shareCount === 0) return;
 
     const feePerShare = totalFee / shareCount;
-    const stableMap = new Map((draft.npcStables ?? []).map((s: any) => [s.id, s]));
 
     // Distribute to each shareholder
     for (const [shareholderStableId, shares] of Object.entries(syndicate.shareHolders)) {
@@ -136,7 +129,9 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         draft.cash += distribution;
       } else {
         // For NPC stables, add to stable's cash
-        const stable = stableMap.get(shareholderStableId);
+        const stable =
+          lookupMaps?.stableMap.get(shareholderStableId) ||
+          draft.npcStables.find((s) => s.id === shareholderStableId);
         if (stable) {
           stable.cash = (stable.cash || 0) + distribution;
         }
@@ -176,13 +171,7 @@ export class SyndicationHandler implements ImpactHandler {
   handle(
     draft: WritableDraft<GameState>,
     impact: AnyImpact,
-    lookupMaps?: {
-      horseMap: Map<string, WritableDraft<any>>;
-      stableMap: Map<string, WritableDraft<any>>;
-      campaignMap: Map<string, WritableDraft<any>>;
-      raceMap: Map<string, WritableDraft<any>>;
-      jockeyMap: Map<string, WritableDraft<any>>;
-    },
+    lookupMaps?: LookupMaps,
   ): void {
     const handler = IMPACT_HANDLERS[impact.type];
     if (handler) {

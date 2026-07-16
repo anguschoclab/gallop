@@ -10,10 +10,10 @@
  */
 
 import type { WritableDraft } from "immer";
-import type { GameState } from "@/game/types";
+import type { GameState, Horse } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import { isMaleHorse } from "@/core/horse/gender";
-import type { ImpactHandler } from "./types";
+import type { ImpactHandler, LookupMaps } from "./types";
 import { generateUUID } from "@/core/uuid";
 import type {
   HorseCreationImpact,
@@ -39,12 +39,8 @@ import type {
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
   impact: AnyImpact,
-  horse: WritableDraft<any> | undefined,
-  lookupMaps?: {
-    horseMap: Map<string, WritableDraft<any>>;
-    stableMap: Map<string, WritableDraft<any>>;
-    campaignMap: Map<string, WritableDraft<any>>;
-  },
+  horse: WritableDraft<Horse> | undefined,
+  lookupMaps?: LookupMaps,
 ) => void;
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
@@ -234,11 +230,7 @@ export class HorseHandler implements ImpactHandler {
   handle(
     draft: WritableDraft<GameState>,
     impact: AnyImpact,
-    lookupMaps?: {
-      horseMap: Map<string, WritableDraft<any>>;
-      stableMap: Map<string, WritableDraft<any>>;
-      campaignMap: Map<string, WritableDraft<any>>;
-    },
+    lookupMaps?: LookupMaps,
   ): void {
     const horseId =
       (impact as { horseId?: string; entityId?: string }).horseId ||

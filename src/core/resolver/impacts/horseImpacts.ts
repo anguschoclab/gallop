@@ -10,7 +10,7 @@
  */
 
 import type { Impact } from "./base";
-import type { Horse, HealthStatus } from "@/game/types";
+import type { Horse, HealthStatus, BlueHenStatus } from "@/game/types";
 import type { SeasonRecord, HallOfFameEntry } from "../../history/historyTypes";
 
 // Horse stat impact
@@ -148,13 +148,7 @@ export interface SeasonHistoryImpact extends Impact {
 export interface BlueHenImpact extends Impact {
   type: "blue_hen_status";
   horseId: string;
-  blueHenStatus: {
-    isBlueHen: boolean;
-    stakesWinnersProduced: number;
-    group1WinnersProduced: number;
-    blueHenScore: number;
-    foalsProduced?: number;
-  };
+  blueHenStatus: BlueHenStatus;
   reason: string;
 }
 

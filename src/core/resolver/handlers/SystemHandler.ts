@@ -12,7 +12,7 @@
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact, ReputationImpact } from "../impacts";
-import type { ImpactHandler } from "./types";
+import type { ImpactHandler, LookupMaps } from "./types";
 import type { HallOfFameInductionImpact, SeasonHistoryImpact } from "../impacts/horseImpacts";
 import type {
   CampaignSlotImpact,
@@ -47,12 +47,7 @@ import { addReservedName } from "@/core/horse/naming/reservedNames";
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
   impact: AnyImpact,
-  lookupMaps?: {
-    horseMap: Map<string, WritableDraft<GameState["horses"][number]>>;
-    stableMap: Map<string, WritableDraft<GameState["npcStables"][number]>>;
-    campaignMap: Map<string, WritableDraft<NonNullable<GameState["campaigns"]>[number]>>;
-    raceMap?: Map<string, WritableDraft<any>>;
-  },
+  lookupMaps?: LookupMaps,
 ) => void;
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
@@ -353,12 +348,7 @@ export class SystemHandler implements ImpactHandler {
   handle(
     draft: WritableDraft<GameState>,
     impact: AnyImpact,
-    lookupMaps?: {
-      horseMap: Map<string, WritableDraft<any>>;
-      stableMap: Map<string, WritableDraft<any>>;
-      campaignMap: Map<string, WritableDraft<any>>;
-      raceMap?: Map<string, WritableDraft<any>>;
-    },
+    lookupMaps?: LookupMaps,
   ): void {
     const handler = IMPACT_HANDLERS[impact.type];
     if (handler) {

@@ -11,7 +11,7 @@
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
-import type { ImpactHandler } from "./types";
+import type { ImpactHandler, LookupMaps } from "./types";
 import type { FacilityType } from "@/core/facilities";
 import type { Outpost } from "@/core/facilities/outpostTypes";
 import type {
@@ -24,16 +24,7 @@ import type {
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
   impact: AnyImpact,
-  lookupMaps?: {
-    horseMap: Map<string, WritableDraft<any>>;
-    stableMap: Map<string, WritableDraft<any>>;
-    campaignMap: Map<string, WritableDraft<any>>;
-    raceMap: Map<string, WritableDraft<any>>;
-    jockeyMap: Map<string, WritableDraft<any>>;
-    auctionMap: Map<string, WritableDraft<any>>;
-    facilityMap: Map<string, WritableDraft<any>>;
-    staffMap: Map<string, WritableDraft<any>>;
-  },
+  lookupMaps?: LookupMaps,
 ) => void;
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
@@ -52,7 +43,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     if (!draft.hiredStaff) draft.hiredStaff = [];
 
     if (action === "hire") {
-      const poolIndex = draft.staffPool.findIndex((s: any) => s.id === staffId);
+      const poolIndex = draft.staffPool.findIndex((s) => s.id === staffId);
       if (poolIndex !== -1) {
         const staff = draft.staffPool[poolIndex];
         staff.stableId = stableId ?? "";
@@ -65,7 +56,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         }
       }
     } else if (action === "fire") {
-      const index = draft.hiredStaff.findIndex((s: any) => s.id === staffId);
+      const index = draft.hiredStaff.findIndex((s) => s.id === staffId);
       if (index !== -1) {
         draft.hiredStaff.splice(index, 1);
         if (lookupMaps) lookupMaps.staffMap.delete(staffId);
@@ -82,7 +73,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
       // Add to outpost acclimatization list
       const stableId = horse.stableId || "player";
-      let outpost: any;
+      let outpost: Outpost | undefined;
       if (stableId === "player") {
         outpost = draft.outposts?.find((o) => o.id === toOutpostId);
       } else {
@@ -128,16 +119,7 @@ export class InfrastructureHandler implements ImpactHandler {
   handle(
     draft: WritableDraft<GameState>,
     impact: AnyImpact,
-    lookupMaps?: {
-      horseMap: Map<string, WritableDraft<any>>;
-      stableMap: Map<string, WritableDraft<any>>;
-      campaignMap: Map<string, WritableDraft<any>>;
-      raceMap: Map<string, WritableDraft<any>>;
-      jockeyMap: Map<string, WritableDraft<any>>;
-      auctionMap: Map<string, WritableDraft<any>>;
-      facilityMap: Map<string, WritableDraft<any>>;
-      staffMap: Map<string, WritableDraft<any>>;
-    },
+    lookupMaps?: LookupMaps,
   ): void {
     const handler = IMPACT_HANDLERS[impact.type];
     if (handler) {

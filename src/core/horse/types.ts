@@ -12,6 +12,7 @@
 import type { Genotype, AppearanceDNA } from "@/core/genetics/types";
 import type { InsurancePolicy } from "../insurance/insuranceTypes";
 import type { PedigreeNode } from "../breeding/types";
+import type { InjurySeverity } from "@/core/health/healthSystem";
 
 export type Hemisphere = "Northern" | "Southern";
 
@@ -65,7 +66,7 @@ export interface GeneticMarkers {
 
 export type ActiveInjury = {
   type: string;
-  severity: number;
+  severity: InjurySeverity;
   recoveryDays: number;
   onsetDay: number;
 };
@@ -215,13 +216,7 @@ export type Horse = {
   conformation?: number;
   temperament?: number;
   healthStatus: HealthStatus;
-  blueHenStatus?: {
-    isBlueHen: boolean;
-    stakesWinnersProduced: number;
-    group1WinnersProduced: number;
-    blueHenScore: number;
-    foalsProduced: number;
-  };
+  blueHenStatus?: BlueHenStatus;
   racingViable: boolean;
   lifecycleStatus: "active" | "retired" | "deceased";
   retiredOnDay?: number;

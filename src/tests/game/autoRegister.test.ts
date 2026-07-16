@@ -131,7 +131,7 @@ describe("calculateAutoRegisterEntries", () => {
   it("filters out injured horses", () => {
     const horses = [
       createMockHorse({
-        activeInjury: { type: "leg", severity: 0.5, recoveryDays: 30, onsetDay: 1 },
+        activeInjury: { type: "leg", severity: "moderate", recoveryDays: 30, onsetDay: 1 },
       }),
     ];
     const races: Race[] = [createMockRace()];

@@ -10,7 +10,7 @@
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
-import type { ImpactHandler } from "./types";
+import type { ImpactHandler, LookupMaps } from "./types";
 import type { InboxImpact } from "../impacts/inboxImpacts";
 import { generateUUID } from "@/core/uuid";
 
@@ -22,11 +22,7 @@ export class InboxHandler implements ImpactHandler {
   handle(
     draft: WritableDraft<GameState>,
     impact: AnyImpact,
-    _lookupMaps?: {
-      horseMap: Map<string, WritableDraft<any>>;
-      stableMap: Map<string, WritableDraft<any>>;
-      campaignMap: Map<string, WritableDraft<any>>;
-    },
+    _lookupMaps?: LookupMaps,
   ): void {
     const { message } = impact as InboxImpact;
     if (!draft.inbox) draft.inbox = [];

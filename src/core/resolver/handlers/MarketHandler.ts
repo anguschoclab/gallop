@@ -11,7 +11,7 @@
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
-import type { ImpactHandler } from "./types";
+import type { ImpactHandler, LookupMaps } from "./types";
 import type {
   ScoutReportImpact,
   ConsignmentImpact,
@@ -19,19 +19,11 @@ import type {
   AuctionResolutionImpact,
 } from "../impacts/miscImpacts";
 import { generateUUID } from "@/core/uuid";
-import type { AuctionLot } from "@/core/market/types";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
   impact: AnyImpact,
-  lookupMaps?: {
-    horseMap: Map<string, WritableDraft<any>>;
-    stableMap: Map<string, WritableDraft<any>>;
-    campaignMap: Map<string, WritableDraft<any>>;
-    raceMap: Map<string, WritableDraft<any>>;
-    jockeyMap: Map<string, WritableDraft<any>>;
-    auctionMap: Map<string, WritableDraft<any>>;
-  },
+  lookupMaps?: LookupMaps,
 ) => void;
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
@@ -72,7 +64,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const auction =
       lookupMaps?.auctionMap.get(saleId) || draft.auctions?.find((a) => a.id === saleId);
     if (auction) {
-      const index = auction.lots.findIndex((l: AuctionLot) => l.horseId === horseId);
+      const index = auction.lots.findIndex((l) => l.horseId === horseId);
       if (index !== -1) {
         auction.lots.splice(index, 1);
       }
@@ -85,7 +77,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const auction =
       lookupMaps?.auctionMap.get(saleId) || draft.auctions?.find((a) => a.id === saleId);
     if (auction) {
-      const lot = auction.lots.find((l: AuctionLot) => l.id === lotId);
+      const lot = auction.lots.find((l) => l.id === lotId);
       if (lot) {
         lot.hammerPrice = hammerPrice;
         lot.soldToStableId = soldToStableId;
@@ -110,14 +102,7 @@ export class MarketHandler implements ImpactHandler {
   handle(
     draft: WritableDraft<GameState>,
     impact: AnyImpact,
-    lookupMaps?: {
-      horseMap: Map<string, WritableDraft<any>>;
-      stableMap: Map<string, WritableDraft<any>>;
-      campaignMap: Map<string, WritableDraft<any>>;
-      raceMap: Map<string, WritableDraft<any>>;
-      jockeyMap: Map<string, WritableDraft<any>>;
-      auctionMap: Map<string, WritableDraft<any>>;
-    },
+    lookupMaps?: LookupMaps,
   ): void {
     const handler = IMPACT_HANDLERS[impact.type];
     if (handler) {

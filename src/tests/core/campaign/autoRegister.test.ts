@@ -163,7 +163,7 @@ describe("calculateAutoRegisterEntries", () => {
 
   it("skips injured horses (activeInjury set)", () => {
     const horse = mkHorse({
-      activeInjury: { type: "tendon", severity: 0.5, recoveryDays: 30, onsetDay: 1 },
+      activeInjury: { type: "tendon", severity: "moderate", recoveryDays: 30, onsetDay: 1 },
     });
     const race = mkRace({ day: baseDay + 3 });
     const jockey = mkJockey();

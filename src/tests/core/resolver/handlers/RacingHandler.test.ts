@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { RacingHandler } from "@/core/resolver/handlers/RacingHandler";
 import type { GameState } from "@/game/store/state";
+import type { Horse } from "@/game/types";
 import type {
   RaceEntryImpact,
   RaceWithdrawalImpact,
@@ -184,14 +185,14 @@ describe("RacingHandler", () => {
       logLevel: "always",
       type: "jockey_silk",
       jockeyId: "j1",
-      silk: "#ff0000",
+      silk: { pattern: "solid", primary: "#ff0000", secondary: "#0000ff", cap: "#ffffff" },
       reason: "Silk rerolled",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.jockeys[0].silk).toBe("#ff0000");
+    expect(draft.jockeys[0].silk).toEqual(impact.silk);
   });
 
   it("jockey_stats updates stats and handles apprenticeProgression", () => {
@@ -527,4 +528,3 @@ describe("RacingHandler", () => {
     expect(handler.canHandle("cash_change")).toBe(false);
   });
 });
-import type { Horse } from "@/game/types";

@@ -176,4 +176,28 @@ describe("expandPedigreeStubs", () => {
     const expanded = expandPedigreeStubs(pruned, resolveHorse, 0)!;
     expect(countStubs(expanded)).toBe(stubCountBefore);
   });
+
+  it("handles stub with no horseId (returns as-is)", () => {
+    const stubNoId: PedigreeNode = {
+      name: "Unknown Parent",
+      generation: 4,
+      isStub: true,
+    };
+    const root: PedigreeNode = {
+      horseId: "h-root",
+      name: "Root",
+      generation: 0,
+      sirePedigree: stubNoId,
+    };
+
+    let resolverCalled = false;
+    const resolver = (id: string): Horse | undefined => {
+      resolverCalled = true;
+      return { id, pedigree: {} } as Horse;
+    };
+    const expanded = expandPedigreeStubs(root, resolver)!;
+
+    expect(resolverCalled).toBe(false);
+    expect(expanded.sirePedigree).toEqual(stubNoId);
+  });
 });
