@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, vi } from "vitest";
-import { render } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { StaffNegotiationDialog } from "@/components/staff/StaffNegotiationDialog";
@@ -35,19 +35,15 @@ const mkStaff = (overrides: Partial<StaffMember> = {}): StaffMember => ({
 });
 
 describe("StaffNegotiationDialog — accessibility", () => {
-  it("label is associated with input using dynamic id", () => {
+  it("label is associated with input via getByLabelText", () => {
     const staff = mkStaff();
     renderWithStore(<StaffNegotiationDialog staff={staff} isOpen={true} onClose={vi.fn()} />, {
       cash: 100000,
       day: 1,
     });
-    const label = document.querySelector('label');
-    expect(label).toBeTruthy();
-    const htmlFor = label?.getAttribute('for');
-    expect(htmlFor).toBeTruthy();
-
-    const input = document.querySelector(`input#${htmlFor?.replace(/:/g, '\\:')}`);
+    const input = screen.getByLabelText(/your offer \(per day\)/i);
     expect(input).toBeTruthy();
+    expect(input.tagName.toLowerCase()).toBe("input");
   });
 
   it("label text 'Your offer (per day)' is present", () => {
@@ -57,9 +53,7 @@ describe("StaffNegotiationDialog — accessibility", () => {
       day: 1,
     });
 
-    // Find label by text content instead of hardcoded attribute
-    const labels = Array.from(document.querySelectorAll('label'));
-    const offerLabel = labels.find(l => l.textContent?.includes("Your offer"));
-    expect(offerLabel).toBeTruthy();
+    const input = screen.getByLabelText(/your offer \(per day\)/i);
+    expect(input).toBeTruthy();
   });
 });

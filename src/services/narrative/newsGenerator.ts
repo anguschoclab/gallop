@@ -532,7 +532,7 @@ export function generateFollowUpRaceNews(
     `With a hard-fought ${positionLabel} in the ${race.name} behind them, the team surrounding ${horse.name} is meticulously plotting their next move. Expect a carefully considered entry for their upcoming start.`,
     `${horse.name} emerged from the ${grade} ${race.name} with enormous credit after a gallant ${positionLabel}. Trackside rumors suggest several high-profile targets are currently under discussion.`,
     `The racing calendar offers plenty of tempting options for ${horse.name} following a solid ${positionLabel} in the ${race.name}. Connections will be weighing distance and surface before committing.`,
-    `A stellar ${positionLabel} effort in the ${race.name} has ${horse.name} perfectly positioned for a late-season push. The trainer's next move will be analyzed by racing pundits everywhere.`,
+    `A stellar performance to secure a ${positionLabel} in the ${race.name} has ${horse.name} perfectly positioned for a late-season push. The trainer's next move will be analyzed by racing pundits everywhere.`,
     `Having proven their class with a ${positionLabel} in the ${race.name} (${grade}), ${horse.name} now faces the enviable problem of having multiple prestigious races to choose from.`,
     `The immediate aftermath of the ${race.name} has left connections of ${horse.name} thrilled with their ${positionLabelShort}. Now, the strategic challenge begins as they map out the optimal path forward.`,
   ];

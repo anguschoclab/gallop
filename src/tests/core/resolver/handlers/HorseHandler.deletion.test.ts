@@ -58,6 +58,11 @@ describe("HorseHandler — horse_deletion", () => {
       ]),
       stableMap: new Map(),
       campaignMap: new Map(),
+      raceMap: new Map(),
+      jockeyMap: new Map(),
+      auctionMap: new Map(),
+      facilityMap: new Map(),
+      staffMap: new Map(),
     };
 
     handler.handle(draft, impact, lookupMaps);
@@ -93,6 +98,11 @@ describe("HorseHandler — horse_deletion", () => {
       horseMap,
       stableMap: new Map(),
       campaignMap: new Map(),
+      raceMap: new Map(),
+      jockeyMap: new Map(),
+      auctionMap: new Map(),
+      facilityMap: new Map(),
+      staffMap: new Map(),
     };
 
     handler.handle(draft, impact, lookupMaps);
@@ -123,6 +133,11 @@ describe("HorseHandler — horse_deletion", () => {
       horseMap: new Map([["h1", draft.horses["h1"]]]),
       stableMap: new Map(),
       campaignMap: new Map(),
+      raceMap: new Map(),
+      jockeyMap: new Map(),
+      auctionMap: new Map(),
+      facilityMap: new Map(),
+      staffMap: new Map(),
     };
 
     handler.handle(draft, impact, lookupMaps);

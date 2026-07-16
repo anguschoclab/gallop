@@ -188,4 +188,40 @@ describe("generateFollowUpRaceNews", () => {
     expect(news).not.toBeNull();
     expect(isValidUUID(news!.id)).toBe(true);
   });
+
+  it("12.13 — Grammar fix: no body contains 'effort' after the grammar correction", () => {
+    const race = createG1Race();
+    const horse = createPlayerHorse();
+    for (let i = 0; i < 100; i++) {
+      const news = generateFollowUpRaceNews(race, horse, 1, 10, createTestRng(`seed-${i}`));
+      expect(news).not.toBeNull();
+      expect(news!.body).not.toContain("effort");
+    }
+  });
+
+  it("12.14 — Grammar fix: position 1 body reads as 'performance to secure a victory'", () => {
+    const race = createG1Race();
+    const horse = createPlayerHorse();
+    for (let i = 0; i < 100; i++) {
+      const news = generateFollowUpRaceNews(race, horse, 1, 10, createTestRng(`p1-${i}`));
+      if (news!.body.includes("performance to secure a")) {
+        expect(news!.body).toContain("performance to secure a victory");
+        return;
+      }
+    }
+    throw new Error("Did not roll the grammar-corrected body template in 100 tries");
+  });
+
+  it("12.15 — Grammar fix: position 2 body reads as 'performance to secure a runner-up finish'", () => {
+    const race = createG1Race();
+    const horse = createPlayerHorse();
+    for (let i = 0; i < 100; i++) {
+      const news = generateFollowUpRaceNews(race, horse, 2, 10, createTestRng(`p2-${i}`));
+      if (news!.body.includes("performance to secure a")) {
+        expect(news!.body).toContain("performance to secure a runner-up finish");
+        return;
+      }
+    }
+    throw new Error("Did not roll the grammar-corrected body template in 100 tries");
+  });
 });
