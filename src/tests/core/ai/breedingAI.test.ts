@@ -140,13 +140,29 @@ describe("calculateAIStallionScore", () => {
     const mare = createMockMare();
 
     // Record a successful breeding decision and outcome
-    state = recordBreedingDecision(state, stallion.id, mare.id, stallion.name, mare.name, "stable-1", "breeder", 100, 50);
+    state = recordBreedingDecision(
+      state,
+      stallion.id,
+      mare.id,
+      stallion.name,
+      mare.name,
+      "stable-1",
+      "breeder",
+      100,
+      50,
+    );
     state = recordBreedingOutcome(state, stallion.id, mare.id, "foal-1", 75, true, 200);
 
     // Now calculate score - should include strategic bonus from proven sire
     const scoreWithHistory = calculateAIStallionScore(state, stallion, mare, stable, 100000);
     const stateWithoutHistory = createBreedingAIState(stable);
-    const scoreWithoutHistory = calculateAIStallionScore(stateWithoutHistory, stallion, mare, stable, 100000);
+    const scoreWithoutHistory = calculateAIStallionScore(
+      stateWithoutHistory,
+      stallion,
+      mare,
+      stable,
+      100000,
+    );
     expect(scoreWithHistory).toBeGreaterThan(scoreWithoutHistory);
   });
 });
@@ -155,7 +171,17 @@ describe("recordBreedingDecision", () => {
   it("adds to history with all fields", () => {
     const stable = createMockStable();
     const state = createBreedingAIState(stable);
-    const newState = recordBreedingDecision(state, "sire-1", "dam-1", "Sire Name", "Dam Name", "stable-1", "breeder", 100, 50);
+    const newState = recordBreedingDecision(
+      state,
+      "sire-1",
+      "dam-1",
+      "Sire Name",
+      "Dam Name",
+      "stable-1",
+      "breeder",
+      100,
+      50,
+    );
     expect(newState.breedingHistory.length).toBe(1);
     expect(newState.breedingHistory[0].sireId).toBe("sire-1");
     expect(newState.breedingHistory[0].damId).toBe("dam-1");
@@ -173,7 +199,17 @@ describe("recordBreedingDecision", () => {
     const memoryDepth = state.personalityState.memoryDepth;
     let currentState = state;
     for (let i = 0; i < memoryDepth + 5; i++) {
-      currentState = recordBreedingDecision(currentState, `s-${i}`, `d-${i}`, "S", "D", "stable-1", "breeder", i, 50);
+      currentState = recordBreedingDecision(
+        currentState,
+        `s-${i}`,
+        `d-${i}`,
+        "S",
+        "D",
+        "stable-1",
+        "breeder",
+        i,
+        50,
+      );
     }
     expect(currentState.breedingHistory.length).toBe(memoryDepth);
   });
@@ -181,7 +217,17 @@ describe("recordBreedingDecision", () => {
   it("does not mutate original", () => {
     const stable = createMockStable();
     const state = createBreedingAIState(stable);
-    const newState = recordBreedingDecision(state, "s-1", "d-1", "S", "D", "stable-1", "breeder", 100, 50);
+    const newState = recordBreedingDecision(
+      state,
+      "s-1",
+      "d-1",
+      "S",
+      "D",
+      "stable-1",
+      "breeder",
+      100,
+      50,
+    );
     expect(state.breedingHistory).toEqual([]);
     expect(newState).not.toBe(state);
   });
@@ -191,7 +237,17 @@ describe("recordBreedingOutcome", () => {
   it("finds matching decision and updates with outcome", () => {
     const stable = createMockStable();
     let state = createBreedingAIState(stable);
-    state = recordBreedingDecision(state, "sire-1", "dam-1", "S", "D", "stable-1", "breeder", 100, 50);
+    state = recordBreedingDecision(
+      state,
+      "sire-1",
+      "dam-1",
+      "S",
+      "D",
+      "stable-1",
+      "breeder",
+      100,
+      50,
+    );
     const newState = recordBreedingOutcome(state, "sire-1", "dam-1", "foal-1", 75, true, 200);
     expect(newState.breedingHistory[0].outcome).toBeDefined();
     expect(newState.breedingHistory[0].outcome?.foalId).toBe("foal-1");
@@ -203,7 +259,17 @@ describe("recordBreedingOutcome", () => {
   it("updates personalityState", () => {
     const stable = createMockStable();
     let state = createBreedingAIState(stable);
-    state = recordBreedingDecision(state, "sire-1", "dam-1", "S", "D", "stable-1", "breeder", 100, 50);
+    state = recordBreedingDecision(
+      state,
+      "sire-1",
+      "dam-1",
+      "S",
+      "D",
+      "stable-1",
+      "breeder",
+      100,
+      50,
+    );
     const newState = recordBreedingOutcome(state, "sire-1", "dam-1", "foal-1", 75, true, 200);
     expect(newState.personalityState.learningState.outcomes.length).toBeGreaterThan(0);
   });
@@ -218,8 +284,28 @@ describe("recordBreedingOutcome", () => {
   it("handles tripleCrownWin by recording additional series-specific learning", () => {
     const stable = createMockStable();
     let state = createBreedingAIState(stable);
-    state = recordBreedingDecision(state, "sire-1", "dam-1", "S", "D", "stable-1", "breeder", 100, 50, "triple_crown_series_1");
-    const newState = recordBreedingOutcome(state, "sire-1", "dam-1", "foal-1", 75, true, 200, "triple_crown_series_1");
+    state = recordBreedingDecision(
+      state,
+      "sire-1",
+      "dam-1",
+      "S",
+      "D",
+      "stable-1",
+      "breeder",
+      100,
+      50,
+      "triple_crown_series_1",
+    );
+    const newState = recordBreedingOutcome(
+      state,
+      "sire-1",
+      "dam-1",
+      "foal-1",
+      75,
+      true,
+      200,
+      "triple_crown_series_1",
+    );
     // Should have recorded 2 outcomes: one for breeding, one for series
     expect(newState.personalityState.learningState.outcomes.length).toBeGreaterThanOrEqual(2);
   });
@@ -239,7 +325,17 @@ describe("getBreedingInsights", () => {
   it("filters by stableId with outcomes", () => {
     const stable = createMockStable();
     let state = createBreedingAIState(stable);
-    state = recordBreedingDecision(state, "sire-1", "dam-1", "Sire A", "Dam A", "stable-1", "breeder", 100, 50);
+    state = recordBreedingDecision(
+      state,
+      "sire-1",
+      "dam-1",
+      "Sire A",
+      "Dam A",
+      "stable-1",
+      "breeder",
+      100,
+      50,
+    );
     state = recordBreedingOutcome(state, "sire-1", "dam-1", "foal-1", 75, true, 200);
 
     const insights = getBreedingInsights(state, "stable-1");
@@ -253,7 +349,17 @@ describe("getBreedingInsights", () => {
     let state = createBreedingAIState(stable);
     // Record 3 sires with different success rates
     for (let i = 0; i < 3; i++) {
-      state = recordBreedingDecision(state, `sire-${i}`, `dam-${i}`, `Sire ${i}`, `Dam ${i}`, "stable-1", "breeder", 100 + i, 50);
+      state = recordBreedingDecision(
+        state,
+        `sire-${i}`,
+        `dam-${i}`,
+        `Sire ${i}`,
+        `Dam ${i}`,
+        "stable-1",
+        "breeder",
+        100 + i,
+        50,
+      );
       state = recordBreedingOutcome(state, `sire-${i}`, `dam-${i}`, `foal-${i}`, 70, i === 0, 200);
     }
     const insights = getBreedingInsights(state, "stable-1");
@@ -274,7 +380,18 @@ describe("getProgenyTripleCrownSuccess", () => {
   it("calculates seriesWins / total with history", () => {
     const stable = createMockStable();
     let state = createBreedingAIState(stable);
-    state = recordBreedingDecision(state, "sire-1", "dam-1", "S", "D", "stable-1", "breeder", 100, 50, "tc-key");
+    state = recordBreedingDecision(
+      state,
+      "sire-1",
+      "dam-1",
+      "S",
+      "D",
+      "stable-1",
+      "breeder",
+      100,
+      50,
+      "tc-key",
+    );
     state = recordBreedingOutcome(state, "sire-1", "dam-1", "foal-1", 75, true, 200, "tc-key");
 
     // 1 history with tripleCrownWin="tc-key", seriesWins=1, total=1
@@ -290,7 +407,17 @@ describe("adaptBreedingStrategy", () => {
 
     // Record 11 failed outcomes to trigger adaptation
     for (let i = 0; i < 11; i++) {
-      state = recordBreedingDecision(state, `sire-${i}`, `dam-${i}`, "S", "D", "stable-1", "breeder", i, 50);
+      state = recordBreedingDecision(
+        state,
+        `sire-${i}`,
+        `dam-${i}`,
+        "S",
+        "D",
+        "stable-1",
+        "breeder",
+        i,
+        50,
+      );
       state = recordBreedingOutcome(state, `sire-${i}`, `dam-${i}`, `foal-${i}`, 30, false, 200);
     }
 
@@ -309,7 +436,17 @@ describe("adaptBreedingStrategy", () => {
     let state = createBreedingAIState(stable);
 
     for (let i = 0; i < 11; i++) {
-      state = recordBreedingDecision(state, `sire-${i}`, `dam-${i}`, "S", "D", "stable-1", "breeder", i, 50);
+      state = recordBreedingDecision(
+        state,
+        `sire-${i}`,
+        `dam-${i}`,
+        "S",
+        "D",
+        "stable-1",
+        "breeder",
+        i,
+        50,
+      );
       state = recordBreedingOutcome(state, `sire-${i}`, `dam-${i}`, `foal-${i}`, 30, false, 200);
     }
 
@@ -323,7 +460,17 @@ describe("adaptBreedingStrategy", () => {
     let state = createBreedingAIState(stable);
 
     for (let i = 0; i < 11; i++) {
-      state = recordBreedingDecision(state, `sire-${i}`, `dam-${i}`, "S", "D", "stable-1", "breeder", i, 50);
+      state = recordBreedingDecision(
+        state,
+        `sire-${i}`,
+        `dam-${i}`,
+        "S",
+        "D",
+        "stable-1",
+        "breeder",
+        i,
+        50,
+      );
       state = recordBreedingOutcome(state, `sire-${i}`, `dam-${i}`, `foal-${i}`, 30, false, 200);
     }
 
@@ -344,7 +491,17 @@ describe("adaptBreedingStrategy", () => {
     let state = createBreedingAIState(stable);
 
     for (let i = 0; i < 11; i++) {
-      state = recordBreedingDecision(state, `sire-${i}`, `dam-${i}`, "S", "D", "stable-1", "breeder", i, 50);
+      state = recordBreedingDecision(
+        state,
+        `sire-${i}`,
+        `dam-${i}`,
+        "S",
+        "D",
+        "stable-1",
+        "breeder",
+        i,
+        50,
+      );
       state = recordBreedingOutcome(state, `sire-${i}`, `dam-${i}`, `foal-${i}`, 80, true, 200);
     }
 
@@ -358,7 +515,17 @@ describe("adaptBreedingStrategy", () => {
     let state = createBreedingAIState(stable);
 
     for (let i = 0; i < 11; i++) {
-      state = recordBreedingDecision(state, `sire-${i}`, `dam-${i}`, "S", "D", "stable-1", "breeder", i, 50);
+      state = recordBreedingDecision(
+        state,
+        `sire-${i}`,
+        `dam-${i}`,
+        "S",
+        "D",
+        "stable-1",
+        "breeder",
+        i,
+        50,
+      );
       state = recordBreedingOutcome(state, `sire-${i}`, `dam-${i}`, `foal-${i}`, 80, true, 200);
     }
 
@@ -385,7 +552,17 @@ describe("adaptBreedingStrategy", () => {
     let state = createBreedingAIState(stable);
 
     for (let i = 0; i < 11; i++) {
-      state = recordBreedingDecision(state, `sire-${i}`, `dam-${i}`, "S", "D", "stable-1", "breeder", i, 50);
+      state = recordBreedingDecision(
+        state,
+        `sire-${i}`,
+        `dam-${i}`,
+        "S",
+        "D",
+        "stable-1",
+        "breeder",
+        i,
+        50,
+      );
       state = recordBreedingOutcome(state, `sire-${i}`, `dam-${i}`, `foal-${i}`, 80, true, 200);
     }
 
@@ -446,13 +623,7 @@ describe("selectSireForDam", () => {
     const rng = createRng(1);
     const gameState = mkGameState([dam, siblingStallion]);
 
-    const result = selectSireForDam(
-      dam,
-      [siblingStallion],
-      stable,
-      gameState,
-      rng,
-    );
+    const result = selectSireForDam(dam, [siblingStallion], stable, gameState, rng);
 
     expect(result).toBeNull();
   });

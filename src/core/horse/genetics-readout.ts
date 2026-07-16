@@ -85,8 +85,7 @@ export function deriveHorseGenetics(horse: Horse): HorseGeneticsReadout {
     horse.damName ?? "",
   );
   const founder =
-    directInbreeding ??
-    calculateFounderEffect(horse.sireName ?? "", horse.damName ?? "");
+    directInbreeding ?? calculateFounderEffect(horse.sireName ?? "", horse.damName ?? "");
 
   return {
     traits: {

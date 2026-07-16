@@ -120,7 +120,9 @@ describe("calculateStrategicEntryScore", () => {
     const stable = createMockStable();
     const state = createRaceEntryAIState(stable);
     const horse = createMockHorse();
-    const race = createMockRace({ graded: { key: "test", grade: "G3", track: "T", trackId: "t1", surface: "Dirt" } });
+    const race = createMockRace({
+      graded: { key: "test", grade: "G3", track: "T", trackId: "t1", surface: "Dirt" },
+    });
 
     // Add a dev track matching G3
     const stateWithDev = {

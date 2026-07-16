@@ -409,6 +409,9 @@ export function generateG1SpotlightNews(
 /**
  * Generates a weekly flavor news item that references world data.
  * Injects the top-earning horse's name into the body for world-awareness.
+ * @param horses
+ * @param day
+ * @param rng
  */
 export function generateWeeklyFlavorNews(horses: Horse[], day: number, rng: Rng): NewsItem {
   const topEarner =
@@ -486,6 +489,11 @@ export function generateWeeklyFlavorNews(horses: Horse[], day: number, rng: Rng)
 /**
  * Generates a follow-up news item for a player-owned horse that finished
  * in the top 3 of a G1 or G2 race. The article discusses what might be next.
+ * @param race
+ * @param horse
+ * @param position
+ * @param day
+ * @param rng
  */
 export function generateFollowUpRaceNews(
   race: Race,

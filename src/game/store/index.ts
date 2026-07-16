@@ -353,10 +353,7 @@ export const useGame = create<StoreType>()(
           const result = await Promise.race([
             worker.createInitialState({ options }),
             new Promise<never>((_, reject) =>
-              setTimeout(
-                () => reject(new Error("Worker initialization timed out")),
-                15000,
-              ),
+              setTimeout(() => reject(new Error("Worker initialization timed out")), 15000),
             ),
           ]);
           newState = result.state;

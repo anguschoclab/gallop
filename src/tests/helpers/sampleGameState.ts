@@ -12,12 +12,18 @@ import type { PipelineContext } from "@/core/time/pipeline";
 import { createBreedingProgram } from "@/core/breeding/programs";
 import { createRng } from "@/core/common/rng";
 
-/** Converts a Horse array to Record<string, Horse> for use in test state fixtures. */
+/**
+ * Converts a Horse array to Record<string, Horse> for use in test state fixtures.
+ * @param horses
+ */
 export function h2r(horses: Horse[]): Record<string, Horse> {
   return Object.fromEntries(horses.map((h) => [h.id, h]));
 }
 
-/** Converts a Race array to Record<string, Race> for use in test state fixtures. */
+/**
+ * Converts a Race array to Record<string, Race> for use in test state fixtures.
+ * @param races
+ */
 export function r2r(races: Race[]): Record<string, Race> {
   return Object.fromEntries(races.map((r) => [r.id, r]));
 }

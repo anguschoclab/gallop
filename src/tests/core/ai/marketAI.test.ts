@@ -84,10 +84,24 @@ describe("calculatePurchaseValue", () => {
     const stable = createMockStable();
     const state = createMarketAIState(stable);
     const goodHorse = createMockHorse({
-      stats: { speed: 90, stamina: 90, acceleration: 90, consistency: 90, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 90,
+        stamina: 90,
+        acceleration: 90,
+        consistency: 90,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const poorHorse = createMockHorse({
-      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 30,
+        stamina: 30,
+        acceleration: 30,
+        consistency: 30,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const goodScore = calculatePurchaseValue(state, goodHorse, 1000, stable);
     const poorScore = calculatePurchaseValue(state, poorHorse, 100000, stable);
@@ -115,7 +129,14 @@ describe("calculatePurchaseValue", () => {
     const stable = createMockStable();
     const state = createMarketAIState(stable);
     const horse = createMockHorse({
-      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const value = calculatePurchaseValue(state, horse, 50000, stable);
     expect(value).toBeGreaterThan(0);
@@ -171,7 +192,14 @@ describe("calculateMaxPurchasePrice", () => {
     const stable = createMockStable({ cash: 100000, personality: "aggressive" });
     const state = createMarketAIState(stable);
     const horse = createMockHorse({
-      stats: { speed: 90, stamina: 90, acceleration: 90, consistency: 90, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 90,
+        stamina: 90,
+        acceleration: 90,
+        consistency: 90,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const maxPrice = calculateMaxPurchasePrice(state, horse, stable);
     // base=90000, *1.2=108000, capped at 100000*0.2=20000 → 20000
@@ -182,7 +210,14 @@ describe("calculateMaxPurchasePrice", () => {
     const stable = createMockStable({ cash: 1000000, personality: "aggressive" });
     const state = createMarketAIState(stable);
     const horse = createMockHorse({
-      stats: { speed: 71, stamina: 71, acceleration: 71, consistency: 71, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 71,
+        stamina: 71,
+        acceleration: 71,
+        consistency: 71,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const maxPrice = calculateMaxPurchasePrice(state, horse, stable);
     expect(Number.isInteger(maxPrice)).toBe(true);

@@ -154,9 +154,7 @@ describe("deriveHorseGenetics", () => {
   });
 
   it("treats Unknown parents as unknown pedigree, not direct inbreeding", () => {
-    const g = deriveHorseGenetics(
-      makeHorse({ sireName: "Unknown", damName: "Unknown" }),
-    );
+    const g = deriveHorseGenetics(makeHorse({ sireName: "Unknown", damName: "Unknown" }));
     expect(g.inbreeding.description).toBe("Unknown pedigree");
     expect(g.inbreeding.warning).toBeUndefined();
   });

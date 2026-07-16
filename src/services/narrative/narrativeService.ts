@@ -382,6 +382,7 @@ export class NarrativeGenerator {
    * @param newLines - Accumulator for new commentary lines
    * @param leaderPos - Current position of the race leader
    * @param simTime - Current elapsed simulation time
+   * @param leader
    */
   private checkMilestones(
     newLines: CommentaryLine[],

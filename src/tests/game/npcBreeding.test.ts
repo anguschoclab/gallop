@@ -789,7 +789,14 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
       "mare-1",
       "Test Mare",
       "mare",
-      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
       { stableId: "stable-1", silk: "blue" },
     );
 
@@ -798,7 +805,14 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
       "stallion-1",
       "Test Stallion",
       "colt",
-      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-2",
         silk: "red",
@@ -855,7 +869,14 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
       "mare-1",
       "Test Mare",
       "mare",
-      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
       { stableId: "stable-1", silk: "blue", sireId: "stallion-1", sireName: "Test Stallion" },
     );
 
@@ -863,7 +884,14 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
       "stallion-1",
       "Test Stallion",
       "colt",
-      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-2",
         silk: "red",
@@ -920,7 +948,14 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
       "mare-1",
       "Test Mare",
       "mare",
-      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
       { stableId: "stable-1", silk: "blue", healthStatus: "covering_sickness" },
     );
 
@@ -928,7 +963,14 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
       "stallion-1",
       "Test Stallion",
       "colt",
-      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-2",
         silk: "red",
@@ -981,7 +1023,14 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
       "mare-1",
       "Test Mare",
       "mare",
-      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
       { stableId: "stable-1", silk: "blue", lastFoaledDay: 95 },
     );
 
@@ -989,7 +1038,14 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
       "stallion-1",
       "Test Stallion",
       "colt",
-      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-2",
         silk: "red",
@@ -1045,7 +1101,14 @@ describe("runNpcBreeding — all 8 personalities breed", () => {
       "mare-1",
       "Test Mare",
       "mare",
-      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
       { stableId: "stable-1", silk: "blue" },
     );
 
@@ -1053,7 +1116,14 @@ describe("runNpcBreeding — all 8 personalities breed", () => {
       "stallion-1",
       "Test Stallion",
       "colt",
-      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-2",
         silk: "red",
@@ -1132,7 +1202,14 @@ describe("runNpcBreeding — book size and hemisphere checks", () => {
       "mare-1",
       "Test Mare",
       "mare",
-      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
       { stableId: "stable-1", silk: "blue" },
     );
 
@@ -1140,7 +1217,14 @@ describe("runNpcBreeding — book size and hemisphere checks", () => {
       "stallion-1",
       "Test Stallion",
       "colt",
-      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-2",
         silk: "red",
@@ -1193,7 +1277,14 @@ describe("runNpcBreeding — book size and hemisphere checks", () => {
       "mare-1",
       "Test Mare",
       "mare",
-      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
       { stableId: "stable-1", silk: "blue", hemisphere: "Northern" },
     );
 
@@ -1201,7 +1292,14 @@ describe("runNpcBreeding — book size and hemisphere checks", () => {
       "stallion-1",
       "Test Stallion",
       "colt",
-      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-2",
         silk: "red",

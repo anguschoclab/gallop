@@ -16,12 +16,7 @@ describe("inbreedingCalculator", () => {
     });
 
     it("returns null when IDs are different, even with identical names", () => {
-      const result = checkDirectInbreeding(
-        "sire-id-1",
-        "dam-id-1",
-        "SharedName",
-        "SharedName",
-      );
+      const result = checkDirectInbreeding("sire-id-1", "dam-id-1", "SharedName", "SharedName");
       expect(result).toBeNull();
     });
 

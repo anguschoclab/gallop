@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { runNpcCycle, applyFameGainsToHorses, calculateFameGainsForRaces } from "@/core/npc/npcCycle";
+import {
+  runNpcCycle,
+  applyFameGainsToHorses,
+  calculateFameGainsForRaces,
+} from "@/core/npc/npcCycle";
 import { createRng } from "@/core/common/rng";
 import type { Horse, Race, Stable, Jockey } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
@@ -426,7 +430,9 @@ describe("runNpcCycle AI state management", () => {
 
 describe("calculateFameGainsForRaces", () => {
   function createRaceWithResult(
-    overrides: Partial<Race> & { result?: { horseId: string; position: number; time: number }[] } = {},
+    overrides: Partial<Race> & {
+      result?: { horseId: string; position: number; time: number }[];
+    } = {},
   ): Race {
     return {
       id: "race-1",

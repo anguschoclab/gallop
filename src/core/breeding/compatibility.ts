@@ -407,14 +407,14 @@ export function calculateBreedingCompatibility(
   const weights = {
     nicking: 0.07,
     dosage: 0.07,
-    inbreeding: 0.20,
+    inbreeding: 0.2,
     parentPerformance: 0.12,
     conformation: 0.06,
     temperament: 0.05,
     foundationStock: 0.08,
     founderEffect: 0.08,
-    genetic: 0.10,
-    blueHen: 0.10,
+    genetic: 0.1,
+    blueHen: 0.1,
     crossFamily: 0.07,
   };
 

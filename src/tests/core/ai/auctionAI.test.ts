@@ -106,10 +106,24 @@ describe("calculateBiddingValue", () => {
     const stable = createMockStable();
     const state = createAuctionAIState(stable);
     const goodHorse = createMockHorse({
-      stats: { speed: 90, stamina: 90, acceleration: 90, consistency: 90, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 90,
+        stamina: 90,
+        acceleration: 90,
+        consistency: 90,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const poorHorse = createMockHorse({
-      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 30,
+        stamina: 30,
+        acceleration: 30,
+        consistency: 30,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const cheapLot = createMockAuctionLot({ reservePrice: 1000 });
     const expensiveLot = createMockAuctionLot({ reservePrice: 200000 });
@@ -142,7 +156,14 @@ describe("calculateBiddingValue", () => {
     const stable = createMockStable();
     const state = createAuctionAIState(stable);
     const horse = createMockHorse({
-      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const lot = createMockAuctionLot();
     // rating=80 >= qualityTarget=60 → +10
@@ -177,7 +198,14 @@ describe("calculateMaxBid", () => {
     const stable = createMockStable({ cash: 100000, personality: "aggressive" });
     const state = createAuctionAIState(stable);
     const horse = createMockHorse({
-      stats: { speed: 90, stamina: 90, acceleration: 90, consistency: 90, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 90,
+        stamina: 90,
+        acceleration: 90,
+        consistency: 90,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const lot = createMockAuctionLot();
     const maxBid = calculateMaxBid(state, horse, lot, stable, 1);
@@ -189,7 +217,14 @@ describe("calculateMaxBid", () => {
     const stable = createMockStable({ cash: 1000000, personality: "aggressive" });
     const state = createAuctionAIState(stable);
     const horse = createMockHorse({
-      stats: { speed: 71, stamina: 71, acceleration: 71, consistency: 71, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 71,
+        stamina: 71,
+        acceleration: 71,
+        consistency: 71,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const lot = createMockAuctionLot();
     const maxBid = calculateMaxBid(state, horse, lot, stable, 1);
@@ -263,7 +298,14 @@ describe("shouldConsignHorse", () => {
     const state = createAuctionAIState(stable);
     const horse = createMockHorse({
       age: 6,
-      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 30,
+        stamina: 30,
+        acceleration: 30,
+        consistency: 30,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const result = shouldConsignHorse(state, horse, stable, 1);
     expect(result.shouldConsign).toBe(true);
@@ -308,7 +350,14 @@ describe("shouldConsignHorse", () => {
     const state = createAuctionAIState(stable);
     const horse = createMockHorse({
       age: 10,
-      stats: { speed: 40, stamina: 40, acceleration: 40, consistency: 40, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 40,
+        stamina: 40,
+        acceleration: 40,
+        consistency: 40,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const result = shouldConsignHorse(state, horse, stable, 1);
     expect(result.shouldConsign).toBe(true);
@@ -332,7 +381,16 @@ describe("recordBiddingDecision", () => {
     const memoryDepth = state.personalityState.memoryDepth;
     let currentState = state;
     for (let i = 0; i < memoryDepth + 3; i++) {
-      currentState = recordBiddingDecision(currentState, horse, lot, stable, 50000, 40000, false, i + 1);
+      currentState = recordBiddingDecision(
+        currentState,
+        horse,
+        lot,
+        stable,
+        50000,
+        40000,
+        false,
+        i + 1,
+      );
     }
     expect(currentState.biddingHistory.length).toBe(memoryDepth);
   });
@@ -376,7 +434,14 @@ describe("recordConsignmentDecision", () => {
     const memoryDepth = state.personalityState.memoryDepth;
     let currentState = state;
     for (let i = 0; i < memoryDepth + 3; i++) {
-      currentState = recordConsignmentDecision(currentState, horse, "underperformer", 10000, stable, i + 1);
+      currentState = recordConsignmentDecision(
+        currentState,
+        horse,
+        "underperformer",
+        10000,
+        stable,
+        i + 1,
+      );
     }
     expect(currentState.consignmentHistory.length).toBe(memoryDepth);
   });
@@ -393,7 +458,14 @@ describe("recordConsignmentDecision", () => {
       },
     };
     const horse = createMockHorse({ age: 8 });
-    const newState = recordConsignmentDecision(stateWithHorses, horse, "surplus", 10000, stable, 100);
+    const newState = recordConsignmentDecision(
+      stateWithHorses,
+      horse,
+      "surplus",
+      10000,
+      stable,
+      100,
+    );
     expect(newState.portfolio.currentHorseCount).toBe(4);
     expect(newState.portfolio.ageDistribution[8]).toBe(2);
   });
