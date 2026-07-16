@@ -35,23 +35,18 @@ const mkStaff = (overrides: Partial<StaffMember> = {}): StaffMember => ({
 });
 
 describe("StaffNegotiationDialog — accessibility", () => {
-  it("label has htmlFor='offerAmount' attribute", () => {
+  it("label is associated with input using dynamic id", () => {
     const staff = mkStaff();
     renderWithStore(<StaffNegotiationDialog staff={staff} isOpen={true} onClose={vi.fn()} />, {
       cash: 100000,
       day: 1,
     });
-    const label = document.querySelector('label[for="offerAmount"]');
+    const label = document.querySelector('label');
     expect(label).toBeTruthy();
-  });
+    const htmlFor = label?.getAttribute('for');
+    expect(htmlFor).toBeTruthy();
 
-  it("input has id='offerAmount' attribute", () => {
-    const staff = mkStaff();
-    renderWithStore(<StaffNegotiationDialog staff={staff} isOpen={true} onClose={vi.fn()} />, {
-      cash: 100000,
-      day: 1,
-    });
-    const input = document.querySelector("input#offerAmount");
+    const input = document.querySelector(`input#${htmlFor?.replace(/:/g, '\\:')}`);
     expect(input).toBeTruthy();
   });
 
@@ -61,7 +56,10 @@ describe("StaffNegotiationDialog — accessibility", () => {
       cash: 100000,
       day: 1,
     });
-    const label = document.querySelector('label[for="offerAmount"]');
-    expect(label?.textContent).toContain("Your offer");
+
+    // Find label by text content instead of hardcoded attribute
+    const labels = Array.from(document.querySelectorAll('label'));
+    const offerLabel = labels.find(l => l.textContent?.includes("Your offer"));
+    expect(offerLabel).toBeTruthy();
   });
 });

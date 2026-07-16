@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -33,6 +34,7 @@ function getStaffQuote(roundsUsed: number, patience: number, tier: string): stri
 }
 
 export function StaffNegotiationDialog({ staff, isOpen, onClose }: StaffNegotiationDialogProps) {
+  const offerInputId = useId();
   const {
     offerAmount,
     setOfferAmount,
@@ -100,13 +102,13 @@ export function StaffNegotiationDialog({ staff, isOpen, onClose }: StaffNegotiat
 
             <div className="space-y-1">
               <label
-                htmlFor="offerAmount"
+                htmlFor={offerInputId}
                 className="text-[10px] font-black uppercase text-cream/50 tracking-widest"
               >
                 Your offer (per day)
               </label>
               <Input
-                id="offerAmount"
+                id={offerInputId}
                 inputMode="numeric"
                 placeholder={`e.g. ${Math.round(askingSalary * 0.9)}`}
                 value={offerAmount}
