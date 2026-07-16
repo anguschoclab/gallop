@@ -4,9 +4,10 @@ import { BeyerChart } from "@/components/race/BeyerChart";
 import { PaceProfileSummary } from "@/components/race/PaceProfileSummary";
 import { DistanceAptitudeDrift } from "@/components/horse/DistanceAptitudeDrift";
 import { getHorseInsight } from "@/core/horse/insights";
+import type { Horse } from "@/game/types";
 
 interface HorseAnalyticsSectionProps {
-  horse: any;
+  horse: Horse;
   peakingMultiplier: number;
 }
 
@@ -49,7 +50,7 @@ export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyti
           <BeyerChart history={horse.raceHistory ?? []} />
 
           {(horse.raceHistory ?? []).some(
-            (h: any) => h.pacePositions && h.pacePositions.length > 0,
+            (h) => h.pacePositions && h.pacePositions.length > 0,
           ) && (
             <div className="pt-4 border-t border-white/5 space-y-2">
               <div className="text-[10px] font-black uppercase text-fame/40 tracking-widest">

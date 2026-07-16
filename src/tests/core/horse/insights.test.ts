@@ -53,4 +53,54 @@ describe("getHorseInsight", () => {
     expect(insight?.label).toBe("Distance Specialist");
     expect(insight?.value).toBe("1000m");
   });
+
+  it("returns Surface Affinity for a horse with 3+ races on the same surface", () => {
+    const horse = {
+      raceHistory: [
+        { position: 2, day: 1, surface: "Turf", beyer: 80 },
+        { position: 2, day: 2, surface: "Turf", beyer: 85 },
+        { position: 2, day: 3, surface: "Turf", beyer: 90 },
+      ],
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.label).toBe("Surface Affinity");
+    expect(insight?.value).toBe("Turf");
+  });
+
+  it("returns null when no surface has 3+ races", () => {
+    const horse = {
+      raceHistory: [
+        { position: 2, day: 1, surface: "Turf", beyer: 80 },
+        { position: 2, day: 2, surface: "Turf", beyer: 85 },
+        { position: 2, day: 3, surface: "Dirt", beyer: 80 },
+        { position: 2, day: 4, surface: "Dirt", beyer: 85 },
+      ],
+    } as Horse;
+    expect(getHorseInsight(horse)).toBeNull();
+  });
+
+  it("win streak takes priority over distance specialist", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1, distance: 1200, beyer: 90 },
+        { position: 1, day: 2, distance: 1200, beyer: 90 },
+        { position: 1, day: 3, distance: 1200, beyer: 90 },
+      ],
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.label).toBe("Red Hot");
+  });
+
+  it("does not skip distance 0 due to falsy check", () => {
+    const horse = {
+      raceHistory: [
+        { position: 2, day: 1, distance: 0, beyer: 80 },
+        { position: 2, day: 2, distance: 0, beyer: 80 },
+        { position: 2, day: 3, distance: 0, beyer: 80 },
+      ],
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.label).toBe("Distance Specialist");
+    expect(insight?.value).toBe("0m");
+  });
 });

@@ -29,7 +29,7 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
   // 2. Check for distance sweet spot (best average beyer by distance, min 3 races)
   const distanceStats = new Map<number, { runs: number; totalBeyer: number; wins: number }>();
   for (const race of history) {
-    if (race.distance && typeof race.beyer === "number") {
+    if (race.distance != null && typeof race.beyer === "number") {
       const stats = distanceStats.get(race.distance) || { runs: 0, totalBeyer: 0, wins: 0 };
       stats.runs++;
       stats.totalBeyer += race.beyer;
@@ -38,7 +38,7 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     }
   }
 
-  let bestDistance = null;
+  let bestDistance: number | null = null;
   let bestAvgBeyer = 0;
   let bestDistanceRuns = 0;
 
@@ -53,7 +53,7 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     }
   }
 
-  if (bestDistance && bestAvgBeyer > 0) {
+  if (bestDistance !== null && bestAvgBeyer > 0) {
     return {
       label: "Distance Specialist",
       value: `${bestDistance}m`,
@@ -62,23 +62,23 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     };
   }
 
-  // 3. Track Affinity
-  const trackStats = new Map<string, { runs: number; totalBeyer: number; wins: number }>();
+  // 3. Surface Affinity
+  const surfaceStats = new Map<string, { runs: number; totalBeyer: number; wins: number }>();
   for (const race of history) {
     if (race.surface && typeof race.beyer === "number") {
-      const stats = trackStats.get(race.surface) || { runs: 0, totalBeyer: 0, wins: 0 };
+      const stats = surfaceStats.get(race.surface) || { runs: 0, totalBeyer: 0, wins: 0 };
       stats.runs++;
       stats.totalBeyer += race.beyer;
       if (race.position === 1) stats.wins++;
-      trackStats.set(race.surface, stats);
+      surfaceStats.set(race.surface, stats);
     }
   }
 
-  let bestSurface = null;
+  let bestSurface: string | null = null;
   let bestSurfaceBeyer = 0;
   let bestSurfaceRuns = 0;
 
-  for (const [surface, stats] of trackStats.entries()) {
+  for (const [surface, stats] of surfaceStats.entries()) {
     if (stats.runs >= 3) {
       const avg = stats.totalBeyer / stats.runs;
       if (avg > bestSurfaceBeyer) {
@@ -89,7 +89,7 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     }
   }
 
-  if (bestSurface && bestSurfaceBeyer > 0) {
+  if (bestSurface !== null && bestSurfaceBeyer > 0) {
     return {
       label: "Surface Affinity",
       value: bestSurface,
