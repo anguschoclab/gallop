@@ -62,7 +62,7 @@ vi.mock("@/game/store/storage", () => {
     },
     saveGameStateToIDB: vi.fn().mockResolvedValue(undefined),
     loadGameStateFromIDB,
-    createRehydrateStore: (initialState: any, useGameStore: any) => {
+    createRehydrateStore: (useGameStore: any) => {
       return async function rehydrateStore(passedStore?: any): Promise<void> {
         const store = passedStore || useGameStore;
         if (!store) return;
@@ -109,7 +109,7 @@ describe("saveExists flag", () => {
       setState: vi.fn(),
     };
 
-    const rehydrate = createRehydrateStore(() => ({}), mockStore);
+    const rehydrate = createRehydrateStore(mockStore);
     await rehydrate(mockStore);
 
     expect(saveExists.value).toBe(true);
@@ -123,7 +123,7 @@ describe("saveExists flag", () => {
       setState: vi.fn(),
     };
 
-    const rehydrate = createRehydrateStore(() => ({}), mockStore);
+    const rehydrate = createRehydrateStore(mockStore);
     await rehydrate(mockStore);
 
     expect(saveExists.value).toBe(false);
@@ -136,7 +136,7 @@ describe("saveExists flag", () => {
       setState: vi.fn(),
     };
 
-    const rehydrate = createRehydrateStore(() => ({}), mockStore);
+    const rehydrate = createRehydrateStore(mockStore);
     await rehydrate(mockStore);
     expect(saveExists.value).toBe(true);
 

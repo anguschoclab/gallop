@@ -32,32 +32,20 @@ export interface NpcStablesBucket {
   [stableId: string]: Stable;
 }
 
-export interface MarketBucket {
-  [key: string]: unknown;
-}
-
-export interface HistoryBucket {
-  [key: string]: unknown[];
-}
-
 export interface AllBuckets {
   meta: MetaBucket;
   horses: HorsesBucket;
   races: RacesBucket;
   npcStables: NpcStablesBucket;
-  market: MarketBucket;
-  history: HistoryBucket;
 }
 
-type StoreName = "meta" | "horses" | "races" | "npcStables" | "market" | "history" | "saveSlots";
+type StoreName = "meta" | "horses" | "races" | "npcStables" | "saveSlots";
 
 const STORE_NAMES: StoreName[] = [
   "meta",
   "horses",
   "races",
   "npcStables",
-  "market",
-  "history",
   "saveSlots",
 ];
 
@@ -122,30 +110,6 @@ function txPut(storeName: StoreName, key: string, value: unknown): Promise<void>
   );
 }
 
-function txGetAll<T>(storeName: StoreName): Promise<T[]> {
-  return openDatabase().then(
-    (db) =>
-      new Promise<T[]>((resolve, reject) => {
-        const tx = db.transaction(storeName, "readonly");
-        const req = tx.objectStore(storeName).getAll();
-        req.onsuccess = () => resolve(req.result as T[]);
-        req.onerror = () => reject(req.error);
-      }),
-  );
-}
-
-function txGetAllKeys(storeName: StoreName): Promise<IDBValidKey[]> {
-  return openDatabase().then(
-    (db) =>
-      new Promise<IDBValidKey[]>((resolve, reject) => {
-        const tx = db.transaction(storeName, "readonly");
-        const req = tx.objectStore(storeName).getAllKeys();
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-      }),
-  );
-}
-
 function txClear(storeName: StoreName): Promise<void> {
   return openDatabase().then(
     (db) =>
@@ -162,8 +126,6 @@ const META_KEY = "meta";
 const HORSES_KEY = "horses";
 const RACES_KEY = "races";
 const NPC_STABLES_KEY = "npcStables";
-const MARKET_KEY = "market";
-const HISTORY_KEY = "history";
 
 export async function saveBuckets(buckets: Partial<AllBuckets>): Promise<void> {
   const tasks: Promise<void>[] = [];
@@ -180,12 +142,6 @@ export async function saveBuckets(buckets: Partial<AllBuckets>): Promise<void> {
   if (buckets.npcStables) {
     tasks.push(txPut("npcStables", NPC_STABLES_KEY, buckets.npcStables));
   }
-  if (buckets.market) {
-    tasks.push(txPut("market", MARKET_KEY, buckets.market));
-  }
-  if (buckets.history) {
-    tasks.push(txPut("history", HISTORY_KEY, buckets.history));
-  }
 
   await Promise.all(tasks);
 }
@@ -194,16 +150,14 @@ export async function loadBuckets(): Promise<AllBuckets | null> {
   if (!isIndexedDBAvailable()) return null;
 
   try {
-    const [meta, horses, races, npcStables, market, history] = await Promise.all([
+    const [meta, horses, races, npcStables] = await Promise.all([
       txGet<MetaBucket>("meta", META_KEY),
       txGet<HorsesBucket>("horses", HORSES_KEY),
       txGet<RacesBucket>("races", RACES_KEY),
       txGet<NpcStablesBucket>("npcStables", NPC_STABLES_KEY),
-      txGet<MarketBucket>("market", MARKET_KEY),
-      txGet<HistoryBucket>("history", HISTORY_KEY),
     ]);
 
-    if (!meta && !horses && !races && !npcStables && !market && !history) {
+    if (!meta && !horses && !races && !npcStables) {
       return null;
     }
 
@@ -212,8 +166,6 @@ export async function loadBuckets(): Promise<AllBuckets | null> {
       horses: horses ?? { playerHorses: {}, npcSummaries: [] },
       races: races ?? {},
       npcStables: npcStables ?? {},
-      market: market ?? {},
-      history: history ?? {},
     };
   } catch (error) {
     console.error("Failed to load buckets from IndexedDB:", error);

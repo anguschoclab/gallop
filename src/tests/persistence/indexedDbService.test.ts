@@ -10,6 +10,9 @@ import {
   loadBuckets,
   clearDatabase,
   hasSavedState,
+  saveSlotState,
+  loadSlotState,
+  deleteSlotState,
   _resetForTest,
   type AllBuckets,
 } from "@/services/storage/indexedDbService";
@@ -42,16 +45,6 @@ class MockObjectStore {
   put(value: unknown, key: string): MockIDBRequest {
     this.data.set(key, value);
     const req = new MockIDBRequest(undefined);
-    setTimeout(() => req._fireSuccess(), 0);
-    return req;
-  }
-  getAll(): MockIDBRequest {
-    const req = new MockIDBRequest(Array.from(this.data.values()));
-    setTimeout(() => req._fireSuccess(), 0);
-    return req;
-  }
-  getAllKeys(): MockIDBRequest {
-    const req = new MockIDBRequest(Array.from(this.data.keys()));
     setTimeout(() => req._fireSuccess(), 0);
     return req;
   }
@@ -99,8 +92,6 @@ class MockDatabase {
       "horses",
       "races",
       "npcStables",
-      "market",
-      "history",
       "saveSlots",
     ]) {
       this.stores[name] = new MockObjectStore();
@@ -162,8 +153,6 @@ describe("indexedDbService", () => {
       },
       races: { r1: { id: "r1" } as any },
       npcStables: { s1: { id: "s1" } as any },
-      market: { auctions: [] },
-      history: { log: [{ day: 1, text: "test" }] },
     };
 
     await saveBuckets(buckets);
@@ -174,8 +163,6 @@ describe("indexedDbService", () => {
     expect(loaded!.horses.playerHorses["h1"]).toBeDefined();
     expect(loaded!.races["r1"]).toBeDefined();
     expect(loaded!.npcStables["s1"]).toBeDefined();
-    expect(loaded!.market).toEqual({ auctions: [] });
-    expect(loaded!.history).toEqual({ log: [{ day: 1, text: "test" }] });
   });
 
   it("returns null when no data is stored", async () => {
@@ -203,5 +190,118 @@ describe("indexedDbService", () => {
   it("hasSavedState returns false when IDB is unavailable", async () => {
     removeIdbMock();
     expect(await hasSavedState()).toBe(false);
+  });
+
+  // ─── saveSlotState / loadSlotState / deleteSlotState ──────────────────────
+
+  it("saveSlotState round-trips a GameState through the saveSlots store", async () => {
+    installIdbMock();
+    const mockState = { day: 42, cash: 100000, horses: {} } as any;
+    await saveSlotState("slot1", mockState);
+    const loaded = await loadSlotState("slot1");
+    expect(loaded).toEqual(mockState);
+  });
+
+  it("loadSlotState returns null for non-existent slot", async () => {
+    installIdbMock();
+    const loaded = await loadSlotState("nonexistent");
+    expect(loaded).toBeNull();
+  });
+
+  it("deleteSlotState deletes an existing slot", async () => {
+    installIdbMock();
+    const mockState = { day: 1 } as any;
+    await saveSlotState("slot1", mockState);
+    expect(await loadSlotState("slot1")).not.toBeNull();
+    await deleteSlotState("slot1");
+    expect(await loadSlotState("slot1")).toBeNull();
+  });
+
+  it("deleteSlotState is a no-op for non-existent slot", async () => {
+    installIdbMock();
+    await expect(deleteSlotState("nonexistent")).resolves.not.toThrow();
+  });
+
+  // ─── Error paths ──────────────────────────────────────────────────────────
+
+  it("loadBuckets returns null on IDB transaction error", async () => {
+    installIdbMock();
+    const db = (globalThis as any).indexedDB;
+    const originalOpen = db.open;
+    db.open = vi.fn(() => {
+      const req = {
+        result: {
+          objectStoreNames: { contains: () => true },
+          transaction: () => {
+            throw new Error("IDB transaction failed");
+          },
+          createObjectStore: () => {},
+        },
+        error: null,
+        onsuccess: null as any,
+        onerror: null as any,
+        onupgradeneeded: null as any,
+      };
+      setTimeout(() => {
+        if (req.onsuccess) req.onsuccess();
+      }, 0);
+      return req;
+    });
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const loaded = await loadBuckets();
+    expect(loaded).toBeNull();
+    consoleErrorSpy.mockRestore();
+    db.open = originalOpen;
+  });
+
+  it("hasSavedState returns false on IDB error", async () => {
+    installIdbMock();
+    const db = (globalThis as any).indexedDB;
+    const originalOpen = db.open;
+    db.open = vi.fn(() => {
+      const req = {
+        result: {
+          objectStoreNames: { contains: () => true },
+          transaction: () => {
+            throw new Error("IDB error");
+          },
+          createObjectStore: () => {},
+        },
+        error: null,
+        onsuccess: null as any,
+        onerror: null as any,
+        onupgradeneeded: null as any,
+      };
+      setTimeout(() => {
+        if (req.onsuccess) req.onsuccess();
+      }, 0);
+      return req;
+    });
+    const result = await hasSavedState();
+    expect(result).toBe(false);
+    db.open = originalOpen;
+  });
+
+  // ─── Partial saves ────────────────────────────────────────────────────────
+
+  it("saveBuckets with partial buckets (only meta) succeeds", async () => {
+    installIdbMock();
+    await saveBuckets({ meta: { day: 1, cash: 500 } });
+    const loaded = await loadBuckets();
+    expect(loaded).not.toBeNull();
+    expect(loaded!.meta).toEqual({ day: 1, cash: 500 });
+    expect(loaded!.horses).toEqual({ playerHorses: {}, npcSummaries: [] });
+  });
+
+  it("saveBuckets with empty partial is a no-op", async () => {
+    installIdbMock();
+    await saveBuckets({});
+    const loaded = await loadBuckets();
+    expect(loaded).toBeNull();
+  });
+
+  it("clearDatabase is a no-op when IDB unavailable", async () => {
+    removeIdbMock();
+    await expect(clearDatabase()).resolves.not.toThrow();
   });
 });

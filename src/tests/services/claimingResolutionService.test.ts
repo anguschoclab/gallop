@@ -757,3 +757,212 @@ describe("processClaimingResolution — impact structure validation", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 });
+
+describe("processClaimingResolution — multiple eligible claims for different horses", () => {
+  it("2 horses × 1 claimant each: 2 claiming transfers, 2 payments, 2 proceeds, logs", () => {
+    const race = mkRace({
+      entries: [
+        { horseId: "h1", owned: false, stableId: "s-old-1" },
+        { horseId: "h2", owned: false, stableId: "s-old-2" },
+      ],
+    });
+    const intents = [
+      mkClaimingIntent({ id: "c-1", horseId: "h1", claimantStableId: "s-buyer-1", claimingPrice: 25000 }),
+      mkClaimingIntent({ id: "c-2", horseId: "h2", claimantStableId: "s-buyer-2", claimingPrice: 25000 }),
+    ];
+    const result = processClaimingResolution({
+      race,
+      claimIntents: intents,
+      horses: [mkClaimedHorse("h1", "s-old-1"), mkClaimedHorse("h2", "s-old-2")],
+      newDay: DAY,
+      rng: createTestRng("multi-horse"),
+    });
+    const claimingImpacts = result.impacts.filter((i) => i.type === "claiming") as any[];
+    expect(claimingImpacts).toHaveLength(2);
+    expect(claimingImpacts.map((c) => c.horseId).sort()).toEqual(["h1", "h2"]);
+
+    const negativeCash = result.impacts.filter((i) => i.type === "cash_change" && (i as any).amount < 0) as any[];
+    expect(negativeCash).toHaveLength(2);
+
+    const positiveProceeds = result.impacts.filter(
+      (i) => i.type === "cash_change" && (i as any).amount > 0 && (i as any).intentId === "",
+    ) as any[];
+    expect(positiveProceeds).toHaveLength(2);
+
+    const logImpacts = result.impacts.filter((i) => i.type === "log") as any[];
+    expect(logImpacts.length).toBeGreaterThanOrEqual(2);
+  });
+});
+
+describe("processClaimingResolution — claimingPrice: 0 edge case", () => {
+  it("claimingPrice: 0 behaves like undefined (falsy) — no transfers, eligible becomes losing refund", () => {
+    const race = mkRace({
+      claimingPrice: 0 as any,
+      entries: [{ horseId: "h1", owned: false, stableId: "stable-old" }],
+    });
+    const intent = mkClaimingIntent({
+      id: "c-1",
+      horseId: "h1",
+      claimantStableId: "stable-buyer",
+      claimingPrice: 25000,
+    });
+    const result = processClaimingResolution({
+      race,
+      claimIntents: [intent],
+      horses: [mkClaimedHorse("h1", "stable-old")],
+      newDay: DAY,
+      rng: createTestRng("zero-price"),
+    });
+    const claimingImpacts = result.impacts.filter((i) => i.type === "claiming");
+    expect(claimingImpacts).toHaveLength(0);
+    const refundImpacts = result.impacts.filter(
+      (i) => i.type === "cash_change" && (i as any).amount > 0,
+    );
+    expect(refundImpacts.length).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe("processClaimingResolution — log impact content", () => {
+  it("eligible claim log impacts have correct fields", () => {
+    const race = mkRace({
+      entries: [{ horseId: "h1", owned: false, stableId: "stable-old" }],
+    });
+    const intent = mkClaimingIntent({
+      id: "c-1",
+      horseId: "h1",
+      claimantStableId: "stable-buyer",
+      claimingPrice: 25000,
+    });
+    const result = processClaimingResolution({
+      race,
+      claimIntents: [intent],
+      horses: [mkClaimedHorse("h1", "stable-old")],
+      newDay: DAY,
+      rng: createTestRng("log-content"),
+    });
+    const logImpacts = result.impacts.filter(
+      (i) => i.type === "log" && (i as any).reason === "Claiming result",
+    ) as any[];
+    expect(logImpacts.length).toBeGreaterThanOrEqual(1);
+    for (const log of logImpacts) {
+      expect(log.logLevel).toBe("always");
+      expect(log.reason).toBe("Claiming result");
+      expect(log.text).toContain("claimed for");
+    }
+  });
+
+  it("withdrawn claim log text matches expected format", () => {
+    const race = mkRace({
+      name: "Test Claiming Race",
+      entries: [{ horseId: "h1", owned: false, stableId: "s-old", withdrawnFromClaiming: true }],
+    });
+    const intent = mkClaimingIntent({
+      id: "w-1",
+      horseId: "h1",
+      claimantStableId: "s-buyer",
+      claimingPrice: 25000,
+    });
+    const result = processClaimingResolution({
+      race,
+      claimIntents: [intent],
+      horses: [mkClaimedHorse("h1", "s-old")],
+      newDay: DAY,
+      rng: createTestRng("withdrawn-log"),
+    });
+    const logImpacts = result.impacts.filter((i) => i.type === "log") as any[];
+    expect(logImpacts).toHaveLength(1);
+    expect(logImpacts[0].text).toBe(
+      "Claim on h1 in Test Claiming Race refunded (horse withdrawn from claiming)",
+    );
+  });
+});
+
+describe("processClaimingResolution — impact reason fields", () => {
+  it("claiming impact reason contains 'Claimed for' and formatted currency", () => {
+    const race = mkRace({
+      entries: [{ horseId: "h1", owned: false, stableId: "stable-old" }],
+    });
+    const intent = mkClaimingIntent({
+      id: "c-1",
+      horseId: "h1",
+      claimantStableId: "stable-buyer",
+      claimingPrice: 25000,
+    });
+    const result = processClaimingResolution({
+      race,
+      claimIntents: [intent],
+      horses: [mkClaimedHorse("h1", "stable-old")],
+      newDay: DAY,
+      rng: createTestRng("reason-test"),
+    });
+    const claimingImpact = result.impacts.find((i) => i.type === "claiming") as any;
+    expect(claimingImpact.reason).toContain("Claimed for");
+    expect(claimingImpact.reason).toContain("$25,000");
+  });
+});
+
+describe("processClaimingResolution — newDay vs race.day", () => {
+  it("impacts use newDay parameter, not race.day", () => {
+    const race = mkRace({
+      day: 10,
+      entries: [{ horseId: "h1", owned: false, stableId: "stable-old" }],
+    });
+    const intent = mkClaimingIntent({
+      id: "c-1",
+      horseId: "h1",
+      claimantStableId: "stable-buyer",
+      claimingPrice: 25000,
+    });
+    const NEW_DAY = 999;
+    const result = processClaimingResolution({
+      race,
+      claimIntents: [intent],
+      horses: [mkClaimedHorse("h1", "stable-old")],
+      newDay: NEW_DAY,
+      rng: createTestRng("newday-test"),
+    });
+    for (const impact of result.impacts) {
+      expect(impact.day).toBe(NEW_DAY);
+    }
+  });
+});
+
+describe("processClaimingResolution — 2 horses × 2 claimants each", () => {
+  it("4 intents across 2 horses: 2 transfers, 2 loser refunds, 2 payments, 2 proceeds", () => {
+    const race = mkRace({
+      entries: [
+        { horseId: "h1", owned: false, stableId: "s-old-1" },
+        { horseId: "h2", owned: false, stableId: "s-old-2" },
+      ],
+    });
+    const intents = [
+      mkClaimingIntent({ id: "c-1a", horseId: "h1", claimantStableId: "s-a1", claimingPrice: 25000 }),
+      mkClaimingIntent({ id: "c-1b", horseId: "h1", claimantStableId: "s-b1", claimingPrice: 25000 }),
+      mkClaimingIntent({ id: "c-2a", horseId: "h2", claimantStableId: "s-a2", claimingPrice: 25000 }),
+      mkClaimingIntent({ id: "c-2b", horseId: "h2", claimantStableId: "s-b2", claimingPrice: 25000 }),
+    ];
+    const result = processClaimingResolution({
+      race,
+      claimIntents: intents,
+      horses: [mkClaimedHorse("h1", "s-old-1"), mkClaimedHorse("h2", "s-old-2")],
+      newDay: DAY,
+      rng: createTestRng("2x2"),
+    });
+    const claimingImpacts = result.impacts.filter((i) => i.type === "claiming") as any[];
+    expect(claimingImpacts).toHaveLength(2);
+    expect(claimingImpacts.map((c) => c.horseId).sort()).toEqual(["h1", "h2"]);
+
+    const refundImpacts = result.impacts.filter(
+      (i) => i.type === "cash_change" && (i as any).amount > 0 && (i as any).intentId !== "",
+    ) as any[];
+    expect(refundImpacts).toHaveLength(2);
+
+    const negativeCash = result.impacts.filter((i) => i.type === "cash_change" && (i as any).amount < 0) as any[];
+    expect(negativeCash).toHaveLength(2);
+
+    const positiveProceeds = result.impacts.filter(
+      (i) => i.type === "cash_change" && (i as any).amount > 0 && (i as any).intentId === "",
+    ) as any[];
+    expect(positiveProceeds).toHaveLength(2);
+  });
+});

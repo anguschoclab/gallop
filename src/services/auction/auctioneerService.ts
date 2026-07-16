@@ -26,7 +26,6 @@ export type AuctioneerContext = {
   scoutedOverall?: number;
   /** A 1-based paddle number derived from the bidder stable index, for flavor. */
   paddleNumber?: number;
-  saleHype?: number; // 0-1 — how heated the room feels (used to bias prefixes)
   /** Lot-specific signals available to the auctioneer (breeze times etc.). */
   breezeSeconds?: number;
 };
@@ -89,7 +88,7 @@ export function generateAuctioneerLine(
  */
 function fameBucket(fame: number): string {
   if (fame >= JOCKEY_FAME_HOUSEHOLD_NAME) return "household name";
-  if (fame >= 35) return "well-known";
+  if (fame >= JOCKEY_FAME_TALKED_ABOUT) return "well-known";
   if (fame >= 15) return "talked-about";
   return "unknown quantity";
 }
@@ -170,8 +169,6 @@ function substitute(template: string, ctx: RenderCtx, rng: Rng): string {
 
   const map: Record<string, string | undefined> = {
     horse: horse?.name,
-    sire: horse?.sireName,
-    dam: horse?.damName,
     coat: horse?.coatColor,
     gender: horse
       ? isFemaleHorse(horse.gender)
@@ -190,7 +187,6 @@ function substitute(template: string, ctx: RenderCtx, rng: Rng): string {
     blueHen: horse?.blueHenStatus?.isBlueHen ? "blue-hen" : undefined,
     stable: stable?.name,
     consignor: ctx.consignor?.name,
-    winner: ctx.winner?.name,
     paddle: ctx.paddleNumber !== undefined ? `paddle ${ctx.paddleNumber}` : undefined,
     amount: ctx.amount !== undefined ? `$${ctx.amount.toLocaleString()}` : undefined,
     reserve: ctx.reserve !== undefined ? `$${ctx.reserve.toLocaleString()}` : undefined,
@@ -284,6 +280,9 @@ const LOT_OPEN_TEMPLATES: readonly string[] = [
   "Workmen rate this one highly — {horse}, {pedigree}.",
   "Hip card reads {horse} — {pedigree}, {fameBucket}.",
   "And now — {horse}. {pedigree}. Build is {conformation}.",
+  "A {runningStyle} type — {horse}, {pedigree}. Who'll start?",
+  "{horse} — {runningStyle} written all over him. {pedigree}.",
+  "Looks like a {runningStyle} profile — {horse}, {pedigree}.",
 ];
 
 const BID_NPC_TEMPLATES: readonly string[] = [

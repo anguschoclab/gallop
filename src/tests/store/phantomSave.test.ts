@@ -90,7 +90,7 @@ vi.mock("@/game/store/storage", () => {
     },
     saveGameStateToIDB: vi.fn().mockResolvedValue(undefined),
     loadGameStateFromIDB,
-    createRehydrateStore: (initialState: any, useGameStore: any) => {
+    createRehydrateStore: (useGameStore: any) => {
       return async function rehydrateStore(passedStore?: any): Promise<void> {
         const store = passedStore || useGameStore;
         if (!store) return;
@@ -201,7 +201,7 @@ describe("rehydrateStore no-save path", () => {
       persist: { rehydrate: vi.fn().mockResolvedValue(undefined) },
       setState: vi.fn(),
     };
-    const rehydrate = createRehydrateStore(() => ({}), mockStore);
+    const rehydrate = createRehydrateStore(mockStore);
     await rehydrate(mockStore);
     expect(mockStore.setState).not.toHaveBeenCalled();
   });
@@ -211,7 +211,7 @@ describe("rehydrateStore no-save path", () => {
       persist: { rehydrate: vi.fn().mockResolvedValue(undefined) },
       setState: vi.fn(),
     };
-    const rehydrate = createRehydrateStore(() => ({}), mockStore);
+    const rehydrate = createRehydrateStore(mockStore);
     await rehydrate(mockStore);
     expect(mockStore.persist.rehydrate).not.toHaveBeenCalled();
   });
@@ -221,7 +221,7 @@ describe("rehydrateStore no-save path", () => {
       persist: { rehydrate: vi.fn().mockResolvedValue(undefined) },
       setState: vi.fn(),
     };
-    const rehydrate = createRehydrateStore(() => ({}), mockStore);
+    const rehydrate = createRehydrateStore(mockStore);
     await rehydrate(mockStore);
     expect(saveExists.value).toBe(false);
   });
@@ -231,7 +231,7 @@ describe("rehydrateStore no-save path", () => {
       persist: { rehydrate: vi.fn().mockResolvedValue(undefined) },
       setState: vi.fn(),
     };
-    const rehydrate = createRehydrateStore(() => ({}), mockStore);
+    const rehydrate = createRehydrateStore(mockStore);
     await rehydrate(mockStore);
     expect(hydrationComplete.value).toBe(true);
   });
@@ -241,7 +241,7 @@ describe("rehydrateStore no-save path", () => {
       persist: { rehydrate: vi.fn().mockResolvedValue(undefined) },
       setState: vi.fn(),
     };
-    const rehydrate = createRehydrateStore(() => ({}), mockStore);
+    const rehydrate = createRehydrateStore(mockStore);
     await rehydrate(mockStore);
     expect(persistenceEnabled.value).toBe(false);
   });
@@ -260,7 +260,7 @@ describe("rehydrateStore save-found path", () => {
       persist: { rehydrate: vi.fn().mockResolvedValue(undefined) },
       setState: vi.fn(),
     };
-    const rehydrate = createRehydrateStore(() => ({}), mockStore);
+    const rehydrate = createRehydrateStore(mockStore);
     await rehydrate(mockStore);
     expect(mockStore.persist.rehydrate).toHaveBeenCalled();
   });
@@ -270,7 +270,7 @@ describe("rehydrateStore save-found path", () => {
       persist: { rehydrate: vi.fn().mockResolvedValue(undefined) },
       setState: vi.fn(),
     };
-    const rehydrate = createRehydrateStore(() => ({}), mockStore);
+    const rehydrate = createRehydrateStore(mockStore);
     await rehydrate(mockStore);
     expect(saveExists.value).toBe(true);
   });
@@ -285,7 +285,7 @@ describe("rehydrateStore save-found path", () => {
       },
       setState: vi.fn(),
     };
-    const rehydrate = createRehydrateStore(() => ({}), mockStore);
+    const rehydrate = createRehydrateStore(mockStore);
     await rehydrate(mockStore);
     expect(callOrder[0]).toBe("persistence=true");
   });
@@ -303,9 +303,7 @@ describe("onRehydrateStorage version mismatch", () => {
       persist: { rehydrate: vi.fn().mockResolvedValue(undefined) },
       setState: vi.fn(),
     };
-    const rehydrate = createRehydrateStore(() => {
-      throw new Error("createInitialState should not be called on version mismatch");
-    }, mockStore);
+    const rehydrate = createRehydrateStore(mockStore);
     (loadGameStateFromIDB as any).mockResolvedValue(null);
     await rehydrate(mockStore);
   });

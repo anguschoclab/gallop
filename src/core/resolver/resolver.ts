@@ -12,7 +12,9 @@
 // Handles intent collection, validation, and impact application using Immer
 
 import { produce, type WritableDraft } from "immer";
-import type { GameState, Horse, Stable } from "@/game/types";
+import type { GameState, Horse, Stable, Race, Jockey, HorseCampaign, AuctionSale } from "@/game/types";
+import type { Facility } from "@/core/facilities/facilityTypes";
+import type { StaffMember } from "@/core/staff/staffTypes";
 import type { AnyIntent } from "./intents";
 import type { AnyImpact } from "./impacts";
 import { ALL_HANDLERS } from "./handlers";
@@ -63,40 +65,40 @@ export function applyImpacts(context: ResolverContext): ResolverContext {
       stableMap.set(s.id, s);
     }
 
-    const campaignMap = new Map<string, WritableDraft<any>>();
+    const campaignMap = new Map<string, WritableDraft<HorseCampaign>>();
     if (draft.campaigns) {
       for (const c of draft.campaigns) {
         campaignMap.set(c.horseId, c);
       }
     }
 
-    const raceMap = new Map<string, WritableDraft<any>>();
+    const raceMap = new Map<string, WritableDraft<Race>>();
     for (const r of Object.values(draft.races)) {
       raceMap.set(r.id, r);
     }
 
-    const jockeyMap = new Map<string, WritableDraft<any>>();
+    const jockeyMap = new Map<string, WritableDraft<Jockey>>();
     if (draft.jockeys) {
       for (const j of draft.jockeys) {
         jockeyMap.set(j.id, j);
       }
     }
 
-    const auctionMap = new Map<string, WritableDraft<any>>();
+    const auctionMap = new Map<string, WritableDraft<AuctionSale>>();
     if (draft.auctions) {
       for (const a of draft.auctions) {
         auctionMap.set(a.id, a);
       }
     }
 
-    const facilityMap = new Map<string, WritableDraft<any>>();
+    const facilityMap = new Map<string, WritableDraft<Facility>>();
     if (draft.facilities) {
       for (const f of Object.values(draft.facilities)) {
         if (f) facilityMap.set(f.type, f);
       }
     }
 
-    const staffMap = new Map<string, WritableDraft<any>>();
+    const staffMap = new Map<string, WritableDraft<StaffMember>>();
     if (draft.hiredStaff) {
       for (const s of draft.hiredStaff) {
         staffMap.set(s.id, s);

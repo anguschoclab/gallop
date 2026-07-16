@@ -125,6 +125,19 @@ const META_KEYS: (keyof GameState)[] = [
   "playerNominations",
   "syndicateInvestors",
   "lastTopTenRank",
+  "shareTransactions",
+  "outposts",
+  "sireLeaderboards",
+  "sireTrendHistory",
+  "leaderboardsUpdatedDay",
+  "damsireLeaderboard",
+  "blueHenLeaderboard",
+  "lastAwardYear",
+  "pendingAwardCeremonies",
+  "currentCeremonyIndex",
+  "industryMeanEarnings",
+  "industryEarningsUpdatedDay",
+  "narrativeArcs",
 ];
 
 export async function saveGameStateToIDB(state: GameState): Promise<void> {
@@ -270,13 +283,12 @@ export function _resetPersistenceEnabled(): void {
  * Creates a rehydrate function that can be called with the store instance.
  *
  * Returns an async function that rehydrates the store from saved state or
- * initializes with default state if no save exists.
+ * does nothing if no save exists.
  *
- * @param initialState - Function to create initial state if no save exists
  * @param useGameStore - Default store instance to use
  * @returns Async rehydrate function that takes an optional store instance
  */
-export function createRehydrateStore(initialState: any, useGameStore: any) {
+export function createRehydrateStore(useGameStore: any) {
   return async function rehydrateStore(passedStore?: any): Promise<void> {
     const store = passedStore || useGameStore;
 

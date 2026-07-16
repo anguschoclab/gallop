@@ -107,6 +107,8 @@ export const gameStateSchema = z
     sireLeaderboards: z.record(z.string(), z.unknown()).optional(),
     sireTrendHistory: z.array(z.unknown()).optional(),
     leaderboardsUpdatedDay: z.number().optional(),
+    damsireLeaderboard: z.unknown().optional(),
+    blueHenLeaderboard: z.unknown().optional(),
     lastAwardYear: z.record(z.string(), z.number()).optional(),
     pendingAwardCeremonies: z.array(z.unknown()).optional(),
     currentCeremonyIndex: z.number().optional(),

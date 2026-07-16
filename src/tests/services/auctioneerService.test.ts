@@ -133,4 +133,327 @@ describe("auctioneerService", () => {
     }
     expect(seen.size).toBeGreaterThanOrEqual(3);
   });
+
+  // -----------------------------------------------------------------------
+  // Phase 4: New tests — event type coverage
+  // -----------------------------------------------------------------------
+
+  it("BID_WAR event: mentions horse name, isHighImpact: true, no unfilled tokens", () => {
+    const horse = mkHorse({ name: "War Admiral" });
+    const event: AuctionTickEvent = { type: "BID_WAR", lotId: "l1", stableIds: ["s1", "s2"] };
+    let mentionsHorse = false;
+    for (let seed = 1; seed <= 10; seed++) {
+      const line = generateAuctioneerLine(event, { horse }, createRng(seed));
+      expect(line.isHighImpact).toBe(true);
+      expect(line.text).not.toMatch(/\{[a-zA-Z]+\}/);
+      if (line.text.includes("War Admiral")) mentionsHorse = true;
+    }
+    expect(mentionsHorse).toBe(true);
+  });
+
+  it("BID_RECEIVED player vs NPC: player mentions 'you', NPC mentions stable/paddle", () => {
+    const horse = mkHorse();
+    const stable = mkStable("Rival Farm");
+    const playerEvent: AuctionTickEvent = { type: "BID_RECEIVED", lotId: "l1", amount: 50000 };
+    const npcEvent: AuctionTickEvent = { type: "BID_RECEIVED", lotId: "l1", stableId: "s1", amount: 50000 };
+
+    let playerMentionsYou = false;
+    let npcMentionsStableOrPaddle = false;
+    for (let seed = 1; seed <= 10; seed++) {
+      const playerLine = generateAuctioneerLine(playerEvent, { horse }, createRng(seed));
+      if (/you|your/i.test(playerLine.text)) playerMentionsYou = true;
+
+      const npcLine = generateAuctioneerLine(npcEvent, { horse, winner: stable, paddleNumber: 7 }, createRng(seed));
+      if (npcLine.text.includes("Rival Farm") || npcLine.text.includes("paddle 7")) npcMentionsStableOrPaddle = true;
+    }
+    expect(playerMentionsYou).toBe(true);
+    expect(npcMentionsStableOrPaddle).toBe(true);
+  });
+
+  it("GOING_ONCE: amount appears in output, isHighImpact: false", () => {
+    const horse = mkHorse();
+    const event: AuctionTickEvent = { type: "GOING_ONCE", lotId: "l1", amount: 42000 };
+    let mentionsAmount = false;
+    for (let seed = 1; seed <= 10; seed++) {
+      const line = generateAuctioneerLine(event, { horse }, createRng(seed));
+      expect(line.isHighImpact).toBe(false);
+      if (line.text.includes("42,000")) mentionsAmount = true;
+    }
+    expect(mentionsAmount).toBe(true);
+  });
+
+  it("GOING_TWICE: amount appears in output", () => {
+    const horse = mkHorse();
+    const event: AuctionTickEvent = { type: "GOING_TWICE", lotId: "l1", amount: 88000 };
+    let mentionsAmount = false;
+    for (let seed = 1; seed <= 10; seed++) {
+      const line = generateAuctioneerLine(event, { horse }, createRng(seed));
+      expect(line.isHighImpact).toBe(true);
+      if (line.text.includes("88,000")) mentionsAmount = true;
+    }
+    expect(mentionsAmount).toBe(true);
+  });
+
+  it("PASSED: horse name appears in output, isHighImpact: false", () => {
+    const horse = mkHorse({ name: "No Sale Boy" });
+    const event: AuctionTickEvent = { type: "PASSED", lotId: "l1", reason: "no_bids" };
+    let mentionsHorse = false;
+    for (let seed = 1; seed <= 10; seed++) {
+      const line = generateAuctioneerLine(event, { horse }, createRng(seed));
+      expect(line.isHighImpact).toBe(false);
+      if (line.text.includes("No Sale Boy")) mentionsHorse = true;
+    }
+    expect(mentionsHorse).toBe(true);
+  });
+
+  it("RESERVE_NOT_MET: amount and reserve appear in output, isHighImpact: false", () => {
+    const horse = mkHorse();
+    const event: AuctionTickEvent = { type: "RESERVE_NOT_MET", lotId: "l1", amount: 30000, reserve: 50000 };
+    let mentionsAmount = false;
+    let mentionsReserve = false;
+    for (let seed = 1; seed <= 10; seed++) {
+      const line = generateAuctioneerLine(event, { horse }, createRng(seed));
+      expect(line.isHighImpact).toBe(false);
+      if (line.text.includes("30,000")) mentionsAmount = true;
+      if (line.text.includes("50,000")) mentionsReserve = true;
+    }
+    expect(mentionsAmount).toBe(true);
+    expect(mentionsReserve).toBe(true);
+  });
+
+  // -----------------------------------------------------------------------
+  // Phase 4: New tests — token substitution coverage
+  // -----------------------------------------------------------------------
+
+  it("fameBucket: fame >= 60 produces 'household name' in LOT_OPEN across seeds", () => {
+    const horse = mkHorse({ fame: 60 });
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    let found = false;
+    for (let seed = 1; seed <= 20; seed++) {
+      const line = generateAuctioneerLine(event, { horse }, createRng(seed));
+      if (line.text.includes("household name")) found = true;
+    }
+    expect(found).toBe(true);
+  });
+
+  it("fameBucket: fame < 15 produces 'unknown quantity' in LOT_OPEN across seeds", () => {
+    const horse = mkHorse({ fame: 10 });
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    let found = false;
+    for (let seed = 1; seed <= 20; seed++) {
+      const line = generateAuctioneerLine(event, { horse }, createRng(seed));
+      if (line.text.includes("unknown quantity")) found = true;
+    }
+    expect(found).toBe(true);
+  });
+
+  it("potentialHintFromOverall: scoutedOverall 90 produces 'blue-chip' in LOT_OPEN", () => {
+    const horse = mkHorse();
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    let found = false;
+    for (let seed = 1; seed <= 20; seed++) {
+      const line = generateAuctioneerLine(event, { horse, scoutedOverall: 90 }, createRng(seed));
+      if (line.text.includes("blue-chip")) found = true;
+    }
+    expect(found).toBe(true);
+  });
+
+  it("potentialHintFromOverall: scoutedOverall 30 produces 'modest' in LOT_OPEN", () => {
+    const horse = mkHorse();
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    let found = false;
+    for (let seed = 1; seed <= 20; seed++) {
+      const line = generateAuctioneerLine(event, { horse, scoutedOverall: 30 }, createRng(seed));
+      if (line.text.includes("modest")) found = true;
+    }
+    expect(found).toBe(true);
+  });
+
+  it("breezeBucket: breezeSeconds 9.5 produces 'blistering' phrase in LOT_OPEN", () => {
+    const horse = mkHorse();
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    let found = false;
+    for (let seed = 1; seed <= 100; seed++) {
+      const line = generateAuctioneerLine(event, { horse, breezeSeconds: 9.5 }, createRng(seed));
+      if (line.text.includes("blistering")) found = true;
+    }
+    expect(found).toBe(true);
+  });
+
+  it("breezeBucket: breezeSeconds 11.0 produces 'workmanlike effort' in LOT_OPEN", () => {
+    const horse = mkHorse();
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    let found = false;
+    for (let seed = 1; seed <= 100; seed++) {
+      const line = generateAuctioneerLine(event, { horse, breezeSeconds: 11.0 }, createRng(seed));
+      if (line.text.includes("workmanlike")) found = true;
+    }
+    expect(found).toBe(true);
+  });
+
+  it("pedigreeFragment: horse with only sire produces 'by {sire}' fragment", () => {
+    const horse = mkHorse({
+      sireName: "Lone Sire",
+      damName: undefined as unknown as string,
+    });
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    let found = false;
+    for (let seed = 1; seed <= 20; seed++) {
+      const line = generateAuctioneerLine(event, { horse }, createRng(seed));
+      if (line.text.includes("by Lone Sire")) found = true;
+    }
+    expect(found).toBe(true);
+  });
+
+  it("pedigreeFragment: horse with only dam produces 'out of {dam}' fragment", () => {
+    const horse = mkHorse({
+      sireName: undefined as unknown as string,
+      damName: "Lone Dam",
+    });
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    let found = false;
+    for (let seed = 1; seed <= 20; seed++) {
+      const line = generateAuctioneerLine(event, { horse }, createRng(seed));
+      if (line.text.includes("out of Lone Dam")) found = true;
+    }
+    expect(found).toBe(true);
+  });
+
+  it("pedigreeFragment: horse with neither sire nor dam produces no crash, no unfilled tokens", () => {
+    const horse = mkHorse({
+      sireName: undefined as unknown as string,
+      damName: undefined as unknown as string,
+    });
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    for (let seed = 1; seed <= 10; seed++) {
+      const line = generateAuctioneerLine(event, { horse }, createRng(seed));
+      expect(line.text).not.toMatch(/\{[a-zA-Z]+\}/);
+      expect(line.text).not.toMatch(/\[\w+\?\]/);
+    }
+  });
+
+  it("coat color substitution: horse coatColor appears in LOT_OPEN across seeds", () => {
+    const horse = mkHorse({ coatColor: "chestnut" as any });
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    let found = false;
+    for (let seed = 1; seed <= 100; seed++) {
+      const line = generateAuctioneerLine(event, { horse }, createRng(seed));
+      if (line.text.includes("chestnut")) found = true;
+    }
+    expect(found).toBe(true);
+  });
+
+  it("gender substitution: colt produces 'colt' in LOT_OPEN across seeds", () => {
+    const horse = mkHorse({ gender: "colt" });
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    let found = false;
+    for (let seed = 1; seed <= 100; seed++) {
+      const line = generateAuctioneerLine(event, { horse }, createRng(seed));
+      if (line.text.includes("colt")) found = true;
+    }
+    expect(found).toBe(true);
+  });
+
+  // -----------------------------------------------------------------------
+  // Phase 4: New tests — determinism
+  // -----------------------------------------------------------------------
+
+  it("determinism: same seed produces identical line for LOT_OPEN", () => {
+    const horse = mkHorse({ name: "Deterministic" });
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    const line1 = generateAuctioneerLine(event, { horse }, createRng(42));
+    const line2 = generateAuctioneerLine(event, { horse }, createRng(42));
+    expect(line1.text).toBe(line2.text);
+    expect(line1.isHighImpact).toBe(line2.isHighImpact);
+  });
+
+  it("determinism: same seed produces identical line for SOLD", () => {
+    const horse = mkHorse({ name: "Sold Horse" });
+    const stable = mkStable("Buyer Farm");
+    const event: AuctionTickEvent = {
+      type: "SOLD",
+      lotId: "l1",
+      amount: 125000,
+      toStableId: "s1",
+    };
+    const line1 = generateAuctioneerLine(event, { horse, winner: stable }, createRng(42));
+    const line2 = generateAuctioneerLine(event, { horse, winner: stable }, createRng(42));
+    expect(line1.text).toBe(line2.text);
+    expect(line1.isHighImpact).toBe(line2.isHighImpact);
+  });
+
+  // -----------------------------------------------------------------------
+  // Phase 1: runningStyle template coverage (tests BEFORE implementation)
+  // -----------------------------------------------------------------------
+
+  it("runningStyle: 'E' produces 'early speed' in LOT_OPEN across seeds", () => {
+    const horse = mkHorse({ runningStyle: "E" });
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    let found = false;
+    for (let seed = 1; seed <= 100; seed++) {
+      const line = generateAuctioneerLine(event, { horse }, createRng(seed));
+      if (line.text.includes("early speed")) found = true;
+    }
+    expect(found).toBe(true);
+  });
+
+  it("runningStyle: 'EP' produces 'press the pace' in LOT_OPEN across seeds", () => {
+    const horse = mkHorse({ runningStyle: "EP" });
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    let found = false;
+    for (let seed = 1; seed <= 100; seed++) {
+      const line = generateAuctioneerLine(event, { horse }, createRng(seed));
+      if (line.text.includes("press the pace")) found = true;
+    }
+    expect(found).toBe(true);
+  });
+
+  it("runningStyle: 'P' produces 'pace stalker' in LOT_OPEN across seeds", () => {
+    const horse = mkHorse({ runningStyle: "P" });
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    let found = false;
+    for (let seed = 1; seed <= 100; seed++) {
+      const line = generateAuctioneerLine(event, { horse }, createRng(seed));
+      if (line.text.includes("pace stalker")) found = true;
+    }
+    expect(found).toBe(true);
+  });
+
+  it("runningStyle: 'S' produces 'deep closer' in LOT_OPEN across seeds", () => {
+    const horse = mkHorse({ runningStyle: "S" });
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    let found = false;
+    for (let seed = 1; seed <= 100; seed++) {
+      const line = generateAuctioneerLine(event, { horse }, createRng(seed));
+      if (line.text.includes("deep closer")) found = true;
+    }
+    expect(found).toBe(true);
+  });
+
+  it("runningStyle: undefined horse in LOT_OPEN produces no crash and no unfilled tokens", () => {
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+    for (let seed = 1; seed <= 10; seed++) {
+      const line = generateAuctioneerLine(event, {}, createRng(seed));
+      expect(line.text).not.toMatch(/\{[a-zA-Z]+\}/);
+      expect(line.text).not.toMatch(/\[\w+\?\]/);
+    }
+  });
+
+  it("fameBucket boundary: fame=34 produces 'talked-about', fame=35 produces 'well-known'", () => {
+    const horse34 = mkHorse({ fame: 34 });
+    const horse35 = mkHorse({ fame: 35 });
+    const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
+
+    let found34 = false;
+    let found35 = false;
+    for (let seed = 1; seed <= 100; seed++) {
+      const line34 = generateAuctioneerLine(event, { horse: horse34 }, createRng(seed));
+      if (line34.text.includes("talked-about")) found34 = true;
+
+      const line35 = generateAuctioneerLine(event, { horse: horse35 }, createRng(seed));
+      if (line35.text.includes("well-known")) found35 = true;
+    }
+    expect(found34).toBe(true);
+    expect(found35).toBe(true);
+  });
 });

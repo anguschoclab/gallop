@@ -94,7 +94,12 @@ export async function saveToSlot(
   }
 
   // 3. Save metadata list
-  localStorage.setItem(METADATA_STORAGE_KEY, JSON.stringify(slots));
+  try {
+    localStorage.setItem(METADATA_STORAGE_KEY, JSON.stringify(slots));
+  } catch (e) {
+    console.error("Failed to save metadata to localStorage:", e);
+    throw e;
+  }
 }
 
 /**
@@ -151,5 +156,10 @@ export async function deleteSaveSlot(slotId: string): Promise<void> {
   // 2. Update and save metadata
   const slots = await getSaveSlots();
   const filtered = slots.filter((s) => s.id !== slotId);
-  localStorage.setItem(METADATA_STORAGE_KEY, JSON.stringify(filtered));
+  try {
+    localStorage.setItem(METADATA_STORAGE_KEY, JSON.stringify(filtered));
+  } catch (e) {
+    console.error("Failed to save metadata to localStorage:", e);
+    throw e;
+  }
 }

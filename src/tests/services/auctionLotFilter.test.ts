@@ -275,3 +275,59 @@ describe("filterAndSortLots — missing horse edge case", () => {
     expect(result.map((l) => l.id)).toEqual(["l9"]);
   });
 });
+
+describe("filterAndSortLots — all filters combined", () => {
+  it("sex + ageBand + reserveBand + q + sort narrows to intersection", () => {
+    const result = filterAndSortLots(lots, horses, {
+      sex: "colt",
+      ageBand: "weanling",
+      reserveBand: "under10k",
+      q: "alpha",
+      sort: "reserve-asc",
+    });
+    expect(result.map((l) => l.id)).toEqual(["l1"]);
+  });
+});
+
+describe("filterAndSortLots — empty horses with horse-dependent filter", () => {
+  it("sex filter with empty horses array returns empty", () => {
+    const result = filterAndSortLots(lots, [], { sex: "colt" });
+    expect(result).toEqual([]);
+  });
+});
+
+describe("filterAndSortLots — sort stability", () => {
+  it("sort: reserve-asc preserves input order for equal reserve prices", () => {
+    const eqLots = [
+      mkLot("eq-a", "h1", 10000),
+      mkLot("eq-b", "h2", 10000),
+      mkLot("eq-c", "h5", 10000),
+    ];
+    const result = filterAndSortLots(eqLots, horses, { sort: "reserve-asc" });
+    expect(result.map((l) => l.id)).toEqual(["eq-a", "eq-b", "eq-c"]);
+  });
+
+  it("sort: reserve-desc preserves input order for equal reserve prices", () => {
+    const eqLots = [
+      mkLot("eq-a", "h1", 10000),
+      mkLot("eq-b", "h2", 10000),
+      mkLot("eq-c", "h5", 10000),
+    ];
+    const result = filterAndSortLots(eqLots, horses, { sort: "reserve-desc" });
+    expect(result.map((l) => l.id)).toEqual(["eq-a", "eq-b", "eq-c"]);
+  });
+});
+
+describe("filterAndSortLots — passed/withdrawn lots", () => {
+  it("lots with passed: true are still included in results", () => {
+    const passedLot = mkLot("l-passed", "h1", 5000, { passed: true });
+    const result = filterAndSortLots([passedLot], horses, {});
+    expect(result.map((l) => l.id)).toEqual(["l-passed"]);
+  });
+
+  it("lots with withdrawn: true are still included in results", () => {
+    const withdrawnLot = mkLot("l-withdrawn", "h1", 5000, { withdrawn: true });
+    const result = filterAndSortLots([withdrawnLot], horses, {});
+    expect(result.map((l) => l.id)).toEqual(["l-withdrawn"]);
+  });
+});

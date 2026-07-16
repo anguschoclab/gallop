@@ -65,4 +65,56 @@ describe("analytics tracker", () => {
     expect(queue).toHaveLength(1);
     expect(queue[0].event).toBe("x");
   });
+
+  it("flushEvents returns [] and does not throw when getItem throws", () => {
+    vi.spyOn(localStorage, "getItem").mockImplementation(() => {
+      throw new Error("disabled");
+    });
+    expect(() => {
+      const flushed = flushEvents();
+      expect(flushed).toEqual([]);
+    }).not.toThrow();
+  });
+
+  it("flushEvents returns queued events and does not throw when setItem throws", () => {
+    trackEvent("a");
+    trackEvent("b");
+    vi.spyOn(localStorage, "setItem").mockImplementation(() => {
+      throw new Error("quota exceeded");
+    });
+    expect(() => {
+      const flushed = flushEvents();
+      expect(flushed).toHaveLength(2);
+    }).not.toThrow();
+  });
+
+  it("schema-invalid JSON (valid JSON, wrong shape) starts fresh queue", () => {
+    localStorage.setItem(ANALYTICS_KEY, JSON.stringify([{ wrong: "shape" }]));
+    expect(() => trackEvent("x")).not.toThrow();
+    const raw = localStorage.getItem(ANALYTICS_KEY);
+    const queue = JSON.parse(raw!);
+    expect(queue).toHaveLength(1);
+    expect(queue[0].event).toBe("x");
+  });
+
+  it("flushEvents on empty queue returns [] and sets localStorage to []", () => {
+    const flushed = flushEvents();
+    expect(flushed).toEqual([]);
+    expect(localStorage.getItem(ANALYTICS_KEY)).toBe("[]");
+  });
+
+  it("queue at exactly 100 boundary does not shift; 101st triggers shift", () => {
+    for (let i = 0; i < 100; i++) {
+      trackEvent("event", { index: i });
+    }
+    let queue = JSON.parse(localStorage.getItem(ANALYTICS_KEY)!);
+    expect(queue).toHaveLength(100);
+    expect(queue[0].properties.index).toBe(0);
+
+    trackEvent("event", { index: 100 });
+    queue = JSON.parse(localStorage.getItem(ANALYTICS_KEY)!);
+    expect(queue).toHaveLength(100);
+    expect(queue[0].properties.index).toBe(1);
+    expect(queue[99].properties.index).toBe(100);
+  });
 });

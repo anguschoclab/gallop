@@ -73,6 +73,53 @@ describe("prunePedigree", () => {
   it("returns undefined for undefined input", () => {
     expect(prunePedigree(undefined)).toBeUndefined();
   });
+
+  it("prunes at exactly maxDepth boundary (generation == maxDepth becomes stub)", () => {
+    // Depth 4 means generations 0,1,2,3,4 — gen 4 should be a stub
+    const deep = makeDeepPedigree(5);
+    const pruned = prunePedigree(deep, 4)!;
+    // Walk down the sire side to generation 4
+    let node = pruned;
+    for (let i = 0; i < 4; i++) {
+      node = node.sirePedigree!;
+    }
+    expect(node.generation).toBe(4);
+    expect(node.isStub).toBe(true);
+    // Generation 3 should NOT be a stub
+    let node3 = pruned;
+    for (let i = 0; i < 3; i++) {
+      node3 = node3.sirePedigree!;
+    }
+    expect(node3.generation).toBe(3);
+    expect(node3.isStub).toBe(false);
+  });
+
+  it("stub preserves aptitudinalGroup field", () => {
+    const deep: PedigreeNode = {
+      horseId: "h-root",
+      name: "Root",
+      generation: 0,
+      sireId: "s-0",
+      damId: "d-0",
+      sireName: "Sire 0",
+      damName: "Dam 0",
+      aptitudinalGroup: "router",
+      sirePedigree: {
+        horseId: "h-1",
+        name: "Gen 1",
+        generation: 1,
+        sireId: "s-1",
+        damId: "d-1",
+        sireName: "Sire 1",
+        damName: "Dam 1",
+        aptitudinalGroup: "miler",
+      },
+    };
+    const pruned = prunePedigree(deep, 1)!;
+    expect(pruned.aptitudinalGroup).toBe("router");
+    expect(pruned.sirePedigree?.isStub).toBe(true);
+    expect(pruned.sirePedigree?.aptitudinalGroup).toBe("miler");
+  });
 });
 
 describe("expandPedigreeStubs", () => {
@@ -111,5 +158,22 @@ describe("expandPedigreeStubs", () => {
 
   it("returns undefined for undefined input", () => {
     expect(expandPedigreeStubs(undefined, () => undefined)).toBeUndefined();
+  });
+
+  it("respects maxExpandDepth=0 safety limit", () => {
+    const deep = makeDeepPedigree(6);
+    const pruned = prunePedigree(deep, 4)!;
+    const stubCountBefore = countStubs(pruned);
+
+    const resolveHorse = (id: string): Horse | undefined => {
+      if (!id.startsWith("h-gen-")) return undefined;
+      const gen = parseInt(id.split("-")[2]);
+      if (gen <= 0) return undefined;
+      return { id, pedigree: makeDeepPedigree(2, gen) } as Horse;
+    };
+
+    // With maxExpandDepth=0, stubs should not be expanded
+    const expanded = expandPedigreeStubs(pruned, resolveHorse, 0)!;
+    expect(countStubs(expanded)).toBe(stubCountBefore);
   });
 });

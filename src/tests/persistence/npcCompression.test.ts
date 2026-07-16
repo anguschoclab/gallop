@@ -121,6 +121,35 @@ describe("compressNpcHorses", () => {
     expect(summaries).toHaveLength(3);
     expect(summaries.find((s) => s.id === playerHorse.id)).toBeUndefined();
   });
+
+  it("skips horse with stableId not in stables list", () => {
+    const stable = makeTestStable();
+    const npcHorses = makeNpcHorses(stable, 1);
+    // Change the horse's stableId to one not in the stables list
+    npcHorses[0].stableId = "nonexistent_stable";
+    const horses: Record<string, Horse> = {};
+    horses[npcHorses[0].id] = npcHorses[0];
+
+    const summaries = compressNpcHorses([stable], horses);
+    expect(summaries).toHaveLength(0);
+  });
+
+  it("handles empty horses record", () => {
+    const stable = makeTestStable();
+    const summaries = compressNpcHorses([stable], {});
+    expect(summaries).toEqual([]);
+  });
+
+  it("captures isFamousStallion when fame >= 80", () => {
+    const stable = makeTestStable();
+    const npcHorses = makeNpcHorses(stable, 1);
+    npcHorses[0].fame = 85;
+    const horses: Record<string, Horse> = {};
+    horses[npcHorses[0].id] = npcHorses[0];
+
+    const summaries = compressNpcHorses([stable], horses);
+    expect(summaries[0].isFamousStallion).toBe(true);
+  });
 });
 
 describe("regenerateNpcHorses", () => {
@@ -177,6 +206,65 @@ describe("regenerateNpcHorses", () => {
     expect(regenerated[0].careerStarts).toBe(npcHorses[0].careerStarts);
     expect(regenerated[0].careerWins).toBe(npcHorses[0].careerWins);
   });
+
+  it("skips summary with unknown stableId", () => {
+    const stable = makeTestStable();
+    const npcHorses = makeNpcHorses(stable, 2);
+    const horses: Record<string, Horse> = {};
+    for (const h of npcHorses) horses[h.id] = h;
+
+    const summaries = compressNpcHorses([stable], horses);
+    // Corrupt one summary's stableId
+    summaries[0].stableId = "nonexistent_stable";
+
+    const regenerated = regenerateNpcHorses(summaries, [stable]);
+    // Only the one with valid stableId should be regenerated
+    expect(regenerated).toHaveLength(1);
+    expect(regenerated[0].id).toBe(npcHorses[1].id);
+  });
+
+  it("restores stud career for atStud summary", () => {
+    const stable = makeTestStable();
+    const npcHorses = makeNpcHorses(stable, 1);
+    npcHorses[0].lifecycleStatus = "retired";
+    npcHorses[0].retiredOnDay = 100;
+    npcHorses[0].stud = {
+      atStud: true,
+      standingFee: 5000,
+      bookSize: 40,
+      seasonBookings: 0,
+      lifetimeFoals: 10,
+      lifetimeStakesFoals: 2,
+      lifetimeG1Foals: 1,
+      retiredOnDay: 100,
+    } as any;
+    const horses: Record<string, Horse> = {};
+    horses[npcHorses[0].id] = npcHorses[0];
+
+    const summaries = compressNpcHorses([stable], horses);
+    expect(summaries[0].atStud).toBe(true);
+    expect(summaries[0].standingFee).toBe(5000);
+
+    const regenerated = regenerateNpcHorses(summaries, [stable]);
+    expect(regenerated[0].stud).toBeDefined();
+    expect(regenerated[0].stud!.atStud).toBe(true);
+    expect(regenerated[0].stud!.standingFee).toBe(5000);
+  });
+
+  it("marks deceased horses correctly", () => {
+    const stable = makeTestStable();
+    const npcHorses = makeNpcHorses(stable, 1);
+    npcHorses[0].lifecycleStatus = "deceased";
+    const horses: Record<string, Horse> = {};
+    horses[npcHorses[0].id] = npcHorses[0];
+
+    const summaries = compressNpcHorses([stable], horses);
+    expect(summaries[0].deceased).toBe(true);
+    expect(summaries[0].lifecycleStatus).toBe("deceased");
+
+    const regenerated = regenerateNpcHorses(summaries, [stable]);
+    expect(regenerated[0].lifecycleStatus).toBe("deceased");
+  });
 });
 
 describe("splitHorsesForPersistence", () => {
@@ -193,6 +281,23 @@ describe("splitHorsesForPersistence", () => {
     expect(Object.keys(playerHorses)).toHaveLength(1);
     expect(playerHorses[playerHorse.id]).toBeDefined();
     expect(npcSummaries).toHaveLength(3);
+  });
+
+  it("horse with stableId not in stables list is treated as player horse", () => {
+    const stable = makeTestStable();
+    const npcHorses = makeNpcHorses(stable, 1);
+    // Set stableId to one not in the stables list
+    npcHorses[0].stableId = "nonexistent_stable";
+    const horses: Record<string, Horse> = {};
+    horses[npcHorses[0].id] = npcHorses[0];
+
+    const { playerHorses, npcSummaries } = splitHorsesForPersistence([stable], horses);
+
+    // Should be in playerHorses because stableId doesn't match any stable
+    expect(Object.keys(playerHorses)).toHaveLength(1);
+    expect(playerHorses[npcHorses[0].id]).toBeDefined();
+    // Should not appear in npcSummaries (compressNpcHorses also skips it)
+    expect(npcSummaries).toHaveLength(0);
   });
 });
 
@@ -214,5 +319,16 @@ describe("mergeHorses", () => {
     for (const h of npcHorses) {
       expect(merged[h.id]).toBeDefined();
     }
+  });
+
+  it("NPC horse overwrites player horse with same ID", () => {
+    const playerHorse = makePlayerHorse();
+    const npcHorse = makeNpcHorses(makeTestStable(), 1)[0];
+    // Force same ID
+    npcHorse.id = playerHorse.id;
+
+    const merged = mergeHorses({ [playerHorse.id]: playerHorse }, [npcHorse]);
+
+    expect(merged[playerHorse.id]).toBe(npcHorse);
   });
 });

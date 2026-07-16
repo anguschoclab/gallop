@@ -134,6 +134,25 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "storeVersion" as keyof GameState,
   // Season standings — last top-10 rank for change detection
   "lastTopTenRank" as keyof GameState,
+  // Share transaction history for syndicates
+  "shareTransactions" as keyof GameState,
+  // Imperial Expansion: player outposts
+  "outposts" as keyof GameState,
+  // Sire leaderboards and trend data
+  "sireLeaderboards" as keyof GameState,
+  "sireTrendHistory" as keyof GameState,
+  "leaderboardsUpdatedDay" as keyof GameState,
+  "damsireLeaderboard" as keyof GameState,
+  "blueHenLeaderboard" as keyof GameState,
+  // Regional awards tracking
+  "lastAwardYear" as keyof GameState,
+  "pendingAwardCeremonies" as keyof GameState,
+  "currentCeremonyIndex" as keyof GameState,
+  // Industry analytics for AEI calculation
+  "industryMeanEarnings" as keyof GameState,
+  "industryEarningsUpdatedDay" as keyof GameState,
+  // Career arc narrative tracking
+  "narrativeArcs" as keyof GameState,
 ];
 
 /**
@@ -368,7 +387,7 @@ export const useGame = create<StoreType>()(
     {
       name: "gallop-game-state",
       storage: createIdbStorage(),
-      onRehydrateStorage: () => (state) => {
+      onRehydrateStorage: () => async (state) => {
         if (!state) {
           hydrationComplete.value = true;
           return;
@@ -377,7 +396,7 @@ export const useGame = create<StoreType>()(
         // Version mismatch: stored data was written by an older/incompatible schema.
         // No backward compatibility for v3 — wipe the save and reset.
         if (state?.storeVersion !== STORE_STATE_VERSION) {
-          clearDatabase();
+          await clearDatabase();
           saveExists.value = false;
           persistenceEnabled.value = false;
           hydrationComplete.value = true;
@@ -398,7 +417,7 @@ export const useGame = create<StoreType>()(
 );
 
 // Export rehydrate function
-export const rehydrateStoreMain = createRehydrateStore(createInitialState, useGame);
+export const rehydrateStoreMain = createRehydrateStore(useGame);
 
 // Export as rehydrateStore for backwards compatibility
 export { rehydrateStoreMain as rehydrateStore };

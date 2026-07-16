@@ -10,6 +10,7 @@
 
 import type { Impact } from "./base";
 import type { ApprenticeProgression } from "@/core/apprentice/apprenticeTypes";
+import type { JockeySilk } from "@/core/jockey/types";
 
 // Jockey contract impact
 export interface JockeyContractImpact extends Impact {
@@ -36,7 +37,7 @@ export interface JockeyAssignmentImpact extends Impact {
 export interface JockeySilkImpact extends Impact {
   type: "jockey_silk";
   jockeyId: string;
-  silk: string;
+  silk: JockeySilk;
   reason: string;
 }
 

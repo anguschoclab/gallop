@@ -59,6 +59,7 @@ import { generateUUID } from "@/core/uuid";
 import { createRng, hashStr } from "@/core/common/rng";
 import { scoutHorse } from "@/core/npc/scouting";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
+import { generateSilk } from "@/core/jockey/generator";
 import { calculateDailyPremium } from "@/core/insurance/insuranceTypes";
 import { calculateBaseHorseValue } from "@/core/horse/pricing";
 import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
@@ -215,9 +216,7 @@ export const managementResolutionPhase: PipelinePhase = {
 
         case "reroll_silk": {
           const typedIntent = intent as RerollSilkIntent;
-          const newSilk = `#${Math.floor(context.dailyRng.next() * 16777215)
-            .toString(16)
-            .padStart(6, "0")}`;
+          const newSilk = generateSilk(context.dailyRng);
 
           impacts.push({
             id: generateUUID(context.dailyRng),

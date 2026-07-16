@@ -30,18 +30,12 @@ import type {
   JockeyAffinityImpact,
 } from "../impacts/jockeyImpacts";
 import type { TripleCrownProgressImpact } from "../impacts/campaignImpacts";
-import type { RaceEntry, RaceResult } from "@/core/race/types";
+import type { LookupMaps } from "./types";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
   impact: AnyImpact,
-  lookupMaps?: {
-    horseMap: Map<string, WritableDraft<any>>;
-    stableMap: Map<string, WritableDraft<any>>;
-    campaignMap: Map<string, WritableDraft<any>>;
-    raceMap: Map<string, WritableDraft<any>>;
-    jockeyMap: Map<string, WritableDraft<any>>;
-  },
+  lookupMaps?: LookupMaps,
 ) => void;
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
@@ -53,13 +47,13 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     if (race && horse) {
       // Evict the bumped entry and refund its stable before adding the challenger
       if (bumpEntryHorseId) {
-        const bumpIdx = race.entries.findIndex((e: RaceEntry) => e.horseId === bumpEntryHorseId);
+        const bumpIdx = race.entries.findIndex((e) => e.horseId === bumpEntryHorseId);
         if (bumpIdx !== -1) {
           const bumped = race.entries[bumpIdx];
           if (bumped.stableId) {
             const bumpedStable =
               lookupMaps?.stableMap.get(bumped.stableId) ||
-              draft.npcStables.find((s: any) => s.id === bumped.stableId);
+              draft.npcStables.find((s) => s.id === bumped.stableId);
             if (bumpedStable) {
               bumpedStable.cash = bumpedStable.cash + race.entryFee;
             }
@@ -83,7 +77,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { raceId, horseId } = impact as RaceWithdrawalImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     if (race) {
-      const index = race.entries.findIndex((e: RaceEntry) => e.horseId === horseId);
+      const index = race.entries.findIndex((e) => e.horseId === horseId);
       if (index !== -1) {
         race.entries.splice(index, 1);
       }
@@ -128,7 +122,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { raceId, horseId, jockeyId } = impact as JockeyAssignmentImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     if (race) {
-      const entry = race.entries.find((e: RaceEntry) => e.horseId === horseId);
+      const entry = race.entries.find((e) => e.horseId === horseId);
       if (entry) {
         entry.jockeyId = jockeyId;
       }
@@ -235,7 +229,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { raceId, horseId, jockeyInstructions } = impact as TacticsImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     if (race) {
-      const entry = race.entries.find((e: RaceEntry) => e.horseId === horseId);
+      const entry = race.entries.find((e) => e.horseId === horseId);
       if (entry) {
         entry.jockeyInstructions = jockeyInstructions;
       }
@@ -248,13 +242,13 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     if (race && race.result) {
       // Apply adjusted results after stewards DQ
       for (const adj of adjustedResults) {
-        const resultEntry = race.result.find((r: RaceResult) => r.horseId === adj.horseId);
+        const resultEntry = race.result.find((r) => r.horseId === adj.horseId);
         if (resultEntry) {
           resultEntry.position = adj.position;
         }
       }
       // Re-sort results by position
-      race.result.sort((a: RaceResult, b: RaceResult) => a.position - b.position);
+      race.result.sort((a, b) => a.position - b.position);
     }
   },
 
@@ -291,13 +285,7 @@ export class RacingHandler implements ImpactHandler {
   handle(
     draft: WritableDraft<GameState>,
     impact: AnyImpact,
-    lookupMaps?: {
-      horseMap: Map<string, WritableDraft<any>>;
-      stableMap: Map<string, WritableDraft<any>>;
-      campaignMap: Map<string, WritableDraft<any>>;
-      raceMap: Map<string, WritableDraft<any>>;
-      jockeyMap: Map<string, WritableDraft<any>>;
-    },
+    lookupMaps?: LookupMaps,
   ): void {
     const handler = IMPACT_HANDLERS[impact.type];
     if (handler) {
