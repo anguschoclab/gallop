@@ -64,13 +64,37 @@ describe("StableRosterWidget — tooltip accessibility", () => {
 
 describe("ImperialOutpostManager — tooltip accessibility", () => {
   it("icon-only button has aria-label on wrapping element", () => {
-    const { container } = renderWithStore(<ImperialOutpostManager />);
+    const { container } = renderWithStore(<ImperialOutpostManager />, {
+      outposts: [
+        {
+          id: "op1",
+          name: "Test Outpost",
+          region: "eu",
+          totalSlots: 10,
+          facilities: {
+            0: { id: "f1", type: "main_track", level: "basic", condition: 100 },
+          },
+        },
+      ],
+    });
     const ariaElements = container.querySelectorAll("[aria-label]");
     expect(ariaElements.length).toBeGreaterThanOrEqual(1);
   });
 
   it("no native title attributes on buttons", () => {
-    const { container } = renderWithStore(<ImperialOutpostManager />);
+    const { container } = renderWithStore(<ImperialOutpostManager />, {
+      outposts: [
+        {
+          id: "op1",
+          name: "Test Outpost",
+          region: "eu",
+          totalSlots: 10,
+          facilities: {
+            0: { id: "f1", type: "main_track", level: "basic", condition: 100 },
+          },
+        },
+      ],
+    });
     const titledButtons = container.querySelectorAll("button[title]");
     expect(titledButtons).toHaveLength(0);
   });

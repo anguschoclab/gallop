@@ -5,7 +5,19 @@ import { ImperialOutpostManager } from "@/components/facilities/ImperialOutpostM
 
 describe("ImperialOutpostManager — tier label display", () => {
   it("does NOT render raw 'basic', 'standard', 'premium', or 'elite' in badge text", () => {
-    const { container } = renderWithStore(<ImperialOutpostManager />);
+    const { container } = renderWithStore(<ImperialOutpostManager />, {
+      outposts: [
+        {
+          id: "op1",
+          name: "Test Outpost",
+          region: "eu",
+          totalSlots: 10,
+          facilities: {
+            0: { id: "f1", type: "main_track", level: "basic", condition: 100 },
+          },
+        },
+      ],
+    });
     const badges = container.querySelectorAll(".bg-t700");
     badges.forEach((badge) => {
       const text = badge.textContent?.toLowerCase() ?? "";
@@ -17,14 +29,38 @@ describe("ImperialOutpostManager — tier label display", () => {
   });
 
   it("renders Tier 0 pattern in facility slot badges", () => {
-    const { container } = renderWithStore(<ImperialOutpostManager />);
+    const { container } = renderWithStore(<ImperialOutpostManager />, {
+      outposts: [
+        {
+          id: "op1",
+          name: "Test Outpost",
+          region: "eu",
+          totalSlots: 10,
+          facilities: {
+            0: { id: "f1", type: "main_track", level: "basic", condition: 100 },
+          },
+        },
+      ],
+    });
     const badges = container.querySelectorAll(".bg-t700");
     const tierBadges = Array.from(badges).filter((b) => /Tier 0/i.test(b.textContent ?? ""));
     expect(tierBadges.length).toBeGreaterThanOrEqual(1);
   });
 
   it("renders Tier 04 instead of Elite (Level 4)", () => {
-    renderWithStore(<ImperialOutpostManager />);
+    renderWithStore(<ImperialOutpostManager />, {
+      outposts: [
+        {
+          id: "op1",
+          name: "Test Outpost",
+          region: "eu",
+          totalSlots: 10,
+          facilities: {
+            0: { id: "f1", type: "main_track", level: "elite", condition: 100 },
+          },
+        },
+      ],
+    });
     expect(screen.queryByText(/Elite \(Level 4\)/i)).toBeNull();
     expect(screen.getAllByText(/Tier 04/i).length).toBeGreaterThanOrEqual(1);
   });

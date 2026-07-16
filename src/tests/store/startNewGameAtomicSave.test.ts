@@ -7,6 +7,10 @@ vi.mock("@/services/storage/indexedDbService", () => ({
   loadBuckets: vi.fn().mockResolvedValue(null),
 }));
 
+vi.mock("@/game/store/initialization", () => ({
+  createInitialState: vi.fn(() => ({ day: 1, cash: 1000, horses: {}, races: {} })),
+}));
+
 vi.mock("@/game/store/storage", () => {
   let _saveExistsValue = false;
   let _persistenceEnabledValue = false;
