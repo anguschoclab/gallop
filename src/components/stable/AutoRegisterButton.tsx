@@ -17,6 +17,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/cn";
 import { Zap, X, Check, AlertTriangle, Loader2 } from "lucide-react";
 import { AutoRegisterSummary } from "./AutoRegisterSummary";
 import { AutoRegisterEntriesTable } from "./AutoRegisterEntriesTable";
@@ -43,22 +45,49 @@ export function AutoRegisterButton() {
 
   return (
     <>
-      <Button
-        variant="outline"
-        size="sm"
-        className="gap-2 border-primary/30 hover:bg-primary/10 text-primary font-bold uppercase text-[10px] tracking-widest"
-        onClick={() => setIsOpen(true)}
-        disabled={isDisabled}
-        title={buttonTooltip}
-      >
-        <Zap className="h-3.5 w-3.5" />
-        Auto-Register
-        {eligibleCount > 0 && (
-          <Badge variant="secondary" className="ml-1 text-[9px] px-1.5 py-0">
-            {eligibleCount}
-          </Badge>
-        )}
-      </Button>
+      {buttonTooltip ? (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <span tabIndex={0} className="inline-block cursor-not-allowed">
+              <Button
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "gap-2 border-primary/30 hover:bg-primary/10 text-primary font-bold uppercase text-[10px] tracking-widest",
+                  isDisabled && "pointer-events-none"
+                )}
+                onClick={() => setIsOpen(true)}
+                disabled={isDisabled}
+              >
+                <Zap className="h-3.5 w-3.5" />
+                Auto-Register
+                {eligibleCount > 0 && (
+                  <Badge variant="secondary" className="ml-1 text-[9px] px-1.5 py-0">
+                    {eligibleCount}
+                  </Badge>
+                )}
+              </Button>
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>{buttonTooltip}</TooltipContent>
+        </Tooltip>
+      ) : (
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2 border-primary/30 hover:bg-primary/10 text-primary font-bold uppercase text-[10px] tracking-widest"
+          onClick={() => setIsOpen(true)}
+          disabled={isDisabled}
+        >
+          <Zap className="h-3.5 w-3.5" />
+          Auto-Register
+          {eligibleCount > 0 && (
+            <Badge variant="secondary" className="ml-1 text-[9px] px-1.5 py-0">
+              {eligibleCount}
+            </Badge>
+          )}
+        </Button>
+      )}
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
