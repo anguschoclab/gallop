@@ -43,13 +43,8 @@ import { GRADED_RACES_BY_TRIPLECROWN_KEY } from "@/data/gradedRaces";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { generateUUID } from "@/core/uuid";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
-import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/constants/gameConstants";
 import { getPeakingBeyerMultiplier } from "@/core/health/banister";
-
-function getPrizeSplitForRace(race: Race): number[] {
-  if (race.graded) return GRADED_PRIZE_SPLIT;
-  return PRIZE_SPLIT;
-}
+import { getPrizeSplitForRace } from "./utils";
 
 /**
  * Resolves a race and applies impacts for live race simulation.

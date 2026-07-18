@@ -12,14 +12,9 @@ import type {
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
-import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/constants";
 import { calculateRaceWinReputation, calculateRaceLossReputation } from "@/core/reputation";
 import type { Race, Horse } from "@/game/types";
-
-function getPrizeSplitForRace(race: Race): number[] {
-  if (race.graded) return GRADED_PRIZE_SPLIT;
-  return PRIZE_SPLIT;
-}
+import { getPrizeSplitForRace } from "../utils";
 
 export function generatePrizeMoneyImpacts(
   horse: Horse,
