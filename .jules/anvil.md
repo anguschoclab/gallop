@@ -12,3 +12,8 @@
 
 **Learning:** `src/core/race/types.ts` used inline object types for `entries` and `result` arrays in the `Race` type. This led to people resorting to `(e: any)` and `(r: any)` casting in loops and `.find` in `RacingHandler.ts` to skip type errors when interacting with these arrays.
 **Action:** Extract inline object array types into explicitly named exported interfaces (like `RaceEntry`, `RaceResult`). Doing so allows other modules to easily type check those objects or let TypeScript naturally infer them from the parent property, eliminating the need for `any` casting.
+
+## 2025-03-03 - Type-safe auction impacts
+
+**Learning:** `src/game/store/slices/auctionSlice.ts` received `impacts: any[]` in `commitAuctionResult` and used `impact as any` inside a switch statement. This bypassed type safety, meaning property accesses (like `entityId` or `message`) were unguarded. Furthermore, it masked a real runtime issue where `inbox_message` impacts lacked an `id` property, meaning invalid objects were being pushed to the inbox.
+**Action:** Always type impact arrays explicitly as `AnyImpact[]` from `src/core/resolver/impacts` when applying them in stores/slices. This enables exhaustive type checking and ensures payload structural integrity.
