@@ -27,3 +27,7 @@
 
 **Learning:** The follow-up race news generator (`generateFollowUpRaceNews`) had only 8 variants for headlines and bodies, leading to repetition.
 **Action:** Expanded the `headlines` and `bodies` arrays in `src/services/narrative/newsGenerator.ts` to 14 variants each to increase variety and immersion.
+## 2026-07-25 - Expanded Atmosphere Commentary Variety Gap
+
+**Learning:** The ATMOSPHERE commentary array only had 12 templates, causing noticeable repetition during dense parts of a race replay.
+**Action:** Expanded the ATMOSPHERE array in `src/assets/narrative/templates.ts` to 24 templates to sustain variety across multiple races.
