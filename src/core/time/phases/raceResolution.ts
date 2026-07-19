@@ -18,6 +18,7 @@ import type {
 } from "@/core/resolver/impacts/index";
 import { rngForRace } from "@/services/race/raceSimulationService";
 import type { Race } from "@/game/types";
+import type { WeatherState } from "@/core/weather/weatherTypes";
 import type { ClaimingIntent } from "@/core/resolver/intents";
 import { simulateRace } from "@/services/race/raceSimulationExecutor";
 import { generateRaceImpacts } from "@/services/race/raceImpactGenerator";
@@ -72,7 +73,7 @@ export const raceResolutionPhase: PipelinePhase = {
       const raceTrackId = race.graded?.trackId ?? race.trackId;
       const weatherBuf = raceTrackId ? state.weather?.byTrack?.[raceTrackId] : undefined;
       const raceWeatherState = Array.isArray(weatherBuf)
-        ? (weatherBuf.find((w: any) => w.day === newDay) ?? weatherBuf[weatherBuf.length - 1])
+        ? (weatherBuf.find((w: WeatherState) => w.day === newDay) ?? weatherBuf[weatherBuf.length - 1])
         : undefined;
 
       // Simulate race using service

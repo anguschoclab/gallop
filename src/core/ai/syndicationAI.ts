@@ -22,7 +22,7 @@ import type { Syndicate } from "@/core/breeding/types";
  */
 export function calculateSyndicateValue(stallion: Horse): number {
   const g1Wins =
-    stallion.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
+    stallion.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1).length || 0;
   const lifetimeEarnings = stallion.lifetimeEarnings || 0;
   const age = stallion.age;
 
@@ -77,7 +77,7 @@ export function shouldCreateSyndicate(
 
   // Check if stallion is a G1 winner
   const g1Wins =
-    stallion.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
+    stallion.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1).length || 0;
   if (g1Wins === 0) return false;
 
   // Check if stallion is at stud
