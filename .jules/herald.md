@@ -27,3 +27,8 @@
 
 **Learning:** The follow-up race news generator (`generateFollowUpRaceNews`) had only 8 variants for headlines and bodies, leading to repetition.
 **Action:** Expanded the `headlines` and `bodies` arrays in `src/services/narrative/newsGenerator.ts` to 14 variants each to increase variety and immersion.
+
+## 2026-07-25 - Expanded Seed News Variety Gap
+
+**Learning:** The seed news generator (`seedNewsGenerator.ts`) only had 8 variants each for headlines and bodies across its many internal builders (e.g. `buildSeasonOpener`, `buildPowerRankings`, etc.). This caused repetition during the start of seasons.
+**Action:** Expanded the `headlines` and `bodies` arrays across all 7 builders in `src/services/narrative/seedNewsGenerator.ts` to 14 variants each to sustain narrative depth and immersion.
