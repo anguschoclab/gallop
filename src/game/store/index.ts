@@ -153,6 +153,11 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "industryEarningsUpdatedDay" as keyof GameState,
   // Career arc narrative tracking
   "narrativeArcs" as keyof GameState,
+  // Solvency / fail-state tracking
+  "consecutiveDaysInDebt" as keyof GameState,
+  "solvencyTier" as keyof GameState,
+  "runEnded" as keyof GameState,
+  "runEndSnapshot" as keyof GameState,
 ];
 
 /**
