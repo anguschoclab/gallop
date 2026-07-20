@@ -47,6 +47,8 @@ export interface GameplaySettings {
   pauseOnEvents: boolean;
   /** Produce foals with blended names from both parents when breeding */
   parentNameBlendingEnabled: boolean;
+  /** Days before forced sale to show the imminent warning alert */
+  imminentForcedSaleWarningDays: number;
 }
 
 /**
@@ -121,6 +123,7 @@ export function createDefaultUserSettings(currentDay: number = 1): UserSettings 
       showDailyEarnings: true,
       pauseOnEvents: true,
       parentNameBlendingEnabled: true,
+      imminentForcedSaleWarningDays: 2,
     },
     notifications: {
       raceResults: true,

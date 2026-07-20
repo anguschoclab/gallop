@@ -67,7 +67,7 @@ export type { StoreType, GameStateCreator } from "./types";
  * resets to defaults, keeping only fields that are always safe to carry over
  * (playerNominations, syndicateInvestors).
  */
-export const STORE_STATE_VERSION = 3;
+export const STORE_STATE_VERSION = 4;
 
 // List of state keys that should be persisted to storage.
 // NOTE: "horses" is handled specially by the storage adapter (split into

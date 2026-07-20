@@ -19,6 +19,7 @@ function makeContext(overrides: {
   auditLog?: PipelineContext["state"]["solvencyAuditLog"];
   runEnded?: boolean;
   runEndSnapshot?: PipelineContext["state"]["runEndSnapshot"];
+  userSettings?: PipelineContext["state"]["userSettings"];
 }): PipelineContext {
   const state = {
     cash: overrides.cash,
@@ -29,6 +30,7 @@ function makeContext(overrides: {
     runEnded: overrides.runEnded ?? false,
     runEndSnapshot: overrides.runEndSnapshot,
     reputation: { tier: "journeyman" },
+    userSettings: overrides.userSettings,
   } as unknown as PipelineContext["state"];
 
   return {
@@ -175,12 +177,122 @@ describe("solvencyPhase integration — day-by-day escalation", () => {
     expect(result.state.solvencyAuditLog?.some((e) => e.kind === "recovered")).toBe(true);
   });
 
-  it("emits a proactive alert 2 days before forced sale", () => {
+  it("emits a proactive alert 2 days before forced sale (default threshold)", () => {
     const ctx = makeContext({
       cash: SOLVENCY_THRESHOLDS.forcedSaleCash - 5_000,
       consecutiveDaysInDebt: SOLVENCY_THRESHOLDS.forcedSaleDays - 3,
       solvencyTier: "warning",
       day: 5,
+    });
+    const result = solvencyPhase.execute(ctx);
+
+    const inbox = result.impacts.filter((i) => i.type === "inbox_message");
+    expect(
+      inbox.some(
+        (i) =>
+          (i as { message?: { title?: string } }).message?.title ===
+          "Forced sale imminent",
+      ),
+    ).toBe(true);
+  });
+});
+
+describe("solvencyPhase — configurable imminent-warning threshold", () => {
+  it("emits alert at custom 3-day threshold", () => {
+    const ctx = makeContext({
+      cash: SOLVENCY_THRESHOLDS.forcedSaleCash - 5_000,
+      consecutiveDaysInDebt: SOLVENCY_THRESHOLDS.forcedSaleDays - 4,
+      solvencyTier: "warning",
+      day: 4,
+      userSettings: {
+        gameplay: { imminentForcedSaleWarningDays: 3 },
+      } as unknown as PipelineContext["state"]["userSettings"],
+    });
+    const result = solvencyPhase.execute(ctx);
+
+    const inbox = result.impacts.filter((i) => i.type === "inbox_message");
+    expect(
+      inbox.some(
+        (i) =>
+          (i as { message?: { title?: string } }).message?.title ===
+          "Forced sale imminent",
+      ),
+    ).toBe(true);
+  });
+
+  it("emits alert at custom 1-day threshold", () => {
+    const ctx = makeContext({
+      cash: SOLVENCY_THRESHOLDS.forcedSaleCash - 5_000,
+      consecutiveDaysInDebt: SOLVENCY_THRESHOLDS.forcedSaleDays - 2,
+      solvencyTier: "warning",
+      day: 6,
+      userSettings: {
+        gameplay: { imminentForcedSaleWarningDays: 1 },
+      } as unknown as PipelineContext["state"]["userSettings"],
+    });
+    const result = solvencyPhase.execute(ctx);
+
+    const inbox = result.impacts.filter((i) => i.type === "inbox_message");
+    expect(
+      inbox.some(
+        (i) =>
+          (i as { message?: { title?: string } }).message?.title ===
+          "Forced sale imminent",
+      ),
+    ).toBe(true);
+  });
+
+  it("does NOT emit alert at old day when custom threshold is 3", () => {
+    const ctx = makeContext({
+      cash: SOLVENCY_THRESHOLDS.forcedSaleCash - 5_000,
+      consecutiveDaysInDebt: SOLVENCY_THRESHOLDS.forcedSaleDays - 3,
+      solvencyTier: "warning",
+      day: 5,
+      userSettings: {
+        gameplay: { imminentForcedSaleWarningDays: 3 },
+      } as unknown as PipelineContext["state"]["userSettings"],
+    });
+    const result = solvencyPhase.execute(ctx);
+
+    const inbox = result.impacts.filter((i) => i.type === "inbox_message");
+    expect(
+      inbox.some(
+        (i) =>
+          (i as { message?: { title?: string } }).message?.title ===
+          "Forced sale imminent",
+      ),
+    ).toBe(false);
+  });
+
+  it("alert body text reflects configured days", () => {
+    const ctx = makeContext({
+      cash: SOLVENCY_THRESHOLDS.forcedSaleCash - 5_000,
+      consecutiveDaysInDebt: SOLVENCY_THRESHOLDS.forcedSaleDays - 4,
+      solvencyTier: "warning",
+      day: 4,
+      userSettings: {
+        gameplay: { imminentForcedSaleWarningDays: 3 },
+      } as unknown as PipelineContext["state"]["userSettings"],
+    });
+    const result = solvencyPhase.execute(ctx);
+
+    const inbox = result.impacts.filter(
+      (i) =>
+        (i as { message?: { title?: string } }).message?.title ===
+        "Forced sale imminent",
+    );
+    expect(inbox.length).toBeGreaterThan(0);
+    const body = (inbox[0] as { message?: { body?: string } }).message?.body ?? "";
+    expect(body).toContain("3 days");
+  });
+
+  it("falls back to 2-day threshold when userSettings is missing", () => {
+    const ctx = makeContext({
+      cash: SOLVENCY_THRESHOLDS.forcedSaleCash - 5_000,
+      consecutiveDaysInDebt: SOLVENCY_THRESHOLDS.forcedSaleDays - 3,
+      solvencyTier: "warning",
+      day: 5,
+      userSettings: undefined,
     });
     const result = solvencyPhase.execute(ctx);
 

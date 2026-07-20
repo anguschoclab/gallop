@@ -107,11 +107,13 @@ export const solvencyPhase = {
       });
     }
 
-    // 2b. Proactive "approaching forced sale" alert (2 days out).
+    // 2b. Proactive "approaching forced sale" alert (configurable days out).
+    const imminentWarningDays =
+      state.userSettings?.gameplay?.imminentForcedSaleWarningDays ?? 2;
     if (
       solvency.tier === "warning" &&
       startCash <= SOLVENCY_THRESHOLDS.forcedSaleCash &&
-      consecutiveDaysInDebt === SOLVENCY_THRESHOLDS.forcedSaleDays - 2
+      consecutiveDaysInDebt === SOLVENCY_THRESHOLDS.forcedSaleDays - imminentWarningDays
     ) {
       impacts.push({
         id: generateUUID(),
@@ -125,7 +127,7 @@ export const solvencyPhase = {
           category: "system",
           priority: "urgent",
           title: "Forced sale imminent",
-          body: `Creditors will seize a horse in 2 days unless your balance recovers above $${SOLVENCY_THRESHOLDS.forcedSaleCash.toLocaleString()}.`,
+          body: `Creditors will seize a horse in ${imminentWarningDays} day${imminentWarningDays === 1 ? "" : "s"} unless your balance recovers above $${SOLVENCY_THRESHOLDS.forcedSaleCash.toLocaleString()}.`,
           cta: { label: "Open finances", route: "financial-report" },
         },
       } as InboxImpact);
@@ -136,7 +138,7 @@ export const solvencyPhase = {
         cashAfter: runningCash,
         delta: 0,
         kind: "escalation",
-        detail: "Approaching forced sale — 2 days remaining",
+        detail: `Approaching forced sale — ${imminentWarningDays} day${imminentWarningDays === 1 ? "" : "s"} remaining`,
       });
     }
 

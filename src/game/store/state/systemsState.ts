@@ -212,7 +212,7 @@ export interface SystemsState {
     cashBefore: number;
     cashAfter: number;
     delta: number;
-    kind: "interest" | "seizure" | "escalation" | "recovered";
+    kind: "interest" | "seizure" | "escalation" | "recovered" | "repayment" | "voluntary_sale";
     detail: string;
   }>;
 }

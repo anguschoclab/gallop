@@ -39,6 +39,8 @@ import { getEngineWorker } from "@/game/store";
 import { generateUUID } from "@/core/uuid";
 import { resolvePhenotype } from "@/core/horse/horseFactory";
 import { clearLineageCache } from "@/core/breeding/lineage";
+import { horsePrice } from "@/core/horse/pricing";
+import { SOLVENCY_THRESHOLDS, deriveSolvencyState } from "@/core/financial/solvency";
 import type { StoreSet, StoreGet, StoreType } from "../types";
 
 export type CoreSlice = CoreState & {
@@ -73,6 +75,8 @@ export type CoreSlice = CoreState & {
   setPlayerProfile: (profile: PlayerProfile) => void;
   addLogEntry: (entry: { day: number; text: string }) => void;
   resolveHorsePhenotype: (horseId: string) => void;
+  payDownDebt: (amount: number) => ActionResult;
+  quickSellHorse: (horseId: string) => ActionResult;
 };
 
 /**
@@ -539,6 +543,83 @@ export function createCoreSlice(
       if (horse.phenotypeResolved !== false) return;
       const resolved = resolvePhenotype(horse);
       set({ horses: { ...s.horses, [horseId]: resolved } });
+    },
+
+    payDownDebt: (amount) => {
+      const s = get();
+      if (s.cash >= 0) {
+        return { ok: false, reason: "Not in debt" };
+      }
+      if (amount <= 0) {
+        return { ok: false, reason: "Amount must be positive" };
+      }
+      const debt = Math.abs(s.cash);
+      if (amount > debt) {
+        return { ok: false, reason: "Amount exceeds current debt" };
+      }
+      const cashBefore = s.cash;
+      const newCash = s.cash + amount;
+      const tier = deriveSolvencyState({
+        cash: newCash,
+        consecutiveDaysInDebt: s.consecutiveDaysInDebt ?? 0,
+      }).tier;
+      const auditEntry = {
+        day: s.day,
+        tier: tier as "healthy" | "warning" | "forced_sale" | "insolvent",
+        cashBefore,
+        cashAfter: newCash,
+        delta: amount,
+        kind: "repayment" as const,
+        detail: `External cash injection of $${amount.toLocaleString()}`,
+      };
+      const newAudit = [...(s.solvencyAuditLog ?? []), auditEntry].slice(-200);
+      set({
+        cash: newCash,
+        solvencyAuditLog: newAudit,
+        consecutiveDaysInDebt: newCash >= 0 ? 0 : s.consecutiveDaysInDebt,
+        solvencyTier: tier,
+      });
+      return { ok: true };
+    },
+
+    quickSellHorse: (horseId) => {
+      const s = get();
+      const horse = s.horses[horseId];
+      if (!horse) {
+        return { ok: false, reason: "Horse not found" };
+      }
+      if (horse.owned === false || horse.stableId) {
+        return { ok: false, reason: "Horse is not owned by player" };
+      }
+      if (horse.age <= 0) {
+        return { ok: false, reason: "Cannot sell a foal" };
+      }
+      const assessed = horsePrice(horse);
+      const salePrice = Math.round(assessed * SOLVENCY_THRESHOLDS.distressSaleRate);
+      const cashBefore = s.cash;
+      const newCash = s.cash + salePrice;
+      const tier = deriveSolvencyState({
+        cash: newCash,
+        consecutiveDaysInDebt: s.consecutiveDaysInDebt ?? 0,
+      }).tier;
+      const auditEntry = {
+        day: s.day,
+        tier: tier as "healthy" | "warning" | "forced_sale" | "insolvent",
+        cashBefore,
+        cashAfter: newCash,
+        delta: salePrice,
+        kind: "voluntary_sale" as const,
+        detail: `Voluntary distress sale of ${horse.name} (assessed $${assessed.toLocaleString()}, sold for $${salePrice.toLocaleString()})`,
+      };
+      const newAudit = [...(s.solvencyAuditLog ?? []), auditEntry].slice(-200);
+      set({
+        cash: newCash,
+        horses: { ...s.horses, [horseId]: { ...horse, owned: false } },
+        solvencyAuditLog: newAudit,
+        consecutiveDaysInDebt: newCash >= 0 ? 0 : s.consecutiveDaysInDebt,
+        solvencyTier: tier,
+      });
+      return { ok: true };
     },
   };
 }

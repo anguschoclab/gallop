@@ -4,96 +4,81 @@ import { useState } from "react";
 import { useGame } from "@/game/store";
 import {
   SOLVENCY_THRESHOLDS,
-  computeDailyInterest,
-  deriveSolvencyState,
+  computeDebtBannerDisplay,
+  previewSeizure,
 } from "@/core/financial/solvency";
 import { formatCurrency } from "@/core/financial";
 import { cn } from "@/lib/cn";
 
+const EMPTY_AUDIT: never[] = [];
+
 /**
  * Persistent banner that surfaces the player's solvency tier whenever cash
  * is negative. Silent when the stable is healthy. Expandable to reveal
- * a detail panel with debt figures, interest, and the next scheduled action.
+ * a detail panel with debt figures, interest, seizure preview, and
+ * pay-down controls.
  */
 export function DebtBanner() {
   const cash = useGame((s) => s.cash);
   const days = useGame((s) => s.consecutiveDaysInDebt ?? 0);
-  const audit = useGame((s) => s.solvencyAuditLog ?? []);
+  const audit = useGame((s) => s.solvencyAuditLog ?? EMPTY_AUDIT);
+  const horses = useGame((s) => s.horses);
+  const userSettings = useGame((s) => s.userSettings);
+  const payDownDebt = useGame((s) => s.payDownDebt);
+  const quickSellHorse = useGame((s) => s.quickSellHorse);
   const [open, setOpen] = useState(false);
+  const [payAmount, setPayAmount] = useState("");
 
-  if (cash >= 0) return null;
+  const imminentWarningDays =
+    userSettings?.gameplay?.imminentForcedSaleWarningDays ?? 2;
 
-  const { tier, cashToRecover } = deriveSolvencyState({
+  const display = computeDebtBannerDisplay({
     cash,
     consecutiveDaysInDebt: days,
+    imminentWarningDays,
   });
-  if (tier === "healthy") return null;
 
-  const daysUntilForcedSale = Math.max(
-    0,
-    SOLVENCY_THRESHOLDS.forcedSaleDays - days,
-  );
-  const interestToday = computeDailyInterest(cash);
-  const belowForcedThreshold = cash <= SOLVENCY_THRESHOLDS.forcedSaleCash;
-  const approachingSale =
-    tier === "warning" && belowForcedThreshold && daysUntilForcedSale <= 2;
+  if (!display) return null;
 
-  const nextAction =
-    tier === "insolvent"
-      ? "Run ends — legacy epilogue"
-      : tier === "forced_sale"
-        ? "Creditors seize your top horse (70% of value)"
-        : belowForcedThreshold
-          ? `Forced sale in ${daysUntilForcedSale} day${daysUntilForcedSale === 1 ? "" : "s"} unless balance recovers above ${formatCurrency(SOLVENCY_THRESHOLDS.forcedSaleCash)}`
-          : `Interest continues; forced sale triggers if balance stays below ${formatCurrency(SOLVENCY_THRESHOLDS.forcedSaleCash)} for ${SOLVENCY_THRESHOLDS.forcedSaleDays} days`;
-
-  const config = {
-    warning: {
-      label: approachingSale ? "Forced sale imminent" : "Cash reserves depleted",
-      body: `Debt ${formatCurrency(cashToRecover)}. Interest accrues daily.`,
-      tone: approachingSale
-        ? "border-red-500/60 bg-red-500/15 text-red-100"
-        : "border-amber-500/50 bg-amber-500/10 text-amber-100",
-      icon: approachingSale ? "text-red-300" : "text-amber-300",
-    },
-    forced_sale: {
-      label: "Creditors are moving in",
-      body: `Debt ${formatCurrency(cashToRecover)} for ${days} days. Assets may be seized to cover overdue balances.`,
-      tone: "border-red-600/60 bg-red-600/15 text-red-100",
-      icon: "text-red-300",
-    },
-    insolvent: {
-      label: "Insolvent",
-      body: `Debt ${formatCurrency(cashToRecover)} exceeded the floor. Run over.`,
-      tone: "border-red-800/70 bg-red-900/25 text-red-100",
-      icon: "text-red-400",
-    },
-  }[tier];
+  const horseList = Object.values(horses);
+  const seizure = previewSeizure(horseList, cash);
 
   const recentAudit = audit.slice(-5).reverse();
+
+  const handlePayDown = () => {
+    const amount = parseInt(payAmount, 10);
+    if (isNaN(amount) || amount <= 0) return;
+    const result = payDownDebt(amount);
+    if (result.ok) setPayAmount("");
+  };
+
+  const handleQuickSell = () => {
+    if (!seizure) return;
+    quickSellHorse(seizure.horseId);
+  };
 
   return (
     <div
       className={cn(
         "rounded-lg border px-4 py-3 shadow-lg",
-        config.tone,
+        display.tone,
       )}
       role="alert"
     >
       <div className="flex items-start gap-3">
-        <AlertTriangle className={cn("h-5 w-5 shrink-0 mt-0.5", config.icon)} />
+        <AlertTriangle className={cn("h-5 w-5 shrink-0 mt-0.5", display.icon)} />
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <p className="font-[family-name:var(--font-display)] text-sm font-bold tracking-wide">
-              {config.label}
+              {display.label}
             </p>
-            {tier === "warning" && belowForcedThreshold && (
+            {display.showGraceBadge && (
               <span className="text-[10px] uppercase tracking-widest opacity-75 font-mono">
-                {daysUntilForcedSale}d grace remaining
+                {display.daysUntilForcedSale}d grace remaining
               </span>
             )}
           </div>
-          <p className="text-xs opacity-90 mt-0.5">{config.body}</p>
+          <p className="text-xs opacity-90 mt-0.5">{display.body}</p>
           <div className="flex gap-3 mt-2 text-[11px] items-center">
             <Link
               to="/financial-report"
@@ -119,16 +104,77 @@ export function DebtBanner() {
 
       {open && (
         <div className="mt-3 pt-3 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-3 text-[11px]">
-          <DetailCell label="Current debt" value={formatCurrency(cashToRecover)} />
+          <DetailCell label="Current debt" value={formatCurrency(display.cashToRecover)} />
           <DetailCell
             label="Daily interest"
-            value={`${formatCurrency(interestToday)} (${(SOLVENCY_THRESHOLDS.dailyInterestRate * 100).toFixed(2)}%)`}
+            value={`${formatCurrency(display.interestToday)} (${(SOLVENCY_THRESHOLDS.dailyInterestRate * 100).toFixed(2)}%)`}
           />
           <DetailCell
             label="Days in phase"
-            value={`${days}${tier === "warning" ? ` / ${SOLVENCY_THRESHOLDS.forcedSaleDays}` : ""}`}
+            value={`${days}${display.tier === "warning" ? ` / ${SOLVENCY_THRESHOLDS.forcedSaleDays}` : ""}`}
           />
-          <DetailCell label="Next action" value={nextAction} wide />
+          <DetailCell label="Next action" value={display.nextAction} wide />
+
+          {/* Seizure Preview */}
+          {seizure && (
+            <div className="col-span-2 md:col-span-4 mt-1 p-2 rounded border border-red-500/30 bg-red-950/20">
+              <p className="text-[10px] uppercase tracking-widest opacity-60 mb-1 font-mono">
+                Seizure preview
+              </p>
+              <div className="flex flex-wrap gap-4 font-mono">
+                <span>
+                  <span className="opacity-60">Horse: </span>
+                  {seizure.horseName}
+                </span>
+                <span>
+                  <span className="opacity-60">Assessed: </span>
+                  {formatCurrency(seizure.assessedValue)}
+                </span>
+                <span className="text-red-300">
+                  <span className="opacity-60">Forced-sale: </span>
+                  {formatCurrency(seizure.salePrice)}
+                </span>
+                <span>
+                  <span className="opacity-60">Deficit after: </span>
+                  {formatCurrency(seizure.deficitAfter)}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Pay-down Debt Controls */}
+          <div className="col-span-2 md:col-span-4 mt-1 flex flex-wrap gap-2 items-end">
+            <div>
+              <label className="text-[10px] uppercase tracking-widest opacity-60 font-mono block mb-0.5">
+                Pay down debt
+              </label>
+              <input
+                type="number"
+                min={0}
+                max={display.cashToRecover}
+                value={payAmount}
+                onChange={(e) => setPayAmount(e.target.value)}
+                placeholder="Amount"
+                className="w-28 px-2 py-1 text-xs bg-black/30 border border-white/20 rounded font-mono tabular-nums"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={handlePayDown}
+              className="px-3 py-1 text-xs rounded bg-emerald-600/80 hover:bg-emerald-600 text-white font-bold"
+            >
+              Inject cash
+            </button>
+            {seizure && (
+              <button
+                type="button"
+                onClick={handleQuickSell}
+                className="px-3 py-1 text-xs rounded bg-red-600/80 hover:bg-red-600 text-white font-bold"
+              >
+                Quick sell {seizure.horseName} ({formatCurrency(seizure.salePrice)})
+              </button>
+            )}
+          </div>
 
           {recentAudit.length > 0 && (
             <div className="col-span-2 md:col-span-4 mt-1">

@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Slider } from "@/components/ui/slider";
 import { Gamepad2 } from "lucide-react";
 
 interface GameplaySettings {
@@ -10,6 +11,7 @@ interface GameplaySettings {
   showDailyEarnings?: boolean;
   pauseOnEvents?: boolean;
   parentNameBlendingEnabled?: boolean;
+  imminentForcedSaleWarningDays?: number;
 }
 
 interface GameplaySettingsCardProps {
@@ -85,6 +87,27 @@ export function GameplaySettingsCard({ settings, onUpdate }: GameplaySettingsCar
             checked={settings?.parentNameBlendingEnabled ?? true}
             onCheckedChange={(checked) => onUpdate({ parentNameBlendingEnabled: checked })}
           />
+        </div>
+        <Separator />
+        <div className="space-y-2">
+          <div className="space-y-0.5">
+            <Label htmlFor="imminent-warning">Imminent Forced Sale Warning</Label>
+            <p className="text-xs text-cream-muted">Days before forced sale to show the alert</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Slider
+              id="imminent-warning"
+              min={1}
+              max={5}
+              step={1}
+              value={[settings?.imminentForcedSaleWarningDays ?? 2]}
+              onValueChange={(value) => onUpdate({ imminentForcedSaleWarningDays: value[0] })}
+              className="flex-1"
+            />
+            <span className="text-sm text-cream-muted font-mono tabular-nums w-16 text-right">
+              {settings?.imminentForcedSaleWarningDays ?? 2} day{((settings?.imminentForcedSaleWarningDays ?? 2) === 1 ? "" : "s")}
+            </span>
+          </div>
         </div>
       </CardContent>
     </Card>
