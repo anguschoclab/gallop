@@ -51,6 +51,7 @@ import { impactApplicationPhase } from "./impactApplication";
 import { weatherPhase } from "./weatherPhase";
 import { raceInvitationsPhase } from "./raceInvitations";
 import { foalDevelopmentPhase } from "./foalDevelopmentPhase";
+import { solvencyPhase } from "./solvency";
 
 /**
  * Shared array of all game pipeline phases in their correct order.
