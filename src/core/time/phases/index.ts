@@ -51,6 +51,7 @@ import { impactApplicationPhase } from "./impactApplication";
 import { weatherPhase } from "./weatherPhase";
 import { raceInvitationsPhase } from "./raceInvitations";
 import { foalDevelopmentPhase } from "./foalDevelopmentPhase";
+import { solvencyPhase } from "./solvency";
 
 /**
  * Shared array of all game pipeline phases in their correct order.
@@ -111,6 +112,8 @@ export const GAME_PIPELINE_PHASES = [
   archivingPhase,
   // Season standings notification (order 195, before impact application)
   seasonStandingsPhase,
+  // Solvency escalation (order 199 — after upkeep/purses settled, before impacts applied)
+  solvencyPhase,
   // Impact application phase (final)
   impactApplicationPhase,
 ];

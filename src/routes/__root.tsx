@@ -129,13 +129,20 @@ export function RootComponent() {
     doRehydrate();
   }, [doRehydrate]);
 
+  const runEnded = useGame((s) => s.runEnded ?? false);
+
   useEffect(() => {
-    if (isHydrated && !saveExists.value) {
+    if (!isHydrated) return;
+    if (!saveExists.value) {
       navigate({ to: "/start" }).catch((error) => {
         console.error("Navigation error:", error);
       });
+      return;
     }
-  }, [isHydrated, saveExists.value, navigate]);
+    if (runEnded && typeof window !== "undefined" && window.location.pathname !== "/epilogue") {
+      navigate({ to: "/epilogue" }).catch(() => {});
+    }
+  }, [isHydrated, saveExists.value, runEnded, navigate]);
 
   if (rehydrateError || timedOut) {
     return (

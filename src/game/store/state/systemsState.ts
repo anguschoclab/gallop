@@ -181,6 +181,23 @@ export interface SystemsState {
   // Season standings notification system
   /** Player's rank in the top 10 at last check (for change detection) */
   lastTopTenRank?: number;
+
+  // Solvency / fail-state system
+  /** Days the player has spent below zero cash without recovering. */
+  consecutiveDaysInDebt?: number;
+  /** Most recently derived solvency tier (healthy/warning/forced_sale/insolvent). */
+  solvencyTier?: "healthy" | "warning" | "forced_sale" | "insolvent";
+  /** Once true, the run is over — routes redirect to the epilogue. */
+  runEnded?: boolean;
+  /** Snapshot of legacy stats captured at insolvency for the epilogue screen. */
+  runEndSnapshot?: {
+    day: number;
+    cash: number;
+    horsesOwned: number;
+    lifetimeEarnings: number;
+    reputationTier: string;
+    causeOfDeath: string;
+  };
 }
 
 /**
