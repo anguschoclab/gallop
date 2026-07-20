@@ -30,7 +30,9 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         stable.cash = Math.max(0, stable.cash + amount);
       }
     } else {
-      draft.cash = Math.max(0, draft.cash + amount);
+      // Player cash may go negative — the solvency phase escalates from
+      // warning → forced sale → insolvent based on the deficit.
+      draft.cash = draft.cash + amount;
     }
   },
 
