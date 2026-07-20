@@ -96,12 +96,14 @@ describe("solvencyPhase integration — day-by-day escalation", () => {
   });
 
   it("escalates warning → forced_sale on day N of debt below threshold and seizes a horse", () => {
+    const baseStats = { speed: 70, stamina: 70, acceleration: 70, temperament: 70 };
     const horses = {
-      cheap: { id: "cheap", name: "Cheap Chuck", age: 5, ratings: { current: 60 } },
+      cheap: { id: "cheap", name: "Cheap Chuck", age: 5, stats: baseStats, ratings: { current: 60 } },
       valuable: {
         id: "valuable",
         name: "Star Runner",
         age: 5,
+        stats: { speed: 110, stamina: 110, acceleration: 110, temperament: 110 },
         ratings: { current: 110 },
       },
     };
