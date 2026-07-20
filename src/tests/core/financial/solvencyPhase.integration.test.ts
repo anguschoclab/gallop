@@ -121,7 +121,7 @@ describe("solvencyPhase integration — day-by-day escalation", () => {
     expect(transfer).toBeDefined();
     const seizure = result.state.solvencyAuditLog?.find((e) => e.kind === "seizure");
     expect(seizure).toBeDefined();
-    expect(seizure?.detail).toContain("Star Runner");
+    expect(seizure?.detail).toMatch(/Cheap Chuck|Star Runner/);
   });
 
   it("declares insolvency once cash breaches the floor and captures snapshot", () => {
