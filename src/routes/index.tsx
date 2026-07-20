@@ -17,6 +17,7 @@ import { SeasonStandingsWidget } from "@/components/dashboard/SeasonStandingsWid
 import { ReputationDashboard } from "@/components/reputation/ReputationDashboard";
 import { ApprenticeTracker } from "@/components/apprentice/ApprenticeTracker";
 import { NextActionBanner } from "@/components/dashboard/NextActionBanner";
+import { DebtBanner } from "@/components/dashboard/DebtBanner";
 import { deriveNextAction } from "@/core/dashboard/nextAction";
 import { useNextActionBanner } from "@/hooks/dashboard/useNextActionBanner";
 
