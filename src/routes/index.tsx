@@ -106,6 +106,9 @@ function Dashboard() {
         <NextActionBanner action={nextAction} onDismiss={dismiss} />
       )}
 
+      {/* Solvency status */}
+      <DebtBanner />
+
       {/* Urgent Messages */}
       <UrgentMessagesStrip messages={urgentMessages} />
 
