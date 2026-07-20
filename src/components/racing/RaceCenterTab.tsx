@@ -30,9 +30,19 @@ export function RaceCenterTab() {
     return ids;
   }, [races]);
 
+  const autoSelectFirst = useMemo(() => {
+    if (selectedHorseId) return null;
+    const firstEligible = horseList.find(
+      (h) => h.owned && h.lifecycleStatus === "active" && !h.consignedSaleId && !h.activeInjury,
+    );
+    return firstEligible?.id ?? null;
+  }, [horseList, selectedHorseId]);
+
+  const effectiveHorseId = selectedHorseId ?? autoSelectFirst;
+
   const selectedHorse = useMemo(
-    () => (selectedHorseId ? horses[selectedHorseId] : undefined),
-    [horses, selectedHorseId],
+    () => (effectiveHorseId ? horses[effectiveHorseId] : undefined),
+    [horses, effectiveHorseId],
   );
 
   const eligibleRows = useHorseEligibleRaces(selectedHorse, races, jockeys, cash, day, 30);
@@ -50,16 +60,6 @@ export function RaceCenterTab() {
     },
     [advanceMultipleDays, day],
   );
-
-  const autoSelectFirst = useMemo(() => {
-    if (selectedHorseId) return null;
-    const firstEligible = horseList.find(
-      (h) => h.owned && h.lifecycleStatus === "active" && !h.consignedSaleId && !h.activeInjury,
-    );
-    return firstEligible?.id ?? null;
-  }, [horseList, selectedHorseId]);
-
-  const effectiveHorseId = selectedHorseId ?? autoSelectFirst;
 
   return (
     <div className="space-y-6 pb-20 animate-fade-in">

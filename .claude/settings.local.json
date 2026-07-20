@@ -135,7 +135,8 @@
       "Bash(curl -s -o /dev/null -w \"engine: %{http_code}\\\\n\" \"http://localhost:8080/src/workers/engine.worker.ts?worker_file&type=module\")",
       "Bash(curl -s -o /dev/null -w \"init-worker: %{http_code}\\\\n\" \"http://localhost:8080/src/workers/initialization.worker.ts?worker_file&type=module\")",
       "Bash(grep -oE \"[a-z-]+/[a-z-]+$|no-restricted-syntax|jsdoc/[a-z-]+\")",
-      "Bash(awk -F'order: ' '{print $2}')"
+      "Bash(awk -F'order: ' '{print $2}')",
+      "Bash(echo \"TSC=$?\")"
     ]
   },
   "hooks": {
