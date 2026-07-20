@@ -197,7 +197,24 @@ export interface SystemsState {
     lifetimeEarnings: number;
     reputationTier: string;
     causeOfDeath: string;
+    /** Details on the final creditor seizure, if any. */
+    lastSeizure?: {
+      horseName: string;
+      assessedValue: number;
+      salePrice: number;
+      deficitAfter: number;
+    };
   };
+  /** Rolling audit trail of solvency-related cash movements (interest, seizures). */
+  solvencyAuditLog?: Array<{
+    day: number;
+    tier: "healthy" | "warning" | "forced_sale" | "insolvent";
+    cashBefore: number;
+    cashAfter: number;
+    delta: number;
+    kind: "interest" | "seizure" | "escalation" | "recovered";
+    detail: string;
+  }>;
 }
 
 /**
