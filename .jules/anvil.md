@@ -12,3 +12,7 @@
 
 **Learning:** `src/core/race/types.ts` used inline object types for `entries` and `result` arrays in the `Race` type. This led to people resorting to `(e: any)` and `(r: any)` casting in loops and `.find` in `RacingHandler.ts` to skip type errors when interacting with these arrays.
 **Action:** Extract inline object array types into explicitly named exported interfaces (like `RaceEntry`, `RaceResult`). Doing so allows other modules to easily type check those objects or let TypeScript naturally infer them from the parent property, eliminating the need for `any` casting.
+
+## 2026-07-20 - Extracted RaceRunner Type to Eliminate any in Race History Logic
+**Learning:** `recordRaceHistory` and several components were defining `runners` arrays loosely (e.g., `any[]` or duplicated inline types). This obscured the specific properties available on runner objects (like `horseId`, `jockeyId`, `jockeyName`) leading to risky lookups without type assistance.
+**Action:** Extract inline and `any[]` arrays representing a runner directly into a unified `RaceRunner` interface exported from `@/core/race/types.ts` and `game/types.ts`.

@@ -1,7 +1,7 @@
 import { buildRaceField, rngForRace } from "@/services/race/raceSimulationService";
 import { runRaceToCompletion } from "@/core/race/engine/simulation";
 import { getCourseForRace } from "@/data/tracks";
-import type { Race, Horse, Jockey, Stable } from "@/game/types";
+import type { Race, Horse, Jockey, Stable, RaceRunner } from "@/game/types";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
@@ -10,16 +10,7 @@ import { DEFAULT_DT, defaultMaxTime } from "@/core/race/engine/constants";
 export interface RaceSimulationResult {
   raceId: string;
   result: Array<{ horseId: string; position: number; time: number }>;
-  runners: Array<{
-    horseId: string;
-    name: string;
-    silk: string;
-    owned: boolean;
-    jockeyId: string;
-    jockeyName: string;
-    barrier?: number;
-    lane?: number;
-  }>;
+  runners: RaceRunner[];
   snapshots: RaceSnapshot[];
 }
 

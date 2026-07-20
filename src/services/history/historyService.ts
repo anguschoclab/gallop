@@ -1,4 +1,4 @@
-import type { Race, Horse } from "@/game/types";
+import type { Race, Horse, RaceRunner } from "@/game/types";
 import type { SeasonRecord, HallOfFameEntry, TrackRecord } from "@/core/history/historyTypes";
 import { generateUUID } from "@/core/uuid";
 import { getCareerStats } from "@/core/horse/stats";
@@ -11,7 +11,7 @@ import type { Rng } from "@/core/common/rng";
  *
  * @param {Race} race - The race being recorded.
  * @param {Array<{horseId: string, position: number, time: number}>} result - Final positions and times for all finishers.
- * @param {any[]} runners - Runner objects containing detailed race data.
+ * @param {RaceRunner[]} runners - Runner objects containing detailed race data.
  * @param {Horse[] | Map<string, Horse>} horses - The global horse collection for metadata lookup.
  * @param {number} day - The current simulation day.
  * @param {Rng} [rng] - Optional random number generator for deterministic ID generation.
@@ -20,7 +20,7 @@ import type { Rng } from "@/core/common/rng";
 export function recordRaceHistory(
   race: Race,
   result: Array<{ horseId: string; position: number; time: number }>,
-  runners: any[],
+  runners: RaceRunner[],
   horses: Horse[] | Map<string, Horse>,
   day: number,
   rng?: Rng,

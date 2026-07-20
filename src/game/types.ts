@@ -23,7 +23,7 @@ export * from "@/core/calendar/campaignTypes";
 export type { Pregnancy } from "@/core/breeding/types";
 export type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
 export type { Horse } from "@/core/horse/types";
-export type { Race } from "@/core/race/types";
+export type { Race, RaceRunner } from "@/core/race/types";
 export type { AuctionSale, ScoutReport, PrivateSaleOffer, Claim } from "@/core/market/types";
 export type { PlayerProfile } from "@/core/stable/types";
 
