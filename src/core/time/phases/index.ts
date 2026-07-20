@@ -112,8 +112,8 @@ export const GAME_PIPELINE_PHASES = [
   archivingPhase,
   // Season standings notification (order 195, before impact application)
   seasonStandingsPhase,
-  // Impact application phase (final for state mutations)
-  impactApplicationPhase,
-  // Solvency escalation (runs last so it sees settled cash)
+  // Solvency escalation (order 199 — after upkeep/purses settled, before impacts applied)
   solvencyPhase,
+  // Impact application phase (final)
+  impactApplicationPhase,
 ];
