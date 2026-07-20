@@ -145,7 +145,7 @@ export const solvencyPhase = {
     if (solvency.tier === "insolvent") {
       const playerHorses = Object.values(state.horses).filter((h) => !h.stableId);
       const lifetimeEarnings = playerHorses.reduce(
-        (sum, h) => sum + (h.earnings ?? 0),
+        (sum, h) => sum + (h.raceHistory ?? []).reduce((s, r) => s + (r.purseEarned ?? 0), 0),
         0,
       );
       nextState = {
