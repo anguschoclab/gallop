@@ -158,6 +158,7 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "solvencyTier" as keyof GameState,
   "runEnded" as keyof GameState,
   "runEndSnapshot" as keyof GameState,
+  "solvencyAuditLog" as keyof GameState,
 ];
 
 /**

@@ -63,6 +63,34 @@ function EpiloguePage() {
         </p>
       </section>
 
+      {snapshot.lastSeizure && (
+        <section className="border border-red-900/40 rounded-lg bg-red-950/20 p-6 space-y-3">
+          <h2 className="text-xs uppercase tracking-widest text-red-300 font-mono">
+            Final creditor action
+          </h2>
+          <p className="text-cream leading-relaxed">
+            The last horse creditors seized was{" "}
+            <span className="font-bold text-cream">{snapshot.lastSeizure.horseName}</span>,
+            assessed at {formatCurrency(snapshot.lastSeizure.assessedValue)} and sold at a
+            distressed rate for {formatCurrency(snapshot.lastSeizure.salePrice)}.
+          </p>
+          <div className="grid grid-cols-3 gap-3 pt-2">
+            <StatCell
+              label="Assessed value"
+              value={formatCurrency(snapshot.lastSeizure.assessedValue)}
+            />
+            <StatCell
+              label="Distress sale"
+              value={formatCurrency(snapshot.lastSeizure.salePrice)}
+            />
+            <StatCell
+              label="Deficit after"
+              value={formatCurrency(snapshot.lastSeizure.deficitAfter)}
+            />
+          </div>
+        </section>
+      )}
+
       <footer className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
         <Link
           to="/start"
