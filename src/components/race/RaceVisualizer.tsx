@@ -11,6 +11,7 @@ import {
 import { interpolateSnapshots, getReplayDuration } from "@/services/race/racePlaybackService";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import { useRaceReplay } from "@/hooks/race/useRaceReplay";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import "./RaceVisualizer.css";
 
 interface RunnerInfo {
@@ -366,47 +367,74 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
       </div>
 
       <div className="race-controls">
-        <button
-          className="race-control-btn"
-          onClick={() => step(-1)}
-          aria-label="Step back 1 second"
-          title="Step back (←)"
-        >
-          <ChevronLeft size={20} />
-        </button>
-        <button
-          className="race-control-btn"
-          onClick={() => setIsPlaying((p) => !p)}
-          aria-label={isPlaying ? "Pause race" : "Play race"}
-          title="Play/Pause (space)"
-        >
-          {isPlaying ? <Pause size={20} /> : <Play size={20} />}
-        </button>
-        <button
-          className="race-control-btn"
-          onClick={() => step(1)}
-          aria-label="Step forward 1 second"
-          title="Step forward (→)"
-        >
-          <ChevronRight size={20} />
-        </button>
-        <button className="race-control-btn" onClick={restart} aria-label="Restart race">
-          <RotateCcw size={20} />
-        </button>
-        <button
-          className="race-control-btn"
-          onClick={toggleCamera}
-          aria-label={`Toggle camera focus: currently following ${cameraMode}`}
-        >
-          <Camera size={20} color={cameraMode === "player" ? "#facc15" : "#fff"} />
-        </button>
-        <button
-          className="race-control-btn"
-          onClick={toggleSpeed}
-          aria-label={`Toggle playback speed: currently ${playbackSpeed}x`}
-        >
-          <SkipForward size={20} color={playbackSpeed > 1 ? "#facc15" : "#fff"} />
-        </button>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              className="race-control-btn"
+              onClick={() => step(-1)}
+              aria-label="Step back 1 second"
+            >
+              <ChevronLeft size={20} />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>Step back (←)</TooltipContent>
+        </Tooltip>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              className="race-control-btn"
+              onClick={() => setIsPlaying((p) => !p)}
+              aria-label={isPlaying ? "Pause race" : "Play race"}
+            >
+              {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>Play/Pause (space)</TooltipContent>
+        </Tooltip>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              className="race-control-btn"
+              onClick={() => step(1)}
+              aria-label="Step forward 1 second"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>Step forward (→)</TooltipContent>
+        </Tooltip>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button className="race-control-btn" onClick={restart} aria-label="Restart race">
+              <RotateCcw size={20} />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>Restart race</TooltipContent>
+        </Tooltip>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              className="race-control-btn"
+              onClick={toggleCamera}
+              aria-label={`Toggle camera focus: currently following ${cameraMode}`}
+            >
+              <Camera size={20} color={cameraMode === "player" ? "#facc15" : "#fff"} />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>Toggle camera focus</TooltipContent>
+        </Tooltip>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <button
+              className="race-control-btn"
+              onClick={toggleSpeed}
+              aria-label={`Toggle playback speed: currently ${playbackSpeed}x`}
+            >
+              <SkipForward size={20} color={playbackSpeed > 1 ? "#facc15" : "#fff"} />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>Toggle playback speed</TooltipContent>
+        </Tooltip>
       </div>
     </div>
   );
