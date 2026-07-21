@@ -72,3 +72,8 @@
 
 **Learning:** When trying to memoize an O(N*M) array derivation (like `consignablePairs` using `horses.map(h => find(activeUpcoming))`), using an inline derived array (like `activeUpcoming` initialized via `.filter().sort().slice()`) as a `useMemo` dependency causes the hook to fail its equality check on every render. This turns the optimization into a regression because the application pays the overhead of the `useMemo` hook without reaping its caching benefits.
 **Action:** Always verify that all variables in a `useMemo` dependency array are referentially stable. If a dependency is a dynamically derived array, move its derivation inside the `useMemo` block and depend on the stable root source (e.g. `auctions` instead of `activeUpcoming`).
+
+## 2025-03-09 - [Optimize O(N^2) array lookup in auction runner finalLots]
+
+**Learning:** In core game logic modules, utilizing `Array.prototype.find()` inside `Array.prototype.map()` (e.g., `sale.lots.map(orig => lots.find(...))`) creates O(N^2) complexity. This degrades performance, especially in day-rollover phases where many lots are processed.
+**Action:** Pre-calculate a hash map (`Map`) using `Array.prototype.map()` for O(1) lookups before the mapping phase, reducing the overall complexity from O(N^2) to O(N).

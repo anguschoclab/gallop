@@ -601,12 +601,15 @@ export function createAuctionRunner(
     currentLot,
     step,
     runToCompletion,
-    finalLots: () =>
-      sale.lots.map((orig) => {
+    finalLots: () => {
+      // Pre-calculate hash map for O(1) lookup to avoid O(N) find inside O(N) map
+      const stateMap = new Map(lots.map(l => [l.lot.id, l]));
+      return sale.lots.map((orig) => {
         if (orig.withdrawn) return orig;
-        const state = lots.find((l) => l.lot.id === orig.id);
+        const state = stateMap.get(orig.id);
         return state ? state.lot : orig;
-      }),
+      });
+    },
     log: () => log,
     finalImpacts,
     setPlayerMaxBid: (cap: number | undefined) => {
