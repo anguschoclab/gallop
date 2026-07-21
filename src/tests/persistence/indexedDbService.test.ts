@@ -87,13 +87,7 @@ class MockDatabase {
   private stores: Record<string, MockObjectStore> = {};
 
   constructor() {
-    for (const name of [
-      "meta",
-      "horses",
-      "races",
-      "npcStables",
-      "saveSlots",
-    ]) {
+    for (const name of ["meta", "horses", "races", "npcStables", "saveSlots"]) {
       this.stores[name] = new MockObjectStore();
     }
   }

@@ -227,11 +227,7 @@ export class HorseHandler implements ImpactHandler {
     ].includes(type);
   }
 
-  handle(
-    draft: WritableDraft<GameState>,
-    impact: AnyImpact,
-    lookupMaps?: LookupMaps,
-  ): void {
+  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
     const horseId =
       (impact as { horseId?: string; entityId?: string }).horseId ||
       (impact as { entityId?: string }).entityId ||

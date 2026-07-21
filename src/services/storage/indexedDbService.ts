@@ -41,13 +41,7 @@ export interface AllBuckets {
 
 type StoreName = "meta" | "horses" | "races" | "npcStables" | "saveSlots";
 
-const STORE_NAMES: StoreName[] = [
-  "meta",
-  "horses",
-  "races",
-  "npcStables",
-  "saveSlots",
-];
+const STORE_NAMES: StoreName[] = ["meta", "horses", "races", "npcStables", "saveSlots"];
 
 let dbInstance: IDBDatabase | null = null;
 let dbInitPromise: Promise<IDBDatabase> | null = null;

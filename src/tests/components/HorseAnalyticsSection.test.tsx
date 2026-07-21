@@ -45,9 +45,36 @@ describe("HorseAnalyticsSection — Tipster Insight", () => {
   it("renders insight when horse has a 3-race win streak", () => {
     const horse = createHorse({
       raceHistory: [
-        { raceId: "r1", raceName: "Race 1", position: 1, day: 1, distance: 1200, surface: "Turf", beyer: 80, purse: 1000 },
-        { raceId: "r2", raceName: "Race 2", position: 1, day: 2, distance: 1200, surface: "Turf", beyer: 85, purse: 1000 },
-        { raceId: "r3", raceName: "Race 3", position: 1, day: 3, distance: 1200, surface: "Turf", beyer: 90, purse: 1000 },
+        {
+          raceId: "r1",
+          raceName: "Race 1",
+          position: 1,
+          day: 1,
+          distance: 1200,
+          surface: "Turf",
+          beyer: 80,
+          purse: 1000,
+        },
+        {
+          raceId: "r2",
+          raceName: "Race 2",
+          position: 1,
+          day: 2,
+          distance: 1200,
+          surface: "Turf",
+          beyer: 85,
+          purse: 1000,
+        },
+        {
+          raceId: "r3",
+          raceName: "Race 3",
+          position: 1,
+          day: 3,
+          distance: 1200,
+          surface: "Turf",
+          beyer: 90,
+          purse: 1000,
+        },
       ],
     });
     renderWithStore(<HorseAnalyticsSection horse={horse} peakingMultiplier={1.0} />);
@@ -58,20 +85,67 @@ describe("HorseAnalyticsSection — Tipster Insight", () => {
   it("does not render insight section when horse has fewer than 3 races", () => {
     const horse = createHorse({
       raceHistory: [
-        { raceId: "r1", raceName: "Race 1", position: 1, day: 1, distance: 1200, surface: "Turf", beyer: 80, purse: 1000 },
-        { raceId: "r2", raceName: "Race 2", position: 2, day: 2, distance: 1200, surface: "Turf", beyer: 75, purse: 1000 },
+        {
+          raceId: "r1",
+          raceName: "Race 1",
+          position: 1,
+          day: 1,
+          distance: 1200,
+          surface: "Turf",
+          beyer: 80,
+          purse: 1000,
+        },
+        {
+          raceId: "r2",
+          raceName: "Race 2",
+          position: 2,
+          day: 2,
+          distance: 1200,
+          surface: "Turf",
+          beyer: 75,
+          purse: 1000,
+        },
       ],
     });
-    const { container } = renderWithStore(<HorseAnalyticsSection horse={horse} peakingMultiplier={1.0} />);
+    const { container } = renderWithStore(
+      <HorseAnalyticsSection horse={horse} peakingMultiplier={1.0} />,
+    );
     expect(container.textContent).not.toContain("Tipster Insight");
   });
 
   it("displays the correct value and context for a distance specialist", () => {
     const horse = createHorse({
       raceHistory: [
-        { raceId: "r1", raceName: "Race 1", position: 2, day: 1, distance: 1200, surface: "Turf", beyer: 80, purse: 1000 },
-        { raceId: "r2", raceName: "Race 2", position: 2, day: 2, distance: 1200, surface: "Turf", beyer: 85, purse: 1000 },
-        { raceId: "r3", raceName: "Race 3", position: 2, day: 3, distance: 1200, surface: "Turf", beyer: 90, purse: 1000 },
+        {
+          raceId: "r1",
+          raceName: "Race 1",
+          position: 2,
+          day: 1,
+          distance: 1200,
+          surface: "Turf",
+          beyer: 80,
+          purse: 1000,
+        },
+        {
+          raceId: "r2",
+          raceName: "Race 2",
+          position: 2,
+          day: 2,
+          distance: 1200,
+          surface: "Turf",
+          beyer: 85,
+          purse: 1000,
+        },
+        {
+          raceId: "r3",
+          raceName: "Race 3",
+          position: 2,
+          day: 3,
+          distance: 1200,
+          surface: "Turf",
+          beyer: 90,
+          purse: 1000,
+        },
       ],
     });
     renderWithStore(<HorseAnalyticsSection horse={horse} peakingMultiplier={1.0} />);

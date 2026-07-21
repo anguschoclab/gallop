@@ -19,11 +19,7 @@ export class InboxHandler implements ImpactHandler {
     return type === "inbox_message";
   }
 
-  handle(
-    draft: WritableDraft<GameState>,
-    impact: AnyImpact,
-    _lookupMaps?: LookupMaps,
-  ): void {
+  handle(draft: WritableDraft<GameState>, impact: AnyImpact, _lookupMaps?: LookupMaps): void {
     const { message } = impact as InboxImpact;
     if (!draft.inbox) draft.inbox = [];
 

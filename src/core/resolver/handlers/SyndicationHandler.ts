@@ -112,10 +112,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     syndicate.lifetimeEarnings += totalFee;
 
     // Distribute fee among shareowners
-    const shareCount = Object.values(syndicate.shareHolders).reduce(
-      (sum, count) => sum + count,
-      0,
-    );
+    const shareCount = Object.values(syndicate.shareHolders).reduce((sum, count) => sum + count, 0);
     if (shareCount === 0) return;
 
     const feePerShare = totalFee / shareCount;
@@ -168,11 +165,7 @@ export class SyndicationHandler implements ImpactHandler {
     ].includes(type);
   }
 
-  handle(
-    draft: WritableDraft<GameState>,
-    impact: AnyImpact,
-    lookupMaps?: LookupMaps,
-  ): void {
+  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
     const handler = IMPACT_HANDLERS[impact.type];
     if (handler) {
       handler(draft, impact, lookupMaps);

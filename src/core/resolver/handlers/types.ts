@@ -7,7 +7,15 @@
  * Related files: ../resolver.ts (uses handlers), ./index.ts (exports handlers)
  */
 
-import type { GameState, Horse, Race, Stable, Jockey, HorseCampaign, AuctionSale } from "@/game/types";
+import type {
+  GameState,
+  Horse,
+  Race,
+  Stable,
+  Jockey,
+  HorseCampaign,
+  AuctionSale,
+} from "@/game/types";
 import type { Facility } from "@/core/facilities/facilityTypes";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { AnyImpact } from "../impacts";
@@ -35,11 +43,7 @@ export interface ImpactHandler {
   /**
    * Handle an impact by mutating the draft state
    */
-  handle(
-    draft: WritableDraft<GameState>,
-    impact: AnyImpact,
-    lookupMaps?: LookupMaps,
-  ): void;
+  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void;
 
   /**
    * Returns true if this handler can process the given impact type

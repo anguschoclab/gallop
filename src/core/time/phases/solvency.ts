@@ -22,9 +22,7 @@ import { PHASE_ORDER_SOLVENCY } from "@/constants";
 
 const MAX_AUDIT_ENTRIES = 200;
 
-type AuditEntry = NonNullable<
-  PipelineContext["state"]["solvencyAuditLog"]
->[number];
+type AuditEntry = NonNullable<PipelineContext["state"]["solvencyAuditLog"]>[number];
 
 export const solvencyPhase = {
   name: "solvency",
@@ -75,11 +73,7 @@ export const solvencyPhase = {
     }
 
     // 2. Warning tier escalation notice.
-    if (
-      solvency.tier === "warning" &&
-      prevDays === 0 &&
-      consecutiveDaysInDebt === 1
-    ) {
+    if (solvency.tier === "warning" && prevDays === 0 && consecutiveDaysInDebt === 1) {
       impacts.push({
         id: generateUUID(),
         intentId: "",
@@ -108,8 +102,7 @@ export const solvencyPhase = {
     }
 
     // 2b. Proactive "approaching forced sale" alert (configurable days out).
-    const imminentWarningDays =
-      state.userSettings?.gameplay?.imminentForcedSaleWarningDays ?? 2;
+    const imminentWarningDays = state.userSettings?.gameplay?.imminentForcedSaleWarningDays ?? 2;
     if (
       solvency.tier === "warning" &&
       startCash <= SOLVENCY_THRESHOLDS.forcedSaleCash &&
@@ -143,14 +136,12 @@ export const solvencyPhase = {
     }
 
     // 3. Forced sale — creditors seize the most valuable horse at 70% value.
-    let seizureRecord:
-      | {
-          horseName: string;
-          assessedValue: number;
-          salePrice: number;
-          deficitAfter: number;
-        }
-      | null = null;
+    let seizureRecord: {
+      horseName: string;
+      assessedValue: number;
+      salePrice: number;
+      deficitAfter: number;
+    } | null = null;
 
     if (solvency.tier === "forced_sale") {
       const candidates = Object.values(state.horses)
@@ -164,9 +155,7 @@ export const solvencyPhase = {
         }));
       const pick = selectForcedSaleHorse(candidates);
       if (pick) {
-        const salePrice = Math.round(
-          pick.value * SOLVENCY_THRESHOLDS.distressSaleRate,
-        );
+        const salePrice = Math.round(pick.value * SOLVENCY_THRESHOLDS.distressSaleRate);
         const deficitAfter = Math.max(0, Math.abs(runningCash) - salePrice);
         seizureRecord = {
           horseName: pick.name,
@@ -247,10 +236,9 @@ export const solvencyPhase = {
     }
 
     // Assemble next state.
-    const trimmedAudit = [
-      ...(state.solvencyAuditLog ?? []),
-      ...auditAdditions,
-    ].slice(-MAX_AUDIT_ENTRIES);
+    const trimmedAudit = [...(state.solvencyAuditLog ?? []), ...auditAdditions].slice(
+      -MAX_AUDIT_ENTRIES,
+    );
 
     let nextState = {
       ...state,
@@ -260,16 +248,9 @@ export const solvencyPhase = {
     } as typeof state;
 
     if (solvency.tier === "insolvent") {
-      const playerHorses = Object.values(state.horses).filter(
-        (h) => !h.stableId,
-      );
+      const playerHorses = Object.values(state.horses).filter((h) => !h.stableId);
       const lifetimeEarnings = playerHorses.reduce(
-        (sum, h) =>
-          sum +
-          (h.raceHistory ?? []).reduce(
-            (s, r) => s + (r.purseEarned ?? 0),
-            0,
-          ),
+        (sum, h) => sum + (h.raceHistory ?? []).reduce((s, r) => s + (r.purseEarned ?? 0), 0),
         0,
       );
       nextState = {
@@ -282,8 +263,7 @@ export const solvencyPhase = {
           lifetimeEarnings,
           reputationTier: state.reputation?.tier ?? "unknown",
           causeOfDeath: `Cash fell to $${startCash.toLocaleString()}, past the insolvency floor.`,
-          lastSeizure:
-            seizureRecord ?? state.runEndSnapshot?.lastSeizure ?? undefined,
+          lastSeizure: seizureRecord ?? state.runEndSnapshot?.lastSeizure ?? undefined,
         },
       };
       newLogs.push({

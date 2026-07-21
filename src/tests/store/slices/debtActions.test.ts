@@ -161,7 +161,14 @@ describe("quickSellHorse action", () => {
       id: "h1",
       name: "Valuable",
       age: 5,
-      stats: { speed: 110, stamina: 110, acceleration: 110, consistency: 110, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 110,
+        stamina: 110,
+        acceleration: 110,
+        consistency: 110,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     seedStore({
       cash: -1_000,

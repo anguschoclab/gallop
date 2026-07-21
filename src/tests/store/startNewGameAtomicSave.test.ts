@@ -8,7 +8,13 @@ vi.mock("@/services/storage/indexedDbService", () => ({
 }));
 
 vi.mock("@/game/store/initialization", () => ({
-  createInitialState: vi.fn((options) => ({ day: 1, cash: 1000, horses: {}, races: {}, playerProfile: options?.profile })),
+  createInitialState: vi.fn((options) => ({
+    day: 1,
+    cash: 1000,
+    horses: {},
+    races: {},
+    playerProfile: options?.profile,
+  })),
 }));
 
 vi.mock("@/game/store/storage", () => {

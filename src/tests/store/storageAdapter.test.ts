@@ -68,7 +68,27 @@ function makeMockHorse(id: string, owned: boolean, stableId?: string): any {
     gender: "colt",
     hemisphere: "northern",
     silk: "red",
-    stats: { speed: 50, stamina: 50, acceleration: 50, temperament: 50, distanceAptitude: 50, surfaceAptitude: 50, mudAptitude: 50, corneringAptitude: 50, climbingAptitude: 50, recoveryRate: 50, trainability: 50, heartScore: 50, peakAge: 4, strideType: "average", trackPreference: "balanced", runningStyle: "front", bleederRisk: 0, roarerRisk: 0, ocdRisk: 0 } as any,
+    stats: {
+      speed: 50,
+      stamina: 50,
+      acceleration: 50,
+      temperament: 50,
+      distanceAptitude: 50,
+      surfaceAptitude: 50,
+      mudAptitude: 50,
+      corneringAptitude: 50,
+      climbingAptitude: 50,
+      recoveryRate: 50,
+      trainability: 50,
+      heartScore: 50,
+      peakAge: 4,
+      strideType: "average",
+      trackPreference: "balanced",
+      runningStyle: "front",
+      bleederRisk: 0,
+      roarerRisk: 0,
+      ocdRisk: 0,
+    } as any,
     genotype: {} as any,
     energy: 100,
     fitness: 50,
@@ -197,7 +217,9 @@ describe("store/storage.ts", () => {
       expect(buckets.meta.cash).toBe(50000);
       // Races and npcStables should be passed through
       expect(buckets.races).toEqual({});
-      expect(buckets.npcStables).toEqual({ npc_stable_1: { id: "npc_stable_1", name: "NPC Stable" } });
+      expect(buckets.npcStables).toEqual({
+        npc_stable_1: { id: "npc_stable_1", name: "NPC Stable" },
+      });
     });
 
     it("uses localStorage fallback when IDB unavailable", async () => {

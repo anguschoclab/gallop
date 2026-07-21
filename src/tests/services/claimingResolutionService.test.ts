@@ -767,8 +767,18 @@ describe("processClaimingResolution — multiple eligible claims for different h
       ],
     });
     const intents = [
-      mkClaimingIntent({ id: "c-1", horseId: "h1", claimantStableId: "s-buyer-1", claimingPrice: 25000 }),
-      mkClaimingIntent({ id: "c-2", horseId: "h2", claimantStableId: "s-buyer-2", claimingPrice: 25000 }),
+      mkClaimingIntent({
+        id: "c-1",
+        horseId: "h1",
+        claimantStableId: "s-buyer-1",
+        claimingPrice: 25000,
+      }),
+      mkClaimingIntent({
+        id: "c-2",
+        horseId: "h2",
+        claimantStableId: "s-buyer-2",
+        claimingPrice: 25000,
+      }),
     ];
     const result = processClaimingResolution({
       race,
@@ -781,7 +791,9 @@ describe("processClaimingResolution — multiple eligible claims for different h
     expect(claimingImpacts).toHaveLength(2);
     expect(claimingImpacts.map((c) => c.horseId).sort()).toEqual(["h1", "h2"]);
 
-    const negativeCash = result.impacts.filter((i) => i.type === "cash_change" && (i as any).amount < 0) as any[];
+    const negativeCash = result.impacts.filter(
+      (i) => i.type === "cash_change" && (i as any).amount < 0,
+    ) as any[];
     expect(negativeCash).toHaveLength(2);
 
     const positiveProceeds = result.impacts.filter(
@@ -936,10 +948,30 @@ describe("processClaimingResolution — 2 horses × 2 claimants each", () => {
       ],
     });
     const intents = [
-      mkClaimingIntent({ id: "c-1a", horseId: "h1", claimantStableId: "s-a1", claimingPrice: 25000 }),
-      mkClaimingIntent({ id: "c-1b", horseId: "h1", claimantStableId: "s-b1", claimingPrice: 25000 }),
-      mkClaimingIntent({ id: "c-2a", horseId: "h2", claimantStableId: "s-a2", claimingPrice: 25000 }),
-      mkClaimingIntent({ id: "c-2b", horseId: "h2", claimantStableId: "s-b2", claimingPrice: 25000 }),
+      mkClaimingIntent({
+        id: "c-1a",
+        horseId: "h1",
+        claimantStableId: "s-a1",
+        claimingPrice: 25000,
+      }),
+      mkClaimingIntent({
+        id: "c-1b",
+        horseId: "h1",
+        claimantStableId: "s-b1",
+        claimingPrice: 25000,
+      }),
+      mkClaimingIntent({
+        id: "c-2a",
+        horseId: "h2",
+        claimantStableId: "s-a2",
+        claimingPrice: 25000,
+      }),
+      mkClaimingIntent({
+        id: "c-2b",
+        horseId: "h2",
+        claimantStableId: "s-b2",
+        claimingPrice: 25000,
+      }),
     ];
     const result = processClaimingResolution({
       race,
@@ -957,7 +989,9 @@ describe("processClaimingResolution — 2 horses × 2 claimants each", () => {
     ) as any[];
     expect(refundImpacts).toHaveLength(2);
 
-    const negativeCash = result.impacts.filter((i) => i.type === "cash_change" && (i as any).amount < 0) as any[];
+    const negativeCash = result.impacts.filter(
+      (i) => i.type === "cash_change" && (i as any).amount < 0,
+    ) as any[];
     expect(negativeCash).toHaveLength(2);
 
     const positiveProceeds = result.impacts.filter(

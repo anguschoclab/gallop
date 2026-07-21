@@ -29,8 +29,7 @@ export function DebtBanner() {
   const [open, setOpen] = useState(false);
   const [payAmount, setPayAmount] = useState("");
 
-  const imminentWarningDays =
-    userSettings?.gameplay?.imminentForcedSaleWarningDays ?? 2;
+  const imminentWarningDays = userSettings?.gameplay?.imminentForcedSaleWarningDays ?? 2;
 
   const display = computeDebtBannerDisplay({
     cash,
@@ -58,13 +57,7 @@ export function DebtBanner() {
   };
 
   return (
-    <div
-      className={cn(
-        "rounded-lg border px-4 py-3 shadow-lg",
-        display.tone,
-      )}
-      role="alert"
-    >
+    <div className={cn("rounded-lg border px-4 py-3 shadow-lg", display.tone)} role="alert">
       <div className="flex items-start gap-3">
         <AlertTriangle className={cn("h-5 w-5 shrink-0 mt-0.5", display.icon)} />
         <div className="flex-1 min-w-0">
@@ -80,10 +73,7 @@ export function DebtBanner() {
           </div>
           <p className="text-xs opacity-90 mt-0.5">{display.body}</p>
           <div className="flex gap-3 mt-2 text-[11px] items-center">
-            <Link
-              to="/financial-report"
-              className="underline underline-offset-2 hover:opacity-80"
-            >
+            <Link to="/financial-report" className="underline underline-offset-2 hover:opacity-80">
               Open finances
             </Link>
             <Link to="/stable" className="underline underline-offset-2 hover:opacity-80">
@@ -207,15 +197,7 @@ export function DebtBanner() {
   );
 }
 
-function DetailCell({
-  label,
-  value,
-  wide,
-}: {
-  label: string;
-  value: string;
-  wide?: boolean;
-}) {
+function DetailCell({ label, value, wide }: { label: string; value: string; wide?: boolean }) {
   return (
     <div className={cn(wide && "col-span-2 md:col-span-4")}>
       <div className="text-[9px] uppercase tracking-widest opacity-60 font-mono mb-0.5">

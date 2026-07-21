@@ -155,7 +155,12 @@ describe("auctioneerService", () => {
     const horse = mkHorse();
     const stable = mkStable("Rival Farm");
     const playerEvent: AuctionTickEvent = { type: "BID_RECEIVED", lotId: "l1", amount: 50000 };
-    const npcEvent: AuctionTickEvent = { type: "BID_RECEIVED", lotId: "l1", stableId: "s1", amount: 50000 };
+    const npcEvent: AuctionTickEvent = {
+      type: "BID_RECEIVED",
+      lotId: "l1",
+      stableId: "s1",
+      amount: 50000,
+    };
 
     let playerMentionsYou = false;
     let npcMentionsStableOrPaddle = false;
@@ -163,8 +168,13 @@ describe("auctioneerService", () => {
       const playerLine = generateAuctioneerLine(playerEvent, { horse }, createRng(seed));
       if (/you|your/i.test(playerLine.text)) playerMentionsYou = true;
 
-      const npcLine = generateAuctioneerLine(npcEvent, { horse, winner: stable, paddleNumber: 7 }, createRng(seed));
-      if (npcLine.text.includes("Rival Farm") || npcLine.text.includes("paddle 7")) npcMentionsStableOrPaddle = true;
+      const npcLine = generateAuctioneerLine(
+        npcEvent,
+        { horse, winner: stable, paddleNumber: 7 },
+        createRng(seed),
+      );
+      if (npcLine.text.includes("Rival Farm") || npcLine.text.includes("paddle 7"))
+        npcMentionsStableOrPaddle = true;
     }
     expect(playerMentionsYou).toBe(true);
     expect(npcMentionsStableOrPaddle).toBe(true);
@@ -208,7 +218,12 @@ describe("auctioneerService", () => {
 
   it("RESERVE_NOT_MET: amount and reserve appear in output, isHighImpact: false", () => {
     const horse = mkHorse();
-    const event: AuctionTickEvent = { type: "RESERVE_NOT_MET", lotId: "l1", amount: 30000, reserve: 50000 };
+    const event: AuctionTickEvent = {
+      type: "RESERVE_NOT_MET",
+      lotId: "l1",
+      amount: 30000,
+      reserve: 50000,
+    };
     let mentionsAmount = false;
     let mentionsReserve = false;
     for (let seed = 1; seed <= 10; seed++) {

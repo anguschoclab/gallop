@@ -10,8 +10,7 @@ import { horsePrice } from "@/core/horse/pricing";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 
 vi.mock("@tanstack/react-router", () => ({
-  Link: ({ children, ...props }: { children?: ReactNode }) =>
-    createElement("a", props, children),
+  Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
 }));
 
 describe("DebtBanner", () => {

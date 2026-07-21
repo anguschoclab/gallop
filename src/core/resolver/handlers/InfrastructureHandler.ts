@@ -116,11 +116,7 @@ export class InfrastructureHandler implements ImpactHandler {
     return ["facility_upgrade", "staff", "transport_horse", "outpost_action"].includes(type);
   }
 
-  handle(
-    draft: WritableDraft<GameState>,
-    impact: AnyImpact,
-    lookupMaps?: LookupMaps,
-  ): void {
+  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
     const handler = IMPACT_HANDLERS[impact.type];
     if (handler) {
       handler(draft, impact, lookupMaps);

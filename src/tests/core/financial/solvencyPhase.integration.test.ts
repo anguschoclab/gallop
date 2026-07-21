@@ -100,7 +100,13 @@ describe("solvencyPhase integration — day-by-day escalation", () => {
   it("escalates warning → forced_sale on day N of debt below threshold and seizes a horse", () => {
     const baseStats = { speed: 70, stamina: 70, acceleration: 70, temperament: 70 };
     const horses = {
-      cheap: { id: "cheap", name: "Cheap Chuck", age: 5, stats: baseStats, ratings: { current: 60 } },
+      cheap: {
+        id: "cheap",
+        name: "Cheap Chuck",
+        age: 5,
+        stats: baseStats,
+        ratings: { current: 60 },
+      },
       valuable: {
         id: "valuable",
         name: "Star Runner",
@@ -189,9 +195,7 @@ describe("solvencyPhase integration — day-by-day escalation", () => {
     const inbox = result.impacts.filter((i) => i.type === "inbox_message");
     expect(
       inbox.some(
-        (i) =>
-          (i as { message?: { title?: string } }).message?.title ===
-          "Forced sale imminent",
+        (i) => (i as { message?: { title?: string } }).message?.title === "Forced sale imminent",
       ),
     ).toBe(true);
   });
@@ -213,9 +217,7 @@ describe("solvencyPhase — configurable imminent-warning threshold", () => {
     const inbox = result.impacts.filter((i) => i.type === "inbox_message");
     expect(
       inbox.some(
-        (i) =>
-          (i as { message?: { title?: string } }).message?.title ===
-          "Forced sale imminent",
+        (i) => (i as { message?: { title?: string } }).message?.title === "Forced sale imminent",
       ),
     ).toBe(true);
   });
@@ -235,9 +237,7 @@ describe("solvencyPhase — configurable imminent-warning threshold", () => {
     const inbox = result.impacts.filter((i) => i.type === "inbox_message");
     expect(
       inbox.some(
-        (i) =>
-          (i as { message?: { title?: string } }).message?.title ===
-          "Forced sale imminent",
+        (i) => (i as { message?: { title?: string } }).message?.title === "Forced sale imminent",
       ),
     ).toBe(true);
   });
@@ -257,9 +257,7 @@ describe("solvencyPhase — configurable imminent-warning threshold", () => {
     const inbox = result.impacts.filter((i) => i.type === "inbox_message");
     expect(
       inbox.some(
-        (i) =>
-          (i as { message?: { title?: string } }).message?.title ===
-          "Forced sale imminent",
+        (i) => (i as { message?: { title?: string } }).message?.title === "Forced sale imminent",
       ),
     ).toBe(false);
   });
@@ -277,9 +275,7 @@ describe("solvencyPhase — configurable imminent-warning threshold", () => {
     const result = solvencyPhase.execute(ctx);
 
     const inbox = result.impacts.filter(
-      (i) =>
-        (i as { message?: { title?: string } }).message?.title ===
-        "Forced sale imminent",
+      (i) => (i as { message?: { title?: string } }).message?.title === "Forced sale imminent",
     );
     expect(inbox.length).toBeGreaterThan(0);
     const body = (inbox[0] as { message?: { body?: string } }).message?.body ?? "";
@@ -299,9 +295,7 @@ describe("solvencyPhase — configurable imminent-warning threshold", () => {
     const inbox = result.impacts.filter((i) => i.type === "inbox_message");
     expect(
       inbox.some(
-        (i) =>
-          (i as { message?: { title?: string } }).message?.title ===
-          "Forced sale imminent",
+        (i) => (i as { message?: { title?: string } }).message?.title === "Forced sale imminent",
       ),
     ).toBe(true);
   });

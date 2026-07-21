@@ -41,10 +41,7 @@ function EpiloguePage() {
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCell label="Days survived" value={snapshot.day.toLocaleString()} />
         <StatCell label="Horses owned" value={snapshot.horsesOwned.toLocaleString()} />
-        <StatCell
-          label="Lifetime earnings"
-          value={formatCurrency(snapshot.lifetimeEarnings)}
-        />
+        <StatCell label="Lifetime earnings" value={formatCurrency(snapshot.lifetimeEarnings)} />
         <StatCell label="Reputation" value={snapshot.reputationTier} />
       </section>
 
@@ -54,12 +51,11 @@ function EpiloguePage() {
         </h2>
         <p className="text-cream leading-relaxed">
           At day {snapshot.day.toLocaleString()}, the ledger read {formatCurrency(snapshot.cash)}.
-          The horses were led away, the silks folded, the stalls swept clean. What remains is
-          {" "}
+          The horses were led away, the silks folded, the stalls swept clean. What remains is{" "}
           {snapshot.lifetimeEarnings > 0
             ? `a record of ${formatCurrency(snapshot.lifetimeEarnings)} won on the turf`
-            : "only what might have been"}
-          {" "}— and the memory of every horse that carried your colors.
+            : "only what might have been"}{" "}
+          — and the memory of every horse that carried your colors.
         </p>
       </section>
 
@@ -70,9 +66,9 @@ function EpiloguePage() {
           </h2>
           <p className="text-cream leading-relaxed">
             The last horse creditors seized was{" "}
-            <span className="font-bold text-cream">{snapshot.lastSeizure.horseName}</span>,
-            assessed at {formatCurrency(snapshot.lastSeizure.assessedValue)} and sold at a
-            distressed rate for {formatCurrency(snapshot.lastSeizure.salePrice)}.
+            <span className="font-bold text-cream">{snapshot.lastSeizure.horseName}</span>, assessed
+            at {formatCurrency(snapshot.lastSeizure.assessedValue)} and sold at a distressed rate
+            for {formatCurrency(snapshot.lastSeizure.salePrice)}.
           </p>
           <div className="grid grid-cols-3 gap-3 pt-2">
             <StatCell
@@ -115,9 +111,7 @@ function StatCell({ label, value }: { label: string; value: string | number }) {
       <div className="text-[9px] uppercase tracking-widest text-cream-muted/60 font-mono mb-1">
         {label}
       </div>
-      <div className="text-xl font-bold text-cream font-mono tabular-nums">
-        {value}
-      </div>
+      <div className="text-xl font-bold text-cream font-mono tabular-nums">{value}</div>
     </div>
   );
 }

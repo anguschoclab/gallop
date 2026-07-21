@@ -12,7 +12,15 @@
 // Handles intent collection, validation, and impact application using Immer
 
 import { produce, type WritableDraft } from "immer";
-import type { GameState, Horse, Stable, Race, Jockey, HorseCampaign, AuctionSale } from "@/game/types";
+import type {
+  GameState,
+  Horse,
+  Stable,
+  Race,
+  Jockey,
+  HorseCampaign,
+  AuctionSale,
+} from "@/game/types";
 import type { Facility } from "@/core/facilities/facilityTypes";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { AnyIntent } from "./intents";

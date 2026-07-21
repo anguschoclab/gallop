@@ -99,11 +99,7 @@ export class MarketHandler implements ImpactHandler {
     );
   }
 
-  handle(
-    draft: WritableDraft<GameState>,
-    impact: AnyImpact,
-    lookupMaps?: LookupMaps,
-  ): void {
+  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
     const handler = IMPACT_HANDLERS[impact.type];
     if (handler) {
       handler(draft, impact, lookupMaps);

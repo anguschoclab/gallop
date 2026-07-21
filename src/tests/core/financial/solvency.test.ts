@@ -60,9 +60,7 @@ describe("selectForcedSaleHorse", () => {
 
   it("returns null when there is nothing eligible", () => {
     expect(selectForcedSaleHorse([])).toBeNull();
-    expect(
-      selectForcedSaleHorse([{ id: "x", owned: false, age: 4, value: 10 }]),
-    ).toBeNull();
+    expect(selectForcedSaleHorse([{ id: "x", owned: false, age: 4, value: 10 }])).toBeNull();
   });
 });
 
@@ -84,8 +82,32 @@ describe("computeDailyInterest", () => {
 
 describe("previewSeizure", () => {
   it("returns the most valuable owned adult horse", () => {
-    const cheap = createTestHorse({ id: "cheap", name: "Cheap Chuck", age: 5, stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60, temperament: 50, conformation: 50 } });
-    const valuable = createTestHorse({ id: "valuable", name: "Star Runner", age: 5, stats: { speed: 100, stamina: 100, acceleration: 100, consistency: 100, temperament: 50, conformation: 50 } });
+    const cheap = createTestHorse({
+      id: "cheap",
+      name: "Cheap Chuck",
+      age: 5,
+      stats: {
+        speed: 60,
+        stamina: 60,
+        acceleration: 60,
+        consistency: 60,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
+    const valuable = createTestHorse({
+      id: "valuable",
+      name: "Star Runner",
+      age: 5,
+      stats: {
+        speed: 100,
+        stamina: 100,
+        acceleration: 100,
+        consistency: 100,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
     const result = previewSeizure([cheap, valuable], -50_000);
     expect(result).not.toBeNull();
     expect(result!.horseId).toBe("valuable");
@@ -122,7 +144,19 @@ describe("previewSeizure", () => {
   });
 
   it("computes deficitAfter correctly when salePrice < debt", () => {
-    const horse = createTestHorse({ id: "h1", name: "Test", age: 5, stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60, temperament: 50, conformation: 50 } });
+    const horse = createTestHorse({
+      id: "h1",
+      name: "Test",
+      age: 5,
+      stats: {
+        speed: 60,
+        stamina: 60,
+        acceleration: 60,
+        consistency: 60,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
     const assessed = horsePrice(horse);
     const salePrice = Math.round(assessed * SOLVENCY_THRESHOLDS.distressSaleRate);
     const result = previewSeizure([horse], -50_000);
@@ -131,7 +165,19 @@ describe("previewSeizure", () => {
   });
 
   it("clamps deficitAfter to 0 when salePrice exceeds debt", () => {
-    const horse = createTestHorse({ id: "h1", name: "Valuable", age: 5, stats: { speed: 110, stamina: 110, acceleration: 110, consistency: 110, temperament: 50, conformation: 50 } });
+    const horse = createTestHorse({
+      id: "h1",
+      name: "Valuable",
+      age: 5,
+      stats: {
+        speed: 110,
+        stamina: 110,
+        acceleration: 110,
+        consistency: 110,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
     const result = previewSeizure([horse], -1_000);
     expect(result).not.toBeNull();
     expect(result!.deficitAfter).toBe(0);
@@ -139,10 +185,40 @@ describe("previewSeizure", () => {
 
   it("selects same horse as selectForcedSaleHorse on identical input", () => {
     const horses = [
-      createTestHorse({ id: "a", name: "A", age: 4, stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 } }),
-      createTestHorse({ id: "b", name: "B", age: 6, stats: { speed: 90, stamina: 90, acceleration: 90, consistency: 90, temperament: 50, conformation: 50 } }),
+      createTestHorse({
+        id: "a",
+        name: "A",
+        age: 4,
+        stats: {
+          speed: 70,
+          stamina: 70,
+          acceleration: 70,
+          consistency: 70,
+          temperament: 50,
+          conformation: 50,
+        },
+      }),
+      createTestHorse({
+        id: "b",
+        name: "B",
+        age: 6,
+        stats: {
+          speed: 90,
+          stamina: 90,
+          acceleration: 90,
+          consistency: 90,
+          temperament: 50,
+          conformation: 50,
+        },
+      }),
     ];
-    const sellable = horses.map((h) => ({ id: h.id, owned: h.owned, age: h.age, value: horsePrice(h), name: h.name }));
+    const sellable = horses.map((h) => ({
+      id: h.id,
+      owned: h.owned,
+      age: h.age,
+      value: horsePrice(h),
+      name: h.name,
+    }));
     const forcedPick = selectForcedSaleHorse(sellable);
     const preview = previewSeizure(horses, -50_000);
     expect(preview).not.toBeNull();

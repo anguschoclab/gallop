@@ -49,9 +49,7 @@ export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyti
 
           <BeyerChart history={horse.raceHistory ?? []} />
 
-          {(horse.raceHistory ?? []).some(
-            (h) => h.pacePositions && h.pacePositions.length > 0,
-          ) && (
+          {(horse.raceHistory ?? []).some((h) => h.pacePositions && h.pacePositions.length > 0) && (
             <div className="pt-4 border-t border-white/5 space-y-2">
               <div className="text-[10px] font-black uppercase text-fame/40 tracking-widest">
                 Pace Profile

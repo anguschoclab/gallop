@@ -105,7 +105,8 @@ export function GameplaySettingsCard({ settings, onUpdate }: GameplaySettingsCar
               className="flex-1"
             />
             <span className="text-sm text-cream-muted font-mono tabular-nums w-16 text-right">
-              {settings?.imminentForcedSaleWarningDays ?? 2} day{((settings?.imminentForcedSaleWarningDays ?? 2) === 1 ? "" : "s")}
+              {settings?.imminentForcedSaleWarningDays ?? 2} day
+              {(settings?.imminentForcedSaleWarningDays ?? 2) === 1 ? "" : "s"}
             </span>
           </div>
         </div>
