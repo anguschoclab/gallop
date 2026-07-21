@@ -32,3 +32,17 @@ export function renderWithStore(
   seedStore(overrides);
   return render(ui);
 }
+
+/**
+ * A minimal but non-empty game: some cash and a mid-game day. playerProfile is
+ * left undefined (its default) — a partial profile is worse than none because
+ * routes guard with `if (profile)` before accessing its fields.
+ *
+ * @returns partial state suitable for seedStore/renderWithStore overrides
+ */
+export function midGameSeed(): Partial<GameState> {
+  return {
+    day: 120,
+    cash: 250_000,
+  };
+}

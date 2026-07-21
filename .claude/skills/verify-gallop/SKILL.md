@@ -56,7 +56,12 @@ A block-body selector is fine if it returns a _primitive_ or an _existing elemen
 1. `useGameWithShallow((s) => s.x ?? [])` — for `?? []`/`?? {}` fallbacks; shallow equality makes empty collections compare equal. Match the file's existing convention.
 2. A module-level stable constant returned from a plain `useGame`: `const EMPTY: T[] = []; … useGame((s) => s.x ?? EMPTY)`.
 
-**Prove a render-loop fix actually holds** (don't trust "it looks fixed"): there's a real-store test harness at `src/test-utils/renderWithStore.tsx` that mounts a component against the _real_ store, so a loop throws `Maximum update depth exceeded` in the test. Add/extend a smoke case in `src/tests/smoke/storeSubscription.smoke.test.tsx`, then prove it bites by reverting the fix and watching it fail. An ESLint guardrail (`no-restricted-syntax` in `eslint.config.js`) now blocks new offenders — `bun run lint` will catch a reintroduced `?? []`.
+**Prove a render-loop fix actually holds** (don't trust "it looks fixed"): there's a real-store test harness at `src/test-utils/renderWithStore.tsx` that mounts a component against the _real_ store, so a loop throws `Maximum update depth exceeded` in the test. Two smoke suites use it:
+
+1. **`src/tests/smoke/storeSubscription.smoke.test.tsx`** — targeted tests for individual components known to be loop-prone (e.g. `WeatherForecastStrip`, `RacesTab`).
+2. **`src/tests/smoke/routeMount.smoke.test.tsx`** — auto-discovers and mounts **every** route component (31+ content routes) via `import.meta.glob` against the real store with a mocked router. Catches loops anywhere in the route tree, not just in pre-selected components. Uses `src/test-utils/routerMock.tsx` (complete mock with `createFileRoute`, `createRootRoute`, `notFound`, `Navigate`, etc.) and `midGameSeed()` (minimal non-empty state). Routes that `throw notFound()` for non-existent dummy IDs are treated as passes (the component mounted and ran to the guard). `__root.tsx` is skipped (needs a real router). Run: `bunx vitest run src/tests/smoke/routeMount.smoke.test.tsx`.
+
+Prove either suite bites by reverting the fix and watching it fail, then restoring and watching it pass. An ESLint guardrail (`no-restricted-syntax` in `eslint.config.js`) now blocks new offenders — `bun run lint` will catch a reintroduced `?? []`.
 
 ## Runtime verification
 

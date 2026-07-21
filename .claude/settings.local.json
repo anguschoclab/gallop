@@ -136,7 +136,8 @@
       "Bash(curl -s -o /dev/null -w \"init-worker: %{http_code}\\\\n\" \"http://localhost:8080/src/workers/initialization.worker.ts?worker_file&type=module\")",
       "Bash(grep -oE \"[a-z-]+/[a-z-]+$|no-restricted-syntax|jsdoc/[a-z-]+\")",
       "Bash(awk -F'order: ' '{print $2}')",
-      "Bash(echo \"TSC=$?\")"
+      "Bash(echo \"TSC=$?\")",
+      "Bash(cp src/game/store/index.ts *)"
     ]
   },
   "hooks": {

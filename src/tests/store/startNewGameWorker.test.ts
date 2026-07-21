@@ -60,6 +60,11 @@ const mockWorkerCreateInitialState = vi.fn();
 vi.mock("@/workers/engine.worker", () => ({}));
 vi.mock("@/workers/initialization.worker", () => ({}));
 
+const mockMainThreadCreateInitialState = vi.fn();
+vi.mock("@/game/store/initialization", () => ({
+  createInitialState: (...args: unknown[]) => mockMainThreadCreateInitialState(...args),
+}));
+
 vi.mock("comlink", () => ({
   wrap: vi.fn(() => ({
     createInitialState: mockWorkerCreateInitialState,
@@ -129,6 +134,7 @@ describe("startNewGame uses initialization worker", () => {
     (saveGameStateToIDB as any).mockResolvedValue(undefined);
     (clearDatabase as any).mockResolvedValue(undefined);
     mockWorkerCreateInitialState.mockResolvedValue({ state: mockWorkerState });
+    mockMainThreadCreateInitialState.mockReturnValue(mockWorkerState);
     useGame.setState({ playerProfile: undefined } as any);
   });
 
@@ -184,5 +190,50 @@ describe("startNewGame uses initialization worker", () => {
     const allCalls = (saveGameStateToIDB as any).mock.calls.map((c: any) => c[0]);
     const versionedCall = allCalls.find((s: any) => s.storeVersion === STORE_STATE_VERSION);
     expect(versionedCall).toBeDefined();
+  });
+
+  it("falls back to main-thread createInitialState if the worker never responds (timeout guard)", async () => {
+    vi.useFakeTimers();
+    try {
+      // Worker call never resolves or rejects — simulates a hung/broken worker.
+      mockWorkerCreateInitialState.mockReturnValue(new Promise(() => {}));
+
+      const startPromise = useGame.getState().startNewGame(mockOptions);
+
+      // Advance past the 15s worker timeout guard.
+      await vi.advanceTimersByTimeAsync(15_000);
+      await startPromise;
+
+      expect(mockMainThreadCreateInitialState).toHaveBeenCalledWith(mockOptions);
+      expect(saveExists.value).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("does not hang startNewGame past the timeout when the worker never responds", async () => {
+    vi.useFakeTimers();
+    try {
+      mockWorkerCreateInitialState.mockReturnValue(new Promise(() => {}));
+
+      let settled = false;
+      const startPromise = useGame
+        .getState()
+        .startNewGame(mockOptions)
+        .then(() => {
+          settled = true;
+        });
+
+      // Just before the timeout, startNewGame must still be pending.
+      await vi.advanceTimersByTimeAsync(14_999);
+      expect(settled).toBe(false);
+
+      // Crossing the timeout must resolve it (via main-thread fallback).
+      await vi.advanceTimersByTimeAsync(1);
+      await startPromise;
+      expect(settled).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

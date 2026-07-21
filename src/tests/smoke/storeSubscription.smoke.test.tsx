@@ -4,7 +4,7 @@
  * exceeded". Router is mocked because routing context is incidental here.
  */
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { createElement, type ReactNode } from "react";
+import { createElement, type ReactNode, type ComponentType } from "react";
 import { cleanup } from "@testing-library/react";
 
 vi.mock("@tanstack/react-router", () => ({
@@ -16,6 +16,7 @@ vi.mock("@tanstack/react-router", () => ({
     useNavigate: () => () => {},
     useParams: () => ({}),
   }),
+  createFileRoute: () => (opts: Record<string, unknown>) => ({ options: opts }),
 }));
 
 import { renderWithStore } from "@/test-utils/renderWithStore";
@@ -35,5 +36,11 @@ describe("store subscription stability (smoke)", () => {
   it("RacesTab feed mounts without a loop (empty weather/forecast)", async () => {
     const { RacesTab } = await import("@/components/racing/RacesTab");
     expect(() => renderWithStore(createElement(RacesTab))).not.toThrow();
+  });
+
+  it("Facilities route mounts without an update loop", async () => {
+    const { Route } = await import("@/routes/facilities");
+    const Cmp = (Route.options as { component: ComponentType }).component;
+    expect(() => renderWithStore(createElement(Cmp))).not.toThrow();
   });
 });

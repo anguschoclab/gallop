@@ -93,7 +93,7 @@ describe("applyImpacts", () => {
     expect(result.state.npcStables[0].cash).toBe(5500);
   });
 
-  it("should prevent cash from going negative", () => {
+  it("allows player cash to go negative (solvency system handles escalation)", () => {
     const state = createTestState();
     const impact: CashImpact = {
       id: "impact-1",
@@ -116,7 +116,7 @@ describe("applyImpacts", () => {
     };
 
     const result = applyImpacts(context);
-    expect(result.state.cash).toBe(0);
+    expect(result.state.cash).toBe(-10000);
   });
 
   it("should apply horse stat change impact", () => {
