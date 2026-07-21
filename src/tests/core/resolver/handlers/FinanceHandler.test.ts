@@ -3,6 +3,7 @@ import { FinanceHandler } from "@/core/resolver/handlers/FinanceHandler";
 import type { GameState } from "@/game/store/state";
 import type { CashImpact, HorseTransferImpact } from "@/core/resolver/impacts/index";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import type { Horse } from "@/game/types";
 
 describe("FinanceHandler", () => {
   it("cash_change with entityId='player' updates draft.cash", () => {
@@ -54,7 +55,7 @@ describe("FinanceHandler", () => {
     expect(draft.npcStables[0].cash).toBe(500);
   });
 
-  it("cash_change prevents cash from going negative", () => {
+  it("cash_change allows player cash to go negative (solvency handles escalation)", () => {
     const handler = new FinanceHandler();
     const state = { cash: 100, horses: {}, npcStables: [] } as unknown as GameState;
 
@@ -73,7 +74,7 @@ describe("FinanceHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.cash).toBe(0);
+    expect(draft.cash).toBe(-400);
   });
 
   it("horse_transfer sets horse.stableId and horse.owned", () => {
@@ -144,4 +145,3 @@ describe("FinanceHandler", () => {
     expect(handler.canHandle("unknown_type")).toBe(false);
   });
 });
-import type { Horse } from "@/game/types";
