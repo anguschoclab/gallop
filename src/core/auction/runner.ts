@@ -603,7 +603,7 @@ export function createAuctionRunner(
     runToCompletion,
     finalLots: () => {
       // Pre-calculate hash map for O(1) lookup to avoid O(N) find inside O(N) map
-      const stateMap = new Map(lots.map(l => [l.lot.id, l]));
+      const stateMap = new Map(lots.map((l) => [l.lot.id, l]));
       return sale.lots.map((orig) => {
         if (orig.withdrawn) return orig;
         const state = stateMap.get(orig.id);
