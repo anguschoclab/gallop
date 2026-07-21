@@ -14,3 +14,8 @@
 
 **Learning:** `computeWeatherInjuryMultiplier` in `src/core/health/healthSystem.ts` is an untested pure function that calculates probability weight multipliers for injury risk based on weather and track conditions. Testing this isolated function provides high value as it directly affects injury severity and probability, which is a key part of the health and simulation systems.
 **Action:** Always check for pure functions with branching logic, especially those involving probability weights or math, as they are high-value targets for testing.
+
+## 2024-03-20 - Edge bounds in Reputation Calculations
+
+**Learning:** Found an untested core behavior related to reputation calculations (`calculateRaceWinReputation`, `calculateRaceLossReputation`). These algorithms handle continuous stats (purse sizing and slump counters) mapped into capped reward logic. Found a risk area where missing bounds checks might inflate prestige infinitely.
+**Action:** Always verify both bounds of conditional math logic when introducing tests for game algorithms that handle continuous stats or categorical combinations.
