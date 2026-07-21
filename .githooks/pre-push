@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+echo "running verify before push (skip with --no-verify)"
+bun run verify

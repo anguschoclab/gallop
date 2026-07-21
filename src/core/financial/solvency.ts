@@ -36,7 +36,12 @@ export interface SolvencyState {
   cashToRecover: number;
 }
 
-/** Classify the player's financial position into an escalation tier. */
+/**
+ * Classify the player's financial position into an escalation tier.
+ *
+ * @param {SolvencyInput} input - Cash balance and consecutive days in debt.
+ * @returns {SolvencyState} The solvency tier and cash to recover.
+ */
 export function deriveSolvencyState(input: SolvencyInput): SolvencyState {
   const cashToRecover = input.cash < 0 ? Math.abs(input.cash) : 0;
 
@@ -62,14 +67,24 @@ export interface SellableHorse {
   value: number;
 }
 
-/** Choose which horse creditors seize: the most valuable owned runner. */
+/**
+ * Choose which horse creditors seize: the most valuable owned runner.
+ *
+ * @param {T[]} horses - Sellable horses to choose from.
+ * @returns {T | null} The most valuable owned horse, or null if none eligible.
+ */
 export function selectForcedSaleHorse<T extends SellableHorse>(horses: T[]): T | null {
   const eligible = horses.filter((h) => h.owned && h.age > 0);
   if (eligible.length === 0) return null;
   return eligible.reduce((best, h) => (h.value > best.value ? h : best));
 }
 
-/** Compute daily interest charge (positive amount) on a negative balance. */
+/**
+ * Compute daily interest charge (positive amount) on a negative balance.
+ *
+ * @param {number} cash - Current cash balance (negative incurs interest).
+ * @returns {number} The daily interest charge, rounded to nearest integer.
+ */
 export function computeDailyInterest(cash: number): number {
   if (cash >= 0) return 0;
   return Math.round(Math.abs(cash) * SOLVENCY_THRESHOLDS.dailyInterestRate);

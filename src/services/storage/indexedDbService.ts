@@ -46,6 +46,11 @@ const STORE_NAMES: StoreName[] = ["meta", "horses", "races", "npcStables", "save
 let dbInstance: IDBDatabase | null = null;
 let dbInitPromise: Promise<IDBDatabase> | null = null;
 
+/**
+ * Checks whether the IndexedDB API is available in the current environment.
+ *
+ * @returns {boolean} True if IndexedDB is available.
+ */
 function isIndexedDBAvailable(): boolean {
   return typeof indexedDB !== "undefined";
 }
@@ -121,6 +126,12 @@ const HORSES_KEY = "horses";
 const RACES_KEY = "races";
 const NPC_STABLES_KEY = "npcStables";
 
+/**
+ * Saves one or more game-state buckets to IndexedDB in parallel.
+ *
+ * @param {Partial<AllBuckets>} buckets - Buckets to save (only non-undefined buckets are written).
+ * @returns {Promise<void>}
+ */
 export async function saveBuckets(buckets: Partial<AllBuckets>): Promise<void> {
   const tasks: Promise<void>[] = [];
 
@@ -140,6 +151,11 @@ export async function saveBuckets(buckets: Partial<AllBuckets>): Promise<void> {
   await Promise.all(tasks);
 }
 
+/**
+ * Loads all game-state buckets from IndexedDB.
+ *
+ * @returns {Promise<AllBuckets | null>} All buckets, or null if IndexedDB is unavailable or empty.
+ */
 export async function loadBuckets(): Promise<AllBuckets | null> {
   if (!isIndexedDBAvailable()) return null;
 
@@ -167,12 +183,22 @@ export async function loadBuckets(): Promise<AllBuckets | null> {
   }
 }
 
+/**
+ * Clears all object stores in the IndexedDB database.
+ *
+ * @returns {Promise<void>}
+ */
 export async function clearDatabase(): Promise<void> {
   if (!isIndexedDBAvailable()) return;
 
   await Promise.all(STORE_NAMES.map((name) => txClear(name)));
 }
 
+/**
+ * Checks whether any saved state exists in the meta bucket.
+ *
+ * @returns {Promise<boolean>} True if a meta bucket entry exists.
+ */
 export async function hasSavedState(): Promise<boolean> {
   if (!isIndexedDBAvailable()) return false;
 
@@ -184,6 +210,9 @@ export async function hasSavedState(): Promise<boolean> {
   }
 }
 
+/**
+ * Resets the internal database instance and init promise. Intended for test teardown only.
+ */
 export function _resetForTest(): void {
   dbInstance = null;
   dbInitPromise = null;
@@ -201,15 +230,34 @@ function txDelete(storeName: StoreName, key: string): Promise<void> {
   );
 }
 
+/**
+ * Saves a full game state to a named save slot.
+ *
+ * @param {string} slotId - The save slot identifier.
+ * @param {GameState} state - The complete game state to persist.
+ * @returns {Promise<void>}
+ */
 export async function saveSlotState(slotId: string, state: GameState): Promise<void> {
   await txPut("saveSlots", slotId, state);
 }
 
+/**
+ * Loads a game state from a named save slot.
+ *
+ * @param {string} slotId - The save slot identifier.
+ * @returns {Promise<T | null>} The loaded state, or null if the slot is empty.
+ */
 export async function loadSlotState<T = GameState>(slotId: string): Promise<T | null> {
   const result = await txGet<T>("saveSlots", slotId);
   return result ?? null;
 }
 
+/**
+ * Deletes a game state from a named save slot.
+ *
+ * @param {string} slotId - The save slot identifier.
+ * @returns {Promise<void>}
+ */
 export async function deleteSlotState(slotId: string): Promise<void> {
   await txDelete("saveSlots", slotId);
 }

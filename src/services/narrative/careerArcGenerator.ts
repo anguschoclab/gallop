@@ -12,6 +12,17 @@ export interface CareerArcState {
   consecutiveLosses: number;
 }
 
+/**
+ * Checks whether a horse's race result triggers a career arc stage transition.
+ *
+ * @param {Horse} horse - The horse whose career arc is being evaluated.
+ * @param {CareerArcState | undefined} arcState - Current career arc state, if any.
+ * @param {Race} race - The race that was just completed.
+ * @param {number} position - Finishing position in the race.
+ * @param {number} day - Current simulation day.
+ * @param {Rng} rng - Seeded random number generator for news generation.
+ * @returns {{ newsItem: NewsItem | null; newArcState: CareerArcState }} The generated news item (if any) and updated arc state.
+ */
 export function checkCareerArcTrigger(
   horse: Horse,
   arcState: CareerArcState | undefined,

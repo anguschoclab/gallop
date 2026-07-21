@@ -409,9 +409,11 @@ export function generateG1SpotlightNews(
 /**
  * Generates a weekly flavor news item that references world data.
  * Injects the top-earning horse's name into the body for world-awareness.
- * @param horses
- * @param day
- * @param rng
+ *
+ * @param {Horse[]} horses - All horses in the game world.
+ * @param {number} day - Current simulation day.
+ * @param {Rng} rng - Seeded random number generator.
+ * @returns {NewsItem} A weekly flavor news item.
  */
 export function generateWeeklyFlavorNews(horses: Horse[], day: number, rng: Rng): NewsItem {
   const topEarner =
@@ -489,11 +491,13 @@ export function generateWeeklyFlavorNews(horses: Horse[], day: number, rng: Rng)
 /**
  * Generates a follow-up news item for a player-owned horse that finished
  * in the top 3 of a G1 or G2 race. The article discusses what might be next.
- * @param race
- * @param horse
- * @param position
- * @param day
- * @param rng
+ *
+ * @param {Race} race - The completed G1 or G2 race.
+ * @param {Horse} horse - The player-owned horse that placed in the top 3.
+ * @param {number} position - Finishing position (1-3).
+ * @param {number} day - Current simulation day.
+ * @param {Rng} rng - Seeded random number generator.
+ * @returns {NewsItem | null} A follow-up news item, or null if conditions aren't met.
  */
 export function generateFollowUpRaceNews(
   race: Race,

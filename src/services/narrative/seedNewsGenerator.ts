@@ -10,6 +10,16 @@ export interface SeedGazetteResult {
   introStableIds: string[];
 }
 
+/**
+ * Generates the initial gazette news items for a new game.
+ *
+ * @param {Stable[]} npcStables - NPC stables for rival introductions.
+ * @param {Horse[]} npcHorses - NPC horses for power rankings and bloodline insights.
+ * @param {Race[]} races - Scheduled races for G1 spotlight and graded preview.
+ * @param {PlayerProfile | undefined} playerProfile - Player's stable profile for season opener.
+ * @param {Rng} rng - Seeded random number generator.
+ * @returns {SeedGazetteResult} Generated news items and intro stable IDs.
+ */
 export function seedGazetteNews(
   npcStables: Stable[],
   npcHorses: Horse[],
