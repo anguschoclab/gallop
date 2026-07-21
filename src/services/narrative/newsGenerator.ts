@@ -78,6 +78,12 @@ export function generateRaceNews(
     `Unstoppable: ${winner.name} Captures the ${race.name}.`,
     `${winner.name} Crowned Champion of the ${race.name}.`,
     `No Catching ${winner.name} in the ${race.name}!`,
+    `A Flawless Victory for ${winner.name} in the ${race.name}.`,
+    `${winner.name} Leaves Rivals Behind in ${race.name}.`,
+    `The ${race.name} Crown Goes to ${winner.name}.`,
+    `${winner.name} Stamps Authority on the ${race.name}.`,
+    `A Deserved ${race.name} Win for ${winner.name}.`,
+    `${winner.name} Too Strong for ${race.name} Field.`,
   ];
 
   const bodies = [
@@ -102,6 +108,13 @@ export function generateRaceNews(
     `${winner.name} confirmed their status as a rising star with a gutsy, hard-fought triumph in today's feature event, the ${race.name}.`,
     `Never in doubt from the start, ${winner.name} ran a picture-perfect race to emphatically capture the ${race.name}.`,
     `Showing tremendous heart and determination, ${winner.name} fended off all challengers in the closing stages of the ${race.name}.`,
+    `A magnificent run from ${winner.name} saw them claim the ${race.name} with plenty in reserve.`,
+    `${winner.name} proved too classy for their rivals today, taking the ${race.name} with a devastating turn of foot.`,
+    `The roar of the crowd accompanied ${winner.name} across the line to seal a memorable ${race.name} win.`,
+    `Connections were thrilled as ${winner.name} executed a perfect race plan to win the ${race.name}.`,
+    `Nobody could lay a glove on ${winner.name}, who romped home to win the ${race.name} in fine style.`,
+    `A brilliant tactical ride allowed ${winner.name} to find the gaps and secure the ${race.name}.`,
+    `${winner.name} made it look easy in the ${race.name}, pulling clear for an emphatic victory.`,
   ];
 
   const headline = rng.pick(headlines);
@@ -152,6 +165,12 @@ export function generateMarketNews(horse: Horse, price: number, day: number, rng
     `Bidding War Ends: ${horse.name} Goes for $${formattedPrice}.`,
     `${horse.name} Changes Hands in $${formattedPrice} Mega-Deal.`,
     `Headline Transaction: ${horse.name} Secured for $${formattedPrice}.`,
+    `A King's Ransom: ${horse.name} Sold for $${formattedPrice}.`,
+    `${horse.name} Smashes Expectations at $${formattedPrice}.`,
+    `New Home for ${horse.name} After $${formattedPrice} Bid.`,
+    `$${formattedPrice} Secures Top Talent ${horse.name}.`,
+    `Market Frenzy Over $${formattedPrice} ${horse.name}.`,
+    `${horse.name} Joins Elite Company at $${formattedPrice}.`,
   ];
 
   const bodies = [
@@ -172,6 +191,11 @@ export function generateMarketNews(horse: Horse, price: number, day: number, rng
     `The ink is dry on one of the season's biggest transactions. ${horse.name} is on the move, and the hefty price confirms their elite status.`,
     `Speculation finally ended today as ${horse.name} was sold. The immense valuation reflects the immense potential seen in this remarkable athlete.`,
     `It took a fortune, but a deal was struck for ${horse.name}. The pressure is now squarely on the new connections to make this massive investment pay off.`,
+    `A remarkable bidding war culminated in ${horse.name} changing hands for a massive sum, setting the tone for the season.`,
+    `The sales ring erupted when the hammer finally fell on ${horse.name}, reflecting the massive potential of this athlete.`,
+    `Expectations are soaring after ${horse.name} was acquired for an eye-watering figure today.`,
+    `The new owners of ${horse.name} made a massive statement of intent, outbidding all rivals to secure the purchase.`,
+    `It was standing room only as ${horse.name} entered the ring, eventually going to the highest bidder for a premium price.`,
   ];
   return createNewsItem(
     {
