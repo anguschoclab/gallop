@@ -5,3 +5,6 @@
 ## 2024-07-17 - Tipster Insight Priority & Test Pollution
 **Learning:** Adding new Tipster insights can cause unexpected test pollution if existing test fixtures inadvertently meet the criteria of the newly prioritized insight (e.g. testing surface affinity with monotonically increasing beyers falsely triggers an "Improving Form" insight).
 **Action:** When adding insights that examine historical trends, carefully audit existing mock histories to ensure they don't contain spurious trends, or adjust the insight priority order if appropriate.
+## 2025-02-12 - Tipster Insight: Model of Consistency
+**Learning:** Adding aggregate historical insights requires careful precedence ordering relative to "hot streaks", and ensuring the sample size (min 5 starts) is sufficient before presenting percentage-based metrics.
+**Action:** Prioritize active streaks (like win streaks) over long-term consistency metrics by placing their evaluation earlier in the `getHorseInsight` pipeline.
