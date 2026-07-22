@@ -128,7 +128,7 @@ function generateRisingStarNews(horse: Horse, day: number, rng: Rng): NewsItem {
     `A Force to be Reckoned With: ${horse.name}`,
     `Perfect Start: ${horse.name} Remains Unbeaten`,
     `${horse.name}'s Perfect Record Remains Intact`,
-    `Can Anyone Stop ${horse.name}?`
+    `Can Anyone Stop ${horse.name}?`,
   );
 
   const bodies = [
@@ -154,7 +154,7 @@ function generateRisingStarNews(horse: Horse, day: number, rng: Rng): NewsItem {
     `The early stages of ${horse.name}'s career have been nothing short of spectacular. This rising star has all the makings of a future champion.`,
     `It's hard not to be impressed by what ${horse.name} has accomplished so early on. If they maintain this form, they will be a formidable presence in the upcoming stakes races.`,
     `Another race, another win for ${horse.name}. The perfect start to their career has trainers across the circuit sitting up and taking notice.`,
-    `The hype train for ${horse.name} has officially left the station. This rising star continues to clear every hurdle placed in front of them with impressive ease.`
+    `The hype train for ${horse.name} has officially left the station. This rising star continues to clear every hurdle placed in front of them with impressive ease.`,
   );
 
   return createNewsItem(
@@ -196,7 +196,7 @@ function generateContenderNews(horse: Horse, race: Race, day: number, rng: Rng):
     `A Statement Win for ${horse.name} in the ${grade} ${raceName}`,
     `The Real Deal: ${horse.name} Takes the ${raceName}`,
     `${horse.name} Rises to the Occasion in the ${raceName}`,
-    `Grabbing Headlines: ${horse.name} Wins the ${raceName}`
+    `Grabbing Headlines: ${horse.name} Wins the ${raceName}`,
   );
 
   const bodies = [
@@ -222,7 +222,7 @@ function generateContenderNews(horse: Horse, race: Race, day: number, rng: Rng):
     `The performance delivered by ${horse.name} in the ${raceName} was a clear warning to the rest of the field. This ${grade} victory marks the arrival of a serious threat.`,
     `By capturing the ${raceName}, ${horse.name} has proven they belong in the upper echelons of the sport. The ${grade} triumph solidifies their standing as a true contender.`,
     `It takes a special horse to win a ${grade} race like the ${raceName}, and ${horse.name} has shown they possess that elusive quality. The future looks incredibly bright.`,
-    `The transition from rising star to proven contender is officially complete. ${horse.name}'s victory in the ${raceName} (${grade}) is a testament to their growing ability.`
+    `The transition from rising star to proven contender is officially complete. ${horse.name}'s victory in the ${raceName} (${grade}) is a testament to their growing ability.`,
   );
 
   return createNewsItem(
@@ -267,7 +267,7 @@ function generateChampionNews(horse: Horse, race: Race, day: number, rng: Rng): 
     `Unforgettable: ${horse.name}'s Triumph in the ${raceName}`,
     `${horse.name} Reaches the Pinnacle in the ${raceName}`,
     `The Best in the Business: ${horse.name} Wins the ${raceName}`,
-    `${horse.name} Crowned Champion After ${raceName} Masterclass`
+    `${horse.name} Crowned Champion After ${raceName} Masterclass`,
   );
 
   const bodies = [
@@ -293,7 +293,7 @@ function generateChampionNews(horse: Horse, race: Race, day: number, rng: Rng): 
     `A masterclass in racing. ${horse.name} dismantled the field in the ${raceName} to achieve Grade 1 glory, forever etching their name in the history books as a champion.`,
     `To win a Grade 1 is the dream; to do it in the ${raceName} is legendary. ${horse.name} has cemented their status as an undisputed champion.`,
     `The title of champion is not given, it is earned. And ${horse.name} earned it emphatically with a breathtaking display in the ${raceName}.`,
-    `History will remember ${horse.name}'s performance in the ${raceName}. It was the day a contender became a champion on the sport's biggest stage.`
+    `History will remember ${horse.name}'s performance in the ${raceName}. It was the day a contender became a champion on the sport's biggest stage.`,
   );
 
   return createNewsItem(
@@ -336,7 +336,7 @@ function generateBustNews(horse: Horse, day: number, rng: Rng): NewsItem {
     `Questions Emerge as ${horse.name} Struggles`,
     `The Luster Fades: ${horse.name} Falls Short Again`,
     `${horse.name} Searches for Answers After Another Loss`,
-    `Time Running Out for ${horse.name} to Reclaim Form`
+    `Time Running Out for ${horse.name} to Reclaim Form`,
   );
 
   const bodies = [
@@ -362,7 +362,7 @@ function generateBustNews(horse: Horse, day: number, rng: Rng): NewsItem {
     `The struggles continue for ${horse.name}. What seemed like a temporary blip is now looking like a significant downturn in form, leaving connections scratching their heads.`,
     `Once hailed as a top contender, ${horse.name} has failed to live up to the hype in recent outings. The pressure is mounting to deliver a positive result.`,
     `The magic seems to have faded for ${horse.name}. Another disappointing performance raises serious doubts about their ability to compete at the highest level.`,
-    `With their third consecutive loss, ${horse.name} finds themselves at a crossroads. The road back to the winner's circle looks steeper than ever.`
+    `With their third consecutive loss, ${horse.name} finds themselves at a crossroads. The road back to the winner's circle looks steeper than ever.`,
   );
 
   return createNewsItem(

@@ -143,7 +143,7 @@ describe("HorseAnalyticsSection — Tipster Insight", () => {
           day: 3,
           distance: 1200,
           surface: "Turf",
-          beyer: 90,
+          beyer: 82,
           purse: 1000,
         },
       ],

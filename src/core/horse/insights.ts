@@ -26,11 +26,10 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     };
   }
 
-
   // 1.5 Check for Improving Form (trending up in last 3 starts)
   const recentBeyers = history
     .slice(-3)
-    .map(r => r.beyer)
+    .map((r) => r.beyer)
     .filter((b): b is number => typeof b === "number");
 
   if (recentBeyers.length === 3) {

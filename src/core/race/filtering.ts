@@ -65,7 +65,9 @@ export function filterRacesByCriteria(
 
     // Filter by triple crown
     if (filters.tripleCrown !== "all" && filters.tripleCrown !== undefined) {
-      const isTripleCrown = Boolean(race.graded && GRADED_RACES_BY_TRIPLECROWN_KEY.has(race.graded.triplecrownKey || ""));
+      const isTripleCrown = Boolean(
+        race.graded && GRADED_RACES_BY_TRIPLECROWN_KEY.has(race.graded.triplecrownKey || ""),
+      );
       if (filters.tripleCrown && !isTripleCrown) return false;
       if (!filters.tripleCrown && isTripleCrown) return false;
     }

@@ -49,7 +49,7 @@ export function AutoRegisterButton() {
       size="sm"
       className={cn(
         "gap-2 border-primary/30 hover:bg-primary/10 text-primary font-bold uppercase text-[10px] tracking-widest",
-        isDisabled && "pointer-events-none"
+        isDisabled && "pointer-events-none",
       )}
       onClick={() => setIsOpen(true)}
       disabled={isDisabled}

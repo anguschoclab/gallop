@@ -38,8 +38,7 @@ export class SyndicationValidator implements IntentValidator {
 
         // Validate stallion is a G1 winner
         const g1Wins =
-          stallion.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1).length ||
-          0;
+          stallion.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1).length || 0;
         if (g1Wins === 0) return { valid: false, reason: "Stallion must be a G1 winner" };
 
         // Validate total shares

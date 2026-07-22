@@ -110,8 +110,8 @@ describe("getHorseInsight", () => {
         { position: 2, day: 1, beyer: 70 },
         { position: 3, day: 2, beyer: 72 },
         { position: 2, day: 3, beyer: 75 },
-        { position: 2, day: 4, beyer: 80 }
-      ]
+        { position: 2, day: 4, beyer: 80 },
+      ],
     } as Horse;
     const insight = getHorseInsight(horse);
     expect(insight?.label).toBe("Trending Up");
@@ -123,8 +123,8 @@ describe("getHorseInsight", () => {
       raceHistory: [
         { position: 2, day: 1, beyer: 70 },
         { position: 3, day: 2, beyer: 72 },
-        { position: 2, day: 3, beyer: 73 }
-      ]
+        { position: 2, day: 3, beyer: 73 },
+      ],
     } as Horse;
     const insight = getHorseInsight(horse);
     expect(insight).toBeNull();
