@@ -47,3 +47,8 @@
 
 **Learning:** The career arc news generator (`generateRisingStarNews`, `generateContenderNews`, `generateChampionNews`, `generateBustNews`) had only 8 variants for headlines and bodies. This caused rapid repetition during long play sessions as horses hit milestones.
 **Action:** Expanded the `headlines` and `bodies` arrays in `src/services/narrative/careerArcGenerator.ts` to 14 variants each to increase variety and immersion without logic changes.
+
+## 2026-07-25 - Expanded Seed News Variety Gap
+
+**Learning:** The seed news generator (`seedNewsGenerator.ts`) only had 8 variants each for headlines and bodies across its many internal builders (e.g. `buildSeasonOpener`, `buildPowerRankings`, etc.). This caused repetition during the start of seasons.
+**Action:** Expanded the `headlines` and `bodies` arrays across all 7 builders in `src/services/narrative/seedNewsGenerator.ts` to 14 variants each to sustain narrative depth and immersion.
