@@ -30,7 +30,7 @@ export function generateFinancialBreedingImpacts(
   // Prize money distribution
   const prizeImpacts = generatePrizeMoneyImpacts(horse, r.position, race, newDay, rng);
   if (prizeImpacts) {
-    impacts.push(prizeImpacts.cashImpact);
+    if (prizeImpacts.cashImpact) impacts.push(prizeImpacts.cashImpact);
     if (prizeImpacts.transactionImpact) impacts.push(prizeImpacts.transactionImpact);
     if (prizeImpacts.reputationImpact) impacts.push(prizeImpacts.reputationImpact);
   }

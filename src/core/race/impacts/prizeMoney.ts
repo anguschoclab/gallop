@@ -23,47 +23,57 @@ export function generatePrizeMoneyImpacts(
   newDay: number,
   rng?: Rng,
 ): {
-  cashImpact: CashImpact;
+  cashImpact?: CashImpact;
   transactionImpact?: TransactionImpact;
   reputationImpact?: ReputationImpact;
 } | null {
   const prizeSplit = getPrizeSplitForRace(race);
-  if (position - 1 >= prizeSplit.length) return null;
+  const inPrizeSplit = position - 1 < prizeSplit.length;
+  const prize = inPrizeSplit ? Math.round(race.purse * prizeSplit[position - 1]) : 0;
 
-  const prize = Math.round(race.purse * prizeSplit[position - 1]);
-  if (prize <= 0) return null;
+  // If no prize and not eligible for reputation loss, return null
+  if (prize <= 0 && !race.graded && position === 1) return null;
+  if (prize <= 0 && !race.graded) return null;
 
-  const cashImpact: CashImpact = {
-    id: generateUUID(rng),
-    intentId: "",
-    day: newDay,
-    phase: "raceResolution",
-    logLevel: "conditional",
-    type: "cash_change",
-    entityId: horse.stableId || "",
-    amount: prize,
-    reason: `Prize money: ${position}${getOrdinalSuffix(position)} in ${race.name}`,
-  };
-
+  let cashImpact: CashImpact | undefined;
   let transactionImpact: TransactionImpact | undefined;
   let reputationImpact: ReputationImpact | undefined;
 
-  if (!horse.stableId) {
-    transactionImpact = {
+  // Cash and transaction impacts only for in-prize-split positions
+  if (inPrizeSplit && prize > 0) {
+    cashImpact = {
       id: generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",
       logLevel: "conditional",
-      type: "transaction",
+      type: "cash_change",
+      entityId: horse.stableId || "",
       amount: prize,
-      category: "prize_money",
-      description: `Prize money: ${position}${getOrdinalSuffix(position)} in ${race.name}`,
-      horseId: horse.id,
-      raceId: race.id,
+      reason: `Prize money: ${position}${getOrdinalSuffix(position)} in ${race.name}`,
     };
 
-    if (position === 1) {
+    if (!horse.stableId) {
+      transactionImpact = {
+        id: generateUUID(rng),
+        intentId: "",
+        day: newDay,
+        phase: "raceResolution",
+        logLevel: "conditional",
+        type: "transaction",
+        amount: prize,
+        category: "prize_money",
+        description: `Prize money: ${position}${getOrdinalSuffix(position)} in ${race.name}`,
+        horseId: horse.id,
+        raceId: race.id,
+      };
+    }
+  }
+
+  // Reputation impacts: win reputation for 1st place, loss reputation for poor finishes
+  // Applies even when horse is outside prize split (especially in graded races)
+  if (!horse.stableId) {
+    if (position === 1 && inPrizeSplit) {
       const repGain = calculateRaceWinReputation(race.graded?.grade, race.purse);
       reputationImpact = {
         id: generateUUID(rng),
@@ -77,8 +87,8 @@ export function generatePrizeMoneyImpacts(
         reason: `Win in ${race.name}${race.graded ? ` (${race.graded.grade})` : ""}`,
         metadata: { horseId: horse.id, raceId: race.id },
       };
-    } else {
-      const fieldSize = race.entries?.length || position;
+    } else if (position > 1) {
+      const fieldSize = race.entries?.length ?? race.fieldSize ?? position;
       const consecutiveLosses = horse.raceHistory
         ? horse.raceHistory
             .slice()
@@ -112,5 +122,7 @@ export function generatePrizeMoneyImpacts(
     }
   }
 
-  return { cashImpact, transactionImpact, reputationImpact };
+  if (!cashImpact && !reputationImpact) return null;
+
+  return { cashImpact: cashImpact!, transactionImpact, reputationImpact };
 }
