@@ -76,3 +76,8 @@
 
 **Learning:** When checking if a value exists as a key in a global `Map` (like `GRADED_RACES_BY_TRIPLECROWN_KEY`) from inside a filter loop over a large array, instantiating `new Set(map.keys())` creates an O(N) allocation bottleneck per loop iteration.
 **Action:** Always use the `Map.prototype.has()` method directly inside the loop instead of mapping keys to a `Set` to prevent massive memory allocation and performance degradation during rendering or filtering.
+
+## 2024-05-25 - [Optimize redundant array lookups across multiple component renders]
+
+**Learning:** Recomputing O(N) `.find()` lookups on the same array data across multiple rendering sections of a single component (e.g., once to build a selected array, then again in a `.map()` to render a UI element like name chips based on the same IDs) causes unnecessary CPU cycles during React renders.
+**Action:** When a component maps an array of IDs to full objects, always calculate the derived array once using a pre-calculated `Map` (reducing O(M*N) to O(M+N)) in `useMemo`, and then reuse that memoized array for subsequent sub-component rendering lookups instead of repeating the `.find()` against the full dataset.

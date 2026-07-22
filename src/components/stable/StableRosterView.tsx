@@ -69,10 +69,11 @@ export function StableRosterView({
     }
   };
 
-  const selectedHorses = useMemo(
-    () => selectedIds.map((id) => horses.find((h) => h.id === id)).filter(Boolean) as Horse[],
-    [selectedIds, horses],
-  );
+  const selectedHorses = useMemo(() => {
+    // ⚡ Bolt Optimization: Use a map to avoid O(N^2) lookups when resolving selected horses
+    const map = new Map(horses.map((h) => [h.id, h]));
+    return selectedIds.map((id) => map.get(id)).filter(Boolean) as Horse[];
+  }, [selectedIds, horses]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -338,7 +339,8 @@ export function StableRosterView({
           {/* Horse name chips with reorder controls */}
           <div className="flex items-center gap-1.5">
             {selectedIds.map((id, idx) => {
-              const h = horses.find((x) => x.id === id);
+              // ⚡ Bolt Optimization: Already mapped in selectedHorses, reuse it to avoid O(N) lookup
+              const h = selectedHorses.find((x) => x.id === id);
               if (!h) return null;
               return (
                 <div key={id} className="flex items-center gap-0.5 bg-white/5 rounded px-1.5 py-1">
