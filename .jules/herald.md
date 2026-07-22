@@ -42,3 +42,8 @@
 
 **Learning:** The career arc news generators (`generateRisingStarNews`, `generateContenderNews`, `generateChampionNews`, `generateBustNews`) only had 8 variants each for headlines and bodies, leading to rapid repetition of player milestones during long sessions.
 **Action:** Expanded the `headlines` and `bodies` arrays in `src/services/narrative/careerArcGenerator.ts` to 14 variants each to increase variety and immersion.
+
+## 2026-07-25 - Career Arc News Variety Gap
+
+**Learning:** The career arc news generator (`generateRisingStarNews`, `generateContenderNews`, `generateChampionNews`, `generateBustNews`) had only 8 variants for headlines and bodies. This caused rapid repetition during long play sessions as horses hit milestones.
+**Action:** Expanded the `headlines` and `bodies` arrays in `src/services/narrative/careerArcGenerator.ts` to 14 variants each to increase variety and immersion without logic changes.

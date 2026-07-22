@@ -122,7 +122,13 @@ function generateRisingStarNews(horse: Horse, day: number, rng: Rng): NewsItem {
     `A Prospect No More: ${horse.name} is a Rising Star`,
     `Catching the Eye: ${horse.name} Makes It Three`,
     `${horse.name}'s Star Shines Brighter with Latest Win`,
-    `The Buzz Builds Around ${horse.name} After Three Straight`
+    `The Buzz Builds Around ${horse.name} After Three Straight`,
+    `The Hype is Real: ${horse.name} Wins Three Straight`,
+    `${horse.name} Continues Undefeated Streak`,
+    `A Force to be Reckoned With: ${horse.name}`,
+    `Perfect Start: ${horse.name} Remains Unbeaten`,
+    `${horse.name}'s Perfect Record Remains Intact`,
+    `Can Anyone Stop ${horse.name}?`
   );
 
   const bodies = [
@@ -142,7 +148,13 @@ function generateRisingStarNews(horse: Horse, day: number, rng: Rng): NewsItem {
     `The spotlight is finding ${horse.name} more often these days. Three wins is the benchmark for a rising star, and this horse just cleared it with room to spare.`,
     `You can't ignore three wins. ${horse.name} is building an impressive resume early on, catching the attention of seasoned observers who know a rising star when they see one.`,
     `Expectations are shifting for ${horse.name}. Following a third career win, the narrative has firmly moved from 'promising' to 'rising star' status.`,
-    `There's a palpable excitement surrounding ${horse.name}. Securing a third win confirms the early promise and cements this horse as one of the brightest rising stars in the ranks.`
+    `There's a palpable excitement surrounding ${horse.name}. Securing a third win confirms the early promise and cements this horse as one of the brightest rising stars in the ranks.`,
+    `A flawless start to a career is rare, but ${horse.name} has managed just that. The buzz surrounding this horse continues to grow with each commanding victory.`,
+    `With their latest win, ${horse.name} has firmly established themselves as a horse of immense potential. The racing world is eagerly awaiting their next appearance.`,
+    `The early stages of ${horse.name}'s career have been nothing short of spectacular. This rising star has all the makings of a future champion.`,
+    `It's hard not to be impressed by what ${horse.name} has accomplished so early on. If they maintain this form, they will be a formidable presence in the upcoming stakes races.`,
+    `Another race, another win for ${horse.name}. The perfect start to their career has trainers across the circuit sitting up and taking notice.`,
+    `The hype train for ${horse.name} has officially left the station. This rising star continues to clear every hurdle placed in front of them with impressive ease.`
   );
 
   return createNewsItem(
@@ -179,7 +191,12 @@ function generateContenderNews(horse: Horse, race: Race, day: number, rng: Rng):
     `${horse.name} Steps Up and Delivers in the ${raceName}`,
     `No Doubts Now: ${horse.name} is a Bonafide Contender`,
     `The Elite Ranks Welcome ${horse.name} After ${raceName} Win`,
-    `${horse.name} Shakes Up the Contender Picture`
+    `${horse.name} Shakes Up the Contender Picture`,
+    `${horse.name} Stakes Claim in ${raceName}`,
+    `A Statement Win for ${horse.name} in the ${grade} ${raceName}`,
+    `The Real Deal: ${horse.name} Takes the ${raceName}`,
+    `${horse.name} Rises to the Occasion in the ${raceName}`,
+    `Grabbing Headlines: ${horse.name} Wins the ${raceName}`
   );
 
   const bodies = [
@@ -199,7 +216,13 @@ function generateContenderNews(horse: Horse, race: Race, day: number, rng: Rng):
     `The transition from rising star to proven contender is the hardest leap to make, but ${horse.name} managed it brilliantly with a win in the ${grade} ${raceName}.`,
     `Any lingering doubts about ${horse.name}'s class were erased in the ${raceName}. Claiming a ${grade} event is the ultimate proof of contender status.`,
     `The contender picture just got more complicated. ${horse.name} staked their claim forcefully by taking down the ${grade} ${raceName}.`,
-    `It's a new chapter for ${horse.name}. With the ${raceName} (${grade}) trophy on the mantle, they are officially recognized as a major contender for top honors.`
+    `It's a new chapter for ${horse.name}. With the ${raceName} (${grade}) trophy on the mantle, they are officially recognized as a major contender for top honors.`,
+    `Any lingering doubts about ${horse.name} were firmly put to rest following a spectacular run in the ${raceName} (${grade}). This horse is undoubtedly a contender.`,
+    `Stepping up in class can expose a horse's limitations, but ${horse.name} thrived in the ${grade} ${raceName}. The transition to contender status is now complete.`,
+    `The performance delivered by ${horse.name} in the ${raceName} was a clear warning to the rest of the field. This ${grade} victory marks the arrival of a serious threat.`,
+    `By capturing the ${raceName}, ${horse.name} has proven they belong in the upper echelons of the sport. The ${grade} triumph solidifies their standing as a true contender.`,
+    `It takes a special horse to win a ${grade} race like the ${raceName}, and ${horse.name} has shown they possess that elusive quality. The future looks incredibly bright.`,
+    `The transition from rising star to proven contender is officially complete. ${horse.name}'s victory in the ${raceName} (${grade}) is a testament to their growing ability.`
   );
 
   return createNewsItem(
@@ -238,7 +261,13 @@ function generateChampionNews(horse: Horse, race: Race, day: number, rng: Rng): 
     `The Pinnacle: ${horse.name} is a G1 Champion`,
     `${horse.name} Masters the ${raceName} to Become Champion`,
     `A Legendary Performance Secures Champion Status for ${horse.name}`,
-    `${horse.name} Realizes the Ultimate Dream in the ${raceName}`
+    `${horse.name} Realizes the Ultimate Dream in the ${raceName}`,
+    `A Legend is Born: ${horse.name} Captures the ${raceName}`,
+    `${horse.name} Secures Legacy with ${raceName} Win`,
+    `Unforgettable: ${horse.name}'s Triumph in the ${raceName}`,
+    `${horse.name} Reaches the Pinnacle in the ${raceName}`,
+    `The Best in the Business: ${horse.name} Wins the ${raceName}`,
+    `${horse.name} Crowned Champion After ${raceName} Masterclass`
   );
 
   const bodies = [
@@ -258,7 +287,13 @@ function generateChampionNews(horse: Horse, race: Race, day: number, rng: Rng): 
     `The air is rarefied at the top, and ${horse.name} breathes it comfortably now. A devastatingly brilliant win in the ${raceName} (G1) cements their legacy as a true champion.`,
     `They asked for greatness, and ${horse.name} delivered. The ${raceName} will go down as the defining moment this horse evolved into a bona fide G1 champion.`,
     `It doesn't get better than this. ${horse.name} scaled the mountain to win the G1 ${raceName}, forever etching their name among the champions of the turf.`,
-    `The long road to glory ends here. By winning the prestigious ${raceName}, ${horse.name} has proven beyond all doubt that they are a champion of the highest order.`
+    `The long road to glory ends here. By winning the prestigious ${raceName}, ${horse.name} has proven beyond all doubt that they are a champion of the highest order.`,
+    `There are wins, and then there are defining moments. ${horse.name}'s victory in the Grade 1 ${raceName} is undeniably the latter. A true champion has been crowned.`,
+    `The pinnacle of the sport has been reached. By winning the ${raceName}, ${horse.name} has secured their legacy as a champion of the turf.`,
+    `A masterclass in racing. ${horse.name} dismantled the field in the ${raceName} to achieve Grade 1 glory, forever etching their name in the history books as a champion.`,
+    `To win a Grade 1 is the dream; to do it in the ${raceName} is legendary. ${horse.name} has cemented their status as an undisputed champion.`,
+    `The title of champion is not given, it is earned. And ${horse.name} earned it emphatically with a breathtaking display in the ${raceName}.`,
+    `History will remember ${horse.name}'s performance in the ${raceName}. It was the day a contender became a champion on the sport's biggest stage.`
   );
 
   return createNewsItem(
@@ -295,7 +330,13 @@ function generateBustNews(horse: Horse, day: number, rng: Rng): NewsItem {
     `Searching for Answers: ${horse.name} Beaten Again`,
     `${horse.name}'s Star Wanes After Latest Defeat`,
     `The Fall of a Contender: ${horse.name} Loses Three Straight`,
-    `${horse.name} Looks a Shadow of Their Former Self`
+    `${horse.name} Looks a Shadow of Their Former Self`,
+    `A Bump in the Road for ${horse.name}`,
+    `${horse.name}'s Form Dips After Latest Defeat`,
+    `Questions Emerge as ${horse.name} Struggles`,
+    `The Luster Fades: ${horse.name} Falls Short Again`,
+    `${horse.name} Searches for Answers After Another Loss`,
+    `Time Running Out for ${horse.name} to Reclaim Form`
   );
 
   const bodies = [
@@ -315,7 +356,13 @@ function generateBustNews(horse: Horse, day: number, rng: Rng): NewsItem {
     `The harsh reality of top-level racing is catching up with ${horse.name}. Following three consecutive losses, the contender status they once enjoyed feels like a distant memory.`,
     `Something is amiss with ${horse.name}. Another uninspiring performance makes it three losses in a row, leaving fans wondering if the best days are already behind them.`,
     `The wheels have well and truly come off the ${horse.name} bandwagon. Three defeats on the bounce have severely dented their reputation as a top-tier contender.`,
-    `It's a worrying trend for ${horse.name}. The spark that defined their early success was missing again today, marking a third straight failure to deliver.`
+    `It's a worrying trend for ${horse.name}. The spark that defined their early success was missing again today, marking a third straight failure to deliver.`,
+    `The recent string of defeats has cast a long shadow over ${horse.name}. The horse that once looked unstoppable is now desperately searching for answers.`,
+    `It has been a spectacular fall from grace for ${horse.name}. Following their third straight loss, the racing community is questioning if they can ever bounce back.`,
+    `The struggles continue for ${horse.name}. What seemed like a temporary blip is now looking like a significant downturn in form, leaving connections scratching their heads.`,
+    `Once hailed as a top contender, ${horse.name} has failed to live up to the hype in recent outings. The pressure is mounting to deliver a positive result.`,
+    `The magic seems to have faded for ${horse.name}. Another disappointing performance raises serious doubts about their ability to compete at the highest level.`,
+    `With their third consecutive loss, ${horse.name} finds themselves at a crossroads. The road back to the winner's circle looks steeper than ever.`
   );
 
   return createNewsItem(
