@@ -26,6 +26,7 @@ import {
 import { WEATHER_HISTORY_DAYS, WEATHER_FORECAST_DAYS, PHASE_ORDER_WEATHER } from "@/constants";
 import { calculateConditionChange } from "@/core/race/trackConditions";
 import { generateUUID } from "@/core/uuid";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
 
 /**
  * Map a Race trackId; falls back to graded.trackId or graded.track.
@@ -76,7 +77,7 @@ export const weatherPhase = {
     const newByTrack: Record<string, WeatherState[]> = { ...existing };
     const newForecast: Record<string, WeatherState[]> = {};
     const newLogs: { day: number; text: string }[] = [];
-    const newImpacts: any[] = [];
+    const newImpacts: AnyImpact[] = [];
     const dramaTrackIds = new Set<string>(); // Track IDs with severe weather drama
 
     // Pre-index today's graded races by trackId for O(1) drama lookup

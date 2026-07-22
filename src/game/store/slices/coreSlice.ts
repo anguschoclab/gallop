@@ -449,8 +449,8 @@ export function createCoreSlice(
           // Build shared lookup maps once at pipeline entry
           horseMap: new Map(Object.values(syncState.horses).map((h: Horse) => [h.id, h])),
           raceMap: new Map(Object.values(syncState.races).map((r: Race) => [r.id, r])),
-          stableMap: new Map((syncState.npcStables ?? []).map((s: any) => [s.id, s])),
-          jockeyMap: new Map((syncState.jockeys ?? []).map((j: any) => [j.id, j])),
+          stableMap: new Map((syncState.npcStables ?? []).map((s) => [s.id, s])),
+          jockeyMap: new Map((syncState.jockeys ?? []).map((j) => [j.id, j])),
         };
 
         const updatedContext = executePipeline(GAME_PIPELINE_PHASES, pipelineContext);

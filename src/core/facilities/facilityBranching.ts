@@ -2,7 +2,7 @@
  * facilityBranching.ts - Specialization logic for Imperial Expansion
  */
 
-import type { FacilityBranch } from "./outpostTypes";
+import type { FacilityBranch, Outpost } from "./outpostTypes";
 import type { Horse } from "@/game/types";
 
 export const BRANCH_MODIFIERS = {
@@ -36,7 +36,7 @@ export function getBranchModifiers(branch: FacilityBranch) {
  * @param outposts - Array of outpost objects
  * @returns True if horse is acclimatized or has no outpost
  */
-export function isHorseAcclimatized(horse: Horse, outposts: any[]): boolean {
+export function isHorseAcclimatized(horse: Horse, outposts: Outpost[]): boolean {
   if (!horse.outpostId) return true;
   const outpost = outposts.find((o) => o.id === horse.outpostId);
   if (!outpost) return true;
