@@ -3,7 +3,7 @@
  */
 
 import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/constants/gameConstants";
-import type { Race } from "@/game/types";
+import type { Race } from "./types";
 
 /**
  * Returns the correct prize money split array based on whether the race is graded.

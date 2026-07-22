@@ -65,7 +65,7 @@ export function filterRacesByCriteria(
 
     // Filter by triple crown
     if (filters.tripleCrown !== "all" && filters.tripleCrown !== undefined) {
-      const isTripleCrown = race.graded && GRADED_RACES_BY_TRIPLECROWN_KEY.has(race.graded.triplecrownKey || "");
+      const isTripleCrown = Boolean(race.graded && GRADED_RACES_BY_TRIPLECROWN_KEY.has(race.graded.triplecrownKey || ""));
       if (filters.tripleCrown && !isTripleCrown) return false;
       if (!filters.tripleCrown && isTripleCrown) return false;
     }
@@ -76,7 +76,7 @@ export function filterRacesByCriteria(
       filters.specialFilterMode !== "all" &&
       filters.specialRaceKeys
     ) {
-      const isSpecial = race.graded && filters.specialRaceKeys.has(race.graded.key);
+      const isSpecial = Boolean(race.graded && filters.specialRaceKeys.has(race.graded.key));
       if (filters.specialFilterMode === "only" && !isSpecial) return false;
       if (filters.specialFilterMode === "exclude" && isSpecial) return false;
     }
