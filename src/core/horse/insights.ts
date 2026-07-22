@@ -26,6 +26,27 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     };
   }
 
+
+  // 1.5 Check for Improving Form (trending up in last 3 starts)
+  const recentBeyers = history
+    .slice(-3)
+    .map(r => r.beyer)
+    .filter((b): b is number => typeof b === "number");
+
+  if (recentBeyers.length === 3) {
+    if (recentBeyers[2] > recentBeyers[1] && recentBeyers[1] > recentBeyers[0]) {
+      const improvement = recentBeyers[2] - recentBeyers[0];
+      if (improvement >= 5) {
+        return {
+          label: "Trending Up",
+          value: "Improving Form",
+          context: `Beyer figures have increased consistently over last 3 starts (+${improvement} pts)`,
+          type: "positive",
+        };
+      }
+    }
+  }
+
   // 2. Check for distance sweet spot (best average beyer by distance, min 3 races)
   const distanceStats = new Map<number, { runs: number; totalBeyer: number; wins: number }>();
   for (const race of history) {

@@ -57,9 +57,9 @@ describe("getHorseInsight", () => {
   it("returns Surface Affinity for a horse with 3+ races on the same surface", () => {
     const horse = {
       raceHistory: [
-        { position: 2, day: 1, surface: "Turf", beyer: 80 },
-        { position: 2, day: 2, surface: "Turf", beyer: 85 },
-        { position: 2, day: 3, surface: "Turf", beyer: 90 },
+        { position: 2, day: 1, surface: "Turf", beyer: 90 },
+        { position: 2, day: 2, surface: "Turf", beyer: 80 },
+        { position: 2, day: 3, surface: "Turf", beyer: 85 },
       ],
     } as Horse;
     const insight = getHorseInsight(horse);
@@ -102,5 +102,31 @@ describe("getHorseInsight", () => {
     const insight = getHorseInsight(horse);
     expect(insight?.label).toBe("Distance Specialist");
     expect(insight?.value).toBe("0m");
+  });
+
+  it("detects Improving Form trend", () => {
+    const horse = {
+      raceHistory: [
+        { position: 2, day: 1, beyer: 70 },
+        { position: 3, day: 2, beyer: 72 },
+        { position: 2, day: 3, beyer: 75 },
+        { position: 2, day: 4, beyer: 80 }
+      ]
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.label).toBe("Trending Up");
+    expect(insight?.value).toBe("Improving Form");
+  });
+
+  it("does not detect Improving Form if improvement is < 5", () => {
+    const horse = {
+      raceHistory: [
+        { position: 2, day: 1, beyer: 70 },
+        { position: 3, day: 2, beyer: 72 },
+        { position: 2, day: 3, beyer: 73 }
+      ]
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight).toBeNull();
   });
 });
