@@ -10,25 +10,12 @@ import { generatePrizeMoneyImpacts } from "./prizeMoney";
 import { generateJockeyFeeImpacts } from "./jockeyFees";
 import { generateJockeyAffinityImpact } from "./jockeyAffinity";
 import { generateBreedingImpacts } from "./breedingImpacts";
-import type { Race, Horse, Jockey } from "@/game/types";
+import type { Race, Horse, Jockey, RaceResult, RaceEntry } from "@/game/types";
 import type { Syndicate } from "@/core/breeding/types";
-
-export interface RaceResultEntry {
-  horseId: string;
-  position: number;
-  time: number;
-}
-
-type RaceEntry = {
-  horseId: string;
-  owned: boolean;
-  stableId?: string;
-  jockeyId?: string;
-};
 
 export function generateFinancialBreedingImpacts(
   horse: Horse,
-  r: RaceResultEntry,
+  r: RaceResult,
   race: Race,
   entry: RaceEntry | undefined,
   jockeyMap: Map<string, Jockey>,

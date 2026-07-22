@@ -14,17 +14,11 @@ import { generatePatternJumpImpact } from "./patternJump";
 import { generateRaceHistoryImpact, generateTripleCrownProgressImpact } from "./raceHistory";
 import { generateTrainerStatsImpact } from "./trainerStats";
 import type { StaffMember } from "@/core/staff/staffTypes";
-import type { Race, Horse } from "@/game/types";
-
-export interface RaceResultEntry {
-  horseId: string;
-  position: number;
-  time: number;
-}
+import type { Race, Horse, RaceResult, RaceEntry } from "@/game/types";
 
 export function generatePerformanceCareerImpacts(
   horse: Horse,
-  r: RaceResultEntry,
+  r: RaceResult,
   race: Race,
   runner: { horseId: string; barrier?: number; lane?: number } | undefined,
   classBonus: number,
@@ -34,7 +28,7 @@ export function generatePerformanceCareerImpacts(
   newDay: number,
   hiredStaff: StaffMember[],
   rng?: Rng,
-  raceEntry?: { jockeyId?: string; stableId?: string; owned?: boolean },
+  raceEntry?: RaceEntry,
 ): { impacts: AnyImpact[]; beyerValue: number } {
   const impacts: AnyImpact[] = [];
 

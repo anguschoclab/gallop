@@ -11,24 +11,11 @@ import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { updateApprenticeProgression } from "@/core/apprentice/apprenticeTypes";
 import { generatePercentageJockeyFeeImpacts } from "./jockeyFees";
 import { MAX_FAME, GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/constants";
-import type { Race, Horse, Jockey } from "@/game/types";
-
-export interface RaceResultEntry {
-  horseId: string;
-  position: number;
-  time: number;
-}
-
-type RaceEntry = {
-  horseId: string;
-  owned: boolean;
-  stableId?: string;
-  jockeyId?: string;
-};
+import type { Race, Horse, Jockey, RaceResult, RaceEntry } from "@/game/types";
 
 export function generateJockeyStatsTrackingImpacts(
   horse: Horse,
-  r: RaceResultEntry,
+  r: RaceResult,
   race: Race,
   raceEntry: RaceEntry | undefined,
   jockeyMap: Map<string, Jockey>,
