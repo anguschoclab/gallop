@@ -110,6 +110,55 @@ describe("paceTendency", () => {
             });
             expect(getHorseTendencyStats(h).sample).toBe(0);
         });
+
+        test("breaks ties deterministically — front wins over mid when counts are equal", () => {
+            const h = createTestHorse({
+                raceHistory: [
+                    { distance: 1200, surface: "Dirt", fieldSize: 8, pacePositions: [1], position: 1 }, // front
+                    { distance: 1600, surface: "Turf", fieldSize: 8, pacePositions: [4], position: 2 }, // mid
+                ] as RaceResult[]
+            });
+            const stats = getHorseTendencyStats(h);
+            expect(stats.counts).toEqual({ front: 1, mid: 1, off: 0 });
+            expect(stats.dominant).toBe("front");
+        });
+
+        test("breaks ties deterministically — mid wins over off when counts are equal", () => {
+            const h = createTestHorse({
+                raceHistory: [
+                    { distance: 1600, surface: "Turf", fieldSize: 8, pacePositions: [4], position: 2 }, // mid
+                    { distance: 2000, surface: "Dirt", fieldSize: 8, pacePositions: [7], position: 4 }, // off
+                ] as RaceResult[]
+            });
+            const stats = getHorseTendencyStats(h);
+            expect(stats.counts).toEqual({ front: 0, mid: 1, off: 1 });
+            expect(stats.dominant).toBe("mid");
+        });
+
+        test("breaks ties deterministically — front wins over off when counts are equal", () => {
+            const h = createTestHorse({
+                raceHistory: [
+                    { distance: 1200, surface: "Dirt", fieldSize: 8, pacePositions: [1], position: 1 }, // front
+                    { distance: 2000, surface: "Dirt", fieldSize: 8, pacePositions: [7], position: 4 }, // off
+                ] as RaceResult[]
+            });
+            const stats = getHorseTendencyStats(h);
+            expect(stats.counts).toEqual({ front: 1, mid: 0, off: 1 });
+            expect(stats.dominant).toBe("front");
+        });
+
+        test("breaks three-way tie — front wins when all counts are equal", () => {
+            const h = createTestHorse({
+                raceHistory: [
+                    { distance: 1200, surface: "Dirt", fieldSize: 8, pacePositions: [1], position: 1 }, // front
+                    { distance: 1600, surface: "Turf", fieldSize: 8, pacePositions: [4], position: 2 }, // mid
+                    { distance: 2000, surface: "Dirt", fieldSize: 8, pacePositions: [7], position: 4 }, // off
+                ] as RaceResult[]
+            });
+            const stats = getHorseTendencyStats(h);
+            expect(stats.counts).toEqual({ front: 1, mid: 1, off: 1 });
+            expect(stats.dominant).toBe("front");
+        });
     });
 
     describe("matchesTendency", () => {
