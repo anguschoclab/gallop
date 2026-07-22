@@ -1,3 +1,5 @@
+# Anvil
+
 ## 2025-03-01 - Strengthen TransportIntent type
 
 **Learning:** `transportSlice.ts` was manually building a TransportIntent and casting it `as any` when enqueueing because `TransportIntent` was missing from `src/core/resolver/intents.ts` and the `AnyIntent` union. This bypassed type-checking entirely and could lead to silent bugs if the intent structure changed.
@@ -19,6 +21,7 @@
 **Action:** Before constructing new types or casting, check if the parent data structure is already typed. In many cases, simply removing explicit `any` casts from lambda parameters lets TypeScript's natural inference correctly validate property accesses against the original interface.
 
 ## 2026-07-20 - Extracted RaceRunner Type to Eliminate any in Race History Logic
+
 **Learning:** `recordRaceHistory` and several components were defining `runners` arrays loosely (e.g., `any[]` or duplicated inline types). This obscured the specific properties available on runner objects (like `horseId`, `jockeyId`, `jockeyName`) leading to risky lookups without type assistance.
 **Action:** Extract inline and `any[]` arrays representing a runner directly into a unified `RaceRunner` interface exported from `@/core/race/types.ts` and `game/types.ts`.
 
