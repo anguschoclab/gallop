@@ -55,7 +55,7 @@ describe("prizeMoney", () => {
       const impacts = generatePrizeMoneyImpacts(baseHorse, 1, gradedRace, 1, rng);
 
       const expectedPrize = Math.round(100000 * GRADED_PRIZE_SPLIT[0]);
-      expect(impacts?.cashImpact.amount).toBe(expectedPrize);
+      expect(impacts?.cashImpact?.amount).toBe(expectedPrize);
     });
 
     it("generates transaction and reputation impacts for NPC horses (no stableId) winning", () => {

@@ -1,7 +1,7 @@
 import { test, describe, expect } from "vitest";
 import { classifyTendency, distanceBucket, getHorseTendencyStats, matchesTendency } from "@/core/horse/paceTendency";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { Horse, RaceResult } from "@/game/types";
+import type { Horse } from "@/game/types";
 
 describe("paceTendency", () => {
     describe("distanceBucket", () => {
@@ -70,7 +70,7 @@ describe("paceTendency", () => {
                     { distance: 1600, surface: "Turf", fieldSize: 8, pacePositions: [4], position: 2 }, // mid, itm
                     { distance: 2000, surface: "Dirt", fieldSize: 8, pacePositions: [7], position: 4 }, // off, nothing
                     { distance: 1200, surface: "Turf", fieldSize: 8, pacePositions: [2], position: 3 }, // front, itm
-                ] as RaceResult[]
+                ] as unknown as Horse["raceHistory"]
             });
 
             const stats = getHorseTendencyStats(h);
@@ -87,7 +87,7 @@ describe("paceTendency", () => {
                 raceHistory: [
                     { distance: 1200, surface: "Dirt", fieldSize: 8, pacePositions: [1], position: 1 }, // front, sprint, dirt
                     { distance: 1600, surface: "Turf", fieldSize: 8, pacePositions: [8], position: 2 }, // off, mile, turf
-                ] as RaceResult[]
+                ] as unknown as Horse["raceHistory"]
             });
 
             const sprintStats = getHorseTendencyStats(h, { distance: "sprint" });
@@ -106,7 +106,7 @@ describe("paceTendency", () => {
             const h = createTestHorse({
                 raceHistory: [
                     { distance: 1200, surface: "Dirt", fieldSize: 8, pacePositions: [], position: 1 },
-                ] as RaceResult[]
+                ] as unknown as Horse["raceHistory"]
             });
             expect(getHorseTendencyStats(h).sample).toBe(0);
         });
@@ -116,7 +116,7 @@ describe("paceTendency", () => {
                 raceHistory: [
                     { distance: 1200, surface: "Dirt", fieldSize: 8, pacePositions: [1], position: 1 }, // front
                     { distance: 1600, surface: "Turf", fieldSize: 8, pacePositions: [4], position: 2 }, // mid
-                ] as RaceResult[]
+                ] as unknown as Horse["raceHistory"]
             });
             const stats = getHorseTendencyStats(h);
             expect(stats.counts).toEqual({ front: 1, mid: 1, off: 0 });
@@ -128,7 +128,7 @@ describe("paceTendency", () => {
                 raceHistory: [
                     { distance: 1600, surface: "Turf", fieldSize: 8, pacePositions: [4], position: 2 }, // mid
                     { distance: 2000, surface: "Dirt", fieldSize: 8, pacePositions: [7], position: 4 }, // off
-                ] as RaceResult[]
+                ] as unknown as Horse["raceHistory"]
             });
             const stats = getHorseTendencyStats(h);
             expect(stats.counts).toEqual({ front: 0, mid: 1, off: 1 });
@@ -140,7 +140,7 @@ describe("paceTendency", () => {
                 raceHistory: [
                     { distance: 1200, surface: "Dirt", fieldSize: 8, pacePositions: [1], position: 1 }, // front
                     { distance: 2000, surface: "Dirt", fieldSize: 8, pacePositions: [7], position: 4 }, // off
-                ] as RaceResult[]
+                ] as unknown as Horse["raceHistory"]
             });
             const stats = getHorseTendencyStats(h);
             expect(stats.counts).toEqual({ front: 1, mid: 0, off: 1 });
@@ -153,7 +153,7 @@ describe("paceTendency", () => {
                     { distance: 1200, surface: "Dirt", fieldSize: 8, pacePositions: [1], position: 1 }, // front
                     { distance: 1600, surface: "Turf", fieldSize: 8, pacePositions: [4], position: 2 }, // mid
                     { distance: 2000, surface: "Dirt", fieldSize: 8, pacePositions: [7], position: 4 }, // off
-                ] as RaceResult[]
+                ] as unknown as Horse["raceHistory"]
             });
             const stats = getHorseTendencyStats(h);
             expect(stats.counts).toEqual({ front: 1, mid: 1, off: 1 });
@@ -187,7 +187,7 @@ describe("paceTendency", () => {
                 runningStyle: "S",
                 raceHistory: [
                     { distance: 1200, surface: "Dirt", fieldSize: 8, pacePositions: [1], position: 1 },
-                ] as RaceResult[]
+                ] as unknown as Horse["raceHistory"]
             });
 
             expect(matchesTendency(h, "front")).toBe(true);
