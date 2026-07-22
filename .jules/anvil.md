@@ -21,3 +21,8 @@
 ## 2026-07-20 - Extracted RaceRunner Type to Eliminate any in Race History Logic
 **Learning:** `recordRaceHistory` and several components were defining `runners` arrays loosely (e.g., `any[]` or duplicated inline types). This obscured the specific properties available on runner objects (like `horseId`, `jockeyId`, `jockeyName`) leading to risky lookups without type assistance.
 **Action:** Extract inline and `any[]` arrays representing a runner directly into a unified `RaceRunner` interface exported from `@/core/race/types.ts` and `game/types.ts`.
+
+## 2025-03-03 - Type-safe auction impacts
+
+**Learning:** `src/game/store/slices/auctionSlice.ts` received `impacts: any[]` in `commitAuctionResult` and used `impact as any` inside a switch statement. This bypassed type safety, meaning property accesses (like `entityId` or `message`) were unguarded. Furthermore, it masked a real runtime issue where `inbox_message` impacts lacked an `id` property, meaning invalid objects were being pushed to the inbox.
+**Action:** Always type impact arrays explicitly as `AnyImpact[]` from `src/core/resolver/impacts` when applying them in stores/slices. This enables exhaustive type checking and ensures payload structural integrity.

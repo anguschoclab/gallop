@@ -11,10 +11,12 @@
 import type { Horse, AuctionSale, AuctionLot } from "@/game/types";
 import { horseMarketValue } from "@/core/horse/pricing";
 import { generateUUID } from "@/core/uuid";
+import type { InboxMessage } from "@/core/inbox/inboxTypes";
 import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/constants";
 import { formatCurrency } from "@/core/common/formatting";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
+import type { AnyImpact } from "@/core/resolver/impacts";
 import { requireHorse, requireOwned } from "../guards";
 
 export type AuctionSlice = {
@@ -38,7 +40,7 @@ export type AuctionSlice = {
   commitAuctionResult: (
     saleId: string,
     finalLots: AuctionLot[],
-    impacts: any[],
+    impacts: AnyImpact[],
   ) => { ok: true } | { ok: false; reason: string };
   /** Immediately resolves a lot at its buy-now price */
   buyNow: (saleId: string, lotId: string) => { ok: boolean; reason?: string };
@@ -175,11 +177,9 @@ export function createAuctionSlice(
       let newInbox = [...s.inbox];
 
       for (const impact of impacts ?? []) {
-        const anyImpact = impact as any;
-
-        switch (anyImpact.type) {
+        switch (impact.type) {
           case "cash_change": {
-            const { entityId, amount } = anyImpact;
+            const { entityId, amount } = impact;
             if (entityId) {
               // NPC stable cash change
               newNpcStables = newNpcStables.map((stable) =>
@@ -195,7 +195,7 @@ export function createAuctionSlice(
           }
 
           case "horse_transfer": {
-            const { horseId: transferId, toStableId } = anyImpact;
+            const { horseId: transferId, toStableId } = impact;
             if (newHorses[transferId]) {
               newHorses = {
                 ...newHorses,
@@ -210,9 +210,14 @@ export function createAuctionSlice(
           }
 
           case "inbox_message": {
-            const { message } = anyImpact;
+            const { message } = impact;
             if (message) {
-              newInbox = [message, ...newInbox].slice(0, 100);
+              const fullMessage: InboxMessage = {
+                ...message,
+                id: generateUUID(),
+                readAt: undefined,
+              };
+              newInbox = [fullMessage, ...newInbox].slice(0, 100);
             }
             break;
           }
