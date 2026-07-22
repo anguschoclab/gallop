@@ -14,3 +14,6 @@
 
 **Learning:** `computeWeatherInjuryMultiplier` in `src/core/health/healthSystem.ts` is an untested pure function that calculates probability weight multipliers for injury risk based on weather and track conditions. Testing this isolated function provides high value as it directly affects injury severity and probability, which is a key part of the health and simulation systems.
 **Action:** Always check for pure functions with branching logic, especially those involving probability weights or math, as they are high-value targets for testing.
+## 2025-03-08 - Pace Tendency Classification Limits
+**Learning:** `classifyTendency` in `src/core/horse/paceTendency.ts` uses `Math.max` checks (`Math.max(2, f * 0.25)` and `Math.max(5, f * 0.65)`) to bucket race positions into "front", "mid", and "off" pace. In small fields (e.g. 4 or 5 horses), the minimum threshold for "mid" (5) exceeds the field size, meaning it is mathematically impossible for a horse to be classified as "off" pace in small fields.
+**Action:** Added full test coverage for `distanceBucket`, `classifyTendency`, `getHorseTendencyStats`, and `matchesTendency`. Be aware of field-size skewing classification bounds when writing pace or tactical AI simulation code.
