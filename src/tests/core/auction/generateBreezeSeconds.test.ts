@@ -7,7 +7,14 @@ describe("Auction Engine - generateBreezeSeconds", () => {
   it("generates fast times for elite horses (100 stats)", () => {
     const eliteHorse = createTestHorse({
       id: "elite-1",
-      stats: { speed: 100, acceleration: 100, stamina: 100, temperament: 100, conformation: 100, consistency: 100 },
+      stats: {
+        speed: 100,
+        acceleration: 100,
+        stamina: 100,
+        temperament: 100,
+        conformation: 100,
+        consistency: 100,
+      },
     });
 
     // Deterministic test - middle noise (noise = 0)
@@ -26,7 +33,14 @@ describe("Auction Engine - generateBreezeSeconds", () => {
   it("generates slow times for slow horses (0 stats)", () => {
     const slowHorse = createTestHorse({
       id: "slow-1",
-      stats: { speed: 0, acceleration: 0, stamina: 0, temperament: 0, conformation: 0, consistency: 0 },
+      stats: {
+        speed: 0,
+        acceleration: 0,
+        stamina: 0,
+        temperament: 0,
+        conformation: 0,
+        consistency: 0,
+      },
     });
 
     const rng1 = { range: () => 0.5, next: () => 0.5 } as any;
@@ -36,12 +50,26 @@ describe("Auction Engine - generateBreezeSeconds", () => {
   it("weights speed more than acceleration", () => {
     const speedHorse = createTestHorse({
       id: "speed-1",
-      stats: { speed: 100, acceleration: 0, stamina: 50, temperament: 50, conformation: 50, consistency: 50 },
+      stats: {
+        speed: 100,
+        acceleration: 0,
+        stamina: 50,
+        temperament: 50,
+        conformation: 50,
+        consistency: 50,
+      },
     });
 
     const accelHorse = createTestHorse({
       id: "accel-1",
-      stats: { speed: 0, acceleration: 100, stamina: 50, temperament: 50, conformation: 50, consistency: 50 },
+      stats: {
+        speed: 0,
+        acceleration: 100,
+        stamina: 50,
+        temperament: 50,
+        conformation: 50,
+        consistency: 50,
+      },
     });
 
     const rng = { range: () => 0.5, next: () => 0.5 } as any;
@@ -57,7 +85,14 @@ describe("Auction Engine - generateBreezeSeconds", () => {
   it("uses real RNG to generate valid range of times", () => {
     const horse = createTestHorse({
       id: "avg-1",
-      stats: { speed: 50, acceleration: 50, stamina: 50, temperament: 50, conformation: 50, consistency: 50 },
+      stats: {
+        speed: 50,
+        acceleration: 50,
+        stamina: 50,
+        temperament: 50,
+        conformation: 50,
+        consistency: 50,
+      },
     });
 
     const rng = createRng(12345);
