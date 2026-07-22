@@ -32,3 +32,8 @@
 
 **Learning:** When using Node.js scripts (with `String.prototype.replace`) to inject JavaScript template strings into source code that contain a currency dollar sign followed immediately by a template variable (e.g., `Sold for $${formattedPrice}`), the literal `$` must be preserved correctly during the search-and-replace operation. If manipulating the file via basic string replacement, you must inject the literal `$` explicitly in your replacement string so it appears as `$${formattedPrice}` in the final `.ts` code.
 **Action:** When injecting template variables that represent currency, verify that the `$` symbol is not consumed or omitted, ensuring the output retains the format `$${variableName}`.
+
+## 2026-07-25 - Expanded Atmosphere Commentary Variety Gap
+
+**Learning:** The ATMOSPHERE commentary array only had 12 templates, causing noticeable repetition during dense parts of a race replay.
+**Action:** Expanded the ATMOSPHERE array in `src/assets/narrative/templates.ts` to 24 templates to sustain variety across multiple races.
