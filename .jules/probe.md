@@ -22,3 +22,9 @@
 
 **Learning:** Found an untested core behavior related to reputation calculations (`calculateRaceWinReputation`, `calculateRaceLossReputation`). These algorithms handle continuous stats (purse sizing and slump counters) mapped into capped reward logic. Found a risk area where missing bounds checks might inflate prestige infinitely.
 **Action:** Always verify both bounds of conditional math logic when introducing tests for game algorithms that handle continuous stats or categorical combinations.
+
+## 2024-07-17 - Asymmetric Reputation and Transaction Impacts in Prize Money
+
+**Learning:** In `src/core/race/impacts/prizeMoney.ts`, the generation of transaction impacts and reputation impacts (both wins and losses) are gated inside an `if (!horse.stableId)` check. This means NPC horses generate these impacts, but player-owned horses (`horse.stableId` exists) do not generate reputation or explicit transaction logs from this core module during race resolution.
+
+**Action:** Wrote tests to document this current behavior explicitly. When testing impacts or resolvers, always assert both the positive and negative branches of ownership checks to reveal asymmetric simulation logic.
