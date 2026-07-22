@@ -17,7 +17,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
 import { Zap, X, Check, AlertTriangle, Loader2 } from "lucide-react";
 import { AutoRegisterSummary } from "./AutoRegisterSummary";
@@ -67,14 +67,16 @@ export function AutoRegisterButton() {
   return (
     <>
       {buttonTooltip ? (
-        <Tooltip delayDuration={300}>
-          <TooltipTrigger asChild>
-            <span tabIndex={0} className="inline-block cursor-not-allowed">
-              {button}
-            </span>
-          </TooltipTrigger>
-          <TooltipContent>{buttonTooltip}</TooltipContent>
-        </Tooltip>
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span tabIndex={0} className="inline-block cursor-not-allowed">
+                {button}
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>{buttonTooltip}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       ) : (
         button
       )}

@@ -166,12 +166,12 @@ function buildRivalIntros(
       `${stable.name} — ${stable.owner}'s pride and joy from ${country}. ${capitalize(description)} Boasting a reputation of ${stable.reputation}, they represent everything an elite stable should be.`,
       `The story of ${stable.name} is one of ambition and success. Founded by ${stable.owner} in ${country}, ${description} Their ${stable.reputation} reputation marks them as a true powerhouse.`,
       `In the competitive world of ${country} racing, ${stable.name} stands tall. ${stable.owner}'s operation is defined by ${capitalize(description)} A reputation of ${stable.reputation} cements their elite status.`,
-      `Based in ${country}, ${stable.name} comes with high expectations. Their reputation of ${stable.reputation} means they shouldn't be underestimated. ${capitalize(description)}`,
-      `A closer look at ${stable.name} reveals a meticulously run operation out of ${country}. Sporting a reputation of ${stable.reputation}, they are primed for battle. ${capitalize(description)}`,
-      `The racing scene in ${country} has produced a formidable rival in ${stable.name}. With a solid ${stable.reputation} reputation, they command attention. ${capitalize(description)}`,
-      `Operating with a reputation of ${stable.reputation}, ${stable.name} represents the best of ${country}. ${capitalize(description)} They will be a tough nut to crack.`,
-      `The story of ${stable.name} continues to unfold in ${country}. Their impressive ${stable.reputation} reputation precedes them. ${capitalize(description)}`,
-      `Rival stable ${stable.name} from ${country} is a proven quantity with a reputation of ${stable.reputation}. ${capitalize(description)} Expect them to be a constant thorn in the side.`,
+      `Based in ${country}, ${stable.name} comes with high expectations. ${stable.owner}'s operation, with a reputation of ${stable.reputation}, means they shouldn't be underestimated. ${capitalize(description)}`,
+      `A closer look at ${stable.name} reveals a meticulously run operation out of ${country}. ${stable.owner} sporting a reputation of ${stable.reputation}, they are primed for battle. ${capitalize(description)}`,
+      `The racing scene in ${country} has produced a formidable rival in ${stable.name}. ${stable.owner}, with a solid ${stable.reputation} reputation, commands attention. ${capitalize(description)}`,
+      `Operating with a reputation of ${stable.reputation}, ${stable.name} represents the best of ${country}. ${capitalize(description)} ${stable.owner} will be a tough nut to crack.`,
+      `The story of ${stable.name} continues to unfold in ${country}. ${stable.owner}'s impressive ${stable.reputation} reputation precedes them. ${capitalize(description)}`,
+      `Rival stable ${stable.name} from ${country} is a proven quantity with a reputation of ${stable.reputation}. ${capitalize(description)} ${stable.owner} expects them to be a constant thorn in the side.`,
     ];
 
     const news = createNewsItem(
