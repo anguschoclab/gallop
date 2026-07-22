@@ -12,3 +12,8 @@
 
 **Learning:** `src/core/race/types.ts` used inline object types for `entries` and `result` arrays in the `Race` type. This led to people resorting to `(e: any)` and `(r: any)` casting in loops and `.find` in `RacingHandler.ts` to skip type errors when interacting with these arrays.
 **Action:** Extract inline object array types into explicitly named exported interfaces (like `RaceEntry`, `RaceResult`). Doing so allows other modules to easily type check those objects or let TypeScript naturally infer them from the parent property, eliminating the need for `any` casting.
+
+## 2025-03-03 - Natural Inference for Array Methods
+
+**Learning:** `src/core/resolver/validators/SyndicationValidator.ts` and `src/core/ai/syndicationAI.ts` explicitly cast `(r: any)` in `raceHistory.filter()` despite `raceHistory` being fully typed in the `Horse` interface. This silenced the compiler on property accesses (e.g., `r.grade`). Removing the explicit `: any` allowed natural TypeScript inference to restore complete type safety.
+**Action:** Before constructing new types or casting, check if the parent data structure is already typed. In many cases, simply removing explicit `any` casts from lambda parameters lets TypeScript's natural inference correctly validate property accesses against the original interface.
