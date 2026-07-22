@@ -17,3 +17,8 @@
 ## 2025-03-08 - Pace Tendency Classification Limits
 **Learning:** `classifyTendency` in `src/core/horse/paceTendency.ts` uses `Math.max` checks (`Math.max(2, f * 0.25)` and `Math.max(5, f * 0.65)`) to bucket race positions into "front", "mid", and "off" pace. In small fields (e.g. 4 or 5 horses), the minimum threshold for "mid" (5) exceeds the field size, meaning it is mathematically impossible for a horse to be classified as "off" pace in small fields.
 **Action:** Added full test coverage for `distanceBucket`, `classifyTendency`, `getHorseTendencyStats`, and `matchesTendency`. Be aware of field-size skewing classification bounds when writing pace or tactical AI simulation code.
+
+## 2024-03-20 - Edge bounds in Reputation Calculations
+
+**Learning:** Found an untested core behavior related to reputation calculations (`calculateRaceWinReputation`, `calculateRaceLossReputation`). These algorithms handle continuous stats (purse sizing and slump counters) mapped into capped reward logic. Found a risk area where missing bounds checks might inflate prestige infinitely.
+**Action:** Always verify both bounds of conditional math logic when introducing tests for game algorithms that handle continuous stats or categorical combinations.
