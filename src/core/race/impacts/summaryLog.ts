@@ -9,13 +9,8 @@ import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { formatCurrency } from "@/core/common/formatting";
-import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/constants";
 import type { Race, Horse } from "@/game/types";
-
-function getPrizeSplitForRace(race: Race): number[] {
-  if (race.graded) return GRADED_PRIZE_SPLIT;
-  return PRIZE_SPLIT;
-}
+import { getPrizeSplitForRace } from "../utils";
 
 export function generateRaceSummaryLog(
   ownedResults: Array<{ horseId: string; position: number; time: number }>,
