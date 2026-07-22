@@ -73,7 +73,7 @@ export const raceResolutionPhase: PipelinePhase = {
       const raceTrackId = race.graded?.trackId ?? race.trackId;
       const weatherBuf = raceTrackId ? state.weather?.byTrack?.[raceTrackId] : undefined;
       const raceWeatherState = Array.isArray(weatherBuf)
-        ? (weatherBuf.find((w: WeatherState) => w.day === newDay) ?? weatherBuf[weatherBuf.length - 1])
+        ? ((weatherBuf as WeatherState[]).find((w) => w.day === newDay) ?? (weatherBuf as WeatherState[])[weatherBuf.length - 1])
         : undefined;
 
       // Simulate race using service

@@ -3,7 +3,7 @@ import { recordRaceHistory, checkTrackRecord } from "@/services/history/historyS
 import { createTestHorse, createTestRng } from "@/tests/helpers";
 import { DAYS_PER_YEAR } from "@/constants";
 import { isValidUUID } from "@/core/uuid";
-import type { Race, Horse } from "@/game/types";
+import type { Race, Horse, RaceRunner } from "@/game/types";
 import type { TrackRecord } from "@/core/history/historyTypes";
 
 // ─── Shared fixtures ──────────────────────────────────────────────────────
@@ -38,9 +38,12 @@ function createMockResult(winnerId: string, winnerTime: number = 100.5) {
   ];
 }
 
-function createMockRunner(horseId: string, jockeyId?: string, jockeyName?: string) {
+function createMockRunner(horseId: string, jockeyId?: string, jockeyName?: string): RaceRunner {
   return {
     horseId,
+    name: "Mock Horse",
+    silk: "#000",
+    owned: true,
     jockeyId: jockeyId ?? "j-1",
     jockeyName: jockeyName ?? "Test Jockey",
   };
@@ -296,7 +299,7 @@ describe("recordRaceHistory", () => {
     const record = recordRaceHistory(
       race,
       createMockResult("winner-1"),
-      [{ horseId: "winner-1" }],
+      [{ horseId: "winner-1", name: "Mock Horse", silk: "#000", owned: true } as RaceRunner],
       [baseHorse()],
       100,
       createTestRng("seed"),

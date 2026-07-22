@@ -17,3 +17,7 @@
 
 **Learning:** `src/core/resolver/validators/SyndicationValidator.ts` and `src/core/ai/syndicationAI.ts` explicitly cast `(r: any)` in `raceHistory.filter()` despite `raceHistory` being fully typed in the `Horse` interface. This silenced the compiler on property accesses (e.g., `r.grade`). Removing the explicit `: any` allowed natural TypeScript inference to restore complete type safety.
 **Action:** Before constructing new types or casting, check if the parent data structure is already typed. In many cases, simply removing explicit `any` casts from lambda parameters lets TypeScript's natural inference correctly validate property accesses against the original interface.
+
+## 2026-07-20 - Extracted RaceRunner Type to Eliminate any in Race History Logic
+**Learning:** `recordRaceHistory` and several components were defining `runners` arrays loosely (e.g., `any[]` or duplicated inline types). This obscured the specific properties available on runner objects (like `horseId`, `jockeyId`, `jockeyName`) leading to risky lookups without type assistance.
+**Action:** Extract inline and `any[]` arrays representing a runner directly into a unified `RaceRunner` interface exported from `@/core/race/types.ts` and `game/types.ts`.

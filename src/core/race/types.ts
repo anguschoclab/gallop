@@ -159,3 +159,14 @@ export type SectionalSplit = {
 export type RegionalSystem =
   "north_america" | "europe" | "australia" | "asia" | "south_america" | "japan";
 export type GradeLevel = "G1" | "G2" | "G3" | "Listed";
+
+export type RaceRunner = {
+  horseId: string;
+  name: string;
+  silk: string;
+  owned: boolean;
+  jockeyId: string;
+  jockeyName: string;
+  barrier?: number;
+  lane?: number;
+};
