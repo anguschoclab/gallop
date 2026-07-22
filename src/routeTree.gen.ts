@@ -18,6 +18,7 @@ import { Route as BreedingRouteImport } from './routes/breeding'
 import { Route as BriefingRouteImport } from './routes/briefing'
 import { Route as BroodmaresRouteImport } from './routes/broodmares'
 import { Route as CalendarRouteImport } from './routes/calendar'
+import { Route as EpilogueRouteImport } from './routes/epilogue'
 import { Route as FacilitiesRouteImport } from './routes/facilities'
 import { Route as FinancialReportRouteImport } from './routes/financial-report'
 import { Route as GazetteRouteImport } from './routes/gazette'
@@ -106,6 +107,11 @@ const BroodmaresRoute = BroodmaresRouteImport.update({
 const CalendarRoute = CalendarRouteImport.update({
   id: '/calendar',
   path: '/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EpilogueRoute = EpilogueRouteImport.update({
+  id: '/epilogue',
+  path: '/epilogue',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FacilitiesRoute = FacilitiesRouteImport.update({
@@ -339,6 +345,7 @@ export interface FileRoutesByFullPath {
   '/briefing': typeof BriefingRoute
   '/broodmares': typeof BroodmaresRoute
   '/calendar': typeof CalendarRouteWithChildren
+  '/epilogue': typeof EpilogueRoute
   '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
   '/gazette': typeof GazetteRoute
@@ -391,6 +398,7 @@ export interface FileRoutesByTo {
   '/breeding': typeof BreedingRoute
   '/briefing': typeof BriefingRoute
   '/broodmares': typeof BroodmaresRoute
+  '/epilogue': typeof EpilogueRoute
   '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
   '/gazette': typeof GazetteRoute
@@ -444,6 +452,7 @@ export interface FileRoutesById {
   '/briefing': typeof BriefingRoute
   '/broodmares': typeof BroodmaresRoute
   '/calendar': typeof CalendarRouteWithChildren
+  '/epilogue': typeof EpilogueRoute
   '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
   '/gazette': typeof GazetteRoute
@@ -501,6 +510,7 @@ export interface FileRouteTypes {
     | '/briefing'
     | '/broodmares'
     | '/calendar'
+    | '/epilogue'
     | '/facilities'
     | '/financial-report'
     | '/gazette'
@@ -553,6 +563,7 @@ export interface FileRouteTypes {
     | '/breeding'
     | '/briefing'
     | '/broodmares'
+    | '/epilogue'
     | '/facilities'
     | '/financial-report'
     | '/gazette'
@@ -605,6 +616,7 @@ export interface FileRouteTypes {
     | '/briefing'
     | '/broodmares'
     | '/calendar'
+    | '/epilogue'
     | '/facilities'
     | '/financial-report'
     | '/gazette'
@@ -661,6 +673,7 @@ export interface RootRouteChildren {
   BriefingRoute: typeof BriefingRoute
   BroodmaresRoute: typeof BroodmaresRoute
   CalendarRoute: typeof CalendarRouteWithChildren
+  EpilogueRoute: typeof EpilogueRoute
   FacilitiesRoute: typeof FacilitiesRoute
   FinancialReportRoute: typeof FinancialReportRoute
   GazetteRoute: typeof GazetteRoute
@@ -754,6 +767,13 @@ declare module '@tanstack/react-router' {
       path: '/calendar'
       fullPath: '/calendar'
       preLoaderRoute: typeof CalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/epilogue': {
+      id: '/epilogue'
+      path: '/epilogue'
+      fullPath: '/epilogue'
+      preLoaderRoute: typeof EpilogueRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/facilities': {
@@ -1175,6 +1195,7 @@ const rootRouteChildren: RootRouteChildren = {
   BriefingRoute: BriefingRoute,
   BroodmaresRoute: BroodmaresRoute,
   CalendarRoute: CalendarRouteWithChildren,
+  EpilogueRoute: EpilogueRoute,
   FacilitiesRoute: FacilitiesRoute,
   FinancialReportRoute: FinancialReportRoute,
   GazetteRoute: GazetteRoute,

@@ -22,3 +22,8 @@
 
 **Learning:** I found that `StaffNegotiationDialog` had an incorrect label association: the label used a static `htmlFor="offerAmount"`, but the `id` was not set on the `<Input>` correctly or was missing. Static IDs can cause collision issues if the dialog is rendered multiple times.
 **Action:** Use `useId()` when explicitly binding `<label>` and `<Input>` in forms and dialogs to ensure proper screen reader association without risk of ID collisions.
+
+## 2024-07-31 - Replace Native Titles with Tooltips for Custom Controls
+
+**Learning:** Custom UI controls like the race visualizer's playback buttons (`.race-control-btn`) used native `title` attributes for tooltips, which look inconsistent and often lack accessibility hooks compared to the app's standard `Tooltip` component.
+**Action:** When implementing custom icon-only button groups (even those not using the standard `Button` component), wrap them with the design system's `Tooltip` components (`Tooltip`, `TooltipTrigger`, `TooltipContent`) rather than relying on native `title` attributes to ensure consistent visual polish and accessibility. Note that individual Tooltips should not be wrapped with `TooltipProvider` as it should only wrap the app root.
