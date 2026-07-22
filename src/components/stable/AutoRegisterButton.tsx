@@ -43,50 +43,40 @@ export function AutoRegisterButton() {
     setIsOpen(false);
   };
 
+  const button = (
+    <Button
+      variant="outline"
+      size="sm"
+      className={cn(
+        "gap-2 border-primary/30 hover:bg-primary/10 text-primary font-bold uppercase text-[10px] tracking-widest",
+        isDisabled && "pointer-events-none"
+      )}
+      onClick={() => setIsOpen(true)}
+      disabled={isDisabled}
+    >
+      <Zap className="h-3.5 w-3.5" />
+      Auto-Register
+      {eligibleCount > 0 && (
+        <Badge variant="secondary" className="ml-1 text-[9px] px-1.5 py-0">
+          {eligibleCount}
+        </Badge>
+      )}
+    </Button>
+  );
+
   return (
     <>
       {buttonTooltip ? (
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <span tabIndex={0} className="inline-block cursor-not-allowed">
-              <Button
-                variant="outline"
-                size="sm"
-                className={cn(
-                  "gap-2 border-primary/30 hover:bg-primary/10 text-primary font-bold uppercase text-[10px] tracking-widest",
-                  isDisabled && "pointer-events-none"
-                )}
-                onClick={() => setIsOpen(true)}
-                disabled={isDisabled}
-              >
-                <Zap className="h-3.5 w-3.5" />
-                Auto-Register
-                {eligibleCount > 0 && (
-                  <Badge variant="secondary" className="ml-1 text-[9px] px-1.5 py-0">
-                    {eligibleCount}
-                  </Badge>
-                )}
-              </Button>
+              {button}
             </span>
           </TooltipTrigger>
           <TooltipContent>{buttonTooltip}</TooltipContent>
         </Tooltip>
       ) : (
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-2 border-primary/30 hover:bg-primary/10 text-primary font-bold uppercase text-[10px] tracking-widest"
-          onClick={() => setIsOpen(true)}
-          disabled={isDisabled}
-        >
-          <Zap className="h-3.5 w-3.5" />
-          Auto-Register
-          {eligibleCount > 0 && (
-            <Badge variant="secondary" className="ml-1 text-[9px] px-1.5 py-0">
-              {eligibleCount}
-            </Badge>
-          )}
-        </Button>
+        button
       )}
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
