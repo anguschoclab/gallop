@@ -27,3 +27,8 @@
 
 **Learning:** The follow-up race news generator (`generateFollowUpRaceNews`) had only 8 variants for headlines and bodies, leading to repetition.
 **Action:** Expanded the `headlines` and `bodies` arrays in `src/services/narrative/newsGenerator.ts` to 14 variants each to increase variety and immersion.
+
+## 2026-07-25 - Escaping dollar signs in JS template literal arrays
+
+**Learning:** When using Node.js scripts (with `String.prototype.replace`) to inject JavaScript template strings into source code that contain a currency dollar sign followed immediately by a template variable (e.g., `Sold for $${formattedPrice}`), the literal `$` must be preserved correctly during the search-and-replace operation. If manipulating the file via basic string replacement, you must inject the literal `$` explicitly in your replacement string so it appears as `$${formattedPrice}` in the final `.ts` code.
+**Action:** When injecting template variables that represent currency, verify that the `$` symbol is not consumed or omitted, ensuring the output retains the format `$${variableName}`.
