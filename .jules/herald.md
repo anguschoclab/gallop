@@ -37,3 +37,8 @@
 
 **Learning:** The ATMOSPHERE commentary array only had 12 templates, causing noticeable repetition during dense parts of a race replay.
 **Action:** Expanded the ATMOSPHERE array in `src/assets/narrative/templates.ts` to 24 templates to sustain variety across multiple races.
+
+## 2026-07-25 - Expanded Career Arc News Variety Gap
+
+**Learning:** The career arc news generators (`generateRisingStarNews`, `generateContenderNews`, `generateChampionNews`, `generateBustNews`) only had 8 variants each for headlines and bodies, leading to rapid repetition of player milestones during long sessions.
+**Action:** Expanded the `headlines` and `bodies` arrays in `src/services/narrative/careerArcGenerator.ts` to 14 variants each to increase variety and immersion.
