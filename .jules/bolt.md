@@ -76,3 +76,8 @@
 
 **Learning:** When checking if a value exists as a key in a global `Map` (like `GRADED_RACES_BY_TRIPLECROWN_KEY`) from inside a filter loop over a large array, instantiating `new Set(map.keys())` creates an O(N) allocation bottleneck per loop iteration.
 **Action:** Always use the `Map.prototype.has()` method directly inside the loop instead of mapping keys to a `Set` to prevent massive memory allocation and performance degradation during rendering or filtering.
+
+## 2025-04-10 - O(N) array lookups in StableRosterView rendering
+
+**Learning:** In React components like `StableRosterView`, using `horses.find()` inside array mapping structures (like `.map(id => horses.find(...))`) both in `useMemo` hooks and JSX render loops results in O(N*M) complexity which degrades performance when rendering UI with potentially large datasets.
+**Action:** Always pre-calculate a local hash map using `useMemo(() => new Map(arr.map(x => [x.id, x])), [arr])` before the mapping loops and use `.get()` to achieve O(1) conditional lookup, transforming O(N*M) time into O(N+M).
