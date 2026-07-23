@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { ChevronRight } from "lucide-react";
+import type { CampaignRaceSlot, Race } from "@/game/types";
 
 const SLOT_STATUS_COLORS: Record<string, string> = {
   planned: "bg-t700 text-cream",
@@ -22,8 +23,8 @@ function SlotStatusBadge({ status }: { status: string }) {
 }
 
 interface CampaignSlotListProps {
-  slots: any[];
-  getRace: (raceId: string) => any;
+  slots: CampaignRaceSlot[];
+  getRace: (raceId: string) => Race | undefined;
 }
 
 export function CampaignSlotList({ slots, getRace }: CampaignSlotListProps) {
@@ -40,7 +41,7 @@ export function CampaignSlotList({ slots, getRace }: CampaignSlotListProps) {
       <p className="text-xs font-medium text-cream-muted uppercase tracking-wide mb-2">
         Upcoming races
       </p>
-      {slots.map((slot: any, si: number) => {
+      {slots.map((slot: CampaignRaceSlot, si: number) => {
         const race = slot.raceId ? getRace(slot.raceId) : undefined;
         return (
           <div
