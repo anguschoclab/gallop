@@ -17,6 +17,14 @@ export const BIOGRAPHICAL_TEMPLATES = [
   "Tracing back to the {family} line, {horse} is one to watch,",
   "The {coat} {gender} {horse} looks to make a statement,",
   "Representing the {stable} operation, {horse},",
+  "Bred in the purple, {horse}, a son of {sire},",
+  "{horse}, a beautifully bred {coat} {gender} out of {dam},",
+  "The pride of the {family} lineage, {horse},",
+  "Carrying the colors of {stable}, it's {horse},",
+  "{horse}, a striking {coat} {gender} by {sire},",
+  "Another talented progeny of {sire}, {horse} is here,",
+  "A well-regarded {coat} {gender}, {horse},",
+  "The {stable} team sends out their {coat} {gender}, {horse},",
 ];
 
 export const FRAGMENTS = {

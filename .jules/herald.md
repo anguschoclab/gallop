@@ -54,3 +54,8 @@
 
 **Learning:** The seed news generator (`seedNewsGenerator.ts`) only had 8 variants each for headlines and bodies across its many internal builders (e.g. `buildSeasonOpener`, `buildPowerRankings`, etc.). This caused repetition during the start of seasons.
 **Action:** Expanded the `headlines` and `bodies` arrays across all 7 builders in `src/services/narrative/seedNewsGenerator.ts` to 14 variants each to sustain narrative depth and immersion.
+
+## 2026-07-26 - Expanded Biographical Commentary Variety Gap
+
+**Learning:** The `BIOGRAPHICAL_TEMPLATES` array in `src/assets/narrative/templates.ts` only had 11 variants, causing rapid repetition during pre-race or mid-race biographical introductions.
+**Action:** Expanded this array to 19 variants to ensure player-facing commentary remains fresh across multiple races.
