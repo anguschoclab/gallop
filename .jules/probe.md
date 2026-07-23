@@ -32,3 +32,6 @@
 **Learning:** In `src/core/race/impacts/prizeMoney.ts`, the generation of transaction impacts and reputation impacts (both wins and losses) are gated inside an `if (!horse.stableId)` check. This means NPC horses generate these impacts, but player-owned horses (`horse.stableId` exists) do not generate reputation or explicit transaction logs from this core module during race resolution.
 
 **Action:** Wrote tests to document this current behavior explicitly. When testing impacts or resolvers, always assert both the positive and negative branches of ownership checks to reveal asymmetric simulation logic.
+## 2024-05-19 - Testing Dosage Profile Logic
+**Learning:** Found an untested core behavior block related to dosage profile calculations (`src/core/race/dosage.ts`). Discovered that it inherently depends on `pedigreeData` which can be efficiently mocked by overriding `findHorseByName` to control generation tree structure cleanly and test boundary scenarios.
+**Action:** Always seek to stub data retrieval functions instead of deeply nesting full data objects when testing calculation algorithms over structures like a pedigree tree.
