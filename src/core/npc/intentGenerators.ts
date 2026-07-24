@@ -52,6 +52,12 @@ import {
 } from "@/core/ai/withdrawalAI";
 import { createGeldingAIState, shouldGeldHorse } from "@/core/ai/geldingAI";
 import {
+  shouldCreateSyndicate,
+  calculateSharePurchase,
+  calculateShareSale,
+  calculateSharePrice,
+} from "@/core/ai/syndicationAI";
+import {
   getOrCreateStableAIState,
   updateStableAIState,
   type NpcAIManager,
