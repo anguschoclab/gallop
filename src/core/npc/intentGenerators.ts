@@ -20,6 +20,9 @@ import type {
   ClaimingIntent,
   WithdrawFromClaimingIntent,
   GeldingIntent,
+  SyndicateCreationIntent,
+  SharePurchaseIntent,
+  ShareSaleIntent,
 } from "@/core/resolver/intents";
 import type { GameState, Horse, Race, Stable, Jockey } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
