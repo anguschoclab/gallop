@@ -29,3 +29,7 @@
 
 **Learning:** `src/game/store/slices/auctionSlice.ts` received `impacts: any[]` in `commitAuctionResult` and used `impact as any` inside a switch statement. This bypassed type safety, meaning property accesses (like `entityId` or `message`) were unguarded. Furthermore, it masked a real runtime issue where `inbox_message` impacts lacked an `id` property, meaning invalid objects were being pushed to the inbox.
 **Action:** Always type impact arrays explicitly as `AnyImpact[]` from `src/core/resolver/impacts` when applying them in stores/slices. This enables exhaustive type checking and ensures payload structural integrity.
+
+## 2025-03-05 - Remove any casts in resolveFoalMilestone
+**Learning:** `racingSlice.ts` had multiple `any` casts (e.g. `const s = get() as any;`, `m: any`) masking the lack of proper typing in the `resolveFoalMilestone` action. This defeated the compiler's ability to check for property existence and type correctness for `GameState` and `DevelopmentArc`.
+**Action:** When working with core state logic and store actions, rely on correctly typed state interfaces and natural TypeScript inference. Simply removing explicit `any` casts from lambda parameters lets TypeScript's natural inference correctly validate property accesses against the original interface.
