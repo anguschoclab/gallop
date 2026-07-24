@@ -136,6 +136,7 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "lastTopTenRank" as keyof GameState,
   // Share transaction history for syndicates
   "shareTransactions" as keyof GameState,
+  "shareActivityFeed" as keyof GameState,
   // Imperial Expansion: player outposts
   "outposts" as keyof GameState,
   // Sire leaderboards and trend data

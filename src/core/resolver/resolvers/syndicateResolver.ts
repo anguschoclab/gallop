@@ -85,6 +85,8 @@ export function resolveSyndicationIntent(
         type: "share_transaction",
         syndicateId: purchaseIntent.syndicateId,
         stableId: purchaseIntent.buyerStableId || "player",
+        buyerStableId: purchaseIntent.buyerStableId || "player",
+        sellerStableId: "treasury",
         shares: purchaseIntent.shares,
         pricePerShare: purchaseIntent.pricePerShare,
         reason: `Purchased ${purchaseIntent.shares} shares in ${syndicate.stallionName}`,
@@ -108,6 +110,8 @@ export function resolveSyndicationIntent(
         type: "share_transaction",
         syndicateId: saleIntent.syndicateId,
         stableId: saleIntent.sellerStableId || "player",
+        buyerStableId: "market",
+        sellerStableId: saleIntent.sellerStableId || "player",
         shares: -saleIntent.shares, // Negative for sales
         pricePerShare: saleIntent.pricePerShare,
         reason: `Sold ${saleIntent.shares} shares in ${syndicate.stallionName}`,

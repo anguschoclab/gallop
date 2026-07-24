@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { ArrowLeft, Users, DollarSign, TrendingUp, HandCoins } from "lucide-react";
+import { ShareOwnershipPanel } from "@/components/market/ShareOwnershipPanel";
+import { ShareActivityFeed } from "@/components/market/ShareActivityFeed";
 
 export const Route = createFileRoute("/syndicate/$syndicateId")({
   component: SyndicatePage,
@@ -29,6 +31,8 @@ function SyndicatePage() {
   const cash = useGame((s: GameState) => s.cash);
   const solicit = useGame((s: any) => s.solicitInvestor);
   const buyout = useGame((s: any) => s.buyoutInvestor);
+  const horses = useGameWithShallow((s: any) => s.horses);
+  const npcStables = useGameWithShallow((s: any) => s.npcStables ?? []);
 
   const [sharesToOffer, setSharesToOffer] = useState(1);
 
@@ -193,6 +197,14 @@ function SyndicatePage() {
           )}
         </CardContent>
       </Card>
+
+      <ShareOwnershipPanel
+        syndicate={syndicate}
+        stallion={horses[syndicate.stallionId]}
+        npcStables={npcStables}
+      />
+
+      <ShareActivityFeed syndicateId={syndicateId} />
 
       <div className="text-xs text-cream-muted flex items-center gap-4">
         <span className="flex items-center gap-1">

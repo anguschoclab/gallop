@@ -22,6 +22,8 @@ import { getArchetypeById } from "@/core/breeding/archetypes";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import { canBreed, type BreedResult } from "@/core/breeding/eligibility";
 import { generateUUID } from "@/core/uuid";
+import type { ShareActivityFeedItem } from "@/core/breeding/types";
+import { findMajorityOwner } from "@/core/breeding/devolutionUtils";
 import type {
   BreedingIntent,
   SyndicateCreationIntent,
@@ -326,6 +328,33 @@ export function createBreedingSlice(
           ...(state.syndicateInvestors ?? {}),
           [investorId]: investor,
         },
+        shareTransactions: [
+          ...(state.shareTransactions ?? []),
+          {
+            id: generateUUID(),
+            syndicateId,
+            buyerStableId: investorId,
+            sellerStableId: "player",
+            shares: sharesOffered,
+            pricePerShare: syndicate.sharePrice,
+            day: state.day,
+          },
+        ],
+        shareActivityFeed: [
+          ...((state.shareActivityFeed ?? []) as ShareActivityFeedItem[]),
+          {
+            id: generateUUID(),
+            syndicateId,
+            syndicateName: syndicate.stallionName,
+            type: "investor_solicit" as const,
+            buyerStableId: investorId,
+            sellerStableId: "player",
+            shares: sharesOffered,
+            pricePerShare: syndicate.sharePrice,
+            cashMoved: price,
+            day: state.day,
+          },
+        ].slice(-200),
         log: [
           {
             day: state.day,
@@ -334,6 +363,56 @@ export function createBreedingSlice(
           ...state.log,
         ].slice(0, 50),
       }));
+
+      // Check for ownership devolution after investor purchase
+      const updatedSyndicate = get().syndicates?.[syndicateId];
+      const stallion = updatedSyndicate ? get().horses[updatedSyndicate.stallionId] : undefined;
+      if (updatedSyndicate && stallion) {
+        const currentOwnerKey = stallion.stableId ?? "player";
+        const devolutionResult = findMajorityOwner(
+          updatedSyndicate.shareHolders,
+          updatedSyndicate.totalShares,
+          currentOwnerKey,
+        );
+        if (devolutionResult.wouldDevolve && devolutionResult.newOwner) {
+          const topHolder = devolutionResult.newOwner;
+          const newStableId = topHolder === "player" ? undefined : topHolder;
+          const previousOwnerKey = currentOwnerKey;
+          set((state) => ({
+            horses: {
+              ...state.horses,
+              [stallion.id]: {
+                ...state.horses[stallion.id],
+                stableId: newStableId,
+                owned: !newStableId,
+              },
+            },
+            shareActivityFeed: [
+              ...((state.shareActivityFeed ?? []) as ShareActivityFeedItem[]),
+              {
+                id: generateUUID(),
+                syndicateId,
+                syndicateName: updatedSyndicate.stallionName,
+                type: "devolution" as const,
+                shares: 0,
+                pricePerShare: 0,
+                cashMoved: 0,
+                day: get().day,
+                previousOwner: previousOwnerKey,
+                newOwner: topHolder,
+                stallionName: stallion.name,
+              },
+            ].slice(-200),
+            log: [
+              {
+                day: get().day,
+                text: `Syndicate: ${stallion.name} ownership transferred to ${topHolder === "player" ? "your stable" : topHolder} (majority shareholder).`,
+              },
+              ...get().log,
+            ].slice(0, 50),
+          }));
+        }
+      }
 
       return { ok: true, investorId };
     },
@@ -365,6 +444,33 @@ export function createBreedingSlice(
           ...state.syndicates,
           [investor.syndicateId]: { ...syndicate, shareHolders: nextHolders },
         },
+        shareTransactions: [
+          ...(state.shareTransactions ?? []),
+          {
+            id: generateUUID(),
+            syndicateId: investor.syndicateId,
+            buyerStableId: "player",
+            sellerStableId: investorId,
+            shares: investor.shares,
+            pricePerShare: syndicate.sharePrice,
+            day: state.day,
+          },
+        ],
+        shareActivityFeed: [
+          ...((state.shareActivityFeed ?? []) as ShareActivityFeedItem[]),
+          {
+            id: generateUUID(),
+            syndicateId: investor.syndicateId,
+            syndicateName: syndicate.stallionName,
+            type: "investor_buyout" as const,
+            buyerStableId: "player",
+            sellerStableId: investorId,
+            shares: investor.shares,
+            pricePerShare: syndicate.sharePrice,
+            cashMoved: price,
+            day: state.day,
+          },
+        ].slice(-200),
         log: [
           {
             day: state.day,
@@ -373,6 +479,56 @@ export function createBreedingSlice(
           ...state.log,
         ].slice(0, 50),
       }));
+
+      // Check for ownership devolution after buyout
+      const updatedSyndicate = get().syndicates?.[investor.syndicateId];
+      const stallion = updatedSyndicate ? get().horses[updatedSyndicate.stallionId] : undefined;
+      if (updatedSyndicate && stallion) {
+        const currentOwnerKey = stallion.stableId ?? "player";
+        const devolutionResult = findMajorityOwner(
+          updatedSyndicate.shareHolders,
+          updatedSyndicate.totalShares,
+          currentOwnerKey,
+        );
+        if (devolutionResult.wouldDevolve && devolutionResult.newOwner) {
+          const topHolder = devolutionResult.newOwner;
+          const newStableId = topHolder === "player" ? undefined : topHolder;
+          const previousOwnerKey = currentOwnerKey;
+          set((state) => ({
+            horses: {
+              ...state.horses,
+              [stallion.id]: {
+                ...state.horses[stallion.id],
+                stableId: newStableId,
+                owned: !newStableId,
+              },
+            },
+            shareActivityFeed: [
+              ...((state.shareActivityFeed ?? []) as ShareActivityFeedItem[]),
+              {
+                id: generateUUID(),
+                syndicateId: investor.syndicateId,
+                syndicateName: updatedSyndicate.stallionName,
+                type: "devolution" as const,
+                shares: 0,
+                pricePerShare: 0,
+                cashMoved: 0,
+                day: get().day,
+                previousOwner: previousOwnerKey,
+                newOwner: topHolder,
+                stallionName: stallion.name,
+              },
+            ].slice(-200),
+            log: [
+              {
+                day: get().day,
+                text: `Syndicate: ${stallion.name} ownership transferred to ${topHolder === "player" ? "your stable" : topHolder} (majority shareholder).`,
+              },
+              ...get().log,
+            ].slice(0, 50),
+          }));
+        }
+      }
 
       return { ok: true };
     },

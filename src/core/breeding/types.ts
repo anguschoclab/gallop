@@ -55,10 +55,27 @@ export type PedigreeNode = {
 export interface ShareTransaction {
   id: string;
   syndicateId: string;
-  stableId: string;
+  buyerStableId: string;
+  sellerStableId: string;
   shares: number;
   pricePerShare: number;
   day: number;
+}
+
+export interface ShareActivityFeedItem {
+  id: string;
+  syndicateId: string;
+  syndicateName: string;
+  type: "share_purchase" | "share_sale" | "devolution" | "investor_solicit" | "investor_buyout";
+  buyerStableId?: string;
+  sellerStableId?: string;
+  shares: number;
+  pricePerShare: number;
+  cashMoved: number;
+  day: number;
+  previousOwner?: string;
+  newOwner?: string;
+  stallionName?: string;
 }
 
 export interface Syndicate {

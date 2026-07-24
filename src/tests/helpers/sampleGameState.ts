@@ -129,6 +129,7 @@ export function makeGameState(overrides: Partial<GameState> = {}): Partial<GameS
     horseLeaderboards: { earnings: [] as any, beyer: [] as any },
     trackRecords: {},
     campaigns: [],
+    shareActivityFeed: [],
     ...overrides,
   };
 }

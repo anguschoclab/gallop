@@ -126,6 +126,7 @@ const META_KEYS: (keyof GameState)[] = [
   "syndicateInvestors",
   "lastTopTenRank",
   "shareTransactions",
+  "shareActivityFeed",
   "outposts",
   "sireLeaderboards",
   "sireTrendHistory",

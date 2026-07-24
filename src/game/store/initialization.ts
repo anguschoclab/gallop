@@ -230,6 +230,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     syndicates: {},
     syndicateInvestors: {},
     shareTransactions: [],
+    shareActivityFeed: [],
     staffPool: [],
     hiredStaff: [],
     breedingPrograms: [],

@@ -93,6 +93,7 @@ export const gameStateSchema = z
     founders: z.record(z.string(), z.unknown()).optional(),
     lastFounderUpdateDay: z.number().optional(),
     shareTransactions: z.array(z.unknown()).optional(),
+    shareActivityFeed: z.array(z.unknown()).optional(),
     playerProfile: z.unknown().optional(),
     outposts: z.array(z.unknown()).optional(),
     weather: z.unknown().optional(),

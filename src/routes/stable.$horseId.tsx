@@ -8,6 +8,7 @@ import { TrainingPanel } from "@/components/horse/TrainingPanel";
 import { FoalDevelopmentPanel } from "@/components/horse/FoalDevelopmentPanel";
 import { PrivateTrialDialog } from "@/components/horse/PrivateTrialDialog";
 import { SyndicateDialog } from "@/components/market/SyndicateDialog";
+import { ShareOwnershipPanel } from "@/components/market/ShareOwnershipPanel";
 import { HorseDetailHeader } from "@/components/horse/HorseDetailHeader";
 import { HorseIdentitySection } from "@/components/horse/HorseIdentitySection";
 import { HorseConditionSection } from "@/components/horse/HorseConditionSection";
@@ -242,6 +243,12 @@ function HorseDetail() {
 
             <FounderLegacy horseId={horse.id} />
             <HorseAwardsPanel horse={horse} />
+            {detail.isSyndicated && detail.syndicates[horse.id] && (
+              <ShareOwnershipPanel
+                syndicate={detail.syndicates[horse.id]}
+                stallion={horse}
+              />
+            )}
           </div>
         </div>
       </div>

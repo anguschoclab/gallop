@@ -77,6 +77,8 @@ export interface ShareTransactionImpact extends Impact {
   type: "share_transaction";
   syndicateId: string;
   stableId: string;
+  buyerStableId?: string;
+  sellerStableId?: string;
   shares: number;
   pricePerShare: number;
   reason: string;
