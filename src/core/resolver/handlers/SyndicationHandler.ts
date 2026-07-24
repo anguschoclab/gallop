@@ -96,7 +96,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       } else {
         const stable =
           lookupMaps?.stableMap.get(stableId) ||
-          draft.npcStables.find((s) => s.id === stableId);
+          draft.npcStables?.find((s) => s.id === stableId);
         if (stable) {
           stable.cash = (stable.cash || 0) + cashDelta;
         }
