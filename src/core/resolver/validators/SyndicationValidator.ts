@@ -78,9 +78,14 @@ export class SyndicationValidator implements IntentValidator {
           return { valid: false, reason: "Insufficient shares available" };
         }
 
-        // Validate sufficient funds
+        // Validate sufficient funds for the buyer (player or NPC stable).
         const totalCost = purchaseIntent.shares * purchaseIntent.pricePerShare;
-        if (state.cash < totalCost) {
+        const buyerId = purchaseIntent.buyerStableId || "player";
+        const buyerCash =
+          buyerId === "player"
+            ? state.cash
+            : state.npcStables.find((s) => s.id === buyerId)?.cash ?? 0;
+        if (buyerCash < totalCost) {
           return { valid: false, reason: "Insufficient funds to purchase shares" };
         }
 

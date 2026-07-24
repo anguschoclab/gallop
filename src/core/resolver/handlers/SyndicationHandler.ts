@@ -88,6 +88,21 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       }
     }
 
+    // Move cash: positive shares = purchase (buyer pays), negative = sale (seller receives)
+    const cashDelta = -shares * pricePerShare;
+    if (cashDelta !== 0) {
+      if (stableId === "player") {
+        draft.cash += cashDelta;
+      } else {
+        const stable =
+          lookupMaps?.stableMap.get(stableId) ||
+          draft.npcStables?.find((s) => s.id === stableId);
+        if (stable) {
+          stable.cash = (stable.cash || 0) + cashDelta;
+        }
+      }
+    }
+
     // Record transaction
     const transaction = {
       id: generateUUID(),
@@ -100,6 +115,46 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
     if (!draft.shareTransactions) draft.shareTransactions = [];
     draft.shareTransactions.push(transaction);
+
+    // Ownership devolution: if the current stallion owner no longer holds the
+    // majority of shares (>50%), transfer ownership to the largest shareholder.
+    const stallion =
+      lookupMaps?.horseMap.get(syndicate.stallionId) || draft.horses[syndicate.stallionId];
+    if (stallion) {
+      const currentOwnerKey = stallion.stableId ?? "player";
+      const currentOwnerShares = syndicate.shareHolders[currentOwnerKey] || 0;
+      const majorityThreshold = syndicate.totalShares / 2;
+
+      if (currentOwnerShares <= majorityThreshold) {
+        let topHolder = currentOwnerKey;
+        let topShares = currentOwnerShares;
+        for (const [holder, count] of Object.entries(syndicate.shareHolders)) {
+          if (count > topShares) {
+            topShares = count;
+            topHolder = holder;
+          }
+        }
+
+        if (topHolder !== currentOwnerKey && topShares > 0) {
+          const newStableId = topHolder === "player" ? undefined : topHolder;
+          stallion.stableId = newStableId;
+          stallion.owned = !newStableId;
+
+          const newOwnerName =
+            topHolder === "player"
+              ? "your stable"
+              : draft.npcStables.find((s) => s.id === topHolder)?.name || "a new majority owner";
+
+          draft.log = [
+            {
+              day: impact.day,
+              text: `Syndicate: ${stallion.name} ownership transferred to ${newOwnerName} (majority shareholder).`,
+            },
+            ...(draft.log || []),
+          ].slice(0, 50);
+        }
+      }
+    }
   },
 
   syndicate_fee_distribution: (draft, impact, lookupMaps) => {

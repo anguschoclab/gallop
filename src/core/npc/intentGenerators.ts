@@ -20,6 +20,9 @@ import type {
   ClaimingIntent,
   WithdrawFromClaimingIntent,
   GeldingIntent,
+  SyndicateCreationIntent,
+  SharePurchaseIntent,
+  ShareSaleIntent,
 } from "@/core/resolver/intents";
 import type { GameState, Horse, Race, Stable, Jockey } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
@@ -48,6 +51,12 @@ import {
   recordWithdrawalDecision,
 } from "@/core/ai/withdrawalAI";
 import { createGeldingAIState, shouldGeldHorse } from "@/core/ai/geldingAI";
+import {
+  shouldCreateSyndicate,
+  calculateSharePurchase,
+  calculateShareSale,
+  calculateSharePrice,
+} from "@/core/ai/syndicationAI";
 import {
   getOrCreateStableAIState,
   updateStableAIState,
@@ -174,6 +183,7 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
         ),
       );
       intents.push(...generateNpcGeldingIntents(state, stable, stableAI, day, ownedHorses));
+      intents.push(...generateNpcSyndicateIntents(state, stable, day, ownedHorses));
 
       // Update stable AI state in the manager
       if (aiManager && stableAI) {
@@ -556,6 +566,113 @@ function generateNpcGeldingIntents(
         type: "gelding",
         horseId: horse.id,
       });
+    }
+  }
+
+  return intents;
+}
+
+/**
+ * Generate syndicate-related intents for an NPC stable:
+ * - Create syndicates for eligible G1-winning stallions.
+ * - Sell shares in existing syndicates when overvalued / declining / cash-poor.
+ * - Opportunistically buy shares in other stables' syndicates.
+ *
+ * Runs weekly (day % 7 === stable-hash) to avoid daily spam.
+ */
+function generateNpcSyndicateIntents(
+  state: GameState,
+  stable: Stable,
+  day: number,
+  ownedHorses: Horse[],
+): AnyIntent[] {
+  const intents: AnyIntent[] = [];
+  const syndicates = state.syndicates || {};
+
+  // Weekly cadence, staggered per stable to spread activity.
+  const stableHash = stable.id
+    .split("")
+    .reduce((acc, ch) => (acc + ch.charCodeAt(0)) & 0xffff, 0);
+  if ((day + stableHash) % 7 !== 0) return intents;
+
+  // 1) Create syndicates for eligible stallions.
+  for (const horse of ownedHorses) {
+    if (shouldCreateSyndicate(stable, horse, syndicates)) {
+      const totalShares = 40;
+      const sharePrice = Math.max(1000, Math.round(calculateSharePrice(
+        {
+          id: `syndicate_${horse.id}`,
+          stallionId: horse.id,
+          stallionName: horse.name,
+          totalShares,
+          shareHolders: {},
+          sharePrice: 0,
+          studFee: horse.stud?.standingFee || 0,
+          isPublic: true,
+          lifetimeEarnings: 0,
+        },
+        horse,
+      )));
+      const intent: SyndicateCreationIntent = {
+        id: generateUUID(),
+        entityId: horse.id,
+        source: "npc",
+        day,
+        priority: 40,
+        type: "syndicate_creation",
+        stallionId: horse.id,
+        totalShares,
+        sharePrice,
+        // Owner keeps a controlling initial stake (60%).
+        initialShareholders: { [stable.id]: Math.floor(totalShares * 0.6) },
+      };
+      intents.push(intent);
+    }
+  }
+
+  // 2) Sell / 3) Buy shares in existing syndicates.
+  for (const syndicate of Object.values(syndicates)) {
+    const stallion = state.horses[syndicate.stallionId];
+    if (!stallion) continue;
+
+    // Sell
+    const sellCount = calculateShareSale(stable, syndicate, stallion);
+    if (sellCount > 0) {
+      const price = calculateSharePrice(syndicate, stallion);
+      const saleIntent: ShareSaleIntent = {
+        id: generateUUID(),
+        entityId: syndicate.id,
+        source: "npc",
+        day,
+        priority: 40,
+        type: "share_sale",
+        syndicateId: syndicate.id,
+        sellerStableId: stable.id,
+        shares: sellCount,
+        pricePerShare: price,
+      };
+      intents.push(saleIntent);
+      continue; // Don't buy the same syndicate on the same tick.
+    }
+
+    // Buy (only in stallions the NPC doesn't own, to keep syndication interesting).
+    if (stallion.stableId === stable.id) continue;
+    const buyCount = calculateSharePurchase(stable, syndicate, stallion);
+    if (buyCount > 0) {
+      const price = calculateSharePrice(syndicate, stallion);
+      const purchaseIntent: SharePurchaseIntent = {
+        id: generateUUID(),
+        entityId: syndicate.id,
+        source: "npc",
+        day,
+        priority: 40,
+        type: "share_purchase",
+        syndicateId: syndicate.id,
+        buyerStableId: stable.id,
+        shares: buyCount,
+        pricePerShare: price,
+      };
+      intents.push(purchaseIntent);
     }
   }
 
