@@ -294,7 +294,7 @@ describe("pregnancyPhase", () => {
   });
 
   it("should have correct order", () => {
-    expect(pregnancyPhase.order).toBe(70);
+    expect(pregnancyPhase.order).toBe(68);
   });
 
   it("should have correct name", () => {

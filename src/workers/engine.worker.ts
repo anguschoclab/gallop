@@ -8,7 +8,7 @@ import { expose, proxy } from "comlink";
 import { produceWithPatches, enablePatches, type Patch } from "immer";
 import type { GameState } from "@/game/types";
 import { executePipeline, type PipelineContext } from "@/core/time/pipeline";
-import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
+import { STAGE_PHASES, STAGE_RANGES } from "@/workers/pipelineStages";
 import { createRng, hashStr } from "@/core/common/rng";
 import { getCurrentYear } from "@/core/race/schedule";
 
@@ -23,6 +23,22 @@ export type AdvanceDayInput = {
 export type AdvanceDayOutput = {
   patches: Patch[];
   logs: { day: number; text: string }[];
+};
+
+export type AdvanceDaysBatchInput = {
+  state: GameState;
+  count: number;
+  headless?: boolean;
+  playerRaceDays?: Set<number>;
+  progressCallback?: (day: number, totalDays: number) => void;
+};
+
+export type AdvanceDaysBatchOutput = {
+  patches: Patch[];
+  logs: { day: number; text: string }[];
+  daysAdvanced: number;
+  encounteredPlayerRace: boolean;
+  playerRaceId?: string;
 };
 
 /**
@@ -79,52 +95,14 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
 
     // Execute pipeline with progress callbacks
     let currentContext = pipelineContext;
-    const totalStages = 5;
+    const totalStages = STAGE_PHASES.length;
 
-    // Stage 1: Intent processing + early expiry (phases 1-10)
-    if (progressCallback) {
-      progressCallback(1, totalStages, "Intent processing");
+    for (let i = 0; i < STAGE_PHASES.length; i++) {
+      if (progressCallback) {
+        progressCallback(i + 1, totalStages, STAGE_RANGES[i].name);
+      }
+      currentContext = executePipeline(STAGE_PHASES[i], currentContext);
     }
-    currentContext = executePipeline(
-      GAME_PIPELINE_PHASES.filter((p) => p.order >= 1 && p.order <= 10),
-      currentContext,
-    );
-
-    // Stage 2: Resolution intents (phases 15-45)
-    if (progressCallback) {
-      progressCallback(2, totalStages, "Resolution intents");
-    }
-    currentContext = executePipeline(
-      GAME_PIPELINE_PHASES.filter((p) => p.order >= 15 && p.order <= 45),
-      currentContext,
-    );
-
-    // Stage 3: Core simulation (phases 50-95)
-    if (progressCallback) {
-      progressCallback(3, totalStages, "Core simulation");
-    }
-    currentContext = executePipeline(
-      GAME_PIPELINE_PHASES.filter((p) => p.order >= 50 && p.order <= 95),
-      currentContext,
-    );
-
-    // Stage 4: Lifecycle (phases 100-160)
-    if (progressCallback) {
-      progressCallback(4, totalStages, "Lifecycle");
-    }
-    currentContext = executePipeline(
-      GAME_PIPELINE_PHASES.filter((p) => p.order >= 100 && p.order <= 160),
-      currentContext,
-    );
-
-    // Stage 5: Final resolution (phases 67-200)
-    if (progressCallback) {
-      progressCallback(5, totalStages, "Final resolution");
-    }
-    currentContext = executePipeline(
-      GAME_PIPELINE_PHASES.filter((p) => p.order >= 67 && p.order <= 200),
-      currentContext,
-    );
 
     // Sync the draft state with the final pipeline state
     Object.assign(draft, currentContext.state);
@@ -143,10 +121,110 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
 }
 
 /**
+ * Execute multiple day advancements in the worker in a single call.
+ * This eliminates N worker round-trips for multi-day advances.
+ */
+async function advanceDaysBatch(input: AdvanceDaysBatchInput): Promise<AdvanceDaysBatchOutput> {
+  const { state, count, headless, playerRaceDays, progressCallback } = input;
+  const allLogs: { day: number; text: string }[] = [];
+  let daysAdvanced = 0;
+  let encounteredPlayerRace = false;
+  let playerRaceId: string | undefined;
+
+  const [finalState, patches] = produceWithPatches(state, (draft) => {
+    let currentState = draft as GameState;
+
+    for (let i = 0; i < count; i++) {
+      const nextDay = currentState.day + 1;
+
+      // Check for player race (unless headless)
+      if (!headless && playerRaceDays?.has(nextDay)) {
+        const playerRace = Object.values(currentState.races).find(
+          (r) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned),
+        );
+        if (playerRace) {
+          encounteredPlayerRace = true;
+          playerRaceId = playerRace.id;
+          break;
+        }
+      }
+
+      if (progressCallback) {
+        progressCallback(i + 1, count);
+      }
+
+      // Run pipeline for this day
+      const previousDay = currentState.day;
+      const currentYear = getCurrentYear(nextDay);
+      const previousYear = getCurrentYear(previousDay);
+
+      // Clean up expired Win and You're In qualifications at year boundary
+      let horses = currentState.horses;
+      if (currentYear > previousYear) {
+        horses = Object.fromEntries(
+          Object.values(horses).map((h) => {
+            if (h.winAndYouInQualified) {
+              return [
+                h.id,
+                {
+                  ...h,
+                  winAndYouInQualified: h.winAndYouInQualified.filter(
+                    (q: { year: number }) => q.year >= currentYear,
+                  ),
+                },
+              ];
+            }
+            return [h.id, h];
+          }),
+        );
+      }
+
+      const pipelineContext: PipelineContext = {
+        previousDay,
+        newDay: nextDay,
+        state: { ...currentState, horses },
+        logs: [],
+        dailyRng: createRng(hashStr("daily_" + nextDay)),
+        intents: currentState.pendingIntents || [],
+        impacts: [],
+        impactLog: [],
+        horseMap: new Map(Object.values(horses).map((h) => [h.id, h])),
+        raceMap: new Map(Object.values(currentState.races).map((r) => [r.id, r])),
+        stableMap: new Map((currentState.npcStables ?? []).map((s) => [s.id, s])),
+        jockeyMap: new Map((currentState.jockeys ?? []).map((j) => [j.id, j])),
+      };
+
+      let currentContext = pipelineContext;
+      for (const stagePhases of STAGE_PHASES) {
+        currentContext = executePipeline(stagePhases, currentContext);
+      }
+
+      // Update state for next iteration
+      currentState = { ...currentContext.state, day: nextDay, pendingIntents: [], trainingUsed: {} };
+      allLogs.push(...currentContext.logs);
+      daysAdvanced++;
+    }
+
+    // Sync the draft with the final state
+    Object.assign(draft, currentState);
+    return allLogs as any;
+  });
+
+  return {
+    patches,
+    logs: allLogs,
+    daysAdvanced,
+    encounteredPlayerRace,
+    playerRaceId,
+  };
+}
+
+/**
  * Engine worker API exposed via Comlink
  */
 export type EngineWorkerApi = {
   advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput>;
+  advanceDaysBatch(input: AdvanceDaysBatchInput): Promise<AdvanceDaysBatchOutput>;
 };
 
 // Expose the worker API with Comlink
@@ -162,5 +240,17 @@ expose({
       : undefined;
 
     return advanceDay({ ...input, progressCallback: proxiedCallback });
+  },
+
+  advanceDaysBatch: (input: AdvanceDaysBatchInput) => {
+    const proxiedCallback = input.progressCallback
+      ? proxy((day: number, totalDays: number) => {
+          if (input.progressCallback) {
+            input.progressCallback(day, totalDays);
+          }
+        })
+      : undefined;
+
+    return advanceDaysBatch({ ...input, progressCallback: proxiedCallback });
   },
 } as EngineWorkerApi);

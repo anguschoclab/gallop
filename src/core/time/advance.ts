@@ -8,7 +8,7 @@
  * Related files: pipeline.ts (uses advance functions), phases/ (phases use advance)
  */
 
-import type { GameState, Race } from "@/game/types";
+import type { Race } from "@/game/types";
 
 /**
  * Pre-compute player race days for O(1) lookup during multi-day advance.
@@ -37,54 +37,3 @@ export function computePlayerRaceDays(
   return playerRaceDays;
 }
 
-/**
- * Advance multiple days with player race detection.
- *
- * Advancing may be less than requested if a player race is encountered.
- *
- * @param state - Current game state
- * @param daysToAdvance - Number of days requested to advance
- * @param advanceDayFn - Function to call for each day advancement
- * @param headless - Whether to ignore player races (defaults to false)
- * @returns Result object with days advanced and race detection info
- */
-export function advanceMultipleDaysWithRaceDetection(
-  state: GameState,
-  daysToAdvance: number,
-  advanceDayFn: () => void,
-  headless: boolean = false,
-): { daysAdvanced: number; encounteredPlayerRace: boolean; playerRaceDay?: number } {
-  let daysAdvanced = 0;
-
-  for (let i = 0; i < daysToAdvance; i++) {
-    const currentDay = state.day;
-    const nextDay = currentDay + 1;
-
-    // Check for player race on next day
-    const playerRace = Object.values(state.races).find(
-      (r) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned),
-    );
-
-    if (playerRace && !headless) {
-      return {
-        daysAdvanced,
-        encounteredPlayerRace: true,
-        playerRaceDay: nextDay,
-      };
-    }
-
-    // If player race found in headless mode, resolve it automatically
-    if (playerRace && headless) {
-      // This would need to call resolveRace headlessly
-      // For now, we'll just advance and let advanceDay handle it
-    }
-
-    advanceDayFn();
-    daysAdvanced++;
-  }
-
-  return {
-    daysAdvanced,
-    encounteredPlayerRace: false,
-  };
-}

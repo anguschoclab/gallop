@@ -36,6 +36,7 @@ import {
 import { calculateOverallRating } from "@/core/horse/stats";
 import { requireOwned, requireHorse } from "../guards";
 import { getEngineWorker } from "@/game/store";
+import { persistenceEnabled } from "@/game/store/storage";
 import { generateUUID } from "@/core/uuid";
 import { resolvePhenotype } from "@/core/horse/horseFactory";
 import { clearLineageCache } from "@/core/breeding/lineage";
@@ -467,30 +468,78 @@ export function createCoreSlice(
       // Pre-compute player race days for O(1) lookup
       const playerRaceDays = computePlayerRaceDays(Object.values(s.races), s.day + 1, s.day + n);
 
-      // Batch size - yield control every 5 days to balance performance and responsiveness
-      const batchSize = 5;
+      // Debounce persistence: disable saves during batch, restore after
+      const wasPersistenceEnabled = persistenceEnabled.value;
+      persistenceEnabled.value = false;
 
-      for (let i = 0; i < n; i++) {
-        const currentS = get();
-        const nextDay = currentS.day + 1;
+      try {
+        // Try worker batch first (single round-trip for all N days)
+        try {
+          const engineWorker = getEngineWorker();
+          const result = await engineWorker.advanceDaysBatch({
+            state: { ...s },
+            count: n,
+            headless,
+            playerRaceDays,
+          });
 
-        // O(1) lookup instead of O(n) array.find
-        if (playerRaceDays.has(nextDay) && !headless) {
-          const playerRace = Object.values(currentS.races).find(
-            (r: Race) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned),
-          );
-          if (playerRace) {
-            set({ pendingPlayerRaceId: playerRace.id });
-            return;
+          const { patches, logs: allLogs, daysAdvanced, encounteredPlayerRace, playerRaceId } = result;
+
+          // Apply patches to get the final state
+          const finalState = applyPatches(s, patches);
+          const finalDay = s.day + daysAdvanced;
+
+          // Calculate upkeep for the final day
+          const playerHorseCount = Object.values(finalState.horses ?? {}).filter(
+            (h: Horse) => !h.stableId,
+          ).length;
+          const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
+
+          // Apply the result
+          applyDayResult(finalState, allLogs, playerUpkeep, finalDay);
+
+          if (encounteredPlayerRace && playerRaceId) {
+            set({ pendingPlayerRaceId: playerRaceId });
+          }
+          return;
+        } catch (error) {
+          // Worker not available — fall through to synchronous per-day loop
+          if (!(error instanceof Error && error.message.includes("Worker not available"))) {
+            console.warn(
+              "Worker batch not available, using synchronous per-day pipeline execution",
+            );
           }
         }
 
-        await get().advanceDay();
+        // Fallback: synchronous per-day loop with yield every 5 days
+        const batchSize = 5;
 
-        // Yield control to browser every batchSize days to prevent UI freeze
-        if (i % batchSize === 0 && i > 0) {
-          await new Promise((resolve) => setTimeout(resolve, 0));
+        for (let i = 0; i < n; i++) {
+          const currentS = get();
+          const nextDay = currentS.day + 1;
+
+          // O(1) lookup instead of O(n) array.find
+          if (playerRaceDays.has(nextDay) && !headless) {
+            const playerRace = Object.values(currentS.races).find(
+              (r: Race) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned),
+            );
+            if (playerRace) {
+              set({ pendingPlayerRaceId: playerRace.id });
+              return;
+            }
+          }
+
+          await get().advanceDay();
+
+          // Yield control to browser every batchSize days to prevent UI freeze
+          if (i % batchSize === 0 && i > 0) {
+            await new Promise((resolve) => setTimeout(resolve, 0));
+          }
         }
+      } finally {
+        // Restore persistence — the persist middleware will save the final state
+        // via the set() call in applyDayResult from the last advanceDay.
+        persistenceEnabled.value = wasPersistenceEnabled;
       }
     },
 

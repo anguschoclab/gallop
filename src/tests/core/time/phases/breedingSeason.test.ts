@@ -187,7 +187,7 @@ describe("breedingSeasonPhase", () => {
   });
 
   it("should have correct order", () => {
-    expect(breedingSeasonPhase.order).toBe(35);
+    expect(breedingSeasonPhase.order).toBe(36);
   });
 
   it("should have correct name", () => {

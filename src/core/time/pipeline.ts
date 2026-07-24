@@ -56,7 +56,7 @@ export function executePipeline(
   phases: PipelinePhase[],
   context: PipelineContext,
 ): PipelineContext {
-  const sortedPhases = [...phases].sort((a, b) => a.order - b.order);
+  const sortedPhases = isSorted(phases) ? phases : [...phases].sort((a, b) => a.order - b.order);
   let currentContext = context;
 
   for (const phase of sortedPhases) {
@@ -68,6 +68,13 @@ export function executePipeline(
   }
 
   return currentContext;
+}
+
+function isSorted(phases: PipelinePhase[]): boolean {
+  for (let i = 0; i < phases.length - 1; i++) {
+    if (phases[i].order > phases[i + 1].order) return false;
+  }
+  return true;
 }
 
 /**

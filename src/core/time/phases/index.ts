@@ -116,4 +116,4 @@ export const GAME_PIPELINE_PHASES = [
   solvencyPhase,
   // Impact application phase (final)
   impactApplicationPhase,
-];
+].sort((a, b) => a.order - b.order);
