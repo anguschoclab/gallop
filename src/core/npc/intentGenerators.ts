@@ -183,6 +183,7 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
         ),
       );
       intents.push(...generateNpcGeldingIntents(state, stable, stableAI, day, ownedHorses));
+      intents.push(...generateNpcSyndicateIntents(state, stable, day, ownedHorses));
 
       // Update stable AI state in the manager
       if (aiManager && stableAI) {
