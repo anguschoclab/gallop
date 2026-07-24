@@ -11,6 +11,24 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
   const history = horse.raceHistory ?? [];
   if (history.length < 3) return null;
 
+  // 0.5. Check for Seconditis (frequent runner-up, struggling to win)
+  if (history.length >= 5) {
+    let wins = 0;
+    let seconds = 0;
+    for (const race of history) {
+      if (race.position === 1) wins++;
+      if (race.position === 2) seconds++;
+    }
+    if (wins === 0 && seconds >= 3) {
+      return {
+        label: "Seconditis",
+        value: "Frequent Runner-Up",
+        context: `Has finished 2nd in ${seconds} of ${history.length} starts without a win`,
+        type: "negative",
+      };
+    }
+  }
+
   // 1. Check for win streak
   let currentWinStreak = 0;
   for (let i = history.length - 1; i >= 0; i--) {
