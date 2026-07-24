@@ -14,9 +14,7 @@ function makeStallion(id: string, name: string, stableId?: string): Horse {
     energy: 100,
     form: 0,
     potential: 80,
-    raceHistory: [
-      { raceId: "r1", raceName: "G1 Race", position: 1, day: 100, grade: "G1" },
-    ],
+    raceHistory: [{ raceId: "r1", raceName: "G1 Race", position: 1, day: 100, grade: "G1" }],
     stud: { atStud: true, standingFee: 50000, bookSize: 50, seasonBookings: 0 },
     owned: !stableId,
     stableId,
@@ -168,7 +166,9 @@ describe("Syndicate Devolution Integration", () => {
     const stallion = makeStallion("s1", "Champ");
     // Use 50 total shares so there are unissued shares for purchases
     const syndicate = makeSyndicate(
-      "syn-s1", "s1", "Champ",
+      "syn-s1",
+      "s1",
+      "Champ",
       { player: 15, npcA: 15, npcB: 10 },
       50,
     );
@@ -204,11 +204,7 @@ describe("Syndicate Devolution Integration", () => {
     const stallion = makeStallion("s1", "Champ");
     // 50 total shares, threshold = 25. Start: player 20, npcA 15, npcB 5 = 40, 10 unissued.
     // Player already below threshold (20 <= 25) but npcA 15 < 20, no transfer yet.
-    const syndicate = makeSyndicate(
-      "syn-s1", "s1", "Champ",
-      { player: 20, npcA: 15, npcB: 5 },
-      50,
-    );
+    const syndicate = makeSyndicate("syn-s1", "s1", "Champ", { player: 20, npcA: 15, npcB: 5 }, 50);
     const state = makeState(stallion, syndicate, [
       { id: "npcA", name: "NPC A", cash: 1000000 },
       { id: "npcB", name: "NPC B", cash: 1000000 },

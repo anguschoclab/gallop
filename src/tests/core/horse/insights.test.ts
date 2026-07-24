@@ -3,21 +3,6 @@ import { getHorseInsight } from "@/core/horse/insights";
 import type { Horse } from "@/core/horse/types";
 
 describe("getHorseInsight", () => {
-  it("detects Seconditis for frequent runner-ups", () => {
-    const horse = {
-      raceHistory: [
-        { position: 2, day: 1 },
-        { position: 2, day: 2 },
-        { position: 4, day: 3 },
-        { position: 2, day: 4 },
-        { position: 3, day: 5 },
-      ],
-    } as Horse;
-    const insight = getHorseInsight(horse);
-    expect(insight?.label).toBe("Seconditis");
-    expect(insight?.type).toBe("negative");
-  });
-
   it("returns null for history with less than 3 races", () => {
     const horse = { raceHistory: [{ position: 1, day: 1 }] } as Horse;
     expect(getHorseInsight(horse)).toBeNull();
@@ -40,12 +25,12 @@ describe("getHorseInsight", () => {
   it("detects distance specialists", () => {
     const horse = {
       raceHistory: [
-        { position: 3, day: 1, distance: 1000, beyer: 50 },
-        { position: 3, day: 2, distance: 1000, beyer: 50 },
-        { position: 3, day: 3, distance: 1000, beyer: 50 },
-        { position: 3, day: 4, distance: 1200, beyer: 90 },
-        { position: 3, day: 5, distance: 1200, beyer: 90 },
-        { position: 3, day: 6, distance: 1200, beyer: 90 },
+        { position: 2, day: 1, distance: 1000, beyer: 50 },
+        { position: 2, day: 2, distance: 1000, beyer: 50 },
+        { position: 2, day: 3, distance: 1000, beyer: 50 },
+        { position: 2, day: 4, distance: 1200, beyer: 90 },
+        { position: 2, day: 5, distance: 1200, beyer: 90 },
+        { position: 2, day: 6, distance: 1200, beyer: 90 },
       ],
     } as Horse;
     const insight = getHorseInsight(horse);
@@ -56,12 +41,12 @@ describe("getHorseInsight", () => {
   it("handles ties by preferring the first one encountered (based on map iteration)", () => {
     const horse = {
       raceHistory: [
-        { position: 3, day: 1, distance: 1000, beyer: 90 },
-        { position: 3, day: 2, distance: 1000, beyer: 90 },
-        { position: 3, day: 3, distance: 1000, beyer: 90 },
-        { position: 3, day: 4, distance: 1200, beyer: 90 },
-        { position: 3, day: 5, distance: 1200, beyer: 90 },
-        { position: 3, day: 6, distance: 1200, beyer: 90 },
+        { position: 2, day: 1, distance: 1000, beyer: 90 },
+        { position: 2, day: 2, distance: 1000, beyer: 90 },
+        { position: 2, day: 3, distance: 1000, beyer: 90 },
+        { position: 2, day: 4, distance: 1200, beyer: 90 },
+        { position: 2, day: 5, distance: 1200, beyer: 90 },
+        { position: 2, day: 6, distance: 1200, beyer: 90 },
       ],
     } as Horse;
     const insight = getHorseInsight(horse);
@@ -72,9 +57,9 @@ describe("getHorseInsight", () => {
   it("returns Surface Affinity for a horse with 3+ races on the same surface", () => {
     const horse = {
       raceHistory: [
-        { position: 3, day: 1, surface: "Turf", beyer: 90 },
-        { position: 3, day: 2, surface: "Turf", beyer: 80 },
-        { position: 3, day: 3, surface: "Turf", beyer: 85 },
+        { position: 2, day: 1, surface: "Turf", beyer: 90 },
+        { position: 2, day: 2, surface: "Turf", beyer: 80 },
+        { position: 2, day: 3, surface: "Turf", beyer: 85 },
       ],
     } as Horse;
     const insight = getHorseInsight(horse);
@@ -85,10 +70,10 @@ describe("getHorseInsight", () => {
   it("returns null when no surface has 3+ races", () => {
     const horse = {
       raceHistory: [
-        { position: 3, day: 1, surface: "Turf", beyer: 80 },
-        { position: 3, day: 2, surface: "Turf", beyer: 85 },
-        { position: 3, day: 3, surface: "Dirt", beyer: 80 },
-        { position: 3, day: 4, surface: "Dirt", beyer: 85 },
+        { position: 2, day: 1, surface: "Turf", beyer: 80 },
+        { position: 2, day: 2, surface: "Turf", beyer: 85 },
+        { position: 2, day: 3, surface: "Dirt", beyer: 80 },
+        { position: 2, day: 4, surface: "Dirt", beyer: 85 },
       ],
     } as Horse;
     expect(getHorseInsight(horse)).toBeNull();
