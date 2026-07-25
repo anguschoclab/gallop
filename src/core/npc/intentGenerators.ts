@@ -579,6 +579,10 @@ function generateNpcGeldingIntents(
  * - Opportunistically buy shares in other stables' syndicates.
  *
  * Runs weekly (day % 7 === stable-hash) to avoid daily spam.
+ * @param state The current game state.
+ * @param stable The NPC stable.
+ * @param day The current game day.
+ * @param ownedHorses The list of horses owned by the NPC stable.
  */
 function generateNpcSyndicateIntents(
   state: GameState,
