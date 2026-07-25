@@ -244,10 +244,7 @@ function HorseDetail() {
             <FounderLegacy horseId={horse.id} />
             <HorseAwardsPanel horse={horse} />
             {detail.isSyndicated && detail.syndicates[horse.id] && (
-              <ShareOwnershipPanel
-                syndicate={detail.syndicates[horse.id]}
-                stallion={horse}
-              />
+              <ShareOwnershipPanel syndicate={detail.syndicates[horse.id]} stallion={horse} />
             )}
           </div>
         </div>

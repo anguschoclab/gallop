@@ -44,25 +44,13 @@ describe("devolutionUtils", () => {
 
   describe("simulateShareChange", () => {
     it("sale that causes tie does not trigger devolution", () => {
-      const result = simulateShareChange(
-        { player: 21, npcA: 19 },
-        40,
-        "player",
-        "player",
-        -2,
-      );
+      const result = simulateShareChange({ player: 21, npcA: 19 }, 40, "player", "player", -2);
       expect(result.wouldDevolve).toBe(false);
       expect(result.newOwner).toBeNull();
     });
 
     it("sale that drops below NPC triggers devolution", () => {
-      const result = simulateShareChange(
-        { player: 20, npcA: 20 },
-        40,
-        "player",
-        "player",
-        -2,
-      );
+      const result = simulateShareChange({ player: 20, npcA: 20 }, 40, "player", "player", -2);
       expect(result.wouldDevolve).toBe(true);
       expect(result.newOwner).toBe("npcA");
     });
@@ -70,13 +58,7 @@ describe("devolutionUtils", () => {
     it("purchase that makes NPC majority triggers devolution when owner at threshold", () => {
       // Owner must already be <= threshold for purchase to trigger devolution
       // Player 19 <= 20, npcA buys 2 -> npcA 21. 21 > 19 -> devolution
-      const result = simulateShareChange(
-        { player: 19, npcA: 19 },
-        40,
-        "player",
-        "npcA",
-        2,
-      );
+      const result = simulateShareChange({ player: 19, npcA: 19 }, 40, "player", "npcA", 2);
       expect(result.wouldDevolve).toBe(true);
       expect(result.newOwner).toBe("npcA");
     });
@@ -85,13 +67,7 @@ describe("devolutionUtils", () => {
       // Player 19 <= 20, npcA buys 1 -> npcA 20. 20 = 19? No, 20 > 19 -> devolution!
       // Actually npcA 20 > player 19 -> would devolve. Let me use a different setup.
       // Player 19, npcA 15. npcA buys 3 -> npcA 18. 18 < 19 -> no devolution.
-      const result = simulateShareChange(
-        { player: 19, npcA: 15 },
-        40,
-        "player",
-        "npcA",
-        3,
-      );
+      const result = simulateShareChange({ player: 19, npcA: 15 }, 40, "player", "npcA", 3);
       expect(result.wouldDevolve).toBe(false);
       expect(result.newOwner).toBeNull();
     });

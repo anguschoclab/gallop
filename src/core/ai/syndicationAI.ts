@@ -96,6 +96,9 @@ export function shouldCreateSyndicate(
 
 /**
  * Check if selling N shares would cause the NPC to lose majority ownership.
+ * @param syndicate
+ * @param npcStableId
+ * @param sharesToSell
  */
 function wouldLoseMajority(
   syndicate: Syndicate,
@@ -111,6 +114,9 @@ function wouldLoseMajority(
 /**
  * Calculate how many shares the NPC needs to buy to trigger devolution
  * (become the majority shareholder). Returns 0 if impossible.
+ * @param syndicate
+ * @param npcStableId
+ * @param availableShares
  */
 function sharesToTriggerDevolution(
   syndicate: Syndicate,

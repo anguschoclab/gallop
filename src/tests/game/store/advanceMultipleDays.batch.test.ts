@@ -7,7 +7,10 @@ import type { Race } from "@/game/types";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
-function runPipelineForDay(state: GameState, newDay: number): { state: GameState; logs: { day: number; text: string }[] } {
+function runPipelineForDay(
+  state: GameState,
+  newDay: number,
+): { state: GameState; logs: { day: number; text: string }[] } {
   const pipelineContext: PipelineContext = {
     previousDay: state.day,
     newDay,
