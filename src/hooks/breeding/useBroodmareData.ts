@@ -6,7 +6,7 @@ import type { GameState, Pregnancy, Horse } from "@/game/types";
 export interface BroodmareEntry {
   pregnancy: Pregnancy;
   dam: Horse;
-  sire: Horse;
+  sire: Horse | undefined;
   daysRemaining: number;
   maternityLog: { day: number; text: string }[];
 }
@@ -22,8 +22,8 @@ export function useBroodmareData() {
   const sortedBroodmares = useMemo(() => {
     const data = activePregnancies
       .map((pregnancy) => {
-        const dam = horses[pregnancy.damId];
-        const sire = horses[pregnancy.sireId];
+        const dam = horses[pregnancy.damId] as Horse | undefined;
+        const sire = horses[pregnancy.sireId] as Horse | undefined;
         const daysRemaining = pregnancy.dueDay - day - 1;
 
         const maternityLog = log.filter(
@@ -40,7 +40,7 @@ export function useBroodmareData() {
           maternityLog,
         };
       })
-      .filter((data): data is BroodmareEntry => data.dam !== undefined && data.sire !== undefined);
+      .filter((data): data is BroodmareEntry => data.dam !== undefined);
 
     data.sort((a, b) => a.daysRemaining - b.daysRemaining);
     return data;
