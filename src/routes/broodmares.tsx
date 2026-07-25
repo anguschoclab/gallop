@@ -39,7 +39,7 @@ function BroodmaresPage() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {sortedBroodmares.map(({ pregnancy, dam, sire, daysRemaining, maternityLog }: any) => (
+          {sortedBroodmares.map(({ pregnancy, dam, sire, daysRemaining, maternityLog }) => (
             <Card key={pregnancy.id} className="border-l-4 border-l-gold border-gold-muted">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
@@ -139,7 +139,7 @@ function BroodmaresPage() {
                       Recent maternity activity:
                     </p>
                     <div className="space-y-1">
-                      {maternityLog.slice(0, 3).map((entry: any, idx: number) => (
+                      {maternityLog.slice(0, 3).map((entry, idx) => (
                         <div
                           key={idx}
                           className="text-xs py-1 border-b border-gold-muted last:border-0 flex gap-2"
