@@ -25,12 +25,12 @@ describe("getHorseInsight", () => {
   it("detects distance specialists", () => {
     const horse = {
       raceHistory: [
-        { position: 2, day: 1, distance: 1000, beyer: 50 },
-        { position: 2, day: 2, distance: 1000, beyer: 50 },
-        { position: 2, day: 3, distance: 1000, beyer: 50 },
-        { position: 2, day: 4, distance: 1200, beyer: 90 },
-        { position: 2, day: 5, distance: 1200, beyer: 90 },
-        { position: 2, day: 6, distance: 1200, beyer: 90 },
+        { position: 4, day: 1, distance: 1000, beyer: 50 },
+        { position: 4, day: 2, distance: 1000, beyer: 50 },
+        { position: 4, day: 3, distance: 1000, beyer: 50 },
+        { position: 4, day: 4, distance: 1200, beyer: 90 },
+        { position: 4, day: 5, distance: 1200, beyer: 90 },
+        { position: 4, day: 6, distance: 1200, beyer: 90 },
       ],
     } as Horse;
     const insight = getHorseInsight(horse);
@@ -41,12 +41,12 @@ describe("getHorseInsight", () => {
   it("handles ties by preferring the first one encountered (based on map iteration)", () => {
     const horse = {
       raceHistory: [
-        { position: 2, day: 1, distance: 1000, beyer: 90 },
-        { position: 2, day: 2, distance: 1000, beyer: 90 },
-        { position: 2, day: 3, distance: 1000, beyer: 90 },
-        { position: 2, day: 4, distance: 1200, beyer: 90 },
-        { position: 2, day: 5, distance: 1200, beyer: 90 },
-        { position: 2, day: 6, distance: 1200, beyer: 90 },
+        { position: 4, day: 1, distance: 1000, beyer: 90 },
+        { position: 4, day: 2, distance: 1000, beyer: 90 },
+        { position: 4, day: 3, distance: 1000, beyer: 90 },
+        { position: 4, day: 4, distance: 1200, beyer: 90 },
+        { position: 4, day: 5, distance: 1200, beyer: 90 },
+        { position: 4, day: 6, distance: 1200, beyer: 90 },
       ],
     } as Horse;
     const insight = getHorseInsight(horse);
@@ -94,9 +94,9 @@ describe("getHorseInsight", () => {
   it("does not skip distance 0 due to falsy check", () => {
     const horse = {
       raceHistory: [
-        { position: 2, day: 1, distance: 0, beyer: 80 },
-        { position: 2, day: 2, distance: 0, beyer: 80 },
-        { position: 2, day: 3, distance: 0, beyer: 80 },
+        { position: 4, day: 1, distance: 0, beyer: 80 },
+        { position: 4, day: 2, distance: 0, beyer: 80 },
+        { position: 4, day: 3, distance: 0, beyer: 80 },
       ],
     } as Horse;
     const insight = getHorseInsight(horse);
@@ -121,12 +121,27 @@ describe("getHorseInsight", () => {
   it("does not detect Improving Form if improvement is < 5", () => {
     const horse = {
       raceHistory: [
-        { position: 2, day: 1, beyer: 70 },
-        { position: 3, day: 2, beyer: 72 },
-        { position: 2, day: 3, beyer: 73 },
+        { position: 4, day: 1, beyer: 70 },
+        { position: 5, day: 2, beyer: 72 },
+        { position: 4, day: 3, beyer: 73 },
       ],
     } as Horse;
     const insight = getHorseInsight(horse);
     expect(insight).toBeNull();
+  });
+
+  it("detects Consistent Performer", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1 },
+        { position: 3, day: 2 },
+        { position: 2, day: 3 },
+        { position: 4, day: 4 },
+        { position: 2, day: 5 },
+      ],
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.label).toBe("Consistent");
+    expect(insight?.value).toBe("In the Money Machine");
   });
 });
