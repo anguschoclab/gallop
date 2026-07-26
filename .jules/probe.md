@@ -32,7 +32,3 @@
 **Learning:** In `src/core/race/impacts/prizeMoney.ts`, the generation of transaction impacts and reputation impacts (both wins and losses) are gated inside an `if (!horse.stableId)` check. This means NPC horses generate these impacts, but player-owned horses (`horse.stableId` exists) do not generate reputation or explicit transaction logs from this core module during race resolution.
 
 **Action:** Wrote tests to document this current behavior explicitly. When testing impacts or resolvers, always assert both the positive and negative branches of ownership checks to reveal asymmetric simulation logic.
-## 2025-03-09 - Assigned Weight Handicap Logic
-
-**Learning:** The pure function `calculateAssignedWeight` in `src/core/race/entryScoring.ts` had zero test coverage, which handles compounding bounds and branches for age and sex allowances, as well as specific overriding logic for race handicaps. If untested, changes to `restrictions` schemas could silently bypass handicap rules or inadvertently stack allowances.
-**Action:** Add focused tests covering each branch individually and in combination for core simulation functions that apply categorical modifiers.

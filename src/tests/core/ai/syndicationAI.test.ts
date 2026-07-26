@@ -16,9 +16,7 @@ function makeStallion(overrides: Partial<Horse> = {}): Horse {
     energy: 100,
     form: 0,
     potential: 80,
-    raceHistory: [
-      { raceId: "r1", raceName: "G1", position: 1, day: 100, grade: "G1" },
-    ],
+    raceHistory: [{ raceId: "r1", raceName: "G1", position: 1, day: 100, grade: "G1" }],
     stud: { atStud: true, standingFee: 50000, bookSize: 50, seasonBookings: 0 },
     owned: true,
     fame: 50,
@@ -49,11 +47,7 @@ function makeStallion(overrides: Partial<Horse> = {}): Horse {
   } as unknown as Horse;
 }
 
-function makeStable(
-  id: string,
-  personality: string,
-  cash: number,
-): Stable {
+function makeStable(id: string, personality: string, cash: number): Stable {
   return {
     id,
     name: `Stable ${id}`,

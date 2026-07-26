@@ -200,7 +200,12 @@ async function advanceDaysBatch(input: AdvanceDaysBatchInput): Promise<AdvanceDa
       }
 
       // Update state for next iteration
-      currentState = { ...currentContext.state, day: nextDay, pendingIntents: [], trainingUsed: {} };
+      currentState = {
+        ...currentContext.state,
+        day: nextDay,
+        pendingIntents: [],
+        trainingUsed: {},
+      };
       allLogs.push(...currentContext.logs);
       daysAdvanced++;
     }

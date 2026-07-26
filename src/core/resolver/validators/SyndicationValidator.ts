@@ -84,7 +84,7 @@ export class SyndicationValidator implements IntentValidator {
         const buyerCash =
           buyerId === "player"
             ? state.cash
-            : state.npcStables.find((s) => s.id === buyerId)?.cash ?? 0;
+            : (state.npcStables.find((s) => s.id === buyerId)?.cash ?? 0);
         if (buyerCash < totalCost) {
           return { valid: false, reason: "Insufficient funds to purchase shares" };
         }
