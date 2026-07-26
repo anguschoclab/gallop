@@ -579,6 +579,10 @@ function generateNpcGeldingIntents(
  * - Opportunistically buy shares in other stables' syndicates.
  *
  * Runs weekly (day % 7 === stable-hash) to avoid daily spam.
+ * @param state
+ * @param stable
+ * @param day
+ * @param ownedHorses
  */
 function generateNpcSyndicateIntents(
   state: GameState,
@@ -590,29 +594,32 @@ function generateNpcSyndicateIntents(
   const syndicates = state.syndicates || {};
 
   // Weekly cadence, staggered per stable to spread activity.
-  const stableHash = stable.id
-    .split("")
-    .reduce((acc, ch) => (acc + ch.charCodeAt(0)) & 0xffff, 0);
+  const stableHash = stable.id.split("").reduce((acc, ch) => (acc + ch.charCodeAt(0)) & 0xffff, 0);
   if ((day + stableHash) % 7 !== 0) return intents;
 
   // 1) Create syndicates for eligible stallions.
   for (const horse of ownedHorses) {
     if (shouldCreateSyndicate(stable, horse, syndicates)) {
       const totalShares = 40;
-      const sharePrice = Math.max(1000, Math.round(calculateSharePrice(
-        {
-          id: `syndicate_${horse.id}`,
-          stallionId: horse.id,
-          stallionName: horse.name,
-          totalShares,
-          shareHolders: {},
-          sharePrice: 0,
-          studFee: horse.stud?.standingFee || 0,
-          isPublic: true,
-          lifetimeEarnings: 0,
-        },
-        horse,
-      )));
+      const sharePrice = Math.max(
+        1000,
+        Math.round(
+          calculateSharePrice(
+            {
+              id: `syndicate_${horse.id}`,
+              stallionId: horse.id,
+              stallionName: horse.name,
+              totalShares,
+              shareHolders: {},
+              sharePrice: 0,
+              studFee: horse.stud?.standingFee || 0,
+              isPublic: true,
+              lifetimeEarnings: 0,
+            },
+            horse,
+          ),
+        ),
+      );
       const intent: SyndicateCreationIntent = {
         id: generateUUID(),
         entityId: horse.id,
