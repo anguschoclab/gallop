@@ -46,6 +46,57 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     }
   }
 
+  // 1.7 Check for Freshness / Layoff performance
+  // Requires at least 2 runs off a layoff (>= 60 days) and 3 active runs (< 60 days)
+  let freshRuns = 0;
+  let freshBeyerTotal = 0;
+  let activeRuns = 0;
+  let activeBeyerTotal = 0;
+
+  // The raceHistory is generally ordered by day (newest or oldest depending on where it's used,
+  // but to be safe we sort a copy ascending by day to find gaps)
+  const chronologicalHistory = [...history].sort((a, b) => a.day - b.day);
+
+  for (let i = 0; i < chronologicalHistory.length; i++) {
+    const race = chronologicalHistory[i];
+    if (typeof race.beyer !== "number") continue;
+
+    // First race of career is considered "fresh"
+    let daysSinceLast = 90;
+    if (i > 0) {
+      daysSinceLast = race.day - chronologicalHistory[i - 1].day;
+    }
+
+    if (daysSinceLast >= 60) {
+      freshRuns++;
+      freshBeyerTotal += race.beyer;
+    } else {
+      activeRuns++;
+      activeBeyerTotal += race.beyer;
+    }
+  }
+
+  if (freshRuns >= 2 && activeRuns >= 3) {
+    const freshAvg = freshBeyerTotal / freshRuns;
+    const activeAvg = activeBeyerTotal / activeRuns;
+
+    if (freshAvg >= activeAvg + 8) {
+      return {
+        label: "Fires Fresh",
+        value: "Excels off a Layoff",
+        context: `Averages an ${Math.round(freshAvg)} Beyer off a 60+ day break vs ${Math.round(activeAvg)} when racing actively`,
+        type: "positive",
+      };
+    } else if (activeAvg >= freshAvg + 8) {
+      return {
+        label: "Needs Racing",
+        value: "Improves with Activity",
+        context: `Averages an ${Math.round(activeAvg)} Beyer when active vs ${Math.round(freshAvg)} off a layoff`,
+        type: "neutral", // Not necessarily a bad thing, just a training note
+      };
+    }
+  }
+
   // 2. Check for distance sweet spot (best average beyer by distance, min 3 races)
   const distanceStats = new Map<number, { runs: number; totalBeyer: number; wins: number }>();
   for (const race of history) {
