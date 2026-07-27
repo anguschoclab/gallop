@@ -59,13 +59,9 @@ function FeedItemRow({ item }: { item: ShareActivityFeedItem }) {
     <div className="flex items-center gap-3 rounded-md border border-cream/10 bg-broadcast-panel px-3 py-2">
       {icon}
       <div className="flex-1 text-sm">
-        <span className="text-cream-muted">
-          {getStableName(item.buyerStableId ?? "?")}
-        </span>
+        <span className="text-cream-muted">{getStableName(item.buyerStableId ?? "?")}</span>
         <ArrowRight className="h-3 w-3 inline mx-1 text-cream-muted" />
-        <span className="text-cream-muted">
-          {getStableName(item.sellerStableId ?? "?")}
-        </span>
+        <span className="text-cream-muted">{getStableName(item.sellerStableId ?? "?")}</span>
         <span className="text-cream mx-2">·</span>
         <span className="text-cream">{item.shares} shares</span>
         <span className="text-cream-muted mx-2">·</span>
@@ -82,9 +78,7 @@ export function ShareActivityFeed({ syndicateId }: ShareActivityFeedProps) {
   const feed = useGameWithShallow((s: any) => s.shareActivityFeed ?? []) as ShareActivityFeedItem[];
 
   const filtered = useMemo(() => {
-    const items = syndicateId
-      ? feed.filter((f) => f.syndicateId === syndicateId)
-      : feed;
+    const items = syndicateId ? feed.filter((f) => f.syndicateId === syndicateId) : feed;
     return [...items].reverse().slice(0, 50);
   }, [feed, syndicateId]);
 
@@ -97,13 +91,9 @@ export function ShareActivityFeed({ syndicateId }: ShareActivityFeedProps) {
       </CardHeader>
       <CardContent className="space-y-2">
         {filtered.length === 0 ? (
-          <div className="text-cream-muted text-sm py-4 text-center">
-            No share activity yet.
-          </div>
+          <div className="text-cream-muted text-sm py-4 text-center">No share activity yet.</div>
         ) : (
-          filtered.map((item) => (
-            <FeedItemRow key={item.id} item={item} />
-          ))
+          filtered.map((item) => <FeedItemRow key={item.id} item={item} />)
         )}
       </CardContent>
     </Card>

@@ -48,9 +48,7 @@ export function ShareOwnershipPanel({ syndicate, stallion, npcStables }: ShareOw
         holderId: h.id,
         holderName: h.name,
         wouldDevolve: result.wouldDevolve,
-        newOwner: result.newOwner
-          ? getHolderName(result.newOwner, npcStables)
-          : null,
+        newOwner: result.newOwner ? getHolderName(result.newOwner, npcStables) : null,
       };
     });
   }, [holders, syndicate.shareHolders, totalShares, currentOwnerKey, npcStables]);
@@ -87,9 +85,7 @@ export function ShareOwnershipPanel({ syndicate, stallion, npcStables }: ShareOw
                     )}
                   </td>
                   <td className="text-right py-2 text-cream">{h.shares}</td>
-                  <td className="text-right py-2 text-cream-muted">
-                    {h.percentage.toFixed(1)}%
-                  </td>
+                  <td className="text-right py-2 text-cream-muted">{h.percentage.toFixed(1)}%</td>
                 </tr>
               ))}
             </tbody>
@@ -111,9 +107,7 @@ export function ShareOwnershipPanel({ syndicate, stallion, npcStables }: ShareOw
                 key={p.holderId}
                 className="flex items-center justify-between text-xs rounded-md border border-cream/10 bg-broadcast-panel px-3 py-2"
               >
-                <span className="text-cream-muted">
-                  {p.holderName} sells 1 →
-                </span>
+                <span className="text-cream-muted">{p.holderName} sells 1 →</span>
                 {p.wouldDevolve && p.newOwner ? (
                   <Badge variant="outline" className="text-amber-300 border-amber-400/40">
                     Ownership → {p.newOwner}

@@ -98,8 +98,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         draft.cash += cashDelta;
       } else {
         const stable =
-          lookupMaps?.stableMap.get(stableId) ||
-          draft.npcStables?.find((s) => s.id === stableId);
+          lookupMaps?.stableMap.get(stableId) || draft.npcStables?.find((s) => s.id === stableId);
         if (stable) {
           stable.cash = (stable.cash || 0) + cashDelta;
         }

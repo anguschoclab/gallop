@@ -8,7 +8,10 @@ function makeContext(): PipelineContext {
   return makePipelineContext({ newDay: 2 }) as PipelineContext;
 }
 
-function makeMockPhases(): { spies: Map<string, ReturnType<typeof vi.fn>>; mocks: PipelinePhase[] } {
+function makeMockPhases(): {
+  spies: Map<string, ReturnType<typeof vi.fn>>;
+  mocks: PipelinePhase[];
+} {
   const spies = new Map<string, ReturnType<typeof vi.fn>>();
   const mocks = GAME_PIPELINE_PHASES.map((phase) => {
     const spy = vi.fn((ctx: PipelineContext) => ctx);
@@ -21,9 +24,7 @@ function makeMockPhases(): { spies: Map<string, ReturnType<typeof vi.fn>>; mocks
 function runAllStages(mocks: PipelinePhase[], ctx: PipelineContext): PipelineContext {
   let current = ctx;
   for (const stagePhases of STAGE_PHASES) {
-    const stageMocks = mocks.filter((m) =>
-      stagePhases.some((sp) => sp.name === m.name),
-    );
+    const stageMocks = mocks.filter((m) => stagePhases.some((sp) => sp.name === m.name));
     current = executePipeline(stageMocks, current);
   }
   return current;
