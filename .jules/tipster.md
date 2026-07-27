@@ -5,3 +5,6 @@
 ## 2024-07-17 - Tipster Insight Priority & Test Pollution
 **Learning:** Adding new Tipster insights can cause unexpected test pollution if existing test fixtures inadvertently meet the criteria of the newly prioritized insight (e.g. testing surface affinity with monotonically increasing beyers falsely triggers an "Improving Form" insight).
 **Action:** When adding insights that examine historical trends, carefully audit existing mock histories to ensure they don't contain spurious trends, or adjust the insight priority order if appropriate.
+## 2024-10-15 - Exploring Neutral Streaks
+**Learning:** Insight logic isn't limited to just positive accolades; adding neutral analysis like a "Bridesmaid" (consistent 2nd place) streak adds flavorful texture to the data and points out interesting statistical quirks.
+**Action:** Look for other consistent failure-to-win patterns or "almost-there" streaks in the data as potential insights that tell a story about the horse's luck or limitations.

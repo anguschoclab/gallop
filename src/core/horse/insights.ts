@@ -26,6 +26,21 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     };
   }
 
+  // 1.1 Check for Bridesmaid (2nd place streak)
+  let currentPlaceStreak = 0;
+  for (let i = history.length - 1; i >= 0; i--) {
+    if (history[i].position === 2) currentPlaceStreak++;
+    else break;
+  }
+  if (currentPlaceStreak >= 3) {
+    return {
+      label: "Bridesmaid",
+      value: `${currentPlaceStreak} Consecutive 2nd Place Finishes`,
+      context: "Consistently close but struggling to break through for a win",
+      type: "neutral",
+    };
+  }
+
   // 1.5 Check for Improving Form (trending up in last 3 starts)
   const recentBeyers = history
     .slice(-3)
