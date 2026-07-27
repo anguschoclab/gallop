@@ -59,7 +59,7 @@ export function PrivateTrialDialog({ horse, horses, cash }: PrivateTrialDialogPr
       disabled={isDisabled}
       className={cn(
         "w-full bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-widest text-xs h-10 rounded-none shadow-lg mt-2",
-        isDisabled && "pointer-events-none"
+        isDisabled && "pointer-events-none",
       )}
     >
       Run Private Trial ($250 / -20 Energy)
@@ -80,9 +80,7 @@ export function PrivateTrialDialog({ horse, horses, cash }: PrivateTrialDialogPr
           </Tooltip>
         </TooltipProvider>
       ) : (
-        <DialogTrigger asChild>
-          {triggerButton}
-        </DialogTrigger>
+        <DialogTrigger asChild>{triggerButton}</DialogTrigger>
       )}
       <DialogContent className="max-w-2xl bg-slate-950 border border-gold-muted/40 rounded-none text-cream shadow-2xl overflow-y-auto max-h-[90vh]">
         <DialogHeader className="border-b border-white/5 pb-4">
