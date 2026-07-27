@@ -69,10 +69,11 @@ export function StableRosterView({
     }
   };
 
-  const selectedHorses = useMemo(
-    () => selectedIds.map((id) => horses.find((h) => h.id === id)).filter(Boolean) as Horse[],
-    [selectedIds, horses],
-  );
+  const selectedHorses = useMemo(() => {
+    // Pre-calculate hash map for O(1) lookups instead of running O(N) .find() inside the .map() loop
+    const horseMap = new Map(horses.map((h) => [h.id, h]));
+    return selectedIds.map((id) => horseMap.get(id)).filter(Boolean) as Horse[];
+  }, [selectedIds, horses]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
