@@ -334,6 +334,46 @@ export function generateFlavorNews(day: number, rng: Rng): NewsItem {
       body: "In a proactive measure, racing authorities have introduced stricter travel guidelines for horses shipping in from out of state to ensure equine health.",
       category: "flavor" as NewsCategory,
     },
+    {
+      headline: "Fashion on the Field Draws Attention",
+      body: "The annual race day fashion contest brought an array of colorful outfits to the grandstand, proving the sport remains a major social event.",
+      category: "flavor" as NewsCategory,
+    },
+    {
+      headline: "Local Blacksmith Celebrates Half-Century",
+      body: "The backstretch threw a surprise party for a beloved farrier who has been shoeing champions at this track for exactly fifty years.",
+      category: "flavor" as NewsCategory,
+    },
+    {
+      headline: "Unusual Mascot Spotted in Paddock",
+      body: "A prominent stable has adopted a stray goat as a companion for their top sprinter, claiming the unlikely friendship keeps the horse calm before big races.",
+      category: "flavor" as NewsCategory,
+    },
+    {
+      headline: "Old Grandstand Gets Historic Designation",
+      body: "The local heritage society has officially recognized the track's original wooden grandstand, securing funds for its much-needed restoration.",
+      category: "flavor" as NewsCategory,
+    },
+    {
+      headline: "Equipment Malfunction Delays Workouts",
+      body: "Morning training was briefly halted when the starting gate tractor broke down, leaving several eager colts waiting patiently on the track.",
+      category: "flavor" as NewsCategory,
+    },
+    {
+      headline: "Track Kitchen Introduces New Menu",
+      body: "The famous backstretch diner has revamped its breakfast offerings, sparking lively debate among grooms and hotwalkers over the new coffee blend.",
+      category: "flavor" as NewsCategory,
+    },
+    {
+      headline: "Rivalry Brews Among Outriders",
+      body: "A friendly but fierce competition has developed between the track's outriders over who has the most impressive pony horse this season.",
+      category: "flavor" as NewsCategory,
+    },
+    {
+      headline: "Amateur Photography Contest Winners Announced",
+      body: "The racing club revealed the winning photos from this year's fan contest, featuring stunning morning workout silhouettes and dramatic finish-line action.",
+      category: "flavor" as NewsCategory,
+    },
   ];
 
   const story = rng.pick(flavorStories);
@@ -394,6 +434,11 @@ export function generateG1SpotlightNews(
     `The ${overallRating}-Rated King: ${winner.name} Rules the ${race.name}`,
     `${winner.name} Shows Why the ${overallRating} Rating Fits in ${race.name}`,
     `G1 Glory for ${overallRating}-Rated Phenomenon ${winner.name}`,
+    `${winner.name} Stamps Class on the ${race.name} with ${overallRating} Rating`,
+    `Unstoppable: ${overallRating}-Rated ${winner.name} Claims ${race.name}`,
+    `The ${overallRating} OVR Juggernaut: ${winner.name} Wins ${race.name}`,
+    `${race.name} Goes to ${overallRating}-Rated Phenomenon ${winner.name}`,
+    `A True ${overallRating} Superstar: ${winner.name} Takes the ${race.name}`,
   ];
 
   const bodies = [
@@ -408,6 +453,11 @@ export function generateG1SpotlightNews(
     `In a race full of champions, ${winner.name} stood apart — a horse whose ${overallRating} overall rating marks them as something special, and whose ${race.name} victory was a masterclass in every sense.`,
     `${winner.name} has long been regarded as one of the best, and their ${overallRating} overall rating was on full display in the ${race.name}, where they simply outclassed a field of elite contenders.`,
     `With the ${race.name} now in the books, ${winner.name} and that remarkable ${overallRating} overall rating will be the talk of the racing world for weeks. This is a horse at the absolute peak of their powers.`,
+    `It takes a truly special animal to achieve a ${overallRating} overall rating, and ${winner.name} showed every ounce of that class in a breathtaking ${race.name} victory.`,
+    `The buzz around ${winner.name}'s ${overallRating} overall rating was deafening before the ${race.name}, but the performance exceeded all expectations.`,
+    `A ${overallRating} rating is rarefied air in this sport. ${winner.name} proved they belong among the all-time greats with a commanding run in the ${race.name}.`,
+    `Trackside observers were left shaking their heads in disbelief as ${winner.name} (${overallRating} OVR) turned the prestigious ${race.name} into a one-horse exhibition.`,
+    `You don't get a ${overallRating} overall rating by accident. ${winner.name} confirmed their elite status with a flawless, devastating victory in the ${race.name}.`,
     `An ${overallRating} overall rating. A Grade 1 victory in the ${race.name}. ${winner.name} is not just living up to expectations — they're redefining them.`,
   ];
 

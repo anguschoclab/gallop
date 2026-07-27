@@ -54,3 +54,6 @@
 
 **Learning:** The seed news generator (`seedNewsGenerator.ts`) only had 8 variants each for headlines and bodies across its many internal builders (e.g. `buildSeasonOpener`, `buildPowerRankings`, etc.). This caused repetition during the start of seasons.
 **Action:** Expanded the `headlines` and `bodies` arrays across all 7 builders in `src/services/narrative/seedNewsGenerator.ts` to 14 variants each to sustain narrative depth and immersion.
+## 2026-07-27 - Flavor News Array Added
+**Learning:** Expanding news generator pools with context-neutral stories (like track upgrades or quirky backstretch events) immediately enlivens the world without risking logic side effects or breaking strict data dependencies. The `flavorStories` array in `src/services/narrative/newsGenerator.ts` is a great target for adding depth since it is completely decoupled from active game state while giving the illusion of a living, breathing ecosystem around the player.
+**Action:** When adding static flavor arrays, I will focus on the peripheral world elements—like outriders, farriers, track staff, and fans—to flesh out the track atmosphere. I'll use regex/replacement scripts to safely append new templates in long arrays rather than attempting complex manual edits.
