@@ -9,3 +9,8 @@
 **Learning:** Disabled elements (like buttons with \`disabled\` prop) swallow mouse events, preventing standard \`TooltipTrigger\` from working. If we want a disabled button to explain _why_ it's disabled, we must wrap it in a focusable span with \`cursor-not-allowed\` and add \`pointer-events-none\` to the button itself, or similar techniques, so the wrapper can trigger the tooltip.
 
 **Action:** When adding tooltips to explain disabled states, use the \`DisabledTooltipWrapper\` pattern or wrap the button in \`<span tabIndex={0} className="inline-block cursor-not-allowed">\` and add \`pointer-events-none\` to the disabled button.
+
+## 2024-07-27 - Polishing Empty States in Rival Archives
+
+**Learning:** List views, like the Rival Archives, often default to plain text "No data available" when filtered to zero results.
+**Action:** Always provide a polished empty state (icon, clear message, and action button like "Clear Filters") consistent with the rest of the app (e.g., StableRosterView) when lists or tables are empty.

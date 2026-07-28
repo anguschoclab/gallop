@@ -73,8 +73,32 @@ export function RivalArchivesView({
       </div>
 
       {stables.length === 0 ? (
-        <div className="p-20 text-center border border-dashed border-white/10 opacity-40">
-          <p className="font-mono text-xs uppercase tracking-widest">No data available</p>
+        <div className="p-20 text-center space-y-4 bg-black/10 border border-white/5 shadow-2xl">
+          <div className="h-16 w-16 bg-white/5 rounded-full flex items-center justify-center mx-auto border border-white/5">
+            <Search className="h-6 w-6 text-cream/10" />
+          </div>
+          <div className="space-y-1">
+            <p className="text-sm font-bold text-cream/60 uppercase tracking-widest font-[family-name:var(--font-display)]">
+              No Rivals Found
+            </p>
+            <p className="text-[10px] font-mono text-cream/20 uppercase tracking-tighter">
+              No stable entities match the current search parameters.
+            </p>
+          </div>
+          {(rivalQ || rivalTier !== "all") && (
+            <div className="flex items-center justify-center pt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  navigate({ search: (p: any) => ({ ...p, rivalQ: "", rivalTier: "all" }) })
+                }
+                className="font-mono text-xs uppercase font-bold tracking-tighter"
+              >
+                Clear Filters
+              </Button>
+            </div>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

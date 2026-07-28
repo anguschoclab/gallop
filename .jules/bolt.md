@@ -72,6 +72,7 @@
 
 **Learning:** When trying to memoize an O(N*M) array derivation (like `consignablePairs` using `horses.map(h => find(activeUpcoming))`), using an inline derived array (like `activeUpcoming` initialized via `.filter().sort().slice()`) as a `useMemo` dependency causes the hook to fail its equality check on every render. This turns the optimization into a regression because the application pays the overhead of the `useMemo` hook without reaping its caching benefits.
 **Action:** Always verify that all variables in a `useMemo` dependency array are referentially stable. If a dependency is a dynamically derived array, move its derivation inside the `useMemo` block and depend on the stable root source (e.g. `auctions` instead of `activeUpcoming`).
+
 ## 2024-05-24 - [Avoid Set allocation inside loop for Map keys check]
 
 **Learning:** When checking if a value exists as a key in a global `Map` (like `GRADED_RACES_BY_TRIPLECROWN_KEY`) from inside a filter loop over a large array, instantiating `new Set(map.keys())` creates an O(N) allocation bottleneck per loop iteration.
