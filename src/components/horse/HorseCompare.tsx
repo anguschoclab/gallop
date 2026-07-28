@@ -323,6 +323,12 @@ function HeadToHeadSection({ horses }: { horses: Horse[] }) {
     [horses, distance, surface],
   );
 
+  // ⚡ Bolt Optimization:
+  // Pre-calculate hash maps for O(1) lookups instead of running O(N) .find() inside the .map() loops.
+  // Impact: Reduces rendering complexity from O(N^2) to O(N), improving performance during re-renders.
+  const oddsMap = useMemo(() => new Map(odds.map(o => [o.horseId, o])), [odds]);
+  const simResultsMap = useMemo(() => simResults ? new Map(simResults.map(r => [r.horseId, r])) : null, [simResults]);
+
   const runSim = () => {
     setSimRunning(true);
     setTimeout(() => {
@@ -390,7 +396,7 @@ function HeadToHeadSection({ horses }: { horses: Horse[] }) {
       {/* Lightweight odds */}
       <div className={cn("grid gap-3 mb-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3")}>
         {horses.map((h) => {
-          const o = odds.find((r) => r.horseId === h.id);
+          const o = oddsMap.get(h.id);
           if (!o) return null;
           return (
             <div key={h.id} className="rounded border border-white/5 p-3 bg-white/[0.02]">
@@ -445,7 +451,7 @@ function HeadToHeadSection({ horses }: { horses: Horse[] }) {
       {simResults && (
         <div className={cn("grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3")}>
           {horses.map((h) => {
-            const r = simResults.find((s) => s.horseId === h.id);
+            const r = simResultsMap?.get(h.id);
             if (!r) return null;
             return (
               <div key={h.id} className="rounded border border-gold/10 p-3 bg-gold/[0.02]">
