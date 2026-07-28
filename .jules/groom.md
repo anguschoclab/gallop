@@ -14,3 +14,10 @@
 
 **Learning:** List views, like the Rival Archives, often default to plain text "No data available" when filtered to zero results.
 **Action:** Always provide a polished empty state (icon, clear message, and action button like "Clear Filters") consistent with the rest of the app (e.g., StableRosterView) when lists or tables are empty.
+
+## 2024-11-20 - Tooltips on disabled elements in action bars
+
+**Learning:** When using the tooltip pattern for disabled buttons (wrapping with a focusable span), ensure the `TooltipProvider` wraps the `<Tooltip>` element locally if the app does not have a global provider, otherwise Shadcn tooltip components will throw a Context error in tests or runtime. Additionally, `pointer-events-none` is required on the disabled `<Button>` child to let the wrapper receive mouse events and trigger the tooltip on hover.
+
+**Action:** When applying tooltips to disabled buttons, wrap them as `<TooltipProvider><Tooltip><TooltipTrigger><span tabIndex={0} className="inline-block cursor-not-allowed"><Button disabled className="pointer-events-none">...</Button></span>...`
+>>>>>>> origin/groom-tooltip-fix-1308946897783319793

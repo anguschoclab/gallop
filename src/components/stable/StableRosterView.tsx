@@ -386,24 +386,51 @@ export function StableRosterView({
               );
             })}
           </div>
-          <Button
-            size="sm"
-            className="gap-2 bg-gold text-slate-950 hover:bg-gold/90 font-bold uppercase text-[10px] tracking-widest"
-            disabled={selectedIds.length < 2}
-            onClick={() => setCompareOpen(true)}
-          >
-            <GitCompare className="h-3.5 w-3.5" />
-            Compare
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            className="h-8 w-8 p-0 text-cream/60 hover:text-cream"
-            onClick={() => setSelectedIds([])}
-            aria-label="Clear selection"
-          >
-            <X className="h-4 w-4" />
-          </Button>
+          {selectedIds.length < 2 ? (
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span tabIndex={0} className="inline-block cursor-not-allowed">
+                    <Button
+                      size="sm"
+                      className="gap-2 bg-gold text-slate-950 hover:bg-gold/90 font-bold uppercase text-[10px] tracking-widest pointer-events-none"
+                      disabled
+                    >
+                      <GitCompare className="h-3.5 w-3.5" />
+                      Compare
+                    </Button>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>Select at least 2 horses to compare</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <Button
+              size="sm"
+              className="gap-2 bg-gold text-slate-950 hover:bg-gold/90 font-bold uppercase text-[10px] tracking-widest"
+              onClick={() => setCompareOpen(true)}
+            >
+              <GitCompare className="h-3.5 w-3.5" />
+              Compare
+            </Button>
+          )}
+
+          <TooltipProvider delayDuration={300}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 w-8 p-0 text-cream/60 hover:text-cream"
+                  onClick={() => setSelectedIds([])}
+                  aria-label="Clear selection"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Clear selection</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       )}
 
