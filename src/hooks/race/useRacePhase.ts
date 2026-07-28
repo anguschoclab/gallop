@@ -37,7 +37,10 @@ export function useRacePhase(resolved: boolean): {
   const setPhase = useCallback(
     (next: RacePhase) => {
       navigate({
-        search: (prev: Record<string, unknown>): Record<string, unknown> => ({ ...prev, phase: next }),
+        search: (prev: Record<string, unknown>): Record<string, unknown> => ({
+          ...prev,
+          phase: next,
+        }),
         replace: true,
       });
 

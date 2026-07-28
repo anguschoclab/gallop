@@ -15,7 +15,9 @@ import type { Stable } from "@/game/types";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { Search, X, ExternalLink, Flame } from "lucide-react";
 
-type NavigateFn = (opts: { search?: Record<string, unknown> | ((prev: Record<string, unknown>) => Record<string, unknown>) }) => void;
+type NavigateFn = (opts: {
+  search?: Record<string, unknown> | ((prev: Record<string, unknown>) => Record<string, unknown>);
+}) => void;
 
 interface RivalArchivesViewProps {
   stables: Stable[];
@@ -64,9 +66,7 @@ export function RivalArchivesView({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() =>
-              navigate({ search: (p) => ({ ...p, rivalQ: "", rivalTier: "all" }) })
-            }
+            onClick={() => navigate({ search: (p) => ({ ...p, rivalQ: "", rivalTier: "all" }) })}
             className="h-10 gap-2 text-cream/40 hover:text-cream uppercase text-[10px] font-black tracking-widest"
           >
             <X className="w-3.5 h-3.5" />

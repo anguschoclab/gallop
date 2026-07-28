@@ -1,5 +1,12 @@
 import { useMemo, useState, type ComponentType } from "react";
-import { ReactFlow, Background, useNodesState, useEdgesState, type NodeTypes, type NodeProps } from "@xyflow/react";
+import {
+  ReactFlow,
+  Background,
+  useNodesState,
+  useEdgesState,
+  type NodeTypes,
+  type NodeProps,
+} from "@xyflow/react";
 import dagre from "@dagrejs/dagre";
 import "@xyflow/react/dist/style.css";
 import { useGame } from "@/game/store";

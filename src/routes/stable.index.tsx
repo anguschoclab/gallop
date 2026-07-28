@@ -145,7 +145,9 @@ function StablePage() {
 
       <Tabs
         value={tab}
-        onValueChange={(v) => navigate({ search: (prev) => ({ ...prev, tab: v as "roster" | "rivals" }) })}
+        onValueChange={(v) =>
+          navigate({ search: (prev) => ({ ...prev, tab: v as "roster" | "rivals" }) })
+        }
         className="space-y-4"
       >
         <div className="flex items-center justify-between bg-slate-900/40 p-1 border border-white/5 rounded-lg">
@@ -173,7 +175,9 @@ function StablePage() {
                   "h-7 w-7 p-0 rounded",
                   view === "ledger" ? "bg-white/10 text-gold" : "text-cream/40",
                 )}
-                onClick={() => navigate({ search: (prev) => ({ ...prev, view: "ledger" as const }) })}
+                onClick={() =>
+                  navigate({ search: (prev) => ({ ...prev, view: "ledger" as const }) })
+                }
               >
                 <List className="h-4 w-4" />
               </Button>
@@ -184,7 +188,9 @@ function StablePage() {
                   "h-7 w-7 p-0 rounded",
                   view === "gallery" ? "bg-white/10 text-gold" : "text-cream/40",
                 )}
-                onClick={() => navigate({ search: (prev) => ({ ...prev, view: "gallery" as const }) })}
+                onClick={() =>
+                  navigate({ search: (prev) => ({ ...prev, view: "gallery" as const }) })
+                }
               >
                 <LayoutGrid className="h-4 w-4" />
               </Button>
