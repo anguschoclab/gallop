@@ -36,9 +36,11 @@
 **Action:** When building UI components handling core domains, import the explicitly named exported interfaces from `@/game/types`. This ensures component props safely map back to the validated data structures rather than bypassing the compiler.
 
 ## 2025-03-03 - Natural Inference for state loops
+
 **Learning:** `coreSlice.ts` explicitly cast `(s: any)` and `(j: any)` when constructing `Map` instances for `stableMap` and `jockeyMap`, bypassing type safety despite `syncState` providing fully typed structures.
 **Action:** Let TypeScript naturally infer loop variables from strongly typed parents rather than inserting generic any casts.
 
 ## 2025-03-05 - Remove any casts in resolveFoalMilestone
+
 **Learning:** `racingSlice.ts` had multiple `any` casts (e.g. `const s = get() as any;`, `m: any`) masking the lack of proper typing in the `resolveFoalMilestone` action. This defeated the compiler's ability to check for property existence and type correctness for `GameState` and `DevelopmentArc`.
 **Action:** When working with core state logic and store actions, rely on correctly typed state interfaces and natural TypeScript inference. Simply removing explicit `any` casts from lambda parameters lets TypeScript's natural inference correctly validate property accesses against the original interface.

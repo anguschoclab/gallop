@@ -34,6 +34,7 @@
 **Action:** Wrote tests to document this current behavior explicitly. When testing impacts or resolvers, always assert both the positive and negative branches of ownership checks to reveal asymmetric simulation logic.
 
 ## 2024-05-19 - Testing Dosage Profile Logic
+
 **Learning:** Found an untested core behavior block related to dosage profile calculations (`src/core/race/dosage.ts`). Discovered that it inherently depends on `pedigreeData` which can be efficiently mocked by overriding `findHorseByName` to control generation tree structure cleanly and test boundary scenarios.
 **Action:** Always seek to stub data retrieval functions instead of deeply nesting full data objects when testing calculation algorithms over structures like a pedigree tree.
 
