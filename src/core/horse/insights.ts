@@ -26,6 +26,24 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     };
   }
 
+  // 1.25 Check for Model of Consistency (80%+ top-3 finish rate, min 5 starts)
+  const starts = history.length;
+  if (starts >= 5) {
+    let top3Count = 0;
+    for (const race of history) {
+      if (race.position >= 1 && race.position <= 3) top3Count++;
+    }
+    const rate = top3Count / starts;
+    if (rate >= 0.8) {
+      return {
+        label: "Model of Consistency",
+        value: `${Math.round(rate * 100)}% In The Money`,
+        context: `Finished top 3 in ${top3Count} of ${starts} career starts`,
+        type: "positive",
+      };
+    }
+  }
+
   // 1.5 Check for Improving Form (trending up in last 3 starts)
   const recentBeyers = history
     .slice(-3)

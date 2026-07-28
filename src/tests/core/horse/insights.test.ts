@@ -22,6 +22,21 @@ describe("getHorseInsight", () => {
     expect(insight?.value).toBe("3 Race Win Streak");
   });
 
+  it("detects Model of Consistency", () => {
+    const horse = {
+      raceHistory: [
+        { position: 2, day: 1, beyer: 50 },
+        { position: 3, day: 2, beyer: 50 },
+        { position: 1, day: 3, beyer: 50 },
+        { position: 3, day: 4, beyer: 50 },
+        { position: 5, day: 5, beyer: 50 },
+      ],
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.label).toBe("Model of Consistency");
+    expect(insight?.value).toBe("80% In The Money");
+  });
+
   it("detects distance specialists", () => {
     const horse = {
       raceHistory: [
