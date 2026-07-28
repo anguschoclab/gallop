@@ -2,6 +2,11 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useCallback } from "react";
 import { toast } from "sonner";
 
+type GenericNavigateFn = (opts: {
+  search?: Record<string, unknown> | ((prev: Record<string, unknown>) => Record<string, unknown>);
+  replace?: boolean;
+}) => void;
+
 export type RacePhase = "preshow" | "live" | "review";
 
 const PHASES: readonly RacePhase[] = ["preshow", "live", "review"];
@@ -24,7 +29,7 @@ export function useRacePhase(resolved: boolean): {
   // strict:false because this hook is also exercised in tests outside a typed
   // route context; the route declares `phase` in its validateSearch schema.
   const search = useSearch({ strict: false }) as { phase?: string };
-  const navigate = useNavigate();
+  const navigate = useNavigate() as unknown as GenericNavigateFn;
 
   const fallback: RacePhase = resolved ? "review" : "preshow";
   const phase = coerce(search?.phase, fallback);
@@ -32,9 +37,9 @@ export function useRacePhase(resolved: boolean): {
   const setPhase = useCallback(
     (next: RacePhase) => {
       navigate({
-        search: ((prev: Record<string, unknown> = {}) => ({ ...prev, phase: next })) as any,
+        search: (prev: Record<string, unknown>): Record<string, unknown> => ({ ...prev, phase: next }),
         replace: true,
-      } as any);
+      });
 
       if (next === "live") {
         toast.info("Race is live");

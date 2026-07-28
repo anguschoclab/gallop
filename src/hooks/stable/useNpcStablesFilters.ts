@@ -8,9 +8,13 @@ export type NpcStablesSearch = {
   tier: string;
 };
 
+type GenericNavigateFn = (opts: {
+  search?: Record<string, unknown> | ((prev: Record<string, unknown>) => Record<string, unknown>);
+}) => void;
+
 export function useNpcStablesFilters(search: NpcStablesSearch) {
   const { q, tier } = search;
-  const navigate = useNavigate();
+  const navigate = useNavigate() as unknown as GenericNavigateFn;
   const npcStables = useNpcStables();
 
   const majorStables = useMemo(() => getMajorStables(npcStables), [npcStables]);
@@ -32,16 +36,16 @@ export function useNpcStablesFilters(search: NpcStablesSearch) {
 
   const updateFilter = useCallback(
     (key: keyof NpcStablesSearch, value: string) => {
-      (navigate as any)({
-        search: (prev: any) => ({ ...prev, [key]: value }),
+      navigate({
+        search: (prev: Record<string, unknown>): Record<string, unknown> => ({ ...prev, [key]: value }),
       });
     },
     [navigate],
   );
 
   const clearFilters = useCallback(() => {
-    (navigate as any)({
-      search: (prev: any) => ({ q: "", tier: "all" }),
+    navigate({
+      search: (): Record<string, unknown> => ({ q: "", tier: "all" }),
     });
   }, [navigate]);
 

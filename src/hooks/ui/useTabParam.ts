@@ -1,5 +1,10 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 
+type GenericNavigateFn = (opts: {
+  search?: Record<string, unknown>;
+  replace?: boolean;
+}) => void;
+
 /**
  * URL-search-param-backed tab state. Deep-linkable and back-button friendly.
  *
@@ -7,7 +12,7 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
  * @param valid - allowed tab values (guards against junk in the URL)
  */
 export function useTabParam<T extends string>(fallback: T, valid: readonly T[]) {
-  const navigate = useNavigate();
+  const navigate = useNavigate() as unknown as GenericNavigateFn;
   const search = useSearch({ strict: false }) as { tab?: string };
 
   const tab = (valid as readonly string[]).includes(search.tab ?? "")
@@ -16,7 +21,7 @@ export function useTabParam<T extends string>(fallback: T, valid: readonly T[]) 
 
   const setTab = (next: T) => {
     navigate({
-      search: { ...search, tab: next } as any,
+      search: { ...search, tab: next },
     });
   };
 
