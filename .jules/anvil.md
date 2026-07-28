@@ -34,3 +34,7 @@
 
 **Learning:** The `CampaignCard` and `CampaignSlotList` components were typed locally using `any` and inline `any[]` types instead of the proper core types (`HorseCampaign`, `CampaignFlag`, `CampaignRaceSlot`). This masked type validations for things like flag filtering, mapped slot properties, and race fetching logic.
 **Action:** When building UI components handling core domains, import the explicitly named exported interfaces from `@/game/types`. This ensures component props safely map back to the validated data structures rather than bypassing the compiler.
+
+## 2025-03-03 - Natural Inference for state loops
+**Learning:** `coreSlice.ts` explicitly cast `(s: any)` and `(j: any)` when constructing `Map` instances for `stableMap` and `jockeyMap`, bypassing type safety despite `syncState` providing fully typed structures.
+**Action:** Let TypeScript naturally infer loop variables from strongly typed parents rather than inserting generic any casts.

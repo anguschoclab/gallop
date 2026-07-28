@@ -13,6 +13,7 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { getFacilityBonus } from "@/core/facilities";
 import { resolveEpmRisk } from "@/core/genetics/phenotype";
 import { BANISTER_CONSTANTS, decayValue, calculatePeakingIndex } from "@/core/health/banister";
+import type { Outpost } from "@/core/facilities/outpostTypes";
 
 const RECOVERY_DAYS = 30;
 const COVERING_SICKNESS_DURATION = 7;
@@ -187,7 +188,7 @@ export const energyPhase = {
       npcStables = npcStables.map((stable) => {
         const originalOutposts = stable.outposts ?? [];
         let outpostsChanged = false;
-        const updatedOutposts = originalOutposts.map((outpost: any) => {
+        const updatedOutposts = originalOutposts.map((outpost: Outpost) => {
           const updates = acclimatizationUpdates.get(outpost.id);
           if (!updates) return outpost;
           const updatedDays = { ...outpost.acclimatizationDays };
