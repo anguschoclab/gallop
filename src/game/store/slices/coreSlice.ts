@@ -483,7 +483,13 @@ export function createCoreSlice(
             playerRaceDays,
           });
 
-          const { patches, logs: allLogs, daysAdvanced, encounteredPlayerRace, playerRaceId } = result;
+          const {
+            patches,
+            logs: allLogs,
+            daysAdvanced,
+            encounteredPlayerRace,
+            playerRaceId,
+          } = result;
 
           // Apply patches to get the final state
           const finalState = applyPatches(s, patches);

@@ -45,9 +45,7 @@ export function findMajorityOwner(
   }
 
   const wouldDevolve =
-    currentOwnerShares <= majorityThreshold &&
-    topHolder !== currentOwnerKey &&
-    topShares > 0;
+    currentOwnerShares <= majorityThreshold && topHolder !== currentOwnerKey && topShares > 0;
 
   return {
     owner: currentOwnerKey,
