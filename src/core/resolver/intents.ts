@@ -92,6 +92,15 @@ export interface JockeyContractIntent extends Intent {
   stableId?: string;
   contractUntil?: number;
   bonus?: number;
+  stableAffinity?: number;
+  isApprentice?: boolean;
+  loyalty?: number;
+}
+
+// Jockey release intent
+export interface JockeyReleaseIntent extends Intent {
+  type: "jockey_release";
+  jockeyId: string;
 }
 
 // Jockey assignment intent
@@ -374,6 +383,7 @@ export type AnyIntent =
   | StudRetirementIntent
   | PurchaseIntent
   | JockeyContractIntent
+  | JockeyReleaseIntent
   | JockeyAssignmentIntent
   | ScoutIntent
   | ConsignmentIntent

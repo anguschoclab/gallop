@@ -12,15 +12,18 @@ import {
 import { cn } from "@/lib/cn";
 import { formatCurrency } from "@/core/common/formatting";
 import type { Stable } from "@/game/types";
+import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { Search, X, ExternalLink, Flame } from "lucide-react";
+
+type NavigateFn = (opts: { search?: Record<string, unknown> | ((prev: Record<string, unknown>) => Record<string, unknown>) }) => void;
 
 interface RivalArchivesViewProps {
   stables: Stable[];
   rivalQ: string;
   rivalTier: string;
   horseCountsByStable: Map<string, number>;
-  npcAIManager: any;
-  navigate: any;
+  npcAIManager: NpcAIManager;
+  navigate: NavigateFn;
 }
 
 export function RivalArchivesView({
@@ -40,12 +43,12 @@ export function RivalArchivesView({
             placeholder="Identify Rival Entity..."
             className="pl-9 h-10 bg-slate-950/50 border-white/10 text-sm font-mono uppercase tracking-tight focus-visible:ring-blue-500/30"
             value={rivalQ}
-            onChange={(e) => navigate({ search: (p: any) => ({ ...p, rivalQ: e.target.value }) })}
+            onChange={(e) => navigate({ search: (p) => ({ ...p, rivalQ: e.target.value }) })}
           />
         </div>
         <Select
           value={rivalTier}
-          onValueChange={(v) => navigate({ search: (p: any) => ({ ...p, rivalTier: v }) })}
+          onValueChange={(v) => navigate({ search: (p) => ({ ...p, rivalTier: v }) })}
         >
           <SelectTrigger className="h-10 w-40 bg-slate-950/50 border-white/10 text-xs font-bold uppercase tracking-widest">
             <SelectValue placeholder="Entity Tier" />
@@ -62,7 +65,7 @@ export function RivalArchivesView({
             variant="ghost"
             size="sm"
             onClick={() =>
-              navigate({ search: (p: any) => ({ ...p, rivalQ: "", rivalTier: "all" }) })
+              navigate({ search: (p) => ({ ...p, rivalQ: "", rivalTier: "all" }) })
             }
             className="h-10 gap-2 text-cream/40 hover:text-cream uppercase text-[10px] font-black tracking-widest"
           >
@@ -91,7 +94,7 @@ export function RivalArchivesView({
                 variant="outline"
                 size="sm"
                 onClick={() =>
-                  navigate({ search: (p: any) => ({ ...p, rivalQ: "", rivalTier: "all" }) })
+                  navigate({ search: (p) => ({ ...p, rivalQ: "", rivalTier: "all" }) })
                 }
                 className="font-mono text-xs uppercase font-bold tracking-tighter"
               >

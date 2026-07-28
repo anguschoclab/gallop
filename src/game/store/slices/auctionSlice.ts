@@ -263,7 +263,7 @@ export function createAuctionSlice(
       if (!sale) return { ok: false, reason: "sale_not_found" };
       if (sale.resolved) return { ok: false, reason: "sale_resolved" };
       if (sale.kind === "broodmare") return { ok: false, reason: "buy_now_unavailable" };
-      const lot = sale.lots.find((l: any) => l.id === lotId);
+      const lot = sale.lots.find((l: AuctionLot) => l.id === lotId);
       if (!lot) return { ok: false, reason: "lot_not_found" };
       if (lot.buyNowPrice === undefined) return { ok: false, reason: "buy_now_unavailable" };
       const buyNowPrice: number = lot.buyNowPrice;

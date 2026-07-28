@@ -113,7 +113,7 @@ function NpcStableDetailPage() {
         <div className="space-y-6 min-w-0">
           <Tabs
             value={tab}
-            onValueChange={(v) => navigate({ search: { tab: v as any } })}
+            onValueChange={(v) => navigate({ search: { tab: v as "overview" | "roster" | "history" } })}
             className="space-y-6"
           >
             <div className="flex items-center justify-between bg-slate-900/40 p-1 border border-white/5 rounded-lg">

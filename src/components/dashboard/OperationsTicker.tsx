@@ -13,9 +13,9 @@ export function OperationsTicker() {
   const activeHorses = Object.values(horses).filter(
     (h) => h.owned && h.lifecycleStatus === "active",
   );
-  const playerSyndicates = Array.isArray(syndicates)
-    ? syndicates.filter((s: any) => s.ownerId === "player")
-    : [];
+  const playerSyndicates = Object.values(syndicates).filter(
+    (s) => s.shareHolders["player"] !== undefined,
+  );
 
   return (
     <Card className="border-gold-muted bg-slate-900/60 backdrop-blur-xl shadow-inner border-l-4 border-l-gold">

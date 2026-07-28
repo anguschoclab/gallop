@@ -27,6 +27,7 @@ import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { formatCurrency } from "@/core/common/formatting";
 import { BREEDING_FEE, GESTATION_DAYS, LIVE_FOAL_GUARANTEE_FEE } from "@/constants";
+import type { NamingContext } from "@/core/horse/naming/nameGenerator";
 
 /**
  * Helper function to get regional system from country string.
@@ -113,7 +114,7 @@ export function resolvePregnancies(
     }
 
     // Prepare naming context
-    const namingContext: any = {
+    const namingContext: NamingContext = {
       existingNames: nextUsedNames,
       reservedNames: state?.reservedHorseNames,
       currentDay: newDay,

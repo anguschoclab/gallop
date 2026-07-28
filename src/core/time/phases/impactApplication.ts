@@ -61,7 +61,7 @@ export const impactApplicationPhase: PipelinePhase = {
     }
     if (cleanedState.paceSamples) {
       // Pace samples is an object with arrays, clean each bucket
-      const newPaceSamples: any = {};
+      const newPaceSamples: Record<string, number[]> = {};
       for (const key in cleanedState.paceSamples) {
         newPaceSamples[key] =
           cleanedState.paceSamples[key].length > PACE_SAMPLES_MAX_SIZE

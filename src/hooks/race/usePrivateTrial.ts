@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
-import { useGame } from "@/game/store";
+import { useGame, type StoreType } from "@/game/store";
 import type { Horse } from "@/game/types";
 import { generateRiderFeedback } from "@/core/horse/trialFeedback";
 
@@ -24,7 +24,7 @@ export function usePrivateTrial(horse: Horse, horses: Horse[], cash: number) {
   const [error, setError] = useState<string | null>(null);
   const [trialResult, setTrialResult] = useState<TrialResult | null>(null);
 
-  const runPrivateTrial = useGame((s: any) => s.runPrivateTrial);
+  const runPrivateTrial = useGame((s: StoreType) => s.runPrivateTrial);
 
   const eligibleOpponents = useMemo(() => {
     return horses.filter((h) => h.owned && h.energy >= 15 && h.id !== horse.id);

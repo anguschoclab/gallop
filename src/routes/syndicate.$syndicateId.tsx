@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { useGame, useGameWithShallow } from "@/game/store";
+import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import type { GameState } from "@/game/types";
 import type { Syndicate } from "@/core/breeding/types";
 import type { InvestorRecord } from "@/core/breeding/investorTypes";
@@ -24,15 +24,14 @@ function SyndicatePage() {
   const syndicate = useGame(
     (s: GameState) => (s.syndicates ?? {})[syndicateId] as Syndicate | undefined,
   );
-  const investorsRecord = useGameWithShallow((s: any) => s.syndicateInvestors ?? {}) as Record<
-    string,
-    InvestorRecord
-  >;
+  const investorsRecord = useGameWithShallow(
+    (s: GameState) => s.syndicateInvestors ?? {},
+  ) as Record<string, InvestorRecord>;
   const cash = useGame((s: GameState) => s.cash);
-  const solicit = useGame((s: any) => s.solicitInvestor);
-  const buyout = useGame((s: any) => s.buyoutInvestor);
-  const horses = useGameWithShallow((s: any) => s.horses);
-  const npcStables = useGameWithShallow((s: any) => s.npcStables ?? []);
+  const solicit = useGame((s: StoreType) => s.solicitInvestor);
+  const buyout = useGame((s: StoreType) => s.buyoutInvestor);
+  const horses = useGameWithShallow((s: GameState) => s.horses);
+  const npcStables = useGameWithShallow((s: GameState) => s.npcStables ?? []);
 
   const [sharesToOffer, setSharesToOffer] = useState(1);
 

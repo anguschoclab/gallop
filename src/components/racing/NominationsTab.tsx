@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useGame, useGameWithShallow } from "@/game/store";
+import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import type { GameState } from "@/game/types";
 import { Link } from "@tanstack/react-router";
 import {
@@ -39,9 +39,11 @@ export function NominationsTab() {
   const cash = useGame((s: GameState) => s.cash);
   const races = useGame((s: GameState) => s.races);
   const horses = useGame((s: GameState) => s.horses);
-  const noms = useGameWithShallow((s: any) => s.playerNominations ?? []) as NominationRecord[];
-  const nominateHorse = useGame((s: any) => s.nominateHorse);
-  const withdrawNomination = useGame((s: any) => s.withdrawNomination);
+  const noms = useGameWithShallow(
+    (s: GameState) => s.playerNominations ?? [],
+  ) as NominationRecord[];
+  const nominateHorse = useGame((s: StoreType) => s.nominateHorse);
+  const withdrawNomination = useGame((s: StoreType) => s.withdrawNomination);
 
   const playerHorses = useMemo(
     () => Object.values(horses).filter((h) => h.owned && h.lifecycleStatus === "active"),

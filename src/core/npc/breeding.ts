@@ -198,7 +198,7 @@ export function runAutonomousBreeding(
  * @param rng - Random number generator
  * @returns Object containing horses, npcStables, newPregnancies, and logs
  */
-export function runNpcBreeding(state: any, day: number, rng: Rng) {
+export function runNpcBreeding(state: Partial<GameState>, day: number, rng: Rng) {
   const originalPregnanciesLength = state.pregnancies ? state.pregnancies.length : 0;
 
   const tempState = { ...state, day };

@@ -15,6 +15,12 @@ import type { RegionalAward } from "@/core/awards/types";
 import { ChevronRight, Zap, Clock, Search, GitCompare, X, ChevronLeft } from "lucide-react";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 
+type NavigateFn = (opts: {
+  to?: string;
+  params?: Record<string, string>;
+  search?: Record<string, unknown> | ((prev: Record<string, unknown>) => Record<string, unknown>);
+}) => void;
+
 const MAX_COMPARE = 3;
 
 interface StableRosterViewProps {
@@ -28,7 +34,7 @@ interface StableRosterViewProps {
     all: number;
   };
   playerAwards: RegionalAward[];
-  navigate: any;
+  navigate: NavigateFn;
   compareIds?: string[];
   onCompareIdsChange?: (ids: string[]) => void;
 }
@@ -83,7 +89,7 @@ export function StableRosterView({
       <RosterFilterBar
         status={status}
         counts={counts}
-        onStatusChange={(key) => navigate({ search: (prev: any) => ({ ...prev, status: key }) })}
+        onStatusChange={(key) => navigate({ search: (prev) => ({ ...prev, status: key }) })}
       />
 
       {horses.length === 0 ? (

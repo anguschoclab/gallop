@@ -145,7 +145,7 @@ function StablePage() {
 
       <Tabs
         value={tab}
-        onValueChange={(v) => navigate({ search: (prev: any) => ({ ...prev, tab: v }) })}
+        onValueChange={(v) => navigate({ search: (prev) => ({ ...prev, tab: v as "roster" | "rivals" }) })}
         className="space-y-4"
       >
         <div className="flex items-center justify-between bg-slate-900/40 p-1 border border-white/5 rounded-lg">
@@ -173,7 +173,7 @@ function StablePage() {
                   "h-7 w-7 p-0 rounded",
                   view === "ledger" ? "bg-white/10 text-gold" : "text-cream/40",
                 )}
-                onClick={() => navigate({ search: (prev: any) => ({ ...prev, view: "ledger" }) })}
+                onClick={() => navigate({ search: (prev) => ({ ...prev, view: "ledger" as const }) })}
               >
                 <List className="h-4 w-4" />
               </Button>
@@ -184,7 +184,7 @@ function StablePage() {
                   "h-7 w-7 p-0 rounded",
                   view === "gallery" ? "bg-white/10 text-gold" : "text-cream/40",
                 )}
-                onClick={() => navigate({ search: (prev: any) => ({ ...prev, view: "gallery" }) })}
+                onClick={() => navigate({ search: (prev) => ({ ...prev, view: "gallery" as const }) })}
               >
                 <LayoutGrid className="h-4 w-4" />
               </Button>
@@ -195,11 +195,11 @@ function StablePage() {
         <TabsContent value="roster" className="mt-0 space-y-3">
           <PaceTendencyFilter
             tendency={tendency}
-            onTendency={(t) => navigate({ search: (prev: any) => ({ ...prev, tendency: t }) })}
+            onTendency={(t) => navigate({ search: (prev) => ({ ...prev, tendency: t }) })}
             distance={trip}
-            onDistance={(d) => navigate({ search: (prev: any) => ({ ...prev, trip: d }) })}
+            onDistance={(d) => navigate({ search: (prev) => ({ ...prev, trip: d }) })}
             surface={surface}
-            onSurface={(s) => navigate({ search: (prev: any) => ({ ...prev, surface: s }) })}
+            onSurface={(s) => navigate({ search: (prev) => ({ ...prev, surface: s }) })}
           />
           <StableRosterView
             horses={filteredMyHorses}
@@ -210,7 +210,7 @@ function StablePage() {
             navigate={navigate}
             compareIds={compareIds}
             onCompareIdsChange={(ids) =>
-              navigate({ search: (prev: any) => ({ ...prev, compareIds: ids }) })
+              navigate({ search: (prev) => ({ ...prev, compareIds: ids }) })
             }
           />
         </TabsContent>
@@ -221,7 +221,7 @@ function StablePage() {
             rivalQ={rivalQ}
             rivalTier={rivalTier}
             horseCountsByStable={horseCountsByStable}
-            npcAIManager={npcAIManager}
+            npcAIManager={npcAIManager!}
             navigate={navigate}
           />
         </TabsContent>

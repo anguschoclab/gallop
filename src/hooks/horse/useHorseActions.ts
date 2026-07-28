@@ -1,4 +1,4 @@
-import { useGame, useGameWithShallow } from "@/game/store";
+import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import { isMaleHorse } from "@/core/horse/gender";
 import type { Horse, AuctionSale } from "@/game/types";
 import { useMemo, useEffect } from "react";
@@ -15,7 +15,7 @@ export function useHorseActions(horseId: string) {
   const day = useGame((s) => s.day);
 
   const horse = useMemo(() => horses[horseId], [horses, horseId]);
-  const resolveHorsePhenotype = useGame((s: any) => s.resolveHorsePhenotype);
+  const resolveHorsePhenotype = useGame((s: StoreType) => s.resolveHorsePhenotype);
 
   useEffect(() => {
     if (horse && horse.phenotypeResolved === false) {

@@ -32,7 +32,9 @@ function saveDismissed(s: Set<string>) {
  * has been recorded and hasn't been acknowledged.
  */
 export function StewardsInquiryOverlay() {
-  const inquiries = useGameWithShallow((s: any) => s.stewardsInquiries ?? []) as StewardsInquiry[];
+  const inquiries = useGameWithShallow(
+    (s: GameState) => s.stewardsInquiries ?? [],
+  ) as StewardsInquiry[];
   const horses = useGame((s: GameState) => s.horses);
   const [dismissed, setDismissed] = useState<Set<string>>(() => loadDismissed());
 

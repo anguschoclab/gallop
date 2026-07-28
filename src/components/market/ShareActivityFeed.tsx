@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useGameWithShallow } from "@/game/store";
+import type { GameState } from "@/game/types";
 import type { ShareActivityFeedItem } from "@/core/breeding/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -75,7 +76,9 @@ function FeedItemRow({ item }: { item: ShareActivityFeedItem }) {
 }
 
 export function ShareActivityFeed({ syndicateId }: ShareActivityFeedProps) {
-  const feed = useGameWithShallow((s: any) => s.shareActivityFeed ?? []) as ShareActivityFeedItem[];
+  const feed = useGameWithShallow(
+    (s: GameState) => s.shareActivityFeed ?? [],
+  ) as ShareActivityFeedItem[];
 
   const filtered = useMemo(() => {
     const items = syndicateId ? feed.filter((f) => f.syndicateId === syndicateId) : feed;

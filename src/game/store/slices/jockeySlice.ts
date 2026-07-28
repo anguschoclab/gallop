@@ -63,7 +63,7 @@ export const createJockeySlice: SliceCreator<JockeySlice> = (set, get) => ({
         s.day + (contractType === "retainer" ? JOCKEY_RETAINER_DAYS : JOCKEY_CONTRACT_DAYS),
       bonus,
       stableAffinity: contractType === "retainer" ? 50 : 0, // Retainers start with 50 stable affinity
-    } as any);
+    });
 
     return { ok: true };
   },
@@ -88,7 +88,7 @@ export const createJockeySlice: SliceCreator<JockeySlice> = (set, get) => ({
       contractUntil: s.day + DAYS_PER_YEAR, // Year-long enrollment
       bonus: 0,
       stableAffinity: 20,
-    } as any);
+    });
 
     return { ok: true };
   },
@@ -108,7 +108,7 @@ export const createJockeySlice: SliceCreator<JockeySlice> = (set, get) => ({
       priority: 100,
       type: "jockey_release",
       jockeyId,
-    } as any);
+    });
 
     return { ok: true };
   },
