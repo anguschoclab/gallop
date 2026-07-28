@@ -42,3 +42,8 @@
 
 **Learning:** Found an untested pure function `generateBreezeSeconds` in `src/core/auction/engine.ts` which calculates the breeze time for a horse at auction using weighted stats (speed 0.6, accel 0.4). This is critical for 2YO auction valuations.
 **Action:** Adding isolated unit tests for it to verify exact math, range boundaries, stat weights and RNG variance.
+
+## 2025-03-09 - Stewards Inquiry Generation Bounds
+
+**Learning:** `generateRandomInquiry` in `src/core/stewards/stewardTypes.ts` takes an array of `horseIds`. It selects an accused horse at random, and then attempts to select a reporting horse from the *remaining* horses using `.filter`. However, if there is only 1 horse in the array, the filter results in an empty array, and indexing into it yields `undefined`.
+**Action:** Documented this edge case behavior in tests. When dealing with simulation events that require multiple actors (like interference or reporting), always explicitly handle the length-1 bounds check rather than allowing standard math to silently produce undefined references.
