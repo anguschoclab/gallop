@@ -119,7 +119,7 @@ describe("HorseAnalyticsSection — Tipster Insight", () => {
         {
           raceId: "r1",
           raceName: "Race 1",
-          position: 2,
+          position: 3,
           day: 1,
           distance: 1200,
           surface: "Turf",
@@ -129,7 +129,7 @@ describe("HorseAnalyticsSection — Tipster Insight", () => {
         {
           raceId: "r2",
           raceName: "Race 2",
-          position: 2,
+          position: 3,
           day: 2,
           distance: 1200,
           surface: "Turf",
@@ -139,7 +139,7 @@ describe("HorseAnalyticsSection — Tipster Insight", () => {
         {
           raceId: "r3",
           raceName: "Race 3",
-          position: 2,
+          position: 3,
           day: 3,
           distance: 1200,
           surface: "Turf",
