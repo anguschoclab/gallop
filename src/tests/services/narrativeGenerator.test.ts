@@ -3,7 +3,7 @@ import { NarrativeGenerator } from "@/services/narrative/narrativeService";
 import type { Race, Horse, Stable } from "@/game/types";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import { createRng, hashStr } from "@/core/common/rng";
-import { TEMPLATES, EXPERT_INSIGHT_TEMPLATES } from "@/assets/narrative/templates";
+import { TEMPLATES, EXPERT_INSIGHT_TEMPLATES, BIOGRAPHICAL_TEMPLATES } from "@/assets/narrative/templates";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {
@@ -264,5 +264,37 @@ describe("template variety (herald branches)", () => {
     for (const t of TEMPLATES.FINISH) {
       expect(t).not.toContain("clings on");
     }
+  });
+
+  it("POSITION_CHECK templates contain at least 16 entries", () => {
+    expect(TEMPLATES.POSITION_CHECK.length).toBeGreaterThanOrEqual(16);
+  });
+
+  it("DRAFTING templates contain at least 16 entries", () => {
+    expect(TEMPLATES.DRAFTING.length).toBeGreaterThanOrEqual(16);
+  });
+
+  it("HOT_PACE templates contain at least 16 entries", () => {
+    expect(TEMPLATES.HOT_PACE.length).toBeGreaterThanOrEqual(16);
+  });
+
+  it("WEATHER_COMMENT templates contain at least 16 entries", () => {
+    expect(TEMPLATES.WEATHER_COMMENT.length).toBeGreaterThanOrEqual(16);
+  });
+
+  it("STABLE_WATCH templates contain at least 16 entries", () => {
+    expect(TEMPLATES.STABLE_WATCH.length).toBeGreaterThanOrEqual(16);
+  });
+
+  it("MILESTONE templates contain at least 16 entries", () => {
+    expect(TEMPLATES.MILESTONE.length).toBeGreaterThanOrEqual(16);
+  });
+
+  it("LANE_WATCH templates contain at least 16 entries", () => {
+    expect(TEMPLATES.LANE_WATCH.length).toBeGreaterThanOrEqual(16);
+  });
+
+  it("BIOGRAPHICAL_TEMPLATES contain at least 19 entries", () => {
+    expect(BIOGRAPHICAL_TEMPLATES.length).toBeGreaterThanOrEqual(19);
   });
 });

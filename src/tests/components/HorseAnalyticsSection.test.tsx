@@ -119,7 +119,7 @@ describe("HorseAnalyticsSection — Tipster Insight", () => {
         {
           raceId: "r1",
           raceName: "Race 1",
-          position: 3,
+          position: 5,
           day: 1,
           distance: 1200,
           surface: "Turf",
@@ -129,7 +129,7 @@ describe("HorseAnalyticsSection — Tipster Insight", () => {
         {
           raceId: "r2",
           raceName: "Race 2",
-          position: 3,
+          position: 5,
           day: 2,
           distance: 1200,
           surface: "Turf",
@@ -139,7 +139,7 @@ describe("HorseAnalyticsSection — Tipster Insight", () => {
         {
           raceId: "r3",
           raceName: "Race 3",
-          position: 3,
+          position: 5,
           day: 3,
           distance: 1200,
           surface: "Turf",
@@ -152,5 +152,54 @@ describe("HorseAnalyticsSection — Tipster Insight", () => {
     expect(screen.getByText(/Tipster Insight: Distance Specialist/i)).toBeTruthy();
     expect(screen.getAllByText(/1200m/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/Best performance average/i)).toBeTruthy();
+  });
+
+  it("displays Bridesmaid insight for 3+ consecutive 2nd places", () => {
+    const horse = createHorse({
+      raceHistory: [
+        {
+          raceId: "r1",
+          raceName: "Race 1",
+          position: 5,
+          day: 1,
+          distance: 1200,
+          surface: "Turf",
+          beyer: 50,
+          purse: 1000,
+        },
+        {
+          raceId: "r2",
+          raceName: "Race 2",
+          position: 2,
+          day: 2,
+          distance: 1200,
+          surface: "Turf",
+          beyer: 70,
+          purse: 1000,
+        },
+        {
+          raceId: "r3",
+          raceName: "Race 3",
+          position: 2,
+          day: 3,
+          distance: 1200,
+          surface: "Turf",
+          beyer: 72,
+          purse: 1000,
+        },
+        {
+          raceId: "r4",
+          raceName: "Race 4",
+          position: 2,
+          day: 4,
+          distance: 1200,
+          surface: "Turf",
+          beyer: 75,
+          purse: 1000,
+        },
+      ],
+    });
+    renderWithStore(<HorseAnalyticsSection horse={horse} peakingMultiplier={1.0} />);
+    expect(screen.getByText(/Tipster Insight: Bridesmaid/i)).toBeTruthy();
   });
 });

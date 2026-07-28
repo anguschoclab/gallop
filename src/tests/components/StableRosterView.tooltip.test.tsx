@@ -70,3 +70,55 @@ describe("StableRosterView — tooltip replacement of native title", () => {
     expect(clockIcons.length).toBeGreaterThanOrEqual(1);
   });
 });
+
+describe("StableRosterView — compare and clear button tooltips", () => {
+  it("Compare button is disabled with tooltip when < 2 horses selected", () => {
+    const { container } = render(
+      <StableRosterView
+        horses={[mkHorse()]}
+        status="active"
+        view="ledger"
+        counts={{ active: 1, retired: 0, auctioned: 0, all: 1 }}
+        playerAwards={[]}
+        navigate={vi.fn()}
+        compareIds={["h1"]}
+        onCompareIdsChange={vi.fn()}
+      />,
+    );
+    expect(container.textContent).toContain("Select at least 2 horses to compare");
+  });
+
+  it("Compare button is enabled without tooltip when >= 2 horses selected", () => {
+    const h1 = mkHorse({ id: "h1" });
+    const h2 = mkHorse({ id: "h2", name: "Lightning" });
+    const { container } = render(
+      <StableRosterView
+        horses={[h1, h2]}
+        status="active"
+        view="ledger"
+        counts={{ active: 2, retired: 0, auctioned: 0, all: 2 }}
+        playerAwards={[]}
+        navigate={vi.fn()}
+        compareIds={["h1", "h2"]}
+        onCompareIdsChange={vi.fn()}
+      />,
+    );
+    expect(container.textContent).not.toContain("Select at least 2 horses to compare");
+  });
+
+  it("Clear selection button has tooltip", () => {
+    const { container } = render(
+      <StableRosterView
+        horses={[mkHorse()]}
+        status="active"
+        view="ledger"
+        counts={{ active: 1, retired: 0, auctioned: 0, all: 1 }}
+        playerAwards={[]}
+        navigate={vi.fn()}
+        compareIds={["h1"]}
+        onCompareIdsChange={vi.fn()}
+      />,
+    );
+    expect(container.textContent).toContain("Clear selection");
+  });
+});
