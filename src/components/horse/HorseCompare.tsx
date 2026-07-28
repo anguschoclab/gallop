@@ -326,8 +326,11 @@ function HeadToHeadSection({ horses }: { horses: Horse[] }) {
   // ⚡ Bolt Optimization:
   // Pre-calculate hash maps for O(1) lookups instead of running O(N) .find() inside the .map() loops.
   // Impact: Reduces rendering complexity from O(N^2) to O(N), improving performance during re-renders.
-  const oddsMap = useMemo(() => new Map(odds.map(o => [o.horseId, o])), [odds]);
-  const simResultsMap = useMemo(() => simResults ? new Map(simResults.map(r => [r.horseId, r])) : null, [simResults]);
+  const oddsMap = useMemo(() => new Map(odds.map((o) => [o.horseId, o])), [odds]);
+  const simResultsMap = useMemo(
+    () => (simResults ? new Map(simResults.map((r) => [r.horseId, r])) : null),
+    [simResults],
+  );
 
   const runSim = () => {
     setSimRunning(true);
