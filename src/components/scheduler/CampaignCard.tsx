@@ -4,7 +4,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Flag, Trash2, X } from "lucide-react";
-import type { CampaignGoalType, Horse } from "@/game/types";
+import type {
+  CampaignGoalType,
+  Horse,
+  HorseCampaign,
+  CampaignFlag,
+  CampaignRaceSlot,
+  Race,
+} from "@/game/types";
 import { CampaignSlotList } from "./CampaignSlotList";
 
 const GOAL_LABELS: Record<CampaignGoalType, string> = {
@@ -18,9 +25,9 @@ const GOAL_LABELS: Record<CampaignGoalType, string> = {
 };
 
 interface CampaignCardProps {
-  campaign: any;
+  campaign: HorseCampaign;
   horse: Horse;
-  getRace: (raceId: string) => any;
+  getRace: (raceId: string) => Race | undefined;
   onDelete: (horseId: string) => void;
   onDismissFlag: (horseId: string, flagIndex: number) => void;
 }
@@ -32,10 +39,10 @@ export function CampaignCard({
   onDelete,
   onDismissFlag,
 }: CampaignCardProps) {
-  const activeFlags = campaign.flags.filter((f: any) => !f.dismissed);
+  const activeFlags = campaign.flags.filter((f: CampaignFlag) => !f.dismissed);
   const upcomingSlots = campaign.slots
-    .filter((s: any) => s.status === "planned" || s.status === "entered")
-    .sort((a: any, b: any) => a.dayTarget - b.dayTarget)
+    .filter((s: CampaignRaceSlot) => s.status === "planned" || s.status === "entered")
+    .sort((a: CampaignRaceSlot, b: CampaignRaceSlot) => a.dayTarget - b.dayTarget)
     .slice(0, 5);
 
   return (
@@ -93,7 +100,7 @@ export function CampaignCard({
       <CardContent className="space-y-4">
         {activeFlags.length > 0 && (
           <div className="space-y-2">
-            {activeFlags.map((flag: any, fi: number) => (
+            {activeFlags.map((flag: CampaignFlag, fi: number) => (
               <div
                 key={fi}
                 className="flex items-start justify-between gap-2 p-2 rounded-md bg-warning/20 border border-warning"

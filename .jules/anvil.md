@@ -29,3 +29,8 @@
 
 **Learning:** `src/game/store/slices/auctionSlice.ts` received `impacts: any[]` in `commitAuctionResult` and used `impact as any` inside a switch statement. This bypassed type safety, meaning property accesses (like `entityId` or `message`) were unguarded. Furthermore, it masked a real runtime issue where `inbox_message` impacts lacked an `id` property, meaning invalid objects were being pushed to the inbox.
 **Action:** Always type impact arrays explicitly as `AnyImpact[]` from `src/core/resolver/impacts` when applying them in stores/slices. This enables exhaustive type checking and ensures payload structural integrity.
+
+## 2025-03-03 - Remove any from Campaign UI components
+
+**Learning:** The `CampaignCard` and `CampaignSlotList` components were typed locally using `any` and inline `any[]` types instead of the proper core types (`HorseCampaign`, `CampaignFlag`, `CampaignRaceSlot`). This masked type validations for things like flag filtering, mapped slot properties, and race fetching logic.
+**Action:** When building UI components handling core domains, import the explicitly named exported interfaces from `@/game/types`. This ensures component props safely map back to the validated data structures rather than bypassing the compiler.
