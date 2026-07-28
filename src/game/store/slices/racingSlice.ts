@@ -284,18 +284,18 @@ export function createRacingSlice(
     },
 
     resolveFoalMilestone: (horseId, milestoneKey, choiceKey) => {
-      const s = get() as any;
+      const s = get();
       const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You do not own this horse." };
       const arc = horse.developmentArc;
       if (!arc) return { ok: false, reason: "This horse has no development arc." };
-      const milestone = arc.milestones.find((m: any) => m.key === milestoneKey);
+      const milestone = arc.milestones.find((m) => m.key === milestoneKey);
       if (!milestone) return { ok: false, reason: "Milestone not found." };
       if (milestone.status !== "pending") {
         return { ok: false, reason: "Milestone already resolved." };
       }
-      const choice = milestone.choices.find((c: any) => c.key === choiceKey);
+      const choice = milestone.choices.find((c) => c.key === choiceKey);
       if (!choice) return { ok: false, reason: "Choice not found." };
 
       set((state) => {
@@ -304,7 +304,7 @@ export function createRacingSlice(
         if (h) {
           const currentArc = h.developmentArc;
           if (currentArc) {
-            const targetMilestone = currentArc.milestones.find((m: any) => m.key === milestoneKey);
+            const targetMilestone = currentArc.milestones.find((m) => m.key === milestoneKey);
             if (targetMilestone && targetMilestone.status === "pending") {
               const nextStats = { ...h.stats };
               for (const [stat, delta] of Object.entries(choice.delta) as [
@@ -316,7 +316,7 @@ export function createRacingSlice(
                 nextStats[stat] = Math.round(Math.max(0, Math.min(100, current + delta)));
               }
 
-              const nextMilestones = currentArc.milestones.map((m: any) =>
+              const nextMilestones = currentArc.milestones.map((m) =>
                 m.key === milestoneKey
                   ? {
                       ...m,
