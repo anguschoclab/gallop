@@ -145,18 +145,33 @@ describe("getHorseInsight", () => {
     expect(insight).toBeNull();
   });
 
-  it("detects Consistent Performer", () => {
+  it("detects Fires Fresh insight", () => {
     const horse = {
       raceHistory: [
-        { position: 1, day: 1 },
-        { position: 3, day: 2 },
-        { position: 2, day: 3 },
-        { position: 4, day: 4 },
-        { position: 2, day: 5 },
+        { position: 1, day: 1, beyer: 90 }, // fresh (first race)
+        { position: 3, day: 30, beyer: 80 }, // active (29 days)
+        { position: 3, day: 50, beyer: 80 }, // active (20 days)
+        { position: 3, day: 70, beyer: 80 }, // active (20 days)
+        { position: 1, day: 200, beyer: 90 }, // fresh (130 days)
       ],
     } as Horse;
     const insight = getHorseInsight(horse);
-    expect(insight?.label).toBe("Consistent");
-    expect(insight?.value).toBe("In the Money Machine");
+    expect(insight?.label).toBe("Fires Fresh");
+    expect(insight?.value).toBe("Excels off a Layoff");
+  });
+
+  it("detects Needs Racing insight", () => {
+    const horse = {
+      raceHistory: [
+        { position: 4, day: 1, beyer: 70 }, // fresh (first race)
+        { position: 1, day: 30, beyer: 85 }, // active
+        { position: 1, day: 50, beyer: 85 }, // active
+        { position: 1, day: 70, beyer: 85 }, // active
+        { position: 5, day: 200, beyer: 70 }, // fresh (130 days)
+      ],
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.label).toBe("Needs Racing");
+    expect(insight?.value).toBe("Improves with Activity");
   });
 });

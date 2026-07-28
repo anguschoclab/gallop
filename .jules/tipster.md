@@ -15,3 +15,7 @@
 ## 2025-02-12 - Tipster Insight: Model of Consistency
 **Learning:** Adding aggregate historical insights requires careful precedence ordering relative to "hot streaks", and ensuring the sample size (min 5 starts) is sufficient before presenting percentage-based metrics.
 **Action:** Prioritize active streaks (like win streaks) over long-term consistency metrics by placing their evaluation earlier in the `getHorseInsight` pipeline.
+
+## 2024-07-26 - Gap Analysis requires Chronological sorting
+**Learning:** Checking for layoff trends requires knowing the gap in days between consecutive races. Relying on the default array order can lead to bugs if history arrays are prepended vs appended in different contexts.
+**Action:** Always create a shallow copy and explicitly sort chronological historical data (`[...history].sort((a,b) => a.day - b.day)`) before computing interval-based insights.
