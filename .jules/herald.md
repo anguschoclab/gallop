@@ -58,3 +58,8 @@
 ## 2026-07-25 - Expanded Mid-Race Commentary Variety Gap
 **Learning:** The mid-race commentary arrays in `src/assets/narrative/templates.ts` for events like `POSITION_CHECK`, `DRAFTING`, `HOT_PACE`, `WEATHER_COMMENT`, `STABLE_WATCH`, `MILESTONE`, and `LANE_WATCH` had exactly 12 templates each, resulting in noticeable repetition over a long play session.
 **Action:** Expanded each of these 7 event arrays by appending 4 new contextually appropriate variants (bringing the total to 16 each) to provide richer variety and deeper immersion without requiring any changes to the underlying commentary generator logic.
+
+## 2026-07-26 - Expanded Biographical Commentary Variety Gap
+
+**Learning:** The `BIOGRAPHICAL_TEMPLATES` array in `src/assets/narrative/templates.ts` only had 11 variants, causing rapid repetition during pre-race or mid-race biographical introductions.
+**Action:** Expanded this array to 19 variants to ensure player-facing commentary remains fresh across multiple races.
