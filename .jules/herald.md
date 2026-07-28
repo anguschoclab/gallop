@@ -54,3 +54,7 @@
 
 **Learning:** The seed news generator (`seedNewsGenerator.ts`) only had 8 variants each for headlines and bodies across its many internal builders (e.g. `buildSeasonOpener`, `buildPowerRankings`, etc.). This caused repetition during the start of seasons.
 **Action:** Expanded the `headlines` and `bodies` arrays across all 7 builders in `src/services/narrative/seedNewsGenerator.ts` to 14 variants each to sustain narrative depth and immersion.
+
+## 2026-07-25 - Expanded Mid-Race Commentary Variety Gap
+**Learning:** The mid-race commentary arrays in `src/assets/narrative/templates.ts` for events like `POSITION_CHECK`, `DRAFTING`, `HOT_PACE`, `WEATHER_COMMENT`, `STABLE_WATCH`, `MILESTONE`, and `LANE_WATCH` had exactly 12 templates each, resulting in noticeable repetition over a long play session.
+**Action:** Expanded each of these 7 event arrays by appending 4 new contextually appropriate variants (bringing the total to 16 each) to provide richer variety and deeper immersion without requiring any changes to the underlying commentary generator logic.
