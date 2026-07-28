@@ -19,3 +19,7 @@
 ## 2024-07-26 - Gap Analysis requires Chronological sorting
 **Learning:** Checking for layoff trends requires knowing the gap in days between consecutive races. Relying on the default array order can lead to bugs if history arrays are prepended vs appended in different contexts.
 **Action:** Always create a shallow copy and explicitly sort chronological historical data (`[...history].sort((a,b) => a.day - b.day)`) before computing interval-based insights.
+
+## 2024-10-15 - Exploring Neutral Streaks
+**Learning:** Insight logic isn't limited to just positive accolades; adding neutral analysis like a "Bridesmaid" (consistent 2nd place) streak adds flavorful texture to the data and points out interesting statistical quirks.
+**Action:** Look for other consistent failure-to-win patterns or "almost-there" streaks in the data as potential insights that tell a story about the horse's luck or limitations.
