@@ -8,6 +8,7 @@ vi.mock("@tanstack/react-router", () => ({
 
 import { CampaignCard } from "@/components/scheduler/CampaignCard";
 import type { Horse } from "@/game/types";
+import type { HorseCampaign } from "@/core/calendar/campaignTypes";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({
@@ -17,20 +18,22 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     gender: "colt",
     energy: 80,
     peakingIndex: 0,
-    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70 } as any,
+    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, conformation: 70, consistency: 70 },
     ...overrides,
   }) as Horse;
 
-const mkCampaign = (overrides: any = {}) => ({
+const mkCampaign = (overrides: Partial<HorseCampaign> = {}): HorseCampaign => ({
   horseId: "h1",
   goalType: "free_run",
   autoManaged: false,
   flags: [],
   slots: [],
   confirmedAptitudes: {
-    surfaceConfirmed: null,
-    distanceBandConfirmed: null,
+    surfaceStarts: { Turf: 0, Dirt: 0, Synthetic: 0 },
+    distanceBandStarts: { sprint: 0, mile: 0, intermediate: 0, staying: 0 },
   },
+  createdDay: 0,
+  lastReviewedDay: 0,
   ...overrides,
 });
 
@@ -66,7 +69,7 @@ describe("CampaignCard — tooltip replacement of native title", () => {
   it("has X icon inside tooltip trigger for dismiss flag", () => {
     const { container } = render(
       <CampaignCard
-        campaign={mkCampaign({ flags: [{ message: "Low energy", dismissed: false }] })}
+        campaign={mkCampaign({ flags: [{ day: 1, type: "low_energy", message: "Low energy", dismissed: false }] })}
         horse={mkHorse()}
         getRace={vi.fn()}
         onDelete={vi.fn()}
@@ -116,7 +119,7 @@ describe("CampaignCard — tooltip replacement of native title", () => {
   it("preserves aria-label on dismiss flag button", () => {
     const { container } = render(
       <CampaignCard
-        campaign={mkCampaign({ flags: [{ message: "Low energy", dismissed: false }] })}
+        campaign={mkCampaign({ flags: [{ day: 1, type: "low_energy", message: "Low energy", dismissed: false }] })}
         horse={mkHorse({ name: "Thunder" })}
         getRace={vi.fn()}
         onDelete={vi.fn()}

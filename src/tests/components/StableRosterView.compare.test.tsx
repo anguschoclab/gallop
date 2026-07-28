@@ -19,14 +19,14 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     gender: "colt",
     energy: 80,
     peakingIndex: 0,
-    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70 } as any,
+    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, conformation: 70, consistency: 70 },
     lifecycleStatus: "active",
     raceHistory: [],
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     form: 50,
     potential: 75,
-    silk: { primary: "#ff0000", secondary: "#00ff00" } as any,
+    silk: "#ff0000",
     ...overrides,
   }) as Horse;
 

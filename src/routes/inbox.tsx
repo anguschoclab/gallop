@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import type { FileRouteTypes } from "@/routeTree.gen";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
@@ -169,7 +170,7 @@ function InboxPage() {
                           /\$(\w+)/g,
                           (_, key) => msg.cta?.params?.[key] || "",
                         );
-                        navigate({ to: routePath as any });
+                        navigate({ to: routePath as FileRouteTypes["to"] });
                       }
                     }}
                   >

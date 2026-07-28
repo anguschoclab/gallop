@@ -108,11 +108,11 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
     Object.assign(draft, currentContext.state);
 
     // Return the logs through a side channel since patches don't include them
-    return currentContext.logs as any;
+    return currentContext.logs as unknown as void;
   });
 
   // Extract logs from the produceWithPatches result (immer returns what the producer returns)
-  const logs = _ as any as { day: number; text: string }[];
+  const logs = _ as unknown as { day: number; text: string }[];
 
   return {
     patches,
@@ -212,7 +212,7 @@ async function advanceDaysBatch(input: AdvanceDaysBatchInput): Promise<AdvanceDa
 
     // Sync the draft with the final state
     Object.assign(draft, currentState);
-    return allLogs as any;
+    return allLogs as unknown as void;
   });
 
   return {

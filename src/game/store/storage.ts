@@ -157,13 +157,13 @@ export async function saveGameStateToIDB(state: GameState): Promise<void> {
   }
 
   // Build meta bucket (all non-horse/race/stable state)
-  const meta: Record<string, unknown> = { storeVersion: (state as any).storeVersion };
+  const meta: Record<string, unknown> = { storeVersion: (state as GameState & { storeVersion?: number }).storeVersion };
   for (const key of META_KEYS) {
-    meta[key as string] = (state as any)[key];
+    meta[key as string] = state[key];
   }
 
   // Build npcStables bucket
-  const npcStablesBucket: Record<string, any> = {};
+  const npcStablesBucket: Record<string, import("@/game/types").Stable> = {};
   for (const s of stables) {
     npcStablesBucket[s.id] = s;
   }
@@ -199,7 +199,7 @@ export async function loadGameStateFromIDB(): Promise<GameState | null> {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.GAME_STATE_FALLBACK);
       if (!stored) return null;
-      const payload = safeParseJson(stored, bucketPayloadSchema) as any;
+      const payload = safeParseJson(stored, bucketPayloadSchema) as AllBuckets | null;
       if (!payload) return null;
       return reassembleState(payload);
     } catch (e) {
@@ -214,11 +214,11 @@ export async function loadGameStateFromIDB(): Promise<GameState | null> {
   return reassembleState(buckets);
 }
 
-function reassembleState(payload: Partial<AllBuckets> & Record<string, any>): GameState {
+function reassembleState(payload: Partial<AllBuckets>): GameState {
   const meta = payload.meta ?? {};
   const horsesBucket = payload.horses ?? { playerHorses: {}, npcSummaries: [] };
   const npcStablesBucket = payload.npcStables ?? {};
-  const stables = Object.values(npcStablesBucket) as any[];
+  const stables = Object.values(npcStablesBucket) as import("@/game/types").Stable[];
 
   // Regenerate NPC horses from summaries
   const npcHorses = regenerateNpcHorses(horsesBucket.npcSummaries ?? [], stables);
@@ -227,7 +227,7 @@ function reassembleState(payload: Partial<AllBuckets> & Record<string, any>): Ga
   const horses = mergeHorses(horsesBucket.playerHorses ?? {}, npcHorses);
 
   // Reconstruct state from meta + structured buckets
-  const state: any = {};
+  const state = {} as Record<string, unknown>;
   for (const [key, value] of Object.entries(meta)) {
     state[key] = value;
   }
@@ -235,7 +235,7 @@ function reassembleState(payload: Partial<AllBuckets> & Record<string, any>): Ga
   state.races = payload.races ?? {};
   state.npcStables = stables;
 
-  return state as GameState;
+  return state as unknown as GameState;
 }
 
 /**

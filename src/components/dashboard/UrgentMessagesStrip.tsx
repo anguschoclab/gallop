@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "@tanstack/react-router";
+import type { FileRouteTypes } from "@/routeTree.gen";
 import { useGame } from "@/game/store";
 import { cn } from "@/lib/cn";
 import { AlertCircle, Bell, ChevronRight } from "lucide-react";
@@ -39,7 +40,7 @@ export function UrgentMessagesStrip({ messages }: UrgentMessagesStripProps) {
                 /\$(\w+)/g,
                 (_, key) => msg.cta?.params?.[key] || "",
               );
-              navigate({ to: routePath as any });
+              navigate({ to: routePath as FileRouteTypes["to"] });
               markMessageRead(msg.id);
             } else {
               navigate({ to: "/inbox" });

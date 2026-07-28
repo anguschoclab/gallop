@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import type { FileRouteTypes } from "@/routeTree.gen";
 import { Bookmark as BookmarkIcon, Trash2, X, Search, Tag as TagIcon, Plus } from "lucide-react";
 import { useMemo, useState, type KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
@@ -289,9 +290,9 @@ function BookmarkCard({
     <li className="group relative border border-white/10 bg-slate-950/40 hover:border-gold/40 transition-colors p-3 space-y-3">
       <div className="flex items-start gap-2">
         <Link
-          to={href.to as any}
-          params={href.params as any}
-          search={href.search as any}
+          to={href.to as FileRouteTypes["to"]}
+          params={href.params as Record<string, string>}
+          search={href.search as Record<string, unknown>}
           className="block flex-1 min-w-0"
         >
           <div className="text-[9px] uppercase font-black tracking-widest text-gold/70">

@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { ReactFlow, Background, useNodesState, useEdgesState, type NodeTypes } from "@xyflow/react";
+import { useMemo, useState, type ComponentType } from "react";
+import { ReactFlow, Background, useNodesState, useEdgesState, type NodeTypes, type NodeProps } from "@xyflow/react";
 import dagre from "@dagrejs/dagre";
 import "@xyflow/react/dist/style.css";
 import { useGame } from "@/game/store";
@@ -10,7 +10,7 @@ import { cn } from "@/lib/cn";
 import type { PedigreeFlowNode, PedigreeEdge } from "@/core/breeding/pedigreeGraph";
 
 const nodeTypes: NodeTypes = {
-  horse: PedigreeNodeCard as any,
+  horse: PedigreeNodeCard as unknown as ComponentType<NodeProps<PedigreeFlowNode>>,
 };
 
 function applyDagreLayout(nodes: PedigreeFlowNode[], edges: PedigreeEdge[]): PedigreeFlowNode[] {

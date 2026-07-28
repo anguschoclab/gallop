@@ -20,8 +20,8 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     energy: 80,
     peakingIndex: 0,
     raceHistory: [],
-    surfaceAptitude: { Turf: 0.5, Dirt: 0.5, Synthetic: 0.5 } as any,
-    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, durability: 70 } as any,
+    surfaceAptitude: { Turf: 0.5, Dirt: 0.5, Synthetic: 0.5 },
+    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, conformation: 70, consistency: 70 },
     ...overrides,
   }) as Horse;
 

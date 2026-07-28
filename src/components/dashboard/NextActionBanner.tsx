@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import type { FileRouteTypes } from "@/routeTree.gen";
 import {
   ChevronRight,
   Bell,
@@ -74,9 +75,9 @@ export function NextActionBanner({ action, onDismiss }: NextActionBannerProps) {
       className="group relative flex items-center gap-4 rounded-lg border border-gold/30 bg-gradient-to-r from-gold/10 via-gold/5 to-transparent px-5 py-4 shadow-[0_0_24px_rgba(212,175,55,0.08)] transition hover:border-gold/60 hover:from-gold/15 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold"
     >
       <Link
-        to={action.to as any}
-        params={action.params as any}
-        search={action.search as any}
+        to={action.to as FileRouteTypes["to"]}
+        params={action.params as Record<string, string>}
+        search={action.search as Record<string, unknown>}
         aria-label={`${action.label}: ${action.detail}`}
         onClick={handleClick}
         className="flex flex-1 items-center gap-4 min-w-0"
