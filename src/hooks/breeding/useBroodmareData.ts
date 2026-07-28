@@ -1,14 +1,14 @@
 import { useMemo } from "react";
 import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
-import type { GameState } from "@/game/types";
+import type { GameState, Pregnancy, Horse } from "@/game/types";
 
 export interface BroodmareEntry {
-  pregnancy: any;
-  dam: any;
-  sire: any;
+  pregnancy: Pregnancy;
+  dam: Horse;
+  sire: Horse | undefined;
   daysRemaining: number;
-  maternityLog: any[];
+  maternityLog: { day: number; text: string }[];
 }
 
 export function useBroodmareData() {
@@ -17,17 +17,17 @@ export function useBroodmareData() {
   const day = useGame((s: GameState) => s.day);
   const log = useGameWithShallow((s: GameState) => s.log);
 
-  const activePregnancies = pregnancies.filter((p: any) => !p.resolved);
+  const activePregnancies = pregnancies.filter((p) => !p.resolved);
 
   const sortedBroodmares = useMemo(() => {
-    const data: BroodmareEntry[] = activePregnancies
-      .map((pregnancy: any) => {
-        const dam = horses[pregnancy.damId];
-        const sire = horses[pregnancy.sireId];
+    const data = activePregnancies
+      .map((pregnancy) => {
+        const dam = horses[pregnancy.damId] as Horse | undefined;
+        const sire = horses[pregnancy.sireId] as Horse | undefined;
         const daysRemaining = pregnancy.dueDay - day - 1;
 
         const maternityLog = log.filter(
-          (l: any) =>
+          (l) =>
             l.text.includes(pregnancy.damName) &&
             (l.text.includes("Mated") || l.text.includes("Foal")),
         );
@@ -40,9 +40,9 @@ export function useBroodmareData() {
           maternityLog,
         };
       })
-      .filter((data: any) => data.dam);
+      .filter((data): data is BroodmareEntry => data.dam !== undefined);
 
-    data.sort((a: BroodmareEntry, b: BroodmareEntry) => a.daysRemaining - b.daysRemaining);
+    data.sort((a, b) => a.daysRemaining - b.daysRemaining);
     return data;
   }, [activePregnancies, horses, day, log]);
 
