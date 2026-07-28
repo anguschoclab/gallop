@@ -69,9 +69,11 @@ export function StableRosterView({
     }
   };
 
+  const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
+
   const selectedHorses = useMemo(
-    () => selectedIds.map((id) => horses.find((h) => h.id === id)).filter(Boolean) as Horse[],
-    [selectedIds, horses],
+    () => selectedIds.map((id) => horseMap.get(id)).filter(Boolean) as Horse[],
+    [selectedIds, horseMap],
   );
 
   return (
@@ -338,7 +340,7 @@ export function StableRosterView({
           {/* Horse name chips with reorder controls */}
           <div className="flex items-center gap-1.5">
             {selectedIds.map((id, idx) => {
-              const h = horses.find((x) => x.id === id);
+              const h = horseMap.get(id);
               if (!h) return null;
               return (
                 <div key={id} className="flex items-center gap-0.5 bg-white/5 rounded px-1.5 py-1">
