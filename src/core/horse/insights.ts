@@ -46,6 +46,23 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     }
   }
 
+  // 1.7 Check for Consistent Performer (Top 3 finish in >= 80% of races, min 5 starts)
+  if (history.length >= 5) {
+    let top3Finishes = 0;
+    for (const race of history) {
+      if (race.position <= 3) top3Finishes++;
+    }
+    const top3Rate = top3Finishes / history.length;
+    if (top3Rate >= 0.8) {
+      return {
+        label: "Consistent",
+        value: "In the Money Machine",
+        context: `Finished in the top 3 in ${Math.round(top3Rate * 100)}% of ${history.length} career starts`,
+        type: "positive",
+      };
+    }
+  }
+
   // 2. Check for distance sweet spot (best average beyer by distance, min 3 races)
   const distanceStats = new Map<number, { runs: number; totalBeyer: number; wins: number }>();
   for (const race of history) {
