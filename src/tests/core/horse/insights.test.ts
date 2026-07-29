@@ -89,7 +89,6 @@ describe("getHorseInsight", () => {
         { position: 5, day: 1, surface: "Turf", beyer: 90 },
         { position: 5, day: 2, surface: "Turf", beyer: 80 },
         { position: 5, day: 3, surface: "Turf", beyer: 85 },
-
       ],
     } as Horse;
     const insight = getHorseInsight(horse);
@@ -104,7 +103,6 @@ describe("getHorseInsight", () => {
         { position: 5, day: 2, surface: "Turf", beyer: 85 },
         { position: 5, day: 3, surface: "Dirt", beyer: 80 },
         { position: 5, day: 4, surface: "Dirt", beyer: 85 },
-
       ],
     } as Horse;
     expect(getHorseInsight(horse)).toBeNull();
@@ -155,7 +153,6 @@ describe("getHorseInsight", () => {
         { position: 5, day: 1, beyer: 70 },
         { position: 5, day: 2, beyer: 72 },
         { position: 5, day: 3, beyer: 73 },
-
       ],
     } as Horse;
     const insight = getHorseInsight(horse);
