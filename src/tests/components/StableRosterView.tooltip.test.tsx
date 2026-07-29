@@ -21,7 +21,14 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     peakingIndex: 0,
     raceHistory: [],
     surfaceAptitude: { Turf: 0.5, Dirt: 0.5, Synthetic: 0.5 },
-    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, conformation: 70, consistency: 70 },
+    stats: {
+      speed: 70,
+      stamina: 70,
+      acceleration: 70,
+      temperament: 70,
+      conformation: 70,
+      consistency: 70,
+    },
     ...overrides,
   }) as Horse;
 
@@ -87,7 +94,9 @@ describe("StableRosterView — compare and clear button tooltips", () => {
         onCompareIdsChange={vi.fn()}
       />,
     );
-    expect(container.querySelector('[aria-label="Select at least 2 horses to compare"]')).toBeTruthy();
+    expect(
+      container.querySelector('[aria-label="Select at least 2 horses to compare"]'),
+    ).toBeTruthy();
   });
 
   it("Compare button is enabled without tooltip when >= 2 horses selected", () => {
@@ -105,7 +114,9 @@ describe("StableRosterView — compare and clear button tooltips", () => {
         onCompareIdsChange={vi.fn()}
       />,
     );
-    expect(container.querySelector('[aria-label="Select at least 2 horses to compare"]')).toBeFalsy();
+    expect(
+      container.querySelector('[aria-label="Select at least 2 horses to compare"]'),
+    ).toBeFalsy();
   });
 
   it("Clear selection button has tooltip", () => {

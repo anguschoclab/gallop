@@ -3,7 +3,11 @@ import { NarrativeGenerator } from "@/services/narrative/narrativeService";
 import type { Race, Horse, Stable } from "@/game/types";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import { createRng, hashStr } from "@/core/common/rng";
-import { TEMPLATES, EXPERT_INSIGHT_TEMPLATES, BIOGRAPHICAL_TEMPLATES } from "@/assets/narrative/templates";
+import {
+  TEMPLATES,
+  EXPERT_INSIGHT_TEMPLATES,
+  BIOGRAPHICAL_TEMPLATES,
+} from "@/assets/narrative/templates";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {

@@ -398,7 +398,11 @@ export function StableRosterView({
             <TooltipProvider delayDuration={300}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span tabIndex={0} className="inline-block cursor-not-allowed" aria-label="Select at least 2 horses to compare">
+                  <span
+                    tabIndex={0}
+                    className="inline-block cursor-not-allowed"
+                    aria-label="Select at least 2 horses to compare"
+                  >
                     <Button
                       size="sm"
                       className="gap-2 bg-gold text-slate-950 hover:bg-gold/90 font-bold uppercase text-[10px] tracking-widest pointer-events-none"

@@ -18,7 +18,14 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     gender: "colt",
     energy: 80,
     peakingIndex: 0,
-    stats: { speed: 70, stamina: 70, acceleration: 70, temperament: 70, conformation: 70, consistency: 70 },
+    stats: {
+      speed: 70,
+      stamina: 70,
+      acceleration: 70,
+      temperament: 70,
+      conformation: 70,
+      consistency: 70,
+    },
     ...overrides,
   }) as Horse;
 
@@ -69,7 +76,9 @@ describe("CampaignCard — tooltip replacement of native title", () => {
   it("has X icon inside tooltip trigger for dismiss flag", () => {
     const { container } = render(
       <CampaignCard
-        campaign={mkCampaign({ flags: [{ day: 1, type: "low_energy", message: "Low energy", dismissed: false }] })}
+        campaign={mkCampaign({
+          flags: [{ day: 1, type: "low_energy", message: "Low energy", dismissed: false }],
+        })}
         horse={mkHorse()}
         getRace={vi.fn()}
         onDelete={vi.fn()}
@@ -119,7 +128,9 @@ describe("CampaignCard — tooltip replacement of native title", () => {
   it("preserves aria-label on dismiss flag button", () => {
     const { container } = render(
       <CampaignCard
-        campaign={mkCampaign({ flags: [{ day: 1, type: "low_energy", message: "Low energy", dismissed: false }] })}
+        campaign={mkCampaign({
+          flags: [{ day: 1, type: "low_energy", message: "Low energy", dismissed: false }],
+        })}
         horse={mkHorse({ name: "Thunder" })}
         getRace={vi.fn()}
         onDelete={vi.fn()}

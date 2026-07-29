@@ -1,9 +1,6 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 
-type GenericNavigateFn = (opts: {
-  search?: Record<string, unknown>;
-  replace?: boolean;
-}) => void;
+type GenericNavigateFn = (opts: { search?: Record<string, unknown>; replace?: boolean }) => void;
 
 /**
  * URL-search-param-backed tab state. Deep-linkable and back-button friendly.

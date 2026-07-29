@@ -157,7 +157,9 @@ export async function saveGameStateToIDB(state: GameState): Promise<void> {
   }
 
   // Build meta bucket (all non-horse/race/stable state)
-  const meta: Record<string, unknown> = { storeVersion: (state as GameState & { storeVersion?: number }).storeVersion };
+  const meta: Record<string, unknown> = {
+    storeVersion: (state as GameState & { storeVersion?: number }).storeVersion,
+  };
   for (const key of META_KEYS) {
     meta[key as string] = state[key];
   }

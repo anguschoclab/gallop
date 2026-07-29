@@ -37,7 +37,10 @@ export function useNpcStablesFilters(search: NpcStablesSearch) {
   const updateFilter = useCallback(
     (key: keyof NpcStablesSearch, value: string) => {
       navigate({
-        search: (prev: Record<string, unknown>): Record<string, unknown> => ({ ...prev, [key]: value }),
+        search: (prev: Record<string, unknown>): Record<string, unknown> => ({
+          ...prev,
+          [key]: value,
+        }),
       });
     },
     [navigate],
