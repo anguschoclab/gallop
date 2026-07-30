@@ -5,6 +5,7 @@ import {
   parTime,
   expectedBeyer,
   calculateBeyerForResult,
+  detectPatternJump,
 } from "@/core/race/beyer";
 import type { Horse } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
@@ -139,5 +140,45 @@ describe("calculateBeyerForResult", () => {
   it("non-finite finishTime → 0", () => {
     expect(calculateBeyerForResult(1600, Infinity)).toBe(0);
     expect(calculateBeyerForResult(1600, 0)).toBe(0);
+  });
+});
+
+describe("detectPatternJump", () => {
+  it("returns false if horse has no beyer history", () => {
+    const h = mkHorse();
+    expect(detectPatternJump(h, 90)).toEqual({ jumped: false, margin: 0 });
+  });
+
+  it("jumps if new beyer is 15+ over average", () => {
+    const h = mkHorse({
+      raceHistory: [{ beyer: 70 } as any],
+    });
+    expect(detectPatternJump(h, 85)).toEqual({ jumped: true, margin: 15 });
+  });
+
+  it("jumps if new beyer is 10+ over career best with min 2 history", () => {
+    const h = mkHorse({
+      raceHistory: [{ beyer: 70 } as any, { beyer: 72 } as any],
+    });
+    // average is 71, career best is 72. New beyer 82 is +11 over average (<15)
+    // but +10 over career best. History len = 2.
+    expect(detectPatternJump(h, 82)).toEqual({ jumped: true, margin: 11 }); // Margin is max(jumpOverAvg, jumpOverBest) -> max(11, 10)
+  });
+
+  it("does not jump if 10+ over career best but history < 2", () => {
+    const h = mkHorse({
+      raceHistory: [{ beyer: 72 } as any],
+    });
+    // average is 72, best is 72. New beyer 82 is +10 over average (<15) and +10 over best.
+    // but history len = 1 (< PATTERN_JUMP_MIN_HISTORY)
+    expect(detectPatternJump(h, 82)).toEqual({ jumped: false, margin: 0 });
+  });
+
+  it("returns false if thresholds not met", () => {
+    const h = mkHorse({
+      raceHistory: [{ beyer: 70 } as any, { beyer: 72 } as any],
+    });
+    // new beyer 80 is +9 over average (71), +8 over best (72).
+    expect(detectPatternJump(h, 80)).toEqual({ jumped: false, margin: 0 });
   });
 });
