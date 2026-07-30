@@ -338,9 +338,38 @@ export const useGame = create<StoreType>()(
       // Stewards inquiry action — used by the useStewardsInquiry hook after
       // the player watches a race complete in the UI.
       addStewardsInquiry: (inquiry: StewardsInquiry) => {
-        set((state) => ({
-          stewardsInquiries: [...state.stewardsInquiries, inquiry],
-        }));
+        set((state) => {
+          const race = state.races[inquiry.raceId];
+          const races = race
+            ? {
+                ...state.races,
+                [inquiry.raceId]: {
+                  ...race,
+                  inquiries: [...(race.inquiries ?? []), inquiry],
+                },
+              }
+            : state.races;
+
+          // Apply jockey suspension if the inquiry has a suspension outcome
+          let jockeys = state.jockeys;
+          if (
+            inquiry.outcome === "suspension" &&
+            inquiry.suspensionDays &&
+            inquiry.accusedJockeyId
+          ) {
+            jockeys = state.jockeys?.map((j) =>
+              j.id === inquiry.accusedJockeyId
+                ? { ...j, suspendedUntil: state.day + inquiry.suspensionDays! }
+                : j,
+            );
+          }
+
+          return {
+            stewardsInquiries: [...state.stewardsInquiries, inquiry],
+            races,
+            jockeys,
+          };
+        });
       },
 
       // Start new game action

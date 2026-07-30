@@ -91,22 +91,24 @@ describe("stewardTypes", () => {
       expect(result?.reportingHorseId).toBe("horse-1");
     });
 
-    it("documents CURRENT behavior: handles single horse array gracefully but yields undefined reporting horse", () => {
-      // If there's only 1 horse in the array, the accused horse will be the only horse.
-      // Then `horseIds.filter(...)` will be empty.
-      // `Math.floor(_rng.next() * (horseIds.length - 1))` -> Math.floor(rng * 0) = 0.
-      // Accessing index 0 of an empty array returns undefined.
-      // rng calls: 0.01 (pass), 0.5 (type), 0.5 (accused), 0.5 (reporting - irrelevant)
+    it("returns null for empty horseIds array (Bug 2)", () => {
+      const rng = createMockRng([0.01]);
+      const result = generateRandomInquiry("race-1", 100, [], rng);
+      expect(result).toBeNull();
+    });
+
+    it("returns null for single-horse array (Bug 2)", () => {
       const rng = createMockRng([0.01, 0.5, 0.5, 0.5]);
-      const horseIds = ["lone-horse"];
+      const result = generateRandomInquiry("race-1", 100, ["lone-horse"], rng);
+      expect(result).toBeNull();
+    });
 
-      const result = generateRandomInquiry("race-1", 100, horseIds, rng);
-
+    it("returns valid reportingHorseId for 2+ horses", () => {
+      const rng = createMockRng([0.04, 0.1, 0.5, 0.5]);
+      const result = generateRandomInquiry("race-1", 100, ["horse-1", "horse-2"], rng);
       expect(result).toBeDefined();
-      expect(result?.accusedHorseId).toBe("lone-horse");
-      // This exposes a latent bug/edge case where an inquiry involves an undefined reporting horse
-      // when generated on a race with only 1 horse.
-      expect(result?.reportingHorseId).toBeUndefined();
+      expect(result?.reportingHorseId).toBeDefined();
+      expect(result?.reportingHorseId).not.toBe(result?.accusedHorseId);
     });
   });
 
@@ -144,6 +146,34 @@ describe("stewardTypes", () => {
       expect(resolved.outcome).toBe("suspension");
       expect(resolved.fineAmount).toBe(500);
       expect(resolved.suspensionDays).toBe(3);
+    });
+
+    it("preserves existing fineAmount when not provided (Bug 3)", () => {
+      const inquiry = createStewardsInquiry(
+        "race-1",
+        100,
+        "improper_riding",
+        "horse-A",
+        "description",
+      );
+      const withFine = resolveInquiry(inquiry, "fine", 1000);
+      const reResolved = resolveInquiry(withFine, "warning");
+
+      expect(reResolved.fineAmount).toBe(1000);
+    });
+
+    it("preserves existing suspensionDays when not provided (Bug 3)", () => {
+      const inquiry = createStewardsInquiry(
+        "race-1",
+        100,
+        "improper_riding",
+        "horse-A",
+        "description",
+      );
+      const withSuspension = resolveInquiry(inquiry, "suspension", undefined, 10);
+      const reResolved = resolveInquiry(withSuspension, "warning");
+
+      expect(reResolved.suspensionDays).toBe(10);
     });
   });
 

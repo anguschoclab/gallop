@@ -121,3 +121,109 @@ describe("stewardsPhase — player-entry guard", () => {
     expect(result.impacts.filter((i: any) => i.type === "stewards_inquiry")).toHaveLength(0);
   });
 });
+
+describe("stewardsPhase — outcome coverage (Bug 1)", () => {
+  it("can generate suspension and dq_placed_last outcomes across many races", () => {
+    const suspensionImpacts: any[] = [];
+    const dqPlacedLastImpacts: any[] = [];
+
+    for (let raceNum = 0; raceNum < 500; raceNum++) {
+      const race = makeResolvedRace({
+        id: `outcome-race-${raceNum}`,
+        entries: [
+          { horseId: `h${raceNum}-1`, owned: false } as any,
+          { horseId: `h${raceNum}-2`, owned: false } as any,
+          { horseId: `h${raceNum}-3`, owned: false } as any,
+        ],
+        result: [
+          { horseId: `h${raceNum}-1`, position: 1, time: 96.0 },
+          { horseId: `h${raceNum}-2`, position: 2, time: 96.5 },
+          { horseId: `h${raceNum}-3`, position: 3, time: 97.0 },
+        ],
+      });
+
+      const ctx = makePipelineContext({
+        newDay: raceNum + 1,
+        state: makeGameState({ races: r2r([race]), horses: {} }) as any,
+      });
+
+      const result = stewardsPhase.execute(ctx as any);
+      for (const imp of result.impacts) {
+        if (imp.type === "stewards_inquiry") {
+          if ((imp as any).inquiry.outcome === "suspension") suspensionImpacts.push(imp);
+          if ((imp as any).inquiry.outcome === "dq_placed_last") dqPlacedLastImpacts.push(imp);
+        }
+      }
+    }
+
+    expect(suspensionImpacts.length).toBeGreaterThan(0);
+    expect(dqPlacedLastImpacts.length).toBeGreaterThan(0);
+  });
+
+  it("sets suspensionDays when outcome is suspension", () => {
+    let foundSuspension = false;
+
+    for (let raceNum = 0; raceNum < 500; raceNum++) {
+      const race = makeResolvedRace({
+        id: `susp-test-${raceNum}`,
+        entries: [
+          { horseId: `h${raceNum}-1`, owned: false } as any,
+          { horseId: `h${raceNum}-2`, owned: false } as any,
+        ],
+        result: [
+          { horseId: `h${raceNum}-1`, position: 1, time: 96.0 },
+          { horseId: `h${raceNum}-2`, position: 2, time: 96.5 },
+        ],
+      });
+
+      const ctx = makePipelineContext({
+        newDay: raceNum + 1,
+        state: makeGameState({ races: r2r([race]), horses: {} }) as any,
+      });
+
+      const result = stewardsPhase.execute(ctx as any);
+      for (const imp of result.impacts) {
+        if (imp.type === "stewards_inquiry" && (imp as any).inquiry.outcome === "suspension") {
+          expect((imp as any).inquiry.suspensionDays).toBeDefined();
+          expect((imp as any).inquiry.suspensionDays).toBeGreaterThan(0);
+          foundSuspension = true;
+        }
+      }
+    }
+
+    expect(foundSuspension).toBe(true);
+  });
+});
+
+describe("stewardsPhase — stewards_resolution impact (Bug 7)", () => {
+  it("emits stewards_resolution impact for auto-resolved inquiries", () => {
+    let foundResolution = false;
+
+    for (let raceNum = 0; raceNum < 100; raceNum++) {
+      const race = makeResolvedRace({
+        id: `res-race-${raceNum}`,
+        entries: [
+          { horseId: `h${raceNum}-1`, owned: false } as any,
+          { horseId: `h${raceNum}-2`, owned: false } as any,
+        ],
+        result: [
+          { horseId: `h${raceNum}-1`, position: 1, time: 96.0 },
+          { horseId: `h${raceNum}-2`, position: 2, time: 96.5 },
+        ],
+      });
+
+      const ctx = makePipelineContext({
+        newDay: raceNum + 1,
+        state: makeGameState({ races: r2r([race]), horses: {} }) as any,
+      });
+
+      const result = stewardsPhase.execute(ctx as any);
+      if (result.impacts.some((i: any) => i.type === "stewards_resolution")) {
+        foundResolution = true;
+        break;
+      }
+    }
+
+    expect(foundResolution).toBe(true);
+  });
+});

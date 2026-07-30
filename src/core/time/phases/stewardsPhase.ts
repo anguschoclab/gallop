@@ -14,6 +14,7 @@ import { resolveInquiry, type InquiryOutcome } from "@/core/stewards/stewardType
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type {
   StewardsInquiryImpact,
+  StewardsResolutionImpact,
   RaceResultAdjustmentImpact,
 } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
@@ -91,7 +92,14 @@ export const stewardsPhase: PipelinePhase = {
       };
 
       // Auto-resolve inquiry immediately (for gameplay flow)
-      const outcomes: InquiryOutcome[] = ["no_action", "warning", "fine", "disqualification"];
+      const outcomes: InquiryOutcome[] = [
+        "no_action",
+        "warning",
+        "fine",
+        "disqualification",
+        "suspension",
+        "dq_placed_last",
+      ];
       const outcome = outcomes[Math.floor(rng.next() * outcomes.length)];
 
       let fineAmount: number | undefined;
@@ -122,6 +130,21 @@ export const stewardsPhase: PipelinePhase = {
         inquiry: resolvedInquiry,
         reason: `Stewards inquiry: ${inquiry.description}`,
       } as StewardsInquiryImpact);
+
+      // Emit stewards_resolution so the SystemHandler applies jockey suspensions
+      impacts.push({
+        id: generateUUID(rng),
+        intentId: "",
+        day: newDay,
+        phase: "stewards",
+        logLevel: "always",
+        type: "stewards_resolution",
+        inquiryId: resolvedInquiry.id,
+        outcome,
+        fineAmount,
+        suspensionDays,
+        reason: `Stewards resolution: ${outcome}`,
+      } as StewardsResolutionImpact);
 
       // If DQ, emit race result adjustment
       if (outcome === "disqualification" || outcome === "dq_placed_last") {

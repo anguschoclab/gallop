@@ -104,6 +104,9 @@ export function generateRandomInquiry(
   // 5% chance of an inquiry
   if (_rng.next() > 0.05) return null;
 
+  // Need at least 2 horses to have an accused and a reporter
+  if (horseIds.length < 2) return null;
+
   const types: InquiryType[] = ["interference", "improper_riding", "lane_violation"];
   const type = types[Math.floor(_rng.next() * types.length)];
   const accusedHorseId = horseIds[Math.floor(_rng.next() * horseIds.length)];
@@ -144,8 +147,8 @@ export function resolveInquiry(
     ...inquiry,
     status: "resolved",
     outcome,
-    fineAmount,
-    suspensionDays,
+    ...(fineAmount !== undefined && { fineAmount }),
+    ...(suspensionDays !== undefined && { suspensionDays }),
   };
 }
 
