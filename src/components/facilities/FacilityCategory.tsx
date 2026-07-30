@@ -9,13 +9,14 @@ import { useFacilityTiers } from "@/hooks/facilities/useFacilityTiers";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { JARGON_DEFINITIONS } from "@/constants/jargon";
+import type { PlayerFacilities } from "@/core/facilities";
 
 interface FacilityCategoryProps {
   category: string;
   icon: React.ElementType;
   color: string;
   types: FacilityType[];
-  facilities: Record<string, any>;
+  facilities: PlayerFacilities;
   cash: number;
   onUpgrade: (type: FacilityType) => void;
 }

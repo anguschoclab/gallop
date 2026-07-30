@@ -58,4 +58,9 @@ export type { StewardsInquiry, InquiryType, InquiryOutcome } from "@/core/stewar
 export type { InsurancePolicy, InsurancePolicyType } from "@/core/insurance/insuranceTypes";
 
 // Type alias for facilities
-export type FacilityState = Record<string, any>;
+export type FacilityState = Partial<
+  Record<
+    import("@/core/facilities/facilityTypes").FacilityType,
+    import("@/core/facilities/facilityTypes").Facility
+  >
+>;
