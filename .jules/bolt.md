@@ -87,3 +87,6 @@
 
 **Learning:** When generating lightweight odds and monte carlo sim results inside `HeadToHeadSection`, using `.find()` inside a `horses.map()` render loop leads to O(N^2) performance degradation during rendering.
 **Action:** Pre-calculate hash maps using `useMemo` (e.g. `new Map(odds.map(o => [o.horseId, o]))`) for O(1) lookups inside the render loop, changing the complexity to O(N).
+## 2025-05-18 - Lift invariant calculation out of loop in deriveEligibleRaces
+**Learning:** In `deriveEligibleRaces`, `estimateJockeyFee` was called inside the `for (const race of upcoming)` loop. However, the calculation depends only on `horse` and `jockeys`, not on the individual race.
+**Action:** Lift invariant calculations out of loops to prevent redundant execution and improve performance when processing large arrays.
