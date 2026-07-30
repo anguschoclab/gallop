@@ -33,3 +33,7 @@
 ## 2025-02-12 - Play Style Insight using Pace Positions
 **Learning:** `raceHistory` tracks `pacePositions` and `fieldSize`, allowing the derivation of wire-to-wire victories without needing new states. Checking `pacePositions.every(p => p === 1)` is an effective way to define "Wire-to-Wire".
 **Action:** Use existing structural data like `pacePositions` to construct contextual play style accolades like "Catch Me If You Can". Ensure safe fallbacks for missing `pacePositions` in legacy mock data.
+
+## 2025-02-12 - Play Style Insight using Late Closing wins
+**Learning:** Checking the first call position in `pacePositions` relative to `fieldSize` is an effective way to define late closers without needing new states. `firstCall > Math.max(5, fieldSize * 0.65)` accurately categorizes "off-pace" horses in `paceTendency.ts`.
+**Action:** Use existing structural data to construct contextual play style accolades like "From the Clouds", while maintaining safe fallbacks for missing `fieldSize` in legacy mock data.

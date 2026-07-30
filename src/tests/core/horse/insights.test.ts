@@ -389,4 +389,18 @@ describe("Play Style Success insights", () => {
     expect(insight!.label).toBe("Catch Me If You Can");
     expect(insight!.type).toBe("positive");
   });
+
+  it("detects From the Clouds when horse has 2+ late closing wins", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1, fieldSize: 8, pacePositions: [7, 5, 2, 1] },
+        { position: 1, day: 2, fieldSize: 10, pacePositions: [9, 8, 4, 1] },
+        { position: 3, day: 3, fieldSize: 8, pacePositions: [7, 6, 4, 3] },
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("From the Clouds");
+    expect(insight!.type).toBe("positive");
+  });
 });
