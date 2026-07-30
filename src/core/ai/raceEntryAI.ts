@@ -84,6 +84,7 @@ export function createRaceEntryAIState(stable: Stable): RaceEntryAIState {
  * @param race - The race to evaluate
  * @param stable - The stable making the decision
  * @param currentDay - Current game day
+ * @param horseMap - Optional map of all horses for competitor quality analysis
  * @returns Strategic entry score
  */
 export function calculateStrategicEntryScore(
@@ -92,6 +93,7 @@ export function calculateStrategicEntryScore(
   race: Race,
   stable: Stable,
   currentDay: number,
+  horseMap?: Map<string, Horse>,
 ): number {
   // Base suitability score
   let score = calculateRaceSuitability(horse, race, stable);
@@ -110,8 +112,26 @@ export function calculateStrategicEntryScore(
   score += adaptiveBonus;
 
   // Strategic planning adjustment
-  const strategicValue = evaluateStrategicValue(aiState, horse, race, currentDay);
+  const strategicValue = evaluateStrategicValue(aiState, horse, race, currentDay, horseMap);
   score += strategicValue;
+
+  // Form cycling: penalize entries when horse hasn't had enough rest
+  if (horse.lastRaceDay !== undefined) {
+    const daysSinceLastRace = currentDay - horse.lastRaceDay;
+    // Personality-based minimum rest days
+    const minRestDays =
+      stable.personality === "aggressive" || stable.personality === "win-now"
+        ? 7
+        : stable.personality === "conservative" || stable.personality === "prestige"
+          ? 21
+          : 14; // Default for breeder, trader, developer, specialist
+    if (daysSinceLastRace < minRestDays) {
+      // Penalty scales with how close to the minimum rest we are
+      const restRatio = daysSinceLastRace / minRestDays;
+      const restPenalty = (1 - restRatio) * 15; // Up to -15 for 0 days rest
+      score -= restPenalty;
+    }
+  }
 
   return score;
 }
@@ -126,6 +146,7 @@ export function calculateStrategicEntryScore(
  * @param horse - The horse to evaluate
  * @param race - The race to evaluate
  * @param currentDay - Current game day
+ * @param horseMap - Optional map of all horses for competitor quality analysis
  * @returns Strategic value score
  */
 function evaluateStrategicValue(
@@ -133,6 +154,7 @@ function evaluateStrategicValue(
   horse: Horse,
   race: Race,
   currentDay: number,
+  horseMap?: Map<string, Horse>,
 ): number {
   let strategicValue = 0;
 
@@ -151,13 +173,28 @@ function evaluateStrategicValue(
     }
   }
 
-  // Competitive positioning - avoid races with too many top competitors
-  if (race.entries.length > 0) {
-    // In real implementation, would look up horse stats
-    const avgCompetitorQuality = 50;
+  // Competitive positioning - calculate actual competitor quality from horseMap
+  if (race.entries.length > 0 && horseMap) {
+    let totalQuality = 0;
+    let competitorCount = 0;
+    for (const entry of race.entries) {
+      if (entry.horseId === horse.id) continue;
+      const competitor = horseMap.get(entry.horseId);
+      if (competitor) {
+        totalQuality += calculateOverallRating(competitor);
+        competitorCount++;
+      }
+    }
+    const avgCompetitorQuality = competitorCount > 0 ? totalQuality / competitorCount : 50;
 
     if (avgCompetitorQuality > 80) {
       strategicValue -= 10; // Penalty for very competitive fields
+    }
+  } else if (race.entries.length > 0) {
+    // Fallback: no horseMap available, use conservative default
+    const avgCompetitorQuality = 50;
+    if (avgCompetitorQuality > 80) {
+      strategicValue -= 10;
     }
   }
 
@@ -330,10 +367,17 @@ export function generateMultiRaceStrategy(
     return (b.purse || 0) - (a.purse || 0);
   });
 
+  // Track which horses are assigned on which days to prevent same-day double entry
+  const assignedHorseDays = new Set<string>(); // `${horseId}:${day}`
+
   // Assign horses to races based on strategic fit
   for (const race of upcomingRaces) {
+    const maxPerRace = Math.min(2, race.fieldSize - race.entries.length);
+    if (maxPerRace <= 0) continue;
+
     const candidates = horses
       .filter((h) => h.stableId === stable.id)
+      .filter((h) => !assignedHorseDays.has(`${h.id}:${race.day}`))
       .map((horse) => ({
         horse,
         score: calculateStrategicEntryScore(aiState, horse, race, stable, currentDay),
@@ -341,10 +385,13 @@ export function generateMultiRaceStrategy(
       .filter((c) => c.score > 50)
       .sort((a, b) => b.score - a.score);
 
-    // Select top candidates (max 2 per race)
-    const selected = candidates.slice(0, 2).map((c) => c.horse.id);
+    // Select top candidates respecting field size limit
+    const selected = candidates.slice(0, maxPerRace).map((c) => c.horse.id);
     if (selected.length > 0) {
       strategy[race.id] = selected;
+      for (const horseId of selected) {
+        assignedHorseDays.add(`${horseId}:${race.day}`);
+      }
     }
   }
 

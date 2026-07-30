@@ -144,7 +144,64 @@ export function calculateOptimalTactics(
 
   // Use strategy record to determine tactics based on running style
   const instructionsCalculator = TACTICS_STRATEGIES[horse.runningStyle];
-  return instructionsCalculator(horse, race, jockey, personality, isSkilled, aggressiveness);
+  const baseInstructions = instructionsCalculator(
+    horse,
+    race,
+    jockey,
+    personality,
+    isSkilled,
+    aggressiveness,
+  );
+
+  // Field-aware adjustments: large fields (14+ horses) require traffic-aware tactics
+  const fieldSize = race.entries.length || race.fieldSize;
+  if (fieldSize >= 14) {
+    // Closers (S style) should be less aggressive early in large fields to avoid traffic
+    if (horse.runningStyle === "S") {
+      return {
+        ...baseInstructions,
+        aggressiveness: Math.max(20, baseInstructions.aggressiveness - 10),
+        earlyPosition:
+          baseInstructions.earlyPosition === "press" ? "midpack" : baseInstructions.earlyPosition,
+      };
+    }
+    // Front-runners (E style) in large fields should avoid getting trapped on the rail
+    if (horse.runningStyle === "E") {
+      return {
+        ...baseInstructions,
+        earlyPosition:
+          baseInstructions.earlyPosition === "drop_back" ? "press" : baseInstructions.earlyPosition,
+      };
+    }
+  }
+
+  // Track-condition adjustments: adverse conditions affect horses with low mudAptitude
+  const trackCondition = race.trackCondition;
+  if (trackCondition === "heavy" || trackCondition === "soft" || trackCondition === "yielding") {
+    const mudAptitude = horse.mudAptitude ?? 0.5;
+    if (mudAptitude < 0.5) {
+      // Horse struggles in mud — reduce aggressiveness and adopt more conservative position
+      const aggressivenessReduction = Math.round((0.5 - mudAptitude) * 30); // Up to -15
+      const adjustedAggressiveness = Math.max(
+        20,
+        baseInstructions.aggressiveness - aggressivenessReduction,
+      );
+      // Front-runners on soft tracks with low mud aptitude should not go for the lead
+      if (horse.runningStyle === "E" && baseInstructions.earlyPosition === "lead") {
+        return {
+          ...baseInstructions,
+          aggressiveness: adjustedAggressiveness,
+          earlyPosition: "press",
+        };
+      }
+      return {
+        ...baseInstructions,
+        aggressiveness: adjustedAggressiveness,
+      };
+    }
+  }
+
+  return baseInstructions;
 }
 
 /**

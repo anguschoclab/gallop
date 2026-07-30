@@ -12,12 +12,12 @@ describe("Worker pipeline stage boundaries", () => {
     }
   });
 
-  it("T6: Stage 2 filters phases with order 15-45 (no overlap)", () => {
+  it("T6: Stage 2 filters phases with order 15-48 (no overlap)", () => {
     const stage2 = STAGE_PHASES[1];
     expect(stage2.length).toBeGreaterThan(0);
     for (const phase of stage2) {
       expect(phase.order).toBeGreaterThanOrEqual(15);
-      expect(phase.order).toBeLessThanOrEqual(45);
+      expect(phase.order).toBeLessThanOrEqual(48);
     }
   });
 

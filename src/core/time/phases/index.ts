@@ -52,6 +52,10 @@ import { weatherPhase } from "./weatherPhase";
 import { raceInvitationsPhase } from "./raceInvitations";
 import { foalDevelopmentPhase } from "./foalDevelopmentPhase";
 import { solvencyPhase } from "./solvency";
+import { worldAssessmentPhase } from "./worldAssessmentPhase";
+import { diplomacyPhase } from "./diplomacyPhase";
+import { narrativePhase } from "./narrativePhase";
+import { economyPhase } from "./economyPhase";
 
 /**
  * Shared array of all game pipeline phases in their correct order.
@@ -59,6 +63,8 @@ import { solvencyPhase } from "./solvency";
  * and the main thread fallback.
  */
 export const GAME_PIPELINE_PHASES = [
+  // World assessment (order 2, before everything else)
+  worldAssessmentPhase,
   // Intent/impact resolver phases
   intentCollectionPhase,
   intentValidationPhase,
@@ -73,6 +79,8 @@ export const GAME_PIPELINE_PHASES = [
   industryMetricsPhase,
   npcBreedingPhase,
   energyPhase,
+  // Economy AI (order 48, before market at 50)
+  economyPhase,
   marketPhase,
   // Dynamic weather sim — runs after market (50), before races (60)
   weatherPhase,
@@ -82,6 +90,8 @@ export const GAME_PIPELINE_PHASES = [
   jockeyPhase,
   pregnancyPhase,
   npcCyclePhase,
+  // Diplomacy AI (order 81, after NPC cycle)
+  diplomacyPhase,
   stallionRetirementPhase,
   pastureRetirementPhase,
   hallOfFamePhase,
@@ -112,6 +122,8 @@ export const GAME_PIPELINE_PHASES = [
   archivingPhase,
   // Season standings notification (order 195, before impact application)
   seasonStandingsPhase,
+  // Narrative AI (order 196, after season standings)
+  narrativePhase,
   // Solvency escalation (order 199 — after upkeep/purses settled, before impacts applied)
   solvencyPhase,
   // Impact application phase (final)

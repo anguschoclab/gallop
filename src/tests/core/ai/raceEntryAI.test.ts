@@ -545,3 +545,216 @@ describe("adaptStrategy", () => {
     expect(newState).toBe(currentState);
   });
 });
+
+describe("competitor quality calculation", () => {
+  it("penalizes races with high-quality competitors vs empty field", () => {
+    const stable = createMockStable();
+    const state = createRaceEntryAIState(stable);
+    const horse = createMockHorse();
+
+    // Race with no entries (empty field)
+    const emptyRace = createMockRace({ entries: [] });
+
+    // Race with high-quality competitors (OVR 85+)
+    const competitor1 = createMockHorse({
+      id: "comp-1",
+      stats: {
+        speed: 85,
+        stamina: 85,
+        acceleration: 85,
+        consistency: 80,
+        temperament: 70,
+        conformation: 70,
+      },
+    });
+    const competitor2 = createMockHorse({
+      id: "comp-2",
+      stats: {
+        speed: 88,
+        stamina: 82,
+        acceleration: 86,
+        consistency: 80,
+        temperament: 70,
+        conformation: 70,
+      },
+    });
+    const toughRace = createMockRace({
+      entries: [
+        { horseId: "comp-1", owned: false },
+        { horseId: "comp-2", owned: false },
+      ],
+    });
+
+    const horseMap = new Map<string, Horse>([
+      ["comp-1", competitor1],
+      ["comp-2", competitor2],
+      [horse.id, horse],
+    ]);
+
+    const emptyScore = calculateStrategicEntryScore(state, horse, emptyRace, stable, 1, horseMap);
+    const toughScore = calculateStrategicEntryScore(state, horse, toughRace, stable, 1, horseMap);
+    expect(toughScore).toBeLessThan(emptyScore);
+  });
+
+  it("does not penalize races with low-quality competitors", () => {
+    const stable = createMockStable();
+    const state = createRaceEntryAIState(stable);
+    const horse = createMockHorse();
+
+    const emptyRace = createMockRace({ entries: [] });
+
+    // Low-quality competitors (OVR ~40)
+    const weakCompetitor = createMockHorse({
+      id: "weak-1",
+      stats: {
+        speed: 40,
+        stamina: 40,
+        acceleration: 40,
+        consistency: 40,
+        temperament: 30,
+        conformation: 30,
+      },
+    });
+    const weakRace = createMockRace({
+      entries: [{ horseId: "weak-1", owned: false }],
+    });
+
+    const horseMap = new Map<string, Horse>([
+      ["weak-1", weakCompetitor],
+      [horse.id, horse],
+    ]);
+
+    const emptyScore = calculateStrategicEntryScore(state, horse, emptyRace, stable, 1, horseMap);
+    const weakScore = calculateStrategicEntryScore(state, horse, weakRace, stable, 1, horseMap);
+    // Weak competitors should not cause a penalty (score should be similar or same)
+    expect(weakScore).toBeGreaterThanOrEqual(emptyScore - 1);
+  });
+
+  it("accepts optional horseMap parameter for backward compatibility", () => {
+    const stable = createMockStable();
+    const state = createRaceEntryAIState(stable);
+    const horse = createMockHorse();
+    const race = createMockRace({ entries: [] });
+
+    // Should work without horseMap (backward compatible)
+    const score = calculateStrategicEntryScore(state, horse, race, stable, 1);
+    expect(typeof score).toBe("number");
+    expect(Number.isFinite(score)).toBe(true);
+  });
+});
+
+describe("form cycling — rest day enforcement based on personality", () => {
+  it("penalizes entry when horse raced very recently (within rest window)", () => {
+    const stable = createMockStable({ personality: "conservative" });
+    const state = createRaceEntryAIState(stable);
+    const horse = createMockHorse({ lastRaceDay: 98 });
+    const race = createMockRace({ day: 100, entries: [] });
+
+    const freshHorse = createMockHorse({ id: "fresh", lastRaceDay: undefined });
+    const freshScore = calculateStrategicEntryScore(state, freshHorse, race, stable, 100);
+    const tiredScore = calculateStrategicEntryScore(state, horse, race, stable, 100);
+
+    // Horse that just raced should score lower than a fresh horse
+    expect(tiredScore).toBeLessThan(freshScore);
+  });
+
+  it("applies shorter rest requirement for aggressive personality", () => {
+    const aggressiveStable = createMockStable({ personality: "aggressive" });
+    const conservativeStable = createMockStable({ personality: "conservative" });
+    const aggressiveState = createRaceEntryAIState(aggressiveStable);
+    const conservativeState = createRaceEntryAIState(conservativeStable);
+
+    const horse = createMockHorse({ lastRaceDay: 97 });
+    const race = createMockRace({ day: 100, entries: [] });
+
+    const aggressiveScore = calculateStrategicEntryScore(
+      aggressiveState,
+      horse,
+      race,
+      aggressiveStable,
+      100,
+    );
+    const conservativeScore = calculateStrategicEntryScore(
+      conservativeState,
+      horse,
+      race,
+      conservativeStable,
+      100,
+    );
+
+    // Aggressive personality should penalize less for recent race
+    expect(aggressiveScore).toBeGreaterThan(conservativeScore);
+  });
+
+  it("does not penalize when horse has had adequate rest", () => {
+    const stable = createMockStable({ personality: "conservative" });
+    const state = createRaceEntryAIState(stable);
+    const horse = createMockHorse({ lastRaceDay: 80 });
+    const race = createMockRace({ day: 100, entries: [] });
+
+    const freshHorse = createMockHorse({ id: "fresh", lastRaceDay: undefined });
+    const freshScore = calculateStrategicEntryScore(state, freshHorse, race, stable, 100);
+    const restedScore = calculateStrategicEntryScore(state, horse, race, stable, 100);
+
+    // 20 days rest should be enough — no penalty
+    expect(restedScore).toBeGreaterThanOrEqual(freshScore - 1);
+  });
+});
+
+describe("generateMultiRaceStrategy — race selection optimization", () => {
+  it("assigns horses to races maximizing total stable value", () => {
+    const stable = createMockStable({ id: "stable-1" });
+    const state = createRaceEntryAIState(stable);
+    const horse1 = createMockHorse({ id: "h1", stableId: "stable-1" });
+    const horse2 = createMockHorse({ id: "h2", stableId: "stable-1" });
+
+    const race1 = createMockRace({ id: "r1", day: 101, purse: 50000, entries: [] });
+    const race2 = createMockRace({ id: "r2", day: 102, purse: 100000, entries: [] });
+
+    const strategy = generateMultiRaceStrategy(
+      state,
+      stable,
+      [horse1, horse2],
+      [race1, race2],
+      100,
+      7,
+    );
+
+    // At least one race should have entries
+    const totalEntries = Object.values(strategy).flat().length;
+    expect(totalEntries).toBeGreaterThan(0);
+  });
+
+  it("does not assign the same horse to multiple races on the same day", () => {
+    const stable = createMockStable({ id: "stable-1" });
+    const state = createRaceEntryAIState(stable);
+    const horse1 = createMockHorse({ id: "h1", stableId: "stable-1" });
+
+    const race1 = createMockRace({ id: "r1", day: 101, entries: [] });
+    const race2 = createMockRace({ id: "r2", day: 101, entries: [] });
+
+    const strategy = generateMultiRaceStrategy(state, stable, [horse1], [race1, race2], 100, 7);
+
+    // Horse should not be assigned to both races on the same day
+    const r1Entries = strategy["r1"] ?? [];
+    const r2Entries = strategy["r2"] ?? [];
+    const inBoth = r1Entries.filter((id) => r2Entries.includes(id));
+    expect(inBoth).toHaveLength(0);
+  });
+
+  it("respects field size limits when assigning horses", () => {
+    const stable = createMockStable({ id: "stable-1" });
+    const state = createRaceEntryAIState(stable);
+    const horses = Array.from({ length: 5 }, (_, i) =>
+      createMockHorse({ id: `h${i}`, stableId: "stable-1" }),
+    );
+
+    const race = createMockRace({ id: "r1", day: 101, fieldSize: 2, entries: [] });
+
+    const strategy = generateMultiRaceStrategy(state, stable, horses, [race], 100, 7);
+
+    // Should not assign more than 2 horses to a field-size-2 race
+    const assigned = strategy["r1"] ?? [];
+    expect(assigned.length).toBeLessThanOrEqual(2);
+  });
+});

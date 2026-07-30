@@ -63,6 +63,16 @@ import {
   type NpcAIManager,
   type StableAIState,
 } from "@/core/ai/npcCycleAI";
+import {
+  assessWorldState,
+  generateStrategicDirectives,
+  allocateBudget,
+  coordinateSubsystems,
+  type WorldAssessment,
+  type StrategicDirective,
+  type BudgetAllocation,
+  type SubsystemWeights,
+} from "@/core/ai/strategicCoordinator";
 import { calculateOptimalTactics, createJockeyStrategyAIState } from "@/core/ai/jockeyStrategyAI";
 
 /**
@@ -79,6 +89,11 @@ import { calculateOptimalTactics, createJockeyStrategyAIState } from "@/core/ai/
 export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
   const intents: AnyIntent[] = [];
   const aiManager = state.npcAIManager;
+
+  // Cross-System Coordination: assess world state once per cycle
+  const worldAssessment: WorldAssessment | undefined = aiManager
+    ? assessWorldState(state, aiManager)
+    : undefined;
 
   // Index horses by stable for fast lookup
   const horseMap = new Map(Object.entries(state.horses));
@@ -128,7 +143,22 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
       const ownedHorses = horsesByStable.get(stable.id) || [];
 
       // Get or create AI state for this stable
-      const stableAI = aiManager ? getOrCreateStableAIState(aiManager, stable, day) : undefined;
+      let stableAI = aiManager ? getOrCreateStableAIState(aiManager, stable, day) : undefined;
+
+      // Cross-System Coordination: generate directives, allocate budget, coordinate subsystems
+      if (aiManager && stableAI && worldAssessment) {
+        const directives = generateStrategicDirectives(stable, worldAssessment, stable.personality);
+        const budget = allocateBudget(stable, directives);
+        const _weights = coordinateSubsystems(directives, budget);
+
+        // Store coordination results on stableAI state
+        stableAI = {
+          ...stableAI,
+          strategicDirectives: directives,
+          budgetAllocation: budget,
+          worldAssessment,
+        };
+      }
 
       // Only check races in the stable's country, plus any Graded races (which are "global")
       const stableRegion = stable.country || "Other";
@@ -156,6 +186,7 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
           ownedHorses,
           relevantRaces,
           raceEntrySets,
+          horseMap,
         ),
       );
       intents.push(
@@ -274,6 +305,7 @@ function generateNpcTrainingIntents(
  * @param ownedHorses - Horses owned by the stable
  * @param upcomingRaces - Array of upcoming races to consider
  * @param raceEntrySets - Map of race IDs to sets of horse IDs already entered
+ * @param horseMap - Map of all horses for competitor quality analysis
  * @returns Array of race entry intents
  */
 function generateNpcRaceEntryIntents(
@@ -284,6 +316,7 @@ function generateNpcRaceEntryIntents(
   ownedHorses: Horse[],
   upcomingRaces: Race[],
   raceEntrySets: Map<string, Set<string>>,
+  horseMap: Map<string, Horse>,
 ): RaceEntryIntent[] {
   const intents: RaceEntryIntent[] = [];
 
@@ -324,9 +357,31 @@ function generateNpcRaceEntryIntents(
       }
 
       // Use AI to determine suitability
-      const suitability = calculateStrategicEntryScore(raceEntryAI, horse, race, stable, day);
+      const suitability = calculateStrategicEntryScore(
+        raceEntryAI,
+        horse,
+        race,
+        stable,
+        day,
+        horseMap,
+      );
 
-      if (suitability > 60) {
+      // Diplomacy-aware: if in a racing coalition and ally already entered this race,
+      // raise the threshold to reduce internal competition
+      let threshold = 60;
+      if (stableAI?.npcRelationships) {
+        for (const entry of race.entries) {
+          const otherHorse = horseMap.get(entry.horseId);
+          if (!otherHorse?.stableId || otherHorse.stableId === stable.id) continue;
+          const rel = stableAI.npcRelationships[otherHorse.stableId];
+          if (rel?.allianceType === "racing_coalition") {
+            threshold = 70; // Higher bar to avoid splitting coalition votes
+            break;
+          }
+        }
+      }
+
+      if (suitability > threshold) {
         // Calculate optimal jockey instructions for this horse in this race
         const jockey = (state.jockeys || [])[0]; // Use first jockey for instructions calculation
         if (!jockey) continue;
@@ -418,6 +473,17 @@ function generateNpcClaimingIntents(
 
       if (!horse) continue;
       if (horse.stableId === stable.id) continue; // Don't claim own horses
+
+      // Diplomacy-aware: don't claim horses from allied stables
+      if (horse.stableId && stableAI?.npcRelationships?.[horse.stableId]) {
+        const rel = stableAI.npcRelationships[horse.stableId];
+        if (
+          rel.allianceType === "breeding_partnership" ||
+          rel.allianceType === "racing_coalition"
+        ) {
+          continue; // Don't claim ally's horses
+        }
+      }
 
       // Use AI to determine if should claim
       const friction = stableAI?.friction ?? 0;

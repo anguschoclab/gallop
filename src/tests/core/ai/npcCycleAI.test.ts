@@ -186,3 +186,106 @@ describe("getStrategicInsights", () => {
     expect(insights!.overallSuccessRate).toBeCloseTo(2 / 3, 5);
   });
 });
+
+describe("StableAIState coordination fields", () => {
+  it("createStableAIState initializes with undefined strategicDirectives", () => {
+    const stable = createMockStable();
+    const state = createStableAIState(stable, 100);
+    expect(state.strategicDirectives).toBeUndefined();
+  });
+
+  it("createStableAIState initializes with undefined budgetAllocation", () => {
+    const stable = createMockStable();
+    const state = createStableAIState(stable, 100);
+    expect(state.budgetAllocation).toBeUndefined();
+  });
+
+  it("createStableAIState initializes with undefined worldAssessment", () => {
+    const stable = createMockStable();
+    const state = createStableAIState(stable, 100);
+    expect(state.worldAssessment).toBeUndefined();
+  });
+
+  it("createStableAIState initializes with undefined npcRelationships", () => {
+    const stable = createMockStable();
+    const state = createStableAIState(stable, 100);
+    expect(state.npcRelationships).toBeUndefined();
+  });
+
+  it("createStableAIState initializes with undefined narrativeState", () => {
+    const stable = createMockStable();
+    const state = createStableAIState(stable, 100);
+    expect(state.narrativeState).toBeUndefined();
+  });
+
+  it("allows setting strategicDirectives after creation", () => {
+    const stable = createMockStable();
+    const state = createStableAIState(stable, 100);
+    state.strategicDirectives = [{ type: "aggressive_expansion", priority: 1, weight: 1.0 }];
+    expect(state.strategicDirectives).toHaveLength(1);
+    expect(state.strategicDirectives![0].type).toBe("aggressive_expansion");
+  });
+
+  it("allows setting budgetAllocation after creation", () => {
+    const stable = createMockStable();
+    const state = createStableAIState(stable, 100);
+    state.budgetAllocation = {
+      total: 50000,
+      training: 10000,
+      facilities: 5000,
+      auctions: 20000,
+      claiming: 5000,
+      breeding: 10000,
+    };
+    expect(state.budgetAllocation?.total).toBe(50000);
+  });
+
+  it("allows setting npcRelationships after creation", () => {
+    const stable = createMockStable();
+    const state = createStableAIState(stable, 100);
+    state.npcRelationships = {
+      "npc-2": { trust: 50, allianceType: null, history: [] },
+    };
+    expect(state.npcRelationships?.["npc-2"]?.trust).toBe(50);
+  });
+});
+
+describe("NpcAIManager coordination fields", () => {
+  it("createMockManager initializes with undefined globalEconomicState", () => {
+    const manager = createMockManager();
+    expect(manager.globalEconomicState).toBeUndefined();
+  });
+
+  it("createMockManager initializes with undefined activeCartels", () => {
+    const manager = createMockManager();
+    expect(manager.activeCartels).toBeUndefined();
+  });
+
+  it("createMockManager initializes with undefined narrativeArcs", () => {
+    const manager = createMockManager();
+    expect(manager.narrativeArcs).toBeUndefined();
+  });
+
+  it("createMockManager initializes with undefined difficultyModulator", () => {
+    const manager = createMockManager();
+    expect(manager.difficultyModulator).toBeUndefined();
+  });
+
+  it("allows setting globalEconomicState after creation", () => {
+    const manager = createMockManager();
+    manager.globalEconomicState = {
+      studFeeTrend: 0.05,
+      yearlingPriceIndex: 110,
+      claimingMarketActivity: 5,
+    };
+    expect(manager.globalEconomicState?.studFeeTrend).toBe(0.05);
+  });
+
+  it("allows setting activeCartels after creation", () => {
+    const manager = createMockManager();
+    manager.activeCartels = [
+      { id: "cartel-1", memberStableIds: ["npc-1", "npc-2"], type: "breeding" },
+    ];
+    expect(manager.activeCartels).toHaveLength(1);
+  });
+});

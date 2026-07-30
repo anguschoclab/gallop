@@ -31,6 +31,8 @@ import type { HorseGenAIState } from "./horseGenAI";
 import type { RaceEntryAIState } from "./raceEntryAI";
 import type { BreedingAIState } from "./breedingAI";
 import type { GeldingAIState } from "./geldingAI";
+import type { StrategicDirective, BudgetAllocation, WorldAssessment } from "./strategicCoordinator";
+import type { EconomicTrend } from "./strategicCoordinator";
 
 /**
  * Per-stable AI state that persists across all NPC decision-making
@@ -63,6 +65,76 @@ export interface StableAIState {
   raceEntryAI?: RaceEntryAIState;
   breedingAI?: BreedingAIState;
   geldingAI?: GeldingAIState;
+
+  // Cross-System Coordination (Phase 1)
+  strategicDirectives?: StrategicDirective[];
+  budgetAllocation?: BudgetAllocation;
+  worldAssessment?: WorldAssessment;
+  npcRelationships?: Record<string, NpcRelationship>;
+  narrativeState?: NarrativeState;
+}
+
+/**
+ * Per-stable relationship with another NPC stable (for diplomacy)
+ */
+export interface NpcRelationship {
+  trust: number; // -100 to 100
+  allianceType: AllianceType | null;
+  allianceSinceDay?: number;
+  history: DiplomaticEvent[];
+}
+
+export type AllianceType =
+  "breeding_partnership" | "racing_coalition" | "economic_cartel" | "non_aggression_pact";
+
+export interface DiplomaticEvent {
+  day: number;
+  type: "alliance_formed" | "alliance_broken" | "betrayal" | "cooperation" | "competition";
+  description: string;
+}
+
+/**
+ * Per-stable narrative arc tracking (for AI-driven narrative)
+ */
+export interface NarrativeState {
+  activeArcs: NarrativeArc[];
+  storyBeats: StoryBeat[];
+  dramaticPotential: number; // 0-1
+  lastArcDay?: number;
+}
+
+export interface NarrativeArc {
+  id: string;
+  type: string;
+  stableId: string;
+  startDay: number;
+  status: "setup" | "rising_action" | "climax" | "resolution";
+  beats: StoryBeat[];
+}
+
+export interface StoryBeat {
+  day: number;
+  arcId: string;
+  headline: string;
+  body: string;
+}
+
+/**
+ * Cartel information for economic coordination
+ */
+export interface Cartel {
+  id: string;
+  memberStableIds: string[];
+  type: "breeding" | "claiming" | "auction";
+}
+
+/**
+ * Difficulty modulation state
+ */
+export interface DifficultyState {
+  playerWinRate: number;
+  npcCompetenceMultiplier: number;
+  lastAdjustmentDay: number;
 }
 
 /**
@@ -72,6 +144,12 @@ export interface NpcAIManager {
   stableStates: Record<string, StableAIState>;
   globalDay: number;
   regionalKings: Record<string, string>; // regionName -> stableId
+
+  // Cross-System Coordination (Phase 1)
+  globalEconomicState?: EconomicTrend;
+  activeCartels?: Cartel[];
+  narrativeArcs?: NarrativeArc[];
+  difficultyModulator?: DifficultyState;
 }
 
 /**

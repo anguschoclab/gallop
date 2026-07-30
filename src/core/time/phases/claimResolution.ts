@@ -17,6 +17,9 @@ import { PHASE_ORDER_CLAIM_RESOLUTION } from "@/constants";
 import { formatCurrency } from "@/core/common/formatting";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { HorseTransferImpact, CashImpact } from "@/core/resolver/impacts/index";
+import { processClaimingFriction } from "@/core/ai/diplomacyAI";
+import { trackClaimingActivity } from "@/core/ai/economyAI";
+import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 /**
  * Phase: Claim Resolution
@@ -190,12 +193,41 @@ export const claimResolutionPhase = {
       );
     }
 
+    // Process diplomacy friction for NPC-to-NPC claims
+    let updatedNpcAIManager = (state as { npcAIManager?: NpcAIManager }).npcAIManager;
+    if (updatedNpcAIManager) {
+      let claimCount = 0;
+      for (const [key, horseClaims] of grouped) {
+        if (horseClaims.length === 0) continue;
+        const [raceId, horseId] = key.split(":");
+        const seed = hashStr(raceId + horseId);
+        const winnerIdx = seed % horseClaims.length;
+        const winnerClaim = horseClaims[winnerIdx];
+        const horse = horseMap.get(horseId);
+        if (!horse) continue;
+
+        claimCount++;
+        const originalStableId = horse.stableId;
+        // Only process friction for NPC-to-NPC claims
+        if (winnerClaim.claimantStableId && originalStableId) {
+          updatedNpcAIManager = processClaimingFriction(
+            updatedNpcAIManager,
+            winnerClaim.claimantStableId,
+            originalStableId,
+          );
+        }
+      }
+      // Track claiming market activity for economy AI
+      updatedNpcAIManager = trackClaimingActivity(updatedNpcAIManager, claimCount);
+    }
+
     return {
       ...context,
       state: {
         ...context.state,
         claims: newClaims,
         privateSaleOffers,
+        ...(updatedNpcAIManager ? { npcAIManager: updatedNpcAIManager } : {}),
       },
       impacts: [...context.impacts, ...impacts],
       logs: newLogs,

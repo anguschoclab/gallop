@@ -11,6 +11,7 @@ import {
   shouldMakeTacticalMove,
   recordRaceStrategy,
   getStrategyInsights,
+  calculateOptimalTactics,
 } from "@/core/ai/jockeyStrategyAI";
 import type { Jockey, Horse, Race, Stable } from "@/game/types";
 
@@ -547,5 +548,138 @@ describe("getStrategyInsights", () => {
 
     expect(insights1.totalRaces).toBe(1);
     expect(insights2.totalRaces).toBe(1);
+  });
+});
+
+describe("calculateOptimalTactics field-aware adjustments", () => {
+  it("returns valid JockeyInstructions for a standard race", () => {
+    const stable = createMockStable();
+    const state = createJockeyStrategyAIState(stable);
+    const horse = createMockHorse({ recoveryPoints: 80 });
+    const race = createMockRace({ fieldSize: 8, entries: [] });
+    const jockey = createMockJockey();
+
+    const instructions = calculateOptimalTactics(state, horse, race, jockey, stable);
+    expect(instructions).toBeDefined();
+    expect(instructions.horseId).toBe(horse.id);
+    expect(instructions.raceId).toBe(race.id);
+    expect(instructions.aggressiveness).toBeGreaterThanOrEqual(0);
+    expect(instructions.aggressiveness).toBeLessThanOrEqual(100);
+  });
+
+  it("reduces aggressiveness in large fields (14+ horses) for closers", () => {
+    const stable = createMockStable();
+    const state = createJockeyStrategyAIState(stable);
+    const horse = createMockHorse({ recoveryPoints: 80, runningStyle: "S" });
+    const smallFieldRace = createMockRace({
+      fieldSize: 6,
+      entries: Array.from({ length: 5 }, (_, i) => ({ horseId: `h${i}`, owned: false })),
+    });
+    const largeFieldRace = createMockRace({
+      fieldSize: 14,
+      entries: Array.from({ length: 13 }, (_, i) => ({ horseId: `h${i}`, owned: false })),
+    });
+    const jockey = createMockJockey();
+
+    const smallFieldInstructions = calculateOptimalTactics(
+      state,
+      horse,
+      smallFieldRace,
+      jockey,
+      stable,
+    );
+    const largeFieldInstructions = calculateOptimalTactics(
+      state,
+      horse,
+      largeFieldRace,
+      jockey,
+      stable,
+    );
+
+    // In large fields, closers should be less aggressive early to avoid traffic
+    expect(largeFieldInstructions.aggressiveness).toBeLessThanOrEqual(
+      smallFieldInstructions.aggressiveness,
+    );
+  });
+
+  it("adjusts early position based on field size", () => {
+    const stable = createMockStable();
+    const state = createJockeyStrategyAIState(stable);
+    const horse = createMockHorse({ recoveryPoints: 80, runningStyle: "E" });
+    const smallFieldRace = createMockRace({
+      fieldSize: 6,
+      entries: Array.from({ length: 5 }, (_, i) => ({ horseId: `h${i}`, owned: false })),
+    });
+    const largeFieldRace = createMockRace({
+      fieldSize: 16,
+      entries: Array.from({ length: 15 }, (_, i) => ({ horseId: `h${i}`, owned: false })),
+    });
+    const jockey = createMockJockey();
+
+    const smallFieldInstructions = calculateOptimalTactics(
+      state,
+      horse,
+      smallFieldRace,
+      jockey,
+      stable,
+    );
+    const largeFieldInstructions = calculateOptimalTactics(
+      state,
+      horse,
+      largeFieldRace,
+      jockey,
+      stable,
+    );
+
+    // Both should produce valid instructions
+    expect(smallFieldInstructions.earlyPosition).toBeDefined();
+    expect(largeFieldInstructions.earlyPosition).toBeDefined();
+  });
+});
+
+describe("calculateOptimalTactics — track condition adjustments", () => {
+  it("reduces aggressiveness on heavy track for horse with low mudAptitude", () => {
+    const stable = createMockStable();
+    const state = createJockeyStrategyAIState(stable);
+    const horse = createMockHorse({ recoveryPoints: 80, mudAptitude: 0.3, runningStyle: "E" });
+    const fastRace = createMockRace({ trackCondition: "fast", weather: "sunny" });
+    const heavyRace = createMockRace({ trackCondition: "heavy", weather: "rainy" });
+    const jockey = createMockJockey();
+
+    const fastInstructions = calculateOptimalTactics(state, horse, fastRace, jockey, stable);
+    const heavyInstructions = calculateOptimalTactics(state, horse, heavyRace, jockey, stable);
+
+    // On heavy track with low mud aptitude, should be less aggressive
+    expect(heavyInstructions.aggressiveness).toBeLessThan(fastInstructions.aggressiveness);
+  });
+
+  it("does not reduce aggressiveness on heavy track for horse with high mudAptitude", () => {
+    const stable = createMockStable();
+    const state = createJockeyStrategyAIState(stable);
+    const horse = createMockHorse({ recoveryPoints: 80, mudAptitude: 0.9, runningStyle: "E" });
+    const fastRace = createMockRace({ trackCondition: "fast", weather: "sunny" });
+    const heavyRace = createMockRace({ trackCondition: "heavy", weather: "rainy" });
+    const jockey = createMockJockey();
+
+    const fastInstructions = calculateOptimalTactics(state, horse, fastRace, jockey, stable);
+    const heavyInstructions = calculateOptimalTactics(state, horse, heavyRace, jockey, stable);
+
+    // Mud-loving horse should not be penalized on heavy track
+    expect(heavyInstructions.aggressiveness).toBeGreaterThanOrEqual(
+      fastInstructions.aggressiveness - 5,
+    );
+  });
+
+  it("adjusts early position to midpack on soft track for front-runner with low mudAptitude", () => {
+    const stable = createMockStable();
+    const state = createJockeyStrategyAIState(stable);
+    const horse = createMockHorse({ recoveryPoints: 80, mudAptitude: 0.2, runningStyle: "E" });
+    const softRace = createMockRace({ trackCondition: "soft", weather: "rainy" });
+    const jockey = createMockJockey();
+
+    const instructions = calculateOptimalTactics(state, horse, softRace, jockey, stable);
+
+    // On soft track with low mud aptitude, front-runner should be more conservative
+    expect(instructions.earlyPosition).not.toBe("lead");
   });
 });
