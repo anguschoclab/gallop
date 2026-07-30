@@ -69,3 +69,8 @@
 
 **Learning:** Expanding news generator pools with context-neutral stories (like track upgrades or quirky backstretch events) immediately enlivens the world without risking logic side effects or breaking strict data dependencies. The `flavorStories` array in `src/services/narrative/newsGenerator.ts` is a great target for adding depth since it is completely decoupled from active game state while giving the illusion of a living, breathing ecosystem around the player.
 **Action:** When adding static flavor arrays, I will focus on the peripheral world elements—like outriders, farriers, track staff, and fans—to flesh out the track atmosphere. I'll use regex/replacement scripts to safely append new templates in long arrays rather than attempting complex manual edits.
+
+## 2026-07-30 - Expanded Expert Insight Variety Gap
+
+**Learning:** The `EXPERT_INSIGHT_TEMPLATES` in `src/assets/narrative/templates.ts` only had 12 variants per category (`POSITIVE_FORM`, `NEGATIVE_FORM`, `DISTANCE_FIT`, `NEW_DISTANCE`), causing rapid repetition of expert commentary.
+**Action:** Expanded these arrays to 20 variants each to ensure player-facing expert insights remain fresh and varied over long play sessions.

@@ -40,7 +40,7 @@
 
 ## 2026-07-01 - [Optimizing O(N*M) loop lookups with Set in React Renders]
 
-**Learning:** When filtering or mapping arrays (like `races` or `horses`) and checking membership in another array (e.g., `tracks.includes(...)` or `.some(...)`), React renders can suffer from O(N*M) performance bottlenecks if both arrays are large.
+**Learning:** When filtering or mapping arrays (like `races` or `horses`) and checking membership in another array (e.g., `tracks.includes(...)` or `.some(...)`), React renders can suffer from O(N\*M) performance bottlenecks if both arrays are large.
 **Action:** Replace `.includes()` and `.some()` inside `.filter()` or `.map()` loops with a pre-calculated `Set` using `useMemo` (e.g., `useMemo(() => new Set(arr), [arr])`) to perform O(1) membership checks, reducing overall complexity to O(N+M).
 
 ## 2024-05-19 - [O(N) Lookups in NominationsTab]
@@ -55,12 +55,12 @@
 
 ## 2024-05-21 - [Optimizing O(N*M) loop lookups with Set in React Renders]
 
-**Learning:** When filtering or mapping arrays and checking membership in another array (e.g., `program.enrolledDamIds.includes(h.id)`), React renders can suffer from O(N*M) performance bottlenecks if both arrays are large, such as in `ActiveProgramView.tsx`.
+**Learning:** When filtering or mapping arrays and checking membership in another array (e.g., `program.enrolledDamIds.includes(h.id)`), React renders can suffer from O(N\*M) performance bottlenecks if both arrays are large, such as in `ActiveProgramView.tsx`.
 **Action:** Replace `.includes()` and `.some()` inside `.filter()` or `.map()` loops with a pre-calculated `Set` using `useMemo` (e.g., `useMemo(() => new Set(arr), [arr])`) to perform O(1) membership checks, reducing overall complexity to O(N+M).
 
 ## 2024-07-06 - O(1) Lookups in Awards Scoring
 
-**Learning:** During the awards phase (`calculateAwardPoints`), checking category eligibility and calculating points iterates over each race in a horse's history, running an O(N) `.find()` on the global `races` array. Across multiple categories, regions, and horses, this results in an O(Regions * Categories * Horses * RacesHistory * TotalRaces) nested bottleneck.
+**Learning:** During the awards phase (`calculateAwardPoints`), checking category eligibility and calculating points iterates over each race in a horse's history, running an O(N) `.find()` on the global `races` array. Across multiple categories, regions, and horses, this results in an O(Regions _ Categories _ Horses _ RacesHistory _ TotalRaces) nested bottleneck.
 **Action:** Always prefer `Map` lookups (O(1)) over `Array.prototype.find()` inside deeply nested loops. When processing data that requires repeated lookups against a static array, precompute a `Map` structure at the outermost scope and pass it down the pipeline.
 
 ## 2024-07-28 - [Optimizing O(N) Lookups in Pipeline Phases]
@@ -70,7 +70,7 @@
 
 ## 2024-05-22 - [Optimizing O(N*M) derived arrays with unstable dependencies]
 
-**Learning:** When trying to memoize an O(N*M) array derivation (like `consignablePairs` using `horses.map(h => find(activeUpcoming))`), using an inline derived array (like `activeUpcoming` initialized via `.filter().sort().slice()`) as a `useMemo` dependency causes the hook to fail its equality check on every render. This turns the optimization into a regression because the application pays the overhead of the `useMemo` hook without reaping its caching benefits.
+**Learning:** When trying to memoize an O(N\*M) array derivation (like `consignablePairs` using `horses.map(h => find(activeUpcoming))`), using an inline derived array (like `activeUpcoming` initialized via `.filter().sort().slice()`) as a `useMemo` dependency causes the hook to fail its equality check on every render. This turns the optimization into a regression because the application pays the overhead of the `useMemo` hook without reaping its caching benefits.
 **Action:** Always verify that all variables in a `useMemo` dependency array are referentially stable. If a dependency is a dynamically derived array, move its derivation inside the `useMemo` block and depend on the stable root source (e.g. `auctions` instead of `activeUpcoming`).
 
 ## 2024-05-24 - [Avoid Set allocation inside loop for Map keys check]

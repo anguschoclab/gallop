@@ -31,5 +31,6 @@
 **Action:** Look for other consistent failure-to-win patterns or "almost-there" streaks in the data as potential insights that tell a story about the horse's luck or limitations.
 
 ## 2025-02-12 - Play Style Insight using Pace Positions
+
 **Learning:** `raceHistory` tracks `pacePositions` and `fieldSize`, allowing the derivation of wire-to-wire victories without needing new states. Checking `pacePositions.every(p => p === 1)` is an effective way to define "Wire-to-Wire".
 **Action:** Use existing structural data like `pacePositions` to construct contextual play style accolades like "Catch Me If You Can". Ensure safe fallbacks for missing `pacePositions` in legacy mock data.

@@ -44,6 +44,7 @@
 
 **Learning:** `racingSlice.ts` had multiple `any` casts (e.g. `const s = get() as any;`, `m: any`) masking the lack of proper typing in the `resolveFoalMilestone` action. This defeated the compiler's ability to check for property existence and type correctness for `GameState` and `DevelopmentArc`.
 **Action:** When working with core state logic and store actions, rely on correctly typed state interfaces and natural TypeScript inference. Simply removing explicit `any` casts from lambda parameters lets TypeScript's natural inference correctly validate property accesses against the original interface.
+
 ## 2025-03-05 - Strengthened Map Types in Time Phases
 
 **Learning:** `trainingResolution.ts` and `energy.ts` time phases used `new Map<string, any>()` and `new Map<string, Map<string, any>>()` to store typed Outpost and Staff data for lookups. This bypasses the compiler checks entirely and allows invalid states to propagate.
