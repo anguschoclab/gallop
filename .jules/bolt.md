@@ -82,3 +82,8 @@
 
 **Learning:** In React components like `StableRosterView`, using `horses.find()` inside array mapping structures (like `.map(id => horses.find(...))`) both in `useMemo` hooks and JSX render loops results in O(N*M) complexity which degrades performance when rendering UI with potentially large datasets.
 **Action:** Always pre-calculate a local hash map using `useMemo(() => new Map(arr.map(x => [x.id, x])), [arr])` before the mapping loops and use `.get()` to achieve O(1) conditional lookup, transforming O(N*M) time into O(N+M).
+
+## 2024-05-25 - [Optimizing O(N^2) loop lookups with Map in Head-to-Head Compare renders]
+
+**Learning:** When generating lightweight odds and monte carlo sim results inside `HeadToHeadSection`, using `.find()` inside a `horses.map()` render loop leads to O(N^2) performance degradation during rendering.
+**Action:** Pre-calculate hash maps using `useMemo` (e.g. `new Map(odds.map(o => [o.horseId, o]))`) for O(1) lookups inside the render loop, changing the complexity to O(N).
