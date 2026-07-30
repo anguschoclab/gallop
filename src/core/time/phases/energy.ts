@@ -14,6 +14,7 @@ import { getFacilityBonus } from "@/core/facilities";
 import { resolveEpmRisk } from "@/core/genetics/phenotype";
 import { BANISTER_CONSTANTS, decayValue, calculatePeakingIndex } from "@/core/health/banister";
 import type { Outpost } from "@/core/facilities/outpostTypes";
+import type { StaffRole, StaffMember } from "@/core/staff/staffTypes";
 
 const RECOVERY_DAYS = 30;
 const COVERING_SICKNESS_DURATION = 7;
@@ -38,7 +39,7 @@ export const energyPhase = {
     const { state, newDay } = context;
 
     // Index staff by stableId and role for fast lookup
-    const staffByStableAndRole = new Map<string, Map<string, any>>();
+    const staffByStableAndRole = new Map<string, Map<StaffRole, StaffMember>>();
     if (state.hiredStaff) {
       for (const staff of state.hiredStaff) {
         const stableId = staff.stableId ?? "";
@@ -49,7 +50,7 @@ export const energyPhase = {
       }
     }
 
-    const outpostMap = new Map<string, any>();
+    const outpostMap = new Map<string, Outpost>();
     for (const s of state.npcStables ?? []) {
       for (const o of s.outposts ?? []) {
         outpostMap.set(o.id, o);

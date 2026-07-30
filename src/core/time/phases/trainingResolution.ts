@@ -13,6 +13,8 @@
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { TrainingIntent } from "@/core/resolver/intents";
+import type { Outpost } from "@/core/facilities/outpostTypes";
+import type { StaffRole, StaffMember } from "@/core/staff/staffTypes";
 import {
   PHASE_ORDER_TRAINING_RESOLUTION,
   TRAINING_COST,
@@ -57,7 +59,7 @@ export const trainingResolutionPhase: PipelinePhase = {
     const trainingIntents = intents.filter((i): i is TrainingIntent => i.type === "training");
 
     const { horseMap, stableMap } = context;
-    const outpostMap = new Map<string, any>();
+    const outpostMap = new Map<string, Outpost>();
 
     // Clone NPC AI manager so we never mutate the input state's stableStates.
     const aiManager: NpcAIManager = state.npcAIManager
@@ -74,9 +76,9 @@ export const trainingResolutionPhase: PipelinePhase = {
         outpostMap.set(o.id, o);
       }
     }
-    const playerOutpostMap = new Map<string, any>((state.outposts ?? []).map((o) => [o.id, o]));
+    const playerOutpostMap = new Map<string, Outpost>((state.outposts ?? []).map((o) => [o.id, o]));
 
-    const hiredStaffByStableAndRole = new Map<string, Map<string, any>>();
+    const hiredStaffByStableAndRole = new Map<string, Map<StaffRole, StaffMember>>();
     if (state.hiredStaff) {
       for (const staff of state.hiredStaff) {
         if (!staff.stableId) continue;
