@@ -130,6 +130,27 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     }
   }
 
+  // 1.8 Check for Play Style Success (Wire-to-wire)
+  let wireToWireWins = 0;
+
+  for (const race of history) {
+    if (race.position === 1 && race.pacePositions && race.pacePositions.length > 0) {
+      const isWireToWire = race.pacePositions.every((p) => p === 1);
+      if (isWireToWire) {
+        wireToWireWins++;
+      }
+    }
+  }
+
+  if (wireToWireWins >= 2) {
+    return {
+      label: "Catch Me If You Can",
+      value: "Wire-to-Wire Winner",
+      context: `Has led from start to finish in ${wireToWireWins} career wins`,
+      type: "positive",
+    };
+  }
+
   // 2. Check for distance sweet spot (best average beyer by distance, min 3 races)
   const distanceStats = new Map<number, { runs: number; totalBeyer: number; wins: number }>();
   for (const race of history) {

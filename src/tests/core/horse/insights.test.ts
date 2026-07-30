@@ -374,3 +374,19 @@ describe("Insight priority ordering", () => {
     expect(insight!.label).toBe("Bridesmaid");
   });
 });
+
+describe("Play Style Success insights", () => {
+  it("detects Catch Me If You Can when horse has 2+ wire-to-wire wins", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1, pacePositions: [1, 1, 1] },
+        { position: 1, day: 2, pacePositions: [1, 1, 1] },
+        { position: 3, day: 3, pacePositions: [2, 2, 3] },
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Catch Me If You Can");
+    expect(insight!.type).toBe("positive");
+  });
+});
