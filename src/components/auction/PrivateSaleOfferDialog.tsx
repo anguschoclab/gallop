@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useId } from "react";
 import { useGame } from "@/game/store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,6 +59,7 @@ export function PrivateSaleOfferDialog({
   cash,
   allHorses,
 }: PrivateSaleOfferDialogProps) {
+  const offerId = useId();
   const [offerAmount, setOfferAmount] = useState("");
   const [offerError, setOfferError] = useState("");
   const proposePrivateSale = useGame((s) => s.proposePrivateSale);
@@ -106,8 +107,11 @@ export function PrivateSaleOfferDialog({
             </span>
           </p>
           <div className="space-y-1">
-            <label className="text-sm font-medium">Your offer amount</label>
+            <label htmlFor={offerId} className="text-sm font-medium">
+              Your offer amount
+            </label>
             <Input
+              id={offerId}
               inputMode="numeric"
               placeholder="e.g. 25000"
               value={offerAmount}
