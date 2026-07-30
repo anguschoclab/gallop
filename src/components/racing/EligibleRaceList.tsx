@@ -4,6 +4,7 @@ import type { Race } from "@/game/types";
 import { formatCurrency } from "@/core/common/formatting";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { RaceEntry } from "@/components/race/RaceEntry";
 import { cn } from "@/lib/cn";
@@ -122,10 +123,24 @@ export function EligibleRaceList({
 
                 <div className="shrink-0">
                   {row.isEntered ? (
-                    <Button size="sm" variant="ghost" disabled className="gap-1.5 text-success">
-                      <CheckCircle2 className="h-4 w-4" />
-                      Entered
-                    </Button>
+                    <TooltipProvider delayDuration={300}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span tabIndex={0} className="inline-block cursor-not-allowed">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              disabled
+                              className="gap-1.5 text-success pointer-events-none"
+                            >
+                              <CheckCircle2 className="h-4 w-4" />
+                              Entered
+                            </Button>
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>Horse is already entered in this race</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   ) : row.requiresDialog ? (
                     <Button
                       size="sm"
