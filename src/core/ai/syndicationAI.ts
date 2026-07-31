@@ -73,7 +73,7 @@ export function recordSyndicationOutcome(
   const newHistory = [...aiState.syndicationHistory, decision];
   const trimmedHistory = newHistory.slice(-aiState.personalityState.memoryDepth);
 
-  const contextKey = `${decision.action}:${decision.stallionId}`;
+  const contextKey = decision.action;
   const newLearningState = recordLearningOutcome(
     aiState.learningState,
     "syndication",

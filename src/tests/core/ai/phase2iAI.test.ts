@@ -6,9 +6,16 @@ import {
   detectConsecutiveWithdrawalPattern,
 } from "@/core/ai/withdrawalAI";
 import { shouldConsiderGeldingForPerformance, generatePostGeldingPlan } from "@/core/ai/geldingAI";
-import { calculateShareValue, shouldDissolveSyndicate } from "@/core/ai/syndicationAI";
-import { createTestHorse } from "@/tests/helpers";
-import type { Horse } from "@/game/types";
+import {
+  calculateShareValue,
+  shouldDissolveSyndicate,
+  createSyndicationAIState,
+  recordSyndicationOutcome,
+  getSyndicationSuccessRate,
+  shouldCreateSyndicateWithLearning,
+} from "@/core/ai/syndicationAI";
+import { createTestHorse, createTestStable } from "@/tests/helpers";
+import type { Horse, Stable } from "@/game/types";
 
 describe("identifyCostOptimizationOpportunities", () => {
   it("returns empty array for healthy roster", () => {
@@ -198,5 +205,173 @@ describe("shouldDissolveSyndicate", () => {
       raceHistory: [{ raceId: "r1", raceName: "G1", position: 1, day: 1, grade: "G1" }],
     });
     expect(shouldDissolveSyndicate(horse, 5000000, 5)).toBe(false);
+  });
+});
+
+describe("createSyndicationAIState", () => {
+  it("creates state with personality and learning", () => {
+    const stable = createTestStable({ id: "s1", personality: "aggressive" });
+    const state = createSyndicationAIState(stable);
+    expect(state.personalityState).toBeDefined();
+    expect(state.learningState).toBeDefined();
+    expect(state.syndicationHistory).toEqual([]);
+  });
+});
+
+describe("recordSyndicationOutcome", () => {
+  it("records decision in history", () => {
+    const stable = createTestStable({ id: "s1", personality: "aggressive" });
+    let state = createSyndicationAIState(stable);
+    state = recordSyndicationOutcome(
+      state,
+      {
+        stallionId: "h1",
+        stableId: "s1",
+        action: "create",
+        shares: 0,
+        value: 500000,
+        day: 100,
+        success: true,
+      },
+      100,
+    );
+    expect(state.syndicationHistory).toHaveLength(1);
+    expect(state.syndicationHistory[0].action).toBe("create");
+  });
+
+  it("trims history to memory depth", () => {
+    const stable = createTestStable({ id: "s1", personality: "aggressive" });
+    let state = createSyndicationAIState(stable);
+    for (let i = 0; i < 30; i++) {
+      state = recordSyndicationOutcome(
+        state,
+        {
+          stallionId: `h${i}`,
+          stableId: "s1",
+          action: "buy",
+          shares: 1,
+          value: 50000,
+          day: 100 + i,
+          success: true,
+        },
+        100 + i,
+      );
+    }
+    expect(state.syndicationHistory.length).toBeLessThanOrEqual(state.personalityState.memoryDepth);
+  });
+
+  it("does not mutate original state", () => {
+    const stable = createTestStable({ id: "s1", personality: "aggressive" });
+    const state = createSyndicationAIState(stable);
+    const originalLength = state.syndicationHistory.length;
+    recordSyndicationOutcome(
+      state,
+      {
+        stallionId: "h1",
+        stableId: "s1",
+        action: "create",
+        shares: 0,
+        value: 500000,
+        day: 100,
+        success: true,
+      },
+      100,
+    );
+    expect(state.syndicationHistory).toHaveLength(originalLength);
+  });
+});
+
+describe("getSyndicationSuccessRate", () => {
+  it("returns 0.5 for empty history (default)", () => {
+    const stable = createTestStable({ id: "s1", personality: "aggressive" });
+    const state = createSyndicationAIState(stable);
+    expect(getSyndicationSuccessRate(state, "create")).toBe(0.5);
+  });
+
+  it("returns 1.0 after successful outcomes", () => {
+    const stable = createTestStable({ id: "s1", personality: "aggressive" });
+    let state = createSyndicationAIState(stable);
+    for (let i = 0; i < 5; i++) {
+      state = recordSyndicationOutcome(
+        state,
+        {
+          stallionId: `h${i}`,
+          stableId: "s1",
+          action: "buy",
+          shares: 1,
+          value: 50000,
+          day: 100 + i,
+          success: true,
+        },
+        100 + i,
+      );
+    }
+    expect(getSyndicationSuccessRate(state, "buy")).toBe(1.0);
+  });
+});
+
+describe("shouldCreateSyndicateWithLearning", () => {
+  it("returns true when base decision is true and no history", () => {
+    const stable = createTestStable({
+      id: "s1",
+      personality: "aggressive",
+      cash: 500000,
+    });
+    const horse = createTestHorse({
+      id: "h1",
+      stableId: "s1",
+      stud: {
+        atStud: true,
+        standingFee: 50000,
+        lifetimeStakesFoals: 0,
+        lifetimeG1Foals: 0,
+        bookSize: 0,
+        seasonBookings: 0,
+        lifetimeFoals: 0,
+      },
+      raceHistory: [{ raceId: "r1", raceName: "G1", position: 1, day: 1, grade: "G1" }],
+    });
+    const aiState = createSyndicationAIState(stable);
+    expect(shouldCreateSyndicateWithLearning(aiState, stable, horse, {})).toBe(true);
+  });
+
+  it("returns false when past syndication success is low", () => {
+    const stable = createTestStable({
+      id: "s1",
+      personality: "aggressive",
+      cash: 500000,
+    });
+    const horse = createTestHorse({
+      id: "h1",
+      stableId: "s1",
+      stud: {
+        atStud: true,
+        standingFee: 50000,
+        lifetimeStakesFoals: 0,
+        lifetimeG1Foals: 0,
+        bookSize: 0,
+        seasonBookings: 0,
+        lifetimeFoals: 0,
+      },
+      raceHistory: [{ raceId: "r1", raceName: "G1", position: 1, day: 1, grade: "G1" }],
+    });
+    let aiState = createSyndicationAIState(stable);
+    // Record 5 failed syndication outcomes
+    for (let i = 0; i < 5; i++) {
+      aiState = recordSyndicationOutcome(
+        aiState,
+        {
+          stallionId: `h${i}`,
+          stableId: "s1",
+          action: "create",
+          shares: 0,
+          value: 100000,
+          day: 100 + i,
+          success: false,
+        },
+        100 + i,
+      );
+    }
+    expect(shouldCreateSyndicateWithLearning(aiState, stable, horse, {})).toBe(false);
   });
 });
