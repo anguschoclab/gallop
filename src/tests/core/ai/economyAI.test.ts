@@ -13,6 +13,12 @@ import {
   getEconomicSignal,
   processEconomicCycle,
   trackClaimingActivity,
+  trackAuctionPrices,
+  evaluateCartelOpportunity,
+  coordinateCartelAction,
+  calculateAuctionReservePrice,
+  calculateStrategicClaimingPrice,
+  calculateDynamicStudFee,
 } from "@/core/ai/economyAI";
 import type { Stable, GameState } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
@@ -41,9 +47,13 @@ function createMockAIState(stableId: string): StableAIState {
   } as any;
 }
 
-function createMockManager(): NpcAIManager {
+function createMockManager(stableIds: string[] = ["s1", "s2"]): NpcAIManager {
+  const stableStates: Record<string, StableAIState> = {};
+  for (const id of stableIds) {
+    stableStates[id] = createMockAIState(id);
+  }
   return {
-    stableStates: { s1: createMockAIState("s1"), s2: createMockAIState("s2") },
+    stableStates,
     globalDay: 100,
     regionalKings: {},
   };
@@ -266,5 +276,176 @@ describe("trackClaimingActivity", () => {
     };
     const result = trackClaimingActivity(manager, 5);
     expect(result.globalEconomicState!.claimingMarketActivity).toBeLessThanOrEqual(1);
+  });
+});
+
+describe("trackAuctionPrices", () => {
+  it("does nothing when no auction results", () => {
+    const manager = createMockManager();
+    manager.globalEconomicState = createEconomicState();
+    const result = trackAuctionPrices(manager, []);
+    expect(result).toBe(manager);
+  });
+
+  it("adjusts stud fee trend based on high auction prices", () => {
+    const manager = createMockManager();
+    manager.globalEconomicState = createEconomicState();
+    const result = trackAuctionPrices(manager, [
+      { hammerPrice: 500000, horseRating: 80 },
+      { hammerPrice: 600000, horseRating: 75 },
+    ]);
+    expect(result.globalEconomicState!.studFeeTrend).not.toBe(0);
+  });
+
+  it("adjusts stud fee trend downward for low auction prices", () => {
+    const manager = createMockManager();
+    manager.globalEconomicState = createEconomicState();
+    const result = trackAuctionPrices(manager, [
+      { hammerPrice: 1000, horseRating: 80 },
+      { hammerPrice: 2000, horseRating: 75 },
+    ]);
+    expect(result.globalEconomicState!.studFeeTrend).toBeLessThan(0);
+  });
+});
+
+describe("evaluateCartelOpportunity", () => {
+  it("returns null when no relationships exist", () => {
+    const manager = createMockManager(["s1", "s2"]);
+    const result = evaluateCartelOpportunity(manager, "s1", ["s2"]);
+    expect(result).toBeNull();
+  });
+
+  it("returns null when trust is too low", () => {
+    const manager = createMockManager(["s1", "s2"]);
+    manager.stableStates["s1"].npcRelationships = {
+      s2: { trust: 30, allianceType: null, history: [] },
+    };
+    const result = evaluateCartelOpportunity(manager, "s1", ["s2"]);
+    expect(result).toBeNull();
+  });
+
+  it("returns cartel info when trust is high enough", () => {
+    const manager = createMockManager(["s1", "s2", "s3"]);
+    manager.stableStates["s1"].npcRelationships = {
+      s2: { trust: 70, allianceType: null, history: [] },
+      s3: { trust: 80, allianceType: null, history: [] },
+    };
+    const result = evaluateCartelOpportunity(manager, "s1", ["s2", "s3"]);
+    expect(result).not.toBeNull();
+    expect(result!.memberIds).toContain("s1");
+    expect(result!.memberIds).toContain("s2");
+    expect(result!.memberIds).toContain("s3");
+  });
+
+  it("returns breeding type for breeder personality", () => {
+    const manager = createMockManager(["s1", "s2"]);
+    manager.stableStates["s1"].npcRelationships = {
+      s2: { trust: 70, allianceType: null, history: [] },
+    };
+    (manager.stableStates["s1"].personalityState as { personality: string }).personality =
+      "breeder";
+    const result = evaluateCartelOpportunity(manager, "s1", ["s2"]);
+    expect(result).not.toBeNull();
+    expect(result!.type).toBe("breeding");
+  });
+});
+
+describe("coordinateCartelAction", () => {
+  it("assigns directives to all members", () => {
+    const directives = coordinateCartelAction(["s1", "s2", "s3"], "avoid_bidding_war", 100);
+    expect(directives["s1"].action).toBe("avoid_bidding_war");
+    expect(directives["s2"].action).toBe("avoid_bidding_war");
+    expect(directives["s3"].action).toBe("avoid_bidding_war");
+    expect(directives["s1"].day).toBe(100);
+  });
+
+  it("assigns rotation indices for rotate_claims action", () => {
+    const directives = coordinateCartelAction(["s1", "s2", "s3"], "rotate_claims", 50);
+    expect(directives["s1"].rotationIndex).toBe(0);
+    expect(directives["s2"].rotationIndex).toBe(1);
+    expect(directives["s3"].rotationIndex).toBe(2);
+  });
+
+  it("does not assign rotation indices for non-rotation actions", () => {
+    const directives = coordinateCartelAction(["s1", "s2"], "fix_stud_fees", 50);
+    expect(directives["s1"].rotationIndex).toBeUndefined();
+    expect(directives["s2"].rotationIndex).toBeUndefined();
+  });
+});
+
+describe("calculateAuctionReservePrice", () => {
+  it("returns base price in neutral market", () => {
+    const trend: EconomicTrend = {
+      studFeeTrend: 0,
+      yearlingPriceIndex: 100,
+      claimingMarketActivity: 0,
+    };
+    const result = calculateAuctionReservePrice(trend, 50000);
+    expect(result).toBe(50000);
+  });
+
+  it("increases reserve in bull market", () => {
+    const trend: EconomicTrend = {
+      studFeeTrend: 0.1,
+      yearlingPriceIndex: 120,
+      claimingMarketActivity: 0,
+    };
+    const result = calculateAuctionReservePrice(trend, 50000);
+    expect(result).toBeGreaterThan(50000);
+  });
+
+  it("decreases reserve in bear market", () => {
+    const trend: EconomicTrend = {
+      studFeeTrend: -0.1,
+      yearlingPriceIndex: 80,
+      claimingMarketActivity: 0,
+    };
+    const result = calculateAuctionReservePrice(trend, 50000);
+    expect(result).toBeLessThan(50000);
+  });
+});
+
+describe("calculateStrategicClaimingPrice", () => {
+  const trend: EconomicTrend = {
+    studFeeTrend: 0,
+    yearlingPriceIndex: 100,
+    claimingMarketActivity: 0.5,
+  };
+
+  it("returns lower price when stable wants to sell", () => {
+    const sellPrice = calculateStrategicClaimingPrice(trend, 70, true);
+    const keepPrice = calculateStrategicClaimingPrice(trend, 70, false);
+    expect(sellPrice).toBeLessThan(keepPrice);
+  });
+
+  it("returns higher price when stable wants to keep", () => {
+    const keepPrice = calculateStrategicClaimingPrice(trend, 70, false);
+    expect(keepPrice).toBeGreaterThan(70 * 1000);
+  });
+});
+
+describe("calculateDynamicStudFee", () => {
+  const trend: EconomicTrend = {
+    studFeeTrend: 0.05,
+    yearlingPriceIndex: 110,
+    claimingMarketActivity: 0,
+  };
+
+  it("applies cartel premium when cartelFixed is true", () => {
+    const result = calculateDynamicStudFee(trend, 50000, 0.5, true);
+    expect(result).toBe(60000); // 50000 * 1.2
+  });
+
+  it("adjusts based on progeny performance", () => {
+    const lowPerf = calculateDynamicStudFee(trend, 50000, 0.1, false);
+    const highPerf = calculateDynamicStudFee(trend, 50000, 0.9, false);
+    expect(highPerf).toBeGreaterThan(lowPerf);
+  });
+
+  it("applies market adjustment when not cartel-fixed", () => {
+    const result = calculateDynamicStudFee(trend, 50000, 0.5, false);
+    const marketAdj = calculateStudFeeAdjustment(trend, 50000);
+    const expectedMultiplier = 0.7 + 0.5 * 0.6;
+    expect(result).toBe(Math.round(marketAdj * expectedMultiplier));
   });
 });

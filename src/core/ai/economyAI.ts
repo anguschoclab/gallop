@@ -171,3 +171,200 @@ export function trackClaimingActivity(manager: NpcAIManager, claimCount: number)
     },
   };
 }
+
+/**
+ * Track auction price data for economic signal calculation.
+ *
+ * Updates the stud fee trend based on auction hammer prices
+ * relative to horse ratings. High prices drive stud fee inflation.
+ *
+ * @param manager - Current NPC AI manager
+ * @param auctionResults - Array of hammer prices and horse ratings
+ * @returns Updated manager with adjusted stud fee trend
+ */
+export function trackAuctionPrices(
+  manager: NpcAIManager,
+  auctionResults: Array<{ hammerPrice: number; horseRating: number }>,
+): NpcAIManager {
+  if (auctionResults.length === 0) return manager;
+
+  const current = manager.globalEconomicState ?? createEconomicState();
+
+  // Calculate average price-per-rating-point
+  const pricePerRating = auctionResults.map((r) => r.hammerPrice / Math.max(1, r.horseRating));
+  const avgPricePerRating = pricePerRating.reduce((sum, p) => sum + p, 0) / pricePerRating.length;
+
+  // Compare to baseline (1000 per rating point = neutral)
+  const baseline = 1000;
+  const deviation = (avgPricePerRating - baseline) / baseline;
+  const trendAdjustment = Math.max(-0.1, Math.min(0.1, deviation * 0.05));
+
+  return {
+    ...manager,
+    globalEconomicState: {
+      ...current,
+      studFeeTrend: current.studFeeTrend * 0.9 + trendAdjustment, // Weighted update
+    },
+  };
+}
+
+// ─── Cartel Coordination (Phase 5c) ──────────────────────────────────────────
+
+/**
+ * Evaluate whether a cartel opportunity exists for a group of stables.
+ *
+ * Checks if stables have high mutual trust and complementary personalities
+ * to form an economic cartel for market coordination.
+ *
+ * @param manager - Current NPC AI manager
+ * @param initiatorId - Stable ID of the cartel initiator
+ * @param candidateIds - Other stable IDs to evaluate
+ * @returns Cartel formation info if viable, null otherwise
+ */
+export function evaluateCartelOpportunity(
+  manager: NpcAIManager,
+  initiatorId: string,
+  candidateIds: string[],
+): { memberIds: string[]; type: "breeding" | "claiming" | "auction" } | null {
+  if (candidateIds.length === 0) return null;
+
+  const initiatorState = manager.stableStates[initiatorId];
+  if (!initiatorState?.npcRelationships) return null;
+
+  const viableMembers: string[] = [initiatorId];
+  let totalTrust = 0;
+  let trustCount = 0;
+
+  for (const candidateId of candidateIds) {
+    const rel = initiatorState.npcRelationships[candidateId];
+    if (!rel) continue;
+    if (rel.trust >= 60) {
+      viableMembers.push(candidateId);
+      totalTrust += rel.trust;
+      trustCount++;
+    }
+  }
+
+  if (viableMembers.length < 2) return null;
+
+  const avgTrust = totalTrust / trustCount;
+  if (avgTrust < 65) return null;
+
+  // Determine cartel type based on initiator personality
+  const personality = initiatorState.personalityState.personality;
+  let type: "breeding" | "claiming" | "auction" = "auction";
+  if (personality === "breeder" || personality === "developer") {
+    type = "breeding";
+  } else if (personality === "trader") {
+    type = "claiming";
+  }
+
+  return { memberIds: viableMembers, type };
+}
+
+/**
+ * Coordinate a cartel market action among member stables.
+ *
+ * Returns coordination directives for cartel members:
+ * - "avoid_bidding_war": members should not bid against each other in auctions
+ * - "rotate_claims": members take turns claiming underpriced horses
+ * - "fix_stud_fees": members agree not to undercut stud fees
+ *
+ * @param memberIds - Stable IDs in the cartel
+ * @param action - The coordinated market action
+ * @param currentDay - Current game day
+ * @returns Coordination directives per stable
+ */
+export function coordinateCartelAction(
+  memberIds: string[],
+  action: "avoid_bidding_war" | "rotate_claims" | "fix_stud_fees",
+  currentDay: number,
+): Record<string, { action: string; day: number; rotationIndex?: number }> {
+  const directives: Record<string, { action: string; day: number; rotationIndex?: number }> = {};
+
+  for (let i = 0; i < memberIds.length; i++) {
+    directives[memberIds[i]] = {
+      action,
+      day: currentDay,
+      rotationIndex: action === "rotate_claims" ? i : undefined,
+    };
+  }
+
+  return directives;
+}
+
+// ─── Dynamic Pricing (Phase 5d) ──────────────────────────────────────────────
+
+/**
+ * Calculate dynamic auction reserve price based on market trends.
+ *
+ * NPC consignments set reserve prices based on market trends,
+ * not just horse rating. In a bull market, reserves are higher.
+ *
+ * @param trend - Current economic trends
+ * @param baseReserve - Base reserve price from horse rating
+ * @returns Adjusted reserve price
+ */
+export function calculateAuctionReservePrice(trend: EconomicTrend, baseReserve: number): number {
+  const marketMultiplier = trend.yearlingPriceIndex / BASE_YEARLING_INDEX;
+  const bullPremium = trend.studFeeTrend > 0.05 ? 1.1 : 1.0;
+  const bearDiscount = trend.studFeeTrend < -0.05 ? 0.9 : 1.0;
+  const adjusted = baseReserve * marketMultiplier * bullPremium * bearDiscount;
+  return Math.round(Math.max(baseReserve * 0.5, adjusted));
+}
+
+/**
+ * Calculate strategic claiming price for an NPC horse entry.
+ *
+ * NPC stables strategically enter horses at claiming prices that reflect
+ * market conditions. Low price to attract claims when wanting to sell,
+ * high price to deter claims when wanting to keep.
+ *
+ * @param trend - Current economic trends
+ * @param horseRating - Overall rating of the horse
+ * @param wantsToSell - Whether the stable wants to sell the horse
+ * @returns Strategic claiming price
+ */
+export function calculateStrategicClaimingPrice(
+  trend: EconomicTrend,
+  horseRating: number,
+  wantsToSell: boolean,
+): number {
+  const basePrice = horseRating * 1000;
+  const marketMultiplier = 1 + trend.claimingMarketActivity * 0.3;
+
+  if (wantsToSell) {
+    // Price below market to attract claims
+    return Math.round(basePrice * 0.8 * marketMultiplier);
+  }
+  // Price above market to deter claims
+  return Math.round(basePrice * 1.3 * marketMultiplier);
+}
+
+/**
+ * Calculate dynamic stud fee based on progeny performance and market demand.
+ *
+ * NPC stallion stud fees adjust based on progeny performance, market demand,
+ * and cartel agreements.
+ *
+ * @param trend - Current economic trends
+ * @param baseFee - Base stud fee
+ * @param progenyPerformanceScore - 0-1 score based on recent progeny results
+ * @param cartelFixed - Whether a cartel is fixing fees (overrides market adjustment)
+ * @returns Adjusted stud fee
+ */
+export function calculateDynamicStudFee(
+  trend: EconomicTrend,
+  baseFee: number,
+  progenyPerformanceScore: number,
+  cartelFixed: boolean,
+): number {
+  if (cartelFixed) {
+    // Cartel keeps fees high — 20% premium, no market downward adjustment
+    return Math.round(baseFee * 1.2);
+  }
+
+  const marketAdjustment = calculateStudFeeAdjustment(trend, baseFee);
+  const performanceMultiplier = 0.7 + progenyPerformanceScore * 0.6; // 0.7 to 1.3
+  return Math.round(marketAdjustment * performanceMultiplier);
+}

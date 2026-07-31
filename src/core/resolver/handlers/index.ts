@@ -16,6 +16,7 @@ import { SystemHandler } from "./SystemHandler";
 import { InfrastructureHandler } from "./InfrastructureHandler";
 import { SyndicationHandler } from "./SyndicationHandler";
 import { InboxHandler } from "./InboxHandler";
+import { DiplomacyHandler } from "./DiplomacyHandler";
 import type { ImpactHandler } from "./types";
 
 export const ALL_HANDLERS: ImpactHandler[] = [
@@ -28,6 +29,7 @@ export const ALL_HANDLERS: ImpactHandler[] = [
   new InfrastructureHandler(),
   new SyndicationHandler(),
   new InboxHandler(),
+  new DiplomacyHandler(),
 ];
 
 export * from "./types";

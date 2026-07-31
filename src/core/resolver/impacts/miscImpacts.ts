@@ -156,6 +156,25 @@ export interface NarrativeArcUpdateImpact extends Impact {
   arcState: CareerArcState;
 }
 
+// Diplomatic action impact (NPC-to-NPC diplomacy)
+export interface DiplomaticImpact extends Impact {
+  type: "diplomatic";
+  sourceStableId: string;
+  targetStableId: string;
+  action: "alliance_formed" | "alliance_broken" | "betrayal" | "cooperation";
+  allianceType?: string;
+  trustChange: number;
+}
+
+// Cartel action impact (economic coordination)
+export interface CartelImpact extends Impact {
+  type: "cartel";
+  stableIds: string[];
+  action: "cartel_formed" | "cartel_dissolved" | "market_coordinated";
+  cartelType?: string;
+  marketAction?: string;
+}
+
 export type MiscImpact =
   | NewsImpact
   | TrackRecordImpact
@@ -171,4 +190,6 @@ export type MiscImpact =
   | TransportImpact
   | OutpostImpact
   | NameReservationImpact
-  | NarrativeArcUpdateImpact;
+  | NarrativeArcUpdateImpact
+  | DiplomaticImpact
+  | CartelImpact;

@@ -127,6 +127,36 @@ export function applyFameGainsToHorses(horses: Horse[], fameGains: Map<string, n
 }
 
 /**
+ * Apply ally friction cascades — when an NPC gains friction against the player,
+ * their allies also gain a reduced amount of friction.
+ *
+ * @param aiManager - Current AI manager (will be mutated in the shallow copy)
+ * @param sourceStableId - The stable that gained friction
+ * @param frictionGain - The friction amount gained
+ * @param _region - The region where the event occurred (reserved for future use)
+ */
+function applyAllyFrictionCascade(
+  aiManager: NpcAIManager,
+  sourceStableId: string,
+  frictionGain: number,
+  _region: string,
+): void {
+  const sourceState = aiManager.stableStates[sourceStableId];
+  if (!sourceState?.npcRelationships) return;
+
+  const allyFrictionGain = Math.floor(frictionGain * 0.4); // Allies get 40% of friction
+
+  for (const [otherStableId, rel] of Object.entries(sourceState.npcRelationships)) {
+    if (rel.allianceType && rel.allianceType !== "non_aggression_pact") {
+      const allyState = aiManager.stableStates[otherStableId];
+      if (allyState) {
+        allyState.friction = Math.min(100, allyState.friction + allyFrictionGain);
+      }
+    }
+  }
+}
+
+/**
  * Process regional dominance updates based on race winners.
  * Updates the AI manager with new regional kings and friction values.
  * Also detects rivalry milestones and generates news items.
@@ -244,6 +274,11 @@ function processRegionalDominance(
             stableAI.regionalPrestige[region] = (stableAI.regionalPrestige[region] || 0) + 1;
             updatedAiManager.stableStates[stable.id] = stableAI;
 
+            // Diplomacy-aware: allies of the winning NPC also gain friction against player
+            if (currentKingId === "player") {
+              applyAllyFrictionCascade(updatedAiManager, stable.id, 5, region);
+            }
+
             // Check for rivalry emergence (friction crosses 60)
             if (oldFriction < 60 && stableAI.friction >= 60 && !stableAI.rivalryAnnouncedDay) {
               // Retroactive intro if never published
@@ -345,7 +380,15 @@ function processRegionalDominance(
                     rivalAI.friction = Math.min(100, rivalAI.friction + 10);
                   } else {
                     // Rival victory - they taunt you, friction increases
-                    rivalAI.friction = Math.min(100, rivalAI.friction + 15);
+                    const rivalWinGain = 15;
+                    rivalAI.friction = Math.min(100, rivalAI.friction + rivalWinGain);
+                    // Diplomacy-aware: allies of the rival also gain friction
+                    applyAllyFrictionCascade(
+                      updatedAiManager,
+                      rivalStableId!,
+                      rivalWinGain,
+                      region,
+                    );
                   }
 
                   // Check for rivalry escalation (friction crosses 80)
