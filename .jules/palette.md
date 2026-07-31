@@ -31,3 +31,8 @@
 
 **Learning:** Found a missing htmlFor/id association in the private sale offer dialog input, which reduces screen reader accessibility and clickable area. Using `useId()` reliably maps the label to the input element dynamically.
 **Action:** Always wrap standard inputs in standard components and associate them to their matching `label` via `useId()` and explicit `htmlFor` / `id` mapping.
+
+## 2024-07-31 - Tooltips on disabled buttons require focusable wrappers
+
+**Learning:** Native disabled buttons swallow mouse events (like hover), preventing tooltips from triggering.
+**Action:** When adding a tooltip to explain why a button is disabled, conditionally wrap the button in a `<span tabIndex={0} className="inline-block cursor-not-allowed">`, and apply `pointer-events-none` to the button itself so the wrapper receives events.
