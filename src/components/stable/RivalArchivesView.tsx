@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,9 @@ export function RivalArchivesView({
   npcAIManager,
   navigate,
 }: RivalArchivesViewProps) {
+  // Pre-calculate hash map for O(1) stable lookups instead of running O(N) .find() inside the map loop.
+  const stablesMap = useMemo(() => new Map(stables.map((s) => [s.id, s])), [stables]);
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <div className="flex flex-wrap items-center gap-3 bg-black/20 p-4 border border-white/5">
@@ -197,8 +201,7 @@ export function RivalArchivesView({
                         </div>
                         <div className="flex flex-wrap gap-1">
                           {alliances.map((a) => {
-                            const otherName =
-                              stables.find((s) => s.id === a.stableId)?.name ?? a.stableId;
+                            const otherName = stablesMap.get(a.stableId)?.name ?? a.stableId;
                             return (
                               <span
                                 key={a.stableId}
