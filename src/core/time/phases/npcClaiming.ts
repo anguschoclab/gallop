@@ -13,6 +13,8 @@ import type { PipelineContext } from "../pipeline";
 import type { Race, Claim, Horse, Stable } from "@/game/types";
 import { calculateLotValuation } from "@/core/auction/engine";
 import { generateUUID } from "@/core/uuid";
+import { trackClaimingActivity } from "@/core/ai/economyAI";
+import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 /**
  * Phase: NPC Claiming
@@ -75,11 +77,22 @@ export const npcClaimingPhase = {
       }
     }
 
+    // Track claiming volume for economic signals (Phase 5b)
+    const newClaimCount = newClaims.length - (state.claims?.length ?? 0);
+    let updatedNpcAIManager = state.npcAIManager;
+    if (newClaimCount > 0 && updatedNpcAIManager) {
+      updatedNpcAIManager = trackClaimingActivity(
+        updatedNpcAIManager as NpcAIManager,
+        newClaimCount,
+      );
+    }
+
     return {
       ...context,
       state: {
         ...state,
         claims: newClaims,
+        ...(updatedNpcAIManager ? { npcAIManager: updatedNpcAIManager } : {}),
       },
     };
   },

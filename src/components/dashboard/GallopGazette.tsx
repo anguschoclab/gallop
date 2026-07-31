@@ -18,6 +18,9 @@ interface NewsItem {
     start: number;
     end: number;
   }>;
+  arcId?: string;
+  partNumber?: number;
+  totalParts?: number;
 }
 
 export function GallopGazette() {
@@ -52,6 +55,11 @@ export function GallopGazette() {
                 <Badge className="bg-[#2c2c2c] text-white rounded-none text-[9px] font-bold h-4 px-1.5 uppercase tracking-widest">
                   {item.category}
                 </Badge>
+                {item.partNumber && item.totalParts && item.totalParts > 1 && (
+                  <Badge className="bg-gold/80 text-[#2c2c2c] rounded-none text-[9px] font-bold h-4 px-1.5 uppercase tracking-widest">
+                    Part {item.partNumber}/{item.totalParts}
+                  </Badge>
+                )}
                 <h3
                   className={cn(
                     "font-extrabold leading-[1.05] tracking-tighter text-[#1a1a1a] font-[family-name:var(--font-display)] group-hover:text-gold-dark transition-colors",

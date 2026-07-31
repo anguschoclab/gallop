@@ -20,6 +20,7 @@ import {
   calculateStrategicClaimingPrice,
   calculateDynamicStudFee,
   trackBreedingVolume,
+  trackMarketPrices,
 } from "@/core/ai/economyAI";
 import type { Stable, GameState } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
@@ -490,5 +491,62 @@ describe("trackBreedingVolume", () => {
     const result = trackBreedingVolume(manager, 5, 250000);
     expect(result.globalEconomicState).toBeDefined();
     expect(result.globalEconomicState!.studFeeTrend).not.toBe(0);
+  });
+});
+
+describe("trackMarketPrices", () => {
+  function createMockManager(): NpcAIManager {
+    return {
+      stableStates: {},
+      globalDay: 100,
+      regionalKings: {},
+      globalEconomicState: createEconomicState(),
+    };
+  }
+
+  it("returns manager unchanged when purchases is empty", () => {
+    const manager = createMockManager();
+    const result = trackMarketPrices(manager, []);
+    expect(result).toBe(manager);
+  });
+
+  it("adjusts yearling price index upward for high-price purchases", () => {
+    const manager = createMockManager();
+    const initialIndex = manager.globalEconomicState!.yearlingPriceIndex;
+    const result = trackMarketPrices(manager, [
+      { price: 150000, horseRating: 80 },
+      { price: 120000, horseRating: 75 },
+    ]);
+    // High price-to-rating ratio should push index up
+    expect(result.globalEconomicState!.yearlingPriceIndex).toBeGreaterThan(initialIndex);
+  });
+
+  it("adjusts yearling price index downward for low-price purchases", () => {
+    const manager = createMockManager();
+    const initialIndex = manager.globalEconomicState!.yearlingPriceIndex;
+    const result = trackMarketPrices(manager, [
+      { price: 20000, horseRating: 80 },
+      { price: 15000, horseRating: 75 },
+    ]);
+    // Low price-to-rating ratio should push index down
+    expect(result.globalEconomicState!.yearlingPriceIndex).toBeLessThan(initialIndex);
+  });
+
+  it("creates economic state if missing", () => {
+    const manager: NpcAIManager = {
+      stableStates: {},
+      globalDay: 100,
+      regionalKings: {},
+    };
+    const result = trackMarketPrices(manager, [{ price: 80000, horseRating: 70 }]);
+    expect(result.globalEconomicState).toBeDefined();
+    expect(result.globalEconomicState!.yearlingPriceIndex).not.toBe(100);
+  });
+
+  it("clamps yearling price index to valid range", () => {
+    const manager = createMockManager();
+    manager.globalEconomicState!.yearlingPriceIndex = 290;
+    const result = trackMarketPrices(manager, [{ price: 500000, horseRating: 50 }]);
+    expect(result.globalEconomicState!.yearlingPriceIndex).toBeLessThanOrEqual(300);
   });
 });

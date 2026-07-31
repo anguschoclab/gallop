@@ -79,12 +79,19 @@ export const Gazette: React.FC = () => {
                         className="p-4 space-y-2 hover:bg-white/[0.02] transition-colors group"
                       >
                         <div className="flex items-center justify-between">
-                          <Badge
-                            variant="outline"
-                            className="text-[8px] h-3.5 px-1 font-black uppercase border-white/10 text-cream/30 rounded-none tracking-widest"
-                          >
-                            {item.category}
-                          </Badge>
+                          <div className="flex items-center gap-1">
+                            <Badge
+                              variant="outline"
+                              className="text-[8px] h-3.5 px-1 font-black uppercase border-white/10 text-cream/30 rounded-none tracking-widest"
+                            >
+                              {item.category}
+                            </Badge>
+                            {item.partNumber && item.totalParts && item.totalParts > 1 && (
+                              <Badge className="text-[8px] h-3.5 px-1 font-black uppercase bg-gold/20 text-gold/60 rounded-none tracking-widest">
+                                P{item.partNumber}/{item.totalParts}
+                              </Badge>
+                            )}
+                          </div>
                           <span className="text-[9px] font-mono text-cream/10">
                             D{String(item.day).padStart(3, "0")}
                           </span>

@@ -47,8 +47,17 @@ export const narrativePhase = {
     for (const stable of state.npcStables) {
       const stableState = aiManager.stableStates[stable.id];
       const beats = stableState?.narrativeState?.storyBeats ?? [];
+      const arcs = stableState?.narrativeState?.activeArcs ?? [];
       for (const beat of beats) {
         if (beat.day === newDay) {
+          // Find the arc this beat belongs to for multi-part labeling
+          const arc = arcs.find((a) => a.id === beat.arcId);
+          const beatIndex = arc
+            ? arc.beats.findIndex((b) => b.day === beat.day && b.headline === beat.headline)
+            : -1;
+          const partNumber = beatIndex >= 0 ? beatIndex + 1 : undefined;
+          const totalParts = arc ? arc.beats.length : undefined;
+
           impacts.push({
             id: generateUUID(context.dailyRng),
             intentId: "",
@@ -63,6 +72,9 @@ export const narrativePhase = {
               body: beat.body,
               category: "stable",
               importance: "medium",
+              arcId: beat.arcId,
+              partNumber,
+              totalParts,
             },
           } as NewsImpact);
         }

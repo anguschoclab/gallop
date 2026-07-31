@@ -23,14 +23,21 @@ export function NewsArticle({ item }: NewsArticleProps) {
       )}
     >
       <CardHeader className="pb-3 border-b border-white/5 flex flex-row items-center justify-between bg-black/20">
-        <Badge
-          className={cn(
-            "rounded-none font-black text-[9px] tracking-widest uppercase h-5 px-2",
-            isHigh ? "bg-gold text-slate-950" : "bg-slate-800 text-cream/60",
+        <div className="flex items-center gap-2">
+          <Badge
+            className={cn(
+              "rounded-none font-black text-[9px] tracking-widest uppercase h-5 px-2",
+              isHigh ? "bg-gold text-slate-950" : "bg-slate-800 text-cream/60",
+            )}
+          >
+            {item.category}
+          </Badge>
+          {item.partNumber && item.totalParts && item.totalParts > 1 && (
+            <Badge className="rounded-none font-black text-[9px] tracking-widest uppercase h-5 px-2 bg-gold/30 text-gold-bright border border-gold/20">
+              Part {item.partNumber}/{item.totalParts}
+            </Badge>
           )}
-        >
-          {item.category}
-        </Badge>
+        </div>
         <span className="text-[10px] font-mono text-cream/20">
           D{String(item.day).padStart(3, "0")}
         </span>

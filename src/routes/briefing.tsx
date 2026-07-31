@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Newspaper, Trophy, Rss } from "lucide-react";
+import { Newspaper, Trophy, Rss, BookOpen } from "lucide-react";
 import { useTabParam } from "@/hooks/ui/useTabParam";
 import { GazetteTab } from "@/components/briefing/GazetteTab";
 import { RecapTab } from "@/components/briefing/RecapTab";
 import { NewsTab } from "@/components/briefing/NewsTab";
+import { StorylinesTab } from "@/components/briefing/StorylinesTab";
 
-const BRIEFING_TABS = ["gazette", "recap", "news"] as const;
+const BRIEFING_TABS = ["gazette", "recap", "news", "storylines"] as const;
 
 export const Route = createFileRoute("/briefing")({
   validateSearch: z.object({ tab: z.enum(BRIEFING_TABS).optional() }),
@@ -45,6 +46,10 @@ function BriefingPage() {
             <Rss className="h-4 w-4" />
             News
           </TabsTrigger>
+          <TabsTrigger value="storylines" className="gap-2">
+            <BookOpen className="h-4 w-4" />
+            Storylines
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="gazette" className="space-y-4">
@@ -55,6 +60,9 @@ function BriefingPage() {
         </TabsContent>
         <TabsContent value="news" className="space-y-4">
           <NewsTab />
+        </TabsContent>
+        <TabsContent value="storylines" className="space-y-4">
+          <StorylinesTab />
         </TabsContent>
       </Tabs>
     </div>

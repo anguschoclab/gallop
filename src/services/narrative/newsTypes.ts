@@ -25,4 +25,7 @@ export interface NewsItem {
   headline: string;
   body: string;
   entityLinks?: EntityLink[];
+  arcId?: string;
+  partNumber?: number;
+  totalParts?: number;
 }

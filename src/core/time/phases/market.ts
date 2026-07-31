@@ -20,6 +20,8 @@ import {
   recordMarketPurchase,
 } from "@/core/ai/marketAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import { trackMarketPrices } from "@/core/ai/economyAI";
+import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { generateStaffPool } from "@/core/staff/staffGenerator";
 import { generateUUID } from "@/core/uuid";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
@@ -121,6 +123,20 @@ export const marketPhase = {
     if (staffPool.length < 4) {
       const newStaff = generateStaffPool(dailyRng, 6 - staffPool.length);
       staffPool = [...staffPool, ...newStaff];
+    }
+
+    // Track market purchase prices for economic signals (Phase 5b)
+    const marketPurchases = impacts
+      .filter((imp) => imp.type === "horse_transfer" && imp.price !== undefined)
+      .map((imp) => {
+        const horse = context.horseMap.get((imp as { horseId: string }).horseId);
+        return {
+          price: (imp as { price: number }).price,
+          horseRating: horse ? calculateRaceRating(horse) : 50,
+        };
+      });
+    if (marketPurchases.length > 0 && npcAIManager) {
+      npcAIManager = trackMarketPrices(npcAIManager as NpcAIManager, marketPurchases);
     }
 
     return {

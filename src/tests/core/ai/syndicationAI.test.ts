@@ -3,6 +3,10 @@ import {
   calculateShareSale,
   calculateSharePurchase,
   calculateSharePrice,
+  createSyndicationAIState,
+  recordSyndicationOutcome,
+  shouldCreateSyndicateWithLearning,
+  getSyndicationSuccessRate,
 } from "@/core/ai/syndicationAI";
 import type { Horse, Stable } from "@/game/types";
 import type { Syndicate } from "@/core/breeding/types";
@@ -235,5 +239,163 @@ describe("syndicationAI - calculateSharePurchase", () => {
 
     const result = calculateSharePurchase(stable, syndicate, stallion);
     expect(result).toBe(0);
+  });
+});
+
+describe("personality-driven syndicate creation with learning", () => {
+  it("creates syndicate when base criteria met and no history", () => {
+    const stable = makeStable("npc1", "aggressive", 500000);
+    const stallion = makeStallion({ stableId: "npc1" });
+    const aiState = createSyndicationAIState(stable);
+
+    const result = shouldCreateSyndicateWithLearning(aiState, stable, stallion, {});
+    expect(result).toBe(true);
+  });
+
+  it("blocks creation when past success rate is low and history is long", () => {
+    const stable = makeStable("npc1", "conservative", 500000);
+    const stallion = makeStallion({ stableId: "npc1" });
+    let aiState = createSyndicationAIState(stable);
+
+    for (let i = 0; i < 4; i++) {
+      aiState = recordSyndicationOutcome(
+        aiState,
+        {
+          stallionId: `sire-${i}`,
+          stableId: "npc1",
+          action: "create",
+          shares: 20,
+          value: 100000,
+          day: 100 + i,
+          success: false,
+        },
+        100 + i,
+      );
+    }
+
+    const result = shouldCreateSyndicateWithLearning(aiState, stable, stallion, {});
+    expect(result).toBe(false);
+  });
+
+  it("allows creation when success rate is high", () => {
+    const stable = makeStable("npc1", "aggressive", 500000);
+    const stallion = makeStallion({ stableId: "npc1" });
+    let aiState = createSyndicationAIState(stable);
+
+    for (let i = 0; i < 5; i++) {
+      aiState = recordSyndicationOutcome(
+        aiState,
+        {
+          stallionId: `sire-${i}`,
+          stableId: "npc1",
+          action: "create",
+          shares: 20,
+          value: 150000,
+          day: 100 + i,
+          success: true,
+        },
+        100 + i,
+      );
+    }
+
+    const result = shouldCreateSyndicateWithLearning(aiState, stable, stallion, {});
+    expect(result).toBe(true);
+  });
+
+  it("blocks creation for low-confidence stable with mediocre success", () => {
+    const stable = makeStable("npc1", "conservative", 500000);
+    const stallion = makeStallion({ stableId: "npc1" });
+    let aiState = createSyndicationAIState(stable);
+
+    // Record enough failures to push strategyConfidence below 0.4
+    // recordOutcome reduces confidence by (1 - successRate) * adaptationSpeed
+    // when total >= 5 and successRate < threshold
+    for (let i = 0; i < 8; i++) {
+      aiState = recordSyndicationOutcome(
+        aiState,
+        {
+          stallionId: `sire-fail-${i}`,
+          stableId: "npc1",
+          action: "create",
+          shares: 20,
+          value: 50000,
+          day: 100 + i,
+          success: false,
+        },
+        100 + i,
+      );
+    }
+
+    const result = shouldCreateSyndicateWithLearning(aiState, stable, stallion, {});
+    expect(result).toBe(false);
+  });
+});
+
+describe("recordSyndicationOutcome — learning feedback loop", () => {
+  it("records decision to history", () => {
+    const stable = makeStable("npc1", "aggressive", 500000);
+    const aiState = createSyndicationAIState(stable);
+
+    const result = recordSyndicationOutcome(
+      aiState,
+      {
+        stallionId: "s1",
+        stableId: "npc1",
+        action: "create",
+        shares: 20,
+        value: 100000,
+        day: 100,
+        success: true,
+      },
+      100,
+    );
+    expect(result.syndicationHistory).toHaveLength(1);
+    expect(result.syndicationHistory[0].stallionId).toBe("s1");
+  });
+
+  it("trims history to personality memory depth", () => {
+    const stable = makeStable("npc1", "aggressive", 500000);
+    let aiState = createSyndicationAIState(stable);
+    const memoryDepth = aiState.personalityState.memoryDepth;
+
+    for (let i = 0; i < memoryDepth + 5; i++) {
+      aiState = recordSyndicationOutcome(
+        aiState,
+        {
+          stallionId: `s-${i}`,
+          stableId: "npc1",
+          action: "buy",
+          shares: 1,
+          value: 1000,
+          day: i,
+          success: true,
+        },
+        i,
+      );
+    }
+
+    expect(aiState.syndicationHistory.length).toBeLessThanOrEqual(memoryDepth);
+  });
+
+  it("updates learning state with outcome", () => {
+    const stable = makeStable("npc1", "aggressive", 500000);
+    const aiState = createSyndicationAIState(stable);
+
+    const result = recordSyndicationOutcome(
+      aiState,
+      {
+        stallionId: "s1",
+        stableId: "npc1",
+        action: "create",
+        shares: 20,
+        value: 100000,
+        day: 100,
+        success: true,
+      },
+      100,
+    );
+
+    const successRate = getSyndicationSuccessRate(result, "create");
+    expect(successRate).toBeGreaterThan(0);
   });
 });

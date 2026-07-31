@@ -407,3 +407,41 @@ export function trackBreedingVolume(
     },
   };
 }
+
+/**
+ * Track private market sale prices for economic signal calculation.
+ *
+ * Updates the yearling price index based on private market purchase prices
+ * relative to horse ratings. This complements auction price tracking by
+ * capturing off-market transactions.
+ *
+ * @param manager - Current NPC AI manager
+ * @param purchases - Array of purchase prices and horse ratings
+ * @returns Updated manager with adjusted yearling price index
+ */
+export function trackMarketPrices(
+  manager: NpcAIManager,
+  purchases: Array<{ price: number; horseRating: number }>,
+): NpcAIManager {
+  if (purchases.length === 0) return manager;
+
+  const current = manager.globalEconomicState ?? createEconomicState();
+
+  // Calculate average price-per-rating-point from market purchases
+  const avgPricePerRating =
+    purchases.reduce((sum, p) => sum + p.price / Math.max(1, p.horseRating), 0) / purchases.length;
+
+  // Normalize: 1000 per rating point = index 100
+  const marketIndex = (avgPricePerRating / 1000) * 100;
+
+  // Blend with existing index (weighted moving average)
+  const blendedIndex = current.yearlingPriceIndex * 0.9 + marketIndex * 0.1;
+
+  return {
+    ...manager,
+    globalEconomicState: {
+      ...current,
+      yearlingPriceIndex: Math.max(50, Math.min(300, blendedIndex)),
+    },
+  };
+}

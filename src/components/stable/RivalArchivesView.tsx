@@ -13,7 +13,7 @@ import { cn } from "@/lib/cn";
 import { formatCurrency } from "@/core/common/formatting";
 import type { Stable } from "@/game/types";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
-import { Search, X, ExternalLink, Flame } from "lucide-react";
+import { Search, X, ExternalLink, Flame, Handshake, BookOpen } from "lucide-react";
 
 type NavigateFn = (opts: {
   search?: Record<string, unknown> | ((prev: Record<string, unknown>) => Record<string, unknown>);
@@ -109,6 +109,19 @@ export function RivalArchivesView({
             const stableHorseCount = horseCountsByStable.get(stable.id) || 0;
             const stableAI = npcAIManager?.stableStates?.[stable.id];
             const friction = stableAI?.friction ?? 0;
+            const relationships = stableAI?.npcRelationships;
+            const narrative = stableAI?.narrativeState;
+
+            const alliances: Array<{ stableId: string; type: string }> = [];
+            if (relationships) {
+              for (const [otherId, rel] of Object.entries(relationships)) {
+                if (rel.allianceType) {
+                  alliances.push({ stableId: otherId, type: rel.allianceType });
+                }
+              }
+            }
+            const activeArcs = narrative?.activeArcs ?? [];
+            const recentBeats = narrative?.storyBeats?.slice(-2) ?? [];
 
             return (
               <Card
@@ -175,6 +188,70 @@ export function RivalArchivesView({
                       </span>
                       <span className="text-success font-bold">{formatCurrency(stable.cash)}</span>
                     </div>
+
+                    {alliances.length > 0 && (
+                      <div className="space-y-1.5 pt-1">
+                        <div className="text-[9px] font-black uppercase tracking-widest text-cream/40 flex items-center gap-1">
+                          <Handshake className="h-3 w-3" />
+                          Alliances
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {alliances.map((a) => {
+                            const otherName =
+                              stables.find((s) => s.id === a.stableId)?.name ?? a.stableId;
+                            return (
+                              <span
+                                key={a.stableId}
+                                className={cn(
+                                  "text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 border rounded-none",
+                                  a.type === "economic_cartel"
+                                    ? "border-amber-500/30 text-amber-400/70 bg-amber-500/5"
+                                    : a.type === "racing_coalition"
+                                      ? "border-blue-500/30 text-blue-400/70 bg-blue-500/5"
+                                      : a.type === "breeding_partnership"
+                                        ? "border-emerald-500/30 text-emerald-400/70 bg-emerald-500/5"
+                                        : "border-white/10 text-cream/40 bg-white/5",
+                                )}
+                                title={`${a.type.replace(/_/g, " ")} with ${otherName}`}
+                              >
+                                {a.type.replace(/_/g, " ").split(" ")[0]} · {otherName}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {activeArcs.length > 0 && (
+                      <div className="space-y-1.5 pt-1">
+                        <div className="text-[9px] font-black uppercase tracking-widest text-cream/40 flex items-center gap-1">
+                          <BookOpen className="h-3 w-3" />
+                          Active Storylines
+                        </div>
+                        {activeArcs.map((arc, i) => (
+                          <div key={`${arc.id}-${i}`} className="text-[10px] text-cream/50">
+                            <span className="font-bold text-gold/60 uppercase">
+                              {arc.type.replace(/_/g, " ")}
+                            </span>
+                            <span className="text-cream/20"> · </span>
+                            <span className="text-cream/30">{arc.status.replace(/_/g, " ")}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {recentBeats.length > 0 && (
+                      <div className="space-y-1 pt-1 border-t border-white/5">
+                        {recentBeats.map((beat, i) => (
+                          <p
+                            key={`${beat.day}-${i}`}
+                            className="text-[10px] text-cream/30 italic leading-tight"
+                          >
+                            "{beat.headline}"
+                          </p>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </Link>
 
