@@ -17,6 +17,9 @@ import { createAuctionRunner } from "@/core/auction/runner";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { generateUUID } from "@/core/uuid";
 import { PHASE_ORDER_AUCTIONS, AUCTION_RETENTION_DAYS } from "@/constants";
+import { trackAuctionPrices } from "@/core/ai/economyAI";
+import { calculateOverallRating } from "@/core/horse/stats";
+import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 /**
  * Phase: Auctions (order 90).
@@ -133,6 +136,32 @@ export const auctionsPhase = {
       return { ...sale, lots: finalLots, resolved: true };
     });
 
+    // Track auction prices for economic signal tracking (Phase 5b)
+    let updatedNpcAIManager: NpcAIManager | undefined;
+    const resolvedSales = auctions.filter((a) => a.resolved);
+    if (resolvedSales.length > 0) {
+      const auctionResults: Array<{ hammerPrice: number; horseRating: number }> = [];
+      for (const sale of resolvedSales) {
+        for (const lot of sale.lots) {
+          if (lot.hammerPrice && lot.hammerPrice > 0) {
+            const horse = state.horses[lot.horseId];
+            if (horse) {
+              auctionResults.push({
+                hammerPrice: lot.hammerPrice,
+                horseRating: calculateOverallRating(horse),
+              });
+            }
+          }
+        }
+      }
+      if (auctionResults.length > 0) {
+        const aiManager = (state as { npcAIManager?: NpcAIManager }).npcAIManager;
+        if (aiManager) {
+          updatedNpcAIManager = trackAuctionPrices(aiManager, auctionResults);
+        }
+      }
+    }
+
     // Prune auctions older than AUCTION_RETENTION_DAYS.
     auctions = auctions.filter((a) => a.day >= newDay - AUCTION_RETENTION_DAYS);
 
@@ -141,6 +170,7 @@ export const auctionsPhase = {
       state: {
         ...state,
         auctions,
+        ...(updatedNpcAIManager ? { npcAIManager: updatedNpcAIManager } : {}),
       },
       impacts,
       logs,

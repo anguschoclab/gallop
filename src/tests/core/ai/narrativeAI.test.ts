@@ -14,6 +14,9 @@ import {
   getActiveArcs,
   resolveArc,
   detectRaceBeats,
+  detectDynastyBeats,
+  detectComebackBeats,
+  detectAllianceDramaBeats,
 } from "@/core/ai/narrativeAI";
 import type { Stable, GameState, Horse } from "@/game/types";
 import type { Race } from "@/core/race/types";
@@ -63,6 +66,24 @@ function createMockManager(stableIds: string[] = ["s1", "s2"]): NpcAIManager {
     stableStates[id] = createMockAIState(id);
   }
   return { stableStates, globalDay: 100, regionalKings: {} };
+}
+
+function createMockRace(overrides: Partial<Race> = {}): Race {
+  return {
+    id: "race-1",
+    name: "Test Race",
+    day: 100,
+    distance: 1600,
+    surface: "Dirt",
+    raceClass: "Stakes",
+    entryFee: 100,
+    purse: 100000,
+    fieldSize: 8,
+    entries: [],
+    resolved: true,
+    result: [{ horseId: "horse-1", position: 1, time: 95.0 }],
+    ...overrides,
+  };
 }
 
 describe("createNarrativeState", () => {
@@ -320,24 +341,6 @@ describe("detectRaceBeats", () => {
     });
   }
 
-  function createMockRace(overrides: Partial<Race> = {}): Race {
-    return {
-      id: "race-1",
-      name: "Test Race",
-      day: 100,
-      distance: 1600,
-      surface: "Dirt",
-      raceClass: "Stakes",
-      entryFee: 100,
-      purse: 100000,
-      fieldSize: 8,
-      entries: [],
-      resolved: true,
-      result: [{ horseId: "horse-1", position: 1, time: 95.0 }],
-      ...overrides,
-    };
-  }
-
   it("generates a beat for G1 wins by NPC-owned horses", () => {
     const manager = createManagerWithNarrative("s1");
     const horse = createMockHorse({ id: "horse-1", stableId: "s1" });
@@ -444,5 +447,214 @@ describe("detectRaceBeats", () => {
     const result = detectRaceBeats(manager, [race], horseMap, 100);
     const beats = result.stableStates["s1"].narrativeState!.storyBeats;
     expect(beats).toHaveLength(0);
+  });
+});
+
+describe("detectDynastyBeats", () => {
+  function createManagerWithNarrative(stableId: string): NpcAIManager {
+    return {
+      stableStates: {
+        [stableId]: {
+          ...createMockAIState(stableId),
+          narrativeState: createNarrativeState(),
+        },
+      },
+      globalDay: 100,
+      regionalKings: {},
+    };
+  }
+
+  it("generates dynasty beat when stable has 3+ homebred graded winners", () => {
+    const manager = createManagerWithNarrative("s1");
+    const winner = createTestHorse({
+      id: "winner",
+      stableId: "s1",
+      sireId: "sire-1",
+      damId: "dam-1",
+      raceHistory: [
+        { raceId: "r1", raceName: "Race 1", position: 1, day: 90, grade: "G1", stableId: "s1" },
+      ],
+    });
+    const race = createMockRace({
+      id: "race-1",
+      graded: { key: "g1-test", grade: "G1", track: "Test", surface: "Dirt" },
+      result: [{ horseId: "winner", position: 1, time: 95.0 }],
+    });
+
+    // Create 2 more homebred graded winners to reach threshold of 3
+    const h2 = createTestHorse({
+      id: "h2",
+      stableId: "s1",
+      sireId: "sire-2",
+      damId: "dam-2",
+      raceHistory: [
+        { raceId: "r2", raceName: "Race 2", position: 1, day: 80, grade: "G2", stableId: "s1" },
+      ],
+    });
+    const h3 = createTestHorse({
+      id: "h3",
+      stableId: "s1",
+      sireId: "sire-3",
+      damId: "dam-3",
+      raceHistory: [
+        { raceId: "r3", raceName: "Race 3", position: 1, day: 70, grade: "G1", stableId: "s1" },
+      ],
+    });
+
+    const horseMap = new Map([
+      ["winner", winner],
+      ["h2", h2],
+      ["h3", h3],
+    ]);
+
+    const result = detectDynastyBeats(manager, [race], horseMap, 100);
+    const beats = result.stableStates["s1"].narrativeState!.storyBeats;
+    expect(beats.some((b) => b.arcId === "dynasty")).toBe(true);
+  });
+
+  it("does not generate dynasty beat for non-graded races", () => {
+    const manager = createManagerWithNarrative("s1");
+    const horse = createTestHorse({
+      id: "horse-1",
+      stableId: "s1",
+      sireId: "sire-1",
+      damId: "dam-1",
+    });
+    const race = createMockRace({ graded: undefined });
+    const horseMap = new Map([["horse-1", horse]]);
+
+    const result = detectDynastyBeats(manager, [race], horseMap, 100);
+    const beats = result.stableStates["s1"].narrativeState!.storyBeats;
+    expect(beats).toHaveLength(0);
+  });
+});
+
+describe("detectComebackBeats", () => {
+  function createManagerWithNarrative(stableId: string): NpcAIManager {
+    return {
+      stableStates: {
+        [stableId]: {
+          ...createMockAIState(stableId),
+          narrativeState: createNarrativeState(),
+        },
+      },
+      globalDay: 100,
+      regionalKings: {},
+    };
+  }
+
+  it("generates comeback beat for older horse winning after long gap", () => {
+    const manager = createManagerWithNarrative("s1");
+    const horse = createTestHorse({
+      id: "horse-1",
+      stableId: "s1",
+      age: 8,
+      raceHistory: [
+        { raceId: "r1", raceName: "Old Race", position: 3, day: 20, stableId: "s1" },
+        { raceId: "r2", raceName: "Recent Win", position: 1, day: 100, stableId: "s1" },
+      ],
+    });
+    const race = createMockRace({
+      result: [{ horseId: "horse-1", position: 1, time: 95.0 }],
+    });
+    const horseMap = new Map([["horse-1", horse]]);
+
+    const result = detectComebackBeats(manager, [race], horseMap, 100);
+    const beats = result.stableStates["s1"].narrativeState!.storyBeats;
+    expect(beats.some((b) => b.arcId === "comeback")).toBe(true);
+  });
+
+  it("does not generate comeback beat for young horse", () => {
+    const manager = createManagerWithNarrative("s1");
+    const horse = createTestHorse({
+      id: "horse-1",
+      stableId: "s1",
+      age: 4,
+      raceHistory: [
+        { raceId: "r1", raceName: "Old Race", position: 3, day: 20, stableId: "s1" },
+        { raceId: "r2", raceName: "Recent Win", position: 1, day: 100, stableId: "s1" },
+      ],
+    });
+    const race = createMockRace({
+      result: [{ horseId: "horse-1", position: 1, time: 95.0 }],
+    });
+    const horseMap = new Map([["horse-1", horse]]);
+
+    const result = detectComebackBeats(manager, [race], horseMap, 100);
+    const beats = result.stableStates["s1"].narrativeState!.storyBeats;
+    expect(beats).toHaveLength(0);
+  });
+});
+
+describe("detectAllianceDramaBeats", () => {
+  it("generates betrayal beat when trust drops below -50", () => {
+    const manager: NpcAIManager = {
+      stableStates: {
+        s1: {
+          ...createMockAIState("s1"),
+          npcRelationships: {
+            s2: { trust: -60, allianceType: null, history: [] },
+          },
+          narrativeState: createNarrativeState(),
+        },
+      },
+      globalDay: 100,
+      regionalKings: {},
+    };
+
+    const result = detectAllianceDramaBeats(manager, 100);
+    const beats = result.stableStates["s1"].narrativeState!.storyBeats;
+    expect(beats.some((b) => b.arcId === "betrayal")).toBe(true);
+  });
+
+  it("generates alliance formed beat when trust is high with active alliance", () => {
+    const manager: NpcAIManager = {
+      stableStates: {
+        s1: {
+          ...createMockAIState("s1"),
+          npcRelationships: {
+            s2: { trust: 85, allianceType: "racing_coalition", history: [] },
+          },
+          narrativeState: createNarrativeState(),
+        },
+      },
+      globalDay: 100,
+      regionalKings: {},
+    };
+
+    const result = detectAllianceDramaBeats(manager, 100);
+    const beats = result.stableStates["s1"].narrativeState!.storyBeats;
+    expect(beats.some((b) => b.arcId === "alliance_formed")).toBe(true);
+  });
+
+  it("does not generate duplicate beats within 30 days", () => {
+    const manager: NpcAIManager = {
+      stableStates: {
+        s1: {
+          ...createMockAIState("s1"),
+          npcRelationships: {
+            s2: { trust: -60, allianceType: null, history: [] },
+          },
+          narrativeState: {
+            activeArcs: [],
+            storyBeats: [
+              {
+                arcId: "betrayal",
+                day: 85,
+                headline: "Alliance Broken: s1 Turns on s2",
+                body: "Old beat",
+              },
+            ],
+            dramaticPotential: 0,
+          },
+        },
+      },
+      globalDay: 100,
+      regionalKings: {},
+    };
+
+    const result = detectAllianceDramaBeats(manager, 100);
+    const beats = result.stableStates["s1"].narrativeState!.storyBeats;
+    expect(beats).toHaveLength(1); // Only the pre-existing beat
   });
 });

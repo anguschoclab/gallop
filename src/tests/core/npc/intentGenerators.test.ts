@@ -15,9 +15,14 @@ let shouldThrowForStable1 = false;
 
 // Mock the AI module so we can control when it throws
 vi.mock("@/core/ai/npcCycleAI", () => ({
-  getOrCreateStableAIState: vi.fn((_manager: any, stable: Stable, _day: number) => {
+  getOrCreateStableAIState: vi.fn((manager: any, stable: Stable, _day: number) => {
     if (stable.id === "stable1" && shouldThrowForStable1) {
       throw new Error("Simulated AI error for stable 1");
+    }
+    // Return the actual state from manager if it exists, otherwise default
+    const existing = manager?.stableStates?.[stable.id];
+    if (existing) {
+      return { ...existing, stableId: stable.id };
     }
     return { id: stable.id, stableId: stable.id };
   }),
@@ -322,5 +327,169 @@ describe("generateNpcIntents diplomacy-aware claiming", () => {
     const claimingIntents = intents.filter((i) => i.type === "claiming");
     // Should not claim the ally's horse
     expect(claimingIntents.length).toBe(0);
+  });
+});
+
+describe("generateNpcIntents diplomatic intent generation", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    shouldThrowForStable1 = false;
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("generates diplomatic_action intents when trust is high", () => {
+    const mockState = {
+      horses: {},
+      pregnancies: [],
+      races: {},
+      npcStables: [
+        createTestStable({ id: "stable1", country: "USA", personality: "aggressive" }),
+        createTestStable({ id: "stable2", country: "USA", personality: "conservative" }),
+      ],
+      npcAIManager: {
+        stableStates: {
+          stable1: {
+            stableId: "stable1",
+            npcRelationships: {
+              stable2: {
+                trust: 80,
+                allianceType: null,
+                history: [],
+              },
+            },
+          },
+          stable2: {
+            stableId: "stable2",
+            npcRelationships: {
+              stable1: {
+                trust: 80,
+                allianceType: null,
+                history: [],
+              },
+            },
+          },
+        },
+        globalDay: 1,
+        regionalKings: {},
+      },
+      jockeys: [],
+    } as unknown as GameState;
+
+    // Find a day where stable1's hash mod 7 === 0
+    const stableHash = "stable1"
+      .split("")
+      .reduce((acc, ch) => (acc + ch.charCodeAt(0)) & 0xffff, 0);
+    const day = (7 - (stableHash % 7)) % 7 || 7;
+
+    const intents = generateNpcIntents(mockState, day);
+    const diplomaticIntents = intents.filter((i) => i.type === "diplomatic_action");
+    expect(diplomaticIntents.length).toBeGreaterThan(0);
+    const proposeIntents = diplomaticIntents.filter(
+      (i) => (i as { action: string }).action === "propose_alliance",
+    );
+    expect(proposeIntents.length).toBeGreaterThan(0);
+  });
+
+  it("generates break_alliance intents when trust drops below 20", () => {
+    const mockState = {
+      horses: {},
+      pregnancies: [],
+      races: {},
+      npcStables: [
+        createTestStable({ id: "stable1", country: "USA", personality: "aggressive" }),
+        createTestStable({ id: "stable2", country: "USA", personality: "conservative" }),
+      ],
+      npcAIManager: {
+        stableStates: {
+          stable1: {
+            stableId: "stable1",
+            npcRelationships: {
+              stable2: {
+                trust: 10,
+                allianceType: "racing_coalition",
+                history: [],
+              },
+            },
+          },
+          stable2: {
+            stableId: "stable2",
+            npcRelationships: {
+              stable1: {
+                trust: 10,
+                allianceType: "racing_coalition",
+                history: [],
+              },
+            },
+          },
+        },
+        globalDay: 1,
+        regionalKings: {},
+      },
+      jockeys: [],
+    } as unknown as GameState;
+
+    const stableHash = "stable1"
+      .split("")
+      .reduce((acc, ch) => (acc + ch.charCodeAt(0)) & 0xffff, 0);
+    const day = (7 - (stableHash % 7)) % 7 || 7;
+
+    const intents = generateNpcIntents(mockState, day);
+    const diplomaticIntents = intents.filter((i) => i.type === "diplomatic_action");
+    const breakIntents = diplomaticIntents.filter(
+      (i) => (i as { action: string }).action === "break_alliance",
+    );
+    expect(breakIntents.length).toBeGreaterThan(0);
+  });
+
+  it("generates cartel_action intents when high-trust unaffiliated partners exist", () => {
+    const mockState = {
+      horses: {},
+      pregnancies: [],
+      races: {},
+      npcStables: [
+        createTestStable({ id: "stable1", country: "USA", personality: "trader" }),
+        createTestStable({ id: "stable2", country: "USA", personality: "trader" }),
+        createTestStable({ id: "stable3", country: "USA", personality: "trader" }),
+      ],
+      npcAIManager: {
+        stableStates: {
+          stable1: {
+            stableId: "stable1",
+            npcRelationships: {
+              stable2: { trust: 65, allianceType: null, history: [] },
+              stable3: { trust: 70, allianceType: null, history: [] },
+            },
+          },
+          stable2: {
+            stableId: "stable2",
+            npcRelationships: {
+              stable1: { trust: 65, allianceType: null, history: [] },
+            },
+          },
+          stable3: {
+            stableId: "stable3",
+            npcRelationships: {
+              stable1: { trust: 70, allianceType: null, history: [] },
+            },
+          },
+        },
+        globalDay: 1,
+        regionalKings: {},
+      },
+      jockeys: [],
+    } as unknown as GameState;
+
+    const stableHash = "stable1"
+      .split("")
+      .reduce((acc, ch) => (acc + ch.charCodeAt(0)) & 0xffff, 0);
+    const day = (7 - (stableHash % 7)) % 7 || 7;
+
+    const intents = generateNpcIntents(mockState, day);
+    const cartelIntents = intents.filter((i) => i.type === "cartel_action");
+    expect(cartelIntents.length).toBeGreaterThan(0);
   });
 });

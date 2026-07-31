@@ -23,6 +23,8 @@ import type {
   SyndicateCreationIntent,
   SharePurchaseIntent,
   ShareSaleIntent,
+  DiplomaticActionIntent,
+  CartelActionIntent,
 } from "@/core/resolver/intents";
 import type { GameState, Horse, Race, Stable, Jockey } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
@@ -215,6 +217,7 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
       );
       intents.push(...generateNpcGeldingIntents(state, stable, stableAI, day, ownedHorses));
       intents.push(...generateNpcSyndicateIntents(state, stable, day, ownedHorses));
+      intents.push(...generateNpcDiplomaticIntents(state, stable, stableAI, day, aiManager));
 
       // Update stable AI state in the manager (immutable update)
       if (aiManager && stableAI) {
@@ -730,6 +733,102 @@ function generateNpcSyndicateIntents(
       };
       intents.push(purchaseIntent);
     }
+  }
+
+  return intents;
+}
+
+/**
+ * Generate diplomatic and cartel intents for an NPC stable.
+ *
+ * Evaluates relationships with other NPC stables and generates:
+ * - Alliance proposals when trust is high and no alliance exists
+ * - Alliance breaks when trust drops below threshold
+ * - Cartel actions when economic conditions are favorable
+ *
+ * Runs on a weekly cadence (day % 7) staggered per stable to avoid daily spam.
+ *
+ * @param _state - Current game state
+ * @param stable - The stable to generate intents for
+ * @param stableAI - Current AI state for the stable
+ * @param day - Current game day
+ * @param aiManager - Current NPC AI manager
+ * @returns Array of diplomatic and cartel intents
+ */
+function generateNpcDiplomaticIntents(
+  _state: GameState,
+  stable: Stable,
+  stableAI: StableAIState | undefined,
+  day: number,
+  aiManager: NpcAIManager | undefined,
+): AnyIntent[] {
+  const intents: AnyIntent[] = [];
+  if (!stableAI?.npcRelationships || !aiManager) return intents;
+
+  // Weekly cadence, staggered per stable
+  const stableHash = stable.id.split("").reduce((acc, ch) => (acc + ch.charCodeAt(0)) & 0xffff, 0);
+  if ((day + stableHash) % 7 !== 0) return intents;
+
+  for (const [otherStableId, rel] of Object.entries(stableAI.npcRelationships)) {
+    // Propose alliance when trust is high and no alliance exists
+    if (rel.trust >= 70 && !rel.allianceType) {
+      const allianceType: DiplomaticActionIntent["allianceType"] =
+        stable.personality === "breeder" || stable.personality === "developer"
+          ? "breeding_partnership"
+          : stable.personality === "trader"
+            ? "economic_cartel"
+            : stable.personality === "aggressive"
+              ? "racing_coalition"
+              : "non_aggression";
+
+      intents.push({
+        id: generateUUID(),
+        entityId: stable.id,
+        source: "npc",
+        sourceId: stable.id,
+        day,
+        priority: 30,
+        type: "diplomatic_action",
+        targetStableId: otherStableId,
+        action: "propose_alliance",
+        allianceType,
+      } as DiplomaticActionIntent);
+    }
+
+    // Break alliance when trust drops below 20
+    if (rel.allianceType && rel.trust < 20) {
+      intents.push({
+        id: generateUUID(),
+        entityId: stable.id,
+        source: "npc",
+        sourceId: stable.id,
+        day,
+        priority: 60,
+        type: "diplomatic_action",
+        targetStableId: otherStableId,
+        action: "break_alliance",
+      } as DiplomaticActionIntent);
+    }
+  }
+
+  // Cartel action: evaluate cartel opportunity with high-trust partners
+  const highTrustIds = Object.entries(stableAI.npcRelationships)
+    .filter(([, rel]) => rel.trust >= 60 && !rel.allianceType)
+    .map(([id]) => id);
+
+  if (highTrustIds.length >= 1) {
+    intents.push({
+      id: generateUUID(),
+      entityId: stable.id,
+      source: "npc",
+      sourceId: stable.id,
+      day,
+      priority: 25,
+      type: "cartel_action",
+      action: "join_cartel",
+      targetStableIds: highTrustIds.slice(0, 2),
+      marketAction: "avoid_bidding_war",
+    } as CartelActionIntent);
   }
 
   return intents;

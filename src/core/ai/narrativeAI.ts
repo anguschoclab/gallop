@@ -358,6 +358,181 @@ export function detectRaceBeats(
   return result;
 }
 
+// ─── Dynasty Beat Detection ──────────────────────────────────────────────────
+
+/**
+ * Detect breeding dynasty patterns — when a stable's homebred horses win multiple graded races.
+ *
+ * @param manager - Current NPC AI manager
+ * @param resolvedRaces - Races resolved today
+ * @param horseMap - Map of all horses for lookup
+ * @param day - Current game day
+ * @returns Updated manager with dynasty story beats
+ */
+export function detectDynastyBeats(
+  manager: NpcAIManager,
+  resolvedRaces: Race[],
+  horseMap: Map<string, Horse>,
+  day: number,
+): NpcAIManager {
+  let result = manager;
+
+  for (const race of resolvedRaces) {
+    if (!race.result || race.result.length === 0) continue;
+    if (!race.graded) continue;
+
+    const winner = race.result.find((r) => r.position === 1);
+    if (!winner) continue;
+
+    const winnerHorse = horseMap.get(winner.horseId);
+    if (!winnerHorse || !winnerHorse.stableId) continue;
+
+    // Check if this is a homebred horse (has both sire and dam in pedigree,
+    // and has been with the same stable throughout its career)
+    const isHomebred =
+      !!winnerHorse.sireId &&
+      !!winnerHorse.damId &&
+      winnerHorse.raceHistory.every((rh) => rh.stableId === winnerHorse.stableId);
+    if (!isHomebred) continue;
+
+    const stableState = result.stableStates[winnerHorse.stableId];
+    if (!stableState?.narrativeState) continue;
+
+    // Count graded wins by homebreds in race history
+    const homebredGradedWins = Array.from(horseMap.values()).filter(
+      (h) =>
+        h.stableId === winnerHorse.stableId &&
+        !!h.sireId &&
+        !!h.damId &&
+        h.raceHistory.some((rh) => rh.grade && rh.position === 1),
+    ).length;
+
+    // Dynasty beat: 3+ homebred graded winners
+    if (homebredGradedWins >= 3) {
+      const existingBeat = stableState.narrativeState.storyBeats.find(
+        (b) => b.arcId === "dynasty" && b.day > day - 30,
+      );
+      if (!existingBeat) {
+        const beat = generateStoryBeat(
+          "dynasty",
+          day,
+          `Breeding Dynasty: ${homebredGradedWins} Homebred Graded Winners`,
+          `The breeding program at this stable has produced ${homebredGradedWins} graded race winners, establishing a true dynasty in the making.`,
+        );
+        result = addBeatToManager(result, winnerHorse.stableId, beat);
+      }
+    }
+  }
+
+  return result;
+}
+
+// ─── Comeback Beat Detection ─────────────────────────────────────────────────
+
+/**
+ * Detect comeback narratives — when an older or previously injured horse wins after a long drought.
+ *
+ * @param manager - Current NPC AI manager
+ * @param resolvedRaces - Races resolved today
+ * @param horseMap - Map of all horses for lookup
+ * @param day - Current game day
+ * @returns Updated manager with comeback story beats
+ */
+export function detectComebackBeats(
+  manager: NpcAIManager,
+  resolvedRaces: Race[],
+  horseMap: Map<string, Horse>,
+  day: number,
+): NpcAIManager {
+  let result = manager;
+
+  for (const race of resolvedRaces) {
+    if (!race.result || race.result.length === 0) continue;
+
+    const winner = race.result.find((r) => r.position === 1);
+    if (!winner) continue;
+
+    const winnerHorse = horseMap.get(winner.horseId);
+    if (!winnerHorse || !winnerHorse.stableId) continue;
+
+    const stableState = result.stableStates[winnerHorse.stableId];
+    if (!stableState?.narrativeState) continue;
+
+    // Comeback: horse age >= 7 winning after 60+ day gap
+    const sortedHistory = [...winnerHorse.raceHistory].sort((a, b) => a.day - b.day);
+    if (sortedHistory.length < 2) continue;
+
+    const lastRace = sortedHistory[sortedHistory.length - 1];
+    const prevRace = sortedHistory[sortedHistory.length - 2];
+    const gap = lastRace.day - prevRace.day;
+
+    if (winnerHorse.age >= 7 && gap >= 60 && lastRace.position === 1) {
+      const beat = generateStoryBeat(
+        "comeback",
+        day,
+        `Remarkable Comeback: ${winnerHorse.name} Returns to Win`,
+        `After a ${gap}-day absence from the track, ${winnerHorse.age}-year-old ${winnerHorse.name} defied age and doubt to claim victory once more.`,
+      );
+      result = addBeatToManager(result, winnerHorse.stableId, beat);
+    }
+  }
+
+  return result;
+}
+
+// ─── Alliance Drama Beat Detection ───────────────────────────────────────────
+
+/**
+ * Detect alliance drama — when diplomatic events create narrative-worthy moments.
+ *
+ * @param manager - Current NPC AI manager
+ * @param day - Current game day
+ * @returns Updated manager with alliance drama story beats
+ */
+export function detectAllianceDramaBeats(manager: NpcAIManager, day: number): NpcAIManager {
+  let result = manager;
+
+  for (const [stableId, state] of Object.entries(manager.stableStates)) {
+    if (!state.npcRelationships || !state.narrativeState) continue;
+
+    for (const [otherId, rel] of Object.entries(state.npcRelationships)) {
+      // Betrayal: trust dropped below -50 with a former ally
+      if (rel.trust <= -50 && rel.allianceType === null) {
+        const hasRecentBetrayalBeat = state.narrativeState.storyBeats.some(
+          (b) => b.arcId === "betrayal" && b.day > day - 30 && b.headline.includes(otherId),
+        );
+        if (!hasRecentBetrayalBeat) {
+          const beat = generateStoryBeat(
+            "betrayal",
+            day,
+            `Alliance Broken: ${stableId} Turns on ${otherId}`,
+            `Trust between ${stableId} and ${otherId} has collapsed to ${rel.trust}, shattering their former alliance and sending shockwaves through the racing community.`,
+          );
+          result = addBeatToManager(result, stableId, beat);
+        }
+      }
+
+      // New alliance formed: trust >= 80 with active alliance
+      if (rel.trust >= 80 && rel.allianceType !== null) {
+        const hasRecentAllianceBeat = state.narrativeState.storyBeats.some(
+          (b) => b.arcId === "alliance_formed" && b.day > day - 30 && b.headline.includes(otherId),
+        );
+        if (!hasRecentAllianceBeat) {
+          const beat = generateStoryBeat(
+            "alliance_formed",
+            day,
+            `New Alliance: ${stableId} and ${otherId} Forge ${rel.allianceType} Pact`,
+            `In a strategic move, ${stableId} and ${otherId} have formalized a ${rel.allianceType} agreement, reshaping the competitive landscape.`,
+          );
+          result = addBeatToManager(result, stableId, beat);
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
 /**
  * Add a story beat to a stable's narrative state.
  *
