@@ -351,3 +351,137 @@ export function getClaimingInsights(
     avgRisk,
   };
 }
+
+// ─── Post-Claim Plan ─────────────────────────────────────────────────────────
+
+/**
+ * Generate a post-claim plan for a newly claimed horse.
+ *
+ * Determines the best strategy for a horse after claiming: immediate re-entry
+ * at a higher tag (flipping), development path (racing up), or breeding prospect.
+ *
+ * @param horse - The claimed horse
+ * @param claimPrice - The price paid for the claim
+ * @param stable - The stable that claimed the horse
+ * @returns Post-claim plan with strategy and target tag
+ */
+export function generatePostClaimPlan(
+  horse: Horse,
+  claimPrice: number,
+  stable: Stable,
+): { strategy: "flip" | "develop" | "breed"; targetTag?: number; expectedValue: number } {
+  const rating = calculateOverallRating(horse);
+
+  // High-rated horse claimed cheap: flip at higher tag
+  if (rating >= 70 && claimPrice < 50000) {
+    return {
+      strategy: "flip",
+      targetTag: Math.floor(claimPrice * 2.5),
+      expectedValue: claimPrice * 2,
+    };
+  }
+
+  // Young horse with potential: develop through racing
+  if (horse.age <= 4 && rating >= 55) {
+    return {
+      strategy: "develop",
+      targetTag: Math.floor(claimPrice * 1.5),
+      expectedValue: claimPrice * 1.8,
+    };
+  }
+
+  // Older mare with decent rating: breed
+  if ((horse.gender === "mare" || horse.gender === "filly") && horse.age >= 5 && rating >= 60) {
+    return {
+      strategy: "breed",
+      expectedValue: claimPrice * 1.5,
+    };
+  }
+
+  // Default: develop
+  return {
+    strategy: "develop",
+    targetTag: claimPrice,
+    expectedValue: claimPrice * 1.2,
+  };
+}
+
+// ─── Claiming Defense ────────────────────────────────────────────────────────
+
+/**
+ * Evaluate if a stable should defend a horse from being claimed.
+ *
+ * If a stable's horse is entered in a claiming race and is likely to be claimed
+ * (high rating relative to tag), the stable may want to scratch or move the horse
+ * to a higher tag to protect it.
+ *
+ * @param horse - The horse entered in a claiming race
+ * @param claimingTag - The claiming price for the race
+ * @param stableCash - The stable's available cash
+ * @returns True if the horse should be withdrawn to prevent claiming
+ */
+export function shouldDefendFromClaim(
+  horse: Horse,
+  claimingTag: number,
+  stableCash: number,
+): boolean {
+  const rating = calculateOverallRating(horse);
+
+  // If horse rating is significantly above what the tag implies, it's a target
+  // Rough heuristic: tag / 1000 = expected rating band
+  const expectedRatingForTag = claimingTag / 1000;
+
+  // Horse is worth much more than the tag: defend
+  if (rating > expectedRatingForTag + 20) {
+    return true;
+  }
+
+  // If stable can afford to move the horse to a higher tag, do so
+  if (rating > expectedRatingForTag + 10 && stableCash > claimingTag * 3) {
+    return true;
+  }
+
+  return false;
+}
+
+// ─── Market Arbitrage ────────────────────────────────────────────────────────
+
+/**
+ * Detect claiming market arbitrage opportunities.
+ *
+ * Identifies horses whose actual value (based on rating) significantly exceeds
+ * their claiming price, representing a profitable claiming opportunity.
+ *
+ * @param horses - Array of horses entered in claiming races
+ * @param claimingTags - Map of horseId to claiming price
+ * @returns Array of arbitrage opportunities sorted by profit potential
+ */
+export function detectClaimingArbitrage(
+  horses: Horse[],
+  claimingTags: Map<string, number>,
+): Array<{ horseId: string; rating: number; tag: number; profitPotential: number }> {
+  const opportunities: Array<{
+    horseId: string;
+    rating: number;
+    tag: number;
+    profitPotential: number;
+  }> = [];
+
+  for (const horse of horses) {
+    const tag = claimingTags.get(horse.id);
+    if (tag === undefined) continue;
+
+    const rating = calculateOverallRating(horse);
+    const estimatedValue = rating * 1000; // Rough: 1 rating point = $1000 value
+    const profitPotential = estimatedValue - tag;
+
+    // Only flag opportunities with > 20% profit potential
+    if (profitPotential > tag * 0.2) {
+      opportunities.push({ horseId: horse.id, rating, tag, profitPotential });
+    }
+  }
+
+  // Sort by profit potential (highest first)
+  opportunities.sort((a, b) => b.profitPotential - a.profitPotential);
+  return opportunities;
+}

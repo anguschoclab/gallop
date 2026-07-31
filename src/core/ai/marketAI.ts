@@ -384,3 +384,68 @@ export function getMarketInsights(
     portfolioHealth,
   };
 }
+
+// ─── Market Timing ───────────────────────────────────────────────────────────
+
+/**
+ * Determine if current market conditions favor buying or waiting.
+ *
+ * Uses recent purchase prices to detect if the market is overheated
+ * (prices above average) or depressed (prices below average).
+ *
+ * @param aiState - Current market AI state
+ * @returns 'buy', 'wait', or 'neutral' recommendation
+ */
+export function getMarketTimingRecommendation(aiState: MarketAIState): "buy" | "wait" | "neutral" {
+  const recentPurchases = aiState.purchaseHistory.slice(-10);
+  if (recentPurchases.length < 3) return "neutral";
+
+  const avgPrice =
+    recentPurchases.reduce((sum, p) => sum + p.purchasePrice, 0) / recentPurchases.length;
+  const overallAvg =
+    aiState.purchaseHistory.reduce((sum, p) => sum + p.purchasePrice, 0) /
+    aiState.purchaseHistory.length;
+
+  if (avgPrice < overallAvg * 0.85) return "buy";
+  if (avgPrice > overallAvg * 1.15) return "wait";
+  return "neutral";
+}
+
+// ─── Price Negotiation ───────────────────────────────────────────────────────
+
+/**
+ * Calculate a negotiated purchase price based on horse value and stable personality.
+ *
+ * Aggressive personalities push for lower prices, while prestige personalities
+ * are willing to pay closer to asking price.
+ *
+ * @param askingPrice - The seller's asking price
+ * @param horseRating - The overall rating of the horse
+ * @param personality - The stable's personality type
+ * @returns Negotiated price
+ */
+export function calculateNegotiatedPrice(
+  askingPrice: number,
+  horseRating: number,
+  personality: Stable["personality"],
+): number {
+  let discountRate = 0.05; // Default: 5% discount
+
+  if (personality === "aggressive" || personality === "win-now") {
+    discountRate = 0.12;
+  } else if (personality === "trader") {
+    discountRate = 0.1;
+  } else if (personality === "conservative") {
+    discountRate = 0.08;
+  } else if (personality === "prestige") {
+    discountRate = 0.02;
+  }
+
+  // High-rated horses command less discount (sellers know their value)
+  if (horseRating >= 80) {
+    discountRate *= 0.5;
+  }
+
+  const negotiatedPrice = askingPrice * (1 - discountRate);
+  return Math.max(1000, Math.round(negotiatedPrice));
+}

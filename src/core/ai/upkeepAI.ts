@@ -428,3 +428,119 @@ export function getBudgetInsights(
     targetReserveRatio,
   };
 }
+
+// ─── Cost Optimization ───────────────────────────────────────────────────────
+
+/**
+ * Identify cost optimization opportunities for a stable.
+ *
+ * Analyzes horse roster to find underperforming horses consuming resources
+ * without generating value. Recommends trimming or repositioning.
+ *
+ * @param horses - Array of horses in the stable
+ * @param dailyUpkeepPerHorse - Daily upkeep cost per horse
+ * @returns Array of cost optimization recommendations
+ */
+export function identifyCostOptimizationOpportunities(
+  horses: Horse[],
+  dailyUpkeepPerHorse: number,
+): Array<{ horseId: string; reason: string; potentialSavings: number }> {
+  const opportunities: Array<{
+    horseId: string;
+    reason: string;
+    potentialSavings: number;
+  }> = [];
+
+  for (const horse of horses) {
+    // Old horses with low rating: retirement candidate
+    if (horse.age >= 10 && (horse.form ?? 50) < 40) {
+      opportunities.push({
+        horseId: horse.id,
+        reason: "old_low_form",
+        potentialSavings: dailyUpkeepPerHorse * 365,
+      });
+    }
+
+    // Chronically injured horses
+    if (horse.activeInjury && horse.activeInjury.recoveryDays > 60) {
+      opportunities.push({
+        horseId: horse.id,
+        reason: "chronic_injury",
+        potentialSavings: dailyUpkeepPerHorse * 90,
+      });
+    }
+
+    // Horses with very low energy that haven't raced recently
+    if (horse.energy < 20 && horse.raceHistory && horse.raceHistory.length === 0) {
+      opportunities.push({
+        horseId: horse.id,
+        reason: "unraced_low_energy",
+        potentialSavings: dailyUpkeepPerHorse * 30,
+      });
+    }
+  }
+
+  return opportunities;
+}
+
+// ─── Emergency Budgeting ─────────────────────────────────────────────────────
+
+/**
+ * Determine if a stable needs emergency budget cuts.
+ *
+ * If cash reserves fall below a critical threshold relative to daily upkeep,
+ * recommend cutting non-essential spending and potentially selling horses.
+ *
+ * @param stableCash - Current cash on hand
+ * @param dailyUpkeep - Total daily upkeep cost
+ * @param horseCount - Number of horses in the stable
+ * @returns Emergency budget recommendation
+ */
+export function assessEmergencyBudget(
+  stableCash: number,
+  dailyUpkeep: number,
+  horseCount: number,
+): { isEmergency: boolean; recommendedActions: string[]; horsesToSell: number } {
+  const daysOfCash = dailyUpkeep > 0 ? stableCash / dailyUpkeep : Infinity;
+  const actions: string[] = [];
+  let horsesToSell = 0;
+
+  if (daysOfCash < 14) {
+    return {
+      isEmergency: true,
+      recommendedActions: actions,
+      horsesToSell,
+    };
+  }
+
+  if (daysOfCash < 30) {
+    actions.push("reduce_training");
+    actions.push("cancel_non_essential_spending");
+
+    if (horseCount > 10) {
+      horsesToSell = Math.ceil((horseCount - 10) * 0.3);
+      actions.push("sell_underperformers");
+    }
+
+    return {
+      isEmergency: true,
+      recommendedActions: actions,
+      horsesToSell,
+    };
+  }
+
+  if (daysOfCash < 60) {
+    actions.push("monitor_spending");
+    return {
+      isEmergency: false,
+      recommendedActions: actions,
+      horsesToSell,
+    };
+  }
+
+  return {
+    isEmergency: false,
+    recommendedActions: [],
+    horsesToSell: 0,
+  };
+}

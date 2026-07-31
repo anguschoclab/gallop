@@ -76,3 +76,56 @@ export function shouldGeldHorse(aiState: GeldingAIState, horse: Horse, day: numb
   const hash = Math.abs(hashStr(horse.id + "_gelding"));
   return hash % 30 === day % 30;
 }
+
+// ─── Performance-Based Gelding Timing ────────────────────────────────────────
+
+/**
+ * Determine if a horse's recent performance justifies gelding.
+ *
+ * Horses with inconsistent form (high variance in recent race positions)
+ * may benefit from gelding to improve temperament and consistency.
+ *
+ * @param horse - The horse to evaluate
+ * @returns True if performance pattern justifies gelding consideration
+ */
+export function shouldConsiderGeldingForPerformance(horse: Horse): boolean {
+  if (!horse.raceHistory || horse.raceHistory.length < 3) return false;
+
+  const recent = horse.raceHistory.slice(-5);
+  const positions = recent.map((r) => r.position);
+
+  // Calculate variance in positions
+  const avg = positions.reduce((sum, p) => sum + p, 0) / positions.length;
+  const variance = positions.reduce((sum, p) => sum + Math.pow(p - avg, 2), 0) / positions.length;
+
+  // High variance (inconsistent performer) with poor average = gelding candidate
+  return variance > 4 && avg > 5;
+}
+
+// ─── Post-Gelding Development Plan ───────────────────────────────────────────
+
+/**
+ * Generate a development plan for a recently gelded horse.
+ *
+ * Gelded horses typically need a short adjustment period before returning
+ * to training. This plan recommends a gradual reintroduction schedule.
+ *
+ * @param horse - The gelded horse
+ * @param geldingDay - The day the horse was gelded
+ * @returns Development plan with rest period and reintroduction schedule
+ */
+export function generatePostGeldingPlan(
+  horse: Horse,
+  geldingDay: number,
+): { restDays: number; reintroductionDay: number; targetRaceDay: number } {
+  // Younger horses recover faster from gelding
+  const restDays = horse.age <= 3 ? 21 : 30;
+  const reintroductionDay = geldingDay + restDays;
+  const targetRaceDay = reintroductionDay + 14; // 2 weeks of training before first race back
+
+  return {
+    restDays,
+    reintroductionDay,
+    targetRaceDay,
+  };
+}

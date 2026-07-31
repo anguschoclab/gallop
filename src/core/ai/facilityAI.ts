@@ -498,3 +498,114 @@ export function getFacilityInsights(
     facilityLevels,
   };
 }
+
+// ─── Capacity-Driven Upgrades ────────────────────────────────────────────────
+
+/**
+ * Determine if a facility should be upgraded based on stable capacity utilization.
+ *
+ * If a stable's horse count is at or near the facility's capacity, the facility
+ * should be upgraded to support more horses. This prevents bottlenecks in
+ * training, breeding, or recovery.
+ *
+ * @param facilityType - The type of facility to evaluate
+ * @param currentLevel - Current facility level
+ * @param horseCount - Number of horses in the stable
+ * @param stableCash - Available cash for upgrades
+ * @returns True if the facility should be upgraded
+ */
+const LEVEL_CAPACITY: Record<FacilityLevel, number> = {
+  basic: 5,
+  standard: 10,
+  premium: 15,
+  elite: 20,
+};
+
+export function shouldUpgradeForCapacity(
+  facilityType: FacilityType,
+  currentLevel: FacilityLevel,
+  horseCount: number,
+  stableCash: number,
+): boolean {
+  const capacity = LEVEL_CAPACITY[currentLevel] ?? 5;
+
+  // At 80%+ capacity, recommend upgrade
+  if (horseCount >= capacity * 0.8) {
+    const upgradeCost = FACILITY_UPGRADE_COSTS[currentLevel];
+    if (upgradeCost === null) return false; // Already at max level
+    // Only upgrade if stable can afford it without going broke
+    if (stableCash > upgradeCost * 2) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// ─── Specialization Strategy ─────────────────────────────────────────────────
+
+/**
+ * Determine the optimal facility specialization for a stable.
+ *
+ * Based on stable personality, recommend which facility to prioritize:
+ * - Breeder: breeding barn and nursery
+ * - Aggressive/win-now: training track and pool
+ * - Developer: training track and vet clinic
+ * - Trader: training track (quick turnaround)
+ *
+ * @param personality - The stable's personality type
+ * @returns Ordered list of facility types to prioritize
+ */
+export function getSpecializationPriority(personality: Stable["personality"]): FacilityType[] {
+  switch (personality) {
+    case "breeder":
+      return ["barn", "nutrition_lab", "main_track", "veterinary_clinic"];
+    case "aggressive":
+    case "win-now":
+      return ["main_track", "exercise_pool", "veterinary_clinic", "spa"];
+    case "developer":
+      return ["main_track", "veterinary_clinic", "exercise_pool", "barn"];
+    case "trader":
+      return ["main_track", "veterinary_clinic", "barn", "exercise_pool"];
+    case "prestige":
+      return ["barn", "main_track", "exercise_pool", "veterinary_clinic"];
+    default:
+      return ["main_track", "veterinary_clinic", "barn", "exercise_pool"];
+  }
+}
+
+// ─── ROI Divestment ──────────────────────────────────────────────────────────
+
+/**
+ * Evaluate if a facility should be divested (downgraded) based on poor ROI.
+ *
+ * If a facility has been generating negative ROI for an extended period,
+ * it may be better to downgrade it and redirect funds elsewhere.
+ *
+ * @param roi - The facility's ROI tracking data
+ * @param currentLevel - Current facility level
+ * @returns True if the facility should be downgraded
+ */
+const LEVEL_ORDER: Record<FacilityLevel, number> = {
+  basic: 1,
+  standard: 2,
+  premium: 3,
+  elite: 4,
+};
+
+export function shouldDivestFacility(roi: FacilityROI, currentLevel: FacilityLevel): boolean {
+  // Only consider divestment for premium+ facilities (basic/standard are baseline)
+  if (LEVEL_ORDER[currentLevel] < 3) return false;
+
+  // Need at least 30 days of data
+  if (roi.daysOwned < 30) return false;
+
+  // Calculate ROI percentage
+  const roiPercent =
+    roi.totalInvestment > 0 ? (roi.totalBenefit - roi.totalInvestment) / roi.totalInvestment : 0;
+
+  // Negative ROI beyond -20%: divest
+  if (roiPercent < -0.2) return true;
+
+  return false;
+}

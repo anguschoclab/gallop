@@ -7,6 +7,9 @@ import {
   recordClaimingDecision,
   recordClaimingOutcome,
   getClaimingInsights,
+  generatePostClaimPlan,
+  shouldDefendFromClaim,
+  detectClaimingArbitrage,
 } from "@/core/ai/claimingAI";
 import type { Horse, Race, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
@@ -410,5 +413,197 @@ describe("getClaimingInsights", () => {
     // avgRisk should be the actual riskScore from the decision, not hardcoded 60
     const expectedRisk = stateWithOutcome.claimingHistory[0].riskScore!;
     expect(insights.avgRisk).toBe(expectedRisk);
+  });
+});
+
+describe("generatePostClaimPlan", () => {
+  it("recommends flip for high-rated horse claimed cheap", () => {
+    const horse = createTestHorse({
+      id: "h1",
+      age: 5,
+      gender: "colt",
+      stats: {
+        speed: 80,
+        stamina: 75,
+        acceleration: 78,
+        consistency: 72,
+        temperament: 60,
+        conformation: 60,
+      },
+    });
+    const stable = createTestStable({ id: "s1", personality: "aggressive" });
+    const plan = generatePostClaimPlan(horse, 25000, stable);
+    expect(plan.strategy).toBe("flip");
+    expect(plan.targetTag).toBeGreaterThan(25000);
+  });
+
+  it("recommends develop for young horse with potential", () => {
+    const horse = createTestHorse({
+      id: "h2",
+      age: 3,
+      gender: "colt",
+      stats: {
+        speed: 60,
+        stamina: 60,
+        acceleration: 60,
+        consistency: 55,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
+    const stable = createTestStable({ id: "s1", personality: "developer" });
+    const plan = generatePostClaimPlan(horse, 50000, stable);
+    expect(plan.strategy).toBe("develop");
+  });
+
+  it("recommends breed for older mare with decent rating", () => {
+    const horse = createTestHorse({
+      id: "h3",
+      age: 6,
+      gender: "mare",
+      stats: {
+        speed: 65,
+        stamina: 65,
+        acceleration: 65,
+        consistency: 65,
+        temperament: 55,
+        conformation: 55,
+      },
+    });
+    const stable = createTestStable({ id: "s1", personality: "breeder" });
+    const plan = generatePostClaimPlan(horse, 40000, stable);
+    expect(plan.strategy).toBe("breed");
+  });
+});
+
+describe("shouldDefendFromClaim", () => {
+  it("defends when horse rating far exceeds tag value", () => {
+    const horse = createTestHorse({
+      id: "h1",
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 70,
+        conformation: 70,
+      },
+    });
+    // Tag=10000, expected rating ~10, horse rating ~77 -> defend
+    expect(shouldDefendFromClaim(horse, 10000, 100000)).toBe(true);
+  });
+
+  it("does not defend when horse rating matches tag", () => {
+    const horse = createTestHorse({
+      id: "h2",
+      stats: {
+        speed: 30,
+        stamina: 30,
+        acceleration: 30,
+        consistency: 30,
+        temperament: 30,
+        conformation: 30,
+      },
+    });
+    // Tag=50000, expected rating ~50, horse rating ~30 -> no defend
+    expect(shouldDefendFromClaim(horse, 50000, 100000)).toBe(false);
+  });
+
+  it("defends when stable can afford higher tag and horse is above tag", () => {
+    const horse = createTestHorse({
+      id: "h3",
+      stats: {
+        speed: 65,
+        stamina: 65,
+        acceleration: 65,
+        consistency: 65,
+        temperament: 55,
+        conformation: 55,
+      },
+    });
+    // Tag=40000, expected rating ~40, horse rating ~62, stable has 200k -> defend
+    expect(shouldDefendFromClaim(horse, 40000, 200000)).toBe(true);
+  });
+});
+
+describe("detectClaimingArbitrage", () => {
+  it("detects underpriced horses in claiming races", () => {
+    const horse1 = createTestHorse({
+      id: "h1",
+      stats: {
+        speed: 75,
+        stamina: 75,
+        acceleration: 75,
+        consistency: 75,
+        temperament: 60,
+        conformation: 60,
+      },
+    });
+    const horse2 = createTestHorse({
+      id: "h2",
+      stats: {
+        speed: 40,
+        stamina: 40,
+        acceleration: 40,
+        consistency: 40,
+        temperament: 30,
+        conformation: 30,
+      },
+    });
+    const tags = new Map([
+      ["h1", 20000], // High-rated horse at low tag = arbitrage
+      ["h2", 50000], // Low-rated horse at high tag = no opportunity
+    ]);
+    const opportunities = detectClaimingArbitrage([horse1, horse2], tags);
+    expect(opportunities.length).toBeGreaterThanOrEqual(1);
+    expect(opportunities[0].horseId).toBe("h1");
+  });
+
+  it("returns empty array when no opportunities exist", () => {
+    const horse = createTestHorse({
+      id: "h1",
+      stats: {
+        speed: 30,
+        stamina: 30,
+        acceleration: 30,
+        consistency: 30,
+        temperament: 20,
+        conformation: 20,
+      },
+    });
+    const tags = new Map([["h1", 50000]]);
+    const opportunities = detectClaimingArbitrage([horse], tags);
+    expect(opportunities).toEqual([]);
+  });
+
+  it("sorts by profit potential descending", () => {
+    const horse1 = createTestHorse({
+      id: "h1",
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 70,
+        conformation: 70,
+      },
+    });
+    const horse2 = createTestHorse({
+      id: "h2",
+      stats: {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 60,
+        conformation: 60,
+      },
+    });
+    const tags = new Map([
+      ["h1", 20000],
+      ["h2", 20000],
+    ]);
+    const opportunities = detectClaimingArbitrage([horse1, horse2], tags);
+    expect(opportunities[0].profitPotential).toBeGreaterThan(opportunities[1].profitPotential);
   });
 });

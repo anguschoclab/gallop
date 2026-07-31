@@ -7,6 +7,8 @@ import {
   recordMarketPurchase,
   recordMarketOutcome,
   getMarketInsights,
+  getMarketTimingRecommendation,
+  calculateNegotiatedPrice,
 } from "@/core/ai/marketAI";
 import type { Horse, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
@@ -323,5 +325,32 @@ describe("getMarketInsights", () => {
     };
     const insights = getMarketInsights(stateWithHorses, "stable-1");
     expect(insights.portfolioHealth).toBe(5 / 10);
+  });
+});
+
+describe("getMarketTimingRecommendation", () => {
+  it("returns neutral when insufficient purchase history", () => {
+    const stable = createTestStable({ id: "s1", personality: "aggressive" });
+    const state = createMarketAIState(stable);
+    expect(getMarketTimingRecommendation(state)).toBe("neutral");
+  });
+});
+
+describe("calculateNegotiatedPrice", () => {
+  it("applies larger discount for aggressive personality", () => {
+    const aggressive = calculateNegotiatedPrice(100000, 60, "aggressive");
+    const prestige = calculateNegotiatedPrice(100000, 60, "prestige");
+    expect(aggressive).toBeLessThan(prestige);
+  });
+
+  it("applies smaller discount for high-rated horses", () => {
+    const highRated = calculateNegotiatedPrice(100000, 85, "aggressive");
+    const lowRated = calculateNegotiatedPrice(100000, 50, "aggressive");
+    expect(highRated).toBeGreaterThan(lowRated);
+  });
+
+  it("never goes below minimum price", () => {
+    const price = calculateNegotiatedPrice(1000, 50, "aggressive");
+    expect(price).toBeGreaterThanOrEqual(1000);
   });
 });

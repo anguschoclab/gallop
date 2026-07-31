@@ -748,3 +748,167 @@ export function getCampaignInsights(
     contenderCount,
   };
 }
+
+// ─── Prep Race Optimization ──────────────────────────────────────────────────
+
+/**
+ * Select the best prep race for a contender from available upcoming races.
+ *
+ * Evaluates each upcoming race for suitability based on distance alignment
+ * with the target race, field strength (easier fields preferred for prep),
+ * and timing (ideally 2-4 weeks before the target race).
+ *
+ * @param contender - The contender status for the horse
+ * @param targetRaceKey - The key of the major race being prepped for
+ * @param upcomingRaces - Array of upcoming graded races
+ * @param currentDayOfYear - Current day of year
+ * @returns The best prep race key, or null if none suitable
+ */
+export function selectPrepRace(
+  contender: ContenderStatus,
+  targetRaceKey: string,
+  upcomingRaces: GradedRace[],
+  currentDayOfYear: number,
+): string | null {
+  const targetRace = GRADED_RACES_BY_KEY.get(targetRaceKey);
+  if (!targetRace || upcomingRaces.length === 0) return null;
+
+  let bestRace: GradedRace | null = null;
+  let bestScore = -1;
+
+  for (const race of upcomingRaces) {
+    // Skip the target race itself
+    if (race.key === targetRaceKey) continue;
+
+    // Skip races that are too close or too far (need 1-6 weeks before target)
+    const dayDiff = race.dayOfYear - currentDayOfYear;
+    if (dayDiff < 7 || dayDiff > 42) continue;
+
+    let score = 50;
+
+    // Distance alignment: prefer races at similar distance to target
+    const distanceDiff = Math.abs(race.distance - targetRace.distance);
+    if (distanceDiff <= 100) {
+      score += 20;
+    } else if (distanceDiff <= 200) {
+      score += 10;
+    }
+
+    // Surface alignment: prefer same surface
+    if (race.surface === targetRace.surface) {
+      score += 15;
+    }
+
+    // Timing: prefer races 2-4 weeks out
+    const weeksToTarget = (targetRace.dayOfYear - race.dayOfYear) / 7;
+    if (weeksToTarget >= 2 && weeksToTarget <= 4) {
+      score += 15;
+    } else if (weeksToTarget >= 1 && weeksToTarget <= 6) {
+      score += 5;
+    }
+
+    // Grade: prefer lower-grade races for prep (less competitive)
+    if (race.grade === "G3") {
+      score += 10;
+    } else if (race.grade === "G2") {
+      score += 5;
+    }
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestRace = race;
+    }
+  }
+
+  return bestRace?.key ?? null;
+}
+
+// ─── Contender Confidence Decay ──────────────────────────────────────────────
+
+/**
+ * Decay contender confidence based on recent race performance.
+ *
+ * If a horse underperforms in prep races (finishing worse than expected),
+ * reduce confidence and potentially flag as no longer a contender.
+ *
+ * @param contender - Current contender status
+ * @param recentResults - Array of recent race positions (lower is better)
+ * @param currentDay - Current game day
+ * @returns Updated contender status with decayed confidence
+ */
+export function decayContenderConfidence(
+  contender: ContenderStatus,
+  recentResults: number[],
+  currentDay: number,
+): ContenderStatus {
+  if (!contender.isContender) return contender;
+
+  if (recentResults.length === 0) return contender;
+
+  // Calculate average position in recent races
+  const avgPosition = recentResults.reduce((sum, p) => sum + p, 0) / recentResults.length;
+
+  // Good performance (avg position <= 3): boost confidence slightly
+  // Poor performance (avg position > 5): decay confidence
+  let confidenceDelta = 0;
+  if (avgPosition <= 2) {
+    confidenceDelta = 0.05; // Small boost for winning form
+  } else if (avgPosition <= 3) {
+    confidenceDelta = 0.02; // Small boost for placing
+  } else if (avgPosition > 5) {
+    confidenceDelta = -0.1; // Significant decay for poor finishes
+  } else if (avgPosition > 4) {
+    confidenceDelta = -0.05; // Moderate decay
+  }
+
+  const newConfidence = Math.max(0, Math.min(1, contender.confidence + confidenceDelta));
+
+  // If confidence drops below 0.3, horse is no longer a contender
+  const stillContender = newConfidence >= 0.3;
+
+  return {
+    ...contender,
+    confidence: newConfidence,
+    isContender: stillContender,
+    lastAssessmentDay: currentDay,
+  };
+}
+
+// ─── Multi-Horse Campaign Coordination ───────────────────────────────────────
+
+/**
+ * Coordinate campaign schedules for multiple contenders targeting the same series.
+ *
+ * If a stable has 2+ contenders for the same series, assign complementary
+ * prep schedules to avoid internal competition (different prep races).
+ *
+ * @param contenders - Array of contender statuses for the stable's horses
+ * @param targetRaceKey - The target race key
+ * @param upcomingRaces - Available prep races
+ * @param currentDay - Current game day
+ * @returns Map of horseId to assigned prep race key
+ */
+export function coordinateMultiHorsePrep(
+  contenders: Array<{ horseId: string; status: ContenderStatus }>,
+  targetRaceKey: string,
+  upcomingRaces: GradedRace[],
+  currentDay: number,
+): Map<string, string | null> {
+  const assignments = new Map<string, string | null>();
+  const usedRaceKeys = new Set<string>();
+
+  // Sort contenders by confidence (highest first gets first pick)
+  const sorted = [...contenders].sort((a, b) => b.status.confidence - a.status.confidence);
+
+  for (const { horseId, status } of sorted) {
+    // Filter out already-assigned prep races
+    const available = upcomingRaces.filter((r) => !usedRaceKeys.has(r.key));
+    const prepRace = selectPrepRace(status, targetRaceKey, available, currentDay);
+    if (prepRace) {
+      usedRaceKeys.add(prepRace);
+    }
+    assignments.set(horseId, prepRace);
+  }
+
+  return assignments;
+}

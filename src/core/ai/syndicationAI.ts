@@ -287,3 +287,58 @@ export function calculateShareSale(
 
   return sellQuantity;
 }
+
+// ─── Syndicate Share Valuation ───────────────────────────────────────────────
+
+/**
+ * Calculate the per-share value of a syndicate.
+ *
+ * Uses the stallion's syndicate value and divides by total shares,
+ * adjusting for stallion age trajectory (younger stallions have
+ * more upside potential).
+ *
+ * @param stallion - The syndicated stallion
+ * @param totalShares - Total shares in the syndicate
+ * @returns Per-share value
+ */
+export function calculateShareValue(stallion: Horse, totalShares: number): number {
+  if (totalShares <= 0) return 0;
+  const syndicateValue = calculateSyndicateValue(stallion);
+  return Math.round(syndicateValue / totalShares);
+}
+
+// ─── Syndicate Dissolution Evaluation ────────────────────────────────────────
+
+/**
+ * Evaluate if a syndicate should be dissolved.
+ *
+ * If a stallion's performance has declined significantly (no G1 wins in
+ * recent years, declining progeny earnings), it may be time to dissolve
+ * the syndicate and sell the stallion.
+ *
+ * @param stallion - The syndicated stallion
+ * @param syndicateValue - Current syndicate value
+ * @param yearsActive - Years the syndicate has been active
+ * @returns True if the syndicate should be dissolved
+ */
+export function shouldDissolveSyndicate(
+  stallion: Horse,
+  syndicateValue: number,
+  yearsActive: number,
+): boolean {
+  // Don't dissolve young syndicates
+  if (yearsActive < 3) return false;
+
+  // Check recent G1 performance
+  const recentG1Wins =
+    stallion.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1 && r.day > 0).length ||
+    0;
+
+  // If stallion is old and syndicate value is low, dissolve
+  if (stallion.age > 18 && syndicateValue < 500000) return true;
+
+  // If no G1 wins and syndicate has been active for 5+ years with low value
+  if (yearsActive >= 5 && recentG1Wins === 0 && syndicateValue < 1000000) return true;
+
+  return false;
+}

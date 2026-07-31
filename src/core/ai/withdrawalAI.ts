@@ -444,3 +444,51 @@ export function getWithdrawalInsights(
     commonReasons,
   };
 }
+
+// ─── Track Condition Aware Withdrawal ────────────────────────────────────────
+
+/**
+ * Evaluate if a horse should be withdrawn based on unfavorable track conditions.
+ *
+ * Horses with strong surface aptitude preferences may underperform on
+ * off-conditions (mud/sloppy). This function checks if the horse's
+ * mud aptitude justifies a withdrawal.
+ *
+ * @param horse - The horse to evaluate
+ * @param trackCondition - Current track condition ('fast', 'good', 'muddy', 'sloppy')
+ * @returns True if the horse should be withdrawn due to track conditions
+ */
+export function shouldWithdrawForTrackCondition(
+  horse: Horse,
+  trackCondition: "fast" | "good" | "muddy" | "sloppy",
+): boolean {
+  // Only withdraw for off-conditions
+  if (trackCondition === "fast" || trackCondition === "good") return false;
+
+  // Horses with very low mud aptitude should be withdrawn
+  if (horse.mudAptitude < 0.3) return true;
+
+  return false;
+}
+
+// ─── Consecutive Withdrawal Pattern Detection ────────────────────────────────
+
+/**
+ * Detect if a horse has a pattern of consecutive withdrawals indicating
+ * a deeper issue (chronic injury, training mismatch, or behavioral problem).
+ *
+ * @param recentWithdrawals - Array of recent withdrawal decisions for the horse
+ * @returns True if the horse has a problematic withdrawal pattern
+ */
+export function detectConsecutiveWithdrawalPattern(
+  recentWithdrawals: Array<{ withdrew: boolean; reason?: string }>,
+): boolean {
+  if (recentWithdrawals.length < 3) return false;
+
+  const consecutiveCount = recentWithdrawals.slice(-3).filter((d) => d.withdrew).length;
+
+  // 3+ consecutive withdrawals indicate a pattern
+  if (consecutiveCount >= 3) return true;
+
+  return false;
+}

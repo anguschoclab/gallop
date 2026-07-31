@@ -8,8 +8,14 @@ import {
   getProgenyTripleCrownSuccess,
   adaptBreedingStrategy,
   selectSireForDam,
+  evaluateMareRetirement,
+  getBreedingMarketTiming,
+  hasSyndicateShare,
+  applySyndicatePreference,
+  assessGeneticDiversity,
 } from "@/core/ai/breedingAI";
 import type { Horse, Stable, GameState } from "@/game/types";
+import type { EconomicTrend } from "@/core/ai/strategicCoordinator";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createRng } from "@/core/common/rng";
@@ -626,5 +632,220 @@ describe("selectSireForDam", () => {
     const result = selectSireForDam(dam, [siblingStallion], stable, gameState, rng);
 
     expect(result).toBeNull();
+  });
+});
+
+describe("evaluateMareRetirement", () => {
+  it("does not retire mares younger than 5", () => {
+    const mare = createTestHorse({
+      id: "mare-1",
+      gender: "mare",
+      age: 4,
+      stats: {
+        speed: 50,
+        stamina: 50,
+        acceleration: 50,
+        consistency: 50,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
+    const stable = createTestStable({ id: "s1" });
+    expect(evaluateMareRetirement(mare, stable, [])).toEqual({ shouldRetire: false });
+  });
+
+  it("retires old mares with declining rating", () => {
+    const mare = createTestHorse({
+      id: "mare-2",
+      gender: "mare",
+      age: 9,
+      stats: {
+        speed: 40,
+        stamina: 40,
+        acceleration: 40,
+        consistency: 40,
+        temperament: 40,
+        conformation: 40,
+      },
+    });
+    const stable = createTestStable({ id: "s1" });
+    const result = evaluateMareRetirement(mare, stable, []);
+    expect(result.shouldRetire).toBe(true);
+    expect(result.reason).toBe("age_decline");
+  });
+
+  it("retires mares with poor recent form", () => {
+    const mare = createTestHorse({
+      id: "mare-3",
+      gender: "mare",
+      age: 6,
+      stats: {
+        speed: 60,
+        stamina: 60,
+        acceleration: 60,
+        consistency: 60,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
+    const stable = createTestStable({ id: "s1" });
+    const result = evaluateMareRetirement(mare, stable, [8, 7, 9, 6, 8]);
+    expect(result.shouldRetire).toBe(true);
+    expect(result.reason).toBe("poor_form");
+  });
+
+  it("retires high-rated older mares for breeding value", () => {
+    const mare = createTestHorse({
+      id: "mare-4",
+      gender: "mare",
+      age: 7,
+      stats: {
+        speed: 85,
+        stamina: 85,
+        acceleration: 85,
+        consistency: 85,
+        temperament: 80,
+        conformation: 80,
+      },
+    });
+    const stable = createTestStable({ id: "s1" });
+    const result = evaluateMareRetirement(mare, stable, [1, 2, 1]);
+    expect(result.shouldRetire).toBe(true);
+    expect(result.reason).toBe("high_breeding_value");
+  });
+
+  it("does not evaluate non-mares", () => {
+    const horse = createTestHorse({
+      id: "horse-1",
+      gender: "horse",
+      age: 10,
+      stats: {
+        speed: 30,
+        stamina: 30,
+        acceleration: 30,
+        consistency: 30,
+        temperament: 30,
+        conformation: 30,
+      },
+    });
+    const stable = createTestStable({ id: "s1" });
+    expect(evaluateMareRetirement(horse, stable, [])).toEqual({ shouldRetire: false });
+  });
+});
+
+describe("getBreedingMarketTiming", () => {
+  it("returns 1.0 for neutral market", () => {
+    const trend: EconomicTrend = {
+      studFeeTrend: 0,
+      yearlingPriceIndex: 100,
+      claimingMarketActivity: 0,
+    };
+    expect(getBreedingMarketTiming(trend)).toBeCloseTo(1.0);
+  });
+
+  it("returns >1.0 for bull market", () => {
+    const trend: EconomicTrend = {
+      studFeeTrend: 0.1,
+      yearlingPriceIndex: 120,
+      claimingMarketActivity: 0.3,
+    };
+    expect(getBreedingMarketTiming(trend)).toBeGreaterThan(1.0);
+  });
+
+  it("returns <1.0 for bear market", () => {
+    const trend: EconomicTrend = {
+      studFeeTrend: -0.1,
+      yearlingPriceIndex: 80,
+      claimingMarketActivity: 0.1,
+    };
+    expect(getBreedingMarketTiming(trend)).toBeLessThan(1.0);
+  });
+
+  it("clamps to 0.5-1.5 range", () => {
+    const extreme: EconomicTrend = {
+      studFeeTrend: 1,
+      yearlingPriceIndex: 200,
+      claimingMarketActivity: 1,
+    };
+    expect(getBreedingMarketTiming(extreme)).toBeLessThanOrEqual(1.5);
+  });
+});
+
+describe("syndicate-aware sire selection", () => {
+  it("hasSyndicateShare returns false when stable has no shares", () => {
+    const stable = createTestStable({ id: "s1" });
+    const sire = createTestHorse({ id: "sire-1" });
+    expect(hasSyndicateShare(stable, sire)).toBe(false);
+  });
+
+  it("hasSyndicateShare returns true when stable has shares in sire", () => {
+    const stable = createTestStable({ id: "s1" });
+    (stable as unknown as { syndicateShares: Array<{ horseId: string }> }).syndicateShares = [
+      { horseId: "sire-1" },
+    ];
+    const sire = createTestHorse({ id: "sire-1" });
+    expect(hasSyndicateShare(stable, sire)).toBe(true);
+  });
+
+  it("applySyndicatePreference boosts score for syndicate-owned sire", () => {
+    const stable = createTestStable({ id: "s1" });
+    (stable as unknown as { syndicateShares: Array<{ horseId: string }> }).syndicateShares = [
+      { horseId: "sire-1" },
+    ];
+    const sire = createTestHorse({ id: "sire-1" });
+    const boosted = applySyndicatePreference(100, stable, sire);
+    expect(boosted).toBeCloseTo(115);
+  });
+
+  it("applySyndicatePreference does not boost for non-syndicate sire", () => {
+    const stable = createTestStable({ id: "s1" });
+    const sire = createTestHorse({ id: "sire-2" });
+    const score = applySyndicatePreference(100, stable, sire);
+    expect(score).toBe(100);
+  });
+});
+
+describe("assessGeneticDiversity", () => {
+  it("returns low risk for empty breeding history", () => {
+    const result = assessGeneticDiversity([], new Map());
+    expect(result.averageCoi).toBe(0);
+    expect(result.riskLevel).toBe("low");
+  });
+
+  it("returns low risk for diverse breedings", () => {
+    const sire1 = createTestHorse({ id: "sire-a" });
+    const dam1 = createTestHorse({ id: "dam-a" });
+    const sire2 = createTestHorse({ id: "sire-b" });
+    const dam2 = createTestHorse({ id: "dam-b" });
+    const horseMap = new Map([
+      ["sire-a", sire1],
+      ["dam-a", dam1],
+      ["sire-b", sire2],
+      ["dam-b", dam2],
+    ]);
+    const history = [
+      {
+        sireId: "sire-a",
+        damId: "dam-a",
+        sireName: "a",
+        damName: "a",
+        stableId: "s1",
+        personality: "breeder" as const,
+        day: 1,
+        score: 80,
+      },
+      {
+        sireId: "sire-b",
+        damId: "dam-b",
+        sireName: "b",
+        damName: "b",
+        stableId: "s1",
+        personality: "breeder" as const,
+        day: 2,
+        score: 80,
+      },
+    ];
+    const result = assessGeneticDiversity(history, horseMap);
+    expect(result.riskLevel).toBe("low");
   });
 });

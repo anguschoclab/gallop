@@ -22,6 +22,7 @@ import type { BreedingProgram } from "@/core/breeding/programs";
 import { createRng, hashStr, type Rng } from "@/core/common/rng";
 import { computeProspectiveCoi } from "@/core/breeding/populationGenetics";
 import { canBreed } from "@/core/breeding/eligibility";
+import type { EconomicTrend } from "./strategicCoordinator";
 
 /**
  * Breeding AI System
@@ -542,4 +543,155 @@ function selectSireByTraditionalScoring(
 
   scored.sort((a, b) => b.score - a.score);
   return scored[0].sire;
+}
+
+// ─── Mare Retirement Optimization ────────────────────────────────────────────
+
+/**
+ * Evaluate whether a mare should be retired from racing to breeding.
+ *
+ * Considers age, performance decline, and breeding value. Mares that are
+ * older with declining form and high breeding potential should be retired.
+ *
+ * @param mare - The mare to evaluate
+ * @param stable - The stable owning the mare
+ * @param recentForm - Array of recent race positions (last 5 races)
+ * @returns Object with shouldRetire flag and reason
+ */
+export function evaluateMareRetirement(
+  mare: Horse,
+  stable: Stable,
+  recentForm: number[],
+): { shouldRetire: boolean; reason?: string } {
+  // Only evaluate mares/fillies
+  if (mare.gender !== "mare" && mare.gender !== "filly") {
+    return { shouldRetire: false };
+  }
+
+  // Don't retire young mares
+  if (mare.age < 5) return { shouldRetire: false };
+
+  const rating = calculateOverallRating(mare);
+
+  // Age-based: mares 8+ with declining rating should retire to breeding
+  if (mare.age >= 8 && rating < 60) {
+    return { shouldRetire: true, reason: "age_decline" };
+  }
+
+  // Performance-based: poor recent form (avg position > 6 in last 5 races)
+  if (recentForm.length >= 3) {
+    const avgPosition = recentForm.reduce((sum, p) => sum + p, 0) / recentForm.length;
+    if (avgPosition > 6 && mare.age >= 6) {
+      return { shouldRetire: true, reason: "poor_form" };
+    }
+  }
+
+  // Breeding value: high-rated mares should retire earlier to maximize breeding career
+  if (mare.age >= 7 && rating >= 80) {
+    return { shouldRetire: true, reason: "high_breeding_value" };
+  }
+
+  return { shouldRetire: false };
+}
+
+// ─── Market Timing for Breeding ──────────────────────────────────────────────
+
+/**
+ * Determine breeding aggressiveness based on economic market conditions.
+ *
+ * When the foal market is strong (high yearling price index), stables should
+ * breed more aggressively. When the market is saturated or weak, scale back.
+ *
+ * @param trend - Current global economic trend
+ * @returns Multiplier for breeding aggressiveness (0.5 to 1.5)
+ */
+export function getBreedingMarketTiming(trend: EconomicTrend): number {
+  const indexDeviation = (trend.yearlingPriceIndex - 100) / 100;
+  // Bull market: breed more (up to 1.5x), bear market: breed less (down to 0.5x)
+  const multiplier = 1 + Math.max(-0.5, Math.min(0.5, indexDeviation * 2));
+  return multiplier;
+}
+
+// ─── Syndicate-Aware Sire Selection ──────────────────────────────────────────
+
+/**
+ * Check if a stable holds shares in a stallion's syndicate.
+ *
+ * Stables that hold syndicate shares in a stallion get reduced or waived
+ * stud fees, making those sires economically preferable.
+ *
+ * @param stable - The stable considering breeding
+ * @param sire - The candidate stallion
+ * @returns True if the stable has syndicate shares in this sire
+ */
+export function hasSyndicateShare(stable: Stable, sire: Horse): boolean {
+  // Check if stable has any syndicate shares referencing this sire
+  const shares = (stable as unknown as { syndicateShares?: Array<{ horseId: string }> })
+    .syndicateShares;
+  if (!shares) return false;
+  return shares.some((s) => s.horseId === sire.id);
+}
+
+/**
+ * Apply syndicate-aware preference to sire selection.
+ *
+ * Sires in which the stable holds syndicate shares get a score boost,
+ * as breeding to them avoids or reduces stud fees.
+ *
+ * @param baseScore - The base sire score from traditional scoring
+ * @param stable - The stable making the breeding decision
+ * @param sire - The candidate stallion
+ * @returns Adjusted score with syndicate preference applied
+ */
+export function applySyndicatePreference(baseScore: number, stable: Stable, sire: Horse): number {
+  if (hasSyndicateShare(stable, sire)) {
+    // 15% score boost for syndicate-owned sires (fee savings)
+    return baseScore * 1.15;
+  }
+  return baseScore;
+}
+
+// ─── Genetic Diversity Tracking ──────────────────────────────────────────────
+
+/**
+ * Evaluate the genetic diversity risk of a stable's breeding program.
+ *
+ * Tracks the average COI across recent breedings and flags if the stable
+ * is trending toward inbreeding issues.
+ *
+ * @param breedingHistory - Array of recent breeding decisions
+ * @param horses - Map of all horses for COI lookup
+ * @returns Object with averageCoi and riskLevel
+ */
+export function assessGeneticDiversity(
+  breedingHistory: BreedingDecision[],
+  horses: Map<string, Horse>,
+): { averageCoi: number; riskLevel: "low" | "moderate" | "high" } {
+  const recentBreedings = breedingHistory.slice(-10);
+  if (recentBreedings.length === 0) {
+    return { averageCoi: 0, riskLevel: "low" };
+  }
+
+  let totalCoi = 0;
+  let count = 0;
+
+  for (const decision of recentBreedings) {
+    const sire = horses.get(decision.sireId);
+    const dam = horses.get(decision.damId);
+    if (sire && dam) {
+      totalCoi += computeProspectiveCoi(sire, dam);
+      count++;
+    }
+  }
+
+  const averageCoi = count > 0 ? totalCoi / count : 0;
+
+  let riskLevel: "low" | "moderate" | "high" = "low";
+  if (averageCoi > 0.08) {
+    riskLevel = "high";
+  } else if (averageCoi > 0.05) {
+    riskLevel = "moderate";
+  }
+
+  return { averageCoi, riskLevel };
 }

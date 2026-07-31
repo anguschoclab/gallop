@@ -501,3 +501,59 @@ export function getGenerationInsights(
     rosterBalance,
   };
 }
+
+// ─── Roster Gap Analysis ─────────────────────────────────────────────────────
+
+/**
+ * Analyze roster gaps and recommend what type of horse to generate next.
+ *
+ * Evaluates the current roster for missing distance preferences, surface
+ * specializations, or age gaps, and recommends what to generate.
+ *
+ * @param horses - Current horses in the stable
+ * @returns Recommendation for next horse generation
+ */
+export function analyzeRosterGaps(horses: Horse[]): {
+  type: "sprint" | "middle" | "stayer" | "turf" | "dirt" | "young" | "balanced";
+  reason: string;
+} {
+  if (horses.length === 0) {
+    return { type: "balanced", reason: "empty_roster" };
+  }
+
+  // Check distance distribution using distanceAptitude (0-1, higher = better at longer distances)
+  const sprinters = horses.filter((h) => h.distanceAptitude < 0.4).length;
+  const stayers = horses.filter((h) => h.distanceAptitude > 0.7).length;
+
+  // Check surface distribution using surfaceAptitude
+  const turfHorses = horses.filter((h) => h.surfaceAptitude.Turf > 0.6).length;
+  const dirtHorses = horses.filter((h) => h.surfaceAptitude.Dirt > 0.6).length;
+
+  // Check age distribution
+  const youngHorses = horses.filter((h) => h.age <= 3).length;
+
+  // Prioritize: if no sprinters, generate one
+  if (sprinters === 0 && horses.length >= 3) {
+    return { type: "sprint", reason: "no_sprinters" };
+  }
+
+  // If no stayers, generate one
+  if (stayers === 0 && horses.length >= 5) {
+    return { type: "stayer", reason: "no_stayers" };
+  }
+
+  // If heavily skewed to one surface
+  if (turfHorses === 0 && dirtHorses > 0) {
+    return { type: "turf", reason: "no_turf_horses" };
+  }
+  if (dirtHorses === 0 && turfHorses > 0) {
+    return { type: "dirt", reason: "no_dirt_horses" };
+  }
+
+  // If not enough young horses coming up
+  if (youngHorses < Math.ceil(horses.length * 0.3)) {
+    return { type: "young", reason: "aging_roster" };
+  }
+
+  return { type: "balanced", reason: "well_balanced" };
+}

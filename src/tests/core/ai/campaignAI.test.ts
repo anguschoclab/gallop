@@ -13,9 +13,13 @@ import {
   recordCampaignDecision,
   recordCampaignOutcome,
   getCampaignInsights,
+  selectPrepRace,
+  decayContenderConfidence,
+  coordinateMultiHorsePrep,
 } from "@/core/ai/campaignAI";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { GradedRace } from "@/data/gradedRaces";
+import type { ContenderStatus } from "@/core/ai/campaignAI";
 import type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 
@@ -774,5 +778,199 @@ describe("getCampaignInsights", () => {
 
     const insights = getCampaignInsights(updatedState2, "stable-1");
     expect(insights.contenderCount).toBe(2);
+  });
+});
+
+describe("selectPrepRace", () => {
+  function createMockContender(overrides: Partial<ContenderStatus> = {}): ContenderStatus {
+    return {
+      horseId: "horse-1",
+      isContender: true,
+      targetRaces: ["usa-kentucky-derby"],
+      confidence: 0.8,
+      lastAssessmentDay: 100,
+      contenderSeries: {},
+      ...overrides,
+    };
+  }
+
+  function createMockGradedRace(overrides: Partial<GradedRace> = {}): GradedRace {
+    return {
+      uuid: "race-uuid-1",
+      key: "prep-race-1",
+      name: "Prep Race",
+      track: "Test Track",
+      grade: "G3",
+      distance: 1800,
+      surface: "Dirt",
+      purse: 100000,
+      dayOfYear: 110,
+      ...overrides,
+    };
+  }
+
+  it("returns null when no upcoming races available", () => {
+    const contender = createMockContender();
+    expect(selectPrepRace(contender, "usa-kentucky-derby", [], 100)).toBeNull();
+  });
+
+  it("selects a suitable prep race with good distance and surface alignment", () => {
+    const contender = createMockContender();
+    const prepRace = createMockGradedRace({
+      key: "prep-1",
+      distance: 2000,
+      surface: "Dirt",
+      dayOfYear: 115,
+      grade: "G3",
+    });
+    // Target race: Kentucky Derby (2012m Dirt, dayOfYear=123)
+    const result = selectPrepRace(contender, "usa-kentucky-derby", [prepRace], 100);
+    expect(result).toBe("prep-1");
+  });
+
+  it("skips races too close to current day", () => {
+    const contender = createMockContender();
+    const tooClose = createMockGradedRace({ key: "too-close", dayOfYear: 103 });
+    expect(selectPrepRace(contender, "usa-kentucky-derby", [tooClose], 100)).toBeNull();
+  });
+
+  it("skips races too far out", () => {
+    const contender = createMockContender();
+    const tooFar = createMockGradedRace({ key: "too-far", dayOfYear: 150 });
+    expect(selectPrepRace(contender, "usa-kentucky-derby", [tooFar], 100)).toBeNull();
+  });
+});
+
+describe("decayContenderConfidence", () => {
+  function createMockContender(overrides: Partial<ContenderStatus> = {}): ContenderStatus {
+    return {
+      horseId: "horse-1",
+      isContender: true,
+      targetRaces: [],
+      confidence: 0.7,
+      lastAssessmentDay: 100,
+      contenderSeries: {},
+      ...overrides,
+    };
+  }
+
+  it("boosts confidence for winning form (avg position <= 2)", () => {
+    const contender = createMockContender({ confidence: 0.7 });
+    const result = decayContenderConfidence(contender, [1, 2, 1], 110);
+    expect(result.confidence).toBeGreaterThan(0.7);
+    expect(result.isContender).toBe(true);
+  });
+
+  it("decays confidence for poor finishes (avg position > 5)", () => {
+    const contender = createMockContender({ confidence: 0.7 });
+    const result = decayContenderConfidence(contender, [6, 7, 8], 110);
+    expect(result.confidence).toBeLessThan(0.7);
+  });
+
+  it("removes contender status when confidence drops below 0.3", () => {
+    const contender = createMockContender({ confidence: 0.35 });
+    const result = decayContenderConfidence(contender, [8, 7, 9], 110);
+    expect(result.isContender).toBe(false);
+    expect(result.confidence).toBeLessThan(0.3);
+  });
+
+  it("does not modify non-contenders", () => {
+    const contender = createMockContender({ isContender: false, confidence: 0.1 });
+    const result = decayContenderConfidence(contender, [1, 1, 1], 110);
+    expect(result.confidence).toBe(0.1);
+    expect(result.isContender).toBe(false);
+  });
+
+  it("returns unchanged for empty results", () => {
+    const contender = createMockContender({ confidence: 0.7 });
+    const result = decayContenderConfidence(contender, [], 110);
+    expect(result.confidence).toBe(0.7);
+  });
+});
+
+describe("coordinateMultiHorsePrep", () => {
+  function createMockContender(
+    horseId: string,
+    confidence: number,
+  ): { horseId: string; status: ContenderStatus } {
+    return {
+      horseId,
+      status: {
+        horseId,
+        isContender: true,
+        targetRaces: ["usa-kentucky-derby"],
+        confidence,
+        lastAssessmentDay: 100,
+        contenderSeries: {},
+      },
+    };
+  }
+
+  it("assigns different prep races to multiple contenders", () => {
+    const contenders = [createMockContender("h1", 0.8), createMockContender("h2", 0.6)];
+    const races = [
+      {
+        uuid: "r1",
+        key: "prep-a",
+        name: "Prep A",
+        track: "Track A",
+        grade: "G3" as const,
+        distance: 2000,
+        surface: "Dirt" as const,
+        purse: 100000,
+        dayOfYear: 115,
+      },
+      {
+        uuid: "r2",
+        key: "prep-b",
+        name: "Prep B",
+        track: "Track B",
+        grade: "G3" as const,
+        distance: 2000,
+        surface: "Dirt" as const,
+        purse: 100000,
+        dayOfYear: 120,
+      },
+    ];
+    const result = coordinateMultiHorsePrep(contenders, "usa-kentucky-derby", races, 100);
+    const h1Race = result.get("h1");
+    const h2Race = result.get("h2");
+    expect(h1Race).not.toBeNull();
+    expect(h2Race).not.toBeNull();
+    expect(h1Race).not.toBe(h2Race);
+  });
+
+  it("gives higher confidence contender first pick", () => {
+    const contenders = [createMockContender("h1", 0.9), createMockContender("h2", 0.5)];
+    const bestRace = {
+      uuid: "r1",
+      key: "best-prep",
+      name: "Best Prep",
+      track: "Track A",
+      grade: "G3" as const,
+      distance: 2000,
+      surface: "Dirt" as const,
+      purse: 100000,
+      dayOfYear: 115,
+    };
+    const lesserRace = {
+      uuid: "r2",
+      key: "lesser-prep",
+      name: "Lesser Prep",
+      track: "Track B",
+      grade: "G2" as const,
+      distance: 1800,
+      surface: "Dirt" as const,
+      purse: 100000,
+      dayOfYear: 120,
+    };
+    const result = coordinateMultiHorsePrep(
+      contenders,
+      "usa-kentucky-derby",
+      [bestRace, lesserRace],
+      100,
+    );
+    // h1 (higher confidence) should get the G3 race (better prep race)
+    expect(result.get("h1")).toBe("best-prep");
   });
 });

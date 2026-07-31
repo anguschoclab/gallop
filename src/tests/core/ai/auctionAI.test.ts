@@ -9,8 +9,15 @@ import {
   recordBiddingDecision,
   recordConsignmentDecision,
   getAuctionInsights,
+  getMarketTrendMultiplier,
+  getAverageRecentHammerPrice,
+  recordHammerPrice,
+  shouldYieldToAlly,
+  evaluateConsignmentTiming,
 } from "@/core/ai/auctionAI";
 import type { Horse, Stable, AuctionLot } from "@/game/types";
+import type { NpcRelationship } from "@/core/ai/npcCycleAI";
+import type { EconomicTrend } from "@/core/ai/strategicCoordinator";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 
 function createMockHorse(overrides: Partial<Horse> = {}): Horse {
@@ -514,5 +521,194 @@ describe("getAuctionInsights", () => {
     };
     const insights = getAuctionInsights(stateWithHorses, "stable-1");
     expect(insights.portfolioHealth).toBe(5 / 10);
+  });
+});
+
+describe("getMarketTrendMultiplier", () => {
+  it("returns 1.0 for neutral market (index=100)", () => {
+    const trend: EconomicTrend = {
+      studFeeTrend: 0,
+      yearlingPriceIndex: 100,
+      claimingMarketActivity: 0,
+    };
+    expect(getMarketTrendMultiplier(trend)).toBeCloseTo(1.0);
+  });
+
+  it("returns >1.0 for bull market (index=120)", () => {
+    const trend: EconomicTrend = {
+      studFeeTrend: 0.1,
+      yearlingPriceIndex: 120,
+      claimingMarketActivity: 0.3,
+    };
+    expect(getMarketTrendMultiplier(trend)).toBeGreaterThan(1.0);
+  });
+
+  it("returns <1.0 for bear market (index=80)", () => {
+    const trend: EconomicTrend = {
+      studFeeTrend: -0.1,
+      yearlingPriceIndex: 80,
+      claimingMarketActivity: 0.1,
+    };
+    expect(getMarketTrendMultiplier(trend)).toBeLessThan(1.0);
+  });
+
+  it("clamps multiplier to ±20%", () => {
+    const extremeBull: EconomicTrend = {
+      studFeeTrend: 0.5,
+      yearlingPriceIndex: 200,
+      claimingMarketActivity: 0.9,
+    };
+    expect(getMarketTrendMultiplier(extremeBull)).toBeLessThanOrEqual(1.2);
+
+    const extremeBear: EconomicTrend = {
+      studFeeTrend: -0.5,
+      yearlingPriceIndex: 50,
+      claimingMarketActivity: 0,
+    };
+    expect(getMarketTrendMultiplier(extremeBear)).toBeGreaterThanOrEqual(0.8);
+  });
+});
+
+describe("hammer price tracking", () => {
+  it("returns 0 for empty history", () => {
+    const stable = createMockStable();
+    const state = createAuctionAIState(stable);
+    expect(getAverageRecentHammerPrice(state)).toBe(0);
+  });
+
+  it("records and averages hammer prices", () => {
+    const stable = createMockStable();
+    let state = createAuctionAIState(stable);
+    state = recordHammerPrice(state, 50000);
+    state = recordHammerPrice(state, 70000);
+    expect(getAverageRecentHammerPrice(state)).toBe(60000);
+  });
+
+  it("trims to last 20 prices", () => {
+    const stable = createMockStable();
+    let state = createAuctionAIState(stable);
+    for (let i = 0; i < 25; i++) {
+      state = recordHammerPrice(state, i * 1000);
+    }
+    expect(state.recentHammerPrices.length).toBe(20);
+    // Last 20 prices are 5000..24000
+    expect(state.recentHammerPrices[0]).toBe(5000);
+    expect(state.recentHammerPrices[19]).toBe(24000);
+  });
+});
+
+describe("shouldYieldToAlly", () => {
+  const allyRel: NpcRelationship = {
+    trust: 70,
+    allianceType: "racing_coalition",
+    allianceSinceDay: 10,
+    history: [],
+  };
+
+  it("yields when ally needs horses more", () => {
+    const stable = createMockStable({ id: "s1", personality: "aggressive" });
+    const aiState = createAuctionAIState(stable);
+    aiState.portfolio.currentHorseCount = 10;
+    // My portfolio is full (10/10), ally has 2/10
+    const yieldResult = shouldYieldToAlly(stable, aiState, "s2", allyRel, 2, 10);
+    expect(yieldResult).toBe(true);
+  });
+
+  it("does not yield when I need horses more", () => {
+    const stable = createMockStable({ id: "s1", personality: "aggressive" });
+    const aiState = createAuctionAIState(stable);
+    aiState.portfolio.currentHorseCount = 2;
+    // I have 2/10, ally has 10/10
+    const yieldResult = shouldYieldToAlly(stable, aiState, "s2", allyRel, 10, 10);
+    expect(yieldResult).toBe(false);
+  });
+
+  it("does not yield to non-allied stables", () => {
+    const stable = createMockStable({ id: "s1", personality: "aggressive" });
+    const aiState = createAuctionAIState(stable);
+    const nonAllyRel: NpcRelationship = {
+      trust: 50,
+      allianceType: null,
+      history: [],
+    };
+    expect(shouldYieldToAlly(stable, aiState, "s2", nonAllyRel, 0, 10)).toBe(false);
+  });
+
+  it("does not yield when trust is low", () => {
+    const stable = createMockStable({ id: "s1", personality: "aggressive" });
+    const aiState = createAuctionAIState(stable);
+    const lowTrustRel: NpcRelationship = {
+      trust: 10,
+      allianceType: "racing_coalition",
+      allianceSinceDay: 1,
+      history: [],
+    };
+    expect(shouldYieldToAlly(stable, aiState, "s2", lowTrustRel, 0, 10)).toBe(false);
+  });
+});
+
+describe("evaluateConsignmentTiming", () => {
+  it("recommends consignment with price boost for empty catalog", () => {
+    const horse = createMockHorse({
+      stats: {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
+    const result = evaluateConsignmentTiming(horse, []);
+    expect(result.shouldConsign).toBe(true);
+    expect(result.priceModifier).toBeGreaterThan(1.0);
+  });
+
+  it("recommends consignment with boost when horse is much better than catalog", () => {
+    const horse = createMockHorse({
+      stats: {
+        speed: 90,
+        stamina: 90,
+        acceleration: 90,
+        consistency: 90,
+        temperament: 80,
+        conformation: 80,
+      },
+    });
+    const result = evaluateConsignmentTiming(horse, [50, 55, 60, 52]);
+    expect(result.shouldConsign).toBe(true);
+    expect(result.priceModifier).toBeGreaterThan(1.0);
+  });
+
+  it("recommends against consignment when horse is much weaker than catalog", () => {
+    const horse = createMockHorse({
+      stats: {
+        speed: 40,
+        stamina: 40,
+        acceleration: 40,
+        consistency: 40,
+        temperament: 30,
+        conformation: 30,
+      },
+    });
+    const result = evaluateConsignmentTiming(horse, [80, 85, 90, 82]);
+    expect(result.shouldConsign).toBe(false);
+    expect(result.priceModifier).toBeLessThan(1.0);
+  });
+
+  it("recommends consignment at neutral modifier when horse fits catalog", () => {
+    const horse = createMockHorse({
+      stats: {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
+    const result = evaluateConsignmentTiming(horse, [68, 72, 70, 71]);
+    expect(result.shouldConsign).toBe(true);
+    expect(result.priceModifier).toBe(1.0);
   });
 });

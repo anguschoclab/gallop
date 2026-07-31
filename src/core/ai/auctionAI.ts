@@ -18,6 +18,8 @@ import { getPersonalityAIState, calculateUtilityScore } from "./personalitySyste
 import { createLearningState, recordOutcome as recordLearningOutcome } from "./learningModule";
 import { getSuccessRate, getAdaptiveThreshold, type LearningState } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
+import type { EconomicTrend } from "./strategicCoordinator";
+import type { NpcRelationship } from "./npcCycleAI";
 
 export interface AuctionAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -25,6 +27,7 @@ export interface AuctionAIState {
   biddingHistory: BiddingDecision[];
   consignmentHistory: ConsignmentDecision[];
   portfolio: PortfolioState;
+  recentHammerPrices: number[];
 }
 
 export interface BiddingDecision {
@@ -75,6 +78,7 @@ export function createAuctionAIState(stable: Stable): AuctionAIState {
     learningState: createLearningState(),
     biddingHistory: [],
     consignmentHistory: [],
+    recentHammerPrices: [],
     portfolio: {
       targetHorseCount: stable.personality === "prestige" ? 15 : 10,
       currentHorseCount: 0,
@@ -530,4 +534,146 @@ export function getAuctionInsights(
     sellRate,
     portfolioHealth,
   };
+}
+
+// ─── Market Trend Awareness ──────────────────────────────────────────────────
+
+/**
+ * Calculate a market trend multiplier for bidding decisions.
+ *
+ * Uses the global economic trend to adjust bidding thresholds:
+ * - Bull market (high yearlingPriceIndex): raise max bids, as future resale value is higher
+ * - Bear market (low yearlingPriceIndex): lower max bids, as market is cooling
+ *
+ * @param trend - Current global economic trend
+ * @returns Multiplier to apply to max bid (e.g., 1.1 in bull market, 0.9 in bear)
+ */
+export function getMarketTrendMultiplier(trend: EconomicTrend): number {
+  const indexDeviation = (trend.yearlingPriceIndex - 100) / 100;
+  // Clamp to ±20% adjustment
+  const multiplier = 1 + Math.max(-0.2, Math.min(0.2, indexDeviation));
+  return multiplier;
+}
+
+/**
+ * Calculate the average recent hammer price from tracked auction history.
+ *
+ * @param aiState - Current auction AI state
+ * @returns Average hammer price, or 0 if no history
+ */
+export function getAverageRecentHammerPrice(aiState: AuctionAIState): number {
+  if (aiState.recentHammerPrices.length === 0) return 0;
+  return (
+    aiState.recentHammerPrices.reduce((sum, p) => sum + p, 0) / aiState.recentHammerPrices.length
+  );
+}
+
+/**
+ * Record a hammer price for market trend tracking.
+ *
+ * @param aiState - Current auction AI state
+ * @param hammerPrice - The final sale price
+ * @returns Updated AI state with tracked hammer price (keeps last 20)
+ */
+export function recordHammerPrice(aiState: AuctionAIState, hammerPrice: number): AuctionAIState {
+  const updated = [...aiState.recentHammerPrices, hammerPrice];
+  // Keep last 20 prices
+  const trimmed = updated.length > 20 ? updated.slice(-20) : updated;
+  return { ...aiState, recentHammerPrices: trimmed };
+}
+
+// ─── Coalition Bidding ───────────────────────────────────────────────────────
+
+/**
+ * Determine if a stable should yield to an allied stable in a coalition bidding scenario.
+ *
+ * When multiple NPC stables in an economic cartel or racing coalition want the same horse,
+ * they should coordinate to avoid driving prices up. The stable with the higher need
+ * (lower portfolio count or higher quality target alignment) gets priority.
+ *
+ * @param myStable - The stable considering bidding
+ * @param myAiState - The stable's auction AI state
+ * @param allyStableId - ID of the allied stable also interested
+ * @param allyRelationship - Relationship with the ally
+ * @param allyPortfolioCount - Ally's current horse count
+ * @param allyTargetCount - Ally's target horse count
+ * @returns True if this stable should yield (not bid) to the ally
+ */
+export function shouldYieldToAlly(
+  myStable: Stable,
+  myAiState: AuctionAIState,
+  allyStableId: string,
+  allyRelationship: NpcRelationship,
+  allyPortfolioCount: number,
+  allyTargetCount: number,
+): boolean {
+  // Only yield to allies in economic alliances
+  if (
+    allyRelationship.allianceType !== "racing_coalition" &&
+    allyRelationship.allianceType !== "breeding_partnership"
+  ) {
+    return false;
+  }
+
+  // Low trust = no cooperation
+  if (allyRelationship.trust < 30) return false;
+
+  const myCount = myAiState.portfolio.currentHorseCount;
+  const myTarget = myAiState.portfolio.targetHorseCount;
+
+  // If I'm well-stocked and ally needs horses more, yield
+  const myNeed = Math.max(0, myTarget - myCount);
+  const allyNeed = Math.max(0, allyTargetCount - allyPortfolioCount);
+
+  // Ally needs more horses than I do
+  if (allyNeed > myNeed) return true;
+
+  // Equal need: higher-rated stable (prestige > aggressive > others) gets priority
+  if (allyNeed === myNeed && myStable.personality !== "prestige") {
+    return true;
+  }
+
+  return false;
+}
+
+// ─── Consignment Timing ──────────────────────────────────────────────────────
+
+/**
+ * Evaluate whether the current auction catalog is a good time to consign a horse.
+ *
+ * Avoid consigning a mid-quality horse into a sale full of high-quality prospects,
+ * as it will get overshadowed and fetch a lower price. Conversely, consigning
+ * a high-quality horse into a weak sale can maximize visibility and price.
+ *
+ * @param horse - The horse being considered for consignment
+ * @param catalogHorseRatings - Array of ratings of other horses in the catalog
+ * @returns Object with shouldConsign flag and expected price modifier
+ */
+export function evaluateConsignmentTiming(
+  horse: Horse,
+  catalogHorseRatings: number[],
+): { shouldConsign: boolean; priceModifier: number } {
+  const horseRating = calculateOverallRating(horse);
+
+  if (catalogHorseRatings.length === 0) {
+    // Empty catalog — good time to consign, less competition
+    return { shouldConsign: true, priceModifier: 1.1 };
+  }
+
+  const catalogAvg =
+    catalogHorseRatings.reduce((sum, r) => sum + r, 0) / catalogHorseRatings.length;
+  const ratingDiff = horseRating - catalogAvg;
+
+  // Consigning a strong horse into a weak catalog: price boost
+  if (ratingDiff > 15) {
+    return { shouldConsign: true, priceModifier: 1.15 };
+  }
+
+  // Consigning a weak horse into a strong catalog: price penalty
+  if (ratingDiff < -15) {
+    return { shouldConsign: false, priceModifier: 0.85 };
+  }
+
+  // Neutral: horse fits the catalog
+  return { shouldConsign: true, priceModifier: 1.0 };
 }

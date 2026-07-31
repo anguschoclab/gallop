@@ -7,8 +7,12 @@ import {
   recordFacilityInvestment,
   updateFacilityROI,
   getFacilityInsights,
+  shouldUpgradeForCapacity,
+  getSpecializationPriority,
+  shouldDivestFacility,
 } from "@/core/ai/facilityAI";
 import type { PlayerFacilities } from "@/core/facilities/facilityTypes";
+import type { FacilityROI } from "@/core/ai/facilityAI";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 
 function makeState(
@@ -272,5 +276,108 @@ describe("getFacilityInsights", () => {
     expect(insights.facilityLevels["main_track"]).toBe("standard");
     expect(insights.facilityLevels["barn"]).toBe("premium");
     expect(insights.totalFacilities).toBe(2);
+  });
+});
+
+describe("shouldUpgradeForCapacity", () => {
+  it("recommends upgrade when at 80% capacity and affordable", () => {
+    expect(shouldUpgradeForCapacity("barn", "basic", 4, 100000)).toBe(true);
+  });
+
+  it("does not upgrade when below capacity threshold", () => {
+    expect(shouldUpgradeForCapacity("barn", "basic", 2, 100000)).toBe(false);
+  });
+
+  it("does not upgrade when stable cannot afford it", () => {
+    expect(shouldUpgradeForCapacity("barn", "basic", 4, 5000)).toBe(false);
+  });
+
+  it("does not upgrade elite level facilities", () => {
+    expect(shouldUpgradeForCapacity("barn", "elite", 18, 1000000)).toBe(false);
+  });
+});
+
+describe("getSpecializationPriority", () => {
+  it("prioritizes barn for breeder personality", () => {
+    const priority = getSpecializationPriority("breeder");
+    expect(priority[0]).toBe("barn");
+  });
+
+  it("prioritizes main_track for aggressive personality", () => {
+    const priority = getSpecializationPriority("aggressive");
+    expect(priority[0]).toBe("main_track");
+  });
+
+  it("prioritizes main_track for developer personality", () => {
+    const priority = getSpecializationPriority("developer");
+    expect(priority[0]).toBe("main_track");
+  });
+
+  it("returns valid FacilityType values", () => {
+    const priority = getSpecializationPriority("trader");
+    expect(priority.length).toBeGreaterThan(0);
+    expect(typeof priority[0]).toBe("string");
+  });
+});
+
+describe("shouldDivestFacility", () => {
+  it("does not divest basic level facilities", () => {
+    const roi: FacilityROI = {
+      facilityType: "main_track",
+      level: "basic",
+      totalInvestment: 10000,
+      totalBenefit: 5000,
+      daysOwned: 60,
+      lastUpdateDay: 60,
+    };
+    expect(shouldDivestFacility(roi, "basic")).toBe(false);
+  });
+
+  it("does not divest standard level facilities", () => {
+    const roi: FacilityROI = {
+      facilityType: "main_track",
+      level: "standard",
+      totalInvestment: 10000,
+      totalBenefit: 5000,
+      daysOwned: 60,
+      lastUpdateDay: 60,
+    };
+    expect(shouldDivestFacility(roi, "standard")).toBe(false);
+  });
+
+  it("divests premium facilities with poor ROI", () => {
+    const roi: FacilityROI = {
+      facilityType: "main_track",
+      level: "premium",
+      totalInvestment: 50000,
+      totalBenefit: 30000,
+      daysOwned: 60,
+      lastUpdateDay: 60,
+    };
+    expect(shouldDivestFacility(roi, "premium")).toBe(true);
+  });
+
+  it("does not divest premium facilities with good ROI", () => {
+    const roi: FacilityROI = {
+      facilityType: "main_track",
+      level: "premium",
+      totalInvestment: 50000,
+      totalBenefit: 60000,
+      daysOwned: 60,
+      lastUpdateDay: 60,
+    };
+    expect(shouldDivestFacility(roi, "premium")).toBe(false);
+  });
+
+  it("does not divest facilities owned less than 30 days", () => {
+    const roi: FacilityROI = {
+      facilityType: "main_track",
+      level: "premium",
+      totalInvestment: 50000,
+      totalBenefit: 10000,
+      daysOwned: 20,
+      lastUpdateDay: 20,
+    };
+    expect(shouldDivestFacility(roi, "premium")).toBe(false);
   });
 });

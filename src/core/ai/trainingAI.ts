@@ -328,3 +328,94 @@ export function shouldTrainToday(
 
   return true;
 }
+
+// ─── Periodization ───────────────────────────────────────────────────────────
+
+/**
+ * Determine training focus based on upcoming race schedule (periodization).
+ *
+ * Cycles training focus based on the target race distance:
+ * - Sprint (< 1400m): speed focus
+ * - Middle distance (1400-1800m): acceleration focus
+ * - Stayer (> 1800m): stamina focus
+ * - No upcoming race: balanced
+ *
+ * @param horse - The horse to train
+ * @param upcomingRaceDistance - Distance of the next race the horse is entered in, or null
+ * @returns Training focus for the current period
+ */
+export function getPeriodizedFocus(
+  horse: Horse,
+  upcomingRaceDistance: number | null,
+): "speed" | "stamina" | "acceleration" | "balanced" {
+  if (upcomingRaceDistance === null) return "balanced";
+
+  if (upcomingRaceDistance < 1400) return "speed";
+  if (upcomingRaceDistance <= 1800) return "acceleration";
+  return "stamina";
+}
+
+// ─── Overtraining Detection ──────────────────────────────────────────────────
+
+/**
+ * Detect if a horse is being overtrained based on energy and training history.
+ *
+ * If a horse's energy is chronically low (below 30 for multiple sessions) or
+ * has declining energy across recent sessions, recommend a rest period.
+ *
+ * @param horse - The horse to evaluate
+ * @param devTrack - The horse's training development track
+ * @returns True if horse should rest (not train) due to overtraining
+ */
+export function detectOvertraining(
+  horse: Horse,
+  devTrack: HorseTrainingTrack | undefined,
+): boolean {
+  // Chronic low energy
+  if (horse.energy < 20) return true;
+
+  // Check recent training history for declining energy pattern
+  if (devTrack && devTrack.trainingHistory.length >= 3) {
+    const recent = devTrack.trainingHistory.slice(-3);
+    const energies = recent.map((s) => s.energyAfter);
+    const declining = energies.every((e, i) => i === 0 || e <= energies[i - 1]);
+    const allLow = energies.every((e) => e < 30);
+
+    if (declining && allLow) return true;
+  }
+
+  return false;
+}
+
+// ─── Race-Schedule-Aware Training ────────────────────────────────────────────
+
+/**
+ * Determine if training should switch to maintenance mode before a race.
+ *
+ * If a horse is entered in a race within 3 days, switch to light maintenance
+ * training to preserve energy for race day.
+ *
+ * @param horse - The horse to evaluate
+ * @param daysToNextRace - Days until the horse's next race, or null if none
+ * @returns True if horse should do maintenance training only
+ */
+export function shouldDoMaintenanceTraining(horse: Horse, daysToNextRace: number | null): boolean {
+  if (daysToNextRace === null) return false;
+  return daysToNextRace <= 3;
+}
+
+// ─── Facility-Aware Training Intensity ───────────────────────────────────────
+
+/**
+ * Calculate training effectiveness multiplier based on facility level.
+ *
+ * Higher-level facilities provide better training equipment, leading to
+ * more effective training sessions.
+ *
+ * @param facilityLevel - The training facility level (1-5)
+ * @returns Multiplier for training effectiveness (1.0 at level 1, up to 1.4 at level 5)
+ */
+export function getFacilityTrainingMultiplier(facilityLevel: number): number {
+  if (facilityLevel <= 1) return 1.0;
+  return Math.min(1.4, 1.0 + (facilityLevel - 1) * 0.1);
+}
