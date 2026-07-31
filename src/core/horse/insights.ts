@@ -151,6 +151,34 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     };
   }
 
+  // 1.9 Check for Play Style Success (From the Clouds / Late Closer)
+  let fromTheCloudsWins = 0;
+
+  for (const race of history) {
+    if (
+      race.position === 1 &&
+      race.pacePositions &&
+      race.pacePositions.length >= 2 &&
+      race.fieldSize
+    ) {
+      const firstCall = race.pacePositions[0];
+      // Back third of the field at the first call
+      const isBackThird = firstCall > Math.floor(race.fieldSize * 0.66);
+      if (isBackThird) {
+        fromTheCloudsWins++;
+      }
+    }
+  }
+
+  if (fromTheCloudsWins >= 2) {
+    return {
+      label: "From the Clouds",
+      value: "Late Closer",
+      context: `Has rallied from the back third of the field to win ${fromTheCloudsWins} times`,
+      type: "positive",
+    };
+  }
+
   // 2. Check for distance sweet spot (best average beyer by distance, min 3 races)
   const distanceStats = new Map<number, { runs: number; totalBeyer: number; wins: number }>();
   for (const race of history) {

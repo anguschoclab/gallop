@@ -34,3 +34,8 @@
 
 **Learning:** `raceHistory` tracks `pacePositions` and `fieldSize`, allowing the derivation of wire-to-wire victories without needing new states. Checking `pacePositions.every(p => p === 1)` is an effective way to define "Wire-to-Wire".
 **Action:** Use existing structural data like `pacePositions` to construct contextual play style accolades like "Catch Me If You Can". Ensure safe fallbacks for missing `pacePositions` in legacy mock data.
+
+## 2025-02-13 - From the Clouds Insight
+
+**Learning:** `raceHistory` retains detailed `pacePositions` as well as `fieldSize`, making it possible to determine if a horse is rallying from the back of the pack. Calculating the back third position is a neat way to surface "closing" play styles.
+**Action:** Extract a "From the Clouds" insight to celebrate when a horse rallies from the back third of the pack at the first call to win, highlighting an exciting come-from-behind running style using the exact same metrics tracking logic as the wire-to-wire check.

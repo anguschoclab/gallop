@@ -389,4 +389,29 @@ describe("Play Style Success insights", () => {
     expect(insight!.label).toBe("Catch Me If You Can");
     expect(insight!.type).toBe("positive");
   });
+
+  it("detects From the Clouds when horse has 2+ wins rallying from the back third", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1, pacePositions: [8, 7, 1], fieldSize: 10 }, // 8 > 6.6
+        { position: 1, day: 2, pacePositions: [9, 5, 1], fieldSize: 12 }, // 9 > 7.92
+        { position: 3, day: 3, pacePositions: [8, 8, 3], fieldSize: 10 },
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("From the Clouds");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("does not detect From the Clouds if wins are not from back third", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1, pacePositions: [6, 4, 1], fieldSize: 10 }, // 6 <= 6.6 (midpack)
+        { position: 1, day: 2, pacePositions: [9, 5, 1], fieldSize: 12 }, // back third
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight?.label).not.toBe("From the Clouds");
+  });
 });
