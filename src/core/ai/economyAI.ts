@@ -368,3 +368,42 @@ export function calculateDynamicStudFee(
   const performanceMultiplier = 0.7 + progenyPerformanceScore * 0.6; // 0.7 to 1.3
   return Math.round(marketAdjustment * performanceMultiplier);
 }
+
+/**
+ * Track breeding volume data for economic signal calculation.
+ *
+ * Updates the economic state based on the number of new pregnancies
+ * and average stud fees paid. High breeding volume signals market confidence.
+ *
+ * @param manager - Current NPC AI manager
+ * @param breedingCount - Number of new breedings this cycle
+ * @param totalStudFeesPaid - Total stud fees paid this cycle
+ * @returns Updated manager with adjusted economic state
+ */
+export function trackBreedingVolume(
+  manager: NpcAIManager,
+  breedingCount: number,
+  totalStudFeesPaid: number,
+): NpcAIManager {
+  if (breedingCount === 0) return manager;
+
+  const current = manager.globalEconomicState ?? createEconomicState();
+  const avgFee = totalStudFeesPaid / breedingCount;
+
+  // High breeding volume with high fees → bullish stud fee trend
+  // Low volume or low fees → bearish pressure
+  const volumeSignal = Math.min(1, breedingCount / 20); // Normalize: 20+ breedings = max signal
+  const feeSignal = Math.min(1, avgFee / 50000); // Normalize: 50k+ avg fee = max signal
+  const combinedSignal = (volumeSignal + feeSignal) / 2;
+
+  // Adjust stud fee trend: high activity pushes fees up, low activity pushes down
+  const trendAdjustment = (combinedSignal - 0.4) * 0.05; // Range: -0.02 to +0.03
+
+  return {
+    ...manager,
+    globalEconomicState: {
+      ...current,
+      studFeeTrend: Math.max(-0.5, Math.min(0.5, current.studFeeTrend * 0.95 + trendAdjustment)),
+    },
+  };
+}

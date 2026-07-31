@@ -19,6 +19,7 @@ import {
   calculateAuctionReservePrice,
   calculateStrategicClaimingPrice,
   calculateDynamicStudFee,
+  trackBreedingVolume,
 } from "@/core/ai/economyAI";
 import type { Stable, GameState } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
@@ -447,5 +448,47 @@ describe("calculateDynamicStudFee", () => {
     const marketAdj = calculateStudFeeAdjustment(trend, 50000);
     const expectedMultiplier = 0.7 + 0.5 * 0.6;
     expect(result).toBe(Math.round(marketAdj * expectedMultiplier));
+  });
+});
+
+describe("trackBreedingVolume", () => {
+  function createMockManager(): NpcAIManager {
+    return {
+      stableStates: {},
+      globalDay: 100,
+      regionalKings: {},
+      globalEconomicState: createEconomicState(),
+    };
+  }
+
+  it("returns manager unchanged when breedingCount is 0", () => {
+    const manager = createMockManager();
+    const result = trackBreedingVolume(manager, 0, 0);
+    expect(result).toBe(manager);
+  });
+
+  it("adjusts stud fee trend upward for high volume and high fees", () => {
+    const manager = createMockManager();
+    const initialTrend = manager.globalEconomicState!.studFeeTrend;
+    const result = trackBreedingVolume(manager, 25, 1000000);
+    expect(result.globalEconomicState!.studFeeTrend).toBeGreaterThan(initialTrend);
+  });
+
+  it("adjusts stud fee trend downward for low volume and low fees", () => {
+    const manager = createMockManager();
+    const initialTrend = manager.globalEconomicState!.studFeeTrend;
+    const result = trackBreedingVolume(manager, 1, 5000);
+    expect(result.globalEconomicState!.studFeeTrend).toBeLessThan(initialTrend);
+  });
+
+  it("creates economic state if missing", () => {
+    const manager: NpcAIManager = {
+      stableStates: {},
+      globalDay: 100,
+      regionalKings: {},
+    };
+    const result = trackBreedingVolume(manager, 5, 250000);
+    expect(result.globalEconomicState).toBeDefined();
+    expect(result.globalEconomicState!.studFeeTrend).not.toBe(0);
   });
 });
