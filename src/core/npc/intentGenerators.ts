@@ -216,16 +216,13 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
       intents.push(...generateNpcGeldingIntents(state, stable, stableAI, day, ownedHorses));
       intents.push(...generateNpcSyndicateIntents(state, stable, day, ownedHorses));
 
-      // Update stable AI state in the manager
+      // Update stable AI state in the manager (immutable update)
       if (aiManager && stableAI) {
         const updatedState = updateStableAIState(stableAI, day);
-        // Use a safer way to update the state that handles potential readonly issues
-        try {
-          aiManager.stableStates[stable.id] = updatedState;
-        } catch (e) {
-          // Fallback for readonly state (e.g. during development/tests)
-          // Note: This won't persist if the manager isn't updated in the state
-        }
+        aiManager.stableStates = {
+          ...aiManager.stableStates,
+          [stable.id]: updatedState,
+        };
       }
     } catch (err) {
       console.warn("Failed to generate intents for NPC", stable.id, err);
@@ -258,11 +255,7 @@ function generateNpcTrainingIntents(
   const intents: TrainingIntent[] = [];
 
   // Use persisted AI state if available, otherwise fallback to temporary state
-  const trainingAI =
-    stableAI?.trainingAI ||
-    (stableAI
-      ? (stableAI.trainingAI = createTrainingAIState(stable))
-      : createTrainingAIState(stable));
+  const trainingAI = stableAI?.trainingAI ?? createTrainingAIState(stable);
 
   const stableFacilities = state.npcFacilities?.[stable.id];
   const availableTypes = stableFacilities
@@ -321,18 +314,10 @@ function generateNpcRaceEntryIntents(
   const intents: RaceEntryIntent[] = [];
 
   // Use persisted AI state if available, otherwise fallback to temporary state
-  const raceEntryAI =
-    stableAI?.raceEntryAI ||
-    (stableAI
-      ? (stableAI.raceEntryAI = createRaceEntryAIState(stable))
-      : createRaceEntryAIState(stable));
+  const raceEntryAI = stableAI?.raceEntryAI ?? createRaceEntryAIState(stable);
 
   // Initialize jockey strategy AI if not present
-  const jockeyStrategyAI =
-    stableAI?.jockeyStrategyAI ||
-    (stableAI
-      ? (stableAI.jockeyStrategyAI = createJockeyStrategyAIState(stable))
-      : createJockeyStrategyAIState(stable));
+  const jockeyStrategyAI = stableAI?.jockeyStrategyAI ?? createJockeyStrategyAIState(stable);
 
   // Create a jockey map for tactics calculation (use first available jockey for now)
   const jockeyMap = new Map((state.jockeys || []).map((j) => [j.id, j]));
@@ -383,7 +368,9 @@ function generateNpcRaceEntryIntents(
 
       if (suitability > threshold) {
         // Calculate optimal jockey instructions for this horse in this race
-        const jockey = (state.jockeys || [])[0]; // Use first jockey for instructions calculation
+        // Prefer a jockey contracted to this stable, fall back to any available
+        const allJockeys = state.jockeys || [];
+        const jockey = allJockeys.find((j) => j.stableId === stable.id) || allJockeys[0];
         if (!jockey) continue;
         const jockeyInstructions = calculateOptimalTactics(
           jockeyStrategyAI,
@@ -458,11 +445,7 @@ function generateNpcClaimingIntents(
   const intents: ClaimingIntent[] = [];
 
   // Use persisted AI state if available, otherwise fallback to temporary state
-  let claimingAI =
-    stableAI?.claimingAI ||
-    (stableAI
-      ? (stableAI.claimingAI = createClaimingAIState(stable))
-      : createClaimingAIState(stable));
+  let claimingAI = stableAI?.claimingAI ?? createClaimingAIState(stable);
 
   for (const race of upcomingRaces) {
     // Skip if not a claiming race

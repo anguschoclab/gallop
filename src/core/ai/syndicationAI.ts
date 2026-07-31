@@ -12,6 +12,108 @@
 import type { Horse, Stable } from "@/game/types";
 import type { Syndicate } from "@/core/breeding/types";
 import { findMajorityOwner } from "@/core/breeding/devolutionUtils";
+import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
+import {
+  createLearningState,
+  recordOutcome as recordLearningOutcome,
+  getSuccessRate,
+  type LearningState,
+} from "./learningModule";
+
+/**
+ * Syndication AI State — tracks learning outcomes for syndication decisions.
+ *
+ * This is the only AI subsystem that previously had zero personality/learning
+ * integration. This state enables adaptive syndication decisions based on
+ * historical success rates.
+ */
+export interface SyndicationAIState {
+  personalityState: ReturnType<typeof getPersonalityAIState>;
+  learningState: LearningState;
+  syndicationHistory: SyndicationDecision[];
+}
+
+export interface SyndicationDecision {
+  stallionId: string;
+  stableId: string;
+  action: "create" | "buy" | "sell" | "dissolve";
+  shares: number;
+  value: number;
+  day: number;
+  success: boolean;
+}
+
+/**
+ * Create AI state for syndication decisions.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized syndication AI state
+ */
+export function createSyndicationAIState(stable: Stable): SyndicationAIState {
+  return {
+    personalityState: getPersonalityAIState(stable.personality),
+    learningState: createLearningState(),
+    syndicationHistory: [],
+  };
+}
+
+/**
+ * Record a syndication decision outcome for learning.
+ *
+ * @param aiState - Current syndication AI state
+ * @param decision - The decision that was made
+ * @param currentDay - Current game day
+ * @returns Updated syndication AI state
+ */
+export function recordSyndicationOutcome(
+  aiState: SyndicationAIState,
+  decision: SyndicationDecision,
+  currentDay: number,
+): SyndicationAIState {
+  const newHistory = [...aiState.syndicationHistory, decision];
+  const trimmedHistory = newHistory.slice(-aiState.personalityState.memoryDepth);
+
+  const contextKey = `${decision.action}:${decision.stallionId}`;
+  const newLearningState = recordLearningOutcome(
+    aiState.learningState,
+    "syndication",
+    contextKey,
+    decision.success,
+    decision.value,
+    currentDay,
+    aiState.personalityState.memoryDepth,
+  );
+
+  const newPersonalityState = recordOutcome(
+    aiState.personalityState,
+    "syndication",
+    { stallionId: decision.stallionId, action: decision.action },
+    decision.success,
+    decision.value,
+    currentDay,
+  );
+
+  return {
+    ...aiState,
+    syndicationHistory: trimmedHistory,
+    learningState: newLearningState,
+    personalityState: newPersonalityState,
+  };
+}
+
+/**
+ * Get syndication success rate for a given action type.
+ *
+ * @param aiState - Current syndication AI state
+ * @param action - The action type to check
+ * @returns Success rate (0-1)
+ */
+export function getSyndicationSuccessRate(
+  aiState: SyndicationAIState,
+  action: SyndicationDecision["action"],
+): number {
+  return getSuccessRate(aiState.learningState, "syndication", action);
+}
 
 /**
  * Calculate syndicate value based on stallion performance metrics.
@@ -90,6 +192,44 @@ export function shouldCreateSyndicate(
   // Check if NPC has sufficient cash for initial share distribution (20 shares at $10k each)
   const initialCost = 200000;
   if ((npcStable.cash || 0) < initialCost) return false;
+
+  return true;
+}
+
+/**
+ * Personality-aware syndicate creation check.
+ *
+ * Uses the syndication AI state to adjust the creation threshold based on
+ * past syndication success rates and personality confidence.
+ *
+ * @param aiState - Current syndication AI state
+ * @param npcStable - The NPC stable
+ * @param stallion - The stallion to consider
+ * @param existingSyndicates - Map of existing syndicates
+ * @returns Whether NPC should create syndicate (with learning adjustment)
+ */
+export function shouldCreateSyndicateWithLearning(
+  aiState: SyndicationAIState,
+  npcStable: Stable,
+  stallion: Horse,
+  existingSyndicates: Record<string, Syndicate>,
+): boolean {
+  const baseDecision = shouldCreateSyndicate(npcStable, stallion, existingSyndicates);
+  if (!baseDecision) return false;
+
+  // Adjust based on past syndication success
+  const successRate = getSyndicationSuccessRate(aiState, "create");
+  const confidence = aiState.personalityState.strategyConfidence;
+
+  // If past syndication attempts had low success, be more cautious
+  if (successRate < 0.3 && aiState.syndicationHistory.length > 3) {
+    return false;
+  }
+
+  // High-confidence stables are more willing to create syndicates
+  if (confidence < 0.4 && successRate < 0.5) {
+    return false;
+  }
 
   return true;
 }

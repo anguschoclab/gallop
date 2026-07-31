@@ -677,3 +677,72 @@ export function evaluateConsignmentTiming(
   // Neutral: horse fits the catalog
   return { shouldConsign: true, priceModifier: 1.0 };
 }
+
+// ─── Post-Purchase Integration ───────────────────────────────────────────────
+
+/**
+ * Generate a post-purchase plan for a horse won at auction.
+ *
+ * After winning a bid, the stable should immediately plan:
+ * - Initial training focus based on horse's current stats and aptitudes
+ * - Target race class based on rating
+ * - Development timeline based on age
+ *
+ * @param horse - The horse purchased at auction
+ * @param stable - The stable that purchased the horse
+ * @returns Post-purchase plan with training focus, target class, and timeline
+ */
+export function generatePostPurchasePlan(
+  horse: Horse,
+  stable: Stable,
+): {
+  trainingFocus: "speed" | "stamina" | "acceleration" | "maintenance";
+  targetRaceClass: "maidens" | "allowance" | "listed" | "graded";
+  developmentDays: number;
+  rationale: string;
+} {
+  const rating = calculateOverallRating(horse);
+
+  // Determine training focus based on weakest stat area
+  const { speed, stamina, acceleration } = horse.stats;
+  const minStat = Math.min(speed, stamina, acceleration);
+  let trainingFocus: "speed" | "stamina" | "acceleration" | "maintenance";
+
+  if (minStat === speed) {
+    trainingFocus = "speed";
+  } else if (minStat === stamina) {
+    trainingFocus = "stamina";
+  } else {
+    trainingFocus = "acceleration";
+  }
+
+  // Maintenance focus for older horses
+  if (horse.age >= 6) {
+    trainingFocus = "maintenance";
+  }
+
+  // Determine target race class based on rating
+  let targetRaceClass: "maidens" | "allowance" | "listed" | "graded";
+  if (rating < 50) {
+    targetRaceClass = "maidens";
+  } else if (rating < 65) {
+    targetRaceClass = "allowance";
+  } else if (rating < 80) {
+    targetRaceClass = "listed";
+  } else {
+    targetRaceClass = "graded";
+  }
+
+  // Development timeline based on age
+  const developmentDays = horse.age <= 2 ? 180 : horse.age <= 4 ? 90 : 45;
+
+  // Build rationale
+  const rationale = `Rating ${rating.toFixed(0)} → ${targetRaceClass} target. ${trainingFocus} focus needed (lowest stat: ${minStat}). ${horse.age}yo → ${developmentDays}d development window.`;
+
+  return {
+    trainingFocus,
+    targetRaceClass,
+    developmentDays,
+    rationale,
+  };
+}

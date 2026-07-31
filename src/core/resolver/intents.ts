@@ -374,6 +374,23 @@ export interface StewardsInquiryIntent extends Intent {
   reportingHorseId?: string;
 }
 
+// Diplomatic action intent (NPC-to-NPC diplomacy)
+export interface DiplomaticActionIntent extends Intent {
+  type: "diplomatic_action";
+  targetStableId: string;
+  action: "propose_alliance" | "break_alliance" | "betray" | "cooperate";
+  allianceType?: "breeding_partnership" | "racing_coalition" | "economic_cartel" | "non_aggression";
+}
+
+// Cartel action intent (economic coordination)
+export interface CartelActionIntent extends Intent {
+  type: "cartel_action";
+  action: "join_cartel" | "leave_cartel" | "coordinate_market";
+  cartelId?: string;
+  marketAction?: "avoid_bidding_war" | "rotate_claims" | "fix_stud_fees";
+  targetStableIds?: string[];
+}
+
 // Union type for all intents
 export type AnyIntent =
   | TrainingIntent
@@ -417,4 +434,6 @@ export type AnyIntent =
   | InsurancePurchaseIntent
   | InsuranceCancelIntent
   | InsuranceClaimIntent
-  | StewardsInquiryIntent;
+  | StewardsInquiryIntent
+  | DiplomaticActionIntent
+  | CartelActionIntent;

@@ -32,8 +32,11 @@ export const economyPhase = {
 
     aiManager = processEconomicCycle(aiManager, state, newDay);
 
+    const economicTrend = aiManager.globalEconomicState ?? undefined;
+
     return {
       ...context,
+      economicTrend,
       state: {
         ...state,
         npcAIManager: aiManager,

@@ -17,6 +17,7 @@ import type { Rng } from "@/core/common/rng";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { ImpactLogEntry } from "@/core/resolver/resolver";
+import type { WorldAssessment, EconomicTrend } from "@/core/ai/strategicCoordinator";
 
 export interface PipelineContext {
   previousDay: number;
@@ -34,6 +35,10 @@ export interface PipelineContext {
   raceMap: Map<string, Race>;
   stableMap: Map<string, Stable>;
   jockeyMap: Map<string, Jockey>;
+  /** Cached world assessment from worldAssessmentPhase (order 2) */
+  worldAssessment?: WorldAssessment;
+  /** Cached economic trend from economyPhase (order 48) */
+  economicTrend?: EconomicTrend;
 }
 
 export interface PipelinePhase {

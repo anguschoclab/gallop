@@ -12,6 +12,10 @@ import {
   recordRaceStrategy,
   getStrategyInsights,
   calculateOptimalTactics,
+  adjustForTrackCondition,
+  adjustForFieldComposition,
+  calculateAffinityBoost,
+  applyAffinityBoost,
 } from "@/core/ai/jockeyStrategyAI";
 import type { Jockey, Horse, Race, Stable } from "@/game/types";
 
@@ -681,5 +685,155 @@ describe("calculateOptimalTactics — track condition adjustments", () => {
 
     // On soft track with low mud aptitude, front-runner should be more conservative
     expect(instructions.earlyPosition).not.toBe("lead");
+  });
+});
+
+describe("adjustForTrackCondition (standalone)", () => {
+  it("returns instructions unchanged on fast track", () => {
+    const horse = createMockHorse({ mudAptitude: 0.2 });
+    const race = createMockRace({ trackCondition: "fast" });
+    const instructions = {
+      horseId: "h1",
+      raceId: "r1",
+      ridingStyle: "front_runner" as const,
+      earlyPosition: "lead" as const,
+      moveTiming: "early" as const,
+      aggressiveness: 70,
+    };
+    const result = adjustForTrackCondition(instructions, horse, race);
+    expect(result).toBe(instructions);
+  });
+
+  it("reduces aggressiveness on heavy track for low mudAptitude horse", () => {
+    const horse = createMockHorse({ mudAptitude: 0.2 });
+    const race = createMockRace({ trackCondition: "heavy" });
+    const instructions = {
+      horseId: "h1",
+      raceId: "r1",
+      ridingStyle: "front_runner" as const,
+      earlyPosition: "lead" as const,
+      moveTiming: "early" as const,
+      aggressiveness: 70,
+    };
+    const result = adjustForTrackCondition(instructions, horse, race);
+    expect(result.aggressiveness).toBeLessThan(70);
+    expect(result.moveTiming).toBe("mid");
+  });
+
+  it("increases aggressiveness on heavy track for high mudAptitude horse", () => {
+    const horse = createMockHorse({ mudAptitude: 0.8 });
+    const race = createMockRace({ trackCondition: "heavy" });
+    const instructions = {
+      horseId: "h1",
+      raceId: "r1",
+      ridingStyle: "front_runner" as const,
+      earlyPosition: "lead" as const,
+      moveTiming: "early" as const,
+      aggressiveness: 70,
+    };
+    const result = adjustForTrackCondition(instructions, horse, race);
+    expect(result.aggressiveness).toBeGreaterThan(70);
+  });
+});
+
+describe("adjustForFieldComposition (standalone)", () => {
+  it("returns base style when no horseMap provided", () => {
+    const race = createMockRace();
+    expect(adjustForFieldComposition("E", race)).toBe("E");
+  });
+
+  it("switches front-runner to closer when field is saturated with front-runners", () => {
+    const horseMap = new Map<string, Horse>();
+    for (let i = 0; i < 5; i++) {
+      horseMap.set(`h${i}`, createMockHorse({ id: `h${i}`, distanceAptitude: 0.3 }));
+    }
+    const race = createMockRace({
+      entries: Array.from({ length: 5 }, (_, i) => ({ horseId: `h${i}`, owned: false })),
+    });
+    expect(adjustForFieldComposition("E", race, horseMap)).toBe("S");
+  });
+
+  it("switches closer to front-runner when field is saturated with closers", () => {
+    const horseMap = new Map<string, Horse>();
+    for (let i = 0; i < 5; i++) {
+      horseMap.set(`h${i}`, createMockHorse({ id: `h${i}`, distanceAptitude: 0.8 }));
+    }
+    const race = createMockRace({
+      entries: Array.from({ length: 5 }, (_, i) => ({ horseId: `h${i}`, owned: false })),
+    });
+    expect(adjustForFieldComposition("S", race, horseMap)).toBe("E");
+  });
+
+  it("returns base style for balanced field", () => {
+    const horseMap = new Map<string, Horse>();
+    horseMap.set("h0", createMockHorse({ id: "h0", distanceAptitude: 0.3 }));
+    horseMap.set("h1", createMockHorse({ id: "h1", distanceAptitude: 0.5 }));
+    horseMap.set("h2", createMockHorse({ id: "h2", distanceAptitude: 0.8 }));
+    horseMap.set("h3", createMockHorse({ id: "h3", distanceAptitude: 0.5 }));
+    const race = createMockRace({
+      entries: Array.from({ length: 4 }, (_, i) => ({ horseId: `h${i}`, owned: false })),
+    });
+    expect(adjustForFieldComposition("P", race, horseMap)).toBe("P");
+  });
+});
+
+describe("calculateAffinityBoost", () => {
+  it("returns 1.0 for zero affinity", () => {
+    const jockey = createMockJockey({ affinityMap: {} });
+    expect(calculateAffinityBoost(jockey, "h1")).toBe(1);
+  });
+
+  it("returns >1.0 for positive affinity", () => {
+    const jockey = createMockJockey({ affinityMap: { h1: 50 } });
+    expect(calculateAffinityBoost(jockey, "h1")).toBeGreaterThan(1);
+  });
+
+  it("caps boost at 30%", () => {
+    const jockey = createMockJockey({ affinityMap: { h1: 1000 } });
+    expect(calculateAffinityBoost(jockey, "h1")).toBeLessThanOrEqual(1.3);
+  });
+});
+
+describe("applyAffinityBoost", () => {
+  it("returns instructions unchanged for zero affinity", () => {
+    const jockey = createMockJockey({ affinityMap: {} });
+    const instructions = {
+      horseId: "h1",
+      raceId: "r1",
+      ridingStyle: "front_runner" as const,
+      earlyPosition: "lead" as const,
+      moveTiming: "early" as const,
+      aggressiveness: 50,
+    };
+    const result = applyAffinityBoost(instructions, jockey, "h1");
+    expect(result).toBe(instructions);
+  });
+
+  it("increases aggressiveness for high-affinity pair", () => {
+    const jockey = createMockJockey({ affinityMap: { h1: 60 } });
+    const instructions = {
+      horseId: "h1",
+      raceId: "r1",
+      ridingStyle: "front_runner" as const,
+      earlyPosition: "lead" as const,
+      moveTiming: "early" as const,
+      aggressiveness: 50,
+    };
+    const result = applyAffinityBoost(instructions, jockey, "h1");
+    expect(result.aggressiveness).toBeGreaterThan(50);
+  });
+
+  it("caps aggressiveness at 100", () => {
+    const jockey = createMockJockey({ affinityMap: { h1: 100 } });
+    const instructions = {
+      horseId: "h1",
+      raceId: "r1",
+      ridingStyle: "front_runner" as const,
+      earlyPosition: "lead" as const,
+      moveTiming: "early" as const,
+      aggressiveness: 95,
+    };
+    const result = applyAffinityBoost(instructions, jockey, "h1");
+    expect(result.aggressiveness).toBeLessThanOrEqual(100);
   });
 });

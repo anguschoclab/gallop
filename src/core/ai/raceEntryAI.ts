@@ -428,3 +428,33 @@ export function adaptStrategy(aiState: RaceEntryAIState, currentDay: number): Ra
 
   return aiState;
 }
+
+// ─── CampaignAI Hook ─────────────────────────────────────────────────────────
+
+/**
+ * Check if a race conflicts with a horse's campaign prep schedule.
+ *
+ * If a horse is a tracked contender for a major race, entering it in
+ * a non-prep race too close to the target race should be penalized.
+ *
+ * @param horseId - The horse to check
+ * @param raceDay - The day of the race being considered
+ * @param campaignTargetDays - Array of target race days for this horse's campaign
+ * @param prepWindowDays - Days before target race that should be reserved for prep only
+ * @returns True if the race conflicts with the campaign schedule
+ */
+export function conflictsWithCampaignPrep(
+  horseId: string,
+  raceDay: number,
+  campaignTargetDays: number[],
+  prepWindowDays = 14,
+): boolean {
+  for (const targetDay of campaignTargetDays) {
+    // If the race is within the prep window before a target race
+    // and it's not on the target day itself, it's a conflict
+    if (raceDay >= targetDay - prepWindowDays && raceDay < targetDay) {
+      return true;
+    }
+  }
+  return false;
+}

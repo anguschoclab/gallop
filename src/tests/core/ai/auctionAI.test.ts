@@ -14,6 +14,7 @@ import {
   recordHammerPrice,
   shouldYieldToAlly,
   evaluateConsignmentTiming,
+  generatePostPurchasePlan,
 } from "@/core/ai/auctionAI";
 import type { Horse, Stable, AuctionLot } from "@/game/types";
 import type { NpcRelationship } from "@/core/ai/npcCycleAI";
@@ -710,5 +711,86 @@ describe("evaluateConsignmentTiming", () => {
     const result = evaluateConsignmentTiming(horse, [68, 72, 70, 71]);
     expect(result.shouldConsign).toBe(true);
     expect(result.priceModifier).toBe(1.0);
+  });
+});
+
+describe("generatePostPurchasePlan", () => {
+  it("targets maidens for low-rated horse", () => {
+    const stable = createMockStable();
+    const horse = createMockHorse({
+      age: 2,
+      stats: {
+        speed: 30,
+        stamina: 30,
+        acceleration: 30,
+        consistency: 30,
+        temperament: 30,
+        conformation: 30,
+      },
+    });
+    const plan = generatePostPurchasePlan(horse, stable);
+    expect(plan.targetRaceClass).toBe("maidens");
+    expect(plan.developmentDays).toBe(180);
+  });
+
+  it("targets graded for high-rated horse", () => {
+    const stable = createMockStable();
+    const horse = createMockHorse({
+      age: 4,
+      stats: {
+        speed: 90,
+        stamina: 90,
+        acceleration: 90,
+        consistency: 90,
+        temperament: 80,
+        conformation: 80,
+      },
+    });
+    const plan = generatePostPurchasePlan(horse, stable);
+    expect(plan.targetRaceClass).toBe("graded");
+    expect(plan.developmentDays).toBe(90);
+  });
+
+  it("uses maintenance focus for older horses (6+)", () => {
+    const stable = createMockStable();
+    const horse = createMockHorse({
+      age: 7,
+      stats: {
+        speed: 70,
+        stamina: 60,
+        acceleration: 80,
+        consistency: 70,
+        temperament: 60,
+        conformation: 60,
+      },
+    });
+    const plan = generatePostPurchasePlan(horse, stable);
+    expect(plan.trainingFocus).toBe("maintenance");
+    expect(plan.developmentDays).toBe(45);
+  });
+
+  it("focuses on weakest stat for young horses", () => {
+    const stable = createMockStable();
+    const horse = createMockHorse({
+      age: 3,
+      stats: {
+        speed: 80,
+        stamina: 50,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 60,
+        conformation: 60,
+      },
+    });
+    const plan = generatePostPurchasePlan(horse, stable);
+    expect(plan.trainingFocus).toBe("stamina");
+  });
+
+  it("includes rationale string", () => {
+    const stable = createMockStable();
+    const horse = createMockHorse();
+    const plan = generatePostPurchasePlan(horse, stable);
+    expect(plan.rationale).toContain("Rating");
+    expect(plan.rationale.length).toBeGreaterThan(10);
   });
 });

@@ -692,3 +692,157 @@ export function getStrategyInsights(
     avgAggressiveness,
   };
 }
+
+// ─── Track-Condition Awareness ──────────────────────────────────────────────
+
+/**
+ * Adjust jockey instructions based on track conditions.
+ *
+ * Horses with low mud aptitude should use more conservative tactics on
+ * soft/heavy tracks. On fast tracks, aggressive tactics are favored.
+ *
+ * @param instructions - Base jockey instructions
+ * @param horse - The horse being ridden
+ * @param race - The race being run
+ * @returns Adjusted jockey instructions
+ */
+export function adjustForTrackCondition(
+  instructions: JockeyInstructions,
+  horse: Horse,
+  race: Race,
+): JockeyInstructions {
+  const condition = race.trackCondition;
+
+  // No adjustment needed for fast/good tracks
+  if (!condition || condition === "fast" || condition === "good") {
+    return instructions;
+  }
+
+  // On soft/heavy/yielding tracks, check horse mud aptitude
+  const mudAptitude = horse.mudAptitude ?? 0.5;
+
+  if (mudAptitude < 0.3) {
+    // Poor mud aptitude: be more conservative
+    return {
+      ...instructions,
+      aggressiveness: Math.max(20, instructions.aggressiveness - 15),
+      moveTiming: instructions.moveTiming === "early" ? "mid" : instructions.moveTiming,
+    };
+  }
+
+  if (mudAptitude > 0.7) {
+    // Excellent mud aptitude: can be more aggressive on off tracks
+    return {
+      ...instructions,
+      aggressiveness: Math.min(100, instructions.aggressiveness + 10),
+    };
+  }
+
+  return instructions;
+}
+
+// ─── Field-Aware Tactics ─────────────────────────────────────────────────────
+
+/**
+ * Adjust running style based on field composition.
+ *
+ * If the field is full of front-runners, a closer style becomes more valuable
+ * (avoid speed duel). If the field lacks early speed, a front-running style
+ * can capitalize on an easy lead.
+ *
+ * @param baseStyle - The calculated optimal running style
+ * @param race - The race being run
+ * @param horseMap - Optional map of all horses for field analysis
+ * @returns Adjusted running style
+ */
+export function adjustForFieldComposition(
+  baseStyle: RunningStyle,
+  race: Race,
+  horseMap?: Map<string, Horse>,
+): RunningStyle {
+  if (!horseMap || race.entries.length < 3) return baseStyle;
+
+  let frontRunners = 0;
+  let closers = 0;
+
+  for (const entry of race.entries) {
+    const horse = horseMap.get(entry.horseId);
+    if (!horse) continue;
+
+    // Use distance aptitude and surface aptitude as proxy for running style tendency
+    // Horses with high distanceAptitude tend to be closers, low tends to be front-runners
+    if (horse.distanceAptitude < 0.4) frontRunners++;
+    if (horse.distanceAptitude > 0.7) closers++;
+  }
+
+  const fieldSize = race.entries.length;
+  const frontRunnerRatio = frontRunners / fieldSize;
+  const closerRatio = closers / fieldSize;
+
+  // If field is saturated with front-runners (>40%), switch to closer if currently front-runner
+  if (frontRunnerRatio > 0.4 && baseStyle === "E") {
+    return "S";
+  }
+
+  // If field is saturated with closers (>40%), switch to front-runner if currently closer
+  if (closerRatio > 0.4 && baseStyle === "S") {
+    return "E";
+  }
+
+  // Large field adjustment: closers benefit from large fields (more chaos upfront)
+  if (fieldSize > 12 && baseStyle === "P") {
+    return "S";
+  }
+
+  return baseStyle;
+}
+
+// ─── Jockey-Horse Affinity Weighting ────────────────────────────────────────
+
+/**
+ * Calculate confidence boost from jockey-horse affinity.
+ *
+ * Jockeys who have ridden a horse before (high affinityMap value) get
+ * a confidence boost that improves instruction effectiveness.
+ *
+ * @param jockey - The jockey riding the horse
+ * @param horseId - The ID of the horse being ridden
+ * @returns Affinity confidence multiplier (1.0 = neutral, >1.0 = boost)
+ */
+export function calculateAffinityBoost(jockey: Jockey, horseId: string): number {
+  const affinity = jockey.affinityMap[horseId] ?? 0;
+
+  // Each 10 affinity points = 5% boost, capped at 30%
+  const boost = 1 + Math.min(0.3, (affinity / 10) * 0.05);
+
+  return boost;
+}
+
+/**
+ * Apply affinity boost to jockey instructions.
+ *
+ * High-affinity jockey-horse pairs get more effective instructions
+ * (slightly higher aggressiveness and better timing).
+ *
+ * @param instructions - Base jockey instructions
+ * @param jockey - The jockey riding the horse
+ * @param horseId - The ID of the horse being ridden
+ * @returns Adjusted jockey instructions
+ */
+export function applyAffinityBoost(
+  instructions: JockeyInstructions,
+  jockey: Jockey,
+  horseId: string,
+): JockeyInstructions {
+  const boost = calculateAffinityBoost(jockey, horseId);
+
+  if (boost <= 1.0) return instructions;
+
+  // Apply a small aggressiveness boost from affinity
+  const aggressivenessBoost = Math.round((boost - 1) * 20);
+
+  return {
+    ...instructions,
+    aggressiveness: Math.min(100, instructions.aggressiveness + aggressivenessBoost),
+  };
+}

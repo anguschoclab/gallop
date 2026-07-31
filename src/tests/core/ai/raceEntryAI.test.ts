@@ -6,6 +6,7 @@ import {
   recordRaceEntryOutcome,
   generateMultiRaceStrategy,
   adaptStrategy,
+  conflictsWithCampaignPrep,
 } from "@/core/ai/raceEntryAI";
 import type { Horse, Race, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
@@ -756,5 +757,38 @@ describe("generateMultiRaceStrategy — race selection optimization", () => {
     // Should not assign more than 2 horses to a field-size-2 race
     const assigned = strategy["r1"] ?? [];
     expect(assigned.length).toBeLessThanOrEqual(2);
+  });
+});
+
+describe("conflictsWithCampaignPrep", () => {
+  it("returns false when no campaign targets", () => {
+    expect(conflictsWithCampaignPrep("h1", 100, [])).toBe(false);
+  });
+
+  it("returns true when race is within prep window before target", () => {
+    expect(conflictsWithCampaignPrep("h1", 112, [125], 14)).toBe(true);
+  });
+
+  it("returns false when race is on target day", () => {
+    expect(conflictsWithCampaignPrep("h1", 125, [125], 14)).toBe(false);
+  });
+
+  it("returns false when race is well before prep window", () => {
+    expect(conflictsWithCampaignPrep("h1", 100, [125], 14)).toBe(false);
+  });
+
+  it("returns false when race is after target day", () => {
+    expect(conflictsWithCampaignPrep("h1", 130, [125], 14)).toBe(false);
+  });
+
+  it("checks against multiple campaign targets", () => {
+    expect(conflictsWithCampaignPrep("h1", 112, [125, 200], 14)).toBe(true);
+    expect(conflictsWithCampaignPrep("h1", 187, [125, 200], 14)).toBe(true);
+    expect(conflictsWithCampaignPrep("h1", 150, [125, 200], 14)).toBe(false);
+  });
+
+  it("respects custom prep window", () => {
+    expect(conflictsWithCampaignPrep("h1", 117, [125], 7)).toBe(false);
+    expect(conflictsWithCampaignPrep("h1", 120, [125], 7)).toBe(true);
   });
 });

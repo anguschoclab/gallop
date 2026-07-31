@@ -35,6 +35,7 @@ export const worldAssessmentPhase = {
 
     return {
       ...context,
+      worldAssessment,
       state: {
         ...state,
         npcAIManager: {
