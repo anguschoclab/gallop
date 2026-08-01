@@ -34,3 +34,7 @@
 
 **Learning:** `raceHistory` tracks `pacePositions` and `fieldSize`, allowing the derivation of wire-to-wire victories without needing new states. Checking `pacePositions.every(p => p === 1)` is an effective way to define "Wire-to-Wire".
 **Action:** Use existing structural data like `pacePositions` to construct contextual play style accolades like "Catch Me If You Can". Ensure safe fallbacks for missing `pacePositions` in legacy mock data.
+
+## 2024-08-01 - Tipster Insight: Late Bloomer
+**Learning:** The `pacePositions` and `fieldSize` recorded in `raceHistory` allow detecting a horse's relative position at the first call. This can be used to identify closing tendencies.
+**Action:** Added a "Late Bloomer" insight to highlight horses that have multiple wins coming from off the pace.

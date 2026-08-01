@@ -151,6 +151,34 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     };
   }
 
+  // 1.9 Check for Late Bloomer (Closing Success)
+  let closingWins = 0;
+
+  for (const race of history) {
+    if (
+      race.position === 1 &&
+      race.pacePositions &&
+      race.pacePositions.length > 0 &&
+      race.fieldSize &&
+      race.fieldSize >= 6
+    ) {
+      const firstCall = race.pacePositions[0];
+      const isOffPace = firstCall > Math.max(5, race.fieldSize * 0.65);
+      if (isOffPace) {
+        closingWins++;
+      }
+    }
+  }
+
+  if (closingWins >= 2) {
+    return {
+      label: "Late Bloomer",
+      value: "Off-the-Pace Winner",
+      context: `Has won from the back of the pack in ${closingWins} career races`,
+      type: "positive",
+    };
+  }
+
   // 2. Check for distance sweet spot (best average beyer by distance, min 3 races)
   const distanceStats = new Map<number, { runs: number; totalBeyer: number; wins: number }>();
   for (const race of history) {
