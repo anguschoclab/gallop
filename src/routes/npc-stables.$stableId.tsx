@@ -15,6 +15,7 @@ import { useNpcStableDetail } from "@/hooks/stable/useNpcStableDetail";
 import { NpcStableOverviewTab } from "@/components/stable/NpcStableOverviewTab";
 import { NpcStableRosterTab } from "@/components/stable/NpcStableRosterTab";
 import { NpcStableInfoSidebar } from "@/components/stable/NpcStableInfoSidebar";
+import { DiplomacyPanel } from "@/components/npc/DiplomacyPanel";
 
 const searchSchema = z.object({
   tab: fallback(z.enum(["overview", "roster", "staff", "history"]), "overview").default("overview"),
@@ -241,6 +242,7 @@ function NpcStableDetailPage() {
         </div>
 
         <NpcStableInfoSidebar stableId={stableId} pageData={pageData} navigate={navigate} />
+        <DiplomacyPanel stableId={stableId} />
       </div>
 
       {offerHorse && (

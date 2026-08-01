@@ -129,14 +129,20 @@ export function processNarrativeCycle(
   stables: Stable[],
   day: number,
 ): NpcAIManager {
-  const hasNarrative = stables.some((s) => manager.stableStates[s.id]?.narrativeState);
-  if (!hasNarrative) return manager;
-
   const updatedStates = { ...manager.stableStates };
 
   for (const stable of stables) {
     const state = updatedStates[stable.id];
-    if (!state?.narrativeState) continue;
+    if (!state) continue;
+
+    // Initialize narrative state if not present
+    if (!state.narrativeState) {
+      updatedStates[stable.id] = {
+        ...state,
+        narrativeState: createNarrativeState(),
+      };
+      continue;
+    }
 
     const narrativeState = { ...state.narrativeState };
     let activeArcs = [...narrativeState.activeArcs];

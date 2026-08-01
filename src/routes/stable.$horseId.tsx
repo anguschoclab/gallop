@@ -22,6 +22,7 @@ import { CareerProjectionSection } from "@/components/horse/CareerProjectionSect
 import { FoalInheritancePanel } from "@/components/horse/FoalInheritancePanel";
 import { InsurancePanel } from "@/components/insurance/InsurancePanel";
 import { StewardsPanel } from "@/components/stewards/StewardsPanel";
+import { TransportPlanner } from "@/components/transportation/TransportPlanner";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { useHorseActions } from "@/hooks/horse/useHorseActions";
 import { useHorseDetail } from "@/hooks/horse/useHorseDetail";
@@ -169,6 +170,7 @@ function HorseDetail() {
             />
             <InsurancePanel horseId={horse.id} />
             <StewardsPanel horseId={horse.id} />
+            <TransportPlanner horseId={horse.id} />
           </div>
 
           {/* RIGHT PILLAR */}

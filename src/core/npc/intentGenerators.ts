@@ -16,7 +16,6 @@ import type {
   AnyIntent,
   TrainingIntent,
   RaceEntryIntent,
-  BreedingIntent,
   ClaimingIntent,
   WithdrawFromClaimingIntent,
   GeldingIntent,
@@ -86,16 +85,20 @@ import { calculateOptimalTactics, createJockeyStrategyAIState } from "@/core/ai/
  *
  * @param state - Current game state
  * @param day - Current game day
+ * @param cachedWorldAssessment - Optional pre-computed world assessment from worldAssessmentPhase
  * @returns Array of intent objects for all NPC actions
  */
-export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
+export function generateNpcIntents(
+  state: GameState,
+  day: number,
+  cachedWorldAssessment?: WorldAssessment,
+): AnyIntent[] {
   const intents: AnyIntent[] = [];
   const aiManager = state.npcAIManager;
 
-  // Cross-System Coordination: assess world state once per cycle
-  const worldAssessment: WorldAssessment | undefined = aiManager
-    ? assessWorldState(state, aiManager)
-    : undefined;
+  // Cross-System Coordination: use cached world assessment if available, otherwise compute
+  const worldAssessment: WorldAssessment | undefined =
+    cachedWorldAssessment ?? (aiManager ? assessWorldState(state, aiManager) : undefined);
 
   // Index horses by stable for fast lookup
   const horseMap = new Map(Object.entries(state.horses));
@@ -151,13 +154,14 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
       if (aiManager && stableAI && worldAssessment) {
         const directives = generateStrategicDirectives(stable, worldAssessment, stable.personality);
         const budget = allocateBudget(stable, directives);
-        const _weights = coordinateSubsystems(directives, budget);
+        const weights = coordinateSubsystems(directives, budget);
 
         // Store coordination results on stableAI state
         stableAI = {
           ...stableAI,
           strategicDirectives: directives,
           budgetAllocation: budget,
+          subsystemWeights: weights,
           worldAssessment,
         };
       }
@@ -169,6 +173,7 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
         ...globalGradedRaces.filter((r) => r.graded?.country !== stableRegion),
       ];
 
+      const weights = stableAI?.subsystemWeights;
       intents.push(
         ...generateNpcTrainingIntents(
           state,
@@ -177,6 +182,7 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
           day,
           ownedHorses,
           activePregnanciesByDam,
+          weights?.training,
         ),
       );
       intents.push(
@@ -189,20 +195,19 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
           relevantRaces,
           raceEntrySets,
           horseMap,
+          weights?.raceEntry,
         ),
       );
       intents.push(
-        ...generateNpcBreedingIntents(
+        ...generateNpcClaimingIntents(
           state,
           stable,
           stableAI,
           day,
-          ownedHorses,
-          activePregnanciesByDam,
+          relevantRaces,
+          horseMap,
+          weights?.claiming,
         ),
-      );
-      intents.push(
-        ...generateNpcClaimingIntents(state, stable, stableAI, day, relevantRaces, horseMap),
       );
       intents.push(
         ...generateNpcWithdrawalIntents(
@@ -215,7 +220,9 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
           horseMap,
         ),
       );
-      intents.push(...generateNpcGeldingIntents(state, stable, stableAI, day, ownedHorses));
+      intents.push(
+        ...generateNpcGeldingIntents(state, stable, stableAI, day, ownedHorses, weights?.breeding),
+      );
       intents.push(...generateNpcSyndicateIntents(state, stable, day, ownedHorses));
       intents.push(...generateNpcDiplomaticIntents(state, stable, stableAI, day, aiManager));
 
@@ -245,6 +252,7 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
  * @param day - Current game day
  * @param ownedHorses - Horses owned by the stable
  * @param activePregnanciesByDam - Set of IDs for horses that are currently pregnant
+ * @param trainingWeight - Subsystem weight that modulates training willingness
  * @returns Array of training intents
  */
 function generateNpcTrainingIntents(
@@ -254,6 +262,7 @@ function generateNpcTrainingIntents(
   day: number,
   ownedHorses: Horse[],
   activePregnanciesByDam: Set<string>,
+  trainingWeight = 1.0,
 ): TrainingIntent[] {
   const intents: TrainingIntent[] = [];
 
@@ -269,7 +278,7 @@ function generateNpcTrainingIntents(
     // AI-driven training decision
     if (horse.energy >= 15 && !activePregnanciesByDam.has(horse.id)) {
       // Use AI to determine if horse should train today
-      if (shouldTrainToday(trainingAI, horse, day)) {
+      if (shouldTrainToday(trainingAI, horse, day, trainingWeight)) {
         // Use AI to select training type
         const trainingType = selectTrainingType(trainingAI, horse, day, availableTypes);
 
@@ -302,6 +311,7 @@ function generateNpcTrainingIntents(
  * @param upcomingRaces - Array of upcoming races to consider
  * @param raceEntrySets - Map of race IDs to sets of horse IDs already entered
  * @param horseMap - Map of all horses for competitor quality analysis
+ * @param raceEntryWeight - Subsystem weight that modulates race entry willingness
  * @returns Array of race entry intents
  */
 function generateNpcRaceEntryIntents(
@@ -313,6 +323,7 @@ function generateNpcRaceEntryIntents(
   upcomingRaces: Race[],
   raceEntrySets: Map<string, Set<string>>,
   horseMap: Map<string, Horse>,
+  raceEntryWeight = 1.0,
 ): RaceEntryIntent[] {
   const intents: RaceEntryIntent[] = [];
 
@@ -369,6 +380,9 @@ function generateNpcRaceEntryIntents(
         }
       }
 
+      // Apply subsystem weight: higher weight lowers threshold (more willing to enter)
+      threshold /= raceEntryWeight;
+
       if (suitability > threshold) {
         // Calculate optimal jockey instructions for this horse in this race
         // Prefer a jockey contracted to this stable, fall back to any available
@@ -403,30 +417,6 @@ function generateNpcRaceEntryIntents(
 }
 
 /**
- * Generate breeding intents for an NPC stable
- *
- * @param state - Current game state
- * @param stable - The stable to generate intents for
- * @param stableAI - Current AI state for the stable
- * @param day - Current game day
- * @param ownedHorses - Horses owned by the stable
- * @param activePregnanciesByDam - Set of IDs for horses that are currently pregnant
- * @returns Array of breeding intents (currently empty as breeding is handled elsewhere)
- */
-function generateNpcBreedingIntents(
-  state: GameState,
-  stable: Stable,
-  stableAI: StableAIState | undefined,
-  day: number,
-  ownedHorses: Horse[],
-  activePregnanciesByDam: Set<string>,
-): BreedingIntent[] {
-  // Breeding is now handled entirely by the autonomous npcBreedingPhase
-  // at the start of the breeding season.
-  return [];
-}
-
-/**
  * Generate claiming intents for an NPC stable
  *
  * @param state - Current game state
@@ -435,6 +425,7 @@ function generateNpcBreedingIntents(
  * @param day - Current game day
  * @param upcomingRaces - Array of upcoming races to consider
  * @param horseMap - Map of all horses for fast lookup
+ * @param claimingWeight - Subsystem weight that modulates claiming willingness
  * @returns Array of claiming intents
  */
 function generateNpcClaimingIntents(
@@ -444,11 +435,16 @@ function generateNpcClaimingIntents(
   day: number,
   upcomingRaces: Race[],
   horseMap: Map<string, Horse>,
+  claimingWeight = 1.0,
 ): ClaimingIntent[] {
   const intents: ClaimingIntent[] = [];
 
   // Use persisted AI state if available, otherwise fallback to temporary state
   let claimingAI = stableAI?.claimingAI ?? createClaimingAIState(stable);
+
+  // Budget enforcement: track cumulative claiming spend
+  const claimingBudget = stableAI?.budgetAllocation?.claiming;
+  let cumulativeClaimSpend = 0;
 
   for (const race of upcomingRaces) {
     // Skip if not a claiming race
@@ -471,9 +467,18 @@ function generateNpcClaimingIntents(
         }
       }
 
+      // Budget enforcement: skip if cumulative spend exceeds claiming budget
+      if (claimingBudget !== undefined && claimingBudget <= 0) continue;
+      if (
+        claimingBudget !== undefined &&
+        cumulativeClaimSpend + race.claimingPrice > claimingBudget
+      ) {
+        continue;
+      }
+
       // Use AI to determine if should claim
       const friction = stableAI?.friction ?? 0;
-      if (shouldClaimHorse(claimingAI, horse, race, stable, day, friction)) {
+      if (shouldClaimHorse(claimingAI, horse, race, stable, day, friction, claimingWeight)) {
         // Check horse eligibility
         if (
           !isHorseEligibleForClaimingPrice(horse, race.claimingPrice, Object.values(state.horses))
@@ -482,6 +487,9 @@ function generateNpcClaimingIntents(
 
         // Record claiming decision for learning
         claimingAI = recordClaimingDecision(claimingAI, horse, race, stable, day);
+
+        // Track cumulative spend
+        cumulativeClaimSpend += race.claimingPrice;
 
         intents.push({
           id: generateUUID(),
@@ -590,6 +598,7 @@ function generateNpcWithdrawalIntents(
  * @param stableAI - Current AI state for the stable
  * @param day - Current game day
  * @param ownedHorses - Horses owned by the stable
+ * @param breedingWeight - Subsystem weight that modulates gelding decisions
  * @returns Array of gelding intents
  */
 function generateNpcGeldingIntents(
@@ -598,6 +607,7 @@ function generateNpcGeldingIntents(
   stableAI: StableAIState | undefined,
   day: number,
   ownedHorses: Horse[],
+  breedingWeight = 1.0,
 ): GeldingIntent[] {
   const intents: GeldingIntent[] = [];
 
@@ -607,7 +617,7 @@ function generateNpcGeldingIntents(
     (stableAI ? (stableAI.geldingAI = createGeldingAIState(stable)) : createGeldingAIState(stable));
 
   for (const horse of ownedHorses) {
-    if (shouldGeldHorse(geldingAI, horse, day)) {
+    if (shouldGeldHorse(geldingAI, horse, day, breedingWeight)) {
       intents.push({
         id: generateUUID(),
         entityId: horse.id,

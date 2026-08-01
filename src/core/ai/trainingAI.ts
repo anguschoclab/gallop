@@ -299,17 +299,22 @@ export function recordTrainingOutcome(
  * @param aiState - Current training AI state
  * @param horse - The horse to evaluate
  * @param currentDay - Current game day
+ * @param weight - Subsystem weight from coordinateSubsystems (default 1.0)
  * @returns True if horse should be trained today
  */
 export function shouldTrainToday(
   aiState: TrainingAIState,
   horse: Horse,
   currentDay: number,
+  weight = 1.0,
 ): boolean {
   // Basic energy check
   if (horse.energy < 15) return false;
 
-  // Check training frequency (personality-driven)
+  // Zero weight means training is deprioritized entirely
+  if (weight <= 0) return false;
+
+  // Check training frequency (personality-driven, modulated by weight)
   const devTrack = aiState.horseDevelopment[horse.id];
   if (devTrack) {
     const daysSinceTraining = currentDay - devTrack.lastTrainingDay;
@@ -323,7 +328,10 @@ export function shouldTrainToday(
           ? 7
           : 5;
 
-    if (daysSinceTraining < minDaysBetween) return false;
+    // Higher weight reduces the minimum days between training (more aggressive)
+    const adjustedMinDays = Math.max(1, Math.round(minDaysBetween / weight));
+
+    if (daysSinceTraining < adjustedMinDays) return false;
   }
 
   return true;

@@ -44,9 +44,15 @@ export function createGeldingAIState(stable: Stable): GeldingAIState {
  * @param aiState - Current gelding AI state
  * @param horse - The horse to evaluate
  * @param day - Current game day
+ * @param breedingWeight - Subsystem weight for breeding from coordinateSubsystems (default 1.0)
  * @returns True if the stable should geld the horse
  */
-export function shouldGeldHorse(aiState: GeldingAIState, horse: Horse, day: number): boolean {
+export function shouldGeldHorse(
+  aiState: GeldingAIState,
+  horse: Horse,
+  day: number,
+  breedingWeight = 1.0,
+): boolean {
   // Must be male and not already gelded
   if (horse.gender !== "colt" && horse.gender !== "horse") return false;
   if (horse.gelded) return false;
@@ -67,6 +73,10 @@ export function shouldGeldHorse(aiState: GeldingAIState, horse: Horse, day: numb
   } else if (personality === "conservative") {
     potentialThreshold = 75;
   }
+
+  // Higher breeding weight raises the threshold (more likely to keep as stallion prospect)
+  // Lower breeding weight lowers the threshold (more likely to geld)
+  potentialThreshold += (breedingWeight - 1) * 10;
 
   // Horse potential must be below threshold (not an elite breeding prospect)
   if (horse.potential >= potentialThreshold) return false;

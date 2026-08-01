@@ -163,6 +163,7 @@ export function calculateClaimingRisk(aiState: ClaimingAIState, horse: Horse, ra
  * @param stable - The stable making the decision
  * @param currentDay - Current game day
  * @param friction - Friction value with player (optional, for rivalry behavior)
+ * @param weight - Subsystem weight from coordinateSubsystems (default 1.0)
  * @returns True if stable should claim the horse
  */
 export function shouldClaimHorse(
@@ -172,10 +173,14 @@ export function shouldClaimHorse(
   stable: Stable,
   currentDay: number,
   friction?: number,
+  weight = 1.0,
 ): boolean {
   // Basic checks
   if (!race.claimingPrice) return false;
   if (stable.cash < race.claimingPrice * 1.1) return false;
+
+  // Zero weight means claiming is deprioritized entirely
+  if (weight <= 0) return false;
 
   // Calculate value and risk
   let valueScore = calculateClaimingValue(aiState, horse, race, stable);
@@ -204,7 +209,10 @@ export function shouldClaimHorse(
   // Decision: claim if value exceeds threshold and risk is acceptable
   const adjustedValue = valueScore - riskScore * (1 - riskTolerance);
 
-  return adjustedValue > adaptiveThreshold;
+  // Higher weight lowers the threshold (more willing to claim)
+  const weightedThreshold = adaptiveThreshold / weight;
+
+  return adjustedValue > weightedThreshold;
 }
 
 /**

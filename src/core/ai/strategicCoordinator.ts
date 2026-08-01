@@ -117,8 +117,8 @@ export function assessWorldState(state: GameState, manager: NpcAIManager): World
     regionalPowerBalance["default"] = 0.5;
   }
 
-  // Economic trends (placeholder — will be fed by economyAI in Phase 5)
-  const economicTrends: EconomicTrend = {
+  // Economic trends: read from aiManager.globalEconomicState, fall back to neutral defaults
+  const economicTrends: EconomicTrend = manager.globalEconomicState ?? {
     studFeeTrend: 0,
     yearlingPriceIndex: 100,
     claimingMarketActivity: 0,

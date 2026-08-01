@@ -31,7 +31,12 @@ import type { HorseGenAIState } from "./horseGenAI";
 import type { RaceEntryAIState } from "./raceEntryAI";
 import type { BreedingAIState } from "./breedingAI";
 import type { GeldingAIState } from "./geldingAI";
-import type { StrategicDirective, BudgetAllocation, WorldAssessment } from "./strategicCoordinator";
+import type {
+  StrategicDirective,
+  BudgetAllocation,
+  WorldAssessment,
+  SubsystemWeights,
+} from "./strategicCoordinator";
 import type { EconomicTrend } from "./strategicCoordinator";
 
 /**
@@ -69,6 +74,7 @@ export interface StableAIState {
   // Cross-System Coordination (Phase 1)
   strategicDirectives?: StrategicDirective[];
   budgetAllocation?: BudgetAllocation;
+  subsystemWeights?: SubsystemWeights;
   worldAssessment?: WorldAssessment;
   npcRelationships?: Record<string, NpcRelationship>;
   narrativeState?: NarrativeState;

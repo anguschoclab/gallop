@@ -40,7 +40,8 @@ export const intentCollectionPhase: PipelinePhase = {
     }
 
     // Collect NPC intents from NPC intent generators
-    const npcIntents = generateNpcIntents(state, newDay);
+    // Pass cached worldAssessment from worldAssessmentPhase to avoid redundant computation
+    const npcIntents = generateNpcIntents(state, newDay, context.worldAssessment);
     for (const intent of npcIntents) {
       intents.push(intent);
     }

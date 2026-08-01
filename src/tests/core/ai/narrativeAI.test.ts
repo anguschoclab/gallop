@@ -174,11 +174,13 @@ describe("generateStoryBeat", () => {
 });
 
 describe("processNarrativeCycle", () => {
-  it("returns manager unchanged when no stables have narrativeState", () => {
+  it("initializes narrativeState for stables that don't have it", () => {
     const manager = createMockManager();
     const stables = [createMockStable({ id: "s1" })];
     const result = processNarrativeCycle(manager, stables, 100);
-    expect(result).toEqual(manager);
+    expect(result.stableStates["s1"].narrativeState).toBeDefined();
+    expect(result.stableStates["s1"].narrativeState!.activeArcs).toEqual([]);
+    expect(result.stableStates["s1"].narrativeState!.dramaticPotential).toBe(0);
   });
 
   it("increases dramaticPotential over time", () => {
