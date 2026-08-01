@@ -69,3 +69,8 @@
 
 **Learning:** Expanding news generator pools with context-neutral stories (like track upgrades or quirky backstretch events) immediately enlivens the world without risking logic side effects or breaking strict data dependencies. The `flavorStories` array in `src/services/narrative/newsGenerator.ts` is a great target for adding depth since it is completely decoupled from active game state while giving the illusion of a living, breathing ecosystem around the player.
 **Action:** When adding static flavor arrays, I will focus on the peripheral world elements—like outriders, farriers, track staff, and fans—to flesh out the track atmosphere. I'll use regex/replacement scripts to safely append new templates in long arrays rather than attempting complex manual edits.
+
+## 2026-07-28 - Rivalry News Variety Gap
+
+**Learning:** The rivalry news generator (`rivalryNewsGenerator.ts`) had very few headline and body variants (between 3 and 8) for key rivalry arcs like introductions, grudge matches (both win and lose), regional rivalry changes, and rivalry escalations.
+**Action:** Expanded the `headlines` and `bodies` arrays across the generators in `src/services/narrative/rivalryNewsGenerator.ts` to ~14 variants each to ensure that as players encounter these dynamic narrative arcs, they don't see repetitive text in long-running saves.
