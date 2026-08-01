@@ -4,7 +4,7 @@
  * Extracted from AuctionControls.tsx.
  */
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/core/common/formatting";
@@ -18,6 +18,7 @@ interface MaxBidPanelProps {
 
 export function MaxBidPanel({ currentBid, playerMaxBid, onSetMaxBid }: MaxBidPanelProps) {
   const [maxBidInput, setMaxBidInput] = useState("");
+  const inputId = useId();
 
   const handleMaxBid = () => {
     const val = parseInt(maxBidInput);
@@ -31,14 +32,20 @@ export function MaxBidPanel({ currentBid, playerMaxBid, onSetMaxBid }: MaxBidPan
 
   return (
     <div className="space-y-2">
-      <div className="text-[10px] uppercase font-bold text-muted-foreground ml-1 flex justify-between">
+      <label
+        htmlFor={inputId}
+        className="block text-[10px] uppercase font-bold text-muted-foreground ml-1 flex justify-between cursor-pointer"
+      >
         <span>Max Bid (Auto)</span>
         {playerMaxBid && (
           <span className="text-primary animate-pulse">SET: {formatCurrency(playerMaxBid)}</span>
         )}
-      </div>
+      </label>
       <div className="flex gap-2">
         <Input
+          id={inputId}
+          type="number"
+          min={currentBid + 1}
           placeholder="Ceiling amount"
           className={cn(
             "rounded-xl h-12 bg-muted/30 border-muted",
