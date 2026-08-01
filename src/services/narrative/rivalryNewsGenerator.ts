@@ -234,6 +234,12 @@ export function generateGrudgeMatchNews(
         `${rivalHorse.name} made a massive statement today, leaving ${playerHorse.name} with no excuses in a race that will undoubtedly sting.`,
         `The rival camp executed perfectly, and unfortunately for ${playerHorse.name}, they ended up on the wrong side of the highlight reel against ${rivalHorse.name}.`,
         `A bitter outcome in a race with so much pride on the line. ${rivalHorse.name} took the honors, sending ${playerHorse.name} back to the drawing board.`,
+        `A tactical error proved costly for ${playerHorse.name}, allowing ${rivalHorse.name} to capitalize and steal a crucial victory in this bitter rivalry.`,
+        `${rivalHorse.name} simply had more gas in the tank today, pulling away from ${playerHorse.name} in a result that will sting the stable for weeks.`,
+        `Despite high expectations, ${playerHorse.name} fell flat against ${rivalHorse.name}, giving the rival camp plenty of ammunition for their post-race celebrations.`,
+        `It was a humbling experience for ${playerHorse.name}, who was soundly beaten by ${rivalHorse.name} in a race the stable had circled on the calendar.`,
+        `${rivalHorse.name} flipped the script today, delivering an unexpected and demoralizing defeat to ${playerHorse.name} in front of a packed grandstand.`,
+        `The stable is left searching for answers after ${rivalHorse.name} exposed unexpected weaknesses in ${playerHorse.name} during today is grudge match.`,
       ];
 
   // Arc-aware body variants: inject career arc context when available
