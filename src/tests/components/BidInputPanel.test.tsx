@@ -23,7 +23,7 @@ describe("BidInputPanel", () => {
     const ref = createRef<BidInputPanelHandle>();
     render(<BidInputPanel ref={ref} currentBid={1000} nextMin={1300} onBid={vi.fn()} />);
     ref.current!.focusAndScroll();
-    const input = screen.getByRole("textbox");
+    const input = screen.getByRole("spinbutton");
     expect(document.activeElement).toBe(input);
   });
 
@@ -33,7 +33,7 @@ describe("BidInputPanel", () => {
     act(() => {
       ref.current!.focusAndScroll(5000);
     });
-    const input = screen.getByRole("textbox") as HTMLInputElement;
+    const input = screen.getByRole("spinbutton") as HTMLInputElement;
     expect(input.value).toBe("5000");
   });
 
@@ -47,7 +47,7 @@ describe("BidInputPanel", () => {
   it("custom bid submission still works after ref change", () => {
     const onBid = vi.fn();
     render(<BidInputPanel currentBid={1000} nextMin={1300} onBid={onBid} />);
-    const input = screen.getByRole("textbox");
+    const input = screen.getByRole("spinbutton");
     fireEvent.change(input, { target: { value: "2000" } });
     fireEvent.click(screen.getByText("GO"));
     expect(onBid).toHaveBeenCalledWith(2000);
@@ -56,7 +56,7 @@ describe("BidInputPanel", () => {
   it("rejects bid <= currentBid", () => {
     const onBid = vi.fn();
     render(<BidInputPanel currentBid={1000} nextMin={1300} onBid={onBid} />);
-    const input = screen.getByRole("textbox");
+    const input = screen.getByRole("spinbutton");
     fireEvent.change(input, { target: { value: "500" } });
     fireEvent.click(screen.getByText("GO"));
     expect(onBid).not.toHaveBeenCalled();
