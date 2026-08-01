@@ -13,6 +13,7 @@ import { cn } from "@/lib/cn";
 import { formatCurrency } from "@/core/common/formatting";
 import type { Stable } from "@/game/types";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import { useMemo } from "react";
 import { Search, X, ExternalLink, Flame, Handshake, BookOpen } from "lucide-react";
 
 type NavigateFn = (opts: {
@@ -36,6 +37,11 @@ export function RivalArchivesView({
   npcAIManager,
   navigate,
 }: RivalArchivesViewProps) {
+  // ⚡ Bolt Optimization:
+  // Pre-calculate hash map for O(1) stable lookups instead of running O(N) .find() inside the map loop.
+  // Impact: Reduces rendering complexity from O(N*M) to O(N+M) avoiding UI jank.
+  const stableMap = useMemo(() => new Map(stables.map((s) => [s.id, s])), [stables]);
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <div className="flex flex-wrap items-center gap-3 bg-black/20 p-4 border border-white/5">
@@ -197,8 +203,7 @@ export function RivalArchivesView({
                         </div>
                         <div className="flex flex-wrap gap-1">
                           {alliances.map((a) => {
-                            const otherName =
-                              stables.find((s) => s.id === a.stableId)?.name ?? a.stableId;
+                            const otherName = stableMap.get(a.stableId)?.name ?? a.stableId;
                             return (
                               <span
                                 key={a.stableId}

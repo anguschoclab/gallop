@@ -87,3 +87,7 @@
 
 **Learning:** When generating lightweight odds and monte carlo sim results inside `HeadToHeadSection`, using `.find()` inside a `horses.map()` render loop leads to O(N^2) performance degradation during rendering.
 **Action:** Pre-calculate hash maps using `useMemo` (e.g. `new Map(odds.map(o => [o.horseId, o]))`) for O(1) lookups inside the render loop, changing the complexity to O(N).
+
+## 2025-05-18 - [Optimizing O(N) Loop Lookups in Rival Archives Renders]
+**Learning:** Inside rendering loops like alliances in `RivalArchivesView`, running `stables.find()` inside an `.map()` leads to O(M*N) rendering complexity, where M is alliances and N is stables.
+**Action:** Pre-calculate hash maps (e.g., `stableMap = new Map(stables.map(s => [s.id, s]))`) for O(1) lookups before rendering mapping loops.
