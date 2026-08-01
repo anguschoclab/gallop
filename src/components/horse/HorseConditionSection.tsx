@@ -1,9 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Activity, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/cn";
+import type { Horse } from "@/game/types";
 
 interface HorseConditionSectionProps {
-  horse: any;
+  horse: Horse;
 }
 
 export function HorseConditionSection({ horse }: HorseConditionSectionProps) {

@@ -10,7 +10,7 @@ interface GradedHistoryEntry {
   position: number;
   day: number;
   beyer?: number;
-  grade?: "G1" | "G2" | "G3";
+  grade?: string;
   distance?: number;
   surface?: string;
   fieldSize?: number;

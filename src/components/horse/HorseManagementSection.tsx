@@ -3,12 +3,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Gavel, Tag, Scissors, Edit, DollarSign } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import type { AuctionSale } from "@/game/types";
+import type { AuctionSale, Horse } from "@/game/types";
 import { useGame } from "@/game/store";
 import { toast } from "sonner";
 
 interface HorseManagementSectionProps {
-  horse: any;
+  horse: Horse;
   isConsigned: boolean;
   consignedSale?: AuctionSale;
   eligibleSale?: AuctionSale;
@@ -53,7 +53,7 @@ export function HorseManagementSection({
 
   const handleUpdateStudFee = () => {
     const newFee = prompt(
-      `Enter new stud fee for ${horse.name} (current: $${horse.stud?.fee || 0}):`,
+      `Enter new stud fee for ${horse.name} (current: $${horse.stud?.standingFee || 0}):`,
     );
     if (newFee && !isNaN(Number(newFee))) {
       const result = updateStudFee(horse.id, Number(newFee));
@@ -140,7 +140,7 @@ export function HorseManagementSection({
                 Career Earnings
               </span>
               <span className="font-mono text-success">
-                ${(horse.earnings ?? 0).toLocaleString()}
+                ${(horse.lifetimeEarnings ?? 0).toLocaleString()}
               </span>
             </div>
           </div>
@@ -159,7 +159,7 @@ export function HorseManagementSection({
               >
                 <Edit className="h-3 w-3 mr-1" /> Rename
               </Button>
-              {horse.sex === "colt" && !horse.isGelded && (
+              {horse.gender === "colt" && !horse.gelded && (
                 <Button
                   onClick={handleGelding}
                   variant="outline"

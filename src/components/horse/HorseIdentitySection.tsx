@@ -4,9 +4,10 @@ import { FileText } from "lucide-react";
 import { HorseStats } from "@/components/horse/HorseBits";
 import { HorseStatsRadar } from "@/components/horse/HorseStatsRadar";
 import { cn } from "@/lib/cn";
+import type { Horse } from "@/game/types";
 
 interface HorseIdentitySectionProps {
-  horse: any;
+  horse: Horse;
   peakingStatus: string;
 }
 

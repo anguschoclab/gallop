@@ -10,9 +10,10 @@ import {
 } from "@/components/ui/select";
 import { GradedHistoryPanel } from "@/components/horse/GradedHistoryPanel";
 import { cn } from "@/lib/cn";
+import type { Horse } from "@/game/types";
 
 interface HorseRaceHistorySectionProps {
-  horse: any;
+  horse: Horse;
   raceHistoryLimit: number;
   onLimitChange: (val: number) => void;
 }
@@ -22,7 +23,7 @@ export function HorseRaceHistorySection({
   raceHistoryLimit,
   onLimitChange,
 }: HorseRaceHistorySectionProps) {
-  const history = [...(horse.raceHistory ?? [])].sort((a: any, b: any) => b.day - a.day);
+  const history = [...(horse.raceHistory ?? [])].sort((a, b) => b.day - a.day);
   const displayed = history.slice(0, raceHistoryLimit);
 
   return (
@@ -56,7 +57,7 @@ export function HorseRaceHistorySection({
             </div>
           ) : (
             <div className="divide-y divide-white/5">
-              {displayed.map((r: any, i: number) => (
+              {displayed.map((r, i) => (
                 <div
                   key={i}
                   className="grid grid-cols-[auto_1fr_auto_auto_auto] gap-4 items-center p-4 hover:bg-white/[0.02] transition-colors"

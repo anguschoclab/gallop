@@ -3,9 +3,10 @@ import { SilkDot } from "@/components/SilkDot";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { ShieldCheck, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/cn";
+import type { Horse } from "@/game/types";
 
 interface HorseDetailHeaderProps {
-  horse: any;
+  horse: Horse;
   ovr: number;
 }
 

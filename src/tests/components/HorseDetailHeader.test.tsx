@@ -44,7 +44,7 @@ describe("HorseDetailHeader", () => {
 
   it("displays potential value", () => {
     renderWithStore(<HorseDetailHeader horse={createHorse()} ovr={85} />);
-    expect(screen.getByText("85")).toBeTruthy();
+    expect(screen.getAllByText("85").length).toBeGreaterThanOrEqual(1);
   });
 
   it("displays energy percentage", () => {
@@ -56,7 +56,7 @@ describe("HorseDetailHeader", () => {
     const horse = createHorse({
       activeInjury: {
         type: "Fracture",
-        severity: "severe",
+        severity: "major",
         recoveryDays: 30,
         onsetDay: 5,
       },
@@ -66,9 +66,7 @@ describe("HorseDetailHeader", () => {
   });
 
   it("does not show Critical badge when no activeInjury", () => {
-    const { container } = renderWithStore(
-      <HorseDetailHeader horse={createHorse()} ovr={85} />,
-    );
+    const { container } = renderWithStore(<HorseDetailHeader horse={createHorse()} ovr={85} />);
     expect(container.textContent).not.toContain("Critical");
   });
 
