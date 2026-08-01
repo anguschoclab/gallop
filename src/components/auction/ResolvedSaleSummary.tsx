@@ -15,8 +15,14 @@ interface ResolvedSaleSummaryProps {
 }
 
 export function ResolvedSaleSummary({ activeLots, horseMap }: ResolvedSaleSummaryProps) {
-  const soldCount = activeLots.filter((l) => !l.passed && l.hammerPrice).length;
-  const passedCount = activeLots.filter((l) => l.passed).length;
+  const { soldCount, passedCount } = activeLots.reduce(
+    (acc, l) => {
+      if (l.passed) acc.passedCount++;
+      else if (l.hammerPrice) acc.soldCount++;
+      return acc;
+    },
+    { soldCount: 0, passedCount: 0 },
+  );
   const topLot = activeLots
     .filter((l) => l.hammerPrice && !l.passed)
     .sort((a, b) => (b.hammerPrice ?? 0) - (a.hammerPrice ?? 0))[0];

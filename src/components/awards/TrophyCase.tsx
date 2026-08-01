@@ -23,7 +23,7 @@ export function TrophyCase({
   className,
 }: TrophyCaseProps) {
   const totalAwards = awards.length;
-  const hotyCount = awards.filter((a) => a.category === "horse_of_the_year").length;
+  const hotyCount = awards.reduce((n, a) => (a.category === "horse_of_the_year" ? n + 1 : n), 0);
 
   if (variant === "compact") {
     return <TrophyCompactView awards={awards} totalAwards={totalAwards} className={className} />;
@@ -62,7 +62,7 @@ interface TrophyStatsProps {
 
 export function TrophyStats({ awards, className }: TrophyStatsProps) {
   const total = awards.length;
-  const hoty = awards.filter((a) => a.category === "horse_of_the_year").length;
+  const hoty = awards.reduce((n, a) => (a.category === "horse_of_the_year" ? n + 1 : n), 0);
   const byRegion = groupByRegion(awards);
 
   return (

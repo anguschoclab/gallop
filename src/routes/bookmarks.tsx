@@ -78,6 +78,7 @@ function BookmarksPage() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     const activeKeys = activeTags.map((t) => t.toLowerCase());
+    const activeKeySet = new Set(activeKeys);
     let list = bookmarks.filter((b) => {
       if (typeFilter !== "all" && b.type !== typeFilter) return false;
       if (q) {
@@ -88,9 +89,9 @@ function BookmarksPage() {
         const inTag = (b.tags ?? []).some((t) => t.toLowerCase().includes(q));
         if (!inLabel && !inId && !inType && !inSub && !inTag) return false;
       }
-      if (activeKeys.length > 0) {
-        const bTags = (b.tags ?? []).map((t) => t.toLowerCase());
-        const allMatch = activeKeys.every((k) => bTags.includes(k));
+      if (activeKeySet.size > 0) {
+        const bTagSet = new Set((b.tags ?? []).map((t) => t.toLowerCase()));
+        const allMatch = activeKeys.every((k) => bTagSet.has(k));
         if (!allMatch) return false;
       }
       return true;

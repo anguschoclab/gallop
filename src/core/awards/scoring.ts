@@ -245,35 +245,62 @@ export function determineRegionalWinners(
   region: AwardRegion,
   raceMap: Map<string, Race>,
 ): Omit<RegionalAward, "id" | "ceremonyDay">[] {
-  const categories = getCategoriesForRegion(region);
-  const winners: Omit<RegionalAward, "id" | "ceremonyDay">[] = [];
+  const categories = getCategoriesForRegion(region).filter(
+    (c) => c !== "award_of_merit" && c !== "champion_international" && c !== "champion_trainer",
+  );
+  const weights = REGIONAL_SCORING[region];
+  const yearStart = (year - 1) * 365 + 1;
+  const yearEnd = year * 365;
 
-  for (const category of categories) {
-    // Skip merit/international categories for now
-    if (
-      category === "award_of_merit" ||
-      category === "champion_international" ||
-      category === "champion_trainer"
-    ) {
-      continue;
-    }
+  // Per-horse, per-category points and qualifying race IDs
+  const pointsMap = new Map<string, Map<RegionalAwardCategory, number>>();
+  const qualifyingMap = new Map<string, Map<RegionalAwardCategory, string[]>>();
 
-    // Calculate points for all eligible horses
-    const horsePoints: Array<{ horse: Horse; points: number }> = [];
-    for (const horse of horses) {
-      const points = calculateAwardPoints(horse, year, region, category, raceMap);
-      if (points > 0) {
-        horsePoints.push({ horse, points });
+  for (const horse of horses) {
+    let horseHasAny = false;
+    const catPoints = new Map<RegionalAwardCategory, number>();
+    const catRaces = new Map<RegionalAwardCategory, string[]>();
+
+    for (const entry of horse.raceHistory) {
+      if (entry.day < yearStart || entry.day > yearEnd) continue;
+      const race = raceMap.get(entry.raceId);
+      if (!race?.graded?.track) continue;
+      const trackContinent = getTrackContinent(race.graded.track);
+      if (CONTINENT_TO_REGION[trackContinent] !== region) continue;
+
+      for (const category of categories) {
+        if (!isEligibleForCategory(horse, category, entry)) continue;
+        const pts = calculateRacePoints(entry, weights);
+        if (pts > 0) {
+          catPoints.set(category, (catPoints.get(category) ?? 0) + pts);
+          if (entry.grade) {
+            const races = catRaces.get(category) ?? [];
+            races.push(entry.raceId);
+            catRaces.set(category, races);
+          }
+          horseHasAny = true;
+        }
       }
     }
 
-    // Sort by points descending
-    horsePoints.sort((a, b) => b.points - a.points);
+    if (horseHasAny) {
+      pointsMap.set(horse.id, catPoints);
+      qualifyingMap.set(horse.id, catRaces);
+    }
+  }
 
-    if (horsePoints.length > 0) {
-      const winner = horsePoints[0];
-      const runnerUp = horsePoints[1];
-
+  // Pick winner per category
+  const winners: Omit<RegionalAward, "id" | "ceremonyDay">[] = [];
+  for (const category of categories) {
+    const candidates: Array<{ horse: Horse; points: number }> = [];
+    for (const horse of horses) {
+      const pts = pointsMap.get(horse.id)?.get(category);
+      if (pts && pts > 0) candidates.push({ horse, points: pts });
+    }
+    candidates.sort((a, b) => b.points - a.points);
+    if (candidates.length > 0) {
+      const winner = candidates[0];
+      const runnerUp = candidates[1];
       winners.push({
         year,
         region,
@@ -285,9 +312,7 @@ export function determineRegionalWinners(
         runnerUpId: runnerUp?.horse.id,
         runnerUpPoints: runnerUp?.points || 0,
         margin: runnerUp ? winner.points - runnerUp.points : winner.points,
-        qualifyingRaces: winner.horse.raceHistory
-          .filter((h) => h.grade && h.day >= (year - 1) * 365 + 1 && h.day <= year * 365)
-          .map((h) => h.raceId),
+        qualifyingRaces: qualifyingMap.get(winner.horse.id)?.get(category) ?? [],
       });
     }
   }

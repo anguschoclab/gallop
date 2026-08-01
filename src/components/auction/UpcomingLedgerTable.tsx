@@ -96,7 +96,7 @@ export function UpcomingLedgerTable({ sales, currentDay }: UpcomingLedgerTablePr
                     ) : (
                       <div className="flex flex-col items-end">
                         <span className="text-cream/60">
-                          {sale.lots.filter((l) => !l.withdrawn).length} LOTS
+                          {sale.lots.reduce((n, l) => (l.withdrawn ? n : n + 1), 0)} LOTS
                         </span>
                         {playerLots.length > 0 && (
                           <span className="text-[8px] text-success font-black uppercase">
