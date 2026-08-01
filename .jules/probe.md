@@ -42,3 +42,8 @@
 
 **Learning:** Found an untested pure function `generateBreezeSeconds` in `src/core/auction/engine.ts` which calculates the breeze time for a horse at auction using weighted stats (speed 0.6, accel 0.4). This is critical for 2YO auction valuations.
 **Action:** Adding isolated unit tests for it to verify exact math, range boundaries, stat weights and RNG variance.
+
+## 2024-03-09 - Hardcoded Valuation in Insurance Impacts
+
+**Learning:** In `src/core/race/impacts/healthInjury.ts`, when a career-ending injury occurs and an insurance policy exists, the payout is calculated using `calculateBaseHorseValue(horse, "mid")`. The stable tier is hardcoded to "mid" rather than fetching the actual stable tier of the horse's owner. This means elite stables and base stables will receive the same underlying valuation multiplier for their insurance payouts.
+**Action:** Wrote tests to document this exact behavior. When testing calculation chains, always explicitly mock underlying valuation calls to verify the correct contextual parameters are passed.
