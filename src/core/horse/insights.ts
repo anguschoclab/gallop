@@ -151,6 +151,33 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     };
   }
 
+  // 1.9 Check for Deep Closer
+  let closingWins = 0;
+
+  for (const race of history) {
+    if (
+      race.position === 1 &&
+      race.pacePositions &&
+      race.pacePositions.length > 0 &&
+      race.fieldSize != null &&
+      race.fieldSize >= 4 // Ensure it's a real field
+    ) {
+      const firstCall = race.pacePositions[0];
+      if (firstCall > Math.ceil(race.fieldSize / 2)) {
+        closingWins++;
+      }
+    }
+  }
+
+  if (closingWins >= 2) {
+    return {
+      label: "From the Clouds",
+      value: "Deep Closing Winner",
+      context: `Has rallied from the back half of the pack to win ${closingWins} career races`,
+      type: "positive",
+    };
+  }
+
   // 2. Check for distance sweet spot (best average beyer by distance, min 3 races)
   const distanceStats = new Map<number, { runs: number; totalBeyer: number; wins: number }>();
   for (const race of history) {

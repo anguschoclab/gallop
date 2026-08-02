@@ -34,3 +34,7 @@
 
 **Learning:** `raceHistory` tracks `pacePositions` and `fieldSize`, allowing the derivation of wire-to-wire victories without needing new states. Checking `pacePositions.every(p => p === 1)` is an effective way to define "Wire-to-Wire".
 **Action:** Use existing structural data like `pacePositions` to construct contextual play style accolades like "Catch Me If You Can". Ensure safe fallbacks for missing `pacePositions` in legacy mock data.
+
+## 2025-02-12 - Tipster Insight: Deep Closer
+**Learning:** Using `raceHistory.pacePositions` alongside `raceHistory.fieldSize`, we can accurately evaluate closing metrics (like winning from the back half) to present a "From the Clouds" insight. Ensure safety against small field sizes where positions don't convey true closing distance.
+**Action:** Combine `pacePositions` with `fieldSize` to track positional changes meaningfully. Ensure safe fallbacks for missing `fieldSize`.
