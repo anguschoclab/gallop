@@ -31,3 +31,8 @@
 
 **Learning:** Found a missing htmlFor/id association in the private sale offer dialog input, which reduces screen reader accessibility and clickable area. Using `useId()` reliably maps the label to the input element dynamically.
 **Action:** Always wrap standard inputs in standard components and associate them to their matching `label` via `useId()` and explicit `htmlFor` / `id` mapping.
+
+## 2026-07-31 - Prop Drilling IDs to Custom Components
+
+**Learning:** When using custom Input components wrapped in a layout (e.g. `BidInput` or `MaxBidInput`), a standard `<label>` next to it must point to the actual `<input>` element within that custom component for screen readers to work correctly.
+**Action:** Always drill an `id` prop down through custom components to the raw `<input>` element inside, and associate it with a unique ID via `useId()` and `htmlFor` on the `<label>`.

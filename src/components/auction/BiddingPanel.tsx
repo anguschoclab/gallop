@@ -5,7 +5,7 @@
  * Extracted from auction.$saleId.tsx.
  */
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Gavel, Activity } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
@@ -47,6 +47,8 @@ export function BiddingPanel({
   const [bidInput, setBidInput] = useState("");
   const [maxBidInput, setMaxBidInput] = useState("");
   const [currentMaxBid, setCurrentMaxBid] = useState<number | undefined>(undefined);
+  const manualBidId = useId();
+  const maxBidId = useId();
 
   const handleCustomBid = () => {
     const amount = Number(bidInput.replace(/,/g, ""));
@@ -121,10 +123,14 @@ export function BiddingPanel({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-[8px] uppercase font-black text-cream/20 tracking-widest px-1">
+              <label
+                htmlFor={manualBidId}
+                className="text-[8px] uppercase font-black text-cream/20 tracking-widest px-1"
+              >
                 Manual_Offer
               </label>
               <BidInput
+                id={manualBidId}
                 value={bidInput}
                 onChange={setBidInput}
                 onSubmit={handleCustomBid}
@@ -135,10 +141,14 @@ export function BiddingPanel({
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-[8px] uppercase font-black text-cream/20 tracking-widest px-1">
+              <label
+                htmlFor={maxBidId}
+                className="text-[8px] uppercase font-black text-cream/20 tracking-widest px-1"
+              >
                 Auto Bid Limit
               </label>
               <MaxBidInput
+                id={maxBidId}
                 value={maxBidInput}
                 onChange={setMaxBidInput}
                 onSubmit={handleSetMaxBid}

@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/cn";
 
 interface MaxBidInputProps {
+  id?: string;
   value: string;
   onChange: (value: string) => void;
   onSubmit: () => void;
@@ -15,6 +16,7 @@ interface MaxBidInputProps {
 }
 
 export function MaxBidInput({
+  id,
   value,
   onChange,
   onSubmit,
@@ -28,6 +30,7 @@ export function MaxBidInput({
   return (
     <div className="flex gap-2">
       <Input
+        id={id}
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
