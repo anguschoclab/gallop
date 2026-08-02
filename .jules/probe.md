@@ -42,3 +42,8 @@
 
 **Learning:** Found an untested pure function `generateBreezeSeconds` in `src/core/auction/engine.ts` which calculates the breeze time for a horse at auction using weighted stats (speed 0.6, accel 0.4). This is critical for 2YO auction valuations.
 **Action:** Adding isolated unit tests for it to verify exact math, range boundaries, stat weights and RNG variance.
+
+## 2024-08-02 - Sire Analytics and AEI Calculation coverage
+
+**Learning:** `src/core/breeding/sireAnalytics.ts` calculates critical stallion statistics like AEI and win percentages that are used extensively in pricing and leaderboards, but its logic involves conditional math operations that lacked direct testing. The `StudCareer` object is complex and has required properties that weren't obvious initially.
+**Action:** Mock partial structures explicitly defined by the types, such as `StudCareer` and `RaceHistory` entries, avoiding hallucination and fully asserting the formulas that drive the simulation's evaluations.
