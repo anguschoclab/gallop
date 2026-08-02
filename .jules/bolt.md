@@ -87,3 +87,8 @@
 
 **Learning:** When generating lightweight odds and monte carlo sim results inside `HeadToHeadSection`, using `.find()` inside a `horses.map()` render loop leads to O(N^2) performance degradation during rendering.
 **Action:** Pre-calculate hash maps using `useMemo` (e.g. `new Map(odds.map(o => [o.horseId, o]))`) for O(1) lookups inside the render loop, changing the complexity to O(N).
+
+## 2026-08-02 - Optimize O(N^2) render loop in RivalArchivesView
+
+**Learning:** O(N) array lookups (`stables.find()`) inside a loop mapping over elements in `src/components/stable/RivalArchivesView.tsx` causes O(M*N) complexity during rendering, which scales poorly as the array size increases.
+**Action:** Pre-calculate a local `useMemo`-backed hash map lookup (`stableMap = new Map(stables.map(s => [s.id, s]))`) to reduce complexity from O(M*N) to O(M+N). Avoid chaining array methods inline or querying an array via `.find` when mapping over a loop structure.
