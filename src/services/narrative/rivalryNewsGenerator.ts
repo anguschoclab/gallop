@@ -439,6 +439,12 @@ export function generateStableIntroNews(stable: Stable, day: number, rng: Rng): 
     `Stable Spotlight: ${stable.name}`,
     `${stable.name}: A Closer Look`,
     `Introducing ${stable.name}`,
+    `The ${country} Connection: ${stable.name}`,
+    `Focus On: ${stable.name}`,
+    `Unmasking ${stable.name}`,
+    `The Rise of ${stable.name}`,
+    `${stable.name} Steps Into the Light`,
+    `Profiling the ${tier} Tier Contender: ${stable.name}`,
   ];
 
   const bodies = [
@@ -450,6 +456,12 @@ export function generateStableIntroNews(stable: Stable, day: number, rng: Rng): 
     `${stable.name} — ${stable.owner}'s pride and joy from ${country}. ${description} A ${tier} tier stable with ambitions to match.`,
     `The story of ${stable.name} is one of ambition and grit. Founded by ${stable.owner} in ${country}, ${description} Their ${tier} tier status cements their place among the racing elite.`,
     `In the competitive world of ${country} racing, ${stable.name} stands tall. ${stable.owner}'s operation is defined by ${description} A ${tier} tier stable through and through.`,
+    `Racing fans in ${country} are well acquainted with ${stable.name}. Guided by ${stable.owner}, ${description} This ${tier} tier yard is stepping up its campaign.`,
+    `A deeper dive into ${stable.name} reveals a meticulously run organization. ${stable.owner} has established a strong presence in ${country}. ${description} They compete at the ${tier} tier level.`,
+    `The paddock chatter often turns to ${stable.name}. Originating from ${country} and managed by ${stable.owner}, ${description} They are proving to be a formidable ${tier} tier outfit.`,
+    `Expectations are high for ${stable.name}. The ${country} based operation, overseen by ${stable.owner}, is gaining traction. ${description} As a ${tier} tier stable, they are not to be underestimated.`,
+    `Stepping into the spotlight is ${stable.name}. ${stable.owner} has assembled an impressive string of runners in ${country}. ${description} Their ${tier} tier classification is well-earned.`,
+    `The ${tier} tier ranks are heating up with the emergence of ${stable.name}. Representing ${country} under ${stable.owner}'s guidance, ${description} They are making their intentions clear.`,
   ];
 
   return buildRivalryNews(
