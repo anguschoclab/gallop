@@ -132,6 +132,7 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
 
   // 1.8 Check for Play Style Success (Wire-to-wire)
   let wireToWireWins = 0;
+  let closerWins = 0;
 
   for (const race of history) {
     if (race.position === 1 && race.pacePositions && race.pacePositions.length > 0) {
@@ -139,7 +140,22 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
       if (isWireToWire) {
         wireToWireWins++;
       }
+
+      const fSize = race.fieldSize ?? 8;
+      const firstCall = race.pacePositions[0];
+      if (firstCall > Math.max(4, fSize / 2)) {
+        closerWins++;
+      }
     }
+  }
+
+  if (wireToWireWins >= 1 && closerWins >= 1) {
+    return {
+      label: "Tactical Versatility",
+      value: "Can Win from Anywhere",
+      context: `Has demonstrated the ability to win both wire-to-wire and from off the pace`,
+      type: "positive",
+    };
   }
 
   if (wireToWireWins >= 2) {
@@ -147,6 +163,15 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
       label: "Catch Me If You Can",
       value: "Wire-to-Wire Winner",
       context: `Has led from start to finish in ${wireToWireWins} career wins`,
+      type: "positive",
+    };
+  }
+
+  if (closerWins >= 2) {
+    return {
+      label: "Late Charge",
+      value: "Off-the-Pace Winner",
+      context: `Has won ${closerWins} races when coming from the back half of the field`,
       type: "positive",
     };
   }

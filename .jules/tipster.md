@@ -34,3 +34,8 @@
 
 **Learning:** `raceHistory` tracks `pacePositions` and `fieldSize`, allowing the derivation of wire-to-wire victories without needing new states. Checking `pacePositions.every(p => p === 1)` is an effective way to define "Wire-to-Wire".
 **Action:** Use existing structural data like `pacePositions` to construct contextual play style accolades like "Catch Me If You Can". Ensure safe fallbacks for missing `pacePositions` in legacy mock data.
+
+## 2024-05-18 - Extracting Play Style Insights
+
+**Learning:** Insights don't have to be just one-dimensional streaks. By using pace positions, we can detect a horse's tactical versatility (winning from different parts of the pack) and late charging ability.
+**Action:** When adding insights based on running styles, handle edge cases with missing `fieldSize` by using a default, and ensure test histories meet the minimum race count requirement (3).
