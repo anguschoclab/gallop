@@ -22,3 +22,8 @@
 **Learning:** When using the tooltip pattern for disabled buttons (wrapping with a focusable span), ensure the `TooltipProvider` wraps the `Tooltip` element locally if the app does not have a global provider, otherwise Shadcn tooltip components will throw a Context error in tests or runtime. Additionally, `pointer-events-none` is required on the disabled `Button` child to let the wrapper receive mouse events and trigger the tooltip on hover.
 
 **Action:** When applying tooltips to disabled buttons, wrap them with `TooltipProvider` > `Tooltip` > `TooltipTrigger` > a focusable span (`tabIndex={0}`, `className="inline-block cursor-not-allowed"`) > `Button` (`disabled`, `className="pointer-events-none"`), and close the tooltip components appropriately.
+
+## 2024-11-21 - Explaining disabled actions
+
+**Learning:** When actions are disabled due to a lack of resources (like cash), silently failing or disabling without explanation can be confusing.
+**Action:** Always wrap disabled financial action buttons (e.g. buying syndicate shares) with tooltips (`TooltipProvider` > `Tooltip` > `TooltipTrigger` > `span` with `tabIndex={0}`) explaining *why* they are disabled (e.g., "Not enough cash").
