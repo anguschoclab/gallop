@@ -49,3 +49,7 @@
 
 **Learning:** `trainingResolution.ts` and `energy.ts` time phases used `new Map<string, any>()` and `new Map<string, Map<string, any>>()` to store typed Outpost and Staff data for lookups. This bypasses the compiler checks entirely and allows invalid states to propagate.
 **Action:** Always declare maps with explicit core types (`Map<string, Outpost>`, `Map<string, Map<StaffRole, StaffMember>>`) when mapping state objects during phase processing to ensure tight compile-time contract enforcement.
+## 2025-03-05 - Remove any casts from RunningStyleBreakdown.tsx
+
+**Learning:** `src/components/horse/RunningStyleBreakdown.tsx` was bypassing type checking by manually casting iterators `(r: any)` over `horse.raceHistory` because `Horse["raceHistory"]` used an inline array object definition rather than a named type. This allowed potential bugs to slip in unchecked.
+**Action:** Extract inline and `any[]` arrays representing race history into a unified `HorseRaceHistoryEntry` interface exported from `@/core/horse/types.ts` and `game/types.ts`. Doing so ensures robust type checking during filtering and mapping operations using TypeScript's natural inference.

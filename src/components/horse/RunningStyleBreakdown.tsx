@@ -154,16 +154,16 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
   const declaredMeta = STYLE_META[declared] ?? STYLE_META.P;
 
   const racesAll = (horse.raceHistory ?? []).filter(
-    (r: any) => r.pacePositions && r.pacePositions.length > 0,
+    (r) => r.pacePositions && r.pacePositions.length > 0,
   );
-  const races = surface === "any" ? racesAll : racesAll.filter((r: any) => r.surface === surface);
+  const races = surface === "any" ? racesAll : racesAll.filter((r) => r.surface === surface);
 
   // Avg position per call segment
-  const maxQuarters = races.reduce((m, r: any) => Math.max(m, r.pacePositions?.length ?? 0), 0);
+  const maxQuarters = races.reduce((m, r) => Math.max(m, r.pacePositions?.length ?? 0), 0);
   const avgPositions: number[] = [];
   for (let q = 0; q < maxQuarters; q++) {
     const ps = races
-      .map((r: any) => r.pacePositions?.[q])
+      .map((r) => r.pacePositions?.[q])
       .filter((p): p is number => typeof p === "number");
     if (ps.length) avgPositions.push(ps.reduce((a, b) => a + b, 0) / ps.length);
   }
