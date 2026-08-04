@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { AlertTriangle, ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { useState, useId } from "react";
 import { useGame } from "@/game/store";
 import {
   SOLVENCY_THRESHOLDS,
@@ -28,6 +28,7 @@ export function DebtBanner() {
   const quickSellHorse = useGame((s) => s.quickSellHorse);
   const [open, setOpen] = useState(false);
   const [payAmount, setPayAmount] = useState("");
+  const payDownId = useId();
 
   const imminentWarningDays = userSettings?.gameplay?.imminentForcedSaleWarningDays ?? 2;
 
@@ -135,10 +136,14 @@ export function DebtBanner() {
           {/* Pay-down Debt Controls */}
           <div className="col-span-2 md:col-span-4 mt-1 flex flex-wrap gap-2 items-end">
             <div>
-              <label className="text-[10px] uppercase tracking-widest opacity-60 font-mono block mb-0.5">
+              <label
+                htmlFor={payDownId}
+                className="text-[10px] uppercase tracking-widest opacity-60 font-mono block mb-0.5"
+              >
                 Pay down debt
               </label>
               <input
+                id={payDownId}
                 type="number"
                 min={0}
                 max={display.cashToRecover}

@@ -27,7 +27,13 @@
 
 **Learning:** Custom UI controls like the race visualizer's playback buttons (`.race-control-btn`) used native `title` attributes for tooltips, which look inconsistent and often lack accessibility hooks compared to the app's standard `Tooltip` component.
 **Action:** When implementing custom icon-only button groups (even those not using the standard `Button` component), wrap them with the design system's `Tooltip` components (`Tooltip`, `TooltipTrigger`, `TooltipContent`) rather than relying on native `title` attributes to ensure consistent visual polish and accessibility. Note that individual Tooltips should not be wrapped with `TooltipProvider` as it should only wrap the app root.
+
 ## 2025-01-20 - Missing label association in PrivateSaleOfferDialog
 
 **Learning:** Found a missing htmlFor/id association in the private sale offer dialog input, which reduces screen reader accessibility and clickable area. Using `useId()` reliably maps the label to the input element dynamically.
 **Action:** Always wrap standard inputs in standard components and associate them to their matching `label` via `useId()` and explicit `htmlFor` / `id` mapping.
+
+## 2024-08-04 - Fix missing label association on Debt Banner Input
+
+**Learning:** Custom inputs or plain inputs often miss an explicit `htmlFor` association with their `<label>`, causing accessibility failures.
+**Action:** Always verify that every custom input has a unique ID via `useId()` and that its label properly refers to it with `htmlFor`.
