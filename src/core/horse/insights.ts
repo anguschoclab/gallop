@@ -151,6 +151,27 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     };
   }
 
+  // 1.9 Check for Deep Closer (Late Kick)
+  let maxPositionsPassed = 0;
+  for (const race of history) {
+    if (race.position === 1 && race.pacePositions && race.pacePositions.length > 0) {
+      const firstCall = race.pacePositions[0];
+      const positionsPassed = firstCall - 1;
+      if (positionsPassed >= 6 && positionsPassed > maxPositionsPassed) {
+        maxPositionsPassed = positionsPassed;
+      }
+    }
+  }
+
+  if (maxPositionsPassed >= 6) {
+    return {
+      label: "Closing Kick",
+      value: "Deep Closer",
+      context: `Has won a race after passing ${maxPositionsPassed} horses from the first call`,
+      type: "positive",
+    };
+  }
+
   // 2. Check for distance sweet spot (best average beyer by distance, min 3 races)
   const distanceStats = new Map<number, { runs: number; totalBeyer: number; wins: number }>();
   for (const race of history) {

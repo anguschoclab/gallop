@@ -34,3 +34,8 @@
 
 **Learning:** `raceHistory` tracks `pacePositions` and `fieldSize`, allowing the derivation of wire-to-wire victories without needing new states. Checking `pacePositions.every(p => p === 1)` is an effective way to define "Wire-to-Wire".
 **Action:** Use existing structural data like `pacePositions` to construct contextual play style accolades like "Catch Me If You Can". Ensure safe fallbacks for missing `pacePositions` in legacy mock data.
+
+## 2024-05-18 - Extracting Closer Insights (Late Kick)
+
+**Learning:** Race history tracks `pacePositions`, showing the horse's position at each quarter. I can use this to derive a "Deep Closer" or "Closing Kick" insight if the horse wins after passing many horses from the first call.
+**Action:** Implemented a new insight that checks if the horse passed 6 or more horses from the first call (`pacePositions[0] - 1`) and went on to win. Surfaced on the HorseAnalyticsSection.
