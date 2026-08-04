@@ -87,3 +87,7 @@
 
 **Learning:** When generating lightweight odds and monte carlo sim results inside `HeadToHeadSection`, using `.find()` inside a `horses.map()` render loop leads to O(N^2) performance degradation during rendering.
 **Action:** Pre-calculate hash maps using `useMemo` (e.g. `new Map(odds.map(o => [o.horseId, o]))`) for O(1) lookups inside the render loop, changing the complexity to O(N).
+
+## 2025-05-26 - [Optimizing O(N) array lookups in ShareOwnershipPanel mapping]
+**Learning:** Using `array.find()` inside `.map()` when resolving relationships between datasets (e.g. mapping shareholder IDs to NPC stable names) creates an O(N*M) loop inside React `useMemo` hooks. This degrades rendering performance as the number of NPC stables and syndicate shareholders grows.
+**Action:** Pre-calculate a hash map using `useMemo(() => new Map(arr.map(x => [x.id, x])), [arr])` before the mapping loops and use `.get()` to achieve O(1) conditional lookup, transforming O(N*M) time into O(N+M).

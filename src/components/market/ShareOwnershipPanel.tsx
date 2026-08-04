@@ -12,13 +12,18 @@ interface ShareOwnershipPanelProps {
   npcStables?: Stable[];
 }
 
-function getHolderName(holderId: string, npcStables?: Stable[]): string {
+function getHolderName(holderId: string, stableMap: Map<string, Stable>): string {
   if (holderId === "player") return "Your Stable";
-  const stable = npcStables?.find((s) => s.id === holderId);
+  const stable = stableMap.get(holderId);
   return stable?.name ?? holderId;
 }
 
 export function ShareOwnershipPanel({ syndicate, stallion, npcStables }: ShareOwnershipPanelProps) {
+  // ⚡ Bolt Optimization: Pre-calculate hash map for O(1) lookups instead of running O(N) .find() inside map loops
+  const stableMap = useMemo(() => {
+    return new Map(npcStables?.map((s) => [s.id, s]) || []);
+  }, [npcStables]);
+
   const currentOwnerKey = stallion?.stableId ?? "player";
   const totalShares = syndicate.totalShares;
   const threshold = totalShares / 2;
@@ -27,13 +32,13 @@ export function ShareOwnershipPanel({ syndicate, stallion, npcStables }: ShareOw
     return Object.entries(syndicate.shareHolders)
       .map(([id, shares]) => ({
         id,
-        name: getHolderName(id, npcStables),
+        name: getHolderName(id, stableMap),
         shares,
         percentage: (shares / totalShares) * 100,
         isOwner: id === currentOwnerKey,
       }))
       .sort((a, b) => b.shares - a.shares);
-  }, [syndicate.shareHolders, totalShares, currentOwnerKey, npcStables]);
+  }, [syndicate.shareHolders, totalShares, currentOwnerKey, stableMap]);
 
   const projections = useMemo(() => {
     return holders.map((h) => {
@@ -48,10 +53,10 @@ export function ShareOwnershipPanel({ syndicate, stallion, npcStables }: ShareOw
         holderId: h.id,
         holderName: h.name,
         wouldDevolve: result.wouldDevolve,
-        newOwner: result.newOwner ? getHolderName(result.newOwner, npcStables) : null,
+        newOwner: result.newOwner ? getHolderName(result.newOwner, stableMap) : null,
       };
     });
-  }, [holders, syndicate.shareHolders, totalShares, currentOwnerKey, npcStables]);
+  }, [holders, syndicate.shareHolders, totalShares, currentOwnerKey, stableMap]);
 
   return (
     <Card>
