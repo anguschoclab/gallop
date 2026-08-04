@@ -42,3 +42,9 @@
 
 **Learning:** Found an untested pure function `generateBreezeSeconds` in `src/core/auction/engine.ts` which calculates the breeze time for a horse at auction using weighted stats (speed 0.6, accel 0.4). This is critical for 2YO auction valuations.
 **Action:** Adding isolated unit tests for it to verify exact math, range boundaries, stat weights and RNG variance.
+
+## 2024-03-09 - Testing Breeding Archetypes Core Logic
+
+**Learning:** Pure domain data access functions like `getArchetypeById`, `getArchetypesBySurface`, `getArchetypeForTripleCrownKey` in `src/core/breeding/archetypes.ts` were completely untested. While they are mostly simple find/filter operations over static arrays and objects, these archetypes dictate critical game goals (e.g. Triple Crown targeting). If the static keys drifted from the mappings, or logic broke silently, it would create obscure bugs where AI or player breeding goals would fail to resolve their targeted archetypes.
+
+**Action:** Added full unit test coverage for archetype retrieval and filtering logic to ensure data invariants remain stable. Always verify that data-access pure functions mapping complex static domains (like breeding archetypes) have simple safety-net tests.
