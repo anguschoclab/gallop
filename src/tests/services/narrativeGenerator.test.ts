@@ -256,6 +256,7 @@ describe("template variety (herald branches)", () => {
     expect(EXPERT_INSIGHT_TEMPLATES.NEGATIVE_FORM.length).toBeGreaterThanOrEqual(4);
     expect(EXPERT_INSIGHT_TEMPLATES.DISTANCE_FIT.length).toBeGreaterThanOrEqual(4);
     expect(EXPERT_INSIGHT_TEMPLATES.NEW_DISTANCE.length).toBeGreaterThanOrEqual(4);
+    expect(EXPERT_INSIGHT_TEMPLATES.SURFACE_FIT.length).toBeGreaterThanOrEqual(4);
   });
 
   it("no STRETCH template contains 'Nothing separates'", () => {

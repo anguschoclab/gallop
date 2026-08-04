@@ -69,3 +69,6 @@
 
 **Learning:** Expanding news generator pools with context-neutral stories (like track upgrades or quirky backstretch events) immediately enlivens the world without risking logic side effects or breaking strict data dependencies. The `flavorStories` array in `src/services/narrative/newsGenerator.ts` is a great target for adding depth since it is completely decoupled from active game state while giving the illusion of a living, breathing ecosystem around the player.
 **Action:** When adding static flavor arrays, I will focus on the peripheral world elements—like outriders, farriers, track staff, and fans—to flesh out the track atmosphere. I'll use regex/replacement scripts to safely append new templates in long arrays rather than attempting complex manual edits.
+## 2025-02-27 - Surface Aptitude Expert Insight
+**Learning:** `race.graded?.surface` can be undefined, and horses have a `surfaceAptitude` record of "Turf" | "Dirt" | "Synthetic" mapping to a number representing aptitude (usually out of 100).
+**Action:** When adding conditions that use `horse.surfaceAptitude`, provide a default value (e.g. `"Dirt"`) for races missing surface data, and check the nested property `surfaceAptitude[surface]` to verify aptitude before generating the string.

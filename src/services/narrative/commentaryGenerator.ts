@@ -151,11 +151,18 @@ export function generateExpertInsight(
     insights.push(...EXPERT_INSIGHT_TEMPLATES.NEW_DISTANCE);
   }
 
+  const raceSurface = race.graded?.surface || race.graded_override?.surface || "Dirt";
+  const surfaceApt = horse.surfaceAptitude?.[raceSurface];
+  if (surfaceApt !== undefined && surfaceApt >= 85) {
+    insights.push(...EXPERT_INSIGHT_TEMPLATES.SURFACE_FIT);
+  }
+
   if (insights.length === 0) return null;
 
   let text = insights[Math.floor(rng.next() * insights.length)];
   text = text.replace("{horse}", runner.name);
   text = text.replace("{distance}", race.distance.toString());
+  text = text.replace("{surface}", raceSurface.toLowerCase());
 
   return text;
 }
