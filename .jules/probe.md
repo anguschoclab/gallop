@@ -42,3 +42,6 @@
 
 **Learning:** Found an untested pure function `generateBreezeSeconds` in `src/core/auction/engine.ts` which calculates the breeze time for a horse at auction using weighted stats (speed 0.6, accel 0.4). This is critical for 2YO auction valuations.
 **Action:** Adding isolated unit tests for it to verify exact math, range boundaries, stat weights and RNG variance.
+## 2024-08-05 - Tested calculateRaceRating, getCareerStats, rollRunningStyle in stats.test.ts
+**Learning:** Found pure core functions in `stats.ts` (`getCareerStats`, `calculateRaceRating`, `rollRunningStyle`) without tests.
+**Action:** Adding deterministic unit coverage (using `createTestRng`) for these functions in `stats.test.ts` instead of modifying application logic, protecting stats summary behavior from regressions.
