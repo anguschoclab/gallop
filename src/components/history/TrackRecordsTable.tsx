@@ -8,6 +8,7 @@ import {
   LeaderboardShell,
 } from "@/components/leaderboard/LeaderboardPrimitives";
 import { useLeaderboardControls } from "@/hooks/leaderboard/useLeaderboardControls";
+import type { TrackRecord } from "@/core/history/historyTypes";
 
 const SORT_OPTIONS = [
   { value: "track", label: "Track Name" },
@@ -23,14 +24,14 @@ const FILTER_OPTIONS = [
   { value: "Synthetic", label: "Synthetic" },
 ];
 
-const SORT_FNS: Record<string, (a: any, b: any) => number> = {
+const SORT_FNS: Record<string, (a: TrackRecord, b: TrackRecord) => number> = {
   track: (a, b) => a.trackName.localeCompare(b.trackName),
   time: (a, b) => a.time - b.time,
   distance: (a, b) => a.distance - b.distance,
   year: (a, b) => b.year - a.year,
 };
 
-const FILTER_FNS: Record<string, (item: any) => boolean> = {
+const FILTER_FNS: Record<string, (item: TrackRecord) => boolean> = {
   all: () => true,
   Turf: (r) => r.surface === "Turf",
   Dirt: (r) => r.surface === "Dirt",
@@ -43,9 +44,9 @@ const surfaceColor = (surface: string) => {
   return "bg-blue-500/20 text-blue-500";
 };
 
-export function TrackRecordsTable({ records }: { records: any[] }) {
+export function TrackRecordsTable({ records }: { records: TrackRecord[] }) {
   const { sortValue, setSortValue, filterValue, setFilterValue, processed } =
-    useLeaderboardControls<any>({
+    useLeaderboardControls<TrackRecord>({
       items: records,
       sortOptions: SORT_OPTIONS,
       filterOptions: FILTER_OPTIONS,
@@ -74,7 +75,7 @@ export function TrackRecordsTable({ records }: { records: any[] }) {
         filterValue={filterValue}
         onFilterChange={setFilterValue}
       />
-      {processed.map((record: any, index: number) => (
+      {processed.map((record, index: number) => (
         <LeaderboardRow
           key={`${record.trackId}_${record.surface}_${record.distance}`}
           rank={index + 1}

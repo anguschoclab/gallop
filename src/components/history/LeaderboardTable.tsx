@@ -8,11 +8,12 @@ import {
   LeaderboardSkeleton,
 } from "@/components/leaderboard/LeaderboardPrimitives";
 import { useLeaderboardControls } from "@/hooks/leaderboard/useLeaderboardControls";
+import type { ProgenyLeaderboard, ProgenyRanking } from "@/core/breeding/leaderboardTypes";
 
 interface LeaderboardTableProps {
-  leaderboard: any;
+  leaderboard: ProgenyLeaderboard | undefined;
   icon: React.ReactNode;
-  valueFormatter: (val: any) => string;
+  valueFormatter: (val: number) => string;
   valueLabel?: string;
 }
 
@@ -23,7 +24,7 @@ const SORT_OPTIONS = [
   { value: "starts", label: "Starts" },
 ];
 
-const SORT_FNS: Record<string, (a: any, b: any) => number> = {
+const SORT_FNS: Record<string, (a: ProgenyRanking, b: ProgenyRanking) => number> = {
   rank: (a, b) => a.rank - b.rank,
   value: (a, b) => b.value - a.value,
   wins: (a, b) => b.metrics.wins - a.metrics.wins,
@@ -36,7 +37,7 @@ export function LeaderboardTable({
   valueFormatter,
   valueLabel = "Value",
 }: LeaderboardTableProps) {
-  const { sortValue, setSortValue, processed } = useLeaderboardControls<any>({
+  const { sortValue, setSortValue, processed } = useLeaderboardControls<ProgenyRanking>({
     items: leaderboard?.rankings ?? [],
     sortOptions: SORT_OPTIONS,
     sortFns: SORT_FNS,
@@ -60,7 +61,7 @@ export function LeaderboardTable({
         sortValue={sortValue}
         onSortChange={setSortValue}
       />
-      {processed.map((entry: any) => (
+      {processed.map((entry) => (
         <LeaderboardRow
           key={entry.horseId}
           rank={entry.rank}

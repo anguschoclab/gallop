@@ -49,3 +49,8 @@
 
 **Learning:** `trainingResolution.ts` and `energy.ts` time phases used `new Map<string, any>()` and `new Map<string, Map<string, any>>()` to store typed Outpost and Staff data for lookups. This bypasses the compiler checks entirely and allows invalid states to propagate.
 **Action:** Always declare maps with explicit core types (`Map<string, Outpost>`, `Map<string, Map<StaffRole, StaffMember>>`) when mapping state objects during phase processing to ensure tight compile-time contract enforcement.
+
+## 2025-03-05 - Strong Typed Leaderboard Controls
+
+**Learning:** `useLeaderboardControls` and `LeaderboardTable` used `any` as generic types and inside the `SORT_FNS` and `FILTER_FNS` record. This bypassed type safety, meaning property accesses were unguarded and wouldn't catch issues when refactoring the leaderboards models.
+**Action:** When creating reusable UI hooks and components that accept generic types, make sure to propagate the correct domain models (like `ProgenyRanking` or `TrackRecord`) into the generic type arguments and function signatures to preserve type safety and ensure the compiler enforces structural integrity.
