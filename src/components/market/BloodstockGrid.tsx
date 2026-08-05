@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { HorseStats, overall, NumericValue } from "@/components/horse/HorseBits";
 import { CareerValuationBreakdown } from "@/components/horse/CareerValuationBreakdown";
 import { formatCurrency } from "@/core/common/formatting";
@@ -110,21 +111,37 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
                 </div>
               )}
 
-              <Button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  buyHorse(h.id);
-                }}
-                disabled={!canAfford}
-                className={cn(
-                  "w-full h-10 uppercase text-[10px] font-black tracking-[0.2em] rounded-none transition-all",
-                  canAfford
-                    ? "bg-success hover:bg-success-dark text-slate-950 shadow-lg"
-                    : "border-white/5 text-cream/20 bg-transparent",
-                )}
-              >
-                {canAfford ? "Buy" : "Can't afford"}
-              </Button>
+              {!canAfford ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span tabIndex={0} className="w-full block cursor-not-allowed">
+                      <Button
+                        disabled
+                        className={cn(
+                          "w-full h-10 uppercase text-[10px] font-black tracking-[0.2em] rounded-none transition-all pointer-events-none",
+                          "border-white/5 text-cream/20 bg-transparent",
+                        )}
+                      >
+                        Can't afford
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>Not enough cash</TooltipContent>
+                </Tooltip>
+              ) : (
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    buyHorse(h.id);
+                  }}
+                  className={cn(
+                    "w-full h-10 uppercase text-[10px] font-black tracking-[0.2em] rounded-none transition-all",
+                    "bg-success hover:bg-success-dark text-slate-950 shadow-lg",
+                  )}
+                >
+                  Buy
+                </Button>
+              )}
             </CardContent>
           </Card>
         );

@@ -27,7 +27,13 @@
 
 **Learning:** Custom UI controls like the race visualizer's playback buttons (`.race-control-btn`) used native `title` attributes for tooltips, which look inconsistent and often lack accessibility hooks compared to the app's standard `Tooltip` component.
 **Action:** When implementing custom icon-only button groups (even those not using the standard `Button` component), wrap them with the design system's `Tooltip` components (`Tooltip`, `TooltipTrigger`, `TooltipContent`) rather than relying on native `title` attributes to ensure consistent visual polish and accessibility. Note that individual Tooltips should not be wrapped with `TooltipProvider` as it should only wrap the app root.
+
 ## 2025-01-20 - Missing label association in PrivateSaleOfferDialog
 
 **Learning:** Found a missing htmlFor/id association in the private sale offer dialog input, which reduces screen reader accessibility and clickable area. Using `useId()` reliably maps the label to the input element dynamically.
 **Action:** Always wrap standard inputs in standard components and associate them to their matching `label` via `useId()` and explicit `htmlFor` / `id` mapping.
+
+## 2024-08-01 - Tooltips for disabled action buttons in market lists
+
+**Learning:** Disabled buttons without an explanation can lead to a frustrating experience. For financial actions like "Buy 1 Share" in the Syndicate Market or "Buy" in Bloodstock Grid, when they are disabled because of insufficient funds, a tooltip explaining "Not enough cash" greatly improves UX by providing immediate feedback on why the action is unavailable. Additionally, natively disabled buttons do not trigger tooltip hover events, so they must be wrapped in a focusable element with `tabIndex={0}` and the button itself must have `pointer-events-none` when disabled.
+**Action:** When buttons are disabled due to specific conditions (like insufficient funds), wrap them in a `Tooltip` providing context for the disabled state, ensuring a focusable wrapper is used to capture hover events when disabled.

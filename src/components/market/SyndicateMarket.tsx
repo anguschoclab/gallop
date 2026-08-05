@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/core/common/formatting";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function SyndicateMarket() {
   const syndicates = useGameWithShallow((s: StoreType) => s.syndicates || {});
@@ -95,15 +96,32 @@ export function SyndicateMarket() {
             </div>
 
             <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                className="flex-1"
-                disabled={cash < syndicate.sharePrice}
-                onClick={() => handlePurchase(syndicate.id, syndicate.sharePrice)}
-              >
-                Buy 1 Share
-              </Button>
+              {cash < syndicate.sharePrice ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span tabIndex={0} className="flex-1 flex cursor-not-allowed">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-full pointer-events-none"
+                        disabled
+                      >
+                        Buy 1 Share
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>Not enough cash</TooltipContent>
+                </Tooltip>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => handlePurchase(syndicate.id, syndicate.sharePrice)}
+                >
+                  Buy 1 Share
+                </Button>
+              )}
               {playerShares > 0 && (
                 <Button
                   size="sm"
