@@ -25,7 +25,11 @@ vi.mock("@tanstack/react-router", () => ({
 describe("LeaderboardTable", () => {
   it("renders skeleton when leaderboard is undefined", () => {
     const { container } = render(
-      <LeaderboardTable leaderboard={undefined} icon={<span />} valueFormatter={(v) => v.toString()} />,
+      <LeaderboardTable
+        leaderboard={undefined}
+        icon={<span />}
+        valueFormatter={(v) => v.toString()}
+      />,
     );
     expect(container.querySelectorAll(".w-8").length).toBe(5);
   });
@@ -33,7 +37,9 @@ describe("LeaderboardTable", () => {
   it("renders LeaderboardEmpty when rankings empty", () => {
     render(
       <LeaderboardTable
-        leaderboard={{ title: "Test", type: "beyer", description: "", lastUpdated: 0, rankings: [] } as any}
+        leaderboard={
+          { title: "Test", type: "beyer", description: "", lastUpdated: 0, rankings: [] } as any
+        }
         icon={<span />}
         valueFormatter={(v) => v.toString()}
       />,
