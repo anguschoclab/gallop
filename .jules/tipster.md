@@ -34,3 +34,7 @@
 
 **Learning:** `raceHistory` tracks `pacePositions` and `fieldSize`, allowing the derivation of wire-to-wire victories without needing new states. Checking `pacePositions.every(p => p === 1)` is an effective way to define "Wire-to-Wire".
 **Action:** Use existing structural data like `pacePositions` to construct contextual play style accolades like "Catch Me If You Can". Ensure safe fallbacks for missing `pacePositions` in legacy mock data.
+
+## 2025-02-12 - Surface Versatility Insight
+**Learning:** Checking for unique winning surfaces provides a highly actionable insight ("Dual-Surface Threat") that directly informs player entry decisions, but we must ensure we don't pollute existing tests that don't specify surface fields, and that our new mocks don't unintentionally trigger higher-priority streak or consistency insights (like "Red Hot" or "Model of Consistency").
+**Action:** When adding insights based on surface strings, ensure they safely fall back when `surface` is missing, test against `Set` sizes to robustly detect versatility, and use neutral losing positions in test mock histories to avoid triggering unintended insights.

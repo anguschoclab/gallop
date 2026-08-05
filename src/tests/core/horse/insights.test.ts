@@ -390,3 +390,35 @@ describe("Play Style Success insights", () => {
     expect(insight!.type).toBe("positive");
   });
 });
+
+describe("Versatility insights", () => {
+  it("detects Dual-Surface Threat when horse wins on 2 different surfaces", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1, surface: "Turf" },
+        { position: 2, day: 2, surface: "Turf" },
+        { position: 1, day: 3, surface: "Dirt" },
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Dual-Surface Threat");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("detects All-Surface Master when horse wins on 3 different surfaces", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1, surface: "Turf" },
+        { position: 5, day: 2, surface: "Turf" },
+        { position: 1, day: 3, surface: "Dirt" },
+        { position: 5, day: 4, surface: "Dirt" },
+        { position: 1, day: 5, surface: "Synthetic" },
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("All-Surface Master");
+    expect(insight!.type).toBe("positive");
+  });
+});
