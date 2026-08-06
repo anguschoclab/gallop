@@ -64,12 +64,16 @@ export function deriveEligibleRaces(
 
   const rows: EligibleRaceRow[] = [];
 
+  // ⚡ Bolt Optimization:
+  // Lifted invariant jockey fee calculation outside the loop.
+  // Impact: Prevents redundant calculation (including filtering and sorting jockeys) per upcoming race.
+  const jockeyFee = estimateJockeyFee(horse, jockeys);
+
   for (const race of upcoming) {
     if (!isHorseEligibleForRace(horse, race, new Set(), day)) continue;
 
     const score = calculateRaceSuitability(horse, race, PLAYER_STABLE_CONFIG);
     const transportCost = getTransportCostForRace(race);
-    const jockeyFee = estimateJockeyFee(horse, jockeys);
     const totalCost = race.entryFee + jockeyFee + transportCost;
     const isEntered = race.entries.some((e) => e.horseId === horse.id);
     const requiresDialog = !!race.graded;
