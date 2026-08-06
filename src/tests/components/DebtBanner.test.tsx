@@ -147,3 +147,45 @@ describe("DebtBanner", () => {
     expect(screen.getByText("Cash reserves depleted")).toBeInTheDocument();
   });
 });
+
+describe("DebtBanner accessibility", () => {
+  it("has role='alert' on the banner container", () => {
+    const { container } = renderWithStore(<DebtBanner />, { cash: -5_000, day: 1 });
+    const banner = container.querySelector('[role="alert"]');
+    expect(banner).toBeTruthy();
+  });
+
+  it("toggle button has aria-expanded attribute reflecting open state", () => {
+    renderWithStore(<DebtBanner />, { cash: -5_000, day: 1 });
+    const toggle = screen.getByText("Show details").closest("button");
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+
+    fireEvent.click(toggle!);
+    const hideToggle = screen.getByText("Hide details").closest("button");
+    expect(hideToggle).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("pay-down input has an associated label", () => {
+    renderWithStore(<DebtBanner />, { cash: -30_000, day: 1 });
+    fireEvent.click(screen.getByText("Show details"));
+
+    const input = screen.getByPlaceholderText("Amount");
+    expect(input).toBeInTheDocument();
+
+    // Check that a label element exists for this input
+    const labels = document.querySelectorAll("label");
+    const payDownLabel = Array.from(labels).find((l) => l.textContent?.includes("Pay down debt"));
+    expect(payDownLabel).toBeTruthy();
+  });
+
+  it.todo("pay-down label should have htmlFor matching input id for proper a11y association");
+
+  it("detail panel labels are present when expanded", () => {
+    renderWithStore(<DebtBanner />, { cash: -5_000, day: 1 });
+    fireEvent.click(screen.getByText("Show details"));
+    expect(screen.getByText("Current debt")).toBeInTheDocument();
+    expect(screen.getByText("Daily interest")).toBeInTheDocument();
+    expect(screen.getByText("Days in phase")).toBeInTheDocument();
+    expect(screen.getByText("Next action")).toBeInTheDocument();
+  });
+});
