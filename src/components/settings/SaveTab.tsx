@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FileText } from "lucide-react";
+import React from "react";
 import type { SaveSlotMetadata } from "@/services/storage/saveManager";
 
 interface SaveTabProps {
@@ -24,6 +25,8 @@ export function SaveTab({
   onDelete,
   LedgerEntryComponent,
 }: SaveTabProps) {
+  const inputId = React.useId();
+
   return (
     <div className="space-y-6">
       <div className="p-4 bg-slate-900/40 border border-gold/20 flex gap-4 items-center">
@@ -31,10 +34,14 @@ export function SaveTab({
           <FileText className="h-5 w-5 text-gold" />
         </div>
         <div className="flex-1 space-y-1">
-          <label className="text-[10px] uppercase font-mono text-gold/60 tracking-tighter">
+          <label
+            htmlFor={inputId}
+            className="text-[10px] uppercase font-mono text-gold/60 tracking-tighter"
+          >
             Entry Label
           </label>
           <Input
+            id={inputId}
             placeholder="Save name..."
             value={newSaveName}
             onChange={(e) => onNameChange(e.target.value.toUpperCase())}
