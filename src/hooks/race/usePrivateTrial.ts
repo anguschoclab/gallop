@@ -78,7 +78,7 @@ export function usePrivateTrial(horse: Horse, horses: Horse[], cash: number) {
         setError(res.reason || "Failed to start trial.");
       }
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "An unexpected error occurred.");
+      setError(e instanceof Error && e.message ? e.message : "An unexpected error occurred.");
     } finally {
       setLoading(false);
     }
