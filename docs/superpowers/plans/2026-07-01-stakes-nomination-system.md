@@ -19,8 +19,8 @@ The existing race schedule generates races 90+ days in advance. The `Race` type 
 **Key fee schedule:**
 
 - G1 early: $2,000 | G1 standard: $5,000 | G1 late: not available
-- G2 early: $800  | G2 standard: $2,000 | G2 late: $10,000
-- G3 early: $400  | G3 standard: $1,000 | G3 late: $5,000
+- G2 early: $800 | G2 standard: $2,000 | G2 late: $10,000
+- G3 early: $400 | G3 standard: $1,000 | G3 late: $5,000
 
 ---
 
