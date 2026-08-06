@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface BidInputProps {
+  id?: string;
   value: string;
   onChange: (value: string) => void;
   onSubmit: () => void;
@@ -12,6 +13,7 @@ interface BidInputProps {
 }
 
 export function BidInput({
+  id,
   value,
   onChange,
   onSubmit,
@@ -23,6 +25,7 @@ export function BidInput({
   return (
     <div className="flex gap-2">
       <Input
+        id={id}
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
