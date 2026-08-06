@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState, Horse } from "@/game/types";
+import type { Pregnancy } from "@/core/breeding/types";
 import { inBreedingSeason, nextBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
 import { isFemaleHorse } from "@/core/horse/gender";
 import { getAvailableStallions } from "@/core/breeding/stallions";
@@ -37,14 +38,14 @@ export function useBreedingPage() {
   }, [sireId, damId, localHorseMap]);
 
   const adults = Object.values(horses).filter((h: Horse) => h.age >= 3);
-  const breedLogs = log.filter((l: any) => /Mated|Foal/.test(l.text));
+  const breedLogs = log.filter((l: { day: number; text: string }) => /Mated|Foal/.test(l.text));
   const selectedMare = localHorseMap.get(damId);
   const availableStallions = getAvailableStallions(Object.values(horses), selectedMare);
 
   const seasonOpen = inBreedingSeason(day, "Northern");
   const nextSeasonStart = nextBreedingSeasonStart(day, "Northern");
 
-  const activePregnancies = pregnancies.filter((p: any) => !p.resolved);
+  const activePregnancies = pregnancies.filter((p: Pregnancy) => !p.resolved);
   const activePregnanciesCount = activePregnancies.length;
 
   const femalesToBreed = adults.filter((h: Horse) => isFemaleHorse(h.gender) && h.id !== sireId);

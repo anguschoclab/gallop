@@ -10,8 +10,9 @@ import { toast } from "sonner";
 import { DistanceBadge } from "./DistanceBadge";
 import { archetypeMeta } from "./ArchetypeMeta";
 import { TrendingDown, CheckCircle2, Circle, Plus, X, Dna, Award } from "lucide-react";
+import type { Horse } from "@/core/horse/types";
 
-function getBestSurface(mare: any) {
+function getBestSurface(mare: Horse) {
   const best = Object.entries((mare.surfaceAptitude || {}) as Record<string, number>).sort(
     (a, b) => b[1] - a[1],
   )[0];

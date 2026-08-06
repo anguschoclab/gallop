@@ -6,13 +6,14 @@ import { JockeyReportPanel } from "@/components/race/JockeyReportPanel";
 import { LiveSplitsTable } from "@/components/race/LiveSplitsTable";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Horse } from "@/game/types";
+import type { Race } from "@/core/race/types";
 
 interface PostRaceAnalysisProps {
-  race: any;
+  race: Race;
   runners: Runner[];
   liveSplits: Map<string, number[]>;
   localHorseMap: Map<string, Horse>;
-  calibratedPars: any;
+  calibratedPars: Record<number, number>;
 }
 
 /**
@@ -46,7 +47,7 @@ export function PostRaceAnalysis({
               Pace / Position Graph
             </h3>
             <PaceGraph
-              splits={race.sectionalSplits}
+              splits={race.sectionalSplits ?? []}
               runners={runnerProps}
               distance={race.distance}
             />
@@ -57,7 +58,7 @@ export function PostRaceAnalysis({
               Sectional Analysis
             </h3>
             <SectionalTimingTable
-              splits={race.sectionalSplits}
+              splits={race.sectionalSplits ?? []}
               runners={runnerProps}
               distance={race.distance}
             />
@@ -80,7 +81,7 @@ export function PostRaceAnalysis({
                   <span className="h-1 w-12 bg-broadcast-accent" />
                   Per-Runner Breakdown
                 </h3>
-                <SpeedBreakdownTable splits={race.sectionalSplits} runners={runnerProps} />
+                <SpeedBreakdownTable splits={race.sectionalSplits ?? []} runners={runnerProps} />
               </div>
             </>
           )}

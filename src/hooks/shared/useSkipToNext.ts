@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useGame, type StoreType } from "@/game/store";
+import type { Race } from "@/core/race/types";
 
 export function useSkipToNext() {
   const advanceMultipleDays = useGame((s: StoreType) => s.advanceMultipleDays);
@@ -16,8 +17,8 @@ export function useSkipToNext() {
         nextDay = days.length ? Math.min(...days) : undefined;
       } else {
         const days = Object.values(state.races ?? {})
-          .filter((r: any) => r.day > currentDay)
-          .map((r: any) => r.day);
+          .filter((r: Race) => r.day > currentDay)
+          .map((r: Race) => r.day);
         nextDay = days.length ? Math.min(...days) : undefined;
       }
       if (!nextDay) return;

@@ -4,6 +4,8 @@ import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { CourseSpecification } from "@/data/tracks";
 import type { NarrativeGenerator } from "@/services/narrative/narrativeService";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
+import type { Race, RaceResult } from "@/core/race/types";
+import type { Rng } from "@/core/common/rng";
 
 /**
  * Build a rank map from the current runner field, skipping already-finished runners.
@@ -103,12 +105,12 @@ export function useLiveRaceSimulation({
   initialPaused = false,
   initialSpeed,
 }: {
-  race: any;
+  race: Race;
   runners: Runner[];
-  resolveRaceWithImpacts: (raceId: string, finishOrder: any[]) => void;
+  resolveRaceWithImpacts: (raceId: string, finishOrder: RaceResult[]) => void;
   narrativeRef: React.MutableRefObject<NarrativeGenerator | null>;
   messageQueue: React.MutableRefObject<CommentaryLine[]>;
-  rngRef: React.MutableRefObject<any>;
+  rngRef: React.MutableRefObject<Rng | null>;
   course?: CourseSpecification;
   windKph?: number;
   windDirectionDeg?: number;
@@ -240,7 +242,19 @@ export function useLiveRaceSimulation({
 
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [race, runners, resolveRaceWithImpacts, narrativeRef, messageQueue, rngRef, running]);
+  }, [
+    race,
+    runners,
+    resolveRaceWithImpacts,
+    narrativeRef,
+    messageQueue,
+    rngRef,
+    running,
+    course,
+    resumeAtSimTime,
+    windDirectionDeg,
+    windKph,
+  ]);
 
   return {
     tick,

@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import type { GameState } from "@/game/types";
+import type { Race } from "@/core/race/types";
+import type { Horse } from "@/core/horse/types";
 import { Link } from "@tanstack/react-router";
 import {
   calculateNominationFee,
@@ -193,9 +195,9 @@ function RaceNominationRow({
   noms,
   onNominate,
 }: {
-  race: any;
+  race: Race;
   day: number;
-  playerHorses: any[];
+  playerHorses: Horse[];
   noms: NominationRecord[];
   onNominate: (horseId: string) => void;
 }) {

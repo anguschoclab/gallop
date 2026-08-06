@@ -66,7 +66,7 @@ export function SchedulerTab() {
         </Card>
       )}
 
-      {campaigns.map((campaign: any) => {
+      {campaigns.map((campaign: HorseCampaign) => {
         const horse = getHorse(campaign.horseId);
         if (!horse) return null;
         return (

@@ -139,7 +139,7 @@ export function PaceGraph({ splits, runners, distance, className }: PaceGraphPro
                   const r = runnerMap.get(key);
                   return [`Pos ${value}`, r?.name ?? key];
                 }}
-                itemSorter={(item: any) => Number(item.value)}
+                itemSorter={(item: { value?: number | string }) => Number(item.value)}
               />
               {distance && (
                 <ReferenceLine

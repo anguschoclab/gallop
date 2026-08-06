@@ -11,13 +11,14 @@ import { generateAuctioneerLine, type AuctioneerLine } from "@/services/auction/
 import { getDisplayableStats } from "@/core/npc/scouting";
 import type { AuctionTickEvent, AuctionRunner } from "@/core/auction/runner";
 import type { Horse, Stable, AuctionLot, AuctionBidRecord } from "@/game/types";
+import type { ScoutReport } from "@/core/market/types";
 
 interface UseAuctionEventProcessorOptions {
   saleId: string;
   sale: { id: string; lots: AuctionLot[] } | undefined;
   stables: Stable[];
   horses: Horse[];
-  scoutReports: any;
+  scoutReports: ScoutReport[];
   day: number;
   runnerRef: React.RefObject<AuctionRunner | null>;
   setChantLines: React.Dispatch<React.SetStateAction<AuctioneerLine[]>>;
@@ -140,8 +141,6 @@ export function useAuctionEventProcessor(options: UseAuctionEventProcessorOption
     [
       runnerRef,
       theaterState.done,
-      sale,
-      stables,
       horseMap,
       stableMap,
       stableIndexMap,

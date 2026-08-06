@@ -213,7 +213,7 @@ export function LiveRace() {
     setFilter,
     setSortBy,
     setMinBeyer,
-  } = useRaceUIState(runners, race, messageQueue, finished, classBonus, calibratedPars);
+  } = useRaceUIState(runners, race, messageQueue, finished, classBonus, calibratedPars ?? {});
 
   const allFinished = runners.every((r) => r.finishTime !== null);
   const anyFinished = runners.some((r) => r.finishTime !== null);
@@ -298,7 +298,7 @@ export function LiveRace() {
           onShowAllCards={() => setShowAllCards(true)}
           onNavigateBack={navigateToRaces}
           localHorseMap={localHorseMap}
-          calibratedPars={calibratedPars}
+          calibratedPars={calibratedPars ?? {}}
           liveSplits={liveSplits}
           analysisOpen={analysisOpen}
           setAnalysisOpen={setAnalysisOpen}

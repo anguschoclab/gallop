@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState, Horse } from "@/game/types";
+import type { Race } from "@/core/race/types";
 
 export function useRecapData() {
   const races = useGameWithShallow((s: GameState) => s.races);
@@ -16,7 +17,7 @@ export function useRecapData() {
     () =>
       Object.values(races)
         .filter(
-          (r: any) =>
+          (r: Race) =>
             r.resolved &&
             r.graded &&
             r.result &&
@@ -24,8 +25,8 @@ export function useRecapData() {
             r.day >= weekAgo &&
             r.day <= day,
         )
-        .sort((a: any, b: any) => {
-          const gradeOrder: any = { G1: 3, G2: 2, G3: 1 };
+        .sort((a: Race, b: Race) => {
+          const gradeOrder: Record<string, number> = { G1: 3, G2: 2, G3: 1 };
           const gradeDiff = gradeOrder[b.graded!.grade] - gradeOrder[a.graded!.grade];
           if (gradeDiff !== 0) return gradeDiff;
           return b.day - a.day;

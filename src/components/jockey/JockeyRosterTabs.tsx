@@ -2,11 +2,12 @@ import { useNavigate } from "@tanstack/react-router";
 import { JockeyCard } from "./JockeyCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserCheck, Users } from "lucide-react";
+import type { Jockey } from "@/core/jockey/types";
 
 interface JockeyRosterTabsProps {
-  myJockeys: any[];
-  market: any[];
-  filterList: (list: any[]) => any[];
+  myJockeys: Jockey[];
+  market: Jockey[];
+  filterList: (list: Jockey[]) => Jockey[];
   onRelease: (jockeyId: string) => void;
   onHire: (jockeyId: string) => void;
 }
@@ -48,7 +49,7 @@ export function JockeyRosterTabs({
         >
           {myJockeys.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filterList(myJockeys).map((j: any) => (
+              {filterList(myJockeys).map((j: Jockey) => (
                 <JockeyCard
                   key={j.id}
                   jockey={j}
@@ -77,7 +78,7 @@ export function JockeyRosterTabs({
           className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300 focus-visible:outline-none"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filterList(market).map((j: any) => (
+            {filterList(market).map((j: Jockey) => (
               <JockeyCard
                 key={j.id}
                 jockey={j}

@@ -1,7 +1,7 @@
 import { useGame } from "@/game/store";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles } from "lucide-react";
-import type { MareRanking } from "@/core/breeding/leaderboardTypes";
+import type { MareRanking, BlueHenLeaderboard } from "@/core/breeding/leaderboardTypes";
 import {
   LeaderboardControlsBar,
   LeaderboardEmpty,
@@ -63,7 +63,7 @@ export function BlueHenLeaderboardTab() {
   );
 }
 
-function BlueHenLeaderboardContent({ leaderboard }: { leaderboard: any }) {
+function BlueHenLeaderboardContent({ leaderboard }: { leaderboard: BlueHenLeaderboard }) {
   const { sortValue, setSortValue, filterValue, setFilterValue, processed } =
     useLeaderboardControls<MareRanking>({
       items: leaderboard.rankings,

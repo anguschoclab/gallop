@@ -74,7 +74,7 @@ export function BreedingPedigreeTab({ pageData }: BreedingPedigreeTabProps) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {breedLogs.map((l: any, i: number) => (
+                  {breedLogs.map((l: { day: number; text: string }, i: number) => (
                     <tr key={i} className="hover:bg-white/[0.02]">
                       <td className="px-4 py-2 tabular-nums text-cream-muted">{l.day}</td>
                       <td className="px-4 py-2 text-cream">{l.text}</td>

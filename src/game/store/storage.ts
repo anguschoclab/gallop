@@ -291,8 +291,12 @@ export function _resetPersistenceEnabled(): void {
  * @param useGameStore - Default store instance to use
  * @returns Async rehydrate function that takes an optional store instance
  */
-export function createRehydrateStore(useGameStore: any) {
-  return async function rehydrateStore(passedStore?: any): Promise<void> {
+type AnyStore = {
+  persist?: { rehydrate: () => void | Promise<void> };
+};
+
+export function createRehydrateStore(useGameStore: AnyStore | undefined) {
+  return async function rehydrateStore(passedStore?: AnyStore | undefined): Promise<void> {
     const store = passedStore || useGameStore;
 
     if (!store) {
@@ -315,7 +319,7 @@ export function createRehydrateStore(useGameStore: any) {
         console.warn(
           "Store persist middleware not found during rehydration, using direct setState",
         );
-        store.setState(state);
+        (store as { setState: (state: unknown) => void }).setState(state);
       }
       hydrationComplete.value = true;
     } else {

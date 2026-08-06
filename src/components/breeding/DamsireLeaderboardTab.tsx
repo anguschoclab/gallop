@@ -1,7 +1,7 @@
 import { useGame } from "@/game/store";
 import { Badge } from "@/components/ui/badge";
 import { Heart } from "lucide-react";
-import type { DamsireRanking } from "@/core/breeding/leaderboardTypes";
+import type { DamsireRanking, DamsireLeaderboard } from "@/core/breeding/leaderboardTypes";
 import {
   LeaderboardControlsBar,
   LeaderboardEmpty,
@@ -65,7 +65,7 @@ export function DamsireLeaderboardTab() {
   );
 }
 
-function DamsireLeaderboardContent({ leaderboard }: { leaderboard: any }) {
+function DamsireLeaderboardContent({ leaderboard }: { leaderboard: DamsireLeaderboard }) {
   const { sortValue, setSortValue, filterValue, setFilterValue, processed } =
     useLeaderboardControls<DamsireRanking>({
       items: leaderboard.rankings,

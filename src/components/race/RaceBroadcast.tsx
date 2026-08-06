@@ -49,7 +49,7 @@ export interface RaceBroadcastProps {
   onShowAllCards: () => void;
   onNavigateBack: () => void;
   localHorseMap: Map<string, Horse>;
-  calibratedPars: any;
+  calibratedPars: Record<number, number>;
   liveSplits: Map<string, number[]>;
   analysisOpen: boolean;
   setAnalysisOpen: (v: boolean) => void;

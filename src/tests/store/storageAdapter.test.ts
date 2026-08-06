@@ -472,7 +472,9 @@ describe("store/storage.ts", () => {
       };
       const consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
-      const rehydrate = createRehydrateStore(mockStore);
+      const rehydrate = createRehydrateStore(
+        mockStore as Parameters<typeof createRehydrateStore>[0],
+      );
       await rehydrate();
 
       expect(mockStore.setState).toHaveBeenCalledTimes(1);
@@ -484,7 +486,7 @@ describe("store/storage.ts", () => {
       mockLoadBuckets.mockResolvedValue(null);
       const consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
-      const rehydrate = createRehydrateStore(null);
+      const rehydrate = createRehydrateStore(undefined);
       await rehydrate();
 
       expect(consoleWarnSpy).toHaveBeenCalledWith("No store instance provided for rehydration");

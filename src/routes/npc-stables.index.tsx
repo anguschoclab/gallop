@@ -16,6 +16,7 @@ import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { useNpcStablesFilters } from "@/hooks/stable/useNpcStablesFilters";
 import { getReputationStars } from "@/core/stable/uiHelpers";
 import { stableTierColor } from "@/core/common/uiTokens";
+import type { Stable } from "@/core/stable/types";
 
 type NpcStablesSearch = {
   q: string;
@@ -186,7 +187,7 @@ function NpcStablesPage() {
   );
 }
 
-function StableCard({ stable }: { stable: any }) {
+function StableCard({ stable }: { stable: Stable }) {
   return (
     <div className="relative h-full">
       <div className="absolute top-2 right-2 z-10">

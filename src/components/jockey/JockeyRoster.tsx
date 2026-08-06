@@ -7,6 +7,7 @@ import { useState } from "react";
 import { JockeyArchetype, JockeySilkPattern } from "@/game/types";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { Briefcase } from "lucide-react";
+import type { Jockey } from "@/core/jockey/types";
 
 export function JockeyRoster() {
   const jockeys = useGameWithShallow((s) => s.jockeys);
@@ -17,12 +18,12 @@ export function JockeyRoster() {
   const [patternFilter, setPatternFilter] = useState<JockeySilkPattern | "all">("all");
   const [colorFilter, setColorFilter] = useState<string>("all");
 
-  const myJockeys = jockeys?.filter((j: any) => !j.stableId && !!j.contractUntil) ?? [];
-  const market = jockeys?.filter((j: any) => !j.stableId && !j.contractUntil) ?? [];
+  const myJockeys = jockeys?.filter((j: Jockey) => !j.stableId && !!j.contractUntil) ?? [];
+  const market = jockeys?.filter((j: Jockey) => !j.stableId && !j.contractUntil) ?? [];
 
-  const filterList = (list: any[]) => {
+  const filterList = (list: Jockey[]) => {
     if (!list) return [];
-    return list.filter((j: any) => {
+    return list.filter((j: Jockey) => {
       const matchesSearch = j.name.toLowerCase().includes(search.toLowerCase());
       const matchesArchetype = archetypeFilter === "all" || j.archetype === archetypeFilter;
       const matchesPattern = patternFilter === "all" || j.silk.pattern === patternFilter;

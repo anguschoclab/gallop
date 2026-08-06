@@ -3,6 +3,10 @@ import { useGame, useGameWithShallow } from "@/game/store";
 import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/storage/storageAdapter";
 import { getAffinityLevel, calculateTheHandBonus } from "@/core/jockey/affinity";
 import { getPeakingBeyerMultiplier } from "@/core/health/banister";
+import type { Pregnancy } from "@/core/breeding/types";
+import type { Race, RaceEntry } from "@/core/race/types";
+import type { TrainingIntent } from "@/core/resolver/intents";
+import type { Jockey } from "@/core/jockey/types";
 
 export function useHorseDetail(horseId: string) {
   const trainHorse = useGame((s) => s.trainHorse);
@@ -16,17 +20,18 @@ export function useHorseDetail(horseId: string) {
   const retireToPasture = useGame((s) => s.retireToPasture);
   const facilities = useGameWithShallow((s) => s.facilities);
   const pregnancies = useGameWithShallow((s) => s.pregnancies);
-  const pregnancy = pregnancies?.find((p: any) => !p.resolved && p.damId === horseId);
+  const pregnancy = pregnancies?.find((p: Pregnancy) => !p.resolved && p.damId === horseId);
 
   const progenyPregnancies = useMemo(() => {
     if (!pregnancies) return [];
-    return pregnancies.filter((p: any) => p.sireId === horseId || p.damId === horseId);
+    return pregnancies.filter((p: Pregnancy) => p.sireId === horseId || p.damId === horseId);
   }, [pregnancies, horseId]);
 
   const reBreedingPregnancies = useMemo(() => {
     if (!pregnancies) return [];
     return pregnancies.filter(
-      (p: any) => p.damId === horseId && (p.liveFoalGuarantee || (p.reBreedingAttempts || 0) > 0),
+      (p: Pregnancy) =>
+        p.damId === horseId && (p.liveFoalGuarantee || (p.reBreedingAttempts || 0) > 0),
     );
   }, [pregnancies, horseId]);
 
@@ -34,15 +39,17 @@ export function useHorseDetail(horseId: string) {
   const [syndicateDialogOpen, setSyndicateDialogOpen] = useState(false);
   const syndicates = useGameWithShallow((s) => s.syndicates || {});
   const races = useGameWithShallow((s) => s.races);
-  const currentRace = Object.values(races ?? {}).find((r: any) =>
-    r.entries.some((e: any) => e.horseId === horseId && !r.resolved),
+  const currentRace = Object.values(races ?? {}).find((r: Race) =>
+    r.entries.some((e: RaceEntry) => e.horseId === horseId && !r.resolved),
   );
-  const assignedJockeyId = currentRace?.entries.find((e: any) => e.horseId === horseId)?.jockeyId;
+  const assignedJockeyId = currentRace?.entries.find(
+    (e: RaceEntry) => e.horseId === horseId,
+  )?.jockeyId;
   const jockeys = useGameWithShallow((s) => s.jockeys);
-  const assignedJockey = jockeys?.find((j: any) => j.id === assignedJockeyId);
+  const assignedJockey = jockeys?.find((j: Jockey) => j.id === assignedJockeyId);
 
   const handleTrain = useCallback(
-    (hId: string, type: any) => {
+    (hId: string, type: TrainingIntent["trainingType"]) => {
       trainHorse(hId, type);
     },
     [trainHorse],
@@ -123,7 +130,9 @@ export function useHorseDetail(horseId: string) {
           ? "Standard"
           : "Fatigued";
   const g1Wins =
-    horse?.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
+    horse?.raceHistory?.filter(
+      (r: { grade?: string; position: number }) => r.grade === "G1" && r.position === 1,
+    ).length || 0;
 
   return {
     trainHorse,

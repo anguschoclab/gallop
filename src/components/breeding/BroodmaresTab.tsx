@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Baby, FileText } from "lucide-react";
 import { PregnancyTimeline } from "@/components/breeding/PregnancyTimeline";
 import type { useBreedingPage } from "@/hooks/breeding/useBreedingPage";
+import type { Pregnancy } from "@/core/breeding/types";
 
 interface BroodmaresTabProps {
   pageData: ReturnType<typeof useBreedingPage>;
@@ -29,7 +30,7 @@ export function BroodmaresTab({ pageData }: BroodmaresTabProps) {
 
   return (
     <div className="grid gap-4">
-      {activePregnancies.map((p: any) => {
+      {activePregnancies.map((p: Pregnancy) => {
         const daysRemaining = p.dueDay - day - 1;
         return (
           <Card key={p.id} className="border-l-4 border-l-gold border-gold-muted">
@@ -83,7 +84,7 @@ export function BroodmaresTab({ pageData }: BroodmaresTabProps) {
                   )}
                   {(() => {
                     const maternityLog = log.filter(
-                      (l: any) =>
+                      (l: { day: number; text: string }) =>
                         l.text.includes(p.damName) &&
                         (l.text.includes("Mated") || l.text.includes("Foal")),
                     );

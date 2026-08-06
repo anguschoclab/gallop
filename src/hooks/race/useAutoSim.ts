@@ -2,6 +2,8 @@ import { useState, useRef, useCallback } from "react";
 import { useGame } from "@/game/store";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 
+type LogEntry = { day: number; text: string };
+
 export function useAutoSim() {
   const [days, setDays] = useState(30);
   const [headless, setHeadless] = useState(false);
@@ -58,14 +60,16 @@ export function useAutoSim() {
 
       const recentLog = useGame.getState().log.slice(0, batchSize * 3);
       const notable = recentLog.filter(
-        (e: any) =>
+        (e: LogEntry) =>
           e.text.includes("Foal born") ||
           e.text.includes("hammer price") ||
           e.text.includes("recalibrated") ||
           (e.day >= startDay && e.day <= afterDay),
       );
       if (notable.length > 0) {
-        setLog((l) => [...notable.map((e: any) => `Day ${e.day}: ${e.text}`), ...l].slice(0, 50));
+        setLog((l) =>
+          [...notable.map((e: LogEntry) => `Day ${e.day}: ${e.text}`), ...l].slice(0, 50),
+        );
       }
 
       rafRef.current = requestAnimationFrame(tick);

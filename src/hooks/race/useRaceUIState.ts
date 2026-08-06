@@ -1,21 +1,22 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
+import type { Race } from "@/core/race/types";
 import { projectedBeyer } from "@/components/race/raceVisualHelpers";
 
 export function useRaceUIState(
   runners: Runner[],
-  race: any,
+  race: Race,
   messageQueue: React.MutableRefObject<CommentaryLine[]>,
   finished: boolean,
   classBonus: number,
-  calibratedPars: any,
+  calibratedPars: Record<number, number>,
 ) {
   const [sortBy, setSortBy] = useState<"position" | "beyer" | "velocity">("position");
   const [filter, setFilter] = useState<"all" | "owned" | "top5">("all");
   const [minBeyer, setMinBeyer] = useState(0);
 
-  const ownedRunnersTotal = runners.filter((r: any) => r.owned);
+  const ownedRunnersTotal = runners.filter((r) => r.owned);
   const defaultFollowTarget = ownedRunnersTotal.length > 0 ? ownedRunnersTotal[0].horseId : null;
   const [followTarget, setFollowTarget] = useState<string | null>(defaultFollowTarget);
 

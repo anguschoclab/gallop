@@ -1,5 +1,7 @@
 import { useMemo, useCallback } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
+import type { RaceEntry } from "@/core/race/types";
+import type { InboxMessage } from "@/core/inbox/inboxTypes";
 
 export function useDashboardData() {
   const day = useGame((s) => s.day);
@@ -22,12 +24,12 @@ export function useDashboardData() {
     .sort((a, b) => a.day - b.day)
     .slice(0, 8);
 
-  const nextOwnedRace = upcoming.find((r) => r.entries.some((e: any) => e.owned));
+  const nextOwnedRace = upcoming.find((r) => r.entries.some((e: RaceEntry) => e.owned));
   const activeAuctions = auctions?.filter((a) => !a.resolved) ?? [];
 
   const urgentMessages = (inbox || [])
-    .filter((m: any) => !m.readAt && m.priority !== "info")
-    .sort((a: any, b: any) => b.day - a.day)
+    .filter((m: InboxMessage) => !m.readAt && m.priority !== "info")
+    .sort((a: InboxMessage, b: InboxMessage) => b.day - a.day)
     .slice(0, 3);
 
   const topRivals = npcStables
@@ -52,7 +54,7 @@ export function useDashboardData() {
           .forEach((raceResult: { raceId: string; position: number }) => {
             const race = raceMap[raceResult.raceId];
             if (race) {
-              const hadRivalEntry = race.entries.some((e: any) => e.stableId === stableId);
+              const hadRivalEntry = race.entries.some((e: RaceEntry) => e.stableId === stableId);
               if (hadRivalEntry) {
                 if (raceResult.position === 1) wins++;
                 else losses++;

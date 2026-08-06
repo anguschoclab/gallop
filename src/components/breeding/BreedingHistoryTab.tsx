@@ -13,6 +13,7 @@ import {
 } from "@/components/leaderboard/LeaderboardPrimitives";
 import { useLeaderboardControls } from "@/hooks/leaderboard/useLeaderboardControls";
 import type { useBreedingPage } from "@/hooks/breeding/useBreedingPage";
+import type { Pregnancy } from "@/core/breeding/types";
 
 interface BreedingHistoryTabProps {
   pageData: ReturnType<typeof useBreedingPage>;
@@ -41,7 +42,7 @@ interface FoalRecord {
   dueDay: number;
   isOwned: boolean;
   isUnnamed: boolean;
-  raw: any;
+  raw: Pregnancy;
 }
 
 const SORT_FNS: Record<string, (a: FoalRecord, b: FoalRecord) => number> = {
@@ -62,9 +63,9 @@ export function BreedingHistoryTab({ pageData }: BreedingHistoryTabProps) {
   const { pregnancies, breedLogs, localHorseMap, namingFoalId, setNamingFoalId } = pageData;
 
   const foalRecords: FoalRecord[] = pregnancies
-    .filter((p: any) => p.resolved)
-    .map((p: any) => {
-      const foal = localHorseMap.get(p.foalId);
+    .filter((p: Pregnancy) => p.resolved)
+    .map((p: Pregnancy) => {
+      const foal = p.foalId ? localHorseMap.get(p.foalId) : undefined;
       return {
         id: p.id,
         sireName: p.sireName,
@@ -154,7 +155,7 @@ export function BreedingHistoryTab({ pageData }: BreedingHistoryTabProps) {
         {breedLogs.length === 0 ? (
           <LeaderboardEmpty message="No breeding events yet." />
         ) : (
-          breedLogs.map((l: any, i: number) => (
+          breedLogs.map((l: { day: number; text: string }, i: number) => (
             <LeaderboardRow
               key={i}
               rank={i + 1}

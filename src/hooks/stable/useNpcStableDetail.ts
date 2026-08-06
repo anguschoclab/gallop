@@ -6,6 +6,8 @@ import { useNpcStables, useAwards } from "@/hooks/game/useSystemsState";
 import { getStableById } from "@/core/stable/stableQueries";
 import { isMaleHorse, isFemaleHorse } from "@/core/horse/gender";
 import type { GameState, Horse, PrivateSaleOffer } from "@/game/types";
+import type { RaceEntry } from "@/core/race/types";
+import type { EntityLink } from "@/services/narrative/newsTypes";
 
 export function getRivalryStatusLabel(f: number) {
   if (f >= 80) return "Heated Rival";
@@ -65,7 +67,7 @@ export function useNpcStableDetail(stableId: string) {
         .forEach((raceResult: { raceId: string; position: number }) => {
           const race = races[raceResult.raceId];
           if (race && race.graded) {
-            const hadRivalEntry = race.entries.some((e: any) => e.stableId === stableId);
+            const hadRivalEntry = race.entries.some((e: RaceEntry) => e.stableId === stableId);
             if (hadRivalEntry) {
               if (raceResult.position === 1) wins++;
               else losses++;
@@ -81,7 +83,9 @@ export function useNpcStableDetail(stableId: string) {
         .filter(
           (n) =>
             n.category === "racing" &&
-            n.entityLinks?.some((link: any) => link.type === "stable" && link.id === stableId),
+            n.entityLinks?.some(
+              (link: EntityLink) => link.type === "stable" && link.id === stableId,
+            ),
         )
         .slice(0, 3)
     : [];

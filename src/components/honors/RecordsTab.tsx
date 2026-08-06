@@ -58,7 +58,7 @@ export function RecordsTab() {
           <LeaderboardTable
             leaderboard={horseLeaderboards.earnings}
             icon={<DollarSign className="text-gold" />}
-            valueFormatter={(val: any) => formatCurrency(val)}
+            valueFormatter={(val: number) => formatCurrency(val)}
           />
         </TabsContent>
 
@@ -66,7 +66,7 @@ export function RecordsTab() {
           <LeaderboardTable
             leaderboard={horseLeaderboards.beyer}
             icon={<Zap className="text-primary" />}
-            valueFormatter={(val: any) => val.toString()}
+            valueFormatter={(val: number) => val.toString()}
           />
         </TabsContent>
 

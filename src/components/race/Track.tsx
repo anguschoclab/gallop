@@ -5,6 +5,7 @@ import {
   isAnimatedSprite,
 } from "@/components/race/raceVisualHelpers";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
+import type { Weather } from "@/core/race/types";
 import { HorseSprite } from "./HorseSprite";
 
 interface TrackProps {
@@ -12,7 +13,7 @@ interface TrackProps {
   distance: number;
   tick: number;
   surface?: string;
-  weather?: any;
+  weather?: Weather;
   followTarget?: string | null;
   paused?: boolean;
   subjectHorseId?: string | null;

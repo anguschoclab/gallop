@@ -11,21 +11,24 @@
 import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
+import type { Pregnancy } from "@/core/breeding/types";
+import type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
 
-const EMPTY_ARRAY: any[] = [];
+const EMPTY_PREGNANCIES: Pregnancy[] = [];
+const EMPTY_TC_HISTORY: TripleCrownProgress[] = [];
 
 /**
  * Breeding state selectors for reproduction tracking and lineage.
  *
  * @returns Array of active pregnancies
  */
-export const usePregnancies = () => useGame((s: GameState) => s.pregnancies ?? EMPTY_ARRAY);
+export const usePregnancies = () => useGame((s: GameState) => s.pregnancies ?? EMPTY_PREGNANCIES);
 
 /**
  * @returns Array of Triple Crown winners
  */
 export const useTripleCrownHistory = () =>
-  useGameWithShallow((s) => s.triplecrownHistory ?? EMPTY_ARRAY);
+  useGameWithShallow((s) => s.triplecrownHistory ?? EMPTY_TC_HISTORY);
 
 /**
  * Multiple breeding state values with shallow comparison.
@@ -36,7 +39,7 @@ export const useTripleCrownHistory = () =>
  */
 export const useBreedingState = () => {
   const pregnancies = useGame((s: GameState) => s.pregnancies);
-  const triplecrownHistory = useGame((s: GameState) => s.triplecrownHistory ?? EMPTY_ARRAY);
+  const triplecrownHistory = useGame((s: GameState) => s.triplecrownHistory ?? EMPTY_TC_HISTORY);
 
   return {
     pregnancies,

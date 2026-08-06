@@ -3,6 +3,7 @@ import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
+import type { Horse } from "@/core/horse/types";
 
 export const COAT_COLORS = [
   { value: "all", label: "All Coats" },
@@ -27,7 +28,7 @@ export function useGalleryFilters() {
   const horses = useMemo(
     () =>
       Object.values(allHorses)
-        .filter((h: any) => h.owned)
+        .filter((h: Horse) => h.owned)
         .map(ensurePhenotypeResolved),
     [allHorses],
   );
@@ -56,7 +57,7 @@ export function useGalleryFilters() {
 
   const coatCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    horses.forEach((h: any) => {
+    horses.forEach((h: Horse) => {
       if (h.coatColor) {
         counts[h.coatColor] = (counts[h.coatColor] || 0) + 1;
       }

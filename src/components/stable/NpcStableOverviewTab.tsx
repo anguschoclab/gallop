@@ -7,6 +7,7 @@ import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { cn } from "@/lib/cn";
 import { getRivalryStatusLabel, getRivalryBadgeColor } from "@/hooks/stable/useNpcStableDetail";
 import type { useNpcStableDetail } from "@/hooks/stable/useNpcStableDetail";
+import type { NewsItem } from "@/services/narrative/newsTypes";
 
 interface NpcStableOverviewTabProps {
   stableId: string;
@@ -125,7 +126,7 @@ export function NpcStableOverviewTab({ stableId, pageData }: NpcStableOverviewTa
               Grudge Match History
             </h3>
             <div className="space-y-2">
-              {grudgeMatches.map((match: any) => (
+              {grudgeMatches.map((match: NewsItem) => (
                 <div key={match.id} className="bg-slate-950/30 border border-white/5 rounded p-3">
                   <div className="flex justify-between items-start">
                     <div>

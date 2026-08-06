@@ -45,7 +45,7 @@ export function usePrivateTrial(horse: Horse, horses: Horse[], cash: number) {
       });
       return dataPoint;
     });
-  }, [trialResult, horse.name, opponentName]);
+  }, [trialResult, horse.id, horse.name, opponentName]);
 
   const runnerStats = useMemo(() => {
     if (!trialResult || !trialResult.result) return [];
@@ -60,7 +60,7 @@ export function usePrivateTrial(horse: Horse, horses: Horse[], cash: number) {
         };
       })
       .sort((a, b) => a.position - b.position);
-  }, [trialResult, horse.name, opponentName]);
+  }, [trialResult, horse.id, horse.name, opponentName]);
 
   const feedback = useMemo(() => {
     if (!trialResult) return "";
@@ -77,8 +77,8 @@ export function usePrivateTrial(horse: Horse, horses: Horse[], cash: number) {
       } else {
         setError(res.reason || "Failed to start trial.");
       }
-    } catch (e: any) {
-      setError(e.message || "An unexpected error occurred.");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "An unexpected error occurred.");
     } finally {
       setLoading(false);
     }

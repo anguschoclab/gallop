@@ -145,7 +145,7 @@ export function PlayerRacePrompt() {
           {enteredHorse && (
             <div className="space-y-2">
               <label className="text-sm font-medium">Instructions</label>
-              <Select value={selectedPreset} onValueChange={(v: any) => setSelectedPreset(v)}>
+              <Select value={selectedPreset} onValueChange={(v: string) => setSelectedPreset(v)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>

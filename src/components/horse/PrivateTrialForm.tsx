@@ -71,7 +71,10 @@ export function PrivateTrialForm({
           <Label className="text-[10px] font-black uppercase tracking-wider text-cream/60">
             Surface
           </Label>
-          <Select value={surface} onValueChange={(v: any) => setSurface(v)}>
+          <Select
+            value={surface}
+            onValueChange={(v: "Turf" | "Dirt" | "Synthetic") => setSurface(v)}
+          >
             <SelectTrigger className="bg-slate-900 border-white/5 rounded-none text-cream font-mono uppercase">
               <SelectValue />
             </SelectTrigger>

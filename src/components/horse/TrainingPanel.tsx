@@ -6,6 +6,7 @@ import { TRAINING_FACILITY_REQUIREMENTS } from "@/constants/workoutConstants";
 import { getAvailableTrainingTypes } from "@/core/facilities";
 import { FACILITY_NAMES, facilityLevelToTierLabel } from "@/core/facilities/facilityTypes";
 import type { Horse, PlayerFacilities } from "@/game/types";
+import type { TrainingIntent } from "@/core/resolver/intents";
 import { useCallback, memo, useMemo } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
@@ -16,7 +17,7 @@ interface TrainingPanelProps {
   slotsLeft: number;
   cash: number;
   facilities: PlayerFacilities | null | undefined;
-  onTrain: (horseId: string, type: any) => void;
+  onTrain: (horseId: string, type: TrainingIntent["trainingType"]) => void;
 }
 
 function getStatValue(stats: Horse["stats"], key: string): number {
@@ -68,7 +69,7 @@ export function TrainingPanelComponent({
 
   // Single handler for all training buttons
   const handleTrainingClick = useCallback(
-    (type: string) => {
+    (type: TrainingIntent["trainingType"]) => {
       onTrain(horse.id, type);
     },
     [horse.id, onTrain],
@@ -156,7 +157,7 @@ export function TrainingPanelComponent({
           cost: workout.cost,
           isEnabled,
           unlockHint,
-          onClick: () => handleTrainingClick(workout.key),
+          onClick: () => handleTrainingClick(workout.key as TrainingIntent["trainingType"]),
         };
       }),
     [availableTypes, horse, isPregnant, slotsLeft, cash, handleTrainingClick],

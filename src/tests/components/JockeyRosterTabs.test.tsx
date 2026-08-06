@@ -13,6 +13,7 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 import { JockeyRosterTabs } from "@/components/jockey/JockeyRosterTabs";
+import type { Jockey } from "@/core/jockey/types";
 
 function mkJockey(id: string, overrides: Record<string, unknown> = {}) {
   return {
@@ -24,13 +25,13 @@ function mkJockey(id: string, overrides: Record<string, unknown> = {}) {
     ridingFee: 500,
     fame: 50,
     ...overrides,
-  };
+  } as unknown as Jockey;
 }
 
 const defaultProps = {
   myJockeys: [mkJockey("j1"), mkJockey("j2")],
   market: [mkJockey("j3")],
-  filterList: (list: any[]) => list,
+  filterList: (list: Jockey[]) => list,
   onRelease: vi.fn(),
   onHire: vi.fn(),
 };

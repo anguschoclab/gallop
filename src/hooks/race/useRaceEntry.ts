@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { Horse, Race, Jockey } from "@/game/types";
+import type { WeatherState } from "@/core/weather/weatherTypes";
 import { getCurrentYear } from "@/core/race/schedule";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { buildInstructions, type PresetId } from "@/components/race/TacticOptions";
@@ -32,7 +33,7 @@ export function useRaceEntry(race: Race) {
     if (!trackId) return undefined;
     const buf = s.weather?.byTrack?.[trackId];
     if (!buf || !buf.length) return undefined;
-    return buf.find((w: any) => w.day === race.day) ?? buf[buf.length - 1];
+    return buf.find((w: WeatherState) => w.day === race.day) ?? buf[buf.length - 1];
   });
 
   const isNewClaimingRace = !!race.claiming;

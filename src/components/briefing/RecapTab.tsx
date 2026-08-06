@@ -13,6 +13,7 @@ import { Trophy, Medal, Award, Clock } from "lucide-react";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/cn";
+import type { Race, RaceResult } from "@/core/race/types";
 
 export function RecapTab() {
   const { localHorseMap, recentGradedRaces, calibratedPars } = useRecapData();
@@ -30,10 +31,10 @@ export function RecapTab() {
 
   return (
     <div className="grid gap-4">
-      {recentGradedRaces.map((race: any) => {
+      {recentGradedRaces.map((race: Race) => {
         const topFinishers = race
           .result!.slice(0, 3)
-          .map((result: any) => {
+          .map((result: RaceResult) => {
             const horse = localHorseMap.get(result.horseId);
             if (!horse) return null;
             const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
@@ -45,7 +46,7 @@ export function RecapTab() {
             );
             return { horse, result, beyer };
           })
-          .filter((f: any): f is NonNullable<typeof f> => f !== null);
+          .filter((f): f is NonNullable<typeof f> => f !== null);
 
         return (
           <Card key={race.id} className="border-l-4 border-l-gold border-gold-muted">
@@ -77,7 +78,7 @@ export function RecapTab() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {topFinishers.map((finisher: any, index: number) => {
+              {topFinishers.map((finisher, index: number) => {
                 const positionIcon =
                   index === 0 ? (
                     <Trophy className="h-4 w-4 text-fame" />
@@ -138,7 +139,7 @@ export function RecapTab() {
                   </div>
                   <PaceGraph
                     splits={race.sectionalSplits}
-                    runners={race.result!.map((r: any) => {
+                    runners={race.result!.map((r: RaceResult) => {
                       const horse = localHorseMap.get(r.horseId);
                       return {
                         horseId: r.horseId,
@@ -157,7 +158,7 @@ export function RecapTab() {
                   </div>
                   <SectionalTimingTable
                     splits={race.sectionalSplits}
-                    runners={race.result!.map((r: any) => {
+                    runners={race.result!.map((r: RaceResult) => {
                       const horse = localHorseMap.get(r.horseId);
                       return {
                         horseId: r.horseId,
@@ -171,7 +172,7 @@ export function RecapTab() {
                   {race.snapshots && race.snapshots.length > 0 && (
                     <SpeedBreakdownChart
                       snapshots={race.snapshots}
-                      runners={race.result!.map((r: any) => {
+                      runners={race.result!.map((r: RaceResult) => {
                         const horse = localHorseMap.get(r.horseId);
                         return {
                           horseId: r.horseId,
