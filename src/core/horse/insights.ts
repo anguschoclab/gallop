@@ -151,7 +151,7 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     };
   }
 
-  // 1.9 Check for Deep Closer (Late Kick)
+  // 1.9 Check for Closing Kick (absolute positions passed from first call)
   let maxPositionsPassed = 0;
   for (const race of history) {
     if (race.position === 1 && race.pacePositions && race.pacePositions.length > 0) {
@@ -168,6 +168,33 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
       label: "Closing Kick",
       value: "Deep Closer",
       context: `Has won a race after passing ${maxPositionsPassed} horses from the first call`,
+      type: "positive",
+    };
+  }
+
+  // 1.91 Check for From the Clouds (firstCall > ceil(fieldSize/2), min 2 such wins)
+  let closingWins = 0;
+
+  for (const race of history) {
+    if (
+      race.position === 1 &&
+      race.pacePositions &&
+      race.pacePositions.length > 0 &&
+      race.fieldSize != null &&
+      race.fieldSize >= 4
+    ) {
+      const firstCall = race.pacePositions[0];
+      if (firstCall > Math.ceil(race.fieldSize / 2)) {
+        closingWins++;
+      }
+    }
+  }
+
+  if (closingWins >= 2) {
+    return {
+      label: "From the Clouds",
+      value: "Deep Closing Winner",
+      context: `Has rallied from the back half of the pack to win ${closingWins} career races`,
       type: "positive",
     };
   }
