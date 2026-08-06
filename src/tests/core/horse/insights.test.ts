@@ -503,8 +503,8 @@ describe("Deep Closer insights", () => {
   it("detects From the Clouds when horse has 2+ deep closing wins", () => {
     const horse = {
       raceHistory: [
-        { position: 1, day: 1, fieldSize: 10, pacePositions: [8, 5, 1] },
-        { position: 1, day: 2, fieldSize: 8, pacePositions: [6, 4, 1] },
+        { position: 1, day: 1, fieldSize: 10, pacePositions: [6, 5, 1] },
+        { position: 1, day: 2, fieldSize: 8, pacePositions: [5, 4, 1] },
         { position: 3, day: 3, fieldSize: 10, pacePositions: [2, 2, 3] },
       ],
     };
@@ -541,8 +541,8 @@ describe("Late Bloomer insights", () => {
   it("detects Late Bloomer when horse has 2+ off-the-pace wins", () => {
     const horse = {
       raceHistory: [
-        { position: 1, day: 1, fieldSize: 10, pacePositions: [8, 7, 1] },
-        { position: 1, day: 2, fieldSize: 8, pacePositions: [7, 5, 1] },
+        { position: 1, day: 1, fieldSize: 8, pacePositions: [6, 4, 1] },
+        { position: 1, day: 2, fieldSize: 8, pacePositions: [6, 5, 1] },
         { position: 3, day: 3, fieldSize: 8, pacePositions: [2, 2, 3] },
       ],
     };

@@ -188,34 +188,7 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     };
   }
 
-  // 1.91 Check for From the Clouds (firstCall > ceil(fieldSize/2), min 2 such wins)
-  let closingWins = 0;
-
-  for (const race of history) {
-    if (
-      race.position === 1 &&
-      race.pacePositions &&
-      race.pacePositions.length > 0 &&
-      race.fieldSize != null &&
-      race.fieldSize >= 4
-    ) {
-      const firstCall = race.pacePositions[0];
-      if (firstCall > Math.ceil(race.fieldSize / 2)) {
-        closingWins++;
-      }
-    }
-  }
-
-  if (closingWins >= 2) {
-    return {
-      label: "From the Clouds",
-      value: "Deep Closing Winner",
-      context: `Has rallied from the back half of the pack to win ${closingWins} career races`,
-      type: "positive",
-    };
-  }
-
-  // 1.92 Check for Late Bloomer (firstCall > max(5, fieldSize * 0.65), fieldSize >= 6)
+  // 1.91 Check for Late Bloomer (firstCall > max(5, fieldSize * 0.65), fieldSize >= 6, min 2 such wins)
   let lateBloomerWins = 0;
 
   for (const race of history) {
@@ -239,6 +212,33 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
       label: "Late Bloomer",
       value: "Off-the-Pace Winner",
       context: `Has won from the back of the pack in ${lateBloomerWins} career races`,
+      type: "positive",
+    };
+  }
+
+  // 1.92 Check for From the Clouds (firstCall > ceil(fieldSize/2), min 2 such wins)
+  let closingWins = 0;
+
+  for (const race of history) {
+    if (
+      race.position === 1 &&
+      race.pacePositions &&
+      race.pacePositions.length > 0 &&
+      race.fieldSize != null &&
+      race.fieldSize >= 4
+    ) {
+      const firstCall = race.pacePositions[0];
+      if (firstCall > Math.ceil(race.fieldSize / 2)) {
+        closingWins++;
+      }
+    }
+  }
+
+  if (closingWins >= 2) {
+    return {
+      label: "From the Clouds",
+      value: "Deep Closing Winner",
+      context: `Has rallied from the back half of the pack to win ${closingWins} career races`,
       type: "positive",
     };
   }
