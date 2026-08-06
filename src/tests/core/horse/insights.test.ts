@@ -517,7 +517,7 @@ describe("Deep Closer insights", () => {
   it("does not detect deep closer if field size is too small", () => {
     const horse = {
       raceHistory: [
-        { position: 1, day: 1, fieldSize: 3, pacePositions: [3, 2, 1] }, // First call > fieldSize/2 (3 > 1.5), but field < 4
+        { position: 1, day: 1, fieldSize: 3, pacePositions: [3, 2, 1] },
         { position: 1, day: 2, fieldSize: 3, pacePositions: [3, 2, 1] },
       ],
     };
@@ -528,7 +528,7 @@ describe("Deep Closer insights", () => {
   it("does not detect deep closer if not rallying from back half", () => {
     const horse = {
       raceHistory: [
-        { position: 1, day: 1, fieldSize: 10, pacePositions: [5, 4, 1] }, // 5 is not > 5
+        { position: 1, day: 1, fieldSize: 10, pacePositions: [5, 4, 1] },
         { position: 1, day: 2, fieldSize: 10, pacePositions: [4, 3, 1] },
       ],
     };
