@@ -4,7 +4,7 @@
  * Extracted from AuctionControls.tsx.
  */
 
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState, useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/core/common/formatting";
@@ -23,6 +23,7 @@ export const BidInputPanel = forwardRef<BidInputPanelHandle, BidInputPanelProps>
   function BidInputPanel({ currentBid, nextMin, onBid }, ref) {
     const [customBid, setCustomBid] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
+    const inputId = useId();
 
     useImperativeHandle(ref, () => ({
       focusAndScroll: (prefillAmount?: number) => {
@@ -43,9 +44,17 @@ export const BidInputPanel = forwardRef<BidInputPanelHandle, BidInputPanelProps>
 
     return (
       <div id="bid-input-panel" className="space-y-2">
-        <div className="text-[10px] uppercase font-bold text-muted-foreground ml-1">Custom Bid</div>
+        <label
+          htmlFor={inputId}
+          className="block text-[10px] uppercase font-bold text-muted-foreground ml-1 cursor-pointer"
+        >
+          Custom Bid
+        </label>
         <div className="flex gap-2">
           <Input
+            id={inputId}
+            type="number"
+            min={nextMin}
             ref={inputRef}
             placeholder={`min ${formatCurrency(nextMin)}`}
             className="rounded-xl h-12 bg-muted/30 border-muted"
