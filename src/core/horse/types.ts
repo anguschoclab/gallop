@@ -111,6 +111,28 @@ export type RunningStyle = "E" | "EP" | "P" | "S";
 /**
  * Core Horse interface - represents a horse in the game population
  */
+export interface HorseRaceHistoryEntry {
+  raceId: string;
+  raceName: string;
+  position: number;
+  day: number;
+  beyer?: number;
+  grade?: string;
+  distance?: number;
+  surface?: string;
+  purse?: number;
+  purseEarned?: number;
+  fieldSize?: number;
+  raceClass?: string;
+  barrier?: number;
+  lane?: number;
+  winAndYouInQualified?: { year: number; raceId: string; raceKey: string };
+  pacePositions?: number[]; // Position at each quarter (1-indexed)
+  courseVisitCount?: number; // Visit count at time of race
+  jockeyId?: string; // Jockey that rode the horse in this race
+  stableId?: string; // Owner stable at time of race
+}
+
 export type Horse = {
   id: string;
   name: string;
@@ -159,27 +181,7 @@ export type Horse = {
     longevityBonus: number;
     ffs1RiskMultiplier: number;
   };
-  raceHistory: {
-    raceId: string;
-    raceName: string;
-    position: number;
-    day: number;
-    beyer?: number;
-    grade?: string;
-    distance?: number;
-    surface?: string;
-    purse?: number;
-    purseEarned?: number;
-    fieldSize?: number;
-    raceClass?: string;
-    barrier?: number;
-    lane?: number;
-    winAndYouInQualified?: { year: number; raceId: string; raceKey: string };
-    pacePositions?: number[]; // Position at each quarter (1-indexed)
-    courseVisitCount?: number; // Visit count at time of race
-    jockeyId?: string; // Jockey that rode the horse in this race
-    stableId?: string; // Owner stable at time of race
-  }[];
+  raceHistory: HorseRaceHistoryEntry[];
   fame: number;
   owned: boolean;
   stableId?: string;
