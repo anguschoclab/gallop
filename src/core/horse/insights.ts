@@ -79,6 +79,45 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     }
   }
 
+  // 1.6 Check for Stakes Performance (Big Stage Performer / Stage Fright)
+  let gradedRuns = 0;
+  let gradedBeyerTotal = 0;
+  let regularRuns = 0;
+  let regularBeyerTotal = 0;
+
+  for (const race of history) {
+    if (typeof race.beyer === "number") {
+      if (race.grade && ["G1", "G2", "G3"].includes(race.grade)) {
+        gradedRuns++;
+        gradedBeyerTotal += race.beyer;
+      } else {
+        regularRuns++;
+        regularBeyerTotal += race.beyer;
+      }
+    }
+  }
+
+  if (gradedRuns >= 2 && regularRuns >= 3) {
+    const gradedAvg = gradedBeyerTotal / gradedRuns;
+    const regularAvg = regularBeyerTotal / regularRuns;
+
+    if (gradedAvg >= regularAvg + 5) {
+      return {
+        label: "Big Stage Performer",
+        value: "Elevates in Stakes Races",
+        context: `Averages a ${Math.round(gradedAvg)} Beyer in Graded company vs ${Math.round(regularAvg)} in standard races`,
+        type: "positive",
+      };
+    } else if (regularAvg >= gradedAvg + 8) {
+      return {
+        label: "Stage Fright",
+        value: "Struggles in Stakes Races",
+        context: `Averages a ${Math.round(regularAvg)} Beyer in standard company vs ${Math.round(gradedAvg)} in Graded stakes`,
+        type: "negative",
+      };
+    }
+  }
+
   // 1.7 Check for Freshness / Layoff performance
   // Requires at least 2 runs off a layoff (>= 60 days) and 3 active runs (< 60 days)
   let freshRuns = 0;

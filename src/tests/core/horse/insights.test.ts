@@ -583,3 +583,37 @@ describe("Versatility insights", () => {
     expect(insight!.type).toBe("positive");
   });
 });
+
+describe("Stakes Performance insights", () => {
+  it("detects Big Stage Performer when horse elevates in stakes races", () => {
+    const horse = {
+      raceHistory: [
+        { position: 5, day: 1, beyer: 95, grade: "G1" },
+        { position: 4, day: 2, beyer: 94, grade: "G2" },
+        { position: 5, day: 3, beyer: 85, grade: undefined },
+        { position: 4, day: 4, beyer: 84, grade: undefined },
+        { position: 5, day: 5, beyer: 86, grade: undefined },
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Big Stage Performer");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("detects Stage Fright when horse struggles in stakes races", () => {
+    const horse = {
+      raceHistory: [
+        { position: 5, day: 1, beyer: 80, grade: "G1" },
+        { position: 4, day: 2, beyer: 82, grade: "G2" },
+        { position: 4, day: 3, beyer: 95, grade: undefined },
+        { position: 5, day: 4, beyer: 94, grade: undefined },
+        { position: 4, day: 5, beyer: 93, grade: undefined },
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Stage Fright");
+    expect(insight!.type).toBe("negative");
+  });
+});
