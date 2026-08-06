@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Gavel, Activity } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
 import { BuyNowDialog } from "./BuyNowDialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { BidInput } from "./BidInput";
 import { MaxBidInput } from "./MaxBidInput";
 import { cn } from "@/lib/cn";
@@ -70,6 +71,26 @@ export function BiddingPanel({
     setMaxBidInput("");
   };
 
+  const bidDisabled = cash < nextBid || isPlayerLeading || isPlayerConsigned;
+  let bidDisabledReason = "";
+  if (isPlayerConsigned) bidDisabledReason = "You cannot bid on your own horse";
+  else if (isPlayerLeading) bidDisabledReason = "You are already the leading bidder";
+  else if (cash < nextBid) bidDisabledReason = "Not enough cash";
+
+  const bidButton = (
+    <Button
+      className={cn(
+        "flex-1 h-14 bg-success hover:bg-success/90 text-slate-950 font-black uppercase tracking-[0.2em] rounded-none text-xs shadow-lg group",
+        bidDisabled && "pointer-events-none",
+      )}
+      onClick={() => onBid(nextBid)}
+      disabled={bidDisabled}
+    >
+      <Gavel className="h-4 w-4 mr-3 group-hover:rotate-12 transition-transform" />
+      Bid {formatCurrency(nextBid)}
+    </Button>
+  );
+
   if (currentLot.passed) return null;
 
   return (
@@ -102,14 +123,20 @@ export function BiddingPanel({
 
         <div className="space-y-4">
           <div className="flex gap-2">
-            <Button
-              className="flex-1 h-14 bg-success hover:bg-success/90 text-slate-950 font-black uppercase tracking-[0.2em] rounded-none text-xs shadow-lg group"
-              onClick={() => onBid(nextBid)}
-              disabled={cash < nextBid || isPlayerLeading || isPlayerConsigned}
-            >
-              <Gavel className="h-4 w-4 mr-3 group-hover:rotate-12 transition-transform" />
-              Bid {formatCurrency(nextBid)}
-            </Button>
+            {bidDisabled ? (
+              <TooltipProvider delayDuration={300}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span tabIndex={0} className="flex-1 inline-block cursor-not-allowed">
+                      {bidButton}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>{bidDisabledReason}</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              bidButton
+            )}
             {buyNowPrice !== undefined && !isPlayerConsigned && (
               <BuyNowDialog
                 horseName={horseName}
