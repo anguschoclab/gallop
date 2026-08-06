@@ -11,7 +11,8 @@ import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { ImpactHandler, LookupMaps } from "./types";
-import type { CashImpact } from "../impacts/financialImpacts";
+import type { CashImpact, TransactionImpact } from "../impacts/financialImpacts";
+import { createTransaction } from "@/core/transactions";
 import type { HorseTransferImpact } from "../impacts/horseImpacts";
 
 type ImpactHandlerFunction = (
@@ -36,6 +37,23 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     }
   },
 
+  transaction: (draft, impact) => {
+    const { amount, category, description, horseId, raceId, recurring } =
+      impact as TransactionImpact;
+    if (!draft.transactions) draft.transactions = [];
+    const type = amount >= 0 ? "income" : "expense";
+    const newTransaction = createTransaction(
+      type,
+      category,
+      amount,
+      description,
+      impact.day,
+      draft.cash + amount,
+      { horseId, raceId, recurring },
+    );
+    draft.transactions.push(newTransaction);
+  },
+
   horse_transfer: (draft, impact, lookupMaps) => {
     const { horseId, toStableId } = impact as HorseTransferImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
@@ -48,7 +66,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
 export class FinanceHandler implements ImpactHandler {
   canHandle(type: string): boolean {
-    return ["cash_change", "horse_transfer"].includes(type);
+    return ["cash_change", "horse_transfer", "transaction"].includes(type);
   }
 
   handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
