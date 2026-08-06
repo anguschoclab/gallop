@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/core/common/formatting";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 
 export function SyndicateMarket() {
@@ -95,15 +96,34 @@ export function SyndicateMarket() {
             </div>
 
             <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                className="flex-1"
-                disabled={cash < syndicate.sharePrice}
-                onClick={() => handlePurchase(syndicate.id, syndicate.sharePrice)}
-              >
-                Buy 1 Share
-              </Button>
+              {cash < syndicate.sharePrice ? (
+                <TooltipProvider delayDuration={300}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span tabIndex={0} className="flex-1 inline-block cursor-not-allowed">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="w-full pointer-events-none"
+                          disabled
+                        >
+                          Buy 1 Share
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>Not enough cash</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => handlePurchase(syndicate.id, syndicate.sharePrice)}
+                >
+                  Buy 1 Share
+                </Button>
+              )}
               {playerShares > 0 && (
                 <Button
                   size="sm"
