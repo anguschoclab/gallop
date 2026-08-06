@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/core/common/formatting";
 import { Gavel, Pause, Play, FastForward, X } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { nextBidAmount } from "@/core/auction/runner";
 import { AuctionErrorState } from "@/components/auction/AuctionStates";
 import { BidInputPanel, type BidInputPanelHandle } from "./BidInputPanel";
@@ -58,20 +59,38 @@ export function AuctionControls({
 
       {/* Main Action Bar */}
       <div className="grid grid-cols-4 gap-3">
-        <Button
-          size="lg"
-          className={cn(
-            "col-span-2 h-20 text-xl font-black rounded-2xl transition-all shadow-xl active:scale-95",
-            playerIsLeading
-              ? "bg-muted text-muted-foreground cursor-not-allowed opacity-50"
-              : "bg-primary hover:bg-primary/90 text-primary-foreground",
-          )}
-          onClick={() => !playerIsLeading && onBid()}
-          disabled={playerIsLeading || isPlayerConsignment}
-        >
-          <Gavel className="mr-3 h-8 w-8" />
-          {playerIsLeading ? "LEADING" : `BID ${formatCurrency(nextMin)}`}
-        </Button>
+        {playerIsLeading || isPlayerConsignment ? (
+          <TooltipProvider delayDuration={300}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span tabIndex={0} className="col-span-2 inline-block w-full cursor-not-allowed">
+                  <Button
+                    size="lg"
+                    className="w-full h-20 text-xl font-black rounded-2xl transition-all shadow-xl bg-muted text-muted-foreground opacity-50 pointer-events-none"
+                    disabled
+                  >
+                    <Gavel className="mr-3 h-8 w-8" />
+                    {playerIsLeading ? "LEADING" : `BID ${formatCurrency(nextMin)}`}
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                {playerIsLeading
+                  ? "You are already leading the bidding."
+                  : "Cannot bid on your own consignment."}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          <Button
+            size="lg"
+            className="col-span-2 h-20 text-xl font-black rounded-2xl transition-all shadow-xl active:scale-95 bg-primary hover:bg-primary/90 text-primary-foreground"
+            onClick={() => onBid()}
+          >
+            <Gavel className="mr-3 h-8 w-8" />
+            BID {formatCurrency(nextMin)}
+          </Button>
+        )}
 
         <Button
           variant="outline"
