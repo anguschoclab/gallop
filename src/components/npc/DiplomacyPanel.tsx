@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useGame } from "@/game/store";
@@ -10,6 +11,14 @@ interface DiplomacyPanelProps {
 export function DiplomacyPanel({ stableId }: DiplomacyPanelProps) {
   const relationships = useGame((s) => s.npcAIManager?.stableStates?.[stableId]?.npcRelationships);
   const npcStables = useGame((s) => s.npcStables);
+
+  // ⚡ Bolt Optimization:
+  // Impact: Reduces rendering complexity of diplomacy panel from O(N*M) to O(N+M)
+  // Pre-calculate hash map for O(1) stable lookups instead of running O(N) .find() inside the map loop.
+  const npcStablesMap = useMemo(
+    () => new Map(npcStables?.map((s) => [s.id, s]) || []),
+    [npcStables],
+  );
 
   if (!relationships || Object.keys(relationships).length === 0) {
     return null;
@@ -24,7 +33,7 @@ export function DiplomacyPanel({ stableId }: DiplomacyPanelProps) {
       </CardHeader>
       <CardContent className="space-y-3">
         {Object.entries(relationships).map(([otherId, rel]) => {
-          const otherStable = npcStables?.find((s) => s.id === otherId);
+          const otherStable = npcStablesMap.get(otherId);
           const trustPct = (rel.trust * 100).toFixed(0);
           const isPositive = rel.trust > 0;
 
