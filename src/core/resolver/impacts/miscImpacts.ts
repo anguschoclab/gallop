@@ -43,7 +43,7 @@ export interface ReputationImpact extends Impact {
   delta: number;
   reason: string;
   source: ReputationSource;
-  metadata?: Record<string, any>;
+  metadata?: { horseId?: string; raceId?: string };
 }
 
 // Staff impact
@@ -138,7 +138,12 @@ export interface OutpostImpact extends Impact {
   stableId: string;
   action: "create" | "upgrade_slot" | "assign_trainer";
   outpostId: string;
-  metadata?: Record<string, any>;
+  metadata?: {
+    name?: string;
+    region?: import("@/core/facilities/outpostTypes").OutpostRegion;
+    headTrainerId?: string;
+    trainerId?: string;
+  };
   reason: string;
 }
 
