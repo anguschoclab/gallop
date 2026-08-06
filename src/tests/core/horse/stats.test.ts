@@ -1,8 +1,15 @@
 import { describe, it, expect } from "vitest";
-import { calculateOverallRating, getAbility, abilityGrade } from "@/core/horse/stats";
+import {
+  calculateOverallRating,
+  calculateRaceRating,
+  getCareerStats,
+  getAbility,
+  abilityGrade,
+  rollRunningStyle,
+} from "@/core/horse/stats";
 import { resolvePhenotype } from "@/core/horse/horseFactory";
 import type { Horse } from "@/game/types";
-import { createTestHorse } from "@/tests/helpers";
+import { createTestHorse, createTestRng } from "@/tests/helpers";
 
 function mkHorse(
   speed: number,
@@ -100,4 +107,93 @@ describe("abilityGrade", () => {
   it("49 → F", () => expect(abilityGrade(49)).toBe("F"));
   it("0 → F", () => expect(abilityGrade(0)).toBe("F"));
   it("100 → S", () => expect(abilityGrade(100)).toBe("S"));
+});
+
+describe("calculateRaceRating", () => {
+  it("all-60 → 60", () => expect(calculateRaceRating(mkHorse(60, 60, 60, 90))).toBe(60));
+  it("60+70+80 → 70", () => expect(calculateRaceRating(mkHorse(60, 70, 80, 20))).toBe(70));
+  it("rounds correctly — 61+62+64 = 187/3 = 62.3 → 62", () =>
+    expect(calculateRaceRating(mkHorse(61, 62, 64, 99))).toBe(62));
+  it("ignores consistency — 100+100+100 with 10 consistency → 100", () =>
+    expect(calculateRaceRating(mkHorse(100, 100, 100, 10))).toBe(100));
+});
+
+describe("getCareerStats", () => {
+  it("handles empty history", () => {
+    const h = mkHorse(50, 50, 50, 50);
+    h.raceHistory = [];
+    const stats = getCareerStats(h);
+    expect(stats.starts).toBe(0);
+    expect(stats.wins).toBe(0);
+    expect(stats.earnings).toBe(0);
+  });
+
+  it("calculates basic wins and earnings", () => {
+    const h = mkHorse(50, 50, 50, 50);
+    h.raceHistory = [
+      { raceId: "1", day: 1, raceName: "Race 1", position: 1, purseEarned: 1000 },
+      { raceId: "2", day: 2, raceName: "Race 2", position: 2, purseEarned: 500 },
+      { raceId: "3", day: 3, raceName: "Race 3", position: 1, purseEarned: 2000 },
+    ] as unknown as Horse["raceHistory"];
+    const stats = getCareerStats(h);
+    expect(stats.starts).toBe(3);
+    expect(stats.wins).toBe(2);
+    expect(stats.places).toBe(1);
+    expect(stats.earnings).toBe(3500);
+  });
+
+  it("calculates surface and distance stats", () => {
+    const h = mkHorse(50, 50, 50, 50);
+    h.raceHistory = [
+      { raceId: "1", day: 1, raceName: "R1", position: 1, surface: "Turf", distance: 1200 }, // turf sprint win
+      { raceId: "2", day: 2, raceName: "R2", position: 1, surface: "Dirt", distance: 1600 }, // dirt classic win
+      { raceId: "3", day: 3, raceName: "R3", position: 2, surface: "Synthetic", distance: 2400 }, // synthetic stayer place
+    ] as unknown as Horse["raceHistory"];
+    const stats = getCareerStats(h);
+
+    expect(stats.turfStarts).toBe(1);
+    expect(stats.turfWins).toBe(1);
+    expect(stats.dirtStarts).toBe(1);
+    expect(stats.dirtWins).toBe(1);
+    expect(stats.syntheticStarts).toBe(1);
+    expect(stats.syntheticWins).toBe(0);
+
+    expect(stats.sprintStarts).toBe(1);
+    expect(stats.sprintWins).toBe(1);
+    expect(stats.classicStarts).toBe(1);
+    expect(stats.classicWins).toBe(1);
+    expect(stats.stayerStarts).toBe(1);
+    expect(stats.stayerWins).toBe(0);
+  });
+
+  it("counts graded and stakes wins", () => {
+    const h = mkHorse(50, 50, 50, 50);
+    h.raceHistory = [
+      { raceId: "1", day: 1, raceName: "R1", position: 1, grade: "G1" },
+      { raceId: "2", day: 2, raceName: "R2", position: 1, grade: "G2" },
+      { raceId: "3", day: 3, raceName: "R3", position: 1, grade: "G3" },
+      { raceId: "4", day: 4, raceName: "R4", position: 1, raceClass: "Listed" },
+      { raceId: "5", day: 5, raceName: "R5", position: 2, grade: "G1" },
+    ] as unknown as Horse["raceHistory"];
+    const stats = getCareerStats(h);
+
+    expect(stats.gradedStarts).toBe(4);
+    expect(stats.gradedWins).toBe(3);
+    expect(stats.g1Wins).toBe(1);
+    expect(stats.g2Wins).toBe(1);
+    expect(stats.g3Wins).toBe(1);
+    expect(stats.stakesWins).toBe(4); // G1, G2, G3 + Listed
+  });
+});
+
+describe("rollRunningStyle", () => {
+  it("forces Early (E) when early bias > late bias by large margin", () => {
+    const rng = createTestRng("early_bias_test");
+    expect(rollRunningStyle({ speed: 100, stamina: 0, acceleration: 100 }, rng)).toBe("E");
+  });
+
+  it("forces Stalker (S) when late bias > early bias by large margin", () => {
+    const rng = createTestRng("late_bias_test");
+    expect(rollRunningStyle({ speed: 0, stamina: 100, acceleration: 0 }, rng)).toBe("S");
+  });
 });
