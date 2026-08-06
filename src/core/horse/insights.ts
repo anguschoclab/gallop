@@ -227,6 +227,33 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     };
   }
 
+  // 1.93 Check for Surface Versatility (wins on 2+ surfaces)
+  const winningSurfaces = new Set<string>();
+  for (const race of history) {
+    if (race.position === 1 && race.surface) {
+      winningSurfaces.add(race.surface);
+    }
+  }
+
+  if (winningSurfaces.size >= 2) {
+    const surfacesArray = Array.from(winningSurfaces);
+    if (surfacesArray.length >= 3) {
+      return {
+        label: "All-Surface Master",
+        value: "Triple-Surface Winner",
+        context: "Has recorded victories on Turf, Dirt, and Synthetic",
+        type: "positive",
+      };
+    } else {
+      return {
+        label: "Dual-Surface Threat",
+        value: "Multi-Surface Winner",
+        context: `Has recorded victories on both ${surfacesArray[0]} and ${surfacesArray[1]}`,
+        type: "positive",
+      };
+    }
+  }
+
   // 2. Check for distance sweet spot (best average beyer by distance, min 3 races)
   const distanceStats = new Map<number, { runs: number; totalBeyer: number; wins: number }>();
   for (const race of history) {
