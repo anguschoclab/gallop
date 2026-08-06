@@ -1,7 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { FinanceHandler } from "@/core/resolver/handlers/FinanceHandler";
 import type { GameState } from "@/game/store/state";
-import type { CashImpact, HorseTransferImpact } from "@/core/resolver/impacts/index";
+import type {
+  CashImpact,
+  HorseTransferImpact,
+  TransactionImpact,
+} from "@/core/resolver/impacts/index";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import type { Horse } from "@/game/types";
 
@@ -77,6 +81,65 @@ describe("FinanceHandler", () => {
     expect(draft.cash).toBe(-400);
   });
 
+  it("transaction creates a transaction entry with correct type", () => {
+    const handler = new FinanceHandler();
+    const state = {
+      cash: 1000,
+      transactions: [],
+      horses: {},
+      npcStables: [],
+    } as unknown as GameState;
+
+    const impact: TransactionImpact = {
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "transaction",
+      amount: 500,
+      category: "prize_money",
+      description: "Race winnings",
+      reason: "Transaction",
+    };
+
+    const draft = JSON.parse(JSON.stringify(state));
+    handler.handle(draft, impact);
+
+    expect(draft.transactions).toHaveLength(1);
+    expect(draft.transactions[0].amount).toBe(500);
+    expect(draft.transactions[0].type).toBe("income");
+  });
+
+  it("transaction with negative amount creates expense type", () => {
+    const handler = new FinanceHandler();
+    const state = {
+      cash: 1000,
+      transactions: [],
+      horses: {},
+      npcStables: [],
+    } as unknown as GameState;
+
+    const impact: TransactionImpact = {
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "managementResolution",
+      logLevel: "always",
+      type: "transaction",
+      amount: -200,
+      category: "entry_fee",
+      description: "Race entry fee",
+      reason: "Transaction",
+    };
+
+    const draft = JSON.parse(JSON.stringify(state));
+    handler.handle(draft, impact);
+
+    expect(draft.transactions).toHaveLength(1);
+    expect(draft.transactions[0].type).toBe("expense");
+  });
+
   it("horse_transfer sets horse.stableId and horse.owned", () => {
     const handler = new FinanceHandler();
     const state = {
@@ -141,7 +204,7 @@ describe("FinanceHandler", () => {
     const handler = new FinanceHandler();
     expect(handler.canHandle("cash_change")).toBe(true);
     expect(handler.canHandle("horse_transfer")).toBe(true);
-    expect(handler.canHandle("transaction")).toBe(false);
+    expect(handler.canHandle("transaction")).toBe(true);
     expect(handler.canHandle("unknown_type")).toBe(false);
   });
 });

@@ -3,7 +3,6 @@ import { SystemHandler } from "@/core/resolver/handlers/SystemHandler";
 import type { GameState } from "@/game/store/state";
 import type {
   LogImpact,
-  TransactionImpact,
   CampaignCreationImpact,
   CampaignFlagDismissalImpact,
 } from "@/core/resolver/impacts/index";
@@ -30,55 +29,6 @@ describe("SystemHandler", () => {
     expect(draft.log).toHaveLength(1);
     expect(draft.log[0].text).toBe("Something happened");
     expect(draft.log[0].day).toBe(10);
-  });
-
-  it("transaction creates a transaction entry with correct type", () => {
-    const handler = new SystemHandler();
-    const state = { cash: 1000, transactions: [], horses: {} } as unknown as GameState;
-
-    const impact: TransactionImpact = {
-      id: "imp-1",
-      intentId: "",
-      day: 10,
-      phase: "raceResolution",
-      logLevel: "always",
-      type: "transaction",
-      amount: 500,
-      category: "prize_money",
-      description: "Race winnings",
-      reason: "Transaction",
-    };
-
-    const draft = JSON.parse(JSON.stringify(state));
-    handler.handle(draft, impact);
-
-    expect(draft.transactions).toHaveLength(1);
-    expect(draft.transactions[0].amount).toBe(500);
-    expect(draft.transactions[0].type).toBe("income");
-  });
-
-  it("transaction with negative amount creates expense type", () => {
-    const handler = new SystemHandler();
-    const state = { cash: 1000, transactions: [], horses: {} } as unknown as GameState;
-
-    const impact: TransactionImpact = {
-      id: "imp-1",
-      intentId: "",
-      day: 10,
-      phase: "managementResolution",
-      logLevel: "always",
-      type: "transaction",
-      amount: -200,
-      category: "entry_fee",
-      description: "Race entry fee",
-      reason: "Transaction",
-    };
-
-    const draft = JSON.parse(JSON.stringify(state));
-    handler.handle(draft, impact);
-
-    expect(draft.transactions).toHaveLength(1);
-    expect(draft.transactions[0].type).toBe("expense");
   });
 
   it("campaign_creation creates a new campaign from horseId+goalType — regression test for shape fix", () => {
@@ -205,7 +155,6 @@ describe("SystemHandler", () => {
   it("canHandle returns true for known impact types", () => {
     const handler = new SystemHandler();
     expect(handler.canHandle("log")).toBe(true);
-    expect(handler.canHandle("transaction")).toBe(true);
     expect(handler.canHandle("horse_deletion")).toBe(false);
     expect(handler.canHandle("campaign_creation")).toBe(true);
     expect(handler.canHandle("reputation_change")).toBe(true);
