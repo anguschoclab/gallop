@@ -243,6 +243,16 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     };
   }
 
+  // 1.925 Check for Late Charge (closerWins from wire-to-wire section, looser threshold)
+  if (closerWins >= 2) {
+    return {
+      label: "Late Charge",
+      value: "Off-the-Pace Winner",
+      context: `Has won ${closerWins} races when coming from the back half of the field`,
+      type: "positive",
+    };
+  }
+
   // 1.93 Check for Surface Versatility (wins on 2+ surfaces)
   const winningSurfaces = new Set<string>();
   for (const race of history) {

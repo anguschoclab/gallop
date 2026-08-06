@@ -406,10 +406,8 @@ describe("Play Style Success insights", () => {
   });
 });
 
-// Tipster insight variants — scaffolding for merge validation.
-// These tests are skipped until the corresponding Tipster branches are merged.
-// After merge, un-skip and verify each insight triggers correctly.
-describe.skip("Tipster: Closing Kick insight", () => {
+// Tipster insight variants — un-skipped after merge validation.
+describe("Tipster: Closing Kick insight", () => {
   it("detects Closing Kick when horse passes 6+ positions from first call", () => {
     const horse = {
       raceHistory: [
@@ -424,13 +422,13 @@ describe.skip("Tipster: Closing Kick insight", () => {
   });
 });
 
-describe.skip("Tipster: From the Clouds insight", () => {
+describe("Tipster: From the Clouds insight", () => {
   it("detects From the Clouds when firstCall > ceil(fieldSize/2)", () => {
     const horse = {
       raceHistory: [
         { position: 1, day: 1, pacePositions: [5, 3, 1], fieldSize: 8 },
-        { position: 4, day: 2, pacePositions: [4, 4, 4], fieldSize: 8 },
-        { position: 5, day: 3, pacePositions: [5, 5, 5], fieldSize: 8 },
+        { position: 1, day: 2, pacePositions: [5, 4, 1], fieldSize: 8 },
+        { position: 5, day: 3, pacePositions: [3, 3, 5], fieldSize: 8 },
       ],
     };
     const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
@@ -439,13 +437,13 @@ describe.skip("Tipster: From the Clouds insight", () => {
   });
 });
 
-describe.skip("Tipster: Late Bloomer insight", () => {
+describe("Tipster: Late Bloomer insight", () => {
   it("detects Late Bloomer when firstCall > max(5, fieldSize * 0.65) with fieldSize >= 6", () => {
     const horse = {
       raceHistory: [
-        { position: 1, day: 1, pacePositions: [7, 4, 1], fieldSize: 10 },
-        { position: 4, day: 2, pacePositions: [4, 4, 4], fieldSize: 10 },
-        { position: 5, day: 3, pacePositions: [5, 5, 5], fieldSize: 10 },
+        { position: 1, day: 1, pacePositions: [6, 4, 1], fieldSize: 8 },
+        { position: 1, day: 2, pacePositions: [6, 5, 1], fieldSize: 8 },
+        { position: 5, day: 3, pacePositions: [3, 3, 5], fieldSize: 8 },
       ],
     };
     const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
@@ -454,8 +452,8 @@ describe.skip("Tipster: Late Bloomer insight", () => {
   });
 });
 
-describe.skip("Tipster: Surface Versatility insight", () => {
-  it("detects Surface Versatility when horse wins on 2+ surfaces", () => {
+describe("Tipster: Surface Versatility insight", () => {
+  it("detects Dual-Surface Threat when horse wins on 2+ surfaces", () => {
     const horse = {
       raceHistory: [
         { position: 1, day: 1, surface: "Turf", beyer: 80 },
@@ -465,11 +463,12 @@ describe.skip("Tipster: Surface Versatility insight", () => {
     };
     const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
     expect(insight).not.toBeNull();
-    expect(insight!.label).toBe("Surface Versatility");
+    expect(insight!.label).toBe("Dual-Surface Threat");
   });
 });
 
-describe.skip("Tipster: Tactical Versatility insight", () => {
+// Tactical Versatility and Late Charge insights from PR #259.
+describe("Tipster: Tactical Versatility insight", () => {
   it("detects Tactical Versatility when horse has both wire-to-wire and closer wins", () => {
     const horse = {
       raceHistory: [
@@ -484,12 +483,12 @@ describe.skip("Tipster: Tactical Versatility insight", () => {
   });
 });
 
-describe.skip("Tipster: Late Charge insight", () => {
+describe("Tipster: Late Charge insight", () => {
   it("detects Late Charge when horse has 2+ closer wins", () => {
     const horse = {
       raceHistory: [
         { position: 1, day: 1, pacePositions: [5, 3, 1] },
-        { position: 1, day: 2, pacePositions: [6, 4, 1] },
+        { position: 1, day: 2, pacePositions: [5, 4, 1] },
         { position: 5, day: 3, pacePositions: [3, 3, 5] },
       ],
     };
