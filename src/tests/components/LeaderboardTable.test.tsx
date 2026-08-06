@@ -23,9 +23,13 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 describe("LeaderboardTable", () => {
-  it("renders skeleton when leaderboard is null", () => {
+  it("renders skeleton when leaderboard is undefined", () => {
     const { container } = render(
-      <LeaderboardTable leaderboard={null} icon={<span />} valueFormatter={(v) => v.toString()} />,
+      <LeaderboardTable
+        leaderboard={undefined}
+        icon={<span />}
+        valueFormatter={(v) => v.toString()}
+      />,
     );
     expect(container.querySelectorAll(".w-8").length).toBe(5);
   });
@@ -33,7 +37,9 @@ describe("LeaderboardTable", () => {
   it("renders LeaderboardEmpty when rankings empty", () => {
     render(
       <LeaderboardTable
-        leaderboard={{ title: "Test", rankings: [] }}
+        leaderboard={
+          { title: "Test", type: "beyer", description: "", lastUpdated: 0, rankings: [] } as any
+        }
         icon={<span />}
         valueFormatter={(v) => v.toString()}
       />,
@@ -46,6 +52,9 @@ describe("LeaderboardTable", () => {
       <LeaderboardTable
         leaderboard={{
           title: "Top Earnings",
+          type: "earnings",
+          description: "",
+          lastUpdated: 0,
           rankings: [
             {
               horseId: "h1",
@@ -53,7 +62,7 @@ describe("LeaderboardTable", () => {
               rank: 1,
               value: 500000,
               sireName: "Sire A",
-              metrics: { age: 4, wins: 5, starts: 10 },
+              metrics: { age: 4, wins: 5, starts: 10, earnings: 500000, gradeWins: 1 },
             },
             {
               horseId: "h2",
@@ -61,7 +70,7 @@ describe("LeaderboardTable", () => {
               rank: 2,
               value: 300000,
               sireName: "Sire B",
-              metrics: { age: 3, wins: 3, starts: 8 },
+              metrics: { age: 3, wins: 3, starts: 8, earnings: 300000, gradeWins: 0 },
             },
           ],
         }}
@@ -79,6 +88,9 @@ describe("LeaderboardTable", () => {
       <LeaderboardTable
         leaderboard={{
           title: "Top Earnings",
+          type: "earnings",
+          description: "",
+          lastUpdated: 0,
           rankings: [
             {
               horseId: "h1",
@@ -86,7 +98,7 @@ describe("LeaderboardTable", () => {
               rank: 1,
               value: 500000,
               sireName: "Sire A",
-              metrics: { age: 4, wins: 5, starts: 10 },
+              metrics: { age: 4, wins: 5, starts: 10, earnings: 500000, gradeWins: 1 },
             },
           ],
         }}
