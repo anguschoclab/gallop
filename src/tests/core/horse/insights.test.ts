@@ -536,3 +536,19 @@ describe("Deep Closer insights", () => {
     expect(insight?.label).not.toBe("From the Clouds");
   });
 });
+
+describe("Late Bloomer insights", () => {
+  it("detects Late Bloomer when horse has 2+ off-the-pace wins", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1, fieldSize: 10, pacePositions: [8, 7, 1] },
+        { position: 1, day: 2, fieldSize: 8, pacePositions: [7, 5, 1] },
+        { position: 3, day: 3, fieldSize: 8, pacePositions: [2, 2, 3] },
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Late Bloomer");
+    expect(insight!.type).toBe("positive");
+  });
+});
