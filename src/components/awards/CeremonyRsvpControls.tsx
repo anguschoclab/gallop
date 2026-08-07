@@ -81,33 +81,33 @@ export function CeremonyRsvpControls({
 
   return (
     <div className="space-y-2">
-    <div className="flex flex-wrap items-center gap-2">
-      <CeremonyRsvpBadge invitation={invitation} day={day} />
-      {!held && (
-        <>
-          <Button
-            size="sm"
-            variant={status === "attending" ? "default" : "outline"}
-            className="gap-1"
-            onClick={() => respond("attending")}
-            disabled={status === "attending"}
-          >
-            <Check className="h-3 w-3" />
-            Attend
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            className="gap-1"
-            onClick={() => respond("declined")}
-            disabled={status === "declined"}
-          >
-            <X className="h-3 w-3" />
-            Decline
-          </Button>
-        </>
-      )}
-    </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <CeremonyRsvpBadge invitation={invitation} day={day} />
+        {!held && (
+          <>
+            <Button
+              size="sm"
+              variant={status === "attending" ? "default" : "outline"}
+              className="gap-1"
+              onClick={() => respond("attending")}
+              disabled={status === "attending"}
+            >
+              <Check className="h-3 w-3" />
+              Attend
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1"
+              onClick={() => respond("declined")}
+              disabled={status === "declined"}
+            >
+              <X className="h-3 w-3" />
+              Decline
+            </Button>
+          </>
+        )}
+      </div>
       {!held && (
         <p className={`text-xs ${overdue ? "text-destructive" : "text-cream-muted"}`}>
           {overdue

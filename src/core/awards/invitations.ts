@@ -46,11 +46,7 @@ export const RSVP_REMINDER_MARKS = [5, 2, 0];
 
 /** Kinds of auditable events on an invitation. */
 export type InvitationAuditKind =
-  | "invited"
-  | "rsvp_change"
-  | "reminder_sent"
-  | "deadline_lapsed"
-  | "ceremony_held";
+  "invited" | "rsvp_change" | "reminder_sent" | "deadline_lapsed" | "ceremony_held";
 
 /** A single audit entry recording an invitation status change. */
 export interface InvitationAuditEntry {
@@ -104,27 +100,46 @@ export const AUDIT_KIND_LABELS: Record<InvitationAuditKind, string> = {
   ceremony_held: "Ceremony held",
 };
 
-/** Whether the ceremony has already taken place. */
+/**
+ * Whether the ceremony has already taken place.
+ * @param invitation
+ * @param day
+ */
 export function isCeremonyHeld(invitation: AwardCeremonyInvitation, day: number): boolean {
   return day >= invitation.ceremonyDay;
 }
 
-/** Absolute game day by which an RSVP must be submitted. */
+/**
+ * Absolute game day by which an RSVP must be submitted.
+ * @param invitation
+ */
 export function getRsvpDeadlineDay(invitation: AwardCeremonyInvitation): number {
   return invitation.ceremonyDay - RSVP_DEADLINE_LEAD_DAYS;
 }
 
-/** Days left to respond (negative once the deadline has passed). */
+/**
+ * Days left to respond (negative once the deadline has passed).
+ * @param invitation
+ * @param day
+ */
 export function daysUntilRsvpDeadline(invitation: AwardCeremonyInvitation, day: number): number {
   return getRsvpDeadlineDay(invitation) - day;
 }
 
-/** Whether the RSVP window has closed. */
+/**
+ * Whether the RSVP window has closed.
+ * @param invitation
+ * @param day
+ */
 export function isRsvpDeadlinePassed(invitation: AwardCeremonyInvitation, day: number): boolean {
   return day > getRsvpDeadlineDay(invitation);
 }
 
-/** Append an audit entry, returning a new invitation. */
+/**
+ * Append an audit entry, returning a new invitation.
+ * @param invitation
+ * @param entry
+ */
 export function appendInvitationAudit(
   invitation: AwardCeremonyInvitation,
   entry: InvitationAuditEntry,
@@ -132,11 +147,14 @@ export function appendInvitationAudit(
   return { ...invitation, auditLog: [...(invitation.auditLog ?? []), entry] };
 }
 
-/** Whether the player attended (RSVP'd attending and the ceremony was held). */
+/**
+ * Whether the player attended (RSVP'd attending and the ceremony was held).
+ * @param invitation
+ * @param day
+ */
 export function didAttend(invitation: AwardCeremonyInvitation, day: number): boolean {
   return isCeremonyHeld(invitation, day) && invitation.rsvp === "attending";
 }
-
 
 /**
  * Awards the player won at the ceremony this invitation refers to.
@@ -145,10 +163,9 @@ export function didAttend(invitation: AwardCeremonyInvitation, day: number): boo
  * @param invitation - The invitation to resolve outcomes for
  * @returns Player-owned awards for that region and year
  */
-export function getInvitationOutcome<T extends { region: AwardRegion; year: number; stableId?: string }>(
-  awards: T[],
-  invitation: AwardCeremonyInvitation,
-): T[] {
+export function getInvitationOutcome<
+  T extends { region: AwardRegion; year: number; stableId?: string },
+>(awards: T[], invitation: AwardCeremonyInvitation): T[] {
   return awards.filter(
     (a) => !a.stableId && a.region === invitation.region && a.year === invitation.year,
   );

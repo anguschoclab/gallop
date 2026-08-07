@@ -45,7 +45,6 @@ export const createAwardSlice: GameStateCreator<AwardSlice> = (set) => ({
     }));
   },
 
-
   clearPendingCeremonies: () => {
     set({
       pendingAwardCeremonies: undefined,
