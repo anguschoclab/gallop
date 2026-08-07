@@ -30,7 +30,9 @@ type RacingSearch = {
 
 export function RacesTab() {
   const search = racingRouteApi.useSearch();
-  const navigate = racingRouteApi.useNavigate();
+  const navigate = racingRouteApi.useNavigate() as unknown as (opts: {
+    search: (prev: RacingSearch) => RacingSearch;
+  }) => void;
 
   const filters: RaceFilters = {
     grade: search.grade || "all",
