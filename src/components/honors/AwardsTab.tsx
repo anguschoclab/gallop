@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrophyCase, TrophyStats } from "@/components/awards";
+import { TrophyCase, TrophyStats, CeremonyInvitations } from "@/components/awards";
 import { Badge } from "@/components/ui/badge";
 import { useAwardsData } from "@/hooks/awards/useAwardsData";
 import { REGION_AWARD_NAMES } from "@/core/awards/types";
@@ -7,8 +7,15 @@ import { REGION_COLOR_CLASSES } from "@/assets/awards";
 import { Trophy, Calendar, Star } from "lucide-react";
 
 export function AwardsTab() {
-  const { year, playerAwards, awardsByRegion, totalAwards, hotyCount, currentYearAwards } =
-    useAwardsData();
+  const {
+    day,
+    invitations,
+    playerAwards,
+    awardsByRegion,
+    totalAwards,
+    hotyCount,
+    currentYearAwards,
+  } = useAwardsData();
 
   return (
     <div className="space-y-6">
@@ -46,6 +53,8 @@ export function AwardsTab() {
       </div>
 
       <TrophyStats awards={playerAwards} />
+
+      <CeremonyInvitations invitations={invitations} day={day} />
 
       <Card className="border-gold-muted">
         <CardHeader>

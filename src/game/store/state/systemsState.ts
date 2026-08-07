@@ -19,6 +19,7 @@ import type { Jockey } from "@/core/jockey/types";
 import type { HorseCampaign } from "@/core/calendar/campaignTypes";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import type { RegionalAward, AwardRegion } from "@/core/awards/types";
+import type { AwardCeremonyInvitation } from "@/core/awards/invitations";
 import type {
   Leaderboard,
   SireTrendData,
@@ -79,6 +80,8 @@ export interface SystemsState {
   }[];
   /** Index of current ceremony being displayed */
   currentCeremonyIndex?: number;
+  /** Invitations to upcoming regional award ceremonies (player qualified via G1 top-3) */
+  awardCeremonyInvitations?: AwardCeremonyInvitation[];
 
   // Industry analytics (optional - computed periodically)
   /** Rolling average of foal-aged horse earnings for AEI calculation */
