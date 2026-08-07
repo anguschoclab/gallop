@@ -37,6 +37,21 @@ function StableName({ id }: { id: string }) {
   );
 }
 
+function StallionName({ syndicateId, name }: { syndicateId: string; name: string }) {
+  const syndicates = useGame((s) => s.syndicates);
+  const stallionId = syndicates[syndicateId]?.stallionId;
+  if (!stallionId) return <span className="text-cream">{name}</span>;
+  return (
+    <Link
+      to="/sire-watch/$stallionId"
+      params={{ stallionId }}
+      className="text-cream hover:text-gold hover:underline"
+    >
+      {name}
+    </Link>
+  );
+}
+
 function FeedItemRow({ item }: { item: ShareActivityFeedItem }) {
   const icon = (() => {
     switch (item.type) {
@@ -61,7 +76,11 @@ function FeedItemRow({ item }: { item: ShareActivityFeedItem }) {
         {icon}
         <div className="flex-1 text-sm">
           <span className="text-cream">
-            {item.stallionName ?? item.syndicateName} ownership transferred
+            <StallionName
+              syndicateId={item.syndicateId}
+              name={item.stallionName ?? item.syndicateName}
+            />{" "}
+            ownership transferred
           </span>
           <span className="text-cream-muted mx-2">·</span>
           <span className="text-cream-muted">

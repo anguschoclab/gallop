@@ -108,7 +108,9 @@ export function InboxPage() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <CardTitle className="text-lg text-cream">{msg.title}</CardTitle>
+                        <CardTitle className="text-lg text-cream">
+                          <NewsContent text={msg.title} />
+                        </CardTitle>
                         {!msg.readAt && (
                           <span className="h-2 w-2 rounded-full bg-gold animate-pulse" />
                         )}

@@ -354,6 +354,30 @@ describe("computeSeasonStandings", () => {
     expect(player.recentResults[4].day).toBe(52);
   });
 
+  it("recentResults include raceId propagated from raceHistory", () => {
+    const h1 = mkHorse({
+      id: "h1",
+      owned: true,
+      raceHistory: [
+        {
+          raceId: "r-abc",
+          raceName: "Grand Stakes",
+          position: 1,
+          day: 50,
+          purse: 100000,
+          purseEarned: 60000,
+          surface: "Turf",
+          distance: 1600,
+        },
+      ],
+    });
+    const s: GameState = mkState({ day: 55, horses: { h1 } });
+    const result = computeSeasonStandings(s, 30);
+    const player = result.standings.find((e) => e.isPlayer)!;
+    expect(player.recentResults.length).toBeGreaterThanOrEqual(1);
+    expect(player.recentResults[0].raceId).toBe("r-abc");
+  });
+
   it("uses playerProfile.stableName for player entry name", () => {
     const s: GameState = mkState({
       playerProfile: {
