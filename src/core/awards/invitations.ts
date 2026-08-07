@@ -38,6 +38,32 @@ export interface InvitationQualifier {
 /** RSVP status for a ceremony invitation. */
 export type CeremonyRsvpStatus = "pending" | "attending" | "declined";
 
+/** Days before the ceremony that an RSVP must be submitted. */
+export const RSVP_DEADLINE_LEAD_DAYS = 3;
+
+/** Days-until-deadline marks on which a reminder is sent. */
+export const RSVP_REMINDER_MARKS = [5, 2, 0];
+
+/** Kinds of auditable events on an invitation. */
+export type InvitationAuditKind =
+  | "invited"
+  | "rsvp_change"
+  | "reminder_sent"
+  | "deadline_lapsed"
+  | "ceremony_held";
+
+/** A single audit entry recording an invitation status change. */
+export interface InvitationAuditEntry {
+  day: number;
+  kind: InvitationAuditKind;
+  /** Previous RSVP status, when the entry describes a change. */
+  from?: CeremonyRsvpStatus;
+  /** New RSVP status, when the entry describes a change. */
+  to?: CeremonyRsvpStatus;
+  /** Human-readable description. */
+  note: string;
+}
+
 /** An invitation to a regional award ceremony. */
 export interface AwardCeremonyInvitation {
   id: string;
@@ -56,6 +82,10 @@ export interface AwardCeremonyInvitation {
   rsvp?: CeremonyRsvpStatus;
   /** Absolute game day the player responded. */
   respondedDay?: number;
+  /** Days-until-deadline marks already reminded about. */
+  remindersSent?: number[];
+  /** Chronological audit trail of RSVP and status changes. */
+  auditLog?: InvitationAuditEntry[];
 }
 
 /** Human-readable RSVP labels. */
@@ -65,15 +95,48 @@ export const RSVP_LABELS: Record<CeremonyRsvpStatus, string> = {
   declined: "Declined",
 };
 
+/** Human-readable audit event labels. */
+export const AUDIT_KIND_LABELS: Record<InvitationAuditKind, string> = {
+  invited: "Invitation issued",
+  rsvp_change: "RSVP updated",
+  reminder_sent: "Reminder sent",
+  deadline_lapsed: "Deadline lapsed",
+  ceremony_held: "Ceremony held",
+};
+
 /** Whether the ceremony has already taken place. */
 export function isCeremonyHeld(invitation: AwardCeremonyInvitation, day: number): boolean {
   return day >= invitation.ceremonyDay;
+}
+
+/** Absolute game day by which an RSVP must be submitted. */
+export function getRsvpDeadlineDay(invitation: AwardCeremonyInvitation): number {
+  return invitation.ceremonyDay - RSVP_DEADLINE_LEAD_DAYS;
+}
+
+/** Days left to respond (negative once the deadline has passed). */
+export function daysUntilRsvpDeadline(invitation: AwardCeremonyInvitation, day: number): number {
+  return getRsvpDeadlineDay(invitation) - day;
+}
+
+/** Whether the RSVP window has closed. */
+export function isRsvpDeadlinePassed(invitation: AwardCeremonyInvitation, day: number): boolean {
+  return day > getRsvpDeadlineDay(invitation);
+}
+
+/** Append an audit entry, returning a new invitation. */
+export function appendInvitationAudit(
+  invitation: AwardCeremonyInvitation,
+  entry: InvitationAuditEntry,
+): AwardCeremonyInvitation {
+  return { ...invitation, auditLog: [...(invitation.auditLog ?? []), entry] };
 }
 
 /** Whether the player attended (RSVP'd attending and the ceremony was held). */
 export function didAttend(invitation: AwardCeremonyInvitation, day: number): boolean {
   return isCeremonyHeld(invitation, day) && invitation.rsvp === "attending";
 }
+
 
 /**
  * Awards the player won at the ceremony this invitation refers to.
