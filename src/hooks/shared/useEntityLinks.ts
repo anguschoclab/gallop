@@ -17,6 +17,7 @@ export function useEntityLinks(text: string, explicitLinks?: EntityLink[], autoD
   const horses = useGame((s) => s.horses);
   const jockeys = useGame((s) => s.jockeys ?? EMPTY_JOCKEYS);
   const npcStables = useGame((s) => s.npcStables);
+  const races = useGame((s) => s.races);
 
   return useMemo(() => {
     const combined: EntityLink[] = [...(explicitLinks || [])];
@@ -42,8 +43,15 @@ export function useEntityLinks(text: string, explicitLinks?: EntityLink[], autoD
           combined.push({ type: "stable", id: s.id, name: s.name });
         }
       });
+
+      Object.values(races).forEach((r) => {
+        const regex = new RegExp(`\\b${escapeRegExp(r.name)}\\b`, "g");
+        if (regex.test(text) && !combined.some((l) => l.name === r.name)) {
+          combined.push({ type: "race", id: r.id, name: r.name });
+        }
+      });
     }
 
     return combined.sort((a, b) => b.name.length - a.name.length);
-  }, [text, explicitLinks, autoDetect, horses, jockeys, npcStables]);
+  }, [text, explicitLinks, autoDetect, horses, jockeys, npcStables, races]);
 }

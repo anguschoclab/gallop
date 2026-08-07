@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/cn";
 import { Zap } from "lucide-react";
 
@@ -51,7 +52,11 @@ export function KeyRivalsWidget({ rivals, calculateHeadToHead }: KeyRivalsWidget
               return (
                 <div key={rival.stable.id} className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-cream/80">{rival.stable.name}</span>
+                    <span className="text-xs font-bold text-cream/80">
+                      <Link to="/npc-stables/$stableId" params={{ stableId: rival.stable.id }}>
+                        {rival.stable.name}
+                      </Link>
+                    </span>
                     <Badge className={getRivalryBadgeColor(rival.friction)}>
                       {getRivalryStatusLabel(rival.friction)}
                     </Badge>

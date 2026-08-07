@@ -72,7 +72,11 @@ export function CircuitWidget() {
                 className="flex items-center justify-between p-2 rounded bg-black/20 border border-white/5 hover:bg-black/40 transition-colors"
               >
                 <div className="space-y-0.5 min-w-0">
-                  <div className="text-[11px] font-bold text-cream truncate">{r.name}</div>
+                  <div className="text-[11px] font-bold text-cream truncate">
+                    <Link to="/race/$raceId" params={{ raceId: r.id }}>
+                      {r.name}
+                    </Link>
+                  </div>
                   <div className="text-[9px] text-cream-muted uppercase font-mono tracking-tighter opacity-60">
                     {r.distance}m · {r.raceClass}
                   </div>

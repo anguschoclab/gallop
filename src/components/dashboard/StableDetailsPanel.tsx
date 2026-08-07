@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SilkDot } from "@/components/SilkDot";
+import { Link } from "@tanstack/react-router";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { formatCurrency } from "@/core/common/formatting";
 import { cn } from "@/lib/cn";
@@ -22,7 +23,13 @@ export function StableDetailsPanel({ stable }: { stable: StandingEntry | null })
               <div className="flex items-center gap-2">
                 {stable.silkColor && <SilkDot color={stable.silkColor} size="sm" />}
                 <CardTitle className="text-sm font-bold font-[family-name:var(--font-display)] text-cream">
-                  {stable.name}
+                  {stable.isPlayer ? (
+                    stable.name
+                  ) : (
+                    <Link to="/npc-stables/$stableId" params={{ stableId: stable.stableId }}>
+                      {stable.name}
+                    </Link>
+                  )}
                 </CardTitle>
                 {stable.isPlayer && (
                   <Badge className="text-[8px] h-3.5 px-1 bg-gold/20 text-gold border-gold/30">
@@ -77,7 +84,15 @@ export function StableDetailsPanel({ stable }: { stable: StandingEntry | null })
                 <div className="space-y-1">
                   {stable.recentResults.map((r, i) => (
                     <div key={i} className="flex items-center justify-between text-xs">
-                      <span className="text-cream/70 truncate max-w-[140px]">{r.raceName}</span>
+                      <span className="text-cream/70 truncate max-w-[140px]">
+                        {r.raceId ? (
+                          <Link to="/race/$raceId" params={{ raceId: r.raceId }}>
+                            {r.raceName}
+                          </Link>
+                        ) : (
+                          r.raceName
+                        )}
+                      </span>
                       <div className="flex items-center gap-2">
                         {r.position === 1 && <Trophy className="h-3 w-3 text-gold" />}
                         <span

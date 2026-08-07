@@ -5,6 +5,7 @@ import type { FileRouteTypes } from "@/routeTree.gen";
 import { useGame } from "@/game/store";
 import { cn } from "@/lib/cn";
 import { AlertCircle, Bell, ChevronRight } from "lucide-react";
+import { NewsContent } from "@/components/narrative/NewsContent";
 
 interface UrgentMessagesStripProps {
   messages: Array<{
@@ -62,7 +63,9 @@ export function UrgentMessagesStrip({ messages }: UrgentMessagesStripProps) {
             </div>
             <div className="space-y-1 min-w-0">
               <h3 className="text-sm font-bold text-cream truncate">{msg.title}</h3>
-              <p className="text-xs text-cream-muted line-clamp-2">{msg.body}</p>
+              <p className="text-xs text-cream-muted line-clamp-2">
+                <NewsContent text={msg.body} />
+              </p>
             </div>
             <ChevronRight className="h-4 w-4 text-cream-muted ml-auto shrink-0 group-hover:text-gold transition-colors" />
           </CardContent>

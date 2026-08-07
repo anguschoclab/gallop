@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn";
 import { Building2, ChevronRight } from "lucide-react";
 import { FACILITY_NAMES, type FacilityType } from "@/core/facilities";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { NewsContent } from "@/components/narrative/NewsContent";
 
 interface ReputationEvent {
   description: string;
@@ -82,7 +83,9 @@ export function HQOpsWidget() {
                   className="flex justify-between items-center text-[11px] border-b border-white/5 pb-1.5 last:border-0"
                 >
                   <span className="text-cream/60 truncate max-w-[140px] italic">
-                    &ldquo;{e.description}&rdquo;
+                    &ldquo;
+                    <NewsContent text={e.description} />
+                    &rdquo;
                   </span>
                   <span
                     className={cn(

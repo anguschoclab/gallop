@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -170,7 +171,13 @@ export function SeasonStandingsWidget() {
                                 s.isPlayer ? "font-black text-gold" : "font-medium text-cream/80",
                               )}
                             >
-                              {s.name}
+                              {s.isPlayer ? (
+                                s.name
+                              ) : (
+                                <Link to="/npc-stables/$stableId" params={{ stableId: s.stableId }}>
+                                  {s.name}
+                                </Link>
+                              )}
                             </span>
                             {!s.isPlayer && s.winsVsPlayer > 0 && (
                               <Badge

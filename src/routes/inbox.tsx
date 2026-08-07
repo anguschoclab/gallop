@@ -8,12 +8,13 @@ import { Check, CheckCheck, Trash2, Pin, Bell, ExternalLink } from "lucide-react
 import { cn } from "@/lib/cn";
 import { useInbox } from "@/hooks/inbox/useInbox";
 import { InboxCeremonyRsvp } from "@/components/awards/CeremonyRsvpControls";
+import { NewsContent } from "@/components/narrative/NewsContent";
 
 export const Route = createFileRoute("/inbox")({
   component: InboxPage,
 });
 
-function InboxPage() {
+export function InboxPage() {
   const navigate = useNavigate();
   const {
     day,
@@ -157,7 +158,9 @@ function InboxPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-cream-muted text-sm mb-4 leading-relaxed">{msg.body}</p>
+                <p className="text-cream-muted text-sm mb-4 leading-relaxed">
+                  <NewsContent text={msg.body} />
+                </p>
                 {msg.cta?.params?.invitationId && (
                   <InboxCeremonyRsvp invitationId={msg.cta.params.invitationId} />
                 )}

@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "@tanstack/react-router";
 import { GraduationCap, TrendingUp, Award, Clock } from "lucide-react";
 import { useGame } from "@/game/store";
 import {
@@ -77,7 +78,11 @@ export function ApprenticeTracker() {
                     {apprentice.name.charAt(0)}
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-cream">{apprentice.name}</div>
+                    <div className="text-xs font-bold text-cream">
+                      <Link to="/jockey/$jockeyId" params={{ jockeyId: apprentice.id }}>
+                        {apprentice.name}
+                      </Link>
+                    </div>
                     <div className="text-[9px] text-cream/40 font-mono">
                       ID: {apprentice.id.slice(0, 8)}
                     </div>

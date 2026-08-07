@@ -55,7 +55,9 @@ export function RecapTab() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2 flex-wrap">
                     <h3 className="text-xl font-bold font-[family-name:var(--font-display)]">
-                      {race.name}
+                      <Link to="/race/$raceId" params={{ raceId: race.id }}>
+                        {race.name}
+                      </Link>
                     </h3>
                     <Badge className={cn(gradeColor, "font-[family-name:var(--font-mono)]")}>
                       {race.graded!.grade}

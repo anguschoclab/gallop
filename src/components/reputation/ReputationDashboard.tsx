@@ -9,6 +9,7 @@ import {
 } from "@/core/reputation/reputationTypes";
 import { reputationColor } from "@/core/common/uiTokens";
 import { cn } from "@/lib/cn";
+import { NewsContent } from "@/components/narrative/NewsContent";
 
 export function ReputationDashboard() {
   const reputation = useGame((s) => s.reputation);
@@ -155,7 +156,9 @@ export function ReputationDashboard() {
                     {getSourceIcon(event.source)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-[10px] text-cream/80 truncate">{event.description}</div>
+                    <div className="text-[10px] text-cream/80 truncate">
+                      <NewsContent text={event.description} />
+                    </div>
                     <div className="text-[8px] text-cream/40 font-mono">Day {event.day}</div>
                   </div>
                   <div

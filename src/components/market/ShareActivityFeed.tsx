@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { useGameWithShallow } from "@/game/store";
+import { Link } from "@tanstack/react-router";
+import { useGameWithShallow, useGame } from "@/game/store";
 import type { GameState } from "@/game/types";
 import type { ShareActivityFeedItem } from "@/core/breeding/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,11 +12,29 @@ interface ShareActivityFeedProps {
   syndicateId?: string;
 }
 
-function getStableName(id: string): string {
+function getStableName(id: string, npcStables: { id: string; name: string }[]): string {
   if (id === "player") return "Your Stable";
   if (id === "treasury") return "Treasury";
   if (id === "market") return "Market";
-  return id;
+  const stable = npcStables.find((s) => s.id === id);
+  return stable?.name ?? id;
+}
+
+function StableName({ id }: { id: string }) {
+  const npcStables = useGame((s) => s.npcStables);
+  const name = getStableName(id, npcStables);
+  if (id === "player" || id === "treasury" || id === "market") {
+    return <span className="text-cream-muted">{name}</span>;
+  }
+  return (
+    <Link
+      to="/npc-stables/$stableId"
+      params={{ stableId: id }}
+      className="text-cream-muted hover:text-gold hover:underline"
+    >
+      {name}
+    </Link>
+  );
 }
 
 function FeedItemRow({ item }: { item: ShareActivityFeedItem }) {
@@ -46,7 +65,7 @@ function FeedItemRow({ item }: { item: ShareActivityFeedItem }) {
           </span>
           <span className="text-cream-muted mx-2">·</span>
           <span className="text-cream-muted">
-            {getStableName(item.previousOwner ?? "?")} → {getStableName(item.newOwner ?? "?")}
+            <StableName id={item.previousOwner ?? "?"} /> → <StableName id={item.newOwner ?? "?"} />
           </span>
         </div>
         <Badge variant="outline" className="text-gold border-gold/40 text-xs">
@@ -60,9 +79,13 @@ function FeedItemRow({ item }: { item: ShareActivityFeedItem }) {
     <div className="flex items-center gap-3 rounded-md border border-cream/10 bg-broadcast-panel px-3 py-2">
       {icon}
       <div className="flex-1 text-sm">
-        <span className="text-cream-muted">{getStableName(item.buyerStableId ?? "?")}</span>
+        <span className="text-cream-muted">
+          <StableName id={item.buyerStableId ?? "?"} />
+        </span>
         <ArrowRight className="h-3 w-3 inline mx-1 text-cream-muted" />
-        <span className="text-cream-muted">{getStableName(item.sellerStableId ?? "?")}</span>
+        <span className="text-cream-muted">
+          <StableName id={item.sellerStableId ?? "?"} />
+        </span>
         <span className="text-cream mx-2">·</span>
         <span className="text-cream">{item.shares} shares</span>
         <span className="text-cream-muted mx-2">·</span>

@@ -1,10 +1,12 @@
 import { useGame } from "@/game/store";
+import { Link } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { NarrativeArc, StoryBeat } from "@/core/ai/npcCycleAI";
 import type { Stable } from "@/game/types";
 import { BookOpen, Sparkles, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { NewsContent } from "@/components/narrative/NewsContent";
 
 export function StorylinesTab() {
   const npcAIManager = useGame((s) => s.npcAIManager);
@@ -73,7 +75,9 @@ export function StorylinesTab() {
           <CardContent className="p-5 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-cream font-[family-name:var(--font-display)]">
-                {stableName}
+                <Link to="/npc-stables/$stableId" params={{ stableId }}>
+                  {stableName}
+                </Link>
               </h3>
               <div className="flex items-center gap-2">
                 <Sparkles
@@ -112,7 +116,9 @@ export function StorylinesTab() {
                         </span>
                       </div>
                       <p className="text-xs text-cream/60 leading-relaxed">
-                        {arc.beats[arc.beats.length - 1]?.body ?? "Story in progress..."}
+                        <NewsContent
+                          text={arc.beats[arc.beats.length - 1]?.body ?? "Story in progress..."}
+                        />
                       </p>
                     </div>
                   </div>
@@ -132,10 +138,10 @@ export function StorylinesTab() {
                         <span className="text-[9px] font-mono text-cream/20">Day {beat.day}</span>
                       </div>
                       <p className="text-xs font-bold text-cream/70 leading-tight">
-                        {beat.headline}
+                        <NewsContent text={beat.headline} />
                       </p>
                       <p className="text-[10px] text-cream/40 leading-relaxed italic">
-                        {beat.body}
+                        <NewsContent text={beat.body} />
                       </p>
                     </div>
                   ))}

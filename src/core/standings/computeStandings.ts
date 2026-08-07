@@ -14,6 +14,7 @@ export interface StandingEntry {
   winsVsPlayer: number;
   recentResults: {
     raceName: string;
+    raceId?: string;
     position: number;
     day: number;
     purseEarned: number;
@@ -41,7 +42,13 @@ export function computeSeasonStandings(
     {
       range: number;
       sparkline: number[];
-      recent: { raceName: string; position: number; day: number; purseEarned: number }[];
+      recent: {
+        raceName: string;
+        raceId?: string;
+        position: number;
+        day: number;
+        purseEarned: number;
+      }[];
     }
   >();
 
@@ -68,6 +75,7 @@ export function computeSeasonStandings(
       }
       b.recent.push({
         raceName: r.raceName,
+        raceId: r.raceId,
         position: r.position,
         day: r.day,
         purseEarned: earned,

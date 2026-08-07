@@ -115,7 +115,9 @@ export function DebtBanner() {
               <div className="flex flex-wrap gap-4 font-mono">
                 <span>
                   <span className="opacity-60">Horse: </span>
-                  {seizure.horseName}
+                  <Link to="/stable/$horseId" params={{ horseId: seizure.horseId }}>
+                    {seizure.horseName}
+                  </Link>
                 </span>
                 <span>
                   <span className="opacity-60">Assessed: </span>

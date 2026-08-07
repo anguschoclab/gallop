@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGame } from "@/game/store";
 import { Activity } from "lucide-react";
+import { NewsContent } from "@/components/narrative/NewsContent";
 
 export function NewsFeedWidget() {
   const log = useGame((s) => s.log);
@@ -30,7 +31,7 @@ export function NewsFeedWidget() {
                   </span>
                 </div>
                 <span className="text-sm text-cream/80 font-[family-name:var(--font-body)] leading-relaxed flex-1 pt-0.5">
-                  {l.text}
+                  <NewsContent text={l.text} />
                 </span>
               </div>
             ))
