@@ -17,7 +17,10 @@ import { Check, X } from "lucide-react";
 import { toast } from "sonner";
 import {
   RSVP_LABELS,
+  daysUntilRsvpDeadline,
+  getRsvpDeadlineDay,
   isCeremonyHeld,
+  isRsvpDeadlinePassed,
   type AwardCeremonyInvitation,
   type CeremonyRsvpStatus,
 } from "@/core/awards/invitations";
@@ -72,7 +75,12 @@ export function CeremonyRsvpControls({
     );
   };
 
+  const deadlineDay = getRsvpDeadlineDay(invitation);
+  const daysLeft = daysUntilRsvpDeadline(invitation, day);
+  const overdue = isRsvpDeadlinePassed(invitation, day);
+
   return (
+    <div className="space-y-2">
     <div className="flex flex-wrap items-center gap-2">
       <CeremonyRsvpBadge invitation={invitation} day={day} />
       {!held && (
@@ -98,6 +106,14 @@ export function CeremonyRsvpControls({
             Decline
           </Button>
         </>
+      )}
+    </div>
+      {!held && (
+        <p className={`text-xs ${overdue ? "text-destructive" : "text-cream-muted"}`}>
+          {overdue
+            ? `RSVP deadline passed (day ${deadlineDay}).`
+            : `RSVP due by day ${deadlineDay} — ${daysLeft === 0 ? "today" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} left`}.`}
+        </p>
       )}
     </div>
   );
