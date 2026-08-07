@@ -35,6 +35,9 @@ export interface InvitationQualifier {
   day: number;
 }
 
+/** RSVP status for a ceremony invitation. */
+export type CeremonyRsvpStatus = "pending" | "attending" | "declined";
+
 /** An invitation to a regional award ceremony. */
 export interface AwardCeremonyInvitation {
   id: string;
@@ -49,6 +52,43 @@ export interface AwardCeremonyInvitation {
   issuedDay: number;
   /** Performances that earned the invitation. */
   qualifiers: InvitationQualifier[];
+  /** Player's RSVP status (defaults to pending). */
+  rsvp?: CeremonyRsvpStatus;
+  /** Absolute game day the player responded. */
+  respondedDay?: number;
+}
+
+/** Human-readable RSVP labels. */
+export const RSVP_LABELS: Record<CeremonyRsvpStatus, string> = {
+  pending: "Awaiting RSVP",
+  attending: "Attending",
+  declined: "Declined",
+};
+
+/** Whether the ceremony has already taken place. */
+export function isCeremonyHeld(invitation: AwardCeremonyInvitation, day: number): boolean {
+  return day >= invitation.ceremonyDay;
+}
+
+/** Whether the player attended (RSVP'd attending and the ceremony was held). */
+export function didAttend(invitation: AwardCeremonyInvitation, day: number): boolean {
+  return isCeremonyHeld(invitation, day) && invitation.rsvp === "attending";
+}
+
+/**
+ * Awards the player won at the ceremony this invitation refers to.
+ *
+ * @param awards - All awards in the game
+ * @param invitation - The invitation to resolve outcomes for
+ * @returns Player-owned awards for that region and year
+ */
+export function getInvitationOutcome<T extends { region: AwardRegion; year: number; stableId?: string }>(
+  awards: T[],
+  invitation: AwardCeremonyInvitation,
+): T[] {
+  return awards.filter(
+    (a) => !a.stableId && a.region === invitation.region && a.year === invitation.year,
+  );
 }
 
 /**

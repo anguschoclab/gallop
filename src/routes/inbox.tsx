@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, CheckCheck, Trash2, Pin, Bell, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useInbox } from "@/hooks/inbox/useInbox";
+import { InboxCeremonyRsvp } from "@/components/awards/CeremonyRsvpControls";
 
 export const Route = createFileRoute("/inbox")({
   component: InboxPage,
@@ -157,6 +158,9 @@ function InboxPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-cream-muted text-sm mb-4 leading-relaxed">{msg.body}</p>
+                {msg.cta?.params?.invitationId && (
+                  <InboxCeremonyRsvp invitationId={msg.cta.params.invitationId} />
+                )}
                 {msg.cta && (
                   <Button
                     variant={msg.priority === "urgent" ? "destructive" : "default"}
