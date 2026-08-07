@@ -12,6 +12,7 @@ import {
   type AwardCeremonyInvitation,
 } from "@/core/awards/invitations";
 import { CeremonyRsvpControls } from "@/components/awards/CeremonyRsvpControls";
+import { InvitationAuditLog } from "@/components/awards/InvitationAuditLog";
 
 export const Route = createFileRoute("/ceremony/$invitationId")({
   head: () => ({
@@ -115,6 +116,8 @@ function CeremonyPage() {
           </p>
         </CardContent>
       </Card>
+
+      <InvitationAuditLog invitation={invitation} />
 
       <Card className="border-gold-muted">
         <CardHeader>

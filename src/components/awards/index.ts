@@ -10,3 +10,4 @@ export type { TrophyTone } from "./VisualTrophy";
 export { CeremonyInvitations } from "./CeremonyInvitations";
 export { CeremonyRsvpControls, CeremonyRsvpBadge, InboxCeremonyRsvp } from "./CeremonyRsvpControls";
 export { InvitationHistoryPanel } from "./InvitationHistoryPanel";
+export { InvitationAuditLog, InvitationAuditList } from "./InvitationAuditLog";
