@@ -59,6 +59,31 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     }
   }
 
+  // 1.55 Check for Bounce Candidate (last race beyer is >= 8 points higher than best previous beyer)
+  if (history.length >= 3) {
+    const chronologicalHistory = [...history].sort((a, b) => a.day - b.day);
+    const lastRace = chronologicalHistory[chronologicalHistory.length - 1];
+
+    if (typeof lastRace.beyer === "number") {
+      let maxPreviousBeyer = -1;
+      for (let i = 0; i < chronologicalHistory.length - 1; i++) {
+        const race = chronologicalHistory[i];
+        if (typeof race.beyer === "number" && race.beyer > maxPreviousBeyer) {
+          maxPreviousBeyer = race.beyer;
+        }
+      }
+
+      if (maxPreviousBeyer > 0 && lastRace.beyer >= maxPreviousBeyer + 8) {
+        return {
+          label: "Regression Risk",
+          value: "Bounce Candidate",
+          context: `Ran a massive new top Beyer (${lastRace.beyer}, +${lastRace.beyer - maxPreviousBeyer} pts) last time out and may regress`,
+          type: "negative",
+        };
+      }
+    }
+  }
+
   // 1.5 Check for Improving Form (trending up in last 3 starts)
   const recentBeyers = history
     .slice(-3)
