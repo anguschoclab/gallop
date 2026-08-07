@@ -64,6 +64,7 @@ export const awardInvitationsPhase: PipelinePhase = {
         ceremonyDay,
         issuedDay: newDay,
         qualifiers,
+        rsvp: "pending",
       });
 
       const headline = qualifiers[0];
@@ -81,8 +82,9 @@ export const awardInvitationsPhase: PipelinePhase = {
           title: `Invitation: ${ceremony.name}`,
           body: `Your stable is invited to the ${ceremony.name} (${REGION_NAMES[ceremony.region]}) in ${CEREMONY_INVITE_LEAD_DAYS} days. ${headline.horseName} finished ${headline.position === 1 ? "1st" : headline.position === 2 ? "2nd" : "3rd"} in the G1 ${headline.raceName}${qualifiers.length > 1 ? `, one of ${qualifiers.length} qualifying Grade 1 placings` : ""}.`,
           cta: {
-            label: "View Awards",
-            route: "/honors",
+            label: "View Ceremony",
+            route: "/ceremony/$invitationId",
+            params: { invitationId: invitations[invitations.length - 1].id },
           },
         },
       } as InboxImpact);
