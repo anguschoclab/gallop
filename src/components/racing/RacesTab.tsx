@@ -13,6 +13,7 @@ import { Globe } from "lucide-react";
 import { getRouteApi } from "@tanstack/react-router";
 
 const racingRouteApi = getRouteApi("/racing");
+type RacingSearch = ReturnType<typeof racingRouteApi.useSearch>;
 
 export function RacesTab() {
   const search = racingRouteApi.useSearch();
@@ -51,17 +52,17 @@ export function RacesTab() {
 
   const updateFilter = (key: keyof RaceFilters, value: string) => {
     navigate({
-      search: (prev) => ({ ...prev, [key]: value }),
+      search: (prev: RacingSearch) => ({ ...prev, [key]: value }),
     });
   };
 
   const patchFilters = (patch: Partial<RaceFilters>) => {
-    navigate({ search: (prev) => ({ ...prev, ...patch }) });
+    navigate({ search: (prev: RacingSearch) => ({ ...prev, ...patch }) });
   };
 
   const resetAll = () =>
     navigate({
-      search: (prev) => ({
+      search: (prev: RacingSearch) => ({
         ...prev,
         grade: "all",
         country: "all",

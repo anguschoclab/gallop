@@ -31,6 +31,8 @@ const stableSearchSchema = z.object({
   compareIds: fallback(z.array(z.string()), []).default([]),
 });
 
+type StableSearch = z.infer<typeof stableSearchSchema>;
+
 export const Route = createFileRoute("/stable/")({
   validateSearch: zodValidator(stableSearchSchema),
   component: StablePage,
@@ -146,7 +148,7 @@ function StablePage() {
       <Tabs
         value={tab}
         onValueChange={(v) =>
-          navigate({ search: (prev) => ({ ...prev, tab: v as "roster" | "rivals" }) })
+          navigate({ search: (prev: StableSearch) => ({ ...prev, tab: v as "roster" | "rivals" }) })
         }
         className="space-y-4"
       >
@@ -176,7 +178,7 @@ function StablePage() {
                   view === "ledger" ? "bg-white/10 text-gold" : "text-cream/40",
                 )}
                 onClick={() =>
-                  navigate({ search: (prev) => ({ ...prev, view: "ledger" as const }) })
+                  navigate({ search: (prev: StableSearch) => ({ ...prev, view: "ledger" as const }) })
                 }
               >
                 <List className="h-4 w-4" />
@@ -189,7 +191,7 @@ function StablePage() {
                   view === "gallery" ? "bg-white/10 text-gold" : "text-cream/40",
                 )}
                 onClick={() =>
-                  navigate({ search: (prev) => ({ ...prev, view: "gallery" as const }) })
+                  navigate({ search: (prev: StableSearch) => ({ ...prev, view: "gallery" as const }) })
                 }
               >
                 <LayoutGrid className="h-4 w-4" />
@@ -201,11 +203,11 @@ function StablePage() {
         <TabsContent value="roster" className="mt-0 space-y-3">
           <PaceTendencyFilter
             tendency={tendency}
-            onTendency={(t) => navigate({ search: (prev) => ({ ...prev, tendency: t }) })}
+            onTendency={(t) => navigate({ search: (prev: StableSearch) => ({ ...prev, tendency: t }) })}
             distance={trip}
-            onDistance={(d) => navigate({ search: (prev) => ({ ...prev, trip: d }) })}
+            onDistance={(d) => navigate({ search: (prev: StableSearch) => ({ ...prev, trip: d }) })}
             surface={surface}
-            onSurface={(s) => navigate({ search: (prev) => ({ ...prev, surface: s }) })}
+            onSurface={(s) => navigate({ search: (prev: StableSearch) => ({ ...prev, surface: s }) })}
           />
           <StableRosterView
             horses={filteredMyHorses}
@@ -216,7 +218,7 @@ function StablePage() {
             navigate={navigate}
             compareIds={compareIds}
             onCompareIdsChange={(ids) =>
-              navigate({ search: (prev) => ({ ...prev, compareIds: ids }) })
+              navigate({ search: (prev: StableSearch) => ({ ...prev, compareIds: ids }) })
             }
           />
         </TabsContent>
