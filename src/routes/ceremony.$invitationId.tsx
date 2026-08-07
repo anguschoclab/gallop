@@ -3,7 +3,6 @@ import { useGame } from "@/game/store";
 import type { GameState } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ArrowLeft, Award, CalendarClock, MapPin, Trophy } from "lucide-react";
 import { REGION_AWARD_NAMES, CATEGORY_DISPLAY_NAMES } from "@/core/awards/types";
 import { formatDate, dayOfYear } from "@/core/calendar/dateFormatting";
@@ -55,11 +54,13 @@ function CeremonyPage() {
           Ceremony not found
         </h1>
         <p className="text-cream-muted">This invitation is no longer available.</p>
-        <Button asChild variant="outline">
-          <Link to="/honors" search={{ tab: "awards" }}>
-            Back to Honors
-          </Link>
-        </Button>
+        <Link
+          to="/honors"
+          search={{ tab: "awards" as const }}
+          className="text-sm text-gold hover:underline"
+        >
+          Back to Honors
+        </Link>
       </div>
     );
   }
@@ -70,12 +71,14 @@ function CeremonyPage() {
 
   return (
     <div className="container mx-auto p-6 max-w-3xl space-y-6">
-      <Button asChild variant="ghost" size="sm" className="gap-2">
-        <Link to="/honors" search={{ tab: "awards" }}>
-          <ArrowLeft className="h-4 w-4" />
-          Back to Awards
-        </Link>
-      </Button>
+      <Link
+        to="/honors"
+        search={{ tab: "awards" as const }}
+        className="inline-flex items-center gap-2 text-sm text-cream-muted hover:text-gold"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to Awards
+      </Link>
 
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
