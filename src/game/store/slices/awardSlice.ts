@@ -9,7 +9,12 @@
  */
 
 import type { RegionalAward } from "@/core/awards/types";
-import type { CeremonyRsvpStatus } from "@/core/awards/invitations";
+import {
+  RSVP_LABELS,
+  appendInvitationAudit,
+  getRsvpDeadlineDay,
+  type CeremonyRsvpStatus,
+} from "@/core/awards/invitations";
 import type { GameStateCreator } from "../types";
 
 export type AwardSlice = {
