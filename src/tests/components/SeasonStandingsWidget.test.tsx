@@ -1,9 +1,24 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { createElement, type ReactNode } from "react";
 import { seedStore } from "@/test-utils/renderWithStore";
 import { SeasonStandingsWidget } from "@/components/dashboard/SeasonStandingsWidget";
 import { createDefaultGameState } from "@/game/store/state";
 import type { GameState, Horse } from "@/game/types";
+
+vi.mock("@tanstack/react-router", () => ({
+  Link: ({
+    children,
+    to,
+    params,
+  }: {
+    children?: ReactNode;
+    to?: string;
+    params?: Record<string, string>;
+  }) => createElement("a", { to, "data-params": JSON.stringify(params) }, children),
+  useNavigate: () => () => {},
+  useSearch: () => ({}),
+}));
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({
