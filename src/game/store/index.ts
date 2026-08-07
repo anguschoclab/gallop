@@ -148,6 +148,7 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   // Regional awards tracking
   "lastAwardYear" as keyof GameState,
   "pendingAwardCeremonies" as keyof GameState,
+  "awardCeremonyInvitations" as keyof GameState,
   "currentCeremonyIndex" as keyof GameState,
   // Industry analytics for AEI calculation
   "industryMeanEarnings" as keyof GameState,

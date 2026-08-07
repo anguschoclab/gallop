@@ -99,7 +99,7 @@ export const awardInvitationsPhase: PipelinePhase = {
       impacts: [...context.impacts, ...impacts],
       logs: [
         ...context.logs,
-        ...invitations.map((i) => ({
+        ...invitations.map((i: AwardCeremonyInvitation) => ({
           day: newDay,
           text: `✉️ Invited to the ${i.ceremonyName} (${REGION_NAMES[i.region]}).`,
         })),
