@@ -13,7 +13,20 @@ import { Globe } from "lucide-react";
 import { getRouteApi } from "@tanstack/react-router";
 
 const racingRouteApi = getRouteApi("/racing");
-type RacingSearch = ReturnType<typeof racingRouteApi.useSearch>;
+type RacingSearch = {
+  tab?: string;
+  grade?: string;
+  country?: string;
+  surface?: string;
+  track?: string;
+  owned?: string;
+  q?: string;
+  stableId?: string;
+  window?: string;
+  trip?: string;
+  eligibleOnly?: string;
+  openOnly?: string;
+};
 
 export function RacesTab() {
   const search = racingRouteApi.useSearch();
