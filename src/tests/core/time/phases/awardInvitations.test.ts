@@ -14,7 +14,12 @@ import { createDefaultGameState } from "@/game/store/state";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import type { Horse, Race } from "@/game/types";
-import { CEREMONY_INVITE_LEAD_DAYS } from "@/core/awards/invitations";
+import {
+  CEREMONY_INVITE_LEAD_DAYS,
+  RSVP_DEADLINE_LEAD_DAYS,
+  RSVP_REMINDER_MARKS,
+  type AwardCeremonyInvitation,
+} from "@/core/awards/invitations";
 
 const EUROPE_CEREMONY_DOY = 314; // Cartier Racing Awards
 const NA_CEREMONY_DOY = 365; // Eclipse Awards
@@ -211,5 +216,68 @@ describe("awardInvitationsPhase (integration)", () => {
     const invitationId = (result.state.awardCeremonyInvitations ?? [])[0].id;
     expect(impact.message.cta?.route).toBe("/ceremony/$invitationId");
     expect(impact.message.cta?.params?.invitationId).toBe(invitationId);
+  });
+});
+
+describe("RSVP deadline reminders and audit log", () => {
+  const euroRace = mkRace("race-eu2", "Ascot", 200);
+
+  function withInvitation(day: number, inv: AwardCeremonyInvitation): PipelineContext {
+    const ctx = mkContext(day, [], [euroRace]);
+    return {
+      ...ctx,
+      state: { ...ctx.state, awardCeremonyInvitations: [inv] },
+    } as PipelineContext;
+  }
+
+  const base: AwardCeremonyInvitation = {
+    id: "inv-1",
+    region: "europe",
+    year: 1,
+    ceremonyName: "Cartier Racing Awards",
+    ceremonyDay: EUROPE_CEREMONY_DOY,
+    issuedDay: EUROPE_CEREMONY_DOY - CEREMONY_INVITE_LEAD_DAYS,
+    qualifiers: [],
+    rsvp: "pending",
+    remindersSent: [],
+    auditLog: [],
+  };
+
+  const deadline = EUROPE_CEREMONY_DOY - RSVP_DEADLINE_LEAD_DAYS;
+
+  it("sends a reminder at each reminder mark and records it once", () => {
+    for (const mark of RSVP_REMINDER_MARKS) {
+      const result = awardInvitationsPhase.execute(withInvitation(deadline - mark, base));
+      const inv = (result.state.awardCeremonyInvitations ?? [])[0];
+      expect(result.impacts).toHaveLength(1);
+      expect(inv.remindersSent).toContain(mark);
+      expect(inv.auditLog?.some((e) => e.kind === "reminder_sent")).toBe(true);
+
+      // Re-running the same day does not duplicate the reminder
+      const again = awardInvitationsPhase.execute(withInvitation(deadline - mark, inv));
+      expect(again.impacts).toHaveLength(0);
+    }
+  });
+
+  it("does not remind once the player has responded", () => {
+    const responded = { ...base, rsvp: "attending" as const, respondedDay: 300 };
+    const result = awardInvitationsPhase.execute(withInvitation(deadline - 5, responded));
+    expect(result.impacts).toHaveLength(0);
+  });
+
+  it("records a lapsed deadline when no response was submitted", () => {
+    const result = awardInvitationsPhase.execute(withInvitation(deadline + 1, base));
+    const inv = (result.state.awardCeremonyInvitations ?? [])[0];
+    expect(result.impacts).toHaveLength(1);
+    expect(inv.auditLog?.some((e) => e.kind === "deadline_lapsed")).toBe(true);
+  });
+
+  it("stamps an audit entry on newly issued invitations", () => {
+    const horse = mkHorse("h-audit", "race-eu2", 1, 200);
+    const result = awardInvitationsPhase.execute(
+      mkContext(EUROPE_CEREMONY_DOY - CEREMONY_INVITE_LEAD_DAYS, [horse], [euroRace]),
+    );
+    const inv = (result.state.awardCeremonyInvitations ?? [])[0];
+    expect(inv.auditLog?.[0].kind).toBe("invited");
   });
 });
