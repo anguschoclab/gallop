@@ -22,11 +22,24 @@ export type AwardSlice = {
 export const createAwardSlice: GameStateCreator<AwardSlice> = (set) => ({
   setCeremonyRsvp: (invitationId, status) => {
     set((state) => ({
-      awardCeremonyInvitations: (state.awardCeremonyInvitations ?? []).map((inv) =>
-        inv.id === invitationId ? { ...inv, rsvp: status, respondedDay: state.day } : inv,
-      ),
+      awardCeremonyInvitations: (state.awardCeremonyInvitations ?? []).map((inv) => {
+        if (inv.id !== invitationId) return inv;
+        const from = inv.rsvp ?? "pending";
+        if (from === status) return inv;
+        return appendInvitationAudit(
+          { ...inv, rsvp: status, respondedDay: state.day },
+          {
+            day: state.day,
+            kind: "rsvp_change",
+            from,
+            to: status,
+            note: `RSVP changed from ${RSVP_LABELS[from]} to ${RSVP_LABELS[status]}${state.day > getRsvpDeadlineDay(inv) ? " (after the deadline)" : ""}.`,
+          },
+        );
+      }),
     }));
   },
+
 
   clearPendingCeremonies: () => {
     set({
