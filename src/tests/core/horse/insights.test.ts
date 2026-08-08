@@ -583,3 +583,31 @@ describe("Versatility insights", () => {
     expect(insight!.type).toBe("positive");
   });
 });
+
+describe("Distance Versatility insights", () => {
+  it("detects Distance Versatility when winning spread is >= 600m", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1, distance: 1200 },
+        { position: 5, day: 2, distance: 1600 },
+        { position: 1, day: 3, distance: 1800 },
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Distance Versatility");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("does not detect Distance Versatility when winning spread is < 600m", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1, distance: 1200 },
+        { position: 1, day: 2, distance: 1600 },
+        { position: 5, day: 3, distance: 1800 },
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight?.label).not.toBe("Distance Versatility");
+  });
+});

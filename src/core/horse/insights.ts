@@ -280,6 +280,28 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     }
   }
 
+  // 1.94 Check for Distance Versatility (spread between min and max winning distance >= 600m)
+  let minWinDist: number | null = null;
+  let maxWinDist: number | null = null;
+  for (const race of history) {
+    if (race.position === 1 && race.distance != null) {
+      if (minWinDist === null || race.distance < minWinDist) minWinDist = race.distance;
+      if (maxWinDist === null || race.distance > maxWinDist) maxWinDist = race.distance;
+    }
+  }
+
+  if (minWinDist !== null && maxWinDist !== null) {
+    const spread = maxWinDist - minWinDist;
+    if (spread >= 600) {
+      return {
+        label: "Distance Versatility",
+        value: "Range Specialist",
+        context: `Has recorded victories spanning from ${minWinDist}m to ${maxWinDist}m`,
+        type: "positive",
+      };
+    }
+  }
+
   // 2. Check for distance sweet spot (best average beyer by distance, min 3 races)
   const distanceStats = new Map<number, { runs: number; totalBeyer: number; wins: number }>();
   for (const race of history) {
