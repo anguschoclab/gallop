@@ -178,7 +178,11 @@ describe("awardInvitationsPhase (integration)", () => {
     const h1 = mkHorse("h1", "race-eu", 1, 200);
     const h2 = mkHorse("h2", "race-eu2", 3, 240);
     const result = awardInvitationsPhase.execute(
-      mkContext(EUROPE_CEREMONY_DOY - CEREMONY_INVITE_LEAD_DAYS, [h1, h2], [euroRace, secondEuroRace]),
+      mkContext(
+        EUROPE_CEREMONY_DOY - CEREMONY_INVITE_LEAD_DAYS,
+        [h1, h2],
+        [euroRace, secondEuroRace],
+      ),
     );
     const invitations = result.state.awardCeremonyInvitations ?? [];
     expect(invitations).toHaveLength(1);
@@ -212,7 +216,9 @@ describe("awardInvitationsPhase (integration)", () => {
     const result = awardInvitationsPhase.execute(
       mkContext(EUROPE_CEREMONY_DOY - CEREMONY_INVITE_LEAD_DAYS, [horse], [euroRace]),
     );
-    const impact = result.impacts[0] as { message: { cta?: { route: string; params?: Record<string, string> } } };
+    const impact = result.impacts[0] as {
+      message: { cta?: { route: string; params?: Record<string, string> } };
+    };
     const invitationId = (result.state.awardCeremonyInvitations ?? [])[0].id;
     expect(impact.message.cta?.route).toBe("/ceremony/$invitationId");
     expect(impact.message.cta?.params?.invitationId).toBe(invitationId);

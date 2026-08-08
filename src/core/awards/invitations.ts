@@ -46,11 +46,7 @@ export const RSVP_REMINDER_MARKS = [5, 2, 0];
 
 /** Kinds of auditable events on an invitation. */
 export type InvitationAuditKind =
-  | "invited"
-  | "rsvp_change"
-  | "reminder_sent"
-  | "deadline_lapsed"
-  | "ceremony_held";
+  "invited" | "rsvp_change" | "reminder_sent" | "deadline_lapsed" | "ceremony_held";
 
 /** A single audit entry recording an invitation status change. */
 export interface InvitationAuditEntry {
@@ -137,7 +133,6 @@ export function didAttend(invitation: AwardCeremonyInvitation, day: number): boo
   return isCeremonyHeld(invitation, day) && invitation.rsvp === "attending";
 }
 
-
 /**
  * Awards the player won at the ceremony this invitation refers to.
  *
@@ -145,10 +140,9 @@ export function didAttend(invitation: AwardCeremonyInvitation, day: number): boo
  * @param invitation - The invitation to resolve outcomes for
  * @returns Player-owned awards for that region and year
  */
-export function getInvitationOutcome<T extends { region: AwardRegion; year: number; stableId?: string }>(
-  awards: T[],
-  invitation: AwardCeremonyInvitation,
-): T[] {
+export function getInvitationOutcome<
+  T extends { region: AwardRegion; year: number; stableId?: string },
+>(awards: T[], invitation: AwardCeremonyInvitation): T[] {
   return awards.filter(
     (a) => !a.stableId && a.region === invitation.region && a.year === invitation.year,
   );
