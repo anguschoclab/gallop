@@ -14,6 +14,7 @@ import { BidInput } from "./BidInput";
 import { MaxBidInput } from "./MaxBidInput";
 import { cn } from "@/lib/cn";
 import type { AuctionLot } from "@/game/types";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface BiddingPanelProps {
   currentLot: AuctionLot;
@@ -102,14 +103,38 @@ export function BiddingPanel({
 
         <div className="space-y-4">
           <div className="flex gap-2">
-            <Button
-              className="flex-1 h-14 bg-success hover:bg-success/90 text-slate-950 font-black uppercase tracking-[0.2em] rounded-none text-xs shadow-lg group"
-              onClick={() => onBid(nextBid)}
-              disabled={cash < nextBid || isPlayerLeading || isPlayerConsigned}
-            >
-              <Gavel className="h-4 w-4 mr-3 group-hover:rotate-12 transition-transform" />
-              Bid {formatCurrency(nextBid)}
-            </Button>
+            {cash < nextBid || isPlayerLeading || isPlayerConsigned ? (
+              <TooltipProvider delayDuration={300}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span tabIndex={0} className="flex-1 inline-block cursor-not-allowed">
+                      <Button
+                        className="w-full h-14 bg-success/50 text-slate-950/50 font-black uppercase tracking-[0.2em] rounded-none text-xs pointer-events-none"
+                        disabled
+                      >
+                        <Gavel className="h-4 w-4 mr-3" />
+                        Bid {formatCurrency(nextBid)}
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {isPlayerConsigned
+                      ? "Cannot bid on your own consignment."
+                      : isPlayerLeading
+                        ? "You are already leading the bidding."
+                        : `Not enough cash (${formatCurrency(nextBid)} required).`}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              <Button
+                className="flex-1 h-14 bg-success hover:bg-success/90 text-slate-950 font-black uppercase tracking-[0.2em] rounded-none text-xs shadow-lg group"
+                onClick={() => onBid(nextBid)}
+              >
+                <Gavel className="h-4 w-4 mr-3 group-hover:rotate-12 transition-transform" />
+                Bid {formatCurrency(nextBid)}
+              </Button>
+            )}
             {buyNowPrice !== undefined && !isPlayerConsigned && (
               <BuyNowDialog
                 horseName={horseName}
