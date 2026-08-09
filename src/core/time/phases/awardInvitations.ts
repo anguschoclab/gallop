@@ -114,9 +114,7 @@ export const awardInvitationsPhase: PipelinePhase = {
     const horses = Object.values(state.horses);
 
     for (const ceremony of dueCeremonies) {
-      const alreadyInvited = existing.some(
-        (i) => i.region === ceremony.region && i.year === year,
-      );
+      const alreadyInvited = existing.some((i) => i.region === ceremony.region && i.year === year);
       if (alreadyInvited) continue;
 
       const qualifiers = findInvitationQualifiers(horses, year, ceremony.region, raceMap);
@@ -174,7 +172,14 @@ export const awardInvitationsPhase: PipelinePhase = {
   },
 };
 
-/** Build an inbox impact linking to a ceremony detail page. */
+/**
+ * Build an inbox impact linking to a ceremony detail page.
+ * @param day
+ * @param title
+ * @param body
+ * @param invitationId
+ * @param priority
+ */
 function makeInbox(
   day: number,
   title: string,
@@ -203,4 +208,3 @@ function makeInbox(
     },
   } as InboxImpact;
 }
-
