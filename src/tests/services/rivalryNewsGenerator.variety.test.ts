@@ -7,6 +7,7 @@
 
 import { describe, it, expect } from "vitest";
 import {
+  generateStableIntroNews,
   generateRivalryEmergenceNews,
   generateGrudgeMatchNews,
   generateRegionLostNews,
@@ -221,6 +222,36 @@ describe("generateRivalryEscalationNews — template variety", () => {
     );
     for (const b of bodies) {
       expect(b).toContain("Bitter Creek Stables");
+    }
+  });
+});
+
+describe("generateStableIntroNews — template variety", () => {
+  it("headline pool has at least 8 unique values (≥14 templates)", () => {
+    const headlines = sweepHeadlines(
+      (rng) => generateStableIntroNews(stable, DAY, rng)?.headline ?? null,
+    );
+    expect(headlines.size).toBeGreaterThanOrEqual(8);
+  });
+
+  it("body pool has at least 6 unique values (≥14 templates)", () => {
+    const bodies = sweepBodies((rng) => generateStableIntroNews(stable, DAY, rng)?.body ?? null);
+    expect(bodies.size).toBeGreaterThanOrEqual(6);
+  });
+
+  it("all headlines contain the stable name", () => {
+    const headlines = sweepHeadlines(
+      (rng) => generateStableIntroNews(stable, DAY, rng)?.headline ?? null,
+    );
+    for (const h of headlines) {
+      expect(h).toContain("Bitter Creek Stables");
+    }
+  });
+
+  it("all bodies contain the stable owner or country", () => {
+    const bodies = sweepBodies((rng) => generateStableIntroNews(stable, DAY, rng)?.body ?? null);
+    for (const b of bodies) {
+      expect(b).toContain(stable.owner);
     }
   });
 });
