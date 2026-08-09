@@ -1,0 +1,3 @@
+## 2026-08-09 - Prevent Invalid Types from Triple Crown Impacts
+**Learning:** `RacingHandler.ts` initialized a `Map` representing historical triple crown progress as `Map<string, any>`, creating an implicit `any` that leaked loosely-typed objects into the broader application state when entries were updated. By using `NonNullable<typeof draft.triplecrownHistory>[number]`, we enforce that updates strictly adhere to the `TripleCrownProgress` interface, guaranteeing shape conformity and compile-time validation.
+**Action:** Always prefer mapped or inferred types from the Draft/State over implicit `any` when initializing data structures serving as caches for GameState properties to prevent type degradation and enable deep validation.
