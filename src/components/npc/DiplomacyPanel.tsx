@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import React from "react";
 import { useGame } from "@/game/store";
 import { cn } from "@/lib/cn";
 
@@ -10,6 +11,10 @@ interface DiplomacyPanelProps {
 export function DiplomacyPanel({ stableId }: DiplomacyPanelProps) {
   const relationships = useGame((s) => s.npcAIManager?.stableStates?.[stableId]?.npcRelationships);
   const npcStables = useGame((s) => s.npcStables);
+  const npcStablesMap = React.useMemo(
+    () => new Map(npcStables?.map((s) => [s.id, s]) || []),
+    [npcStables],
+  );
 
   if (!relationships || Object.keys(relationships).length === 0) {
     return null;
@@ -24,7 +29,7 @@ export function DiplomacyPanel({ stableId }: DiplomacyPanelProps) {
       </CardHeader>
       <CardContent className="space-y-3">
         {Object.entries(relationships).map(([otherId, rel]) => {
-          const otherStable = npcStables?.find((s) => s.id === otherId);
+          const otherStable = npcStablesMap.get(otherId);
           const trustPct = (rel.trust * 100).toFixed(0);
           const isPositive = rel.trust > 0;
 
