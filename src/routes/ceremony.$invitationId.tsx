@@ -42,9 +42,7 @@ function CeremonyPage() {
   const { invitationId } = Route.useParams();
   const day = useGame((s: GameState) => s.day);
   const invitation = useGame((s: GameState) =>
-    (s.awardCeremonyInvitations ?? []).find(
-      (i: AwardCeremonyInvitation) => i.id === invitationId,
-    ),
+    (s.awardCeremonyInvitations ?? []).find((i: AwardCeremonyInvitation) => i.id === invitationId),
   );
   const awards = useGame((s: GameState) => s.awards);
 
