@@ -1,0 +1,3 @@
+## 2024-05-15 - Biographical Template Structure
+**Learning:** Biographical templates in `BIOGRAPHICAL_TEMPLATES` are conditionally prepended to SURGE and LEAD_CHANGE events with a 35% probability (`context.rng.next() < 0.35`) in `commentaryGenerator.ts` for horses that haven't had their bio announced yet. These templates support interpolation of `{coat}`, `{gender}`, `{horse}`, `{sire}`, `{dam}`, `{stable}`, and `{family}`.
+**Action:** When enriching race commentary, expanding `BIOGRAPHICAL_TEMPLATES` provides a high-leverage way to add variety to the early/mid-race narrative for each runner, as it's triggered naturally by race dynamics.

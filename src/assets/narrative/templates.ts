@@ -25,6 +25,14 @@ export const BIOGRAPHICAL_TEMPLATES = [
   "Another talented progeny of {sire}, {horse} is here,",
   "A well-regarded {coat} {gender}, {horse},",
   "The {stable} team sends out their {coat} {gender}, {horse},",
+  "With {sire} blood running through their veins, {horse},",
+  "The striking {coat} {gender} from the {stable} yard, {horse},",
+  "A proud descendant of the {family} line, {horse},",
+  "Carrying the prestigious {stable} banner today is {horse},",
+  "Boasting a pedigree out of {dam}, here is {horse},",
+  "The highly touted {coat} {gender} by {sire}, {horse},",
+  "A {coat} flash of brilliance representing {stable}, {horse},",
+  "Tracing back to {sire} and {dam}, the exciting {horse},",
 ];
 
 export const FRAGMENTS = {
