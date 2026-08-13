@@ -39,9 +39,24 @@ describe("Trait Search Integration", () => {
 
   it("Jockey Roster: seed 3 jockeys with different traits, search by trait text, verify correct subset", () => {
     const jockeys: Jockey[] = [
-      createTestJockey({ id: "j1", name: "Alice", traits: ["gate_master"] as JockeyTrait[] }),
-      createTestJockey({ id: "j2", name: "Bob", traits: ["hill_specialist"] as JockeyTrait[] }),
-      createTestJockey({ id: "j3", name: "Carol", traits: ["bullring_expert"] as JockeyTrait[] }),
+      createTestJockey({
+        id: "j1",
+        name: "Alice",
+        traits: ["gate_master"] as JockeyTrait[],
+        contractUntil: 100,
+      }),
+      createTestJockey({
+        id: "j2",
+        name: "Bob",
+        traits: ["hill_specialist"] as JockeyTrait[],
+        contractUntil: 100,
+      }),
+      createTestJockey({
+        id: "j3",
+        name: "Carol",
+        traits: ["bullring_expert"] as JockeyTrait[],
+        contractUntil: 100,
+      }),
     ];
     renderWithStore(<JockeyRoster />, { jockeys });
     const searchInput = screen.getByPlaceholderText(/jockey name/i);
@@ -53,9 +68,24 @@ describe("Trait Search Integration", () => {
 
   it("Jockey Roster: trait dropdown filter selects correct subset", () => {
     const jockeys: Jockey[] = [
-      createTestJockey({ id: "j1", name: "Alice", traits: ["gate_master"] as JockeyTrait[] }),
-      createTestJockey({ id: "j2", name: "Bob", traits: ["hill_specialist"] as JockeyTrait[] }),
-      createTestJockey({ id: "j3", name: "Carol", traits: ["gate_master"] as JockeyTrait[] }),
+      createTestJockey({
+        id: "j1",
+        name: "Alice",
+        traits: ["gate_master"] as JockeyTrait[],
+        contractUntil: 100,
+      }),
+      createTestJockey({
+        id: "j2",
+        name: "Bob",
+        traits: ["hill_specialist"] as JockeyTrait[],
+        contractUntil: 100,
+      }),
+      createTestJockey({
+        id: "j3",
+        name: "Carol",
+        traits: ["gate_master"] as JockeyTrait[],
+        contractUntil: 100,
+      }),
     ];
     renderWithStore(<JockeyRoster />, { jockeys });
     const traitSelect = screen.getByDisplayValue("All Traits");

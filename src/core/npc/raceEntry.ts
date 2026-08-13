@@ -189,7 +189,7 @@ export function runNpcRaceEntry(
         if (!chosenJockey) {
           // Find best available freelance jockey using chemistry-aware scoring
           if (freeAgents.length > 0) {
-            chosenJockey = selectBestFreeAgentJockey(horse, freeAgents);
+            chosenJockey = selectBestFreeAgentJockey(horse, freeAgents) ?? undefined;
 
             // Mark as used today
             freeAgents = freeAgents.filter((j) => j.id !== chosenJockey!.id);

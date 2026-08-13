@@ -8,6 +8,7 @@ import { JockeyArchetype, JockeySilkPattern } from "@/game/types";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { Briefcase } from "lucide-react";
 import type { Jockey } from "@/core/jockey/types";
+import type { JockeyTrait } from "@/core/jockey/types";
 
 export function JockeyRoster() {
   const jockeys = useGameWithShallow((s) => s.jockeys);
@@ -17,6 +18,7 @@ export function JockeyRoster() {
   const [archetypeFilter, setArchetypeFilter] = useState<JockeyArchetype | "all">("all");
   const [patternFilter, setPatternFilter] = useState<JockeySilkPattern | "all">("all");
   const [colorFilter, setColorFilter] = useState<string>("all");
+  const [traitFilter, setTraitFilter] = useState<JockeyTrait | "all">("all");
 
   const myJockeys = jockeys?.filter((j: Jockey) => !j.stableId && !!j.contractUntil) ?? [];
   const market = jockeys?.filter((j: Jockey) => !j.stableId && !j.contractUntil) ?? [];
@@ -24,12 +26,15 @@ export function JockeyRoster() {
   const filterList = (list: Jockey[]) => {
     if (!list) return [];
     return list.filter((j: Jockey) => {
-      const matchesSearch = j.name.toLowerCase().includes(search.toLowerCase());
+      const q = search.toLowerCase();
+      const matchesSearch =
+        j.name.toLowerCase().includes(q) || j.traits.some((t) => t.toLowerCase().includes(q));
       const matchesArchetype = archetypeFilter === "all" || j.archetype === archetypeFilter;
       const matchesPattern = patternFilter === "all" || j.silk.pattern === patternFilter;
       const matchesColor =
         colorFilter === "all" || j.silk.primary.toLowerCase() === colorFilter.toLowerCase();
-      return matchesSearch && matchesArchetype && matchesPattern && matchesColor;
+      const matchesTrait = traitFilter === "all" || j.traits.includes(traitFilter);
+      return matchesSearch && matchesArchetype && matchesPattern && matchesColor && matchesTrait;
     });
   };
 
@@ -79,11 +84,14 @@ export function JockeyRoster() {
           onPatternChange={setPatternFilter}
           colorFilter={colorFilter}
           onColorChange={setColorFilter}
+          traitFilter={traitFilter}
+          onTraitChange={setTraitFilter}
           onReset={() => {
             setSearch("");
             setArchetypeFilter("all");
             setPatternFilter("all");
             setColorFilter("all");
+            setTraitFilter("all");
           }}
         />
         <JockeyRosterTabs

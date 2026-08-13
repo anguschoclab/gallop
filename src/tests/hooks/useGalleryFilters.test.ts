@@ -172,11 +172,17 @@ describe("useGalleryFilters — trait filtering", () => {
     mockState.horses = {
       h1: mkHorse("h1", {
         name: "Alpha",
-        genotype: createTestGenotype({ mental: [5, 5] as [number, number] }),
+        genotype: createTestGenotype({
+          mental: [5, 5] as [number, number],
+          physical: [1, 1] as [number, number],
+        }),
       }),
       h2: mkHorse("h2", {
         name: "Beta",
-        genotype: createTestGenotype({ mental: [1, 1] as [number, number] }),
+        genotype: createTestGenotype({
+          mental: [1, 1] as [number, number],
+          physical: [1, 1] as [number, number],
+        }),
       }),
     };
     const { result } = renderHook(() => useGalleryFilters());

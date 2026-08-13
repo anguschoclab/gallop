@@ -60,9 +60,7 @@ describe("RecruitmentPool — trait search & filter", () => {
       mkPoolMember("p1", { name: "Alice", traits: ["speed_coach"] }),
       mkPoolMember("p2", { name: "Bob", traits: ["colic_expert"] }),
     ];
-    renderWithStore(
-      <RecruitmentPool staffPool={pool} {...baseProps} search="speed" />,
-    );
+    renderWithStore(<RecruitmentPool staffPool={pool} {...baseProps} search="speed" />);
     expect(screen.getByText("Alice")).toBeTruthy();
     expect(screen.queryByText("Bob")).toBeNull();
   });
@@ -72,9 +70,7 @@ describe("RecruitmentPool — trait search & filter", () => {
       mkPoolMember("p1", { name: "Alice", traits: ["speed_coach"] }),
       mkPoolMember("p2", { name: "Bob", traits: ["colic_expert"] }),
     ];
-    renderWithStore(
-      <RecruitmentPool staffPool={pool} {...baseProps} search="colic" />,
-    );
+    renderWithStore(<RecruitmentPool staffPool={pool} {...baseProps} search="colic" />);
     expect(screen.queryByText("Alice")).toBeNull();
     expect(screen.getByText("Bob")).toBeTruthy();
   });
@@ -84,9 +80,7 @@ describe("RecruitmentPool — trait search & filter", () => {
       mkPoolMember("p1", { name: "Alice Wonder" }),
       mkPoolMember("p2", { name: "Bob Builder" }),
     ];
-    renderWithStore(
-      <RecruitmentPool staffPool={pool} {...baseProps} search="wonder" />,
-    );
+    renderWithStore(<RecruitmentPool staffPool={pool} {...baseProps} search="wonder" />);
     expect(screen.getByText("Alice Wonder")).toBeTruthy();
     expect(screen.queryByText("Bob Builder")).toBeNull();
   });
@@ -97,9 +91,7 @@ describe("RecruitmentPool — trait search & filter", () => {
       mkPoolMember("p2", { name: "Bob", traits: ["colic_expert"] }),
       mkPoolMember("p3", { name: "Carol", traits: ["speed_coach"] }),
     ];
-    renderWithStore(
-      <RecruitmentPool staffPool={pool} {...baseProps} traitFilter="speed_coach" />,
-    );
+    renderWithStore(<RecruitmentPool staffPool={pool} {...baseProps} traitFilter="speed_coach" />);
     expect(screen.getByText("Alice")).toBeTruthy();
     expect(screen.getByText("Carol")).toBeTruthy();
     expect(screen.queryByText("Bob")).toBeNull();
@@ -120,9 +112,7 @@ describe("RecruitmentPool — trait search & filter", () => {
       mkPoolMember("p1", { name: "Alice", traits: [] }),
       mkPoolMember("p2", { name: "Bob", traits: ["speed_coach"] }),
     ];
-    renderWithStore(
-      <RecruitmentPool staffPool={pool} {...baseProps} traitFilter="speed_coach" />,
-    );
+    renderWithStore(<RecruitmentPool staffPool={pool} {...baseProps} traitFilter="speed_coach" />);
     expect(screen.queryByText("Alice")).toBeNull();
     expect(screen.getByText("Bob")).toBeTruthy();
   });

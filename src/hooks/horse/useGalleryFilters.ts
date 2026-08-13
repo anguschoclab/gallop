@@ -4,6 +4,11 @@ import { useGame, useGameWithShallow } from "@/game/store";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import type { Horse } from "@/core/horse/types";
+import {
+  getHorseTraitValue,
+  getAllHorseTraitValues,
+  type HorseTraitKey,
+} from "@/core/common/traitLabels";
 
 export const COAT_COLORS = [
   { value: "all", label: "All Coats" },
@@ -34,12 +39,28 @@ export function useGalleryFilters() {
   );
   const [coatFilter, setCoatFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"ovr" | "age" | "name">("ovr");
+  const [search, setSearch] = useState<string>("");
+  const [traitCategory, setTraitCategory] = useState<HorseTraitKey | "all">("all");
+  const [traitFilter, setTraitFilter] = useState<string>("all");
 
   const filteredHorses = useMemo(() => {
     let result = [...horses];
 
     if (coatFilter !== "all") {
       result = result.filter((h) => h.coatColor === coatFilter);
+    }
+
+    if (traitCategory !== "all" && traitFilter !== "all") {
+      result = result.filter((h) => getHorseTraitValue(h, traitCategory) === traitFilter);
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(
+        (h) =>
+          h.name.toLowerCase().includes(q) ||
+          getAllHorseTraitValues(h).some((v) => v.toLowerCase().includes(q)),
+      );
     }
 
     result.sort((a, b) => {
@@ -53,7 +74,7 @@ export function useGalleryFilters() {
     });
 
     return result;
-  }, [horses, coatFilter, sortBy]);
+  }, [horses, coatFilter, sortBy, search, traitCategory, traitFilter]);
 
   const coatCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -73,5 +94,11 @@ export function useGalleryFilters() {
     setSortBy,
     filteredHorses,
     coatCounts,
+    search,
+    setSearch,
+    traitCategory,
+    setTraitCategory,
+    traitFilter,
+    setTraitFilter,
   };
 }

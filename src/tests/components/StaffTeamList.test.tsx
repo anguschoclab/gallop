@@ -57,9 +57,7 @@ describe("StaffTeamList — trait search & filter", () => {
       mkStaff("s1", { name: "Alice", traits: ["speed_coach"] }),
       mkStaff("s2", { name: "Bob", traits: ["colic_expert"] }),
     ];
-    renderWithStore(
-      <StaffTeamList staff={staff} {...baseProps} search="speed" />,
-    );
+    renderWithStore(<StaffTeamList staff={staff} {...baseProps} search="speed" />);
     expect(screen.getByText("Alice")).toBeTruthy();
     expect(screen.queryByText("Bob")).toBeNull();
   });
@@ -69,9 +67,7 @@ describe("StaffTeamList — trait search & filter", () => {
       mkStaff("s1", { name: "Alice", traits: ["speed_coach"] }),
       mkStaff("s2", { name: "Bob", traits: ["colic_expert"] }),
     ];
-    renderWithStore(
-      <StaffTeamList staff={staff} {...baseProps} search="colic" />,
-    );
+    renderWithStore(<StaffTeamList staff={staff} {...baseProps} search="colic" />);
     expect(screen.queryByText("Alice")).toBeNull();
     expect(screen.getByText("Bob")).toBeTruthy();
   });
@@ -81,9 +77,7 @@ describe("StaffTeamList — trait search & filter", () => {
       mkStaff("s1", { name: "Alice Wonder", traits: ["speed_coach"] }),
       mkStaff("s2", { name: "Bob Builder", traits: ["colic_expert"] }),
     ];
-    renderWithStore(
-      <StaffTeamList staff={staff} {...baseProps} search="wonder" />,
-    );
+    renderWithStore(<StaffTeamList staff={staff} {...baseProps} search="wonder" />);
     expect(screen.getByText("Alice Wonder")).toBeTruthy();
     expect(screen.queryByText("Bob Builder")).toBeNull();
   });
@@ -94,9 +88,7 @@ describe("StaffTeamList — trait search & filter", () => {
       mkStaff("s2", { name: "Bob", traits: ["colic_expert"] }),
       mkStaff("s3", { name: "Carol", traits: ["speed_coach"] }),
     ];
-    renderWithStore(
-      <StaffTeamList staff={staff} {...baseProps} traitFilter="speed_coach" />,
-    );
+    renderWithStore(<StaffTeamList staff={staff} {...baseProps} traitFilter="speed_coach" />);
     expect(screen.getByText("Alice")).toBeTruthy();
     expect(screen.getByText("Carol")).toBeTruthy();
     expect(screen.queryByText("Bob")).toBeNull();
@@ -117,9 +109,7 @@ describe("StaffTeamList — trait search & filter", () => {
       mkStaff("s1", { name: "Alice", traits: [] }),
       mkStaff("s2", { name: "Bob", traits: ["speed_coach"] }),
     ];
-    renderWithStore(
-      <StaffTeamList staff={staff} {...baseProps} traitFilter="speed_coach" />,
-    );
+    renderWithStore(<StaffTeamList staff={staff} {...baseProps} traitFilter="speed_coach" />);
     expect(screen.queryByText("Alice")).toBeNull();
     expect(screen.getByText("Bob")).toBeTruthy();
   });

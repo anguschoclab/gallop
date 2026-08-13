@@ -6,6 +6,7 @@ import { formatCurrency } from "@/core/common/formatting";
 import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/core/staff/staffConfig";
 import { cn } from "@/lib/cn";
 import { Briefcase, ShieldCheck, Trophy } from "lucide-react";
+import { formatStaffTrait } from "@/core/common/traitLabels";
 
 interface StaffMember {
   id: string;
@@ -21,10 +22,28 @@ interface StaffTeamListProps {
   honorCounts: Record<string, number>;
   showHonors: boolean;
   onFire: (staff: StaffMember) => void;
+  search?: string;
+  traitFilter?: string;
 }
 
-export function StaffTeamList({ staff, honorCounts, showHonors, onFire }: StaffTeamListProps) {
-  if (staff.length === 0) {
+export function StaffTeamList({
+  staff,
+  honorCounts,
+  showHonors,
+  onFire,
+  search = "",
+  traitFilter = "all",
+}: StaffTeamListProps) {
+  const filtered = staff.filter((member) => {
+    const q = search.toLowerCase();
+    const matchesSearch =
+      !q ||
+      member.name.toLowerCase().includes(q) ||
+      member.traits.some((t) => t.toLowerCase().includes(q));
+    const matchesTrait = traitFilter === "all" || member.traits.includes(traitFilter);
+    return matchesSearch && matchesTrait;
+  });
+  if (filtered.length === 0) {
     return (
       <section className="space-y-6">
         <div className="flex items-center gap-3 px-1 border-b border-white/5 pb-2">
@@ -52,7 +71,7 @@ export function StaffTeamList({ staff, honorCounts, showHonors, onFire }: StaffT
       </div>
 
       <div className="grid grid-cols-1 gap-4">
-        {staff.map((member) => (
+        {filtered.map((member) => (
           <Card
             key={member.id}
             className="bg-slate-900/40 border-white/5 rounded-none group hover:border-blue-500/30 transition-all duration-300 relative overflow-hidden shadow-xl"
@@ -122,7 +141,7 @@ export function StaffTeamList({ staff, honorCounts, showHonors, onFire }: StaffT
                           key={t}
                           className="px-2 py-0.5 bg-black/40 border border-white/5 text-[9px] font-mono text-blue-400/60 uppercase tracking-tighter rounded-sm"
                         >
-                          {t.toUpperCase()}
+                          {formatStaffTrait(t).toUpperCase()}
                         </div>
                       ))}
                     </div>

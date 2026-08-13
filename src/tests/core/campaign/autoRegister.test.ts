@@ -277,18 +277,20 @@ describe("calculateAutoRegisterEntries", () => {
     expect(result.entries[0].jockeyId).toBe("retained");
   });
 
-  it("selects free-agent jockey by running style match (E→front_runner)", () => {
+  it("selects free-agent jockey by compatibility match (E→front_runner over closer)", () => {
     const horse = mkHorse({ runningStyle: "E" });
     const race = mkRace({ day: baseDay + 3 });
     const frontRunner = mkJockey({ id: "ft", archetype: "front_runner", fame: 30 });
-    const versatile = mkJockey({ id: "v", archetype: "versatile", fame: 90 });
+    const closer = mkJockey({ id: "c", archetype: "closer", fame: 90 });
     const result = calculateAutoRegisterEntries(
       [horse],
       [race],
-      [frontRunner, versatile],
+      [frontRunner, closer],
       100000,
       baseDay,
     );
+    // E + front_runner = High (+20); E + closer = Poor (-15)
+    // ft: 15 + 0 + 20 = 35; c: 45 + 0 - 15 = 30 → ft wins
     expect(result.entries[0].jockeyId).toBe("ft");
   });
 

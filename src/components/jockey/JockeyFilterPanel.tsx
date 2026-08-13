@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { JockeyArchetype, JockeySilkPattern } from "@/game/types";
 import { FilterSelect } from "./FilterSelect";
 import { Search, Filter } from "lucide-react";
+import { JOCKEY_TRAIT_OPTIONS } from "@/core/common/traitLabels";
+import type { JockeyTrait } from "@/core/jockey/types";
 
 interface JockeyFilterPanelProps {
   search: string;
@@ -15,6 +17,8 @@ interface JockeyFilterPanelProps {
   onPatternChange: (value: JockeySilkPattern | "all") => void;
   colorFilter: string;
   onColorChange: (value: string) => void;
+  traitFilter: JockeyTrait | "all";
+  onTraitChange: (value: JockeyTrait | "all") => void;
   onReset: () => void;
 }
 
@@ -61,6 +65,8 @@ export function JockeyFilterPanel({
   onPatternChange,
   colorFilter,
   onColorChange,
+  traitFilter,
+  onTraitChange,
   onReset,
 }: JockeyFilterPanelProps) {
   const searchId = useId();
@@ -86,7 +92,7 @@ export function JockeyFilterPanel({
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream/20" />
                 <Input
                   id={searchId}
-                  placeholder="Jockey name..."
+                  placeholder="Jockey name or trait..."
                   value={search}
                   onChange={(e) => onSearchChange(e.target.value)}
                   className="h-9 bg-slate-950/60 border-white/5 text-xs font-mono pl-8 uppercase tracking-tighter focus-visible:ring-blue-500/30"
@@ -113,6 +119,13 @@ export function JockeyFilterPanel({
               value={colorFilter}
               options={colorOptions}
               onChange={onColorChange}
+            />
+
+            <FilterSelect
+              label="Trait"
+              value={traitFilter}
+              options={JOCKEY_TRAIT_OPTIONS}
+              onChange={(v) => onTraitChange(v as JockeyTrait | "all")}
             />
 
             <Button

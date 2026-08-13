@@ -31,6 +31,7 @@ function mkJockey(id: string, overrides: Record<string, unknown> = {}): Jockey {
     stableAffinity: 0,
     isApprentice: false,
     loyalty: 50,
+    contractUntil: 100,
     ...overrides,
   } as unknown as Jockey;
 }

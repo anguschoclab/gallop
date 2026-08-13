@@ -12,16 +12,35 @@ import {
 import { HorsePortrait } from "@/components/horse/HorsePortrait";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import { Zap, TrendingUp, Filter } from "lucide-react";
+import { Zap, TrendingUp, Filter, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { useGalleryFilters, COAT_COLORS } from "@/hooks/horse/useGalleryFilters";
+import {
+  HORSE_TRAIT_CATEGORY_OPTIONS,
+  HORSE_TRAIT_OPTIONS,
+  type HorseTraitKey,
+} from "@/core/common/traitLabels";
 
 export const Route = createFileRoute("/horse-gallery")({
   component: HorseGalleryPage,
 });
 
 function HorseGalleryPage() {
-  const { horses, coatFilter, setCoatFilter, sortBy, setSortBy, filteredHorses, coatCounts } =
-    useGalleryFilters();
+  const {
+    horses,
+    coatFilter,
+    setCoatFilter,
+    sortBy,
+    setSortBy,
+    filteredHorses,
+    coatCounts,
+    search,
+    setSearch,
+    traitCategory,
+    setTraitCategory,
+    traitFilter,
+    setTraitFilter,
+  } = useGalleryFilters();
 
   return (
     <div className="space-y-6">
@@ -34,7 +53,49 @@ function HorseGalleryPage() {
             Browse all {horses.length} horses in your stable with coat details.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-cream-muted" />
+            <Input
+              placeholder="Search name or trait..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-[200px] pl-8"
+            />
+          </div>
+          <Select
+            value={traitCategory}
+            onValueChange={(v) => {
+              setTraitCategory(v as HorseTraitKey | "all");
+              setTraitFilter("all");
+            }}
+          >
+            <SelectTrigger className="w-[160px]">
+              <Filter className="w-4 h-4 mr-2" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {HORSE_TRAIT_CATEGORY_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {traitCategory !== "all" && (
+            <Select value={traitFilter} onValueChange={setTraitFilter}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {HORSE_TRAIT_OPTIONS[traitCategory].map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
           <Select value={coatFilter} onValueChange={setCoatFilter}>
             <SelectTrigger className="w-[140px]">
               <Filter className="w-4 h-4 mr-2" />

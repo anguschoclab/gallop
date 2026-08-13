@@ -6,6 +6,7 @@ import { formatCurrency } from "@/core/common/formatting";
 import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/core/staff/staffConfig";
 import { isOffended, offendedDaysRemaining } from "@/core/staff/staffNegotiation";
 import { UserPlus, Zap, Activity, Info } from "lucide-react";
+import { formatStaffTrait } from "@/core/common/traitLabels";
 
 interface PoolMember {
   id: string;
@@ -14,6 +15,7 @@ interface PoolMember {
   tier: string;
   salary: number;
   bonusValue: number;
+  traits?: string[];
   offended?: boolean;
   offendedUntil?: number;
 }
@@ -22,9 +24,27 @@ interface RecruitmentPoolProps {
   staffPool: PoolMember[];
   day: number;
   onNegotiate: (staffId: string) => void;
+  search?: string;
+  traitFilter?: string;
 }
 
-export function RecruitmentPool({ staffPool, day, onNegotiate }: RecruitmentPoolProps) {
+export function RecruitmentPool({
+  staffPool,
+  day,
+  onNegotiate,
+  search = "",
+  traitFilter = "all",
+}: RecruitmentPoolProps) {
+  const filtered = staffPool.filter((staff) => {
+    const q = search.toLowerCase();
+    const matchesSearch =
+      !q ||
+      staff.name.toLowerCase().includes(q) ||
+      (staff.traits ?? []).some((t) => t.toLowerCase().includes(q));
+    const matchesTrait = traitFilter === "all" || (staff.traits ?? []).includes(traitFilter);
+    return matchesSearch && matchesTrait;
+  });
+
   return (
     <section className="space-y-6">
       <div className="flex items-center gap-3 px-1 border-b border-white/5 pb-2">
@@ -35,7 +55,7 @@ export function RecruitmentPool({ staffPool, day, onNegotiate }: RecruitmentPool
       </div>
 
       <div className="grid grid-cols-1 gap-4">
-        {staffPool.map((staff) => (
+        {filtered.map((staff) => (
           <Card
             key={staff.id}
             className="bg-slate-900/40 border-white/5 rounded-none group hover:border-gold/30 transition-all duration-300 relative overflow-hidden shadow-xl"
@@ -89,6 +109,19 @@ export function RecruitmentPool({ staffPool, day, onNegotiate }: RecruitmentPool
                 </div>
               </div>
 
+              {staff.traits && staff.traits.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-4">
+                  {staff.traits.map((t) => (
+                    <div
+                      key={t}
+                      className="px-2 py-0.5 bg-black/40 border border-white/5 text-[9px] font-mono text-blue-400/60 uppercase tracking-tighter rounded-sm"
+                    >
+                      {formatStaffTrait(t).toUpperCase()}
+                    </div>
+                  ))}
+                </div>
+              )}
+
               {isOffended(
                 staff as unknown as import("@/core/staff/staffTypes").StaffMember,
                 day,
@@ -117,7 +150,7 @@ export function RecruitmentPool({ staffPool, day, onNegotiate }: RecruitmentPool
           </Card>
         ))}
 
-        {staffPool.length === 0 && (
+        {filtered.length === 0 && (
           <div className="p-12 text-center border border-dashed border-white/10 bg-black/10">
             <p className="text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
               Recruitment cycle currently saturated. Check next frequency.

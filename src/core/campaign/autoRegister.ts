@@ -20,6 +20,7 @@ import { calculateRaceSuitability } from "@/core/race/entryScoring";
 import { getTransportCostForRace } from "@/core/race/transportCost";
 import { MAX_HORSES_PER_STABLE_PER_RACE } from "@/constants";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
+import { selectBestFreeAgentJockey } from "@/core/jockey/selectFreeAgent";
 
 // Virtual player stable for scoring purposes
 // Uses win-now personality with elite tier for competitive AI evaluation
@@ -95,16 +96,8 @@ function selectBestJockey(horse: Horse, jockeys: Jockey[]): Jockey | null {
   const freeAgents = jockeys.filter((j) => !j.stableId);
   if (freeAgents.length === 0) return null;
 
-  // Match by running style
-  const matches = freeAgents.filter((j) => {
-    if (horse.runningStyle === "E") return j.archetype === "front_runner";
-    if (horse.runningStyle === "S") return j.archetype === "closer";
-    return j.archetype === "versatile" || j.archetype === "clinical";
-  });
-
-  // Sort by fame (best jockey first), fallback to all free agents
-  const pool = matches.length > 0 ? matches : freeAgents;
-  return pool.sort((a, b) => b.fame - a.fame)[0] ?? null;
+  // Use chemistry-aware selection (affinity + compatibility + fame)
+  return selectBestFreeAgentJockey(horse, freeAgents);
 }
 
 /**

@@ -3,6 +3,7 @@ import type { Horse, Race, Jockey, Stable } from "@/game/types";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { calculateRaceSuitability } from "@/core/race/entryScoring";
 import { getTransportCostForRace } from "@/core/race/transportCost";
+import { selectBestFreeAgentJockey } from "@/core/jockey/selectFreeAgent";
 
 const PLAYER_STABLE_CONFIG: Stable = {
   id: "player",
@@ -38,14 +39,8 @@ function estimateJockeyFee(horse: Horse, jockeys: Jockey[]): number {
   const freeAgents = jockeys.filter((j) => !j.stableId);
   if (freeAgents.length === 0) return 0;
 
-  const matches = freeAgents.filter((j) => {
-    if (horse.runningStyle === "E") return j.archetype === "front_runner";
-    if (horse.runningStyle === "S") return j.archetype === "closer";
-    return j.archetype === "versatile" || j.archetype === "clinical";
-  });
-
-  const pool = matches.length > 0 ? matches : freeAgents;
-  return pool.sort((a, b) => b.fame - a.fame)[0]?.ridingFee ?? 0;
+  const selected = selectBestFreeAgentJockey(horse, freeAgents);
+  return selected?.ridingFee ?? 0;
 }
 
 export function deriveEligibleRaces(

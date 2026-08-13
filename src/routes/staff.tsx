@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/core/common/formatting";
 import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/core/staff/staffConfig";
-import { Users } from "lucide-react";
+import { Users, Search, Filter } from "lucide-react";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { useMemo, useState } from "react";
 import { getG1WinsForStable, countByGrade } from "@/constants/connectionTrophies";
@@ -12,6 +13,14 @@ import type { StaffRole, StaffTier } from "@/core/staff/staffTypes";
 import { StaffNegotiationDialog } from "@/components/staff/StaffNegotiationDialog";
 import { StaffTeamList } from "@/components/staff/StaffTeamList";
 import { RecruitmentPool } from "@/components/staff/RecruitmentPool";
+import { STAFF_TRAIT_OPTIONS } from "@/core/common/traitLabels";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const Route = createFileRoute("/staff")({
   component: StaffManagement,
@@ -27,6 +36,8 @@ function StaffManagement() {
   const horses = useGameWithShallow((s) => s.horses);
   const races = useGameWithShallow((s) => s.races);
   const [negotiatingId, setNegotiatingId] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [traitFilter, setTraitFilter] = useState<string>("all");
 
   const myStaff = hiredStaff?.filter((s) => s.stableId === "") ?? [];
   const staffMap = useMemo(() => new Map(staffPool.map((s) => [s.id, s])), [staffPool]);
@@ -79,6 +90,28 @@ function StaffManagement() {
           </div>
         </div>
         <div className="flex gap-2">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-cream-muted" />
+            <Input
+              placeholder="Search name or trait..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-[200px] pl-8"
+            />
+          </div>
+          <Select value={traitFilter} onValueChange={setTraitFilter}>
+            <SelectTrigger className="w-[160px]">
+              <Filter className="w-4 h-4 mr-2" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {STAFF_TRAIT_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Badge
             variant="outline"
             className="border-blue-500/30 text-blue-400 bg-blue-500/5 font-mono text-[10px] uppercase tracking-widest px-3 py-1 h-8 rounded-none"
@@ -94,8 +127,16 @@ function StaffManagement() {
           honorCounts={honorCounts}
           showHonors={myStaff.some((s) => showHonors(s.role)) && stableG1Wins.length > 0}
           onFire={handleFire}
+          search={search}
+          traitFilter={traitFilter}
         />
-        <RecruitmentPool staffPool={staffPool} day={day} onNegotiate={setNegotiatingId} />
+        <RecruitmentPool
+          staffPool={staffPool}
+          day={day}
+          onNegotiate={setNegotiatingId}
+          search={search}
+          traitFilter={traitFilter}
+        />
       </div>
 
       {negotiatingId &&
