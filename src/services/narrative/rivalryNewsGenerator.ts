@@ -526,9 +526,21 @@ export function generateStableIntroNews(stable: Stable, day: number, rng: Rng): 
     `The Story Behind ${stable.name}`,
     `${stable.name} Breaks Cover`,
     `What You Need to Know About ${stable.name}`,
+    `Meeting the ${tier} Tier Challenge: ${stable.name}`,
+    `The Ascendance of ${stable.name}`,
+    `Under the Microscope: ${stable.name}`,
+    `Who is Behind ${stable.name}?`,
+    `A Primer on ${stable.name}`,
+    `Tracking the Progress of ${stable.name}`,
   );
 
   const bodies = [
+    `The foundation laid by ${stable.owner} in ${country} is bearing fruit. ${stable.name} has proven they belong in the ${tier} tier conversation. ${description}`,
+    `It takes a lot to stand out in the ${tier} tier, but ${stable.name} is doing just that. Hailing from ${country}, ${stable.owner}'s strategy is paying off. ${description}`,
+    `More and more insiders are talking about ${stable.name}. From their base in ${country}, ${stable.owner} is putting together a very interesting ${tier} tier campaign. ${description}`,
+    `The ambitions of ${stable.name} are clear. The ${country}-based yard, steered by ${stable.owner}, is not here to make up numbers in the ${tier} tier. ${description}`,
+    `You can't ignore the momentum behind ${stable.name}. The ${country} operation, built by ${stable.owner}, is a ${tier} tier force on the rise. ${description}`,
+    `What ${stable.owner} has accomplished with ${stable.name} in ${country} is noteworthy. They're a ${tier} tier stable that commands attention. ${description}`,
     `Based in ${country}, ${stable.name} is operated by ${stable.owner}. ${description} As a ${tier} tier operation, they're a name worth remembering.`,
     `${stable.name}, led by ${stable.owner}, hails from ${country}. ${description} Their ${tier} tier status marks them as a serious player in the racing world.`,
     `From ${country} comes ${stable.name}, the brainchild of ${stable.owner}. ${description} This ${tier} tier stable is one to watch.`,
