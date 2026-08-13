@@ -7,19 +7,12 @@
 import { useMemo, useState } from "react";
 import { useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
-import {
-  ChartCard,
-  AreaTrend,
-  MiniBar,
-  chartColors,
-  formatCurrencyCompact,
-} from "@/components/charts";
+import { ChartCard, AreaTrend, MiniBar, chartColors, formatCurrencyCompact } from "@/components/charts";
 import { TimeWindowSelect } from "@/components/analytics/TimeWindowSelect";
 import { useTimeWindow } from "@/hooks/analytics/useTimeWindow";
 import { timeWindowLabel } from "@/core/analytics/timeWindow";
 import {
   computeRegionTrends,
-  regionNameFor,
   type RegionKey,
 } from "@/core/analytics/regionalTrends";
 import { RegionDrilldownDrawer } from "./RegionDrilldownDrawer";
@@ -153,12 +146,12 @@ export function RegionalTrendsWidget() {
 
       <RegionDrilldownDrawer
         region={openRegion}
-        onClose={() => setOpenRegion(null)}
+        weeks={weeks}
         horses={horses}
         races={races}
-        currentDay={day}
-        weeks={weeks}
+        day={day}
         lookups={lookups}
+        onClose={() => setOpenRegion(null)}
       />
     </div>
   );
