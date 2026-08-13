@@ -22,6 +22,7 @@ import { energyPhase } from "./energy";
 import { marketPhase } from "./market";
 import { racesPhase } from "./races";
 import { beyerRecalibrationPhase } from "./beyerRecalibration";
+import { barrierDrawPhase } from "./barrierDraw";
 import { jockeyPhase } from "./jockeyPhase";
 import { pregnancyPhase } from "./pregnancy";
 import { npcCyclePhase } from "./npcCycle";
@@ -35,6 +36,7 @@ import { leaderboardPhase } from "./leaderboardPhase";
 import { awardsPhase } from "./awards";
 import { awardInvitationsPhase } from "./awardInvitations";
 import { schedulerPhase } from "./schedulerPhase";
+import { raceCancellationPhase } from "./raceCancellation";
 import { raceEntryResolutionPhase } from "./raceEntryResolution";
 import { consignmentResolutionPhase } from "./consignmentResolution";
 import { purchaseResolutionPhase } from "./purchaseResolution";
@@ -88,6 +90,7 @@ export const GAME_PIPELINE_PHASES = [
   raceInvitationsPhase,
   racesPhase,
   beyerRecalibrationPhase,
+  barrierDrawPhase,
   jockeyPhase,
   pregnancyPhase,
   npcCyclePhase,
@@ -103,6 +106,8 @@ export const GAME_PIPELINE_PHASES = [
   awardInvitationsPhase,
   awardsPhase,
   schedulerPhase,
+  // Race cancellation (order 88, after scheduler, before auctions)
+  raceCancellationPhase,
   // Resolution phases (convert intents to impacts)
   raceEntryResolutionPhase,
   consignmentResolutionPhase,

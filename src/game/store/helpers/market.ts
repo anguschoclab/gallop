@@ -86,7 +86,7 @@ export function generateUpcomingRaces(currentRaces: Race[], newDay: number): Rac
  */
 export function pruneOldRaces(races: Race[], newDay: number): Race[] {
   return races.filter((r) => {
-    if (!r.resolved) return true;
+    if (!r.resolved && !r.cancelled) return true;
     if (r.graded) return r.day > newDay - 365;
     return r.day > newDay - 30;
   });

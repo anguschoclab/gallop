@@ -41,7 +41,7 @@ export const archivingPhase: PipelinePhase = {
     const RACE_ARCHIVE_DAYS = 30;
 
     for (const race of Object.values(state.races)) {
-      if (race.resolved && newDay - race.day > RACE_ARCHIVE_DAYS) {
+      if ((race.resolved || race.cancelled) && newDay - race.day > RACE_ARCHIVE_DAYS) {
         archivedRaces.push(race);
       } else {
         activeRaces[race.id] = race;

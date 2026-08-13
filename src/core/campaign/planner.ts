@@ -135,6 +135,7 @@ export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
 
   const candidateRaces = races.filter((r) => {
     if (r.resolved) return false;
+    if (r.cancelled) return false;
     if (r.day <= currentDay) return false;
     if (r.day > currentDay + 365) return false;
     return true;

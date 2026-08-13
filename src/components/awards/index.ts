@@ -9,5 +9,8 @@ export { VisualTrophy, TrophyShelf } from "./VisualTrophy";
 export type { TrophyTone } from "./VisualTrophy";
 export { CeremonyInvitations } from "./CeremonyInvitations";
 export { CeremonyRsvpControls, CeremonyRsvpBadge, InboxCeremonyRsvp } from "./CeremonyRsvpControls";
+export { CeremonyRsvpStatusIndicator } from "./CeremonyRsvpStatusIndicator";
+export { CeremonyTimeline } from "./CeremonyTimeline";
+export { BulkRsvpControls } from "./BulkRsvpControls";
 export { InvitationHistoryPanel } from "./InvitationHistoryPanel";
 export { InvitationAuditLog, InvitationAuditList } from "./InvitationAuditLog";

@@ -71,6 +71,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
 
       if (!race || !horse) continue;
       if (race.resolved) continue;
+      if (race.cancelled) continue;
       if (race.entries.some((e: { horseId: string }) => e.horseId === intent.horseId)) continue;
 
       // Safety net: skip invite-only races for uninvited horses

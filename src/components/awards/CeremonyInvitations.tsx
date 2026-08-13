@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CeremonyRsvpControls } from "./CeremonyRsvpControls";
+import { CeremonyRsvpStatusIndicator } from "./CeremonyRsvpStatusIndicator";
+import { BulkRsvpControls } from "./BulkRsvpControls";
 import { Badge } from "@/components/ui/badge";
 import { MailOpen, CalendarClock } from "lucide-react";
 import { REGION_AWARD_NAMES } from "@/core/awards/types";
@@ -68,6 +70,7 @@ export function CeremonyInvitations({ invitations, day }: Props) {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
+        <BulkRsvpControls />
         {sorted.map((inv) => {
           const daysAway = inv.ceremonyDay - day;
           return (
@@ -85,13 +88,16 @@ export function CeremonyInvitations({ invitations, day }: Props) {
                     {REGION_AWARD_NAMES[inv.region]} · Year {inv.year}
                   </div>
                 </div>
-                <Badge
-                  variant="outline"
-                  className="border-gold-muted text-cream flex items-center gap-1 whitespace-nowrap"
-                >
-                  <CalendarClock className="w-3 h-3" />
-                  {daysAway > 0 ? `In ${daysAway} days` : "Held"}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <CeremonyRsvpStatusIndicator invitation={inv} day={day} />
+                  <Badge
+                    variant="outline"
+                    className="border-gold-muted text-cream flex items-center gap-1 whitespace-nowrap"
+                  >
+                    <CalendarClock className="w-3 h-3" />
+                    {daysAway > 0 ? `In ${daysAway} days` : "Held"}
+                  </Badge>
+                </div>
               </div>
               <ul className="text-sm text-cream-muted space-y-1">
                 {inv.qualifiers.slice(0, 4).map((q) => (

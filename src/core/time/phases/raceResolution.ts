@@ -47,7 +47,9 @@ export const raceResolutionPhase: PipelinePhase = {
     const { intents, state, newDay } = context;
     const impacts: AnyImpact[] = [];
     const updatedRaces: Record<string, Race> = { ...state.races };
-    const overdueRaces = Object.values(state.races).filter((r) => !r.resolved && r.day <= newDay);
+    const overdueRaces = Object.values(state.races).filter(
+      (r) => !r.resolved && !r.cancelled && r.day <= newDay,
+    );
 
     // PRE-INDEX: Use shared context maps built at pipeline entry
     const { horseMap, jockeyMap } = context;
@@ -283,7 +285,7 @@ export const raceResolutionPhase: PipelinePhase = {
     // Cleanup
     const prunedRaces = Object.fromEntries(
       Object.values(updatedRaces)
-        .filter((r) => !r.resolved || r.day >= newDay - 30)
+        .filter((r) => (!r.resolved && !r.cancelled) || r.day >= newDay - 30)
         .map((r) => [r.id, r]),
     );
 

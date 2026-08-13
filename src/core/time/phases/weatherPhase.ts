@@ -66,7 +66,7 @@ export const weatherPhase = {
     const trackIds = new Set<string>(Object.keys(existing));
 
     for (const race of Object.values(state.races)) {
-      if (race.resolved) continue;
+      if (race.resolved || race.cancelled) continue;
       if (race.day < newDay || race.day > newDay + WEATHER_FORECAST_DAYS) continue;
       const tid = raceTrackId(race);
       if (tid) trackIds.add(tid);

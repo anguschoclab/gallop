@@ -77,14 +77,21 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   const surface = race.surface || race.graded?.surface;
   const rng = rngForRace(race);
 
-  // 1. Prepare the full list of entry data
-  const entriesData: { horseId: string; owned: boolean; jockeyId?: string; weight?: number }[] = [];
+  // 1. Prepare the full list of entry data (carry barrier from pre-assigned draws)
+  const entriesData: {
+    horseId: string;
+    owned: boolean;
+    jockeyId?: string;
+    weight?: number;
+    barrier?: number;
+  }[] = [];
   for (const entry of race.entries) {
     entriesData.push({
       horseId: entry.horseId,
       owned: entry.owned,
       jockeyId: entry.jockeyId,
       weight: entry.weight,
+      barrier: entry.barrier,
     });
   }
 
@@ -110,13 +117,35 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
     entriesData.push({ horseId: aiHorse.id, owned: false, jockeyId: jk.id, weight });
   }
 
-  // 3. Shuffle all entries to assign unique barriers (1 to N)
-  // We use the race-seeded RNG for deterministic shuffling.
-  const shuffled = [...entriesData];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(rng.next() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  // 3. Assign barriers: respect pre-assigned barriers, shuffle the rest
+  const preAssigned = entriesData.filter((e) => e.barrier !== undefined);
+  const unassigned = entriesData.filter((e) => e.barrier === undefined);
+
+  const usedBarriers = new Set(preAssigned.map((e) => e.barrier!));
+  const totalSize = entriesData.length;
+  const remainingBarriers: number[] = [];
+  for (let b = 1; b <= totalSize; b++) {
+    if (!usedBarriers.has(b)) {
+      remainingBarriers.push(b);
+    }
   }
+
+  // Shuffle unassigned entries using Fisher-Yates with race-seeded RNG
+  const shuffledUnassigned = [...unassigned];
+  for (let i = shuffledUnassigned.length - 1; i > 0; i--) {
+    const j = Math.floor(rng.next() * (i + 1));
+    [shuffledUnassigned[i], shuffledUnassigned[j]] = [shuffledUnassigned[j], shuffledUnassigned[i]];
+  }
+
+  // Assign remaining barriers to shuffled unassigned entries
+  for (let i = 0; i < shuffledUnassigned.length; i++) {
+    shuffledUnassigned[i].barrier = remainingBarriers[i];
+  }
+
+  // Merge and sort by barrier number for final runner order
+  const allWithBarriers = [...preAssigned, ...shuffledUnassigned].sort(
+    (a, b) => (a.barrier ?? 0) - (b.barrier ?? 0),
+  );
 
   // 4. Build the final Runner objects with assigned barriers
   const horseMap =
@@ -137,9 +166,9 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   const fillerMap = new Map(fillerHorses.map((h) => [h.id, h]));
 
   const runners: Runner[] = [];
-  for (let i = 0; i < shuffled.length; i++) {
-    const entryData = shuffled[i];
-    const barrier = i + 1;
+  for (let i = 0; i < allWithBarriers.length; i++) {
+    const entryData = allWithBarriers[i];
+    const barrier = entryData.barrier!;
 
     // Find the horse
     const horse = horseMap.get(entryData.horseId) || fillerMap.get(entryData.horseId);

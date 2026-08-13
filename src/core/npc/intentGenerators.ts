@@ -120,7 +120,7 @@ export function generateNpcIntents(
 
   // Cache upcoming races and index them by region
   const upcomingRaces = Object.values(state.races).filter(
-    (r) => !r.resolved && r.day >= day && r.day <= day + 7,
+    (r) => !r.resolved && !r.cancelled && r.day >= day && r.day <= day + 7,
   );
 
   const racesByRegion = new Map<string, Race[]>();

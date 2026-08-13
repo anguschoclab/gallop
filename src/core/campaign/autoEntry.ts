@@ -63,11 +63,13 @@ export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
     let race: Race | undefined = slot.raceId ? raceMap.get(slot.raceId) : undefined;
 
     if (race && race.resolved) race = undefined;
+    if (race && race.cancelled) race = undefined;
 
     if (!race) {
       race = races.find(
         (r) =>
           !r.resolved &&
+          !r.cancelled &&
           r.day >= windowStart &&
           r.day <= windowEnd &&
           (!slot.constraintDistance || Math.abs(r.distance - slot.constraintDistance) <= 200) &&
@@ -129,6 +131,9 @@ export function reconcileSlotStatuses(
     const race = slot.raceId ? raceMap.get(slot.raceId) : undefined;
     if (race?.resolved) {
       return { ...slot, status: "completed" as const };
+    }
+    if (race?.cancelled) {
+      return { ...slot, status: "cancelled" as const };
     }
     return slot;
   });

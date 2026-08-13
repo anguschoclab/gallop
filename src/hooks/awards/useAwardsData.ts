@@ -1,10 +1,10 @@
 import { useMemo } from "react";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 
 export function useAwardsData() {
   const awards = useGame((s) => s.awards);
   const day = useGame((s) => s.day);
-  const invitations = useGame((s) => s.awardCeremonyInvitations) ?? [];
+  const invitations = useGameWithShallow((s) => s.awardCeremonyInvitations) ?? [];
   const year = Math.floor((day - 1) / 365) + 1;
 
   const playerAwards = awards.filter((a) => !a.stableId);

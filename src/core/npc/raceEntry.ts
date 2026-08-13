@@ -107,7 +107,7 @@ export function runNpcRaceEntry(
 
   // Look at races in the next daysAhead days
   const upcomingRaces = races.filter(
-    (r) => r.day > currentDay && r.day <= currentDay + daysAhead && !r.resolved,
+    (r) => r.day > currentDay && r.day <= currentDay + daysAhead && !r.resolved && !r.cancelled,
   );
 
   if (upcomingRaces.length === 0) return races;

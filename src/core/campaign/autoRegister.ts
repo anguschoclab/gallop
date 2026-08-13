@@ -188,6 +188,10 @@ export function calculateAutoRegisterEntries(
       return false;
     }
 
+    if (r.cancelled) {
+      return false;
+    }
+
     // Race must be in the future
     if (r.day <= day) {
       return false;

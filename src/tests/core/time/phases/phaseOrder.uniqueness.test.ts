@@ -21,4 +21,10 @@ describe("Phase order uniqueness", () => {
       expect(sorted[i].order).toBeLessThan(sorted[i + 1].order);
     }
   });
+
+  it("T47: raceCancellation phase exists with order 88", () => {
+    const phase = GAME_PIPELINE_PHASES.find((p) => p.name === "raceCancellation");
+    expect(phase).toBeDefined();
+    expect(phase!.order).toBe(88);
+  });
 });

@@ -525,4 +525,47 @@ describe("raceEntryResolutionPhase", () => {
       expect(jockeyIds).toEqual(["j-a", "j-b"]);
     });
   });
+
+  describe("cancelled races", () => {
+    it("25. should skip cancelled race — no race_entry impact emitted", () => {
+      const horse = createTestHorse({ id: "horse-1" });
+      const state: GameState = {
+        ...createTestState(),
+        horses: h2r([horse]),
+        races: r2r([
+          {
+            id: "race-cancelled",
+            name: "Cancelled Race",
+            day: 5,
+            distance: 2000,
+            raceClass: "Maiden",
+            entryFee: 500,
+            purse: 10000,
+            minStat: 70,
+            fieldSize: 8,
+            entries: [],
+            resolved: false,
+            cancelled: true,
+            cancelledReason: "Insufficient entries",
+          } as any,
+        ]),
+      };
+
+      const intent: RaceEntryIntent = {
+        id: "intent-1",
+        day: 1,
+        type: "race_entry",
+        entityId: "horse-1",
+        priority: 100,
+        source: "player",
+        horseId: "horse-1",
+        raceId: "race-cancelled",
+      };
+
+      const context = createTestContext(state, [intent]);
+      const result = raceEntryResolutionPhase.execute(context);
+
+      expect(result.impacts.filter((i) => i.type === "race_entry")).toHaveLength(0);
+    });
+  });
 });

@@ -79,6 +79,8 @@ export type Race = {
   entries: RaceEntry[];
   inquiries?: StewardsInquiry[];
   resolved: boolean;
+  cancelled?: boolean;
+  cancelledReason?: string;
   result?: RaceResult[];
   snapshots?: RaceSnapshot[];
   graded?: {

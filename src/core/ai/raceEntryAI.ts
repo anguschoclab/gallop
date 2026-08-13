@@ -357,7 +357,7 @@ export function generateMultiRaceStrategy(
 
   // Filter upcoming races
   const upcomingRaces = races.filter(
-    (r) => r.day > currentDay && r.day <= currentDay + daysAhead && !r.resolved,
+    (r) => r.day > currentDay && r.day <= currentDay + daysAhead && !r.resolved && !r.cancelled,
   );
 
   // Sort races by day and priority

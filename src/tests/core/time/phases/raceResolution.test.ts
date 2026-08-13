@@ -225,4 +225,45 @@ describe("raceResolutionPhase", () => {
   it("should have correct name", () => {
     expect(raceResolutionPhase.name).toBe("raceResolution");
   });
+
+  it("24. should skip cancelled races (not simulate them)", () => {
+    const race: Race = {
+      id: "race-cancelled",
+      name: "Cancelled Race",
+      day: 5,
+      distance: 2000,
+      raceClass: "Maiden",
+      entryFee: 500,
+      purse: 10000,
+      minStat: 70,
+      fieldSize: 8,
+      entries: [],
+      resolved: false,
+      cancelled: true,
+      cancelledReason: "Insufficient entries",
+    } as Race;
+
+    const state: GameState = makeGameState({
+      day: 10,
+      races: r2r([race]),
+      reputation: {
+        score: 50,
+        tier: "local",
+        events: [],
+        totalWins: 0,
+        gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 },
+        yearsActive: 1,
+      },
+    }) as GameState;
+
+    const context: PipelineContext = makePipelineContext({
+      previousDay: 9,
+      newDay: 10,
+      state,
+    }) as PipelineContext;
+
+    const result = raceResolutionPhase.execute(context);
+    expect(result.state.races["race-cancelled"].resolved).toBe(false);
+    expect(result.impacts.filter((i) => i.type === "race_result")).toHaveLength(0);
+  });
 });

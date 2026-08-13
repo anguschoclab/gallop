@@ -14,7 +14,7 @@ export function CircuitWidget() {
   const auctions = useGame((s) => s.auctions);
 
   const upcoming = Object.values(races)
-    .filter((r) => !r.resolved && r.day >= day)
+    .filter((r) => !r.resolved && !r.cancelled && r.day >= day)
     .sort((a, b) => a.day - b.day)
     .slice(0, 3);
 
