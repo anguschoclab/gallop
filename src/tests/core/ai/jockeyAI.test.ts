@@ -14,9 +14,26 @@ import {
   recordJockeyOutcome,
   getJockeyInsights,
 } from "@/core/ai/jockeyAI";
-import type { Jockey, Horse, Stable } from "@/game/types";
+import type { Jockey, Horse, Stable, Race } from "@/game/types";
 import type { JockeyStats } from "@/core/jockey/types";
 import { createTestHorse, createTestStable, createTestJockey } from "@/tests/helpers";
+
+function createMockRace(overrides: Partial<Race> = {}): Race {
+  return {
+    id: "race-1",
+    name: "Test Race",
+    day: 100,
+    distance: 1600,
+    surface: "Dirt",
+    raceClass: "Stakes",
+    entryFee: 100,
+    purse: 100000,
+    fieldSize: 8,
+    entries: [],
+    resolved: false,
+    ...overrides,
+  } as Race;
+}
 
 // Mock data setup
 function createMockJockey(overrides: Partial<Jockey> = {}): Jockey {
@@ -512,5 +529,175 @@ describe("recordJockeyOutcome", () => {
     );
 
     expect(stateWithOutcome.learningState.outcomes[0].success).toBe(false);
+  });
+});
+
+// ─── Trait-Aware Jockey Selection ───────────────────────────────────────────
+
+describe("calculateJockeySuitability — trait awareness with race context", () => {
+  it("boosts turf_specialist on Turf races", () => {
+    const state = createJockeyAIState(createMockStable());
+    const jockey = createMockJockey({
+      traits: ["turf_specialist"],
+      stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
+    });
+    const horse = createMockHorse();
+    const stable = createMockStable();
+    const turfRace = createMockRace({ surface: "Turf" });
+    const dirtRace = createMockRace({ surface: "Dirt" });
+
+    const turfScore = calculateJockeySuitability(state, jockey, horse, stable, turfRace);
+    const dirtScore = calculateJockeySuitability(state, jockey, horse, stable, dirtRace);
+
+    expect(turfScore).toBeGreaterThan(dirtScore);
+  });
+
+  it("boosts dirt_specialist on Dirt races", () => {
+    const state = createJockeyAIState(createMockStable());
+    const jockey = createMockJockey({
+      traits: ["dirt_specialist"],
+      stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
+    });
+    const horse = createMockHorse();
+    const stable = createMockStable();
+    const turfRace = createMockRace({ surface: "Turf" });
+    const dirtRace = createMockRace({ surface: "Dirt" });
+
+    const turfScore = calculateJockeySuitability(state, jockey, horse, stable, turfRace);
+    const dirtScore = calculateJockeySuitability(state, jockey, horse, stable, dirtRace);
+
+    expect(dirtScore).toBeGreaterThan(turfScore);
+  });
+
+  it("boosts sprint_specialist on short races", () => {
+    const state = createJockeyAIState(createMockStable());
+    const jockey = createMockJockey({
+      traits: ["sprint_specialist"],
+      stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
+    });
+    const horse = createMockHorse();
+    const stable = createMockStable();
+    const sprintRace = createMockRace({ distance: 1200 });
+    const stayingRace = createMockRace({ distance: 2400 });
+
+    const sprintScore = calculateJockeySuitability(state, jockey, horse, stable, sprintRace);
+    const stayingScore = calculateJockeySuitability(state, jockey, horse, stable, stayingRace);
+
+    expect(sprintScore).toBeGreaterThan(stayingScore);
+  });
+
+  it("boosts staying_specialist on long races", () => {
+    const state = createJockeyAIState(createMockStable());
+    const jockey = createMockJockey({
+      traits: ["staying_specialist"],
+      stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
+    });
+    const horse = createMockHorse();
+    const stable = createMockStable();
+    const sprintRace = createMockRace({ distance: 1200 });
+    const stayingRace = createMockRace({ distance: 2400 });
+
+    const sprintScore = calculateJockeySuitability(state, jockey, horse, stable, sprintRace);
+    const stayingScore = calculateJockeySuitability(state, jockey, horse, stable, stayingRace);
+
+    expect(stayingScore).toBeGreaterThan(sprintScore);
+  });
+
+  it("boosts mud_master on wet conditions", () => {
+    const state = createJockeyAIState(createMockStable());
+    const jockey = createMockJockey({
+      traits: ["mud_master"],
+      stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
+    });
+    const horse = createMockHorse();
+    const stable = createMockStable();
+    const wetRace = createMockRace({ trackCondition: "heavy", weather: "rainy" });
+    const dryRace = createMockRace({ trackCondition: "fast", weather: "sunny" });
+
+    const wetScore = calculateJockeySuitability(state, jockey, horse, stable, wetRace);
+    const dryScore = calculateJockeySuitability(state, jockey, horse, stable, dryRace);
+
+    expect(wetScore).toBeGreaterThan(dryScore);
+  });
+
+  it("boosts big_match_temperament in large fields", () => {
+    const state = createJockeyAIState(createMockStable());
+    const jockey = createMockJockey({
+      traits: ["big_match_temperament"],
+      stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
+    });
+    const horse = createMockHorse();
+    const stable = createMockStable();
+    const bigRace = createMockRace({ fieldSize: 16 });
+    const smallRace = createMockRace({ fieldSize: 6 });
+
+    const bigScore = calculateJockeySuitability(state, jockey, horse, stable, bigRace);
+    const smallScore = calculateJockeySuitability(state, jockey, horse, stable, smallRace);
+
+    expect(bigScore).toBeGreaterThan(smallScore);
+  });
+
+  it("does not apply trait bonuses without race context (backward compat)", () => {
+    const state = createJockeyAIState(createMockStable());
+    const traitJockey = createMockJockey({
+      traits: ["turf_specialist", "sprint_specialist"],
+      stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
+    });
+    const noTraitJockey = createMockJockey({
+      traits: [],
+      stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
+    });
+    const horse = createMockHorse();
+    const stable = createMockStable();
+
+    const traitScore = calculateJockeySuitability(state, traitJockey, horse, stable);
+    const noTraitScore = calculateJockeySuitability(state, noTraitJockey, horse, stable);
+
+    // Without race context, traits should not affect score
+    expect(traitScore).toBe(noTraitScore);
+  });
+});
+
+describe("selectBestJockey — trait-aware selection", () => {
+  it("prefers jockey with surface-matching trait", () => {
+    const state = createJockeyAIState(createMockStable());
+    const turfJockey = createMockJockey({
+      id: "turf-jockey",
+      traits: ["turf_specialist"],
+      stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
+    });
+    const dirtJockey = createMockJockey({
+      id: "dirt-jockey",
+      traits: ["dirt_specialist"],
+      stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
+    });
+    const horse = createMockHorse();
+    const stable = createMockStable();
+    const turfRace = createMockRace({ surface: "Turf" });
+
+    const best = selectBestJockey(state, horse, [dirtJockey, turfJockey], stable, turfRace);
+
+    expect(best?.id).toBe("turf-jockey");
+  });
+
+  it("prefers jockey with distance-matching trait", () => {
+    const state = createJockeyAIState(createMockStable());
+    const sprintJockey = createMockJockey({
+      id: "sprint-jockey",
+      traits: ["sprint_specialist"],
+      stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
+    });
+    const stayingJockey = createMockJockey({
+      id: "staying-jockey",
+      traits: ["staying_specialist"],
+      stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
+    });
+    const horse = createMockHorse();
+    const stable = createMockStable();
+    const sprintRace = createMockRace({ distance: 1200 });
+
+    const best = selectBestJockey(state, horse, [stayingJockey, sprintJockey], stable, sprintRace);
+
+    expect(best?.id).toBe("sprint-jockey");
   });
 });

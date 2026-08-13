@@ -141,7 +141,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
               const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
               const jockeyAI =
                 stableAI.jockeyAI || (stableAI.jockeyAI = createJockeyAIState(stable));
-              const chosen = selectBestJockey(jockeyAI, horse, freeAgents, stable);
+              const chosen = selectBestJockey(jockeyAI, horse, freeAgents, stable, race);
               if (chosen) {
                 jockeyId = chosen.id;
               }

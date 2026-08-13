@@ -13,7 +13,7 @@
  * Personality-driven jockey selection, retention, and contract negotiation
  */
 
-import type { Horse, Stable } from "@/game/types";
+import type { Horse, Stable, Race } from "@/game/types";
 import type { Jockey } from "@/game/types";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
 import { calculateRaceRating } from "@/core/horse/stats";
@@ -82,6 +82,7 @@ export function createJockeyAIState(stable: Stable): JockeyAIState {
  * @param jockey - The jockey to evaluate
  * @param horse - The horse to evaluate
  * @param stable - The stable making the decision
+ * @param race - Optional race context for trait-based bonuses
  * @returns Jockey suitability score (0-100)
  */
 export function calculateJockeySuitability(
@@ -89,6 +90,7 @@ export function calculateJockeySuitability(
   jockey: Jockey,
   horse: Horse | undefined,
   stable: Stable,
+  race?: Race,
 ): number {
   let score = 0;
 
@@ -121,6 +123,71 @@ export function calculateJockeySuitability(
   const adaptiveBonus = (successRate - 0.5) * 10;
   score += adaptiveBonus;
 
+  // Trait-based bonuses when race context is available
+  if (race) {
+    const traits = jockey.traits ?? [];
+    const surface = race.surface;
+    const distance = race.distance;
+    const fieldSize = race.entries.length || race.fieldSize;
+    const trackCondition = race.trackCondition;
+    const weather = race.weather;
+
+    // Surface specialists
+    if (surface === "Turf" && traits.includes("turf_specialist")) {
+      score += 8;
+    }
+    if (surface === "Dirt" && traits.includes("dirt_specialist")) {
+      score += 8;
+    }
+
+    // Distance specialists
+    if (distance < 1400 && traits.includes("sprint_specialist")) {
+      score += 8;
+    }
+    if (distance > 2200 && traits.includes("staying_specialist")) {
+      score += 8;
+    }
+
+    // Mud master on wet/heavy tracks
+    if (
+      traits.includes("mud_master") &&
+      (trackCondition === "heavy" ||
+        trackCondition === "soft" ||
+        trackCondition === "yielding" ||
+        weather === "rainy")
+    ) {
+      score += 8;
+    }
+
+    // Big match temperament in large fields
+    if (traits.includes("big_match_temperament") && fieldSize > 12) {
+      score += 6;
+    }
+
+    // Gate master for front-running horses
+    if (traits.includes("gate_master") && horse?.runningStyle === "E") {
+      score += 5;
+    }
+
+    // Closer instinct for stalking/closing horses
+    if (
+      traits.includes("closer_instinct") &&
+      (horse?.runningStyle === "S" || horse?.runningStyle === "P")
+    ) {
+      score += 5;
+    }
+
+    // Pace presser for presser horses
+    if (traits.includes("pace_presser") && horse?.runningStyle === "EP") {
+      score += 5;
+    }
+
+    // Veteran poise for experienced jockeys
+    if (traits.includes("veteran_poise") && jockey.age >= 35) {
+      score += 4;
+    }
+  }
+
   return Math.max(0, Math.min(100, score));
 }
 
@@ -134,6 +201,7 @@ export function calculateJockeySuitability(
  * @param horse - The horse to select jockey for
  * @param availableJockeys - List of available jockeys
  * @param stable - The stable making the decision
+ * @param race - Optional race context for trait-based selection
  * @returns Best jockey or null if no suitable jockey found
  */
 export function selectBestJockey(
@@ -141,13 +209,14 @@ export function selectBestJockey(
   horse: Horse | undefined,
   availableJockeys: Jockey[],
   stable: Stable,
+  race?: Race,
 ): Jockey | null {
   if (availableJockeys.length === 0) return null;
 
   const scoredJockeys = availableJockeys
     .map((jockey) => ({
       jockey,
-      score: calculateJockeySuitability(aiState, jockey, horse, stable),
+      score: calculateJockeySuitability(aiState, jockey, horse, stable, race),
     }))
     .filter((j) => j.score > 0)
     .sort((a, b) => b.score - a.score);

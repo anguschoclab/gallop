@@ -837,3 +837,197 @@ describe("applyAffinityBoost", () => {
     expect(result.aggressiveness).toBeLessThanOrEqual(100);
   });
 });
+
+// ─── Trait-Aware Strategy AI ─────────────────────────────────────────────────
+
+describe("calculateOptimalRunningStyle — trait awareness", () => {
+  it("gate_master trait boosts front-running style score", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const gateJockey = createMockJockey({ traits: ["gate_master"] });
+    const noTraitJockey = createMockJockey({ traits: [] });
+    const horse = createMockHorse({ energy: 85, runningStyle: "E" });
+    const race = createMockRace({ distance: 1200 });
+    const stable = createMockStable();
+
+    const gateStyle = calculateOptimalRunningStyle(state, horse, race, gateJockey, stable);
+    const noTraitStyle = calculateOptimalRunningStyle(state, horse, race, noTraitJockey, stable);
+
+    // gate_master should bias toward E (front-running)
+    expect(gateStyle).toBe("E");
+    // Without trait, may still pick E but gate_master reinforces it
+    expect(["E", "EP", "P", "S"]).toContain(noTraitStyle);
+  });
+
+  it("closer_instinct trait boosts closer style score", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const closerJockey = createMockJockey({
+      traits: ["closer_instinct"],
+      archetype: "closer",
+      stats: { pacing: 85, positioning: 85, vigor: 85, gateSkill: 70, temperament: 75 },
+    });
+    const horse = createMockHorse({ energy: 75, runningStyle: "S", distanceAptitude: 1800 });
+    const race = createMockRace({ distance: 1800 });
+    const stable = createMockStable();
+
+    const style = calculateOptimalRunningStyle(state, horse, race, closerJockey, stable);
+
+    // closer_instinct should bias toward S or P
+    expect(["S", "P"]).toContain(style);
+  });
+
+  it("sprint_specialist trait boosts front-running on short races", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const sprintJockey = createMockJockey({ traits: ["sprint_specialist"] });
+    const horse = createMockHorse({ energy: 85, runningStyle: "E" });
+    const sprintRace = createMockRace({ distance: 1000 });
+    const stable = createMockStable();
+
+    const style = calculateOptimalRunningStyle(state, horse, sprintRace, sprintJockey, stable);
+
+    expect(style).toBe("E");
+  });
+
+  it("staying_specialist trait boosts closer on long races", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const stayingJockey = createMockJockey({
+      traits: ["staying_specialist"],
+      archetype: "closer",
+      stats: { pacing: 85, positioning: 85, vigor: 85, gateSkill: 70, temperament: 75 },
+    });
+    const horse = createMockHorse({ energy: 75, runningStyle: "S", distanceAptitude: 2400 });
+    const stayingRace = createMockRace({ distance: 2400 });
+    const stable = createMockStable();
+
+    const style = calculateOptimalRunningStyle(state, horse, stayingRace, stayingJockey, stable);
+
+    expect(["S", "P"]).toContain(style);
+  });
+});
+
+describe("calculateOptimalTactics — trait awareness", () => {
+  it("gate_master jockey gets more aggressive early tactics", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const gateJockey = createMockJockey({ traits: ["gate_master"] });
+    const noTraitJockey = createMockJockey({ traits: [] });
+    const horse = createMockHorse({ recoveryPoints: 80, runningStyle: "E" });
+    const race = createMockRace({ distance: 1200 });
+    const stable = createMockStable();
+
+    const gateTactics = calculateOptimalTactics(state, horse, race, gateJockey, stable);
+    const noTraitTactics = calculateOptimalTactics(state, horse, race, noTraitJockey, stable);
+
+    // gate_master should get equal or more aggressive early position
+    expect(gateTactics.aggressiveness).toBeGreaterThanOrEqual(noTraitTactics.aggressiveness);
+  });
+
+  it("big_match_temperament jockey gets more aggressive in large fields", () => {
+    const conservativeStable = createMockStable({ personality: "conservative" });
+    const state = createJockeyStrategyAIState(conservativeStable);
+    const bigMatchJockey = createMockJockey({ traits: ["big_match_temperament"] });
+    const noTraitJockey = createMockJockey({ traits: [] });
+    const horse = createMockHorse({ recoveryPoints: 80, runningStyle: "P" });
+    const bigRace = createMockRace({
+      fieldSize: 16,
+      entries: Array.from({ length: 15 }, (_, i) => ({ horseId: `h${i}`, owned: false })),
+    });
+
+    const bigMatchTactics = calculateOptimalTactics(
+      state,
+      horse,
+      bigRace,
+      bigMatchJockey,
+      conservativeStable,
+    );
+    const noTraitTactics = calculateOptimalTactics(
+      state,
+      horse,
+      bigRace,
+      noTraitJockey,
+      conservativeStable,
+    );
+
+    expect(bigMatchTactics.aggressiveness).toBeGreaterThan(noTraitTactics.aggressiveness);
+  });
+
+  it("pace_presser jockey gets more aggressive early tactics for E style", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const pacePresserJockey = createMockJockey({ traits: ["pace_presser"] });
+    const noTraitJockey = createMockJockey({ traits: [] });
+    const horse = createMockHorse({ recoveryPoints: 80, runningStyle: "E" });
+    const race = createMockRace();
+    const stable = createMockStable();
+
+    const ppTactics = calculateOptimalTactics(state, horse, race, pacePresserJockey, stable);
+    const noTraitTactics = calculateOptimalTactics(state, horse, race, noTraitJockey, stable);
+
+    expect(ppTactics.aggressiveness).toBeGreaterThanOrEqual(noTraitTactics.aggressiveness);
+  });
+
+  it("veteran_poise jockey gets more conservative, consistent tactics", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const veteranJockey = createMockJockey({ traits: ["veteran_poise"], age: 38 });
+    const youngJockey = createMockJockey({ traits: [], age: 22 });
+    const horse = createMockHorse({ recoveryPoints: 80, runningStyle: "P" });
+    const race = createMockRace();
+    const stable = createMockStable();
+
+    const veteranTactics = calculateOptimalTactics(state, horse, race, veteranJockey, stable);
+    const youngTactics = calculateOptimalTactics(state, horse, race, youngJockey, stable);
+
+    // Veteran should be more measured — not excessively aggressive
+    expect(veteranTactics.aggressiveness).toBeLessThanOrEqual(youngTactics.aggressiveness + 5);
+  });
+});
+
+describe("calculateJockeyAggressiveness — trait awareness", () => {
+  it("pace_presser trait increases aggressiveness for front-runners", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const pacePresserJockey = createMockJockey({ traits: ["pace_presser"] });
+    const noTraitJockey = createMockJockey({ traits: [] });
+    const horse = createMockHorse({ runningStyle: "E" });
+    const race = createMockRace();
+    const stable = createMockStable();
+
+    const ppAggr = calculateJockeyAggressiveness(state, horse, race, pacePresserJockey, stable);
+    const noTraitAggr = calculateJockeyAggressiveness(state, horse, race, noTraitJockey, stable);
+
+    expect(ppAggr).toBeGreaterThan(noTraitAggr);
+  });
+
+  it("veteran_poise trait slightly reduces aggressiveness for older jockeys", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const veteranJockey = createMockJockey({ traits: ["veteran_poise"], age: 38 });
+    const noTraitJockey = createMockJockey({ traits: [], age: 38 });
+    const horse = createMockHorse();
+    const race = createMockRace();
+    const stable = createMockStable();
+
+    const vetAggr = calculateJockeyAggressiveness(state, horse, race, veteranJockey, stable);
+    const noTraitAggr = calculateJockeyAggressiveness(state, horse, race, noTraitJockey, stable);
+
+    expect(vetAggr).toBeLessThanOrEqual(noTraitAggr);
+  });
+
+  it("big_match_temperament increases aggressiveness in large fields", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const bigMatchJockey = createMockJockey({ traits: ["big_match_temperament"] });
+    const noTraitJockey = createMockJockey({ traits: [] });
+    const horse = createMockHorse();
+    const bigRace = createMockRace({
+      fieldSize: 16,
+      entries: Array.from({ length: 15 }, (_, i) => ({ horseId: `h${i}`, owned: false })),
+    });
+    const stable = createMockStable();
+
+    const bigMatchAggr = calculateJockeyAggressiveness(
+      state,
+      horse,
+      bigRace,
+      bigMatchJockey,
+      stable,
+    );
+    const noTraitAggr = calculateJockeyAggressiveness(state, horse, bigRace, noTraitJockey, stable);
+
+    expect(bigMatchAggr).toBeGreaterThan(noTraitAggr);
+  });
+});

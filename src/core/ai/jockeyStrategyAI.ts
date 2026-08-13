@@ -201,7 +201,61 @@ export function calculateOptimalTactics(
     }
   }
 
-  return baseInstructions;
+  // Trait-based tactic adjustments
+  const traits = jockey.traits ?? [];
+  let traitAdjustedInstructions = baseInstructions;
+
+  // gate_master: more aggressive early position for front-runners
+  if (traits.includes("gate_master") && horse.runningStyle === "E") {
+    traitAdjustedInstructions = {
+      ...traitAdjustedInstructions,
+      aggressiveness: Math.min(100, traitAdjustedInstructions.aggressiveness + 5),
+      earlyPosition:
+        traitAdjustedInstructions.earlyPosition === "press"
+          ? "lead"
+          : traitAdjustedInstructions.earlyPosition,
+    };
+  }
+
+  // pace_presser: more aggressive for early pressers
+  if (
+    traits.includes("pace_presser") &&
+    (horse.runningStyle === "E" || horse.runningStyle === "EP")
+  ) {
+    traitAdjustedInstructions = {
+      ...traitAdjustedInstructions,
+      aggressiveness: Math.min(100, traitAdjustedInstructions.aggressiveness + 5),
+    };
+  }
+
+  // big_match_temperament: more aggressive in large fields
+  if (traits.includes("big_match_temperament") && fieldSize > 12) {
+    traitAdjustedInstructions = {
+      ...traitAdjustedInstructions,
+      aggressiveness: Math.min(100, traitAdjustedInstructions.aggressiveness + 8),
+    };
+  }
+
+  // veteran_poise: more measured, slightly reduce aggressiveness for older jockeys
+  if (traits.includes("veteran_poise") && jockey.age >= 35) {
+    traitAdjustedInstructions = {
+      ...traitAdjustedInstructions,
+      aggressiveness: Math.max(20, traitAdjustedInstructions.aggressiveness - 3),
+    };
+  }
+
+  // closer_instinct: favor late move timing for closers
+  if (
+    traits.includes("closer_instinct") &&
+    (horse.runningStyle === "S" || horse.runningStyle === "P")
+  ) {
+    traitAdjustedInstructions = {
+      ...traitAdjustedInstructions,
+      moveTiming: "late",
+    };
+  }
+
+  return traitAdjustedInstructions;
 }
 
 /**
@@ -443,6 +497,20 @@ function calculateStyleScore(
   const adaptiveBonus = (successRate - 0.5) * 15;
   score += adaptiveBonus;
 
+  // Trait-based style preferences (applied after utility scoring to differentiate)
+  const traits = jockey.traits ?? [];
+  if (traits.includes("gate_master") && style === "E") score += 15;
+  if (traits.includes("closer_instinct") && (style === "S" || style === "P")) score += 15;
+  if (traits.includes("pace_presser") && (style === "E" || style === "EP")) score += 10;
+  if (traits.includes("sprint_specialist") && race.distance < 1400 && style === "E") score += 10;
+  if (
+    traits.includes("staying_specialist") &&
+    race.distance > 2200 &&
+    (style === "S" || style === "P")
+  )
+    score += 10;
+  if (traits.includes("big_match_temperament") && race.fieldSize > 12 && style === "S") score += 8;
+
   return score;
 }
 
@@ -484,6 +552,28 @@ export function calculateJockeyAggressiveness(
 
   // Jockey temperament
   aggressiveness += (jockey.stats.temperament - 50) / 200; // -0.25 to +0.25
+
+  // Trait-based aggressiveness adjustments
+  const traits = jockey.traits ?? [];
+
+  // pace_presser: more aggressive for front-runners/pressers
+  if (
+    traits.includes("pace_presser") &&
+    (horse.runningStyle === "E" || horse.runningStyle === "EP")
+  ) {
+    aggressiveness += 0.08;
+  }
+
+  // veteran_poise: slightly more measured for older jockeys
+  if (traits.includes("veteran_poise") && jockey.age >= 35) {
+    aggressiveness -= 0.05;
+  }
+
+  // big_match_temperament: more aggressive in large fields
+  const fieldSize = race.entries.length || race.fieldSize;
+  if (traits.includes("big_match_temperament") && fieldSize > 12) {
+    aggressiveness += 0.07;
+  }
 
   // Learning-based adjustment
   const contextKey = `${horse.age}:${race.distance}`;
