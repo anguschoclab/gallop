@@ -115,11 +115,7 @@ describe("calculateTraitAffinitySynergy", () => {
 
   it("caps at 2.0 with multiple matching traits", () => {
     const j = mkJockey({
-      traits: [
-        "gate_master",
-        "closer_instinct",
-        "pace_presser",
-      ] as JockeyTrait[],
+      traits: ["gate_master", "closer_instinct", "pace_presser"] as JockeyTrait[],
     });
     const h = mkHorse({ runningStyle: "E" });
     // gate_master + E = +0.5, closer_instinct + E = no match, pace_presser + E = no match

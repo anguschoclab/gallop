@@ -146,9 +146,7 @@ export function PersonFormCharts({ entries }: PersonFormChartsProps) {
             footnote="Prize money returned per run"
             info="Average prize money banked per start, smoothed over the last 10 starts. Higher means each ride is paying more."
             infoFormula="Σ purse earned (last 10 starts) ÷ number of those starts."
-            legend={[
-              { label: "Return per run", color: chartColors.secondary, variant: "line" },
-            ]}
+            legend={[{ label: "Return per run", color: chartColors.secondary, variant: "line" }]}
           >
             {derived.profitability.length < 2 ? (
               <div className="px-2 py-5 text-center font-mono text-xs text-cream/60">
@@ -181,7 +179,12 @@ export function PersonFormCharts({ entries }: PersonFormChartsProps) {
               <StackedRatioBar
                 segments={[
                   { key: "w", label: "Win", value: derived.finish[0], color: chartColors.primary },
-                  { key: "p", label: "2nd", value: derived.finish[1], color: chartColors.secondary },
+                  {
+                    key: "p",
+                    label: "2nd",
+                    value: derived.finish[1],
+                    color: chartColors.secondary,
+                  },
                   { key: "s", label: "3rd", value: derived.finish[2], color: chartColors.tertiary },
                   { key: "o", label: "4th+", value: derived.finish[3], color: chartColors.slate },
                 ]}
