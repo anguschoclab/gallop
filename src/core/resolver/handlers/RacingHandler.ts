@@ -212,7 +212,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   triple_crown_progress: (draft, impact) => {
     const { horseId, triplecrownKey, year, legs, won } = impact as TripleCrownProgressImpact;
     if (!draft.triplecrownHistory) draft.triplecrownHistory = [];
-    const tcHistoryMap = new Map<string, any>();
+    const tcHistoryMap = new Map<string, NonNullable<typeof draft.triplecrownHistory>[number]>();
     for (const t of draft.triplecrownHistory) {
       tcHistoryMap.set(`${t.horseId}:${t.triplecrownKey}:${t.year}`, t);
     }
