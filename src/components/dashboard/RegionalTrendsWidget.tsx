@@ -5,7 +5,6 @@
  * trainers and stables behind that region for the selected time window.
  */
 import { useMemo, useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 import { ChartCard, AreaTrend, MiniBar, chartColors, formatCurrencyCompact } from "@/components/charts";
@@ -13,13 +12,11 @@ import { TimeWindowSelect } from "@/components/analytics/TimeWindowSelect";
 import { useTimeWindow } from "@/hooks/analytics/useTimeWindow";
 import { timeWindowLabel } from "@/core/analytics/timeWindow";
 import {
-  computeRegionDrilldown,
   computeRegionTrends,
   regionNameFor,
   type RegionKey,
 } from "@/core/analytics/regionalTrends";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RegionDrilldownDrawer } from "./RegionDrilldownDrawer";
 import { Globe2 } from "lucide-react";
 
 export function RegionalTrendsWidget() {
@@ -58,19 +55,6 @@ export function RegionalTrendsWidget() {
     }
     return { jockeyNames, stableNames, trainerByStable };
   }, [jockeys, npcStables, hiredStaff, staffPool, stableName]);
-
-  const drilldown = useMemo(() => {
-    if (!openRegion) return null;
-    return computeRegionDrilldown({
-      horses,
-      races,
-      currentDay: day,
-      weeks,
-      ownedOnly: true,
-      region: openRegion,
-      ...lookups,
-    });
-  }, [openRegion, horses, races, day, weeks, lookups]);
 
   const totals = useMemo(
     () => ({
@@ -161,114 +145,15 @@ export function RegionalTrendsWidget() {
         </div>
       )}
 
-      <Dialog open={!!openRegion} onOpenChange={(o) => !o && setOpenRegion(null)}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-cream">
-              {openRegion ? regionNameFor(openRegion) : ""} ·{" "}
-              <span className="font-mono text-xs uppercase tracking-wider text-cream/50">
-                last {timeWindowLabel(weeks)}
-              </span>
-            </DialogTitle>
-          </DialogHeader>
-          {drilldown ? (
-            <Tabs defaultValue="jockeys">
-              <TabsList>
-                <TabsTrigger value="jockeys">Jockeys ({drilldown.jockeys.length})</TabsTrigger>
-                <TabsTrigger value="trainers">Trainers ({drilldown.trainers.length})</TabsTrigger>
-                <TabsTrigger value="stables">Stables ({drilldown.stables.length})</TabsTrigger>
-                <TabsTrigger value="runs">Runs ({drilldown.runs.length})</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="jockeys">
-                <EntityList
-                  rows={drilldown.jockeys}
-                  linkFor={(id) => ({ to: "/jockey/$jockeyId", params: { jockeyId: id } })}
-                />
-              </TabsContent>
-              <TabsContent value="trainers">
-                <EntityList
-                  rows={drilldown.trainers}
-                  linkFor={(id) => ({ to: "/staff/$staffId", params: { staffId: id } })}
-                />
-              </TabsContent>
-              <TabsContent value="stables">
-                <EntityList
-                  rows={drilldown.stables}
-                  linkFor={(id) =>
-                    id === "player"
-                      ? null
-                      : { to: "/npc-stables/$stableId", params: { stableId: id } }
-                  }
-                />
-              </TabsContent>
-              <TabsContent value="runs">
-                <ul className="max-h-[320px] space-y-1 overflow-y-auto pt-2">
-                  {drilldown.runs.map((r, i) => (
-                    <li
-                      key={`${r.entry.raceId}-${r.horseId}-${i}`}
-                      className="flex items-center justify-between gap-3 rounded-md bg-white/[0.03] px-2 py-1.5 text-[11px]"
-                    >
-                      <span className="truncate text-cream/80">
-                        {r.entry.raceName}
-                        <span className="ml-2 font-mono text-cream/40">D{r.entry.day}</span>
-                      </span>
-                      <span className="shrink-0 font-mono tabular-nums text-cream/60">
-                        {r.horseName} · {r.entry.position}
-                        {r.isG1 ? " · G1" : ""} ·{" "}
-                        {formatCurrencyCompact(r.entry.purseEarned ?? 0)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </TabsContent>
-            </Tabs>
-          ) : null}
-        </DialogContent>
-      </Dialog>
+      <RegionDrilldownDrawer
+        region={openRegion}
+        onClose={() => setOpenRegion(null)}
+        horses={horses}
+        races={races}
+        currentDay={day}
+        weeks={weeks}
+        lookups={lookups}
+      />
     </div>
-  );
-}
-
-interface EntityListProps {
-  rows: { id: string; name: string; starts: number; wins: number; top3: number; earnings: number; g1Top3: number }[];
-  linkFor: (id: string) => { to: string; params: Record<string, string> } | null;
-}
-
-function EntityList({ rows, linkFor }: EntityListProps) {
-  if (rows.length === 0) {
-    return (
-      <p className="py-6 text-center text-[11px] font-mono uppercase tracking-wider text-cream/40">
-        Nothing recorded for this region in the selected window.
-      </p>
-    );
-  }
-  return (
-    <ul className="max-h-[320px] space-y-1 overflow-y-auto pt-2">
-      {rows.map((r) => {
-        const link = linkFor(r.id);
-        const body = (
-          <div className="flex items-center justify-between gap-3 rounded-md bg-white/[0.03] px-2 py-1.5 text-[11px] hover:bg-white/[0.06]">
-            <span className="truncate text-cream/85">{r.name}</span>
-            <span className="shrink-0 font-mono tabular-nums text-cream/60">
-              {r.starts} starts · {r.wins}W · {r.top3} top-3 · {r.g1Top3} G1 ·{" "}
-              {formatCurrencyCompact(r.earnings)}
-            </span>
-          </div>
-        );
-        return (
-          <li key={r.id}>
-            {link ? (
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              <Link to={link.to as any} params={link.params as any} className="block">
-                {body}
-              </Link>
-            ) : (
-              body
-            )}
-          </li>
-        );
-      })}
-    </ul>
   );
 }
