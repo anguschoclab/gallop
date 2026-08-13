@@ -6,6 +6,8 @@ import { cn } from "@/lib/cn";
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import type { ReactNode } from "react";
+import { MetricInfo } from "./MetricInfo";
+import { ChartLegend, type LegendItem } from "./ChartLegend";
 
 interface ChartCardProps {
   title: string;
@@ -15,6 +17,12 @@ interface ChartCardProps {
   href?: string;
   className?: string;
   bodyClassName?: string;
+  /** Plain-language definition of the metric, shown behind an info tooltip. */
+  info?: string;
+  /** How the metric is computed (second tooltip line). */
+  infoFormula?: string;
+  /** Swatch legend rendered under the header. */
+  legend?: LegendItem[];
   children: ReactNode;
 }
 
@@ -26,6 +34,9 @@ export function ChartCard({
   href,
   className,
   bodyClassName,
+  info,
+  infoFormula,
+  legend,
   children,
 }: ChartCardProps) {
   const inner = (
@@ -40,9 +51,12 @@ export function ChartCard({
     >
       <header className="flex items-start justify-between gap-3 px-4 pt-3.5 pb-2">
         <div className="min-w-0">
-          <h3 className="text-[11px] font-semibold uppercase tracking-[0.15em] text-cream/70 truncate">
-            {title}
-          </h3>
+          <div className="flex items-center gap-1.5">
+            <h3 className="text-[11px] font-semibold uppercase tracking-[0.15em] text-cream/70 truncate">
+              {title}
+            </h3>
+            {info ? <MetricInfo definition={info} formula={infoFormula} /> : null}
+          </div>
           {subtitle ? (
             <div className="mt-1 text-cream font-mono text-lg leading-tight tabular-nums">
               {subtitle}
@@ -56,6 +70,11 @@ export function ChartCard({
           ) : null}
         </div>
       </header>
+      {legend && legend.length ? (
+        <div className="px-4 pb-2">
+          <ChartLegend items={legend} />
+        </div>
+      ) : null}
       <div className={cn("flex-1 min-h-0 px-2 pb-2 overflow-hidden", bodyClassName)}>
         {children}
       </div>
