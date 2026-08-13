@@ -42,7 +42,7 @@ describe("BuyNowDialog", () => {
       />,
     );
     const trigger = getByRole("button", { name: /Buy Now/i }).parentElement;
-    fireEvent.pointerEnter(trigger);
+    fireEvent.pointerEnter(trigger!);
 
     // In our test environment without a real pointer system/layout,
     // radix tooltip might not pop open automatically with just pointerEnter.
