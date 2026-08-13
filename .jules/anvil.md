@@ -1,0 +1,3 @@
+## 2026-08-13 - Stricter type for Jockey state update in RacingHandler
+**Learning:** Found an instance of `as any` in `RacingHandler.ts` where `jockey` was cast to `any` before mutating properties and passing to functions like `awardTraitXp`. The explicit `any` disabled type checking for those state updates and the function arguments, which is a hole in core logic (game simulation impacts).
+**Action:** Replaced `as any` with a proper top-level `import type { Jockey }` and narrowed the cast to `as unknown as Jockey` to enforce proper strict typing without modifying runtime behavior. Ensure strict domain entity types during state mutations.
