@@ -4,5 +4,7 @@ export { DeltaPill } from "./DeltaPill";
 export { MiniBar } from "./MiniBar";
 export { AreaTrend } from "./AreaTrend";
 export { StackedRatioBar } from "./StackedRatioBar";
+export { MetricInfo } from "./MetricInfo";
+export { ChartLegend, type LegendItem } from "./ChartLegend";
 export * from "./chartTheme";
 export * from "./useChartFormat";
