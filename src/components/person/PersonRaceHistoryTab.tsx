@@ -104,6 +104,8 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
 
       <PersonFormCharts entries={filteredRows.map((r) => r.entry)} />
 
+      <PersonMixCharts entries={filteredRows.map((r) => r.entry)} />
+
       <div className="flex items-center gap-2">
         <Select value={gradeFilter} onValueChange={(v) => setGradeFilter(v as GradeFilter)}>
           <SelectTrigger data-testid="grade-filter" className="w-[140px] h-8 text-xs">
