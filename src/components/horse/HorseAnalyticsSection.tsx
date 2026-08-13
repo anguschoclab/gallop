@@ -16,6 +16,7 @@ interface HorseAnalyticsSectionProps {
 
 export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyticsSectionProps) {
   const insight = getHorseInsight(horse);
+  const transactions = useGame((s) => s.transactions ?? []);
   return (
     <section id="beyer" className="space-y-4 pt-4">
       <div className="flex items-center gap-2 mb-2">
