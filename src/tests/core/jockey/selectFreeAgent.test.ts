@@ -7,7 +7,13 @@ function mkHorse(overrides: Partial<ReturnType<typeof createTestHorse>> = {}) {
 }
 
 function mkJockey(overrides: Partial<ReturnType<typeof createTestJockey>> = {}) {
-  return createTestJockey({ id: "j1", fame: 50, archetype: "versatile", affinityMap: {}, ...overrides });
+  return createTestJockey({
+    id: "j1",
+    fame: 50,
+    archetype: "versatile",
+    affinityMap: {},
+    ...overrides,
+  });
 }
 
 describe("scoreJockeyChemistry", () => {
@@ -50,7 +56,9 @@ describe("scoreJockeyChemistry", () => {
     const frontRunner = mkJockey({ archetype: "front_runner", fame: 50, affinityMap: {} });
     const closer = mkJockey({ archetype: "closer", fame: 50, affinityMap: {} });
     // E + front_runner = High (+20); E + closer = Poor (-15)
-    expect(scoreJockeyChemistry(horse, frontRunner)).toBeGreaterThan(scoreJockeyChemistry(horse, closer));
+    expect(scoreJockeyChemistry(horse, frontRunner)).toBeGreaterThan(
+      scoreJockeyChemistry(horse, closer),
+    );
   });
 
   it("applies compatibility penalty for Poor match", () => {
@@ -98,7 +106,9 @@ describe("selectBestFreeAgentJockey", () => {
     });
     // lowFame: 40*0.5 + 50 + 20(High) = 90
     // highFame: 90*0.5 + 0 + 20(High) = 65
-    expect(selectBestFreeAgentJockey(horse, [highFameNoAffinity, lowFameAffinity])).toBe(lowFameAffinity);
+    expect(selectBestFreeAgentJockey(horse, [highFameNoAffinity, lowFameAffinity])).toBe(
+      lowFameAffinity,
+    );
   });
 
   it("selects higher-fame jockey when both have low affinity", () => {
@@ -116,12 +126,19 @@ describe("selectBestFreeAgentJockey", () => {
       affinityMap: { "horse-1": 20 },
     });
     // hf: 45 + 2 + 20 = 67; lf: 5 + 2 + 20 = 27
-    expect(selectBestFreeAgentJockey(horse, [lowFameLowAffinity, highFameLowAffinity])).toBe(highFameLowAffinity);
+    expect(selectBestFreeAgentJockey(horse, [lowFameLowAffinity, highFameLowAffinity])).toBe(
+      highFameLowAffinity,
+    );
   });
 
   it("penalizes Poor compatibility: equal fame, High vs Poor", () => {
     const horse = mkHorse({ runningStyle: "E" });
-    const highCompat = mkJockey({ id: "high", fame: 50, archetype: "front_runner", affinityMap: {} });
+    const highCompat = mkJockey({
+      id: "high",
+      fame: 50,
+      archetype: "front_runner",
+      affinityMap: {},
+    });
     const poorCompat = mkJockey({ id: "poor", fame: 50, archetype: "closer", affinityMap: {} });
     // high: 25 + 0 + 20 = 45; poor: 25 + 0 - 15 = 10
     expect(selectBestFreeAgentJockey(horse, [poorCompat, highCompat])).toBe(highCompat);
@@ -130,9 +147,21 @@ describe("selectBestFreeAgentJockey", () => {
   it("High compatibility can overcome up to 20 fame difference vs Neutral", () => {
     const horse = mkHorse({ runningStyle: "E" });
     // E + front_runner = High (+20); E + finisher = Neutral (0)
-    const highCompatLowerFame = mkJockey({ id: "hc", fame: 60, archetype: "front_runner", affinityMap: {} });
-    const neutralHigherFame = mkJockey({ id: "n", fame: 80, archetype: "finisher", affinityMap: {} });
+    const highCompatLowerFame = mkJockey({
+      id: "hc",
+      fame: 60,
+      archetype: "front_runner",
+      affinityMap: {},
+    });
+    const neutralHigherFame = mkJockey({
+      id: "n",
+      fame: 80,
+      archetype: "finisher",
+      affinityMap: {},
+    });
     // hc: 30 + 0 + 20 = 50; n: 40 + 0 + 0 = 40
-    expect(selectBestFreeAgentJockey(horse, [neutralHigherFame, highCompatLowerFame])).toBe(highCompatLowerFame);
+    expect(selectBestFreeAgentJockey(horse, [neutralHigherFame, highCompatLowerFame])).toBe(
+      highCompatLowerFame,
+    );
   });
 });

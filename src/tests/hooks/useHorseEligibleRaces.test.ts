@@ -334,7 +334,13 @@ describe("deriveEligibleRaces — chemistry-aware jockey fee estimation", () => 
       archetype: "versatile",
       affinityMap: { h1: 500 },
     });
-    const result = deriveEligibleRaces(horse, [race], [famousJockey, affinityJockey], 100000, baseDay);
+    const result = deriveEligibleRaces(
+      horse,
+      [race],
+      [famousJockey, affinityJockey],
+      100000,
+      baseDay,
+    );
     expect(result.length).toBe(1);
     // Should pick the affinity jockey's fee (150), not the famous jockey's fee (500)
     expect(result[0].estimatedJockeyFee).toBe(150);

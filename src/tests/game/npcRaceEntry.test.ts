@@ -320,7 +320,15 @@ describe("runNpcRaceEntry", () => {
       lastRaceDay: 0,
     });
 
-    const result = runNpcRaceEntry([stable], [horse], [famousJockey, affinityJockey], [race], 1, createRng("test"), 3);
+    const result = runNpcRaceEntry(
+      [stable],
+      [horse],
+      [famousJockey, affinityJockey],
+      [race],
+      1,
+      createRng("test"),
+      3,
+    );
     const entry = result.find((r) => r.id === "r1")!.entries.find((e) => e.horseId === "h1");
     expect(entry).toBeDefined();
     expect(entry!.jockeyId).toBe("j-affinity");
