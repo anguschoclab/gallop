@@ -4,7 +4,7 @@ import {
   isHorseEligibleForClaimingPrice,
   getSuggestedClaimingPriceRange,
   validateClaimingRace,
-  type ClaimAttempt
+  type ClaimAttempt,
 } from "@/core/market/claiming";
 import { createTestHorse } from "@/tests/helpers";
 import type { Race } from "@/core/race/types";
@@ -36,7 +36,12 @@ describe("Claiming Mechanics", () => {
     });
 
     it("processes a single valid claim", () => {
-      const race = createTestRace({ id: "race-1", resolved: true, claimingPrice: 10000, name: "Test Race" });
+      const race = createTestRace({
+        id: "race-1",
+        resolved: true,
+        claimingPrice: 10000,
+        name: "Test Race",
+      });
       const horse = createTestHorse({ id: "horse-1", stableId: "stable-1", name: "Test Horse" });
       const claim: ClaimAttempt = {
         claimantStableId: "stable-2",
@@ -62,11 +67,21 @@ describe("Claiming Mechanics", () => {
       const race = createTestRace({ id: "race-1", resolved: true, claimingPrice: 10000 });
       const horse = createTestHorse({ id: "horse-1", stableId: "stable-1" });
       const claims: ClaimAttempt[] = [
-        { claimantStableId: "stable-2", horseId: "horse-1", claimingPrice: 10000, successful: false },
-        { claimantStableId: "stable-3", horseId: "horse-1", claimingPrice: 10000, successful: false },
+        {
+          claimantStableId: "stable-2",
+          horseId: "horse-1",
+          claimingPrice: 10000,
+          successful: false,
+        },
+        {
+          claimantStableId: "stable-3",
+          horseId: "horse-1",
+          claimingPrice: 10000,
+          successful: false,
+        },
       ];
 
-      const rng = createTestRng(1); // Ensure deterministic selection
+      const rng = createTestRng("1"); // Ensure deterministic selection
       const { transfers } = processClaims(race, claims, [horse], 1, rng);
       expect(transfers).toHaveLength(1);
       expect(transfers[0].toStableId).toBeDefined();
@@ -76,7 +91,14 @@ describe("Claiming Mechanics", () => {
   describe("isHorseEligibleForClaimingPrice", () => {
     it("returns false if horse is significantly over-qualified", () => {
       const horse = createTestHorse({
-        stats: { speed: 90, stamina: 90, acceleration: 90, consistency: 90, temperament: 50, conformation: 50 },
+        stats: {
+          speed: 90,
+          stamina: 90,
+          acceleration: 90,
+          consistency: 90,
+          temperament: 50,
+          conformation: 50,
+        },
       });
       // High stats mean estimated value > 1.5 * claiming price (5000)
       expect(isHorseEligibleForClaimingPrice(horse, 5000, [])).toBe(false);
@@ -84,17 +106,37 @@ describe("Claiming Mechanics", () => {
 
     it("returns false if horse has won a high-level race", () => {
       const horse = createTestHorse({
-        stats: { speed: 50, stamina: 50, acceleration: 50, consistency: 50, temperament: 50, conformation: 50 },
-        raceHistory: [{
-          raceId: "r1", raceName: "G1 Stakes", position: 1, day: 1, grade: "G1",
-        }],
+        stats: {
+          speed: 50,
+          stamina: 50,
+          acceleration: 50,
+          consistency: 50,
+          temperament: 50,
+          conformation: 50,
+        },
+        raceHistory: [
+          {
+            raceId: "r1",
+            raceName: "G1 Stakes",
+            position: 1,
+            day: 1,
+            grade: "G1",
+          },
+        ],
       });
       expect(isHorseEligibleForClaimingPrice(horse, 50000, [])).toBe(false);
     });
 
     it("returns true if horse is eligible", () => {
       const horse = createTestHorse({
-        stats: { speed: 40, stamina: 40, acceleration: 40, consistency: 40, temperament: 50, conformation: 50 },
+        stats: {
+          speed: 40,
+          stamina: 40,
+          acceleration: 40,
+          consistency: 40,
+          temperament: 50,
+          conformation: 50,
+        },
       });
       expect(isHorseEligibleForClaimingPrice(horse, 50000, [])).toBe(true);
     });
@@ -103,7 +145,14 @@ describe("Claiming Mechanics", () => {
   describe("getSuggestedClaimingPriceRange", () => {
     it("returns a valid claiming price range", () => {
       const horse = createTestHorse({
-        stats: { speed: 50, stamina: 50, acceleration: 50, consistency: 50, temperament: 50, conformation: 50 },
+        stats: {
+          speed: 50,
+          stamina: 50,
+          acceleration: 50,
+          consistency: 50,
+          temperament: 50,
+          conformation: 50,
+        },
       });
       const range = getSuggestedClaimingPriceRange(horse);
       expect(range).toHaveLength(2);
