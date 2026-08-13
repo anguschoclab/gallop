@@ -23,6 +23,7 @@ import { gradeColor } from "@/core/common/uiTokens";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { History, ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { PersonFormCharts } from "@/components/person/PersonFormCharts";
 
 export type PersonRole = "jockey" | "trainer" | "owner";
 
@@ -100,6 +101,8 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
         <StatBox label="Podium" value={stats.podium} />
         <StatBox label="Win %" value={`${stats.winRate.toFixed(1)}%`} />
       </div>
+
+      <PersonFormCharts entries={filteredRows.map((r) => r.entry)} />
 
       <div className="flex items-center gap-2">
         <Select value={gradeFilter} onValueChange={(v) => setGradeFilter(v as GradeFilter)}>

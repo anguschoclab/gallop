@@ -3,6 +3,7 @@ import { Activity, Lightbulb } from "lucide-react";
 import { BeyerChart } from "@/components/race/BeyerChart";
 import { PaceProfileSummary } from "@/components/race/PaceProfileSummary";
 import { DistanceAptitudeDrift } from "@/components/horse/DistanceAptitudeDrift";
+import { HorseCareerCharts } from "@/components/horse/HorseCareerCharts";
 import { getHorseInsight } from "@/core/horse/insights";
 import type { Horse } from "@/game/types";
 
@@ -48,6 +49,13 @@ export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyti
           )}
 
           <BeyerChart history={horse.raceHistory ?? []} />
+
+          <div className="pt-4 border-t border-white/5 space-y-2">
+            <div className="text-[10px] font-black uppercase text-fame/40 tracking-widest">
+              Career Charts
+            </div>
+            <HorseCareerCharts horse={horse} />
+          </div>
 
           {(horse.raceHistory ?? []).some((h) => h.pacePositions && h.pacePositions.length > 0) && (
             <div className="pt-4 border-t border-white/5 space-y-2">
