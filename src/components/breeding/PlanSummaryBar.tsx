@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/select";
 import { Check, Save, FolderOpen, Trash2, Sparkles, Eraser } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/cn";
 import type { SavedMatingPlan } from "@/game/store/state/breedingState";
 
 interface PlanSummaryBarProps {
@@ -167,10 +169,36 @@ export function PlanSummaryBar({
             Clear
           </Button>
 
-          <Button size="sm" className="h-8 gap-1.5" onClick={onConfirmAll} disabled={!canConfirm}>
-            <Check className="h-3.5 w-3.5" />
-            Confirm All ({assignedCount})
-          </Button>
+          {!canConfirm ? (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span tabIndex={0} className="inline-block cursor-not-allowed">
+                    <Button size="sm" className={cn("h-8 gap-1.5 pointer-events-none")} disabled>
+                      <Check className="h-3.5 w-3.5" />
+                      Confirm All ({assignedCount})
+                    </Button>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    {!seasonOpen
+                      ? "Breeding season is closed"
+                      : assignedCount === 0
+                        ? "No mares assigned"
+                        : !canAffordAll
+                          ? "Insufficient funds"
+                          : "Cannot confirm"}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <Button size="sm" className="h-8 gap-1.5" onClick={onConfirmAll}>
+              <Check className="h-3.5 w-3.5" />
+              Confirm All ({assignedCount})
+            </Button>
+          )}
         </div>
       </div>
       {!seasonOpen && (
