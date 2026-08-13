@@ -23,17 +23,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Globe2 } from "lucide-react";
 
 export function RegionalTrendsWidget() {
-  const horses = useGameWithShallow((s: GameState) => s.horses);
-  const races = useGameWithShallow((s: GameState) => s.races);
+  const horseMap = useGameWithShallow((s: GameState) => s.horses);
+  const raceMap = useGameWithShallow((s: GameState) => s.races);
   const jockeys = useGameWithShallow((s: GameState) => s.jockeys ?? []);
   const npcStables = useGameWithShallow((s: GameState) => s.npcStables ?? []);
   const hiredStaff = useGameWithShallow((s: GameState) => s.hiredStaff ?? []);
   const staffPool = useGameWithShallow((s: GameState) => s.staffPool ?? []);
-  const stableName = useGameWithShallow((s: GameState) => s.stableName ?? "My Stable");
+  const stableName = useGameWithShallow(
+    (s: GameState) => s.playerProfile?.stableName ?? "My Stable",
+  );
   const day = useGameWithShallow((s: GameState) => s.day);
 
   const { weeks } = useTimeWindow();
   const [openRegion, setOpenRegion] = useState<RegionKey | null>(null);
+
+  const horses = useMemo(() => Object.values(horseMap), [horseMap]);
+  const races = useMemo(() => Object.values(raceMap), [raceMap]);
 
   const rows = useMemo(
     () => computeRegionTrends({ horses, races, currentDay: day, weeks, ownedOnly: true }),
