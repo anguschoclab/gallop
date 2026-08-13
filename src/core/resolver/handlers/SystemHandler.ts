@@ -38,10 +38,8 @@ import type {
   StewardsInquiryImpact,
   StewardsResolutionImpact,
 } from "../impacts/raceImpacts";
-import type { TransactionImpact } from "../impacts/financialImpacts";
 import { distanceBucket } from "@/core/race/beyer";
 import { getReputationTier, createReputationEvent, type ReputationSource } from "@/core/reputation";
-import { createTransaction } from "@/core/transactions";
 import { addReservedName } from "@/core/horse/naming/reservedNames";
 
 type ImpactHandlerFunction = (
@@ -161,23 +159,6 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         draft.reputation.totalWins += 1;
       }
     }
-  },
-
-  transaction: (draft, impact) => {
-    const { amount, category, description, horseId, raceId, recurring } =
-      impact as TransactionImpact;
-    if (!draft.transactions) draft.transactions = [];
-    const type = amount >= 0 ? "income" : "expense";
-    const newTransaction = createTransaction(
-      type,
-      category,
-      amount,
-      description,
-      impact.day,
-      draft.cash + amount,
-      { horseId, raceId, recurring },
-    );
-    draft.transactions.push(newTransaction);
   },
 
   news_item: (draft, impact) => {
@@ -329,7 +310,6 @@ export class SystemHandler implements ImpactHandler {
       "campaign_deletion",
       "auto_manage_toggle",
       "reputation_change",
-      "transaction",
       "news_item",
       "narrative_arc_update",
       "hall_of_fame_induction",
