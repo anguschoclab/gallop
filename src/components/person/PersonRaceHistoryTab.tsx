@@ -24,6 +24,7 @@ import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { History, ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PersonFormCharts } from "@/components/person/PersonFormCharts";
+import { PersonMixCharts } from "@/components/person/PersonMixCharts";
 
 export type PersonRole = "jockey" | "trainer" | "owner";
 
