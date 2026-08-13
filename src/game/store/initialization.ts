@@ -237,5 +237,6 @@ export function createInitialState(options?: NewGameOptions): GameState {
     privateSaleOffers: [],
     claims: [],
     stewardsInquiries: [],
+    savedMatingPlans: [],
   };
 }

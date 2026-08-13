@@ -15,7 +15,11 @@
  */
 
 import type { Pregnancy, TripleCrownProgress, Horse } from "@/game/types";
-import type { BreedingState } from "@/game/store/state/breedingState";
+import type {
+  BreedingState,
+  MatingPlanEntry,
+  SavedMatingPlan,
+} from "@/game/store/state/breedingState";
 import { createDefaultBreedingState } from "@/game/store/state/breedingState";
 import { createBreedingProgram, updateProgramProgress } from "@/core/breeding/programs";
 import { getArchetypeById } from "@/core/breeding/archetypes";
@@ -72,6 +76,21 @@ export type BreedingSlice = BreedingState & {
     sharesOffered: number,
   ) => { ok: true; investorId: string } | { ok: false; reason: string };
   buyoutInvestor: (investorId: string) => { ok: true } | { ok: false; reason: string };
+  breedBatch: (entries: MatingPlanEntry[]) => {
+    ok: boolean;
+    results: BatchBreedResult[];
+    reason?: string;
+  };
+  saveMatingPlan: (name: string, entries: MatingPlanEntry[]) => { ok: true; planId: string };
+  deleteMatingPlan: (planId: string) => void;
+  getSavedMatingPlan: (planId: string) => SavedMatingPlan | undefined;
+};
+
+export type BatchBreedResult = {
+  damId: string;
+  sireId: string;
+  ok: boolean;
+  reason?: string;
 };
 
 /**
@@ -531,6 +550,152 @@ export function createBreedingSlice(
       }
 
       return { ok: true };
+    },
+
+    breedBatch: (entries) => {
+      const s = get();
+      const results: BatchBreedResult[] = [];
+      const processedDams = new Set<string>();
+      let totalFee = 0;
+
+      for (const entry of entries) {
+        const sire = s.horses[entry.sireId];
+        const dam = s.horses[entry.damId];
+
+        if (processedDams.has(entry.damId)) {
+          results.push({
+            damId: entry.damId,
+            sireId: entry.sireId,
+            ok: false,
+            reason: "Mare already assigned in this batch.",
+          });
+          continue;
+        }
+
+        const eligibility = canBreed(sire, dam, s.day, s.pregnancies ?? []);
+        if (!eligibility.ok) {
+          results.push({
+            damId: entry.damId,
+            sireId: entry.sireId,
+            ok: false,
+            reason: eligibility.reason,
+          });
+          continue;
+        }
+
+        const isExternal = !!sire!.stableId;
+        let studFee = 0;
+        if (isExternal) {
+          if (!sire!.stud?.atStud) {
+            results.push({
+              damId: entry.damId,
+              sireId: entry.sireId,
+              ok: false,
+              reason: `${sire!.name} is not standing at stud.`,
+            });
+            continue;
+          }
+          if (sire!.stud.seasonBookings >= sire!.stud.bookSize) {
+            results.push({
+              damId: entry.damId,
+              sireId: entry.sireId,
+              ok: false,
+              reason: `${sire!.name}'s book is full this season.`,
+            });
+            continue;
+          }
+          if (sire!.hemisphere !== dam!.hemisphere) {
+            results.push({
+              damId: entry.damId,
+              sireId: entry.sireId,
+              ok: false,
+              reason: "Cross-hemisphere breeding is not supported.",
+            });
+            continue;
+          }
+
+          const syndicate = s.syndicates?.[entry.sireId];
+          const playerShareCount = syndicate?.shareHolders?.["player"] || 0;
+          const totalShares = syndicate?.totalShares || 1;
+          const playerSharePercentage = playerShareCount / totalShares;
+          studFee = sire!.stud.standingFee * (1 - playerSharePercentage);
+        }
+
+        const fee = isExternal
+          ? BREEDING_FEE + (entry.liveFoalGuarantee ? LIVE_FOAL_GUARANTEE_FEE : 0) + studFee
+          : 0;
+        totalFee += fee;
+        processedDams.add(entry.damId);
+        results.push({
+          damId: entry.damId,
+          sireId: entry.sireId,
+          ok: true,
+        });
+      }
+
+      if (s.cash < totalFee) {
+        return {
+          ok: false,
+          results: [],
+          reason: "Insufficient cash for batch.",
+        };
+      }
+
+      for (let i = 0; i < entries.length; i++) {
+        if (!results[i].ok) continue;
+        const entry = entries[i];
+        const sire = s.horses[entry.sireId];
+        const isExternal = !!sire?.stableId;
+        let studFee = 0;
+        if (isExternal && sire?.stud) {
+          const syndicate = s.syndicates?.[entry.sireId];
+          const playerShareCount = syndicate?.shareHolders?.["player"] || 0;
+          const totalShares = syndicate?.totalShares || 1;
+          const playerSharePercentage = playerShareCount / totalShares;
+          studFee = sire.stud.standingFee * (1 - playerSharePercentage);
+        }
+        const fee = isExternal
+          ? BREEDING_FEE + (entry.liveFoalGuarantee ? LIVE_FOAL_GUARANTEE_FEE : 0) + studFee
+          : 0;
+
+        const intent: BreedingIntent = {
+          id: generateUUID(),
+          entityId: entry.damId,
+          source: "player",
+          day: s.day,
+          priority: 100,
+          type: "breeding",
+          sireId: entry.sireId,
+          damId: entry.damId,
+          liveFoalGuarantee: entry.liveFoalGuarantee,
+        };
+        enqueueIntent({ ...intent, fee });
+      }
+
+      return { ok: true, results };
+    },
+
+    saveMatingPlan: (name, entries) => {
+      const plan: SavedMatingPlan = {
+        id: generateUUID(),
+        name,
+        createdDay: get().day,
+        entries,
+      };
+      set((state) => ({
+        savedMatingPlans: [...state.savedMatingPlans, plan],
+      }));
+      return { ok: true, planId: plan.id };
+    },
+
+    deleteMatingPlan: (planId) => {
+      set((state) => ({
+        savedMatingPlans: state.savedMatingPlans.filter((p) => p.id !== planId),
+      }));
+    },
+
+    getSavedMatingPlan: (planId) => {
+      return get().savedMatingPlans.find((p) => p.id === planId);
     },
   };
 }

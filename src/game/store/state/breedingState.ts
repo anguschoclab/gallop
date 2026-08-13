@@ -17,6 +17,19 @@ import type { BreedingProgram } from "@/core/breeding/programs";
 import type { Syndicate } from "@/core/breeding/types";
 import type { InvestorRecord } from "@/core/breeding/investorTypes";
 
+export interface MatingPlanEntry {
+  damId: string;
+  sireId: string;
+  liveFoalGuarantee: boolean;
+}
+
+export interface SavedMatingPlan {
+  id: string;
+  name: string;
+  createdDay: number;
+  entries: MatingPlanEntry[];
+}
+
 /**
  * Breeding-related state for reproduction tracking and lineage.
  */
@@ -35,6 +48,8 @@ export interface BreedingState {
   shareTransactions: ShareTransaction[];
   /** Activity feed for syndicate share transactions and devolution events */
   shareActivityFeed: ShareActivityFeedItem[];
+  /** Saved mating plans for reuse across breeding seasons */
+  savedMatingPlans: SavedMatingPlan[];
 }
 
 /**
@@ -51,5 +66,6 @@ export function createDefaultBreedingState(): BreedingState {
     syndicateInvestors: {},
     shareTransactions: [],
     shareActivityFeed: [],
+    savedMatingPlans: [],
   };
 }

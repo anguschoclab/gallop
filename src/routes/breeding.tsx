@@ -30,9 +30,11 @@ import { SireWatchTab } from "@/components/breeding/SireWatchTab";
 import { SireLeaderboardsTab } from "@/components/breeding/SireLeaderboardsTab";
 import { DamsireLeaderboardTab } from "@/components/breeding/DamsireLeaderboardTab";
 import { BlueHenLeaderboardTab } from "@/components/breeding/BlueHenLeaderboardTab";
+import { SeasonPlannerTab } from "@/components/breeding/SeasonPlannerTab";
 import { useTabParam } from "@/hooks/ui/useTabParam";
 
 const BREEDING_TABS = [
+  "planner",
   "shed",
   "broodmares",
   "history",
@@ -56,7 +58,7 @@ export const Route = createFileRoute("/breeding")({
 function BreedingPage() {
   const pageData = useBreedingPage();
   const { activePregnanciesCount, seasonOpen, nextSeasonStart } = pageData;
-  const { tab, setTab } = useTabParam("shed", BREEDING_TABS);
+  const { tab, setTab } = useTabParam("planner", BREEDING_TABS);
 
   return (
     <div className="space-y-6">
@@ -92,9 +94,13 @@ function BreedingPage() {
         className="space-y-4"
       >
         <TabsList>
+          <TabsTrigger value="planner" className="gap-2">
+            <Calendar className="h-4 w-4" />
+            Season Planner
+          </TabsTrigger>
           <TabsTrigger value="shed" className="gap-2">
             <Heart className="h-4 w-4" />
-            Breeding Shed
+            Classic Shed
           </TabsTrigger>
           <TabsTrigger value="broodmares" className="gap-2">
             <Baby className="h-4 w-4" />
@@ -142,6 +148,10 @@ function BreedingPage() {
             Blue Hens
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="planner" className="space-y-4">
+          <SeasonPlannerTab />
+        </TabsContent>
 
         <TabsContent value="shed" className="space-y-4">
           <BreedingShedTab pageData={pageData} />
