@@ -29,20 +29,65 @@ describe("traitLabels — jockey traits", () => {
     expect(formatJockeyTrait("long_straight_pro")).toBe("Long Straight Pro");
   });
 
-  it("JOCKEY_TRAIT_OPTIONS has 5 entries (all + 4 traits)", () => {
-    expect(JOCKEY_TRAIT_OPTIONS).toHaveLength(5);
+  it("JOCKEY_TRAIT_OPTIONS has 14 entries (all + 13 traits)", () => {
+    expect(JOCKEY_TRAIT_OPTIONS).toHaveLength(14);
   });
 
   it("JOCKEY_TRAIT_OPTIONS first entry is the 'all' sentinel", () => {
     expect(JOCKEY_TRAIT_OPTIONS[0].value).toBe("all");
   });
 
-  it("JOCKEY_TRAIT_OPTIONS contains all 4 jockey traits", () => {
+  it("JOCKEY_TRAIT_OPTIONS contains all 13 jockey traits", () => {
     const values = JOCKEY_TRAIT_OPTIONS.map((o) => o.value);
     expect(values).toContain("gate_master");
     expect(values).toContain("bullring_expert");
     expect(values).toContain("hill_specialist");
     expect(values).toContain("long_straight_pro");
+    expect(values).toContain("turf_specialist");
+    expect(values).toContain("dirt_specialist");
+    expect(values).toContain("mud_master");
+    expect(values).toContain("sprint_specialist");
+    expect(values).toContain("staying_specialist");
+    expect(values).toContain("pace_presser");
+    expect(values).toContain("big_match_temperament");
+    expect(values).toContain("veteran_poise");
+    expect(values).toContain("closer_instinct");
+  });
+
+  it("formatJockeyTrait: turf_specialist → Turf Specialist", () => {
+    expect(formatJockeyTrait("turf_specialist")).toBe("Turf Specialist");
+  });
+
+  it("formatJockeyTrait: dirt_specialist → Dirt Specialist", () => {
+    expect(formatJockeyTrait("dirt_specialist")).toBe("Dirt Specialist");
+  });
+
+  it("formatJockeyTrait: mud_master → Mud Master", () => {
+    expect(formatJockeyTrait("mud_master")).toBe("Mud Master");
+  });
+
+  it("formatJockeyTrait: sprint_specialist → Sprint Specialist", () => {
+    expect(formatJockeyTrait("sprint_specialist")).toBe("Sprint Specialist");
+  });
+
+  it("formatJockeyTrait: staying_specialist → Staying Specialist", () => {
+    expect(formatJockeyTrait("staying_specialist")).toBe("Staying Specialist");
+  });
+
+  it("formatJockeyTrait: pace_presser → Pace Presser", () => {
+    expect(formatJockeyTrait("pace_presser")).toBe("Pace Presser");
+  });
+
+  it("formatJockeyTrait: big_match_temperament → Big Match Temperament", () => {
+    expect(formatJockeyTrait("big_match_temperament")).toBe("Big Match Temperament");
+  });
+
+  it("formatJockeyTrait: veteran_poise → Veteran Poise", () => {
+    expect(formatJockeyTrait("veteran_poise")).toBe("Veteran Poise");
+  });
+
+  it("formatJockeyTrait: closer_instinct → Closer Instinct", () => {
+    expect(formatJockeyTrait("closer_instinct")).toBe("Closer Instinct");
   });
 });
 

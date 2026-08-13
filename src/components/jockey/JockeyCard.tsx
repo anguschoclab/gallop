@@ -11,6 +11,7 @@ import {
   ChevronRight,
   User,
   ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 import { JockeyAvatar } from "./JockeyAvatar";
 import { JockeyStatsGrid } from "./JockeyStatsGrid";
@@ -19,6 +20,7 @@ import { formatCurrency } from "@/core/common/formatting";
 import { Link } from "@tanstack/react-router";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { cn } from "@/lib/cn";
+import { formatJockeyTrait } from "@/core/common/traitLabels";
 
 interface JockeyCardProps {
   jockey: Jockey;
@@ -160,6 +162,26 @@ export function JockeyCard({
 
         <div className="p-5 flex-1 space-y-6">
           <JockeyStatsGrid jockey={jockey} />
+
+          {(jockey.traits?.length ?? 0) > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-1.5 text-[8px] font-black uppercase text-cream/20 tracking-widest">
+                <Sparkles className="h-3 w-3 text-gold/40" />
+                Traits
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {jockey.traits.map((trait) => (
+                  <Badge
+                    key={trait}
+                    variant="outline"
+                    className="text-[9px] font-bold uppercase tracking-wider h-5 px-2 rounded-none border-gold/30 text-gold/80 bg-gold/5"
+                  >
+                    {formatJockeyTrait(trait)}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="flex items-center justify-between bg-black/40 p-2 rounded-sm border border-white/5">
             <div className="flex items-center gap-2">

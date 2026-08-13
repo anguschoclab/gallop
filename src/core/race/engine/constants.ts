@@ -138,3 +138,37 @@ export const MIN_WIND_SPEED_MOD = 0.92;
 export const HEADWIND_STAMINA_PENALTY = 1.03;
 /** Stamina relief multiplier for running with a tailwind. */
 export const TAILWIND_STAMINA_RELIEF = 0.97;
+
+// --- Jockey trait constants ---
+
+// Gate master
+export const GATE_MASTER_TRAIT_BONUS = 0.3;
+
+// Surface specialists
+export const SURFACE_SPECIALIST_SPEED_BONUS = 0.02;
+
+// Mud master
+export const MUD_MASTER_SPEED_BONUS = 0.02;
+
+// Distance specialists
+export const SPRINT_SPECIALIST_DISTANCE_THRESHOLD = 1400;
+export const SPRINT_SPECIALIST_SPEED_BONUS = 0.03;
+export const SPRINT_SPECIALIST_LONG_PENALTY = 0.02;
+export const STAYING_SPECIALIST_DISTANCE_THRESHOLD = 2200;
+export const STAYING_SPECIALIST_SPEED_BONUS = 0.03;
+export const STAYING_SPECIALIST_SHORT_PENALTY = 0.02;
+
+// Pace presser
+export const PACE_PRESSER_MITIGATION = 0.5;
+
+// Big match temperament
+export const BIG_MATCH_FIELD_THRESHOLD = 12;
+export const BIG_MATCH_VIGOR_BONUS = 0.05;
+
+// Veteran poise
+export const VETERAN_AGE_THRESHOLD = 35;
+export const VETERAN_POSITIONING_BONUS = 0.1;
+
+// Closer instinct
+export const CLOSER_INSTINCT_PROGRESS_THRESHOLD = 0.85;
+export const CLOSER_INSTINCT_STYLE_BONUS = 0.05;

@@ -22,6 +22,15 @@ export const JOCKEY_TRAIT_OPTIONS: { value: JockeyTrait | "all"; label: string }
   { value: "hill_specialist", label: "Hill Specialist" },
   { value: "long_straight_pro", label: "Long Straight Pro" },
   { value: "gate_master", label: "Gate Master" },
+  { value: "turf_specialist", label: "Turf Specialist" },
+  { value: "dirt_specialist", label: "Dirt Specialist" },
+  { value: "mud_master", label: "Mud Master" },
+  { value: "sprint_specialist", label: "Sprint Specialist" },
+  { value: "staying_specialist", label: "Staying Specialist" },
+  { value: "pace_presser", label: "Pace Presser" },
+  { value: "big_match_temperament", label: "Big Match Temperament" },
+  { value: "veteran_poise", label: "Veteran Poise" },
+  { value: "closer_instinct", label: "Closer Instinct" },
 ];
 
 // --- Staff traits ---

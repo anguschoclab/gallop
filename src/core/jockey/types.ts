@@ -19,7 +19,23 @@ export type JockeyStats = {
 };
 
 export type JockeyTrait =
-  "bullring_expert" | "hill_specialist" | "long_straight_pro" | "gate_master";
+  // Track & geometry
+  | "bullring_expert"
+  | "hill_specialist"
+  | "long_straight_pro"
+  | "gate_master"
+  // Surface & weather
+  | "turf_specialist"
+  | "dirt_specialist"
+  | "mud_master"
+  // Distance & pace
+  | "sprint_specialist"
+  | "staying_specialist"
+  | "pace_presser"
+  // Temperament & big-match
+  | "big_match_temperament"
+  | "veteran_poise"
+  | "closer_instinct";
 
 export type JockeySilkPattern =
   "solid" | "stripes" | "halves" | "quarters" | "chevron" | "diamond" | "star" | "sash" | "hoops";
@@ -58,4 +74,10 @@ export type Jockey = {
   apprenticeProgression?: import("@/core/apprentice/apprenticeTypes").ApprenticeProgression;
   // Jockey suspension (stewards inquiry outcome)
   suspendedUntil?: number;
+
+  // Trait progression system
+  traitProgression?: {
+    xp: Record<string, number>; // traitKey → XP points
+    unlockedAt: Record<string, number>; // traitKey → game day unlocked
+  };
 };

@@ -4,10 +4,16 @@ import { useMemo } from "react";
 import type { GameState } from "@/game/types";
 import { JockeyCard } from "@/components/jockey/JockeyCard";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PersonRaceHistoryTab } from "@/components/person/PersonRaceHistoryTab";
-import { ChevronLeft, User, History } from "lucide-react";
+import { ChevronLeft, User, History, Sparkles } from "lucide-react";
+import { formatJockeyTrait } from "@/core/common/traitLabels";
+import {
+  TRAIT_XP_UNLOCK_THRESHOLD,
+  TRAIT_XP_MAINTENANCE_THRESHOLD,
+} from "@/core/jockey/traitProgression";
 
 export const Route = createFileRoute("/jockey/$jockeyId")({
   component: JockeyPage,
@@ -66,6 +72,10 @@ function JockeyPage() {
             <History className="h-4 w-4" />
             Race History
           </TabsTrigger>
+          <TabsTrigger value="traits" className="gap-2">
+            <Sparkles className="h-4 w-4" />
+            Traits
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile">
@@ -91,6 +101,79 @@ function JockeyPage() {
 
         <TabsContent value="history">
           <PersonRaceHistoryTab personId={jockey.id} roles={["jockey"]} />
+        </TabsContent>
+
+        <TabsContent value="traits">
+          <div className="space-y-4 max-w-2xl mx-auto">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="h-5 w-5 text-gold/60" />
+              <h2 className="text-lg font-bold text-cream uppercase tracking-tight">
+                Trait Development
+              </h2>
+            </div>
+
+            {(jockey.traits?.length ?? 0) > 0 && (
+              <div className="space-y-2">
+                <h3 className="text-[10px] font-black uppercase text-cream/40 tracking-widest">
+                  Active Traits
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {jockey.traits.map((trait) => (
+                    <Badge
+                      key={trait}
+                      variant="outline"
+                      className="text-[10px] font-bold uppercase tracking-wider h-6 px-2.5 rounded-none border-gold/30 text-gold/80 bg-gold/5"
+                    >
+                      {formatJockeyTrait(trait)}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {jockey.traitProgression && (
+              <div className="space-y-3">
+                <h3 className="text-[10px] font-black uppercase text-cream/40 tracking-widest">
+                  Progression
+                </h3>
+                {Object.entries(jockey.traitProgression.xp).map(([traitKey, xp]) => {
+                  const isUnlocked = jockey.traits.includes(traitKey as any);
+                  const unlockDay = jockey.traitProgression!.unlockedAt[traitKey];
+                  const pct = Math.min(100, (xp / TRAIT_XP_UNLOCK_THRESHOLD) * 100);
+                  return (
+                    <div key={traitKey} className="space-y-1">
+                      <div className="flex items-center justify-between text-[10px] font-mono">
+                        <span className={isUnlocked ? "text-gold/80" : "text-cream/50"}>
+                          {formatJockeyTrait(traitKey as any)}
+                        </span>
+                        <span className="text-cream/40">
+                          {xp} / {TRAIT_XP_UNLOCK_THRESHOLD} XP
+                          {isUnlocked && unlockDay ? ` · Unlocked Day ${unlockDay}` : ""}
+                        </span>
+                      </div>
+                      <div className="h-1.5 bg-white/5 rounded-sm overflow-hidden">
+                        <div
+                          className={isUnlocked ? "h-full bg-gold/60" : "h-full bg-blue-400/40"}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                      {!isUnlocked && xp < TRAIT_XP_MAINTENANCE_THRESHOLD && (
+                        <div className="text-[8px] text-destructive/40 uppercase tracking-widest">
+                          Atrophy Risk
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {(jockey.traits?.length ?? 0) === 0 && !jockey.traitProgression && (
+              <p className="text-sm text-cream/40 italic">
+                No trait development yet. Race this jockey to earn trait XP.
+              </p>
+            )}
+          </div>
         </TabsContent>
       </Tabs>
     </div>

@@ -97,6 +97,21 @@ import {
   MIN_WIND_SPEED_MOD,
   HEADWIND_STAMINA_PENALTY,
   TAILWIND_STAMINA_RELIEF,
+  GATE_MASTER_TRAIT_BONUS,
+  SURFACE_SPECIALIST_SPEED_BONUS,
+  SPRINT_SPECIALIST_DISTANCE_THRESHOLD,
+  SPRINT_SPECIALIST_SPEED_BONUS,
+  SPRINT_SPECIALIST_LONG_PENALTY,
+  STAYING_SPECIALIST_DISTANCE_THRESHOLD,
+  STAYING_SPECIALIST_SPEED_BONUS,
+  STAYING_SPECIALIST_SHORT_PENALTY,
+  PACE_PRESSER_MITIGATION,
+  BIG_MATCH_FIELD_THRESHOLD,
+  BIG_MATCH_VIGOR_BONUS,
+  VETERAN_AGE_THRESHOLD,
+  VETERAN_POSITIONING_BONUS,
+  CLOSER_INSTINCT_PROGRESS_THRESHOLD,
+  CLOSER_INSTINCT_STYLE_BONUS,
 } from "./constants";
 
 // Standardizing imports for relocated file
@@ -268,6 +283,7 @@ function calculateTrackGeometryModifiers(
   gradientStaminaMul: number;
   arcFactor: number;
   radius: number;
+  traitSurfaceMul: number;
 } {
   const section = getTrackSection(position, distance, course);
   const radius = section?.type === "turn" ? (section.radius ?? Infinity) : Infinity;
@@ -302,7 +318,16 @@ function calculateTrackGeometryModifiers(
     turnSpeedMul = 1 - totalPenalty;
   }
 
-  return { turnSpeedMul, gradientSpeedMul, gradientStaminaMul, arcFactor, radius };
+  // Surface specialist traits
+  let traitSurfaceMul = 1.0;
+  const surface = course?.surface;
+  if (surface === "Turf" && r.jockey?.traits.includes("turf_specialist")) {
+    traitSurfaceMul = 1 + SURFACE_SPECIALIST_SPEED_BONUS;
+  } else if (surface === "Dirt" && r.jockey?.traits.includes("dirt_specialist")) {
+    traitSurfaceMul = 1 + SURFACE_SPECIALIST_SPEED_BONUS;
+  }
+
+  return { turnSpeedMul, gradientSpeedMul, gradientStaminaMul, arcFactor, radius, traitSurfaceMul };
 }
 
 /**
@@ -333,11 +358,11 @@ function calculateStaminaMultiplier(
       effectiveStamina = effectiveStamina + (1 - effectiveStamina) * DRAFT_STAMINA_PRESERVE;
     }
     if (pace && pace.pacePressure > 0 && r.runningStyle === "E") {
-      effectiveStamina = clamp(
-        effectiveStamina - PACE_PRESSURE_STAMINA_PENALTY * pace.pacePressure,
-        0.2,
-        1,
-      );
+      const isPacePresser = r.jockey?.traits.includes("pace_presser");
+      const penalty = isPacePresser
+        ? PACE_PRESSURE_STAMINA_PENALTY * PACE_PRESSER_MITIGATION
+        : PACE_PRESSURE_STAMINA_PENALTY;
+      effectiveStamina = clamp(effectiveStamina - penalty * pace.pacePressure, 0.2, 1);
     }
     const bleederRisk = r.horse.bleederRisk ?? 0;
     if (
@@ -396,6 +421,7 @@ function calculateStaminaMultiplier(
  * @param {number} progress - The current race progress (0 to 1).
  * @param {PaceContext} [pace] - The current pace context.
  * @param {CourseSpecification} [course] - The track course specification.
+ * @param {number} [distance] - The total race distance in meters.
  * @returns {number} The calculated style multiplier.
  */
 function calculateStyleMultiplier(
@@ -403,8 +429,46 @@ function calculateStyleMultiplier(
   progress: number,
   pace?: PaceContext,
   course?: CourseSpecification,
+  distance?: number,
 ): number {
   let styleMul = paceShapeMul(r.runningStyle, progress);
+
+  // Distance specialist traits
+  if (distance) {
+    if (
+      distance < SPRINT_SPECIALIST_DISTANCE_THRESHOLD &&
+      r.jockey?.traits.includes("sprint_specialist")
+    ) {
+      styleMul *= 1 + SPRINT_SPECIALIST_SPEED_BONUS;
+    }
+    if (
+      distance > SPRINT_SPECIALIST_DISTANCE_THRESHOLD + 600 &&
+      r.jockey?.traits.includes("sprint_specialist")
+    ) {
+      styleMul *= 1 - SPRINT_SPECIALIST_LONG_PENALTY;
+    }
+    if (
+      distance > STAYING_SPECIALIST_DISTANCE_THRESHOLD &&
+      r.jockey?.traits.includes("staying_specialist")
+    ) {
+      styleMul *= 1 + STAYING_SPECIALIST_SPEED_BONUS;
+    }
+    if (
+      distance < STAYING_SPECIALIST_DISTANCE_THRESHOLD - 800 &&
+      r.jockey?.traits.includes("staying_specialist")
+    ) {
+      styleMul *= 1 - STAYING_SPECIALIST_SHORT_PENALTY;
+    }
+  }
+
+  // Closer instinct: stacks with long_straight_pro
+  if (
+    progress > CLOSER_INSTINCT_PROGRESS_THRESHOLD &&
+    (r.runningStyle === "S" || r.runningStyle === "P") &&
+    r.jockey?.traits.includes("closer_instinct")
+  ) {
+    styleMul *= 1 + CLOSER_INSTINCT_STYLE_BONUS;
+  }
 
   const straight = course?.straightLength ?? 400;
   if (straight < SHORT_STRAIGHT_THRESHOLD) {
@@ -480,6 +544,7 @@ function calculateDraftMultiplier(r: Runner, progress: number): number {
  * @param {number} arcFactor - The track arc factor.
  * @param {number} dt - The time delta in seconds.
  * @param {number} staminaMul - The current stamina multiplier.
+ * @param {number} [fieldSize] - Number of runners in the race (for big_match_temperament).
  * @returns {Object} Final distance step and updated stamina multiplier.
  */
 function applyJockeyEffects(
@@ -489,6 +554,7 @@ function applyJockeyEffects(
   arcFactor: number,
   dt: number,
   staminaMul: number,
+  fieldSize?: number,
 ): { finalDs: number; staminaMul: number } {
   let finalDs = r.velocity * dt;
   let updatedStaminaMul = staminaMul;
@@ -496,13 +562,22 @@ function applyJockeyEffects(
   if (r.jockey) {
     const stats = r.jockey.stats;
     const arch = r.jockey.archetype;
+    const traits = r.jockey.traits;
 
     if (progress < GATE_SKILL_PROGRESS_THRESHOLD) {
-      r.velocity += (stats.gateSkill / 100) * GATE_SKILL_VELOCITY_BONUS * dt;
+      const isGateMaster = traits.includes("gate_master");
+      const gateBoost = (stats.gateSkill / 100) * GATE_SKILL_VELOCITY_BONUS * dt;
+      const traitBoost = isGateMaster ? GATE_MASTER_TRAIT_BONUS * dt : 0;
+      r.velocity += gateBoost + traitBoost;
     }
 
+    // Veteran poise: positioning bonus for older jockeys
+    const isVeteran = traits.includes("veteran_poise") && r.jockey.age >= VETERAN_AGE_THRESHOLD;
+    const positioningBonus = isVeteran
+      ? (stats.positioning / 100) * POSITIONING_BONUS_TURN * (1 + VETERAN_POSITIONING_BONUS)
+      : (stats.positioning / 100) * POSITIONING_BONUS_TURN;
+
     if (radius !== Infinity) {
-      const positioningBonus = (stats.positioning / 100) * POSITIONING_BONUS_TURN;
       const effectiveLane = Math.max(0, r.lane * (1 - positioningBonus));
       const adjustedArcFactor = 1 + effectiveLane / radius;
       finalDs = (r.velocity * dt) / adjustedArcFactor;
@@ -531,6 +606,16 @@ function applyJockeyEffects(
 
     if (progress > VIGOR_PROGRESS_THRESHOLD) {
       let vigorBoost = (stats.vigor / 100) * VIGOR_BOOST_FACTOR;
+
+      // Big match temperament: extra vigor in large fields
+      if (
+        traits.includes("big_match_temperament") &&
+        fieldSize &&
+        fieldSize > BIG_MATCH_FIELD_THRESHOLD
+      ) {
+        vigorBoost *= 1 + BIG_MATCH_VIGOR_BONUS;
+      }
+
       // "Late Kick" tactic bonus
       if (r.jockeyInstructions?.moveTiming === "late" && progress > LATE_KICK_BOOST_THRESHOLD) {
         vigorBoost *= LATE_KICK_VIGOR_MULTIPLIER;
@@ -740,6 +825,7 @@ export function calculateWindEffect(
  * @param {number} [aliveCount] - Pre-computed alive count (avoids O(n) per runner).
  * @param {number} [windKph] - Wind speed in km/h for drag calculation.
  * @param {number} [windDirectionDeg] - Wind direction in degrees (meteorological).
+ * @param {number} [fieldSize] - Total number of runners in the race (for big_match_temperament).
  */
 export function stepRunner(
   r: Runner,
@@ -754,6 +840,7 @@ export function stepRunner(
   aliveCount?: number,
   windKph?: number,
   windDirectionDeg?: number,
+  fieldSize?: number,
 ) {
   if (r.finishTime !== null) return;
   const progress = r.position / distance;
@@ -766,14 +853,14 @@ export function stepRunner(
   updateLanePosition(r, targetLane, dt);
 
   // Calculate track geometry modifiers
-  const { turnSpeedMul, gradientSpeedMul, gradientStaminaMul, arcFactor, radius } =
+  const { turnSpeedMul, gradientSpeedMul, gradientStaminaMul, arcFactor, radius, traitSurfaceMul } =
     calculateTrackGeometryModifiers(r, r.position, distance, course);
 
   // Calculate stamina multiplier
   let staminaMul = calculateStaminaMultiplier(r, progress, distance, pace, rng, dt);
 
   // Calculate style multiplier
-  const styleMul = calculateStyleMultiplier(r, progress, pace, course);
+  const styleMul = calculateStyleMultiplier(r, progress, pace, course, distance);
 
   // Calculate draft multiplier
   const draftMul = calculateDraftMultiplier(r, progress);
@@ -848,6 +935,7 @@ export function stepRunner(
     draftMul *
     turnSpeedMul *
     gradientSpeedMul *
+    traitSurfaceMul *
     seekMul *
     spurtMul *
     windSpeedMod *
@@ -866,6 +954,7 @@ export function stepRunner(
     arcFactor,
     dt,
     staminaMul,
+    fieldSize,
   );
   staminaMul = updatedStaminaMul;
 
@@ -964,6 +1053,7 @@ export function runRaceToCompletion(
         aliveRank,
         windKph,
         windDirectionDeg,
+        numRunners,
       );
 
       if (r.finishTime !== null) {

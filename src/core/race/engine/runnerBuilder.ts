@@ -32,6 +32,7 @@ import {
   MAX_FORM_ENERGY_MUL,
   TOP_SPEED_CEILING,
   LANE_WIDTH,
+  MUD_MASTER_SPEED_BONUS,
 } from "./constants";
 import type { SimWeatherPattern } from "@/core/weather/weatherTypes";
 
@@ -437,6 +438,18 @@ export function buildRunner(
       weatherPrefMod = 1.05; // more erratic (higher noise)
       weatherSpeedMod = 0.98; // direct speed penalty
       weatherStaminaMod = 0.98; // direct stamina penalty
+    }
+  }
+
+  // Mud master trait: negate harsh weather speed penalty and add small bonus
+  if (jockey?.traits.includes("mud_master")) {
+    const isWetConditions = weatherPattern
+      ? ["shower", "rain", "snow", "storm"].includes(weatherPattern)
+      : race?.weather === "rainy";
+    const isHarshTrack = conditions.speedMul < HARSH_CONDITION_SPEED_THRESHOLD;
+    if (isWetConditions || isHarshTrack) {
+      // Negate the conditions speed penalty by boosting weatherSpeedMod
+      weatherSpeedMod = Math.max(weatherSpeedMod, 1.0) + MUD_MASTER_SPEED_BONUS;
     }
   }
 

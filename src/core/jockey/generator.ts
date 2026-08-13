@@ -46,34 +46,46 @@ interface ArchetypeStrategy {
  */
 const JOCKEY_ARCHETYPE_STRATEGIES: Record<JockeyArchetype, ArchetypeStrategy> = {
   front_runner: {
-    apply: (stats, traits) => {
+    apply: (stats, traits, rng) => {
       stats.gateSkill += 15;
       stats.pacing += 10;
       stats.vigor -= 10;
       traits.push("gate_master");
+      if (rng.next() < 0.5) {
+        traits.push(rng.pick(["sprint_specialist", "pace_presser"]));
+      }
     },
   },
   closer: {
-    apply: (stats, traits) => {
+    apply: (stats, traits, rng) => {
       stats.vigor += 15;
       stats.positioning += 10;
       stats.gateSkill -= 10;
       traits.push("hill_specialist");
+      if (rng.next() < 0.5) {
+        traits.push(rng.pick(["closer_instinct", "staying_specialist"]));
+      }
     },
   },
   clinical: {
-    apply: (stats, traits) => {
+    apply: (stats, traits, rng) => {
       stats.positioning += 15;
       stats.pacing += 10;
       traits.push("bullring_expert");
+      if (rng.next() < 0.5) {
+        traits.push(rng.pick(["turf_specialist", "dirt_specialist"]));
+      }
     },
   },
   finisher: {
-    apply: (stats, traits) => {
+    apply: (stats, traits, rng) => {
       stats.vigor += 20;
       stats.gateSkill += 5;
       stats.pacing -= 10;
       traits.push("long_straight_pro");
+      if (rng.next() < 0.5) {
+        traits.push(rng.pick(["closer_instinct", "big_match_temperament"]));
+      }
     },
   },
   versatile: {
@@ -84,6 +96,7 @@ const JOCKEY_ARCHETYPE_STRATEGIES: Record<JockeyArchetype, ArchetypeStrategy> = 
       stats.gateSkill += 5;
       stats.temperament += 5;
       if (rng.next() < 0.2) traits.push(rng.pick(["gate_master", "hill_specialist"]));
+      if (rng.next() < 0.15) traits.push(rng.pick(["pace_presser", "veteran_poise"]));
     },
   },
 };
@@ -126,6 +139,29 @@ export function generateJockey({
 
   // Apply archetype bonuses and traits via strategy pattern
   JOCKEY_ARCHETYPE_STRATEGIES[archetype].apply(stats, traits, rng);
+
+  // Elite jockeys get an extra roll for a tertiary trait from any pool
+  if (tier === "elite" && rng.next() < 0.3) {
+    const allTraits: JockeyTrait[] = [
+      "gate_master",
+      "hill_specialist",
+      "bullring_expert",
+      "long_straight_pro",
+      "turf_specialist",
+      "dirt_specialist",
+      "mud_master",
+      "sprint_specialist",
+      "staying_specialist",
+      "pace_presser",
+      "big_match_temperament",
+      "veteran_poise",
+      "closer_instinct",
+    ];
+    const available = allTraits.filter((t) => !traits.includes(t));
+    if (available.length > 0) {
+      traits.push(rng.pick(available));
+    }
+  }
 
   // Clamp stats
   Object.keys(stats).forEach((k) => {
