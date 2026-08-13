@@ -21,14 +21,6 @@ vi.mock("@tanstack/react-router", () => ({
   createFileRoute: () => (opts: any) => opts,
 }));
 
-vi.mock("@/components/awards/CeremonyRsvpControls", () => ({
-  InboxCeremonyRsvp: ({ invitationId }: { invitationId: string }) =>
-    createElement("div", {
-      "data-testid": "inbox-ceremony-rsvp",
-      "data-invitation-id": invitationId,
-    }),
-}));
-
 // We test the Inbox page body rendering by importing the component directly
 // The route component uses useInbox which reads from the game store
 describe("Inbox — entity linking", () => {
@@ -150,8 +142,125 @@ describe("Inbox — ceremony integration", () => {
     });
 
     const { container } = render(createElement(InboxPage));
-    const rsvpEl = container.querySelector("[data-testid='inbox-ceremony-rsvp']");
-    expect(rsvpEl).not.toBeNull();
-    expect(rsvpEl?.getAttribute("data-invitation-id")).toBe("inv-1");
+    expect(container.querySelector("[data-testid='rsvp-status']")).not.toBeNull();
+  });
+
+  it("enhanced InboxCeremonyRsvp renders CeremonyRsvpStatusIndicator", () => {
+    seedStore({
+      ...createDefaultGameState(),
+      day: 290,
+      inbox: [
+        {
+          id: "msg1",
+          day: 286,
+          title: "Ceremony Invitation",
+          body: "You have been invited.",
+          category: "system",
+          priority: "info" as const,
+          readAt: undefined,
+          cta: {
+            label: "View Ceremony",
+            route: "/ceremony/$invitationId",
+            params: { invitationId: "inv-1" },
+          },
+        },
+      ],
+      awardCeremonyInvitations: [
+        {
+          id: "inv-1",
+          region: "europe",
+          year: 1,
+          ceremonyName: "Cartier Awards",
+          ceremonyDay: 300,
+          issuedDay: 286,
+          qualifiers: [],
+          rsvp: "pending",
+        },
+      ],
+    });
+
+    const { container } = render(createElement(InboxPage));
+    const statusBadge = container.querySelector("[data-testid='rsvp-status']");
+    expect(statusBadge).not.toBeNull();
+    expect(statusBadge?.textContent).toContain("Awaiting RSVP");
+  });
+
+  it("enhanced InboxCeremonyRsvp renders CeremonyTimeline", () => {
+    seedStore({
+      ...createDefaultGameState(),
+      day: 290,
+      inbox: [
+        {
+          id: "msg1",
+          day: 286,
+          title: "Ceremony Invitation",
+          body: "You have been invited.",
+          category: "system",
+          priority: "info" as const,
+          readAt: undefined,
+          cta: {
+            label: "View Ceremony",
+            route: "/ceremony/$invitationId",
+            params: { invitationId: "inv-1" },
+          },
+        },
+      ],
+      awardCeremonyInvitations: [
+        {
+          id: "inv-1",
+          region: "europe",
+          year: 1,
+          ceremonyName: "Cartier Awards",
+          ceremonyDay: 300,
+          issuedDay: 286,
+          qualifiers: [],
+          rsvp: "pending",
+          auditLog: [{ day: 286, kind: "invited", note: "Invitation issued." }],
+        },
+      ],
+    });
+
+    const { container } = render(createElement(InboxPage));
+    const timelineEntry = container.querySelector("[data-testid='timeline-entry']");
+    expect(timelineEntry).not.toBeNull();
+    expect(timelineEntry?.textContent).toContain("Day 286");
+  });
+
+  it("enhanced InboxCeremonyRsvp renders timeline 'No activity yet' when auditLog is empty", () => {
+    seedStore({
+      ...createDefaultGameState(),
+      day: 290,
+      inbox: [
+        {
+          id: "msg1",
+          day: 286,
+          title: "Ceremony Invitation",
+          body: "You have been invited.",
+          category: "system",
+          priority: "info" as const,
+          readAt: undefined,
+          cta: {
+            label: "View Ceremony",
+            route: "/ceremony/$invitationId",
+            params: { invitationId: "inv-1" },
+          },
+        },
+      ],
+      awardCeremonyInvitations: [
+        {
+          id: "inv-1",
+          region: "europe",
+          year: 1,
+          ceremonyName: "Cartier Awards",
+          ceremonyDay: 300,
+          issuedDay: 286,
+          qualifiers: [],
+          rsvp: "pending",
+        },
+      ],
+    });
+
+    const { container } = render(createElement(InboxPage));
+    expect(container.textContent).toContain("No activity yet");
   });
 });
