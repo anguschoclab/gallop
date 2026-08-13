@@ -8,7 +8,7 @@ import { RaceCard } from "@/components/race/RaceCard";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/core/financial";
 import { cn } from "@/lib/cn";
-import type { Race, Claim } from "@/game/types";
+import type { Race, Claim, Horse } from "@/game/types";
 import { List, LayoutGrid, Target, MapPin, Globe } from "lucide-react";
 
 interface RaceFeedProps {
@@ -16,10 +16,10 @@ interface RaceFeedProps {
   viewMode: "list" | "grid";
   onViewModeChange: (mode: "list" | "grid") => void;
   onEnterRace: (race: Race) => void;
-  horses: any[];
+  horses: Horse[];
   claims: Claim[];
   cash: number;
-  fileClaim: any;
+  fileClaim: (raceId: string, horseId: string) => { ok: boolean; reason?: string };
 }
 
 export function RaceFeed({
@@ -92,7 +92,7 @@ export function RaceFeed({
               <div
                 className={cn(
                   "absolute top-0 left-0 w-1 h-full transition-colors z-10",
-                  r.entries.some((e: any) => e.owned)
+                  r.entries.some((e) => e.owned)
                     ? "bg-success"
                     : "bg-white/5 group-hover:bg-success/20",
                 )}
@@ -117,7 +117,7 @@ export function RaceFeed({
             </thead>
             <tbody className="divide-y divide-white/5">
               {races.map((r) => {
-                const isEntered = r.entries.some((e: any) => e.owned);
+                const isEntered = r.entries.some((e) => e.owned);
                 const isClaiming = !!r.claiming;
 
                 return (

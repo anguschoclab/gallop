@@ -178,7 +178,9 @@ function StablePage() {
                   view === "ledger" ? "bg-white/10 text-gold" : "text-cream/40",
                 )}
                 onClick={() =>
-                  navigate({ search: (prev: StableSearch) => ({ ...prev, view: "ledger" as const }) })
+                  navigate({
+                    search: (prev: StableSearch) => ({ ...prev, view: "ledger" as const }),
+                  })
                 }
               >
                 <List className="h-4 w-4" />
@@ -191,7 +193,9 @@ function StablePage() {
                   view === "gallery" ? "bg-white/10 text-gold" : "text-cream/40",
                 )}
                 onClick={() =>
-                  navigate({ search: (prev: StableSearch) => ({ ...prev, view: "gallery" as const }) })
+                  navigate({
+                    search: (prev: StableSearch) => ({ ...prev, view: "gallery" as const }),
+                  })
                 }
               >
                 <LayoutGrid className="h-4 w-4" />
@@ -203,11 +207,15 @@ function StablePage() {
         <TabsContent value="roster" className="mt-0 space-y-3">
           <PaceTendencyFilter
             tendency={tendency}
-            onTendency={(t) => navigate({ search: (prev: StableSearch) => ({ ...prev, tendency: t }) })}
+            onTendency={(t) =>
+              navigate({ search: (prev: StableSearch) => ({ ...prev, tendency: t }) })
+            }
             distance={trip}
             onDistance={(d) => navigate({ search: (prev: StableSearch) => ({ ...prev, trip: d }) })}
             surface={surface}
-            onSurface={(s) => navigate({ search: (prev: StableSearch) => ({ ...prev, surface: s }) })}
+            onSurface={(s) =>
+              navigate({ search: (prev: StableSearch) => ({ ...prev, surface: s }) })
+            }
           />
           <StableRosterView
             horses={filteredMyHorses}

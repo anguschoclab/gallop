@@ -23,11 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { History, Trophy, ScrollText } from "lucide-react";
-import {
-  REGION_AWARD_NAMES,
-  CATEGORY_DISPLAY_NAMES,
-  type AwardRegion,
-} from "@/core/awards/types";
+import { REGION_AWARD_NAMES, CATEGORY_DISPLAY_NAMES, type AwardRegion } from "@/core/awards/types";
 import type { RegionalAward } from "@/core/awards/types";
 import {
   didAttend,
@@ -115,10 +111,7 @@ export function InvitationHistoryPanel({ invitations, awards, day }: Props) {
         ) : (
           <>
             <div className="flex flex-wrap items-center gap-2">
-              <Select
-                value={region}
-                onValueChange={(v) => setRegion(v as AwardRegion | "all")}
-              >
+              <Select value={region} onValueChange={(v) => setRegion(v as AwardRegion | "all")}>
                 <SelectTrigger className="h-8 w-[170px] text-xs" aria-label="Filter by region">
                   <SelectValue />
                 </SelectTrigger>
@@ -187,7 +180,10 @@ export function InvitationHistoryPanel({ invitations, awards, day }: Props) {
                 const won = getInvitationOutcome(awards, inv);
                 const attended = didAttend(inv, day);
                 return (
-                  <div key={inv.id} className="rounded-md border border-gold-muted/50 p-3 space-y-2">
+                  <div
+                    key={inv.id}
+                    className="rounded-md border border-gold-muted/50 p-3 space-y-2"
+                  >
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div>
                         <Link
@@ -198,8 +194,7 @@ export function InvitationHistoryPanel({ invitations, awards, day }: Props) {
                           {inv.ceremonyName}
                         </Link>
                         <div className="text-xs text-cream-muted">
-                          {REGION_AWARD_NAMES[inv.region]} · Year {inv.year} · Day{" "}
-                          {inv.ceremonyDay}
+                          {REGION_AWARD_NAMES[inv.region]} · Year {inv.year} · Day {inv.ceremonyDay}
                         </div>
                       </div>
                       <CeremonyRsvpBadge invitation={inv} day={day} />

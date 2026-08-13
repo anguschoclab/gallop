@@ -3,6 +3,32 @@ import { getHorseInsight } from "@/core/horse/insights";
 import type { Horse } from "@/core/horse/types";
 
 describe("getHorseInsight", () => {
+  it("detects Bounce Candidate when last beyer is massive jump", () => {
+    const horse = {
+      raceHistory: [
+        { day: 1, beyer: 70 },
+        { day: 2, beyer: 75 },
+        { day: 3, beyer: 85 }, // +10 points from previous max
+      ],
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.value).toBe("Bounce Candidate");
+    expect(insight?.label).toBe("Regression Risk");
+    expect(insight?.type).toBe("negative");
+  });
+
+  it("does not detect Bounce Candidate when jump is small", () => {
+    const horse = {
+      raceHistory: [
+        { day: 1, beyer: 75 },
+        { day: 2, beyer: 70 },
+        { day: 3, beyer: 79 }, // Only +4 points over maxPrevious (75)
+      ],
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight).toBeNull();
+  });
+
   it("returns null for history with less than 3 races", () => {
     const horse = { raceHistory: [{ position: 1, day: 1 }] } as Horse;
     expect(getHorseInsight(horse)).toBeNull();
@@ -581,5 +607,67 @@ describe("Versatility insights", () => {
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("All-Surface Master");
     expect(insight!.type).toBe("positive");
+  });
+});
+
+describe("Stakes Performance insights", () => {
+  it("detects Big Stage Performer when horse elevates in stakes races", () => {
+    const horse = {
+      raceHistory: [
+        { position: 5, day: 1, beyer: 95, grade: "G1" },
+        { position: 4, day: 2, beyer: 94, grade: "G2" },
+        { position: 5, day: 3, beyer: 85, grade: undefined },
+        { position: 4, day: 4, beyer: 84, grade: undefined },
+        { position: 5, day: 5, beyer: 86, grade: undefined },
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Big Stage Performer");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("detects Stage Fright when horse struggles in stakes races", () => {
+    const horse = {
+      raceHistory: [
+        { position: 5, day: 1, beyer: 80, grade: "G1" },
+        { position: 4, day: 2, beyer: 82, grade: "G2" },
+        { position: 4, day: 3, beyer: 95, grade: undefined },
+        { position: 5, day: 4, beyer: 94, grade: undefined },
+        { position: 4, day: 5, beyer: 93, grade: undefined },
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Stage Fright");
+    expect(insight!.type).toBe("negative");
+  });
+});
+
+describe("Distance Versatility insights", () => {
+  it("detects Distance Versatility when winning spread is >= 600m", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1, distance: 1200 },
+        { position: 5, day: 2, distance: 1600 },
+        { position: 1, day: 3, distance: 1800 },
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Distance Versatility");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("does not detect Distance Versatility when winning spread is < 600m", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1, distance: 1200 },
+        { position: 1, day: 2, distance: 1600 },
+        { position: 5, day: 3, distance: 1800 },
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight?.label).not.toBe("Distance Versatility");
   });
 });

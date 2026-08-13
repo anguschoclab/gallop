@@ -5,15 +5,15 @@
  * Extracted from auction.$saleId.tsx.
  */
 
-import { useState, useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Gavel, Activity } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
 import { BuyNowDialog } from "./BuyNowDialog";
-import { BidInput } from "./BidInput";
-import { MaxBidInput } from "./MaxBidInput";
+import { BidInputPanel } from "./sub/BidInputPanel";
+import { MaxBidPanel } from "./sub/MaxBidPanel";
 import { cn } from "@/lib/cn";
 import type { AuctionLot } from "@/game/types";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface BiddingPanelProps {
   currentLot: AuctionLot;
@@ -44,32 +44,6 @@ export function BiddingPanel({
   onBuyNow,
   message,
 }: BiddingPanelProps) {
-  const [bidInput, setBidInput] = useState("");
-  const [maxBidInput, setMaxBidInput] = useState("");
-  const [currentMaxBid, setCurrentMaxBid] = useState<number | undefined>(undefined);
-  const manualBidId = useId();
-  const maxBidId = useId();
-
-  const handleCustomBid = () => {
-    const amount = Number(bidInput.replace(/,/g, ""));
-    if (amount > currentPrice) {
-      onBid(amount);
-      setBidInput("");
-    }
-  };
-
-  const handleSetMaxBid = () => {
-    const max = Number(maxBidInput.replace(/,/g, ""));
-    if (max > currentPrice) {
-      setCurrentMaxBid(max);
-      onSetMaxBid(max);
-    } else {
-      setCurrentMaxBid(undefined);
-      onSetMaxBid(undefined);
-    }
-    setMaxBidInput("");
-  };
-
   if (currentLot.passed) return null;
 
   return (
@@ -102,14 +76,38 @@ export function BiddingPanel({
 
         <div className="space-y-4">
           <div className="flex gap-2">
-            <Button
-              className="flex-1 h-14 bg-success hover:bg-success/90 text-slate-950 font-black uppercase tracking-[0.2em] rounded-none text-xs shadow-lg group"
-              onClick={() => onBid(nextBid)}
-              disabled={cash < nextBid || isPlayerLeading || isPlayerConsigned}
-            >
-              <Gavel className="h-4 w-4 mr-3 group-hover:rotate-12 transition-transform" />
-              Bid {formatCurrency(nextBid)}
-            </Button>
+            {cash < nextBid || isPlayerLeading || isPlayerConsigned ? (
+              <TooltipProvider delayDuration={300}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span tabIndex={0} className="flex-1 inline-block cursor-not-allowed">
+                      <Button
+                        className="w-full h-14 bg-success/50 text-slate-950/50 font-black uppercase tracking-[0.2em] rounded-none text-xs pointer-events-none"
+                        disabled
+                      >
+                        <Gavel className="h-4 w-4 mr-3" />
+                        Bid {formatCurrency(nextBid)}
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {isPlayerConsigned
+                      ? "Cannot bid on your own consignment."
+                      : isPlayerLeading
+                        ? "You are already leading the bidding."
+                        : `Not enough cash (${formatCurrency(nextBid)} required).`}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              <Button
+                className="flex-1 h-14 bg-success hover:bg-success/90 text-slate-950 font-black uppercase tracking-[0.2em] rounded-none text-xs shadow-lg group"
+                onClick={() => onBid(nextBid)}
+              >
+                <Gavel className="h-4 w-4 mr-3 group-hover:rotate-12 transition-transform" />
+                Bid {formatCurrency(nextBid)}
+              </Button>
+            )}
             {buyNowPrice !== undefined && !isPlayerConsigned && (
               <BuyNowDialog
                 horseName={horseName}
@@ -122,44 +120,12 @@ export function BiddingPanel({
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label
-                htmlFor={manualBidId}
-                className="text-[8px] uppercase font-black text-cream/20 tracking-widest px-1"
-              >
-                Manual_Offer
-              </label>
-              <BidInput
-                id={manualBidId}
-                value={bidInput}
-                onChange={setBidInput}
-                onSubmit={handleCustomBid}
-                placeholder="Amount..."
-                buttonLabel="Bid"
-                inputClassName="h-10 bg-slate-950 border-white/5 text-xs font-mono uppercase tracking-tighter focus-visible:ring-success/30 rounded-none"
-                buttonClassName="border-white/10 text-cream/60 rounded-none hover:bg-white/5"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label
-                htmlFor={maxBidId}
-                className="text-[8px] uppercase font-black text-cream/20 tracking-widest px-1"
-              >
-                Auto Bid Limit
-              </label>
-              <MaxBidInput
-                id={maxBidId}
-                value={maxBidInput}
-                onChange={setMaxBidInput}
-                onSubmit={handleSetMaxBid}
-                isSet={!!currentMaxBid}
-                setLabel="Set Max"
-                resetLabel="Reset"
-                placeholder="Limit..."
-                inputClassName="focus-visible:ring-gold/30"
-                buttonClassName="text-gold/60 border-white/10"
-              />
-            </div>
+            <BidInputPanel currentBid={currentPrice} nextMin={nextBid} onBid={onBid} />
+            <MaxBidPanel
+              currentBid={currentPrice}
+              playerMaxBid={undefined}
+              onSetMaxBid={onSetMaxBid}
+            />
           </div>
         </div>
 

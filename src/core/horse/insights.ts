@@ -59,6 +59,31 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
     }
   }
 
+  // 1.55 Check for Bounce Candidate (last race beyer is >= 8 points higher than best previous beyer)
+  if (history.length >= 3) {
+    const chronologicalHistory = [...history].sort((a, b) => a.day - b.day);
+    const lastRace = chronologicalHistory[chronologicalHistory.length - 1];
+
+    if (typeof lastRace.beyer === "number") {
+      let maxPreviousBeyer = -1;
+      for (let i = 0; i < chronologicalHistory.length - 1; i++) {
+        const race = chronologicalHistory[i];
+        if (typeof race.beyer === "number" && race.beyer > maxPreviousBeyer) {
+          maxPreviousBeyer = race.beyer;
+        }
+      }
+
+      if (maxPreviousBeyer > 0 && lastRace.beyer >= maxPreviousBeyer + 8) {
+        return {
+          label: "Regression Risk",
+          value: "Bounce Candidate",
+          context: `Ran a massive new top Beyer (${lastRace.beyer}, +${lastRace.beyer - maxPreviousBeyer} pts) last time out and may regress`,
+          type: "negative",
+        };
+      }
+    }
+  }
+
   // 1.5 Check for Improving Form (trending up in last 3 starts)
   const recentBeyers = history
     .slice(-3)
@@ -76,6 +101,45 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
           type: "positive",
         };
       }
+    }
+  }
+
+  // 1.6 Check for Stakes Performance (Big Stage Performer / Stage Fright)
+  let gradedRuns = 0;
+  let gradedBeyerTotal = 0;
+  let regularRuns = 0;
+  let regularBeyerTotal = 0;
+
+  for (const race of history) {
+    if (typeof race.beyer === "number") {
+      if (race.grade && ["G1", "G2", "G3"].includes(race.grade)) {
+        gradedRuns++;
+        gradedBeyerTotal += race.beyer;
+      } else {
+        regularRuns++;
+        regularBeyerTotal += race.beyer;
+      }
+    }
+  }
+
+  if (gradedRuns >= 2 && regularRuns >= 3) {
+    const gradedAvg = gradedBeyerTotal / gradedRuns;
+    const regularAvg = regularBeyerTotal / regularRuns;
+
+    if (gradedAvg >= regularAvg + 5) {
+      return {
+        label: "Big Stage Performer",
+        value: "Elevates in Stakes Races",
+        context: `Averages a ${Math.round(gradedAvg)} Beyer in Graded company vs ${Math.round(regularAvg)} in standard races`,
+        type: "positive",
+      };
+    } else if (regularAvg >= gradedAvg + 8) {
+      return {
+        label: "Stage Fright",
+        value: "Underperforms in Stakes",
+        context: `Averages only ${Math.round(gradedAvg)} Beyer in Graded company vs ${Math.round(regularAvg)} in standard races`,
+        type: "negative",
+      };
     }
   }
 
@@ -350,6 +414,28 @@ export function getHorseInsight(horse: Horse): HorseInsight | null {
       context: `Best performance average (Beyer ${Math.round(bestSurfaceBeyer)}) across ${bestSurfaceRuns} starts`,
       type: "positive",
     };
+  }
+
+  // 1.94 Check for Distance Versatility (spread between min and max winning distance >= 600m)
+  let minWinDist: number | null = null;
+  let maxWinDist: number | null = null;
+  for (const race of history) {
+    if (race.position === 1 && race.distance != null) {
+      if (minWinDist === null || race.distance < minWinDist) minWinDist = race.distance;
+      if (maxWinDist === null || race.distance > maxWinDist) maxWinDist = race.distance;
+    }
+  }
+
+  if (minWinDist !== null && maxWinDist !== null) {
+    const spread = maxWinDist - minWinDist;
+    if (spread >= 600) {
+      return {
+        label: "Distance Versatility",
+        value: "Range Specialist",
+        context: `Has recorded victories spanning from ${minWinDist}m to ${maxWinDist}m`,
+        type: "positive",
+      };
+    }
   }
 
   return null;
