@@ -36,7 +36,7 @@ import type {
   SyndicateFeeDistributionIntent,
   AnyIntent,
 } from "@/core/resolver/intents";
-import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/constants";
+import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE, MAX_BATCH_BREEDING } from "@/constants";
 import { formatCurrency } from "@/core/common/formatting";
 import {
   pickPersonality,
@@ -554,6 +554,13 @@ export function createBreedingSlice(
 
     breedBatch: (entries) => {
       const s = get();
+      if (entries.length > MAX_BATCH_BREEDING) {
+        return {
+          ok: false,
+          results: [],
+          reason: `Batch exceeds maximum of ${MAX_BATCH_BREEDING} entries.`,
+        };
+      }
       const results: BatchBreedResult[] = [];
       const processedDams = new Set<string>();
       let totalFee = 0;

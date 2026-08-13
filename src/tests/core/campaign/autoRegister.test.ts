@@ -351,4 +351,30 @@ describe("calculateAutoRegisterEntries", () => {
     expect(result.affordableCount).toBe(result.entries.length);
     expect(result.affordableCount).toBe(2);
   });
+
+  it("selects free agent with affinity over higher-fame jockey (chemistry-aware)", () => {
+    const horse = mkHorse({ id: "h1", runningStyle: "P" });
+    const race = mkRace({ day: baseDay + 3 });
+    const famousJockey = mkJockey({
+      id: "j-famous",
+      fame: 90,
+      archetype: "versatile",
+      affinityMap: {},
+    });
+    const affinityJockey = mkJockey({
+      id: "j-affinity",
+      fame: 30,
+      archetype: "versatile",
+      affinityMap: { h1: 500 },
+    });
+    const result = calculateAutoRegisterEntries(
+      [horse],
+      [race],
+      [famousJockey, affinityJockey],
+      100000,
+      baseDay,
+    );
+    expect(result.entries.length).toBe(1);
+    expect(result.entries[0].jockeyId).toBe("j-affinity");
+  });
 });

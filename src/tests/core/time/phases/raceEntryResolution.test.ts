@@ -526,6 +526,73 @@ describe("raceEntryResolutionPhase", () => {
     });
   });
 
+  describe("chemistry-aware backup jockey selection", () => {
+    it("selects free agent with affinity over higher-fame jockey when no retainer and no AI manager", () => {
+      const npcHorse = createTestHorse({ id: "npc-horse", stableId: "s-npc", runningStyle: "P" });
+      const state: GameState = {
+        ...createTestState(),
+        horses: h2r([npcHorse]),
+        races: r2r([
+          {
+            id: "race-1",
+            name: "Test Race",
+            day: 5,
+            distance: 2000,
+            raceClass: "Maiden",
+            entryFee: 500,
+            purse: 10000,
+            minStat: 70,
+            fieldSize: 8,
+            entries: [],
+            resolved: false,
+          },
+        ]),
+        npcStables: [{ id: "s-npc", name: "NPC Stable", horses: h2r([npcHorse]) } as any],
+        jockeys: [
+          {
+            id: "j-famous",
+            name: "Famous Jockey",
+            fame: 90,
+            ridingFee: 100,
+            archetype: "versatile",
+            affinityMap: {},
+            stableAffinity: 0,
+            lastRaceDay: 0,
+          } as any,
+          {
+            id: "j-affinity",
+            name: "Affinity Jockey",
+            fame: 30,
+            ridingFee: 100,
+            archetype: "versatile",
+            affinityMap: { "npc-horse": 500 },
+            stableAffinity: 0,
+            lastRaceDay: 0,
+          } as any,
+        ],
+      };
+
+      const intent: RaceEntryIntent = {
+        id: "intent-1",
+        day: 1,
+        type: "race_entry",
+        entityId: "npc-horse",
+        priority: 100,
+        source: "npc",
+        sourceId: "s-npc",
+        horseId: "npc-horse",
+        raceId: "race-1",
+      };
+
+      const context = createTestContext(state, [intent]);
+      const result = raceEntryResolutionPhase.execute(context);
+
+      const entryImpact = result.impacts.find((i) => i.type === "race_entry") as any;
+      expect(entryImpact).toBeDefined();
+      expect(entryImpact.jockeyId).toBe("j-affinity");
+    });
+  });
+
   describe("cancelled races", () => {
     it("25. should skip cancelled race — no race_entry impact emitted", () => {
       const horse = createTestHorse({ id: "horse-1" });

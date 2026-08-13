@@ -5,7 +5,7 @@ import { updateHorseFame } from "@/core/npc/postRace";
 import { createRng } from "@/core/common/rng";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { StaffRole } from "@/core/staff/staffTypes";
-import { createTestHorse } from "@/tests/helpers";
+import { createTestHorse, createTestJockey } from "@/tests/helpers";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -296,6 +296,34 @@ describe("runNpcRaceEntry", () => {
     const races = [mkRace({ id: "r1", day: 2 }), mkRace({ id: "r2", day: 4 })];
     const result = runNpcRaceEntry([], [], [], races, 1, createRng("test"), 3);
     expect(result).toHaveLength(races.length);
+  });
+
+  it("selects free agent with affinity over higher-fame jockey (chemistry-aware)", () => {
+    const horse = mkHorse({ id: "h1", stableId: "s1", energy: 80, runningStyle: "P" });
+    const race = mkRace({ id: "r1", day: 2, fieldSize: 10 });
+    const stable = mkStable({ horses: ["h1"] });
+
+    const famousJockey = createTestJockey({
+      id: "j-famous",
+      name: "Famous",
+      fame: 80,
+      archetype: "versatile",
+      affinityMap: {},
+      lastRaceDay: 0,
+    });
+    const affinityJockey = createTestJockey({
+      id: "j-affinity",
+      name: "Affinity",
+      fame: 30,
+      archetype: "versatile",
+      affinityMap: { h1: 500 },
+      lastRaceDay: 0,
+    });
+
+    const result = runNpcRaceEntry([stable], [horse], [famousJockey, affinityJockey], [race], 1, createRng("test"), 3);
+    const entry = result.find((r) => r.id === "r1")!.entries.find((e) => e.horseId === "h1");
+    expect(entry).toBeDefined();
+    expect(entry!.jockeyId).toBe("j-affinity");
   });
 });
 

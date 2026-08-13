@@ -16,6 +16,7 @@ export function useBreedingPage() {
   const day = useGame((s: GameState) => s.day);
   const cash = useGame((s: GameState) => s.cash);
   const breed = useGame((s) => s.breed);
+  const savedMatingPlans = useGameWithShallow((s: GameState) => s.savedMatingPlans || []);
 
   const [sireId, setSireId] = useState<string>("");
   const [damId, setDamId] = useState<string>("");
@@ -78,5 +79,6 @@ export function useBreedingPage() {
     activePregnanciesCount,
     breed,
     femalesToBreed,
+    savedMatingPlans,
   };
 }

@@ -37,8 +37,12 @@ export function useSeasonPlanner() {
 
   const availableStallions = useMemo(() => getAvailableStallions(horseList), [horseList]);
 
-  const seasonOpen = inBreedingSeason(day, "Northern");
-  const nextSeasonStart = nextBreedingSeasonStart(day, "Northern");
+  const northernSeasonOpen = inBreedingSeason(day, "Northern");
+  const southernSeasonOpen = inBreedingSeason(day, "Southern");
+  const seasonOpen = northernSeasonOpen || southernSeasonOpen;
+  const nextNorthernSeason = nextBreedingSeasonStart(day, "Northern");
+  const nextSouthernSeason = nextBreedingSeasonStart(day, "Southern");
+  const nextSeasonStart = Math.min(nextNorthernSeason, nextSouthernSeason);
 
   const suggestionsForMare = useCallback(
     (damId: string): SireSuggestion[] => {

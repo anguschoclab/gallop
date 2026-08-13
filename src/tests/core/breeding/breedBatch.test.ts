@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { createBreedingSlice } from "@/game/store/slices/breedingSlice";
 import type { StoreGet } from "@/game/store/types";
 import { createTestMare, createTestStallion } from "@/tests/helpers";
-import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/constants";
+import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE, MAX_BATCH_BREEDING } from "@/constants";
 import type { Horse, StudCareer, Pregnancy } from "@/game/types";
 import type { MatingPlanEntry } from "@/game/store/state/breedingState";
 
@@ -215,5 +215,21 @@ describe("breedBatch", () => {
     // player owns 20/40 = 50% shares, so pays 50% of stud fee
     const expectedStudFee = 5000 * 0.5;
     expect(intent.fee).toBe(BREEDING_FEE + expectedStudFee);
+  });
+
+  it("rejects batch exceeding MAX_BATCH_BREEDING limit", () => {
+    const { slice, enqueueIntent } = makeMockStore({});
+    const entries: MatingPlanEntry[] = Array.from({ length: MAX_BATCH_BREEDING + 1 }, (_, i) => ({
+      damId: `mare-${i}`,
+      sireId: "sire1",
+      liveFoalGuarantee: false,
+    }));
+    const result = slice.breedBatch(entries);
+    expect(result.ok).toBe(false);
+    expect(result.results).toEqual([]);
+    if (!result.ok) {
+      expect(result.reason).toContain("maximum");
+    }
+    expect(enqueueIntent).not.toHaveBeenCalled();
   });
 });

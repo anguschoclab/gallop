@@ -315,3 +315,28 @@ describe("findFirstEligibleRace", () => {
     expect(result).toBeUndefined();
   });
 });
+
+describe("deriveEligibleRaces — chemistry-aware jockey fee estimation", () => {
+  it("estimates fee from affinity jockey rather than higher-fame jockey", () => {
+    const horse = mkHorse({ id: "h1", runningStyle: "P" });
+    const race = mkRace({ day: baseDay + 3 });
+    const famousJockey = mkJockey({
+      id: "j-famous",
+      fame: 90,
+      ridingFee: 500,
+      archetype: "versatile",
+      affinityMap: {},
+    });
+    const affinityJockey = mkJockey({
+      id: "j-affinity",
+      fame: 30,
+      ridingFee: 150,
+      archetype: "versatile",
+      affinityMap: { h1: 500 },
+    });
+    const result = deriveEligibleRaces(horse, [race], [famousJockey, affinityJockey], 100000, baseDay);
+    expect(result.length).toBe(1);
+    // Should pick the affinity jockey's fee (150), not the famous jockey's fee (500)
+    expect(result[0].estimatedJockeyFee).toBe(150);
+  });
+});

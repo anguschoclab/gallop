@@ -22,7 +22,7 @@ const STAFF_NAMES = [
   "Lucia Rossi",
 ];
 
-const SPECIALIZED_TRAITS: Record<StaffRole, string[]> = {
+export const SPECIALIZED_TRAITS: Record<StaffRole, string[]> = {
   veterinarian: ["colic_expert", "bone_specialist", "fertility_boost", "calm_demeanor"],
   farrier: ["mud_expert", "turf_specialist", "synthetic_pro", "durability_focus"],
   nutritionist: ["stamina_optimizer", "weight_manager", "recovery_plus", "growth_agent"],

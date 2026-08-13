@@ -23,9 +23,7 @@ describe("scoreJockeyChemistry", () => {
     const horse = mkHorse();
     const jockey = mkJockey({ affinityMap: {} });
     const score = scoreJockeyChemistry(horse, jockey);
-    expect(score).toBe(jockey.fame * 0.5); // no affinity, versatile → High compat but versatile gives High
-    // Actually versatile archetype returns "High" from getCompatibility
-    // So score = fame*0.5 + 0 + 20
+    // versatile archetype → "High" compatibility (+20), no affinity
     expect(score).toBe(jockey.fame * 0.5 + 20);
   });
 

@@ -19,6 +19,7 @@ import { createTransportRequest } from "@/core/transportation";
 import { createTransaction } from "@/core/transactions";
 import { generateUUID } from "@/core/uuid";
 import { selectBestJockey, createJockeyAIState } from "@/core/ai/jockeyAI";
+import { selectBestFreeAgentJockey } from "@/core/jockey/selectFreeAgent";
 import { getOrCreateStableAIState, type NpcAIManager } from "@/core/ai/npcCycleAI";
 import { calculateOverallRating } from "@/core/horse/stats";
 
@@ -50,9 +51,6 @@ export const raceEntryResolutionPhase: PipelinePhase = {
       if (j.stableId) jockeysByStableId.set(j.stableId, j);
     }
     const freeAgents = jockeys.filter((j) => !j.stableId && j.lastRaceDay !== newDay);
-
-    // Sort free agents by fame for fallback selection
-    freeAgents.sort((a, b) => b.fame - a.fame);
 
     // Clone NPC AI manager so jockey AI state updates never mutate input state.
     const npcAIManager: NpcAIManager | undefined = state.npcAIManager
@@ -151,9 +149,12 @@ export const raceEntryResolutionPhase: PipelinePhase = {
               npcAIManagerUpdated = true;
             }
 
-            // 3. Fallback to best available if AI selection failed
+            // 3. Fallback to chemistry-aware best available if AI selection failed
             if (!jockeyId) {
-              jockeyId = freeAgents[0].id;
+              const chosen = selectBestFreeAgentJockey(horse, freeAgents);
+              if (chosen) {
+                jockeyId = chosen.id;
+              }
             }
           }
         }

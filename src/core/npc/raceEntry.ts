@@ -21,6 +21,7 @@ import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { shouldEnterHorse } from "./raceEntryHelpers";
 import { isHatedRival } from "@/core/stable/rivalry";
 import { calculateOverallRating } from "@/core/horse/stats";
+import { selectBestFreeAgentJockey } from "@/core/jockey/selectFreeAgent";
 
 /**
  * AI decision: Enter horses from a stable into a specific race.
@@ -126,7 +127,6 @@ export function runNpcRaceEntry(
 
   // Cache free agents
   let freeAgents = jockeys.filter((j) => !j.stableId && j.lastRaceDay !== currentDay);
-  freeAgents.sort((a, b) => b.fame - a.fame);
 
   for (const race of workingUpcoming) {
     // Skip invitation-only races during initialization (invites haven't gone out yet)
@@ -187,15 +187,9 @@ export function runNpcRaceEntry(
         let chosenJockey = retainedJockey;
 
         if (!chosenJockey) {
-          // Find best available freelance jockey whose archetype matches horse style
+          // Find best available freelance jockey using chemistry-aware scoring
           if (freeAgents.length > 0) {
-            const matches = freeAgents.filter((j) => {
-              if (horse.runningStyle === "E") return j.archetype === "front_runner";
-              if (horse.runningStyle === "S") return j.archetype === "closer";
-              return j.archetype === "versatile" || j.archetype === "clinical";
-            });
-            const pool = matches.length > 0 ? matches : freeAgents;
-            chosenJockey = pool[0];
+            chosenJockey = selectBestFreeAgentJockey(horse, freeAgents);
 
             // Mark as used today
             freeAgents = freeAgents.filter((j) => j.id !== chosenJockey!.id);
