@@ -71,7 +71,10 @@ const COLUMNS: { key: SortKey; label: string; numeric?: boolean }[] = [
   { key: "earnings", label: "Earnings", numeric: true },
 ];
 
-function linkFor(kind: EntityKind, id: string): { to: string; params: Record<string, string> } | null {
+function linkFor(
+  kind: EntityKind,
+  id: string,
+): { to: string; params: Record<string, string> } | null {
   if (kind === "jockeys") return { to: "/jockey/$jockeyId", params: { jockeyId: id } };
   if (kind === "trainers") return { to: "/staff/$staffId", params: { staffId: id } };
   if (id === "player") return null;
@@ -94,7 +97,14 @@ export function RegionDrilldownDrawer({
   const [weeksA, setWeeksA] = useState<TimeWindowWeeks>(weeks);
   const [weeksB, setWeeksB] = useState<TimeWindowWeeks>(4);
 
-  const base = { horses, races, currentDay, ownedOnly: true, region: region ?? "other", ...lookups };
+  const base = {
+    horses,
+    races,
+    currentDay,
+    ownedOnly: true,
+    region: region ?? "other",
+    ...lookups,
+  };
 
   const primary = useMemo(
     () => (region ? computeRegionDrilldown({ ...base, weeks: compare ? weeksA : weeks }) : null),
@@ -288,9 +298,8 @@ export function RegionDrilldownDrawer({
                         <td className="max-w-[180px] truncate px-2 py-1.5 text-cream/85">
                           {link ? (
                             <Link
-                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
                               to={link.to as any}
-                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
                               params={link.params as any}
                               className="hover:text-gold"
                             >
@@ -320,7 +329,9 @@ export function RegionDrilldownDrawer({
 }
 
 function Num({ children }: { children: React.ReactNode }) {
-  return <td className="px-2 py-1.5 text-right font-mono tabular-nums text-cream/70">{children}</td>;
+  return (
+    <td className="px-2 py-1.5 text-right font-mono tabular-nums text-cream/70">{children}</td>
+  );
 }
 
 function CompareCell({
