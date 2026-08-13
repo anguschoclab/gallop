@@ -3,6 +3,32 @@ import { getHorseInsight } from "@/core/horse/insights";
 import type { Horse } from "@/core/horse/types";
 
 describe("getHorseInsight", () => {
+  it("detects Bounce Candidate when last beyer is massive jump", () => {
+    const horse = {
+      raceHistory: [
+        { day: 1, beyer: 70 },
+        { day: 2, beyer: 75 },
+        { day: 3, beyer: 85 }, // +10 points from previous max
+      ],
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.value).toBe("Bounce Candidate");
+    expect(insight?.label).toBe("Regression Risk");
+    expect(insight?.type).toBe("negative");
+  });
+
+  it("does not detect Bounce Candidate when jump is small", () => {
+    const horse = {
+      raceHistory: [
+        { day: 1, beyer: 75 },
+        { day: 2, beyer: 70 },
+        { day: 3, beyer: 79 }, // Only +4 points over maxPrevious (75)
+      ],
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight).toBeNull();
+  });
+
   it("returns null for history with less than 3 races", () => {
     const horse = { raceHistory: [{ position: 1, day: 1 }] } as Horse;
     expect(getHorseInsight(horse)).toBeNull();
