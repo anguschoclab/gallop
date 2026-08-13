@@ -41,14 +41,14 @@ const horse = (raceId: string, day: number, position: number, earned: number) =>
 describe("time window helpers", () => {
   it("includes only days inside the window", () => {
     expect(isInWindow(100, 100, 4)).toBe(true);
-    expect(isInWindow(72, 100, 4)).toBe(true);
-    expect(isInWindow(71, 100, 4)).toBe(false);
+    expect(isInWindow(73, 100, 4)).toBe(true);
+    expect(isInWindow(72, 100, 4)).toBe(false);
     expect(isInWindow(1, 100, 0)).toBe(true);
   });
 
   it("buckets recent days into the last bucket", () => {
     expect(weekBucket(100, 100, 4)).toBe(3);
-    expect(weekBucket(72, 100, 4)).toBe(0);
+    expect(weekBucket(73, 100, 4)).toBe(0);
   });
 });
 
