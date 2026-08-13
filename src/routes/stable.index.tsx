@@ -230,6 +230,7 @@ function StablePage() {
               navigate({ search: (prev: StableSearch) => ({ ...prev, compareIds: ids }) })
             }
           />
+          <StableSplitAnalytics horses={myHorses} title="Race Split Analytics" />
         </TabsContent>
 
         <TabsContent value="rivals" className="mt-0">
