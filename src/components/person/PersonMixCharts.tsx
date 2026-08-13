@@ -104,7 +104,13 @@ export function PersonMixCharts({ entries, window = 10 }: PersonMixChartsProps) 
           </div>
         ) : (
           <div className="px-2 pt-2">
-            <AreaTrend data={derived.trend} height={140} format={formatCurrencyCompact} />
+            <AreaTrend
+              data={derived.trend}
+              height={140}
+              yFormat={formatCurrencyCompact}
+              xFormat={(x) => `D${x}`}
+            />
+
           </div>
         )}
       </ChartCard>
