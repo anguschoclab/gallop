@@ -22,8 +22,7 @@ export function HorseCareerCharts({ horse }: HorseCareerChartsProps) {
   const { weeks } = useTimeWindow();
 
   const history = useMemo(
-    () =>
-      filterByWindow([...(horse.raceHistory ?? [])], day, weeks).sort((a, b) => a.day - b.day),
+    () => filterByWindow([...(horse.raceHistory ?? [])], day, weeks).sort((a, b) => a.day - b.day),
     [horse.raceHistory, day, weeks],
   );
 
@@ -96,92 +95,97 @@ export function HorseCareerCharts({ horse }: HorseCareerChartsProps) {
         <TimeWindowSelect />
       </div>
       <div className="grid gap-3 md:grid-cols-2">
-      <ChartCard
-        title="Cumulative Earnings"
-        subtitle={formatCurrencyCompact(derived.total)}
-        footnote={history.length === 1 ? "First start only" : `${history.length} starts`}
-        info="Prize money this horse has banked, accumulated across its career in race-day order."
-        infoFormula="Running total of purse earned per start; x-axis is the in-game day."
-        legend={[{ label: "Cumulative earnings", color: chartColors.primary, variant: "line" }]}
-        className="md:col-span-2"
-      >
-        {derived.earningsCurve.length === 1 ? (
-          <div className="px-2 py-6 text-center font-mono text-sm text-cream/70">
-            {formatCurrencyCompact(derived.total)} from first start (Day{" "}
-            {derived.earningsCurve[0].x})
+        <ChartCard
+          title="Cumulative Earnings"
+          subtitle={formatCurrencyCompact(derived.total)}
+          footnote={history.length === 1 ? "First start only" : `${history.length} starts`}
+          info="Prize money this horse has banked, accumulated across its career in race-day order."
+          infoFormula="Running total of purse earned per start; x-axis is the in-game day."
+          legend={[{ label: "Cumulative earnings", color: chartColors.primary, variant: "line" }]}
+          className="md:col-span-2"
+        >
+          {derived.earningsCurve.length === 1 ? (
+            <div className="px-2 py-6 text-center font-mono text-sm text-cream/70">
+              {formatCurrencyCompact(derived.total)} from first start (Day{" "}
+              {derived.earningsCurve[0].x})
+            </div>
+          ) : (
+            <AreaTrend
+              data={derived.earningsCurve}
+              height={180}
+              yFormat={formatCurrencyCompact}
+              xFormat={(x) => formatDay(Number(x))}
+            />
+          )}
+        </ChartCard>
+
+        <ChartCard
+          title="Finish Distribution"
+          subtitle={`${history.length} starts`}
+          info="Share of starts finishing 1st, 2nd, 3rd, or outside the top three."
+          infoFormula="starts in each finish bucket ÷ total starts."
+          legend={[
+            { label: "Win", color: chartColors.primary },
+            { label: "2nd", color: chartColors.secondary },
+            { label: "3rd", color: chartColors.tertiary },
+            { label: "4th+", color: chartColors.slate },
+          ]}
+        >
+          <div className="px-2 pt-2">
+            <StackedRatioBar
+              segments={[
+                {
+                  key: "w",
+                  label: "Win",
+                  value: derived.finishBuckets[0],
+                  color: chartColors.primary,
+                },
+                {
+                  key: "p",
+                  label: "2nd",
+                  value: derived.finishBuckets[1],
+                  color: chartColors.secondary,
+                },
+                {
+                  key: "s",
+                  label: "3rd",
+                  value: derived.finishBuckets[2],
+                  color: chartColors.tertiary,
+                },
+                {
+                  key: "o",
+                  label: "4th+",
+                  value: derived.finishBuckets[3],
+                  color: chartColors.slate,
+                },
+              ]}
+            />
           </div>
-        ) : (
-          <AreaTrend
-            data={derived.earningsCurve}
-            height={180}
-            yFormat={formatCurrencyCompact}
-            xFormat={(x) => formatDay(Number(x))}
-          />
-        )}
-      </ChartCard>
+        </ChartCard>
 
-      <ChartCard
-        title="Finish Distribution"
-        subtitle={`${history.length} starts`}
-        info="Share of starts finishing 1st, 2nd, 3rd, or outside the top three."
-        infoFormula="starts in each finish bucket ÷ total starts."
-        legend={[
-          { label: "Win", color: chartColors.primary },
-          { label: "2nd", color: chartColors.secondary },
-          { label: "3rd", color: chartColors.tertiary },
-          { label: "4th+", color: chartColors.slate },
-        ]}
-      >
-        <div className="px-2 pt-2">
-          <StackedRatioBar
-            segments={[
-              { key: "w", label: "Win", value: derived.finishBuckets[0], color: chartColors.primary },
-              {
-                key: "p",
-                label: "2nd",
-                value: derived.finishBuckets[1],
-                color: chartColors.secondary,
-              },
-              {
-                key: "s",
-                label: "3rd",
-                value: derived.finishBuckets[2],
-                color: chartColors.tertiary,
-              },
-              {
-                key: "o",
-                label: "4th+",
-                value: derived.finishBuckets[3],
-                color: chartColors.slate,
-              },
-            ]}
-          />
-        </div>
-      </ChartCard>
+        <ChartCard
+          title="Strike Rate by Surface"
+          footnote="Wins as % of starts"
+          info="Win rate on each surface. The hint under every bar is the sample size — a 100% bar off one start means little."
+          infoFormula="wins on surface ÷ starts on surface (× 100)."
+          legend={[{ label: "Strike rate", color: chartColors.primary }]}
+        >
+          <div className="px-2 pt-2">
+            <MiniBar rows={derived.surfaceRows} max={100} format={(n) => `${n}%`} />
+          </div>
+        </ChartCard>
 
-      <ChartCard
-        title="Strike Rate by Surface"
-        footnote="Wins as % of starts"
-        info="Win rate on each surface. The hint under every bar is the sample size — a 100% bar off one start means little."
-        infoFormula="wins on surface ÷ starts on surface (× 100)."
-        legend={[{ label: "Strike rate", color: chartColors.primary }]}
-      >
-        <div className="px-2 pt-2">
-          <MiniBar rows={derived.surfaceRows} max={100} format={(n) => `${n}%`} />
-        </div>
-      </ChartCard>
-
-      <ChartCard
-        title="Strike Rate by Trip"
-        footnote="Sprint <1400m · Mile <2000m · Route 2000m+"
-        info="Win rate by trip length bucket, with starts per bucket shown as the bar hint."
-        infoFormula="wins in trip bucket ÷ starts in trip bucket (× 100)."
-        legend={[{ label: "Strike rate", color: chartColors.primary }]}
-      >
-        <div className="px-2 pt-2">
-          <MiniBar rows={derived.tripRows} max={100} format={(n) => `${n}%`} />
-        </div>
-      </ChartCard>
+        <ChartCard
+          title="Strike Rate by Trip"
+          footnote="Sprint <1400m · Mile <2000m · Route 2000m+"
+          info="Win rate by trip length bucket, with starts per bucket shown as the bar hint."
+          infoFormula="wins in trip bucket ÷ starts in trip bucket (× 100)."
+          legend={[{ label: "Strike rate", color: chartColors.primary }]}
+        >
+          <div className="px-2 pt-2">
+            <MiniBar rows={derived.tripRows} max={100} format={(n) => `${n}%`} />
+          </div>
+        </ChartCard>
       </div>
     </div>
   );
