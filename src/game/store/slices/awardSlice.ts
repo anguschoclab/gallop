@@ -22,6 +22,8 @@ export type AwardSlice = {
   setAwards: (awards: RegionalAward[]) => void;
   /** Confirm or decline attendance at an award ceremony. */
   setCeremonyRsvp: (invitationId: string, status: CeremonyRsvpStatus) => void;
+  /** Bulk confirm or decline attendance for multiple ceremony invitations at once. */
+  bulkSetCeremonyRsvp: (invitationIds: string[], status: CeremonyRsvpStatus) => void;
 };
 
 export const createAwardSlice: GameStateCreator<AwardSlice> = (set) => ({
@@ -29,6 +31,28 @@ export const createAwardSlice: GameStateCreator<AwardSlice> = (set) => ({
     set((state) => ({
       awardCeremonyInvitations: (state.awardCeremonyInvitations ?? []).map((inv) => {
         if (inv.id !== invitationId) return inv;
+        const from = inv.rsvp ?? "pending";
+        if (from === status) return inv;
+        return appendInvitationAudit(
+          { ...inv, rsvp: status, respondedDay: state.day },
+          {
+            day: state.day,
+            kind: "rsvp_change",
+            from,
+            to: status,
+            note: `RSVP changed from ${RSVP_LABELS[from]} to ${RSVP_LABELS[status]}${state.day > getRsvpDeadlineDay(inv) ? " (after the deadline)" : ""}.`,
+          },
+        );
+      }),
+    }));
+  },
+
+  bulkSetCeremonyRsvp: (invitationIds, status) => {
+    if (invitationIds.length === 0) return;
+    const idSet = new Set(invitationIds);
+    set((state) => ({
+      awardCeremonyInvitations: (state.awardCeremonyInvitations ?? []).map((inv) => {
+        if (!idSet.has(inv.id)) return inv;
         const from = inv.rsvp ?? "pending";
         if (from === status) return inv;
         return appendInvitationAudit(

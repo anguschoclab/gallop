@@ -22,7 +22,11 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 vi.mock("@/components/awards/CeremonyRsvpControls", () => ({
-  InboxCeremonyRsvp: () => null,
+  InboxCeremonyRsvp: ({ invitationId }: { invitationId: string }) =>
+    createElement("div", {
+      "data-testid": "inbox-ceremony-rsvp",
+      "data-invitation-id": invitationId,
+    }),
 }));
 
 // We test the Inbox page body rendering by importing the component directly
@@ -51,5 +55,103 @@ describe("Inbox — entity linking", () => {
     const link = container.querySelector("a[to='/stable/$horseId']");
     expect(link).not.toBeNull();
     expect(link?.textContent).toBe("Thunder Strike");
+  });
+});
+
+describe("Inbox — ceremony integration", () => {
+  it("renders BulkRsvpControls when 2+ pending invitations exist", () => {
+    seedStore({
+      ...createDefaultGameState(),
+      day: 290,
+      inbox: [],
+      awardCeremonyInvitations: [
+        {
+          id: "inv-1",
+          region: "europe",
+          year: 1,
+          ceremonyName: "Cartier Awards",
+          ceremonyDay: 300,
+          issuedDay: 286,
+          qualifiers: [],
+          rsvp: "pending",
+        },
+        {
+          id: "inv-2",
+          region: "north_america",
+          year: 1,
+          ceremonyName: "Eclipse Awards",
+          ceremonyDay: 310,
+          issuedDay: 296,
+          qualifiers: [],
+          rsvp: "pending",
+        },
+      ],
+    });
+
+    const { container } = render(createElement(InboxPage));
+    expect(container.querySelector("[data-testid='bulk-rsvp-controls']")).not.toBeNull();
+  });
+
+  it("does not render BulkRsvpControls when fewer than 2 pending invitations", () => {
+    seedStore({
+      ...createDefaultGameState(),
+      day: 290,
+      inbox: [],
+      awardCeremonyInvitations: [
+        {
+          id: "inv-1",
+          region: "europe",
+          year: 1,
+          ceremonyName: "Cartier Awards",
+          ceremonyDay: 300,
+          issuedDay: 286,
+          qualifiers: [],
+          rsvp: "pending",
+        },
+      ],
+    });
+
+    const { container } = render(createElement(InboxPage));
+    expect(container.querySelector("[data-testid='bulk-rsvp-controls']")).toBeNull();
+  });
+
+  it("renders InboxCeremonyRsvp for messages with invitationId CTA", () => {
+    seedStore({
+      ...createDefaultGameState(),
+      day: 290,
+      inbox: [
+        {
+          id: "msg1",
+          day: 286,
+          title: "Ceremony Invitation",
+          body: "You have been invited.",
+          category: "system",
+          priority: "info" as const,
+          readAt: undefined,
+          cta: {
+            label: "View Ceremony",
+            route: "/ceremony/$invitationId",
+            params: { invitationId: "inv-1" },
+          },
+        },
+      ],
+      awardCeremonyInvitations: [
+        {
+          id: "inv-1",
+          region: "europe",
+          year: 1,
+          ceremonyName: "Cartier Awards",
+          ceremonyDay: 300,
+          issuedDay: 286,
+          qualifiers: [],
+          rsvp: "pending",
+        },
+      ],
+    });
+
+    const { container } = render(createElement(InboxPage));
+    const rsvpEl = container.querySelector("[data-testid='inbox-ceremony-rsvp']");
+    expect(rsvpEl).not.toBeNull();
+    expect(rsvpEl?.getAttribute("data-invitation-id")).toBe("inv-1");
   });
 });

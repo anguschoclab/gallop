@@ -15,6 +15,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import { toast } from "sonner";
+import { CeremonyRsvpStatusIndicator } from "./CeremonyRsvpStatusIndicator";
+import { CeremonyTimeline } from "./CeremonyTimeline";
 import {
   RSVP_LABELS,
   daysUntilRsvpDeadline,
@@ -119,7 +121,7 @@ export function CeremonyRsvpControls({
   );
 }
 
-/** Inbox helper: resolves the invitation by ID and renders RSVP controls. */
+/** Inbox helper: resolves the invitation by ID and renders RSVP controls, status indicator, and timeline. */
 export function InboxCeremonyRsvp({ invitationId }: { invitationId: string }) {
   const day = useGame((s: GameState) => s.day);
   const invitation = useGame((s: GameState) =>
@@ -127,8 +129,10 @@ export function InboxCeremonyRsvp({ invitationId }: { invitationId: string }) {
   );
   if (!invitation) return null;
   return (
-    <div className="mb-4">
+    <div className="mb-4 space-y-3">
+      <CeremonyRsvpStatusIndicator invitation={invitation} day={day} />
       <CeremonyRsvpControls invitation={invitation} day={day} />
+      <CeremonyTimeline invitation={invitation} />
     </div>
   );
 }

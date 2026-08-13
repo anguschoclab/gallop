@@ -8,6 +8,7 @@ import { Check, CheckCheck, Trash2, Pin, Bell, ExternalLink } from "lucide-react
 import { cn } from "@/lib/cn";
 import { useInbox } from "@/hooks/inbox/useInbox";
 import { InboxCeremonyRsvp } from "@/components/awards/CeremonyRsvpControls";
+import { BulkRsvpControls } from "@/components/awards/BulkRsvpControls";
 import { NewsContent } from "@/components/narrative/NewsContent";
 
 export const Route = createFileRoute("/inbox")({
@@ -52,6 +53,8 @@ export function InboxPage() {
           </Button>
         </div>
       </div>
+
+      <BulkRsvpControls />
 
       <div className="flex gap-2 mb-6">
         <Button
