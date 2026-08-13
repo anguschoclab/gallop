@@ -77,8 +77,8 @@ describe("getAffinityLevel", () => {
 describe("calculateTraitAffinitySynergy", () => {
   // Import dynamically so tests fail (RED) before implementation exists
   // const { calculateTraitAffinitySynergy } = require("@/core/jockey/affinity") as {
-//    calculateTraitAffinitySynergy: (jockey: Jockey, horse: Horse) => number;
-//  };
+  //    calculateTraitAffinitySynergy: (jockey: Jockey, horse: Horse) => number;
+  //  };
 
   it("returns 1.0 for jockey with no traits", () => {
     const j = mkJockey({ traits: [] });
