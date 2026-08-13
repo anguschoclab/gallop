@@ -78,7 +78,16 @@ interface ComputeArgs {
   ownedOnly?: boolean;
 }
 
-/** Flattens every in-window run into a region-tagged row. */
+/**
+ * Flattens every in-window run into a region-tagged row.
+ * @param root0
+ * @param root0.horses
+ * @param root0.races
+ * @param root0.currentDay
+ * @param root0.weeks
+ * @param root0.stableId
+ * @param root0.ownedOnly
+ */
 export function collectRegionRuns({
   horses,
   races,

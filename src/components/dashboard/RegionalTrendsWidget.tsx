@@ -7,14 +7,17 @@
 import { useMemo, useState } from "react";
 import { useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
-import { ChartCard, AreaTrend, MiniBar, chartColors, formatCurrencyCompact } from "@/components/charts";
+import {
+  ChartCard,
+  AreaTrend,
+  MiniBar,
+  chartColors,
+  formatCurrencyCompact,
+} from "@/components/charts";
 import { TimeWindowSelect } from "@/components/analytics/TimeWindowSelect";
 import { useTimeWindow } from "@/hooks/analytics/useTimeWindow";
 import { timeWindowLabel } from "@/core/analytics/timeWindow";
-import {
-  computeRegionTrends,
-  type RegionKey,
-} from "@/core/analytics/regionalTrends";
+import { computeRegionTrends, type RegionKey } from "@/core/analytics/regionalTrends";
 import { RegionDrilldownDrawer } from "./RegionDrilldownDrawer";
 import { Globe2 } from "lucide-react";
 

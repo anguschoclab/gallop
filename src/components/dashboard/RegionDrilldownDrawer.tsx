@@ -303,7 +303,10 @@ export function RegionDrilldownDrawer({
   );
 }
 
-function linkFor(kind: EntityKind, id: string): { to: string; params: Record<string, string> } | null {
+function linkFor(
+  kind: EntityKind,
+  id: string,
+): { to: string; params: Record<string, string> } | null {
   if (kind === "jockeys") return { to: "/jockey/$jockeyId", params: { jockeyId: id } };
   if (kind === "trainers") return { to: "/staff/$staffId", params: { staffId: id } };
   if (id === "player") return null;
@@ -315,9 +318,8 @@ function EntityName({ kind, row }: { kind: EntityKind; row: DrilldownEntity }) {
   if (!link) return <span className="truncate text-cream/85">{row.name}</span>;
   return (
     <Link
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       to={link.to as any}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       params={link.params as any}
       className="truncate text-cream/85 hover:text-[var(--chart-1)]"
     >
