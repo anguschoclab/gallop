@@ -18,7 +18,6 @@ import { overall } from "@/components/horse/HorseBits";
 import { Users, Clock, Heart, List, LayoutGrid } from "lucide-react";
 import { matchesTendency } from "@/core/horse/paceTendency";
 import { PaceTendencyFilter } from "@/components/horse/PaceTendencyFilter";
-import { StableSplitAnalytics } from "@/components/stable/StableSplitAnalytics";
 
 const stableSearchSchema = z.object({
   tab: fallback(z.enum(["roster", "rivals"]), "roster").default("roster"),
@@ -230,7 +229,6 @@ function StablePage() {
               navigate({ search: (prev: StableSearch) => ({ ...prev, compareIds: ids }) })
             }
           />
-          <StableSplitAnalytics horses={myHorses} title="Race Split Analytics" />
         </TabsContent>
 
         <TabsContent value="rivals" className="mt-0">

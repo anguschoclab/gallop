@@ -4,8 +4,6 @@ import { BeyerChart } from "@/components/race/BeyerChart";
 import { PaceProfileSummary } from "@/components/race/PaceProfileSummary";
 import { DistanceAptitudeDrift } from "@/components/horse/DistanceAptitudeDrift";
 import { HorseCareerCharts } from "@/components/horse/HorseCareerCharts";
-import { TrainingImpactCharts } from "@/components/horse/TrainingImpactCharts";
-import { useGame } from "@/game/store";
 import { getHorseInsight } from "@/core/horse/insights";
 import type { Horse } from "@/game/types";
 
@@ -16,7 +14,6 @@ interface HorseAnalyticsSectionProps {
 
 export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyticsSectionProps) {
   const insight = getHorseInsight(horse);
-  const transactions = useGame((s) => s.transactions ?? []);
   return (
     <section id="beyer" className="space-y-4 pt-4">
       <div className="flex items-center gap-2 mb-2">
@@ -59,14 +56,6 @@ export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyti
             </div>
             <HorseCareerCharts horse={horse} />
           </div>
-
-          <div className="pt-4 border-t border-white/5 space-y-2">
-            <div className="text-[10px] font-black uppercase text-fame/40 tracking-widest">
-              Training Impact
-            </div>
-            <TrainingImpactCharts horse={horse} transactions={transactions} />
-          </div>
-
 
           {(horse.raceHistory ?? []).some((h) => h.pacePositions && h.pacePositions.length > 0) && (
             <div className="pt-4 border-t border-white/5 space-y-2">

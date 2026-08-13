@@ -1,137 +1,274 @@
 /**
- * RegionalTrendsWidget.tsx - Dashboard regional performance trends: earnings and
- * Grade 1 finish counts per region over the last N weeks.
+ * RegionalTrendsWidget.tsx - Dashboard regional earnings / G1 trends.
+ *
+ * Every bar and region row is clickable: it opens a drilldown of the jockeys,
+ * trainers and stables behind that region for the selected time window.
  */
 import { useMemo, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { AreaTrend, ChartCard, MiniBar, chartColors, formatCurrencyCompact } from "@/components/charts";
+import { Link } from "@tanstack/react-router";
 import { useGameWithShallow } from "@/game/store";
-import { regionForTrack } from "@/core/calendar/trackRegion";
 import type { GameState } from "@/game/types";
+import { ChartCard, AreaTrend, MiniBar, chartColors, formatCurrencyCompact } from "@/components/charts";
+import { TimeWindowSelect } from "@/components/analytics/TimeWindowSelect";
+import { useTimeWindow } from "@/hooks/analytics/useTimeWindow";
+import { timeWindowLabel } from "@/core/analytics/timeWindow";
+import {
+  computeRegionDrilldown,
+  computeRegionTrends,
+  regionNameFor,
+  type RegionKey,
+} from "@/core/analytics/regionalTrends";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Globe2 } from "lucide-react";
-import { cn } from "@/lib/cn";
-
-const RANGES = [4, 8, 12];
 
 export function RegionalTrendsWidget() {
-  const { day, horses, races } = useGameWithShallow((s: GameState) => ({
-    day: s.day,
-    horses: s.horses,
-    races: s.races,
-  }));
-  const [weeks, setWeeks] = useState(8);
+  const horseMap = useGameWithShallow((s: GameState) => s.horses);
+  const raceMap = useGameWithShallow((s: GameState) => s.races);
+  const jockeys = useGameWithShallow((s: GameState) => s.jockeys ?? []);
+  const npcStables = useGameWithShallow((s: GameState) => s.npcStables ?? []);
+  const hiredStaff = useGameWithShallow((s: GameState) => s.hiredStaff ?? []);
+  const staffPool = useGameWithShallow((s: GameState) => s.staffPool ?? []);
+  const stableName = useGameWithShallow(
+    (s: GameState) => s.playerProfile?.stableName ?? "My Stable",
+  );
+  const day = useGameWithShallow((s: GameState) => s.day);
 
-  const derived = useMemo(() => {
-    const since = day - weeks * 7;
-    const earningsByRegion = new Map<string, number>();
-    const g1ByRegion = new Map<string, number>();
-    const weekly = new Map<number, number>();
+  const { weeks } = useTimeWindow();
+  const [openRegion, setOpenRegion] = useState<RegionKey | null>(null);
 
-    for (const h of Object.values(horses)) {
-      if (h.stableId !== "player") continue;
-      for (const r of h.raceHistory ?? []) {
-        if (r.day < since || r.day > day) continue;
-        const race = races[r.raceId];
-        const track = race?.graded?.track ?? race?.graded_override?.track;
-        const region = regionForTrack(track);
-        const label = region?.name ?? "Unclassified";
+  const horses = useMemo(() => Object.values(horseMap), [horseMap]);
+  const races = useMemo(() => Object.values(raceMap), [raceMap]);
 
-        earningsByRegion.set(label, (earningsByRegion.get(label) ?? 0) + (r.purseEarned ?? 0));
-        if ((r.grade ?? race?.graded?.grade) === "G1" && r.position <= 3) {
-          g1ByRegion.set(label, (g1ByRegion.get(label) ?? 0) + 1);
-        }
+  const rows = useMemo(
+    () => computeRegionTrends({ horses, races, currentDay: day, weeks, ownedOnly: true }),
+    [horses, races, day, weeks],
+  );
 
-        const week = Math.floor((r.day - since) / 7);
-        weekly.set(week, (weekly.get(week) ?? 0) + (r.purseEarned ?? 0));
+  const lookups = useMemo(() => {
+    const jockeyNames = new Map((jockeys ?? []).map((j) => [j.id, j.name]));
+    const stableNames = new Map<string, string>(npcStables.map((s) => [s.id, s.name]));
+    stableNames.set("player", stableName);
+    const allStaff = [...hiredStaff, ...staffPool];
+    const trainerByStable = new Map<string, { id: string; name: string }>();
+    for (const m of allStaff) {
+      if (m.role === "trainer" && m.stableId) {
+        trainerByStable.set(m.stableId, { id: m.id, name: m.name });
       }
     }
+    return { jockeyNames, stableNames, trainerByStable };
+  }, [jockeys, npcStables, hiredStaff, staffPool, stableName]);
 
-    const earningsRows = Array.from(earningsByRegion.entries())
-      .filter(([, v]) => v > 0)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 6)
-      .map(([label, value]) => ({ label, value, color: chartColors.primary }));
+  const drilldown = useMemo(() => {
+    if (!openRegion) return null;
+    return computeRegionDrilldown({
+      horses,
+      races,
+      currentDay: day,
+      weeks,
+      ownedOnly: true,
+      region: openRegion,
+      ...lookups,
+    });
+  }, [openRegion, horses, races, day, weeks, lookups]);
 
-    const g1Rows = Array.from(g1ByRegion.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 6)
-      .map(([label, value]) => ({ label, value, color: chartColors.secondary }));
+  const totals = useMemo(
+    () => ({
+      earnings: rows.reduce((s, r) => s + r.earnings, 0),
+      g1: rows.reduce((s, r) => s + r.g1Top3, 0),
+      starts: rows.reduce((s, r) => s + r.starts, 0),
+    }),
+    [rows],
+  );
 
-    const trend = Array.from({ length: weeks }, (_, i) => ({
-      x: `W${i + 1}`,
-      y: weekly.get(i) ?? 0,
-    }));
-
-    const total = Array.from(earningsByRegion.values()).reduce((s, v) => s + v, 0);
-
-    return { earningsRows, g1Rows, trend, total };
-  }, [day, horses, races, weeks]);
+  const weeklyAll = useMemo(() => {
+    const len = rows[0]?.weeklyEarnings.length ?? 0;
+    const series: { x: string; y: number }[] = [];
+    for (let i = 0; i < len; i++) {
+      series.push({
+        x: `W-${len - i - 1}`,
+        y: rows.reduce((s, r) => s + (r.weeklyEarnings[i] ?? 0), 0),
+      });
+    }
+    return series;
+  }, [rows]);
 
   return (
-    <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl lg:col-span-12">
-      <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-        <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.2em] text-cream">
+    <div className="space-y-3 lg:col-span-12">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
           <Globe2 className="h-4 w-4 text-fame" />
-          Regional Trends
-        </CardTitle>
-        <div className="flex items-center gap-1">
-          {RANGES.map((w) => (
-            <Button
-              key={w}
-              size="sm"
-              variant="ghost"
-              onClick={() => setWeeks(w)}
-              className={cn(
-                "h-6 px-2 font-mono text-[10px] uppercase tracking-widest",
-                weeks === w ? "text-gold bg-gold/10" : "text-cream/40",
-              )}
-            >
-              {w}W
-            </Button>
-          ))}
+          <h2 className="text-sm font-black uppercase tracking-[0.3em] text-cream">
+            Regional Trends
+          </h2>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        {derived.total === 0 && derived.g1Rows.length === 0 ? (
-          <div className="py-6 text-center font-mono text-xs text-cream/50">
-            No runs in the last {weeks} weeks.
-          </div>
-        ) : (
-          <div className="grid gap-3 md:grid-cols-3">
-            <ChartCard
-              title="Earnings Trend"
-              subtitle={formatCurrencyCompact(derived.total)}
-              footnote={`Prize money per week, last ${weeks} weeks`}
-            >
-              <div className="px-2 pt-2">
-                <AreaTrend
-                  data={derived.trend}
-                  height={140}
-                  yFormat={formatCurrencyCompact}
-                  xFormat={(x) => String(x)}
+        <TimeWindowSelect />
+      </div>
+
+      {totals.starts === 0 ? (
+        <div className="rounded-xl border border-white/5 bg-card/40 p-6 text-center text-[11px] font-mono uppercase tracking-wider text-cream/40">
+          No starts in the last {timeWindowLabel(weeks)} — regional trends appear after you race.
+        </div>
+      ) : (
+        <div className="grid gap-3 md:grid-cols-3">
+          <ChartCard
+            title="Weekly Earnings"
+            subtitle={formatCurrencyCompact(totals.earnings)}
+            className="md:col-span-2"
+            footnote={`All regions · last ${timeWindowLabel(weeks)}`}
+            info="Prize money your horses banked, bucketed by week across every region."
+            infoFormula="Σ purse earned per run, grouped into 7-day buckets (W-0 = current week)."
+            legend={[{ label: "Earnings", color: chartColors.primary, variant: "line" }]}
+          >
+            <AreaTrend data={weeklyAll} height={170} yFormat={formatCurrencyCompact} />
+          </ChartCard>
+
+          <ChartCard
+            title="Earnings by Region"
+            subtitle={`${totals.g1} G1 top-3`}
+            footnote="Click a region to drill into jockeys, trainers and stables"
+            info="Each bar is one racing region's share of your prize money in the window. Clicking a bar opens the people and stables behind those runs."
+            infoFormula="Region = the region that owns the race's track."
+            legend={[
+              { label: "Earnings", color: chartColors.primary },
+              { label: "G1 top-3", color: chartColors.tertiary, variant: "swatch" },
+            ]}
+          >
+            <ul className="space-y-1 px-2 pt-1">
+              {rows.map((r) => (
+                <li key={r.region}>
+                  <button
+                    type="button"
+                    onClick={() => setOpenRegion(r.region)}
+                    className="w-full rounded-md px-1.5 py-1 text-left transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--chart-1)]"
+                  >
+                    <MiniBar
+                      rows={[
+                        {
+                          label: r.name,
+                          value: r.earnings,
+                          hint: `${r.starts} starts · ${r.wins}W · ${r.g1Top3} G1 top-3`,
+                        },
+                      ]}
+                      max={rows[0]?.earnings || 1}
+                      format={formatCurrencyCompact}
+                    />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </ChartCard>
+        </div>
+      )}
+
+      <Dialog open={!!openRegion} onOpenChange={(o) => !o && setOpenRegion(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-cream">
+              {openRegion ? regionNameFor(openRegion) : ""} ·{" "}
+              <span className="font-mono text-xs uppercase tracking-wider text-cream/50">
+                last {timeWindowLabel(weeks)}
+              </span>
+            </DialogTitle>
+          </DialogHeader>
+          {drilldown ? (
+            <Tabs defaultValue="jockeys">
+              <TabsList>
+                <TabsTrigger value="jockeys">Jockeys ({drilldown.jockeys.length})</TabsTrigger>
+                <TabsTrigger value="trainers">Trainers ({drilldown.trainers.length})</TabsTrigger>
+                <TabsTrigger value="stables">Stables ({drilldown.stables.length})</TabsTrigger>
+                <TabsTrigger value="runs">Runs ({drilldown.runs.length})</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="jockeys">
+                <EntityList
+                  rows={drilldown.jockeys}
+                  linkFor={(id) => ({ to: "/jockey/$jockeyId", params: { jockeyId: id } })}
                 />
-              </div>
-            </ChartCard>
-            <ChartCard title="Earnings by Region" footnote="Prize money won">
-              <div className="px-2 pt-2">
-                <MiniBar rows={derived.earningsRows} format={formatCurrencyCompact} />
-              </div>
-            </ChartCard>
-            <ChartCard title="Grade 1 Top-3 Finishes" footnote="By region">
-              <div className="px-2 pt-2">
-                {derived.g1Rows.length ? (
-                  <MiniBar rows={derived.g1Rows} />
-                ) : (
-                  <div className="py-4 text-center font-mono text-[11px] text-cream/50">
-                    No Grade 1 placings yet.
-                  </div>
-                )}
-              </div>
-            </ChartCard>
+              </TabsContent>
+              <TabsContent value="trainers">
+                <EntityList
+                  rows={drilldown.trainers}
+                  linkFor={(id) => ({ to: "/staff/$staffId", params: { staffId: id } })}
+                />
+              </TabsContent>
+              <TabsContent value="stables">
+                <EntityList
+                  rows={drilldown.stables}
+                  linkFor={(id) =>
+                    id === "player"
+                      ? null
+                      : { to: "/npc-stables/$stableId", params: { stableId: id } }
+                  }
+                />
+              </TabsContent>
+              <TabsContent value="runs">
+                <ul className="max-h-[320px] space-y-1 overflow-y-auto pt-2">
+                  {drilldown.runs.map((r, i) => (
+                    <li
+                      key={`${r.entry.raceId}-${r.horseId}-${i}`}
+                      className="flex items-center justify-between gap-3 rounded-md bg-white/[0.03] px-2 py-1.5 text-[11px]"
+                    >
+                      <span className="truncate text-cream/80">
+                        {r.entry.raceName}
+                        <span className="ml-2 font-mono text-cream/40">D{r.entry.day}</span>
+                      </span>
+                      <span className="shrink-0 font-mono tabular-nums text-cream/60">
+                        {r.horseName} · {r.entry.position}
+                        {r.isG1 ? " · G1" : ""} ·{" "}
+                        {formatCurrencyCompact(r.entry.purseEarned ?? 0)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </TabsContent>
+            </Tabs>
+          ) : null}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+interface EntityListProps {
+  rows: { id: string; name: string; starts: number; wins: number; top3: number; earnings: number; g1Top3: number }[];
+  linkFor: (id: string) => { to: string; params: Record<string, string> } | null;
+}
+
+function EntityList({ rows, linkFor }: EntityListProps) {
+  if (rows.length === 0) {
+    return (
+      <p className="py-6 text-center text-[11px] font-mono uppercase tracking-wider text-cream/40">
+        Nothing recorded for this region in the selected window.
+      </p>
+    );
+  }
+  return (
+    <ul className="max-h-[320px] space-y-1 overflow-y-auto pt-2">
+      {rows.map((r) => {
+        const link = linkFor(r.id);
+        const body = (
+          <div className="flex items-center justify-between gap-3 rounded-md bg-white/[0.03] px-2 py-1.5 text-[11px] hover:bg-white/[0.06]">
+            <span className="truncate text-cream/85">{r.name}</span>
+            <span className="shrink-0 font-mono tabular-nums text-cream/60">
+              {r.starts} starts · {r.wins}W · {r.top3} top-3 · {r.g1Top3} G1 ·{" "}
+              {formatCurrencyCompact(r.earnings)}
+            </span>
           </div>
-        )}
-      </CardContent>
-    </Card>
+        );
+        return (
+          <li key={r.id}>
+            {link ? (
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              <Link to={link.to as any} params={link.params as any} className="block">
+                {body}
+              </Link>
+            ) : (
+              body
+            )}
+          </li>
+        );
+      })}
+    </ul>
   );
 }

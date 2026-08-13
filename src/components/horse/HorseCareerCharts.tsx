@@ -7,15 +7,24 @@ import { useMemo } from "react";
 import { ChartCard, AreaTrend, MiniBar, StackedRatioBar } from "@/components/charts";
 import { chartColors, formatCurrencyCompact, formatDay } from "@/components/charts";
 import type { Horse } from "@/game/types";
+import { TimeWindowSelect } from "@/components/analytics/TimeWindowSelect";
+import { useTimeWindow } from "@/hooks/analytics/useTimeWindow";
+import { filterByWindow, timeWindowLabel } from "@/core/analytics/timeWindow";
+import { useGameWithShallow } from "@/game/store";
+import type { GameState } from "@/game/types";
 
 interface HorseCareerChartsProps {
   horse: Horse;
 }
 
 export function HorseCareerCharts({ horse }: HorseCareerChartsProps) {
+  const day = useGameWithShallow((s: GameState) => s.day);
+  const { weeks } = useTimeWindow();
+
   const history = useMemo(
-    () => [...(horse.raceHistory ?? [])].sort((a, b) => a.day - b.day),
-    [horse.raceHistory],
+    () =>
+      filterByWindow([...(horse.raceHistory ?? [])], day, weeks).sort((a, b) => a.day - b.day),
+    [horse.raceHistory, day, weeks],
   );
 
   const derived = useMemo(() => {
@@ -67,18 +76,33 @@ export function HorseCareerCharts({ horse }: HorseCareerChartsProps) {
 
   if (history.length === 0) {
     return (
-      <div className="text-[11px] font-mono uppercase tracking-wider text-cream/40">
-        No starts yet — career charts appear after the first race.
+      <div className="space-y-3">
+        <div className="flex justify-end">
+          <TimeWindowSelect />
+        </div>
+        <div className="text-[11px] font-mono uppercase tracking-wider text-cream/40">
+          No starts in the last {timeWindowLabel(weeks)} — widen the window to see more.
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="grid gap-3 md:grid-cols-2">
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-cream/40">
+          Last {timeWindowLabel(weeks)} · {history.length} starts
+        </span>
+        <TimeWindowSelect />
+      </div>
+      <div className="grid gap-3 md:grid-cols-2">
       <ChartCard
         title="Cumulative Earnings"
         subtitle={formatCurrencyCompact(derived.total)}
         footnote={history.length === 1 ? "First start only" : `${history.length} starts`}
+        info="Prize money this horse has banked, accumulated across its career in race-day order."
+        infoFormula="Running total of purse earned per start; x-axis is the in-game day."
+        legend={[{ label: "Cumulative earnings", color: chartColors.primary, variant: "line" }]}
         className="md:col-span-2"
       >
         {derived.earningsCurve.length === 1 ? (
@@ -96,7 +120,18 @@ export function HorseCareerCharts({ horse }: HorseCareerChartsProps) {
         )}
       </ChartCard>
 
-      <ChartCard title="Finish Distribution" subtitle={`${history.length} starts`}>
+      <ChartCard
+        title="Finish Distribution"
+        subtitle={`${history.length} starts`}
+        info="Share of starts finishing 1st, 2nd, 3rd, or outside the top three."
+        infoFormula="starts in each finish bucket ÷ total starts."
+        legend={[
+          { label: "Win", color: chartColors.primary },
+          { label: "2nd", color: chartColors.secondary },
+          { label: "3rd", color: chartColors.tertiary },
+          { label: "4th+", color: chartColors.slate },
+        ]}
+      >
         <div className="px-2 pt-2">
           <StackedRatioBar
             segments={[
@@ -124,17 +159,30 @@ export function HorseCareerCharts({ horse }: HorseCareerChartsProps) {
         </div>
       </ChartCard>
 
-      <ChartCard title="Strike Rate by Surface" footnote="Wins as % of starts">
+      <ChartCard
+        title="Strike Rate by Surface"
+        footnote="Wins as % of starts"
+        info="Win rate on each surface. The hint under every bar is the sample size — a 100% bar off one start means little."
+        infoFormula="wins on surface ÷ starts on surface (× 100)."
+        legend={[{ label: "Strike rate", color: chartColors.primary }]}
+      >
         <div className="px-2 pt-2">
           <MiniBar rows={derived.surfaceRows} max={100} format={(n) => `${n}%`} />
         </div>
       </ChartCard>
 
-      <ChartCard title="Strike Rate by Trip" footnote="Sprint <1400m · Mile <2000m · Route 2000m+">
+      <ChartCard
+        title="Strike Rate by Trip"
+        footnote="Sprint <1400m · Mile <2000m · Route 2000m+"
+        info="Win rate by trip length bucket, with starts per bucket shown as the bar hint."
+        infoFormula="wins in trip bucket ÷ starts in trip bucket (× 100)."
+        legend={[{ label: "Strike rate", color: chartColors.primary }]}
+      >
         <div className="px-2 pt-2">
           <MiniBar rows={derived.tripRows} max={100} format={(n) => `${n}%`} />
         </div>
       </ChartCard>
+      </div>
     </div>
   );
 }

@@ -54,7 +54,13 @@ export function NpcStableCharts({ horses, headToHead }: NpcStableChartsProps) {
 
   return (
     <div className="grid gap-3 md:grid-cols-3">
-      <ChartCard title="Top Earners" footnote="Career prize money">
+      <ChartCard
+        title="Top Earners"
+        footnote="Career prize money"
+        info="The five highest career earners on this roster; bar length is prize money, the hint is wins over starts."
+        infoFormula="Σ purse earned across all career starts."
+        legend={[{ label: "Career earnings", color: chartColors.primary }]}
+      >
         <div className="px-2 pt-2">
           {derived.topEarners.length ? (
             <MiniBar rows={derived.topEarners} format={formatCurrencyCompact} />
