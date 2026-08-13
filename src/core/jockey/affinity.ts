@@ -6,6 +6,7 @@
  */
 
 import type { Jockey } from "./types";
+import type { Horse } from "@/game/types";
 import {
   AFFINITY_LEVEL_FAMILIAR,
   AFFINITY_LEVEL_TRUSTED,
@@ -83,4 +84,23 @@ export function getAffinityLevel(xp: number): string {
   if (xp >= AFFINITY_CONSTANTS.LEVELS.trusted) return "Trusted";
   if (xp >= AFFINITY_CONSTANTS.LEVELS.familiar) return "Familiar";
   return "Acquaintances";
+}
+
+/**
+ * Calculate the trait-affinity synergy multiplier for a jockey-horse pair.
+ * When a jockey's traits match the horse's running style, affinity XP grows faster.
+ * @param jockey - The jockey
+ * @param horse - The horse
+ * @returns Multiplier (1.0–2.0) applied to affinity XP gains
+ */
+export function calculateTraitAffinitySynergy(jockey: Jockey, horse: Horse): number {
+  const traits = jockey.traits ?? [];
+  const style = horse.runningStyle;
+  let multiplier = 1.0;
+
+  if (traits.includes("gate_master") && style === "E") multiplier += 0.5;
+  if (traits.includes("closer_instinct") && (style === "S" || style === "P")) multiplier += 0.5;
+  if (traits.includes("pace_presser") && style === "EP") multiplier += 0.3;
+
+  return Math.min(multiplier, 2.0);
 }

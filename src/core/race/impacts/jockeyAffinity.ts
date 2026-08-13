@@ -8,7 +8,7 @@ import type { JockeyAffinityImpact } from "@/core/resolver/impacts/index";
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
-import { AFFINITY_CONSTANTS } from "@/core/jockey/affinity";
+import { AFFINITY_CONSTANTS, calculateTraitAffinitySynergy } from "@/core/jockey/affinity";
 import type { Race, Horse, Jockey } from "@/game/types";
 
 export function generateJockeyAffinityImpact(
@@ -34,6 +34,8 @@ export function generateJockeyAffinityImpact(
   if (position <= 3 && beyerValue > 100) {
     xpGain += 5;
   }
+
+  xpGain = Math.round(xpGain * calculateTraitAffinitySynergy(jockey, horse));
 
   return {
     id: generateUUID(rng),

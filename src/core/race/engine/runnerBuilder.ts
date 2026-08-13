@@ -567,6 +567,9 @@ export function buildRunner(
   const affinityBonus = jockey ? calculateTheHandBonus(jockey, h.id) : 0;
   const reducedNoise = noise * (1 - affinityBonus);
 
+  // Affinity speed bonus: bonded pairs get up to ~4.5% speed bonus at Soulmates
+  const affinitySpeedMul = 1 + affinityBonus * 0.3;
+
   return {
     horseId: h.id,
     name: h.name,
@@ -580,7 +583,7 @@ export function buildRunner(
     targetLane: 0,
     laneVelocity: 0,
     barrier,
-    topSpeed: clamp(topSpeed * genderSpeedMul * weightMod * strideMod, 5, TOP_SPEED_CEILING),
+    topSpeed: clamp(topSpeed * genderSpeedMul * weightMod * strideMod * affinitySpeedMul, 5, TOP_SPEED_CEILING),
     accel: accel * weightMod,
     staminaFactor: clamp(staminaFactor + ((h.heartScore ?? 1.0) - 1.0) * 0.5, 0.2, 1),
     noise: reducedNoise,

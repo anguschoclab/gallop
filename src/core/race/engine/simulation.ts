@@ -564,10 +564,13 @@ function applyJockeyEffects(
     const arch = r.jockey.archetype;
     const traits = r.jockey.traits;
 
+    // Affinity amplifier: high affinity amplifies trait bonuses
+    const affinityAmp = r.affinityBonus > 0.05 ? 1 + r.affinityBonus * 0.5 : 1;
+
     if (progress < GATE_SKILL_PROGRESS_THRESHOLD) {
       const isGateMaster = traits.includes("gate_master");
       const gateBoost = (stats.gateSkill / 100) * GATE_SKILL_VELOCITY_BONUS * dt;
-      const traitBoost = isGateMaster ? GATE_MASTER_TRAIT_BONUS * dt : 0;
+      const traitBoost = isGateMaster ? GATE_MASTER_TRAIT_BONUS * affinityAmp * dt : 0;
       r.velocity += gateBoost + traitBoost;
     }
 
@@ -613,7 +616,7 @@ function applyJockeyEffects(
         fieldSize &&
         fieldSize > BIG_MATCH_FIELD_THRESHOLD
       ) {
-        vigorBoost *= 1 + BIG_MATCH_VIGOR_BONUS;
+        vigorBoost *= 1 + BIG_MATCH_VIGOR_BONUS * affinityAmp;
       }
 
       // "Late Kick" tactic bonus
