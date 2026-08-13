@@ -6,6 +6,7 @@ import { NumericValue } from "@/components/horse/HorseBits";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { cn } from "@/lib/cn";
 import { NpcStableCharts } from "@/components/stable/NpcStableCharts";
+import { StableSplitAnalytics } from "@/components/stable/StableSplitAnalytics";
 import { getRivalryStatusLabel, getRivalryBadgeColor } from "@/hooks/stable/useNpcStableDetail";
 import type { useNpcStableDetail } from "@/hooks/stable/useNpcStableDetail";
 import type { NewsItem } from "@/services/narrative/newsTypes";
