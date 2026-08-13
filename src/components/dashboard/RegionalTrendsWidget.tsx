@@ -28,7 +28,7 @@ export function RegionalTrendsWidget() {
     const g1ByRegion = new Map<string, number>();
     const weekly = new Map<number, number>();
 
-    for (const h of horses) {
+    for (const h of Object.values(horses)) {
       if (h.stableId !== "player") continue;
       for (const r of h.raceHistory ?? []) {
         if (r.day < since || r.day > day) continue;
