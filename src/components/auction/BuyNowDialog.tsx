@@ -13,6 +13,7 @@ import {
 import { Zap } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 function showBuyNowResult(result: { ok: boolean; reason?: string }, horseName: string) {
   if (result.ok) {
@@ -43,15 +44,21 @@ export function BuyNowDialog({
 
   if (disabled) {
     return (
-      <div className="space-y-1">
-        <Button variant="outline" className="w-full gap-2" disabled>
-          <Zap className="h-4 w-4" />
-          Buy Now {formatted}
-        </Button>
-        <p className="text-xs text-destructive tabular-nums text-center">
-          Insufficient funds. You need {formatCurrency(buyNowPrice - cash)} more.
-        </p>
-      </div>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span tabIndex={0} className="inline-block w-full cursor-not-allowed">
+              <Button variant="outline" className="w-full gap-2 pointer-events-none" disabled>
+                <Zap className="h-4 w-4" />
+                Buy Now {formatted}
+              </Button>
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Insufficient funds. You need {formatCurrency(buyNowPrice - cash)} more.</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     );
   }
 
