@@ -90,6 +90,8 @@ export function NpcStableOverviewTab({ stableId, pageData }: NpcStableOverviewTa
 
       <NpcStableCharts horses={stableHorses} headToHead={headToHead} />
 
+      <StableSplitAnalytics horses={stableHorses} title="Race Split Analytics" />
+
       {friction >= 40 && (
         <Card className="bg-slate-950/50 border border-white/5 rounded-none shadow-xl">
           <CardContent className="p-4 space-y-3">
