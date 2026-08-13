@@ -5,6 +5,7 @@ import { TrophyCase } from "@/components/awards";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { cn } from "@/lib/cn";
+import { NpcStableCharts } from "@/components/stable/NpcStableCharts";
 import { getRivalryStatusLabel, getRivalryBadgeColor } from "@/hooks/stable/useNpcStableDetail";
 import type { useNpcStableDetail } from "@/hooks/stable/useNpcStableDetail";
 import type { NewsItem } from "@/services/narrative/newsTypes";
@@ -85,6 +86,8 @@ export function NpcStableOverviewTab({ stableId, pageData }: NpcStableOverviewTa
           </div>
         </CardContent>
       </Card>
+
+      <NpcStableCharts horses={stableHorses} headToHead={headToHead} />
 
       {friction >= 40 && (
         <Card className="bg-slate-950/50 border border-white/5 rounded-none shadow-xl">
