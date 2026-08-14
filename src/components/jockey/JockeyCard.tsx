@@ -15,12 +15,15 @@ import {
 } from "lucide-react";
 import { JockeyAvatar } from "./JockeyAvatar";
 import { JockeyStatsGrid } from "./JockeyStatsGrid";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
+import { useMemo } from "react";
 import { formatCurrency } from "@/core/common/formatting";
 import { Link } from "@tanstack/react-router";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { cn } from "@/lib/cn";
 import { formatJockeyTrait } from "@/core/common/traitLabels";
+import { getJockeyInsight } from "@/core/jockey/insights";
+import { Lightbulb } from "lucide-react";
 
 interface JockeyCardProps {
   jockey: Jockey;
@@ -40,6 +43,8 @@ export function JockeyCard({
   className,
 }: JockeyCardProps) {
   const rerollJockeySilk = useGame((s) => s.rerollJockeySilk);
+  const horses = useGameWithShallow((s) => s.horses);
+  const insight = useMemo(() => getJockeyInsight(jockey, horses ?? {}), [jockey, horses]);
 
   let claim = 0;
   if (jockey.isApprentice) {
@@ -162,6 +167,19 @@ export function JockeyCard({
 
         <div className="p-5 flex-1 space-y-6">
           <JockeyStatsGrid jockey={jockey} />
+
+          {insight && (
+            <div className="bg-gold/10 border border-gold/20 p-3 flex gap-3 items-start rounded-sm">
+              <Lightbulb className="h-4 w-4 text-gold mt-0.5 shrink-0" />
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-gold/80 mb-0.5">
+                  Tipster Insight: {insight.label}
+                </div>
+                <div className="text-sm font-bold text-cream">{insight.value}</div>
+                <div className="text-[10px] font-mono text-cream/60 mt-1">{insight.context}</div>
+              </div>
+            </div>
+          )}
 
           {(jockey.traits?.length ?? 0) > 0 && (
             <div className="space-y-2">
