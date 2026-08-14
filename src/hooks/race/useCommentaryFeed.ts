@@ -21,7 +21,9 @@ export function useCommentaryFeed(
   const [announcement, setAnnouncement] = useState<string>("");
   const [commentary, setCommentary] = useState<CommentaryLine[]>([]);
   const [subjectHorseId, setSubjectHorseId] = useState<string | null>(null);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<number>(() => Date.now());
   const lastMessageTime = useRef<number>(0);
+
 
   useEffect(() => {
     if (finished) return;
