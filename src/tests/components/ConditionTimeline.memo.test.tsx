@@ -7,7 +7,7 @@
  */
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { createElement } from "react";
-import { render, screen, cleanup } from "@testing-library/react";
+import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 
 // ── Mock tooltip to avoid Radix overhead ─────────────────────────────────────
 vi.mock("@/components/ui/tooltip", () => ({
@@ -146,5 +146,103 @@ describe("ConditionTimeline — React.memo", () => {
     );
 
     expect(screen.getByText(/Condition timeline · Lightning/)).toBeTruthy();
+  });
+});
+
+describe("ConditionTimeline — condition badge filtering", () => {
+  const MULTI_SEGMENTS = [
+    makeSegment({ id: "flying", label: "Flying", tone: "positive" }),
+    makeSegment({ id: "battling", label: "Battling", tone: "caution" }),
+    makeSegment({ id: "flagging", label: "Flagging", tone: "negative" }),
+  ];
+
+  it("renders filter chips for all unique condition badges present", () => {
+    render(
+      createElement(ConditionTimeline, {
+        segments: MULTI_SEGMENTS,
+        distance: DISTANCE,
+      }),
+    );
+
+    expect(screen.getByTestId("condition-filter-flying")).toBeInTheDocument();
+    expect(screen.getByTestId("condition-filter-battling")).toBeInTheDocument();
+    expect(screen.getByTestId("condition-filter-flagging")).toBeInTheDocument();
+    expect(screen.getByTestId("condition-filter-all")).toBeInTheDocument();
+    expect(screen.getByTestId("condition-filter-none")).toBeInTheDocument();
+  });
+
+  it("toggles condition visibility when filter chip is clicked", () => {
+    render(
+      createElement(ConditionTimeline, {
+        segments: MULTI_SEGMENTS,
+        distance: DISTANCE,
+      }),
+    );
+
+    // Initially all 3 lanes are visible
+    expect(screen.getAllByText("Flying").length).toBeGreaterThanOrEqual(2); // In filter chip + lane label
+    expect(screen.getAllByText("Battling").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByText("Flagging").length).toBeGreaterThanOrEqual(2);
+
+    const flyingBtn = screen.getByTestId("condition-filter-flying");
+    expect(flyingBtn.getAttribute("aria-pressed")).toBe("true");
+
+    // Click to hide "Flying"
+    fireEvent.click(flyingBtn);
+
+    expect(flyingBtn.getAttribute("aria-pressed")).toBe("false");
+    // "Flying" is now only in the filter chip, not the lane label
+    expect(screen.getAllByText("Flying").length).toBe(1);
+
+    // Click again to show "Flying"
+    fireEvent.click(flyingBtn);
+    expect(flyingBtn.getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getAllByText("Flying").length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("hides all lanes when 'None' is clicked and restores with 'All'", () => {
+    render(
+      createElement(ConditionTimeline, {
+        segments: MULTI_SEGMENTS,
+        distance: DISTANCE,
+      }),
+    );
+
+    const noneBtn = screen.getByTestId("condition-filter-none");
+    fireEvent.click(noneBtn);
+
+    expect(
+      screen.getByText("All 3 condition badges are hidden by filters."),
+    ).toBeInTheDocument();
+
+    const resetBtn = screen.getByTestId("condition-filter-reset");
+    fireEvent.click(resetBtn);
+
+    expect(
+      screen.queryByText("All 3 condition badges are hidden by filters."),
+    ).toBeNull();
+    expect(screen.getAllByText("Flying").length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("initializes with initialHiddenConditions and triggers onFilterChange", () => {
+    const onFilterChange = vi.fn();
+    render(
+      createElement(ConditionTimeline, {
+        segments: MULTI_SEGMENTS,
+        distance: DISTANCE,
+        initialHiddenConditions: ["flagging"],
+        onFilterChange,
+      }),
+    );
+
+    const flaggingBtn = screen.getByTestId("condition-filter-flagging");
+    expect(flaggingBtn.getAttribute("aria-pressed")).toBe("false");
+
+    const flyingBtn = screen.getByTestId("condition-filter-flying");
+    fireEvent.click(flyingBtn);
+
+    expect(onFilterChange).toHaveBeenCalledWith(
+      expect.arrayContaining(["flagging", "flying"]),
+    );
   });
 });
