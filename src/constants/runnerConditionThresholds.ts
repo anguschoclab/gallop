@@ -15,6 +15,11 @@ export const FLYING_FIELD_RATIO = 1.06;
 /** Fade ratio above which a runner is still "on the bridle" (> this value). */
 export const FLYING_FADE_RATIO = 0.97;
 
+/** Maximum velocity rank (1 = fastest) for a runner to be tagged "Flying".
+ *  Ensures the badge is rare — only the fastest runner(s) in the field can
+ *  earn it, not everyone above a fixed speed. */
+export const FLYING_MAX_VELOCITY_RANK = 2;
+
 // ── Battling ────────────────────────────────────────────────────────────────
 
 /** Maximum gap (metres) to nearest rival for battling condition. */

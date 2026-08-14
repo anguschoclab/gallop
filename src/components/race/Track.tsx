@@ -14,6 +14,27 @@ import {
 import { RunnerConditionBadges } from "./RunnerConditionBadges";
 import { RunnerMoodFace } from "./RunnerMoodFace";
 import { HorseSprite } from "./HorseSprite";
+import {
+  TRACK_LANE_HEIGHT,
+  TRACK_HEIGHT_PADDING,
+  TRACK_TOP_OFFSET,
+  TRACK_VIEWPORT_DISTANCE_RATIO,
+  TRACK_BG_TILE_WIDTH,
+  TRACK_DISTANCE_MARKER_INTERVAL,
+  TRACK_OFFSCREEN_PCT_MIN,
+  TRACK_OFFSCREEN_PCT_MAX,
+  FINISH_LINE_PROXIMITY,
+  HORSE_FINISH_POP_MS,
+  VELOCITY_BADGE_FAST_RATIO,
+  VELOCITY_BADGE_OK_RATIO,
+  VELOCITY_BADGE_FAST_COLOR,
+  VELOCITY_BADGE_OK_COLOR,
+  VELOCITY_BADGE_SLOW_COLOR,
+  FADING_PROGRESS_THRESHOLD,
+  FADING_VELOCITY_RATIO,
+  KICKING_PROGRESS_THRESHOLD,
+  LEADING_PROXIMITY_METRES,
+} from "@/constants/raceBroadcastConstants";
 
 interface TrackProps {
   runners: Runner[];
@@ -37,10 +58,10 @@ export function Track({
   subjectHorseId,
   simTimeRef,
 }: TrackProps) {
-  const laneHeight = 48;
-  const trackHeight = runners.length * laneHeight + 20;
+  const laneHeight = TRACK_LANE_HEIGHT;
+  const trackHeight = runners.length * laneHeight + TRACK_HEIGHT_PADDING;
   const trackBg = getTrackBackground(surface);
-  const viewportWidth = distance * 0.6;
+  const viewportWidth = distance * TRACK_VIEWPORT_DISTANCE_RATIO;
 
   const progressBarRef = useRef<HTMLDivElement>(null);
   const simTimeDisplayRef = useRef<HTMLSpanElement>(null);
@@ -68,17 +89,22 @@ export function Track({
         leaderDistDisplayRef.current.textContent = `${Math.round(maxPos)}m / ${distance}m`;
       }
 
-      // Velocity badges
+      // Velocity badges — field-relative colouring computed once per frame
+      const liveRunners = runners.filter((r) => r.finishTime === null && r.velocity > 0);
+      const fieldMeanVel = liveRunners.length
+        ? liveRunners.reduce((s, r) => s + r.velocity, 0) / liveRunners.length
+        : 0;
       for (const r of runners) {
         const badgeEl = velocityBadgeRefs.current.get(r.horseId);
         if (badgeEl) {
           badgeEl.textContent = r.velocity.toFixed(1) + " m/s";
+          const ratio = fieldMeanVel > 0 ? r.velocity / fieldMeanVel : 1;
           const color =
-            r.velocity > 17
-              ? "var(--color-success, #22c55e)"
-              : r.velocity > 14
-                ? "var(--color-warning, #f59e0b)"
-                : "oklch(0.65 0.2 25)";
+            ratio >= VELOCITY_BADGE_FAST_RATIO
+              ? VELOCITY_BADGE_FAST_COLOR
+              : ratio >= VELOCITY_BADGE_OK_RATIO
+                ? VELOCITY_BADGE_OK_COLOR
+                : VELOCITY_BADGE_SLOW_COLOR;
           badgeEl.style.color = color;
         }
       }
@@ -92,7 +118,7 @@ export function Track({
           const el = horseElemRefs.current.get(r.horseId);
           if (el) {
             el.classList.add("horse-finish-pop");
-            setTimeout(() => el.classList.remove("horse-finish-pop"), 500);
+            setTimeout(() => el.classList.remove("horse-finish-pop"), HORSE_FINISH_POP_MS);
           }
         }
       }
@@ -128,7 +154,7 @@ export function Track({
     }
     return { cameraPos: cam, leaderPos: maxPos };
   })();
-  const finishActive = leaderPos > distance - 100 && leaderPos < distance;
+  const finishActive = leaderPos > distance - FINISH_LINE_PROXIMITY && leaderPos < distance;
 
   // Per-runner peak velocity drives the "is it fading?" readings. Runners are
   // mutated in place, so history has to live in a ref keyed by horse id.
@@ -139,7 +165,7 @@ export function Track({
 
   captureRunnerMoods(runners, peakVelocityRef.current, distance);
 
-  const trackOffset = -(cameraPos % 512);
+  const trackOffset = -(cameraPos % TRACK_BG_TILE_WIDTH);
 
   return (
     <div
@@ -174,15 +200,15 @@ export function Track({
         <div
           key={i}
           className="absolute left-0 right-0 border-b border-white/5"
-          style={{ top: 10 + i * laneHeight + laneHeight }}
+          style={{ top: TRACK_TOP_OFFSET + i * laneHeight + laneHeight }}
         />
       ))}
 
-      {Array.from({ length: Math.ceil(distance / 200) }, (_, i) => {
-        const markerPos = i * 200;
+      {Array.from({ length: Math.ceil(distance / TRACK_DISTANCE_MARKER_INTERVAL) }, (_, i) => {
+        const markerPos = i * TRACK_DISTANCE_MARKER_INTERVAL;
         const relativePos = markerPos - cameraPos;
         const screenPct = (relativePos / viewportWidth) * 100;
-        if (screenPct < -10 || screenPct > 110) return null;
+        if (screenPct < TRACK_OFFSCREEN_PCT_MIN || screenPct > TRACK_OFFSCREEN_PCT_MAX) return null;
         return (
           <div
             key={i}
@@ -206,12 +232,14 @@ export function Track({
       {runners.map((r, i) => {
         const relativePos = r.position - cameraPos;
         const screenPct = (relativePos / viewportWidth) * 100;
-        if (screenPct < -10 || screenPct > 110) return null;
+        if (screenPct < TRACK_OFFSCREEN_PCT_MIN || screenPct > TRACK_OFFSCREEN_PCT_MAX) return null;
 
         const isRunning = tick > 0 && !paused && r.finishTime === null;
         const isSubject = r.horseId === subjectHorseId;
         const isFading =
-          r.position / distance > 0.7 && r.velocity < r.topSpeed * 0.75 && r.finishTime === null;
+          r.position / distance > FADING_PROGRESS_THRESHOLD &&
+          r.velocity < r.topSpeed * FADING_VELOCITY_RATIO &&
+          r.finishTime === null;
         const finishRank =
           r.finishTime !== null ? finishRankMapRef.current.get(r.horseId) : undefined;
 
@@ -235,7 +263,7 @@ export function Track({
             className="absolute transition-none"
             style={{
               left: `${screenPct}%`,
-              top: 10 + i * laneHeight,
+              top: TRACK_TOP_OFFSET + i * laneHeight,
               zIndex: Math.round(r.position),
               willChange: "left",
             }}
@@ -269,16 +297,18 @@ export function Track({
                       SAVING
                     </div>
                   )}
-                {r.jockeyInstructions?.earlyPosition === "lead" && r.position >= leaderPos - 2 && (
-                  <div className="px-1.5 py-0.5 rounded-full bg-gold/80 text-[8px] font-black text-t950 flex items-center gap-1">
-                    LEADING
-                  </div>
-                )}
-                {r.jockeyInstructions?.moveTiming === "late" && r.position / distance > 0.85 && (
-                  <div className="px-1.5 py-0.5 rounded-full bg-red-600 text-[8px] font-black text-white flex items-center gap-1 animate-pulse">
-                    KICKING
-                  </div>
-                )}
+                {r.jockeyInstructions?.earlyPosition === "lead" &&
+                  r.position >= leaderPos - LEADING_PROXIMITY_METRES && (
+                    <div className="px-1.5 py-0.5 rounded-full bg-gold/80 text-[8px] font-black text-t950 flex items-center gap-1">
+                      LEADING
+                    </div>
+                  )}
+                {r.jockeyInstructions?.moveTiming === "late" &&
+                  r.position / distance > KICKING_PROGRESS_THRESHOLD && (
+                    <div className="px-1.5 py-0.5 rounded-full bg-red-600 text-[8px] font-black text-white flex items-center gap-1 animate-pulse">
+                      KICKING
+                    </div>
+                  )}
                 {r.draftingHorseId && !r.jockeyInstructions && (
                   <div className="px-1.5 py-0.5 rounded-full bg-muted text-[8px] font-bold text-foreground flex items-center gap-1 animate-pulse">
                     <span className="h-1 w-1 rounded-full bg-foreground" />

@@ -55,6 +55,29 @@ describe("deriveRunnerConditions", () => {
     ).not.toContain("flying");
   });
 
+  it("does NOT flag Flying when the runner meets the field ratio but is not among the fastest", () => {
+    // 4 runners all at 17 m/s except one at 16.5.
+    // The 17 m/s runners each have fieldRatio = 17/16.875 ≈ 1.007, which is
+    // below FLYING_FIELD_RATIO (1.06), so none should be flying.
+    // But even if we boost them to meet the ratio, only the top 2 by velocity
+    // should get the badge.
+    const a = runner({ horseId: "a", velocity: 18, position: 500 });
+    const b = runner({ horseId: "b", velocity: 17.9, position: 480 });
+    const c = runner({ horseId: "c", velocity: 17.8, position: 460 });
+    const d = runner({ horseId: "d", velocity: 14, position: 300 });
+    const field = buildFieldContext([a, b, c, d]);
+    // a (rank 1) and b (rank 2) should be flying; c (rank 3) should NOT
+    expect(ids(deriveRunnerConditions(a, field, { peakVelocity: 18 }, DISTANCE))).toContain(
+      "flying",
+    );
+    expect(ids(deriveRunnerConditions(b, field, { peakVelocity: 17.9 }, DISTANCE))).toContain(
+      "flying",
+    );
+    expect(ids(deriveRunnerConditions(c, field, { peakVelocity: 17.8 }, DISTANCE))).not.toContain(
+      "flying",
+    );
+  });
+
   it("flags Battling for a close, evenly matched duel late in the race", () => {
     const a = runner({ horseId: "a", position: 1200, velocity: 16, lane: 1 });
     const b = runner({ horseId: "b", position: 1201, velocity: 16.1, lane: 3 });
@@ -106,6 +129,26 @@ describe("deriveRunnerConditions", () => {
 function findSignal(signals: MoodSignal[], label: string): MoodSignal | undefined {
   return signals.find((s) => s.label === label);
 }
+
+describe("buildFieldContext velocityRank", () => {
+  it("ranks runners by velocity descending (1 = fastest)", () => {
+    const a = runner({ horseId: "a", velocity: 18 });
+    const b = runner({ horseId: "b", velocity: 16 });
+    const c = runner({ horseId: "c", velocity: 17 });
+    const field = buildFieldContext([a, b, c]);
+    expect(field.velocityRank.get("a")).toBe(1);
+    expect(field.velocityRank.get("c")).toBe(2);
+    expect(field.velocityRank.get("b")).toBe(3);
+  });
+
+  it("excludes finished runners from velocity ranking", () => {
+    const a = runner({ horseId: "a", velocity: 18 });
+    const done = runner({ horseId: "done", velocity: 20, finishTime: 60.0 });
+    const field = buildFieldContext([a, done]);
+    expect(field.velocityRank.get("a")).toBe(1);
+    expect(field.velocityRank.has("done")).toBe(false);
+  });
+});
 
 describe("deriveRunnerMood", () => {
   it("is happy when a front-runner is on the pace", () => {

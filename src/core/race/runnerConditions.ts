@@ -15,6 +15,7 @@ import type { Runner } from "@/core/race/engine/runnerBuilder";
 import {
   FLYING_FIELD_RATIO,
   FLYING_FADE_RATIO,
+  FLYING_MAX_VELOCITY_RANK,
   BATTLING_MAX_GAP,
   BATTLING_MIN_PROGRESS,
   BATTLING_MAX_VELOCITY_DIFF,
@@ -91,6 +92,8 @@ export interface FieldContext {
   liveCount: number;
   /** Live runners sorted by position, ascending. */
   sortedLive: Runner[];
+  /** Rank of each live runner by velocity (1 = fastest). Ties broken by horseId for determinism. */
+  velocityRank: Map<string, number>;
 }
 
 export interface RunnerHistory {
@@ -121,12 +124,17 @@ export function buildFieldContext(runners: Runner[]): FieldContext {
     : 0;
   const fastestVelocity = moving.reduce((m, r) => Math.max(m, r.velocity), 0);
   const leaderPos = runners.reduce((m, r) => Math.max(m, r.position), 0);
+  const velocityRank = new Map<string, number>();
+  [...moving]
+    .sort((a, b) => b.velocity - a.velocity || a.horseId.localeCompare(b.horseId))
+    .forEach((r, i) => velocityRank.set(r.horseId, i + 1));
   return {
     meanVelocity,
     fastestVelocity,
     leaderPos,
     liveCount: live.length,
     sortedLive: [...live].sort((a, b) => a.position - b.position),
+    velocityRank,
   };
 }
 
@@ -193,7 +201,8 @@ export function deriveRunnerConditions(
     field.liveCount > 1 &&
     r.velocity > 0 &&
     fieldRatio >= FLYING_FIELD_RATIO &&
-    fadeRatio > FLYING_FADE_RATIO
+    fadeRatio > FLYING_FADE_RATIO &&
+    (field.velocityRank.get(r.horseId) ?? 99) <= FLYING_MAX_VELOCITY_RANK
   ) {
     conditions.push({
       id: "flying",
@@ -346,7 +355,11 @@ export function deriveRunnerMood(
   const peak = Math.max(history.peakVelocity, r.velocity);
   const fadeRatio = peak > 0 ? r.velocity / peak : 1;
   const fieldRatio = field.meanVelocity > 0 ? r.velocity / field.meanVelocity : 1;
-  if (fieldRatio >= FLYING_FIELD_RATIO && fadeRatio > FLYING_FADE_RATIO) {
+  if (
+    fieldRatio >= FLYING_FIELD_RATIO &&
+    fadeRatio > FLYING_FADE_RATIO &&
+    (field.velocityRank.get(r.horseId) ?? 99) <= FLYING_MAX_VELOCITY_RANK
+  ) {
     score += MOOD_TRAVELLING_BONUS;
     signals.push({ label: "Travelling strongly", contribution: MOOD_TRAVELLING_BONUS });
   }
