@@ -159,7 +159,7 @@ describe("Race Leaderboard", () => {
         onMinBeyerChange={() => {}}
       />,
     );
-    expect(screen.getByText(/Live/)).toBeTruthy();
+    expect(screen.getByText(/Live ·/)).toBeTruthy();
     expect(document.querySelector("[class*='animate-ping']")).toBeTruthy();
   });
 });
