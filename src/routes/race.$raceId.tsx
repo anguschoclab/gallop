@@ -222,6 +222,7 @@ export function LiveRace() {
     setMinBeyer,
     allFinished,
     anyFinished,
+    lastUpdatedAt,
   } = useLeaderboardState(runners, race, classBonus, calibratedPars ?? {}, tick);
 
   const ownedRunnersTotal = runners.filter((r) => r.owned);
