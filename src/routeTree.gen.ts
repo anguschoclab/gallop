@@ -13,8 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AuctionRouteImport } from './routes/auction'
 import { Route as AwardsRouteImport } from './routes/awards'
-import { Route as AwardsIndexRouteImport } from './routes/awards.index'
-import { Route as AwardsCategoryIdRouteImport } from './routes/awards.$category'
 import { Route as BookmarksRouteImport } from './routes/bookmarks'
 import { Route as BreedingRouteImport } from './routes/breeding'
 import { Route as BriefingRouteImport } from './routes/briefing'
@@ -53,6 +51,8 @@ import { Route as AnalyticsRacingRouteImport } from './routes/analytics.racing'
 import { Route as AnalyticsStableRouteImport } from './routes/analytics.stable'
 import { Route as AuctionIndexRouteImport } from './routes/auction.index'
 import { Route as AuctionSaleIdRouteImport } from './routes/auction.$saleId'
+import { Route as AwardsIndexRouteImport } from './routes/awards.index'
+import { Route as AwardsCategoryRouteImport } from './routes/awards.$category'
 import { Route as CalendarIndexRouteImport } from './routes/calendar.index'
 import { Route as CalendarRegionIdRouteImport } from './routes/calendar.$regionId'
 import { Route as CeremonyInvitationIdRouteImport } from './routes/ceremony.$invitationId'
@@ -87,16 +87,6 @@ const AwardsRoute = AwardsRouteImport.update({
   id: '/awards',
   path: '/awards',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AwardsIndexRoute = AwardsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AwardsRoute,
-} as any)
-const AwardsCategoryIdRoute = AwardsCategoryIdRouteImport.update({
-  id: '/$category',
-  path: '/$category',
-  getParentRoute: () => AwardsRoute,
 } as any)
 const BookmarksRoute = BookmarksRouteImport.update({
   id: '/bookmarks',
@@ -288,6 +278,16 @@ const AuctionSaleIdRoute = AuctionSaleIdRouteImport.update({
   path: '/$saleId',
   getParentRoute: () => AuctionRoute,
 } as any)
+const AwardsIndexRoute = AwardsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AwardsRoute,
+} as any)
+const AwardsCategoryRoute = AwardsCategoryRouteImport.update({
+  id: '/$category',
+  path: '/$category',
+  getParentRoute: () => AwardsRoute,
+} as any)
 const CalendarIndexRoute = CalendarIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -400,7 +400,7 @@ export interface FileRoutesByFullPath {
   '/analytics/racing': typeof AnalyticsRacingRoute
   '/analytics/stable': typeof AnalyticsStableRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
-  '/awards/$category': typeof AwardsCategoryIdRoute
+  '/awards/$category': typeof AwardsCategoryRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/ceremony/$invitationId': typeof CeremonyInvitationIdRoute
   '/foal-development/$horseId': typeof FoalDevelopmentHorseIdRoute
@@ -421,7 +421,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/awards': typeof AwardsRouteWithChildren
   '/bookmarks': typeof BookmarksRoute
   '/breeding': typeof BreedingRoute
   '/briefing': typeof BriefingRoute
@@ -454,7 +453,7 @@ export interface FileRoutesByTo {
   '/analytics/racing': typeof AnalyticsRacingRoute
   '/analytics/stable': typeof AnalyticsStableRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
-  '/awards/$category': typeof AwardsCategoryIdRoute
+  '/awards/$category': typeof AwardsCategoryRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/ceremony/$invitationId': typeof CeremonyInvitationIdRoute
   '/foal-development/$horseId': typeof FoalDevelopmentHorseIdRoute
@@ -515,7 +514,7 @@ export interface FileRoutesById {
   '/analytics/racing': typeof AnalyticsRacingRoute
   '/analytics/stable': typeof AnalyticsStableRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
-  '/awards/$category': typeof AwardsCategoryIdRoute
+  '/awards/$category': typeof AwardsCategoryRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/ceremony/$invitationId': typeof CeremonyInvitationIdRoute
   '/foal-development/$horseId': typeof FoalDevelopmentHorseIdRoute
@@ -598,7 +597,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/awards'
     | '/bookmarks'
     | '/breeding'
     | '/briefing'
@@ -783,20 +781,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/awards'
       preLoaderRoute: typeof AwardsRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/awards/': {
-      id: '/awards/'
-      path: '/'
-      fullPath: '/awards/'
-      preLoaderRoute: typeof AwardsIndexRouteImport
-      parentRoute: typeof AwardsRoute
-    }
-    '/awards/$category': {
-      id: '/awards/$category'
-      path: '/$category'
-      fullPath: '/awards/$category'
-      preLoaderRoute: typeof AwardsCategoryIdRouteImport
-      parentRoute: typeof AwardsRoute
     }
     '/bookmarks': {
       id: '/bookmarks'
@@ -1064,6 +1048,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuctionSaleIdRouteImport
       parentRoute: typeof AuctionRoute
     }
+    '/awards/': {
+      id: '/awards/'
+      path: '/'
+      fullPath: '/awards/'
+      preLoaderRoute: typeof AwardsIndexRouteImport
+      parentRoute: typeof AwardsRoute
+    }
+    '/awards/$category': {
+      id: '/awards/$category'
+      path: '/$category'
+      fullPath: '/awards/$category'
+      preLoaderRoute: typeof AwardsCategoryRouteImport
+      parentRoute: typeof AwardsRoute
+    }
     '/calendar/': {
       id: '/calendar/'
       path: '/'
@@ -1185,20 +1183,6 @@ const AnalyticsRouteWithChildren = AnalyticsRoute._addFileChildren(
   AnalyticsRouteChildren,
 )
 
-interface AwardsRouteChildren {
-  AwardsCategoryIdRoute: typeof AwardsCategoryIdRoute
-  AwardsIndexRoute: typeof AwardsIndexRoute
-}
-
-const AwardsRouteChildren: AwardsRouteChildren = {
-  AwardsCategoryIdRoute: AwardsCategoryIdRoute,
-  AwardsIndexRoute: AwardsIndexRoute,
-}
-
-const AwardsRouteWithChildren = AwardsRoute._addFileChildren(
-  AwardsRouteChildren,
-)
-
 interface AuctionRouteChildren {
   AuctionSaleIdRoute: typeof AuctionSaleIdRoute
   AuctionIndexRoute: typeof AuctionIndexRoute
@@ -1211,6 +1195,19 @@ const AuctionRouteChildren: AuctionRouteChildren = {
 
 const AuctionRouteWithChildren =
   AuctionRoute._addFileChildren(AuctionRouteChildren)
+
+interface AwardsRouteChildren {
+  AwardsCategoryRoute: typeof AwardsCategoryRoute
+  AwardsIndexRoute: typeof AwardsIndexRoute
+}
+
+const AwardsRouteChildren: AwardsRouteChildren = {
+  AwardsCategoryRoute: AwardsCategoryRoute,
+  AwardsIndexRoute: AwardsIndexRoute,
+}
+
+const AwardsRouteWithChildren =
+  AwardsRoute._addFileChildren(AwardsRouteChildren)
 
 interface CalendarRouteChildren {
   CalendarRegionIdRoute: typeof CalendarRegionIdRoute
