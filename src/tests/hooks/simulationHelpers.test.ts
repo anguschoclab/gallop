@@ -123,25 +123,25 @@ describe("updateSplitCrossings", () => {
 
 describe("recordFinish", () => {
   it("appends entry with position 1 when finishOrder is empty", () => {
-    const r = makeRunner({ horseId: "h1", finishTime: 90.5 });
-    const finishOrder: { horseId: string; position: number; time: number }[] = [];
+    const r = makeRunner({ horseId: "h1", finishTime: 90.5, barrier: 1 });
+    const finishOrder: { horseId: string; position: number; time: number; barrier: number }[] = [];
     recordFinish(r, finishOrder);
     expect(finishOrder).toHaveLength(1);
-    expect(finishOrder[0]).toEqual({ horseId: "h1", position: 1, time: 90.5 });
+    expect(finishOrder[0]).toEqual({ horseId: "h1", position: 1, time: 90.5, barrier: 1 });
   });
 
   it("does NOT append when finishTime is null", () => {
     const r = makeRunner({ horseId: "h1", finishTime: null });
-    const finishOrder: { horseId: string; position: number; time: number }[] = [];
+    const finishOrder: { horseId: string; position: number; time: number; barrier: number }[] = [];
     recordFinish(r, finishOrder);
     expect(finishOrder).toHaveLength(0);
   });
 
   it("assigns sequential positions for multiple finishers", () => {
-    const finishOrder: { horseId: string; position: number; time: number }[] = [];
-    recordFinish(makeRunner({ horseId: "h1", finishTime: 90.0 }), finishOrder);
-    recordFinish(makeRunner({ horseId: "h2", finishTime: 90.3 }), finishOrder);
-    recordFinish(makeRunner({ horseId: "h3", finishTime: 90.7 }), finishOrder);
+    const finishOrder: { horseId: string; position: number; time: number; barrier: number }[] = [];
+    recordFinish(makeRunner({ horseId: "h1", finishTime: 90.0, barrier: 1 }), finishOrder);
+    recordFinish(makeRunner({ horseId: "h2", finishTime: 90.3, barrier: 2 }), finishOrder);
+    recordFinish(makeRunner({ horseId: "h3", finishTime: 90.7, barrier: 3 }), finishOrder);
     expect(finishOrder.map((f) => f.position)).toEqual([1, 2, 3]);
   });
 });

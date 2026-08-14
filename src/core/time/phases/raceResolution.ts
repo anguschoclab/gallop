@@ -9,7 +9,14 @@
  */
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT, PHASE_ORDER_RACE_RESOLUTION } from "@/constants";
+import {
+  PRIZE_SPLIT,
+  GRADED_PRIZE_SPLIT,
+  PHASE_ORDER_RACE_RESOLUTION,
+  TOP_FINISH_POSITION,
+  WINNER_PURSE_SHARE,
+  RACE_HISTORY_UNGRADED_RETENTION_DAYS,
+} from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type {
   TrackRecordImpact,
@@ -142,7 +149,7 @@ export const raceResolutionPhase: PipelinePhase = {
                     horse,
                     race,
                     newDay,
-                    res.position <= 3,
+                    res.position <= TOP_FINISH_POSITION,
                     res.position,
                   );
                 }
@@ -230,7 +237,7 @@ export const raceResolutionPhase: PipelinePhase = {
           const winnerId = result.find((r) => r.position === 1)?.horseId;
           const winner = winnerId ? horseMap.get(winnerId) : null;
           if (winner && winner.id) {
-            const prizeMoney = race.purse * 0.6;
+            const prizeMoney = race.purse * WINNER_PURSE_SHARE;
             const tempHorse = {
               ...winner,
               lifetimeEarnings: (winner.lifetimeEarnings ?? 0) + prizeMoney,
@@ -322,7 +329,7 @@ export const raceResolutionPhase: PipelinePhase = {
                   horse,
                   race,
                   newDay,
-                  res.position <= 3,
+                  res.position <= TOP_FINISH_POSITION,
                   res.position,
                 );
               }
@@ -441,7 +448,7 @@ export const raceResolutionPhase: PipelinePhase = {
         const winnerId = result.find((r) => r.position === 1)?.horseId;
         const winner = winnerId ? horseMap.get(winnerId) : null;
         if (winner && winner.id) {
-          const prizeMoney = race.purse * 0.6;
+          const prizeMoney = race.purse * WINNER_PURSE_SHARE;
           const tempHorse = {
             ...winner,
             lifetimeEarnings: (winner.lifetimeEarnings ?? 0) + prizeMoney,
@@ -492,7 +499,10 @@ export const raceResolutionPhase: PipelinePhase = {
     // Cleanup
     const prunedRaces = Object.fromEntries(
       Object.values(updatedRaces)
-        .filter((r) => (!r.resolved && !r.cancelled) || r.day >= newDay - 30)
+        .filter(
+          (r) =>
+            (!r.resolved && !r.cancelled) || r.day >= newDay - RACE_HISTORY_UNGRADED_RETENTION_DAYS,
+        )
         .map((r) => [r.id, r]),
     );
 

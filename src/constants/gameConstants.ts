@@ -755,3 +755,9 @@ export const POSITION_PLACE = 2;
 
 /** Finishing position for 3rd place (show) */
 export const POSITION_SHOW = 3;
+
+/** Finishing positions that count as "in the money" (win, place, show). */
+export const TOP_FINISH_POSITION = 3;
+
+/** Winner's share of the purse (used for HoF temp-horse earnings estimate). */
+export const WINNER_PURSE_SHARE = 0.6;

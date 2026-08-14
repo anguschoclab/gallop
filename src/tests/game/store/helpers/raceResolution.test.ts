@@ -218,23 +218,19 @@ describe("sanitizeAndRankResults", () => {
     );
   });
 
-  it("may break ties differently with different raceIds", () => {
+  it("breaks ties deterministically by horseId regardless of raceId", () => {
     const raw = [
       { horseId: "h1", time: 70.0 },
       { horseId: "h2", time: 70.0 },
     ];
-    // Run with many different raceIds to find at least one that differs
+    // With deterministic tie-breaking, all raceIds produce the same order
     const firstOrder = sanitizeAndRankResults(raw, "race-A").finishers.map((f) => f.horseId);
-    let foundDifferent = false;
     for (let i = 0; i < 50; i++) {
       const order = sanitizeAndRankResults(raw, `race-${i}`).finishers.map((f) => f.horseId);
-      if (order.join(",") !== firstOrder.join(",")) {
-        foundDifferent = true;
-        break;
-      }
+      expect(order).toEqual(firstOrder);
     }
-    // With 50 different seeds, probability of all matching is ~2^-50
-    expect(foundDifferent).toBe(true);
+    // h1 < h2 lexicographically
+    expect(firstOrder).toEqual(["h1", "h2"]);
   });
 
   it("breaks three-way ties deterministically", () => {

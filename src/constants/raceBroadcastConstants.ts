@@ -44,3 +44,10 @@ export const FINISH_TIME_DECIMALS = 1;
 
 /** Inline hint text shown when horses are level and tie-breaking is active. */
 export const TIE_BREAK_HINT_TEXT = "⚡ Horses level — order held by tie-break";
+
+// --- RNG isolation constants ---
+
+/** XOR mask applied to the race-id hash to derive a distinct seed for the
+ *  NarrativeGenerator RNG, so commentary rng.next() calls don't advance the
+ *  simulation RNG. */
+export const NARRATIVE_RNG_XOR_MASK = 0x6e61;

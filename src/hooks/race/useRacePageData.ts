@@ -13,6 +13,7 @@ import { calculateClassBonus } from "@/core/common/classBonus";
 import { NarrativeGenerator } from "@/services/narrative/narrativeService";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 import { createRng, hashStr } from "@/core/common/rng";
+import { NARRATIVE_RNG_XOR_MASK } from "@/constants/raceBroadcastConstants";
 
 export function useRacePageData(raceId: string) {
   const race = useGameWithShallow((s: GameState) => s.races[raceId]);
@@ -58,7 +59,7 @@ export function useRacePageData(raceId: string) {
     rngRef.current = race ? rngForRace(race) : null;
     // NarrativeGenerator gets its own RNG (seeded differently) so that
     // commentary rng.next() calls don't advance the simulation RNG.
-    const narrativeRng = race ? createRng(hashStr(race.id) ^ 0x6e61) : null;
+    const narrativeRng = race ? createRng(hashStr(race.id) ^ NARRATIVE_RNG_XOR_MASK) : null;
     // Filler horses are part of the field but not in the store, so they must be
     // handed to the narrative generator or commentary about them loses its context.
     narrativeRef.current =

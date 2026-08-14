@@ -12,6 +12,7 @@ import { formatCurrency } from "@/core/common/formatting";
 import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/constants";
 import { Trophy, ChevronRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
 
 /**
  * Props for the ResultOverlay component.
