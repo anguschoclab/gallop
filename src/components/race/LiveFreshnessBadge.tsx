@@ -1,10 +1,5 @@
 import { useLiveFreshness } from "@/hooks/shared/useLiveFreshness";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
 
 interface LiveFreshnessBadgeProps {
@@ -15,14 +10,8 @@ interface LiveFreshnessBadgeProps {
   className?: string;
 }
 
-export function LiveFreshnessBadge({
-  lastUpdatedAt,
-  context,
-  className,
-}: LiveFreshnessBadgeProps) {
-  const { timeAgo, isStale, staleSeconds } = useLiveFreshness(
-    lastUpdatedAt ?? Date.now(),
-  );
+export function LiveFreshnessBadge({ lastUpdatedAt, context, className }: LiveFreshnessBadgeProps) {
+  const { timeAgo, isStale, staleSeconds } = useLiveFreshness(lastUpdatedAt ?? Date.now());
 
   const tooltip = isStale
     ? `No update received for ${staleSeconds}s. The broadcast may be paused or lagging.`
@@ -47,9 +36,7 @@ export function LiveFreshnessBadge({
             <div
               className={cn(
                 "h-1.5 w-1.5 rounded-full",
-                isStale
-                  ? "bg-warning"
-                  : "bg-destructive animate-pulse",
+                isStale ? "bg-warning" : "bg-destructive animate-pulse",
               )}
             />
             <span className="text-[8px] font-bold uppercase tracking-tighter">

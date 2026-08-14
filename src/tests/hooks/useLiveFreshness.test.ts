@@ -64,10 +64,9 @@ describe("useLiveFreshness", () => {
   });
 
   it("resets to fresh when the timestamp is updated", () => {
-    const { result, rerender } = renderHook(
-      ({ timestamp }) => useLiveFreshness(timestamp),
-      { initialProps: { timestamp: BASE_TIME } },
-    );
+    const { result, rerender } = renderHook(({ timestamp }) => useLiveFreshness(timestamp), {
+      initialProps: { timestamp: BASE_TIME },
+    });
 
     act(() => vi.advanceTimersByTime(STALE_DATA_THRESHOLD_MS + 5_000));
     expect(result.current.isStale).toBe(true);

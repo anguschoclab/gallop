@@ -20,7 +20,6 @@ export function BroadcastCommentary({ commentary, lastUpdatedAt }: BroadcastComm
 
   const visibleLines = commentary.slice(-8);
 
-
   return (
     <div className="mt-4 bg-broadcast-marquee/80 backdrop-blur-xl rounded-xl border border-white/10 overflow-hidden shadow-2xl transition-all duration-500">
       <div className="px-4 py-2.5 border-b border-white/10 bg-gradient-to-r from-white/10 to-transparent flex items-center justify-between">
@@ -38,7 +37,6 @@ export function BroadcastCommentary({ commentary, lastUpdatedAt }: BroadcastComm
           </div>
         </div>
         <LiveFreshnessBadge context="Commentary" lastUpdatedAt={lastUpdatedAt} />
-
       </div>
       <div
         ref={scrollRef}

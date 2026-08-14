@@ -135,9 +135,7 @@ describe("BroadcastCommentary - Badge Timing Behavior", () => {
   });
 
   it("resets badge freshness back to 'just now' when lastUpdatedAt prop is updated", () => {
-    const { rerender } = render(
-      <BroadcastCommentary commentary={[]} lastUpdatedAt={BASE_TIME} />,
-    );
+    const { rerender } = render(<BroadcastCommentary commentary={[]} lastUpdatedAt={BASE_TIME} />);
 
     // Advance 10 seconds
     act(() => {
@@ -147,9 +145,7 @@ describe("BroadcastCommentary - Badge Timing Behavior", () => {
 
     // New commentary arrival at BASE_TIME + 10000
     const newTimestamp = BASE_TIME + 10000;
-    rerender(
-      <BroadcastCommentary commentary={[]} lastUpdatedAt={newTimestamp} />,
-    );
+    rerender(<BroadcastCommentary commentary={[]} lastUpdatedAt={newTimestamp} />);
 
     // Immediately resets to "just now"
     expect(screen.getByLabelText("Commentary last updated just now")).toHaveTextContent("just now");
@@ -175,9 +171,7 @@ describe("BroadcastCommentary - Badge Timing Behavior", () => {
 
   it("cleans up the timer interval on component unmount", () => {
     const clearIntervalSpy = vi.spyOn(window, "clearInterval");
-    const { unmount } = render(
-      <BroadcastCommentary commentary={[]} lastUpdatedAt={BASE_TIME} />,
-    );
+    const { unmount } = render(<BroadcastCommentary commentary={[]} lastUpdatedAt={BASE_TIME} />);
 
     unmount();
     expect(clearIntervalSpy).toHaveBeenCalled();
