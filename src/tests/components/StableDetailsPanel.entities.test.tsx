@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { StableDetailsPanel } from "@/components/dashboard/StableDetailsPanel";
 import type { StandingEntry } from "@/core/standings/computeStandings";
@@ -29,7 +29,14 @@ describe("StableDetailsPanel — entity linking", () => {
       winsVsPlayer: 2,
       sparkline: [0, 0, 100000],
       recentResults: [
-        { raceName: "Grand Stakes", raceId: "r1", position: 1, day: 50, purseEarned: 60000 },
+        {
+          raceName: "Grand Stakes",
+          raceId: "r1",
+          position: 1,
+          day: 50,
+          purseEarned: 60000,
+          gate: 3,
+        },
       ] as any,
     };
     const { container } = render(<StableDetailsPanel stable={entry} />);
@@ -37,6 +44,30 @@ describe("StableDetailsPanel — entity linking", () => {
     expect(link).not.toBeNull();
     expect(link?.textContent).toBe("Grand Stakes");
     expect(link?.getAttribute("data-params")).toBe(JSON.stringify({ raceId: "r1" }));
+  });
+
+  it("displays gate alongside position in recent results", () => {
+    const entry: StandingEntry = {
+      stableId: "npc1",
+      name: "Rival Stable",
+      isPlayer: false,
+      rangePrizeMoney: 100000,
+      prestige: 50,
+      winsVsPlayer: 2,
+      sparkline: [0, 0, 100000],
+      recentResults: [
+        {
+          raceName: "Grand Stakes",
+          raceId: "r1",
+          position: 1,
+          day: 50,
+          purseEarned: 60000,
+          gate: 3,
+        },
+      ] as any,
+    };
+    render(<StableDetailsPanel stable={entry} />);
+    expect(screen.getByText("G3")).toBeTruthy();
   });
 
   it("renders stable name as a Link to /npc-stables/$stableId", () => {

@@ -217,11 +217,26 @@ describe("awardInvitationsPhase (integration)", () => {
       mkContext(EUROPE_CEREMONY_DOY - CEREMONY_INVITE_LEAD_DAYS, [horse], [euroRace]),
     );
     const impact = result.impacts[0] as {
-      message: { cta?: { route: string; params?: Record<string, string> } };
+      message: {
+        cta?: { route: string; params?: Record<string, string> };
+        secondaryCta?: { label: string; route: string };
+      };
     };
     const invitationId = (result.state.awardCeremonyInvitations ?? [])[0].id;
     expect(impact.message.cta?.route).toBe("/ceremony/$invitationId");
     expect(impact.message.cta?.params?.invitationId).toBe(invitationId);
+  });
+
+  it("includes a secondary CTA linking to /honors awards tab", () => {
+    const horse = mkHorse("h1", "race-eu", 1, 200);
+    const result = awardInvitationsPhase.execute(
+      mkContext(EUROPE_CEREMONY_DOY - CEREMONY_INVITE_LEAD_DAYS, [horse], [euroRace]),
+    );
+    const impact = result.impacts[0] as {
+      message: { secondaryCta?: { label: string; route: string } };
+    };
+    expect(impact.message.secondaryCta?.label).toBe("Browse Award Categories");
+    expect(impact.message.secondaryCta?.route).toBe("/awards/$category");
   });
 });
 

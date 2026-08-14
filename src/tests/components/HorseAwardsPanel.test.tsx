@@ -4,8 +4,21 @@ import { HorseAwardsPanel } from "@/components/awards/HorseAwardsPanel";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import type { Horse } from "@/game/types";
 import type { RegionalAward } from "@/core/awards/types";
+import { CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
 
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn(), info: vi.fn() } }));
+
+vi.mock("@tanstack/react-router", () => ({
+  Link: ({ children, to, params }: any) => (
+    <a
+      href={to as string}
+      data-to={to as string}
+      data-params={params ? JSON.stringify(params) : ""}
+    >
+      {children}
+    </a>
+  ),
+}));
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({
@@ -162,5 +175,33 @@ describe("HorseAwardsPanel", () => {
     const totalLabel = screen.getByText("Total Awards");
     const totalValue = totalLabel.previousElementSibling;
     expect(totalValue?.textContent).toBe("1");
+  });
+
+  it("wraps expanded award badges in Link to /awards/$category", () => {
+    const { container } = renderWithStore(<HorseAwardsPanel horse={mkHorse()} />, {
+      awards: [mkAward({ id: "a1", category: "champion_3yo_male", year: 5 })],
+    });
+    const categoryLinks = container.querySelectorAll('a[data-to="/awards/$category"]');
+    expect(categoryLinks.length).toBeGreaterThanOrEqual(1);
+    const link = categoryLinks[0];
+    expect(link.getAttribute("data-params")).toContain("champion_3yo_male");
+  });
+
+  it("wraps compact category rows in Link to /awards/$category", () => {
+    const awards: RegionalAward[] = Array.from({ length: 6 }, (_, i) =>
+      mkAward({ id: `a${i}`, category: "champion_3yo_male", year: 5 + i }),
+    );
+    const { container } = renderWithStore(<HorseAwardsPanel horse={mkHorse()} />, { awards });
+    const categoryLinks = container.querySelectorAll('a[data-to="/awards/$category"]');
+    expect(categoryLinks.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("includes CATEGORY_DESCRIPTIONS text in title attribute on category names", () => {
+    renderWithStore(<HorseAwardsPanel horse={mkHorse()} />, {
+      awards: [mkAward({ id: "a1", category: "champion_3yo_male", year: 5 })],
+    });
+    const categoryText = screen.getByText("Champion 3YO Male");
+    const titleAttr = categoryText.closest("[title]")?.getAttribute("title");
+    expect(titleAttr).toContain(CATEGORY_DESCRIPTIONS.champion_3yo_male);
   });
 });

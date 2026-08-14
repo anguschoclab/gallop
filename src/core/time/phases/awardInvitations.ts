@@ -207,6 +207,11 @@ function makeInbox(
         route: "/ceremony/$invitationId",
         params: { invitationId },
       },
+      secondaryCta: {
+        label: "Browse Award Categories",
+        route: "/awards/$category",
+        params: { category: "horse_of_the_year" },
+      },
     },
   } as InboxImpact;
 }

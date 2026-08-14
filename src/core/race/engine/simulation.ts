@@ -1090,7 +1090,7 @@ export function runRaceToCompletion(
   }
 
   const ranked = [...runners]
-    .map((r) => ({ horseId: r.horseId, time: r.finishTime ?? Infinity, barrier: r.barrier }))
+    .map((r) => ({ horseId: r.horseId, time: r.finishTime ?? Infinity, gate: r.gate }))
     .sort(compareFinishOrder);
 
   const result = ranked.map((r, idx) => ({

@@ -37,8 +37,8 @@ export interface GenerateRaceImpactsProps {
   race: Race;
   /** Final race result positions and times for each participant */
   result: Array<{ horseId: string; position: number; time: number }>;
-  /** The field of runners with lane and barrier data */
-  runners: Array<{ horseId: string; barrier?: number; lane?: number }>;
+  /** The field of runners with lane and gate data */
+  runners: Array<{ horseId: string; gate?: number; lane?: number }>;
   /** Current horse population (can be an array or a pre-indexed Map) */
   horses: Horse[] | Map<string, Horse>;
   /** Current jockey population (can be an array or a pre-indexed Map) */
@@ -76,7 +76,7 @@ export interface GenerateRaceImpactsProps {
  * @param props - Impact generation properties
  * @param props.race - The completed race data
  * @param props.result - Final race result positions and times for each participant
- * @param props.runners - The field of runners with lane and barrier data
+ * @param props.runners - The field of runners with lane and gate data
  * @param props.horses - Current horse population (can be an array or a pre-indexed Map)
  * @param props.jockeys - Current jockey population (can be an array or a pre-indexed Map)
  * @param props.newDay - Game day of the race resolution

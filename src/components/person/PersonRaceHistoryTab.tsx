@@ -176,6 +176,7 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
                       <span>Day {entry.day}</span>
                       {entry.distance && <span>· {entry.distance}m</span>}
                       {entry.surface && <span>· {entry.surface}</span>}
+                      {typeof entry.gate === "number" && <span>· G{entry.gate}</span>}
                     </div>
                   </div>
                   <Link

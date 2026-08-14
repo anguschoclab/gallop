@@ -5,6 +5,7 @@ export { TrophyCase, TrophyStats } from "./TrophyCase";
 export { AwardCeremony, useAwardCeremony } from "./AwardCeremony";
 export { HorseAwardsPanel } from "./HorseAwardsPanel";
 export { G1TrophyList } from "./G1TrophyList";
+export { G1WinnerHistory } from "./G1WinnerHistory";
 export { VisualTrophy, TrophyShelf } from "./VisualTrophy";
 export type { TrophyTone } from "./VisualTrophy";
 export { CeremonyInvitations } from "./CeremonyInvitations";

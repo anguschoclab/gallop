@@ -2,11 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGame } from "@/game/store";
 import { Link } from "@tanstack/react-router";
 import { Trophy, ChevronRight } from "lucide-react";
+import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
 
 export function LegacyAwardsWidget() {
   const awards = useGame((s) => s.awards);
   const playerAwards = awards.filter((a) => !a.stableId);
   const g1Wins = awards.filter((a) => a.isHistoric).length;
+  const sortedPlayerAwards = [...playerAwards].sort((a, b) => b.year - a.year);
+  const recentAward = sortedPlayerAwards[0];
 
   return (
     <Card className="lg:col-span-4 border-gold-muted bg-slate-900/40 flex flex-col relative overflow-hidden">
@@ -59,6 +62,24 @@ export function LegacyAwardsWidget() {
                 Secure Access <ChevronRight className="h-3 w-3" />
               </Link>
             </div>
+
+            {recentAward && (
+              <Link
+                to="/awards/$category"
+                params={{ category: recentAward.category }}
+                className="block p-3 rounded-lg border border-gold/20 bg-gold/5 hover:bg-gold/10 hover:border-gold/40 transition-all"
+              >
+                <div className="text-[9px] text-gold-muted/80 uppercase font-bold tracking-widest mb-1">
+                  Most Recent Award · Y{recentAward.year}
+                </div>
+                <div className="text-sm font-bold text-gold mb-1">
+                  {CATEGORY_DISPLAY_NAMES[recentAward.category]}
+                </div>
+                <div className="text-[10px] text-cream-muted line-clamp-2">
+                  {CATEGORY_DESCRIPTIONS[recentAward.category]}
+                </div>
+              </Link>
+            )}
 
             <div className="text-center">
               <Link

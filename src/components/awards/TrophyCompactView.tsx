@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AwardIconWithYear } from "./AwardIcon";
-import { CATEGORY_DISPLAY_NAMES } from "@/core/awards/types";
+import { Link } from "@tanstack/react-router";
+import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
 import { getRegionCountryLabel } from "@/core/common/countryFlag";
 import { Trophy } from "lucide-react";
 import type { RegionalAward } from "@/core/awards/types";
@@ -58,10 +59,12 @@ export function TrophyCompactView({ awards, totalAwards, className }: TrophyComp
               <div className="flex gap-2 overflow-x-auto pb-2">
                 {display.map((item) =>
                   item.kind === "single" ? (
-                    <div
+                    <Link
                       key={item.award.id}
+                      to="/awards/$category"
+                      params={{ category: item.award.category }}
                       className="flex-shrink-0"
-                      title={`${CATEGORY_DISPLAY_NAMES[item.award.category]} (${item.award.year}) · ${getRegionCountryLabel(item.award.region)}`}
+                      title={`${CATEGORY_DISPLAY_NAMES[item.award.category]} (${item.award.year}) · ${getRegionCountryLabel(item.award.region)} · ${CATEGORY_DESCRIPTIONS[item.award.category]}`}
                     >
                       <AwardIconWithYear
                         region={item.award.region}
@@ -69,12 +72,14 @@ export function TrophyCompactView({ awards, totalAwards, className }: TrophyComp
                         year={item.award.year}
                         size="small"
                       />
-                    </div>
+                    </Link>
                   ) : (
-                    <div
+                    <Link
                       key={item.category}
+                      to="/awards/$category"
+                      params={{ category: item.sample.category }}
                       className="flex-shrink-0 flex items-center gap-1 px-2 h-8 rounded-full border border-gold/30 bg-gold/5"
-                      title={`${CATEGORY_DISPLAY_NAMES[item.sample.category]} · ${item.count} years`}
+                      title={`${CATEGORY_DISPLAY_NAMES[item.sample.category]} · ${item.count} years · ${CATEGORY_DESCRIPTIONS[item.sample.category]}`}
                     >
                       <AwardIconWithYear
                         region={item.sample.region}
@@ -83,7 +88,7 @@ export function TrophyCompactView({ awards, totalAwards, className }: TrophyComp
                         size="small"
                       />
                       <span className="text-xs font-mono tabular-nums">×{item.count}</span>
-                    </div>
+                    </Link>
                   ),
                 )}
                 {overflow > 0 && (

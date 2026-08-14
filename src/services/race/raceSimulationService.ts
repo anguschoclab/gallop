@@ -77,13 +77,13 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   const surface = race.surface || race.graded?.surface;
   const rng = rngForRace(race);
 
-  // 1. Prepare the full list of entry data (carry barrier from pre-assigned draws)
+  // 1. Prepare the full list of entry data (carry gate from pre-assigned draws)
   const entriesData: {
     horseId: string;
     owned: boolean;
     jockeyId?: string;
     weight?: number;
-    barrier?: number;
+    gate?: number;
   }[] = [];
   for (const entry of race.entries) {
     entriesData.push({
@@ -91,7 +91,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
       owned: entry.owned,
       jockeyId: entry.jockeyId,
       weight: entry.weight,
-      barrier: entry.barrier,
+      gate: entry.gate,
     });
   }
 
@@ -117,16 +117,16 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
     entriesData.push({ horseId: aiHorse.id, owned: false, jockeyId: jk.id, weight });
   }
 
-  // 3. Assign barriers: respect pre-assigned barriers, shuffle the rest
-  const preAssigned = entriesData.filter((e) => e.barrier !== undefined);
-  const unassigned = entriesData.filter((e) => e.barrier === undefined);
+  // 3. Assign gates: respect pre-assigned gates, shuffle the rest
+  const preAssigned = entriesData.filter((e) => e.gate !== undefined);
+  const unassigned = entriesData.filter((e) => e.gate === undefined);
 
-  const usedBarriers = new Set(preAssigned.map((e) => e.barrier!));
+  const usedGates = new Set(preAssigned.map((e) => e.gate!));
   const totalSize = entriesData.length;
-  const remainingBarriers: number[] = [];
+  const remainingGates: number[] = [];
   for (let b = 1; b <= totalSize; b++) {
-    if (!usedBarriers.has(b)) {
-      remainingBarriers.push(b);
+    if (!usedGates.has(b)) {
+      remainingGates.push(b);
     }
   }
 
@@ -137,17 +137,17 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
     [shuffledUnassigned[i], shuffledUnassigned[j]] = [shuffledUnassigned[j], shuffledUnassigned[i]];
   }
 
-  // Assign remaining barriers to shuffled unassigned entries
+  // Assign remaining gates to shuffled unassigned entries
   for (let i = 0; i < shuffledUnassigned.length; i++) {
-    shuffledUnassigned[i].barrier = remainingBarriers[i];
+    shuffledUnassigned[i].gate = remainingGates[i];
   }
 
-  // Merge and sort by barrier number for final runner order
-  const allWithBarriers = [...preAssigned, ...shuffledUnassigned].sort(
-    (a, b) => (a.barrier ?? 0) - (b.barrier ?? 0),
+  // Merge and sort by gate number for final runner order
+  const allWithGates = [...preAssigned, ...shuffledUnassigned].sort(
+    (a, b) => (a.gate ?? 0) - (b.gate ?? 0),
   );
 
-  // 4. Build the final Runner objects with assigned barriers
+  // 4. Build the final Runner objects with assigned gates
   const horseMap =
     horses instanceof Map ? (horses as Map<string, Horse>) : new Map(horses.map((h) => [h.id, h]));
   const jockeyMap =
@@ -166,9 +166,9 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   const fillerMap = new Map(fillerHorses.map((h) => [h.id, h]));
 
   const runners: Runner[] = [];
-  for (let i = 0; i < allWithBarriers.length; i++) {
-    const entryData = allWithBarriers[i];
-    const barrier = entryData.barrier!;
+  for (let i = 0; i < allWithGates.length; i++) {
+    const entryData = allWithGates[i];
+    const gate = entryData.gate!;
 
     // Find the horse
     const horse = horseMap.get(entryData.horseId) || fillerMap.get(entryData.horseId);
@@ -198,7 +198,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
           race.distance,
           surface ?? null,
           conditions,
-          barrier,
+          gate,
           jockeyObj,
           entryData.weight,
           race.handedness,

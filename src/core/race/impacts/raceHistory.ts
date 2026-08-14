@@ -19,7 +19,7 @@ export function generateRaceHistoryImpact(
   race: Race,
   adjustedBeyer: number,
   newDay: number,
-  runner?: { horseId: string; barrier?: number; lane?: number },
+  runner?: { horseId: string; gate?: number; lane?: number },
   rng?: Rng,
   raceEntry?: { jockeyId?: string; stableId?: string; owned?: boolean },
 ): RaceHistoryImpact {
@@ -58,7 +58,7 @@ export function generateRaceHistoryImpact(
       purseEarned,
       fieldSize: 0,
       raceClass: race.raceClass,
-      barrier: runner?.barrier,
+      gate: runner?.gate,
       lane: runner?.lane,
       jockeyId: raceEntry?.jockeyId,
       stableId: raceEntry?.stableId ?? horse.stableId,

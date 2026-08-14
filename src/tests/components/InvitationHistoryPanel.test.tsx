@@ -3,7 +3,16 @@ import { cleanup, screen } from "@testing-library/react";
 import { render } from "@testing-library/react";
 
 vi.mock("@tanstack/react-router", () => ({
-  Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
+  Link: ({ children, to, params, ...rest }: any) => (
+    <a
+      href={to as string}
+      data-to={to as string}
+      data-params={params ? JSON.stringify(params) : ""}
+      {...rest}
+    >
+      {children}
+    </a>
+  ),
 }));
 
 import { InvitationHistoryPanel } from "@/components/awards/InvitationHistoryPanel";
@@ -46,5 +55,28 @@ describe("InvitationHistoryPanel", () => {
     expect(screen.getByLabelText("Filter by region")).toBeTruthy();
     expect(screen.getByLabelText("Filter by attendance")).toBeTruthy();
     expect(screen.getByLabelText("Filter by outcome")).toBeTruthy();
+  });
+
+  it("wraps won award badges in Link to /awards/$category", () => {
+    const inv = mkInvitation({ ceremonyDay: 50 });
+    const award: RegionalAward = {
+      id: "a1",
+      year: 1,
+      region: "north_america",
+      category: "champion_3yo_male",
+      horseId: "h1",
+      horseName: "Thunder",
+      points: 100,
+      runnerUpPoints: 80,
+      margin: 20,
+      qualifyingRaces: ["r1"],
+      ceremonyDay: 50,
+    };
+    const { container } = render(
+      <InvitationHistoryPanel invitations={[inv]} awards={[award]} day={100} />,
+    );
+    const categoryLinks = container.querySelectorAll('a[data-to="/awards/$category"]');
+    expect(categoryLinks.length).toBeGreaterThanOrEqual(1);
+    expect(categoryLinks[0].getAttribute("data-params")).toContain("champion_3yo_male");
   });
 });

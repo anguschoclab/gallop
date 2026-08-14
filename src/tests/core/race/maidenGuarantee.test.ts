@@ -156,4 +156,22 @@ describe("ensureMaidenInCard", () => {
     expect(added).toBeDefined();
     expect(added!.trackId).toBe("my-track-id");
   });
+
+  it("ensureMaidenRaces added maiden has no restrictions", () => {
+    const races: Race[] = [];
+    const result = ensureMaidenRaces(races, 2, 3, createRng("test"));
+    const added = result.filter((r) => r.raceClass === "Maiden" && !races.includes(r));
+    for (const m of added) {
+      expect(m.restrictions).toBeUndefined();
+    }
+  });
+
+  it("ensureMaidenInCard added maiden has no restrictions", () => {
+    const card: Race[] = [mkRace({ day: 30, raceClass: "Allowance" })];
+    const track = mkTrack();
+    const result = ensureMaidenInCard(card, 30, track, createRng("test"));
+    const added = result.find((r) => r.raceClass === "Maiden" && !card.includes(r));
+    expect(added).toBeDefined();
+    expect(added!.restrictions).toBeUndefined();
+  });
 });

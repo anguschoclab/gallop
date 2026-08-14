@@ -378,6 +378,29 @@ describe("computeSeasonStandings", () => {
     expect(player.recentResults[0].raceId).toBe("r-abc");
   });
 
+  it("recentResults include gate propagated from raceHistory", () => {
+    const h1 = mkHorse({
+      id: "h1",
+      owned: true,
+      raceHistory: [
+        {
+          raceId: "r-gate",
+          raceName: "Gate Test Stakes",
+          position: 2,
+          day: 50,
+          purse: 100000,
+          purseEarned: 30000,
+          gate: 7,
+        },
+      ],
+    });
+    const s: GameState = mkState({ day: 55, horses: { h1 } });
+    const result = computeSeasonStandings(s, 30);
+    const player = result.standings.find((e) => e.isPlayer)!;
+    expect(player.recentResults.length).toBeGreaterThanOrEqual(1);
+    expect(player.recentResults[0].gate).toBe(7);
+  });
+
   it("uses playerProfile.stableName for player entry name", () => {
     const s: GameState = mkState({
       playerProfile: {

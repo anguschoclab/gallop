@@ -1,8 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { AwardBadge } from "./AwardBadge";
 import { Trophy } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import type { RegionalAward } from "@/core/awards/types";
-import { CATEGORY_DISPLAY_NAMES } from "@/core/awards/types";
+import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
 import { getRegionFlag, getRegionCountryLabel } from "@/core/common/countryFlag";
 
 const COMPACT_THRESHOLD = 5;
@@ -37,8 +38,11 @@ export function AwardsGrid({ awards }: AwardsGridProps) {
           const last = sorted[0].year;
           const sample = sorted[0];
           return [
-            <div
+            <Link
               key={`compact-${category}`}
+              to="/awards/$category"
+              params={{ category: sample.category }}
+              title={CATEGORY_DESCRIPTIONS[sample.category]}
               className="flex items-center gap-3 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
             >
               <div className="flex-1 min-w-0">
@@ -47,6 +51,9 @@ export function AwardsGrid({ awards }: AwardsGridProps) {
                   <Badge variant="secondary" className="font-mono tabular-nums">
                     ×{sorted.length}
                   </Badge>
+                </div>
+                <div className="text-xs text-muted-foreground line-clamp-1">
+                  {CATEGORY_DESCRIPTIONS[sample.category]}
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <span title={getRegionCountryLabel(sample.region)}>
@@ -58,7 +65,7 @@ export function AwardsGrid({ awards }: AwardsGridProps) {
                   </span>
                 </div>
               </div>
-            </div>,
+            </Link>,
           ];
         }
         return sorted.map((award) => (

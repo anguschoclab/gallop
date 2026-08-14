@@ -91,27 +91,27 @@ function stddev(xs: number[]): number {
 // ------------------------------ facets ------------------------------
 
 function evalGateBreak(runner: Runner, ranks: number[], fieldSize: number): JockeyReportFacet {
-  const gate = runner.jockey?.stats.gateSkill ?? 50;
-  const barrier = runner.barrier ?? 1;
+  const gateSkill = runner.jockey?.stats.gateSkill ?? 50;
+  const gatePos = runner.gate ?? 1;
   const firstRank = ranks[0];
-  const expected = (barrier / Math.max(1, fieldSize)) * fieldSize; // rough barrier expectation
+  const expected = (gatePos / Math.max(1, fieldSize)) * fieldSize; // rough gate expectation
   let score: number;
   let note: string;
   if (firstRank === undefined) {
-    score = clamp(gate);
+    score = clamp(gateSkill);
     note = "No sectional data — graded on gate skill alone.";
   } else {
-    const delta = expected - firstRank; // positive = better than barrier
-    const swing = clamp(50 + delta * 6 + (gate - 50) * 0.6, 0, 100);
+    const delta = expected - firstRank; // positive = better than gate
+    const swing = clamp(50 + delta * 6 + (gateSkill - 50) * 0.6, 0, 100);
     score = swing;
-    if (delta >= 2) note = `Sharp break from gate ${barrier} into ${firstRank}th early.`;
-    else if (delta <= -2) note = `Slow away — lost ground from gate ${barrier}.`;
-    else note = `Clean break from gate ${barrier}, settled ${firstRank}th early.`;
+    if (delta >= 2) note = `Sharp break from gate ${gatePos} into ${firstRank}th early.`;
+    else if (delta <= -2) note = `Slow away — lost ground from gate ${gatePos}.`;
+    else note = `Clean break from gate ${gatePos}, settled ${firstRank}th early.`;
   }
   return {
     id: "gate_break",
     label: "Gate Break",
-    description: "How well the start was handled given the barrier draw.",
+    description: "How well the start was handled given the gate draw.",
     score,
     grade: gradeFromScore(score),
     note,

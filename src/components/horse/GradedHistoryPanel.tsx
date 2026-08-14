@@ -19,6 +19,7 @@ interface GradedHistoryEntry {
   distance?: number;
   surface?: string;
   fieldSize?: number;
+  gate?: number;
 }
 
 interface GradedHistoryPanelProps {

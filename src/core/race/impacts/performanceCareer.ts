@@ -20,7 +20,7 @@ export function generatePerformanceCareerImpacts(
   horse: Horse,
   r: RaceResult,
   race: Race,
-  runner: { horseId: string; barrier?: number; lane?: number } | undefined,
+  runner: { horseId: string; gate?: number; lane?: number } | undefined,
   classBonus: number,
   calibratedPars: Record<number, number>,
   splitEntryMaps: Map<string, { horseId: string; rank: number }>[],

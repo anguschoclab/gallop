@@ -14,6 +14,7 @@ interface GradedHistoryEntry {
   distance?: number;
   surface?: string;
   fieldSize?: number;
+  gate?: number;
 }
 
 interface RaceHistoryGroupProps {
@@ -51,6 +52,7 @@ export function RaceHistoryGroup({ entries, countryFor, yearFor }: RaceHistoryGr
                   {r.distance ? <span>· {r.distance}m</span> : null}
                   {r.surface ? <span>· {r.surface}</span> : null}
                   {r.fieldSize ? <span>· field of {r.fieldSize}</span> : null}
+                  {typeof r.gate === "number" && <span>· G{r.gate}</span>}
                   <span>· D{r.day}</span>
                 </div>
               </div>

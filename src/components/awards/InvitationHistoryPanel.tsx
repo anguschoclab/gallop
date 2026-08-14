@@ -270,14 +270,15 @@ function InvitationHistoryRow({
       {won.length > 0 ? (
         <div className="flex flex-wrap gap-1">
           {won.map((a) => (
-            <Badge
-              key={a.id}
-              variant="outline"
-              className="border-gold text-gold flex items-center gap-1"
-            >
-              <Trophy className="w-3 h-3" />
-              {CATEGORY_DISPLAY_NAMES[a.category]} — {a.horseName}
-            </Badge>
+            <Link key={a.id} to="/awards/$category" params={{ category: a.category }}>
+              <Badge
+                variant="outline"
+                className="border-gold text-gold flex items-center gap-1 hover:bg-gold/10 transition-colors"
+              >
+                <Trophy className="w-3 h-3" />
+                {CATEGORY_DISPLAY_NAMES[a.category]} — {a.horseName}
+              </Badge>
+            </Link>
           ))}
         </div>
       ) : (

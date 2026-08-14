@@ -4,7 +4,11 @@ import type { GameState } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Award, CalendarClock, MapPin, Trophy } from "lucide-react";
-import { REGION_AWARD_NAMES, CATEGORY_DISPLAY_NAMES } from "@/core/awards/types";
+import {
+  REGION_AWARD_NAMES,
+  CATEGORY_DISPLAY_NAMES,
+  CATEGORY_DESCRIPTIONS,
+} from "@/core/awards/types";
 import { formatDate, dayOfYear } from "@/core/calendar/dateFormatting";
 import {
   getInvitationOutcome,
@@ -166,17 +170,27 @@ function CeremonyPage() {
                 key={a.id}
                 className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-gold/50 p-3"
               >
-                <span className="flex items-center gap-2 font-semibold text-cream">
+                <Link
+                  to="/awards/$category"
+                  params={{ category: a.category }}
+                  className="flex items-center gap-2 font-semibold text-cream hover:text-gold transition-colors"
+                  title={CATEGORY_DESCRIPTIONS[a.category]}
+                >
                   <Trophy className="h-4 w-4 text-gold" />
                   {CATEGORY_DISPLAY_NAMES[a.category]}
-                </span>
-                <Link
-                  to="/stable/$horseId"
-                  params={{ horseId: a.horseId }}
-                  className="text-sm text-gold hover:underline"
-                >
-                  {a.horseName}
                 </Link>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-cream-muted max-w-xs line-clamp-1">
+                    {CATEGORY_DESCRIPTIONS[a.category]}
+                  </span>
+                  <Link
+                    to="/stable/$horseId"
+                    params={{ horseId: a.horseId }}
+                    className="text-sm text-gold hover:underline"
+                  >
+                    {a.horseName}
+                  </Link>
+                </div>
               </div>
             ))
           )}

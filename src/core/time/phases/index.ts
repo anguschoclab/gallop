@@ -22,7 +22,7 @@ import { energyPhase } from "./energy";
 import { marketPhase } from "./market";
 import { racesPhase } from "./races";
 import { beyerRecalibrationPhase } from "./beyerRecalibration";
-import { barrierDrawPhase } from "./barrierDraw";
+import { gateDrawPhase } from "./gateDraw";
 import { jockeyPhase } from "./jockeyPhase";
 import { pregnancyPhase } from "./pregnancy";
 import { npcCyclePhase } from "./npcCycle";
@@ -90,7 +90,7 @@ export const GAME_PIPELINE_PHASES = [
   raceInvitationsPhase,
   racesPhase,
   beyerRecalibrationPhase,
-  barrierDrawPhase,
+  gateDrawPhase,
   jockeyPhase,
   pregnancyPhase,
   npcCyclePhase,

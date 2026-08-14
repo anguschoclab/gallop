@@ -1,13 +1,13 @@
 /**
- * phases/barrierDraw.ts - Barrier draw phase
+ * phases/gateDraw.ts - Gate draw phase
  *
- * Assigns barrier (post position) numbers to race entries before race day.
+ * Assigns gate (post position) numbers to race entries before race day.
  * G1 races draw 5 days before the race with an email notification.
  * All other races draw 2 days before the race silently.
- * Late entries and filler horses get remaining barriers at simulation time.
+ * Late entries and filler horses get remaining gates at simulation time.
  */
 
-import { PHASE_ORDER_BARRIER_DRAW } from "@/constants";
+import { PHASE_ORDER_GATE_DRAW } from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { Race } from "@/core/race/types";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
@@ -16,14 +16,14 @@ import { rngForRace } from "@/services/race/raceSimulationService";
 import { generateUUID } from "@/core/uuid";
 
 /**
- * Barrier Draw Phase (Order 66)
- * Assigns barrier numbers to race entries at a configurable lead time before race day.
+ * Gate Draw Phase (Order 66)
+ * Assigns gate numbers to race entries at a configurable lead time before race day.
  * G1 races: draw 5 days before, send inbox email with full draw results.
  * Other races: draw 2 days before, no notification.
  */
-export const barrierDrawPhase: PipelinePhase = {
-  name: "barrierDraw",
-  order: PHASE_ORDER_BARRIER_DRAW,
+export const gateDrawPhase: PipelinePhase = {
+  name: "gateDraw",
+  order: PHASE_ORDER_GATE_DRAW,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay, horseMap } = context;
     const impacts: AnyImpact[] = [];
@@ -38,9 +38,9 @@ export const barrierDrawPhase: PipelinePhase = {
 
       if (daysUntilRace !== drawLeadTime) continue;
 
-      // Skip if all entries already have barriers (idempotent)
-      const hasUnassignedBarriers = race.entries.some((e) => e.barrier === undefined);
-      if (!hasUnassignedBarriers) continue;
+      // Skip if all entries already have gates (idempotent)
+      const hasUnassignedGates = race.entries.some((e) => e.gate === undefined);
+      if (!hasUnassignedGates) continue;
 
       // Skip if no entries to draw for
       if (race.entries.length === 0) continue;
@@ -49,18 +49,18 @@ export const barrierDrawPhase: PipelinePhase = {
       const rng = rngForRace(race);
 
       // Partition entries into pre-assigned and unassigned
-      const preAssigned = race.entries.filter((e) => e.barrier !== undefined);
-      const unassigned = race.entries.filter((e) => e.barrier === undefined);
+      const preAssigned = race.entries.filter((e) => e.gate !== undefined);
+      const unassigned = race.entries.filter((e) => e.gate === undefined);
 
-      // Collect barriers already taken
-      const usedBarriers = new Set(preAssigned.map((e) => e.barrier!));
+      // Collect gates already taken
+      const usedGates = new Set(preAssigned.map((e) => e.gate!));
 
-      // Compute remaining barrier numbers
+      // Compute remaining gate numbers
       const totalEntries = race.entries.length;
-      const remainingBarriers: number[] = [];
+      const remainingGates: number[] = [];
       for (let b = 1; b <= totalEntries; b++) {
-        if (!usedBarriers.has(b)) {
-          remainingBarriers.push(b);
+        if (!usedGates.has(b)) {
+          remainingGates.push(b);
         }
       }
 
@@ -71,16 +71,16 @@ export const barrierDrawPhase: PipelinePhase = {
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
       }
 
-      // Assign remaining barriers to shuffled unassigned entries
+      // Assign remaining gates to shuffled unassigned entries
       const updatedUnassigned = shuffled.map((entry, i) => ({
         ...entry,
-        barrier: remainingBarriers[i],
+        gate: remainingGates[i],
       }));
 
       // Merge pre-assigned and updated unassigned, preserving original order
       let unassignedIdx = 0;
       const updatedEntries = race.entries.map((entry) => {
-        if (entry.barrier !== undefined) {
+        if (entry.gate !== undefined) {
           return entry;
         }
         return updatedUnassigned[unassignedIdx++];
@@ -95,7 +95,7 @@ export const barrierDrawPhase: PipelinePhase = {
           .map((e) => {
             const horse = horseMap.get(e.horseId);
             const horseName = horse?.name ?? `Horse ${e.horseId}`;
-            return `Barrier ${e.barrier}: ${horseName}`;
+            return `Gate ${e.gate}: ${horseName}`;
           })
           .join("\n");
 
@@ -103,15 +103,15 @@ export const barrierDrawPhase: PipelinePhase = {
           id: generateUUID(),
           intentId: "",
           day: newDay,
-          phase: "barrierDraw",
+          phase: "gateDraw",
           logLevel: "conditional",
           type: "inbox_message",
           message: {
             day: newDay,
             category: "race",
             priority: "info",
-            title: `Barrier Draw: ${race.name}`,
-            body: `The barrier draw for ${race.name} has been completed.\n\n${drawList}`,
+            title: `Gate Draw: ${race.name}`,
+            body: `The gate draw for ${race.name} has been completed.\n\n${drawList}`,
             cta: {
               label: "View Race",
               route: "race.$raceId",

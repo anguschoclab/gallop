@@ -103,6 +103,9 @@ export function StableDetailsPanel({ stable }: { stable: StandingEntry | null })
                         >
                           P{r.position}
                         </span>
+                        {typeof r.gate === "number" && (
+                          <span className="font-mono tabular-nums text-cream/40">G{r.gate}</span>
+                        )}
                         <span className="font-mono tabular-nums text-cream/50">
                           {formatCurrency(r.purseEarned)}
                         </span>

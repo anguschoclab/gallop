@@ -204,6 +204,24 @@ export function InboxPage() {
                     <ExternalLink className={ICON_SIZE_PIN} />
                   </Button>
                 )}
+                {msg.secondaryCta && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-2 ml-2"
+                    onClick={() => {
+                      markRead(msg.id);
+                      const sc = msg.secondaryCta;
+                      if (sc) {
+                        const routePath = interpolateCtaRoute(sc.route, sc.params);
+                        navigate({ to: routePath as FileRouteTypes["to"] });
+                      }
+                    }}
+                  >
+                    {msg.secondaryCta.label}
+                    <ExternalLink className={ICON_SIZE_PIN} />
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ))

@@ -263,4 +263,35 @@ describe("Inbox — ceremony integration", () => {
     const { container } = render(createElement(InboxPage));
     expect(container.textContent).toContain("No activity yet");
   });
+
+  it("renders secondary CTA button when message has secondaryCta", () => {
+    seedStore({
+      ...createDefaultGameState(),
+      day: 290,
+      inbox: [
+        {
+          id: "msg1",
+          day: 286,
+          title: "Ceremony Invitation",
+          body: "You have been invited.",
+          category: "system",
+          priority: "info" as const,
+          readAt: undefined,
+          cta: {
+            label: "View Ceremony",
+            route: "/ceremony/$invitationId",
+            params: { invitationId: "inv-1" },
+          },
+          secondaryCta: {
+            label: "View Awards",
+            route: "/honors",
+          },
+        },
+      ],
+      awardCeremonyInvitations: [],
+    });
+
+    const { container } = render(createElement(InboxPage));
+    expect(container.textContent).toContain("View Awards");
+  });
 });

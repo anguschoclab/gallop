@@ -96,6 +96,9 @@ export function HorseRaceHistorySection({
                   {typeof r.beyer === "number" && (
                     <span className="font-mono text-[10px] text-gold-bright">{r.beyer}</span>
                   )}
+                  {typeof r.gate === "number" && (
+                    <span className="text-[10px] font-mono text-cream/30">G{r.gate}</span>
+                  )}
                   <span className="text-[10px] font-mono text-cream/30">{r.surface ?? "—"}</span>
                 </div>
               ))}

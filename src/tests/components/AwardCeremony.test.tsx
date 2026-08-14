@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 import { AwardCeremony } from "@/components/awards/AwardCeremony";
 import type { RegionalAward } from "@/core/awards/types";
+import { CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
 
 vi.mock("@/components/ui/dialog", () => ({
   Dialog: ({ children, open }: { children: React.ReactNode; open: boolean }) =>
@@ -47,6 +48,18 @@ vi.mock("@/components/awards/AwardIcon", () => ({
 
 vi.mock("@/components/awards/AwardBadge", () => ({
   AwardBadge: () => <span data-testid="award-badge" />,
+}));
+
+vi.mock("@tanstack/react-router", () => ({
+  Link: ({ children, to, params }: any) => (
+    <a
+      href={to as string}
+      data-to={to as string}
+      data-params={params ? JSON.stringify(params) : ""}
+    >
+      {children}
+    </a>
+  ),
 }));
 
 vi.mock("@/assets/awards", () => ({
@@ -142,5 +155,24 @@ describe("AwardCeremony", () => {
       <AwardCeremony isOpen={true} onClose={() => {}} ceremonies={[]} />,
     );
     expect(container.firstChild).toBeNull();
+  });
+
+  it("renders CATEGORY_DESCRIPTIONS text below each category name in awards list", () => {
+    const ceremony = mkCeremony([
+      mkAward({ id: "a1", category: "champion_3yo_male", stableId: undefined }),
+    ]);
+    render(<AwardCeremony isOpen={true} onClose={() => {}} ceremonies={[ceremony]} />);
+    expect(screen.getByText(CATEGORY_DESCRIPTIONS.champion_3yo_male)).toBeTruthy();
+  });
+
+  it("wraps award entries in Link to /awards/$category", () => {
+    const ceremony = mkCeremony([
+      mkAward({ id: "a1", category: "champion_3yo_male", stableId: undefined }),
+    ]);
+    const { container } = render(
+      <AwardCeremony isOpen={true} onClose={() => {}} ceremonies={[ceremony]} />,
+    );
+    const categoryLinks = container.querySelectorAll('a[data-to="/awards/$category"]');
+    expect(categoryLinks.length).toBeGreaterThanOrEqual(1);
   });
 });

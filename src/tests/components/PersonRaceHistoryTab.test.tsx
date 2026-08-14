@@ -391,4 +391,19 @@ describe("PersonRaceHistoryTab", () => {
     const link = screen.getByRole("link", { name: "Horse 1" });
     expect(link.getAttribute("href")).toContain("/stable/h-1");
   });
+
+  // 11. Gate is displayed when present in race history entry
+  it("displays gate in race row when present", () => {
+    const horses: Horse[] = [
+      mkHorseWithHistory("h-1", "Horse 1", [
+        mkRaceEntry({ raceId: "r-1", jockeyId: "j-1", position: 2, day: 10, gate: 7 }),
+      ]),
+    ];
+
+    renderWithStore(<PersonRaceHistoryTab personId="j-1" roles={["jockey"]} />, {
+      horses: h2r(horses),
+    } as unknown as Partial<GameState>);
+
+    expect(screen.getByText("G7")).toBeTruthy();
+  });
 });

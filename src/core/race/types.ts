@@ -47,7 +47,7 @@ export type RaceEntry = {
   owned: boolean;
   stableId?: string;
   npc?: boolean;
-  barrier?: number;
+  gate?: number;
   jockeyId?: string;
   weight?: number;
   withdrawnFromClaiming?: boolean;
@@ -169,6 +169,6 @@ export type RaceRunner = {
   owned: boolean;
   jockeyId: string;
   jockeyName: string;
-  barrier?: number;
+  gate?: number;
   lane?: number;
 };

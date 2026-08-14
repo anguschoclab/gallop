@@ -118,7 +118,7 @@ export type Runner = {
   lane: number;
   targetLane: number;
   laneVelocity: number;
-  barrier: number;
+  gate: number;
   topSpeed: number;
   accel: number;
   staminaFactor: number;
@@ -278,7 +278,7 @@ export function getConditionsModifier(
  * @param raceDistance - The race distance in meters
  * @param surface - The race surface
  * @param conditions - Conditions modifier for weather/track
- * @param barrier - The horse's barrier position
+ * @param gate - The horse's gate position
  * @param jockey - Optional jockey
  * @param weight - Optional assigned weight
  * @param handedness - Track handedness
@@ -299,7 +299,7 @@ export function buildRunner(
   raceDistance: number,
   surface: "Turf" | "Dirt" | "Synthetic" | null,
   conditions: ConditionsModifier = { speedMul: 1, staminaDrainMul: 1 },
-  barrier: number = 1,
+  gate: number = 1,
   jockey?: JockeyT,
   weight?: number,
   handedness?: "left" | "right" | "balanced",
@@ -581,10 +581,10 @@ export function buildRunner(
     position: 0,
     velocity: 0,
     finishTime: null,
-    lane: (barrier - 1) * LANE_WIDTH,
+    lane: (gate - 1) * LANE_WIDTH,
     targetLane: 0,
     laneVelocity: 0,
-    barrier,
+    gate,
     topSpeed: clamp(
       topSpeed * genderSpeedMul * weightMod * strideMod * affinitySpeedMul,
       5,

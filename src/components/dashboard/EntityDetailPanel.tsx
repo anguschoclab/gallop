@@ -103,6 +103,7 @@ export function EntityDetailPanel({
             </span>
             <span className="shrink-0 font-mono tabular-nums text-cream/50">
               {r.horseName} · {r.entry.position}
+              {typeof r.entry.gate === "number" ? ` · G${r.entry.gate}` : ""}
               {r.isG1 ? " · G1" : ""}
             </span>
           </li>
@@ -121,6 +122,7 @@ export function EntityDetailPanel({
             </span>
             <span className="shrink-0 font-mono tabular-nums text-cream/50">
               {r.horseName} · {r.entry.position}
+              {typeof r.entry.gate === "number" ? ` · G${r.entry.gate}` : ""}
               {r.isG1 ? " · G1" : ""}
             </span>
           </li>

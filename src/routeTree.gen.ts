@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AuctionRouteImport } from './routes/auction'
 import { Route as AwardsRouteImport } from './routes/awards'
+import { Route as AwardsIndexRouteImport } from './routes/awards.index'
+import { Route as AwardsCategoryIdRouteImport } from './routes/awards.$category'
 import { Route as BookmarksRouteImport } from './routes/bookmarks'
 import { Route as BreedingRouteImport } from './routes/breeding'
 import { Route as BriefingRouteImport } from './routes/briefing'
@@ -85,6 +87,16 @@ const AwardsRoute = AwardsRouteImport.update({
   id: '/awards',
   path: '/awards',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AwardsIndexRoute = AwardsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AwardsRoute,
+} as any)
+const AwardsCategoryIdRoute = AwardsCategoryIdRouteImport.update({
+  id: '/$category',
+  path: '/$category',
+  getParentRoute: () => AwardsRoute,
 } as any)
 const BookmarksRoute = BookmarksRouteImport.update({
   id: '/bookmarks',
@@ -351,7 +363,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRouteWithChildren
   '/auction': typeof AuctionRouteWithChildren
-  '/awards': typeof AwardsRoute
+  '/awards': typeof AwardsRouteWithChildren
   '/bookmarks': typeof BookmarksRoute
   '/breeding': typeof BreedingRoute
   '/briefing': typeof BriefingRoute
@@ -388,6 +400,7 @@ export interface FileRoutesByFullPath {
   '/analytics/racing': typeof AnalyticsRacingRoute
   '/analytics/stable': typeof AnalyticsStableRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
+  '/awards/$category': typeof AwardsCategoryIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/ceremony/$invitationId': typeof CeremonyInvitationIdRoute
   '/foal-development/$horseId': typeof FoalDevelopmentHorseIdRoute
@@ -400,6 +413,7 @@ export interface FileRoutesByFullPath {
   '/syndicate/$syndicateId': typeof SyndicateSyndicateIdRoute
   '/analytics/': typeof AnalyticsIndexRoute
   '/auction/': typeof AuctionIndexRoute
+  '/awards/': typeof AwardsIndexRoute
   '/calendar/': typeof CalendarIndexRoute
   '/npc-stables/': typeof NpcStablesIndexRoute
   '/sire-watch/': typeof SireWatchIndexRoute
@@ -407,7 +421,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/awards': typeof AwardsRoute
+  '/awards': typeof AwardsRouteWithChildren
   '/bookmarks': typeof BookmarksRoute
   '/breeding': typeof BreedingRoute
   '/briefing': typeof BriefingRoute
@@ -440,6 +454,7 @@ export interface FileRoutesByTo {
   '/analytics/racing': typeof AnalyticsRacingRoute
   '/analytics/stable': typeof AnalyticsStableRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
+  '/awards/$category': typeof AwardsCategoryIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/ceremony/$invitationId': typeof CeremonyInvitationIdRoute
   '/foal-development/$horseId': typeof FoalDevelopmentHorseIdRoute
@@ -452,6 +467,7 @@ export interface FileRoutesByTo {
   '/syndicate/$syndicateId': typeof SyndicateSyndicateIdRoute
   '/analytics': typeof AnalyticsIndexRoute
   '/auction': typeof AuctionIndexRoute
+  '/awards': typeof AwardsIndexRoute
   '/calendar': typeof CalendarIndexRoute
   '/npc-stables': typeof NpcStablesIndexRoute
   '/sire-watch': typeof SireWatchIndexRoute
@@ -462,7 +478,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRouteWithChildren
   '/auction': typeof AuctionRouteWithChildren
-  '/awards': typeof AwardsRoute
+  '/awards': typeof AwardsRouteWithChildren
   '/bookmarks': typeof BookmarksRoute
   '/breeding': typeof BreedingRoute
   '/briefing': typeof BriefingRoute
@@ -499,6 +515,7 @@ export interface FileRoutesById {
   '/analytics/racing': typeof AnalyticsRacingRoute
   '/analytics/stable': typeof AnalyticsStableRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
+  '/awards/$category': typeof AwardsCategoryIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/ceremony/$invitationId': typeof CeremonyInvitationIdRoute
   '/foal-development/$horseId': typeof FoalDevelopmentHorseIdRoute
@@ -511,6 +528,7 @@ export interface FileRoutesById {
   '/syndicate/$syndicateId': typeof SyndicateSyndicateIdRoute
   '/analytics/': typeof AnalyticsIndexRoute
   '/auction/': typeof AuctionIndexRoute
+  '/awards/': typeof AwardsIndexRoute
   '/calendar/': typeof CalendarIndexRoute
   '/npc-stables/': typeof NpcStablesIndexRoute
   '/sire-watch/': typeof SireWatchIndexRoute
@@ -559,6 +577,7 @@ export interface FileRouteTypes {
     | '/analytics/racing'
     | '/analytics/stable'
     | '/auction/$saleId'
+    | '/awards/$category'
     | '/calendar/$regionId'
     | '/ceremony/$invitationId'
     | '/foal-development/$horseId'
@@ -571,6 +590,7 @@ export interface FileRouteTypes {
     | '/syndicate/$syndicateId'
     | '/analytics/'
     | '/auction/'
+    | '/awards/'
     | '/calendar/'
     | '/npc-stables/'
     | '/sire-watch/'
@@ -611,6 +631,7 @@ export interface FileRouteTypes {
     | '/analytics/racing'
     | '/analytics/stable'
     | '/auction/$saleId'
+    | '/awards/$category'
     | '/calendar/$regionId'
     | '/ceremony/$invitationId'
     | '/foal-development/$horseId'
@@ -623,6 +644,7 @@ export interface FileRouteTypes {
     | '/syndicate/$syndicateId'
     | '/analytics'
     | '/auction'
+    | '/awards'
     | '/calendar'
     | '/npc-stables'
     | '/sire-watch'
@@ -669,6 +691,7 @@ export interface FileRouteTypes {
     | '/analytics/racing'
     | '/analytics/stable'
     | '/auction/$saleId'
+    | '/awards/$category'
     | '/calendar/$regionId'
     | '/ceremony/$invitationId'
     | '/foal-development/$horseId'
@@ -681,6 +704,7 @@ export interface FileRouteTypes {
     | '/syndicate/$syndicateId'
     | '/analytics/'
     | '/auction/'
+    | '/awards/'
     | '/calendar/'
     | '/npc-stables/'
     | '/sire-watch/'
@@ -691,7 +715,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRouteWithChildren
   AuctionRoute: typeof AuctionRouteWithChildren
-  AwardsRoute: typeof AwardsRoute
+  AwardsRoute: typeof AwardsRouteWithChildren
   BookmarksRoute: typeof BookmarksRoute
   BreedingRoute: typeof BreedingRoute
   BriefingRoute: typeof BriefingRoute
@@ -759,6 +783,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/awards'
       preLoaderRoute: typeof AwardsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/awards/': {
+      id: '/awards/'
+      path: '/'
+      fullPath: '/awards/'
+      preLoaderRoute: typeof AwardsIndexRouteImport
+      parentRoute: typeof AwardsRoute
+    }
+    '/awards/$category': {
+      id: '/awards/$category'
+      path: '/$category'
+      fullPath: '/awards/$category'
+      preLoaderRoute: typeof AwardsCategoryIdRouteImport
+      parentRoute: typeof AwardsRoute
     }
     '/bookmarks': {
       id: '/bookmarks'
@@ -1147,6 +1185,20 @@ const AnalyticsRouteWithChildren = AnalyticsRoute._addFileChildren(
   AnalyticsRouteChildren,
 )
 
+interface AwardsRouteChildren {
+  AwardsCategoryIdRoute: typeof AwardsCategoryIdRoute
+  AwardsIndexRoute: typeof AwardsIndexRoute
+}
+
+const AwardsRouteChildren: AwardsRouteChildren = {
+  AwardsCategoryIdRoute: AwardsCategoryIdRoute,
+  AwardsIndexRoute: AwardsIndexRoute,
+}
+
+const AwardsRouteWithChildren = AwardsRoute._addFileChildren(
+  AwardsRouteChildren,
+)
+
 interface AuctionRouteChildren {
   AuctionSaleIdRoute: typeof AuctionSaleIdRoute
   AuctionIndexRoute: typeof AuctionIndexRoute
@@ -1229,7 +1281,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRouteWithChildren,
   AuctionRoute: AuctionRouteWithChildren,
-  AwardsRoute: AwardsRoute,
+  AwardsRoute: AwardsRouteWithChildren,
   BookmarksRoute: BookmarksRoute,
   BreedingRoute: BreedingRoute,
   BriefingRoute: BriefingRoute,

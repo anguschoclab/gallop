@@ -120,4 +120,14 @@ describe("HorseRaceHistorySection", () => {
     const races = screen.getAllByText(/Race \d+/);
     expect(races.length).toBe(5);
   });
+
+  it("displays gate when present in race history entry", () => {
+    const horse = createHorse({
+      raceHistory: [{ raceId: "r1", raceName: "Derby", position: 1, day: 25, gate: 3 }],
+    });
+    renderWithStore(
+      <HorseRaceHistorySection horse={horse} raceHistoryLimit={10} onLimitChange={() => {}} />,
+    );
+    expect(screen.getByText("G3")).toBeTruthy();
+  });
 });

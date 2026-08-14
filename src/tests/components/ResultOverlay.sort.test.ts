@@ -76,3 +76,10 @@ describe("ResultOverlay — tie-breaking", () => {
     expect(overlayOrder).toEqual(completionOrder);
   });
 });
+
+describe("ResultOverlay — gate display", () => {
+  it("runner has gate field available for display", () => {
+    const runner = makeRunner({ horseId: "h1", gate: 5 });
+    expect(runner.gate).toBe(5);
+  });
+});

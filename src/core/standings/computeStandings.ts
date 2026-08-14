@@ -18,6 +18,7 @@ export interface StandingEntry {
     position: number;
     day: number;
     purseEarned: number;
+    gate?: number;
   }[];
 }
 
@@ -48,6 +49,7 @@ export function computeSeasonStandings(
         position: number;
         day: number;
         purseEarned: number;
+        gate?: number;
       }[];
     }
   >();
@@ -79,6 +81,7 @@ export function computeSeasonStandings(
         position: r.position,
         day: r.day,
         purseEarned: earned,
+        gate: r.gate,
       });
     }
   }

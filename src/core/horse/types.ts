@@ -124,7 +124,7 @@ export interface HorseRaceHistoryEntry {
   purseEarned?: number;
   fieldSize?: number;
   raceClass?: string;
-  barrier?: number;
+  gate?: number;
   lane?: number;
   winAndYouInQualified?: { year: number; raceId: string; raceKey: string };
   pacePositions?: number[]; // Position at each quarter (1-indexed)
@@ -183,6 +183,7 @@ export type Horse = {
   };
   raceHistory: HorseRaceHistoryEntry[];
   fame: number;
+  fanCount: number;
   owned: boolean;
   stableId?: string;
   /** True if this horse was foaled while its dam was owned by the player's stable. Set at birth, never mutated. */

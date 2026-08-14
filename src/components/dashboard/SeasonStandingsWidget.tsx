@@ -5,13 +5,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SilkDot } from "@/components/SilkDot";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useSeasonStandings } from "@/hooks/dashboard/useSeasonStandings";
+import { useWealthStandings } from "@/hooks/dashboard/useWealthStandings";
 import { useStandingsMessages } from "@/hooks/dashboard/useStandingsMessages";
 import { buildStandingsRows } from "@/core/standings/buildStandingsRows";
 import { StableDetailsPanel } from "@/components/dashboard/StableDetailsPanel";
+import { WealthDetailsPanel } from "@/components/dashboard/WealthDetailsPanel";
 import { formatCurrency } from "@/core/common/formatting";
 import { cn } from "@/lib/cn";
-import { Trophy, Bell } from "lucide-react";
+import { Trophy, Bell, Coins } from "lucide-react";
+import { useGameWithShallow } from "@/game/store";
 import {
   DASHBOARD_SEASON_STANDINGS_LIMIT,
   STANDINGS_RANGE_SHORT_DAYS,
@@ -59,9 +63,13 @@ function Sparkline({ data, positive = true }: { data: number[]; positive?: boole
 export function SeasonStandingsWidget() {
   const [rangeDays, setRangeDays] = useState(STANDINGS_DEFAULT_RANGE_DAYS);
   const [selectedStableId, setSelectedStableId] = useState<string | null>(null);
+  const [selectedWealthStableId, setSelectedWealthStableId] = useState<string | null>(null);
 
   const { standings, playerRank } = useSeasonStandings(rangeDays);
+  const wealthStandings = useWealthStandings();
   const standingsMessages = useStandingsMessages();
+  const { horses } = useGameWithShallow((s) => ({ horses: s.horses }));
+  const allHorses = Object.values(horses);
   const { rows, playerInTop, topNLength } = buildStandingsRows(
     standings,
     playerRank,
@@ -69,6 +77,8 @@ export function SeasonStandingsWidget() {
   );
 
   const selectedStable = standings.find((s) => s.stableId === selectedStableId) ?? null;
+  const selectedWealthStable =
+    wealthStandings.standings.find((s) => s.stableId === selectedWealthStableId) ?? null;
 
   return (
     <Card className="border-gold-muted bg-slate-900/20 group hover:border-gold/40 transition-all duration-300 lg:col-span-6">
@@ -97,125 +107,223 @@ export function SeasonStandingsWidget() {
         </Badge>
       </CardHeader>
       <CardContent className="pt-3">
-        {/* Time-range selector */}
-        <div className="flex items-center gap-1 mb-3">
-          {RANGES.map((r) => (
-            <Button
-              key={r.label}
-              size="sm"
-              variant="ghost"
-              className={cn(
-                "h-6 px-2 text-[10px] font-mono uppercase tracking-wider",
-                rangeDays === r.days
-                  ? "bg-gold/20 text-gold border border-gold/30"
-                  : "text-cream/40 border border-white/5",
-              )}
-              onClick={() => setRangeDays(r.days)}
-            >
-              {r.label}
-            </Button>
-          ))}
-        </div>
+        <Tabs defaultValue="earnings">
+          <TabsList className="mb-3">
+            <TabsTrigger value="earnings" className="text-xs gap-1">
+              <Trophy className="h-3 w-3" />
+              Earnings
+            </TabsTrigger>
+            <TabsTrigger value="wealth" className="text-xs gap-1">
+              <Coins className="h-3 w-3" />
+              Wealth
+            </TabsTrigger>
+          </TabsList>
 
-        {standings.length === 0 ? (
-          <div className="space-y-2">
-            {Array.from({ length: STANDINGS_SKELETON_ROW_COUNT }).map((_, i) => (
-              <div key={i} className="flex items-center gap-2 py-2">
-                <Skeleton className="w-6 h-6" />
-                <Skeleton className="h-4 flex-1 max-w-[180px]" />
-                <Skeleton className="h-4 w-20" />
-                <Skeleton className="h-5 w-20" />
-              </div>
-            ))}
-          </div>
-        ) : standings.length === 1 && standings[0].rangePrizeMoney === 0 ? (
-          <p className="text-xs text-cream/30 italic text-center py-6">
-            No prize money earned yet this season.
-          </p>
-        ) : (
-          <div className="space-y-3">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="font-mono text-[9px] uppercase tracking-[0.2em] text-cream/40 border-b border-white/5">
-                    <th className="py-2 px-2 w-8 text-right">#</th>
-                    <th className="py-2 px-2 text-left">Stable</th>
-                    <th className="py-2 px-2 text-right">
-                      {RANGES.find((r) => r.days === rangeDays)?.label} Earnings
-                    </th>
-                    <th className="py-2 px-2 text-right hidden sm:table-cell">Trend</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {rows.map((s, i) => {
-                    if (!s) return null;
-                    const rank = s.isPlayer && !playerInTop ? playerRank : i + 1;
-                    const showDivider = s.isPlayer && !playerInTop && i === topNLength;
-                    return (
-                      <tr
-                        key={s.stableId}
-                        className={cn(
-                          "transition-colors cursor-pointer min-h-[44px]",
-                          s.isPlayer ? "bg-gold/10 hover:bg-gold/15" : "hover:bg-white/[0.02]",
-                          showDivider && "border-t-2 border-dashed border-white/10",
-                          selectedStableId === s.stableId && "ring-1 ring-gold/30",
-                        )}
-                        onClick={() => setSelectedStableId(s.stableId)}
-                      >
-                        <td
-                          className={cn(
-                            "py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs",
-                            rank === 1 ? "text-fame font-black" : "text-cream/50",
-                          )}
-                        >
-                          {rank}
-                        </td>
-                        <td className="py-2.5 sm:py-2 px-2">
-                          <div className="flex items-center gap-2">
-                            {s.silkColor && <SilkDot color={s.silkColor} size="sm" />}
-                            <span
-                              className={cn(
-                                "text-xs truncate max-w-[120px] sm:max-w-[180px]",
-                                s.isPlayer ? "font-black text-gold" : "font-medium text-cream/80",
-                              )}
-                            >
-                              {s.isPlayer ? (
-                                s.name
-                              ) : (
-                                <Link to="/npc-stables/$stableId" params={{ stableId: s.stableId }}>
-                                  {s.name}
-                                </Link>
-                              )}
-                            </span>
-                            {!s.isPlayer && s.winsVsPlayer > 0 && (
-                              <Badge
-                                variant="outline"
-                                className="text-[8px] h-3.5 px-1 border-destructive/40 text-destructive"
-                                title="Recent wins against you"
-                              >
-                                ×{s.winsVsPlayer}
-                              </Badge>
-                            )}
-                          </div>
-                        </td>
-                        <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/80">
-                          {formatCurrency(s.rangePrizeMoney)}
-                        </td>
-                        <td className="py-2.5 sm:py-2 px-2 hidden sm:table-cell">
-                          <div className="flex justify-end">
-                            <Sparkline data={s.sparkline} positive={s.isPlayer} />
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+          <TabsContent value="earnings">
+            {/* Time-range selector */}
+            <div className="flex items-center gap-1 mb-3">
+              {RANGES.map((r) => (
+                <Button
+                  key={r.label}
+                  size="sm"
+                  variant="ghost"
+                  className={cn(
+                    "h-6 px-2 text-[10px] font-mono uppercase tracking-wider",
+                    rangeDays === r.days
+                      ? "bg-gold/20 text-gold border border-gold/30"
+                      : "text-cream/40 border border-white/5",
+                  )}
+                  onClick={() => setRangeDays(r.days)}
+                >
+                  {r.label}
+                </Button>
+              ))}
             </div>
 
-            {selectedStable && <StableDetailsPanel stable={selectedStable} />}
-          </div>
-        )}
+            {standings.length === 0 ? (
+              <div className="space-y-2">
+                {Array.from({ length: STANDINGS_SKELETON_ROW_COUNT }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-2 py-2">
+                    <Skeleton className="w-6 h-6" />
+                    <Skeleton className="h-4 flex-1 max-w-[180px]" />
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-5 w-20" />
+                  </div>
+                ))}
+              </div>
+            ) : standings.length === 1 && standings[0].rangePrizeMoney === 0 ? (
+              <p className="text-xs text-cream/30 italic text-center py-6">
+                No prize money earned yet this season.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="font-mono text-[9px] uppercase tracking-[0.2em] text-cream/40 border-b border-white/5">
+                        <th className="py-2 px-2 w-8 text-right">#</th>
+                        <th className="py-2 px-2 text-left">Stable</th>
+                        <th className="py-2 px-2 text-right">
+                          {RANGES.find((r) => r.days === rangeDays)?.label} Earnings
+                        </th>
+                        <th className="py-2 px-2 text-right hidden sm:table-cell">Trend</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {rows.map((s, i) => {
+                        if (!s) return null;
+                        const rank = s.isPlayer && !playerInTop ? playerRank : i + 1;
+                        const showDivider = s.isPlayer && !playerInTop && i === topNLength;
+                        return (
+                          <tr
+                            key={s.stableId}
+                            className={cn(
+                              "transition-colors cursor-pointer min-h-[44px]",
+                              s.isPlayer ? "bg-gold/10 hover:bg-gold/15" : "hover:bg-white/[0.02]",
+                              showDivider && "border-t-2 border-dashed border-white/10",
+                              selectedStableId === s.stableId && "ring-1 ring-gold/30",
+                            )}
+                            onClick={() => setSelectedStableId(s.stableId)}
+                          >
+                            <td
+                              className={cn(
+                                "py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs",
+                                rank === 1 ? "text-fame font-black" : "text-cream/50",
+                              )}
+                            >
+                              {rank}
+                            </td>
+                            <td className="py-2.5 sm:py-2 px-2">
+                              <div className="flex items-center gap-2">
+                                {s.silkColor && <SilkDot color={s.silkColor} size="sm" />}
+                                <span
+                                  className={cn(
+                                    "text-xs truncate max-w-[120px] sm:max-w-[180px]",
+                                    s.isPlayer
+                                      ? "font-black text-gold"
+                                      : "font-medium text-cream/80",
+                                  )}
+                                >
+                                  {s.isPlayer ? (
+                                    s.name
+                                  ) : (
+                                    <Link
+                                      to="/npc-stables/$stableId"
+                                      params={{ stableId: s.stableId }}
+                                    >
+                                      {s.name}
+                                    </Link>
+                                  )}
+                                </span>
+                                {!s.isPlayer && s.winsVsPlayer > 0 && (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[8px] h-3.5 px-1 border-destructive/40 text-destructive"
+                                    title="Recent wins against you"
+                                  >
+                                    ×{s.winsVsPlayer}
+                                  </Badge>
+                                )}
+                              </div>
+                            </td>
+                            <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/80">
+                              {formatCurrency(s.rangePrizeMoney)}
+                            </td>
+                            <td className="py-2.5 sm:py-2 px-2 hidden sm:table-cell">
+                              <div className="flex justify-end">
+                                <Sparkline data={s.sparkline} positive={s.isPlayer} />
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {selectedStable && <StableDetailsPanel stable={selectedStable} />}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="wealth">
+            <div className="space-y-3">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="font-mono text-[9px] uppercase tracking-[0.2em] text-cream/40 border-b border-white/5">
+                      <th className="py-2 px-2 w-8 text-right">#</th>
+                      <th className="py-2 px-2 text-left">Stable</th>
+                      <th className="py-2 px-2 text-right">Cash</th>
+                      <th className="py-2 px-2 text-right">Horse Assets</th>
+                      <th className="py-2 px-2 text-right">Total Wealth</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {wealthStandings.standings.map((s, i) => {
+                      const rank = i + 1;
+                      return (
+                        <tr
+                          key={s.stableId}
+                          className={cn(
+                            "transition-colors cursor-pointer min-h-[44px]",
+                            s.isPlayer ? "bg-gold/10 hover:bg-gold/15" : "hover:bg-white/[0.02]",
+                            selectedWealthStableId === s.stableId && "ring-1 ring-gold/30",
+                          )}
+                          onClick={() => setSelectedWealthStableId(s.stableId)}
+                        >
+                          <td
+                            className={cn(
+                              "py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs",
+                              rank === 1 ? "text-fame font-black" : "text-cream/50",
+                            )}
+                          >
+                            {rank}
+                          </td>
+                          <td className="py-2.5 sm:py-2 px-2">
+                            <div className="flex items-center gap-2">
+                              {s.silkColor && <SilkDot color={s.silkColor} size="sm" />}
+                              <span
+                                className={cn(
+                                  "text-xs truncate max-w-[120px] sm:max-w-[180px]",
+                                  s.isPlayer ? "font-black text-gold" : "font-medium text-cream/80",
+                                )}
+                              >
+                                {s.isPlayer ? (
+                                  s.name
+                                ) : (
+                                  <Link
+                                    to="/npc-stables/$stableId"
+                                    params={{ stableId: s.stableId }}
+                                  >
+                                    {s.name}
+                                  </Link>
+                                )}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/80">
+                            {formatCurrency(s.cash)}
+                          </td>
+                          <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/80">
+                            {formatCurrency(s.horseAssets)}
+                          </td>
+                          <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream font-bold">
+                            {formatCurrency(s.totalWealth)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {selectedWealthStable && (
+                <WealthDetailsPanel stable={selectedWealthStable} horses={allHorses} />
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
   );

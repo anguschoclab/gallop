@@ -1,8 +1,22 @@
-import { describe, it, expect, afterEach } from "vitest";
-import { cleanup, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, afterEach, vi } from "vitest";
+import { cleanup, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { G1WinnerHistory } from "@/components/awards/G1WinnerHistory";
 import type { SeasonRecord } from "@/core/history/historyTypes";
+
+vi.mock("@tanstack/react-router", () => ({
+  Link: ({ children, to, params, className }: any) => (
+    <a
+      href={to as string}
+      data-to={to as string}
+      data-params={params ? JSON.stringify(params) : ""}
+      className={className}
+    >
+      {children}
+    </a>
+  ),
+}));
 
 const mkSeasonRecord = (overrides: Partial<SeasonRecord> = {}): SeasonRecord => ({
   id: `rec-${Math.random().toString(36).slice(2)}`,
@@ -87,11 +101,12 @@ describe("G1WinnerHistory", () => {
     ];
     renderWithStore(<G1WinnerHistory />, { seasonRecords: records });
 
-    // Most recent winner (Lightning, Y2) should be visible as summary
-    expect(screen.getByText("Lightning")).toBeTruthy();
+    expect(screen.getByText(/Lightning/)).toBeTruthy();
+    expect(screen.getByText(/Y2/)).toBeTruthy();
   });
 
-  it("collapsible sections expand to show full winner list", () => {
+  it("collapsible sections expand to show full winner list", async () => {
+    const user = userEvent.setup();
     const records: SeasonRecord[] = [
       mkSeasonRecord({
         id: "r1",
@@ -110,30 +125,52 @@ describe("G1WinnerHistory", () => {
     ];
     renderWithStore(<G1WinnerHistory />, { seasonRecords: records });
 
-    // Both winners should be present in the DOM (accordion content may be hidden but still rendered)
+    // Click the accordion trigger to expand
+    await user.click(screen.getByText("Kentucky Derby"));
+
+    // Now both winners should be present in the expanded content
     expect(screen.getByText("Thunder")).toBeTruthy();
     expect(screen.getByText("Lightning")).toBeTruthy();
   });
 
-  it("chronological view renders table sorted by day descending", () => {
+  it("chronological view renders table sorted by day descending", async () => {
+    const user = userEvent.setup();
     const records: SeasonRecord[] = [
-      mkSeasonRecord({ id: "r1", raceName: "Race A", winnerName: "Horse A", day: 100, year: 1 }),
-      mkSeasonRecord({ id: "r2", raceName: "Race B", winnerName: "Horse B", day: 300, year: 2 }),
-      mkSeasonRecord({ id: "r3", raceName: "Race C", winnerName: "Horse C", day: 200, year: 1 }),
+      mkSeasonRecord({
+        id: "r1",
+        raceName: "Race A",
+        winnerName: "Horse A",
+        day: 100,
+        year: 1,
+      }),
+      mkSeasonRecord({
+        id: "r2",
+        raceName: "Race B",
+        winnerName: "Horse B",
+        day: 300,
+        year: 2,
+      }),
+      mkSeasonRecord({
+        id: "r3",
+        raceName: "Race C",
+        winnerName: "Horse C",
+        day: 200,
+        year: 1,
+      }),
     ];
     renderWithStore(<G1WinnerHistory />, { seasonRecords: records });
 
     // Click the "Chronological" tab
-    const chronoTab = screen.getByRole("tab", { name: /Chronological/i });
-    fireEvent.click(chronoTab);
+    await user.click(screen.getByRole("tab", { name: /Chronological/i }));
 
-    // Table should be present
+    // Table should be present with all race names
     expect(screen.getByText("Race B")).toBeTruthy();
     expect(screen.getByText("Race C")).toBeTruthy();
     expect(screen.getByText("Race A")).toBeTruthy();
   });
 
-  it("player-owned winners highlighted with gold styling", () => {
+  it("player-owned winners highlighted with gold styling", async () => {
+    const user = userEvent.setup();
     const records: SeasonRecord[] = [
       mkSeasonRecord({
         id: "r1",
@@ -145,11 +182,15 @@ describe("G1WinnerHistory", () => {
     ];
     renderWithStore(<G1WinnerHistory />, { seasonRecords: records });
 
+    // Use chronological view where content is always visible
+    await user.click(screen.getByRole("tab", { name: /Chronological/i }));
+
     const winnerLink = screen.getByText("MyHorse");
     expect(winnerLink.className).toContain("text-gold");
   });
 
-  it("winner names link to horse page", () => {
+  it("winner names link to horse page", async () => {
+    const user = userEvent.setup();
     const records: SeasonRecord[] = [
       mkSeasonRecord({
         id: "r1",
@@ -161,12 +202,16 @@ describe("G1WinnerHistory", () => {
     ];
     renderWithStore(<G1WinnerHistory />, { seasonRecords: records });
 
+    // Use chronological view where content is always visible
+    await user.click(screen.getByRole("tab", { name: /Chronological/i }));
+
     const link = screen.getByText("Thunder").closest("a");
     expect(link).toBeTruthy();
-    expect(link?.getAttribute("href")).toContain("h-thunder");
+    expect(link?.getAttribute("data-params")).toContain("h-thunder");
   });
 
-  it("silk dot renders with winner silk color", () => {
+  it("silk dot renders with winner silk color", async () => {
+    const user = userEvent.setup();
     const records: SeasonRecord[] = [
       mkSeasonRecord({
         id: "r1",
@@ -178,13 +223,17 @@ describe("G1WinnerHistory", () => {
     ];
     renderWithStore(<G1WinnerHistory />, { seasonRecords: records });
 
+    // Use chronological view where content is always visible
+    await user.click(screen.getByRole("tab", { name: /Chronological/i }));
+
     const silkDot = document.querySelector(
       '[style*="background-color: rgb(0, 255, 0)"], [style*="background-color: #00ff00"], [style*="background:#00ff00"], [style*="background: #00ff00"]',
     );
     expect(silkDot).toBeTruthy();
   });
 
-  it("multiple winners per race sorted by year descending in expanded view", () => {
+  it("multiple winners per race sorted by year descending in expanded view", async () => {
+    const user = userEvent.setup();
     const records: SeasonRecord[] = [
       mkSeasonRecord({
         id: "r1",
@@ -208,25 +257,34 @@ describe("G1WinnerHistory", () => {
         year: 2,
       }),
     ];
-    const { container } = renderWithStore(<G1WinnerHistory />, { seasonRecords: records });
+    renderWithStore(<G1WinnerHistory />, { seasonRecords: records });
 
-    // All three should be rendered
+    // Click the accordion trigger to expand
+    await user.click(screen.getByText("Kentucky Derby"));
+
+    // All three should be rendered in the expanded content
     expect(screen.getByText("Year1")).toBeTruthy();
     expect(screen.getByText("Year2")).toBeTruthy();
     expect(screen.getByText("Year3")).toBeTruthy();
   });
 
-  it("view toggle switches back to By Race from Chronological", () => {
+  it("view toggle switches back to By Race from Chronological", async () => {
+    const user = userEvent.setup();
     const records: SeasonRecord[] = [
-      mkSeasonRecord({ id: "r1", raceName: "Kentucky Derby", winnerName: "Thunder", day: 365 }),
+      mkSeasonRecord({
+        id: "r1",
+        raceName: "Kentucky Derby",
+        winnerName: "Thunder",
+        day: 365,
+      }),
     ];
     renderWithStore(<G1WinnerHistory />, { seasonRecords: records });
 
     // Switch to chronological
-    fireEvent.click(screen.getByRole("tab", { name: /Chronological/i }));
+    await user.click(screen.getByRole("tab", { name: /Chronological/i }));
 
     // Switch back to By Race
-    fireEvent.click(screen.getByRole("tab", { name: /By Race/i }));
+    await user.click(screen.getByRole("tab", { name: /By Race/i }));
 
     // Race group header should be visible again
     expect(screen.getByText("Kentucky Derby")).toBeTruthy();

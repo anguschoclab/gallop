@@ -65,7 +65,7 @@ export interface RaceHistoryImpact extends Impact {
     purseEarned?: number;
     fieldSize?: number;
     raceClass?: RaceClass;
-    barrier?: number;
+    gate?: number;
     lane?: number;
     winAndYouInQualified?: { year: number; raceId: string; raceKey: string };
     pacePositions?: number[]; // Position at each quarter (1-indexed)

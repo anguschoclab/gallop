@@ -48,4 +48,13 @@ export interface InboxMessage {
     /** Dynamic route parameters */
     params?: Record<string, string>;
   };
+  /** Optional secondary Call-To-Action for additional navigation */
+  secondaryCta?: {
+    /** Label for the button */
+    label: string;
+    /** Target route name (e.g. "awards.$category") */
+    route: string;
+    /** Dynamic route parameters */
+    params?: Record<string, string>;
+  };
 }

@@ -107,4 +107,24 @@ describe("TrophyStats", () => {
     const zeros = screen.getAllByText("0");
     expect(zeros.length).toBe(3);
   });
+
+  it("wall view wraps trophy items in Link to /awards/$category", () => {
+    const awards = [
+      mkAward({ id: "a1", category: "horse_of_the_year", year: 1 }),
+      mkAward({ id: "a2", category: "champion_3yo_male", year: 2 }),
+    ];
+    const { container } = render(<TrophyCase awards={awards} variant="wall" />);
+    const categoryLinks = container.querySelectorAll('a[href="/awards/$category"]');
+    expect(categoryLinks.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("compact view wraps trophy icons in Link to /awards/$category", () => {
+    const awards = [
+      mkAward({ id: "a1", category: "horse_of_the_year", year: 1 }),
+      mkAward({ id: "a2", category: "champion_3yo_male", year: 2 }),
+    ];
+    const { container } = render(<TrophyCase awards={awards} variant="compact" />);
+    const categoryLinks = container.querySelectorAll('a[href="/awards/$category"]');
+    expect(categoryLinks.length).toBeGreaterThanOrEqual(1);
+  });
 });

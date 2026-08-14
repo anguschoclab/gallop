@@ -5,11 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { AwardIcon } from "./AwardIcon";
 import { AwardBadge } from "./AwardBadge";
 import { cn } from "@/lib/cn";
+import { Link } from "@tanstack/react-router";
 import type { AwardRegion, RegionalAward } from "@/core/awards/types";
 import {
   REGION_AWARD_NAMES,
   REGION_DISPLAY_NAMES,
   CATEGORY_DISPLAY_NAMES,
+  CATEGORY_DESCRIPTIONS,
 } from "@/core/awards/types";
 import { REGION_COLORS } from "@/assets/awards";
 import { Trophy, ChevronRight, Star, Sparkles } from "lucide-react";
@@ -128,11 +130,14 @@ export function AwardCeremony({ isOpen, onClose, ceremonies, onComplete }: Award
             </h3>
             <div className="grid gap-2 max-h-[300px] overflow-y-auto">
               {awards.map((award) => (
-                <div
+                <Link
                   key={award.id}
+                  to="/awards/$category"
+                  params={{ category: award.category }}
                   className={cn(
                     "flex items-center gap-3 p-3 rounded-lg border",
                     !award.stableId && "bg-primary/5 border-primary/20",
+                    "hover:bg-accent/50 transition-colors",
                   )}
                 >
                   <AwardIcon
@@ -152,6 +157,9 @@ export function AwardCeremony({ isOpen, onClose, ceremonies, onComplete }: Award
                         </Badge>
                       )}
                     </div>
+                    <div className="text-xs text-muted-foreground line-clamp-1">
+                      {CATEGORY_DESCRIPTIONS[award.category]}
+                    </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span className="truncate">{award.horseName}</span>
                       <span>•</span>
@@ -159,7 +167,7 @@ export function AwardCeremony({ isOpen, onClose, ceremonies, onComplete }: Award
                     </div>
                   </div>
                   {award.isHistoric && <Star className="w-4 h-4 text-fame fill-fame" />}
-                </div>
+                </Link>
               ))}
             </div>
           </div>

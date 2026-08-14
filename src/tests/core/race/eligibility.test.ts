@@ -134,3 +134,77 @@ describe("isHorseEligibleForRace", () => {
     expect(isHorseEligibleForRace(h, r, new Set())).toBe(false);
   });
 });
+
+describe("isHorseEligibleForRace — Maiden age eligibility", () => {
+  function mkMaidenRace(overrides: Partial<Race> = {}): Race {
+    return mkRace({ raceClass: "Maiden", ...overrides });
+  }
+
+  it("accepts older maiden (age 5, Northern, 0 wins) for Maiden race", () => {
+    const h = mkHorse({ age: 5, hemisphere: "Northern", raceHistory: [] });
+    const r = mkMaidenRace();
+    expect(isHorseEligibleForRace(h, r, new Set())).toBe(true);
+  });
+
+  it("accepts older maiden (age 8, Northern, 0 wins) for Maiden race", () => {
+    const h = mkHorse({ age: 8, hemisphere: "Northern", raceHistory: [] });
+    const r = mkMaidenRace();
+    expect(isHorseEligibleForRace(h, r, new Set())).toBe(true);
+  });
+
+  it("accepts older maiden (age 5, Southern, 0 wins) for Maiden race", () => {
+    const h = mkHorse({ age: 5, hemisphere: "Southern", raceHistory: [] });
+    const r = mkMaidenRace();
+    expect(isHorseEligibleForRace(h, r, new Set())).toBe(true);
+  });
+
+  it("rejects young horse below default min age (age 1, Northern) for Maiden race", () => {
+    const h = mkHorse({ age: 1, hemisphere: "Northern", raceHistory: [] });
+    const r = mkMaidenRace();
+    expect(isHorseEligibleForRace(h, r, new Set())).toBe(false);
+  });
+
+  it("rejects horse with 1 win from Maiden race", () => {
+    const h = mkHorse({
+      age: 4,
+      raceHistory: [
+        {
+          raceId: "r-prev",
+          raceName: "Prev Race",
+          position: 1,
+          day: 5,
+        },
+      ],
+    });
+    const r = mkMaidenRace();
+    expect(isHorseEligibleForRace(h, r, new Set())).toBe(false);
+  });
+
+  it("accepts horse with 0 wins but raceHistory entries for Maiden race", () => {
+    const h = mkHorse({
+      age: 4,
+      raceHistory: [
+        {
+          raceId: "r-prev",
+          raceName: "Prev Race",
+          position: 3,
+          day: 5,
+        },
+      ],
+    });
+    const r = mkMaidenRace();
+    expect(isHorseEligibleForRace(h, r, new Set())).toBe(true);
+  });
+
+  it("accepts older horse (age 6) for MaidenClaiming race", () => {
+    const h = mkHorse({ age: 6, hemisphere: "Northern", raceHistory: [] });
+    const r = mkMaidenRace({ raceClass: "MaidenClaiming" });
+    expect(isHorseEligibleForRace(h, r, new Set())).toBe(true);
+  });
+
+  it("accepts older horse (age 7) for MaidenSpecialWeight race", () => {
+    const h = mkHorse({ age: 7, hemisphere: "Northern", raceHistory: [] });
+    const r = mkMaidenRace({ raceClass: "MaidenSpecialWeight" });
+    expect(isHorseEligibleForRace(h, r, new Set())).toBe(true);
+  });
+});

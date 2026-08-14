@@ -1,9 +1,10 @@
 import { AwardIcon } from "./AwardIcon";
 import { REGION_COLOR_CLASSES } from "@/assets/awards";
 import { cn } from "@/lib/cn";
+import { Link } from "@tanstack/react-router";
 import { Trophy, Star } from "lucide-react";
 import type { RegionalAward } from "@/core/awards/types";
-import { CATEGORY_DISPLAY_NAMES } from "@/core/awards/types";
+import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
 
 interface TrophyWallViewProps {
   awards: RegionalAward[];
@@ -41,8 +42,11 @@ export function TrophyWallView({
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {sortedAwards.map((award) => (
-            <div
+            <Link
               key={award.id}
+              to="/awards/$category"
+              params={{ category: award.category }}
+              title={CATEGORY_DESCRIPTIONS[award.category]}
               className={cn(
                 "flex flex-col items-center p-4 rounded-lg border",
                 "bg-card hover:bg-accent/50 transition-all",
@@ -61,7 +65,7 @@ export function TrophyWallView({
               </span>
               <span className="text-[10px] opacity-70">{award.year}</span>
               {award.isHistoric && <Star className="w-3 h-3 text-fame mt-1" />}
-            </div>
+            </Link>
           ))}
         </div>
       )}

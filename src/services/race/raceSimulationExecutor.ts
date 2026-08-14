@@ -97,14 +97,14 @@ export function simulateRace(
   return {
     raceId: race.id,
     result,
-    runners: runners.map(({ horseId, name, silk, owned, jockey, barrier, lane }) => ({
+    runners: runners.map(({ horseId, name, silk, owned, jockey, gate, lane }) => ({
       horseId,
       name,
       silk,
       owned,
       jockeyId: jockey?.id || "ai",
       jockeyName: jockey?.name || "AI Jockey",
-      barrier,
+      gate,
       lane,
     })),
 

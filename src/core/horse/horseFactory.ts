@@ -285,6 +285,7 @@ export function createHorseFromDNA(
     form: 50,
     potential,
     fame: 0,
+    fanCount: 0,
     raceHistory: [],
     owned: opts.owned ?? false,
     stableId: opts.stableId,

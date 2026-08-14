@@ -67,6 +67,7 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
     raceHistory: [],
     owned: true,
     fame: 50,
+    fanCount: 25000,
 
     // Optional basic properties
     sireName: "Test Sire",
@@ -234,6 +235,7 @@ export function createTestNpcHorse(overrides?: Partial<Horse>): Horse {
     owned: false,
     stableId: "test-npc-stable-1",
     fame: 30,
+    fanCount: 15000,
     ...overrides,
   });
 }

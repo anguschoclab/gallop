@@ -4,9 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { AwardIcon } from "./AwardIcon";
 import { AwardBadge } from "./AwardBadge";
 import { cn } from "@/lib/cn";
+import { Link } from "@tanstack/react-router";
 import type { Horse } from "@/game/types";
 import type { RegionalAward, RegionalAwardCategory } from "@/core/awards/types";
-import { CATEGORY_DISPLAY_NAMES } from "@/core/awards/types";
+import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
 import { getRegionFlag, getRegionCountryLabel } from "@/core/common/countryFlag";
 import { Trophy, Award, Star } from "lucide-react";
 import { VisualTrophy, TrophyShelf } from "./VisualTrophy";
@@ -22,14 +23,20 @@ function renderCompactCategory(category: RegionalAwardCategory, sorted: Regional
   const first = sorted[sorted.length - 1].year;
   const last = sorted[0].year;
   return (
-    <div
+    <Link
       key={category}
-      className="flex items-center justify-between gap-2 p-2 rounded-md border border-gold/20 bg-card"
+      to="/awards/$category"
+      params={{ category }}
+      title={CATEGORY_DESCRIPTIONS[category]}
+      className="flex items-center justify-between gap-2 p-2 rounded-md border border-gold/20 bg-card hover:bg-accent/50 transition-colors"
     >
       <div className="flex items-center gap-2 min-w-0">
         <AwardIcon region={sorted[0].region} category={category} size="tiny" />
         <div className="min-w-0">
           <div className="text-sm font-medium truncate">{CATEGORY_DISPLAY_NAMES[category]}</div>
+          <div className="text-[10px] text-muted-foreground line-clamp-1">
+            {CATEGORY_DESCRIPTIONS[category]}
+          </div>
           <div className="text-[10px] text-muted-foreground flex items-center gap-1">
             <span title={getRegionCountryLabel(sorted[0].region)}>
               {getRegionFlag(sorted[0].region)}
@@ -43,14 +50,14 @@ function renderCompactCategory(category: RegionalAwardCategory, sorted: Regional
       <Badge variant="secondary" className="font-mono tabular-nums shrink-0">
         ×{sorted.length}
       </Badge>
-    </div>
+    </Link>
   );
 }
 
 function renderExpandedAwards(sorted: RegionalAward[]) {
   return sorted.map((award) => (
     <div key={award.id} className="flex items-center justify-between gap-2">
-      <AwardBadge award={award} variant="inline" showYear />
+      <AwardBadge award={award} variant="inline" showYear linkToCategory />
       <span
         className="text-xs text-muted-foreground flex items-center gap-1 shrink-0"
         title={getRegionCountryLabel(award.region)}

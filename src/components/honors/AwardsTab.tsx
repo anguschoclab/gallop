@@ -4,10 +4,11 @@ import {
   TrophyStats,
   CeremonyInvitations,
   InvitationHistoryPanel,
+  G1WinnerHistory,
 } from "@/components/awards";
 import { Badge } from "@/components/ui/badge";
 import { useAwardsData } from "@/hooks/awards/useAwardsData";
-import { REGION_AWARD_NAMES, REGIONAL_CONFIGS } from "@/core/awards/types";
+import { REGION_AWARD_NAMES, REGIONAL_CONFIGS, CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
 import { REGION_COLOR_CLASSES } from "@/assets/awards";
 import { Trophy, Calendar, Star } from "lucide-react";
 
@@ -64,6 +65,8 @@ export function AwardsTab() {
       <InvitationHistoryPanel invitations={invitations} awards={playerAwards} day={day} />
 
       <AwardScheduleCard awardsByRegion={awardsByRegion} />
+
+      <G1WinnerHistory />
 
       <TrophyCase awards={playerAwards} variant="full" sortBy="year" />
 
@@ -175,6 +178,18 @@ function AboutAwardsCard() {
               <li>• Campeón 3YO categories</li>
               <li>• Campeón Velocidad, Fondo</li>
             </ul>
+          </div>
+        </div>
+        <div className="mt-4 pt-4 border-t border-gold-muted/30">
+          <h4 className="font-semibold text-sm mb-2 text-cream">Award Category Descriptions</h4>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {Object.entries(CATEGORY_DESCRIPTIONS).map(([key, desc]) => (
+              <div key={key} className="text-xs text-cream-muted">
+                <span className="font-medium text-cream">{key.replace(/_/g, " ")}</span>
+                {" — "}
+                {desc}
+              </div>
+            ))}
           </div>
         </div>
       </CardContent>
