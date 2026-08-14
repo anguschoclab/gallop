@@ -9,7 +9,7 @@ import { REGION_LIST, type RegionId } from "@/core/calendar/regions";
 import type { Horse, HorseRaceHistoryEntry } from "@/core/horse/types";
 import type { Race } from "@/core/race/types";
 import { isInWindow, weekBucket, type TimeWindowWeeks } from "./timeWindow";
-import { FALLBACK_WEEK_BUCKETS } from "./regionalConstants";
+import { FALLBACK_WEEK_BUCKETS, TOP3_POSITION, WIN_POSITION } from "./regionalConstants";
 
 export type RegionKey = RegionId | "other";
 
@@ -157,8 +157,8 @@ export function computeRegionTrends(args: ComputeArgs): RegionTrendRow[] {
     const earned = run.entry.purseEarned ?? 0;
     row.earnings += earned;
     row.starts += 1;
-    if (run.entry.position === 1) row.wins += 1;
-    const top3 = run.entry.position <= 3;
+    if (run.entry.position === WIN_POSITION) row.wins += 1;
+    const top3 = run.entry.position <= TOP3_POSITION;
     if (run.isG1 && top3) row.g1Top3 += 1;
 
     const b = args.weeks ? weekBucket(run.entry.day, args.currentDay, args.weeks) : 0;
@@ -220,11 +220,11 @@ export function computeRegionDrilldown(args: DrilldownArgs): RegionDrilldown {
         g1Starts: 0,
       } as DrilldownEntity);
     e.starts += 1;
-    if (run.entry.position === 1) e.wins += 1;
-    if (run.entry.position <= 3) e.top3 += 1;
+    if (run.entry.position === WIN_POSITION) e.wins += 1;
+    if (run.entry.position <= TOP3_POSITION) e.top3 += 1;
     e.earnings += run.entry.purseEarned ?? 0;
     if (run.isG1) e.g1Starts += 1;
-    if (run.isG1 && run.entry.position <= 3) e.g1Top3 += 1;
+    if (run.isG1 && run.entry.position <= TOP3_POSITION) e.g1Top3 += 1;
     map.set(id, e);
   };
 

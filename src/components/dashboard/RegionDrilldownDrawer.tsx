@@ -98,7 +98,7 @@ const METRICS_RAW: MetricDef[] = [
     label: "Wins",
     value: (e) => e.wins,
     format: (n) => n.toLocaleString(),
-    weekly: (r) => r.filter((x) => x.entry.position === 1).length,
+    weekly: (r) => r.filter((x) => x.entry.position === WIN_POSITION).length,
     definition: "Runs finishing first.",
   },
   {
@@ -107,7 +107,8 @@ const METRICS_RAW: MetricDef[] = [
     value: (e) => (e.starts ? e.wins / e.starts : 0),
     format: (n) => `${(n * 100).toFixed(1)}%`,
     asPercent: true,
-    weekly: (r) => (r.length ? r.filter((x) => x.entry.position === 1).length / r.length : 0),
+    weekly: (r) =>
+      r.length ? r.filter((x) => x.entry.position === WIN_POSITION).length / r.length : 0,
     definition: "Wins divided by starts (strike rate).",
   },
   {
@@ -115,7 +116,7 @@ const METRICS_RAW: MetricDef[] = [
     label: "Top 3",
     value: (e) => e.top3,
     format: (n) => n.toLocaleString(),
-    weekly: (r) => r.filter((x) => x.entry.position <= 3).length,
+    weekly: (r) => r.filter((x) => x.entry.position <= TOP3_POSITION).length,
     definition: "Runs finishing first, second or third.",
   },
   {
@@ -123,7 +124,7 @@ const METRICS_RAW: MetricDef[] = [
     label: "G1 top-3",
     value: (e) => e.g1Top3,
     format: (n) => n.toLocaleString(),
-    weekly: (r) => r.filter((x) => x.isG1 && x.entry.position <= 3).length,
+    weekly: (r) => r.filter((x) => x.isG1 && x.entry.position <= TOP3_POSITION).length,
     definition: "Grade 1 runs finishing in the first three.",
   },
   {
@@ -142,7 +143,8 @@ const METRICS_RATE: MetricDef[] = [
     label: "Wins/Start",
     value: (e) => (e.starts ? e.wins / e.starts : 0),
     format: (n) => n.toFixed(2),
-    weekly: (r) => (r.length ? r.filter((x) => x.entry.position === 1).length / r.length : 0),
+    weekly: (r) =>
+      r.length ? r.filter((x) => x.entry.position === WIN_POSITION).length / r.length : 0,
     definition: "Wins divided by starts (per-start strike rate).",
   },
   {
@@ -151,7 +153,8 @@ const METRICS_RATE: MetricDef[] = [
     value: (e) => (e.starts ? e.top3 / e.starts : 0),
     format: (n) => `${(n * 100).toFixed(1)}%`,
     asPercent: true,
-    weekly: (r) => (r.length ? r.filter((x) => x.entry.position <= 3).length / r.length : 0),
+    weekly: (r) =>
+      r.length ? r.filter((x) => x.entry.position <= TOP3_POSITION).length / r.length : 0,
     definition: "Top-3 finishes divided by starts.",
   },
   {
@@ -162,7 +165,7 @@ const METRICS_RATE: MetricDef[] = [
     asPercent: true,
     weekly: (r) => {
       const g1 = r.filter((x) => x.isG1);
-      return g1.length ? g1.filter((x) => x.entry.position <= 3).length / g1.length : 0;
+      return g1.length ? g1.filter((x) => x.entry.position <= TOP3_POSITION).length / g1.length : 0;
     },
     definition:
       "G1 top-3 finishes divided by G1 starts. Uses g1Starts as denominator for consistent denominators across windows.",

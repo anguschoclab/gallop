@@ -4,6 +4,8 @@ import { weekBucket, type TimeWindowWeeks } from "@/core/analytics/timeWindow";
 import type { RegionRunRow } from "@/core/analytics/regionalTrends";
 import {
   FALLBACK_WEEK_BUCKETS,
+  TOP3_POSITION,
+  WIN_POSITION,
   type EntityKind,
   type Lookups,
 } from "@/core/analytics/regionalConstants";
@@ -48,8 +50,8 @@ export function EntityDetailPanel({
 
   const summary = useMemo(() => {
     const starts = entityRunsA.length;
-    const wins = entityRunsA.filter((r) => r.entry.position === 1).length;
-    const top3 = entityRunsA.filter((r) => r.entry.position <= 3).length;
+    const wins = entityRunsA.filter((r) => r.entry.position === WIN_POSITION).length;
+    const top3 = entityRunsA.filter((r) => r.entry.position <= TOP3_POSITION).length;
     const earnings = entityRunsA.reduce((s, r) => s + (r.entry.purseEarned ?? 0), 0);
     return { starts, wins, top3, earnings };
   }, [entityRunsA]);
