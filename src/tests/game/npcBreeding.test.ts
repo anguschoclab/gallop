@@ -42,6 +42,7 @@ function mockHorse(
     gender,
     hemisphere: "Northern",
     silk: "#ff0000",
+    fanCount: 0,
     stats,
     energy: 100,
     form: 0,

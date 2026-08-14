@@ -26,6 +26,7 @@ function makeHorse(id: string, name: string): Horse {
     damName: "Dam",
     pedigree: { name: "Test", generation: 1 },
     birthDay: 0,
+    fanCount: 0,
     age: 3,
     gender: "colt",
     hemisphere: "Northern",
