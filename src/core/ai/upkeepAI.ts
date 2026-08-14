@@ -21,7 +21,7 @@ import {
   getSuccessRate,
   type LearningState,
 } from "./learningModule";
-import { DEFAULT_SUBSYSTEM_WEIGHT } from "./subsystemWeightConstants";
+import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
 
 export interface UpkeepAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;

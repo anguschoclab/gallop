@@ -41,18 +41,20 @@ import {
   DEFAULT_WEEKS_B,
   DIST_PRESETS,
   DIST_PRESET_MAP,
-  TOP3_POSITION,
-  WIN_POSITION,
   type DistPreset,
   type EntityKind,
   type Lookups,
   type MetricMode,
-} from "@/core/analytics/regionalConstants";
+} from "@/constants/regionalConstants";
+import {
+  POSITION_WIN as WIN_POSITION,
+  TOP_FINISH_POSITION as TOP3_POSITION,
+} from "@/constants/raceSimulationConstants";
 import type { Horse } from "@/core/horse/types";
 import type { Race } from "@/core/race/types";
 import { EntityDetailPanel } from "./EntityDetailPanel";
 
-export type { MetricMode, DistPreset } from "@/core/analytics/regionalConstants";
+export type { MetricMode, DistPreset } from "@/constants/regionalConstants";
 
 interface Props {
   region: RegionKey | null;

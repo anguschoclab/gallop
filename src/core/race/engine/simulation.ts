@@ -119,7 +119,7 @@ import {
   LEAD_GROUP_GAP,
   LANE_DENSITY_BUCKETS,
   LANE_BUCKET_WIDTH,
-} from "./constants";
+} from "@/constants/raceEngineConstants";
 
 // Standardizing imports for relocated file
 import type { Race as RaceT } from "@/game/types";

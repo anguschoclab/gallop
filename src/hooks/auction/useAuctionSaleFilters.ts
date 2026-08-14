@@ -5,7 +5,7 @@
  */
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
-import type { AuctionBrowseSearch } from "@/constants/auctionSearchSchema";
+import type { AuctionBrowseSearch } from "@/components/auction/auctionSearchSchema";
 
 const ROUTE_PATH = "/auction/$saleId" as const;
 

@@ -12,7 +12,7 @@ import {
   STRIP_DEFAULT_BG_CLASS,
   STRIP_BORDER_CLASSES,
   STRIP_DEFAULT_BORDER_CLASS,
-} from "@/core/inbox/inboxConstants";
+} from "@/constants/inboxConstants";
 
 interface UrgentMessagesStripProps {
   messages: Array<{

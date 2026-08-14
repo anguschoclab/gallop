@@ -3,15 +3,14 @@ import type { Horse } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { horseMarketValue } from "@/core/horse/pricing";
 import { formatCurrency } from "@/components/horse/HorseBits";
+import { ENERGY_MAX } from "@/constants/energyRecoveryConstants";
+import { STAT_SCALE_MAX, STAT_SCALE_MIN } from "@/constants/horseStatConstants";
 import {
-  ENERGY_MAX,
-  STAT_SCALE_MAX,
-  STAT_SCALE_MIN,
   BEYER_NULL_SENTINEL,
   POSITION_WIN,
   POSITION_PLACE,
   POSITION_SHOW,
-} from "@/constants/gameConstants";
+} from "@/constants/raceSimulationConstants";
 
 export interface RowData {
   label: string;

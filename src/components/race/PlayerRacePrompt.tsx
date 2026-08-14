@@ -26,7 +26,7 @@ import { formatCurrency } from "@/core/common/formatting";
 import { useMemo, useState } from "react";
 import { INSTRUCTION_PRESETS, buildInstructions, type PresetId } from "./TacticOptions";
 import { AGGRESSIVENESS_DEFAULT } from "@/constants";
-import { DEFAULT_DT, defaultMaxTime } from "@/core/race/engine/constants";
+import { DEFAULT_DT, defaultMaxTime } from "@/constants/raceEngineConstants";
 
 export function PlayerRacePrompt() {
   const pendingRaceId = useGame((s) => s.pendingPlayerRaceId);

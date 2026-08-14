@@ -2,7 +2,7 @@
  * utils.ts - Shared race utilities
  */
 
-import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/constants/gameConstants";
+import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/constants/economicConstants";
 import type { Race } from "./types";
 
 /**

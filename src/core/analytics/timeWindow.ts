@@ -17,7 +17,7 @@ export const TIME_WINDOW_OPTIONS: { value: TimeWindowWeeks; label: string }[] = 
   { value: 0, label: "All time" },
 ];
 
-export const DAYS_PER_WEEK = 7;
+import { DAYS_PER_WEEK } from "@/constants/calendarConstants";
 
 export function timeWindowLabel(weeks: TimeWindowWeeks): string {
   return TIME_WINDOW_OPTIONS.find((o) => o.value === weeks)?.label ?? `${weeks} wks`;

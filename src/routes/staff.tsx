@@ -7,7 +7,7 @@ import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/core/staff/staffConfig";
 import { Users, Search, Filter } from "lucide-react";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { useMemo, useState } from "react";
-import { getG1WinsForStable, countByGrade } from "@/constants/connectionTrophies";
+import { getG1WinsForStable, countByGrade } from "@/core/awards/connectionTrophies";
 import { generateUUID } from "@/core/uuid";
 import type { StaffRole, StaffTier } from "@/core/staff/staffTypes";
 import { StaffNegotiationDialog } from "@/components/staff/StaffNegotiationDialog";

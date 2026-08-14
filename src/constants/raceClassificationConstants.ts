@@ -1,0 +1,61 @@
+export const ENTRY_MAIDEN = 100;
+export const ENTRY_MAIDEN_SPECIAL_WEIGHT = 150;
+export const ENTRY_MAIDEN_CLAIMING = 100;
+export const ENTRY_MAIDEN_OPTIONAL_CLAIMING = 120;
+export const ENTRY_MAIDEN_STAKES = 500;
+export const ENTRY_ALLOWANCE = 300;
+export const ENTRY_OPTIONAL_CLAIMING = 350;
+export const ENTRY_STARTER_ALLOWANCE = 250;
+export const ENTRY_STARTER_HANDICAP = 200;
+export const ENTRY_STAKES = 800;
+export const ENTRY_CLAIMING = 150;
+export const ENTRY_HANDICAP = 400;
+export const ENTRY_LISTED = 1500;
+export const ENTRY_GROUP = 2000;
+
+export const PURSE_MAIDEN = 2000;
+export const PURSE_MAIDEN_SPECIAL_WEIGHT = 3000;
+export const PURSE_MAIDEN_CLAIMING = 2000;
+export const PURSE_MAIDEN_OPTIONAL_CLAIMING = 2500;
+export const PURSE_MAIDEN_STAKES = 10000;
+export const PURSE_ALLOWANCE = 6000;
+export const PURSE_OPTIONAL_CLAIMING = 7000;
+export const PURSE_STARTER_ALLOWANCE = 5000;
+export const PURSE_STARTER_HANDICAP = 4500;
+export const PURSE_STAKES = 18000;
+export const PURSE_CLAIMING = 3000;
+export const PURSE_HANDICAP = 8000;
+export const PURSE_LISTED = 40000;
+export const PURSE_GROUP = 50000;
+
+export const MINSTAT_MAIDEN_SPECIAL_WEIGHT = 40;
+export const MINSTAT_MAIDEN_OPTIONAL_CLAIMING = 35;
+export const MINSTAT_MAIDEN_STAKES = 45;
+export const MINSTAT_ALLOWANCE = 50;
+export const MINSTAT_OPTIONAL_CLAIMING = 52;
+export const MINSTAT_STARTER_ALLOWANCE = 48;
+export const MINSTAT_STARTER_HANDICAP = 45;
+export const MINSTAT_STAKES = 65;
+export const MINSTAT_CLAIMING = 40;
+export const MINSTAT_HANDICAP = 55;
+export const MINSTAT_LISTED = 72;
+export const MINSTAT_GROUP = 78;
+
+export const RACE_CLASS_MAIDEN_PROB = 0.25;
+export const RACE_CLASS_ALLOWANCE_PROB = 0.45;
+export const RACE_CLASS_HANDICAP_PROB = 0.65;
+export const RACE_CLASS_STARTER_ALLOWANCE_PROB = 0.75;
+export const RACE_CLASS_STARTER_HANDICAP_PROB = 0.85;
+export const RACE_CLASS_MAIDEN_STAKES_PROB = 0.95;
+
+export const GRADE_G1_MIN_STAT = 78;
+export const GRADE_G2_MIN_STAT = 70;
+export const GRADE_G3_MIN_STAT = 62;
+
+export const NA_CLAIMING_RACE_PERCENTAGE = 0.7;
+
+export const DEFAULT_FIELD_SIZE = 14;
+
+export const RACE_GRADES = ["G1", "G2", "G3"] as const;
+
+export const MINIMUM_RACE_ENTRIES = 2;

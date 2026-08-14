@@ -9,7 +9,11 @@ import { REGION_LIST, type RegionId } from "@/core/calendar/regions";
 import type { Horse, HorseRaceHistoryEntry } from "@/core/horse/types";
 import type { Race } from "@/core/race/types";
 import { isInWindow, weekBucket, type TimeWindowWeeks } from "./timeWindow";
-import { FALLBACK_WEEK_BUCKETS, TOP3_POSITION, WIN_POSITION } from "./regionalConstants";
+import { FALLBACK_WEEK_BUCKETS } from "@/constants/regionalConstants";
+import {
+  POSITION_WIN as WIN_POSITION,
+  TOP_FINISH_POSITION as TOP3_POSITION,
+} from "@/constants/raceSimulationConstants";
 
 export type RegionKey = RegionId | "other";
 

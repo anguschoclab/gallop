@@ -55,39 +55,3 @@ export const ANALYTICS_FORM_CHART_DISPLAY = 12;
 
 /** Number of recent races per horse for form chart */
 export const ANALYTICS_FORM_CHART_RECENT_RACES = 10;
-
-/** Number of news items to display in feed widget */
-export const DASHBOARD_NEWS_FEED_LIMIT = 15;
-
-/** Number of standings to display in season widget */
-export const DASHBOARD_SEASON_STANDINGS_LIMIT = 10;
-
-/** Number of share activity items to display */
-export const SHARE_ACTIVITY_FEED_LIMIT = 50;
-
-/** Number of upcoming graded races in nominations tab */
-export const NOMINATIONS_UPCOMING_LIMIT = 60;
-
-/** Number of days in weather forecast strip display */
-export const WEATHER_FORECAST_STRIP_DAYS = 7;
-
-/** Number of beyer history entries to display */
-export const BEYER_CHART_HISTORY_LIMIT = 10;
-
-/** Short time range for standings widget (7 days) */
-export const STANDINGS_RANGE_SHORT_DAYS = 7;
-
-/** Medium time range for standings widget (30 days) */
-export const STANDINGS_RANGE_MEDIUM_DAYS = 30;
-
-/** Long time range for standings widget (90 days) */
-export const STANDINGS_RANGE_LONG_DAYS = 90;
-
-/** Default time range (in days) selected on standings widget load */
-export const STANDINGS_DEFAULT_RANGE_DAYS = 30;
-
-/** Number of skeleton placeholder rows while standings are loading */
-export const STANDINGS_SKELETON_ROW_COUNT = 5;
-
-/** Maximum recent race results per stable in standings entries */
-export const STANDINGS_RECENT_RESULTS_LIMIT = 5;

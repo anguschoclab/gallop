@@ -24,7 +24,7 @@ import { trackMarketPrices } from "@/core/ai/economyAI";
 import {
   HORSE_RATING_TO_VALUE_MULTIPLIER,
   DEFAULT_SUBSYSTEM_WEIGHT,
-} from "@/core/ai/subsystemWeightConstants";
+} from "@/constants/aiConstants";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { generateStaffPool } from "@/core/staff/staffGenerator";
 import { generateUUID } from "@/core/uuid";

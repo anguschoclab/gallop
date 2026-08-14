@@ -2,7 +2,7 @@ import type { Horse } from "@/game/types";
 import { Progress } from "@/components/ui/progress";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { cn } from "@/lib/cn";
-import { STAT_SCALE_MAX } from "@/constants/gameConstants";
+import { STAT_SCALE_MAX } from "@/constants/horseStatConstants";
 
 const SURFACES: Array<"Turf" | "Dirt" | "Synthetic"> = ["Turf", "Dirt", "Synthetic"];
 

@@ -31,7 +31,7 @@ import {
   recordBiddingDecision,
 } from "@/core/ai/auctionAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
-import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/core/ai/subsystemWeightConstants";
+import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
 import { SALE_TRIGGERS, KIND_LABELS } from "./data";
 import {
   CONSIGNMENT_COMMISSION,

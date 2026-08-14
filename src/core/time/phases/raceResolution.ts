@@ -14,7 +14,6 @@ import {
   GRADED_PRIZE_SPLIT,
   PHASE_ORDER_RACE_RESOLUTION,
   TOP_FINISH_POSITION,
-  WINNER_PURSE_SHARE,
   RACE_HISTORY_UNGRADED_RETENTION_DAYS,
 } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
@@ -237,7 +236,7 @@ export const raceResolutionPhase: PipelinePhase = {
           const winnerId = result.find((r) => r.position === 1)?.horseId;
           const winner = winnerId ? horseMap.get(winnerId) : null;
           if (winner && winner.id) {
-            const prizeMoney = race.purse * WINNER_PURSE_SHARE;
+            const prizeMoney = race.purse * PRIZE_SPLIT[0];
             const tempHorse = {
               ...winner,
               lifetimeEarnings: (winner.lifetimeEarnings ?? 0) + prizeMoney,
@@ -448,7 +447,7 @@ export const raceResolutionPhase: PipelinePhase = {
         const winnerId = result.find((r) => r.position === 1)?.horseId;
         const winner = winnerId ? horseMap.get(winnerId) : null;
         if (winner && winner.id) {
-          const prizeMoney = race.purse * WINNER_PURSE_SHARE;
+          const prizeMoney = race.purse * PRIZE_SPLIT[0];
           const tempHorse = {
             ...winner,
             lifetimeEarnings: (winner.lifetimeEarnings ?? 0) + prizeMoney,

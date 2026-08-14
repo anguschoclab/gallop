@@ -6,7 +6,9 @@ import type { NarrativeGenerator } from "@/services/narrative/narrativeService";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 import type { Race, RaceResult } from "@/core/race/types";
 import type { Rng } from "@/core/common/rng";
-import { FIXED_DT, MAX_STEPS_PER_FRAME, SPLIT_FRACTIONS } from "@/constants/raceBroadcastConstants";
+import { DEFAULT_DT as FIXED_DT } from "@/constants/raceEngineConstants";
+import { SIMULATION_MAX_STEPS_PER_FRAME as MAX_STEPS_PER_FRAME } from "@/constants/raceSimulationConstants";
+import { SPLIT_FRACTIONS } from "@/constants/raceBroadcastConstants";
 
 import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
 

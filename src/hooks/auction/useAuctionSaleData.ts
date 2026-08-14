@@ -6,7 +6,7 @@
 import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { AuctionLot } from "@/game/types";
-import type { AuctionBrowseSearch } from "@/constants/auctionSearchSchema";
+import type { AuctionBrowseSearch } from "@/components/auction/auctionSearchSchema";
 import { filterAndSortLots } from "@/services/auction/auctionLotFilter";
 import { getDisplayableStats } from "@/core/npc/scouting";
 import {

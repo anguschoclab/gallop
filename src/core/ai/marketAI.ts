@@ -23,7 +23,7 @@ import {
   PURCHASE_CASH_BUFFER_MULTIPLIER,
   HORSE_RATING_TO_VALUE_MULTIPLIER,
   DEFAULT_SUBSYSTEM_WEIGHT,
-} from "./subsystemWeightConstants";
+} from "@/constants/aiConstants";
 
 export interface MarketAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;

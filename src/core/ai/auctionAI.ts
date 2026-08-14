@@ -28,7 +28,7 @@ import {
   BID_BASE_THRESHOLD,
   HORSE_RATING_TO_VALUE_MULTIPLIER,
   DEFAULT_SUBSYSTEM_WEIGHT,
-} from "./subsystemWeightConstants";
+} from "@/constants/aiConstants";
 
 export interface AuctionAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;

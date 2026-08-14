@@ -25,7 +25,7 @@ import {
   shouldUpgradeFacility,
 } from "@/core/ai/facilityAI";
 import { upgradeFacility } from "@/core/facilities";
-import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/core/ai/subsystemWeightConstants";
+import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
 import type { Facility, PlayerFacilities } from "@/core/facilities/facilityTypes";
 import { generateUUID } from "@/core/uuid";
 import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";

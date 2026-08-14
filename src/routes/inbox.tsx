@@ -8,8 +8,8 @@ import { Check, CheckCheck, Trash2, Pin, Bell, ExternalLink } from "lucide-react
 import { cn } from "@/lib/cn";
 import { useInbox } from "@/hooks/inbox/useInbox";
 import { interpolateCtaRoute } from "@/core/inbox/ctaRoute";
+import { TOOLTIP_DELAY_MS } from "@/constants/uiConstants";
 import {
-  TOOLTIP_DELAY_MS,
   UNREAD_BADGE_CLASSES,
   EMPTY_STATE_ICON_SIZE,
   EMPTY_STATE_ICON_OPACITY,
@@ -17,7 +17,7 @@ import {
   ICON_SIZE_PIN,
   UNREAD_DOT_SIZE,
   INBOX_CONTAINER_MAX_WIDTH,
-} from "@/core/inbox/inboxConstants";
+} from "@/constants/inboxConstants";
 import { InboxCeremonyRsvp } from "@/components/awards/CeremonyRsvpControls";
 import { BulkRsvpControls } from "@/components/awards/BulkRsvpControls";
 import { NewsContent } from "@/components/narrative/NewsContent";

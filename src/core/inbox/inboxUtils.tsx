@@ -12,7 +12,7 @@ import {
   ICON_SIZE_SM,
   PRIORITY_COLOR_CLASSES,
   DEFAULT_PRIORITY_COLOR_CLASS,
-} from "@/core/inbox/inboxConstants";
+} from "@/constants/inboxConstants";
 
 export function getCategoryIcon(category: InboxCategory): ReactNode {
   switch (category) {

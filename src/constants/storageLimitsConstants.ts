@@ -1,0 +1,27 @@
+export const HALL_OF_FAME_MAX_SIZE = 200;
+
+export const SEASON_RECORDS_MAX_SIZE = 500;
+
+export const RECENT_RACES_MAX_COUNT = 5;
+
+export const INACTIVITY_RETIREMENT_DAYS = 90;
+
+export const NAME_MIN_WORD_LENGTH = 2;
+
+export const PARENT_NAME_MAX_LENGTH = 10;
+
+export const TRAINING_HISTORY_MAX_SIZE = 10;
+
+export const SCOUT_REPORTS_MAX_SIZE = 100;
+
+export const TRIPLE_CROWN_HISTORY_MAX_SIZE = 100;
+
+export const PACE_SAMPLES_MAX_SIZE = 100;
+
+export const RACE_HISTORY_LIMIT_LOW = 10;
+export const RACE_HISTORY_LIMIT_MID = 20;
+export const RACE_HISTORY_LIMIT_HIGH = 50;
+
+export const RACE_HISTORY_UNGRADED_RETENTION_DAYS = 30;
+
+export const AUCTION_RETENTION_DAYS = 30;

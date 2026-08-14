@@ -6,7 +6,7 @@ import {
   type RaceSimulationDependencies,
 } from "@/services/race/raceSimulationService";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
-import { DEFAULT_DT, defaultMaxTime } from "@/core/race/engine/constants";
+import { DEFAULT_DT, defaultMaxTime } from "@/constants/raceEngineConstants";
 import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
 import type { Race } from "@/core/race/types";
 

@@ -24,7 +24,7 @@ import {
   updateReserveState,
 } from "@/core/ai/upkeepAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
-import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/core/ai/subsystemWeightConstants";
+import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
 import {
   UPKEEP_PER_HORSE,
   PHASE_ORDER_UPKEEP,

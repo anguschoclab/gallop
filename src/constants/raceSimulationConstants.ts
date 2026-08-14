@@ -1,0 +1,48 @@
+export const PHOTO_FINISH_THRESHOLD_SECONDS = 0.05;
+
+export const SIMULATION_MAX_STEPS_PER_FRAME = 64;
+
+export const BEYER_MIN = 30;
+export const BEYER_MAX = 125;
+
+export const BEYER_BASE = 80;
+
+export const BEYER_FORMULA_SCALE = 500;
+
+export const PATTERN_JUMP_AVG_THRESHOLD = 15;
+export const PATTERN_JUMP_BEST_THRESHOLD = 10;
+export const PATTERN_JUMP_MIN_HISTORY = 2;
+
+export const STAMINA_DRAIN_DISTANCE_DIVISOR = 100;
+export const STAMINA_DRAIN_BEYER_DIVISOR = 20;
+
+export const STAMINA_DRAIN_MAX = 30;
+
+export const RACE_ENERGY_IMPACT = -25;
+
+export const CORNERING_APTITUDE_SIZE_LARGE_THRESHOLD = 8;
+export const CORNERING_APTITUDE_LARGE_PENALTY = 0.15;
+export const CORNERING_APTITUDE_SIZE_SMALL_THRESHOLD = 4;
+export const CORNERING_APTITUDE_SMALL_BONUS = 0.1;
+
+export const MILESTONE_FINAL_400M = 400;
+export const MILESTONE_FINAL_200M = 200;
+export const MILESTONE_FINAL_100M = 100;
+export const MIN_DISTANCE_FOR_FINAL_400 = 800;
+export const MIN_DISTANCE_FOR_FINAL_200 = 600;
+export const MIN_DISTANCE_FOR_FINAL_100 = 400;
+export const TURN_SEGMENT_LENGTH = 1600;
+export const GAP_THRESHOLD_LENGTHS = 2.0;
+
+export const STRETCH_THRESHOLD_PERCENT = 0.85;
+
+export const METERS_PER_LENGTH = 2.4;
+
+export const MAX_SAMPLES_PER_BUCKET = 60;
+
+export const BEYER_NULL_SENTINEL = -Infinity;
+
+export const POSITION_WIN = 1;
+export const POSITION_PLACE = 2;
+export const POSITION_SHOW = 3;
+export const TOP_FINISH_POSITION = 3;

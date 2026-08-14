@@ -1,0 +1,16 @@
+export const MAX_HORSES_PER_STABLE_PER_RACE = 2;
+
+export const MIN_ENERGY_TO_ENTER = 50;
+
+export const BUMP_RATING_MARGIN = 3;
+
+export const MIN_FORM_TO_ENTER = -3;
+
+export const PREFERRED_DISTANCE_RANGE = 300;
+
+export const DISTANCE_INVITE_THRESHOLD = 400;
+export const DEFAULT_INVITE_DAYS_AHEAD = 30;
+export const INVITE_AT_LARGE_MULTIPLIER = 2;
+
+export const FOAL_BREAKING_IN_DAY = 18;
+export const FOAL_EARLY_WORKOUTS_DAY = 24;

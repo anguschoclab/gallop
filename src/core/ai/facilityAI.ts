@@ -28,10 +28,7 @@ import {
   type LearningState,
 } from "./learningModule";
 import { FACILITY_UPGRADE_COSTS } from "@/core/facilities/facilityTypes";
-import {
-  FACILITY_UPGRADE_BASE_THRESHOLD,
-  DEFAULT_SUBSYSTEM_WEIGHT,
-} from "./subsystemWeightConstants";
+import { FACILITY_UPGRADE_BASE_THRESHOLD, DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
 
 export interface FacilityAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;

@@ -33,7 +33,7 @@ import {
   TOP_SPEED_CEILING,
   LANE_WIDTH,
   MUD_MASTER_SPEED_BONUS,
-} from "./constants";
+} from "@/constants/raceEngineConstants";
 import type { SimWeatherPattern } from "@/core/weather/weatherTypes";
 import type { RunnerMood } from "@/core/race/runnerConditions";
 

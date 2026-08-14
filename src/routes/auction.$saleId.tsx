@@ -1,6 +1,6 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { HardDrive } from "lucide-react";
-import { auctionBrowseSearchSchema } from "@/constants/auctionSearchSchema";
+import { auctionBrowseSearchSchema } from "@/components/auction/auctionSearchSchema";
 import { AuctionTheater } from "@/components/auction/AuctionTheater";
 import { SaleHeader } from "@/components/auction/SaleHeader";
 import { CatalogIndex } from "@/components/auction/CatalogIndex";

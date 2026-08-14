@@ -4,11 +4,13 @@ import { weekBucket, type TimeWindowWeeks } from "@/core/analytics/timeWindow";
 import type { RegionRunRow } from "@/core/analytics/regionalTrends";
 import {
   FALLBACK_WEEK_BUCKETS,
-  TOP3_POSITION,
-  WIN_POSITION,
   type EntityKind,
   type Lookups,
-} from "@/core/analytics/regionalConstants";
+} from "@/constants/regionalConstants";
+import {
+  POSITION_WIN as WIN_POSITION,
+  TOP_FINISH_POSITION as TOP3_POSITION,
+} from "@/constants/raceSimulationConstants";
 
 interface Props {
   entityId: string;

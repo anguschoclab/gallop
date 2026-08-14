@@ -12,7 +12,7 @@ import {
   DEFAULT_INBOX_FILTER,
   ACTION_FILTER_EXCLUDED_PRIORITY,
   type InboxFilter,
-} from "@/core/inbox/inboxConstants";
+} from "@/constants/inboxConstants";
 import { getCategoryIcon, getPriorityColor } from "@/core/inbox/inboxUtils";
 
 export { getCategoryIcon, getPriorityColor };

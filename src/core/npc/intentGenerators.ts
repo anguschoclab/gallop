@@ -85,7 +85,7 @@ import {
   HORSE_RATING_TO_VALUE_MULTIPLIER,
   CONSIGNMENT_INTENT_PRIORITY,
   DEFAULT_SUBSYSTEM_WEIGHT,
-} from "@/core/ai/subsystemWeightConstants";
+} from "@/constants/aiConstants";
 
 /**
  * Generate all NPC intents for the day.

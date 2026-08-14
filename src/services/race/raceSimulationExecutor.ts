@@ -5,7 +5,7 @@ import type { Race, Horse, Jockey, Stable, RaceRunner } from "@/game/types";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
-import { DEFAULT_DT, defaultMaxTime } from "@/core/race/engine/constants";
+import { DEFAULT_DT, defaultMaxTime } from "@/constants/raceEngineConstants";
 
 export interface RaceSimulationResult {
   raceId: string;

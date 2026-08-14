@@ -10,9 +10,9 @@ import {
   DIST_PRESET_VALUES,
   type DistPreset,
   type MetricMode,
-} from "@/core/analytics/regionalConstants";
+} from "@/constants/regionalConstants";
 
-export type { MetricMode, DistPreset } from "@/core/analytics/regionalConstants";
+export type { MetricMode, DistPreset } from "@/constants/regionalConstants";
 
 type GenericNavigateFn = (opts: {
   search?: Record<string, unknown> | ((prev: Record<string, unknown>) => Record<string, unknown>);
