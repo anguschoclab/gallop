@@ -17,8 +17,7 @@ export function SurfaceAptitudeSection({ horses }: { horses: Horse[] }) {
           <div key={h.id} className="space-y-2">
             <div className="text-xs font-medium text-cream/70">{h.name}</div>
             {SURFACES.map((s) => {
-              STAT_SCALE_MAX;
-              const val = Math.round((h.surfaceAptitude[s] ?? 0) * 100);
+              const val = Math.round((h.surfaceAptitude[s] ?? 0) * STAT_SCALE_MAX);
               return (
                 <div key={s}>
                   <div className="flex justify-between text-xs mb-1">

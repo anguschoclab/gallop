@@ -9,7 +9,7 @@ import {
   STRETCH_THRESHOLD_PERCENT,
   TURN_SEGMENT_LENGTH,
   METERS_PER_LENGTH,
-} from "@/constants";
+} from "@/constants/gameConstants";
 
 export const NARRATIVE_THRESHOLDS = {
   METERS_PER_LENGTH,
