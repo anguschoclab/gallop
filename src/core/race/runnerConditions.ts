@@ -100,11 +100,22 @@ export interface RunnerHistory {
 
 export type MoodFace = "happy" | "neutral" | "unhappy";
 
+export interface MoodBreakdownItem {
+  /** Human-readable sub-signal name. */
+  signal: string;
+  /** Signed point contribution to the mood score. */
+  contribution: number;
+  /** One-line explanation of why this signal fired. */
+  description: string;
+}
+
 export interface RunnerMood {
   score: number;
   face: MoodFace;
   label: string;
   reasons: string[];
+  /** Exact sub-signal contributions that make up the score. */
+  breakdown: MoodBreakdownItem[];
 }
 
 /** Aggregate stats about the live field, computed once per frame. */
