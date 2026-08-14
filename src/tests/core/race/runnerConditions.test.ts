@@ -6,7 +6,11 @@ import {
 } from "@/core/race/runnerConditions";
 import type { MoodSignal } from "@/core/race/runnerConditions";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
-import { MOOD_BASE_SCORE } from "@/constants";
+import {
+  MOOD_BASE_SCORE,
+  MOOD_DEFAULT_SIGNAL_LABEL,
+  MOOD_DEFAULT_SIGNAL_CONTRIBUTION,
+} from "@/constants";
 
 function horse(temperament = 50, injured = false) {
   return {
@@ -56,15 +60,14 @@ describe("deriveRunnerConditions", () => {
   });
 
   it("does NOT flag Flying when the runner meets the field ratio but is not among the fastest", () => {
-    // 4 runners all at 17 m/s except one at 16.5.
-    // The 17 m/s runners each have fieldRatio = 17/16.875 ≈ 1.007, which is
-    // below FLYING_FIELD_RATIO (1.06), so none should be flying.
-    // But even if we boost them to meet the ratio, only the top 2 by velocity
-    // should get the badge.
+    // Field: a=18, b=17.9, c=17.8, d=12 → mean = 16.425
+    // a: fieldRatio = 18/16.425 ≈ 1.096 ≥ 1.06, rank 1 → flying ✓
+    // b: fieldRatio = 17.9/16.425 ≈ 1.090 ≥ 1.06, rank 2 → flying ✓
+    // c: fieldRatio = 17.8/16.425 ≈ 1.084 ≥ 1.06, rank 3 → NOT flying (rank > 2)
     const a = runner({ horseId: "a", velocity: 18, position: 500 });
     const b = runner({ horseId: "b", velocity: 17.9, position: 480 });
     const c = runner({ horseId: "c", velocity: 17.8, position: 460 });
-    const d = runner({ horseId: "d", velocity: 14, position: 300 });
+    const d = runner({ horseId: "d", velocity: 12, position: 300 });
     const field = buildFieldContext([a, b, c, d]);
     // a (rank 1) and b (rank 2) should be flying; c (rank 3) should NOT
     expect(ids(deriveRunnerConditions(a, field, { peakVelocity: 18 }, DISTANCE))).toContain(
@@ -391,14 +394,16 @@ describe("deriveRunnerMood — signals", () => {
     expect(mood.signals).toEqual([]);
   });
 
-  it("returns empty signals when no conditions trigger", () => {
+  it("returns default signal when no conditions trigger", () => {
     const steady = runner({ horseId: "a", runningStyle: "P", position: 800, velocity: 16 });
     const field = buildFieldContext([
       steady,
       runner({ horseId: "b", position: 800, velocity: 16 }),
     ]);
     const mood = deriveRunnerMood(steady, field, { peakVelocity: 16 }, DISTANCE);
-    expect(mood.signals).toEqual([]);
+    expect(mood.signals).toHaveLength(1);
+    expect(mood.signals[0].label).toBe(MOOD_DEFAULT_SIGNAL_LABEL);
+    expect(mood.signals[0].contribution).toBe(MOOD_DEFAULT_SIGNAL_CONTRIBUTION);
   });
 
   it("signal contributions sum to score minus base (clamped scenario)", () => {

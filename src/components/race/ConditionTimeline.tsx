@@ -3,10 +3,17 @@
  * condition (Flying, Battling, Boxed In, ...) switched on and off for the
  * selected horse, plotted against distance covered.
  */
+import { memo } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
 import type { ConditionTone } from "@/core/race/runnerConditions";
 import type { ConditionSegment } from "@/hooks/race/useConditionTimeline";
+
+/** Number of distance markers (including start and end) shown on the timeline axis. */
+const DISTANCE_MARKER_COUNT = 4;
+
+/** Minimum visual width (percentage) for a condition bar segment. */
+const MIN_SEGMENT_WIDTH_PCT = 1.5;
 
 const TONE_BAR: Record<ConditionTone, string> = {
   positive: "bg-success/80",
@@ -22,12 +29,7 @@ interface ConditionTimelineProps {
   className?: string;
 }
 
-export function ConditionTimeline({
-  segments,
-  distance,
-  horseName,
-  className,
-}: ConditionTimelineProps) {
+function ConditionTimeline({ segments, distance, horseName, className }: ConditionTimelineProps) {
   const lanes = new Map<string, ConditionSegment[]>();
   for (const seg of segments) {
     const list = lanes.get(seg.id);
@@ -35,14 +37,11 @@ export function ConditionTimeline({
     else lanes.set(seg.id, [seg]);
   }
 
-  const markerCount = 4;
+  const markerCount = DISTANCE_MARKER_COUNT;
 
   return (
     <div
-      className={cn(
-        "rounded-lg border border-white/10 bg-black/30 px-3 py-2 space-y-2",
-        className,
-      )}
+      className={cn("rounded-lg border border-white/10 bg-black/30 px-3 py-2 space-y-2", className)}
     >
       <div className="flex items-center justify-between gap-2">
         <span className="text-[10px] font-black uppercase tracking-widest text-cream-muted">
@@ -75,7 +74,10 @@ export function ConditionTimeline({
                   ))}
                   {segs.map((seg, i) => {
                     const left = (seg.startPos / distance) * 100;
-                    const width = Math.max(1.5, ((seg.endPos - seg.startPos) / distance) * 100);
+                    const width = Math.max(
+                      MIN_SEGMENT_WIDTH_PCT,
+                      ((seg.endPos - seg.startPos) / distance) * 100,
+                    );
                     return (
                       <Tooltip key={i}>
                         <TooltipTrigger asChild>
@@ -115,3 +117,6 @@ export function ConditionTimeline({
     </div>
   );
 }
+
+export const MemoizedConditionTimeline = memo(ConditionTimeline);
+export { ConditionTimeline };

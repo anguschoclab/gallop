@@ -84,6 +84,13 @@ vi.mock("@/components/race/PostRaceAnalysis", () => ({
   PostRaceAnalysis: (props: unknown) => PostRaceAnalysisMock(props),
 }));
 
+const ConditionTimelinePanelMock = vi.fn((_props?: unknown) =>
+  createElement("div", { "data-testid": "condition-timeline-panel" }),
+);
+vi.mock("@/components/race/ConditionTimelinePanel", () => ({
+  ConditionTimelinePanel: (props: unknown) => ConditionTimelinePanelMock(props),
+}));
+
 vi.mock("@/components/race/raceVisualHelpers", () => ({
   getSkyBackground: vi.fn(() => "url(/sky.png)"),
 }));
@@ -231,6 +238,7 @@ afterEach(() => {
   WeatherForecastStripMock.mockClear();
   BookmarkButtonMock.mockClear();
   PostRaceAnalysisMock.mockClear();
+  ConditionTimelinePanelMock.mockClear();
 });
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -410,5 +418,86 @@ describe("RaceBroadcast — grouped prop rendering", () => {
     expect(received.type).toBe("race");
     expect(received.id).toBe(props.race.id);
     expect(received.label).toBe(props.race.name);
+  });
+});
+
+describe("RaceBroadcast — ConditionTimelinePanel integration", () => {
+  it("does not render ConditionTimelinePanel when followTarget and subjectHorseId are null", () => {
+    render(createElement(RaceBroadcast, makeGroupedProps()));
+
+    expect(ConditionTimelinePanelMock).not.toHaveBeenCalled();
+  });
+
+  it("forwards correct props to ConditionTimelinePanel when followTarget is set", () => {
+    const props = makeGroupedProps({
+      controls: {
+        onTogglePause: vi.fn(),
+        onSetSpeed: vi.fn(),
+        onSetFollowTarget: vi.fn(),
+        onToggleHideResults: vi.fn(),
+        onShowAllCards: vi.fn(),
+        onNavigateBack: vi.fn(),
+        followTarget: "h1",
+        hideUntilAllFinished: false,
+        allFinished: false,
+        anyFinished: false,
+      },
+    });
+    render(createElement(RaceBroadcast, props));
+
+    expect(ConditionTimelinePanelMock).toHaveBeenCalledTimes(1);
+    const received = ConditionTimelinePanelMock.mock.calls[0][0] as Record<string, unknown>;
+    expect(received.horseId).toBe("h1");
+    expect(received.runners).toBe(props.runners);
+    expect(received.distance).toBe(props.race.distance);
+    expect(received.tick).toBe(props.simulation.tick);
+    expect(received.simTimeRef).toBe(props.simulation.simTimeRef);
+  });
+
+  it("forwards subjectHorseId to ConditionTimelinePanel when followTarget is null", () => {
+    const props = makeGroupedProps({
+      commentary: {
+        commentary: [],
+        subjectHorseId: "h1",
+        announcement: "",
+      },
+    });
+    render(createElement(RaceBroadcast, props));
+
+    expect(ConditionTimelinePanelMock).toHaveBeenCalledTimes(1);
+    const received = ConditionTimelinePanelMock.mock.calls[0][0] as Record<string, unknown>;
+    expect(received.horseId).toBe("h1");
+  });
+
+  it("does not render ConditionTimelinePanel when showReplay is true", () => {
+    const props = makeGroupedProps({
+      race: makeRace({
+        resolved: true,
+        snapshots: [{ tick: 0, runners: [] }],
+      }),
+      simulation: {
+        tick: 0,
+        phase: "review" as any,
+        finished: true,
+        paused: false,
+        speed: 1,
+        simTimeRef: { current: 0 } as any,
+      },
+      controls: {
+        onTogglePause: vi.fn(),
+        onSetSpeed: vi.fn(),
+        onSetFollowTarget: vi.fn(),
+        onToggleHideResults: vi.fn(),
+        onShowAllCards: vi.fn(),
+        onNavigateBack: vi.fn(),
+        followTarget: "h1",
+        hideUntilAllFinished: false,
+        allFinished: false,
+        anyFinished: false,
+      },
+    });
+    render(createElement(RaceBroadcast, props));
+
+    expect(ConditionTimelinePanelMock).not.toHaveBeenCalled();
   });
 });

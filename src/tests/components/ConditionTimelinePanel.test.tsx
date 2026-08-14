@@ -26,6 +26,7 @@ const ConditionTimelineMock = vi.fn((_props?: unknown) =>
 );
 vi.mock("@/components/race/ConditionTimeline", () => ({
   ConditionTimeline: (props: unknown) => ConditionTimelineMock(props),
+  MemoizedConditionTimeline: (props: unknown) => ConditionTimelineMock(props),
 }));
 
 // ── Import after mocks ────────────────────────────────────────────────────────

@@ -188,3 +188,52 @@ export const MOOD_MIN_SCORE = 0;
 
 /** Maximum clamped mood score. */
 export const MOOD_MAX_SCORE = 100;
+
+// Mood — display constants
+
+/** Tooltip delay (ms) for the RunnerMoodFace hover tooltip. */
+export const MOOD_TOOLTIP_DELAY_MS = 150;
+
+/** Default pixel size for the RunnerMoodFace icon. */
+export const MOOD_FACE_DEFAULT_SIZE = 16;
+
+/** Pixel size for the RunnerMoodFace icon in the ResultOverlay. */
+export const MOOD_FACE_RESULT_OVERLAY_SIZE = 14;
+
+/** Maximum number of signals shown in the RunnerMoodFace tooltip (full list in breakdown). */
+export const MOOD_TOOLTIP_MAX_SIGNALS = 3;
+
+/** Label for the default signal when no mood signals were generated. */
+export const MOOD_DEFAULT_SIGNAL_LABEL = "Going about its business without fuss";
+
+/** Contribution value for the default signal (neutral). */
+export const MOOD_DEFAULT_SIGNAL_CONTRIBUTION = 0;
+
+// Mood — SVG face geometry
+
+/** SVG viewBox dimension for the mood face icon. */
+export const MOOD_SVG_VIEWBOX = 24;
+
+/** SVG circle radius for the mood face background. */
+export const MOOD_SVG_FACE_RADIUS = 12;
+
+/** SVG x-coordinate for the left eye. */
+export const MOOD_SVG_LEFT_EYE_X = 8.4;
+
+/** SVG x-coordinate for the right eye. */
+export const MOOD_SVG_RIGHT_EYE_X = 15.6;
+
+/** SVG y-coordinate for both eyes. */
+export const MOOD_SVG_EYE_Y = 9.4;
+
+/** SVG radius for each eye. */
+export const MOOD_SVG_EYE_RADIUS = 1.7;
+
+/** SVG stroke width for mouth paths. */
+export const MOOD_SVG_STROKE_WIDTH = 1.8;
+
+/** SVG fill color for eyes and mouth. */
+export const MOOD_SVG_INK_COLOR = "#111827";
+
+/** z-index class for the mood tooltip when rendered inside a modal overlay. */
+export const MOOD_TOOLTIP_OVERLAY_CLASS = "z-[60]";

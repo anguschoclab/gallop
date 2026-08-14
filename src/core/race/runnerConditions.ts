@@ -65,6 +65,8 @@ import {
   MOOD_NEUTRAL_THRESHOLD,
   MOOD_MIN_SCORE,
   MOOD_MAX_SCORE,
+  MOOD_DEFAULT_SIGNAL_LABEL,
+  MOOD_DEFAULT_SIGNAL_CONTRIBUTION,
 } from "@/constants";
 
 /** Metres per length, used to phrase gaps the way a race caller would. */
@@ -115,7 +117,10 @@ export interface RunnerMood {
   signals: MoodSignal[];
 }
 
-/** Aggregate stats about the live field, computed once per frame. */
+/**
+ * Aggregate stats about the live field, computed once per frame.
+ * @param runners - All runners in the race (live and finished).
+ */
 export function buildFieldContext(runners: Runner[]): FieldContext {
   const live = runners.filter((r) => r.finishTime === null);
   const moving = live.filter((r) => r.velocity > 0);
@@ -138,7 +143,11 @@ export function buildFieldContext(runners: Runner[]): FieldContext {
   };
 }
 
-/** Smallest gap (metres) to another live runner, and whether it is ahead. */
+/**
+ * Smallest gap (metres) to another live runner, and whether it is ahead.
+ * @param r - The runner to check.
+ * @param field - Aggregate field context.
+ */
 function nearestRival(r: Runner, field: FieldContext): { gap: number; rival: Runner | null } {
   let gap = Infinity;
   let rival: Runner | null = null;
@@ -153,7 +162,11 @@ function nearestRival(r: Runner, field: FieldContext): { gap: number; rival: Run
   return { gap, rival };
 }
 
-/** True when another runner sits directly in front in effectively the same lane. */
+/**
+ * True when another runner sits directly in front in effectively the same lane.
+ * @param r - The runner to check.
+ * @param field - Aggregate field context.
+ */
 function isBlocked(r: Runner, field: FieldContext): boolean {
   return field.sortedLive.some((other) => {
     if (other.horseId === r.horseId) return false;
@@ -169,6 +182,10 @@ function isBlocked(r: Runner, field: FieldContext): boolean {
 /**
  * Derives the badge states for one runner. Multiple states can be true at once;
  * the caller decides how many to show.
+ * @param r - The runner to derive conditions for.
+ * @param field - Aggregate field context.
+ * @param history - Runner history (peak velocity).
+ * @param distance - Race distance in metres.
  */
 export function deriveRunnerConditions(
   r: Runner,
@@ -302,6 +319,11 @@ const STYLE_LABEL: Record<string, string> = {
  * Derives how happy the horse is with where it finds itself, from its running
  * style versus its current place in the run, the traffic around it, how it is
  * travelling relative to its own peak, and its temperament.
+ * @param r - The runner to derive mood for.
+ * @param field - Aggregate field context.
+ * @param history - Runner history (peak velocity).
+ * @param distance - Race distance in metres.
+ * @param conditions - Pre-computed runner conditions (optional).
  */
 export function deriveRunnerMood(
   r: Runner,
@@ -418,6 +440,12 @@ export function deriveRunnerMood(
         ? "neutral"
         : "unhappy";
   const label = face === "happy" ? "Happy" : face === "neutral" ? "Coping" : "Unhappy";
+  if (signals.length === 0) {
+    signals.push({
+      label: MOOD_DEFAULT_SIGNAL_LABEL,
+      contribution: MOOD_DEFAULT_SIGNAL_CONTRIBUTION,
+    });
+  }
 
   return { score, face, label, signals };
 }
@@ -430,6 +458,10 @@ export function deriveRunnerMood(
  * This is called once per frame from the presentation layer (Track.tsx) so
  * that the last meaningful mood before a runner crosses the line is retained
  * for post-race display in ResultOverlay.
+ *
+ * @param runners - All runners in the race.
+ * @param peakVelocities - Map of horseId to peak velocity seen so far.
+ * @param distance - Race distance in metres.
  */
 export function captureRunnerMoods(
   runners: Runner[],

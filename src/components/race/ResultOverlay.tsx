@@ -114,14 +114,14 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                               <RunnerMoodFace mood={r.finalMood} horseName={r.name} size={14} />
                             )}
                             <Link
-                            to="/stable/$horseId"
-                            params={{ horseId: r.horseId }}
-                            className={cn(
-                              "block font-bold uppercase tracking-tight truncate hover:text-gold transition-colors",
-                              r.owned ? "text-success" : "text-cream/80",
-                            )}
-                          >
-                            {r.name}
+                              to="/stable/$horseId"
+                              params={{ horseId: r.horseId }}
+                              className={cn(
+                                "block font-bold uppercase tracking-tight truncate hover:text-gold transition-colors",
+                                r.owned ? "text-success" : "text-cream/80",
+                              )}
+                            >
+                              {r.name}
                             </Link>
                           </div>
                           <Link
