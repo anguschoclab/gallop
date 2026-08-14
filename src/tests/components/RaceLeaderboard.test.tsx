@@ -60,6 +60,7 @@ describe("Race Leaderboard", () => {
         filter="all"
         sortBy="position"
         minBeyer={0}
+        lastUpdatedAt={Date.now()}
         onFilterChange={() => {}}
         onSortByChange={() => {}}
         onMinBeyerChange={() => {}}
