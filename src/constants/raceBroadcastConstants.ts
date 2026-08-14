@@ -20,6 +20,9 @@ export const SUBJECT_HIGHLIGHT_CLEAR_MS = 3000;
 /** Time (ms) after which a live widget is considered stale and shows a warning. */
 export const STALE_DATA_THRESHOLD_MS = 5000;
 
+/** Time (ms) after which a live widget transitions from green "fresh" to yellow "warning". */
+export const FRESHNESS_WARNING_THRESHOLD_MS = 3000;
+
 /** Fractional positions at which split times are recorded. */
 export const SPLIT_FRACTIONS = [0.25, 0.5, 0.75, 1.0] as const;
 

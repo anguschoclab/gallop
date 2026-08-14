@@ -1,7 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useLiveFreshness } from "@/hooks/shared/useLiveFreshness";
-import { STALE_DATA_THRESHOLD_MS } from "@/constants/raceBroadcastConstants";
+import {
+  STALE_DATA_THRESHOLD_MS,
+  FRESHNESS_WARNING_THRESHOLD_MS,
+} from "@/constants/raceBroadcastConstants";
 
 describe("useLiveFreshness", () => {
   const BASE_TIME = 1_700_000_000_000;
@@ -15,12 +18,13 @@ describe("useLiveFreshness", () => {
     vi.useRealTimers();
   });
 
-  it("reports 'just now' and not stale for a fresh timestamp", () => {
+  it("reports 'just now', level 'fresh' and not stale for a fresh timestamp", () => {
     const { result } = renderHook(() => useLiveFreshness(BASE_TIME));
 
     expect(result.current.timeAgo).toBe("just now");
     expect(result.current.isStale).toBe(false);
     expect(result.current.staleSeconds).toBe(0);
+    expect(result.current.level).toBe("fresh");
   });
 
   it("reports seconds-based relative time as the clock advances", () => {
@@ -41,14 +45,34 @@ describe("useLiveFreshness", () => {
     act(() => vi.advanceTimersByTime(STALE_DATA_THRESHOLD_MS + 1000));
 
     expect(result.current.isStale).toBe(true);
+    expect(result.current.level).toBe("stale");
     expect(result.current.timeAgo).toMatch(/^[0-9]+s ago$/);
   });
 
   it("remains fresh right up to the threshold boundary", () => {
     const { result } = renderHook(() => useLiveFreshness(BASE_TIME));
 
+    act(() => vi.advanceTimersByTime(FRESHNESS_WARNING_THRESHOLD_MS));
+
+    expect(result.current.level).toBe("fresh");
+    expect(result.current.isStale).toBe(false);
+  });
+
+  it("switches to warning level after the warning threshold", () => {
+    const { result } = renderHook(() => useLiveFreshness(BASE_TIME));
+
+    act(() => vi.advanceTimersByTime(FRESHNESS_WARNING_THRESHOLD_MS + 1000));
+
+    expect(result.current.level).toBe("warning");
+    expect(result.current.isStale).toBe(false);
+  });
+
+  it("remains at warning level up to the stale threshold", () => {
+    const { result } = renderHook(() => useLiveFreshness(BASE_TIME));
+
     act(() => vi.advanceTimersByTime(STALE_DATA_THRESHOLD_MS));
 
+    expect(result.current.level).toBe("warning");
     expect(result.current.isStale).toBe(false);
   });
 
@@ -58,6 +82,7 @@ describe("useLiveFreshness", () => {
     act(() => vi.advanceTimersByTime(60_000));
     expect(result.current.timeAgo).toBe("1m ago");
     expect(result.current.staleSeconds).toBe(60);
+    expect(result.current.level).toBe("stale");
 
     act(() => vi.advanceTimersByTime(60_000));
     expect(result.current.timeAgo).toBe("2m ago");
@@ -70,11 +95,13 @@ describe("useLiveFreshness", () => {
 
     act(() => vi.advanceTimersByTime(STALE_DATA_THRESHOLD_MS + 5_000));
     expect(result.current.isStale).toBe(true);
+    expect(result.current.level).toBe("stale");
 
     rerender({ timestamp: BASE_TIME + STALE_DATA_THRESHOLD_MS + 5_000 });
 
     expect(result.current.timeAgo).toBe("just now");
     expect(result.current.isStale).toBe(false);
+    expect(result.current.level).toBe("fresh");
   });
 
   it("cleans up its interval on unmount", () => {
