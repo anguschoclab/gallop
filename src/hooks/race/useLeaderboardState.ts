@@ -15,7 +15,14 @@ export function useLeaderboardState(
   race: Race,
   classBonus: number,
   calibratedPars: Record<number, number>,
+  /**
+   * Simulation tick. Runner objects are mutated in place by the physics loop, so
+   * the array identity never changes; the tick is what invalidates the memos and
+   * keeps the live order in sync with the race.
+   */
+  tick = 0,
 ) {
+
   const [sortBy, setSortBy] = useState<"position" | "beyer" | "velocity">("position");
   const [filter, setFilter] = useState<"all" | "owned" | "top5">("all");
   const [minBeyer, setMinBeyer] = useState(0);
@@ -29,7 +36,8 @@ export function useLeaderboardState(
         r,
         beyer: projectedBeyer(r, race?.distance ?? 0, 0, classBonus, calibratedPars),
       })),
-    [runners, race?.distance, classBonus, calibratedPars],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [runners, race?.distance, classBonus, calibratedPars, tick],
   );
 
   const positionRank = useMemo(
@@ -41,6 +49,7 @@ export function useLeaderboardState(
       ),
     [rows],
   );
+
 
   const sorted = useMemo(() => {
     const filtered = rows.filter(({ r, beyer }) => {

@@ -121,6 +121,17 @@ export function Track({
     return { cameraPos: cam, leaderPos: maxPos };
   })();
   const finishActive = leaderPos > distance - 100 && leaderPos < distance;
+
+  // "Flying" is a relative surge marker, not an absolute speed: a runner must be
+  // clearly quicker than the current field average and near the fastest in the race.
+  const { flyingThreshold } = (() => {
+    const live = runners.filter((r) => r.finishTime === null && r.velocity > 0);
+    if (live.length < 2) return { flyingThreshold: Infinity };
+    const mean = live.reduce((s, r) => s + r.velocity, 0) / live.length;
+    const fastest = Math.max(...live.map((r) => r.velocity));
+    return { flyingThreshold: Math.max(mean * 1.06, fastest * 0.985) };
+  })();
+
   const trackOffset = -(cameraPos % 512);
 
   return (
@@ -257,7 +268,7 @@ export function Track({
                     Drafting
                   </div>
                 )}
-                {r.velocity > 18.5 && (
+                {r.finishTime === null && r.velocity >= flyingThreshold && (
                   <div className="px-1.5 py-0.5 rounded-full bg-warning/80 text-[8px] font-bold text-warning-foreground flex items-center gap-1 animate-bounce">
                     <span className="h-1 w-1 rounded-full bg-warning-foreground" />
                     Flying

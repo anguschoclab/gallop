@@ -61,24 +61,27 @@ export function generateCommentaryLine(
     text = `${prefix} ${text}`;
   }
 
+  const sub = (token: string, value: string) => {
+    text = text.split(token).join(value);
+  };
+
   // Replace race context placeholders
-  text = text.replace("{raceName}", context.race.name);
-  text = text.replace("{raceClass}", context.race.raceClass);
-  text = text.replace("{trackName}", context.race.graded?.track || "the track");
-  text = text.replace("{weather}", context.race.weather || "clear");
-  text = text.replace("{trackCondition}", context.race.trackCondition || "good");
-  text = text.replace(
-    "{remaining}",
-    (context.race.distance - (context.runner?.position || 0)).toFixed(0),
-  );
+  sub("{raceName}", context.race.name);
+  sub("{raceClass}", context.race.raceClass);
+  sub("{trackName}", context.race.graded?.track || "the track");
+  sub("{weather}", context.race.weather || "clear");
+  sub("{trackCondition}", context.race.trackCondition || "good");
+  sub("{remaining}", (context.race.distance - (context.runner?.position || 0)).toFixed(0));
 
   if (context.lengths) {
-    text = text.replace("{lengths}", context.lengths);
+    sub("{lengths}", context.lengths);
   }
 
-  // Replace horse context placeholders
-  if (context.runner && context.horse) {
-    const stable = context.horse.stableId ? context.stable : null;
+  // Replace horse context placeholders. The runner name is always available,
+  // even when no Horse record exists (e.g. auto-generated filler runners).
+  if (context.runner) {
+    const horse = context.horse;
+    const stable = horse?.stableId ? context.stable : null;
 
     // Add biographical template for surge/lead change
     if (
@@ -93,22 +96,23 @@ export function generateCommentaryLine(
       context.hasAnnouncedBio.add(context.runner.horseId);
     }
 
-    text = text.replace("{horse}", context.runner.name);
-    text = text.replace("{coat}", context.horse.coatColor || "colored");
-    text = text.replace("{gender}", context.horse.gender || "runner");
-    text = text.replace("{sire}", context.horse.sireName || "Unknown Sire");
-    text = text.replace("{dam}", context.horse.damName || "Unknown Dam");
-    text = text.replace("{stable}", stable?.name || "Independent");
-    text = text.replace("{family}", context.horse.bruceLoweFamily?.toString() || "Unknown");
+    sub("{horse}", context.runner.name);
+    sub("{coat}", horse?.coatColor || "well-turned-out");
+    sub("{gender}", horse?.gender || "runner");
+    sub("{sire}", horse?.sireName || "an unheralded sire");
+    sub("{dam}", horse?.damName || "an unheralded mare");
+    sub("{stable}", stable?.name || "Independent");
+    sub("{family}", horse?.bruceLoweFamily?.toString() || "Unknown");
 
     // Replace rank placeholder
     if (context.lastRanks) {
       const rank = context.lastRanks.get(context.runner.horseId);
       if (rank) {
-        text = text.replace("{rank}", getOrdinal(rank));
+        sub("{rank}", getOrdinal(rank));
       }
     }
   }
+
 
   return {
     id: `${type}-${lineCounter.value++}`,
@@ -160,9 +164,10 @@ export function generateExpertInsight(
   if (insights.length === 0) return null;
 
   let text = insights[Math.floor(rng.next() * insights.length)];
-  text = text.replace("{horse}", runner.name);
-  text = text.replace("{distance}", race.distance.toString());
-  text = text.replace("{surface}", raceSurface.toLowerCase());
+  text = text.split("{horse}").join(runner.name);
+  text = text.split("{distance}").join(race.distance.toString());
+  text = text.split("{surface}").join(raceSurface.toLowerCase());
+
 
   return text;
 }

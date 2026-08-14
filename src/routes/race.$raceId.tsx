@@ -222,7 +222,7 @@ export function LiveRace() {
     setMinBeyer,
     allFinished,
     anyFinished,
-  } = useLeaderboardState(runners, race, classBonus, calibratedPars ?? {});
+  } = useLeaderboardState(runners, race, classBonus, calibratedPars ?? {}, tick);
 
   const ownedRunnersTotal = runners.filter((r) => r.owned);
   const defaultFollowTarget = ownedRunnersTotal.length > 0 ? ownedRunnersTotal[0].horseId : null;
