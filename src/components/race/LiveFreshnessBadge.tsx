@@ -10,12 +10,34 @@ interface LiveFreshnessBadgeProps {
   className?: string;
 }
 
-export function LiveFreshnessBadge({ lastUpdatedAt, context, className }: LiveFreshnessBadgeProps) {
-  const { timeAgo, isStale, staleSeconds } = useLiveFreshness(lastUpdatedAt ?? Date.now());
+const LEVEL_STYLES = {
+  fresh: {
+    badge: "bg-success/15 border-success/40 text-success",
+    dot: "bg-success",
+    label: "Live",
+  },
+  warning: {
+    badge: "bg-warning/15 border-warning/40 text-warning",
+    dot: "bg-warning",
+    label: "Slowing",
+  },
+  stale: {
+    badge: "bg-destructive/15 border-destructive/40 text-destructive",
+    dot: "bg-destructive",
+    label: "Stale data",
+  },
+};
 
-  const tooltip = isStale
-    ? `No update received for ${staleSeconds}s. The broadcast may be paused or lagging.`
-    : `Last updated ${timeAgo}.`;
+export function LiveFreshnessBadge({ lastUpdatedAt, context, className }: LiveFreshnessBadgeProps) {
+  const { timeAgo, level, staleSeconds } = useLiveFreshness(lastUpdatedAt ?? Date.now());
+  const styles = LEVEL_STYLES[level];
+
+  const tooltip =
+    level === "stale"
+      ? `No update received for ${staleSeconds}s. The broadcast may be paused or lagging.`
+      : level === "warning"
+        ? `Last update ${timeAgo}. The broadcast is beginning to lag.`
+        : `Last updated ${timeAgo}.`;
 
   const ariaLabel = `${context ? `${context} ` : ""}last updated ${timeAgo}`;
 
@@ -26,9 +48,7 @@ export function LiveFreshnessBadge({ lastUpdatedAt, context, className }: LiveFr
           <div
             className={cn(
               "flex items-center gap-2 px-2 py-1 rounded-full border",
-              isStale
-                ? "bg-warning/15 border-warning/40 text-warning"
-                : "bg-black/40 border-white/5",
+              styles.badge,
               className,
             )}
             aria-label={ariaLabel}
@@ -36,16 +56,15 @@ export function LiveFreshnessBadge({ lastUpdatedAt, context, className }: LiveFr
             <div
               className={cn(
                 "h-1.5 w-1.5 rounded-full",
-                isStale ? "bg-warning" : "bg-destructive animate-pulse",
+                styles.dot,
+                level === "fresh" && "animate-pulse",
               )}
             />
-            <span className="text-[8px] font-bold uppercase tracking-tighter">
-              {isStale ? "Stale data" : "Live"}
-            </span>
+            <span className="text-[8px] font-bold uppercase tracking-tighter">{styles.label}</span>
             <span
               className={cn(
                 "text-[8px] tabular-nums",
-                isStale ? "opacity-90" : "text-muted-foreground lowercase",
+                level === "stale" ? "opacity-90" : "text-muted-foreground/80 lowercase",
               )}
             >
               {timeAgo}
