@@ -119,7 +119,7 @@ export function deriveRunnerConditions(
   const mean = field.meanVelocity;
   const peak = Math.max(history.peakVelocity, r.velocity);
   const progress = distance > 0 ? r.position / distance : 0;
-  const behindLeader = field.leanLengths ?? (field.leaderPos - r.position) / METRES_PER_LENGTH;
+  const behindLeader = (field.leaderPos - r.position) / METRES_PER_LENGTH;
   const { gap, rival } = nearestRival(r, field);
   const fadeRatio = peak > 0 ? r.velocity / peak : 1;
   const fieldRatio = mean > 0 ? r.velocity / mean : 1;
