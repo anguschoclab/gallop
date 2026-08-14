@@ -135,6 +135,17 @@ export function RaceBroadcast({
   const skyBg = getSkyBackground(race.weather);
   const showReplay = phase === "review" && race.resolved && !!race.snapshots?.length;
 
+  // Condition timeline follows the camera target, falling back to the subject horse.
+  const timelineHorseId = followTarget ?? subjectHorseId ?? null;
+  const timelineSegments = useConditionTimeline(
+    runners,
+    race.distance,
+    timelineHorseId,
+    tick,
+    simTimeRef,
+  );
+  const timelineHorseName = runners.find((r) => r.horseId === timelineHorseId)?.name;
+
   return (
     <div className="broadcast min-h-screen text-white bg-broadcast-track">
       <div
