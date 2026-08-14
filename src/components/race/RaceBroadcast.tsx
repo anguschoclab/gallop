@@ -6,6 +6,8 @@ import { RaceVisualizer } from "@/components/race/RaceVisualizer";
 import { ResultOverlay } from "@/components/race/ResultOverlay";
 import { RaceControlBar } from "@/components/race/RaceControlBar";
 import { Track } from "@/components/race/Track";
+import { ConditionTimeline } from "@/components/race/ConditionTimeline";
+import { useConditionTimeline } from "@/hooks/race/useConditionTimeline";
 import { Leaderboard } from "@/components/race/Leaderboard";
 import { RaceFieldDialog } from "@/components/race/RaceFieldDialog";
 import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
