@@ -34,6 +34,7 @@ export function useCommentaryFeed(
         setCommentary((prev) => [...prev, next].slice(-COMMENTARY_SLICE_CAP));
         setAnnouncement(next.text);
         setSubjectHorseId(next.horseId || null);
+        setLastUpdatedAt(now);
         lastMessageTime.current = now;
 
         setTimeout(() => {
@@ -48,5 +49,7 @@ export function useCommentaryFeed(
     announcement,
     commentary,
     subjectHorseId,
+    lastUpdatedAt,
   };
+
 }
