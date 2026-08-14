@@ -6,6 +6,13 @@ import {
 } from "@/core/race/runnerConditions";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 
+function horse(temperament = 50, injured = false) {
+  return {
+    stats: { temperament },
+    ...(injured ? { activeInjury: { type: "tendon" } } : {}),
+  } as unknown as Runner["horse"];
+}
+
 function runner(overrides: Partial<Runner> = {}): Runner {
   return {
     horseId: "h1",
@@ -17,7 +24,7 @@ function runner(overrides: Partial<Runner> = {}): Runner {
     owned: false,
     runningStyle: "P",
     topSpeed: 18,
-    horse: { stats: { temperament: 50 } },
+    horse: horse(),
     ...overrides,
   } as unknown as Runner;
 }
@@ -78,7 +85,7 @@ describe("deriveRunnerConditions", () => {
   });
 
   it("flags Ailing when the horse carries an active injury", () => {
-    const hurt = runner({ horse: { stats: { temperament: 50 }, activeInjury: { type: "tendon" } } });
+    const hurt = runner({ horse: horse(50, true) });
     const field = buildFieldContext([hurt]);
     expect(ids(deriveRunnerConditions(hurt, field, { peakVelocity: 16 }, DISTANCE))).toContain(
       "ailing",
@@ -117,8 +124,8 @@ describe("deriveRunnerMood", () => {
     const base = { horseId: "a", runningStyle: "E" as const, position: 800, velocity: 13 };
     const rival = runner({ horseId: "b", position: 880, velocity: 17, lane: 6 });
 
-    const placid = runner({ ...base, horse: { stats: { temperament: 85 } } });
-    const fretful = runner({ ...base, horse: { stats: { temperament: 20 } } });
+    const placid = runner({ ...base, horse: horse(85) });
+    const fretful = runner({ ...base, horse: horse(20) });
     const field = buildFieldContext([placid, rival]);
 
     const placidMood = deriveRunnerMood(placid, field, { peakVelocity: 17 }, DISTANCE);
@@ -131,7 +138,7 @@ describe("deriveRunnerMood", () => {
       runningStyle: "E",
       position: 400,
       velocity: 5,
-      horse: { stats: { temperament: 10 }, activeInjury: { type: "tendon" } },
+      horse: horse(10, true),
     });
     const field = buildFieldContext([
       wretched,
