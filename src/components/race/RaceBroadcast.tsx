@@ -224,6 +224,13 @@ export function RaceBroadcast({
               simTimeRef={simTimeRef}
             />
           )}
+          {timelineHorseId && !showReplay && (
+            <ConditionTimeline
+              segments={timelineSegments}
+              distance={race.distance}
+              horseName={timelineHorseName}
+            />
+          )}
           <BroadcastCommentary commentary={commentaryLines} />
 
           {phase === "review" && (
