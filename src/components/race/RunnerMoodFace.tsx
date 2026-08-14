@@ -58,7 +58,7 @@ export function RunnerMoodFace({ mood, horseName, size = 16, className }: Runner
             </svg>
           </span>
         </TooltipTrigger>
-        <TooltipContent side="top" className="max-w-56">
+        <TooltipContent side="top" className="max-w-64">
           <p className="text-xs font-bold uppercase tracking-wide">
             {mood.label} · {mood.score}/100
           </p>
@@ -67,6 +67,40 @@ export function RunnerMoodFace({ mood, horseName, size = 16, className }: Runner
               <li key={reason}>{reason}</li>
             ))}
           </ul>
+          {mood.breakdown && mood.breakdown.length > 0 && (
+            <div className="mt-2 border-t border-white/10 pt-2">
+              <p className="text-[9px] font-black uppercase tracking-widest text-cream/40 mb-1.5">
+                Mood breakdown
+              </p>
+              <div className="space-y-1">
+                {mood.breakdown.map((item) => (
+                  <div
+                    key={item.signal}
+                    className="flex items-start justify-between gap-3 text-[11px]"
+                  >
+                    <span className="text-cream/70 leading-tight">{item.signal}</span>
+                    <span
+                      className={cn(
+                        "tabular-nums font-black shrink-0",
+                        item.contribution > 0
+                          ? "text-success"
+                          : item.contribution < 0
+                            ? "text-destructive"
+                            : "text-cream/30",
+                      )}
+                    >
+                      {item.contribution > 0 ? "+" : ""}
+                      {item.contribution}
+                    </span>
+                  </div>
+                ))}
+                <div className="flex items-start justify-between gap-3 text-[11px] border-t border-white/5 pt-1 mt-1">
+                  <span className="text-cream/40 font-bold">Total score</span>
+                  <span className="tabular-nums font-black text-cream">{mood.score}/100</span>
+                </div>
+              </div>
+            </div>
+          )}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
