@@ -21,6 +21,7 @@ import {
   getSuccessRate,
   type LearningState,
 } from "./learningModule";
+import { DEFAULT_SUBSYSTEM_WEIGHT } from "./subsystemWeightConstants";
 
 export interface UpkeepAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -308,7 +309,7 @@ export function shouldConserveCash(
   aiState: UpkeepAIState,
   stable: Stable,
   monthlyExpenses: number,
-  weight = 1.0,
+  weight = DEFAULT_SUBSYSTEM_WEIGHT,
 ): boolean {
   // Weight ≤ 0 → always conserve (max conservation)
   if (weight <= 0) return true;

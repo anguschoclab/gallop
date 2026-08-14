@@ -17,9 +17,13 @@ import { getCategoryIcon, getPriorityColor } from "@/core/inbox/inboxUtils";
 
 export { getCategoryIcon, getPriorityColor };
 
+export function useUnreadCount(): number {
+  return useGame((s: StoreType) => s.inbox.filter((m) => !m.readAt).length);
+}
+
 export function useInbox() {
   const day = useGame((s: StoreType) => s.day);
-  const inbox = useGame((s: StoreType) => s.inbox) || [];
+  const inbox = useGame((s: StoreType) => s.inbox);
   const markRead = useGame((s: StoreType) => s.markMessageRead);
   const markAllRead = useGame((s: StoreType) => s.markAllMessagesRead);
   const dismiss = useGame((s: StoreType) => s.dismissMessage);

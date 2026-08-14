@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "@tanstack/react-router";
 import type { FileRouteTypes } from "@/routeTree.gen";
 import { useGame } from "@/game/store";
@@ -72,7 +71,12 @@ export function UrgentMessagesStrip({ messages }: UrgentMessagesStripProps) {
                 <NewsContent text={msg.body} />
               </p>
             </div>
-            <ChevronRight className={cn(ICON_SIZE_SM, "text-cream-muted ml-auto shrink-0 group-hover:text-gold transition-colors")} />
+            <ChevronRight
+              className={cn(
+                ICON_SIZE_SM,
+                "text-cream-muted ml-auto shrink-0 group-hover:text-gold transition-colors",
+              )}
+            />
           </CardContent>
         </Card>
       ))}

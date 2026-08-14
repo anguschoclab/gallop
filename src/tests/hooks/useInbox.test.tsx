@@ -2,7 +2,8 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { seedStore } from "@/test-utils/renderWithStore";
 import { createDefaultGameState } from "@/game/store/state";
-import { useInbox, getCategoryIcon, getPriorityColor } from "@/hooks/inbox/useInbox";
+import { useInbox, useUnreadCount } from "@/hooks/inbox/useInbox";
+import { getCategoryIcon, getPriorityColor } from "@/core/inbox/inboxUtils";
 import { useGame } from "@/game/store";
 import type { InboxMessage } from "@/core/inbox/inboxTypes";
 
@@ -184,6 +185,32 @@ describe("useInbox — store action passthrough", () => {
 
     expect(useGame.getState().inbox).toHaveLength(1);
     expect(useGame.getState().inbox[0].id).toBe("m2");
+  });
+});
+
+describe("useUnreadCount", () => {
+  beforeEach(() => {
+    seedStore();
+  });
+
+  it("returns 0 when inbox is empty", () => {
+    seedStore({ ...createDefaultGameState(), inbox: [] });
+    const { result } = renderHook(() => useUnreadCount());
+    expect(result.current).toBe(0);
+  });
+
+  it("returns count of messages where readAt is undefined", () => {
+    const messages = [mkMsg("m1", { readAt: undefined }), mkMsg("m2", { readAt: 5 }), mkMsg("m3")];
+    seedStore({ ...createDefaultGameState(), inbox: messages });
+    const { result } = renderHook(() => useUnreadCount());
+    expect(result.current).toBe(2);
+  });
+
+  it("returns 0 when all messages are read", () => {
+    const messages = [mkMsg("m1", { readAt: 5 }), mkMsg("m2", { readAt: 10 })];
+    seedStore({ ...createDefaultGameState(), inbox: messages });
+    const { result } = renderHook(() => useUnreadCount());
+    expect(result.current).toBe(0);
   });
 });
 

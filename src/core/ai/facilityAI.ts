@@ -215,7 +215,7 @@ export function shouldUpgradeFacility(
   currentLevel: FacilityLevel,
   stable: Stable,
   currentDay: number,
-  weight = 1.0,
+  weight = DEFAULT_SUBSYSTEM_WEIGHT,
 ): boolean {
   // Weight ≤ 0 → never upgrade
   if (weight <= 0) return false;

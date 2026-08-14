@@ -11,6 +11,7 @@ import { SidebarNav } from "./SidebarNav";
 import { useState } from "react";
 import { useSkipToNext } from "@/hooks/shared/useSkipToNext";
 import { useAwardCeremony } from "@/hooks/awards/useAwardCeremony";
+import { useUnreadCount } from "@/hooks/inbox/useInbox";
 import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/constants";
 
 export function AppShell() {
@@ -27,8 +28,7 @@ export function AppShell() {
   const navigate = useNavigate();
   const [autoSimOpen, setAutoSimOpen] = useState(false);
 
-  const inbox = useGame((s: StoreType) => s.inbox);
-  const unreadCount = inbox.filter((m) => !m.readAt).length;
+  const unreadCount = useUnreadCount();
 
   const awards = useAwards();
   const { showCeremony, setShowCeremony, pendingCeremonies, clearPendingCeremonies } =

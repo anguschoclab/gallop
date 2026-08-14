@@ -61,10 +61,10 @@ describe("StableCard", () => {
     expect(repSpan.textContent).toBe("★★★★☆");
   });
 
-  it("link href contains /npc-stables/{stable.id}", () => {
+  it("link targets /npc-stables/$stableId route", () => {
     const { container } = render(<StableCard stable={mkStable({ id: "abc123" })} />);
-    const link = container.querySelector('a[href*="/npc-stables/"]');
+    const link = container.querySelector('a[to*="/npc-stables/"]');
     expect(link).toBeTruthy();
-    expect(link!.getAttribute("href")).toContain("/npc-stables/abc123");
+    expect(link!.getAttribute("to")).toBe("/npc-stables/$stableId");
   });
 });

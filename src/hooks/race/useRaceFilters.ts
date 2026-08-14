@@ -62,8 +62,9 @@ export function useRaceFilters(
   const emptySet = useMemo(() => new Set<string>(), []);
 
   const eligibleRaceIds = useMemo(() => {
-    if (eligibleOnly !== "1" || ownedHorses.length === 0) return null;
+    if (eligibleOnly !== "1") return null;
     const ids = new Set<string>();
+    if (ownedHorses.length === 0) return ids;
     for (const r of races) {
       if (r.resolved || r.day < day) continue;
       if (ownedHorses.some((h) => isHorseEligibleForRace(h, r, emptySet, day))) {
