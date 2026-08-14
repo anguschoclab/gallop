@@ -23,7 +23,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Flag, Trophy, Lock } from "lucide-react";
-import { NOMINATIONS_UPCOMING_LIMIT } from "@/constants";
+import { NOMINATIONS_UPCOMING_LIMIT, TOOLTIP_DELAY_MS } from "@/constants";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const TIER_COLORS: Record<NominationTier, string> = {
   early: "bg-emerald-500/20 text-emerald-300 border-emerald-400/40",
@@ -252,16 +253,30 @@ export function RaceNominationRow({
               ))}
             </SelectContent>
           </Select>
-          <Button
-            size="sm"
-            disabled={!pickedHorse}
-            onClick={() => {
-              onNominate(pickedHorse);
-              setPickedHorse("");
-            }}
-          >
-            Nominate
-          </Button>
+          {!pickedHorse ? (
+            <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span tabIndex={0} className="inline-block cursor-not-allowed">
+                    <Button size="sm" disabled className="pointer-events-none">
+                      Nominate
+                    </Button>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>Select a horse to nominate</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <Button
+              size="sm"
+              onClick={() => {
+                onNominate(pickedHorse);
+                setPickedHorse("");
+              }}
+            >
+              Nominate
+            </Button>
+          )}
         </div>
       )}
       {nominatedIds.size > 0 && (
