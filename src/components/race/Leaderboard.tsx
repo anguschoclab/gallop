@@ -1,8 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Slider } from "@/components/ui/slider";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import { useTimeAgo } from "@/hooks/shared/useTimeAgo";
-import { cn } from "@/lib/cn";
+import { LiveFreshnessBadge } from "@/components/race/LiveFreshnessBadge";
 import {
   LeaderboardControlsBar,
   LeaderboardEmpty,
@@ -58,20 +57,12 @@ export function Leaderboard({
   onSortByChange,
   onMinBeyerChange,
 }: LeaderboardProps) {
-  const timeAgo = useTimeAgo(lastUpdatedAt ?? Date.now());
-
   return (
     <div className="bg-broadcast-marquee rounded-lg p-3 space-y-3 backdrop-blur-md border border-white/5">
       <div>
         <div className="flex items-center justify-between px-3 sm:px-6 mb-2">
           <p className="text-xs uppercase tracking-wide text-muted-foreground">Live order</p>
-          <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wide text-muted-foreground">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-broadcast-accent opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-broadcast-accent" />
-            </span>
-            <span className={cn(lastUpdatedAt && "tabular-nums")}>Live · {timeAgo}</span>
-          </div>
+          <LiveFreshnessBadge context="Leaderboard" lastUpdatedAt={lastUpdatedAt} />
         </div>
         {hasTies && sortBy === "position" && (
           <p className="text-[10px] text-muted-foreground italic px-3 sm:px-6 mb-2">

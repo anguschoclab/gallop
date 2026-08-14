@@ -12,6 +12,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, act } from "@testing-library/react";
 import { BroadcastCommentary } from "@/components/race/BroadcastCommentary";
+import { STALE_DATA_THRESHOLD_MS } from "@/constants/raceBroadcastConstants";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 
 function makeCommentaryLine(
@@ -134,9 +135,7 @@ describe("BroadcastCommentary - Badge Timing Behavior", () => {
   });
 
   it("resets badge freshness back to 'just now' when lastUpdatedAt prop is updated", () => {
-    const { rerender } = render(
-      <BroadcastCommentary commentary={[]} lastUpdatedAt={BASE_TIME} />,
-    );
+    const { rerender } = render(<BroadcastCommentary commentary={[]} lastUpdatedAt={BASE_TIME} />);
 
     // Advance 10 seconds
     act(() => {
@@ -146,9 +145,7 @@ describe("BroadcastCommentary - Badge Timing Behavior", () => {
 
     // New commentary arrival at BASE_TIME + 10000
     const newTimestamp = BASE_TIME + 10000;
-    rerender(
-      <BroadcastCommentary commentary={[]} lastUpdatedAt={newTimestamp} />,
-    );
+    rerender(<BroadcastCommentary commentary={[]} lastUpdatedAt={newTimestamp} />);
 
     // Immediately resets to "just now"
     expect(screen.getByLabelText("Commentary last updated just now")).toHaveTextContent("just now");
@@ -160,11 +157,21 @@ describe("BroadcastCommentary - Badge Timing Behavior", () => {
     expect(screen.getByLabelText("Commentary last updated 3s ago")).toHaveTextContent("3s ago");
   });
 
+  it("shows a stale data warning when the last update exceeds the threshold", () => {
+    render(<BroadcastCommentary commentary={[]} lastUpdatedAt={BASE_TIME} />);
+
+    act(() => {
+      vi.advanceTimersByTime(STALE_DATA_THRESHOLD_MS + 1000);
+    });
+
+    const badge = screen.getByLabelText("Commentary last updated 6s ago");
+    expect(badge).toHaveTextContent("Stale data");
+    expect(badge).toHaveTextContent("6s ago");
+  });
+
   it("cleans up the timer interval on component unmount", () => {
     const clearIntervalSpy = vi.spyOn(window, "clearInterval");
-    const { unmount } = render(
-      <BroadcastCommentary commentary={[]} lastUpdatedAt={BASE_TIME} />,
-    );
+    const { unmount } = render(<BroadcastCommentary commentary={[]} lastUpdatedAt={BASE_TIME} />);
 
     unmount();
     expect(clearIntervalSpy).toHaveBeenCalled();
