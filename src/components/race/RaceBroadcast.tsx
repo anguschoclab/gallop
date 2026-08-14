@@ -6,6 +6,8 @@ import { RaceVisualizer } from "@/components/race/RaceVisualizer";
 import { ResultOverlay } from "@/components/race/ResultOverlay";
 import { RaceControlBar } from "@/components/race/RaceControlBar";
 import { Track } from "@/components/race/Track";
+import { ConditionTimeline } from "@/components/race/ConditionTimeline";
+import { useConditionTimeline } from "@/hooks/race/useConditionTimeline";
 import { Leaderboard } from "@/components/race/Leaderboard";
 import { RaceFieldDialog } from "@/components/race/RaceFieldDialog";
 import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
@@ -133,6 +135,17 @@ export function RaceBroadcast({
   const skyBg = getSkyBackground(race.weather);
   const showReplay = phase === "review" && race.resolved && !!race.snapshots?.length;
 
+  // Condition timeline follows the camera target, falling back to the subject horse.
+  const timelineHorseId = followTarget ?? subjectHorseId ?? null;
+  const timelineSegments = useConditionTimeline(
+    runners,
+    race.distance,
+    timelineHorseId,
+    tick,
+    simTimeRef,
+  );
+  const timelineHorseName = runners.find((r) => r.horseId === timelineHorseId)?.name;
+
   return (
     <div className="broadcast min-h-screen text-white bg-broadcast-track">
       <div
@@ -209,6 +222,13 @@ export function RaceBroadcast({
               paused={paused}
               subjectHorseId={subjectHorseId}
               simTimeRef={simTimeRef}
+            />
+          )}
+          {timelineHorseId && !showReplay && (
+            <ConditionTimeline
+              segments={timelineSegments}
+              distance={race.distance}
+              horseName={timelineHorseName}
             />
           )}
           <BroadcastCommentary commentary={commentaryLines} />
