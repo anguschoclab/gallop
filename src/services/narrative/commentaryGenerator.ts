@@ -57,7 +57,10 @@ export function generateCommentaryLine(
   let text = templates[Math.floor(context.rng.next() * templates.length)];
 
   // Add prefixes for impactful events
-  if (context.rng.next() < NARRATIVE_THRESHOLDS.PREFIX_PROBABILITY && (type === "SURGE" || type === "LEAD_CHANGE")) {
+  if (
+    context.rng.next() < NARRATIVE_THRESHOLDS.PREFIX_PROBABILITY &&
+    (type === "SURGE" || type === "LEAD_CHANGE")
+  ) {
     const prefix = FRAGMENTS.PREFIXES[Math.floor(context.rng.next() * FRAGMENTS.PREFIXES.length)];
     text = `${prefix} ${text}`;
   }
@@ -114,7 +117,6 @@ export function generateCommentaryLine(
     }
   }
 
-
   return {
     id: `${type}-${lineCounter.value++}`,
     text,
@@ -150,7 +152,8 @@ export function generateExpertInsight(
 
   if (stable?.preferredDistance) {
     const diff = Math.abs(race.distance - stable.preferredDistance);
-    if (diff <= NARRATIVE_THRESHOLDS.EXPERT_INSIGHT_DISTANCE_FIT_TOLERANCE) insights.push(...EXPERT_INSIGHT_TEMPLATES.DISTANCE_FIT);
+    if (diff <= NARRATIVE_THRESHOLDS.EXPERT_INSIGHT_DISTANCE_FIT_TOLERANCE)
+      insights.push(...EXPERT_INSIGHT_TEMPLATES.DISTANCE_FIT);
   }
 
   const hasRunDistance = horse.raceHistory.some((h) => h.distance === race.distance);
@@ -160,7 +163,10 @@ export function generateExpertInsight(
 
   const raceSurface = race.graded?.surface || race.graded_override?.surface || "Dirt";
   const surfaceApt = horse.surfaceAptitude?.[raceSurface];
-  if (surfaceApt !== undefined && surfaceApt >= NARRATIVE_THRESHOLDS.EXPERT_INSIGHT_SURFACE_APTITUDE) {
+  if (
+    surfaceApt !== undefined &&
+    surfaceApt >= NARRATIVE_THRESHOLDS.EXPERT_INSIGHT_SURFACE_APTITUDE
+  ) {
     insights.push(...EXPERT_INSIGHT_TEMPLATES.SURFACE_FIT);
   }
 
@@ -170,7 +176,6 @@ export function generateExpertInsight(
   text = text.split("{horse}").join(runner.name);
   text = text.split("{distance}").join(race.distance.toString());
   text = text.split("{surface}").join(raceSurface.toLowerCase());
-
 
   return text;
 }

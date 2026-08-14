@@ -22,7 +22,6 @@ type NavigateFn = (opts: {
   search?: Record<string, unknown> | ((prev: Record<string, unknown>) => Record<string, unknown>);
 }) => void;
 
-
 interface StableRosterViewProps {
   horses: Horse[];
   status: string;

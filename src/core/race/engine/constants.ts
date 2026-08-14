@@ -172,3 +172,22 @@ export const VETERAN_POSITIONING_BONUS = 0.1;
 // Closer instinct
 export const CLOSER_INSTINCT_PROGRESS_THRESHOLD = 0.85;
 export const CLOSER_INSTINCT_STYLE_BONUS = 0.05;
+
+// Pace context computation
+/** Base velocity for pace rating calculation (m/s at reference distance). */
+export const PACE_BASE_VELOCITY = 18.5;
+
+/** Reference distance for pace rating normalisation (metres). */
+export const PACE_REFERENCE_DISTANCE = 3000;
+
+/** Velocity reduction factor over distance (m/s per metre of reference distance). */
+export const PACE_DISTANCE_FACTOR = 2.5;
+
+/** Maximum gap (metres) from leader to be counted in the lead group. */
+export const LEAD_GROUP_GAP = 4;
+
+/** Number of lane density buckets for traffic analysis. */
+export const LANE_DENSITY_BUCKETS = 12;
+
+/** Lane width (metres) per lane density bucket. */
+export const LANE_BUCKET_WIDTH = 1.2;

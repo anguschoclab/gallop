@@ -24,6 +24,7 @@ vi.mock("@/core/race/headToHead", () => ({
 
 import { useHeadToHeadSim } from "@/hooks/horse/useHeadToHeadSim";
 import { runHeadToHeadSimulation } from "@/core/race/headToHead";
+import { SIM_ITERATIONS } from "@/constants/uiConstants";
 import type { Horse } from "@/game/types";
 
 const mkHorse = (id: string): Horse =>
@@ -78,7 +79,12 @@ describe("useHeadToHeadSim", () => {
     });
     expect(result.current.simResults).not.toBeNull();
     expect(result.current.simResults).toHaveLength(2);
-    expect(runHeadToHeadSimulation).toHaveBeenCalledWith(expect.any(Array), 1600, "Turf", 50);
+    expect(runHeadToHeadSimulation).toHaveBeenCalledWith(
+      expect.any(Array),
+      1600,
+      "Turf",
+      SIM_ITERATIONS,
+    );
   });
 
   it("clearSim resets simResults to null", async () => {

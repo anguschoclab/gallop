@@ -113,6 +113,12 @@ import {
   VETERAN_POSITIONING_BONUS,
   CLOSER_INSTINCT_PROGRESS_THRESHOLD,
   CLOSER_INSTINCT_STYLE_BONUS,
+  PACE_BASE_VELOCITY,
+  PACE_REFERENCE_DISTANCE,
+  PACE_DISTANCE_FACTOR,
+  LEAD_GROUP_GAP,
+  LANE_DENSITY_BUCKETS,
+  LANE_BUCKET_WIDTH,
 } from "./constants";
 
 // Standardizing imports for relocated file
@@ -136,7 +142,7 @@ export function computePaceContext(
   let leaderVelocity = 0;
   let totalProgress = 0;
   let alive = 0;
-  const laneDensity = laneDensityBuffer ?? new Array(12).fill(0);
+  const laneDensity = laneDensityBuffer ?? new Array(LANE_DENSITY_BUCKETS).fill(0);
   if (laneDensityBuffer) {
     laneDensityBuffer.fill(0);
   }
@@ -156,11 +162,11 @@ export function computePaceContext(
     if (r.finishTime === null) {
       totalProgress += r.position / distance;
       alive++;
-      const laneIdx = Math.floor(r.lane / 1.2);
-      if (laneIdx >= 0 && laneIdx < 12) laneDensity[laneIdx]++;
+      const laneIdx = Math.floor(r.lane / LANE_BUCKET_WIDTH);
+      if (laneIdx >= 0 && laneIdx < LANE_DENSITY_BUCKETS) laneDensity[laneIdx]++;
 
       // Pace pressure and lead group check
-      if (leaderPos - r.position <= 4) {
+      if (leaderPos - r.position <= LEAD_GROUP_GAP) {
         leadGroupCount++;
         if (r.runningStyle === "E") frontRunnersInLeadGroup++;
       }
@@ -170,7 +176,8 @@ export function computePaceContext(
   }
 
   // Calculate Pace Rating
-  const expectedVel = 18.5 - (distance / 3000) * 2.5;
+  const expectedVel =
+    PACE_BASE_VELOCITY - (distance / PACE_REFERENCE_DISTANCE) * PACE_DISTANCE_FACTOR;
   const paceRating = leaderVelocity / expectedVel;
   const pacePressure = clamp((frontRunnersInLeadGroup - 1) / 2, 0, 1);
   const progress = alive > 0 ? totalProgress / runners.length : 1;

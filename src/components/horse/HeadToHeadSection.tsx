@@ -145,7 +145,9 @@ export function HeadToHeadSection({ horses }: { horses: Horse[] }) {
           {simRunning ? "Running..." : `Run Simulation (${SIM_ITERATIONS}×)`}
         </Button>
         {simResults && (
-          <span className="text-[10px] font-mono text-cream/40">{SIM_ITERATIONS} iterations completed</span>
+          <span className="text-[10px] font-mono text-cream/40">
+            {SIM_ITERATIONS} iterations completed
+          </span>
         )}
       </div>
 

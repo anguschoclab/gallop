@@ -2,6 +2,7 @@ import type { Horse } from "@/game/types";
 import { Progress } from "@/components/ui/progress";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { cn } from "@/lib/cn";
+import { STAT_SCALE_MAX } from "@/constants/gameConstants";
 
 const SURFACES: Array<"Turf" | "Dirt" | "Synthetic"> = ["Turf", "Dirt", "Synthetic"];
 
@@ -16,6 +17,7 @@ export function SurfaceAptitudeSection({ horses }: { horses: Horse[] }) {
           <div key={h.id} className="space-y-2">
             <div className="text-xs font-medium text-cream/70">{h.name}</div>
             {SURFACES.map((s) => {
+              STAT_SCALE_MAX;
               const val = Math.round((h.surfaceAptitude[s] ?? 0) * 100);
               return (
                 <div key={s}>

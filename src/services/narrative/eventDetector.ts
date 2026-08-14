@@ -283,7 +283,10 @@ export function detectStableWatch(
   stablesMap: Map<string, { id: string; isMajor: boolean }>,
   simTime: number,
 ): DetectedEvent | null {
-  if (simTime < NARRATIVE_THRESHOLDS.STABLE_WATCH_START_TIME || simTime > NARRATIVE_THRESHOLDS.STABLE_WATCH_END_TIME)
+  if (
+    simTime < NARRATIVE_THRESHOLDS.STABLE_WATCH_START_TIME ||
+    simTime > NARRATIVE_THRESHOLDS.STABLE_WATCH_END_TIME
+  )
     return null;
 
   const horse = horsesMap.get(runner.horseId);
