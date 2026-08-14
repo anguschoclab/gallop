@@ -35,6 +35,8 @@ export interface CommentaryLine {
   type: NarrativeEvent;
   horseId?: string;
   isHighImpact?: boolean;
+  /** Wall-clock timestamp (ms) when this PBP tick was generated or received. */
+  receivedAt?: number;
 }
 
 export interface DetectedEvent {

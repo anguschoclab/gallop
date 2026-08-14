@@ -33,6 +33,9 @@ interface RaceControlBarProps {
   onSetFollowTarget: (id: string | null) => void;
   onToggleHideResults: () => void;
   onShowAllCards: () => void;
+  onTakeSnapshot?: () => void;
+  onOpenSnapshotInspector?: () => void;
+  snapshotCount?: number;
 }
 
 export function RaceControlBar({
@@ -52,6 +55,9 @@ export function RaceControlBar({
   onSetFollowTarget,
   onToggleHideResults,
   onShowAllCards,
+  onTakeSnapshot,
+  onOpenSnapshotInspector,
+  snapshotCount,
 }: RaceControlBarProps) {
   return (
     <div className="relative z-10 p-4 flex items-center justify-between border-b border-white/10 bg-broadcast-marquee backdrop-blur-sm">
@@ -115,6 +121,45 @@ export function RaceControlBar({
             <TooltipContent>Show all horse stat cards</TooltipContent>
           </Tooltip>
         </TooltipProvider>
+
+        {!finished && onTakeSnapshot && (
+          <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={onTakeSnapshot}
+                  className="gap-1.5 border-white/20 bg-black/40 hover:bg-white/10 text-white"
+                  aria-label="Snapshot in-running conditions"
+                >
+                  <Camera className="h-3.5 w-3.5 text-broadcast-accent" />
+                  <span className="text-[11px] font-black uppercase tracking-widest">
+                    Snapshot
+                  </span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                Freeze current in-running conditions for inspection while live race continues
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+
+        {snapshotCount !== undefined && snapshotCount > 0 && onOpenSnapshotInspector && (
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={onOpenSnapshotInspector}
+            className="gap-1.5 bg-broadcast-accent/20 border border-broadcast-accent/40 text-broadcast-accent hover:bg-broadcast-accent/30"
+            aria-label={`Inspect ${snapshotCount} captured snapshot${snapshotCount > 1 ? "s" : ""}`}
+          >
+            <Camera className="h-3.5 w-3.5" />
+            <span className="text-[11px] font-black uppercase tracking-widest">
+              Snapshots ({snapshotCount})
+            </span>
+          </Button>
+        )}
 
         {!finished && (
           <Button

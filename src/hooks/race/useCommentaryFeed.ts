@@ -31,7 +31,11 @@ export function useCommentaryFeed(
       const now = Date.now();
       if (messageQueue.current.length > 0 && now - lastMessageTime.current > COMMENTARY_PACING_MS) {
         const next = messageQueue.current.shift()!;
-        setCommentary((prev) => [...prev, next].slice(-COMMENTARY_SLICE_CAP));
+        const stampedNext: CommentaryLine = {
+          ...next,
+          receivedAt: next.receivedAt ?? now,
+        };
+        setCommentary((prev) => [...prev, stampedNext].slice(-COMMENTARY_SLICE_CAP));
         setAnnouncement(next.text);
         setSubjectHorseId(next.horseId || null);
         setLastUpdatedAt(now);

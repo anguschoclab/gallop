@@ -254,8 +254,22 @@ describe("useCommentaryFeed", () => {
       act(() => {
         vi.advanceTimersByTime(5000);
       });
-
       expect(result.current.lastUpdatedAt).toBe(startTime);
+    });
+
+    it("stamps receivedAt with the exact drain timestamp on consumed messages", () => {
+      const startTime = 1700000000000;
+      vi.setSystemTime(startTime);
+
+      const queue = makeQueue([makeLine("c1", "First line")]);
+      const { result } = renderHook(() => useCommentaryFeed(queue, false));
+
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      expect(result.current.commentary).toHaveLength(1);
+      expect(result.current.commentary[0].receivedAt).toBe(startTime + 100);
     });
   });
 });

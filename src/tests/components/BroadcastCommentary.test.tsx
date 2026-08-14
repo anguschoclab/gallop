@@ -20,6 +20,7 @@ function makeCommentaryLine(
   text: string,
   timestamp: number = 0,
   isHighImpact: boolean = false,
+  receivedAt?: number,
 ): CommentaryLine {
   return {
     id,
@@ -28,6 +29,7 @@ function makeCommentaryLine(
     type: "INFO",
     horseId: null,
     isHighImpact,
+    receivedAt,
   } as unknown as CommentaryLine;
 }
 
@@ -234,5 +236,47 @@ describe("BroadcastCommentary - Content and Visual Elements", () => {
     expect(pings[0].closest(".text-foreground") || pings[0].parentElement).toHaveTextContent(
       "Dramatic photo finish move!",
     );
+  });
+
+  it("displays formatted PBP tick received timestamp on each commentary line when receivedAt is present", () => {
+    const receivedTime = new Date("2026-08-14T15:30:45Z").getTime();
+    const lines = [
+      makeCommentaryLine("c1", "First tick event", 2.0, false, receivedTime),
+      makeCommentaryLine("c2", "Second tick event", 4.5, true, receivedTime + 2000),
+    ];
+
+    render(<BroadcastCommentary commentary={lines} lastUpdatedAt={BASE_TIME} />);
+
+    const tickTimestamps = screen.getAllByTestId("pbp-received-time");
+    expect(tickTimestamps).toHaveLength(2);
+
+    const expectedTime1 = new Date(receivedTime).toLocaleTimeString([], {
+      hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    const expectedTime2 = new Date(receivedTime + 2000).toLocaleTimeString([], {
+      hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+
+    expect(tickTimestamps[0]).toHaveTextContent(expectedTime1);
+    expect(tickTimestamps[0]).toHaveAttribute("aria-label", `PBP tick received at ${expectedTime1}`);
+    expect(tickTimestamps[1]).toHaveTextContent(expectedTime2);
+    expect(tickTimestamps[1]).toHaveAttribute("aria-label", `PBP tick received at ${expectedTime2}`);
+  });
+
+  it("omits the PBP receive timestamp element gracefully when receivedAt is undefined", () => {
+    const lines = [
+      makeCommentaryLine("c1", "No receivedAt line", 1.0, false, undefined),
+    ];
+
+    render(<BroadcastCommentary commentary={lines} lastUpdatedAt={BASE_TIME} />);
+
+    expect(screen.getByText("1.0s")).toBeInTheDocument();
+    expect(screen.queryByTestId("pbp-received-time")).not.toBeInTheDocument();
   });
 });

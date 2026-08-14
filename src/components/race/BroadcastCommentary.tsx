@@ -44,6 +44,15 @@ export function BroadcastCommentary({ commentary, lastUpdatedAt }: BroadcastComm
       >
         {visibleLines.map((line, i) => {
           const isLatest = i === visibleLines.length - 1;
+          const receivedTimeStr =
+            line.receivedAt !== undefined
+              ? new Date(line.receivedAt).toLocaleTimeString([], {
+                  hour12: false,
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                })
+              : null;
           return (
             <div
               key={line.id}
@@ -53,11 +62,25 @@ export function BroadcastCommentary({ commentary, lastUpdatedAt }: BroadcastComm
                   : "text-muted-foreground font-normal"
               }`}
             >
-              <span
-                className={`text-[10px] tabular-nums flex-shrink-0 mt-0.5 ${isLatest ? "text-broadcast-accent" : "opacity-30"}`}
-              >
-                {line.timestamp.toFixed(1)}s
-              </span>
+              <div className="flex flex-col items-start flex-shrink-0 mt-0.5 min-w-[3.5rem]">
+                <span
+                  className={`text-[10px] tabular-nums font-mono ${isLatest ? "text-broadcast-accent font-semibold" : "opacity-40"}`}
+                >
+                  {line.timestamp.toFixed(1)}s
+                </span>
+                {receivedTimeStr && (
+                  <span
+                    data-testid="pbp-received-time"
+                    aria-label={`PBP tick received at ${receivedTimeStr}`}
+                    title={`PBP tick received at ${receivedTimeStr}`}
+                    className={`text-[8px] tabular-nums font-mono leading-tight tracking-tight ${
+                      isLatest ? "text-broadcast-accent/70" : "text-muted-foreground/40"
+                    }`}
+                  >
+                    {receivedTimeStr}
+                  </span>
+                )}
+              </div>
               <div className="flex-1 leading-relaxed relative">
                 {line.isHighImpact && isLatest && (
                   <span className="absolute -left-4 top-0 animate-ping h-2 w-2 rounded-full bg-broadcast-accent opacity-75" />

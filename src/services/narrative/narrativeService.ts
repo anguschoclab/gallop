@@ -109,6 +109,7 @@ export class NarrativeGenerator {
         timestamp: simTime,
         type: "EXPERT_INSIGHT",
         horseId: spotlightRunner.horseId,
+        receivedAt: Date.now(),
       });
     }
     this.state.hasAnnouncedStart = true;

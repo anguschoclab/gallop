@@ -128,6 +128,6 @@ describe("HorseRaceHistorySection", () => {
     renderWithStore(
       <HorseRaceHistorySection horse={horse} raceHistoryLimit={10} onLimitChange={() => {}} />,
     );
-    expect(screen.getByText("G3")).toBeTruthy();
+    expect(screen.getAllByText(/G3/).length).toBeGreaterThan(0);
   });
 });

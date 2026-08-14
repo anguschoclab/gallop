@@ -9,6 +9,7 @@ import { useCommentaryFeed } from "@/hooks/race/useCommentaryFeed";
 import { useLeaderboardState } from "@/hooks/race/useLeaderboardState";
 import { useRacePhase, type RacePhase } from "@/hooks/race/useRacePhase";
 import { useRaceProgress } from "@/hooks/race/useRaceProgress";
+import { useInRunningSnapshots } from "@/hooks/race/useInRunningSnapshots";
 import { useStewardsInquiry } from "@/hooks/race/useStewardsInquiry";
 import { getCourseForRace } from "@/data/tracks";
 import { safeParseJson, raceProgressSchema } from "@/services/storage/schemas";
@@ -238,6 +239,21 @@ export function LiveRace() {
   const [hideUntilAllFinished, setHideUntilAllFinished] = useState(false);
   const [showAllCards, setShowAllCards] = useState(false);
 
+  const {
+    snapshots,
+    selectedSnapshot,
+    setSelectedSnapshotId,
+    takeSnapshot,
+    clearSnapshots,
+    isInspectorOpen,
+    setIsInspectorOpen,
+  } = useInRunningSnapshots();
+
+  const handleTakeSnapshot = useCallback(() => {
+    if (!race) return;
+    takeSnapshot(runners, race.distance, simTimeRef.current, tick);
+  }, [takeSnapshot, runners, race, simTimeRef, tick]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === "Space" && !finished) {
@@ -342,6 +358,15 @@ export function LiveRace() {
           fieldDialog={{
             showAllCards,
             setShowAllCards,
+          }}
+          snapshots={{
+            snapshots,
+            selectedSnapshot,
+            onSelectSnapshot: setSelectedSnapshotId,
+            onTakeSnapshot: handleTakeSnapshot,
+            onClearSnapshots: clearSnapshots,
+            isInspectorOpen,
+            setIsInspectorOpen,
           }}
         />
       </PhasePanel>

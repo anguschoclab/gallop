@@ -12,12 +12,24 @@ import { RaceFieldDialog } from "@/components/race/RaceFieldDialog";
 import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { PostRaceAnalysis } from "@/components/race/PostRaceAnalysis";
+import { InRunningSnapshotDialog } from "@/components/race/InRunningSnapshotDialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Horse, Race } from "@/game/types";
 import type { RacePhase } from "@/hooks/race/useRacePhase";
+import type { InRunningSnapshot } from "@/hooks/race/useInRunningSnapshots";
+
+export interface SnapshotSlice {
+  snapshots: InRunningSnapshot[];
+  selectedSnapshot: InRunningSnapshot | null;
+  onSelectSnapshot: (id: string) => void;
+  onTakeSnapshot: () => void;
+  onClearSnapshots: () => void;
+  isInspectorOpen: boolean;
+  setIsInspectorOpen: (open: boolean) => void;
+}
 
 export interface SimulationSlice {
   tick: number;
@@ -87,6 +99,7 @@ export interface RaceBroadcastProps {
   controls: ControlsSlice;
   analysis: AnalysisSlice;
   fieldDialog: FieldDialogSlice;
+  snapshots?: SnapshotSlice;
 }
 
 export function RaceBroadcast({
@@ -99,6 +112,7 @@ export function RaceBroadcast({
   controls,
   analysis,
   fieldDialog,
+  snapshots,
 }: RaceBroadcastProps) {
   const { tick, phase, finished, paused, speed, simTimeRef } = simulation;
   const {
@@ -179,6 +193,9 @@ export function RaceBroadcast({
         onSetFollowTarget={onSetFollowTarget}
         onToggleHideResults={onToggleHideResults}
         onShowAllCards={onShowAllCards}
+        onTakeSnapshot={snapshots?.onTakeSnapshot}
+        onOpenSnapshotInspector={() => snapshots?.setIsInspectorOpen(true)}
+        snapshotCount={snapshots?.snapshots.length}
       />
 
       <div className="absolute top-2 right-2 z-30">
@@ -294,6 +311,18 @@ export function RaceBroadcast({
         runners={runners}
         localHorseMap={localHorseMap}
       />
+
+      {snapshots && (
+        <InRunningSnapshotDialog
+          open={snapshots.isInspectorOpen}
+          onOpenChange={snapshots.setIsInspectorOpen}
+          snapshots={snapshots.snapshots}
+          selectedSnapshot={snapshots.selectedSnapshot}
+          onSelectSnapshot={snapshots.onSelectSnapshot}
+          onClearSnapshots={snapshots.onClearSnapshots}
+          currentSimTime={simTimeRef?.current}
+        />
+      )}
     </div>
   );
 }

@@ -91,6 +91,13 @@ vi.mock("@/components/race/ConditionTimelinePanel", () => ({
   ConditionTimelinePanel: (props: unknown) => ConditionTimelinePanelMock(props),
 }));
 
+const InRunningSnapshotDialogMock = vi.fn((_props?: unknown) =>
+  createElement("div", { "data-testid": "in-running-snapshot-dialog" }),
+);
+vi.mock("@/components/race/InRunningSnapshotDialog", () => ({
+  InRunningSnapshotDialog: (props: unknown) => InRunningSnapshotDialogMock(props),
+}));
+
 vi.mock("@/components/race/raceVisualHelpers", () => ({
   getSkyBackground: vi.fn(() => "url(/sky.png)"),
 }));
@@ -214,6 +221,15 @@ function makeGroupedProps(overrides: Record<string, unknown> = {}): any {
       showAllCards: false,
       setShowAllCards: vi.fn(),
     },
+    snapshots: {
+      snapshots: [],
+      selectedSnapshot: null,
+      onSelectSnapshot: vi.fn(),
+      onTakeSnapshot: vi.fn(),
+      onClearSnapshots: vi.fn(),
+      isInspectorOpen: false,
+      setIsInspectorOpen: vi.fn(),
+    },
     ...overrides,
   };
 }
@@ -239,6 +255,7 @@ afterEach(() => {
   BookmarkButtonMock.mockClear();
   PostRaceAnalysisMock.mockClear();
   ConditionTimelinePanelMock.mockClear();
+  InRunningSnapshotDialogMock.mockClear();
 });
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -499,5 +516,39 @@ describe("RaceBroadcast — ConditionTimelinePanel integration", () => {
     render(createElement(RaceBroadcast, props));
 
     expect(ConditionTimelinePanelMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("RaceBroadcast — in-running snapshot integration", () => {
+  it("forwards snapshot handlers and count to RaceControlBar", () => {
+    const onTakeSnapshot = vi.fn();
+    const props = makeGroupedProps({
+      snapshots: {
+        snapshots: [{ id: "snap-1" }] as any,
+        selectedSnapshot: { id: "snap-1" } as any,
+        onSelectSnapshot: vi.fn(),
+        onTakeSnapshot,
+        onClearSnapshots: vi.fn(),
+        isInspectorOpen: false,
+        setIsInspectorOpen: vi.fn(),
+      },
+    });
+
+    render(createElement(RaceBroadcast, props));
+
+    expect(RaceControlBarMock).toHaveBeenCalledTimes(1);
+    const received = RaceControlBarMock.mock.calls[0][0] as Record<string, unknown>;
+    expect(received.onTakeSnapshot).toBe(onTakeSnapshot);
+    expect(received.snapshotCount).toBe(1);
+  });
+
+  it("renders InRunningSnapshotDialog when snapshots prop is provided", () => {
+    const props = makeGroupedProps();
+    render(createElement(RaceBroadcast, props));
+
+    expect(InRunningSnapshotDialogMock).toHaveBeenCalledTimes(1);
+    const received = InRunningSnapshotDialogMock.mock.calls[0][0] as Record<string, unknown>;
+    expect(received.snapshots).toBe(props.snapshots.snapshots);
+    expect(received.selectedSnapshot).toBe(props.snapshots.selectedSnapshot);
   });
 });

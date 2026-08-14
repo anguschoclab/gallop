@@ -123,6 +123,7 @@ export function generateCommentaryLine(
     timestamp,
     type,
     horseId: context.runner?.horseId,
+    receivedAt: Date.now(),
   };
 }
 

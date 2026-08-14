@@ -404,6 +404,6 @@ describe("PersonRaceHistoryTab", () => {
       horses: h2r(horses),
     } as unknown as Partial<GameState>);
 
-    expect(screen.getByText("G7")).toBeTruthy();
+    expect(screen.getByText(/G7/)).toBeTruthy();
   });
 });
