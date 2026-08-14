@@ -18,7 +18,15 @@ export type NarrativeEvent =
   | "EXPERT_INSIGHT"
   | "GAP_ANNOUNCEMENT"
   | "ATMOSPHERE"
-  | "LANE_WATCH";
+  | "LANE_WATCH"
+  | "FLYING"
+  | "BATTLING"
+  | "BOXED_IN"
+  | "GRINDING"
+  | "FLAGGING"
+  | "IN_TROUBLE"
+  | "AILING"
+  | "SETTLED";
 
 export interface CommentaryLine {
   id: string;

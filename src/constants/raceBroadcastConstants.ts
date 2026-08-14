@@ -17,8 +17,10 @@ export const COMMENTARY_SLICE_CAP = 50;
 /** Time (ms) before the subject-horse highlight clears after a message. */
 export const SUBJECT_HIGHLIGHT_CLEAR_MS = 3000;
 
-/** Fixed delta time (seconds) for the physics simulation loop. */
-export const FIXED_DT = 0.05;
+/** Fixed delta time (seconds) for the physics simulation loop.
+ * Must match DEFAULT_DT from @/core/race/engine/constants to ensure
+ * live and background simulations produce identical results. */
+export const FIXED_DT = 0.1;
 
 /** Maximum number of simulation steps per animation frame. */
 export const MAX_STEPS_PER_FRAME = 64;

@@ -1,5 +1,6 @@
 import type { NarrativeEvent, CommentaryLine } from "./types";
 import { NARRATIVE_THRESHOLDS } from "@/constants/narrativeThresholds";
+import type { RunnerConditionId } from "@/core/race/runnerConditions";
 
 /**
  * Holds all mutable tracking state for a single race commentary session.
@@ -20,6 +21,8 @@ export class NarrativeState {
   hasAnnouncedFinish = false;
   hasAnnouncedStretch = false;
   lastLeaderId: string | null = null;
+  readonly activeConditions: Map<string, Set<RunnerConditionId>> = new Map();
+  readonly peakVelocities: Map<string, number> = new Map();
 
   /**
    * Check if a specific event type can be announced (cooldown check).
@@ -78,5 +81,20 @@ export class NarrativeState {
    */
   getCommentary(): CommentaryLine[] {
     return this.commentary;
+  }
+
+  setActiveConditions(horseId: string, ids: Set<RunnerConditionId>): void {
+    this.activeConditions.set(horseId, new Set(ids));
+  }
+
+  getActiveConditions(horseId: string): Set<RunnerConditionId> {
+    return this.activeConditions.get(horseId) ?? new Set();
+  }
+
+  updatePeakVelocity(horseId: string, velocity: number): void {
+    const current = this.peakVelocities.get(horseId) ?? 0;
+    if (velocity > current) {
+      this.peakVelocities.set(horseId, velocity);
+    }
   }
 }

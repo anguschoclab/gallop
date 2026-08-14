@@ -8,6 +8,8 @@ import type { Race, RaceResult } from "@/core/race/types";
 import type { Rng } from "@/core/common/rng";
 import { FIXED_DT, MAX_STEPS_PER_FRAME, SPLIT_FRACTIONS } from "@/constants/raceBroadcastConstants";
 
+import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
+
 /**
  * Callback invoked once per non-silent simulation step.
  *
@@ -83,9 +85,14 @@ export function recordFinish(
   if (r.finishTime === null) return;
   finishOrder.push({
     horseId: r.horseId,
-    position: finishOrder.length + 1,
+    position: 0,
     time: r.finishTime,
   });
+  // Re-sort by deterministic tie-break chain and reassign positions
+  finishOrder.sort((a, b) => compareFinishOrder(a, b));
+  for (let i = 0; i < finishOrder.length; i++) {
+    finishOrder[i].position = i + 1;
+  }
 }
 
 /**
@@ -161,7 +168,6 @@ export function useLiveRaceSimulation({
     const splitMarkers = SPLIT_FRACTIONS.map((f) => f * race.distance);
 
     const runOneTick = (silent: boolean): boolean => {
-      simTimeRef.current += FIXED_DT;
       let stillRunning = false;
 
       const pace = computePaceContext(runners, race.distance);
@@ -195,6 +201,7 @@ export function useLiveRaceSimulation({
           aliveRank,
           windKph,
           windDirectionDeg,
+          runners.length,
         );
         if (!splitCrossingsRef.current.has(r.horseId)) {
           splitCrossingsRef.current.set(r.horseId, []);
@@ -213,6 +220,7 @@ export function useLiveRaceSimulation({
           stillRunning = true;
         }
       }
+      simTimeRef.current += FIXED_DT;
       return stillRunning;
     };
 

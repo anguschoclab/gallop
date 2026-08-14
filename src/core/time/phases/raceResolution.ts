@@ -19,7 +19,7 @@ import type {
 import { rngForRace } from "@/services/race/raceSimulationService";
 import type { Race } from "@/game/types";
 import type { WeatherState } from "@/core/weather/weatherTypes";
-import type { ClaimingIntent } from "@/core/resolver/intents";
+import type { ClaimingIntent, RaceResolutionIntent } from "@/core/resolver/intents";
 import { simulateRace } from "@/services/race/raceSimulationExecutor";
 import { generateRaceImpacts } from "@/services/race/raceImpactGenerator";
 import { processClaimingResolution } from "@/services/auction/claimingResolutionService";

@@ -3,6 +3,7 @@ import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Race } from "@/core/race/types";
 import { projectedBeyer } from "@/components/race/raceVisualHelpers";
 import { assertTieBreakFields } from "@/core/race/engine/validateTieBreakFields";
+import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
 
 /** Sub-centimetre position gaps are treated as ties (1 cm in metres). */
 const POS_EPSILON = 0.01;
@@ -66,24 +67,10 @@ export function useLeaderboardState(
     [runners, race?.distance, classBonus, calibratedPars, tick],
   );
 
-  /**
-   * Deterministic tie-break chain. Floating point positions frequently tie
-   * (especially pre-start and post-finish), so we fall back to finish time,
-   * then barrier, then horseId — all stable across ticks — to stop the
-   * leaderboard order from flickering.
-   */
-  const tieBreak = (a: Runner, b: Runner) => {
-    const at = a.finishTime ?? Infinity;
-    const bt = b.finishTime ?? Infinity;
-    if (at !== bt) return at - bt;
-    if (a.barrier !== b.barrier) return a.barrier - b.barrier;
-    return a.horseId < b.horseId ? -1 : a.horseId > b.horseId ? 1 : 0;
-  };
-
   // Positions are continuous metres; treat sub-centimetre gaps as ties.
   const byPosition = (a: Runner, b: Runner) => {
     if (Math.abs(b.position - a.position) > POS_EPSILON) return b.position - a.position;
-    return tieBreak(a, b);
+    return compareFinishOrder(a, b);
   };
 
   const positionSorted = useMemo(

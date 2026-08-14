@@ -40,7 +40,7 @@ interface ResultOverlayProps {
  */
 export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOverlayProps) {
   const prizeSplit = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
-  const ordered = [...runners].sort((a, b) => (a.finishTime ?? 999) - (b.finishTime ?? 999));
+  const ordered = [...runners].sort(compareFinishOrder);
   const finishedCount = runners.filter((r) => r.finishTime !== null).length;
   const allFinished = finishedCount === runners.length;
   const showWaiting = hideResults && !allFinished;

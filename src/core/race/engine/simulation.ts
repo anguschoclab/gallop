@@ -13,6 +13,7 @@ import type { Horse, Race, Stable, Jockey } from "@/game/types";
 import type { CourseSpecification, TrackSection } from "@/data/tracks";
 import type { Rng } from "@/core/common/types";
 import { clamp } from "@/core/common/math";
+import { compareFinishOrder } from "./compareFinishOrder";
 import type { RaceSnapshot } from "./raceSnapshotTypes";
 import { calculateTacticalAdjustment } from "./tacticalAI";
 import { type Runner, type PaceContext, paceShapeMul } from "./runnerBuilder";
@@ -1082,8 +1083,8 @@ export function runRaceToCompletion(
   }
 
   const ranked = [...runners]
-    .map((r) => ({ horseId: r.horseId, time: r.finishTime ?? Infinity }))
-    .sort((a, b) => a.time - b.time);
+    .map((r) => ({ horseId: r.horseId, time: r.finishTime ?? Infinity, barrier: r.barrier }))
+    .sort(compareFinishOrder);
 
   const result = ranked.map((r, idx) => ({
     horseId: r.horseId,

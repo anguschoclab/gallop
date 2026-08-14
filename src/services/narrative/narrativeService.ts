@@ -17,6 +17,48 @@ import {
 } from "./eventDetector";
 import { NARRATIVE_THRESHOLDS } from "@/constants/narrativeThresholds";
 import { NarrativeState } from "./narrativeState";
+import { buildFieldContext, deriveRunnerConditions } from "@/core/race/runnerConditions";
+import type {
+  RunnerConditionId,
+  RunnerHistory,
+  ConditionTone,
+  RunnerCondition,
+} from "@/core/race/runnerConditions";
+
+const CONDITION_TO_EVENT: Record<RunnerConditionId, NarrativeEvent> = {
+  flying: "FLYING",
+  battling: "BATTLING",
+  boxed: "BOXED_IN",
+  grinding: "GRINDING",
+  flagging: "FLAGGING",
+  distressed: "IN_TROUBLE",
+  ailing: "AILING",
+  settled: "SETTLED",
+};
+
+const CONDITION_COOLDOWN: Record<RunnerConditionId, number> = {
+  flying: NARRATIVE_THRESHOLDS.CONDITION_FLYING_COOLDOWN,
+  battling: NARRATIVE_THRESHOLDS.CONDITION_BATTLING_COOLDOWN,
+  boxed: NARRATIVE_THRESHOLDS.CONDITION_BOXED_IN_COOLDOWN,
+  grinding: NARRATIVE_THRESHOLDS.CONDITION_GRINDING_COOLDOWN,
+  flagging: NARRATIVE_THRESHOLDS.CONDITION_FLAGGING_COOLDOWN,
+  distressed: NARRATIVE_THRESHOLDS.CONDITION_IN_TROUBLE_COOLDOWN,
+  ailing: NARRATIVE_THRESHOLDS.CONDITION_AILING_COOLDOWN,
+  settled: NARRATIVE_THRESHOLDS.CONDITION_SETTLED_COOLDOWN,
+};
+
+const TONE_PRIORITY: Record<ConditionTone, number> = {
+  negative: 0,
+  caution: 1,
+  positive: 2,
+  neutral: 3,
+};
+
+const HIGH_IMPACT_CONDITIONS: Set<RunnerConditionId> = new Set([
+  "flying",
+  "battling",
+  "distressed",
+]);
 
 /**
  * Orchestrates real-time race commentary generation.
@@ -76,6 +118,7 @@ export class NarrativeGenerator {
     this.checkIndividualEvents(runners, ranks, simTime, newLines);
     this.checkDrafting(runners, runnersMap, simTime, newLines);
     this.checkLaneWatch(runners, simTime, newLines);
+    this.checkConditionTransitions(runners, simTime, newLines);
 
     this.state.push(...newLines);
     return newLines;
@@ -332,6 +375,74 @@ export class NarrativeGenerator {
           );
         }
       }
+    }
+  }
+
+  private checkConditionTransitions(
+    runners: Runner[],
+    simTime: number,
+    newLines: CommentaryLine[],
+  ) {
+    if (!this.state.hasAnnouncedStart || this.state.hasAnnouncedFinish) return;
+
+    const field = buildFieldContext(runners);
+
+    for (const r of runners) {
+      if (r.finishTime !== null) continue;
+
+      this.state.updatePeakVelocity(r.horseId, r.velocity);
+
+      const history: RunnerHistory = {
+        peakVelocity: this.state.peakVelocities.get(r.horseId) ?? 0,
+      };
+
+      const conditions = deriveRunnerConditions(r, field, history, this.race.distance);
+      const currentIds = new Set(conditions.map((c) => c.id));
+      const previousIds = this.state.getActiveConditions(r.horseId);
+
+      const newIds = [...currentIds].filter((id) => !previousIds.has(id));
+
+      if (newIds.length === 0) {
+        this.state.setActiveConditions(r.horseId, currentIds);
+        continue;
+      }
+
+      // Ailing fires independently, outside the single-condition limit
+      const ailingNew = newIds.find((id) => id === "ailing");
+      if (ailingNew) {
+        const eventType = CONDITION_TO_EVENT["ailing"];
+        const cooldown = CONDITION_COOLDOWN["ailing"];
+        if (this.state.canAnnounce(eventType, r.horseId, simTime, cooldown)) {
+          const line = this.createLine(eventType, simTime, r);
+          newLines.push(line);
+          this.state.setCooldown(eventType, r.horseId, simTime, cooldown);
+        }
+      }
+
+      // For all other new conditions, pick highest priority: emphatic first, then tone
+      const nonAilingNew = newIds.filter((id) => id !== "ailing");
+      if (nonAilingNew.length > 0) {
+        const sorted = nonAilingNew.sort((a, b) => {
+          const aCond = conditions.find((c) => c.id === a)!;
+          const bCond = conditions.find((c) => c.id === b)!;
+          if (aCond.emphatic !== bCond.emphatic) return aCond.emphatic ? -1 : 1;
+          return TONE_PRIORITY[aCond.tone] - TONE_PRIORITY[bCond.tone];
+        });
+
+        const winner = sorted[0];
+        const eventType = CONDITION_TO_EVENT[winner];
+        const cooldown = CONDITION_COOLDOWN[winner];
+        if (this.state.canAnnounce(eventType, r.horseId, simTime, cooldown)) {
+          const line = this.createLine(eventType, simTime, r);
+          if (HIGH_IMPACT_CONDITIONS.has(winner)) {
+            line.isHighImpact = true;
+          }
+          newLines.push(line);
+          this.state.setCooldown(eventType, r.horseId, simTime, cooldown);
+        }
+      }
+
+      this.state.setActiveConditions(r.horseId, currentIds);
     }
   }
 
