@@ -105,6 +105,7 @@ export function RaceBroadcast({
     filter,
     sortBy,
     minBeyer,
+    lastUpdatedAt,
     onFilterChange,
     onSortByChange,
     onMinBeyerChange,
