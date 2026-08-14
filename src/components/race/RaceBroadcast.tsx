@@ -246,6 +246,7 @@ export function RaceBroadcast({
           filter={filter}
           sortBy={sortBy}
           minBeyer={minBeyer}
+          lastUpdatedAt={lastUpdatedAt}
           onFilterChange={onFilterChange}
           onSortByChange={onSortByChange}
           onMinBeyerChange={onMinBeyerChange}
