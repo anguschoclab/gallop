@@ -28,6 +28,10 @@ import {
   type LearningState,
 } from "./learningModule";
 import { FACILITY_UPGRADE_COSTS } from "@/core/facilities/facilityTypes";
+import {
+  FACILITY_UPGRADE_BASE_THRESHOLD,
+  DEFAULT_SUBSYSTEM_WEIGHT,
+} from "./subsystemWeightConstants";
 
 export interface FacilityAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -226,7 +230,7 @@ export function shouldUpgradeFacility(
 
   // Get adaptive threshold
   const contextKey = `${stable.personality}:${facilityType}`;
-  const baseThreshold = 50;
+  const baseThreshold = FACILITY_UPGRADE_BASE_THRESHOLD;
   const adaptiveThreshold = getAdaptiveThreshold(
     aiState.learningState,
     "facility_upgrade",

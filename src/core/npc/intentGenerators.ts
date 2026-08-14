@@ -81,6 +81,11 @@ import {
   applyAffinityBoost,
 } from "@/core/ai/jockeyStrategyAI";
 import { createAuctionAIState, shouldConsignHorse } from "@/core/ai/auctionAI";
+import {
+  HORSE_RATING_TO_VALUE_MULTIPLIER,
+  CONSIGNMENT_INTENT_PRIORITY,
+  DEFAULT_SUBSYSTEM_WEIGHT,
+} from "@/core/ai/subsystemWeightConstants";
 
 /**
  * Generate all NPC intents for the day.
@@ -881,7 +886,7 @@ function generateNpcAuctionIntents(
   day: number,
   ownedHorses: Horse[],
   auctions: AuctionSale[],
-  auctionWeight = 1.0,
+  auctionWeight = DEFAULT_SUBSYSTEM_WEIGHT,
 ): ConsignmentIntent[] {
   const intents: ConsignmentIntent[] = [];
 
@@ -903,14 +908,16 @@ function generateNpcAuctionIntents(
     for (const horse of ownedHorses) {
       const result = shouldConsignHorse(auctionAI, horse, stable, day, auctionWeight);
       if (result.shouldConsign) {
-        const reservePrice = Math.floor(calculateOverallRating(horse) * 1000);
+        const reservePrice = Math.floor(
+          calculateOverallRating(horse) * HORSE_RATING_TO_VALUE_MULTIPLIER,
+        );
         intents.push({
           id: generateUUID(),
           entityId: horse.id,
           source: "npc",
           sourceId: stable.id,
           day,
-          priority: 40,
+          priority: CONSIGNMENT_INTENT_PRIORITY,
           type: "consignment",
           horseId: horse.id,
           saleId: sale.id,

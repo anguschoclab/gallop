@@ -621,4 +621,71 @@ describe("generateNpcIntents auction consignment", () => {
     const consignmentIntents = intents.filter((i) => i.type === "consignment");
     expect(consignmentIntents.length).toBe(0);
   });
+
+  it("generates no consignment intents when auction weight is 0", () => {
+    const horse = createTestHorse({
+      id: "horse-old",
+      name: "Old Underperformer",
+      age: 8,
+      stableId: "stable1",
+      energy: 50,
+      form: 30,
+      stats: {
+        speed: 20,
+        stamina: 20,
+        acceleration: 20,
+        consistency: 20,
+        temperament: 20,
+        conformation: 20,
+      },
+    });
+
+    // Set up stableAI state with auction weight = 0
+    const stableAI = {
+      id: "stable1",
+      stableId: "stable1",
+      subsystemWeights: {
+        raceEntry: 1.0,
+        training: 1.0,
+        auction: 0,
+        claiming: 1.0,
+        breeding: 1.0,
+        facility: 1.0,
+        market: 1.0,
+        upkeep: 1.0,
+      },
+    };
+
+    const mockState = {
+      horses: { "horse-old": horse },
+      pregnancies: [],
+      races: {},
+      npcStables: [createTestStable({ id: "stable1", country: "USA", personality: "aggressive" })],
+      npcAIManager: {
+        stableStates: { stable1: stableAI },
+        globalDay: 1,
+        regionalKings: {},
+      },
+      auctions: [
+        {
+          id: "sale-1",
+          name: "Test Sale",
+          kind: "mixed",
+          day: 10,
+          lots: [],
+          resolved: false,
+        },
+      ],
+      jockeys: [],
+    } as unknown as GameState;
+
+    const stableHash = "stable1"
+      .split("")
+      .reduce((acc, ch) => (acc + ch.charCodeAt(0)) & 0xffff, 0);
+    const day = (7 - (stableHash % 7)) % 7 || 7;
+
+    const intents = generateNpcIntents(mockState, day);
+    const consignmentIntents = intents.filter((i) => i.type === "consignment");
+    expect(consignmentIntents.length).toBe(0);
+  });
 });

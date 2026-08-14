@@ -3,6 +3,7 @@ import type { Race, Horse } from "@/game/types";
 import { getCountry } from "@/data/gradedRaces";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { distanceBucket } from "@/core/horse/paceTendency";
+import { DEFAULT_FIELD_SIZE } from "@/constants";
 
 /**
  * Filter state for races. The optional fields power the quick-filter chips
@@ -60,6 +61,18 @@ export function useRaceFilters(
   const windowDays = timeWindow === "all" ? Infinity : Number(timeWindow);
   const emptySet = useMemo(() => new Set<string>(), []);
 
+  const eligibleRaceIds = useMemo(() => {
+    if (eligibleOnly !== "1" || ownedHorses.length === 0) return null;
+    const ids = new Set<string>();
+    for (const r of races) {
+      if (r.resolved || r.day < day) continue;
+      if (ownedHorses.some((h) => isHorseEligibleForRace(h, r, emptySet, day))) {
+        ids.add(r.id);
+      }
+    }
+    return ids;
+  }, [races, day, ownedHorses, eligibleOnly, emptySet]);
+
   const filteredRaces = useMemo(() => {
     const qLower = q ? q.toLowerCase() : "";
     return races
@@ -82,11 +95,9 @@ export function useRaceFilters(
           if (owned === "owned" && !hasOwned) return false;
           if (owned === "not-owned" && hasOwned) return false;
         }
-        if (openOnly === "1" && r.entries.length >= (r.fieldSize ?? 14)) return false;
-        if (eligibleOnly === "1") {
-          if (ownedHorses.length === 0) return false;
-          if (!ownedHorses.some((h) => isHorseEligibleForRace(h, r, emptySet, day))) return false;
-        }
+        if (openOnly === "1" && r.entries.length >= (r.fieldSize ?? DEFAULT_FIELD_SIZE))
+          return false;
+        if (eligibleRaceIds && !eligibleRaceIds.has(r.id)) return false;
         if (qLower && !r.name.toLowerCase().includes(qLower)) return false;
         return true;
       })
@@ -103,10 +114,8 @@ export function useRaceFilters(
     stableId,
     windowDays,
     trip,
-    eligibleOnly,
     openOnly,
-    ownedHorses,
-    emptySet,
+    eligibleRaceIds,
   ]);
 
   const filterOptions = useMemo(() => {

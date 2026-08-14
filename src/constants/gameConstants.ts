@@ -658,3 +658,46 @@ export const INVITE_AT_LARGE_MULTIPLIER = 2; // max total invites = fieldSize * 
  */
 export const FOAL_BREAKING_IN_DAY = 18;
 export const FOAL_EARLY_WORKOUTS_DAY = 24;
+
+// ============================================================================
+// DASHBOARD
+// ============================================================================
+
+/**
+ * Maximum number of upcoming races to display on the dashboard
+ */
+export const DASHBOARD_UPCOMING_RACES_LIMIT = 8;
+
+/**
+ * Maximum number of urgent inbox messages to display on the dashboard
+ */
+export const DASHBOARD_URGENT_MESSAGES_LIMIT = 3;
+
+/**
+ * Maximum number of top rivals to display on the dashboard
+ */
+export const DASHBOARD_TOP_RIVALS_LIMIT = 3;
+
+/**
+ * Minimum friction level for a rival to be considered a "top rival" on the dashboard
+ */
+export const DASHBOARD_RIVAL_FRICTION_THRESHOLD = 40;
+
+/**
+ * Number of days to look back for head-to-head race results
+ */
+export const HEAD_TO_HEAD_LOOKBACK_DAYS = 30;
+
+// ============================================================================
+// RACE FIELD DEFAULTS
+// ============================================================================
+
+/**
+ * Default field size for races when no explicit fieldSize is set
+ */
+export const DEFAULT_FIELD_SIZE = 14;
+
+/**
+ * The three graded race tiers, ordered from highest to lowest
+ */
+export const RACE_GRADES = ["G1", "G2", "G3"] as const;

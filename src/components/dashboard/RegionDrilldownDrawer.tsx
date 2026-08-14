@@ -303,7 +303,10 @@ export function RegionDrilldownDrawer({
   );
 }
 
-function linkFor(kind: EntityKind, id: string): { to: string; params: Record<string, string> } | null {
+function linkFor(
+  kind: EntityKind,
+  id: string,
+): { to: string; params: Record<string, string> } | null {
   if (kind === "jockeys") return { to: "/jockey/$jockeyId", params: { jockeyId: id } };
   if (kind === "trainers") return { to: "/staff/$staffId", params: { staffId: id } };
   if (id === "player") return null;

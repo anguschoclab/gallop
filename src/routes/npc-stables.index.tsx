@@ -1,8 +1,7 @@
 // NPC Stables Directory - Browse rival stables and their horses
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Trophy, TrendingUp, Users, Building2, Search, X } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -12,11 +11,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
+import { StableList } from "@/components/stable";
 import { useNpcStablesFilters } from "@/hooks/stable/useNpcStablesFilters";
-import { getReputationStars } from "@/core/stable/uiHelpers";
-import { stableTierColor } from "@/core/common/uiTokens";
-import type { Stable } from "@/core/stable/types";
 
 type NpcStablesSearch = {
   q: string;
@@ -123,50 +119,21 @@ function NpcStablesPage() {
         </Card>
       ) : (
         <>
-          {/* Elite Stables */}
-          {eliteStables.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-3 flex items-center gap-2 font-[family-name:var(--font-display)]">
-                <Trophy className="w-5 h-5 text-gold" />
-                Elite Stables
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {eliteStables.map((stable) => (
-                  <StableCard key={stable.id} stable={stable} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Mid-Tier Stables */}
-          {midStables.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-3 flex items-center gap-2 font-[family-name:var(--font-display)]">
-                <TrendingUp className="w-5 h-5 text-gold" />
-                Mid-Tier Stables
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {midStables.map((stable) => (
-                  <StableCard key={stable.id} stable={stable} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Budget Stables */}
-          {budgetStables.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-3 flex items-center gap-2 font-[family-name:var(--font-display)]">
-                <Users className="w-5 h-5 text-gold" />
-                Budget Stables
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {budgetStables.map((stable) => (
-                  <StableCard key={stable.id} stable={stable} />
-                ))}
-              </div>
-            </div>
-          )}
+          <StableList
+            title="Elite Stables"
+            icon={<Trophy className="w-5 h-5 text-gold" />}
+            stables={eliteStables}
+          />
+          <StableList
+            title="Mid-Tier Stables"
+            icon={<TrendingUp className="w-5 h-5 text-gold" />}
+            stables={midStables}
+          />
+          <StableList
+            title="Budget Stables"
+            icon={<Users className="w-5 h-5 text-gold" />}
+            stables={budgetStables}
+          />
         </>
       )}
 
@@ -183,57 +150,6 @@ function NpcStablesPage() {
           </p>
         </div>
       )}
-    </div>
-  );
-}
-
-function StableCard({ stable }: { stable: Stable }) {
-  return (
-    <div className="relative h-full">
-      <div className="absolute top-2 right-2 z-10">
-        <BookmarkButton
-          type="stable"
-          id={stable.id}
-          label={stable.name}
-          subtitle={`${stable.country} · ${stable.tier}`}
-        />
-      </div>
-      <Link to="/npc-stables/$stableId" params={{ stableId: stable.id }}>
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-gold-muted">
-          <CardHeader className="pb-3">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-8 h-8 rounded-full border-2"
-                  style={{
-                    backgroundColor: stable.colors.primary,
-                    borderColor: stable.colors.secondary,
-                  }}
-                />
-                <div>
-                  <CardTitle className="text-lg font-[family-name:var(--font-display)]">
-                    {stable.name}
-                  </CardTitle>
-                  <p className="text-sm text-cream-muted">{stable.country}</p>
-                </div>
-              </div>
-              <Badge className={stableTierColor(stable.tier)}>{stable.tier}</Badge>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-cream-muted mb-3 line-clamp-2">
-              {stable.description ||
-                `${stable.owner}'s racing operation with ${stable.horses.length} horses.`}
-            </p>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-cream-muted">{stable.horses.length} horses</span>
-              <span className="text-fame" title={`Reputation: ${stable.reputation}`}>
-                {getReputationStars(stable.reputation)}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-      </Link>
     </div>
   );
 }

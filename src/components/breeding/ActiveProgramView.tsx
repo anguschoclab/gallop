@@ -7,10 +7,29 @@ import { cn } from "@/lib/cn";
 import { ALL_ARCHETYPES } from "@/core/breeding/archetypes";
 import { calculateGeneticDistance } from "@/core/breeding/programs";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { DistanceBadge } from "./DistanceBadge";
 import { archetypeMeta } from "./ArchetypeMeta";
+import { useCancelBreedingProgram } from "./useCancelBreedingProgram";
 import { TrendingDown, CheckCircle2, Circle, Plus, X, Dna, Award } from "lucide-react";
 import type { Horse } from "@/core/horse/types";
+import {
+  CANCEL_DIALOG_TITLE,
+  CANCEL_DIALOG_DESCRIPTION,
+  CANCEL_DIALOG_KEEP,
+  CANCEL_DIALOG_CONFIRM,
+  CANCEL_BUTTON_ARIA_LABEL,
+} from "@/constants/breedingConstants";
 
 function getBestSurface(mare: Horse) {
   const best = Object.entries((mare.surfaceAptitude || {}) as Record<string, number>).sort(
@@ -20,23 +39,25 @@ function getBestSurface(mare: Horse) {
 }
 
 export function ActiveProgramView() {
-  const program = useGame((s) => s.activeBreedingProgram)!;
+  const program = useGame((s) => s.activeBreedingProgram);
   const horses = useGame((s) => s.horses);
-  const cancelBreedingProgram = useGame((s) => s.cancelBreedingProgram);
   const enrollDamInProgram = useGame((s) => s.enrollDamInProgram);
   const unenrollDamFromProgram = useGame((s) => s.unenrollDamFromProgram);
-
-  const archetype = ALL_ARCHETYPES.find((a) => a.id === program.archetypeId);
-  const meta = archetypeMeta(program.archetypeId);
-
-  // ⚡ Bolt Optimization:
-  // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loops.
-  // Impact: Reduces rendering complexity from O(N*M) to O(N+M) avoiding UI jank.
+  const { isOpen, openCancelDialog, handleDialogCancel, handleConfirm } =
+    useCancelBreedingProgram();
 
   // ⚡ Bolt Optimization:
   // Pre-calculate a Set for O(1) membership checks instead of running O(M) .includes() inside the .filter() loop.
   // Impact: Reduces complexity from O(N*M) to O(N+M), improving render performance when lists are large.
-  const enrolledDamSet = useMemo(() => new Set(program.enrolledDamIds), [program.enrolledDamIds]);
+  const enrolledDamSet = useMemo(
+    () => new Set(program?.enrolledDamIds ?? []),
+    [program?.enrolledDamIds],
+  );
+
+  if (!program) return null;
+
+  const archetype = ALL_ARCHETYPES.find((a) => a.id === program.archetypeId);
+  const meta = archetypeMeta(program.archetypeId);
 
   const eligibleMares = Object.values(horses).filter(
     (h) =>
@@ -52,11 +73,6 @@ export function ActiveProgramView() {
   const handleEnroll = (damId: string) => {
     const result = enrollDamInProgram(damId);
     if (!result.ok) toast.error(result.reason);
-  };
-
-  const handleCancel = () => {
-    cancelBreedingProgram();
-    toast.info("Breeding program cancelled.");
   };
 
   return (
@@ -78,15 +94,43 @@ export function ActiveProgramView() {
             </div>
             <div className="flex items-center gap-2">
               <DistanceBadge distance={program.geneticDistance} />
-              <Button
-                size="sm"
-                variant="ghost"
-                className="h-7 w-7 p-0 text-cream-muted hover:text-red-400"
-                onClick={handleCancel}
-                aria-label="Cancel breeding program"
-              >
-                <X className="h-3.5 w-3.5" />
-              </Button>
+              <AlertDialog open={isOpen} onOpenChange={(open) => !open && handleDialogCancel()}>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 w-7 p-0 text-cream-muted hover:text-red-400"
+                    onClick={openCancelDialog}
+                    aria-label={CANCEL_BUTTON_ARIA_LABEL}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-slate-950 border-destructive/30 rounded-none">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-destructive uppercase font-black tracking-widest">
+                      {CANCEL_DIALOG_TITLE}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-cream/60 font-mono text-xs uppercase tracking-tighter">
+                      {CANCEL_DIALOG_DESCRIPTION(archetype?.name ?? program.archetypeId)}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel
+                      onClick={handleDialogCancel}
+                      className="rounded-none font-black text-[10px] uppercase tracking-widest border-white/10 hover:bg-white/5"
+                    >
+                      {CANCEL_DIALOG_KEEP}
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleConfirm}
+                      className="bg-destructive text-white hover:bg-destructive/90 rounded-none font-black text-[10px] uppercase tracking-widest"
+                    >
+                      {CANCEL_DIALOG_CONFIRM}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </div>
         </CardHeader>

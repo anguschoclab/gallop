@@ -18,21 +18,22 @@ import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Horse, Race } from "@/game/types";
 import type { RacePhase } from "@/hooks/race/useRacePhase";
 
-export interface RaceBroadcastProps {
-  race: Race;
-  runners: Runner[];
+export interface SimulationSlice {
+  tick: number;
+  phase: RacePhase;
   finished: boolean;
   paused: boolean;
   speed: number;
-  tick: number;
-  phase: RacePhase;
-  raceWeather: { tempC: number; windKph: number; windDirectionDeg?: number } | undefined;
-  followTarget: string | null;
-  anyFinished: boolean;
-  allFinished: boolean;
-  hideUntilAllFinished: boolean;
+  simTimeRef?: MutableRefObject<number>;
+}
+
+export interface CommentarySlice {
   commentary: CommentaryLine[];
   subjectHorseId: string | null;
+  announcement: string;
+}
+
+export interface LeaderboardSlice {
   sorted: { r: Runner; beyer: number | null }[];
   positionRank: Map<string, number>;
   runnerOdds: Map<string, string>;
@@ -42,65 +43,87 @@ export interface RaceBroadcastProps {
   onFilterChange: (v: "all" | "owned" | "top5") => void;
   onSortByChange: (v: "position" | "beyer" | "velocity") => void;
   onMinBeyerChange: (v: number) => void;
+}
+
+export interface ControlsSlice {
   onTogglePause: () => void;
   onSetSpeed: (s: number) => void;
   onSetFollowTarget: (id: string | null) => void;
   onToggleHideResults: () => void;
   onShowAllCards: () => void;
   onNavigateBack: () => void;
-  localHorseMap: Map<string, Horse>;
-  calibratedPars: Record<number, number>;
-  liveSplits: Map<string, number[]>;
+  followTarget: string | null;
+  hideUntilAllFinished: boolean;
+  allFinished: boolean;
+  anyFinished: boolean;
+}
+
+export interface AnalysisSlice {
   analysisOpen: boolean;
   setAnalysisOpen: (v: boolean) => void;
   analysisRef: RefObject<HTMLDivElement | null>;
+  liveSplits: Map<string, number[]>;
+  calibratedPars: Record<number, number>;
+  localHorseMap: Map<string, Horse>;
+}
+
+export interface FieldDialogSlice {
   showAllCards: boolean;
   setShowAllCards: (v: boolean) => void;
-  announcement: string;
-  simTimeRef?: MutableRefObject<number>;
+}
+
+export interface RaceBroadcastProps {
+  race: Race;
+  runners: Runner[];
+  raceWeather: { tempC: number; windKph: number; windDirectionDeg?: number } | undefined;
+  simulation: SimulationSlice;
+  commentary: CommentarySlice;
+  leaderboard: LeaderboardSlice;
+  controls: ControlsSlice;
+  analysis: AnalysisSlice;
+  fieldDialog: FieldDialogSlice;
 }
 
 export function RaceBroadcast({
   race,
   runners,
-  finished,
-  paused,
-  speed,
-  tick,
-  phase,
   raceWeather,
-  followTarget,
-  anyFinished,
-  allFinished,
-  hideUntilAllFinished,
+  simulation,
   commentary,
-  subjectHorseId,
-  sorted,
-  positionRank,
-  runnerOdds,
-  filter,
-  sortBy,
-  minBeyer,
-  onFilterChange,
-  onSortByChange,
-  onMinBeyerChange,
-  onTogglePause,
-  onSetSpeed,
-  onSetFollowTarget,
-  onToggleHideResults,
-  onShowAllCards,
-  onNavigateBack,
-  localHorseMap,
-  calibratedPars,
-  liveSplits,
-  analysisOpen,
-  setAnalysisOpen,
-  analysisRef,
-  showAllCards,
-  setShowAllCards,
-  announcement,
-  simTimeRef,
+  leaderboard,
+  controls,
+  analysis,
+  fieldDialog,
 }: RaceBroadcastProps) {
+  const { tick, phase, finished, paused, speed, simTimeRef } = simulation;
+  const { commentary: commentaryLines, subjectHorseId, announcement } = commentary;
+  const {
+    sorted,
+    positionRank,
+    runnerOdds,
+    filter,
+    sortBy,
+    minBeyer,
+    onFilterChange,
+    onSortByChange,
+    onMinBeyerChange,
+  } = leaderboard;
+  const {
+    onTogglePause,
+    onSetSpeed,
+    onSetFollowTarget,
+    onToggleHideResults,
+    onShowAllCards,
+    onNavigateBack,
+    followTarget,
+    hideUntilAllFinished,
+    allFinished,
+    anyFinished,
+  } = controls;
+  const { analysisOpen, setAnalysisOpen, analysisRef, liveSplits, calibratedPars, localHorseMap } =
+    analysis;
+  const { showAllCards, setShowAllCards } = fieldDialog;
+
   const skyBg = getSkyBackground(race.weather);
   const showReplay = phase === "review" && race.resolved && !!race.snapshots?.length;
 
@@ -182,7 +205,7 @@ export function RaceBroadcast({
               simTimeRef={simTimeRef}
             />
           )}
-          <BroadcastCommentary commentary={commentary} />
+          <BroadcastCommentary commentary={commentaryLines} />
 
           {phase === "review" && (
             <div ref={analysisRef}>

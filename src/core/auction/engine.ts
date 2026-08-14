@@ -31,6 +31,7 @@ import {
   recordBiddingDecision,
 } from "@/core/ai/auctionAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/core/ai/subsystemWeightConstants";
 import { SALE_TRIGGERS, KIND_LABELS } from "./data";
 import {
   CONSIGNMENT_COMMISSION,
@@ -389,7 +390,15 @@ export function calculateNpcBid(
       };
 
       // Check if stable should bid using AI
-      const shouldBid = shouldBidOnHorse(aiState.auctionAI, horse, tempLot, stable, currentDay);
+      const auctionWeight = aiState.subsystemWeights?.auction ?? DEFAULT_SUBSYSTEM_WEIGHT;
+      const shouldBid = shouldBidOnHorse(
+        aiState.auctionAI,
+        horse,
+        tempLot,
+        stable,
+        currentDay,
+        auctionWeight,
+      );
       if (!shouldBid) return null;
 
       // Calculate max bid using AI with friction consideration

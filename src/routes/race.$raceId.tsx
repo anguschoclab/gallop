@@ -270,43 +270,55 @@ export function LiveRace() {
         <RaceBroadcast
           race={race}
           runners={runners}
-          finished={finished}
-          paused={paused}
-          speed={speed}
-          tick={tick}
-          phase={phase}
           raceWeather={raceWeather}
-          followTarget={followTarget}
-          anyFinished={anyFinished}
-          allFinished={allFinished}
-          hideUntilAllFinished={hideUntilAllFinished}
-          commentary={commentary}
-          subjectHorseId={subjectHorseId}
-          sorted={sorted}
-          positionRank={positionRank}
-          runnerOdds={runnerOdds}
-          filter={filter}
-          sortBy={sortBy}
-          minBeyer={minBeyer}
-          onFilterChange={setFilter}
-          onSortByChange={setSortBy}
-          onMinBeyerChange={setMinBeyer}
-          onTogglePause={() => setPaused((p) => !p)}
-          onSetSpeed={setSpeed}
-          onSetFollowTarget={setFollowTarget}
-          onToggleHideResults={() => setHideUntilAllFinished((v: boolean) => !v)}
-          onShowAllCards={() => setShowAllCards(true)}
-          onNavigateBack={navigateToRaces}
-          localHorseMap={localHorseMap}
-          calibratedPars={calibratedPars ?? {}}
-          liveSplits={liveSplits}
-          analysisOpen={analysisOpen}
-          setAnalysisOpen={setAnalysisOpen}
-          analysisRef={analysisRef}
-          showAllCards={showAllCards}
-          setShowAllCards={setShowAllCards}
-          announcement={announcement}
-          simTimeRef={simTimeRef}
+          simulation={{
+            tick,
+            phase,
+            finished,
+            paused,
+            speed,
+            simTimeRef,
+          }}
+          commentary={{
+            commentary,
+            subjectHorseId,
+            announcement,
+          }}
+          leaderboard={{
+            sorted,
+            positionRank,
+            runnerOdds,
+            filter,
+            sortBy,
+            minBeyer,
+            onFilterChange: setFilter,
+            onSortByChange: setSortBy,
+            onMinBeyerChange: setMinBeyer,
+          }}
+          controls={{
+            onTogglePause: () => setPaused((p) => !p),
+            onSetSpeed: setSpeed,
+            onSetFollowTarget: setFollowTarget,
+            onToggleHideResults: () => setHideUntilAllFinished((v: boolean) => !v),
+            onShowAllCards: () => setShowAllCards(true),
+            onNavigateBack: navigateToRaces,
+            followTarget,
+            hideUntilAllFinished,
+            allFinished,
+            anyFinished,
+          }}
+          analysis={{
+            analysisOpen,
+            setAnalysisOpen,
+            analysisRef,
+            liveSplits,
+            calibratedPars: calibratedPars ?? {},
+            localHorseMap,
+          }}
+          fieldDialog={{
+            showAllCards,
+            setShowAllCards,
+          }}
         />
       </PhasePanel>
     </div>

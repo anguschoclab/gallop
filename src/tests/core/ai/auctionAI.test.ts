@@ -880,3 +880,37 @@ describe("shouldConsignHorse weight modulation", () => {
     expect(withWeight.reason).toBe("underperformer");
   });
 });
+
+describe("shouldBidOnHorse weight modulation", () => {
+  it("returns false when weight = 0", () => {
+    const stable = createMockStable({ cash: 1_000_000, personality: "aggressive" });
+    const aiState = createAuctionAIState(stable);
+    const horse = createMockHorse();
+    const lot = createMockAuctionLot({ reservePrice: 1000, hammerPrice: 5000 });
+    expect(shouldBidOnHorse(aiState, horse, lot, stable, 1, 0)).toBe(false);
+  });
+
+  it("weight = 1.0 preserves baseline behavior", () => {
+    const stable = createMockStable({ cash: 1_000_000, personality: "aggressive" });
+    const aiState = createAuctionAIState(stable);
+    const horse = createMockHorse();
+    const lot = createMockAuctionLot({ reservePrice: 1000, hammerPrice: 5000 });
+    const baseline = shouldBidOnHorse(aiState, horse, lot, stable, 1);
+    const withWeight = shouldBidOnHorse(aiState, horse, lot, stable, 1, 1.0);
+    expect(withWeight).toBe(baseline);
+  });
+
+  it("weight > 1 makes bidding more likely (lower threshold)", () => {
+    const stable = createMockStable({ cash: 1_000_000, personality: "conservative" });
+    const aiState = createAuctionAIState(stable);
+    const horse = createMockHorse();
+    const lot = createMockAuctionLot({ reservePrice: 1000, hammerPrice: 5000 });
+    const baseline = shouldBidOnHorse(aiState, horse, lot, stable, 1);
+    const withWeight = shouldBidOnHorse(aiState, horse, lot, stable, 1, 2.0);
+    // If baseline is true, weighted must also be true
+    if (baseline) {
+      expect(withWeight).toBe(true);
+    }
+    expect(typeof withWeight).toBe("boolean");
+  });
+});

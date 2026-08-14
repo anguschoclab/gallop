@@ -11,6 +11,7 @@ import type { GameState, Horse, Race } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 import { createBreedingProgram } from "@/core/breeding/programs";
 import { createRng } from "@/core/common/rng";
+import { PROGRAM_STATUS_ACTIVE } from "@/constants/breedingConstants";
 
 /**
  * Converts a Horse array to Record<string, Horse> for use in test state fixtures.
@@ -63,7 +64,7 @@ export function makeBreedingProgram(overrides: Partial<BreedingProgram> = {}): B
     overrides.archetypeId ?? "elite-turf-stayer",
     overrides.createdDay ?? 0,
   );
-  return { ...base, ...overrides };
+  return { ...base, status: PROGRAM_STATUS_ACTIVE, ...overrides };
 }
 
 /**

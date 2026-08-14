@@ -11,13 +11,23 @@ import {
   createBreedingProgram as buildBreedingProgram,
   type BreedingProgram,
 } from "@/core/breeding/programs";
+import { getArchetypeById } from "@/core/breeding/archetypes";
 import type { ActionResult, GameStateCreator } from "../types";
+import {
+  PLAYER_STABLE_ID,
+  PROGRAM_STATUS_CANCELLED,
+  CANCEL_REASON_USER,
+  ERR_NO_ACTIVE_PROGRAM,
+  ERR_PROGRAM_ALREADY_ACTIVE,
+  ERR_MARE_ALREADY_ENROLLED,
+  FALLBACK_STABLE_NAME,
+} from "@/constants/breedingConstants";
 
 export type BreedingProgramSlice = {
   /** Begin a new active breeding program targeting the given archetype. */
   startBreedingProgram: (archetypeId: string) => ActionResult;
-  /** Clear the active breeding program (archives nothing — soft cancel). */
-  cancelBreedingProgram: () => void;
+  /** Cancel the active breeding program and record cancellation metadata. */
+  cancelBreedingProgram: (opts?: { reason?: string }) => ActionResult;
   /** Enroll a dam into the active program. */
   enrollDamInProgram: (damId: string) => ActionResult;
   /** Remove a dam from the active program. */
@@ -33,9 +43,9 @@ export const createBreedingProgramSlice: GameStateCreator<BreedingProgramSlice> 
   startBreedingProgram: (archetypeId) => {
     const state = get();
     if (state.activeBreedingProgram) {
-      return { ok: false, reason: "A breeding program is already active. Cancel it first." };
+      return { ok: false, reason: ERR_PROGRAM_ALREADY_ACTIVE };
     }
-    const stableId = "player";
+    const stableId = PLAYER_STABLE_ID;
     const day = state.day;
     const program = buildBreedingProgram(stableId, archetypeId, day);
     set((s) => ({
@@ -45,16 +55,44 @@ export const createBreedingProgramSlice: GameStateCreator<BreedingProgramSlice> 
     return { ok: true };
   },
 
-  cancelBreedingProgram: () => {
-    set({ activeBreedingProgram: null });
+  cancelBreedingProgram: (opts) => {
+    const state = get();
+    const program = state.activeBreedingProgram;
+    if (!program) {
+      return { ok: false, reason: ERR_NO_ACTIVE_PROGRAM };
+    }
+
+    const cancelledProgram: BreedingProgram = {
+      ...program,
+      enrolledDamIds: [],
+      status: PROGRAM_STATUS_CANCELLED,
+      cancelledAtDay: state.day,
+      cancellationReason: opts?.reason ?? CANCEL_REASON_USER,
+    };
+
+    const stableName = state.playerProfile?.stableName ?? FALLBACK_STABLE_NAME;
+    const archetypeName = getArchetypeById(program.archetypeId)?.name ?? program.archetypeId;
+    state.addLogEntry({
+      day: state.day,
+      text: `${stableName} cancelled the ${archetypeName} breeding program on day ${state.day}.`,
+    });
+
+    set((s) => ({
+      activeBreedingProgram: null,
+      breedingPrograms: s.breedingPrograms.map((p: BreedingProgram) =>
+        p.id === cancelledProgram.id ? cancelledProgram : p,
+      ),
+    }));
+
+    return { ok: true };
   },
 
   enrollDamInProgram: (damId) => {
     const state = get();
     const program = state.activeBreedingProgram;
-    if (!program) return { ok: false, reason: "No active breeding program." };
+    if (!program) return { ok: false, reason: ERR_NO_ACTIVE_PROGRAM };
     if (program.enrolledDamIds.includes(damId)) {
-      return { ok: false, reason: "Mare is already enrolled in this program." };
+      return { ok: false, reason: ERR_MARE_ALREADY_ENROLLED };
     }
     const updated: BreedingProgram = {
       ...program,

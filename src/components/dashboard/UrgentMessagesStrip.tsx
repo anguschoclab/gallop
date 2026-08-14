@@ -6,6 +6,14 @@ import { useGame } from "@/game/store";
 import { cn } from "@/lib/cn";
 import { AlertCircle, Bell, ChevronRight } from "lucide-react";
 import { NewsContent } from "@/components/narrative/NewsContent";
+import { interpolateCtaRoute } from "@/core/inbox/ctaRoute";
+import {
+  ICON_SIZE_SM,
+  STRIP_PRIORITY_BG_CLASSES,
+  STRIP_DEFAULT_BG_CLASS,
+  STRIP_BORDER_CLASSES,
+  STRIP_DEFAULT_BORDER_CLASS,
+} from "@/core/inbox/inboxConstants";
 
 interface UrgentMessagesStripProps {
   messages: Array<{
@@ -33,14 +41,11 @@ export function UrgentMessagesStrip({ messages }: UrgentMessagesStripProps) {
           key={msg.id}
           className={cn(
             "bg-t800 border-l-4 transition-all hover:bg-t750 cursor-pointer group",
-            msg.priority === "urgent" ? "border-l-red-500" : "border-l-gold",
+            STRIP_BORDER_CLASSES[msg.priority] ?? STRIP_DEFAULT_BORDER_CLASS,
           )}
           onClick={() => {
             if (msg.cta) {
-              const routePath = msg.cta.route.replace(
-                /\$(\w+)/g,
-                (_, key) => msg.cta?.params?.[key] || "",
-              );
+              const routePath = interpolateCtaRoute(msg.cta.route, msg.cta.params);
               navigate({ to: routePath as FileRouteTypes["to"] });
               markMessageRead(msg.id);
             } else {
@@ -52,13 +57,13 @@ export function UrgentMessagesStrip({ messages }: UrgentMessagesStripProps) {
             <div
               className={cn(
                 "p-2 rounded-full shrink-0",
-                msg.priority === "urgent" ? "bg-red-500/10 text-red-500" : "bg-gold/10 text-gold",
+                STRIP_PRIORITY_BG_CLASSES[msg.priority] ?? STRIP_DEFAULT_BG_CLASS,
               )}
             >
               {msg.priority === "urgent" ? (
-                <AlertCircle className="h-4 w-4" />
+                <AlertCircle className={ICON_SIZE_SM} />
               ) : (
-                <Bell className="h-4 w-4" />
+                <Bell className={ICON_SIZE_SM} />
               )}
             </div>
             <div className="space-y-1 min-w-0">
@@ -67,7 +72,7 @@ export function UrgentMessagesStrip({ messages }: UrgentMessagesStripProps) {
                 <NewsContent text={msg.body} />
               </p>
             </div>
-            <ChevronRight className="h-4 w-4 text-cream-muted ml-auto shrink-0 group-hover:text-gold transition-colors" />
+            <ChevronRight className={cn(ICON_SIZE_SM, "text-cream-muted ml-auto shrink-0 group-hover:text-gold transition-colors")} />
           </CardContent>
         </Card>
       ))}

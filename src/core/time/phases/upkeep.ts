@@ -24,6 +24,7 @@ import {
   updateReserveState,
 } from "@/core/ai/upkeepAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/core/ai/subsystemWeightConstants";
 import { UPKEEP_PER_HORSE, PHASE_ORDER_UPKEEP } from "@/constants";
 
 /**
@@ -171,7 +172,7 @@ export const upkeepPhase = {
         );
 
         // Check if stable should conserve cash
-        const upkeepWeight = aiState.subsystemWeights?.upkeep ?? 1.0;
+        const upkeepWeight = aiState.subsystemWeights?.upkeep ?? DEFAULT_SUBSYSTEM_WEIGHT;
         const shouldConserve = shouldConserveCash(
           updatedAIState,
           stable,

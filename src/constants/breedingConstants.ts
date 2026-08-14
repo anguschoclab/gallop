@@ -46,3 +46,34 @@ export const LETHAL_RECESSIVE_CHANCE = 0.25;
 export const TWIN_REDUCTION_CHANCE = 0.005;
 
 export const MAX_BATCH_BREEDING = 20;
+
+// Breeding program status values
+export const PROGRAM_STATUS_ACTIVE = "active" as const;
+export const PROGRAM_STATUS_CANCELLED = "cancelled" as const;
+export const PROGRAM_STATUS_COMPLETED = "completed" as const;
+
+// Breeding program cancellation reasons
+export const CANCEL_REASON_USER = "user" as const;
+export const CANCEL_REASON_AUTO = "auto" as const;
+
+// Breeding program identity
+export const PLAYER_STABLE_ID = "player";
+
+// Breeding program error messages
+export const ERR_NO_ACTIVE_PROGRAM = "No active breeding program.";
+export const ERR_PROGRAM_ALREADY_ACTIVE = "A breeding program is already active. Cancel it first.";
+export const ERR_MARE_ALREADY_ENROLLED = "Mare is already enrolled in this program.";
+
+// Breeding program log messages
+export const FALLBACK_STABLE_NAME = "Your stable";
+
+// Breeding program cancellation UI strings
+export const CANCEL_DIALOG_TITLE = "Cancel Breeding Program?";
+export const CANCEL_DIALOG_DESCRIPTION = (programName: string) =>
+  `This will end the ${programName} program and unenroll all mares. This cannot be undone.`;
+export const CANCEL_DIALOG_KEEP = "Keep Program";
+export const CANCEL_DIALOG_CONFIRM = "Cancel Program";
+export const CANCEL_BUTTON_ARIA_LABEL = "Cancel breeding program";
+
+// Breeding program toast messages
+export const TOAST_PROGRAM_CANCELLED = "Breeding program cancelled.";

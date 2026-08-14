@@ -21,6 +21,10 @@ import {
 } from "@/core/ai/marketAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { trackMarketPrices } from "@/core/ai/economyAI";
+import {
+  HORSE_RATING_TO_VALUE_MULTIPLIER,
+  DEFAULT_SUBSYSTEM_WEIGHT,
+} from "@/core/ai/subsystemWeightConstants";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { generateStaffPool } from "@/core/staff/staffGenerator";
 import { generateUUID } from "@/core/uuid";
@@ -58,11 +62,11 @@ export const marketPhase = {
         }
 
         // Check if stable should purchase any horse from market
-        const marketWeight = aiState.subsystemWeights?.market ?? 1.0;
+        const marketWeight = aiState.subsystemWeights?.market ?? DEFAULT_SUBSYSTEM_WEIGHT;
         for (const horse of market) {
           // Estimate price based on horse stats (since Horse doesn't have price field)
           const horseRating = calculateRaceRating(horse);
-          const estimatedPrice = Math.floor(horseRating * 1000);
+          const estimatedPrice = Math.floor(horseRating * HORSE_RATING_TO_VALUE_MULTIPLIER);
 
           const shouldPurchase = shouldPurchaseHorse(
             aiState.marketAI,

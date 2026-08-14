@@ -25,6 +25,7 @@ import {
   shouldUpgradeFacility,
 } from "@/core/ai/facilityAI";
 import { upgradeFacility } from "@/core/facilities";
+import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/core/ai/subsystemWeightConstants";
 import type { Facility, PlayerFacilities } from "@/core/facilities/facilityTypes";
 import { generateUUID } from "@/core/uuid";
 import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";
@@ -585,7 +586,8 @@ export function runNpcCycle(
               const currentFacility = facilities[facilityToUpgrade];
               if (!currentFacility) continue;
               // Weight-modulated gate: check if AI approves the upgrade
-              const facilityWeight = stableAIState.subsystemWeights?.facility ?? 1.0;
+              const facilityWeight =
+                stableAIState.subsystemWeights?.facility ?? DEFAULT_SUBSYSTEM_WEIGHT;
               if (
                 !shouldUpgradeFacility(
                   stableAIState.facilityAI,

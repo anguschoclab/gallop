@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { gradeColor } from "@/core/common/uiTokens";
+import { RACE_GRADES } from "@/constants";
 import type { Race, Horse } from "@/game/types";
 
 interface GradeBreakdownProps {
@@ -12,7 +13,7 @@ interface GradeBreakdownProps {
 export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
   const { gradeData, avgBeyer } = useMemo(() => {
     const upcoming = races.filter((r) => !r.resolved && r.day >= day);
-    const grades = ["G1", "G2", "G3"] as const;
+    const grades = RACE_GRADES;
 
     const horsesById = new Map<string, Horse>();
     for (const horse of horses) {

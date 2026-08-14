@@ -3,6 +3,14 @@ import { useGame, useGameWithShallow } from "@/game/store";
 import type { RaceEntry } from "@/core/race/types";
 import type { InboxMessage } from "@/core/inbox/inboxTypes";
 import type { Horse } from "@/core/horse/types";
+import {
+  ENERGY_LOW_THRESHOLD,
+  DASHBOARD_UPCOMING_RACES_LIMIT,
+  DASHBOARD_URGENT_MESSAGES_LIMIT,
+  DASHBOARD_TOP_RIVALS_LIMIT,
+  DASHBOARD_RIVAL_FRICTION_THRESHOLD,
+  HEAD_TO_HEAD_LOOKBACK_DAYS,
+} from "@/constants";
 
 export function useDashboardData() {
   const day = useGame((s) => s.day);
@@ -25,7 +33,7 @@ export function useDashboardData() {
       owned.push(h);
       if (h.lifecycleStatus !== "active") continue;
       active.push(h);
-      if (h.energy < 40) lowEnergy.push(h);
+      if (h.energy < ENERGY_LOW_THRESHOLD) lowEnergy.push(h);
     }
     return { ownedHorses: owned, activeHorses: active, lowEnergyHorses: lowEnergy };
   }, [horses]);
@@ -33,7 +41,7 @@ export function useDashboardData() {
   const upcoming = Object.values(races)
     .filter((r) => !r.resolved && r.day >= day)
     .sort((a, b) => a.day - b.day)
-    .slice(0, 8);
+    .slice(0, DASHBOARD_UPCOMING_RACES_LIMIT);
 
   const nextOwnedRace = upcoming.find((r) => r.entries.some((e: RaceEntry) => e.owned));
   const activeAuctions = auctions?.filter((a) => !a.resolved) ?? [];
@@ -41,22 +49,22 @@ export function useDashboardData() {
   const urgentMessages = (inbox || [])
     .filter((m: InboxMessage) => !m.readAt && m.priority !== "info")
     .sort((a: InboxMessage, b: InboxMessage) => b.day - a.day)
-    .slice(0, 3);
+    .slice(0, DASHBOARD_URGENT_MESSAGES_LIMIT);
 
   const topRivals = npcStables
     .map((stable) => ({
       stable,
       friction: npcAIManager?.stableStates?.[stable.id]?.friction ?? 0,
     }))
-    .filter((r) => r.friction >= 40)
+    .filter((r) => r.friction >= DASHBOARD_RIVAL_FRICTION_THRESHOLD)
     .sort((a, b) => b.friction - a.friction)
-    .slice(0, 3);
+    .slice(0, DASHBOARD_TOP_RIVALS_LIMIT);
 
   const raceMap = races;
 
   const calculateHeadToHead = useCallback(
     (stableId: string) => {
-      const thirtyDaysAgo = day - 30;
+      const thirtyDaysAgo = day - HEAD_TO_HEAD_LOOKBACK_DAYS;
       let wins = 0;
       let losses = 0;
       ownedHorses.forEach((horse) => {

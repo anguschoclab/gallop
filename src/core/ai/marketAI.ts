@@ -18,6 +18,12 @@ import { getPersonalityAIState, recordOutcome, calculateUtilityScore } from "./p
 import { createLearningState, recordOutcome as recordLearningOutcome } from "./learningModule";
 import { getSuccessRate, getAdaptiveThreshold, type LearningState } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
+import {
+  PURCHASE_BASE_THRESHOLD,
+  PURCHASE_CASH_BUFFER_MULTIPLIER,
+  HORSE_RATING_TO_VALUE_MULTIPLIER,
+  DEFAULT_SUBSYSTEM_WEIGHT,
+} from "./subsystemWeightConstants";
 
 export interface MarketAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -91,7 +97,7 @@ export function calculatePurchaseValue(
 
   // Base value from horse rating vs price
   const horseRating = calculateOverallRating(horse);
-  const estimatedValue = horseRating * 1000;
+  const estimatedValue = horseRating * HORSE_RATING_TO_VALUE_MULTIPLIER;
   const valueRatio = estimatedValue / (price || 1);
 
   // Higher score for undervalued horses
@@ -153,20 +159,20 @@ export function shouldPurchaseHorse(
   price: number,
   stable: Stable,
   currentDay: number,
-  weight = 1.0,
+  weight = DEFAULT_SUBSYSTEM_WEIGHT,
 ): boolean {
   // Weight ≤ 0 → never purchase
   if (weight <= 0) return false;
 
   // Basic checks
-  if (stable.cash < price * 1.1) return false;
+  if (stable.cash < price * PURCHASE_CASH_BUFFER_MULTIPLIER) return false;
 
   // Calculate value score
   const valueScore = calculatePurchaseValue(aiState, horse, price, stable);
 
   // Get adaptive threshold
   const contextKey = `${horse.age}`;
-  const baseThreshold = 50;
+  const baseThreshold = PURCHASE_BASE_THRESHOLD;
   const adaptiveThreshold = getAdaptiveThreshold(
     aiState.learningState,
     "market_purchase",
@@ -205,7 +211,7 @@ export function calculateMaxPurchasePrice(
   stable: Stable,
 ): number {
   const horseRating = calculateOverallRating(horse);
-  const estimatedValue = horseRating * 1000;
+  const estimatedValue = horseRating * HORSE_RATING_TO_VALUE_MULTIPLIER;
 
   // Base max price is estimated value
   let maxPrice = estimatedValue;

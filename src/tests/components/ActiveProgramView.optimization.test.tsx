@@ -6,13 +6,19 @@
  */
 
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { ActiveProgramView } from "@/components/breeding/ActiveProgramView";
 import { createTestHorse, createTestMare, createTestFilly, createTestColt } from "@/tests/helpers";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import {
+  CANCEL_DIALOG_TITLE,
+  CANCEL_DIALOG_KEEP,
+  CANCEL_DIALOG_CONFIRM,
+  CANCEL_BUTTON_ARIA_LABEL,
+} from "@/constants/breedingConstants";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
@@ -93,5 +99,50 @@ describe("ActiveProgramView — Set-based mare filtering", () => {
     } as any);
     expect(screen.queryByText("Unowned Mare")).toBeNull();
     expect(screen.getByText("Owned Mare")).toBeTruthy();
+  });
+});
+
+describe("ActiveProgramView — cancellation dialog", () => {
+  it("opens the confirmation dialog when the cancel button is clicked", () => {
+    renderWithStore(<ActiveProgramView />, {
+      activeBreedingProgram: mkProgram({ enrolledDamIds: [] }),
+      horses: {},
+    } as any);
+
+    fireEvent.click(screen.getByLabelText(CANCEL_BUTTON_ARIA_LABEL));
+    expect(screen.getByText(CANCEL_DIALOG_TITLE)).toBeInTheDocument();
+    expect(screen.getByText(CANCEL_DIALOG_KEEP)).toBeInTheDocument();
+    expect(screen.getByText(CANCEL_DIALOG_CONFIRM)).toBeInTheDocument();
+  });
+
+  it("closes the dialog and leaves the program active when keeping the program", () => {
+    const program = mkProgram({ id: "prog-cancel-keep", enrolledDamIds: [] });
+    renderWithStore(<ActiveProgramView />, {
+      activeBreedingProgram: program,
+      breedingPrograms: [program],
+      horses: {},
+    } as any);
+
+    fireEvent.click(screen.getByLabelText(CANCEL_BUTTON_ARIA_LABEL));
+    fireEvent.click(screen.getByText(CANCEL_DIALOG_KEEP));
+
+    expect(screen.queryByText(CANCEL_DIALOG_TITLE)).not.toBeInTheDocument();
+    expect(screen.getByText("Elite Turf Stayer")).toBeInTheDocument();
+  });
+
+  it("cancels the program and shows a toast when confirming the dialog", () => {
+    const program = mkProgram({ id: "prog-cancel-confirm", enrolledDamIds: ["mare-1"] });
+    const mare = createTestMare({ id: "mare-1", name: "Enrolled Mare", owned: true });
+    renderWithStore(<ActiveProgramView />, {
+      activeBreedingProgram: program,
+      breedingPrograms: [program],
+      horses: h2r([mare]),
+    } as any);
+
+    fireEvent.click(screen.getByLabelText(CANCEL_BUTTON_ARIA_LABEL));
+    fireEvent.click(screen.getByText(CANCEL_DIALOG_CONFIRM));
+
+    expect(screen.queryByText(CANCEL_DIALOG_TITLE)).not.toBeInTheDocument();
+    expect(screen.queryByText("Elite Turf Stayer")).not.toBeInTheDocument();
   });
 });

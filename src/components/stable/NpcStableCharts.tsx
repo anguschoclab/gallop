@@ -84,7 +84,12 @@ export function NpcStableCharts({ horses, headToHead }: NpcStableChartsProps) {
           <StackedRatioBar
             segments={[
               { key: "w", label: "Win", value: derived.record.wins, color: chartColors.primary },
-              { key: "p", label: "2nd", value: derived.record.places, color: chartColors.secondary },
+              {
+                key: "p",
+                label: "2nd",
+                value: derived.record.places,
+                color: chartColors.secondary,
+              },
               { key: "s", label: "3rd", value: derived.record.shows, color: chartColors.tertiary },
               { key: "o", label: "4th+", value: derived.record.other, color: chartColors.slate },
             ]}

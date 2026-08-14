@@ -20,6 +20,15 @@ import { getSuccessRate, getAdaptiveThreshold, type LearningState } from "./lear
 import { calculateOverallRating } from "@/core/horse/stats";
 import type { EconomicTrend } from "./strategicCoordinator";
 import type { NpcRelationship } from "./npcCycleAI";
+import {
+  CONSIGN_UNDERPERFORMER_RATING_THRESHOLD,
+  CONSIGN_UNDERPERFORMER_AGE_THRESHOLD,
+  CONSIGN_RATING_RELAXATION_PER_WEIGHT,
+  CONSIGN_AGE_RELAXATION_PER_WEIGHT,
+  BID_BASE_THRESHOLD,
+  HORSE_RATING_TO_VALUE_MULTIPLIER,
+  DEFAULT_SUBSYSTEM_WEIGHT,
+} from "./subsystemWeightConstants";
 
 export interface AuctionAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -113,7 +122,7 @@ export function calculateBiddingValue(
 
   // Base value from horse rating vs current bid
   const horseRating = calculateOverallRating(horse);
-  const estimatedValue = horseRating * 1000;
+  const estimatedValue = horseRating * HORSE_RATING_TO_VALUE_MULTIPLIER;
   const currentBid = lot.hammerPrice || lot.reservePrice;
   const valueRatio = estimatedValue / (currentBid || 1);
 
@@ -207,7 +216,7 @@ export function calculateMaxBid(
   friction?: number,
 ): number {
   const horseRating = calculateOverallRating(horse);
-  const estimatedValue = horseRating * 1000;
+  const estimatedValue = horseRating * HORSE_RATING_TO_VALUE_MULTIPLIER;
 
   // Base max bid is estimated value
   let maxBid = estimatedValue;
@@ -247,6 +256,7 @@ export function calculateMaxBid(
  * @param lot - The auction lot
  * @param stable - The stable making the bid
  * @param currentDay - Current game day
+ * @param weight - Subsystem weight that modulates bidding willingness (default 1.0)
  * @returns True if stable should bid
  */
 export function shouldBidOnHorse(
@@ -255,7 +265,11 @@ export function shouldBidOnHorse(
   lot: AuctionLot,
   stable: Stable,
   currentDay: number,
+  weight = DEFAULT_SUBSYSTEM_WEIGHT,
 ): boolean {
+  // Weight ≤ 0 → never bid
+  if (weight <= 0) return false;
+
   // Basic checks
   if (stable.cash < lot.reservePrice) return false;
   const currentBid = lot.hammerPrice || lot.reservePrice;
@@ -267,7 +281,7 @@ export function shouldBidOnHorse(
 
   // Get adaptive threshold (use horse age as context key)
   const contextKey = `${horse.age}`;
-  const baseThreshold = 50;
+  const baseThreshold = BID_BASE_THRESHOLD;
   const adaptiveThreshold = getAdaptiveThreshold(
     aiState.learningState,
     "bidding",
@@ -276,8 +290,11 @@ export function shouldBidOnHorse(
     aiState.personalityState.adaptationSpeed,
   );
 
+  // Weight modulates threshold: higher weight → lower threshold → more likely to bid
+  const effectiveThreshold = adaptiveThreshold / weight;
+
   // Decision: bid if value exceeds threshold and within budget
-  return valueScore > adaptiveThreshold && maxBid >= (lot.hammerPrice || lot.reservePrice);
+  return valueScore > effectiveThreshold && maxBid >= (lot.hammerPrice || lot.reservePrice);
 }
 
 /**
@@ -320,7 +337,7 @@ export function shouldConsignHorse(
   horse: Horse,
   stable: Stable,
   currentDay: number,
-  weight = 1.0,
+  weight = DEFAULT_SUBSYSTEM_WEIGHT,
 ): {
   shouldConsign: boolean;
   reason?: "underperformer" | "surplus" | "rebalancing" | "retirement";
@@ -335,8 +352,10 @@ export function shouldConsignHorse(
   const portfolio = aiState.portfolio;
 
   // Weight-modulated thresholds: higher weight relaxes criteria
-  const ratingThreshold = 40 + (weight - 1) * 20;
-  const ageThreshold = 5 - (weight - 1) * 2;
+  const ratingThreshold =
+    CONSIGN_UNDERPERFORMER_RATING_THRESHOLD + (weight - 1) * CONSIGN_RATING_RELAXATION_PER_WEIGHT;
+  const ageThreshold =
+    CONSIGN_UNDERPERFORMER_AGE_THRESHOLD - (weight - 1) * CONSIGN_AGE_RELAXATION_PER_WEIGHT;
 
   // Check for underperformance
   if (horseRating < ratingThreshold && horse.age > ageThreshold) {

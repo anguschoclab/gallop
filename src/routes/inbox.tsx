@@ -7,6 +7,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, CheckCheck, Trash2, Pin, Bell, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useInbox } from "@/hooks/inbox/useInbox";
+import { interpolateCtaRoute } from "@/core/inbox/ctaRoute";
+import {
+  TOOLTIP_DELAY_MS,
+  UNREAD_BADGE_CLASSES,
+  EMPTY_STATE_ICON_SIZE,
+  EMPTY_STATE_ICON_OPACITY,
+  ICON_SIZE_SM,
+  ICON_SIZE_PIN,
+  UNREAD_DOT_SIZE,
+  INBOX_CONTAINER_MAX_WIDTH,
+} from "@/core/inbox/inboxConstants";
 import { InboxCeremonyRsvp } from "@/components/awards/CeremonyRsvpControls";
 import { BulkRsvpControls } from "@/components/awards/BulkRsvpControls";
 import { NewsContent } from "@/components/narrative/NewsContent";
@@ -31,7 +42,12 @@ export function InboxPage() {
   } = useInbox();
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl animate-in fade-in slide-in-from-bottom-4">
+    <div
+      className={cn(
+        "container mx-auto p-6 animate-in fade-in slide-in-from-bottom-4",
+        INBOX_CONTAINER_MAX_WIDTH,
+      )}
+    >
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-cream font-[family-name:var(--font-display)]">
@@ -71,7 +87,7 @@ export function InboxPage() {
         >
           Unread
           {inbox.some((m) => !m.readAt) && (
-            <Badge variant="destructive" className="ml-2 px-1.5 h-4 min-w-[16px]">
+            <Badge variant="destructive" className={UNREAD_BADGE_CLASSES}>
               {inbox.filter((m) => !m.readAt).length}
             </Badge>
           )}
@@ -89,7 +105,7 @@ export function InboxPage() {
         {filteredMessages.length === 0 ? (
           <Card className="bg-t800 border-gold-muted/30 py-12">
             <CardContent className="flex flex-col items-center justify-center text-cream-muted">
-              <Bell className="h-12 w-12 mb-4 opacity-20" />
+              <Bell className={cn(EMPTY_STATE_ICON_SIZE, "mb-4", EMPTY_STATE_ICON_OPACITY)} />
               <p>No messages to display.</p>
             </CardContent>
           </Card>
@@ -115,10 +131,12 @@ export function InboxPage() {
                           <NewsContent text={msg.title} />
                         </CardTitle>
                         {!msg.readAt && (
-                          <span className="h-2 w-2 rounded-full bg-gold animate-pulse" />
+                          <span
+                            className={cn(UNREAD_DOT_SIZE, "rounded-full bg-gold animate-pulse")}
+                          />
                         )}
                         {msg.pinnedUntil && msg.pinnedUntil >= day && (
-                          <Pin className="h-3 w-3 text-gold fill-gold" />
+                          <Pin className={cn(ICON_SIZE_PIN, "text-gold fill-gold")} />
                         )}
                       </div>
                       <p className="text-xs text-cream-muted font-mono">
@@ -128,7 +146,7 @@ export function InboxPage() {
                   </div>
                   <div className="flex gap-1">
                     {!msg.readAt && (
-                      <TooltipProvider delayDuration={300}>
+                      <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
@@ -137,14 +155,14 @@ export function InboxPage() {
                               aria-label={"Mark '" + msg.title + "' as read"}
                               onClick={() => markRead(msg.id)}
                             >
-                              <Check className="h-4 w-4" />
+                              <Check className={ICON_SIZE_SM} />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>Mark as read</TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
                     )}
-                    <TooltipProvider delayDuration={300}>
+                    <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
@@ -153,7 +171,7 @@ export function InboxPage() {
                             aria-label={"Dismiss message '" + msg.title + "'"}
                             onClick={() => dismiss(msg.id)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className={ICON_SIZE_SM} />
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>Dismiss</TooltipContent>
@@ -177,17 +195,13 @@ export function InboxPage() {
                     onClick={() => {
                       markRead(msg.id);
                       if (msg.cta) {
-                        // Handle parameterized routes
-                        const routePath = msg.cta.route.replace(
-                          /\$(\w+)/g,
-                          (_, key) => msg.cta?.params?.[key] || "",
-                        );
+                        const routePath = interpolateCtaRoute(msg.cta.route, msg.cta.params);
                         navigate({ to: routePath as FileRouteTypes["to"] });
                       }
                     }}
                   >
                     {msg.cta.label}
-                    <ExternalLink className="h-3 w-3" />
+                    <ExternalLink className={ICON_SIZE_PIN} />
                   </Button>
                 )}
               </CardContent>

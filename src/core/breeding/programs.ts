@@ -16,6 +16,11 @@
 
 import type { Horse } from "@/game/types";
 import type { Archetype } from "./archetypes";
+import {
+  PROGRAM_STATUS_ACTIVE,
+  PROGRAM_STATUS_CANCELLED,
+  PROGRAM_STATUS_COMPLETED,
+} from "@/constants/breedingConstants";
 
 export type ProgramMilestone = {
   id: string;
@@ -36,6 +41,12 @@ export type BreedingProgram = {
   milestones: ProgramMilestone[];
   enrolledDamIds: string[];
   history: { day: number; distance: number; horseId: string }[];
+  status?:
+    | typeof PROGRAM_STATUS_ACTIVE
+    | typeof PROGRAM_STATUS_CANCELLED
+    | typeof PROGRAM_STATUS_COMPLETED;
+  cancelledAtDay?: number;
+  cancellationReason?: string;
 };
 
 /**
@@ -203,5 +214,6 @@ export function createBreedingProgram(
     milestones,
     enrolledDamIds: [],
     history: [],
+    status: PROGRAM_STATUS_ACTIVE,
   };
 }
