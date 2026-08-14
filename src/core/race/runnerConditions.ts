@@ -100,11 +100,22 @@ export interface RunnerHistory {
 
 export type MoodFace = "happy" | "neutral" | "unhappy";
 
+export interface MoodBreakdownItem {
+  /** Human-readable sub-signal name. */
+  signal: string;
+  /** Signed point contribution to the mood score. */
+  contribution: number;
+  /** One-line explanation of why this signal fired. */
+  description: string;
+}
+
 export interface RunnerMood {
   score: number;
   face: MoodFace;
   label: string;
   reasons: string[];
+  /** Exact sub-signal contributions that make up the score. */
+  breakdown: MoodBreakdownItem[];
 }
 
 /** Aggregate stats about the live field, computed once per frame. */
@@ -297,6 +308,7 @@ export function deriveRunnerMood(
   conditions: RunnerCondition[] = [],
 ): RunnerMood {
   const reasons: string[] = [];
+  const breakdown: MoodBreakdownItem[] = [];
   let score = MOOD_BASE_SCORE;
 
   if (r.finishTime !== null) {
@@ -305,6 +317,7 @@ export function deriveRunnerMood(
       face: "neutral",
       label: "Race complete",
       reasons: ["Has completed the race."],
+      breakdown: [],
     };
   }
 
@@ -315,59 +328,91 @@ export function deriveRunnerMood(
   const early = progress < MOOD_EARLY_PHASE_PROGRESS;
 
   // Running-line fit: does its current place suit the way it likes to race?
+  let runningStyleFit = 0;
+  let runningStyleDescription = `Position is acceptable for a ${styleLabel}.`;
   const wantsFront = style === "E" || style === "EP";
   const wantsBack = style === "S";
   if (wantsFront) {
     if (lengthsBack <= MOOD_HANDY_LENGTHS) {
-      score += MOOD_HANDY_BONUS;
-      reasons.push(`Handy on the pace, exactly where a ${styleLabel} wants to be.`);
+      runningStyleFit += MOOD_HANDY_BONUS;
+      runningStyleDescription = `Handy on the pace, exactly where a ${styleLabel} wants to be.`;
+      reasons.push(runningStyleDescription);
     } else if (lengthsBack > MOOD_STRANDED_LENGTHS) {
-      score -= MOOD_STRANDED_PENALTY;
-      reasons.push(`A ${styleLabel} stranded ${Math.round(lengthsBack)} lengths off the lead.`);
+      runningStyleFit -= MOOD_STRANDED_PENALTY;
+      runningStyleDescription = `A ${styleLabel} stranded ${Math.round(lengthsBack)} lengths off the lead.`;
+      reasons.push(runningStyleDescription);
     }
   } else if (wantsBack) {
     if (early && lengthsBack >= MOOD_COVERED_LENGTHS) {
-      score += MOOD_COVERED_BONUS;
-      reasons.push(`Dropped out and covered up, ideal for a ${styleLabel}.`);
+      runningStyleFit += MOOD_COVERED_BONUS;
+      runningStyleDescription = `Dropped out and covered up, ideal for a ${styleLabel}.`;
+      reasons.push(runningStyleDescription);
     } else if (early && lengthsBack <= MOOD_TOO_SOON_LENGTHS) {
-      score -= MOOD_TOO_SOON_PENALTY;
-      reasons.push(`A ${styleLabel} forced to make its own running too soon.`);
+      runningStyleFit -= MOOD_TOO_SOON_PENALTY;
+      runningStyleDescription = `A ${styleLabel} forced to make its own running too soon.`;
+      reasons.push(runningStyleDescription);
     }
   } else if (lengthsBack > MOOD_HANDY_LENGTHS && lengthsBack < MOOD_MIDFIELD_MAX_LENGTHS) {
-    score += MOOD_MIDFIELD_BONUS;
-    reasons.push(`Tracking the pace in midfield, the trip a ${styleLabel} enjoys.`);
+    runningStyleFit += MOOD_MIDFIELD_BONUS;
+    runningStyleDescription = `Tracking the pace in midfield, the trip a ${styleLabel} enjoys.`;
+    reasons.push(runningStyleDescription);
   }
+  score += runningStyleFit;
 
   // How it is travelling against its own best tempo and the field.
+  let peakFade = 0;
+  let peakFadeDescription = "Holding its own against the tempo.";
   const peak = Math.max(history.peakVelocity, r.velocity);
   const fadeRatio = peak > 0 ? r.velocity / peak : 1;
   const fieldRatio = field.meanVelocity > 0 ? r.velocity / field.meanVelocity : 1;
   if (fieldRatio >= FLYING_FIELD_RATIO && fadeRatio > FLYING_FADE_RATIO) {
-    score += MOOD_TRAVELLING_BONUS;
+    peakFade += MOOD_TRAVELLING_BONUS;
+    peakFadeDescription = "Travelling above the field average and still on the bridle.";
     reasons.push("Moving strongly, well on top of the tempo.");
   }
   if (fadeRatio < FLAGGING_FADE_RATIO) {
-    score -= fadeRatio < DISTRESSED_FADE_RATIO ? MOOD_DISTRESSED_PENALTY : MOOD_FLAGGING_PENALTY;
+    const penalty = fadeRatio < DISTRESSED_FADE_RATIO ? MOOD_DISTRESSED_PENALTY : MOOD_FLAGGING_PENALTY;
+    peakFade -= penalty;
+    peakFadeDescription =
+      fadeRatio < DISTRESSED_FADE_RATIO
+        ? "Severe fade off its own best tempo."
+        : "Starting to fade off its own best tempo.";
     reasons.push("Off its own best tempo — feeling the effort.");
   }
+  score += peakFade;
 
+  // Traffic / conditions that make the trip harder.
+  let traffic = 0;
+  let trafficDescription = "No traffic pressure at the moment.";
   for (const c of conditions) {
     if (c.id === "boxed") {
-      score -= MOOD_BOXED_PENALTY;
+      traffic -= MOOD_BOXED_PENALTY;
+      trafficDescription = "Blocked in with no clear running.";
       reasons.push("No clear running, and resenting the traffic.");
     }
     if (c.id === "battling") {
-      score -= MOOD_BATTLING_PENALTY;
+      traffic -= MOOD_BATTLING_PENALTY;
+      trafficDescription = "Locked in a duel with a rival.";
       reasons.push("Locked in a duel and being kept up to its work.");
     }
     if (c.id === "ailing") {
-      score -= MOOD_AILING_PENALTY;
+      traffic -= MOOD_AILING_PENALTY;
+      trafficDescription = "Racing with an active injury.";
       reasons.push("Racing with a complaint.");
     }
   }
+  score += traffic;
+
+  breakdown.push(
+    { signal: "Running style fit", contribution: runningStyleFit, description: runningStyleDescription },
+    { signal: "Peak fade", contribution: peakFade, description: peakFadeDescription },
+    { signal: "Traffic", contribution: traffic, description: trafficDescription },
+  );
 
   // Temperament decides how much the horse minds an awkward trip.
   const temperament = r.horse?.stats?.temperament ?? r.horse?.temperament ?? MOOD_BASE_SCORE;
+  let temperamentContribution = 0;
+  let temperamentDescription = "Moderate temperament, no adjustment.";
   if (score < MOOD_BASE_SCORE) {
     const deficit = MOOD_BASE_SCORE - score;
     const tolerance =
@@ -376,22 +421,29 @@ export function deriveRunnerMood(
         : temperament < MOOD_FRETFUL_TEMPERAMENT
           ? MOOD_FRETFUL_TOLERANCE
           : MOOD_DEFAULT_TOLERANCE;
-    score = MOOD_BASE_SCORE - deficit * tolerance;
-    if (temperament >= MOOD_PLACID_TEMPERAMENT)
+    const adjustedScore = MOOD_BASE_SCORE - deficit * tolerance;
+    temperamentContribution = adjustedScore - score;
+    score = adjustedScore;
+    if (temperament >= MOOD_PLACID_TEMPERAMENT) {
+      temperamentDescription = "Placid temperament softens the rough trip.";
       reasons.push("A placid type that takes the rough with the smooth.");
-    if (temperament < MOOD_FRETFUL_TEMPERAMENT)
+    }
+    if (temperament < MOOD_FRETFUL_TEMPERAMENT) {
+      temperamentDescription = "Fretful temperament amplifies the rough trip.";
       reasons.push("A fretful type that takes any inconvenience to heart.");
+    }
   }
+  breakdown.push({
+    signal: "Temperament",
+    contribution: temperamentContribution,
+    description: temperamentDescription,
+  });
 
   score = Math.max(MOOD_MIN_SCORE, Math.min(MOOD_MAX_SCORE, Math.round(score)));
   const face: MoodFace =
-    score >= MOOD_HAPPY_THRESHOLD
-      ? "happy"
-      : score >= MOOD_NEUTRAL_THRESHOLD
-        ? "neutral"
-        : "unhappy";
+    score >= MOOD_HAPPY_THRESHOLD ? "happy" : score >= MOOD_NEUTRAL_THRESHOLD ? "neutral" : "unhappy";
   const label = face === "happy" ? "Happy" : face === "neutral" ? "Coping" : "Unhappy";
   if (reasons.length === 0) reasons.push("Going about its business without fuss.");
 
-  return { score, face, label, reasons };
+  return { score, face, label, reasons, breakdown };
 }
