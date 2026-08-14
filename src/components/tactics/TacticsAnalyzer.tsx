@@ -16,7 +16,8 @@ import {
   type MoveTiming,
 } from "@/core/tactics/tacticsTypes";
 import { cn } from "@/lib/cn";
-import { useState, type ComponentType } from "react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface TacticsAnalyzerProps {
   horseId: string;
@@ -26,7 +27,7 @@ interface TacticsAnalyzerProps {
 export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
   const horse = useGame((s) => s.horses[horseId]);
   const race = useGame((s) => s.races[raceId]);
-  const assignJockey = useGame((s) => s.assignJockey);
+  const setRaceTactics = useGame((s) => s.setRaceTactics);
 
   const [instructions, setInstructions] = useState<JockeyInstructions>({
     horseId,
@@ -36,14 +37,17 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
     moveTiming: "mid",
     aggressiveness: 50,
   });
+  const [saved, setSaved] = useState(false);
 
   if (!horse || !race) return null;
 
   const styleBonus = calculateStyleBonus(instructions, horse.stats.speed, horse.stats.stamina);
 
   const handleSave = () => {
-    // In a full implementation, this would save the tactics to the race entry
-    // For now, this is a no-op until the store action is wired
+    setRaceTactics(raceId, horseId, instructions);
+    setSaved(true);
+    toast.success("Tactics saved for this race entry.");
+    setTimeout(() => setSaved(false), 2000);
   };
 
   const ridingStyles: {
@@ -215,7 +219,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
           onClick={handleSave}
           className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-black uppercase tracking-widest text-xs"
         >
-          Save Tactics
+          {saved ? "Saved!" : "Save Tactics"}
         </Button>
       </CardContent>
     </Card>
