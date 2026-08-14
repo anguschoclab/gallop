@@ -15,7 +15,6 @@ import { RunnerConditionBadges } from "./RunnerConditionBadges";
 import { RunnerMoodFace } from "./RunnerMoodFace";
 import { HorseSprite } from "./HorseSprite";
 
-
 interface TrackProps {
   runners: Runner[];
   distance: number;
@@ -52,7 +51,6 @@ export function Track({
   const finishRankMapRef = useRef<Map<string, number>>(new Map());
   const finishedCountRef = useRef(0);
   const peakVelocityRef = useRef<Map<string, number>>(new Map());
-
 
   useEffect(() => {
     let frameId = 0;
@@ -141,7 +139,6 @@ export function Track({
 
   const fieldContext = buildFieldContext(runners);
 
-
   const trackOffset = -(cameraPos % 512);
 
   return (
@@ -222,7 +219,6 @@ export function Track({
         const conditions = deriveRunnerConditions(r, fieldContext, history, distance);
         const mood = deriveRunnerMood(r, fieldContext, history, distance, conditions);
 
-
         return (
           <div
             key={r.horseId}
@@ -285,7 +281,6 @@ export function Track({
                 )}
                 <RunnerConditionBadges conditions={conditions} />
                 {r.finishTime === null && <RunnerMoodFace mood={mood} horseName={r.name} />}
-
               </div>
 
               <HorseSprite

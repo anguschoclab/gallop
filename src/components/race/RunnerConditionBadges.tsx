@@ -2,12 +2,7 @@
  * RunnerConditionBadges — In-running condition markers (Flying, Battling,
  * Boxed In, Flagging, In Trouble, ...) shown above a runner on the track.
  */
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
 import type { ConditionTone, RunnerCondition } from "@/core/race/runnerConditions";
 
@@ -28,7 +23,7 @@ export function RunnerConditionBadges({ conditions, max = 2 }: RunnerConditionBa
   if (conditions.length === 0) return null;
 
   return (
-    <>
+    <TooltipProvider delayDuration={150}>
       {conditions.slice(0, max).map((condition) => (
         <Tooltip key={condition.id}>
           <TooltipTrigger asChild>
@@ -49,6 +44,6 @@ export function RunnerConditionBadges({ conditions, max = 2 }: RunnerConditionBa
           </TooltipContent>
         </Tooltip>
       ))}
-    </>
+    </TooltipProvider>
   );
 }

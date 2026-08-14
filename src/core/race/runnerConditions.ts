@@ -19,14 +19,7 @@ export const METRES_PER_LENGTH = 2.4;
 export type ConditionTone = "positive" | "caution" | "negative" | "neutral";
 
 export type RunnerConditionId =
-  | "flying"
-  | "battling"
-  | "boxed"
-  | "grinding"
-  | "flagging"
-  | "distressed"
-  | "ailing"
-  | "settled";
+  "flying" | "battling" | "boxed" | "grinding" | "flagging" | "distressed" | "ailing" | "settled";
 
 export interface RunnerCondition {
   id: RunnerConditionId;
@@ -193,7 +186,12 @@ export function deriveRunnerConditions(
     });
   }
 
-  if (conditions.length === 0 && progress > 0.1 && progress < 0.6 && Math.abs(fieldRatio - 1) < 0.04) {
+  if (
+    conditions.length === 0 &&
+    progress > 0.1 &&
+    progress < 0.6 &&
+    Math.abs(fieldRatio - 1) < 0.04
+  ) {
     conditions.push({
       id: "settled",
       label: "Settled",
@@ -228,7 +226,12 @@ export function deriveRunnerMood(
   let score = 60;
 
   if (r.finishTime !== null) {
-    return { score: 60, face: "neutral", label: "Race complete", reasons: ["Has completed the race."] };
+    return {
+      score: 60,
+      face: "neutral",
+      label: "Race complete",
+      reasons: ["Has completed the race."],
+    };
   }
 
   const progress = distance > 0 ? r.position / distance : 0;
