@@ -40,6 +40,7 @@ export interface LeaderboardSlice {
   filter: "all" | "owned" | "top5";
   sortBy: "position" | "beyer" | "velocity";
   minBeyer: number;
+  lastUpdatedAt?: number;
   onFilterChange: (v: "all" | "owned" | "top5") => void;
   onSortByChange: (v: "position" | "beyer" | "velocity") => void;
   onMinBeyerChange: (v: number) => void;
