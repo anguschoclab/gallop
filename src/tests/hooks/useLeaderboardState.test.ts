@@ -201,3 +201,39 @@ describe("useLeaderboardState", () => {
     expect(result.current.sorted[0].beyer).toBe(75); // 15 * 5
   });
 });
+
+describe("useLeaderboardState tie-breaking", () => {
+  it("orders equal positions by finishTime, then barrier, then horseId", () => {
+    const runners = [
+      makeRunner({ horseId: "c", position: 1200, barrier: 5 }),
+      makeRunner({ horseId: "a", position: 1200, barrier: 2 }),
+      makeRunner({ horseId: "b", position: 1200, barrier: 2, finishTime: 95 }),
+    ];
+    const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
+    expect(result.current.sorted.map((r) => r.r.horseId)).toEqual(["b", "a", "c"]);
+  });
+
+  it("keeps the same order across ticks when positions are tied", () => {
+    const runners = [
+      makeRunner({ horseId: "z", position: 800, barrier: 3 }),
+      makeRunner({ horseId: "y", position: 800, barrier: 1 }),
+    ];
+    const first = renderHook(({ tick }) => useLeaderboardState(runners, makeRace(), 0, {}, tick), {
+      initialProps: { tick: 0 },
+    });
+    const before = first.result.current.sorted.map((r) => r.r.horseId);
+    first.rerender({ tick: 1 });
+    expect(first.result.current.sorted.map((r) => r.r.horseId)).toEqual(before);
+    expect(before).toEqual(["y", "z"]);
+  });
+
+  it("falls back to position ordering when velocities tie", () => {
+    const runners = [
+      makeRunner({ horseId: "slowlead", position: 900, velocity: 15 }),
+      makeRunner({ horseId: "back", position: 500, velocity: 15 }),
+    ];
+    const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
+    act(() => result.current.setSortBy("velocity"));
+    expect(result.current.sorted.map((r) => r.r.horseId)).toEqual(["slowlead", "back"]);
+  });
+});

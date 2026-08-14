@@ -40,13 +40,35 @@ export function useLeaderboardState(
     [runners, race?.distance, classBonus, calibratedPars, tick],
   );
 
+  /**
+   * Deterministic tie-break chain. Floating point positions frequently tie
+   * (especially pre-start and post-finish), so we fall back to finish time,
+   * then barrier, then horseId — all stable across ticks — to stop the
+   * leaderboard order from flickering.
+   */
+  const tieBreak = (a: Runner, b: Runner) => {
+    const at = a.finishTime ?? Infinity;
+    const bt = b.finishTime ?? Infinity;
+    if (at !== bt) return at - bt;
+    if (a.barrier !== b.barrier) return a.barrier - b.barrier;
+    return a.horseId < b.horseId ? -1 : a.horseId > b.horseId ? 1 : 0;
+  };
+
+  // Positions are continuous metres; treat sub-centimetre gaps as ties.
+  const POS_EPSILON = 0.01;
+  const byPosition = (a: Runner, b: Runner) => {
+    if (Math.abs(b.position - a.position) > POS_EPSILON) return b.position - a.position;
+    return tieBreak(a, b);
+  };
+
   const positionRank = useMemo(
     () =>
       new Map(
         [...rows]
-          .sort((a, b) => b.r.position - a.r.position)
+          .sort((a, b) => byPosition(a.r, b.r))
           .map((row, i) => [row.r.horseId, i + 1]),
       ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [rows],
   );
 
@@ -60,11 +82,21 @@ export function useLeaderboardState(
     });
 
     return [...filtered].sort((a, b) => {
-      if (sortBy === "beyer") return (b.beyer ?? -1) - (a.beyer ?? -1);
-      if (sortBy === "velocity") return b.r.velocity - a.r.velocity;
-      return b.r.position - a.r.position;
+      if (sortBy === "beyer") {
+        const d = (b.beyer ?? -1) - (a.beyer ?? -1);
+        if (Math.abs(d) > 1e-9) return d;
+        return byPosition(a.r, b.r);
+      }
+      if (sortBy === "velocity") {
+        const d = b.r.velocity - a.r.velocity;
+        if (Math.abs(d) > 1e-6) return d;
+        return byPosition(a.r, b.r);
+      }
+      return byPosition(a.r, b.r);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows, filter, positionRank, minBeyer, sortBy]);
+
 
   return {
     sortBy,
