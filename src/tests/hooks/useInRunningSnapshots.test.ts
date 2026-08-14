@@ -59,8 +59,18 @@ describe("useInRunningSnapshots", () => {
   it("takes an in-running snapshot and opens the inspector", () => {
     const { result } = renderHook(() => useInRunningSnapshots());
 
-    const runner1 = createMockRunner({ horseId: "h1", name: "Horse 1", position: 500, velocity: 16 });
-    const runner2 = createMockRunner({ horseId: "h2", name: "Horse 2", position: 480, velocity: 15.5 });
+    const runner1 = createMockRunner({
+      horseId: "h1",
+      name: "Horse 1",
+      position: 500,
+      velocity: 16,
+    });
+    const runner2 = createMockRunner({
+      horseId: "h2",
+      name: "Horse 2",
+      position: 480,
+      velocity: 15.5,
+    });
 
     let captured: any;
     act(() => {
@@ -86,7 +96,12 @@ describe("useInRunningSnapshots", () => {
   it("freezes runner state so subsequent live runner mutations do not affect the captured snapshot", () => {
     const { result } = renderHook(() => useInRunningSnapshots());
 
-    const runner = createMockRunner({ horseId: "h1", name: "Original", position: 300, velocity: 15 });
+    const runner = createMockRunner({
+      horseId: "h1",
+      name: "Original",
+      position: 300,
+      velocity: 15,
+    });
 
     act(() => {
       result.current.takeSnapshot([runner], 1600, 8.0, 16);

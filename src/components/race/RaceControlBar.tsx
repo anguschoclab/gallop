@@ -134,9 +134,7 @@ export function RaceControlBar({
                   aria-label="Snapshot in-running conditions"
                 >
                   <Camera className="h-3.5 w-3.5 text-broadcast-accent" />
-                  <span className="text-[11px] font-black uppercase tracking-widest">
-                    Snapshot
-                  </span>
+                  <span className="text-[11px] font-black uppercase tracking-widest">Snapshot</span>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>

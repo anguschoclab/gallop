@@ -64,10 +64,7 @@ export function InRunningSnapshotDialog({
   const inspectedRunner: InRunningRunnerSnapshot | undefined =
     sortedRunners.find((r) => r.horseId === selectedHorseId) ?? sortedRunners[0];
 
-  const totalConditionsCount = sortedRunners.reduce(
-    (sum, r) => sum + r.conditions.length,
-    0,
-  );
+  const totalConditionsCount = sortedRunners.reduce((sum, r) => sum + r.conditions.length, 0);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -84,7 +81,8 @@ export function InRunningSnapshotDialog({
                 <span className="text-broadcast-accent font-bold font-mono">
                   {activeSnapshot?.simTime.toFixed(1)}s
                 </span>{" "}
-                sim time ({activeSnapshot ? new Date(activeSnapshot.capturedAt).toLocaleTimeString() : ""})
+                sim time (
+                {activeSnapshot ? new Date(activeSnapshot.capturedAt).toLocaleTimeString() : ""})
               </DialogDescription>
             </div>
 
@@ -271,13 +269,18 @@ export function InRunningSnapshotDialog({
                         )}
                       </div>
                       <div className="text-[10px] font-mono text-muted-foreground">
-                        Rank #{inspectedRunner.rank} · Gate {inspectedRunner.gate} · Lane {inspectedRunner.lane}
+                        Rank #{inspectedRunner.rank} · Gate {inspectedRunner.gate} · Lane{" "}
+                        {inspectedRunner.lane}
                       </div>
                     </div>
 
                     {inspectedRunner.mood && (
                       <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/5 border border-white/10">
-                        <RunnerMoodFace mood={inspectedRunner.mood} horseName={inspectedRunner.name} size={14} />
+                        <RunnerMoodFace
+                          mood={inspectedRunner.mood}
+                          horseName={inspectedRunner.name}
+                          size={14}
+                        />
                         <span className="text-[9px] font-bold uppercase tracking-wider text-cream">
                           {inspectedRunner.mood.label}
                         </span>
@@ -288,25 +291,33 @@ export function InRunningSnapshotDialog({
                   {/* Runner Metrics Grid */}
                   <div className="grid grid-cols-2 gap-2 text-[11px] font-mono bg-white/5 p-2 rounded">
                     <div>
-                      <span className="text-muted-foreground text-[9px] uppercase block">Position</span>
+                      <span className="text-muted-foreground text-[9px] uppercase block">
+                        Position
+                      </span>
                       <span className="font-bold text-cream">
                         {Math.round(inspectedRunner.position)}m / {activeSnapshot?.distance}m
                       </span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground text-[9px] uppercase block">Velocity</span>
+                      <span className="text-muted-foreground text-[9px] uppercase block">
+                        Velocity
+                      </span>
                       <span className="font-bold text-broadcast-accent">
                         {inspectedRunner.velocity.toFixed(1)} m/s
                       </span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground text-[9px] uppercase block">Coverage</span>
+                      <span className="text-muted-foreground text-[9px] uppercase block">
+                        Coverage
+                      </span>
                       <span className="font-bold text-cream">
                         {inspectedRunner.distanceCoveredPct.toFixed(1)}%
                       </span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground text-[9px] uppercase block">Tactical Status</span>
+                      <span className="text-muted-foreground text-[9px] uppercase block">
+                        Tactical Status
+                      </span>
                       <span className="font-bold text-foreground">
                         {inspectedRunner.tacticalBadge || "Tracking"}
                       </span>
@@ -342,9 +353,7 @@ export function InRunningSnapshotDialog({
                                 {cond.tone}
                               </span>
                             </div>
-                            <p className="text-[11px] opacity-90 leading-relaxed">
-                              {cond.detail}
-                            </p>
+                            <p className="text-[11px] opacity-90 leading-relaxed">{cond.detail}</p>
                           </div>
                         ))}
                       </div>
