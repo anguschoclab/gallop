@@ -8,6 +8,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { cn } from "@/lib/cn";
 import type { ConditionTone } from "@/core/race/runnerConditions";
 import type { ConditionSegment } from "@/hooks/race/useConditionTimeline";
+import { useTimeAgo } from "@/hooks/shared/useTimeAgo";
 
 /** Number of distance markers (including start and end) shown on the timeline axis. */
 const DISTANCE_MARKER_COUNT = 4;
@@ -27,9 +28,18 @@ interface ConditionTimelineProps {
   distance: number;
   horseName?: string;
   className?: string;
+  /** Wall-clock ms when the last simulation tick fed this strip. */
+  lastUpdatedAt?: number;
 }
 
-function ConditionTimeline({ segments, distance, horseName, className }: ConditionTimelineProps) {
+function ConditionTimeline({
+  segments,
+  distance,
+  horseName,
+  className,
+  lastUpdatedAt,
+}: ConditionTimelineProps) {
+  const freshness = useTimeAgo(lastUpdatedAt ?? Date.now());
   const lanes = new Map<string, ConditionSegment[]>();
   for (const seg of segments) {
     const list = lanes.get(seg.id);
@@ -47,9 +57,23 @@ function ConditionTimeline({ segments, distance, horseName, className }: Conditi
         <span className="text-[10px] font-black uppercase tracking-widest text-cream-muted">
           Condition timeline{horseName ? ` · ${horseName}` : ""}
         </span>
-        <span className="text-[10px] tabular-nums text-muted-foreground font-mono">
-          0–{distance}m
-        </span>
+        <div className="flex items-center gap-2">
+          <div
+            className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/40 border border-white/5"
+            aria-label={`In-running state last updated ${freshness}`}
+          >
+            <div className="h-1.5 w-1.5 rounded-full bg-destructive animate-pulse" />
+            <span className="text-[8px] font-bold uppercase tracking-tighter text-foreground">
+              Live
+            </span>
+            <span className="text-[8px] font-medium text-muted-foreground tabular-nums">
+              {freshness}
+            </span>
+          </div>
+          <span className="text-[10px] tabular-nums text-muted-foreground font-mono">
+            0–{distance}m
+          </span>
+        </div>
       </div>
 
       {lanes.size === 0 ? (
