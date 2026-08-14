@@ -239,6 +239,22 @@ describe("useLeaderboardState tie-breaking", () => {
   });
 });
 
+describe("useLeaderboardState tie-break validation", () => {
+  it("throws when a runner has missing barrier", () => {
+    const runners = [makeRunner({ horseId: "a", barrier: undefined as any })];
+    expect(() => renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}))).toThrow();
+  });
+
+  it("does not throw with valid runners", () => {
+    const runners = [
+      makeRunner({ horseId: "a", barrier: 1, finishTime: null }),
+      makeRunner({ horseId: "b", barrier: 2, finishTime: 95.5 }),
+    ];
+    const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
+    expect(result.current.sorted).toHaveLength(2);
+  });
+});
+
 describe("useLeaderboardState tie-break chain isolation", () => {
   // ── Step 1: Position epsilon boundary ──
 

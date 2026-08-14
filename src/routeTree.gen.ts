@@ -9,220 +9,66 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AnalyticsRouteImport } from './routes/analytics'
-import { Route as AuctionRouteImport } from './routes/auction'
-import { Route as AwardsRouteImport } from './routes/awards'
-import { Route as BookmarksRouteImport } from './routes/bookmarks'
-import { Route as BreedingRouteImport } from './routes/breeding'
-import { Route as BriefingRouteImport } from './routes/briefing'
-import { Route as BroodmaresRouteImport } from './routes/broodmares'
-import { Route as CalendarRouteImport } from './routes/calendar'
-import { Route as EpilogueRouteImport } from './routes/epilogue'
-import { Route as FacilitiesRouteImport } from './routes/facilities'
-import { Route as FinancialReportRouteImport } from './routes/financial-report'
-import { Route as GazetteRouteImport } from './routes/gazette'
-import { Route as HallOfFameRouteImport } from './routes/hall-of-fame'
-import { Route as HonorsRouteImport } from './routes/honors'
-import { Route as HorseGalleryRouteImport } from './routes/horse-gallery'
-import { Route as InboxRouteImport } from './routes/inbox'
-import { Route as JockeysRouteImport } from './routes/jockeys'
-import { Route as MarketRouteImport } from './routes/market'
-import { Route as NewGameRouteImport } from './routes/new-game'
-import { Route as NpcStablesRouteImport } from './routes/npc-stables'
-import { Route as RaceBrowserRouteImport } from './routes/race-browser'
-import { Route as RacesRouteImport } from './routes/races'
-import { Route as RacingRouteImport } from './routes/racing'
-import { Route as RecapRouteImport } from './routes/recap'
-import { Route as RecordsRouteImport } from './routes/records'
-import { Route as SchedulerRouteImport } from './routes/scheduler'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as SireLeaderboardsRouteImport } from './routes/sire-leaderboards'
-import { Route as SireWatchRouteImport } from './routes/sire-watch'
-import { Route as StableRouteImport } from './routes/stable'
-import { Route as StaffRouteImport } from './routes/staff'
-import { Route as StallionsRouteImport } from './routes/stallions'
 import { Route as StartRouteImport } from './routes/start'
-import { Route as AnalyticsIndexRouteImport } from './routes/analytics.index'
-import { Route as AnalyticsBreedingRouteImport } from './routes/analytics.breeding'
-import { Route as AnalyticsFinanceRouteImport } from './routes/analytics.finance'
-import { Route as AnalyticsRacingRouteImport } from './routes/analytics.racing'
-import { Route as AnalyticsStableRouteImport } from './routes/analytics.stable'
-import { Route as AuctionIndexRouteImport } from './routes/auction.index'
-import { Route as AuctionSaleIdRouteImport } from './routes/auction.$saleId'
-import { Route as CalendarIndexRouteImport } from './routes/calendar.index'
-import { Route as CalendarRegionIdRouteImport } from './routes/calendar.$regionId'
-import { Route as CeremonyInvitationIdRouteImport } from './routes/ceremony.$invitationId'
-import { Route as FoalDevelopmentHorseIdRouteImport } from './routes/foal-development.$horseId'
-import { Route as JockeyJockeyIdRouteImport } from './routes/jockey.$jockeyId'
-import { Route as NpcStablesIndexRouteImport } from './routes/npc-stables.index'
-import { Route as NpcStablesStableIdRouteImport } from './routes/npc-stables.$stableId'
-import { Route as RaceRaceIdRouteImport } from './routes/race.$raceId'
-import { Route as SireWatchIndexRouteImport } from './routes/sire-watch.index'
-import { Route as SireWatchStallionIdRouteImport } from './routes/sire-watch.$stallionId'
+import { Route as StallionsRouteImport } from './routes/stallions'
+import { Route as StaffRouteImport } from './routes/staff'
+import { Route as StableRouteImport } from './routes/stable'
+import { Route as SireWatchRouteImport } from './routes/sire-watch'
+import { Route as SireLeaderboardsRouteImport } from './routes/sire-leaderboards'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SchedulerRouteImport } from './routes/scheduler'
+import { Route as RegionalComparisonRouteImport } from './routes/regional-comparison'
+import { Route as RecordsRouteImport } from './routes/records'
+import { Route as RecapRouteImport } from './routes/recap'
+import { Route as RacingRouteImport } from './routes/racing'
+import { Route as RacesRouteImport } from './routes/races'
+import { Route as RaceBrowserRouteImport } from './routes/race-browser'
+import { Route as NpcStablesRouteImport } from './routes/npc-stables'
+import { Route as NewGameRouteImport } from './routes/new-game'
+import { Route as MarketRouteImport } from './routes/market'
+import { Route as JockeysRouteImport } from './routes/jockeys'
+import { Route as InboxRouteImport } from './routes/inbox'
+import { Route as HorseGalleryRouteImport } from './routes/horse-gallery'
+import { Route as HonorsRouteImport } from './routes/honors'
+import { Route as HallOfFameRouteImport } from './routes/hall-of-fame'
+import { Route as GazetteRouteImport } from './routes/gazette'
+import { Route as FinancialReportRouteImport } from './routes/financial-report'
+import { Route as FacilitiesRouteImport } from './routes/facilities'
+import { Route as EpilogueRouteImport } from './routes/epilogue'
+import { Route as CalendarRouteImport } from './routes/calendar'
+import { Route as BroodmaresRouteImport } from './routes/broodmares'
+import { Route as BriefingRouteImport } from './routes/briefing'
+import { Route as BreedingRouteImport } from './routes/breeding'
+import { Route as BookmarksRouteImport } from './routes/bookmarks'
+import { Route as AwardsRouteImport } from './routes/awards'
+import { Route as AuctionRouteImport } from './routes/auction'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as StableIndexRouteImport } from './routes/stable.index'
-import { Route as StableHorseIdRouteImport } from './routes/stable.$horseId'
-import { Route as StaffStaffIdRouteImport } from './routes/staff.$staffId'
+import { Route as SireWatchIndexRouteImport } from './routes/sire-watch.index'
+import { Route as NpcStablesIndexRouteImport } from './routes/npc-stables.index'
+import { Route as CalendarIndexRouteImport } from './routes/calendar.index'
+import { Route as AuctionIndexRouteImport } from './routes/auction.index'
+import { Route as AnalyticsIndexRouteImport } from './routes/analytics.index'
 import { Route as SyndicateSyndicateIdRouteImport } from './routes/syndicate.$syndicateId'
+import { Route as StaffStaffIdRouteImport } from './routes/staff.$staffId'
+import { Route as StableHorseIdRouteImport } from './routes/stable.$horseId'
+import { Route as SireWatchStallionIdRouteImport } from './routes/sire-watch.$stallionId'
+import { Route as RaceRaceIdRouteImport } from './routes/race.$raceId'
+import { Route as NpcStablesStableIdRouteImport } from './routes/npc-stables.$stableId'
+import { Route as JockeyJockeyIdRouteImport } from './routes/jockey.$jockeyId'
+import { Route as FoalDevelopmentHorseIdRouteImport } from './routes/foal-development.$horseId'
+import { Route as CeremonyInvitationIdRouteImport } from './routes/ceremony.$invitationId'
+import { Route as CalendarRegionIdRouteImport } from './routes/calendar.$regionId'
+import { Route as AuctionSaleIdRouteImport } from './routes/auction.$saleId'
+import { Route as AnalyticsStableRouteImport } from './routes/analytics.stable'
+import { Route as AnalyticsRacingRouteImport } from './routes/analytics.racing'
+import { Route as AnalyticsFinanceRouteImport } from './routes/analytics.finance'
+import { Route as AnalyticsBreedingRouteImport } from './routes/analytics.breeding'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AnalyticsRoute = AnalyticsRouteImport.update({
-  id: '/analytics',
-  path: '/analytics',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuctionRoute = AuctionRouteImport.update({
-  id: '/auction',
-  path: '/auction',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AwardsRoute = AwardsRouteImport.update({
-  id: '/awards',
-  path: '/awards',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BookmarksRoute = BookmarksRouteImport.update({
-  id: '/bookmarks',
-  path: '/bookmarks',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BreedingRoute = BreedingRouteImport.update({
-  id: '/breeding',
-  path: '/breeding',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BriefingRoute = BriefingRouteImport.update({
-  id: '/briefing',
-  path: '/briefing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BroodmaresRoute = BroodmaresRouteImport.update({
-  id: '/broodmares',
-  path: '/broodmares',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CalendarRoute = CalendarRouteImport.update({
-  id: '/calendar',
-  path: '/calendar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EpilogueRoute = EpilogueRouteImport.update({
-  id: '/epilogue',
-  path: '/epilogue',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FacilitiesRoute = FacilitiesRouteImport.update({
-  id: '/facilities',
-  path: '/facilities',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FinancialReportRoute = FinancialReportRouteImport.update({
-  id: '/financial-report',
-  path: '/financial-report',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GazetteRoute = GazetteRouteImport.update({
-  id: '/gazette',
-  path: '/gazette',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HallOfFameRoute = HallOfFameRouteImport.update({
-  id: '/hall-of-fame',
-  path: '/hall-of-fame',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HonorsRoute = HonorsRouteImport.update({
-  id: '/honors',
-  path: '/honors',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HorseGalleryRoute = HorseGalleryRouteImport.update({
-  id: '/horse-gallery',
-  path: '/horse-gallery',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InboxRoute = InboxRouteImport.update({
-  id: '/inbox',
-  path: '/inbox',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const JockeysRoute = JockeysRouteImport.update({
-  id: '/jockeys',
-  path: '/jockeys',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MarketRoute = MarketRouteImport.update({
-  id: '/market',
-  path: '/market',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NewGameRoute = NewGameRouteImport.update({
-  id: '/new-game',
-  path: '/new-game',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NpcStablesRoute = NpcStablesRouteImport.update({
-  id: '/npc-stables',
-  path: '/npc-stables',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RaceBrowserRoute = RaceBrowserRouteImport.update({
-  id: '/race-browser',
-  path: '/race-browser',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RacesRoute = RacesRouteImport.update({
-  id: '/races',
-  path: '/races',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RacingRoute = RacingRouteImport.update({
-  id: '/racing',
-  path: '/racing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecapRoute = RecapRouteImport.update({
-  id: '/recap',
-  path: '/recap',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecordsRoute = RecordsRouteImport.update({
-  id: '/records',
-  path: '/records',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SchedulerRoute = SchedulerRouteImport.update({
-  id: '/scheduler',
-  path: '/scheduler',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SireLeaderboardsRoute = SireLeaderboardsRouteImport.update({
-  id: '/sire-leaderboards',
-  path: '/sire-leaderboards',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SireWatchRoute = SireWatchRouteImport.update({
-  id: '/sire-watch',
-  path: '/sire-watch',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StableRoute = StableRouteImport.update({
-  id: '/stable',
-  path: '/stable',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StaffRoute = StaffRouteImport.update({
-  id: '/staff',
-  path: '/staff',
+const StartRoute = StartRouteImport.update({
+  id: '/start',
+  path: '/start',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StallionsRoute = StallionsRouteImport.update({
@@ -230,59 +76,234 @@ const StallionsRoute = StallionsRouteImport.update({
   path: '/stallions',
   getParentRoute: () => rootRouteImport,
 } as any)
-const StartRoute = StartRouteImport.update({
-  id: '/start',
-  path: '/start',
+const StaffRoute = StaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AnalyticsIndexRoute = AnalyticsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AnalyticsRoute,
-} as any)
-const AnalyticsBreedingRoute = AnalyticsBreedingRouteImport.update({
-  id: '/breeding',
-  path: '/breeding',
-  getParentRoute: () => AnalyticsRoute,
-} as any)
-const AnalyticsFinanceRoute = AnalyticsFinanceRouteImport.update({
-  id: '/finance',
-  path: '/finance',
-  getParentRoute: () => AnalyticsRoute,
-} as any)
-const AnalyticsRacingRoute = AnalyticsRacingRouteImport.update({
-  id: '/racing',
-  path: '/racing',
-  getParentRoute: () => AnalyticsRoute,
-} as any)
-const AnalyticsStableRoute = AnalyticsStableRouteImport.update({
+const StableRoute = StableRouteImport.update({
   id: '/stable',
   path: '/stable',
-  getParentRoute: () => AnalyticsRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuctionIndexRoute = AuctionIndexRouteImport.update({
+const SireWatchRoute = SireWatchRouteImport.update({
+  id: '/sire-watch',
+  path: '/sire-watch',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SireLeaderboardsRoute = SireLeaderboardsRouteImport.update({
+  id: '/sire-leaderboards',
+  path: '/sire-leaderboards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SchedulerRoute = SchedulerRouteImport.update({
+  id: '/scheduler',
+  path: '/scheduler',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegionalComparisonRoute = RegionalComparisonRouteImport.update({
+  id: '/regional-comparison',
+  path: '/regional-comparison',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecordsRoute = RecordsRouteImport.update({
+  id: '/records',
+  path: '/records',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecapRoute = RecapRouteImport.update({
+  id: '/recap',
+  path: '/recap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RacingRoute = RacingRouteImport.update({
+  id: '/racing',
+  path: '/racing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RacesRoute = RacesRouteImport.update({
+  id: '/races',
+  path: '/races',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RaceBrowserRoute = RaceBrowserRouteImport.update({
+  id: '/race-browser',
+  path: '/race-browser',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NpcStablesRoute = NpcStablesRouteImport.update({
+  id: '/npc-stables',
+  path: '/npc-stables',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewGameRoute = NewGameRouteImport.update({
+  id: '/new-game',
+  path: '/new-game',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketRoute = MarketRouteImport.update({
+  id: '/market',
+  path: '/market',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JockeysRoute = JockeysRouteImport.update({
+  id: '/jockeys',
+  path: '/jockeys',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InboxRoute = InboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HorseGalleryRoute = HorseGalleryRouteImport.update({
+  id: '/horse-gallery',
+  path: '/horse-gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HonorsRoute = HonorsRouteImport.update({
+  id: '/honors',
+  path: '/honors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HallOfFameRoute = HallOfFameRouteImport.update({
+  id: '/hall-of-fame',
+  path: '/hall-of-fame',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GazetteRoute = GazetteRouteImport.update({
+  id: '/gazette',
+  path: '/gazette',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FinancialReportRoute = FinancialReportRouteImport.update({
+  id: '/financial-report',
+  path: '/financial-report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FacilitiesRoute = FacilitiesRouteImport.update({
+  id: '/facilities',
+  path: '/facilities',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EpilogueRoute = EpilogueRouteImport.update({
+  id: '/epilogue',
+  path: '/epilogue',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalendarRoute = CalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BroodmaresRoute = BroodmaresRouteImport.update({
+  id: '/broodmares',
+  path: '/broodmares',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BriefingRoute = BriefingRouteImport.update({
+  id: '/briefing',
+  path: '/briefing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BreedingRoute = BreedingRouteImport.update({
+  id: '/breeding',
+  path: '/breeding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookmarksRoute = BookmarksRouteImport.update({
+  id: '/bookmarks',
+  path: '/bookmarks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AwardsRoute = AwardsRouteImport.update({
+  id: '/awards',
+  path: '/awards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuctionRoute = AuctionRouteImport.update({
+  id: '/auction',
+  path: '/auction',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AuctionRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuctionSaleIdRoute = AuctionSaleIdRouteImport.update({
-  id: '/$saleId',
-  path: '/$saleId',
-  getParentRoute: () => AuctionRoute,
+const StableIndexRoute = StableIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StableRoute,
+} as any)
+const SireWatchIndexRoute = SireWatchIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SireWatchRoute,
+} as any)
+const NpcStablesIndexRoute = NpcStablesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => NpcStablesRoute,
 } as any)
 const CalendarIndexRoute = CalendarIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => CalendarRoute,
 } as any)
-const CalendarRegionIdRoute = CalendarRegionIdRouteImport.update({
-  id: '/$regionId',
-  path: '/$regionId',
-  getParentRoute: () => CalendarRoute,
+const AuctionIndexRoute = AuctionIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuctionRoute,
 } as any)
-const CeremonyInvitationIdRoute = CeremonyInvitationIdRouteImport.update({
-  id: '/ceremony/$invitationId',
-  path: '/ceremony/$invitationId',
+const AnalyticsIndexRoute = AnalyticsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AnalyticsRoute,
+} as any)
+const SyndicateSyndicateIdRoute = SyndicateSyndicateIdRouteImport.update({
+  id: '/syndicate/$syndicateId',
+  path: '/syndicate/$syndicateId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StaffStaffIdRoute = StaffStaffIdRouteImport.update({
+  id: '/$staffId',
+  path: '/$staffId',
+  getParentRoute: () => StaffRoute,
+} as any)
+const StableHorseIdRoute = StableHorseIdRouteImport.update({
+  id: '/$horseId',
+  path: '/$horseId',
+  getParentRoute: () => StableRoute,
+} as any)
+const SireWatchStallionIdRoute = SireWatchStallionIdRouteImport.update({
+  id: '/$stallionId',
+  path: '/$stallionId',
+  getParentRoute: () => SireWatchRoute,
+} as any)
+const RaceRaceIdRoute = RaceRaceIdRouteImport.update({
+  id: '/race/$raceId',
+  path: '/race/$raceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NpcStablesStableIdRoute = NpcStablesStableIdRouteImport.update({
+  id: '/$stableId',
+  path: '/$stableId',
+  getParentRoute: () => NpcStablesRoute,
+} as any)
+const JockeyJockeyIdRoute = JockeyJockeyIdRouteImport.update({
+  id: '/jockey/$jockeyId',
+  path: '/jockey/$jockeyId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FoalDevelopmentHorseIdRoute = FoalDevelopmentHorseIdRouteImport.update({
@@ -290,55 +311,40 @@ const FoalDevelopmentHorseIdRoute = FoalDevelopmentHorseIdRouteImport.update({
   path: '/foal-development/$horseId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const JockeyJockeyIdRoute = JockeyJockeyIdRouteImport.update({
-  id: '/jockey/$jockeyId',
-  path: '/jockey/$jockeyId',
+const CeremonyInvitationIdRoute = CeremonyInvitationIdRouteImport.update({
+  id: '/ceremony/$invitationId',
+  path: '/ceremony/$invitationId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NpcStablesIndexRoute = NpcStablesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => NpcStablesRoute,
+const CalendarRegionIdRoute = CalendarRegionIdRouteImport.update({
+  id: '/$regionId',
+  path: '/$regionId',
+  getParentRoute: () => CalendarRoute,
 } as any)
-const NpcStablesStableIdRoute = NpcStablesStableIdRouteImport.update({
-  id: '/$stableId',
-  path: '/$stableId',
-  getParentRoute: () => NpcStablesRoute,
+const AuctionSaleIdRoute = AuctionSaleIdRouteImport.update({
+  id: '/$saleId',
+  path: '/$saleId',
+  getParentRoute: () => AuctionRoute,
 } as any)
-const RaceRaceIdRoute = RaceRaceIdRouteImport.update({
-  id: '/race/$raceId',
-  path: '/race/$raceId',
-  getParentRoute: () => rootRouteImport,
+const AnalyticsStableRoute = AnalyticsStableRouteImport.update({
+  id: '/stable',
+  path: '/stable',
+  getParentRoute: () => AnalyticsRoute,
 } as any)
-const SireWatchIndexRoute = SireWatchIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => SireWatchRoute,
+const AnalyticsRacingRoute = AnalyticsRacingRouteImport.update({
+  id: '/racing',
+  path: '/racing',
+  getParentRoute: () => AnalyticsRoute,
 } as any)
-const SireWatchStallionIdRoute = SireWatchStallionIdRouteImport.update({
-  id: '/$stallionId',
-  path: '/$stallionId',
-  getParentRoute: () => SireWatchRoute,
+const AnalyticsFinanceRoute = AnalyticsFinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
+  getParentRoute: () => AnalyticsRoute,
 } as any)
-const StableIndexRoute = StableIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => StableRoute,
-} as any)
-const StableHorseIdRoute = StableHorseIdRouteImport.update({
-  id: '/$horseId',
-  path: '/$horseId',
-  getParentRoute: () => StableRoute,
-} as any)
-const StaffStaffIdRoute = StaffStaffIdRouteImport.update({
-  id: '/$staffId',
-  path: '/$staffId',
-  getParentRoute: () => StaffRoute,
-} as any)
-const SyndicateSyndicateIdRoute = SyndicateSyndicateIdRouteImport.update({
-  id: '/syndicate/$syndicateId',
-  path: '/syndicate/$syndicateId',
-  getParentRoute: () => rootRouteImport,
+const AnalyticsBreedingRoute = AnalyticsBreedingRouteImport.update({
+  id: '/breeding',
+  path: '/breeding',
+  getParentRoute: () => AnalyticsRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -368,6 +374,7 @@ export interface FileRoutesByFullPath {
   '/racing': typeof RacingRoute
   '/recap': typeof RecapRoute
   '/records': typeof RecordsRoute
+  '/regional-comparison': typeof RegionalComparisonRoute
   '/scheduler': typeof SchedulerRoute
   '/settings': typeof SettingsRoute
   '/sire-leaderboards': typeof SireLeaderboardsRoute
@@ -421,6 +428,7 @@ export interface FileRoutesByTo {
   '/racing': typeof RacingRoute
   '/recap': typeof RecapRoute
   '/records': typeof RecordsRoute
+  '/regional-comparison': typeof RegionalComparisonRoute
   '/scheduler': typeof SchedulerRoute
   '/settings': typeof SettingsRoute
   '/sire-leaderboards': typeof SireLeaderboardsRoute
@@ -477,6 +485,7 @@ export interface FileRoutesById {
   '/racing': typeof RacingRoute
   '/recap': typeof RecapRoute
   '/records': typeof RecordsRoute
+  '/regional-comparison': typeof RegionalComparisonRoute
   '/scheduler': typeof SchedulerRoute
   '/settings': typeof SettingsRoute
   '/sire-leaderboards': typeof SireLeaderboardsRoute
@@ -536,6 +545,7 @@ export interface FileRouteTypes {
     | '/racing'
     | '/recap'
     | '/records'
+    | '/regional-comparison'
     | '/scheduler'
     | '/settings'
     | '/sire-leaderboards'
@@ -589,6 +599,7 @@ export interface FileRouteTypes {
     | '/racing'
     | '/recap'
     | '/records'
+    | '/regional-comparison'
     | '/scheduler'
     | '/settings'
     | '/sire-leaderboards'
@@ -644,6 +655,7 @@ export interface FileRouteTypes {
     | '/racing'
     | '/recap'
     | '/records'
+    | '/regional-comparison'
     | '/scheduler'
     | '/settings'
     | '/sire-leaderboards'
@@ -702,6 +714,7 @@ export interface RootRouteChildren {
   RacingRoute: typeof RacingRoute
   RecapRoute: typeof RecapRoute
   RecordsRoute: typeof RecordsRoute
+  RegionalComparisonRoute: typeof RegionalComparisonRoute
   SchedulerRoute: typeof SchedulerRoute
   SettingsRoute: typeof SettingsRoute
   SireLeaderboardsRoute: typeof SireLeaderboardsRoute
@@ -719,228 +732,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/analytics': {
-      id: '/analytics'
-      path: '/analytics'
-      fullPath: '/analytics'
-      preLoaderRoute: typeof AnalyticsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auction': {
-      id: '/auction'
-      path: '/auction'
-      fullPath: '/auction'
-      preLoaderRoute: typeof AuctionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/awards': {
-      id: '/awards'
-      path: '/awards'
-      fullPath: '/awards'
-      preLoaderRoute: typeof AwardsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/bookmarks': {
-      id: '/bookmarks'
-      path: '/bookmarks'
-      fullPath: '/bookmarks'
-      preLoaderRoute: typeof BookmarksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/breeding': {
-      id: '/breeding'
-      path: '/breeding'
-      fullPath: '/breeding'
-      preLoaderRoute: typeof BreedingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/briefing': {
-      id: '/briefing'
-      path: '/briefing'
-      fullPath: '/briefing'
-      preLoaderRoute: typeof BriefingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/broodmares': {
-      id: '/broodmares'
-      path: '/broodmares'
-      fullPath: '/broodmares'
-      preLoaderRoute: typeof BroodmaresRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/calendar': {
-      id: '/calendar'
-      path: '/calendar'
-      fullPath: '/calendar'
-      preLoaderRoute: typeof CalendarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/epilogue': {
-      id: '/epilogue'
-      path: '/epilogue'
-      fullPath: '/epilogue'
-      preLoaderRoute: typeof EpilogueRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/facilities': {
-      id: '/facilities'
-      path: '/facilities'
-      fullPath: '/facilities'
-      preLoaderRoute: typeof FacilitiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/financial-report': {
-      id: '/financial-report'
-      path: '/financial-report'
-      fullPath: '/financial-report'
-      preLoaderRoute: typeof FinancialReportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/gazette': {
-      id: '/gazette'
-      path: '/gazette'
-      fullPath: '/gazette'
-      preLoaderRoute: typeof GazetteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/hall-of-fame': {
-      id: '/hall-of-fame'
-      path: '/hall-of-fame'
-      fullPath: '/hall-of-fame'
-      preLoaderRoute: typeof HallOfFameRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/honors': {
-      id: '/honors'
-      path: '/honors'
-      fullPath: '/honors'
-      preLoaderRoute: typeof HonorsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/horse-gallery': {
-      id: '/horse-gallery'
-      path: '/horse-gallery'
-      fullPath: '/horse-gallery'
-      preLoaderRoute: typeof HorseGalleryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/inbox': {
-      id: '/inbox'
-      path: '/inbox'
-      fullPath: '/inbox'
-      preLoaderRoute: typeof InboxRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/jockeys': {
-      id: '/jockeys'
-      path: '/jockeys'
-      fullPath: '/jockeys'
-      preLoaderRoute: typeof JockeysRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/market': {
-      id: '/market'
-      path: '/market'
-      fullPath: '/market'
-      preLoaderRoute: typeof MarketRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/new-game': {
-      id: '/new-game'
-      path: '/new-game'
-      fullPath: '/new-game'
-      preLoaderRoute: typeof NewGameRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/npc-stables': {
-      id: '/npc-stables'
-      path: '/npc-stables'
-      fullPath: '/npc-stables'
-      preLoaderRoute: typeof NpcStablesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/race-browser': {
-      id: '/race-browser'
-      path: '/race-browser'
-      fullPath: '/race-browser'
-      preLoaderRoute: typeof RaceBrowserRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/races': {
-      id: '/races'
-      path: '/races'
-      fullPath: '/races'
-      preLoaderRoute: typeof RacesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/racing': {
-      id: '/racing'
-      path: '/racing'
-      fullPath: '/racing'
-      preLoaderRoute: typeof RacingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recap': {
-      id: '/recap'
-      path: '/recap'
-      fullPath: '/recap'
-      preLoaderRoute: typeof RecapRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/records': {
-      id: '/records'
-      path: '/records'
-      fullPath: '/records'
-      preLoaderRoute: typeof RecordsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/scheduler': {
-      id: '/scheduler'
-      path: '/scheduler'
-      fullPath: '/scheduler'
-      preLoaderRoute: typeof SchedulerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sire-leaderboards': {
-      id: '/sire-leaderboards'
-      path: '/sire-leaderboards'
-      fullPath: '/sire-leaderboards'
-      preLoaderRoute: typeof SireLeaderboardsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sire-watch': {
-      id: '/sire-watch'
-      path: '/sire-watch'
-      fullPath: '/sire-watch'
-      preLoaderRoute: typeof SireWatchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/stable': {
-      id: '/stable'
-      path: '/stable'
-      fullPath: '/stable'
-      preLoaderRoute: typeof StableRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/staff': {
-      id: '/staff'
-      path: '/staff'
-      fullPath: '/staff'
-      preLoaderRoute: typeof StaffRouteImport
+    '/start': {
+      id: '/start'
+      path: '/start'
+      fullPath: '/start'
+      preLoaderRoute: typeof StartRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/stallions': {
@@ -950,61 +746,257 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StallionsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/start': {
-      id: '/start'
-      path: '/start'
-      fullPath: '/start'
-      preLoaderRoute: typeof StartRouteImport
+    '/staff': {
+      id: '/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof StaffRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/analytics/': {
-      id: '/analytics/'
-      path: '/'
-      fullPath: '/analytics/'
-      preLoaderRoute: typeof AnalyticsIndexRouteImport
-      parentRoute: typeof AnalyticsRoute
-    }
-    '/analytics/breeding': {
-      id: '/analytics/breeding'
-      path: '/breeding'
-      fullPath: '/analytics/breeding'
-      preLoaderRoute: typeof AnalyticsBreedingRouteImport
-      parentRoute: typeof AnalyticsRoute
-    }
-    '/analytics/finance': {
-      id: '/analytics/finance'
-      path: '/finance'
-      fullPath: '/analytics/finance'
-      preLoaderRoute: typeof AnalyticsFinanceRouteImport
-      parentRoute: typeof AnalyticsRoute
-    }
-    '/analytics/racing': {
-      id: '/analytics/racing'
-      path: '/racing'
-      fullPath: '/analytics/racing'
-      preLoaderRoute: typeof AnalyticsRacingRouteImport
-      parentRoute: typeof AnalyticsRoute
-    }
-    '/analytics/stable': {
-      id: '/analytics/stable'
+    '/stable': {
+      id: '/stable'
       path: '/stable'
-      fullPath: '/analytics/stable'
-      preLoaderRoute: typeof AnalyticsStableRouteImport
-      parentRoute: typeof AnalyticsRoute
+      fullPath: '/stable'
+      preLoaderRoute: typeof StableRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/auction/': {
-      id: '/auction/'
+    '/sire-watch': {
+      id: '/sire-watch'
+      path: '/sire-watch'
+      fullPath: '/sire-watch'
+      preLoaderRoute: typeof SireWatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sire-leaderboards': {
+      id: '/sire-leaderboards'
+      path: '/sire-leaderboards'
+      fullPath: '/sire-leaderboards'
+      preLoaderRoute: typeof SireLeaderboardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scheduler': {
+      id: '/scheduler'
+      path: '/scheduler'
+      fullPath: '/scheduler'
+      preLoaderRoute: typeof SchedulerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/regional-comparison': {
+      id: '/regional-comparison'
+      path: '/regional-comparison'
+      fullPath: '/regional-comparison'
+      preLoaderRoute: typeof RegionalComparisonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/records': {
+      id: '/records'
+      path: '/records'
+      fullPath: '/records'
+      preLoaderRoute: typeof RecordsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recap': {
+      id: '/recap'
+      path: '/recap'
+      fullPath: '/recap'
+      preLoaderRoute: typeof RecapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/racing': {
+      id: '/racing'
+      path: '/racing'
+      fullPath: '/racing'
+      preLoaderRoute: typeof RacingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/races': {
+      id: '/races'
+      path: '/races'
+      fullPath: '/races'
+      preLoaderRoute: typeof RacesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/race-browser': {
+      id: '/race-browser'
+      path: '/race-browser'
+      fullPath: '/race-browser'
+      preLoaderRoute: typeof RaceBrowserRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/npc-stables': {
+      id: '/npc-stables'
+      path: '/npc-stables'
+      fullPath: '/npc-stables'
+      preLoaderRoute: typeof NpcStablesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/new-game': {
+      id: '/new-game'
+      path: '/new-game'
+      fullPath: '/new-game'
+      preLoaderRoute: typeof NewGameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/market': {
+      id: '/market'
+      path: '/market'
+      fullPath: '/market'
+      preLoaderRoute: typeof MarketRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jockeys': {
+      id: '/jockeys'
+      path: '/jockeys'
+      fullPath: '/jockeys'
+      preLoaderRoute: typeof JockeysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inbox': {
+      id: '/inbox'
+      path: '/inbox'
+      fullPath: '/inbox'
+      preLoaderRoute: typeof InboxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/horse-gallery': {
+      id: '/horse-gallery'
+      path: '/horse-gallery'
+      fullPath: '/horse-gallery'
+      preLoaderRoute: typeof HorseGalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/honors': {
+      id: '/honors'
+      path: '/honors'
+      fullPath: '/honors'
+      preLoaderRoute: typeof HonorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hall-of-fame': {
+      id: '/hall-of-fame'
+      path: '/hall-of-fame'
+      fullPath: '/hall-of-fame'
+      preLoaderRoute: typeof HallOfFameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gazette': {
+      id: '/gazette'
+      path: '/gazette'
+      fullPath: '/gazette'
+      preLoaderRoute: typeof GazetteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/financial-report': {
+      id: '/financial-report'
+      path: '/financial-report'
+      fullPath: '/financial-report'
+      preLoaderRoute: typeof FinancialReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/facilities': {
+      id: '/facilities'
+      path: '/facilities'
+      fullPath: '/facilities'
+      preLoaderRoute: typeof FacilitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/epilogue': {
+      id: '/epilogue'
+      path: '/epilogue'
+      fullPath: '/epilogue'
+      preLoaderRoute: typeof EpilogueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calendar': {
+      id: '/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof CalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/broodmares': {
+      id: '/broodmares'
+      path: '/broodmares'
+      fullPath: '/broodmares'
+      preLoaderRoute: typeof BroodmaresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/briefing': {
+      id: '/briefing'
+      path: '/briefing'
+      fullPath: '/briefing'
+      preLoaderRoute: typeof BriefingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/breeding': {
+      id: '/breeding'
+      path: '/breeding'
+      fullPath: '/breeding'
+      preLoaderRoute: typeof BreedingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bookmarks': {
+      id: '/bookmarks'
+      path: '/bookmarks'
+      fullPath: '/bookmarks'
+      preLoaderRoute: typeof BookmarksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/awards': {
+      id: '/awards'
+      path: '/awards'
+      fullPath: '/awards'
+      preLoaderRoute: typeof AwardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auction': {
+      id: '/auction'
+      path: '/auction'
+      fullPath: '/auction'
+      preLoaderRoute: typeof AuctionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
       path: '/'
-      fullPath: '/auction/'
-      preLoaderRoute: typeof AuctionIndexRouteImport
-      parentRoute: typeof AuctionRoute
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/auction/$saleId': {
-      id: '/auction/$saleId'
-      path: '/$saleId'
-      fullPath: '/auction/$saleId'
-      preLoaderRoute: typeof AuctionSaleIdRouteImport
-      parentRoute: typeof AuctionRoute
+    '/stable/': {
+      id: '/stable/'
+      path: '/'
+      fullPath: '/stable/'
+      preLoaderRoute: typeof StableIndexRouteImport
+      parentRoute: typeof StableRoute
+    }
+    '/sire-watch/': {
+      id: '/sire-watch/'
+      path: '/'
+      fullPath: '/sire-watch/'
+      preLoaderRoute: typeof SireWatchIndexRouteImport
+      parentRoute: typeof SireWatchRoute
+    }
+    '/npc-stables/': {
+      id: '/npc-stables/'
+      path: '/'
+      fullPath: '/npc-stables/'
+      preLoaderRoute: typeof NpcStablesIndexRouteImport
+      parentRoute: typeof NpcStablesRoute
     }
     '/calendar/': {
       id: '/calendar/'
@@ -1013,18 +1005,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalendarIndexRouteImport
       parentRoute: typeof CalendarRoute
     }
-    '/calendar/$regionId': {
-      id: '/calendar/$regionId'
-      path: '/$regionId'
-      fullPath: '/calendar/$regionId'
-      preLoaderRoute: typeof CalendarRegionIdRouteImport
-      parentRoute: typeof CalendarRoute
+    '/auction/': {
+      id: '/auction/'
+      path: '/'
+      fullPath: '/auction/'
+      preLoaderRoute: typeof AuctionIndexRouteImport
+      parentRoute: typeof AuctionRoute
     }
-    '/ceremony/$invitationId': {
-      id: '/ceremony/$invitationId'
-      path: '/ceremony/$invitationId'
-      fullPath: '/ceremony/$invitationId'
-      preLoaderRoute: typeof CeremonyInvitationIdRouteImport
+    '/analytics/': {
+      id: '/analytics/'
+      path: '/'
+      fullPath: '/analytics/'
+      preLoaderRoute: typeof AnalyticsIndexRouteImport
+      parentRoute: typeof AnalyticsRoute
+    }
+    '/syndicate/$syndicateId': {
+      id: '/syndicate/$syndicateId'
+      path: '/syndicate/$syndicateId'
+      fullPath: '/syndicate/$syndicateId'
+      preLoaderRoute: typeof SyndicateSyndicateIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/staff/$staffId': {
+      id: '/staff/$staffId'
+      path: '/$staffId'
+      fullPath: '/staff/$staffId'
+      preLoaderRoute: typeof StaffStaffIdRouteImport
+      parentRoute: typeof StaffRoute
+    }
+    '/stable/$horseId': {
+      id: '/stable/$horseId'
+      path: '/$horseId'
+      fullPath: '/stable/$horseId'
+      preLoaderRoute: typeof StableHorseIdRouteImport
+      parentRoute: typeof StableRoute
+    }
+    '/sire-watch/$stallionId': {
+      id: '/sire-watch/$stallionId'
+      path: '/$stallionId'
+      fullPath: '/sire-watch/$stallionId'
+      preLoaderRoute: typeof SireWatchStallionIdRouteImport
+      parentRoute: typeof SireWatchRoute
+    }
+    '/race/$raceId': {
+      id: '/race/$raceId'
+      path: '/race/$raceId'
+      fullPath: '/race/$raceId'
+      preLoaderRoute: typeof RaceRaceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/npc-stables/$stableId': {
+      id: '/npc-stables/$stableId'
+      path: '/$stableId'
+      fullPath: '/npc-stables/$stableId'
+      preLoaderRoute: typeof NpcStablesStableIdRouteImport
+      parentRoute: typeof NpcStablesRoute
+    }
+    '/jockey/$jockeyId': {
+      id: '/jockey/$jockeyId'
+      path: '/jockey/$jockeyId'
+      fullPath: '/jockey/$jockeyId'
+      preLoaderRoute: typeof JockeyJockeyIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/foal-development/$horseId': {
@@ -1034,75 +1075,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FoalDevelopmentHorseIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/jockey/$jockeyId': {
-      id: '/jockey/$jockeyId'
-      path: '/jockey/$jockeyId'
-      fullPath: '/jockey/$jockeyId'
-      preLoaderRoute: typeof JockeyJockeyIdRouteImport
+    '/ceremony/$invitationId': {
+      id: '/ceremony/$invitationId'
+      path: '/ceremony/$invitationId'
+      fullPath: '/ceremony/$invitationId'
+      preLoaderRoute: typeof CeremonyInvitationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/npc-stables/': {
-      id: '/npc-stables/'
-      path: '/'
-      fullPath: '/npc-stables/'
-      preLoaderRoute: typeof NpcStablesIndexRouteImport
-      parentRoute: typeof NpcStablesRoute
+    '/calendar/$regionId': {
+      id: '/calendar/$regionId'
+      path: '/$regionId'
+      fullPath: '/calendar/$regionId'
+      preLoaderRoute: typeof CalendarRegionIdRouteImport
+      parentRoute: typeof CalendarRoute
     }
-    '/npc-stables/$stableId': {
-      id: '/npc-stables/$stableId'
-      path: '/$stableId'
-      fullPath: '/npc-stables/$stableId'
-      preLoaderRoute: typeof NpcStablesStableIdRouteImport
-      parentRoute: typeof NpcStablesRoute
+    '/auction/$saleId': {
+      id: '/auction/$saleId'
+      path: '/$saleId'
+      fullPath: '/auction/$saleId'
+      preLoaderRoute: typeof AuctionSaleIdRouteImport
+      parentRoute: typeof AuctionRoute
     }
-    '/race/$raceId': {
-      id: '/race/$raceId'
-      path: '/race/$raceId'
-      fullPath: '/race/$raceId'
-      preLoaderRoute: typeof RaceRaceIdRouteImport
-      parentRoute: typeof rootRouteImport
+    '/analytics/stable': {
+      id: '/analytics/stable'
+      path: '/stable'
+      fullPath: '/analytics/stable'
+      preLoaderRoute: typeof AnalyticsStableRouteImport
+      parentRoute: typeof AnalyticsRoute
     }
-    '/sire-watch/': {
-      id: '/sire-watch/'
-      path: '/'
-      fullPath: '/sire-watch/'
-      preLoaderRoute: typeof SireWatchIndexRouteImport
-      parentRoute: typeof SireWatchRoute
+    '/analytics/racing': {
+      id: '/analytics/racing'
+      path: '/racing'
+      fullPath: '/analytics/racing'
+      preLoaderRoute: typeof AnalyticsRacingRouteImport
+      parentRoute: typeof AnalyticsRoute
     }
-    '/sire-watch/$stallionId': {
-      id: '/sire-watch/$stallionId'
-      path: '/$stallionId'
-      fullPath: '/sire-watch/$stallionId'
-      preLoaderRoute: typeof SireWatchStallionIdRouteImport
-      parentRoute: typeof SireWatchRoute
+    '/analytics/finance': {
+      id: '/analytics/finance'
+      path: '/finance'
+      fullPath: '/analytics/finance'
+      preLoaderRoute: typeof AnalyticsFinanceRouteImport
+      parentRoute: typeof AnalyticsRoute
     }
-    '/stable/': {
-      id: '/stable/'
-      path: '/'
-      fullPath: '/stable/'
-      preLoaderRoute: typeof StableIndexRouteImport
-      parentRoute: typeof StableRoute
-    }
-    '/stable/$horseId': {
-      id: '/stable/$horseId'
-      path: '/$horseId'
-      fullPath: '/stable/$horseId'
-      preLoaderRoute: typeof StableHorseIdRouteImport
-      parentRoute: typeof StableRoute
-    }
-    '/staff/$staffId': {
-      id: '/staff/$staffId'
-      path: '/$staffId'
-      fullPath: '/staff/$staffId'
-      preLoaderRoute: typeof StaffStaffIdRouteImport
-      parentRoute: typeof StaffRoute
-    }
-    '/syndicate/$syndicateId': {
-      id: '/syndicate/$syndicateId'
-      path: '/syndicate/$syndicateId'
-      fullPath: '/syndicate/$syndicateId'
-      preLoaderRoute: typeof SyndicateSyndicateIdRouteImport
-      parentRoute: typeof rootRouteImport
+    '/analytics/breeding': {
+      id: '/analytics/breeding'
+      path: '/breeding'
+      fullPath: '/analytics/breeding'
+      preLoaderRoute: typeof AnalyticsBreedingRouteImport
+      parentRoute: typeof AnalyticsRoute
     }
   }
 }
@@ -1232,6 +1252,7 @@ const rootRouteChildren: RootRouteChildren = {
   RacingRoute: RacingRoute,
   RecapRoute: RecapRoute,
   RecordsRoute: RecordsRoute,
+  RegionalComparisonRoute: RegionalComparisonRoute,
   SchedulerRoute: SchedulerRoute,
   SettingsRoute: SettingsRoute,
   SireLeaderboardsRoute: SireLeaderboardsRoute,

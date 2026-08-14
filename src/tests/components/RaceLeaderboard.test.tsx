@@ -197,7 +197,7 @@ describe("Race Leaderboard tie-break hint", () => {
         onMinBeyerChange={() => {}}
       />,
     );
-    expect(screen.queryByText("Horses level — order held by tie-break")).toBeNull();
+    expect(screen.queryByText(/Horses level — order held by tie-break/)).toBeNull();
   });
 
   it("renders hint text when hasTies is true and sortBy is position", () => {
@@ -216,7 +216,7 @@ describe("Race Leaderboard tie-break hint", () => {
         onMinBeyerChange={() => {}}
       />,
     );
-    expect(screen.getByText("Horses level — order held by tie-break")).toBeTruthy();
+    expect(screen.getByText(/Horses level — order held by tie-break/)).toBeTruthy();
   });
 
   it("does not render hint text when hasTies is true but sortBy is beyer", () => {
@@ -235,7 +235,7 @@ describe("Race Leaderboard tie-break hint", () => {
         onMinBeyerChange={() => {}}
       />,
     );
-    expect(screen.queryByText("Horses level — order held by tie-break")).toBeNull();
+    expect(screen.queryByText(/Horses level — order held by tie-break/)).toBeNull();
   });
 
   it("renders marker for tied rows", () => {

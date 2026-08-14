@@ -63,10 +63,10 @@ describe("useRegionalComparisonParams", () => {
   it("setRegion calls navigate with updated search params", () => {
     searchState = {};
     const { result } = renderHook(() => useRegionalComparisonParams());
-    act(() => result.current.setRegion("europe"));
+    act(() => result.current.setRegion("usa"));
     expect(navigate).toHaveBeenCalledTimes(1);
     const arg = navigate.mock.calls[0][0];
-    expect(arg.search({})).toMatchObject({ region: "europe" });
+    expect(arg.search({})).toMatchObject({ region: "usa" });
   });
 
   it("setRegion(null) navigates with region undefined", () => {
