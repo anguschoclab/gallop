@@ -31,7 +31,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
 
 describe("recordFinish — same-tick ordering", () => {
   it("appends entries sorted by finishTime when two runners finish in same tick", () => {
-    const finishOrder: { horseId: string; position: number; time: number }[] = [];
+    const finishOrder: { horseId: string; position: number; time: number; barrier: number }[] = [];
     // h2 has earlier finishTime but is processed second (array order)
     const r1 = makeRunner({ horseId: "h1", finishTime: 90.5, barrier: 1 });
     const r2 = makeRunner({ horseId: "h2", finishTime: 90.3, barrier: 2 });
@@ -49,7 +49,7 @@ describe("recordFinish — same-tick ordering", () => {
   });
 
   it("tie-breaks by barrier when finishTime is identical", () => {
-    const finishOrder: { horseId: string; position: number; time: number }[] = [];
+    const finishOrder: { horseId: string; position: number; time: number; barrier: number }[] = [];
     const r1 = makeRunner({ horseId: "h1", finishTime: 90.0, barrier: 3 });
     const r2 = makeRunner({ horseId: "h2", finishTime: 90.0, barrier: 1 });
 
@@ -62,7 +62,7 @@ describe("recordFinish — same-tick ordering", () => {
   });
 
   it("tie-breaks by horseId when finishTime and barrier are identical", () => {
-    const finishOrder: { horseId: string; position: number; time: number }[] = [];
+    const finishOrder: { horseId: string; position: number; time: number; barrier: number }[] = [];
     const r1 = makeRunner({ horseId: "zzz", finishTime: 90.0, barrier: 2 });
     const r2 = makeRunner({ horseId: "aaa", finishTime: 90.0, barrier: 2 });
 
@@ -74,7 +74,7 @@ describe("recordFinish — same-tick ordering", () => {
   });
 
   it("sorts three same-tick finishers by finishTime regardless of array order", () => {
-    const finishOrder: { horseId: string; position: number; time: number }[] = [];
+    const finishOrder: { horseId: string; position: number; time: number; barrier: number }[] = [];
     const r1 = makeRunner({ horseId: "h1", finishTime: 90.7, barrier: 1 });
     const r2 = makeRunner({ horseId: "h2", finishTime: 90.3, barrier: 2 });
     const r3 = makeRunner({ horseId: "h3", finishTime: 90.5, barrier: 3 });
@@ -88,7 +88,7 @@ describe("recordFinish — same-tick ordering", () => {
   });
 
   it("produces order consistent with compareFinishOrder", () => {
-    const finishOrder: { horseId: string; position: number; time: number }[] = [];
+    const finishOrder: { horseId: string; position: number; time: number; barrier: number }[] = [];
     const runners = [
       makeRunner({ horseId: "c", finishTime: 90.0, barrier: 3 }),
       makeRunner({ horseId: "a", finishTime: 90.0, barrier: 1 }),
