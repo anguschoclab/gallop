@@ -22,10 +22,18 @@ export function useLeaderboardState(
    */
   tick = 0,
 ) {
-
   const [sortBy, setSortBy] = useState<"position" | "beyer" | "velocity">("position");
   const [filter, setFilter] = useState<"all" | "owned" | "top5">("all");
   const [minBeyer, setMinBeyer] = useState(0);
+
+  // Track the wall-clock time the leaderboard last re-derived for this tick.
+  const lastUpdatedAtRef = useRef<number>(Date.now());
+  const prevTickRef = useRef<number>(tick);
+  if (prevTickRef.current !== tick) {
+    prevTickRef.current = tick;
+    lastUpdatedAtRef.current = Date.now();
+  }
+  const lastUpdatedAt = lastUpdatedAtRef.current;
 
   const allFinished = runners.every((r) => r.finishTime !== null);
   const anyFinished = runners.some((r) => r.finishTime !== null);
