@@ -209,7 +209,12 @@ export function LiveRace() {
     return () => window.clearTimeout(id);
   }, [phase, analysisRef]);
 
-  const { announcement, commentary, subjectHorseId } = useCommentaryFeed(messageQueue, finished);
+  const {
+    announcement,
+    commentary,
+    subjectHorseId,
+    lastUpdatedAt: commentaryUpdatedAt,
+  } = useCommentaryFeed(messageQueue, finished);
 
   const {
     sorted,
@@ -298,6 +303,7 @@ export function LiveRace() {
             commentary,
             subjectHorseId,
             announcement,
+            lastUpdatedAt: commentaryUpdatedAt,
           }}
           leaderboard={{
             sorted,
