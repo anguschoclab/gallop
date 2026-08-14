@@ -11,7 +11,8 @@
 // Race Entry Resolution Phase
 // Converts RaceEntryIntents into impacts (race entry, cash changes)
 
-import { PHASE_ORDER_RACE_ENTRY_RESOLUTION, BUMP_RATING_MARGIN } from "@/constants";
+import { PHASE_ORDER_RACE_ENTRY_RESOLUTION } from "@/constants";
+import { findBumpableEntryIndex } from "@/core/race/entry/bumpResolver";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, RaceEntryIntent } from "@/core/resolver/intents";
 import type { AnyImpact, RaceEntryImpact, CashImpact } from "@/core/resolver/impacts/index";
@@ -95,21 +96,8 @@ export const raceEntryResolutionPhase: PipelinePhase = {
           bumpEntryHorseId = intent.bumpEntryHorseId;
         } else if (intent.source === "npc") {
           // CPU bump: find weakest non-player NPC entry
-          const challengerRating = calculateOverallRating(horse);
-          let weakestIdx = -1;
-          let weakestRating = Infinity;
-          for (let i = 0; i < race.entries.length; i++) {
-            const entry = race.entries[i];
-            if (entry.owned) continue; // never bump player
-            const existing = horseMap.get(entry.horseId);
-            if (!existing) continue;
-            const r = calculateOverallRating(existing);
-            if (r < weakestRating) {
-              weakestRating = r;
-              weakestIdx = i;
-            }
-          }
-          if (weakestIdx === -1 || challengerRating <= weakestRating + BUMP_RATING_MARGIN) {
+          const weakestIdx = findBumpableEntryIndex(race.entries, horse, (id) => horseMap.get(id));
+          if (weakestIdx === -1) {
             continue; // can't bump anyone meaningfully
           }
           bumpEntryHorseId = race.entries[weakestIdx].horseId;
