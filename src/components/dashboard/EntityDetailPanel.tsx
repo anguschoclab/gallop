@@ -2,10 +2,11 @@ import { useMemo } from "react";
 import { AreaTrend, formatCurrencyCompact } from "@/components/charts";
 import { weekBucket, type TimeWindowWeeks } from "@/core/analytics/timeWindow";
 import type { RegionRunRow } from "@/core/analytics/regionalTrends";
-import { type EntityKind, type Lookups } from "@/core/analytics/regionalConstants";
-
-/** Fallback bucket count when weeks is 0 (all-time). */
-const FALLBACK_WEEK_BUCKETS = 1;
+import {
+  FALLBACK_WEEK_BUCKETS,
+  type EntityKind,
+  type Lookups,
+} from "@/core/analytics/regionalConstants";
 
 interface Props {
   entityId: string;

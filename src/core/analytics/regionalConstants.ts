@@ -28,9 +28,21 @@ export const ALL_SURFACES = ["Turf", "Dirt", "Synthetic"] as const;
 
 export type MetricMode = "raw" | "rate";
 
+/** All valid MetricMode values, for Zod enums and runtime validation. */
+export const METRIC_MODES: readonly MetricMode[] = ["raw", "rate"];
+
 /* ── Distance presets ─────────────────────────────────────────────────── */
 
 export type DistPreset = "all" | "sprint" | "mile" | "route" | "staying";
+
+/** All valid DistPreset values, for Zod enums and runtime validation. */
+export const DIST_PRESET_VALUES: readonly DistPreset[] = [
+  "all",
+  "sprint",
+  "mile",
+  "route",
+  "staying",
+];
 
 export const DIST_PRESETS: { value: DistPreset; label: string }[] = [
   { value: "sprint", label: "Sprint" },
@@ -52,6 +64,16 @@ export const DIST_PRESET_MAP: Record<DistPreset, { distMin?: number; distMax?: n
 
 export const DEFAULT_WEEKS_A: TimeWindowWeeks = 12;
 export const DEFAULT_WEEKS_B: TimeWindowWeeks = 4;
+
+/** Fallback bucket count when weeks is 0 (all-time). */
+export const FALLBACK_WEEK_BUCKETS = 1;
+
+/* ── Racing position thresholds ───────────────────────────────────────── */
+
+/** Finishing position that counts as a win. */
+export const WIN_POSITION = 1;
+/** Maximum finishing position (inclusive) that counts as a "top-3" / placed run. */
+export const TOP3_POSITION = 3;
 
 /* ── Shared entity types ──────────────────────────────────────────────── */
 

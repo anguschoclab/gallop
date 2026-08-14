@@ -37,8 +37,12 @@ import {
 } from "@/core/analytics/timeWindow";
 import {
   ALL_SURFACES,
+  DEFAULT_WEEKS_A,
+  DEFAULT_WEEKS_B,
   DIST_PRESETS,
   DIST_PRESET_MAP,
+  TOP3_POSITION,
+  WIN_POSITION,
   type DistPreset,
   type EntityKind,
   type Lookups,
@@ -218,7 +222,9 @@ export function RegionDrilldownDrawer({
   onDistPresetChange,
 }: Props) {
   const [compare, setCompare] = useState(false);
-  const [weeksB, setWeeksB] = useState<TimeWindowWeeks>(weeks === 4 ? 12 : 4);
+  const [weeksB, setWeeksB] = useState<TimeWindowWeeks>(
+    weeks === DEFAULT_WEEKS_B ? DEFAULT_WEEKS_A : DEFAULT_WEEKS_B,
+  );
   const [internalMetricMode, setInternalMetricMode] = useState<MetricMode>("raw");
   const [internalSurface, setInternalSurface] = useState<string[]>([...ALL_SURFACES]);
   const [internalDistPreset, setInternalDistPreset] = useState<DistPreset>("all");

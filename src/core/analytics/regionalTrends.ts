@@ -9,6 +9,7 @@ import { REGION_LIST, type RegionId } from "@/core/calendar/regions";
 import type { Horse, HorseRaceHistoryEntry } from "@/core/horse/types";
 import type { Race } from "@/core/race/types";
 import { isInWindow, weekBucket, type TimeWindowWeeks } from "./timeWindow";
+import { FALLBACK_WEEK_BUCKETS } from "./regionalConstants";
 
 export type RegionKey = RegionId | "other";
 
@@ -135,7 +136,7 @@ export function collectRegionRuns({
 }
 
 export function computeRegionTrends(args: ComputeArgs): RegionTrendRow[] {
-  const buckets = args.weeks || 1;
+  const buckets = args.weeks || FALLBACK_WEEK_BUCKETS;
   const byRegion = new Map<RegionKey, RegionTrendRow>();
 
   for (const run of collectRegionRuns(args)) {

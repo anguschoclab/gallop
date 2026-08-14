@@ -12,6 +12,12 @@ const BEYER_EPSILON = 1e-9;
 const VELOCITY_EPSILON = 1e-6;
 /** Fallback rank when a horse is not found in positionRank (filters them out of top5). */
 const FALLBACK_RANK = 99;
+/** Number of runners shown when the "top5" filter is active. */
+const TOP_N_FILTER = 5;
+/** Fallback Beyer value when projection returns null/undefined (sorts to bottom). */
+const FALLBACK_BEYER = -1;
+/** Simulation time passed to projectedBeyer during live rendering (always 0 = now). */
+const LIVE_SIM_TIME = 0;
 
 /**
  * useLeaderboardState — derives the sorted/filtered leaderboard view from
@@ -54,7 +60,7 @@ export function useLeaderboardState(
     () =>
       runners.map((r) => ({
         r,
-        beyer: projectedBeyer(r, race?.distance ?? 0, 0, classBonus, calibratedPars),
+        beyer: projectedBeyer(r, race?.distance ?? 0, LIVE_SIM_TIME, classBonus, calibratedPars),
       })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [runners, race?.distance, classBonus, calibratedPars, tick],
@@ -107,14 +113,15 @@ export function useLeaderboardState(
   const sorted = useMemo(() => {
     const filtered = rows.filter(({ r, beyer }) => {
       if (filter === "owned" && !r.owned) return false;
-      if (filter === "top5" && (positionRank.get(r.horseId) ?? FALLBACK_RANK) > 5) return false;
+      if (filter === "top5" && (positionRank.get(r.horseId) ?? FALLBACK_RANK) > TOP_N_FILTER)
+        return false;
       if (minBeyer > 0 && (beyer ?? 0) < minBeyer) return false;
       return true;
     });
 
     return [...filtered].sort((a, b) => {
       if (sortBy === "beyer") {
-        const d = (b.beyer ?? -1) - (a.beyer ?? -1);
+        const d = (b.beyer ?? FALLBACK_BEYER) - (a.beyer ?? FALLBACK_BEYER);
         if (Math.abs(d) > BEYER_EPSILON) return d;
         return byPosition(a.r, b.r);
       }

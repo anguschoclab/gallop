@@ -7,6 +7,7 @@ import {
   DEFAULT_WEEKS_A,
   DEFAULT_WEEKS_B,
   DIST_PRESET_MAP,
+  DIST_PRESET_VALUES,
   type DistPreset,
   type MetricMode,
 } from "@/core/analytics/regionalConstants";
@@ -48,8 +49,9 @@ function parseSurface(raw: unknown): string[] {
 }
 
 function parseDistPreset(raw: unknown): DistPreset {
-  const valid: DistPreset[] = ["all", "sprint", "mile", "route", "staying"];
-  return valid.includes(raw as DistPreset) ? (raw as DistPreset) : "all";
+  return (DIST_PRESET_VALUES as readonly string[]).includes(raw as string)
+    ? (raw as DistPreset)
+    : "all";
 }
 
 export function useRegionalComparisonParams() {
