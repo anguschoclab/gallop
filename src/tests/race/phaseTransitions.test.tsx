@@ -66,7 +66,7 @@ vi.mock("@/hooks/race/useRacePageData", () => ({
         lane: 1,
         targetLane: 1,
         laneVelocity: 0,
-        barrier: 1,
+        gate: 1,
         topSpeed: 18,
         accel: 3,
         staminaFactor: 1,

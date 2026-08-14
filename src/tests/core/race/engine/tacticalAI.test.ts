@@ -22,7 +22,7 @@ describe("tacticalAI", () => {
       staminaFactor: 1,
       noise: 0,
       runningStyle: "P",
-      barrier: 1,
+      gate: 1,
       weight: 126,
       courseFamiliarityMultiplier: 1,
       lastSeekContribution: 0,

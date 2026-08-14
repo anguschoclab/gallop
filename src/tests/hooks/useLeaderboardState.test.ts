@@ -35,7 +35,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     lane: 1,
     targetLane: 1,
     laneVelocity: 0,
-    barrier: 1,
+    gate: 1,
     topSpeed: 16,
     accel: 1,
     staminaFactor: 1,
@@ -204,11 +204,11 @@ describe("useLeaderboardState", () => {
 });
 
 describe("useLeaderboardState tie-breaking", () => {
-  it("orders equal positions by finishTime, then barrier, then horseId", () => {
+  it("orders equal positions by finishTime, then gate, then horseId", () => {
     const runners = [
-      makeRunner({ horseId: "c", position: 1200, barrier: 5 }),
-      makeRunner({ horseId: "a", position: 1200, barrier: 2 }),
-      makeRunner({ horseId: "b", position: 1200, barrier: 2, finishTime: 95 }),
+      makeRunner({ horseId: "c", position: 1200, gate: 5 }),
+      makeRunner({ horseId: "a", position: 1200, gate: 2 }),
+      makeRunner({ horseId: "b", position: 1200, gate: 2, finishTime: 95 }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     expect(result.current.sorted.map((r) => r.r.horseId)).toEqual(["b", "a", "c"]);
@@ -216,8 +216,8 @@ describe("useLeaderboardState tie-breaking", () => {
 
   it("keeps the same order across ticks when positions are tied", () => {
     const runners = [
-      makeRunner({ horseId: "z", position: 800, barrier: 3 }),
-      makeRunner({ horseId: "y", position: 800, barrier: 1 }),
+      makeRunner({ horseId: "z", position: 800, gate: 3 }),
+      makeRunner({ horseId: "y", position: 800, gate: 1 }),
     ];
     const first = renderHook(({ tick }) => useLeaderboardState(runners, makeRace(), 0, {}, tick), {
       initialProps: { tick: 0 },
@@ -240,15 +240,15 @@ describe("useLeaderboardState tie-breaking", () => {
 });
 
 describe("useLeaderboardState tie-break validation", () => {
-  it("throws when a runner has missing barrier", () => {
-    const runners = [makeRunner({ horseId: "a", barrier: undefined as any })];
+  it("throws when a runner has missing gate", () => {
+    const runners = [makeRunner({ horseId: "a", gate: undefined as any })];
     expect(() => renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}))).toThrow();
   });
 
   it("does not throw with valid runners", () => {
     const runners = [
-      makeRunner({ horseId: "a", barrier: 1, finishTime: null }),
-      makeRunner({ horseId: "b", barrier: 2, finishTime: 95.5 }),
+      makeRunner({ horseId: "a", gate: 1, finishTime: null }),
+      makeRunner({ horseId: "b", gate: 2, finishTime: 95.5 }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     expect(result.current.sorted).toHaveLength(2);
@@ -260,8 +260,8 @@ describe("useLeaderboardState tie-break chain isolation", () => {
 
   it("treats positions exactly 0.01m apart as tied (falls through to horseId)", () => {
     const runners = [
-      makeRunner({ horseId: "z", position: 100.0, barrier: 1, finishTime: null }),
-      makeRunner({ horseId: "a", position: 100.01, barrier: 1, finishTime: null }),
+      makeRunner({ horseId: "z", position: 100.0, gate: 1, finishTime: null }),
+      makeRunner({ horseId: "a", position: 100.01, gate: 1, finishTime: null }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     expect(result.current.sorted.map((r) => r.r.horseId)).toEqual(["a", "z"]);
@@ -269,17 +269,17 @@ describe("useLeaderboardState tie-break chain isolation", () => {
 
   it("treats positions 0.011m apart as NOT tied (position decides)", () => {
     const runners = [
-      makeRunner({ horseId: "a", position: 100.0, barrier: 1, finishTime: null }),
-      makeRunner({ horseId: "b", position: 100.011, barrier: 1, finishTime: null }),
+      makeRunner({ horseId: "a", position: 100.0, gate: 1, finishTime: null }),
+      makeRunner({ horseId: "b", position: 100.011, gate: 1, finishTime: null }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     expect(result.current.sorted.map((r) => r.r.horseId)).toEqual(["b", "a"]);
   });
 
-  it("identical positions fall through to barrier", () => {
+  it("identical positions fall through to gate", () => {
     const runners = [
-      makeRunner({ horseId: "x", position: 500, barrier: 5, finishTime: null }),
-      makeRunner({ horseId: "y", position: 500, barrier: 2, finishTime: null }),
+      makeRunner({ horseId: "x", position: 500, gate: 5, finishTime: null }),
+      makeRunner({ horseId: "y", position: 500, gate: 2, finishTime: null }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     expect(result.current.sorted.map((r) => r.r.horseId)).toEqual(["y", "x"]);
@@ -289,8 +289,8 @@ describe("useLeaderboardState tie-break chain isolation", () => {
 
   it("lower finishTime wins when positions are tied", () => {
     const runners = [
-      makeRunner({ horseId: "late", position: 1200, barrier: 1, finishTime: 95 }),
-      makeRunner({ horseId: "early", position: 1200, barrier: 1, finishTime: 90 }),
+      makeRunner({ horseId: "late", position: 1200, gate: 1, finishTime: 95 }),
+      makeRunner({ horseId: "early", position: 1200, gate: 1, finishTime: 90 }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     expect(result.current.sorted.map((r) => r.r.horseId)).toEqual(["early", "late"]);
@@ -298,28 +298,28 @@ describe("useLeaderboardState tie-break chain isolation", () => {
 
   it("null finishTime sorts after a non-null finishTime", () => {
     const runners = [
-      makeRunner({ horseId: "running", position: 1200, barrier: 1, finishTime: null }),
-      makeRunner({ horseId: "done", position: 1200, barrier: 1, finishTime: 90 }),
+      makeRunner({ horseId: "running", position: 1200, gate: 1, finishTime: null }),
+      makeRunner({ horseId: "done", position: 1200, gate: 1, finishTime: 90 }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     expect(result.current.sorted.map((r) => r.r.horseId)).toEqual(["done", "running"]);
   });
 
-  it("both null finishTime falls through to barrier", () => {
+  it("both null finishTime falls through to gate", () => {
     const runners = [
-      makeRunner({ horseId: "hi", position: 800, barrier: 3, finishTime: null }),
-      makeRunner({ horseId: "lo", position: 800, barrier: 1, finishTime: null }),
+      makeRunner({ horseId: "hi", position: 800, gate: 3, finishTime: null }),
+      makeRunner({ horseId: "lo", position: 800, gate: 1, finishTime: null }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     expect(result.current.sorted.map((r) => r.r.horseId)).toEqual(["lo", "hi"]);
   });
 
-  // ── Step 3: Barrier tie-break ──
+  // ── Step 3: Gate tie-break ──
 
-  it("lower barrier wins when positions and finishTimes are tied", () => {
+  it("lower gate wins when positions and finishTimes are tied", () => {
     const runners = [
-      makeRunner({ horseId: "wide", position: 1200, barrier: 5, finishTime: 90 }),
-      makeRunner({ horseId: "inside", position: 1200, barrier: 2, finishTime: 90 }),
+      makeRunner({ horseId: "wide", position: 1200, gate: 5, finishTime: 90 }),
+      makeRunner({ horseId: "inside", position: 1200, gate: 2, finishTime: 90 }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     expect(result.current.sorted.map((r) => r.r.horseId)).toEqual(["inside", "wide"]);
@@ -327,10 +327,10 @@ describe("useLeaderboardState tie-break chain isolation", () => {
 
   // ── Step 4: Horse ID tie-break ──
 
-  it("lexicographically lower horseId wins when position, finishTime, and barrier all tie", () => {
+  it("lexicographically lower horseId wins when position, finishTime, and gate all tie", () => {
     const runners = [
-      makeRunner({ horseId: "z", position: 1200, barrier: 3, finishTime: 90 }),
-      makeRunner({ horseId: "a", position: 1200, barrier: 3, finishTime: 90 }),
+      makeRunner({ horseId: "z", position: 1200, gate: 3, finishTime: 90 }),
+      makeRunner({ horseId: "a", position: 1200, gate: 3, finishTime: 90 }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     expect(result.current.sorted.map((r) => r.r.horseId)).toEqual(["a", "z"]);
@@ -341,13 +341,13 @@ describe("useLeaderboardState tie-break chain isolation", () => {
   it("exercises every tie-break level in a single 4-runner field", () => {
     const runners = [
       // D: still running (finishTime null) → sorts last among tied
-      makeRunner({ horseId: "d", position: 1200.005, barrier: 1, finishTime: null }),
-      // C: finished but wide barrier
-      makeRunner({ horseId: "c", position: 1200.005, barrier: 5, finishTime: 90 }),
-      // B: finished, lower barrier than C
-      makeRunner({ horseId: "b", position: 1200.005, barrier: 3, finishTime: 90 }),
-      // A: finished, same barrier as B, lower horseId
-      makeRunner({ horseId: "a", position: 1200.005, barrier: 3, finishTime: 90 }),
+      makeRunner({ horseId: "d", position: 1200.005, gate: 1, finishTime: null }),
+      // C: finished but wide gate
+      makeRunner({ horseId: "c", position: 1200.005, gate: 5, finishTime: 90 }),
+      // B: finished, lower gate than C
+      makeRunner({ horseId: "b", position: 1200.005, gate: 3, finishTime: 90 }),
+      // A: finished, same gate as B, lower horseId
+      makeRunner({ horseId: "a", position: 1200.005, gate: 3, finishTime: 90 }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     expect(result.current.sorted.map((r) => r.r.horseId)).toEqual(["a", "b", "c", "d"]);
@@ -357,9 +357,9 @@ describe("useLeaderboardState tie-break chain isolation", () => {
 
   it("assigns sequential positionRank via tie-break when positions are tied", () => {
     const runners = [
-      makeRunner({ horseId: "c", position: 1000, barrier: 9, finishTime: null }),
-      makeRunner({ horseId: "a", position: 1000, barrier: 1, finishTime: null }),
-      makeRunner({ horseId: "b", position: 1000, barrier: 5, finishTime: null }),
+      makeRunner({ horseId: "c", position: 1000, gate: 9, finishTime: null }),
+      makeRunner({ horseId: "a", position: 1000, gate: 1, finishTime: null }),
+      makeRunner({ horseId: "b", position: 1000, gate: 5, finishTime: null }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     expect(result.current.positionRank.get("a")).toBe(1);
@@ -368,14 +368,14 @@ describe("useLeaderboardState tie-break chain isolation", () => {
   });
 
   it("top5 filter uses tie-break-derived positionRank when positions are tied", () => {
-    // 6 runners: 3 tied at position 1000 (barriers 1,2,3), 3 at lower positions
+    // 6 runners: 3 tied at position 1000 (gates 1,2,3), 3 at lower positions
     const runners = [
-      makeRunner({ horseId: "t1", position: 1000, barrier: 1, finishTime: null }),
-      makeRunner({ horseId: "t2", position: 1000, barrier: 2, finishTime: null }),
-      makeRunner({ horseId: "t3", position: 1000, barrier: 3, finishTime: null }),
-      makeRunner({ horseId: "back1", position: 500, barrier: 4, finishTime: null }),
-      makeRunner({ horseId: "back2", position: 400, barrier: 5, finishTime: null }),
-      makeRunner({ horseId: "back3", position: 300, barrier: 6, finishTime: null }),
+      makeRunner({ horseId: "t1", position: 1000, gate: 1, finishTime: null }),
+      makeRunner({ horseId: "t2", position: 1000, gate: 2, finishTime: null }),
+      makeRunner({ horseId: "t3", position: 1000, gate: 3, finishTime: null }),
+      makeRunner({ horseId: "back1", position: 500, gate: 4, finishTime: null }),
+      makeRunner({ horseId: "back2", position: 400, gate: 5, finishTime: null }),
+      makeRunner({ horseId: "back3", position: 300, gate: 6, finishTime: null }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     act(() => result.current.setFilter("top5"));
@@ -398,10 +398,10 @@ describe("useLeaderboardState tie-break chain isolation", () => {
     expect(result.current.sorted.map((r) => r.r.horseId)).toEqual(["ahead", "behind"]);
   });
 
-  it("velocity sort with tied velocity and tied position falls through to barrier", () => {
+  it("velocity sort with tied velocity and tied position falls through to gate", () => {
     const runners = [
-      makeRunner({ horseId: "wide", position: 800, velocity: 15, barrier: 5 }),
-      makeRunner({ horseId: "inside", position: 800, velocity: 15, barrier: 2 }),
+      makeRunner({ horseId: "wide", position: 800, velocity: 15, gate: 5 }),
+      makeRunner({ horseId: "inside", position: 800, velocity: 15, gate: 2 }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     act(() => result.current.setSortBy("velocity"));
@@ -410,10 +410,10 @@ describe("useLeaderboardState tie-break chain isolation", () => {
 
   // ── Step 8: Dead-heat scenario ──
 
-  it("dead heat: same non-null finishTime and position → barrier decides", () => {
+  it("dead heat: same non-null finishTime and position → gate decides", () => {
     const runners = [
-      makeRunner({ horseId: "outer", position: 1600, barrier: 4, finishTime: 95.0 }),
-      makeRunner({ horseId: "inner", position: 1600, barrier: 2, finishTime: 95.0 }),
+      makeRunner({ horseId: "outer", position: 1600, gate: 4, finishTime: 95.0 }),
+      makeRunner({ horseId: "inner", position: 1600, gate: 2, finishTime: 95.0 }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     expect(result.current.sorted.map((r) => r.r.horseId)).toEqual(["inner", "outer"]);
@@ -421,11 +421,11 @@ describe("useLeaderboardState tie-break chain isolation", () => {
 
   // ── Step 9: Pre-start scenario ──
 
-  it("pre-start: all runners at position 0 with null finishTime → barrier order", () => {
+  it("pre-start: all runners at position 0 with null finishTime → gate order", () => {
     const runners = [
-      makeRunner({ horseId: "h3", position: 0, barrier: 3, finishTime: null }),
-      makeRunner({ horseId: "h1", position: 0, barrier: 1, finishTime: null }),
-      makeRunner({ horseId: "h2", position: 0, barrier: 2, finishTime: null }),
+      makeRunner({ horseId: "h3", position: 0, gate: 3, finishTime: null }),
+      makeRunner({ horseId: "h1", position: 0, gate: 1, finishTime: null }),
+      makeRunner({ horseId: "h2", position: 0, gate: 2, finishTime: null }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     expect(result.current.sorted.map((r) => r.r.horseId)).toEqual(["h1", "h2", "h3"]);

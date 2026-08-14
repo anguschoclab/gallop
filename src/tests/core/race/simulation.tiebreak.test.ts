@@ -14,7 +14,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     lane: 1,
     targetLane: 1,
     laneVelocity: 0,
-    barrier: 1,
+    gate: 1,
     topSpeed: 16,
     accel: 1,
     staminaFactor: 1,
@@ -31,25 +31,25 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
 }
 
 describe("runRaceToCompletion — tie-breaking", () => {
-  it("ranks identical finishTime by barrier then horseId", () => {
+  it("ranks identical finishTime by gate then horseId", () => {
     // Force a tie by pre-setting finishTime and position at the finish line.
     // runRaceToCompletion will skip already-finished runners and sort them.
     const runners = [
       makeRunner({
         horseId: "zzz",
-        barrier: 3,
+        gate: 3,
         position: 100,
         finishTime: 10.0,
       }),
       makeRunner({
         horseId: "aaa",
-        barrier: 1,
+        gate: 1,
         position: 100,
         finishTime: 10.0,
       }),
       makeRunner({
         horseId: "mmm",
-        barrier: 2,
+        gate: 2,
         position: 100,
         finishTime: 10.0,
       }),
@@ -58,17 +58,17 @@ describe("runRaceToCompletion — tie-breaking", () => {
     const rng = createRng("test-tiebreak");
     const { result } = runRaceToCompletion(runners, 100, rng, 0.1, 600, undefined, false);
 
-    // All three have identical finishTimes — tie-break by barrier: 1, 2, 3
+    // All three have identical finishTimes — tie-break by gate: 1, 2, 3
     const positions = result.map((r) => r.horseId);
-    expect(positions[0]).toBe("aaa"); // barrier 1
-    expect(positions[1]).toBe("mmm"); // barrier 2
-    expect(positions[2]).toBe("zzz"); // barrier 3
+    expect(positions[0]).toBe("aaa"); // gate 1
+    expect(positions[1]).toBe("mmm"); // gate 2
+    expect(positions[2]).toBe("zzz"); // gate 3
   });
 
   it("ranks DNF runners (Infinity time) after all finishers", () => {
     const runners = [
-      makeRunner({ horseId: "h1", barrier: 1, topSpeed: 50, velocity: 50 }),
-      makeRunner({ horseId: "h2", barrier: 2, topSpeed: 0, velocity: 0 }),
+      makeRunner({ horseId: "h1", gate: 1, topSpeed: 50, velocity: 50 }),
+      makeRunner({ horseId: "h2", gate: 2, topSpeed: 0, velocity: 0 }),
     ];
 
     const rng = createRng("test-dnf");
@@ -87,9 +87,9 @@ describe("runRaceToCompletion — tie-breaking", () => {
   it("uses compareFinishOrder for final ranking", () => {
     // Verify that the result ordering matches what compareFinishOrder would produce
     const runners = [
-      makeRunner({ horseId: "c", barrier: 3, topSpeed: 80, velocity: 80 }),
-      makeRunner({ horseId: "a", barrier: 1, topSpeed: 80, velocity: 80 }),
-      makeRunner({ horseId: "b", barrier: 2, topSpeed: 80, velocity: 80 }),
+      makeRunner({ horseId: "c", gate: 3, topSpeed: 80, velocity: 80 }),
+      makeRunner({ horseId: "a", gate: 1, topSpeed: 80, velocity: 80 }),
+      makeRunner({ horseId: "b", gate: 2, topSpeed: 80, velocity: 80 }),
     ];
 
     const rng = createRng("test-compare");
@@ -99,7 +99,7 @@ describe("runRaceToCompletion — tie-breaking", () => {
     const expected = [...result]
       .map((r) => ({
         finishTime: r.time,
-        barrier: runners.find((rn) => rn.horseId === r.horseId)?.barrier,
+        gate: runners.find((rn) => rn.horseId === r.horseId)?.gate,
         horseId: r.horseId,
       }))
       .sort(compareFinishOrder);

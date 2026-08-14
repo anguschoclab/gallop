@@ -77,7 +77,7 @@ describe("buildRaceField — deps consistency", () => {
     // (Exact assertion depends on implementation, but at minimum the objects should exist)
   });
 
-  it("assigns barriers deterministically based on race seed", () => {
+  it("assigns gates deterministically based on race seed", () => {
     const race = makeRace();
     const horses = [
       createTestHorse({ id: "h1", name: "Horse 1" }),
@@ -89,8 +89,8 @@ describe("buildRaceField — deps consistency", () => {
     const { runners: runners1 } = buildRaceField(deps);
     const { runners: runners2 } = buildRaceField(deps);
 
-    const barriers1 = runners1.map((r) => r.barrier);
-    const barriers2 = runners2.map((r) => r.barrier);
-    expect(barriers1).toEqual(barriers2);
+    const gates1 = runners1.map((r) => r.gate);
+    const gates2 = runners2.map((r) => r.gate);
+    expect(gates1).toEqual(gates2);
   });
 });

@@ -12,7 +12,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     lane: 1,
     targetLane: 1,
     laneVelocity: 0,
-    barrier: 1,
+    gate: 1,
     topSpeed: 16,
     accel: 1,
     staminaFactor: 1,
@@ -29,11 +29,11 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
 }
 
 describe("ResultOverlay — tie-breaking", () => {
-  it("sorts identical finishTime by barrier then horseId (using compareFinishOrder)", () => {
+  it("sorts identical finishTime by gate then horseId (using compareFinishOrder)", () => {
     const runners = [
-      makeRunner({ horseId: "zzz", finishTime: 90.0, barrier: 3 }),
-      makeRunner({ horseId: "aaa", finishTime: 90.0, barrier: 1 }),
-      makeRunner({ horseId: "mmm", finishTime: 90.0, barrier: 2 }),
+      makeRunner({ horseId: "zzz", finishTime: 90.0, gate: 3 }),
+      makeRunner({ horseId: "aaa", finishTime: 90.0, gate: 1 }),
+      makeRunner({ horseId: "mmm", finishTime: 90.0, gate: 2 }),
     ];
 
     // This is the sort that ResultOverlay should use after the fix
@@ -44,8 +44,8 @@ describe("ResultOverlay — tie-breaking", () => {
 
   it("sorts null finishTime last", () => {
     const runners = [
-      makeRunner({ horseId: "h1", finishTime: null, barrier: 1 }),
-      makeRunner({ horseId: "h2", finishTime: 90.0, barrier: 2 }),
+      makeRunner({ horseId: "h1", finishTime: null, gate: 1 }),
+      makeRunner({ horseId: "h2", finishTime: 90.0, gate: 2 }),
     ];
 
     const ordered = [...runners].sort(compareFinishOrder);
@@ -58,18 +58,18 @@ describe("ResultOverlay — tie-breaking", () => {
     // Verify that the sort used by ResultOverlay (compareFinishOrder)
     // produces the same order as the sort used by runRaceToCompletion
     const runners = [
-      makeRunner({ horseId: "c", finishTime: 90.0, barrier: 3 }),
-      makeRunner({ horseId: "a", finishTime: 90.0, barrier: 1 }),
-      makeRunner({ horseId: "b", finishTime: 90.0, barrier: 2 }),
-      makeRunner({ horseId: "d", finishTime: 89.0, barrier: 4 }),
+      makeRunner({ horseId: "c", finishTime: 90.0, gate: 3 }),
+      makeRunner({ horseId: "a", finishTime: 90.0, gate: 1 }),
+      makeRunner({ horseId: "b", finishTime: 90.0, gate: 2 }),
+      makeRunner({ horseId: "d", finishTime: 89.0, gate: 4 }),
     ];
 
     // ResultOverlay sort (after fix)
     const overlayOrder = [...runners].sort(compareFinishOrder).map((r) => r.horseId);
 
-    // runRaceToCompletion sort (after fix) — same comparator on finishTime/barrier/horseId
+    // runRaceToCompletion sort (after fix) — same comparator on finishTime/gate/horseId
     const completionOrder = [...runners]
-      .map((r) => ({ finishTime: r.finishTime, barrier: r.barrier, horseId: r.horseId }))
+      .map((r) => ({ finishTime: r.finishTime, gate: r.gate, horseId: r.horseId }))
       .sort(compareFinishOrder)
       .map((r) => r.horseId);
 

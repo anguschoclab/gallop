@@ -116,7 +116,7 @@ function makeRunner(overrides: Partial<Record<string, unknown>> = {}) {
     lane: 1,
     targetLane: 1,
     laneVelocity: 0,
-    barrier: 1,
+    gate: 1,
     topSpeed: 16,
     accel: 1,
     staminaFactor: 1,

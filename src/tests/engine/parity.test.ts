@@ -124,7 +124,7 @@ describe("background vs watched parity", () => {
     // Executor path
     const execResult = simulateRace(race, horses, []);
 
-    // Direct path: build field via the same helper so barrier shuffling matches.
+    // Direct path: build field via the same helper so gate shuffling matches.
     const { runners } = buildRaceField({ race, horses, jockeys: [] });
     const rng = rngForRace(race);
     const directResult = runRaceToCompletion(runners, race.distance, rng, 0.1, 600);

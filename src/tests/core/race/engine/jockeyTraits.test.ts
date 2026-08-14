@@ -51,7 +51,7 @@ function makeRunner(
     lane: 0,
     targetLane: 0,
     laneVelocity: 15,
-    barrier: 1,
+    gate: 1,
     topSpeed: 18,
     accel: 6,
     staminaFactor: 0.9,

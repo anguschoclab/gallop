@@ -12,8 +12,8 @@ const BEYER_MOCK_MULTIPLIER = 5;
 const RACE_DISTANCE = 1600;
 /** Default velocity (m/s) for the runner helper. */
 const DEFAULT_VELOCITY = 16;
-/** Default barrier draw for the runner helper. */
-const DEFAULT_BARRIER = 1;
+/** Default gate draw for the runner helper. */
+const DEFAULT_GATE = 1;
 /** Default lane for the runner helper. */
 const DEFAULT_LANE = 1;
 
@@ -90,7 +90,7 @@ function runner(horseId: string, position: number, overrides: Partial<Runner> = 
     finishTime: null,
     owned: false,
     lane: DEFAULT_LANE,
-    barrier: DEFAULT_BARRIER,
+    gate: DEFAULT_GATE,
     ...overrides,
   } as Runner;
 }
@@ -132,9 +132,9 @@ describe("useLeaderboardState live updates", () => {
 describe("useLeaderboardState tie-stability across consecutive ticks", () => {
   it("keeps tied runners in the same order across 6 consecutive ticks (position sort)", () => {
     const runners = [
-      runner("c", TIED_POSITION, { barrier: 3 }),
-      runner("a", TIED_POSITION, { barrier: 1 }),
-      runner("b", TIED_POSITION, { barrier: 2 }),
+      runner("c", TIED_POSITION, { gate: 3 }),
+      runner("a", TIED_POSITION, { gate: 1 }),
+      runner("b", TIED_POSITION, { gate: 2 }),
     ];
     const { result, rerender } = renderHook(
       ({ tick }: { tick: number }) => useLeaderboardState(runners, race, 0, {}, tick),
@@ -216,18 +216,18 @@ describe("useLeaderboardState tie-stability across consecutive ticks", () => {
 
   it("keeps a large field with multiple tie clusters stable across ticks", () => {
     const runners = [
-      // Cluster A (position 1000): barriers 2/1/3 → internal order e, d, f
-      runner("d", CLUSTER_A_POSITION, { barrier: 2 }),
-      runner("e", CLUSTER_A_POSITION, { barrier: 1 }),
-      runner("f", CLUSTER_A_POSITION, { barrier: 3 }),
+      // Cluster A (position 1000): gates 2/1/3 → internal order e, d, f
+      runner("d", CLUSTER_A_POSITION, { gate: 2 }),
+      runner("e", CLUSTER_A_POSITION, { gate: 1 }),
+      runner("f", CLUSTER_A_POSITION, { gate: 3 }),
       // Untied: j at 750
-      runner("j", UNTIED_MID_POSITION, { barrier: 1 }),
-      // Cluster B (position 500): barriers 3/1/2 → internal order h, i, g
-      runner("g", CLUSTER_B_POSITION, { barrier: 3 }),
-      runner("h", CLUSTER_B_POSITION, { barrier: 1 }),
-      runner("i", CLUSTER_B_POSITION, { barrier: 2 }),
+      runner("j", UNTIED_MID_POSITION, { gate: 1 }),
+      // Cluster B (position 500): gates 3/1/2 → internal order h, i, g
+      runner("g", CLUSTER_B_POSITION, { gate: 3 }),
+      runner("h", CLUSTER_B_POSITION, { gate: 1 }),
+      runner("i", CLUSTER_B_POSITION, { gate: 2 }),
       // Untied: k at 200
-      runner("k", UNTIED_LOW_POSITION, { barrier: 1 }),
+      runner("k", UNTIED_LOW_POSITION, { gate: 1 }),
     ];
     const { result, rerender } = renderHook(
       ({ tick }: { tick: number }) => useLeaderboardState(runners, race, 0, {}, tick),
@@ -274,10 +274,10 @@ describe("useLeaderboardState tie-stability across consecutive ticks", () => {
 
   it("keeps pre-start runners (all position 0) in stable order across ticks", () => {
     const runners = [
-      runner("d", 0, { barrier: 4 }),
-      runner("b", 0, { barrier: 2 }),
-      runner("a", 0, { barrier: 1 }),
-      runner("c", 0, { barrier: 3 }),
+      runner("d", 0, { gate: 4 }),
+      runner("b", 0, { gate: 2 }),
+      runner("a", 0, { gate: 1 }),
+      runner("c", 0, { gate: 3 }),
     ];
     const { result, rerender } = renderHook(
       ({ tick }: { tick: number }) => useLeaderboardState(runners, race, 0, {}, tick),
@@ -303,18 +303,18 @@ describe("useLeaderboardState tie-stability across consecutive ticks", () => {
 
   it("treats positions within POS_EPSILON as ties and positions outside as distinct", () => {
     const runners = [
-      // a and b within epsilon → tied, broken by barrier
-      runner("a", EPSILON_BASE, { barrier: 2 }),
-      runner("b", EPSILON_BASE + EPSILON_WITHIN, { barrier: 1 }),
+      // a and b within epsilon → tied, broken by gate
+      runner("a", EPSILON_BASE, { gate: 2 }),
+      runner("b", EPSILON_BASE + EPSILON_WITHIN, { gate: 1 }),
       // c outside epsilon → NOT tied, sorts ahead by position
-      runner("c", EPSILON_BASE + EPSILON_OUTSIDE, { barrier: 1 }),
+      runner("c", EPSILON_BASE + EPSILON_OUTSIDE, { gate: 1 }),
     ];
     const { result, rerender } = renderHook(
       ({ tick }: { tick: number }) => useLeaderboardState(runners, race, 0, {}, tick),
       { initialProps: { tick: 0 } },
     );
 
-    // a and b are tied (within epsilon) → barrier breaks: b(1) < a(2)
+    // a and b are tied (within epsilon) → gate breaks: b(1) < a(2)
     // c is beyond epsilon → not tied → sorts first by position
     const expected = ["c", "b", "a"];
     expect(result.current.sorted.map((r) => r.r.horseId)).toEqual(expected);

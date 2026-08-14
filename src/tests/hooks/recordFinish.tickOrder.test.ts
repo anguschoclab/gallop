@@ -13,7 +13,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     lane: 1,
     targetLane: 1,
     laneVelocity: 0,
-    barrier: 1,
+    gate: 1,
     topSpeed: 16,
     accel: 1,
     staminaFactor: 1,
@@ -31,10 +31,10 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
 
 describe("recordFinish — same-tick ordering", () => {
   it("appends entries sorted by finishTime when two runners finish in same tick", () => {
-    const finishOrder: { horseId: string; position: number; time: number; barrier: number }[] = [];
+    const finishOrder: { horseId: string; position: number; time: number; gate: number }[] = [];
     // h2 has earlier finishTime but is processed second (array order)
-    const r1 = makeRunner({ horseId: "h1", finishTime: 90.5, barrier: 1 });
-    const r2 = makeRunner({ horseId: "h2", finishTime: 90.3, barrier: 2 });
+    const r1 = makeRunner({ horseId: "h1", finishTime: 90.5, gate: 1 });
+    const r2 = makeRunner({ horseId: "h2", finishTime: 90.3, gate: 2 });
 
     // Simulate same-tick: both finish, but r1 is first in array order
     recordFinish(r1, finishOrder);
@@ -48,23 +48,23 @@ describe("recordFinish — same-tick ordering", () => {
     expect(finishOrder[1].position).toBe(2);
   });
 
-  it("tie-breaks by barrier when finishTime is identical", () => {
-    const finishOrder: { horseId: string; position: number; time: number; barrier: number }[] = [];
-    const r1 = makeRunner({ horseId: "h1", finishTime: 90.0, barrier: 3 });
-    const r2 = makeRunner({ horseId: "h2", finishTime: 90.0, barrier: 1 });
+  it("tie-breaks by gate when finishTime is identical", () => {
+    const finishOrder: { horseId: string; position: number; time: number; gate: number }[] = [];
+    const r1 = makeRunner({ horseId: "h1", finishTime: 90.0, gate: 3 });
+    const r2 = makeRunner({ horseId: "h2", finishTime: 90.0, gate: 1 });
 
     recordFinish(r1, finishOrder);
     recordFinish(r2, finishOrder);
 
-    // h2 (barrier 1) should be before h1 (barrier 3)
+    // h2 (gate 1) should be before h1 (gate 3)
     expect(finishOrder[0].horseId).toBe("h2");
     expect(finishOrder[1].horseId).toBe("h1");
   });
 
-  it("tie-breaks by horseId when finishTime and barrier are identical", () => {
-    const finishOrder: { horseId: string; position: number; time: number; barrier: number }[] = [];
-    const r1 = makeRunner({ horseId: "zzz", finishTime: 90.0, barrier: 2 });
-    const r2 = makeRunner({ horseId: "aaa", finishTime: 90.0, barrier: 2 });
+  it("tie-breaks by horseId when finishTime and gate are identical", () => {
+    const finishOrder: { horseId: string; position: number; time: number; gate: number }[] = [];
+    const r1 = makeRunner({ horseId: "zzz", finishTime: 90.0, gate: 2 });
+    const r2 = makeRunner({ horseId: "aaa", finishTime: 90.0, gate: 2 });
 
     recordFinish(r1, finishOrder);
     recordFinish(r2, finishOrder);
@@ -74,10 +74,10 @@ describe("recordFinish — same-tick ordering", () => {
   });
 
   it("sorts three same-tick finishers by finishTime regardless of array order", () => {
-    const finishOrder: { horseId: string; position: number; time: number; barrier: number }[] = [];
-    const r1 = makeRunner({ horseId: "h1", finishTime: 90.7, barrier: 1 });
-    const r2 = makeRunner({ horseId: "h2", finishTime: 90.3, barrier: 2 });
-    const r3 = makeRunner({ horseId: "h3", finishTime: 90.5, barrier: 3 });
+    const finishOrder: { horseId: string; position: number; time: number; gate: number }[] = [];
+    const r1 = makeRunner({ horseId: "h1", finishTime: 90.7, gate: 1 });
+    const r2 = makeRunner({ horseId: "h2", finishTime: 90.3, gate: 2 });
+    const r3 = makeRunner({ horseId: "h3", finishTime: 90.5, gate: 3 });
 
     recordFinish(r1, finishOrder);
     recordFinish(r2, finishOrder);
@@ -88,11 +88,11 @@ describe("recordFinish — same-tick ordering", () => {
   });
 
   it("produces order consistent with compareFinishOrder", () => {
-    const finishOrder: { horseId: string; position: number; time: number; barrier: number }[] = [];
+    const finishOrder: { horseId: string; position: number; time: number; gate: number }[] = [];
     const runners = [
-      makeRunner({ horseId: "c", finishTime: 90.0, barrier: 3 }),
-      makeRunner({ horseId: "a", finishTime: 90.0, barrier: 1 }),
-      makeRunner({ horseId: "b", finishTime: 90.0, barrier: 2 }),
+      makeRunner({ horseId: "c", finishTime: 90.0, gate: 3 }),
+      makeRunner({ horseId: "a", finishTime: 90.0, gate: 1 }),
+      makeRunner({ horseId: "b", finishTime: 90.0, gate: 2 }),
     ];
 
     for (const r of runners) {

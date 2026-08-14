@@ -13,7 +13,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     lane: 1,
     targetLane: 1,
     laneVelocity: 0,
-    barrier: 1,
+    gate: 1,
     topSpeed: 16,
     accel: 1,
     staminaFactor: 1,
@@ -32,12 +32,12 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
 describe("RNG isolation — live vs background divergence", () => {
   it("runRaceToCompletion with fresh RNG produces deterministic result", () => {
     const runners1 = [
-      makeRunner({ horseId: "h1", barrier: 1, topSpeed: 16, velocity: 15 }),
-      makeRunner({ horseId: "h2", barrier: 2, topSpeed: 16, velocity: 15 }),
+      makeRunner({ horseId: "h1", gate: 1, topSpeed: 16, velocity: 15 }),
+      makeRunner({ horseId: "h2", gate: 2, topSpeed: 16, velocity: 15 }),
     ];
     const runners2 = [
-      makeRunner({ horseId: "h1", barrier: 1, topSpeed: 16, velocity: 15 }),
-      makeRunner({ horseId: "h2", barrier: 2, topSpeed: 16, velocity: 15 }),
+      makeRunner({ horseId: "h1", gate: 1, topSpeed: 16, velocity: 15 }),
+      makeRunner({ horseId: "h2", gate: 2, topSpeed: 16, velocity: 15 }),
     ];
 
     const rng1 = createRng("race-test-1");
@@ -52,12 +52,12 @@ describe("RNG isolation — live vs background divergence", () => {
 
   it("pre-advancing RNG by N calls produces different result", () => {
     const runners1 = [
-      makeRunner({ horseId: "h1", barrier: 1, topSpeed: 16, velocity: 15, noise: 0.5 }),
-      makeRunner({ horseId: "h2", barrier: 2, topSpeed: 16, velocity: 15, noise: 0.5 }),
+      makeRunner({ horseId: "h1", gate: 1, topSpeed: 16, velocity: 15, noise: 0.5 }),
+      makeRunner({ horseId: "h2", gate: 2, topSpeed: 16, velocity: 15, noise: 0.5 }),
     ];
     const runners2 = [
-      makeRunner({ horseId: "h1", barrier: 1, topSpeed: 16, velocity: 15, noise: 0.5 }),
-      makeRunner({ horseId: "h2", barrier: 2, topSpeed: 16, velocity: 15, noise: 0.5 }),
+      makeRunner({ horseId: "h1", gate: 1, topSpeed: 16, velocity: 15, noise: 0.5 }),
+      makeRunner({ horseId: "h2", gate: 2, topSpeed: 16, velocity: 15, noise: 0.5 }),
     ];
 
     const rng1 = createRng("race-test-2");

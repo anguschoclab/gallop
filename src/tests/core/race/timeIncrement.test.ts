@@ -13,7 +13,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     lane: 1,
     targetLane: 1,
     laneVelocity: 0,
-    barrier: 1,
+    gate: 1,
     topSpeed: 16,
     accel: 1,
     staminaFactor: 1,
@@ -35,7 +35,7 @@ describe("time increment pattern — runRaceToCompletion vs useLiveRaceSimulatio
     // We can verify this by checking the finish time for a runner that
     // finishes immediately — its finishTime should be based on t=0 for the first step.
     const runners = [
-      makeRunner({ horseId: "h1", barrier: 1, position: 0, velocity: 1000, topSpeed: 1000 }),
+      makeRunner({ horseId: "h1", gate: 1, position: 0, velocity: 1000, topSpeed: 1000 }),
     ];
 
     const rng = createRng("time-test");
@@ -48,10 +48,10 @@ describe("time increment pattern — runRaceToCompletion vs useLiveRaceSimulatio
 
   it("runRaceToCompletion with dt=0.1 produces deterministic finish times", () => {
     const runners1 = [
-      makeRunner({ horseId: "h1", barrier: 1, topSpeed: 16, velocity: 15, noise: 0.1 }),
+      makeRunner({ horseId: "h1", gate: 1, topSpeed: 16, velocity: 15, noise: 0.1 }),
     ];
     const runners2 = [
-      makeRunner({ horseId: "h1", barrier: 1, topSpeed: 16, velocity: 15, noise: 0.1 }),
+      makeRunner({ horseId: "h1", gate: 1, topSpeed: 16, velocity: 15, noise: 0.1 }),
     ];
 
     const rng1 = createRng("time-det-1");
@@ -67,10 +67,10 @@ describe("time increment pattern — runRaceToCompletion vs useLiveRaceSimulatio
     // This test demonstrates the dt mismatch: different dt values produce
     // different finish times even with the same seed.
     const runners1 = [
-      makeRunner({ horseId: "h1", barrier: 1, topSpeed: 16, velocity: 15, noise: 0.1 }),
+      makeRunner({ horseId: "h1", gate: 1, topSpeed: 16, velocity: 15, noise: 0.1 }),
     ];
     const runners2 = [
-      makeRunner({ horseId: "h1", barrier: 1, topSpeed: 16, velocity: 15, noise: 0.1 }),
+      makeRunner({ horseId: "h1", gate: 1, topSpeed: 16, velocity: 15, noise: 0.1 }),
     ];
 
     const rng1 = createRng("time-dt-test");

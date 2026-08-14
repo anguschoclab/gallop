@@ -85,7 +85,7 @@ vi.mock("@/core/race/engine/compareFinishOrder", () => ({
     if (a.finishTime === null) return 1;
     if (b.finishTime === null) return -1;
     if (a.finishTime !== b.finishTime) return a.finishTime - b.finishTime;
-    if (a.barrier !== b.barrier) return a.barrier - b.barrier;
+    if (a.gate !== b.gate) return a.gate - b.gate;
     return a.horseId.localeCompare(b.horseId);
   },
 }));
@@ -118,7 +118,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     lane: 1,
     targetLane: 1,
     laneVelocity: 0,
-    barrier: 1,
+    gate: 1,
     topSpeed: 18,
     accel: 1,
     staminaFactor: 1,
@@ -192,7 +192,7 @@ describe("ResultOverlay — mood breakdown", () => {
         name: "Other Horse",
         owned: false,
         finishTime: 91.0,
-        barrier: 2,
+        gate: 2,
         finalMood: mood2,
       }),
     ];
@@ -243,7 +243,7 @@ describe("ResultOverlay — mood breakdown", () => {
         name: "No Mood",
         owned: false,
         finishTime: 91.0,
-        barrier: 2,
+        gate: 2,
         finalMood: undefined,
       }),
     ];

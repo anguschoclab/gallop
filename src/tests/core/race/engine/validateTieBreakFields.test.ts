@@ -17,7 +17,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     lane: 1,
     targetLane: 1,
     laneVelocity: 0,
-    barrier: 1,
+    gate: 1,
     topSpeed: 16,
     accel: 1,
     staminaFactor: 1,
@@ -33,12 +33,12 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
 
 describe("validateTieBreakFields", () => {
   it("returns no issues for valid runners with null finishTime", () => {
-    const runners = [makeRunner({ horseId: "h1", barrier: 1, finishTime: null })];
+    const runners = [makeRunner({ horseId: "h1", gate: 1, finishTime: null })];
     expect(validateTieBreakFields(runners)).toEqual([]);
   });
 
   it("returns no issues for valid runners with positive finishTime", () => {
-    const runners = [makeRunner({ horseId: "h1", barrier: 1, finishTime: 95.5 })];
+    const runners = [makeRunner({ horseId: "h1", gate: 1, finishTime: 95.5 })];
     expect(validateTieBreakFields(runners)).toEqual([]);
   });
 
@@ -60,39 +60,39 @@ describe("validateTieBreakFields", () => {
     expect(issues[0].field).toBe("horseId");
   });
 
-  it("reports issue for NaN barrier", () => {
-    const runners = [makeRunner({ barrier: NaN })];
+  it("reports issue for NaN gate", () => {
+    const runners = [makeRunner({ gate: NaN })];
     const issues = validateTieBreakFields(runners);
     expect(issues).toHaveLength(1);
-    expect(issues[0].field).toBe("barrier");
+    expect(issues[0].field).toBe("gate");
   });
 
-  it("reports issue for undefined barrier", () => {
-    const runners = [makeRunner({ barrier: undefined as any })];
+  it("reports issue for undefined gate", () => {
+    const runners = [makeRunner({ gate: undefined as any })];
     const issues = validateTieBreakFields(runners);
     expect(issues).toHaveLength(1);
-    expect(issues[0].field).toBe("barrier");
+    expect(issues[0].field).toBe("gate");
   });
 
-  it("reports issue for barrier of 0", () => {
-    const runners = [makeRunner({ barrier: 0 })];
+  it("reports issue for gate of 0", () => {
+    const runners = [makeRunner({ gate: 0 })];
     const issues = validateTieBreakFields(runners);
     expect(issues).toHaveLength(1);
-    expect(issues[0].field).toBe("barrier");
+    expect(issues[0].field).toBe("gate");
   });
 
-  it("reports issue for negative barrier", () => {
-    const runners = [makeRunner({ barrier: -1 })];
+  it("reports issue for negative gate", () => {
+    const runners = [makeRunner({ gate: -1 })];
     const issues = validateTieBreakFields(runners);
     expect(issues).toHaveLength(1);
-    expect(issues[0].field).toBe("barrier");
+    expect(issues[0].field).toBe("gate");
   });
 
-  it("reports issue for Infinity barrier", () => {
-    const runners = [makeRunner({ barrier: Infinity })];
+  it("reports issue for Infinity gate", () => {
+    const runners = [makeRunner({ gate: Infinity })];
     const issues = validateTieBreakFields(runners);
     expect(issues).toHaveLength(1);
-    expect(issues[0].field).toBe("barrier");
+    expect(issues[0].field).toBe("gate");
   });
 
   it("reports issue for undefined finishTime", () => {
@@ -131,25 +131,25 @@ describe("validateTieBreakFields", () => {
   });
 
   it("reports all issues when a runner has multiple problems", () => {
-    const runners = [makeRunner({ horseId: "", barrier: NaN, finishTime: -1 })];
+    const runners = [makeRunner({ horseId: "", gate: NaN, finishTime: -1 })];
     const issues = validateTieBreakFields(runners);
     expect(issues).toHaveLength(3);
     expect(issues.map((i: { field: string }) => i.field)).toEqual([
       "horseId",
-      "barrier",
+      "gate",
       "finishTime",
     ]);
   });
 
   it("collects issues across multiple runners", () => {
     const runners = [
-      makeRunner({ horseId: "a", barrier: 0 }),
+      makeRunner({ horseId: "a", gate: 0 }),
       makeRunner({ horseId: "b", finishTime: NaN }),
     ];
     const issues = validateTieBreakFields(runners);
     expect(issues).toHaveLength(2);
     expect(issues[0].horseId).toBe("a");
-    expect(issues[0].field).toBe("barrier");
+    expect(issues[0].field).toBe("gate");
     expect(issues[1].horseId).toBe("b");
     expect(issues[1].field).toBe("finishTime");
   });
@@ -172,19 +172,19 @@ describe("assertTieBreakFields", () => {
   });
 
   it("does not throw for valid runners", () => {
-    const runners = [makeRunner({ horseId: "h1", barrier: 1, finishTime: null })];
+    const runners = [makeRunner({ horseId: "h1", gate: 1, finishTime: null })];
     expect(() => assertTieBreakFields(runners)).not.toThrow();
   });
 
   it("throws in dev mode when runners have issues", () => {
-    const runners = [makeRunner({ horseId: "", barrier: NaN })];
+    const runners = [makeRunner({ horseId: "", gate: NaN })];
     expect(() => assertTieBreakFields(runners)).toThrow();
   });
 
   it("does not throw in production mode", () => {
     (import.meta.env as any).DEV = false;
     process.env.NODE_ENV = "production";
-    const runners = [makeRunner({ horseId: "", barrier: NaN })];
+    const runners = [makeRunner({ horseId: "", gate: NaN })];
     expect(() => assertTieBreakFields(runners)).not.toThrow();
   });
 
@@ -199,7 +199,7 @@ describe("assertTieBreakFields", () => {
   });
 
   it("includes issue count in error message", () => {
-    const runners = [makeRunner({ horseId: "", barrier: NaN, finishTime: -1 })];
+    const runners = [makeRunner({ horseId: "", gate: NaN, finishTime: -1 })];
     try {
       assertTieBreakFields(runners, "test");
       expect.fail("should have thrown");

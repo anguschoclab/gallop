@@ -102,7 +102,7 @@ describe("Advanced AI Tactics", () => {
       lane: 0,
       targetLane: 0,
       laneVelocity: 15,
-      barrier: 1,
+      gate: 1,
       topSpeed: 16,
       accel: 8,
       staminaFactor: 1.0,

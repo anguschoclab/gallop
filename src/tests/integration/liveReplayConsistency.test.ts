@@ -96,7 +96,7 @@ describe("live vs replay consistency", () => {
     // Verify the result is sorted by compareFinishOrder
     const sortable = result.map((r) => ({
       finishTime: r.time,
-      barrier: runners.find((rn) => rn.horseId === r.horseId)?.barrier,
+      gate: runners.find((rn) => rn.horseId === r.horseId)?.gate,
       horseId: r.horseId,
     }));
     const expected = [...sortable].sort(compareFinishOrder);

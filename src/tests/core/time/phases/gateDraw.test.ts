@@ -1,9 +1,9 @@
 /**
- * barrierDraw.test.ts - Tests for the barrier draw phase
+ * gateDraw.test.ts - Tests for the gate draw phase
  */
 
 import { describe, it, expect } from "vitest";
-import { barrierDrawPhase } from "@/core/time/phases/barrierDraw";
+import { gateDrawPhase } from "@/core/time/phases/gateDraw";
 import type { Horse, Race, GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { InboxImpact } from "@/core/resolver/impacts/inboxImpacts";
@@ -96,20 +96,20 @@ function makeHorsesForEntries(count: number): Horse[] {
   );
 }
 
-describe("barrierDrawPhase", () => {
-  // 1. G1 race draws at race.day - 5 — verify entries get unique barriers 1..N
-  it("G1 race draws barriers 5 days before race day", () => {
+describe("gateDrawPhase", () => {
+  // 1. G1 race draws at race.day - 5 — verify entries get unique gates 1..N
+  it("G1 race draws gates 5 days before race day", () => {
     const entries = makeEntries(5);
     const horses = makeHorsesForEntries(5);
     const race = makeG1Race({ id: "r1", day: 100, entries });
     const ctx = makeContext([race], horses, 95); // 100 - 5 = 95
 
-    const result = barrierDrawPhase.execute(ctx);
+    const result = gateDrawPhase.execute(ctx);
     const updatedRace = result.state.races["r1"]!;
 
-    const barriers = updatedRace.entries.map((e) => e.barrier).sort((a, b) => (a ?? 0) - (b ?? 0));
-    expect(barriers).toEqual([1, 2, 3, 4, 5]);
-    expect(new Set(barriers).size).toBe(5);
+    const gates = updatedRace.entries.map((e) => e.gate).sort((a, b) => (a ?? 0) - (b ?? 0));
+    expect(gates).toEqual([1, 2, 3, 4, 5]);
+    expect(new Set(gates).size).toBe(5);
   });
 
   // 2. G1 race emits InboxImpact with correct category, priority, title
@@ -119,24 +119,24 @@ describe("barrierDrawPhase", () => {
     const race = makeG1Race({ id: "r1", name: "Grand Stakes", day: 100, entries });
     const ctx = makeContext([race], horses, 95);
 
-    const result = barrierDrawPhase.execute(ctx);
+    const result = gateDrawPhase.execute(ctx);
     const inboxImpacts = result.impacts.filter((i) => i.type === "inbox_message") as InboxImpact[];
 
     expect(inboxImpacts.length).toBe(1);
     const impact = inboxImpacts[0];
     expect(impact.message.category).toBe("race");
     expect(impact.message.priority).toBe("info");
-    expect(impact.message.title).toBe("Barrier Draw: Grand Stakes");
+    expect(impact.message.title).toBe("Gate Draw: Grand Stakes");
   });
 
-  // 3. G1 email body contains horse names and barrier numbers
-  it("G1 email body contains horse names and barrier numbers", () => {
+  // 3. G1 email body contains horse names and gate numbers
+  it("G1 email body contains horse names and gate numbers", () => {
     const entries = makeEntries(3);
     const horses = makeHorsesForEntries(3);
     const race = makeG1Race({ id: "r1", name: "Grand Stakes", day: 100, entries });
     const ctx = makeContext([race], horses, 95);
 
-    const result = barrierDrawPhase.execute(ctx);
+    const result = gateDrawPhase.execute(ctx);
     const inboxImpact = result.impacts.find((i) => i.type === "inbox_message") as
       InboxImpact | undefined;
 
@@ -153,7 +153,7 @@ describe("barrierDrawPhase", () => {
     const race = makeG1Race({ id: "r1", day: 100, entries });
     const ctx = makeContext([race], horses, 95);
 
-    const result = barrierDrawPhase.execute(ctx);
+    const result = gateDrawPhase.execute(ctx);
     const inboxImpact = result.impacts.find((i) => i.type === "inbox_message") as
       InboxImpact | undefined;
 
@@ -165,34 +165,34 @@ describe("barrierDrawPhase", () => {
   });
 
   // 5. Non-G1 race (G2) draws at race.day - 2 — no inbox impact
-  it("G2 race draws barriers 2 days before race day with no inbox impact", () => {
+  it("G2 race draws gates 2 days before race day with no inbox impact", () => {
     const entries = makeEntries(4);
     const horses = makeHorsesForEntries(4);
     const race = makeG2Race({ id: "r2", day: 100, entries });
     const ctx = makeContext([race], horses, 98); // 100 - 2 = 98
 
-    const result = barrierDrawPhase.execute(ctx);
+    const result = gateDrawPhase.execute(ctx);
     const updatedRace = result.state.races["r2"]!;
 
-    const barriers = updatedRace.entries.map((e) => e.barrier).sort((a, b) => (a ?? 0) - (b ?? 0));
-    expect(barriers).toEqual([1, 2, 3, 4]);
+    const gates = updatedRace.entries.map((e) => e.gate).sort((a, b) => (a ?? 0) - (b ?? 0));
+    expect(gates).toEqual([1, 2, 3, 4]);
 
     const inboxImpacts = result.impacts.filter((i) => i.type === "inbox_message");
     expect(inboxImpacts.length).toBe(0);
   });
 
   // 6. Non-graded race draws at race.day - 2 — no inbox impact
-  it("Non-graded race draws barriers 2 days before race day with no inbox impact", () => {
+  it("Non-graded race draws gates 2 days before race day with no inbox impact", () => {
     const entries = makeEntries(3);
     const horses = makeHorsesForEntries(3);
     const race = makeRace({ id: "r3", day: 100, entries, graded: undefined });
     const ctx = makeContext([race], horses, 98);
 
-    const result = barrierDrawPhase.execute(ctx);
+    const result = gateDrawPhase.execute(ctx);
     const updatedRace = result.state.races["r3"]!;
 
-    const barriers = updatedRace.entries.map((e) => e.barrier).sort((a, b) => (a ?? 0) - (b ?? 0));
-    expect(barriers).toEqual([1, 2, 3]);
+    const gates = updatedRace.entries.map((e) => e.gate).sort((a, b) => (a ?? 0) - (b ?? 0));
+    expect(gates).toEqual([1, 2, 3]);
 
     const inboxImpacts = result.impacts.filter((i) => i.type === "inbox_message");
     expect(inboxImpacts.length).toBe(0);
@@ -205,11 +205,11 @@ describe("barrierDrawPhase", () => {
     const race = makeG1Race({ id: "r1", day: 100, entries });
     const ctx = makeContext([race], horses, 96); // 100 - 4 = 96, not 5
 
-    const result = barrierDrawPhase.execute(ctx);
+    const result = gateDrawPhase.execute(ctx);
     const updatedRace = result.state.races["r1"]!;
 
-    // Entries should not have barriers
-    expect(updatedRace.entries.every((e) => e.barrier === undefined)).toBe(true);
+    // Entries should not have gates
+    expect(updatedRace.entries.every((e) => e.gate === undefined)).toBe(true);
     expect(result.impacts.length).toBe(0);
   });
 
@@ -220,36 +220,36 @@ describe("barrierDrawPhase", () => {
     const race = makeG1Race({ id: "r1", day: 100, entries, resolved: true });
     const ctx = makeContext([race], horses, 95);
 
-    const result = barrierDrawPhase.execute(ctx);
+    const result = gateDrawPhase.execute(ctx);
     expect(result.impacts.length).toBe(0);
     // State should be unchanged
-    expect(result.state.races["r1"]!.entries.every((e) => e.barrier === undefined)).toBe(true);
+    expect(result.state.races["r1"]!.entries.every((e) => e.gate === undefined)).toBe(true);
   });
 
-  // 9. Idempotency: re-running on same day with barriers already assigned — no re-draw
-  it("Idempotency: re-running with barriers already assigned does not re-draw", () => {
-    const entries = makeEntries(3).map((e, i) => ({ ...e, barrier: i + 1 }));
+  // 9. Idempotency: re-running on same day with gates already assigned — no re-draw
+  it("Idempotency: re-running with gates already assigned does not re-draw", () => {
+    const entries = makeEntries(3).map((e, i) => ({ ...e, gate: i + 1 }));
     const horses = makeHorsesForEntries(3);
     const race = makeG1Race({ id: "r1", day: 100, entries });
     const ctx = makeContext([race], horses, 95);
 
-    const result = barrierDrawPhase.execute(ctx);
+    const result = gateDrawPhase.execute(ctx);
     const updatedRace = result.state.races["r1"]!;
 
-    // Barriers should be unchanged from the pre-assigned values
-    expect(updatedRace.entries.map((e) => e.barrier)).toEqual([1, 2, 3]);
+    // Gates should be unchanged from the pre-assigned values
+    expect(updatedRace.entries.map((e) => e.gate)).toEqual([1, 2, 3]);
     // No new inbox impact (already drawn)
     const inboxImpacts = result.impacts.filter((i) => i.type === "inbox_message");
     expect(inboxImpacts.length).toBe(0);
   });
 
   // 10. Race with 0 entries at draw time — no crash, no email
-  it("Race with 0 entries at draw time — no crash, no barriers, no email", () => {
+  it("Race with 0 entries at draw time — no crash, no gates, no email", () => {
     const race = makeG1Race({ id: "r1", day: 100, entries: [] });
     const ctx = makeContext([race], [], 95);
 
-    expect(() => barrierDrawPhase.execute(ctx)).not.toThrow();
-    const result = barrierDrawPhase.execute(ctx);
+    expect(() => gateDrawPhase.execute(ctx)).not.toThrow();
+    const result = gateDrawPhase.execute(ctx);
     expect(result.state.races["r1"]!.entries.length).toBe(0);
     expect(result.impacts.filter((i) => i.type === "inbox_message").length).toBe(0);
   });
@@ -280,59 +280,59 @@ describe("barrierDrawPhase", () => {
     // Actually 97-95=2, so non-graded SHOULD also draw on day 95
     const ctx = makeContext([g1Race, nonGradedRace], allHorses, 95);
 
-    const result = barrierDrawPhase.execute(ctx);
+    const result = gateDrawPhase.execute(ctx);
 
-    // G1 should have barriers
+    // G1 should have gates
     const updatedG1 = result.state.races["g1r"]!;
-    expect(updatedG1.entries.every((e) => e.barrier !== undefined)).toBe(true);
+    expect(updatedG1.entries.every((e) => e.gate !== undefined)).toBe(true);
 
-    // Non-graded (day 97, current day 95, diff=2) should also have barriers
+    // Non-graded (day 97, current day 95, diff=2) should also have gates
     const updatedNG = result.state.races["ngr"]!;
-    expect(updatedNG.entries.every((e) => e.barrier !== undefined)).toBe(true);
+    expect(updatedNG.entries.every((e) => e.gate !== undefined)).toBe(true);
 
     // Only G1 should have inbox impact
     const inboxImpacts = result.impacts.filter((i) => i.type === "inbox_message");
     expect(inboxImpacts.length).toBe(1);
   });
 
-  // 12. Determinism: same race ID + same entries → same barrier assignment across runs
-  it("Determinism: same race ID and entries produce same barrier assignment", () => {
+  // 12. Determinism: same race ID + same entries → same gate assignment across runs
+  it("Determinism: same race ID and entries produce same gate assignment", () => {
     const entries = makeEntries(5);
     const horses = makeHorsesForEntries(5);
     const race = makeG1Race({ id: "deterministic-race", day: 100, entries });
 
     const ctx1 = makeContext([race], horses, 95);
-    const result1 = barrierDrawPhase.execute(ctx1);
-    const barriers1 = result1.state.races["deterministic-race"]!.entries.map((e) => e.barrier);
+    const result1 = gateDrawPhase.execute(ctx1);
+    const gates1 = result1.state.races["deterministic-race"]!.entries.map((e) => e.gate);
 
     const ctx2 = makeContext([race], horses, 95);
-    const result2 = barrierDrawPhase.execute(ctx2);
-    const barriers2 = result2.state.races["deterministic-race"]!.entries.map((e) => e.barrier);
+    const result2 = gateDrawPhase.execute(ctx2);
+    const gates2 = result2.state.races["deterministic-race"]!.entries.map((e) => e.gate);
 
-    expect(barriers1).toEqual(barriers2);
+    expect(gates1).toEqual(gates2);
   });
 
-  // 13. Partial barriers: race with some entries already having barriers — only assign to unassigned
-  it("Partial barriers: preserves existing barriers, assigns only to unassigned entries", () => {
+  // 13. Partial gates: race with some entries already having gates — only assign to unassigned
+  it("Partial gates: preserves existing gates, assigns only to unassigned entries", () => {
     const entries = [
-      { horseId: "h1", owned: true, barrier: 3 },
-      { horseId: "h2", owned: true, barrier: 1 },
-      { horseId: "h3", owned: true }, // no barrier
+      { horseId: "h1", owned: true, gate: 3 },
+      { horseId: "h2", owned: true, gate: 1 },
+      { horseId: "h3", owned: true }, // no gate
     ];
     const horses = makeHorsesForEntries(3);
     const race = makeG1Race({ id: "r1", day: 100, entries });
     const ctx = makeContext([race], horses, 95);
 
-    const result = barrierDrawPhase.execute(ctx);
+    const result = gateDrawPhase.execute(ctx);
     const updatedRace = result.state.races["r1"]!;
 
-    // h1 keeps barrier 3, h2 keeps barrier 1, h3 gets barrier 2
+    // h1 keeps gate 3, h2 keeps gate 1, h3 gets gate 2
     const h1 = updatedRace.entries.find((e) => e.horseId === "h1")!;
     const h2 = updatedRace.entries.find((e) => e.horseId === "h2")!;
     const h3 = updatedRace.entries.find((e) => e.horseId === "h3")!;
 
-    expect(h1.barrier).toBe(3);
-    expect(h2.barrier).toBe(1);
-    expect(h3.barrier).toBe(2);
+    expect(h1.gate).toBe(3);
+    expect(h2.gate).toBe(1);
+    expect(h3.gate).toBe(2);
   });
 });
