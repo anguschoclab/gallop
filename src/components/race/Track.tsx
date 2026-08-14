@@ -6,7 +6,15 @@ import {
 } from "@/components/race/raceVisualHelpers";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Weather } from "@/core/race/types";
+import {
+  buildFieldContext,
+  deriveRunnerConditions,
+  deriveRunnerMood,
+} from "@/core/race/runnerConditions";
+import { RunnerConditionBadges } from "./RunnerConditionBadges";
+import { RunnerMoodFace } from "./RunnerMoodFace";
 import { HorseSprite } from "./HorseSprite";
+
 
 interface TrackProps {
   runners: Runner[];
@@ -43,6 +51,8 @@ export function Track({
   const finishedSetRef = useRef<Set<string>>(new Set());
   const finishRankMapRef = useRef<Map<string, number>>(new Map());
   const finishedCountRef = useRef(0);
+  const peakVelocityRef = useRef<Map<string, number>>(new Map());
+
 
   useEffect(() => {
     let frameId = 0;
@@ -122,15 +132,15 @@ export function Track({
   })();
   const finishActive = leaderPos > distance - 100 && leaderPos < distance;
 
-  // "Flying" is a relative surge marker, not an absolute speed: a runner must be
-  // clearly quicker than the current field average and near the fastest in the race.
-  const { flyingThreshold } = (() => {
-    const live = runners.filter((r) => r.finishTime === null && r.velocity > 0);
-    if (live.length < 2) return { flyingThreshold: Infinity };
-    const mean = live.reduce((s, r) => s + r.velocity, 0) / live.length;
-    const fastest = Math.max(...live.map((r) => r.velocity));
-    return { flyingThreshold: Math.max(mean * 1.06, fastest * 0.985) };
-  })();
+  // Per-runner peak velocity drives the "is it fading?" readings. Runners are
+  // mutated in place, so history has to live in a ref keyed by horse id.
+  for (const r of runners) {
+    const prev = peakVelocityRef.current.get(r.horseId) ?? 0;
+    if (r.velocity > prev) peakVelocityRef.current.set(r.horseId, r.velocity);
+  }
+
+  const fieldContext = buildFieldContext(runners);
+
 
   const trackOffset = -(cameraPos % 512);
 
