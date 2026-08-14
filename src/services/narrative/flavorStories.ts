@@ -6,7 +6,8 @@ export interface FlavorStory {
   category: NewsCategory;
 }
 
-export type FlavorStoryTheme = "track" | "jockeys" | "breeding" | "weather" | "community" | "industry";
+export type FlavorStoryTheme =
+  "track" | "jockeys" | "breeding" | "weather" | "community" | "industry";
 
 export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   track: [

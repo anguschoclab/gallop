@@ -116,8 +116,9 @@ describe("TacticsAnalyzer", () => {
     fireEvent.click(screen.getByRole("button", { name: "Save Tactics" }));
     expect(screen.getByRole("button", { name: "Saved!" })).toBeTruthy();
 
-    vi.advanceTimersByTime(2000);
-    act(() => {});
+    act(() => {
+      vi.advanceTimersByTime(2000);
+    });
     expect(screen.getByRole("button", { name: "Save Tactics" })).toBeTruthy();
   });
 
