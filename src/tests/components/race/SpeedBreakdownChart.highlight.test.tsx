@@ -7,10 +7,10 @@ vi.mock("recharts", () => {
   const Line = (props: Record<string, unknown>) => (
     <div
       data-testid="line"
-      data-horseId={String(props.dataKey)}
-      data-strokeWidth={String(props.strokeWidth)}
-      data-strokeOpacity={String(props.strokeOpacity)}
-      data-strokeDasharray={String(props.strokeDasharray ?? "")}
+      data-horse-id={String(props.dataKey)}
+      data-stroke-width={String(props.strokeWidth)}
+      data-stroke-opacity={String(props.strokeOpacity)}
+      data-stroke-dasharray={String(props.strokeDasharray ?? "")}
     />
   );
   const ResponsiveContainer = ({ children }: { children: React.ReactNode }) => (

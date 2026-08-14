@@ -5,9 +5,7 @@ import type { Horse } from "@/game/types";
 import type { RowData } from "@/hooks/horse/useHorseCompareRows";
 
 vi.mock("@/components/SilkDot", () => ({
-  SilkDot: ({ color }: { color: string }) => (
-    <span data-testid="silk-dot" data-color={color} />
-  ),
+  SilkDot: ({ color }: { color: string }) => <span data-testid="silk-dot" data-color={color} />,
 }));
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>

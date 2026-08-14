@@ -1,4 +1,4 @@
-import { TOOLTIP_DELAY_MS } from "@/constants";
+import { TOOLTIP_DELAY_MS, MAX_COMPARE_HORSES } from "@/constants";
 import { useState, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { TrophyCase } from "@/components/awards";
@@ -22,7 +22,6 @@ type NavigateFn = (opts: {
   search?: Record<string, unknown> | ((prev: Record<string, unknown>) => Record<string, unknown>);
 }) => void;
 
-const MAX_COMPARE = 3;
 
 interface StableRosterViewProps {
   horses: Horse[];
@@ -58,7 +57,7 @@ export function StableRosterView({
   const toggleSelect = (id: string) => {
     const update = (prev: string[]) => {
       if (prev.includes(id)) return prev.filter((x) => x !== id);
-      if (prev.length >= MAX_COMPARE) return prev;
+      if (prev.length >= MAX_COMPARE_HORSES) return prev;
       return [...prev, id];
     };
     if (onCompareIdsChange) {
@@ -166,7 +165,7 @@ export function StableRosterView({
               {horses.map((h, i) => {
                 const ovrVal = overall(h);
                 const isSelected = selectedIds.includes(h.id);
-                const disableCheck = !isSelected && selectedIds.length >= MAX_COMPARE;
+                const disableCheck = !isSelected && selectedIds.length >= MAX_COMPARE_HORSES;
                 return (
                   <tr
                     key={h.id}
@@ -316,7 +315,7 @@ export function StableRosterView({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {horses.map((h) => {
             const isSelected = selectedIds.includes(h.id);
-            const disableCheck = !isSelected && selectedIds.length >= MAX_COMPARE;
+            const disableCheck = !isSelected && selectedIds.length >= MAX_COMPARE_HORSES;
             return (
               <div key={h.id} className="relative">
                 <div className="absolute top-2 left-2 z-10 bg-slate-950/80 backdrop-blur rounded p-1">
@@ -342,7 +341,7 @@ export function StableRosterView({
       {selectedIds.length > 0 && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 bg-slate-900 border border-gold/30 shadow-2xl rounded-lg px-4 py-3 animate-in slide-in-from-bottom-4 duration-200 max-w-[95vw] flex-wrap">
           <span className="font-mono text-[10px] uppercase tracking-widest text-cream/60 whitespace-nowrap">
-            {selectedIds.length}/{MAX_COMPARE} selected
+            {selectedIds.length}/{MAX_COMPARE_HORSES} selected
           </span>
           {/* Horse name chips with reorder controls */}
           <div className="flex items-center gap-1.5">

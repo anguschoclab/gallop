@@ -27,3 +27,20 @@ export const MAX_STEPS_PER_FRAME = 64;
 
 /** Fractional positions at which split times are recorded. */
 export const SPLIT_FRACTIONS = [0.25, 0.5, 0.75, 1.0] as const;
+
+// --- Leaderboard UI constants ---
+
+/** Minimum value on the Beyer filter slider. */
+export const BEYER_SLIDER_MIN = 0;
+
+/** Maximum value on the Beyer filter slider. */
+export const BEYER_SLIDER_MAX = 120;
+
+/** Step size for the Beyer filter slider. */
+export const BEYER_SLIDER_STEP = 5;
+
+/** Decimal places shown for finish times in the leaderboard. */
+export const FINISH_TIME_DECIMALS = 1;
+
+/** Inline hint text shown when horses are level and tie-breaking is active. */
+export const TIE_BREAK_HINT_TEXT = "⚡ Horses level — order held by tie-break";

@@ -48,8 +48,19 @@ export const NARRATIVE_THRESHOLDS = {
   HOT_PACE_THRESHOLD: 1.1,
   HOT_PACE_MAX_PROGRESS: 0.6,
   HOT_PACE_COOLDOWN: 30,
+  // Atmosphere minimum sim time before atmosphere events can fire
+  ATMOSPHERE_MIN_TIME: 5,
   // Default cooldown
   DEFAULT_COOLDOWN: 10,
+  // Commentary generator probabilities
+  PREFIX_PROBABILITY: 0.2,
+  BIO_TEMPLATE_PROBABILITY: 0.35,
+  // Expert insight thresholds
+  EXPERT_INSIGHT_POSITIVE_FORM: 5,
+  EXPERT_INSIGHT_NEGATIVE_FORM: -5,
+  EXPERT_INSIGHT_DISTANCE_FIT_TOLERANCE: 200,
+  EXPERT_INSIGHT_NEW_DISTANCE_MIN: 1600,
+  EXPERT_INSIGHT_SURFACE_APTITUDE: 85,
   // Condition commentary cooldowns (seconds)
   CONDITION_FLYING_COOLDOWN: 30,
   CONDITION_BATTLING_COOLDOWN: 25,

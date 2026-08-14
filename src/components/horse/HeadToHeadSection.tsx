@@ -7,6 +7,7 @@ import { NumericValue } from "@/components/horse/HorseBits";
 import { calculateHeadToHeadOdds } from "@/core/race/headToHead";
 import { useHeadToHeadSim } from "@/hooks/horse/useHeadToHeadSim";
 import { cn } from "@/lib/cn";
+import { SIM_ITERATIONS, DEFAULT_SIM_DISTANCE } from "@/constants/uiConstants";
 
 const DISTANCE_OPTIONS = [
   { label: "5F", value: 1000 },
@@ -23,7 +24,7 @@ const SURFACE_OPTIONS: Array<{ label: string; value: "Turf" | "Dirt" | "Syntheti
 ];
 
 export function HeadToHeadSection({ horses }: { horses: Horse[] }) {
-  const [distance, setDistance] = useState(1600);
+  const [distance, setDistance] = useState(DEFAULT_SIM_DISTANCE);
   const [surface, setSurface] = useState<"Turf" | "Dirt" | "Synthetic">("Turf");
   const { simResults, simRunning, runSim, clearSim } = useHeadToHeadSim();
 
@@ -141,10 +142,10 @@ export function HeadToHeadSection({ horses }: { horses: Horse[] }) {
           disabled={simRunning}
           className="h-7 text-[10px] uppercase tracking-widest font-mono"
         >
-          {simRunning ? "Running..." : "Run Simulation (50×)"}
+          {simRunning ? "Running..." : `Run Simulation (${SIM_ITERATIONS}×)`}
         </Button>
         {simResults && (
-          <span className="text-[10px] font-mono text-cream/40">50 iterations completed</span>
+          <span className="text-[10px] font-mono text-cream/40">{SIM_ITERATIONS} iterations completed</span>
         )}
       </div>
 

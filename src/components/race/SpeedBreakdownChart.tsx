@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -12,6 +12,7 @@ import {
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/cn";
+import { useRunnerHighlight } from "@/components/race/useRunnerHighlight";
 
 interface SpeedBreakdownRunner {
   horseId: string;
@@ -40,26 +41,8 @@ export function SpeedBreakdownChart({
 }: SpeedBreakdownChartProps) {
   const runnerMap = useMemo(() => new Map(runners.map((r) => [r.horseId, r])), [runners]);
 
-  const [hovered, setHovered] = useState<string | null>(null);
-  const [pinned, setPinned] = useState<Set<string>>(() => {
-    const init = new Set<string>();
-    runners.forEach((r) => {
-      if (r.owned) init.add(r.horseId);
-    });
-    return init;
-  });
-
-  const togglePin = (horseId: string) => {
-    setPinned((prev) => {
-      const next = new Set(prev);
-      if (next.has(horseId)) next.delete(horseId);
-      else next.add(horseId);
-      return next;
-    });
-  };
-
-  const isHighlighted = (horseId: string) => pinned.has(horseId) || hovered === horseId;
-  const anyHighlight = pinned.size > 0 || hovered !== null;
+  const { hovered, setHovered, pinned, togglePin, isHighlighted, anyHighlight } =
+    useRunnerHighlight(runners);
 
   // Downsample to every 5th snapshot for Recharts performance
   const downsampled = useMemo(() => {
@@ -88,6 +71,24 @@ export function SpeedBreakdownChart({
     const ordered = [...last.horses].sort((a, b) => b.position - a.position);
     return ordered.map((h) => h.horseId);
   }, [snapshots, runners]);
+
+  const getSeekLineProps = (r: SpeedBreakdownRunner) => {
+    const highlight = isHighlighted(r.horseId);
+    const dim = anyHighlight && !highlight;
+    return {
+      strokeWidth: highlight ? 2 : r.owned ? 1.5 : 1,
+      strokeOpacity: dim ? 0.12 : 0.5,
+    };
+  };
+
+  const getSpurtLineProps = (r: SpeedBreakdownRunner) => {
+    const highlight = isHighlighted(r.horseId);
+    const dim = anyHighlight && !highlight;
+    return {
+      strokeWidth: highlight ? 2.5 : r.owned ? 2 : 1.25,
+      strokeOpacity: dim ? 0.18 : 1,
+    };
+  };
 
   if (snapshots.length === 0 || runners.length === 0) return null;
 
@@ -157,17 +158,17 @@ export function SpeedBreakdownChart({
                 />
               ))}
               {runners.map((r) => {
-                const highlight = isHighlighted(r.horseId);
-                const dim = anyHighlight && !highlight;
                 const baseColor = r.silk || "var(--chart-1)";
+                const seek = getSeekLineProps(r);
+                const spurt = getSpurtLineProps(r);
                 return (
                   <g key={r.horseId}>
                     <Line
                       type="monotone"
                       dataKey={`${r.horseId}_seek`}
                       stroke={baseColor}
-                      strokeWidth={highlight ? 2 : r.owned ? 1.5 : 1}
-                      strokeOpacity={dim ? 0.12 : 0.5}
+                      strokeWidth={seek.strokeWidth}
+                      strokeOpacity={seek.strokeOpacity}
                       strokeDasharray="4 4"
                       dot={false}
                       activeDot={false}
@@ -178,8 +179,8 @@ export function SpeedBreakdownChart({
                       type="monotone"
                       dataKey={`${r.horseId}_spurt`}
                       stroke={baseColor}
-                      strokeWidth={highlight ? 2.5 : r.owned ? 2 : 1.25}
-                      strokeOpacity={dim ? 0.18 : 1}
+                      strokeWidth={spurt.strokeWidth}
+                      strokeOpacity={spurt.strokeOpacity}
                       dot={false}
                       activeDot={{ r: 4 }}
                       isAnimationActive={false}

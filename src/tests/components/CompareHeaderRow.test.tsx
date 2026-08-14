@@ -4,9 +4,7 @@ import { CompareHeaderRow } from "@/components/horse/CompareHeaderRow";
 import type { Horse } from "@/game/types";
 
 vi.mock("@/components/SilkDot", () => ({
-  SilkDot: ({ color }: { color: string }) => (
-    <span data-testid="silk-dot" data-color={color} />
-  ),
+  SilkDot: ({ color }: { color: string }) => <span data-testid="silk-dot" data-color={color} />,
 }));
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
@@ -55,7 +53,10 @@ describe("CompareHeaderRow", () => {
   });
 
   it("shows Injured badge when activeInjury", () => {
-    const h1 = mkHorse({ id: "h1", activeInjury: { type: "tendon", severity: "moderate", recoveryDays: 30, onsetDay: 1 } as any });
+    const h1 = mkHorse({
+      id: "h1",
+      activeInjury: { type: "tendon", severity: "moderate", recoveryDays: 30, onsetDay: 1 } as any,
+    });
     const h2 = mkHorse({ id: "h2" });
     render(<CompareHeaderRow horses={[h1, h2]} />);
     expect(screen.getByText("Injured")).toBeTruthy();

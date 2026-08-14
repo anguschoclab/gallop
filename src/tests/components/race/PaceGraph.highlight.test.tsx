@@ -7,9 +7,9 @@ vi.mock("recharts", () => {
   const Line = (props: Record<string, unknown>) => (
     <div
       data-testid="line"
-      data-horseId={String(props.dataKey)}
-      data-strokeWidth={String(props.strokeWidth)}
-      data-strokeOpacity={String(props.strokeOpacity)}
+      data-horse-id={String(props.dataKey)}
+      data-stroke-width={String(props.strokeWidth)}
+      data-stroke-opacity={String(props.strokeOpacity)}
       data-dot={JSON.stringify(props.dot)}
     />
   );
@@ -24,7 +24,16 @@ vi.mock("recharts", () => {
   const CartesianGrid = () => <div data-testid="grid" />;
   const Tooltip = () => <div data-testid="tooltip" />;
   const ReferenceLine = () => <div data-testid="refline" />;
-  return { Line, ResponsiveContainer, LineChart, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine };
+  return {
+    Line,
+    ResponsiveContainer,
+    LineChart,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ReferenceLine,
+  };
 });
 
 vi.mock("@/components/SilkDot", () => ({

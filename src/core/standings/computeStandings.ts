@@ -1,5 +1,5 @@
 import type { GameState } from "@/game/types";
-import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/constants";
+import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT, STANDINGS_RECENT_RESULTS_LIMIT } from "@/constants";
 
 const PLAYER_ID = "__player__";
 
@@ -96,7 +96,9 @@ export function computeSeasonStandings(
     sparkline: playerBucket?.sparkline ?? new Array(rangeDays).fill(0),
     prestige: 0,
     winsVsPlayer: 0,
-    recentResults: (playerBucket?.recent ?? []).sort((a, b) => b.day - a.day).slice(0, 5),
+    recentResults: (playerBucket?.recent ?? [])
+      .sort((a, b) => b.day - a.day)
+      .slice(0, STANDINGS_RECENT_RESULTS_LIMIT),
   });
 
   for (const s of state.npcStables ?? []) {
@@ -114,7 +116,9 @@ export function computeSeasonStandings(
       sparkline: b?.sparkline ?? new Array(rangeDays).fill(0),
       prestige,
       winsVsPlayer: ai?.winsAgainstPlayer ?? 0,
-      recentResults: (b?.recent ?? []).sort((a, c) => c.day - a.day).slice(0, 5),
+      recentResults: (b?.recent ?? [])
+        .sort((a, c) => c.day - a.day)
+        .slice(0, STANDINGS_RECENT_RESULTS_LIMIT),
     });
   }
 

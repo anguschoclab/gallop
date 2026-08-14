@@ -80,13 +80,14 @@ export function updateSplitCrossings(
  */
 export function recordFinish(
   r: Runner,
-  finishOrder: { horseId: string; position: number; time: number }[],
+  finishOrder: { horseId: string; position: number; time: number; barrier: number }[],
 ): void {
   if (r.finishTime === null) return;
   finishOrder.push({
     horseId: r.horseId,
     position: 0,
     time: r.finishTime,
+    barrier: r.barrier,
   });
   // Re-sort by deterministic tie-break chain and reassign positions
   finishOrder.sort((a, b) => compareFinishOrder(a, b));
@@ -144,7 +145,9 @@ export function useLiveRaceSimulation({
   const [paused, setPaused] = useState(initialPaused);
 
   const simTimeRef = useRef(0);
-  const finishOrderRef = useRef<{ horseId: string; position: number; time: number }[]>([]);
+  const finishOrderRef = useRef<
+    { horseId: string; position: number; time: number; barrier: number }[]
+  >([]);
   const speedRef = useRef(speed);
   const pausedRef = useRef(paused);
   // splitCrossings[horseId] = [t_at_25%, t_at_50%, t_at_75%, t_at_finish]

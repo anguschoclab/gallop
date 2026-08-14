@@ -3,6 +3,15 @@ import type { Horse } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { horseMarketValue } from "@/core/horse/pricing";
 import { formatCurrency } from "@/components/horse/HorseBits";
+import {
+  ENERGY_MAX,
+  STAT_SCALE_MAX,
+  STAT_SCALE_MIN,
+  BEYER_NULL_SENTINEL,
+  POSITION_WIN,
+  POSITION_PLACE,
+  POSITION_SHOW,
+} from "@/constants/gameConstants";
 
 export interface RowData {
   label: string;
@@ -30,9 +39,9 @@ function careerRecord(h: Horse) {
     shows = 0,
     earnings = 0;
   for (const r of h.raceHistory) {
-    if (r.position === 1) wins++;
-    else if (r.position === 2) places++;
-    else if (r.position === 3) shows++;
+    if (r.position === POSITION_WIN) wins++;
+    else if (r.position === POSITION_PLACE) places++;
+    else if (r.position === POSITION_SHOW) shows++;
     earnings += r.purseEarned ?? 0;
   }
   return { starts, wins, places, shows, earnings };
@@ -74,7 +83,7 @@ export function useHorseCompareRows(horses: Horse[], allHorses: Horse[]): { rows
       },
       {
         label: "Energy",
-        values: horses.map((h) => `${Math.round(h.energy)}/100`),
+        values: horses.map((h) => `${Math.round(h.energy)}/${ENERGY_MAX}`),
         numeric: horses.map((h) => h.energy),
         higherIsBetter: true,
         barValues: horses.map((h) => h.energy),
@@ -84,7 +93,7 @@ export function useHorseCompareRows(horses: Horse[], allHorses: Horse[]): { rows
         values: horses.map((h) => (h.form > 0 ? `+${h.form}` : `${h.form}`)),
         numeric: horses.map((h) => h.form),
         higherIsBetter: true,
-        barValues: horses.map((h) => Math.max(0, Math.min(100, h.form))),
+        barValues: horses.map((h) => Math.max(STAT_SCALE_MIN, Math.min(STAT_SCALE_MAX, h.form))),
       },
       {
         label: "Valuation",
@@ -113,7 +122,7 @@ export function useHorseCompareRows(horses: Horse[], allHorses: Horse[]): { rows
       {
         label: "Beyer avg",
         values: beyers.map((b) => (b.avg == null ? "—" : b.avg)),
-        numeric: beyers.map((b) => b.avg ?? -Infinity),
+        numeric: beyers.map((b) => b.avg ?? BEYER_NULL_SENTINEL),
         higherIsBetter: true,
       },
       {

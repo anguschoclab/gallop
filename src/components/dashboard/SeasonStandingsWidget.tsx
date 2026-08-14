@@ -12,17 +12,27 @@ import { StableDetailsPanel } from "@/components/dashboard/StableDetailsPanel";
 import { formatCurrency } from "@/core/common/formatting";
 import { cn } from "@/lib/cn";
 import { Trophy, Bell } from "lucide-react";
-import { DASHBOARD_SEASON_STANDINGS_LIMIT } from "@/constants";
+import {
+  DASHBOARD_SEASON_STANDINGS_LIMIT,
+  STANDINGS_RANGE_SHORT_DAYS,
+  STANDINGS_RANGE_MEDIUM_DAYS,
+  STANDINGS_RANGE_LONG_DAYS,
+  STANDINGS_DEFAULT_RANGE_DAYS,
+  STANDINGS_SKELETON_ROW_COUNT,
+  SPARKLINE_WIDTH,
+  SPARKLINE_HEIGHT,
+  SPARKLINE_STROKE_WIDTH,
+} from "@/constants";
 
 const RANGES = [
-  { label: "7D", days: 7 },
-  { label: "30D", days: 30 },
-  { label: "90D", days: 90 },
+  { label: "7D", days: STANDINGS_RANGE_SHORT_DAYS },
+  { label: "30D", days: STANDINGS_RANGE_MEDIUM_DAYS },
+  { label: "90D", days: STANDINGS_RANGE_LONG_DAYS },
 ];
 
 function Sparkline({ data, positive = true }: { data: number[]; positive?: boolean }) {
-  const w = 80;
-  const h = 20;
+  const w = SPARKLINE_WIDTH;
+  const h = SPARKLINE_HEIGHT;
   const max = Math.max(1, ...data);
   const points = data
     .map((v, i) => {
@@ -36,7 +46,7 @@ function Sparkline({ data, positive = true }: { data: number[]; positive?: boole
     <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} className="overflow-visible">
       <polyline
         fill="none"
-        strokeWidth={1.25}
+        strokeWidth={SPARKLINE_STROKE_WIDTH}
         strokeLinecap="round"
         strokeLinejoin="round"
         className={cls}
@@ -47,7 +57,7 @@ function Sparkline({ data, positive = true }: { data: number[]; positive?: boole
 }
 
 export function SeasonStandingsWidget() {
-  const [rangeDays, setRangeDays] = useState(30);
+  const [rangeDays, setRangeDays] = useState(STANDINGS_DEFAULT_RANGE_DAYS);
   const [selectedStableId, setSelectedStableId] = useState<string | null>(null);
 
   const { standings, playerRank } = useSeasonStandings(rangeDays);
@@ -109,7 +119,7 @@ export function SeasonStandingsWidget() {
 
         {standings.length === 0 ? (
           <div className="space-y-2">
-            {Array.from({ length: 5 }).map((_, i) => (
+            {Array.from({ length: STANDINGS_SKELETON_ROW_COUNT }).map((_, i) => (
               <div key={i} className="flex items-center gap-2 py-2">
                 <Skeleton className="w-6 h-6" />
                 <Skeleton className="h-4 flex-1 max-w-[180px]" />

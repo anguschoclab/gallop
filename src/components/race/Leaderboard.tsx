@@ -9,6 +9,13 @@ import {
   LeaderboardSkeleton,
 } from "@/components/leaderboard/LeaderboardPrimitives";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
+import {
+  BEYER_SLIDER_MIN,
+  BEYER_SLIDER_MAX,
+  BEYER_SLIDER_STEP,
+  FINISH_TIME_DECIMALS,
+  TIE_BREAK_HINT_TEXT,
+} from "@/constants/raceBroadcastConstants";
 
 interface LeaderboardProps {
   sorted: Array<{ r: Runner; beyer: number | null }>;
@@ -68,7 +75,7 @@ export function Leaderboard({
         </div>
         {hasTies && sortBy === "position" && (
           <p className="text-[10px] text-muted-foreground italic px-3 sm:px-6 mb-2">
-            ⚡ Horses level — order held by tie-break
+            {TIE_BREAK_HINT_TEXT}
           </p>
         )}
         <LeaderboardControlsBar
@@ -87,9 +94,9 @@ export function Leaderboard({
             <span className="tabular-nums font-bold text-broadcast-accent">{minBeyer}</span>
           </label>
           <Slider
-            min={0}
-            max={120}
-            step={5}
+            min={BEYER_SLIDER_MIN}
+            max={BEYER_SLIDER_MAX}
+            step={BEYER_SLIDER_STEP}
             value={[minBeyer]}
             onValueChange={(vals) => onMinBeyerChange(vals[0])}
             className="py-2"
@@ -135,7 +142,7 @@ export function Leaderboard({
               )}
               {r.finishTime !== null && (
                 <span className="text-xs text-muted-foreground tabular-nums shrink-0 hidden sm:inline">
-                  {r.finishTime.toFixed(1)}s
+                  {r.finishTime.toFixed(FINISH_TIME_DECIMALS)}s
                 </span>
               )}
             </div>

@@ -6,7 +6,7 @@ import { assertTieBreakFields } from "@/core/race/engine/validateTieBreakFields"
 import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
 
 /** Sub-centimetre position gaps are treated as ties (1 cm in metres). */
-const POS_EPSILON = 0.01;
+export const POS_EPSILON = 0.01;
 /** Beyer comparison tolerance — differences below this are considered equal. */
 const BEYER_EPSILON = 1e-9;
 /** Velocity comparison tolerance — differences below this are considered equal. */

@@ -49,9 +49,7 @@ describe("useRunnerHighlight", () => {
   });
 
   it("anyHighlight is false when no pins and no hover", () => {
-    const { result } = renderHook(() =>
-      useRunnerHighlight([{ horseId: "h1", owned: false }]),
-    );
+    const { result } = renderHook(() => useRunnerHighlight([{ horseId: "h1", owned: false }]));
     expect(result.current.anyHighlight).toBe(false);
   });
 
@@ -61,9 +59,7 @@ describe("useRunnerHighlight", () => {
   });
 
   it("anyHighlight is true when hover is set but no pins", () => {
-    const { result } = renderHook(() =>
-      useRunnerHighlight([{ horseId: "h1", owned: false }]),
-    );
+    const { result } = renderHook(() => useRunnerHighlight([{ horseId: "h1", owned: false }]));
     act(() => result.current.setHovered("h1"));
     expect(result.current.anyHighlight).toBe(true);
   });

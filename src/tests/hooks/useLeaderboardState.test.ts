@@ -10,7 +10,7 @@ import { renderHook, act } from "@testing-library/react";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 
 // Import after mocks — the module doesn't exist yet, so this will fail (RED).
-import { useLeaderboardState } from "@/hooks/race/useLeaderboardState";
+import { useLeaderboardState, POS_EPSILON } from "@/hooks/race/useLeaderboardState";
 
 // Mock projectedBeyer so tests are deterministic
 vi.mock("@/components/race/raceVisualHelpers", () => ({
@@ -446,7 +446,7 @@ describe("useLeaderboardState tie detection", () => {
   it("hasTies is true when two runners are within POS_EPSILON", () => {
     const runners = [
       makeRunner({ horseId: "a", position: 100.0 }),
-      makeRunner({ horseId: "b", position: 100.005 }),
+      makeRunner({ horseId: "b", position: 100.0 + POS_EPSILON / 2 }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
     expect(result.current.hasTies).toBe(true);
@@ -455,7 +455,7 @@ describe("useLeaderboardState tie detection", () => {
   it("tiedHorseIds contains all tied horse IDs but not untied ones", () => {
     const runners = [
       makeRunner({ horseId: "a", position: 100 }),
-      makeRunner({ horseId: "b", position: 100.005 }),
+      makeRunner({ horseId: "b", position: 100 + POS_EPSILON / 2 }),
       makeRunner({ horseId: "c", position: 200 }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
@@ -501,7 +501,7 @@ describe("useLeaderboardState tie detection", () => {
     );
     expect(result.current.hasTies).toBe(false);
 
-    runners[1].position = 100.005;
+    runners[1].position = 100 + POS_EPSILON / 2;
     rerender({ tick: 1 });
     expect(result.current.hasTies).toBe(true);
     expect(result.current.tiedHorseIds.has("a")).toBe(true);

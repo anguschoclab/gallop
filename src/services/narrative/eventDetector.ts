@@ -1,6 +1,7 @@
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Race } from "@/game/types";
 import { METERS_PER_LENGTH } from "@/constants";
+import { NARRATIVE_THRESHOLDS } from "@/constants/narrativeThresholds";
 import type { NarrativeEvent, DetectedEvent } from "./types";
 
 /**
@@ -28,7 +29,11 @@ export function detectLeadChange(
   const sorted = [...runners].sort((a, b) => b.position - a.position);
   const currentLeader = sorted[0];
 
-  if (lastLeaderId && currentLeader.horseId !== lastLeaderId && currentLeader.position > 20) {
+  if (
+    lastLeaderId &&
+    currentLeader.horseId !== lastLeaderId &&
+    currentLeader.position > NARRATIVE_THRESHOLDS.LEAD_CHANGE_THRESHOLD
+  ) {
     return {
       type: "LEAD_CHANGE",
       horseId: currentLeader.horseId,
@@ -60,13 +65,17 @@ export function detectPositionChange(
   if (!hasAnnouncedStart || hasAnnouncedFinish) return null;
   if (lastRank === undefined || lastRank === currentRank) return null;
 
-  if (lastRank - currentRank >= 2 || (currentRank <= 3 && lastRank > 3)) {
+  if (
+    lastRank - currentRank >= NARRATIVE_THRESHOLDS.SURGE_RANK_DIFF ||
+    (currentRank <= NARRATIVE_THRESHOLDS.SURGE_TOP3_RANK_DIFF &&
+      lastRank > NARRATIVE_THRESHOLDS.SURGE_TOP3_RANK_DIFF)
+  ) {
     return {
       type: "SURGE",
       horseId: runner.horseId,
       data: { from: lastRank, to: currentRank },
     };
-  } else if (currentRank - lastRank >= 3) {
+  } else if (currentRank - lastRank >= NARRATIVE_THRESHOLDS.FADE_RANK_DIFF) {
     return {
       type: "FADE",
       horseId: runner.horseId,
@@ -116,7 +125,7 @@ export function detectLaneWatch(
   hasAnnouncedFinish: boolean,
 ): DetectedEvent | null {
   if (!hasAnnouncedStart || hasAnnouncedFinish) return null;
-  if (runner.lane < 3.6) return null; // Only if wide (3.6m+)
+  if (runner.lane < NARRATIVE_THRESHOLDS.LANE_THRESHOLD) return null; // Only if wide
 
   if (isInTurn(runner.position, race)) {
     return {
@@ -149,7 +158,7 @@ export function detectGapAnnouncement(
   const gapMeters = sorted[0].position - sorted[1].position;
   const lengths = (gapMeters / METERS_PER_LENGTH).toFixed(1);
 
-  if (parseFloat(lengths) >= 2.0) {
+  if (parseFloat(lengths) >= NARRATIVE_THRESHOLDS.GAP_THRESHOLD_LENGTHS) {
     return {
       type: "GAP_ANNOUNCEMENT",
       horseId: sorted[0].horseId,
@@ -177,7 +186,7 @@ export function detectStretch(
 ): DetectedEvent | null {
   if (hasAnnouncedStretch || hasAnnouncedFinish) return null;
 
-  if (leaderPosition > race.distance * 0.85) {
+  if (leaderPosition > race.distance * NARRATIVE_THRESHOLDS.STRETCH_THRESHOLD) {
     return {
       type: "STRETCH",
     };
@@ -251,8 +260,12 @@ export function detectMilestones(
  */
 function isInTurn(pos: number, race: Race): boolean {
   const distFromFinish = race.distance - pos;
-  const trackPos = distFromFinish % 1600;
-  return (trackPos > 400 && trackPos <= 800) || trackPos > 1200;
+  const trackPos = distFromFinish % NARRATIVE_THRESHOLDS.TURN_SEGMENT_LENGTH;
+  return (
+    (trackPos > NARRATIVE_THRESHOLDS.TURN_SEGMENT_START &&
+      trackPos <= NARRATIVE_THRESHOLDS.TURN_SEGMENT_END) ||
+    trackPos > NARRATIVE_THRESHOLDS.TURN_SEGMENT_FINAL_START
+  );
 }
 
 /**
@@ -270,7 +283,8 @@ export function detectStableWatch(
   stablesMap: Map<string, { id: string; isMajor: boolean }>,
   simTime: number,
 ): DetectedEvent | null {
-  if (simTime < 2 || simTime > 15) return null;
+  if (simTime < NARRATIVE_THRESHOLDS.STABLE_WATCH_START_TIME || simTime > NARRATIVE_THRESHOLDS.STABLE_WATCH_END_TIME)
+    return null;
 
   const horse = horsesMap.get(runner.horseId);
   if (!horse?.stableId) return null;
@@ -299,7 +313,7 @@ export function detectAtmosphere(
   hasAnnouncedFinish: boolean,
 ): DetectedEvent | null {
   if (!hasAnnouncedStart || hasAnnouncedFinish) return null;
-  if (simTime < 5) return null;
+  if (simTime < NARRATIVE_THRESHOLDS.ATMOSPHERE_MIN_TIME) return null;
 
   return {
     type: "ATMOSPHERE",

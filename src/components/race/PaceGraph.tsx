@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -12,6 +12,7 @@ import {
 import type { SectionalSplit } from "@/core/race/types";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/cn";
+import { useRunnerHighlight } from "@/components/race/useRunnerHighlight";
 
 interface PaceGraphRunner {
   horseId: string;
@@ -44,14 +45,8 @@ interface PointDatum {
 export function PaceGraph({ splits, runners, distance, className }: PaceGraphProps) {
   const runnerMap = useMemo(() => new Map(runners.map((r) => [r.horseId, r])), [runners]);
 
-  const [hovered, setHovered] = useState<string | null>(null);
-  const [pinned, setPinned] = useState<Set<string>>(() => {
-    const init = new Set<string>();
-    runners.forEach((r) => {
-      if (r.owned) init.add(r.horseId);
-    });
-    return init;
-  });
+  const { hovered, setHovered, pinned, togglePin, isHighlighted, anyHighlight } =
+    useRunnerHighlight(runners);
 
   const fieldSize = runners.length;
 
@@ -75,17 +70,15 @@ export function PaceGraph({ splits, runners, distance, className }: PaceGraphPro
     return [...last.entries].sort((a, b) => a.rank - b.rank).map((e) => e.horseId);
   }, [splits, runners]);
 
-  const togglePin = (horseId: string) => {
-    setPinned((prev) => {
-      const next = new Set(prev);
-      if (next.has(horseId)) next.delete(horseId);
-      else next.add(horseId);
-      return next;
-    });
+  const getLineProps = (r: PaceGraphRunner) => {
+    const highlight = isHighlighted(r.horseId);
+    const dim = anyHighlight && !highlight;
+    return {
+      strokeWidth: highlight ? 2.5 : r.owned ? 2 : 1.25,
+      strokeOpacity: dim ? 0.18 : 1,
+      dot: highlight ? { r: 3, fill: r.silk } : false,
+    };
   };
-
-  const isHighlighted = (horseId: string) => pinned.has(horseId) || hovered === horseId;
-  const anyHighlight = pinned.size > 0 || hovered !== null;
 
   if (splits.length === 0 || runners.length === 0) return null;
 
@@ -156,17 +149,16 @@ export function PaceGraph({ splits, runners, distance, className }: PaceGraphPro
                 />
               )}
               {runners.map((r) => {
-                const highlight = isHighlighted(r.horseId);
-                const dim = anyHighlight && !highlight;
+                const { strokeWidth, strokeOpacity, dot } = getLineProps(r);
                 return (
                   <Line
                     key={r.horseId}
                     type="monotone"
                     dataKey={r.horseId}
                     stroke={r.silk || "var(--chart-1)"}
-                    strokeWidth={highlight ? 2.5 : r.owned ? 2 : 1.25}
-                    strokeOpacity={dim ? 0.18 : 1}
-                    dot={highlight ? { r: 3, fill: r.silk } : false}
+                    strokeWidth={strokeWidth}
+                    strokeOpacity={strokeOpacity}
+                    dot={dot}
                     activeDot={{ r: 4 }}
                     isAnimationActive={false}
                     connectNulls

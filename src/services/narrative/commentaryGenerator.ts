@@ -7,6 +7,7 @@ import {
   EXPERT_INSIGHT_TEMPLATES,
   TEMPLATES,
 } from "@/assets/narrative/templates";
+import { NARRATIVE_THRESHOLDS } from "@/constants/narrativeThresholds";
 import type { NarrativeEvent, CommentaryLine } from "./types";
 export type { NarrativeEvent, CommentaryLine } from "./types";
 
@@ -56,7 +57,7 @@ export function generateCommentaryLine(
   let text = templates[Math.floor(context.rng.next() * templates.length)];
 
   // Add prefixes for impactful events
-  if (context.rng.next() < 0.2 && (type === "SURGE" || type === "LEAD_CHANGE")) {
+  if (context.rng.next() < NARRATIVE_THRESHOLDS.PREFIX_PROBABILITY && (type === "SURGE" || type === "LEAD_CHANGE")) {
     const prefix = FRAGMENTS.PREFIXES[Math.floor(context.rng.next() * FRAGMENTS.PREFIXES.length)];
     text = `${prefix} ${text}`;
   }
@@ -88,7 +89,7 @@ export function generateCommentaryLine(
       (type === "SURGE" || type === "LEAD_CHANGE") &&
       context.hasAnnouncedBio &&
       !context.hasAnnouncedBio.has(context.runner.horseId) &&
-      context.rng.next() < 0.35
+      context.rng.next() < NARRATIVE_THRESHOLDS.BIO_TEMPLATE_PROBABILITY
     ) {
       const bio =
         BIOGRAPHICAL_TEMPLATES[Math.floor(context.rng.next() * BIOGRAPHICAL_TEMPLATES.length)];
@@ -142,22 +143,24 @@ export function generateExpertInsight(
 ): string | null {
   const insights: string[] = [];
 
-  if (horse.form > 5) insights.push(...EXPERT_INSIGHT_TEMPLATES.POSITIVE_FORM);
-  else if (horse.form < -5) insights.push(...EXPERT_INSIGHT_TEMPLATES.NEGATIVE_FORM);
+  if (horse.form > NARRATIVE_THRESHOLDS.EXPERT_INSIGHT_POSITIVE_FORM)
+    insights.push(...EXPERT_INSIGHT_TEMPLATES.POSITIVE_FORM);
+  else if (horse.form < NARRATIVE_THRESHOLDS.EXPERT_INSIGHT_NEGATIVE_FORM)
+    insights.push(...EXPERT_INSIGHT_TEMPLATES.NEGATIVE_FORM);
 
   if (stable?.preferredDistance) {
     const diff = Math.abs(race.distance - stable.preferredDistance);
-    if (diff <= 200) insights.push(...EXPERT_INSIGHT_TEMPLATES.DISTANCE_FIT);
+    if (diff <= NARRATIVE_THRESHOLDS.EXPERT_INSIGHT_DISTANCE_FIT_TOLERANCE) insights.push(...EXPERT_INSIGHT_TEMPLATES.DISTANCE_FIT);
   }
 
   const hasRunDistance = horse.raceHistory.some((h) => h.distance === race.distance);
-  if (!hasRunDistance && race.distance >= 1600) {
+  if (!hasRunDistance && race.distance >= NARRATIVE_THRESHOLDS.EXPERT_INSIGHT_NEW_DISTANCE_MIN) {
     insights.push(...EXPERT_INSIGHT_TEMPLATES.NEW_DISTANCE);
   }
 
   const raceSurface = race.graded?.surface || race.graded_override?.surface || "Dirt";
   const surfaceApt = horse.surfaceAptitude?.[raceSurface];
-  if (surfaceApt !== undefined && surfaceApt >= 85) {
+  if (surfaceApt !== undefined && surfaceApt >= NARRATIVE_THRESHOLDS.EXPERT_INSIGHT_SURFACE_APTITUDE) {
     insights.push(...EXPERT_INSIGHT_TEMPLATES.SURFACE_FIT);
   }
 

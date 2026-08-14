@@ -16,49 +16,19 @@ import {
   detectAtmosphere,
 } from "./eventDetector";
 import { NARRATIVE_THRESHOLDS } from "@/constants/narrativeThresholds";
+import {
+  CONDITION_TO_EVENT,
+  CONDITION_COOLDOWN,
+  TONE_PRIORITY,
+  HIGH_IMPACT_CONDITIONS,
+} from "@/constants/narrativeConditionConstants";
 import { NarrativeState } from "./narrativeState";
 import { buildFieldContext, deriveRunnerConditions } from "@/core/race/runnerConditions";
 import type {
   RunnerConditionId,
   RunnerHistory,
-  ConditionTone,
   RunnerCondition,
 } from "@/core/race/runnerConditions";
-
-const CONDITION_TO_EVENT: Record<RunnerConditionId, NarrativeEvent> = {
-  flying: "FLYING",
-  battling: "BATTLING",
-  boxed: "BOXED_IN",
-  grinding: "GRINDING",
-  flagging: "FLAGGING",
-  distressed: "IN_TROUBLE",
-  ailing: "AILING",
-  settled: "SETTLED",
-};
-
-const CONDITION_COOLDOWN: Record<RunnerConditionId, number> = {
-  flying: NARRATIVE_THRESHOLDS.CONDITION_FLYING_COOLDOWN,
-  battling: NARRATIVE_THRESHOLDS.CONDITION_BATTLING_COOLDOWN,
-  boxed: NARRATIVE_THRESHOLDS.CONDITION_BOXED_IN_COOLDOWN,
-  grinding: NARRATIVE_THRESHOLDS.CONDITION_GRINDING_COOLDOWN,
-  flagging: NARRATIVE_THRESHOLDS.CONDITION_FLAGGING_COOLDOWN,
-  distressed: NARRATIVE_THRESHOLDS.CONDITION_IN_TROUBLE_COOLDOWN,
-  ailing: NARRATIVE_THRESHOLDS.CONDITION_AILING_COOLDOWN,
-  settled: NARRATIVE_THRESHOLDS.CONDITION_SETTLED_COOLDOWN,
-};
-
-const TONE_PRIORITY: Record<ConditionTone, number> = {
-  negative: 0,
-  caution: 1,
-  positive: 2,
-  neutral: 3,
-};
-
-const HIGH_IMPACT_CONDITIONS: Set<RunnerConditionId> = new Set([
-  "flying",
-  "battling",
-  "distressed",
-]);
 
 /**
  * Orchestrates real-time race commentary generation.

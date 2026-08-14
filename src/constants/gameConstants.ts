@@ -730,3 +730,28 @@ export const DEFAULT_FIELD_SIZE = 14;
  * The three graded race tiers, ordered from highest to lowest
  */
 export const RACE_GRADES = ["G1", "G2", "G3"] as const;
+
+// ============================================================================
+// HORSE STATS & METRICS
+// ============================================================================
+
+/** Maximum value on the 0-100 stat scale (speed, stamina, acceleration, etc.) */
+export const STAT_SCALE_MAX = 100;
+
+/** Minimum value on the 0-100 stat scale */
+export const STAT_SCALE_MIN = 0;
+
+/** Maximum energy value for a horse */
+export const ENERGY_MAX = 100;
+
+/** Sentinel value used when a Beyer average is null (no race history) for numeric comparison */
+export const BEYER_NULL_SENTINEL = -Infinity;
+
+/** Finishing position for 1st place (win) */
+export const POSITION_WIN = 1;
+
+/** Finishing position for 2nd place (place) */
+export const POSITION_PLACE = 2;
+
+/** Finishing position for 3rd place (show) */
+export const POSITION_SHOW = 3;
