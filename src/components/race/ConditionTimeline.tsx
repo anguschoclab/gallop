@@ -8,6 +8,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { cn } from "@/lib/cn";
 import type { ConditionTone } from "@/core/race/runnerConditions";
 import type { ConditionSegment } from "@/hooks/race/useConditionTimeline";
+import { useTimeAgo } from "@/hooks/shared/useTimeAgo";
 
 /** Number of distance markers (including start and end) shown on the timeline axis. */
 const DISTANCE_MARKER_COUNT = 4;
