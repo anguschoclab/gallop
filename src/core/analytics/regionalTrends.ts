@@ -76,6 +76,12 @@ interface ComputeArgs {
   stableId?: string;
   /** Only count horses the player owns. */
   ownedOnly?: boolean;
+  /** Surface filter: capitalized values "Turf" | "Dirt" | "Synthetic". Empty/omitted = all. */
+  surface?: string[];
+  /** Distance min in meters (inclusive). */
+  distMin?: number;
+  /** Distance max in meters (inclusive). */
+  distMax?: number;
 }
 
 /** Flattens every in-window run into a region-tagged row. */
@@ -86,6 +92,9 @@ export function collectRegionRuns({
   weeks,
   stableId,
   ownedOnly,
+  surface,
+  distMin,
+  distMax,
 }: ComputeArgs): RegionRunRow[] {
   const raceById = new Map(races.map((r) => [r.id, r]));
   const rows: RegionRunRow[] = [];
@@ -95,6 +104,9 @@ export function collectRegionRuns({
     for (const entry of horse.raceHistory ?? []) {
       if (!isInWindow(entry.day, currentDay, weeks)) continue;
       if (stableId && (entry.stableId ?? horse.stableId) !== stableId) continue;
+      if (surface?.length && !surface.includes(entry.surface ?? "")) continue;
+      if (distMin != null && (entry.distance ?? 0) < distMin) continue;
+      if (distMax != null && (entry.distance ?? 0) > distMax) continue;
       const race = raceById.get(entry.raceId);
       const region = regionKeyForRace(race);
       const grade = entry.grade ?? race?.graded?.grade;
@@ -154,6 +166,7 @@ export interface DrilldownEntity {
   top3: number;
   earnings: number;
   g1Top3: number;
+  g1Starts: number;
 }
 
 export interface RegionDrilldown {
@@ -183,11 +196,12 @@ export function computeRegionDrilldown(args: DrilldownArgs): RegionDrilldown {
   ): void => {
     const e =
       map.get(id) ??
-      ({ id, name, starts: 0, wins: 0, top3: 0, earnings: 0, g1Top3: 0 } as DrilldownEntity);
+      ({ id, name, starts: 0, wins: 0, top3: 0, earnings: 0, g1Top3: 0, g1Starts: 0 } as DrilldownEntity);
     e.starts += 1;
     if (run.entry.position === 1) e.wins += 1;
     if (run.entry.position <= 3) e.top3 += 1;
     e.earnings += run.entry.purseEarned ?? 0;
+    if (run.isG1) e.g1Starts += 1;
     if (run.isG1 && run.entry.position <= 3) e.g1Top3 += 1;
     map.set(id, e);
   };
