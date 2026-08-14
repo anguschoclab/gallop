@@ -250,7 +250,9 @@ function ConditionTimeline({
                               />
                             </TooltipTrigger>
                             <TooltipContent side="top" className="max-w-56">
-                              <p className="text-xs font-bold uppercase tracking-wide">{seg.label}</p>
+                              <p className="text-xs font-bold uppercase tracking-wide">
+                                {seg.label}
+                              </p>
                               <p className="text-[11px] tabular-nums text-muted-foreground">
                                 {Math.round(seg.startPos)}m → {Math.round(seg.endPos)}m ·{" "}
                                 {seg.startTime.toFixed(1)}s–{seg.endTime.toFixed(1)}s

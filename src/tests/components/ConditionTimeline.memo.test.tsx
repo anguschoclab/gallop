@@ -211,16 +211,12 @@ describe("ConditionTimeline — condition badge filtering", () => {
     const noneBtn = screen.getByTestId("condition-filter-none");
     fireEvent.click(noneBtn);
 
-    expect(
-      screen.getByText("All 3 condition badges are hidden by filters."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("All 3 condition badges are hidden by filters.")).toBeInTheDocument();
 
     const resetBtn = screen.getByTestId("condition-filter-reset");
     fireEvent.click(resetBtn);
 
-    expect(
-      screen.queryByText("All 3 condition badges are hidden by filters."),
-    ).toBeNull();
+    expect(screen.queryByText("All 3 condition badges are hidden by filters.")).toBeNull();
     expect(screen.getAllByText("Flying").length).toBeGreaterThanOrEqual(2);
   });
 
@@ -241,8 +237,6 @@ describe("ConditionTimeline — condition badge filtering", () => {
     const flyingBtn = screen.getByTestId("condition-filter-flying");
     fireEvent.click(flyingBtn);
 
-    expect(onFilterChange).toHaveBeenCalledWith(
-      expect.arrayContaining(["flagging", "flying"]),
-    );
+    expect(onFilterChange).toHaveBeenCalledWith(expect.arrayContaining(["flagging", "flying"]));
   });
 });
