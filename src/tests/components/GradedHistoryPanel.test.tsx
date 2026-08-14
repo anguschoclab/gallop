@@ -58,6 +58,6 @@ describe("GradedHistoryPanel", () => {
         history={[{ raceId: "r1", raceName: "Derby", position: 1, day: 10, grade: "G1", gate: 5 }]}
       />,
     );
-    expect(screen.getByText("G5")).toBeTruthy();
+    expect(screen.getByText(/G5/)).toBeTruthy();
   });
 });
