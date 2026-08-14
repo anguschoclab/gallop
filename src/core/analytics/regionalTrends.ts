@@ -84,7 +84,19 @@ interface ComputeArgs {
   distMax?: number;
 }
 
-/** Flattens every in-window run into a region-tagged row. */
+/**
+ * Flattens every in-window run into a region-tagged row.
+ * @param root0 - destructured args
+ * @param root0.horses - all horses to scan
+ * @param root0.races - race definitions for region lookup
+ * @param root0.currentDay - current game day
+ * @param root0.weeks - time window in weeks
+ * @param root0.stableId - optional stable filter
+ * @param root0.ownedOnly - only owned horses
+ * @param root0.surface - surface filter (capitalized)
+ * @param root0.distMin - distance min in meters
+ * @param root0.distMax - distance max in meters
+ */
 export function collectRegionRuns({
   horses,
   races,
@@ -196,7 +208,16 @@ export function computeRegionDrilldown(args: DrilldownArgs): RegionDrilldown {
   ): void => {
     const e =
       map.get(id) ??
-      ({ id, name, starts: 0, wins: 0, top3: 0, earnings: 0, g1Top3: 0, g1Starts: 0 } as DrilldownEntity);
+      ({
+        id,
+        name,
+        starts: 0,
+        wins: 0,
+        top3: 0,
+        earnings: 0,
+        g1Top3: 0,
+        g1Starts: 0,
+      } as DrilldownEntity);
     e.starts += 1;
     if (run.entry.position === 1) e.wins += 1;
     if (run.entry.position <= 3) e.top3 += 1;

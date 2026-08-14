@@ -5,6 +5,7 @@
  * trainers and stables behind that region for the selected time window.
  */
 import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 import {
@@ -18,10 +19,16 @@ import { TimeWindowSelect } from "@/components/analytics/TimeWindowSelect";
 import { useTimeWindow } from "@/hooks/analytics/useTimeWindow";
 import { timeWindowLabel } from "@/core/analytics/timeWindow";
 import { computeRegionTrends, type RegionKey } from "@/core/analytics/regionalTrends";
+import { useRegionalComparisonParams } from "@/hooks/analytics/useRegionalComparisonParams";
 import { RegionDrilldownDrawer } from "./RegionDrilldownDrawer";
 import { Globe2 } from "lucide-react";
 
-export function RegionalTrendsWidget() {
+interface WidgetProps {
+  /** When true, region/metric/filters are backed by URL params. */
+  routeMode?: boolean;
+}
+
+export function RegionalTrendsWidget({ routeMode = false }: WidgetProps) {
   const horseMap = useGameWithShallow((s: GameState) => s.horses);
   const raceMap = useGameWithShallow((s: GameState) => s.races);
   const jockeys = useGameWithShallow((s: GameState) => s.jockeys ?? []);
@@ -35,6 +42,8 @@ export function RegionalTrendsWidget() {
 
   const { weeks } = useTimeWindow();
   const [openRegion, setOpenRegion] = useState<RegionKey | null>(null);
+
+  const routeParams = useRegionalComparisonParams();
 
   const horses = useMemo(() => Object.values(horseMap), [horseMap]);
   const races = useMemo(() => Object.values(raceMap), [raceMap]);
@@ -88,7 +97,17 @@ export function RegionalTrendsWidget() {
             Regional Trends
           </h2>
         </div>
-        <TimeWindowSelect />
+        <div className="flex items-center gap-2">
+          <TimeWindowSelect />
+          {!routeMode && (
+            <Link
+              to="/regional-comparison"
+              className="rounded-md border border-white/10 px-2 py-1 text-[10px] font-mono uppercase tracking-wider text-cream/60 transition-colors hover:text-cream"
+            >
+              Full comparison
+            </Link>
+          )}
+        </div>
       </div>
 
       {totals.starts === 0 ? (
@@ -125,7 +144,10 @@ export function RegionalTrendsWidget() {
                 <li key={r.region}>
                   <button
                     type="button"
-                    onClick={() => setOpenRegion(r.region)}
+                    onClick={() => {
+                      if (routeMode) routeParams.setRegion(r.region);
+                      else setOpenRegion(r.region);
+                    }}
                     className="w-full rounded-md px-1.5 py-1 text-left transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--chart-1)]"
                   >
                     <MiniBar
@@ -148,13 +170,22 @@ export function RegionalTrendsWidget() {
       )}
 
       <RegionDrilldownDrawer
-        region={openRegion}
-        weeks={weeks}
+        region={routeMode ? routeParams.region : openRegion}
+        weeks={routeMode ? routeParams.weeksA : weeks}
         horses={horses}
         races={races}
         day={day}
         lookups={lookups}
-        onClose={() => setOpenRegion(null)}
+        onClose={() => {
+          if (routeMode) routeParams.setRegion(null);
+          else setOpenRegion(null);
+        }}
+        metricMode={routeMode ? routeParams.metric : undefined}
+        onMetricModeChange={routeMode ? routeParams.setMetric : undefined}
+        surfaceFilter={routeMode ? routeParams.surface : undefined}
+        onSurfaceChange={routeMode ? routeParams.setSurface : undefined}
+        distPreset={routeMode ? routeParams.distPreset : undefined}
+        onDistPresetChange={routeMode ? routeParams.setDistPreset : undefined}
       />
     </div>
   );

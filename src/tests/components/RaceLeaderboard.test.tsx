@@ -60,10 +60,12 @@ describe("Race Leaderboard", () => {
         filter="all"
         sortBy="position"
         minBeyer={0}
-        lastUpdatedAt={Date.now()}
+        hasTies={false}
+        tiedHorseIds={new Set()}
         onFilterChange={() => {}}
         onSortByChange={() => {}}
         onMinBeyerChange={() => {}}
+        lastUpdatedAt={Date.now()}
       />,
     );
     expect(screen.getByText("No runners match the current filters.")).toBeTruthy();
@@ -78,9 +80,12 @@ describe("Race Leaderboard", () => {
         filter="all"
         sortBy="position"
         minBeyer={0}
+        hasTies={false}
+        tiedHorseIds={new Set()}
         onFilterChange={() => {}}
         onSortByChange={() => {}}
         onMinBeyerChange={() => {}}
+        lastUpdatedAt={Date.now()}
       />,
     );
     expect(screen.getByText("Thunder")).toBeTruthy();
@@ -96,9 +101,12 @@ describe("Race Leaderboard", () => {
         filter="all"
         sortBy="position"
         minBeyer={0}
+        hasTies={false}
+        tiedHorseIds={new Set()}
         onFilterChange={() => {}}
         onSortByChange={() => {}}
         onMinBeyerChange={() => {}}
+        lastUpdatedAt={Date.now()}
       />,
     );
     expect(screen.getByText("Position")).toBeTruthy();
@@ -116,9 +124,12 @@ describe("Race Leaderboard", () => {
         filter="all"
         sortBy="position"
         minBeyer={0}
+        hasTies={false}
+        tiedHorseIds={new Set()}
         onFilterChange={() => {}}
         onSortByChange={onSortByChange}
         onMinBeyerChange={() => {}}
+        lastUpdatedAt={Date.now()}
       />,
     );
     const selects = screen.getAllByTestId("select");
@@ -135,9 +146,12 @@ describe("Race Leaderboard", () => {
         filter="all"
         sortBy="position"
         minBeyer={0}
+        hasTies={false}
+        tiedHorseIds={new Set()}
         onFilterChange={() => {}}
         onSortByChange={() => {}}
         onMinBeyerChange={() => {}}
+        lastUpdatedAt={Date.now()}
       />,
     );
     const finishTimeSpan = container.querySelector(".hidden.sm\\:inline");
@@ -153,6 +167,8 @@ describe("Race Leaderboard", () => {
         filter="all"
         sortBy="position"
         minBeyer={0}
+        hasTies={false}
+        tiedHorseIds={new Set()}
         lastUpdatedAt={Date.now()}
         onFilterChange={() => {}}
         onSortByChange={() => {}}
@@ -161,5 +177,117 @@ describe("Race Leaderboard", () => {
     );
     expect(screen.getByText(/Live ·/)).toBeTruthy();
     expect(document.querySelector("[class*='animate-ping']")).toBeTruthy();
+  });
+});
+
+describe("Race Leaderboard tie-break hint", () => {
+  it("does not render hint text when hasTies is false", () => {
+    render(
+      <Leaderboard
+        sorted={[mockRunner()]}
+        positionRank={new Map([["h1", 1]])}
+        runnerOdds={new Map([["h1", "3/1"]])}
+        filter="all"
+        sortBy="position"
+        minBeyer={0}
+        hasTies={false}
+        tiedHorseIds={new Set()}
+        onFilterChange={() => {}}
+        onSortByChange={() => {}}
+        onMinBeyerChange={() => {}}
+      />,
+    );
+    expect(screen.queryByText("Horses level — order held by tie-break")).toBeNull();
+  });
+
+  it("renders hint text when hasTies is true and sortBy is position", () => {
+    render(
+      <Leaderboard
+        sorted={[mockRunner()]}
+        positionRank={new Map([["h1", 1]])}
+        runnerOdds={new Map([["h1", "3/1"]])}
+        filter="all"
+        sortBy="position"
+        minBeyer={0}
+        hasTies={true}
+        tiedHorseIds={new Set(["h1"])}
+        onFilterChange={() => {}}
+        onSortByChange={() => {}}
+        onMinBeyerChange={() => {}}
+      />,
+    );
+    expect(screen.getByText("Horses level — order held by tie-break")).toBeTruthy();
+  });
+
+  it("does not render hint text when hasTies is true but sortBy is beyer", () => {
+    render(
+      <Leaderboard
+        sorted={[mockRunner()]}
+        positionRank={new Map([["h1", 1]])}
+        runnerOdds={new Map([["h1", "3/1"]])}
+        filter="all"
+        sortBy="beyer"
+        minBeyer={0}
+        hasTies={true}
+        tiedHorseIds={new Set(["h1"])}
+        onFilterChange={() => {}}
+        onSortByChange={() => {}}
+        onMinBeyerChange={() => {}}
+      />,
+    );
+    expect(screen.queryByText("Horses level — order held by tie-break")).toBeNull();
+  });
+
+  it("renders marker for tied rows", () => {
+    const { container } = render(
+      <Leaderboard
+        sorted={[mockRunner()]}
+        positionRank={new Map([["h1", 1]])}
+        runnerOdds={new Map([["h1", "3/1"]])}
+        filter="all"
+        sortBy="position"
+        minBeyer={0}
+        hasTies={true}
+        tiedHorseIds={new Set(["h1"])}
+        onFilterChange={() => {}}
+        onSortByChange={() => {}}
+        onMinBeyerChange={() => {}}
+      />,
+    );
+    const marker = container.querySelector('[data-testid="tie-marker"]');
+    expect(marker).toBeTruthy();
+  });
+
+  it("does not render marker for non-tied rows", () => {
+    const { container } = render(
+      <Leaderboard
+        sorted={[
+          { r: { ...mockRunner().r, horseId: "h1" }, beyer: 95 },
+          { r: { ...mockRunner().r, horseId: "h2", name: "Lightning" }, beyer: 90 },
+        ]}
+        positionRank={
+          new Map([
+            ["h1", 1],
+            ["h2", 2],
+          ])
+        }
+        runnerOdds={
+          new Map([
+            ["h1", "3/1"],
+            ["h2", "5/1"],
+          ])
+        }
+        filter="all"
+        sortBy="position"
+        minBeyer={0}
+        hasTies={true}
+        tiedHorseIds={new Set(["h2"])}
+        onFilterChange={() => {}}
+        onSortByChange={() => {}}
+        onMinBeyerChange={() => {}}
+      />,
+    );
+    const markers = container.querySelectorAll('[data-testid="tie-marker"]');
+    expect(markers).toHaveLength(1);
   });
 });

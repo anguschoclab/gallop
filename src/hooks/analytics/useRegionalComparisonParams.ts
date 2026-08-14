@@ -43,7 +43,10 @@ function coerceWeeks(value: unknown, fallback: TimeWindowWeeks): TimeWindowWeeks
 
 function parseSurface(raw: unknown): string[] {
   if (typeof raw !== "string" || !raw) return [...ALL_SURFACES];
-  const parts = raw.split(",").map((s) => s.trim()).filter(Boolean);
+  const parts = raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
   return parts.length > 0 ? parts : [...ALL_SURFACES];
 }
 

@@ -18,13 +18,7 @@ const race = (id: string, track?: string, grade?: "G1" | "G2") =>
     graded: track ? { key: id, grade: grade ?? "G1", track, surface: "Dirt" } : undefined,
   }) as unknown as Race;
 
-const horse = (
-  raceId: string,
-  day: number,
-  position: number,
-  earned: number,
-  grade?: string,
-) =>
+const horse = (raceId: string, day: number, position: number, earned: number, grade?: string) =>
   ({
     id: "h1",
     name: "Tester",
@@ -77,8 +71,26 @@ describe("computeRegionDrilldown — g1Starts field", () => {
       name: "Tester",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "r1", position: 1, day: 100, purseEarned: 50000, grade: "G1", jockeyId: "j1", stableId: "player" },
-        { raceId: "r2", raceName: "r2", position: 2, day: 99, purseEarned: 10000, grade: "G2", jockeyId: "j1", stableId: "player" },
+        {
+          raceId: "r1",
+          raceName: "r1",
+          position: 1,
+          day: 100,
+          purseEarned: 50000,
+          grade: "G1",
+          jockeyId: "j1",
+          stableId: "player",
+        },
+        {
+          raceId: "r2",
+          raceName: "r2",
+          position: 2,
+          day: 99,
+          purseEarned: 10000,
+          grade: "G2",
+          jockeyId: "j1",
+          stableId: "player",
+        },
       ],
     } as unknown as Horse;
     const result = computeRegionDrilldown({
@@ -120,9 +132,36 @@ describe("rate metric calculations", () => {
       name: "Tester",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "r1", position: 1, day: 100, purseEarned: 50000, grade: "G1", jockeyId: "j1", stableId: "player" },
-        { raceId: "r2", raceName: "r2", position: 1, day: 99, purseEarned: 30000, grade: "G1", jockeyId: "j1", stableId: "player" },
-        { raceId: "r3", raceName: "r3", position: 5, day: 98, purseEarned: 0, grade: "G1", jockeyId: "j1", stableId: "player" },
+        {
+          raceId: "r1",
+          raceName: "r1",
+          position: 1,
+          day: 100,
+          purseEarned: 50000,
+          grade: "G1",
+          jockeyId: "j1",
+          stableId: "player",
+        },
+        {
+          raceId: "r2",
+          raceName: "r2",
+          position: 1,
+          day: 99,
+          purseEarned: 30000,
+          grade: "G1",
+          jockeyId: "j1",
+          stableId: "player",
+        },
+        {
+          raceId: "r3",
+          raceName: "r3",
+          position: 5,
+          day: 98,
+          purseEarned: 0,
+          grade: "G1",
+          jockeyId: "j1",
+          stableId: "player",
+        },
       ],
     } as unknown as Horse;
     const result = computeRegionDrilldown({
@@ -148,8 +187,26 @@ describe("rate metric calculations", () => {
       name: "Tester",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "r1", position: 2, day: 100, purseEarned: 20000, grade: "G1", jockeyId: "j1", stableId: "player" },
-        { raceId: "r2", raceName: "r2", position: 5, day: 99, purseEarned: 0, grade: "G1", jockeyId: "j1", stableId: "player" },
+        {
+          raceId: "r1",
+          raceName: "r1",
+          position: 2,
+          day: 100,
+          purseEarned: 20000,
+          grade: "G1",
+          jockeyId: "j1",
+          stableId: "player",
+        },
+        {
+          raceId: "r2",
+          raceName: "r2",
+          position: 5,
+          day: 99,
+          purseEarned: 0,
+          grade: "G1",
+          jockeyId: "j1",
+          stableId: "player",
+        },
       ],
     } as unknown as Horse;
     const result = computeRegionDrilldown({
@@ -175,8 +232,26 @@ describe("rate metric calculations", () => {
       name: "Tester",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "r1", position: 2, day: 100, purseEarned: 20000, grade: "G1", jockeyId: "j1", stableId: "player" },
-        { raceId: "r2", raceName: "r2", position: 3, day: 99, purseEarned: 5000, grade: "G2", jockeyId: "j1", stableId: "player" },
+        {
+          raceId: "r1",
+          raceName: "r1",
+          position: 2,
+          day: 100,
+          purseEarned: 20000,
+          grade: "G1",
+          jockeyId: "j1",
+          stableId: "player",
+        },
+        {
+          raceId: "r2",
+          raceName: "r2",
+          position: 3,
+          day: 99,
+          purseEarned: 5000,
+          grade: "G2",
+          jockeyId: "j1",
+          stableId: "player",
+        },
       ],
     } as unknown as Horse;
     const result = computeRegionDrilldown({
@@ -204,8 +279,26 @@ describe("rate metric calculations", () => {
       name: "Tester",
       owned: true,
       raceHistory: [
-        { raceId: "r1", raceName: "r1", position: 1, day: 100, purseEarned: 50000, grade: "G1", jockeyId: "j1", stableId: "player" },
-        { raceId: "r2", raceName: "r2", position: 3, day: 99, purseEarned: 10000, grade: "G1", jockeyId: "j1", stableId: "player" },
+        {
+          raceId: "r1",
+          raceName: "r1",
+          position: 1,
+          day: 100,
+          purseEarned: 50000,
+          grade: "G1",
+          jockeyId: "j1",
+          stableId: "player",
+        },
+        {
+          raceId: "r2",
+          raceName: "r2",
+          position: 3,
+          day: 99,
+          purseEarned: 10000,
+          grade: "G1",
+          jockeyId: "j1",
+          stableId: "player",
+        },
       ],
     } as unknown as Horse;
     const result = computeRegionDrilldown({

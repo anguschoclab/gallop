@@ -17,6 +17,8 @@ interface LeaderboardProps {
   filter: "all" | "owned" | "top5";
   sortBy: "position" | "beyer" | "velocity";
   minBeyer: number;
+  hasTies?: boolean;
+  tiedHorseIds?: Set<string>;
   lastUpdatedAt?: number;
   onFilterChange: (val: "all" | "owned" | "top5") => void;
   onSortByChange: (val: "position" | "beyer" | "velocity") => void;
@@ -42,6 +44,8 @@ export function Leaderboard({
   filter,
   sortBy,
   minBeyer,
+  hasTies = false,
+  tiedHorseIds = new Set(),
   lastUpdatedAt,
   onFilterChange,
   onSortByChange,
@@ -64,6 +68,11 @@ export function Leaderboard({
             </span>
           </div>
         </div>
+        {hasTies && sortBy === "position" && (
+          <p className="text-[10px] text-muted-foreground italic px-3 sm:px-6 mb-2">
+            ⚡ Horses level — order held by tie-break
+          </p>
+        )}
         <LeaderboardControlsBar
           sortOptions={SORT_OPTIONS}
           sortValue={sortBy}
@@ -101,6 +110,12 @@ export function Leaderboard({
               <span className="w-5 text-muted-foreground tabular-nums shrink-0">
                 {positionRank.get(r.horseId)}
               </span>
+              {tiedHorseIds.has(r.horseId) && (
+                <span
+                  data-testid="tie-marker"
+                  className="h-1.5 w-1.5 rounded-full bg-amber-400 shrink-0"
+                />
+              )}
               <div
                 className="h-4 w-4 rounded-full border border-white/40 shadow-sm shrink-0"
                 style={{ backgroundColor: r.silk }}

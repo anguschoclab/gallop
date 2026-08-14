@@ -2,7 +2,15 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 
 vi.mock("@tanstack/react-router", () => ({
-  Link: ({ children, to, params, ...rest }: { children: React.ReactNode; to: string; params: Record<string, string> } & Record<string, unknown>) => (
+  Link: ({
+    children,
+    to,
+    params,
+    ...rest
+  }: { children: React.ReactNode; to: string; params: Record<string, string> } & Record<
+    string,
+    unknown
+  >) => (
     <a href={to} data-params={JSON.stringify(params)} {...rest}>
       {children}
     </a>
@@ -21,7 +29,9 @@ vi.mock("@/components/ui/sheet", () => ({
 
 vi.mock("@/components/ui/tabs", () => ({
   Tabs: ({ children, defaultValue }: { children: React.ReactNode; defaultValue: string }) => (
-    <div data-testid="tabs" data-default={defaultValue}>{children}</div>
+    <div data-testid="tabs" data-default={defaultValue}>
+      {children}
+    </div>
   ),
   TabsList: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   TabsTrigger: ({ children, value }: { children: React.ReactNode; value: string }) => (
@@ -169,19 +179,20 @@ describe("RegionDrilldownDrawer", () => {
 
   it("expands entity detail panel when jockey row is clicked", () => {
     const { container } = render(<RegionDrilldownDrawer {...defaultProps} />);
-    // Click on the jockey row (Jockey One appears in the entity table)
-    const jockeyRow = screen.getByText("Jockey One");
-    fireEvent.click(jockeyRow);
+    // Click on a metric cell (not the name link which stops propagation)
+    const earningsCells = screen.getAllByText("$70,000");
+    fireEvent.click(earningsCells[0]!);
     // EntityDetailPanel should render with run log
     expect(container.textContent).toContain("Test Race");
   });
 
   it("collapses entity detail panel when expanded row is clicked again", () => {
     const { container } = render(<RegionDrilldownDrawer {...defaultProps} />);
-    const jockeyRow = screen.getByText("Jockey One");
-    fireEvent.click(jockeyRow);
-    expect(container.textContent).toContain("Test Race");
-    fireEvent.click(jockeyRow);
-    expect(container.textContent).not.toContain("Test Race");
+    const earningsCells = screen.getAllByText("$70,000");
+    fireEvent.click(earningsCells[0]!);
+    expect(container.textContent).toContain("2 starts");
+    expect(container.textContent).toContain("1 wins");
+    fireEvent.click(earningsCells[0]!);
+    expect(container.textContent).not.toContain("2 starts");
   });
 });

@@ -40,6 +40,8 @@ export interface LeaderboardSlice {
   filter: "all" | "owned" | "top5";
   sortBy: "position" | "beyer" | "velocity";
   minBeyer: number;
+  hasTies?: boolean;
+  tiedHorseIds?: Set<string>;
   lastUpdatedAt?: number;
   onFilterChange: (v: "all" | "owned" | "top5") => void;
   onSortByChange: (v: "position" | "beyer" | "velocity") => void;
@@ -105,6 +107,8 @@ export function RaceBroadcast({
     filter,
     sortBy,
     minBeyer,
+    hasTies,
+    tiedHorseIds,
     lastUpdatedAt,
     onFilterChange,
     onSortByChange,
@@ -246,6 +250,8 @@ export function RaceBroadcast({
           filter={filter}
           sortBy={sortBy}
           minBeyer={minBeyer}
+          hasTies={hasTies}
+          tiedHorseIds={tiedHorseIds}
           lastUpdatedAt={lastUpdatedAt}
           onFilterChange={onFilterChange}
           onSortByChange={onSortByChange}

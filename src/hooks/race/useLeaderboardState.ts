@@ -69,17 +69,29 @@ export function useLeaderboardState(
     return tieBreak(a, b);
   };
 
-  const positionRank = useMemo(
-    () =>
-      new Map(
-        [...rows]
-          .sort((a, b) => byPosition(a.r, b.r))
-          .map((row, i) => [row.r.horseId, i + 1]),
-      ),
+  const positionSorted = useMemo(
+    () => [...rows].sort((a, b) => byPosition(a.r, b.r)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [rows],
   );
 
+  const positionRank = useMemo(
+    () => new Map(positionSorted.map((row, i) => [row.r.horseId, i + 1])),
+    [positionSorted],
+  );
+
+  const { hasTies, tiedHorseIds } = useMemo(() => {
+    const tied = new Set<string>();
+    for (let i = 1; i < positionSorted.length; i++) {
+      const prev = positionSorted[i - 1].r;
+      const curr = positionSorted[i].r;
+      if (Math.abs(curr.position - prev.position) <= POS_EPSILON) {
+        tied.add(prev.horseId);
+        tied.add(curr.horseId);
+      }
+    }
+    return { hasTies: tied.size > 0, tiedHorseIds: tied };
+  }, [positionSorted]);
 
   const sorted = useMemo(() => {
     const filtered = rows.filter(({ r, beyer }) => {
@@ -105,7 +117,6 @@ export function useLeaderboardState(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows, filter, positionRank, minBeyer, sortBy]);
 
-
   return {
     sortBy,
     setSortBy,
@@ -117,6 +128,8 @@ export function useLeaderboardState(
     anyFinished,
     sorted,
     positionRank,
+    hasTies,
+    tiedHorseIds,
     lastUpdatedAt,
   };
 }

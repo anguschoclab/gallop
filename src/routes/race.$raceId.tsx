@@ -222,6 +222,8 @@ export function LiveRace() {
     setMinBeyer,
     allFinished,
     anyFinished,
+    hasTies,
+    tiedHorseIds,
     lastUpdatedAt,
   } = useLeaderboardState(runners, race, classBonus, calibratedPars ?? {}, tick);
 
@@ -304,6 +306,8 @@ export function LiveRace() {
             filter,
             sortBy,
             minBeyer,
+            hasTies,
+            tiedHorseIds,
             lastUpdatedAt,
             onFilterChange: setFilter,
             onSortByChange: setSortBy,

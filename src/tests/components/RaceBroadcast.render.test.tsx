@@ -177,6 +177,8 @@ function makeGroupedProps(overrides: Record<string, unknown> = {}): any {
       filter: "all" as const,
       sortBy: "position" as const,
       minBeyer: 0,
+      hasTies: false,
+      tiedHorseIds: new Set<string>(),
       onFilterChange: vi.fn(),
       onSortByChange: vi.fn(),
       onMinBeyerChange: vi.fn(),
@@ -311,6 +313,8 @@ describe("RaceBroadcast — grouped prop rendering", () => {
     expect(received.filter).toBe("all");
     expect(received.sortBy).toBe("position");
     expect(received.minBeyer).toBe(0);
+    expect(received.hasTies).toBe(false);
+    expect(received.tiedHorseIds).toBe(props.leaderboard.tiedHorseIds);
   });
 
   it("renders ResultOverlay when finished is true", () => {

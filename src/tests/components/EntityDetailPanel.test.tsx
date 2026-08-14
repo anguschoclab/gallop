@@ -44,10 +44,7 @@ const lookups = {
 
 describe("EntityDetailPanel", () => {
   it("renders runs log with race name, day, and position", () => {
-    const runs = [
-      makeRun("h1", "j1", 100, 1, 50000, true),
-      makeRun("h1", "j1", 95, 3, 10000),
-    ];
+    const runs = [makeRun("h1", "j1", 100, 1, 50000, true), makeRun("h1", "j1", 95, 3, 10000)];
     render(
       <EntityDetailPanel
         entityId="j1"
@@ -63,10 +60,7 @@ describe("EntityDetailPanel", () => {
   });
 
   it("filters runs to only those matching entityId and kind", () => {
-    const runs = [
-      makeRun("h1", "j1", 100, 1, 50000),
-      makeRun("h2", "j2", 99, 2, 20000),
-    ];
+    const runs = [makeRun("h1", "j1", 100, 1, 50000), makeRun("h2", "j2", 99, 2, 20000)];
     render(
       <EntityDetailPanel
         entityId="j1"
@@ -82,10 +76,7 @@ describe("EntityDetailPanel", () => {
   });
 
   it("shows summary line with starts, wins, top-3, and earnings", () => {
-    const runs = [
-      makeRun("h1", "j1", 100, 1, 50000),
-      makeRun("h1", "j1", 95, 3, 10000),
-    ];
+    const runs = [makeRun("h1", "j1", 100, 1, 50000), makeRun("h1", "j1", 95, 3, 10000)];
     render(
       <EntityDetailPanel
         entityId="j1"
