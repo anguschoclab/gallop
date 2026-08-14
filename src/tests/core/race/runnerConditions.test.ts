@@ -111,6 +111,9 @@ describe("deriveRunnerMood", () => {
     const mood = deriveRunnerMood(leader, field, { peakVelocity: 17 }, DISTANCE);
     expect(mood.face).toBe("happy");
     expect(mood.reasons.join(" ")).toMatch(/pace/i);
+    expect(mood.breakdown).toEqual(
+      expect.arrayContaining([expect.objectContaining({ signal: "Running style fit" })]),
+    );
   });
 
   it("is unhappy when a front-runner is stranded at the back and fading", () => {
@@ -123,6 +126,9 @@ describe("deriveRunnerMood", () => {
     const mood = deriveRunnerMood(stranded, field, { peakVelocity: 17 }, DISTANCE, conditions);
     expect(mood.face).toBe("unhappy");
     expect(mood.score).toBeLessThan(42);
+    expect(mood.breakdown).toEqual(
+      expect.arrayContaining([expect.objectContaining({ signal: "Peak fade" })]),
+    );
   });
 
   it("softens a bad trip for a placid horse and worsens it for a fretful one", () => {
@@ -136,6 +142,12 @@ describe("deriveRunnerMood", () => {
     const placidMood = deriveRunnerMood(placid, field, { peakVelocity: 17 }, DISTANCE);
     const fretfulMood = deriveRunnerMood(fretful, field, { peakVelocity: 17 }, DISTANCE);
     expect(placidMood.score).toBeGreaterThan(fretfulMood.score);
+    expect(placidMood.breakdown).toEqual(
+      expect.arrayContaining([expect.objectContaining({ signal: "Temperament" })]),
+    );
+    expect(fretfulMood.breakdown).toEqual(
+      expect.arrayContaining([expect.objectContaining({ signal: "Temperament" })]),
+    );
   });
 
   it("clamps the score into 0-100", () => {
@@ -153,5 +165,13 @@ describe("deriveRunnerMood", () => {
     const mood = deriveRunnerMood(wretched, field, { peakVelocity: 18 }, DISTANCE, conditions);
     expect(mood.score).toBeGreaterThanOrEqual(0);
     expect(mood.score).toBeLessThanOrEqual(100);
+  });
+
+  it("returns a breakdown whose contributions sum to the final score", () => {
+    const base = runner({ runningStyle: "E", position: 1000, velocity: 16 });
+    const field = buildFieldContext([base, runner({ horseId: "b", position: 900, velocity: 15 })]);
+    const mood = deriveRunnerMood(base, field, { peakVelocity: 16 }, DISTANCE);
+    const contributionSum = mood.breakdown.reduce((acc, item) => acc + item.contribution, 0);
+    expect(mood.score).toBe(60 + contributionSum);
   });
 });
