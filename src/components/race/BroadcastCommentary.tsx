@@ -1,13 +1,17 @@
 import { useEffect, useRef } from "react";
 import { Mic2 } from "lucide-react";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
+import { useTimeAgo } from "@/hooks/shared/useTimeAgo";
 
 interface BroadcastCommentaryProps {
   commentary: CommentaryLine[];
+  /** Wall-clock ms when the last commentary tick was received. */
+  lastUpdatedAt?: number;
 }
 
-export function BroadcastCommentary({ commentary }: BroadcastCommentaryProps) {
+export function BroadcastCommentary({ commentary, lastUpdatedAt }: BroadcastCommentaryProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const freshness = useTimeAgo(lastUpdatedAt ?? Date.now());
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -16,6 +20,7 @@ export function BroadcastCommentary({ commentary }: BroadcastCommentaryProps) {
   }, [commentary]);
 
   const visibleLines = commentary.slice(-8);
+
 
   return (
     <div className="mt-4 bg-broadcast-marquee/80 backdrop-blur-xl rounded-xl border border-white/10 overflow-hidden shadow-2xl transition-all duration-500">
@@ -33,12 +38,19 @@ export function BroadcastCommentary({ commentary }: BroadcastCommentaryProps) {
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-2 px-2 py-1 rounded-full bg-black/40 border border-white/5">
+        <div
+          className="flex items-center gap-2 px-2 py-1 rounded-full bg-black/40 border border-white/5"
+          aria-label={`Commentary last updated ${freshness}`}
+        >
           <div className="h-1.5 w-1.5 rounded-full bg-destructive animate-pulse shadow-[0_0_8px_var(--destructive)]" />
           <span className="text-[8px] font-bold text-foreground uppercase tracking-tighter">
             Live
           </span>
+          <span className="text-[8px] font-medium text-muted-foreground tabular-nums lowercase tracking-normal">
+            {freshness}
+          </span>
         </div>
+
       </div>
       <div
         ref={scrollRef}

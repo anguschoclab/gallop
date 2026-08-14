@@ -32,6 +32,7 @@ export interface CommentarySlice {
   commentary: CommentaryLine[];
   subjectHorseId: string | null;
   announcement: string;
+  lastUpdatedAt?: number;
 }
 
 export interface LeaderboardSlice {
@@ -100,7 +101,12 @@ export function RaceBroadcast({
   fieldDialog,
 }: RaceBroadcastProps) {
   const { tick, phase, finished, paused, speed, simTimeRef } = simulation;
-  const { commentary: commentaryLines, subjectHorseId, announcement } = commentary;
+  const {
+    commentary: commentaryLines,
+    subjectHorseId,
+    announcement,
+    lastUpdatedAt: commentaryUpdatedAt,
+  } = commentary;
   const {
     sorted,
     positionRank,
@@ -224,7 +230,7 @@ export function RaceBroadcast({
               simTimeRef={simTimeRef}
             />
           )}
-          <BroadcastCommentary commentary={commentaryLines} />
+          <BroadcastCommentary commentary={commentaryLines} lastUpdatedAt={commentaryUpdatedAt} />
 
           {phase === "review" && (
             <div ref={analysisRef}>

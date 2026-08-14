@@ -21,7 +21,9 @@ export function useCommentaryFeed(
   const [announcement, setAnnouncement] = useState<string>("");
   const [commentary, setCommentary] = useState<CommentaryLine[]>([]);
   const [subjectHorseId, setSubjectHorseId] = useState<string | null>(null);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<number>(() => Date.now());
   const lastMessageTime = useRef<number>(0);
+
 
   useEffect(() => {
     if (finished) return;
@@ -32,6 +34,7 @@ export function useCommentaryFeed(
         setCommentary((prev) => [...prev, next].slice(-COMMENTARY_SLICE_CAP));
         setAnnouncement(next.text);
         setSubjectHorseId(next.horseId || null);
+        setLastUpdatedAt(now);
         lastMessageTime.current = now;
 
         setTimeout(() => {
@@ -46,5 +49,7 @@ export function useCommentaryFeed(
     announcement,
     commentary,
     subjectHorseId,
+    lastUpdatedAt,
   };
+
 }
