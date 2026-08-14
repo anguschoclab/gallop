@@ -23,7 +23,10 @@ export function timeWindowLabel(weeks: TimeWindowWeeks): string {
   return TIME_WINDOW_OPTIONS.find((o) => o.value === weeks)?.label ?? `${weeks} wks`;
 }
 
-/** First in-window day (exclusive lower bound). Negative infinity for all-time. */
+/** First in-window day (exclusive lower bound). Negative infinity for all-time.
+ * @param currentDay - The current day number.
+ * @param weeks - The window size in weeks (0 means all-time).
+ */
 export function windowStartDay(currentDay: number, weeks: TimeWindowWeeks): number {
   if (!weeks) return Number.NEGATIVE_INFINITY;
   return currentDay - weeks * DAYS_PER_WEEK;
@@ -34,7 +37,11 @@ export function isInWindow(day: number, currentDay: number, weeks: TimeWindowWee
   return day > windowStartDay(currentDay, weeks) && day <= currentDay;
 }
 
-/** Bucket index 0..weeks-1, oldest first. Returns -1 when out of window. */
+/** Bucket index 0..weeks-1, oldest first. Returns -1 when out of window.
+ * @param day - The day number to bucket.
+ * @param currentDay - The current day number.
+ * @param weeks - The window size in weeks (0 means all-time).
+ */
 export function weekBucket(day: number, currentDay: number, weeks: TimeWindowWeeks): number {
   if (!weeks) return -1;
   if (!isInWindow(day, currentDay, weeks)) return -1;
