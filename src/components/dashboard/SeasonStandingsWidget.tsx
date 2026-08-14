@@ -1,12 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SilkDot } from "@/components/SilkDot";
-import { useGame } from "@/game/store";
 import { useSeasonStandings } from "@/hooks/dashboard/useSeasonStandings";
+import { useStandingsMessages } from "@/hooks/dashboard/useStandingsMessages";
+import { buildStandingsRows } from "@/core/standings/buildStandingsRows";
 import { StableDetailsPanel } from "@/components/dashboard/StableDetailsPanel";
 import { formatCurrency } from "@/core/common/formatting";
 import { cn } from "@/lib/cn";
@@ -50,16 +51,12 @@ export function SeasonStandingsWidget() {
   const [selectedStableId, setSelectedStableId] = useState<string | null>(null);
 
   const { standings, playerRank } = useSeasonStandings(rangeDays);
-
-  const inbox = useGame((s) => s.inbox);
-  const standingsMessages = useMemo(
-    () => inbox.filter((m) => m.category === "standings" && !m.readAt),
-    [inbox],
+  const standingsMessages = useStandingsMessages();
+  const { rows, playerInTop, topNLength } = buildStandingsRows(
+    standings,
+    playerRank,
+    DASHBOARD_SEASON_STANDINGS_LIMIT,
   );
-
-  const top10 = standings.slice(0, DASHBOARD_SEASON_STANDINGS_LIMIT);
-  const playerInTop = top10.some((s) => s.isPlayer);
-  const rows = playerInTop ? top10 : [...top10, standings[playerRank - 1]].filter(Boolean);
 
   const selectedStable = standings.find((s) => s.stableId === selectedStableId) ?? null;
 
@@ -143,7 +140,7 @@ export function SeasonStandingsWidget() {
                   {rows.map((s, i) => {
                     if (!s) return null;
                     const rank = s.isPlayer && !playerInTop ? playerRank : i + 1;
-                    const showDivider = s.isPlayer && !playerInTop && i === top10.length;
+                    const showDivider = s.isPlayer && !playerInTop && i === topNLength;
                     return (
                       <tr
                         key={s.stableId}

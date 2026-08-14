@@ -67,8 +67,215 @@ export const raceResolutionPhase: PipelinePhase = {
       : undefined;
 
     let resolvedCount = 0;
+    // Build a lookup of race_resolution intents so live-resolved races skip re-simulation
+    const resolutionIntents = new Map<string, RaceResolutionIntent>();
+    for (const intent of intents) {
+      if (intent.type === "race_resolution") {
+        resolutionIntents.set(intent.raceId, intent as RaceResolutionIntent);
+      }
+    }
+
     for (const race of overdueRaces) {
       resolvedCount++;
+
+      // Check if this race was already resolved live (via race_resolution intent)
+      const liveIntent = resolutionIntents.get(race.id);
+      if (liveIntent && liveIntent.results.length > 0) {
+        // Use the live results directly — do NOT re-simulate
+        const result = liveIntent.results.map(({ horseId, position, time }) => ({
+          horseId,
+          position,
+          time,
+        }));
+        updatedRaces[race.id] = { ...race, resolved: true, result };
+
+        // Still generate impacts (prize money, form, etc.) using the live results
+        const rng = rngForRace(race);
+
+        // We need runners for impact generation — build them from the race field
+        const { runners: impactRunners } = simulateRace(
+          race,
+          horseMap,
+          jockeyMap,
+          state.hiredStaff,
+          npcStableMap,
+          npcAIManager,
+          newDay,
+          undefined,
+          undefined,
+          undefined,
+        );
+
+        // Generate race impacts using the live results
+        const raceImpacts = generateRaceImpacts({
+          race,
+          result,
+          runners: impactRunners,
+          horses: horseMap,
+          jockeys: jockeyMap,
+          newDay,
+          hiredStaff: state.hiredStaff ?? [],
+          rng,
+          snapshots: [],
+          calibratedPars: state.calibratedPars || {},
+          raceWeatherState: undefined,
+          syndicates: state.syndicates,
+          narrativeArcs: state.narrativeArcs,
+        });
+
+        for (const impact of raceImpacts) {
+          impacts.push(impact);
+        }
+
+        // Record NPC AI outcomes
+        if (npcAIManager) {
+          const runnerByHorseId = new Map(impactRunners.map((r) => [r.horseId, r]));
+          for (const res of result) {
+            const horse = horseMap.get(res.horseId);
+            if (horse && horse.stableId) {
+              const stable = npcStableMap.get(horse.stableId);
+              if (stable) {
+                const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
+                if (stableAI.raceEntryAI) {
+                  stableAI.raceEntryAI = recordRaceEntryOutcome(
+                    stableAI.raceEntryAI,
+                    horse,
+                    race,
+                    newDay,
+                    res.position <= 3,
+                    res.position,
+                  );
+                }
+                if (stableAI.jockeyAI) {
+                  const runner = runnerByHorseId.get(res.horseId);
+                  if (runner && runner.jockeyId) {
+                    const prizeSplit = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
+                    const prize =
+                      res.position <= prizeSplit.length
+                        ? Math.round(race.purse * prizeSplit[res.position - 1])
+                        : 0;
+                    stableAI.jockeyAI = recordJockeyOutcome(
+                      stableAI.jockeyAI,
+                      runner.jockeyId,
+                      res.horseId,
+                      race.id,
+                      res.position,
+                      prize,
+                      newDay,
+                    );
+                  }
+                }
+                if (stableAI.campaignAI && race.graded?.key) {
+                  const prizeSplit = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
+                  const prize =
+                    res.position <= prizeSplit.length
+                      ? Math.round(race.purse * prizeSplit[res.position - 1])
+                      : 0;
+                  stableAI.campaignAI = recordCampaignOutcome(
+                    stableAI.campaignAI,
+                    res.horseId,
+                    race.graded.key,
+                    res.position,
+                    prize,
+                    newDay,
+                  );
+                }
+                npcAIManager.stableStates[stable.id] = stableAI;
+              }
+            }
+          }
+        }
+
+        // Track record check
+        const winnerResult = result.find((r) => r.position === 1);
+        const winnerHorse = winnerResult ? horseMap.get(winnerResult.horseId) : null;
+        if (winnerResult && winnerHorse) {
+          const trackRecord = checkTrackRecord(
+            race,
+            winnerResult.horseId,
+            winnerHorse.name,
+            winnerResult.time,
+            newDay,
+            state.trackRecords || {},
+          );
+          if (trackRecord) {
+            impacts.push({
+              id: generateUUID(),
+              intentId: race.id,
+              day: newDay,
+              phase: "raceResolution",
+              logLevel: "always",
+              type: "track_record",
+              record: trackRecord,
+              reason: "New track record set!",
+            } as TrackRecordImpact);
+          }
+        }
+
+        // G1 history & Hall of Fame
+        if (race.graded?.grade === "G1") {
+          const historyRecord = recordRaceHistory(race, result, impactRunners, horseMap, newDay);
+          if (historyRecord) {
+            impacts.push({
+              id: generateUUID(),
+              intentId: race.id,
+              day: newDay,
+              phase: "raceResolution",
+              logLevel: "never",
+              type: "season_history_record",
+              record: historyRecord,
+            } as SeasonHistoryImpact);
+          }
+
+          const winnerId = result.find((r) => r.position === 1)?.horseId;
+          const winner = winnerId ? horseMap.get(winnerId) : null;
+          if (winner && winner.id) {
+            const prizeMoney = race.purse * 0.6;
+            const tempHorse = {
+              ...winner,
+              lifetimeEarnings: (winner.lifetimeEarnings ?? 0) + prizeMoney,
+              careerWins: (winner.careerWins ?? 0) + 1,
+              raceHistory: [
+                ...winner.raceHistory,
+                { raceId: race.id, raceName: race.name, grade: "G1", position: 1, day: newDay },
+              ],
+            };
+            const hofEntry = checkHallOfFameInduction(tempHorse, newDay);
+            if (hofEntry && !hallOfFameIds.has(winner.id)) {
+              impacts.push({
+                id: generateUUID(),
+                intentId: race.id,
+                day: newDay,
+                phase: "raceResolution",
+                logLevel: "always",
+                type: "hall_of_fame_induction",
+                entry: hofEntry,
+                reason: "G1 winner reached HoF criteria",
+              } as HallOfFameInductionImpact);
+            }
+          }
+        }
+
+        // Claiming resolution
+        if (race.claimingPrice) {
+          const claimIntents = context.intents.filter(
+            (i): i is ClaimingIntent => i.type === "claiming" && i.raceId === race.id,
+          );
+          if (claimIntents.length > 0) {
+            const { impacts: claimingImpacts } = processClaimingResolution({
+              race,
+              claimIntents,
+              horses: Object.values(state.horses),
+              newDay,
+              rng,
+            });
+            for (const impact of claimingImpacts) {
+              impacts.push(impact);
+            }
+          }
+        }
+        continue;
+      }
 
       // Look up current weather for this race's track BEFORE simulating
       // so the granular SimWeatherPattern can be used for weather-preference bonuses.

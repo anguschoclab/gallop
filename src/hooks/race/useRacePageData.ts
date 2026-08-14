@@ -19,6 +19,9 @@ export function useRacePageData(raceId: string) {
   const horses = useGameWithShallow((s: GameState) => s.horses);
   const jockeys = useGameWithShallow((s: GameState) => s.jockeys ?? []);
   const stables = useGameWithShallow((s: GameState) => s.npcStables);
+  const hiredStaff = useGameWithShallow((s: GameState) => s.hiredStaff);
+  const npcAIManager = useGameWithShallow((s: GameState) => s.npcAIManager);
+  const currentDay = useGameWithShallow((s: GameState) => s.day);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
   const raceWeather = useGameWithShallow((s) => {
     if (!race) return undefined;
@@ -35,10 +38,15 @@ export function useRacePageData(raceId: string) {
       race,
       horses: Object.values(horses),
       jockeys,
+      npcStables: stables,
+      npcAIManager: npcAIManager ?? undefined,
+      currentDay,
+      hiredStaff: hiredStaff ?? [],
+      weatherPattern: raceWeather?.pattern,
     };
     const built = buildRaceField(deps);
     return { runners: built.runners, fillerHorses: built.fillerHorses ?? [] };
-  }, [raceId, horses, jockeys]);
+  }, [raceId, horses, jockeys, stables, hiredStaff, npcAIManager, currentDay, raceWeather]);
 
   const rngRef = useRef<any>(null);
   const narrativeRef = useRef<NarrativeGenerator | null>(null);

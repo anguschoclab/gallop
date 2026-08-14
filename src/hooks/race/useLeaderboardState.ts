@@ -75,7 +75,7 @@ export function useLeaderboardState(
 
   const positionSorted = useMemo(
     () => [...rows].sort((a, b) => byPosition(a.r, b.r)),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [rows],
   );
 
@@ -119,7 +119,6 @@ export function useLeaderboardState(
       }
       return byPosition(a.r, b.r);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows, filter, positionRank, minBeyer, sortBy]);
 
   return {

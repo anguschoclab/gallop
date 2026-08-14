@@ -86,7 +86,16 @@ export function PlayerRacePrompt() {
       setRaceTactics(race!.id, enteredHorse.id, instructions);
     }
 
-    const { runners } = buildRaceField({ race: race!, horses: Object.values(horses), jockeys });
+    const { runners } = buildRaceField({
+      race: race!,
+      horses: Object.values(horses),
+      jockeys,
+      hiredStaff: useGame.getState().hiredStaff ?? [],
+      npcStables: useGame.getState().npcStables,
+      npcAIManager: useGame.getState().npcAIManager,
+      currentDay: day,
+      weatherPattern: raceWeather?.pattern,
+    });
     const course = getCourseForRace(race!);
     const result = runRaceToCompletion(
       runners,

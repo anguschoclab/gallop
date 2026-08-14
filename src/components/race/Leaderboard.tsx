@@ -63,9 +63,7 @@ export function Leaderboard({
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-broadcast-accent opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-broadcast-accent" />
             </span>
-            <span className={cn(lastUpdatedAt && "tabular-nums")}>
-              Live · {timeAgo}
-            </span>
+            <span className={cn(lastUpdatedAt && "tabular-nums")}>Live · {timeAgo}</span>
           </div>
         </div>
         {hasTies && sortBy === "position" && (

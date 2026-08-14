@@ -13,8 +13,8 @@
  * Pure business logic for race result processing
  */
 
-import { createRng, hashStr, type Rng } from "@/core/common/rng";
 import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/constants";
+import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
 
 export type RankedResult = { horseId: string; position: number; time: number; dnf: boolean };
 
@@ -48,21 +48,15 @@ export function computePayoutSplits(
 /**
  * Sanitizes and ranks race results, handling ties and DNFs
  * @param rawResult - Raw race results with horse IDs and times
- * @param raceId - Race ID for deterministic tie-breaking
+ * @param _raceId - Race ID (unused, kept for API compatibility)
  * @returns Object containing ranked results, finishers only, and DNFs only
  */
 export function sanitizeAndRankResults(
   rawResult: { horseId: string; time: number }[],
-  raceId: string,
+  _raceId: string,
 ): { ranked: RankedResult[]; finishers: RankedResult[]; dnfs: RankedResult[] } {
-  const tieRng = createRng(hashStr(raceId) ^ 0x7e57);
   const enriched = rawResult.map((r) => ({ ...r, dnf: !Number.isFinite(r.time) || r.time <= 0 }));
-  const finishersRaw = enriched
-    .filter((r) => !r.dnf)
-    .sort((a, b) => {
-      if (a.time === b.time) return tieRng.next() - 0.5;
-      return a.time - b.time;
-    });
+  const finishersRaw = enriched.filter((r) => !r.dnf).sort((a, b) => compareFinishOrder(a, b));
   const finishers = finishersRaw.map((r, idx) => ({ ...r, position: idx + 1 }));
   const dnfs = enriched
     .filter((r) => r.dnf)
