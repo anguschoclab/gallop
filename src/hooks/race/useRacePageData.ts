@@ -28,15 +28,15 @@ export function useRacePageData(raceId: string) {
     return buf.find((w) => w.day === race.day) ?? buf[buf.length - 1];
   });
 
-  const runners = useMemo<Runner[]>(() => {
-    if (!race) return [];
+  const { runners, fillerHorses } = useMemo<{ runners: Runner[]; fillerHorses: Horse[] }>(() => {
+    if (!race) return { runners: [], fillerHorses: [] };
     const deps: RaceSimulationDependencies = {
       race,
       horses: Object.values(horses),
       jockeys,
     };
-    const { runners: built } = buildRaceField(deps);
-    return built;
+    const built = buildRaceField(deps);
+    return { runners: built.runners, fillerHorses: built.fillerHorses ?? [] };
   }, [raceId, horses, jockeys]);
 
   const rngRef = useRef<any>(null);
@@ -47,11 +47,19 @@ export function useRacePageData(raceId: string) {
   if (lastRaceIdRef.current !== raceId) {
     lastRaceIdRef.current = raceId;
     rngRef.current = race ? rngForRace(race) : null;
+    // Filler horses are part of the field but not in the store, so they must be
+    // handed to the narrative generator or commentary about them loses its context.
     narrativeRef.current = race
-      ? new NarrativeGenerator(race, Object.values(horses), stables, rngRef.current)
+      ? new NarrativeGenerator(
+          race,
+          [...Object.values(horses), ...fillerHorses],
+          stables,
+          rngRef.current,
+        )
       : null;
     messageQueue.current = [];
   }
+
 
   const localHorseMap = useMemo(() => new Map<string, Horse>(Object.entries(horses)), [horses]);
 
