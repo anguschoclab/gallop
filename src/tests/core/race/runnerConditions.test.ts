@@ -48,9 +48,9 @@ describe("deriveRunnerConditions", () => {
       even,
       runner({ horseId: "b", velocity: 15, position: 300 }),
     ]);
-    expect(ids(deriveRunnerConditions(even, evenField, { peakVelocity: 15.2 }, DISTANCE))).not.toContain(
-      "flying",
-    );
+    expect(
+      ids(deriveRunnerConditions(even, evenField, { peakVelocity: 15.2 }, DISTANCE)),
+    ).not.toContain("flying");
   });
 
   it("flags Battling for a close, evenly matched duel late in the race", () => {
@@ -65,7 +65,9 @@ describe("deriveRunnerConditions", () => {
     const a = runner({ horseId: "a", position: 800, lane: 2 });
     const blocker = runner({ horseId: "b", position: 802, lane: 2 });
     const field = buildFieldContext([a, blocker]);
-    expect(ids(deriveRunnerConditions(a, field, { peakVelocity: 16 }, DISTANCE))).toContain("boxed");
+    expect(ids(deriveRunnerConditions(a, field, { peakVelocity: 16 }, DISTANCE))).toContain(
+      "boxed",
+    );
   });
 
   it("flags Flagging then In Trouble as the runner drops off its own peak", () => {
@@ -73,9 +75,9 @@ describe("deriveRunnerConditions", () => {
 
     const fading = runner({ horseId: "a", position: 900, velocity: 16 });
     const fadingField = buildFieldContext([fading, ...rivals]);
-    expect(ids(deriveRunnerConditions(fading, fadingField, { peakVelocity: 18 }, DISTANCE))).toContain(
-      "flagging",
-    );
+    expect(
+      ids(deriveRunnerConditions(fading, fadingField, { peakVelocity: 18 }, DISTANCE)),
+    ).toContain("flagging");
 
     const stopping = runner({ horseId: "a", position: 900, velocity: 12 });
     const stoppingField = buildFieldContext([stopping, ...rivals]);
@@ -102,7 +104,10 @@ describe("deriveRunnerConditions", () => {
 describe("deriveRunnerMood", () => {
   it("is happy when a front-runner is on the pace", () => {
     const leader = runner({ horseId: "a", runningStyle: "E", position: 900, velocity: 17 });
-    const field = buildFieldContext([leader, runner({ horseId: "b", position: 880, velocity: 16 })]);
+    const field = buildFieldContext([
+      leader,
+      runner({ horseId: "b", position: 880, velocity: 16 }),
+    ]);
     const mood = deriveRunnerMood(leader, field, { peakVelocity: 17 }, DISTANCE);
     expect(mood.face).toBe("happy");
     expect(mood.reasons.join(" ")).toMatch(/pace/i);
