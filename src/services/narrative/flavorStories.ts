@@ -68,6 +68,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "A wave of promising apprentice riders has arrived on the circuit this week, eager to make their mark and challenge the established veterans.",
       category: "flavor",
     },
+    {
+      headline: "Veteran Rider Hits Career Milestone",
+      body: "A respected journeyman notched another significant win today, proving that experience in the saddle still counts for plenty on this demanding circuit.",
+      category: "flavor",
+    },
+    {
+      headline: "New Agent Shakes Up Riders' Room",
+      body: "A prominent jockey agent has swooped in to sign several top local talents, changing the dynamic and sparking fresh rivalries in the weighing room.",
+      category: "flavor",
+    },
   ],
   breeding: [
     {
@@ -100,6 +110,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "Heavy Rains Threaten Turf Schedule",
       body: "An unexpected storm system moving into the region has track superintendents working overtime to ensure the turf course remains safe for competition.",
+      category: "flavor",
+    },
+    {
+      headline: "Unexpected Cold Snap Shivers Backstretch",
+      body: "Plummeting temperatures overnight have trainers scrambling for extra blankets, while morning workouts have been delayed until the track surface properly thaws.",
+      category: "flavor",
+    },
+    {
+      headline: "High Winds Challenge Turf Runners",
+      body: "Gusty crosswinds are expected for the afternoon card, leading several top trainers to reconsider tactics for their late-running turf specialists.",
       category: "flavor",
     },
   ],
