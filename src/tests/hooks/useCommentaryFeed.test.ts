@@ -163,4 +163,99 @@ describe("useCommentaryFeed", () => {
     expect(result.current.subjectHorseId).toBeNull();
     expect(result.current.commentary).toHaveLength(1);
   });
+
+  describe("lastUpdatedAt badge timing behavior", () => {
+    it("initializes lastUpdatedAt to the current system time", () => {
+      const startTime = 1700000000000;
+      vi.setSystemTime(startTime);
+
+      const queue = makeQueue([]);
+      const { result } = renderHook(() => useCommentaryFeed(queue, false));
+
+      expect(result.current.lastUpdatedAt).toBe(startTime);
+    });
+
+    it("updates lastUpdatedAt to the exact time of message drain", () => {
+      const startTime = 1700000000000;
+      vi.setSystemTime(startTime);
+
+      const queue = makeQueue([makeLine("c1", "Off to the races!")]);
+      const { result } = renderHook(() => useCommentaryFeed(queue, false));
+
+      expect(result.current.lastUpdatedAt).toBe(startTime);
+
+      // Drain message at 100ms interval tick
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      expect(result.current.lastUpdatedAt).toBe(startTime + 100);
+    });
+
+    it("does not update lastUpdatedAt during ticks when the queue is empty", () => {
+      const startTime = 1700000000000;
+      vi.setSystemTime(startTime);
+
+      const queue = makeQueue([]);
+      const { result } = renderHook(() => useCommentaryFeed(queue, false));
+
+      expect(result.current.lastUpdatedAt).toBe(startTime);
+
+      act(() => {
+        vi.advanceTimersByTime(3000);
+      });
+
+      // Still startTime because no message drained
+      expect(result.current.lastUpdatedAt).toBe(startTime);
+    });
+
+    it("does not update lastUpdatedAt while waiting for the pacing gate", () => {
+      const startTime = 1700000000000;
+      vi.setSystemTime(startTime);
+
+      const queue = makeQueue([makeLine("c1", "First")]);
+      const { result } = renderHook(() => useCommentaryFeed(queue, false));
+
+      // First message drains at 100ms
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+      const firstDrainTime = startTime + 100;
+      expect(result.current.lastUpdatedAt).toBe(firstDrainTime);
+
+      // Queue next message immediately
+      queue.current.push(makeLine("c2", "Second"));
+
+      // Advance by 1400ms (total 1500ms since start, 1400ms since drain <= 1500ms pacing)
+      act(() => {
+        vi.advanceTimersByTime(1400);
+      });
+
+      // Still firstDrainTime because pacing gate has not passed
+      expect(result.current.lastUpdatedAt).toBe(firstDrainTime);
+
+      // Advance another 200ms (> 1500ms pacing) to trigger drain
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+
+      expect(result.current.lastUpdatedAt).toBe(firstDrainTime + 1400 + 200);
+    });
+
+    it("does not update lastUpdatedAt when finished is true even if queue has messages", () => {
+      const startTime = 1700000000000;
+      vi.setSystemTime(startTime);
+
+      const queue = makeQueue([makeLine("c1", "Finished")]);
+      const { result } = renderHook(() => useCommentaryFeed(queue, true));
+
+      expect(result.current.lastUpdatedAt).toBe(startTime);
+
+      act(() => {
+        vi.advanceTimersByTime(5000);
+      });
+
+      expect(result.current.lastUpdatedAt).toBe(startTime);
+    });
+  });
 });
