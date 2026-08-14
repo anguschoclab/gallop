@@ -126,6 +126,24 @@ describe("Race Leaderboard", () => {
     expect(onSortByChange).toHaveBeenCalledWith("beyer");
   });
 
+  it("hides finish time on mobile (hidden sm:inline)", () => {
+    const { container } = render(
+      <Leaderboard
+        sorted={[mockRunner()]}
+        positionRank={new Map([["h1", 1]])}
+        runnerOdds={new Map([["h1", "3/1"]])}
+        filter="all"
+        sortBy="position"
+        minBeyer={0}
+        onFilterChange={() => {}}
+        onSortByChange={() => {}}
+        onMinBeyerChange={() => {}}
+      />,
+    );
+    const finishTimeSpan = container.querySelector(".hidden.sm\\:inline");
+    expect(finishTimeSpan).toBeTruthy();
+  });
+
   it("renders a live freshness indicator with a pulsing dot", () => {
     render(
       <Leaderboard
