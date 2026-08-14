@@ -48,36 +48,36 @@ describe("BroadcastCommentary - Badge Timing Behavior", () => {
   it("renders live badge with 'just now' on initial mount when lastUpdatedAt is provided", () => {
     render(<BroadcastCommentary commentary={[]} lastUpdatedAt={BASE_TIME} />);
 
-    const badge = screen.getByLabelText("Commentary last updated just now");
+    const badge = screen.getByLabelText("Commentary last updated 0s ago");
     expect(badge).toBeInTheDocument();
     expect(badge).toHaveTextContent("Live");
-    expect(badge).toHaveTextContent("just now");
+    expect(badge).toHaveTextContent("0s ago");
   });
 
   it("renders live badge with fallback when lastUpdatedAt is omitted", () => {
     render(<BroadcastCommentary commentary={[]} />);
 
-    const badge = screen.getByLabelText("Commentary last updated just now");
+    const badge = screen.getByLabelText("Commentary last updated 0s ago");
     expect(badge).toBeInTheDocument();
     expect(badge).toHaveTextContent("Live");
-    expect(badge).toHaveTextContent("just now");
+    expect(badge).toHaveTextContent("0s ago");
   });
 
-  it("keeps 'just now' for durations under 1 second", () => {
+  it("keeps '0s ago' for durations under 1 second", () => {
     render(<BroadcastCommentary commentary={[]} lastUpdatedAt={BASE_TIME} />);
 
     act(() => {
       vi.advanceTimersByTime(500);
     });
 
-    const badge = screen.getByLabelText("Commentary last updated just now");
-    expect(badge).toHaveTextContent("just now");
+    const badge = screen.getByLabelText("Commentary last updated 0s ago");
+    expect(badge).toHaveTextContent("0s ago");
 
     act(() => {
       vi.advanceTimersByTime(400); // 900ms total
     });
 
-    expect(screen.getByLabelText("Commentary last updated just now")).toHaveTextContent("just now");
+    expect(screen.getByLabelText("Commentary last updated 0s ago")).toHaveTextContent("0s ago");
   });
 
   it("updates badge freshness to seconds ('1s ago', '5s ago', '45s ago') as time progresses", () => {
@@ -108,35 +108,35 @@ describe("BroadcastCommentary - Badge Timing Behavior", () => {
     expect(screen.getByLabelText("Commentary last updated 59s ago")).toHaveTextContent("59s ago");
   });
 
-  it("updates badge freshness to minutes ('1m ago', '2m ago') after 60 seconds", () => {
+  it("updates badge freshness with exact seconds after 60 seconds ('60s ago', '120s ago', '300s ago')", () => {
     render(<BroadcastCommentary commentary={[]} lastUpdatedAt={BASE_TIME} />);
 
-    // 60 seconds elapsed (1m)
+    // 60 seconds elapsed (60s)
     act(() => {
       vi.advanceTimersByTime(60000);
     });
-    expect(screen.getByLabelText("Commentary last updated 1m ago")).toHaveTextContent("1m ago");
+    expect(screen.getByLabelText("Commentary last updated 60s ago")).toHaveTextContent("60s ago");
 
-    // 119 seconds elapsed (still 1m)
+    // 119 seconds elapsed (119s)
     act(() => {
       vi.advanceTimersByTime(59000);
     });
-    expect(screen.getByLabelText("Commentary last updated 1m ago")).toHaveTextContent("1m ago");
+    expect(screen.getByLabelText("Commentary last updated 119s ago")).toHaveTextContent("119s ago");
 
-    // 120 seconds elapsed (2m)
+    // 120 seconds elapsed (120s)
     act(() => {
       vi.advanceTimersByTime(1000);
     });
-    expect(screen.getByLabelText("Commentary last updated 2m ago")).toHaveTextContent("2m ago");
+    expect(screen.getByLabelText("Commentary last updated 120s ago")).toHaveTextContent("120s ago");
 
-    // 5 minutes elapsed
+    // 5 minutes elapsed (300s)
     act(() => {
       vi.advanceTimersByTime(180000);
     });
-    expect(screen.getByLabelText("Commentary last updated 5m ago")).toHaveTextContent("5m ago");
+    expect(screen.getByLabelText("Commentary last updated 300s ago")).toHaveTextContent("300s ago");
   });
 
-  it("resets badge freshness back to 'just now' when lastUpdatedAt prop is updated", () => {
+  it("resets badge freshness back to '0s ago' when lastUpdatedAt prop is updated", () => {
     const { rerender } = render(<BroadcastCommentary commentary={[]} lastUpdatedAt={BASE_TIME} />);
 
     // Advance 10 seconds
@@ -149,8 +149,8 @@ describe("BroadcastCommentary - Badge Timing Behavior", () => {
     const newTimestamp = BASE_TIME + 10000;
     rerender(<BroadcastCommentary commentary={[]} lastUpdatedAt={newTimestamp} />);
 
-    // Immediately resets to "just now"
-    expect(screen.getByLabelText("Commentary last updated just now")).toHaveTextContent("just now");
+    // Immediately resets to "0s ago"
+    expect(screen.getByLabelText("Commentary last updated 0s ago")).toHaveTextContent("0s ago");
 
     // Advance 3 more seconds
     act(() => {
@@ -264,15 +264,19 @@ describe("BroadcastCommentary - Content and Visual Elements", () => {
     });
 
     expect(tickTimestamps[0]).toHaveTextContent(expectedTime1);
-    expect(tickTimestamps[0]).toHaveAttribute("aria-label", `PBP tick received at ${expectedTime1}`);
+    expect(tickTimestamps[0]).toHaveAttribute(
+      "aria-label",
+      `PBP tick received at ${expectedTime1}`,
+    );
     expect(tickTimestamps[1]).toHaveTextContent(expectedTime2);
-    expect(tickTimestamps[1]).toHaveAttribute("aria-label", `PBP tick received at ${expectedTime2}`);
+    expect(tickTimestamps[1]).toHaveAttribute(
+      "aria-label",
+      `PBP tick received at ${expectedTime2}`,
+    );
   });
 
   it("omits the PBP receive timestamp element gracefully when receivedAt is undefined", () => {
-    const lines = [
-      makeCommentaryLine("c1", "No receivedAt line", 1.0, false, undefined),
-    ];
+    const lines = [makeCommentaryLine("c1", "No receivedAt line", 1.0, false, undefined)];
 
     render(<BroadcastCommentary commentary={lines} lastUpdatedAt={BASE_TIME} />);
 

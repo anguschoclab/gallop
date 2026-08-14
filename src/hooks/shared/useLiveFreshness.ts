@@ -7,8 +7,10 @@ import {
 export type FreshnessLevel = "fresh" | "warning" | "stale";
 
 export interface LiveFreshness {
-  /** Human-readable relative time (e.g. "just now", "12s ago"). */
+  /** Human-readable relative time (e.g. "just now", "12s ago", "1m ago"). */
   timeAgo: string;
+  /** Exact relative time in seconds (e.g. "0s ago", "1s ago", "12s ago", "60s ago"). */
+  exactSecondsAgo: string;
   /** True when the timestamp has not been refreshed within the stale threshold. */
   isStale: boolean;
   /** Number of whole seconds since the last update. */
@@ -52,8 +54,11 @@ export function useLiveFreshness(timestamp: number = Date.now()): LiveFreshness 
     timeAgo = `${Math.floor(seconds / 60)}m ago`;
   }
 
+  const exactSecondsAgo = `${seconds}s ago`;
+
   return {
     timeAgo,
+    exactSecondsAgo,
     isStale,
     staleSeconds: seconds,
     level,

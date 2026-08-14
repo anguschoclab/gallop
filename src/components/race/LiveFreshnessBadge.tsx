@@ -29,23 +29,27 @@ const LEVEL_STYLES = {
 };
 
 export function LiveFreshnessBadge({ lastUpdatedAt, context, className }: LiveFreshnessBadgeProps) {
-  const { timeAgo, level, staleSeconds } = useLiveFreshness(lastUpdatedAt ?? Date.now());
+  const { timeAgo, exactSecondsAgo, level, staleSeconds } = useLiveFreshness(
+    lastUpdatedAt ?? Date.now(),
+  );
   const styles = LEVEL_STYLES[level];
 
   const tooltip =
     level === "stale"
-      ? `No update received for ${staleSeconds}s. The broadcast may be paused or lagging.`
+      ? `No update received for ${staleSeconds}s (${exactSecondsAgo}). The broadcast may be paused or lagging.`
       : level === "warning"
-        ? `Last update ${timeAgo}. The broadcast is beginning to lag.`
-        : `Last updated ${timeAgo}.`;
+        ? `Last update ${exactSecondsAgo} (${timeAgo}). The broadcast is beginning to lag.`
+        : `Last updated ${exactSecondsAgo}.`;
 
-  const ariaLabel = `${context ? `${context} ` : ""}last updated ${timeAgo}`;
+  const ariaLabel = `${context ? `${context} ` : ""}last updated ${exactSecondsAgo}`;
 
   return (
     <TooltipProvider delayDuration={100}>
       <Tooltip>
         <TooltipTrigger asChild>
           <div
+            data-testid="live-freshness-badge"
+            data-seconds-ago={staleSeconds}
             className={cn(
               "flex items-center gap-2 px-2 py-1 rounded-full border",
               styles.badge,
@@ -62,12 +66,14 @@ export function LiveFreshnessBadge({ lastUpdatedAt, context, className }: LiveFr
             />
             <span className="text-[8px] font-bold uppercase tracking-tighter">{styles.label}</span>
             <span
+              data-testid="live-freshness-seconds"
               className={cn(
-                "text-[8px] tabular-nums",
-                level === "stale" ? "opacity-90" : "text-muted-foreground/80 lowercase",
+                "text-[8px] tabular-nums font-mono",
+                level === "stale" ? "opacity-90 font-bold" : "text-muted-foreground/80 lowercase",
               )}
+              title={`Last updated ${exactSecondsAgo}`}
             >
-              {timeAgo}
+              {exactSecondsAgo}
             </span>
           </div>
         </TooltipTrigger>
