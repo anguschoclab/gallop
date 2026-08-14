@@ -1,13 +1,17 @@
 import { useEffect, useRef } from "react";
 import { Mic2 } from "lucide-react";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
+import { useTimeAgo } from "@/hooks/shared/useTimeAgo";
 
 interface BroadcastCommentaryProps {
   commentary: CommentaryLine[];
+  /** Wall-clock ms when the last commentary tick was received. */
+  lastUpdatedAt?: number;
 }
 
-export function BroadcastCommentary({ commentary }: BroadcastCommentaryProps) {
+export function BroadcastCommentary({ commentary, lastUpdatedAt }: BroadcastCommentaryProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const freshness = useTimeAgo(lastUpdatedAt ?? Date.now());
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -16,6 +20,7 @@ export function BroadcastCommentary({ commentary }: BroadcastCommentaryProps) {
   }, [commentary]);
 
   const visibleLines = commentary.slice(-8);
+
 
   return (
     <div className="mt-4 bg-broadcast-marquee/80 backdrop-blur-xl rounded-xl border border-white/10 overflow-hidden shadow-2xl transition-all duration-500">
