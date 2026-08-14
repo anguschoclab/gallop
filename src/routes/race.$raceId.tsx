@@ -304,6 +304,7 @@ export function LiveRace() {
             filter,
             sortBy,
             minBeyer,
+            lastUpdatedAt,
             onFilterChange: setFilter,
             onSortByChange: setSortBy,
             onMinBeyerChange: setMinBeyer,
