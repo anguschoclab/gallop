@@ -37,13 +37,18 @@ export function useConditionTimeline(
 ) {
   const [segments, setSegments] = useState<ConditionSegment[]>([]);
   const peakRef = useRef(0);
+  const allRef = useRef<ConditionSegment[]>([]);
   const openRef = useRef<Map<RunnerConditionId, ConditionSegment>>(new Map());
   const keyRef = useRef<string | null>(null);
   const lastPosRef = useRef(0);
 
   useEffect(() => {
     if (!horseId) {
-      setSegments([]);
+      if (allRef.current.length) {
+        allRef.current = [];
+        openRef.current = new Map();
+        setSegments([]);
+      }
       return;
     }
     const runner = runners.find((r) => r.horseId === horseId);
@@ -53,11 +58,10 @@ export function useConditionTimeline(
     if (keyRef.current !== horseId || runner.position < lastPosRef.current - 1) {
       keyRef.current = horseId;
       peakRef.current = 0;
+      allRef.current = [];
       openRef.current = new Map();
-      setSegments([]);
     }
     lastPosRef.current = runner.position;
-
     if (runner.velocity > peakRef.current) peakRef.current = runner.velocity;
 
     const field = buildFieldContext(runners);
@@ -68,17 +72,18 @@ export function useConditionTimeline(
       distance,
     );
     const now = simTimeRef?.current ?? 0;
-    const pos = Math.min(distance, runner.position);
+    const pos = Math.max(0, Math.min(distance, runner.position));
     const seen = new Set<RunnerConditionId>(conditions.map((c) => c.id));
 
     let changed = false;
+
     for (const c of conditions) {
       const open = openRef.current.get(c.id);
       if (open) {
         open.endPos = pos;
         open.endTime = now;
       } else {
-        openRef.current.set(c.id, {
+        const seg: ConditionSegment = {
           id: c.id,
           label: c.label,
           tone: c.tone,
@@ -88,29 +93,24 @@ export function useConditionTimeline(
           startTime: now,
           endTime: now,
           active: true,
-        });
+        };
+        openRef.current.set(c.id, seg);
+        allRef.current.push(seg);
         changed = true;
       }
     }
-    for (const [id, seg] of openRef.current) {
-      if (!seen.has(id) && seg.active) {
+
+    for (const [id, seg] of [...openRef.current]) {
+      if (!seen.has(id)) {
         seg.active = false;
+        openRef.current.delete(id);
         changed = true;
       }
     }
-    // A closed segment can re-open later as a new segment.
-    if (changed || conditions.length > 0) {
-      const closed: ConditionSegment[] = [];
-      for (const [id, seg] of openRef.current) {
-        closed.push({ ...seg });
-        if (!seg.active) openRef.current.delete(id);
-      }
-      setSegments((prev) => {
-        const finished = prev.filter((p) => !p.active);
-        const merged = [...finished, ...closed.filter((c) => c.active)];
-        const newlyClosed = closed.filter((c) => !c.active);
-        return [...merged, ...newlyClosed].sort((a, b) => a.startPos - b.startPos);
-      });
+
+    // Extending an open segment also matters visually, so publish either way.
+    if (changed || openRef.current.size > 0) {
+      setSegments(allRef.current.map((s) => ({ ...s })));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tick, horseId, distance, runners]);
