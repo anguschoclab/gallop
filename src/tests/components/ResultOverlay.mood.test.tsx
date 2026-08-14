@@ -33,10 +33,16 @@ vi.mock("@/components/race/JockeyReportPanel", () => ({
 }));
 
 vi.mock("@/components/race/RunnerMoodFace", () => ({
-  RunnerMoodFace: ({ mood, horseName, size }: any) =>
+  RunnerMoodFace: ({ mood, horseName, size, tooltipClassName }: any) =>
     createElement(
       "span",
-      { "data-testid": "mood-face", "data-mood-label": mood.label, "data-mood-score": mood.score },
+      {
+        "data-testid": "mood-face",
+        "data-mood-label": mood.label,
+        "data-mood-score": mood.score,
+        "data-size": size,
+        "data-tooltip-class": tooltipClassName,
+      },
       `${mood.label} ${mood.score}`,
     ),
 }));
@@ -65,6 +71,8 @@ vi.mock("@/core/common/formatting", () => ({
 vi.mock("@/constants", () => ({
   PRIZE_SPLIT: [0.6, 0.2, 0.1, 0.05],
   GRADED_PRIZE_SPLIT: [0.6, 0.2, 0.1, 0.05],
+  MOOD_FACE_RESULT_OVERLAY_SIZE: 14,
+  MOOD_TOOLTIP_OVERLAY_CLASS: "z-[60]",
 }));
 
 vi.mock("@/lib/cn", () => ({
@@ -301,5 +309,22 @@ describe("ResultOverlay — mood breakdown", () => {
       expect(hiddenContent.closest("[data-state]")).toBeTruthy();
       expect(hiddenContent.closest("[data-state]")?.getAttribute("data-state")).toBe("closed");
     }
+  });
+
+  it("passes MOOD_FACE_RESULT_OVERLAY_SIZE and MOOD_TOOLTIP_OVERLAY_CLASS to RunnerMoodFace", () => {
+    const mood = makeMood();
+    const runners = [makeRunner({ owned: true, finalMood: mood })];
+
+    render(
+      createElement(ResultOverlay, {
+        race: makeRace(),
+        runners,
+        onClose: vi.fn(),
+      } as any),
+    );
+
+    const moodFace = screen.getByTestId("mood-face");
+    expect(moodFace.getAttribute("data-size")).toBe("14");
+    expect(moodFace.getAttribute("data-tooltip-class")).toBe("z-[60]");
   });
 });

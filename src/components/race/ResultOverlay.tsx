@@ -10,7 +10,12 @@ import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { SectionalSplit } from "@/core/race/types";
 import { generateJockeyFeedback } from "@/core/race/jockeyFeedback";
 import { formatCurrency } from "@/core/common/formatting";
-import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/constants";
+import {
+  PRIZE_SPLIT,
+  GRADED_PRIZE_SPLIT,
+  MOOD_FACE_RESULT_OVERLAY_SIZE,
+  MOOD_TOOLTIP_OVERLAY_CLASS,
+} from "@/constants";
 import { Trophy, ChevronRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
@@ -111,7 +116,12 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                         <div className="col-span-6 space-y-1 min-w-0">
                           <div className="flex items-center gap-2">
                             {r.finalMood && (
-                              <RunnerMoodFace mood={r.finalMood} horseName={r.name} size={14} />
+                              <RunnerMoodFace
+                                mood={r.finalMood}
+                                horseName={r.name}
+                                size={MOOD_FACE_RESULT_OVERLAY_SIZE}
+                                tooltipClassName={MOOD_TOOLTIP_OVERLAY_CLASS}
+                              />
                             )}
                             <Link
                               to="/stable/$horseId"

@@ -165,4 +165,19 @@ describe("RunnerMoodFace — tooltip sub-signals", () => {
     expect(trigger?.getAttribute("aria-label")).toContain("Happy");
     expect(trigger?.getAttribute("aria-label")).toContain("73/100");
   });
+
+  it("applies tooltipClassName to the tooltip content", async () => {
+    const mood = mkMood({
+      score: 73,
+      face: "happy",
+      label: "Happy",
+      signals: [{ label: "Handy on the pace", contribution: 18 }],
+    });
+    const { container } = render(
+      <RunnerMoodFace mood={mood} horseName="Test" tooltipClassName="z-[60]" />,
+    );
+    await openTooltip(container);
+    const root = tooltipRoot();
+    expect(root.className).toContain("z-[60]");
+  });
 });
