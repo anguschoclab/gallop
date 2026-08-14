@@ -36,4 +36,16 @@ describe("useLeaderboardState live updates", () => {
     expect(result.current.positionRank.get("b")).toBe(1);
     expect(result.current.sorted[0].r.horseId).toBe("b");
   });
+
+  it("updates lastUpdatedAt when the tick advances", () => {
+    const runners = [runner("a", 100)];
+    const { result, rerender } = renderHook(
+      ({ tick }: { tick: number }) => useLeaderboardState(runners, race, 0, {}, tick),
+      { initialProps: { tick: 0 } },
+    );
+
+    const before = result.current.lastUpdatedAt;
+    rerender({ tick: 1 });
+    expect(result.current.lastUpdatedAt).toBeGreaterThanOrEqual(before);
+  });
 });

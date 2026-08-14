@@ -54,13 +54,14 @@ function makeRace(distance = 1600) {
 }
 
 describe("useLeaderboardState", () => {
-  it("returns initial state with default filter/sort/minBeyer", () => {
+  it("returns initial state with default filter/sort/minBeyer and lastUpdatedAt", () => {
     const runners = [makeRunner()];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
 
     expect(result.current.filter).toBe("all");
     expect(result.current.sortBy).toBe("position");
     expect(result.current.minBeyer).toBe(0);
+    expect(result.current.lastUpdatedAt).toBeGreaterThan(0);
   });
 
   it("computes positionRank from runner positions", () => {
