@@ -100,11 +100,16 @@ export interface RunnerHistory {
 
 export type MoodFace = "happy" | "neutral" | "unhappy";
 
+export interface MoodSignal {
+  label: string;
+  contribution: number;
+}
+
 export interface RunnerMood {
   score: number;
   face: MoodFace;
   label: string;
-  reasons: string[];
+  signals: MoodSignal[];
 }
 
 /** Aggregate stats about the live field, computed once per frame. */
@@ -296,7 +301,7 @@ export function deriveRunnerMood(
   distance: number,
   conditions: RunnerCondition[] = [],
 ): RunnerMood {
-  const reasons: string[] = [];
+  const signals: MoodSignal[] = [];
   let score = MOOD_BASE_SCORE;
 
   if (r.finishTime !== null) {
@@ -304,14 +309,13 @@ export function deriveRunnerMood(
       score: MOOD_BASE_SCORE,
       face: "neutral",
       label: "Race complete",
-      reasons: ["Has completed the race."],
+      signals: [],
     };
   }
 
   const progress = distance > 0 ? r.position / distance : 0;
   const lengthsBack = (field.leaderPos - r.position) / METRES_PER_LENGTH;
   const style = r.runningStyle ?? "P";
-  const styleLabel = STYLE_LABEL[style] ?? "runner";
   const early = progress < MOOD_EARLY_PHASE_PROGRESS;
 
   // Running-line fit: does its current place suit the way it likes to race?
@@ -320,22 +324,22 @@ export function deriveRunnerMood(
   if (wantsFront) {
     if (lengthsBack <= MOOD_HANDY_LENGTHS) {
       score += MOOD_HANDY_BONUS;
-      reasons.push(`Handy on the pace, exactly where a ${styleLabel} wants to be.`);
+      signals.push({ label: "Handy on the pace", contribution: MOOD_HANDY_BONUS });
     } else if (lengthsBack > MOOD_STRANDED_LENGTHS) {
       score -= MOOD_STRANDED_PENALTY;
-      reasons.push(`A ${styleLabel} stranded ${Math.round(lengthsBack)} lengths off the lead.`);
+      signals.push({ label: "Stranded off the lead", contribution: -MOOD_STRANDED_PENALTY });
     }
   } else if (wantsBack) {
     if (early && lengthsBack >= MOOD_COVERED_LENGTHS) {
       score += MOOD_COVERED_BONUS;
-      reasons.push(`Dropped out and covered up, ideal for a ${styleLabel}.`);
+      signals.push({ label: "Covered up", contribution: MOOD_COVERED_BONUS });
     } else if (early && lengthsBack <= MOOD_TOO_SOON_LENGTHS) {
       score -= MOOD_TOO_SOON_PENALTY;
-      reasons.push(`A ${styleLabel} forced to make its own running too soon.`);
+      signals.push({ label: "Too soon", contribution: -MOOD_TOO_SOON_PENALTY });
     }
   } else if (lengthsBack > MOOD_HANDY_LENGTHS && lengthsBack < MOOD_MIDFIELD_MAX_LENGTHS) {
     score += MOOD_MIDFIELD_BONUS;
-    reasons.push(`Tracking the pace in midfield, the trip a ${styleLabel} enjoys.`);
+    signals.push({ label: "Midfield tracking", contribution: MOOD_MIDFIELD_BONUS });
   }
 
   // How it is travelling against its own best tempo and the field.
@@ -344,25 +348,30 @@ export function deriveRunnerMood(
   const fieldRatio = field.meanVelocity > 0 ? r.velocity / field.meanVelocity : 1;
   if (fieldRatio >= FLYING_FIELD_RATIO && fadeRatio > FLYING_FADE_RATIO) {
     score += MOOD_TRAVELLING_BONUS;
-    reasons.push("Moving strongly, well on top of the tempo.");
+    signals.push({ label: "Travelling strongly", contribution: MOOD_TRAVELLING_BONUS });
   }
   if (fadeRatio < FLAGGING_FADE_RATIO) {
-    score -= fadeRatio < DISTRESSED_FADE_RATIO ? MOOD_DISTRESSED_PENALTY : MOOD_FLAGGING_PENALTY;
-    reasons.push("Off its own best tempo — feeling the effort.");
+    if (fadeRatio < DISTRESSED_FADE_RATIO) {
+      score -= MOOD_DISTRESSED_PENALTY;
+      signals.push({ label: "Distressed", contribution: -MOOD_DISTRESSED_PENALTY });
+    } else {
+      score -= MOOD_FLAGGING_PENALTY;
+      signals.push({ label: "Flagging", contribution: -MOOD_FLAGGING_PENALTY });
+    }
   }
 
   for (const c of conditions) {
     if (c.id === "boxed") {
       score -= MOOD_BOXED_PENALTY;
-      reasons.push("No clear running, and resenting the traffic.");
+      signals.push({ label: "Boxed in", contribution: -MOOD_BOXED_PENALTY });
     }
     if (c.id === "battling") {
       score -= MOOD_BATTLING_PENALTY;
-      reasons.push("Locked in a duel and being kept up to its work.");
+      signals.push({ label: "Battling", contribution: -MOOD_BATTLING_PENALTY });
     }
     if (c.id === "ailing") {
       score -= MOOD_AILING_PENALTY;
-      reasons.push("Racing with a complaint.");
+      signals.push({ label: "Ailing", contribution: -MOOD_AILING_PENALTY });
     }
   }
 
@@ -376,14 +385,19 @@ export function deriveRunnerMood(
         : temperament < MOOD_FRETFUL_TEMPERAMENT
           ? MOOD_FRETFUL_TOLERANCE
           : MOOD_DEFAULT_TOLERANCE;
+    const preTemperamentScore = score;
     score = MOOD_BASE_SCORE - deficit * tolerance;
-    if (temperament >= MOOD_PLACID_TEMPERAMENT)
-      reasons.push("A placid type that takes the rough with the smooth.");
-    if (temperament < MOOD_FRETFUL_TEMPERAMENT)
-      reasons.push("A fretful type that takes any inconvenience to heart.");
+    if (score !== preTemperamentScore) {
+      signals.push({ label: "Temperament adjustment", contribution: score - preTemperamentScore });
+    }
   }
 
+  const preClampScore = score;
   score = Math.max(MOOD_MIN_SCORE, Math.min(MOOD_MAX_SCORE, Math.round(score)));
+  if (score !== preClampScore) {
+    signals.push({ label: "Rounding & clamping", contribution: score - preClampScore });
+  }
+
   const face: MoodFace =
     score >= MOOD_HAPPY_THRESHOLD
       ? "happy"
@@ -391,7 +405,29 @@ export function deriveRunnerMood(
         ? "neutral"
         : "unhappy";
   const label = face === "happy" ? "Happy" : face === "neutral" ? "Coping" : "Unhappy";
-  if (reasons.length === 0) reasons.push("Going about its business without fuss.");
 
-  return { score, face, label, reasons };
+  return { score, face, label, signals };
+}
+
+/**
+ * Computes and stores the current mood for every live runner, mutating each
+ * runner's `finalMood` field in place. Finished runners are skipped so their
+ * last live mood is preserved.
+ *
+ * This is called once per frame from the presentation layer (Track.tsx) so
+ * that the last meaningful mood before a runner crosses the line is retained
+ * for post-race display in ResultOverlay.
+ */
+export function captureRunnerMoods(
+  runners: Runner[],
+  peakVelocities: Map<string, number>,
+  distance: number,
+): void {
+  const field = buildFieldContext(runners);
+  for (const r of runners) {
+    if (r.finishTime !== null) continue;
+    const history = { peakVelocity: peakVelocities.get(r.horseId) ?? 0 };
+    const conditions = deriveRunnerConditions(r, field, history, distance);
+    r.finalMood = deriveRunnerMood(r, field, history, distance, conditions);
+  }
 }

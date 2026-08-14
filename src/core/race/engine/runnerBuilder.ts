@@ -35,6 +35,7 @@ import {
   MUD_MASTER_SPEED_BONUS,
 } from "./constants";
 import type { SimWeatherPattern } from "@/core/weather/weatherTypes";
+import type { RunnerMood } from "@/core/race/runnerConditions";
 
 export type RunnerBonuses = {
   farrier?: number;
@@ -138,6 +139,7 @@ export type Runner = {
   distanceDeviation?: number;
   distanceMod?: number;
   distanceStaminaMul?: number;
+  finalMood?: RunnerMood;
 };
 
 export type ConditionsModifier = {

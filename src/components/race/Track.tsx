@@ -9,7 +9,7 @@ import type { Weather } from "@/core/race/types";
 import {
   buildFieldContext,
   deriveRunnerConditions,
-  deriveRunnerMood,
+  captureRunnerMoods,
 } from "@/core/race/runnerConditions";
 import { RunnerConditionBadges } from "./RunnerConditionBadges";
 import { RunnerMoodFace } from "./RunnerMoodFace";
@@ -137,7 +137,7 @@ export function Track({
     if (r.velocity > prev) peakVelocityRef.current.set(r.horseId, r.velocity);
   }
 
-  const fieldContext = buildFieldContext(runners);
+  captureRunnerMoods(runners, peakVelocityRef.current, distance);
 
   const trackOffset = -(cameraPos % 512);
 
@@ -215,9 +215,15 @@ export function Track({
         const finishRank =
           r.finishTime !== null ? finishRankMapRef.current.get(r.horseId) : undefined;
 
-        const history = { peakVelocity: peakVelocityRef.current.get(r.horseId) ?? 0 };
-        const conditions = deriveRunnerConditions(r, fieldContext, history, distance);
-        const mood = deriveRunnerMood(r, fieldContext, history, distance, conditions);
+        const conditions =
+          r.finishTime === null
+            ? deriveRunnerConditions(
+                r,
+                buildFieldContext(runners),
+                { peakVelocity: peakVelocityRef.current.get(r.horseId) ?? 0 },
+                distance,
+              )
+            : [];
 
         return (
           <div
@@ -280,7 +286,9 @@ export function Track({
                   </div>
                 )}
                 <RunnerConditionBadges conditions={conditions} />
-                {r.finishTime === null && <RunnerMoodFace mood={mood} horseName={r.name} />}
+                {r.finishTime === null && r.finalMood && (
+                  <RunnerMoodFace mood={r.finalMood} horseName={r.name} />
+                )}
               </div>
 
               <HorseSprite

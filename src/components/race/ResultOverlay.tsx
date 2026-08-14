@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { PaceGraph } from "@/components/race/PaceGraph";
 import { SpeedBreakdownChart } from "@/components/race/SpeedBreakdownChart";
 import { JockeyReportPanel } from "@/components/race/JockeyReportPanel";
+import { RunnerMoodFace } from "@/components/race/RunnerMoodFace";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
@@ -108,7 +109,11 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                         </div>
 
                         <div className="col-span-6 space-y-1 min-w-0">
-                          <Link
+                          <div className="flex items-center gap-2">
+                            {r.finalMood && (
+                              <RunnerMoodFace mood={r.finalMood} horseName={r.name} size={14} />
+                            )}
+                            <Link
                             to="/stable/$horseId"
                             params={{ horseId: r.horseId }}
                             className={cn(
@@ -117,7 +122,8 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                             )}
                           >
                             {r.name}
-                          </Link>
+                            </Link>
+                          </div>
                           <Link
                             to="/jockey/$jockeyId"
                             params={{ jockeyId: r.jockey?.id || "" }}
@@ -210,6 +216,32 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                                   ×{r.distanceStaminaMul.toFixed(3)}
                                 </span>
                               </div>
+                            </div>
+                          </CollapsibleContent>
+                        </Collapsible>
+                      )}
+
+                      {r.finalMood && (
+                        <Collapsible className="mt-2 ml-10">
+                          <CollapsibleTrigger className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-widest text-gold/40 hover:text-gold transition-colors">
+                            <ChevronDown className="h-2.5 w-2.5" />
+                            Mood Breakdown
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <div className="mt-2 p-3 bg-black/30 border border-white/5 space-y-2">
+                              <div className="text-[10px] font-black uppercase tracking-wide text-cream/60">
+                                {r.finalMood.label} · {r.finalMood.score}/100
+                              </div>
+                              <ul className="space-y-1">
+                                {r.finalMood.signals.map((s) => (
+                                  <li
+                                    key={s.label}
+                                    className="text-[10px] text-cream/50 leading-relaxed"
+                                  >
+                                    {s.label}
+                                  </li>
+                                ))}
+                              </ul>
                             </div>
                           </CollapsibleContent>
                         </Collapsible>

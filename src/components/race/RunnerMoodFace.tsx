@@ -63,10 +63,26 @@ export function RunnerMoodFace({ mood, horseName, size = 16, className }: Runner
             {mood.label} · {mood.score}/100
           </p>
           <ul className="mt-1 space-y-0.5 text-[11px] text-muted-foreground">
-            {mood.reasons.slice(0, 3).map((reason) => (
-              <li key={reason}>{reason}</li>
+            {mood.signals.map((signal) => (
+              <li
+                key={signal.label}
+                data-testid="mood-signal"
+                className="flex justify-between gap-2"
+              >
+                <span data-testid="mood-signal-label">{signal.label}</span>
+                <span data-testid="mood-signal-contribution" className="tabular-nums">
+                  {signal.contribution > 0 ? "+" : ""}
+                  {signal.contribution}
+                </span>
+              </li>
             ))}
           </ul>
+          <p
+            data-testid="mood-total"
+            className="mt-1 border-t border-white/10 pt-0.5 text-[11px] font-bold tabular-nums"
+          >
+            Total: {mood.score}/100
+          </p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
