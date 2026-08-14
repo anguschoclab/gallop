@@ -2,7 +2,12 @@
  * RunnerMoodFace — Three-state face showing how happy a runner is with its
  * current position in the run. Green smile / amber flat / red frown.
  */
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
 import type { RunnerMood } from "@/core/race/runnerConditions";
 
