@@ -144,9 +144,11 @@ export function generateAllNpcHorses(
   const usedNames = new Set<string>();
 
   const stallionsByStable = new Map<string, Horse[]>();
+  const famousStallionIds = new Set<string>();
   if (famousStallions) {
     for (const s of famousStallions) {
       usedNames.add(s.name.toLowerCase());
+      famousStallionIds.add(s.id);
       if (s.stableId) {
         if (!stallionsByStable.has(s.stableId)) stallionsByStable.set(s.stableId, []);
         stallionsByStable.get(s.stableId)!.push(s);
@@ -160,7 +162,7 @@ export function generateAllNpcHorses(
     horses.push(...stableFamous);
 
     for (const horse of horses) {
-      if (famousStallions?.some((fs) => fs.id === horse.id)) continue;
+      if (famousStallionIds.has(horse.id)) continue;
       if (shouldRetireAtStartup(horse, stable)) {
         const { bookSize } = defaultStudParams(stable.tier);
         horse.stud = {

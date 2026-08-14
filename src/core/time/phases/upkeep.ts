@@ -171,7 +171,13 @@ export const upkeepPhase = {
         );
 
         // Check if stable should conserve cash
-        const shouldConserve = shouldConserveCash(updatedAIState, stable, monthlyExpenses);
+        const upkeepWeight = aiState.subsystemWeights?.upkeep ?? 1.0;
+        const shouldConserve = shouldConserveCash(
+          updatedAIState,
+          stable,
+          monthlyExpenses,
+          upkeepWeight,
+        );
 
         // If conserving cash and running low, reduce spending by not charging full upkeep
         if (shouldConserve && stable.cash < monthlyExpenses * 2) {

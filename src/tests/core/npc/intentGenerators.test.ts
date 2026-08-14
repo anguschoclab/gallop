@@ -9,6 +9,7 @@ import {
 import { updateStableAIState } from "@/core/ai/npcCycleAI";
 import type { GameState, Stable } from "@/game/types";
 import { createTestStable } from "@/tests/helpers/createTestStable";
+import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
 // Define a mock instance variable to control throw behavior
 let shouldThrowForStable1 = false;
@@ -512,5 +513,112 @@ describe("generateNpcIntents diplomatic intent generation", () => {
     const intents = generateNpcIntents(mockState, day);
     const cartelIntents = intents.filter((i) => i.type === "cartel_action");
     expect(cartelIntents.length).toBeGreaterThan(0);
+  });
+});
+
+describe("generateNpcIntents auction consignment", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    shouldThrowForStable1 = false;
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("generates consignment intents when auction weight is high and suitable horses exist", () => {
+    // Horse that is an underperformer: age > 5, low rating
+    const horse = createTestHorse({
+      id: "horse-old",
+      name: "Old Underperformer",
+      age: 8,
+      stableId: "stable1",
+      energy: 50,
+      form: 30,
+      stats: {
+        speed: 20,
+        stamina: 20,
+        acceleration: 20,
+        consistency: 20,
+        temperament: 20,
+        conformation: 20,
+      },
+    });
+
+    const mockState = {
+      horses: { "horse-old": horse },
+      pregnancies: [],
+      races: {},
+      npcStables: [createTestStable({ id: "stable1", country: "USA", personality: "aggressive" })],
+      npcAIManager: {
+        stableStates: {},
+        globalDay: 1,
+        regionalKings: {},
+      },
+      auctions: [
+        {
+          id: "sale-1",
+          name: "Test Sale",
+          kind: "mixed",
+          day: 10,
+          lots: [],
+          resolved: false,
+        },
+      ],
+      jockeys: [],
+    } as unknown as GameState;
+
+    // Find a day where stable1's hash mod 7 === 0 (weekly cadence)
+    const stableHash = "stable1"
+      .split("")
+      .reduce((acc, ch) => (acc + ch.charCodeAt(0)) & 0xffff, 0);
+    const day = (7 - (stableHash % 7)) % 7 || 7;
+
+    const intents = generateNpcIntents(mockState, day);
+    const consignmentIntents = intents.filter((i) => i.type === "consignment");
+    expect(consignmentIntents.length).toBeGreaterThan(0);
+  });
+
+  it("generates no consignment intents when no active auctions exist", () => {
+    const horse = createTestHorse({
+      id: "horse-old",
+      name: "Old Underperformer",
+      age: 8,
+      stableId: "stable1",
+      energy: 50,
+      form: 30,
+      stats: {
+        speed: 20,
+        stamina: 20,
+        acceleration: 20,
+        consistency: 20,
+        temperament: 20,
+        conformation: 20,
+      },
+    });
+
+    const mockState = {
+      horses: { "horse-old": horse },
+      pregnancies: [],
+      races: {},
+      npcStables: [createTestStable({ id: "stable1", country: "USA", personality: "aggressive" })],
+      npcAIManager: {
+        stableStates: {},
+        globalDay: 1,
+        regionalKings: {},
+      },
+      auctions: [],
+      jockeys: [],
+    } as unknown as GameState;
+
+    const stableHash = "stable1"
+      .split("")
+      .reduce((acc, ch) => (acc + ch.charCodeAt(0)) & 0xffff, 0);
+    const day = (7 - (stableHash % 7)) % 7 || 7;
+
+    const intents = generateNpcIntents(mockState, day);
+    const consignmentIntents = intents.filter((i) => i.type === "consignment");
+    expect(consignmentIntents.length).toBe(0);
   });
 });

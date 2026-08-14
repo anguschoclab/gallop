@@ -14,15 +14,21 @@ export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
     const upcoming = races.filter((r) => !r.resolved && r.day >= day);
     const grades = ["G1", "G2", "G3"] as const;
 
-    // ⚡ Bolt: Replace O(N^2) array lookup inside loop with O(N) hash map construction + O(1) lookup
     const horsesById = new Map<string, Horse>();
     for (const horse of horses) {
       horsesById.set(horse.id, horse);
     }
 
+    const ownedRaceIds = new Set<string>();
+    for (const r of upcoming) {
+      if (r.entries.some((e) => e.owned)) {
+        ownedRaceIds.add(r.id);
+      }
+    }
+
     const gradeData = grades.map((grade) => {
       const gradeRaces = upcoming.filter((r) => r.graded?.grade === grade);
-      const ownedEntries = gradeRaces.filter((r) => r.entries.some((e) => e.owned));
+      const ownedEntries = gradeRaces.filter((r) => ownedRaceIds.has(r.id));
 
       const allOwnedProjs: number[] = [];
       let topProj: { name: string; proj: number } | null = null;

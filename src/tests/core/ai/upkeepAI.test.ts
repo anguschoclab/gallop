@@ -342,3 +342,42 @@ describe("getBudgetInsights", () => {
     expect(insights.budgetAdherence).toBe(0.5);
   });
 });
+
+describe("shouldConserveCash weight modulation", () => {
+  it("weight = 0 always returns true (max conservation)", () => {
+    const stable = createMockStable({ cash: 1_000_000, personality: "aggressive" });
+    const state = createUpkeepAIState(stable);
+    // Even with huge cash, weight = 0 should force conservation
+    expect(shouldConserveCash(state, stable, 1000, 0)).toBe(true);
+  });
+
+  it("weight = 1.0 preserves baseline behavior", () => {
+    const stable = createMockStable({ cash: 8000, personality: "conservative" });
+    const state = createUpkeepAIState(stable);
+    const stateWithTarget = {
+      ...state,
+      reserves: { ...state.reserves, targetReserveRatio: 6 },
+    };
+    const baseline = shouldConserveCash(stateWithTarget, stable, 1000);
+    const withWeight = shouldConserveCash(stateWithTarget, stable, 1000, 1.0);
+    expect(withWeight).toBe(baseline);
+  });
+
+  it("weight > 1 makes stable less likely to conserve (more spending)", () => {
+    // Set up a scenario where baseline conserves but higher weight doesn't
+    // conservative: target=6, buffer=1.0, so conserves if ratio < 7
+    // cash = 6500, expenses = 1000 → ratio = 6.5 < 7 → baseline conserves
+    const stable = createMockStable({ cash: 6500, personality: "conservative" });
+    const state = createUpkeepAIState(stable);
+    const stateWithTarget = {
+      ...state,
+      reserves: { ...state.reserves, targetReserveRatio: 6 },
+    };
+    const baseline = shouldConserveCash(stateWithTarget, stable, 1000);
+    expect(baseline).toBe(true);
+    // With weight = 2.0, effective threshold = (6 + 1.0) / 2.0 = 3.5
+    // ratio = 6.5 >= 3.5 → should NOT conserve
+    const withWeight = shouldConserveCash(stateWithTarget, stable, 1000, 2.0);
+    expect(withWeight).toBe(false);
+  });
+});

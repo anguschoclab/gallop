@@ -24,8 +24,9 @@ import type {
   ShareSaleIntent,
   DiplomaticActionIntent,
   CartelActionIntent,
+  ConsignmentIntent,
 } from "@/core/resolver/intents";
-import type { GameState, Horse, Race, Stable, Jockey } from "@/game/types";
+import type { GameState, Horse, Race, Stable, Jockey, AuctionSale } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { isHorseEligibleForClaimingPrice } from "@/core/market/claiming";
@@ -79,6 +80,7 @@ import {
   createJockeyStrategyAIState,
   applyAffinityBoost,
 } from "@/core/ai/jockeyStrategyAI";
+import { createAuctionAIState, shouldConsignHorse } from "@/core/ai/auctionAI";
 
 /**
  * Generate all NPC intents for the day.
@@ -229,6 +231,17 @@ export function generateNpcIntents(
       );
       intents.push(...generateNpcSyndicateIntents(state, stable, day, ownedHorses));
       intents.push(...generateNpcDiplomaticIntents(state, stable, stableAI, day, aiManager));
+      intents.push(
+        ...generateNpcAuctionIntents(
+          state,
+          stable,
+          stableAI,
+          day,
+          ownedHorses,
+          state.auctions ?? [],
+          weights?.auction,
+        ),
+      );
 
       // Update stable AI state in the manager (immutable update)
       if (aiManager && stableAI) {
@@ -841,6 +854,70 @@ function generateNpcDiplomaticIntents(
       targetStableIds: highTrustIds.slice(0, 2),
       marketAction: "avoid_bidding_war",
     } as CartelActionIntent);
+  }
+
+  return intents;
+}
+
+/**
+ * Generate auction consignment intents for an NPC stable.
+ *
+ * Evaluates owned horses for consignment to active auction sales based on
+ * the auction AI state, subsystem weight, and weekly cadence.
+ *
+ * @param _state - Current game state (unused)
+ * @param stable - The stable to generate intents for
+ * @param stableAI - Current AI state for the stable
+ * @param day - Current game day
+ * @param ownedHorses - Horses owned by the stable
+ * @param auctions - Active auction sales
+ * @param auctionWeight - Subsystem weight that modulates consignment willingness
+ * @returns Array of consignment intents
+ */
+function generateNpcAuctionIntents(
+  _state: GameState,
+  stable: Stable,
+  stableAI: StableAIState | undefined,
+  day: number,
+  ownedHorses: Horse[],
+  auctions: AuctionSale[],
+  auctionWeight = 1.0,
+): ConsignmentIntent[] {
+  const intents: ConsignmentIntent[] = [];
+
+  // Skip if no active auctions or weight is zero
+  if (auctions.length === 0 || auctionWeight <= 0) return intents;
+
+  // Weekly cadence, staggered per stable (same pattern as diplomatic intents)
+  const stableHash = stable.id.split("").reduce((acc, ch) => (acc + ch.charCodeAt(0)) & 0xffff, 0);
+  if ((day + stableHash) % 7 !== 0) return intents;
+
+  // Get or create auction AI state
+  const auctionAI = stableAI?.auctionAI ?? createAuctionAIState(stable);
+
+  // Find active (non-resolved) auctions
+  const activeSales = auctions.filter((s) => !s.resolved);
+  if (activeSales.length === 0) return intents;
+
+  for (const sale of activeSales) {
+    for (const horse of ownedHorses) {
+      const result = shouldConsignHorse(auctionAI, horse, stable, day, auctionWeight);
+      if (result.shouldConsign) {
+        const reservePrice = Math.floor(calculateOverallRating(horse) * 1000);
+        intents.push({
+          id: generateUUID(),
+          entityId: horse.id,
+          source: "npc",
+          sourceId: stable.id,
+          day,
+          priority: 40,
+          type: "consignment",
+          horseId: horse.id,
+          saleId: sale.id,
+          reservePrice,
+        });
+      }
+    }
   }
 
   return intents;

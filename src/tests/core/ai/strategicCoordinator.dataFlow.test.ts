@@ -133,8 +133,27 @@ describe("coordinateSubsystems: weights are consumed by intent generators", () =
 
     const updatedStableAI = manager.stableStates["npc-1"];
     expect(updatedStableAI).toBeDefined();
-    const aiWithWeights = updatedStableAI as unknown as { subsystemWeights?: unknown };
-    expect(aiWithWeights.subsystemWeights).toBeDefined();
+    expect(updatedStableAI?.subsystemWeights).toBeDefined();
+  });
+
+  it("all 8 subsystem weights are present on stableAI after generateNpcIntents", () => {
+    const manager = createMockManager();
+    const state = createMockGameState({ npcAIManager: manager });
+
+    generateNpcIntents(state, 100);
+
+    const updatedStableAI = manager.stableStates["npc-1"];
+    expect(updatedStableAI).toBeDefined();
+    const weights = updatedStableAI?.subsystemWeights;
+    expect(weights).toBeDefined();
+    expect(weights?.raceEntry).toBeDefined();
+    expect(weights?.training).toBeDefined();
+    expect(weights?.auction).toBeDefined();
+    expect(weights?.claiming).toBeDefined();
+    expect(weights?.breeding).toBeDefined();
+    expect(weights?.facility).toBeDefined();
+    expect(weights?.market).toBeDefined();
+    expect(weights?.upkeep).toBeDefined();
   });
 });
 

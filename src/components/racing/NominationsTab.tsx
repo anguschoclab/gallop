@@ -188,7 +188,7 @@ export function NominationsTab() {
   );
 }
 
-function RaceNominationRow({
+export function RaceNominationRow({
   race,
   day,
   playerHorses,
@@ -206,10 +206,17 @@ function RaceNominationRow({
   const daysOut = race.day - day;
   const tier = getNominationTier(daysOut);
   const fee = calculateNominationFee(grade, tier);
-  const nominatedIds = new Set(
-    noms.filter((n) => n.raceId === race.id && n.status !== "scratched").map((n) => n.horseId),
+  const nominatedIds = useMemo(
+    () =>
+      new Set(
+        noms.filter((n) => n.raceId === race.id && n.status !== "scratched").map((n) => n.horseId),
+      ),
+    [noms, race.id],
   );
-  const eligible = playerHorses.filter((h) => !nominatedIds.has(h.id));
+  const eligible = useMemo(
+    () => playerHorses.filter((h) => !nominatedIds.has(h.id)),
+    [playerHorses, nominatedIds],
+  );
 
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-md border border-cream/10 bg-broadcast-panel px-3 py-2">

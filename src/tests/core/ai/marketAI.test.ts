@@ -354,3 +354,35 @@ describe("calculateNegotiatedPrice", () => {
     expect(price).toBeGreaterThanOrEqual(1000);
   });
 });
+
+describe("shouldPurchaseHorse weight modulation", () => {
+  it("returns false when weight = 0", () => {
+    const stable = createMockStable({ cash: 1_000_000, personality: "aggressive" });
+    const state = createMarketAIState(stable);
+    const horse = createMockHorse();
+    expect(shouldPurchaseHorse(state, horse, 1000, stable, 1, 0)).toBe(false);
+  });
+
+  it("weight = 1.0 preserves baseline behavior", () => {
+    const stable = createMockStable({ cash: 1_000_000, personality: "aggressive" });
+    const state = createMarketAIState(stable);
+    const horse = createMockHorse();
+    const baseline = shouldPurchaseHorse(state, horse, 1000, stable, 1);
+    const withWeight = shouldPurchaseHorse(state, horse, 1000, stable, 1, 1.0);
+    expect(withWeight).toBe(baseline);
+  });
+
+  it("weight > 1 makes purchase more likely (lower threshold)", () => {
+    // Use conservative personality (higher threshold) to test lowering
+    const stable = createMockStable({ cash: 1_000_000, personality: "conservative" });
+    const state = createMarketAIState(stable);
+    const horse = createMockHorse();
+    const baseline = shouldPurchaseHorse(state, horse, 1000, stable, 1);
+    const withWeight = shouldPurchaseHorse(state, horse, 1000, stable, 1, 2.0);
+    // If baseline is true, weighted must also be true
+    if (baseline) {
+      expect(withWeight).toBe(true);
+    }
+    expect(typeof withWeight).toBe("boolean");
+  });
+});

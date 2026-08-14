@@ -263,8 +263,9 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     if (race && race.result) {
       // Apply adjusted results after stewards DQ
+      const resultMap = new Map(race.result.map((r) => [r.horseId, r]));
       for (const adj of adjustedResults) {
-        const resultEntry = race.result.find((r) => r.horseId === adj.horseId);
+        const resultEntry = resultMap.get(adj.horseId);
         if (resultEntry) {
           resultEntry.position = adj.position;
         }

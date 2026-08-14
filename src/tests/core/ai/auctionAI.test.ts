@@ -794,3 +794,89 @@ describe("generatePostPurchasePlan", () => {
     expect(plan.rationale.length).toBeGreaterThan(10);
   });
 });
+
+describe("shouldConsignHorse weight modulation", () => {
+  it("returns shouldConsign: false when weight = 0", () => {
+    const stable = createMockStable();
+    const aiState = createAuctionAIState(stable);
+    const horse = createMockHorse({
+      age: 8,
+      stats: {
+        speed: 20,
+        stamina: 20,
+        acceleration: 20,
+        consistency: 20,
+        temperament: 20,
+        conformation: 20,
+      },
+    });
+    const result = shouldConsignHorse(aiState, horse, stable, 1, 0);
+    expect(result.shouldConsign).toBe(false);
+  });
+
+  it("weight = 1.0 preserves baseline behavior", () => {
+    const stable = createMockStable();
+    const aiState = createAuctionAIState(stable);
+    // Underperformer: rating < 40, age > 5
+    const horse = createMockHorse({
+      age: 7,
+      stats: {
+        speed: 20,
+        stamina: 20,
+        acceleration: 20,
+        consistency: 20,
+        temperament: 20,
+        conformation: 20,
+      },
+    });
+    const baseline = shouldConsignHorse(aiState, horse, stable, 1);
+    const withWeight = shouldConsignHorse(aiState, horse, stable, 1, 1.0);
+    expect(withWeight).toEqual(baseline);
+  });
+
+  it("weight > 1 relaxes underperformer age criteria", () => {
+    const stable = createMockStable();
+    const aiState = createAuctionAIState(stable);
+    // rating < 40 but age = 5 (baseline requires age > 5, so baseline returns false)
+    const horse = createMockHorse({
+      age: 5,
+      stats: {
+        speed: 20,
+        stamina: 20,
+        acceleration: 20,
+        consistency: 20,
+        temperament: 20,
+        conformation: 20,
+      },
+    });
+    const baseline = shouldConsignHorse(aiState, horse, stable, 1);
+    expect(baseline.shouldConsign).toBe(false);
+    // With weight = 1.5, age gate relaxes to age > 4, so should consign
+    const withWeight = shouldConsignHorse(aiState, horse, stable, 1, 1.5);
+    expect(withWeight.shouldConsign).toBe(true);
+    expect(withWeight.reason).toBe("underperformer");
+  });
+
+  it("weight > 1 relaxes underperformer rating criteria", () => {
+    const stable = createMockStable();
+    const aiState = createAuctionAIState(stable);
+    // rating ~45 (baseline requires < 40, so baseline returns false), age = 7
+    const horse = createMockHorse({
+      age: 7,
+      stats: {
+        speed: 45,
+        stamina: 45,
+        acceleration: 45,
+        consistency: 45,
+        temperament: 45,
+        conformation: 45,
+      },
+    });
+    const baseline = shouldConsignHorse(aiState, horse, stable, 1);
+    expect(baseline.shouldConsign).toBe(false);
+    // With weight = 1.5, rating threshold relaxes to < 40 + 10 = 50, so should consign
+    const withWeight = shouldConsignHorse(aiState, horse, stable, 1, 1.5);
+    expect(withWeight.shouldConsign).toBe(true);
+    expect(withWeight.reason).toBe("underperformer");
+  });
+});

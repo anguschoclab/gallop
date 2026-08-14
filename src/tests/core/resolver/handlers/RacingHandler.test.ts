@@ -483,6 +483,66 @@ describe("RacingHandler", () => {
     expect(draft.races["race-1"].result[1].position).toBe(2);
   });
 
+  it("race_result_adjustment handles large field with multiple simultaneous adjustments", () => {
+    const handler = new RacingHandler();
+    const state = {
+      horses: {},
+      races: r2r([
+        {
+          id: "race-1",
+          entries: [],
+          resolved: true,
+          result: [
+            { horseId: "h1", position: 1, time: 90 },
+            { horseId: "h2", position: 2, time: 91 },
+            { horseId: "h3", position: 3, time: 92 },
+            { horseId: "h4", position: 4, time: 93 },
+            { horseId: "h5", position: 5, time: 94 },
+          ],
+        },
+      ] as unknown as Race[]),
+    } as unknown as GameState;
+
+    const impact: RaceResultAdjustmentImpact = {
+      id: "imp-1",
+      intentId: "",
+      day: 16,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "race_result_adjustment",
+      raceId: "race-1",
+      originalResults: [
+        { horseId: "h1", position: 1, time: 90 },
+        { horseId: "h2", position: 2, time: 91 },
+        { horseId: "h3", position: 3, time: 92 },
+        { horseId: "h4", position: 4, time: 93 },
+        { horseId: "h5", position: 5, time: 94 },
+      ],
+      adjustedResults: [
+        { horseId: "h1", position: 3, time: 90 },
+        { horseId: "h2", position: 1, time: 91 },
+        { horseId: "h3", position: 5, time: 92 },
+        { horseId: "h4", position: 2, time: 93 },
+        { horseId: "h5", position: 4, time: 94 },
+      ],
+      reason: "Multiple DQs",
+    };
+
+    const draft = JSON.parse(JSON.stringify(state));
+    handler.handle(draft, impact);
+
+    expect(draft.races["race-1"].result[0].horseId).toBe("h2");
+    expect(draft.races["race-1"].result[0].position).toBe(1);
+    expect(draft.races["race-1"].result[1].horseId).toBe("h4");
+    expect(draft.races["race-1"].result[1].position).toBe(2);
+    expect(draft.races["race-1"].result[2].horseId).toBe("h1");
+    expect(draft.races["race-1"].result[2].position).toBe(3);
+    expect(draft.races["race-1"].result[3].horseId).toBe("h5");
+    expect(draft.races["race-1"].result[3].position).toBe(4);
+    expect(draft.races["race-1"].result[4].horseId).toBe("h3");
+    expect(draft.races["race-1"].result[4].position).toBe(5);
+  });
+
   it("jockey_affinity_gain updates affinity map", () => {
     const handler = new RacingHandler();
     const state = {

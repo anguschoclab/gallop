@@ -202,6 +202,7 @@ function getFacilityPriority(
  * @param currentLevel - Current level of the facility
  * @param stable - The stable making the decision
  * @param currentDay - Current game day
+ * @param weight - Subsystem weight that modulates upgrade willingness (default 1.0)
  * @returns True if stable should upgrade the facility
  */
 export function shouldUpgradeFacility(
@@ -210,7 +211,11 @@ export function shouldUpgradeFacility(
   currentLevel: FacilityLevel,
   stable: Stable,
   currentDay: number,
+  weight = 1.0,
 ): boolean {
+  // Weight ≤ 0 → never upgrade
+  if (weight <= 0) return false;
+
   const priorityScore = calculateFacilityUpgradePriority(
     aiState,
     facilityType,
@@ -237,6 +242,9 @@ export function shouldUpgradeFacility(
   if (config.personality === "aggressive") threshold -= 10;
   if (config.personality === "conservative") threshold += 10;
   if (config.personality === "developer") threshold -= 5; // Developers invest more
+
+  // Weight modulates threshold: higher weight → lower threshold → more likely to upgrade
+  threshold /= weight;
 
   return priorityScore > threshold;
 }

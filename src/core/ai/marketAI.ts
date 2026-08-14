@@ -144,6 +144,7 @@ export function calculatePurchaseValue(
  * @param price - The purchase price
  * @param stable - The stable making the decision
  * @param currentDay - Current game day
+ * @param weight - Subsystem weight that modulates purchase willingness (default 1.0)
  * @returns True if stable should purchase the horse
  */
 export function shouldPurchaseHorse(
@@ -152,7 +153,11 @@ export function shouldPurchaseHorse(
   price: number,
   stable: Stable,
   currentDay: number,
+  weight = 1.0,
 ): boolean {
+  // Weight ≤ 0 → never purchase
+  if (weight <= 0) return false;
+
   // Basic checks
   if (stable.cash < price * 1.1) return false;
 
@@ -176,6 +181,9 @@ export function shouldPurchaseHorse(
 
   if (config.personality === "aggressive") threshold -= 10;
   if (config.personality === "conservative") threshold += 10;
+
+  // Weight modulates threshold: higher weight → lower threshold → more likely to purchase
+  threshold /= weight;
 
   return valueScore > threshold;
 }

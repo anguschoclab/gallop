@@ -22,6 +22,7 @@ import {
   calculateFacilityBudget,
   createFacilityAIState,
   recordFacilityInvestment,
+  shouldUpgradeFacility,
 } from "@/core/ai/facilityAI";
 import { upgradeFacility } from "@/core/facilities";
 import type { Facility, PlayerFacilities } from "@/core/facilities/facilityTypes";
@@ -583,6 +584,20 @@ export function runNpcCycle(
             if (facilityToUpgrade) {
               const currentFacility = facilities[facilityToUpgrade];
               if (!currentFacility) continue;
+              // Weight-modulated gate: check if AI approves the upgrade
+              const facilityWeight = stableAIState.subsystemWeights?.facility ?? 1.0;
+              if (
+                !shouldUpgradeFacility(
+                  stableAIState.facilityAI,
+                  facilityToUpgrade,
+                  currentFacility.level,
+                  stable,
+                  currentDay,
+                  facilityWeight,
+                )
+              ) {
+                continue;
+              }
               const upgraded = upgradeFacility(currentFacility, currentDay);
               if (upgraded) {
                 cashChanges.push({

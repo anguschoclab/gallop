@@ -301,13 +301,18 @@ export function updateReserveState(
  * @param aiState - Current upkeep AI state
  * @param stable - The stable to evaluate
  * @param monthlyExpenses - Monthly expense amount
+ * @param weight - Subsystem weight that modulates conservation tendency (default 1.0)
  * @returns True if stable should conserve cash
  */
 export function shouldConserveCash(
   aiState: UpkeepAIState,
   stable: Stable,
   monthlyExpenses: number,
+  weight = 1.0,
 ): boolean {
+  // Weight ≤ 0 → always conserve (max conservation)
+  if (weight <= 0) return true;
+
   const currentReserveRatio = stable.cash / (monthlyExpenses || 1);
   const targetReserveRatio = aiState.reserves.targetReserveRatio;
 
@@ -317,7 +322,10 @@ export function shouldConserveCash(
   // Personality-based buffer
   const strategy = UPKEEP_STRATEGIES[stable.personality];
 
-  return currentReserveRatio < targetReserveRatio + strategy.conserveBuffer;
+  // Weight modulates: higher weight → higher threshold → less likely to conserve
+  const effectiveThreshold = (targetReserveRatio + strategy.conserveBuffer) / weight;
+
+  return currentReserveRatio < effectiveThreshold;
 }
 
 /**

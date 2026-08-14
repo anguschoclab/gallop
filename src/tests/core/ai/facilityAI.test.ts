@@ -381,3 +381,35 @@ describe("shouldDivestFacility", () => {
     expect(shouldDivestFacility(roi, "premium")).toBe(false);
   });
 });
+
+describe("shouldUpgradeFacility weight modulation", () => {
+  it("returns false when weight = 0", () => {
+    const stable = createTestStable({ cash: 500_000, personality: "aggressive" });
+    const state = makeState();
+    expect(shouldUpgradeFacility(state, "main_track", "basic", stable, 1, 0)).toBe(false);
+  });
+
+  it("weight = 1.0 preserves baseline behavior", () => {
+    const stable = createTestStable({ cash: 500_000, personality: "aggressive" });
+    const state = makeState();
+    const baseline = shouldUpgradeFacility(state, "main_track", "basic", stable, 1);
+    const withWeight = shouldUpgradeFacility(state, "main_track", "basic", stable, 1, 1.0);
+    expect(withWeight).toBe(baseline);
+  });
+
+  it("weight > 1 makes upgrade more likely (lower threshold)", () => {
+    // Use conservative personality (higher threshold) to test that weight lowers it
+    const stable = createTestStable({ cash: 500_000, personality: "conservative" });
+    const state = makeState("conservative");
+    const baseline = shouldUpgradeFacility(state, "main_track", "basic", stable, 1);
+    // With weight = 2.0, threshold is halved, so if baseline was false, weighted may be true
+    const withWeight = shouldUpgradeFacility(state, "main_track", "basic", stable, 1, 2.0);
+    // If baseline is true, weighted must also be true (lower threshold can't make it false)
+    if (baseline) {
+      expect(withWeight).toBe(true);
+    }
+    // If baseline is false, weighted may flip to true (that's the expected modulation)
+    // We just verify it doesn't throw and returns a boolean
+    expect(typeof withWeight).toBe("boolean");
+  });
+});

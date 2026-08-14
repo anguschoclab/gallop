@@ -119,4 +119,31 @@ describe("JockeyRoster — trait search & filter", () => {
     expect(screen.getByText("Alice")).toBeTruthy();
     expect(screen.getByText("Bob")).toBeTruthy();
   });
+
+  it("myJockeys partition shows jockeys with contractUntil and no stableId", () => {
+    const jockeys = [
+      mkJockey("j1", { name: "Signed Jockey", stableId: undefined, contractUntil: 100 }),
+      mkJockey("j2", { name: "Market Jockey", stableId: undefined, contractUntil: undefined }),
+      mkJockey("j3", { name: "Stable Jockey", stableId: "stable-1", contractUntil: 100 }),
+    ];
+    renderWithStore(<JockeyRoster />, { jockeys });
+    // Header shows "Signed: 1" (j1) and "Available: 1" (j2)
+    // j3 has stableId so it's in neither partition
+    const text = document.body.textContent ?? "";
+    expect(text).toContain("Signed:");
+    expect(text).toMatch(/Signed:\s*1/);
+    expect(text).toMatch(/Available:\s*1/);
+  });
+
+  it("jockeys with stableId appear in neither myJockeys nor market", () => {
+    const jockeys = [
+      mkJockey("j1", { name: "Free Agent", stableId: undefined, contractUntil: 100 }),
+      mkJockey("j2", { name: "Owned By Stable", stableId: "stable-1", contractUntil: 100 }),
+    ];
+    renderWithStore(<JockeyRoster />, { jockeys });
+    // Signed: 1 (j1), Available: 0 (j2 has stableId, excluded from both)
+    const text = document.body.textContent ?? "";
+    expect(text).toMatch(/Signed:\s*1/);
+    expect(text).toMatch(/Available:\s*0/);
+  });
 });

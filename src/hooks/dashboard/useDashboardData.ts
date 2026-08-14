@@ -2,6 +2,7 @@ import { useMemo, useCallback } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { RaceEntry } from "@/core/race/types";
 import type { InboxMessage } from "@/core/inbox/inboxTypes";
+import type { Horse } from "@/core/horse/types";
 
 export function useDashboardData() {
   const day = useGame((s) => s.day);
@@ -15,9 +16,19 @@ export function useDashboardData() {
     inbox: s.inbox,
   }));
 
-  const ownedHorses = Object.values(horses).filter((h) => h.owned);
-  const activeHorses = ownedHorses.filter((h) => h.lifecycleStatus === "active");
-  const lowEnergyHorses = activeHorses.filter((h) => h.energy < 40);
+  const { ownedHorses, activeHorses, lowEnergyHorses } = useMemo(() => {
+    const owned: Horse[] = [];
+    const active: Horse[] = [];
+    const lowEnergy: Horse[] = [];
+    for (const h of Object.values(horses)) {
+      if (!h.owned) continue;
+      owned.push(h);
+      if (h.lifecycleStatus !== "active") continue;
+      active.push(h);
+      if (h.energy < 40) lowEnergy.push(h);
+    }
+    return { ownedHorses: owned, activeHorses: active, lowEnergyHorses: lowEnergy };
+  }, [horses]);
 
   const upcoming = Object.values(races)
     .filter((r) => !r.resolved && r.day >= day)

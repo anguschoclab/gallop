@@ -312,6 +312,7 @@ export function calculateBidIncrement(
  * @param horse - The horse to evaluate
  * @param stable - The stable owning the horse
  * @param currentDay - Current game day
+ * @param weight - Subsystem weight that modulates consignment willingness (default 1.0)
  * @returns Object with shouldConsign flag and optional reason
  */
 export function shouldConsignHorse(
@@ -319,18 +320,26 @@ export function shouldConsignHorse(
   horse: Horse,
   stable: Stable,
   currentDay: number,
+  weight = 1.0,
 ): {
   shouldConsign: boolean;
   reason?: "underperformer" | "surplus" | "rebalancing" | "retirement";
 } {
+  // Weight ≤ 0 → never consign
+  if (weight <= 0) return { shouldConsign: false };
+
   // Don't consign young horses
   if (horse.age < 3) return { shouldConsign: false };
 
   const horseRating = calculateOverallRating(horse);
   const portfolio = aiState.portfolio;
 
+  // Weight-modulated thresholds: higher weight relaxes criteria
+  const ratingThreshold = 40 + (weight - 1) * 20;
+  const ageThreshold = 5 - (weight - 1) * 2;
+
   // Check for underperformance
-  if (horseRating < 40 && horse.age > 5) {
+  if (horseRating < ratingThreshold && horse.age > ageThreshold) {
     return { shouldConsign: true, reason: "underperformer" };
   }
 

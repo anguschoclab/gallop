@@ -3,7 +3,7 @@ import { shallow } from "zustand/shallow";
 import { JockeyFilterPanel } from "./JockeyFilterPanel";
 import { JockeyRosterTabs } from "./JockeyRosterTabs";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { JockeyArchetype, JockeySilkPattern } from "@/game/types";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { Briefcase } from "lucide-react";
@@ -20,8 +20,14 @@ export function JockeyRoster() {
   const [colorFilter, setColorFilter] = useState<string>("all");
   const [traitFilter, setTraitFilter] = useState<JockeyTrait | "all">("all");
 
-  const myJockeys = jockeys?.filter((j: Jockey) => !j.stableId && !!j.contractUntil) ?? [];
-  const market = jockeys?.filter((j: Jockey) => !j.stableId && !j.contractUntil) ?? [];
+  const myJockeys = useMemo(
+    () => jockeys?.filter((j: Jockey) => !j.stableId && !!j.contractUntil) ?? [],
+    [jockeys],
+  );
+  const market = useMemo(
+    () => jockeys?.filter((j: Jockey) => !j.stableId && !j.contractUntil) ?? [],
+    [jockeys],
+  );
 
   const filterList = (list: Jockey[]) => {
     if (!list) return [];

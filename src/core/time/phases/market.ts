@@ -58,6 +58,7 @@ export const marketPhase = {
         }
 
         // Check if stable should purchase any horse from market
+        const marketWeight = aiState.subsystemWeights?.market ?? 1.0;
         for (const horse of market) {
           // Estimate price based on horse stats (since Horse doesn't have price field)
           const horseRating = calculateRaceRating(horse);
@@ -69,6 +70,7 @@ export const marketPhase = {
             estimatedPrice,
             stable,
             newDay,
+            marketWeight,
           );
           if (shouldPurchase) {
             const maxPrice = calculateMaxPurchasePrice(aiState.marketAI, horse, stable);
