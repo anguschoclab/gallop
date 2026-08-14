@@ -17,6 +17,7 @@ import type { Horse, Stable, Race } from "@/game/types";
 import type { Jockey } from "@/game/types";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
 import { calculateRaceRating } from "@/core/horse/stats";
+import { getCompatibility } from "@/core/jockey/compatibility";
 import {
   createLearningState,
   recordOutcome as recordLearningOutcome,
@@ -188,6 +189,17 @@ export function calculateJockeySuitability(
     }
   }
 
+  // Affinity bonus: jockeys with existing horse relationships score higher
+  if (horse) {
+    score += Math.min((jockey.affinityMap?.[horse.id] ?? 0) / 10, 15);
+
+    // Compatibility bonus: archetype/trait match with horse running style
+    const compat = getCompatibility(horse, jockey);
+    if (compat === "High") score += 10;
+    else if (compat === "Good") score += 5;
+    else if (compat === "Poor") score -= 10;
+  }
+
   return Math.max(0, Math.min(100, score));
 }
 
@@ -325,6 +337,17 @@ export function shouldRetainJockey(
   // Don't retain if not used recently (unless very high value)
   if (daysSinceUse > 90 && avgPrizePerRide < 10000) {
     shouldRetain = false;
+  }
+
+  // Affinity-informed retention: high total affinity gives second chance
+  const totalAffinity = Object.values(jockey.affinityMap ?? {}).reduce((sum, xp) => sum + xp, 0);
+  if (totalAffinity >= 200 && !shouldRetain) {
+    // High-affinity jockey gets a second chance if earning reasonably
+    shouldRetain = avgPrizePerRide > 1000;
+  }
+  // Very high affinity overrides disuse penalty
+  if (totalAffinity >= 500 && daysSinceUse > 90) {
+    shouldRetain = true;
   }
 
   return shouldRetain;

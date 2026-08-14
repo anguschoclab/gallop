@@ -276,6 +276,74 @@ describe("shouldRetainJockey", () => {
   });
 });
 
+describe("shouldRetainJockey — affinity-informed retention", () => {
+  it("high total affinity (>=200) retains even with borderline performance", () => {
+    const state = createJockeyAIState(createMockStable({ personality: "conservative" }));
+    const jockey = createMockJockey({
+      affinityMap: { h1: 100, h2: 100 },
+    });
+    const stable = createMockStable({ personality: "conservative" });
+
+    state.retention.push({
+      jockeyId: jockey.id,
+      stableId: stable.id,
+      hireDay: 1,
+      lastUseDay: 10,
+      totalRides: 10,
+      totalPrize: 12000, // avgPrizePerRide = 1200 > 1000
+      retained: true,
+    });
+
+    // Conservative requires avgPrizePerRide > 5000, but affinity >= 200 gives second chance
+    const shouldRetainDecision = shouldRetainJockey(state, jockey, stable, 20);
+    expect(shouldRetainDecision).toBe(true);
+  });
+
+  it("zero affinity with borderline performance does not get second chance", () => {
+    const state = createJockeyAIState(createMockStable({ personality: "conservative" }));
+    const jockey = createMockJockey({
+      affinityMap: {},
+    });
+    const stable = createMockStable({ personality: "conservative" });
+
+    state.retention.push({
+      jockeyId: jockey.id,
+      stableId: stable.id,
+      hireDay: 1,
+      lastUseDay: 10,
+      totalRides: 10,
+      totalPrize: 12000, // avgPrizePerRide = 1200 > 1000 but < 5000
+      retained: true,
+    });
+
+    // No affinity, conservative threshold not met → not retained
+    const shouldRetainDecision = shouldRetainJockey(state, jockey, stable, 20);
+    expect(shouldRetainDecision).toBe(false);
+  });
+
+  it("high affinity (>=500) overrides disuse penalty", () => {
+    const state = createJockeyAIState(createMockStable({ personality: "conservative" }));
+    const jockey = createMockJockey({
+      affinityMap: { h1: 300, h2: 250 },
+    });
+    const stable = createMockStable({ personality: "conservative" });
+
+    state.retention.push({
+      jockeyId: jockey.id,
+      stableId: stable.id,
+      hireDay: 1,
+      lastUseDay: 1,
+      totalRides: 10,
+      totalPrize: 60000, // avgPrizePerRide = 6000 > 5000
+      retained: true,
+    });
+
+    // daysSinceUse = 100 - 1 = 99 > 90, but affinity >= 500 overrides
+    const shouldRetainDecision = shouldRetainJockey(state, jockey, stable, 100);
+    expect(shouldRetainDecision).toBe(true);
+  });
+});
+
 describe("calculateMaxJockeyFee", () => {
   it("should calculate fee based on jockey riding fee", () => {
     const state = createJockeyAIState(createMockStable());
@@ -699,5 +767,88 @@ describe("selectBestJockey — trait-aware selection", () => {
     const best = selectBestJockey(state, horse, [stayingJockey, sprintJockey], stable, sprintRace);
 
     expect(best?.id).toBe("sprint-jockey");
+  });
+});
+
+// ─── Affinity & Compatibility in Suitability ───────────────────────────────
+
+describe("calculateJockeySuitability — affinity and compatibility", () => {
+  it("jockey with high affinity scores higher than zero-affinity (same stats/traits)", () => {
+    const state = createJockeyAIState(createMockStable());
+    const baseStats = { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 };
+    const zeroAffinityJockey = createMockJockey({
+      id: "j-zero",
+      stats: baseStats,
+      affinityMap: {},
+      traits: [],
+    });
+    const highAffinityJockey = createMockJockey({
+      id: "j-high",
+      stats: baseStats,
+      affinityMap: { "horse-1": 500 },
+      traits: [],
+    });
+    const horse = createMockHorse({ id: "horse-1" });
+    const stable = createMockStable();
+
+    const zeroScore = calculateJockeySuitability(state, zeroAffinityJockey, horse, stable);
+    const highScore = calculateJockeySuitability(state, highAffinityJockey, horse, stable);
+
+    expect(highScore).toBeGreaterThan(zeroScore);
+  });
+
+  it("jockey with High compatibility scores higher than Poor compatibility (same stats/traits)", () => {
+    const state = createJockeyAIState(createMockStable());
+    const baseStats = { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 };
+    const highCompatJockey = createMockJockey({
+      id: "j-hc",
+      archetype: "front_runner",
+      stats: baseStats,
+      affinityMap: {},
+      traits: [],
+    });
+    const poorCompatJockey = createMockJockey({
+      id: "j-pc",
+      archetype: "closer",
+      stats: baseStats,
+      affinityMap: {},
+      traits: [],
+    });
+    const horse = createMockHorse({ id: "horse-1", runningStyle: "E" });
+    const stable = createMockStable();
+
+    const highScore = calculateJockeySuitability(state, highCompatJockey, horse, stable);
+    const poorScore = calculateJockeySuitability(state, poorCompatJockey, horse, stable);
+
+    expect(highScore).toBeGreaterThan(poorScore);
+  });
+
+  it("affinity + compatibility bonuses stack with existing trait bonuses", () => {
+    const state = createJockeyAIState(createMockStable());
+    const baseStats = { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 };
+    const allBonusJockey = createMockJockey({
+      id: "j-all",
+      archetype: "front_runner",
+      stats: baseStats,
+      affinityMap: { "horse-1": 500 },
+      traits: ["gate_master"],
+    });
+    const noBonusJockey = createMockJockey({
+      id: "j-none",
+      archetype: "closer",
+      stats: baseStats,
+      affinityMap: {},
+      traits: [],
+    });
+    const horse = createMockHorse({ id: "horse-1", runningStyle: "E" });
+    const stable = createMockStable();
+    const race = createMockRace({ surface: "Turf" });
+
+    const allScore = calculateJockeySuitability(state, allBonusJockey, horse, stable, race);
+    const noScore = calculateJockeySuitability(state, noBonusJockey, horse, stable, race);
+
+    expect(allScore).toBeGreaterThan(noScore);
+    // The gap should be significant (affinity + compat + trait bonuses)
+    expect(allScore - noScore).toBeGreaterThan(20);
   });
 });

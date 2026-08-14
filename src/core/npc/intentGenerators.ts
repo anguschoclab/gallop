@@ -74,7 +74,11 @@ import {
   type BudgetAllocation,
   type SubsystemWeights,
 } from "@/core/ai/strategicCoordinator";
-import { calculateOptimalTactics, createJockeyStrategyAIState } from "@/core/ai/jockeyStrategyAI";
+import {
+  calculateOptimalTactics,
+  createJockeyStrategyAIState,
+  applyAffinityBoost,
+} from "@/core/ai/jockeyStrategyAI";
 
 /**
  * Generate all NPC intents for the day.
@@ -389,12 +393,10 @@ function generateNpcRaceEntryIntents(
         const allJockeys = state.jockeys || [];
         const jockey = allJockeys.find((j) => j.stableId === stable.id) || allJockeys[0];
         if (!jockey) continue;
-        const jockeyInstructions = calculateOptimalTactics(
-          jockeyStrategyAI,
-          horse,
-          race,
+        const jockeyInstructions = applyAffinityBoost(
+          calculateOptimalTactics(jockeyStrategyAI, horse, race, jockey, stable),
           jockey,
-          stable,
+          horse.id,
         );
 
         intents.push({

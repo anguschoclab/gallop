@@ -24,12 +24,18 @@ describe("calculateTheHandBonus", () => {
   });
 
   it("returns familiar bonus for XP at familiar level", () => {
-    const j = mkJockey({ affinityMap: { h1: AFFINITY_CONSTANTS.LEVELS.familiar } });
+    const j = mkJockey({
+      affinityMap: { h1: AFFINITY_CONSTANTS.LEVELS.familiar },
+      stableAffinity: 0,
+    });
     expect(calculateTheHandBonus(j, "h1")).toBe(AFFINITY_CONSTANTS.BONUS.familiar);
   });
 
   it("returns soulmates bonus for XP at soulmates level", () => {
-    const j = mkJockey({ affinityMap: { h1: AFFINITY_CONSTANTS.LEVELS.soulmates } });
+    const j = mkJockey({
+      affinityMap: { h1: AFFINITY_CONSTANTS.LEVELS.soulmates },
+      stableAffinity: 0,
+    });
     expect(calculateTheHandBonus(j, "h1")).toBe(AFFINITY_CONSTANTS.BONUS.soulmates);
   });
 
@@ -72,11 +78,6 @@ describe("getAffinityLevel", () => {
 });
 
 describe("calculateTraitAffinitySynergy", () => {
-  // Import dynamically so tests fail (RED) before implementation exists
-  const { calculateTraitAffinitySynergy } = require("@/core/jockey/affinity") as {
-    calculateTraitAffinitySynergy: (jockey: Jockey, horse: Horse) => number;
-  };
-
   it("returns 1.0 for jockey with no traits", () => {
     const j = mkJockey({ traits: [] });
     const h = mkHorse({ runningStyle: "E" });
@@ -115,11 +116,7 @@ describe("calculateTraitAffinitySynergy", () => {
 
   it("caps at 2.0 with multiple matching traits", () => {
     const j = mkJockey({
-      traits: [
-        "gate_master",
-        "closer_instinct",
-        "pace_presser",
-      ] as JockeyTrait[],
+      traits: ["gate_master", "closer_instinct", "pace_presser"] as JockeyTrait[],
     });
     const h = mkHorse({ runningStyle: "E" });
     // gate_master + E = +0.5, closer_instinct + E = no match, pace_presser + E = no match

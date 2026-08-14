@@ -165,3 +165,45 @@ describe("selectBestFreeAgentJockey", () => {
     );
   });
 });
+
+describe("scoreJockeyChemistry — trait awareness", () => {
+  it("matching traits score higher than without (same fame/affinity/compat)", () => {
+    const horse = mkHorse({ runningStyle: "E" });
+    const baseProps = {
+      fame: 50,
+      archetype: "versatile" as const,
+      affinityMap: {},
+    };
+    const noTraitJockey = mkJockey({ id: "j-no-trait", ...baseProps, traits: [] });
+    const traitJockey = mkJockey({
+      id: "j-trait",
+      ...baseProps,
+      traits: ["gate_master"],
+    });
+    // Both versatile → High compat (+20), same fame (25), same affinity (0)
+    // traitJockey gets +10 for gate_master + E
+    expect(scoreJockeyChemistry(horse, traitJockey)).toBeGreaterThan(
+      scoreJockeyChemistry(horse, noTraitJockey),
+    );
+  });
+
+  it("mismatched traits score lower (penalty)", () => {
+    const horse = mkHorse({ runningStyle: "E" });
+    const baseProps = {
+      fame: 50,
+      archetype: "versatile" as const,
+      affinityMap: {},
+    };
+    const noTraitJockey = mkJockey({ id: "j-no-trait", ...baseProps, traits: [] });
+    const mismatchJockey = mkJockey({
+      id: "j-mis",
+      ...baseProps,
+      traits: ["closer_instinct"],
+    });
+    // Both versatile → High compat (+20), same fame (25), same affinity (0)
+    // mismatchJockey gets -5 for closer_instinct + E
+    expect(scoreJockeyChemistry(horse, mismatchJockey)).toBeLessThan(
+      scoreJockeyChemistry(horse, noTraitJockey),
+    );
+  });
+});

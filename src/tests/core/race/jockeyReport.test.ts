@@ -179,7 +179,7 @@ describe("ranksByHorse (via generateJockeyReport)", () => {
 
     expect(report.finishPosition).toBe(1);
     expect(report.fieldSize).toBe(2);
-    expect(report.facets).toHaveLength(10);
+    expect(report.facets).toHaveLength(11);
   });
 
   it("returns empty ranks for horse not in any split", () => {
@@ -197,7 +197,7 @@ describe("ranksByHorse (via generateJockeyReport)", () => {
     const report = generateJockeyReport(runner, ordered, splits);
 
     expect(report.finishPosition).toBe(3);
-    expect(report.facets).toHaveLength(10);
+    expect(report.facets).toHaveLength(11);
     const gateFacet = report.facets.find((f) => f.id === "gate_break");
     expect(gateFacet?.note).toContain("No sectional data");
   });
@@ -219,7 +219,7 @@ describe("ranksByHorse (via generateJockeyReport)", () => {
     const report = generateJockeyReport(runner, ordered, splits);
 
     expect(report.finishPosition).toBe(3);
-    expect(report.facets).toHaveLength(10);
+    expect(report.facets).toHaveLength(11);
   });
 
   it("handles empty splits array", () => {
@@ -228,7 +228,7 @@ describe("ranksByHorse (via generateJockeyReport)", () => {
 
     const report = generateJockeyReport(runner, ordered, []);
 
-    expect(report.facets).toHaveLength(10);
+    expect(report.facets).toHaveLength(11);
     const gateFacet = report.facets.find((f) => f.id === "gate_break");
     expect(gateFacet?.note).toContain("No sectional data");
   });
@@ -240,7 +240,7 @@ describe("ranksByHorse (via generateJockeyReport)", () => {
 
     const report = generateJockeyReport(runner, ordered, splits);
 
-    expect(report.facets).toHaveLength(10);
+    expect(report.facets).toHaveLength(11);
     const gateFacet = report.facets.find((f) => f.id === "gate_break");
     expect(gateFacet?.note).toContain("No sectional data");
   });
@@ -268,7 +268,7 @@ describe("generateJockeyReport", () => {
     expect(report.jockeyName).toBe("Test Jockey");
     expect(report.finishPosition).toBe(1);
     expect(report.fieldSize).toBe(3);
-    expect(report.facets).toHaveLength(10);
+    expect(report.facets).toHaveLength(11);
 
     for (const facet of report.facets) {
       expect(facet.score).toBeGreaterThanOrEqual(0);
@@ -286,7 +286,7 @@ describe("generateJockeyReport", () => {
 
     const report = generateJockeyReport(runner, ordered, undefined);
 
-    expect(report.facets).toHaveLength(10);
+    expect(report.facets).toHaveLength(11);
     const gateFacet = report.facets.find((f) => f.id === "gate_break");
     expect(gateFacet?.note).toContain("No sectional data");
   });
@@ -377,5 +377,49 @@ describe("gradeColorClass", () => {
     const classes = grades.map((g) => gradeColorClass(g));
     const unique = new Set(classes);
     expect(unique.size).toBe(grades.length);
+  });
+});
+
+describe("trait_synergy facet", () => {
+  it("includes trait_synergy facet when jockey has matching traits", () => {
+    const runner = makeRunner({
+      jockey: makeJockey({ traits: ["gate_master"] }),
+      horse: makeHorse({ runningStyle: "E" }),
+      runningStyle: "E",
+    });
+    const report = generateJockeyReport(runner, [runner], undefined);
+    const facet = report.facets.find((f) => f.id === "trait_synergy");
+    expect(facet).toBeDefined();
+    expect(facet!.score).toBeGreaterThan(50);
+  });
+
+  it("trait_synergy score is higher for gate_master + E than gate_master + S", () => {
+    const eRunner = makeRunner({
+      jockey: makeJockey({ traits: ["gate_master"] }),
+      horse: makeHorse({ runningStyle: "E" }),
+      runningStyle: "E",
+    });
+    const sRunner = makeRunner({
+      jockey: makeJockey({ traits: ["gate_master"] }),
+      horse: makeHorse({ runningStyle: "S" }),
+      runningStyle: "S",
+    });
+    const eReport = generateJockeyReport(eRunner, [eRunner], undefined);
+    const sReport = generateJockeyReport(sRunner, [sRunner], undefined);
+    const eScore = eReport.facets.find((f) => f.id === "trait_synergy")!.score;
+    const sScore = sReport.facets.find((f) => f.id === "trait_synergy")!.score;
+    expect(eScore).toBeGreaterThan(sScore);
+  });
+
+  it("trait_synergy facet scores low when no traits match", () => {
+    const runner = makeRunner({
+      jockey: makeJockey({ traits: [] }),
+      horse: makeHorse({ runningStyle: "P" }),
+      runningStyle: "P",
+    });
+    const report = generateJockeyReport(runner, [runner], undefined);
+    const facet = report.facets.find((f) => f.id === "trait_synergy");
+    expect(facet).toBeDefined();
+    expect(facet!.score).toBeLessThanOrEqual(50);
   });
 });

@@ -2,6 +2,16 @@ import type { Horse, Jockey } from "@/game/types";
 import { JockeyCard } from "@/components/jockey/JockeyCard";
 import { getCompatibility } from "@/core/jockey/compatibility";
 
+function getTraitSynergyLabel(horse: Horse, jockey: Jockey): string | null {
+  const traits = jockey.traits ?? [];
+  const style = horse.runningStyle;
+  if (traits.includes("gate_master") && style === "E") return "Gate Master Synergy";
+  if (traits.includes("closer_instinct") && (style === "S" || style === "P"))
+    return "Closer Instinct Synergy";
+  if (traits.includes("pace_presser") && style === "EP") return "Pace Presser Synergy";
+  return null;
+}
+
 interface Props {
   marketJockeys: Jockey[];
   selectedJockeyId: string | null;
@@ -40,6 +50,11 @@ export function JockeySelectionStep({
                   }`}
                 >
                   {getCompatibility(selectedHorse, j)} Match
+                </div>
+              )}
+              {selectedHorse && getTraitSynergyLabel(selectedHorse, j) && (
+                <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded text-[8px] font-black uppercase bg-primary text-primary-foreground">
+                  {getTraitSynergyLabel(selectedHorse, j)}
                 </div>
               )}
             </div>

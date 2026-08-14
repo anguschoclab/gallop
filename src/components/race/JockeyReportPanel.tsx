@@ -15,6 +15,7 @@ import {
   Shuffle,
   MapPin,
   Heart,
+  Sparkles,
   Trophy,
   ChevronRight,
 } from "lucide-react";
@@ -36,6 +37,7 @@ const FACET_ICONS = {
   traffic_handling: Shuffle,
   course_knowledge: MapPin,
   horse_affinity: Heart,
+  trait_synergy: Sparkles,
   overall_ride: Trophy,
 } as const;
 

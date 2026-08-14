@@ -93,6 +93,7 @@ export function generateJockeyStatsTrackingImpacts(
         careerStarts: jockey.careerStarts + 1,
         careerWins: jockey.careerWins + (r.position === 1 ? 1 : 0),
         fame: Math.min(MAX_FAME, jockey.fame + (r.position === 1 ? 2 : r.position <= 3 ? 0.5 : 0)),
+        stableAffinityDelta: r.position === 1 ? 5 : r.position <= 3 ? 2 : 0,
         apprenticeProgression,
         traitXpAwards: Object.keys(traitXpAwards).length > 0 ? traitXpAwards : undefined,
         reason: `Rode ${horse.name} to ${r.position}${getOrdinalSuffix(r.position)}`,

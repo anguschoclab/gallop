@@ -12,6 +12,7 @@ import type { RaceEntryIntent } from "@/core/resolver/intents";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import type { RaceEntryImpact } from "@/core/resolver/impacts/raceImpacts";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { createJockeyAIState } from "@/core/ai/jockeyAI";
 
 describe("raceEntryResolutionPhase", () => {
   const createTestState = (): GameState =>
@@ -590,6 +591,194 @@ describe("raceEntryResolutionPhase", () => {
       const entryImpact = result.impacts.find((i) => i.type === "race_entry") as any;
       expect(entryImpact).toBeDefined();
       expect(entryImpact.jockeyId).toBe("j-affinity");
+    });
+  });
+
+  describe("retainer vs free agent comparison", () => {
+    it("NPC entry with Poor-compatibility retainer + zero affinity selects free agent with High compatibility", () => {
+      const npcHorse = createTestHorse({
+        id: "npc-horse",
+        stableId: "s-npc",
+        runningStyle: "S",
+      });
+      const state: GameState = {
+        ...createTestState(),
+        horses: h2r([npcHorse]),
+        races: r2r([
+          {
+            id: "race-1",
+            name: "Test Race",
+            day: 5,
+            distance: 2000,
+            raceClass: "Maiden",
+            entryFee: 500,
+            purse: 10000,
+            minStat: 0,
+            fieldSize: 8,
+            entries: [],
+            resolved: false,
+          },
+        ]),
+        npcStables: [
+          {
+            id: "s-npc",
+            name: "NPC Stable",
+            horses: h2r([npcHorse]),
+            personality: "conservative",
+            cash: 100000,
+          } as any,
+        ],
+        jockeys: [
+          {
+            id: "j-retainer",
+            name: "Retainer Jockey",
+            fame: 50,
+            ridingFee: 100,
+            archetype: "front_runner",
+            affinityMap: {},
+            stableAffinity: 0,
+            stableId: "s-npc",
+            lastRaceDay: 0,
+            stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
+          } as any,
+          {
+            id: "j-freeagent",
+            name: "Free Agent Jockey",
+            fame: 50,
+            ridingFee: 100,
+            archetype: "closer",
+            affinityMap: {},
+            stableAffinity: 0,
+            traits: ["closer_instinct"],
+            lastRaceDay: 0,
+            stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
+          } as any,
+        ],
+        npcAIManager: {
+          stableStates: {
+            "s-npc": {
+              jockeyAI: createJockeyAIState({
+                id: "s-npc",
+                name: "NPC Stable",
+                personality: "conservative",
+              } as any),
+            },
+          },
+        } as any,
+      };
+
+      const intent: RaceEntryIntent = {
+        id: "intent-1",
+        day: 1,
+        type: "race_entry",
+        entityId: "npc-horse",
+        priority: 100,
+        source: "npc",
+        sourceId: "s-npc",
+        horseId: "npc-horse",
+        raceId: "race-1",
+      };
+
+      const context = createTestContext(state, [intent]);
+      const result = raceEntryResolutionPhase.execute(context);
+
+      const entryImpact = result.impacts.find((i) => i.type === "race_entry") as any;
+      expect(entryImpact).toBeDefined();
+      // Free agent with closer_instinct trait + S running style = High compatibility
+      // should be selected over retainer with front_runner archetype + S = Poor
+      expect(entryImpact.jockeyId).toBe("j-freeagent");
+    });
+
+    it("NPC entry with High-affinity retainer keeps retainer", () => {
+      const npcHorse = createTestHorse({
+        id: "npc-horse",
+        stableId: "s-npc",
+        runningStyle: "E",
+      });
+      const state: GameState = {
+        ...createTestState(),
+        horses: h2r([npcHorse]),
+        races: r2r([
+          {
+            id: "race-1",
+            name: "Test Race",
+            day: 5,
+            distance: 2000,
+            raceClass: "Maiden",
+            entryFee: 500,
+            purse: 10000,
+            minStat: 0,
+            fieldSize: 8,
+            entries: [],
+            resolved: false,
+          },
+        ]),
+        npcStables: [
+          {
+            id: "s-npc",
+            name: "NPC Stable",
+            horses: h2r([npcHorse]),
+            personality: "conservative",
+            cash: 100000,
+          } as any,
+        ],
+        jockeys: [
+          {
+            id: "j-retainer",
+            name: "Retainer Jockey",
+            fame: 50,
+            ridingFee: 100,
+            archetype: "front_runner",
+            affinityMap: { "npc-horse": 500 },
+            stableAffinity: 50,
+            stableId: "s-npc",
+            traits: ["gate_master"],
+            lastRaceDay: 0,
+            stats: { pacing: 80, positioning: 80, vigor: 80, gateSkill: 80, temperament: 80 },
+          } as any,
+          {
+            id: "j-freeagent",
+            name: "Free Agent Jockey",
+            fame: 50,
+            ridingFee: 100,
+            archetype: "versatile",
+            affinityMap: {},
+            stableAffinity: 0,
+            lastRaceDay: 0,
+            stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
+          } as any,
+        ],
+        npcAIManager: {
+          stableStates: {
+            "s-npc": {
+              jockeyAI: createJockeyAIState({
+                id: "s-npc",
+                name: "NPC Stable",
+                personality: "conservative",
+              } as any),
+            },
+          },
+        } as any,
+      };
+
+      const intent: RaceEntryIntent = {
+        id: "intent-1",
+        day: 1,
+        type: "race_entry",
+        entityId: "npc-horse",
+        priority: 100,
+        source: "npc",
+        sourceId: "s-npc",
+        horseId: "npc-horse",
+        raceId: "race-1",
+      };
+
+      const context = createTestContext(state, [intent]);
+      const result = raceEntryResolutionPhase.execute(context);
+
+      const entryImpact = result.impacts.find((i) => i.type === "race_entry") as any;
+      expect(entryImpact).toBeDefined();
+      expect(entryImpact.jockeyId).toBe("j-retainer");
     });
   });
 

@@ -50,3 +50,31 @@ export function generateJockeyAffinityImpact(
     reason: `Raced ${horse.name} to ${position}${getOrdinalSuffix(position)}${xpGain < 0 ? " (poor performance penalty)" : ""}`,
   } as JockeyAffinityImpact;
 }
+
+export function generateWorkoutAffinityImpact(
+  horse: Horse,
+  jockey: Jockey,
+  trainingType: string,
+  newDay: number,
+  rng?: Rng,
+): JockeyAffinityImpact {
+  let xpGain = AFFINITY_CONSTANTS.XP_PER_WORKOUT;
+
+  const traits = jockey.traits ?? [];
+  if (traits.includes("sprint_specialist") && trainingType === "speed") xpGain += 5;
+  if (traits.includes("staying_specialist") && trainingType === "stamina") xpGain += 5;
+  if (traits.includes("gate_master") && trainingType === "gate_work") xpGain += 5;
+
+  return {
+    id: generateUUID(rng),
+    intentId: "",
+    day: newDay,
+    phase: "trainingResolution",
+    logLevel: "conditional",
+    type: "jockey_affinity_gain",
+    jockeyId: jockey.id,
+    horseId: horse.id,
+    xp: xpGain,
+    reason: `Workout (${trainingType}) with ${horse.name}`,
+  } as JockeyAffinityImpact;
+}

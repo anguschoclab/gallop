@@ -35,6 +35,7 @@ import { recordTrainingOutcome } from "@/core/ai/trainingAI";
 import { BANISTER_CONSTANTS, calculateImpulse } from "@/core/health/banister";
 import { getOutpostSpecialty } from "@/core/facilities/outpostTypes";
 import { getBranchModifiers } from "@/core/facilities/facilityBranching";
+import { generateWorkoutAffinityImpact } from "@/core/race/impacts/jockeyAffinity";
 
 /**
  * Training Resolution Phase (Order 45)
@@ -58,7 +59,7 @@ export const trainingResolutionPhase: PipelinePhase = {
     // Filter for training intents
     const trainingIntents = intents.filter((i): i is TrainingIntent => i.type === "training");
 
-    const { horseMap, stableMap } = context;
+    const { horseMap, stableMap, jockeyMap } = context;
     const outpostMap = new Map<string, Outpost>();
 
     // Clone NPC AI manager so we never mutate the input state's stableStates.
@@ -383,6 +384,16 @@ export const trainingResolutionPhase: PipelinePhase = {
             recoveryDay: newDay + recoveryDuration,
             reason: `OCD injury during ${intent.trainingType} - ${recoveryDuration} day recovery`,
           });
+        }
+      }
+
+      // Generate jockey affinity XP for non-rest workouts
+      if (intent.trainingType !== "rest" && horse.stableId) {
+        const jockey = jockeyMap
+          ? [...jockeyMap.values()].find((j) => j.stableId === horse.stableId)
+          : undefined;
+        if (jockey) {
+          impacts.push(generateWorkoutAffinityImpact(horse, jockey, intent.trainingType, newDay));
         }
       }
 

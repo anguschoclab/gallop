@@ -18,7 +18,11 @@ import type { AnyImpact, RaceEntryImpact, CashImpact } from "@/core/resolver/imp
 import { createTransportRequest } from "@/core/transportation";
 import { createTransaction } from "@/core/transactions";
 import { generateUUID } from "@/core/uuid";
-import { selectBestJockey, createJockeyAIState } from "@/core/ai/jockeyAI";
+import {
+  selectBestJockey,
+  createJockeyAIState,
+  calculateJockeySuitability,
+} from "@/core/ai/jockeyAI";
 import { selectBestFreeAgentJockey } from "@/core/jockey/selectFreeAgent";
 import { getOrCreateStableAIState, type NpcAIManager } from "@/core/ai/npcCycleAI";
 import { calculateOverallRating } from "@/core/horse/stats";
@@ -134,7 +138,32 @@ export const raceEntryResolutionPhase: PipelinePhase = {
           // 1. Check for retainer
           const retainer = jockeysByStableId.get(stable.id);
           if (retainer) {
-            jockeyId = retainer.id;
+            // Compare retainer suitability vs best free agent
+            let retainerScore = 0;
+            let bestFreeAgentScore = 0;
+            let bestFreeAgent: typeof retainer | null = null;
+            if (npcAIManager) {
+              const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
+              const jockeyAI =
+                stableAI.jockeyAI || (stableAI.jockeyAI = createJockeyAIState(stable));
+              retainerScore = calculateJockeySuitability(jockeyAI, retainer, horse, stable, race);
+              if (freeAgents.length > 0) {
+                for (const fa of freeAgents) {
+                  const score = calculateJockeySuitability(jockeyAI, fa, horse, stable, race);
+                  if (score > bestFreeAgentScore) {
+                    bestFreeAgentScore = score;
+                    bestFreeAgent = fa;
+                  }
+                }
+              }
+              npcAIManager.stableStates[stable.id] = stableAI;
+              npcAIManagerUpdated = true;
+            }
+            if (bestFreeAgent && bestFreeAgentScore > retainerScore * 1.2) {
+              jockeyId = bestFreeAgent.id;
+            } else {
+              jockeyId = retainer.id;
+            }
           } else if (freeAgents.length > 0) {
             // 2. Use AI to select best free agent
             if (npcAIManager) {

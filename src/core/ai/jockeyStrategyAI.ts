@@ -931,8 +931,26 @@ export function applyAffinityBoost(
   // Apply a small aggressiveness boost from affinity
   const aggressivenessBoost = Math.round((boost - 1) * 20);
 
+  const affinity = jockey.affinityMap[horseId] ?? 0;
+
+  // Upgrade moveTiming based on affinity level
+  let moveTiming = instructions.moveTiming;
+  if (affinity >= 400 && moveTiming === "mid") {
+    moveTiming = "late";
+  } else if (affinity >= 150 && moveTiming === "early") {
+    moveTiming = "mid";
+  }
+
+  // Upgrade earlyPosition based on affinity level
+  let earlyPosition = instructions.earlyPosition;
+  if (affinity >= 150 && earlyPosition === "drop_back") {
+    earlyPosition = "midpack";
+  }
+
   return {
     ...instructions,
     aggressiveness: Math.min(100, instructions.aggressiveness + aggressivenessBoost),
+    moveTiming,
+    earlyPosition,
   };
 }

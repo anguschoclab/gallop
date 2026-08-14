@@ -48,6 +48,7 @@ export interface JockeyStatsImpact extends Impact {
   careerStarts: number;
   careerWins: number;
   fame: number;
+  stableAffinityDelta?: number;
   apprenticeProgression?: ApprenticeProgression;
   traitXpAwards?: Record<string, number>;
   reason: string;

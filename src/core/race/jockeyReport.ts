@@ -22,6 +22,7 @@ export type JockeyReportFacetId =
   | "traffic_handling"
   | "course_knowledge"
   | "horse_affinity"
+  | "trait_synergy"
   | "overall_ride";
 
 export interface JockeyReportFacet {
@@ -323,6 +324,43 @@ function evalHorseAffinity(runner: Runner): JockeyReportFacet {
   };
 }
 
+function evalTraitSynergy(runner: Runner): JockeyReportFacet {
+  const traits = runner.jockey?.traits ?? [];
+  const style = runner.horse?.runningStyle ?? runner.runningStyle;
+  let score = 40;
+  const matches: string[] = [];
+
+  if (traits.includes("gate_master") && style === "E") {
+    score += 35;
+    matches.push("Gate Master");
+  }
+  if (traits.includes("closer_instinct") && (style === "S" || style === "P")) {
+    score += 35;
+    matches.push("Closer Instinct");
+  }
+  if (traits.includes("pace_presser") && style === "EP") {
+    score += 25;
+    matches.push("Pace Presser");
+  }
+
+  score = clamp(score);
+  let note: string;
+  if (matches.length > 0) {
+    note = `${matches.join(" + ")} synergy amplifies performance.`;
+  } else {
+    note = "No trait–style synergy detected.";
+  }
+
+  return {
+    id: "trait_synergy",
+    label: "Trait Synergy",
+    description: "Jockey trait alignment with horse running style.",
+    score,
+    grade: gradeFromScore(score),
+    note,
+  };
+}
+
 function evalOverall(
   runner: Runner,
   finishRank: number,
@@ -371,6 +409,7 @@ export function generateJockeyReport(
   facets.push(evalTrafficHandling(runner, ranks));
   facets.push(evalCourseKnowledge(runner));
   facets.push(evalHorseAffinity(runner));
+  facets.push(evalTraitSynergy(runner));
 
   const facetAvg = avg(facets.map((f) => f.score));
   facets.push(evalOverall(runner, finishPosition, fieldSize, facetAvg));

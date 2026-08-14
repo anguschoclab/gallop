@@ -18,6 +18,7 @@ import {
   applyAffinityBoost,
 } from "@/core/ai/jockeyStrategyAI";
 import type { Jockey, Horse, Race, Stable } from "@/game/types";
+import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 
 // Mock data setup
 function createMockJockey(overrides: Partial<Jockey> = {}): Jockey {
@@ -1029,5 +1030,75 @@ describe("calculateJockeyAggressiveness — trait awareness", () => {
     const noTraitAggr = calculateJockeyAggressiveness(state, horse, bigRace, noTraitJockey, stable);
 
     expect(bigMatchAggr).toBeGreaterThan(noTraitAggr);
+  });
+});
+
+// ─── Enhanced applyAffinityBoost ────────────────────────────────────────────
+
+describe("applyAffinityBoost — enhanced with moveTiming and earlyPosition", () => {
+  function mkInstructions(overrides: Partial<JockeyInstructions> = {}): JockeyInstructions {
+    return {
+      horseId: "horse-1",
+      raceId: "race-1",
+      ridingStyle: "front_runner",
+      earlyPosition: "midpack",
+      moveTiming: "early",
+      aggressiveness: 50,
+      ...overrides,
+    };
+  }
+
+  it("Trusted affinity (XP >= 150) upgrades moveTiming from early to mid", () => {
+    const jockey = createMockJockey({
+      affinityMap: { "horse-1": 150 },
+    });
+    const instructions = mkInstructions({ moveTiming: "early" });
+    const result = applyAffinityBoost(instructions, jockey, "horse-1");
+    expect(result.moveTiming).toBe("mid");
+  });
+
+  it("Bonded affinity (XP >= 400) upgrades moveTiming from mid to late", () => {
+    const jockey = createMockJockey({
+      affinityMap: { "horse-1": 400 },
+    });
+    const instructions = mkInstructions({ moveTiming: "mid" });
+    const result = applyAffinityBoost(instructions, jockey, "horse-1");
+    expect(result.moveTiming).toBe("late");
+  });
+
+  it("Bonded affinity (XP >= 400) upgrades moveTiming from early to mid", () => {
+    const jockey = createMockJockey({
+      affinityMap: { "horse-1": 400 },
+    });
+    const instructions = mkInstructions({ moveTiming: "early" });
+    const result = applyAffinityBoost(instructions, jockey, "horse-1");
+    expect(result.moveTiming).toBe("mid");
+  });
+
+  it("zero affinity leaves moveTiming unchanged", () => {
+    const jockey = createMockJockey({
+      affinityMap: {},
+    });
+    const instructions = mkInstructions({ moveTiming: "early" });
+    const result = applyAffinityBoost(instructions, jockey, "horse-1");
+    expect(result.moveTiming).toBe("early");
+  });
+
+  it("Trusted affinity upgrades earlyPosition from drop_back to midpack", () => {
+    const jockey = createMockJockey({
+      affinityMap: { "horse-1": 150 },
+    });
+    const instructions = mkInstructions({ earlyPosition: "drop_back" });
+    const result = applyAffinityBoost(instructions, jockey, "horse-1");
+    expect(result.earlyPosition).toBe("midpack");
+  });
+
+  it("existing aggressiveness boost still works (no regression)", () => {
+    const jockey = createMockJockey({
+      affinityMap: { "horse-1": 300 },
+    });
+    const instructions = mkInstructions({ aggressiveness: 50 });
+    const result = applyAffinityBoost(instructions, jockey, "horse-1");
+    expect(result.aggressiveness).toBeGreaterThan(50);
   });
 });

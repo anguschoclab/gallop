@@ -140,14 +140,24 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   jockey_stats: (draft, impact, lookupMaps) => {
-    const { jockeyId, careerStarts, careerWins, fame, apprenticeProgression, traitXpAwards } =
-      impact as JockeyStatsImpact;
+    const {
+      jockeyId,
+      careerStarts,
+      careerWins,
+      fame,
+      stableAffinityDelta,
+      apprenticeProgression,
+      traitXpAwards,
+    } = impact as JockeyStatsImpact;
     const jockey =
       lookupMaps?.jockeyMap.get(jockeyId) || draft.jockeys?.find((j) => j.id === jockeyId);
     if (jockey) {
       jockey.careerStarts = careerStarts;
       jockey.careerWins = careerWins;
       jockey.fame = fame;
+      if (stableAffinityDelta) {
+        jockey.stableAffinity = Math.min(100, (jockey.stableAffinity ?? 0) + stableAffinityDelta);
+      }
       // Update apprentice progression if provided
       if (apprenticeProgression !== undefined) {
         jockey.apprenticeProgression = apprenticeProgression;

@@ -1034,3 +1034,98 @@ describe("generateRaceImpacts — integration regression", () => {
     expect(impacts).toEqual([]);
   });
 });
+
+describe("jockey_stats stableAffinityDelta", () => {
+  it("includes stableAffinityDelta of 5 when jockey wins", () => {
+    const horse = createTestColt({ id: "h1", owned: true });
+    const jockey = createTestJockey({ id: "j1", careerStarts: 50, careerWins: 10 });
+    const race = makeOpenRace({
+      entries: [{ horseId: "h1", jockeyId: "j1", owned: true } as any],
+    });
+    const impacts = generateRaceImpacts({
+      race,
+      result: [{ horseId: "h1", position: 1, time: 120 }],
+      runners: [{ horseId: "h1" }],
+      horses: [horse],
+      jockeys: [jockey],
+      newDay: 100,
+      calibratedPars: {},
+    });
+    const js = impacts.find((i) => i.type === "jockey_stats") as any;
+    expect(js).toBeDefined();
+    expect(js.stableAffinityDelta).toBe(5);
+  });
+
+  it("includes stableAffinityDelta of 2 when jockey places (top 3)", () => {
+    const horse = createTestColt({ id: "h1", owned: true });
+    const jockey = createTestJockey({ id: "j1", careerStarts: 50, careerWins: 10 });
+    const race = makeOpenRace({
+      entries: [
+        { horseId: "h1", jockeyId: "j1", owned: true } as any,
+        { horseId: "h2", jockeyId: "j2", owned: false } as any,
+        { horseId: "h3", jockeyId: "j3", owned: false } as any,
+      ],
+    });
+    const impacts = generateRaceImpacts({
+      race,
+      result: [
+        { horseId: "h2", position: 1, time: 120 },
+        { horseId: "h1", position: 2, time: 121 },
+        { horseId: "h3", position: 3, time: 122 },
+      ],
+      runners: [{ horseId: "h1" }, { horseId: "h2" }, { horseId: "h3" }],
+      horses: [horse, createTestNpcHorse({ id: "h2" }), createTestNpcHorse({ id: "h3" })],
+      jockeys: [jockey, createTestJockey({ id: "j2" }), createTestJockey({ id: "j3" })],
+      newDay: 100,
+      calibratedPars: {},
+    });
+    const js = impacts.find(
+      (i) => i.type === "jockey_stats" && (i as any).jockeyId === "j1",
+    ) as any;
+    expect(js).toBeDefined();
+    expect(js.stableAffinityDelta).toBe(2);
+  });
+
+  it("has no stableAffinityDelta for finishers outside top 3", () => {
+    const horse = createTestColt({ id: "h1", owned: true });
+    const jockey = createTestJockey({ id: "j1", careerStarts: 50, careerWins: 10 });
+    const race = makeOpenRace({
+      entries: [
+        { horseId: "h1", jockeyId: "j1", owned: true } as any,
+        { horseId: "h2", jockeyId: "j2", owned: false } as any,
+        { horseId: "h3", jockeyId: "j3", owned: false } as any,
+        { horseId: "h4", jockeyId: "j4", owned: false } as any,
+      ],
+    });
+    const impacts = generateRaceImpacts({
+      race,
+      result: [
+        { horseId: "h2", position: 1, time: 120 },
+        { horseId: "h3", position: 2, time: 121 },
+        { horseId: "h4", position: 3, time: 122 },
+        { horseId: "h1", position: 4, time: 123 },
+      ],
+      runners: [{ horseId: "h1" }, { horseId: "h2" }, { horseId: "h3" }, { horseId: "h4" }],
+      horses: [
+        horse,
+        createTestNpcHorse({ id: "h2" }),
+        createTestNpcHorse({ id: "h3" }),
+        createTestNpcHorse({ id: "h4" }),
+      ],
+      jockeys: [
+        jockey,
+        createTestJockey({ id: "j2" }),
+        createTestJockey({ id: "j3" }),
+        createTestJockey({ id: "j4" }),
+      ],
+      newDay: 100,
+      calibratedPars: {},
+    });
+    // h1 finished 4th — jockey_stats impact exists (4th place gets prize) but stableAffinityDelta is 0
+    const js = impacts.find(
+      (i) => i.type === "jockey_stats" && (i as any).jockeyId === "j1",
+    ) as any;
+    expect(js).toBeDefined();
+    expect(js.stableAffinityDelta).toBe(0);
+  });
+});
