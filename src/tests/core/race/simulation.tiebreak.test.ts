@@ -32,37 +32,33 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
 
 describe("runRaceToCompletion — tie-breaking", () => {
   it("ranks identical finishTime by barrier then horseId", () => {
-    // Create runners that will have identical finishTimes by making them
-    // finish at the same time. We simulate a very short race.
+    // Force a tie by pre-setting finishTime and position at the finish line.
+    // runRaceToCompletion will skip already-finished runners and sort them.
     const runners = [
       makeRunner({
         horseId: "zzz",
         barrier: 3,
-        position: 0,
-        topSpeed: 100,
-        velocity: 100,
+        position: 100,
+        finishTime: 10.0,
       }),
       makeRunner({
         horseId: "aaa",
         barrier: 1,
-        position: 0,
-        topSpeed: 100,
-        velocity: 100,
+        position: 100,
+        finishTime: 10.0,
       }),
       makeRunner({
         horseId: "mmm",
         barrier: 2,
-        position: 0,
-        topSpeed: 100,
-        velocity: 100,
+        position: 100,
+        finishTime: 10.0,
       }),
     ];
 
     const rng = createRng("test-tiebreak");
     const { result } = runRaceToCompletion(runners, 100, rng, 0.1, 600, undefined, false);
 
-    // All three should finish at the same time (or very close).
-    // The tie-break should order them by barrier: 1, 2, 3
+    // All three have identical finishTimes — tie-break by barrier: 1, 2, 3
     const positions = result.map((r) => r.horseId);
     expect(positions[0]).toBe("aaa"); // barrier 1
     expect(positions[1]).toBe("mmm"); // barrier 2

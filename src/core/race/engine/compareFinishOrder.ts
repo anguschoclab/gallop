@@ -7,13 +7,14 @@
 
 export interface FinishOrderable {
   finishTime?: number | null;
+  time?: number | null;
   barrier?: number;
   horseId: string;
 }
 
 export function compareFinishOrder(a: FinishOrderable, b: FinishOrderable): number {
-  const at = a.finishTime ?? Infinity;
-  const bt = b.finishTime ?? Infinity;
+  const at = a.finishTime ?? a.time ?? Infinity;
+  const bt = b.finishTime ?? b.time ?? Infinity;
   if (at !== bt) return at - bt;
   const ab = a.barrier ?? Infinity;
   const bb = b.barrier ?? Infinity;

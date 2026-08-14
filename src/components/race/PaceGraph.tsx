@@ -13,6 +13,15 @@ import type { SectionalSplit } from "@/core/race/types";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/cn";
 import { useRunnerHighlight } from "@/components/race/useRunnerHighlight";
+import {
+  PACE_GRAPH_HIGHLIGHT_STROKE,
+  PACE_GRAPH_OWNED_STROKE,
+  PACE_GRAPH_DEFAULT_STROKE,
+  PACE_GRAPH_DIM_OPACITY,
+  PACE_GRAPH_FULL_OPACITY,
+  PACE_GRAPH_DOT_RADIUS,
+  PACE_GRAPH_ACTIVE_DOT_RADIUS,
+} from "@/constants";
 
 interface PaceGraphRunner {
   horseId: string;
@@ -74,9 +83,13 @@ export function PaceGraph({ splits, runners, distance, className }: PaceGraphPro
     const highlight = isHighlighted(r.horseId);
     const dim = anyHighlight && !highlight;
     return {
-      strokeWidth: highlight ? 2.5 : r.owned ? 2 : 1.25,
-      strokeOpacity: dim ? 0.18 : 1,
-      dot: highlight ? { r: 3, fill: r.silk } : false,
+      strokeWidth: highlight
+        ? PACE_GRAPH_HIGHLIGHT_STROKE
+        : r.owned
+          ? PACE_GRAPH_OWNED_STROKE
+          : PACE_GRAPH_DEFAULT_STROKE,
+      strokeOpacity: dim ? PACE_GRAPH_DIM_OPACITY : PACE_GRAPH_FULL_OPACITY,
+      dot: highlight ? { r: PACE_GRAPH_DOT_RADIUS, fill: r.silk } : false,
     };
   };
 
@@ -159,7 +172,7 @@ export function PaceGraph({ splits, runners, distance, className }: PaceGraphPro
                     strokeWidth={strokeWidth}
                     strokeOpacity={strokeOpacity}
                     dot={dot}
-                    activeDot={{ r: 4 }}
+                    activeDot={{ r: PACE_GRAPH_ACTIVE_DOT_RADIUS }}
                     isAnimationActive={false}
                     connectNulls
                   />

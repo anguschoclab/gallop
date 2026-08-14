@@ -13,6 +13,23 @@ import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/cn";
 import { useRunnerHighlight } from "@/components/race/useRunnerHighlight";
+import {
+  SPEED_SEEK_HIGHLIGHT_STROKE,
+  SPEED_SEEK_OWNED_STROKE,
+  SPEED_SEEK_DEFAULT_STROKE,
+  SPEED_SEEK_DIM_OPACITY,
+  SPEED_SEEK_NORMAL_OPACITY,
+  SPEED_SPURT_HIGHLIGHT_STROKE,
+  SPEED_SPURT_OWNED_STROKE,
+  SPEED_SPURT_DEFAULT_STROKE,
+  SPEED_SPURT_DIM_OPACITY,
+  SPEED_SPURT_NORMAL_OPACITY,
+  SPEED_SPURT_ACTIVE_DOT_RADIUS,
+  SPEED_DOWNSAMPLE_INTERVAL,
+  SPEED_CONTRIBUTION_PERCENT,
+  SPEED_QUARTER_FRACTIONS,
+  SPEED_REF_LINE_OPACITY,
+} from "@/constants";
 
 interface SpeedBreakdownRunner {
   horseId: string;
@@ -44,9 +61,9 @@ export function SpeedBreakdownChart({
   const { hovered, setHovered, pinned, togglePin, isHighlighted, anyHighlight } =
     useRunnerHighlight(runners);
 
-  // Downsample to every 5th snapshot for Recharts performance
+  // Downsample to every Nth snapshot for Recharts performance
   const downsampled = useMemo(() => {
-    return snapshots.filter((_, i) => i % 5 === 0);
+    return snapshots.filter((_, i) => i % SPEED_DOWNSAMPLE_INTERVAL === 0);
   }, [snapshots]);
 
   const data = useMemo<ChartRow[]>(() => {
@@ -58,8 +75,8 @@ export function SpeedBreakdownChart({
       }
       row.distance = Math.round(maxPos);
       for (const h of snap.horses) {
-        row[`${h.horseId}_seek`] = (h.seekContribution ?? 0) * 100;
-        row[`${h.horseId}_spurt`] = (h.spurtContribution ?? 0) * 100;
+        row[`${h.horseId}_seek`] = (h.seekContribution ?? 0) * SPEED_CONTRIBUTION_PERCENT;
+        row[`${h.horseId}_spurt`] = (h.spurtContribution ?? 0) * SPEED_CONTRIBUTION_PERCENT;
       }
       return row;
     });
@@ -76,8 +93,12 @@ export function SpeedBreakdownChart({
     const highlight = isHighlighted(r.horseId);
     const dim = anyHighlight && !highlight;
     return {
-      strokeWidth: highlight ? 2 : r.owned ? 1.5 : 1,
-      strokeOpacity: dim ? 0.12 : 0.5,
+      strokeWidth: highlight
+        ? SPEED_SEEK_HIGHLIGHT_STROKE
+        : r.owned
+          ? SPEED_SEEK_OWNED_STROKE
+          : SPEED_SEEK_DEFAULT_STROKE,
+      strokeOpacity: dim ? SPEED_SEEK_DIM_OPACITY : SPEED_SEEK_NORMAL_OPACITY,
     };
   };
 
@@ -85,15 +106,19 @@ export function SpeedBreakdownChart({
     const highlight = isHighlighted(r.horseId);
     const dim = anyHighlight && !highlight;
     return {
-      strokeWidth: highlight ? 2.5 : r.owned ? 2 : 1.25,
-      strokeOpacity: dim ? 0.18 : 1,
+      strokeWidth: highlight
+        ? SPEED_SPURT_HIGHLIGHT_STROKE
+        : r.owned
+          ? SPEED_SPURT_OWNED_STROKE
+          : SPEED_SPURT_DEFAULT_STROKE,
+      strokeOpacity: dim ? SPEED_SPURT_DIM_OPACITY : SPEED_SPURT_NORMAL_OPACITY,
     };
   };
 
   if (snapshots.length === 0 || runners.length === 0) return null;
 
   // Quarter markers for reference lines
-  const markers = [0.25, 0.5, 0.75, 1.0].map((f) => Math.round(f * distance));
+  const markers = SPEED_QUARTER_FRACTIONS.map((f) => Math.round(f * distance));
 
   return (
     <div className={cn("space-y-3", className)}>
@@ -154,7 +179,7 @@ export function SpeedBreakdownChart({
                   x={m}
                   stroke="var(--chart-axis)"
                   strokeDasharray="2 4"
-                  strokeOpacity={0.3}
+                  strokeOpacity={SPEED_REF_LINE_OPACITY}
                 />
               ))}
               {runners.map((r) => {
@@ -182,7 +207,7 @@ export function SpeedBreakdownChart({
                       strokeWidth={spurt.strokeWidth}
                       strokeOpacity={spurt.strokeOpacity}
                       dot={false}
-                      activeDot={{ r: 4 }}
+                      activeDot={{ r: SPEED_SPURT_ACTIVE_DOT_RADIUS }}
                       isAnimationActive={false}
                       connectNulls
                     />
