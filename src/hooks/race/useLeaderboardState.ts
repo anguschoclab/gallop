@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Race } from "@/core/race/types";
 import { projectedBeyer } from "@/components/race/raceVisualHelpers";
