@@ -25,7 +25,7 @@ import { getCourseForRace } from "@/data/tracks";
 import { formatCurrency } from "@/core/common/formatting";
 import { useMemo, useState } from "react";
 import { INSTRUCTION_PRESETS, buildInstructions, type PresetId } from "./TacticOptions";
-import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+import { AGGRESSIVENESS_DEFAULT } from "@/constants";
 import { DEFAULT_DT, defaultMaxTime } from "@/core/race/engine/constants";
 
 export function PlayerRacePrompt() {
@@ -77,7 +77,7 @@ export function PlayerRacePrompt() {
             ridingStyle: "tactical",
             earlyPosition: "midpack",
             moveTiming: "mid",
-            aggressiveness: 50,
+            aggressiveness: AGGRESSIVENESS_DEFAULT,
           },
         },
         enteredHorse.id,

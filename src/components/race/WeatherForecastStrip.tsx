@@ -11,6 +11,7 @@ import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { useGame } from "@/game/store";
 import type { SimWeatherPattern, WeatherState } from "@/core/weather";
 import type { TrackCondition } from "@/game/types";
+import { WEATHER_FORECAST_STRIP_DAYS } from "@/constants";
 
 const ICONS: Record<SimWeatherPattern, typeof Sun> = {
   clear: Sun,
@@ -56,8 +57,11 @@ export function WeatherForecastStrip({ trackId, trackCondition }: Props) {
         </span>
       )}
       {forecast.length > 0 && (
-        <div className="flex items-center gap-0.5 ml-auto" aria-label="7-day forecast">
-          {forecast.slice(0, 7).map((w) => {
+        <div
+          className="flex items-center gap-0.5 ml-auto"
+          aria-label={`${WEATHER_FORECAST_STRIP_DAYS}-day forecast`}
+        >
+          {forecast.slice(0, WEATHER_FORECAST_STRIP_DAYS).map((w) => {
             const Icon = ICONS[w.pattern];
             return (
               <JargonTooltip key={w.day} term={w.pattern}>

@@ -19,6 +19,15 @@ import {
   formatCurrencyCompact,
   formatCurrencyFull,
 } from "@/components/charts";
+import {
+  ANALYTICS_ITM_SPARKLINE_RACES_PER_HORSE,
+  ANALYTICS_ITM_SPARKLINE_MAX_POINTS,
+  ANALYTICS_ROI_TOP_N,
+  ANALYTICS_INCOME_SPEND_RECENT_WEEKS,
+  ANALYTICS_CASH_LOOKBACK_DAYS,
+  ANALYTICS_EARNINGS_WEEKS,
+  ANALYTICS_EXPENSE_LOOKBACK_DAYS,
+} from "@/constants";
 
 export function AnalyticsOverviewTab() {
   const d = useAnalyticsData();
@@ -34,8 +43,12 @@ export function AnalyticsOverviewTab() {
       ? (d.wpsRatio.wins + d.wpsRatio.places + d.wpsRatio.shows) / d.wpsRatio.runs
       : 0;
 
-  const totalIncome30 = d.earningsVsSpend.slice(-4).reduce((s, b) => s + b.income, 0);
-  const totalSpend30 = d.earningsVsSpend.slice(-4).reduce((s, b) => s + b.expense, 0);
+  const totalIncome30 = d.earningsVsSpend
+    .slice(-ANALYTICS_INCOME_SPEND_RECENT_WEEKS)
+    .reduce((s, b) => s + b.income, 0);
+  const totalSpend30 = d.earningsVsSpend
+    .slice(-ANALYTICS_INCOME_SPEND_RECENT_WEEKS)
+    .reduce((s, b) => s + b.expense, 0);
 
   return (
     <div className="space-y-6">
@@ -52,146 +65,237 @@ export function AnalyticsOverviewTab() {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-3 auto-rows-[160px]">
-        <ChartCard
-          className="md:col-span-4 lg:col-span-5 row-span-2"
-          title="Cash on hand"
-          subtitle={formatCurrencyFull(d.cash)}
-          trailing={<DeltaPill value={cash90Delta} asPercent />}
-          footnote="Last 90 days"
-        >
-          <div className="h-full px-2">
-            <AreaTrend
-              data={d.cashPoints}
-              height={180}
-              yFormat={formatCurrencyCompact}
-              xFormat={(x) => `D${x}`}
-            />
-          </div>
-        </ChartCard>
-
-        <ChartCard
-          className="md:col-span-2 lg:col-span-3"
-          title="Win rate"
-          subtitle={`${(winRate * 100).toFixed(1)}%`}
-          footnote={`${d.wpsRatio.runs} runs`}
-        >
-          <div className="flex h-full items-end px-3 pb-3">
-            <StackedRatioBar
-              segments={[
-                { key: "w", label: "W", value: d.wpsRatio.wins, color: chartColors.primary },
-                { key: "p", label: "P", value: d.wpsRatio.places, color: chartColors.secondary },
-                { key: "s", label: "S", value: d.wpsRatio.shows, color: chartColors.tertiary },
-                {
-                  key: "u",
-                  label: "Unplaced",
-                  value: d.wpsRatio.runs - d.wpsRatio.wins - d.wpsRatio.places - d.wpsRatio.shows,
-                  color: chartColors.slate,
-                },
-              ]}
-            />
-          </div>
-        </ChartCard>
-
-        <ChartCard
-          className="md:col-span-2 lg:col-span-2"
-          title="ITM rate"
-          subtitle={`${(itmRate * 100).toFixed(0)}%`}
-          footnote="Top-3 finishes"
-        >
-          <div className="flex h-full items-center justify-center px-3">
-            <Sparkline
-              data={d.owned
-                .flatMap((h) => h.raceHistory.slice(-10).map((r) => (r.position <= 3 ? 1 : 0)))
-                .slice(-30)}
-              height={60}
-            />
-          </div>
-        </ChartCard>
-
-        <ChartCard
-          className="md:col-span-2 lg:col-span-2"
-          title="Active horses"
-          subtitle={String(d.active.length)}
-          footnote={`${d.owned.length} owned`}
-        >
-          <div className="h-full px-3 pb-2 flex items-end">
-            <MiniBar
-              className="w-full"
-              rows={[
-                {
-                  label: "60+",
-                  value: d.energyBuckets[3] + d.energyBuckets[4],
-                  color: chartColors.primary,
-                },
-                { label: "40–59", value: d.energyBuckets[2], color: chartColors.tertiary },
-                {
-                  label: "0–39",
-                  value: d.energyBuckets[0] + d.energyBuckets[1],
-                  color: chartColors.negative,
-                },
-              ]}
-            />
-          </div>
-        </ChartCard>
-
-        <ChartCard
-          className="md:col-span-4 lg:col-span-7"
-          title="Earnings vs spend"
-          subtitle={`${formatCurrencyCompact(totalIncome30)} in · ${formatCurrencyCompact(totalSpend30)} out`}
-          footnote="Last 12 weeks"
-        >
-          <div className="h-full px-2">
-            <EarningsVsSpendChart data={d.earningsVsSpend} />
-          </div>
-        </ChartCard>
-
-        <ChartCard
-          className="md:col-span-3 lg:col-span-3"
-          title="Top sire"
-          subtitle={d.topSire?.stallionName ?? "—"}
-          footnote={d.topSire ? `AEI ${d.topSire.value.toFixed(2)}` : "No data yet"}
-        >
-          <div className="h-full px-3 pb-3 flex items-end">
-            {d.topSireTrend.length > 1 ? (
-              <Sparkline data={d.topSireTrend} height={70} />
-            ) : (
-              <div className="text-[11px] text-cream/40 font-mono">Trend pending</div>
-            )}
-          </div>
-        </ChartCard>
-
-        <ChartCard
-          className="md:col-span-3 lg:col-span-5"
-          title="Top expenses · 30d"
-          footnote="By subcategory"
-        >
-          <div className="h-full px-3 pb-3 overflow-y-auto">
-            {d.expenseRows.length > 0 ? (
-              <MiniBar rows={d.expenseRows} format={formatCurrencyCompact} />
-            ) : (
-              <div className="text-[11px] text-cream/40 font-mono">No expenses recorded</div>
-            )}
-          </div>
-        </ChartCard>
-
-        <ChartCard
-          className="md:col-span-3 lg:col-span-7"
-          title="Horse ROI · top 5"
-          footnote="Career earnings − tracked expenses"
-        >
-          <div className="h-full px-3 pb-3 overflow-y-auto">
-            <MiniBar
-              rows={d.rankedRoi.slice(0, 5).map((r) => ({
-                label: r.name,
-                value: r.net,
-                color: r.net >= 0 ? chartColors.primary : chartColors.negative,
-              }))}
-              format={formatCurrencyCompact}
-            />
-          </div>
-        </ChartCard>
+        <CashChartCard cash={d.cash} cashPoints={d.cashPoints} cash90Delta={cash90Delta} />
+        <WinRateCard winRate={winRate} wpsRatio={d.wpsRatio} />
+        <ItmRateCard itmRate={itmRate} owned={d.owned} />
+        <ActiveHorsesCard active={d.active} owned={d.owned} energyBuckets={d.energyBuckets} />
+        <EarningsVsSpendCard
+          totalIncome30={totalIncome30}
+          totalSpend30={totalSpend30}
+          data={d.earningsVsSpend}
+        />
+        <TopSireCard topSire={d.topSire} topSireTrend={d.topSireTrend} />
+        <TopExpensesCard expenseRows={d.expenseRows} />
+        <HorseRoiCard rankedRoi={d.rankedRoi} />
       </div>
     </div>
+  );
+}
+
+function CashChartCard({
+  cash,
+  cashPoints,
+  cash90Delta,
+}: {
+  cash: number;
+  cashPoints: { x: number; y: number }[];
+  cash90Delta: number;
+}) {
+  return (
+    <ChartCard
+      className="md:col-span-4 lg:col-span-5 row-span-2"
+      title="Cash on hand"
+      subtitle={formatCurrencyFull(cash)}
+      trailing={<DeltaPill value={cash90Delta} asPercent />}
+      footnote={`Last ${ANALYTICS_CASH_LOOKBACK_DAYS} days`}
+    >
+      <div className="h-full px-2">
+        <AreaTrend
+          data={cashPoints}
+          height={180}
+          yFormat={formatCurrencyCompact}
+          xFormat={(x) => `D${x}`}
+        />
+      </div>
+    </ChartCard>
+  );
+}
+
+function WinRateCard({
+  winRate,
+  wpsRatio,
+}: {
+  winRate: number;
+  wpsRatio: { wins: number; places: number; shows: number; runs: number };
+}) {
+  return (
+    <ChartCard
+      className="md:col-span-2 lg:col-span-3"
+      title="Win rate"
+      subtitle={`${(winRate * 100).toFixed(1)}%`}
+      footnote={`${wpsRatio.runs} runs`}
+    >
+      <div className="flex h-full items-end px-3 pb-3">
+        <StackedRatioBar
+          segments={[
+            { key: "w", label: "W", value: wpsRatio.wins, color: chartColors.primary },
+            { key: "p", label: "P", value: wpsRatio.places, color: chartColors.secondary },
+            { key: "s", label: "S", value: wpsRatio.shows, color: chartColors.tertiary },
+            {
+              key: "u",
+              label: "Unplaced",
+              value: wpsRatio.runs - wpsRatio.wins - wpsRatio.places - wpsRatio.shows,
+              color: chartColors.slate,
+            },
+          ]}
+        />
+      </div>
+    </ChartCard>
+  );
+}
+
+function ItmRateCard({
+  itmRate,
+  owned,
+}: {
+  itmRate: number;
+  owned: { raceHistory: { position: number }[] }[];
+}) {
+  return (
+    <ChartCard
+      className="md:col-span-2 lg:col-span-2"
+      title="ITM rate"
+      subtitle={`${(itmRate * 100).toFixed(0)}%`}
+      footnote="Top-3 finishes"
+    >
+      <div className="flex h-full items-center justify-center px-3">
+        <Sparkline
+          data={owned
+            .flatMap((h) =>
+              h.raceHistory
+                .slice(-ANALYTICS_ITM_SPARKLINE_RACES_PER_HORSE)
+                .map((r) => (r.position <= 3 ? 1 : 0)),
+            )
+            .slice(-ANALYTICS_ITM_SPARKLINE_MAX_POINTS)}
+          height={60}
+        />
+      </div>
+    </ChartCard>
+  );
+}
+
+function ActiveHorsesCard({
+  active,
+  owned,
+  energyBuckets,
+}: {
+  active: unknown[];
+  owned: unknown[];
+  energyBuckets: number[];
+}) {
+  return (
+    <ChartCard
+      className="md:col-span-2 lg:col-span-2"
+      title="Active horses"
+      subtitle={String(active.length)}
+      footnote={`${owned.length} owned`}
+    >
+      <div className="h-full px-3 pb-2 flex items-end">
+        <MiniBar
+          className="w-full"
+          rows={[
+            {
+              label: "60+",
+              value: energyBuckets[3] + energyBuckets[4],
+              color: chartColors.primary,
+            },
+            { label: "40–59", value: energyBuckets[2], color: chartColors.tertiary },
+            {
+              label: "0–39",
+              value: energyBuckets[0] + energyBuckets[1],
+              color: chartColors.negative,
+            },
+          ]}
+        />
+      </div>
+    </ChartCard>
+  );
+}
+
+function EarningsVsSpendCard({
+  totalIncome30,
+  totalSpend30,
+  data,
+}: {
+  totalIncome30: number;
+  totalSpend30: number;
+  data: { x: number; income: number; expense: number }[];
+}) {
+  return (
+    <ChartCard
+      className="md:col-span-4 lg:col-span-7"
+      title="Earnings vs spend"
+      subtitle={`${formatCurrencyCompact(totalIncome30)} in · ${formatCurrencyCompact(totalSpend30)} out`}
+      footnote={`Last ${ANALYTICS_EARNINGS_WEEKS} weeks`}
+    >
+      <div className="h-full px-2">
+        <EarningsVsSpendChart data={data} />
+      </div>
+    </ChartCard>
+  );
+}
+
+function TopSireCard({
+  topSire,
+  topSireTrend,
+}: {
+  topSire: { stallionName: string; value: number } | null | undefined;
+  topSireTrend: number[];
+}) {
+  return (
+    <ChartCard
+      className="md:col-span-3 lg:col-span-3"
+      title="Top sire"
+      subtitle={topSire?.stallionName ?? "—"}
+      footnote={topSire ? `AEI ${topSire.value.toFixed(2)}` : "No data yet"}
+    >
+      <div className="h-full px-3 pb-3 flex items-end">
+        {topSireTrend.length > 1 ? (
+          <Sparkline data={topSireTrend} height={70} />
+        ) : (
+          <div className="text-[11px] text-cream/40 font-mono">Trend pending</div>
+        )}
+      </div>
+    </ChartCard>
+  );
+}
+
+function TopExpensesCard({ expenseRows }: { expenseRows: { label: string; value: number }[] }) {
+  return (
+    <ChartCard
+      className="md:col-span-3 lg:col-span-5"
+      title={`Top expenses · ${ANALYTICS_EXPENSE_LOOKBACK_DAYS}d`}
+      footnote="By subcategory"
+    >
+      <div className="h-full px-3 pb-3 overflow-y-auto">
+        {expenseRows.length > 0 ? (
+          <MiniBar rows={expenseRows} format={formatCurrencyCompact} />
+        ) : (
+          <div className="text-[11px] text-cream/40 font-mono">No expenses recorded</div>
+        )}
+      </div>
+    </ChartCard>
+  );
+}
+
+function HorseRoiCard({ rankedRoi }: { rankedRoi: { name: string; net: number }[] }) {
+  return (
+    <ChartCard
+      className="md:col-span-3 lg:col-span-7"
+      title={`Horse ROI · top ${ANALYTICS_ROI_TOP_N}`}
+      footnote="Career earnings − tracked expenses"
+    >
+      <div className="h-full px-3 pb-3 overflow-y-auto">
+        <MiniBar
+          rows={rankedRoi.slice(0, ANALYTICS_ROI_TOP_N).map((r) => ({
+            label: r.name,
+            value: r.net,
+            color: r.net >= 0 ? chartColors.primary : chartColors.negative,
+          }))}
+          format={formatCurrencyCompact}
+        />
+      </div>
+    </ChartCard>
   );
 }
 

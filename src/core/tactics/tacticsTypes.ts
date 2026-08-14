@@ -1,3 +1,18 @@
+import {
+  AGGRESSIVENESS_DEFAULT,
+  AGGRESSIVENESS_CONSERVATIVE_MAX,
+  AGGRESSIVENESS_MODERATE_MAX,
+  AGGRESSIVENESS_AGGRESSIVE_MAX,
+  STAT_BASELINE,
+  FRONT_RUNNER_MULTIPLIER,
+  CLOSER_MULTIPLIER,
+  STALKER_MULTIPLIER,
+  TACTICAL_BALANCE_THRESHOLD,
+  TACTICAL_BALANCED_BONUS,
+  STYLE_BONUS_MIN,
+  STYLE_BONUS_MAX,
+} from "@/constants";
+
 // Race Day Tactics Types - Jockey instructions for race strategy
 
 /**
@@ -42,7 +57,7 @@ export function createDefaultInstructions(horseId: string, raceId: string): Jock
     ridingStyle: "tactical",
     earlyPosition: "midpack",
     moveTiming: "mid",
-    aggressiveness: 50,
+    aggressiveness: AGGRESSIVENESS_DEFAULT,
   };
 }
 
@@ -111,23 +126,26 @@ export function calculateStyleBonus(
   switch (instructions.ridingStyle) {
     case "front_runner":
       // Front runners benefit from high speed
-      bonus = (horseSpeed - 50) * 0.1;
+      bonus = (horseSpeed - STAT_BASELINE) * FRONT_RUNNER_MULTIPLIER;
       break;
     case "closer":
       // Closers benefit from high stamina
-      bonus = (horseStamina - 50) * 0.1;
+      bonus = (horseStamina - STAT_BASELINE) * CLOSER_MULTIPLIER;
       break;
     case "stalker":
       // Stalkers need balanced stats
-      bonus = ((horseSpeed + horseStamina) / 2 - 50) * 0.08;
+      bonus = ((horseSpeed + horseStamina) / 2 - STAT_BASELINE) * STALKER_MULTIPLIER;
       break;
     case "tactical":
       // Tactical is flexible, small bonus for balanced
-      bonus = Math.abs(horseSpeed - horseStamina) < 10 ? 2 : 0;
+      bonus =
+        Math.abs(horseSpeed - horseStamina) < TACTICAL_BALANCE_THRESHOLD
+          ? TACTICAL_BALANCED_BONUS
+          : 0;
       break;
   }
 
-  return Math.max(0, Math.min(5, bonus)); // Clamp between 0 and 5
+  return Math.max(STYLE_BONUS_MIN, Math.min(STYLE_BONUS_MAX, bonus));
 }
 
 /**
@@ -137,8 +155,8 @@ export function calculateStyleBonus(
  * @returns Human-readable aggressiveness label
  */
 export function formatAggressiveness(level: number): string {
-  if (level < 30) return "Conservative";
-  if (level < 50) return "Moderate";
-  if (level < 70) return "Aggressive";
+  if (level < AGGRESSIVENESS_CONSERVATIVE_MAX) return "Conservative";
+  if (level < AGGRESSIVENESS_MODERATE_MAX) return "Moderate";
+  if (level < AGGRESSIVENESS_AGGRESSIVE_MAX) return "Aggressive";
   return "Very Aggressive";
 }

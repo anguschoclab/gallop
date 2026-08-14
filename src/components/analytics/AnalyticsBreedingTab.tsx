@@ -1,6 +1,11 @@
 import { useMemo } from "react";
 import { useAnalyticsData } from "@/hooks/analytics/useAnalyticsData";
 import { ChartCard, MiniBar, Sparkline, chartColors } from "@/components/charts";
+import {
+  ANALYTICS_SIRE_TREND_DAYS,
+  ANALYTICS_TOP_SIRES_DISPLAY,
+  ANALYTICS_TOP_SIRE_TREND_DISPLAY,
+} from "@/constants";
 
 export function AnalyticsBreedingTab() {
   const d = useAnalyticsData();
@@ -9,7 +14,7 @@ export function AnalyticsBreedingTab() {
 
   const sireTrendMap = useMemo(() => {
     const map = new Map<string, number[]>();
-    const minDay = d.day - 60;
+    const minDay = d.day - ANALYTICS_SIRE_TREND_DAYS;
     for (let i = 0; i < d.sireTrendHistory.length; i++) {
       const t = d.sireTrendHistory[i];
       if (t.day < minDay) continue;
@@ -41,7 +46,7 @@ export function AnalyticsBreedingTab() {
           <div className="px-3 py-2">
             {rankings.length > 0 ? (
               <MiniBar
-                rows={rankings.slice(0, 8).map((r) => ({
+                rows={rankings.slice(0, ANALYTICS_TOP_SIRES_DISPLAY).map((r) => ({
                   label: `${r.rank}. ${r.stallionName}`,
                   value: r.value,
                   color: chartColors.primary,
@@ -54,9 +59,12 @@ export function AnalyticsBreedingTab() {
           </div>
         </ChartCard>
 
-        <ChartCard title="Top 5 · 60d AEI trend" footnote="Each row independently scaled">
+        <ChartCard
+          title={`Top ${ANALYTICS_TOP_SIRE_TREND_DISPLAY} · ${ANALYTICS_SIRE_TREND_DAYS}d AEI trend`}
+          footnote="Each row independently scaled"
+        >
           <div className="px-3 py-2 space-y-2">
-            {rankings.slice(0, 5).map((r) => {
+            {rankings.slice(0, ANALYTICS_TOP_SIRE_TREND_DISPLAY).map((r) => {
               const series = sireTrendMap.get(r.stallionId) ?? [];
               return (
                 <div key={r.stallionId} className="flex items-center gap-3">

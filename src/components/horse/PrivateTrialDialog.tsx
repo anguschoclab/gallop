@@ -1,3 +1,4 @@
+import { TOOLTIP_DELAY_MS } from "@/constants";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -69,7 +70,7 @@ export function PrivateTrialDialog({ horse, horses, cash }: PrivateTrialDialogPr
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       {isDisabled ? (
-        <TooltipProvider delayDuration={300}>
+        <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
           <Tooltip>
             <TooltipTrigger asChild>
               <span tabIndex={0} className="inline-block w-full cursor-not-allowed">

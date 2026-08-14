@@ -5,7 +5,8 @@ import { useLiveRaceSimulation } from "@/hooks/race/useLiveRaceSimulation";
 import { RacePreShow } from "@/components/race/RacePreShow";
 import { RaceBroadcast } from "@/components/race/RaceBroadcast";
 import { useRacePageData } from "@/hooks/race/useRacePageData";
-import { useRaceUIState } from "@/hooks/race/useRaceUIState";
+import { useCommentaryFeed } from "@/hooks/race/useCommentaryFeed";
+import { useLeaderboardState } from "@/hooks/race/useLeaderboardState";
 import { useRacePhase, type RacePhase } from "@/hooks/race/useRacePhase";
 import { useRaceProgress } from "@/hooks/race/useRaceProgress";
 import { useStewardsInquiry } from "@/hooks/race/useStewardsInquiry";
@@ -152,6 +153,18 @@ export function LiveRace() {
     }
   }, [progressStorageKey]);
 
+  const onTick = useCallback(
+    (sortedField: typeof runners, simTime: number, _silent: boolean) => {
+      if (narrativeRef.current) {
+        const newCommentary = narrativeRef.current.update(sortedField, simTime);
+        if (newCommentary.length > 0) {
+          messageQueue.current.push(...newCommentary);
+        }
+      }
+    },
+    [narrativeRef, messageQueue],
+  );
+
   const { tick, speed, setSpeed, finished, paused, setPaused, simTime, simTimeRef, liveSplits } =
     useLiveRaceSimulation({
       race,
@@ -167,6 +180,7 @@ export function LiveRace() {
       resumeAtSimTime: phase === "live" ? savedProgress.simTime : 0,
       initialPaused: savedProgress.paused,
       initialSpeed: savedProgress.speed,
+      onTick,
     });
 
   const { analysisOpen, setAnalysisOpen, analysisRef } = useRaceProgress({
@@ -195,16 +209,9 @@ export function LiveRace() {
     return () => window.clearTimeout(id);
   }, [phase, analysisRef]);
 
+  const { announcement, commentary, subjectHorseId } = useCommentaryFeed(messageQueue, finished);
+
   const {
-    announcement,
-    commentary,
-    subjectHorseId,
-    followTarget,
-    setFollowTarget,
-    hideUntilAllFinished,
-    setHideUntilAllFinished,
-    showAllCards,
-    setShowAllCards,
     sorted,
     positionRank,
     filter,
@@ -213,10 +220,15 @@ export function LiveRace() {
     setFilter,
     setSortBy,
     setMinBeyer,
-  } = useRaceUIState(runners, race, messageQueue, finished, classBonus, calibratedPars ?? {});
+    allFinished,
+    anyFinished,
+  } = useLeaderboardState(runners, race, classBonus, calibratedPars ?? {});
 
-  const allFinished = runners.every((r) => r.finishTime !== null);
-  const anyFinished = runners.some((r) => r.finishTime !== null);
+  const ownedRunnersTotal = runners.filter((r) => r.owned);
+  const defaultFollowTarget = ownedRunnersTotal.length > 0 ? ownedRunnersTotal[0].horseId : null;
+  const [followTarget, setFollowTarget] = useState<string | null>(defaultFollowTarget);
+  const [hideUntilAllFinished, setHideUntilAllFinished] = useState(false);
+  const [showAllCards, setShowAllCards] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
-import { TRAINING_COST } from "@/constants";
+import { TRAINING_COST, TOOLTIP_DELAY_MS } from "@/constants";
 import { BASIC_TRAINING_TYPES, ADVANCED_WORKOUTS } from "@/constants/trainingTypes";
 import { TRAINING_FACILITY_REQUIREMENTS } from "@/constants/workoutConstants";
 import { getAvailableTrainingTypes } from "@/core/facilities";
@@ -42,7 +42,7 @@ function DisabledTooltipWrapper({
   if (!reason) return <>{children}</>;
 
   return (
-    <TooltipProvider delayDuration={300}>
+    <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
       <Tooltip>
         <TooltipTrigger asChild>
           <span tabIndex={0} className="inline-block w-full cursor-not-allowed">
@@ -52,6 +52,96 @@ function DisabledTooltipWrapper({
         <TooltipContent>{reason}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
+  );
+}
+
+interface BasicTrainingButtonProps {
+  label: string;
+  currentValue: number;
+  nextValue: number;
+  disabled: boolean;
+  disabledReason?: string;
+  onClick: () => void;
+}
+
+function BasicTrainingButton({
+  label,
+  currentValue,
+  nextValue,
+  disabled,
+  disabledReason,
+  onClick,
+}: BasicTrainingButtonProps) {
+  return (
+    <DisabledTooltipWrapper reason={disabledReason}>
+      <Button
+        onClick={onClick}
+        disabled={disabled}
+        className={cn("w-full justify-between", disabled && "pointer-events-none")}
+        variant="outline"
+      >
+        <span className="capitalize">{label} work</span>
+        <span className="text-cream-muted">
+          {currentValue} → {nextValue}
+        </span>
+      </Button>
+    </DisabledTooltipWrapper>
+  );
+}
+
+interface AdvancedWorkoutButtonProps {
+  label: string;
+  cost: number;
+  isEnabled: boolean;
+  disabled: boolean;
+  disabledReason?: string;
+  onClick: () => void;
+}
+
+function AdvancedWorkoutButton({
+  label,
+  cost,
+  isEnabled,
+  disabled,
+  disabledReason,
+  onClick,
+}: AdvancedWorkoutButtonProps) {
+  return (
+    <DisabledTooltipWrapper reason={disabledReason}>
+      <Button
+        onClick={onClick}
+        disabled={disabled}
+        className={cn("w-full justify-between text-xs", disabled && "pointer-events-none")}
+        variant="outline"
+      >
+        <div className="flex items-center gap-1">
+          {!isEnabled ? <Lock className="h-3 w-3" /> : null}
+          <span>{label}</span>
+        </div>
+        <span className="text-cream-muted">${cost}</span>
+      </Button>
+    </DisabledTooltipWrapper>
+  );
+}
+
+interface RestButtonProps {
+  disabled: boolean;
+  disabledReason?: string;
+  onClick: () => void;
+}
+
+function RestButton({ disabled, disabledReason, onClick }: RestButtonProps) {
+  return (
+    <DisabledTooltipWrapper reason={disabledReason}>
+      <Button
+        onClick={onClick}
+        disabled={disabled}
+        className={cn("w-full", disabled && "pointer-events-none")}
+        variant="secondary"
+      >
+        {REST_LABEL}
+      </Button>
+    </DisabledTooltipWrapper>
   );
 }
 
@@ -67,7 +157,6 @@ export function TrainingPanelComponent({
     onTrain(horse.id, "rest");
   }, [horse.id, onTrain]);
 
-  // Single handler for all training buttons
   const handleTrainingClick = useCallback(
     (type: TrainingIntent["trainingType"]) => {
       onTrain(horse.id, type);
@@ -75,7 +164,6 @@ export function TrainingPanelComponent({
     [horse.id, onTrain],
   );
 
-  // Memoize the training types arrays to prevent recreation
   const basicTrainingButtons = useMemo(
     () =>
       BASIC_TRAINING_TYPES.map((k) => {
@@ -117,7 +205,6 @@ export function TrainingPanelComponent({
     [facilities],
   );
 
-  // Memoize advanced workouts array to prevent recreation
   const advancedWorkoutButtons = useMemo(
     () =>
       ADVANCED_WORKOUTS.map((workout) => {
@@ -165,51 +252,38 @@ export function TrainingPanelComponent({
 
   return (
     <div className="space-y-2">
-      {/* Basic training types */}
       {basicTrainingButtons.map((btn) => (
-        <DisabledTooltipWrapper key={btn.key} reason={btn.disabledReason}>
-          <Button
-            onClick={btn.onClick}
-            disabled={btn.disabled}
-            className={cn("w-full justify-between", btn.disabled && "pointer-events-none")}
-            variant="outline"
-          >
-            <span className="capitalize">{btn.label} work</span>
-            <span className="text-cream-muted">
-              {btn.currentValue} → {btn.nextValue}
-            </span>
-          </Button>
-        </DisabledTooltipWrapper>
+        <BasicTrainingButton
+          key={btn.key}
+          label={btn.label}
+          currentValue={btn.currentValue}
+          nextValue={btn.nextValue}
+          disabled={btn.disabled}
+          disabledReason={btn.disabledReason}
+          onClick={btn.onClick}
+        />
       ))}
 
-      {/* Advanced workout types */}
       <div className="pt-2 border-t border-gold-muted/30">
         <p className="text-xs text-cream-muted mb-2">{ADVANCED_WORKOUTS_LABEL}</p>
         <div className="grid grid-cols-2 gap-2">
           {advancedWorkoutButtons.map((btn) => (
-            <DisabledTooltipWrapper key={btn.key} reason={btn.disabledReason}>
-              <Button
-                onClick={btn.onClick}
-                disabled={btn.disabled}
-                className={cn(
-                  "w-full justify-between text-xs",
-                  btn.disabled && "pointer-events-none",
-                )}
-                variant="outline"
-              >
-                <div className="flex items-center gap-1">
-                  {!btn.isEnabled ? <Lock className="h-3 w-3" /> : null}
-                  <span>{btn.label}</span>
-                </div>
-                <span className="text-cream-muted">${btn.cost}</span>
-              </Button>
-            </DisabledTooltipWrapper>
+            <AdvancedWorkoutButton
+              key={btn.key}
+              label={btn.label}
+              cost={btn.cost}
+              isEnabled={btn.isEnabled}
+              disabled={btn.disabled}
+              disabledReason={btn.disabledReason}
+              onClick={btn.onClick}
+            />
           ))}
         </div>
       </div>
 
-      <DisabledTooltipWrapper
-        reason={
+      <RestButton
+        disabled={isPregnant || slotsLeft <= 0 || horse.energy >= 100}
+        disabledReason={
           isPregnant
             ? "Horse is pregnant"
             : slotsLeft <= 0
@@ -218,19 +292,8 @@ export function TrainingPanelComponent({
                 ? "Horse is fully rested"
                 : undefined
         }
-      >
-        <Button
-          onClick={handleRest}
-          disabled={isPregnant || slotsLeft <= 0 || horse.energy >= 100}
-          className={cn(
-            "w-full",
-            (isPregnant || slotsLeft <= 0 || horse.energy >= 100) && "pointer-events-none",
-          )}
-          variant="secondary"
-        >
-          {REST_LABEL}
-        </Button>
-      </DisabledTooltipWrapper>
+        onClick={handleRest}
+      />
     </div>
   );
 }

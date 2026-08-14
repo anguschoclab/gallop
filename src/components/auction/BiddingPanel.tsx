@@ -1,3 +1,4 @@
+import { TOOLTIP_DELAY_MS } from "@/constants";
 /**
  * BiddingPanel.tsx - Auction bidding controls
  *
@@ -77,7 +78,7 @@ export function BiddingPanel({
         <div className="space-y-4">
           <div className="flex gap-2">
             {cash < nextBid || isPlayerLeading || isPlayerConsigned ? (
-              <TooltipProvider delayDuration={300}>
+              <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <span tabIndex={0} className="flex-1 inline-block cursor-not-allowed">

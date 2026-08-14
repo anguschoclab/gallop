@@ -90,17 +90,16 @@ vi.mock("@/hooks/race/useRacePageData", () => ({
   }),
 }));
 
-vi.mock("@/hooks/race/useRaceUIState", () => ({
-  useRaceUIState: () => ({
+vi.mock("@/hooks/race/useCommentaryFeed", () => ({
+  useCommentaryFeed: () => ({
     announcement: "",
     commentary: [],
     subjectHorseId: null,
-    followTarget: null,
-    setFollowTarget: vi.fn(),
-    hideUntilAllFinished: false,
-    setHideUntilAllFinished: vi.fn(),
-    showAllCards: false,
-    setShowAllCards: vi.fn(),
+  }),
+}));
+
+vi.mock("@/hooks/race/useLeaderboardState", () => ({
+  useLeaderboardState: () => ({
     sorted: [],
     positionRank: new Map(),
     filter: "all",
@@ -109,6 +108,8 @@ vi.mock("@/hooks/race/useRaceUIState", () => ({
     setFilter: vi.fn(),
     setSortBy: vi.fn(),
     setMinBeyer: vi.fn(),
+    allFinished: false,
+    anyFinished: false,
   }),
 }));
 

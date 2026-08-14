@@ -20,6 +20,22 @@ import {
   PROGRAM_STATUS_ACTIVE,
   PROGRAM_STATUS_CANCELLED,
   PROGRAM_STATUS_COMPLETED,
+  DISTANCE_THRESHOLD_MODERATE,
+  DISTANCE_THRESHOLD_GOOD,
+  DISTANCE_THRESHOLD_EXCELLENT,
+  DISTANCE_MIN,
+  DISTANCE_MAX,
+  INITIAL_GENETIC_DISTANCE,
+  INITIAL_GENERATION_COUNT,
+  STAT_NORMALIZATION_MAX,
+  TRIGGER_FIRST_GENERATION,
+  TRIGGER_DISTANCE_MODERATE,
+  TRIGGER_DISTANCE_GOOD,
+  TRIGGER_DISTANCE_EXCELLENT,
+  MILESTONE_DESC_FIRST_GEN,
+  MILESTONE_DESC_FOUNDATION,
+  MILESTONE_DESC_TAKING_SHAPE,
+  MILESTONE_DESC_EXCELLENT,
 } from "@/constants/breedingConstants";
 
 export type ProgramMilestone = {
@@ -73,10 +89,10 @@ export function calculateGeneticDistance(horse: Horse, archetype: Archetype): nu
   const consistency = horse.stats.consistency;
 
   // Normalize stats to 0-1 range (assuming max potential around 100)
-  const normalizedSpeed = speed / 100;
-  const normalizedStamina = stamina / 100;
-  const normalizedAcceleration = acceleration / 100;
-  const normalizedConsistency = consistency / 100;
+  const normalizedSpeed = speed / STAT_NORMALIZATION_MAX;
+  const normalizedStamina = stamina / STAT_NORMALIZATION_MAX;
+  const normalizedAcceleration = acceleration / STAT_NORMALIZATION_MAX;
+  const normalizedConsistency = consistency / STAT_NORMALIZATION_MAX;
 
   // Calculate squared differences weighted by archetype weights
   const speedDiff = Math.pow(normalizedSpeed - target.speed, 2) * weights.speed;
@@ -93,7 +109,7 @@ export function calculateGeneticDistance(horse: Horse, archetype: Archetype): nu
   const totalWeight = weights.speed + weights.stamina + weights.acceleration + weights.consistency;
   const normalizedDistance = Math.sqrt(totalWeightedDiff / totalWeight);
 
-  return Math.min(1, Math.max(0, normalizedDistance));
+  return Math.min(DISTANCE_MAX, Math.max(DISTANCE_MIN, normalizedDistance));
 }
 
 /**
@@ -125,13 +141,22 @@ export function updateProgramProgress(
     if (milestone.achieved) return milestone;
 
     let achieved = false;
-    if (milestone.triggerCondition === "first_generation" && program.generationCount === 1) {
+    if (milestone.triggerCondition === TRIGGER_FIRST_GENERATION && program.generationCount === 1) {
       achieved = true;
-    } else if (milestone.triggerCondition === "distance_below_0.6" && newDistance < 0.6) {
+    } else if (
+      milestone.triggerCondition === TRIGGER_DISTANCE_MODERATE &&
+      newDistance < DISTANCE_THRESHOLD_MODERATE
+    ) {
       achieved = true;
-    } else if (milestone.triggerCondition === "distance_below_0.4" && newDistance < 0.4) {
+    } else if (
+      milestone.triggerCondition === TRIGGER_DISTANCE_GOOD &&
+      newDistance < DISTANCE_THRESHOLD_GOOD
+    ) {
       achieved = true;
-    } else if (milestone.triggerCondition === "distance_below_0.2" && newDistance < 0.2) {
+    } else if (
+      milestone.triggerCondition === TRIGGER_DISTANCE_EXCELLENT &&
+      newDistance < DISTANCE_THRESHOLD_EXCELLENT
+    ) {
       achieved = true;
     }
 
@@ -179,26 +204,26 @@ export function createBreedingProgram(
   const milestones: ProgramMilestone[] = [
     {
       id: `${stableId}_first_gen`,
-      description: "First generation foal",
-      triggerCondition: "first_generation",
+      description: MILESTONE_DESC_FIRST_GEN,
+      triggerCondition: TRIGGER_FIRST_GENERATION,
       achieved: false,
     },
     {
       id: `${stableId}_dist_0.6`,
-      description: "Genetic foundation established",
-      triggerCondition: "distance_below_0.6",
+      description: MILESTONE_DESC_FOUNDATION,
+      triggerCondition: TRIGGER_DISTANCE_MODERATE,
       achieved: false,
     },
     {
       id: `${stableId}_dist_0.4`,
-      description: "Program taking shape",
-      triggerCondition: "distance_below_0.4",
+      description: MILESTONE_DESC_TAKING_SHAPE,
+      triggerCondition: TRIGGER_DISTANCE_GOOD,
       achieved: false,
     },
     {
       id: `${stableId}_dist_0.2`,
-      description: "Achieve genetic distance below 0.2",
-      triggerCondition: "distance_below_0.2",
+      description: MILESTONE_DESC_EXCELLENT,
+      triggerCondition: TRIGGER_DISTANCE_EXCELLENT,
       achieved: false,
     },
   ];
@@ -208,9 +233,9 @@ export function createBreedingProgram(
     stableId,
     archetypeId,
     createdDay: day,
-    generationCount: 0,
+    generationCount: INITIAL_GENERATION_COUNT,
     bestHorseId: null,
-    geneticDistance: 1.0,
+    geneticDistance: INITIAL_GENETIC_DISTANCE,
     milestones,
     enrolledDamIds: [],
     history: [],

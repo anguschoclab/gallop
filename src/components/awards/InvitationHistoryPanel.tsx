@@ -110,141 +110,195 @@ export function InvitationHistoryPanel({ invitations, awards, day }: Props) {
           </p>
         ) : (
           <>
-            <div className="flex flex-wrap items-center gap-2">
-              <Select value={region} onValueChange={(v) => setRegion(v as AwardRegion | "all")}>
-                <SelectTrigger className="h-8 w-[170px] text-xs" aria-label="Filter by region">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All regions</SelectItem>
-                  {REGIONS.map((r) => (
-                    <SelectItem key={r} value={r}>
-                      {REGION_AWARD_NAMES[r]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select
-                value={attendance}
-                onValueChange={(v) => setAttendance(v as AttendanceFilter)}
-              >
-                <SelectTrigger className="h-8 w-[150px] text-xs" aria-label="Filter by attendance">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {(Object.keys(ATTENDANCE_LABELS) as AttendanceFilter[]).map((k) => (
-                    <SelectItem key={k} value={k}>
-                      {ATTENDANCE_LABELS[k]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select value={outcome} onValueChange={(v) => setOutcome(v as OutcomeFilter)}>
-                <SelectTrigger className="h-8 w-[140px] text-xs" aria-label="Filter by outcome">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {(Object.keys(OUTCOME_LABELS) as OutcomeFilter[]).map((k) => (
-                    <SelectItem key={k} value={k}>
-                      {OUTCOME_LABELS[k]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              {hasFilters && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-8 text-xs"
-                  onClick={() => {
-                    setRegion("all");
-                    setAttendance("all");
-                    setOutcome("all");
-                  }}
-                >
-                  Clear
-                </Button>
-              )}
-              <span className="text-xs text-cream-muted ml-auto">
-                {filtered.length} of {past.length}
-              </span>
-            </div>
+            <InvitationFilterControls
+              region={region}
+              attendance={attendance}
+              outcome={outcome}
+              hasFilters={hasFilters}
+              filteredCount={filtered.length}
+              totalCount={past.length}
+              onRegionChange={setRegion}
+              onAttendanceChange={setAttendance}
+              onOutcomeChange={setOutcome}
+              onClear={() => {
+                setRegion("all");
+                setAttendance("all");
+                setOutcome("all");
+              }}
+            />
 
             {filtered.length === 0 ? (
               <p className="text-sm text-cream-muted">No invitations match these filters.</p>
             ) : (
-              filtered.map((inv) => {
-                const won = getInvitationOutcome(awards, inv);
-                const attended = didAttend(inv, day);
-                return (
-                  <div
-                    key={inv.id}
-                    className="rounded-md border border-gold-muted/50 p-3 space-y-2"
-                  >
-                    <div className="flex flex-wrap items-start justify-between gap-2">
-                      <div>
-                        <Link
-                          to="/ceremony/$invitationId"
-                          params={{ invitationId: inv.id }}
-                          className="font-semibold text-cream hover:text-gold"
-                        >
-                          {inv.ceremonyName}
-                        </Link>
-                        <div className="text-xs text-cream-muted">
-                          {REGION_AWARD_NAMES[inv.region]} · Year {inv.year} · Day {inv.ceremonyDay}
-                        </div>
-                      </div>
-                      <CeremonyRsvpBadge invitation={inv} day={day} />
-                    </div>
-                    <div className="text-sm text-cream-muted">
-                      {inv.qualifiers.length} qualifying Grade 1 placing
-                      {inv.qualifiers.length === 1 ? "" : "s"} ·{" "}
-                      {attended ? "Attended in person" : "Followed from the stable"}
-                    </div>
-                    {won.length > 0 ? (
-                      <div className="flex flex-wrap gap-1">
-                        {won.map((a) => (
-                          <Badge
-                            key={a.id}
-                            variant="outline"
-                            className="border-gold text-gold flex items-center gap-1"
-                          >
-                            <Trophy className="w-3 h-3" />
-                            {CATEGORY_DISPLAY_NAMES[a.category]} — {a.horseName}
-                          </Badge>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-xs text-cream-muted/70">
-                        No awards won at this ceremony.
-                      </div>
-                    )}
-                    <div>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-7 px-2 text-xs gap-1"
-                        onClick={() => setOpenAudit(openAudit === inv.id ? null : inv.id)}
-                      >
-                        <ScrollText className="w-3 h-3" />
-                        {openAudit === inv.id ? "Hide" : "Show"} RSVP audit log
-                      </Button>
-                      {openAudit === inv.id && (
-                        <div className="mt-2 border-t border-gold-muted/40 pt-2">
-                          <InvitationAuditList invitation={inv} />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })
+              filtered.map((inv) => (
+                <InvitationHistoryRow
+                  key={inv.id}
+                  inv={inv}
+                  awards={awards}
+                  day={day}
+                  openAudit={openAudit}
+                  onToggleAudit={(id) => setOpenAudit(openAudit === id ? null : id)}
+                />
+              ))
             )}
           </>
         )}
       </CardContent>
     </Card>
+  );
+}
+
+interface InvitationFilterControlsProps {
+  region: AwardRegion | "all";
+  attendance: AttendanceFilter;
+  outcome: OutcomeFilter;
+  hasFilters: boolean;
+  filteredCount: number;
+  totalCount: number;
+  onRegionChange: (v: AwardRegion | "all") => void;
+  onAttendanceChange: (v: AttendanceFilter) => void;
+  onOutcomeChange: (v: OutcomeFilter) => void;
+  onClear: () => void;
+}
+
+function InvitationFilterControls({
+  region,
+  attendance,
+  outcome,
+  hasFilters,
+  filteredCount,
+  totalCount,
+  onRegionChange,
+  onAttendanceChange,
+  onOutcomeChange,
+  onClear,
+}: InvitationFilterControlsProps) {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <Select value={region} onValueChange={(v) => onRegionChange(v as AwardRegion | "all")}>
+        <SelectTrigger className="h-8 w-[170px] text-xs" aria-label="Filter by region">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All regions</SelectItem>
+          {REGIONS.map((r) => (
+            <SelectItem key={r} value={r}>
+              {REGION_AWARD_NAMES[r]}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <Select value={attendance} onValueChange={(v) => onAttendanceChange(v as AttendanceFilter)}>
+        <SelectTrigger className="h-8 w-[150px] text-xs" aria-label="Filter by attendance">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {(Object.keys(ATTENDANCE_LABELS) as AttendanceFilter[]).map((k) => (
+            <SelectItem key={k} value={k}>
+              {ATTENDANCE_LABELS[k]}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <Select value={outcome} onValueChange={(v) => onOutcomeChange(v as OutcomeFilter)}>
+        <SelectTrigger className="h-8 w-[140px] text-xs" aria-label="Filter by outcome">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {(Object.keys(OUTCOME_LABELS) as OutcomeFilter[]).map((k) => (
+            <SelectItem key={k} value={k}>
+              {OUTCOME_LABELS[k]}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      {hasFilters && (
+        <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={onClear}>
+          Clear
+        </Button>
+      )}
+      <span className="text-xs text-cream-muted ml-auto">
+        {filteredCount} of {totalCount}
+      </span>
+    </div>
+  );
+}
+
+interface InvitationHistoryRowProps {
+  inv: AwardCeremonyInvitation;
+  awards: RegionalAward[];
+  day: number;
+  openAudit: string | null;
+  onToggleAudit: (id: string) => void;
+}
+
+function InvitationHistoryRow({
+  inv,
+  awards,
+  day,
+  openAudit,
+  onToggleAudit,
+}: InvitationHistoryRowProps) {
+  const won = getInvitationOutcome(awards, inv);
+  const attended = didAttend(inv, day);
+
+  return (
+    <div className="rounded-md border border-gold-muted/50 p-3 space-y-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <Link
+            to="/ceremony/$invitationId"
+            params={{ invitationId: inv.id }}
+            className="font-semibold text-cream hover:text-gold"
+          >
+            {inv.ceremonyName}
+          </Link>
+          <div className="text-xs text-cream-muted">
+            {REGION_AWARD_NAMES[inv.region]} · Year {inv.year} · Day {inv.ceremonyDay}
+          </div>
+        </div>
+        <CeremonyRsvpBadge invitation={inv} day={day} />
+      </div>
+      <div className="text-sm text-cream-muted">
+        {inv.qualifiers.length} qualifying Grade 1 placing
+        {inv.qualifiers.length === 1 ? "" : "s"} ·{" "}
+        {attended ? "Attended in person" : "Followed from the stable"}
+      </div>
+      {won.length > 0 ? (
+        <div className="flex flex-wrap gap-1">
+          {won.map((a) => (
+            <Badge
+              key={a.id}
+              variant="outline"
+              className="border-gold text-gold flex items-center gap-1"
+            >
+              <Trophy className="w-3 h-3" />
+              {CATEGORY_DISPLAY_NAMES[a.category]} — {a.horseName}
+            </Badge>
+          ))}
+        </div>
+      ) : (
+        <div className="text-xs text-cream-muted/70">No awards won at this ceremony.</div>
+      )}
+      <div>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-7 px-2 text-xs gap-1"
+          onClick={() => onToggleAudit(inv.id)}
+        >
+          <ScrollText className="w-3 h-3" />
+          {openAudit === inv.id ? "Hide" : "Show"} RSVP audit log
+        </Button>
+        {openAudit === inv.id && (
+          <div className="mt-2 border-t border-gold-muted/40 pt-2">
+            <InvitationAuditList invitation={inv} />
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

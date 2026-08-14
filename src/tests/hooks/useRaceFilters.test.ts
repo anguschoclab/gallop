@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useRaceFilters, type RaceFilters } from "@/hooks/race/useRaceFilters";
+import { DEFAULT_FIELD_SIZE } from "@/constants";
 import type { Race, Horse } from "@/game/types";
 
 const defaultFilters: RaceFilters = {
@@ -21,7 +22,7 @@ function mkRace(id: string, overrides: Partial<Race> = {}): Race {
     surface: "Turf",
     distance: 1800,
     entries: [],
-    fieldSize: 14,
+    fieldSize: DEFAULT_FIELD_SIZE,
     ...overrides,
   } as unknown as Race;
 }
@@ -108,8 +109,11 @@ describe("useRaceFilters — basic filtering", () => {
 
   it("filters by open field (not full)", () => {
     const races = [
-      mkRace("r1", { entries: [], fieldSize: 14 }),
-      mkRace("r2", { entries: new Array(14).fill({ owned: false }), fieldSize: 14 }),
+      mkRace("r1", { entries: [], fieldSize: DEFAULT_FIELD_SIZE }),
+      mkRace("r2", {
+        entries: new Array(DEFAULT_FIELD_SIZE).fill({ owned: false }),
+        fieldSize: DEFAULT_FIELD_SIZE,
+      }),
     ];
 
     const { result } = renderHook(() =>

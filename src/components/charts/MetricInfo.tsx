@@ -4,6 +4,7 @@
  */
 import { Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TOOLTIP_DELAY_SHORT_MS } from "@/constants";
 import { cn } from "@/lib/cn";
 
 interface MetricInfoProps {
@@ -16,7 +17,7 @@ interface MetricInfoProps {
 
 export function MetricInfo({ definition, formula, className }: MetricInfoProps) {
   return (
-    <TooltipProvider delayDuration={150}>
+    <TooltipProvider delayDuration={TOOLTIP_DELAY_SHORT_MS}>
       <Tooltip>
         <TooltipTrigger asChild>
           <button

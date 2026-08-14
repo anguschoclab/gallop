@@ -1,3 +1,4 @@
+import { TOOLTIP_DELAY_MS } from "@/constants";
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -78,7 +79,7 @@ export function CampaignCard({
               </Badge>
             )}
             <TooltipProvider>
-              <Tooltip delayDuration={300}>
+              <Tooltip delayDuration={TOOLTIP_DELAY_MS}>
                 <TooltipTrigger asChild>
                   <Button
                     size="icon"
@@ -110,7 +111,7 @@ export function CampaignCard({
                   <p className="text-xs text-cream">{flag.message}</p>
                 </div>
                 <TooltipProvider>
-                  <Tooltip delayDuration={300}>
+                  <Tooltip delayDuration={TOOLTIP_DELAY_MS}>
                     <TooltipTrigger asChild>
                       <Button
                         size="icon"

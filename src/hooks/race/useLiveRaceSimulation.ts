@@ -6,6 +6,16 @@ import type { NarrativeGenerator } from "@/services/narrative/narrativeService";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 import type { Race, RaceResult } from "@/core/race/types";
 import type { Rng } from "@/core/common/rng";
+import { FIXED_DT, MAX_STEPS_PER_FRAME, SPLIT_FRACTIONS } from "@/constants/raceBroadcastConstants";
+
+/**
+ * Callback invoked once per non-silent simulation step.
+ *
+ * @param sortedField - Runners sorted by position (descending)
+ * @param simTime - Current simulation time in seconds
+ * @param silent - Whether this step is silent (fast-forward)
+ */
+export type OnTickCallback = (sortedField: Runner[], simTime: number, silent: boolean) => void;
 
 /**
  * Build a rank map from the current runner field, skipping already-finished runners.
@@ -104,6 +114,7 @@ export function useLiveRaceSimulation({
   resumeAtSimTime = 0,
   initialPaused = false,
   initialSpeed,
+  onTick,
 }: {
   race: Race;
   runners: Runner[];
@@ -118,6 +129,7 @@ export function useLiveRaceSimulation({
   resumeAtSimTime?: number;
   initialPaused?: boolean;
   initialSpeed?: number;
+  onTick?: OnTickCallback;
 }) {
   const [tick, setTick] = useState(0);
   const [speed, setSpeed] = useState(initialSpeed ?? 1);
@@ -145,10 +157,8 @@ export function useLiveRaceSimulation({
 
     let raf = 0;
     let last = performance.now();
-    const FIXED_DT = 0.05;
     let accumulator = 0;
-    const MAX_STEPS_PER_FRAME = 64;
-    const splitMarkers = [0.25, 0.5, 0.75, 1.0].map((f) => f * race.distance);
+    const splitMarkers = SPLIT_FRACTIONS.map((f) => f * race.distance);
 
     const runOneTick = (silent: boolean): boolean => {
       simTimeRef.current += FIXED_DT;
@@ -158,10 +168,14 @@ export function useLiveRaceSimulation({
       const sortedField = [...runners].sort((a, b) => b.position - a.position);
       const { rankMap, aliveRank } = buildRankMap(runners);
 
-      if (!silent && narrativeRef.current) {
-        const newCommentary = narrativeRef.current.update(sortedField, simTimeRef.current);
-        if (newCommentary.length > 0) {
-          messageQueue.current.push(...newCommentary);
+      if (!silent) {
+        if (onTick) {
+          onTick(sortedField, simTimeRef.current, silent);
+        } else if (narrativeRef.current) {
+          const newCommentary = narrativeRef.current.update(sortedField, simTimeRef.current);
+          if (newCommentary.length > 0) {
+            messageQueue.current.push(...newCommentary);
+          }
         }
       }
 
@@ -254,6 +268,7 @@ export function useLiveRaceSimulation({
     resumeAtSimTime,
     windDirectionDeg,
     windKph,
+    onTick,
   ]);
 
   return {

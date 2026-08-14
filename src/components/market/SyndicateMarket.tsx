@@ -1,3 +1,4 @@
+import { TOOLTIP_DELAY_MS } from "@/constants";
 import { useMemo } from "react";
 import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import type { Syndicate } from "@/core/breeding/types";
@@ -97,7 +98,7 @@ export function SyndicateMarket() {
 
             <div className="flex gap-2">
               {cash < syndicate.sharePrice ? (
-                <TooltipProvider delayDuration={300}>
+                <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <span tabIndex={0} className="flex-1 inline-block cursor-not-allowed">

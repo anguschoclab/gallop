@@ -1,3 +1,4 @@
+import { TOOLTIP_DELAY_MS } from "@/constants";
 import { useState } from "react";
 import type { EligibleRaceRow } from "@/hooks/race/useHorseEligibleRaces";
 import type { Race } from "@/game/types";
@@ -123,7 +124,7 @@ export function EligibleRaceList({
 
                 <div className="shrink-0">
                   {row.isEntered ? (
-                    <TooltipProvider delayDuration={300}>
+                    <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <span tabIndex={0} className="inline-block cursor-not-allowed">

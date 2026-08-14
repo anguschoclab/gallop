@@ -1,3 +1,4 @@
+import { TOOLTIP_DELAY_MS } from "@/constants";
 import {
   Select,
   SelectContent,
@@ -99,7 +100,7 @@ export function RaceControlBar({
           </Select>
         )}
 
-        <TooltipProvider delayDuration={300}>
+        <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button

@@ -1,3 +1,4 @@
+import { TOOLTIP_DELAY_MS } from "@/constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,7 +33,7 @@ export function StableRosterWidget() {
             Stable & Roster
           </CardTitle>
         </div>
-        <TooltipProvider delayDuration={300}>
+        <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
           <Tooltip>
             <TooltipTrigger asChild>
               <Link to="/stable" aria-label="Go to Stable & Roster">

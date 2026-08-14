@@ -1,3 +1,4 @@
+import { TOOLTIP_DELAY_MS } from "@/constants";
 /**
  * AutoRegisterButton.tsx - Smart auto-registration button for stable page
  *
@@ -67,7 +68,7 @@ export function AutoRegisterButton() {
   return (
     <>
       {buttonTooltip ? (
-        <TooltipProvider delayDuration={300}>
+        <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
           <Tooltip>
             <TooltipTrigger asChild>
               <span tabIndex={0} className="inline-block cursor-not-allowed">

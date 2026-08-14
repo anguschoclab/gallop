@@ -4,6 +4,14 @@ import type { NewsItem, NewsCategory, NewsImportance } from "@/services/narrativ
 import { ALL_FLAVOR_STORIES } from "@/services/narrative/flavorStories";
 import type { Race, Horse } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
+import {
+  NEWS_HIGH_IMPORTANCE_PRICE_THRESHOLD,
+  NEWS_LONG_DISTANCE_THRESHOLD,
+  NEWS_SPRINT_DISTANCE_THRESHOLD,
+  NEWS_DOMINANT_MARGIN_SECONDS,
+  PHOTO_FINISH_THRESHOLD_SECONDS,
+  GRADE_S_THRESHOLD,
+} from "@/constants";
 
 /**
  * Creates a new news item with a unique identifier.
@@ -17,6 +25,76 @@ export function createNewsItem(params: Omit<NewsItem, "id">, rng?: Rng): NewsIte
     id: generateUUID(rng),
     ...params,
   };
+}
+
+/**
+ * Adds conditional flavor text to headlines and bodies arrays based on race
+ * conditions (weather, track condition, distance, winning margin).
+ *
+ * @param race - The completed race.
+ * @param winner - The winning horse.
+ * @param headlines - Array to push conditional headlines into.
+ * @param bodies - Array to push conditional bodies into.
+ */
+function addConditionalRaceFlavor(
+  race: Race,
+  winner: Horse,
+  headlines: string[],
+  bodies: string[],
+): void {
+  if (race.weather === "rainy") {
+    bodies.push(
+      `Despite the pouring rain, ${winner.name} sloshed through the mud to claim a spectacular victory in the ${race.name}.`,
+    );
+    bodies.push(
+      `The wet conditions couldn't slow down ${winner.name}, who splashed home to win the ${race.name}.`,
+    );
+  }
+
+  if (race.trackCondition === "fast") {
+    bodies.push(
+      `Taking full advantage of the fast track, ${winner.name} flew down the stretch to capture the ${race.name}.`,
+    );
+  } else if (race.trackCondition === "heavy" || race.trackCondition === "soft") {
+    bodies.push(
+      `The tiring ${race.trackCondition} ground proved no issue for ${winner.name}, who showed immense stamina to win the ${race.name}.`,
+    );
+  }
+
+  if (race.distance >= NEWS_LONG_DISTANCE_THRESHOLD) {
+    bodies.push(
+      `In a true test of stamina over ${race.distance}m, ${winner.name} outstayed the competition to win the ${race.name}.`,
+    );
+  } else if (race.distance <= NEWS_SPRINT_DISTANCE_THRESHOLD) {
+    bodies.push(
+      `Showing blinding speed in this ${race.distance}m sprint, ${winner.name} proved too quick for the field in the ${race.name}.`,
+    );
+  }
+
+  if (race.result && race.result.length > 1) {
+    const winnerRes = race.result.find((r) => r.position === 1);
+    const secondRes = race.result.find((r) => r.position === 2);
+    if (winnerRes && secondRes) {
+      const margin = secondRes.time - winnerRes.time;
+      if (margin > NEWS_DOMINANT_MARGIN_SECONDS) {
+        headlines.push(`${winner.name} Destroys the Field in the ${race.name}!`);
+        bodies.push(
+          `It was an absolute romp! ${winner.name} destroyed the field by a massive margin to take the ${race.name}.`,
+        );
+        bodies.push(
+          `Nobody else was even in the same zip code as ${winner.name} today. A truly dominant, wide-margin victory in the ${race.name}.`,
+        );
+      } else if (margin < PHOTO_FINISH_THRESHOLD_SECONDS) {
+        headlines.push(`Nail-Biter: ${winner.name} Edges Out Rivals in the ${race.name}`);
+        bodies.push(
+          `In a thrilling photo finish, ${winner.name} just managed to stick their nose in front to steal the ${race.name}.`,
+        );
+        bodies.push(
+          `Fans were on the edge of their seats as ${winner.name} narrowly held on in a desperately close finish to the ${race.name}.`,
+        );
+      }
+    }
+  }
 }
 
 /**
@@ -118,123 +196,7 @@ export function generateRaceNews(
     `${winner.name} made it look easy in the ${race.name}, pulling clear for an emphatic victory.`,
   ];
 
-  // Conditional flavor based on track conditions
-  if (race.weather === "rainy") {
-    bodies.push(
-      `Despite the pouring rain, ${winner.name} sloshed through the mud to claim a spectacular victory in the ${race.name}.`,
-    );
-    bodies.push(
-      `The wet conditions couldn't slow down ${winner.name}, who splashed home to win the ${race.name}.`,
-    );
-  }
-
-  if (race.trackCondition === "fast") {
-    bodies.push(
-      `Taking full advantage of the fast track, ${winner.name} flew down the stretch to capture the ${race.name}.`,
-    );
-  } else if (race.trackCondition === "heavy" || race.trackCondition === "soft") {
-    bodies.push(
-      `The tiring ${race.trackCondition} ground proved no issue for ${winner.name}, who showed immense stamina to win the ${race.name}.`,
-    );
-  }
-
-  // Conditional flavor based on distance
-  if (race.distance >= 2400) {
-    bodies.push(
-      `In a true test of stamina over ${race.distance}m, ${winner.name} outstayed the competition to win the ${race.name}.`,
-    );
-  } else if (race.distance <= 1200) {
-    bodies.push(
-      `Showing blinding speed in this ${race.distance}m sprint, ${winner.name} proved too quick for the field in the ${race.name}.`,
-    );
-  }
-
-  // Conditional flavor based on margin (if available)
-  if (race.result && race.result.length > 1) {
-    const winnerRes = race.result.find((r) => r.position === 1);
-    const secondRes = race.result.find((r) => r.position === 2);
-    if (winnerRes && secondRes) {
-      const margin = secondRes.time - winnerRes.time;
-      if (margin > 1.5) {
-        // Roughly 9+ lengths
-        headlines.push(`${winner.name} Destroys the Field in the ${race.name}!`);
-        bodies.push(
-          `It was an absolute romp! ${winner.name} destroyed the field by a massive margin to take the ${race.name}.`,
-        );
-        bodies.push(
-          `Nobody else was even in the same zip code as ${winner.name} today. A truly dominant, wide-margin victory in the ${race.name}.`,
-        );
-      } else if (margin < 0.05) {
-        // Photo finish (less than half a length)
-        headlines.push(`Nail-Biter: ${winner.name} Edges Out Rivals in the ${race.name}`);
-        bodies.push(
-          `In a thrilling photo finish, ${winner.name} just managed to stick their nose in front to steal the ${race.name}.`,
-        );
-        bodies.push(
-          `Fans were on the edge of their seats as ${winner.name} narrowly held on in a desperately close finish to the ${race.name}.`,
-        );
-      }
-    }
-  }
-
-  // Conditional flavor based on track conditions
-  if (race.weather === "rainy") {
-    bodies.push(
-      `Despite the pouring rain, ${winner.name} sloshed through the mud to claim a spectacular victory in the ${race.name}.`,
-    );
-    bodies.push(
-      `The wet conditions couldn't slow down ${winner.name}, who splashed home to win the ${race.name}.`,
-    );
-  }
-
-  if (race.trackCondition === "fast") {
-    bodies.push(
-      `Taking full advantage of the fast track, ${winner.name} flew down the stretch to capture the ${race.name}.`,
-    );
-  } else if (race.trackCondition === "heavy" || race.trackCondition === "soft") {
-    bodies.push(
-      `The tiring ${race.trackCondition} ground proved no issue for ${winner.name}, who showed immense stamina to win the ${race.name}.`,
-    );
-  }
-
-  // Conditional flavor based on distance
-  if (race.distance >= 2400) {
-    bodies.push(
-      `In a true test of stamina over ${race.distance}m, ${winner.name} outstayed the competition to win the ${race.name}.`,
-    );
-  } else if (race.distance <= 1200) {
-    bodies.push(
-      `Showing blinding speed in this ${race.distance}m sprint, ${winner.name} proved too quick for the field in the ${race.name}.`,
-    );
-  }
-
-  // Conditional flavor based on margin (if available)
-  if (race.result && race.result.length > 1) {
-    const winnerRes = race.result.find((r) => r.position === 1);
-    const secondRes = race.result.find((r) => r.position === 2);
-    if (winnerRes && secondRes) {
-      const margin = secondRes.time - winnerRes.time;
-      if (margin > 1.5) {
-        // Roughly 9+ lengths
-        headlines.push(`${winner.name} Destroys the Field in the ${race.name}!`);
-        bodies.push(
-          `It was an absolute romp! ${winner.name} destroyed the field by a massive margin to take the ${race.name}.`,
-        );
-        bodies.push(
-          `Nobody else was even in the same zip code as ${winner.name} today. A truly dominant, wide-margin victory in the ${race.name}.`,
-        );
-      } else if (margin < 0.05) {
-        // Photo finish (less than half a length)
-        headlines.push(`Nail-Biter: ${winner.name} Edges Out Rivals in the ${race.name}`);
-        bodies.push(
-          `In a thrilling photo finish, ${winner.name} just managed to stick their nose in front to steal the ${race.name}.`,
-        );
-        bodies.push(
-          `Fans were on the edge of their seats as ${winner.name} narrowly held on in a desperately close finish to the ${race.name}.`,
-        );
-      }
-    }
-  }
+  addConditionalRaceFlavor(race, winner, headlines, bodies);
 
   const headline = rng.pick(headlines);
   const body = rng.pick(bodies);
@@ -320,7 +282,7 @@ export function generateMarketNews(horse: Horse, price: number, day: number, rng
     {
       day,
       category: "market",
-      importance: price > 500000 ? "high" : "medium",
+      importance: price > NEWS_HIGH_IMPORTANCE_PRICE_THRESHOLD ? "high" : "medium",
       headline: rng.pick(headlines),
       body: rng.pick(bodies),
       entityLinks: [{ type: "horse", id: horse.id, name: horse.name }],
@@ -380,7 +342,7 @@ export function generateG1SpotlightNews(
   if (!winner) return null;
 
   const overallRating = calculateOverallRating(winner);
-  if (overallRating < 90) return null;
+  if (overallRating < GRADE_S_THRESHOLD) return null;
 
   const headlines = [
     `${winner.name} Proves Elite Status with ${overallRating}-Rated G1 Triumph`,

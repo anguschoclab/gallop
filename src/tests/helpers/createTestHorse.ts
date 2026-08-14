@@ -6,10 +6,7 @@ import type {
   RunningStyle,
   HorseMarkings,
   HealthStatus,
-  BlueHenStatus,
   CoatColor,
-  Pedigree,
-  StudCareer,
 } from "@/game/types";
 import { createTestGenotype } from "./createTestGenotype";
 import { createTestAppearance } from "./createTestAppearance";

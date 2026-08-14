@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGame } from "@/game/store";
 import { Activity } from "lucide-react";
 import { NewsContent } from "@/components/narrative/NewsContent";
+import { DASHBOARD_NEWS_FEED_LIMIT } from "@/constants";
 
 export function NewsFeedWidget() {
   const log = useGame((s) => s.log);
@@ -17,7 +18,7 @@ export function NewsFeedWidget() {
       <CardContent className="p-0">
         <div className="divide-y divide-white/5 max-h-[300px] overflow-y-auto custom-scrollbar">
           {log.length > 0 ? (
-            log.slice(0, 15).map((l, i) => (
+            log.slice(0, DASHBOARD_NEWS_FEED_LIMIT).map((l, i) => (
               <div
                 key={i}
                 className="px-6 py-3 flex items-start gap-5 hover:bg-white/[0.02] transition-colors group"

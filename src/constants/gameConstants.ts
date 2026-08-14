@@ -660,6 +660,35 @@ export const FOAL_BREAKING_IN_DAY = 18;
 export const FOAL_EARLY_WORKOUTS_DAY = 24;
 
 // ============================================================================
+// NEWS GENERATION
+// ============================================================================
+
+/**
+ * Price threshold (in dollars) above which market news is classified as high importance
+ */
+export const NEWS_HIGH_IMPORTANCE_PRICE_THRESHOLD = 500000;
+
+/**
+ * Minimum race distance (in meters) for stamina-test flavor text
+ */
+export const NEWS_LONG_DISTANCE_THRESHOLD = 2400;
+
+/**
+ * Maximum race distance (in meters) for sprint flavor text
+ */
+export const NEWS_SPRINT_DISTANCE_THRESHOLD = 1200;
+
+/**
+ * Winning margin (in seconds) above which dominant-victory flavor is added
+ */
+export const NEWS_DOMINANT_MARGIN_SECONDS = 1.5;
+
+/**
+ * Probability per upkeep day of generating a random flavor news item
+ */
+export const NEWS_FLAVOR_DAILY_PROBABILITY = 0.1;
+
+// ============================================================================
 // DASHBOARD
 // ============================================================================
 

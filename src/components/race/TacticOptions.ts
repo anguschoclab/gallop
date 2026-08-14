@@ -1,4 +1,5 @@
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+import { AGGRESSIVENESS_DEFAULT } from "@/constants";
 
 export interface InstructionPreset {
   id: string;
@@ -18,7 +19,7 @@ export const INSTRUCTION_PRESETS: InstructionPreset[] = [
       ridingStyle: "tactical",
       earlyPosition: "midpack",
       moveTiming: "mid",
-      aggressiveness: 50,
+      aggressiveness: AGGRESSIVENESS_DEFAULT,
     },
   },
   {

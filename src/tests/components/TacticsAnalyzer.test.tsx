@@ -5,6 +5,7 @@ import { createDefaultGameState } from "@/game/store/state";
 import { useGame } from "@/game/store";
 import { TacticsAnalyzer } from "@/components/tactics/TacticsAnalyzer";
 import type { Horse, Race } from "@/game/types";
+import { AGGRESSIVENESS_DEFAULT, TACTICS_SAVED_FEEDBACK_MS } from "@/constants";
 
 vi.mock("sonner", () => ({
   toast: { success: vi.fn() },
@@ -101,7 +102,7 @@ describe("TacticsAnalyzer", () => {
     expect((tacticsIntent as any)?.jockeyInstructions?.ridingStyle).toBe("tactical");
     expect((tacticsIntent as any)?.jockeyInstructions?.earlyPosition).toBe("midpack");
     expect((tacticsIntent as any)?.jockeyInstructions?.moveTiming).toBe("mid");
-    expect((tacticsIntent as any)?.jockeyInstructions?.aggressiveness).toBe(50);
+    expect((tacticsIntent as any)?.jockeyInstructions?.aggressiveness).toBe(AGGRESSIVENESS_DEFAULT);
   });
 
   it("save button shows 'Saved!' feedback then reverts after 2 seconds", () => {
@@ -117,7 +118,7 @@ describe("TacticsAnalyzer", () => {
     expect(screen.getByRole("button", { name: "Saved!" })).toBeTruthy();
 
     act(() => {
-      vi.advanceTimersByTime(2000);
+      vi.advanceTimersByTime(TACTICS_SAVED_FEEDBACK_MS);
     });
     expect(screen.getByRole("button", { name: "Save Tactics" })).toBeTruthy();
   });

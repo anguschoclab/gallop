@@ -1,3 +1,4 @@
+import { TOOLTIP_DELAY_MS } from "@/constants";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -44,7 +45,7 @@ export function CeremonyRsvpStatusIndicator({
     phase === "counted" && invitation.rsvp !== "attending" ? "Not Counted" : PHASE_LABELS[phase];
 
   return (
-    <TooltipProvider delayDuration={300}>
+    <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
       <Tooltip>
         <TooltipTrigger asChild>
           <Badge variant="outline" className={PHASE_CLASSES[phase]} data-testid="rsvp-status">

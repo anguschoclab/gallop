@@ -9,13 +9,14 @@ import {
   ReferenceLine,
 } from "recharts";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
+import { BEYER_CHART_HISTORY_LIMIT } from "@/constants";
 
 type Entry = { raceName: string; day: number; beyer?: number; position: number };
 
 export function BeyerChart({ history }: { history: Entry[] }) {
   const data = [...history]
     .filter((h) => typeof h.beyer === "number")
-    .slice(0, 10)
+    .slice(0, BEYER_CHART_HISTORY_LIMIT)
     .reverse()
     .map((h, i) => ({
       idx: i + 1,

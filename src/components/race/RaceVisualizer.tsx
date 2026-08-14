@@ -1,3 +1,4 @@
+import { TOOLTIP_DELAY_MS } from "@/constants";
 import React, { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import {
   Play,
@@ -367,7 +368,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
       </div>
 
       <div className="race-controls">
-        <Tooltip delayDuration={300}>
+        <Tooltip delayDuration={TOOLTIP_DELAY_MS}>
           <TooltipTrigger asChild>
             <button
               className="race-control-btn"
@@ -379,7 +380,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
           </TooltipTrigger>
           <TooltipContent>Step back (←)</TooltipContent>
         </Tooltip>
-        <Tooltip delayDuration={300}>
+        <Tooltip delayDuration={TOOLTIP_DELAY_MS}>
           <TooltipTrigger asChild>
             <button
               className="race-control-btn"
@@ -391,7 +392,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
           </TooltipTrigger>
           <TooltipContent>Play/Pause (space)</TooltipContent>
         </Tooltip>
-        <Tooltip delayDuration={300}>
+        <Tooltip delayDuration={TOOLTIP_DELAY_MS}>
           <TooltipTrigger asChild>
             <button
               className="race-control-btn"
@@ -403,7 +404,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
           </TooltipTrigger>
           <TooltipContent>Step forward (→)</TooltipContent>
         </Tooltip>
-        <Tooltip delayDuration={300}>
+        <Tooltip delayDuration={TOOLTIP_DELAY_MS}>
           <TooltipTrigger asChild>
             <button className="race-control-btn" onClick={restart} aria-label="Restart race">
               <RotateCcw size={20} />
@@ -411,7 +412,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
           </TooltipTrigger>
           <TooltipContent>Restart race</TooltipContent>
         </Tooltip>
-        <Tooltip delayDuration={300}>
+        <Tooltip delayDuration={TOOLTIP_DELAY_MS}>
           <TooltipTrigger asChild>
             <button
               className="race-control-btn"
@@ -423,7 +424,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
           </TooltipTrigger>
           <TooltipContent>Toggle camera focus</TooltipContent>
         </Tooltip>
-        <Tooltip delayDuration={300}>
+        <Tooltip delayDuration={TOOLTIP_DELAY_MS}>
           <TooltipTrigger asChild>
             <button
               className="race-control-btn"

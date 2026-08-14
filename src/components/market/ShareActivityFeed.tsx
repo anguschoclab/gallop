@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, TrendingUp, TrendingDown, Crown, HandCoins, DollarSign } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
+import { SHARE_ACTIVITY_FEED_LIMIT } from "@/constants";
 
 interface ShareActivityFeedProps {
   syndicateId?: string;
@@ -124,7 +125,7 @@ export function ShareActivityFeed({ syndicateId }: ShareActivityFeedProps) {
 
   const filtered = useMemo(() => {
     const items = syndicateId ? feed.filter((f) => f.syndicateId === syndicateId) : feed;
-    return [...items].reverse().slice(0, 50);
+    return [...items].reverse().slice(0, SHARE_ACTIVITY_FEED_LIMIT);
   }, [feed, syndicateId]);
 
   return (

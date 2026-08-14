@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Flag, Trophy, Lock } from "lucide-react";
+import { NOMINATIONS_UPCOMING_LIMIT } from "@/constants";
 
 const TIER_COLORS: Record<NominationTier, string> = {
   early: "bg-emerald-500/20 text-emerald-300 border-emerald-400/40",
@@ -57,7 +58,7 @@ export function NominationsTab() {
       Object.values(races)
         .filter((r) => getRaceGrade(r) && r.day > day && !r.resolved)
         .sort((a, b) => a.day - b.day)
-        .slice(0, 60),
+        .slice(0, NOMINATIONS_UPCOMING_LIMIT),
     [races, day],
   );
 

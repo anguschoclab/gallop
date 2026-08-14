@@ -168,7 +168,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       }
       // Process trait XP awards
       if (traitXpAwards) {
-        let updated = jockey as any;
+        let updated = jockey;
         for (const [traitKey, xp] of Object.entries(traitXpAwards)) {
           updated = awardTraitXp(updated, traitKey, xp);
         }

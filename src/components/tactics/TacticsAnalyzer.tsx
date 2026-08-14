@@ -6,6 +6,7 @@ import { Target, Zap, Gauge, Wind } from "lucide-react";
 import { useGame } from "@/game/store";
 import {
   type JockeyInstructions,
+  createDefaultInstructions,
   getRidingStyleDescription,
   getEarlyPositionDescription,
   getMoveTimingDescription,
@@ -18,6 +19,12 @@ import {
 import { cn } from "@/lib/cn";
 import { useState } from "react";
 import { toast } from "sonner";
+import {
+  AGGRESSIVENESS_MIN,
+  AGGRESSIVENESS_MAX,
+  AGGRESSIVENESS_STEP,
+  TACTICS_SAVED_FEEDBACK_MS,
+} from "@/constants";
 
 interface TacticsAnalyzerProps {
   horseId: string;
@@ -29,14 +36,9 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
   const race = useGame((s) => s.races[raceId]);
   const setRaceTactics = useGame((s) => s.setRaceTactics);
 
-  const [instructions, setInstructions] = useState<JockeyInstructions>({
-    horseId,
-    raceId,
-    ridingStyle: "tactical",
-    earlyPosition: "midpack",
-    moveTiming: "mid",
-    aggressiveness: 50,
-  });
+  const [instructions, setInstructions] = useState<JockeyInstructions>(
+    createDefaultInstructions(horseId, raceId),
+  );
   const [saved, setSaved] = useState(false);
 
   if (!horse || !race) return null;
@@ -47,7 +49,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
     setRaceTactics(raceId, horseId, instructions);
     setSaved(true);
     toast.success("Tactics saved for this race entry.");
-    setTimeout(() => setSaved(false), 2000);
+    setTimeout(() => setSaved(false), TACTICS_SAVED_FEEDBACK_MS);
   };
 
   const ridingStyles: {
@@ -188,9 +190,9 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
           <Slider
             value={[instructions.aggressiveness]}
             onValueChange={([value]) => setInstructions({ ...instructions, aggressiveness: value })}
-            min={0}
-            max={100}
-            step={5}
+            min={AGGRESSIVENESS_MIN}
+            max={AGGRESSIVENESS_MAX}
+            step={AGGRESSIVENESS_STEP}
             className="py-2"
           />
           <div className="flex justify-between text-[8px] text-cream/30 font-mono">

@@ -11,6 +11,7 @@ import { StableDetailsPanel } from "@/components/dashboard/StableDetailsPanel";
 import { formatCurrency } from "@/core/common/formatting";
 import { cn } from "@/lib/cn";
 import { Trophy, Bell } from "lucide-react";
+import { DASHBOARD_SEASON_STANDINGS_LIMIT } from "@/constants";
 
 const RANGES = [
   { label: "7D", days: 7 },
@@ -56,7 +57,7 @@ export function SeasonStandingsWidget() {
     [inbox],
   );
 
-  const top10 = standings.slice(0, 10);
+  const top10 = standings.slice(0, DASHBOARD_SEASON_STANDINGS_LIMIT);
   const playerInTop = top10.some((s) => s.isPlayer);
   const rows = playerInTop ? top10 : [...top10, standings[playerRank - 1]].filter(Boolean);
 

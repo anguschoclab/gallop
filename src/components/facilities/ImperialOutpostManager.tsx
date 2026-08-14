@@ -1,3 +1,4 @@
+import { TOOLTIP_DELAY_MS } from "@/constants";
 import React, { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -160,7 +161,7 @@ export function ImperialOutpostManager() {
                   </p>
                   <p className="text-[10px] text-gold uppercase font-bold">Unassigned</p>
                 </div>
-                <TooltipProvider delayDuration={300}>
+                <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button

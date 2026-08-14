@@ -1,3 +1,4 @@
+import { TOOLTIP_DELAY_MS } from "@/constants";
 import { useState, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { TrophyCase } from "@/components/awards";
@@ -256,7 +257,7 @@ export function StableRosterView({
                           label={h.name}
                           subtitle={`Age ${Math.floor(h.age)} · ${h.gender}`}
                         />
-                        <TooltipProvider delayDuration={300}>
+                        <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Link
@@ -277,7 +278,7 @@ export function StableRosterView({
                             <TooltipContent>Training Room</TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
-                        <TooltipProvider delayDuration={300}>
+                        <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Link to="/scheduler">
@@ -395,7 +396,7 @@ export function StableRosterView({
             })}
           </div>
           {selectedIds.length < 2 ? (
-            <TooltipProvider delayDuration={300}>
+            <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span
@@ -427,7 +428,7 @@ export function StableRosterView({
             </Button>
           )}
 
-          <TooltipProvider delayDuration={300}>
+          <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button

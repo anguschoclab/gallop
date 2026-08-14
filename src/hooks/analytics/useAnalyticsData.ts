@@ -6,6 +6,16 @@ import { useMemo } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { Transaction } from "@/core/transactions/transactionTypes";
 import { getCareerStats } from "@/core/horse/stats";
+import {
+  ANALYTICS_CASH_LOOKBACK_DAYS,
+  ANALYTICS_RECENT_RACES_COUNT,
+  ANALYTICS_EARNINGS_WEEKS,
+  ANALYTICS_EXPENSE_LOOKBACK_DAYS,
+  ANALYTICS_EXPENSE_TOP_N,
+  ANALYTICS_SIRE_TREND_DAYS,
+  ANALYTICS_ENERGY_BUCKET_COUNT,
+  ANALYTICS_ENERGY_BUCKET_WIDTH,
+} from "@/constants";
 
 export function useAnalyticsData() {
   const day = useGame((s) => s.day);
@@ -19,20 +29,20 @@ export function useAnalyticsData() {
     const owned = Object.values(horses).filter((h) => h.owned);
     const active = owned.filter((h) => h.lifecycleStatus === "active");
 
-    // Cash curve (last 90 days) from transactions balanceAfter
-    const minDay = Math.max(0, day - 90);
+    // Cash curve from transactions balanceAfter
+    const minDay = Math.max(0, day - ANALYTICS_CASH_LOOKBACK_DAYS);
     const cashPoints = transactions
       .filter((t) => t.day >= minDay)
       .map((t) => ({ x: t.day, y: t.balanceAfter }));
     if (cashPoints.length === 0) cashPoints.push({ x: day, y: cash });
 
-    // Win/place/show from last 30 race results across owned horses
+    // Win/place/show from recent race results across owned horses
     let wins = 0,
       places = 0,
       shows = 0,
       runs = 0;
     owned.forEach((h) => {
-      h.raceHistory.slice(-30).forEach((r) => {
+      h.raceHistory.slice(-ANALYTICS_RECENT_RACES_COUNT).forEach((r) => {
         runs++;
         if (r.position === 1) wins++;
         else if (r.position === 2) places++;
@@ -40,8 +50,8 @@ export function useAnalyticsData() {
       });
     });
 
-    // Earnings vs spend - last 12 weeks bucketed weekly
-    const weeks = 12;
+    // Earnings vs spend - bucketed weekly
+    const weeks = ANALYTICS_EARNINGS_WEEKS;
     const buckets = Array.from({ length: weeks }, (_, i) => ({
       x: day - (weeks - 1 - i) * 7,
       income: 0,
@@ -55,10 +65,10 @@ export function useAnalyticsData() {
       else b.expense += -t.amount;
     });
 
-    // Expense category breakdown (last 30 days)
+    // Expense category breakdown
     const recentExpenses = new Map<string, number>();
     transactions.forEach((t) => {
-      if (t.day < day - 30) return;
+      if (t.day < day - ANALYTICS_EXPENSE_LOOKBACK_DAYS) return;
       if (t.amount < 0) {
         const key = t.subcategory || t.type || "other";
         recentExpenses.set(key, (recentExpenses.get(key) ?? 0) + -t.amount);
@@ -66,19 +76,22 @@ export function useAnalyticsData() {
     });
     const expenseRows = Array.from(recentExpenses.entries())
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 6)
+      .slice(0, ANALYTICS_EXPENSE_TOP_N)
       .map(([label, value]) => ({ label, value }));
 
     // Energy distribution
-    const energyBuckets = [0, 0, 0, 0, 0]; // 0-19, 20-39, 40-59, 60-79, 80-100
+    const energyBuckets = new Array(ANALYTICS_ENERGY_BUCKET_COUNT).fill(0);
     active.forEach((h) => {
-      const idx = Math.min(4, Math.floor(h.energy / 20));
+      const idx = Math.min(
+        ANALYTICS_ENERGY_BUCKET_COUNT - 1,
+        Math.floor(h.energy / ANALYTICS_ENERGY_BUCKET_WIDTH),
+      );
       energyBuckets[idx]++;
     });
 
-    // Pre-compute sire trend map (last 60d) for O(1) lookups
+    // Pre-compute sire trend map for O(1) lookups
     const sireTrendMap = new Map<string, number[]>();
-    const trendMinDay = day - 60;
+    const trendMinDay = day - ANALYTICS_SIRE_TREND_DAYS;
     for (let i = 0; i < sireTrendHistory.length; i++) {
       const t = sireTrendHistory[i];
       if (t.day < trendMinDay) continue;
@@ -90,7 +103,7 @@ export function useAnalyticsData() {
       }
     }
 
-    // Top sire trend (last 60d)
+    // Top sire trend
     const topSire = sireLeaderboards?.overall?.rankings?.[0];
     const topSireTrend = topSire ? (sireTrendMap.get(topSire.stallionId) ?? []) : [];
 

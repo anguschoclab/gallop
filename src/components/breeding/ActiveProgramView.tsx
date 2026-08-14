@@ -29,6 +29,11 @@ import {
   CANCEL_DIALOG_KEEP,
   CANCEL_DIALOG_CONFIRM,
   CANCEL_BUTTON_ARIA_LABEL,
+  MIN_BREEDING_AGE,
+  DISTANCE_MAX,
+  PERCENTAGE_MULTIPLIER,
+  MAX_ELIGIBLE_MARES_DISPLAY,
+  MAX_HISTORY_ENTRIES_DISPLAY,
 } from "@/constants/breedingConstants";
 
 function getBestSurface(mare: Horse) {
@@ -63,12 +68,12 @@ export function ActiveProgramView() {
     (h) =>
       h.owned &&
       (h.gender === "mare" || h.gender === "filly") &&
-      h.age >= 3 &&
+      h.age >= MIN_BREEDING_AGE &&
       !enrolledDamSet.has(h.id),
   );
 
   const enrolledMares = Object.values(horses).filter((h) => enrolledDamSet.has(h.id));
-  const progressPct = Math.round((1 - program.geneticDistance) * 100);
+  const progressPct = Math.round((DISTANCE_MAX - program.geneticDistance) * PERCENTAGE_MULTIPLIER);
 
   const handleEnroll = (damId: string) => {
     const result = enrollDamInProgram(damId);
@@ -102,6 +107,7 @@ export function ActiveProgramView() {
                     className="h-7 w-7 p-0 text-cream-muted hover:text-red-400"
                     onClick={openCancelDialog}
                     aria-label={CANCEL_BUTTON_ARIA_LABEL}
+                    disabled={isOpen}
                   >
                     <X className="h-3.5 w-3.5" />
                   </Button>
@@ -233,8 +239,8 @@ export function ActiveProgramView() {
                 Add mare to program:
               </p>
               <div className="space-y-1">
-                {eligibleMares.slice(0, 5).map((mare) => {
-                  const dist = archetype ? calculateGeneticDistance(mare, archetype) : 1;
+                {eligibleMares.slice(0, MAX_ELIGIBLE_MARES_DISPLAY).map((mare) => {
+                  const dist = archetype ? calculateGeneticDistance(mare, archetype) : DISTANCE_MAX;
                   return (
                     <button
                       key={mare.id}
@@ -274,7 +280,7 @@ export function ActiveProgramView() {
             <div className="space-y-1">
               {[...program.history]
                 .reverse()
-                .slice(0, 6)
+                .slice(0, MAX_HISTORY_ENTRIES_DISPLAY)
                 .map((entry, i) => {
                   const horse = horses[entry.horseId];
                   return (

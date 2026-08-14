@@ -3,6 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { seedStore } from "@/test-utils/renderWithStore";
 import { useDashboardData } from "@/hooks/dashboard/useDashboardData";
 import { createDefaultGameState } from "@/game/store/state";
+import { ENERGY_LOW_THRESHOLD } from "@/constants";
 import type { Horse } from "@/core/horse/types";
 
 function mkHorse(id: string, overrides: Partial<Horse> = {}): Horse {
@@ -11,7 +12,7 @@ function mkHorse(id: string, overrides: Partial<Horse> = {}): Horse {
     name: `Horse-${id}`,
     owned: true,
     lifecycleStatus: "active",
-    energy: 50,
+    energy: ENERGY_LOW_THRESHOLD + 10,
     raceHistory: [],
     stats: {
       speed: 50,
@@ -32,10 +33,26 @@ describe("useDashboardData — horse categorization", () => {
 
   it("correctly categorizes owned, active, and low-energy horses", () => {
     const horses: Record<string, Horse> = {
-      h1: mkHorse("h1", { owned: true, lifecycleStatus: "active", energy: 50 }),
-      h2: mkHorse("h2", { owned: true, lifecycleStatus: "active", energy: 30 }),
-      h3: mkHorse("h3", { owned: true, lifecycleStatus: "retired", energy: 50 }),
-      h4: mkHorse("h4", { owned: false, lifecycleStatus: "active", energy: 50 }),
+      h1: mkHorse("h1", {
+        owned: true,
+        lifecycleStatus: "active",
+        energy: ENERGY_LOW_THRESHOLD + 10,
+      }),
+      h2: mkHorse("h2", {
+        owned: true,
+        lifecycleStatus: "active",
+        energy: ENERGY_LOW_THRESHOLD - 10,
+      }),
+      h3: mkHorse("h3", {
+        owned: true,
+        lifecycleStatus: "retired",
+        energy: ENERGY_LOW_THRESHOLD + 10,
+      }),
+      h4: mkHorse("h4", {
+        owned: false,
+        lifecycleStatus: "active",
+        energy: ENERGY_LOW_THRESHOLD + 10,
+      }),
     };
 
     seedStore({ horses });
@@ -58,9 +75,21 @@ describe("useDashboardData — horse categorization", () => {
 
   it("all owned, active, low-energy → all three arrays have same length", () => {
     const horses: Record<string, Horse> = {
-      h1: mkHorse("h1", { owned: true, lifecycleStatus: "active", energy: 20 }),
-      h2: mkHorse("h2", { owned: true, lifecycleStatus: "active", energy: 10 }),
-      h3: mkHorse("h3", { owned: true, lifecycleStatus: "active", energy: 30 }),
+      h1: mkHorse("h1", {
+        owned: true,
+        lifecycleStatus: "active",
+        energy: ENERGY_LOW_THRESHOLD - 20,
+      }),
+      h2: mkHorse("h2", {
+        owned: true,
+        lifecycleStatus: "active",
+        energy: ENERGY_LOW_THRESHOLD - 30,
+      }),
+      h3: mkHorse("h3", {
+        owned: true,
+        lifecycleStatus: "active",
+        energy: ENERGY_LOW_THRESHOLD - 10,
+      }),
     };
 
     seedStore({ horses });

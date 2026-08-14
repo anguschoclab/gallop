@@ -1,3 +1,4 @@
+import { TOOLTIP_DELAY_MS } from "@/constants";
 import { type MouseEvent, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
@@ -15,7 +16,7 @@ function DisabledTooltipWrapper({
   if (!reason) return <>{children}</>;
 
   return (
-    <TooltipProvider delayDuration={300}>
+    <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
       <Tooltip>
         <TooltipTrigger asChild>
           <span tabIndex={0} className="inline-block cursor-not-allowed">

@@ -6,6 +6,11 @@ import {
   chartColors,
   formatCurrencyCompact,
 } from "@/components/charts";
+import {
+  ANALYTICS_ROI_RANKING_DISPLAY,
+  ANALYTICS_FORM_CHART_DISPLAY,
+  ANALYTICS_FORM_CHART_RECENT_RACES,
+} from "@/constants";
 
 export function AnalyticsStableTab() {
   const d = useAnalyticsData();
@@ -56,7 +61,7 @@ export function AnalyticsStableTab() {
         <ChartCard title="ROI ranked" subtitle={`${d.rankedRoi.length} horses`}>
           <div className="px-3 py-2 max-h-[260px] overflow-y-auto">
             <MiniBar
-              rows={d.rankedRoi.slice(0, 10).map((r) => ({
+              rows={d.rankedRoi.slice(0, ANALYTICS_ROI_RANKING_DISPLAY).map((r) => ({
                 label: r.name,
                 value: r.net,
                 hint: `Earned ${formatCurrencyCompact(r.earnings)} · spent ${formatCurrencyCompact(r.expense)}`,
@@ -69,15 +74,17 @@ export function AnalyticsStableTab() {
 
         <ChartCard
           className="md:col-span-2 lg:col-span-3"
-          title="Form pulse · last 10 starts per horse"
+          title={`Form pulse · last ${ANALYTICS_FORM_CHART_RECENT_RACES} starts per horse`}
           footnote="Each row: 1 = ITM (top-3), 0 = unplaced"
         >
           <div className="px-3 py-2 space-y-2 max-h-[320px] overflow-y-auto">
             {d.owned
               .filter((h) => h.raceHistory.length > 0)
-              .slice(0, 12)
+              .slice(0, ANALYTICS_FORM_CHART_DISPLAY)
               .map((h) => {
-                const series = h.raceHistory.slice(-10).map((r) => (r.position <= 3 ? 1 : 0));
+                const series = h.raceHistory
+                  .slice(-ANALYTICS_FORM_CHART_RECENT_RACES)
+                  .map((r) => (r.position <= 3 ? 1 : 0));
                 return (
                   <div key={h.id} className="flex items-center gap-3">
                     <div className="w-32 text-[11px] truncate text-cream/80">{h.name}</div>

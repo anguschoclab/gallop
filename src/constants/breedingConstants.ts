@@ -77,3 +77,38 @@ export const CANCEL_BUTTON_ARIA_LABEL = "Cancel breeding program";
 
 // Breeding program toast messages
 export const TOAST_PROGRAM_CANCELLED = "Breeding program cancelled.";
+
+// Breeding program genetic distance thresholds
+export const DISTANCE_THRESHOLD_MODERATE = 0.6;
+export const DISTANCE_THRESHOLD_GOOD = 0.4;
+export const DISTANCE_THRESHOLD_EXCELLENT = 0.2;
+
+// Breeding program distance bounds
+export const DISTANCE_MIN = 0;
+export const DISTANCE_MAX = 1;
+
+// Breeding program initial values
+export const INITIAL_GENETIC_DISTANCE = 1.0;
+export const INITIAL_GENERATION_COUNT = 0;
+
+// Stat normalization (horse stats are 0-100, normalized to 0-1)
+export const STAT_NORMALIZATION_MAX = 100;
+
+// Percentage conversion multiplier
+export const PERCENTAGE_MULTIPLIER = 100;
+
+// Breeding program milestone trigger conditions
+export const TRIGGER_FIRST_GENERATION = "first_generation" as const;
+export const TRIGGER_DISTANCE_MODERATE = "distance_below_0.6" as const;
+export const TRIGGER_DISTANCE_GOOD = "distance_below_0.4" as const;
+export const TRIGGER_DISTANCE_EXCELLENT = "distance_below_0.2" as const;
+
+// Breeding program milestone descriptions
+export const MILESTONE_DESC_FIRST_GEN = "First generation foal";
+export const MILESTONE_DESC_FOUNDATION = "Genetic foundation established";
+export const MILESTONE_DESC_TAKING_SHAPE = "Program taking shape";
+export const MILESTONE_DESC_EXCELLENT = "Achieve genetic distance below 0.2";
+
+// Breeding program UI display limits
+export const MAX_ELIGIBLE_MARES_DISPLAY = 5;
+export const MAX_HISTORY_ENTRIES_DISPLAY = 6;

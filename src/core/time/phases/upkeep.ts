@@ -25,7 +25,12 @@ import {
 } from "@/core/ai/upkeepAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/core/ai/subsystemWeightConstants";
-import { UPKEEP_PER_HORSE, PHASE_ORDER_UPKEEP } from "@/constants";
+import {
+  UPKEEP_PER_HORSE,
+  PHASE_ORDER_UPKEEP,
+  NEWS_FLAVOR_DAILY_PROBABILITY,
+  DAYS_PER_WEEK,
+} from "@/constants";
 
 /**
  * Phase: Upkeep
@@ -244,7 +249,7 @@ export const upkeepPhase = {
       impacts: [
         ...context.impacts,
         ...impacts,
-        ...(dailyRng.next() < 0.1
+        ...(dailyRng.next() < NEWS_FLAVOR_DAILY_PROBABILITY
           ? [
               {
                 id: generateUUID(dailyRng),
@@ -257,7 +262,7 @@ export const upkeepPhase = {
               } as NewsImpact,
             ]
           : []),
-        ...(newDay % 7 === 0
+        ...(newDay % DAYS_PER_WEEK === 0
           ? [
               {
                 id: generateUUID(dailyRng),

@@ -2,12 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SilkDot } from "@/components/SilkDot";
 import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
+import { TacticsAnalyzer } from "@/components/tactics/TacticsAnalyzer";
 import { buildPreShowField } from "@/core/race/preShowField";
 import { Flag, Play } from "lucide-react";
 import type { TrackCondition } from "@/game/types";
 
 interface RacePreShowProps {
   race: {
+    id: string;
     name: string;
     distance: number;
     surface?: string;
@@ -30,6 +32,7 @@ interface RacePreShowProps {
 export function RacePreShow({ race, runners, runnerOdds, onStart }: RacePreShowProps) {
   const field = buildPreShowField(runners, runnerOdds);
   const gradeLabel = race.graded?.grade ? `${race.graded.grade} Stakes` : "Race";
+  const ownedRunner = runners.find((r) => r.owned);
 
   return (
     <div className="broadcast min-h-screen text-white bg-broadcast-track">
@@ -82,6 +85,9 @@ export function RacePreShow({ race, runners, runnerOdds, onStart }: RacePreShowP
             </div>
           ))}
         </div>
+
+        {/* Tactics analyzer for player's entered horse */}
+        {ownedRunner && <TacticsAnalyzer horseId={ownedRunner.horseId} raceId={race.id} />}
 
         {/* Start CTA */}
         <div className="flex justify-center pt-2">

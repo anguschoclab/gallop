@@ -1,3 +1,4 @@
+import { TOOLTIP_DELAY_MS } from "@/constants";
 /**
  * AuctionControls.tsx - Bidding and management controls
  *
@@ -60,7 +61,7 @@ export function AuctionControls({
       {/* Main Action Bar */}
       <div className="grid grid-cols-4 gap-3">
         {playerIsLeading || isPlayerConsignment ? (
-          <TooltipProvider delayDuration={300}>
+          <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <span tabIndex={0} className="col-span-2 inline-block w-full cursor-not-allowed">

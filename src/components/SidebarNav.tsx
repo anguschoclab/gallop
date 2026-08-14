@@ -33,7 +33,7 @@ import {
 
 import { formatCurrency } from "@/core/common/formatting";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
-import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/constants";
+import { DAYS_PER_WEEK, DAYS_PER_MONTH, TOOLTIP_DELAY_MS, SIDEBAR_WIDTH_PX } from "@/constants";
 import { NavSection, type NavItem, clearAllSidebarStorage } from "./NavSection";
 import { useState } from "react";
 
@@ -57,6 +57,7 @@ const navSections: { label: string; items: NavItem[] }[] = [
       { to: "/stable", label: "Stables", icon: Trophy, exact: false },
       { to: "/horse-gallery", label: "Horses", icon: LayoutGrid, exact: false },
       { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
+      { to: "/broodmares", label: "Broodmares", icon: Heart, exact: false },
       { to: "/staff", label: "Staff", icon: Users, exact: false },
       { to: "/jockeys", label: "Jockeys", icon: User, exact: false },
       { to: "/facilities", label: "Facilities", icon: Building2, exact: false },
@@ -118,7 +119,10 @@ export function SidebarNav({
   }
 
   return (
-    <aside className="w-[248px] shrink-0 border-r border-gold-muted bg-t950 flex flex-col">
+    <aside
+      className="w-[248px] shrink-0 border-r border-gold-muted bg-t950 flex flex-col"
+      style={{ width: SIDEBAR_WIDTH_PX }}
+    >
       <div className="p-5 border-b border-gold-muted">
         <h1 className="text-[21px] font-bold text-gold font-[family-name:var(--font-display)] tracking-[0.04em] leading-none">
           Gallop
@@ -164,7 +168,7 @@ export function SidebarNav({
           </p>
           <p className="text-[10px] text-cream-muted/60 mt-1">{horseCount} horses</p>
           <div className="grid grid-cols-4 gap-1">
-            <TooltipProvider delayDuration={300}>
+            <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -181,7 +185,7 @@ export function SidebarNav({
               </Tooltip>
             </TooltipProvider>
 
-            <TooltipProvider delayDuration={300}>
+            <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -198,7 +202,7 @@ export function SidebarNav({
               </Tooltip>
             </TooltipProvider>
 
-            <TooltipProvider delayDuration={300}>
+            <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -215,7 +219,7 @@ export function SidebarNav({
               </Tooltip>
             </TooltipProvider>
 
-            <TooltipProvider delayDuration={300}>
+            <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -233,7 +237,7 @@ export function SidebarNav({
             </TooltipProvider>
           </div>
           <div className="grid grid-cols-2 gap-1 mt-1">
-            <TooltipProvider delayDuration={300}>
+            <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -249,7 +253,7 @@ export function SidebarNav({
                 <TooltipContent>Skip to next auction</TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <TooltipProvider delayDuration={300}>
+            <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
