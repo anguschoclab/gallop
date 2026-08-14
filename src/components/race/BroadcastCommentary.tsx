@@ -38,12 +38,19 @@ export function BroadcastCommentary({ commentary, lastUpdatedAt }: BroadcastComm
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-2 px-2 py-1 rounded-full bg-black/40 border border-white/5">
+        <div
+          className="flex items-center gap-2 px-2 py-1 rounded-full bg-black/40 border border-white/5"
+          aria-label={`Commentary last updated ${freshness}`}
+        >
           <div className="h-1.5 w-1.5 rounded-full bg-destructive animate-pulse shadow-[0_0_8px_var(--destructive)]" />
           <span className="text-[8px] font-bold text-foreground uppercase tracking-tighter">
             Live
           </span>
+          <span className="text-[8px] font-medium text-muted-foreground tabular-nums lowercase tracking-normal">
+            {freshness}
+          </span>
         </div>
+
       </div>
       <div
         ref={scrollRef}
