@@ -17,6 +17,7 @@ interface LeaderboardProps {
   filter: "all" | "owned" | "top5";
   sortBy: "position" | "beyer" | "velocity";
   minBeyer: number;
+  lastUpdatedAt?: number;
   onFilterChange: (val: "all" | "owned" | "top5") => void;
   onSortByChange: (val: "position" | "beyer" | "velocity") => void;
   onMinBeyerChange: (val: number) => void;
