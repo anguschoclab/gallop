@@ -4,7 +4,7 @@ export const TRAIT_XP_UNLOCK_THRESHOLD = 100;
 export const TRAIT_XP_MAINTENANCE_THRESHOLD = 50;
 export const TRAIT_XP_TRAINING_CAP = 500;
 
-export function awardTraitXp(jockey: Jockey, traitKey: string, amount: number): Jockey {
+export function awardTraitXp(jockey: Jockey, traitKey: JockeyTrait, amount: number): Jockey {
   const progression = jockey.traitProgression ?? { xp: {}, unlockedAt: {} };
   const currentXp = progression.xp[traitKey] ?? 0;
   return {
@@ -22,15 +22,23 @@ export function checkTraitUnlock(jockey: Jockey, currentDay: number): Jockey {
   const { xp, unlockedAt } = jockey.traitProgression;
   const currentTraits = [...jockey.traits];
 
-  for (const [traitKey, traitXp] of Object.entries(xp)) {
-    if (traitXp >= TRAIT_XP_UNLOCK_THRESHOLD && !currentTraits.includes(traitKey as JockeyTrait)) {
+  for (const [traitKey, traitXp] of Object.entries(xp) as [JockeyTrait, number][]) {
+    if (
+      traitXp !== undefined &&
+      traitXp >= TRAIT_XP_UNLOCK_THRESHOLD &&
+      !currentTraits.includes(traitKey as JockeyTrait)
+    ) {
       currentTraits.push(traitKey as JockeyTrait);
     }
   }
 
   const newUnlockedAt = { ...unlockedAt };
   for (const trait of currentTraits) {
-    if (!newUnlockedAt[trait] && xp[trait] >= TRAIT_XP_UNLOCK_THRESHOLD) {
+    if (
+      !newUnlockedAt[trait] &&
+      xp[trait] !== undefined &&
+      xp[trait] >= TRAIT_XP_UNLOCK_THRESHOLD
+    ) {
       newUnlockedAt[trait] = currentDay;
     }
   }
@@ -57,7 +65,7 @@ export function checkTraitAtrophy(jockey: Jockey): Jockey {
   };
 }
 
-export function trainTrait(jockey: Jockey, traitKey: string, amount: number): Jockey {
+export function trainTrait(jockey: Jockey, traitKey: JockeyTrait, amount: number): Jockey {
   const progression = jockey.traitProgression ?? { xp: {}, unlockedAt: {} };
   const currentXp = progression.xp[traitKey] ?? 0;
   const newXp = Math.min(currentXp + amount, TRAIT_XP_TRAINING_CAP);

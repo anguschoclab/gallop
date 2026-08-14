@@ -77,7 +77,7 @@ export type Jockey = {
 
   // Trait progression system
   traitProgression?: {
-    xp: Record<string, number>; // traitKey → XP points
-    unlockedAt: Record<string, number>; // traitKey → game day unlocked
+    xp: Partial<Record<JockeyTrait, number>>; // traitKey → XP points
+    unlockedAt: Partial<Record<JockeyTrait, number>>; // traitKey → game day unlocked
   };
 };
