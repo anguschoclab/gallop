@@ -2,6 +2,16 @@ import { useState, useMemo, useRef } from "react";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Race } from "@/core/race/types";
 import { projectedBeyer } from "@/components/race/raceVisualHelpers";
+import { assertTieBreakFields } from "@/core/race/engine/validateTieBreakFields";
+
+/** Sub-centimetre position gaps are treated as ties (1 cm in metres). */
+const POS_EPSILON = 0.01;
+/** Beyer comparison tolerance — differences below this are considered equal. */
+const BEYER_EPSILON = 1e-9;
+/** Velocity comparison tolerance — differences below this are considered equal. */
+const VELOCITY_EPSILON = 1e-6;
+/** Fallback rank when a horse is not found in positionRank (filters them out of top5). */
+const FALLBACK_RANK = 99;
 
 /**
  * useLeaderboardState — derives the sorted/filtered leaderboard view from
@@ -22,6 +32,8 @@ export function useLeaderboardState(
    */
   tick = 0,
 ) {
+  assertTieBreakFields(runners, "useLeaderboardState");
+
   const [sortBy, setSortBy] = useState<"position" | "beyer" | "velocity">("position");
   const [filter, setFilter] = useState<"all" | "owned" | "top5">("all");
   const [minBeyer, setMinBeyer] = useState(0);
@@ -63,7 +75,6 @@ export function useLeaderboardState(
   };
 
   // Positions are continuous metres; treat sub-centimetre gaps as ties.
-  const POS_EPSILON = 0.01;
   const byPosition = (a: Runner, b: Runner) => {
     if (Math.abs(b.position - a.position) > POS_EPSILON) return b.position - a.position;
     return tieBreak(a, b);
@@ -96,7 +107,7 @@ export function useLeaderboardState(
   const sorted = useMemo(() => {
     const filtered = rows.filter(({ r, beyer }) => {
       if (filter === "owned" && !r.owned) return false;
-      if (filter === "top5" && (positionRank.get(r.horseId) ?? 99) > 5) return false;
+      if (filter === "top5" && (positionRank.get(r.horseId) ?? FALLBACK_RANK) > 5) return false;
       if (minBeyer > 0 && (beyer ?? 0) < minBeyer) return false;
       return true;
     });
@@ -104,12 +115,12 @@ export function useLeaderboardState(
     return [...filtered].sort((a, b) => {
       if (sortBy === "beyer") {
         const d = (b.beyer ?? -1) - (a.beyer ?? -1);
-        if (Math.abs(d) > 1e-9) return d;
+        if (Math.abs(d) > BEYER_EPSILON) return d;
         return byPosition(a.r, b.r);
       }
       if (sortBy === "velocity") {
         const d = b.r.velocity - a.r.velocity;
-        if (Math.abs(d) > 1e-6) return d;
+        if (Math.abs(d) > VELOCITY_EPSILON) return d;
         return byPosition(a.r, b.r);
       }
       return byPosition(a.r, b.r);

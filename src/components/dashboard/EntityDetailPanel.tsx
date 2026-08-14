@@ -2,14 +2,10 @@ import { useMemo } from "react";
 import { AreaTrend, formatCurrencyCompact } from "@/components/charts";
 import { weekBucket, type TimeWindowWeeks } from "@/core/analytics/timeWindow";
 import type { RegionRunRow } from "@/core/analytics/regionalTrends";
+import { type EntityKind, type Lookups } from "@/core/analytics/regionalConstants";
 
-type EntityKind = "jockeys" | "trainers" | "stables";
-
-interface Lookups {
-  jockeyNames: Map<string, string>;
-  stableNames: Map<string, string>;
-  trainerByStable: Map<string, { id: string; name: string }>;
-}
+/** Fallback bucket count when weeks is 0 (all-time). */
+const FALLBACK_WEEK_BUCKETS = 1;
 
 interface Props {
   entityId: string;
@@ -58,7 +54,7 @@ export function EntityDetailPanel({
   }, [entityRunsA]);
 
   const weeklyEarnings = useMemo(() => {
-    const buckets = weeks || 1;
+    const buckets = weeks || FALLBACK_WEEK_BUCKETS;
     const grouped: number[] = new Array(buckets).fill(0);
     for (const run of entityRunsA) {
       const b = weeks ? weekBucket(run.entry.day, day, weeks) : 0;

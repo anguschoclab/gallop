@@ -1,15 +1,22 @@
 import { useCallback } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import type { RegionKey } from "@/core/analytics/regionalTrends";
-import type { TimeWindowWeeks } from "@/core/analytics/timeWindow";
+import { TIME_WINDOW_OPTIONS, type TimeWindowWeeks } from "@/core/analytics/timeWindow";
+import {
+  ALL_SURFACES,
+  DEFAULT_WEEKS_A,
+  DEFAULT_WEEKS_B,
+  DIST_PRESET_MAP,
+  type DistPreset,
+  type MetricMode,
+} from "@/core/analytics/regionalConstants";
+
+export type { MetricMode, DistPreset } from "@/core/analytics/regionalConstants";
 
 type GenericNavigateFn = (opts: {
   search?: Record<string, unknown> | ((prev: Record<string, unknown>) => Record<string, unknown>);
   replace?: boolean;
 }) => void;
-
-export type MetricMode = "raw" | "rate";
-export type DistPreset = "all" | "sprint" | "mile" | "route" | "staying";
 
 export interface RegionalComparisonParams {
   region: RegionKey | null;
@@ -23,17 +30,7 @@ export interface RegionalComparisonParams {
   distPreset: DistPreset;
 }
 
-const ALL_SURFACES = ["Turf", "Dirt", "Synthetic"];
-
-const DIST_PRESET_MAP: Record<DistPreset, { distMin?: number; distMax?: number }> = {
-  all: {},
-  sprint: { distMin: 0, distMax: 1400 },
-  mile: { distMin: 1400, distMax: 1600 },
-  route: { distMin: 1600, distMax: 2000 },
-  staying: { distMin: 2000 },
-};
-
-const VALID_WEEKS = [4, 8, 12, 26, 52, 0] as const;
+const VALID_WEEKS = TIME_WINDOW_OPTIONS.map((o) => o.value);
 
 function coerceWeeks(value: unknown, fallback: TimeWindowWeeks): TimeWindowWeeks {
   return (VALID_WEEKS as readonly number[]).includes(value as number)
@@ -60,8 +57,8 @@ export function useRegionalComparisonParams() {
   const search = useSearch({ strict: false }) as Record<string, unknown>;
 
   const region = (search.region as RegionKey | undefined) ?? null;
-  const weeksA = coerceWeeks(search.weeksA, 12);
-  const weeksB = coerceWeeks(search.weeksB, 4);
+  const weeksA = coerceWeeks(search.weeksA, DEFAULT_WEEKS_A);
+  const weeksB = coerceWeeks(search.weeksB, DEFAULT_WEEKS_B);
   const metric: MetricMode = search.metric === "rate" ? "rate" : "raw";
   const compare = search.compare === true;
   const surface = parseSurface(search.surface);

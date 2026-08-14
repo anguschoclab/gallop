@@ -134,9 +134,11 @@ describe("validateTieBreakFields", () => {
     const runners = [makeRunner({ horseId: "", barrier: NaN, finishTime: -1 })];
     const issues = validateTieBreakFields(runners);
     expect(issues).toHaveLength(3);
-    expect(
-      issues.map((i: { field: string }) => i.field),
-    ).toEqual(["horseId", "barrier", "finishTime"]);
+    expect(issues.map((i: { field: string }) => i.field)).toEqual([
+      "horseId",
+      "barrier",
+      "finishTime",
+    ]);
   });
 
   it("collects issues across multiple runners", () => {

@@ -35,38 +35,20 @@ import {
   weekBucket,
   type TimeWindowWeeks,
 } from "@/core/analytics/timeWindow";
+import {
+  ALL_SURFACES,
+  DIST_PRESETS,
+  DIST_PRESET_MAP,
+  type DistPreset,
+  type EntityKind,
+  type Lookups,
+  type MetricMode,
+} from "@/core/analytics/regionalConstants";
 import type { Horse } from "@/core/horse/types";
 import type { Race } from "@/core/race/types";
 import { EntityDetailPanel } from "./EntityDetailPanel";
 
-export type MetricMode = "raw" | "rate";
-export type DistPreset = "all" | "sprint" | "mile" | "route" | "staying";
-
-const ALL_SURFACES = ["Turf", "Dirt", "Synthetic"] as const;
-
-const DIST_PRESETS: { value: DistPreset; label: string }[] = [
-  { value: "sprint", label: "Sprint" },
-  { value: "mile", label: "Mile" },
-  { value: "route", label: "Route" },
-  { value: "staying", label: "Staying" },
-  { value: "all", label: "All" },
-];
-
-const DIST_PRESET_MAP: Record<DistPreset, { distMin?: number; distMax?: number }> = {
-  all: {},
-  sprint: { distMin: 0, distMax: 1400 },
-  mile: { distMin: 1400, distMax: 1600 },
-  route: { distMin: 1600, distMax: 2000 },
-  staying: { distMin: 2000 },
-};
-
-type EntityKind = "jockeys" | "trainers" | "stables";
-
-interface Lookups {
-  jockeyNames: Map<string, string>;
-  stableNames: Map<string, string>;
-  trainerByStable: Map<string, { id: string; name: string }>;
-}
+export type { MetricMode, DistPreset } from "@/core/analytics/regionalConstants";
 
 interface Props {
   region: RegionKey | null;
