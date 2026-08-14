@@ -218,6 +218,11 @@ export function Track({
         const finishRank =
           r.finishTime !== null ? finishRankMapRef.current.get(r.horseId) : undefined;
 
+        const history = { peakVelocity: peakVelocityRef.current.get(r.horseId) ?? 0 };
+        const conditions = deriveRunnerConditions(r, fieldContext, history, distance);
+        const mood = deriveRunnerMood(r, fieldContext, history, distance, conditions);
+
+
         return (
           <div
             key={r.horseId}
@@ -278,12 +283,9 @@ export function Track({
                     Drafting
                   </div>
                 )}
-                {r.finishTime === null && r.velocity >= flyingThreshold && (
-                  <div className="px-1.5 py-0.5 rounded-full bg-warning/80 text-[8px] font-bold text-warning-foreground flex items-center gap-1 animate-bounce">
-                    <span className="h-1 w-1 rounded-full bg-warning-foreground" />
-                    Flying
-                  </div>
-                )}
+                <RunnerConditionBadges conditions={conditions} />
+                {r.finishTime === null && <RunnerMoodFace mood={mood} horseName={r.name} />}
+
               </div>
 
               <HorseSprite
