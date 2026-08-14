@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Slider } from "@/components/ui/slider";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
+import { useTimeAgo } from "@/hooks/shared/useTimeAgo";
+import { cn } from "@/lib/cn";
 import {
   LeaderboardControlsBar,
   LeaderboardEmpty,
