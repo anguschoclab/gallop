@@ -17,6 +17,9 @@ export const COMMENTARY_SLICE_CAP = 50;
 /** Time (ms) before the subject-horse highlight clears after a message. */
 export const SUBJECT_HIGHLIGHT_CLEAR_MS = 3000;
 
+/** Time (ms) after which a live widget is considered stale and shows a warning. */
+export const STALE_DATA_THRESHOLD_MS = 5000;
+
 /** Fractional positions at which split times are recorded. */
 export const SPLIT_FRACTIONS = [0.25, 0.5, 0.75, 1.0] as const;
 
