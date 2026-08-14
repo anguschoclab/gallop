@@ -117,5 +117,6 @@ export function useLeaderboardState(
     anyFinished,
     sorted,
     positionRank,
+    lastUpdatedAt,
   };
 }
