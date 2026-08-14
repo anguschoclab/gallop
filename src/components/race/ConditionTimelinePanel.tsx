@@ -31,10 +31,18 @@ function ConditionTimelinePanelInner({
     [runners, horseId],
   );
 
+  // Wall-clock stamp of the most recent simulation tick that fed the strip.
+  const lastUpdatedAt = useMemo(() => Date.now(), [tick, horseId]);
+
   if (!horseId || segments.length === 0) return null;
 
   return (
-    <MemoizedConditionTimeline segments={segments} distance={distance} horseName={horseName} />
+    <MemoizedConditionTimeline
+      segments={segments}
+      distance={distance}
+      horseName={horseName}
+      lastUpdatedAt={lastUpdatedAt}
+    />
   );
 }
 
