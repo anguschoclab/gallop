@@ -126,8 +126,8 @@ describe("Race Leaderboard", () => {
     expect(onSortByChange).toHaveBeenCalledWith("beyer");
   });
 
-  it("hides finish time on mobile (hidden sm:inline)", () => {
-    const { container } = render(
+  it("renders a live freshness indicator with a pulsing dot", () => {
+    render(
       <Leaderboard
         sorted={[mockRunner()]}
         positionRank={new Map([["h1", 1]])}
@@ -135,12 +135,13 @@ describe("Race Leaderboard", () => {
         filter="all"
         sortBy="position"
         minBeyer={0}
+        lastUpdatedAt={Date.now()}
         onFilterChange={() => {}}
         onSortByChange={() => {}}
         onMinBeyerChange={() => {}}
       />,
     );
-    const finishTimeSpan = container.querySelector(".hidden.sm\\:inline");
-    expect(finishTimeSpan).toBeTruthy();
+    expect(screen.getByText(/Live/)).toBeTruthy();
+    expect(document.querySelector("[class*='animate-ping']")).toBeTruthy();
   });
 });
