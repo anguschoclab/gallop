@@ -2,13 +2,8 @@
  * Strategic Coordinator Data Flow Tests
  *
  * Tests that verify the data flow between strategic coordinator outputs
- * and the NPC intent generators. These tests document the CURRENT broken
- * state (assessWorldState hardcodes economic trends, _weights is unused,
- * budgetAllocation is not checked, worldAssessment is recomputed) and will
- * be updated to assert correct behavior after the implementation fix.
- *
- * Test-first approach: these tests are written BEFORE the implementation
- * changes in Phase 1.2.
+ * and the NPC intent generators. Covers economic trends, subsystem weights,
+ * budget allocation enforcement, and cached worldAssessment passing.
  */
 
 import { describe, it, expect } from "vitest";
@@ -95,10 +90,7 @@ describe("assessWorldState: economic trends data flow", () => {
     const state = createMockGameState();
     const result = assessWorldState(state, manager);
 
-    // AFTER FIX: should use real economic data from manager
-    // CURRENT: hardcodes to placeholders
     expect(result.economicTrends).toBeDefined();
-    // This will fail before the fix — documenting the expected behavior
     expect(result.economicTrends.studFeeTrend).toBe(5.2);
     expect(result.economicTrends.yearlingPriceIndex).toBe(115);
     expect(result.economicTrends.claimingMarketActivity).toBe(0.3);
@@ -129,25 +121,18 @@ describe("coordinateSubsystems: weights are consumed by intent generators", () =
       ),
     });
 
-    // After fix: generateNpcIntents should use the weights to modulate behavior
-    // For now, just verify it doesn't crash
     const intents = generateNpcIntents(state, 100);
     expect(Array.isArray(intents)).toBe(true);
   });
 
   it("subsystem weights from coordinateSubsystems are stored on stableAI", () => {
-    // After the fix, the weights should be stored on stableAI and used by generators
-    // We verify by checking that stableAI has subsystemWeights after generateNpcIntents
     const manager = createMockManager();
     const state = createMockGameState({ npcAIManager: manager });
 
     generateNpcIntents(state, 100);
 
-    // After fix: stableAI should have subsystemWeights stored
-    // CURRENT: only strategicDirectives, budgetAllocation, worldAssessment are stored
     const updatedStableAI = manager.stableStates["npc-1"];
     expect(updatedStableAI).toBeDefined();
-    // Use type assertion since subsystemWeights doesn't exist on StableAIState yet
     const aiWithWeights = updatedStableAI as unknown as { subsystemWeights?: unknown };
     expect(aiWithWeights.subsystemWeights).toBeDefined();
   });
@@ -210,8 +195,7 @@ describe("budgetAllocation: checked before generating spending intents", () => {
     const intents = generateNpcIntents(state, 100);
     const claimingIntents = intents.filter((i) => i.type === "claiming");
 
-    // After fix: if budget.claiming is 0, no claiming intents should be generated
-    // CURRENT: claiming intents are generated without budget check
+    // If claiming intents exist, budget.claiming should be > 0
     if (claimingIntents.length > 0) {
       const updatedStableAI = manager.stableStates["npc-1"];
       const budget = updatedStableAI?.budgetAllocation;
@@ -223,14 +207,9 @@ describe("budgetAllocation: checked before generating spending intents", () => {
 
 describe("worldAssessment: not recomputed in intentGenerators", () => {
   it("generateNpcIntents accepts optional cached worldAssessment parameter", () => {
-    // After fix: intentCollectionPhase should pass worldAssessment to generateNpcIntents
-    // and generateNpcIntents should accept it as a parameter instead of recomputing
-    // CURRENT: generateNpcIntents recomputes assessWorldState internally
-
     const manager = createMockManager();
     const state = createMockGameState({ npcAIManager: manager });
 
-    // After fix: this should accept a third parameter for worldAssessment
     const cachedAssessment: WorldAssessment = {
       playerDominance: 0.3,
       regionalPowerBalance: { default: 0.5 },
@@ -239,8 +218,6 @@ describe("worldAssessment: not recomputed in intentGenerators", () => {
       upcomingMajorRaces: [],
     };
 
-    // This call should work with the cached assessment after the fix
-    // Currently generateNpcIntents only accepts (state, day) — the fix adds a 3rd param
     expect(() => generateNpcIntents(state, 100, cachedAssessment)).not.toThrow();
   });
 });

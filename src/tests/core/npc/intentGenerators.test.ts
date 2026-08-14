@@ -203,6 +203,27 @@ describe("generateNpcIntents coordination integration", () => {
     generateNpcIntents(mockState, 1);
     expect(assessWorldState).not.toHaveBeenCalled();
   });
+
+  it("does not call assessWorldState when cached worldAssessment is provided", () => {
+    const mockState = {
+      horses: {},
+      pregnancies: [],
+      races: {},
+      npcStables: [createTestStable({ id: "stable1", country: "USA", personality: "aggressive" })],
+      npcAIManager: { stableStates: {}, globalDay: 1, regionalKings: {} },
+    } as unknown as GameState;
+
+    const cachedAssessment = {
+      playerDominance: 0.5,
+      regionalPowerBalance: {},
+      economicTrends: { studFeeTrend: 0, yearlingPriceIndex: 100, claimingMarketActivity: 0 },
+      breedingMarketSaturation: 0.3,
+      upcomingMajorRaces: [],
+    };
+
+    generateNpcIntents(mockState, 1, cachedAssessment);
+    expect(assessWorldState).not.toHaveBeenCalled();
+  });
 });
 
 describe("generateNpcIntents diplomacy-aware claiming", () => {

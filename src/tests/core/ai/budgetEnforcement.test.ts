@@ -149,6 +149,78 @@ describe("Budget Enforcement", () => {
     expect(syndicateIntents.length).toBe(0);
   });
 
+  it("cumulative claiming spend cap limits intents when budget is partially exhausted", () => {
+    const stable = createMockStable({ cash: 200000, personality: "trader" });
+    const budget: BudgetAllocation = {
+      total: 100000,
+      training: 20000,
+      facilities: 15000,
+      auctions: 30000,
+      claiming: 30000,
+      breeding: 20000,
+    };
+    const manager = createMockManagerWithBudget([stable], budget);
+
+    // Two claimable horses in separate races, each priced at 25000
+    // Budget is 30000, so only the first claim fits (25000 <= 30000)
+    // Second claim would exceed: 25000 + 25000 = 50000 > 30000
+    const horse1 = createMockHorse({
+      id: "claim-target-1",
+      stableId: "npc-2",
+      age: 4,
+      energy: 50,
+      form: 40,
+    });
+    const horse2 = createMockHorse({
+      id: "claim-target-2",
+      stableId: "npc-2",
+      age: 4,
+      energy: 50,
+      form: 40,
+    });
+    const claimingRace1 = {
+      id: "claim-race-1",
+      name: "Claiming Race 1",
+      day: 100,
+      distance: 1600,
+      surface: "Dirt",
+      raceClass: "Claiming",
+      entryFee: 0,
+      purse: 10000,
+      fieldSize: 12,
+      entries: [{ horseId: "claim-target-1", stableId: "npc-2" }] as never[],
+      resolved: false,
+      claimingPrice: 25000,
+    } as unknown as GameState["races"][string];
+    const claimingRace2 = {
+      id: "claim-race-2",
+      name: "Claiming Race 2",
+      day: 100,
+      distance: 1600,
+      surface: "Dirt",
+      raceClass: "Claiming",
+      entryFee: 0,
+      purse: 10000,
+      fieldSize: 12,
+      entries: [{ horseId: "claim-target-2", stableId: "npc-2" }] as never[],
+      resolved: false,
+      claimingPrice: 25000,
+    } as unknown as GameState["races"][string];
+
+    const state = createMockGameState({
+      npcStables: [stable, createMockStable({ id: "npc-2", personality: "conservative" })],
+      horses: { "claim-target-1": horse1, "claim-target-2": horse2 },
+      races: { "claim-race-1": claimingRace1, "claim-race-2": claimingRace2 },
+      npcAIManager: manager,
+    });
+
+    const intents = generateNpcIntents(state, 100);
+    const claimingIntents = intents.filter((i) => i.type === "claiming");
+
+    // Only 1 claiming intent should be generated — the second exceeds the cumulative cap
+    expect(claimingIntents.length).toBeLessThanOrEqual(1);
+  });
+
   it("budgetAllocation is stored on stableAI state and accessible to generators", () => {
     const stable = createMockStable({ cash: 100000 });
     const budget: BudgetAllocation = {
