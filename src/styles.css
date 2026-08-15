@@ -297,12 +297,13 @@
 /* Race Viewer Sprite Animations */
 @keyframes sprite-run {
   from {
-    background-position: 0 0;
+    background-position: 0 bottom;
   }
   to {
-    background-position: -300px 0;
+    background-position: -300px bottom;
   }
 }
+
 
 @keyframes sprite-bob {
   0%,
