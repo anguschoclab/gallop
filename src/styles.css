@@ -346,7 +346,7 @@
 }
 
 .horse-sprite-animated {
-  animation: sprite-run 0.5s steps(var(--sprite-frames, 6)) infinite;
+  animation: sprite-run 0.5s steps(6) infinite;
 }
 
 .horse-sprite-bob {
