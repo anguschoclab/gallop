@@ -15,6 +15,7 @@ Fix: make it relative and rare — show "Flying" only for a runner meaningfully 
 ## 3. Commentary prints `{horse}` instead of the horse's name
 
 Two causes:
+
 - The narrative service only receives player/NPC horses from the store, not the auto-generated filler runners in the field. When a line is about a filler runner, the horse record is missing and the whole horse-placeholder block — including `{horse}` — is skipped.
 - Placeholder substitution replaces only the first occurrence, so templates mentioning a horse twice keep the second `{horse}`.
 

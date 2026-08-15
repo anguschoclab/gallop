@@ -223,7 +223,6 @@ describe("HorseSprite — sprite rendering (load success)", () => {
       `${sheet?.frameHeight ?? 100}px`,
     );
     expect(sprite.style.animationTimingFunction).toBe(`steps(${sheet?.frames ?? 6})`);
-
   });
 
   it("animationDuration style reflects quantized velocity (15.3 → same as 15)", () => {

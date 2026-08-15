@@ -24,7 +24,6 @@ export function useCommentaryFeed(
   const [lastUpdatedAt, setLastUpdatedAt] = useState<number>(() => Date.now());
   const lastMessageTime = useRef<number>(0);
 
-
   useEffect(() => {
     if (finished) return;
     const interval = setInterval(() => {
@@ -55,5 +54,4 @@ export function useCommentaryFeed(
     subjectHorseId,
     lastUpdatedAt,
   };
-
 }
