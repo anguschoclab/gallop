@@ -145,11 +145,6 @@ export const upkeepPhase = {
       };
     }
 
-    // Bankruptcy protection thresholds
-    const BANKRUPTCY_THRESHOLD = -10000; // Allow some debt before intervention
-    const BANKRUPTCY_INJECTION = 50000; // Cash injection amount
-    const BANKRUPTCY_COOLDOWN_DAYS = 365; // One year between injections per stable
-
     // Calculate NPC upkeep costs and emit cash_change impacts.
     for (const stable of state.npcStables) {
       const aiState = npcAIManager
@@ -215,27 +210,6 @@ export const upkeepPhase = {
           amount: -actualCost,
           reason: "Daily NPC upkeep",
         } as CashImpact);
-      }
-
-      // Bankruptcy protection: emit cash injection if projected cash falls below threshold.
-      const projectedCash = stable.cash - actualCost;
-      if (projectedCash < BANKRUPTCY_THRESHOLD) {
-        const lastInjectionDay = stable.lastBankruptcyInjectionDay || 0;
-        const daysSinceInjection = newDay - lastInjectionDay;
-
-        if (daysSinceInjection >= BANKRUPTCY_COOLDOWN_DAYS) {
-          impacts.push({
-            id: generateUUID(dailyRng),
-            intentId: "",
-            day: newDay,
-            phase: "upkeep",
-            logLevel: "conditional",
-            type: "cash_change",
-            entityId: stable.id,
-            amount: BANKRUPTCY_INJECTION,
-            reason: "Bankruptcy protection cash injection",
-          } as CashImpact);
-        }
       }
     }
 

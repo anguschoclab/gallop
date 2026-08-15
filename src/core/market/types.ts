@@ -54,7 +54,8 @@ export type AuctionSaleKind =
   | "mixed"
   | "broodmare"
   | "2yo_training"
-  | "racing_age";
+  | "racing_age"
+  | "liquidation";
 
 export type AuctionSale = {
   id: string;

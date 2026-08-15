@@ -72,7 +72,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   auction_resolution: (draft, impact, lookupMaps) => {
-    const { saleId, lotId, hammerPrice, soldToStableId, passed, bidHistory, wasPlayerConsignment } =
+    const { saleId, lotId, hammerPrice, soldToStableId, passed, bidHistory } =
       impact as AuctionResolutionImpact;
     const auction =
       lookupMaps?.auctionMap.get(saleId) || draft.auctions?.find((a) => a.id === saleId);
@@ -83,9 +83,23 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         lot.soldToStableId = soldToStableId;
         lot.passed = passed;
         if (bidHistory) lot.bidHistory = bidHistory;
-        if (wasPlayerConsignment) {
-          const horse = lookupMaps?.horseMap.get(lot.horseId) || draft.horses[lot.horseId];
-          if (horse) horse.consignedSaleId = undefined;
+
+        // Clear consignedSaleId for ALL lots, not just player consignments.
+        // This fixes a pre-existing bug where NPC consigned horses remained
+        // locked out of racing/training after auction resolution.
+        const horse = lookupMaps?.horseMap.get(lot.horseId) || draft.horses[lot.horseId];
+        if (horse) {
+          horse.consignedSaleId = undefined;
+
+          // For passed lots from a dissolved consignor (bankrupt stable),
+          // the horse has no stable to return to — make it unowned.
+          if (passed && lot.consignorStableId) {
+            const consignorExists = draft.npcStables.some((s) => s.id === lot.consignorStableId);
+            if (!consignorExists) {
+              horse.stableId = undefined;
+              horse.owned = true;
+            }
+          }
         }
       }
     }

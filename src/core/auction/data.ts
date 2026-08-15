@@ -30,4 +30,5 @@ export const KIND_LABELS: Record<AuctionSaleKind, string> = {
   broodmare: "Broodmare & Breeding Stock Sale",
   "2yo_training": "2YOs in Training Sale",
   racing_age: "Horses-of-Racing-Age Sale",
+  liquidation: "Liquidation Sale",
 };

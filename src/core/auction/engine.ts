@@ -470,6 +470,7 @@ const ELIGIBLE_AGES_BY_KIND: Record<AuctionSaleKind, number[]> = {
   broodmare: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
   "2yo_training": [2],
   racing_age: [3, 4, 5, 6, 7],
+  liquidation: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
 };
 
 // Some sales are hemisphere-specific; others (mixed/broodmare/2yo/racing-age)
@@ -483,6 +484,7 @@ const HEMISPHERE_BY_KIND: Record<AuctionSaleKind, "Northern" | "Southern" | unde
   broodmare: undefined,
   "2yo_training": undefined,
   racing_age: undefined,
+  liquidation: undefined,
 };
 
 /**

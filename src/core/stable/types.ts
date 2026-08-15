@@ -42,7 +42,6 @@ export type Stable = {
   preferredSurface?: "Turf" | "Dirt" | "Synthetic";
   breedingArchetype?: Archetype["id"];
   staff: Record<import("@/core/staff/staffTypes").StaffRole, string | null>;
-  lastBankruptcyInjectionDay?: number;
 
   // Imperial Expansion: Outposts
   outposts: Outpost[];

@@ -14,6 +14,7 @@ import { intentValidationPhase } from "./intentValidation";
 import { privateSaleExpiryPhase } from "./privateSaleExpiry";
 import { privateSaleResolutionPhase } from "./privateSaleResolution";
 import { upkeepPhase } from "./upkeep";
+import { npcBankruptcyPhase } from "./npcBankruptcy";
 import { agingPhase } from "./aging";
 import { breedingSeasonPhase } from "./breedingSeason";
 import { industryMetricsPhase } from "./industryMetricsPhase";
@@ -77,6 +78,8 @@ export const GAME_PIPELINE_PHASES = [
   privateSaleResolutionPhase,
   // Existing phases
   upkeepPhase,
+  // NPC bankruptcy detection (order 21, after upkeep, before breeding resolution)
+  npcBankruptcyPhase,
   agingPhase,
   breedingSeasonPhase,
   industryMetricsPhase,

@@ -28,7 +28,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       const stable =
         lookupMaps?.stableMap.get(entityId) || draft.npcStables.find((s) => s.id === entityId);
       if (stable) {
-        stable.cash = Math.max(0, stable.cash + amount);
+        stable.cash = stable.cash + amount;
       }
     } else {
       // Player cash may go negative — the solvency phase escalates from
