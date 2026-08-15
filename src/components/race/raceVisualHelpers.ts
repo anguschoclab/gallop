@@ -1,6 +1,29 @@
 import type { Weather } from "@/game/types";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import { beyerFigure } from "@/core/race/beyer";
+import trackTurf from "@/assets/track-turf.png";
+import trackDirt from "@/assets/track-dirt.png";
+import trackSynthetic from "@/assets/track-synthetic.png";
+import skySunny from "@/assets/bg-sky-sunny.png";
+import skyCloudy from "@/assets/bg-sky-cloudy.png";
+import skyPouring from "@/assets/bg-sky-pouring.png";
+import skySunset from "@/assets/bg-sky-sunset.png";
+import skyNight from "@/assets/bg-sky-night.png";
+import horseB from "@/assets/horse-b.png";
+import horseBl from "@/assets/horse-bl.png";
+import horseCh from "@/assets/horse-ch.png";
+import horseDkb from "@/assets/horse-dkb.png";
+import horseGr from "@/assets/horse-gr.png";
+import horseRoan from "@/assets/horse-roan.png";
+import horsePalomino from "@/assets/horse-palomino.png";
+import horseWhite from "@/assets/horse-white.png";
+import horseSeal from "@/assets/horse-seal.png";
+import horseLiver from "@/assets/horse-liver.png";
+import horseBuck from "@/assets/horse-buck.png";
+import horseDun from "@/assets/horse-dun.png";
+import horseGrulla from "@/assets/horse-grulla.png";
+import horseChampagne from "@/assets/horse-champagne.png";
+
 
 /**
  * Returns the background image URL for a given track surface.
@@ -10,11 +33,11 @@ import { beyerFigure } from "@/core/race/beyer";
 export function getTrackBackground(surface?: string): string | undefined {
   switch (surface) {
     case "Turf":
-      return "url(/assets/track-turf.png)";
+      return `url(${trackTurf})`;
     case "Dirt":
-      return "url(/assets/track-dirt.png)";
+      return `url(${trackDirt})`;
     case "Synthetic":
-      return "url(/assets/track-synthetic.png)";
+      return `url(${trackSynthetic})`;
     default:
       return undefined;
   }
@@ -28,15 +51,15 @@ export function getTrackBackground(surface?: string): string | undefined {
 export function getSkyBackground(weather?: Weather): string | undefined {
   switch (weather) {
     case "sunny":
-      return "url(/assets/bg-sky-sunny.png)";
+      return `url(${skySunny})`;
     case "cloudy":
-      return "url(/assets/bg-sky-cloudy.png)";
+      return `url(${skyCloudy})`;
     case "rainy":
-      return "url(/assets/bg-sky-pouring.png)";
+      return `url(${skyPouring})`;
     case "sunset":
-      return "url(/assets/bg-sky-sunset.png)";
+      return `url(${skySunset})`;
     case "night":
-      return "url(/assets/bg-sky-night.png)";
+      return `url(${skyNight})`;
     default:
       return undefined;
   }
@@ -64,61 +87,68 @@ export function getWeatherDisplay(weather?: Weather): string {
   }
 }
 
-// Sprite sheet configuration
-const ANIMATED_SPRITES = [
-  "bay",
-  "black",
-  "chestnut",
-  "dark-bay",
-  "gray",
-  "roan",
-  "palomino",
-  "white",
-  "seal-brown",
-  "liver-chestnut",
-  "buckskin",
-  "dun",
-  "grulla",
-  "champagne",
-];
+/**
+ * Sprite sheet metadata. Every sheet is 6 frames wide; `frameHeight` is the
+ * per-frame pixel height (some sheets are 50px tall, others 100px).
+ */
+export interface SpriteSheet {
+  url: string;
+  frames: number;
+  frameWidth: number;
+  frameHeight: number;
+}
 
-const COAT_TO_SPRITE: Record<string, string> = {
-  bay: "b",
-  black: "bl",
-  chestnut: "ch",
-  "dark-bay": "dkb",
-  gray: "gr",
-  roan: "roan",
-  palomino: "palomino",
-  white: "white",
-  "seal-brown": "seal",
-  "liver-chestnut": "liver",
-  buckskin: "buck",
-  dun: "dun",
-  grulla: "grulla",
-  champagne: "champagne",
+const sheet = (url: string, frameHeight: number): SpriteSheet => ({
+  url,
+  frames: 6,
+  frameWidth: 50,
+  frameHeight,
+});
+
+const COAT_TO_SPRITE_SHEET: Record<string, SpriteSheet> = {
+  bay: sheet(horseB, 100),
+  black: sheet(horseBl, 100),
+  chestnut: sheet(horseCh, 100),
+  "dark-bay": sheet(horseDkb, 100),
+  gray: sheet(horseGr, 100),
+  roan: sheet(horseRoan, 50),
+  palomino: sheet(horsePalomino, 50),
+  white: sheet(horseWhite, 50),
+  "seal-brown": sheet(horseSeal, 100),
+  "liver-chestnut": sheet(horseLiver, 100),
+  buckskin: sheet(horseBuck, 100),
+  dun: sheet(horseDun, 100),
+  grulla: sheet(horseGrulla, 100),
+  champagne: sheet(horseChampagne, 100),
 };
+
+/**
+ * Returns the full sprite sheet descriptor for a coat color.
+ */
+export function getSpriteSheet(coatColor?: string): SpriteSheet | undefined {
+  if (!coatColor) return undefined;
+  return COAT_TO_SPRITE_SHEET[coatColor];
+}
 
 /**
  * Returns the sprite image URL for a given horse coat color.
  * @param coatColor - The horse's coat color
- * @returns Path to the sprite image, or undefined if color is unknown
+ * @returns Bundled URL of the sprite sheet, or undefined if color is unknown
  */
 export function getSpriteUrl(coatColor?: string): string | undefined {
-  if (!coatColor) return undefined;
-  const sprite = COAT_TO_SPRITE[coatColor];
-  return sprite ? `/assets/horse-${sprite}.png` : undefined;
+  return getSpriteSheet(coatColor)?.url;
 }
 
 /**
- * Checks if a coat color has an animated sprite available.
+ * Checks if a coat color has an animated (multi-frame) sprite sheet available.
  * @param coatColor - The horse's coat color
  * @returns true if the color has an animated sprite, false otherwise
  */
 export function isAnimatedSprite(coatColor?: string): boolean {
-  if (!coatColor) return false;
-  return ANIMATED_SPRITES.includes(coatColor);
+  const s = getSpriteSheet(coatColor);
+  return !!s && s.frames > 1;
 }
+
 
 /**
  * Calculates the CSS animation duration for a horse sprite based on velocity.
