@@ -10,6 +10,8 @@ interface Rival {
     name: string;
   };
   friction: number;
+  diplomaticOrigin?: string;
+  recentEncounters?: string[];
 }
 
 interface KeyRivalsWidgetProps {
@@ -72,6 +74,23 @@ export function KeyRivalsWidget({ rivals, calculateHeadToHead }: KeyRivalsWidget
                       Head-to-Head: {headToHead.wins}-{headToHead.losses}
                     </span>
                   </div>
+                  {rival.diplomaticOrigin && (
+                    <div className="text-[9px] text-cream/30 italic font-mono">
+                      Origin: {rival.diplomaticOrigin}
+                    </div>
+                  )}
+                  {rival.recentEncounters && rival.recentEncounters.length > 0 && (
+                    <div className="space-y-0.5 pt-1 border-t border-white/5">
+                      <div className="text-[8px] font-black uppercase tracking-widest text-cream/20">
+                        Recent
+                      </div>
+                      {rival.recentEncounters.slice(-2).map((enc, idx) => (
+                        <div key={idx} className="text-[9px] text-cream/40">
+                          {enc}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               );
             })}

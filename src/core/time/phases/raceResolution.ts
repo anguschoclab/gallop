@@ -39,6 +39,7 @@ import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { recordRaceEntryOutcome } from "@/core/ai/raceEntryAI";
 import { recordJockeyOutcome } from "@/core/ai/jockeyAI";
 import { recordCampaignOutcome } from "@/core/ai/campaignAI";
+import { recordRaceStrategy } from "@/core/ai/jockeyStrategyAI";
 
 /**
  * Race Resolution Phase (Order 70)
@@ -185,6 +186,27 @@ export const raceResolutionPhase: PipelinePhase = {
                     prize,
                     newDay,
                   );
+                }
+                // 4. Learn from jockey strategy outcomes
+                if (stableAI.jockeyStrategyAI) {
+                  const runner = runnerByHorseId.get(res.horseId);
+                  const jockey = runner?.jockeyId ? jockeyMap.get(runner.jockeyId) : undefined;
+                  if (jockey) {
+                    const style = horse.runningStyle ?? "P";
+                    const entry = race.entries.find((e) => e.horseId === horse.id);
+                    const aggressiveness = entry?.jockeyInstructions?.aggressiveness ?? 50;
+                    stableAI.jockeyStrategyAI = recordRaceStrategy(
+                      stableAI.jockeyStrategyAI,
+                      horse,
+                      race,
+                      jockey,
+                      stable,
+                      style,
+                      aggressiveness,
+                      res.position,
+                      newDay,
+                    );
+                  }
                 }
                 npcAIManager.stableStates[stable.id] = stableAI;
               }
@@ -372,6 +394,28 @@ export const raceResolutionPhase: PipelinePhase = {
                   prize,
                   newDay,
                 );
+              }
+
+              // 4. Learn from jockey strategy outcomes
+              if (stableAI.jockeyStrategyAI) {
+                const runner = runnerByHorseId.get(res.horseId);
+                const jockey = runner?.jockeyId ? jockeyMap.get(runner.jockeyId) : undefined;
+                if (jockey) {
+                  const style = horse.runningStyle ?? "P";
+                  const entry = race.entries.find((e) => e.horseId === horse.id);
+                  const aggressiveness = entry?.jockeyInstructions?.aggressiveness ?? 50;
+                  stableAI.jockeyStrategyAI = recordRaceStrategy(
+                    stableAI.jockeyStrategyAI,
+                    horse,
+                    race,
+                    jockey,
+                    stable,
+                    style,
+                    aggressiveness,
+                    res.position,
+                    newDay,
+                  );
+                }
               }
 
               npcAIManager.stableStates[stable.id] = stableAI;

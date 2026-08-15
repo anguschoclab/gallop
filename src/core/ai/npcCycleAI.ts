@@ -155,6 +155,7 @@ export interface NpcAIManager {
 
   // Cross-System Coordination (Phase 1)
   globalEconomicState?: EconomicTrend;
+  economicHistory?: EconomicTrend[];
   activeCartels?: Cartel[];
   narrativeArcs?: NarrativeArc[];
   difficultyModulator?: DifficultyState;

@@ -1103,3 +1103,66 @@ describe("applyAffinityBoost — enhanced with moveTiming and earlyPosition", ()
     expect(result.aggressiveness).toBeGreaterThan(50);
   });
 });
+
+// ── Phase 4: Enhanced context keys in recordRaceStrategy ──
+
+describe("recordRaceStrategy enhanced context keys", () => {
+  it("includes trackCondition in learning context when race has one", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const jockey = createMockJockey();
+    const horse = createMockHorse();
+    const race = createMockRace({ trackCondition: "heavy" });
+    const stable = createMockStable();
+
+    const updatedState = recordRaceStrategy(state, horse, race, jockey, stable, "E", 0.7, 1, 100);
+
+    expect(updatedState.learningState.outcomes).toHaveLength(1);
+    // The contextKey in the learning outcome should include trackCondition
+    const outcome = updatedState.learningState.outcomes[0];
+    expect(outcome.contextKey).toContain("heavy");
+  });
+
+  it("includes weather in learning context when race has one", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const jockey = createMockJockey();
+    const horse = createMockHorse();
+    const race = createMockRace({ weather: "rain" as any });
+    const stable = createMockStable();
+
+    const updatedState = recordRaceStrategy(state, horse, race, jockey, stable, "P", 0.5, 2, 100);
+
+    const outcome = updatedState.learningState.outcomes[0];
+    expect(outcome.contextKey).toContain("rain");
+  });
+
+  it("includes both trackCondition and weather in context key", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const jockey = createMockJockey();
+    const horse = createMockHorse();
+    const race = createMockRace({ trackCondition: "soft", weather: "overcast" as any });
+    const stable = createMockStable();
+
+    const updatedState = recordRaceStrategy(state, horse, race, jockey, stable, "S", 0.6, 3, 100);
+
+    const outcome = updatedState.learningState.outcomes[0];
+    expect(outcome.contextKey).toContain("soft");
+    expect(outcome.contextKey).toContain("overcast");
+  });
+
+  it("works without trackCondition or weather (backward compatible)", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const jockey = createMockJockey();
+    const horse = createMockHorse();
+    const race = createMockRace();
+    const stable = createMockStable();
+
+    const updatedState = recordRaceStrategy(state, horse, race, jockey, stable, "E", 0.7, 1, 100);
+
+    expect(updatedState.learningState.outcomes).toHaveLength(1);
+    // Should still have the base context key components
+    const outcome = updatedState.learningState.outcomes[0];
+    expect(outcome.contextKey).toContain("3"); // horse.age
+    expect(outcome.contextKey).toContain("1600"); // race.distance
+    expect(outcome.contextKey).toContain("E"); // runningStyle
+  });
+});

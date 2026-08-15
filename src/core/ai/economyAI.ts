@@ -143,9 +143,13 @@ export function processEconomicCycle(
   const current = manager.globalEconomicState ?? createEconomicState();
   const updated = updateEconomicTrends(current, state, day);
 
+  const history = [...(manager.economicHistory ?? []), updated];
+  const prunedHistory = history.length > 365 ? history.slice(-365) : history;
+
   return {
     ...manager,
     globalEconomicState: updated,
+    economicHistory: prunedHistory,
   };
 }
 

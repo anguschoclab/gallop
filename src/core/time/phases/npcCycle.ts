@@ -30,20 +30,29 @@ export const npcCyclePhase = {
   name: "npcCycle",
   order: PHASE_ORDER_NPC_CYCLE,
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, newDay } = context;
+    const { state, newDay, economicTrend } = context;
 
     // Skip if no NPC stables
     if (state.npcStables.length === 0) {
       return context;
     }
 
+    // Cross-phase data: economicTrend from economyPhase and worldAssessment from worldAssessmentPhase
+    // are used to inform NPC AI decision-making throughout the cycle
+
     const pregnantIds = new Set(state.pregnancies.filter((p) => !p.resolved).map((p) => p.damId));
 
     // Get existing AI manager or create new one
-    const aiManager: NpcAIManager = (state as { npcAIManager?: NpcAIManager }).npcAIManager || {
-      stableStates: {},
-      globalDay: newDay,
-      regionalKings: {},
+    // Attach cross-phase data so NPC AI subsystems can use economic trends and world assessment
+    const aiManager: NpcAIManager = {
+      ...((state as { npcAIManager?: NpcAIManager }).npcAIManager || {
+        stableStates: {},
+        globalDay: newDay,
+        regionalKings: {},
+      }),
+      globalEconomicState:
+        economicTrend ??
+        (state as { npcAIManager?: NpcAIManager }).npcAIManager?.globalEconomicState,
     };
 
     // Run the complete NPC cycle

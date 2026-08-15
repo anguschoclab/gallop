@@ -214,7 +214,72 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
     }
   }
 
+  populateRivalHorseIds(runners, npcAIManager, npcStables);
+
   return { runners, fillerHorses };
+}
+
+/**
+ * Populate rivalHorseIds on each runner based on NPC stable relationships.
+ * Horses from stables with trust < -40 (rivalry threshold) are marked as rivals.
+ *
+ * @param runners - All runners in the race
+ * @param npcAIManager - Optional NPC AI manager with stable states
+ * @param npcStables - Optional NPC stables list
+ */
+function populateRivalHorseIds(
+  runners: Runner[],
+  npcAIManager?: NpcAIManager,
+  npcStables?: Stable[],
+): void {
+  if (!npcAIManager || !npcStables) return;
+
+  // Build a map of stableId -> rival stableIds
+  const stableRivals = new Map<string, Set<string>>();
+  for (const [stableId, state] of Object.entries(npcAIManager.stableStates)) {
+    if (!state.npcRelationships) continue;
+    const rivals = new Set<string>();
+    for (const [otherStableId, rel] of Object.entries(state.npcRelationships)) {
+      if (rel.trust < -40) {
+        rivals.add(otherStableId);
+      }
+    }
+    if (rivals.size > 0) {
+      stableRivals.set(stableId, rivals);
+    }
+  }
+
+  if (stableRivals.size === 0) return;
+
+  // Build a map of stableId -> horseIds in this race
+  const stableHorsesInRace = new Map<string, string[]>();
+  for (const runner of runners) {
+    const stableId = runner.horse?.stableId;
+    if (stableId) {
+      const list = stableHorsesInRace.get(stableId) ?? [];
+      list.push(runner.horseId);
+      stableHorsesInRace.set(stableId, list);
+    }
+  }
+
+  // For each runner, find rival horses from rival stables in this race
+  for (const runner of runners) {
+    const stableId = runner.horse?.stableId;
+    if (!stableId) continue;
+    const rivals = stableRivals.get(stableId);
+    if (!rivals) continue;
+
+    const rivalHorseIds: string[] = [];
+    for (const rivalStableId of rivals) {
+      const horsesInRace = stableHorsesInRace.get(rivalStableId);
+      if (horsesInRace) {
+        rivalHorseIds.push(...horsesInRace.filter((id) => id !== runner.horseId));
+      }
+    }
+    if (rivalHorseIds.length > 0) {
+      runner.rivalHorseIds = rivalHorseIds;
+    }
+  }
 }
 
 /**

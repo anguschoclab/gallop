@@ -10,6 +10,7 @@
 
 import { generateUUID } from "@/core/uuid";
 import { requireOwned, requireHorse } from "../guards";
+import { SIRE_GENDERS } from "@/core/horse/gender";
 import type { ActionResult } from "../types";
 import type { GameStateCreator } from "../types";
 
@@ -50,7 +51,7 @@ export const createHorseAdminSlice: GameStateCreator<HorseAdminSlice> = (set, ge
     const horse = requireHorse(s.horses, horseId);
     const ownershipGuard = requireOwned(horse);
     if (ownershipGuard) return ownershipGuard;
-    if (horse!.gender !== "horse" && horse!.gender !== "colt")
+    if (!SIRE_GENDERS.includes(horse!.gender))
       return { ok: false, reason: "Only male horses can stand at stud." };
     if (horse!.age < 4)
       return { ok: false, reason: "Horse must be at least 4 years old to stand at stud." };

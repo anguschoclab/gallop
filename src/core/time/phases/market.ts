@@ -44,6 +44,11 @@ export const marketPhase = {
     let npcAIManager = state.npcAIManager;
     const impacts: AnyImpact[] = [];
 
+    // Cross-phase data: use economic trend to adjust market behavior
+    // context.economicTrend is set by economyPhase (order 48) and consumed here
+    const yearlingPriceIndex = context.economicTrend?.yearlingPriceIndex ?? 100;
+    const marketPriceMultiplier = yearlingPriceIndex / 100;
+
     // NPC AI-driven market purchases
     if (npcAIManager && npcStables.length > 0) {
       // Clone the manager and stable map so we never mutate the original state.
@@ -64,9 +69,11 @@ export const marketPhase = {
         // Check if stable should purchase any horse from market
         const marketWeight = aiState.subsystemWeights?.market ?? DEFAULT_SUBSYSTEM_WEIGHT;
         for (const horse of market) {
-          // Estimate price based on horse stats (since Horse doesn't have price field)
+          // Estimate price based on horse stats, adjusted by economic trend
           const horseRating = calculateRaceRating(horse);
-          const estimatedPrice = Math.floor(horseRating * HORSE_RATING_TO_VALUE_MULTIPLIER);
+          const estimatedPrice = Math.floor(
+            horseRating * HORSE_RATING_TO_VALUE_MULTIPLIER * marketPriceMultiplier,
+          );
 
           const shouldPurchase = shouldPurchaseHorse(
             aiState.marketAI,

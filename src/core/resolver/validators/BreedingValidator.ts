@@ -12,6 +12,7 @@ import type { GameState } from "@/game/types";
 import type { AnyIntent, BreedingIntent } from "../intents";
 import type { IntentValidator, ValidationCache } from "./types";
 import { canBreed } from "@/core/breeding/eligibility";
+import { SIRE_GENDERS, DAM_GENDERS } from "@/core/horse/gender";
 
 export class BreedingValidator implements IntentValidator {
   canValidate(type: AnyIntent["type"]): boolean {
@@ -28,9 +29,9 @@ export class BreedingValidator implements IntentValidator {
 
     if (!sire) return { valid: false, reason: "Sire not found" };
     if (!dam) return { valid: false, reason: "Dam not found" };
-    if (sire.gender !== "horse" && sire.gender !== "colt")
+    if (!SIRE_GENDERS.includes(sire.gender))
       return { valid: false, reason: "Invalid sire gender (must be stallion or colt)" };
-    if (dam.gender !== "mare" && dam.gender !== "filly")
+    if (!DAM_GENDERS.includes(dam.gender))
       return { valid: false, reason: "Invalid dam gender (must be mare or filly)" };
     if (state.cash < 2000) return { valid: false, reason: "Insufficient funds for breeding" };
 

@@ -171,4 +171,11 @@ export type RaceRunner = {
   jockeyName: string;
   gate?: number;
   lane?: number;
+  runningStyle?: string;
+  jockeyInstructions?: {
+    ridingStyle?: string;
+    earlyPosition?: string;
+    moveTiming?: string;
+    aggressiveness?: number;
+  };
 };

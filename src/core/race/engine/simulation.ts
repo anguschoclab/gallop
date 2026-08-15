@@ -16,6 +16,11 @@ import { clamp } from "@/core/common/math";
 import { compareFinishOrder } from "./compareFinishOrder";
 import type { RaceSnapshot } from "./raceSnapshotTypes";
 import { calculateTacticalAdjustment } from "./tacticalAI";
+import {
+  calculateStyleAwareDraftMultiplier,
+  getEnhancedDraftingHorseId,
+  calculateRailSavingLane,
+} from "./draftingAI";
 import { type Runner, type PaceContext, paceShapeMul } from "./runnerBuilder";
 import {
   getRunningStyleProfile,
@@ -41,8 +46,6 @@ import {
   STAMINA_FADE_START,
   STAMINA_FADE_DURATION,
   DRAFT_STAMINA_PRESERVE,
-  DRAFT_DISTANCE,
-  DRAFT_SPEED_BONUS,
   LANE_WIDTH,
   MAX_LATERAL_SPEED,
   LANE_GAP_THRESHOLD,
@@ -249,6 +252,13 @@ function calculateTargetLane(
       }
     }
   }
+
+  // Rail-saving: closers and stalkers shift toward rail in late race
+  const railLane = calculateRailSavingLane(r, progress);
+  if (railLane !== r.lane) {
+    targetLane = Math.floor(railLane / LANE_WIDTH);
+  }
+
   return targetLane;
 }
 
@@ -533,13 +543,7 @@ function calculateStyleMultiplier(
  * @returns {number} The draft multiplier.
  */
 function calculateDraftMultiplier(r: Runner, progress: number): number {
-  let draftMul = 1;
-  if (r.draftingHorseId && progress < LATE_KICK_PROGRESS_THRESHOLD) {
-    draftMul = DRAFT_SPEED_BONUS;
-    // "Rail" tactics bonus for drafting (front runners hug rail)
-    if (r.jockeyInstructions?.ridingStyle === "front_runner") draftMul *= 1.005;
-  }
-  return draftMul;
+  return calculateStyleAwareDraftMultiplier(r, progress);
 }
 
 /**
@@ -672,16 +676,7 @@ function applyBlockingEffect(r: Runner, sortedField?: Runner[]): void {
  * @returns {string | null} The ID of the drafted horse, or null if not drafting.
  */
 function getDraftingHorseId(r: Runner, sortedField: Runner[]): string | null {
-  for (const other of sortedField) {
-    if (other.horseId === r.horseId) continue;
-    const gap = other.position - r.position;
-    if (gap <= 0) break; // Optimization: stop early
-    if (gap > DRAFT_DISTANCE) continue;
-
-    const laneGap = Math.abs(other.lane - r.lane);
-    if (laneGap < 0.8) return other.horseId;
-  }
-  return null;
+  return getEnhancedDraftingHorseId(r, sortedField);
 }
 
 /**

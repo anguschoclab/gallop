@@ -13,6 +13,7 @@ import type { Horse, Stable } from "@/game/types";
 import type { Syndicate } from "@/core/breeding/types";
 import type { DistressLevel } from "./financialDistressAI";
 import { findMajorityOwner } from "@/core/breeding/devolutionUtils";
+import { getCareerStats } from "@/core/horse/stats";
 import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
 import {
   createLearningState,
@@ -125,8 +126,7 @@ export function getSyndicationSuccessRate(
  * @returns Estimated syndicate value in dollars
  */
 export function calculateSyndicateValue(stallion: Horse): number {
-  const g1Wins =
-    stallion.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1).length || 0;
+  const g1Wins = getCareerStats(stallion).g1Wins;
   const lifetimeEarnings = stallion.lifetimeEarnings || 0;
   const age = stallion.age;
 
@@ -180,8 +180,7 @@ export function shouldCreateSyndicate(
   if (stallion.stableId !== npcStable.id) return false;
 
   // Check if stallion is a G1 winner
-  const g1Wins =
-    stallion.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1).length || 0;
+  const g1Wins = getCareerStats(stallion).g1Wins;
   if (g1Wins === 0) return false;
 
   // Check if stallion is at stud
@@ -345,8 +344,7 @@ export function calculateSharePurchase(
 
     if (personality === "prestige") {
       // Prestige NPCs are motivated for elite stallions
-      const g1Wins =
-        stallion.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1).length || 0;
+      const g1Wins = getCareerStats(stallion).g1Wins;
       if (g1Wins >= 3) {
         return takeoverShares;
       }

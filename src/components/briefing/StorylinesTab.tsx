@@ -4,9 +4,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { NarrativeArc, StoryBeat } from "@/core/ai/npcCycleAI";
 import type { Stable } from "@/game/types";
-import { BookOpen, Sparkles, TrendingUp } from "lucide-react";
+import { BookOpen, Sparkles, TrendingUp, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { NewsContent } from "@/components/narrative/NewsContent";
+import { NarrativeArcCard } from "@/components/narrative/NarrativeArcCard";
 
 export function StorylinesTab() {
   const npcAIManager = useGame((s) => s.npcAIManager);
@@ -151,6 +152,54 @@ export function StorylinesTab() {
           </CardContent>
         </Card>
       ))}
+
+      {/* Completed Arcs Archive */}
+      {(() => {
+        const completedArcs: Array<{
+          arc: NarrativeArc;
+          stableName: string;
+          isRivalry: boolean;
+        }> = [];
+
+        for (const { stableId, stableName, arcs } of arcsByStable) {
+          const stableAI = npcAIManager?.stableStates?.[stableId];
+          const isRival = (stableAI?.friction ?? 0) > 60;
+          for (const arc of arcs) {
+            if (arc.status === "resolution" && arc.beats.length > 0) {
+              completedArcs.push({ arc, stableName, isRivalry: isRival });
+            }
+          }
+        }
+
+        if (completedArcs.length === 0) return null;
+
+        return (
+          <div className="space-y-4 pt-6 border-t border-white/5">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-green-400" />
+              <h3 className="text-sm font-bold uppercase tracking-widest text-cream/60">
+                Completed Arcs
+              </h3>
+              <Badge
+                variant="outline"
+                className="border-green-400/20 text-green-400/60 font-mono text-[9px] uppercase tracking-widest"
+              >
+                {completedArcs.length}
+              </Badge>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {completedArcs.map(({ arc, stableName, isRivalry }) => (
+                <NarrativeArcCard
+                  key={arc.id}
+                  arc={arc}
+                  stableName={stableName}
+                  isRivalry={isRivalry}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

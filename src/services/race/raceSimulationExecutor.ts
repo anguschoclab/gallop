@@ -97,16 +97,27 @@ export function simulateRace(
   return {
     raceId: race.id,
     result,
-    runners: runners.map(({ horseId, name, silk, owned, jockey, gate, lane }) => ({
-      horseId,
-      name,
-      silk,
-      owned,
-      jockeyId: jockey?.id || "ai",
-      jockeyName: jockey?.name || "AI Jockey",
-      gate,
-      lane,
-    })),
+    runners: runners.map(
+      ({ horseId, name, silk, owned, jockey, gate, lane, runningStyle, jockeyInstructions }) => ({
+        horseId,
+        name,
+        silk,
+        owned,
+        jockeyId: jockey?.id || "ai",
+        jockeyName: jockey?.name || "AI Jockey",
+        gate,
+        lane,
+        runningStyle,
+        jockeyInstructions: jockeyInstructions
+          ? {
+              ridingStyle: jockeyInstructions.ridingStyle,
+              earlyPosition: jockeyInstructions.earlyPosition,
+              moveTiming: jockeyInstructions.moveTiming,
+              aggressiveness: jockeyInstructions.aggressiveness,
+            }
+          : undefined,
+      }),
+    ),
 
     snapshots,
   };

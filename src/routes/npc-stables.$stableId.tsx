@@ -16,9 +16,15 @@ import { NpcStableOverviewTab } from "@/components/stable/NpcStableOverviewTab";
 import { NpcStableRosterTab } from "@/components/stable/NpcStableRosterTab";
 import { NpcStableInfoSidebar } from "@/components/stable/NpcStableInfoSidebar";
 import { DiplomacyPanel } from "@/components/npc/DiplomacyPanel";
+import { RelationshipGraph } from "@/components/npc/RelationshipGraph";
+import { AIPersonalityCard } from "@/components/npc/AIPersonalityCard";
+import { StrategicDirectivesPanel } from "@/components/npc/StrategicDirectivesPanel";
 
 const searchSchema = z.object({
-  tab: fallback(z.enum(["overview", "roster", "staff", "history"]), "overview").default("overview"),
+  tab: fallback(
+    z.enum(["overview", "roster", "staff", "history", "ai-profile"]),
+    "overview",
+  ).default("overview"),
 });
 
 export const Route = createFileRoute("/npc-stables/$stableId")({
@@ -33,6 +39,14 @@ function NpcStableDetailPage() {
   const pageData = useNpcStableDetail(stableId);
   const { stable, offerHorse, setOfferHorse, cash, horses } = pageData;
   const hiredStaff = useGame((s) => s.hiredStaff);
+  const npcAIManager = useGame((s) => s.npcAIManager);
+  const npcStables = useGame((s) => s.npcStables);
+
+  const aiRelationships = useMemo(
+    () => npcAIManager?.stableStates?.[stableId]?.npcRelationships ?? {},
+    [npcAIManager, stableId],
+  );
+  const aiCartels = useMemo(() => npcAIManager?.activeCartels, [npcAIManager]);
 
   const trainerStaffId = useMemo(
     () => (hiredStaff ?? []).find((m) => m.role === "trainer" && m.stableId === stableId)?.id,
@@ -115,7 +129,9 @@ function NpcStableDetailPage() {
           <Tabs
             value={tab}
             onValueChange={(v) =>
-              navigate({ search: { tab: v as "overview" | "roster" | "history" } })
+              navigate({
+                search: { tab: v as "overview" | "roster" | "history" | "ai-profile" },
+              })
             }
             className="space-y-6"
           >
@@ -144,6 +160,12 @@ function NpcStableDetailPage() {
                   className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all"
                 >
                   History
+                </TabsTrigger>
+                <TabsTrigger
+                  value="ai-profile"
+                  className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all"
+                >
+                  AI Profile
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -197,6 +219,26 @@ function NpcStableDetailPage() {
               )}
             </TabsContent>
 
+            <TabsContent
+              value="ai-profile"
+              className="mt-0 space-y-6 animate-in fade-in duration-300"
+            >
+              {npcAIManager?.stableStates?.[stableId] ? (
+                <>
+                  <AIPersonalityCard stableAI={npcAIManager.stableStates[stableId]} />
+                  <StrategicDirectivesPanel
+                    directives={npcAIManager.stableStates[stableId].strategicDirectives}
+                  />
+                </>
+              ) : (
+                <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl">
+                  <CardContent className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+                    No AI data available for this stable.
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+
             <TabsContent value="history" className="mt-0 animate-in fade-in duration-300">
               <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
                 <CardHeader className="bg-black/20 border-b border-white/5">
@@ -243,6 +285,12 @@ function NpcStableDetailPage() {
 
         <NpcStableInfoSidebar stableId={stableId} pageData={pageData} navigate={navigate} />
         <DiplomacyPanel stableId={stableId} />
+        <RelationshipGraph
+          stableId={stableId}
+          relationships={aiRelationships}
+          stables={npcStables}
+          cartels={aiCartels}
+        />
       </div>
 
       {offerHorse && (

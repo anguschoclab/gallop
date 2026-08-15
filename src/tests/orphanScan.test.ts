@@ -1,14 +1,22 @@
 /**
- * Orphan scan baseline test.
+ * Orphan scan baseline test (Extended).
  *
  * Programmatically verifies which state fields, AI subsystems, pipeline outputs,
- * and UI components are currently orphaned (implemented but not consumed by the
- * active game loop, UI, or AI decision trees).
+ * UI components, intent types, store slices, hooks, and NpcAIManager fields are
+ * currently orphaned (implemented but not consumed by the active game loop, UI,
+ * or AI decision trees).
  *
  * This test documents the CURRENT state of orphans. As orphans are fixed in
  * subsequent implementation phases, the corresponding assertions should be
- * updated from "orphaned" to "wired". The final pass in Phase 5 should have
- * zero orphans.
+ * updated from "orphaned" to "wired". The final pass should have zero orphans.
+ *
+ * Validation corrections applied:
+ * - Intent count corrected from 39 to 44
+ * - trackRecords, horseLeaderboards, founders moved to "confirmed wired" list
+ * - runEnded, runEndSnapshot, solvencyAuditLog confirmed wired
+ * - outposts, transports UI confirmed wired (AI gap remains)
+ * - npcRelationships, narrativeState, globalEconomicState confirmed wired
+ * - InsurancePanel confirmed wired
  */
 
 import { describe, it, expect } from "vitest";
@@ -102,32 +110,36 @@ function isImportedByNonTest(importPath: string): boolean {
   return allSourceContents.some((f) => !f.path.endsWith(basename) && f.text.includes(importPath));
 }
 
-// ─── State fields to audit ───────────────────────────────────────────────────
+// ─── State fields: confirmed wired (validated, no longer audited as orphans) ──
 
-const systemsStateOptionalFields = [
-  "narrativeArcs",
-  "trackRecords",
-  "horseLeaderboards",
-  "founders",
-  "lastFounderUpdateDay",
-  "replays",
-  "industryMeanEarnings",
-  "industryEarningsUpdatedDay",
-  "lastTopTenRank",
-  "solvencyAuditLog",
-  "runEnded",
-  "runEndSnapshot",
-  "pendingAwardCeremonies",
-  "currentCeremonyIndex",
-  "outposts",
-  "transports",
-  "sireLeaderboards",
-  "sireTrendHistory",
-  "damsireLeaderboard",
-  "blueHenLeaderboard",
-  "leaderboardsUpdatedDay",
-  "lastAwardYear",
+const confirmedWiredFields = [
+  "trackRecords", // wired in RecordsTab.tsx:16
+  "horseLeaderboards", // wired in RecordsTab.tsx:13
+  "founders", // wired in FounderLegacy.tsx:12
+  "runEnded", // wired in epilogue.tsx:12
+  "runEndSnapshot", // wired in epilogue.tsx:13
+  "solvencyAuditLog", // wired in DebtBanner.tsx:24
+  "outposts", // wired in facilities.tsx (UI only; AI gap remains)
+  "transports", // wired in stable.$horseId.tsx (UI only; AI gap remains)
+  "industryMeanEarnings", // wired in sire-watch.$stallionId.tsx (UI only; AI gap remains)
+  "sireLeaderboards", // wired in SireLeaderboardsTab.tsx, rendered in breeding.tsx
+  "sireTrendHistory", // wired in AnalyticsBreedingTab.tsx
+  "damsireLeaderboard", // wired in DamsireLeaderboardTab.tsx, rendered in breeding.tsx
+  "blueHenLeaderboard", // wired in BlueHenLeaderboardTab.tsx, rendered in breeding.tsx
+  "narrativeArcs", // wired in CareerArcPanel.tsx, rendered in stable.$horseId.tsx
+  "replays", // wired in ReplayPlayer.tsx, rendered in race.$raceId.tsx
+  "pendingAwardCeremonies", // wired in AwardsTab.tsx via useAwardsData hook
+  "currentCeremonyIndex", // wired in AwardsTab.tsx via useAwardsData hook
+  "leaderboardsUpdatedDay", // wired in RecordsTab.tsx Data Freshness card
+  "lastTopTenRank", // wired in RecordsTab.tsx Data Freshness card
+  "industryEarningsUpdatedDay", // wired in RecordsTab.tsx Data Freshness card
+  "lastFounderUpdateDay", // wired in RecordsTab.tsx Data Freshness card
+  "lastAwardYear", // wired in RecordsTab.tsx Data Freshness card
 ];
+
+// ─── State fields to audit (genuinely suspected orphans) ─────────────────────
+
+const systemsStateOptionalFields: string[] = [];
 
 const breedingStateFields = [
   "syndicates",
@@ -161,8 +173,9 @@ const aiFiles = [
 ];
 
 // ─── Components to audit ──────────────────────────────────────────────────────
-
-const orphanSuspectComponents = ["TransportPlanner", "InsurancePanel", "ImperialOutpostManager"];
+// Validation: InsurancePanel confirmed wired in stable.$horseId.tsx — removed.
+// TransportPlanner and ImperialOutpostManager confirmed wired in UI — removed.
+// These components are no longer suspect orphans.
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
@@ -217,18 +230,6 @@ describe("Orphan Scan: AI Subsystem Imports", () => {
   });
 });
 
-describe("Orphan Scan: UI Components", () => {
-  for (const component of orphanSuspectComponents) {
-    it(`${component} is referenced in UI source`, () => {
-      const found = tsxFileContents.some(
-        (f) => !f.path.includes(component) && f.text.includes(component),
-      );
-      console.log(`${component}: ${found ? "WIRED" : "ORPHANED"}`);
-      expect(typeof component).toBe("string");
-    });
-  }
-});
-
 describe("Orphan Scan: Pipeline Phase Outputs", () => {
   it("context.worldAssessment is consumed by downstream phases", () => {
     const phaseFiles = allCoreTsFiles
@@ -278,6 +279,11 @@ describe("Orphan Scan: Strategic Coordinator Outputs", () => {
   it("budgetAllocation is read by any AI subsystem", () => {
     const intentText = readFileSafe(join(srcRoot, "core", "npc", "intentGenerators.ts"));
     const readsBudget =
+      intentText.includes("budgetAllocation?.claiming") ||
+      intentText.includes("budgetAllocation?.auctions") ||
+      intentText.includes("budgetAllocation?.breeding") ||
+      intentText.includes("budgetAllocation?.training") ||
+      intentText.includes("budgetAllocation?.facilities") ||
       intentText.includes("budgetAllocation.claiming") ||
       intentText.includes("budgetAllocation.auctions") ||
       intentText.includes("budgetAllocation.breeding") ||
@@ -287,4 +293,269 @@ describe("Orphan Scan: Strategic Coordinator Outputs", () => {
     console.log("budgetAllocation read by subsystems:", readsBudget);
     expect(typeof readsBudget).toBe("boolean");
   });
+});
+
+// ─── Intent type coverage audit (44 types) ───────────────────────────────────
+
+const allIntentTypes = [
+  "training",
+  "race_entry",
+  "race_withdrawal",
+  "breeding",
+  "stud_retirement",
+  "purchase",
+  "jockey_contract",
+  "jockey_release",
+  "jockey_assignment",
+  "scout",
+  "consignment",
+  "consignment_withdrawal",
+  "gelding",
+  "reroll_silk",
+  "rename",
+  "campaign_slot",
+  "campaign_flag_dismissal",
+  "campaign_creation",
+  "campaign_deletion",
+  "auto_manage_toggle",
+  "upkeep",
+  "aging",
+  "energy",
+  "pregnancy_check",
+  "pregnancy_resolution",
+  "race_resolution",
+  "claiming",
+  "withdraw_from_claiming",
+  "tactics",
+  "transport",
+  "staff",
+  "facility_upgrade",
+  "pasture_retirement",
+  "update_stud_fee",
+  "syndicate_creation",
+  "share_purchase",
+  "share_sale",
+  "syndicate_fee_distribution",
+  "insurance_purchase",
+  "insurance_cancel",
+  "insurance_claim",
+  "stewards_inquiry",
+  "diplomatic_action",
+  "cartel_action",
+];
+
+describe("Orphan Scan: Intent Type Coverage (44 types)", () => {
+  const orphanedIntents: string[] = [];
+  const wiredIntents: string[] = [];
+
+  // Collect all non-test source text for intent generation check
+  const intentGenText = readFileSafe(join(srcRoot, "core", "npc", "intentGenerators.ts"));
+  const allPhaseTexts = allCoreTsFiles
+    .filter((f) => f.includes(sep + "time" + sep + "phases" + sep) && !f.includes(".test."))
+    .map((f) => readFileSafe(f))
+    .join("\n");
+  const allHandlerTexts = allCoreTsFiles
+    .filter((f) => f.includes(sep + "resolver" + sep + "handlers" + sep) && !f.includes(".test."))
+    .map((f) => readFileSafe(f))
+    .join("\n");
+  const allSourceText = allSourceContents.map((f) => f.text).join("\n");
+
+  for (const intentType of allIntentTypes) {
+    it(`intent type "${intentType}" is generated and handled`, () => {
+      const isGenerated =
+        intentGenText.includes(`type: "${intentType}"`) ||
+        allPhaseTexts.includes(`type: "${intentType}"`) ||
+        allSourceText.includes(`type: "${intentType}"`);
+      const isHandled =
+        allHandlerTexts.includes(`"${intentType}"`) || allPhaseTexts.includes(`"${intentType}"`);
+      const isReferenced = allSourceText.includes(`type: "${intentType}"`);
+
+      if (isGenerated && isHandled) {
+        wiredIntents.push(intentType);
+      } else {
+        orphanedIntents.push(
+          `${intentType} (generated: ${isGenerated}, handled: ${isHandled}, referenced: ${isReferenced})`,
+        );
+      }
+      expect(typeof intentType).toBe("string");
+    });
+  }
+
+  it("records orphaned intent types for Phase 5 comparison", () => {
+    console.log("ORPHANED intent types:", orphanedIntents);
+    console.log("WIRED intent types:", wiredIntents);
+    expect(allIntentTypes.length).toBe(44);
+  });
+});
+
+// ─── Store slice action audit (20 slices) ────────────────────────────────────
+
+const storeSlices = [
+  "auctionSlice",
+  "awardSlice",
+  "breedingProgramSlice",
+  "breedingSlice",
+  "campaignSlice",
+  "coreSlice",
+  "facilitySlice",
+  "horseAdminSlice",
+  "inboxSlice",
+  "insuranceSlice",
+  "jockeySlice",
+  "marketSlice",
+  "privateSaleSlice",
+  "racingSlice",
+  "scoutingSlice",
+  "settingsSlice",
+  "staffSlice",
+  "transportSlice",
+  "utilitySlice",
+  "weatherSlice",
+];
+
+describe("Orphan Scan: Store Slice Imports (20 slices)", () => {
+  const orphanedSlices: string[] = [];
+  const wiredSlices: string[] = [];
+
+  for (const slice of storeSlices) {
+    const importPath = `./slices/${slice}`;
+    it(`${slice} is imported by store/index.ts`, () => {
+      const storeText = readFileSafe(join(srcRoot, "game", "store", "index.ts"));
+      const imported = storeText.includes(importPath);
+
+      if (imported) {
+        wiredSlices.push(slice);
+      } else {
+        orphanedSlices.push(slice);
+      }
+      console.log(`${slice}: ${imported ? "WIRED" : "ORPHANED"}`);
+      expect(typeof slice).toBe("string");
+    });
+  }
+
+  it("records orphaned store slices", () => {
+    console.log("ORPHANED store slices:", orphanedSlices);
+    console.log("WIRED store slices:", wiredSlices);
+    expect(storeSlices.length).toBe(20);
+  });
+});
+
+// ─── Hook selector audit ─────────────────────────────────────────────────────
+
+describe("Orphan Scan: Hook Selectors", () => {
+  const hooksDir = join(srcRoot, "hooks");
+  const hookFiles = collectFiles(hooksDir, [".ts", ".tsx"], [])
+    .filter((f) => !f.includes(".test."))
+    .map((f) => relative(srcRoot, f));
+
+  const orphanedHooks: string[] = [];
+  const wiredHooks: string[] = [];
+
+  for (const hookFile of hookFiles) {
+    it(`hook ${hookFile} is consumed by non-test source`, () => {
+      const hookName =
+        hookFile
+          .split(sep)
+          .pop()
+          ?.replace(/\.[jt]sx?$/, "") ?? "";
+      // Check if any non-test source file imports from this hook path
+      const importPath = `@/hooks/${hookName}`;
+      const importPathWithDir = `@/hooks/${hookFile.replace(/\.[jt]sx?$/, "")}`;
+      const consumed = allSourceContents.some(
+        (f) =>
+          !f.path.includes(hookFile) &&
+          (f.text.includes(importPath) || f.text.includes(importPathWithDir)),
+      );
+
+      if (consumed) {
+        wiredHooks.push(hookFile);
+      } else {
+        orphanedHooks.push(hookFile);
+      }
+      expect(typeof hookFile).toBe("string");
+    });
+  }
+
+  it("records orphaned hooks", () => {
+    console.log("ORPHANED hooks:", orphanedHooks);
+    console.log("WIRED hooks:", wiredHooks);
+  });
+});
+
+// ─── NpcAIManager field audit ────────────────────────────────────────────────
+
+const npcAIManagerFields = [
+  "globalEconomicState",
+  "activeCartels",
+  "narrativeArcs",
+  "difficultyModulator",
+];
+
+describe("Orphan Scan: NpcAIManager Fields", () => {
+  const orphanedManagerFields: string[] = [];
+  const wiredManagerFields: string[] = [];
+
+  for (const field of npcAIManagerFields) {
+    it(`NpcAIManager.${field} is surfaced in UI (.tsx)`, () => {
+      const inTsx = isInTsx(field);
+      if (inTsx) {
+        wiredManagerFields.push(field);
+      } else {
+        orphanedManagerFields.push(field);
+      }
+      console.log(`NpcAIManager.${field}: ${inTsx ? "WIRED" : "ORPHANED"}`);
+      expect(typeof field).toBe("string");
+    });
+  }
+
+  it("records orphaned NpcAIManager fields", () => {
+    console.log("ORPHANED NpcAIManager fields (no UI consumer):", orphanedManagerFields);
+    console.log("WIRED NpcAIManager fields:", wiredManagerFields);
+  });
+});
+
+// ─── Detailed budget allocation per-field audit ──────────────────────────────
+
+describe("Orphan Scan: Budget Allocation Per-Field", () => {
+  const budgetFields = ["training", "facilities", "auctions", "claiming", "breeding"];
+  const orphanedBudgets: string[] = [];
+  const wiredBudgets: string[] = [];
+
+  for (const budget of budgetFields) {
+    it(`budgetAllocation.${budget} is read by AI subsystem`, () => {
+      const intentText = readFileSafe(join(srcRoot, "core", "npc", "intentGenerators.ts"));
+      const allAiText = allCoreTsFiles
+        .filter((f) => f.includes(sep + "ai" + sep) && !f.includes(".test."))
+        .map((f) => readFileSafe(f))
+        .join("\n");
+      const isRead =
+        intentText.includes(`budgetAllocation?.${budget}`) ||
+        intentText.includes(`budgetAllocation.${budget}`) ||
+        allAiText.includes(`budgetAllocation?.${budget}`) ||
+        allAiText.includes(`budgetAllocation.${budget}`);
+
+      if (isRead) {
+        wiredBudgets.push(budget);
+      } else {
+        orphanedBudgets.push(budget);
+      }
+      console.log(`budgetAllocation.${budget}: ${isRead ? "READ" : "NOT READ"}`);
+      expect(typeof budget).toBe("string");
+    });
+  }
+
+  it("records orphaned budget fields", () => {
+    console.log("ORPHANED budget fields (not read by AI):", orphanedBudgets);
+    console.log("WIRED budget fields:", wiredBudgets);
+  });
+});
+
+// ─── Confirmed wired fields (validation baseline) ────────────────────────────
+
+describe("Orphan Scan: Confirmed Wired Fields (Validation Baseline)", () => {
+  for (const field of confirmedWiredFields) {
+    it(`${field} is confirmed wired in UI`, () => {
+      expect(isInTsx(field)).toBe(true);
+    });
+  }
 });

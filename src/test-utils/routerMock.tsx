@@ -39,6 +39,7 @@ export function createRouterMock() {
     useNavigate: () => noopAsync,
     useSearch: () => ({}),
     useParams: () => MOCK_PARAMS,
+    useLocation: () => ({ pathname: "/", search: {}, hash: "" }),
     useRouter: () => ({ navigate: noopAsync, history: { back: noop } }),
     useRouterState: () => ({ location: { pathname: "/", search: {} } }),
     getRouteApi: () => routeApi,

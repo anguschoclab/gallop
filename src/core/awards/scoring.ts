@@ -23,6 +23,7 @@ import {
 } from "./types";
 import { getTrackContinent, type Continent } from "@/data/gradedRaces";
 import { DAYS_PER_YEAR } from "@/constants";
+import { SIRE_GENDERS, DAM_GENDERS } from "@/core/horse/gender";
 
 // Map continent to award region
 const CONTINENT_TO_REGION: Record<Continent, AwardRegion> = {
@@ -102,18 +103,18 @@ function isEligibleForCategory(
     // Age-based categories
     case "champion_2yo_male":
     case "champion_2yo_colt":
-      return age === 2 && (gender === "colt" || gender === "horse");
+      return age === 2 && SIRE_GENDERS.includes(gender);
     case "champion_2yo_female":
     case "champion_2yo_filly":
-      return age === 2 && (gender === "filly" || gender === "mare");
+      return age === 2 && DAM_GENDERS.includes(gender);
     case "champion_3yo_male":
     case "champion_3yo_colt":
     case "campeon_3yo_macho":
-      return age === 3 && (gender === "colt" || gender === "horse");
+      return age === 3 && SIRE_GENDERS.includes(gender);
     case "champion_3yo_female":
     case "champion_3yo_filly":
     case "campeona_3yo_hembras":
-      return age === 3 && (gender === "filly" || gender === "mare");
+      return age === 3 && DAM_GENDERS.includes(gender);
     case "champion_2yo":
     case "potrillo_del_ano":
     case "potranca_del_ano":
@@ -123,9 +124,9 @@ function isEligibleForCategory(
 
     // Older horse categories
     case "champion_older_dirt_male":
-      return age >= 4 && (gender === "horse" || gender === "colt") && surface === "dirt";
+      return age >= 4 && SIRE_GENDERS.includes(gender) && surface === "dirt";
     case "champion_older_dirt_female":
-      return age >= 4 && (gender === "mare" || gender === "filly") && surface === "dirt";
+      return age >= 4 && DAM_GENDERS.includes(gender) && surface === "dirt";
     case "champion_older_horse":
     case "campeon_mayor":
       return age >= 4;
@@ -145,9 +146,9 @@ function isEligibleForCategory(
 
     // Turf categories
     case "champion_turf_male":
-      return (gender === "horse" || gender === "colt") && surface === "turf";
+      return SIRE_GENDERS.includes(gender) && surface === "turf";
     case "champion_turf_female":
-      return (gender === "mare" || gender === "filly") && surface === "turf";
+      return DAM_GENDERS.includes(gender) && surface === "turf";
 
     // Middle distance
     case "champion_middle_distance":
@@ -155,7 +156,7 @@ function isEligibleForCategory(
 
     // Filly/Mare categories
     case "champion_filly_or_mare":
-      return gender === "filly" || gender === "mare";
+      return DAM_GENDERS.includes(gender);
 
     // Steeplechase - longer distance turf races (heuristic until proper steeplechase type added)
     case "champion_steeplechase":

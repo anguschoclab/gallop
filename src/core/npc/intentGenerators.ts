@@ -26,6 +26,7 @@ import type {
   CartelActionIntent,
   ConsignmentIntent,
   UpdateStudFeeIntent,
+  TransportIntent,
 } from "@/core/resolver/intents";
 import type { GameState, Horse, Race, Stable, Jockey, AuctionSale } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
@@ -185,10 +186,12 @@ export function generateNpcIntents(
         const weights = coordinateSubsystems(directives, budget);
 
         // Store coordination results on stableAI state
+        // Facilities budget is tracked for future facility upgrade decisions
+        const facilitiesBudget = stableAI?.budgetAllocation?.facilities ?? budget.facilities;
         stableAI = {
           ...stableAI,
           strategicDirectives: directives,
-          budgetAllocation: budget,
+          budgetAllocation: { ...budget, facilities: facilitiesBudget },
           subsystemWeights: weights,
           worldAssessment,
         };
@@ -288,6 +291,11 @@ export function generateNpcIntents(
         intents.push(...generateNpcStudFeeIntents(stable, day, ownedHorses, distressLevel));
       }
 
+      // Transport intents: move horses between outposts for regional racing advantage
+      if (stable.outposts && stable.outposts.length > 1) {
+        intents.push(...generateNpcTransportIntents(stable, day, ownedHorses));
+      }
+
       // Update stable AI state in the manager (immutable update)
       if (aiManager && stableAI) {
         const updatedState = updateStableAIState(stableAI, day);
@@ -336,6 +344,11 @@ function generateNpcTrainingIntents(
   // Use persisted AI state if available, otherwise fallback to temporary state
   const trainingAI = stableAI?.trainingAI ?? createTrainingAIState(stable);
 
+  // Budget enforcement: cap training sessions based on training budget
+  const trainingBudget = stableAI?.budgetAllocation?.training;
+  const trainingCostPerSession = 500; // approximate cost per training session
+  let cumulativeTrainingSpend = 0;
+
   const stableFacilities = state.npcFacilities?.[stable.id];
   const availableTypes = stableFacilities
     ? getAvailableTrainingTypes(stableFacilities)
@@ -366,6 +379,12 @@ function generateNpcTrainingIntents(
       if (shouldTrainToday(trainingAI, horse, day, trainingWeight)) {
         // Use AI to select training type
         const trainingType = selectTrainingType(trainingAI, horse, day, availableTypes);
+
+        // Budget enforcement: skip if budget exhausted (but allow at least one)
+        if (trainingBudget !== undefined && trainingBudget <= 0 && cumulativeTrainingSpend > 0) {
+          continue;
+        }
+        cumulativeTrainingSpend += trainingCostPerSession;
 
         intents.push({
           id: generateUUID(),
@@ -704,8 +723,19 @@ function generateNpcGeldingIntents(
     stableAI?.geldingAI ||
     (stableAI ? (stableAI.geldingAI = createGeldingAIState(stable)) : createGeldingAIState(stable));
 
+  // Budget enforcement: cap breeding-related spending based on breeding budget
+  const breedingBudget = stableAI?.budgetAllocation?.breeding;
+  const geldingCost = 2000; // approximate cost per gelding procedure
+  let cumulativeBreedingSpend = 0;
+
   for (const horse of ownedHorses) {
     if (shouldGeldHorse(geldingAI, horse, day, breedingWeight)) {
+      // Budget enforcement: skip if budget exhausted (but allow at least one)
+      if (breedingBudget !== undefined && breedingBudget <= 0 && cumulativeBreedingSpend > 0) {
+        continue;
+      }
+      cumulativeBreedingSpend += geldingCost;
+
       intents.push({
         id: generateUUID(),
         entityId: horse.id,
@@ -981,6 +1011,10 @@ function generateNpcAuctionIntents(
   // Get or create auction AI state
   const auctionAI = stableAI?.auctionAI ?? createAuctionAIState(stable);
 
+  // Budget enforcement: cap auction spending based on auctions budget
+  const auctionBudget = stableAI?.budgetAllocation?.auctions;
+  let cumulativeAuctionSpend = 0;
+
   // Find active (non-resolved) auctions
   const activeSales = auctions.filter((s) => !s.resolved);
   if (activeSales.length === 0) return intents;
@@ -999,6 +1033,13 @@ function generateNpcAuctionIntents(
         const reservePrice = Math.floor(
           calculateOverallRating(horse) * HORSE_RATING_TO_VALUE_MULTIPLIER,
         );
+
+        // Budget enforcement: skip if budget exhausted (but allow at least one)
+        if (auctionBudget !== undefined && auctionBudget <= 0 && cumulativeAuctionSpend > 0) {
+          continue;
+        }
+        cumulativeAuctionSpend += reservePrice;
+
         intents.push({
           id: generateUUID(),
           entityId: horse.id,
@@ -1083,6 +1124,73 @@ function generateNpcStudFeeIntents(
         horseId: horse.id,
         newFee,
       });
+    }
+  }
+
+  return intents;
+}
+
+/**
+ * Generate transport intents for NPC stables with multiple outposts.
+ * Moves horses to outposts that better match their surface aptitude.
+ *
+ * @param stable - The NPC stable generating transport intents
+ * @param day - Current game day
+ * @param ownedHorses - Horses owned by this stable
+ * @returns Array of transport intents
+ */
+function generateNpcTransportIntents(
+  stable: Stable,
+  day: number,
+  ownedHorses: Horse[],
+): TransportIntent[] {
+  const intents: TransportIntent[] = [];
+  if (!stable.outposts || stable.outposts.length < 2) return intents;
+
+  const TRANSPORT_COST = 5000;
+  const MAX_TRANSPORTS_PER_DAY = 2;
+  let transportCount = 0;
+
+  for (const horse of ownedHorses) {
+    if (transportCount >= MAX_TRANSPORTS_PER_DAY) break;
+    if (horse.stableId !== stable.id) continue;
+    if (horse.age < 2) continue;
+
+    // Find current outpost (where horse is acclimatizing or assigned)
+    const currentOutpost = stable.outposts.find((o) =>
+      Object.keys(o.acclimatizationDays ?? {}).includes(horse.id),
+    );
+    if (!currentOutpost) continue;
+
+    // Check if horse is still acclimatizing — don't move if so
+    const acclimRemaining = currentOutpost.acclimatizationDays?.[horse.id] ?? 0;
+    if (acclimRemaining > 0) continue;
+
+    // Find a better outpost: prefer one with facilities matching horse's surface aptitude
+    const turfApt = horse.surfaceAptitude?.Turf ?? 0;
+    const dirtApt = horse.surfaceAptitude?.Dirt ?? 0;
+    const horseSurface = turfApt > dirtApt ? "Turf" : "Dirt";
+    const candidateOutposts = stable.outposts.filter((o) => o.id !== currentOutpost.id);
+
+    // Find outpost with a main track matching horse's preferred surface
+    const bestOutpost = candidateOutposts.find((o) => {
+      const mainTrack = Object.values(o.facilities ?? {}).find((f) => f.type === "main_track");
+      return mainTrack?.branch === (horseSurface === "Turf" ? "turf" : "dirt");
+    });
+
+    if (bestOutpost) {
+      intents.push({
+        id: generateUUID(),
+        entityId: horse.id,
+        source: "npc",
+        sourceId: stable.id,
+        day,
+        priority: 20,
+        type: "transport",
+        transportId: `${currentOutpost.id}->${bestOutpost.id}`,
+        cost: TRANSPORT_COST,
+      });
+      transportCount++;
     }
   }
 

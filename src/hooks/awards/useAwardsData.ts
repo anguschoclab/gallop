@@ -6,6 +6,8 @@ export function useAwardsData() {
   const awards = useGame((s) => s.awards);
   const day = useGame((s) => s.day);
   const invitations = useGameWithShallow((s) => s.awardCeremonyInvitations) ?? [];
+  const pendingAwardCeremonies = useGameWithShallow((s) => s.pendingAwardCeremonies) ?? [];
+  const currentCeremonyIndex = useGameWithShallow((s) => s.currentCeremonyIndex);
   const year = Math.floor((day - 1) / DAYS_PER_YEAR) + 1;
 
   const playerAwards = awards.filter((a) => !a.stableId);
@@ -36,5 +38,7 @@ export function useAwardsData() {
     totalAwards,
     hotyCount,
     currentYearAwards,
+    pendingAwardCeremonies,
+    currentCeremonyIndex,
   };
 }

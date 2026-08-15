@@ -10,6 +10,7 @@
  */
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
+import { getCareerStats } from "@/core/horse/stats";
 
 // Pasture Retirement Phase
 // Automatically retires NPC horses to pasture based on age and inactivity
@@ -120,9 +121,7 @@ export const pastureRetirementPhase: PipelinePhase = {
       const inactiveDays = lastRaceDay > 0 ? newDay - lastRaceDay : newDay;
 
       // Count graded wins
-      const gradedWins = horse.raceHistory.filter(
-        (r) => r.position === 1 && r.grade && ["G1", "G2", "G3"].includes(r.grade),
-      ).length;
+      const gradedWins = getCareerStats(horse).gradedWins;
 
       // Determine retirement eligibility
       const isOld = horse.age >= 8;

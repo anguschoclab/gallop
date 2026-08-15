@@ -509,7 +509,7 @@ export function isLotEligible(
   if (hemi && horse.hemisphere !== hemi) return false;
 
   if (kind === "broodmare") {
-    if (horse.gender !== "mare" && horse.gender !== "filly") return false;
+    if (!isFemaleHorse(horse.gender)) return false;
   }
   if (kind === "racing_age") {
     if (horse.gender === "mare") return false; // mares 4+ go to broodmare

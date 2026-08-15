@@ -492,7 +492,7 @@ function calculateStyleScore(
   score = calculateUtilityScore(aiState.personalityState, "jockey_strategy", factors);
 
   // Learning-based adjustment
-  const contextKey = `${horse.age}:${race.distance}:${style}`;
+  const contextKey = `${horse.age}:${race.distance}:${style}:${race.trackCondition ?? "none"}:${race.weather ?? "none"}`;
   const successRate = getSuccessRate(aiState.learningState, "jockey_strategy", contextKey);
   const adaptiveBonus = (successRate - 0.5) * 15;
   score += adaptiveBonus;
@@ -708,12 +708,12 @@ export function recordRaceStrategy(
 
   // Update learning state
   const success = position <= 3; // Top 3 is success
-  const contextKey = `${horse.age}:${race.distance}:${runningStyle}`;
+  const contextKey = `${horse.age}:${race.distance}:${runningStyle}:${race.trackCondition ?? "none"}:${race.weather ?? "none"}`;
   const value = 10 - position; // Higher value for better positions
   const newLearningState = recordLearningOutcome(
     aiState.learningState,
     "jockey_strategy",
-    `${race.id}:${horse.id}`,
+    contextKey,
     success,
     value,
     currentDay,

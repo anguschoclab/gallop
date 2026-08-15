@@ -7,6 +7,7 @@ import { AnalyticsRacingTab } from "@/components/analytics/AnalyticsRacingTab";
 import { AnalyticsFinanceTab } from "@/components/analytics/AnalyticsFinanceTab";
 import { AnalyticsBreedingTab } from "@/components/analytics/AnalyticsBreedingTab";
 import { EconomicIndicators } from "@/components/analytics/EconomicIndicators";
+import { NpcAIStatusPanel } from "@/components/analytics/NpcAIStatusPanel";
 import { useTabParam } from "@/hooks/ui/useTabParam";
 import { BarChart3, Zap, DollarSign, Sprout, PawPrint } from "lucide-react";
 
@@ -63,6 +64,7 @@ function AnalyticsPage() {
 
         <TabsContent value="overview" className="space-y-4">
           <EconomicIndicators />
+          <NpcAIStatusPanel />
           <AnalyticsOverviewTab />
         </TabsContent>
 

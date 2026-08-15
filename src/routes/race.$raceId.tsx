@@ -14,6 +14,7 @@ import { useStewardsInquiry } from "@/hooks/race/useStewardsInquiry";
 import { getCourseForRace } from "@/data/tracks";
 import { safeParseJson, raceProgressSchema } from "@/services/storage/schemas";
 import { preloadHorseSprites } from "@/components/race/raceVisualHelpers";
+import { ReplayPlayer } from "@/components/race/ReplayPlayer";
 
 type DisplayPhase = "preshow" | "broadcast";
 
@@ -375,6 +376,12 @@ export function LiveRace() {
           }}
         />
       </PhasePanel>
+
+      {race.resolved && (
+        <div className="p-6 max-w-4xl mx-auto">
+          <ReplayPlayer raceId={race.id} />
+        </div>
+      )}
     </div>
   );
 }

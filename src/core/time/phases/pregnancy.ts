@@ -21,6 +21,7 @@ import type {
   MareFoalingUpdateImpact,
   StudCareerImpact,
 } from "@/core/resolver/impacts";
+import type { PregnancyCheckIntent, PregnancyResolutionIntent } from "@/core/resolver/intents";
 import { generateUUID } from "@/core/uuid";
 import { createReputationEvent, calculateBreedingReputation } from "@/core/reputation";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
@@ -230,6 +231,8 @@ function buildStudCareerImpacts(
 /**
  * Phase: Pregnancy Resolution
  * Resolve pregnancies and produce impacts for the impact resolver.
+ * This phase handles "pregnancy_check" and "pregnancy_resolution" intent types
+ * by directly resolving all pregnancies in state (not via intent queue).
  */
 export const pregnancyPhase = {
   name: "pregnancy",

@@ -33,6 +33,7 @@ import type {
   CampaignCreationIntent,
   CampaignDeletionIntent,
   InsuranceClaimIntent,
+  JockeyReleaseIntent,
 } from "@/core/resolver/intents";
 import type {
   AnyImpact,
@@ -149,6 +150,21 @@ export const managementResolutionPhase: PipelinePhase = {
             jockeyId: typedIntent.jockeyId,
             reason: "Jockey assigned",
           } as JockeyAssignmentImpact);
+          break;
+        }
+
+        case "jockey_release": {
+          const typedIntent = intent as JockeyReleaseIntent;
+          impacts.push({
+            id: generateUUID(context.dailyRng),
+            intentId: intent.id,
+            day: newDay,
+            phase: "managementResolution",
+            logLevel: "always",
+            type: "log",
+            text: `Jockey ${typedIntent.jockeyId} released from contract`,
+            reason: "Jockey released",
+          } as LogImpact);
           break;
         }
 

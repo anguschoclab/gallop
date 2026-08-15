@@ -13,6 +13,7 @@ import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
 import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
 import { getSuccessRate } from "./learningModule";
 import { scoreStallion } from "@/core/breeding/strategy";
+import { isFemaleHorse } from "@/core/horse/gender";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { runBreedingSimulation } from "@/core/genetics/breedingSimulator";
 import { cachedSimulation } from "@/core/genetics/genotypeCache";
@@ -535,11 +536,23 @@ function selectSireByTraditionalScoring(
 ): Horse | null {
   if (candidateSires.length === 0) return null;
 
-  // Simple scoring based on overall rating
-  const scored = candidateSires.map((sire) => ({
-    sire,
-    score: calculateOverallRating(sire),
-  }));
+  // Use industryMeanEarnings to adjust sire scores: sires whose progeny earnings
+  // exceed the industry mean get a bonus, making them more attractive candidates.
+  const industryMean = gameState.industryMeanEarnings ?? 0;
+
+  const scored = candidateSires.map((sire) => {
+    let score = calculateOverallRating(sire);
+
+    // Adjust score based on sire's lifetime earnings vs industry mean
+    const sireEarnings = sire.lifetimeEarnings ?? 0;
+    if (industryMean > 0 && sireEarnings > 0) {
+      const earningsRatio = sireEarnings / industryMean;
+      // Bonus up to +15 for sires with earnings well above industry mean
+      score += Math.min(15, (earningsRatio - 1) * 10);
+    }
+
+    return { sire, score };
+  });
 
   scored.sort((a, b) => b.score - a.score);
   return scored[0].sire;
@@ -556,15 +569,17 @@ function selectSireByTraditionalScoring(
  * @param mare - The mare to evaluate
  * @param stable - The stable owning the mare
  * @param recentForm - Array of recent race positions (last 5 races)
+ * @param industryMeanEarnings - Optional industry mean earnings for comparison
  * @returns Object with shouldRetire flag and reason
  */
 export function evaluateMareRetirement(
   mare: Horse,
   stable: Stable,
   recentForm: number[],
+  industryMeanEarnings?: number,
 ): { shouldRetire: boolean; reason?: string } {
   // Only evaluate mares/fillies
-  if (mare.gender !== "mare" && mare.gender !== "filly") {
+  if (!isFemaleHorse(mare.gender)) {
     return { shouldRetire: false };
   }
 
@@ -583,6 +598,13 @@ export function evaluateMareRetirement(
     const avgPosition = recentForm.reduce((sum, p) => sum + p, 0) / recentForm.length;
     if (avgPosition > 6 && mare.age >= 6) {
       return { shouldRetire: true, reason: "poor_form" };
+    }
+  }
+
+  // Industry earnings comparison: mares earning well below industry mean should retire
+  if (industryMeanEarnings !== undefined && industryMeanEarnings > 0 && mare.age >= 6) {
+    if (mare.lifetimeEarnings < industryMeanEarnings * 0.3) {
+      return { shouldRetire: true, reason: "below_industry_earnings" };
     }
   }
 

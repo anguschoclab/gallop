@@ -2,10 +2,11 @@ import { useGame, useGameWithShallow } from "@/game/store";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LeaderboardTable } from "@/components/history/LeaderboardTable";
 import { TrackRecordsTable } from "@/components/history/TrackRecordsTable";
-import { DollarSign, Zap, Timer } from "lucide-react";
+import { DollarSign, Zap, Timer, RefreshCw } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
 import type { TrackRecord } from "@/core/history/historyTypes";
 import type { ProgenyLeaderboard } from "@/core/breeding/leaderboardTypes";
+import { Card, CardContent } from "@/components/ui/card";
 
 const EMPTY_OBJECT = {} as Record<string, never>;
 
@@ -17,6 +18,11 @@ export function RecordsTab() {
     string,
     TrackRecord
   >;
+  const leaderboardsUpdatedDay = useGameWithShallow((s) => s.leaderboardsUpdatedDay);
+  const lastTopTenRank = useGameWithShallow((s) => s.lastTopTenRank);
+  const industryEarningsUpdatedDay = useGameWithShallow((s) => s.industryEarningsUpdatedDay);
+  const lastFounderUpdateDay = useGameWithShallow((s) => s.lastFounderUpdateDay);
+  const lastAwardYear = useGameWithShallow((s) => s.lastAwardYear);
 
   const trackRecordsList = Object.values(trackRecords).sort((a, b) => {
     if (a.trackName !== b.trackName) return a.trackName.localeCompare(b.trackName);
@@ -34,6 +40,61 @@ export function RecordsTab() {
           The Hall of Champions — All-Time Rankings
         </p>
       </div>
+
+      <Card className="border-white/5 bg-slate-900/40">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <RefreshCw className="h-4 w-4 text-gold/60" />
+            <h3 className="text-xs font-black uppercase tracking-widest text-cream/40">
+              Data Freshness
+            </h3>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs">
+            <div>
+              <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+                Leaderboards
+              </span>
+              <p className="text-cream font-mono">
+                {leaderboardsUpdatedDay !== undefined ? `Day ${leaderboardsUpdatedDay}` : "—"}
+              </p>
+            </div>
+            <div>
+              <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+                Top Ten Rank
+              </span>
+              <p className="text-cream font-mono">
+                {lastTopTenRank !== undefined ? `#${lastTopTenRank}` : "—"}
+              </p>
+            </div>
+            <div>
+              <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+                Industry Earnings
+              </span>
+              <p className="text-cream font-mono">
+                {industryEarningsUpdatedDay !== undefined
+                  ? `Day ${industryEarningsUpdatedDay}`
+                  : "—"}
+              </p>
+            </div>
+            <div>
+              <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+                Founder Update
+              </span>
+              <p className="text-cream font-mono">
+                {lastFounderUpdateDay !== undefined ? `Day ${lastFounderUpdateDay}` : "—"}
+              </p>
+            </div>
+            <div>
+              <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+                Last Awards
+              </span>
+              <p className="text-cream font-mono">
+                {lastAwardYear !== undefined ? `Year ${lastAwardYear}` : "—"}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Tabs defaultValue="earnings" className="w-full">
         <TabsList className="grid w-full max-w-2xl grid-cols-3 bg-muted/50 p-1 mb-8">

@@ -21,6 +21,8 @@ export function AwardsTab() {
     totalAwards,
     hotyCount,
     currentYearAwards,
+    pendingAwardCeremonies,
+    currentCeremonyIndex,
   } = useAwardsData();
 
   return (
@@ -59,6 +61,25 @@ export function AwardsTab() {
       </div>
 
       <TrophyStats awards={playerAwards} />
+
+      {pendingAwardCeremonies.length > 0 && (
+        <Card className="border-gold bg-gold/5">
+          <CardContent className="p-4 flex items-center gap-3">
+            <Calendar className="h-5 w-5 text-gold" />
+            <div>
+              <p className="text-sm font-bold text-gold">
+                {pendingAwardCeremonies.length} Pending Award Ceremony
+                {pendingAwardCeremonies.length > 1 ? "s" : ""}
+              </p>
+              <p className="text-xs text-gold/70">
+                {currentCeremonyIndex !== undefined
+                  ? `Currently processing ceremony ${currentCeremonyIndex + 1} of ${pendingAwardCeremonies.length}`
+                  : "Awaiting ceremony processing"}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <CeremonyInvitations invitations={invitations} day={day} />
 

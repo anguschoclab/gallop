@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HorseAwardsPanel } from "@/components/awards";
 import { FounderLegacy } from "@/components/horse/FounderLegacy";
+import { CareerArcPanel } from "@/components/horse/CareerArcPanel";
 import { TrainingPanel } from "@/components/horse/TrainingPanel";
 import { FoalDevelopmentPanel } from "@/components/horse/FoalDevelopmentPanel";
 import { PrivateTrialDialog } from "@/components/horse/PrivateTrialDialog";
@@ -244,6 +245,7 @@ function HorseDetail() {
             />
 
             <FounderLegacy horseId={horse.id} />
+            <CareerArcPanel horseId={horse.id} />
             <HorseAwardsPanel horse={horse} />
             {detail.isSyndicated && detail.syndicates[horse.id] && (
               <ShareOwnershipPanel syndicate={detail.syndicates[horse.id]} stallion={horse} />

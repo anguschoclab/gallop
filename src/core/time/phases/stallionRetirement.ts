@@ -14,6 +14,8 @@ import { generateUUID } from "@/core/uuid";
 import type { StudCareerImpact, LogImpact } from "@/core/resolver/impacts/index";
 import { calculateRecommendedStudFee } from "@/core/breeding/stallions";
 import { formatCurrency } from "@/core/common/formatting";
+import { SIRE_GENDERS } from "@/core/horse/gender";
+import { getCareerStats } from "@/core/horse/stats";
 
 /**
  * Phase: Stallion Retirement (Order 145)
@@ -32,14 +34,13 @@ export const stallionRetirementPhase: PipelinePhase = {
 
     for (const horse of npcHorses) {
       // 1. Basic eligibility
-      if (horse.gender !== "horse" && horse.gender !== "colt") continue;
+      if (!SIRE_GENDERS.includes(horse.gender)) continue;
       if (horse.stud?.atStud) continue;
       if (horse.age < 4) continue;
 
       // 2. Retirement Criteria
       // NPCs retire if they are legends (high fame/G1 wins) or reached "old age" (6+)
-      const isLegend =
-        horse.fame > 70 || horse.raceHistory.some((r) => r.position === 1 && r.grade === "G1");
+      const isLegend = horse.fame > 70 || getCareerStats(horse).g1Wins > 0;
       const isOld = horse.age >= 6;
 
       // Additional check: are they still competitive?

@@ -49,13 +49,61 @@ export function calculateTacticalAdjustment(
   }
 
   // If pace is too slow, front runners might try to "steal" it
+  // Enhanced: stamina-aware — don't steal if staminaFactor < 0.7
   if (pace.paceRating < 0.92 && (runner.runningStyle === "E" || runner.runningStyle === "EP")) {
     if (progress < 0.7) {
-      velocityMod += 0.015 * skill * (1 - pace.paceRating);
+      const staminaFactor = runner.staminaFactor ?? 1;
+      const staminaScale = staminaFactor < 0.7 ? staminaFactor / 0.7 : 1;
+      velocityMod += 0.015 * skill * (1 - pace.paceRating) * staminaScale;
     }
   }
 
-  // 2. Lane Management & Traffic
+  // Enhanced: closers detecting very slow pace should not drop further back
+  // — switch targetLane to midpack instead of rail
+  if (pace.paceRating < 0.88 && runner.runningStyle === "S" && progress < 0.6) {
+    targetLane = 1.2; // Midpack lane
+  }
+
+  // 2. Weather-aware tactics
+  // Horses with low mud aptitude (< 0.5) in heavy/soft/yielding conditions save energy early
+  const trackCondition = runner.trackCondition;
+  if (
+    trackCondition &&
+    (trackCondition === "heavy" || trackCondition === "soft" || trackCondition === "yielding")
+  ) {
+    const mudAptitude = runner.horse?.mudAptitude ?? 1.0;
+    if (mudAptitude < 0.5 && progress < 0.6) {
+      velocityMod -= (0.5 - mudAptitude) * 0.04 * skill;
+    }
+  }
+
+  // 3. Stamina-state awareness
+  // If staminaFactor < 0.6, reduce velocity to preserve energy for late kick
+  const staminaFactor = runner.staminaFactor ?? 1;
+  if (staminaFactor < 0.6 && progress < 0.7) {
+    velocityMod -= (0.6 - staminaFactor) * 0.05 * skill;
+  }
+
+  // 4. Competitive intelligence (rival awareness)
+  // When a rival horse is within 2 lengths (~6m), apply aggressiveness boost
+  // scaled by jockey pacing skill
+  const rivalHorseIds = runner.rivalHorseIds;
+  if (rivalHorseIds && rivalHorseIds.length > 0) {
+    const rivalSet = new Set(rivalHorseIds);
+    const nearbyRival = runners.find(
+      (r) =>
+        r.horseId !== runner.horseId &&
+        rivalSet.has(r.horseId) &&
+        r.finishTime === null &&
+        Math.abs(r.position - runner.position) < 6,
+    );
+    if (nearbyRival) {
+      const pacingSkill = jockey.stats.pacing / 100;
+      velocityMod += 0.02 * pacingSkill;
+    }
+  }
+
+  // 5. Lane Management & Traffic
   // Check for traffic directly in front
   const horsesInFront = runners.filter(
     (r) =>
@@ -73,14 +121,35 @@ export function calculateTacticalAdjustment(
     }
   }
 
-  // 3. Jockey Instruction Specifics
+  // Enhanced: Traffic prediction — scan for 2-3 horses ahead within 6m in same lane
+  // If ≥2 horses clustered ahead, preemptively switch to findBestLane
+  // Low-skill jockeys (positioning < 40) don't predict
+  if (jockey.stats.positioning >= 40) {
+    const clusteredAhead = runners.filter(
+      (r) =>
+        r.horseId !== runner.horseId &&
+        r.finishTime === null &&
+        r.position > runner.position &&
+        r.position - runner.position < 6 &&
+        r.position - runner.position > 3 && // Beyond immediate traffic check
+        Math.abs(r.lane - runner.lane) < 0.5,
+    );
+    if (clusteredAhead.length >= 2 && horsesInFront.length === 0) {
+      targetLane = findBestLane(runner, pace.laneDensity);
+    }
+  }
+
+  // 6. Jockey Instruction Specifics
   if (
     runner.jockeyInstructions?.ridingStyle === "closer" &&
     runner.jockeyInstructions?.moveTiming === "late"
   ) {
     // Prioritize drafting and staying on rail (save energy)
     velocityMod *= 0.995;
-    targetLane = 0;
+    // Don't override if we already set midpack for slow pace
+    if (!(pace.paceRating < 0.88 && runner.runningStyle === "S" && progress < 0.6)) {
+      targetLane = 0;
+    }
   }
 
   if (runner.jockeyInstructions?.earlyPosition === "lead" && pace.leaderPos - runner.position < 1) {

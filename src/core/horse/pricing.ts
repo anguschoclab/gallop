@@ -14,6 +14,7 @@
 import type { Horse, StableTier, Stable } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
+import { SIRE_GENDERS, DAM_GENDERS } from "@/core/horse/gender";
 import {
   AGE_YOUNG_THRESHOLD,
   AGE_OLD_THRESHOLD,
@@ -54,7 +55,7 @@ export function calculateNpcHorseValue(horse: Horse, tier: StableTier): number {
  * @param stable
  */
 export function getStudFee(horse: Horse, stable: Pick<Stable, "tier">): number {
-  if (horse.gender !== "horse" && horse.gender !== "colt") return 0;
+  if (!SIRE_GENDERS.includes(horse.gender)) return 0;
   if (horse.age < 4) return 0;
   return calculateNpcHorseValue(horse, stable.tier);
 }
@@ -65,7 +66,7 @@ export function getStudFee(horse: Horse, stable: Pick<Stable, "tier">): number {
  * @param stable
  */
 export function getBroodmareFee(horse: Horse, stable: Pick<Stable, "tier">): number {
-  if (horse.gender !== "mare" && horse.gender !== "filly") return 0;
+  if (!DAM_GENDERS.includes(horse.gender)) return 0;
   if (horse.age < 3) return 0;
   return Math.round(calculateNpcHorseValue(horse, stable.tier) * 0.3);
 }

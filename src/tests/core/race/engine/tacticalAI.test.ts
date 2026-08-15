@@ -33,15 +33,26 @@ describe("tacticalAI", () => {
       distanceMod: 1,
       distanceStaminaMul: 1,
       draftingHorseId: null,
+      horse: {
+        id: "horse1",
+        mudAptitude: 1.0,
+        recoveryPoints: 100,
+      } as any,
       jockey: jockeyOverrides
         ? {
             id: "j1",
             name: "Test Jockey",
             skill: 50,
-            stats: { pacing: 50, positioning: 50, vigor: 50, gates: 50, loyalty: 50 },
+            stats: {
+              pacing: 50,
+              positioning: 50,
+              vigor: 50,
+              gates: 50,
+              loyalty: 50,
+              ...jockeyOverrides,
+            },
             traits: [],
             weight: 118,
-            ...jockeyOverrides,
           }
         : undefined,
       ...overrides,
@@ -131,5 +142,287 @@ describe("tacticalAI", () => {
 
     expect(result.velocityMod).toBeLessThan(1.0);
     expect(result.targetLane).toBe(0); // Moves to rail
+  });
+
+  // ── Phase 2: Enhanced Tactical AI ──
+
+  describe("weather-aware tactics", () => {
+    it.each([
+      ["heavy", 0.3],
+      ["soft", 0.4],
+      ["yielding", 0.45],
+    ] as const)(
+      "reduces velocity for low mudAptitude horse on %s track early in race",
+      (trackCondition, mudAptitude) => {
+        const runner = createMockRunner(
+          {
+            runningStyle: "E",
+            position: 50,
+            trackCondition,
+            horse: { id: "horse1", mudAptitude, recoveryPoints: 100 } as any,
+          },
+          { pacing: 80, positioning: 80 },
+        );
+        const pace = createMockPace({ leaderPos: 100, progress: 0.3 });
+
+        const result = calculateTacticalAdjustment(runner, pace, [runner]);
+
+        expect(result.velocityMod).toBeLessThan(1.0);
+      },
+    );
+
+    it("does not reduce velocity for high mudAptitude horse on heavy track", () => {
+      const runner = createMockRunner(
+        {
+          runningStyle: "E",
+          position: 50,
+          trackCondition: "heavy",
+          horse: { id: "horse1", mudAptitude: 1.1, recoveryPoints: 100 } as any,
+        },
+        { pacing: 80, positioning: 80 },
+      );
+      const pace = createMockPace({ leaderPos: 100, progress: 0.3 });
+
+      const result = calculateTacticalAdjustment(runner, pace, [runner]);
+
+      // Should not have weather penalty — velocityMod from pace sensing only
+      expect(result.velocityMod).toBeGreaterThanOrEqual(1.0);
+    });
+
+    it("does not apply weather penalty on fast track", () => {
+      const runner = createMockRunner(
+        {
+          runningStyle: "E",
+          position: 50,
+          trackCondition: "fast",
+          horse: { id: "horse1", mudAptitude: 0.3, recoveryPoints: 100 } as any,
+        },
+        { pacing: 80, positioning: 80 },
+      );
+      const pace = createMockPace({ leaderPos: 100, progress: 0.3 });
+
+      const result = calculateTacticalAdjustment(runner, pace, [runner]);
+
+      expect(result.velocityMod).toBeGreaterThanOrEqual(1.0);
+    });
+  });
+
+  describe("stamina-state awareness", () => {
+    it.each([0.3, 0.45, 0.55])(
+      "reduces velocity when staminaFactor is low (%s)",
+      (staminaFactor) => {
+        const runner = createMockRunner(
+          {
+            runningStyle: "E",
+            position: 50,
+            staminaFactor,
+          },
+          { pacing: 80, positioning: 80 },
+        );
+        const pace = createMockPace({ leaderPos: 100, progress: 0.4 });
+
+        const result = calculateTacticalAdjustment(runner, pace, [runner]);
+
+        expect(result.velocityMod).toBeLessThan(1.0);
+      },
+    );
+
+    it("does not reduce velocity when staminaFactor is high", () => {
+      const runner = createMockRunner(
+        {
+          runningStyle: "E",
+          position: 50,
+          staminaFactor: 0.9,
+        },
+        { pacing: 80, positioning: 80 },
+      );
+      const pace = createMockPace({ leaderPos: 100, progress: 0.4 });
+
+      const result = calculateTacticalAdjustment(runner, pace, [runner]);
+
+      expect(result.velocityMod).toBeGreaterThanOrEqual(1.0);
+    });
+  });
+
+  describe("competitive intelligence (rival awareness)", () => {
+    it("applies aggressiveness boost when rival is within 2 lengths", () => {
+      const runner = createMockRunner(
+        {
+          horseId: "horse1",
+          runningStyle: "P",
+          position: 100,
+          rivalHorseIds: ["horse2"],
+        },
+        { pacing: 80, positioning: 80 },
+      );
+      const rival = createMockRunner({
+        horseId: "horse2",
+        position: 104, // Within ~6m (2 lengths)
+        lane: 1.2,
+        runningStyle: "E",
+      });
+      const pace = createMockPace({ leaderPos: 110, progress: 0.5 });
+
+      const result = calculateTacticalAdjustment(runner, pace, [runner, rival]);
+
+      expect(result.velocityMod).toBeGreaterThan(1.0);
+    });
+
+    it("does not apply rival boost when rival is far ahead", () => {
+      const runner = createMockRunner(
+        {
+          horseId: "horse1",
+          runningStyle: "P",
+          position: 100,
+          rivalHorseIds: ["horse2"],
+        },
+        { pacing: 80, positioning: 80 },
+      );
+      const rival = createMockRunner({
+        horseId: "horse2",
+        position: 120, // Far ahead, >6m
+        lane: 1.2,
+        runningStyle: "E",
+      });
+      const pace = createMockPace({ leaderPos: 130, progress: 0.5 });
+
+      const result = calculateTacticalAdjustment(runner, pace, [runner, rival]);
+
+      // No rival boost — velocityMod should be baseline (1.0 for P at normal pace)
+      expect(result.velocityMod).toBe(1.0);
+    });
+
+    it("does not apply rival boost when no rivalHorseIds set", () => {
+      const runner = createMockRunner(
+        {
+          horseId: "horse1",
+          runningStyle: "P",
+          position: 100,
+        },
+        { pacing: 80, positioning: 80 },
+      );
+      const other = createMockRunner({
+        horseId: "horse2",
+        position: 104,
+        lane: 1.2,
+        runningStyle: "E",
+      });
+      const pace = createMockPace({ leaderPos: 110, progress: 0.5 });
+
+      const result = calculateTacticalAdjustment(runner, pace, [runner, other]);
+
+      expect(result.velocityMod).toBe(1.0);
+    });
+  });
+
+  describe("traffic prediction", () => {
+    it("preemptively switches lane when 2+ horses clustered ahead within 6m", () => {
+      const runner = createMockRunner(
+        {
+          horseId: "horse1",
+          position: 100,
+          lane: 1.2,
+          runningStyle: "P",
+        },
+        { pacing: 80, positioning: 80 },
+      );
+      const blocker1 = createMockRunner({
+        horseId: "b1",
+        position: 104,
+        lane: 1.2,
+        runningStyle: "E",
+      });
+      const blocker2 = createMockRunner({
+        horseId: "b2",
+        position: 105,
+        lane: 1.2,
+        runningStyle: "E",
+      });
+      const pace = createMockPace({ laneDensity: [0, 2, 0, 0] });
+
+      const result = calculateTacticalAdjustment(runner, pace, [runner, blocker1, blocker2]);
+
+      // Should switch to a less dense lane (lane index 2 = 2.4)
+      expect(result.targetLane).not.toBe(runner.lane);
+    });
+
+    it("does not predict traffic with low-skill jockey (positioning < 40)", () => {
+      const runner = createMockRunner(
+        {
+          horseId: "horse1",
+          position: 100,
+          lane: 1.2,
+          runningStyle: "P",
+        },
+        { pacing: 30, positioning: 30 },
+      );
+      const blocker1 = createMockRunner({
+        horseId: "b1",
+        position: 104,
+        lane: 1.2,
+        runningStyle: "E",
+      });
+      const blocker2 = createMockRunner({
+        horseId: "b2",
+        position: 105,
+        lane: 1.2,
+        runningStyle: "E",
+      });
+      const pace = createMockPace({ laneDensity: [0, 2, 0, 0] });
+
+      const result = calculateTacticalAdjustment(runner, pace, [runner, blocker1, blocker2]);
+
+      // Low-skill jockey should not predict — stays in current lane
+      expect(result.targetLane).toBe(runner.lane);
+    });
+  });
+
+  describe("dynamic pace adaptation", () => {
+    it("front-runner steal boost is reduced when staminaFactor is low", () => {
+      const runnerLowStamina = createMockRunner(
+        {
+          runningStyle: "E",
+          position: 50,
+          staminaFactor: 0.5,
+        },
+        { pacing: 100, positioning: 100 },
+      );
+      const runnerHighStamina = createMockRunner(
+        {
+          runningStyle: "E",
+          position: 50,
+          staminaFactor: 1.0,
+        },
+        { pacing: 100, positioning: 100 },
+      );
+      const pace = createMockPace({ paceRating: 0.8, leaderPos: 100, progress: 0.5 });
+
+      const resultLow = calculateTacticalAdjustment(runnerLowStamina, pace, [runnerLowStamina]);
+      const resultHigh = calculateTacticalAdjustment(runnerHighStamina, pace, [runnerHighStamina]);
+
+      // Low stamina should get less boost than high stamina
+      expect(resultLow.velocityMod).toBeLessThan(resultHigh.velocityMod);
+    });
+
+    it("closers reposition to midpack on very slow pace instead of dropping further back", () => {
+      const runner = createMockRunner(
+        {
+          runningStyle: "S",
+          position: 50,
+          lane: 2.4, // Currently wide
+        },
+        { pacing: 80, positioning: 80 },
+      );
+      const pace = createMockPace({
+        paceRating: 0.85,
+        leaderPos: 100,
+        progress: 0.4,
+      });
+
+      const result = calculateTacticalAdjustment(runner, pace, [runner]);
+
+      // Should not target the far outside — move toward midpack/rail
+      expect(result.targetLane).toBeLessThan(runner.lane);
+    });
   });
 });

@@ -11,7 +11,7 @@
 import type { Horse, Race } from "@/game/types";
 import type { Hemisphere } from "@/game/types";
 import { isGenderEligible as checkGenderEligibility } from "@/core/horse/gender";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateOverallRating, getCareerStats } from "@/core/horse/stats";
 import { getCurrentYear } from "@/core/race/schedule";
 import {
   DEFAULT_MIN_AGE_NORTHERN,
@@ -151,7 +151,7 @@ export function isHorseEligibleForRace(
     const allWins = horse.raceHistory.filter((r) => r.position === 1);
 
     // N3L: Non-winners of 3 races lifetime
-    if (race.winCondition === "N3L" && allWins.length >= 3) {
+    if (race.winCondition === "N3L" && getCareerStats(horse).wins >= 3) {
       return false;
     }
 

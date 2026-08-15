@@ -1,4 +1,25 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
+
+// Hoist matchMedia mock so it runs before any module-level code executes
+vi.hoisted(() => {
+  if (typeof globalThis !== "undefined") {
+    const g = globalThis as any;
+    if (!g.window?.matchMedia) {
+      if (!g.window) g.window = {};
+      g.window.matchMedia = (query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => false,
+      });
+    }
+  }
+});
+
 import { createElement } from "react";
 import { cleanup } from "@testing-library/react";
 import { createRouterMock, NotFoundError } from "@/test-utils/routerMock";

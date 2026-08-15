@@ -16,6 +16,7 @@ import type {
   Jockey as JockeyT,
   RunningStyle as RunningStyleT,
 } from "@/game/types";
+import type { TrackCondition, Weather } from "@/core/race/types";
 import { TRAIT_VALUES, fiberDistanceModifier } from "@/core/genetics/phenotype";
 import { clamp } from "@/core/common/math";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
@@ -141,6 +142,10 @@ export type Runner = {
   distanceMod?: number;
   distanceStaminaMul?: number;
   finalMood?: RunnerMood;
+  trackCondition?: TrackCondition;
+  weather?: Weather;
+  rivalHorseIds?: string[];
+  railPreference?: number;
 };
 
 export type ConditionsModifier = {
@@ -614,6 +619,14 @@ export function buildRunner(
     distanceDeviation,
     distanceMod,
     distanceStaminaMul,
+    trackCondition: race?.trackCondition,
+    weather: race?.weather,
+    railPreference:
+      runningStyle === "S" || runningStyle === "P"
+        ? jockey && jockey.stats.positioning > 70
+          ? 0
+          : 0.5
+        : 0.5,
   };
 }
 
