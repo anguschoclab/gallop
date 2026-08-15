@@ -217,7 +217,13 @@ describe("HorseSprite — sprite rendering (load success)", () => {
     expect(sprite).toBeTruthy();
     const sheet = getSpriteSheet("bay");
     const expectedWidth = (sheet?.frames ?? 6) * (sheet?.frameWidth ?? 50);
-    expect(sprite.style.backgroundSize).toBe(`${expectedWidth}px ${sheet?.frameHeight ?? 100}px`);
+    // Sizing is driven by CSS custom properties so any sheet dimension works.
+    expect(sprite.style.getPropertyValue("--sprite-sheet-width")).toBe(`${expectedWidth}px`);
+    expect(sprite.style.getPropertyValue("--sprite-sheet-height")).toBe(
+      `${sheet?.frameHeight ?? 100}px`,
+    );
+    expect(sprite.style.animationTimingFunction).toBe(`steps(${sheet?.frames ?? 6})`);
+
   });
 
   it("animationDuration style reflects quantized velocity (15.3 → same as 15)", () => {
