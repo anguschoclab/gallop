@@ -253,8 +253,8 @@ describe("HorseSprite — sprite rendering (load success)", () => {
     const sprite2 = document.querySelector(".horse-sprite") as HTMLElement;
     const duration2 = sprite2.style.animationDuration;
 
-    expect(duration1).toBe(duration2);
-    expect(duration1).toBe(getAnimationDuration(15));
+    expect(parseFloat(duration1)).toBe(parseFloat(getAnimationDuration(15)));
+    expect(parseFloat(duration1)).toBe(parseFloat(duration2));
   });
 });
 
@@ -294,7 +294,7 @@ describe("HorseSprite — memoization", () => {
     expect(sprite1).toBe(sprite2);
   });
 
-  it("does NOT re-render when velocity changes within same quantization bucket (15.1 → 15.9)", () => {
+  it("does NOT re-render when velocity changes within same quantization bucket (15.6 → 15.9)", () => {
     const baseProps = {
       coatColor: "bay",
       silk: "#ff0000",
@@ -305,7 +305,7 @@ describe("HorseSprite — memoization", () => {
       isAnimated: true,
     };
 
-    const { rerender } = render(createElement(HorseSprite, { ...baseProps, velocity: 15.1 }));
+    const { rerender } = render(createElement(HorseSprite, { ...baseProps, velocity: 15.6 }));
 
     const sprite1 = document.querySelector(".horse-sprite") as HTMLElement;
     const duration1 = sprite1.style.animationDuration;
@@ -316,8 +316,8 @@ describe("HorseSprite — memoization", () => {
     const duration2 = sprite2.style.animationDuration;
 
     // Both round to 16, so duration should be identical
-    expect(duration1).toBe(duration2);
-    expect(duration1).toBe(getAnimationDuration(16));
+    expect(parseFloat(duration1)).toBe(parseFloat(duration2));
+    expect(parseFloat(duration1)).toBe(parseFloat(getAnimationDuration(16)));
   });
 
   it("DOES re-render when velocity crosses a quantization boundary (15.4 → 16.0)", () => {
@@ -342,9 +342,9 @@ describe("HorseSprite — memoization", () => {
     const sprite2 = document.querySelector(".horse-sprite") as HTMLElement;
     const duration2 = sprite2.style.animationDuration;
 
-    expect(duration1).not.toBe(duration2);
-    expect(duration1).toBe(getAnimationDuration(15));
-    expect(duration2).toBe(getAnimationDuration(16));
+    expect(parseFloat(duration1)).not.toBe(parseFloat(duration2));
+    expect(parseFloat(duration1)).toBe(parseFloat(getAnimationDuration(15)));
+    expect(parseFloat(duration2)).toBe(parseFloat(getAnimationDuration(16)));
   });
 });
 

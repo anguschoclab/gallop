@@ -8,6 +8,23 @@ let mockPhase = "preshow";
 let mockFinished = false;
 const navigate = vi.fn();
 
+// ── Hoisted matchMedia mock (must run before imports that call matchMedia at module load) ──
+vi.hoisted(() => {
+  Object.defineProperty(window, "matchMedia", {
+    writable: true,
+    value: vi.fn().mockImplementation((query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  });
+});
+
 // ── Module mocks (hoisted by vitest) ────────────────────────────────────────
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
@@ -151,27 +168,13 @@ vi.mock("@/components/race/raceVisualHelpers", async (importOriginal) => {
 // ── Import after mocks ───────────────────────────────────────────────────────
 import { LiveRace } from "@/routes/race.$raceId";
 
-// jsdom doesn't implement ResizeObserver or matchMedia.
+// jsdom doesn't implement ResizeObserver.
 class ResizeObserverMock {
   observe() {}
   unobserve() {}
   disconnect() {}
 }
 window.ResizeObserver = ResizeObserverMock;
-
-Object.defineProperty(window, "matchMedia", {
-  writable: true,
-  value: vi.fn().mockImplementation((query: string) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
-});
 
 afterEach(() => {
   cleanup();
