@@ -180,9 +180,16 @@ export async function preloadHorseSprites(): Promise<void> {
     urls.map(
       (url) =>
         new Promise<void>((resolve) => {
+          spriteLoadCache.set(url, "loading");
           const img = new Image();
-          img.onload = () => resolve();
-          img.onerror = () => resolve();
+          img.onload = () => {
+            spriteLoadCache.set(url, "loaded");
+            resolve();
+          };
+          img.onerror = () => {
+            spriteLoadCache.set(url, "error");
+            resolve();
+          };
           img.src = url;
         }),
     ),
