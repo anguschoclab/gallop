@@ -13,6 +13,7 @@ import { useInRunningSnapshots } from "@/hooks/race/useInRunningSnapshots";
 import { useStewardsInquiry } from "@/hooks/race/useStewardsInquiry";
 import { getCourseForRace } from "@/data/tracks";
 import { safeParseJson, raceProgressSchema } from "@/services/storage/schemas";
+import { preloadHorseSprites } from "@/components/race/raceVisualHelpers";
 
 type DisplayPhase = "preshow" | "broadcast";
 
@@ -253,6 +254,10 @@ export function LiveRace() {
     if (!race) return;
     takeSnapshot(runners, race.distance, simTimeRef.current, tick);
   }, [takeSnapshot, runners, race, simTimeRef, tick]);
+
+  useEffect(() => {
+    void preloadHorseSprites();
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

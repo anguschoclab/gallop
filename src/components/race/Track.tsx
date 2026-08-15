@@ -322,7 +322,11 @@ export function Track({
               </div>
 
               <HorseSprite
-                runner={r}
+                coatColor={r.coatColor}
+                silk={r.silk}
+                velocity={r.velocity}
+                finishTime={r.finishTime}
+                horseName={r.name}
                 isRunning={isRunning}
                 spriteUrl={getSpriteUrl(r.coatColor)}
                 isAnimated={isAnimatedSprite(r.coatColor)}

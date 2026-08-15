@@ -24,7 +24,6 @@ import horseDun from "@/assets/horse-dun.png";
 import horseGrulla from "@/assets/horse-grulla.png";
 import horseChampagne from "@/assets/horse-champagne.png";
 
-
 /**
  * Returns the background image URL for a given track surface.
  * @param surface - The track surface type (Turf, Dirt, Synthetic)
@@ -149,6 +148,34 @@ export function isAnimatedSprite(coatColor?: string): boolean {
   return !!s && s.frames > 1;
 }
 
+/**
+ * Returns all unique sprite sheet URLs bundled in the app.
+ */
+export function getAllSpriteUrls(): string[] {
+  return [...new Set(Object.values(COAT_TO_SPRITE_SHEET).map((s) => s.url))];
+}
+
+/**
+ * Preloads all horse sprite sheet images so they are cached by the browser
+ * before the race broadcast renders. Resolves once all images have loaded
+ * or errored — a single failed sprite does not block the rest.
+ * No-op in SSR environments where `Image` is not available.
+ */
+export async function preloadHorseSprites(): Promise<void> {
+  if (typeof Image === "undefined") return;
+  const urls = getAllSpriteUrls();
+  await Promise.allSettled(
+    urls.map(
+      (url) =>
+        new Promise<void>((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve();
+          img.onerror = () => resolve();
+          img.src = url;
+        }),
+    ),
+  );
+}
 
 /**
  * Calculates the CSS animation duration for a horse sprite based on velocity.

@@ -139,6 +139,15 @@ vi.mock("@/hooks/race/useRacePhase", () => ({
   RacePhase: {} as any,
 }));
 
+vi.mock("@/components/race/raceVisualHelpers", async (importOriginal) => {
+  const actual = (await importOriginal()) as Record<string, unknown>;
+  return {
+    ...actual,
+    preloadHorseSprites: vi.fn().mockResolvedValue(undefined),
+    getSpriteLoadStatus: vi.fn().mockReturnValue("loaded"),
+  };
+});
+
 // ── Import after mocks ───────────────────────────────────────────────────────
 import { LiveRace } from "@/routes/race.$raceId";
 
