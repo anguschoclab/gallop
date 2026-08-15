@@ -1,0 +1,6 @@
+## 2024-05-18 - Removed unused type guards in horseImpacts.ts
+**Learning:** Found several type guards (`isHorseStatImpact`, `isEnergyImpact`, `isFormImpact`, `isFameImpact`, `isFanCountImpact`) in `src/core/resolver/impacts/horseImpacts.ts` that were essentially unused dead code. Only `isEnergyImpact` had a single usage in a test file, which was easily replaced with a direct type cast `as EnergyImpact` since we already check `i.type === "energy_change"`.
+**Action:** Remove unnecessary type guard functions to simplify the impact typing logic when checking `impact.type` is sufficient, reducing lines of code without altering behavior.
+## 2024-05-18 - Removed unused type guards in horseImpacts.ts
+**Learning:** Found several type guards (`isHorseStatImpact`, `isEnergyImpact`, `isFormImpact`, `isFameImpact`, `isFanCountImpact`) in `src/core/resolver/impacts/horseImpacts.ts` that were essentially unused dead code. Only `isEnergyImpact` had a single usage in a test file, which was easily replaced with a more robust type predicate `.find((i): i is EnergyImpact => i.type === "energy_change")`.
+**Action:** Remove unnecessary type guard functions to simplify the impact typing logic when checking `impact.type` natively is sufficient, reducing boilerplate without altering behavior.

@@ -216,27 +216,6 @@ export interface DistanceAptitudeImpact extends Impact {
   distanceStaminaMul?: number;
 }
 
-// Type guards for discriminating impact types
-export function isHorseStatImpact(impact: Impact): impact is HorseStatImpact {
-  return impact.type === "horse_stat_change";
-}
-
-export function isEnergyImpact(impact: Impact): impact is EnergyImpact {
-  return impact.type === "energy_change";
-}
-
-export function isFormImpact(impact: Impact): impact is FormImpact {
-  return impact.type === "form_change";
-}
-
-export function isFameImpact(impact: Impact): impact is FameImpact {
-  return impact.type === "fame_change";
-}
-
-export function isFanCountImpact(impact: Impact): impact is FanCountImpact {
-  return impact.type === "fan_count_change";
-}
-
 export type HorseImpact =
   | HorseStatImpact
   | EnergyImpact
