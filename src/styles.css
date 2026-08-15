@@ -300,7 +300,7 @@
     background-position: 0 bottom;
   }
   to {
-    background-position: -300px bottom;
+    background-position: calc(-1 * var(--sprite-sheet-width, 300px)) bottom;
   }
 }
 
@@ -337,16 +337,16 @@
 /* Horse sprite base styles */
 /* Sprite sheets are 300x100px (6 frames × 50px width, 100px height per frame) */
 .horse-sprite {
-  width: 50px;
-  height: 50px;
-  background-size: 300px 100px;
+  width: var(--sprite-frame-width, 50px);
+  height: var(--sprite-frame-width, 50px);
+  background-size: var(--sprite-sheet-width, 300px) var(--sprite-sheet-height, 100px);
   background-repeat: no-repeat;
   image-rendering: pixelated;
   background-position-y: bottom; /* Show bottom 50px of 100px frame */
 }
 
 .horse-sprite-animated {
-  animation: sprite-run 0.5s steps(6) infinite;
+  animation: sprite-run 0.5s steps(var(--sprite-frames, 6)) infinite;
 }
 
 .horse-sprite-bob {
@@ -355,7 +355,7 @@
 
 /* Static sprite (for roan/palomino/white) */
 .horse-sprite-static {
-  background-size: 50px 50px;
+  background-size: var(--sprite-sheet-width, 50px) var(--sprite-sheet-height, 50px);
 }
 
 /* Finish line animation */
