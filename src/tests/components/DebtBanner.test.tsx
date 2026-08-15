@@ -178,7 +178,16 @@ describe("DebtBanner accessibility", () => {
     expect(payDownLabel).toBeTruthy();
   });
 
-  it.todo("pay-down label should have htmlFor matching input id for proper a11y association");
+  it("pay-down label should have htmlFor matching input id for proper a11y association", () => {
+    renderWithStore(<DebtBanner />, { cash: -30_000, day: 1 });
+    fireEvent.click(screen.getByText("Show details"));
+
+    const input = screen.getByPlaceholderText("Amount");
+    const labels = document.querySelectorAll("label");
+    const payDownLabel = Array.from(labels).find((l) => l.textContent?.includes("Pay down debt"));
+    expect(payDownLabel).toBeTruthy();
+    expect(payDownLabel).toHaveAttribute("for", input.id);
+  });
 
   it("detail panel labels are present when expanded", () => {
     renderWithStore(<DebtBanner />, { cash: -5_000, day: 1 });
