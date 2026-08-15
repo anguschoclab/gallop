@@ -1,4 +1,4 @@
-import { getAnimationDuration } from "@/components/race/raceVisualHelpers";
+import { getAnimationDuration, getSpriteSheet } from "@/components/race/raceVisualHelpers";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 
 interface HorseSpriteProps {
@@ -12,13 +12,16 @@ export function HorseSprite({ runner, isRunning, spriteUrl, isAnimated }: HorseS
   const prefersReducedMotion =
     typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const animationDuration = getAnimationDuration(runner.velocity);
+  const sheet = getSpriteSheet(runner.coatColor);
 
   if (isAnimated && spriteUrl) {
+    const sheetWidth = (sheet?.frames ?? 6) * (sheet?.frameWidth ?? 50);
     return (
       <div
         className={`horse-sprite ${isRunning && !prefersReducedMotion ? "horse-sprite-animated" : ""}`}
         style={{
           backgroundImage: `url(${spriteUrl})`,
+          backgroundSize: `${sheetWidth}px ${sheet?.frameHeight ?? 100}px`,
           animationDuration: isRunning ? animationDuration : "0.6s",
         }}
       />
