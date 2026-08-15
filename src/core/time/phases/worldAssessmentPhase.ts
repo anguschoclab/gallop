@@ -11,7 +11,10 @@
 import type { PipelineContext } from "../pipeline";
 import { assessWorldState } from "@/core/ai/strategicCoordinator";
 import type { WorldAssessment } from "@/core/ai/strategicCoordinator";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
+import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import { assessFinancialDistressWithPersonality } from "@/core/ai/financialDistressAI";
+import { UPKEEP_PER_HORSE } from "@/constants";
 
 const PHASE_ORDER_WORLD_ASSESSMENT = 2;
 
@@ -33,6 +36,40 @@ export const worldAssessmentPhase = {
 
     const worldAssessment: WorldAssessment = assessWorldState(state, aiManager);
 
+    // Compute financial distress for each NPC stable and store on AI state.
+    // This runs early (order 2) so all downstream phases have access.
+    const horseCountsByStable = new Map<string, number>();
+    for (const horse of Object.values(state.horses)) {
+      if (horse.stableId) {
+        horseCountsByStable.set(horse.stableId, (horseCountsByStable.get(horse.stableId) ?? 0) + 1);
+      }
+    }
+
+    const updatedStableStates: Record<string, StableAIState> = Object.fromEntries(
+      Object.entries(aiManager.stableStates).map(([id, s]) => {
+        const stable = state.npcStables.find((st) => st.id === id);
+        if (!stable) return [id, { ...s, worldAssessment }];
+
+        const horseCount = horseCountsByStable.get(stable.id) ?? 0;
+        const dailyUpkeep = horseCount * UPKEEP_PER_HORSE;
+        const financialDistress = assessFinancialDistressWithPersonality(stable, dailyUpkeep);
+
+        return [id, { ...s, worldAssessment, financialDistress }];
+      }),
+    );
+
+    // Also compute distress for stables that don't yet have AI state
+    for (const stable of state.npcStables) {
+      if (!updatedStableStates[stable.id]) {
+        const stableAI = getOrCreateStableAIState(aiManager, stable, newDay);
+        const horseCount = horseCountsByStable.get(stable.id) ?? 0;
+        const dailyUpkeep = horseCount * UPKEEP_PER_HORSE;
+        stableAI.financialDistress = assessFinancialDistressWithPersonality(stable, dailyUpkeep);
+        stableAI.worldAssessment = worldAssessment;
+        updatedStableStates[stable.id] = stableAI;
+      }
+    }
+
     return {
       ...context,
       worldAssessment,
@@ -40,12 +77,7 @@ export const worldAssessmentPhase = {
         ...state,
         npcAIManager: {
           ...aiManager,
-          stableStates: Object.fromEntries(
-            Object.entries(aiManager.stableStates).map(([id, s]) => [
-              id,
-              { ...s, worldAssessment },
-            ]),
-          ),
+          stableStates: updatedStableStates,
         },
       },
     };

@@ -38,6 +38,7 @@ import type {
   SubsystemWeights,
 } from "./strategicCoordinator";
 import type { EconomicTrend } from "./strategicCoordinator";
+import type { FinancialDistressState } from "./financialDistressAI";
 
 /**
  * Per-stable AI state that persists across all NPC decision-making
@@ -78,6 +79,7 @@ export interface StableAIState {
   worldAssessment?: WorldAssessment;
   npcRelationships?: Record<string, NpcRelationship>;
   narrativeState?: NarrativeState;
+  financialDistress?: FinancialDistressState;
 }
 
 /**

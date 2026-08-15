@@ -33,6 +33,11 @@ import {
   recordBreedingDecision,
 } from "@/core/ai/breedingAI";
 import { BREEDING_FEE, GESTATION_DAYS } from "@/constants";
+import type { DistressLevel } from "@/core/ai/financialDistressAI";
+import {
+  BREEDING_MARE_FRACTION,
+  EMERGENCY_STUD_FEE_CAP_FRACTION,
+} from "@/constants/financialDistressConstants";
 
 /**
  * Run autonomous NPC breeding for the current day.
@@ -69,6 +74,13 @@ export function runAutonomousBreeding(
   for (const stable of stables) {
     if (!BREEDING_PERSONALITIES.includes(stable.personality)) continue;
 
+    // Distress-aware breeding: check financial distress from AI state
+    const distressLevel: DistressLevel =
+      npcAIManager?.stableStates[stable.id]?.financialDistress?.level ?? "healthy";
+
+    // Critical distress: skip breeding entirely
+    if (distressLevel === "critical") continue;
+
     // Try to breed if in season
 
     // Identify candidate mares (not pregnant, eligible age)
@@ -93,14 +105,27 @@ export function runAutonomousBreeding(
     // Best mares first — the stable's best cash on its best mares.
     candidateMares.sort((a, b) => calculateOverallRating(b) - calculateOverallRating(a));
 
+    // Distress-aware: limit number of mares bred
+    let maxMaresToBreed = candidateMares.length;
+    if (distressLevel === "caution") {
+      maxMaresToBreed = Math.ceil(candidateMares.length * BREEDING_MARE_FRACTION.caution);
+    } else if (distressLevel === "emergency") {
+      maxMaresToBreed = Math.ceil(candidateMares.length * BREEDING_MARE_FRACTION.emergency);
+    }
+    const maresToBreed = candidateMares.slice(0, maxMaresToBreed);
+
     // Track running cash so we don't over-commit within one season.
     let stableCash = stables.find((s) => s.id === stable.id)!.cash;
 
-    for (const mare of candidateMares) {
+    for (const mare of maresToBreed) {
       if (stableCash < BREEDING_FEE) break;
 
       // Identify candidate stallions within budget
-      const maxFeePerMare = stableCash * (SINGLE_FEE_CAP_FRACTION[stable.personality] ?? 0.1);
+      let maxFeePerMare = stableCash * (SINGLE_FEE_CAP_FRACTION[stable.personality] ?? 0.1);
+      // Emergency distress: cap stud fees at EMERGENCY_STUD_FEE_CAP_FRACTION of normal budget
+      if (distressLevel === "emergency") {
+        maxFeePerMare *= EMERGENCY_STUD_FEE_CAP_FRACTION;
+      }
       const stallions = getAvailableStallions(Object.values(state.horses), mare)
         .filter((s) => s.stableId !== stable.id)
         .map(ensurePhenotypeResolved)

@@ -25,6 +25,7 @@ import type {
   DiplomaticActionIntent,
   CartelActionIntent,
   ConsignmentIntent,
+  UpdateStudFeeIntent,
 } from "@/core/resolver/intents";
 import type { GameState, Horse, Race, Stable, Jockey, AuctionSale } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
@@ -81,6 +82,16 @@ import {
   applyAffinityBoost,
 } from "@/core/ai/jockeyStrategyAI";
 import { createAuctionAIState, shouldConsignHorse } from "@/core/ai/auctionAI";
+import type { DistressLevel } from "@/core/ai/financialDistressAI";
+import {
+  STUD_FEE_REDUCTION_MULTIPLIER,
+  STUD_FEE_MINIMUM,
+  STUD_FEE_INTENT_PRIORITY,
+  PRESTIGE_STUD_FEE_RESISTANCE,
+  TRADER_STUD_FEE_AGGRESSION,
+  TRAINING_CAUTION_MIN_ENERGY,
+} from "@/constants/financialDistressConstants";
+import { MEDIUM_PURSE_THRESHOLD } from "@/constants";
 import {
   HORSE_RATING_TO_VALUE_MULTIPLIER,
   CONSIGNMENT_INTENT_PRIORITY,
@@ -163,7 +174,13 @@ export function generateNpcIntents(
 
       // Cross-System Coordination: generate directives, allocate budget, coordinate subsystems
       if (aiManager && stableAI && worldAssessment) {
-        const directives = generateStrategicDirectives(stable, worldAssessment, stable.personality);
+        const financialDistress = stableAI.financialDistress;
+        const directives = generateStrategicDirectives(
+          stable,
+          worldAssessment,
+          stable.personality,
+          financialDistress,
+        );
         const budget = allocateBudget(stable, directives);
         const weights = coordinateSubsystems(directives, budget);
 
@@ -185,6 +202,9 @@ export function generateNpcIntents(
       ];
 
       const weights = stableAI?.subsystemWeights;
+      const distressLevel = stableAI?.financialDistress?.level ?? "healthy";
+
+      // Training intents (distress reduces training for low-energy horses)
       intents.push(
         ...generateNpcTrainingIntents(
           state,
@@ -194,6 +214,7 @@ export function generateNpcIntents(
           ownedHorses,
           activePregnanciesByDam,
           weights?.training,
+          distressLevel,
         ),
       );
       intents.push(
@@ -207,19 +228,24 @@ export function generateNpcIntents(
           raceEntrySets,
           horseMap,
           weights?.raceEntry,
+          distressLevel,
         ),
       );
-      intents.push(
-        ...generateNpcClaimingIntents(
-          state,
-          stable,
-          stableAI,
-          day,
-          relevantRaces,
-          horseMap,
-          weights?.claiming,
-        ),
-      );
+
+      // Block claiming when in financial distress
+      if (distressLevel === "healthy") {
+        intents.push(
+          ...generateNpcClaimingIntents(
+            state,
+            stable,
+            stableAI,
+            day,
+            relevantRaces,
+            horseMap,
+            weights?.claiming,
+          ),
+        );
+      }
       intents.push(
         ...generateNpcWithdrawalIntents(
           state,
@@ -234,8 +260,16 @@ export function generateNpcIntents(
       intents.push(
         ...generateNpcGeldingIntents(state, stable, stableAI, day, ownedHorses, weights?.breeding),
       );
-      intents.push(...generateNpcSyndicateIntents(state, stable, day, ownedHorses));
-      intents.push(...generateNpcDiplomaticIntents(state, stable, stableAI, day, aiManager));
+
+      // Syndicate intents: bypass weekly cadence when in distress
+      intents.push(...generateNpcSyndicateIntents(state, stable, day, ownedHorses, distressLevel));
+
+      // Diplomatic intents: skip entirely when in distress
+      if (distressLevel === "healthy") {
+        intents.push(...generateNpcDiplomaticIntents(state, stable, stableAI, day, aiManager));
+      }
+
+      // Auction consignment intents: bypass weekly cadence when in distress
       intents.push(
         ...generateNpcAuctionIntents(
           state,
@@ -245,8 +279,14 @@ export function generateNpcIntents(
           ownedHorses,
           state.auctions ?? [],
           weights?.auction,
+          distressLevel,
         ),
       );
+
+      // Stud fee intents: generate when in distress to reduce fees
+      if (distressLevel !== "healthy") {
+        intents.push(...generateNpcStudFeeIntents(stable, day, ownedHorses, distressLevel));
+      }
 
       // Update stable AI state in the manager (immutable update)
       if (aiManager && stableAI) {
@@ -275,6 +315,7 @@ export function generateNpcIntents(
  * @param ownedHorses - Horses owned by the stable
  * @param activePregnanciesByDam - Set of IDs for horses that are currently pregnant
  * @param trainingWeight - Subsystem weight that modulates training willingness
+ * @param distressLevel - Current financial distress level (defaults to healthy)
  * @returns Array of training intents
  */
 function generateNpcTrainingIntents(
@@ -285,8 +326,12 @@ function generateNpcTrainingIntents(
   ownedHorses: Horse[],
   activePregnanciesByDam: Set<string>,
   trainingWeight = 1.0,
+  distressLevel: DistressLevel = "healthy",
 ): TrainingIntent[] {
   const intents: TrainingIntent[] = [];
+
+  // Critical distress: skip all training intents
+  if (distressLevel === "critical") return intents;
 
   // Use persisted AI state if available, otherwise fallback to temporary state
   const trainingAI = stableAI?.trainingAI ?? createTrainingAIState(stable);
@@ -297,8 +342,26 @@ function generateNpcTrainingIntents(
     : ["speed", "stamina", "acceleration", "rest"];
 
   for (const horse of ownedHorses) {
-    // AI-driven training decision
-    if (horse.energy >= 15 && !activePregnanciesByDam.has(horse.id)) {
+    // Distress-aware: at caution+, skip training for low-energy horses
+    const minEnergy = distressLevel === "healthy" ? 15 : TRAINING_CAUTION_MIN_ENERGY;
+    if (horse.energy >= minEnergy && !activePregnanciesByDam.has(horse.id)) {
+      // At emergency, only allow rest training
+      if (distressLevel === "emergency") {
+        if (!shouldTrainToday(trainingAI, horse, day, trainingWeight)) continue;
+        intents.push({
+          id: generateUUID(),
+          entityId: horse.id,
+          source: "npc",
+          sourceId: stable.id,
+          day,
+          priority: 50,
+          type: "training",
+          horseId: horse.id,
+          trainingType: "rest",
+        });
+        continue;
+      }
+
       // Use AI to determine if horse should train today
       if (shouldTrainToday(trainingAI, horse, day, trainingWeight)) {
         // Use AI to select training type
@@ -334,6 +397,7 @@ function generateNpcTrainingIntents(
  * @param raceEntrySets - Map of race IDs to sets of horse IDs already entered
  * @param horseMap - Map of all horses for competitor quality analysis
  * @param raceEntryWeight - Subsystem weight that modulates race entry willingness
+ * @param distressLevel - Current financial distress level (defaults to healthy)
  * @returns Array of race entry intents
  */
 function generateNpcRaceEntryIntents(
@@ -346,6 +410,7 @@ function generateNpcRaceEntryIntents(
   raceEntrySets: Map<string, Set<string>>,
   horseMap: Map<string, Horse>,
   raceEntryWeight = 1.0,
+  distressLevel: DistressLevel = "healthy",
 ): RaceEntryIntent[] {
   const intents: RaceEntryIntent[] = [];
 
@@ -359,6 +424,9 @@ function generateNpcRaceEntryIntents(
   const jockeyMap = new Map((state.jockeys || []).map((j) => [j.id, j]));
 
   for (const race of upcomingRaces) {
+    // At critical distress, skip low-purse races to focus on earnings
+    if (distressLevel === "critical" && race.purse < MEDIUM_PURSE_THRESHOLD) continue;
+
     const entrySet = raceEntrySets.get(race.id);
     for (const horse of ownedHorses) {
       // Skip if already entered
@@ -665,19 +733,26 @@ function generateNpcGeldingIntents(
  * @param stable The NPC stable.
  * @param day The current game day.
  * @param ownedHorses The list of horses owned by the NPC stable.
+ * @param distressLevel Current financial distress level (defaults to healthy).
  */
 function generateNpcSyndicateIntents(
   state: GameState,
   stable: Stable,
   day: number,
   ownedHorses: Horse[],
+  distressLevel: DistressLevel = "healthy",
 ): AnyIntent[] {
   const intents: AnyIntent[] = [];
   const syndicates = state.syndicates || {};
 
   // Weekly cadence, staggered per stable to spread activity.
-  const stableHash = stable.id.split("").reduce((acc, ch) => (acc + ch.charCodeAt(0)) & 0xffff, 0);
-  if ((day + stableHash) % 7 !== 0) return intents;
+  // Bypass cadence when in financial distress — run daily.
+  if (distressLevel === "healthy") {
+    const stableHash = stable.id
+      .split("")
+      .reduce((acc, ch) => (acc + ch.charCodeAt(0)) & 0xffff, 0);
+    if ((day + stableHash) % 7 !== 0) return intents;
+  }
 
   // 1) Create syndicates for eligible stallions.
   for (const horse of ownedHorses) {
@@ -725,7 +800,7 @@ function generateNpcSyndicateIntents(
     if (!stallion) continue;
 
     // Sell
-    const sellCount = calculateShareSale(stable, syndicate, stallion);
+    const sellCount = calculateShareSale(stable, syndicate, stallion, distressLevel);
     if (sellCount > 0) {
       const price = calculateSharePrice(syndicate, stallion);
       const saleIntent: ShareSaleIntent = {
@@ -877,6 +952,7 @@ function generateNpcDiplomaticIntents(
  * @param ownedHorses - Horses owned by the stable
  * @param auctions - Active auction sales
  * @param auctionWeight - Subsystem weight that modulates consignment willingness
+ * @param distressLevel - Current financial distress level (defaults to healthy)
  * @returns Array of consignment intents
  */
 function generateNpcAuctionIntents(
@@ -887,15 +963,20 @@ function generateNpcAuctionIntents(
   ownedHorses: Horse[],
   auctions: AuctionSale[],
   auctionWeight = DEFAULT_SUBSYSTEM_WEIGHT,
+  distressLevel: DistressLevel = "healthy",
 ): ConsignmentIntent[] {
   const intents: ConsignmentIntent[] = [];
 
   // Skip if no active auctions or weight is zero
   if (auctions.length === 0 || auctionWeight <= 0) return intents;
 
-  // Weekly cadence, staggered per stable (same pattern as diplomatic intents)
-  const stableHash = stable.id.split("").reduce((acc, ch) => (acc + ch.charCodeAt(0)) & 0xffff, 0);
-  if ((day + stableHash) % 7 !== 0) return intents;
+  // Weekly cadence, staggered per stable — bypass when in financial distress
+  if (distressLevel === "healthy") {
+    const stableHash = stable.id
+      .split("")
+      .reduce((acc, ch) => (acc + ch.charCodeAt(0)) & 0xffff, 0);
+    if ((day + stableHash) % 7 !== 0) return intents;
+  }
 
   // Get or create auction AI state
   const auctionAI = stableAI?.auctionAI ?? createAuctionAIState(stable);
@@ -906,7 +987,14 @@ function generateNpcAuctionIntents(
 
   for (const sale of activeSales) {
     for (const horse of ownedHorses) {
-      const result = shouldConsignHorse(auctionAI, horse, stable, day, auctionWeight);
+      const result = shouldConsignHorse(
+        auctionAI,
+        horse,
+        stable,
+        day,
+        auctionWeight,
+        distressLevel,
+      );
       if (result.shouldConsign) {
         const reservePrice = Math.floor(
           calculateOverallRating(horse) * HORSE_RATING_TO_VALUE_MULTIPLIER,
@@ -924,6 +1012,77 @@ function generateNpcAuctionIntents(
           reservePrice,
         });
       }
+    }
+  }
+
+  return intents;
+}
+
+/**
+ * Generate stud fee reduction intents for an NPC stable in financial distress.
+ *
+ * Reduces stud fees for owned stallions with active stud careers based on
+ * distress level and personality. Only generates intents that reduce fees
+ * (never increases).
+ *
+ * @param stable - The NPC stable
+ * @param day - Current game day
+ * @param ownedHorses - Horses owned by the stable
+ * @param distressLevel - Current financial distress level
+ * @returns Array of update_stud_fee intents
+ */
+function generateNpcStudFeeIntents(
+  stable: Stable,
+  day: number,
+  ownedHorses: Horse[],
+  distressLevel: DistressLevel,
+): UpdateStudFeeIntent[] {
+  const intents: UpdateStudFeeIntent[] = [];
+
+  let reductionMultiplier: number;
+  switch (distressLevel) {
+    case "caution":
+      reductionMultiplier = STUD_FEE_REDUCTION_MULTIPLIER.caution;
+      break;
+    case "emergency":
+      reductionMultiplier = STUD_FEE_REDUCTION_MULTIPLIER.emergency;
+      break;
+    case "critical":
+      reductionMultiplier = STUD_FEE_REDUCTION_MULTIPLIER.critical;
+      break;
+    default:
+      return intents;
+  }
+
+  const personality = stable.personality;
+  if (personality === "prestige") {
+    reductionMultiplier = 1 - (1 - reductionMultiplier) * PRESTIGE_STUD_FEE_RESISTANCE;
+  } else if (personality === "trader") {
+    reductionMultiplier = 1 - (1 - reductionMultiplier) * TRADER_STUD_FEE_AGGRESSION;
+  }
+
+  for (const horse of ownedHorses) {
+    if (!horse.stud || !horse.stud.atStud) continue;
+    if (horse.stableId !== stable.id) continue;
+
+    const currentFee = horse.stud.standingFee;
+    if (currentFee <= 0) continue;
+
+    const minFee = STUD_FEE_MINIMUM[distressLevel];
+    const newFee = Math.max(minFee, Math.floor(currentFee * reductionMultiplier));
+
+    if (newFee < currentFee) {
+      intents.push({
+        id: generateUUID(),
+        entityId: horse.id,
+        source: "npc",
+        sourceId: stable.id,
+        day,
+        priority: STUD_FEE_INTENT_PRIORITY,
+        type: "update_stud_fee",
+        horseId: horse.id,
+        newFee,
+      });
     }
   }
 

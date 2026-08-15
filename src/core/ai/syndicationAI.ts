@@ -11,6 +11,7 @@
 
 import type { Horse, Stable } from "@/game/types";
 import type { Syndicate } from "@/core/breeding/types";
+import type { DistressLevel } from "./financialDistressAI";
 import { findMajorityOwner } from "@/core/breeding/devolutionUtils";
 import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
 import {
@@ -373,12 +374,14 @@ export function calculateSharePurchase(
  * @param npcStable - The NPC stable
  * @param syndicate - The syndicate to consider
  * @param stallion - The stallion for valuation
+ * @param distressLevel - Optional financial distress level for distress-aware selling
  * @returns Number of shares to sell (0 if none)
  */
 export function calculateShareSale(
   npcStable: Stable,
   syndicate: Syndicate,
   stallion: Horse,
+  distressLevel?: DistressLevel,
 ): number {
   const currentShares = syndicate.shareHolders[npcStable.id] || 0;
   if (currentShares <= 0) return 0;
@@ -396,7 +399,31 @@ export function calculateShareSale(
   // Sell if NPC needs cash (less than $100k)
   const needsCash = (npcStable.cash || 0) < 100000;
 
-  if (!isOvervalued && !isDeclining && !needsCash) return 0;
+  // Distress-aware: force selling when in distress
+  const inDistress =
+    distressLevel === "caution" || distressLevel === "emergency" || distressLevel === "critical";
+
+  if (!isOvervalued && !isDeclining && !needsCash && !inDistress) return 0;
+
+  // Critical distress: sell everything, ignore devolution
+  if (distressLevel === "critical") {
+    return currentShares;
+  }
+
+  // Emergency distress: sell all shares (aggressive/trader) or keep majority (cautious)
+  if (distressLevel === "emergency") {
+    const personality = npcStable.personality;
+    const isOwner = stallion.stableId === npcStable.id;
+    const avoidDevolution =
+      personality === "conservative" || personality === "breeder" || personality === "prestige";
+
+    if (isOwner && avoidDevolution) {
+      const threshold = syndicate.totalShares / 2;
+      const maxSellable = currentShares - Math.ceil(threshold) - 1;
+      return Math.max(0, maxSellable);
+    }
+    return currentShares;
+  }
 
   // Base sell quantity: 50% of holdings
   let sellQuantity = Math.floor(currentShares * 0.5);

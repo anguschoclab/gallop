@@ -14,6 +14,9 @@
 import type { GameState, Stable, StablePersonality, Race } from "@/game/types";
 import type { NpcAIManager } from "./npcCycleAI";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
+import type { FinancialDistressState } from "./financialDistressAI";
+import { getDistressDirective } from "./financialDistressAI";
+import { DISTRESS_BUDGET_MULTIPLIER } from "@/constants/financialDistressConstants";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -48,7 +51,8 @@ export type DirectiveType =
   | "breeding_focus"
   | "racing_focus"
   | "market_speculation"
-  | "consolidation";
+  | "consolidation"
+  | "financial_distress";
 
 export interface StrategicDirective {
   type: DirectiveType;
@@ -168,14 +172,25 @@ export function assessWorldState(state: GameState, manager: NpcAIManager): World
  * @param stable - The NPC stable
  * @param worldAssessment - Current world assessment
  * @param personality - Stable personality
+ * @param financialDistress - Optional financial distress state for distress-aware directives
  * @returns Array of strategic directives ordered by priority
  */
 export function generateStrategicDirectives(
   stable: Stable,
   worldAssessment: WorldAssessment,
   personality: StablePersonality,
+  financialDistress?: FinancialDistressState,
 ): StrategicDirective[] {
   const directives: StrategicDirective[] = [];
+
+  // If in financial distress, prepend distress directive with highest priority
+  if (financialDistress) {
+    const distressDirective = getDistressDirective(financialDistress);
+    if (distressDirective) {
+      directives.push(distressDirective);
+    }
+  }
+
   const { playerDominance, breedingMarketSaturation, economicTrends } = worldAssessment;
 
   switch (personality) {
@@ -286,6 +301,16 @@ export function allocateBudget(stable: Stable, directives: StrategicDirective[])
       case "consolidation":
         totalBudget *= 1 - 0.2 * directive.weight;
         break;
+      case "financial_distress": {
+        const multiplier =
+          directive.weight >= 1.0
+            ? DISTRESS_BUDGET_MULTIPLIER.critical
+            : directive.weight >= 0.8
+              ? DISTRESS_BUDGET_MULTIPLIER.emergency
+              : DISTRESS_BUDGET_MULTIPLIER.caution;
+        totalBudget *= multiplier;
+        break;
+      }
     }
   }
 
@@ -422,6 +447,15 @@ const DIRECTIVE_WEIGHT_ADJUSTMENTS: Record<DirectiveType, Partial<SubsystemWeigh
     auction: -0.1,
     facility: 0.1,
     upkeep: 0.1,
+  },
+  financial_distress: {
+    raceEntry: 0,
+    auction: -1.0,
+    claiming: -1.0,
+    breeding: -0.8,
+    facility: -1.0,
+    market: -1.0,
+    upkeep: 0.3,
   },
 };
 

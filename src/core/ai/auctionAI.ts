@@ -20,6 +20,7 @@ import { getSuccessRate, getAdaptiveThreshold, type LearningState } from "./lear
 import { calculateOverallRating } from "@/core/horse/stats";
 import type { EconomicTrend } from "./strategicCoordinator";
 import type { NpcRelationship } from "./npcCycleAI";
+import type { DistressLevel } from "./financialDistressAI";
 import {
   CONSIGN_UNDERPERFORMER_RATING_THRESHOLD,
   CONSIGN_UNDERPERFORMER_AGE_THRESHOLD,
@@ -29,6 +30,11 @@ import {
   HORSE_RATING_TO_VALUE_MULTIPLIER,
   DEFAULT_SUBSYSTEM_WEIGHT,
 } from "@/constants/aiConstants";
+import {
+  DISTRESS_CONSIGN_RATING_REDUCTION,
+  DISTRESS_CONSIGN_AGE_REDUCTION,
+  DISTRESS_EMERGENCY_CONSIGN_RATING_THRESHOLD,
+} from "@/constants/financialDistressConstants";
 
 export interface AuctionAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -55,7 +61,7 @@ export interface BiddingDecision {
 export interface ConsignmentDecision {
   horseId: string;
   horseRating: number;
-  reason: "underperformer" | "surplus" | "rebalancing" | "retirement";
+  reason: "underperformer" | "surplus" | "rebalancing" | "retirement" | "financial_distress";
   minPrice: number;
   stableId: string;
   personality: Stable["personality"];
@@ -330,6 +336,7 @@ export function calculateBidIncrement(
  * @param stable - The stable owning the horse
  * @param currentDay - Current game day
  * @param weight - Subsystem weight that modulates consignment willingness (default 1.0)
+ * @param distressLevel - Optional financial distress level for distress-aware consignment
  * @returns Object with shouldConsign flag and optional reason
  */
 export function shouldConsignHorse(
@@ -338,18 +345,49 @@ export function shouldConsignHorse(
   stable: Stable,
   currentDay: number,
   weight = DEFAULT_SUBSYSTEM_WEIGHT,
+  distressLevel?: DistressLevel,
 ): {
   shouldConsign: boolean;
-  reason?: "underperformer" | "surplus" | "rebalancing" | "retirement";
+  reason?: "underperformer" | "surplus" | "rebalancing" | "retirement" | "financial_distress";
 } {
   // Weight ≤ 0 → never consign
   if (weight <= 0) return { shouldConsign: false };
 
-  // Don't consign young horses
-  if (horse.age < 3) return { shouldConsign: false };
+  // Don't consign young horses (unless in distress)
+  if (horse.age < 3 && !distressLevel) return { shouldConsign: false };
+  if (horse.age < 3 && distressLevel !== "critical") return { shouldConsign: false };
 
   const horseRating = calculateOverallRating(horse);
   const portfolio = aiState.portfolio;
+
+  // Distress-aware consignment logic
+  if (distressLevel === "critical") {
+    // Critical: consign all except top 3 by rating — caller must handle top-3 filtering.
+    // Here we consign any horse with rating below a very high threshold.
+    return { shouldConsign: true, reason: "financial_distress" };
+  }
+
+  if (distressLevel === "emergency") {
+    // Emergency: consign any horse with rating < threshold, age >= 3
+    if (horse.age >= 3 && horseRating < DISTRESS_EMERGENCY_CONSIGN_RATING_THRESHOLD) {
+      return { shouldConsign: true, reason: "financial_distress" };
+    }
+  }
+
+  if (distressLevel === "caution") {
+    // Caution: lower rating threshold, lower age threshold
+    const distressRatingThreshold =
+      CONSIGN_UNDERPERFORMER_RATING_THRESHOLD +
+      (weight - 1) * CONSIGN_RATING_RELAXATION_PER_WEIGHT -
+      DISTRESS_CONSIGN_RATING_REDUCTION;
+    const distressAgeThreshold =
+      CONSIGN_UNDERPERFORMER_AGE_THRESHOLD -
+      (weight - 1) * CONSIGN_AGE_RELAXATION_PER_WEIGHT -
+      DISTRESS_CONSIGN_AGE_REDUCTION;
+    if (horseRating < distressRatingThreshold && horse.age > distressAgeThreshold) {
+      return { shouldConsign: true, reason: "financial_distress" };
+    }
+  }
 
   // Weight-modulated thresholds: higher weight relaxes criteria
   const ratingThreshold =
@@ -474,7 +512,7 @@ export function recordBiddingDecision(
 export function recordConsignmentDecision(
   aiState: AuctionAIState,
   horse: Horse,
-  reason: "underperformer" | "surplus" | "rebalancing" | "retirement",
+  reason: "underperformer" | "surplus" | "rebalancing" | "retirement" | "financial_distress",
   minPrice: number,
   stable: Stable,
   currentDay: number,

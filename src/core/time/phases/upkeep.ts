@@ -24,6 +24,8 @@ import {
   updateReserveState,
 } from "@/core/ai/upkeepAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import type { DistressLevel } from "@/core/ai/financialDistressAI";
+import { UPKEEP_DISTRESS_MULTIPLIER } from "@/constants/financialDistressConstants";
 import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
 import {
   UPKEEP_PER_HORSE,
@@ -183,6 +185,16 @@ export const upkeepPhase = {
         // If conserving cash and running low, reduce spending by not charging full upkeep
         if (shouldConserve && stable.cash < monthlyExpenses * 2) {
           actualCost = Math.floor(actualCost * 0.5);
+        }
+
+        // Distress-aware additional cost cuts (on top of shouldConserveCash)
+        const distressLevel: DistressLevel = aiState.financialDistress?.level ?? "healthy";
+        if (distressLevel === "caution") {
+          actualCost = Math.floor(actualCost * UPKEEP_DISTRESS_MULTIPLIER.caution);
+        } else if (distressLevel === "emergency") {
+          actualCost = Math.floor(actualCost * UPKEEP_DISTRESS_MULTIPLIER.emergency);
+        } else if (distressLevel === "critical") {
+          actualCost = Math.floor(actualCost * UPKEEP_DISTRESS_MULTIPLIER.critical);
         }
 
         // Record budget decision for AI learning
