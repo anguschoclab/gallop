@@ -11,7 +11,7 @@ import { calculateAssignedWeight } from "@/core/race/entryScoring";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { RunnerBonuses } from "@/core/race/engine/runnerBuilder";
-import { MIN_GATE } from "@/constants/gateConstants";
+import { MIN_GATE, GATE_SORT_FALLBACK } from "@/constants/gateConstants";
 
 /**
  * Race simulation orchestration with dependency injection
@@ -145,7 +145,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
 
   // Merge and sort by gate number for final runner order
   const allWithGates = [...preAssigned, ...shuffledUnassigned].sort(
-    (a, b) => (a.gate ?? 0) - (b.gate ?? 0),
+    (a, b) => (a.gate ?? GATE_SORT_FALLBACK) - (b.gate ?? GATE_SORT_FALLBACK),
   );
 
   // 4. Build the final Runner objects with assigned gates

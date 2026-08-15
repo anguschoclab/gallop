@@ -22,6 +22,7 @@ export interface SeasonRecord {
   jockeyName: string;
   grade: "G1" | "G2" | "G3";
   isPlayerOwned: boolean;
+  gate?: number;
 }
 
 export interface HallOfFameEntry {

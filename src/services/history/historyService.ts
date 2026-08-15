@@ -51,6 +51,7 @@ export function recordRaceHistory(
     jockeyName: runner?.jockeyName || "Unknown",
     grade: "G1",
     isPlayerOwned: winnerHorse?.owned || false,
+    gate: runner?.gate,
   };
 }
 

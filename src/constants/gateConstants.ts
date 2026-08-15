@@ -9,3 +9,6 @@ export const G1_GATE_DRAW_LEAD_DAYS = 5;
 
 /** Days before a non-G1 race to perform the gate draw (silent). */
 export const STANDARD_GATE_DRAW_LEAD_DAYS = 2;
+
+/** Fallback value for sorting entries with undefined gate (sorts first). */
+export const GATE_SORT_FALLBACK = 0;

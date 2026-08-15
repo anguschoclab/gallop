@@ -289,4 +289,40 @@ describe("G1WinnerHistory", () => {
     // Race group header should be visible again
     expect(screen.getByText("Kentucky Derby")).toBeTruthy();
   });
+
+  it("displays gate number in chronological view when present", async () => {
+    const user = userEvent.setup();
+    const records: SeasonRecord[] = [
+      mkSeasonRecord({
+        id: "r1",
+        raceName: "Kentucky Derby",
+        winnerName: "Thunder",
+        day: 365,
+        gate: 7,
+      }),
+    ];
+    renderWithStore(<G1WinnerHistory />, { seasonRecords: records });
+
+    await user.click(screen.getByRole("tab", { name: /Chronological/i }));
+
+    expect(screen.getByText("G7")).toBeTruthy();
+  });
+
+  it("displays gate number in by-race expanded view when present", async () => {
+    const user = userEvent.setup();
+    const records: SeasonRecord[] = [
+      mkSeasonRecord({
+        id: "r1",
+        raceName: "Kentucky Derby",
+        winnerName: "Thunder",
+        day: 365,
+        gate: 3,
+      }),
+    ];
+    renderWithStore(<G1WinnerHistory />, { seasonRecords: records });
+
+    await user.click(screen.getByText("Kentucky Derby"));
+
+    expect(screen.getByText("G3")).toBeTruthy();
+  });
 });

@@ -114,6 +114,7 @@ export function G1WinnerHistory() {
                             <th className="py-2 px-3">Year</th>
                             <th className="py-2 px-3">Winner</th>
                             <th className="py-2 px-3">Jockey</th>
+                            <th className="py-2 px-3">Gate</th>
                             <th className="py-2 px-3">Time</th>
                           </tr>
                         </thead>
@@ -143,6 +144,9 @@ export function G1WinnerHistory() {
                                 </div>
                               </td>
                               <td className="py-2 px-3 text-cream-muted">{record.jockeyName}</td>
+                              <td className="py-2 px-3 font-mono text-cream/50">
+                                {typeof record.gate === "number" ? `G${record.gate}` : "—"}
+                              </td>
                               <td className="py-2 px-3 font-mono">
                                 {record.time.toFixed(TIME_DECIMAL_PLACES)}s
                               </td>
@@ -166,6 +170,7 @@ export function G1WinnerHistory() {
                     <th className="py-2 px-3">Race</th>
                     <th className="py-2 px-3">Winner</th>
                     <th className="py-2 px-3">Jockey</th>
+                    <th className="py-2 px-3">Gate</th>
                     <th className="py-2 px-3">Time</th>
                   </tr>
                 </thead>
@@ -196,6 +201,9 @@ export function G1WinnerHistory() {
                         </div>
                       </td>
                       <td className="py-2 px-3 text-cream-muted">{record.jockeyName}</td>
+                      <td className="py-2 px-3 font-mono text-cream/50">
+                        {typeof record.gate === "number" ? `G${record.gate}` : "—"}
+                      </td>
                       <td className="py-2 px-3 font-mono">
                         {record.time.toFixed(TIME_DECIMAL_PLACES)}s
                       </td>

@@ -3,6 +3,7 @@ import { renderHook, act } from "@testing-library/react";
 import { useLeaderboardState } from "@/hooks/race/useLeaderboardState";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Race } from "@/core/race/types";
+import { DEFAULT_GATE } from "@/constants/gateConstants";
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
@@ -12,8 +13,6 @@ const BEYER_MOCK_MULTIPLIER = 5;
 const RACE_DISTANCE = 1600;
 /** Default velocity (m/s) for the runner helper. */
 const DEFAULT_VELOCITY = 16;
-/** Default gate draw for the runner helper. */
-const DEFAULT_GATE = 1;
 /** Default lane for the runner helper. */
 const DEFAULT_LANE = 1;
 

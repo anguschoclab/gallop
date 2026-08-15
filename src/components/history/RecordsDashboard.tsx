@@ -149,6 +149,7 @@ export const RecordsDashboard: React.FC = () => {
                         <th className="py-3 px-4">Race</th>
                         <th className="py-3 px-4">Winner</th>
                         <th className="py-3 px-4">Jockey</th>
+                        <th className="py-3 px-4">Gate</th>
                         <th className="py-3 px-4">Time</th>
                       </tr>
                     </thead>
@@ -178,6 +179,9 @@ export const RecordsDashboard: React.FC = () => {
                               </div>
                             </td>
                             <td className="py-4 px-4 text-cream-muted">{record.jockeyName}</td>
+                            <td className="py-4 px-4 font-mono text-cream/50">
+                              {typeof record.gate === "number" ? `G${record.gate}` : "—"}
+                            </td>
                             <td className="py-4 px-4 font-mono">{record.time.toFixed(2)}s</td>
                           </tr>
                         ))}
