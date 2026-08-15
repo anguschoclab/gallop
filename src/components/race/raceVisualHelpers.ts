@@ -1,6 +1,29 @@
 import type { Weather } from "@/game/types";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import { beyerFigure } from "@/core/race/beyer";
+import trackTurf from "@/assets/track-turf.png";
+import trackDirt from "@/assets/track-dirt.png";
+import trackSynthetic from "@/assets/track-synthetic.png";
+import skySunny from "@/assets/bg-sky-sunny.png";
+import skyCloudy from "@/assets/bg-sky-cloudy.png";
+import skyPouring from "@/assets/bg-sky-pouring.png";
+import skySunset from "@/assets/bg-sky-sunset.png";
+import skyNight from "@/assets/bg-sky-night.png";
+import horseB from "@/assets/horse-b.png";
+import horseBl from "@/assets/horse-bl.png";
+import horseCh from "@/assets/horse-ch.png";
+import horseDkb from "@/assets/horse-dkb.png";
+import horseGr from "@/assets/horse-gr.png";
+import horseRoan from "@/assets/horse-roan.png";
+import horsePalomino from "@/assets/horse-palomino.png";
+import horseWhite from "@/assets/horse-white.png";
+import horseSeal from "@/assets/horse-seal.png";
+import horseLiver from "@/assets/horse-liver.png";
+import horseBuck from "@/assets/horse-buck.png";
+import horseDun from "@/assets/horse-dun.png";
+import horseGrulla from "@/assets/horse-grulla.png";
+import horseChampagne from "@/assets/horse-champagne.png";
+
 
 /**
  * Returns the background image URL for a given track surface.
