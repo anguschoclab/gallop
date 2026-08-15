@@ -68,6 +68,26 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "A wave of promising apprentice riders has arrived on the circuit this week, eager to make their mark and challenge the established veterans.",
       category: "flavor",
     },
+    {
+      headline: "Veteran Rider Hits Career Milestone",
+      body: "The grandstand erupted in applause today as one of the circuit's most respected journeyman riders secured their 2,000th career victory in a thrilling stretch duel.",
+      category: "flavor",
+    },
+    {
+      headline: "Suspensions Shake Up Rider Standings",
+      body: "A flurry of recent careless riding suspensions has created an opening at the top of the jockey standings, leaving several eager riders scrambling for mounts.",
+      category: "flavor",
+    },
+    {
+      headline: "New Agent in Town Turns Heads",
+      body: "A highly regarded jockey's agent has set up shop on the backstretch, immediately securing top mounts for their riders and disrupting established relationships.",
+      category: "flavor",
+    },
+    {
+      headline: "Riders Complain About Track Surface",
+      body: "Following yesterday's card, several prominent riders voiced concerns to track management regarding an uneven bias that developed along the rail during the late afternoon.",
+      category: "flavor",
+    },
   ],
   breeding: [
     {
@@ -90,6 +110,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "Leading equine practitioners wrapped up their annual summit today, highlighting new advancements in regenerative therapies for soft tissue injuries.",
       category: "flavor",
     },
+    {
+      headline: "First Crop Sires Generating Buzz",
+      body: "The early reports are in from the training centers, and whispers are growing that this year's freshman crop of sires might be one of the most precocious in recent memory.",
+      category: "flavor",
+    },
+    {
+      headline: "Major Farm Announces Stallion Roster",
+      body: "One of the region's leading breeding operations unveiled their stud fees for the upcoming season, reflecting a sharp increase in demand for proven turf sires.",
+      category: "flavor",
+    },
   ],
   weather: [
     {
@@ -100,6 +130,21 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "Heavy Rains Threaten Turf Schedule",
       body: "An unexpected storm system moving into the region has track superintendents working overtime to ensure the turf course remains safe for competition.",
+      category: "flavor",
+    },
+    {
+      headline: "Sweltering Heat Forces Post Time Changes",
+      body: "Track officials have announced a shift to evening racing for the remainder of the week to protect the equine athletes from the ongoing record-breaking heatwave.",
+      category: "flavor",
+    },
+    {
+      headline: "Fog Rolls In During Morning Works",
+      body: "A thick blanket of fog covered the backstretch this morning, making it nearly impossible for clockers to record official workout times for the early sets.",
+      category: "flavor",
+    },
+    {
+      headline: "Unexpected Frost Delays Training",
+      body: "Trainers arrived at the barns this morning to find a surprisingly hard frost, forcing a delay in the training schedule until the track could be safely harrowed.",
       category: "flavor",
     },
   ],
