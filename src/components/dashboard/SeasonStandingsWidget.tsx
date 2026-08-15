@@ -14,10 +14,11 @@ import { StableDetailsPanel } from "@/components/dashboard/StableDetailsPanel";
 import { WealthDetailsPanel } from "@/components/dashboard/WealthDetailsPanel";
 import { formatCurrency } from "@/core/common/formatting";
 import { cn } from "@/lib/cn";
-import { Trophy, Bell, Coins } from "lucide-react";
+import { Trophy, Bell, Coins, Award } from "lucide-react";
 import { useGameWithShallow } from "@/game/store";
 import {
   DASHBOARD_SEASON_STANDINGS_LIMIT,
+  DASHBOARD_WEALTH_STANDINGS_LIMIT,
   STANDINGS_RANGE_SHORT_DAYS,
   STANDINGS_RANGE_MEDIUM_DAYS,
   STANDINGS_RANGE_LONG_DAYS,
@@ -26,7 +27,11 @@ import {
   SPARKLINE_WIDTH,
   SPARKLINE_HEIGHT,
   SPARKLINE_STROKE_WIDTH,
+  STANDINGS_RECENT_AWARDS_LIMIT,
+  WEALTH_TAB_VALUE,
+  EARNINGS_TAB_VALUE,
 } from "@/constants";
+import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
 
 const RANGES = [
   { label: "7D", days: STANDINGS_RANGE_SHORT_DAYS },
@@ -64,11 +69,12 @@ export function SeasonStandingsWidget() {
   const [rangeDays, setRangeDays] = useState(STANDINGS_DEFAULT_RANGE_DAYS);
   const [selectedStableId, setSelectedStableId] = useState<string | null>(null);
   const [selectedWealthStableId, setSelectedWealthStableId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState(EARNINGS_TAB_VALUE);
 
   const { standings, playerRank } = useSeasonStandings(rangeDays);
   const wealthStandings = useWealthStandings();
   const standingsMessages = useStandingsMessages();
-  const { horses } = useGameWithShallow((s) => ({ horses: s.horses }));
+  const { horses, awards } = useGameWithShallow((s) => ({ horses: s.horses, awards: s.awards }));
   const allHorses = Object.values(horses);
   const { rows, playerInTop, topNLength } = buildStandingsRows(
     standings,
@@ -79,6 +85,12 @@ export function SeasonStandingsWidget() {
   const selectedStable = standings.find((s) => s.stableId === selectedStableId) ?? null;
   const selectedWealthStable =
     wealthStandings.standings.find((s) => s.stableId === selectedWealthStableId) ?? null;
+
+  const displayRank = activeTab === WEALTH_TAB_VALUE ? wealthStandings.playerRank : playerRank;
+
+  const wealthRows = wealthStandings.standings.slice(0, DASHBOARD_WEALTH_STANDINGS_LIMIT);
+  const wealthPlayerInTop = wealthRows.some((s) => s.isPlayer);
+  const wealthPlayerEntry = wealthStandings.standings.find((s) => s.isPlayer) ?? null;
 
   return (
     <Card className="border-gold-muted bg-slate-900/20 group hover:border-gold/40 transition-all duration-300 lg:col-span-6">
@@ -103,23 +115,23 @@ export function SeasonStandingsWidget() {
           variant="outline"
           className="border-gold/30 text-gold-muted bg-gold/5 font-mono tracking-widest text-[10px] uppercase h-5"
         >
-          You: #{playerRank || "—"}
+          You: #{displayRank || "—"}
         </Badge>
       </CardHeader>
       <CardContent className="pt-3">
-        <Tabs defaultValue="earnings">
+        <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue={EARNINGS_TAB_VALUE}>
           <TabsList className="mb-3">
-            <TabsTrigger value="earnings" className="text-xs gap-1">
+            <TabsTrigger value={EARNINGS_TAB_VALUE} className="text-xs gap-1">
               <Trophy className="h-3 w-3" />
               Earnings
             </TabsTrigger>
-            <TabsTrigger value="wealth" className="text-xs gap-1">
+            <TabsTrigger value={WEALTH_TAB_VALUE} className="text-xs gap-1">
               <Coins className="h-3 w-3" />
               Wealth
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="earnings">
+          <TabsContent value={EARNINGS_TAB_VALUE}>
             {/* Time-range selector */}
             <div className="flex items-center gap-1 mb-3">
               {RANGES.map((r) => (
@@ -246,7 +258,7 @@ export function SeasonStandingsWidget() {
             )}
           </TabsContent>
 
-          <TabsContent value="wealth">
+          <TabsContent value={WEALTH_TAB_VALUE}>
             <div className="space-y-3">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -260,14 +272,17 @@ export function SeasonStandingsWidget() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
-                    {wealthStandings.standings.map((s, i) => {
+                    {wealthRows.map((s, i) => {
                       const rank = i + 1;
+                      const showDivider =
+                        !wealthPlayerInTop && wealthPlayerEntry && i === wealthRows.length - 1;
                       return (
                         <tr
                           key={s.stableId}
                           className={cn(
                             "transition-colors cursor-pointer min-h-[44px]",
                             s.isPlayer ? "bg-gold/10 hover:bg-gold/15" : "hover:bg-white/[0.02]",
+                            showDivider && "border-t-2 border-dashed border-white/10",
                             selectedWealthStableId === s.stableId && "ring-1 ring-gold/30",
                           )}
                           onClick={() => setSelectedWealthStableId(s.stableId)}
@@ -314,6 +329,40 @@ export function SeasonStandingsWidget() {
                         </tr>
                       );
                     })}
+                    {!wealthPlayerInTop && wealthPlayerEntry && (
+                      <tr
+                        key={wealthPlayerEntry.stableId}
+                        className={cn(
+                          "transition-colors cursor-pointer min-h-[44px] bg-gold/10 hover:bg-gold/15 border-t-2 border-dashed border-white/10",
+                          selectedWealthStableId === wealthPlayerEntry.stableId &&
+                            "ring-1 ring-gold/30",
+                        )}
+                        onClick={() => setSelectedWealthStableId(wealthPlayerEntry.stableId)}
+                      >
+                        <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/50">
+                          {wealthStandings.playerRank}
+                        </td>
+                        <td className="py-2.5 sm:py-2 px-2">
+                          <div className="flex items-center gap-2">
+                            {wealthPlayerEntry.silkColor && (
+                              <SilkDot color={wealthPlayerEntry.silkColor} size="sm" />
+                            )}
+                            <span className="text-xs truncate max-w-[120px] sm:max-w-[180px] font-black text-gold">
+                              {wealthPlayerEntry.name}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/80">
+                          {formatCurrency(wealthPlayerEntry.cash)}
+                        </td>
+                        <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/80">
+                          {formatCurrency(wealthPlayerEntry.horseAssets)}
+                        </td>
+                        <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream font-bold">
+                          {formatCurrency(wealthPlayerEntry.totalWealth)}
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -324,6 +373,40 @@ export function SeasonStandingsWidget() {
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Recent awards summary */}
+        {(() => {
+          const playerAwards = awards
+            .filter((a) => !a.stableId)
+            .sort((a, b) => b.year - a.year)
+            .slice(0, STANDINGS_RECENT_AWARDS_LIMIT);
+          if (playerAwards.length === 0) return null;
+          return (
+            <div className="mt-3 pt-3 border-t border-white/5">
+              <div className="flex items-center gap-2 mb-2">
+                <Award className="h-3 w-3 text-gold" />
+                <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-cream/40">
+                  Recent Awards
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {playerAwards.map((a) => (
+                  <Link
+                    key={a.id}
+                    to="/awards/$category"
+                    params={{ category: a.category }}
+                    title={CATEGORY_DESCRIPTIONS[a.category]}
+                    className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md border border-gold/20 bg-gold/5 hover:bg-gold/10 hover:border-gold/40 transition-all text-xs text-cream"
+                  >
+                    <Trophy className="h-3 w-3 text-gold" />
+                    <span className="font-medium">{CATEGORY_DISPLAY_NAMES[a.category]}</span>
+                    <span className="text-[10px] text-cream-muted">Y{a.year}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
       </CardContent>
     </Card>
   );

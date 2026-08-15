@@ -194,4 +194,63 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
     // Range buttons visible
     expect(screen.getByText("7D")).toBeTruthy();
   });
+
+  it("rank badge shows earnings rank on earnings tab and wealth rank on wealth tab", async () => {
+    const h1 = createTestHorse({ id: "h1", owned: true, name: "My Horse" });
+    const stable = createTestStable({ id: "npc1", name: "Rich Stable", cash: 10000000 });
+    seedStore({
+      ...createDefaultGameState(),
+      cash: 50000,
+      horses: { h1 },
+      npcStables: [stable],
+      playerProfile: {
+        stableName: "My Stable",
+        ownerName: "John",
+        silk: { primary: "#ff0000", secondary: "#0000ff" },
+        backstoryId: "inheritor",
+        founded: 1,
+      } as any,
+    });
+    render(<SeasonStandingsWidget />);
+    // On earnings tab (default), badge shows earnings rank
+    const badge = screen.getByText(/You: #/);
+    expect(badge.textContent).toMatch(/You: #/);
+
+    // Switch to wealth tab — badge should update to wealth rank
+    await clickTab("Wealth");
+    const wealthBadge = screen.getByText(/You: #/);
+    expect(wealthBadge).toBeTruthy();
+    // Player should be rank 2 (NPC has 10M cash vs player 50K + 1 horse)
+    expect(wealthBadge.textContent).toBe("You: #2");
+  });
+
+  it("wealth tab limits rows to top N and appends player row when outside top N", async () => {
+    // Create 12 NPC stables with more cash than player to push player outside top 10
+    const npcStables = Array.from({ length: 12 }, (_, i) =>
+      createTestStable({
+        id: `npc${i}`,
+        name: `Stable ${i}`,
+        cash: 1000000 + i * 100000,
+      }),
+    );
+    seedStore({
+      ...createDefaultGameState(),
+      cash: 1000,
+      npcStables,
+      playerProfile: {
+        stableName: "Poor Stable",
+        ownerName: "John",
+        silk: { primary: "#ff0000", secondary: "#0000ff" },
+        backstoryId: "inheritor",
+        founded: 1,
+      } as any,
+    });
+    render(<SeasonStandingsWidget />);
+    await clickTab("Wealth");
+    // Player should still be visible (appended after top N)
+    expect(screen.getByText("Poor Stable")).toBeTruthy();
+    // Player rank should be 13 (12 NPC stables + player)
+    const badge = screen.getByText(/You: #/);
+    expect(badge.textContent).toBe("You: #13");
+  });
 });

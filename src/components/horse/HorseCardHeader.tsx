@@ -6,7 +6,8 @@ import { getCoatColor } from "@/core/horse/uiHelpers";
 import { genderSymbol } from "@/core/horse/gender";
 import { cn } from "@/lib/cn";
 import type { Horse } from "@/game/types";
-import { Trophy, Calendar } from "lucide-react";
+import { Trophy, Calendar, Users } from "lucide-react";
+import { formatFanCount } from "@/components/horse/fanFormat";
 
 interface HorseCardHeaderProps {
   horse: Horse;
@@ -51,6 +52,14 @@ export function HorseCardHeader({ horse, genderColor }: HorseCardHeaderProps) {
                   <span className="w-1 h-1 bg-white/20 rounded-full" />
                   <span className="text-fame flex items-center gap-1">
                     <Trophy className="h-2.5 w-2.5" /> Fame {Math.round(horse.fame)}
+                  </span>
+                </>
+              )}
+              {(horse.fanCount ?? 0) > 0 && (
+                <>
+                  <span className="w-1 h-1 bg-white/20 rounded-full" />
+                  <span className="text-blue-300/60 flex items-center gap-1">
+                    <Users className="h-2.5 w-2.5" /> {formatFanCount(horse.fanCount)}
                   </span>
                 </>
               )}

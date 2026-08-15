@@ -12,6 +12,12 @@ import { randomWeather, rand } from "@/core/common/random";
 import { randomTrackConditionWithClimateBias } from "@/core/race/trackConditions";
 import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
 import { CLASS_CONFIG } from "./raceGen";
+import {
+  SA_FIELD_SIZE_MIN,
+  SA_FIELD_SIZE_MAX,
+  SA_CLAIMING_PURSE_MULTIPLIER,
+  SA_CLAIMING_PURSE_BONUS_MAX,
+} from "@/constants";
 
 const SA_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
   { class: "Maiden", probability: 0.4 },
@@ -85,7 +91,7 @@ export function generateSouthAmericanRace(
     entryFee: cfg.entry,
     purse: cfg.purse,
     minStat: cfg.minStat,
-    fieldSize: rand(8, 12, rng),
+    fieldSize: rand(SA_FIELD_SIZE_MIN, SA_FIELD_SIZE_MAX, rng),
     entries: [],
     resolved: false,
     weather: randomWeather(rng),
@@ -96,7 +102,8 @@ export function generateSouthAmericanRace(
 
   if (claimingPrice) {
     race.claimingPrice = claimingPrice;
-    race.purse = claimingPrice * 1.5 + rng.int(0, 2000);
+    race.purse =
+      claimingPrice * SA_CLAIMING_PURSE_MULTIPLIER + rng.int(0, SA_CLAIMING_PURSE_BONUS_MAX);
   }
 
   return race;

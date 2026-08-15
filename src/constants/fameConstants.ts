@@ -37,3 +37,8 @@ export const FAN_BONUS_LARGE_PURSE = 2000;
 export const FAN_BONUS_MEDIUM_PURSE = 800;
 export const FAN_DAILY_DECAY_RATE = 0.001;
 export const FAN_DECAY_GRACE_DAYS = 30;
+
+// Fan count valuation divisors (higher fan count = higher valuation multiplier)
+export const FAN_VALUATION_DIVISOR = 100000;
+export const FAN_BREEDING_VALUATION_DIVISOR = 200000;
+export const FAN_AUCTION_RACING_AGE_THRESHOLD = 10000;

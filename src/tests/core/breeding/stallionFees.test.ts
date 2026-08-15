@@ -15,6 +15,7 @@ const baseHorse = createTestHorse({
   gender: "colt",
   age: 5,
   potential: 60,
+  fanCount: 0,
 });
 
 describe("Stallion Fee Recommendation", () => {

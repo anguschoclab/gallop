@@ -344,6 +344,14 @@ export const AWARD_CEREMONY_SCHEDULE: { dayOfYear: number; region: AwardRegion; 
   { dayOfYear: 365, region: "north_america", name: "Eclipse Awards" },
 ];
 
+// Award region rank order (chronological ceremony order, not alphabetical)
+export const AWARD_REGION_ORDER: Record<AwardRegion, number> = {
+  south_america: 0,
+  asia_pacific: 1,
+  europe: 2,
+  north_america: 3,
+};
+
 // Category display names (for UI)
 export const CATEGORY_DISPLAY_NAMES: Record<RegionalAwardCategory, string> = {
   // North America
@@ -385,6 +393,11 @@ export const CATEGORY_DISPLAY_NAMES: Record<RegionalAwardCategory, string> = {
   campeon_velocidad: "Best sprinter",
   campeon_fondo: "Best stayer",
 };
+
+// Category rank order based on CATEGORY_DISPLAY_NAMES key order (not alphabetical)
+export const AWARD_CATEGORY_ORDER: Record<string, number> = Object.fromEntries(
+  Object.keys(CATEGORY_DISPLAY_NAMES).map((cat, i) => [cat, i]),
+);
 
 // Category descriptions (for tooltips)
 export const CATEGORY_DESCRIPTIONS: Record<RegionalAwardCategory, string> = {

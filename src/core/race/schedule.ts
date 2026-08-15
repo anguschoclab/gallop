@@ -23,7 +23,8 @@ import { generateEuropeanRaceCard } from "./generation/europe";
 import { generateAustralianRaceCard } from "./generation/australia";
 import { generateAsianRaceCard } from "./generation/asia";
 import { generateSouthAmericanRaceCard } from "./generation/southAmerica";
-import { ensureMaidenInCard } from "./maidenGuarantee";
+import { ensureMaidenInCard, ensure2yoRaces } from "./maidenGuarantee";
+import { TWOYO_GUARANTEE_LOOKAHEAD_DAYS } from "@/constants";
 
 // Breeders' Cup rotation pool
 const BREEDERS_CUP_TRACKS = [
@@ -323,5 +324,14 @@ export function generateUpcomingRaces(
     }
   }
 
-  return races;
+  // 2yo race guarantee: ensure 2yo races exist across all distance bands
+  // for each day in the upcoming race generation window
+  const twoyoRng = createRng(hashStr(`twoyoGuarantee_${newDay}`));
+  const with2yo = ensure2yoRaces(
+    races,
+    newDay + 1,
+    newDay + TWOYO_GUARANTEE_LOOKAHEAD_DAYS,
+    twoyoRng,
+  );
+  return with2yo;
 }

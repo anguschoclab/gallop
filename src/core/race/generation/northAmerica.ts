@@ -20,7 +20,13 @@ import { randomWeather, rand } from "@/core/common/random";
 import { randomTrackConditionWithClimateBias } from "@/core/race/trackConditions";
 import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
 import { CLASS_CONFIG } from "./raceGen";
-import { NA_CLAIMING_RACE_PERCENTAGE } from "@/constants";
+import {
+  NA_FIELD_SIZE_MIN,
+  NA_FIELD_SIZE_MAX,
+  CLAIMING_PURSE_MULTIPLIER,
+  OPTIONAL_CLAIMING_PURSE_MULTIPLIER,
+  CLAIMING_PURSE_BONUS_MAX,
+} from "@/constants";
 
 // Configuration for North American race distribution
 // Matches NA_CLAIMING_RACE_PERCENTAGE (70%) as per real-world statistics
@@ -155,7 +161,7 @@ export function generateNorthAmericanRace(
     entryFee: cfg.entry,
     purse: cfg.purse,
     minStat: cfg.minStat,
-    fieldSize: rand(6, 10, rng),
+    fieldSize: rand(NA_FIELD_SIZE_MIN, NA_FIELD_SIZE_MAX, rng),
     entries: [],
     resolved: false,
     weather: randomWeather(rng),
@@ -173,7 +179,7 @@ export function generateNorthAmericanRace(
     race.claimingPrice = claimingPrice;
     // Scale purse based on claiming price
     if (claimingPrice) {
-      race.purse = claimingPrice * 2 + rng.int(0, 5000);
+      race.purse = claimingPrice * CLAIMING_PURSE_MULTIPLIER + rng.int(0, CLAIMING_PURSE_BONUS_MAX);
     }
   }
 
@@ -181,7 +187,8 @@ export function generateNorthAmericanRace(
   if (raceClass === "OptionalClaiming") {
     race.claimingPrice = claimingPrice;
     if (claimingPrice) {
-      race.purse = claimingPrice * 2.5 + rng.int(0, 5000);
+      race.purse =
+        claimingPrice * OPTIONAL_CLAIMING_PURSE_MULTIPLIER + rng.int(0, CLAIMING_PURSE_BONUS_MAX);
     }
   }
 

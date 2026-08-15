@@ -26,7 +26,7 @@ import { createRng, hashStr, type Rng } from "@/core/common/rng";
 import { GRADED_RACES } from "@/data/gradedRaces";
 import { createDefaultPlayerFacilities, createFacility } from "@/core/facilities";
 import type { FacilityLevel } from "@/core/facilities";
-import { STARTING_CASH } from "@/constants";
+import { STARTING_CASH, MAIDEN_GUARANTEE_START_DAY, MAIDEN_GUARANTEE_END_DAY } from "@/constants";
 import { seedGazetteNews } from "@/services/narrative/seedNewsGenerator";
 import { createStableAIState } from "@/core/ai/npcCycleAI";
 import { generateUpcomingRaces } from "@/game/store/helpers/market";
@@ -88,7 +88,12 @@ export function createInitialState(options?: NewGameOptions): GameState {
   const racesWithTrack = generateUpcomingRaces(races, 1);
 
   // Guarantee starter-eligible maiden races for days 2-7
-  const racesWithMaidens = ensureMaidenRaces(racesWithTrack, 2, 7, setupRng);
+  const racesWithMaidens = ensureMaidenRaces(
+    racesWithTrack,
+    MAIDEN_GUARANTEE_START_DAY,
+    MAIDEN_GUARANTEE_END_DAY,
+    setupRng,
+  );
 
   // Generate NPC stables and horses
   const stableRng = createRng(hashStr("initial_stables"));

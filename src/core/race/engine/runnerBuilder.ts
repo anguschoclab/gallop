@@ -34,6 +34,7 @@ import {
   LANE_WIDTH,
   MUD_MASTER_SPEED_BONUS,
 } from "@/constants/raceEngineConstants";
+import { DEFAULT_GATE } from "@/constants/gateConstants";
 import type { SimWeatherPattern } from "@/core/weather/weatherTypes";
 import type { RunnerMood } from "@/core/race/runnerConditions";
 
@@ -299,7 +300,7 @@ export function buildRunner(
   raceDistance: number,
   surface: "Turf" | "Dirt" | "Synthetic" | null,
   conditions: ConditionsModifier = { speedMul: 1, staminaDrainMul: 1 },
-  gate: number = 1,
+  gate: number = DEFAULT_GATE,
   jockey?: JockeyT,
   weight?: number,
   handedness?: "left" | "right" | "balanced",

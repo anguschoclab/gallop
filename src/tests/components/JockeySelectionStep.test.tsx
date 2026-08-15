@@ -25,6 +25,7 @@ function makeJockey(overrides?: Partial<Jockey>): Jockey {
     name: "Test Jockey",
     age: 28,
     archetype: "versatile",
+    tier: "mid",
     stats: makeJockeyStats(),
     potential: 80,
     traits: [],

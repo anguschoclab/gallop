@@ -9,6 +9,7 @@ import {
   CATEGORY_DESCRIPTIONS,
   REGION_AWARD_NAMES,
 } from "@/core/awards/types";
+import { AWARD_BADGE_INLINE_MAX_WIDTH } from "@/constants/awardsConstants";
 
 interface AwardBadgeProps {
   award: RegionalAward;
@@ -46,7 +47,12 @@ export function AwardBadge({
         )}
       >
         <AwardIcon region={award.region} category={award.category} size="tiny" />
-        <span className="text-xs font-medium truncate max-w-[120px]">{categoryName}</span>
+        <span
+          className="text-xs font-medium truncate"
+          style={{ maxWidth: AWARD_BADGE_INLINE_MAX_WIDTH }}
+        >
+          {categoryName}
+        </span>
         {showYear && <span className="text-[10px] opacity-70">{award.year}</span>}
       </Badge>
     );

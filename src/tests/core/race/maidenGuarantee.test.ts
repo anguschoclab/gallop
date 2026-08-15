@@ -1,8 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { ensureMaidenRaces, ensureMaidenInCard } from "@/core/race/maidenGuarantee";
+import { ensureMaidenRaces, ensureMaidenInCard, ensure2yoRaces } from "@/core/race/maidenGuarantee";
 import { createRng } from "@/core/common/rng";
 import type { Race } from "@/game/types";
 import type { Track } from "@/data/tracks";
+import { TWOYO_DISTANCE_BANDS, TWOYO_AGE } from "@/constants";
 
 function mkRace(overrides: Partial<Race> = {}): Race {
   const base: Race = {
@@ -175,3 +176,128 @@ describe("ensureMaidenInCard", () => {
     expect(added!.restrictions).toBeUndefined();
   });
 });
+
+describe("ensure2yoRaces", () => {
+  it("adds 2yo races for all distance bands when none exist", () => {
+    const races: Race[] = [];
+    const result = ensure2yoRaces(races, 10, 10, createRng("test"));
+    const day10Twoyo = result.filter(
+      (r) => r.restrictions?.minAge === TWOYO_AGE && r.restrictions?.maxAge === TWOYO_AGE,
+    );
+    expect(day10Twoyo.length).toBeGreaterThanOrEqual(3);
+
+    const bands = new Set(day10Twoyo.map((r) => getBandKey(r.distance)));
+    for (const key of Object.keys(TWOYO_DISTANCE_BANDS)) {
+      expect(bands.has(key as keyof typeof TWOYO_DISTANCE_BANDS)).toBe(true);
+    }
+  });
+
+  it("does not add 2yo races when all bands already covered", () => {
+    const existing: Race[] = [
+      mkRace({
+        day: 10,
+        distance: 1200,
+        raceClass: "MaidenSpecialWeight",
+        restrictions: { minAge: TWOYO_AGE, maxAge: TWOYO_AGE },
+      }),
+      mkRace({
+        day: 10,
+        distance: 1600,
+        raceClass: "MaidenSpecialWeight",
+        restrictions: { minAge: TWOYO_AGE, maxAge: TWOYO_AGE },
+      }),
+      mkRace({
+        day: 10,
+        distance: 2000,
+        raceClass: "MaidenSpecialWeight",
+        restrictions: { minAge: TWOYO_AGE, maxAge: TWOYO_AGE },
+      }),
+    ];
+    const result = ensure2yoRaces(existing, 10, 10, createRng("test"));
+    expect(result.length).toBe(existing.length);
+  });
+
+  it("fills only missing bands", () => {
+    const existing: Race[] = [
+      mkRace({
+        day: 10,
+        distance: 1200,
+        raceClass: "MaidenSpecialWeight",
+        restrictions: { minAge: TWOYO_AGE, maxAge: TWOYO_AGE },
+      }),
+    ];
+    const result = ensure2yoRaces(existing, 10, 10, createRng("test"));
+    const added = result.filter((r) => !existing.includes(r));
+    expect(added.length).toBe(2);
+
+    const bands = new Set(added.map((r) => getBandKey(r.distance)));
+    expect(bands.has("mile")).toBe(true);
+    expect(bands.has("route")).toBe(true);
+    expect(bands.has("sprint")).toBe(false);
+  });
+
+  it("skips days outside range", () => {
+    const races: Race[] = [];
+    const result = ensure2yoRaces(races, 10, 12, createRng("test"));
+    const day9 = result.filter((r) => r.day === 9);
+    const day13 = result.filter((r) => r.day === 13);
+    expect(day9.length).toBe(0);
+    expect(day13.length).toBe(0);
+  });
+
+  it("added 2yo races have correct restrictions", () => {
+    const races: Race[] = [];
+    const result = ensure2yoRaces(races, 10, 10, createRng("test"));
+    const added = result.filter((r) => r.restrictions?.minAge === TWOYO_AGE);
+    for (const r of added) {
+      expect(r.restrictions?.minAge).toBe(TWOYO_AGE);
+      expect(r.restrictions?.maxAge).toBe(TWOYO_AGE);
+    }
+  });
+
+  it("added 2yo races have MaidenSpecialWeight class", () => {
+    const races: Race[] = [];
+    const result = ensure2yoRaces(races, 10, 10, createRng("test"));
+    const added = result.filter((r) => !races.includes(r));
+    for (const r of added) {
+      expect(r.raceClass).toBe("MaidenSpecialWeight");
+    }
+  });
+
+  it("does not treat open-age races as 2yo races", () => {
+    const existing: Race[] = [
+      mkRace({ day: 10, distance: 1200, raceClass: "Maiden" }),
+      mkRace({ day: 10, distance: 1600, raceClass: "Allowance" }),
+    ];
+    const result = ensure2yoRaces(existing, 10, 10, createRng("test"));
+    const added = result.filter((r) => !existing.includes(r));
+    expect(added.length).toBe(3);
+  });
+
+  it("handles multi-day range", () => {
+    const races: Race[] = [];
+    const result = ensure2yoRaces(races, 10, 12, createRng("test"));
+    for (let d = 10; d <= 12; d++) {
+      const dayRaces = result.filter((r) => r.day === d);
+      const twoyoRaces = dayRaces.filter(
+        (r) => r.restrictions?.minAge === TWOYO_AGE && r.restrictions?.maxAge === TWOYO_AGE,
+      );
+      expect(twoyoRaces.length).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it("preserves existing races", () => {
+    const existing: Race[] = [mkRace({ day: 10, raceClass: "Stakes", distance: 1800 })];
+    const result = ensure2yoRaces(existing, 10, 10, createRng("test"));
+    expect(result).toContain(existing[0]);
+  });
+});
+
+function getBandKey(distance: number): keyof typeof TWOYO_DISTANCE_BANDS {
+  for (const [key, band] of Object.entries(TWOYO_DISTANCE_BANDS)) {
+    if (distance >= band.min && distance <= band.max) {
+      return key as keyof typeof TWOYO_DISTANCE_BANDS;
+    }
+  }
+  return "sprint";
+}

@@ -22,6 +22,7 @@ import type {
   EnergyImpact,
   FormImpact,
   FameImpact,
+  FanCountImpact,
   RenameImpact,
   AgingImpact,
   HealthStatusImpact,
@@ -82,6 +83,12 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { delta } = impact as FameImpact;
     if (horse) {
       horse.fame = Math.round(Math.min(100, Math.max(0, horse.fame + delta)));
+    }
+  },
+  fan_count_change: (draft, impact, horse) => {
+    const { delta } = impact as FanCountImpact;
+    if (horse) {
+      horse.fanCount = Math.max(0, Math.round((horse.fanCount ?? 0) + delta));
     }
   },
   gelding: (draft, impact, horse) => {
@@ -209,6 +216,7 @@ export class HorseHandler implements ImpactHandler {
       "energy_change",
       "form_change",
       "fame_change",
+      "fan_count_change",
       "gelding",
       "rename",
       "aging",

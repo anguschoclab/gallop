@@ -19,6 +19,7 @@ function mkJockey(id: string, overrides: Record<string, unknown> = {}): Jockey {
     name: `Jockey ${id}`,
     age: 25,
     archetype: "versatile",
+    tier: "mid",
     stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
     potential: 75,
     traits: [] as JockeyTrait[],

@@ -11,6 +11,7 @@
 import type { Horse, Stable, StableTier } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
 import { generateNpcHorse as _generateNpcHorse } from "@/core/horse/horseFactory";
+import { deriveFanCount } from "@/core/horse/fans";
 import { rand } from "@/core/common/random";
 import {
   shouldRetireAtStartup,
@@ -106,6 +107,7 @@ export function generateStableHorses(
       const age = getAgeFromCategory(cat, rng);
       const horse = _generateNpcHorse(stable, rng, npcAIManager, currentDay, { forcedAge: age });
       horse.fame = calculateStartingFame(stable.tier, age, rng);
+      horse.fanCount = deriveFanCount(horse.fame);
 
       if (aiState?.horseGenAI && currentDay !== undefined) {
         recordHorseGeneration(aiState.horseGenAI, horse, stable, currentDay);

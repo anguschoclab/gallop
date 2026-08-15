@@ -176,4 +176,37 @@ describe("SeasonStandingsWidget", () => {
     const row = screen.getByText("My Stable");
     fireEvent.click(row);
   });
+
+  it("shows recent awards with links to /awards/$category", () => {
+    const h1 = mkHorse({ id: "h1", owned: true });
+    seedStore({
+      ...createDefaultGameState(),
+      day: 60,
+      horses: { h1 },
+      awards: [
+        {
+          id: "aw1",
+          year: 2,
+          category: "horse_of_the_year",
+          region: "north_america",
+          horseId: "h1",
+          horseName: "Thunder",
+          points: 100,
+          runnerUpPoints: 80,
+          margin: 20,
+          qualifyingRaces: ["r1"],
+          ceremonyDay: 50,
+        } as any,
+      ],
+      playerProfile: {
+        stableName: "My Stable",
+        silk: { primary: "#ff0000", secondary: "#0000ff" },
+      } as any,
+    });
+    const { container } = render(<SeasonStandingsWidget />);
+    expect(screen.getByText("Recent Awards")).toBeTruthy();
+    expect(screen.getByText("Horse of the Year")).toBeTruthy();
+    const awardLinks = container.querySelectorAll('a[to="/awards/$category"]');
+    expect(awardLinks.length).toBeGreaterThanOrEqual(1);
+  });
 });

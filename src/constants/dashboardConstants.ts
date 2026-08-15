@@ -26,3 +26,10 @@ export const STANDINGS_RANGE_LONG_DAYS = 90;
 export const STANDINGS_DEFAULT_RANGE_DAYS = 30;
 export const STANDINGS_SKELETON_ROW_COUNT = 5;
 export const STANDINGS_RECENT_RESULTS_LIMIT = 5;
+
+export const WEALTH_TAB_VALUE = "wealth";
+export const EARNINGS_TAB_VALUE = "earnings";
+export const WEALTH_PLAYER_ID = "__player__";
+export const WEALTH_PLAYER_FALLBACK_NAME = "Your stable";
+export const WEALTH_DETAILS_TOP_HORSES_LIMIT = 5;
+export const DASHBOARD_WEALTH_STANDINGS_LIMIT = 10;

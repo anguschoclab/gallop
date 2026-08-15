@@ -6,6 +6,7 @@ import type {
   EnergyImpact,
   FormImpact,
   FameImpact,
+  FanCountImpact,
   RenameImpact,
   AgingImpact,
   PastureRetirementImpact,
@@ -191,6 +192,102 @@ describe("HorseHandler", () => {
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].fame).toBe(100);
+  });
+
+  it("fan_count_change with positive delta increases fanCount", () => {
+    const handler = new HorseHandler();
+    const state = {
+      horses: h2r([{ id: "h1", name: "Star", fanCount: 10000 }] as unknown as Horse[]),
+    } as unknown as GameState;
+
+    const impact: FanCountImpact = {
+      id: "imp-fan-1",
+      intentId: "",
+      day: 10,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "fan_count_change",
+      horseId: "h1",
+      delta: 15000,
+      reason: "G1 win fan gain",
+    };
+
+    const draft = JSON.parse(JSON.stringify(state));
+    handler.handle(draft, impact);
+
+    expect(draft.horses["h1"].fanCount).toBe(25000);
+  });
+
+  it("fan_count_change with negative delta decreases fanCount", () => {
+    const handler = new HorseHandler();
+    const state = {
+      horses: h2r([{ id: "h1", name: "Star", fanCount: 50000 }] as unknown as Horse[]),
+    } as unknown as GameState;
+
+    const impact: FanCountImpact = {
+      id: "imp-fan-2",
+      intentId: "",
+      day: 10,
+      phase: "npcCycle",
+      logLevel: "always",
+      type: "fan_count_change",
+      horseId: "h1",
+      delta: -5000,
+      reason: "Fan decay",
+    };
+
+    const draft = JSON.parse(JSON.stringify(state));
+    handler.handle(draft, impact);
+
+    expect(draft.horses["h1"].fanCount).toBe(45000);
+  });
+
+  it("fan_count_change does not go below 0", () => {
+    const handler = new HorseHandler();
+    const state = {
+      horses: h2r([{ id: "h1", name: "Star", fanCount: 3000 }] as unknown as Horse[]),
+    } as unknown as GameState;
+
+    const impact: FanCountImpact = {
+      id: "imp-fan-3",
+      intentId: "",
+      day: 10,
+      phase: "npcCycle",
+      logLevel: "always",
+      type: "fan_count_change",
+      horseId: "h1",
+      delta: -10000,
+      reason: "Massive fan decay",
+    };
+
+    const draft = JSON.parse(JSON.stringify(state));
+    handler.handle(draft, impact);
+
+    expect(draft.horses["h1"].fanCount).toBe(0);
+  });
+
+  it("fan_count_change does NOT clamp to 100 (unlike fame_change)", () => {
+    const handler = new HorseHandler();
+    const state = {
+      horses: h2r([{ id: "h1", name: "Star", fanCount: 50000 }] as unknown as Horse[]),
+    } as unknown as GameState;
+
+    const impact: FanCountImpact = {
+      id: "imp-fan-4",
+      intentId: "",
+      day: 10,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "fan_count_change",
+      horseId: "h1",
+      delta: 100000,
+      reason: "Championship win",
+    };
+
+    const draft = JSON.parse(JSON.stringify(state));
+    handler.handle(draft, impact);
+
+    expect(draft.horses["h1"].fanCount).toBe(150000);
   });
 
   it("rename updates name", () => {
@@ -422,6 +519,7 @@ describe("HorseHandler", () => {
     expect(handler.canHandle("energy_change")).toBe(true);
     expect(handler.canHandle("form_change")).toBe(true);
     expect(handler.canHandle("fame_change")).toBe(true);
+    expect(handler.canHandle("fan_count_change")).toBe(true);
     expect(handler.canHandle("gelding")).toBe(true);
     expect(handler.canHandle("rename")).toBe(true);
     expect(handler.canHandle("aging")).toBe(true);

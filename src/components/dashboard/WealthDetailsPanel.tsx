@@ -6,6 +6,7 @@ import { Link } from "@tanstack/react-router";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { formatCurrency } from "@/core/common/formatting";
 import { horseMarketValue } from "@/core/horse/pricing";
+import { WEALTH_DETAILS_TOP_HORSES_LIMIT } from "@/constants";
 import { cn } from "@/lib/cn";
 import { ChevronDown } from "lucide-react";
 import type { WealthStandingEntry } from "@/core/standings/computeWealthStandings";
@@ -27,7 +28,7 @@ export function WealthDetailsPanel({ stable, horses }: WealthDetailsPanelProps) 
     return stableHorses
       .map((h) => ({ horse: h, value: horseMarketValue(h, horses) }))
       .sort((a, b) => b.value - a.value)
-      .slice(0, 5);
+      .slice(0, WEALTH_DETAILS_TOP_HORSES_LIMIT);
   }, [stable, horses]);
 
   if (!stable) return null;

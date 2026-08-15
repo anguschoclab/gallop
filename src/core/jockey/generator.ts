@@ -195,6 +195,7 @@ export function generateJockey({
     name,
     age,
     archetype,
+    tier,
     stats,
     potential,
     traits,

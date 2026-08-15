@@ -12,6 +12,14 @@ import { randomWeather, rand } from "@/core/common/random";
 import { randomTrackConditionWithClimateBias } from "@/core/race/trackConditions";
 import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
 import { CLASS_CONFIG } from "./raceGen";
+import {
+  AUSTRALIA_PURSE_MULTIPLIER,
+  AUSTRALIA_SPRINT_PROBABILITY,
+  AUSTRALIA_SPRINT_DIST_MIN,
+  AUSTRALIA_SPRINT_DIST_MAX,
+  AUSTRALIA_FIELD_SIZE_MIN,
+  AUSTRALIA_FIELD_SIZE_MAX,
+} from "@/constants";
 
 const AUSTRALIA_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
   { class: "Maiden", probability: 0.3 },
@@ -58,9 +66,9 @@ export function generateAustralianRace(
   const selectedSurface = surface || rng.pick(trackSurfaces.length > 0 ? trackSurfaces : ["Turf"]);
 
   // Australia favors sprints (1000m-1400m)
-  const isSprint = rng.next() < 0.6;
+  const isSprint = rng.next() < AUSTRALIA_SPRINT_PROBABILITY;
   const distance = isSprint
-    ? rand(10, 14, rng) * 100
+    ? rand(AUSTRALIA_SPRINT_DIST_MIN / 100, AUSTRALIA_SPRINT_DIST_MAX / 100, rng) * 100
     : rand(cfg.dist[0] / 100, cfg.dist[1] / 100, rng) * 100;
 
   const name = generateRaceName({
@@ -79,9 +87,9 @@ export function generateAustralianRace(
     distance,
     raceClass,
     entryFee: cfg.entry,
-    purse: Math.round(cfg.purse * 1.1),
+    purse: Math.round(cfg.purse * AUSTRALIA_PURSE_MULTIPLIER),
     minStat: cfg.minStat,
-    fieldSize: rand(10, 16, rng), // Large fields in Australia
+    fieldSize: rand(AUSTRALIA_FIELD_SIZE_MIN, AUSTRALIA_FIELD_SIZE_MAX, rng), // Large fields in Australia
     entries: [],
     resolved: false,
     weather: randomWeather(rng),

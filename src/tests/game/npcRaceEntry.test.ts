@@ -424,4 +424,67 @@ describe("updateHorseFame", () => {
     const result = updateHorseFame([horse], race);
     expect(result[0].fame).toBe(20);
   });
+
+  it("non-graded win (position=1) also applies fan gain", () => {
+    const horse = mkHorse({ id: "h1", fame: 10, fanCount: 5000 });
+    const race = mkRace({ result: [{ horseId: "h1", position: 1, time: 95 }] });
+    const result = updateHorseFame([horse], race);
+    expect(result[0].fanCount).toBeGreaterThan(5000);
+  });
+
+  it("G1 win also applies FAN_GAIN_G1_WIN fan gain", () => {
+    const horse = mkHorse({ id: "h1", fame: 10, fanCount: 5000 });
+    const race = mkRace({
+      result: [{ horseId: "h1", position: 1, time: 95 }],
+      graded: { key: "g1", grade: "G1", track: "Ascot", trackId: "t1", surface: "Turf" },
+    });
+    const result = updateHorseFame([horse], race);
+    expect(result[0].fanCount).toBe(5000 + 15000);
+  });
+
+  it("G2 win also applies FAN_GAIN_G2_WIN fan gain", () => {
+    const horse = mkHorse({ id: "h1", fame: 5, fanCount: 5000 });
+    const race = mkRace({
+      result: [{ horseId: "h1", position: 1, time: 95 }],
+      graded: { key: "g2", grade: "G2", track: "Newmarket", trackId: "t2", surface: "Turf" },
+    });
+    const result = updateHorseFame([horse], race);
+    expect(result[0].fanCount).toBe(5000 + 10000);
+  });
+
+  it("position > 5 → no fan gain", () => {
+    const horse = mkHorse({ id: "h1", fame: 10, fanCount: 5000 });
+    const race = mkRace({ result: [{ horseId: "h1", position: 6, time: 100 }] });
+    const result = updateHorseFame([horse], race);
+    expect(result[0].fanCount).toBe(5000);
+  });
+
+  it("horse not in result → fan count unchanged", () => {
+    const horse = mkHorse({ id: "other", fame: 20, fanCount: 8000 });
+    const race = mkRace({ result: [{ horseId: "h1", position: 1, time: 95 }] });
+    const result = updateHorseFame([horse], race);
+    expect(result[0].fanCount).toBe(8000);
+  });
+
+  it("large purse adds FAN_BONUS_LARGE_PURSE to fan gain", () => {
+    const horse = mkHorse({ id: "h1", fame: 10, fanCount: 5000 });
+    const race = mkRace({
+      purse: 600000,
+      result: [{ horseId: "h1", position: 1, time: 95 }],
+      graded: { key: "g1", grade: "G1", track: "Ascot", trackId: "t1", surface: "Turf" },
+    });
+    const result = updateHorseFame([horse], race);
+    expect(result[0].fanCount).toBe(5000 + 15000 + 2000);
+  });
+
+  it("medium purse adds FAN_BONUS_MEDIUM_PURSE to fan gain", () => {
+    const horse = mkHorse({ id: "h1", fame: 10, fanCount: 5000 });
+    const race = mkRace({
+      purse: 150000,
+      result: [{ horseId: "h1", position: 1, time: 95 }],
+      graded: { key: "g1", grade: "G1", track: "Ascot", trackId: "t1", surface: "Turf" },
+    });
+    const result = updateHorseFame([horse], race);
+    expect(result[0].fanCount).toBe(5000 + 15000 + 800);
+  });
 });

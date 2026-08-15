@@ -67,6 +67,19 @@ import {
   RACE_CLASS_STARTER_ALLOWANCE_PROB,
   RACE_CLASS_STARTER_HANDICAP_PROB,
   RACE_CLASS_MAIDEN_STAKES_PROB,
+  RACE_CLASS_MAIDEN_CLAIMING_PROB,
+  RACE_CLASS_CLAIMING_PROB,
+  RACE_CLASS_STAKES_PROB,
+  RACE_CLASS_OPTIONAL_CLAIMING_PROB,
+  RACE_CLASS_MAIDEN_SPECIAL_WEIGHT_PROB,
+  RACE_CLASS_MAIDEN_OPTIONAL_CLAIMING_PROB,
+  RACE_CLASS_LISTED_PROB,
+  GRADED_ENTRY_FEE_G1,
+  GRADED_ENTRY_FEE_G2,
+  GRADED_ENTRY_FEE_G3,
+  DEFAULT_GRADED_FIELD_SIZE,
+  RACE_FIELD_SIZE_MIN,
+  RACE_FIELD_SIZE_MAX,
 } from "@/constants";
 
 /**
@@ -160,7 +173,12 @@ export function makeGradedRace(
   gameDay: number,
   rng: Rng = nondeterministicRng(),
 ): Race {
-  const entryFee = g.grade === "G1" ? 2500 : g.grade === "G2" ? 1500 : 1000;
+  const entryFee =
+    g.grade === "G1"
+      ? GRADED_ENTRY_FEE_G1
+      : g.grade === "G2"
+        ? GRADED_ENTRY_FEE_G2
+        : GRADED_ENTRY_FEE_G3;
   const minStat =
     g.grade === "G1" ? GRADE_G1_MIN_STAT : g.grade === "G2" ? GRADE_G2_MIN_STAT : GRADE_G3_MIN_STAT;
   return {
@@ -172,7 +190,7 @@ export function makeGradedRace(
     entryFee,
     purse: g.purse,
     minStat,
-    fieldSize: g.fieldSize ?? 12,
+    fieldSize: g.fieldSize ?? DEFAULT_GRADED_FIELD_SIZE,
     entries: [],
     resolved: false,
     graded: {
@@ -205,18 +223,18 @@ export function generateRace(day: number, rng: Rng = nondeterministicRng()): Rac
   const r = rng.next();
   let cls: RaceClass;
   if (r < RACE_CLASS_MAIDEN_PROB) cls = "Maiden";
-  else if (r < 0.3) cls = "MaidenClaiming";
+  else if (r < RACE_CLASS_MAIDEN_CLAIMING_PROB) cls = "MaidenClaiming";
   else if (r < RACE_CLASS_ALLOWANCE_PROB) cls = "Allowance";
-  else if (r < 0.5) cls = "Claiming";
-  else if (r < 0.6) cls = "Stakes";
+  else if (r < RACE_CLASS_CLAIMING_PROB) cls = "Claiming";
+  else if (r < RACE_CLASS_STAKES_PROB) cls = "Stakes";
   else if (r < RACE_CLASS_HANDICAP_PROB) cls = "Handicap";
-  else if (r < 0.7) cls = "OptionalClaiming";
+  else if (r < RACE_CLASS_OPTIONAL_CLAIMING_PROB) cls = "OptionalClaiming";
   else if (r < RACE_CLASS_STARTER_ALLOWANCE_PROB) cls = "StarterAllowance";
-  else if (r < 0.8) cls = "MaidenSpecialWeight";
+  else if (r < RACE_CLASS_MAIDEN_SPECIAL_WEIGHT_PROB) cls = "MaidenSpecialWeight";
   else if (r < RACE_CLASS_STARTER_HANDICAP_PROB) cls = "StarterHandicap";
-  else if (r < 0.9) cls = "MaidenOptionalClaiming";
+  else if (r < RACE_CLASS_MAIDEN_OPTIONAL_CLAIMING_PROB) cls = "MaidenOptionalClaiming";
   else if (r < RACE_CLASS_MAIDEN_STAKES_PROB) cls = "MaidenStakes";
-  else if (r < 0.98) cls = "Listed";
+  else if (r < RACE_CLASS_LISTED_PROB) cls = "Listed";
   else cls = "Group";
 
   const cfg = CLASS_CONFIG[cls];
@@ -230,7 +248,7 @@ export function generateRace(day: number, rng: Rng = nondeterministicRng()): Rac
     entryFee: cfg.entry,
     purse: cfg.purse,
     minStat: cfg.minStat,
-    fieldSize: rand(6, 8, rng),
+    fieldSize: rand(RACE_FIELD_SIZE_MIN, RACE_FIELD_SIZE_MAX, rng),
     entries: [],
     resolved: false,
     weather: randomWeather(rng),

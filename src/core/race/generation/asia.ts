@@ -12,6 +12,13 @@ import { randomWeather, rand } from "@/core/common/random";
 import { randomTrackConditionWithClimateBias } from "@/core/race/trackConditions";
 import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
 import { CLASS_CONFIG } from "./raceGen";
+import {
+  ASIA_ENTRY_FEE_MULTIPLIER,
+  ASIA_PURSE_MULTIPLIER,
+  ASIA_MINSTAT_BONUS,
+  ASIA_FIELD_SIZE_MIN,
+  ASIA_FIELD_SIZE_MAX,
+} from "@/constants";
 
 const ASIA_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
   { class: "Maiden", probability: 0.15 },
@@ -75,10 +82,10 @@ export function generateAsianRace(
     day,
     distance,
     raceClass,
-    entryFee: Math.round(cfg.entry * 1.5),
-    purse: Math.round(cfg.purse * 2.0), // Asian racing (Japan/HK/UAE) has much higher purses
-    minStat: cfg.minStat !== undefined ? cfg.minStat + 10 : undefined, // Higher standard for classes with minStat; Maiden stays open
-    fieldSize: rand(10, 16, rng),
+    entryFee: Math.round(cfg.entry * ASIA_ENTRY_FEE_MULTIPLIER),
+    purse: Math.round(cfg.purse * ASIA_PURSE_MULTIPLIER), // Asian racing (Japan/HK/UAE) has much higher purses
+    minStat: cfg.minStat !== undefined ? cfg.minStat + ASIA_MINSTAT_BONUS : undefined, // Higher standard for classes with minStat; Maiden stays open
+    fieldSize: rand(ASIA_FIELD_SIZE_MIN, ASIA_FIELD_SIZE_MAX, rng),
     entries: [],
     resolved: false,
     weather: randomWeather(rng),

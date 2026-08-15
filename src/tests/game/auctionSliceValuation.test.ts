@@ -354,4 +354,30 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
       expect(valuation.current).toBe(marketValue);
     }
   });
+
+  // ---------------------------------------------------------------------------
+  // 16: High fan count produces higher reserve than fanCount 0
+  // ---------------------------------------------------------------------------
+  it("horseMarketValue with high fanCount produces higher reserve than with fanCount 0", () => {
+    const h0 = createTestColt({ id: "h-fan-0", age: 3, owned: true, fanCount: 0 });
+    const hHigh = createTestColt({ id: "h-fan-high", age: 3, owned: true, fanCount: 100000 });
+
+    const val0 = horseMarketValue(h0, [h0]);
+    const valHigh = horseMarketValue(hHigh, [hHigh]);
+
+    expect(valHigh).toBeGreaterThan(val0);
+  });
+
+  // ---------------------------------------------------------------------------
+  // 17: horseCareerValuation.current with high fanCount produces higher value
+  // ---------------------------------------------------------------------------
+  it("horseCareerValuation.current with high fanCount produces higher value", () => {
+    const h0 = createTestColt({ id: "h-cv-0", age: 3, owned: true, fanCount: 0 });
+    const hHigh = createTestColt({ id: "h-cv-high", age: 3, owned: true, fanCount: 100000 });
+
+    const cv0 = horseCareerValuation(h0, [h0]);
+    const cvHigh = horseCareerValuation(hHigh, [hHigh]);
+
+    expect(cvHigh.current).toBeGreaterThan(cv0.current);
+  });
 });

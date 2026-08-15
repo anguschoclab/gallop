@@ -12,6 +12,12 @@ import { randomWeather, rand } from "@/core/common/random";
 import { randomTrackConditionWithClimateBias } from "@/core/race/trackConditions";
 import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
 import { CLASS_CONFIG } from "./raceGen";
+import {
+  EUROPE_PURSE_MULTIPLIER,
+  EUROPE_MIN_DISTANCE,
+  EUROPE_FIELD_SIZE_MIN,
+  EUROPE_FIELD_SIZE_MAX,
+} from "@/constants";
 
 const EUROPE_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
   { class: "Maiden", probability: 0.25 },
@@ -59,7 +65,8 @@ export function generateEuropeanRace(
   const selectedSurface = surface || "Turf";
 
   // Europe favors longer distances
-  const distance = rand(Math.max(cfg.dist[0], 1600) / 100, cfg.dist[1] / 100, rng) * 100;
+  const distance =
+    rand(Math.max(cfg.dist[0], EUROPE_MIN_DISTANCE) / 100, cfg.dist[1] / 100, rng) * 100;
 
   const name = generateRaceName({
     track,
@@ -77,9 +84,9 @@ export function generateEuropeanRace(
     distance,
     raceClass,
     entryFee: cfg.entry,
-    purse: Math.round(cfg.purse * 1.2), // European purses for conditions/handicaps slightly higher
+    purse: Math.round(cfg.purse * EUROPE_PURSE_MULTIPLIER), // European purses for conditions/handicaps slightly higher
     minStat: cfg.minStat,
-    fieldSize: rand(8, 14, rng), // Larger fields in Europe
+    fieldSize: rand(EUROPE_FIELD_SIZE_MIN, EUROPE_FIELD_SIZE_MAX, rng), // Larger fields in Europe
     entries: [],
     resolved: false,
     weather: randomWeather(rng),

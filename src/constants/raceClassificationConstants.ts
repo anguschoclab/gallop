@@ -59,3 +59,123 @@ export const DEFAULT_FIELD_SIZE = 14;
 export const RACE_GRADES = ["G1", "G2", "G3"] as const;
 
 export const MINIMUM_RACE_ENTRIES = 2;
+
+// ============================================================================
+// MAIDEN GUARANTEE
+// ============================================================================
+
+/** Start day for ensureMaidenRaces during game initialization */
+export const MAIDEN_GUARANTEE_START_DAY = 2;
+
+/** End day for ensureMaidenRaces during game initialization */
+export const MAIDEN_GUARANTEE_END_DAY = 7;
+
+// ============================================================================
+// 2YO RACE GUARANTEE
+// ============================================================================
+
+/** Age restriction for 2yo-only races */
+export const TWOYO_AGE = 2;
+
+/** Distance band boundaries (in meters) for 2yo race coverage */
+export const TWOYO_DISTANCE_BANDS = {
+  sprint: { min: 1000, max: 1399 },
+  mile: { min: 1400, max: 1799 },
+  route: { min: 1800, max: 2200 },
+} as const;
+
+/** Number of days ahead to check/generate 2yo race coverage (matches upcoming race window) */
+export const TWOYO_GUARANTEE_LOOKAHEAD_DAYS = 7;
+
+/** Default field size for generated 2yo races */
+export const TWOYO_RACE_FIELD_SIZE_MIN = 6;
+export const TWOYO_RACE_FIELD_SIZE_MAX = 8;
+
+/** Min stat for 2yo MaidenSpecialWeight races (lower than standard MSW) */
+export const TWOYO_MSW_MIN_STAT = 30;
+
+/** Entry fee for generated 2yo races */
+export const TWOYO_RACE_ENTRY_FEE = 150;
+
+/** Purse for generated 2yo races */
+export const TWOYO_RACE_PURSE = 3000;
+
+// ============================================================================
+// GRADED RACE ENTRY FEES
+// ============================================================================
+
+export const GRADED_ENTRY_FEE_G1 = 2500;
+export const GRADED_ENTRY_FEE_G2 = 1500;
+export const GRADED_ENTRY_FEE_G3 = 1000;
+
+export const DEFAULT_GRADED_FIELD_SIZE = 12;
+
+// ============================================================================
+// RACE CLASS PROBABILITY THRESHOLDS (cumulative)
+// ============================================================================
+
+export const RACE_CLASS_MAIDEN_CLAIMING_PROB = 0.3;
+export const RACE_CLASS_CLAIMING_PROB = 0.5;
+export const RACE_CLASS_STAKES_PROB = 0.6;
+export const RACE_CLASS_OPTIONAL_CLAIMING_PROB = 0.7;
+export const RACE_CLASS_MAIDEN_SPECIAL_WEIGHT_PROB = 0.8;
+export const RACE_CLASS_MAIDEN_OPTIONAL_CLAIMING_PROB = 0.9;
+export const RACE_CLASS_LISTED_PROB = 0.98;
+
+// ============================================================================
+// RACE FIELD SIZE RANGES
+// ============================================================================
+
+export const RACE_FIELD_SIZE_MIN = 6;
+export const RACE_FIELD_SIZE_MAX = 8;
+
+export const MAIDEN_FIELD_SIZE_MIN = 6;
+export const MAIDEN_FIELD_SIZE_MAX = 8;
+
+export const NA_FIELD_SIZE_MIN = 6;
+export const NA_FIELD_SIZE_MAX = 10;
+
+export const EUROPE_FIELD_SIZE_MIN = 8;
+export const EUROPE_FIELD_SIZE_MAX = 14;
+
+export const AUSTRALIA_FIELD_SIZE_MIN = 10;
+export const AUSTRALIA_FIELD_SIZE_MAX = 16;
+
+export const ASIA_FIELD_SIZE_MIN = 10;
+export const ASIA_FIELD_SIZE_MAX = 16;
+
+export const SA_FIELD_SIZE_MIN = 8;
+export const SA_FIELD_SIZE_MAX = 12;
+
+// ============================================================================
+// MAIDEN GUARANTEE
+// ============================================================================
+
+export const MAIDEN_GUARANTEE_DAY_OF_YEAR_LIMIT = 60;
+
+// ============================================================================
+// REGIONAL PURSE & DISTANCE MULTIPLIERS
+// ============================================================================
+
+export const EUROPE_PURSE_MULTIPLIER = 1.2;
+export const EUROPE_MIN_DISTANCE = 1600;
+
+export const AUSTRALIA_PURSE_MULTIPLIER = 1.1;
+export const AUSTRALIA_SPRINT_PROBABILITY = 0.6;
+export const AUSTRALIA_SPRINT_DIST_MIN = 1000;
+export const AUSTRALIA_SPRINT_DIST_MAX = 1400;
+
+export const ASIA_ENTRY_FEE_MULTIPLIER = 1.5;
+export const ASIA_PURSE_MULTIPLIER = 2.0;
+export const ASIA_MINSTAT_BONUS = 10;
+
+// ============================================================================
+// CLAIMING PURSE CALCULATION
+// ============================================================================
+
+export const CLAIMING_PURSE_MULTIPLIER = 2;
+export const OPTIONAL_CLAIMING_PURSE_MULTIPLIER = 2.5;
+export const CLAIMING_PURSE_BONUS_MAX = 5000;
+
+export const SA_CLAIMING_PURSE_MULTIPLIER = 1.5;
+export const SA_CLAIMING_PURSE_BONUS_MAX = 2000;

@@ -4,6 +4,7 @@ import {
   applyFameGainsToHorses,
   calculateFameGainsForRaces,
 } from "@/core/npc/npcCycle";
+import { calculateFanGainsForRaces } from "@/core/horse/fans";
 import { createRng } from "@/core/common/rng";
 import type { Horse, Race, Stable, Jockey } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
@@ -22,6 +23,8 @@ import {
   LARGE_PURSE_THRESHOLD,
   MEDIUM_PURSE_THRESHOLD,
   MAX_FAME,
+  FAN_GAIN_G1_WIN,
+  FAN_GAIN_G2_WIN,
 } from "@/constants";
 
 describe("runNpcCycle", () => {
@@ -548,5 +551,149 @@ describe("calculateFameGainsForRaces", () => {
   it("handles empty races array", () => {
     const gains = calculateFameGainsForRaces([]);
     expect(gains.size).toBe(0);
+  });
+});
+
+describe("calculateFanGainsForRaces", () => {
+  function createRaceWithResult(
+    overrides: Partial<Race> & {
+      result?: { horseId: string; position: number; time: number }[];
+    } = {},
+  ): Race {
+    return {
+      id: "race-1",
+      name: "Test Race",
+      day: 100,
+      distance: 1600,
+      surface: "Dirt",
+      raceClass: "Stakes",
+      entryFee: 100,
+      purse: 50000,
+      fieldSize: 8,
+      entries: [],
+      resolved: true,
+      ...overrides,
+    };
+  }
+
+  const g1 = { key: "g1", grade: "G1" as const, track: "test", surface: "Dirt" as const };
+  const g2 = { key: "g2", grade: "G2" as const, track: "test", surface: "Dirt" as const };
+
+  it("returns correct fan gains for G1 win", () => {
+    const race = createRaceWithResult({
+      graded: g1,
+      result: [{ horseId: "h-1", position: 1, time: 90 }],
+    });
+    const gains = calculateFanGainsForRaces([race]);
+    expect(gains.get("h-1")).toBe(FAN_GAIN_G1_WIN);
+  });
+
+  it("returns correct fan gains for G2 win", () => {
+    const race = createRaceWithResult({
+      graded: g2,
+      result: [{ horseId: "h-1", position: 1, time: 90 }],
+    });
+    const gains = calculateFanGainsForRaces([race]);
+    expect(gains.get("h-1")).toBe(FAN_GAIN_G2_WIN);
+  });
+});
+
+describe("runNpcCycle fan changes", () => {
+  function createMockStable(): Stable {
+    return createTestStable({
+      id: "npc-stable-1",
+      name: "NPC Stable",
+      cash: 100000,
+      personality: "aggressive",
+    });
+  }
+
+  it("returns fanChanges in result when yesterday's races have gains", () => {
+    const stable = createMockStable();
+    const horse = createTestHorse({
+      id: "h1",
+      stableId: "npc-stable-1",
+      fame: 0,
+      fanCount: 0,
+    });
+    const race: Race = {
+      id: "r1",
+      name: "Test Race",
+      day: 100,
+      distance: 1600,
+      raceClass: "Stakes",
+      entryFee: 100,
+      purse: 50000,
+      fieldSize: 8,
+      entries: [],
+      resolved: true,
+      result: [{ horseId: "h1", position: 1, time: 90 }],
+      graded: { grade: "G1" } as any,
+    };
+    const rng = createRng("test-seed");
+    const result = runNpcCycle([stable], [horse], [], [race], 100, rng);
+    expect(result.fanChanges).toBeDefined();
+    expect(result.fanChanges!.length).toBeGreaterThan(0);
+    expect(result.fanChanges![0].horseId).toBe("h1");
+    expect(result.fanChanges![0].delta).toBe(FAN_GAIN_G1_WIN);
+  });
+
+  it("returns empty fanChanges when no races", () => {
+    const stable = createMockStable();
+    const rng = createRng("test-seed");
+    const result = runNpcCycle([stable], [], [], [], 100, rng);
+    expect(result.fanChanges).toBeDefined();
+    expect(result.fanChanges!.length).toBe(0);
+  });
+
+  it("fan changes are proportional to race grade and position", () => {
+    const stable = createMockStable();
+    const horseG1 = createTestHorse({
+      id: "h1",
+      stableId: "npc-stable-1",
+      fame: 0,
+      fanCount: 0,
+    });
+    const horseG2 = createTestHorse({
+      id: "h2",
+      stableId: "npc-stable-1",
+      fame: 0,
+      fanCount: 0,
+    });
+    const raceG1: Race = {
+      id: "r1",
+      name: "G1 Race",
+      day: 100,
+      distance: 1600,
+      raceClass: "Stakes",
+      entryFee: 100,
+      purse: 50000,
+      fieldSize: 8,
+      entries: [],
+      resolved: true,
+      result: [{ horseId: "h1", position: 1, time: 90 }],
+      graded: { grade: "G1" } as any,
+    };
+    const raceG2: Race = {
+      id: "r2",
+      name: "G2 Race",
+      day: 100,
+      distance: 1600,
+      raceClass: "Stakes",
+      entryFee: 100,
+      purse: 50000,
+      fieldSize: 8,
+      entries: [],
+      resolved: true,
+      result: [{ horseId: "h2", position: 1, time: 90 }],
+      graded: { grade: "G2" } as any,
+    };
+    const rng = createRng("test-seed");
+    const result = runNpcCycle([stable], [horseG1, horseG2], [], [raceG1, raceG2], 100, rng);
+    const g1Change = result.fanChanges!.find((f) => f.horseId === "h1");
+    const g2Change = result.fanChanges!.find((f) => f.horseId === "h2");
+    expect(g1Change).toBeDefined();
+    expect(g2Change).toBeDefined();
+    expect(g1Change!.delta).toBeGreaterThan(g2Change!.delta);
   });
 });

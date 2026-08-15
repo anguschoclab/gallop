@@ -7,7 +7,12 @@
  * Late entries and filler horses get remaining gates at simulation time.
  */
 
-import { PHASE_ORDER_GATE_DRAW } from "@/constants";
+import {
+  PHASE_ORDER_GATE_DRAW,
+  G1_GATE_DRAW_LEAD_DAYS,
+  STANDARD_GATE_DRAW_LEAD_DAYS,
+  MIN_GATE,
+} from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { Race } from "@/core/race/types";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
@@ -33,7 +38,8 @@ export const gateDrawPhase: PipelinePhase = {
     for (const race of Object.values(races)) {
       if (race.resolved) continue;
 
-      const drawLeadTime = race.graded?.grade === "G1" ? 5 : 2;
+      const drawLeadTime =
+        race.graded?.grade === "G1" ? G1_GATE_DRAW_LEAD_DAYS : STANDARD_GATE_DRAW_LEAD_DAYS;
       const daysUntilRace = race.day - newDay;
 
       if (daysUntilRace !== drawLeadTime) continue;
@@ -58,7 +64,7 @@ export const gateDrawPhase: PipelinePhase = {
       // Compute remaining gate numbers
       const totalEntries = race.entries.length;
       const remainingGates: number[] = [];
-      for (let b = 1; b <= totalEntries; b++) {
+      for (let b = MIN_GATE; b <= totalEntries; b++) {
         if (!usedGates.has(b)) {
           remainingGates.push(b);
         }

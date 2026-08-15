@@ -1,11 +1,12 @@
 import { useMemo } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
+import { DAYS_PER_YEAR } from "@/constants";
 
 export function useAwardsData() {
   const awards = useGame((s) => s.awards);
   const day = useGame((s) => s.day);
   const invitations = useGameWithShallow((s) => s.awardCeremonyInvitations) ?? [];
-  const year = Math.floor((day - 1) / 365) + 1;
+  const year = Math.floor((day - 1) / DAYS_PER_YEAR) + 1;
 
   const playerAwards = awards.filter((a) => !a.stableId);
 

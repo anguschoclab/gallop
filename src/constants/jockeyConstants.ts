@@ -5,6 +5,23 @@
 export const JOCKEY_FEE_PERCENTAGE = 0.1;
 export const BASE_JOCKEY_RIDING_FEE = 100;
 
+// Jockey tier order for rank-based sorting (not alphabetical)
+export const JOCKEY_TIER_ORDER: Record<string, number> = {
+  budget: 0,
+  mid: 1,
+  elite: 2,
+};
+
+export const JOCKEY_TIER_LABELS: Record<string, string> = {
+  budget: "Budget",
+  mid: "Mid-Range",
+  elite: "Elite",
+};
+
+// Fallback tier derivation thresholds (matching generator basePotential ranges)
+export const JOCKEY_TIER_POTENTIAL_ELITE_MIN = 78;
+export const JOCKEY_TIER_POTENTIAL_MID_MIN = 60;
+
 // Jockey salary ranges by tier
 export const JOCKEY_SALARY_ELITE_MIN = 75;
 export const JOCKEY_SALARY_ELITE_MAX = 98;

@@ -1,7 +1,6 @@
 import type { Runner } from "./runnerBuilder";
+import { MIN_GATE } from "@/constants";
 
-/** Minimum valid gate draw (gates are 1-indexed). */
-const MIN_GATE = 1;
 /** Finish time must be strictly positive — a zero or negative time is invalid. */
 const MIN_FINISH_TIME = 0;
 /** Fallback context label when none is provided. */

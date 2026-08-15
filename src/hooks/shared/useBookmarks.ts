@@ -3,6 +3,15 @@ import { safeParseJson, bookmarkArraySchema } from "@/services/storage/schemas";
 
 export type BookmarkEntityType = "horse" | "jockey" | "stable" | "race" | "sire";
 
+// Bookmark type rank order for sorting (matches TYPE_FILTERS display order, not alphabetical)
+export const BOOKMARK_TYPE_ORDER: Record<BookmarkEntityType, number> = {
+  horse: 0,
+  sire: 1,
+  jockey: 2,
+  stable: 3,
+  race: 4,
+};
+
 export interface Bookmark {
   type: BookmarkEntityType;
   id: string;

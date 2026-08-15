@@ -53,6 +53,7 @@ export function createTestJockey(overrides?: Partial<Jockey>): Jockey {
     name: "Test Jockey",
     age: 25,
     archetype: "versatile" as JockeyArchetype,
+    tier: "mid" as Jockey["tier"],
     stats: createTestJockeyStats(),
     potential: 75,
     traits: [] as JockeyTrait[],

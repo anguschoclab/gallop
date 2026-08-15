@@ -2,6 +2,11 @@ export const MAX_HORSES_PER_STABLE_PER_RACE = 2;
 
 export const MIN_ENERGY_TO_ENTER = 50;
 
+export const MIN_ENERGY_TO_RACE = 15;
+
+export const DEFAULT_MIN_AGE_NORTHERN = 2;
+export const SOUTHERN_HEMISPHERE_AGE_OFFSET = 1;
+
 export const BUMP_RATING_MARGIN = 3;
 
 export const MIN_FORM_TO_ENTER = -3;

@@ -11,13 +11,12 @@ import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/core/awards/typ
 import { getRegionFlag, getRegionCountryLabel } from "@/core/common/countryFlag";
 import { Trophy, Award, Star } from "lucide-react";
 import { VisualTrophy, TrophyShelf } from "./VisualTrophy";
+import { AWARD_COMPACT_THRESHOLD, HOTY_TROPHY_SIZE } from "@/constants/awardsConstants";
 
 interface HorseAwardsPanelProps {
   horse: Horse;
   className?: string;
 }
-
-const COMPACT_THRESHOLD = 5;
 
 function renderCompactCategory(category: RegionalAwardCategory, sorted: RegionalAward[]) {
   const first = sorted[sorted.length - 1].year;
@@ -136,7 +135,7 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
                 <VisualTrophy
                   key={award.id}
                   tone="platinum"
-                  size={72}
+                  size={HOTY_TROPHY_SIZE}
                   label="HOTY"
                   sublabel={`Y${award.year}`}
                   flag={getRegionFlag(award.region)}
@@ -157,7 +156,7 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
             <div className="grid gap-2">
               {Array.from(byCategory.entries()).map(([category, list]) => {
                 const sorted = [...list].sort((a, b) => b.year - a.year);
-                if (sorted.length > COMPACT_THRESHOLD) {
+                if (sorted.length > AWARD_COMPACT_THRESHOLD) {
                   return renderCompactCategory(category, sorted);
                 }
                 return renderExpandedAwards(sorted);

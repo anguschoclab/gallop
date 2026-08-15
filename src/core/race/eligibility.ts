@@ -13,6 +13,12 @@ import type { Hemisphere } from "@/game/types";
 import { isGenderEligible as checkGenderEligibility } from "@/core/horse/gender";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { getCurrentYear } from "@/core/race/schedule";
+import {
+  DEFAULT_MIN_AGE_NORTHERN,
+  SOUTHERN_HEMISPHERE_AGE_OFFSET,
+  POSITION_WIN,
+  MIN_ENERGY_TO_RACE,
+} from "@/constants";
 
 /**
  * Pure race eligibility checking logic
@@ -47,8 +53,8 @@ export function getMinimumAgeForHemisphere(
     return restrictions.minAgeSouthern;
   }
   // Fall back to general minAge
-  const baseAge = restrictions?.minAge ?? 2;
-  return horseHemisphere === "Southern" ? baseAge + 1 : baseAge;
+  const baseAge = restrictions?.minAge ?? DEFAULT_MIN_AGE_NORTHERN;
+  return horseHemisphere === "Southern" ? baseAge + SOUTHERN_HEMISPHERE_AGE_OFFSET : baseAge;
 }
 
 /**
@@ -125,7 +131,7 @@ export function isHorseEligibleForRace(
   }
 
   // Check energy
-  if (horse.energy < 15) {
+  if (horse.energy < MIN_ENERGY_TO_RACE) {
     return false;
   }
 
@@ -136,7 +142,7 @@ export function isHorseEligibleForRace(
 
   // Check Maiden races explicitly (must have 0 wins)
   if (race.raceClass?.toLowerCase().includes("maiden")) {
-    const hasWon = horse.raceHistory.some((r) => r.position === 1);
+    const hasWon = horse.raceHistory.some((r) => r.position === POSITION_WIN);
     if (hasWon) return false;
   }
 

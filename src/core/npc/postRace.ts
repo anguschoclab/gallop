@@ -9,6 +9,21 @@
  */
 
 import type { Horse, Race } from "@/game/types";
+import {
+  FAN_GAIN_G1_WIN,
+  FAN_GAIN_G2_WIN,
+  FAN_GAIN_G3_WIN,
+  FAN_GAIN_OTHER_WIN,
+  FAN_GAIN_TOP3_G1,
+  FAN_GAIN_TOP3_G2,
+  FAN_GAIN_TOP3_G3,
+  FAN_GAIN_TOP3_OTHER,
+  FAN_GAIN_TOP5,
+  FAN_BONUS_LARGE_PURSE,
+  FAN_BONUS_MEDIUM_PURSE,
+  LARGE_PURSE_THRESHOLD,
+  MEDIUM_PURSE_THRESHOLD,
+} from "@/constants";
 
 // Fame gain constants
 const FAME_GAIN = {
@@ -86,9 +101,40 @@ export function updateHorseFame(
       fameGain += FAME_GAIN.MEDIUM_PURSE_BONUS;
     }
 
+    // Calculate fan gain mirroring fame gain logic
+    let fanGain = 0;
+    if (result.position === 1) {
+      fanGain =
+        race.graded?.grade === "G1"
+          ? FAN_GAIN_G1_WIN
+          : race.graded?.grade === "G2"
+            ? FAN_GAIN_G2_WIN
+            : race.graded?.grade === "G3"
+              ? FAN_GAIN_G3_WIN
+              : FAN_GAIN_OTHER_WIN;
+    } else if (result.position <= 3) {
+      fanGain =
+        race.graded?.grade === "G1"
+          ? FAN_GAIN_TOP3_G1
+          : race.graded?.grade === "G2"
+            ? FAN_GAIN_TOP3_G2
+            : race.graded?.grade === "G3"
+              ? FAN_GAIN_TOP3_G3
+              : FAN_GAIN_TOP3_OTHER;
+    } else if (result.position <= 5) {
+      fanGain = FAN_GAIN_TOP5;
+    }
+
+    if (race.purse > LARGE_PURSE_THRESHOLD) {
+      fanGain += FAN_BONUS_LARGE_PURSE;
+    } else if (race.purse > MEDIUM_PURSE_THRESHOLD) {
+      fanGain += FAN_BONUS_MEDIUM_PURSE;
+    }
+
     updatedHorses[horseIndex] = {
       ...horse,
       fame: Math.min(FAME_GAIN.MAX_FAME, horse.fame + fameGain),
+      fanCount: Math.max(0, (horse.fanCount ?? 0) + fanGain),
     };
   }
 

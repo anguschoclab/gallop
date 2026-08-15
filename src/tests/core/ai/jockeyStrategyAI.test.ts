@@ -27,6 +27,7 @@ function createMockJockey(overrides: Partial<Jockey> = {}): Jockey {
     name: "Test Jockey",
     age: 30,
     archetype: "front_runner",
+    tier: "mid",
     stats: { pacing: 75, positioning: 75, vigor: 75, gateSkill: 75, temperament: 75 },
     potential: 75,
     traits: [],

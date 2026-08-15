@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateJockey } from "@/core/jockey/generator";
+import { generateJockey, generateApprentice } from "@/core/jockey/generator";
 import { createRng } from "@/core/common/rng";
 import type { JockeyTrait } from "@/core/jockey/types";
 
@@ -115,5 +115,37 @@ describe("generateJockey — trait assignment", () => {
     }
     // If no versatile generated, that's fine — the test passes
     expect(true).toBe(true);
+  });
+});
+
+describe("generateJockey — tier storage", () => {
+  it("stores tier: 'elite' when generated with tier elite", () => {
+    const rng = createRng(42);
+    const j = generateJockey({ tier: "elite", rng });
+    expect(j.tier).toBe("elite");
+  });
+
+  it("stores tier: 'mid' when generated with tier mid", () => {
+    const rng = createRng(42);
+    const j = generateJockey({ tier: "mid", rng });
+    expect(j.tier).toBe("mid");
+  });
+
+  it("stores tier: 'budget' when generated with tier budget", () => {
+    const rng = createRng(42);
+    const j = generateJockey({ tier: "budget", rng });
+    expect(j.tier).toBe("budget");
+  });
+
+  it("defaults to tier: 'mid' when no tier specified", () => {
+    const rng = createRng(42);
+    const j = generateJockey({ rng });
+    expect(j.tier).toBe("mid");
+  });
+
+  it("generateApprentice stores tier: 'budget'", () => {
+    const rng = createRng(42);
+    const j = generateApprentice({ rng });
+    expect(j.tier).toBe("budget");
   });
 });

@@ -19,9 +19,14 @@ import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { generateUUID } from "@/core/uuid";
 import type { AwardRegion, RegionalAward } from "@/core/awards/types";
 import { AWARD_CEREMONY_SCHEDULE } from "@/core/awards/types";
-import { PHASE_ORDER_AWARDS } from "@/constants";
+import { PHASE_ORDER_AWARDS, FANS_PER_FAME_POINT, DAYS_PER_YEAR } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
-import type { FameImpact } from "@/core/resolver/impacts/index";
+import type { FameImpact, FanCountImpact } from "@/core/resolver/impacts/index";
+
+/** Fame boost for Horse of the Year award winners */
+const HOTY_FAME_BOOST = 25;
+/** Fame boost for category award winners (non-HOTY) */
+const CATEGORY_FAME_BOOST = 15;
 
 export const awardsPhase = {
   name: "awards",
@@ -29,7 +34,7 @@ export const awardsPhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay, logs } = context;
     const doy = dayOfYear(newDay);
-    const year = Math.floor((newDay - 1) / 365) + 1;
+    const year = Math.floor((newDay - 1) / DAYS_PER_YEAR) + 1;
 
     // Check for any ceremony scheduled for today
     const todayCeremonies = AWARD_CEREMONY_SCHEDULE.filter((c) => c.dayOfYear === doy);
@@ -105,7 +110,8 @@ export const awardsPhase = {
         const horse = horseMap.get(award.horseId);
         if (horse) {
           // Fame boost: +25 for HOTY, +15 for category
-          const fameBoost = award.category === "horse_of_the_year" ? 25 : 15;
+          const fameBoost =
+            award.category === "horse_of_the_year" ? HOTY_FAME_BOOST : CATEGORY_FAME_BOOST;
           impacts.push({
             id: generateUUID(),
             intentId: "",
@@ -117,6 +123,18 @@ export const awardsPhase = {
             delta: fameBoost,
             reason: `${award.region} ${award.category} award fame bonus`,
           } as FameImpact);
+
+          impacts.push({
+            id: generateUUID(),
+            intentId: "",
+            day: newDay,
+            phase: "awards",
+            logLevel: "conditional",
+            type: "fan_count_change",
+            horseId: award.horseId,
+            delta: Math.round(fameBoost * FANS_PER_FAME_POINT),
+            reason: `${award.region} ${award.category} award fan bonus`,
+          } as FanCountImpact);
         }
       }
 

@@ -55,6 +55,8 @@ import {
   AUCTION_AGGRESSIVE_BID_MIN_PERCENT,
   AUCTION_AGGRESSIVE_BID_VARIANCE,
   DEFAULT_PLAYER_RESERVE_RATIO,
+  FAN_VALUATION_DIVISOR,
+  FAN_AUCTION_RACING_AGE_THRESHOLD,
 } from "@/constants";
 
 // ---------------------------------------------------------------------------
@@ -232,6 +234,10 @@ function prestigeValuation(ctx: ValuationContext): number {
   let mod = 1.2 + ctx.horse.fame / 200;
   if (ctx.base < 5000) mod = 0;
   if (ctx.isRacingAge) mod *= 1.0 + AUCTION_RACING_AGE_PREMIUM;
+  const fanCount = ctx.horse.fanCount ?? 0;
+  if (fanCount > FAN_AUCTION_RACING_AGE_THRESHOLD) {
+    mod *= 1.0 + fanCount / FAN_VALUATION_DIVISOR;
+  }
   return mod;
 }
 

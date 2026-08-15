@@ -1,7 +1,8 @@
 import type { GameState } from "@/game/types";
 import { horseMarketValue } from "@/core/horse/pricing";
+import { WEALTH_PLAYER_ID, WEALTH_PLAYER_FALLBACK_NAME } from "@/constants";
 
-const PLAYER_ID = "__player__";
+const PLAYER_ID = WEALTH_PLAYER_ID;
 
 export interface WealthStandingEntry {
   stableId: string;
@@ -63,7 +64,7 @@ export function computeWealthStandings(state: WealthStandingsState): ComputeWeal
   const playerProfile = state.playerProfile;
   list.push({
     stableId: PLAYER_ID,
-    name: playerProfile?.stableName ?? "Your stable",
+    name: playerProfile?.stableName ?? WEALTH_PLAYER_FALLBACK_NAME,
     isPlayer: true,
     silkColor: playerProfile?.silk?.primary,
     cash: state.cash,

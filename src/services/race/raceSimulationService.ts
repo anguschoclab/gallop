@@ -11,6 +11,7 @@ import { calculateAssignedWeight } from "@/core/race/entryScoring";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { RunnerBonuses } from "@/core/race/engine/runnerBuilder";
+import { MIN_GATE } from "@/constants/gateConstants";
 
 /**
  * Race simulation orchestration with dependency injection
@@ -124,7 +125,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   const usedGates = new Set(preAssigned.map((e) => e.gate!));
   const totalSize = entriesData.length;
   const remainingGates: number[] = [];
-  for (let b = 1; b <= totalSize; b++) {
+  for (let b = MIN_GATE; b <= totalSize; b++) {
     if (!usedGates.has(b)) {
       remainingGates.push(b);
     }

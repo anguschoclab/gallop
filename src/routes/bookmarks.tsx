@@ -5,7 +5,12 @@ import { useMemo, useState, type KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/cn";
-import { useBookmarks, type Bookmark, type BookmarkEntityType } from "@/hooks/shared/useBookmarks";
+import {
+  useBookmarks,
+  type Bookmark,
+  type BookmarkEntityType,
+  BOOKMARK_TYPE_ORDER,
+} from "@/hooks/shared/useBookmarks";
 
 export const Route = createFileRoute("/bookmarks")({
   component: BookmarksPage,
@@ -103,7 +108,10 @@ function BookmarksPage() {
         case "name":
           return a.label.localeCompare(b.label);
         case "type":
-          return a.type.localeCompare(b.type) || b.addedAt - a.addedAt;
+          return (
+            (BOOKMARK_TYPE_ORDER[a.type] ?? 0) - (BOOKMARK_TYPE_ORDER[b.type] ?? 0) ||
+            b.addedAt - a.addedAt
+          );
         case "recent":
         default:
           return b.addedAt - a.addedAt;

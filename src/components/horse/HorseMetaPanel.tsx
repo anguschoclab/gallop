@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { scoutGrade } from "@/core/horse/grading";
+import { formatFanCount } from "@/components/horse/fanFormat";
 import type { Horse } from "@/game/types";
 
 interface HorseMetaPanelProps {
@@ -47,6 +48,14 @@ export function HorseMetaPanel({ horse, isAdvanced, onToggleView }: HorseMetaPan
               className="text-[8px] font-mono uppercase bg-white/[0.02] text-cream/60 border-white/10 rounded-none tracking-tighter"
             >
               CNF: {isAdvanced ? horse.conformation : scoutGrade(horse.conformation)}
+            </Badge>
+          )}
+          {(horse.fanCount ?? 0) > 0 && (
+            <Badge
+              variant="outline"
+              className="text-[8px] font-mono uppercase bg-white/[0.02] text-blue-300/60 border-white/10 rounded-none tracking-tighter"
+            >
+              FANS: {formatFanCount(horse.fanCount)}
             </Badge>
           )}
         </div>

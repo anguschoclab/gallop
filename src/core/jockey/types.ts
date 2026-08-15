@@ -8,6 +8,8 @@
  * Related files: proceduralNaming.ts (provides name generation)
  */
 
+export type JockeyTier = "budget" | "mid" | "elite";
+
 export type JockeyArchetype = "front_runner" | "closer" | "clinical" | "finisher" | "versatile";
 
 export type JockeyStats = {
@@ -52,6 +54,7 @@ export type Jockey = {
   name: string;
   age: number;
   archetype: JockeyArchetype;
+  tier: JockeyTier;
   stats: JockeyStats;
   potential: number;
   traits: JockeyTrait[];

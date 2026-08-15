@@ -9,6 +9,7 @@
 
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { SectionalSplit } from "@/core/race/types";
+import { DEFAULT_GATE } from "@/constants/gateConstants";
 
 export type JockeyReportGrade = "A+" | "A" | "B" | "C" | "D" | "F";
 
@@ -92,7 +93,7 @@ function stddev(xs: number[]): number {
 
 function evalGateBreak(runner: Runner, ranks: number[], fieldSize: number): JockeyReportFacet {
   const gateSkill = runner.jockey?.stats.gateSkill ?? 50;
-  const gatePos = runner.gate ?? 1;
+  const gatePos = runner.gate ?? DEFAULT_GATE;
   const firstRank = ranks[0];
   const expected = (gatePos / Math.max(1, fieldSize)) * fieldSize; // rough gate expectation
   let score: number;

@@ -2,7 +2,8 @@ import type { Horse } from "@/game/types";
 import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Eye } from "lucide-react";
+import { Trophy, Eye, Users } from "lucide-react";
+import { formatFanCount } from "@/components/horse/fanFormat";
 import { scoutGrade } from "@/core/horse/grading";
 import { genderSymbol } from "@/core/horse/gender";
 import { getCoatColor } from "@/core/horse/uiHelpers";
@@ -59,6 +60,14 @@ export function HorseCardScout({ horse, hookData, className = "" }: HorseCardSco
               <span className="text-fame flex items-center gap-1">
                 <Trophy className="h-2.5 w-2.5" /> {Math.round(horse.fame)}
               </span>
+              {(horse.fanCount ?? 0) > 0 && (
+                <>
+                  <span className="w-1 h-1 bg-white/20 rounded-full" />
+                  <span className="text-blue-300/60 flex items-center gap-1">
+                    <Users className="h-2.5 w-2.5" /> {formatFanCount(horse.fanCount)}
+                  </span>
+                </>
+              )}
               {scoutStatus && (
                 <Badge
                   variant="outline"

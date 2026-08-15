@@ -5,8 +5,7 @@ import { Link } from "@tanstack/react-router";
 import type { RegionalAward } from "@/core/awards/types";
 import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
 import { getRegionFlag, getRegionCountryLabel } from "@/core/common/countryFlag";
-
-const COMPACT_THRESHOLD = 5;
+import { AWARD_COMPACT_THRESHOLD } from "@/constants/awardsConstants";
 
 interface AwardsGridProps {
   awards: RegionalAward[];
@@ -33,7 +32,7 @@ export function AwardsGrid({ awards }: AwardsGridProps) {
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from(buckets.entries()).flatMap(([category, list]) => {
         const sorted = [...list].sort((a, b) => b.year - a.year);
-        if (sorted.length > COMPACT_THRESHOLD) {
+        if (sorted.length > AWARD_COMPACT_THRESHOLD) {
           const first = sorted[sorted.length - 1].year;
           const last = sorted[0].year;
           const sample = sorted[0];

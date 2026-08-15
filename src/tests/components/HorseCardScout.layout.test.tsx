@@ -78,4 +78,11 @@ describe("HorseCardScout responsive layout", () => {
     expect(leftSide).toBeTruthy();
     expect(leftSide!.className).toContain("min-w-0");
   });
+
+  it("fan count is displayed when fanCount > 0", () => {
+    const horse = mkHorse({ fanCount: 25000 });
+    const { container } = render(<HorseCardScout horse={horse} hookData={mkHookData()} />);
+    const text = container.textContent ?? "";
+    expect(text).toMatch(/25K|25,000|fans/i);
+  });
 });

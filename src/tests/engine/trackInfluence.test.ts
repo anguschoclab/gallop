@@ -101,6 +101,7 @@ function mkJockey(overrides: Partial<Jockey> = {}): Jockey {
     name: overrides.name ?? "Test J",
     age: 25,
     archetype: overrides.archetype ?? "versatile",
+    tier: overrides.tier ?? "mid",
     stats: {
       pacing: 70,
       positioning: 70,

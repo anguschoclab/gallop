@@ -15,6 +15,10 @@ import {
 } from "@/core/awards/types";
 import { REGION_COLORS } from "@/assets/awards";
 import { Trophy, ChevronRight, Star, Sparkles } from "lucide-react";
+import {
+  AWARD_CEREMONY_CONFETTI_COUNT,
+  AWARD_CEREMONY_LIST_MAX_HEIGHT,
+} from "@/constants/awardsConstants";
 
 interface AwardCeremonyProps {
   isOpen: boolean;
@@ -128,7 +132,10 @@ export function AwardCeremony({ isOpen, onClose, ceremonies, onComplete }: Award
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
               Award Winners
             </h3>
-            <div className="grid gap-2 max-h-[300px] overflow-y-auto">
+            <div
+              className="grid gap-2 overflow-y-auto"
+              style={{ maxHeight: AWARD_CEREMONY_LIST_MAX_HEIGHT }}
+            >
               {awards.map((award) => (
                 <Link
                   key={award.id}
@@ -211,7 +218,7 @@ function Confetti({ active }: { active: boolean }) {
       data-testid="confetti-overlay"
       className="absolute inset-0 pointer-events-none overflow-hidden"
     >
-      {[...Array(20)].map((_, i) => (
+      {[...Array(AWARD_CEREMONY_CONFETTI_COUNT)].map((_, i) => (
         <div
           key={i}
           className="absolute w-2 h-2 rounded-full animate-ping"

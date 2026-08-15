@@ -46,6 +46,14 @@ export interface FameImpact extends Impact {
   reason: string;
 }
 
+// Fan count impact
+export interface FanCountImpact extends Impact {
+  type: "fan_count_change";
+  horseId: string;
+  delta: number;
+  reason: string;
+}
+
 // Horse creation impact
 export interface HorseCreationImpact extends Impact {
   type: "horse_creation";
@@ -225,11 +233,16 @@ export function isFameImpact(impact: Impact): impact is FameImpact {
   return impact.type === "fame_change";
 }
 
+export function isFanCountImpact(impact: Impact): impact is FanCountImpact {
+  return impact.type === "fan_count_change";
+}
+
 export type HorseImpact =
   | HorseStatImpact
   | EnergyImpact
   | FormImpact
   | FameImpact
+  | FanCountImpact
   | HorseCreationImpact
   | HorseTransferImpact
   | HorseDeletionImpact

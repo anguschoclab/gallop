@@ -13,6 +13,7 @@ import type { Horse } from "@/core/horse/types";
 import type { Race } from "@/core/race/types";
 import type { AwardRegion } from "./types";
 import { getTrackContinent, type Continent } from "@/data/gradedRaces";
+import { DAYS_PER_YEAR } from "@/constants";
 
 const CONTINENT_TO_REGION: Record<Continent, AwardRegion> = {
   north_america: "north_america",
@@ -198,8 +199,8 @@ export function findInvitationQualifiers(
   region: AwardRegion,
   raceMap: Map<string, Race>,
 ): InvitationQualifier[] {
-  const yearStart = (year - 1) * 365 + 1;
-  const yearEnd = year * 365;
+  const yearStart = (year - 1) * DAYS_PER_YEAR + 1;
+  const yearEnd = year * DAYS_PER_YEAR;
   const qualifiers: InvitationQualifier[] = [];
 
   for (const horse of horses) {

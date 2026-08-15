@@ -20,6 +20,8 @@ import {
   AGE_RETIREMENT_THRESHOLD,
   INJURY_PRONENESS_LOW_THRESHOLD,
   INJURY_PRONENESS_HIGH_THRESHOLD,
+  FAN_VALUATION_DIVISOR,
+  FAN_BREEDING_VALUATION_DIVISOR,
 } from "@/constants";
 
 /**
@@ -32,8 +34,9 @@ export function calculateBaseHorseValue(horse: Horse, tier: StableTier): number 
   const ageMod =
     horse.age <= AGE_YOUNG_THRESHOLD ? 1.3 : horse.age >= AGE_OLD_THRESHOLD ? 0.5 : 0.9;
   const fameMod = 1 + horse.fame / 200;
+  const fanMod = 1 + (horse.fanCount ?? 0) / FAN_VALUATION_DIVISOR;
   const tierMod = tier === "elite" ? 1.5 : tier === "mid" ? 1.2 : 1.0;
-  return Math.round((overall * 100 * ageMod * fameMod * tierMod) / 100) * 100;
+  return Math.round((overall * 100 * ageMod * fameMod * fanMod * tierMod) / 100) * 100;
 }
 
 /**
@@ -89,7 +92,8 @@ export function horsePrice(h: Horse): number {
   if (proneness < INJURY_PRONENESS_LOW_THRESHOLD) bioMod += 0.15;
   if (proneness > INJURY_PRONENESS_HIGH_THRESHOLD) bioMod -= 0.2;
 
-  return Math.round((overall * 80 * ageMod * potMod * bioMod) / 50) * 50;
+  const fanMod = 1 + (h.fanCount ?? 0) / FAN_VALUATION_DIVISOR;
+  return Math.round((overall * 80 * ageMod * potMod * bioMod * fanMod) / 50) * 50;
 }
 
 /**
@@ -152,6 +156,7 @@ export function estimateBreedingValue(h: Horse, allHorses: Horse[] = []): number
   });
   const winRate = h.careerStarts > 0 ? h.careerWins / h.careerStarts : 0;
   const fameBoost = 1 + (h.fame ?? 0) / 150;
+  const fanBoost = 1 + (h.fanCount ?? 0) / FAN_BREEDING_VALUATION_DIVISOR;
 
   const male = h.gender === "colt" || h.gender === "horse";
   if (male) {
@@ -171,7 +176,7 @@ export function estimateBreedingValue(h: Horse, allHorses: Horse[] = []): number
       base *= 1 + stakesRate * 1.2 + (stud.lifetimeG1Foals ?? 0) * 0.05;
     } else {
       // Projected stud value for racing / unproven males.
-      base = overall * overall * 6 * potMod * pedMul * fameBoost;
+      base = overall * overall * 6 * potMod * pedMul * fameBoost * fanBoost;
       base *= 1 + winRate * 0.6;
     }
     const val = base * stallionAgeCurve(h.age);
@@ -179,7 +184,7 @@ export function estimateBreedingValue(h: Horse, allHorses: Horse[] = []): number
   }
 
   // Filly / mare
-  let base = overall * 220 * potMod * pedMul * fameBoost;
+  let base = overall * 220 * potMod * pedMul * fameBoost * fanBoost;
   const bh = h.blueHenStatus;
   const blueHen = bh?.blueHenScore ?? 0;
   const stakesWinners = bh?.stakesWinnersProduced ?? 0;

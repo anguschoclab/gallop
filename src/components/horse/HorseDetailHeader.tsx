@@ -1,7 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { SilkDot } from "@/components/SilkDot";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
-import { ShieldCheck, AlertCircle } from "lucide-react";
+import { ShieldCheck, AlertCircle, Users } from "lucide-react";
+import { formatFanCount } from "@/components/horse/fanFormat";
 import { cn } from "@/lib/cn";
 import type { Horse } from "@/game/types";
 
@@ -87,7 +88,7 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 w-full md:w-auto">
+        <div className="grid grid-cols-3 gap-2 w-full md:w-auto">
           <div className="bg-black/40 border border-white/5 p-3 text-center min-w-[100px]">
             <div className="text-[9px] font-black uppercase text-cream/20 tracking-tighter mb-1">
               Potential
@@ -105,6 +106,15 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
               )}
             >
               {Math.round(horse.energy)}%
+            </div>
+          </div>
+          <div className="bg-black/40 border border-white/5 p-3 text-center min-w-[100px]">
+            <div className="text-[9px] font-black uppercase text-cream/20 tracking-tighter mb-1">
+              Fans
+            </div>
+            <div className="text-2xl font-bold font-mono text-blue-300/80 flex items-center justify-center gap-1">
+              <Users className="h-4 w-4" />
+              {formatFanCount(horse.fanCount ?? 0)}
             </div>
           </div>
         </div>

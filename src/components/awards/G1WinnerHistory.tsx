@@ -14,6 +14,21 @@ import { SilkDot } from "@/components/SilkDot";
 import { Link } from "@tanstack/react-router";
 import { Trophy } from "lucide-react";
 import { cn } from "@/lib/cn";
+import {
+  TIME_DECIMAL_PLACES,
+  G1_HISTORY_TAB_BY_RACE,
+  G1_HISTORY_TAB_CHRONOLOGICAL,
+  HORSE_PAGE_ROUTE,
+  G1_HISTORY_EMPTY_MESSAGE,
+  G1_HISTORY_TITLE,
+  WINNER_LABEL_SINGULAR,
+  WINNER_LABEL_PLURAL,
+  RACE_LABEL_SINGULAR,
+  RACE_LABEL_PLURAL,
+  YEAR_LABEL_PREFIX,
+  LATEST_WINNER_PREFIX,
+  G1_HISTORY_SUBTITLE_SUFFIX,
+} from "@/constants/awardsConstants";
 
 export function G1WinnerHistory() {
   const seasonRecords = useGame((s) => s.seasonRecords);
@@ -42,11 +57,11 @@ export function G1WinnerHistory() {
         <CardHeader>
           <CardTitle className="text-base text-cream font-[family-name:var(--font-display)] flex items-center gap-2">
             <Trophy className="w-4 h-4 text-gold" />
-            G1 Race Winners
+            {G1_HISTORY_TITLE}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-cream-muted italic">No Grade 1 races completed yet.</p>
+          <p className="text-sm text-cream-muted italic">{G1_HISTORY_EMPTY_MESSAGE}</p>
         </CardContent>
       </Card>
     );
@@ -57,20 +72,22 @@ export function G1WinnerHistory() {
       <CardHeader>
         <CardTitle className="text-base text-cream font-[family-name:var(--font-display)] flex items-center gap-2">
           <Trophy className="w-4 h-4 text-gold" />
-          G1 Race Winners
+          {G1_HISTORY_TITLE}
         </CardTitle>
         <p className="text-xs text-cream-muted">
-          {seasonRecords.length} Grade 1 {seasonRecords.length === 1 ? "race" : "races"} on record
+          {seasonRecords.length} Grade 1{" "}
+          {seasonRecords.length === 1 ? RACE_LABEL_SINGULAR : RACE_LABEL_PLURAL}{" "}
+          {G1_HISTORY_SUBTITLE_SUFFIX}
         </p>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="by-race" className="w-full">
+        <Tabs defaultValue={G1_HISTORY_TAB_BY_RACE} className="w-full">
           <TabsList className="mb-4">
-            <TabsTrigger value="by-race">By Race</TabsTrigger>
-            <TabsTrigger value="chronological">Chronological</TabsTrigger>
+            <TabsTrigger value={G1_HISTORY_TAB_BY_RACE}>By Race</TabsTrigger>
+            <TabsTrigger value={G1_HISTORY_TAB_CHRONOLOGICAL}>Chronological</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="by-race">
+          <TabsContent value={G1_HISTORY_TAB_BY_RACE}>
             <Accordion type="multiple">
               {byRace.map(([raceName, winners]) => (
                 <AccordionItem key={raceName} value={raceName}>
@@ -79,10 +96,12 @@ export function G1WinnerHistory() {
                       <span className="font-medium text-cream">{raceName}</span>
                       <div className="flex items-center gap-2">
                         <Badge variant="secondary" className="font-mono tabular-nums">
-                          {winners.length} {winners.length === 1 ? "winner" : "winners"}
+                          {winners.length}{" "}
+                          {winners.length === 1 ? WINNER_LABEL_SINGULAR : WINNER_LABEL_PLURAL}
                         </Badge>
                         <span className="text-xs text-cream-muted">
-                          Latest: {winners[0].winnerName} (Y{winners[0].year})
+                          {LATEST_WINNER_PREFIX} {winners[0].winnerName} ({YEAR_LABEL_PREFIX}
+                          {winners[0].year})
                         </span>
                       </div>
                     </div>
@@ -104,12 +123,15 @@ export function G1WinnerHistory() {
                               key={record.id}
                               className="border-b border-white/5 hover:bg-white/5 transition-colors"
                             >
-                              <td className="py-2 px-3 font-bold text-gold">Y{record.year}</td>
+                              <td className="py-2 px-3 font-bold text-gold">
+                                {YEAR_LABEL_PREFIX}
+                                {record.year}
+                              </td>
                               <td className="py-2 px-3">
                                 <div className="flex items-center gap-2">
                                   <SilkDot color={record.winnerSilk} size="sm" />
                                   <Link
-                                    to="/stable/$horseId"
+                                    to={HORSE_PAGE_ROUTE}
                                     params={{ horseId: record.winnerId }}
                                     className={cn(
                                       "hover:text-gold transition-colors",
@@ -121,7 +143,9 @@ export function G1WinnerHistory() {
                                 </div>
                               </td>
                               <td className="py-2 px-3 text-cream-muted">{record.jockeyName}</td>
-                              <td className="py-2 px-3 font-mono">{record.time.toFixed(2)}s</td>
+                              <td className="py-2 px-3 font-mono">
+                                {record.time.toFixed(TIME_DECIMAL_PLACES)}s
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -133,7 +157,7 @@ export function G1WinnerHistory() {
             </Accordion>
           </TabsContent>
 
-          <TabsContent value="chronological">
+          <TabsContent value={G1_HISTORY_TAB_CHRONOLOGICAL}>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -151,13 +175,16 @@ export function G1WinnerHistory() {
                       key={record.id}
                       className="border-b border-white/5 hover:bg-white/5 transition-colors"
                     >
-                      <td className="py-2 px-3 font-bold text-gold">Y{record.year}</td>
+                      <td className="py-2 px-3 font-bold text-gold">
+                        {YEAR_LABEL_PREFIX}
+                        {record.year}
+                      </td>
                       <td className="py-2 px-3 font-medium text-cream">{record.raceName}</td>
                       <td className="py-2 px-3">
                         <div className="flex items-center gap-2">
                           <SilkDot color={record.winnerSilk} size="sm" />
                           <Link
-                            to="/stable/$horseId"
+                            to={HORSE_PAGE_ROUTE}
                             params={{ horseId: record.winnerId }}
                             className={cn(
                               "hover:text-gold transition-colors",
@@ -169,7 +196,9 @@ export function G1WinnerHistory() {
                         </div>
                       </td>
                       <td className="py-2 px-3 text-cream-muted">{record.jockeyName}</td>
-                      <td className="py-2 px-3 font-mono">{record.time.toFixed(2)}s</td>
+                      <td className="py-2 px-3 font-mono">
+                        {record.time.toFixed(TIME_DECIMAL_PLACES)}s
+                      </td>
                     </tr>
                   ))}
                 </tbody>

@@ -24,7 +24,7 @@ import {
   isCeremonyHeld,
   type AwardCeremonyInvitation,
 } from "@/core/awards/invitations";
-import { PHASE_ORDER_AWARD_INVITATIONS } from "@/constants";
+import { PHASE_ORDER_AWARD_INVITATIONS, DAYS_PER_YEAR } from "@/constants";
 import type { AnyImpact, InboxImpact } from "@/core/resolver/impacts/index";
 
 const REGION_NAMES: Record<AwardRegion, string> = {
@@ -40,7 +40,7 @@ export const awardInvitationsPhase: PipelinePhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay, raceMap } = context;
     const doy = dayOfYear(newDay);
-    const year = Math.floor((newDay - 1) / 365) + 1;
+    const year = Math.floor((newDay - 1) / DAYS_PER_YEAR) + 1;
     const existing = state.awardCeremonyInvitations ?? [];
     const impacts: AnyImpact[] = [];
     const logs: { day: number; text: string }[] = [];

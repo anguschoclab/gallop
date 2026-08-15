@@ -53,6 +53,7 @@ import {
   MEDIUM_PURSE_THRESHOLD,
   MAX_FAME,
 } from "@/constants";
+import { calculateFanGainsForRaces } from "@/core/horse/fans";
 
 /**
  * Calculate fame gains for horses based on race results.
@@ -460,6 +461,7 @@ export interface NpcCycleResult {
   reputationEvents?: ReputationEvent[];
   cashChanges?: Array<{ stableId: string; amount: number; reason: string }>;
   fameChanges?: Array<{ horseId: string; delta: number }>;
+  fanChanges?: Array<{ horseId: string; delta: number }>;
 }
 
 /**
@@ -497,7 +499,15 @@ export function runNpcCycle(
   try {
     // Skip if no NPC stables
     if (npcStables.length === 0) {
-      return { horses, races, jockeys, aiManager, cashChanges: [], fameChanges: [] };
+      return {
+        horses,
+        races,
+        jockeys,
+        aiManager,
+        cashChanges: [],
+        fameChanges: [],
+        fanChanges: [],
+      };
     }
 
     // 1. NPC Training and 2. NPC Race Entry are now handled via the Intent/Impact pipeline
@@ -505,6 +515,7 @@ export function runNpcCycle(
     const racesAfterEntry = races;
     const cashChanges: Array<{ stableId: string; amount: number; reason: string }> = [];
     let fameChanges: Array<{ horseId: string; delta: number }> = [];
+    let fanChanges: Array<{ horseId: string; delta: number }> = [];
 
     // Clone facilities to avoid mutating the input state.
     let updatedNpcFacilities = npcFacilities;
@@ -522,6 +533,14 @@ export function runNpcCycle(
       const fameGains = calculateFameGainsForRaces(yesterdayRaces);
       if (fameGains.size > 0) {
         fameChanges = Array.from(fameGains.entries()).map(([horseId, delta]) => ({
+          horseId,
+          delta,
+        }));
+      }
+
+      const fanGains = calculateFanGainsForRaces(yesterdayRaces);
+      if (fanGains.size > 0) {
+        fanChanges = Array.from(fanGains.entries()).map(([horseId, delta]) => ({
           horseId,
           delta,
         }));
@@ -643,6 +662,7 @@ export function runNpcCycle(
       reputationEvents: dominanceResult.reputationEvents,
       cashChanges,
       fameChanges,
+      fanChanges,
     };
   } catch (error) {
     console.error("Error in runNpcCycle:", error);
@@ -656,6 +676,7 @@ export function runNpcCycle(
       newsItems: [],
       cashChanges: [],
       fameChanges: [],
+      fanChanges: [],
     };
   }
 }

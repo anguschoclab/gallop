@@ -2,11 +2,31 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { AwardsGrid } from "./AwardsGrid";
 import { groupByRegion } from "./awardUtils";
 import type { AwardRegion, RegionalAward } from "@/core/awards/types";
-import { REGION_AWARD_NAMES, REGION_DISPLAY_NAMES } from "@/core/awards/types";
+import {
+  REGION_AWARD_NAMES,
+  REGION_DISPLAY_NAMES,
+  AWARD_REGION_ORDER,
+  AWARD_CATEGORY_ORDER,
+} from "@/core/awards/types";
 import { Trophy, Medal, Star } from "lucide-react";
+
+type TrophySortKey = "year" | "category" | "region";
+
+const SORT_OPTIONS: ReadonlyArray<{ value: TrophySortKey; label: string }> = [
+  { value: "year", label: "Year (newest first)" },
+  { value: "category", label: "Category" },
+  { value: "region", label: "Region" },
+];
 
 interface TrophyFullViewProps {
   awards: RegionalAward[];
@@ -24,12 +44,13 @@ export function TrophyFullView({
   totalAwards,
   hotyCount,
   filterByRegion,
-  sortBy = "year",
+  sortBy: sortByProp = "year",
   className,
 }: TrophyFullViewProps) {
   const [selectedRegion, setSelectedRegion] = useState<AwardRegion | "all">(
     filterByRegion || "all",
   );
+  const [sortKey, setSortKey] = useState<TrophySortKey>(sortByProp);
 
   const filteredAwards = awards.filter((award) => {
     if (selectedRegion !== "all" && award.region !== selectedRegion) return false;
@@ -37,9 +58,11 @@ export function TrophyFullView({
   });
 
   const sortedAwards = [...filteredAwards].sort((a, b) => {
-    if (sortBy === "year") return b.year - a.year;
-    if (sortBy === "category") return a.category.localeCompare(b.category);
-    if (sortBy === "region") return a.region.localeCompare(b.region);
+    if (sortKey === "year") return b.year - a.year;
+    if (sortKey === "category")
+      return (AWARD_CATEGORY_ORDER[a.category] ?? 0) - (AWARD_CATEGORY_ORDER[b.category] ?? 0);
+    if (sortKey === "region")
+      return (AWARD_REGION_ORDER[a.region] ?? 0) - (AWARD_REGION_ORDER[b.region] ?? 0);
     return 0;
   });
 
@@ -55,6 +78,18 @@ export function TrophyFullView({
             {ownerName && <span className="text-muted-foreground">- {ownerName}</span>}
           </CardTitle>
           <div className="flex items-center gap-2">
+            <Select value={sortKey} onValueChange={(v) => setSortKey(v as TrophySortKey)}>
+              <SelectTrigger className="h-8 text-xs bg-muted border-border text-foreground w-auto">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {SORT_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Badge variant="secondary" className="flex items-center gap-1">
               <Medal className="w-3 h-3" />
               {totalAwards}

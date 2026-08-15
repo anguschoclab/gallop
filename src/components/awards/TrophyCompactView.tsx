@@ -6,8 +6,7 @@ import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/core/awards/typ
 import { getRegionCountryLabel } from "@/core/common/countryFlag";
 import { Trophy } from "lucide-react";
 import type { RegionalAward } from "@/core/awards/types";
-
-const COMPACT_THRESHOLD = 5;
+import { AWARD_COMPACT_THRESHOLD, TROPHY_COMPACT_MAX_DISPLAY } from "@/constants/awardsConstants";
 
 interface TrophyCompactViewProps {
   awards: RegionalAward[];
@@ -47,13 +46,13 @@ export function TrophyCompactView({ awards, totalAwards, className }: TrophyComp
               | { kind: "count"; category: string; sample: RegionalAward; count: number }
             > = [];
             for (const [category, list] of buckets) {
-              if (list.length > COMPACT_THRESHOLD) {
+              if (list.length > AWARD_COMPACT_THRESHOLD) {
                 items.push({ kind: "count", category, sample: list[0], count: list.length });
               } else {
                 for (const a of list) items.push({ kind: "single", award: a });
               }
             }
-            const display = items.slice(0, 10);
+            const display = items.slice(0, TROPHY_COMPACT_MAX_DISPLAY);
             const overflow = items.length - display.length;
             return (
               <div className="flex gap-2 overflow-x-auto pb-2">

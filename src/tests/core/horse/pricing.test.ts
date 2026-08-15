@@ -6,6 +6,9 @@ import {
   getBroodmareFee,
   horsePrice,
   horsePriceWithPedigree,
+  estimateBreedingValue,
+  horseMarketValue,
+  horseCareerValuation,
 } from "@/core/horse/pricing";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { Horse } from "@/game/types";
@@ -190,6 +193,124 @@ describe("pricing and valuation", () => {
 
       expect(safePrice).toBeGreaterThan(basePrice);
       expect(riskPrice).toBeLessThan(basePrice);
+    });
+  });
+
+  describe("fan count valuation", () => {
+    it("calculateBaseHorseValue increases when fanCount > 0", () => {
+      const h = getBaseHorse();
+      h.fanCount = 0;
+      const baseVal = calculateBaseHorseValue(h, "budget");
+
+      const hFans = getBaseHorse();
+      hFans.fanCount = 100000;
+      const fanVal = calculateBaseHorseValue(hFans, "budget");
+
+      expect(fanVal).toBeGreaterThan(baseVal);
+    });
+
+    it("calculateBaseHorseValue with fanCount 100000 produces higher value than fanCount 0", () => {
+      const h0 = getBaseHorse();
+      h0.fanCount = 0;
+      const h100k = getBaseHorse();
+      h100k.fanCount = 100000;
+
+      expect(calculateBaseHorseValue(h100k, "elite")).toBeGreaterThan(
+        calculateBaseHorseValue(h0, "elite"),
+      );
+    });
+
+    it("horsePrice increases when fanCount > 0", () => {
+      const h = getBaseHorse();
+      h.fanCount = 0;
+      const basePrice = horsePrice(h);
+
+      const hFans = getBaseHorse();
+      hFans.fanCount = 100000;
+      const fanPrice = horsePrice(hFans);
+
+      expect(fanPrice).toBeGreaterThan(basePrice);
+    });
+
+    it("estimateBreedingValue increases when fanCount > 0", () => {
+      const h = getBaseHorse();
+      h.gender = "colt";
+      h.age = 5;
+      h.fanCount = 0;
+      const baseVal = estimateBreedingValue(h, [h]);
+
+      const hFans = getBaseHorse();
+      hFans.gender = "colt";
+      hFans.age = 5;
+      hFans.fanCount = 200000;
+      const fanVal = estimateBreedingValue(hFans, [hFans]);
+
+      expect(fanVal).toBeGreaterThan(baseVal);
+    });
+
+    it("horseMarketValue increases when fanCount > 0", () => {
+      const h = getBaseHorse();
+      h.fanCount = 0;
+      const baseVal = horseMarketValue(h, [h]);
+
+      const hFans = getBaseHorse();
+      hFans.fanCount = 100000;
+      const fanVal = horseMarketValue(hFans, [hFans]);
+
+      expect(fanVal).toBeGreaterThan(baseVal);
+    });
+
+    it("horseCareerValuation.current increases when fanCount > 0", () => {
+      const h = getBaseHorse();
+      h.fanCount = 0;
+      const baseVal = horseCareerValuation(h, [h]);
+
+      const hFans = getBaseHorse();
+      hFans.fanCount = 100000;
+      const fanVal = horseCareerValuation(hFans, [hFans]);
+
+      expect(fanVal.current).toBeGreaterThan(baseVal.current);
+    });
+
+    it("horseCareerValuation.racing increases when fanCount > 0", () => {
+      const h = getBaseHorse();
+      h.fanCount = 0;
+      const baseVal = horseCareerValuation(h, [h]);
+
+      const hFans = getBaseHorse();
+      hFans.fanCount = 100000;
+      const fanVal = horseCareerValuation(hFans, [hFans]);
+
+      expect(fanVal.racing).toBeGreaterThan(baseVal.racing);
+    });
+
+    it("horseCareerValuation.breeding increases when fanCount > 0", () => {
+      const h = getBaseHorse();
+      h.gender = "colt";
+      h.age = 5;
+      h.fanCount = 0;
+      const baseVal = horseCareerValuation(h, [h]);
+
+      const hFans = getBaseHorse();
+      hFans.gender = "colt";
+      hFans.age = 5;
+      hFans.fanCount = 200000;
+      const fanVal = horseCareerValuation(hFans, [hFans]);
+
+      expect(fanVal.breeding).toBeGreaterThan(baseVal.breeding);
+    });
+
+    it("existing fame scaling test still passes with fanCount 0", () => {
+      const h = getBaseHorse();
+      h.fanCount = 0;
+      const baseVal = calculateBaseHorseValue(h, "budget");
+
+      const hFame = getBaseHorse();
+      hFame.fanCount = 0;
+      hFame.fame = 200;
+      const fameVal = calculateBaseHorseValue(hFame, "budget");
+
+      expect(fameVal).toBeGreaterThan(baseVal);
     });
   });
 

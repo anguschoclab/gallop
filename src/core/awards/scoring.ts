@@ -22,6 +22,7 @@ import {
   SOUTH_AMERICAN_CATEGORIES,
 } from "./types";
 import { getTrackContinent, type Continent } from "@/data/gradedRaces";
+import { DAYS_PER_YEAR } from "@/constants";
 
 // Map continent to award region
 const CONTINENT_TO_REGION: Record<Continent, AwardRegion> = {
@@ -199,8 +200,8 @@ export function calculateAwardPoints(
   let totalPoints = 0;
 
   // Filter race history to relevant year and region
-  const yearStart = (year - 1) * 365 + 1;
-  const yearEnd = year * 365;
+  const yearStart = (year - 1) * DAYS_PER_YEAR + 1;
+  const yearEnd = year * DAYS_PER_YEAR;
 
   for (const historyEntry of horse.raceHistory) {
     // Check if within award year
@@ -249,8 +250,8 @@ export function determineRegionalWinners(
     (c) => c !== "award_of_merit" && c !== "champion_international" && c !== "champion_trainer",
   );
   const weights = REGIONAL_SCORING[region];
-  const yearStart = (year - 1) * 365 + 1;
-  const yearEnd = year * 365;
+  const yearStart = (year - 1) * DAYS_PER_YEAR + 1;
+  const yearEnd = year * DAYS_PER_YEAR;
 
   // Per-horse, per-category points and qualifying race IDs
   const pointsMap = new Map<string, Map<RegionalAwardCategory, number>>();

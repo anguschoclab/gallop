@@ -18,6 +18,7 @@ import type {
   ReputationImpact,
   CashImpact,
   FameImpact,
+  FanCountImpact,
 } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 
@@ -55,6 +56,7 @@ export const npcCyclePhase = {
       reputationEvents,
       cashChanges,
       fameChanges,
+      fanChanges,
     } = runNpcCycle(
       state.npcStables,
       Object.values(state.horses),
@@ -132,6 +134,22 @@ export const npcCyclePhase = {
           delta: change.delta,
           reason: "Race performance fame gain",
         } as FameImpact);
+      }
+    }
+
+    if (fanChanges) {
+      for (const change of fanChanges) {
+        impacts.push({
+          id: generateUUID(context.dailyRng),
+          intentId: "",
+          day: newDay,
+          phase: "npcCycle",
+          logLevel: "conditional",
+          type: "fan_count_change",
+          horseId: change.horseId,
+          delta: change.delta,
+          reason: "Race performance fan gain",
+        } as FanCountImpact);
       }
     }
 

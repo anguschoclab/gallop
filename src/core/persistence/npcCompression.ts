@@ -32,6 +32,7 @@ export interface NpcHorseSummary {
   deceased: boolean;
   retiredOnDay?: number;
   fame: number;
+  fanCount: number;
   lifetimeEarnings: number;
   careerStarts: number;
   careerWins: number;
@@ -76,6 +77,7 @@ export function compressNpcHorses(
       deceased: horse.lifecycleStatus === "deceased",
       retiredOnDay: horse.retiredOnDay,
       fame: horse.fame,
+      fanCount: horse.fanCount,
       lifetimeEarnings: horse.lifetimeEarnings,
       careerStarts: horse.careerStarts,
       careerWins: horse.careerWins,
@@ -120,6 +122,7 @@ export function regenerateNpcHorses(summaries: NpcHorseSummary[], stables: Stabl
 
     // Restore career stats
     horse.fame = summary.fame;
+    horse.fanCount = summary.fanCount;
     horse.lifetimeEarnings = summary.lifetimeEarnings;
     horse.careerStarts = summary.careerStarts;
     horse.careerWins = summary.careerWins;

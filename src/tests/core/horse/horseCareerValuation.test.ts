@@ -159,7 +159,7 @@ describe("horseCareerValuation", () => {
   // ---------------------------------------------------------------------------
   // 14: preCareer uses yearling pedigree weight (age 1), not current age
   // ---------------------------------------------------------------------------
-  it("preCareer uses yearling pedigree weight (age 1) regardless of current age", () => {
+  it("preCareer uses yearling pedigree weight (age 1), not current age", () => {
     const sire = createTestStallion({
       id: "sire",
       stud: {
@@ -208,5 +208,47 @@ describe("horseCareerValuation", () => {
     const breedingUpside = Math.round(estimateBreedingValue({ ...colt, age: 5 }, allHorses) * 0.25);
     const expectedPreCareer = Math.round((yearlingPed + breedingUpside) / 50) * 50;
     expect(v.preCareer).toBe(expectedPreCareer);
+  });
+});
+
+describe("horseCareerValuation — fan count influence", () => {
+  it("racing with fanCount 50000 is higher than with fanCount 0", () => {
+    const h0 = createTestColt({ age: 3, fanCount: 0 });
+    const h50k = createTestColt({ age: 3, fanCount: 50000 });
+    expect(horseCareerValuation(h50k, [h50k]).racing).toBeGreaterThan(
+      horseCareerValuation(h0, [h0]).racing,
+    );
+  });
+
+  it("breeding with fanCount 50000 is higher than with fanCount 0", () => {
+    const h0 = createTestStallion({ age: 5, fanCount: 0 });
+    const h50k = createTestStallion({ age: 5, fanCount: 50000 });
+    expect(horseCareerValuation(h50k, [h50k]).breeding).toBeGreaterThan(
+      horseCareerValuation(h0, [h0]).breeding,
+    );
+  });
+
+  it("current with fanCount 50000 is higher than with fanCount 0", () => {
+    const h0 = createTestColt({ age: 3, fanCount: 0 });
+    const h50k = createTestColt({ age: 3, fanCount: 50000 });
+    expect(horseCareerValuation(h50k, [h50k]).current).toBeGreaterThan(
+      horseCareerValuation(h0, [h0]).current,
+    );
+  });
+
+  it("preCareer with fanCount 50000 is higher than with fanCount 0", () => {
+    const h0 = createTestColt({ age: 3, fanCount: 0 });
+    const h50k = createTestColt({ age: 3, fanCount: 50000 });
+    expect(horseCareerValuation(h50k, [h50k]).preCareer).toBeGreaterThan(
+      horseCareerValuation(h0, [h0]).preCareer,
+    );
+  });
+
+  it("postCareer with fanCount 50000 is higher than with fanCount 0", () => {
+    const h0 = createTestStallion({ age: 5, fanCount: 0 });
+    const h50k = createTestStallion({ age: 5, fanCount: 50000 });
+    expect(horseCareerValuation(h50k, [h50k]).postCareer).toBeGreaterThan(
+      horseCareerValuation(h0, [h0]).postCareer,
+    );
   });
 });
