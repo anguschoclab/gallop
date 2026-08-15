@@ -159,12 +159,74 @@ export type SpriteLoadStatus = "loading" | "loaded" | "error";
 
 const spriteLoadCache = new Map<string, SpriteLoadStatus>();
 
+/** Natural pixel dimensions of each sheet, measured once the image loads. */
+const spriteDimensionCache = new Map<string, { width: number; height: number }>();
+
+const MAX_INFERRED_FRAMES = 24;
+
+/**
+ * Infers the frame layout of an unknown sprite sheet from its natural size.
+ * Assumes horizontally-stacked, square-ish frames: picks the frame count whose
+ * resulting frame width is closest to the sheet height (or half of it, for
+ * sheets that reserve vertical head-room above the horse).
+ */
+export function inferSpriteLayout(
+  width: number,
+  height: number,
+): { frames: number; frameWidth: number; frameHeight: number } {
+  if (!width || !height) return { frames: 1, frameWidth: width || 50, frameHeight: height || 50 };
+  let best = { frames: 1, error: Number.POSITIVE_INFINITY };
+  for (let f = 1; f <= MAX_INFERRED_FRAMES; f++) {
+    const frameWidth = width / f;
+    if (!Number.isInteger(frameWidth)) continue;
+    const error = Math.min(
+      Math.abs(frameWidth - height),
+      Math.abs(frameWidth - height / 2) + 0.5, // slight bias toward full-height frames
+    );
+    if (error < best.error) best = { frames: f, error };
+  }
+  const frameWidth = width / best.frames;
+  return { frames: best.frames, frameWidth, frameHeight: height };
+}
+
+/**
+ * Resolves the metrics used to render a sheet: registry metadata when the coat
+ * is known, otherwise inferred from the measured image. Measured dimensions
+ * always win for the sheet width/height so odd-sized future assets crop right.
+ */
+export function getSpriteMetrics(
+  url: string,
+  declared?: SpriteSheet,
+): { frames: number; frameWidth: number; frameHeight: number; sheetWidth: number } {
+  const dims = spriteDimensionCache.get(url);
+  if (dims) {
+    const frames = declared && declared.frames > 1 ? declared.frames : undefined;
+    const inferred = inferSpriteLayout(dims.width, dims.height);
+    const resolvedFrames = frames ?? inferred.frames;
+    return {
+      frames: resolvedFrames,
+      frameWidth: dims.width / resolvedFrames,
+      frameHeight: dims.height,
+      sheetWidth: dims.width,
+    };
+  }
+  const frames = declared?.frames ?? 6;
+  const frameWidth = declared?.frameWidth ?? 50;
+  const frameHeight = declared?.frameHeight ?? 100;
+  return { frames, frameWidth, frameHeight, sheetWidth: frames * frameWidth };
+}
+
+export function getSpriteDimensions(url: string): { width: number; height: number } | undefined {
+  return spriteDimensionCache.get(url);
+}
+
 export function getSpriteLoadStatus(url: string): SpriteLoadStatus | undefined {
   return spriteLoadCache.get(url);
 }
 
 export function _resetSpriteLoadCache(): void {
   spriteLoadCache.clear();
+  spriteDimensionCache.clear();
 }
 
 /**
@@ -184,6 +246,12 @@ export async function preloadHorseSprites(): Promise<void> {
           const img = new Image();
           img.onload = () => {
             spriteLoadCache.set(url, "loaded");
+            if (img.naturalWidth && img.naturalHeight) {
+              spriteDimensionCache.set(url, {
+                width: img.naturalWidth,
+                height: img.naturalHeight,
+              });
+            }
             resolve();
           };
           img.onerror = () => {
