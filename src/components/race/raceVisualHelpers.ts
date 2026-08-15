@@ -155,6 +155,18 @@ export function getAllSpriteUrls(): string[] {
   return [...new Set(Object.values(COAT_TO_SPRITE_SHEET).map((s) => s.url))];
 }
 
+export type SpriteLoadStatus = "loading" | "loaded" | "error";
+
+const spriteLoadCache = new Map<string, SpriteLoadStatus>();
+
+export function getSpriteLoadStatus(url: string): SpriteLoadStatus | undefined {
+  return spriteLoadCache.get(url);
+}
+
+export function _resetSpriteLoadCache(): void {
+  spriteLoadCache.clear();
+}
+
 /**
  * Preloads all horse sprite sheet images so they are cached by the browser
  * before the race broadcast renders. Resolves once all images have loaded

@@ -84,7 +84,8 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
             <>
               <div className="grid grid-cols-12 px-4 py-2 border-b border-white/5 font-mono text-[9px] uppercase font-black text-cream/20 tracking-widest">
                 <div className="col-span-1">P</div>
-                <div className="col-span-6">Horse / Jockey</div>
+                <div className="col-span-1">Gate</div>
+                <div className="col-span-5">Horse / Jockey</div>
                 <div className="col-span-2 text-right">Time</div>
                 <div className="col-span-3 text-right">Earnings</div>
               </div>
@@ -113,7 +114,13 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                           </span>
                         </div>
 
-                        <div className="col-span-6 space-y-1 min-w-0">
+                        <div className="col-span-1">
+                          <span className="font-mono text-[10px] text-cream/30 tabular-nums">
+                            {typeof r.gate === "number" ? `G${r.gate}` : "—"}
+                          </span>
+                        </div>
+
+                        <div className="col-span-5 space-y-1 min-w-0">
                           <div className="flex items-center gap-2">
                             {r.finalMood && (
                               <RunnerMoodFace
