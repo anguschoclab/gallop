@@ -181,12 +181,7 @@ export function PlanSummaryBar({
                 : undefined
             }
           >
-            <Button
-              size="sm"
-              className="h-8 gap-1.5"
-              onClick={onConfirmAll}
-              disabled={!canConfirm}
-            >
+            <Button size="sm" className="h-8 gap-1.5" onClick={onConfirmAll} disabled={!canConfirm}>
               <Check className="h-3.5 w-3.5" />
               Confirm All ({assignedCount})
             </Button>
