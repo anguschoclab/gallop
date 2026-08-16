@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Check, Save, FolderOpen, Trash2, Sparkles, Eraser } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
+import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
 import type { SavedMatingPlan } from "@/game/store/state/breedingState";
 
 interface PlanSummaryBarProps {
@@ -167,10 +168,29 @@ export function PlanSummaryBar({
             Clear
           </Button>
 
-          <Button size="sm" className="h-8 gap-1.5" onClick={onConfirmAll} disabled={!canConfirm}>
-            <Check className="h-3.5 w-3.5" />
-            Confirm All ({assignedCount})
-          </Button>
+          <DisabledTooltipWrapper
+            reason={
+              !canConfirm
+                ? !seasonOpen
+                  ? "Breeding season is closed"
+                  : assignedCount === 0
+                    ? "No mares assigned"
+                    : !canAffordAll
+                      ? "Insufficient funds"
+                      : "Cannot confirm"
+                : undefined
+            }
+          >
+            <Button
+              size="sm"
+              className="h-8 gap-1.5"
+              onClick={onConfirmAll}
+              disabled={!canConfirm}
+            >
+              <Check className="h-3.5 w-3.5" />
+              Confirm All ({assignedCount})
+            </Button>
+          </DisabledTooltipWrapper>
         </div>
       </div>
       {!seasonOpen && (

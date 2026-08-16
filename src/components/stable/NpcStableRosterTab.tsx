@@ -1,33 +1,10 @@
-import { TOOLTIP_DELAY_MS } from "@/constants";
 import { type MouseEvent, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, Eye, HandCoins } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
 import { cn } from "@/lib/cn";
 
-function DisabledTooltipWrapper({
-  reason,
-  children,
-}: {
-  reason?: string | false;
-  children: React.ReactNode;
-}) {
-  if (!reason) return <>{children}</>;
-
-  return (
-    <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <span tabIndex={0} className="inline-block cursor-not-allowed">
-            {children}
-          </span>
-        </TooltipTrigger>
-        <TooltipContent>{reason}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-}
 import { HorseCard } from "@/components/horse/HorseCard";
 import { PrivateSaleCounterCard } from "@/components/auction/PrivateSaleCounterCard";
 import { overall } from "@/components/horse/HorseBits";

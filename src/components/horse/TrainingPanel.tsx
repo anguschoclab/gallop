@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
-import { TRAINING_COST, TOOLTIP_DELAY_MS } from "@/constants";
+import { TRAINING_COST } from "@/constants";
 import { BASIC_TRAINING_TYPES, ADVANCED_WORKOUTS } from "@/constants/trainingTypes";
 import { TRAINING_FACILITY_REQUIREMENTS } from "@/constants/workoutConstants";
 import { getAvailableTrainingTypes } from "@/core/facilities";
@@ -8,7 +8,7 @@ import { FACILITY_NAMES, facilityLevelToTierLabel } from "@/core/facilities/faci
 import type { Horse, PlayerFacilities } from "@/game/types";
 import type { TrainingIntent } from "@/core/resolver/intents";
 import { useCallback, memo, useMemo } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
 import { cn } from "@/lib/cn";
 
 interface TrainingPanelProps {
@@ -31,30 +31,6 @@ function getStatValue(stats: Horse["stats"], key: string): number {
 const ADVANCED_WORKOUTS_LABEL = "Advanced Workouts";
 const REST_LABEL = "Rest (+30 energy)";
 
-// Helper to conditionally wrap button with tooltip if disabled
-function DisabledTooltipWrapper({
-  reason,
-  children,
-}: {
-  reason?: string;
-  children: React.ReactNode;
-}) {
-  if (!reason) return <>{children}</>;
-
-  return (
-    <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <span tabIndex={0} className="inline-block w-full cursor-not-allowed">
-            {children}
-          </span>
-        </TooltipTrigger>
-        <TooltipContent>{reason}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-}
-
 interface BasicTrainingButtonProps {
   label: string;
   currentValue: number;
@@ -73,7 +49,7 @@ function BasicTrainingButton({
   onClick,
 }: BasicTrainingButtonProps) {
   return (
-    <DisabledTooltipWrapper reason={disabledReason}>
+    <DisabledTooltipWrapper reason={disabledReason} wrapperClassName="w-full">
       <Button
         onClick={onClick}
         disabled={disabled}
@@ -107,7 +83,7 @@ function AdvancedWorkoutButton({
   onClick,
 }: AdvancedWorkoutButtonProps) {
   return (
-    <DisabledTooltipWrapper reason={disabledReason}>
+    <DisabledTooltipWrapper reason={disabledReason} wrapperClassName="w-full">
       <Button
         onClick={onClick}
         disabled={disabled}

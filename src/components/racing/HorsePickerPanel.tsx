@@ -2,6 +2,7 @@ import type { Horse } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { cn } from "@/lib/cn";
 import { CheckCircle2 } from "lucide-react";
+import { useMemo } from "react";
 
 interface HorsePickerPanelProps {
   horses: Horse[];
@@ -16,16 +17,17 @@ export function HorsePickerPanel({
   onSelect,
   enteredHorseIds,
 }: HorsePickerPanelProps) {
-  const eligible = horses.filter(
-    (h) => h.owned && h.lifecycleStatus === "active" && !h.consignedSaleId && !h.activeInjury,
-  );
-
-  const sorted = [...eligible].sort((a, b) => {
-    const aEntered = enteredHorseIds.has(a.id) ? 1 : 0;
-    const bEntered = enteredHorseIds.has(b.id) ? 1 : 0;
-    if (aEntered !== bEntered) return aEntered - bEntered;
-    return calculateOverallRating(b) - calculateOverallRating(a);
-  });
+  const sorted = useMemo(() => {
+    const eligible = horses.filter(
+      (h) => h.owned && h.lifecycleStatus === "active" && !h.consignedSaleId && !h.activeInjury,
+    );
+    return [...eligible].sort((a, b) => {
+      const aEntered = enteredHorseIds.has(a.id) ? 1 : 0;
+      const bEntered = enteredHorseIds.has(b.id) ? 1 : 0;
+      if (aEntered !== bEntered) return aEntered - bEntered;
+      return calculateOverallRating(b) - calculateOverallRating(a);
+    });
+  }, [horses, enteredHorseIds]);
 
   if (sorted.length === 0) {
     return (

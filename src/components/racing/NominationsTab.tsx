@@ -24,6 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Flag, Trophy, Lock } from "lucide-react";
 import { NOMINATIONS_UPCOMING_LIMIT } from "@/constants";
+import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
 
 const TIER_COLORS: Record<NominationTier, string> = {
   early: "bg-emerald-500/20 text-emerald-300 border-emerald-400/40",
@@ -252,16 +253,18 @@ export function RaceNominationRow({
               ))}
             </SelectContent>
           </Select>
-          <Button
-            size="sm"
-            disabled={!pickedHorse}
-            onClick={() => {
-              onNominate(pickedHorse);
-              setPickedHorse("");
-            }}
-          >
-            Nominate
-          </Button>
+          <DisabledTooltipWrapper reason={!pickedHorse ? "Select a horse to nominate" : undefined}>
+            <Button
+              size="sm"
+              disabled={!pickedHorse}
+              onClick={() => {
+                onNominate(pickedHorse);
+                setPickedHorse("");
+              }}
+            >
+              Nominate
+            </Button>
+          </DisabledTooltipWrapper>
         </div>
       )}
       {nominatedIds.size > 0 && (
