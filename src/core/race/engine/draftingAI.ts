@@ -115,3 +115,37 @@ export function calculateRailSavingLane(r: Runner, progress: number): number {
 
   return r.lane;
 }
+
+/**
+ * Calculate cover modifier based on horses ahead within 5m in the same lane.
+ *
+ * When ≥2 horses are clustered ahead within 5m in the same lane, the runner
+ * has cover and should conserve energy (velocityMod *= 0.99). When cover
+ * drops to 0, the runner should improve position (velocityMod *= 1.01).
+ * Exactly 1 horse ahead is neutral (1.0).
+ *
+ * @param r - The runner to calculate cover for
+ * @param sortedField - Runners sorted by position (leading first)
+ * @returns Velocity modifier (0.99 with cover, 1.01 without, 1.0 neutral)
+ */
+export function calculateCoverModifier(r: Runner, sortedField: Runner[]): number {
+  let coverCount = 0;
+
+  for (const other of sortedField) {
+    if (other.horseId === r.horseId) continue;
+    if (other.finishTime !== null) continue;
+
+    const gap = other.position - r.position;
+    if (gap <= 0) break; // Optimization: stop early (sorted field)
+    if (gap > 5) continue;
+
+    const laneGap = Math.abs(other.lane - r.lane);
+    if (laneGap < 0.5) {
+      coverCount++;
+    }
+  }
+
+  if (coverCount >= 2) return 0.99;
+  if (coverCount === 0) return 1.01;
+  return 1.0;
+}

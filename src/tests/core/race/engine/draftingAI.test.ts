@@ -10,6 +10,7 @@ import {
   calculateStyleAwareDraftMultiplier,
   getEnhancedDraftingHorseId,
   calculateRailSavingLane,
+  calculateCoverModifier,
 } from "@/core/race/engine/draftingAI";
 
 function createMockRunner(overrides: Partial<Runner> = {}): Runner {
@@ -140,6 +141,56 @@ describe("draftingAI", () => {
       const runner = createMockRunner({ runningStyle: "S", lane: 0, railPreference: 0 });
       const targetLane = calculateRailSavingLane(runner, 0.8);
       expect(targetLane).toBe(0);
+    });
+  });
+
+  describe("calculateCoverModifier", () => {
+    it("returns 0.99 (conserve) when ≥2 horses ahead within 5m in same lane", () => {
+      const runner = createMockRunner({ horseId: "h1", position: 100, lane: 1.2 });
+      const ahead1 = createMockRunner({ horseId: "h2", position: 103, lane: 1.2 });
+      const ahead2 = createMockRunner({ horseId: "h3", position: 104, lane: 1.2 });
+      const sortedField = [ahead1, ahead2, runner];
+      const mod = calculateCoverModifier(runner, sortedField);
+      expect(mod).toBeCloseTo(0.99, 5);
+    });
+
+    it("returns 1.01 (improve) when no horses ahead within 5m", () => {
+      const runner = createMockRunner({ horseId: "h1", position: 100, lane: 1.2 });
+      const farAhead = createMockRunner({ horseId: "h2", position: 110, lane: 1.2 });
+      const sortedField = [farAhead, runner];
+      const mod = calculateCoverModifier(runner, sortedField);
+      expect(mod).toBeCloseTo(1.01, 5);
+    });
+
+    it("returns 1.0 when exactly 1 horse ahead within 5m (neutral)", () => {
+      const runner = createMockRunner({ horseId: "h1", position: 100, lane: 1.2 });
+      const ahead = createMockRunner({ horseId: "h2", position: 103, lane: 1.2 });
+      const sortedField = [ahead, runner];
+      const mod = calculateCoverModifier(runner, sortedField);
+      expect(mod).toBeCloseTo(1.0, 5);
+    });
+
+    it("only counts horses in the same lane (gap < 0.5)", () => {
+      const runner = createMockRunner({ horseId: "h1", position: 100, lane: 1.2 });
+      const ahead1 = createMockRunner({ horseId: "h2", position: 103, lane: 2.4 });
+      const ahead2 = createMockRunner({ horseId: "h3", position: 104, lane: 2.4 });
+      const sortedField = [ahead1, ahead2, runner];
+      const mod = calculateCoverModifier(runner, sortedField);
+      expect(mod).toBeCloseTo(1.01, 5);
+    });
+
+    it("ignores finished runners", () => {
+      const runner = createMockRunner({ horseId: "h1", position: 100, lane: 1.2 });
+      const ahead1 = createMockRunner({
+        horseId: "h2",
+        position: 103,
+        lane: 1.2,
+        finishTime: 120.5,
+      });
+      const ahead2 = createMockRunner({ horseId: "h3", position: 104, lane: 1.2 });
+      const sortedField = [ahead1, ahead2, runner];
+      const mod = calculateCoverModifier(runner, sortedField);
+      expect(mod).toBeCloseTo(1.0, 5);
     });
   });
 });

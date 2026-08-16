@@ -20,6 +20,7 @@ import {
   calculateStyleAwareDraftMultiplier,
   getEnhancedDraftingHorseId,
   calculateRailSavingLane,
+  calculateCoverModifier,
 } from "./draftingAI";
 import { type Runner, type PaceContext, paceShapeMul } from "./runnerBuilder";
 import {
@@ -871,6 +872,9 @@ export function stepRunner(
   // Calculate draft multiplier
   const draftMul = calculateDraftMultiplier(r, progress);
 
+  // Calculate cover modifier (conserve energy with cover, improve without)
+  const coverMul = sortedField ? calculateCoverModifier(r, sortedField) : 1.0;
+
   // Apply gradient stamina modifier
   staminaMul *= gradientStaminaMul;
 
@@ -939,6 +943,7 @@ export function stepRunner(
     staminaMul *
     styleMul *
     draftMul *
+    coverMul *
     turnSpeedMul *
     gradientSpeedMul *
     traitSurfaceMul *
