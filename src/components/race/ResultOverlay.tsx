@@ -4,14 +4,10 @@ import { PaceGraph } from "@/components/race/PaceGraph";
 import { SpeedBreakdownChart } from "@/components/race/SpeedBreakdownChart";
 import { JockeyReportPanel } from "@/components/race/JockeyReportPanel";
 import { RunnerMoodFace } from "@/components/race/RunnerMoodFace";
-import {
-  TacticalAnalysisPanel,
-  type JockeyInsightEntry,
-} from "@/components/race/TacticalAnalysisPanel";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
-import type { RaceRunner, SectionalSplit } from "@/core/race/types";
+import type { SectionalSplit } from "@/core/race/types";
 import { generateJockeyFeedback } from "@/core/race/jockeyFeedback";
 import { formatCurrency } from "@/core/common/formatting";
 import {
@@ -23,8 +19,6 @@ import {
 import { Trophy, ChevronRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
-import { useGame } from "@/game/store";
-import { getStrategyInsights } from "@/core/ai/jockeyStrategyAI";
 
 /**
  * Props for the ResultOverlay component.
@@ -57,6 +51,41 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
   const finishedCount = runners.filter((r) => r.finishTime !== null).length;
   const allFinished = finishedCount === runners.length;
   const showWaiting = hideResults && !allFinished;
+
+  const npcAIManager = useGame((s) => s.npcAIManager);
+
+  const tacticalRunners: RaceRunner[] = ordered.map((r) => ({
+    horseId: r.horseId,
+    name: r.name,
+    silk: r.silk,
+    owned: r.owned,
+    jockeyId: r.jockey?.id ?? "",
+    jockeyName: r.jockeyName ?? r.jockey?.name ?? "",
+    gate: r.gate,
+    lane: r.lane,
+    runningStyle: r.runningStyle,
+    jockeyInstructions: r.jockeyInstructions,
+  }));
+
+  const hasTacticalData = tacticalRunners.some((r) => r.runningStyle || r.jockeyInstructions);
+
+  const jockeyInsights: JockeyInsightEntry[] = [];
+  for (const runner of ordered) {
+    const jockeyId = runner.jockey?.id;
+    if (!jockeyId) continue;
+    const stableId = Object.keys(npcAIManager?.stableStates ?? {}).find((sid) => {
+      const state = npcAIManager!.stableStates[sid];
+      return state.jockeyStrategyAI;
+    });
+    if (!stableId) continue;
+    const aiState = npcAIManager!.stableStates[stableId].jockeyStrategyAI!;
+    const insights = getStrategyInsights(aiState, stableId);
+    jockeyInsights.push({
+      jockeyId,
+      jockeyName: runner.jockeyName ?? runner.jockey?.name ?? "",
+      insights: insights.totalRaces > 0 ? insights : null,
+    });
+  }
 
   return (
     <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">

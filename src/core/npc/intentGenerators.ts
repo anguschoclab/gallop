@@ -237,6 +237,7 @@ export function generateNpcIntents(
           activePregnanciesByDam,
           weights?.training,
           distressLevel,
+          aiManager?.difficultyModulator,
         ),
       );
       intents.push(
@@ -303,6 +304,7 @@ export function generateNpcIntents(
           state.auctions ?? [],
           weights?.auction,
           distressLevel,
+          aiManager?.difficultyModulator,
         ),
       );
 
@@ -349,6 +351,7 @@ export function generateNpcIntents(
  * @param activePregnanciesByDam - Set of IDs for horses that are currently pregnant
  * @param trainingWeight - Subsystem weight that modulates training willingness
  * @param distressLevel - Current financial distress level (defaults to healthy)
+ * @param difficultyModulator - Optional difficulty state that adjusts NPC training frequency
  * @returns Array of training intents
  */
 function generateNpcTrainingIntents(
@@ -360,6 +363,7 @@ function generateNpcTrainingIntents(
   activePregnanciesByDam: Set<string>,
   trainingWeight = 1.0,
   distressLevel: DistressLevel = "healthy",
+  difficultyModulator?: DifficultyState,
 ): TrainingIntent[] {
   const intents: TrainingIntent[] = [];
 
@@ -401,7 +405,11 @@ function generateNpcTrainingIntents(
       }
 
       // Use AI to determine if horse should train today
-      if (shouldTrainToday(trainingAI, horse, day, trainingWeight)) {
+      // Difficulty modulator: higher NPC competence increases training frequency
+      const effectiveTrainingWeight = difficultyModulator
+        ? trainingWeight * difficultyModulator.npcCompetenceMultiplier
+        : trainingWeight;
+      if (shouldTrainToday(trainingAI, horse, day, effectiveTrainingWeight)) {
         // Use AI to select training type
         const trainingType = selectTrainingType(trainingAI, horse, day, availableTypes);
 
@@ -1015,6 +1023,7 @@ function generateNpcDiplomaticIntents(
  * @param auctions - Active auction sales
  * @param auctionWeight - Subsystem weight that modulates consignment willingness
  * @param distressLevel - Current financial distress level (defaults to healthy)
+ * @param difficultyModulator - Optional difficulty state that adjusts NPC consignment aggression
  * @returns Array of consignment intents
  */
 function generateNpcAuctionIntents(
@@ -1026,6 +1035,7 @@ function generateNpcAuctionIntents(
   auctions: AuctionSale[],
   auctionWeight = DEFAULT_SUBSYSTEM_WEIGHT,
   distressLevel: DistressLevel = "healthy",
+  difficultyModulator?: DifficultyState,
 ): ConsignmentIntent[] {
   const intents: ConsignmentIntent[] = [];
 
@@ -1058,7 +1068,9 @@ function generateNpcAuctionIntents(
         horse,
         stable,
         day,
-        auctionWeight,
+        difficultyModulator
+          ? auctionWeight * difficultyModulator.npcCompetenceMultiplier
+          : auctionWeight,
         distressLevel,
       );
       if (result.shouldConsign) {
