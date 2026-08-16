@@ -32,6 +32,7 @@ import type {
 import type { TripleCrownProgressImpact } from "../impacts/campaignImpacts";
 import type { LookupMaps } from "./types";
 import { awardTraitXp, checkTraitUnlock, checkTraitAtrophy } from "@/core/jockey/traitProgression";
+import type { JockeyTrait } from "@/core/jockey/types";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -86,13 +87,12 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   race_result: (draft, impact, lookupMaps) => {
-    const { raceId, results, snapshots, paceSnapshots } = impact as RaceResultImpact;
+    const { raceId, results, snapshots } = impact as RaceResultImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     if (race) {
       race.result = results;
       race.resolved = true;
       race.snapshots = snapshots;
-      race.paceSnapshots = paceSnapshots;
     }
   },
 
@@ -171,7 +171,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       if (traitXpAwards) {
         let updated = jockey;
         for (const [traitKey, xp] of Object.entries(traitXpAwards)) {
-          updated = awardTraitXp(updated, traitKey, xp);
+          updated = awardTraitXp(updated, traitKey as JockeyTrait, xp);
         }
         updated = checkTraitUnlock(updated, impact.day);
         updated = checkTraitAtrophy(updated);

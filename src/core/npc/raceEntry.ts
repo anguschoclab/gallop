@@ -15,8 +15,9 @@
 import type { Horse, Race, Stable, Jockey } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
 import { calculateAssignedWeight } from "@/core/race/entryScoring";
-import { MAX_HORSES_PER_STABLE_PER_RACE, BUMP_RATING_MARGIN } from "@/constants";
-import { calculateOptimalTactics, applyAffinityBoost } from "@/core/ai/jockeyStrategyAI";
+import { MAX_HORSES_PER_STABLE_PER_RACE } from "@/constants";
+import { findBumpableEntryIndex } from "@/core/race/entry/bumpResolver";
+import { calculateOptimalTactics } from "@/core/ai/jockeyStrategyAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { shouldEnterHorse } from "./raceEntryHelpers";
 import { isHatedRival } from "@/core/stable/rivalry";
@@ -154,21 +155,8 @@ export function runNpcRaceEntry(
         // horse is meaningfully weaker than this challenger. Player entries
         // are never bumped to preserve the player's planned campaign.
         if (race.entries.length >= race.fieldSize) {
-          const challengerRating = calculateOverallRating(horse);
-          let weakestIdx = -1;
-          let weakestRating = Infinity;
-          for (let i = 0; i < race.entries.length; i++) {
-            const entry = race.entries[i];
-            if (entry.owned) continue; // never bump player
-            const existing = horseMap.get(entry.horseId);
-            if (!existing) continue;
-            const r = calculateOverallRating(existing);
-            if (r < weakestRating) {
-              weakestRating = r;
-              weakestIdx = i;
-            }
-          }
-          if (weakestIdx === -1 || challengerRating <= weakestRating + BUMP_RATING_MARGIN) {
+          const weakestIdx = findBumpableEntryIndex(race.entries, horse, (id) => horseMap.get(id));
+          if (weakestIdx === -1) {
             break; // can't bump anyone meaningfully — stop trying for this stable
           }
           const bumped = race.entries[weakestIdx];
@@ -222,10 +210,12 @@ export function runNpcRaceEntry(
         } else if (aiManager && jockey) {
           const stableState = aiManager.stableStates[stable.id];
           if (stableState?.jockeyStrategyAI) {
-            jockeyInstructions = applyAffinityBoost(
-              calculateOptimalTactics(stableState.jockeyStrategyAI, horse, race, jockey, stable),
+            jockeyInstructions = calculateOptimalTactics(
+              stableState.jockeyStrategyAI,
+              horse,
+              race,
               jockey,
-              horse.id,
+              stable,
             );
           }
         }

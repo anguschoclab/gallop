@@ -26,14 +26,9 @@ import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
 import { createRng, hashStr } from "@/core/common/rng";
 import { getCurrentYear } from "@/core/race/schedule";
 import { computePlayerRaceDays } from "@/core/time/advance";
-import {
-  UPKEEP_PER_HORSE,
-  DAYS_PER_YEAR,
-  DAYS_PER_MONTH,
-  DAYS_PER_WEEK,
-  BUMP_RATING_MARGIN,
-} from "@/constants";
+import { UPKEEP_PER_HORSE, DAYS_PER_YEAR, DAYS_PER_MONTH, DAYS_PER_WEEK } from "@/constants";
 import { calculateOverallRating } from "@/core/horse/stats";
+import { findBumpableEntryIndex } from "@/core/race/entry/bumpResolver";
 import { requireOwned, requireHorse } from "../guards";
 import { getEngineWorker } from "@/game/store";
 import { persistenceEnabled } from "@/game/store/storage";
@@ -190,26 +185,14 @@ export function createCoreSlice(
 
       let bumpEntryHorseId: string | undefined;
       if (race.entries.length >= race.fieldSize) {
-        const playerRating = calculateOverallRating(horse!);
-        let weakestHorseId: string | undefined;
-        let weakestRating = Infinity;
-        for (const entry of race.entries) {
-          if (entry.owned) continue; // never bump player's own entries
-          const entryHorse = s.horses[entry.horseId];
-          if (!entryHorse) continue;
-          const r = calculateOverallRating(entryHorse);
-          if (r < weakestRating) {
-            weakestRating = r;
-            weakestHorseId = entry.horseId;
-          }
-        }
-        if (!weakestHorseId || playerRating <= weakestRating + BUMP_RATING_MARGIN) {
+        const weakestIdx = findBumpableEntryIndex(race.entries, horse!, (id) => s.horses[id]);
+        if (weakestIdx === -1) {
           return {
             ok: false,
             reason: "Race is full — your horse isn't rated high enough to bump an entry.",
           };
         }
-        bumpEntryHorseId = weakestHorseId;
+        bumpEntryHorseId = race.entries[weakestIdx].horseId;
       }
 
       enqueueIntent({

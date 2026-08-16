@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PersonRaceHistoryTab } from "@/components/person/PersonRaceHistoryTab";
 import { ChevronLeft, User, History, Sparkles } from "lucide-react";
 import { formatJockeyTrait } from "@/core/common/traitLabels";
+import type { JockeyTrait } from "@/core/jockey/types";
 import {
   TRAIT_XP_UNLOCK_THRESHOLD,
   TRAIT_XP_MAINTENANCE_THRESHOLD,
@@ -137,14 +138,15 @@ function JockeyPage() {
                   Progression
                 </h3>
                 {Object.entries(jockey.traitProgression.xp).map(([traitKey, xp]) => {
-                  const isUnlocked = jockey.traits.includes(traitKey as any);
-                  const unlockDay = jockey.traitProgression!.unlockedAt[traitKey];
+                  const typedTraitKey = traitKey as JockeyTrait;
+                  const isUnlocked = jockey.traits.includes(typedTraitKey);
+                  const unlockDay = jockey.traitProgression!.unlockedAt[typedTraitKey];
                   const pct = Math.min(100, (xp / TRAIT_XP_UNLOCK_THRESHOLD) * 100);
                   return (
                     <div key={traitKey} className="space-y-1">
                       <div className="flex items-center justify-between text-[10px] font-mono">
                         <span className={isUnlocked ? "text-gold/80" : "text-cream/50"}>
-                          {formatJockeyTrait(traitKey as any)}
+                          {formatJockeyTrait(typedTraitKey)}
                         </span>
                         <span className="text-cream/40">
                           {xp} / {TRAIT_XP_UNLOCK_THRESHOLD} XP

@@ -8,9 +8,9 @@
  * Related files: proceduralNaming.ts (provides name generation)
  */
 
-export type JockeyTier = "budget" | "mid" | "elite";
-
 export type JockeyArchetype = "front_runner" | "closer" | "clinical" | "finisher" | "versatile";
+
+export type JockeyTier = "elite" | "mid" | "budget";
 
 export type JockeyStats = {
   pacing: number;
@@ -54,7 +54,7 @@ export type Jockey = {
   name: string;
   age: number;
   archetype: JockeyArchetype;
-  tier: JockeyTier;
+  tier?: JockeyTier;
   stats: JockeyStats;
   potential: number;
   traits: JockeyTrait[];
@@ -80,7 +80,7 @@ export type Jockey = {
 
   // Trait progression system
   traitProgression?: {
-    xp: Record<string, number>; // traitKey → XP points
-    unlockedAt: Record<string, number>; // traitKey → game day unlocked
+    xp: Partial<Record<JockeyTrait, number>>; // traitKey → XP points
+    unlockedAt: Partial<Record<JockeyTrait, number>>; // traitKey → game day unlocked
   };
 };

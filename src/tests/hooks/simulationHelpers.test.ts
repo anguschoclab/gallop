@@ -123,7 +123,7 @@ describe("updateSplitCrossings", () => {
 
 describe("recordFinish", () => {
   it("appends entry with position 1 when finishOrder is empty", () => {
-    const r = makeRunner({ horseId: "h1", finishTime: 90.5, gate: 1 });
+    const r = makeRunner({ horseId: "h1", finishTime: 90.5 });
     const finishOrder: { horseId: string; position: number; time: number; gate: number }[] = [];
     recordFinish(r, finishOrder);
     expect(finishOrder).toHaveLength(1);
@@ -139,9 +139,9 @@ describe("recordFinish", () => {
 
   it("assigns sequential positions for multiple finishers", () => {
     const finishOrder: { horseId: string; position: number; time: number; gate: number }[] = [];
-    recordFinish(makeRunner({ horseId: "h1", finishTime: 90.0, gate: 1 }), finishOrder);
-    recordFinish(makeRunner({ horseId: "h2", finishTime: 90.3, gate: 2 }), finishOrder);
-    recordFinish(makeRunner({ horseId: "h3", finishTime: 90.7, gate: 3 }), finishOrder);
+    recordFinish(makeRunner({ horseId: "h1", finishTime: 90.0 }), finishOrder);
+    recordFinish(makeRunner({ horseId: "h2", finishTime: 90.3 }), finishOrder);
+    recordFinish(makeRunner({ horseId: "h3", finishTime: 90.7 }), finishOrder);
     expect(finishOrder.map((f) => f.position)).toEqual([1, 2, 3]);
   });
 });

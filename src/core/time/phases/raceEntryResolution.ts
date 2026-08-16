@@ -11,18 +11,15 @@
 // Race Entry Resolution Phase
 // Converts RaceEntryIntents into impacts (race entry, cash changes)
 
-import { PHASE_ORDER_RACE_ENTRY_RESOLUTION, BUMP_RATING_MARGIN } from "@/constants";
+import { PHASE_ORDER_RACE_ENTRY_RESOLUTION } from "@/constants";
+import { findBumpableEntryIndex } from "@/core/race/entry/bumpResolver";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, RaceEntryIntent } from "@/core/resolver/intents";
 import type { AnyImpact, RaceEntryImpact, CashImpact } from "@/core/resolver/impacts/index";
 import { createTransportRequest } from "@/core/transportation";
 import { createTransaction } from "@/core/transactions";
 import { generateUUID } from "@/core/uuid";
-import {
-  selectBestJockey,
-  createJockeyAIState,
-  calculateJockeySuitability,
-} from "@/core/ai/jockeyAI";
+import { selectBestJockey, createJockeyAIState } from "@/core/ai/jockeyAI";
 import { selectBestFreeAgentJockey } from "@/core/jockey/selectFreeAgent";
 import { getOrCreateStableAIState, type NpcAIManager } from "@/core/ai/npcCycleAI";
 import { calculateOverallRating } from "@/core/horse/stats";
@@ -99,21 +96,8 @@ export const raceEntryResolutionPhase: PipelinePhase = {
           bumpEntryHorseId = intent.bumpEntryHorseId;
         } else if (intent.source === "npc") {
           // CPU bump: find weakest non-player NPC entry
-          const challengerRating = calculateOverallRating(horse);
-          let weakestIdx = -1;
-          let weakestRating = Infinity;
-          for (let i = 0; i < race.entries.length; i++) {
-            const entry = race.entries[i];
-            if (entry.owned) continue; // never bump player
-            const existing = horseMap.get(entry.horseId);
-            if (!existing) continue;
-            const r = calculateOverallRating(existing);
-            if (r < weakestRating) {
-              weakestRating = r;
-              weakestIdx = i;
-            }
-          }
-          if (weakestIdx === -1 || challengerRating <= weakestRating + BUMP_RATING_MARGIN) {
+          const weakestIdx = findBumpableEntryIndex(race.entries, horse, (id) => horseMap.get(id));
+          if (weakestIdx === -1) {
             continue; // can't bump anyone meaningfully
           }
           bumpEntryHorseId = race.entries[weakestIdx].horseId;
@@ -138,32 +122,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
           // 1. Check for retainer
           const retainer = jockeysByStableId.get(stable.id);
           if (retainer) {
-            // Compare retainer suitability vs best free agent
-            let retainerScore = 0;
-            let bestFreeAgentScore = 0;
-            let bestFreeAgent: typeof retainer | null = null;
-            if (npcAIManager) {
-              const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
-              const jockeyAI =
-                stableAI.jockeyAI || (stableAI.jockeyAI = createJockeyAIState(stable));
-              retainerScore = calculateJockeySuitability(jockeyAI, retainer, horse, stable, race);
-              if (freeAgents.length > 0) {
-                for (const fa of freeAgents) {
-                  const score = calculateJockeySuitability(jockeyAI, fa, horse, stable, race);
-                  if (score > bestFreeAgentScore) {
-                    bestFreeAgentScore = score;
-                    bestFreeAgent = fa;
-                  }
-                }
-              }
-              npcAIManager.stableStates[stable.id] = stableAI;
-              npcAIManagerUpdated = true;
-            }
-            if (bestFreeAgent && bestFreeAgentScore > retainerScore * 1.2) {
-              jockeyId = bestFreeAgent.id;
-            } else {
-              jockeyId = retainer.id;
-            }
+            jockeyId = retainer.id;
           } else if (freeAgents.length > 0) {
             // 2. Use AI to select best free agent
             if (npcAIManager) {

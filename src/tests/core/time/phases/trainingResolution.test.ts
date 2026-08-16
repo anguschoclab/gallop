@@ -6,7 +6,7 @@ import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import { createDefaultGameState } from "@/game/store/state";
 import type { TrainingIntent } from "@/core/resolver/intents";
-import { isEnergyImpact } from "@/core/resolver/impacts/horseImpacts";
+import type { EnergyImpact } from "@/core/resolver/impacts/horseImpacts";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import { AFFINITY_XP_PER_WORKOUT } from "@/constants";
 
@@ -99,9 +99,9 @@ describe("trainingResolutionPhase", () => {
     const context = createTestContext(state, [intent]);
     const result = trainingResolutionPhase.execute(context);
 
-    const energyImpact = result.impacts.find((i) => i.type === "energy_change");
+    const energyImpact = result.impacts.find((i): i is EnergyImpact => i.type === "energy_change");
     expect(energyImpact).toBeDefined();
-    if (energyImpact && isEnergyImpact(energyImpact)) {
+    if (energyImpact) {
       expect(energyImpact.delta).toBeLessThan(0);
     }
   });
@@ -128,9 +128,9 @@ describe("trainingResolutionPhase", () => {
     const context = createTestContext(state, [intent]);
     const result = trainingResolutionPhase.execute(context);
 
-    const energyImpact = result.impacts.find((i) => i.type === "energy_change");
+    const energyImpact = result.impacts.find((i): i is EnergyImpact => i.type === "energy_change");
     expect(energyImpact).toBeDefined();
-    if (energyImpact && isEnergyImpact(energyImpact)) {
+    if (energyImpact) {
       expect(energyImpact.delta).toBeGreaterThan(0);
     }
   });
