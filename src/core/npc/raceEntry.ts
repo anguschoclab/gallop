@@ -17,7 +17,7 @@ import type { Rng } from "@/core/common/rng";
 import { calculateAssignedWeight } from "@/core/race/entryScoring";
 import { MAX_HORSES_PER_STABLE_PER_RACE } from "@/constants";
 import { findBumpableEntryIndex } from "@/core/race/entry/bumpResolver";
-import { calculateOptimalTactics } from "@/core/ai/jockeyStrategyAI";
+import { calculateOptimalTactics, applyAffinityBoost } from "@/core/ai/jockeyStrategyAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { shouldEnterHorse } from "./raceEntryHelpers";
 import { isHatedRival } from "@/core/stable/rivalry";
@@ -210,12 +210,10 @@ export function runNpcRaceEntry(
         } else if (aiManager && jockey) {
           const stableState = aiManager.stableStates[stable.id];
           if (stableState?.jockeyStrategyAI) {
-            jockeyInstructions = calculateOptimalTactics(
-              stableState.jockeyStrategyAI,
-              horse,
-              race,
+            jockeyInstructions = applyAffinityBoost(
+              calculateOptimalTactics(stableState.jockeyStrategyAI, horse, race, jockey, stable),
               jockey,
-              stable,
+              horse.id,
             );
           }
         }
