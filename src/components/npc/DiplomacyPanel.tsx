@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import React from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { cn } from "@/lib/cn";
-import type { Cartel } from "@/core/ai/npcCycleAI";
+import type { Cartel, DiplomaticEvent } from "@/core/ai/npcCycleAI";
 
 interface DiplomacyPanelProps {
   stableId: string;
@@ -71,6 +71,9 @@ export function DiplomacyPanel({ stableId }: DiplomacyPanelProps) {
                       {trustPct}%
                     </span>
                   </div>
+                  {rel.history && rel.history.length > 0 && (
+                    <DiplomacyTimeline events={rel.history.slice(-3)} />
+                  )}
                 </div>
               );
             })}
@@ -132,5 +135,34 @@ function CartelSection({
         ))}
       </CardContent>
     </Card>
+  );
+}
+
+const EVENT_COLORS: Record<DiplomaticEvent["type"], string> = {
+  alliance_formed: "text-green-400",
+  alliance_broken: "text-red-400",
+  betrayal: "text-red-500",
+  cooperation: "text-blue-400",
+  competition: "text-orange-400",
+};
+
+function DiplomacyTimeline({ events }: { events: DiplomaticEvent[] }) {
+  return (
+    <div className="space-y-1 pt-1 border-t border-white/5">
+      <div className="text-[8px] font-black uppercase tracking-widest text-cream/30">
+        Recent Events
+      </div>
+      {events.map((event, i) => (
+        <div key={i} className="flex items-start gap-1.5 text-[10px]">
+          <span className="font-mono text-cream/30 tabular-nums shrink-0">D{event.day}</span>
+          <span
+            className={cn("font-mono uppercase tracking-wider shrink-0", EVENT_COLORS[event.type])}
+          >
+            {event.type.replace(/_/g, " ")}
+          </span>
+          <span className="text-cream/40 truncate">{event.description}</span>
+        </div>
+      ))}
+    </div>
   );
 }

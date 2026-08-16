@@ -1,8 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Brain, TrendingUp, Target, Lightbulb, Gauge } from "lucide-react";
+import { Brain, TrendingUp, Target, Lightbulb, Gauge, BookOpen } from "lucide-react";
 import type { StableAIState } from "@/core/ai/npcCycleAI";
 import { formatCurrency } from "@/core/common/formatting";
+import { getStrategyInsights } from "@/core/ai/jockeyStrategyRecording";
+import { getSuccessRate } from "@/core/ai/learningModule";
 
 interface AIPersonalityCardProps {
   stableAI: StableAIState;
@@ -74,6 +76,8 @@ export function AIPersonalityCard({ stableAI }: AIPersonalityCardProps) {
         </div>
 
         {stableAI.budgetAllocation && <BudgetAllocationView budget={stableAI.budgetAllocation} />}
+
+        {stableAI.jockeyStrategyAI && <LearningInsightsView stableAI={stableAI} />}
       </CardContent>
     </Card>
   );
@@ -130,6 +134,74 @@ function BudgetAllocationView({
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function LearningInsightsView({ stableAI }: { stableAI: StableAIState }) {
+  const jockeyAI = stableAI.jockeyStrategyAI;
+  if (!jockeyAI) return null;
+
+  const insights = getStrategyInsights(jockeyAI, stableAI.stableId);
+  const overallSuccessRate = getSuccessRate(stableAI.learningState, "race_strategy", "all");
+
+  const styleLabels: Record<string, string> = {
+    E: "Front",
+    EP: "Press",
+    P: "Stalk",
+    S: "Close",
+  };
+
+  return (
+    <div className="space-y-2 pt-2 border-t border-white/5">
+      <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-cream/30">
+        <BookOpen className="h-3 w-3 text-cyan-400" /> Learning Insights
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <StatRow
+          icon={<TrendingUp className="h-3 w-3 text-green-400" />}
+          label="Total Races"
+          value={String(insights.totalRaces)}
+        />
+        <StatRow
+          icon={<Target className="h-3 w-3 text-orange-400" />}
+          label="Avg Position"
+          value={insights.avgPosition.toFixed(1)}
+        />
+        <StatRow
+          icon={<Gauge className="h-3 w-3 text-blue-400" />}
+          label="Avg Aggression"
+          value={`${Math.round(insights.avgAggressiveness * 100)}%`}
+        />
+        <StatRow
+          icon={<Brain className="h-3 w-3 text-purple-400" />}
+          label="Success Rate"
+          value={`${Math.round(overallSuccessRate * 100)}%`}
+        />
+      </div>
+      {insights.totalRaces > 0 && (
+        <div className="space-y-1">
+          <div className="text-[9px] font-mono uppercase tracking-widest text-cream/30">
+            Style Usage
+          </div>
+          <div className="flex gap-2">
+            {Object.entries(insights.styleUsage).map(([style, count]) => (
+              <div
+                key={style}
+                className="flex items-center gap-1 text-[10px] font-mono text-cream/50"
+              >
+                <Badge
+                  variant="outline"
+                  className="px-1.5 py-0 border-white/10 text-cream/60 rounded-none font-mono text-[8px] uppercase"
+                >
+                  {styleLabels[style] ?? style}
+                </Badge>
+                <span className="tabular-nums">{count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

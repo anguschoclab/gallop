@@ -100,6 +100,51 @@ describe("AIPersonalityCard", () => {
     render(<AIPersonalityCard stableAI={stableAI} />);
     expect(screen.queryByText(/budget allocation/i)).not.toBeInTheDocument();
   });
+
+  it("renders learning insights when jockeyStrategyAI is present", () => {
+    const stableAI = createMockStableAI({
+      jockeyStrategyAI: {
+        personalityState: {
+          personality: "aggressive",
+          learningRate: 0.6,
+          memoryDepth: 50,
+          adaptationSpeed: 0.7,
+          strategicHorizon: 0.8,
+          competitiveAwareness: 0.9,
+          conservatism: 0.2,
+          innovation: 0.8,
+          learningState: { outcomes: [], successRates: {}, patterns: {}, lastUpdateDay: 100 },
+          currentStrategy: "aggressive_expansion",
+          strategyConfidence: 0.75,
+          lastStrategyChangeDay: 80,
+        },
+        learningState: { outcomes: [], successRates: {}, patterns: {}, lastUpdateDay: 100 },
+        strategyHistory: [
+          {
+            raceId: "r1",
+            horseId: "h1",
+            jockeyId: "j1",
+            stableId: "s1",
+            day: 90,
+            runningStyle: "E",
+            aggressiveness: 0.7,
+            position: 2,
+          },
+        ],
+      },
+    });
+    render(<AIPersonalityCard stableAI={stableAI} />);
+    expect(screen.getByText(/learning insights/i)).toBeInTheDocument();
+    expect(screen.getByText(/total races/i)).toBeInTheDocument();
+    expect(screen.getByText(/avg position/i)).toBeInTheDocument();
+    expect(screen.getByText(/success rate/i)).toBeInTheDocument();
+  });
+
+  it("does not render learning insights when jockeyStrategyAI is absent", () => {
+    const stableAI = createMockStableAI();
+    render(<AIPersonalityCard stableAI={stableAI} />);
+    expect(screen.queryByText(/learning insights/i)).not.toBeInTheDocument();
+  });
 });
 
 describe("StrategicDirectivesPanel", () => {

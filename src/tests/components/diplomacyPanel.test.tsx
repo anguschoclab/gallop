@@ -9,39 +9,41 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import { DiplomacyPanel } from "@/components/npc/DiplomacyPanel";
 
-vi.mock("@/game/store", () => ({
-  useGame: (selector: (s: any) => any) =>
-    selector({
-      npcAIManager: {
-        stableStates: {
-          "npc-1": {
-            npcRelationships: {
-              "npc-2": {
-                trust: 0.6,
-                allianceType: "racing_coalition",
-                history: [],
-              },
-              "npc-3": {
-                trust: -0.3,
-                allianceType: null,
-                history: [],
-              },
-            },
+const mockStateWithHistory = {
+  npcAIManager: {
+    stableStates: {
+      "npc-1": {
+        npcRelationships: {
+          "npc-2": {
+            trust: 0.6,
+            allianceType: "racing_coalition",
+            history: [
+              { day: 50, type: "alliance_formed", description: "Pact signed" },
+              { day: 80, type: "cooperation", description: "Shared breeding info" },
+              { day: 95, type: "competition", description: "Bidding war at auction" },
+            ],
+          },
+          "npc-3": {
+            trust: -0.3,
+            allianceType: null,
+            history: [],
           },
         },
-        activeCartels: [],
       },
-      npcStables: [
-        { id: "npc-2", name: "Rival Stable A" },
-        { id: "npc-3", name: "Rival Stable B" },
-      ],
-    }),
-  useGameWithShallow: (selector: (s: any) => any) =>
-    selector({
-      npcAIManager: {
-        activeCartels: [],
-      },
-    }),
+    },
+    activeCartels: [],
+  },
+  npcStables: [
+    { id: "npc-2", name: "Rival Stable A" },
+    { id: "npc-3", name: "Rival Stable B" },
+  ],
+};
+
+const mockState = mockStateWithHistory;
+
+vi.mock("@/game/store", () => ({
+  useGame: (selector: (s: any) => any) => selector(mockState),
+  useGameWithShallow: (selector: (s: any) => any) => selector(mockState),
 }));
 
 describe("DiplomacyPanel", () => {
@@ -74,5 +76,13 @@ describe("DiplomacyPanel", () => {
     render(<DiplomacyPanel stableId="npc-1" />);
     // Trust 0.6 = 60%
     expect(screen.getByText(/60/)).toBeDefined();
+  });
+
+  it("renders diplomacy timeline when history events exist", () => {
+    render(<DiplomacyPanel stableId="npc-1" />);
+    expect(screen.getByText(/recent events/i)).toBeDefined();
+    expect(screen.getByText(/alliance formed/i)).toBeDefined();
+    expect(screen.getByText(/cooperation/i)).toBeDefined();
+    expect(screen.getByText("Pact signed")).toBeDefined();
   });
 });
