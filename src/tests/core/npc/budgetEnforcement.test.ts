@@ -3,47 +3,42 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const PROJECT_ROOT = join(__dirname, "..", "..", "..", "..");
-const intentGenPath = join(PROJECT_ROOT, "src", "core", "npc", "intentGenerators.ts");
-const intentGenText = readFileSync(intentGenPath, "utf-8");
+const trainingPath = join(PROJECT_ROOT, "src", "core", "npc", "intents", "trainingIntents.ts");
+const auctionPath = join(PROJECT_ROOT, "src", "core", "npc", "intents", "facilityIntents.ts");
+const breedingPath = join(PROJECT_ROOT, "src", "core", "npc", "intents", "breedingIntents.ts");
+const facilityPath = join(PROJECT_ROOT, "src", "core", "npc", "intents", "facilityIntents.ts");
+
+const trainingText = readFileSync(trainingPath, "utf-8");
+const auctionText = readFileSync(auctionPath, "utf-8");
+const breedingText = readFileSync(breedingPath, "utf-8");
+const facilityText = readFileSync(facilityPath, "utf-8");
 
 describe("Budget Allocation Enforcement (Test-First)", () => {
   describe("training budget", () => {
     it("generateNpcTrainingIntents reads budgetAllocation.training", () => {
-      expect(intentGenText).toContain("budgetAllocation");
-      // Check that training budget is referenced in the training intent function
-      const trainingSection = intentGenText.substring(
-        intentGenText.indexOf("function generateNpcTrainingIntents"),
-        intentGenText.indexOf("function generateNpcRaceEntryIntents"),
-      );
-      expect(trainingSection).toContain("budgetAllocation");
-      expect(trainingSection).toContain("training");
+      expect(trainingText).toContain("budgetAllocation");
+      expect(trainingText).toContain("training");
     });
   });
 
   describe("auction budget", () => {
     it("generateNpcAuctionIntents reads budgetAllocation.auctions", () => {
-      const auctionSection = intentGenText.substring(
-        intentGenText.indexOf("function generateNpcAuctionIntents"),
-        intentGenText.indexOf("function generateNpcStudFeeIntents"),
-      );
-      expect(auctionSection).toContain("budgetAllocation");
-      expect(auctionSection).toContain("auctions");
+      expect(auctionText).toContain("budgetAllocation");
+      expect(auctionText).toContain("auctions");
     });
   });
 
   describe("breeding budget", () => {
-    it("breeding budget is read somewhere in intentGenerators", () => {
-      expect(intentGenText).toContain("budgetAllocation");
-      // Breeding budget should be referenced somewhere
-      expect(intentGenText).toMatch(/budgetAllocation.*breeding|breeding.*budgetAllocation/);
+    it("breeding budget is read somewhere in intent modules", () => {
+      expect(breedingText).toContain("budgetAllocation");
+      expect(breedingText).toMatch(/budgetAllocation.*breeding|breeding.*budgetAllocation/);
     });
   });
 
   describe("facilities budget", () => {
-    it("facilities budget is read somewhere in intentGenerators", () => {
-      expect(intentGenText).toContain("budgetAllocation");
-      // Facilities budget should be referenced somewhere
-      expect(intentGenText).toMatch(/budgetAllocation.*facilities|facilities.*budgetAllocation/);
+    it("facilities budget is read somewhere in intent modules", () => {
+      expect(facilityText).toContain("budgetAllocation");
+      expect(facilityText).toMatch(/budgetAllocation.*facilities|facilities.*budgetAllocation/);
     });
   });
 });

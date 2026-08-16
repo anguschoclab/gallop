@@ -12,6 +12,7 @@ import {
   calculateRailSavingLane,
   calculateCoverModifier,
 } from "@/core/race/engine/draftingAI";
+import { calculateTargetLane } from "@/core/race/engine/lateralMovement";
 
 function createMockRunner(overrides: Partial<Runner> = {}): Runner {
   return {
@@ -110,6 +111,54 @@ describe("draftingAI", () => {
       const draftId = getEnhancedDraftingHorseId(runner, sortedField);
       expect(draftId).toBe("h2");
     });
+
+    it("closer (S) prefers drafting behind front-runner (E) over another closer ahead", () => {
+      const runner = createMockRunner({
+        horseId: "h1",
+        position: 100,
+        lane: 1.2,
+        runningStyle: "S",
+      });
+      const otherCloser = createMockRunner({
+        horseId: "h2",
+        position: 102.5,
+        lane: 1.2,
+        runningStyle: "S",
+      });
+      const frontRunner = createMockRunner({
+        horseId: "h3",
+        position: 101.5,
+        lane: 1.2,
+        runningStyle: "E",
+      });
+      const sortedField = [otherCloser, frontRunner, runner];
+      const draftId = getEnhancedDraftingHorseId(runner, sortedField);
+      expect(draftId).toBe("h3");
+    });
+
+    it("stalker (P) prefers drafting behind early-presser (EP) over another stalker ahead", () => {
+      const runner = createMockRunner({
+        horseId: "h1",
+        position: 100,
+        lane: 1.2,
+        runningStyle: "P",
+      });
+      const otherStalker = createMockRunner({
+        horseId: "h2",
+        position: 102.5,
+        lane: 1.2,
+        runningStyle: "P",
+      });
+      const earlyPresser = createMockRunner({
+        horseId: "h3",
+        position: 101.5,
+        lane: 1.2,
+        runningStyle: "EP",
+      });
+      const sortedField = [otherStalker, earlyPresser, runner];
+      const draftId = getEnhancedDraftingHorseId(runner, sortedField);
+      expect(draftId).toBe("h3");
+    });
   });
 
   describe("calculateRailSavingLane", () => {
@@ -154,12 +203,12 @@ describe("draftingAI", () => {
       expect(mod).toBeCloseTo(0.99, 5);
     });
 
-    it("returns 1.01 (improve) when no horses ahead within 5m", () => {
+    it("returns 1.0 (neutral) when no horses ahead within 5m", () => {
       const runner = createMockRunner({ horseId: "h1", position: 100, lane: 1.2 });
       const farAhead = createMockRunner({ horseId: "h2", position: 110, lane: 1.2 });
       const sortedField = [farAhead, runner];
       const mod = calculateCoverModifier(runner, sortedField);
-      expect(mod).toBeCloseTo(1.01, 5);
+      expect(mod).toBeCloseTo(1.0, 5);
     });
 
     it("returns 1.0 when exactly 1 horse ahead within 5m (neutral)", () => {
@@ -176,7 +225,7 @@ describe("draftingAI", () => {
       const ahead2 = createMockRunner({ horseId: "h3", position: 104, lane: 2.4 });
       const sortedField = [ahead1, ahead2, runner];
       const mod = calculateCoverModifier(runner, sortedField);
-      expect(mod).toBeCloseTo(1.01, 5);
+      expect(mod).toBeCloseTo(1.0, 5);
     });
 
     it("ignores finished runners", () => {
@@ -191,6 +240,49 @@ describe("draftingAI", () => {
       const sortedField = [ahead1, ahead2, runner];
       const mod = calculateCoverModifier(runner, sortedField);
       expect(mod).toBeCloseTo(1.0, 5);
+    });
+  });
+
+  describe("calculateTargetLane with railPreference", () => {
+    it("railPreference=0 biases toward rail (lane 0) in early race", () => {
+      const runner = createMockRunner({
+        horseId: "h1",
+        lane: 2.4,
+        railPreference: 0,
+        runningStyle: "S",
+      });
+      const targetLane = calculateTargetLane(runner, 0.2);
+      expect(targetLane).toBe(0);
+    });
+
+    it("railPreference=0.5 does not bias toward rail in early race", () => {
+      const runner = createMockRunner({
+        horseId: "h1",
+        lane: 2.4,
+        railPreference: 0.5,
+        runningStyle: "S",
+        jockeyInstructions: {
+          ridingStyle: "closer",
+          earlyPosition: "midpack",
+          moveTiming: "late",
+          aggressiveness: 50,
+        } as any,
+      });
+      const targetLane = calculateTargetLane(runner, 0.2);
+      // Without rail preference, closer should get outside lane, not rail
+      expect(targetLane).not.toBe(0);
+    });
+
+    it("swings wide in stretch (progress > 0.7) for railPreference=0 runners", () => {
+      const runner = createMockRunner({
+        horseId: "h1",
+        lane: 0,
+        railPreference: 0,
+        runningStyle: "S",
+      });
+      const targetLane = calculateTargetLane(runner, 0.8);
+      // In stretch, railPreference=0 runners should swing wide for clear run
+      expect(targetLane).toBeGreaterThan(0);
     });
   });
 });

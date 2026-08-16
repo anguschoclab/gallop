@@ -31,6 +31,15 @@ export function calculateTargetLane(
   if (r.jockeyInstructions?.earlyPosition === "lead" && progress < LEAD_PROGRESS_THRESHOLD)
     targetLane = 0;
 
+  // Rail preference: bias toward rail early, swing wide in stretch
+  if (r.railPreference === 0) {
+    if (progress < 0.5) {
+      targetLane = 0;
+    } else if (progress > 0.7) {
+      targetLane = Math.max(1, Math.floor(r.lane / LANE_WIDTH) + 1);
+    }
+  }
+
   if (sortedField && pace) {
     const laneIdx = Math.floor(r.lane / LANE_WIDTH);
     if (

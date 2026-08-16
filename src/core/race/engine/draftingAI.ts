@@ -73,6 +73,10 @@ export function calculateStyleAwareDraftMultiplier(r: Runner, progress: number):
 export function getEnhancedDraftingHorseId(r: Runner, sortedField: Runner[]): string | null {
   let bestId: string | null = null;
   let bestLaneGap = Infinity;
+  let bestIsPreferredStyle = false;
+
+  // Closers (S) and stalkers (P) prefer drafting behind front-runners (E) and early-pressers (EP)
+  const runnerPrefersFrontRunners = r.runningStyle === "S" || r.runningStyle === "P";
 
   for (const other of sortedField) {
     if (other.horseId === r.horseId) continue;
@@ -82,8 +86,15 @@ export function getEnhancedDraftingHorseId(r: Runner, sortedField: Runner[]): st
 
     const laneGap = Math.abs(other.lane - r.lane);
     if (laneGap < 0.8) {
-      // Prefer the horse with the smallest lane gap (closest to same lane)
-      if (laneGap < bestLaneGap) {
+      const isPreferredStyle =
+        runnerPrefersFrontRunners && (other.runningStyle === "E" || other.runningStyle === "EP");
+
+      // Prefer preferred-style horses even if lane gap is slightly larger
+      if (isPreferredStyle && !bestIsPreferredStyle) {
+        bestIsPreferredStyle = true;
+        bestLaneGap = laneGap;
+        bestId = other.horseId;
+      } else if (isPreferredStyle === bestIsPreferredStyle && laneGap < bestLaneGap) {
         bestLaneGap = laneGap;
         bestId = other.horseId;
       }
@@ -120,13 +131,12 @@ export function calculateRailSavingLane(r: Runner, progress: number): number {
  * Calculate cover modifier based on horses ahead within 5m in the same lane.
  *
  * When ≥2 horses are clustered ahead within 5m in the same lane, the runner
- * has cover and should conserve energy (velocityMod *= 0.99). When cover
- * drops to 0, the runner should improve position (velocityMod *= 1.01).
- * Exactly 1 horse ahead is neutral (1.0).
+ * has cover and should conserve energy (velocityMod *= 0.99). Otherwise,
+ * the modifier is neutral (1.0).
  *
  * @param r - The runner to calculate cover for
  * @param sortedField - Runners sorted by position (leading first)
- * @returns Velocity modifier (0.99 with cover, 1.01 without, 1.0 neutral)
+ * @returns Velocity modifier (0.99 with cover, 1.0 otherwise)
  */
 export function calculateCoverModifier(r: Runner, sortedField: Runner[]): number {
   let coverCount = 0;
@@ -146,6 +156,5 @@ export function calculateCoverModifier(r: Runner, sortedField: Runner[]): number
   }
 
   if (coverCount >= 2) return 0.99;
-  if (coverCount === 0) return 1.01;
   return 1.0;
 }

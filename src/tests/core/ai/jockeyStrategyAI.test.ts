@@ -1117,7 +1117,6 @@ describe("recordRaceStrategy enhanced context keys", () => {
     const updatedState = recordRaceStrategy(state, horse, race, jockey, stable, "E", 0.7, 1, 100);
 
     expect(updatedState.learningState.outcomes).toHaveLength(1);
-    // The contextKey in the learning outcome should include trackCondition
     const outcome = updatedState.learningState.outcomes[0];
     expect(outcome.contextKey).toContain("heavy");
   });
@@ -1126,27 +1125,109 @@ describe("recordRaceStrategy enhanced context keys", () => {
     const state = createJockeyStrategyAIState(createMockStable());
     const jockey = createMockJockey();
     const horse = createMockHorse();
-    const race = createMockRace({ weather: "rain" as any });
+    const race = createMockRace({ weather: "rainy" });
     const stable = createMockStable();
 
     const updatedState = recordRaceStrategy(state, horse, race, jockey, stable, "P", 0.5, 2, 100);
 
     const outcome = updatedState.learningState.outcomes[0];
-    expect(outcome.contextKey).toContain("rain");
+    expect(outcome.contextKey).toContain("rainy");
   });
 
   it("includes both trackCondition and weather in context key", () => {
     const state = createJockeyStrategyAIState(createMockStable());
     const jockey = createMockJockey();
     const horse = createMockHorse();
-    const race = createMockRace({ trackCondition: "soft", weather: "overcast" as any });
+    const race = createMockRace({ trackCondition: "soft", weather: "cloudy" });
     const stable = createMockStable();
 
     const updatedState = recordRaceStrategy(state, horse, race, jockey, stable, "S", 0.6, 3, 100);
 
     const outcome = updatedState.learningState.outcomes[0];
     expect(outcome.contextKey).toContain("soft");
-    expect(outcome.contextKey).toContain("overcast");
+    expect(outcome.contextKey).toContain("cloudy");
+  });
+
+  it("uses distanceRange instead of raw distance in context key", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const jockey = createMockJockey();
+    const horse = createMockHorse();
+    const race = createMockRace({ distance: 1200 });
+    const stable = createMockStable();
+
+    const updatedState = recordRaceStrategy(state, horse, race, jockey, stable, "E", 0.7, 1, 100);
+
+    const outcome = updatedState.learningState.outcomes[0];
+    expect(outcome.contextKey).toContain("short");
+    expect(outcome.contextKey).not.toContain("1200");
+  });
+
+  it("uses mid distanceRange for medium distances", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const jockey = createMockJockey();
+    const horse = createMockHorse();
+    const race = createMockRace({ distance: 1800 });
+    const stable = createMockStable();
+
+    const updatedState = recordRaceStrategy(state, horse, race, jockey, stable, "P", 0.5, 2, 100);
+
+    const outcome = updatedState.learningState.outcomes[0];
+    expect(outcome.contextKey).toContain("mid");
+  });
+
+  it("uses long distanceRange for long distances", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const jockey = createMockJockey();
+    const horse = createMockHorse();
+    const race = createMockRace({ distance: 2400 });
+    const stable = createMockStable();
+
+    const updatedState = recordRaceStrategy(state, horse, race, jockey, stable, "S", 0.6, 3, 100);
+
+    const outcome = updatedState.learningState.outcomes[0];
+    expect(outcome.contextKey).toContain("long");
+  });
+
+  it("uses fieldSize bucket in context key", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const jockey = createMockJockey();
+    const horse = createMockHorse();
+    const race = createMockRace({ fieldSize: 14 });
+    const stable = createMockStable();
+
+    const updatedState = recordRaceStrategy(state, horse, race, jockey, stable, "E", 0.7, 1, 100);
+
+    const outcome = updatedState.learningState.outcomes[0];
+    expect(outcome.contextKey).toContain("large");
+  });
+
+  it("uses surface in context key", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const jockey = createMockJockey();
+    const horse = createMockHorse();
+    const race = createMockRace({ surface: "Turf" });
+    const stable = createMockStable();
+
+    const updatedState = recordRaceStrategy(state, horse, race, jockey, stable, "E", 0.7, 1, 100);
+
+    const outcome = updatedState.learningState.outcomes[0];
+    expect(outcome.contextKey).toContain("Turf");
+  });
+
+  it("uses graded surface when surface not set directly", () => {
+    const state = createJockeyStrategyAIState(createMockStable());
+    const jockey = createMockJockey();
+    const horse = createMockHorse();
+    const race = createMockRace({
+      surface: undefined,
+      graded: { key: "test", grade: "G1", track: "T", surface: "Turf" },
+    });
+    const stable = createMockStable();
+
+    const updatedState = recordRaceStrategy(state, horse, race, jockey, stable, "E", 0.7, 1, 100);
+
+    const outcome = updatedState.learningState.outcomes[0];
+    expect(outcome.contextKey).toContain("Turf");
   });
 
   it("works without trackCondition or weather (backward compatible)", () => {
@@ -1159,10 +1240,66 @@ describe("recordRaceStrategy enhanced context keys", () => {
     const updatedState = recordRaceStrategy(state, horse, race, jockey, stable, "E", 0.7, 1, 100);
 
     expect(updatedState.learningState.outcomes).toHaveLength(1);
-    // Should still have the base context key components
     const outcome = updatedState.learningState.outcomes[0];
-    expect(outcome.contextKey).toContain("3"); // horse.age
-    expect(outcome.contextKey).toContain("1600"); // race.distance
+    expect(outcome.contextKey).toContain("mid"); // 1600m = mid
+    expect(outcome.contextKey).toContain("small"); // fieldSize 8 = small
+    expect(outcome.contextKey).toContain("Dirt"); // default surface
     expect(outcome.contextKey).toContain("E"); // runningStyle
+  });
+});
+
+// ── Phase 4 item 4: calculateOptimalRunningStyle with learning override ──
+
+describe("calculateOptimalRunningStyle learning override", () => {
+  it("selects non-genetic style when success rate > 0.65 with >= 5 data points", () => {
+    const stable = createMockStable();
+    let state = createJockeyStrategyAIState(stable);
+    const jockey = createMockJockey();
+    const horse = createMockHorse({ runningStyle: "E" });
+    const race = createMockRace({ distance: 1600, fieldSize: 8, surface: "Dirt" });
+
+    // Record 6 successful outcomes for style S in same context
+    for (let i = 0; i < 6; i++) {
+      state = recordRaceStrategy(state, horse, race, jockey, stable, "S", 0.6, 1, 100 + i);
+    }
+
+    const result = calculateOptimalRunningStyle(state, horse, race, jockey, stable);
+    expect(result).toBe("S");
+  });
+
+  it("does not override when success rate is high but data points < 5", () => {
+    const stable = createMockStable();
+    let state = createJockeyStrategyAIState(stable);
+    const jockey = createMockJockey();
+    const horse = createMockHorse({ runningStyle: "E" });
+    const race = createMockRace();
+
+    // Only 3 successful outcomes — not enough for override
+    for (let i = 0; i < 3; i++) {
+      state = recordRaceStrategy(state, horse, race, jockey, stable, "S", 0.6, 1, 100 + i);
+    }
+
+    const result = calculateOptimalRunningStyle(state, horse, race, jockey, stable);
+    // With only 3 data points, should not hard-override to S
+    // The genetic style E should still get its base score
+    expect(result).toBe("E");
+  });
+
+  it("does not override when success rate <= 0.65", () => {
+    const stable = createMockStable();
+    let state = createJockeyStrategyAIState(stable);
+    const jockey = createMockJockey();
+    const horse = createMockHorse({ runningStyle: "E" });
+    const race = createMockRace();
+
+    // Record 6 outcomes: 3 wins, 3 losses = 0.5 success rate
+    for (let i = 0; i < 3; i++) {
+      state = recordRaceStrategy(state, horse, race, jockey, stable, "S", 0.6, 1, 100 + i);
+      state = recordRaceStrategy(state, horse, race, jockey, stable, "S", 0.6, 8, 100 + i);
+    }
+
+    const result = calculateOptimalRunningStyle(state, horse, race, jockey, stable);
+    // 0.5 success rate should not trigger override
+    expect(result).toBe("E");
   });
 });

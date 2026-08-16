@@ -11,12 +11,17 @@
  * updated from "orphaned" to "wired". The final pass should have zero orphans.
  *
  * Validation corrections applied:
- * - Intent count corrected from 39 to 44
+ * - Intent count corrected from 39 to 45 (outpost_action added)
  * - trackRecords, horseLeaderboards, founders moved to "confirmed wired" list
  * - runEnded, runEndSnapshot, solvencyAuditLog confirmed wired
- * - outposts, transports UI confirmed wired (AI gap remains)
+ * - outposts UI confirmed wired; NPC AI integration wired (outpost_action intents)
+ * - transports UI confirmed wired (AI gap remains)
+ * - industryMeanEarnings wired in economyAI.ts and breedingAI.ts (AI gap closed)
  * - npcRelationships, narrativeState, globalEconomicState confirmed wired
  * - InsurancePanel confirmed wired
+ * - difficultyModulator wired into AI subsystems (race entry, training, auction)
+ * - activeCartels wired in DiplomacyPanel.tsx
+ * - budgetAllocation facilities field wired in strategicCoordinator.ts
  */
 
 import { describe, it, expect } from "vitest";
@@ -119,13 +124,14 @@ const confirmedWiredFields = [
   "runEnded", // wired in epilogue.tsx:12
   "runEndSnapshot", // wired in epilogue.tsx:13
   "solvencyAuditLog", // wired in DebtBanner.tsx:24
-  "outposts", // wired in facilities.tsx (UI only; AI gap remains)
+  "outposts", // wired in facilities.tsx (UI) + outpost_action intents (AI)
   "transports", // wired in stable.$horseId.tsx (UI only; AI gap remains)
-  "industryMeanEarnings", // wired in sire-watch.$stallionId.tsx (UI only; AI gap remains)
+  "industryMeanEarnings", // wired in sire-watch.$stallionId.tsx (UI) + economyAI.ts (AI)
   "sireLeaderboards", // wired in SireLeaderboardsTab.tsx, rendered in breeding.tsx
   "sireTrendHistory", // wired in AnalyticsBreedingTab.tsx
   "damsireLeaderboard", // wired in DamsireLeaderboardTab.tsx, rendered in breeding.tsx
   "blueHenLeaderboard", // wired in BlueHenLeaderboardTab.tsx, rendered in breeding.tsx
+  "activeCartels", // wired in DiplomacyPanel.tsx CartelSection
   "narrativeArcs", // wired in CareerArcPanel.tsx, rendered in stable.$horseId.tsx
   "replays", // wired in ReplayPlayer.tsx, rendered in race.$raceId.tsx
   "pendingAwardCeremonies", // wired in AwardsTab.tsx via useAwardsData hook
@@ -342,9 +348,10 @@ const allIntentTypes = [
   "stewards_inquiry",
   "diplomatic_action",
   "cartel_action",
+  "outpost_action",
 ];
 
-describe("Orphan Scan: Intent Type Coverage (44 types)", () => {
+describe("Orphan Scan: Intent Type Coverage (45 types)", () => {
   const orphanedIntents: string[] = [];
   const wiredIntents: string[] = [];
 
@@ -384,7 +391,7 @@ describe("Orphan Scan: Intent Type Coverage (44 types)", () => {
   it("records orphaned intent types for Phase 5 comparison", () => {
     console.log("ORPHANED intent types:", orphanedIntents);
     console.log("WIRED intent types:", wiredIntents);
-    expect(allIntentTypes.length).toBe(44);
+    expect(allIntentTypes.length).toBe(45);
   });
 });
 
@@ -484,32 +491,37 @@ describe("Orphan Scan: Hook Selectors", () => {
 
 // ─── NpcAIManager field audit ────────────────────────────────────────────────
 
-const npcAIManagerFields = [
-  "globalEconomicState",
-  "activeCartels",
-  "narrativeArcs",
-  "difficultyModulator",
-];
+const npcAIManagerFields = ["globalEconomicState", "difficultyModulator"];
 
 describe("Orphan Scan: NpcAIManager Fields", () => {
   const orphanedManagerFields: string[] = [];
   const wiredManagerFields: string[] = [];
 
   for (const field of npcAIManagerFields) {
-    it(`NpcAIManager.${field} is surfaced in UI (.tsx)`, () => {
+    it(`NpcAIManager.${field} is surfaced in UI (.tsx) or AI subsystem`, () => {
       const inTsx = isInTsx(field);
-      if (inTsx) {
+      const inAi = allCoreTsFiles
+        .filter((f) => f.includes(sep + "ai" + sep) && !f.includes(".test."))
+        .map((f) => readFileSafe(f))
+        .join("\n")
+        .includes(field);
+      const intentText = readFileSafe(join(srcRoot, "core", "npc", "intentGenerators.ts"));
+      const inIntentGen = intentText.includes(field);
+      const isWired = inTsx || inAi || inIntentGen;
+      if (isWired) {
         wiredManagerFields.push(field);
       } else {
         orphanedManagerFields.push(field);
       }
-      console.log(`NpcAIManager.${field}: ${inTsx ? "WIRED" : "ORPHANED"}`);
+      console.log(
+        `NpcAIManager.${field}: ${isWired ? "WIRED" : "ORPHANED"} (UI: ${inTsx}, AI: ${inAi}, intentGen: ${inIntentGen})`,
+      );
       expect(typeof field).toBe("string");
     });
   }
 
   it("records orphaned NpcAIManager fields", () => {
-    console.log("ORPHANED NpcAIManager fields (no UI consumer):", orphanedManagerFields);
+    console.log("ORPHANED NpcAIManager fields (no UI/AI consumer):", orphanedManagerFields);
     console.log("WIRED NpcAIManager fields:", wiredManagerFields);
   });
 });
@@ -532,7 +544,8 @@ describe("Orphan Scan: Budget Allocation Per-Field", () => {
         intentText.includes(`budgetAllocation?.${budget}`) ||
         intentText.includes(`budgetAllocation.${budget}`) ||
         allAiText.includes(`budgetAllocation?.${budget}`) ||
-        allAiText.includes(`budgetAllocation.${budget}`);
+        allAiText.includes(`budgetAllocation.${budget}`) ||
+        allAiText.includes(`budget.${budget}`);
 
       if (isRead) {
         wiredBudgets.push(budget);
