@@ -1270,18 +1270,21 @@ describe("calculateOptimalRunningStyle learning override", () => {
   it("does not override when success rate is high but data points < 5", () => {
     const stable = createMockStable();
     let state = createJockeyStrategyAIState(stable);
-    const jockey = createMockJockey();
+    const jockey = createMockJockey({
+      stats: { pacing: 85, positioning: 75, vigor: 75, gateSkill: 75, temperament: 75 },
+      traits: ["gate_master"],
+    });
     const horse = createMockHorse({ runningStyle: "E" });
     const race = createMockRace();
 
-    // Only 3 successful outcomes — not enough for override
+    // Only 3 successful outcomes — not enough for hard override
     for (let i = 0; i < 3; i++) {
       state = recordRaceStrategy(state, horse, race, jockey, stable, "S", 0.6, 1, 100 + i);
     }
 
     const result = calculateOptimalRunningStyle(state, horse, race, jockey, stable);
-    // With only 3 data points, should not hard-override to S
-    // The genetic style E should still get its base score
+    // With only 3 data points, hard override should not trigger
+    // E has strong base (pacing 85 + gate_master trait) so soft bonus shouldn't override
     expect(result).toBe("E");
   });
 

@@ -14,7 +14,7 @@ import type { CourseSpecification } from "@/data/tracks";
 import type { Rng } from "@/core/common/types";
 import { clamp } from "@/core/common/math";
 import { compareFinishOrder } from "./compareFinishOrder";
-import type { RaceSnapshot } from "./raceSnapshotTypes";
+import type { RaceSnapshot, PaceSnapshot } from "./raceSnapshotTypes";
 import { calculateTacticalAdjustment } from "./tacticalAI";
 import { calculateCoverModifier } from "./draftingAI";
 import { type Runner, type PaceContext } from "./runnerBuilder";
@@ -246,9 +246,13 @@ export function runRaceToCompletion(
 ): {
   result: { horseId: string; position: number; time: number }[];
   snapshots: RaceSnapshot[];
+  paceSnapshots: PaceSnapshot[];
 } {
   let t = 0;
   const snapshots: RaceSnapshot[] = [];
+  const paceSnapshots: PaceSnapshot[] = [];
+  const paceMilestones = [0.25, 0.5, 0.75];
+  let nextMilestoneIdx = 0;
   const numRunners = runners.length;
   let finishedCount = 0;
 
@@ -261,6 +265,30 @@ export function runRaceToCompletion(
 
   while (finishedCount < numRunners && t < maxTime) {
     const pace = computePaceContext(runners, distance, laneDensity);
+
+    // Capture pace snapshot at 25/50/75% progress milestones
+    if (
+      nextMilestoneIdx < paceMilestones.length &&
+      pace.progress >= paceMilestones[nextMilestoneIdx]
+    ) {
+      const leader = runners.reduce(
+        (best, r) => {
+          if (r.finishTime !== null) return best;
+          if (best === null || r.position > best.position) return r;
+          return best;
+        },
+        null as Runner | null,
+      );
+      paceSnapshots.push({
+        progress: paceMilestones[nextMilestoneIdx],
+        paceRating: pace.paceRating,
+        leaderVelocity: pace.leaderVelocity,
+        leadGroupCount: pace.leadGroupCount,
+        pacePressure: pace.pacePressure,
+        leaderHorseId: leader?.horseId ?? null,
+      });
+      nextMilestoneIdx++;
+    }
 
     // Sort runners by position for faster spatial lookups in stepRunner
     const sortedField = [...runners].sort((a, b) => b.position - a.position);
@@ -326,5 +354,5 @@ export function runRaceToCompletion(
     time: r.time,
   }));
 
-  return { result, snapshots };
+  return { result, snapshots, paceSnapshots };
 }

@@ -43,44 +43,54 @@ export function GallopGazette() {
       <CardContent className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
           {news && news.length > 0 ? (
-            news.slice(0, 2).map((item, i) => (
-              <div
-                key={item.id}
-                className={cn(
-                  "space-y-2",
-                  i === 0 &&
-                    "md:after:content-[''] md:after:absolute md:after:left-1/2 md:after:top-0 md:after:bottom-0 md:after:w-[1px] md:after:bg-[#d3d3d3] md:pr-4",
-                )}
-              >
-                <Badge className="bg-[#2c2c2c] text-white rounded-none text-[9px] font-bold h-4 px-1.5 uppercase tracking-widest">
-                  {item.category}
-                </Badge>
-                {item.partNumber && item.totalParts && item.totalParts > 1 && (
-                  <Badge className="bg-gold/80 text-[#2c2c2c] rounded-none text-[9px] font-bold h-4 px-1.5 uppercase tracking-widest">
-                    Part {item.partNumber}/{item.totalParts}
-                  </Badge>
-                )}
-                <h3
+            [...news]
+              .sort((a, b) => {
+                const aHigh = a.importance === "high" ? 1 : 0;
+                const bHigh = b.importance === "high" ? 1 : 0;
+                if (aHigh !== bHigh) return bHigh - aHigh;
+                const aArc = a.arcId ? 1 : 0;
+                const bArc = b.arcId ? 1 : 0;
+                return bArc - aArc;
+              })
+              .slice(0, 2)
+              .map((item, i) => (
+                <div
+                  key={item.id}
                   className={cn(
-                    "font-extrabold leading-[1.05] tracking-tighter text-[#1a1a1a] font-[family-name:var(--font-display)] group-hover:text-gold-dark transition-colors",
-                    item.importance === "high" ? "text-2xl" : "text-xl",
+                    "space-y-2",
+                    i === 0 &&
+                      "md:after:content-[''] md:after:absolute md:after:left-1/2 md:after:top-0 md:after:bottom-0 md:after:w-[1px] md:after:bg-[#d3d3d3] md:pr-4",
                   )}
                 >
-                  <NewsContent
-                    text={item.headline}
-                    links={item.entityLinks}
-                    linkClassName="text-[#1a1a1a] hover:text-gold-dark border-b border-dotted border-[#1a1a1a]/40"
-                  />
-                </h3>
-                <p className="text-sm line-clamp-3 leading-relaxed opacity-90 font-serif italic text-[#333]">
-                  <NewsContent
-                    text={item.body}
-                    links={item.entityLinks}
-                    linkClassName="text-[#333] hover:text-gold-dark border-b border-dotted border-[#333]/40"
-                  />
-                </p>
-              </div>
-            ))
+                  <Badge className="bg-[#2c2c2c] text-white rounded-none text-[9px] font-bold h-4 px-1.5 uppercase tracking-widest">
+                    {item.category}
+                  </Badge>
+                  {item.partNumber && item.totalParts && item.totalParts > 1 && (
+                    <Badge className="bg-gold/80 text-[#2c2c2c] rounded-none text-[9px] font-bold h-4 px-1.5 uppercase tracking-widest">
+                      Part {item.partNumber}/{item.totalParts}
+                    </Badge>
+                  )}
+                  <h3
+                    className={cn(
+                      "font-extrabold leading-[1.05] tracking-tighter text-[#1a1a1a] font-[family-name:var(--font-display)] group-hover:text-gold-dark transition-colors",
+                      item.importance === "high" ? "text-2xl" : "text-xl",
+                    )}
+                  >
+                    <NewsContent
+                      text={item.headline}
+                      links={item.entityLinks}
+                      linkClassName="text-[#1a1a1a] hover:text-gold-dark border-b border-dotted border-[#1a1a1a]/40"
+                    />
+                  </h3>
+                  <p className="text-sm line-clamp-3 leading-relaxed opacity-90 font-serif italic text-[#333]">
+                    <NewsContent
+                      text={item.body}
+                      links={item.entityLinks}
+                      linkClassName="text-[#333] hover:text-gold-dark border-b border-dotted border-[#333]/40"
+                    />
+                  </p>
+                </div>
+              ))
           ) : (
             <div className="col-span-2 text-center py-4 text-sm italic opacity-40 font-serif uppercase tracking-widest">
               No headlines in this morning's wire.

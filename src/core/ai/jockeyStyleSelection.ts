@@ -1,6 +1,7 @@
 import type { Horse, Race, Jockey, Stable, RunningStyle } from "@/game/types";
 import { calculateUtilityScore } from "./personalitySystem";
 import { getSuccessRate } from "./learningModule";
+import { buildStrategyContextKey } from "./strategyContextKey";
 import type { JockeyStrategyAIState } from "./jockeyStrategyAI";
 
 export function calculateOptimalRunningStyle(
@@ -19,6 +20,21 @@ export function calculateOptimalRunningStyle(
     if (score > bestScore) {
       bestScore = score;
       bestStyle = style;
+    }
+  }
+
+  // Learning override: if a non-genetic style has > 65% success rate with >= 5 data points,
+  // override to that style
+  const geneticStyle = horse.runningStyle ?? "P";
+  if (bestStyle === geneticStyle) {
+    for (const style of styles) {
+      if (style === geneticStyle) continue;
+      const contextKey = buildStrategyContextKey(race, style);
+      const key = `jockey_strategy:${contextKey}`;
+      const data = aiState.learningState.successRates[key];
+      if (data && data.total >= 5 && data.rate > 0.65) {
+        return style;
+      }
     }
   }
 
@@ -105,7 +121,7 @@ function calculateStyleScore(
 
   score = calculateUtilityScore(aiState.personalityState, "jockey_strategy", factors);
 
-  const contextKey = `${horse.age}:${race.distance}:${style}:${race.trackCondition ?? "none"}:${race.weather ?? "none"}`;
+  const contextKey = buildStrategyContextKey(race, style);
   const successRate = getSuccessRate(aiState.learningState, "jockey_strategy", contextKey);
   const adaptiveBonus = (successRate - 0.5) * 15;
   score += adaptiveBonus;

@@ -52,3 +52,15 @@ export type SectionalSplit = {
   time?: number; // leader's time at this split
   positions?: Array<{ horseId: string; position: number }>; // running order
 };
+
+/**
+ * Pace snapshot at a race progress milestone (25%, 50%, 75%).
+ */
+export interface PaceSnapshot {
+  progress: number; // 0.25, 0.5, 0.75
+  paceRating: number;
+  leaderVelocity: number;
+  leadGroupCount: number;
+  pacePressure: number;
+  leaderHorseId: string | null;
+}

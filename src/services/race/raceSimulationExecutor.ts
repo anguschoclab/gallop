@@ -3,7 +3,7 @@ import { runRaceToCompletion } from "@/core/race/engine/simulation";
 import { getCourseForRace } from "@/data/tracks";
 import type { Race, Horse, Jockey, Stable, RaceRunner } from "@/game/types";
 import type { StaffMember } from "@/core/staff/staffTypes";
-import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import type { RaceSnapshot, PaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { DEFAULT_DT, defaultMaxTime } from "@/constants/raceEngineConstants";
 
@@ -12,6 +12,7 @@ export interface RaceSimulationResult {
   result: Array<{ horseId: string; position: number; time: number }>;
   runners: RaceRunner[];
   snapshots: RaceSnapshot[];
+  paceSnapshots: PaceSnapshot[];
 }
 
 /**
@@ -72,7 +73,7 @@ export function simulateRace(
   const dt = DEFAULT_DT;
   const maxTime = defaultMaxTime(race.distance);
 
-  const { result, snapshots } = runRaceToCompletion(
+  const { result, snapshots, paceSnapshots } = runRaceToCompletion(
     runners,
     race.distance,
     rng,
@@ -120,5 +121,6 @@ export function simulateRace(
     ),
 
     snapshots,
+    paceSnapshots,
   };
 }
