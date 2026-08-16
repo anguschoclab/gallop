@@ -56,7 +56,15 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
 describe("Learning Feedback Infrastructure", () => {
   it("recordLearningOutcome updates learning state with success", () => {
     const learningState = createLearningState();
-    const updated = recordLearningOutcome(learningState, "claiming", "4:25000", true, 0.5, 100, 100);
+    const updated = recordLearningOutcome(
+      learningState,
+      "claiming",
+      "4:25000",
+      true,
+      0.5,
+      100,
+      100,
+    );
 
     expect(updated.outcomes.length).toBe(1);
     expect(updated.outcomes[0].success).toBe(true);
@@ -65,7 +73,15 @@ describe("Learning Feedback Infrastructure", () => {
 
   it("recordLearningOutcome updates learning state with failure", () => {
     const learningState = createLearningState();
-    const updated = recordLearningOutcome(learningState, "claiming", "4:25000", false, 0.5, 100, 100);
+    const updated = recordLearningOutcome(
+      learningState,
+      "claiming",
+      "4:25000",
+      false,
+      0.5,
+      100,
+      100,
+    );
 
     expect(updated.outcomes.length).toBe(1);
     expect(updated.outcomes[0].success).toBe(false);
@@ -77,7 +93,15 @@ describe("Learning Feedback Infrastructure", () => {
 
     // Record several successes
     for (let i = 0; i < 5; i++) {
-      learningState = recordLearningOutcome(learningState, "claiming", "4:25000", true, 0.5, 100 + i, 100);
+      learningState = recordLearningOutcome(
+        learningState,
+        "claiming",
+        "4:25000",
+        true,
+        0.5,
+        100 + i,
+        100,
+      );
     }
     const thresholdAfterSuccess = getAdaptiveThreshold(
       learningState,
@@ -90,7 +114,15 @@ describe("Learning Feedback Infrastructure", () => {
     // Record several failures
     learningState = createLearningState();
     for (let i = 0; i < 5; i++) {
-      learningState = recordLearningOutcome(learningState, "claiming", "4:25000", false, 0.5, 100 + i, 100);
+      learningState = recordLearningOutcome(
+        learningState,
+        "claiming",
+        "4:25000",
+        false,
+        0.5,
+        100 + i,
+        100,
+      );
     }
     const thresholdAfterFailure = getAdaptiveThreshold(
       learningState,

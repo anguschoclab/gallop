@@ -346,10 +346,24 @@ describe("Phase 7e: AI behavior diversity", () => {
     const manager = createMockManager(["agg", "con"]);
     const state = createMockGameState([aggressiveStable, conservativeStable], horses);
     state.npcAIManager = manager;
+    state.races = {
+      r1: {
+        id: "r1",
+        name: "Test Sprint",
+        distance: 1600,
+        day: 102,
+        entries: [],
+        resolved: false,
+        cancelled: false,
+        purse: 50000,
+      } as any,
+    };
 
     const intents = generateNpcIntents(state, 100);
-    const aggIntents = intents.filter((i) => i.source === "npc" && i.entityId.includes("agg"));
-    const conIntents = intents.filter((i) => i.source === "npc" && i.entityId.includes("con"));
+    const aggHorseIds = new Set(["h1"]);
+    const conHorseIds = new Set(["h2"]);
+    const aggIntents = intents.filter((i) => i.source === "npc" && aggHorseIds.has(i.entityId));
+    const conIntents = intents.filter((i) => i.source === "npc" && conHorseIds.has(i.entityId));
 
     // Aggressive should have at least as many intents as conservative
     expect(aggIntents.length).toBeGreaterThanOrEqual(conIntents.length);

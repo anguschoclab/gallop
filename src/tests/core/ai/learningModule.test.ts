@@ -30,7 +30,15 @@ describe("recordLearningOutcome", () => {
     const state = createLearningState();
     const day = 100;
 
-    const updatedState = recordLearningOutcome(state, "decision_type", "context_key", true, 100, day, 10);
+    const updatedState = recordLearningOutcome(
+      state,
+      "decision_type",
+      "context_key",
+      true,
+      100,
+      day,
+      10,
+    );
 
     expect(updatedState.outcomes).toHaveLength(1);
     expect(updatedState.outcomes[0].decisionType).toBe("decision_type");
@@ -45,7 +53,15 @@ describe("recordLearningOutcome", () => {
 
     let updatedState = state;
     for (let i = 0; i < 15; i++) {
-      updatedState = recordLearningOutcome(updatedState, "decision", "context", true, i * 10, i, 10);
+      updatedState = recordLearningOutcome(
+        updatedState,
+        "decision",
+        "context",
+        true,
+        i * 10,
+        i,
+        10,
+      );
     }
 
     expect(updatedState.outcomes).toHaveLength(10);
@@ -57,7 +73,15 @@ describe("recordLearningOutcome", () => {
     let updatedState = state;
     // Record 3 successes and 2 failures
     for (let i = 0; i < 5; i++) {
-      updatedState = recordLearningOutcome(updatedState, "breeding", "test_context", i < 3, 100, i, 10);
+      updatedState = recordLearningOutcome(
+        updatedState,
+        "breeding",
+        "test_context",
+        i < 3,
+        100,
+        i,
+        10,
+      );
     }
 
     const successRate = updatedState.successRates["breeding:test_context"];
@@ -72,7 +96,15 @@ describe("recordLearningOutcome", () => {
     let updatedState = state;
     // Record multiple outcomes with same context dimension
     for (let i = 0; i < 5; i++) {
-      updatedState = recordLearningOutcome(updatedState, "decision", "context:value", i < 3, 100, i, 10);
+      updatedState = recordLearningOutcome(
+        updatedState,
+        "decision",
+        "context:value",
+        i < 3,
+        100,
+        i,
+        10,
+      );
     }
 
     const patternScore = updatedState.patterns["decision:context:value"];
@@ -148,7 +180,15 @@ describe("getPatternScore", () => {
     let updatedState = state;
     // Record successes to increase pattern score
     for (let i = 0; i < 10; i++) {
-      updatedState = recordLearningOutcome(updatedState, "decision", "context:value1", true, 100, i, 10);
+      updatedState = recordLearningOutcome(
+        updatedState,
+        "decision",
+        "context:value1",
+        true,
+        100,
+        i,
+        10,
+      );
     }
 
     const patternScore = getPatternScore(updatedState, "decision", "context:value1");
@@ -161,7 +201,15 @@ describe("getPatternScore", () => {
     let updatedState = state;
     // Record failures to decrease pattern score
     for (let i = 0; i < 10; i++) {
-      updatedState = recordLearningOutcome(updatedState, "decision", "context:value1", false, 0, i, 10);
+      updatedState = recordLearningOutcome(
+        updatedState,
+        "decision",
+        "context:value1",
+        false,
+        0,
+        i,
+        10,
+      );
     }
 
     const patternScore = getPatternScore(updatedState, "decision", "context:value1");
@@ -314,7 +362,15 @@ describe("getLearningInsights", () => {
     let updatedState = state;
     const values = [100, 200, 300];
     for (let i = 0; i < 3; i++) {
-      updatedState = recordLearningOutcome(updatedState, "decision", "context", true, values[i], i, 10);
+      updatedState = recordLearningOutcome(
+        updatedState,
+        "decision",
+        "context",
+        true,
+        values[i],
+        i,
+        10,
+      );
     }
 
     const insights = getLearningInsights(updatedState, "decision");

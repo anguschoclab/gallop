@@ -68,12 +68,16 @@ vi.mock("@/core/common/formatting", () => ({
   formatCurrency: (n: number) => `$${n.toLocaleString()}`,
 }));
 
-vi.mock("@/constants", () => ({
-  PRIZE_SPLIT: [0.6, 0.2, 0.1, 0.05],
-  GRADED_PRIZE_SPLIT: [0.6, 0.2, 0.1, 0.05],
-  MOOD_FACE_RESULT_OVERLAY_SIZE: 14,
-  MOOD_TOOLTIP_OVERLAY_CLASS: "z-[60]",
-}));
+vi.mock("@/constants", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/constants")>();
+  return {
+    ...actual,
+    PRIZE_SPLIT: [0.6, 0.2, 0.1, 0.05],
+    GRADED_PRIZE_SPLIT: [0.6, 0.2, 0.1, 0.05],
+    MOOD_FACE_RESULT_OVERLAY_SIZE: 14,
+    MOOD_TOOLTIP_OVERLAY_CLASS: "z-[60]",
+  };
+});
 
 vi.mock("@/lib/cn", () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(" "),

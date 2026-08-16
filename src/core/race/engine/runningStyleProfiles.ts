@@ -96,7 +96,7 @@ export function getDynamicProfile(
   horse?: { stats?: { acceleration?: number }; recoveryPoints?: number },
   jockey?: { stats?: { vigor?: number } },
 ): RunningStyleProfile {
-  const base = RUNNING_STYLE_PROFILES[style];
+  const base = RUNNING_STYLE_PROFILES[style] ?? RUNNING_STYLE_PROFILES["P"];
   let { preferredFieldFraction, seekMaxBoost, spurtBuildupExtra } = base;
 
   // 1. Adaptive preferred field fraction based on pace

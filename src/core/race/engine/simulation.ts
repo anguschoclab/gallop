@@ -19,6 +19,7 @@ import { calculateTacticalAdjustment } from "./tacticalAI";
 import { calculateCoverModifier } from "./draftingAI";
 import { type Runner, type PaceContext } from "./runnerBuilder";
 import {
+  getDynamicProfile,
   getRunningStyleProfile,
   POSITION_SEEK_PROGRESS,
   SPURT_BUILDUP_START_M,
@@ -109,7 +110,14 @@ export function stepRunner(
   // runner toward the field slot that matches their running style instead of
   // letting front-runners dash far ahead when the rest of the field starts slow.
   let seekMul = 1;
-  const profile = getRunningStyleProfile(r.runningStyle);
+  const profile = getDynamicProfile(
+    r.runningStyle,
+    pace?.paceRating ?? 1.0,
+    sortedField ? sortedField.length : 1,
+    progress,
+    r.horse,
+    r.jockey,
+  );
   if (progress < POSITION_SEEK_PROGRESS && sortedField && sortedField.length > 1) {
     // Use pre-computed rank if provided (avoids O(n) filter+findIndex per runner)
     let rank = rankFromFront ?? -1;

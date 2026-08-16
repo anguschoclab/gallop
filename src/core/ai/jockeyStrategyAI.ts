@@ -13,6 +13,7 @@ import type { Horse, Race, Jockey, Stable, RunningStyle } from "@/game/types";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 import { getPersonalityAIState } from "./personalitySystem";
 import { createLearningState, type LearningState } from "./learningModule";
+import { calculateOptimalRunningStyle } from "./jockeyStyleSelection";
 import { calculateJockeyAggressiveness } from "./jockeyTacticalMoves";
 
 // Re-exports for backward compatibility
@@ -219,8 +220,10 @@ export function calculateOptimalTactics(
     };
   }
 
-  // Use strategy record to determine tactics based on running style
-  const instructionsCalculator = TACTICS_STRATEGIES[horse.runningStyle];
+  // Use optimal running style (adaptive to learning & context)
+  const optimalStyle = calculateOptimalRunningStyle(aiState, horse, race, jockey, stable);
+  const instructionsCalculator =
+    TACTICS_STRATEGIES[optimalStyle] ?? TACTICS_STRATEGIES[horse.runningStyle];
   const baseInstructions = instructionsCalculator(
     horse,
     race,

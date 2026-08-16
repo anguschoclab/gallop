@@ -182,7 +182,14 @@ describe("recordPersonalityOutcome", () => {
     const state = getPersonalityAIState("aggressive");
     const day = Date.now();
 
-    const updatedState = recordPersonalityOutcome(state, "race_entry", { race_class: "G1" }, true, 1000, day);
+    const updatedState = recordPersonalityOutcome(
+      state,
+      "race_entry",
+      { race_class: "G1" },
+      true,
+      1000,
+      day,
+    );
 
     expect(updatedState.learningState.outcomes).toHaveLength(1);
     expect(updatedState.learningState.outcomes[0].decisionType).toBe("race_entry");

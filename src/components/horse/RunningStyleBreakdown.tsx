@@ -21,7 +21,7 @@ import type { GameState } from "@/game/types";
 import { derivePaceStyleLabel } from "@/core/race/sectionalAnalysis";
 import {
   classifyTendency,
-  distanceBucket,
+  classifyDistanceBucket as distanceBucket,
   getHorseTendencyStats,
   TENDENCY_LABEL,
   type DistanceBucket,

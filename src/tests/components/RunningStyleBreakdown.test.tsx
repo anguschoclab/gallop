@@ -9,6 +9,7 @@ vi.mock("@/core/race/sectionalAnalysis", () => ({
 
 vi.mock("@/core/horse/paceTendency", () => ({
   classifyTendency: vi.fn(() => "mid"),
+  classifyDistanceBucket: vi.fn(() => "mile"),
   distanceBucket: vi.fn(() => "mile"),
   getHorseTendencyStats: vi.fn(() => ({
     sample: 0,

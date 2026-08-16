@@ -19,7 +19,11 @@ import type {
   PlayerFacilities,
 } from "@/core/facilities/facilityTypes";
 import type { Stable } from "@/game/types";
-import { getPersonalityAIState, recordPersonalityOutcome, calculateUtilityScore } from "./personalitySystem";
+import {
+  getPersonalityAIState,
+  recordPersonalityOutcome,
+  calculateUtilityScore,
+} from "./personalitySystem";
 import {
   createLearningState,
   recordLearningOutcome,

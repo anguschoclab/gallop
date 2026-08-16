@@ -187,7 +187,8 @@ describe("Slow-start regression scenarios", () => {
     const maxSpurtExtra = Math.max(
       ...Object.values(RUNNING_STYLE_PROFILES).map((p) => p.spurtBuildupExtra),
     );
-    const maxSpurt = SPURT_BUILDUP_PEAK + maxSpurtExtra;
+    // Include max dynamic spurt bonus from horse acceleration (0.02) and jockey vigor (0.02)
+    const maxSpurt = SPURT_BUILDUP_PEAK + maxSpurtExtra + 0.04;
 
     for (const seed of SEEDS) {
       const { snapshots } = runScenario(seed);

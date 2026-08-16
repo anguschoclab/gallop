@@ -172,6 +172,7 @@ function calculateStrategicBreedingBonus(
 /**
  * Get progeny triple crown success rate for a sire in a specific series.
  *
+ * @param aiState - Breeding AI state
  * @param sireId - ID of the sire
  * @param tcKey - Triple crown series key
  * @returns Success rate (0-1)
