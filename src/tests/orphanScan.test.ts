@@ -15,7 +15,7 @@
  * - trackRecords, horseLeaderboards, founders moved to "confirmed wired" list
  * - runEnded, runEndSnapshot, solvencyAuditLog confirmed wired
  * - outposts UI confirmed wired; NPC AI integration wired (outpost_action intents)
- * - transports UI confirmed wired (AI gap remains)
+ * - transports UI confirmed wired; TransportIntent resolution wired (AI gap closed)
  * - industryMeanEarnings wired in economyAI.ts and breedingAI.ts (AI gap closed)
  * - npcRelationships, narrativeState, globalEconomicState confirmed wired
  * - InsurancePanel confirmed wired
@@ -125,7 +125,7 @@ const confirmedWiredFields = [
   "runEndSnapshot", // wired in epilogue.tsx:13
   "solvencyAuditLog", // wired in DebtBanner.tsx:24
   "outposts", // wired in facilities.tsx (UI) + outpost_action intents (AI)
-  "transports", // wired in stable.$horseId.tsx (UI only; AI gap remains)
+  "transports", // wired in stable.$horseId.tsx (UI) + TransportIntent resolution (AI)
   "industryMeanEarnings", // wired in sire-watch.$stallionId.tsx (UI) + economyAI.ts (AI)
   "sireLeaderboards", // wired in SireLeaderboardsTab.tsx, rendered in breeding.tsx
   "sireTrendHistory", // wired in AnalyticsBreedingTab.tsx

@@ -35,6 +35,7 @@ import type {
   InsuranceClaimIntent,
   JockeyReleaseIntent,
   OutpostActionIntent,
+  TransportIntent,
 } from "@/core/resolver/intents";
 import type {
   AnyImpact,
@@ -57,6 +58,7 @@ import type {
   CampaignCreationImpact,
   CampaignDeletionImpact,
   OutpostImpact,
+  TransportImpact,
 } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import { createRng, hashStr } from "@/core/common/rng";
@@ -232,6 +234,41 @@ export const managementResolutionPhase: PipelinePhase = {
               entityId: cashEntityId,
               amount: -typedIntent.cost,
               reason: `Outpost ${typedIntent.action}`,
+            } as CashImpact);
+          }
+          break;
+        }
+
+        case "transport": {
+          const typedIntent = intent as TransportIntent;
+          const [fromOutpostId, toOutpostId] = typedIntent.transportId.split("->");
+          impacts.push({
+            id: generateUUID(context.dailyRng),
+            intentId: intent.id,
+            day: newDay,
+            phase: "managementResolution",
+            logLevel: "always",
+            type: "transport_horse",
+            horseId: typedIntent.entityId,
+            fromOutpostId,
+            toOutpostId,
+            fatigueSpike: 15,
+            acclimatizationDays: 14,
+            reason: `Transport from ${fromOutpostId} to ${toOutpostId}`,
+          } as TransportImpact);
+
+          if (typedIntent.cost && typedIntent.cost > 0) {
+            const cashEntityId = intent.source === "npc" ? (intent.sourceId ?? "") : "player";
+            impacts.push({
+              id: generateUUID(context.dailyRng),
+              intentId: intent.id,
+              day: newDay,
+              phase: "managementResolution",
+              logLevel: "always",
+              type: "cash_change",
+              entityId: cashEntityId,
+              amount: -typedIntent.cost,
+              reason: "Horse transport",
             } as CashImpact);
           }
           break;
