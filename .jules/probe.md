@@ -1,0 +1,4 @@
+## 2024-05-24 - Untested Beyer logic
+
+**Learning:** `src/core/race/beyer.ts` is central to the game's simulation and analysis, converting race times into standard figures and calculating form jumps. It's heavily relied upon but currently has no dedicated test file. This is high risk because `beyerFigure`, `expectedBeyer`, and `detectPatternJump` contain pure mathematical logic, edge cases (e.g. `finishTime <= 0`), and threshold evaluations that could easily regress during refactoring. I discovered that calculating track complexity penalties required avoiding courses with zero turns, as empty array filtering naturally creates a zero average radius which inadvertently causes a massive test-failure penalty.
+**Action:** Created a targeted test suite for `src/core/race/beyer.ts` covering calculation edges and jump logic thresholds.
