@@ -14,6 +14,7 @@
 import type { Horse, Race, Jockey } from "@/game/types";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 import type { FacilityLevel } from "@/core/facilities";
+import type { OutpostRegion } from "@/core/facilities/outpostTypes";
 import type { InsurancePolicyType } from "@/core/insurance/insuranceTypes";
 import type { InquiryType } from "@/core/stewards/stewardTypes";
 
@@ -296,6 +297,18 @@ export interface FacilityUpgradeIntent extends Intent {
   cost: number;
 }
 
+// Outpost action intent (create outpost, assign trainer)
+export interface OutpostActionIntent extends Intent {
+  type: "outpost_action";
+  stableId: string;
+  action: "create" | "assign_trainer";
+  outpostId: string;
+  region?: OutpostRegion;
+  name?: string;
+  headTrainerId?: string;
+  cost: number;
+}
+
 // Pasture retirement intent
 export interface PastureRetirementIntent extends Intent {
   type: "pasture_retirement";
@@ -425,6 +438,7 @@ export type AnyIntent =
   | TransportIntent
   | StaffIntent
   | FacilityUpgradeIntent
+  | OutpostActionIntent
   | PastureRetirementIntent
   | UpdateStudFeeIntent
   | SyndicateCreationIntent

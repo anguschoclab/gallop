@@ -28,6 +28,7 @@ import type {
   UpdateStudFeeIntent,
   TransportIntent,
   FacilityUpgradeIntent,
+  OutpostActionIntent,
 } from "@/core/resolver/intents";
 import type { GameState, Horse, Race, Stable, Jockey, AuctionSale } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
@@ -41,6 +42,7 @@ import {
   type FacilityLevel,
   type PlayerFacilities,
 } from "@/core/facilities";
+import type { OutpostRegion } from "@/core/facilities/outpostTypes";
 import {
   createTrainingAIState,
   selectTrainingType,
@@ -322,6 +324,9 @@ export function generateNpcIntents(
       intents.push(
         ...generateNpcFacilityUpgradeIntents(stable, stableAI, day, state.npcFacilities),
       );
+
+      // Outpost creation intents: NPCs with sufficient cash build outposts for regional expansion
+      intents.push(...generateNpcOutpostIntents(stable, stableAI, day));
 
       // Update stable AI state in the manager (immutable update)
       if (aiManager && stableAI) {
@@ -1302,6 +1307,85 @@ function generateNpcFacilityUpgradeIntents(
       cost: bestCandidate.cost,
     });
   }
+
+  return intents;
+}
+
+/**
+ * Generate outpost creation intents for NPC stables.
+ * NPCs with sufficient cash and fewer than 2 outposts build new outposts
+ * for regional racing expansion. Uses facilities budget when available.
+ *
+ * @param stable - The NPC stable generating outpost intents
+ * @param stableAI - Current AI state for the stable
+ * @param day - Current game day
+ * @returns Array of outpost action intents
+ */
+function generateNpcOutpostIntents(
+  stable: Stable,
+  stableAI: StableAIState | undefined,
+  day: number,
+): OutpostActionIntent[] {
+  const intents: OutpostActionIntent[] = [];
+
+  const facilitiesBudget = stableAI?.budgetAllocation?.facilities;
+  const OUTPOST_COST = 50000;
+  const MAX_OUTPOSTS = 2;
+
+  // Skip if stable already has enough outposts
+  const currentOutposts = stable.outposts ?? [];
+  if (currentOutposts.length >= MAX_OUTPOSTS) return intents;
+
+  // Skip if not enough cash (unless facilities budget covers it)
+  if (
+    stable.cash < OUTPOST_COST &&
+    (facilitiesBudget === undefined || facilitiesBudget < OUTPOST_COST)
+  ) {
+    return intents;
+  }
+
+  // Only build on bi-weekly cadence, staggered per stable
+  const stableHash = stable.id.split("").reduce((acc, ch) => (acc + ch.charCodeAt(0)) & 0xffff, 0);
+  if ((day + stableHash) % 14 !== 0) return intents;
+
+  // Skip if in financial distress
+  const distressLevel = stableAI?.financialDistress?.level ?? "healthy";
+  if (distressLevel !== "healthy") return intents;
+
+  // Pick a region different from existing outposts
+  const existingRegions = new Set(currentOutposts.map((o) => o.region));
+  const ALL_REGIONS: OutpostRegion[] = [
+    "North America (East)",
+    "North America (West)",
+    "Europe (UK)",
+    "Europe (France)",
+    "Asia (Japan)",
+    "Asia (Hong Kong)",
+    "Australia",
+    "South America",
+  ];
+  const availableRegions = ALL_REGIONS.filter((r) => !existingRegions.has(r));
+  if (availableRegions.length === 0) return intents;
+
+  const regionIndex = stableHash % availableRegions.length;
+  const chosenRegion = availableRegions[regionIndex];
+  const outpostName = `${stable.name} ${chosenRegion.split(" ")[0]} Outpost`;
+
+  intents.push({
+    id: generateUUID(),
+    entityId: stable.id,
+    source: "npc",
+    sourceId: stable.id,
+    day,
+    priority: 10,
+    type: "outpost_action",
+    stableId: stable.id,
+    action: "create",
+    outpostId: generateUUID(),
+    region: chosenRegion,
+    name: outpostName,
+    cost: OUTPOST_COST,
+  });
 
   return intents;
 }

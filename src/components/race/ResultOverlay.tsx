@@ -4,10 +4,14 @@ import { PaceGraph } from "@/components/race/PaceGraph";
 import { SpeedBreakdownChart } from "@/components/race/SpeedBreakdownChart";
 import { JockeyReportPanel } from "@/components/race/JockeyReportPanel";
 import { RunnerMoodFace } from "@/components/race/RunnerMoodFace";
+import {
+  TacticalAnalysisPanel,
+  type JockeyInsightEntry,
+} from "@/components/race/TacticalAnalysisPanel";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
-import type { SectionalSplit } from "@/core/race/types";
+import type { RaceRunner, SectionalSplit } from "@/core/race/types";
 import { generateJockeyFeedback } from "@/core/race/jockeyFeedback";
 import { formatCurrency } from "@/core/common/formatting";
 import {
@@ -19,6 +23,8 @@ import {
 import { Trophy, ChevronRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
+import { useGame } from "@/game/store";
+import { getStrategyInsights } from "@/core/ai/jockeyStrategyAI";
 
 /**
  * Props for the ResultOverlay component.

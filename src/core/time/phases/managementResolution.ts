@@ -34,6 +34,7 @@ import type {
   CampaignDeletionIntent,
   InsuranceClaimIntent,
   JockeyReleaseIntent,
+  OutpostActionIntent,
 } from "@/core/resolver/intents";
 import type {
   AnyImpact,
@@ -55,6 +56,7 @@ import type {
   CampaignFlagDismissalImpact,
   CampaignCreationImpact,
   CampaignDeletionImpact,
+  OutpostImpact,
 } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import { createRng, hashStr } from "@/core/common/rng";
@@ -194,6 +196,42 @@ export const managementResolutionPhase: PipelinePhase = {
               entityId: "player",
               amount: -typedIntent.cost,
               reason: `Upgrade ${typedIntent.facilityId}`,
+            } as CashImpact);
+          }
+          break;
+        }
+
+        case "outpost_action": {
+          const typedIntent = intent as OutpostActionIntent;
+          impacts.push({
+            id: generateUUID(context.dailyRng),
+            intentId: intent.id,
+            day: newDay,
+            phase: "managementResolution",
+            logLevel: "always",
+            type: "outpost_action",
+            stableId: typedIntent.stableId,
+            action: typedIntent.action,
+            outpostId: typedIntent.outpostId,
+            metadata: {
+              name: typedIntent.name,
+              region: typedIntent.region,
+              headTrainerId: typedIntent.headTrainerId,
+            },
+          } as OutpostImpact);
+
+          if (typedIntent.cost && typedIntent.cost > 0) {
+            const cashEntityId = typedIntent.source === "npc" ? typedIntent.stableId : "player";
+            impacts.push({
+              id: generateUUID(context.dailyRng),
+              intentId: intent.id,
+              day: newDay,
+              phase: "managementResolution",
+              logLevel: "always",
+              type: "cash_change",
+              entityId: cashEntityId,
+              amount: -typedIntent.cost,
+              reason: `Outpost ${typedIntent.action}`,
             } as CashImpact);
           }
           break;
