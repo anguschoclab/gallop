@@ -430,7 +430,7 @@ export function generateJockeyReport(
   };
 }
 
-export function gradeColorClass(grade: JockeyReportGrade): string {
+export function jockeyGradeColorClass(grade: JockeyReportGrade): string {
   switch (grade) {
     case "A+":
       return "text-fame border-fame/50 bg-fame/10";

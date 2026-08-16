@@ -41,7 +41,10 @@ export const auctionsPhase = {
   name: "auctions",
   order: PHASE_ORDER_AUCTIONS,
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, newDay } = context;
+    const { state, newDay, economicTrend } = context;
+
+    // Use economic trend to adjust auction pricing (yearlingPriceIndex base = 100)
+    const priceMultiplier = economicTrend ? economicTrend.yearlingPriceIndex / 100 : 1;
 
     let auctions: AuctionSale[] = [...(state.auctions ?? [])];
     const logs = [...(context.logs ?? [])];
@@ -102,7 +105,7 @@ export const auctionsPhase = {
             horseId: lot.horseId,
             saleId: newSale.id,
             consignorStableId: lot.consignorStableId,
-            reservePrice: lot.reservePrice,
+            reservePrice: Math.round(lot.reservePrice * priceMultiplier),
             breezeSeconds: lot.breezeSeconds,
             reason: "npc_consignment",
           });

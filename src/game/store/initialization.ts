@@ -29,7 +29,7 @@ import type { FacilityLevel } from "@/core/facilities";
 import { STARTING_CASH, MAIDEN_GUARANTEE_START_DAY, MAIDEN_GUARANTEE_END_DAY } from "@/constants";
 import { seedGazetteNews } from "@/services/narrative/seedNewsGenerator";
 import { createStableAIState } from "@/core/ai/npcCycleAI";
-import { generateUpcomingRaces } from "@/game/store/helpers/market";
+import { generateUpcomingScheduledRaces } from "@/game/store/helpers/market";
 import { ensureMaidenRaces } from "@/core/race/maidenGuarantee";
 
 /**
@@ -85,7 +85,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
   }
 
   // Generate track-based races for days 2-8 (graded dedup prevents duplicates)
-  const racesWithTrack = generateUpcomingRaces(races, 1);
+  const racesWithTrack = generateUpcomingScheduledRaces(races, 1);
 
   // Guarantee starter-eligible maiden races for days 2-7
   const racesWithMaidens = ensureMaidenRaces(

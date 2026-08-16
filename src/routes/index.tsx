@@ -12,6 +12,7 @@ import { HQOpsWidget } from "@/components/dashboard/HQOpsWidget";
 import { StableRosterWidget } from "@/components/dashboard/StableRosterWidget";
 import { CircuitWidget } from "@/components/dashboard/CircuitWidget";
 import { NewsFeedWidget } from "@/components/dashboard/NewsFeedWidget";
+import { AIActivityStrip } from "@/components/dashboard/AIActivityStrip";
 import { LegacyAwardsWidget } from "@/components/dashboard/LegacyAwardsWidget";
 import { SeasonStandingsWidget } from "@/components/dashboard/SeasonStandingsWidget";
 import { RegionalTrendsWidget } from "@/components/dashboard/RegionalTrendsWidget";
@@ -35,6 +36,7 @@ function Dashboard() {
     urgentMessages,
     topRivals,
     calculateHeadToHead,
+    news,
   } = useDashboardData();
 
   const nextAction = deriveNextAction({
@@ -118,8 +120,9 @@ function Dashboard() {
         <div className="xl:col-span-8">
           <GallopGazette />
         </div>
-        <div className="xl:col-span-4">
+        <div className="xl:col-span-4 space-y-4">
           <OperationsTicker />
+          <AIActivityStrip news={news} />
         </div>
       </div>
 

@@ -18,7 +18,7 @@ import { TRAINING_HISTORY_MAX_SIZE } from "@/constants";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
 import {
   createLearningState,
-  recordOutcome as recordLearningOutcome,
+  recordLearningOutcome,
   getSuccessRate,
   type LearningState,
 } from "./learningModule";

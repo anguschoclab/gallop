@@ -29,11 +29,18 @@ vi.mock("@/game/store", () => ({
             },
           },
         },
+        activeCartels: [],
       },
       npcStables: [
         { id: "npc-2", name: "Rival Stable A" },
         { id: "npc-3", name: "Rival Stable B" },
       ],
+    }),
+  useGameWithShallow: (selector: (s: any) => any) =>
+    selector({
+      npcAIManager: {
+        activeCartels: [],
+      },
     }),
 }));
 

@@ -11,7 +11,7 @@
 import { PHASE_ORDER_RACES } from "@/constants";
 import type { PipelineContext } from "../pipeline";
 import type { Race } from "@/core/race/types";
-import { generateUpcomingRaces, pruneOldRaces } from "@/game/store/helpers/market";
+import { generateUpcomingScheduledRaces, pruneOldRaces } from "@/game/store/helpers/market";
 import { generateAnnualCalendar, getCurrentYear } from "@/core/race/schedule";
 import { generateUUID } from "@/core/uuid";
 import type { AnyImpact, InboxImpact } from "@/core/resolver/impacts/index";
@@ -37,7 +37,7 @@ export const racesPhase = {
       racesArray = generateAnnualCalendar(newYear, racesArray);
     }
 
-    racesArray = generateUpcomingRaces(racesArray, newDay);
+    racesArray = generateUpcomingScheduledRaces(racesArray, newDay);
     const prunedArray = pruneOldRaces(racesArray, newDay);
     const pruned = prunedArray;
 

@@ -35,6 +35,7 @@ export function useInbox() {
         .filter((m) => {
           if (filter === "unread") return !m.readAt;
           if (filter === "action") return m.priority !== ACTION_FILTER_EXCLUDED_PRIORITY;
+          if (filter === "ai_activity") return m.category === "ai_activity";
           return true;
         })
         .sort((a, b) => {

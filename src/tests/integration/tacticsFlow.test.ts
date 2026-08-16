@@ -10,6 +10,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { useGame } from "@/game/store";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+import { calculateTacticalAdjustment } from "@/core/race/engine/tacticalAI";
+import type { Runner, PaceContext } from "@/core/race/engine/runnerBuilder";
 
 function makeInstructions(
   raceId: string,
@@ -201,5 +203,223 @@ describe("Jockey Instructions Flow Integration", () => {
 
     expect((tactics1 as any)?.jockeyInstructions?.ridingStyle).toBe("front_runner");
     expect((tactics2 as any)?.jockeyInstructions?.ridingStyle).toBe("closer");
+  });
+});
+
+describe("Tactical AI Enhancement Integration", () => {
+  it("should produce different velocity mods for weather-aware adjustments", () => {
+    const baseRunner: Runner = {
+      horseId: "h1",
+      name: "Test",
+      silk: "red",
+      owned: false,
+      position: 50,
+      velocity: 15,
+      lane: 1,
+      targetLane: 1,
+      laneVelocity: 0,
+      finishTime: null,
+      topSpeed: 20,
+      accel: 2,
+      staminaFactor: 1,
+      noise: 0,
+      runningStyle: "P",
+      gate: 1,
+      weight: 126,
+      affinityBonus: 0,
+      draftingHorseId: null,
+      horse: { id: "h1", mudAptitude: 0.3, recoveryPoints: 100 } as any,
+      jockey: {
+        id: "j1",
+        name: "J",
+        skill: 50,
+        stats: { pacing: 50, positioning: 50, vigor: 50, gates: 50 },
+      } as any,
+      jockeyInstructions: {
+        horseId: "h1",
+        raceId: "race-1",
+        ridingStyle: "closer",
+        earlyPosition: "midpack",
+        moveTiming: "late",
+        aggressiveness: 0.6,
+      },
+    };
+    const pace: PaceContext = {
+      leaderPos: 100,
+      leaderVelocity: 16,
+      leadGroupCount: 2,
+      paceRating: 1.0,
+      pacePressure: 0,
+      progress: 0.5,
+      laneDensity: [0, 0, 0],
+    } as any;
+
+    const dryResult = calculateTacticalAdjustment(
+      { ...baseRunner, trackCondition: "fast", weather: "sunny" } as any,
+      pace,
+      [baseRunner],
+    );
+    const muddyResult = calculateTacticalAdjustment(
+      { ...baseRunner, trackCondition: "heavy", weather: "rainy" } as any,
+      pace,
+      [baseRunner],
+    );
+
+    expect(typeof dryResult.velocityMod).toBe("number");
+    expect(typeof muddyResult.velocityMod).toBe("number");
+    // Low mud aptitude in heavy conditions should produce lower velocity mod
+    expect(muddyResult.velocityMod).toBeLessThan(dryResult.velocityMod);
+  });
+
+  it("should apply stamina-state awareness when staminaFactor is low", () => {
+    const baseRunner: Runner = {
+      horseId: "h1",
+      name: "Test",
+      silk: "red",
+      owned: false,
+      position: 50,
+      velocity: 15,
+      lane: 1,
+      targetLane: 1,
+      laneVelocity: 0,
+      finishTime: null,
+      topSpeed: 20,
+      accel: 2,
+      staminaFactor: 1,
+      noise: 0,
+      runningStyle: "S",
+      gate: 1,
+      weight: 126,
+      affinityBonus: 0,
+      draftingHorseId: null,
+      horse: { id: "h1", mudAptitude: 1.0, recoveryPoints: 100 } as any,
+      jockey: {
+        id: "j1",
+        name: "J",
+        skill: 50,
+        stats: { pacing: 50, positioning: 50, vigor: 50, gates: 50 },
+      } as any,
+      jockeyInstructions: {
+        horseId: "h1",
+        raceId: "race-1",
+        ridingStyle: "closer",
+        earlyPosition: "drop_back",
+        moveTiming: "late",
+        aggressiveness: 0.7,
+      },
+    };
+    const pace: PaceContext = {
+      leaderPos: 100,
+      leaderVelocity: 16,
+      leadGroupCount: 2,
+      paceRating: 1.0,
+      pacePressure: 0,
+      progress: 0.5,
+      laneDensity: [0, 0, 0],
+    };
+
+    const freshResult = calculateTacticalAdjustment(
+      { ...baseRunner, staminaFactor: 1.0 } as Runner,
+      pace,
+      [{ ...baseRunner, staminaFactor: 1.0 } as Runner],
+    );
+    const tiredResult = calculateTacticalAdjustment(
+      { ...baseRunner, staminaFactor: 0.4 } as any,
+      pace,
+      [{ ...baseRunner, staminaFactor: 0.4 } as any],
+    );
+
+    // Tired runner should be more conservative (lower velocity mod)
+    expect(tiredResult.velocityMod).toBeLessThan(freshResult.velocityMod);
+  });
+
+  it("should apply rival-awareness boost when rival is near", () => {
+    const rivalRunner: Runner = {
+      horseId: "h2",
+      name: "Rival",
+      silk: "blue",
+      owned: false,
+      position: 53,
+      velocity: 15,
+      lane: 1,
+      targetLane: 1,
+      laneVelocity: 0,
+      finishTime: null,
+      topSpeed: 20,
+      accel: 2,
+      staminaFactor: 1,
+      noise: 0,
+      runningStyle: "E",
+      gate: 2,
+      weight: 126,
+      affinityBonus: 0,
+      draftingHorseId: null,
+      horse: { id: "h2", mudAptitude: 1.0, recoveryPoints: 100 } as any,
+      jockey: {
+        id: "j2",
+        name: "J2",
+        skill: 50,
+        stats: { pacing: 50, positioning: 50, vigor: 50, gates: 50 },
+      } as any,
+    };
+    const mainRunner: Runner = {
+      horseId: "h1",
+      name: "Test",
+      silk: "red",
+      owned: false,
+      position: 50,
+      velocity: 15,
+      lane: 1,
+      targetLane: 1,
+      laneVelocity: 0,
+      finishTime: null,
+      topSpeed: 20,
+      accel: 2,
+      staminaFactor: 1,
+      noise: 0,
+      runningStyle: "P",
+      gate: 1,
+      weight: 126,
+      affinityBonus: 0,
+      draftingHorseId: null,
+      horse: { id: "h1", mudAptitude: 1.0, recoveryPoints: 100 } as any,
+      jockey: {
+        id: "j1",
+        name: "J",
+        skill: 80,
+        stats: { pacing: 80, positioning: 50, vigor: 70, gates: 50 },
+      } as any,
+      jockeyInstructions: {
+        horseId: "h1",
+        raceId: "race-1",
+        ridingStyle: "stalker",
+        earlyPosition: "midpack",
+        moveTiming: "mid",
+        aggressiveness: 0.8,
+      },
+      rivalHorseIds: ["h2"],
+    };
+    const pace: PaceContext = {
+      leaderPos: 100,
+      leaderVelocity: 16,
+      leadGroupCount: 2,
+      paceRating: 1.0,
+      pacePressure: 0,
+      progress: 0.5,
+      laneDensity: [0, 0, 0],
+    } as any;
+
+    const noRivalResult = calculateTacticalAdjustment(
+      { ...mainRunner, rivalHorseIds: undefined } as Runner,
+      pace,
+      [mainRunner],
+    );
+    const withRivalResult = calculateTacticalAdjustment(mainRunner, pace, [
+      mainRunner,
+      rivalRunner,
+    ]);
+
+    // With rival nearby, should get aggressiveness boost
+    expect(withRivalResult.velocityMod).toBeGreaterThan(noRivalResult.velocityMod);
   });
 });

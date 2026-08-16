@@ -4,7 +4,11 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { refreshMarket, generateUpcomingRaces, pruneOldRaces } from "@/game/store/helpers/market";
+import {
+  refreshMarket,
+  generateUpcomingScheduledRaces,
+  pruneOldRaces,
+} from "@/game/store/helpers/market";
 import { resolvePregnancies } from "@/game/store/helpers/pregnancy";
 import { maybeRecalibratePars } from "@/game/store/helpers/beyer";
 import type { Horse, Race, Pregnancy } from "@/game/types";
@@ -49,11 +53,11 @@ describe("refreshMarket", () => {
   });
 });
 
-describe("generateUpcomingRaces", () => {
+describe("generateUpcomingScheduledRaces", () => {
   it("should generate races for upcoming days", () => {
     const currentRaces: Race[] = [];
     const newDay = 1;
-    const races = generateUpcomingRaces(currentRaces, newDay);
+    const races = generateUpcomingScheduledRaces(currentRaces, newDay);
     expect(races.length).toBeGreaterThan(0);
     expect(races.every((r) => r.day >= newDay)).toBe(true);
   });
@@ -62,7 +66,7 @@ describe("generateUpcomingRaces", () => {
     const existingRace = generateRace(1);
     const currentRaces = [existingRace];
     const newDay = 2;
-    const races = generateUpcomingRaces(currentRaces, newDay);
+    const races = generateUpcomingScheduledRaces(currentRaces, newDay);
     expect(races).toContain(existingRace);
   });
 });

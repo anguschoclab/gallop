@@ -15,10 +15,10 @@
 
 import type { Horse, Race, Jockey, Stable, RunningStyle } from "@/game/types";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
-import { getPersonalityAIState, recordOutcome, calculateUtilityScore } from "./personalitySystem";
+import { getPersonalityAIState, recordPersonalityOutcome, calculateUtilityScore } from "./personalitySystem";
 import {
   createLearningState,
-  recordOutcome as recordLearningOutcome,
+  recordLearningOutcome,
   getSuccessRate,
   type LearningState,
 } from "./learningModule";
@@ -720,7 +720,7 @@ export function recordRaceStrategy(
     aiState.personalityState.memoryDepth,
   );
 
-  const newPersonalityState = recordOutcome(
+  const newPersonalityState = recordPersonalityOutcome(
     aiState.personalityState,
     "jockey_strategy",
     { raceId: race.id, horseId: horse.id },

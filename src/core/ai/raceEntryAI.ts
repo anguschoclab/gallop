@@ -11,11 +11,11 @@
 import type { Horse, Race, Stable } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { RECENT_RACES_MAX_COUNT } from "@/constants";
-import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
+import { getPersonalityAIState, recordPersonalityOutcome } from "./personalitySystem";
 import {
   createLearningState,
   getSuccessRate,
-  recordOutcome as recordLearningOutcome,
+  recordLearningOutcome,
   type LearningState,
 } from "./learningModule";
 import { calculateRaceSuitability } from "@/core/race/entryScoring";
@@ -305,7 +305,7 @@ export function recordRaceEntryOutcome(
   const contextKey = `${race.distance}:${race.surface || "unknown"}:${race.graded?.grade || "open"}`;
   const value = success && position ? (10 - position) * 10 : 0;
 
-  const newPersonalityState = recordOutcome(
+  const newPersonalityState = recordPersonalityOutcome(
     aiState.personalityState,
     "race_entry",
     { raceId: race.id, horseId: horse.id },

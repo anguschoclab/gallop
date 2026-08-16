@@ -41,7 +41,7 @@ export function getTrackHemisphere(trackId: string | undefined): Hemisphere {
   return SOUTHERN_COUNTRIES.has(track.country) ? "Southern" : "Northern";
 }
 
-export function getTrackCountry(trackId: string | undefined): string {
+export function getTrackCountryById(trackId: string | undefined): string {
   if (!trackId) return "";
   const track = TRACK_BY_ID[trackId];
   return track?.country ?? "";

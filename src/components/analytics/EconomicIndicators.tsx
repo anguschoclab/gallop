@@ -32,7 +32,20 @@ export function EconomicIndicators() {
   const economicHistory = useGame((s) => s.npcAIManager?.economicHistory);
 
   if (!economicState) {
-    return null;
+    return (
+      <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl">
+        <CardHeader>
+          <CardTitle className="text-sm font-black uppercase tracking-[0.3em] text-cream">
+            Industry Metrics
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-[10px] text-cream/40 italic">
+            Industry economic data will be available once NPC operations begin.
+          </p>
+        </CardContent>
+      </Card>
+    );
   }
 
   const signal = getEconomicSignal(economicState);

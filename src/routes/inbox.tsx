@@ -99,6 +99,20 @@ export function InboxPage() {
         >
           Action Required
         </Button>
+        <Button
+          variant={filter === "ai_activity" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setFilter("ai_activity")}
+        >
+          AI Activity
+          {inbox.some((m) => m.category === "ai_activity" && !m.readAt) && (
+            <Badge
+              className={cn("ml-2", "bg-emerald-500/20 text-emerald-400 border-emerald-500/30")}
+            >
+              {inbox.filter((m) => m.category === "ai_activity" && !m.readAt).length}
+            </Badge>
+          )}
+        </Button>
       </div>
 
       <div className="space-y-4">

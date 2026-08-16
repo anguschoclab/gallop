@@ -2,7 +2,11 @@ import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/cn";
-import { generateJockeyReport, gradeColorClass, type JockeyReport } from "@/core/race/jockeyReport";
+import {
+  generateJockeyReport,
+  jockeyGradeColorClass,
+  type JockeyReport,
+} from "@/core/race/jockeyReport";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { SectionalSplit } from "@/core/race/types";
 import {
@@ -104,7 +108,7 @@ export function JockeyReportPanel({
           <div
             className={cn(
               "px-3 py-1.5 border font-mono text-[10px] uppercase tracking-widest flex items-center gap-2",
-              gradeColorClass(active.averageGrade),
+              jockeyGradeColorClass(active.averageGrade),
             )}
           >
             <span className="text-cream/40">Overall</span>
@@ -188,7 +192,7 @@ export function JockeyReportPanel({
                 <span
                   className={cn(
                     "shrink-0 px-2 py-0.5 border font-mono text-[10px] uppercase tracking-widest font-black tabular-nums",
-                    gradeColorClass(facet.grade),
+                    jockeyGradeColorClass(facet.grade),
                   )}
                   title={`${facet.score.toFixed(0)} / 100`}
                 >

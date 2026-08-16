@@ -29,7 +29,7 @@ export const DISTANCE_LABEL: Record<DistanceBucket, string> = {
  *
  * @param distance - Distance in metres (optional).
  */
-export function distanceBucket(distance?: number): DistanceBucket {
+export function classifyDistanceBucket(distance?: number): DistanceBucket {
   if (!distance) return "any";
   if (distance <= 1400) return "sprint";
   if (distance <= 1900) return "mile";
@@ -95,7 +95,7 @@ export function getHorseTendencyStats(horse: Horse, opts: TendencyFilterOpts = {
 
   for (const r of history) {
     if (!r.pacePositions || r.pacePositions.length === 0) continue;
-    if (distance !== "any" && distanceBucket(r.distance) !== distance) continue;
+    if (distance !== "any" && classifyDistanceBucket(r.distance) !== distance) continue;
     if (surface !== "any" && r.surface !== surface) continue;
     const t = classifyTendency(r.pacePositions[0], r.fieldSize);
     counts[t] += 1;

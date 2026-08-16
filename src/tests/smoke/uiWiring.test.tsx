@@ -128,15 +128,15 @@ describe("Phase 1.4 — Design bible: tabular-nums usage verification", () => {
 // 4. TDD Red Tests — Unwired Features (skipped, driving future implementation)
 // ---------------------------------------------------------------------------
 
-describe("Phase 1.4 — TDD red: unwired features (expected to fail)", () => {
-  it.skip("Industry Metrics should be surfaced in analytics route", async () => {
+describe("Phase 1.4 — Wired features verification (previously TDD red)", () => {
+  it("Industry Metrics should be surfaced in analytics route", async () => {
     const mod: any = await import("@/routes/analytics.index");
     const Component = mod.Route?.options?.component ?? mod.default;
     const { container } = renderWithStore(createElement(Component), midGameSeed());
     expect(container.textContent?.toLowerCase()).toContain("industry");
   });
 
-  it.skip("NPC Bankruptcy events should be surfaced in gazette/briefing", async () => {
+  it("NPC Bankruptcy events should be surfaced in gazette/briefing", async () => {
     const mod: any = await import("@/routes/briefing");
     const Component = mod.Route?.options?.component ?? mod.default;
     const { container } = renderWithStore(createElement(Component), midGameSeed());

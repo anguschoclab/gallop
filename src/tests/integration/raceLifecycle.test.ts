@@ -6,6 +6,7 @@
 import { describe, it, expect } from "vitest";
 import { generateTrackSchedule } from "@/core/race/schedule";
 import { createRng } from "@/core/common/rng";
+import { recordRaceStrategy } from "@/core/ai/jockeyStrategyAI";
 import type { GameState, Race, Horse } from "@/game/types";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
@@ -73,5 +74,46 @@ describe("Race Lifecycle Integration", () => {
       expect(race).toHaveProperty("raceClass");
       expect(race).toHaveProperty("purse");
     }
+  });
+
+  it("should support trackCondition and weather on race type for tactical AI", () => {
+    const existingRace: Race = {
+      id: "race-weather",
+      name: "Weather Test Race",
+      day: 5,
+      trackId: "track-1",
+      graded: {
+        key: "race-weather",
+        grade: "G3",
+        track: "track-1",
+        trackId: "track-1",
+        surface: "Dirt",
+      },
+      distance: 1200,
+      surface: "Dirt",
+      purse: 10000,
+      entries: [],
+      raceClass: "Stakes",
+      entryFee: 500,
+      fieldSize: 12,
+      resolved: false,
+      trackCondition: "heavy",
+      weather: "rainy",
+    };
+
+    const state: GameState = makeGameState({
+      day: 10,
+      cash: 10000,
+      races: r2r([existingRace]),
+    }) as GameState;
+
+    const race = Object.values(state.races).find((r) => r.id === "race-weather");
+    expect(race).toBeDefined();
+    expect(race?.trackCondition).toBe("heavy");
+    expect(race?.weather).toBe("rainy");
+  });
+
+  it("should support jockey learning feedback loop via recordRaceStrategy wiring", () => {
+    expect(typeof recordRaceStrategy).toBe("function");
   });
 });

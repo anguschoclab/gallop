@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import type { Race, Horse } from "@/game/types";
 import { getCountry } from "@/data/gradedRaces";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
-import { distanceBucket } from "@/core/horse/paceTendency";
+import { classifyDistanceBucket } from "@/core/horse/paceTendency";
 import { DEFAULT_FIELD_SIZE } from "@/constants";
 
 /**
@@ -88,7 +88,7 @@ export function useRaceFilters(
         if (country !== "all" && getCountry(r.graded?.track ?? "") !== country) return false;
         if (surface !== "all" && r.surface !== surface) return false;
         if (track !== "all" && r.graded?.track !== track) return false;
-        if (trip !== "all" && distanceBucket(r.distance) !== trip) return false;
+        if (trip !== "all" && classifyDistanceBucket(r.distance) !== trip) return false;
         if (stableId) {
           if (!r.entries.some((e) => e.stableId === stableId)) return false;
         } else if (owned !== "all") {

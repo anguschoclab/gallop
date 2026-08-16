@@ -68,12 +68,13 @@ export function refreshMarket(currentMarket: Horse[], rng: Rng): Horse[] {
 }
 
 /**
- * Generates upcoming races using the track-based schedule system
+ * Convenience wrapper that calls generateUpcomingRaces with TRACK_SCHEDULES.
+ * Callers that need custom schedules should import from @/core/race/schedule directly.
  * @param currentRaces - Current races in the schedule
  * @param newDay - Current simulation day
  * @returns Updated races array with new upcoming races
  */
-export function generateUpcomingRaces(currentRaces: Race[], newDay: number): Race[] {
+export function generateUpcomingScheduledRaces(currentRaces: Race[], newDay: number): Race[] {
   return generateScheduledRaces(currentRaces, newDay, TRACK_SCHEDULES);
 }
 

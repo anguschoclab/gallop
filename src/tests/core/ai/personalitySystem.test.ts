@@ -7,7 +7,7 @@ import { describe, it, expect } from "vitest";
 import {
   getPersonalityAIState,
   calculateUtilityScore,
-  recordOutcome,
+  recordPersonalityOutcome,
   calculateStrategicScore,
   getCompetitiveModifier,
 } from "@/core/ai/personalitySystem";
@@ -177,12 +177,12 @@ describe("calculateUtilityScore", () => {
   });
 });
 
-describe("recordOutcome", () => {
+describe("recordPersonalityOutcome", () => {
   it("should record outcome to history", () => {
     const state = getPersonalityAIState("aggressive");
     const day = Date.now();
 
-    const updatedState = recordOutcome(state, "race_entry", { race_class: "G1" }, true, 1000, day);
+    const updatedState = recordPersonalityOutcome(state, "race_entry", { race_class: "G1" }, true, 1000, day);
 
     expect(updatedState.learningState.outcomes).toHaveLength(1);
     expect(updatedState.learningState.outcomes[0].decisionType).toBe("race_entry");
@@ -200,7 +200,7 @@ describe("recordOutcome", () => {
 
     let updatedState = state;
     for (let i = 0; i < 10; i++) {
-      updatedState = recordOutcome(
+      updatedState = recordPersonalityOutcome(
         updatedState,
         "decision",
         { iteration: i },
@@ -220,7 +220,7 @@ describe("recordOutcome", () => {
     let updatedState = state;
     // Record 3 successes and 2 failures
     for (let i = 0; i < 5; i++) {
-      updatedState = recordOutcome(
+      updatedState = recordPersonalityOutcome(
         updatedState,
         "breeding",
         { context: "test" },
@@ -242,7 +242,7 @@ describe("recordOutcome", () => {
     let updatedState = state;
     // Record enough failures to trigger adaptation
     for (let i = 0; i < 10; i++) {
-      updatedState = recordOutcome(
+      updatedState = recordPersonalityOutcome(
         updatedState,
         "decision",
         { context: "test" },

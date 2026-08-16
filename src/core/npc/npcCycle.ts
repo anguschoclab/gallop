@@ -567,7 +567,14 @@ export function runNpcCycle(
       rng,
     );
     updatedAiManager = dominanceResult.aiManager;
-    const newsItems = dominanceResult.newsItems;
+    const newsItems: NewsItem[] = [...dominanceResult.newsItems];
+
+    // Collect smart notification news items from intent generation
+    if (updatedAiManager.pendingNewsItems && updatedAiManager.pendingNewsItems.length > 0) {
+      newsItems.push(...updatedAiManager.pendingNewsItems);
+      updatedAiManager.pendingNewsItems = [];
+    }
+
     updatedAiManager = applyFrictionDecay(updatedAiManager);
 
     // Check horses entered in claiming races and decide whether to withdraw

@@ -14,10 +14,10 @@
  */
 
 import type { Horse, Race, Stable } from "@/game/types";
-import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
+import { getPersonalityAIState, recordPersonalityOutcome } from "./personalitySystem";
 import {
   createLearningState,
-  recordOutcome as recordLearningOutcome,
+  recordLearningOutcome,
   getSuccessRate,
   getAdaptiveThreshold,
   type LearningState,
@@ -419,7 +419,7 @@ export function recordHorseCareerOutcome(
 
     const contextKey = { horseId };
     const value = careerEarnings / 10000;
-    const newPersonalityState = recordOutcome(
+    const newPersonalityState = recordPersonalityOutcome(
       aiState.personalityState,
       "horse_generation",
       contextKey,

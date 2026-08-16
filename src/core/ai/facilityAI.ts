@@ -19,10 +19,10 @@ import type {
   PlayerFacilities,
 } from "@/core/facilities/facilityTypes";
 import type { Stable } from "@/game/types";
-import { getPersonalityAIState, recordOutcome, calculateUtilityScore } from "./personalitySystem";
+import { getPersonalityAIState, recordPersonalityOutcome, calculateUtilityScore } from "./personalitySystem";
 import {
   createLearningState,
-  recordOutcome as recordLearningOutcome,
+  recordLearningOutcome,
   getSuccessRate,
   getAdaptiveThreshold,
   type LearningState,
@@ -445,7 +445,7 @@ export function updateFacilityROI(
     // Update learning state
     const contextKey = facilityType;
     const success = benefit > 50; // Benefit threshold
-    const newPersonalityState = recordOutcome(
+    const newPersonalityState = recordPersonalityOutcome(
       aiState.personalityState,
       "facility_upgrade",
       { facilityId: `${facilityType}:${level}` },

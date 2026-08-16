@@ -1,5 +1,8 @@
 // Financial Types - Profit & Loss tracking for stable management
 
+import { formatCurrency } from "@/core/common/formatting";
+export { formatCurrency };
+
 /**
  * Income categories for racing operations
  */
@@ -161,27 +164,6 @@ export function createEmptyExpenses(): ExpenseSummary {
     facilityMaintenance: 0,
     total: 0,
   };
-}
-
-/**
- * Format currency for display.
- *
- * Formats a number as USD currency with no decimal places.
- * Handles negative values by prefixing with a minus sign.
- *
- * @param amount - The amount to format
- * @returns Formatted currency string
- */
-export function formatCurrency(amount: number): string {
-  const absAmount = Math.abs(amount);
-  const formatted = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(absAmount);
-
-  return amount < 0 ? `-${formatted}` : formatted;
 }
 
 /**

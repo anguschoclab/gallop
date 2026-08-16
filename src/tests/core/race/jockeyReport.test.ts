@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   generateJockeyReport,
-  gradeColorClass,
+  jockeyGradeColorClass,
   type JockeyReportGrade,
 } from "@/core/race/jockeyReport";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
@@ -362,12 +362,12 @@ describe("generateJockeyReport", () => {
   });
 });
 
-describe("gradeColorClass", () => {
+describe("jockeyGradeColorClass", () => {
   const grades: JockeyReportGrade[] = ["A+", "A", "B", "C", "D", "F"];
 
   for (const grade of grades) {
     it(`returns non-empty class string for grade ${grade}`, () => {
-      const result = gradeColorClass(grade);
+      const result = jockeyGradeColorClass(grade);
       expect(result).toBeTruthy();
       expect(typeof result).toBe("string");
       expect(result.length).toBeGreaterThan(0);
@@ -375,7 +375,7 @@ describe("gradeColorClass", () => {
   }
 
   it("returns distinct classes for different grades", () => {
-    const classes = grades.map((g) => gradeColorClass(g));
+    const classes = grades.map((g) => jockeyGradeColorClass(g));
     const unique = new Set(classes);
     expect(unique.size).toBe(grades.length);
   });

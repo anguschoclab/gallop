@@ -60,7 +60,7 @@ export function createLearningState(): LearningState {
  * @param memoryDepth - Maximum number of outcomes to keep
  * @returns Updated learning state
  */
-export function recordOutcome(
+export function recordLearningOutcome(
   state: LearningState,
   decisionType: string,
   contextKey: string,

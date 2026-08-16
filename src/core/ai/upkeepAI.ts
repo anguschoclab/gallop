@@ -14,10 +14,10 @@
  */
 
 import type { Stable, Horse } from "@/game/types";
-import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
+import { getPersonalityAIState, recordPersonalityOutcome } from "./personalitySystem";
 import {
   createLearningState,
-  recordOutcome as recordLearningOutcome,
+  recordLearningOutcome,
   getSuccessRate,
   type LearningState,
 } from "./learningModule";
@@ -372,7 +372,7 @@ export function recordBudgetDecision(
 
   // Update learning state
   const value = totalBudget - spent;
-  const newPersonalityState = recordOutcome(
+  const newPersonalityState = recordPersonalityOutcome(
     aiState.personalityState,
     "upkeep",
     { stableId: stable.id },

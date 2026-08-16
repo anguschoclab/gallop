@@ -1,7 +1,7 @@
 import { test, describe, expect } from "vitest";
 import {
   classifyTendency,
-  distanceBucket,
+  classifyDistanceBucket,
   getHorseTendencyStats,
   matchesTendency,
 } from "@/core/horse/paceTendency";
@@ -9,21 +9,21 @@ import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { Horse } from "@/game/types";
 
 describe("paceTendency", () => {
-  describe("distanceBucket", () => {
+  describe("classifyDistanceBucket", () => {
     test("handles undefined", () => {
-      expect(distanceBucket(undefined)).toBe("any");
+      expect(classifyDistanceBucket(undefined)).toBe("any");
     });
     test("sprints", () => {
-      expect(distanceBucket(1000)).toBe("sprint");
-      expect(distanceBucket(1400)).toBe("sprint");
+      expect(classifyDistanceBucket(1000)).toBe("sprint");
+      expect(classifyDistanceBucket(1400)).toBe("sprint");
     });
     test("miles", () => {
-      expect(distanceBucket(1401)).toBe("mile");
-      expect(distanceBucket(1900)).toBe("mile");
+      expect(classifyDistanceBucket(1401)).toBe("mile");
+      expect(classifyDistanceBucket(1900)).toBe("mile");
     });
     test("routes", () => {
-      expect(distanceBucket(1901)).toBe("route");
-      expect(distanceBucket(2400)).toBe("route");
+      expect(classifyDistanceBucket(1901)).toBe("route");
+      expect(classifyDistanceBucket(2400)).toBe("route");
     });
   });
 

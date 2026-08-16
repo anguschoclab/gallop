@@ -27,13 +27,20 @@ import type {
   ConsignmentIntent,
   UpdateStudFeeIntent,
   TransportIntent,
+  FacilityUpgradeIntent,
 } from "@/core/resolver/intents";
 import type { GameState, Horse, Race, Stable, Jockey, AuctionSale } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { isHorseEligibleForClaimingPrice } from "@/core/market/claiming";
 import { calculateOverallRating } from "@/core/horse/stats";
-import { getAvailableTrainingTypes } from "@/core/facilities";
+import {
+  getAvailableTrainingTypes,
+  FACILITY_UPGRADE_COSTS,
+  type FacilityType,
+  type FacilityLevel,
+  type PlayerFacilities,
+} from "@/core/facilities";
 import {
   createTrainingAIState,
   selectTrainingType,
@@ -66,6 +73,7 @@ import {
   updateStableAIState,
   type NpcAIManager,
   type StableAIState,
+  type DifficultyState,
 } from "@/core/ai/npcCycleAI";
 import {
   assessWorldState,
@@ -98,6 +106,8 @@ import {
   CONSIGNMENT_INTENT_PRIORITY,
   DEFAULT_SUBSYSTEM_WEIGHT,
 } from "@/constants/aiConstants";
+import { generateDirectiveChangeNews } from "@/services/narrative/directiveNewsGenerator";
+import type { NewsItem } from "@/services/narrative/newsTypes";
 
 /**
  * Generate all NPC intents for the day.
@@ -176,12 +186,21 @@ export function generateNpcIntents(
       // Cross-System Coordination: generate directives, allocate budget, coordinate subsystems
       if (aiManager && stableAI && worldAssessment) {
         const financialDistress = stableAI.financialDistress;
+        const oldDirectives = stableAI.strategicDirectives;
         const directives = generateStrategicDirectives(
           stable,
           worldAssessment,
           stable.personality,
           financialDistress,
         );
+
+        // Smart notification: generate news if top directive changed
+        const directiveNews = generateDirectiveChangeNews(stable, oldDirectives, directives, day);
+        if (directiveNews) {
+          if (!aiManager.pendingNewsItems) aiManager.pendingNewsItems = [];
+          aiManager.pendingNewsItems.push(directiveNews);
+        }
+
         const budget = allocateBudget(stable, directives);
         const weights = coordinateSubsystems(directives, budget);
 
@@ -232,6 +251,7 @@ export function generateNpcIntents(
           horseMap,
           weights?.raceEntry,
           distressLevel,
+          aiManager?.difficultyModulator,
         ),
       );
 
@@ -295,6 +315,11 @@ export function generateNpcIntents(
       if (stable.outposts && stable.outposts.length > 1) {
         intents.push(...generateNpcTransportIntents(stable, day, ownedHorses));
       }
+
+      // Facility upgrade intents: upgrade facilities when budget allows
+      intents.push(
+        ...generateNpcFacilityUpgradeIntents(stable, stableAI, day, state.npcFacilities),
+      );
 
       // Update stable AI state in the manager (immutable update)
       if (aiManager && stableAI) {
@@ -417,6 +442,7 @@ function generateNpcTrainingIntents(
  * @param horseMap - Map of all horses for competitor quality analysis
  * @param raceEntryWeight - Subsystem weight that modulates race entry willingness
  * @param distressLevel - Current financial distress level (defaults to healthy)
+ * @param difficultyModulator - Optional difficulty state that adjusts NPC competence
  * @returns Array of race entry intents
  */
 function generateNpcRaceEntryIntents(
@@ -430,6 +456,7 @@ function generateNpcRaceEntryIntents(
   horseMap: Map<string, Horse>,
   raceEntryWeight = 1.0,
   distressLevel: DistressLevel = "healthy",
+  difficultyModulator?: DifficultyState,
 ): RaceEntryIntent[] {
   const intents: RaceEntryIntent[] = [];
 
@@ -491,6 +518,11 @@ function generateNpcRaceEntryIntents(
 
       // Apply subsystem weight: higher weight lowers threshold (more willing to enter)
       threshold /= raceEntryWeight;
+
+      // Difficulty modulator: higher NPC competence raises threshold (more selective)
+      if (difficultyModulator) {
+        threshold *= difficultyModulator.npcCompetenceMultiplier;
+      }
 
       if (suitability > threshold) {
         // Calculate optimal jockey instructions for this horse in this race
@@ -1192,6 +1224,71 @@ function generateNpcTransportIntents(
       });
       transportCount++;
     }
+  }
+
+  return intents;
+}
+
+/**
+ * Generate facility upgrade intents for NPC stables.
+ * Upgrades the lowest-level facility when budget allows, prioritizing
+ * main_track and barn for training and recovery benefits.
+ *
+ * @param stable - The NPC stable generating facility upgrade intents
+ * @param stableAI - Current AI state for the stable
+ * @param day - Current game day
+ * @param npcFacilities - Map of stable IDs to their facilities
+ * @returns Array of facility upgrade intents
+ */
+function generateNpcFacilityUpgradeIntents(
+  stable: Stable,
+  stableAI: StableAIState | undefined,
+  day: number,
+  npcFacilities?: Record<string, PlayerFacilities>,
+): FacilityUpgradeIntent[] {
+  const intents: FacilityUpgradeIntent[] = [];
+
+  const facilitiesBudget = stableAI?.budgetAllocation?.facilities;
+  if (facilitiesBudget === undefined || facilitiesBudget <= 0) return intents;
+
+  const stableFacilities = npcFacilities?.[stable.id];
+  if (!stableFacilities) return intents;
+
+  const LEVEL_ORDER: FacilityLevel[] = ["basic", "standard", "premium", "elite"];
+  const PRIORITY_FACILITIES: FacilityType[] = ["main_track", "barn", "veterinary_clinic"];
+
+  // Find the lowest-level priority facility that can be upgraded within budget
+  let bestCandidate: { type: FacilityType; level: FacilityLevel; cost: number } | null = null;
+
+  for (const facilityType of PRIORITY_FACILITIES) {
+    const facility = stableFacilities[facilityType];
+    if (!facility) continue;
+    const upgradeCost = FACILITY_UPGRADE_COSTS[facility.level];
+    if (upgradeCost === null) continue; // Already elite
+    if (upgradeCost > facilitiesBudget) continue;
+
+    if (
+      !bestCandidate ||
+      LEVEL_ORDER.indexOf(facility.level) < LEVEL_ORDER.indexOf(bestCandidate.level)
+    ) {
+      bestCandidate = { type: facilityType, level: facility.level, cost: upgradeCost };
+    }
+  }
+
+  if (bestCandidate) {
+    const nextLevel = LEVEL_ORDER[LEVEL_ORDER.indexOf(bestCandidate.level) + 1];
+    intents.push({
+      id: generateUUID(),
+      entityId: stable.id,
+      source: "npc",
+      sourceId: stable.id,
+      day,
+      priority: 15,
+      type: "facility_upgrade",
+      facilityId: bestCandidate.type,
+      nextLevel,
+      cost: bestCandidate.cost,
+    });
   }
 
   return intents;

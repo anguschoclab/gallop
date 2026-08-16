@@ -23,19 +23,18 @@ import { formatCurrency as formatCurrencyCommon } from "@/core/common/formatting
 import { defaultMaxTime as defaultMaxTimeEngine } from "@/core/race/engine/constants";
 import { defaultMaxTime as defaultMaxTimeConstants } from "@/constants/raceEngineConstants";
 import { distanceBucket as distanceBucketBeyer } from "@/core/race/beyer";
-import { distanceBucket as distanceBucketPace } from "@/core/horse/paceTendency";
-import { gradeColorClass as gradeColorJockey } from "@/core/race/jockeyReport";
+import { classifyDistanceBucket as distanceBucketPace } from "@/core/horse/paceTendency";
+import { jockeyGradeColorClass as gradeColorJockey } from "@/core/race/jockeyReport";
 import { gradeColorClass as gradeColorHorse } from "@/core/horse/grading";
-import { recordOutcome as recordPersonalityOutcome } from "@/core/ai/personalitySystem";
-import { recordOutcome as recordLearningOutcome } from "@/core/ai/learningModule";
+import { recordPersonalityOutcome } from "@/core/ai/personalitySystem";
+import { recordLearningOutcome } from "@/core/ai/learningModule";
 import { getTrackCountry as getTrackCountryByName } from "@/data/gradedRaces";
-import { getTrackCountry as getTrackCountryById } from "@/core/weather/trackClimate";
+import { getTrackCountryById as getTrackCountryByIdFn } from "@/core/weather/trackClimate";
 import { generateUpcomingRaces as generateUpcomingRacesSchedule } from "@/core/race/schedule";
-import { generateUpcomingRaces as generateUpcomingRacesMarket } from "@/game/store/helpers/market";
+import { generateUpcomingScheduledRaces as generateUpcomingRacesMarket } from "@/game/store/helpers/market";
 
-// B.2 — connectionTrophies identical file duplication
+// B.2 — connectionTrophies: duplicate file deleted, canonical in @/core/awards
 import * as connectionTrophiesAwards from "@/core/awards/connectionTrophies";
-import * as connectionTrophiesConstants from "@/constants/connectionTrophies";
 
 // ---------------------------------------------------------------------------
 // B.1 — formatCurrency: DIFFERENT implementations (must NOT merge)
@@ -83,37 +82,33 @@ describe("B.1 — formatCurrency duplication verification", () => {
 // B.2 — connectionTrophies.ts: IDENTICAL files (safe to merge)
 // ---------------------------------------------------------------------------
 
-describe("B.2 — connectionTrophies identical file verification", () => {
-  it("both files export the same function names", () => {
+describe("B.2 — connectionTrophies canonical file verification", () => {
+  it("canonical file exports expected function names", () => {
     const awardsExports = Object.keys(connectionTrophiesAwards).sort();
-    const constantsExports = Object.keys(connectionTrophiesConstants).sort();
-    expect(awardsExports).toEqual(constantsExports);
+    expect(awardsExports).toContain("getG1WinsForJockey");
+    expect(awardsExports).toContain("getG1WinsForStable");
+    expect(awardsExports).toContain("countByGrade");
   });
 
-  it("both files export getG1WinsForJockey", () => {
+  it("canonical file exports getG1WinsForJockey", () => {
     expect(typeof connectionTrophiesAwards.getG1WinsForJockey).toBe("function");
-    expect(typeof connectionTrophiesConstants.getG1WinsForJockey).toBe("function");
   });
 
-  it("both files export getG1WinsForStable", () => {
+  it("canonical file exports getG1WinsForStable", () => {
     expect(typeof connectionTrophiesAwards.getG1WinsForStable).toBe("function");
-    expect(typeof connectionTrophiesConstants.getG1WinsForStable).toBe("function");
   });
 
-  it("both files export countByGrade", () => {
+  it("canonical file exports countByGrade", () => {
     expect(typeof connectionTrophiesAwards.countByGrade).toBe("function");
-    expect(typeof connectionTrophiesConstants.countByGrade).toBe("function");
   });
 
-  it("functions produce identical results for empty input", () => {
+  it("functions work for empty input", () => {
     const emptyState = { horses: {}, races: {} } as any;
     const jockeyA = connectionTrophiesAwards.getG1WinsForJockey(emptyState, "j1");
-    const jockeyB = connectionTrophiesConstants.getG1WinsForJockey(emptyState, "j1");
-    expect(jockeyA).toEqual(jockeyB);
+    expect(jockeyA).toBeDefined();
 
     const stableA = connectionTrophiesAwards.getG1WinsForStable(emptyState, "s1");
-    const stableB = connectionTrophiesConstants.getG1WinsForStable(emptyState, "s1");
-    expect(stableA).toEqual(stableB);
+    expect(stableA).toBeDefined();
   });
 });
 
@@ -331,12 +326,12 @@ describe("B.7 — getTrackCountry duplication verification (NOT true duplicates)
 
   it("trackClimate version takes trackId string and looks up TRACK_BY_ID", () => {
     // Need a valid trackId — let's find one
-    const result = getTrackCountryById("nonexistent");
+    const result = getTrackCountryByIdFn("nonexistent");
     expect(result).toBe("");
   });
 
   it("trackClimate version returns empty string for undefined trackId", () => {
-    expect(getTrackCountryById(undefined)).toBe("");
+    expect(getTrackCountryByIdFn(undefined)).toBe("");
   });
 
   it("gradedRaces version returns country for known track names", () => {
@@ -346,7 +341,7 @@ describe("B.7 — getTrackCountry duplication verification (NOT true duplicates)
 
   it("both return string type", () => {
     expect(typeof getTrackCountryByName("Ascot")).toBe("string");
-    expect(typeof getTrackCountryById(undefined)).toBe("string");
+    expect(typeof getTrackCountryByIdFn(undefined)).toBe("string");
   });
 });
 

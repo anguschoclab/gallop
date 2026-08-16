@@ -5,7 +5,7 @@
  * Extracted from useInbox hook to separate pure UI utilities from state management.
  */
 
-import { Bell, Baby, Activity, Gavel, Calendar, LogOut, Award } from "lucide-react";
+import { Bell, Baby, Activity, Gavel, Calendar, LogOut, Award, Bot } from "lucide-react";
 import type { InboxCategory, InboxPriority } from "@/core/inbox/inboxTypes";
 import type { ReactNode } from "react";
 import {
@@ -32,6 +32,8 @@ export function getCategoryIcon(category: InboxCategory): ReactNode {
       return <LogOut className={ICON_SIZE_SM} />;
     case "hall_of_fame":
       return <Award className={ICON_SIZE_SM} />;
+    case "ai_activity":
+      return <Bot className={ICON_SIZE_SM} />;
     default:
       return <Bell className={ICON_SIZE_SM} />;
   }

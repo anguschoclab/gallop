@@ -14,9 +14,9 @@ function createMockEconomicTrend(overrides: Partial<EconomicTrend> = {}): Econom
 }
 
 describe("EconomicIndicators", () => {
-  it("renders nothing when no economic state", () => {
+  it("renders industry metrics placeholder when no economic state", () => {
     const { container } = renderWithStore(<EconomicIndicators />, {});
-    expect(container.firstChild).toBeNull();
+    expect(container.textContent?.toLowerCase()).toContain("industry");
   });
 
   it("renders economic indicators when state present", () => {

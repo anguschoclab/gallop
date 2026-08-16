@@ -2,7 +2,11 @@ import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import type { Horse, Race } from "@/game/types";
 import { EligibleHorseRow } from "./EligibleHorseRow";
 import { PaceTendencyFilter } from "@/components/horse/PaceTendencyFilter";
-import { distanceBucket, matchesTendency, type TendencyFilter } from "@/core/horse/paceTendency";
+import {
+  classifyDistanceBucket,
+  matchesTendency,
+  type TendencyFilter,
+} from "@/core/horse/paceTendency";
 import { useMemo, useState } from "react";
 
 interface Props {
@@ -43,7 +47,7 @@ export function HorseSelectionStep({
     if (tendency === "any") return list;
     return list.filter(({ horse }) =>
       matchesTendency(horse, tendency, {
-        distance: distanceBucket(raceDistance),
+        distance: classifyDistanceBucket(raceDistance),
         surface: raceSurface ?? "any",
       }),
     );

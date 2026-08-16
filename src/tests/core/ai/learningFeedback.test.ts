@@ -1,7 +1,7 @@
 /**
  * Learning Feedback Loop Tests
  *
- * Verifies that AI subsystems have learning functions (recordOutcome, getAdaptiveThreshold)
+ * Verifies that AI subsystems have learning functions (recordLearningOutcome, getAdaptiveThreshold)
  * and that these form a complete feedback loop: decision → intent → resolution →
  * outcome recording → next cycle uses updated thresholds.
  */
@@ -9,7 +9,7 @@
 import { describe, it, expect } from "vitest";
 import {
   createLearningState,
-  recordOutcome,
+  recordLearningOutcome,
   getSuccessRate,
   getAdaptiveThreshold,
 } from "@/core/ai/learningModule";
@@ -54,18 +54,18 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
 }
 
 describe("Learning Feedback Infrastructure", () => {
-  it("recordOutcome updates learning state with success", () => {
+  it("recordLearningOutcome updates learning state with success", () => {
     const learningState = createLearningState();
-    const updated = recordOutcome(learningState, "claiming", "4:25000", true, 0.5, 100, 100);
+    const updated = recordLearningOutcome(learningState, "claiming", "4:25000", true, 0.5, 100, 100);
 
     expect(updated.outcomes.length).toBe(1);
     expect(updated.outcomes[0].success).toBe(true);
     expect(getSuccessRate(updated, "claiming", "4:25000")).toBe(1.0);
   });
 
-  it("recordOutcome updates learning state with failure", () => {
+  it("recordLearningOutcome updates learning state with failure", () => {
     const learningState = createLearningState();
-    const updated = recordOutcome(learningState, "claiming", "4:25000", false, 0.5, 100, 100);
+    const updated = recordLearningOutcome(learningState, "claiming", "4:25000", false, 0.5, 100, 100);
 
     expect(updated.outcomes.length).toBe(1);
     expect(updated.outcomes[0].success).toBe(false);
@@ -77,7 +77,7 @@ describe("Learning Feedback Infrastructure", () => {
 
     // Record several successes
     for (let i = 0; i < 5; i++) {
-      learningState = recordOutcome(learningState, "claiming", "4:25000", true, 0.5, 100 + i, 100);
+      learningState = recordLearningOutcome(learningState, "claiming", "4:25000", true, 0.5, 100 + i, 100);
     }
     const thresholdAfterSuccess = getAdaptiveThreshold(
       learningState,
@@ -90,7 +90,7 @@ describe("Learning Feedback Infrastructure", () => {
     // Record several failures
     learningState = createLearningState();
     for (let i = 0; i < 5; i++) {
-      learningState = recordOutcome(learningState, "claiming", "4:25000", false, 0.5, 100 + i, 100);
+      learningState = recordLearningOutcome(learningState, "claiming", "4:25000", false, 0.5, 100 + i, 100);
     }
     const thresholdAfterFailure = getAdaptiveThreshold(
       learningState,

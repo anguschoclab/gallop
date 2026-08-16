@@ -14,10 +14,10 @@
  */
 
 import type { Horse, Race, Stable } from "@/game/types";
-import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
+import { getPersonalityAIState, recordPersonalityOutcome } from "./personalitySystem";
 import {
   createLearningState,
-  recordOutcome as recordLearningOutcome,
+  recordLearningOutcome,
   getSuccessRate,
   type LearningState,
 } from "./learningModule";
@@ -366,7 +366,7 @@ export function recordWithdrawalOutcome(
       aiState.personalityState.memoryDepth,
     );
 
-    const newPersonalityState = recordOutcome(
+    const newPersonalityState = recordPersonalityOutcome(
       aiState.personalityState,
       "withdrawal",
       { raceId: decision.raceId, horseId: decision.horseId },

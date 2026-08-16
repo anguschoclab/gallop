@@ -463,12 +463,12 @@ const DIRECTIVE_WEIGHT_ADJUSTMENTS: Record<DirectiveType, Partial<SubsystemWeigh
  * Coordinate subsystem weights based on strategic directives and budget.
  *
  * @param directives - Active strategic directives
- * @param _budget - Allocated budget (reserved for future budget-aware weight adjustments)
+ * @param budget - Allocated budget used for budget-aware weight adjustments
  * @returns Subsystem weights (0-2, 1.0 = neutral)
  */
 export function coordinateSubsystems(
   directives: StrategicDirective[],
-  _budget: BudgetAllocation,
+  budget: BudgetAllocation,
 ): SubsystemWeights {
   const weights: SubsystemWeights = { ...BASE_WEIGHTS };
 
@@ -482,6 +482,12 @@ export function coordinateSubsystems(
       weights[subsystemKey] += adjustment * magnitude;
     }
   }
+
+  // Budget-aware adjustments: higher budget increases subsystem weight
+  if (budget.training > 0) weights.training = Math.min(2, weights.training * 1.1);
+  if (budget.auctions > 0) weights.auction = Math.min(2, weights.auction * 1.1);
+  if (budget.breeding > 0) weights.breeding = Math.min(2, weights.breeding * 1.1);
+  if (budget.claiming > 0) weights.claiming = Math.min(2, weights.claiming * 1.1);
 
   // Clamp all weights to [0, 2]
   for (const key of Object.keys(weights) as (keyof SubsystemWeights)[]) {

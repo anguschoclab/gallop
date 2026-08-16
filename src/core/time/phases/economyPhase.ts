@@ -18,7 +18,7 @@ export const economyPhase = {
   name: "economy",
   order: PHASE_ORDER_ECONOMY,
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, newDay } = context;
+    const { state, newDay, worldAssessment } = context;
 
     if (state.npcStables.length === 0) {
       return context;
@@ -31,6 +31,19 @@ export const economyPhase = {
     };
 
     aiManager = processEconomicCycle(aiManager, state, newDay);
+
+    // Use worldAssessment to adjust economic state if available
+    if (worldAssessment && aiManager.globalEconomicState) {
+      // Player dominance affects stud fee trends: high player dominance pressures NPC studs
+      const dominanceAdjustment = (worldAssessment.playerDominance - 0.5) * 5;
+      aiManager = {
+        ...aiManager,
+        globalEconomicState: {
+          ...aiManager.globalEconomicState,
+          studFeeTrend: aiManager.globalEconomicState.studFeeTrend + dominanceAdjustment,
+        },
+      };
+    }
 
     const economicTrend = aiManager.globalEconomicState ?? undefined;
 

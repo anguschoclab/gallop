@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { formatCurrency } from "@/core/financial";
 
 export const Route = createFileRoute("/epilogue")({
@@ -11,6 +11,7 @@ function EpiloguePage() {
   const navigate = useNavigate();
   const snapshot = useGame((s) => s.runEndSnapshot);
   const runEnded = useGame((s) => s.runEnded ?? false);
+  const solvencyLog = useGameWithShallow((s) => s.solvencyAuditLog);
 
   useEffect(() => {
     if (!runEnded) {
@@ -83,6 +84,29 @@ function EpiloguePage() {
               label="Deficit after"
               value={formatCurrency(snapshot.lastSeizure.deficitAfter)}
             />
+          </div>
+        </section>
+      )}
+
+      {solvencyLog && solvencyLog.length > 0 && (
+        <section className="border border-white/5 rounded-lg bg-slate-950/60 p-6 space-y-3">
+          <h2 className="text-xs uppercase tracking-widest text-gold-bright font-mono">
+            Solvency Audit Trail
+          </h2>
+          <div className="space-y-1 max-h-48 overflow-y-auto">
+            {solvencyLog.slice(-10).map((entry, i) => (
+              <div key={i} className="flex justify-between text-xs border-b border-white/5 pb-1">
+                <span className="text-cream-muted font-mono">
+                  Day {entry.day} · {entry.kind}
+                </span>
+                <span
+                  className={`font-mono tabular-nums ${entry.delta < 0 ? "text-red-400" : "text-emerald-400"}`}
+                >
+                  {entry.delta < 0 ? "" : "+"}
+                  {formatCurrency(entry.delta)}
+                </span>
+              </div>
+            ))}
           </div>
         </section>
       )}

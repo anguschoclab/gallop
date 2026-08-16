@@ -6,7 +6,7 @@
 import { describe, it, expect } from "vitest";
 import {
   createLearningState,
-  recordOutcome,
+  recordLearningOutcome,
   getSuccessRate,
   getPatternScore,
   getAdaptiveThreshold,
@@ -25,12 +25,12 @@ describe("createLearningState", () => {
   });
 });
 
-describe("recordOutcome", () => {
+describe("recordLearningOutcome", () => {
   it("should record outcome to history", () => {
     const state = createLearningState();
     const day = 100;
 
-    const updatedState = recordOutcome(state, "decision_type", "context_key", true, 100, day, 10);
+    const updatedState = recordLearningOutcome(state, "decision_type", "context_key", true, 100, day, 10);
 
     expect(updatedState.outcomes).toHaveLength(1);
     expect(updatedState.outcomes[0].decisionType).toBe("decision_type");
@@ -45,7 +45,7 @@ describe("recordOutcome", () => {
 
     let updatedState = state;
     for (let i = 0; i < 15; i++) {
-      updatedState = recordOutcome(updatedState, "decision", "context", true, i * 10, i, 10);
+      updatedState = recordLearningOutcome(updatedState, "decision", "context", true, i * 10, i, 10);
     }
 
     expect(updatedState.outcomes).toHaveLength(10);
@@ -57,7 +57,7 @@ describe("recordOutcome", () => {
     let updatedState = state;
     // Record 3 successes and 2 failures
     for (let i = 0; i < 5; i++) {
-      updatedState = recordOutcome(updatedState, "breeding", "test_context", i < 3, 100, i, 10);
+      updatedState = recordLearningOutcome(updatedState, "breeding", "test_context", i < 3, 100, i, 10);
     }
 
     const successRate = updatedState.successRates["breeding:test_context"];
@@ -72,7 +72,7 @@ describe("recordOutcome", () => {
     let updatedState = state;
     // Record multiple outcomes with same context dimension
     for (let i = 0; i < 5; i++) {
-      updatedState = recordOutcome(updatedState, "decision", "context:value", i < 3, 100, i, 10);
+      updatedState = recordLearningOutcome(updatedState, "decision", "context:value", i < 3, 100, i, 10);
     }
 
     const patternScore = updatedState.patterns["decision:context:value"];
@@ -84,7 +84,7 @@ describe("recordOutcome", () => {
     const state = createLearningState();
     const originalOutcomesLength = state.outcomes.length;
 
-    recordOutcome(state, "decision", "context", true, 100, 1, 10);
+    recordLearningOutcome(state, "decision", "context", true, 100, 1, 10);
 
     expect(state.outcomes).toHaveLength(originalOutcomesLength);
   });
@@ -103,7 +103,7 @@ describe("getSuccessRate", () => {
     let updatedState = state;
     // Record 7 successes and 3 failures
     for (let i = 0; i < 10; i++) {
-      updatedState = recordOutcome(updatedState, "breeding", "test", i < 7, 100, i, 10);
+      updatedState = recordLearningOutcome(updatedState, "breeding", "test", i < 7, 100, i, 10);
     }
 
     const successRate = getSuccessRate(updatedState, "breeding", "test");
@@ -115,7 +115,7 @@ describe("getSuccessRate", () => {
 
     let updatedState = state;
     for (let i = 0; i < 5; i++) {
-      updatedState = recordOutcome(updatedState, "decision", "context", true, 100, i, 10);
+      updatedState = recordLearningOutcome(updatedState, "decision", "context", true, 100, i, 10);
     }
 
     const successRate = getSuccessRate(updatedState, "decision", "context");
@@ -127,7 +127,7 @@ describe("getSuccessRate", () => {
 
     let updatedState = state;
     for (let i = 0; i < 5; i++) {
-      updatedState = recordOutcome(updatedState, "decision", "context", false, 0, i, 10);
+      updatedState = recordLearningOutcome(updatedState, "decision", "context", false, 0, i, 10);
     }
 
     const successRate = getSuccessRate(updatedState, "decision", "context");
@@ -148,7 +148,7 @@ describe("getPatternScore", () => {
     let updatedState = state;
     // Record successes to increase pattern score
     for (let i = 0; i < 10; i++) {
-      updatedState = recordOutcome(updatedState, "decision", "context:value1", true, 100, i, 10);
+      updatedState = recordLearningOutcome(updatedState, "decision", "context:value1", true, 100, i, 10);
     }
 
     const patternScore = getPatternScore(updatedState, "decision", "context:value1");
@@ -161,7 +161,7 @@ describe("getPatternScore", () => {
     let updatedState = state;
     // Record failures to decrease pattern score
     for (let i = 0; i < 10; i++) {
-      updatedState = recordOutcome(updatedState, "decision", "context:value1", false, 0, i, 10);
+      updatedState = recordLearningOutcome(updatedState, "decision", "context:value1", false, 0, i, 10);
     }
 
     const patternScore = getPatternScore(updatedState, "decision", "context:value1");
@@ -182,7 +182,7 @@ describe("getAdaptiveThreshold", () => {
     let updatedState = state;
     // Record high success rate
     for (let i = 0; i < 10; i++) {
-      updatedState = recordOutcome(updatedState, "decision", "context", true, 100, i, 10);
+      updatedState = recordLearningOutcome(updatedState, "decision", "context", true, 100, i, 10);
     }
 
     const threshold = getAdaptiveThreshold(updatedState, "decision", "context", 50, 0.5);
@@ -195,7 +195,7 @@ describe("getAdaptiveThreshold", () => {
     let updatedState = state;
     // Record low success rate
     for (let i = 0; i < 10; i++) {
-      updatedState = recordOutcome(updatedState, "decision", "context", false, 0, i, 10);
+      updatedState = recordLearningOutcome(updatedState, "decision", "context", false, 0, i, 10);
     }
 
     const threshold = getAdaptiveThreshold(updatedState, "decision", "context", 50, 0.5);
@@ -207,7 +207,7 @@ describe("getAdaptiveThreshold", () => {
 
     let updatedState = state;
     for (let i = 0; i < 10; i++) {
-      updatedState = recordOutcome(updatedState, "decision", "context", true, 100, i, 10);
+      updatedState = recordLearningOutcome(updatedState, "decision", "context", true, 100, i, 10);
     }
 
     const lowSpeedThreshold = getAdaptiveThreshold(updatedState, "decision", "context", 50, 0.1);
@@ -222,7 +222,7 @@ describe("getAdaptiveThreshold", () => {
     let updatedState = state;
     // Record very high success rate
     for (let i = 0; i < 20; i++) {
-      updatedState = recordOutcome(updatedState, "decision", "context", true, 100, i, 10);
+      updatedState = recordLearningOutcome(updatedState, "decision", "context", true, 100, i, 10);
     }
 
     const threshold = getAdaptiveThreshold(updatedState, "decision", "context", 50, 1.0);
@@ -236,7 +236,7 @@ describe("pruneOldOutcomes", () => {
 
     let updatedState = state;
     for (let i = 0; i < 10; i++) {
-      updatedState = recordOutcome(updatedState, "decision", "context", true, 100, i, 10);
+      updatedState = recordLearningOutcome(updatedState, "decision", "context", true, 100, i, 10);
     }
 
     // Prune outcomes before day 5
@@ -252,10 +252,10 @@ describe("pruneOldOutcomes", () => {
     let updatedState = state;
     // Record 5 successes then 5 failures
     for (let i = 0; i < 5; i++) {
-      updatedState = recordOutcome(updatedState, "decision", "context", true, 100, i, 10);
+      updatedState = recordLearningOutcome(updatedState, "decision", "context", true, 100, i, 10);
     }
     for (let i = 5; i < 10; i++) {
-      updatedState = recordOutcome(updatedState, "decision", "context", false, 0, i, 10);
+      updatedState = recordLearningOutcome(updatedState, "decision", "context", false, 0, i, 10);
     }
 
     // Prune to keep only the failures (days 5-9)
@@ -289,7 +289,7 @@ describe("getLearningInsights", () => {
     let updatedState = state;
     // Record mixed outcomes
     for (let i = 0; i < 10; i++) {
-      updatedState = recordOutcome(
+      updatedState = recordLearningOutcome(
         updatedState,
         "breeding",
         `context:${i % 3}`,
@@ -314,7 +314,7 @@ describe("getLearningInsights", () => {
     let updatedState = state;
     const values = [100, 200, 300];
     for (let i = 0; i < 3; i++) {
-      updatedState = recordOutcome(updatedState, "decision", "context", true, values[i], i, 10);
+      updatedState = recordLearningOutcome(updatedState, "decision", "context", true, values[i], i, 10);
     }
 
     const insights = getLearningInsights(updatedState, "decision");
@@ -326,8 +326,8 @@ describe("getLearningInsights", () => {
 
     let updatedState = state;
     // Record outcomes with different context dimensions
-    updatedState = recordOutcome(updatedState, "decision", "type1:value", true, 100, 1, 10);
-    updatedState = recordOutcome(updatedState, "decision", "type2:value", true, 100, 2, 10);
+    updatedState = recordLearningOutcome(updatedState, "decision", "type1:value", true, 100, 1, 10);
+    updatedState = recordLearningOutcome(updatedState, "decision", "type2:value", true, 100, 2, 10);
 
     const insights = getLearningInsights(updatedState, "decision");
     const patternKeys = insights.patterns.map((p) => p.key);

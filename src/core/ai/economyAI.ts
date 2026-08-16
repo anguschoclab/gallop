@@ -58,11 +58,15 @@ export function updateEconomicTrends(
   const npcCount = npcStables.length;
   const avgNpcCash = npcCount > 0 ? totalNpcCash / npcCount : 100000;
 
-  // Yearling price index: driven by NPC cash levels (more cash = higher prices)
-  // Apply mean reversion toward 100, then adjust based on cash
+  // Industry mean earnings influence: higher earnings drive higher yearling prices
+  const industryMean = state.industryMeanEarnings ?? 0;
+  const earningsImpact = industryMean > 0 ? Math.log10(industryMean + 1) * 0.5 : 0;
+
+  // Yearling price index: driven by NPC cash levels and industry earnings
+  // Apply mean reversion toward 100, then adjust based on cash and earnings
   const cashImpact = (avgNpcCash - 100000) * NPC_CASH_IMPACT_FACTOR;
   const reversion = (BASE_YEARLING_INDEX - current.yearlingPriceIndex) * INDEX_MEAN_REVERSION;
-  const newIndex = current.yearlingPriceIndex + reversion + cashImpact;
+  const newIndex = current.yearlingPriceIndex + reversion + cashImpact + earningsImpact;
 
   // Stud fee trend: decays toward 0, influenced by yearling price movement
   const trendDecay = current.studFeeTrend * (1 - STUD_FEE_TREND_DECAY);

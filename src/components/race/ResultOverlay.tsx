@@ -307,6 +307,25 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                   />
                 </div>
               )}
+
+              {hasTacticalData && (
+                <div className="pt-4 border-t border-white/5">
+                  <Collapsible defaultOpen={false}>
+                    <CollapsibleTrigger className="flex items-center gap-1 text-[10px] font-black uppercase text-cyan-400/60 tracking-[0.2em] hover:text-cyan-400 transition-colors">
+                      <ChevronDown className="h-3 w-3" />
+                      Tactical Analysis
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="mt-3">
+                        <TacticalAnalysisPanel
+                          runners={tacticalRunners}
+                          insights={jockeyInsights.length > 0 ? jockeyInsights : undefined}
+                        />
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </div>
+              )}
             </>
           )}
         </div>

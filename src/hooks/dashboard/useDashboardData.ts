@@ -15,14 +15,17 @@ import {
 export function useDashboardData() {
   const day = useGame((s) => s.day);
   const cash = useGame((s) => s.cash);
-  const { horses, races, auctions, npcStables, npcAIManager, inbox } = useGameWithShallow((s) => ({
-    horses: s.horses,
-    races: s.races,
-    auctions: s.auctions,
-    npcStables: s.npcStables,
-    npcAIManager: s.npcAIManager,
-    inbox: s.inbox,
-  }));
+  const { horses, races, auctions, npcStables, npcAIManager, inbox, news } = useGameWithShallow(
+    (s) => ({
+      horses: s.horses,
+      races: s.races,
+      auctions: s.auctions,
+      npcStables: s.npcStables,
+      npcAIManager: s.npcAIManager,
+      inbox: s.inbox,
+      news: s.news,
+    }),
+  );
 
   const { ownedHorses, activeHorses, lowEnergyHorses } = useMemo(() => {
     const owned: Horse[] = [];
@@ -98,5 +101,6 @@ export function useDashboardData() {
     urgentMessages,
     topRivals,
     calculateHeadToHead,
+    news,
   };
 }

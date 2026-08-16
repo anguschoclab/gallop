@@ -1,4 +1,4 @@
-export type InboxFilter = "all" | "unread" | "action";
+export type InboxFilter = "all" | "unread" | "action" | "ai_activity";
 
 export const DEFAULT_INBOX_FILTER: InboxFilter = "all";
 

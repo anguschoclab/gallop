@@ -11,7 +11,7 @@ import { createRng, hashStr } from "@/core/common/rng";
 import type { KoppenCode } from "./koppenTypes";
 import { KOPPEN_PROFILES } from "./koppenProfiles";
 import { getTrackKoppen } from "./trackKoppenMappings";
-import { getTrackHemisphere, getTrackCountry } from "./trackClimate";
+import { getTrackHemisphere, getTrackCountryById } from "./trackClimate";
 import { getSeasonalModifiers, applyModifiers } from "./seasonalModifiers";
 import {
   type SimWeatherPattern,
@@ -271,7 +271,7 @@ export function stepWeather(
 
   // Apply seasonal modifiers (monsoons, dry seasons, hurricane seasons, etc.)
   const calendarMonth = getCalendarMonth(day);
-  const country = getTrackCountry(trackId);
+  const country = getTrackCountryById(trackId);
   const modifiers = getSeasonalModifiers(country, calendarMonth);
 
   if (modifiers.length > 0) {

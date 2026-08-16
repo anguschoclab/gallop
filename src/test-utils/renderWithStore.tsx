@@ -44,5 +44,16 @@ export function midGameSeed(): Partial<GameState> {
   return {
     day: 120,
     cash: 250_000,
+    news: [
+      {
+        id: "seed-bankruptcy-1",
+        day: 119,
+        category: "stable",
+        importance: "high",
+        headline: "Whispering Oaks declares bankruptcy",
+        body: "Whispering Oaks has ceased operations. Horses will be sold at a liquidation sale.",
+        entityLinks: [{ type: "stable", id: "npc-1", name: "Whispering Oaks" }],
+      },
+    ],
   };
 }

@@ -22,7 +22,7 @@ export const diplomacyPhase = {
   name: "diplomacy",
   order: PHASE_ORDER_DIPLOMACY,
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, newDay, intents } = context;
+    const { state, newDay, intents, worldAssessment } = context;
 
     if (state.npcStables.length === 0) {
       return context;
@@ -45,6 +45,11 @@ export const diplomacyPhase = {
     // Process diplomatic interactions for this cycle
     aiManager = processDiplomaticInteractions(aiManager, state.npcStables, newDay);
 
+    // Use worldAssessment: high player dominance increases NPC cooperation urgency
+    const cooperationBoost = worldAssessment
+      ? Math.max(1, 1 + (worldAssessment.playerDominance - 0.5) * 0.4)
+      : 1;
+
     // Convert diplomatic_action and cartel_action intents into impacts
     const impacts: AnyImpact[] = [...context.impacts];
 
@@ -52,7 +57,7 @@ export const diplomacyPhase = {
       (i): i is DiplomaticActionIntent => i.type === "diplomatic_action",
     );
     for (const intent of diplomaticIntents) {
-      const trustChange =
+      const baseTrustChange =
         intent.action === "propose_alliance"
           ? 10
           : intent.action === "break_alliance"
@@ -60,6 +65,7 @@ export const diplomacyPhase = {
             : intent.action === "betray"
               ? -40
               : 5; // cooperate
+      const trustChange = Math.round(baseTrustChange * cooperationBoost);
 
       impacts.push({
         id: generateUUID(),

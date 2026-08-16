@@ -15,7 +15,8 @@ export type InboxCategory =
   | "system"
   | "retirement"
   | "hall_of_fame"
-  | "standings";
+  | "standings"
+  | "ai_activity";
 
 export type InboxPriority = "info" | "action" | "urgent";
 

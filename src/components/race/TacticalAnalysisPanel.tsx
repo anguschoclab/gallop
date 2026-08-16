@@ -2,12 +2,32 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Crosshair } from "lucide-react";
 import type { RaceRunner } from "@/core/race/types";
 import { JockeyStrategyBreakdown } from "./JockeyStrategyBreakdown";
+import { JockeyLearningInsights } from "./JockeyLearningInsights";
+
+export interface JockeyInsightEntry {
+  jockeyId: string;
+  jockeyName: string;
+  insights: {
+    totalRaces: number;
+    avgPosition: number;
+    styleUsage: Record<string, number>;
+    avgAggressiveness: number;
+  } | null;
+}
 
 interface TacticalAnalysisPanelProps {
   runners: RaceRunner[];
+  insights?: JockeyInsightEntry[];
 }
 
-export function TacticalAnalysisPanel({ runners }: TacticalAnalysisPanelProps) {
+export function TacticalAnalysisPanel({ runners, insights }: TacticalAnalysisPanelProps) {
+  const insightMap = new Map<string, JockeyInsightEntry>();
+  if (insights) {
+    for (const entry of insights) {
+      insightMap.set(entry.jockeyId, entry);
+    }
+  }
+
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-cyan-400">
       <CardHeader className="bg-black/20 border-b border-white/5">
@@ -22,9 +42,20 @@ export function TacticalAnalysisPanel({ runners }: TacticalAnalysisPanelProps) {
           </div>
         ) : (
           <div className="divide-y divide-white/5">
-            {runners.map((runner) => (
-              <JockeyStrategyBreakdown key={runner.horseId} runner={runner} />
-            ))}
+            {runners.map((runner) => {
+              const insight = insightMap.get(runner.jockeyId);
+              return (
+                <div key={runner.horseId}>
+                  <JockeyStrategyBreakdown runner={runner} />
+                  {insight && (
+                    <JockeyLearningInsights
+                      insights={insight.insights}
+                      jockeyName={insight.jockeyName}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </CardContent>

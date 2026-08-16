@@ -14,10 +14,10 @@ import type { Syndicate } from "@/core/breeding/types";
 import type { DistressLevel } from "./financialDistressAI";
 import { findMajorityOwner } from "@/core/breeding/devolutionUtils";
 import { getCareerStats } from "@/core/horse/stats";
-import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
+import { getPersonalityAIState, recordPersonalityOutcome } from "./personalitySystem";
 import {
   createLearningState,
-  recordOutcome as recordLearningOutcome,
+  recordLearningOutcome,
   getSuccessRate,
   type LearningState,
 } from "./learningModule";
@@ -86,7 +86,7 @@ export function recordSyndicationOutcome(
     aiState.personalityState.memoryDepth,
   );
 
-  const newPersonalityState = recordOutcome(
+  const newPersonalityState = recordPersonalityOutcome(
     aiState.personalityState,
     "syndication",
     { stallionId: decision.stallionId, action: decision.action },

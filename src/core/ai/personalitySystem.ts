@@ -13,7 +13,7 @@ import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { STRATEGY_ALTERNATIVES } from "@/data/personalityTraits";
 import {
   createLearningState,
-  recordOutcome as recordLearningOutcome,
+  recordLearningOutcome,
   getSuccessRate,
   type LearningState,
 } from "./learningModule";
@@ -141,7 +141,7 @@ export function calculateUtilityScore(
  * @param day - Current game day
  * @returns Updated personality AI state
  */
-export function recordOutcome(
+export function recordPersonalityOutcome(
   aiState: PersonalityAIState,
   decisionType: string,
   context: Record<string, unknown>,

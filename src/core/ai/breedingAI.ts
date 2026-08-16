@@ -10,7 +10,7 @@
 
 import type { Horse, Stable, GameState } from "@/game/types";
 import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
-import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
+import { getPersonalityAIState, recordPersonalityOutcome } from "./personalitySystem";
 import { getSuccessRate } from "./learningModule";
 import { scoreStallion } from "@/core/breeding/strategy";
 import { isFemaleHorse } from "@/core/horse/gender";
@@ -276,7 +276,7 @@ export function recordBreedingOutcome(
     newBreedingHistory[decisionIndex] = decision;
 
     // Update personality state (now handles learning internally)
-    const newPersonalityState = recordOutcome(
+    const newPersonalityState = recordPersonalityOutcome(
       aiState.personalityState,
       "breeding",
       { sireId, personality: decision.personality },
@@ -290,7 +290,7 @@ export function recordBreedingOutcome(
       const contextKey = { tripleCrownSeries: tripleCrownWin };
       // Use personality state's learning module to record series-specific outcome
       const seriesSuccess = decision.tripleCrownSeries === tripleCrownWin;
-      const newPersonalityStateWithSeries = recordOutcome(
+      const newPersonalityStateWithSeries = recordPersonalityOutcome(
         newPersonalityState,
         "breeding",
         contextKey,

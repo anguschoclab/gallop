@@ -20,7 +20,7 @@ import { calculateRaceRating } from "@/core/horse/stats";
 import { getCompatibility } from "@/core/jockey/compatibility";
 import {
   createLearningState,
-  recordOutcome as recordLearningOutcome,
+  recordLearningOutcome,
   getSuccessRate,
   type LearningState,
 } from "./learningModule";

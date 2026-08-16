@@ -21,7 +21,7 @@ export const narrativePhase = {
   name: "narrative",
   order: PHASE_ORDER_NARRATIVE,
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, newDay } = context;
+    const { state, newDay, worldAssessment } = context;
 
     if (state.npcStables.length === 0) {
       return context;
@@ -35,6 +35,21 @@ export const narrativePhase = {
 
     // Process narrative arc progression
     aiManager = processNarrativeCycle(aiManager, state.npcStables, newDay);
+
+    // Use worldAssessment: high player dominance accelerates NPC narrative arcs
+    if (worldAssessment && worldAssessment.playerDominance > 0.6) {
+      for (const stableId of Object.keys(aiManager.stableStates)) {
+        const stableState = aiManager.stableStates[stableId];
+        if (stableState.narrativeState) {
+          for (const arc of stableState.narrativeState.activeArcs) {
+            // Advance setup arcs to rising_action faster when player is dominant
+            if (arc.status === "setup" && arc.beats.length >= 2) {
+              arc.status = "rising_action";
+            }
+          }
+        }
+      }
+    }
 
     // Detect narrative beats from resolved races
     const resolvedRacesToday = Object.values(state.races).filter(
