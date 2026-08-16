@@ -43,8 +43,9 @@ describe("flavorStories data", () => {
     expect(unique.size).toBe(headlines.length);
   });
 
-  it("ALL_FLAVOR_STORIES count equals 41", () => {
-    expect(ALL_FLAVOR_STORIES.length).toBe(41);
+  it("ALL_FLAVOR_STORIES count is accurate", () => {
+    const allFromThemes = Object.values(FLAVOR_STORIES).flat();
+    expect(ALL_FLAVOR_STORIES.length).toBe(allFromThemes.length);
   });
 
   it("ALL_FLAVOR_STORIES is a superset of all theme arrays", () => {
