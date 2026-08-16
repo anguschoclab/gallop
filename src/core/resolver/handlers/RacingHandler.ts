@@ -86,12 +86,13 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   race_result: (draft, impact, lookupMaps) => {
-    const { raceId, results, snapshots } = impact as RaceResultImpact;
+    const { raceId, results, snapshots, paceSnapshots } = impact as RaceResultImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     if (race) {
       race.result = results;
       race.resolved = true;
       race.snapshots = snapshots;
+      race.paceSnapshots = paceSnapshots;
     }
   },
 

@@ -10,7 +10,7 @@
  */
 
 import type { Impact } from "./base";
-import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import type { RaceSnapshot, PaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { RaceClass } from "@/core/race/sharedTypes";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 import type { InsurancePolicy } from "@/core/insurance/insuranceTypes";
@@ -45,6 +45,7 @@ export interface RaceResultImpact extends Impact {
   raceId: string;
   results: { horseId: string; position: number; time: number }[];
   snapshots?: RaceSnapshot[];
+  paceSnapshots?: PaceSnapshot[];
   reason: string;
 }
 

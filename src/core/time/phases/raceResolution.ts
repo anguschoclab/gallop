@@ -315,7 +315,7 @@ export const raceResolutionPhase: PipelinePhase = {
         : undefined;
 
       // Simulate race using service
-      const { result, runners, snapshots } = simulateRace(
+      const { result, runners, snapshots, paceSnapshots } = simulateRace(
         race,
         horseMap,
         jockeyMap,
@@ -435,6 +435,7 @@ export const raceResolutionPhase: PipelinePhase = {
         hiredStaff: state.hiredStaff ?? [],
         rng,
         snapshots,
+        paceSnapshots,
         calibratedPars: state.calibratedPars || {},
         raceWeatherState,
         syndicates: state.syndicates,

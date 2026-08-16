@@ -9,7 +9,7 @@
  */
 
 import { RaceClass } from "./sharedTypes";
-import type { RaceSnapshot } from "./engine/raceSnapshotTypes";
+import type { RaceSnapshot, PaceSnapshot } from "./engine/raceSnapshotTypes";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 
@@ -83,6 +83,7 @@ export type Race = {
   cancelledReason?: string;
   result?: RaceResult[];
   snapshots?: RaceSnapshot[];
+  paceSnapshots?: PaceSnapshot[];
   graded?: {
     key: string;
     grade: "G1" | "G2" | "G3";

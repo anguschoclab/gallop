@@ -1,4 +1,4 @@
-import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import type { RaceSnapshot, PaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type {
   AnyImpact,
   RaceResultImpact,
@@ -51,6 +51,8 @@ export interface GenerateRaceImpactsProps {
   rng?: Rng;
   /** Optional detailed race snapshots for replay/summary purposes */
   snapshots?: RaceSnapshot[];
+  /** Optional pace snapshots at 25/50/75% progress for pace map visualization */
+  paceSnapshots?: PaceSnapshot[];
   /** Speed pars for Beyer speed figure calculation, indexed by distance */
   calibratedPars: Record<number, number>;
   /** Optional current weather state for the race's track (for injury risk). */
@@ -83,6 +85,7 @@ export interface GenerateRaceImpactsProps {
  * @param props.hiredStaff - Active staff members with potential bonuses
  * @param props.rng - Optional random number generator for stochastic events (e.g., injuries)
  * @param props.snapshots - Optional detailed race snapshots for replay/summary purposes
+ * @param props.paceSnapshots - Optional pace snapshots at 25/50/75% progress for pace map visualization
  * @param props.calibratedPars - Speed pars for Beyer speed figure calculation, indexed by distance
  * @param props.raceWeatherState
  * @param props.syndicates
@@ -99,6 +102,7 @@ export function generateRaceImpacts({
   hiredStaff = [],
   rng,
   snapshots = [],
+  paceSnapshots = [],
   calibratedPars,
   raceWeatherState,
   syndicates,
@@ -142,6 +146,7 @@ export function generateRaceImpacts({
       raceId: race.id,
       results: result.map(({ horseId, position, time }) => ({ horseId, position, time })),
       snapshots,
+      paceSnapshots,
       reason: "Race resolved",
     } as RaceResultImpact);
 

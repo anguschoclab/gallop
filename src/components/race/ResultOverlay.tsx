@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { PaceGraph } from "@/components/race/PaceGraph";
+import { PaceMap } from "@/components/race/PaceMap";
 import { SpeedBreakdownChart } from "@/components/race/SpeedBreakdownChart";
 import { JockeyReportPanel } from "@/components/race/JockeyReportPanel";
 import { RunnerMoodFace } from "@/components/race/RunnerMoodFace";
@@ -9,7 +10,7 @@ import {
   type JockeyInsightEntry,
 } from "@/components/race/TacticalAnalysisPanel";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
-import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import type { RaceSnapshot, PaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { RaceRunner, SectionalSplit } from "@/core/race/types";
 import { generateJockeyFeedback } from "@/core/race/jockeyFeedback";
@@ -38,6 +39,7 @@ interface ResultOverlayProps {
     sectionalSplits?: SectionalSplit[];
     distance?: number;
     snapshots?: RaceSnapshot[];
+    paceSnapshots?: PaceSnapshot[];
   };
   /** List of runners with their finish times and details. */
   runners: Runner[];
@@ -334,6 +336,17 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                         owned: r.owned,
                       }))}
                       distance={race.distance ?? 0}
+                    />
+                  )}
+                  {race.paceSnapshots && race.paceSnapshots.length > 0 && (
+                    <PaceMap
+                      snapshots={race.paceSnapshots}
+                      runners={ordered.map((r) => ({
+                        horseId: r.horseId,
+                        name: r.name,
+                        silk: r.silk,
+                        owned: r.owned,
+                      }))}
                     />
                   )}
                 </div>

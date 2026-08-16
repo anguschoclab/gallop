@@ -45,21 +45,14 @@ export function PaceMap({ snapshots, runners }: PaceMapProps) {
       <div className="grid grid-cols-3 gap-2">
         {snapshots.map((snap) => {
           const { label, color } = getPaceLabel(snap.paceRating);
-          const leader = snap.leaderHorseId
-            ? runnerMap.get(snap.leaderHorseId)
-            : null;
+          const leader = snap.leaderHorseId ? runnerMap.get(snap.leaderHorseId) : null;
 
           return (
-            <div
-              key={snap.progress}
-              className="bg-black/30 border border-white/5 p-2 space-y-1"
-            >
+            <div key={snap.progress} className="bg-black/30 border border-white/5 p-2 space-y-1">
               <div className="text-[9px] font-black uppercase tracking-widest text-cream/40">
                 {getProgressLabel(snap.progress)}
               </div>
-              <div className={cn("text-sm font-black tabular-nums", color)}>
-                {label}
-              </div>
+              <div className={cn("text-sm font-black tabular-nums", color)}>{label}</div>
               <div className="text-[8px] font-mono text-cream/30 space-y-0.5">
                 <div>
                   <span className="text-cream/20">Pace:</span>{" "}
@@ -69,9 +62,7 @@ export function PaceMap({ snapshots, runners }: PaceMapProps) {
                   <span className="text-cream/20">Lead:</span>{" "}
                   <span className="tabular-nums">{snap.leadGroupCount}</span>
                 </div>
-                {leader && (
-                  <div className="truncate text-cream/40">{leader.name}</div>
-                )}
+                {leader && <div className="truncate text-cream/40">{leader.name}</div>}
               </div>
             </div>
           );
