@@ -202,4 +202,48 @@ describe("NPC Narrative Arc System", () => {
     // npc-2 does not
     expect(updated.stableStates["npc-2"]?.friction).toBeLessThan(60);
   });
+
+  // ── Phase 12: Arc card formatting and player-relevant highlighting ──
+
+  it("arc story card data has required fields for UI rendering", () => {
+    const stables = [createMockStable({ id: "npc-1", personality: "aggressive" })];
+    const manager = createMockManagerWithStables(stables);
+    manager.stableStates["npc-1"].narrativeState = {
+      activeArcs: [],
+      storyBeats: [],
+      dramaticPotential: 0.85,
+    };
+
+    const updated = processNarrativeCycle(manager, stables, 100);
+    const narrative = updated.stableStates["npc-1"].narrativeState!;
+
+    expect(narrative.activeArcs.length).toBeGreaterThan(0);
+
+    const arc = narrative.activeArcs[0];
+    // Required fields for NarrativeArcCard rendering
+    expect(arc.id).toBeDefined();
+    expect(arc.type).toBeDefined();
+    expect(arc.status).toBeDefined();
+    expect(arc.startDay).toBeDefined();
+    expect(Array.isArray(arc.beats)).toBe(true);
+  });
+
+  it("player-relevant arcs can be identified via friction threshold", () => {
+    const stables = [
+      createMockStable({ id: "npc-rival", personality: "aggressive" }),
+      createMockStable({ id: "npc-friendly", personality: "conservative" }),
+    ];
+    const manager = createMockManagerWithStables(stables);
+    manager.stableStates["npc-rival"].friction = 75;
+    manager.stableStates["npc-friendly"].friction = 20;
+
+    const updated = processNarrativeCycle(manager, stables, 100);
+
+    // Rival stable (friction > 60) should be flagged for rivalry watch
+    const rivalFriction = updated.stableStates["npc-rival"]?.friction ?? 0;
+    const friendlyFriction = updated.stableStates["npc-friendly"]?.friction ?? 0;
+
+    expect(rivalFriction).toBeGreaterThanOrEqual(60);
+    expect(friendlyFriction).toBeLessThan(60);
+  });
 });

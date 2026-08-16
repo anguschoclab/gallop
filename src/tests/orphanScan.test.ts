@@ -141,18 +141,17 @@ const confirmedWiredFields = [
   "industryEarningsUpdatedDay", // wired in RecordsTab.tsx Data Freshness card
   "lastFounderUpdateDay", // wired in RecordsTab.tsx Data Freshness card
   "lastAwardYear", // wired in RecordsTab.tsx Data Freshness card
+  "syndicates", // wired in syndicate.$syndicateId.tsx
+  "syndicateInvestors", // wired in syndicate.$syndicateId.tsx
+  "shareTransactions", // wired in syndicate.$syndicateId.tsx Transaction History
+  "shareActivityFeed", // wired in ShareActivityFeed.tsx, rendered in syndicate.$syndicateId.tsx
 ];
 
 // ─── State fields to audit (genuinely suspected orphans) ─────────────────────
 
 const systemsStateOptionalFields: string[] = [];
 
-const breedingStateFields = [
-  "syndicates",
-  "syndicateInvestors",
-  "shareTransactions",
-  "shareActivityFeed",
-];
+const breedingStateFields: string[] = [];
 
 // ─── AI files to audit ────────────────────────────────────────────────────────
 
@@ -212,6 +211,10 @@ describe("Orphan Scan: BreedingState Fields", () => {
       expect(typeof field).toBe("string");
     });
   }
+
+  it("all breeding state fields are confirmed wired", () => {
+    expect(breedingStateFields.length).toBe(0);
+  });
 });
 
 describe("Orphan Scan: AI Subsystem Imports", () => {
@@ -276,10 +279,12 @@ describe("Orphan Scan: Strategic Coordinator Outputs", () => {
 
   it("assessWorldState reads globalEconomicState (not hardcoded)", () => {
     const coordText = readFileSafe(join(srcRoot, "core", "ai", "strategicCoordinator.ts"));
-    const hasPlaceholder =
-      coordText.includes("studFeeTrend: 0") && coordText.includes("yearlingPriceIndex: 100");
-    console.log("assessWorldState uses hardcoded economicTrends:", hasPlaceholder);
-    expect(typeof hasPlaceholder).toBe("boolean");
+    const readsGlobalState = coordText.includes("manager.globalEconomicState");
+    const hasFallback = coordText.includes("studFeeTrend: 0");
+    console.log(
+      `assessWorldState reads globalEconomicState: ${readsGlobalState}, has fallback defaults: ${hasFallback}`,
+    );
+    expect(readsGlobalState).toBe(true);
   });
 
   it("budgetAllocation is read by any AI subsystem", () => {

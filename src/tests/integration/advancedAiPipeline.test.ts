@@ -465,3 +465,68 @@ describe("Phase 7f: Pipeline phase ordering regression", () => {
     expect(worldAssessmentOrder).toBeLessThan(intentCollectionOrder);
   });
 });
+
+// ─── Phase 12: Extended Integration Tests ───────────────────────────────────
+
+describe("Phase 12: Strategic directives appear in UI-accessible state", () => {
+  it("generateStrategicDirectives produces directives accessible on stableAI state", () => {
+    const stable = createMockStable({ id: "s1", cash: 200000, personality: "aggressive" });
+    const horses = [createMockHorse({ id: "h1", stableId: "s1" })];
+    const manager = createMockManager(["s1"]);
+    const state = createMockGameState([stable], horses);
+    state.npcAIManager = manager;
+
+    const assessment = assessWorldState(state, manager);
+    const directives = generateStrategicDirectives(stable, assessment, "aggressive");
+
+    // Directives should be storable on stableAI state for UI access
+    expect(directives.length).toBeGreaterThan(0);
+    expect(directives[0].type).toBeDefined();
+    expect(directives[0].priority).toBeDefined();
+    expect(directives[0].weight).toBeGreaterThan(0);
+  });
+});
+
+describe("Phase 12: Narrative beats generate news items", () => {
+  it("processNarrativeCycle produces story beats that can surface as news", () => {
+    const stable = createMockStable({ id: "s1", personality: "aggressive" });
+    const manager = createMockManager(["s1"]);
+    manager.stableStates["s1"].narrativeState = {
+      activeArcs: [],
+      storyBeats: [],
+      dramaticPotential: 0.9,
+    };
+
+    const result = processNarrativeCycle(manager, [stable], 100);
+    const narrative = result.stableStates["s1"].narrativeState!;
+
+    // With high dramatic potential, arcs should be generated
+    expect(narrative.activeArcs.length).toBeGreaterThan(0);
+
+    // Arcs should have beats that can generate news
+    const arc = narrative.activeArcs[0];
+    expect(arc.type).toBeDefined();
+    expect(arc.startDay).toBeDefined();
+    expect(arc.beats).toBeDefined();
+  });
+});
+
+describe("Phase 12: Diplomatic events surface in state", () => {
+  it("processDiplomaticInteractions creates relationship entries visible to UI", () => {
+    const stables = [
+      createMockStable({ id: "s1", personality: "aggressive" }),
+      createMockStable({ id: "s2", personality: "breeder" }),
+    ];
+    const manager = createMockManager(["s1", "s2"]);
+
+    const initialized = initializeRelationships(manager, stables);
+    const processed = processDiplomaticInteractions(initialized, stables, 100);
+
+    // Each stable should have relationship data accessible for UI
+    const s1Relationships = processed.stableStates["s1"].npcRelationships;
+    expect(s1Relationships).toBeDefined();
+    expect(s1Relationships!["s2"]).toBeDefined();
+    expect(s1Relationships!["s2"].trust).toBeDefined();
+    expect(typeof s1Relationships!["s2"].trust).toBe("number");
+  });
+});

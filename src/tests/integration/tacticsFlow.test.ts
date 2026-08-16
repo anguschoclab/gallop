@@ -422,4 +422,63 @@ describe("Tactical AI Enhancement Integration", () => {
     // With rival nearby, should get aggressiveness boost
     expect(withRivalResult.velocityMod).toBeGreaterThan(noRivalResult.velocityMod);
   });
+
+  it("should preemptively switch lane for traffic prediction with 2+ horses clustered ahead", () => {
+    const mainRunner: Runner = {
+      horseId: "h1",
+      name: "Test",
+      silk: "red",
+      owned: false,
+      position: 100,
+      velocity: 15,
+      lane: 1.2,
+      targetLane: 1.2,
+      laneVelocity: 0,
+      finishTime: null,
+      topSpeed: 20,
+      accel: 2,
+      staminaFactor: 1,
+      noise: 0,
+      runningStyle: "P",
+      gate: 1,
+      weight: 126,
+      affinityBonus: 0,
+      draftingHorseId: null,
+      horse: { id: "h1", mudAptitude: 1.0, recoveryPoints: 100 } as any,
+      jockey: {
+        id: "j1",
+        name: "J",
+        skill: 80,
+        stats: { pacing: 80, positioning: 80, vigor: 50, gates: 50 },
+      } as any,
+    };
+    const blocker1: Runner = {
+      ...mainRunner,
+      horseId: "b1",
+      name: "B1",
+      position: 104,
+      runningStyle: "E",
+    } as Runner;
+    const blocker2: Runner = {
+      ...mainRunner,
+      horseId: "b2",
+      name: "B2",
+      position: 105,
+      runningStyle: "E",
+    } as Runner;
+    const pace: PaceContext = {
+      leaderPos: 120,
+      leaderVelocity: 16,
+      leadGroupCount: 3,
+      paceRating: 1.0,
+      pacePressure: 0,
+      progress: 0.5,
+      laneDensity: [0, 2, 0, 0],
+    } as any;
+
+    const result = calculateTacticalAdjustment(mainRunner, pace, [mainRunner, blocker1, blocker2]);
+
+    // Should switch to a less dense lane (index 2 = 2.4)
+    expect(result.targetLane).not.toBe(mainRunner.lane);
+  });
 });

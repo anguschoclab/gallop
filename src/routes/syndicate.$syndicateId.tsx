@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import type { GameState } from "@/game/types";
-import type { Syndicate } from "@/core/breeding/types";
+import type { Syndicate, ShareTransaction } from "@/core/breeding/types";
 import type { InvestorRecord } from "@/core/breeding/investorTypes";
 import { INVESTOR_PERSONALITY_META } from "@/core/breeding/investorTypes";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,12 +32,24 @@ function SyndicatePage() {
   const buyout = useGame((s: StoreType) => s.buyoutInvestor);
   const horses = useGameWithShallow((s: GameState) => s.horses);
   const npcStables = useGameWithShallow((s: GameState) => s.npcStables ?? []);
+  const allTransactions = useGameWithShallow(
+    (s: GameState) => s.shareTransactions ?? [],
+  ) as ShareTransaction[];
 
   const [sharesToOffer, setSharesToOffer] = useState(1);
 
   const myInvestors = useMemo(
     () => Object.values(investorsRecord).filter((i) => i.syndicateId === syndicateId),
     [investorsRecord, syndicateId],
+  );
+
+  const syndicateTransactions = useMemo(
+    () =>
+      allTransactions
+        .filter((t) => t.syndicateId === syndicateId)
+        .slice(-20)
+        .reverse(),
+    [allTransactions, syndicateId],
   );
 
   if (!syndicate) {
@@ -204,6 +216,45 @@ function SyndicatePage() {
       />
 
       <ShareActivityFeed syndicateId={syndicateId} />
+
+      {syndicateTransactions.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-gold" /> Transaction History
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1 max-h-64 overflow-y-auto">
+              {syndicateTransactions.map((tx) => {
+                const buyerName =
+                  tx.buyerStableId === "player"
+                    ? "You"
+                    : (npcStables.find((s) => s.id === tx.buyerStableId)?.name ?? tx.buyerStableId);
+                const sellerName =
+                  tx.sellerStableId === "player"
+                    ? "You"
+                    : (npcStables.find((s) => s.id === tx.sellerStableId)?.name ??
+                      tx.sellerStableId);
+                return (
+                  <div
+                    key={tx.id}
+                    className="flex items-center justify-between text-xs border-b border-white/5 pb-1"
+                  >
+                    <span className="text-cream-muted font-mono">
+                      Day {tx.day} · {buyerName} ← {sellerName}
+                    </span>
+                    <span className="font-mono tabular-nums text-cream">
+                      {tx.shares} @ ${(tx.pricePerShare / 1000).toFixed(0)}k = $
+                      {((tx.shares * tx.pricePerShare) / 1000).toFixed(0)}k
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="text-xs text-cream-muted flex items-center gap-4">
         <span className="flex items-center gap-1">
