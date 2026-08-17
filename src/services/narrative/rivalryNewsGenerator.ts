@@ -337,6 +337,11 @@ export function generateRegionLostNews(
     `A Hostile Takeover in ${region} by ${rivalStable.name}`,
     `${rivalStable.name} establishes Supremacy in ${region}`,
     `The New Boss in ${region}: ${rivalStable.name}`,
+    `${region} Capitulates to ${rivalStable.name}`,
+    `No Contest: ${rivalStable.name} Captures ${region}`,
+    `The Surrender of ${region} to ${rivalStable.name}`,
+    `${rivalStable.name} Plants Their Flag in ${region}`,
+    `Unstoppable: ${rivalStable.name} Claims ${region}`,
   );
 
   const bodies = [
@@ -363,6 +368,11 @@ export function generateRegionLostNews(
     `${rivalStable.name} did not just sneak into the top spot in ${region}; they kicked the door down and demanded the crown.`,
     `The coronation is complete. After weeks of relentless pressure, ${rivalStable.name} is officially recognized as the premier stable operating out of ${region}.`,
     `Local dominance requires both deep pockets and exceptional horseflesh. ${rivalStable.name} has demonstrated they possess both, seizing control of ${region}.`,
+    `Any doubts about the ambitions of ${rivalStable.name} have been put to rest. They have thoroughly conquered ${region}, leaving rivals in their wake.`,
+    `It was a methodical dismantling of the existing hierarchy. ${rivalStable.name} has emerged as the true power broker in ${region}.`,
+    `The local circuit will never be the same. ${rivalStable.name} has instituted a new regime in ${region}, taking the crown with authority.`,
+    `They came, they saw, they conquered. ${rivalStable.name} has officially locked down ${region}, ending the tenure of the previous king.`,
+    `A masterclass in strategic campaigning has paid off for ${rivalStable.name}, who now look down on the rest of ${region} from the top spot.`,
   );
 
   return buildRivalryNews(
@@ -532,6 +542,11 @@ export function generateStableIntroNews(stable: Stable, day: number, rng: Rng): 
     `Who is Behind ${stable.name}?`,
     `A Primer on ${stable.name}`,
     `Tracking the Progress of ${stable.name}`,
+    `The Global Footprint of ${stable.name}`,
+    `Charting the Course: ${stable.name} in ${country}`,
+    `${stable.owner}'s Vision: The ${stable.name} Story`,
+    `Welcome to the ${tier} Tier: ${stable.name}`,
+    `Making Waves: The ${country} Base of ${stable.name}`,
   );
 
   const bodies = [
@@ -564,6 +579,11 @@ export function generateStableIntroNews(stable: Stable, day: number, rng: Rng): 
     `The buzz around ${country} continues to center on ${stable.name}. Guided by ${stable.owner}, this ${tier} tier operation is making waves. ${description}`,
     `${stable.name} represents the best of ${country} racing culture. With ${stable.owner} at the helm, this ${tier} tier stable is turning heads. ${description}`,
     `A closer look at ${stable.name} reveals a meticulously run ${tier} tier stable. Operating out of ${country}, ${stable.owner} has crafted an organization defined by ${description}`,
+    `You can see the ${country} influence in how ${stable.owner} manages ${stable.name}. They're not just another ${tier} tier competitor. ${description}`,
+    `Quietly building momentum, ${stable.name} is a stable to watch. ${stable.owner} has positioned their ${country} operation perfectly for ${tier} tier success. ${description}`,
+    `The word on the backstretch is that ${stable.name} is preparing a major push. Their ${tier} tier stable, overseen by ${stable.owner} in ${country}, is turning heads. ${description}`,
+    `Consistency is the hallmark of ${stable.name}. This ${country} outfit, under the careful direction of ${stable.owner}, has firmly established its ${tier} tier credentials. ${description}`,
+    `A visit to ${country} reveals why ${stable.name} is so successful. ${stable.owner} runs a tight ship, making this ${tier} tier stable a formidable opponent. ${description}`,
   );
 
   return buildRivalryNews(

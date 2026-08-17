@@ -1,0 +1,3 @@
+## 2025-05-19 - Adding flavor variety for stable intros
+**Learning:** Found that `generateStableIntroNews` in `rivalryNewsGenerator.ts` had a decent number of headlines but the bodies were getting repetitive, missing out on incorporating the unique aspects of a stable's personality, and overall could use more flavor. The variables available are `stable.name`, `stable.owner`, `stable.country`, `stable.description`, and `stable.tier`.
+**Action:** Enhance the `generateStableIntroNews` generator by adding more variety to the `headlines` and `bodies` arrays, specifically pulling in the existing placeholders while maintaining the punchy, professional tone of the racing press.
