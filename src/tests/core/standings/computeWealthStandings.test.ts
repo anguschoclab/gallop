@@ -239,4 +239,23 @@ describe("computeWealthStandings", () => {
     expect(result.standings.find((e) => e.stableId === "npc1")).toBeTruthy();
     expect(result.standings.find((e) => e.stableId === "npc2")).toBeTruthy();
   });
+
+  it("CURRENT BEHAVIOR: mistakenly includes deceased horses in horseCount and horseAssets", () => {
+    // This documents a bug where deceased horses are still iterated over and added to wealth standings
+    const h1 = createTestHorse({ id: "h1", owned: true, name: "Alive Horse" });
+    const h2 = createTestHorse({
+      id: "h2",
+      owned: true,
+      name: "Dead Horse",
+      lifecycleStatus: "deceased",
+    });
+    const s = mkState({ horses: { h1, h2 } });
+
+    const result = computeWealthStandings(s);
+    const player = result.standings.find((e) => e.isPlayer)!;
+
+    // Asserting the buggy behavior to document it.
+    // Expected behavior *should* be horseCount: 1, but we assert 2 to lock in current state.
+    expect(player.horseCount).toBe(2);
+  });
 });

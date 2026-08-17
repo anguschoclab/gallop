@@ -1,0 +1,3 @@
+## 2025-02-18 - Wealth Standings compute includes deceased horses
+**Learning:** `computeWealthStandings` naively iterated over `Object.values(state.horses)` without checking `lifecycleStatus`. A deceased horse still technically exists in state so it has a lineage history, but it shouldn't count towards the active horse assets or top horse value, and certainly shouldn't increment `horseCount` for wealth standings.
+**Action:** When working with aggregate state objects like `horses` for financial or standing counts, explicitly filter out `lifecycleStatus === 'deceased'` unless historical sums are deliberately intended.
