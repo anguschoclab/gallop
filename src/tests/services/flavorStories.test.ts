@@ -43,8 +43,12 @@ describe("flavorStories data", () => {
     expect(unique.size).toBe(headlines.length);
   });
 
-  it("ALL_FLAVOR_STORIES count equals 41", () => {
-    expect(ALL_FLAVOR_STORIES.length).toBe(41);
+  it("ALL_FLAVOR_STORIES count equals the sum of all categorized stories", () => {
+    const expectedLength = Object.values(FLAVOR_STORIES).reduce(
+      (acc, stories) => acc + stories.length,
+      0,
+    );
+    expect(ALL_FLAVOR_STORIES.length).toBe(expectedLength);
   });
 
   it("ALL_FLAVOR_STORIES is a superset of all theme arrays", () => {

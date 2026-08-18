@@ -56,6 +56,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "The famous backstretch diner has revamped its breakfast offerings, sparking lively debate among grooms and hotwalkers over the new coffee blend.",
       category: "flavor",
     },
+    {
+      headline: "Starting Gate Upgrades Completed",
+      body: "The track has unveiled a new, state-of-the-art starting gate, designed with extra padding and quieter mechanisms to keep fractious horses calmer before the break.",
+      category: "flavor",
+    },
+    {
+      headline: "New Grandstand Menu A Hit",
+      body: "The newly revamped culinary offerings at the clubhouse are receiving rave reviews from patrons, with the signature trackside sandwich selling out before the fifth race.",
+      category: "flavor",
+    },
   ],
   jockeys: [
     {
@@ -86,6 +96,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "Riders Complain About Track Surface",
       body: "Following yesterday's card, several prominent riders voiced concerns to track management regarding an uneven bias that developed along the rail during the late afternoon.",
+      category: "flavor",
+    },
+    {
+      headline: "Weight Room Renovations Unveiled",
+      body: "The local jockey colony is celebrating the completion of their newly expanded quarters, featuring upgraded saunas and recovery equipment to help riders manage their weight.",
+      category: "flavor",
+    },
+    {
+      headline: "Veteran Rider Mentors Rising Star",
+      body: "A multiple stakes-winning rider was seen walking the turf course with this year's leading apprentice, pointing out the subtle intricacies of navigating the final turn.",
       category: "flavor",
     },
   ],
@@ -120,6 +140,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "One of the region's leading breeding operations unveiled their stud fees for the upcoming season, reflecting a sharp increase in demand for proven turf sires.",
       category: "flavor",
     },
+    {
+      headline: "First Foal by Champion Sire Arrives",
+      body: "Excitement is building at a premier farm as the highly anticipated first foal from last year's Horse of the Year was born early this morning, described as a leggy, energetic colt.",
+      category: "flavor",
+    },
+    {
+      headline: "Broodmare Sale Breaks Records",
+      body: "The fall mixed sale concluded with surprisingly strong returns, driven largely by intense bidding wars over a handful of deeply pedigreed mares in foal to top stallions.",
+      category: "flavor",
+    },
   ],
   weather: [
     {
@@ -150,6 +180,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "High Winds Challenge Turf Runners",
       body: "Gusty crosswinds are expected for the afternoon card, leading several top trainers to reconsider tactics for their late-running turf specialists.",
+      category: "flavor",
+    },
+    {
+      headline: "Unseasonal Rain Washes Out Morning Works",
+      body: "A sudden torrential downpour left the main track sealed and muddy, forcing most trainers to cancel their scheduled breeze assignments and stick to walking the shedrow.",
+      category: "flavor",
+    },
+    {
+      headline: "Perfect Conditions Forecast for Stakes Weekend",
+      body: "Meteorologists are predicting crisp, clear weather with low humidity for the upcoming festival, promising a fast dirt track and firm going on the turf.",
       category: "flavor",
     },
   ],
@@ -199,6 +239,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "A friendly but fierce competition has developed between the track's outriders over who has the most impressive pony horse this season.",
       category: "flavor",
     },
+    {
+      headline: "Annual Track Picnic A Huge Success",
+      body: "The backstretch community came together for the annual summer barbecue, enjoying a rare afternoon of relaxation before the demanding weekend racing schedule begins.",
+      category: "flavor",
+    },
+    {
+      headline: "Local School Visits Backstretch",
+      body: "A group of elementary school students enjoyed a guided tour of the stables this morning, feeding peppermints to the horses and learning about the daily life of a thoroughbred.",
+      category: "flavor",
+    },
   ],
   industry: [
     {
@@ -224,6 +274,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "New Quarantine Protocols Implemented",
       body: "In a proactive measure, racing authorities have introduced stricter travel guidelines for horses shipping in from out of state to ensure equine health.",
+      category: "flavor",
+    },
+    {
+      headline: "International Buyers Arrive for Yearling Sale",
+      body: "The airport was busy this week as prominent bloodstock agents from around the globe arrived to inspect the latest crop of yearlings ahead of the premier auction.",
+      category: "flavor",
+    },
+    {
+      headline: "New Veterinary Research Published",
+      body: "A leading equine clinic has published a groundbreaking study on soft tissue recovery, offering trainers new insights into managing minor aches and pains in their runners.",
       category: "flavor",
     },
   ],
