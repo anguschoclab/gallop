@@ -1,0 +1,3 @@
+## 2024-08-18 - Added tests for stamina fade engine
+**Learning:** The race simulation engine's stamina fade calculation (`src/core/race/engine/staminaFade.ts`) was completely untested, yet it handles critical complex behaviors including drafting preservation, pace pressure penalties, health risks (bleeder/roarer), early speed penalties, and save-tactics bonuses.
+**Action:** When testing simulation components that rely on `PaceContext` or `JockeyInstructions`, supply full required mock objects with `leaderVelocity`, `leaderPos`, `leadGroupCount`, etc., and ensure `staminaFactor` isn't fully maxed (1.0) so multipliers can actually apply properly after clamping.
