@@ -1,0 +1,3 @@
+## 2025-03-08 - Fixed React Router Link `to` type hole
+**Learning:** Returning intermediate objects (like `{ to, params }`) from helpers and passing them directly to `<Link to={obj.to} />` causes strict string literal types in TanStack Router to widen to `string`. This leads to compile errors, which were previously suppressed via unsafe `as any` casting, masking potential routing typos.
+**Action:** When working with strictly-typed routing components like `<Link>`, render them conditionally inline rather than separating path configurations. This preserves statically verified route definitions and prevents the need for manual overrides.
