@@ -1,0 +1,3 @@
+## 2024-05-19 - Test Coverage for Extracted Race Impacts
+**Learning:** The `raceImpactGenerator.ts` monolith was recently broken down into smaller files in `src/core/race/impacts/`, but some of the newly extracted modules (`energyFormFame`, `patternJump`, `beyerRecovery`, `performanceCareer`) lacked direct unit tests for their specific behavior, exposing a gap where the isolated pure functions weren't explicitly verified.
+**Action:** Created dedicated test files for each of these core impact generators. Always verify that when extracting large files into smaller modules, test coverage is maintained or improved for the new specific files, rather than relying solely on integration tests of the caller.
