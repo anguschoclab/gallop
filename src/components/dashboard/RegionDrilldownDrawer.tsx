@@ -499,23 +499,36 @@ export function RegionDrilldownDrawer({
   );
 }
 
-function linkFor(
-  kind: EntityKind,
-  id: string,
-): { to: string; params: Record<string, string> } | null {
-  if (kind === "jockeys") return { to: "/jockey/$jockeyId", params: { jockeyId: id } };
-  if (kind === "trainers") return { to: "/staff/$staffId", params: { staffId: id } };
-  if (id === "player") return null;
-  return { to: "/npc-stables/$stableId", params: { stableId: id } };
-}
-
 function EntityName({ kind, row }: { kind: EntityKind; row: DrilldownEntity }) {
-  const link = linkFor(kind, row.id);
-  if (!link) return <span className="truncate text-cream/85">{row.name}</span>;
+  if (kind === "jockeys") {
+    return (
+      <Link
+        to="/jockey/$jockeyId"
+        params={{ jockeyId: row.id }}
+        className="truncate text-cream/85 hover:text-[var(--chart-1)]"
+      >
+        {row.name}
+      </Link>
+    );
+  }
+  if (kind === "trainers") {
+    return (
+      <Link
+        to="/staff/$staffId"
+        params={{ staffId: row.id }}
+        className="truncate text-cream/85 hover:text-[var(--chart-1)]"
+      >
+        {row.name}
+      </Link>
+    );
+  }
+  if (row.id === "player") {
+    return <span className="truncate text-cream/85">{row.name}</span>;
+  }
   return (
     <Link
-      to={link.to as any}
-      params={link.params as any}
+      to="/npc-stables/$stableId"
+      params={{ stableId: row.id }}
       className="truncate text-cream/85 hover:text-[var(--chart-1)]"
     >
       {row.name}
