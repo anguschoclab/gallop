@@ -43,7 +43,9 @@ const FILTER_OPTIONS = [
   { value: "top5", label: "Top 5" },
 ];
 
-export function Leaderboard({
+import { memo } from "react";
+
+export const Leaderboard = memo(function Leaderboard({
   sorted,
   positionRank,
   runnerOdds,
@@ -142,4 +144,4 @@ export function Leaderboard({
       </div>
     </div>
   );
-}
+});
