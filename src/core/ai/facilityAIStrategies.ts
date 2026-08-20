@@ -1,5 +1,5 @@
 import type { FacilityType, FacilityLevel } from "@/core/facilities/facilityTypes";
-import type { FacilityROI } from "./facilityAI";
+import type { FacilityROI } from "./facilityAITypes";
 import type { Stable } from "@/game/types";
 import { FACILITY_UPGRADE_COSTS } from "@/core/facilities/facilityTypes";
 

@@ -8,6 +8,7 @@ const SRC_ROOT = join(process.cwd(), "src");
 const ALLOWED: string[] = [
   "components/awards/AwardCeremony.tsx",
   "components/ui/sidebar.tsx",
+  "components/ui/sidebarMenu.tsx",
   "tests/",
   "core/common/rng.ts", // Math.random() fallback when crypto unavailable
 ];

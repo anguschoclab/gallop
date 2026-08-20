@@ -1,16 +1,11 @@
 /**
  * facilityAI.ts - Facility AI system
  *
- * This file provides learning from facility ROI, strategic investment decisions,
- * and budget management for NPC stables.
+ * This file provides strategic investment decisions, budget management,
+ * and upgrade priority scoring for NPC stables.
  *
- * Dependencies: @/game/types (Stable), @/core/facilities/facilityTypes (FacilityType, FacilityLevel, PlayerFacilities, FACILITY_UPGRADE_COSTS), ./personalitySystem (getPersonalityAIState, calculateUtilityScore), ./learningModule (learning functions)
+ * Dependencies: @/game/types (Stable), @/core/facilities/facilityTypes (FacilityType, FacilityLevel, PlayerFacilities, FACILITY_UPGRADE_COSTS), ./personalitySystem (calculateUtilityScore), ./learningModule (getSuccessRate, getAdaptiveThreshold), ./facilityAITypes (types, createFacilityAIState), ./facilityAIRoi (recordFacilityInvestment, updateFacilityROI, getFacilityInsights), ./facilityAIStrategies (shouldUpgradeForCapacity, getSpecializationPriority, shouldDivestFacility)
  * Related files: npcCycleAI.ts (uses facility AI), personalitySystem.ts (provides personality state)
- */
-
-/**
- * Facility AI System
- * Learning from facility ROI, strategic investment decisions, budget management
  */
 
 import type {
@@ -19,65 +14,23 @@ import type {
   PlayerFacilities,
 } from "@/core/facilities/facilityTypes";
 import type { Stable } from "@/game/types";
-import {
-  getPersonalityAIState,
-  recordPersonalityOutcome,
-  calculateUtilityScore,
-} from "./personalitySystem";
-import {
-  createLearningState,
-  recordLearningOutcome,
-  getSuccessRate,
-  getAdaptiveThreshold,
-  type LearningState,
-} from "./learningModule";
+import { calculateUtilityScore } from "./personalitySystem";
+import { getSuccessRate, getAdaptiveThreshold } from "./learningModule";
 import { FACILITY_UPGRADE_COSTS } from "@/core/facilities/facilityTypes";
 import { FACILITY_UPGRADE_BASE_THRESHOLD, DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
+import type { FacilityAIState, FacilityInvestment, FacilityROI } from "./facilityAITypes";
+import { createFacilityAIState } from "./facilityAITypes";
+import { recordFacilityInvestment, updateFacilityROI, getFacilityInsights } from "./facilityAIRoi";
 
-export interface FacilityAIState {
-  personalityState: ReturnType<typeof getPersonalityAIState>;
-  learningState: LearningState;
-  investmentHistory: FacilityInvestment[];
-  roiTracking: Record<string, FacilityROI>;
-}
-
-export interface FacilityInvestment {
-  facilityType: FacilityType;
-  fromLevel: FacilityLevel;
-  toLevel: FacilityLevel;
-  cost: number;
-  stableId: string;
-  personality: Stable["personality"];
-  day: number;
-  roi?: number;
-}
-
-export interface FacilityROI {
-  facilityType: FacilityType;
-  level: FacilityLevel;
-  totalInvestment: number;
-  totalBenefit: number;
-  daysOwned: number;
-  lastUpdateDay: number;
-}
-
-/**
- * Create AI state for facility decisions.
- *
- * Initializes the AI state with personality state, learning state,
- * investment history, and ROI tracking.
- *
- * @param stable - The stable to create AI state for
- * @returns Initialized facility AI state
- */
-export function createFacilityAIState(stable: Stable): FacilityAIState {
-  return {
-    personalityState: getPersonalityAIState(stable.personality),
-    learningState: createLearningState(),
-    investmentHistory: [],
-    roiTracking: {},
-  };
-}
+// Re-export types and functions for backward compatibility
+export type { FacilityAIState, FacilityInvestment, FacilityROI } from "./facilityAITypes";
+export { createFacilityAIState } from "./facilityAITypes";
+export { recordFacilityInvestment, updateFacilityROI, getFacilityInsights } from "./facilityAIRoi";
+export {
+  shouldUpgradeForCapacity,
+  getSpecializationPriority,
+  shouldDivestFacility,
+} from "./facilityAIStrategies";
 
 /**
  * Calculate investment priority score for a facility upgrade.
@@ -345,176 +298,3 @@ export function selectFacilityToUpgrade(
 
   return bestFacility;
 }
-
-/**
- * Record facility investment for learning.
- *
- * Records the facility investment in history and initializes
- * ROI tracking for the upgraded facility.
- *
- * @param aiState - Current facility AI state
- * @param facilityType - The facility type being upgraded
- * @param fromLevel - Previous level before upgrade
- * @param toLevel - New level after upgrade
- * @param cost - Cost of the upgrade
- * @param stable - The stable making the investment
- * @param currentDay - Current game day
- * @returns Updated facility AI state
- */
-export function recordFacilityInvestment(
-  aiState: FacilityAIState,
-  facilityType: FacilityType,
-  fromLevel: FacilityLevel,
-  toLevel: FacilityLevel,
-  cost: number,
-  stable: Stable,
-  currentDay: number,
-): FacilityAIState {
-  const investment: FacilityInvestment = {
-    facilityType,
-    fromLevel,
-    toLevel,
-    cost,
-    stableId: stable.id,
-    personality: stable.personality,
-    day: currentDay,
-  };
-
-  const newHistory = [...aiState.investmentHistory, investment];
-
-  // Trim history to memory depth
-  const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory =
-    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
-
-  // Initialize ROI tracking
-  const roiKey = `${facilityType}:${toLevel}`;
-  const existingRoi = aiState.roiTracking[roiKey];
-
-  const roi = existingRoi
-    ? {
-        ...existingRoi,
-        totalInvestment: existingRoi.totalInvestment + cost,
-      }
-    : {
-        facilityType,
-        level: toLevel,
-        totalInvestment: cost,
-        totalBenefit: 0,
-        daysOwned: 0,
-        lastUpdateDay: currentDay,
-      };
-
-  return {
-    ...aiState,
-    investmentHistory: trimmedHistory,
-    roiTracking: {
-      ...aiState.roiTracking,
-      [roiKey]: roi,
-    },
-  };
-}
-
-/**
- * Update facility ROI tracking.
- *
- * Updates the ROI tracking for a facility with new benefit data,
- * calculates days owned, and updates the learning state.
- *
- * @param aiState - Current facility AI state
- * @param facilityType - The facility type to update
- * @param level - The facility level to update
- * @param benefit - Benefit value to add
- * @param currentDay - Current game day
- * @returns Updated facility AI state
- */
-export function updateFacilityROI(
-  aiState: FacilityAIState,
-  facilityType: FacilityType,
-  level: FacilityLevel,
-  benefit: number,
-  currentDay: number,
-): FacilityAIState {
-  const roiKey = `${facilityType}:${level}`;
-  const roi = aiState.roiTracking[roiKey];
-
-  if (roi) {
-    const updatedRoi = {
-      ...roi,
-      totalBenefit: roi.totalBenefit + benefit,
-      daysOwned: roi.daysOwned + (currentDay - roi.lastUpdateDay),
-      lastUpdateDay: currentDay,
-    };
-
-    // Update learning state
-    const contextKey = facilityType;
-    const success = benefit > 50; // Benefit threshold
-    const newPersonalityState = recordPersonalityOutcome(
-      aiState.personalityState,
-      "facility_upgrade",
-      { facilityId: `${facilityType}:${level}` },
-      success,
-      benefit,
-      currentDay,
-    );
-
-    return {
-      ...aiState,
-      personalityState: newPersonalityState,
-      roiTracking: {
-        ...aiState.roiTracking,
-        [roiKey]: updatedRoi,
-      },
-    };
-  }
-
-  return aiState;
-}
-
-/**
- * Get facility insights for a stable.
- *
- * Calculates facility statistics including total investments,
- * average ROI, total facilities owned, and facility levels.
- *
- * @param aiState - Current facility AI state
- * @param stableId - ID of the stable to get insights for
- * @returns Object with facility statistics
- */
-export function getFacilityInsights(
-  aiState: FacilityAIState,
-  stableId: string,
-): {
-  totalInvestments: number;
-  avgROI: number;
-  totalFacilities: number;
-  facilityLevels: Record<string, FacilityLevel>;
-} {
-  const stableInvestments = aiState.investmentHistory.filter((i) => i.stableId === stableId);
-  const totalInvestments = stableInvestments.length;
-  const totalInvestedAmount = stableInvestments.reduce((sum, i) => sum + i.cost, 0);
-
-  const rois = Object.values(aiState.roiTracking);
-  const totalBenefit = rois.reduce((sum, r) => sum + r.totalBenefit, 0);
-  const avgROI =
-    totalInvestedAmount > 0 ? (totalBenefit - totalInvestedAmount) / totalInvestedAmount : 0;
-
-  const facilityLevels: Record<string, FacilityLevel> = {};
-  for (const investment of stableInvestments) {
-    facilityLevels[investment.facilityType] = investment.toLevel;
-  }
-
-  return {
-    totalInvestments,
-    avgROI,
-    totalFacilities: Object.keys(facilityLevels).length,
-    facilityLevels,
-  };
-}
-
-// Capacity, specialization, and divestment logic extracted to facilityAIStrategies.ts
-export {
-  shouldUpgradeForCapacity,
-  getSpecializationPriority,
-  shouldDivestFacility,
-} from "./facilityAIStrategies";
