@@ -13,7 +13,11 @@ import type {
   ShareSaleIntent,
   AnyIntent,
 } from "@/core/resolver/intents";
-import { pickPersonality, generateInvestorName, buildDefaultExpectations } from "@/core/breeding/investorTypes";
+import {
+  pickPersonality,
+  generateInvestorName,
+  buildDefaultExpectations,
+} from "@/core/breeding/investorTypes";
 import { requireOwned, requireHorse } from "../guards";
 import type { StoreSet, StoreGet } from "../types";
 import type { BreedingSlice } from "./breedingSlice";
