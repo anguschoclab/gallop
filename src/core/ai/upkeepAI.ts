@@ -14,14 +14,8 @@
  */
 
 import type { Stable, Horse } from "@/game/types";
-import { getPersonalityAIState, recordPersonalityOutcome } from "./personalitySystem";
-import {
-  createLearningState,
-  recordLearningOutcome,
-  getSuccessRate,
-  type LearningState,
-} from "./learningModule";
-import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
+import { getPersonalityAIState } from "./personalitySystem";
+import { createLearningState, getSuccessRate, type LearningState } from "./learningModule";
 
 export interface UpkeepAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -84,7 +78,7 @@ interface UpkeepStrategy {
 /**
  * Registry of upkeep strategies indexed by stable personality.
  */
-const UPKEEP_STRATEGIES: Record<Stable["personality"], UpkeepStrategy> = {
+export const UPKEEP_STRATEGIES: Record<Stable["personality"], UpkeepStrategy> = {
   conservative: {
     targetReserveRatio: 6,
     spendingMultiplier: 0.8,
@@ -147,18 +141,17 @@ const UPKEEP_STRATEGIES: Record<Stable["personality"], UpkeepStrategy> = {
   },
 };
 
-/**
- * Calculate target reserve ratio based on personality.
- *
- * Returns the target reserve ratio (months of expenses to keep in reserve)
- * based on personality.
- *
- * @param personality - The stable personality
- * @returns Target reserve ratio in months
- */
-function calculateTargetReserveRatio(personality: Stable["personality"]): number {
-  return UPKEEP_STRATEGIES[personality].targetReserveRatio;
-}
+// Reserve, conservation, budget recording, insights, cost optimization,
+// and emergency budgeting extracted to upkeepAIInsights.ts
+export {
+  calculateTargetReserveRatio,
+  updateReserveState,
+  shouldConserveCash,
+  recordBudgetDecision,
+  getBudgetInsights,
+  identifyCostOptimizationOpportunities,
+  assessEmergencyBudget,
+} from "./upkeepAIInsights";
 
 /**
  * Calculate monthly expense budget.
@@ -258,298 +251,4 @@ export function shouldSpendOnCategory(
   const budgetRatio = amount / (categoryBudget || 1);
 
   return budgetRatio <= spendingPropensity;
-}
-
-/**
- * Update reserve state.
- *
- * Updates the reserve state with current reserve ratio,
- * target reserve ratio, and last adjustment day.
- *
- * @param aiState - Current upkeep AI state
- * @param stable - The stable to update reserves for
- * @param monthlyExpenses - Monthly expense amount
- * @param currentDay - Current game day
- * @returns Updated upkeep AI state
- */
-export function updateReserveState(
-  aiState: UpkeepAIState,
-  stable: Stable,
-  monthlyExpenses: number,
-  currentDay: number,
-): UpkeepAIState {
-  const targetReserveRatio = calculateTargetReserveRatio(aiState.personalityState.personality);
-  const currentReserve = stable.cash;
-  const currentReserveRatio = currentReserve / (monthlyExpenses || 1);
-
-  return {
-    ...aiState,
-    reserves: {
-      ...aiState.reserves,
-      targetReserveRatio,
-      currentReserveRatio,
-      lastAdjustmentDay: currentDay,
-    },
-  };
-}
-
-/**
- * Determine if stable should conserve cash.
- *
- * Evaluates cash conservation based on reserve ratio, target ratio,
- * and personality-based buffer.
- *
- * @param aiState - Current upkeep AI state
- * @param stable - The stable to evaluate
- * @param monthlyExpenses - Monthly expense amount
- * @param weight - Subsystem weight that modulates conservation tendency (default 1.0)
- * @returns True if stable should conserve cash
- */
-export function shouldConserveCash(
-  aiState: UpkeepAIState,
-  stable: Stable,
-  monthlyExpenses: number,
-  weight = DEFAULT_SUBSYSTEM_WEIGHT,
-): boolean {
-  // Weight ≤ 0 → always conserve (max conservation)
-  if (weight <= 0) return true;
-
-  const currentReserveRatio = stable.cash / (monthlyExpenses || 1);
-  const targetReserveRatio = aiState.reserves.targetReserveRatio;
-
-  // Conserve if below target
-  if (currentReserveRatio < targetReserveRatio) return true;
-
-  // Personality-based buffer
-  const strategy = UPKEEP_STRATEGIES[stable.personality];
-
-  // Weight modulates: higher weight → higher threshold → less likely to conserve
-  const effectiveThreshold = (targetReserveRatio + strategy.conserveBuffer) / weight;
-
-  return currentReserveRatio < effectiveThreshold;
-}
-
-/**
- * Record budget decision for learning.
- *
- * Records the budget decision in history and updates the
- * learning state for adaptive improvement.
- *
- * @param aiState - Current upkeep AI state
- * @param totalBudget - Total budget for the period
- * @param spent - Amount actually spent
- * @param categorySpending - Spending by category
- * @param stable - The stable making the budget
- * @param currentDay - Current game day
- * @returns Updated upkeep AI state
- */
-export function recordBudgetDecision(
-  aiState: UpkeepAIState,
-  totalBudget: number,
-  spent: number,
-  categorySpending: Record<string, number>,
-  stable: Stable,
-  currentDay: number,
-): UpkeepAIState {
-  const success = spent <= totalBudget * 1.1;
-  const decision: BudgetDecision = {
-    day: currentDay,
-    totalBudget,
-    spent,
-    reserved: stable.cash - spent,
-    categorySpending,
-    stableId: stable.id,
-    personality: stable.personality,
-    success,
-  };
-
-  const newBudgetHistory = [...aiState.budgetHistory, decision];
-
-  // Trim history to memory depth
-  const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory =
-    newBudgetHistory.length > maxHistory ? newBudgetHistory.slice(-maxHistory) : newBudgetHistory;
-
-  // Update learning state
-  const value = totalBudget - spent;
-  const newPersonalityState = recordPersonalityOutcome(
-    aiState.personalityState,
-    "upkeep",
-    { stableId: stable.id },
-    success,
-    value,
-    currentDay,
-  );
-  const newLearningState = recordLearningOutcome(
-    aiState.learningState,
-    "upkeep_spending",
-    `${stable.personality}`,
-    success,
-    value,
-    currentDay,
-    aiState.personalityState.memoryDepth,
-  );
-
-  return {
-    ...aiState,
-    budgetHistory: trimmedHistory,
-    learningState: newLearningState,
-    personalityState: newPersonalityState,
-  };
-}
-
-/**
- * Get budget insights for a stable.
- *
- * Calculates budget statistics including total budgets, average spending,
- * budget adherence, and reserve ratios.
- *
- * @param aiState - Current upkeep AI state
- * @param stableId - ID of the stable to get insights for
- * @returns Object with budget statistics
- */
-export function getBudgetInsights(
-  aiState: UpkeepAIState,
-  stableId: string,
-): {
-  totalBudgets: number;
-  avgSpending: number;
-  budgetAdherence: number;
-  avgReserveRatio: number;
-  targetReserveRatio: number;
-} {
-  const stableHistory = aiState.budgetHistory.filter((b) => b.stableId === stableId);
-  const totalBudgets = stableHistory.length;
-  const avgSpending =
-    totalBudgets > 0 ? stableHistory.reduce((sum, b) => sum + b.spent, 0) / totalBudgets : 0;
-
-  const successes = stableHistory.filter((b) => b.success).length;
-  const budgetAdherence = totalBudgets > 0 ? successes / totalBudgets : 1;
-
-  const avgReserveRatio = aiState.reserves.currentReserveRatio;
-  const targetReserveRatio = aiState.reserves.targetReserveRatio;
-
-  return {
-    totalBudgets,
-    avgSpending,
-    budgetAdherence,
-    avgReserveRatio,
-    targetReserveRatio,
-  };
-}
-
-// ─── Cost Optimization ───────────────────────────────────────────────────────
-
-/**
- * Identify cost optimization opportunities for a stable.
- *
- * Analyzes horse roster to find underperforming horses consuming resources
- * without generating value. Recommends trimming or repositioning.
- *
- * @param horses - Array of horses in the stable
- * @param dailyUpkeepPerHorse - Daily upkeep cost per horse
- * @returns Array of cost optimization recommendations
- */
-export function identifyCostOptimizationOpportunities(
-  horses: Horse[],
-  dailyUpkeepPerHorse: number,
-): Array<{ horseId: string; reason: string; potentialSavings: number }> {
-  const opportunities: Array<{
-    horseId: string;
-    reason: string;
-    potentialSavings: number;
-  }> = [];
-
-  for (const horse of horses) {
-    // Old horses with low rating: retirement candidate
-    if (horse.age >= 10 && (horse.form ?? 50) < 40) {
-      opportunities.push({
-        horseId: horse.id,
-        reason: "old_low_form",
-        potentialSavings: dailyUpkeepPerHorse * 365,
-      });
-    }
-
-    // Chronically injured horses
-    if (horse.activeInjury && horse.activeInjury.recoveryDays > 60) {
-      opportunities.push({
-        horseId: horse.id,
-        reason: "chronic_injury",
-        potentialSavings: dailyUpkeepPerHorse * 90,
-      });
-    }
-
-    // Horses with very low energy that haven't raced recently
-    if (horse.energy < 20 && horse.raceHistory && horse.raceHistory.length === 0) {
-      opportunities.push({
-        horseId: horse.id,
-        reason: "unraced_low_energy",
-        potentialSavings: dailyUpkeepPerHorse * 30,
-      });
-    }
-  }
-
-  return opportunities;
-}
-
-// ─── Emergency Budgeting ─────────────────────────────────────────────────────
-
-/**
- * Determine if a stable needs emergency budget cuts.
- *
- * If cash reserves fall below a critical threshold relative to daily upkeep,
- * recommend cutting non-essential spending and potentially selling horses.
- *
- * @param stableCash - Current cash on hand
- * @param dailyUpkeep - Total daily upkeep cost
- * @param horseCount - Number of horses in the stable
- * @returns Emergency budget recommendation
- */
-export function assessEmergencyBudget(
-  stableCash: number,
-  dailyUpkeep: number,
-  horseCount: number,
-): { isEmergency: boolean; recommendedActions: string[]; horsesToSell: number } {
-  const daysOfCash = dailyUpkeep > 0 ? stableCash / dailyUpkeep : Infinity;
-  const actions: string[] = [];
-  let horsesToSell = 0;
-
-  if (daysOfCash < 14) {
-    return {
-      isEmergency: true,
-      recommendedActions: actions,
-      horsesToSell,
-    };
-  }
-
-  if (daysOfCash < 30) {
-    actions.push("reduce_training");
-    actions.push("cancel_non_essential_spending");
-
-    if (horseCount > 10) {
-      horsesToSell = Math.ceil((horseCount - 10) * 0.3);
-      actions.push("sell_underperformers");
-    }
-
-    return {
-      isEmergency: true,
-      recommendedActions: actions,
-      horsesToSell,
-    };
-  }
-
-  if (daysOfCash < 60) {
-    actions.push("monitor_spending");
-    return {
-      isEmergency: false,
-      recommendedActions: actions,
-      horsesToSell,
-    };
-  }
-
-  return {
-    isEmergency: false,
-    recommendedActions: [],
-    horsesToSell: 0,
-  };
 }
