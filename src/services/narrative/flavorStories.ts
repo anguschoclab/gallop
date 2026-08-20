@@ -116,6 +116,9 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "Rider Achieves Rare Five-Win Day",
       body: "A prominent journeyman jockey dominated the afternoon card, booting home five winners and leaving the rest of the colony struggling to keep up.",
+      category: "flavor",
+    },
+    {
       headline: "Weight Room Renovations Unveiled",
       body: "The local jockey colony is celebrating the completion of their newly expanded quarters, featuring upgraded saunas and recovery equipment to help riders manage their weight.",
       category: "flavor",
@@ -180,6 +183,9 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "Broodmare of the Year Honored",
       body: "The local breeding association held a banquet last night to honor a legendary mare who has produced three graded stakes winners from just four foals.",
+      category: "flavor",
+    },
+    {
       headline: "First Foal by Champion Sire Arrives",
       body: "Excitement is building at a premier farm as the highly anticipated first foal from last year's Horse of the Year was born early this morning, described as a leggy, energetic colt.",
       category: "flavor",
@@ -239,6 +245,9 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "Dry Spell Leads to Hard Track",
       body: "Weeks without significant rainfall have left the main track favoring early speed, prompting complaints from the connections of several deep closers.",
+      category: "flavor",
+    },
+    {
       headline: "Unseasonal Rain Washes Out Morning Works",
       body: "A sudden torrential downpour left the main track sealed and muddy, forcing most trainers to cancel their scheduled breeze assignments and stick to walking the shedrow.",
       category: "flavor",
@@ -318,6 +327,9 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "Grooms Recognized with Awards",
       body: "In a touching ceremony before the first race, several veteran grooms were honored for their decades of dedicated service to the equine athletes.",
+      category: "flavor",
+    },
+    {
       headline: "Annual Track Picnic A Huge Success",
       body: "The backstretch community came together for the annual summer barbecue, enjoying a rare afternoon of relaxation before the demanding weekend racing schedule begins.",
       category: "flavor",
@@ -413,6 +425,9 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "Task Force Formed on Aftercare",
       body: "Industry leaders announced a joint initiative with several major farms to better fund retirement and retraining programs for off-track thoroughbreds.",
+      category: "flavor",
+    },
+    {
       headline: "International Buyers Arrive for Yearling Sale",
       body: "The airport was busy this week as prominent bloodstock agents from around the globe arrived to inspect the latest crop of yearlings ahead of the premier auction.",
       category: "flavor",

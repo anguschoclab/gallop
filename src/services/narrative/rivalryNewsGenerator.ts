@@ -18,7 +18,7 @@ import type {
 import type { Stable } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
 import type { CareerArcState } from "@/services/narrative/careerArcGenerator";
-export { generateGrudgeMatchNews, generateStableIntroNews } from "./rivalryGrudgeMatch";
+export { generateGrudgeMatchNews } from "./rivalryGrudgeMatch";
 
 /**
  * Build a rivalry news item from headline/body arrays with deterministic RNG selection.
