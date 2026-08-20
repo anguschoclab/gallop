@@ -13,27 +13,16 @@ import type {
   Genotype,
   HorseGender,
   Hemisphere,
-  Pregnancy,
   Pedigree,
   HorseStats,
   CoatColor,
   RunningStyle,
   Stable,
   StableTier,
-  GameState,
 } from "@/game/types";
 import type { Rng } from "@/core/common/types";
 
-/**
- * Represents the outcome of a foaling event.
- *
- * Can be a live foal with associated metadata or a complication
- * describing why the foaling failed or resulted in a non-standard outcome.
- */
-export type FoalOutcome =
-  | { kind: "live"; foal: Horse; transmission: boolean }
-  | { kind: "complication"; type: "stillborn" | "twins" | "injury"; foal?: Horse };
-import { createRng, hashStr, nondeterministicRng } from "@/core/common/rng";
+import { hashStr, nondeterministicRng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { generateAppearanceDNA, getPalette } from "@/core/horse/proceduralPortrait";
 import {
@@ -72,26 +61,14 @@ import {
   resolveHealthStatus,
   computeHeterozygosity,
 } from "@/core/genetics/phenotype";
-import { inheritDNA } from "@/core/genetics/inheritance";
-import { createDefaultFoalDevelopmentArc } from "@/core/horse/foalDevelopment";
-import {
-  rollProceduralFamily,
-  RUNNING_FAMILIES,
-  SIRE_FAMILIES,
-  resolveBruceLoweFamily,
-} from "@/core/breeding/bruceLowe";
 import { rollGender, geldHorse } from "@/core/horse/gender";
 import { randomSilk, rand } from "@/core/common/random";
+import { rollProceduralFamily } from "@/core/breeding/bruceLowe";
 import {
   generateProceduralHorseName,
   type NamingContext,
 } from "@/core/horse/naming/nameGenerator.ts";
-import {
-  resolveBloodline,
-  computeCoiFromSnapshot,
-  computeAhc,
-  computeGenomeModifiers,
-} from "@/core/breeding/populationGenetics";
+import { resolveBloodline } from "@/core/breeding/populationGenetics";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import { shouldRetireAtStartup, defaultStudParams } from "@/core/breeding/stallions";
@@ -110,12 +87,11 @@ import {
   CORNERING_APTITUDE_LARGE_PENALTY,
   CORNERING_APTITUDE_SIZE_SMALL_THRESHOLD,
   CORNERING_APTITUDE_SMALL_BONUS,
-  FOALING_AGE_RISK_THRESHOLD,
-  FOALING_AGE_RISK_MULTIPLIER,
-  FOALING_BASE_COMPLICATION_RATE,
-  LETHAL_RECESSIVE_CHANCE,
-  TWIN_REDUCTION_CHANCE,
 } from "@/constants";
+
+// Re-export foaling types and functions for backward compatibility
+export type { FoalOutcome } from "./foaling";
+export { resolveFoaling } from "./foaling";
 
 // --- Internal Helpers ---
 
@@ -460,178 +436,4 @@ export function generateNpcHorse(
   horse.bruceLoweFamily = rollProceduralFamily(rng);
 
   return horse;
-}
-
-/**
- * Breeding resolution: resolves pregnancy into foal or complication
- *
- * This function handles the foaling process, including genetic inheritance from
- * sire and dam, complication checks (age-based risks, lethal recessives, rare events),
- * and foal creation. It uses a deterministic RNG seeded by the pregnancy ID for
- * consistent results.
- *
- * @param pregnancy - The pregnancy record to resolve
- * @param sire - The sire horse (must have genotype)
- * @param dam - The dam horse (must have genotype)
- * @param namingContext - Optional context for name generation (region, theme, existing names)
- * @param newDay - Optional game day when foaling occurs
- * @param state - Optional game state with horses array for Bruce Lowe family resolution
- * @returns Either a live foal with Horse object, or a complication with type description
- * @throws {Error} If sire or dam is missing genotype
- *
- * @example
- * const result = resolveFoaling(pregnancy, sire, dam, namingContext, currentDay, state);
- * if (result.kind === "live") {
- *   console.log("Foal born:", result.foal.name);
- * } else {
- *   console.log("Complication:", result.type);
- * }
- */
-export function resolveFoaling(
-  pregnancy: Pregnancy,
-  sire: Horse,
-  dam: Horse,
-  namingContext?: Partial<NamingContext>,
-  newDay?: number,
-  state?: Pick<GameState, "horses">,
-): { kind: "live"; foal: Horse; transmission?: boolean } | { kind: "complication"; type: string } {
-  const rng = createRng(hashStr(pregnancy.id));
-
-  // Ensure both parents have resolved phenotypes so lethal-recessive and other
-  // trait checks operate on real data, not zeroed defaults.
-  sire = ensurePhenotypeResolved(sire);
-  dam = ensurePhenotypeResolved(dam);
-
-  // Genetic crossover
-  if (!sire.genotype || !dam.genotype) {
-    throw new Error(
-      `Cannot resolve foaling: missing genotype for ${!sire.genotype ? "sire" : "dam"}`,
-    );
-  }
-
-  // --- Complication Checks ---
-
-  // 1. Age-based risk
-  const ageRisk = Math.max(0, (dam.age - FOALING_AGE_RISK_THRESHOLD) * FOALING_AGE_RISK_MULTIPLIER);
-  const baseRoll = rng.next();
-  if (baseRoll < FOALING_BASE_COMPLICATION_RATE + ageRisk) {
-    const types = ["stillborn", "unable to stand", "early loss", "mid loss"];
-    return { kind: "complication", type: types[Math.floor(rng.next() * types.length)] };
-  }
-
-  // 2. Lethal recessive check
-  const sMarkers = sire.geneticMarkers?.lethalCarriers;
-  const dMarkers = dam.geneticMarkers?.lethalCarriers;
-  if (sMarkers && dMarkers) {
-    if (
-      (sMarkers.csnb && dMarkers.csnb) ||
-      (sMarkers.hypp && dMarkers.hypp) ||
-      (sMarkers.olws && dMarkers.olws)
-    ) {
-      if (rng.next() < LETHAL_RECESSIVE_CHANCE) {
-        // 25% chance for homozygous lethal
-        return { kind: "complication", type: "lethal recessive" };
-      }
-    }
-  }
-
-  // 3. Rare random complication
-  if (rng.next() < TWIN_REDUCTION_CHANCE) {
-    return { kind: "complication", type: "twin reduction (single survivor)" };
-  }
-
-  const genotype = inheritDNA(sire.genotype, dam.genotype, rng);
-
-  const foal = createHorseFromDNA(genotype, rng, {
-    age: 0,
-    gender: rng.next() < 0.5 ? "colt" : "filly",
-    owned: dam.owned,
-    stableId: dam.stableId,
-    createdAtDay: newDay,
-  });
-  // Track breeder: player has no stableId on horses, NPCs do.
-  foal.bredByPlayer = !dam.stableId;
-  // Anchor birthDay so foal-development milestones fire on the correct future days.
-  if (typeof newDay === "number") {
-    foal.birthDay = newDay;
-  }
-  foal.developmentArc = createDefaultFoalDevelopmentArc(foal.birthDay);
-
-  // Set pedigree
-  foal.pedigree = {
-    horseId: foal.id,
-    name: "Foal",
-    generation: 0,
-    sireId: sire.id,
-    damId: dam.id,
-    sireName: sire.name,
-    damName: dam.name,
-    sirePedigree: sire.pedigree,
-    damPedigree: dam.pedigree,
-  };
-
-  // Resolve Bruce Lowe family from dam line
-  if (state) {
-    foal.bruceLoweFamily = resolveBruceLoweFamily(foal, state);
-  } else {
-    // Fallback: use dam's family if available, otherwise roll procedural
-    foal.bruceLoweFamily = dam.bruceLoweFamily ?? rollProceduralFamily(rng);
-  }
-
-  foal.name = generateProceduralHorseName(
-    {
-      sireName: sire.name,
-      damName: dam.name,
-      region: namingContext?.region,
-      namingTheme: namingContext?.namingTheme,
-      existingNames: namingContext?.existingNames ?? new Set(),
-    },
-    rng,
-    { strategy: "hybrid" },
-  );
-
-  foal.pedigree.name = foal.name;
-
-  // Compute COI from the foal's pedigree snapshot
-  const coi = computeCoiFromSnapshot(foal.pedigree);
-  foal.coefficientOfInbreeding = coi;
-
-  // Compute AHC if we have state with horses for ancestor lookup
-  if (state) {
-    const horseMap = new Map(Object.values(state.horses).map((h) => [h.id, h]));
-    const ahc = computeAhc(foal.pedigree, horseMap);
-    foal.ancestralHistoryCoefficient = ahc;
-
-    // Apply genome modifiers based on COI and AHC
-    const modifiers = computeGenomeModifiers(coi, ahc);
-    foal.genomeModifiers = modifiers;
-
-    // Apply stat adjustments from genome modifiers
-    if (foal.stats) {
-      // Depression penalty reduces durability/consistency
-      foal.stats.consistency = Math.max(
-        1,
-        Math.round(foal.stats.consistency * modifiers.depressionPenalty),
-      );
-    }
-    // Vigor bonus improves recovery and trainability
-    if (foal.recoveryRate !== undefined) {
-      foal.recoveryRate = Math.min(2.0, foal.recoveryRate + modifiers.vigorBonus);
-    }
-    if (foal.trainability !== undefined) {
-      foal.trainability = Math.min(2.0, foal.trainability + modifiers.vigorBonus);
-    }
-    // Longevity bonus extends peak age
-    if (foal.peakAge !== undefined) {
-      foal.peakAge = Math.round(foal.peakAge + modifiers.longevityBonus);
-    }
-  } else {
-    // Without state, still compute AHC from pedigree alone (less accurate)
-    foal.ancestralHistoryCoefficient = 0;
-    foal.genomeModifiers = computeGenomeModifiers(coi, 0);
-  }
-
-  const resolvedFoal = resolvePhenotype(foal);
-
-  return { kind: "live", foal: resolvedFoal };
 }
