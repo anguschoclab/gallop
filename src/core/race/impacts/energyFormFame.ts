@@ -4,16 +4,11 @@
  * Extracted from raceImpactGenerator.ts.
  */
 
-import type {
-  EnergyImpact,
-  FormImpact,
-  FameImpact,
-  FanCountImpact,
-} from "@/core/resolver/impacts/index";
+import type { EnergyImpact, FormImpact, FameImpact } from "@/core/resolver/impacts/index";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
-import { RACE_ENERGY_IMPACT, FANS_PER_FAME_POINT } from "@/constants";
+import { RACE_ENERGY_IMPACT } from "@/constants";
 import type { Horse } from "@/game/types";
 
 export function generateEnergyImpact(horseId: string, newDay: number, rng?: Rng): EnergyImpact {
@@ -76,30 +71,6 @@ export function generateFameImpact(
       delta: fameDelta,
       reason: `Race position: ${position}`,
     } as FameImpact;
-  }
-  return null;
-}
-
-export function generateFanCountImpact(
-  horse: Horse,
-  position: number,
-  newDay: number,
-  rng?: Rng,
-): FanCountImpact | null {
-  const fameDelta = position === 1 ? 2 : position <= 3 ? 0.5 : 0;
-  if (fameDelta > 0) {
-    const fanDelta = Math.round(fameDelta * FANS_PER_FAME_POINT);
-    return {
-      id: generateUUID(rng),
-      intentId: "",
-      day: newDay,
-      phase: "raceResolution",
-      logLevel: "conditional",
-      type: "fan_count_change",
-      horseId: horse.id,
-      delta: fanDelta,
-      reason: `Race position: ${position}`,
-    } as FanCountImpact;
   }
   return null;
 }
