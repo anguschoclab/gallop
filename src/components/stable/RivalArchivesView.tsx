@@ -15,6 +15,8 @@ import { formatCurrency } from "@/core/common/formatting";
 import type { Stable } from "@/game/types";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { Search, X, ExternalLink, Flame, Handshake, BookOpen } from "lucide-react";
+import { BankruptcyHistoryPanel } from "./BankruptcyHistoryPanel";
+import type { NewsItem } from "@/services/narrative/newsTypes";
 
 type NavigateFn = (opts: {
   search?: Record<string, unknown> | ((prev: Record<string, unknown>) => Record<string, unknown>);
@@ -27,6 +29,7 @@ interface RivalArchivesViewProps {
   horseCountsByStable: Map<string, number>;
   npcAIManager: NpcAIManager;
   navigate: NavigateFn;
+  news?: NewsItem[];
 }
 
 export function RivalArchivesView({
@@ -36,6 +39,7 @@ export function RivalArchivesView({
   horseCountsByStable,
   npcAIManager,
   navigate,
+  news,
 }: RivalArchivesViewProps) {
   // Pre-calculate hash map for O(1) stable lookups instead of running O(N) .find() inside the map loops.
   // Impact: Reduces rendering complexity of rival archives from O(N^2) to O(N).
@@ -43,6 +47,7 @@ export function RivalArchivesView({
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      {news && news.length > 0 && <BankruptcyHistoryPanel news={news} />}
       <div className="flex flex-wrap items-center gap-3 bg-black/20 p-4 border border-white/5">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-cream/20" />

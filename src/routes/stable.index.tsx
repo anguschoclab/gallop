@@ -12,7 +12,7 @@ import { NumericValue } from "@/components/horse/HorseBits";
 import { cn } from "@/lib/cn";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { overall } from "@/components/horse/HorseBits";
 import { Users, Clock, Heart, List, LayoutGrid } from "lucide-react";
@@ -46,6 +46,7 @@ function StablePage() {
   const awards = useAwards();
   const npcStables = useNpcStables();
   const npcAIManager = useGame((s) => s.npcAIManager);
+  const news = useGameWithShallow((s) => s.news ?? []);
 
   const myHorses = useMemo(
     () =>
@@ -239,6 +240,7 @@ function StablePage() {
             horseCountsByStable={horseCountsByStable}
             npcAIManager={npcAIManager!}
             navigate={navigate}
+            news={news}
           />
         </TabsContent>
       </Tabs>
