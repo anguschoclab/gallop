@@ -170,6 +170,11 @@ export function generateRegionLostNews(
     `A Hostile Takeover in ${region} by ${rivalStable.name}`,
     `${rivalStable.name} establishes Supremacy in ${region}`,
     `The New Boss in ${region}: ${rivalStable.name}`,
+    `${region} Capitulates to ${rivalStable.name}`,
+    `No Contest: ${rivalStable.name} Captures ${region}`,
+    `The Surrender of ${region} to ${rivalStable.name}`,
+    `${rivalStable.name} Plants Their Flag in ${region}`,
+    `Unstoppable: ${rivalStable.name} Claims ${region}`,
   );
 
   const bodies = [
@@ -196,6 +201,11 @@ export function generateRegionLostNews(
     `${rivalStable.name} did not just sneak into the top spot in ${region}; they kicked the door down and demanded the crown.`,
     `The coronation is complete. After weeks of relentless pressure, ${rivalStable.name} is officially recognized as the premier stable operating out of ${region}.`,
     `Local dominance requires both deep pockets and exceptional horseflesh. ${rivalStable.name} has demonstrated they possess both, seizing control of ${region}.`,
+    `Any doubts about the ambitions of ${rivalStable.name} have been put to rest. They have thoroughly conquered ${region}, leaving rivals in their wake.`,
+    `It was a methodical dismantling of the existing hierarchy. ${rivalStable.name} has emerged as the true power broker in ${region}.`,
+    `The local circuit will never be the same. ${rivalStable.name} has instituted a new regime in ${region}, taking the crown with authority.`,
+    `They came, they saw, they conquered. ${rivalStable.name} has officially locked down ${region}, ending the tenure of the previous king.`,
+    `A masterclass in strategic campaigning has paid off for ${rivalStable.name}, who now look down on the rest of ${region} from the top spot.`,
   );
 
   return buildRivalryNews(
@@ -315,6 +325,107 @@ export function generateRivalryEscalationNews(
       day: currentDay,
       category: "stable",
       importance: "high",
+      entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
+    },
+    rng,
+  );
+}
+
+/**
+ * Generate a stable intro news item. Used for retroactive introductions
+ * when a rivalry emerges and the stable was never previously introduced.
+ *
+ * @param stable - The stable to introduce
+ * @param day - Current simulation day
+ * @param rng - Seeded RNG for deterministic selection
+ * @returns A stable intro NewsItem
+ */
+export function generateStableIntroNews(stable: Stable, day: number, rng: Rng): NewsItem {
+  const country = stable.country ?? "parts unknown";
+  const description = stable.description ?? "a stable with a reputation that precedes it";
+  const tier = stable.tier ?? "mid";
+
+  const headlines = [
+    `Who Is ${stable.name}?`,
+    `Stable Profile: ${stable.name}`,
+    `Getting to Know ${stable.name}`,
+    `Inside ${stable.name}`,
+    `Meet the Competition: ${stable.name}`,
+    `Stable Spotlight: ${stable.name}`,
+    `${stable.name}: A Closer Look`,
+    `Introducing ${stable.name}`,
+    `The ${country} Connection: ${stable.name}`,
+    `Focus On: ${stable.name}`,
+    `Unmasking ${stable.name}`,
+    `The Rise of ${stable.name}`,
+    `${stable.name} Steps Into the Light`,
+    `Profiling the ${tier} Tier Contender: ${stable.name}`,
+  ];
+
+  headlines.push(
+    `An Introduction to ${stable.name}`,
+    `Behind the Gates at ${stable.name}`,
+    `Scouting Report: ${stable.name}`,
+    `The Story Behind ${stable.name}`,
+    `${stable.name} Breaks Cover`,
+    `What You Need to Know About ${stable.name}`,
+    `Meeting the ${tier} Tier Challenge: ${stable.name}`,
+    `The Ascendance of ${stable.name}`,
+    `Under the Microscope: ${stable.name}`,
+    `Who is Behind ${stable.name}?`,
+    `A Primer on ${stable.name}`,
+    `Tracking the Progress of ${stable.name}`,
+    `The Global Footprint of ${stable.name}`,
+    `Charting the Course: ${stable.name} in ${country}`,
+    `${stable.owner}'s Vision: The ${stable.name} Story`,
+    `Welcome to the ${tier} Tier: ${stable.name}`,
+    `Making Waves: The ${country} Base of ${stable.name}`,
+  );
+
+  const bodies = [
+    `The foundation laid by ${stable.owner} in ${country} is bearing fruit. ${stable.name} has proven they belong in the ${tier} tier conversation. ${description}`,
+    `It takes a lot to stand out in the ${tier} tier, but ${stable.name} is doing just that. Hailing from ${country}, ${stable.owner}'s strategy is paying off. ${description}`,
+    `More and more insiders are talking about ${stable.name}. From their base in ${country}, ${stable.owner} is putting together a very interesting ${tier} tier campaign. ${description}`,
+    `The ambitions of ${stable.name} are clear. The ${country}-based yard, steered by ${stable.owner}, is not here to make up numbers in the ${tier} tier. ${description}`,
+    `You can't ignore the momentum behind ${stable.name}. The ${country} operation, built by ${stable.owner}, is a ${tier} tier force on the rise. ${description}`,
+    `What ${stable.owner} has accomplished with ${stable.name} in ${country} is noteworthy. They're a ${tier} tier stable that commands attention. ${description}`,
+    `Based in ${country}, ${stable.name} is operated by ${stable.owner}. ${description} As a ${tier} tier operation, they're a name worth remembering.`,
+    `${stable.name}, led by ${stable.owner}, hails from ${country}. ${description} Their ${tier} tier status marks them as a serious player in the racing world.`,
+    `From ${country} comes ${stable.name}, the brainchild of ${stable.owner}. ${description} This ${tier} tier stable is one to watch.`,
+    `${stable.owner}'s ${stable.name} is a name that commands respect in ${country}. ${description} As a ${tier} tier operation, they mean business.`,
+    `Operating out of ${country}, ${stable.name} under ${stable.owner} has built a growing reputation. ${description} Their ${tier} tier standing speaks for itself.`,
+    `${stable.name} — ${stable.owner}'s pride and joy from ${country}. ${description} A ${tier} tier stable with ambitions to match.`,
+    `The story of ${stable.name} is one of ambition and grit. Founded by ${stable.owner} in ${country}, ${description} Their ${tier} tier status cements their place among the racing elite.`,
+    `In the competitive world of ${country} racing, ${stable.name} stands tall. ${stable.owner}'s operation is defined by ${description} A ${tier} tier stable through and through.`,
+    `Racing fans in ${country} are well acquainted with ${stable.name}. Guided by ${stable.owner}, ${description} This ${tier} tier yard is stepping up its campaign.`,
+    `A deeper dive into ${stable.name} reveals a meticulously run organization. ${stable.owner} has established a strong presence in ${country}. ${description} They compete at the ${tier} tier level.`,
+    `The paddock chatter often turns to ${stable.name}. Originating from ${country} and managed by ${stable.owner}, ${description} They are proving to be a formidable ${tier} tier outfit.`,
+    `Expectations are high for ${stable.name}. The ${country} based operation, overseen by ${stable.owner}, is gaining traction. ${description} As a ${tier} tier stable, they are not to be underestimated.`,
+    `Stepping into the spotlight is ${stable.name}. ${stable.owner} has assembled an impressive string of runners in ${country}. ${description} Their ${tier} tier classification is well-earned.`,
+    `The ${tier} tier ranks are heating up with the emergence of ${stable.name}. Representing ${country} under ${stable.owner}'s guidance, ${description} They are making their intentions clear.`,
+  ];
+
+  bodies.push(
+    `With a strong base in ${country}, ${stable.name} continues to impress. Owner ${stable.owner} has ensured this ${tier} tier outfit is highly respected. ${description}`,
+    `Racing fans are keeping a close eye on ${stable.name}. Established in ${country} by ${stable.owner}, they have solidified their ${tier} tier status. ${description}`,
+    `If you have not heard of ${stable.name} yet, you will soon. ${stable.owner} has built a ${tier} tier contender out of ${country}. ${description}`,
+    `The buzz around ${country} continues to center on ${stable.name}. Guided by ${stable.owner}, this ${tier} tier operation is making waves. ${description}`,
+    `${stable.name} represents the best of ${country} racing culture. With ${stable.owner} at the helm, this ${tier} tier stable is turning heads. ${description}`,
+    `A closer look at ${stable.name} reveals a meticulously run ${tier} tier stable. Operating out of ${country}, ${stable.owner} has crafted an organization defined by ${description}`,
+    `You can see the ${country} influence in how ${stable.owner} manages ${stable.name}. They're not just another ${tier} tier competitor. ${description}`,
+    `Quietly building momentum, ${stable.name} is a stable to watch. ${stable.owner} has positioned their ${country} operation perfectly for ${tier} tier success. ${description}`,
+    `The word on the backstretch is that ${stable.name} is preparing a major push. Their ${tier} tier stable, overseen by ${stable.owner} in ${country}, is turning heads. ${description}`,
+    `Consistency is the hallmark of ${stable.name}. This ${country} outfit, under the careful direction of ${stable.owner}, has firmly established its ${tier} tier credentials. ${description}`,
+    `A visit to ${country} reveals why ${stable.name} is so successful. ${stable.owner} runs a tight ship, making this ${tier} tier stable a formidable opponent. ${description}`,
+  );
+
+  return buildRivalryNews(
+    headlines,
+    bodies,
+    {
+      day,
+      category: "stable",
+      importance: "low",
       entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
     },
     rng,
