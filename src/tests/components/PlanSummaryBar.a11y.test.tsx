@@ -61,10 +61,9 @@ describe("PlanSummaryBar accessibility", () => {
     expect(trashButtons.length).toBeGreaterThan(0);
   });
 
-  // ─── Characterization: delete button currently lacks aria-label ──────────────
-  // After Palette #319 adds aria-label, this test should verify it's present.
-  // For now, we lock the current (broken) behavior.
-  it("delete button currently does NOT have aria-label (characterizes the bug)", () => {
+  // ─── Palette #319: delete button now has aria-label ──────────────────────────
+  // The aria-label="Delete plan" was added by Palette #319.
+  it("delete button has aria-label after Palette #319 merge", () => {
     const { container } = render(<PlanSummaryBar {...defaultProps} />);
     const select = screen.getByTestId("plan-select");
     fireEvent.change(select, { target: { value: "plan-1" } });
@@ -73,7 +72,6 @@ describe("PlanSummaryBar accessibility", () => {
       return svg && btn.classList.contains("h-7");
     });
     expect(trashButtons.length).toBeGreaterThan(0);
-    // This characterizes the current bug: no aria-label on the delete button
-    expect(trashButtons[0].getAttribute("aria-label")).toBeNull();
+    expect(trashButtons[0].getAttribute("aria-label")).toBe("Delete plan");
   });
 });

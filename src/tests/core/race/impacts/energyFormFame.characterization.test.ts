@@ -3,7 +3,6 @@ import {
   generateEnergyImpact,
   generateFormImpact,
   generateFameImpact,
-  generateFanCountImpact,
 } from "@/core/race/impacts/energyFormFame";
 import { createTestHorse } from "@/tests/helpers";
 
@@ -42,23 +41,11 @@ describe("energyFormFame exports characterization", () => {
     expect(impact!.delta).toBe(2);
   });
 
-  it("generateFanCountImpact returns null for positions > 3", () => {
-    const horse = createTestHorse({ id: "h1" });
-    expect(generateFanCountImpact(horse, 4, 5)).toBeNull();
-  });
-
-  it("generateFanCountImpact returns impact for position 1 with fan delta", () => {
-    const horse = createTestHorse({ id: "h1" });
-    const impact = generateFanCountImpact(horse, 1, 5);
-    expect(impact).not.toBeNull();
-    expect(impact!.type).toBe("fan_count_change");
-    expect(impact!.delta).toBeGreaterThan(0);
-  });
-
-  // ─── Characterization: generateFanCountImpact is currently exported ──────────
-  // After Mason #315 removes generateFanCountImpact, this test should be updated
-  // to verify it is no longer exported. For now, we lock the current behavior.
-  it("generateFanCountImpact is currently exported from the module", () => {
-    expect(typeof generateFanCountImpact).toBe("function");
+  // ─── Mason #315: generateFanCountImpact has been removed from the module ─────
+  // The function was unused dead code. This test verifies it is no longer exported.
+  it("generateFanCountImpact is no longer exported from the module", async () => {
+    // Importing should not include generateFanCountImpact
+    const module = await import("@/core/race/impacts/energyFormFame");
+    expect((module as any).generateFanCountImpact).toBeUndefined();
   });
 });
