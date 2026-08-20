@@ -48,7 +48,7 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOp
         generateSuggestion();
       }
     }
-  }, [foal, isOpen]);
+  }, [foal, isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const generateSuggestion = useCallback(() => {
     if (!foal) return;

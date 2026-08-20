@@ -34,7 +34,6 @@ function StaffManagement() {
     staffPool: s.staffPool,
   }));
   const horses = useGameWithShallow((s) => s.horses);
-  const races = useGameWithShallow((s) => s.races);
   const [negotiatingId, setNegotiatingId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [traitFilter, setTraitFilter] = useState<string>("all");
@@ -42,7 +41,7 @@ function StaffManagement() {
   const myStaff = hiredStaff?.filter((s) => s.stableId === "") ?? [];
   const staffMap = useMemo(() => new Map(staffPool.map((s) => [s.id, s])), [staffPool]);
 
-  const stableG1Wins = useMemo(() => getG1WinsForStable({ horses }, undefined), [horses, races]);
+  const stableG1Wins = useMemo(() => getG1WinsForStable({ horses }, undefined), [horses]);
   const honorCounts = useMemo(() => countByGrade(stableG1Wins), [stableG1Wins]);
   const showHonors = (role: string) => role === "trainer" || role === "groom";
 

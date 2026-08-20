@@ -130,7 +130,16 @@ export function useAuctionTheater(saleId: string) {
     return () => {
       timers.clearAll();
     };
-  }, [sale?.id, stables, horses, debitForLiveBid]);
+  }, [
+    sale?.id,
+    stables,
+    horses,
+    debitForLiveBid,
+    sale,
+    bidding,
+    timers,
+    eventProcessor.prevLotIndexRef,
+  ]);
 
   // Sync player max bid to runner
   useEffect(() => {
@@ -187,6 +196,7 @@ export function useAuctionTheater(saleId: string) {
     theaterState.paused,
     theaterState.autoWatch,
     eventProcessor.stepAndRender,
+    eventProcessor,
     timers,
   ]);
 

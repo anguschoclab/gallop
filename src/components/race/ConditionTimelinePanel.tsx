@@ -32,7 +32,7 @@ function ConditionTimelinePanelInner({
   );
 
   // Wall-clock stamp of the most recent simulation tick that fed the strip.
-  const lastUpdatedAt = useMemo(() => Date.now(), [tick, horseId]);
+  const lastUpdatedAt = useMemo(() => Date.now(), [tick, horseId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!horseId || segments.length === 0) return null;
 

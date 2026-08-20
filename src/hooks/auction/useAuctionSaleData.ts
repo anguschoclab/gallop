@@ -121,7 +121,7 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
         setMessage("");
       }
     },
-    [sale, currentLot, currentPrice, cash, placeBookBid],
+    [sale, currentLot, currentPrice, cash, placeBookBid, setAuctionError],
   );
 
   const handleMaxBid = useCallback(
@@ -133,7 +133,7 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
       }
       if (max) handleBid(max);
     },
-    [currentPrice, handleBid],
+    [currentPrice, handleBid, setAuctionError],
   );
 
   const handleWithdraw = useCallback(() => {
@@ -147,7 +147,7 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
       setError(null);
       setErrorType(null);
     }
-  }, [currentLot, withdrawConsignment]);
+  }, [currentLot, withdrawConsignment, setAuctionError]);
 
   const handleBuyNow = useCallback(() => {
     if (!sale || !currentLot) {
@@ -164,7 +164,7 @@ export function useAuctionSaleData(saleId: string, filters: AuctionBrowseSearch)
       setMessage("");
     }
     return result;
-  }, [sale, currentLot, buyNow]);
+  }, [sale, currentLot, buyNow, setAuctionError]);
 
   const dismissError = useCallback(() => {
     if (errorType && saleId) {

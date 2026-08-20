@@ -220,7 +220,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
     }
 
     return maxPos;
-  }, [snapshots, distance, cameraMode, playerHorseId, runnerMap, ensureBackground]);
+  }, [snapshots, distance, cameraMode, playerHorseId, runnerMap, ensureBackground]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Animation loop. We intentionally do NOT setState every frame; React rerenders are
   // expensive and were dominating CPU. Stats/progress are updated via refs at ~10Hz.
@@ -278,7 +278,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
       stopped = true;
       cancelAnimationFrame(frameId);
     };
-  }, [isPlaying, playbackSpeed, duration, renderFrame, onComplete]);
+  }, [isPlaying, playbackSpeed, duration, renderFrame, onComplete]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Keyboard shortcuts: Space play/pause, arrows step, Shift = larger step, Home/End jump.
   useEffect(() => {

@@ -142,7 +142,7 @@ export function RootComponent() {
     if (runEnded && typeof window !== "undefined" && window.location.pathname !== "/epilogue") {
       navigate({ to: "/epilogue" }).catch(() => {});
     }
-  }, [isHydrated, saveExists.value, runEnded, navigate]);
+  }, [isHydrated, saveExists, runEnded, navigate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (rehydrateError || timedOut) {
     return (

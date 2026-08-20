@@ -47,7 +47,7 @@ export function useRacePageData(raceId: string) {
     };
     const built = buildRaceField(deps);
     return { runners: built.runners, fillerHorses: built.fillerHorses ?? [] };
-  }, [raceId, horses, jockeys, stables, hiredStaff, npcAIManager, currentDay, raceWeather]);
+  }, [race, horses, jockeys, stables, hiredStaff, npcAIManager, currentDay, raceWeather]);
 
   const rngRef = useRef<any>(null);
   const narrativeRef = useRef<NarrativeGenerator | null>(null);
@@ -94,7 +94,7 @@ export function useRacePageData(raceId: string) {
       }
     }
     return oddsMap;
-  }, [runners, localHorseMap, classBonus]);
+  }, [runners, horses, classBonus]);
 
   const calibratedPars = useGameWithShallow((s: GameState) => s.calibratedPars);
 
