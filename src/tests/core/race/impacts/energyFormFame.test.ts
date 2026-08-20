@@ -3,7 +3,6 @@ import {
   generateEnergyImpact,
   generateFormImpact,
   generateFameImpact,
-  generateFanCountImpact,
 } from "@/core/race/impacts/energyFormFame";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
 import { RACE_ENERGY_IMPACT } from "@/constants";
@@ -69,20 +68,6 @@ describe("energyFormFame impacts", () => {
 
     it("should grant no fame (return null) for 4th or worse", () => {
       const impact = generateFameImpact(testHorse, 4, 10, rng);
-      expect(impact).toBeNull();
-    });
-  });
-
-  describe("generateFanCountImpact", () => {
-    it("should generate fan count increase for top 3 finishes", () => {
-      const impact = generateFanCountImpact(testHorse, 1, 10, rng);
-      expect(impact).not.toBeNull();
-      expect(impact?.type).toBe("fan_count_change");
-      expect(impact?.delta).toBeGreaterThan(0);
-    });
-
-    it("should return null for 4th or worse", () => {
-      const impact = generateFanCountImpact(testHorse, 4, 10, rng);
       expect(impact).toBeNull();
     });
   });
