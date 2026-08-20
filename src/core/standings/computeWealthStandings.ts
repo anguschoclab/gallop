@@ -48,6 +48,7 @@ export function computeWealthStandings(state: WealthStandingsState): ComputeWeal
   };
 
   for (const horse of allHorsesArray) {
+    if (horse.lifecycleStatus === "deceased") continue;
     const key = horse.owned ? PLAYER_ID : horse.stableId;
     if (!key) continue;
 

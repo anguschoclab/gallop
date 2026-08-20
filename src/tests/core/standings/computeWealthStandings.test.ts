@@ -239,4 +239,119 @@ describe("computeWealthStandings", () => {
     expect(result.standings.find((e) => e.stableId === "npc1")).toBeTruthy();
     expect(result.standings.find((e) => e.stableId === "npc2")).toBeTruthy();
   });
+
+  // ─── Characterization test: deceased horses should be excluded ───────────────
+  // This test documents the bug where deceased horses (lifecycleStatus: "deceased")
+  // are still counted in horseCount and horseAssets. After the fix, this test should
+  // pass. Before the fix, it will fail.
+  it("excludes deceased horses from wealth standings", () => {
+    const hAlive = createTestHorse({
+      id: "h-alive",
+      owned: true,
+      name: "Alive Horse",
+      lifecycleStatus: "active",
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 80,
+        conformation: 80,
+      },
+      potential: 85,
+    });
+    const hDeceased = createTestHorse({
+      id: "h-deceased",
+      owned: true,
+      name: "Deceased Horse",
+      lifecycleStatus: "deceased",
+      stats: {
+        speed: 90,
+        stamina: 90,
+        acceleration: 90,
+        consistency: 90,
+        temperament: 90,
+        conformation: 90,
+      },
+      potential: 95,
+    });
+    const s = mkState({ horses: { "h-alive": hAlive, "h-deceased": hDeceased } });
+    const result = computeWealthStandings(s);
+    const player = result.standings.find((e) => e.isPlayer)!;
+    // Should only count the alive horse
+    expect(player.horseCount).toBe(1);
+  });
+
+  it("excludes deceased horses from horseAssets calculation", () => {
+    const hAlive = createTestHorse({
+      id: "h-alive",
+      owned: true,
+      name: "Alive Horse",
+      lifecycleStatus: "active",
+      stats: {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 70,
+        conformation: 70,
+      },
+      potential: 75,
+    });
+    const hDeceased = createTestHorse({
+      id: "h-deceased",
+      owned: true,
+      name: "Deceased Horse",
+      lifecycleStatus: "deceased",
+      stats: {
+        speed: 95,
+        stamina: 95,
+        acceleration: 95,
+        consistency: 95,
+        temperament: 95,
+        conformation: 95,
+      },
+      potential: 99,
+    });
+
+    // Compute with both horses
+    const sBoth = mkState({ horses: { "h-alive": hAlive, "h-deceased": hDeceased } });
+    const resultBoth = computeWealthStandings(sBoth);
+
+    // Compute with only the alive horse
+    const sAliveOnly = mkState({ horses: { "h-alive": hAlive } });
+    const resultAliveOnly = computeWealthStandings(sAliveOnly);
+
+    const playerBoth = resultBoth.standings.find((e) => e.isPlayer)!;
+    const playerAliveOnly = resultAliveOnly.standings.find((e) => e.isPlayer)!;
+
+    // After fix: horseAssets should be the same (deceased horse excluded)
+    expect(playerBoth.horseAssets).toBe(playerAliveOnly.horseAssets);
+  });
+
+  it("excludes deceased NPC horses from NPC stable wealth", () => {
+    const hAlive = createTestHorse({
+      id: "h-npc-alive",
+      owned: false,
+      stableId: "npc1",
+      name: "Alive NPC Horse",
+      lifecycleStatus: "active",
+    });
+    const hDeceased = createTestHorse({
+      id: "h-npc-deceased",
+      owned: false,
+      stableId: "npc1",
+      name: "Deceased NPC Horse",
+      lifecycleStatus: "deceased",
+    });
+    const stable = createTestStable({ id: "npc1", name: "NPC Stable" });
+    const s = mkState({
+      horses: { "h-npc-alive": hAlive, "h-npc-deceased": hDeceased },
+      npcStables: [stable],
+    });
+    const result = computeWealthStandings(s);
+    const npc = result.standings.find((e) => e.stableId === "npc1")!;
+    // Should only count the alive horse
+    expect(npc.horseCount).toBe(1);
+  });
 });
