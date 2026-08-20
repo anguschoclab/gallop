@@ -16,19 +16,9 @@ import {
   detectAtmosphere,
 } from "./eventDetector";
 import { NARRATIVE_THRESHOLDS } from "@/constants/narrativeThresholds";
-import {
-  CONDITION_TO_EVENT,
-  CONDITION_COOLDOWN,
-  TONE_PRIORITY,
-  HIGH_IMPACT_CONDITIONS,
-} from "@/constants/narrativeConditionConstants";
 import { NarrativeState } from "./narrativeState";
-import { buildFieldContext, deriveRunnerConditions } from "@/core/race/runnerConditions";
-import type {
-  RunnerConditionId,
-  RunnerHistory,
-  RunnerCondition,
-} from "@/core/race/runnerConditions";
+import { generateDynamicMilestones } from "./narrativeMilestones";
+import { checkConditionTransitions } from "./narrativeConditionChecks";
 
 /**
  * Orchestrates real-time race commentary generation.
@@ -355,107 +345,12 @@ export class NarrativeGenerator {
     newLines: CommentaryLine[],
   ) {
     if (!this.state.hasAnnouncedStart || this.state.hasAnnouncedFinish) return;
-
-    const field = buildFieldContext(runners);
-
-    for (const r of runners) {
-      if (r.finishTime !== null) continue;
-
-      this.state.updatePeakVelocity(r.horseId, r.velocity);
-
-      const history: RunnerHistory = {
-        peakVelocity: this.state.peakVelocities.get(r.horseId) ?? 0,
-      };
-
-      const conditions = deriveRunnerConditions(r, field, history, this.race.distance);
-      const currentIds = new Set(conditions.map((c) => c.id));
-      const previousIds = this.state.getActiveConditions(r.horseId);
-
-      const newIds = [...currentIds].filter((id) => !previousIds.has(id));
-
-      if (newIds.length === 0) {
-        this.state.setActiveConditions(r.horseId, currentIds);
-        continue;
-      }
-
-      // Ailing fires independently, outside the single-condition limit
-      const ailingNew = newIds.find((id) => id === "ailing");
-      if (ailingNew) {
-        const eventType = CONDITION_TO_EVENT["ailing"];
-        const cooldown = CONDITION_COOLDOWN["ailing"];
-        if (this.state.canAnnounce(eventType, r.horseId, simTime, cooldown)) {
-          const line = this.createLine(eventType, simTime, r);
-          newLines.push(line);
-          this.state.setCooldown(eventType, r.horseId, simTime, cooldown);
-        }
-      }
-
-      // For all other new conditions, pick highest priority: emphatic first, then tone
-      const nonAilingNew = newIds.filter((id) => id !== "ailing");
-      if (nonAilingNew.length > 0) {
-        const sorted = nonAilingNew.sort((a, b) => {
-          const aCond = conditions.find((c) => c.id === a)!;
-          const bCond = conditions.find((c) => c.id === b)!;
-          if (aCond.emphatic !== bCond.emphatic) return aCond.emphatic ? -1 : 1;
-          return TONE_PRIORITY[aCond.tone] - TONE_PRIORITY[bCond.tone];
-        });
-
-        const winner = sorted[0];
-        const eventType = CONDITION_TO_EVENT[winner];
-        const cooldown = CONDITION_COOLDOWN[winner];
-        if (this.state.canAnnounce(eventType, r.horseId, simTime, cooldown)) {
-          const line = this.createLine(eventType, simTime, r);
-          if (HIGH_IMPACT_CONDITIONS.has(winner)) {
-            line.isHighImpact = true;
-          }
-          newLines.push(line);
-          this.state.setCooldown(eventType, r.horseId, simTime, cooldown);
-        }
-      }
-
-      this.state.setActiveConditions(r.horseId, currentIds);
-    }
-  }
-
-  /**
-   * Generate dynamic milestones based on race distance.
-   * @returns Array of milestone objects with position and id.
-   */
-  private generateDynamicMilestones(): Array<{ pos: number; id: number }> {
-    const distance = this.race.distance;
-    const milestones: Array<{ pos: number; id: number }> = [];
-
-    // Halfway point (always included)
-    milestones.push({
-      pos: distance * NARRATIVE_THRESHOLDS.HALFWAY_POSITION,
-      id: 50,
+    const lines = checkConditionTransitions(runners, simTime, {
+      state: this.state,
+      race: this.race,
+      createLine: (type, timestamp, runner?) => this.createLine(type, timestamp, runner),
     });
-
-    // Final 400m (only if race is long enough)
-    if (distance >= NARRATIVE_THRESHOLDS.MIN_DISTANCE_FOR_FINAL_400) {
-      milestones.push({
-        pos: distance - NARRATIVE_THRESHOLDS.MILESTONE_FINAL_400M,
-        id: 400,
-      });
-    }
-
-    // Final 200m (only if race is long enough)
-    if (distance >= NARRATIVE_THRESHOLDS.MIN_DISTANCE_FOR_FINAL_200) {
-      milestones.push({
-        pos: distance - NARRATIVE_THRESHOLDS.MILESTONE_FINAL_200M,
-        id: 200,
-      });
-    }
-
-    // Final 100m (only if race is long enough)
-    if (distance >= NARRATIVE_THRESHOLDS.MIN_DISTANCE_FOR_FINAL_100) {
-      milestones.push({
-        pos: distance - NARRATIVE_THRESHOLDS.MILESTONE_FINAL_100M,
-        id: 100,
-      });
-    }
-
-    return milestones.sort((a, b) => a.pos - b.pos);
+    newLines.push(...lines);
   }
 
   /**
@@ -472,7 +367,7 @@ export class NarrativeGenerator {
     simTime: number,
     leader?: Runner,
   ) {
-    const milestones = this.generateDynamicMilestones();
+    const milestones = generateDynamicMilestones(this.race);
 
     for (const m of milestones) {
       if (leaderPos >= m.pos && !this.state.announcedMilestones.has(m.id)) {

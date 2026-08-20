@@ -9,37 +9,19 @@
  */
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import {
-  PRIZE_SPLIT,
-  GRADED_PRIZE_SPLIT,
-  PHASE_ORDER_RACE_RESOLUTION,
-  TOP_FINISH_POSITION,
-  RACE_HISTORY_UNGRADED_RETENTION_DAYS,
-} from "@/constants";
+import { PHASE_ORDER_RACE_RESOLUTION, RACE_HISTORY_UNGRADED_RETENTION_DAYS } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
-import type {
-  TrackRecordImpact,
-  SeasonHistoryImpact,
-  HallOfFameInductionImpact,
-} from "@/core/resolver/impacts/index";
 import { rngForRace } from "@/services/race/raceSimulationService";
 import type { Race } from "@/game/types";
 import type { WeatherState } from "@/core/weather/weatherTypes";
 import type { ClaimingIntent, RaceResolutionIntent } from "@/core/resolver/intents";
 import { simulateRace } from "@/services/race/raceSimulationExecutor";
 import { generateRaceImpacts } from "@/services/race/raceImpactGenerator";
-import { processClaimingResolution } from "@/services/auction/claimingResolutionService";
 import {
-  recordRaceHistory,
-  checkHallOfFameInduction,
-  checkTrackRecord,
-} from "@/services/history/historyService";
-import { generateUUID } from "@/core/uuid";
-import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
-import { recordRaceEntryOutcome } from "@/core/ai/raceEntryAI";
-import { recordJockeyOutcome } from "@/core/ai/jockeyAI";
-import { recordCampaignOutcome } from "@/core/ai/campaignAI";
-import { recordRaceStrategy } from "@/core/ai/jockeyStrategyAI";
+  recordNpcAiOutcomes,
+  checkTrackRecordAndHof,
+  processClaimingForRace,
+} from "./raceResolutionHelpers";
 
 /**
  * Race Resolution Phase (Order 70)
@@ -136,171 +118,43 @@ export const raceResolutionPhase: PipelinePhase = {
 
         // Record NPC AI outcomes
         if (npcAIManager) {
-          const runnerByHorseId = new Map(impactRunners.map((r) => [r.horseId, r]));
-          for (const res of result) {
-            const horse = horseMap.get(res.horseId);
-            if (horse && horse.stableId) {
-              const stable = npcStableMap.get(horse.stableId);
-              if (stable) {
-                const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
-                if (stableAI.raceEntryAI) {
-                  stableAI.raceEntryAI = recordRaceEntryOutcome(
-                    stableAI.raceEntryAI,
-                    horse,
-                    race,
-                    newDay,
-                    res.position <= TOP_FINISH_POSITION,
-                    res.position,
-                  );
-                }
-                if (stableAI.jockeyAI) {
-                  const runner = runnerByHorseId.get(res.horseId);
-                  if (runner && runner.jockeyId) {
-                    const prizeSplit = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
-                    const prize =
-                      res.position <= prizeSplit.length
-                        ? Math.round(race.purse * prizeSplit[res.position - 1])
-                        : 0;
-                    stableAI.jockeyAI = recordJockeyOutcome(
-                      stableAI.jockeyAI,
-                      runner.jockeyId,
-                      res.horseId,
-                      race.id,
-                      res.position,
-                      prize,
-                      newDay,
-                    );
-                  }
-                }
-                if (stableAI.campaignAI && race.graded?.key) {
-                  const prizeSplit = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
-                  const prize =
-                    res.position <= prizeSplit.length
-                      ? Math.round(race.purse * prizeSplit[res.position - 1])
-                      : 0;
-                  stableAI.campaignAI = recordCampaignOutcome(
-                    stableAI.campaignAI,
-                    res.horseId,
-                    race.graded.key,
-                    res.position,
-                    prize,
-                    newDay,
-                  );
-                }
-                // 4. Learn from jockey strategy outcomes
-                if (stableAI.jockeyStrategyAI) {
-                  const runner = runnerByHorseId.get(res.horseId);
-                  const jockey = runner?.jockeyId ? jockeyMap.get(runner.jockeyId) : undefined;
-                  if (jockey) {
-                    const style = horse.runningStyle ?? "P";
-                    const entry = race.entries.find((e) => e.horseId === horse.id);
-                    const aggressiveness = entry?.jockeyInstructions?.aggressiveness ?? 50;
-                    stableAI.jockeyStrategyAI = recordRaceStrategy(
-                      stableAI.jockeyStrategyAI,
-                      horse,
-                      race,
-                      jockey,
-                      stable,
-                      style,
-                      aggressiveness,
-                      res.position,
-                      newDay,
-                    );
-                  }
-                }
-                npcAIManager.stableStates[stable.id] = stableAI;
-              }
-            }
-          }
-        }
-
-        // Track record check
-        const winnerResult = result.find((r) => r.position === 1);
-        const winnerHorse = winnerResult ? horseMap.get(winnerResult.horseId) : null;
-        if (winnerResult && winnerHorse) {
-          const trackRecord = checkTrackRecord(
+          recordNpcAiOutcomes(
+            npcAIManager,
             race,
-            winnerResult.horseId,
-            winnerHorse.name,
-            winnerResult.time,
+            result,
+            impactRunners,
+            horseMap,
+            jockeyMap,
+            npcStableMap,
             newDay,
-            state.trackRecords || {},
           );
-          if (trackRecord) {
-            impacts.push({
-              id: generateUUID(),
-              intentId: race.id,
-              day: newDay,
-              phase: "raceResolution",
-              logLevel: "always",
-              type: "track_record",
-              record: trackRecord,
-              reason: "New track record set!",
-            } as TrackRecordImpact);
-          }
         }
 
-        // G1 history & Hall of Fame
-        if (race.graded?.grade === "G1") {
-          const historyRecord = recordRaceHistory(race, result, impactRunners, horseMap, newDay);
-          if (historyRecord) {
-            impacts.push({
-              id: generateUUID(),
-              intentId: race.id,
-              day: newDay,
-              phase: "raceResolution",
-              logLevel: "never",
-              type: "season_history_record",
-              record: historyRecord,
-            } as SeasonHistoryImpact);
-          }
-
-          const winnerId = result.find((r) => r.position === 1)?.horseId;
-          const winner = winnerId ? horseMap.get(winnerId) : null;
-          if (winner && winner.id) {
-            const prizeMoney = race.purse * PRIZE_SPLIT[0];
-            const tempHorse = {
-              ...winner,
-              lifetimeEarnings: (winner.lifetimeEarnings ?? 0) + prizeMoney,
-              careerWins: (winner.careerWins ?? 0) + 1,
-              raceHistory: [
-                ...winner.raceHistory,
-                { raceId: race.id, raceName: race.name, grade: "G1", position: 1, day: newDay },
-              ],
-            };
-            const hofEntry = checkHallOfFameInduction(tempHorse, newDay);
-            if (hofEntry && !hallOfFameIds.has(winner.id)) {
-              impacts.push({
-                id: generateUUID(),
-                intentId: race.id,
-                day: newDay,
-                phase: "raceResolution",
-                logLevel: "always",
-                type: "hall_of_fame_induction",
-                entry: hofEntry,
-                reason: "G1 winner reached HoF criteria",
-              } as HallOfFameInductionImpact);
-            }
-          }
-        }
+        // Track record, G1 history & Hall of Fame
+        const trackRecordAndHofImpacts = checkTrackRecordAndHof(
+          race,
+          result,
+          impactRunners,
+          horseMap,
+          newDay,
+          state.trackRecords || {},
+          hallOfFameIds,
+        );
+        impacts.push(...trackRecordAndHofImpacts);
 
         // Claiming resolution
         if (race.claimingPrice) {
           const claimIntents = context.intents.filter(
             (i): i is ClaimingIntent => i.type === "claiming" && i.raceId === race.id,
           );
-          if (claimIntents.length > 0) {
-            const { impacts: claimingImpacts } = processClaimingResolution({
-              race,
-              claimIntents,
-              horses: Object.values(state.horses),
-              newDay,
-              rng,
-            });
-            for (const impact of claimingImpacts) {
-              impacts.push(impact);
-            }
-          }
+          const claimingImpacts = processClaimingForRace(
+            race,
+            claimIntents,
+            Object.values(state.horses),
+            newDay,
+            rng,
+          );
+          impacts.push(...claimingImpacts);
         }
         continue;
       }
@@ -335,93 +189,16 @@ export const raceResolutionPhase: PipelinePhase = {
 
       // Record outcomes for NPC AI
       if (npcAIManager) {
-        const runnerByHorseId = new Map(runners.map((r) => [r.horseId, r]));
-        for (const res of result) {
-          const horse = horseMap.get(res.horseId);
-          if (horse && horse.stableId) {
-            const stable = npcStableMap.get(horse.stableId);
-            if (stable) {
-              const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
-
-              // 1. Learn from race entry performance
-              if (stableAI.raceEntryAI) {
-                stableAI.raceEntryAI = recordRaceEntryOutcome(
-                  stableAI.raceEntryAI,
-                  horse,
-                  race,
-                  newDay,
-                  res.position <= TOP_FINISH_POSITION,
-                  res.position,
-                );
-              }
-
-              // 2. Learn from jockey performance
-              if (stableAI.jockeyAI) {
-                const runner = runnerByHorseId.get(res.horseId);
-                if (runner && runner.jockeyId) {
-                  // Calculate prize money for learning
-                  const prizeSplit = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
-                  const prize =
-                    res.position <= prizeSplit.length
-                      ? Math.round(race.purse * prizeSplit[res.position - 1])
-                      : 0;
-
-                  stableAI.jockeyAI = recordJockeyOutcome(
-                    stableAI.jockeyAI,
-                    runner.jockeyId,
-                    res.horseId,
-                    race.id,
-                    res.position,
-                    prize,
-                    newDay,
-                  );
-                }
-              }
-
-              // 3. Learn from campaign targeting
-              if (stableAI.campaignAI && race.graded?.key) {
-                const prizeSplit = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
-                const prize =
-                  res.position <= prizeSplit.length
-                    ? Math.round(race.purse * prizeSplit[res.position - 1])
-                    : 0;
-
-                stableAI.campaignAI = recordCampaignOutcome(
-                  stableAI.campaignAI,
-                  res.horseId,
-                  race.graded.key,
-                  res.position,
-                  prize,
-                  newDay,
-                );
-              }
-
-              // 4. Learn from jockey strategy outcomes
-              if (stableAI.jockeyStrategyAI) {
-                const runner = runnerByHorseId.get(res.horseId);
-                const jockey = runner?.jockeyId ? jockeyMap.get(runner.jockeyId) : undefined;
-                if (jockey) {
-                  const style = horse.runningStyle ?? "P";
-                  const entry = race.entries.find((e) => e.horseId === horse.id);
-                  const aggressiveness = entry?.jockeyInstructions?.aggressiveness ?? 50;
-                  stableAI.jockeyStrategyAI = recordRaceStrategy(
-                    stableAI.jockeyStrategyAI,
-                    horse,
-                    race,
-                    jockey,
-                    stable,
-                    style,
-                    aggressiveness,
-                    res.position,
-                    newDay,
-                  );
-                }
-              }
-
-              npcAIManager.stableStates[stable.id] = stableAI;
-            }
-          }
-        }
+        recordNpcAiOutcomes(
+          npcAIManager,
+          race,
+          result,
+          runners,
+          horseMap,
+          jockeyMap,
+          npcStableMap,
+          newDay,
+        );
       }
 
       // Generate race impacts using service
@@ -447,96 +224,30 @@ export const raceResolutionPhase: PipelinePhase = {
       }
 
       // --- Historical Records & Hall of Fame ---
-      const winnerResult = result.find((r) => r.position === 1);
-      const winnerHorse = winnerResult ? horseMap.get(winnerResult.horseId) : null;
-
-      if (winnerResult && winnerHorse) {
-        const trackRecord = checkTrackRecord(
-          race,
-          winnerResult.horseId,
-          winnerHorse.name,
-          winnerResult.time,
-          newDay,
-          state.trackRecords || {},
-        );
-
-        if (trackRecord) {
-          impacts.push({
-            id: generateUUID(),
-            intentId: race.id,
-            day: newDay,
-            phase: "raceResolution",
-            logLevel: "always",
-            type: "track_record",
-            record: trackRecord,
-            reason: "New track record set!",
-          } as TrackRecordImpact);
-        }
-      }
-
-      if (race.graded?.grade === "G1") {
-        const historyRecord = recordRaceHistory(race, result, runners, horseMap, newDay);
-        if (historyRecord) {
-          impacts.push({
-            id: generateUUID(),
-            intentId: race.id,
-            day: newDay,
-            phase: "raceResolution",
-            logLevel: "never",
-            type: "season_history_record",
-            record: historyRecord,
-          } as SeasonHistoryImpact);
-        }
-
-        // Check winner for Hall of Fame induction
-        const winnerId = result.find((r) => r.position === 1)?.horseId;
-        const winner = winnerId ? horseMap.get(winnerId) : null;
-        if (winner && winner.id) {
-          const prizeMoney = race.purse * PRIZE_SPLIT[0];
-          const tempHorse = {
-            ...winner,
-            lifetimeEarnings: (winner.lifetimeEarnings ?? 0) + prizeMoney,
-            careerWins: (winner.careerWins ?? 0) + 1,
-            raceHistory: [
-              ...winner.raceHistory,
-              { raceId: race.id, raceName: race.name, grade: "G1", position: 1, day: newDay },
-            ],
-          };
-
-          const hofEntry = checkHallOfFameInduction(tempHorse, newDay);
-          if (hofEntry && !hallOfFameIds.has(winner.id)) {
-            impacts.push({
-              id: generateUUID(),
-              intentId: race.id,
-              day: newDay,
-              phase: "raceResolution",
-              logLevel: "always",
-              type: "hall_of_fame_induction",
-              entry: hofEntry,
-              reason: "G1 winner reached HoF criteria",
-            } as HallOfFameInductionImpact);
-          }
-        }
-      }
+      const trackRecordAndHofImpacts = checkTrackRecordAndHof(
+        race,
+        result,
+        runners,
+        horseMap,
+        newDay,
+        state.trackRecords || {},
+        hallOfFameIds,
+      );
+      impacts.push(...trackRecordAndHofImpacts);
 
       // Claiming resolution (if race is claiming race)
       if (race.claimingPrice) {
         const claimIntents = context.intents.filter(
           (i): i is ClaimingIntent => i.type === "claiming" && i.raceId === race.id,
         );
-
-        if (claimIntents.length > 0) {
-          const { impacts: claimingImpacts } = processClaimingResolution({
-            race,
-            claimIntents,
-            horses: Object.values(state.horses),
-            newDay,
-            rng,
-          });
-          for (const impact of claimingImpacts) {
-            impacts.push(impact);
-          }
-        }
+        const claimingImpacts = processClaimingForRace(
+          race,
+          claimIntents,
+          Object.values(state.horses),
+          newDay,
+          rng,
+        );
+        impacts.push(...claimingImpacts);
       }
     }
 
