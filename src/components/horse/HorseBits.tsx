@@ -85,12 +85,14 @@ export function HorseBit({
 /**
  * overall — Calculate overall rating for a horse.
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function overall(h: Horse) {
   return calculateOverallRating(h);
 }
 
 import { formatCurrency, formatTime } from "@/core/common/formatting";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { formatCurrency, formatTime };
 
 /**

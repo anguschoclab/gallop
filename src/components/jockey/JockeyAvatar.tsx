@@ -26,6 +26,7 @@ interface Props {
  * import { SIZE_MAP, JOCKEY_AVATAR_ASPECT } from "@/components/jockey/JockeyAvatar"
  * ```
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const SIZE_MAP: Record<JockeyAvatarSize, { w: number; h: number }> = {
   xs: { w: 30, h: 36 }, // table rows / inline name chips
   sm: { w: 40, h: 48 }, // dense lists, mobile cards

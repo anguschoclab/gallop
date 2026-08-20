@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createRng, hashStr } from "@/core/common/rng";
 import type { Backstory } from "@/core/common/backstories";
 import { generateUUID } from "@/core/uuid";

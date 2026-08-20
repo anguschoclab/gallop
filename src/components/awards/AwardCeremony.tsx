@@ -239,6 +239,7 @@ function Confetti({ active }: { active: boolean }) {
 }
 
 // Hook for managing ceremony state
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAwardCeremony() {
   const [isOpen, setIsOpen] = useState(false);
   const [ceremonies, setCeremonies] = useState<

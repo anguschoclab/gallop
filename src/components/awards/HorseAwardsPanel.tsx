@@ -192,4 +192,5 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
 }
 
 // Re-export so callers can keep cn in tree-shake graph if needed
+// eslint-disable-next-line react-refresh/only-export-components
 export { cn };

@@ -31,6 +31,7 @@ interface NavSectionProps {
 
 export const STORAGE_PREFIX = "gallop_sidebar_section:";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function clearAllSidebarStorage(): void {
   if (typeof window === "undefined") return;
   try {

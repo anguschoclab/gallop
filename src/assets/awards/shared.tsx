@@ -20,6 +20,7 @@ export interface RegionAwardConfig {
   hoty: RegionAwardColorScheme;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const REGION_AWARD_CONFIG: Record<AwardRegion, RegionAwardConfig> = {
   asia_pacific: {
     category: {

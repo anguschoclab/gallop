@@ -337,5 +337,7 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
 }
 
 // Silences unused-import warning when build tree-shakes.
+// eslint-disable-next-line react-refresh/only-export-components
 export const __classifyTendency = classifyTendency;
+// eslint-disable-next-line react-refresh/only-export-components
 export const __distanceBucket = distanceBucket;
