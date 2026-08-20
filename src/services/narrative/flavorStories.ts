@@ -88,6 +88,26 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "Following yesterday's card, several prominent riders voiced concerns to track management regarding an uneven bias that developed along the rail during the late afternoon.",
       category: "flavor",
     },
+    {
+      headline: "Leading Rider Sidelined by Injury",
+      body: "The current leader in the jockey standings is expected to miss at least three weeks after a minor spill during morning workouts.",
+      category: "flavor",
+    },
+    {
+      headline: "New Whip Design Tested in Races",
+      body: "Several riders are experimenting with a newly approved, padded riding crop designed to meet stricter welfare regulations without sacrificing encouragement.",
+      category: "flavor",
+    },
+    {
+      headline: "Jockey Masterclass Draws Young Talent",
+      body: "A retired Hall of Fame rider hosted a clinic on pace-setting this morning, drawing a large group of eager apprentices.",
+      category: "flavor",
+    },
+    {
+      headline: "Rider Achieves Rare Five-Win Day",
+      body: "A prominent journeyman jockey dominated the afternoon card, booting home five winners and leaving the rest of the colony struggling to keep up.",
+      category: "flavor",
+    },
   ],
   breeding: [
     {
@@ -120,6 +140,31 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "One of the region's leading breeding operations unveiled their stud fees for the upcoming season, reflecting a sharp increase in demand for proven turf sires.",
       category: "flavor",
     },
+    {
+      headline: "Surprise Demand at Yearling Sale",
+      body: "Bidding wars broke out at the regional yearling sale today, with several relatively unknown sires seeing their progeny fetch unexpectedly high prices.",
+      category: "flavor",
+    },
+    {
+      headline: "Legacy Farm Changes Hands",
+      body: "One of the oldest and most respected breeding operations in the region has been quietly sold to an international conglomerate, marking the end of an era.",
+      category: "flavor",
+    },
+    {
+      headline: "New Reproductive Tech Shows Promise",
+      body: "A local fertility clinic presented preliminary data on a new technique that could significantly improve conception rates in older, hard-to-breed mares.",
+      category: "flavor",
+    },
+    {
+      headline: "Pinhooking Syndicate Reaps Rewards",
+      body: "A group that purchased a batch of inexpensive weanlings last year made a massive return on investment today, selling them as two-year-olds in training.",
+      category: "flavor",
+    },
+    {
+      headline: "Broodmare of the Year Honored",
+      body: "The local breeding association held a banquet last night to honor a legendary mare who has produced three graded stakes winners from just four foals.",
+      category: "flavor",
+    },
   ],
   weather: [
     {
@@ -150,6 +195,26 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "High Winds Challenge Turf Runners",
       body: "Gusty crosswinds are expected for the afternoon card, leading several top trainers to reconsider tactics for their late-running turf specialists.",
+      category: "flavor",
+    },
+    {
+      headline: "Autumn Chill Settles Over Track",
+      body: "The distinct crispness of fall was in the air this morning, signaling to trainers that it's time to break out the heavy stable blankets.",
+      category: "flavor",
+    },
+    {
+      headline: "Sudden Downpour Causes Track Seal",
+      body: "A pop-up thunderstorm forced the maintenance crew into action, quickly sealing the main track to prevent moisture from compromising the base.",
+      category: "flavor",
+    },
+    {
+      headline: "Perfect Spring Conditions Attract Crowds",
+      body: "A break in the seasonal showers has delivered a picture-perfect afternoon, with fans flocking to the apron to enjoy the sunshine and fast conditions.",
+      category: "flavor",
+    },
+    {
+      headline: "Dry Spell Leads to Hard Track",
+      body: "Weeks without significant rainfall have left the main track favoring early speed, prompting complaints from the connections of several deep closers.",
       category: "flavor",
     },
   ],
@@ -199,6 +264,31 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "A friendly but fierce competition has developed between the track's outriders over who has the most impressive pony horse this season.",
       category: "flavor",
     },
+    {
+      headline: "Backstretch Barbecue Tradition Continues",
+      body: "The annual end-of-meet barbecue for track workers went off without a hitch last night, serving up legendary ribs and providing a much-needed break for the grooms and hotwalkers.",
+      category: "flavor",
+    },
+    {
+      headline: "Racing Club Welcomes New Members",
+      body: "The local racing syndicate hosted an open house at the barns this morning, drawing an enthusiastic crowd of prospective owners eager to learn about the sport.",
+      category: "flavor",
+    },
+    {
+      headline: "Track Historian Publishes New Book",
+      body: "A newly released book detailing the golden era of this circuit is flying off the shelves at the track gift shop, reviving memories of long-forgotten champions.",
+      category: "flavor",
+    },
+    {
+      headline: "School Visit Brings Smiles to the Paddock",
+      body: "A group of elementary school children got a behind-the-scenes tour of the stables today, getting to feed carrots to a retired graded stakes winner.",
+      category: "flavor",
+    },
+    {
+      headline: "Grooms Recognized with Awards",
+      body: "In a touching ceremony before the first race, several veteran grooms were honored for their decades of dedicated service to the equine athletes.",
+      category: "flavor",
+    },
   ],
   industry: [
     {
@@ -224,6 +314,31 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "New Quarantine Protocols Implemented",
       body: "In a proactive measure, racing authorities have introduced stricter travel guidelines for horses shipping in from out of state to ensure equine health.",
+      category: "flavor",
+    },
+    {
+      headline: "Regulators Weigh Medication Changes",
+      body: "The national governing body is circulating a memo about phasing out several race-day medications, sparking fierce debate among trainers and owners.",
+      category: "flavor",
+    },
+    {
+      headline: "Broadcasting Rights Deal Finalized",
+      body: "A major sports network has secured the exclusive broadcasting rights for the upcoming summer circuit, promising unprecedented coverage of morning works and paddock activity.",
+      category: "flavor",
+    },
+    {
+      headline: "New Ownership App Launches",
+      body: "A tech startup has introduced a fractional ownership app aiming to bring younger demographics into the sport, allowing fans to purchase micro-shares of racehorses.",
+      category: "flavor",
+    },
+    {
+      headline: "International Simulcast Agreement Signed",
+      body: "Track officials have brokered a new simulcast deal, meaning local races will now be broadcast and wagered on in several major overseas markets.",
+      category: "flavor",
+    },
+    {
+      headline: "Task Force Formed on Aftercare",
+      body: "Industry leaders announced a joint initiative with several major farms to better fund retirement and retraining programs for off-track thoroughbreds.",
       category: "flavor",
     },
   ],
