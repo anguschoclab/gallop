@@ -334,9 +334,45 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "Pundits are already weighing in on the upcoming stakes schedule, with many predicting a highly competitive year for the 3-year-old division.",
       category: "flavor",
     },
+
     {
       headline: "Debate Over Whip Rules Continues",
       body: "The racing commission's latest meeting saw heated arguments regarding potential new restrictions on crop usage during the final furlong.",
+      category: "flavor",
+    },
+    {
+      headline: "Off-Track Betting Revenues Spike",
+      body: "The latest fiscal report shows a significant increase in simulcast and off-track wagering, providing a much-needed boost to the local racing economy.",
+      category: "flavor",
+    },
+    {
+      headline: "Proposed Track Relocation Draws Fire",
+      body: "Rumors of a major developer offering to buy the historic track land have sparked protests from local racing fans and preservation societies.",
+      category: "flavor",
+    },
+    {
+      headline: "New Equine Drug Testing Lab Opens",
+      body: "A state-of-the-art testing facility has officially opened its doors, promising faster turnaround times and more rigorous screening for banned substances.",
+      category: "flavor",
+    },
+    {
+      headline: "Racing Commission Announces Leadership Change",
+      body: "Following a turbulent year, the regional racing authority has appointed a new commissioner known for a strict stance on safety regulations.",
+      category: "flavor",
+    },
+    {
+      headline: "Sponsorship Deal Brings New Series",
+      body: "A major automotive manufacturer has signed a multi-year deal to sponsor a new series of stakes races aimed at older handicap horses.",
+      category: "flavor",
+    },
+    {
+      headline: "Investigative Report Rattles Industry",
+      body: "A bombshell article in a leading sports journal detailing alleged irregularities at off-shore breeding operations has the industry on high alert.",
+      category: "flavor",
+    },
+    {
+      headline: "International Simulcast Agreement Reached",
+      body: "Local tracks will now feature directly in several major overseas betting markets following a breakthrough agreement signed earlier this week.",
       category: "flavor",
     },
     {
