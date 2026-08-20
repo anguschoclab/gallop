@@ -26,6 +26,7 @@ import {
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import type { DistressLevel } from "@/core/ai/financialDistressAI";
 import { UPKEEP_DISTRESS_MULTIPLIER } from "@/constants/financialDistressConstants";
+import type { StaffMember } from "@/core/staff/staffTypes";
 import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
 import {
   UPKEEP_PER_HORSE,
@@ -128,7 +129,7 @@ export const upkeepPhase = {
       }
     }
 
-    const staffByStable = new Map<string, any[]>();
+    const staffByStable = new Map<string, StaffMember[]>();
     if (state.hiredStaff) {
       for (const staff of state.hiredStaff) {
         const sid = staff.stableId ?? "";
