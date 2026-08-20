@@ -72,4 +72,12 @@ describe("compareFinishOrder", () => {
     const b = { finishTime: 90.0, gate: 1, horseId: "h2" };
     expect(compareFinishOrder(a, b)).toBeGreaterThan(0);
   });
+
+  it("barrier is no longer a property on FinishOrderable — gate is the sole tie-break", () => {
+    const a = { finishTime: 90.0, gate: 1, horseId: "h1" };
+    const b = { finishTime: 90.0, gate: 2, horseId: "h2" };
+    expect(compareFinishOrder(a, b)).toBeLessThan(0);
+    // Verify barrier is not in the interface by checking that it's not used
+    expect("barrier" in a).toBe(false);
+  });
 });

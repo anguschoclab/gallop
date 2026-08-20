@@ -9,6 +9,7 @@ import {
   TacticalAnalysisPanel,
   type JockeyInsightEntry,
 } from "@/components/race/TacticalAnalysisPanel";
+import { RaceDecisionLog } from "@/components/race/RaceDecisionLog";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import type { RaceSnapshot, PaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
@@ -374,6 +375,31 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                         <TacticalAnalysisPanel
                           runners={tacticalRunners}
                           insights={jockeyInsights.length > 0 ? jockeyInsights : undefined}
+                        />
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </div>
+              )}
+
+              {race.snapshots && race.snapshots.length > 0 && allFinished && (
+                <div className="pt-4 border-t border-white/5">
+                  <Collapsible defaultOpen={false}>
+                    <CollapsibleTrigger className="flex items-center gap-1 text-[10px] font-black uppercase text-purple-400/60 tracking-[0.2em] hover:text-purple-400 transition-colors">
+                      <ChevronDown className="h-3 w-3" />
+                      AI Decision Log
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="mt-3">
+                        <RaceDecisionLog
+                          snapshots={race.snapshots}
+                          runners={ordered.map((r) => ({
+                            horseId: r.horseId,
+                            name: r.name,
+                            owned: r.owned,
+                            runningStyle: r.runningStyle,
+                          }))}
+                          distance={race.distance ?? 0}
                         />
                       </div>
                     </CollapsibleContent>

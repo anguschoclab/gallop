@@ -1,7 +1,7 @@
 /**
  * Shared deterministic tie-break comparator for race finish ordering.
  *
- * Sort chain: finishTime/time (ascending) → barrier (ascending) → horseId (lexicographic).
+ * Sort chain: finishTime/time (ascending) → gate (ascending) → horseId (lexicographic).
  * null/Infinity time sorts last. Supports both `Runner` (finishTime) and
  * finish-order accumulator entries (time).
  */
@@ -9,7 +9,6 @@
 export interface FinishOrderable {
   finishTime?: number | null;
   time?: number;
-  barrier?: number;
   gate?: number;
   horseId: string;
 }
@@ -24,8 +23,8 @@ export function compareFinishOrder(a: FinishOrderable, b: FinishOrderable): numb
   const at = getTime(a);
   const bt = getTime(b);
   if (at !== bt) return at - bt;
-  const ab = a.gate ?? a.barrier ?? Infinity;
-  const bb = b.gate ?? b.barrier ?? Infinity;
-  if (ab !== bb) return ab - bb;
+  const ag = a.gate ?? Infinity;
+  const bg = b.gate ?? Infinity;
+  if (ag !== bg) return ag - bg;
   return a.horseId < b.horseId ? -1 : a.horseId > b.horseId ? 1 : 0;
 }

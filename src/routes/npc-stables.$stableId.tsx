@@ -19,6 +19,7 @@ import { DiplomacyPanel } from "@/components/npc/DiplomacyPanel";
 import { RelationshipGraph } from "@/components/npc/RelationshipGraph";
 import { AIPersonalityCard } from "@/components/npc/AIPersonalityCard";
 import { StrategicDirectivesPanel } from "@/components/npc/StrategicDirectivesPanel";
+import { FinancialDistressIndicator } from "@/components/npc/FinancialDistressIndicator";
 
 const searchSchema = z.object({
   tab: fallback(
@@ -284,6 +285,9 @@ function NpcStableDetailPage() {
         </div>
 
         <NpcStableInfoSidebar stableId={stableId} pageData={pageData} navigate={navigate} />
+        <FinancialDistressIndicator
+          distress={npcAIManager?.stableStates?.[stableId]?.financialDistress}
+        />
         <DiplomacyPanel stableId={stableId} />
         <RelationshipGraph
           stableId={stableId}

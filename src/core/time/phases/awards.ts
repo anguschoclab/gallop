@@ -21,7 +21,8 @@ import type { AwardRegion, RegionalAward } from "@/core/awards/types";
 import { AWARD_CEREMONY_SCHEDULE } from "@/core/awards/types";
 import { PHASE_ORDER_AWARDS, FANS_PER_FAME_POINT, DAYS_PER_YEAR } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
-import type { FameImpact, FanCountImpact } from "@/core/resolver/impacts/index";
+import type { FameImpact, FanCountImpact, InboxImpact } from "@/core/resolver/impacts/index";
+import { generateAwardInboxMessage } from "@/core/awards/awardInboxMessages";
 
 /** Fame boost for Horse of the Year award winners */
 const HOTY_FAME_BOOST = 25;
@@ -136,6 +137,17 @@ export const awardsPhase = {
             reason: `${award.region} ${award.category} award fan bonus`,
           } as FanCountImpact);
         }
+
+        // Generate inbox message with CTA deep-link to award category page
+        impacts.push({
+          id: generateUUID(),
+          intentId: "",
+          day: newDay,
+          phase: "awards",
+          logLevel: "always",
+          type: "inbox_message",
+          message: generateAwardInboxMessage(award, newDay),
+        } as InboxImpact);
       }
 
       updatedLastAwardYear[region] = year;
