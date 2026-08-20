@@ -17,6 +17,13 @@ export interface ConditionCheckContext {
   createLine: (type: NarrativeEvent, timestamp: number, runner?: Runner) => CommentaryLine;
 }
 
+/**
+ * Check for narrative condition transitions during a race and return any new commentary lines.
+ * @param runners - Array of runners in the race.
+ * @param simTime - Current simulation time.
+ * @param ctx - Context containing narrative state, race, and commentary line factory.
+ * @returns Array of commentary lines for condition transitions.
+ */
 export function checkConditionTransitions(
   runners: Runner[],
   simTime: number,

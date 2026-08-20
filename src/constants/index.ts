@@ -34,8 +34,6 @@ export * from "./uiConstants";
 export * from "./runnerConditionThresholds";
 export * from "./narrativeConditionConstants";
 export * from "./narrativeThresholds";
-export * from "./jargon";
-export * from "./trainingTypes";
 export * from "./awardsConstants";
 export * from "./gateConstants";
 export * from "./financialDistressConstants";

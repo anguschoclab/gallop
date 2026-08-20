@@ -6,6 +6,12 @@ export interface Milestone {
   id: number;
 }
 
+/**
+ * Generate dynamic race milestones based on race distance.
+ *
+ * @param race - The race to generate milestones for.
+ * @returns Array of milestone positions and IDs.
+ */
 export function generateDynamicMilestones(race: Race): Milestone[] {
   const distance = race.distance;
   const milestones: Milestone[] = [];

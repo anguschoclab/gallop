@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
 import { TRAINING_COST } from "@/constants";
-import { BASIC_TRAINING_TYPES, ADVANCED_WORKOUTS } from "@/constants/trainingTypes";
+import { BASIC_TRAINING_TYPES, ADVANCED_WORKOUTS } from "@/core/training/trainingTypes";
 import { TRAINING_FACILITY_REQUIREMENTS } from "@/constants/workoutConstants";
 import { getAvailableTrainingTypes } from "@/core/facilities";
 import { FACILITY_NAMES, facilityLevelToTierLabel } from "@/core/facilities/facilityTypes";

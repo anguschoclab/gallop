@@ -11,6 +11,15 @@ import type { CareerArcState } from "@/services/narrative/careerArcGenerator";
 
 /**
  * Build a rivalry news item from headline/body arrays with deterministic RNG selection.
+ * @param headlines
+ * @param bodies
+ * @param fields
+ * @param fields.day
+ * @param fields.category
+ * @param fields.importance
+ * @param fields.entityLinks
+ * @param rng
+ * @returns A constructed NewsItem with deterministic headline/body selection.
  */
 function buildRivalryNews(
   headlines: string[],
@@ -28,6 +37,17 @@ function buildRivalryNews(
 
 /**
  * Generate news for a grudge match result between the player and a rival.
+ * @param race
+ * @param playerHorse
+ * @param rivalHorse
+ * @param playerWon
+ * @param currentDay
+ * @param rng
+ * @param rivalStable
+ * @param arcContext
+ * @param arcContext.horseName
+ * @param arcContext.arcStage
+ * @returns A NewsItem describing the grudge match outcome.
  */
 export function generateGrudgeMatchNews(
   race: Race,
@@ -185,6 +205,10 @@ export function generateGrudgeMatchNews(
 
 /**
  * Generate a stable intro news item for retroactive introductions.
+ * @param stable
+ * @param day
+ * @param rng
+ * @returns A NewsItem introducing the stable.
  */
 export function generateStableIntroNews(stable: Stable, day: number, rng: Rng): NewsItem {
   const country = stable.country ?? "parts unknown";

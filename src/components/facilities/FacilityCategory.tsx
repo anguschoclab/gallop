@@ -9,7 +9,7 @@ import { cn } from "@/lib/cn";
 import { useFacilityTiers } from "@/hooks/facilities/useFacilityTiers";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { JARGON_DEFINITIONS } from "@/constants/jargon";
+import { JARGON_DEFINITIONS } from "@/core/horse/jargon";
 import type { PlayerFacilities } from "@/core/facilities";
 
 interface FacilityCategoryProps {
