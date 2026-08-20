@@ -1,410 +1,117 @@
 /**
- * intents.ts - Intent type definitions
+ * intents.ts - Re-exports for intent type definitions
  *
- * This file provides intent type definitions for the impact resolver system.
- * All player and NPC actions generate intents instead of mutating state directly.
- *
- * Dependencies: @/game/types (Horse, Race, Jockey)
- * Related files: resolver.ts (uses intents), handlers/ (handle intents), validators/ (validate intents)
+ * This file re-exports core, campaign, and system intent types from
+ * dedicated modules for backward compatibility.
  */
 
-// Intent type definitions for the impact resolver system
-// All player and NPC actions generate intents instead of mutating state directly
+export {
+  type Intent,
+  type TrainingIntent,
+  type RaceEntryIntent,
+  type RaceWithdrawalIntent,
+  type BreedingIntent,
+  type StudRetirementIntent,
+  type PurchaseIntent,
+  type JockeyContractIntent,
+  type JockeyReleaseIntent,
+  type JockeyAssignmentIntent,
+  type ScoutIntent,
+  type ConsignmentIntent,
+  type ConsignmentWithdrawalIntent,
+  type GeldingIntent,
+  type RerollSilkIntent,
+  type RenameIntent,
+  type TacticsIntent,
+} from "./intentTypes";
 
-import type { Horse, Race, Jockey } from "@/game/types";
-import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
-import type { FacilityLevel } from "@/core/facilities";
-import type { OutpostRegion } from "@/core/facilities/outpostTypes";
-import type { InsurancePolicyType } from "@/core/insurance/insuranceTypes";
-import type { InquiryType } from "@/core/stewards/stewardTypes";
+export {
+  type CampaignSlotIntent,
+  type CampaignFlagDismissalIntent,
+  type CampaignCreationIntent,
+  type CampaignDeletionIntent,
+  type AutoManageToggleIntent,
+} from "./campaignIntents";
 
-// Base intent type
-export interface Intent {
-  id: string;
-  entityId: string; // horseId, stableId, raceId, etc.
-  source: "player" | "npc" | "system";
-  sourceId?: string; // stableId for NPC intents
-  day: number;
-  priority: number; // Higher priority resolved first (player > NPC)
-}
+export {
+  type UpkeepIntent,
+  type AgingIntent,
+  type EnergyIntent,
+  type PregnancyCheckIntent,
+  type PregnancyResolutionIntent,
+  type RaceResolutionIntent,
+  type ClaimingIntent,
+  type WithdrawFromClaimingIntent,
+  type TransportIntent,
+  type StaffIntent,
+  type FacilityUpgradeIntent,
+  type OutpostActionIntent,
+  type PastureRetirementIntent,
+  type UpdateStudFeeIntent,
+  type SyndicateCreationIntent,
+  type SharePurchaseIntent,
+  type ShareSaleIntent,
+  type SyndicateFeeDistributionIntent,
+  type InsurancePurchaseIntent,
+  type InsuranceCancelIntent,
+  type InsuranceClaimIntent,
+  type StewardsInquiryIntent,
+  type DiplomaticActionIntent,
+  type CartelActionIntent,
+} from "./systemIntents";
 
-// Training intent
-export interface TrainingIntent extends Intent {
-  type: "training";
-  horseId: string;
-  trainingType:
-    | "speed"
-    | "stamina"
-    | "acceleration"
-    | "rest"
-    | "bullet"
-    | "breeze"
-    | "gate_work"
-    | "swimming"
-    | "gallop"
-    | "treadmill";
-}
+import type {
+  TrainingIntent,
+  RaceEntryIntent,
+  RaceWithdrawalIntent,
+  BreedingIntent,
+  StudRetirementIntent,
+  PurchaseIntent,
+  JockeyContractIntent,
+  JockeyReleaseIntent,
+  JockeyAssignmentIntent,
+  ScoutIntent,
+  ConsignmentIntent,
+  ConsignmentWithdrawalIntent,
+  GeldingIntent,
+  RerollSilkIntent,
+  RenameIntent,
+  TacticsIntent,
+} from "./intentTypes";
+import type {
+  CampaignSlotIntent,
+  CampaignFlagDismissalIntent,
+  CampaignCreationIntent,
+  CampaignDeletionIntent,
+  AutoManageToggleIntent,
+} from "./campaignIntents";
+import type {
+  UpkeepIntent,
+  AgingIntent,
+  EnergyIntent,
+  PregnancyCheckIntent,
+  PregnancyResolutionIntent,
+  RaceResolutionIntent,
+  ClaimingIntent,
+  WithdrawFromClaimingIntent,
+  TransportIntent,
+  StaffIntent,
+  FacilityUpgradeIntent,
+  OutpostActionIntent,
+  PastureRetirementIntent,
+  UpdateStudFeeIntent,
+  SyndicateCreationIntent,
+  SharePurchaseIntent,
+  ShareSaleIntent,
+  SyndicateFeeDistributionIntent,
+  InsurancePurchaseIntent,
+  InsuranceCancelIntent,
+  InsuranceClaimIntent,
+  StewardsInquiryIntent,
+  DiplomaticActionIntent,
+  CartelActionIntent,
+} from "./systemIntents";
 
-// Race entry intent
-export interface RaceEntryIntent extends Intent {
-  type: "race_entry";
-  raceId: string;
-  horseId: string;
-  jockeyId?: string;
-  jockeyInstructions?: JockeyInstructions;
-  bumpEntryHorseId?: string; // horseId to evict if race is full
-}
-
-// Race withdrawal intent
-export interface RaceWithdrawalIntent extends Intent {
-  type: "race_withdrawal";
-  raceId: string;
-  horseId: string;
-}
-
-// Breeding intent
-export interface BreedingIntent extends Intent {
-  type: "breeding";
-  sireId: string;
-  damId: string;
-  liveFoalGuarantee: boolean;
-  fee?: number;
-}
-
-// Stud retirement intent
-export interface StudRetirementIntent extends Intent {
-  type: "stud_retirement";
-  horseId: string;
-  standingFee: number;
-  bookSize: number;
-}
-
-// Purchase intent (market)
-export interface PurchaseIntent extends Intent {
-  type: "purchase";
-  horseId: string;
-  price: number;
-}
-
-// Jockey contract intent
-export interface JockeyContractIntent extends Intent {
-  type: "jockey_contract";
-  jockeyId: string;
-  stableId?: string;
-  contractUntil?: number;
-  bonus?: number;
-  stableAffinity?: number;
-  isApprentice?: boolean;
-  loyalty?: number;
-}
-
-// Jockey release intent
-export interface JockeyReleaseIntent extends Intent {
-  type: "jockey_release";
-  jockeyId: string;
-}
-
-// Jockey assignment intent
-export interface JockeyAssignmentIntent extends Intent {
-  type: "jockey_assignment";
-  raceId: string;
-  horseId: string;
-  jockeyId: string;
-}
-
-// Scout intent
-export interface ScoutIntent extends Intent {
-  type: "scout";
-  horseId: string;
-  stableId: string;
-}
-
-// Consignment intent
-export interface ConsignmentIntent extends Intent {
-  type: "consignment";
-  horseId: string;
-  saleId: string;
-  reservePrice: number;
-}
-
-// Consignment withdrawal intent
-export interface ConsignmentWithdrawalIntent extends Intent {
-  type: "consignment_withdrawal";
-  horseId: string;
-  saleId: string;
-}
-
-// Gelding intent
-export interface GeldingIntent extends Intent {
-  type: "gelding";
-  horseId: string;
-}
-
-export interface RerollSilkIntent extends Intent {
-  type: "reroll_silk";
-  jockeyId: string;
-  cost: number;
-}
-
-// Rename intent
-export interface RenameIntent extends Intent {
-  type: "rename";
-  horseId: string;
-  newName: string;
-}
-
-// Campaign slot intent
-export interface CampaignSlotIntent extends Intent {
-  type: "campaign_slot";
-  horseId: string;
-  slotIndex: number;
-  slot: Partial<{
-    dayTarget: number;
-    dayWindow: number;
-    raceId: string;
-    raceKey: string;
-    role: "target" | "prep" | "comeback";
-    constraintDistance?: number;
-    constraintSurface?: "Turf" | "Dirt" | "Synthetic";
-    constraintGradeMin?: "G1" | "G2" | "G3" | "Stakes" | "Allowance";
-    notes?: string;
-    status: "planned" | "entered" | "completed" | "skipped" | "cancelled";
-  }>;
-}
-
-// Campaign flag dismissal intent
-export interface CampaignFlagDismissalIntent extends Intent {
-  type: "campaign_flag_dismissal";
-  horseId: string;
-  flagIndex: number;
-}
-
-// Campaign creation intent
-export interface CampaignCreationIntent extends Intent {
-  type: "campaign_creation";
-  horseId: string;
-  goalType:
-    "chase_g1" | "chase_g2" | "chase_g3" | "maximize_earnings" | "develop_maiden" | "free_run";
-  targetRaceKey?: string;
-}
-
-// Campaign deletion intent
-export interface CampaignDeletionIntent extends Intent {
-  type: "campaign_deletion";
-  horseId: string;
-}
-
-// Auto-manage toggle intent
-export interface AutoManageToggleIntent extends Intent {
-  type: "auto_manage_toggle";
-  horseId: string;
-  autoManaged: boolean;
-}
-
-// Upkeep intent (system-generated)
-export interface UpkeepIntent extends Intent {
-  type: "upkeep";
-  stableId?: string; // undefined for player
-  horseCount: number;
-  cost: number;
-}
-
-// Aging intent (system-generated)
-export interface AgingIntent extends Intent {
-  type: "aging";
-  horseId: string;
-  previousAge: number;
-  newAge: number;
-}
-
-// Energy intent (system-generated)
-export interface EnergyIntent extends Intent {
-  type: "energy";
-  horseId: string;
-  delta: number;
-  reason: "daily_regen" | "training" | "racing" | "breeding";
-}
-
-// Pregnancy check intent (system-generated)
-export interface PregnancyCheckIntent extends Intent {
-  type: "pregnancy_check";
-  pregnancyId: string;
-  stage: "early" | "mid" | "late";
-}
-
-// Pregnancy resolution intent (system-generated)
-export interface PregnancyResolutionIntent extends Intent {
-  type: "pregnancy_resolution";
-  pregnancyId: string;
-  success: boolean;
-  foalId?: string;
-}
-
-// Race resolution intent (system-generated)
-export interface RaceResolutionIntent extends Intent {
-  type: "race_resolution";
-  raceId: string;
-  results: { horseId: string; position: number; time: number }[];
-}
-
-// Claiming intent (system-generated during race resolution)
-export interface ClaimingIntent extends Intent {
-  type: "claiming";
-  raceId: string;
-  horseId: string;
-  claimantStableId?: string; // undefined for player
-  claimingPrice: number;
-}
-
-// Withdraw from claiming intent (for optional claiming races)
-export interface WithdrawFromClaimingIntent extends Intent {
-  type: "withdraw_from_claiming";
-  raceId: string;
-  horseId: string;
-}
-
-// Tactics intent
-export interface TacticsIntent extends Intent {
-  type: "tactics";
-  raceId: string;
-  horseId: string;
-  jockeyInstructions: JockeyInstructions;
-}
-
-// Transport intent
-export interface TransportIntent extends Intent {
-  type: "transport";
-  transportId: string;
-  cost: number;
-}
-
-// Staff intent
-export interface StaffIntent extends Intent {
-  type: "staff";
-  action: "hire" | "fire";
-  staffId: string;
-  role: import("@/core/staff/staffTypes").StaffRole;
-  tier: import("@/core/staff/staffTypes").StaffTier;
-  salary: number;
-  stableId: string;
-}
-
-// Facility upgrade intent
-export interface FacilityUpgradeIntent extends Intent {
-  type: "facility_upgrade";
-  facilityId: string;
-  nextLevel: FacilityLevel;
-  cost: number;
-}
-
-// Outpost action intent (create outpost, assign trainer)
-export interface OutpostActionIntent extends Intent {
-  type: "outpost_action";
-  stableId: string;
-  action: "create" | "assign_trainer";
-  outpostId: string;
-  region?: OutpostRegion;
-  name?: string;
-  headTrainerId?: string;
-  cost: number;
-}
-
-// Pasture retirement intent
-export interface PastureRetirementIntent extends Intent {
-  type: "pasture_retirement";
-  horseId: string;
-}
-
-// Update stud fee intent
-export interface UpdateStudFeeIntent extends Intent {
-  type: "update_stud_fee";
-  horseId: string;
-  newFee: number;
-}
-
-// Syndicate creation intent
-export interface SyndicateCreationIntent extends Intent {
-  type: "syndicate_creation";
-  stallionId: string;
-  totalShares: number;
-  sharePrice: number;
-  initialShareholders: Record<string, number>; // stableId -> share count
-}
-
-// Share purchase intent
-export interface SharePurchaseIntent extends Intent {
-  type: "share_purchase";
-  syndicateId: string;
-  buyerStableId?: string; // undefined for player
-  shares: number;
-  pricePerShare: number;
-}
-
-// Share sale intent
-export interface ShareSaleIntent extends Intent {
-  type: "share_sale";
-  syndicateId: string;
-  sellerStableId?: string; // undefined for player
-  shares: number;
-  pricePerShare: number;
-}
-
-// Syndicate fee distribution intent
-export interface SyndicateFeeDistributionIntent extends Intent {
-  type: "syndicate_fee_distribution";
-  syndicateId: string;
-  totalFee: number;
-  breedingDay: number;
-}
-
-// Insurance purchase intent
-export interface InsurancePurchaseIntent extends Intent {
-  type: "insurance_purchase";
-  horseId: string;
-  policyType: InsurancePolicyType;
-}
-
-// Insurance cancel intent
-export interface InsuranceCancelIntent extends Intent {
-  type: "insurance_cancel";
-  horseId: string;
-}
-
-// Insurance claim intent
-export interface InsuranceClaimIntent extends Intent {
-  type: "insurance_claim";
-  horseId: string;
-  payout: number;
-}
-
-// Stewards inquiry intent
-export interface StewardsInquiryIntent extends Intent {
-  type: "stewards_inquiry";
-  raceId: string;
-  accusedHorseId: string;
-  inquiryType: InquiryType;
-  description: string;
-  reportingHorseId?: string;
-}
-
-// Diplomatic action intent (NPC-to-NPC diplomacy)
-export interface DiplomaticActionIntent extends Intent {
-  type: "diplomatic_action";
-  targetStableId: string;
-  action: "propose_alliance" | "break_alliance" | "betray" | "cooperate";
-  allianceType?: "breeding_partnership" | "racing_coalition" | "economic_cartel" | "non_aggression";
-}
-
-// Cartel action intent (economic coordination)
-export interface CartelActionIntent extends Intent {
-  type: "cartel_action";
-  action: "join_cartel" | "leave_cartel" | "coordinate_market";
-  cartelId?: string;
-  marketAction?: "avoid_bidding_war" | "rotate_claims" | "fix_stud_fees";
-  targetStableIds?: string[];
-}
-
-// Union type for all intents
 export type AnyIntent =
   | TrainingIntent
   | RaceEntryIntent
