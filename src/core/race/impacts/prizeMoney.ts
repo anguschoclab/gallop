@@ -14,6 +14,7 @@ import { generateUUID } from "@/core/uuid";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { calculateRaceWinReputation, calculateRaceLossReputation } from "@/core/reputation";
 import type { Race, Horse } from "@/game/types";
+import { isPlayerOwned } from "@/core/horse/ownership";
 import { getPrizeSplitForRace } from "../utils";
 
 export function generatePrizeMoneyImpacts(
@@ -39,8 +40,13 @@ export function generatePrizeMoneyImpacts(
   let transactionImpact: TransactionImpact | undefined;
   let reputationImpact: ReputationImpact | undefined;
 
+  // A horse with neither `owned` nor a stableId is unowned world stock — its
+  // purse belongs to nobody and must never touch the player's cash.
+  const playerOwned = isPlayerOwned(horse);
+  const hasOwner = playerOwned || !!horse.stableId;
+
   // Cash and transaction impacts only for in-prize-split positions
-  if (inPrizeSplit && prize > 0) {
+  if (inPrizeSplit && prize > 0 && hasOwner) {
     cashImpact = {
       id: generateUUID(rng),
       intentId: "",
@@ -48,12 +54,12 @@ export function generatePrizeMoneyImpacts(
       phase: "raceResolution",
       logLevel: "conditional",
       type: "cash_change",
-      entityId: horse.stableId || "",
+      entityId: playerOwned ? "player" : horse.stableId!,
       amount: prize,
       reason: `Prize money: ${position}${getOrdinalSuffix(position)} in ${race.name}`,
     };
 
-    if (!horse.stableId) {
+    if (playerOwned) {
       transactionImpact = {
         id: generateUUID(rng),
         intentId: "",
@@ -72,7 +78,7 @@ export function generatePrizeMoneyImpacts(
 
   // Reputation impacts: win reputation for 1st place, loss reputation for poor finishes
   // Applies even when horse is outside prize split (especially in graded races)
-  if (!horse.stableId) {
+  if (playerOwned) {
     if (position === 1 && inPrizeSplit) {
       const repGain = calculateRaceWinReputation(race.graded?.grade, race.purse);
       reputationImpact = {

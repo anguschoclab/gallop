@@ -15,6 +15,7 @@ import type { AnyImpact } from "../impacts";
 import { isMaleHorse } from "@/core/horse/gender";
 import type { ImpactHandler, LookupMaps } from "./types";
 import { generateUUID } from "@/core/uuid";
+import { isPlayerOwned } from "@/core/horse/ownership";
 import type {
   HorseCreationImpact,
   HorseDeletionImpact,
@@ -150,7 +151,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       };
 
       // Push to Inbox if player-owned
-      if (!horse.stableId) {
+      if (isPlayerOwned(horse)) {
         if (!draft.inbox) draft.inbox = [];
         draft.inbox.push({
           id: generateUUID(),

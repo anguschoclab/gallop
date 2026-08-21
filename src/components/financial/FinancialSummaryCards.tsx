@@ -31,7 +31,7 @@ export function FinancialSummaryCards({ cash, periodData }: FinancialSummaryCard
         </CardHeader>
         <CardContent className="pt-0 border-t border-white/5 bg-black/20 py-2">
           <div className="text-[8px] font-mono text-cream/20 uppercase tracking-widest">
-            Global Cash Balance
+            Stable Cash Balance
           </div>
         </CardContent>
       </Card>

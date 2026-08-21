@@ -28,6 +28,7 @@ import {
   TWIN_REDUCTION_CHANCE,
 } from "@/constants";
 import { createHorseFromDNA, ensurePhenotypeResolved, resolvePhenotype } from "./horseFactory";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 /**
  * Represents the outcome of a foaling event.
@@ -106,7 +107,7 @@ export function resolveFoaling(
     stableId: dam.stableId,
     createdAtDay: newDay,
   });
-  foal.bredByPlayer = !dam.stableId;
+  foal.bredByPlayer = isPlayerOwned(dam);
   if (typeof newDay === "number") {
     foal.birthDay = newDay;
   }

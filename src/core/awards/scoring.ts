@@ -24,6 +24,7 @@ import {
 import { getTrackContinent, type Continent } from "@/data/gradedRaces";
 import { DAYS_PER_YEAR } from "@/constants";
 import { SIRE_GENDERS, DAM_GENDERS } from "@/core/horse/gender";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 // Map continent to award region
 const CONTINENT_TO_REGION: Record<Continent, AwardRegion> = {
@@ -297,7 +298,10 @@ export function determineRegionalWinners(
     const candidates: Array<{ horse: Horse; points: number }> = [];
     for (const horse of horses) {
       const pts = pointsMap.get(horse.id)?.get(category);
-      if (pts && pts > 0) candidates.push({ horse, points: pts });
+      // Unowned world stock cannot win an award: downstream code treats a
+      // missing stableId as "the player's award".
+      if (pts && pts > 0 && (isPlayerOwned(horse) || horse.stableId))
+        candidates.push({ horse, points: pts });
     }
     candidates.sort((a, b) => b.points - a.points);
     if (candidates.length > 0) {
@@ -309,7 +313,7 @@ export function determineRegionalWinners(
         category,
         horseId: winner.horse.id,
         horseName: winner.horse.name,
-        stableId: winner.horse.stableId,
+        stableId: isPlayerOwned(winner.horse) ? undefined : winner.horse.stableId,
         points: winner.points,
         runnerUpId: runnerUp?.horse.id,
         runnerUpPoints: runnerUp?.points || 0,

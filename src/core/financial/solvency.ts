@@ -9,6 +9,7 @@
 import { horsePrice } from "@/core/horse/pricing";
 import type { Horse } from "@/core/horse/types";
 import { formatCurrency } from "@/core/financial/financialTypes";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 export const SOLVENCY_THRESHOLDS = {
   /** Cash at or below this, sustained, triggers a creditor sale. */
@@ -183,7 +184,7 @@ export interface SeizurePreview {
 
 export function previewSeizure(horses: Horse[], cash: number): SeizurePreview | null {
   const candidates = horses
-    .filter((h) => !h.stableId && h.owned !== false && h.age > 0)
+    .filter((h) => isPlayerOwned(h) && h.age > 0)
     .map((h) => ({
       id: h.id,
       owned: true,

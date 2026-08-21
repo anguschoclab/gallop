@@ -12,6 +12,7 @@ import { persistenceEnabled } from "@/game/store/storage";
 import { clearLineageCache } from "@/core/breeding/lineage";
 import type { StoreSet, StoreGet, StoreType } from "../types";
 import type { CoreSlice } from "./coreSlice";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 export function createAdvanceDayActions(
   set: StoreSet,
@@ -73,7 +74,7 @@ export function createAdvanceDayActions(
         );
       }
 
-      const playerHorseCount = Object.values(horses).filter((h: Horse) => !h.stableId).length;
+      const playerHorseCount = Object.values(horses).filter((h: Horse) => isPlayerOwned(h)).length;
       const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
 
       try {
@@ -153,8 +154,8 @@ export function createAdvanceDayActions(
           const finalState = applyPatches(s, patches);
           const finalDay = s.day + daysAdvanced;
 
-          const playerHorseCount = Object.values(finalState.horses ?? {}).filter(
-            (h: Horse) => !h.stableId,
+          const playerHorseCount = Object.values(finalState.horses ?? {}).filter((h: Horse) =>
+            isPlayerOwned(h),
           ).length;
           const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
 

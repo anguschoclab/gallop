@@ -28,6 +28,7 @@ import {
   generateJockeyStatsTrackingImpacts,
   generateRaceSummaryLog,
 } from "@/core/race/impacts";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 /**
  * Props for the generateRaceImpacts function.
@@ -229,7 +230,7 @@ export function generateRaceImpacts({
     // 9. Narrative: Generate race summary logs for the player
     const ownedHorses = result.filter((r) => {
       const h = horseMap.get(r.horseId);
-      return h && !h.stableId;
+      return h && isPlayerOwned(h);
     });
     const summaryLog = generateRaceSummaryLog(ownedHorses, race, horseMap, newDay, rng);
     if (summaryLog) {

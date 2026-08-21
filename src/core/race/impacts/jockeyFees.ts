@@ -9,6 +9,7 @@ import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { JOCKEY_FEE_PERCENTAGE, BASE_JOCKEY_RIDING_FEE } from "@/constants";
 import type { Horse, Jockey } from "@/game/types";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 export function generateJockeyFeeImpacts(
   horse: Horse,
@@ -19,6 +20,7 @@ export function generateJockeyFeeImpacts(
   rng?: Rng,
 ): { cashImpact: CashImpact; transactionImpact?: TransactionImpact } {
   const ridingFee = jockey.ridingFee || BASE_JOCKEY_RIDING_FEE;
+  const playerOwned = isPlayerOwned(horse);
 
   const cashImpact: CashImpact = {
     id: generateUUID(rng),
@@ -27,14 +29,14 @@ export function generateJockeyFeeImpacts(
     phase: "raceResolution",
     logLevel: "conditional",
     type: "cash_change",
-    entityId: horse.stableId || "",
+    entityId: playerOwned ? "player" : horse.stableId || "",
     amount: -ridingFee,
     reason: `Jockey fee: ${jockey.name}`,
   };
 
   let transactionImpact: TransactionImpact | undefined;
 
-  if (!horse.stableId) {
+  if (playerOwned) {
     transactionImpact = {
       id: generateUUID(rng),
       intentId: "",
