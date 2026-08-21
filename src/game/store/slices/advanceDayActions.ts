@@ -1,4 +1,3 @@
-import { applyPatches } from "immer";
 import type { Horse, Race } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 import { executePipeline } from "@/core/time/pipeline";
@@ -7,7 +6,7 @@ import { createRng, hashStr } from "@/core/common/rng";
 import { getCurrentYear } from "@/core/race/schedule";
 import { computePlayerRaceDays } from "@/core/time/advance";
 import { UPKEEP_PER_HORSE, DAYS_PER_YEAR, DAYS_PER_MONTH, DAYS_PER_WEEK } from "@/constants";
-import { getEngineWorker } from "@/game/store";
+import { getEngineWorker, initEngineWorker } from "@/game/store";
 import { persistenceEnabled } from "@/game/store/storage";
 import { clearLineageCache } from "@/core/breeding/lineage";
 import type { StoreSet, StoreGet, StoreType } from "../types";
@@ -52,6 +51,7 @@ export function createAdvanceDayActions(
   return {
     advanceDay: async (progressCallback?: (stage: number, total: number, name: string) => void) => {
       const s = get();
+      set({ isAdvancing: true });
       const newDay = s.day + 1;
       const currentYear = getCurrentYear(newDay);
       const previousYear = getCurrentYear(s.day);
@@ -85,14 +85,20 @@ export function createAdvanceDayActions(
           progressCallback,
         });
 
-        const { patches, logs: newLogs } = result;
-        const finalState = applyPatches(s, patches);
+        const { state: finalState, logs: newLogs } = result;
         applyDayResult(finalState, newLogs, playerUpkeep, newDay);
       } catch (error) {
         if (!(error instanceof Error && error.message.includes("Worker not available"))) {
           console.warn(
             "Worker not available or failed to clone state, using synchronous pipeline execution",
           );
+        }
+
+        // Attempt to re-initialize the worker for next time
+        try {
+          await initEngineWorker();
+        } catch {
+          // Worker re-init failed, continue with sync fallback
         }
 
         const syncState = {
@@ -123,6 +129,8 @@ export function createAdvanceDayActions(
         const updatedContext = executePipeline(GAME_PIPELINE_PHASES, pipelineContext);
         const { state: finalState, logs: newLogs } = updatedContext;
         applyDayResult(finalState, newLogs, playerUpkeep, newDay);
+      } finally {
+        set({ isAdvancing: false });
       }
     },
 
@@ -132,6 +140,8 @@ export function createAdvanceDayActions(
 
       const wasPersistenceEnabled = persistenceEnabled.value;
       persistenceEnabled.value = false;
+
+      set({ isAdvancing: true });
 
       try {
         try {
@@ -144,14 +154,13 @@ export function createAdvanceDayActions(
           });
 
           const {
-            patches,
+            state: finalState,
             logs: allLogs,
             daysAdvanced,
             encounteredPlayerRace,
             playerRaceId,
           } = result;
 
-          const finalState = applyPatches(s, patches);
           const finalDay = s.day + daysAdvanced;
 
           const playerHorseCount = Object.values(finalState.horses ?? {}).filter((h: Horse) =>
@@ -162,14 +171,31 @@ export function createAdvanceDayActions(
           applyDayResult(finalState, allLogs, playerUpkeep, finalDay);
 
           if (encounteredPlayerRace && playerRaceId) {
+            console.info(
+              `[advanceMultipleDays] Worker batch stopped early: ${daysAdvanced}/${n} days advanced, player race ${playerRaceId} on day ${finalDay}`,
+            );
             set({ pendingPlayerRaceId: playerRaceId });
+          } else {
+            console.info(
+              `[advanceMultipleDays] Worker batch completed: ${daysAdvanced}/${n} days advanced`,
+            );
           }
           return;
         } catch (error) {
           if (!(error instanceof Error && error.message.includes("Worker not available"))) {
             console.warn(
-              "Worker batch not available, using synchronous per-day pipeline execution",
+              `[advanceMultipleDays] Worker batch failed, falling back to sync per-day:`,
+              error instanceof Error ? error.message : error,
             );
+          } else {
+            console.info(`[advanceMultipleDays] Worker not available, using sync fallback`);
+          }
+
+          // Attempt to re-initialize the worker for next time
+          try {
+            await initEngineWorker();
+          } catch {
+            // Worker re-init failed, continue with sync fallback
           }
         }
 
@@ -184,6 +210,9 @@ export function createAdvanceDayActions(
               (r: Race) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned),
             );
             if (playerRace) {
+              console.info(
+                `[advanceMultipleDays] Sync fallback stopped early: ${i}/${n} days advanced, player race ${playerRace.id} on day ${nextDay}`,
+              );
               set({ pendingPlayerRaceId: playerRace.id });
               return;
             }
@@ -196,6 +225,7 @@ export function createAdvanceDayActions(
           }
         }
       } finally {
+        set({ isAdvancing: false });
         persistenceEnabled.value = wasPersistenceEnabled;
       }
     },

@@ -54,12 +54,16 @@ import {
  * @param state - Current game state
  * @param day - Current game day
  * @param cachedWorldAssessment - Optional pre-computed world assessment from worldAssessmentPhase
+ * @param prebuiltHorseMap - Optional pre-built horse map to avoid rebuilding
+ * @param prebuiltRaceMap - Optional pre-built race map to avoid rebuilding
  * @returns Array of intent objects for all NPC actions
  */
 export function generateNpcIntents(
   state: GameState,
   day: number,
   cachedWorldAssessment?: WorldAssessment,
+  prebuiltHorseMap?: Map<string, Horse>,
+  prebuiltRaceMap?: Map<string, Race>,
 ): AnyIntent[] {
   const intents: AnyIntent[] = [];
   const aiManager = state.npcAIManager;
@@ -68,10 +72,10 @@ export function generateNpcIntents(
   const worldAssessment: WorldAssessment | undefined =
     cachedWorldAssessment ?? (aiManager ? assessWorldState(state, aiManager) : undefined);
 
-  // Index horses by stable for fast lookup
-  const horseMap = new Map(Object.entries(state.horses));
+  // Index horses by stable for fast lookup — use pre-built map if available
+  const horseMap = prebuiltHorseMap ?? new Map(Object.entries(state.horses));
   const horsesByStable = new Map<string, Horse[]>();
-  for (const horse of Object.values(state.horses)) {
+  for (const horse of horseMap.values()) {
     if (horse.ownership?.type === "npc") {
       const sid = horse.ownership.stableId;
       if (!horsesByStable.has(sid)) horsesByStable.set(sid, []);
@@ -87,8 +91,11 @@ export function generateNpcIntents(
     }
   }
 
-  // Cache upcoming races and index them by region
-  const upcomingRaces = Object.values(state.races).filter(
+  // Cache upcoming races and index them by region — use pre-built map if available
+  const allRaces = prebuiltRaceMap
+    ? Array.from(prebuiltRaceMap.values())
+    : Object.values(state.races);
+  const upcomingRaces = allRaces.filter(
     (r) => !r.resolved && !r.cancelled && r.day >= day && r.day <= day + 7,
   );
 

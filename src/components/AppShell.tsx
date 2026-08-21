@@ -23,6 +23,7 @@ export function AppShell() {
   const advanceDay = useGame((s: StoreType) => s.advanceDay);
   const advanceMultipleDays = useGame((s: StoreType) => s.advanceMultipleDays);
   const skipToNext = useSkipToNext();
+  const isAdvancing = useGame((s: StoreType) => s.isAdvancing ?? false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -54,6 +55,7 @@ export function AppShell() {
           cash={cash}
           horseCount={Object.keys(horses).length}
           unreadCount={unreadCount}
+          isAdvancing={isAdvancing}
           onAdvanceDay={() => advanceDay()}
           onAdvanceWeek={() => setTimeout(() => advanceMultipleDays(DAYS_PER_WEEK), 0)}
           onAdvanceMonth={() => setTimeout(() => advanceMultipleDays(DAYS_PER_MONTH), 0)}
@@ -73,6 +75,14 @@ export function AppShell() {
       <PlayerRacePrompt />
       <AutoSimPanel open={autoSimOpen} onClose={() => setAutoSimOpen(false)} />
       <StewardsInquiryOverlay />
+      {isAdvancing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-t950/80 backdrop-blur-sm">
+          <div className="text-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-gold border-t-transparent mx-auto mb-4"></div>
+            <p className="text-cream-muted font-[family-name=var(--font-body)]">Advancing days…</p>
+          </div>
+        </div>
+      )}
       <AwardCeremony
         isOpen={showCeremony}
         onClose={() => setShowCeremony(false)}

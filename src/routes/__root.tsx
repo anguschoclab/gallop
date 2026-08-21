@@ -8,7 +8,7 @@ import {
 } from "@tanstack/react-router";
 import { AppShell } from "../components/AppShell";
 import { useCallback, useEffect, useState } from "react";
-import { rehydrateStore, useGame } from "@/game/store";
+import { rehydrateStore, useGame, initEngineWorker, initInitializationWorker } from "@/game/store";
 import { saveExists, hydrationComplete } from "@/game/store/storage";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -123,6 +123,10 @@ export function RootComponent() {
       .finally(() => {
         clearTimeout(timeout);
       });
+
+    // Initialize workers early so they're ready when the user advances days
+    initEngineWorker().catch(() => {});
+    initInitializationWorker().catch(() => {});
   }, []);
 
   useEffect(() => {

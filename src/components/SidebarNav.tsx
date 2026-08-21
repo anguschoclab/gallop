@@ -88,6 +88,7 @@ interface SidebarNavProps {
   cash: number;
   horseCount: number;
   unreadCount: number;
+  isAdvancing?: boolean;
   onAdvanceDay: () => void;
   onAdvanceWeek: () => void;
   onAdvanceMonth: () => void;
@@ -102,6 +103,7 @@ export function SidebarNav({
   cash,
   horseCount,
   unreadCount,
+  isAdvancing,
   onAdvanceDay,
   onAdvanceWeek,
   onAdvanceMonth,
@@ -177,6 +179,7 @@ export function SidebarNav({
                     size="sm"
                     variant="outline"
                     aria-label="Advance 1 day"
+                    disabled={isAdvancing}
                   >
                     <Plus className="h-3 w-3" />
                   </Button>
@@ -194,6 +197,7 @@ export function SidebarNav({
                     size="sm"
                     variant="outline"
                     aria-label="Advance 1 week"
+                    disabled={isAdvancing}
                   >
                     7d
                   </Button>
@@ -211,6 +215,7 @@ export function SidebarNav({
                     size="sm"
                     variant="outline"
                     aria-label="Advance 1 month"
+                    disabled={isAdvancing}
                   >
                     30d
                   </Button>
@@ -228,6 +233,7 @@ export function SidebarNav({
                     size="sm"
                     variant="outline"
                     aria-label="AutoSim settings"
+                    disabled={isAdvancing}
                   >
                     <Settings className="h-3 w-3" />
                   </Button>
@@ -246,6 +252,7 @@ export function SidebarNav({
                     variant="outline"
                     aria-label="Skip to next auction"
                     className="text-[10px]"
+                    disabled={isAdvancing}
                   >
                     <Gavel className="h-3 w-3 mr-1" /> Next Auction
                   </Button>
@@ -262,6 +269,7 @@ export function SidebarNav({
                     variant="outline"
                     aria-label="Skip to next race"
                     className="text-[10px]"
+                    disabled={isAdvancing}
                   >
                     <Trophy className="h-3 w-3 mr-1" /> Next Race
                   </Button>

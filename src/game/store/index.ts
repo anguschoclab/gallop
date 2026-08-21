@@ -172,6 +172,8 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
  */
 let engineWorker: Remote<EngineWorkerApi> | null = null;
 let initializationWorker: Remote<InitializationWorkerApi> | null = null;
+let engineWorkerInitFailed = false;
+let initializationWorkerInitFailed = false;
 
 /**
  * Initialize engine worker.
@@ -190,12 +192,16 @@ export async function initEngineWorker(): Promise<void> {
     return;
   }
 
+  // Reset failure flag when attempting a new initialization
+  engineWorkerInitFailed = false;
+
   const worker = new Worker(new URL("../../workers/engine.worker.ts", import.meta.url), {
     type: "module",
   });
   worker.addEventListener("error", (e) => {
     console.error("Engine worker failed to load:", e.message, e.filename, e.lineno);
     engineWorker = null;
+    engineWorkerInitFailed = true;
   });
   engineWorker = wrap<EngineWorkerApi>(worker);
 }
@@ -217,12 +223,16 @@ export async function initInitializationWorker(): Promise<void> {
     return;
   }
 
+  // Reset failure flag when attempting a new initialization
+  initializationWorkerInitFailed = false;
+
   const worker = new Worker(new URL("../../workers/initialization.worker.ts", import.meta.url), {
     type: "module",
   });
   worker.addEventListener("error", (e) => {
     console.error("Initialization worker failed to load:", e.message, e.filename, e.lineno);
     initializationWorker = null;
+    initializationWorkerInitFailed = true;
   });
   initializationWorker = wrap<InitializationWorkerApi>(worker);
 }

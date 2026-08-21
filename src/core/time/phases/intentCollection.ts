@@ -40,8 +40,14 @@ export const intentCollectionPhase: PipelinePhase = {
     }
 
     // Collect NPC intents from NPC intent generators
-    // Pass cached worldAssessment from worldAssessmentPhase to avoid redundant computation
-    const npcIntents = generateNpcIntents(state, newDay, context.worldAssessment);
+    // Pass cached worldAssessment and pre-built maps from pipeline context to avoid redundant computation
+    const npcIntents = generateNpcIntents(
+      state,
+      newDay,
+      context.worldAssessment,
+      context.horseMap as Map<string, import("@/game/types").Horse>,
+      context.raceMap as Map<string, import("@/game/types").Race>,
+    );
     for (const intent of npcIntents) {
       intents.push(intent);
     }

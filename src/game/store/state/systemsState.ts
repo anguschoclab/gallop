@@ -139,6 +139,8 @@ export interface SystemsState {
   // Multi-day advance system
   /** Set when a player race interrupts auto-advance */
   pendingPlayerRaceId?: import("@/core/types/branded").RaceId;
+  /** True while day advancement is in progress (for UI loading state) */
+  isAdvancing?: boolean;
 
   // Global historical records (optional)
   /** Lifetime track records keyed by trackId_surface_distance */

@@ -69,8 +69,10 @@ export function simulateRace(
   // Default to recording snapshots only if a player-owned horse is in the field
   const shouldRecord = recordSnapshots ?? runners.some((r) => r.owned);
 
-  // Unified dt = 0.1 for all races so background results match watched races.
-  const dt = DEFAULT_DT;
+  // Use coarser timestep for non-player races to reduce simulation cost 4x.
+  // Player races keep DEFAULT_DT (0.1) for accuracy and replay fidelity.
+  const hasPlayerHorse = runners.some((r) => r.owned);
+  const dt = hasPlayerHorse ? DEFAULT_DT : 0.4;
   const maxTime = defaultMaxTime(race.distance);
 
   const { result, snapshots, paceSnapshots } = runRaceToCompletion(

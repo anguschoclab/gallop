@@ -5,14 +5,11 @@
  */
 
 import { expose, proxy } from "comlink";
-import { produceWithPatches, enablePatches, type Patch } from "immer";
 import type { GameState } from "@/game/types";
 import { executePipeline, type PipelineContext } from "@/core/time/pipeline";
 import { STAGE_PHASES, STAGE_RANGES } from "@/workers/pipelineStages";
 import { createRng, hashStr } from "@/core/common/rng";
 import { getCurrentYear } from "@/core/race/schedule";
-
-enablePatches();
 
 export type AdvanceDayInput = {
   state: GameState;
@@ -21,7 +18,7 @@ export type AdvanceDayInput = {
 };
 
 export type AdvanceDayOutput = {
-  patches: Patch[];
+  state: GameState;
   logs: { day: number; text: string }[];
 };
 
@@ -34,7 +31,7 @@ export type AdvanceDaysBatchInput = {
 };
 
 export type AdvanceDaysBatchOutput = {
-  patches: Patch[];
+  state: GameState;
   logs: { day: number; text: string }[];
   daysAdvanced: number;
   encounteredPlayerRace: boolean;
@@ -72,51 +69,36 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
     );
   }
 
-  // Setup initial state for produceWithPatches
-  const initialState = { ...state, horses };
+  // Build shared lookup maps once at pipeline entry — phases read from context
+  const pipelineContext: PipelineContext = {
+    previousDay,
+    newDay,
+    state: { ...state, horses },
+    logs: [],
+    dailyRng: createRng(hashStr("daily_" + newDay)),
+    intents: state.pendingIntents || [],
+    impacts: [],
+    impactLog: [],
+    horseMap: new Map(Object.values(horses).map((h) => [h.id, h])),
+    raceMap: new Map(Object.values(state.races).map((r) => [r.id, r])),
+    stableMap: new Map((state.npcStables ?? []).map((s) => [s.id, s])),
+    jockeyMap: new Map((state.jockeys ?? []).map((j) => [j.id, j])),
+  };
 
-  const [_, patches] = produceWithPatches(initialState, (draft) => {
-    const draftState = draft as GameState;
-    // Build shared lookup maps once at pipeline entry — phases read from context
-    const pipelineContext: PipelineContext = {
-      previousDay,
-      newDay,
-      state: draftState,
-      logs: [],
-      dailyRng: createRng(hashStr("daily_" + newDay)),
-      intents: draft.pendingIntents || [],
-      impacts: [],
-      impactLog: [],
-      horseMap: new Map(Object.values(draftState.horses).map((h) => [h.id, h])),
-      raceMap: new Map(Object.values(draftState.races).map((r) => [r.id, r])),
-      stableMap: new Map((draftState.npcStables ?? []).map((s) => [s.id, s])),
-      jockeyMap: new Map((draftState.jockeys ?? []).map((j) => [j.id, j])),
-    };
+  // Execute pipeline with progress callbacks
+  let currentContext = pipelineContext;
+  const totalStages = STAGE_PHASES.length;
 
-    // Execute pipeline with progress callbacks
-    let currentContext = pipelineContext;
-    const totalStages = STAGE_PHASES.length;
-
-    for (let i = 0; i < STAGE_PHASES.length; i++) {
-      if (progressCallback) {
-        progressCallback(i + 1, totalStages, STAGE_RANGES[i].name);
-      }
-      currentContext = executePipeline(STAGE_PHASES[i], currentContext);
+  for (let i = 0; i < STAGE_PHASES.length; i++) {
+    if (progressCallback) {
+      progressCallback(i + 1, totalStages, STAGE_RANGES[i].name);
     }
-
-    // Sync the draft state with the final pipeline state
-    Object.assign(draft, currentContext.state);
-
-    // Return the logs through a side channel since patches don't include them
-    return currentContext.logs as unknown as void;
-  });
-
-  // Extract logs from the produceWithPatches result (immer returns what the producer returns)
-  const logs = _ as unknown as { day: number; text: string }[];
+    currentContext = executePipeline(STAGE_PHASES[i], currentContext);
+  }
 
   return {
-    patches,
-    logs,
+    state: currentContext.state,
+    logs: currentContext.logs,
   };
 }
 
@@ -131,92 +113,86 @@ async function advanceDaysBatch(input: AdvanceDaysBatchInput): Promise<AdvanceDa
   let encounteredPlayerRace = false;
   let playerRaceId: string | undefined;
 
-  const [finalState, patches] = produceWithPatches(state, (draft) => {
-    let currentState = draft as GameState;
+  let currentState = state;
 
-    for (let i = 0; i < count; i++) {
-      const nextDay = currentState.day + 1;
+  for (let i = 0; i < count; i++) {
+    const nextDay = currentState.day + 1;
 
-      // Check for player race (unless headless)
-      if (!headless && playerRaceDays?.has(nextDay)) {
-        const playerRace = Object.values(currentState.races).find(
-          (r) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned),
-        );
-        if (playerRace) {
-          encounteredPlayerRace = true;
-          playerRaceId = playerRace.id;
-          break;
-        }
+    // Check for player race (unless headless)
+    if (!headless && playerRaceDays?.has(nextDay)) {
+      const playerRace = Object.values(currentState.races).find(
+        (r) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned),
+      );
+      if (playerRace) {
+        encounteredPlayerRace = true;
+        playerRaceId = playerRace.id;
+        break;
       }
-
-      if (progressCallback) {
-        progressCallback(i + 1, count);
-      }
-
-      // Run pipeline for this day
-      const previousDay = currentState.day;
-      const currentYear = getCurrentYear(nextDay);
-      const previousYear = getCurrentYear(previousDay);
-
-      // Clean up expired Win and You're In qualifications at year boundary
-      let horses = currentState.horses;
-      if (currentYear > previousYear) {
-        horses = Object.fromEntries(
-          Object.values(horses).map((h) => {
-            if (h.winAndYouInQualified) {
-              return [
-                h.id,
-                {
-                  ...h,
-                  winAndYouInQualified: h.winAndYouInQualified.filter(
-                    (q: { year: number }) => q.year >= currentYear,
-                  ),
-                },
-              ];
-            }
-            return [h.id, h];
-          }),
-        );
-      }
-
-      const pipelineContext: PipelineContext = {
-        previousDay,
-        newDay: nextDay,
-        state: { ...currentState, horses },
-        logs: [],
-        dailyRng: createRng(hashStr("daily_" + nextDay)),
-        intents: currentState.pendingIntents || [],
-        impacts: [],
-        impactLog: [],
-        horseMap: new Map(Object.values(horses).map((h) => [h.id, h])),
-        raceMap: new Map(Object.values(currentState.races).map((r) => [r.id, r])),
-        stableMap: new Map((currentState.npcStables ?? []).map((s) => [s.id, s])),
-        jockeyMap: new Map((currentState.jockeys ?? []).map((j) => [j.id, j])),
-      };
-
-      let currentContext = pipelineContext;
-      for (const stagePhases of STAGE_PHASES) {
-        currentContext = executePipeline(stagePhases, currentContext);
-      }
-
-      // Update state for next iteration
-      currentState = {
-        ...currentContext.state,
-        day: nextDay,
-        pendingIntents: [],
-        trainingUsed: {},
-      };
-      allLogs.push(...currentContext.logs);
-      daysAdvanced++;
     }
 
-    // Sync the draft with the final state
-    Object.assign(draft, currentState);
-    return allLogs as unknown as void;
-  });
+    if (progressCallback) {
+      progressCallback(i + 1, count);
+    }
+
+    // Run pipeline for this day
+    const previousDay = currentState.day;
+    const currentYear = getCurrentYear(nextDay);
+    const previousYear = getCurrentYear(previousDay);
+
+    // Clean up expired Win and You're In qualifications at year boundary
+    let horses = currentState.horses;
+    if (currentYear > previousYear) {
+      horses = Object.fromEntries(
+        Object.values(horses).map((h) => {
+          if (h.winAndYouInQualified) {
+            return [
+              h.id,
+              {
+                ...h,
+                winAndYouInQualified: h.winAndYouInQualified.filter(
+                  (q: { year: number }) => q.year >= currentYear,
+                ),
+              },
+            ];
+          }
+          return [h.id, h];
+        }),
+      );
+    }
+
+    const pipelineContext: PipelineContext = {
+      previousDay,
+      newDay: nextDay,
+      state: { ...currentState, horses },
+      logs: [],
+      dailyRng: createRng(hashStr("daily_" + nextDay)),
+      intents: currentState.pendingIntents || [],
+      impacts: [],
+      impactLog: [],
+      horseMap: new Map(Object.values(horses).map((h) => [h.id, h])),
+      raceMap: new Map(Object.values(currentState.races).map((r) => [r.id, r])),
+      stableMap: new Map((currentState.npcStables ?? []).map((s) => [s.id, s])),
+      jockeyMap: new Map((currentState.jockeys ?? []).map((j) => [j.id, j])),
+    };
+
+    let currentContext = pipelineContext;
+    for (const stagePhases of STAGE_PHASES) {
+      currentContext = executePipeline(stagePhases, currentContext);
+    }
+
+    // Update state for next iteration
+    currentState = {
+      ...currentContext.state,
+      day: nextDay,
+      pendingIntents: [],
+      trainingUsed: {},
+    };
+    allLogs.push(...currentContext.logs);
+    daysAdvanced++;
+  }
 
   return {
-    patches,
+    state: currentState,
     logs: allLogs,
     daysAdvanced,
     encounteredPlayerRace,

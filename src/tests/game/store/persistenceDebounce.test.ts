@@ -168,7 +168,18 @@ describe("Persistence debouncing during advanceMultipleDays", () => {
         } as any,
       },
       horses: {
-        "horse-1": { id: "horse-1", name: "Test", ownership: { type: "player" }, age: 3 } as any,
+        "horse-1": {
+          id: "horse-1",
+          name: "Test",
+          ownership: { type: "player" },
+          age: 3,
+          stats: { speed: 50, acceleration: 50, stamina: 50, temperament: 50 },
+          form: 0,
+          energy: 100,
+          distanceAptitude: 1600,
+          surfaceAptitude: { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 },
+          raceHistory: [],
+        } as any,
       },
     });
 
