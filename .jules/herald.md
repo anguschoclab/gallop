@@ -1,3 +1,3 @@
-## 2024-08-19 - Flavor Stories System Discovery
-**Learning:** `src/services/narrative/flavorStories.ts` contains simple, static flavor news (no dynamic template variables) separated into themes (`track`, `jockeys`, `breeding`, `weather`, `community`, `industry`). The tone is professional but colorful, simulating realistic backstretch chatter and industry news. There are currently only 42 stories total, leading to frequent repetition over a long career.
-**Action:** Add more variants to the existing `FLAVOR_STORIES` array across the different themes to quickly and safely add content depth without touching any game logic.
+## 2025-03-09 - Added Flavor Stories
+**Learning:** The game world includes flavor stories that generate background simulation feeling by pulling from `src/services/narrative/flavorStories.ts`. The structure includes `track`, `jockeys`, `breeding`, `weather`, `community`, and `industry` sections. Each flavor entry is a plain object with `headline`, `body`, and `category: "flavor"` parameters.
+**Action:** When adding more background flavor to the narrative system, append new items to the arrays in `src/services/narrative/flavorStories.ts` following existing themes and formatting.
