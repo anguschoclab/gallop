@@ -109,7 +109,9 @@ describe("Version-key rehydration guard", () => {
       storeVersion: STORE_STATE_VERSION - 1, // incompatible
       day: 999,
       cash: 1,
-      horses: h2r([{ id: "stale-horse", name: "Old Timer", ownership: { type: "player" } }] as unknown as Horse[]),
+      horses: h2r([
+        { id: "stale-horse", name: "Old Timer", ownership: { type: "player" } },
+      ] as unknown as Horse[]),
       playerNominations: [nomination],
       syndicateInvestors: { "synd-v": investor },
     };

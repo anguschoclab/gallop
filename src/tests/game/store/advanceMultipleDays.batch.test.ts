@@ -82,7 +82,10 @@ describe("Worker batch advance", () => {
         } as any,
       },
       horses: {
-        "horse-1": { ...createTestHorse({ id: "horse-1", name: "Test", ownership: { type: "player" } }), age: 3 },
+        "horse-1": {
+          ...createTestHorse({ id: "horse-1", name: "Test", ownership: { type: "player" } }),
+          age: 3,
+        },
       },
     };
 
@@ -95,7 +98,10 @@ describe("Worker batch advance", () => {
       const nextDay = currentState.day + 1;
       if (playerRaceDays.has(nextDay)) {
         const playerRace = Object.values(currentState.races).find(
-          (r: Race) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.ownership?.type === "player"),
+          (r: Race) =>
+            !r.resolved &&
+            r.day === nextDay &&
+            r.entries.some((e) => e.ownership?.type === "player"),
         );
         if (playerRace) {
           encounteredPlayerRace = true;
@@ -132,7 +138,10 @@ describe("Worker batch advance", () => {
         } as any,
       },
       horses: {
-        "horse-1": { ...createTestHorse({ id: "horse-1", name: "Test", ownership: { type: "player" } }), age: 3 },
+        "horse-1": {
+          ...createTestHorse({ id: "horse-1", name: "Test", ownership: { type: "player" } }),
+          age: 3,
+        },
       },
     };
 

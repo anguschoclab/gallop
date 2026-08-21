@@ -46,7 +46,9 @@ describe("PaceMap", () => {
 
   it("shows leader horse name when available", () => {
     const snapshots = [createMockPaceSnapshot({ progress: 0.25, leaderHorseId: "horse-1" })];
-    const runners = [{ horseId: "horse-1", name: "Thunder Bolt", silk: "red", ownership: { type: "player" } }];
+    const runners = [
+      { horseId: "horse-1", name: "Thunder Bolt", silk: "red", ownership: { type: "player" } },
+    ];
     render(<PaceMap snapshots={snapshots} runners={runners} />);
     expect(screen.getByText("Thunder Bolt")).toBeInTheDocument();
   });

@@ -179,7 +179,13 @@ describe("raceCancellationPhase", () => {
       const race = makeRace({
         id: "race-npc-only",
         day: 12,
-        entries: [{ horseId: "h-npc", ownership: { type: "npc", stableId: asNpcStableId("s1") }, npc: true }],
+        entries: [
+          {
+            horseId: "h-npc",
+            ownership: { type: "npc", stableId: asNpcStableId("s1") },
+            npc: true,
+          },
+        ],
       });
       const state = makeGameState({ day: 10, races: r2r([race]) }) as GameState;
       const context = makePipelineContext({ newDay: 10, state }) as PipelineContext;
@@ -194,7 +200,13 @@ describe("raceCancellationPhase", () => {
         id: "race-npc-refund",
         day: 12,
         entryFee: 300,
-        entries: [{ horseId: "h-npc", ownership: { type: "npc", stableId: asNpcStableId("s-npc") }, npc: true }],
+        entries: [
+          {
+            horseId: "h-npc",
+            ownership: { type: "npc", stableId: asNpcStableId("s-npc") },
+            npc: true,
+          },
+        ],
       });
       const state = makeGameState({ day: 10, races: r2r([race]) }) as GameState;
       const context = makePipelineContext({ newDay: 10, state }) as PipelineContext;

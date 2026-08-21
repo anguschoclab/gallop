@@ -302,7 +302,12 @@ describe("makeGradedRace — invitation inheritance", () => {
 
 describe("raceInvitationsPhase", () => {
   it("sends invites for upcoming invite-only races", () => {
-    const horse = makeHorse({ id: "h1", ownership: { type: "player" }, distanceAptitude: 1600, fame: 80 });
+    const horse = makeHorse({
+      id: "h1",
+      ownership: { type: "player" },
+      distanceAptitude: 1600,
+      fame: 80,
+    });
     const race = makeRace({
       id: "race-1",
       day: 50,
@@ -614,7 +619,12 @@ describe("raceInvitationsPhase", () => {
   });
 
   it("deduplicates invites (does not re-invite already-invited horses)", () => {
-    const horse = makeHorse({ id: "h1", ownership: { type: "player" }, distanceAptitude: 1600, fame: 80 });
+    const horse = makeHorse({
+      id: "h1",
+      ownership: { type: "player" },
+      distanceAptitude: 1600,
+      fame: 80,
+    });
     const race = makeRace({
       id: "race-1",
       day: 50,

@@ -22,7 +22,11 @@ vi.mock("@tanstack/react-router", () => ({
 
 describe("DebtBanner — entity linking", () => {
   it("renders seizure horse name as a Link to /stable/$horseId", () => {
-    const horse = createTestHorse({ id: "h1", name: "Seizure Target", ownership: { type: "player" } });
+    const horse = createTestHorse({
+      id: "h1",
+      name: "Seizure Target",
+      ownership: { type: "player" },
+    });
     renderWithStore(<DebtBanner />, {
       ...createDefaultGameState(),
       cash: -50000,

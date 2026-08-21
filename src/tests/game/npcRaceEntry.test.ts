@@ -107,7 +107,11 @@ describe("selectHorsesForRaceEntry", () => {
   it("does not enter horses already in race", () => {
     const horse = mkHorse({ id: "h1", stableId: "s1", energy: 80 });
     const horseMap = new Map([["h1", horse]]);
-    const race = mkRace({ entries: [{ horseId: "h1", ownership: { type: "npc", stableId: asNpcStableId("s1") }, npc: true }] });
+    const race = mkRace({
+      entries: [
+        { horseId: "h1", ownership: { type: "npc", stableId: asNpcStableId("s1") }, npc: true },
+      ],
+    });
     const stable = mkStable({ horses: ["h1"] });
     const result = selectHorsesForRaceEntry(stable, horseMap, race, new Set());
     expect(result).toHaveLength(0);
@@ -276,7 +280,9 @@ describe("runNpcRaceEntry", () => {
       id: "full",
       day: 3,
       fieldSize: 1,
-      entries: [{ horseId: "h99", ownership: { type: "npc", stableId: asNpcStableId("s99") }, npc: true }],
+      entries: [
+        { horseId: "h99", ownership: { type: "npc", stableId: asNpcStableId("s99") }, npc: true },
+      ],
     });
     const stables = [mkStable()];
     const horses = [mkHorse({ id: "h1", stableId: "s1", energy: 80 })];
@@ -339,7 +345,9 @@ describe("fillRaceWithFillerHorses", () => {
   it("does not add already-entered horses", () => {
     const horse = mkHorse({ id: "h1", stableId: "s1", ownership: { type: "unowned" }, energy: 80 });
     const race = mkRace({
-      entries: [{ horseId: "h1", ownership: { type: "npc", stableId: asNpcStableId("s1") }, npc: true }],
+      entries: [
+        { horseId: "h1", ownership: { type: "npc", stableId: asNpcStableId("s1") }, npc: true },
+      ],
       fieldSize: 5,
     });
     const { updatedRace } = fillRaceWithFillerHorses(race, [mkStable()], [horse], 3);

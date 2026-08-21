@@ -21,7 +21,12 @@ import type {
   StableTier,
 } from "@/game/types";
 import type { Rng } from "@/core/common/types";
-import { makePlayerOwned, makeNpcOwned, makeUnowned, type HorseOwnership } from "@/core/horse/ownership";
+import {
+  makePlayerOwned,
+  makeNpcOwned,
+  makeUnowned,
+  type HorseOwnership,
+} from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 
 import { hashStr, nondeterministicRng } from "@/core/common/rng";

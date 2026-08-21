@@ -50,7 +50,8 @@ export const stallionRetirementPhase: PipelinePhase = {
       const inactive = newDay - lastRaceDay > 60;
 
       if ((isLegend && inactive) || isOld) {
-        const stable = horse.ownership?.type === "npc" ? stableMap.get(horse.ownership.stableId) : undefined;
+        const stable =
+          horse.ownership?.type === "npc" ? stableMap.get(horse.ownership.stableId) : undefined;
         const fee = calculateRecommendedStudFee(horse, stable?.tier || "mid");
 
         impacts.push({

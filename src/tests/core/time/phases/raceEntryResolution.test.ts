@@ -130,7 +130,13 @@ describe("raceEntryResolutionPhase", () => {
             entryFee: 200,
             purse: 10000,
             fieldSize: 1,
-            entries: [{ horseId: "weak-npc", ownership: { type: "npc", stableId: asNpcStableId("s-other") }, npc: true }],
+            entries: [
+              {
+                horseId: "weak-npc",
+                ownership: { type: "npc", stableId: asNpcStableId("s-other") },
+                npc: true,
+              },
+            ],
             resolved: false,
           },
         ]),
@@ -199,7 +205,13 @@ describe("raceEntryResolutionPhase", () => {
             entryFee: 200,
             purse: 10000,
             fieldSize: 1,
-            entries: [{ horseId: "weak-npc", ownership: { type: "npc", stableId: asNpcStableId("s-other") }, npc: true }],
+            entries: [
+              {
+                horseId: "weak-npc",
+                ownership: { type: "npc", stableId: asNpcStableId("s-other") },
+                npc: true,
+              },
+            ],
             resolved: false,
           },
         ]),
@@ -296,7 +308,13 @@ describe("raceEntryResolutionPhase", () => {
             entryFee: 200,
             purse: 10000,
             fieldSize: 1,
-            entries: [{ horseId: "npc-weak", ownership: { type: "npc", stableId: asNpcStableId("s-npc") }, npc: true }],
+            entries: [
+              {
+                horseId: "npc-weak",
+                ownership: { type: "npc", stableId: asNpcStableId("s-npc") },
+                npc: true,
+              },
+            ],
             resolved: false,
           },
         ]),
@@ -340,7 +358,13 @@ describe("raceEntryResolutionPhase", () => {
             entryFee: 200,
             purse: 10000,
             fieldSize: 1,
-            entries: [{ horseId: "npc-horse", ownership: { type: "npc", stableId: asNpcStableId("s-npc") }, npc: true }],
+            entries: [
+              {
+                horseId: "npc-horse",
+                ownership: { type: "npc", stableId: asNpcStableId("s-npc") },
+                npc: true,
+              },
+            ],
             resolved: false,
           },
         ]),

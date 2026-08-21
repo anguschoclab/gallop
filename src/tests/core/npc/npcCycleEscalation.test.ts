@@ -74,7 +74,10 @@ describe("npcCycle — rivalry escalation news (grudge match path)", () => {
       fieldSize: 8,
       entries: [
         { horseId: "player-horse", ownership: { type: "player" } } as any,
-        { horseId: "rival-horse", ownership: { type: "npc", stableId: asNpcStableId("rival-stable") } } as any,
+        {
+          horseId: "rival-horse",
+          ownership: { type: "npc", stableId: asNpcStableId("rival-stable") },
+        } as any,
       ],
       resolved: true,
       result: [

@@ -267,7 +267,10 @@ describe("gateDrawPhase", () => {
       makeHorse({ id: `hg${i + 1}`, name: `NG Horse ${i + 1}`, ownership: { type: "player" } }),
     );
     const allHorses = [...makeHorsesForEntries(3), ...nonGradedHorses];
-    const nonGradedEntriesFixed = nonGradedHorses.map((h) => ({ horseId: h.id, ownership: { type: "player" } }));
+    const nonGradedEntriesFixed = nonGradedHorses.map((h) => ({
+      horseId: h.id,
+      ownership: { type: "player" },
+    }));
 
     const g1Race = makeG1Race({ id: "g1r", day: 100, entries: g1Entries });
     const nonGradedRace = makeRace({

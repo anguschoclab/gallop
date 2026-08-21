@@ -157,9 +157,7 @@ export function StartScreen() {
             key={i}
             onClick={() => setIdx(i)}
             className={`h-2 rounded-full transition-all duration-300 ease-out ${
-              i === idx
-                ? "w-8 bg-primary"
-                : "w-3 bg-primary/30 hover:bg-primary/50"
+              i === idx ? "w-8 bg-primary" : "w-3 bg-primary/30 hover:bg-primary/50"
             }`}
             aria-label={`Show banner ${i + 1}`}
           />

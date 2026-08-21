@@ -25,7 +25,11 @@ vi.mock("@tanstack/react-router", () => ({
 // The route component uses useInbox which reads from the game store
 describe("Inbox — entity linking", () => {
   it("renders message body with NewsContent auto-detection for horse names", async () => {
-    const horse = createTestHorse({ id: "h1", name: "Thunder Strike", ownership: { type: "player" } });
+    const horse = createTestHorse({
+      id: "h1",
+      name: "Thunder Strike",
+      ownership: { type: "player" },
+    });
     seedStore({
       ...createDefaultGameState(),
       day: 55,

@@ -82,7 +82,9 @@ describe("buildRaceField — pre-assigned gates", () => {
       { horseId: "h4", ownership: { type: "player" } },
       { horseId: "h5", ownership: { type: "player" } },
     ];
-    const horses = Array.from({ length: 5 }, (_, i) => mkHorse({ id: `h${i + 1}`, ownership: { type: "player" } }));
+    const horses = Array.from({ length: 5 }, (_, i) =>
+      mkHorse({ id: `h${i + 1}`, ownership: { type: "player" } }),
+    );
     const race = mkRace({ fieldSize: 5, entries });
 
     const { runners } = buildRaceField({ race, horses, jockeys: [] });

@@ -1,0 +1,3 @@
+## 2024-08-21 - Memoizing Array-to-Record lookups in repetitive valuation calls
+**Learning:** Inside `computeWealthStandings`, valuing 1,000+ horses passes the entire `allHorses` array to valuation logic (`horseMarketValue` -> `horsePriceWithPedigree`). Re-running `Object.fromEntries(allHorses.map(...))` on every call implicitly turned an O(N) standing calculation into a hidden O(N^2) bottleneck (~700ms).
+**Action:** Whenever a utility function requires a map lookup derived from an array passed to it in a loop, avoid recreating the map on every call. If modifying the function signature is undesirable, memoize the map conversion using a strict reference check (`if (arr === cachedArr) return cachedMap`) to instantly collapse O(N^2) overhead back to O(N).

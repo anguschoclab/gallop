@@ -239,8 +239,18 @@ describe("multiple stables in one state — each uses its own facility set", () 
 
     const state = {
       horses: h2r([
-        createTestHorse({ id: "b-horse", stableId: "b-stable", ownership: { type: "unowned" }, energy: 100 }),
-        createTestHorse({ id: "e-horse", stableId: "e-stable", ownership: { type: "unowned" }, energy: 100 }),
+        createTestHorse({
+          id: "b-horse",
+          stableId: "b-stable",
+          ownership: { type: "unowned" },
+          energy: 100,
+        }),
+        createTestHorse({
+          id: "e-horse",
+          stableId: "e-stable",
+          ownership: { type: "unowned" },
+          energy: 100,
+        }),
       ]),
       npcStables: [
         createTestStable({ id: "b-stable", tier: "budget" }),

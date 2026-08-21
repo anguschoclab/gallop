@@ -62,7 +62,12 @@ export function generateRaceHistoryImpact(
       gate: runner?.gate,
       lane: runner?.lane,
       jockeyId: raceEntry?.jockeyId,
-      stableId: raceEntry?.ownership?.type === "npc" ? raceEntry.ownership.stableId : (horse.ownership?.type === "npc" ? horse.ownership.stableId : undefined),
+      stableId:
+        raceEntry?.ownership?.type === "npc"
+          ? raceEntry.ownership.stableId
+          : horse.ownership?.type === "npc"
+            ? horse.ownership.stableId
+            : undefined,
       winAndYouInQualified,
     },
     reason: "Race completed",

@@ -83,7 +83,12 @@ describe("Race Resolution History Collection", () => {
       entries: [{ horseId: "winner-1", jockeyId: "j-1", ownership: { type: "player" } }],
     };
 
-    const horse = createTestHorse({ id: "winner-1", name: "Champ", ownership: { type: "player" }, careerWins: 2 });
+    const horse = createTestHorse({
+      id: "winner-1",
+      name: "Champ",
+      ownership: { type: "player" },
+      careerWins: 2,
+    });
     horse.raceHistory = [
       { raceId: "race-1", raceName: "G1 Race 1", grade: "G1", position: 1, day: 10 },
       { raceId: "race-2", raceName: "G1 Race 2", grade: "G1", position: 1, day: 20 },

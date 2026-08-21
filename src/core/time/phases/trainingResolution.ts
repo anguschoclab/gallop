@@ -297,9 +297,10 @@ export const trainingResolutionPhase: PipelinePhase = {
         // --- OUTPOST SPECIALIZATION (Imperial Expansion) ---
         let branchMod = null;
         if (horse.outpostId) {
-          const outpost = horse.ownership?.type === "npc"
-            ? outpostMap.get(horse.outpostId)
-            : playerOutpostMap.get(horse.outpostId);
+          const outpost =
+            horse.ownership?.type === "npc"
+              ? outpostMap.get(horse.outpostId)
+              : playerOutpostMap.get(horse.outpostId);
           if (outpost) {
             const specialty = getOutpostSpecialty(outpost);
             branchMod = getBranchModifiers(specialty);

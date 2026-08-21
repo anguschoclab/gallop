@@ -313,7 +313,11 @@ export function determineRegionalWinners(
         category,
         horseId: winner.horse.id,
         horseName: winner.horse.name,
-        stableId: isPlayerOwned(winner.horse) ? undefined : (winner.horse.ownership?.type === "npc" ? winner.horse.ownership.stableId : undefined),
+        stableId: isPlayerOwned(winner.horse)
+          ? undefined
+          : winner.horse.ownership?.type === "npc"
+            ? winner.horse.ownership.stableId
+            : undefined,
         points: winner.points,
         runnerUpId: runnerUp?.horse.id,
         runnerUpPoints: runnerUp?.points || 0,

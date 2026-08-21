@@ -98,7 +98,10 @@ describe("stewardsPhase — player-entry guard", () => {
     const race = makeResolvedRace({
       id: "already-inquired",
       inquiries: [{ id: "existing", type: "interference" }] as any,
-      entries: [{ horseId: "h1", ownership: { type: "unowned" } } as any, { horseId: "h2", ownership: { type: "unowned" } } as any],
+      entries: [
+        { horseId: "h1", ownership: { type: "unowned" } } as any,
+        { horseId: "h2", ownership: { type: "unowned" } } as any,
+      ],
     });
 
     const ctx = makePipelineContext({

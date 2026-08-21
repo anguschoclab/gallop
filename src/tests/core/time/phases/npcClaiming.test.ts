@@ -15,7 +15,11 @@ describe("npcClaimingPhase", () => {
   });
 
   it("should not claim own horses", () => {
-    const horse = createTestHorse({ id: "horse-1", stableId: "npc-1", ownership: { type: "unowned" } });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stableId: "npc-1",
+      ownership: { type: "unowned" },
+    });
     const stable = createTestStable({ id: "npc-1", cash: 1000000, horses: ["horse-1"] });
     const race = {
       id: "race-1",
@@ -50,7 +54,11 @@ describe("npcClaimingPhase", () => {
   });
 
   it("should file claim when price <= valuation * 0.85 and stable has cash", () => {
-    const horse = createTestHorse({ id: "horse-1", stableId: "player", ownership: { type: "player" } });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stableId: "player",
+      ownership: { type: "player" },
+    });
     const stable = createTestStable({ id: "npc-1", cash: 1000000, horses: [] });
     const race = {
       id: "race-1",
@@ -80,7 +88,11 @@ describe("npcClaimingPhase", () => {
   });
 
   it("should not file duplicate claims", () => {
-    const horse = createTestHorse({ id: "horse-1", stableId: "player", ownership: { type: "player" } });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stableId: "player",
+      ownership: { type: "player" },
+    });
     const stable = createTestStable({ id: "npc-1", cash: 1000000, horses: [] });
     const existingClaim = {
       id: "claim-1",
