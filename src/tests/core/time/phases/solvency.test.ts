@@ -4,6 +4,7 @@ import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleG
 import { createTestHorse, createUnownedHorse } from "@/tests/helpers";
 import type { GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
+import { asHorseId } from "@/core/types/branded";
 
 describe("solvencyPhase", () => {
   it("should skip if runEnded is true", () => {
@@ -88,7 +89,7 @@ describe("solvencyPhase", () => {
 
   it("should NOT seize unowned horse in forced sale", () => {
     const unowned = createUnownedHorse({
-      id: "unowned-valuable",
+      id: asHorseId("unowned-valuable"),
       name: "Wild Treasure",
       age: 4,
       stats: {
@@ -113,8 +114,11 @@ describe("solvencyPhase", () => {
   });
 
   it("should NOT count unowned horse in insolvency horse count", () => {
-    const playerHorse = createTestHorse({ id: "player-h1", ownership: { type: "player" } });
-    const unowned = createUnownedHorse({ id: "unowned-h1" });
+    const playerHorse = createTestHorse({
+      id: asHorseId("player-h1"),
+      ownership: { type: "player" },
+    });
+    const unowned = createUnownedHorse({ id: asHorseId("unowned-h1") });
     const state = makeGameState({
       cash: -110000,
       consecutiveDaysInDebt: 10,

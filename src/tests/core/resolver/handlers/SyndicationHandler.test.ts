@@ -9,6 +9,7 @@ import type {
 } from "@/core/resolver/impacts/index";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import type { Horse } from "@/game/types";
+import { asPlayerOwnerId, asOwnerKey } from "@/core/types/branded";
 
 describe("SyndicationHandler", () => {
   it("syndicate_creation creates syndicate for G1 winner", () => {
@@ -38,7 +39,7 @@ describe("SyndicationHandler", () => {
       stallionName: "Champion",
       totalShares: 40,
       sharePrice: 50000,
-      initialShareholders: { player: 10 },
+      initialShareholders: { [asPlayerOwnerId("player")]: 10 },
       reason: "Syndicate created",
     };
 
@@ -112,7 +113,7 @@ describe("SyndicationHandler", () => {
       logLevel: "always",
       type: "share_transaction",
       syndicateId: "syn-1",
-      stableId: "stable-2",
+      stableId: asOwnerKey("stable-2"),
       shares: 5,
       pricePerShare: 5000,
       reason: "Share purchase",
@@ -154,7 +155,7 @@ describe("SyndicationHandler", () => {
       logLevel: "always",
       type: "share_transaction",
       syndicateId: "syn-1",
-      stableId: "stable-2",
+      stableId: asOwnerKey("stable-2"),
       shares: -3,
       pricePerShare: 5000,
       reason: "Share sale",
@@ -236,7 +237,7 @@ describe("SyndicationHandler", () => {
       logLevel: "always",
       type: "syndicate_satisfaction",
       syndicateId: "syn-1",
-      stableId: "player",
+      stableId: asPlayerOwnerId("player"),
       satisfactionDelta: 60,
       reason: "Great results",
     };
