@@ -103,14 +103,29 @@ export function horsePrice(h: Horse): number {
  * @param h
  * @param allHorses
  */
+
+let cachedHorsesArray: Horse[] | null = null;
+let cachedHorseRecord: Record<string, Horse> = {};
+
+/**
+ * Optimizes valuation loops by memoizing the array-to-record conversion.
+ * If the exact same allHorses array reference is passed, the cached record is returned.
+ * @param allHorses
+ */
+function getHorseRecord(allHorses: Horse[]): Record<string, Horse> {
+  if (allHorses === cachedHorsesArray) return cachedHorseRecord;
+  cachedHorsesArray = allHorses;
+  cachedHorseRecord = {};
+  for (let i = 0; i < allHorses.length; i++) {
+    cachedHorseRecord[allHorses[i].id] = allHorses[i];
+  }
+  return cachedHorseRecord;
+}
+
 export function horsePriceWithPedigree(h: Horse, allHorses: Horse[]): number {
   const base = horsePrice(h);
   return (
-    Math.round(
-      (base *
-        pedigreeMultiplier(h, { horses: Object.fromEntries(allHorses.map((h) => [h.id, h])) })) /
-        50,
-    ) * 50
+    Math.round((base * pedigreeMultiplier(h, { horses: getHorseRecord(allHorses) })) / 50) * 50
   );
 }
 
@@ -153,7 +168,7 @@ export function estimateBreedingValue(h: Horse, allHorses: Horse[] = []): number
   const overall = calculateOverallRating(h);
   const potMod = 0.5 + (h.potential ?? 50) / 100;
   const pedMul = pedigreeMultiplier(h, {
-    horses: Object.fromEntries(allHorses.map((h) => [h.id, h])),
+    horses: getHorseRecord(allHorses),
   });
   const winRate = h.careerStarts > 0 ? h.careerWins / h.careerStarts : 0;
   const fameBoost = 1 + (h.fame ?? 0) / 150;
@@ -259,10 +274,7 @@ export function horseCareerValuation(h: Horse, allHorses: Horse[] = []): HorseCa
   // Pre-career: recompute as if the horse were a yearling — potential and pedigree drive it.
   const overall = calculateOverallRating(h);
   const potMod = 0.5 + (h.potential ?? 50) / 100;
-  const pedMul = pedigreeMultiplier(
-    { ...h, age: 1 },
-    { horses: Object.fromEntries(allHorses.map((h) => [h.id, h])) },
-  );
+  const pedMul = pedigreeMultiplier({ ...h, age: 1 }, { horses: getHorseRecord(allHorses) });
   const yearlingRacing = Math.round((overall * 80 * 1.2 * potMod) / 50) * 50;
   const yearlingPed = Math.round((yearlingRacing * pedMul) / 50) * 50;
   // Include a slice of gender-specific breeding upside since sales rings price yearlings on it.
