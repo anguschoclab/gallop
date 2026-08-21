@@ -75,15 +75,6 @@ export const raceInvitationsPhase: PipelinePhase = {
       return context;
     }
 
-    // Build a set of already-invited (raceId, horseId) pairs to avoid duplicate inbox messages
-    const alreadyMessaged = new Set<string>();
-    for (const msg of newInbox) {
-      // Heuristic: race invite messages contain the race name in the title
-      if (msg.category === "race" && msg.title.startsWith("Invitation:")) {
-        // We can't reliably back-map to raceId here, so we'll rely on invitedHorseIds
-      }
-    }
-
     const updatedRaces: Record<string, Race> = {};
     for (const race of Object.values(state.races)) {
       // Only process invite-only races that are upcoming
@@ -145,15 +136,18 @@ export const raceInvitationsPhase: PipelinePhase = {
 
       const newlyInvited = [...autoInvites, ...selectedAtLarge.map((c) => c.horseId)];
 
-      // Send inbox messages for player-owned newly invited horses
-      for (const horseId of newlyInvited) {
-        const horse = horseMap.get(horseId);
-        if (!horse || !horse.owned) continue;
+      // Send a single consolidated inbox message for all player-owned newly invited horses
+      const ownedInvitedHorses = newlyInvited
+        .map((id) => horseMap.get(id))
+        .filter((h) => h?.owned) as { id: string; name: string }[];
 
-        // Avoid duplicate inbox messages for the same horse/race pair
-        const msgKey = `${race.id}:${horseId}`;
-        if (alreadyMessaged.has(msgKey)) continue;
-        alreadyMessaged.add(msgKey);
+      if (ownedInvitedHorses.length > 0) {
+        const names = ownedInvitedHorses.map((h) => h.name);
+        const nameList =
+          names.length === 1
+            ? names[0]
+            : `${names.slice(0, -1).join(", ")}, and ${names[names.length - 1]}`;
+        const verb = names.length === 1 ? "has" : "have";
 
         impacts.push({
           id: generateUUID(),
@@ -167,7 +161,7 @@ export const raceInvitationsPhase: PipelinePhase = {
             category: "race",
             priority: "action",
             title: `Invitation: ${race.name}`,
-            body: `${horse.name} has been invited to compete in ${race.name} (${race.distance}m, ${race.graded?.grade || ""}) on day ${race.day}.`,
+            body: `${nameList} ${verb} been invited to compete in ${race.name} (${race.distance}m, ${race.graded?.grade || ""}) on day ${race.day}.`,
             cta: {
               label: "View Race",
               route: "race.$raceId",

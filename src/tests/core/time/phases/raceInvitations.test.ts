@@ -344,6 +344,274 @@ describe("raceInvitationsPhase", () => {
     expect(updatedRace.invitedHorseIds).toContain("h1");
     expect(result.impacts.length).toBeGreaterThan(0);
     expect(result.impacts[0].type).toBe("inbox_message");
+    const inboxImpact = result.impacts.find((i) => i.type === "inbox_message");
+    const body = (inboxImpact as any)?.message?.body ?? "";
+    expect(body).toContain("Test Horse");
+  });
+
+  it("consolidates invitations for multiple player-owned horses into one message", () => {
+    const horseA = makeHorse({
+      id: "h-a",
+      name: "Thunder",
+      owned: true,
+      distanceAptitude: 1600,
+      fame: 80,
+    });
+    const horseB = makeHorse({
+      id: "h-b",
+      name: "Lightning",
+      owned: true,
+      distanceAptitude: 1600,
+      fame: 70,
+    });
+    const horseC = makeHorse({
+      id: "h-c",
+      name: "Storm",
+      owned: true,
+      distanceAptitude: 1600,
+      fame: 60,
+    });
+    const race = makeRace({
+      id: "race-1",
+      day: 50,
+      distance: 1600,
+      fieldSize: 14,
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+      },
+    });
+
+    const context: PipelineContext = {
+      previousDay: 19,
+      newDay: 20,
+      state: {
+        day: 20,
+        horses: h2r([horseA, horseB, horseC]),
+        races: r2r([race]),
+        inbox: [],
+        pregnancies: [],
+      } as unknown as GameState,
+      logs: [],
+      dailyRng: { next: () => 0.5, int: () => 0, pick: () => "" } as any,
+      intents: [],
+      impacts: [],
+      impactLog: [],
+      horseMap: new Map([
+        [horseA.id, horseA],
+        [horseB.id, horseB],
+        [horseC.id, horseC],
+      ]),
+      raceMap: new Map([[race.id, race]]),
+      stableMap: new Map(),
+      jockeyMap: new Map(),
+    };
+
+    const result = raceInvitationsPhase.execute(context);
+    const inboxImpacts = result.impacts.filter((i) => i.type === "inbox_message");
+    expect(inboxImpacts.length).toBe(1);
+    const body = (inboxImpacts[0] as any).message.body;
+    expect(body).toContain("Thunder");
+    expect(body).toContain("Lightning");
+    expect(body).toContain("Storm");
+  });
+
+  it("mixed owned/unowned horses — message lists only owned horses", () => {
+    const ownedA = makeHorse({
+      id: "h-owned-a",
+      name: "Thunder",
+      owned: true,
+      distanceAptitude: 1600,
+      fame: 80,
+    });
+    const ownedB = makeHorse({
+      id: "h-owned-b",
+      name: "Lightning",
+      owned: true,
+      distanceAptitude: 1600,
+      fame: 70,
+    });
+    const npcHorse = makeHorse({
+      id: "h-npc",
+      name: "Dark Horse",
+      owned: false,
+      distanceAptitude: 1600,
+      fame: 90,
+    });
+    const race = makeRace({
+      id: "race-1",
+      day: 50,
+      distance: 1600,
+      fieldSize: 14,
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+      },
+    });
+
+    const context: PipelineContext = {
+      previousDay: 19,
+      newDay: 20,
+      state: {
+        day: 20,
+        horses: h2r([ownedA, ownedB, npcHorse]),
+        races: r2r([race]),
+        inbox: [],
+        pregnancies: [],
+      } as unknown as GameState,
+      logs: [],
+      dailyRng: { next: () => 0.5, int: () => 0, pick: () => "" } as any,
+      intents: [],
+      impacts: [],
+      impactLog: [],
+      horseMap: new Map([
+        [ownedA.id, ownedA],
+        [ownedB.id, ownedB],
+        [npcHorse.id, npcHorse],
+      ]),
+      raceMap: new Map([[race.id, race]]),
+      stableMap: new Map(),
+      jockeyMap: new Map(),
+    };
+
+    const result = raceInvitationsPhase.execute(context);
+    const inboxImpacts = result.impacts.filter((i) => i.type === "inbox_message");
+    expect(inboxImpacts.length).toBe(1);
+    const body = (inboxImpacts[0] as any).message.body;
+    expect(body).toContain("Thunder");
+    expect(body).toContain("Lightning");
+    expect(body).not.toContain("Dark Horse");
+  });
+
+  it("no inbox message when only NPC horses are invited", () => {
+    const npcA = makeHorse({
+      id: "h-npc-a",
+      name: "Dark Horse",
+      owned: false,
+      distanceAptitude: 1600,
+      fame: 90,
+    });
+    const npcB = makeHorse({
+      id: "h-npc-b",
+      name: "Shadow",
+      owned: false,
+      distanceAptitude: 1600,
+      fame: 80,
+    });
+    const race = makeRace({
+      id: "race-1",
+      day: 50,
+      distance: 1600,
+      fieldSize: 14,
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+      },
+    });
+
+    const context: PipelineContext = {
+      previousDay: 19,
+      newDay: 20,
+      state: {
+        day: 20,
+        horses: h2r([npcA, npcB]),
+        races: r2r([race]),
+        inbox: [],
+        pregnancies: [],
+      } as unknown as GameState,
+      logs: [],
+      dailyRng: { next: () => 0.5, int: () => 0, pick: () => "" } as any,
+      intents: [],
+      impacts: [],
+      impactLog: [],
+      horseMap: new Map([
+        [npcA.id, npcA],
+        [npcB.id, npcB],
+      ]),
+      raceMap: new Map([[race.id, race]]),
+      stableMap: new Map(),
+      jockeyMap: new Map(),
+    };
+
+    const result = raceInvitationsPhase.execute(context);
+    const inboxImpacts = result.impacts.filter((i) => i.type === "inbox_message");
+    expect(inboxImpacts.length).toBe(0);
+  });
+
+  it("multi-day: new horse invited on subsequent day gets its own message", () => {
+    const horseA = makeHorse({
+      id: "h-a",
+      name: "Thunder",
+      owned: true,
+      distanceAptitude: 1600,
+      fame: 80,
+    });
+    const horseB = makeHorse({
+      id: "h-b",
+      name: "Lightning",
+      owned: true,
+      distanceAptitude: 1600,
+      fame: 70,
+    });
+    const race = makeRace({
+      id: "race-1",
+      day: 50,
+      distance: 1600,
+      fieldSize: 14,
+      invitedHorseIds: ["h-a"],
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+        invitedHorseIds: ["h-a"],
+      },
+    });
+
+    const context: PipelineContext = {
+      previousDay: 20,
+      newDay: 21,
+      state: {
+        day: 21,
+        horses: h2r([horseA, horseB]),
+        races: r2r([race]),
+        inbox: [],
+        pregnancies: [],
+      } as unknown as GameState,
+      logs: [],
+      dailyRng: { next: () => 0.5, int: () => 0, pick: () => "" } as any,
+      intents: [],
+      impacts: [],
+      impactLog: [],
+      horseMap: new Map([
+        [horseA.id, horseA],
+        [horseB.id, horseB],
+      ]),
+      raceMap: new Map([[race.id, race]]),
+      stableMap: new Map(),
+      jockeyMap: new Map(),
+    };
+
+    const result = raceInvitationsPhase.execute(context);
+    const inboxImpacts = result.impacts.filter((i) => i.type === "inbox_message");
+    expect(inboxImpacts.length).toBe(1);
+    const body = (inboxImpacts[0] as any).message.body;
+    expect(body).toContain("Lightning");
+    expect(body).not.toContain("Thunder");
   });
 
   it("deduplicates invites (does not re-invite already-invited horses)", () => {
