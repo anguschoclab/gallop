@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { StepReview } from "@/components/NewGameWizard/steps/StepReview";
 import type { Backstory } from "@/core/common/backstories";
 import type { PlayerProfile, BackstoryId } from "@/game/types";
+import type { WorldSize } from "@/core/stable/worldSizeConfig";
 
 const mockBackstory: Backstory = {
   id: "legacy" as BackstoryId,
@@ -25,6 +26,8 @@ const mockBackstory: Backstory = {
   difficulty: "easy",
 };
 
+const mockWorldSize: WorldSize = "medium";
+
 const mockProfile: PlayerProfile = {
   stableName: "Test Stables",
   ownerName: "Test Owner",
@@ -40,6 +43,7 @@ describe("StepReview — facility upgrade display", () => {
           ownerName="Test Owner"
           silk={{ pattern: "solid", primaryColor: "#ff0000" } as any}
           backstory={mockBackstory}
+          worldSize={mockWorldSize}
         />
       </TooltipProvider>,
     );
@@ -56,6 +60,7 @@ describe("StepReview — facility upgrade display", () => {
           ownerName="Test Owner"
           silk={{ pattern: "solid", primaryColor: "#ff0000" } as any}
           backstory={mockBackstory}
+          worldSize={mockWorldSize}
         />
       </TooltipProvider>,
     );
@@ -65,5 +70,21 @@ describe("StepReview — facility upgrade display", () => {
     expect(allText).not.toMatch(/\(basic\)/);
     expect(allText).not.toMatch(/\(premium\)/);
     expect(allText).not.toMatch(/\(elite\)/);
+  });
+
+  it("displays world size label and entity counts", () => {
+    render(
+      <TooltipProvider>
+        <StepReview
+          stableName="Test Stables"
+          ownerName="Test Owner"
+          silk={{ pattern: "solid", primaryColor: "#ff0000" } as any}
+          backstory={mockBackstory}
+          worldSize={mockWorldSize}
+        />
+      </TooltipProvider>,
+    );
+
+    expect(screen.getByText(/medium/i)).toBeInTheDocument();
   });
 });

@@ -137,6 +137,7 @@ export interface WizardState {
     cap: string;
   };
   backstoryId: string;
+  worldSize: string;
 }
 
 /**

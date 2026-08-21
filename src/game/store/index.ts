@@ -163,6 +163,8 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "solvencyAuditLog" as keyof GameState,
   // Saved mating plans for breeding season planner
   "savedMatingPlans" as keyof GameState,
+  // World size selection for entity count regulation
+  "worldSize" as keyof GameState,
 ];
 
 /**

@@ -27,6 +27,7 @@ function makeValidWizardState() {
     ownerName: "Test Owner",
     silk: { pattern: "solid", primary: "#FF0000", secondary: "#0000FF", cap: "#00FF00" },
     backstoryId: "backstory-1",
+    worldSize: "medium",
   };
 }
 
@@ -182,6 +183,18 @@ describe("wizardStateSchema", () => {
   it("rejects step as string", () => {
     const w = makeValidWizardState();
     (w as any).step = "one";
+    expect(wizardStateSchema.safeParse(w).success).toBe(false);
+  });
+
+  it("accepts worldSize field", () => {
+    const w = makeValidWizardState();
+    expect(wizardStateSchema.safeParse(w).success).toBe(true);
+    expect(w.worldSize).toBe("medium");
+  });
+
+  it("rejects invalid worldSize values", () => {
+    const w = makeValidWizardState();
+    (w as any).worldSize = "huge";
     expect(wizardStateSchema.safeParse(w).success).toBe(false);
   });
 });

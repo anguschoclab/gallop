@@ -35,6 +35,7 @@ function createMockWizardState(): storageAdapter.WizardState {
       cap: "#00FF00",
     },
     backstoryId: "backstory-1",
+    worldSize: "medium",
   };
 }
 
@@ -358,6 +359,7 @@ describe("storageAdapter", () => {
         expect(stored).toHaveProperty("ownerName");
         expect(stored).toHaveProperty("silk");
         expect(stored).toHaveProperty("backstoryId");
+        expect(stored).toHaveProperty("worldSize");
       });
 
       it("logs error when localStorage throws", () => {

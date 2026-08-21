@@ -124,4 +124,41 @@ describe("useNewGameWizard error handling", () => {
       expect(mockNavigate).toHaveBeenCalledWith({ to: "/", replace: true });
     });
   });
+
+  it("defaults worldSize to medium", () => {
+    const startNewGame = vi.fn().mockResolvedValue(undefined);
+    setupStore(startNewGame);
+
+    const { result } = renderHook(() => useNewGameWizard());
+    expect(result.current.worldSize).toBe("medium");
+  });
+
+  it("updates worldSize via setWorldSize", () => {
+    const startNewGame = vi.fn().mockResolvedValue(undefined);
+    setupStore(startNewGame);
+
+    const { result } = renderHook(() => useNewGameWizard());
+    act(() => {
+      result.current.setWorldSize("small");
+    });
+    expect(result.current.worldSize).toBe("small");
+  });
+
+  it("passes worldSize in NewGameOptions to startNewGame", async () => {
+    const startNewGame = vi.fn().mockResolvedValue(undefined);
+    setupStore(startNewGame);
+
+    const { result } = renderHook(() => useNewGameWizard());
+
+    act(() => {
+      result.current.setBackstoryId("wealthy_dilettante" as any);
+      result.current.setWorldSize("small");
+    });
+
+    await result.current.handleStart();
+
+    await waitFor(() => {
+      expect(startNewGame).toHaveBeenCalledWith(expect.objectContaining({ worldSize: "small" }));
+    });
+  });
 });

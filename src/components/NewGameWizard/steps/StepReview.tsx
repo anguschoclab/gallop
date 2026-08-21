@@ -8,6 +8,8 @@ import {
 } from "@/core/facilities";
 import type { JockeySilk } from "@/game/types";
 import type { Backstory } from "@/core/common/backstories";
+import type { WorldSize } from "@/core/stable/worldSizeConfig";
+import { WORLD_SIZE_CONFIGS } from "@/core/stable/worldSizeConfig";
 import { SilkPreview } from "../SilkPreview";
 
 interface StepReviewProps {
@@ -15,9 +17,10 @@ interface StepReviewProps {
   ownerName: string;
   silk: JockeySilk;
   backstory: Backstory;
+  worldSize: WorldSize;
 }
 
-export function StepReview({ stableName, ownerName, silk, backstory }: StepReviewProps) {
+export function StepReview({ stableName, ownerName, silk, backstory, worldSize }: StepReviewProps) {
   return (
     <div className="grid gap-6 md:grid-cols-[140px_1fr]">
       <SilkPreview silk={silk} size={120} />
@@ -84,6 +87,16 @@ export function StepReview({ stableName, ownerName, silk, backstory }: StepRevie
             </TooltipContent>
           </Tooltip>
           <dd className="text-cream">{backstory.reputationScore}</dd>
+
+          <dt className="text-cream-muted">World size</dt>
+          <dd className="text-cream">
+            {worldSize.charAt(0).toUpperCase() + worldSize.slice(1)} (
+            {WORLD_SIZE_CONFIGS[worldSize].stables.elite.count +
+              WORLD_SIZE_CONFIGS[worldSize].stables.mid.count +
+              WORLD_SIZE_CONFIGS[worldSize].stables.budget.count +
+              WORLD_SIZE_CONFIGS[worldSize].stables.filler.count}{" "}
+            stables)
+          </dd>
         </dl>
       </div>
     </div>

@@ -129,6 +129,7 @@ export const wizardStateSchema = z.object({
     cap: z.string(),
   }),
   backstoryId: z.string(),
+  worldSize: z.enum(["small", "medium", "large"]),
 });
 
 // ─── Race filters ────────────────────────────────────────────────────────────

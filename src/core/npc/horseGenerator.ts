@@ -33,6 +33,8 @@ import {
   NPC_HORSE_COUNT_BUDGET_MIN,
   NPC_HORSE_COUNT_BUDGET_MAX,
 } from "@/constants";
+import type { WorldSize } from "@/core/stable/worldSizeConfig";
+import { getWorldSizeConfig, DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";
 
 // ─── Stable horse generation ──────────────────────────────────────────────────
 
@@ -47,6 +49,7 @@ import {
  * @param usedNames - Set of used horse names to avoid duplicates
  * @param npcAIManager - Optional AI manager for AI-driven generation
  * @param currentDay - Current simulation day for AI learning
+ * @param worldSize - Optional world size to scale horse counts
  * @returns Array of generated horses
  */
 export function generateStableHorses(
@@ -55,6 +58,7 @@ export function generateStableHorses(
   usedNames: Set<string>,
   npcAIManager?: NpcAIManager,
   currentDay?: number,
+  worldSize?: WorldSize,
 ): Horse[] {
   const horses: Horse[] = [];
 
@@ -63,19 +67,24 @@ export function generateStableHorses(
     aiState.horseGenAI = createHorseGenAIState(stable);
   }
 
+  const worldConfig = getWorldSizeConfig(worldSize ?? DEFAULT_WORLD_SIZE);
   let targetCount: number;
   if (!stable.isMajor) {
-    targetCount = 10;
+    targetCount = worldConfig.horseCounts.filler;
   } else {
     switch (stable.tier) {
       case "elite":
-        targetCount = rand(NPC_HORSE_COUNT_ELITE_MIN, NPC_HORSE_COUNT_ELITE_MAX, rng);
+        targetCount = rand(worldConfig.horseCounts.elite[0], worldConfig.horseCounts.elite[1], rng);
         break;
       case "mid":
-        targetCount = rand(NPC_HORSE_COUNT_MID_MIN, NPC_HORSE_COUNT_MID_MAX, rng);
+        targetCount = rand(worldConfig.horseCounts.mid[0], worldConfig.horseCounts.mid[1], rng);
         break;
       default:
-        targetCount = rand(NPC_HORSE_COUNT_BUDGET_MIN, NPC_HORSE_COUNT_BUDGET_MAX, rng);
+        targetCount = rand(
+          worldConfig.horseCounts.budget[0],
+          worldConfig.horseCounts.budget[1],
+          rng,
+        );
         break;
     }
   }
@@ -132,6 +141,7 @@ export function generateStableHorses(
  * @param npcAIManager - Optional AI manager for AI-driven generation
  * @param currentDay - Current simulation day for AI learning
  * @param famousStallions - Optional famous stallions to integrate
+ * @param worldSize - Optional world size to scale horse counts
  * @returns Object with updated stables, all horses, and used names
  */
 export function generateAllNpcHorses(
@@ -140,6 +150,7 @@ export function generateAllNpcHorses(
   npcAIManager?: NpcAIManager,
   currentDay?: number,
   famousStallions?: Horse[],
+  worldSize?: WorldSize,
 ): { stables: Stable[]; horses: Horse[]; usedNames: Set<string> } {
   const updatedStables: Stable[] = [];
   const allHorses: Horse[] = [];
@@ -160,7 +171,14 @@ export function generateAllNpcHorses(
 
   for (const stable of stables) {
     const stableFamous = stallionsByStable.get(stable.id) ?? [];
-    const horses = generateStableHorses(stable, rng, usedNames, npcAIManager, currentDay);
+    const horses = generateStableHorses(
+      stable,
+      rng,
+      usedNames,
+      npcAIManager,
+      currentDay,
+      worldSize,
+    );
     horses.push(...stableFamous);
 
     for (const horse of horses) {

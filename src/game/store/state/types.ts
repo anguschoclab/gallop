@@ -7,6 +7,7 @@
 
 import type { PlayerProfile } from "@/core/stable/types";
 import type { Backstory } from "@/core/common/backstories";
+import type { WorldSize } from "@/core/stable/worldSizeConfig";
 
 /**
  * Options for initializing a new game, including player profile and chosen backstory.
@@ -14,4 +15,5 @@ import type { Backstory } from "@/core/common/backstories";
 export interface NewGameOptions {
   profile: PlayerProfile;
   backstory: Backstory;
+  worldSize?: WorldSize;
 }

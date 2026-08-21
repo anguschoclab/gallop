@@ -29,6 +29,7 @@ import { generateFillerStable } from "@/core/stable/stableGeneration";
 import { generateStableHorses } from "@/core/npc/horseGenerator";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { PHASE_ORDER_NPC_BANKRUPTCY } from "@/constants";
+import { DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";
 
 const LIQUIDATION_SALE_DELAY = 3;
 const LIQUIDATION_RESERVE_FACTOR = 0.5;
@@ -186,7 +187,14 @@ export const npcBankruptcyPhase = {
 
       // 5. Spawn replacement stable.
       const newStable = generateFillerStable(newDay, dailyRng);
-      const newHorses = generateStableHorses(newStable, dailyRng, usedNames, npcAIManager, newDay);
+      const newHorses = generateStableHorses(
+        newStable,
+        dailyRng,
+        usedNames,
+        npcAIManager,
+        newDay,
+        state.worldSize ?? DEFAULT_WORLD_SIZE,
+      );
       newStable.horses = newHorses.map((h) => h.id);
 
       for (const horse of newHorses) {

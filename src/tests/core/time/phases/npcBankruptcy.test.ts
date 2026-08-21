@@ -546,4 +546,17 @@ describe("npcBankruptcyPhase", () => {
     const updatedStallion = (result.state as GameState).horses["stallion-1"];
     expect(updatedStallion.stableId).toBe("bankrupt-1");
   });
+
+  it("should respect worldSize: small when generating replacement stable horses", () => {
+    const stable = createTestStable({ id: "bankrupt-1", cash: 0, horses: [] });
+    const state = makeGameState({ npcStables: [stable], worldSize: "small" }) as GameState;
+
+    const context = makePipelineContext({ state }) as PipelineContext;
+    const result = npcBankruptcyPhase.execute(context);
+
+    // Replacement stable should have been spawned with small-world horse counts (~5)
+    const newStable = result.state.npcStables.find((s) => s.id !== "bankrupt-1");
+    expect(newStable).toBeDefined();
+    expect(newStable!.horses.length).toBeLessThanOrEqual(8);
+  });
 });

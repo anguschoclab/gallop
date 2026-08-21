@@ -18,6 +18,7 @@ import {
   recordJockeyAssignment,
 } from "@/core/ai/jockeyAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import { getWorldSizeConfig, DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";
 import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS, PHASE_ORDER_JOCKEY_PHASE } from "@/constants";
 import { generateUUID } from "@/core/uuid";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
@@ -230,10 +231,12 @@ export const jockeyPhase = {
     });
 
     // 3. Pool Refreshment
-    // Ensure at least 20 free agents
+    // Ensure at least the world-size-configured minimum free agents
+    const worldConfig = getWorldSizeConfig(state.worldSize ?? DEFAULT_WORLD_SIZE);
+    const freeAgentMin = worldConfig.freeAgentMin;
     const freeAgents = jockeys.filter((j) => !j.stableId);
-    if (freeAgents.length < 20) {
-      const needed = 20 - freeAgents.length;
+    if (freeAgents.length < freeAgentMin) {
+      const needed = freeAgentMin - freeAgents.length;
       const newJockeys = [];
       for (let i = 0; i < needed; i++) {
         const r = dailyRng.next();

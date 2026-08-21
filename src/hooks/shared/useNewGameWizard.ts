@@ -14,8 +14,9 @@ import {
   type WizardState,
 } from "@/services/storage/storageAdapter";
 import { makeWizardRng } from "@/components/NewGameWizard/steps/helpers";
+import type { WorldSize } from "@/core/stable/worldSizeConfig";
 
-export type Step = 0 | 1 | 2 | 3;
+export type Step = 0 | 1 | 2 | 3 | 4;
 
 export function useNewGameWizard() {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ export function useNewGameWizard() {
   const [ownerName, setOwnerName] = useState(() => randomOwnerName(makeWizardRng("owner")));
   const [silk, setSilk] = useState<JockeySilk>(() => generateSilk(makeWizardRng("silk")));
   const [backstoryId, setBackstoryId] = useState<BackstoryId | undefined>(undefined);
+  const [worldSize, setWorldSize] = useState<WorldSize>("medium");
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -37,6 +39,7 @@ export function useNewGameWizard() {
         setOwnerName(saved.ownerName);
         setSilk(saved.silk as JockeySilk);
         setBackstoryId(saved.backstoryId as BackstoryId);
+        setWorldSize((saved.worldSize as WorldSize) ?? "medium");
       } catch (error) {
         console.error("Failed to restore wizard state:", error);
         clearWizardState();
@@ -52,11 +55,12 @@ export function useNewGameWizard() {
         ownerName,
         silk,
         backstoryId: backstoryId || "",
+        worldSize,
       };
       saveWizardState(state);
     }, 300);
     return () => clearTimeout(timeoutId);
-  }, [step, stableName, ownerName, silk, backstoryId]);
+  }, [step, stableName, ownerName, silk, backstoryId, worldSize]);
 
   const selectedBackstory = useMemo(
     () => BACKSTORIES.find((b) => b.id === backstoryId),
@@ -79,7 +83,8 @@ export function useNewGameWizard() {
     (step === 0 && stableNameValid && ownerNameValid) ||
     (step === 1 && silkValid) ||
     (step === 2 && !!selectedBackstory) ||
-    (step === 3 && silkValid && !!selectedBackstory && stableNameValid && ownerNameValid);
+    (step === 3 && !!worldSize) ||
+    (step === 4 && silkValid && !!selectedBackstory && stableNameValid && ownerNameValid);
 
   const handleStart = useCallback(async () => {
     if (!selectedBackstory) return;
@@ -98,6 +103,7 @@ export function useNewGameWizard() {
         founded: 1,
       },
       backstory: selectedBackstory,
+      worldSize,
     };
     try {
       await startNewGame(options);
@@ -107,7 +113,16 @@ export function useNewGameWizard() {
       console.error("Failed to start new game:", error);
       setSubmitting(false);
     }
-  }, [selectedBackstory, silkValid, stableName, ownerName, silk, startNewGame, navigate]);
+  }, [
+    selectedBackstory,
+    silkValid,
+    stableName,
+    ownerName,
+    silk,
+    worldSize,
+    startNewGame,
+    navigate,
+  ]);
 
   return {
     step,
@@ -120,6 +135,8 @@ export function useNewGameWizard() {
     setSilk,
     backstoryId,
     setBackstoryId,
+    worldSize,
+    setWorldSize,
     submitting,
     selectedBackstory,
     canProceed,

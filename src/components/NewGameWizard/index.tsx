@@ -5,6 +5,7 @@ import { useNewGameWizard, type Step } from "@/hooks/shared/useNewGameWizard";
 import { StepIdentity } from "./steps/StepIdentity";
 import { StepSilks } from "./steps/StepSilks";
 import { StepBackstory } from "./steps/StepBackstory";
+import { StepWorldSize } from "./steps/StepWorldSize";
 import { StepReview } from "./steps/StepReview";
 
 export function NewGameWizard() {
@@ -19,6 +20,8 @@ export function NewGameWizard() {
     setSilk,
     backstoryId,
     setBackstoryId,
+    worldSize,
+    setWorldSize,
     submitting,
     selectedBackstory,
     canProceed,
@@ -59,12 +62,14 @@ export function NewGameWizard() {
               {step === 2 && (
                 <StepBackstory backstoryId={backstoryId} setBackstoryId={setBackstoryId} />
               )}
-              {step === 3 && selectedBackstory && (
+              {step === 3 && <StepWorldSize worldSize={worldSize} setWorldSize={setWorldSize} />}
+              {step === 4 && selectedBackstory && (
                 <StepReview
                   stableName={stableName}
                   ownerName={ownerName}
                   silk={silk}
                   backstory={selectedBackstory}
+                  worldSize={worldSize}
                 />
               )}
             </CardContent>
@@ -78,13 +83,13 @@ export function NewGameWizard() {
             >
               Back
             </Button>
-            {step < 3 ? (
+            {step < 4 ? (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span tabIndex={canProceed ? -1 : 0} className="inline-flex">
                     <Button
                       disabled={!canProceed || submitting}
-                      onClick={() => setStep((s) => Math.min(3, s + 1) as Step)}
+                      onClick={() => setStep((s) => Math.min(4, s + 1) as Step)}
                     >
                       Continue
                     </Button>
@@ -107,7 +112,7 @@ export function NewGameWizard() {
   );
 }
 
-const STEP_TITLES = ["Stable identity", "Silks", "Backstory", "Review & begin"];
+const STEP_TITLES = ["Stable identity", "Silks", "Backstory", "World size", "Review & begin"];
 
 function StepIndicator({ step }: { step: Step }) {
   return (

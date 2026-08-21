@@ -31,6 +31,7 @@ import { seedGazetteNews } from "@/services/narrative/seedNewsGenerator";
 import { createStableAIState } from "@/core/ai/npcCycleAI";
 import { generateUpcomingScheduledRaces } from "@/game/store/helpers/market";
 import { ensureMaidenRaces } from "@/core/race/maidenGuarantee";
+import { getWorldSizeConfig, DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";
 
 /**
  * Creates the initial game state for a new game.
@@ -45,6 +46,8 @@ import { ensureMaidenRaces } from "@/core/race/maidenGuarantee";
 export function createInitialState(options?: NewGameOptions): GameState {
   const profileSeed = options?.profile.stableName ?? "initial_setup";
   const setupRng = createRng(hashStr(profileSeed));
+  const worldSize = options?.worldSize ?? DEFAULT_WORLD_SIZE;
+  const worldConfig = getWorldSizeConfig(worldSize);
 
   // Generate player horses — backstory-driven if options provided, else default 2 starters
   const playerHorseSpecs = options?.backstory.horses ?? [{ tier: "starter" as const, count: 2 }];
@@ -97,7 +100,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
 
   // Generate NPC stables and horses
   const stableRng = createRng(hashStr("initial_stables"));
-  const npcStables = generateAllStables(1, stableRng);
+  const npcStables = generateAllStables(1, stableRng, worldConfig.stables);
   const npcHorseRng = createRng(hashStr("initial_npc_horses"));
 
   // Generate famous stallions first
@@ -108,7 +111,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     stables: updatedStables,
     horses: npcHorses,
     usedNames: npcUsedNames,
-  } = generateAllNpcHorses(npcStables, npcHorseRng, undefined, 1, famousStallions);
+  } = generateAllNpcHorses(npcStables, npcHorseRng, undefined, 1, famousStallions, worldSize);
 
   // Merge used names
   for (const name of npcUsedNames) usedNames.add(name);
@@ -116,7 +119,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
   // Generate initial jockeys
   const jockeyRng = createRng(hashStr("initial_jockeys"));
   const usedJockeyNames = new Set<string>();
-  const jockeys = generateInitialJockeys(jockeyRng, 25, usedJockeyNames);
+  const jockeys = generateInitialJockeys(jockeyRng, worldConfig.jockeyCount, usedJockeyNames);
 
   // Run initial NPC race entry to populate races
   const pregnantIds = new Set<string>();
@@ -243,5 +246,6 @@ export function createInitialState(options?: NewGameOptions): GameState {
     claims: [],
     stewardsInquiries: [],
     savedMatingPlans: [],
+    worldSize,
   };
 }

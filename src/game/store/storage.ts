@@ -139,6 +139,7 @@ const META_KEYS: (keyof GameState)[] = [
   "industryMeanEarnings",
   "industryEarningsUpdatedDay",
   "narrativeArcs",
+  "worldSize",
 ];
 
 export async function saveGameStateToIDB(state: GameState): Promise<void> {

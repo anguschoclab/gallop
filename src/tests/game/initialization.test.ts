@@ -138,3 +138,44 @@ describe("createInitialState race generation for starter eligibility", () => {
     expect(new Set(keys).size).toBe(keys.length);
   });
 });
+
+describe("createInitialState world size entity counts", () => {
+  it("produces ~25 NPC stables with worldSize: small", () => {
+    const state = createInitialState({ ...mockOptions, worldSize: "small" });
+    expect(state.npcStables.length).toBe(25);
+  });
+
+  it("produces ~69 NPC stables with worldSize: medium", () => {
+    const state = createInitialState({ ...mockOptions, worldSize: "medium" });
+    expect(state.npcStables.length).toBe(69);
+  });
+
+  it("produces 128 NPC stables with worldSize: large", () => {
+    const state = createInitialState({ ...mockOptions, worldSize: "large" });
+    expect(state.npcStables.length).toBe(128);
+  });
+
+  it("produces fewer NPC horses with small than large", () => {
+    const smallState = createInitialState({ ...mockOptions, worldSize: "small" });
+    const largeState = createInitialState({ ...mockOptions, worldSize: "large" });
+    const smallHorses = Object.values(smallState.horses).filter((h) => !h.owned && h.stableId);
+    const largeHorses = Object.values(largeState.horses).filter((h) => !h.owned && h.stableId);
+    expect(smallHorses.length).toBeLessThan(largeHorses.length);
+  });
+
+  it("produces ~15 jockeys with worldSize: small", () => {
+    const state = createInitialState({ ...mockOptions, worldSize: "small" });
+    expect(state.jockeys!.length).toBe(15);
+  });
+
+  it("sets worldSize in returned state", () => {
+    const state = createInitialState({ ...mockOptions, worldSize: "small" });
+    expect(state.worldSize).toBe("small");
+  });
+
+  it("defaults to large behavior without worldSize option", () => {
+    const state = createInitialState(mockOptions);
+    expect(state.npcStables.length).toBe(128);
+    expect(state.worldSize).toBe("large");
+  });
+});

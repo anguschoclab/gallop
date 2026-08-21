@@ -47,12 +47,17 @@ import { createFacility, createDefaultPlayerFacilities } from "@/core/facilities
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import { getReputationTier } from "@/core/reputation";
 import type { NewGameOptions } from "./index";
+import type { WorldSize } from "@/core/stable/worldSizeConfig";
+import { DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";
 
 /**
  * Systems state for optional subsystems and advanced features.
  * Most properties are optional as these systems may not be initialized yet.
  */
 export interface SystemsState {
+  /** Selected world size controlling entity counts (stables, horses, jockeys) */
+  worldSize?: WorldSize;
+
   // NPC stable system
   /** All NPC-controlled stables */
   npcStables: Stable[];
@@ -242,6 +247,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     }
 
     return {
+      worldSize: options.worldSize ?? DEFAULT_WORLD_SIZE,
       npcStables: [],
       npcAIManager: {
         stableStates: {},
@@ -282,6 +288,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
 
   // Default behavior when no options provided (backward compatibility)
   return {
+    worldSize: DEFAULT_WORLD_SIZE,
     npcStables: [],
     npcAIManager: {
       stableStates: {},

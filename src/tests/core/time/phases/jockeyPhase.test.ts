@@ -48,13 +48,32 @@ describe("jockeyPhase", () => {
     expect(updatedJockey?.affinityMap).toEqual({});
   });
 
-  it("should refresh free agent pool to at least 20", () => {
+  it("should refresh free agent pool to at least 20 (default large)", () => {
     const state = makeGameState({ jockeys: [] }) as GameState;
     const context = makePipelineContext({ state, newDay: 10 }) as PipelineContext;
 
     const result = jockeyPhase.execute(context);
     const freeAgents = result.state.jockeys!.filter((j) => !j.stableId);
     expect(freeAgents.length).toBeGreaterThanOrEqual(20);
+  });
+
+  it("should refresh free agent pool to at least 10 with worldSize: small", () => {
+    const state = makeGameState({ jockeys: [], worldSize: "small" }) as GameState;
+    const context = makePipelineContext({ state, newDay: 10 }) as PipelineContext;
+
+    const result = jockeyPhase.execute(context);
+    const freeAgents = result.state.jockeys!.filter((j) => !j.stableId);
+    expect(freeAgents.length).toBeGreaterThanOrEqual(10);
+    expect(freeAgents.length).toBeLessThan(20);
+  });
+
+  it("should refresh free agent pool to at least 15 with worldSize: medium", () => {
+    const state = makeGameState({ jockeys: [], worldSize: "medium" }) as GameState;
+    const context = makePipelineContext({ state, newDay: 10 }) as PipelineContext;
+
+    const result = jockeyPhase.execute(context);
+    const freeAgents = result.state.jockeys!.filter((j) => !j.stableId);
+    expect(freeAgents.length).toBeGreaterThanOrEqual(15);
   });
 
   it("should handle empty jockeys array", () => {
