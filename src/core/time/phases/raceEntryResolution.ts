@@ -27,6 +27,7 @@ import {
 import { selectBestFreeAgentJockey } from "@/core/jockey/selectFreeAgent";
 import { getOrCreateStableAIState, type NpcAIManager } from "@/core/ai/npcCycleAI";
 import { calculateOverallRating } from "@/core/horse/stats";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 /**
  * Race Entry Resolution Phase (Order 15)
@@ -195,7 +196,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
       } as RaceEntryImpact);
 
       // Add transport cost for player-owned horses (simplified: fixed cost based on race grade)
-      if (!horse.stableId) {
+      if (isPlayerOwned(horse)) {
         // Simplified transport cost calculation based on race grade
         const transportCost = race.graded
           ? race.graded.grade === "G1"

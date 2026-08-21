@@ -7,7 +7,11 @@ import { describe, it, expect } from "vitest";
 import { pastureRetirementPhase } from "@/core/time/phases/pastureRetirement";
 import { managementResolutionPhase } from "@/core/time/phases/managementResolution";
 import { hallOfFamePhase } from "@/core/time/phases/hallOfFame";
-import { createTestHorse, createTestNpcHorse } from "@/tests/helpers/createTestHorse";
+import {
+  createTestHorse,
+  createTestNpcHorse,
+  createUnownedHorse,
+} from "@/tests/helpers/createTestHorse";
 import { makePipelineContext } from "@/tests/helpers/sampleGameState";
 import { createRng } from "@/core/common/rng";
 import type { PipelineContext } from "@/core/time/pipeline";
@@ -132,6 +136,27 @@ describe("Pasture Retirement — commemorative inbox", () => {
 
     expect(inboxMsgs.length).toBe(0);
   });
+
+  it("does NOT create an inbox_message for an unowned horse", () => {
+    const horse = createUnownedHorse({
+      id: "unowned-horse",
+      name: "Wild One",
+      fame: 75,
+      lifetimeEarnings: 300_000,
+      careerStarts: 10,
+      careerWins: 8,
+      raceHistory: [G1_RACE],
+      gender: "horse" as const,
+      age: 5,
+    });
+    const ctx = makeContext({ horses: h2r([horse]) }, [
+      { type: "pasture_retirement", horseId: horse.id },
+    ]);
+    const out = pastureRetirementPhase.execute(ctx);
+    const inboxMsgs = findInboxMessages(out.impacts);
+
+    expect(inboxMsgs.length).toBe(0);
+  });
 });
 
 describe("Stud Retirement — commemorative inbox", () => {
@@ -170,6 +195,32 @@ describe("Stud Retirement — commemorative inbox", () => {
 
     expect(inboxMsgs.length).toBe(0);
   });
+
+  it("does NOT create an inbox_message for an unowned horse", () => {
+    const horse = createUnownedHorse({
+      id: "unowned-stud",
+      name: "Wild Champion",
+      fame: 75,
+      lifetimeEarnings: 300_000,
+      careerStarts: 10,
+      careerWins: 8,
+      raceHistory: [G1_RACE],
+      gender: "horse" as const,
+      age: 5,
+    });
+    const ctx = makeContext({ horses: h2r([horse]) }, [
+      {
+        type: "stud_retirement",
+        horseId: horse.id,
+        standingFee: 5000,
+        bookSize: 20,
+      },
+    ]);
+    const out = managementResolutionPhase.execute(ctx);
+    const inboxMsgs = findInboxMessages(out.impacts);
+
+    expect(inboxMsgs.length).toBe(0);
+  });
 });
 
 describe("Hall of Fame — commemorative inbox", () => {
@@ -191,6 +242,28 @@ describe("Hall of Fame — commemorative inbox", () => {
     const horse = createTestNpcHorse({
       id: "npc-hof",
       name: "NPC Legend",
+      fame: 90,
+      lifetimeEarnings: 800_000,
+      careerStarts: 20,
+      careerWins: 15,
+      raceHistory: [
+        { ...G1_RACE, raceId: "g1-1", day: 10 },
+        { ...G1_RACE, raceId: "g1-2", day: 50 },
+        { ...G1_RACE, raceId: "g1-3", day: 100 },
+      ],
+      lifecycleStatus: "retired" as const,
+    });
+    const ctx = makeContext({ horses: h2r([horse]), hallOfFame: [] });
+    const out = hallOfFamePhase.execute(ctx);
+    const inboxMsgs = findInboxMessages(out.impacts);
+
+    expect(inboxMsgs.length).toBe(0);
+  });
+
+  it("does NOT create an inbox_message for an unowned HOF-eligible horse", () => {
+    const horse = createUnownedHorse({
+      id: "unowned-hof",
+      name: "Wild Legend",
       fame: 90,
       lifetimeEarnings: 800_000,
       careerStarts: 20,

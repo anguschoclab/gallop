@@ -14,6 +14,7 @@
 import { PHASE_ORDER_HALL_OF_FAME } from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { getCareerStats } from "@/core/horse/stats";
+import { isPlayerOwned } from "@/core/horse/ownership";
 import type {
   AnyImpact,
   HallOfFameInductionImpact,
@@ -121,7 +122,7 @@ export const hallOfFamePhase: PipelinePhase = {
       } as LogImpact);
 
       // Emit inbox message for player-owned horses
-      if (!horse.stableId) {
+      if (isPlayerOwned(horse)) {
         impacts.push({
           id: generateUUID(),
           intentId: "",

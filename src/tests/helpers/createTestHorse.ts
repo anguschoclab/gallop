@@ -239,3 +239,11 @@ export function createTestNpcHorse(overrides?: Partial<Horse>): Horse {
     ...overrides,
   });
 }
+
+export function createUnownedHorse(overrides?: Partial<Horse>): Horse {
+  return createTestHorse({
+    owned: false,
+    stableId: undefined,
+    ...overrides,
+  });
+}

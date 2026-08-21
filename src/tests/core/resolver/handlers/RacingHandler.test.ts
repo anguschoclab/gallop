@@ -26,7 +26,7 @@ describe("RacingHandler", () => {
   it("race_entry adds entry to race", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: h2r([{ id: "h1", name: "Star", stableId: "" }] as unknown as Horse[]),
+      horses: h2r([{ id: "h1", name: "Star", stableId: "", owned: true }] as unknown as Horse[]),
       races: r2r([{ id: "race-1", entries: [], entryFee: 1000 }] as unknown as Race[]),
     } as unknown as GameState;
 
@@ -52,6 +52,38 @@ describe("RacingHandler", () => {
     expect(draft.races["race-1"].entries[0].horseId).toBe("h1");
     expect(draft.races["race-1"].entries[0].jockeyId).toBe("j1");
     expect(draft.races["race-1"].entries[0].owned).toBe(true);
+  });
+
+  it("race_entry for unowned horse sets owned: false, npc: false", () => {
+    const handler = new RacingHandler();
+    const state = {
+      horses: h2r([
+        { id: "h-unowned", name: "Wild", stableId: undefined, owned: false },
+      ] as unknown as Horse[]),
+      races: r2r([{ id: "race-1", entries: [], entryFee: 1000 }] as unknown as Race[]),
+    } as unknown as GameState;
+
+    const impact: RaceEntryImpact = {
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "race_entry",
+      raceId: "race-1",
+      horseId: "h-unowned",
+      jockeyId: "j1",
+      weight: 120,
+      entryFee: 1000,
+      reason: "Entered race",
+    };
+
+    const draft = JSON.parse(JSON.stringify(state));
+    handler.handle(draft, impact);
+
+    expect(draft.races["race-1"].entries[0].horseId).toBe("h-unowned");
+    expect(draft.races["race-1"].entries[0].owned).toBe(false);
+    expect(draft.races["race-1"].entries[0].npc).toBe(false);
   });
 
   it("race_withdrawal removes entry from race", () => {

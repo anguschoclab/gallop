@@ -13,4 +13,5 @@ export {
   createTestGelding,
   createTestHorses,
   createTestNpcHorse,
+  createUnownedHorse,
 } from "./createTestHorse";

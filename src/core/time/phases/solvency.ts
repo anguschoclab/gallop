@@ -19,6 +19,7 @@ import {
   selectForcedSaleHorse,
 } from "@/core/financial/solvency";
 import { PHASE_ORDER_SOLVENCY } from "@/constants";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 const MAX_AUDIT_ENTRIES = 200;
 
@@ -145,7 +146,7 @@ export const solvencyPhase = {
 
     if (solvency.tier === "forced_sale") {
       const candidates = Object.values(state.horses)
-        .filter((h) => !h.stableId && h.owned !== false)
+        .filter((h) => isPlayerOwned(h))
         .map((h) => ({
           id: h.id,
           owned: true,
@@ -248,7 +249,7 @@ export const solvencyPhase = {
     } as typeof state;
 
     if (solvency.tier === "insolvent") {
-      const playerHorses = Object.values(state.horses).filter((h) => !h.stableId);
+      const playerHorses = Object.values(state.horses).filter((h) => isPlayerOwned(h));
       const lifetimeEarnings = playerHorses.reduce(
         (sum, h) => sum + (h.raceHistory ?? []).reduce((s, r) => s + (r.purseEarned ?? 0), 0),
         0,

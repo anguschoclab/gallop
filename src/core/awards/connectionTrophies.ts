@@ -10,6 +10,7 @@
  */
 
 import type { GameState, Horse, Race } from "@/game/types";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 export interface G1WinEntry {
   raceId?: string;
@@ -77,7 +78,7 @@ export function getG1WinsForStable(
   const wantPlayer = !stableId;
   for (const horse of Object.values(state.horses || {})) {
     const horseStable = (horse as Horse).stableId;
-    if (wantPlayer ? horseStable : horseStable !== stableId) continue;
+    if (wantPlayer ? !isPlayerOwned(horse) : horseStable !== stableId) continue;
     for (const r of horse.raceHistory || []) {
       if (!isWinningG1(r)) continue;
       out.push({

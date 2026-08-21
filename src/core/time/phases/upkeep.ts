@@ -9,6 +9,7 @@
  */
 
 import type { PipelineContext } from "../pipeline";
+import { isPlayerOwned } from "@/core/horse/ownership";
 import { createExpense } from "@/core/expenses";
 import { createTransaction } from "@/core/transactions";
 import { calculateTotalMaintenance } from "@/core/facilities";
@@ -49,7 +50,7 @@ export const upkeepPhase = {
     const impacts: AnyImpact[] = [];
 
     const playerHorses = Object.values(state.horses).filter(
-      (h) => !h.stableId && (!h.lifecycleStatus || h.lifecycleStatus === "active"),
+      (h) => isPlayerOwned(h) && (!h.lifecycleStatus || h.lifecycleStatus === "active"),
     );
     const playerHorseCount = playerHorses.length;
     const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;

@@ -4,7 +4,7 @@
 
 import { describe, it, expect } from "vitest";
 import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution";
-import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { createTestHorse, createUnownedHorse } from "@/tests/helpers/createTestHorse";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
@@ -779,6 +779,54 @@ describe("raceEntryResolutionPhase", () => {
       const entryImpact = result.impacts.find((i) => i.type === "race_entry") as any;
       expect(entryImpact).toBeDefined();
       expect(entryImpact.jockeyId).toBe("j-retainer");
+    });
+  });
+
+  describe("unowned horse transport cost", () => {
+    it("should NOT charge transport cost for an unowned horse", () => {
+      const horse = createUnownedHorse({ id: "unowned-1" });
+      const state: GameState = {
+        ...createTestState(),
+        horses: h2r([horse]),
+        races: r2r([
+          {
+            id: "race-1",
+            name: "Test Race",
+            day: 5,
+            distance: 2000,
+            raceClass: "Maiden",
+            entryFee: 500,
+            purse: 10000,
+            minStat: 70,
+            fieldSize: 8,
+            entries: [],
+            resolved: false,
+          },
+        ]),
+      };
+
+      const intent: RaceEntryIntent = {
+        id: "intent-1",
+        day: 1,
+        type: "race_entry",
+        entityId: "unowned-1",
+        priority: 100,
+        source: "player",
+        horseId: "unowned-1",
+        raceId: "race-1",
+      };
+
+      const context = createTestContext(state, [intent]);
+      const result = raceEntryResolutionPhase.execute(context);
+
+      // Should have race_entry impact but NO cash_change for transport
+      const entryImpact = result.impacts.find((i) => i.type === "race_entry");
+      expect(entryImpact).toBeDefined();
+
+      const transportImpact = result.impacts.find(
+        (i) => i.type === "cash_change" && (i as any).reason?.includes("Transport"),
+      );
+      expect(transportImpact).toBeUndefined();
     });
   });
 

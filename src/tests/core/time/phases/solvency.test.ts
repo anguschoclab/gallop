@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { solvencyPhase } from "@/core/time/phases/solvency";
 import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleGameState";
-import { createTestHorse } from "@/tests/helpers";
+import { createTestHorse, createUnownedHorse } from "@/tests/helpers";
 import type { GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 
@@ -84,5 +84,46 @@ describe("solvencyPhase", () => {
 
     const result = solvencyPhase.execute(context);
     expect(result.state.solvencyAuditLog!.length).toBeLessThanOrEqual(200);
+  });
+
+  it("should NOT seize unowned horse in forced sale", () => {
+    const unowned = createUnownedHorse({
+      id: "unowned-valuable",
+      name: "Wild Treasure",
+      age: 4,
+      stats: {
+        speed: 90,
+        stamina: 90,
+        acceleration: 90,
+        consistency: 90,
+        temperament: 90,
+        conformation: 90,
+      } as any,
+    });
+    const state = makeGameState({
+      cash: -30000,
+      consecutiveDaysInDebt: 8,
+      horses: h2r([unowned]),
+    }) as GameState;
+    const context = makePipelineContext({ state, newDay: 10 }) as PipelineContext;
+
+    const result = solvencyPhase.execute(context);
+    const transferImpact = result.impacts.find((i) => i.type === "horse_transfer");
+    expect(transferImpact).toBeUndefined();
+  });
+
+  it("should NOT count unowned horse in insolvency horse count", () => {
+    const playerHorse = createTestHorse({ id: "player-h1", owned: true });
+    const unowned = createUnownedHorse({ id: "unowned-h1" });
+    const state = makeGameState({
+      cash: -110000,
+      consecutiveDaysInDebt: 10,
+      horses: h2r([playerHorse, unowned]),
+    }) as GameState;
+    const context = makePipelineContext({ state, newDay: 10 }) as PipelineContext;
+
+    const result = solvencyPhase.execute(context);
+    expect(result.state.runEnded).toBe(true);
+    expect(result.state.runEndSnapshot?.horsesOwned).toBe(1);
   });
 });

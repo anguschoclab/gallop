@@ -11,6 +11,7 @@
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { getCareerStats } from "@/core/horse/stats";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 // Pasture Retirement Phase
 // Automatically retires NPC horses to pasture based on age and inactivity
@@ -80,7 +81,7 @@ export const pastureRetirementPhase: PipelinePhase = {
           reason: "Player pasture retirement",
         } as LogImpact);
 
-        if (!horse.stableId && isTopHorse(horse)) {
+        if (isPlayerOwned(horse) && isTopHorse(horse)) {
           const hofEligible = isHallOfFameEligible(horse);
           impacts.push({
             id: generateUUID(),

@@ -29,6 +29,7 @@ import { generateUUID } from "@/core/uuid";
 import { createRng, hashStr } from "@/core/common/rng";
 import { scoutHorse } from "@/core/npc/scouting";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
+import { isPlayerOwned } from "@/core/horse/ownership";
 import {
   isTopHorse,
   isHallOfFameEligible,
@@ -128,7 +129,7 @@ export function resolveHorseIntent(
       } as StudCareerImpact);
 
       const horse = horseMap.get(typedIntent.horseId);
-      if (horse && !horse.stableId && isTopHorse(horse)) {
+      if (horse && isPlayerOwned(horse) && isTopHorse(horse)) {
         const hofEligible = isHallOfFameEligible(horse);
         impacts.push({
           id: generateUUID(dailyRng),

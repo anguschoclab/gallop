@@ -33,6 +33,7 @@ import type { TripleCrownProgressImpact } from "../impacts/campaignImpacts";
 import type { LookupMaps } from "./types";
 import { awardTraitXp, checkTraitUnlock, checkTraitAtrophy } from "@/core/jockey/traitProgression";
 import type { JockeyTrait } from "@/core/jockey/types";
+import { isPlayerOwned, isNpcOwned } from "@/core/horse/ownership";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -65,9 +66,9 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       }
       race.entries.push({
         horseId,
-        owned: !horse.stableId,
+        owned: isPlayerOwned(horse),
         stableId: horse.stableId,
-        npc: !!horse.stableId,
+        npc: isNpcOwned(horse),
         jockeyId,
         weight,
         jockeyInstructions,
