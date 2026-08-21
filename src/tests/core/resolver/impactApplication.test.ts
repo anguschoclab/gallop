@@ -8,6 +8,7 @@ import type { GameState } from "@/game/types";
 import { createDefaultGameState } from "@/game/store/state";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { asHorseId, asStableId, asPlayerOwnerId, asOwnerKey } from "@/core/types/branded";
 import type {
   AnyImpact,
   CashImpact,
@@ -33,7 +34,7 @@ describe("applyImpacts", () => {
       phase: "test",
       logLevel: "always",
       type: "cash_change",
-      entityId: "player",
+      entityId: asPlayerOwnerId("player"),
       amount: 500,
       reason: "Test cash change",
     };
@@ -54,7 +55,7 @@ describe("applyImpacts", () => {
 
   it("should apply cash change impact to NPC stable", () => {
     const npcStable = createTestStable({
-      id: "npc-1",
+      id: asStableId("npc-1"),
       name: "Test Stable",
       owner: "Test Owner",
       tier: "mid",
@@ -76,7 +77,7 @@ describe("applyImpacts", () => {
       phase: "test",
       logLevel: "always",
       type: "cash_change",
-      entityId: "npc-1",
+      entityId: asOwnerKey("npc-1"),
       amount: 500,
       reason: "Test cash change",
     };
@@ -102,7 +103,7 @@ describe("applyImpacts", () => {
       phase: "test",
       logLevel: "always",
       type: "cash_change",
-      entityId: "player",
+      entityId: asPlayerOwnerId("player"),
       amount: -20000,
       reason: "Test cash change",
     };
@@ -121,7 +122,7 @@ describe("applyImpacts", () => {
 
   it("should apply horse stat change impact", () => {
     const horse = createTestHorse({
-      id: "horse-1",
+      id: asHorseId("horse-1"),
       stats: {
         speed: 80,
         stamina: 75,
@@ -145,7 +146,7 @@ describe("applyImpacts", () => {
       phase: "test",
       logLevel: "always",
       type: "horse_stat_change",
-      horseId: "horse-1",
+      horseId: asHorseId("horse-1"),
       stat: "speed",
       delta: 5,
       reason: "Training",
@@ -165,7 +166,7 @@ describe("applyImpacts", () => {
 
   it("should clamp horse stat to potential", () => {
     const horse = createTestHorse({
-      id: "horse-1",
+      id: asHorseId("horse-1"),
       stats: {
         speed: 85,
         stamina: 75,
@@ -189,7 +190,7 @@ describe("applyImpacts", () => {
       phase: "test",
       logLevel: "always",
       type: "horse_stat_change",
-      horseId: "horse-1",
+      horseId: asHorseId("horse-1"),
       stat: "speed",
       delta: 10,
       reason: "Training",
@@ -209,7 +210,7 @@ describe("applyImpacts", () => {
 
   it("should apply energy change impact", () => {
     const horse = createTestHorse({
-      id: "horse-1",
+      id: asHorseId("horse-1"),
       stats: {
         speed: 80,
         stamina: 75,
@@ -234,7 +235,7 @@ describe("applyImpacts", () => {
       phase: "test",
       logLevel: "always",
       type: "energy_change",
-      horseId: "horse-1",
+      horseId: asHorseId("horse-1"),
       delta: -25,
       reason: "Race",
     };
@@ -253,7 +254,7 @@ describe("applyImpacts", () => {
 
   it("should clamp energy between 0 and 100", () => {
     const horse = createTestHorse({
-      id: "horse-1",
+      id: asHorseId("horse-1"),
       stats: {
         speed: 80,
         stamina: 75,
@@ -278,7 +279,7 @@ describe("applyImpacts", () => {
       phase: "test",
       logLevel: "always",
       type: "energy_change",
-      horseId: "horse-1",
+      horseId: asHorseId("horse-1"),
       delta: -100,
       reason: "Race",
     };
@@ -290,7 +291,7 @@ describe("applyImpacts", () => {
       phase: "test",
       logLevel: "always",
       type: "energy_change",
-      horseId: "horse-1",
+      horseId: asHorseId("horse-1"),
       delta: 200,
       reason: "Rest",
     };
@@ -321,7 +322,7 @@ describe("applyImpacts", () => {
   it("should apply horse creation impact", () => {
     const state = createTestState();
     const horse = createTestHorse({
-      id: "horse-1",
+      id: asHorseId("horse-1"),
       stats: {
         speed: 80,
         stamina: 75,
@@ -359,7 +360,7 @@ describe("applyImpacts", () => {
 
   it("should apply horse transfer impact", () => {
     const horse = createTestHorse({
-      id: "horse-1",
+      id: asHorseId("horse-1"),
       stats: {
         speed: 80,
         stamina: 75,
@@ -369,7 +370,6 @@ describe("applyImpacts", () => {
         conformation: 50,
       },
       potential: 90,
-      stableId: undefined,
       ownership: { type: "player" },
     });
 
@@ -385,9 +385,9 @@ describe("applyImpacts", () => {
       phase: "test",
       logLevel: "always",
       type: "horse_transfer",
-      horseId: "horse-1",
+      horseId: asHorseId("horse-1"),
       fromStableId: undefined,
-      toStableId: "npc-1",
+      toStableId: asStableId("npc-1"),
       price: 5000,
       reason: "Sale",
     };
@@ -401,12 +401,15 @@ describe("applyImpacts", () => {
     };
 
     const result = applyImpacts(context);
-    expect(Object.values(result.state.horses)[0].ownership).toEqual({ type: "npc", stableId: "npc-1" });
+    expect(Object.values(result.state.horses)[0].ownership).toEqual({
+      type: "npc",
+      stableId: "npc-1",
+    });
   });
 
   it("should apply multiple impacts in order", () => {
     const horse = createTestHorse({
-      id: "horse-1",
+      id: asHorseId("horse-1"),
       stats: {
         speed: 80,
         stamina: 75,
@@ -431,7 +434,7 @@ describe("applyImpacts", () => {
         phase: "test",
         logLevel: "always",
         type: "energy_change",
-        horseId: "horse-1",
+        horseId: asHorseId("horse-1"),
         delta: -25,
         reason: "Race",
       },
@@ -442,7 +445,7 @@ describe("applyImpacts", () => {
         phase: "test",
         logLevel: "always",
         type: "horse_stat_change",
-        horseId: "horse-1",
+        horseId: asHorseId("horse-1"),
         stat: "speed",
         delta: 2,
         reason: "Training",
@@ -472,7 +475,7 @@ describe("applyImpacts", () => {
       phase: "test",
       logLevel: "never",
       type: "cash_change",
-      entityId: "player",
+      entityId: asPlayerOwnerId("player"),
       amount: 500,
       reason: "Test cash change",
     };
@@ -500,7 +503,7 @@ describe("applyImpacts", () => {
       phase: "test",
       logLevel: "always",
       type: "cash_change",
-      entityId: "player",
+      entityId: asPlayerOwnerId("player"),
       amount: 500,
       reason: "Test cash change",
     };

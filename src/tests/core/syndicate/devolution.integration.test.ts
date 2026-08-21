@@ -4,10 +4,11 @@ import type { GameState } from "@/game/types";
 import type { Horse } from "@/game/types";
 import type { ShareTransactionImpact } from "@/core/resolver/impacts/breedingImpacts";
 import { h2r } from "@/tests/helpers/sampleGameState";
+import { asOwnerKey, asHorseId } from "@/core/types/branded";
 
 function makeStallion(id: string, name: string, stableId?: string): Horse {
   return {
-    id,
+    id: asHorseId(id),
     name,
     gender: "horse",
     age: 8,
@@ -95,9 +96,9 @@ function makePurchaseImpact(
     logLevel: "conditional",
     type: "share_transaction",
     syndicateId,
-    stableId: buyerId,
-    buyerStableId: buyerId,
-    sellerStableId: "treasury",
+    stableId: asOwnerKey(buyerId),
+    buyerStableId: asOwnerKey(buyerId),
+    sellerStableId: asOwnerKey("treasury"),
     shares,
     pricePerShare,
     reason: "Purchase",
@@ -119,9 +120,9 @@ function makeSaleImpact(
     logLevel: "conditional",
     type: "share_transaction",
     syndicateId,
-    stableId: sellerId,
-    buyerStableId: "market",
-    sellerStableId: sellerId,
+    stableId: asOwnerKey(sellerId),
+    buyerStableId: asOwnerKey("market"),
+    sellerStableId: asOwnerKey(sellerId),
     shares: -shares,
     pricePerShare,
     reason: "Sale",
