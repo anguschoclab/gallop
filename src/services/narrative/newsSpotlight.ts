@@ -4,6 +4,7 @@ import type { NewsItem } from "@/services/narrative/newsTypes";
 import type { Race, Horse } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
 import { GRADE_S_THRESHOLD } from "@/constants";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 /**
  * Generates a spotlight news item when a horse with an overall rating of 90+
@@ -117,7 +118,7 @@ export function generateFollowUpRaceNews(
   const grade = race.graded?.grade;
   if (grade !== "G1" && grade !== "G2") return null;
   if (position < 1 || position > 3) return null;
-  if (horse.stableId) return null;
+  if (!isPlayerOwned(horse)) return null;
 
   const positionLabel =
     position === 1 ? "victory" : position === 2 ? "runner-up finish" : "third-place finish";

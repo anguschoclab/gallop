@@ -10,6 +10,7 @@ import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import type { Race, Horse } from "@/game/types";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 export function generateTrainerStatsImpact(
   horse: Horse,
@@ -19,9 +20,11 @@ export function generateTrainerStatsImpact(
   newDay: number,
   rng?: Rng,
 ): TrainerStatsImpact | null {
-  const horseStableId = horse.stableId || (horse.owned ? "" : undefined);
+  const playerOwned = isPlayerOwned(horse);
   const assignedTrainer = hiredStaff.find(
-    (s) => s.role === "trainer" && (horse.owned ? !s.stableId : s.stableId === horseStableId),
+    (s) =>
+      s.role === "trainer" &&
+      (playerOwned ? !s.stableId : !!horse.stableId && s.stableId === horse.stableId),
   );
   if (!assignedTrainer) return null;
 

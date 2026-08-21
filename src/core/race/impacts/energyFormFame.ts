@@ -10,6 +10,7 @@ import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { RACE_ENERGY_IMPACT } from "@/constants";
 import type { Horse } from "@/game/types";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 export function generateEnergyImpact(horseId: string, newDay: number, rng?: Rng): EnergyImpact {
   return {
@@ -32,8 +33,12 @@ export function generateFormImpact(
   hiredStaff: StaffMember[],
   rng?: Rng,
 ): FormImpact {
-  const stableId = horse.stableId || "";
-  const groom = hiredStaff.find((s) => s.role === "groom" && s.stableId === stableId);
+  const playerOwned = isPlayerOwned(horse);
+  const groom = hiredStaff.find(
+    (s) =>
+      s.role === "groom" &&
+      (playerOwned ? !s.stableId : !!horse.stableId && s.stableId === horse.stableId),
+  );
 
   const baseFormDelta =
     position === 1 ? 3 : position === 2 ? 2 : position === 3 ? 1 : position <= 5 ? 0 : -1;

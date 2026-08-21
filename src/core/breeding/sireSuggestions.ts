@@ -2,6 +2,7 @@ import type { Horse } from "@/game/types";
 import { calculateBreedingCompatibility } from "@/core/breeding/compatibility";
 import { BREEDING_FEE } from "@/constants";
 import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 export interface SireSuggestion {
   stallion: Horse;
@@ -37,7 +38,7 @@ export function suggestBestSires(
 
   const scored = candidates.map((stallion) => {
     const compat = calculateBreedingCompatibility(stallion, mare);
-    const isExternal = !!stallion.stableId;
+    const isExternal = !isPlayerOwned(stallion);
     const fee = isExternal ? BREEDING_FEE + stallion.stud!.standingFee : 0;
     return {
       stallion,

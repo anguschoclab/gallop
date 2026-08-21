@@ -26,6 +26,7 @@ import { SOLVENCY_THRESHOLDS, deriveSolvencyState } from "@/core/financial/solve
 import type { StoreSet, StoreGet } from "../types";
 import { createRaceEntryActions } from "./raceEntryActions";
 import { createAdvanceDayActions } from "./advanceDayActions";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 export type CoreSlice = CoreState & {
   enqueueIntent: (intent: AnyIntent) => void;
@@ -174,7 +175,7 @@ export function createCoreSlice(
       if (!horse) {
         return { ok: false, reason: "Horse not found" };
       }
-      if (horse.owned === false || horse.stableId) {
+      if (!isPlayerOwned(horse)) {
         return { ok: false, reason: "Horse is not owned by player" };
       }
       if (horse.age <= 0) {

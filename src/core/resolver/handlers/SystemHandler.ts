@@ -152,8 +152,9 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { delta, reason, source, metadata } = repImpact;
     if (draft.reputation) {
       const newEvent = createReputationEvent(source, delta, reason, impact.day, metadata);
+      if (!draft.reputation.events) draft.reputation.events = [];
       draft.reputation.events.push(newEvent);
-      draft.reputation.score += delta;
+      draft.reputation.score = (draft.reputation.score ?? 0) + delta;
       draft.reputation.tier = getReputationTier(draft.reputation.score);
       if (source === "race_win") {
         draft.reputation.totalWins += 1;

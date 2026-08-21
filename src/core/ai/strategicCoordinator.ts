@@ -17,6 +17,7 @@ import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import type { FinancialDistressState } from "./financialDistressAI";
 import { getDistressDirective } from "./financialDistressAI";
 import { DISTRESS_BUDGET_MULTIPLIER } from "@/constants/financialDistressConstants";
+import { isPlayerOwned, isNpcOwned } from "@/core/horse/ownership";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -97,8 +98,8 @@ export function assessWorldState(state: GameState, manager: NpcAIManager): World
   const npcStables = state.npcStables ?? [];
 
   // Player dominance: share of total horse count + cash relative to all stables
-  const playerHorses = allHorses.filter((h) => !h.stableId || h.stableId === "player");
-  const npcHorses = allHorses.filter((h) => h.stableId && h.stableId !== "player");
+  const playerHorses = allHorses.filter((h) => isPlayerOwned(h));
+  const npcHorses = allHorses.filter((h) => isNpcOwned(h));
   const totalHorses = allHorses.length || 1;
   const horseShare = playerHorses.length / totalHorses;
 

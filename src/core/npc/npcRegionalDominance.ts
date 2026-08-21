@@ -14,6 +14,7 @@ import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";
 import { generateUUID } from "@/core/uuid";
 import type { NewsItem } from "@/services/narrative/newsTypes";
+import { isPlayerOwned } from "@/core/horse/ownership";
 import {
   generateRivalryEmergenceNews,
   generateGrudgeMatchNews,
@@ -94,7 +95,10 @@ export function processRegionalDominance(
 
       const winningHorse = horseMap.get(winner.horseId);
       if (!winningHorse) continue;
-      const winningStableId = winningHorse.stableId || "player";
+      const winningStableId = isPlayerOwned(winningHorse)
+        ? "player"
+        : winningHorse.stableId;
+      if (!winningStableId) continue;
 
       if (winningStableId === currentKingId) {
         if (currentKingId !== "player") {
