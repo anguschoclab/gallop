@@ -213,7 +213,7 @@ describe("Phase 1.5 — NPC AI 7-day cycle", () => {
     const horse = createTestHorse({
       id: "h1",
       stableId: "npc-1",
-      owned: false,
+      ownership: { type: "unowned" },
       age: 3,
       energy: 80,
     });
@@ -356,7 +356,7 @@ describe("Phase 1.5 — Multi-day advance (30 days)", () => {
     const horse = createTestHorse({
       id: "h1",
       stableId: "npc-1",
-      owned: false,
+      ownership: { type: "unowned" },
       age: 3,
       energy: 80,
     });

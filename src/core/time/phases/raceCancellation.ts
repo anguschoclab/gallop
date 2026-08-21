@@ -58,7 +58,7 @@ export const raceCancellationPhase: PipelinePhase = {
 
       // Refund entry fees for all entries
       for (const entry of race.entries) {
-        const entityId = entry.owned ? "" : (entry.stableId ?? "");
+        const entityId = entry.ownership?.type === "npc" ? entry.ownership.stableId : "";
         impacts.push({
           id: generateUUID(),
           intentId: "",
@@ -73,7 +73,7 @@ export const raceCancellationPhase: PipelinePhase = {
       }
 
       // Send inbox notification if any player-owned entry
-      const hasPlayerEntry = race.entries.some((e) => e.owned);
+      const hasPlayerEntry = race.entries.some((e) => e.ownership?.type === "player");
       if (hasPlayerEntry) {
         impacts.push({
           id: generateUUID(),

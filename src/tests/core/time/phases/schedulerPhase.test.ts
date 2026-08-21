@@ -23,7 +23,7 @@ describe("schedulerPhase", () => {
   });
 
   it("should skip campaigns for non-owned horses", () => {
-    const horse = createTestHorse({ id: "horse-1", owned: false });
+    const horse = createTestHorse({ id: "horse-1", ownership: { type: "unowned" } });
     const campaign = {
       id: "camp-1",
       horseId: "horse-1",

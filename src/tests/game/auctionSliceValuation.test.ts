@@ -53,7 +53,7 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // 1: Yearling colt default reserve
   // ---------------------------------------------------------------------------
   it("yearling colt (age 1) default reserve ≈ horseMarketValue * 0.7", () => {
-    const horse = createTestColt({ id: "h1", age: 1, owned: true });
+    const horse = createTestColt({ id: "h1", age: 1, ownership: { type: "player" } });
     seedStore([horse]);
 
     const expectedBase = horseMarketValue(horse, [horse]);
@@ -73,7 +73,7 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
     const stallion = createTestStallion({
       id: "h1",
       age: 5,
-      owned: true,
+      ownership: { type: "player" },
       stud: {
         atStud: true,
         standingFee: 50000,
@@ -103,7 +103,7 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // 3: Gelding — reserve is purely racing-based (no breeding value)
   // ---------------------------------------------------------------------------
   it("gelding reserve is purely racing-based (breeding value = 0)", () => {
-    const gelding = createTestGelding({ id: "h1", age: 5, owned: true });
+    const gelding = createTestGelding({ id: "h1", age: 5, ownership: { type: "player" } });
     seedStore([gelding]);
 
     const valuation = horseCareerValuation(gelding, [gelding]);
@@ -127,7 +127,7 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
     const mare = createTestMare({
       id: "h1",
       age: 8,
-      owned: true,
+      ownership: { type: "player" },
       lifecycleStatus: "retired",
       racingViable: false,
       isBlueHen: true,
@@ -159,7 +159,7 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // 5: Explicit reserve override
   // ---------------------------------------------------------------------------
   it("explicit reservePrice override is used instead of default", () => {
-    const horse = createTestColt({ id: "h1", age: 3, owned: true });
+    const horse = createTestColt({ id: "h1", age: 3, ownership: { type: "player" } });
     seedStore([horse]);
 
     const explicitReserve = 99999;
@@ -174,7 +174,7 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // 6: Already-consigned horse
   // ---------------------------------------------------------------------------
   it("already-consigned horse returns error", () => {
-    const horse = createTestColt({ id: "h1", age: 3, owned: true, consignedSaleId: "other-sale" });
+    const horse = createTestColt({ id: "h1", age: 3, ownership: { type: "player" }, consignedSaleId: "other-sale" });
     seedStore([horse]);
 
     const result = useGame.getState().consignHorse("h1", "sale1");
@@ -186,7 +186,7 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // 7: Resolved sale
   // ---------------------------------------------------------------------------
   it("resolved sale returns error", () => {
-    const horse = createTestColt({ id: "h1", age: 3, owned: true });
+    const horse = createTestColt({ id: "h1", age: 3, ownership: { type: "player" } });
     seedStore([horse], { auctions: [mkSale({ resolved: true })] });
 
     const result = useGame.getState().consignHorse("h1", "sale1");
@@ -198,7 +198,7 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // 8: Non-owned horse
   // ---------------------------------------------------------------------------
   it("non-owned horse returns error", () => {
-    const horse = createTestColt({ id: "h1", age: 3, owned: false });
+    const horse = createTestColt({ id: "h1", age: 3, ownership: { type: "unowned" } });
     seedStore([horse]);
 
     const result = useGame.getState().consignHorse("h1", "sale1");
@@ -210,7 +210,7 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // 9: Missing sale
   // ---------------------------------------------------------------------------
   it("missing sale returns error", () => {
-    const horse = createTestColt({ id: "h1", age: 3, owned: true });
+    const horse = createTestColt({ id: "h1", age: 3, ownership: { type: "player" } });
     seedStore([horse], { auctions: [] });
 
     const result = useGame.getState().consignHorse("h1", "no-such-sale");
@@ -222,7 +222,7 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // 10: Withdraw consignment enqueues withdrawal intent
   // ---------------------------------------------------------------------------
   it("withdrawConsignment enqueues consignment_withdrawal intent", () => {
-    const horse = createTestColt({ id: "h1", age: 3, owned: true, consignedSaleId: "sale1" });
+    const horse = createTestColt({ id: "h1", age: 3, ownership: { type: "player" }, consignedSaleId: "sale1" });
     seedStore([horse]);
 
     const result = useGame.getState().withdrawConsignment("h1");
@@ -240,10 +240,10 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // ---------------------------------------------------------------------------
   it("reserve for all genders equals round(horseMarketValue * 0.7)", () => {
     const horses = [
-      createTestColt({ id: "colt1", age: 1, owned: true }),
-      createTestStallion({ id: "stallion1", age: 5, owned: true }),
-      createTestMare({ id: "mare1", age: 6, owned: true }),
-      createTestGelding({ id: "gelding1", age: 4, owned: true }),
+      createTestColt({ id: "colt1", age: 1, ownership: { type: "player" } }),
+      createTestStallion({ id: "stallion1", age: 5, ownership: { type: "player" } }),
+      createTestMare({ id: "mare1", age: 6, ownership: { type: "player" } }),
+      createTestGelding({ id: "gelding1", age: 4, ownership: { type: "player" } }),
     ];
 
     for (const horse of horses) {
@@ -266,7 +266,7 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // 12: Filly (age 3) default reserve
   // ---------------------------------------------------------------------------
   it("filly (age 3) default reserve ≈ horseMarketValue * 0.7", () => {
-    const filly = createTestFilly({ id: "h1", age: 3, owned: true });
+    const filly = createTestFilly({ id: "h1", age: 3, ownership: { type: "player" } });
     seedStore([filly]);
 
     const expectedBase = horseMarketValue(filly, [filly]);
@@ -283,7 +283,7 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // 13: Older active stallion (age 8) reserve
   // ---------------------------------------------------------------------------
   it("older active stallion (age 8) default reserve ≈ horseMarketValue * 0.7", () => {
-    const stallion = createTestStallion({ id: "h1", age: 8, owned: true });
+    const stallion = createTestStallion({ id: "h1", age: 8, ownership: { type: "player" } });
     seedStore([stallion]);
 
     const expectedBase = horseMarketValue(stallion, [stallion]);
@@ -303,7 +303,7 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
     const stallion = createTestStallion({
       id: "h1",
       age: 10,
-      owned: true,
+      ownership: { type: "player" },
       lifecycleStatus: "retired",
       racingViable: false,
       stud: {
@@ -341,11 +341,11 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // ---------------------------------------------------------------------------
   it("horseCareerValuation.current equals horseMarketValue for all genders", () => {
     const horses = [
-      createTestColt({ id: "colt1", age: 1, owned: true }),
-      createTestFilly({ id: "filly1", age: 3, owned: true }),
-      createTestStallion({ id: "stallion1", age: 5, owned: true }),
-      createTestMare({ id: "mare1", age: 6, owned: true }),
-      createTestGelding({ id: "gelding1", age: 4, owned: true }),
+      createTestColt({ id: "colt1", age: 1, ownership: { type: "player" } }),
+      createTestFilly({ id: "filly1", age: 3, ownership: { type: "player" } }),
+      createTestStallion({ id: "stallion1", age: 5, ownership: { type: "player" } }),
+      createTestMare({ id: "mare1", age: 6, ownership: { type: "player" } }),
+      createTestGelding({ id: "gelding1", age: 4, ownership: { type: "player" } }),
     ];
 
     for (const horse of horses) {
@@ -359,8 +359,8 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // 16: High fan count produces higher reserve than fanCount 0
   // ---------------------------------------------------------------------------
   it("horseMarketValue with high fanCount produces higher reserve than with fanCount 0", () => {
-    const h0 = createTestColt({ id: "h-fan-0", age: 3, owned: true, fanCount: 0 });
-    const hHigh = createTestColt({ id: "h-fan-high", age: 3, owned: true, fanCount: 100000 });
+    const h0 = createTestColt({ id: "h-fan-0", age: 3, ownership: { type: "player" }, fanCount: 0 });
+    const hHigh = createTestColt({ id: "h-fan-high", age: 3, ownership: { type: "player" }, fanCount: 100000 });
 
     const val0 = horseMarketValue(h0, [h0]);
     const valHigh = horseMarketValue(hHigh, [hHigh]);
@@ -372,8 +372,8 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // 17: horseCareerValuation.current with high fanCount produces higher value
   // ---------------------------------------------------------------------------
   it("horseCareerValuation.current with high fanCount produces higher value", () => {
-    const h0 = createTestColt({ id: "h-cv-0", age: 3, owned: true, fanCount: 0 });
-    const hHigh = createTestColt({ id: "h-cv-high", age: 3, owned: true, fanCount: 100000 });
+    const h0 = createTestColt({ id: "h-cv-0", age: 3, ownership: { type: "player" }, fanCount: 0 });
+    const hHigh = createTestColt({ id: "h-cv-high", age: 3, ownership: { type: "player" }, fanCount: 100000 });
 
     const cv0 = horseCareerValuation(h0, [h0]);
     const cvHigh = horseCareerValuation(hHigh, [hHigh]);

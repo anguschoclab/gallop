@@ -40,8 +40,10 @@ export function detectRaceBeats(
     const winnerHorse = horseMap.get(winner.horseId);
     if (!winnerHorse) continue;
 
-    if (!winnerHorse.stableId) continue;
-    const stableState = result.stableStates[winnerHorse.stableId];
+    if (!winnerHorse || winnerHorse.ownership?.type !== "npc") continue;
+    const winnerStableId = winnerHorse.ownership.stableId;
+
+    const stableState = result.stableStates[winnerStableId];
     if (!stableState?.narrativeState) continue;
 
     if (race.graded?.grade === "G1") {
@@ -51,7 +53,7 @@ export function detectRaceBeats(
         `${winnerHorse.name} Triumphs in ${race.name}`,
         `${winnerHorse.name} delivered a stunning performance to win the ${race.graded.grade} ${race.name}, cementing their stable's reputation on the biggest stage.`,
       );
-      result = addBeatToManager(result, winnerHorse.stableId, beat);
+      result = addBeatToManager(result, winnerStableId, beat);
     }
 
     const fieldHorses = race.result
@@ -79,7 +81,7 @@ export function detectRaceBeats(
           `Shock Result: ${winnerHorse.name} Stuns Field in ${race.name}`,
           `In a result few saw coming, ${winnerHorse.name} defied the odds to claim victory in ${race.name}, proving that heart and determination can overcome any disadvantage.`,
         );
-        result = addBeatToManager(result, winnerHorse.stableId, beat);
+        result = addBeatToManager(result, winnerStableId, beat);
       }
     }
 
@@ -99,7 +101,7 @@ export function detectRaceBeats(
           `${winnerHorse.name} on a Three-Race Win Streak`,
           `${winnerHorse.name} continues their dominant run with a third consecutive victory in ${race.name}. The racing world is taking notice of this remarkable streak.`,
         );
-        result = addBeatToManager(result, winnerHorse.stableId, beat);
+        result = addBeatToManager(result, winnerStableId, beat);
       }
     }
   }
@@ -123,20 +125,22 @@ export function detectDynastyBeats(
     if (!winner) continue;
 
     const winnerHorse = horseMap.get(winner.horseId);
-    if (!winnerHorse || !winnerHorse.stableId) continue;
+    if (!winnerHorse || winnerHorse.ownership?.type !== "npc") continue;
+    const winnerStableId = winnerHorse.ownership.stableId;
 
     const isHomebred =
       !!winnerHorse.sireId &&
       !!winnerHorse.damId &&
-      winnerHorse.raceHistory.every((rh) => rh.stableId === winnerHorse.stableId);
+      winnerHorse.raceHistory.every((rh) => rh.stableId === winnerStableId);
     if (!isHomebred) continue;
 
-    const stableState = result.stableStates[winnerHorse.stableId];
+    const stableState = result.stableStates[winnerStableId];
     if (!stableState?.narrativeState) continue;
 
     const homebredGradedWins = Array.from(horseMap.values()).filter(
       (h) =>
-        h.stableId === winnerHorse.stableId &&
+        h.ownership?.type === "npc" &&
+        h.ownership.stableId === winnerStableId &&
         !!h.sireId &&
         !!h.damId &&
         h.raceHistory.some((rh) => rh.grade && rh.position === 1),
@@ -153,7 +157,7 @@ export function detectDynastyBeats(
           `Breeding Dynasty: ${homebredGradedWins} Homebred Graded Winners`,
           `The breeding program at this stable has produced ${homebredGradedWins} graded race winners, establishing a true dynasty in the making.`,
         );
-        result = addBeatToManager(result, winnerHorse.stableId, beat);
+        result = addBeatToManager(result, winnerStableId, beat);
       }
     }
   }
@@ -176,9 +180,10 @@ export function detectComebackBeats(
     if (!winner) continue;
 
     const winnerHorse = horseMap.get(winner.horseId);
-    if (!winnerHorse || !winnerHorse.stableId) continue;
+    if (!winnerHorse || winnerHorse.ownership?.type !== "npc") continue;
+    const winnerStableId = winnerHorse.ownership.stableId;
 
-    const stableState = result.stableStates[winnerHorse.stableId];
+    const stableState = result.stableStates[winnerStableId];
     if (!stableState?.narrativeState) continue;
 
     const sortedHistory = [...winnerHorse.raceHistory].sort((a, b) => a.day - b.day);
@@ -195,7 +200,7 @@ export function detectComebackBeats(
         `Remarkable Comeback: ${winnerHorse.name} Returns to Win`,
         `After a ${gap}-day absence from the track, ${winnerHorse.age}-year-old ${winnerHorse.name} defied age and doubt to claim victory once more.`,
       );
-      result = addBeatToManager(result, winnerHorse.stableId, beat);
+      result = addBeatToManager(result, winnerStableId, beat);
     }
   }
 

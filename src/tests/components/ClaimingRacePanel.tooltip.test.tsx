@@ -31,7 +31,7 @@ const mkRace = (overrides: Partial<Race> = {}): Race =>
     purse: 10000,
     minStat: 70,
     fieldSize: 8,
-    entries: [{ horseId: "h1", owned: false, stableId: "s1" }],
+    entries: [{ horseId: "h1", ownership: { type: "npc", stableId: asNpcStableId("s1") } }],
     resolved: false,
     claiming: { price: 5000 },
     ...overrides,

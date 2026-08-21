@@ -67,7 +67,7 @@ export function computeSeasonStandings(
     for (const r of h.raceHistory ?? []) {
       const earned = r.purseEarned ?? computeFallbackPurse(r);
       if (!earned) continue;
-      const key = r.stableId || (h.owned ? PLAYER_ID : null);
+      const key = r.stableId || (h.ownership?.type === "player" ? PLAYER_ID : null);
       if (!key) continue;
       const b = bucket(key);
       if (r.day >= windowStart && r.day <= day) {

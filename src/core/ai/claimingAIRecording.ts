@@ -28,7 +28,7 @@ export function shouldClaimHorse(
   let valueScore = calculateClaimingValue(aiState, horse, race, stable);
   const riskScore = calculateClaimingRisk(aiState, horse, race);
 
-  if (horse.owned && friction && friction >= 50) {
+  if (horse.ownership?.type === "player" && friction && friction >= 50) {
     const frictionMultiplier = 1 + (friction - 50) / 100;
     valueScore *= frictionMultiplier;
   }

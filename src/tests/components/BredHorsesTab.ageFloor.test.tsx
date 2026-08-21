@@ -22,7 +22,7 @@ describe("BredHorsesTab — age floor", () => {
 
   it("displays age with Math.floor for float age", () => {
     const horse = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", owned: true }),
+      generateHorse({ tier: "starter", ownership: { type: "player" } }),
     ) as unknown as Horse;
     horse.age = 3.9;
     horse.bredByPlayer = true;

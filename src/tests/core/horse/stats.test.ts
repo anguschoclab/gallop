@@ -27,7 +27,7 @@ function mkHorse(
     form: 0,
     potential,
     raceHistory: [],
-    owned: false,
+    ownership: { type: "unowned" },
     fame: 0,
   });
 }

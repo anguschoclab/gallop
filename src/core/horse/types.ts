@@ -13,6 +13,8 @@ import type { Genotype, AppearanceDNA } from "@/core/genetics/types";
 import type { InsurancePolicy } from "../insurance/insuranceTypes";
 import type { PedigreeNode } from "../breeding/types";
 import type { InjurySeverity } from "@/core/health/healthSystem";
+import type { HorseId, JockeyId, StableId } from "@/core/types/branded";
+import type { HorseOwnership } from "@/core/horse/ownership";
 
 export type Hemisphere = "Northern" | "Southern";
 
@@ -129,12 +131,12 @@ export interface HorseRaceHistoryEntry {
   winAndYouInQualified?: { year: number; raceId: string; raceKey: string };
   pacePositions?: number[]; // Position at each quarter (1-indexed)
   courseVisitCount?: number; // Visit count at time of race
-  jockeyId?: string; // Jockey that rode the horse in this race
-  stableId?: string; // Owner stable at time of race
+  jockeyId?: JockeyId; // Jockey that rode the horse in this race
+  stableId?: StableId; // Owner stable at time of race
 }
 
 export type Horse = {
-  id: string;
+  id: HorseId;
   name: string;
   sireId?: string;
   damId?: string;
@@ -184,8 +186,7 @@ export type Horse = {
   raceHistory: HorseRaceHistoryEntry[];
   fame: number;
   fanCount: number;
-  owned: boolean;
-  stableId?: string;
+  ownership: HorseOwnership;
   /** True if this horse was foaled while its dam was owned by the player's stable. Set at birth, never mutated. */
   bredByPlayer?: boolean;
   consignedSaleId?: string;

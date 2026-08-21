@@ -31,7 +31,7 @@ function mkHorse(id: string, overrides: Partial<Horse> = {}): Horse {
   return {
     id,
     name: `Horse-${id}`,
-    owned: true,
+    ownership: { type: "player" },
     age: 4,
     gender: "colt",
     lifecycleStatus: "active",
@@ -95,8 +95,8 @@ describe("useRaceFilters — basic filtering", () => {
 
   it("filters by owned entries", () => {
     const races = [
-      mkRace("r1", { entries: [{ horseId: "h1", owned: true } as any] }),
-      mkRace("r2", { entries: [{ horseId: "h2", owned: false } as any] }),
+      mkRace("r1", { entries: [{ horseId: "h1", ownership: { type: "player" } } as any] }),
+      mkRace("r2", { entries: [{ horseId: "h2", ownership: { type: "unowned" } } as any] }),
     ];
 
     const { result } = renderHook(() =>
@@ -111,7 +111,7 @@ describe("useRaceFilters — basic filtering", () => {
     const races = [
       mkRace("r1", { entries: [], fieldSize: DEFAULT_FIELD_SIZE }),
       mkRace("r2", {
-        entries: new Array(DEFAULT_FIELD_SIZE).fill({ owned: false }),
+        entries: new Array(DEFAULT_FIELD_SIZE).fill({ ownership: { type: "unowned" } }),
         fieldSize: DEFAULT_FIELD_SIZE,
       }),
     ];

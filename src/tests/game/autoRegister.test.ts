@@ -16,7 +16,7 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
   return {
     id: `horse-${Math.random().toString(36).substr(2, 9)}`,
     name: "Test Horse",
-    owned: true,
+    ownership: { type: "player" },
     lifecycleStatus: "active",
     energy: 100,
     age: 4,
@@ -87,7 +87,7 @@ describe("calculateAutoRegisterEntries", () => {
   });
 
   it("filters out non-owned horses", () => {
-    const horses = [createMockHorse({ owned: false })];
+    const horses = [createMockHorse({ ownership: { type: "unowned" } })];
     const races: Race[] = [createMockRace()];
     const jockeys: Jockey[] = [createMockJockey()];
     const cash = 10000;
@@ -161,7 +161,7 @@ describe("calculateAutoRegisterEntries", () => {
   it("filters out already-entered horses", () => {
     const horse = createMockHorse();
     const race = createMockRace({
-      entries: [{ horseId: horse.id, owned: true, weight: 126 }],
+      entries: [{ horseId: horse.id, ownership: { type: "player" }, weight: 126 }],
     });
     const horses = [horse];
     const races: Race[] = [race];

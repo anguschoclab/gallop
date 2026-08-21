@@ -29,7 +29,7 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
-    owned: true,
+    ownership: { type: "player" },
     silk: "#ff0000",
     ...overrides,
   }) as unknown as Horse;

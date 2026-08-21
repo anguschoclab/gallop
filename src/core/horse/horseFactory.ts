@@ -21,6 +21,8 @@ import type {
   StableTier,
 } from "@/game/types";
 import type { Rng } from "@/core/common/types";
+import { makePlayerOwned, makeNpcOwned, makeUnowned, type HorseOwnership } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 
 import { hashStr, nondeterministicRng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
@@ -216,8 +218,7 @@ export function ensurePhenotypeResolved(horse: Horse): Horse {
  * @param {number} [opts.age] - Current age in years.
  * @param {HorseGender} [opts.gender] - Biological gender.
  * @param {Hemisphere} [opts.hemisphere] - Racing hemisphere.
- * @param {boolean} [opts.owned] - Player ownership status.
- * @param {string} [opts.stableId] - ID of the assigned stable.
+ * @param {HorseOwnership} [opts.ownership] - Ownership status (player, npc, unowned).
  * @param {number} [opts.createdAtDay] - Simulation day of creation.
  * @returns {Horse} A Horse object with phenotypeResolved=false.
  */
@@ -229,8 +230,7 @@ export function createHorseFromDNA(
     age?: number;
     gender?: HorseGender;
     hemisphere?: Hemisphere;
-    owned?: boolean;
-    stableId?: string;
+    ownership?: HorseOwnership;
     createdAtDay?: number;
   } = {},
 ): Horse {
@@ -263,8 +263,7 @@ export function createHorseFromDNA(
     fame: 0,
     fanCount: 0,
     raceHistory: [],
-    owned: opts.owned ?? false,
-    stableId: opts.stableId,
+    ownership: opts.ownership ?? makeUnowned(),
     conformation: 0,
     temperament: 0,
     coatColor: undefined,
@@ -323,7 +322,7 @@ export function createHorseFromDNA(
  *
  * @param {Object} [opts={}] - Generation options.
  * @param {"starter" | "budget" | "mid" | "elite"} [opts.tier] - Quality tier for genotype generation.
- * @param {boolean} [opts.owned] - Player ownership status.
+ * @param {HorseOwnership} [opts.ownership] - Ownership status.
  * @param {Hemisphere} [opts.hemisphere] - Racing hemisphere.
  * @param {number} [opts.age] - Horse age in years.
  * @param {HorseGender} [opts.gender] - Biological gender.
@@ -334,7 +333,7 @@ export function createHorseFromDNA(
 export function generateHorse(
   opts: {
     tier?: "starter" | "budget" | "mid" | "elite";
-    owned?: boolean;
+    ownership?: HorseOwnership;
     hemisphere?: Hemisphere;
     age?: number;
     gender?: HorseGender;
@@ -361,7 +360,7 @@ export function generateHorse(
     age,
     gender,
     hemisphere,
-    owned: opts.owned,
+    ownership: opts.ownership,
   });
 
   // Assign Bruce Lowe family for procedural horses
@@ -417,7 +416,7 @@ export function generateNpcHorse(
   const horse = createHorseFromDNA(genotype, rng, {
     age,
     gender,
-    stableId: stable.id,
+    ownership: makeNpcOwned(asNpcStableId(stable.id)),
     hemisphere: opts.hemisphere ?? "Northern",
   });
 

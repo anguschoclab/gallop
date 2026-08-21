@@ -11,6 +11,7 @@
 import type { Impact } from "./base";
 import type { BlueHenStatus, Pregnancy, StudCareer } from "@/game/types";
 import type { BlueHenImpact } from "./horseImpacts";
+import type { HorseId, OwnerKey, StableId } from "@/core/types/branded";
 
 // Pregnancy creation impact
 export interface PregnancyCreationImpact extends Impact {
@@ -37,7 +38,7 @@ export interface PregnancyDeletionImpact extends Impact {
 // Stud career impact
 export interface StudCareerImpact extends Impact {
   type: "stud_career";
-  horseId: string;
+  horseId: HorseId;
   studCareer: StudCareer;
   reason: string;
 }
@@ -45,7 +46,7 @@ export interface StudCareerImpact extends Impact {
 // Mare foaling update impact
 export interface MareFoalingUpdateImpact extends Impact {
   type: "mare_foaling_update";
-  horseId: string;
+  horseId: HorseId;
   lastFoaledDay: number;
   foalsProduced: string[];
   blueHenStatus: BlueHenStatus;
@@ -55,7 +56,7 @@ export interface MareFoalingUpdateImpact extends Impact {
 // Update stud fee impact
 export interface UpdateStudFeeImpact extends Impact {
   type: "update_stud_fee";
-  horseId: string;
+  horseId: HorseId;
   newFee: number;
   reason: string;
 }
@@ -68,7 +69,7 @@ export interface SyndicateCreationImpact extends Impact {
   stallionName: string;
   totalShares: number;
   sharePrice: number;
-  initialShareholders: Record<string, number>;
+  initialShareholders: Record<OwnerKey, number>;
   reason: string;
 }
 
@@ -76,9 +77,9 @@ export interface SyndicateCreationImpact extends Impact {
 export interface ShareTransactionImpact extends Impact {
   type: "share_transaction";
   syndicateId: string;
-  stableId: string;
-  buyerStableId?: string;
-  sellerStableId?: string;
+  stableId: OwnerKey;
+  buyerStableId?: OwnerKey;
+  sellerStableId?: OwnerKey;
   shares: number;
   pricePerShare: number;
   reason: string;
@@ -97,7 +98,7 @@ export interface SyndicateFeeDistributionImpact extends Impact {
 export interface SyndicateSatisfactionImpact extends Impact {
   type: "syndicate_satisfaction";
   syndicateId: string;
-  stableId: string;
+  stableId: OwnerKey;
   satisfactionDelta: number; // Can be positive or negative
   reason: string;
 }

@@ -14,7 +14,7 @@ describe("AnalyticsOverviewTab", () => {
     const h1 = createTestHorse({
       id: "h1",
       name: "Thunder",
-      owned: true,
+      ownership: { type: "player" },
       lifecycleStatus: "active",
     });
     renderWithStore(<AnalyticsOverviewTab />, {

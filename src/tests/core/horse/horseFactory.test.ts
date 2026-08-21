@@ -23,7 +23,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     form: 0,
     potential: 90,
     raceHistory: [],
-    owned: true,
+    ownership: { type: "player" },
     fame: 0,
     lifecycleStatus: "active" as const,
     ...overrides,

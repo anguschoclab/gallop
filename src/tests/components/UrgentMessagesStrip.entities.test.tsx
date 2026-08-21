@@ -22,7 +22,7 @@ vi.mock("@tanstack/react-router", () => ({
 
 describe("UrgentMessagesStrip — entity linking", () => {
   it("renders message body with NewsContent auto-detection", () => {
-    const horse = createTestHorse({ id: "h1", name: "Thunder Strike", owned: true });
+    const horse = createTestHorse({ id: "h1", name: "Thunder Strike", ownership: { type: "player" } });
     seedStore({
       ...createDefaultGameState(),
       horses: { [horse.id]: horse },

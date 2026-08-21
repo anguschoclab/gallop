@@ -2,8 +2,7 @@ import { describe, it, expect } from "vitest";
 
 interface MockEntry {
   horseId: string;
-  owned: boolean;
-  stableId?: string;
+  ownership: { type: "player" } | { type: "npc"; stableId: string } | { type: "unowned" };
 }
 
 interface MockResult {
@@ -18,9 +17,9 @@ interface MockRace {
 }
 
 function processGrudgeMatch(race: MockRace, rivalStableId: string) {
-  const playerHorseIds = new Set(race.entries.filter((e) => e.owned).map((e) => e.horseId));
+  const playerHorseIds = new Set(race.entries.filter((e) => e.ownership?.type === "player").map((e) => e.horseId));
   const rivalHorseIds = new Set(
-    race.entries.filter((e) => e.stableId === rivalStableId).map((e) => e.horseId),
+    race.entries.filter((e) => e.ownership?.type === "npc" && e.ownership.stableId === rivalStableId).map((e) => e.horseId),
   );
 
   const playerResults = race.result.filter((r) => playerHorseIds.has(r.horseId));
@@ -55,8 +54,8 @@ describe("npcCycle — Set-based grudge match lookup", () => {
   it("correctly identifies player best position", () => {
     const race = mkRace(
       [
-        { horseId: "p1", owned: true },
-        { horseId: "r1", owned: false, stableId: "rival1" },
+        { horseId: "p1", ownership: { type: "player" } },
+        { horseId: "r1", ownership: { type: "npc", stableId: "rival1" } },
       ],
       [
         { horseId: "p1", position: 3, time: 120 },
@@ -70,8 +69,8 @@ describe("npcCycle — Set-based grudge match lookup", () => {
   it("correctly identifies rival best position", () => {
     const race = mkRace(
       [
-        { horseId: "p1", owned: true },
-        { horseId: "r1", owned: false, stableId: "rival1" },
+        { horseId: "p1", ownership: { type: "player" } },
+        { horseId: "r1", ownership: { type: "npc", stableId: "rival1" } },
       ],
       [
         { horseId: "p1", position: 3, time: 120 },
@@ -85,8 +84,8 @@ describe("npcCycle — Set-based grudge match lookup", () => {
   it("has match when both player and rival have entries", () => {
     const race = mkRace(
       [
-        { horseId: "p1", owned: true },
-        { horseId: "r1", owned: false, stableId: "rival1" },
+        { horseId: "p1", ownership: { type: "player" } },
+        { horseId: "r1", ownership: { type: "npc", stableId: "rival1" } },
       ],
       [
         { horseId: "p1", position: 2, time: 120 },
@@ -99,7 +98,7 @@ describe("npcCycle — Set-based grudge match lookup", () => {
 
   it("does not generate match when player has no entries", () => {
     const race = mkRace(
-      [{ horseId: "r1", owned: false, stableId: "rival1" }],
+      [{ horseId: "r1", ownership: { type: "npc", stableId: "rival1" } }],
       [{ horseId: "r1", position: 1, time: 118 }],
     );
     const result = processGrudgeMatch(race, "rival1");
@@ -108,7 +107,7 @@ describe("npcCycle — Set-based grudge match lookup", () => {
 
   it("does not generate match when rival has no entries", () => {
     const race = mkRace(
-      [{ horseId: "p1", owned: true }],
+      [{ horseId: "p1", ownership: { type: "player" } }],
       [{ horseId: "p1", position: 1, time: 118 }],
     );
     const result = processGrudgeMatch(race, "rival1");
@@ -118,10 +117,10 @@ describe("npcCycle — Set-based grudge match lookup", () => {
   it("handles multiple entries per side and picks best", () => {
     const race = mkRace(
       [
-        { horseId: "p1", owned: true },
-        { horseId: "p2", owned: true },
-        { horseId: "r1", owned: false, stableId: "rival1" },
-        { horseId: "r2", owned: false, stableId: "rival1" },
+        { horseId: "p1", ownership: { type: "player" } },
+        { horseId: "p2", ownership: { type: "player" } },
+        { horseId: "r1", ownership: { type: "npc", stableId: "rival1" } },
+        { horseId: "r2", ownership: { type: "npc", stableId: "rival1" } },
       ],
       [
         { horseId: "p1", position: 4, time: 125 },

@@ -175,7 +175,8 @@ export function shouldCreateSyndicate(
   existingSyndicates: Record<string, Syndicate>,
 ): boolean {
   // Check if stallion is owned by NPC
-  if (stallion.stableId !== npcStable.id) return false;
+  if (stallion.ownership?.type !== "npc" || stallion.ownership.stableId !== npcStable.id)
+    return false;
 
   // Check if stallion is a G1 winner
   const g1Wins = getCareerStats(stallion).g1Wins;

@@ -97,7 +97,7 @@ function makeHorse(overrides: Partial<Horse> = {}): Horse {
     foalingEase: 1.4,
     heterozygosity: 0.5,
     fame: 0,
-    owned: true,
+    ownership: { type: "player" },
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 },
     mudAptitude: 1.0,

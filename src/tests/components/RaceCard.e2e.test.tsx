@@ -241,7 +241,7 @@ describe("RaceCard — end-to-end integration with WeatherForecastStrip", () => 
     ];
 
     const raceWithOwned = makeRace({
-      entries: [{ horseId: "horse-1", owned: true, jockeyId: null }] as any,
+      entries: [{ horseId: "horse-1", ownership: { type: "player" }, jockeyId: null }] as any,
     });
     const html = render(raceWithOwned);
 

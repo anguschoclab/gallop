@@ -66,7 +66,7 @@ export const energyPhase = {
         if (h.lifecycleStatus === "deceased") return [h.id, h] as const;
 
         // Get staff bonuses for this stable
-        const stableId = h.stableId ?? "";
+        const stableId = h.ownership?.type === "npc" ? h.ownership.stableId : "";
         const roleMap = staffByStableAndRole.get(stableId);
 
         const nutritionist = roleMap?.get("nutritionist");

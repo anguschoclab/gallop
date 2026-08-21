@@ -18,7 +18,7 @@ function mkRace(id: string, grade: string, horseId: string): Race {
     day: 10,
     resolved: false,
     graded: { grade, track: "Test", surface: "Turf" },
-    entries: [{ horseId, owned: true }],
+    entries: [{ horseId, ownership: { type: "player" } }],
   } as unknown as Race;
 }
 
@@ -57,9 +57,9 @@ describe("GradeBreakdown — multi-grade owned entries", () => {
     const race = {
       ...mkRace("r1", "G1", "h1"),
       entries: [
-        { horseId: "h1", owned: true },
-        { horseId: "h2", owned: false },
-        { horseId: "h3", owned: false },
+        { horseId: "h1", ownership: { type: "player" } },
+        { horseId: "h2", ownership: { type: "unowned" } },
+        { horseId: "h3", ownership: { type: "unowned" } },
       ],
     } as unknown as Race;
 

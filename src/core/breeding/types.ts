@@ -8,16 +8,18 @@
  * Related files: Used throughout the breeding module and game state
  */
 
+import type { HorseId, StableId } from "@/core/types/branded";
+
 export type Pregnancy = {
   id: string;
-  sireId: string;
-  damId: string;
+  sireId: HorseId;
+  damId: HorseId;
   sireName: string;
   damName: string;
   conceivedDay: number;
   dueDay: number;
   resolved: boolean;
-  foalId?: string;
+  foalId?: HorseId;
   stage?: "early" | "mid" | "late" | "delivered";
   earlyChecked?: boolean;
   midChecked?: boolean;
@@ -25,7 +27,7 @@ export type Pregnancy = {
   liveFoalGuarantee?: boolean;
   reBreedingAttempts?: number;
   refunded?: boolean;
-  stableId?: string;
+  stableId?: StableId;
   isPlayerOwned: boolean;
 };
 
@@ -55,8 +57,8 @@ export type PedigreeNode = {
 export interface ShareTransaction {
   id: string;
   syndicateId: string;
-  buyerStableId: string;
-  sellerStableId: string;
+  buyerStableId: import("@/core/types/branded").OwnerKey;
+  sellerStableId: import("@/core/types/branded").OwnerKey;
   shares: number;
   pricePerShare: number;
   day: number;
@@ -67,8 +69,8 @@ export interface ShareActivityFeedItem {
   syndicateId: string;
   syndicateName: string;
   type: "share_purchase" | "share_sale" | "devolution" | "investor_solicit" | "investor_buyout";
-  buyerStableId?: string;
-  sellerStableId?: string;
+  buyerStableId?: import("@/core/types/branded").OwnerKey;
+  sellerStableId?: import("@/core/types/branded").OwnerKey;
   shares: number;
   pricePerShare: number;
   cashMoved: number;
@@ -83,12 +85,12 @@ export interface Syndicate {
   stallionId: string;
   stallionName: string;
   totalShares: number; // usually 40 in real life
-  shareHolders: Record<string, number>; // stableId -> share count
+  shareHolders: Record<import("@/core/types/branded").OwnerKey, number>; // stableId -> share count
   sharePrice: number;
   studFee: number;
   isPublic: boolean;
   lifetimeEarnings: number; // accumulated stud fees
   // Shareholder satisfaction tracking (Phase 5)
-  shareholderSatisfaction?: Record<string, number>; // stableId -> satisfaction (0-100)
+  shareholderSatisfaction?: Record<import("@/core/types/branded").OwnerKey, number>; // stableId -> satisfaction (0-100)
   lastSatisfactionUpdate?: number; // day of last update
 }

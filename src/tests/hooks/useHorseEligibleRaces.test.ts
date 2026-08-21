@@ -10,7 +10,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     age: 4,
     gender: "horse",
     energy: 100,
-    owned: true,
+    ownership: { type: "player" },
     lifecycleStatus: "active",
     ...overrides,
   });
@@ -129,7 +129,7 @@ describe("deriveEligibleRaces", () => {
     const horse = mkHorse({ id: "h1" });
     const race = mkRace({
       day: baseDay + 3,
-      entries: [{ horseId: "h1", owned: true }],
+      entries: [{ horseId: "h1", ownership: { type: "player" } }],
     });
     const result = deriveEligibleRaces(horse, [race], [], 100000, baseDay);
     // isHorseEligibleForRace returns false for already-entered, so this should be empty

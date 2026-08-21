@@ -48,7 +48,7 @@ function mockHorse(
     form: 0,
     potential: 75,
     raceHistory: [],
-    owned: false,
+    ownership: { type: "unowned" },
     fame: 50,
     careerStarts: 0,
     careerWins: 0,

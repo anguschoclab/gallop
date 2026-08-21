@@ -24,6 +24,7 @@ import { generateUUID } from "@/core/uuid";
 import { createRng, hashStr } from "@/core/common/rng";
 import { generateHorse } from "@/core/horse/horseFactory";
 import type { NewGameOptions } from "./types";
+import type { HorseId, RaceId } from "@/core/types/branded";
 
 /**
  * Core game state that is always present and required for the game to function.
@@ -35,9 +36,9 @@ export interface CoreState {
   /** Player's current cash balance */
   cash: number;
   /** All horses in the game (player owned and NPC owned), keyed by ID */
-  horses: Record<string, Horse>;
+  horses: Record<HorseId, Horse>;
   /** All scheduled races, keyed by ID */
-  races: Record<string, Race>;
+  races: Record<RaceId, Race>;
   /** Game log for significant events */
   log: { day: number; text: string }[];
   /** Structured news items for the Gallop Gazette */
@@ -79,7 +80,7 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
     const playerHorses: Horse[] = [];
     for (const spec of backstory.horses) {
       for (let i = 0; i < spec.count; i++) {
-        const horse = generateHorse({ tier: spec.tier, owned: true }, setupRng);
+        const horse = generateHorse({ tier: spec.tier, ownership: { type: "player" } }, setupRng);
         // Set horse silk to player's primary color for visual identification
         horse.silk = profile.silk.primary;
         playerHorses.push(horse);

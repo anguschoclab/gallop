@@ -11,7 +11,7 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 function buildResolvedPlayerHorse(name: string) {
-  return ensurePhenotypeResolved(generateHorse({ tier: "starter", owned: true }));
+  return ensurePhenotypeResolved(generateHorse({ tier: "starter", ownership: { type: "player" } }));
 }
 
 describe("StableRosterView — OVR label", () => {

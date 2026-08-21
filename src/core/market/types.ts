@@ -9,10 +9,11 @@
  */
 
 import type { HorseStats } from "@/core/horse/types";
+import type { HorseId, OwnerKey, RaceId, StableId } from "@/core/types/branded";
 
 export type ScoutReport = {
-  horseId: string;
-  stableId: string;
+  horseId: HorseId;
+  stableId: StableId;
   day: number;
   accuracy: number;
   revealedStats: Partial<HorseStats>;
@@ -26,19 +27,19 @@ export type ScoutReport = {
 };
 
 export type AuctionBidRecord = {
-  stableId?: string;
+  stableId?: OwnerKey;
   amount: number;
   tick: number;
 };
 
 export type AuctionLot = {
   id: string;
-  horseId: string;
-  consignorStableId?: string;
+  horseId: HorseId;
+  consignorStableId?: StableId;
   saleId: string;
   reservePrice: number;
   hammerPrice?: number;
-  soldToStableId?: string;
+  soldToStableId?: StableId;
   passed: boolean;
   withdrawn: boolean;
   bidHistory?: AuctionBidRecord[];
@@ -70,9 +71,9 @@ export type PrivateSaleStatus = "pending" | "accepted" | "countered" | "declined
 
 export type PrivateSaleOffer = {
   id: string;
-  horseId: string;
-  fromStableId?: string;
-  toStableId?: string;
+  horseId: HorseId;
+  fromStableId?: StableId;
+  toStableId?: StableId;
   amount: number;
   counterAmount?: number;
   status: PrivateSaleStatus;
@@ -82,9 +83,9 @@ export type PrivateSaleOffer = {
 
 export type Claim = {
   id: string;
-  raceId: string;
-  horseId: string;
-  claimantStableId?: string;
+  raceId: RaceId;
+  horseId: HorseId;
+  claimantStableId?: StableId;
   price: number;
   day: number;
 };

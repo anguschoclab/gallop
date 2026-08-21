@@ -12,7 +12,7 @@ function mkHorse(id: string, speed = 70, stamina = 70, acceleration = 70, consis
     energy: 100,
     form: 0,
     potential: 80,
-    owned: false,
+    ownership: { type: "unowned" },
     fame: 0,
   });
 }

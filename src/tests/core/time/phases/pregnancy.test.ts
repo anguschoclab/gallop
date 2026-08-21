@@ -29,8 +29,7 @@ function createLiveFoalScenario(
     name: "Test Sire",
     gender: "horse",
     age: 5,
-    owned: false,
-    stableId: overrides.sireStableId,
+    ownership: { type: "npc", stableId: asNpcStableId(overrides) }.sireStableId,
     stud: {
       atStud: true,
       standingFee: 1000,
@@ -313,12 +312,11 @@ describe("buildNpcAIManagerUpdate", () => {
 describe("buildPregnancyImpacts", () => {
   it("emits reputation and inbox only for player-owned dams", () => {
     const sire = createTestHorse({ id: "sire-1", name: "Sire", gender: "horse" });
-    const playerDam = createTestMare({ id: "dam-1", name: "Player Dam", owned: true });
+    const playerDam = createTestMare({ id: "dam-1", name: "Player Dam", ownership: { type: "player" } });
     const npcDam = createTestMare({
       id: "dam-2",
       name: "NPC Dam",
-      owned: false,
-      stableId: "npc-stable",
+      ownership: { type: "npc", stableId: asNpcStableId("npc-stable") },
     });
 
     const playerPregnancy: Pregnancy = {

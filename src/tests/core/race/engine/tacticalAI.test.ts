@@ -10,7 +10,7 @@ describe("tacticalAI", () => {
     return {
       horseId: "horse1",
       name: "Test Horse",
-      owned: false,
+      ownership: { type: "unowned" },
       position: 100,
       velocity: 15,
       lane: 1.2,

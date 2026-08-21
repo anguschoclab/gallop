@@ -23,7 +23,7 @@ describe("upkeepPhase", () => {
           age: 3,
           gender: "colt",
           hemisphere: "Northern",
-          owned: true,
+          ownership: { type: "player" },
         }),
         createTestHorse({
           id: "horse-2",
@@ -31,7 +31,7 @@ describe("upkeepPhase", () => {
           age: 4,
           gender: "filly",
           hemisphere: "Northern",
-          owned: true,
+          ownership: { type: "player" },
         }),
       ]),
     }) as GameState;
@@ -67,8 +67,7 @@ describe("upkeepPhase", () => {
           age: 3,
           gender: "colt",
           hemisphere: "Northern",
-          owned: false,
-          stableId: "npc-stable-1",
+          ownership: { type: "npc", stableId: asNpcStableId("npc-stable-1") },
         }),
       ]),
       npcStables: [
@@ -106,8 +105,7 @@ describe("upkeepPhase", () => {
           age: 3,
           gender: "colt",
           hemisphere: "Northern",
-          owned: false,
-          stableId: "npc-stable-1",
+          ownership: { type: "npc", stableId: asNpcStableId("npc-stable-1") },
         }),
         createTestHorse({
           id: "horse-2",
@@ -115,8 +113,7 @@ describe("upkeepPhase", () => {
           age: 4,
           gender: "filly",
           hemisphere: "Northern",
-          owned: false,
-          stableId: "npc-stable-2",
+          ownership: { type: "npc", stableId: asNpcStableId("npc-stable-2") },
         }),
       ]),
       npcStables: [
@@ -199,7 +196,7 @@ describe("upkeepPhase", () => {
           age: 3,
           gender: "colt",
           hemisphere: "Northern",
-          owned: true,
+          ownership: { type: "player" },
         }),
         createUnownedHorse({
           id: "unowned-horse",

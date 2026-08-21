@@ -53,7 +53,7 @@ export const intentCollectionPhase: PipelinePhase = {
         if (!campaign.autoManaged) continue;
 
         const horse = horseMap.get(campaign.horseId);
-        if (!horse || !horse.owned) continue;
+        if (!horse || horse.ownership?.type !== "player") continue;
 
         // Check for planned slots that are coming up (today or tomorrow)
         for (const slot of campaign.slots) {

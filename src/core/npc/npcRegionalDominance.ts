@@ -97,7 +97,7 @@ export function processRegionalDominance(
       if (!winningHorse) continue;
       const winningStableId = isPlayerOwned(winningHorse)
         ? "player"
-        : winningHorse.stableId;
+        : winningHorse.ownership?.type === "npc" ? winningHorse.ownership.stableId : null;
       if (!winningStableId) continue;
 
       if (winningStableId === currentKingId) {
@@ -187,10 +187,12 @@ export function processRegionalDominance(
         race.graded &&
         (race.graded.grade === "G1" || race.graded.grade === "G2" || race.graded.grade === "G3")
       ) {
-        const hasPlayerEntry = race.entries.some((e) => e.owned);
+        const hasPlayerEntry = race.entries.some((e) => e.ownership?.type === "player");
         if (hasPlayerEntry) {
           const rivalStablesInRace = new Set(
-            race.entries.map((e) => e.stableId).filter((id) => id && id !== "player"),
+            race.entries
+              .map((e) => (e.ownership?.type === "npc" ? e.ownership.stableId : null))
+              .filter((id): id is NonNullable<typeof id> => id != null),
           );
 
           for (const rivalStableId of rivalStablesInRace) {
@@ -201,10 +203,10 @@ export function processRegionalDominance(
               if (!rivalStable) continue;
 
               const playerHorseIds = new Set(
-                race.entries.filter((e) => e.owned).map((e) => e.horseId),
+                race.entries.filter((e) => e.ownership?.type === "player").map((e) => e.horseId),
               );
               const rivalHorseIds = new Set(
-                race.entries.filter((e) => e.stableId === rivalStableId).map((e) => e.horseId),
+                race.entries.filter((e) => e.ownership?.type === "npc" && e.ownership.stableId === rivalStableId).map((e) => e.horseId),
               );
 
               const playerBestPos = Math.min(

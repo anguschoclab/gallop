@@ -81,7 +81,7 @@ const makeHorse = (
   ({
     id,
     name: `Horse ${id}`,
-    owned: true,
+    ownership: { type: "player" },
     raceHistory: [
       {
         raceId,

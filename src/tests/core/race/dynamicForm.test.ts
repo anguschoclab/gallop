@@ -30,7 +30,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     form: 0,
     potential: 90,
     raceHistory: [],
-    owned: true,
+    ownership: { type: "player" },
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 },
     climbingAptitude: 1.0,

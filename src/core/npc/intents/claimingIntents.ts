@@ -37,10 +37,11 @@ export function generateNpcClaimingIntents(
       const horse = horseMap.get(entry.horseId);
 
       if (!horse) continue;
-      if (horse.stableId === stable.id) continue;
+      if (horse.ownership?.type === "npc" && horse.ownership.stableId === stable.id) continue;
 
-      if (horse.stableId && stableAI?.npcRelationships?.[horse.stableId]) {
-        const rel = stableAI.npcRelationships[horse.stableId];
+      const horseStableId = horse.ownership?.type === "npc" ? horse.ownership.stableId : undefined;
+      if (horseStableId && stableAI?.npcRelationships?.[horseStableId]) {
+        const rel = stableAI.npcRelationships[horseStableId];
         if (
           rel.allianceType === "breeding_partnership" ||
           rel.allianceType === "racing_coalition"
@@ -108,7 +109,7 @@ export function generateNpcWithdrawalIntents(
     if (!race.claimingPrice) continue;
 
     for (const entry of race.entries) {
-      if (entry.stableId !== stable.id) continue;
+      if (entry.ownership?.type !== "npc" || entry.ownership.stableId !== stable.id) continue;
 
       const horse = horseMap.get(entry.horseId);
       if (!horse) continue;

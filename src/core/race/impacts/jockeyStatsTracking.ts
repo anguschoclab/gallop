@@ -103,8 +103,8 @@ export function generateJockeyStatsTrackingImpacts(
         jockey,
         winAmount,
         newDay,
-        raceEntry.owned || false,
-        raceEntry.stableId,
+        raceEntry.ownership?.type === "player" || false,
+        raceEntry.ownership?.type === "npc" ? raceEntry.ownership.stableId : undefined,
         rng,
       );
       if (percentageFeeImpact) {

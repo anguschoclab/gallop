@@ -22,7 +22,7 @@ export const foalDevelopmentPhase: PipelinePhase = {
     const impacts: AnyImpact[] = [];
 
     for (const horse of Object.values(state.horses)) {
-      if (!horse.owned) continue;
+      if (horse.ownership?.type !== "player") continue;
       const arc = horse.developmentArc;
       if (!arc) continue;
 

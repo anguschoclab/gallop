@@ -23,7 +23,7 @@ describe("StableRosterWidget — OVR label", () => {
 
   it("displays 'OVR' as the rating label", () => {
     const horse = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", owned: true }),
+      generateHorse({ tier: "starter", ownership: { type: "player" } }),
     ) as unknown as Horse;
     horse.lifecycleStatus = "active";
 

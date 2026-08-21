@@ -30,7 +30,7 @@ describe("calculateAwardPoints", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [
         {
@@ -93,7 +93,7 @@ describe("calculateAwardPoints", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [
         {
@@ -156,7 +156,7 @@ describe("calculateAwardPoints", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [
         {
@@ -221,7 +221,7 @@ describe("calculateAwardPoints", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [
         {
@@ -285,7 +285,7 @@ describe("calculateAwardPoints", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [],
     });
@@ -312,7 +312,7 @@ describe("calculateAwardPoints", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [
         {
@@ -378,7 +378,7 @@ describe("determineRegionalWinners", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [],
     });
@@ -407,7 +407,7 @@ describe("determineRegionalWinners", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [],
     });
@@ -436,7 +436,7 @@ describe("determineAllRegionalWinners", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [],
     });
@@ -462,7 +462,7 @@ describe("determineAllRegionalWinners", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [],
     });

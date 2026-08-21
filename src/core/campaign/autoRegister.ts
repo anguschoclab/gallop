@@ -134,7 +134,7 @@ export function calculateAutoRegisterEntries(
     let playerCount = 0;
     for (const entry of race.entries) {
       enteredHorseIds.add(entry.horseId);
-      if (entry.owned) playerCount++;
+      if (entry.ownership?.type === "player") playerCount++;
     }
     if (playerCount > 0) playerEntryCountByRace.set(race.id, playerCount);
   }
@@ -142,7 +142,7 @@ export function calculateAutoRegisterEntries(
   // Filter eligible player horses
   const eligibleHorses = horses.filter((h) => {
     // Must be player owned
-    if (!h.owned) {
+    if (h.ownership?.type !== "player") {
       return false;
     }
 

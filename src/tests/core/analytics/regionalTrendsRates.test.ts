@@ -22,7 +22,7 @@ const horse = (raceId: string, day: number, position: number, earned: number, gr
   ({
     id: "h1",
     name: "Tester",
-    owned: true,
+    ownership: { type: "player" },
     raceHistory: [
       {
         raceId,
@@ -69,7 +69,7 @@ describe("computeRegionDrilldown — g1Starts field", () => {
     const h = {
       id: "h1",
       name: "Tester",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -130,7 +130,7 @@ describe("rate metric calculations", () => {
     const h = {
       id: "h1",
       name: "Tester",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -185,7 +185,7 @@ describe("rate metric calculations", () => {
     const h = {
       id: "h1",
       name: "Tester",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -230,7 +230,7 @@ describe("rate metric calculations", () => {
     const h = {
       id: "h1",
       name: "Tester",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -277,7 +277,7 @@ describe("rate metric calculations", () => {
     const h = {
       id: "h1",
       name: "Tester",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",

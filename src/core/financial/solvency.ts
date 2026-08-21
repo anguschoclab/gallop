@@ -9,7 +9,7 @@
 import { horsePrice } from "@/core/horse/pricing";
 import type { Horse } from "@/core/horse/types";
 import { formatCurrency } from "@/core/financial/financialTypes";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { isPlayerOwned, type HorseOwnership } from "@/core/horse/ownership";
 
 export const SOLVENCY_THRESHOLDS = {
   /** Cash at or below this, sustained, triggers a creditor sale. */
@@ -63,7 +63,7 @@ export function deriveSolvencyState(input: SolvencyInput): SolvencyState {
 
 export interface SellableHorse {
   id: string;
-  owned: boolean;
+  ownership: HorseOwnership;
   age: number;
   value: number;
 }
@@ -75,7 +75,7 @@ export interface SellableHorse {
  * @returns {T | null} The most valuable owned horse, or null if none eligible.
  */
 export function selectForcedSaleHorse<T extends SellableHorse>(horses: T[]): T | null {
-  const eligible = horses.filter((h) => h.owned && h.age > 0);
+  const eligible = horses.filter((h) => h.ownership.type === "player" && h.age > 0);
   if (eligible.length === 0) return null;
   return eligible.reduce((best, h) => (h.value > best.value ? h : best));
 }
@@ -187,7 +187,7 @@ export function previewSeizure(horses: Horse[], cash: number): SeizurePreview | 
     .filter((h) => isPlayerOwned(h) && h.age > 0)
     .map((h) => ({
       id: h.id,
-      owned: true,
+      ownership: h.ownership,
       age: h.age,
       value: horsePrice(h),
       name: h.name,

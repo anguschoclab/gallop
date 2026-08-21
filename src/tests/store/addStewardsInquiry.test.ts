@@ -34,8 +34,8 @@ function makeRace(overrides: Partial<Race> = {}): Race {
       { horseId: "horse-B", position: 2, time: 96.5 },
     ],
     entries: [
-      { horseId: "horse-A", owned: true } as any,
-      { horseId: "horse-B", owned: false } as any,
+      { horseId: "horse-A", ownership: { type: "player" } } as any,
+      { horseId: "horse-B", ownership: { type: "unowned" } } as any,
     ],
     ...overrides,
   } as Race;

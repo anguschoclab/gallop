@@ -8,7 +8,7 @@ function createMockRunner(overrides: Partial<RaceRunner> = {}): RaceRunner {
     horseId: "h1",
     name: "Thunder Bolt",
     silk: "red",
-    owned: false,
+    ownership: { type: "unowned" },
     jockeyId: "j1",
     jockeyName: "Mike Smith",
     gate: 1,
@@ -75,7 +75,7 @@ describe("TacticalAnalysisPanel", () => {
   });
 
   it("highlights player-owned runners", () => {
-    const runners = [createMockRunner({ owned: true, horseId: "h-owned" })];
+    const runners = [createMockRunner({ ownership: { type: "player" }, horseId: "h-owned" })];
     render(<TacticalAnalysisPanel runners={runners} />);
     const breakdown = screen.getByTestId("strategy-breakdown");
     expect(breakdown.className).toContain("border-l-gold");

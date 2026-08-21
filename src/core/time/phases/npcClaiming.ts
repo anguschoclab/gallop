@@ -46,7 +46,7 @@ export const npcClaimingPhase = {
 
         for (const stable of npcStables) {
           // Don't claim own horses
-          if (horse.stableId === stable.id) continue;
+          if (horse.ownership?.type === "npc" && horse.ownership.stableId === stable.id) continue;
           // Don't duplicate claims
           const alreadyClaimed = newClaims.some(
             (c: Claim) =>

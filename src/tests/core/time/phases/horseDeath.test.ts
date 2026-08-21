@@ -53,7 +53,7 @@ describe("horseDeathPhase", () => {
       age: 25,
       name: "Insured Horse",
       lifecycleStatus: "retired",
-      owned: true,
+      ownership: { type: "player" },
       insurancePolicy: {
         type: "mortality_only",
         startDate: 1,
@@ -77,7 +77,7 @@ describe("horseDeathPhase", () => {
       age: 25,
       name: "Beloved Horse",
       lifecycleStatus: "retired",
-      owned: true,
+      ownership: { type: "player" },
     });
     const state = makeGameState({ horses: h2r([horse]) }) as GameState;
     const context = makePipelineContext({ state, newDay: 100 }) as PipelineContext;

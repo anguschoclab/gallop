@@ -77,12 +77,12 @@ describe("Worker batch advance", () => {
           purse: 10000,
           minStat: 70,
           fieldSize: 8,
-          entries: [{ horseId: "horse-1", owned: true, npc: false }],
+          entries: [{ horseId: "horse-1", ownership: { type: "player" }, npc: false }],
           resolved: false,
         } as any,
       },
       horses: {
-        "horse-1": { ...createTestHorse({ id: "horse-1", name: "Test", owned: true }), age: 3 },
+        "horse-1": { ...createTestHorse({ id: "horse-1", name: "Test", ownership: { type: "player" } }), age: 3 },
       },
     };
 
@@ -95,7 +95,7 @@ describe("Worker batch advance", () => {
       const nextDay = currentState.day + 1;
       if (playerRaceDays.has(nextDay)) {
         const playerRace = Object.values(currentState.races).find(
-          (r: Race) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned),
+          (r: Race) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.ownership?.type === "player"),
         );
         if (playerRace) {
           encounteredPlayerRace = true;
@@ -127,12 +127,12 @@ describe("Worker batch advance", () => {
           purse: 10000,
           minStat: 70,
           fieldSize: 8,
-          entries: [{ horseId: "horse-1", owned: true, npc: false }],
+          entries: [{ horseId: "horse-1", ownership: { type: "player" }, npc: false }],
           resolved: false,
         } as any,
       },
       horses: {
-        "horse-1": { ...createTestHorse({ id: "horse-1", name: "Test", owned: true }), age: 3 },
+        "horse-1": { ...createTestHorse({ id: "horse-1", name: "Test", ownership: { type: "player" } }), age: 3 },
       },
     };
 

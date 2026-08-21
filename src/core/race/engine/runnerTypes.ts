@@ -25,7 +25,7 @@ export type Runner = {
   name: string;
   silk: string;
   coatColor?: string;
-  owned: boolean;
+  isPlayer: boolean;
   position: number;
   velocity: number;
   finishTime: number | null;

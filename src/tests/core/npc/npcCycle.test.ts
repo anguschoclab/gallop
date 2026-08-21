@@ -121,7 +121,7 @@ describe("runNpcCycle", () => {
       age: 3,
       gender: "colt",
       hemisphere: "Northern",
-      owned: false,
+      ownership: { type: "unowned" },
       fame: 50,
       stableId: "stable-1",
     });
@@ -186,7 +186,7 @@ describe("Simulation Determinism", () => {
         day: currentDay,
         resolved: true,
         result: [{ horseId: "horse-1", position: 1, time: 120 }],
-        entries: [{ horseId: "horse-1", stableId: "stable-1", owned: false }],
+        entries: [{ horseId: "horse-1", stableId: "stable-1", ownership: { type: "unowned" } }],
         purse: 500000,
         graded: { grade: "G1" },
       } as Race,

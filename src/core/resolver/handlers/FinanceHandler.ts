@@ -14,6 +14,8 @@ import type { ImpactHandler, LookupMaps } from "./types";
 import type { CashImpact, TransactionImpact } from "../impacts/financialImpacts";
 import { createTransaction } from "@/core/transactions";
 import type { HorseTransferImpact } from "../impacts/horseImpacts";
+import { makePlayerOwned, makeNpcOwned, makeUnowned, type HorseOwnership } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -58,8 +60,9 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { horseId, toStableId } = impact as HorseTransferImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
     if (horse) {
-      horse.stableId = toStableId;
-      horse.owned = !toStableId;
+      horse.ownership = toStableId
+        ? makeNpcOwned(asNpcStableId(toStableId))
+        : makePlayerOwned();
     }
   },
 };

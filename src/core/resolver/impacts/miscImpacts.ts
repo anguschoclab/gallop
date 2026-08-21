@@ -16,6 +16,7 @@ import type { NewsItem } from "@/services/narrative/newsTypes";
 import type { FacilityLevel } from "@/core/facilities";
 import type { TrackRecord } from "../../history/historyTypes";
 import type { CareerArcState } from "@/services/narrative/careerArcGenerator";
+import type { HorseId, OwnerKey, StableId } from "@/core/types/branded";
 
 // News impact
 export interface NewsImpact extends Impact {
@@ -50,7 +51,7 @@ export interface ReputationImpact extends Impact {
 export interface StaffImpact extends Impact {
   type: "staff";
   action: "hire" | "fire";
-  stableId: string;
+  stableId: StableId;
   staffId: string;
   role: import("@/core/staff/staffTypes").StaffRole;
   tier: import("@/core/staff/staffTypes").StaffTier;
@@ -92,10 +93,10 @@ export interface ScoutReportImpact extends Impact {
 // Consignment impact
 export interface ConsignmentImpact extends Impact {
   type: "consignment";
-  horseId: string;
+  horseId: HorseId;
   saleId: string;
   reservePrice: number;
-  consignorStableId?: string;
+  consignorStableId?: StableId;
   breezeSeconds?: number;
   reason: string;
 }
@@ -103,7 +104,7 @@ export interface ConsignmentImpact extends Impact {
 // Consignment withdrawal impact
 export interface ConsignmentWithdrawalImpact extends Impact {
   type: "consignment_withdrawal";
-  horseId: string;
+  horseId: HorseId;
   saleId: string;
   reason: string;
 }
@@ -114,9 +115,9 @@ export interface AuctionResolutionImpact extends Impact {
   saleId: string;
   lotId: string;
   hammerPrice?: number;
-  soldToStableId?: string;
+  soldToStableId?: StableId;
   passed: boolean;
-  bidHistory?: { stableId?: string; amount: number; tick: number }[];
+  bidHistory?: { stableId?: OwnerKey; amount: number; tick: number }[];
   wasPlayerConsignment?: boolean;
   reason: string;
 }
@@ -124,7 +125,7 @@ export interface AuctionResolutionImpact extends Impact {
 // Transport impact - Imperial Expansion
 export interface TransportImpact extends Impact {
   type: "transport_horse";
-  horseId: string;
+  horseId: HorseId;
   fromOutpostId: string;
   toOutpostId: string;
   fatigueSpike: number;
@@ -135,7 +136,7 @@ export interface TransportImpact extends Impact {
 // Outpost impact - Imperial Expansion
 export interface OutpostImpact extends Impact {
   type: "outpost_action";
-  stableId: string;
+  stableId: StableId;
   action: "create" | "upgrade_slot" | "assign_trainer";
   outpostId: string;
   metadata?: {
@@ -164,8 +165,8 @@ export interface NarrativeArcUpdateImpact extends Impact {
 // Diplomatic action impact (NPC-to-NPC diplomacy)
 export interface DiplomaticImpact extends Impact {
   type: "diplomatic";
-  sourceStableId: string;
-  targetStableId: string;
+  sourceStableId: StableId;
+  targetStableId: StableId;
   action: "alliance_formed" | "alliance_broken" | "betrayal" | "cooperation";
   allianceType?: string;
   trustChange: number;
@@ -174,7 +175,7 @@ export interface DiplomaticImpact extends Impact {
 // Cartel action impact (economic coordination)
 export interface CartelImpact extends Impact {
   type: "cartel";
-  stableIds: string[];
+  stableIds: StableId[];
   action: "cartel_formed" | "cartel_dissolved" | "market_coordinated";
   cartelType?: string;
   marketAction?: string;

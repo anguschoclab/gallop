@@ -95,7 +95,7 @@ describe("Foal development inbox CTA → route → back navigation", () => {
     const horse = createTestHorse({
       id: "foal-1",
       name: "Test Foal",
-      owned: true,
+      ownership: { type: "player" },
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
     const Comp = FoalDevelopmentRoute.options.component as React.ComponentType;
@@ -112,7 +112,7 @@ describe("Foal development inbox CTA → route → back navigation", () => {
     const horse = createTestHorse({
       id: "foal-1",
       name: "Test Foal",
-      owned: true,
+      ownership: { type: "player" },
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
     const Comp = FoalDevelopmentRoute.options.component as React.ComponentType;

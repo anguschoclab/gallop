@@ -32,7 +32,7 @@ function createHorse(overrides: Partial<Horse> = {}): Horse {
     },
     potential: 70,
     raceHistory: [],
-    owned: true,
+    ownership: { type: "player" },
     healthStatus: "healthy",
     lifecycleStatus: "active",
     racingViable: true,

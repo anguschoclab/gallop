@@ -23,7 +23,7 @@ const horse = (raceId: string, day: number, position: number, earned: number) =>
   ({
     id: "h1",
     name: "Tester",
-    owned: true,
+    ownership: { type: "player" },
     raceHistory: [
       {
         raceId,

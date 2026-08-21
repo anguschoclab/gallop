@@ -22,7 +22,7 @@ function makeStallion(overrides: Partial<Horse> = {}): Horse {
     potential: 80,
     raceHistory: [{ raceId: "r1", raceName: "G1", position: 1, day: 100, grade: "G1" }],
     stud: { atStud: true, standingFee: 50000, bookSize: 50, seasonBookings: 0 },
-    owned: true,
+    ownership: { type: "player" },
     fame: 50,
     lifetimeEarnings: 1000000,
     careerStarts: 10,

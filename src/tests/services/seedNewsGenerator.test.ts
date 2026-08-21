@@ -29,7 +29,7 @@ function buildTestNpcHorses(n: number): Horse[] {
     createTestHorse({
       id: `npc-horse-${i + 1}`,
       name: `NPC Horse ${i + 1}`,
-      owned: false,
+      ownership: { type: "unowned" },
       stableId: `stable-${(i % 7) + 1}`,
       age: 3 + (i % 5),
       fame: 80 - i * 3,
@@ -538,7 +538,7 @@ describe("seedGazetteNews", () => {
       const playerHorse = createTestHorse({
         id: "player-horse",
         name: "Player Horse",
-        owned: true,
+        ownership: { type: "player" },
         stableId: undefined,
         stats: {
           speed: 99,

@@ -44,7 +44,7 @@ const mockRunner = (overrides: any = {}) => ({
     horseId: "h1",
     name: "Thunder",
     silk: "#ff0000",
-    owned: false,
+    ownership: { type: "unowned" },
     finishTime: 72.5,
     ...overrides,
   },

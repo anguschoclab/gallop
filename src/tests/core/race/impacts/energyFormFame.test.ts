@@ -45,7 +45,7 @@ describe("energyFormFame impacts", () => {
     });
 
     it("should prevent form decrease if stable employs a groom", () => {
-      const horseWithStable = { ...testHorse, owned: false, stableId: "stable1" };
+      const horseWithStable = { ...testHorse, ownership: { type: "npc", stableId: asNpcStableId("stable1") } };
       const impact = generateFormImpact(horseWithStable, 6, 10, [groomStaff], rng);
       // Groom prevents form dropping below 0
       expect(impact.delta).toBe(0);

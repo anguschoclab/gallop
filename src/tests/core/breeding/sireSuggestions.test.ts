@@ -161,7 +161,7 @@ describe("suggestBestSires", () => {
       id: "s-ext",
       stud: mkStud({ standingFee: 25000 }),
       stableId: "npc-stable-1",
-      owned: false,
+      ownership: { type: "unowned" },
     });
     const results = suggestBestSires(mare, [external], day);
     expect(results).toHaveLength(1);
@@ -173,7 +173,7 @@ describe("suggestBestSires", () => {
     const owned = createTestStallion({
       id: "s-owned",
       stud: mkStud({ standingFee: 25000 }),
-      owned: true,
+      ownership: { type: "player" },
     });
     const results = suggestBestSires(mare, [owned], day);
     expect(results).toHaveLength(1);

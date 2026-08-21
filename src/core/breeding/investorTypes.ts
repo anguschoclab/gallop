@@ -25,7 +25,7 @@ export interface InvestorRecord {
   id: string;
   syndicateId: string;
   name: string;
-  stableId: string; // "player" or an npc stable id
+  stableId: import("@/core/types/branded").OwnerKey; // "player" or an npc stable id
   personality: InvestorPersonality;
   shares: number;
   investedCash: number;

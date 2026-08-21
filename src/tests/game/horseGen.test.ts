@@ -29,14 +29,14 @@ describe("generateHorse", () => {
     });
   }
 
-  it("owned matches opts.owned (true)", () => {
-    const h = generateHorse({ owned: true });
-    expect(h.owned).toBe(true);
+  it("ownership matches opts.ownership (player)", () => {
+    const h = generateHorse({ ownership: { type: "player" } } as any);
+    expect(h.ownership).toEqual({ type: "player" });
   });
 
-  it("owned matches opts.owned (false)", () => {
-    const h = generateHorse({ owned: false });
-    expect(h.owned).toBe(false);
+  it("ownership matches opts.ownership (unowned)", () => {
+    const h = generateHorse({ ownership: { type: "unowned" } } as any);
+    expect(h.ownership).toEqual({ type: "unowned" });
   });
 
   it("hemisphere matches opts.hemisphere", () => {

@@ -87,7 +87,7 @@ function runner(horseId: string, position: number, overrides: Partial<Runner> = 
     position,
     velocity: DEFAULT_VELOCITY,
     finishTime: null,
-    owned: false,
+    ownership: { type: "unowned" },
     lane: DEFAULT_LANE,
     gate: DEFAULT_GATE,
     ...overrides,

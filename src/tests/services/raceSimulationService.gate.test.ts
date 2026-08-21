@@ -31,14 +31,14 @@ describe("buildRaceField — pre-assigned gates", () => {
   // 14. All entries pre-assigned gates — gates preserved, no shuffling
   it("all entries with pre-assigned gates preserve those gates", () => {
     const entries: RaceEntry[] = [
-      { horseId: "h1", owned: true, gate: 3 },
-      { horseId: "h2", owned: true, gate: 1 },
-      { horseId: "h3", owned: true, gate: 2 },
+      { horseId: "h1", ownership: { type: "player" }, gate: 3 },
+      { horseId: "h2", ownership: { type: "player" }, gate: 1 },
+      { horseId: "h3", ownership: { type: "player" }, gate: 2 },
     ];
     const horses = [
-      mkHorse({ id: "h1", owned: true }),
-      mkHorse({ id: "h2", owned: true }),
-      mkHorse({ id: "h3", owned: true }),
+      mkHorse({ id: "h1", ownership: { type: "player" } }),
+      mkHorse({ id: "h2", ownership: { type: "player" } }),
+      mkHorse({ id: "h3", ownership: { type: "player" } }),
     ];
     const race = mkRace({ fieldSize: 3, entries });
 
@@ -56,14 +56,14 @@ describe("buildRaceField — pre-assigned gates", () => {
   // 15. No entries pre-assigned — all shuffled (backward compatible)
   it("no pre-assigned gates — all entries get gates 1..N (backward compatible)", () => {
     const entries: RaceEntry[] = [
-      { horseId: "h1", owned: true },
-      { horseId: "h2", owned: true },
-      { horseId: "h3", owned: true },
+      { horseId: "h1", ownership: { type: "player" } },
+      { horseId: "h2", ownership: { type: "player" } },
+      { horseId: "h3", ownership: { type: "player" } },
     ];
     const horses = [
-      mkHorse({ id: "h1", owned: true }),
-      mkHorse({ id: "h2", owned: true }),
-      mkHorse({ id: "h3", owned: true }),
+      mkHorse({ id: "h1", ownership: { type: "player" } }),
+      mkHorse({ id: "h2", ownership: { type: "player" } }),
+      mkHorse({ id: "h3", ownership: { type: "player" } }),
     ];
     const race = mkRace({ fieldSize: 3, entries });
 
@@ -76,13 +76,13 @@ describe("buildRaceField — pre-assigned gates", () => {
   // 16. Mix: 3 pre-assigned + 2 unassigned — unassigned get remaining gates
   it("mix of pre-assigned and unassigned — unassigned get remaining gates, no conflicts", () => {
     const entries: RaceEntry[] = [
-      { horseId: "h1", owned: true, gate: 2 },
-      { horseId: "h2", owned: true, gate: 5 },
-      { horseId: "h3", owned: true, gate: 1 },
-      { horseId: "h4", owned: true },
-      { horseId: "h5", owned: true },
+      { horseId: "h1", ownership: { type: "player" }, gate: 2 },
+      { horseId: "h2", ownership: { type: "player" }, gate: 5 },
+      { horseId: "h3", ownership: { type: "player" }, gate: 1 },
+      { horseId: "h4", ownership: { type: "player" } },
+      { horseId: "h5", ownership: { type: "player" } },
     ];
-    const horses = Array.from({ length: 5 }, (_, i) => mkHorse({ id: `h${i + 1}`, owned: true }));
+    const horses = Array.from({ length: 5 }, (_, i) => mkHorse({ id: `h${i + 1}`, ownership: { type: "player" } }));
     const race = mkRace({ fieldSize: 5, entries });
 
     const { runners } = buildRaceField({ race, horses, jockeys: [] });
@@ -102,8 +102,8 @@ describe("buildRaceField — pre-assigned gates", () => {
 
   // 17. Filler horses get gates from remaining pool
   it("filler horses get gates from remaining pool after pre-assigned entries", () => {
-    const entries: RaceEntry[] = [{ horseId: "h1", owned: true, gate: 1 }];
-    const horses = [mkHorse({ id: "h1", owned: true })];
+    const entries: RaceEntry[] = [{ horseId: "h1", ownership: { type: "player" }, gate: 1 }];
+    const horses = [mkHorse({ id: "h1", ownership: { type: "player" } })];
     const race = mkRace({ fieldSize: 4, entries });
 
     const { runners } = buildRaceField({ race, horses, jockeys: [] });
@@ -120,14 +120,14 @@ describe("buildRaceField — pre-assigned gates", () => {
   // 18. Gate numbering is contiguous 1..totalRunners with no gaps or duplicates
   it("gate numbering is contiguous 1..totalRunners with no gaps or duplicates", () => {
     const entries: RaceEntry[] = [
-      { horseId: "h1", owned: true, gate: 3 },
-      { horseId: "h2", owned: true },
-      { horseId: "h3", owned: true, gate: 1 },
+      { horseId: "h1", ownership: { type: "player" }, gate: 3 },
+      { horseId: "h2", ownership: { type: "player" } },
+      { horseId: "h3", ownership: { type: "player" }, gate: 1 },
     ];
     const horses = [
-      mkHorse({ id: "h1", owned: true }),
-      mkHorse({ id: "h2", owned: true }),
-      mkHorse({ id: "h3", owned: true }),
+      mkHorse({ id: "h1", ownership: { type: "player" } }),
+      mkHorse({ id: "h2", ownership: { type: "player" } }),
+      mkHorse({ id: "h3", ownership: { type: "player" } }),
     ];
     const race = mkRace({ fieldSize: 6, entries });
 
@@ -143,14 +143,14 @@ describe("buildRaceField — pre-assigned gates", () => {
     // Simulate: original race had h1(gate=1), h2(gate=2), h3(gate=3)
     // h2 was bumped, so entries are now h1(gate=1), h3(gate=3), h4(no gate)
     const entries: RaceEntry[] = [
-      { horseId: "h1", owned: true, gate: 1 },
-      { horseId: "h3", owned: true, gate: 3 },
-      { horseId: "h4", owned: true },
+      { horseId: "h1", ownership: { type: "player" }, gate: 1 },
+      { horseId: "h3", ownership: { type: "player" }, gate: 3 },
+      { horseId: "h4", ownership: { type: "player" } },
     ];
     const horses = [
-      mkHorse({ id: "h1", owned: true }),
-      mkHorse({ id: "h3", owned: true }),
-      mkHorse({ id: "h4", owned: true }),
+      mkHorse({ id: "h1", ownership: { type: "player" } }),
+      mkHorse({ id: "h3", ownership: { type: "player" } }),
+      mkHorse({ id: "h4", ownership: { type: "player" } }),
     ];
     const race = mkRace({ fieldSize: 3, entries });
 

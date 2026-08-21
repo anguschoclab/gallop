@@ -52,7 +52,7 @@ describe("raceCancellationPhase", () => {
         id: "race-one-entry",
         day: 12,
         entryFee: 500,
-        entries: [{ horseId: "h1", owned: true, npc: false }],
+        entries: [{ horseId: "h1", ownership: { type: "player" }, npc: false }],
       });
       const state = makeGameState({ day: 10, races: r2r([race]) }) as GameState;
       const context = makePipelineContext({ newDay: 10, state }) as PipelineContext;
@@ -71,8 +71,8 @@ describe("raceCancellationPhase", () => {
         id: "race-two-entries",
         day: 12,
         entries: [
-          { horseId: "h1", owned: true, npc: false },
-          { horseId: "h2", owned: false, stableId: "s1", npc: true },
+          { horseId: "h1", ownership: { type: "player" }, npc: false },
+          { horseId: "h2", ownership: { type: "npc", stableId: asNpcStableId("s1") }, npc: true },
         ],
       });
       const state = makeGameState({ day: 10, races: r2r([race]) }) as GameState;
@@ -156,9 +156,9 @@ describe("raceCancellationPhase", () => {
       const race = makeRace({
         id: "race-player-entry",
         day: 12,
-        entries: [{ horseId: "h-player", owned: true, npc: false }],
+        entries: [{ horseId: "h-player", ownership: { type: "player" }, npc: false }],
       });
-      const horse = createTestHorse({ id: "h-player", owned: true });
+      const horse = createTestHorse({ id: "h-player", ownership: { type: "player" } });
       const state = makeGameState({
         day: 10,
         races: r2r([race]),
@@ -179,7 +179,7 @@ describe("raceCancellationPhase", () => {
       const race = makeRace({
         id: "race-npc-only",
         day: 12,
-        entries: [{ horseId: "h-npc", owned: false, stableId: "s1", npc: true }],
+        entries: [{ horseId: "h-npc", ownership: { type: "npc", stableId: asNpcStableId("s1") }, npc: true }],
       });
       const state = makeGameState({ day: 10, races: r2r([race]) }) as GameState;
       const context = makePipelineContext({ newDay: 10, state }) as PipelineContext;
@@ -194,7 +194,7 @@ describe("raceCancellationPhase", () => {
         id: "race-npc-refund",
         day: 12,
         entryFee: 300,
-        entries: [{ horseId: "h-npc", owned: false, stableId: "s-npc", npc: true }],
+        entries: [{ horseId: "h-npc", ownership: { type: "npc", stableId: asNpcStableId("s-npc") }, npc: true }],
       });
       const state = makeGameState({ day: 10, races: r2r([race]) }) as GameState;
       const context = makePipelineContext({ newDay: 10, state }) as PipelineContext;
@@ -292,8 +292,8 @@ describe("raceCancellationPhase", () => {
         id: "race-above",
         day: 12,
         entries: [
-          { horseId: "h1", owned: true, npc: false },
-          { horseId: "h2", owned: false, stableId: "s1", npc: true },
+          { horseId: "h1", ownership: { type: "player" }, npc: false },
+          { horseId: "h2", ownership: { type: "npc", stableId: asNpcStableId("s1") }, npc: true },
         ],
       });
       const state = makeGameState({ day: 10, races: r2r([raceBelow, raceAbove]) }) as GameState;
@@ -422,7 +422,7 @@ describe("raceCancellationPhase", () => {
     });
 
     it("19. runAutoEntries skips cancelled races — slot targeting cancelled race not entered", () => {
-      const horse = createTestHorse({ id: "h-auto", owned: true });
+      const horse = createTestHorse({ id: "h-auto", ownership: { type: "player" } });
       const race = makeRace({
         id: "race-cancelled-auto",
         day: 12,

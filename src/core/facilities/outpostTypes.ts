@@ -17,7 +17,7 @@ export type OutpostRegion =
 export type FacilityBranch = "neutral" | "turf" | "dirt";
 
 export interface Outpost {
-  id: string;
+  id: import("@/core/types/branded").OutpostId;
   name: string;
   region: OutpostRegion;
   totalSlots: number;

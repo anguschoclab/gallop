@@ -106,7 +106,7 @@ describe("solvencyPhase integration — day-by-day escalation", () => {
         age: 5,
         stats: baseStats,
         ratings: { current: 60 },
-        owned: true,
+        ownership: { type: "player" },
       },
       valuable: {
         id: "valuable",
@@ -114,7 +114,7 @@ describe("solvencyPhase integration — day-by-day escalation", () => {
         age: 5,
         stats: { speed: 110, stamina: 110, acceleration: 110, temperament: 110 },
         ratings: { current: 110 },
-        owned: true,
+        ownership: { type: "player" },
       },
     };
     const ctx = makeContext({
@@ -146,7 +146,7 @@ describe("solvencyPhase integration — day-by-day escalation", () => {
           name: "Last Runner",
           age: 4,
           ratings: { current: 80 },
-          owned: true,
+          ownership: { type: "player" },
           raceHistory: [{ purseEarned: 12_000 }, { purseEarned: 3_000 }],
         },
       },

@@ -29,7 +29,7 @@ describe("MarketHandler auction_resolution", () => {
       age: 3,
       gender: "colt",
       stableId: "npc-stable-1",
-      owned: false,
+      ownership: { type: "unowned" },
       consignedSaleId: "sale-1",
     });
     const sale = makeSale({
@@ -80,7 +80,7 @@ describe("MarketHandler auction_resolution", () => {
       name: "Horse 1",
       age: 3,
       gender: "colt",
-      owned: true,
+      ownership: { type: "player" },
       consignedSaleId: "sale-1",
     });
     const sale = makeSale({
@@ -132,7 +132,7 @@ describe("MarketHandler auction_resolution", () => {
       age: 3,
       gender: "colt",
       stableId: "dissolved-stable",
-      owned: false,
+      ownership: { type: "unowned" },
       consignedSaleId: "sale-1",
     });
     const sale = makeSale({
@@ -173,8 +173,7 @@ describe("MarketHandler auction_resolution", () => {
     handler.handle(draft, impact);
 
     expect(draft.horses["horse-1"].consignedSaleId).toBeUndefined();
-    expect(draft.horses["horse-1"].stableId).toBeUndefined();
-    expect(draft.horses["horse-1"].owned).toBe(true);
+    expect(draft.horses["horse-1"].ownership).toEqual({ type: "unowned" });
   });
 
   it("should not make horse unowned when passed lot consignor still exists", () => {
@@ -185,7 +184,7 @@ describe("MarketHandler auction_resolution", () => {
       age: 3,
       gender: "colt",
       stableId: "existing-stable",
-      owned: false,
+      ownership: { type: "unowned" },
       consignedSaleId: "sale-1",
     });
     const sale = makeSale({
@@ -236,7 +235,7 @@ describe("MarketHandler auction_resolution", () => {
       age: 3,
       gender: "colt",
       stableId: "npc-stable-1",
-      owned: false,
+      ownership: { type: "unowned" },
     });
     const sale = makeSale({
       id: "sale-1",
@@ -345,7 +344,7 @@ describe("MarketHandler auction_resolution", () => {
       age: 2,
       gender: "colt",
       stableId: "npc-stable-1",
-      owned: false,
+      ownership: { type: "unowned" },
       consignedSaleId: "sale-1",
     });
     const sale = makeSale({

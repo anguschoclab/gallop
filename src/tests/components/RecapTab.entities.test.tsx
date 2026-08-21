@@ -23,7 +23,7 @@ vi.mock("@tanstack/react-router", () => ({
 
 describe("RecapTab — entity linking", () => {
   it("renders race name as a Link to /race/$raceId", () => {
-    const horse = createTestHorse({ id: "h1", name: "Winner", owned: true });
+    const horse = createTestHorse({ id: "h1", name: "Winner", ownership: { type: "player" } });
     const race = {
       id: "r1",
       name: "Grand Stakes",
@@ -33,7 +33,7 @@ describe("RecapTab — entity linking", () => {
       entryFee: 0,
       purse: 50000,
       fieldSize: 1,
-      entries: [{ horseId: "h1", owned: true }],
+      entries: [{ horseId: "h1", ownership: { type: "player" } }],
       resolved: true,
       result: [{ horseId: "h1", position: 1, time: 90 }],
       graded: { key: "g1", grade: "G1", track: "Aintree", surface: "Turf" },

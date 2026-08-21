@@ -58,7 +58,7 @@ function createPlayerHorse(careerWins = 0): ReturnType<typeof createTestHorse> {
   return createTestHorse({
     id: "player-horse-1",
     name: "Thunder Strike",
-    owned: true,
+    ownership: { type: "player" },
     stableId: undefined,
     careerWins,
   });

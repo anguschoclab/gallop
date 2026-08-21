@@ -126,7 +126,11 @@ export function personalityConsignmentPolicy(
 ): { consign: Horse[]; freshCount: number; reserveMultiplier: number } {
   const owned: Horse[] = [];
   for (const h of allHorses) {
-    if (h.stableId === stable.id && isLotEligible(h, kind)) {
+    if (
+      h.ownership?.type === "npc" &&
+      h.ownership.stableId === stable.id &&
+      isLotEligible(h, kind)
+    ) {
       owned.push(ensurePhenotypeResolved(h));
     }
   }

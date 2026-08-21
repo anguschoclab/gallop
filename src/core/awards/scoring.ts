@@ -300,7 +300,7 @@ export function determineRegionalWinners(
       const pts = pointsMap.get(horse.id)?.get(category);
       // Unowned world stock cannot win an award: downstream code treats a
       // missing stableId as "the player's award".
-      if (pts && pts > 0 && (isPlayerOwned(horse) || horse.stableId))
+      if (pts && pts > 0 && (isPlayerOwned(horse) || horse.ownership?.type === "npc"))
         candidates.push({ horse, points: pts });
     }
     candidates.sort((a, b) => b.points - a.points);
@@ -313,7 +313,7 @@ export function determineRegionalWinners(
         category,
         horseId: winner.horse.id,
         horseName: winner.horse.name,
-        stableId: isPlayerOwned(winner.horse) ? undefined : winner.horse.stableId,
+        stableId: isPlayerOwned(winner.horse) ? undefined : (winner.horse.ownership?.type === "npc" ? winner.horse.ownership.stableId : undefined),
         points: winner.points,
         runnerUpId: runnerUp?.horse.id,
         runnerUpPoints: runnerUp?.points || 0,

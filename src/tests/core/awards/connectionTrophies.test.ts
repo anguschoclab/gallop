@@ -24,7 +24,7 @@ describe("getG1WinsForStable", () => {
     const playerHorse = createTestHorse({
       id: "player-h1",
       name: "Player Champion",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [G1_RACE],
     });
     const state = { horses: h2r([playerHorse]) } as Pick<GameState, "horses">;
@@ -51,7 +51,7 @@ describe("getG1WinsForStable", () => {
     const playerHorse = createTestHorse({
       id: "player-h1",
       name: "Player Champion",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [G1_RACE],
     });
     const unownedHorse = createUnownedHorse({

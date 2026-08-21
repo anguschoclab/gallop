@@ -21,7 +21,7 @@ function makeHorse(id: string, name: string): any {
     },
     potential: 70,
     raceHistory: [],
-    owned: true,
+    ownership: { type: "player" },
     healthStatus: "healthy",
     lifecycleStatus: "active",
   };

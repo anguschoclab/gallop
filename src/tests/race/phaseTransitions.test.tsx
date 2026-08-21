@@ -76,7 +76,7 @@ vi.mock("@/hooks/race/useRacePageData", () => ({
         horseId: "h1",
         name: "Horse One",
         silk: "#ff0000",
-        owned: false,
+        ownership: { type: "unowned" },
         position: 0,
         velocity: 0,
         finishTime: null,

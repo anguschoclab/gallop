@@ -163,12 +163,12 @@ describe("Persistence debouncing during advanceMultipleDays", () => {
           purse: 10000,
           minStat: 70,
           fieldSize: 8,
-          entries: [{ horseId: "horse-1", owned: true, npc: false }],
+          entries: [{ horseId: "horse-1", ownership: { type: "player" }, npc: false }],
           resolved: false,
         } as any,
       },
       horses: {
-        "horse-1": { id: "horse-1", name: "Test", owned: true, age: 3 } as any,
+        "horse-1": { id: "horse-1", name: "Test", ownership: { type: "player" }, age: 3 } as any,
       },
     });
 

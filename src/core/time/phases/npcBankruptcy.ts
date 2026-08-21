@@ -30,6 +30,8 @@ import { generateStableHorses } from "@/core/npc/horseGenerator";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { PHASE_ORDER_NPC_BANKRUPTCY } from "@/constants";
 import { DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";
+import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 
 const LIQUIDATION_SALE_DELAY = 3;
 const LIQUIDATION_RESERVE_FACTOR = 0.5;
@@ -74,7 +76,8 @@ export const npcBankruptcyPhase = {
         for (const syndicate of Object.values(state.syndicates)) {
           const stallion = horseMap.get(syndicate.stallionId) || state.horses[syndicate.stallionId];
           if (!stallion) continue;
-          if (stallion.stableId !== stable.id) continue;
+          if (stallion.ownership?.type !== "npc" || stallion.ownership.stableId !== stable.id)
+            continue;
 
           const playerShares = syndicate.shareHolders["player"] || 0;
           if (playerShares > 0) {
@@ -125,7 +128,11 @@ export const npcBankruptcyPhase = {
           // Check devolution: if the stallion was owned by the bankrupt stable,
           // transfer ownership to the new majority holder if one exists.
           const stallion = horseMap.get(syndicate.stallionId) || state.horses[syndicate.stallionId];
-          if (stallion && stallion.stableId === stable.id) {
+          if (
+            stallion &&
+            stallion.ownership.type === "npc" &&
+            stallion.ownership.stableId === stable.id
+          ) {
             const devolutionResult = findMajorityOwner(
               syndicate.shareHolders,
               syndicate.totalShares,
@@ -133,8 +140,8 @@ export const npcBankruptcyPhase = {
             );
             if (devolutionResult.wouldDevolve && devolutionResult.newOwner) {
               const newOwner = devolutionResult.newOwner;
-              stallion.stableId = newOwner === "player" ? undefined : newOwner;
-              stallion.owned = newOwner === "player";
+              stallion.ownership =
+                newOwner === "player" ? makePlayerOwned() : makeNpcOwned(asNpcStableId(newOwner));
             }
           }
         }
@@ -143,7 +150,7 @@ export const npcBankruptcyPhase = {
       // 3. Transfer horses to liquidation sale.
       const stableHorses: Horse[] = [];
       for (const horse of Object.values(state.horses)) {
-        if (horse.stableId === stable.id) {
+        if (horse.ownership.type === "npc" && horse.ownership.stableId === stable.id) {
           stableHorses.push(horse);
         }
       }
@@ -198,8 +205,7 @@ export const npcBankruptcyPhase = {
       newStable.horses = newHorses.map((h) => h.id);
 
       for (const horse of newHorses) {
-        horse.stableId = newStable.id;
-        horse.owned = false;
+        horse.ownership = makeNpcOwned(asNpcStableId(newStable.id));
         usedNames.add(horse.name.toLowerCase());
 
         newImpacts.push({

@@ -62,11 +62,12 @@ export const breedingResolutionPhase: PipelinePhase = {
       if (!breedCheck.ok) continue;
 
       // Check if sire is external (belongs to a different stable than the breeder)
+      const sireStableId = sire.ownership?.type === "npc" ? sire.ownership.stableId : undefined;
       const isExternal =
-        intent.source === "player" ? !!sire.stableId : sire.stableId !== intent.sourceId;
+        intent.source === "player" ? !!sireStableId : sireStableId !== intent.sourceId;
       let studFee = 0;
 
-      if (isExternal && sire.stableId) {
+      if (isExternal && sireStableId) {
         if (!sire.stud?.atStud) continue;
         if (sire.stud.seasonBookings >= sire.stud.bookSize) continue;
         if (sire.hemisphere !== dam.hemisphere) continue;
@@ -98,7 +99,7 @@ export const breedingResolutionPhase: PipelinePhase = {
             phase: "breedingResolution",
             logLevel: "conditional",
             type: "cash_change",
-            entityId: sire.stableId,
+            entityId: sireStableId!,
             amount: studFee,
             reason: "Stud fee",
           });

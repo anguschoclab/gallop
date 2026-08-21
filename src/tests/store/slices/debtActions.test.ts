@@ -118,8 +118,7 @@ describe("quickSellHorse action", () => {
       id: "npc1",
       name: "NPC Horse",
       age: 5,
-      owned: false,
-      stableId: "npc-stable",
+      ownership: { type: "npc", stableId: asNpcStableId("npc-stable") },
     });
     seedStore({
       cash: -30_000,

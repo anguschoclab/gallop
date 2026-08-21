@@ -22,8 +22,8 @@ function makeRace(overrides: Partial<Race> = {}): Race {
     trackCondition: "Fast",
     surface: "Dirt",
     entries: [
-      { horseId: "h1", owned: true },
-      { horseId: "h2", owned: false },
+      { horseId: "h1", ownership: { type: "player" } },
+      { horseId: "h2", ownership: { type: "unowned" } },
     ],
     resolved: false,
     cancelled: false,

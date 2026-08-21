@@ -26,7 +26,7 @@ describe("RacingHandler", () => {
   it("race_entry adds entry to race", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: h2r([{ id: "h1", name: "Star", stableId: "", owned: true }] as unknown as Horse[]),
+      horses: h2r([{ id: "h1", name: "Star", stableId: "", ownership: { type: "player" } }] as unknown as Horse[]),
       races: r2r([{ id: "race-1", entries: [], entryFee: 1000 }] as unknown as Race[]),
     } as unknown as GameState;
 
@@ -51,14 +51,14 @@ describe("RacingHandler", () => {
     expect(Object.keys(draft.races["race-1"].entries)).toHaveLength(1);
     expect(draft.races["race-1"].entries[0].horseId).toBe("h1");
     expect(draft.races["race-1"].entries[0].jockeyId).toBe("j1");
-    expect(draft.races["race-1"].entries[0].owned).toBe(true);
+    expect(draft.races["race-1"].entries[0].ownership).toEqual({ type: "player" });
   });
 
-  it("race_entry for unowned horse sets owned: false, npc: false", () => {
+  it("race_entry for unowned horse sets ownership: { type: 'unowned' }", () => {
     const handler = new RacingHandler();
     const state = {
       horses: h2r([
-        { id: "h-unowned", name: "Wild", stableId: undefined, owned: false },
+        { id: "h-unowned", name: "Wild", ownership: { type: "unowned" } },
       ] as unknown as Horse[]),
       races: r2r([{ id: "race-1", entries: [], entryFee: 1000 }] as unknown as Race[]),
     } as unknown as GameState;
@@ -82,8 +82,7 @@ describe("RacingHandler", () => {
     handler.handle(draft, impact);
 
     expect(draft.races["race-1"].entries[0].horseId).toBe("h-unowned");
-    expect(draft.races["race-1"].entries[0].owned).toBe(false);
-    expect(draft.races["race-1"].entries[0].npc).toBe(false);
+    expect(draft.races["race-1"].entries[0].ownership).toEqual({ type: "unowned" });
   });
 
   it("race_withdrawal removes entry from race", () => {
@@ -91,7 +90,7 @@ describe("RacingHandler", () => {
     const state = {
       horses: {},
       races: r2r([
-        { id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] },
+        { id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } }] },
       ] as unknown as Race[]),
     } as unknown as GameState;
 
@@ -178,7 +177,7 @@ describe("RacingHandler", () => {
     const state = {
       horses: {},
       races: r2r([
-        { id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] },
+        { id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } }] },
       ] as unknown as Race[]),
     } as unknown as GameState;
 
@@ -270,7 +269,7 @@ describe("RacingHandler", () => {
     const handler = new RacingHandler();
     const state = {
       horses: h2r([
-        { id: "h1", name: "Star", stableId: "stable-1", owned: false },
+        { id: "h1", name: "Star", stableId: "stable-1", ownership: { type: "unowned" } },
       ] as unknown as Horse[]),
       races: {},
     } as unknown as GameState;
@@ -292,8 +291,7 @@ describe("RacingHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses["h1"].stableId).toBe("");
-    expect(draft.horses["h1"].owned).toBe(true);
+    expect(draft.horses["h1"].ownership).toEqual({ type: "player" });
   });
 
   it("triple_crown_progress creates new entry", () => {
@@ -440,7 +438,7 @@ describe("RacingHandler", () => {
     const state = {
       horses: {},
       races: r2r([
-        { id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", owned: true }] },
+        { id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } }] },
       ] as unknown as Race[]),
     } as unknown as GameState;
 

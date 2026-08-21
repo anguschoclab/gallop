@@ -9,7 +9,7 @@ function createMockRunner(overrides: Partial<RaceRunner> = {}): RaceRunner {
     horseId: "h1",
     name: "Thunder Bolt",
     silk: "red",
-    owned: false,
+    ownership: { type: "unowned" },
     jockeyId: "j1",
     jockeyName: "Mike Smith",
     gate: 1,

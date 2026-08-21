@@ -256,7 +256,7 @@ describe("shouldClaimHorse", () => {
   it("friction multiplier increases valueScore for player-owned with friction >= 50", () => {
     const stable = createMockStable({ cash: 1000000 });
     const state = createClaimingAIState(stable);
-    const playerHorse = createMockHorse({ owned: true });
+    const playerHorse = createMockHorse({ ownership: { type: "player" } });
     const race = createMockRace({ claimingPrice: 50000 });
 
     const withoutFriction = shouldClaimHorse(state, playerHorse, race, stable, 1, 0);

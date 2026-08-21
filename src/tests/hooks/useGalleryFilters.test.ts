@@ -31,7 +31,7 @@ function mkHorse(id: string, overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
     id,
     name: `Horse ${id}`,
-    owned: true,
+    ownership: { type: "player" },
     ...overrides,
   });
 }
@@ -195,8 +195,8 @@ describe("useGalleryFilters — trait filtering", () => {
 
   it("only owned horses are included", () => {
     mockState.horses = {
-      h1: mkHorse("h1", { owned: true }),
-      h2: mkHorse("h2", { owned: false }),
+      h1: mkHorse("h1", { ownership: { type: "player" } }),
+      h2: mkHorse("h2", { ownership: { type: "unowned" } }),
     };
     const { result } = renderHook(() => useGalleryFilters());
     expect(result.current.filteredHorses).toHaveLength(1);

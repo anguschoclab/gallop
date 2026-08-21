@@ -17,6 +17,8 @@ export * from "@/core/stable/types";
 export * from "@/core/market/types";
 export * from "@/core/breeding/types";
 export * from "@/core/calendar/campaignTypes";
+export * from "@/core/types/branded";
+export * from "@/core/horse/ownership";
 
 // Re-export from core modules that are already exported via wildcard above
 // These are explicitly listed for clarity and to ensure they're available

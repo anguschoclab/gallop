@@ -9,11 +9,12 @@
 
 import type { Impact } from "./base";
 import type { TransactionSubcategory } from "@/core/transactions/transactionTypes";
+import type { HorseId, OwnerKey, RaceId } from "@/core/types/branded";
 
 // Cash impact
 export interface CashImpact extends Impact {
   type: "cash_change";
-  entityId: string; // stableId or undefined for player
+  entityId: OwnerKey;
   amount: number;
   reason: string;
 }
@@ -24,8 +25,8 @@ export interface TransactionImpact extends Impact {
   amount: number;
   category: TransactionSubcategory;
   description: string;
-  horseId?: string;
-  raceId?: string;
+  horseId?: HorseId;
+  raceId?: RaceId;
   recurring?: boolean;
 }
 

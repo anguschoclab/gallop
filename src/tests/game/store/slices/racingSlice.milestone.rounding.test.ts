@@ -9,7 +9,7 @@ function makeMockState(horseOverrides: Partial<Horse> = {}) {
   const horse: Horse = {
     id: "h1",
     name: "Foal",
-    owned: true,
+    ownership: { type: "player" },
     age: 2,
     potential: 80,
     stats: {

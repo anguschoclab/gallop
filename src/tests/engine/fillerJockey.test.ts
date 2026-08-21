@@ -16,7 +16,7 @@ function makeRace(overrides: Partial<Race> = {}): Race {
     entries: [
       {
         horseId: "owned-1",
-        owned: true,
+        ownership: { type: "player" },
         weight: 55,
       },
     ],

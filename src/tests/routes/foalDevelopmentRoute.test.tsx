@@ -82,7 +82,7 @@ describe("/foal-development/$horseId route guard", () => {
   });
 
   it("redirects to /stable/$horseId when the horse has no development arc", () => {
-    const horse = createTestHorse({ id: "foal-1", owned: true, developmentArc: undefined });
+    const horse = createTestHorse({ id: "foal-1", ownership: { type: "player" }, developmentArc: undefined });
     seed([horse]);
     render(<FoalDevelopmentPage />);
 
@@ -104,7 +104,7 @@ describe("/foal-development/$horseId route guard", () => {
       m.resolvedChoiceKey = m.choices[0].key;
       m.resolvedOnDay = m.triggerDay + i;
     });
-    const horse = createTestHorse({ id: "foal-1", owned: true, developmentArc: arc });
+    const horse = createTestHorse({ id: "foal-1", ownership: { type: "player" }, developmentArc: arc });
     seed([horse], 60);
     render(<FoalDevelopmentPage />);
 
@@ -120,7 +120,7 @@ describe("/foal-development/$horseId route guard", () => {
   it("renders read-only countdown when the next milestone has not triggered yet", () => {
     const horse = createTestHorse({
       id: "foal-1",
-      owned: true,
+      ownership: { type: "player" },
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
     seed([horse], 5); // breaking_in triggers at day 18.
@@ -137,7 +137,7 @@ describe("/foal-development/$horseId route guard", () => {
     const horse = createTestHorse({
       id: "foal-1",
       name: "Test Foal",
-      owned: true,
+      ownership: { type: "player" },
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
     seed([horse], 18);

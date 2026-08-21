@@ -30,7 +30,7 @@ function createHorse(overrides: Partial<Horse> = {}): Horse {
     },
     potential: 70,
     raceHistory: [],
-    owned: true,
+    ownership: { type: "player" },
     healthStatus: "healthy",
     lifecycleStatus: "active",
     racingViable: true,
@@ -48,7 +48,7 @@ describe("HorseManagementSection", () => {
 
   it("returns null when horse is not owned", () => {
     const { container } = renderWithStore(
-      <HorseManagementSection horse={createHorse({ owned: false })} isConsigned={false} day={1} />,
+      <HorseManagementSection horse={createHorse({ ownership: { type: "unowned" } })} isConsigned={false} day={1} />,
     );
     expect(container.textContent).toBe("");
   });

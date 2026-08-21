@@ -81,12 +81,12 @@ describe("FinanceHandler", () => {
     expect(draft.cash).toBe(-400);
   });
 
-  it("horse_transfer sets horse.stableId and horse.owned", () => {
+  it("horse_transfer sets horse.ownership to npc", () => {
     const handler = new FinanceHandler();
     const state = {
       cash: 1000,
       horses: h2r([
-        { id: "horse-1", name: "Star", stableId: "player", owned: true },
+        { id: "horse-1", name: "Star", ownership: { type: "player" } },
       ] as unknown as Horse[]),
       npcStables: [],
     } as unknown as GameState;
@@ -107,16 +107,15 @@ describe("FinanceHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses["horse-1"].stableId).toBe("stable-2");
-    expect(draft.horses["horse-1"].owned).toBe(false);
+    expect(draft.horses["horse-1"].ownership).toEqual({ type: "npc", stableId: "stable-2" });
   });
 
-  it("horse_transfer to empty stableId sets owned=true", () => {
+  it("horse_transfer to empty stableId sets ownership to player", () => {
     const handler = new FinanceHandler();
     const state = {
       cash: 1000,
       horses: h2r([
-        { id: "horse-1", name: "Star", stableId: "stable-2", owned: false },
+        { id: "horse-1", name: "Star", ownership: { type: "unowned" } },
       ] as unknown as Horse[]),
       npcStables: [],
     } as unknown as GameState;
@@ -137,8 +136,7 @@ describe("FinanceHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.horses["horse-1"].stableId).toBe("");
-    expect(draft.horses["horse-1"].owned).toBe(true);
+    expect(draft.horses["horse-1"].ownership).toEqual({ type: "player" });
   });
 
   it("transaction creates a transaction entry with correct type", () => {

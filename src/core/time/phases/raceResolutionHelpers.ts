@@ -54,8 +54,8 @@ export function recordNpcAiOutcomes(
   const runnerByHorseId = new Map(runners.map((r) => [r.horseId, r]));
   for (const res of result) {
     const horse = horseMap.get(res.horseId);
-    if (horse && horse.stableId) {
-      const stable = stableMap.get(horse.stableId);
+    if (horse && horse.ownership?.type === "npc") {
+      const stable = stableMap.get(horse.ownership.stableId);
       if (stable) {
         const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
 

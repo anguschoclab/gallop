@@ -19,9 +19,9 @@ import { createRng, hashStr } from "@/core/common/rng";
 describe("refreshMarket", () => {
   it("should keep market at 5 horses", () => {
     const market = [
-      generateHorse({ tier: "budget", owned: false }),
-      generateHorse({ tier: "budget", owned: false }),
-      generateHorse({ tier: "budget", owned: false }),
+      generateHorse({ tier: "budget", ownership: { type: "unowned" } }),
+      generateHorse({ tier: "budget", ownership: { type: "unowned" } }),
+      generateHorse({ tier: "budget", ownership: { type: "unowned" } }),
     ];
     const refreshed = refreshMarket(market, createRng(hashStr("test")));
     expect(refreshed.length).toBe(5);
@@ -29,10 +29,10 @@ describe("refreshMarket", () => {
 
   it("should remove oldest horses when market has more than 3", () => {
     const market = [
-      generateHorse({ tier: "budget", owned: false }),
-      generateHorse({ tier: "budget", owned: false }),
-      generateHorse({ tier: "budget", owned: false }),
-      generateHorse({ tier: "budget", owned: false }),
+      generateHorse({ tier: "budget", ownership: { type: "unowned" } }),
+      generateHorse({ tier: "budget", ownership: { type: "unowned" } }),
+      generateHorse({ tier: "budget", ownership: { type: "unowned" } }),
+      generateHorse({ tier: "budget", ownership: { type: "unowned" } }),
     ];
     const initialIds = market.map((h) => h.id);
     const refreshed = refreshMarket(market, createRng(hashStr("test")));
@@ -45,8 +45,8 @@ describe("refreshMarket", () => {
 
   it("should add horses when market has fewer than 5", () => {
     const market = [
-      generateHorse({ tier: "budget", owned: false }),
-      generateHorse({ tier: "budget", owned: false }),
+      generateHorse({ tier: "budget", ownership: { type: "unowned" } }),
+      generateHorse({ tier: "budget", ownership: { type: "unowned" } }),
     ];
     const refreshed = refreshMarket(market, createRng(hashStr("test")));
     expect(refreshed.length).toBe(5);
@@ -113,12 +113,12 @@ describe("pruneOldRaces", () => {
 
 describe("resolvePregnancies", () => {
   it("should resolve pregnancy on due day", () => {
-    const sire = generateHorse({ tier: "elite", owned: false });
+    const sire = generateHorse({ tier: "elite", ownership: { type: "unowned" } });
     sire.id = "sire-1";
     sire.gender = "horse";
     sire.age = 5;
 
-    const dam = generateHorse({ tier: "elite", owned: true });
+    const dam = generateHorse({ tier: "elite", ownership: { type: "player" } });
     dam.id = "dam-1";
     dam.gender = "mare";
     dam.age = 3; // Younger mare for lower complication rate
@@ -155,12 +155,12 @@ describe("resolvePregnancies", () => {
   });
 
   it("should not resolve pregnancy before due day", () => {
-    const sire = generateHorse({ tier: "elite", owned: false });
+    const sire = generateHorse({ tier: "elite", ownership: { type: "unowned" } });
     sire.id = "sire-1";
     sire.gender = "horse";
     sire.age = 5;
 
-    const dam = generateHorse({ tier: "elite", owned: true });
+    const dam = generateHorse({ tier: "elite", ownership: { type: "player" } });
     dam.id = "dam-1";
     dam.gender = "mare";
     dam.age = 5;
@@ -188,12 +188,12 @@ describe("resolvePregnancies", () => {
   });
 
   it("should skip already resolved pregnancies", () => {
-    const sire = generateHorse({ tier: "elite", owned: false });
+    const sire = generateHorse({ tier: "elite", ownership: { type: "unowned" } });
     sire.id = "sire-1";
     sire.gender = "horse";
     sire.age = 5;
 
-    const dam = generateHorse({ tier: "elite", owned: true });
+    const dam = generateHorse({ tier: "elite", ownership: { type: "player" } });
     dam.id = "dam-1";
     dam.gender = "mare";
     dam.age = 5;
@@ -220,12 +220,12 @@ describe("resolvePregnancies", () => {
   });
 
   it("should handle live foal guarantee on complication", () => {
-    const sire = generateHorse({ tier: "elite", owned: false });
+    const sire = generateHorse({ tier: "elite", ownership: { type: "unowned" } });
     sire.id = "sire-1";
     sire.gender = "horse";
     sire.age = 5;
 
-    const dam = generateHorse({ tier: "elite", owned: true });
+    const dam = generateHorse({ tier: "elite", ownership: { type: "player" } });
     dam.id = "dam-1";
     dam.gender = "mare";
     dam.age = 18; // Older mare for higher complication rate
@@ -255,7 +255,7 @@ describe("resolvePregnancies", () => {
   });
 
   it("should not mutate the input horses array or usedNames set", () => {
-    const sire = generateHorse({ tier: "elite", owned: false });
+    const sire = generateHorse({ tier: "elite", ownership: { type: "unowned" } });
     sire.id = "sire-1";
     sire.gender = "horse";
     sire.age = 5;
@@ -270,7 +270,7 @@ describe("resolvePregnancies", () => {
       retiredOnDay: 0,
     };
 
-    const dam = generateHorse({ tier: "elite", owned: true });
+    const dam = generateHorse({ tier: "elite", ownership: { type: "player" } });
     dam.id = "dam-1";
     dam.gender = "mare";
     dam.age = 3;

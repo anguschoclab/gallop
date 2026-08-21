@@ -95,7 +95,7 @@ describe("Advanced AI Tactics", () => {
       horseId: "H1",
       name: "Horse 1",
       silk: "#ff0000",
-      owned: false,
+      ownership: { type: "unowned" },
       position: 50,
       velocity: 15,
       finishTime: null,

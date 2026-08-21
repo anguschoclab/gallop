@@ -62,8 +62,13 @@ export function generateNpcRaceEntryIntents(
       if (stableAI?.npcRelationships) {
         for (const entry of race.entries) {
           const otherHorse = horseMap.get(entry.horseId);
-          if (!otherHorse?.stableId || otherHorse.stableId === stable.id) continue;
-          const rel = stableAI.npcRelationships[otherHorse.stableId];
+          if (
+            !otherHorse ||
+            otherHorse.ownership?.type !== "npc" ||
+            otherHorse.ownership.stableId === stable.id
+          )
+            continue;
+          const rel = stableAI.npcRelationships[otherHorse.ownership.stableId];
           if (rel?.allianceType === "racing_coalition") {
             threshold = 70;
             break;

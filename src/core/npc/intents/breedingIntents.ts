@@ -144,7 +144,7 @@ export function generateNpcSyndicateIntents(
       continue;
     }
 
-    if (stallion.stableId === stable.id) continue;
+    if (stallion.ownership?.type === "npc" && stallion.ownership.stableId === stable.id) continue;
     const buyCount = calculateSharePurchase(stable, syndicate, stallion);
     if (buyCount > 0) {
       const price = calculateSharePrice(syndicate, stallion);
@@ -199,7 +199,7 @@ export function generateNpcStudFeeIntents(
 
   for (const horse of ownedHorses) {
     if (!horse.stud || !horse.stud.atStud) continue;
-    if (horse.stableId !== stable.id) continue;
+    if (horse.ownership?.type !== "npc" || horse.ownership.stableId !== stable.id) continue;
 
     const currentFee = horse.stud.standingFee;
     if (currentFee <= 0) continue;

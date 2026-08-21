@@ -30,7 +30,7 @@ function createMockSnapshot(overrides: Partial<InRunningSnapshot> = {}): InRunni
         lane: 0,
         gate: 1,
         silk: "#ff0000",
-        owned: true,
+        ownership: { type: "player" },
         finishTime: null,
         rank: 1,
         conditions: [
@@ -59,7 +59,7 @@ function createMockSnapshot(overrides: Partial<InRunningSnapshot> = {}): InRunni
         lane: 1,
         gate: 2,
         silk: "#0000ff",
-        owned: false,
+        ownership: { type: "unowned" },
         finishTime: null,
         rank: 2,
         conditions: [

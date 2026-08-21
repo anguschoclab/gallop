@@ -40,8 +40,9 @@ export const worldAssessmentPhase = {
     // This runs early (order 2) so all downstream phases have access.
     const horseCountsByStable = new Map<string, number>();
     for (const horse of Object.values(state.horses)) {
-      if (horse.stableId) {
-        horseCountsByStable.set(horse.stableId, (horseCountsByStable.get(horse.stableId) ?? 0) + 1);
+      if (horse.ownership?.type === "npc") {
+        const sid = horse.ownership.stableId;
+        horseCountsByStable.set(sid, (horseCountsByStable.get(sid) ?? 0) + 1);
       }
     }
 

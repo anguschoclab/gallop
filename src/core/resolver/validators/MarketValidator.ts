@@ -48,7 +48,10 @@ export class MarketValidator implements IntentValidator {
         if (!race.entries.some((e) => e.horseId === claimingIntent.horseId)) {
           return { valid: false, reason: "Horse is not entered in this race" };
         }
-        if (horse.stableId === claimingIntent.claimantStableId) {
+        if (
+          horse.ownership?.type === "npc" &&
+          horse.ownership.stableId === claimingIntent.claimantStableId
+        ) {
           return { valid: false, reason: "Cannot claim own horse" };
         }
 

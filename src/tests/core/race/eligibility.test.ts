@@ -130,7 +130,7 @@ describe("isHorseEligibleForRace", () => {
 
   it("rejects if horse already entered", () => {
     const h = mkHorse({ id: "already" });
-    const r = mkRace({ entries: [{ horseId: "already", owned: true }] });
+    const r = mkRace({ entries: [{ horseId: "already", ownership: { type: "player" } }] });
     expect(isHorseEligibleForRace(h, r, new Set())).toBe(false);
   });
 });

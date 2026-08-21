@@ -86,7 +86,8 @@ export const privateSaleResolutionPhase: PipelinePhase = {
         continue;
       }
 
-      if (horse.stableId !== stableId) {
+      const horseStableId = horse.ownership?.type === "npc" ? horse.ownership.stableId : undefined;
+      if (horseStableId !== stableId) {
         newLogs.push({
           day: newDay,
           text: `${horse.name} is no longer at ${stable.name} — offer declined.`,

@@ -23,7 +23,7 @@ function makeHorse(): Horse {
     starts: 0,
     earnings: 0,
     retired: false,
-    owned: true,
+    ownership: { type: "player" },
     breed: "thoroughbred" as any,
     coatColor: "bay" as any,
     markings: {} as any,

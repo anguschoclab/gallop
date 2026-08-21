@@ -10,6 +10,13 @@ import type {
 } from "@/game/types";
 import { createTestGenotype } from "./createTestGenotype";
 import { createTestAppearance } from "./createTestAppearance";
+import {
+  makePlayerOwned,
+  makeNpcOwned,
+  makeUnowned,
+  type HorseOwnership,
+} from "@/core/horse/ownership";
+import { asNpcStableId, asHorseId } from "@/core/types/branded";
 
 /**
  * Creates valid test horse stats.
@@ -53,7 +60,7 @@ function createTestHorseMarkings(): HorseMarkings {
 export function createTestHorse(overrides?: Partial<Horse>): Horse {
   return {
     // Basic properties
-    id: "test-horse-1",
+    id: asHorseId("test-horse-1"),
     name: "Test Horse",
     age: 3,
     gender: "colt" as HorseGender,
@@ -65,7 +72,7 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
     form: 0,
     potential: 75,
     raceHistory: [],
-    owned: true,
+    ownership: makePlayerOwned(),
     fame: 50,
     fanCount: 25000,
 
@@ -217,7 +224,7 @@ export function createTestGelding(overrides?: Partial<Horse>): Horse {
 export function createTestHorses(count: number, baseOverrides?: Partial<Horse>): Horse[] {
   return Array.from({ length: count }, (_, i) =>
     createTestHorse({
-      id: `test-horse-${i + 1}`,
+      id: asHorseId(`test-horse-${i + 1}`),
       name: `Test Horse ${i + 1}`,
       ...baseOverrides,
     }),
@@ -232,8 +239,7 @@ export function createTestHorses(count: number, baseOverrides?: Partial<Horse>):
  */
 export function createTestNpcHorse(overrides?: Partial<Horse>): Horse {
   return createTestHorse({
-    owned: false,
-    stableId: "test-npc-stable-1",
+    ownership: makeNpcOwned(asNpcStableId("test-npc-stable-1")),
     fame: 30,
     fanCount: 15000,
     ...overrides,
@@ -242,8 +248,7 @@ export function createTestNpcHorse(overrides?: Partial<Horse>): Horse {
 
 export function createUnownedHorse(overrides?: Partial<Horse>): Horse {
   return createTestHorse({
-    owned: false,
-    stableId: undefined,
+    ownership: makeUnowned(),
     ...overrides,
   });
 }

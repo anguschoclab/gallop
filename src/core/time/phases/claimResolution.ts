@@ -82,7 +82,7 @@ export const claimResolutionPhase = {
       const proceeds = netProceeds(price);
 
       // Transfer horse
-      const originalStableId = horse.stableId;
+      const originalStableId = horse.ownership?.type === "npc" ? horse.ownership.stableId : undefined;
       const originalOwnerIsPlayer = !originalStableId;
 
       impacts.push({
@@ -207,7 +207,7 @@ export const claimResolutionPhase = {
         if (!horse) continue;
 
         claimCount++;
-        const originalStableId = horse.stableId;
+        const originalStableId = horse.ownership?.type === "npc" ? horse.ownership.stableId : undefined;
         // Only process friction for NPC-to-NPC claims
         if (winnerClaim.claimantStableId && originalStableId) {
           updatedNpcAIManager = processClaimingFriction(

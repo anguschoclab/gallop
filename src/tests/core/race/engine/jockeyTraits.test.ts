@@ -44,7 +44,7 @@ function makeRunner(
     horseId,
     name: `Horse ${horseId}`,
     silk: "#ff0000",
-    owned: false,
+    ownership: { type: "unowned" },
     position: 0,
     velocity: 15,
     finishTime: null,

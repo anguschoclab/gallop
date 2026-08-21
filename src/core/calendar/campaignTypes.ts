@@ -52,7 +52,7 @@ export type ConfirmedAptitudes = {
 };
 
 export type HorseCampaign = {
-  horseId: string;
+  horseId: import("@/core/types/branded").HorseId;
   goalType: CampaignGoalType;
   targetRaceKey?: string;
   slots: CampaignRaceSlot[];
@@ -66,7 +66,7 @@ export type HorseCampaign = {
 };
 
 export type TripleCrownProgress = {
-  horseId: string;
+  horseId: import("@/core/types/branded").HorseId;
   triplecrownKey: string;
   year: number;
   legs: { raceKey: string; position: number; day: number }[];

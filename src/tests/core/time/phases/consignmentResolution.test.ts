@@ -7,7 +7,7 @@ import type { PipelineContext } from "@/core/time/pipeline";
 
 describe("consignmentResolutionPhase", () => {
   it("should convert consignment intents to impacts", () => {
-    const horse = createTestHorse({ id: "horse-1", owned: true });
+    const horse = createTestHorse({ id: "horse-1", ownership: { type: "player" } });
     const auction = {
       id: "sale-1",
       day: 10,
@@ -42,7 +42,7 @@ describe("consignmentResolutionPhase", () => {
   });
 
   it("should skip consignment for already-resolved auctions", () => {
-    const horse = createTestHorse({ id: "horse-1", owned: true });
+    const horse = createTestHorse({ id: "horse-1", ownership: { type: "player" } });
     const auction = {
       id: "sale-1",
       day: 10,
@@ -78,7 +78,7 @@ describe("consignmentResolutionPhase", () => {
   it("should skip consignment for already-consigned horses", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      owned: true,
+      ownership: { type: "player" },
       consignedSaleId: "other-sale",
     });
     const auction = {
@@ -116,7 +116,7 @@ describe("consignmentResolutionPhase", () => {
   it("should handle withdrawal intents", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      owned: true,
+      ownership: { type: "player" },
       consignedSaleId: "sale-1",
     });
     const auction = {

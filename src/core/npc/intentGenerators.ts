@@ -72,9 +72,10 @@ export function generateNpcIntents(
   const horseMap = new Map(Object.entries(state.horses));
   const horsesByStable = new Map<string, Horse[]>();
   for (const horse of Object.values(state.horses)) {
-    if (horse.stableId) {
-      if (!horsesByStable.has(horse.stableId)) horsesByStable.set(horse.stableId, []);
-      horsesByStable.get(horse.stableId)!.push(horse);
+    if (horse.ownership?.type === "npc") {
+      const sid = horse.ownership.stableId;
+      if (!horsesByStable.has(sid)) horsesByStable.set(sid, []);
+      horsesByStable.get(sid)!.push(horse);
     }
   }
 

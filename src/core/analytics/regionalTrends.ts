@@ -117,10 +117,10 @@ export function collectRegionRuns({
   const rows: RegionRunRow[] = [];
 
   for (const horse of horses) {
-    if (ownedOnly && !horse.owned) continue;
+    if (ownedOnly && horse.ownership?.type !== "player") continue;
     for (const entry of horse.raceHistory ?? []) {
       if (!isInWindow(entry.day, currentDay, weeks)) continue;
-      if (stableId && (entry.stableId ?? horse.stableId) !== stableId) continue;
+      if (stableId && (entry.stableId ?? (horse.ownership?.type === "npc" ? horse.ownership.stableId : undefined)) !== stableId) continue;
       if (surface?.length && !surface.includes(entry.surface ?? "")) continue;
       if (distMin != null && (entry.distance ?? 0) < distMin) continue;
       if (distMax != null && (entry.distance ?? 0) > distMax) continue;

@@ -31,7 +31,7 @@ function makeMockState(overrides: Record<string, any> = {}) {
     hemisphere: "Northern",
     stud: mkStud({ standingFee: 5000 }),
     stableId: "npc-stable-1",
-    owned: false,
+    ownership: { type: "unowned" },
   });
   const sire2 = createTestStallion({
     id: "sire2",
@@ -39,14 +39,14 @@ function makeMockState(overrides: Record<string, any> = {}) {
     hemisphere: "Northern",
     stud: mkStud({ standingFee: 8000 }),
     stableId: "npc-stable-2",
-    owned: false,
+    ownership: { type: "unowned" },
   });
   const owned = createTestStallion({
     id: "sire-owned",
     name: "Owned Sire",
     hemisphere: "Northern",
     stud: mkStud({ standingFee: 5000 }),
-    owned: true,
+    ownership: { type: "player" },
   });
 
   return {

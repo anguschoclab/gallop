@@ -54,7 +54,7 @@ const investor: InvestorRecord = {
 const playerHorse: Partial<GameState["horses"][number]> = {
   id: "horse-overlay",
   name: "Midnight Comet",
-  owned: true,
+  ownership: { type: "player" },
 } as any;
 
 const inquiry: StewardsInquiry = {
@@ -109,7 +109,7 @@ describe("Version-key rehydration guard", () => {
       storeVersion: STORE_STATE_VERSION - 1, // incompatible
       day: 999,
       cash: 1,
-      horses: h2r([{ id: "stale-horse", name: "Old Timer", owned: true }] as unknown as Horse[]),
+      horses: h2r([{ id: "stale-horse", name: "Old Timer", ownership: { type: "player" } }] as unknown as Horse[]),
       playerNominations: [nomination],
       syndicateInvestors: { "synd-v": investor },
     };
@@ -203,7 +203,7 @@ describe("Empty localStorage — UI renders with default empty state", () => {
     useGame.setState({
       ...createDefaultGameState(),
       // No owned horses — inquiry is for an NPC horse
-      horses: h2r([{ id: "npc-horse", name: "Rival", owned: false } as any]),
+      horses: h2r([{ id: "npc-horse", name: "Rival", ownership: { type: "unowned" } } as any]),
       stewardsInquiries: [
         {
           ...inquiry,

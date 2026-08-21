@@ -22,7 +22,7 @@ function createHorse(overrides: Partial<Horse> = {}): Horse {
       consistency: 50,
     },
     raceHistory: [],
-    owned: true,
+    ownership: { type: "player" },
     healthStatus: "healthy",
     lifecycleStatus: "active",
     racingViable: true,

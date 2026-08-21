@@ -26,7 +26,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     genotype: overrides.genotype ?? createTestGenotype(),
     geneticMarkers: resolveGeneticMarkers(overrides.genotype ?? createTestGenotype()),
     raceHistory: [],
-    owned: true,
+    ownership: { type: "player" },
     fame: 0,
     lifecycleStatus: "active" as const,
     ...overrides,

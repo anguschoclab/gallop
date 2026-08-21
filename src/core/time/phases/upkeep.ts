@@ -123,8 +123,9 @@ export const upkeepPhase = {
     const horseCountsByStable = new Map<string, number>();
     for (const h of Object.values(state.horses)) {
       const isActive = !h.lifecycleStatus || h.lifecycleStatus === "active";
-      if (h.stableId && isActive) {
-        horseCountsByStable.set(h.stableId, (horseCountsByStable.get(h.stableId) ?? 0) + 1);
+      if (h.ownership?.type === "npc" && isActive) {
+        const sid = h.ownership.stableId;
+        horseCountsByStable.set(sid, (horseCountsByStable.get(sid) ?? 0) + 1);
       }
     }
 

@@ -15,6 +15,8 @@ import type { ImpactHandler, LookupMaps } from "./types";
 import type { Syndicate, ShareActivityFeedItem } from "@/core/breeding/types";
 import { generateUUID } from "@/core/uuid";
 import { findMajorityOwner } from "@/core/breeding/devolutionUtils";
+import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 import type {
   SyndicateCreationImpact,
   ShareTransactionImpact,
@@ -143,7 +145,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const stallion =
       lookupMaps?.horseMap.get(syndicate.stallionId) || draft.horses[syndicate.stallionId];
     if (stallion) {
-      const currentOwnerKey = stallion.stableId ?? "player";
+      const currentOwnerKey =
+        stallion.ownership?.type === "npc" ? stallion.ownership.stableId : "player";
       const devolutionResult = findMajorityOwner(
         syndicate.shareHolders,
         syndicate.totalShares,
@@ -154,8 +157,9 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         const topHolder = devolutionResult.newOwner;
         const newStableId = topHolder === "player" ? undefined : topHolder;
         const previousOwnerKey = currentOwnerKey;
-        stallion.stableId = newStableId;
-        stallion.owned = !newStableId;
+        stallion.ownership = newStableId
+          ? makeNpcOwned(asNpcStableId(newStableId))
+          : makePlayerOwned();
 
         const newOwnerName =
           topHolder === "player"

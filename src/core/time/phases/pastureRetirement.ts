@@ -109,7 +109,7 @@ export const pastureRetirementPhase: PipelinePhase = {
 
     // 2. Automatic NPC retirement
     const npcHorses = Object.values(state.horses).filter(
-      (h) => h.stableId && h.lifecycleStatus === "active",
+      (h) => h.ownership?.type === "npc" && h.lifecycleStatus === "active",
     );
 
     for (const horse of npcHorses) {

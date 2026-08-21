@@ -26,7 +26,7 @@ describe("SeasonStandingsWidget — entity linking", () => {
     const horse = createTestHorse({
       id: "h1",
       name: "Thunder",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -45,8 +45,7 @@ describe("SeasonStandingsWidget — entity linking", () => {
     const horse2 = createTestHorse({
       id: "h2",
       name: "Lightning",
-      owned: false,
-      stableId: "npc1",
+      ownership: { type: "npc", stableId: asNpcStableId("npc1") },
       raceHistory: [
         {
           raceId: "r2",

@@ -29,7 +29,7 @@ export const stallionRetirementPhase: PipelinePhase = {
     const impacts = [...context.impacts];
 
     // Only run for NPC horses
-    const npcHorses = Object.values(state.horses).filter((h) => h.stableId);
+    const npcHorses = Object.values(state.horses).filter((h) => h.ownership?.type === "npc");
     const { stableMap } = context;
 
     for (const horse of npcHorses) {
@@ -50,7 +50,7 @@ export const stallionRetirementPhase: PipelinePhase = {
       const inactive = newDay - lastRaceDay > 60;
 
       if ((isLegend && inactive) || isOld) {
-        const stable = stableMap.get(horse.stableId!);
+        const stable = horse.ownership?.type === "npc" ? stableMap.get(horse.ownership.stableId) : undefined;
         const fee = calculateRecommendedStudFee(horse, stable?.tier || "mid");
 
         impacts.push({

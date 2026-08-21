@@ -16,7 +16,7 @@ import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 function seedHorse(overrides: Partial<Horse> = {}) {
   const horse = createTestHorse({
     id: "foal-1",
-    owned: true,
+    ownership: { type: "player" },
     developmentArc: createDefaultFoalDevelopmentArc(0),
     stats: {
       speed: 50,
@@ -106,7 +106,7 @@ describe("resolveFoalMilestone", () => {
   });
 
   it("rejects when the horse is not owned", () => {
-    seedHorse({ owned: false });
+    seedHorse({ ownership: { type: "unowned" } });
     const res = useGame.getState().resolveFoalMilestone("foal-1", "breaking_in", "bold_approach");
     expect(res.ok).toBe(false);
   });

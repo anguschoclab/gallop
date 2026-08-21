@@ -370,7 +370,7 @@ describe("applyImpacts", () => {
       },
       potential: 90,
       stableId: undefined,
-      owned: true,
+      ownership: { type: "player" },
     });
 
     const state: GameState = {
@@ -401,8 +401,7 @@ describe("applyImpacts", () => {
     };
 
     const result = applyImpacts(context);
-    expect(Object.values(result.state.horses)[0].stableId).toBe("npc-1");
-    expect(Object.values(result.state.horses)[0].owned).toBe(false);
+    expect(Object.values(result.state.horses)[0].ownership).toEqual({ type: "npc", stableId: "npc-1" });
   });
 
   it("should apply multiple impacts in order", () => {

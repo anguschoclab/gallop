@@ -11,7 +11,7 @@ describe("stallionRetirementPhase", () => {
       id: "horse-1",
       age: 8,
       gender: "horse",
-      owned: true,
+      ownership: { type: "player" },
     });
     const state = makeGameState({ horses: h2r([horse]) }) as GameState;
     const context = makePipelineContext({ state, newDay: 100 }) as PipelineContext;

@@ -11,6 +11,7 @@ import { getCurrentYear } from "@/core/race/schedule";
 import { GRADED_RACES_BY_TRIPLECROWN_KEY } from "@/data/gradedRaces";
 import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/constants";
 import type { Race, Horse } from "@/game/types";
+import type { HorseOwnership } from "@/core/horse/ownership";
 
 export function generateRaceHistoryImpact(
   horse: Horse,
@@ -21,7 +22,7 @@ export function generateRaceHistoryImpact(
   newDay: number,
   runner?: { horseId: string; gate?: number; lane?: number },
   rng?: Rng,
-  raceEntry?: { jockeyId?: string; stableId?: string; owned?: boolean },
+  raceEntry?: { jockeyId?: string; ownership?: HorseOwnership },
 ): RaceHistoryImpact {
   let winAndYouInQualified = undefined;
   if (position === 1 && race.graded?.winAndYouInTarget) {
@@ -61,7 +62,7 @@ export function generateRaceHistoryImpact(
       gate: runner?.gate,
       lane: runner?.lane,
       jockeyId: raceEntry?.jockeyId,
-      stableId: raceEntry?.stableId ?? horse.stableId,
+      stableId: raceEntry?.ownership?.type === "npc" ? raceEntry.ownership.stableId : (horse.ownership?.type === "npc" ? horse.ownership.stableId : undefined),
       winAndYouInQualified,
     },
     reason: "Race completed",

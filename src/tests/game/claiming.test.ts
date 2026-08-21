@@ -97,7 +97,7 @@ describe("processClaims", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      owned: false,
+      ownership: { type: "unowned" },
       fame: 50,
       stableId: "stable-1",
       raceHistory: [],
@@ -154,7 +154,7 @@ describe("processClaims", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      owned: false,
+      ownership: { type: "unowned" },
       fame: 50,
       stableId: "stable-1",
       raceHistory: [],
@@ -226,8 +226,8 @@ describe("processClaims", () => {
       claimingPrice: 10000,
     };
 
-    const horse1 = createTestHorse({ id: "horse-1", stableId: "stable-1", owned: false });
-    const horse2 = createTestHorse({ id: "horse-2", stableId: "stable-1", owned: false });
+    const horse1 = createTestHorse({ id: "horse-1", stableId: "stable-1", ownership: { type: "unowned" } });
+    const horse2 = createTestHorse({ id: "horse-2", stableId: "stable-1", ownership: { type: "unowned" } });
 
     const claims: ClaimAttempt[] = [
       { claimantStableId: "stable-2", horseId: "horse-1", claimingPrice: 10000, successful: false },
@@ -256,7 +256,7 @@ describe("processClaims", () => {
       claimingPrice: 10000,
     };
 
-    const horse1 = createTestHorse({ id: "horse-1", stableId: "stable-1", owned: false });
+    const horse1 = createTestHorse({ id: "horse-1", stableId: "stable-1", ownership: { type: "unowned" } });
 
     const claims: ClaimAttempt[] = [
       { claimantStableId: "stable-2", horseId: "horse-1", claimingPrice: 10000, successful: false },
@@ -293,7 +293,7 @@ describe("isHorseEligibleForClaimingPrice", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [],
     });
@@ -320,7 +320,7 @@ describe("isHorseEligibleForClaimingPrice", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [],
     });
@@ -347,7 +347,7 @@ describe("isHorseEligibleForClaimingPrice", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [
         {
@@ -386,7 +386,7 @@ describe("isHorseEligibleForClaimingPrice", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [
         {
@@ -426,7 +426,7 @@ describe("getSuggestedClaimingPriceRange", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [],
     });
@@ -454,7 +454,7 @@ describe("getSuggestedClaimingPriceRange", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [],
     });
@@ -482,7 +482,7 @@ describe("getSuggestedClaimingPriceRange", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [],
     });

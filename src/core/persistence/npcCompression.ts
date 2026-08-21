@@ -16,10 +16,11 @@ import {
   calculateRecommendedStudFee,
   defaultStudParams,
 } from "@/core/breeding/stallions";
+import type { HorseId, NpcStableId } from "@/core/types/branded";
 
 export interface NpcHorseSummary {
-  id: string;
-  stableId: string;
+  id: HorseId;
+  stableId: NpcStableId;
   name: string;
   age: number;
   gender: HorseGender;
@@ -57,14 +58,14 @@ export function compressNpcHorses(
   const summaries: NpcHorseSummary[] = [];
 
   for (const horse of Object.values(horses)) {
-    // Only compress NPC horses (those with a stableId)
-    if (!horse.stableId) continue;
-    const stable = stableMap.get(horse.stableId);
+    // Only compress NPC horses
+    if (horse.ownership.type !== "npc") continue;
+    const stable = stableMap.get(horse.ownership.stableId);
     if (!stable) continue;
 
     summaries.push({
       id: horse.id,
-      stableId: horse.stableId,
+      stableId: horse.ownership.stableId,
       name: horse.name,
       age: horse.age,
       gender: horse.gender,
@@ -170,7 +171,7 @@ export function splitHorsesForPersistence(
   const stableIds = new Set(stables.map((s) => s.id));
 
   for (const [id, horse] of Object.entries(horses)) {
-    if (horse.stableId && stableIds.has(horse.stableId)) {
+    if (horse.ownership.type === "npc" && stableIds.has(horse.ownership.stableId)) {
       // NPC horse - skip, will be summarized
       continue;
     }

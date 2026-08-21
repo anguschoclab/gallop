@@ -115,7 +115,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     horseId: "h1",
     name: "Test Horse",
     silk: "#ff0000",
-    owned: false,
+    ownership: { type: "unowned" },
     position: 1600,
     velocity: 16,
     finishTime: 90.0,
@@ -153,7 +153,7 @@ afterEach(() => cleanup());
 describe("ResultOverlay — mood breakdown", () => {
   it("renders mood face and breakdown when finalMood is present", () => {
     const mood = makeMood();
-    const runners = [makeRunner({ owned: true, finalMood: mood })];
+    const runners = [makeRunner({ ownership: { type: "player" }, finalMood: mood })];
 
     render(
       createElement(ResultOverlay, {
@@ -187,14 +187,14 @@ describe("ResultOverlay — mood breakdown", () => {
       makeRunner({
         horseId: "h1",
         name: "Owned Horse",
-        owned: true,
+        ownership: { type: "player" },
         finishTime: 90.0,
         finalMood: mood1,
       }),
       makeRunner({
         horseId: "h2",
         name: "Other Horse",
-        owned: false,
+        ownership: { type: "unowned" },
         finishTime: 91.0,
         gate: 2,
         finalMood: mood2,
@@ -218,7 +218,7 @@ describe("ResultOverlay — mood breakdown", () => {
   });
 
   it("does not render mood section when finalMood is undefined", () => {
-    const runners = [makeRunner({ owned: true, finalMood: undefined })];
+    const runners = [makeRunner({ ownership: { type: "player" }, finalMood: undefined })];
 
     render(
       createElement(ResultOverlay, {
@@ -238,14 +238,14 @@ describe("ResultOverlay — mood breakdown", () => {
       makeRunner({
         horseId: "h1",
         name: "With Mood",
-        owned: true,
+        ownership: { type: "player" },
         finishTime: 90.0,
         finalMood: mood,
       }),
       makeRunner({
         horseId: "h2",
         name: "No Mood",
-        owned: false,
+        ownership: { type: "unowned" },
         finishTime: 91.0,
         gate: 2,
         finalMood: undefined,
@@ -272,7 +272,7 @@ describe("ResultOverlay — mood breakdown", () => {
       contribution: i + 1,
     }));
     const mood = makeMood({ signals: manySignals });
-    const runners = [makeRunner({ owned: true, finalMood: mood })];
+    const runners = [makeRunner({ ownership: { type: "player" }, finalMood: mood })];
 
     render(
       createElement(ResultOverlay, {
@@ -289,7 +289,7 @@ describe("ResultOverlay — mood breakdown", () => {
 
   it("collapsible mood breakdown is collapsed by default", () => {
     const mood = makeMood({ signals: [{ label: "Hidden until expanded", contribution: 5 }] });
-    const runners = [makeRunner({ owned: true, finalMood: mood })];
+    const runners = [makeRunner({ ownership: { type: "player" }, finalMood: mood })];
 
     render(
       createElement(ResultOverlay, {
@@ -317,7 +317,7 @@ describe("ResultOverlay — mood breakdown", () => {
 
   it("passes MOOD_FACE_RESULT_OVERLAY_SIZE and MOOD_TOOLTIP_OVERLAY_CLASS to RunnerMoodFace", () => {
     const mood = makeMood();
-    const runners = [makeRunner({ owned: true, finalMood: mood })];
+    const runners = [makeRunner({ ownership: { type: "player" }, finalMood: mood })];
 
     render(
       createElement(ResultOverlay, {

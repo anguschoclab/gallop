@@ -12,7 +12,7 @@ vi.mock("@tanstack/react-router", () => ({
 describe("Fame display rounding", () => {
   it("HorseCardHeader shows rounded fame", () => {
     const horse = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", owned: true }),
+      generateHorse({ tier: "starter", ownership: { type: "player" } }),
     ) as unknown as Horse;
     horse.fame = 12.5;
 
@@ -25,7 +25,7 @@ describe("Fame display rounding", () => {
 
   it("StallionCard shows rounded fame", () => {
     const stallion = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", owned: true }),
+      generateHorse({ tier: "starter", ownership: { type: "player" } }),
     ) as unknown as Horse;
     stallion.fame = 8.5;
     stallion.stud = {

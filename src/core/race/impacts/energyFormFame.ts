@@ -37,7 +37,9 @@ export function generateFormImpact(
   const groom = hiredStaff.find(
     (s) =>
       s.role === "groom" &&
-      (playerOwned ? !s.stableId : !!horse.stableId && s.stableId === horse.stableId),
+      (playerOwned
+        ? !s.stableId
+        : horse.ownership?.type === "npc" && s.stableId === horse.ownership.stableId),
   );
 
   const baseFormDelta =

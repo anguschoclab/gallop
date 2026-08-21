@@ -6,8 +6,7 @@ import type { Race, Horse } from "@/game/types";
 describe("prizeMoney", () => {
   const baseHorse: Horse = {
     id: "horse1",
-    owned: false,
-    stableId: "stable1",
+    ownership: { type: "npc", stableId: asNpcStableId("stable1") },
     // Minimum fields needed for tests
   } as unknown as Horse;
 
@@ -60,7 +59,7 @@ describe("prizeMoney", () => {
     });
 
     it("generates transaction and reputation impacts for player-owned horses winning", () => {
-      const playerHorse = { ...baseHorse, owned: true, stableId: undefined } as unknown as Horse;
+      const playerHorse = { ...baseHorse, ownership: { type: "player" }, stableId: undefined } as unknown as Horse;
       const impacts = generatePrizeMoneyImpacts(playerHorse, 1, baseRace, 1, rng);
 
       expect(impacts).not.toBeNull();
@@ -75,7 +74,7 @@ describe("prizeMoney", () => {
     });
 
     it("generates no reputation impact for player horses finishing well enough to not lose rep", () => {
-      const playerHorse = { ...baseHorse, owned: true, stableId: undefined } as unknown as Horse;
+      const playerHorse = { ...baseHorse, ownership: { type: "player" }, stableId: undefined } as unknown as Horse;
       const g1Race = {
         ...baseRace,
         graded: { grade: "G1" },
@@ -93,13 +92,13 @@ describe("prizeMoney", () => {
       expect(impacts?.reputationImpact).toBeUndefined();
     });
     it("pays nothing for unowned world stock (no owner, no stableId)", () => {
-      const worldHorse = { ...baseHorse, owned: false, stableId: undefined } as unknown as Horse;
+      const worldHorse = { ...baseHorse, ownership: { type: "npc", stableId: asNpcStableId(undefined) } } as unknown as Horse;
       const impacts = generatePrizeMoneyImpacts(worldHorse, 1, baseRace, 1, rng);
       expect(impacts).toBeNull();
     });
 
     it("targets the player explicitly for player-owned winners", () => {
-      const playerHorse = { ...baseHorse, owned: true, stableId: undefined } as unknown as Horse;
+      const playerHorse = { ...baseHorse, ownership: { type: "player" }, stableId: undefined } as unknown as Horse;
       const impacts = generatePrizeMoneyImpacts(playerHorse, 1, baseRace, 1, rng);
       expect(impacts?.cashImpact?.entityId).toBe("player");
     });

@@ -40,7 +40,7 @@ function makeRunner(overrides: Partial<Record<string, unknown>> = {}): Runner {
     horseId: "h1",
     name: "Test Horse",
     silk: "#ff0000",
-    owned: false,
+    ownership: { type: "unowned" },
     position: 100,
     velocity: 15,
     finishTime: null,

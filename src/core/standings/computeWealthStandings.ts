@@ -49,7 +49,7 @@ export function computeWealthStandings(state: WealthStandingsState): ComputeWeal
 
   for (const horse of allHorsesArray) {
     if (horse.lifecycleStatus === "deceased") continue;
-    const key = horse.owned ? PLAYER_ID : horse.stableId;
+    const key = horse.ownership?.type === "player" ? PLAYER_ID : (horse.ownership?.type === "npc" ? horse.ownership.stableId : null);
     if (!key) continue;
 
     const value = horseMarketValue(horse, allHorsesArray);

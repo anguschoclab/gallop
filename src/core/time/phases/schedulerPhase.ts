@@ -39,7 +39,7 @@ export const schedulerPhase = {
 
     const updatedCampaigns: HorseCampaign[] = state.campaigns.map((campaign) => {
       const horse = horseMap.get(campaign.horseId);
-      if (!horse || !horse.owned) return campaign;
+      if (!horse || horse.ownership?.type !== "player") return campaign;
 
       // Reconcile slot statuses from resolved races
       const reconciledSlots = reconcileSlotStatuses(campaign, Object.values(state.races));

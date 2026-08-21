@@ -27,7 +27,7 @@ export function computePlayerRaceDays(
 
   for (const race of races) {
     if (race.day >= startDay && race.day <= endDay && !race.resolved) {
-      const hasPlayerEntry = race.entries.some((e) => e.owned);
+      const hasPlayerEntry = race.entries.some((e) => e.ownership?.type === "player");
       if (hasPlayerEntry) {
         playerRaceDays.add(race.day);
       }

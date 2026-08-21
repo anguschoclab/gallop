@@ -43,14 +43,14 @@ function createMockRunner(horseId: string, jockeyId?: string, jockeyName?: strin
     horseId,
     name: "Mock Horse",
     silk: "#000",
-    owned: true,
+    ownership: { type: "player" },
     jockeyId: jockeyId ?? "j-1",
     jockeyName: jockeyName ?? "Test Jockey",
   };
 }
 
 const baseHorse = (overrides?: Partial<Horse>) =>
-  createTestHorse({ id: "winner-1", name: "Champ", silk: "#ff0000", owned: true, ...overrides });
+  createTestHorse({ id: "winner-1", name: "Champ", silk: "#ff0000", ownership: { type: "player" }, ...overrides });
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -299,7 +299,7 @@ describe("recordRaceHistory", () => {
     const record = recordRaceHistory(
       race,
       createMockResult("winner-1"),
-      [{ horseId: "winner-1", name: "Mock Horse", silk: "#000", owned: true } as RaceRunner],
+      [{ horseId: "winner-1", name: "Mock Horse", silk: "#000", ownership: { type: "player" } } as RaceRunner],
       [baseHorse()],
       100,
       createTestRng("seed"),
@@ -345,9 +345,9 @@ describe("recordRaceHistory", () => {
 
   // ── isPlayerOwned ──
 
-  it("sets isPlayerOwned to false when horse.owned is false", () => {
+  it("sets isPlayerOwned to false when horse is unowned", () => {
     const race = createMockRace();
-    const horse = baseHorse({ owned: false });
+    const horse = baseHorse({ ownership: { type: "unowned" } });
     const record = recordRaceHistory(
       race,
       createMockResult("winner-1"),

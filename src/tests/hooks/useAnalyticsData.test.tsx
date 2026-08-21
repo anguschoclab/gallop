@@ -101,13 +101,13 @@ describe("useAnalyticsData", () => {
     const h1 = createTestHorse({
       id: "h1",
       name: "Horse 1",
-      owned: true,
+      ownership: { type: "player" },
       lifecycleStatus: "active",
     });
     const h2 = createTestHorse({
       id: "h2",
       name: "Horse 2",
-      owned: true,
+      ownership: { type: "player" },
       lifecycleStatus: "active",
     });
     const transactions: Transaction[] = [
@@ -133,7 +133,7 @@ describe("useAnalyticsData", () => {
     const h1 = createTestHorse({
       id: "h1",
       name: "Horse 1",
-      owned: true,
+      ownership: { type: "player" },
       lifecycleStatus: "active",
     });
     const { Probe, captured } = captureAnalyticsData();
@@ -151,13 +151,13 @@ describe("useAnalyticsData", () => {
     const h1 = createTestHorse({
       id: "h1",
       name: "Horse 1",
-      owned: true,
+      ownership: { type: "player" },
       lifecycleStatus: "active",
     });
     const h2 = createTestHorse({
       id: "h2",
       name: "Horse 2",
-      owned: true,
+      ownership: { type: "player" },
       lifecycleStatus: "active",
     });
     const transactions: Transaction[] = [

@@ -21,16 +21,16 @@ function makeResolvedRace(overrides: Partial<Race> = {}): Race {
       { horseId: "h3", position: 3, time: 97.0 },
     ],
     entries: [
-      { horseId: "h1", owned: false },
-      { horseId: "h2", owned: false },
-      { horseId: "h3", owned: false },
+      { horseId: "h1", ownership: { type: "unowned" } },
+      { horseId: "h2", ownership: { type: "unowned" } },
+      { horseId: "h3", ownership: { type: "unowned" } },
     ],
     ...overrides,
   } as Race;
 }
 
 function makeOwned(id: string): Partial<Horse> {
-  return { id, owned: true, name: `Horse ${id}` };
+  return { id, ownership: { type: "player" }, name: `Horse ${id}` };
 }
 
 describe("stewardsPhase — player-entry guard", () => {
@@ -39,9 +39,9 @@ describe("stewardsPhase — player-entry guard", () => {
     // The guard must fire BEFORE the roll so no inquiry is ever emitted.
     const race = makeResolvedRace({
       entries: [
-        { horseId: "player-horse", owned: true } as any,
-        { horseId: "npc-h2", owned: false } as any,
-        { horseId: "npc-h3", owned: false } as any,
+        { horseId: "player-horse", ownership: { type: "player" } } as any,
+        { horseId: "npc-h2", ownership: { type: "unowned" } } as any,
+        { horseId: "npc-h3", ownership: { type: "unowned" } } as any,
       ],
       result: [
         { horseId: "player-horse", position: 1, time: 96.0 },
@@ -70,9 +70,9 @@ describe("stewardsPhase — player-entry guard", () => {
       const race = makeResolvedRace({
         id: `npc-race-${raceNum}`,
         entries: [
-          { horseId: `n${raceNum}-h1`, owned: false } as any,
-          { horseId: `n${raceNum}-h2`, owned: false } as any,
-          { horseId: `n${raceNum}-h3`, owned: false } as any,
+          { horseId: `n${raceNum}-h1`, ownership: { type: "unowned" } } as any,
+          { horseId: `n${raceNum}-h2`, ownership: { type: "unowned" } } as any,
+          { horseId: `n${raceNum}-h3`, ownership: { type: "unowned" } } as any,
         ],
         result: [
           { horseId: `n${raceNum}-h1`, position: 1, time: 96.0 },
@@ -98,7 +98,7 @@ describe("stewardsPhase — player-entry guard", () => {
     const race = makeResolvedRace({
       id: "already-inquired",
       inquiries: [{ id: "existing", type: "interference" }] as any,
-      entries: [{ horseId: "h1", owned: false } as any, { horseId: "h2", owned: false } as any],
+      entries: [{ horseId: "h1", ownership: { type: "unowned" } } as any, { horseId: "h2", ownership: { type: "unowned" } } as any],
     });
 
     const ctx = makePipelineContext({
@@ -131,9 +131,9 @@ describe("stewardsPhase — outcome coverage (Bug 1)", () => {
       const race = makeResolvedRace({
         id: `outcome-race-${raceNum}`,
         entries: [
-          { horseId: `h${raceNum}-1`, owned: false } as any,
-          { horseId: `h${raceNum}-2`, owned: false } as any,
-          { horseId: `h${raceNum}-3`, owned: false } as any,
+          { horseId: `h${raceNum}-1`, ownership: { type: "unowned" } } as any,
+          { horseId: `h${raceNum}-2`, ownership: { type: "unowned" } } as any,
+          { horseId: `h${raceNum}-3`, ownership: { type: "unowned" } } as any,
         ],
         result: [
           { horseId: `h${raceNum}-1`, position: 1, time: 96.0 },
@@ -167,8 +167,8 @@ describe("stewardsPhase — outcome coverage (Bug 1)", () => {
       const race = makeResolvedRace({
         id: `susp-test-${raceNum}`,
         entries: [
-          { horseId: `h${raceNum}-1`, owned: false } as any,
-          { horseId: `h${raceNum}-2`, owned: false } as any,
+          { horseId: `h${raceNum}-1`, ownership: { type: "unowned" } } as any,
+          { horseId: `h${raceNum}-2`, ownership: { type: "unowned" } } as any,
         ],
         result: [
           { horseId: `h${raceNum}-1`, position: 1, time: 96.0 },
@@ -203,8 +203,8 @@ describe("stewardsPhase — stewards_resolution impact (Bug 7)", () => {
       const race = makeResolvedRace({
         id: `res-race-${raceNum}`,
         entries: [
-          { horseId: `h${raceNum}-1`, owned: false } as any,
-          { horseId: `h${raceNum}-2`, owned: false } as any,
+          { horseId: `h${raceNum}-1`, ownership: { type: "unowned" } } as any,
+          { horseId: `h${raceNum}-2`, ownership: { type: "unowned" } } as any,
         ],
         result: [
           { horseId: `h${raceNum}-1`, position: 1, time: 96.0 },

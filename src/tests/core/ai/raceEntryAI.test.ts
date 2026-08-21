@@ -581,8 +581,8 @@ describe("competitor quality calculation", () => {
     });
     const toughRace = createMockRace({
       entries: [
-        { horseId: "comp-1", owned: false },
-        { horseId: "comp-2", owned: false },
+        { horseId: "comp-1", ownership: { type: "unowned" } },
+        { horseId: "comp-2", ownership: { type: "unowned" } },
       ],
     });
 
@@ -617,7 +617,7 @@ describe("competitor quality calculation", () => {
       },
     });
     const weakRace = createMockRace({
-      entries: [{ horseId: "weak-1", owned: false }],
+      entries: [{ horseId: "weak-1", ownership: { type: "unowned" } }],
     });
 
     const horseMap = new Map<string, Horse>([

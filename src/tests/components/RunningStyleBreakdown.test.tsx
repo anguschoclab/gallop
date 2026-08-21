@@ -31,7 +31,7 @@ describe("RunningStyleBreakdown", () => {
   });
 
   it("renders the section header", () => {
-    const horse = createTestHorse({ id: "h1", name: "Test Horse", owned: true });
+    const horse = createTestHorse({ id: "h1", name: "Test Horse", ownership: { type: "player" } });
     renderWithStore(<RunningStyleBreakdown horse={horse} />, { horses: h2r([horse]) } as any);
     expect(screen.getByText(/Running Style Breakdown/i)).toBeTruthy();
   });
@@ -40,13 +40,13 @@ describe("RunningStyleBreakdown", () => {
     const horse = createTestHorse({
       id: "h1",
       name: "Main Horse",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [{ position: 1, day: 10, raceId: "r1", time: 60 } as any],
     });
     const other = createTestHorse({
       id: "h2",
       name: "Compare Horse",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [{ position: 2, day: 10, raceId: "r1", time: 61 } as any],
     });
     renderWithStore(<RunningStyleBreakdown horse={horse} />, {
@@ -56,17 +56,17 @@ describe("RunningStyleBreakdown", () => {
   });
 
   it("does not show compare horse when no other owned horses with race history exist", () => {
-    const horse = createTestHorse({ id: "h1", name: "Solo Horse", owned: true });
+    const horse = createTestHorse({ id: "h1", name: "Solo Horse", ownership: { type: "player" } });
     renderWithStore(<RunningStyleBreakdown horse={horse} />, { horses: h2r([horse]) } as any);
     expect(screen.queryByText("Exit Compare")).toBeNull();
   });
 
   it("does not include non-owned horses in compare options", () => {
-    const horse = createTestHorse({ id: "h1", name: "Owned", owned: true });
+    const horse = createTestHorse({ id: "h1", name: "Owned", ownership: { type: "player" } });
     const npc = createTestHorse({
       id: "h2",
       name: "Npc Horse",
-      owned: false,
+      ownership: { type: "unowned" },
       raceHistory: [{ position: 1, day: 10, raceId: "r1", time: 60 } as any],
     });
     renderWithStore(<RunningStyleBreakdown horse={horse} />, { horses: h2r([horse, npc]) } as any);

@@ -63,7 +63,7 @@ function makeHorseEntity(overrides: Partial<Horse> = {}): Horse {
     heterozygosity: 0.5,
     raceHistory: [],
     fame: 0,
-    owned: true,
+    ownership: { type: "player" },
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 1, Dirt: 1, Synthetic: 1 },
     mudAptitude: 1,

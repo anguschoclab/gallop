@@ -67,9 +67,9 @@ export function buildNpcAIManagerUpdate(
     if (!pregnancy) continue;
 
     const sire = horseMap.get(pregnancy.sireId);
-    if (!sire || !sire.stableId) continue;
+    if (!sire || sire.ownership?.type !== "npc") continue;
 
-    const stable = stableMap.get(sire.stableId);
+    const stable = stableMap.get(sire.ownership.stableId);
     if (!stable) continue;
 
     const stableAI = getOrCreateStableAIState(nextManager, stable, newDay);
@@ -130,7 +130,7 @@ export function buildPregnancyImpacts(
     impacts.push(horseCreation);
 
     const dam = horseMap.get(pregnancy.damId);
-    if (dam && !dam.stableId) {
+    if (dam && dam.ownership?.type !== "npc") {
       const foalQuality = foal.potential;
       const reputationAmount = calculateBreedingReputation(foalQuality);
 

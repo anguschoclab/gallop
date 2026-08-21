@@ -62,7 +62,7 @@ function makeHorse(overrides?: Partial<Horse>): Horse {
     form: 0,
     potential: 75,
     raceHistory: [],
-    owned: true,
+    ownership: { type: "player" },
     fame: 50,
     runningStyle: "E",
     healthStatus: "healthy",

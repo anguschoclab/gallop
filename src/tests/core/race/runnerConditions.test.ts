@@ -27,7 +27,7 @@ function runner(overrides: Partial<Runner> = {}): Runner {
     velocity: 16,
     finishTime: null,
     lane: 1,
-    owned: false,
+    ownership: { type: "unowned" },
     runningStyle: "P",
     topSpeed: 18,
     horse: horse(),

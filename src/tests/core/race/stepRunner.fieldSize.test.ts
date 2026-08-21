@@ -45,7 +45,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     runningStyle: "EP",
     draftingHorseId: null,
     silk: "",
-    owned: false,
+    ownership: { type: "unowned" },
     weight: 55,
     horse: {} as any,
     jockey: makeJockey(),

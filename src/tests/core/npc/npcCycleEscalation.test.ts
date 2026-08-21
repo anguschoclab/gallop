@@ -54,15 +54,13 @@ describe("npcCycle — rivalry escalation news (grudge match path)", () => {
     playerHorse = createTestHorse({
       id: "player-horse",
       name: "Lightning Bolt",
-      owned: true,
-      stableId: "player",
+      ownership: { type: "player" },
     });
 
     rivalHorse = createTestHorse({
       id: "rival-horse",
       name: "Dark Thunder",
-      owned: false,
-      stableId: "rival-stable",
+      ownership: { type: "npc", stableId: asNpcStableId("rival-stable") },
     });
 
     race = {
@@ -75,8 +73,8 @@ describe("npcCycle — rivalry escalation news (grudge match path)", () => {
       purse: 50000,
       fieldSize: 8,
       entries: [
-        { horseId: "player-horse", owned: true, stableId: "player" } as any,
-        { horseId: "rival-horse", owned: false, stableId: "rival-stable" } as any,
+        { horseId: "player-horse", ownership: { type: "player" } } as any,
+        { horseId: "rival-horse", ownership: { type: "npc", stableId: asNpcStableId("rival-stable") } } as any,
       ],
       resolved: true,
       result: [
@@ -227,8 +225,7 @@ describe("npcCycle — rivalry escalation news (regional dominance path)", () =>
     playerHorse = createTestHorse({
       id: "player-horse",
       name: "Lightning Bolt",
-      owned: true,
-      stableId: "player",
+      ownership: { type: "player" },
     });
 
     race = {
@@ -240,7 +237,7 @@ describe("npcCycle — rivalry escalation news (regional dominance path)", () =>
       entryFee: 500,
       purse: 50000,
       fieldSize: 8,
-      entries: [{ horseId: "player-horse", owned: true, stableId: "player" } as any],
+      entries: [{ horseId: "player-horse", ownership: { type: "player" } } as any],
       resolved: true,
       result: [{ horseId: "player-horse", position: 1, time: 120 }],
       graded: { grade: "G1", country: REGION },

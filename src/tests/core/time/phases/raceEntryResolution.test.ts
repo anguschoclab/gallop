@@ -130,7 +130,7 @@ describe("raceEntryResolutionPhase", () => {
             entryFee: 200,
             purse: 10000,
             fieldSize: 1,
-            entries: [{ horseId: "weak-npc", owned: false, stableId: "s-other", npc: true }],
+            entries: [{ horseId: "weak-npc", ownership: { type: "npc", stableId: asNpcStableId("s-other") }, npc: true }],
             resolved: false,
           },
         ]),
@@ -199,7 +199,7 @@ describe("raceEntryResolutionPhase", () => {
             entryFee: 200,
             purse: 10000,
             fieldSize: 1,
-            entries: [{ horseId: "weak-npc", owned: false, stableId: "s-other", npc: true }],
+            entries: [{ horseId: "weak-npc", ownership: { type: "npc", stableId: asNpcStableId("s-other") }, npc: true }],
             resolved: false,
           },
         ]),
@@ -225,7 +225,7 @@ describe("raceEntryResolutionPhase", () => {
     });
 
     it("does NOT bump a player-owned entry", () => {
-      const playerHorse = createTestHorse({ id: "player-horse", owned: true });
+      const playerHorse = createTestHorse({ id: "player-horse", ownership: { type: "player" } });
       const challenger = createTestHorse({
         id: "strong-challenger",
         stableId: "s1",
@@ -252,7 +252,7 @@ describe("raceEntryResolutionPhase", () => {
             entryFee: 200,
             purse: 10000,
             fieldSize: 1,
-            entries: [{ horseId: "player-horse", owned: true, npc: false }],
+            entries: [{ horseId: "player-horse", ownership: { type: "player" }, npc: false }],
             resolved: false,
           },
         ]),
@@ -296,7 +296,7 @@ describe("raceEntryResolutionPhase", () => {
             entryFee: 200,
             purse: 10000,
             fieldSize: 1,
-            entries: [{ horseId: "npc-weak", owned: false, stableId: "s-npc", npc: true }],
+            entries: [{ horseId: "npc-weak", ownership: { type: "npc", stableId: asNpcStableId("s-npc") }, npc: true }],
             resolved: false,
           },
         ]),
@@ -340,7 +340,7 @@ describe("raceEntryResolutionPhase", () => {
             entryFee: 200,
             purse: 10000,
             fieldSize: 1,
-            entries: [{ horseId: "npc-horse", owned: false, stableId: "s-npc", npc: true }],
+            entries: [{ horseId: "npc-horse", ownership: { type: "npc", stableId: asNpcStableId("s-npc") }, npc: true }],
             resolved: false,
           },
         ]),

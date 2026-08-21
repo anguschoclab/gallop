@@ -34,7 +34,7 @@ const horseWithSurface = (
   ({
     id: "h1",
     name: "Tester",
-    owned: true,
+    ownership: { type: "player" },
     raceHistory: [
       {
         raceId,

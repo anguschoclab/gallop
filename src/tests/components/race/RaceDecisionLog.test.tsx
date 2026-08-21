@@ -44,8 +44,8 @@ function createMockSnapshots(): RaceSnapshot[] {
 }
 
 const runners: RunnerInfo[] = [
-  { horseId: "h1", name: "Thunder", owned: true, runningStyle: "E" },
-  { horseId: "h2", name: "Lightning", owned: false, runningStyle: "S" },
+  { horseId: "h1", name: "Thunder", ownership: { type: "player" }, runningStyle: "E" },
+  { horseId: "h2", name: "Lightning", ownership: { type: "unowned" }, runningStyle: "S" },
 ];
 
 describe("RaceDecisionLog", () => {

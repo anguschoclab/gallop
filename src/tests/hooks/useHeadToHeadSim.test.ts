@@ -47,7 +47,7 @@ const mkHorse = (id: string): Horse =>
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
-    owned: true,
+    ownership: { type: "player" },
   }) as unknown as Horse;
 
 describe("useHeadToHeadSim", () => {

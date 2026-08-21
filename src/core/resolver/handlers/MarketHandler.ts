@@ -19,6 +19,7 @@ import type {
   AuctionResolutionImpact,
 } from "../impacts/miscImpacts";
 import { generateUUID } from "@/core/uuid";
+import { makeUnowned } from "@/core/horse/ownership";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -96,8 +97,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
           if (passed && lot.consignorStableId) {
             const consignorExists = draft.npcStables.some((s) => s.id === lot.consignorStableId);
             if (!consignorExists) {
-              horse.stableId = undefined;
-              horse.owned = true;
+              horse.ownership = makeUnowned();
             }
           }
         }

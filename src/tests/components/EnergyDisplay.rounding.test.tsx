@@ -24,7 +24,7 @@ vi.mock("@/hooks/horse/useHorseCard", () => ({
 describe("Energy display rounding", () => {
   it("HorseCardCompact shows rounded energy", () => {
     const horse = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", owned: true }),
+      generateHorse({ tier: "starter", ownership: { type: "player" } }),
     ) as unknown as Horse;
     horse.energy = 84.7;
 
@@ -37,7 +37,7 @@ describe("Energy display rounding", () => {
 
   it("StableRosterView shows rounded energy", () => {
     const horse = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", owned: true }),
+      generateHorse({ tier: "starter", ownership: { type: "player" } }),
     ) as unknown as Horse;
     horse.energy = 72.3;
     horse.lifecycleStatus = "active";

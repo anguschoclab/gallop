@@ -52,7 +52,7 @@ describe("Season Planner Integration", () => {
       hemisphere: "Northern",
       stud: mkStud({ standingFee: 5000 }),
       stableId: "npc-stable-1",
-      owned: false,
+      ownership: { type: "unowned" },
     });
     const sire2 = createTestStallion({
       id: "sire2",
@@ -60,7 +60,7 @@ describe("Season Planner Integration", () => {
       hemisphere: "Northern",
       stud: mkStud({ standingFee: 8000 }),
       stableId: "npc-stable-2",
-      owned: false,
+      ownership: { type: "unowned" },
     });
 
     const { slice, enqueueIntent } = makeMockStore({
@@ -157,7 +157,7 @@ describe("Season Planner Integration", () => {
       hemisphere: "Northern",
       stud: mkStud(),
       stableId: "npc-stable-1",
-      owned: false,
+      ownership: { type: "unowned" },
     });
 
     const outOfSeasonDay = 200;
@@ -192,7 +192,7 @@ describe("Season Planner Integration", () => {
       hemisphere: "Northern",
       stud: mkStud(),
       stableId: "npc-stable-1",
-      owned: false,
+      ownership: { type: "unowned" },
     });
 
     const { slice, enqueueIntent } = makeMockStore({
@@ -238,7 +238,7 @@ describe("Season Planner Integration", () => {
       hemisphere: "Northern",
       stud: mkStud(),
       stableId: "npc-stable-1",
-      owned: false,
+      ownership: { type: "unowned" },
     });
 
     const canBreedResult = canBreed(sire, mare, breedingDay, []);
@@ -264,7 +264,7 @@ describe("Season Planner Integration", () => {
       name: "Owned Sire",
       hemisphere: "Northern",
       stud: mkStud({ standingFee: 5000 }),
-      owned: true,
+      ownership: { type: "player" },
     });
 
     const suggestions = suggestBestSires(mare, [owned], breedingDay);

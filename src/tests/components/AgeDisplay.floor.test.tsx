@@ -11,7 +11,7 @@ vi.mock("@tanstack/react-router", () => ({
 describe("Age display floor", () => {
   it("PlayerConsignmentsPanel uses Math.floor for age", () => {
     const horse = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", owned: true }),
+      generateHorse({ tier: "starter", ownership: { type: "player" } }),
     ) as unknown as Horse;
     horse.age = 5;
 
@@ -41,7 +41,7 @@ describe("Age display floor", () => {
 
   it("PlayerConsignmentsPanel handles float age with Math.floor", () => {
     const horse = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", owned: true }),
+      generateHorse({ tier: "starter", ownership: { type: "player" } }),
     ) as unknown as Horse;
     horse.age = 5.9;
 

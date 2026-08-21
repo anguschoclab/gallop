@@ -22,7 +22,7 @@ vi.mock("@tanstack/react-router", () => ({
 
 describe("NewsFeedWidget — entity linking", () => {
   it("renders log entries with NewsContent auto-detection for horse names", () => {
-    const horse = createTestHorse({ id: "h1", name: "Thunder Strike", owned: true });
+    const horse = createTestHorse({ id: "h1", name: "Thunder Strike", ownership: { type: "player" } });
     seedStore({
       ...createDefaultGameState(),
       horses: { [horse.id]: horse },
@@ -37,7 +37,7 @@ describe("NewsFeedWidget — entity linking", () => {
   });
 
   it("renders multiple log entries with auto-detected entities", () => {
-    const horse = createTestHorse({ id: "h1", name: "Lightning", owned: true });
+    const horse = createTestHorse({ id: "h1", name: "Lightning", ownership: { type: "player" } });
     seedStore({
       ...createDefaultGameState(),
       horses: { [horse.id]: horse },

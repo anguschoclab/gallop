@@ -16,8 +16,7 @@ function makeStallion(id: string, name: string, stableId?: string): Horse {
     potential: 80,
     raceHistory: [{ raceId: "r1", raceName: "G1 Race", position: 1, day: 100, grade: "G1" }],
     stud: { atStud: true, standingFee: 50000, bookSize: 50, seasonBookings: 0 },
-    owned: !stableId,
-    stableId,
+    ownership: stableId ? { type: "npc", stableId } : { type: "player" },
     fame: 50,
     lifetimeEarnings: 1000000,
     careerStarts: 10,
@@ -141,18 +140,17 @@ describe("Syndicate Devolution Integration", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, makeSaleImpact("syn-s1", "player", 1));
     expect(draft.syndicates["syn-s1"].shareHolders.player).toBe(20);
-    expect(draft.horses["s1"].stableId).toBeUndefined(); // Still player-owned
+    expect(draft.horses["s1"].ownership).toEqual({ type: "player" }); // Still player-owned
 
     // Player sells 1 -> player 19, npcA 19. 19 <= 25, npcA 19 = 19, tie -> no transfer
     handler.handle(draft, makeSaleImpact("syn-s1", "player", 1));
     expect(draft.syndicates["syn-s1"].shareHolders.player).toBe(19);
-    expect(draft.horses["s1"].stableId).toBeUndefined(); // Still player-owned (tie)
+    expect(draft.horses["s1"].ownership).toEqual({ type: "player" }); // Still player-owned (tie)
 
     // NPC-A buys 2 -> npcA 21, player 19. 19 <= 25, npcA 21 > 19 -> transfer!
     handler.handle(draft, makePurchaseImpact("syn-s1", "npcA", 2));
     expect(draft.syndicates["syn-s1"].shareHolders.npcA).toBe(21);
-    expect(draft.horses["s1"].stableId).toBe("npcA");
-    expect(draft.horses["s1"].owned).toBe(false);
+    expect(draft.horses["s1"].ownership).toEqual({ type: "npc", stableId: "npcA" });
 
     // Check devolution feed entry
     const devolutionFeeds = draft.shareActivityFeed.filter((f: any) => f.type === "devolution");

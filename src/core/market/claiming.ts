@@ -82,7 +82,7 @@ export function processClaims(
   // Process each horse's claims
   for (const [horseId, horseClaims] of claimsByHorse) {
     const horse = horseMap.get(horseId);
-    if (!horse || !horse.stableId) continue;
+    if (!horse || horse.ownership?.type !== "npc") continue;
 
     if (horseClaims.length === 0) continue;
 
@@ -94,7 +94,7 @@ export function processClaims(
     // Create transfer
     const transfer: HorseTransfer = {
       horseId,
-      fromStableId: horse.stableId,
+      fromStableId: horse.ownership.stableId,
       toStableId: winningClaim.claimantStableId,
       price: race.claimingPrice,
       raceId: race.id,

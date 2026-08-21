@@ -48,7 +48,7 @@ export type ProgramMilestone = {
 
 export type BreedingProgram = {
   id: string;
-  stableId: string;
+  stableId: import("@/core/types/branded").StableId;
   archetypeId: string;
   createdDay: number;
   generationCount: number;

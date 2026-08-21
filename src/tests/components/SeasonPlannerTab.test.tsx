@@ -38,7 +38,7 @@ const mockMare = (id: string, name: string, overrides: any = {}) => ({
   hemisphere: "Northern",
   distanceAptitude: 1600,
   bruceLoweFamily: undefined,
-  owned: true,
+  ownership: { type: "player" },
   lifecycleStatus: "active",
   ...overrides,
 });
@@ -49,8 +49,7 @@ const mockStallion = (id: string, name: string, overrides: any = {}) => ({
   gender: "horse",
   age: 8,
   hemisphere: "Northern",
-  owned: false,
-  stableId: "npc-stable-1",
+  ownership: { type: "npc", stableId: asNpcStableId("npc-stable-1") },
   stud: {
     atStud: true,
     standingFee: 5000,

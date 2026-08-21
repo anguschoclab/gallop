@@ -136,7 +136,9 @@ export function rollForInjury(
 ): InjuryImpact | null {
   // Get vet bonus
   const vet = hiredStaff.find(
-    (s) => s.role === "veterinarian" && s.stableId === (horse.stableId || ""),
+    (s) =>
+      s.role === "veterinarian" &&
+      s.stableId === (horse.ownership?.type === "npc" ? horse.ownership.stableId : ""),
   );
   const vetBonus = vet ? vet.bonusValue : 0;
 

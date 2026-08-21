@@ -50,7 +50,7 @@ export type JockeySilk = {
 };
 
 export type Jockey = {
-  id: string;
+  id: import("@/core/types/branded").JockeyId;
   name: string;
   age: number;
   archetype: JockeyArchetype;
@@ -59,7 +59,7 @@ export type Jockey = {
   potential: number;
   traits: JockeyTrait[];
   silk: JockeySilk;
-  stableId?: string;
+  stableId?: import("@/core/types/branded").StableId;
   contractUntil?: number;
   careerStarts: number;
   careerWins: number;

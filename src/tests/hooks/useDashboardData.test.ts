@@ -10,7 +10,7 @@ function mkHorse(id: string, overrides: Partial<Horse> = {}): Horse {
   return {
     id,
     name: `Horse-${id}`,
-    owned: true,
+    ownership: { type: "player" },
     lifecycleStatus: "active",
     energy: ENERGY_LOW_THRESHOLD + 10,
     raceHistory: [],
@@ -34,22 +34,22 @@ describe("useDashboardData — horse categorization", () => {
   it("correctly categorizes owned, active, and low-energy horses", () => {
     const horses: Record<string, Horse> = {
       h1: mkHorse("h1", {
-        owned: true,
+        ownership: { type: "player" },
         lifecycleStatus: "active",
         energy: ENERGY_LOW_THRESHOLD + 10,
       }),
       h2: mkHorse("h2", {
-        owned: true,
+        ownership: { type: "player" },
         lifecycleStatus: "active",
         energy: ENERGY_LOW_THRESHOLD - 10,
       }),
       h3: mkHorse("h3", {
-        owned: true,
+        ownership: { type: "player" },
         lifecycleStatus: "retired",
         energy: ENERGY_LOW_THRESHOLD + 10,
       }),
       h4: mkHorse("h4", {
-        owned: false,
+        ownership: { type: "unowned" },
         lifecycleStatus: "active",
         energy: ENERGY_LOW_THRESHOLD + 10,
       }),
@@ -76,17 +76,17 @@ describe("useDashboardData — horse categorization", () => {
   it("all owned, active, low-energy → all three arrays have same length", () => {
     const horses: Record<string, Horse> = {
       h1: mkHorse("h1", {
-        owned: true,
+        ownership: { type: "player" },
         lifecycleStatus: "active",
         energy: ENERGY_LOW_THRESHOLD - 20,
       }),
       h2: mkHorse("h2", {
-        owned: true,
+        ownership: { type: "player" },
         lifecycleStatus: "active",
         energy: ENERGY_LOW_THRESHOLD - 30,
       }),
       h3: mkHorse("h3", {
-        owned: true,
+        ownership: { type: "player" },
         lifecycleStatus: "active",
         energy: ENERGY_LOW_THRESHOLD - 10,
       }),

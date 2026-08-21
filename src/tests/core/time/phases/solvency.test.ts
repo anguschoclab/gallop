@@ -113,7 +113,7 @@ describe("solvencyPhase", () => {
   });
 
   it("should NOT count unowned horse in insolvency horse count", () => {
-    const playerHorse = createTestHorse({ id: "player-h1", owned: true });
+    const playerHorse = createTestHorse({ id: "player-h1", ownership: { type: "player" } });
     const unowned = createUnownedHorse({ id: "unowned-h1" });
     const state = makeGameState({
       cash: -110000,

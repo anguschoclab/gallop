@@ -22,7 +22,7 @@ vi.mock("@tanstack/react-router", () => ({
 
 describe("HQOpsWidget — entity linking", () => {
   it("renders reputation event description with NewsContent auto-detection", () => {
-    const horse = createTestHorse({ id: "h1", name: "Star Runner", owned: true });
+    const horse = createTestHorse({ id: "h1", name: "Star Runner", ownership: { type: "player" } });
     seedStore({
       ...createDefaultGameState(),
       day: 55,

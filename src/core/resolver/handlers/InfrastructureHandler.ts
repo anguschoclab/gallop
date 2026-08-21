@@ -72,7 +72,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       horse.fatigue = (horse.fatigue ?? 0) + fatigueSpike;
 
       // Add to outpost acclimatization list
-      const stableId = horse.stableId || "player";
+      const stableId = horse.ownership?.type === "npc" ? horse.ownership.stableId : "player";
       let outpost: Outpost | undefined;
       if (stableId === "player") {
         outpost = draft.outposts?.find((o) => o.id === toOutpostId);

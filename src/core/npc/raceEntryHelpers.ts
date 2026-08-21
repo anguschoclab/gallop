@@ -61,7 +61,10 @@ export function shouldEnterHorse(
   }
 
   // Check stable hasn't maxed out entries in this race
-  const stableEntries = currentEntries.filter((e) => e.stableId === horse.stableId).length;
+  const horseStableId = horse.ownership?.type === "npc" ? horse.ownership.stableId : undefined;
+  const stableEntries = currentEntries.filter(
+    (e) => e.ownership?.type === "npc" && e.ownership.stableId === horseStableId,
+  ).length;
   if (stableEntries >= MAX_HORSES_PER_STABLE_PER_RACE) {
     return { shouldEnter: false, score: 0 };
   }

@@ -97,7 +97,7 @@ export function generateFinancialBreedingImpacts(
           : sire.stud.lifetimeG1Foals;
 
       const previousFee = sire.stud.standingFee;
-      const newFee = sire.stableId
+      const newFee = sire.ownership?.type === "npc"
         ? recalcStandingFee(
             {
               ...sire,
@@ -126,7 +126,7 @@ export function generateFinancialBreedingImpacts(
           lifetimeStakesFoals: newStakesFoals,
           lifetimeG1Foals: newG1Foals,
         },
-        reason: `Stakes win by ${horse.name}${sire.stableId ? `. Fee: $${formatCurrency(previousFee)} → $${formatCurrency(newFee)}.` : ""}`,
+        reason: `Stakes win by ${horse.name}${sire.ownership?.type === "npc" ? `. Fee: $${formatCurrency(previousFee)} → $${formatCurrency(newFee)}.` : ""}`,
       });
 
       const syndicate = Object.values(syndicates || {}).find((s) => s.stallionId === sire.id);

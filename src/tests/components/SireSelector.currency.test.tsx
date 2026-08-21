@@ -7,7 +7,7 @@ import type { Horse } from "@/game/types";
 describe("SireSelector — currency formatting", () => {
   it("does not show double $ for standing fee", () => {
     const stallion = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", owned: true }),
+      generateHorse({ tier: "starter", ownership: { type: "player" } }),
     ) as unknown as Horse;
     stallion.stud = {
       atStud: true,

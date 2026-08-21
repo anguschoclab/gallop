@@ -94,7 +94,7 @@ describe("npcCyclePhase", () => {
       stableId: "stable-1",
       fame: 0,
       fanCount: 0,
-      owned: false,
+      ownership: { type: "unowned" },
     });
     const race: Race = {
       id: "r1",
@@ -143,7 +143,7 @@ describe("npcCyclePhase", () => {
       fame: 10,
       fanCount: 50000,
       lastRaceDay: 8,
-      owned: false,
+      ownership: { type: "unowned" },
     });
 
     const state: GameState = makeGameState({

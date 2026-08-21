@@ -108,7 +108,7 @@ export function generateNpcTransportIntents(
 
   for (const horse of ownedHorses) {
     if (transportCount >= MAX_TRANSPORTS_PER_DAY) break;
-    if (horse.stableId !== stable.id) continue;
+    if (horse.ownership?.type !== "npc" || horse.ownership.stableId !== stable.id) continue;
     if (horse.age < 2) continue;
 
     const currentOutpost = stable.outposts.find((o) =>

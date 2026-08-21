@@ -103,8 +103,7 @@ export function resolveFoaling(
   const foal = createHorseFromDNA(genotype, rng, {
     age: 0,
     gender: rng.next() < 0.5 ? "colt" : "filly",
-    owned: dam.owned,
-    stableId: dam.stableId,
+    ownership: dam.ownership,
     createdAtDay: newDay,
   });
   foal.bredByPlayer = isPlayerOwned(dam);

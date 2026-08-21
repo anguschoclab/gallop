@@ -29,7 +29,7 @@ export function findBumpableEntryIndex(
 
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
-    if (entry.owned) continue; // never bump player
+    if (entry.ownership?.type === "player") continue; // never bump player
 
     const existing = horseLookup(entry.horseId);
     if (!existing) continue;

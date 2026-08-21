@@ -93,7 +93,7 @@ export function runHeadToHeadSimulation(
     const runners = horses.map((h, i) =>
       buildRunner(
         h,
-        h.owned ?? false,
+        h.ownership?.type === "player",
         distance,
         surface,
         { speedMul: 1, staminaDrainMul: 1 },
@@ -101,7 +101,7 @@ export function runHeadToHeadSimulation(
       ),
     );
     while (runners.length < 8) {
-      const filler = generateHorse({ tier: "mid", owned: false }, rng);
+      const filler = generateHorse({ tier: "mid", ownership: { type: "unowned" } }, rng);
       runners.push(
         buildRunner(
           filler,

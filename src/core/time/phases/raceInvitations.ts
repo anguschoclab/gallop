@@ -139,7 +139,7 @@ export const raceInvitationsPhase: PipelinePhase = {
       // Send a single consolidated inbox message for all player-owned newly invited horses
       const ownedInvitedHorses = newlyInvited
         .map((id) => horseMap.get(id))
-        .filter((h) => h?.owned) as { id: string; name: string }[];
+        .filter((h) => h?.ownership?.type === "player") as { id: string; name: string }[];
 
       if (ownedInvitedHorses.length > 0) {
         const names = ownedInvitedHorses.map((h) => h.name);

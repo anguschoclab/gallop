@@ -7,7 +7,7 @@ function mkRunner(finishTime: number | null, horseId = "h1"): Runner {
     horseId,
     name: "Test",
     silk: "#ff0000",
-    owned: true,
+    ownership: { type: "player" },
     position: 0,
     velocity: 0,
     finishTime,

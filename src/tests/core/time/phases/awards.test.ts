@@ -114,7 +114,7 @@ describe("awardsPhase", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [
         {
@@ -192,7 +192,7 @@ describe("awardsPhase", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       raceHistory: [
         {
@@ -262,7 +262,7 @@ describe("awardsPhase", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       fanCount: 25000,
       raceHistory: [
@@ -335,7 +335,7 @@ describe("awardsPhase", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      owned: true,
+      ownership: { type: "player" },
       fame: 50,
       fanCount: 25000,
       raceHistory: [

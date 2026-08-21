@@ -107,7 +107,7 @@ describe("selectHorsesForRaceEntry", () => {
   it("does not enter horses already in race", () => {
     const horse = mkHorse({ id: "h1", stableId: "s1", energy: 80 });
     const horseMap = new Map([["h1", horse]]);
-    const race = mkRace({ entries: [{ horseId: "h1", owned: false, stableId: "s1", npc: true }] });
+    const race = mkRace({ entries: [{ horseId: "h1", ownership: { type: "npc", stableId: asNpcStableId("s1") }, npc: true }] });
     const stable = mkStable({ horses: ["h1"] });
     const result = selectHorsesForRaceEntry(stable, horseMap, race, new Set());
     expect(result).toHaveLength(0);
@@ -276,7 +276,7 @@ describe("runNpcRaceEntry", () => {
       id: "full",
       day: 3,
       fieldSize: 1,
-      entries: [{ horseId: "h99", owned: false, stableId: "s99", npc: true }],
+      entries: [{ horseId: "h99", ownership: { type: "npc", stableId: asNpcStableId("s99") }, npc: true }],
     });
     const stables = [mkStable()];
     const horses = [mkHorse({ id: "h1", stableId: "s1", energy: 80 })];
@@ -337,9 +337,9 @@ describe("runNpcRaceEntry", () => {
 
 describe("fillRaceWithFillerHorses", () => {
   it("does not add already-entered horses", () => {
-    const horse = mkHorse({ id: "h1", stableId: "s1", owned: false, energy: 80 });
+    const horse = mkHorse({ id: "h1", stableId: "s1", ownership: { type: "unowned" }, energy: 80 });
     const race = mkRace({
-      entries: [{ horseId: "h1", owned: false, stableId: "s1", npc: true }],
+      entries: [{ horseId: "h1", ownership: { type: "npc", stableId: asNpcStableId("s1") }, npc: true }],
       fieldSize: 5,
     });
     const { updatedRace } = fillRaceWithFillerHorses(race, [mkStable()], [horse], 3);
@@ -353,7 +353,7 @@ describe("fillRaceWithFillerHorses", () => {
 
   it("does not exceed fieldSize", () => {
     const horses = Array.from({ length: 20 }, (_, i) =>
-      mkHorse({ id: `h${i}`, stableId: "s1", owned: false, energy: 80 }),
+      mkHorse({ id: `h${i}`, stableId: "s1", ownership: { type: "unowned" }, energy: 80 }),
     );
     const race = mkRace({ fieldSize: 5, entries: [] });
     const { updatedRace } = fillRaceWithFillerHorses(race, [mkStable()], horses, 5);

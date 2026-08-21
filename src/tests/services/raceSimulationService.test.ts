@@ -64,10 +64,10 @@ describe("buildRaceField", () => {
   });
 
   it("entered owned horses appear with owned=true", () => {
-    const horse = mkHorse({ id: "h1", owned: true });
+    const horse = mkHorse({ id: "h1", ownership: { type: "player" } });
     const race = mkRace({
       fieldSize: 6,
-      entries: [{ horseId: "h1", owned: true }],
+      entries: [{ horseId: "h1", ownership: { type: "player" } }],
     });
     const { runners } = buildRaceField({ race, horses: [horse], jockeys: [] });
     const ownedRunner = runners.find((r) => r.horseId === "h1");

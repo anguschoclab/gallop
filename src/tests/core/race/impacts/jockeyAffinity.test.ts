@@ -24,7 +24,7 @@ function mkRace(overrides: Partial<Race> = {}): Race {
     purse: 10000,
     minStat: 70,
     fieldSize: 8,
-    entries: [{ horseId: "h1", jockeyId: "j1", owned: true } as any],
+    entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any],
     resolved: false,
     surface: "Turf",
     trackCondition: "good",

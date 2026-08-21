@@ -113,7 +113,7 @@ describe("Persistence of nominations / investors / stewards inquiries", () => {
     it("StewardsInquiryOverlay opens for a rehydrated inquiry involving a player horse", () => {
       const base = createDefaultGameState();
       const seededState: Partial<GameState> = {
-        horses: h2r([{ id: "horse-1", name: "Silver Comet", owned: true } as any]),
+        horses: h2r([{ id: "horse-1", name: "Silver Comet", ownership: { type: "player" } } as any]),
         playerNominations: [nomination],
         syndicateInvestors: { "synd-1": investor },
         stewardsInquiries: [inquiry],

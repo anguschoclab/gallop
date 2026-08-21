@@ -25,8 +25,8 @@ describe("computeWealthStandings", () => {
   });
 
   it("sums horseMarketValue for all player-owned horses into horseAssets", () => {
-    const h1 = createTestHorse({ id: "h1", owned: true, name: "Horse 1" });
-    const h2 = createTestHorse({ id: "h2", owned: true, name: "Horse 2" });
+    const h1 = createTestHorse({ id: "h1", ownership: { type: "player" }, name: "Horse 1" });
+    const h2 = createTestHorse({ id: "h2", ownership: { type: "player" }, name: "Horse 2" });
     const s = mkState({ horses: { h1, h2 } });
     const result = computeWealthStandings(s);
     const player = result.standings.find((e) => e.isPlayer)!;
@@ -37,14 +37,12 @@ describe("computeWealthStandings", () => {
   it("sums horseMarketValue for all NPC horses (by stableId) into horseAssets", () => {
     const h1 = createTestHorse({
       id: "h1",
-      owned: false,
-      stableId: "npc1",
+      ownership: { type: "npc", stableId: asNpcStableId("npc1") },
       name: "NPC Horse 1",
     });
     const h2 = createTestHorse({
       id: "h2",
-      owned: false,
-      stableId: "npc1",
+      ownership: { type: "npc", stableId: asNpcStableId("npc1") },
       name: "NPC Horse 2",
     });
     const stable = createTestStable({ id: "npc1", name: "Rival Stable" });
@@ -71,7 +69,7 @@ describe("computeWealthStandings", () => {
   });
 
   it("totalWealth = cash + horseAssets", () => {
-    const h1 = createTestHorse({ id: "h1", owned: true, name: "H1" });
+    const h1 = createTestHorse({ id: "h1", ownership: { type: "player" }, name: "H1" });
     const s = mkState({ cash: 300000, horses: { h1 } });
     const result = computeWealthStandings(s);
     const player = result.standings.find((e) => e.isPlayer)!;
@@ -79,7 +77,7 @@ describe("computeWealthStandings", () => {
   });
 
   it("sorts standings by totalWealth descending", () => {
-    const h1 = createTestHorse({ id: "h1", owned: true, name: "H1" });
+    const h1 = createTestHorse({ id: "h1", ownership: { type: "player" }, name: "H1" });
     const stable = createTestStable({ id: "npc1", cash: 1000000 });
     const s = mkState({ cash: 50000, horses: { h1 }, npcStables: [stable] });
     const result = computeWealthStandings(s);
@@ -91,7 +89,7 @@ describe("computeWealthStandings", () => {
   });
 
   it("computes playerRank as 1-based index after sorting", () => {
-    const h1 = createTestHorse({ id: "h1", owned: true, name: "H1" });
+    const h1 = createTestHorse({ id: "h1", ownership: { type: "player" }, name: "H1" });
     const stable = createTestStable({ id: "npc1", cash: 1000000 });
     const s = mkState({ cash: 50000, horses: { h1 }, npcStables: [stable] });
     const result = computeWealthStandings(s);
@@ -162,8 +160,7 @@ describe("computeWealthStandings", () => {
   it("handles horses with no stableId and owned=false (skipped)", () => {
     const h1 = createTestHorse({
       id: "h1",
-      owned: false,
-      stableId: undefined,
+      ownership: { type: "npc", stableId: asNpcStableId(undefined) },
       name: "Wild Horse",
     });
     const s = mkState({ horses: { h1 } });
@@ -175,13 +172,12 @@ describe("computeWealthStandings", () => {
   });
 
   it("horseCount reflects number of horses attributed to each stable", () => {
-    const h1 = createTestHorse({ id: "h1", owned: true, name: "P1" });
-    const h2 = createTestHorse({ id: "h2", owned: true, name: "P2" });
-    const h3 = createTestHorse({ id: "h3", owned: true, name: "P3" });
+    const h1 = createTestHorse({ id: "h1", ownership: { type: "player" }, name: "P1" });
+    const h2 = createTestHorse({ id: "h2", ownership: { type: "player" }, name: "P2" });
+    const h3 = createTestHorse({ id: "h3", ownership: { type: "player" }, name: "P3" });
     const h4 = createTestHorse({
       id: "h4",
-      owned: false,
-      stableId: "npc1",
+      ownership: { type: "npc", stableId: asNpcStableId("npc1") },
       name: "N1",
     });
     const stable = createTestStable({ id: "npc1", name: "NPC" });
@@ -196,7 +192,7 @@ describe("computeWealthStandings", () => {
   it("topHorseValue reflects the highest single horse market value in the stable", () => {
     const h1 = createTestHorse({
       id: "h1",
-      owned: true,
+      ownership: { type: "player" },
       name: "Cheap",
       stats: {
         speed: 50,
@@ -210,7 +206,7 @@ describe("computeWealthStandings", () => {
     });
     const h2 = createTestHorse({
       id: "h2",
-      owned: true,
+      ownership: { type: "player" },
       name: "Expensive",
       stats: {
         speed: 90,
@@ -247,7 +243,7 @@ describe("computeWealthStandings", () => {
   it("excludes deceased horses from wealth standings", () => {
     const hAlive = createTestHorse({
       id: "h-alive",
-      owned: true,
+      ownership: { type: "player" },
       name: "Alive Horse",
       lifecycleStatus: "active",
       stats: {
@@ -262,7 +258,7 @@ describe("computeWealthStandings", () => {
     });
     const hDeceased = createTestHorse({
       id: "h-deceased",
-      owned: true,
+      ownership: { type: "player" },
       name: "Deceased Horse",
       lifecycleStatus: "deceased",
       stats: {
@@ -285,7 +281,7 @@ describe("computeWealthStandings", () => {
   it("excludes deceased horses from horseAssets calculation", () => {
     const hAlive = createTestHorse({
       id: "h-alive",
-      owned: true,
+      ownership: { type: "player" },
       name: "Alive Horse",
       lifecycleStatus: "active",
       stats: {
@@ -300,7 +296,7 @@ describe("computeWealthStandings", () => {
     });
     const hDeceased = createTestHorse({
       id: "h-deceased",
-      owned: true,
+      ownership: { type: "player" },
       name: "Deceased Horse",
       lifecycleStatus: "deceased",
       stats: {
@@ -332,15 +328,13 @@ describe("computeWealthStandings", () => {
   it("excludes deceased NPC horses from NPC stable wealth", () => {
     const hAlive = createTestHorse({
       id: "h-npc-alive",
-      owned: false,
-      stableId: "npc1",
+      ownership: { type: "npc", stableId: asNpcStableId("npc1") },
       name: "Alive NPC Horse",
       lifecycleStatus: "active",
     });
     const hDeceased = createTestHorse({
       id: "h-npc-deceased",
-      owned: false,
-      stableId: "npc1",
+      ownership: { type: "npc", stableId: asNpcStableId("npc1") },
       name: "Deceased NPC Horse",
       lifecycleStatus: "deceased",
     });

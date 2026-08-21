@@ -62,7 +62,7 @@ export const horseDeathPhase: PipelinePhase = {
           intentId: "",
           day: newDay,
           phase: "horseDeath",
-          logLevel: horse.owned ? "always" : "conditional",
+          logLevel: horse.ownership?.type === "player" ? "always" : "conditional",
           type: "horse_death",
           horseId: horse.id,
           cause,
@@ -70,7 +70,7 @@ export const horseDeathPhase: PipelinePhase = {
           reason: `${horse.name} has passed away from ${cause} at age ${age}.`,
         } as HorseDeathImpact);
 
-        if (horse.owned) {
+        if (horse.ownership?.type === "player") {
           impacts.push({
             id: generateUUID(),
             intentId: "",
@@ -131,7 +131,7 @@ export const horseDeathPhase: PipelinePhase = {
             intentId: "",
             day: newDay,
             phase: "horseDeath",
-            logLevel: horse.owned ? "always" : "conditional",
+            logLevel: horse.ownership?.type === "player" ? "always" : "conditional",
             type: "horse_death",
             horseId: horse.id,
             cause,
@@ -139,7 +139,7 @@ export const horseDeathPhase: PipelinePhase = {
             reason: `${horse.name} has succumbed to ${cause}.`,
           } as HorseDeathImpact);
 
-          if (horse.owned) {
+          if (horse.ownership?.type === "player") {
             impacts.push({
               id: generateUUID(),
               intentId: "",

@@ -29,7 +29,7 @@ const mockOptions: NewGameOptions = {
 describe("createInitialState player horse phenotype resolution", () => {
   it("resolves all player-owned horses", () => {
     const state = createInitialState(mockOptions);
-    const playerHorses = Object.values(state.horses).filter((h) => h.owned);
+    const playerHorses = Object.values(state.horses).filter((h) => h.ownership?.type === "player");
     expect(playerHorses.length).toBeGreaterThan(0);
     for (const horse of playerHorses) {
       expect(horse.phenotypeResolved).toBe(true);
@@ -38,7 +38,7 @@ describe("createInitialState player horse phenotype resolution", () => {
 
   it("gives player horses non-zero stats and OVR", () => {
     const state = createInitialState(mockOptions);
-    const playerHorses = Object.values(state.horses).filter((h) => h.owned);
+    const playerHorses = Object.values(state.horses).filter((h) => h.ownership?.type === "player");
     expect(playerHorses.length).toBeGreaterThan(0);
     for (const horse of playerHorses) {
       expect(horse.stats.speed).toBeGreaterThan(0);
@@ -51,7 +51,7 @@ describe("createInitialState player horse phenotype resolution", () => {
 
   it("gives player horses defined coat colors", () => {
     const state = createInitialState(mockOptions);
-    const playerHorses = Object.values(state.horses).filter((h) => h.owned);
+    const playerHorses = Object.values(state.horses).filter((h) => h.ownership?.type === "player");
     for (const horse of playerHorses) {
       expect(horse.coatColor).toBeDefined();
       expect(horse.coatColor).not.toBe("unknown");
@@ -68,7 +68,7 @@ describe("createInitialState player horse phenotype resolution", () => {
 
   it("leaves NPC horses unresolved (lazy)", () => {
     const state = createInitialState(mockOptions);
-    const npcHorses = Object.values(state.horses).filter((h) => !h.owned && h.stableId);
+    const npcHorses = Object.values(state.horses).filter((h) => h.ownership?.type === "npc");
     expect(npcHorses.length).toBeGreaterThan(0);
     for (const horse of npcHorses) {
       expect(horse.phenotypeResolved).toBe(false);
@@ -77,9 +77,10 @@ describe("createInitialState player horse phenotype resolution", () => {
 
   it("resolves default starter horses when no options are provided", () => {
     const state = createInitialState();
-    const playerHorses = Object.values(state.horses).filter((h) => h.owned);
+    const playerHorses = Object.values(state.horses).filter((h) => h.ownership?.type === "player");
     expect(playerHorses.length).toBeGreaterThan(0);
     for (const horse of playerHorses) {
+      expect(horse.coatColor).toBeDefined();
       expect(horse.phenotypeResolved).toBe(true);
       expect(calculateOverallRating(horse)).toBeGreaterThan(0);
     }
@@ -158,8 +159,8 @@ describe("createInitialState world size entity counts", () => {
   it("produces fewer NPC horses with small than large", () => {
     const smallState = createInitialState({ ...mockOptions, worldSize: "small" });
     const largeState = createInitialState({ ...mockOptions, worldSize: "large" });
-    const smallHorses = Object.values(smallState.horses).filter((h) => !h.owned && h.stableId);
-    const largeHorses = Object.values(largeState.horses).filter((h) => !h.owned && h.stableId);
+    const smallHorses = Object.values(smallState.horses).filter((h) => h.ownership?.type === "npc");
+    const largeHorses = Object.values(largeState.horses).filter((h) => h.ownership?.type === "npc");
     expect(smallHorses.length).toBeLessThan(largeHorses.length);
   });
 

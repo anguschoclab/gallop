@@ -45,7 +45,7 @@ describe("intentCollectionPhase", () => {
 
   it("should collect NPC intents from NPC intent generators", () => {
     const stable = createTestStable({ id: "npc-1", cash: 100000, horses: ["horse-1"] });
-    const horse = createTestHorse({ id: "horse-1", stableId: "npc-1", owned: false });
+    const horse = createTestHorse({ id: "horse-1", stableId: "npc-1", ownership: { type: "unowned" } });
     const state = makeGameState({
       npcStables: [stable],
       horses: h2r([horse]),
@@ -57,7 +57,7 @@ describe("intentCollectionPhase", () => {
   });
 
   it("should generate auto-campaign entries for planned slots on race day", () => {
-    const horse = createTestHorse({ id: "horse-1", owned: true });
+    const horse = createTestHorse({ id: "horse-1", ownership: { type: "player" } });
     const race = {
       id: "race-1",
       name: "Test Race",
@@ -104,7 +104,7 @@ describe("intentCollectionPhase", () => {
   });
 
   it("should not generate auto-campaign entries for non-auto-managed campaigns", () => {
-    const horse = createTestHorse({ id: "horse-1", owned: true });
+    const horse = createTestHorse({ id: "horse-1", ownership: { type: "player" } });
     const race = {
       id: "race-1",
       name: "Test Race",

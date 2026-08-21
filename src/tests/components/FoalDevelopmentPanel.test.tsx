@@ -32,7 +32,7 @@ function makeHorse(overrides: Partial<Horse> = {}) {
   return createTestHorse({
     id: "foal-1",
     name: "Test Foal",
-    owned: true,
+    ownership: { type: "player" },
     developmentArc: createDefaultFoalDevelopmentArc(0),
     ...overrides,
   });

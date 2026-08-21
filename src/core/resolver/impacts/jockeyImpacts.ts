@@ -11,12 +11,13 @@
 import type { Impact } from "./base";
 import type { ApprenticeProgression } from "@/core/apprentice/apprenticeTypes";
 import type { JockeySilk } from "@/core/jockey/types";
+import type { JockeyId, StableId } from "@/core/types/branded";
 
 // Jockey contract impact
 export interface JockeyContractImpact extends Impact {
   type: "jockey_contract";
-  jockeyId: string;
-  stableId?: string;
+  jockeyId: JockeyId;
+  stableId?: StableId;
   contractUntil?: number;
   stableAffinity?: number;
   isApprentice?: boolean;

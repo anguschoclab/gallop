@@ -30,7 +30,7 @@ function makeState(
   const horse = createTestHorse({
     id: `${stableId}-horse`,
     stableId,
-    owned: false,
+    ownership: { type: "unowned" },
     energy: 100,
     ...horseOverrides,
   });
@@ -68,7 +68,7 @@ describe("budget stable — never selects advanced or locked training", () => {
       createTestHorse({
         id: `budget-horse-${i}`,
         stableId: "budget-stable",
-        owned: false,
+        ownership: { type: "unowned" },
         energy: 100,
         stats: {
           speed: 40 + i * 5,
@@ -114,7 +114,7 @@ describe("mid stable — picks from mid available set, not premium/elite types",
       createTestHorse({
         id: `mid-horse-${i}`,
         stableId: "mid-stable",
-        owned: false,
+        ownership: { type: "unowned" },
         energy: 100,
       }),
     );
@@ -158,7 +158,7 @@ describe("elite stable — only picks from its full unlocked set", () => {
       createTestHorse({
         id: `elite-horse-${i}`,
         stableId: "elite-stable",
-        owned: false,
+        ownership: { type: "unowned" },
         energy: 100,
       }),
     );
@@ -196,7 +196,7 @@ describe("stable with no npcFacilities entry — falls back to basic types", () 
         createTestHorse({
           id: "no-fac-horse",
           stableId: "no-fac-stable",
-          owned: false,
+          ownership: { type: "unowned" },
           energy: 100,
         }),
       ]),
@@ -239,8 +239,8 @@ describe("multiple stables in one state — each uses its own facility set", () 
 
     const state = {
       horses: h2r([
-        createTestHorse({ id: "b-horse", stableId: "b-stable", owned: false, energy: 100 }),
-        createTestHorse({ id: "e-horse", stableId: "e-stable", owned: false, energy: 100 }),
+        createTestHorse({ id: "b-horse", stableId: "b-stable", ownership: { type: "unowned" }, energy: 100 }),
+        createTestHorse({ id: "e-horse", stableId: "e-stable", ownership: { type: "unowned" }, energy: 100 }),
       ]),
       npcStables: [
         createTestStable({ id: "b-stable", tier: "budget" }),

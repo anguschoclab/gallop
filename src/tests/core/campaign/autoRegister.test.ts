@@ -13,7 +13,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     age: 4,
     gender: "horse",
     energy: 100,
-    owned: true,
+    ownership: { type: "player" },
     lifecycleStatus: "active",
     ...overrides,
   });
@@ -137,7 +137,7 @@ describe("calculateAutoRegisterEntries", () => {
   });
 
   it("skips NPC-owned horses", () => {
-    const horse = mkHorse({ owned: false, stableId: "npc-stable" });
+    const horse = mkHorse({ ownership: { type: "npc", stableId: asNpcStableId("npc-stable") } });
     const race = mkRace({ day: baseDay + 3 });
     const jockey = mkJockey();
     const result = calculateAutoRegisterEntries([horse], [race], [jockey], 100000, baseDay);
@@ -183,7 +183,7 @@ describe("calculateAutoRegisterEntries", () => {
     const horse = mkHorse();
     const race = mkRace({
       day: baseDay + 3,
-      entries: [{ horseId: "h1", owned: true }],
+      entries: [{ horseId: "h1", ownership: { type: "player" } }],
     });
     const jockey = mkJockey();
     const result = calculateAutoRegisterEntries([horse], [race], [jockey], 100000, baseDay);
@@ -213,8 +213,8 @@ describe("calculateAutoRegisterEntries", () => {
       day: baseDay + 3,
       fieldSize: 2,
       entries: [
-        { horseId: "npc1", owned: false },
-        { horseId: "npc2", owned: false },
+        { horseId: "npc1", ownership: { type: "unowned" } },
+        { horseId: "npc2", ownership: { type: "unowned" } },
       ],
     });
     const jockey = mkJockey();
@@ -312,8 +312,8 @@ describe("calculateAutoRegisterEntries", () => {
       day: baseDay + 3,
       fieldSize: 14,
       entries: [
-        { horseId: "h1", owned: true },
-        { horseId: "h2", owned: true },
+        { horseId: "h1", ownership: { type: "player" } },
+        { horseId: "h2", ownership: { type: "player" } },
       ],
     });
     const jockey = mkJockey();

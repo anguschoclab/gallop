@@ -86,13 +86,13 @@ function makeContext(races: Race[], horses: Horse[], newDay: number): PipelineCo
 function makeEntries(count: number): { horseId: string; owned: boolean }[] {
   return Array.from({ length: count }, (_, i) => ({
     horseId: `h${i + 1}`,
-    owned: true,
+    ownership: { type: "player" },
   }));
 }
 
 function makeHorsesForEntries(count: number): Horse[] {
   return Array.from({ length: count }, (_, i) =>
-    makeHorse({ id: `h${i + 1}`, name: `Horse ${i + 1}`, owned: true }),
+    makeHorse({ id: `h${i + 1}`, name: `Horse ${i + 1}`, ownership: { type: "player" } }),
   );
 }
 
@@ -264,10 +264,10 @@ describe("gateDrawPhase", () => {
     ];
     // Non-graded horses need different IDs
     const nonGradedHorses = Array.from({ length: 2 }, (_, i) =>
-      makeHorse({ id: `hg${i + 1}`, name: `NG Horse ${i + 1}`, owned: true }),
+      makeHorse({ id: `hg${i + 1}`, name: `NG Horse ${i + 1}`, ownership: { type: "player" } }),
     );
     const allHorses = [...makeHorsesForEntries(3), ...nonGradedHorses];
-    const nonGradedEntriesFixed = nonGradedHorses.map((h) => ({ horseId: h.id, owned: true }));
+    const nonGradedEntriesFixed = nonGradedHorses.map((h) => ({ horseId: h.id, ownership: { type: "player" } }));
 
     const g1Race = makeG1Race({ id: "g1r", day: 100, entries: g1Entries });
     const nonGradedRace = makeRace({
@@ -315,9 +315,9 @@ describe("gateDrawPhase", () => {
   // 13. Partial gates: race with some entries already having gates — only assign to unassigned
   it("Partial gates: preserves existing gates, assigns only to unassigned entries", () => {
     const entries = [
-      { horseId: "h1", owned: true, gate: 3 },
-      { horseId: "h2", owned: true, gate: 1 },
-      { horseId: "h3", owned: true }, // no gate
+      { horseId: "h1", ownership: { type: "player" }, gate: 3 },
+      { horseId: "h2", ownership: { type: "player" }, gate: 1 },
+      { horseId: "h3", ownership: { type: "player" } }, // no gate
     ];
     const horses = makeHorsesForEntries(3);
     const race = makeG1Race({ id: "r1", day: 100, entries });

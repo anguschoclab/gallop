@@ -24,7 +24,9 @@ export function generateTrainerStatsImpact(
   const assignedTrainer = hiredStaff.find(
     (s) =>
       s.role === "trainer" &&
-      (playerOwned ? !s.stableId : !!horse.stableId && s.stableId === horse.stableId),
+      (playerOwned
+        ? !s.stableId
+        : horse.ownership?.type === "npc" && s.stableId === horse.ownership.stableId),
   );
   if (!assignedTrainer) return null;
 

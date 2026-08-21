@@ -14,7 +14,7 @@ vi.mock("@/services/race/raceSimulationExecutor", () => ({
         horseId: "winner-1",
         name: "Champ",
         silk: "#f00",
-        owned: true,
+        ownership: { type: "player" },
         jockeyId: "j-1",
         jockeyName: "Top Jockey",
       },
@@ -37,10 +37,10 @@ describe("Race Resolution History Collection", () => {
         trackId: "churchill-downs",
         surface: "Dirt",
       },
-      entries: [{ horseId: "winner-1", jockeyId: "j-1", owned: true }],
+      entries: [{ horseId: "winner-1", jockeyId: "j-1", ownership: { type: "player" } }],
     };
 
-    const horse = createTestHorse({ id: "winner-1", name: "Champ", owned: true });
+    const horse = createTestHorse({ id: "winner-1", name: "Champ", ownership: { type: "player" } });
 
     const context: Partial<PipelineContext> = {
       newDay: 100,
@@ -80,10 +80,10 @@ describe("Race Resolution History Collection", () => {
         surface: "Dirt",
       },
       purse: 2000000, // Winner gets 1.2M
-      entries: [{ horseId: "winner-1", jockeyId: "j-1", owned: true }],
+      entries: [{ horseId: "winner-1", jockeyId: "j-1", ownership: { type: "player" } }],
     };
 
-    const horse = createTestHorse({ id: "winner-1", name: "Champ", owned: true, careerWins: 2 });
+    const horse = createTestHorse({ id: "winner-1", name: "Champ", ownership: { type: "player" }, careerWins: 2 });
     horse.raceHistory = [
       { raceId: "race-1", raceName: "G1 Race 1", grade: "G1", position: 1, day: 10 },
       { raceId: "race-2", raceName: "G1 Race 2", grade: "G1", position: 1, day: 20 },

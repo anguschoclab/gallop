@@ -141,7 +141,8 @@ export function calculateShareSale(
 
   if (distressLevel === "emergency") {
     const personality = npcStable.personality;
-    const isOwner = stallion.stableId === npcStable.id;
+    const isOwner =
+      stallion.ownership?.type === "npc" && stallion.ownership.stableId === npcStable.id;
     const avoidDevolution =
       personality === "conservative" || personality === "breeder" || personality === "prestige";
 
@@ -157,7 +158,8 @@ export function calculateShareSale(
   if (sellQuantity < 1) return 0;
 
   const personality = npcStable.personality;
-  const isOwner = stallion.stableId === npcStable.id;
+  const isOwner =
+    stallion.ownership?.type === "npc" && stallion.ownership.stableId === npcStable.id;
   const cashCritical = (npcStable.cash || 0) < 50000;
 
   if (isOwner && !cashCritical) {

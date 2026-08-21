@@ -82,8 +82,7 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
-    owned: false,
-    stableId: "npc1",
+    ownership: { type: "npc", stableId: asNpcStableId("npc1") },
     silk: { primary: "#ff0000", secondary: "#00ff00" } as any,
     ...overrides,
   }) as Horse;

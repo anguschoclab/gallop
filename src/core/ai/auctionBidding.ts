@@ -97,7 +97,7 @@ export function calculateMaxBid(
     maxBid *= 0.8;
   }
 
-  if (horse.owned && friction && friction >= 50) {
+  if (horse.ownership?.type === "player" && friction && friction >= 50) {
     const frictionMultiplier = 1 + (friction - 50) / 200;
     maxBid *= frictionMultiplier;
   }

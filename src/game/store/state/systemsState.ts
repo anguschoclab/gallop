@@ -114,7 +114,7 @@ export interface SystemsState {
   /** Player's stable facilities - affects training, recovery, and operations */
   facilities?: PlayerFacilities;
   /** NPC stable facilities by stable ID */
-  npcFacilities?: Record<string, PlayerFacilities>;
+  npcFacilities?: Record<import("@/core/types/branded").StableId, PlayerFacilities>;
 
   // User settings (optional)
   /** Player preferences and game configuration */
@@ -138,7 +138,7 @@ export interface SystemsState {
 
   // Multi-day advance system
   /** Set when a player race interrupts auto-advance */
-  pendingPlayerRaceId?: string;
+  pendingPlayerRaceId?: import("@/core/types/branded").RaceId;
 
   // Global historical records (optional)
   /** Lifetime track records keyed by trackId_surface_distance */
@@ -184,7 +184,7 @@ export interface SystemsState {
 
   // Career arc system (optional)
   /** Per-horse career arc states for narrative tracking */
-  narrativeArcs?: Record<string, CareerArcState>;
+  narrativeArcs?: Record<import("@/core/types/branded").HorseId, CareerArcState>;
 
   // Season standings notification system
   /** Player's rank in the top 10 at last check (for change detection) */

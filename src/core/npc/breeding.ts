@@ -90,7 +90,8 @@ export function runAutonomousBreeding(
     const candidateMares = Object.values(state.horses)
       .filter(
         (h) =>
-          h.stableId === stable.id &&
+          h.ownership?.type === "npc" &&
+          h.ownership.stableId === stable.id &&
           (!h.lifecycleStatus || h.lifecycleStatus === "active") &&
           (h.gender === "mare" || h.gender === "filly") &&
           h.age >= 3 &&
@@ -127,7 +128,7 @@ export function runAutonomousBreeding(
         maxFeePerMare *= EMERGENCY_STUD_FEE_CAP_FRACTION;
       }
       const stallions = getAvailableStallions(Object.values(state.horses), mare)
-        .filter((s) => s.stableId !== stable.id)
+        .filter((s) => !(s.ownership?.type === "npc" && s.ownership.stableId === stable.id))
         .map(ensurePhenotypeResolved)
         .filter((s) => s.stud!.standingFee <= maxFeePerMare)
         .filter((s) => s.stud!.seasonBookings < s.stud!.bookSize)

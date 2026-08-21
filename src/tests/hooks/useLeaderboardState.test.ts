@@ -28,7 +28,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     horseId: "h1",
     name: "Test Horse",
     silk: "#ff0000",
-    owned: false,
+    ownership: { type: "unowned" },
     position: 0,
     velocity: 15,
     finishTime: null,
@@ -121,8 +121,8 @@ describe("useLeaderboardState", () => {
 
   it("filters to owned runners when filter is 'owned'", () => {
     const runners = [
-      makeRunner({ horseId: "a", owned: true }),
-      makeRunner({ horseId: "b", owned: false }),
+      makeRunner({ horseId: "a", ownership: { type: "player" } }),
+      makeRunner({ horseId: "b", ownership: { type: "unowned" } }),
     ];
     const { result } = renderHook(() => useLeaderboardState(runners, makeRace(), 0, {}));
 

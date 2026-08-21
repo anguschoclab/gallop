@@ -20,13 +20,13 @@ function makeOpenRace() {
 
 describe("jockey trait XP integration", () => {
   it("emits traitXpAwards in jockey_stats impact for winning jockey", () => {
-    const horse = createTestColt({ id: "h1", owned: true });
+    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
     const jockey = createTestJockey({ id: "j1", careerStarts: 50, careerWins: 10, fame: 50 });
     const race = makeOpenRace();
     race.surface = "Turf";
     race.distance = 1200;
     const jockeyMap = new Map([["j1", jockey]]);
-    const entry = { horseId: "h1", owned: true, jockeyId: "j1" };
+    const entry = { horseId: "h1", ownership: { type: "player" }, jockeyId: "j1" };
 
     const impacts = generateJockeyStatsTrackingImpacts(
       horse,
@@ -44,12 +44,12 @@ describe("jockey trait XP integration", () => {
   });
 
   it("awards turf_specialist XP when race is on Turf", () => {
-    const horse = createTestColt({ id: "h1", owned: true });
+    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
     const jockey = createTestJockey({ id: "j1" });
     const race = makeOpenRace();
     race.surface = "Turf";
     const jockeyMap = new Map([["j1", jockey]]);
-    const entry = { horseId: "h1", owned: true, jockeyId: "j1" };
+    const entry = { horseId: "h1", ownership: { type: "player" }, jockeyId: "j1" };
 
     const impacts = generateJockeyStatsTrackingImpacts(
       horse,
@@ -66,12 +66,12 @@ describe("jockey trait XP integration", () => {
   });
 
   it("awards sprint_specialist XP when race distance < 1400m", () => {
-    const horse = createTestColt({ id: "h1", owned: true });
+    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
     const jockey = createTestJockey({ id: "j1" });
     const race = makeOpenRace();
     race.distance = 1200;
     const jockeyMap = new Map([["j1", jockey]]);
-    const entry = { horseId: "h1", owned: true, jockeyId: "j1" };
+    const entry = { horseId: "h1", ownership: { type: "player" }, jockeyId: "j1" };
 
     const impacts = generateJockeyStatsTrackingImpacts(
       horse,
@@ -87,10 +87,10 @@ describe("jockey trait XP integration", () => {
   });
 
   it("does not award XP when jockeyId is missing from entry", () => {
-    const horse = createTestColt({ id: "h1", owned: true });
+    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
     const race = makeOpenRace();
     const jockeyMap = new Map();
-    const entry = { horseId: "h1", owned: true };
+    const entry = { horseId: "h1", ownership: { type: "player" } };
 
     const impacts = generateJockeyStatsTrackingImpacts(
       horse,
@@ -106,12 +106,12 @@ describe("jockey trait XP integration", () => {
   });
 
   it("awards staying_specialist XP when race distance > 2200m", () => {
-    const horse = createTestColt({ id: "h1", owned: true });
+    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
     const jockey = createTestJockey({ id: "j1" });
     const race = makeOpenRace();
     race.distance = 2400;
     const jockeyMap = new Map([["j1", jockey]]);
-    const entry = { horseId: "h1", owned: true, jockeyId: "j1" };
+    const entry = { horseId: "h1", ownership: { type: "player" }, jockeyId: "j1" };
 
     const impacts = generateJockeyStatsTrackingImpacts(
       horse,

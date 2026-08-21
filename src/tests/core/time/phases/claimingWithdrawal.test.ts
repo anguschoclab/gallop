@@ -27,7 +27,7 @@ describe("claimingWithdrawalPhase", () => {
     purse: 10000,
     minStat: 70,
     fieldSize: 8,
-    entries: [{ horseId: "horse-1", owned: true } as any],
+    entries: [{ horseId: "horse-1", ownership: { type: "player" } } as any],
     resolved: false,
     claimingPrice: 10000,
     ...overrides,
@@ -97,8 +97,8 @@ describe("claimingWithdrawalPhase", () => {
     const state: GameState = {
       ...createTestState(),
       races: r2r([
-        makeRace({ id: "race-1", entries: [{ horseId: "horse-1", owned: true } as any] }),
-        makeRace({ id: "race-2", entries: [{ horseId: "horse-2", owned: true } as any] }),
+        makeRace({ id: "race-1", entries: [{ horseId: "horse-1", ownership: { type: "player" } } as any] }),
+        makeRace({ id: "race-2", entries: [{ horseId: "horse-2", ownership: { type: "player" } } as any] }),
       ]),
     };
 
@@ -118,7 +118,7 @@ describe("claimingWithdrawalPhase", () => {
       ...createTestState(),
       races: r2r([
         makeRace({
-          entries: [{ horseId: "horse-1", owned: true, withdrawnFromClaiming: true } as any],
+          entries: [{ horseId: "horse-1", ownership: { type: "player" }, withdrawnFromClaiming: true } as any],
         }),
       ]),
     };

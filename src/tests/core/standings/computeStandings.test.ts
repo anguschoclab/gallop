@@ -27,7 +27,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     distanceAptitude: 1600,
     raceHistory: [],
     fame: 0,
-    owned: true,
+    ownership: { type: "player" },
     form: 50,
     potential: 75,
     ...overrides,
@@ -46,7 +46,7 @@ describe("computeSeasonStandings", () => {
   it("aggregates player purseEarned within the range window", () => {
     const h1 = mkHorse({
       id: "h1",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -69,7 +69,7 @@ describe("computeSeasonStandings", () => {
   it("excludes races outside the range window", () => {
     const h1 = mkHorse({
       id: "h1",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -102,7 +102,7 @@ describe("computeSeasonStandings", () => {
   it("uses fallback purse calculation when purseEarned is missing", () => {
     const h1 = mkHorse({
       id: "h1",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -125,7 +125,7 @@ describe("computeSeasonStandings", () => {
   it("uses graded prize split for graded races in fallback", () => {
     const h1 = mkHorse({
       id: "h1",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -149,7 +149,7 @@ describe("computeSeasonStandings", () => {
   it("includes NPC stables in standings", () => {
     const h1 = mkHorse({
       id: "h1",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -166,8 +166,7 @@ describe("computeSeasonStandings", () => {
     });
     const h2 = mkHorse({
       id: "h2",
-      owned: false,
-      stableId: "npc1",
+      ownership: { type: "npc", stableId: asNpcStableId("npc1") },
       raceHistory: [
         {
           raceId: "r2",
@@ -197,7 +196,7 @@ describe("computeSeasonStandings", () => {
   it("sorts standings by prize money descending", () => {
     const h1 = mkHorse({
       id: "h1",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -214,8 +213,7 @@ describe("computeSeasonStandings", () => {
     });
     const h2 = mkHorse({
       id: "h2",
-      owned: false,
-      stableId: "npc1",
+      ownership: { type: "npc", stableId: asNpcStableId("npc1") },
       raceHistory: [
         {
           raceId: "r2",
@@ -244,7 +242,7 @@ describe("computeSeasonStandings", () => {
   it("computes playerRank as 1-based index after sorting", () => {
     const h1 = mkHorse({
       id: "h1",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -261,8 +259,7 @@ describe("computeSeasonStandings", () => {
     });
     const h2 = mkHorse({
       id: "h2",
-      owned: false,
-      stableId: "npc1",
+      ownership: { type: "npc", stableId: asNpcStableId("npc1") },
       raceHistory: [
         {
           raceId: "r2",
@@ -289,7 +286,7 @@ describe("computeSeasonStandings", () => {
   it("sparkline length matches rangeDays", () => {
     const h1 = mkHorse({
       id: "h1",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -312,7 +309,7 @@ describe("computeSeasonStandings", () => {
   it("sparkline places earnings in the correct bucket", () => {
     const h1 = mkHorse({
       id: "h1",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -345,7 +342,7 @@ describe("computeSeasonStandings", () => {
       surface: "Turf",
       distance: 1600,
     }));
-    const h1 = mkHorse({ id: "h1", owned: true, raceHistory: history });
+    const h1 = mkHorse({ id: "h1", ownership: { type: "player" }, raceHistory: history });
     const s: GameState = mkState({ day: 60, horses: { h1 } });
     const result = computeSeasonStandings(s, 30);
     const player = result.standings.find((e) => e.isPlayer)!;
@@ -357,7 +354,7 @@ describe("computeSeasonStandings", () => {
   it("recentResults include raceId propagated from raceHistory", () => {
     const h1 = mkHorse({
       id: "h1",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r-abc",
@@ -381,7 +378,7 @@ describe("computeSeasonStandings", () => {
   it("recentResults include gate propagated from raceHistory", () => {
     const h1 = mkHorse({
       id: "h1",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r-gate",
@@ -428,8 +425,7 @@ describe("computeSeasonStandings", () => {
   it("NPC prestige is aggregated from regionalPrestige", () => {
     const h2 = mkHorse({
       id: "h2",
-      owned: false,
-      stableId: "npc1",
+      ownership: { type: "npc", stableId: asNpcStableId("npc1") },
       raceHistory: [
         {
           raceId: "r2",

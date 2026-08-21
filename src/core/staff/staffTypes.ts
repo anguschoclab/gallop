@@ -24,7 +24,7 @@ export type StaffTier = "budget" | "mid" | "elite";
  * Individual staff member details
  */
 export interface StaffMember {
-  id: string;
+  id: import("@/core/types/branded").StaffId;
   name: string;
   role: StaffRole;
   tier: StaffTier;
@@ -33,7 +33,7 @@ export interface StaffMember {
   traits: string[]; // Specialized skills (e.g., 'colic_expert', 'dirt_specialist')
   fame: number; // 0-100 reputation of the staff member
   contractUntil?: number; // Optional day when contract expires
-  stableId?: string; // ID of the stable they are currently hired by
+  stableId?: import("@/core/types/branded").StableId; // ID of the stable they are currently hired by
   offended?: boolean; // True if player low-balled them and they walked away
   offendedUntil?: number; // Game day after which they are willing to talk again
   negotiationRounds?: number; // Number of insult rounds used in current negotiation

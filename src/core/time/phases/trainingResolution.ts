@@ -107,7 +107,7 @@ export const trainingResolutionPhase: PipelinePhase = {
         continue;
 
       // Get staff bonuses for this stable
-      const stableId = horse.stableId ?? "";
+      const stableId = horse.ownership?.type === "npc" ? horse.ownership.stableId : "";
       const roleMap = hiredStaffByStableAndRole.get(stableId);
 
       const trainer = roleMap?.get("trainer");
@@ -297,7 +297,7 @@ export const trainingResolutionPhase: PipelinePhase = {
         // --- OUTPOST SPECIALIZATION (Imperial Expansion) ---
         let branchMod = null;
         if (horse.outpostId) {
-          const outpost = horse.stableId
+          const outpost = horse.ownership?.type === "npc"
             ? outpostMap.get(horse.outpostId)
             : playerOutpostMap.get(horse.outpostId);
           if (outpost) {
@@ -388,9 +388,10 @@ export const trainingResolutionPhase: PipelinePhase = {
       }
 
       // Generate jockey affinity XP for non-rest workouts
-      if (intent.trainingType !== "rest" && horse.stableId) {
+      if (intent.trainingType !== "rest" && horse.ownership?.type === "npc") {
+        const horseStableId = horse.ownership.stableId;
         const jockey = jockeyMap
-          ? [...jockeyMap.values()].find((j) => j.stableId === horse.stableId)
+          ? [...jockeyMap.values()].find((j) => j.stableId === horseStableId)
           : undefined;
         if (jockey) {
           impacts.push(generateWorkoutAffinityImpact(horse, jockey, intent.trainingType, newDay));
@@ -398,8 +399,8 @@ export const trainingResolutionPhase: PipelinePhase = {
       }
 
       // Record training outcome for NPC AI
-      if (aiManager && horse.stableId) {
-        const stable = stableMap.get(horse.stableId);
+      if (aiManager && horse.ownership?.type === "npc") {
+        const stable = stableMap.get(horse.ownership.stableId);
         if (stable) {
           const stableAI = getOrCreateStableAIState(aiManager, stable, newDay);
           if (stableAI.trainingAI) {

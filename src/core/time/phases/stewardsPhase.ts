@@ -41,7 +41,7 @@ export const stewardsPhase: PipelinePhase = {
     // which gives the player a contextual post-race notification instead.
     const playerHorseIds = new Set(
       Object.values(state.horses)
-        .filter((h) => h.owned)
+        .filter((h) => h.ownership?.type === "player")
         .map((h) => h.id),
     );
 

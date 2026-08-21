@@ -47,7 +47,7 @@ describe("NPC Bankruptcy Lifecycle (integration)", () => {
       age: 3,
       gender: "colt",
       stableId: "poor-stable",
-      owned: false,
+      ownership: { type: "unowned" },
     });
     const state = makeGameState({
       day: 10,
@@ -126,7 +126,7 @@ describe("NPC Bankruptcy Lifecycle (integration)", () => {
       age: 8,
       gender: "horse",
       stableId: "bankrupt-1",
-      owned: false,
+      ownership: { type: "unowned" },
       lifetimeEarnings: 5000000,
     });
     const syndicate = makeSyndicate({
@@ -200,7 +200,7 @@ describe("NPC Bankruptcy Lifecycle (integration)", () => {
       age: 8,
       gender: "horse",
       stableId: "bankrupt-1",
-      owned: false,
+      ownership: { type: "unowned" },
       lifetimeEarnings: 5000000,
     });
     const otherNpcStable = createTestStable({ id: "other-npc", cash: 100000, horses: [] });
@@ -241,7 +241,7 @@ describe("NPC Bankruptcy Lifecycle (integration)", () => {
       age: 3,
       gender: "colt",
       stableId: "bankrupt-1",
-      owned: false,
+      ownership: { type: "unowned" },
     });
     const horse2 = createTestHorse({
       id: "h2",
@@ -249,7 +249,7 @@ describe("NPC Bankruptcy Lifecycle (integration)", () => {
       age: 5,
       gender: "mare",
       stableId: "bankrupt-2",
-      owned: false,
+      ownership: { type: "unowned" },
     });
     const state = makeGameState({
       npcStables: [stable1, stable2],

@@ -164,7 +164,7 @@ export function generateMultiRaceStrategy(
     if (maxPerRace <= 0) continue;
 
     const candidates = horses
-      .filter((h) => h.stableId === stable.id)
+      .filter((h) => h.ownership?.type === "npc" && h.ownership.stableId === stable.id)
       .filter((h) => !assignedHorseDays.has(`${h.id}:${race.day}`))
       .map((horse) => ({
         horse,

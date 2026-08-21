@@ -31,7 +31,7 @@ function mockHorse(
     form: 0,
     potential: 100,
     raceHistory: [],
-    owned: true,
+    ownership: { type: "player" },
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 },
     injuryProneness: 0,

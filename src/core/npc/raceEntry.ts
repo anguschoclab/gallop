@@ -22,6 +22,8 @@ import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { shouldEnterHorse } from "./raceEntryHelpers";
 import { isHatedRival } from "@/core/stable/rivalry";
 import { calculateOverallRating } from "@/core/horse/stats";
+import { makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 import { selectBestFreeAgentJockey } from "@/core/jockey/selectFreeAgent";
 
 /**
@@ -136,7 +138,7 @@ export function runNpcRaceEntry(
     // Note: even if race is full, NPC stables may try to bump weaker entries below.
 
     // Imperial Expansion: Check if player has an entry to trigger rivalry tactics
-    const playerEntry = race.entries.find((e) => e.owned);
+    const playerEntry = race.entries.find((e) => e.ownership?.type === "player");
 
     // Each stable evaluates this race
     for (const stable of stables) {
@@ -161,8 +163,8 @@ export function runNpcRaceEntry(
           }
           const bumped = race.entries[weakestIdx];
           // Refund entry fee to bumped stable
-          if (bumped.stableId) {
-            const bumpedStable = stableMap.get(bumped.stableId);
+          if (bumped.ownership?.type === "npc") {
+            const bumpedStable = stableMap.get(bumped.ownership.stableId);
             if (bumpedStable) {
               bumpedStable.cash = bumpedStable.cash + race.entryFee;
             }
@@ -220,9 +222,7 @@ export function runNpcRaceEntry(
 
         race.entries.push({
           horseId: horse.id,
-          owned: false,
-          stableId: stable.id,
-          npc: true,
+          ownership: makeNpcOwned(asNpcStableId(stable.id)),
           jockeyId,
           weight: assignedWeight,
           jockeyInstructions,

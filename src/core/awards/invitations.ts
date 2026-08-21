@@ -205,7 +205,7 @@ export function findInvitationQualifiers(
 
   for (const horse of horses) {
     // Player-owned horses only (NPC-owned horses carry a stableId)
-    if (!horse.owned || horse.stableId) continue;
+    if (horse.ownership?.type !== "player") continue;
 
     for (const entry of horse.raceHistory) {
       if (entry.day < yearStart || entry.day > yearEnd) continue;

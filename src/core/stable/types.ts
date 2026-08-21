@@ -11,6 +11,7 @@
 import type { JockeySilk } from "@/core/jockey/types";
 import type { Archetype } from "@/core/breeding/archetypes";
 import type { Outpost } from "@/core/facilities/outpostTypes";
+import type { StableId } from "@/core/types/branded";
 
 export type StableTier = "elite" | "mid" | "budget";
 
@@ -25,7 +26,7 @@ export type StablePersonality =
   | "prestige";
 
 export type Stable = {
-  id: string;
+  id: StableId;
   name: string;
   owner: string;
   tier: StableTier;

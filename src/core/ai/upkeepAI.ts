@@ -178,7 +178,9 @@ export function calculateMonthlyExpenseBudget(
   const strategy = UPKEEP_STRATEGIES[stable.personality];
 
   // Estimate monthly expenses
-  const horseCount = horses.filter((h) => h.stableId === stable.id).length;
+  const horseCount = horses.filter(
+    (h) => h.ownership?.type === "npc" && h.ownership.stableId === stable.id,
+  ).length;
   const basePerHorse = 500;
   const totalMonthlyExpenses = horseCount * basePerHorse;
 

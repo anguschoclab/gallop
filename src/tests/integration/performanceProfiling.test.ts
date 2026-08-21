@@ -15,7 +15,7 @@ function createMockRunner(overrides: Partial<Runner> = {}): Runner {
     horseId: "h1",
     name: "Test",
     silk: "red",
-    owned: false,
+    ownership: { type: "unowned" },
     position: 100,
     velocity: 15,
     lane: 1.2,

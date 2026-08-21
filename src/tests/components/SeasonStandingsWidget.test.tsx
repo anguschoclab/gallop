@@ -39,7 +39,7 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
-    owned: true,
+    ownership: { type: "player" },
     ...overrides,
   }) as Horse;
 
@@ -80,7 +80,7 @@ describe("SeasonStandingsWidget", () => {
   it("renders standings rows when race history exists", () => {
     const h1 = mkHorse({
       id: "h1",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -111,7 +111,7 @@ describe("SeasonStandingsWidget", () => {
   it("shows notification badge when inbox has standings messages", () => {
     const h1 = mkHorse({
       id: "h1",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -148,7 +148,7 @@ describe("SeasonStandingsWidget", () => {
   it("clicking a row opens the stable details panel", () => {
     const h1 = mkHorse({
       id: "h1",
-      owned: true,
+      ownership: { type: "player" },
       raceHistory: [
         {
           raceId: "r1",
@@ -178,7 +178,7 @@ describe("SeasonStandingsWidget", () => {
   });
 
   it("shows recent awards with links to /awards/$category", () => {
-    const h1 = mkHorse({ id: "h1", owned: true });
+    const h1 = mkHorse({ id: "h1", ownership: { type: "player" } });
     seedStore({
       ...createDefaultGameState(),
       day: 60,

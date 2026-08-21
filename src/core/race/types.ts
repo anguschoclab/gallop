@@ -12,6 +12,8 @@ import { RaceClass } from "./sharedTypes";
 import type { RaceSnapshot, PaceSnapshot } from "./engine/raceSnapshotTypes";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
+import type { HorseId, JockeyId, RaceId } from "@/core/types/branded";
+import type { HorseOwnership } from "@/core/horse/ownership";
 
 // Re-export RaceClass for use in race generation modules
 export { RaceClass };
@@ -43,19 +45,17 @@ export type Weather = "sunny" | "cloudy" | "rainy" | "sunset" | "night";
 export type TrackCondition = "fast" | "good" | "soft" | "heavy" | "yielding";
 
 export type RaceEntry = {
-  horseId: string;
-  owned: boolean;
-  stableId?: string;
-  npc?: boolean;
+  horseId: HorseId;
+  ownership: HorseOwnership;
   gate?: number;
-  jockeyId?: string;
+  jockeyId?: JockeyId;
   weight?: number;
   withdrawnFromClaiming?: boolean;
   jockeyInstructions?: JockeyInstructions;
 };
 
 export type RaceResult = {
-  horseId: string;
+  horseId: HorseId;
   position: number;
   time: number;
 };
@@ -67,7 +67,7 @@ export type RaceResult = {
  * optional graded race information.
  */
 export type Race = {
-  id: string;
+  id: RaceId;
   name: string;
   day: number;
   distance: number;
@@ -111,7 +111,7 @@ export type Race = {
   claimingPrice?: ClaimingPrice;
   winCondition?: WinCondition;
   stateBred?: string;
-  handicapWeights?: { horseId: string; weight: number }[];
+  handicapWeights?: { horseId: HorseId; weight: number }[];
   isHandicap?: boolean;
   trackId?: string;
   surface?: "Turf" | "Dirt" | "Synthetic";
@@ -164,11 +164,11 @@ export type RegionalSystem =
 export type GradeLevel = "G1" | "G2" | "G3" | "Listed";
 
 export type RaceRunner = {
-  horseId: string;
+  horseId: HorseId;
   name: string;
   silk: string;
-  owned: boolean;
-  jockeyId: string;
+  ownership: HorseOwnership;
+  jockeyId: JockeyId;
   jockeyName: string;
   gate?: number;
   lane?: number;

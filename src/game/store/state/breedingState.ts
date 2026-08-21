@@ -16,10 +16,11 @@ import type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import type { Syndicate } from "@/core/breeding/types";
 import type { InvestorRecord } from "@/core/breeding/investorTypes";
+import type { HorseId, InvestorId } from "@/core/types/branded";
 
 export interface MatingPlanEntry {
-  damId: string;
-  sireId: string;
+  damId: HorseId;
+  sireId: HorseId;
   liveFoalGuarantee: boolean;
 }
 

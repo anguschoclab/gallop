@@ -33,7 +33,8 @@ import type { TripleCrownProgressImpact } from "../impacts/campaignImpacts";
 import type { LookupMaps } from "./types";
 import { awardTraitXp, checkTraitUnlock, checkTraitAtrophy } from "@/core/jockey/traitProgression";
 import type { JockeyTrait } from "@/core/jockey/types";
-import { isPlayerOwned, isNpcOwned } from "@/core/horse/ownership";
+import { isPlayerOwned, isNpcOwned, makePlayerOwned, makeNpcOwned, makeUnowned, type HorseOwnership } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -53,10 +54,11 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         const bumpIdx = race.entries.findIndex((e) => e.horseId === bumpEntryHorseId);
         if (bumpIdx !== -1) {
           const bumped = race.entries[bumpIdx];
-          if (bumped.stableId) {
+          if (bumped.ownership.type === "npc") {
+            const bumpedStableId = bumped.ownership.stableId;
             const bumpedStable =
-              lookupMaps?.stableMap.get(bumped.stableId) ||
-              draft.npcStables.find((s) => s.id === bumped.stableId);
+              lookupMaps?.stableMap.get(bumpedStableId) ||
+              draft.npcStables.find((s) => s.id === bumpedStableId);
             if (bumpedStable) {
               bumpedStable.cash = bumpedStable.cash + race.entryFee;
             }
@@ -66,9 +68,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       }
       race.entries.push({
         horseId,
-        owned: isPlayerOwned(horse),
-        stableId: horse.stableId,
-        npc: isNpcOwned(horse),
+        ownership: horse.ownership,
         jockeyId,
         weight,
         jockeyInstructions,
@@ -228,8 +228,9 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { horseId, toStableId } = impact as ClaimingImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
     if (horse) {
-      horse.stableId = toStableId;
-      horse.owned = !toStableId;
+      horse.ownership = toStableId
+        ? makeNpcOwned(asNpcStableId(toStableId))
+        : makePlayerOwned();
     }
   },
 
