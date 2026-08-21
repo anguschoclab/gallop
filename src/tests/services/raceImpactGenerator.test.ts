@@ -335,7 +335,7 @@ describe("generatePrizeMoneyImpacts", () => {
     const horse = createTestColt({ id: "h1", owned: true });
     const impacts = runSingle(horse, 1, makeGradedRace({ purse: 1_000_000 }));
     const cash = impacts.find(
-      (i) => i.type === "cash_change" && (i as any).entityId === "" && (i as any).amount > 0,
+      (i) => i.type === "cash_change" && (i as any).entityId === "player" && (i as any).amount > 0,
     );
     expect(cash).toBeDefined();
     expect((cash as any).amount).toBeGreaterThan(0);

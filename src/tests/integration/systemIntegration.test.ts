@@ -210,7 +210,13 @@ describe("Phase 1.5 — Intent → Impact → State flow", () => {
 describe("Phase 1.5 — NPC AI 7-day cycle", () => {
   it("advancing 7 days with NPC stables generates and resolves intents", () => {
     const stable = createTestStable({ id: "npc-1", cash: 500000, isMajor: true });
-    const horse = createTestHorse({ id: "h1", stableId: "npc-1", age: 3, energy: 80 });
+    const horse = createTestHorse({
+      id: "h1",
+      stableId: "npc-1",
+      owned: false,
+      age: 3,
+      energy: 80,
+    });
     const state = makeGameState({ day: 1, cash: 100000 }) as GameState;
     state.horses = h2r([horse]);
     state.npcStables = [stable];
@@ -347,7 +353,13 @@ describe("Phase 1.5 — Multi-day advance (30 days)", () => {
 
   it("30-day advance with NPC stables produces no crashes", () => {
     const stable = createTestStable({ id: "npc-1", cash: 1000000, isMajor: true });
-    const horse = createTestHorse({ id: "h1", stableId: "npc-1", age: 3, energy: 80 });
+    const horse = createTestHorse({
+      id: "h1",
+      stableId: "npc-1",
+      owned: false,
+      age: 3,
+      energy: 80,
+    });
     const state = makeGameState({ day: 1, cash: 500000 }) as GameState;
     state.horses = h2r([horse]);
     state.npcStables = [stable];
