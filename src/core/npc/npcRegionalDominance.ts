@@ -15,6 +15,7 @@ import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";
 import { generateUUID } from "@/core/uuid";
 import type { NewsItem } from "@/services/narrative/newsTypes";
 import { isPlayerOwned } from "@/core/horse/ownership";
+import { asStableId } from "@/core/types/branded";
 import {
   generateRivalryEmergenceNews,
   generateGrudgeMatchNews,
@@ -97,7 +98,9 @@ export function processRegionalDominance(
       if (!winningHorse) continue;
       const winningStableId = isPlayerOwned(winningHorse)
         ? "player"
-        : winningHorse.ownership?.type === "npc" ? winningHorse.ownership.stableId : null;
+        : winningHorse.ownership?.type === "npc"
+          ? winningHorse.ownership.stableId
+          : null;
       if (!winningStableId) continue;
 
       if (winningStableId === currentKingId) {
@@ -117,7 +120,7 @@ export function processRegionalDominance(
               );
 
               if (oldFriction < 80 && kingAI.friction >= 80) {
-                const kingStable = stableMap.get(currentKingId);
+                const kingStable = stableMap.get(asStableId(currentKingId));
                 if (kingStable) {
                   const escNews = generateRivalryEscalationNews(
                     kingStable,
@@ -206,7 +209,11 @@ export function processRegionalDominance(
                 race.entries.filter((e) => e.ownership?.type === "player").map((e) => e.horseId),
               );
               const rivalHorseIds = new Set(
-                race.entries.filter((e) => e.ownership?.type === "npc" && e.ownership.stableId === rivalStableId).map((e) => e.horseId),
+                race.entries
+                  .filter(
+                    (e) => e.ownership?.type === "npc" && e.ownership.stableId === rivalStableId,
+                  )
+                  .map((e) => e.horseId),
               );
 
               const playerBestPos = Math.min(

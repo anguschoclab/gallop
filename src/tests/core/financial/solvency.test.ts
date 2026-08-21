@@ -9,6 +9,7 @@ import {
 } from "@/core/financial/solvency";
 import { createTestHorse, createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import { horsePrice } from "@/core/horse/pricing";
+import { asHorseId } from "@/core/types/branded";
 
 describe("deriveSolvencyState", () => {
   it("returns healthy for non-negative cash", () => {
@@ -61,7 +62,11 @@ describe("selectForcedSaleHorse", () => {
 
   it("returns null when there is nothing eligible", () => {
     expect(selectForcedSaleHorse([])).toBeNull();
-    expect(selectForcedSaleHorse([{ id: "x", ownership: { type: "unowned" }, age: 4, value: 10 }] as SellableHorse[])).toBeNull();
+    expect(
+      selectForcedSaleHorse([
+        { id: "x", ownership: { type: "unowned" }, age: 4, value: 10 },
+      ] as SellableHorse[]),
+    ).toBeNull();
   });
 });
 
@@ -84,7 +89,7 @@ describe("computeDailyInterest", () => {
 describe("previewSeizure", () => {
   it("returns the most valuable owned adult horse", () => {
     const cheap = createTestHorse({
-      id: "cheap",
+      id: asHorseId("cheap"),
       name: "Cheap Chuck",
       age: 5,
       stats: {
@@ -97,7 +102,7 @@ describe("previewSeizure", () => {
       },
     });
     const valuable = createTestHorse({
-      id: "valuable",
+      id: asHorseId("valuable"),
       name: "Star Runner",
       age: 5,
       stats: {
@@ -120,23 +125,23 @@ describe("previewSeizure", () => {
   });
 
   it("excludes NPC horses (stableId set)", () => {
-    const npc = createTestNpcHorse({ id: "npc", name: "NPC Horse", age: 5 });
-    const player = createTestHorse({ id: "player", name: "My Horse", age: 5 });
+    const npc = createTestNpcHorse({ id: asHorseId("npc"), name: "NPC Horse", age: 5 });
+    const player = createTestHorse({ id: asHorseId("player"), name: "My Horse", age: 5 });
     const result = previewSeizure([npc, player], -50_000);
     expect(result).not.toBeNull();
     expect(result!.horseId).toBe("player");
   });
 
   it("excludes foals (age === 0)", () => {
-    const foal = createTestHorse({ id: "foal", name: "Baby", age: 0 });
-    const adult = createTestHorse({ id: "adult", name: "Adult", age: 5 });
+    const foal = createTestHorse({ id: asHorseId("foal"), name: "Baby", age: 0 });
+    const adult = createTestHorse({ id: asHorseId("adult"), name: "Adult", age: 5 });
     const result = previewSeizure([foal, adult], -50_000);
     expect(result).not.toBeNull();
     expect(result!.horseId).toBe("adult");
   });
 
   it("computes salePrice as 70% of assessedValue", () => {
-    const horse = createTestHorse({ id: "h1", name: "Test", age: 5 });
+    const horse = createTestHorse({ id: asHorseId("h1"), name: "Test", age: 5 });
     const assessed = horsePrice(horse);
     const result = previewSeizure([horse], -50_000);
     expect(result).not.toBeNull();
@@ -146,7 +151,7 @@ describe("previewSeizure", () => {
 
   it("computes deficitAfter correctly when salePrice < debt", () => {
     const horse = createTestHorse({
-      id: "h1",
+      id: asHorseId("h1"),
       name: "Test",
       age: 5,
       stats: {
@@ -167,7 +172,7 @@ describe("previewSeizure", () => {
 
   it("clamps deficitAfter to 0 when salePrice exceeds debt", () => {
     const horse = createTestHorse({
-      id: "h1",
+      id: asHorseId("h1"),
       name: "Valuable",
       age: 5,
       stats: {
@@ -187,7 +192,7 @@ describe("previewSeizure", () => {
   it("selects same horse as selectForcedSaleHorse on identical input", () => {
     const horses = [
       createTestHorse({
-        id: "a",
+        id: asHorseId("a"),
         name: "A",
         age: 4,
         stats: {
@@ -200,7 +205,7 @@ describe("previewSeizure", () => {
         },
       }),
       createTestHorse({
-        id: "b",
+        id: asHorseId("b"),
         name: "B",
         age: 6,
         stats: {

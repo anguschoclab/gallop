@@ -16,6 +16,7 @@ import { calculateRaceWinReputation, calculateRaceLossReputation } from "@/core/
 import type { Race, Horse } from "@/game/types";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import { getPrizeSplitForRace } from "../utils";
+import { asOwnerKey } from "@/core/types/branded";
 
 export function generatePrizeMoneyImpacts(
   horse: Horse,
@@ -54,7 +55,9 @@ export function generatePrizeMoneyImpacts(
       phase: "raceResolution",
       logLevel: "conditional",
       type: "cash_change",
-      entityId: (playerOwned ? "player" : horse.ownership?.type === "npc" ? horse.ownership.stableId : "") as string,
+      entityId: asOwnerKey(
+        playerOwned ? "player" : horse.ownership?.type === "npc" ? horse.ownership.stableId : "",
+      ),
       amount: prize,
       reason: `Prize money: ${position}${getOrdinalSuffix(position)} in ${race.name}`,
     };

@@ -14,6 +14,7 @@ import {
   POSITION_WIN as WIN_POSITION,
   TOP_FINISH_POSITION as TOP3_POSITION,
 } from "@/constants/raceSimulationConstants";
+import { asRaceId } from "@/core/types/branded";
 
 export type RegionKey = RegionId | "other";
 
@@ -120,11 +121,16 @@ export function collectRegionRuns({
     if (ownedOnly && horse.ownership?.type !== "player") continue;
     for (const entry of horse.raceHistory ?? []) {
       if (!isInWindow(entry.day, currentDay, weeks)) continue;
-      if (stableId && (entry.stableId ?? (horse.ownership?.type === "npc" ? horse.ownership.stableId : undefined)) !== stableId) continue;
+      if (
+        stableId &&
+        (entry.stableId ??
+          (horse.ownership?.type === "npc" ? horse.ownership.stableId : undefined)) !== stableId
+      )
+        continue;
       if (surface?.length && !surface.includes(entry.surface ?? "")) continue;
       if (distMin != null && (entry.distance ?? 0) < distMin) continue;
       if (distMax != null && (entry.distance ?? 0) > distMax) continue;
-      const race = raceById.get(entry.raceId);
+      const race = raceById.get(asRaceId(entry.raceId));
       const region = regionKeyForRace(race);
       const grade = entry.grade ?? race?.graded?.grade;
       rows.push({

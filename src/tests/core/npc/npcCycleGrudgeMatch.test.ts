@@ -17,9 +17,13 @@ interface MockRace {
 }
 
 function processGrudgeMatch(race: MockRace, rivalStableId: string) {
-  const playerHorseIds = new Set(race.entries.filter((e) => e.ownership?.type === "player").map((e) => e.horseId));
+  const playerHorseIds = new Set(
+    race.entries.filter((e) => e.ownership?.type === "player").map((e) => e.horseId),
+  );
   const rivalHorseIds = new Set(
-    race.entries.filter((e) => e.ownership?.type === "npc" && e.ownership.stableId === rivalStableId).map((e) => e.horseId),
+    race.entries
+      .filter((e) => e.ownership?.type === "npc" && e.ownership.stableId === rivalStableId)
+      .map((e) => e.horseId),
   );
 
   const playerResults = race.result.filter((r) => playerHorseIds.has(r.horseId));

@@ -5,6 +5,7 @@ import { runRaceToCompletion } from "@/core/race/engine/simulation";
 import { calculateProjectedBeyer } from "@/core/race/beyerProjections";
 import { generateHorse } from "@/core/horse/horseFactory";
 import { createRng } from "@/core/common/rng";
+import { asHorseId } from "@/core/types/branded";
 
 export interface HeadToHeadResult {
   horseId: string;
@@ -117,7 +118,7 @@ export function runHeadToHeadSimulation(
     const { result } = runRaceToCompletion(runners, distance, rng, 0.1, 600);
 
     for (const r of result) {
-      if (!selectedIds.has(r.horseId)) continue;
+      if (!selectedIds.has(asHorseId(r.horseId))) continue;
       const s = stats.get(r.horseId)!;
       if (r.position === 1) s.wins++;
       s.positions.push(r.position);

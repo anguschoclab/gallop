@@ -16,7 +16,7 @@ import type { Syndicate, ShareActivityFeedItem } from "@/core/breeding/types";
 import { generateUUID } from "@/core/uuid";
 import { findMajorityOwner } from "@/core/breeding/devolutionUtils";
 import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { asNpcStableId, asHorseId, asStableId } from "@/core/types/branded";
 import type {
   SyndicateCreationImpact,
   ShareTransactionImpact,
@@ -36,7 +36,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       impact as SyndicateCreationImpact;
 
     // Validate stallion exists and is a G1 winner
-    const stallion = lookupMaps?.horseMap.get(stallionId) || draft.horses[stallionId];
+    const stallion =
+      lookupMaps?.horseMap.get(asHorseId(stallionId)) || draft.horses[asHorseId(stallionId)];
     if (!stallion) return;
 
     // Check if stallion is a G1 winner
@@ -96,11 +97,12 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     // Move cash: positive shares = purchase (buyer pays), negative = sale (seller receives)
     const cashDelta = -shares * pricePerShare;
     if (cashDelta !== 0) {
-      if (stableId === "player") {
+      if ((stableId as string) === "player") {
         draft.cash += cashDelta;
       } else {
         const stable =
-          lookupMaps?.stableMap.get(stableId) || draft.npcStables?.find((s) => s.id === stableId);
+          lookupMaps?.stableMap.get(asStableId(stableId)) ||
+          draft.npcStables?.find((s) => s.id === (stableId as string));
         if (stable) {
           stable.cash = (stable.cash || 0) + cashDelta;
         }
@@ -143,7 +145,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     // Ownership devolution: if the current stallion owner no longer holds the
     // majority of shares (>50%), transfer ownership to the largest shareholder.
     const stallion =
-      lookupMaps?.horseMap.get(syndicate.stallionId) || draft.horses[syndicate.stallionId];
+      lookupMaps?.horseMap.get(asHorseId(syndicate.stallionId)) ||
+      draft.horses[asHorseId(syndicate.stallionId)];
     if (stallion) {
       const currentOwnerKey =
         stallion.ownership?.type === "npc" ? stallion.ownership.stableId : "player";
@@ -221,7 +224,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       } else {
         // For NPC stables, add to stable's cash
         const stable =
-          lookupMaps?.stableMap.get(shareholderStableId) ||
+          lookupMaps?.stableMap.get(asStableId(shareholderStableId)) ||
           draft.npcStables.find((s) => s.id === shareholderStableId);
         if (stable) {
           stable.cash = (stable.cash || 0) + distribution;
