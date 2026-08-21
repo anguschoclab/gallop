@@ -12,6 +12,16 @@ export type FlavorStoryTheme =
 export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   track: [
     {
+      headline: "Backstretch Beautification Project Underway",
+      body: "Volunteers and track employees have teamed up to plant hundreds of new flowers around the paddock and walking rings, adding fresh color to the venue.",
+      category: "flavor",
+    },
+    {
+      headline: "Starting Gate Overhauled",
+      body: "Track maintenance crews worked through the night to perform a major overhaul on the starting gate, replacing old padding and recalibrating the magnetic release mechanisms.",
+      category: "flavor",
+    },
+    {
       headline: "Local Track Upgrades Completed",
       body: "Track officials have announced the completion of several key infrastructure projects, promising a better experience for both fans and equine athletes.",
       category: "flavor",
@@ -171,6 +181,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   breeding: [
     {
+      headline: "Prominent Mare Delivers Healthy Twins",
+      body: "In a rare and closely watched event, a multiple stakes-winning mare has safely delivered healthy twin foals, defying the usual odds in thoroughbred reproduction.",
+      category: "flavor",
+    },
+    {
+      headline: "Stud Fee Adjustments Spark Debate",
+      body: "A leading farm's decision to dramatically increase the stud fee of their marquee stallion has triggered intense discussions among breeders about market value and accessibility.",
+      category: "flavor",
+    },
+    {
       headline: "Historical Sire Line Resurging",
       body: "Bloodstock analysts are noting an unexpected revival of a classic sire line that had seemingly fallen out of favor over the past decade.",
       category: "flavor",
@@ -299,6 +319,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   community: [
+    {
+      headline: "Local School Hosts Field Trip at the Track",
+      body: "Hundreds of elementary school students visited the track this morning, getting a behind-the-scenes look at the barns and learning about equine care from local trainers.",
+      category: "flavor",
+    },
+    {
+      headline: "Veteran Groom Honored with Award",
+      body: "A quiet but deeply respected groom received the annual 'Unsung Hero' award at this week's racing banquet, recognized for over forty years of dedicated service to the horses.",
+      category: "flavor",
+    },
     {
       headline: "Trainer Milestone Approaching",
       body: "A veteran of the local training ranks is quietly approaching their 1000th career victory, drawing praise from peers across the backstretch.",
