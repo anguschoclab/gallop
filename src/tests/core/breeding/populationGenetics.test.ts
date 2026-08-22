@@ -7,6 +7,7 @@ import {
   detectInbreedingPattern,
   computeAhc,
   computeCoiFromSnapshot,
+  resolveBloodline,
 } from "@/core/breeding/populationGenetics";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { clearAllCaches, getCacheStats } from "@/core/genetics/genotypeCache";
@@ -289,6 +290,83 @@ describe("populationGenetics", () => {
       const result2 = computeCoiFromSnapshot(pedigree as any);
       expect(getCacheStats().coi).toBe(1);
       expect(result1).toBe(result2);
+    });
+  });
+
+  describe("resolveBloodline", () => {
+    it("returns the bloodline if it is already set on the horse", () => {
+      const horse = createTestHorse({ bloodline: "Storm Cat" });
+      expect(resolveBloodline(horse, new Map())).toBe("Storm Cat");
+    });
+
+    it("matches foundation bloodline by horse name or sire name", () => {
+      const horse1 = createTestHorse({
+        id: "h1",
+        bloodline: undefined as any,
+        name: "Sadler's Wells",
+      });
+      const horse2 = createTestHorse({
+        id: "h2",
+        bloodline: undefined as any,
+        sireName: "Galileo",
+      });
+
+      expect(resolveBloodline(horse1, new Map())).toBe("Sadler's Wells");
+      expect(resolveBloodline(horse2, new Map())).toBe("Galileo");
+    });
+
+    it("traverses upwards via sireId in horseMap", () => {
+      const grandSire = createTestHorse({
+        id: "grandsire-1",
+        bloodline: undefined as any,
+        name: "A.P. Indy",
+      });
+      const sire = createTestHorse({
+        id: "sire-1",
+        bloodline: undefined as any,
+        name: "Some Sire",
+        pedigree: {
+          sireId: "grandsire-1",
+          damId: "unrelated",
+          generation: 1,
+          name: "Some Sire",
+        } as any,
+      });
+      const horse = createTestHorse({
+        id: "horse-1",
+        bloodline: undefined as any,
+        pedigree: {
+          sireId: "sire-1",
+          damId: "unrelated",
+          generation: 0,
+          name: "Test Horse",
+        } as any,
+      });
+
+      const map = new Map([
+        ["grandsire-1", grandSire],
+        ["sire-1", sire],
+      ]);
+
+      expect(resolveBloodline(horse, map)).toBe("A.P. Indy");
+    });
+
+    it("falls back to findHorseByName if in-game pedigree breaks", () => {
+      const horse = createTestHorse({
+        id: "horse-1",
+        bloodline: undefined as any,
+        pedigree: { sireName: "Unbridled's Song", generation: 0, name: "Test Horse" } as any,
+      });
+
+      expect(resolveBloodline(horse, new Map())).toBe("Unbridled's Song");
+    });
+
+    it("returns Unaffiliated if traversal limits are reached or bloodline is unknown", () => {
+      const horse = createTestHorse({
+        bloodline: undefined as any,
+        sireName: "Unknown Random Sire",
+      });
+      expect(resolveBloodline(horse, new Map())).toBe("Unaffiliated");
     });
   });
 });
