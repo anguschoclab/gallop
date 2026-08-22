@@ -295,18 +295,18 @@ describe("populationGenetics", () => {
 
   describe("resolveBloodline", () => {
     it("returns the bloodline if it is already set on the horse", () => {
-      const horse = createTestHorse({ bloodline: "Storm Cat" });
+      const horse = createTestHorse({ id: "bl-1", bloodline: "Storm Cat" });
       expect(resolveBloodline(horse, new Map())).toBe("Storm Cat");
     });
 
     it("matches foundation bloodline by horse name or sire name", () => {
       const horse1 = createTestHorse({
-        id: "h1",
+        id: "bl-2",
         bloodline: undefined as any,
         name: "Sadler's Wells",
       });
       const horse2 = createTestHorse({
-        id: "h2",
+        id: "bl-3",
         bloodline: undefined as any,
         sireName: "Galileo",
       });
@@ -353,7 +353,7 @@ describe("populationGenetics", () => {
 
     it("falls back to findHorseByName if in-game pedigree breaks", () => {
       const horse = createTestHorse({
-        id: "horse-1",
+        id: "horse-2",
         bloodline: undefined as any,
         pedigree: { sireName: "Unbridled's Song", generation: 0, name: "Test Horse" } as any,
       });
@@ -363,6 +363,7 @@ describe("populationGenetics", () => {
 
     it("returns Unaffiliated if traversal limits are reached or bloodline is unknown", () => {
       const horse = createTestHorse({
+        id: "bl-5",
         bloodline: undefined as any,
         sireName: "Unknown Random Sire",
       });

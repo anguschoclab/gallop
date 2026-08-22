@@ -1,3 +1,3 @@
 ## 2024-08-22 - Testing Bloodline Resolution
-**Learning:** `resolveBloodline` in `populationGenetics.ts` handles complex graph traversal, name matching, and fallback to `findHorseByName`, but it had zero tests despite being crucial for applying regional line bias/genetic bonuses.
-**Action:** When I see complex recursion involving fallback strategies and multiple sources of truth (in-game state vs static pedigree data), explicitly add tests to assert each path works correctly and stops when expected.
+**Learning:** `resolveBloodline` in `populationGenetics.ts` handles complex graph traversal, name matching, and fallback to `findHorseByName`, but it had zero tests despite being crucial for applying regional line bias/genetic bonuses. When testing functions that cache by ID, it's crucial to assign explicit IDs to dummy data to avoid cross-test cache pollution.
+**Action:** When I see complex recursion involving fallback strategies and multiple sources of truth (in-game state vs static pedigree data), explicitly add tests to assert each path works correctly and stops when expected. Ensure unique keys in dummy data payloads.
