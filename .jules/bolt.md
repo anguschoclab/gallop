@@ -1,0 +1,3 @@
+## 2024-05-18 - Optimized Array allocations in calculateTacticalAdjustment
+**Learning:** In highly-frequently called tight loops like `calculateTacticalAdjustment` (called ~1Hz for every horse in simulation), chaining `.filter()` and `.find()` array methods combined with recreating `Set`s dynamically causes intense garbage collection (GC) pressure and unnecessary multi-pass iteration overhead.
+**Action:** Replace multi-pass iterations of array filtering and `Set` initializations with single-pass `for` loops. Exploit properties like pre-sorted arrays (`runners.sort()`) to early `break`, significantly boosting throughput and keeping latency safely under benchmark limits (e.g., < 0.5ms per tick).
