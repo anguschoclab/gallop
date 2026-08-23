@@ -27,8 +27,8 @@ export type InitializeOutput = {
  * Delegates to the main-thread createInitialState to ensure output parity.
  */
 async function createInitialState(input: InitializeInput): Promise<InitializeOutput> {
-  const { options } = input;
-  const state = createInitialStateMain(options);
+  const { options, progressCallback } = input;
+  const state = createInitialStateMain(options, progressCallback);
   return { state };
 }
 
