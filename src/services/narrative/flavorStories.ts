@@ -66,6 +66,26 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "The newly revamped culinary offerings at the clubhouse are receiving rave reviews from patrons, with the signature trackside sandwich selling out before the fifth race.",
       category: "flavor",
     },
+    {
+      headline: "Winner's Circle Gets a Facelift",
+      body: "A local landscaping firm has completely redesigned the winner's circle with exotic floral arrangements ahead of the major stakes weekend.",
+      category: "flavor",
+    },
+    {
+      headline: "New Luxury VIP Area Opens",
+      body: "Track officials cut the ribbon on a high-end spectator pavilion today, offering premium dining and private betting terminals for the elite crowd.",
+      category: "flavor",
+    },
+    {
+      headline: "Local Artist Commissions Equine Mural",
+      body: "A massive, vibrant mural depicting historic race finishes was unveiled along the grandstand concourse, much to the delight of visiting racing fans.",
+      category: "flavor",
+    },
+    {
+      headline: "Major Brand Secures Track Sponsorship",
+      body: "A popular beverage company has signed a lucrative deal to sponsor the paddock area, bringing new signage and promotional events to the daily card.",
+      category: "flavor",
+    },
   ],
   jockeys: [
     {
@@ -126,6 +146,26 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "Veteran Rider Mentors Rising Star",
       body: "A multiple stakes-winning rider was seen walking the turf course with this year's leading apprentice, pointing out the subtle intricacies of navigating the final turn.",
+      category: "flavor",
+    },
+    {
+      headline: "Sibling Rivalry on the Track",
+      body: "The jockey colony is buzzing as two talented siblings prepare to ride against each other for the first time in a major stakes race today.",
+      category: "flavor",
+    },
+    {
+      headline: "Veteran Takes Apprentice Under Their Wing",
+      body: "One of the circuit's oldest and wisest riders has been spotted walking the track each morning, passing down decades of knowledge to a promising bug boy.",
+      category: "flavor",
+    },
+    {
+      headline: "New Diet Fad Sweeps the Jockeys' Room",
+      body: "Riders have been trading tips on a controversial new intermittent fasting routine, all in desperate bids to make weight before the weekend action.",
+      category: "flavor",
+    },
+    {
+      headline: "Prominent Rider Hits Dry Spell",
+      body: "Questions are swirling in the paddock as one of the track's leading riders endures a shocking 0-for-20 slump over the past two weeks.",
       category: "flavor",
     },
   ],

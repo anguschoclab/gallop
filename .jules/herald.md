@@ -1,3 +1,3 @@
-## 2024-08-19 - Flavor Stories System Discovery
-**Learning:** `src/services/narrative/flavorStories.ts` contains simple, static flavor news (no dynamic template variables) separated into themes (`track`, `jockeys`, `breeding`, `weather`, `community`, `industry`). The tone is professional but colorful, simulating realistic backstretch chatter and industry news. There are currently only 42 stories total, leading to frequent repetition over a long career.
-**Action:** Add more variants to the existing `FLAVOR_STORIES` array across the different themes to quickly and safely add content depth without touching any game logic.
+## 2024-05-24 - Flavor Story Structures
+**Learning:** Flavor stories (in `src/services/narrative/flavorStories.ts`) are static objects categorized by theme (`track`, `jockeys`, `breeding`, `weather`, `community`, `industry`). They do not use dynamic template variables, acting as pure world-building text displayed to the player.
+**Action:** When enriching flavor stories, add static objects that match the established length (punchy) and tone, categorizing them correctly under existing themes. No complex string interpolation is needed.
