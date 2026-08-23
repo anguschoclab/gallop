@@ -27,11 +27,8 @@ import {
   scoreStallion,
 } from "@/core/breeding/strategy";
 import { calculateOverallRating } from "@/core/horse/stats";
-import {
-  calculateAIStallionScore,
-  createBreedingAIState,
-  recordBreedingDecision,
-} from "@/core/ai/breedingAI";
+import { calculateAIStallionScore, createBreedingAIState } from "@/core/ai/breedingAI";
+import { recordBreedingDecision } from "@/core/ai/breedingRecording";
 import { BREEDING_FEE, GESTATION_DAYS } from "@/constants";
 import type { DistressLevel } from "@/core/ai/financialDistressAI";
 import {

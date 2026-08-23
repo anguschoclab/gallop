@@ -1,6 +1,6 @@
 import type { Horse, Race, Jockey, Stable, RunningStyle } from "@/game/types";
 import { recordPersonalityOutcome } from "./personalitySystem";
-import { recordLearningOutcome } from "./learningModule";
+import { recordLearningOutcome, trimHistory } from "./learningModule";
 import { buildStrategyContextKey } from "./strategyContextKey";
 import type { JockeyStrategyAIState, RaceStrategy } from "./jockeyStrategyAI";
 
@@ -28,9 +28,7 @@ export function recordRaceStrategy(
 
   const newHistory = [...aiState.strategyHistory, strategy];
 
-  const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory =
-    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory = trimHistory(newHistory, aiState.personalityState.memoryDepth);
 
   const success = position <= 3;
   const contextKey = buildStrategyContextKey(race, runningStyle);

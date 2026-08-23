@@ -1,24 +1,12 @@
 /**
- * claimingAI.ts - Claiming AI system (re-exports + strategies)
+ * claimingAI.ts - Claiming AI system (strategies)
  *
- * This file now re-exports types, state creation, value/risk calculation,
- * and recording functions from dedicated modules for backward compatibility.
- * It retains post-claim planning, defense, and arbitrage strategies.
+ * Post-claim planning, defense, and arbitrage strategies.
+ * Types, state creation, value/risk, and recording in dedicated child modules.
  */
 
 import type { Horse, Stable } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
-
-// Re-export types, state creation, value/risk, and recording for backward compatibility
-export type { ClaimingAIState, ClaimingDecision } from "./claimingAITypes";
-export { createClaimingAIState } from "./claimingAITypes";
-export { calculateClaimingValue, calculateClaimingRisk } from "./claimingAIValue";
-export {
-  shouldClaimHorse,
-  recordClaimingDecision,
-  recordClaimingOutcome,
-  getClaimingInsights,
-} from "./claimingAIRecording";
 
 // ─── Post-Claim Plan ─────────────────────────────────────────────────────────
 

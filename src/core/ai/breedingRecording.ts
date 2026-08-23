@@ -1,6 +1,7 @@
 import type { Stable } from "@/game/types";
 import { recordPersonalityOutcome } from "./personalitySystem";
 import type { BreedingAIState, BreedingDecision } from "./breedingAI";
+import { trimHistory } from "./learningModule";
 
 export function recordBreedingDecision(
   aiState: BreedingAIState,
@@ -28,9 +29,7 @@ export function recordBreedingDecision(
 
   const newHistory = [...aiState.breedingHistory, decision];
 
-  const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory =
-    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory = trimHistory(newHistory, aiState.personalityState.memoryDepth);
 
   return {
     ...aiState,

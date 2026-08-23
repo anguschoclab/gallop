@@ -266,11 +266,3 @@ export function calculateMaxJockeyFee(
 
   return Math.floor(maxFee);
 }
-
-// Retention, recording, and insights extracted to jockeyAIRetention.ts
-export {
-  shouldRetainJockey,
-  recordJockeyAssignment,
-  recordJockeyOutcome,
-  getJockeyInsights,
-} from "./jockeyAIRetention";

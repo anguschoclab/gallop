@@ -141,18 +141,6 @@ export const UPKEEP_STRATEGIES: Record<Stable["personality"], UpkeepStrategy> = 
   },
 };
 
-// Reserve, conservation, budget recording, insights, cost optimization,
-// and emergency budgeting extracted to upkeepAIInsights.ts
-export {
-  calculateTargetReserveRatio,
-  updateReserveState,
-  shouldConserveCash,
-  recordBudgetDecision,
-  getBudgetInsights,
-  identifyCostOptimizationOpportunities,
-  assessEmergencyBudget,
-} from "./upkeepAIInsights";
-
 /**
  * Calculate monthly expense budget.
  *

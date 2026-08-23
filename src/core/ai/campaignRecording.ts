@@ -3,6 +3,7 @@ import type { GradedRace } from "@/data/gradedRaces";
 import { recordPersonalityOutcome } from "./personalitySystem";
 import { GRADED_RACES_BY_KEY } from "@/data/gradedRaces";
 import type { CampaignAIState, CampaignDecision, ContenderStatus } from "./campaignAI";
+import { trimHistory } from "./learningModule";
 
 export function recordCampaignDecision(
   aiState: CampaignAIState,
@@ -23,9 +24,7 @@ export function recordCampaignDecision(
 
   const newHistory = [...aiState.campaignHistory, decision];
 
-  const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory =
-    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory = trimHistory(newHistory, aiState.personalityState.memoryDepth);
 
   return {
     ...aiState,

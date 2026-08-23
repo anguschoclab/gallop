@@ -4,22 +4,18 @@
  */
 
 import { describe, it, expect } from "vitest";
+import { createCampaignAIState, detectContender } from "@/core/ai/campaignAI";
+import type { ContenderStatus } from "@/core/ai/campaignAI";
+import { getOptimalMajorRaceTarget, shouldTargetMajorRace, getPrepRaceStrategy, selectPrepRace } from "@/core/ai/campaignTargeting";
 import {
-  createCampaignAIState,
-  detectContender,
-  getOptimalMajorRaceTarget,
-  shouldTargetMajorRace,
-  getPrepRaceStrategy,
   recordCampaignDecision,
   recordCampaignOutcome,
   getCampaignInsights,
-  selectPrepRace,
   decayContenderConfidence,
   coordinateMultiHorsePrep,
-} from "@/core/ai/campaignAI";
+} from "@/core/ai/campaignRecording";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { GradedRace } from "@/data/gradedRaces";
-import type { ContenderStatus } from "@/core/ai/campaignAI";
 import type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 

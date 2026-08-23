@@ -8,13 +8,9 @@
 
 import type { Stable } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
-import {
-  selectFacilityToUpgrade,
-  calculateFacilityBudget,
-  createFacilityAIState,
-  recordFacilityInvestment,
-  shouldUpgradeFacility,
-} from "@/core/ai/facilityAI";
+import { selectFacilityToUpgrade, calculateFacilityBudget, shouldUpgradeFacility } from "@/core/ai/facilityAI";
+import { createFacilityAIState } from "@/core/ai/facilityAITypes";
+import { recordFacilityInvestment } from "@/core/ai/facilityAIRoi";
 import { upgradeFacility } from "@/core/facilities";
 import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
 import type { PlayerFacilities } from "@/core/facilities/facilityTypes";

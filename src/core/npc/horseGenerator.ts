@@ -18,11 +18,8 @@ import {
   calculateRecommendedStudFee,
   defaultStudParams,
 } from "@/core/breeding/stallions";
-import {
-  shouldGenerateHorseOfAge,
-  createHorseGenAIState,
-  recordHorseGeneration,
-} from "@/core/ai/horseGenAI";
+import { shouldGenerateHorseOfAge, createHorseGenAIState } from "@/core/ai/horseGenAI";
+import { recordHorseGeneration } from "@/core/ai/horseGenAIRecording";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { type AgeCategory, getAgeFromCategory, calculateStartingFame } from "./horseGenHelpers";
 import {

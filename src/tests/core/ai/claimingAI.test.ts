@@ -1,12 +1,13 @@
 import { describe, it, expect } from "vitest";
+import { createClaimingAIState } from "@/core/ai/claimingAITypes";
+import { calculateClaimingValue, calculateClaimingRisk } from "@/core/ai/claimingAIValue";
 import {
-  createClaimingAIState,
-  calculateClaimingValue,
-  calculateClaimingRisk,
   shouldClaimHorse,
   recordClaimingDecision,
   recordClaimingOutcome,
   getClaimingInsights,
+} from "@/core/ai/claimingAIRecording";
+import {
   generatePostClaimPlan,
   shouldDefendFromClaim,
   detectClaimingArbitrage,

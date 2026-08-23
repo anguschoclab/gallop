@@ -13,14 +13,11 @@ import type { PipelineContext } from "../pipeline";
 import { refreshMarket } from "@/game/store/helpers/market";
 import { calculateRaceRating } from "@/core/horse/stats";
 import { createRng, hashStr } from "@/core/common/rng";
-import {
-  shouldPurchaseHorse,
-  calculateMaxPurchasePrice,
-  createMarketAIState,
-  recordMarketPurchase,
-} from "@/core/ai/marketAI";
+import { shouldPurchaseHorse, calculateMaxPurchasePrice } from "@/core/ai/marketAIValue";
+import { createMarketAIState } from "@/core/ai/marketAITypes";
+import { recordMarketPurchase } from "@/core/ai/marketAIRecording";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
-import { trackMarketPrices } from "@/core/ai/economyAI";
+import { trackMarketPrices } from "@/core/ai/economyAITracking";
 import {
   HORSE_RATING_TO_VALUE_MULTIPLIER,
   DEFAULT_SUBSYSTEM_WEIGHT,

@@ -4,11 +4,13 @@ import {
   calculateAgeGenerationPriority,
   calculateQualityGenerationPriority,
   shouldGenerateHorseOfAge,
-  updateRosterComposition,
+} from "@/core/ai/horseGenAI";
+import {
   recordHorseGeneration,
   recordHorseCareerOutcome,
   getGenerationInsights,
-} from "@/core/ai/horseGenAI";
+  updateRosterComposition,
+} from "@/core/ai/horseGenAIRecording";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import type { StablePersonality } from "@/core/stable/types";
 import type { Horse, Stable } from "@/game/types";

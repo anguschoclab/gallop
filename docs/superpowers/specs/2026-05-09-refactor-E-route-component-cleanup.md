@@ -78,7 +78,7 @@ The route imports `TrainingPanel` and passes props.
 
 ### Acceptance criteria
 
-- `wc -l src/routes/stable.$horseId.tsx` ≤ 400.
+- Business logic resides in hooks, not route components.
 - `grep -n "canRetireToStud\|canRetireToPasture\|activeLot = " src/routes/stable.\$horseId.tsx` returns zero results (moved to hook).
 - Training panel renders identically to before.
 - All 7 training types still function correctly.
@@ -130,7 +130,7 @@ The route imports and renders `<BreedingCompatibilityCard />` when both sire and
 
 ### Acceptance criteria
 
-- `wc -l src/routes/breeding.tsx` ≤ 350.
+- Business logic resides in hooks, not route components.
 - `grep -n "calculateBreedingCompatibility" src/routes/breeding.tsx` returns zero results.
 - Compatibility display renders identically with correct scores.
 - The Programs tab (added in the breeding programs feature) is unaffected.
@@ -182,7 +182,7 @@ The route renders `<ClaimingRacePanel />` when a claiming race is expanded.
 
 ### Acceptance criteria
 
-- `wc -l src/routes/races.tsx` ≤ 300.
+- Business logic resides in hooks, not route components.
 - `grep -n "useMemo.*filter\|\.filter.*filter.*filter" src/routes/races.tsx` returns zero results.
 - `grep -n "claimingAmount\|showClaimDialog" src/routes/races.tsx` returns zero results.
 - Claiming race entry flows work identically end-to-end.

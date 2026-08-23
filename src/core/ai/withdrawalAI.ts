@@ -1,24 +1,11 @@
 /**
- * withdrawalAI.ts - Withdrawal AI system (re-exports + track condition strategies)
+ * withdrawalAI.ts - Withdrawal AI system (track condition strategies)
  *
- * This file now re-exports types, state creation, value/risk calculation,
- * and recording functions from dedicated modules for backward compatibility.
- * It retains track condition and pattern detection strategies.
+ * Track condition and pattern detection strategies.
+ * Types, state creation, value/risk, and recording in dedicated child modules.
  */
 
 import type { Horse } from "@/game/types";
-
-// Re-export types, state creation, value/risk, and recording for backward compatibility
-export type { WithdrawalAIState, WithdrawalDecision } from "./withdrawalAITypes";
-export { createWithdrawalAIState } from "./withdrawalAITypes";
-export { calculateWithdrawalRisk, calculateWithdrawalOpportunityCost } from "./withdrawalAIValue";
-export {
-  shouldWithdrawHorse,
-  isWithdrawalStrategic,
-  recordWithdrawalDecision,
-  recordWithdrawalOutcome,
-  getWithdrawalInsights,
-} from "./withdrawalAIRecording";
 
 // ─── Track Condition Aware Withdrawal ────────────────────────────────────────
 

@@ -11,17 +11,21 @@ import {
   calculateStudFeeAdjustment,
   calculateYearlingPriceAdjustment,
   getEconomicSignal,
+} from "@/core/ai/economyAIState";
+import {
   processEconomicCycle,
   trackClaimingActivity,
   trackAuctionPrices,
+  trackBreedingVolume,
+  trackMarketPrices,
+} from "@/core/ai/economyAITracking";
+import {
   evaluateCartelOpportunity,
   coordinateCartelAction,
   calculateAuctionReservePrice,
   calculateStrategicClaimingPrice,
   calculateDynamicStudFee,
-  trackBreedingVolume,
-  trackMarketPrices,
-} from "@/core/ai/economyAI";
+} from "@/core/ai/economyAICartel";
 import type { Stable, GameState } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
 import type { EconomicTrend } from "@/core/ai/strategicCoordinator";

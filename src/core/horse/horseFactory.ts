@@ -79,11 +79,8 @@ import { resolveBloodline } from "@/core/breeding/populationGenetics";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import { shouldRetireAtStartup, defaultStudParams } from "@/core/breeding/stallions";
-import {
-  shouldGenerateHorseOfAge,
-  createHorseGenAIState,
-  recordHorseGeneration,
-} from "@/core/ai/horseGenAI";
+import { shouldGenerateHorseOfAge, createHorseGenAIState } from "@/core/ai/horseGenAI";
+import { recordHorseGeneration } from "@/core/ai/horseGenAIRecording";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { activeStallions2020s, type PedigreeHorse } from "@/data/pedigreeData";
 import { clamp } from "@/core/common/math";

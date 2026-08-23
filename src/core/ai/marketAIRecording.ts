@@ -5,7 +5,7 @@
  */
 
 import type { Horse, Stable } from "@/game/types";
-import { recordLearningOutcome } from "./learningModule";
+import { recordLearningOutcome, trimHistory } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
 import type { MarketAIState, MarketPurchase } from "./marketAITypes";
 
@@ -37,9 +37,7 @@ export function recordMarketPurchase(
 
   const newHistory = [...aiState.purchaseHistory, purchase];
 
-  const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory =
-    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory = trimHistory(newHistory, aiState.personalityState.memoryDepth);
 
   const newPortfolio = {
     ...aiState.portfolio,

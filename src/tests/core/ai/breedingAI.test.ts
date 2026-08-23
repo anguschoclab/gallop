@@ -1,19 +1,19 @@
 import { describe, it, expect } from "vitest";
+import { createBreedingAIState, calculateAIStallionScore, getProgenyTripleCrownSuccess } from "@/core/ai/breedingAI";
 import {
-  createBreedingAIState,
-  calculateAIStallionScore,
   recordBreedingDecision,
   recordBreedingOutcome,
   getBreedingInsights,
-  getProgenyTripleCrownSuccess,
   adaptBreedingStrategy,
+} from "@/core/ai/breedingRecording";
+import {
   selectSireForDam,
   evaluateMareRetirement,
   getBreedingMarketTiming,
   hasSyndicateShare,
   applySyndicatePreference,
   assessGeneticDiversity,
-} from "@/core/ai/breedingAI";
+} from "@/core/ai/breedingSelection";
 import type { Horse, Stable, GameState } from "@/game/types";
 import type { EconomicTrend } from "@/core/ai/strategicCoordinator";
 import { createTestHorse, createTestStable } from "@/tests/helpers";

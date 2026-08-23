@@ -1,5 +1,5 @@
 import type { Horse, Stable, AuctionLot } from "@/game/types";
-import { recordLearningOutcome } from "./learningModule";
+import { recordLearningOutcome, trimHistory } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
 import type { EconomicTrend } from "./strategicCoordinator";
 import type { AuctionAIState, BiddingDecision, ConsignmentDecision } from "./auctionAI";
@@ -28,9 +28,7 @@ export function recordBiddingDecision(
 
   const newHistory = [...aiState.biddingHistory, decision];
 
-  const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory =
-    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory = trimHistory(newHistory, aiState.personalityState.memoryDepth);
 
   const contextKey = `${horse.age}`;
   const value = won ? decision.horseRating - finalBid / 1000 : -finalBid / 1000;
@@ -82,9 +80,7 @@ export function recordConsignmentDecision(
 
   const newHistory = [...aiState.consignmentHistory, decision];
 
-  const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory =
-    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory = trimHistory(newHistory, aiState.personalityState.memoryDepth);
 
   const newPortfolio = {
     ...aiState.portfolio,

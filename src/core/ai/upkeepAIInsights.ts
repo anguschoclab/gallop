@@ -1,7 +1,7 @@
 import type { Stable, Horse } from "@/game/types";
 import type { UpkeepAIState, BudgetDecision } from "./upkeepAI";
 import { calculateMonthlyExpenseBudget, UPKEEP_STRATEGIES } from "./upkeepAI";
-import { getSuccessRate, recordLearningOutcome } from "./learningModule";
+import { getSuccessRate, recordLearningOutcome, trimHistory } from "./learningModule";
 import { recordPersonalityOutcome } from "./personalitySystem";
 import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
 
@@ -72,9 +72,7 @@ export function recordBudgetDecision(
 
   const newBudgetHistory = [...aiState.budgetHistory, decision];
 
-  const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory =
-    newBudgetHistory.length > maxHistory ? newBudgetHistory.slice(-maxHistory) : newBudgetHistory;
+  const trimmedHistory = trimHistory(newBudgetHistory, aiState.personalityState.memoryDepth);
 
   const value = totalBudget - spent;
   const newPersonalityState = recordPersonalityOutcome(

@@ -13,7 +13,7 @@ import type { PipelineContext } from "../pipeline";
 import type { Race, Claim, Horse, Stable } from "@/game/types";
 import { calculateLotValuation } from "@/core/auction/engine";
 import { generateUUID } from "@/core/uuid";
-import { trackClaimingActivity } from "@/core/ai/economyAI";
+import { trackClaimingActivity } from "@/core/ai/economyAITracking";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 /**

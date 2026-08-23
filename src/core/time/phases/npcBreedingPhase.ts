@@ -11,7 +11,7 @@
 import type { PipelineContext } from "../pipeline";
 import { runAutonomousBreeding } from "@/core/npc/breeding";
 import { PHASE_ORDER_NPC_BREEDING } from "@/constants";
-import { trackBreedingVolume } from "@/core/ai/economyAI";
+import { trackBreedingVolume } from "@/core/ai/economyAITracking";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 /**

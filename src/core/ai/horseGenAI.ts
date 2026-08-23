@@ -297,12 +297,3 @@ export function shouldGenerateHorseOfAge(
 
   return priority > threshold;
 }
-
-// Recording, insights, and roster gap analysis extracted to horseGenAIRecording.ts
-export {
-  updateRosterComposition,
-  recordHorseGeneration,
-  recordHorseCareerOutcome,
-  getGenerationInsights,
-  analyzeRosterGaps,
-} from "./horseGenAIRecording";

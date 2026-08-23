@@ -1,21 +1,22 @@
 import { describe, it, expect } from "vitest";
+import { createAuctionAIState, shouldConsignHorse } from "@/core/ai/auctionAI";
 import {
-  createAuctionAIState,
   calculateBiddingValue,
   calculateMaxBid,
   shouldBidOnHorse,
   calculateBidIncrement,
-  shouldConsignHorse,
+  shouldYieldToAlly,
+} from "@/core/ai/auctionBidding";
+import {
   recordBiddingDecision,
   recordConsignmentDecision,
   getAuctionInsights,
   getMarketTrendMultiplier,
   getAverageRecentHammerPrice,
   recordHammerPrice,
-  shouldYieldToAlly,
   evaluateConsignmentTiming,
   generatePostPurchasePlan,
-} from "@/core/ai/auctionAI";
+} from "@/core/ai/auctionRecording";
 import type { Horse, Stable, AuctionLot } from "@/game/types";
 import type { NpcRelationship } from "@/core/ai/npcCycleAI";
 import type { EconomicTrend } from "@/core/ai/strategicCoordinator";

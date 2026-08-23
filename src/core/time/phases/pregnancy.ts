@@ -26,7 +26,7 @@ import { generateUUID } from "@/core/uuid";
 import { createReputationEvent, calculateBreedingReputation } from "@/core/reputation";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
-import { recordBreedingOutcome } from "@/core/ai/breedingAI";
+import { recordBreedingOutcome } from "@/core/ai/breedingRecording";
 import { calculateOverallRating } from "@/core/horse/stats";
 
 /**

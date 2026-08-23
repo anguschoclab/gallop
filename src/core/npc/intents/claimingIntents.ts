@@ -2,16 +2,10 @@ import type { ClaimingIntent, WithdrawFromClaimingIntent } from "@/core/resolver
 import type { GameState, Horse, Race, Stable } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import { isHorseEligibleForClaimingPrice } from "@/core/market/claiming";
-import {
-  createClaimingAIState,
-  shouldClaimHorse,
-  recordClaimingDecision,
-} from "@/core/ai/claimingAI";
-import {
-  createWithdrawalAIState,
-  shouldWithdrawHorse,
-  recordWithdrawalDecision,
-} from "@/core/ai/withdrawalAI";
+import { createClaimingAIState } from "@/core/ai/claimingAITypes";
+import { shouldClaimHorse, recordClaimingDecision } from "@/core/ai/claimingAIRecording";
+import { createWithdrawalAIState } from "@/core/ai/withdrawalAITypes";
+import { shouldWithdrawHorse, recordWithdrawalDecision } from "@/core/ai/withdrawalAIRecording";
 import type { StableAIState } from "@/core/ai/npcCycleAI";
 
 export function generateNpcClaimingIntents(

@@ -9,12 +9,8 @@
  */
 
 import { describe, it, expect } from "vitest";
-import {
-  createEconomicState,
-  calculateAuctionReservePrice,
-  calculateYearlingPriceAdjustment,
-  calculateDynamicStudFee,
-} from "@/core/ai/economyAI";
+import { createEconomicState, calculateYearlingPriceAdjustment } from "@/core/ai/economyAIState";
+import { calculateAuctionReservePrice, calculateDynamicStudFee } from "@/core/ai/economyAICartel";
 import type { EconomicTrend } from "@/core/ai/strategicCoordinator";
 
 describe("Cross-System: Economy → Auction Pricing", () => {

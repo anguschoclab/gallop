@@ -5,8 +5,7 @@
  */
 
 import type { Horse, Race, Stable } from "@/game/types";
-import { recordLearningOutcome } from "./learningModule";
-import { getAdaptiveThreshold } from "./learningModule";
+import { recordLearningOutcome, getAdaptiveThreshold, trimHistory } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
 import type { ClaimingAIState, ClaimingDecision } from "./claimingAITypes";
 import { calculateClaimingRisk, calculateClaimingValue } from "./claimingAIValue";
@@ -73,9 +72,7 @@ export function recordClaimingDecision(
 
   const newHistory = [...aiState.claimingHistory, decision];
 
-  const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory =
-    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory = trimHistory(newHistory, aiState.personalityState.memoryDepth);
 
   return {
     ...aiState,

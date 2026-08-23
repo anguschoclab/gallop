@@ -50,7 +50,7 @@ Both the worker path and synchronous fallback call `applyDayResult(set, finalSta
 ### Acceptance criteria
 
 - The `set({` pattern inside `advanceDay` appears exactly **once** (inside `applyDayResult`).
-- `wc -l src/game/store/slices/coreSlice.ts` decreases by approximately 35–40 lines.
+- Each slice file manages exactly one domain area.
 - All day-advancement tests pass.
 - Worker and synchronous paths produce identical state after advancing a day (add a test if one doesn't exist).
 
@@ -105,8 +105,8 @@ Any types currently defined inline in `marketSlice.ts` (e.g., `MarketSlice`, `Au
 
 ### Acceptance criteria
 
-- `wc -l src/game/store/slices/marketSlice.ts` ≤ 100 (open market only).
-- Each new slice file ≤ 150 lines.
+- Each slice file manages exactly one domain area.
+- Each new slice file manages exactly one domain area.
 - All market, scouting, auction, and claiming UI flows work end-to-end in the browser.
 - No TypeScript errors.
 
@@ -151,7 +151,6 @@ Split into four slices:
 
 - Campaign/settings/leaderboard/misc setters only
 - `enqueueIntent` moved to `coreSlice.ts`
-- ≤100 lines
 
 ### `enqueueIntent` migration
 
@@ -159,9 +158,9 @@ Split into four slices:
 
 ### Acceptance criteria
 
-- `wc -l src/game/store/slices/systemsSlice.ts` ≤ 100.
+- Each slice file manages exactly one domain area.
 - `grep -n "enqueueIntent" src/game/store/slices/systemsSlice.ts` returns zero results.
-- Each new slice file ≤ 150 lines.
+- Each new slice file manages exactly one domain area.
 - All jockey, facility, horse management, and campaign UI flows work end-to-end.
 - No TypeScript errors.
 

@@ -1,6 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { identifyCostOptimizationOpportunities, assessEmergencyBudget } from "@/core/ai/upkeepAI";
-import { analyzeRosterGaps } from "@/core/ai/horseGenAI";
+import {
+  identifyCostOptimizationOpportunities,
+  assessEmergencyBudget,
+} from "@/core/ai/upkeepAIInsights";
+import { analyzeRosterGaps } from "@/core/ai/horseGenAIRecording";
 import {
   shouldWithdrawForTrackCondition,
   detectConsecutiveWithdrawalPattern,

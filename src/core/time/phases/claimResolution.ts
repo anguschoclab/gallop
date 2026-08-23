@@ -18,7 +18,7 @@ import { formatCurrency } from "@/core/common/formatting";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { HorseTransferImpact, CashImpact } from "@/core/resolver/impacts/index";
 import { processClaimingFriction } from "@/core/ai/diplomacyAI";
-import { trackClaimingActivity } from "@/core/ai/economyAI";
+import { trackClaimingActivity } from "@/core/ai/economyAITracking";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 /**

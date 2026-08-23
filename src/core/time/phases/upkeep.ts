@@ -17,13 +17,12 @@ import { generateFlavorNews, generateWeeklyFlavorNews } from "@/services/narrati
 import { generateUUID } from "@/core/uuid";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { CashImpact, TransactionImpact, NewsImpact } from "@/core/resolver/impacts/index";
+import { calculateMonthlyExpenseBudget, createUpkeepAIState } from "@/core/ai/upkeepAI";
 import {
-  calculateMonthlyExpenseBudget,
-  shouldConserveCash,
-  createUpkeepAIState,
   recordBudgetDecision,
   updateReserveState,
-} from "@/core/ai/upkeepAI";
+  shouldConserveCash,
+} from "@/core/ai/upkeepAIInsights";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import type { DistressLevel } from "@/core/ai/financialDistressAI";
 import { UPKEEP_DISTRESS_MULTIPLIER } from "@/constants/financialDistressConstants";

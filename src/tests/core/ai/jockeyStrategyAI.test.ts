@@ -4,19 +4,16 @@
  */
 
 import { describe, it, expect } from "vitest";
+import { createJockeyStrategyAIState, calculateOptimalTactics } from "@/core/ai/jockeyStrategyAI";
 import {
-  createJockeyStrategyAIState,
-  calculateOptimalRunningStyle,
-  calculateJockeyAggressiveness,
-  shouldMakeTacticalMove,
-  recordRaceStrategy,
-  getStrategyInsights,
-  calculateOptimalTactics,
   adjustForTrackCondition,
   adjustForFieldComposition,
   calculateAffinityBoost,
   applyAffinityBoost,
-} from "@/core/ai/jockeyStrategyAI";
+} from "@/core/ai/jockeyStrategyAdjustments";
+import { calculateOptimalRunningStyle } from "@/core/ai/jockeyStyleSelection";
+import { calculateJockeyAggressiveness, shouldMakeTacticalMove } from "@/core/ai/jockeyTacticalMoves";
+import { recordRaceStrategy, getStrategyInsights } from "@/core/ai/jockeyStrategyRecording";
 import type { Jockey, Horse, Race, Stable } from "@/game/types";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 

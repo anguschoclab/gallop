@@ -45,8 +45,8 @@ src/game/
 
 ### Acceptance criteria
 
-- `wc -l src/game/npcStables.ts` ≤ 250.
-- `wc -l src/core/stable/stablePoolData.ts` contains all pool data with no logic.
+- Static data arrays reside in dedicated data modules, not logic files.
+- `src/core/stable/stablePoolData.ts` contains all pool data with no logic.
 - All tests that reference `npcStables` pass.
 - No change to the shape of objects returned by `generateAllStables`.
 
@@ -101,7 +101,7 @@ src/core/breeding/
   archetypes.ts             ← existing
   programs.ts               ← existing
 src/game/
-  breedingCompatibility.ts  ← scoring logic only, ≤350 lines
+  breedingCompatibility.ts  ← scoring logic only
 ```
 
 ### Acceptance criteria

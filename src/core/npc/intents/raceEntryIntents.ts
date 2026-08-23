@@ -1,12 +1,10 @@
 import type { RaceEntryIntent } from "@/core/resolver/intents";
 import type { GameState, Horse, Race, Stable } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
-import { createRaceEntryAIState, calculateStrategicEntryScore } from "@/core/ai/raceEntryAI";
-import {
-  calculateOptimalTactics,
-  createJockeyStrategyAIState,
-  applyAffinityBoost,
-} from "@/core/ai/jockeyStrategyAI";
+import { createRaceEntryAIState } from "@/core/ai/raceEntryAITypes";
+import { calculateStrategicEntryScore } from "@/core/ai/raceEntryAIScoring";
+import { calculateOptimalTactics, createJockeyStrategyAIState } from "@/core/ai/jockeyStrategyAI";
+import { applyAffinityBoost } from "@/core/ai/jockeyStrategyAdjustments";
 import type { StableAIState, DifficultyState } from "@/core/ai/npcCycleAI";
 import type { DistressLevel } from "@/core/ai/financialDistressAI";
 import { MEDIUM_PURSE_THRESHOLD } from "@/constants";

@@ -18,19 +18,7 @@ import { calculateUtilityScore } from "./personalitySystem";
 import { getSuccessRate, getAdaptiveThreshold } from "./learningModule";
 import { FACILITY_UPGRADE_COSTS } from "@/core/facilities/facilityTypes";
 import { FACILITY_UPGRADE_BASE_THRESHOLD, DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
-import type { FacilityAIState, FacilityInvestment, FacilityROI } from "./facilityAITypes";
-import { createFacilityAIState } from "./facilityAITypes";
-import { recordFacilityInvestment, updateFacilityROI, getFacilityInsights } from "./facilityAIRoi";
-
-// Re-export types and functions for backward compatibility
-export type { FacilityAIState, FacilityInvestment, FacilityROI } from "./facilityAITypes";
-export { createFacilityAIState } from "./facilityAITypes";
-export { recordFacilityInvestment, updateFacilityROI, getFacilityInsights } from "./facilityAIRoi";
-export {
-  shouldUpgradeForCapacity,
-  getSpecializationPriority,
-  shouldDivestFacility,
-} from "./facilityAIStrategies";
+import type { FacilityAIState } from "./facilityAITypes";
 
 /**
  * Calculate investment priority score for a facility upgrade.

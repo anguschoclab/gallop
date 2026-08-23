@@ -18,7 +18,8 @@ import {
   createTrainingAIState,
   type TrainingAIState,
 } from "@/core/ai/trainingAI";
-import { shouldClaimHorse, createClaimingAIState } from "@/core/ai/claimingAI";
+import { shouldClaimHorse } from "@/core/ai/claimingAIRecording";
+import { createClaimingAIState } from "@/core/ai/claimingAITypes";
 import { shouldGeldHorse, createGeldingAIState } from "@/core/ai/geldingAI";
 import type { Stable, Horse } from "@/game/types";
 import { createTestStable, createTestHorse } from "@/tests/helpers";

@@ -1,18 +1,10 @@
 import { describe, it, expect } from "vitest";
-import {
-  createFacilityAIState,
-  calculateFacilityBudget,
-  shouldUpgradeFacility,
-  selectFacilityToUpgrade,
-  recordFacilityInvestment,
-  updateFacilityROI,
-  getFacilityInsights,
-  shouldUpgradeForCapacity,
-  getSpecializationPriority,
-  shouldDivestFacility,
-} from "@/core/ai/facilityAI";
+import { createFacilityAIState } from "@/core/ai/facilityAITypes";
+import type { FacilityROI } from "@/core/ai/facilityAITypes";
+import { calculateFacilityBudget, shouldUpgradeFacility, selectFacilityToUpgrade } from "@/core/ai/facilityAI";
+import { recordFacilityInvestment, updateFacilityROI, getFacilityInsights } from "@/core/ai/facilityAIRoi";
+import { shouldUpgradeForCapacity, getSpecializationPriority, shouldDivestFacility } from "@/core/ai/facilityAIStrategies";
 import type { PlayerFacilities } from "@/core/facilities/facilityTypes";
-import type { FacilityROI } from "@/core/ai/facilityAI";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 
 function makeState(

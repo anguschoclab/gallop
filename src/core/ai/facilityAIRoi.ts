@@ -8,6 +8,7 @@ import type { FacilityType, FacilityLevel } from "@/core/facilities/facilityType
 import type { Stable } from "@/game/types";
 import { recordPersonalityOutcome } from "./personalitySystem";
 import type { FacilityAIState, FacilityInvestment } from "./facilityAITypes";
+import { trimHistory } from "./learningModule";
 
 export function recordFacilityInvestment(
   aiState: FacilityAIState,
@@ -30,9 +31,7 @@ export function recordFacilityInvestment(
 
   const newHistory = [...aiState.investmentHistory, investment];
 
-  const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory =
-    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory = trimHistory(newHistory, aiState.personalityState.memoryDepth);
 
   const roiKey = `${facilityType}:${toLevel}`;
   const existingRoi = aiState.roiTracking[roiKey];

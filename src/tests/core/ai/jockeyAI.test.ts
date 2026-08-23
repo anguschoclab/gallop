@@ -8,12 +8,14 @@ import {
   createJockeyAIState,
   calculateJockeySuitability,
   selectBestJockey,
-  shouldRetainJockey,
   calculateMaxJockeyFee,
+} from "@/core/ai/jockeyAI";
+import {
+  shouldRetainJockey,
   recordJockeyAssignment,
   recordJockeyOutcome,
   getJockeyInsights,
-} from "@/core/ai/jockeyAI";
+} from "@/core/ai/jockeyAIRetention";
 import type { Jockey, Horse, Stable, Race } from "@/game/types";
 import type { JockeyStats } from "@/core/jockey/types";
 import { createTestHorse, createTestStable, createTestJockey } from "@/tests/helpers";

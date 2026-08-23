@@ -22,7 +22,7 @@ import { calculateNpcHorseValue } from "@/core/horse/pricing";
 import { createRng, type Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
-import { calculateMaxBid, shouldBidOnHorse } from "@/core/ai/auctionAI";
+import { calculateMaxBid, shouldBidOnHorse } from "@/core/ai/auctionBidding";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
 import {

@@ -6,7 +6,7 @@
 
 import type { Horse, Race, Stable } from "@/game/types";
 import { recordPersonalityOutcome } from "./personalitySystem";
-import { getSuccessRate, recordLearningOutcome } from "./learningModule";
+import { getSuccessRate, recordLearningOutcome, trimHistory } from "./learningModule";
 import {
   AI_RISK_TOLERANCE_CONSERVATIVE,
   AI_RISK_TOLERANCE_AGGRESSIVE,
@@ -106,9 +106,7 @@ export function recordWithdrawalDecision(
 
   const newHistory = [...aiState.withdrawalHistory, decision];
 
-  const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory =
-    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory = trimHistory(newHistory, aiState.personalityState.memoryDepth);
 
   return {
     ...aiState,

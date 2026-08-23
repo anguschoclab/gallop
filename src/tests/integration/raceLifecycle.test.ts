@@ -6,7 +6,7 @@
 import { describe, it, expect } from "vitest";
 import { generateTrackSchedule } from "@/core/race/schedule";
 import { createRng } from "@/core/common/rng";
-import { recordRaceStrategy } from "@/core/ai/jockeyStrategyAI";
+import { recordRaceStrategy } from "@/core/ai/jockeyStrategyRecording";
 import { getDynamicProfile } from "@/core/race/engine/runningStyleProfiles";
 import type { GameState, Race, Horse } from "@/game/types";
 import { makeGameState } from "@/tests/helpers/sampleGameState";

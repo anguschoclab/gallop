@@ -61,7 +61,7 @@ Run `grep -rn "runNpcTraining\|updateHorseFame\|fillRaceWithFillerHorses" src` t
 
 ### Acceptance criteria
 
-- `wc -l src/game/npcRaceEntry.ts` ≤ 220.
+- No extracted child module has zero direct importers outside its parent re-export.
 - Each new file has a single clearly-stated purpose in its first comment.
 - `grep -rn "runNpcTraining" src/game/npcRaceEntry.ts` returns zero results.
 - All NPC race entry, training, and post-race tests pass.
@@ -96,7 +96,7 @@ Run `grep -rn "runNpcTraining\|updateHorseFame\|fillRaceWithFillerHorses" src` t
 
 ### Acceptance criteria
 
-- `wc -l src/game/npcHorseGen.ts` ≤ 150.
+- No re-export-only shell modules — every module must contain at least one function definition.
 - `src/game/famousStallions.ts` exists and exports only `generateFamousStallions`.
 - `grep -rn "calculateNpcHorseValue" src/game/npcHorseGen.ts` returns zero results (deleted, imported from pricing).
 - Game initialization produces the same number of famous stallions as before.
@@ -161,7 +161,7 @@ If utility helpers that are conceptually "query a list of stables" are mixed wit
 
 ### Acceptance criteria
 
-- `wc -l src/game/npcStables.ts` ≤ 200 (post B1 and B2).
+- Consumers import from the module that defines the function, not through an intermediary.
 - No static data arrays remain in the file.
 
 ---

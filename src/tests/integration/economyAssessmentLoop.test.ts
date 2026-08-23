@@ -10,7 +10,7 @@
 
 import { describe, it, expect } from "vitest";
 import { assessWorldState } from "@/core/ai/strategicCoordinator";
-import { processEconomicCycle } from "@/core/ai/economyAI";
+import { processEconomicCycle } from "@/core/ai/economyAITracking";
 import type { GameState, Stable, Horse } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";

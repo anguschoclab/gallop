@@ -17,22 +17,6 @@ import { scoreStallion } from "@/core/breeding/strategy";
 import { getTripleCrownKeysForArchetype } from "@/core/breeding/archetypes";
 import type { BreedingProgram } from "@/core/breeding/programs";
 
-// Re-exports for backward compatibility
-export {
-  recordBreedingDecision,
-  recordBreedingOutcome,
-  getBreedingInsights,
-  adaptBreedingStrategy,
-} from "./breedingRecording";
-export {
-  selectSireForDam,
-  evaluateMareRetirement,
-  getBreedingMarketTiming,
-  hasSyndicateShare,
-  applySyndicatePreference,
-  assessGeneticDiversity,
-} from "./breedingSelection";
-
 export interface BreedingAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
   breedingHistory: BreedingDecision[];

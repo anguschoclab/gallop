@@ -1,15 +1,22 @@
 import { describe, it, expect } from "vitest";
 import {
   createMarketAIState,
+  type MarketAIState,
+  type MarketPurchase,
+  type PortfolioState,
+} from "@/core/ai/marketAITypes";
+import {
   calculatePurchaseValue,
   shouldPurchaseHorse,
   calculateMaxPurchasePrice,
+} from "@/core/ai/marketAIValue";
+import {
   recordMarketPurchase,
   recordMarketOutcome,
   getMarketInsights,
   getMarketTimingRecommendation,
   calculateNegotiatedPrice,
-} from "@/core/ai/marketAI";
+} from "@/core/ai/marketAIRecording";
 import type { Horse, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 

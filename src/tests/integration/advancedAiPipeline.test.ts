@@ -13,11 +13,8 @@ import {
 } from "@/core/ai/strategicCoordinator";
 import { processDiplomaticInteractions, initializeRelationships } from "@/core/ai/diplomacyAI";
 import { processNarrativeCycle, createNarrativeState } from "@/core/ai/narrativeAI";
-import {
-  processEconomicCycle,
-  createEconomicState,
-  calculateStudFeeAdjustment,
-} from "@/core/ai/economyAI";
+import { processEconomicCycle } from "@/core/ai/economyAITracking";
+import { createEconomicState, calculateStudFeeAdjustment } from "@/core/ai/economyAIState";
 import type { GameState, Stable, Horse } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";

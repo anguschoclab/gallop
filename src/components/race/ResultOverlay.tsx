@@ -28,7 +28,7 @@ import { Trophy, ChevronRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
 import { useGame } from "@/game/store";
-import { getStrategyInsights } from "@/core/ai/jockeyStrategyAI";
+import { getStrategyInsights } from "@/core/ai/jockeyStrategyRecording";
 
 /**
  * Props for the ResultOverlay component.

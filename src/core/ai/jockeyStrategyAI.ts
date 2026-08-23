@@ -16,17 +16,6 @@ import { createLearningState, type LearningState } from "./learningModule";
 import { calculateOptimalRunningStyle } from "./jockeyStyleSelection";
 import { calculateJockeyAggressiveness } from "./jockeyTacticalMoves";
 
-// Re-exports for backward compatibility
-export { calculateOptimalRunningStyle } from "./jockeyStyleSelection";
-export { calculateJockeyAggressiveness, shouldMakeTacticalMove } from "./jockeyTacticalMoves";
-export { recordRaceStrategy, getStrategyInsights } from "./jockeyStrategyRecording";
-export {
-  adjustForTrackCondition,
-  adjustForFieldComposition,
-  calculateAffinityBoost,
-  applyAffinityBoost,
-} from "./jockeyStrategyAdjustments";
-
 export interface JockeyStrategyAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
   learningState: LearningState;

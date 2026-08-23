@@ -21,22 +21,6 @@ import {
 import { calculateOverallRating, calculateRaceRating } from "@/core/horse/stats";
 import { getTripleCrownKeysForArchetype } from "@/core/breeding/archetypes";
 
-// Re-exports for backward compatibility
-export {
-  getOptimalMajorRaceTarget,
-  calculateRaceTargetScore,
-  shouldTargetMajorRace,
-  getPrepRaceStrategy,
-  selectPrepRace,
-} from "./campaignTargeting";
-export {
-  recordCampaignDecision,
-  recordCampaignOutcome,
-  getCampaignInsights,
-  decayContenderConfidence,
-  coordinateMultiHorsePrep,
-} from "./campaignRecording";
-
 export interface CampaignAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
   learningState: LearningState;

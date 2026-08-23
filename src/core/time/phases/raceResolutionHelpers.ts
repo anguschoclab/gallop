@@ -11,10 +11,10 @@ import type { Rng } from "@/core/common/rng";
 import type { ClaimingIntent } from "@/core/resolver/intents";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
-import { recordRaceEntryOutcome } from "@/core/ai/raceEntryAI";
-import { recordJockeyOutcome } from "@/core/ai/jockeyAI";
-import { recordCampaignOutcome } from "@/core/ai/campaignAI";
-import { recordRaceStrategy } from "@/core/ai/jockeyStrategyAI";
+import { recordRaceEntryOutcome } from "@/core/ai/raceEntryAIRecording";
+import { recordJockeyOutcome } from "@/core/ai/jockeyAIRetention";
+import { recordCampaignOutcome } from "@/core/ai/campaignRecording";
+import { recordRaceStrategy } from "@/core/ai/jockeyStrategyRecording";
 import {
   recordRaceHistory,
   checkHallOfFameInduction,

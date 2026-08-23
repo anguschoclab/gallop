@@ -27,25 +27,6 @@ import {
   DISTRESS_EMERGENCY_CONSIGN_RATING_THRESHOLD,
 } from "@/constants/financialDistressConstants";
 
-// Re-exports for backward compatibility
-export {
-  calculateBiddingValue,
-  calculateMaxBid,
-  shouldBidOnHorse,
-  calculateBidIncrement,
-  shouldYieldToAlly,
-} from "./auctionBidding";
-export {
-  recordBiddingDecision,
-  recordConsignmentDecision,
-  getAuctionInsights,
-  getMarketTrendMultiplier,
-  getAverageRecentHammerPrice,
-  recordHammerPrice,
-  evaluateConsignmentTiming,
-  generatePostPurchasePlan,
-} from "./auctionRecording";
-
 export interface AuctionAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
   learningState: LearningState;

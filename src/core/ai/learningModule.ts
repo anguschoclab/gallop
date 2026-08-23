@@ -46,6 +46,18 @@ export function createLearningState(): LearningState {
 }
 
 /**
+ * Trim a history array to a maximum depth, keeping the most recent entries.
+ *
+ * @param history - Array to trim
+ * @param maxDepth - Maximum number of entries to keep
+ * @returns Trimmed array (same reference if no trimming needed)
+ */
+export function trimHistory<T>(history: T[], maxDepth: number): T[] {
+  if (maxDepth <= 0) return [];
+  return history.length > maxDepth ? history.slice(-maxDepth) : history;
+}
+
+/**
  * Record an outcome for learning.
  *
  * Records the outcome, trims to memory depth, updates success rates,
@@ -81,8 +93,7 @@ export function recordLearningOutcome(
   const newOutcomes = [...state.outcomes, outcome];
 
   // Trim to memory depth
-  const trimmedOutcomes =
-    newOutcomes.length > memoryDepth ? newOutcomes.slice(-memoryDepth) : newOutcomes;
+  const trimmedOutcomes = trimHistory(newOutcomes, memoryDepth);
 
   // Update success rates
   const key = `${decisionType}:${contextKey}`;

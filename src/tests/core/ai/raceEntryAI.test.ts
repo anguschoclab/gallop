@@ -1,13 +1,18 @@
 import { describe, it, expect } from "vitest";
 import {
   createRaceEntryAIState,
-  calculateStrategicEntryScore,
+  type RaceEntryAIState,
+  type StrategicPlan,
+  type HorseDevelopmentTrack,
+} from "@/core/ai/raceEntryAITypes";
+import { calculateStrategicEntryScore } from "@/core/ai/raceEntryAIScoring";
+import {
   updateHorseDevelopment,
   recordRaceEntryOutcome,
   generateMultiRaceStrategy,
   adaptStrategy,
   conflictsWithCampaignPrep,
-} from "@/core/ai/raceEntryAI";
+} from "@/core/ai/raceEntryAIRecording";
 import type { Horse, Race, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeNpcOwned } from "@/core/horse/ownership";

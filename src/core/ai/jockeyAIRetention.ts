@@ -1,7 +1,7 @@
 import type { Horse, Stable } from "@/game/types";
 import type { Jockey } from "@/game/types";
 import type { JockeyAIState, JockeyAssignment, JockeyRetention } from "./jockeyAI";
-import { getSuccessRate, recordLearningOutcome } from "./learningModule";
+import { getSuccessRate, recordLearningOutcome, trimHistory } from "./learningModule";
 
 export function shouldRetainJockey(
   aiState: JockeyAIState,
@@ -77,9 +77,7 @@ export function recordJockeyAssignment(
 
   const newHistory = [...aiState.jockeyHistory, assignment];
 
-  const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory =
-    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory = trimHistory(newHistory, aiState.personalityState.memoryDepth);
 
   let retention = aiState.retention.find(
     (r) => r.jockeyId === jockey.id && r.stableId === stable.id,

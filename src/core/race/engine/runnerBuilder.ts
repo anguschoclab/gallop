@@ -22,7 +22,7 @@ import { clamp } from "@/core/common/math";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { REGIONAL_LINE_BIAS, type Bloodline } from "@/core/breeding/populationGenetics";
 import { calculateDosageMetrics } from "@/core/race/dosage";
-import { calculateOptimalRunningStyle } from "@/core/ai/jockeyStrategyAI";
+import { calculateOptimalRunningStyle } from "@/core/ai/jockeyStyleSelection";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { calculateTheHandBonus } from "@/core/jockey/affinity";
 import { getClaimAllowance } from "@/core/apprentice/apprenticeTypes";

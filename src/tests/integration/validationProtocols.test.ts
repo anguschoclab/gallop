@@ -58,7 +58,9 @@ describe("Phase 14: Architecture validation", () => {
     expectComponentFile("core/race/engine/runnerBuilder.ts");
   });
 
-  it("economyAI module exists with pruning logic", () => {
-    expectComponentFile("core/ai/economyAI.ts");
+  it("economyAI child modules exist with pruning logic", () => {
+    expectComponentFile("core/ai/economyAIState.ts");
+    expectComponentFile("core/ai/economyAITracking.ts");
+    expectComponentFile("core/ai/economyAICartel.ts");
   });
 });

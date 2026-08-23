@@ -10,7 +10,7 @@
  */
 
 import type { PipelineContext } from "../pipeline";
-import { processEconomicCycle } from "@/core/ai/economyAI";
+import { processEconomicCycle } from "@/core/ai/economyAITracking";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { PHASE_ORDER_ECONOMY } from "@/constants";
 

@@ -3,11 +3,13 @@ import {
   createUpkeepAIState,
   calculateMonthlyExpenseBudget,
   shouldSpendOnCategory,
+} from "@/core/ai/upkeepAI";
+import {
   updateReserveState,
-  shouldConserveCash,
   recordBudgetDecision,
   getBudgetInsights,
-} from "@/core/ai/upkeepAI";
+  shouldConserveCash,
+} from "@/core/ai/upkeepAIInsights";
 import type { Horse, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeNpcOwned } from "@/core/horse/ownership";

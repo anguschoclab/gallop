@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Minus, Activity } from "lucide-react";
 import { useGame } from "@/game/store";
-import { getEconomicSignal } from "@/core/ai/economyAI";
+import { getEconomicSignal } from "@/core/ai/economyAIState";
 import { cn } from "@/lib/cn";
 import type { EconomicTrend } from "@/core/ai/strategicCoordinator";
 

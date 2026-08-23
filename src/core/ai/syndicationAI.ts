@@ -17,6 +17,7 @@ import {
   createLearningState,
   recordLearningOutcome,
   getSuccessRate,
+  trimHistory,
   type LearningState,
 } from "./learningModule";
 
@@ -71,7 +72,7 @@ export function recordSyndicationOutcome(
   currentDay: number,
 ): SyndicationAIState {
   const newHistory = [...aiState.syndicationHistory, decision];
-  const trimmedHistory = newHistory.slice(-aiState.personalityState.memoryDepth);
+  const trimmedHistory = trimHistory(newHistory, aiState.personalityState.memoryDepth);
 
   const contextKey = decision.action;
   const newLearningState = recordLearningOutcome(

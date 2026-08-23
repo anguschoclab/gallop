@@ -2,7 +2,7 @@ import type { Horse, Stable } from "@/game/types";
 import type { HorseGenAIState, HorseGeneration } from "./horseGenAI";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { recordPersonalityOutcome } from "./personalitySystem";
-import { recordLearningOutcome } from "./learningModule";
+import { recordLearningOutcome, trimHistory } from "./learningModule";
 
 export function updateRosterComposition(aiState: HorseGenAIState, horse: Horse): HorseGenAIState {
   const composition = aiState.rosterComposition;
@@ -46,9 +46,7 @@ export function recordHorseGeneration(
 
   const newHistory = [...aiState.generationHistory, generation];
 
-  const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory =
-    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory = trimHistory(newHistory, aiState.personalityState.memoryDepth);
 
   const contextKey = horse.id;
   const value = calculateOverallRating(horse);
