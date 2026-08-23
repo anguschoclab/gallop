@@ -5,9 +5,10 @@ import {
   JOCKEY_AVATAR_ASPECT,
   type JockeyAvatarSize,
 } from "./JockeyAvatar";
+import { asJockeyId } from "@/core/types/branded";
 
 const stubJockey = {
-  id: "test-jockey-1",
+  id: asJockeyId("test-jockey-1"),
   age: 28,
   archetype: "versatile" as const,
   silk: { pattern: "solid" as const, primary: "#ff0000", secondary: "#ffffff", cap: "#0000ff" },
