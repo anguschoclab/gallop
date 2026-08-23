@@ -36,6 +36,7 @@ describe("FacilityCategory — human-readable facility names", () => {
         types={["main_track", "starting_gates", "treadmill", "exercise_pool"]}
         facilities={makeFacilities()}
         cash={100000}
+        reputationTier="local"
         onUpgrade={() => {}}
       />,
     );
@@ -52,6 +53,7 @@ describe("FacilityCategory — human-readable facility names", () => {
         types={["veterinary_clinic", "rehab_center", "spa", "nutrition_lab"]}
         facilities={makeFacilities()}
         cash={100000}
+        reputationTier="local"
         onUpgrade={() => {}}
       />,
     );
@@ -78,6 +80,7 @@ describe("FacilityCategory — human-readable facility names", () => {
         ]}
         facilities={makeFacilities()}
         cash={100000}
+        reputationTier="local"
         onUpgrade={() => {}}
       />,
     );

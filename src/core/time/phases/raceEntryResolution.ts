@@ -14,8 +14,13 @@
 import { PHASE_ORDER_RACE_ENTRY_RESOLUTION } from "@/constants";
 import { findBumpableEntryIndex } from "@/core/race/entry/bumpResolver";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyIntent, RaceEntryIntent } from "@/core/resolver/intents";
-import type { AnyImpact, RaceEntryImpact, CashImpact } from "@/core/resolver/impacts/index";
+import type { AnyIntent, RaceEntryIntent, RaceWithdrawalIntent } from "@/core/resolver/intents";
+import type {
+  AnyImpact,
+  RaceEntryImpact,
+  RaceWithdrawalImpact,
+  CashImpact,
+} from "@/core/resolver/impacts/index";
 import { createTransportRequest } from "@/core/transportation";
 import { createTransaction } from "@/core/transactions";
 import { generateUUID } from "@/core/uuid";
@@ -45,12 +50,38 @@ export const raceEntryResolutionPhase: PipelinePhase = {
     const newTransactions: typeof state.transactions = [];
     const newTransports = state.transports ?? [];
 
-    // Filter for race entry intents
+    // Filter for race entry and withdrawal intents
     const raceEntryIntents = intents.filter((i): i is RaceEntryIntent => i.type === "race_entry");
+    const raceWithdrawalIntents = intents.filter(
+      (i): i is RaceWithdrawalIntent => i.type === "race_withdrawal",
+    );
 
     const { horseMap, stableMap } = context;
     // Clone raceMap locally: NPC bump eviction mutates entries to track ejections
     const raceMap = new Map(context.raceMap);
+
+    // Process withdrawal intents: convert to race_withdrawal impacts
+    for (const intent of raceWithdrawalIntents) {
+      const race = raceMap.get(intent.raceId);
+      if (!race || race.resolved) continue;
+
+      const entry = race.entries.find((e) => e.horseId === intent.horseId);
+      if (!entry) continue;
+
+      impacts.push({
+        id: generateUUID(),
+        intentId: intent.id,
+        day: newDay,
+        phase: "raceEntryResolution",
+        logLevel: "always",
+        type: "race_withdrawal",
+        raceId: intent.raceId,
+        horseId: intent.horseId,
+        refundAmount: race.entryFee,
+        reason: "Race withdrawal",
+      } as RaceWithdrawalImpact);
+    }
+
     const jockeys = state.jockeys ?? [];
     const jockeysByStableId = new Map<string, (typeof jockeys)[number]>();
     for (const j of jockeys) {
@@ -229,7 +260,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
             -transportCost,
             `Transport to ${race.name}`,
             newDay,
-            state.cash - transportCost,
+            state.cash - race.entryFee - transportCost,
             { horseId: horse.id, raceId: race.id },
           ),
         );

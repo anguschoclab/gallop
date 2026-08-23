@@ -93,6 +93,17 @@ export const schedulerPhase = {
     const autoEntryImpacts: AnyImpact[] = [];
     let cashDelta = 0;
 
+    // Collect horse+race pairs already entered via pending impacts from raceEntryResolution.
+    // These impacts haven't been applied to state.races yet (impactApplication runs at order 200),
+    // so schedulerPhase must check them to avoid double-entering the same horse.
+    const pendingEntryKeys = new Set<string>();
+    for (const imp of context.impacts) {
+      if (imp.type === "race_entry") {
+        const re = imp as RaceEntryImpact;
+        pendingEntryKeys.add(`${re.raceId}:${re.horseId}`);
+      }
+    }
+
     // Maintain a mutable race snapshot so subsequent auto-entry calls see
     // entries already committed by earlier campaigns, without touching state.races.
     const currentRaces = new Map(
@@ -116,6 +127,8 @@ export const schedulerPhase = {
           if (!race) return { ok: false, reason: "Race not found" };
           if (race.entries.some((e) => e.horseId === horseId))
             return { ok: false, reason: "Already entered" };
+          if (pendingEntryKeys.has(`${raceId}:${horseId}`))
+            return { ok: false, reason: "Already entered via intent pipeline" };
           if (race.entries.length >= race.fieldSize) return { ok: false, reason: "Race full" };
 
           currentRaces.set(raceId, {

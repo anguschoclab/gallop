@@ -101,8 +101,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         } else if (horse.ownership.type === "npc") {
           const stableId = horse.ownership.stableId;
           const stable =
-            lookupMaps?.stableMap.get(stableId) ||
-            draft.npcStables.find((s) => s.id === stableId);
+            lookupMaps?.stableMap.get(stableId) || draft.npcStables.find((s) => s.id === stableId);
           if (stable) {
             stable.cash = Math.max(0, stable.cash - entryFee);
           }
@@ -112,12 +111,28 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   race_withdrawal: (draft, impact, lookupMaps) => {
-    const { raceId, horseId } = impact as RaceWithdrawalImpact;
+    const { raceId, horseId, refundAmount } = impact as RaceWithdrawalImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     if (race) {
       const index = race.entries.findIndex((e) => e.horseId === horseId);
       if (index !== -1) {
+        const entry = race.entries[index];
         race.entries.splice(index, 1);
+
+        // Refund entry fee to the appropriate owner
+        if (refundAmount > 0) {
+          if (entry.ownership.type === "player") {
+            draft.cash = (draft.cash ?? 0) + refundAmount;
+          } else if (entry.ownership.type === "npc") {
+            const stableId = entry.ownership.stableId;
+            const stable =
+              lookupMaps?.stableMap.get(stableId) ||
+              draft.npcStables.find((s) => s.id === stableId);
+            if (stable) {
+              stable.cash += refundAmount;
+            }
+          }
+        }
       }
     }
   },

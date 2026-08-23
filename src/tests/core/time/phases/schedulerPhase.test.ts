@@ -98,4 +98,52 @@ describe("schedulerPhase", () => {
     const raceEntryImpacts = result.impacts.filter((i) => i.type === "race_entry");
     expect(raceEntryImpacts.length).toBeGreaterThan(0);
   });
+
+  it("schedulerPhase does not double-enter horse already entered via intentCollection", () => {
+    const horse = createTestHorse({ id: "horse-dup", ownership: { type: "player" } });
+    const campaign = {
+      id: "camp-dup",
+      horseId: "horse-dup",
+      autoManaged: true,
+      slots: [
+        {
+          raceId: "race-dup",
+          status: "planned",
+          dayTarget: 1,
+        },
+      ],
+      lastReviewedDay: 0,
+      confirmedAptitudes: {},
+      flags: {},
+    };
+    const state = makeGameState({
+      day: 1,
+      cash: 100000,
+      horses: h2r([horse]),
+      campaigns: [campaign as any],
+      races: {
+        "race-dup": {
+          id: "race-dup",
+          name: "Dup Test Race",
+          day: 1,
+          distance: 2000,
+          raceClass: "Maiden",
+          entryFee: 500,
+          purse: 10000,
+          fieldSize: 8,
+          // Horse already entered — simulates intentCollection having processed first
+          entries: [{ horseId: "horse-dup", ownership: { type: "player" } }],
+          resolved: false,
+        },
+      } as any,
+    }) as GameState;
+    const context = makePipelineContext({ state, newDay: 1 }) as PipelineContext;
+
+    const result = schedulerPhase.execute(context);
+
+    const raceEntryImpacts = result.impacts.filter(
+      (i) => i.type === "race_entry" && (i as any).horseId === "horse-dup",
+    );
+    expect(raceEntryImpacts).toHaveLength(0);
+  });
 });

@@ -8,7 +8,7 @@ import { createTestHorse, createUnownedHorse } from "@/tests/helpers/createTestH
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
-import type { RaceEntryIntent } from "@/core/resolver/intents";
+import type { RaceEntryIntent, RaceWithdrawalIntent } from "@/core/resolver/intents";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import type { RaceEntryImpact } from "@/core/resolver/impacts/raceImpacts";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
@@ -894,6 +894,156 @@ describe("raceEntryResolutionPhase", () => {
       const result = raceEntryResolutionPhase.execute(context);
 
       expect(result.impacts.filter((i) => i.type === "race_entry")).toHaveLength(0);
+    });
+  });
+
+  describe("race_withdrawal resolution", () => {
+    it("should convert race_withdrawal intent into race_withdrawal impact", () => {
+      const horse = createTestHorse({ id: "horse-w" });
+      const state: GameState = {
+        ...createTestState(),
+        horses: h2r([horse]),
+        races: r2r([
+          {
+            id: "race-w",
+            name: "Withdraw Test",
+            day: 1,
+            distance: 2000,
+            entryFee: 500,
+            fieldSize: 8,
+            entries: [{ horseId: "horse-w", ownership: { type: "player" } }],
+            resolved: false,
+          } as any,
+        ]),
+      } as any;
+
+      const withdrawalIntent: RaceWithdrawalIntent = {
+        id: "w-intent-1",
+        entityId: "horse-w",
+        source: "player",
+        day: 1,
+        priority: 100,
+        type: "race_withdrawal",
+        raceId: "race-w" as any,
+        horseId: "horse-w" as any,
+      };
+
+      const context = createMockPipelineContext({ state, intents: [withdrawalIntent] } as any);
+      const result = raceEntryResolutionPhase.execute(context);
+
+      const withdrawalImpacts = result.impacts.filter((i) => i.type === "race_withdrawal");
+      expect(withdrawalImpacts).toHaveLength(1);
+      expect((withdrawalImpacts[0] as any).raceId).toBe("race-w");
+      expect((withdrawalImpacts[0] as any).horseId).toBe("horse-w");
+      expect((withdrawalImpacts[0] as any).refundAmount).toBe(500);
+    });
+
+    it("should skip withdrawal intent for non-existent race", () => {
+      const horse = createTestHorse({ id: "horse-w2" });
+      const state: GameState = {
+        ...createTestState(),
+        horses: h2r([horse]),
+        races: r2r([]),
+      } as any;
+
+      const withdrawalIntent: RaceWithdrawalIntent = {
+        id: "w-intent-2",
+        entityId: "horse-w2",
+        source: "player",
+        day: 1,
+        priority: 100,
+        type: "race_withdrawal",
+        raceId: "race-missing" as any,
+        horseId: "horse-w2" as any,
+      };
+
+      const context = createMockPipelineContext({ state, intents: [withdrawalIntent] } as any);
+      const result = raceEntryResolutionPhase.execute(context);
+
+      const withdrawalImpacts = result.impacts.filter((i) => i.type === "race_withdrawal");
+      expect(withdrawalImpacts).toHaveLength(0);
+    });
+
+    it("should skip withdrawal intent for resolved race", () => {
+      const horse = createTestHorse({ id: "horse-w3" });
+      const state: GameState = {
+        ...createTestState(),
+        horses: h2r([horse]),
+        races: r2r([
+          {
+            id: "race-resolved",
+            name: "Resolved Race",
+            day: 1,
+            distance: 2000,
+            entryFee: 500,
+            fieldSize: 8,
+            entries: [{ horseId: "horse-w3", ownership: { type: "player" } }],
+            resolved: true,
+          } as any,
+        ]),
+      } as any;
+
+      const withdrawalIntent: RaceWithdrawalIntent = {
+        id: "w-intent-3",
+        entityId: "horse-w3",
+        source: "player",
+        day: 1,
+        priority: 100,
+        type: "race_withdrawal",
+        raceId: "race-resolved" as any,
+        horseId: "horse-w3" as any,
+      };
+
+      const context = createMockPipelineContext({ state, intents: [withdrawalIntent] } as any);
+      const result = raceEntryResolutionPhase.execute(context);
+
+      const withdrawalImpacts = result.impacts.filter((i) => i.type === "race_withdrawal");
+      expect(withdrawalImpacts).toHaveLength(0);
+    });
+  });
+
+  describe("transport balanceAfter accounting", () => {
+    it("transport transaction balanceAfter should account for entry fee", () => {
+      const horse = createTestHorse({ id: "horse-t" });
+      const state: GameState = {
+        ...createTestState(),
+        cash: 10000,
+        horses: h2r([horse]),
+        races: r2r([
+          {
+            id: "race-t",
+            name: "Transport Test",
+            day: 1,
+            distance: 2000,
+            entryFee: 1000,
+            fieldSize: 8,
+            entries: [],
+            resolved: false,
+          } as any,
+        ]),
+      } as any;
+
+      const entryIntent: RaceEntryIntent = {
+        id: "t-intent-1",
+        entityId: "horse-t",
+        source: "player",
+        day: 1,
+        priority: 100,
+        type: "race_entry",
+        raceId: "race-t" as any,
+        horseId: "horse-t" as any,
+      };
+
+      const context = createMockPipelineContext({ state, intents: [entryIntent] } as any);
+      const result = raceEntryResolutionPhase.execute(context);
+
+      const transportTx = (result.state as any).transactions.find(
+        (t: any) => t.subcategory === "transport",
+      );
+      expect(transportTx).toBeDefined();
+      // Entry fee (1000) + transport cost (150 for non-graded) = 1150 total
+      // balanceAfter should be 10000 - 1000 - 150 = 8850
+      expect(transportTx.balanceAfter).toBe(10000 - 1000 - 150);
     });
   });
 });

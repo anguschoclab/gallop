@@ -36,6 +36,7 @@ describe("FacilityCategory — tooltip wrapping", () => {
         types={["main_track", "starting_gates", "treadmill", "exercise_pool"]}
         facilities={makeFacilities()}
         cash={100000}
+        reputationTier="local"
         onUpgrade={() => {}}
       />,
     );
@@ -51,6 +52,7 @@ describe("FacilityCategory — tooltip wrapping", () => {
         types={["main_track"]}
         facilities={makeFacilities()}
         cash={100000}
+        reputationTier="local"
         onUpgrade={() => {}}
       />,
     );
@@ -66,6 +68,7 @@ describe("FacilityCategory — tooltip wrapping", () => {
         types={["main_track"]}
         facilities={makeFacilities()}
         cash={100000}
+        reputationTier="local"
         onUpgrade={() => {}}
       />,
     );
@@ -81,6 +84,7 @@ describe("FacilityCategory — tooltip wrapping", () => {
         types={["main_track"]}
         facilities={makeFacilities()}
         cash={100000}
+        reputationTier="local"
         onUpgrade={() => {}}
       />,
     );

@@ -859,5 +859,82 @@ describe("RacingHandler", () => {
       const challengerStable = draft.npcStables.find((s: any) => s.id === "s2");
       expect(challengerStable.cash).toBe(4000);
     });
+
+    it("race_withdrawal refunds entry fee to player cash", () => {
+      const handler = new RacingHandler();
+      const state = {
+        cash: 4000,
+        transactions: [],
+        horses: h2r([
+          { id: "h1", name: "Star", ownership: { type: "player" } },
+        ] as unknown as Horse[]),
+        races: r2r([
+          {
+            id: "race-1",
+            name: "Test Race",
+            entries: [{ horseId: "h1", ownership: { type: "player" } }],
+            entryFee: 1000,
+          },
+        ] as unknown as Race[]),
+      } as unknown as GameState;
+
+      const impact: RaceWithdrawalImpact = {
+        id: "imp-w1",
+        intentId: "",
+        day: 10,
+        phase: "raceEntryResolution",
+        logLevel: "always",
+        type: "race_withdrawal",
+        raceId: "race-1",
+        horseId: "h1",
+        refundAmount: 1000,
+        reason: "Race withdrawal",
+      };
+
+      const draft = JSON.parse(JSON.stringify(state));
+      handler.handle(draft, impact);
+
+      expect(draft.cash).toBe(5000);
+      expect(draft.races["race-1"].entries).toHaveLength(0);
+    });
+
+    it("race_withdrawal refunds entry fee to NPC stable cash", () => {
+      const handler = new RacingHandler();
+      const state = {
+        cash: 5000,
+        transactions: [],
+        horses: h2r([
+          { id: "h1", name: "NPC Horse", ownership: { type: "npc", stableId: "s1" } },
+        ] as unknown as Horse[]),
+        races: r2r([
+          {
+            id: "race-1",
+            name: "Test Race",
+            entries: [{ horseId: "h1", ownership: { type: "npc", stableId: "s1" } }],
+            entryFee: 1000,
+          },
+        ] as unknown as Race[]),
+        npcStables: [{ id: "s1", name: "Stable 1", cash: 3000 }],
+      } as unknown as GameState;
+
+      const impact: RaceWithdrawalImpact = {
+        id: "imp-w2",
+        intentId: "",
+        day: 10,
+        phase: "raceEntryResolution",
+        logLevel: "always",
+        type: "race_withdrawal",
+        raceId: "race-1",
+        horseId: "h1",
+        refundAmount: 1000,
+        reason: "Race withdrawal",
+      };
+
+      const draft = JSON.parse(JSON.stringify(state));
+      handler.handle(draft, impact);
+
+      expect(draft.npcStables[0].cash).toBe(4000);
+      expect(draft.races["race-1"].entries).toHaveLength(0);
+    });
   });
 });
