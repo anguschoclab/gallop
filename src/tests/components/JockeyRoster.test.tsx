@@ -12,29 +12,17 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 import { JockeyRoster } from "@/components/jockey/JockeyRoster";
+import { createTestJockey } from "@/tests/helpers";
+import { asJockeyId, asStableId } from "@/core/types/branded";
 
-function mkJockey(id: string, overrides: Record<string, unknown> = {}): Jockey {
-  return {
-    id,
+function mkJockey(id: string, overrides: Partial<Jockey> = {}): Jockey {
+  return createTestJockey({
+    id: asJockeyId(id),
     name: `Jockey ${id}`,
-    age: 25,
-    archetype: "versatile",
-    tier: "mid",
-    stats: { pacing: 70, positioning: 70, vigor: 70, gateSkill: 70, temperament: 70 },
-    potential: 75,
-    traits: [] as JockeyTrait[],
-    silk: { primary: "#ff0000", secondary: "#00ff00", cap: "#0000ff", pattern: "solid" },
-    careerStarts: 100,
-    careerWins: 20,
-    fame: 50,
-    ridingFee: 100,
-    affinityMap: {},
     stableAffinity: 0,
-    isApprentice: false,
-    loyalty: 50,
     contractUntil: 100,
     ...overrides,
-  } as unknown as Jockey;
+  });
 }
 
 describe("JockeyRoster — trait search & filter", () => {
@@ -125,7 +113,11 @@ describe("JockeyRoster — trait search & filter", () => {
     const jockeys = [
       mkJockey("j1", { name: "Signed Jockey", stableId: undefined, contractUntil: 100 }),
       mkJockey("j2", { name: "Market Jockey", stableId: undefined, contractUntil: undefined }),
-      mkJockey("j3", { name: "Stable Jockey", stableId: "stable-1", contractUntil: 100 }),
+      mkJockey("j3", {
+        name: "Stable Jockey",
+        stableId: asStableId("stable-1"),
+        contractUntil: 100,
+      }),
     ];
     renderWithStore(<JockeyRoster />, { jockeys });
     // Header shows "Signed: 1" (j1) and "Available: 1" (j2)
@@ -139,7 +131,11 @@ describe("JockeyRoster — trait search & filter", () => {
   it("jockeys with stableId appear in neither myJockeys nor market", () => {
     const jockeys = [
       mkJockey("j1", { name: "Free Agent", stableId: undefined, contractUntil: 100 }),
-      mkJockey("j2", { name: "Owned By Stable", stableId: "stable-1", contractUntil: 100 }),
+      mkJockey("j2", {
+        name: "Owned By Stable",
+        stableId: asStableId("stable-1"),
+        contractUntil: 100,
+      }),
     ];
     renderWithStore(<JockeyRoster />, { jockeys });
     // Signed: 1 (j1), Available: 0 (j2 has stableId, excluded from both)

@@ -66,7 +66,10 @@ export type StoreType = CoreState &
   InsuranceSlice &
   TransportSlice & {
     storeVersion: number;
-    startNewGame: (options: NewGameOptions) => Promise<void>;
+    startNewGame: (
+      options: NewGameOptions,
+      progressCallback?: (stage: number, total: number, name: string) => void,
+    ) => Promise<void>;
     addStewardsInquiry: (inquiry: StewardsInquiry) => void;
   };
 

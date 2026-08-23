@@ -14,18 +14,11 @@ vi.mock("@tanstack/react-router", () => ({
 
 import { JockeyRosterTabs } from "@/components/jockey/JockeyRosterTabs";
 import type { Jockey } from "@/core/jockey/types";
+import { createTestJockey } from "@/tests/helpers";
+import { asJockeyId } from "@/core/types/branded";
 
-function mkJockey(id: string, overrides: Record<string, unknown> = {}) {
-  return {
-    id,
-    name: `Jockey ${id}`,
-    silk: { primary: "#ff0000", secondary: "#00ff00", cap: "#0000ff", pattern: "solid" },
-    stats: { wins: 10, places: 5, shows: 3, starts: 30 },
-    archetype: "front_runner",
-    ridingFee: 500,
-    fame: 50,
-    ...overrides,
-  } as unknown as Jockey;
+function mkJockey(id: string, overrides: Partial<Jockey> = {}) {
+  return createTestJockey({ id: asJockeyId(id), name: `Jockey ${id}`, ...overrides });
 }
 
 const defaultProps = {

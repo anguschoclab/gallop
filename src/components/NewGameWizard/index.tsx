@@ -23,6 +23,7 @@ export function NewGameWizard() {
     worldSize,
     setWorldSize,
     submitting,
+    initProgress,
     selectedBackstory,
     canProceed,
     handleStart,
@@ -106,6 +107,21 @@ export function NewGameWizard() {
               </Button>
             )}
           </div>
+          {submitting && initProgress && (
+            <div className="mt-4 space-y-2">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-t700">
+                <div
+                  className="h-full rounded-full bg-gold transition-all duration-300"
+                  style={{
+                    width: `${Math.round((initProgress.stage / initProgress.total) * 100)}%`,
+                  }}
+                />
+              </div>
+              <p className="text-center text-sm text-cream-muted">
+                {initProgress.name} ({initProgress.stage}/{initProgress.total})
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </TooltipProvider>

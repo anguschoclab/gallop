@@ -158,7 +158,10 @@ describe("useNewGameWizard error handling", () => {
     await result.current.handleStart();
 
     await waitFor(() => {
-      expect(startNewGame).toHaveBeenCalledWith(expect.objectContaining({ worldSize: "small" }));
+      expect(startNewGame).toHaveBeenCalledWith(
+        expect.objectContaining({ worldSize: "small" }),
+        expect.any(Function),
+      );
     });
   });
 });

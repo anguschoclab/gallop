@@ -3,27 +3,21 @@ import { stepRunner, runRaceToCompletion } from "@/core/race/engine/simulation";
 import { createRng } from "@/core/common/rng";
 import { FactorLedgerCollector } from "@/core/race/factorLedger";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
-import type { Jockey } from "@/core/jockey/types";
+import { createTestJockey } from "@/tests/helpers";
+import { asJockeyId } from "@/core/types/branded";
 
-function makeJockey(): Jockey {
-  return {
-    id: "j1",
-    name: "Test Jockey",
-    age: 25,
+function makeJockey() {
+  return createTestJockey({
+    id: asJockeyId("j1"),
     archetype: "clinical",
     stats: { pacing: 50, positioning: 50, vigor: 50, gateSkill: 50, temperament: 50 },
     potential: 50,
-    traits: [],
-    silk: { pattern: "solid", primary: "red", secondary: "blue", cap: "white" },
     careerStarts: 0,
     careerWins: 0,
     fame: 0,
     ridingFee: 0,
     stableAffinity: 0,
-    isApprentice: false,
-    loyalty: 50,
-    affinityMap: {},
-  } as unknown as Jockey;
+  });
 }
 
 function makeRunner(overrides: Partial<Runner> = {}): Runner {

@@ -406,7 +406,10 @@ export const useGame = create<StoreType>()(
       },
 
       // Start new game action
-      startNewGame: async (options: NewGameOptions) => {
+      startNewGame: async (
+        options: NewGameOptions,
+        progressCallback?: (stage: number, total: number, name: string) => void,
+      ) => {
         // Initialize workers if not already initialized
         await initEngineWorker();
         await initInitializationWorker();
@@ -420,7 +423,7 @@ export const useGame = create<StoreType>()(
         try {
           const worker = getInitializationWorker();
           const result = await Promise.race([
-            worker.createInitialState({ options }),
+            worker.createInitialState({ options, progressCallback }),
             new Promise<never>((_, reject) =>
               setTimeout(() => reject(new Error("Worker initialization timed out")), 15000),
             ),
@@ -429,7 +432,7 @@ export const useGame = create<StoreType>()(
         } catch {
           // Worker not available, timed out, or failed — use main thread
           console.warn("Falling back to main-thread state initialization");
-          newState = createInitialState(options);
+          newState = createInitialState(options, progressCallback);
         }
         set({ ...newState } as Partial<StoreType>);
 

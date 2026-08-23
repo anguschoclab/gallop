@@ -1,4 +1,5 @@
 // Test helper utilities for creating complete test objects
+export { createProgenyLeaderboard, createProgenyRanking } from "./createProgenyLeaderboard";
 export { createTestRng } from "./createTestRng";
 export { createTestGenotype } from "./createTestGenotype";
 export { createTestAppearance } from "./createTestAppearance";

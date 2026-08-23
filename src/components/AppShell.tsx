@@ -45,9 +45,15 @@ export function AppShell() {
     }
   }, [pendingPlayerRaceId, pendingAdvanceRemaining, isAdvancing, advanceMultipleDays]);
 
+  // Clear batch progress when advancing finishes
+  useEffect(() => {
+    if (!isAdvancing) setBatchProgress(null);
+  }, [isAdvancing]);
+
   const location = useLocation();
   const navigate = useNavigate();
   const [autoSimOpen, setAutoSimOpen] = useState(false);
+  const [batchProgress, setBatchProgress] = useState<{ day: number; total: number } | null>(null);
 
   const unreadCount = useUnreadCount();
 
@@ -77,8 +83,24 @@ export function AppShell() {
           unreadCount={unreadCount}
           isAdvancing={isAdvancing}
           onAdvanceDay={() => advanceDay()}
-          onAdvanceWeek={() => setTimeout(() => advanceMultipleDays(DAYS_PER_WEEK), 0)}
-          onAdvanceMonth={() => setTimeout(() => advanceMultipleDays(DAYS_PER_MONTH), 0)}
+          onAdvanceWeek={() =>
+            setTimeout(
+              () =>
+                advanceMultipleDays(DAYS_PER_WEEK, false, (day, total) =>
+                  setBatchProgress({ day, total }),
+                ),
+              0,
+            )
+          }
+          onAdvanceMonth={() =>
+            setTimeout(
+              () =>
+                advanceMultipleDays(DAYS_PER_MONTH, false, (day, total) =>
+                  setBatchProgress({ day, total }),
+                ),
+              0,
+            )
+          }
           onOpenAutoSim={() => setAutoSimOpen(true)}
           onSkipToAuction={() => skipToNext("auction")}
           onSkipToRace={() => skipToNext("race")}
@@ -100,6 +122,21 @@ export function AppShell() {
           <div className="text-center">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-gold border-t-transparent mx-auto mb-4"></div>
             <p className="text-cream-muted font-[family-name=var(--font-body)]">Advancing days…</p>
+            {batchProgress && (
+              <div className="mt-3 space-y-1">
+                <div className="h-1.5 w-48 overflow-hidden rounded-full bg-t700 mx-auto">
+                  <div
+                    className="h-full rounded-full bg-gold transition-all duration-300"
+                    style={{
+                      width: `${Math.round((batchProgress.day / batchProgress.total) * 100)}%`,
+                    }}
+                  />
+                </div>
+                <p className="text-xs text-cream-muted">
+                  Day {batchProgress.day} of {batchProgress.total}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}

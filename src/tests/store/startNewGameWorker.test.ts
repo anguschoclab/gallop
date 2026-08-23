@@ -204,7 +204,7 @@ describe("startNewGame uses initialization worker", () => {
       await vi.advanceTimersByTimeAsync(15_000);
       await startPromise;
 
-      expect(mockMainThreadCreateInitialState).toHaveBeenCalledWith(mockOptions);
+      expect(mockMainThreadCreateInitialState).toHaveBeenCalledWith(mockOptions, undefined);
       expect(saveExists.value).toBe(true);
     } finally {
       vi.useRealTimers();

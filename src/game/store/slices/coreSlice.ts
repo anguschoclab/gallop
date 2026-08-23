@@ -51,7 +51,11 @@ export type CoreSlice = CoreState & {
   advanceDay: (
     progressCallback?: (stage: number, total: number, name: string) => void,
   ) => Promise<void>;
-  advanceMultipleDays: (n: number, headless?: boolean) => Promise<void>;
+  advanceMultipleDays: (
+    n: number,
+    headless?: boolean,
+    progressCallback?: (day: number, totalDays: number) => void,
+  ) => Promise<void>;
   advanceWeek: (headless?: boolean) => Promise<void>;
   advanceMonth: (headless?: boolean) => Promise<void>;
   advanceYear: (headless?: boolean) => Promise<void>;

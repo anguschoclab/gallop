@@ -18,6 +18,12 @@ import type { WorldSize } from "@/core/stable/worldSizeConfig";
 
 export type Step = 0 | 1 | 2 | 3 | 4;
 
+export type InitProgress = {
+  stage: number;
+  total: number;
+  name: string;
+} | null;
+
 export function useNewGameWizard() {
   const navigate = useNavigate();
   const startNewGame = useGame((s) => s.startNewGame);
@@ -29,6 +35,7 @@ export function useNewGameWizard() {
   const [backstoryId, setBackstoryId] = useState<BackstoryId | undefined>(undefined);
   const [worldSize, setWorldSize] = useState<WorldSize>("medium");
   const [submitting, setSubmitting] = useState(false);
+  const [initProgress, setInitProgress] = useState<InitProgress>(null);
 
   useEffect(() => {
     const saved = loadWizardState();
@@ -94,6 +101,7 @@ export function useNewGameWizard() {
     }
 
     setSubmitting(true);
+    setInitProgress({ stage: 0, total: 8, name: "Initializing…" });
     const options: NewGameOptions = {
       profile: {
         stableName: stableName.trim(),
@@ -106,12 +114,16 @@ export function useNewGameWizard() {
       worldSize,
     };
     try {
-      await startNewGame(options);
+      await startNewGame(options, (stage, total, name) => {
+        setInitProgress({ stage, total, name });
+      });
       clearWizardState();
       navigate({ to: "/", replace: true });
     } catch (error) {
       console.error("Failed to start new game:", error);
       setSubmitting(false);
+    } finally {
+      setInitProgress(null);
     }
   }, [
     selectedBackstory,
@@ -138,6 +150,7 @@ export function useNewGameWizard() {
     worldSize,
     setWorldSize,
     submitting,
+    initProgress,
     selectedBackstory,
     canProceed,
     handleStart,

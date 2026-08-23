@@ -135,7 +135,11 @@ export function createAdvanceDayActions(
       }
     },
 
-    advanceMultipleDays: async (n: number, headless?: boolean) => {
+    advanceMultipleDays: async (
+      n: number,
+      headless?: boolean,
+      progressCallback?: (day: number, totalDays: number) => void,
+    ) => {
       const s = get();
       const playerRaceDays = computePlayerRaceDays(Object.values(s.races), s.day + 1, s.day + n);
 
@@ -152,6 +156,7 @@ export function createAdvanceDayActions(
             count: n,
             headless,
             playerRaceDays,
+            progressCallback,
           });
 
           const {
@@ -230,6 +235,7 @@ export function createAdvanceDayActions(
           }
 
           await get().advanceDay();
+          progressCallback?.(i + 1, n);
 
           if (i % batchSize === 0 && i > 0) {
             await new Promise((resolve) => setTimeout(resolve, 0));

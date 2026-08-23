@@ -6,6 +6,7 @@ import type {
   JockeySilk,
   JockeySilkPattern,
 } from "@/game/types";
+import { asJockeyId } from "@/core/types/branded";
 
 /**
  * Creates a valid test jockey stats object.
@@ -49,7 +50,7 @@ function createTestJockeySilk(overrides?: Partial<JockeySilk>): JockeySilk {
 export function createTestJockey(overrides?: Partial<Jockey>): Jockey {
   const silk = createTestJockeySilk();
   return {
-    id: "test-jockey-1",
+    id: asJockeyId("test-jockey-1"),
     name: "Test Jockey",
     age: 25,
     archetype: "versatile" as JockeyArchetype,
@@ -79,7 +80,7 @@ export function createTestJockey(overrides?: Partial<Jockey>): Jockey {
 export function createTestJockeys(count: number = 10): Jockey[] {
   return Array.from({ length: count }, (_, i) =>
     createTestJockey({
-      id: `test-jockey-${i + 1}`,
+      id: asJockeyId(`test-jockey-${i + 1}`),
       name: `Test Jockey ${i + 1}`,
     }),
   );

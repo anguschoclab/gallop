@@ -2,8 +2,9 @@ import { describe, it, expect } from "vitest";
 import { runRaceToCompletion } from "@/core/race/engine/simulation";
 import { buildRunner } from "@/core/race/engine/runnerBuilder";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { asHorseId } from "@/core/types/branded";
 import type { CourseSpecification } from "@/data/tracks";
-import type { Horse, Rng, Jockey, JockeySilk, Genotype, HealthStatus } from "@/game/types";
+import type { Horse, Rng, Genotype, HealthStatus } from "@/game/types";
 
 // Simple deterministic RNG for testing
 const mockRng: Rng = {
@@ -70,7 +71,7 @@ function createHorse(
   overrides: Partial<Horse> = {},
 ): Horse {
   return createTestHorse({
-    id,
+    id: asHorseId(id),
     name: `${style}_Horse_${id}`,
     age: 3,
     gender: "colt",
@@ -87,41 +88,6 @@ function createHorse(
     climbingAptitude: 1.0,
     ...overrides,
   });
-}
-
-function mkJockey(overrides: Partial<Jockey> = {}): Jockey {
-  const silk: JockeySilk = {
-    pattern: "solid",
-    primary: "#ff0000",
-    secondary: "#000000",
-    cap: "solid",
-  };
-  return {
-    id: overrides.id ?? "j1",
-    name: overrides.name ?? "Test J",
-    age: 25,
-    archetype: overrides.archetype ?? "versatile",
-    tier: overrides.tier ?? "mid",
-    stats: {
-      pacing: 70,
-      positioning: 70,
-      vigor: 70,
-      gateSkill: 70,
-      temperament: 70,
-    },
-    potential: 75,
-    traits: overrides.traits ?? [],
-    silk: overrides.silk ?? silk,
-    careerStarts: 0,
-    careerWins: 0,
-    fame: 50,
-    ridingFee: 100,
-    affinityMap: {},
-    stableAffinity: 50,
-    isApprentice: false,
-    loyalty: 50,
-    ...overrides,
-  };
 }
 
 describe("Track Size Influence", () => {

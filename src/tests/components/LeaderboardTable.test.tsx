@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { LeaderboardTable } from "@/components/history/LeaderboardTable";
+import { createProgenyLeaderboard, createProgenyRanking } from "@/tests/helpers";
 
 vi.mock("@/components/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (
@@ -37,9 +38,7 @@ describe("LeaderboardTable", () => {
   it("renders LeaderboardEmpty when rankings empty", () => {
     render(
       <LeaderboardTable
-        leaderboard={
-          { title: "Test", type: "beyer", description: "", lastUpdated: 0, rankings: [] } as any
-        }
+        leaderboard={createProgenyLeaderboard({ type: "beyer", title: "Test", rankings: [] })}
         icon={<span />}
         valueFormatter={(v) => v.toString()}
       />,
@@ -50,30 +49,28 @@ describe("LeaderboardTable", () => {
   it("renders LeaderboardRow for each ranking", () => {
     render(
       <LeaderboardTable
-        leaderboard={{
+        leaderboard={createProgenyLeaderboard({
           title: "Top Earnings",
           type: "earnings",
-          description: "",
-          lastUpdated: 0,
           rankings: [
-            {
+            createProgenyRanking({
               horseId: "h1",
               horseName: "Thunder",
               rank: 1,
               value: 500000,
               sireName: "Sire A",
               metrics: { age: 4, wins: 5, starts: 10, earnings: 500000, gradeWins: 1 },
-            },
-            {
+            }),
+            createProgenyRanking({
               horseId: "h2",
               horseName: "Lightning",
               rank: 2,
               value: 300000,
               sireName: "Sire B",
               metrics: { age: 3, wins: 3, starts: 8, earnings: 300000, gradeWins: 0 },
-            },
+            }),
           ],
-        }}
+        })}
         icon={<span data-testid="icon" />}
         valueFormatter={(v) => `$${v}`}
         valueLabel="Earnings"
@@ -86,22 +83,20 @@ describe("LeaderboardTable", () => {
   it("renders ControlsBar with sort options", () => {
     render(
       <LeaderboardTable
-        leaderboard={{
+        leaderboard={createProgenyLeaderboard({
           title: "Top Earnings",
           type: "earnings",
-          description: "",
-          lastUpdated: 0,
           rankings: [
-            {
+            createProgenyRanking({
               horseId: "h1",
               horseName: "Thunder",
               rank: 1,
               value: 500000,
               sireName: "Sire A",
               metrics: { age: 4, wins: 5, starts: 10, earnings: 500000, gradeWins: 1 },
-            },
+            }),
           ],
-        }}
+        })}
         icon={<span />}
         valueFormatter={(v) => v.toString()}
       />,
