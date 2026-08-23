@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/select";
 import { Star, X } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TOOLTIP_DELAY_MS } from "@/constants/uiConstants";
 import type { Horse } from "@/game/types";
 import type { MatingPlanEntry } from "@/game/store/state/breedingState";
 import type { SireSuggestion } from "@/core/breeding/sireSuggestions";
@@ -75,14 +77,22 @@ export function MarePlannerRow({
           </SelectContent>
         </Select>
         {assignment && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 shrink-0"
-            onClick={() => onClear(mare.id)}
-          >
-            <X className="h-3.5 w-3.5" />
-          </Button>
+          <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 shrink-0"
+                  onClick={() => onClear(mare.id)}
+                  aria-label={`Clear assignment for ${mare.name}`}
+                >
+                  <X className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Clear assignment</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         )}
       </div>
 

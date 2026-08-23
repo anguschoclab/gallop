@@ -11,6 +11,8 @@ import {
 import { Check, Save, FolderOpen, Trash2, Sparkles, Eraser } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
 import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TOOLTIP_DELAY_MS } from "@/constants/uiConstants";
 import type { SavedMatingPlan } from "@/game/store/state/breedingState";
 
 interface PlanSummaryBarProps {
@@ -144,18 +146,25 @@ export function PlanSummaryBar({
           )}
 
           {loadPlanId && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7"
-              onClick={() => {
-                onDeletePlan(loadPlanId);
-                setLoadPlanId("");
-              }}
-              aria-label="Delete plan"
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-            </Button>
+            <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={() => {
+                      onDeletePlan(loadPlanId);
+                      setLoadPlanId("");
+                    }}
+                    aria-label="Delete plan"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Delete plan</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
 
           <Button
