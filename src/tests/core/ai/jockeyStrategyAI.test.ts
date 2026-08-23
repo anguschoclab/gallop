@@ -12,7 +12,10 @@ import {
   applyAffinityBoost,
 } from "@/core/ai/jockeyStrategyAdjustments";
 import { calculateOptimalRunningStyle } from "@/core/ai/jockeyStyleSelection";
-import { calculateJockeyAggressiveness, shouldMakeTacticalMove } from "@/core/ai/jockeyTacticalMoves";
+import {
+  calculateJockeyAggressiveness,
+  shouldMakeTacticalMove,
+} from "@/core/ai/jockeyTacticalMoves";
 import { recordRaceStrategy, getStrategyInsights } from "@/core/ai/jockeyStrategyRecording";
 import type { Jockey, Horse, Race, Stable } from "@/game/types";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";

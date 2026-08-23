@@ -880,7 +880,12 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
         temperament: 50,
         conformation: 50,
       },
-      { ownership: makeNpcOwned(asNpcStableId("stable-1")), silk: "blue", sireId: "stallion-1", sireName: "Test Stallion" },
+      {
+        ownership: makeNpcOwned(asNpcStableId("stable-1")),
+        silk: "blue",
+        sireId: "stallion-1",
+        sireName: "Test Stallion",
+      },
     );
 
     const stallion = mockHorse(
@@ -959,7 +964,11 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
         temperament: 50,
         conformation: 50,
       },
-      { ownership: makeNpcOwned(asNpcStableId("stable-1")), silk: "blue", healthStatus: "covering_sickness" },
+      {
+        ownership: makeNpcOwned(asNpcStableId("stable-1")),
+        silk: "blue",
+        healthStatus: "covering_sickness",
+      },
     );
 
     const stallion = mockHorse(
