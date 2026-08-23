@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { createBreedingAIState, calculateAIStallionScore, getProgenyTripleCrownSuccess } from "@/core/ai/breedingAI";
+import {
+  createBreedingAIState,
+  calculateAIStallionScore,
+  getProgenyTripleCrownSuccess,
+} from "@/core/ai/breedingAI";
 import {
   recordBreedingDecision,
   recordBreedingOutcome,

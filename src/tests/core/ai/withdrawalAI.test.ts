@@ -1,6 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { createWithdrawalAIState } from "@/core/ai/withdrawalAITypes";
-import { calculateWithdrawalRisk, calculateWithdrawalOpportunityCost } from "@/core/ai/withdrawalAIValue";
+import {
+  calculateWithdrawalRisk,
+  calculateWithdrawalOpportunityCost,
+} from "@/core/ai/withdrawalAIValue";
 import {
   shouldWithdrawHorse,
   isWithdrawalStrategic,

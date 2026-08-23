@@ -1,0 +1,3 @@
+## 2024-08-23 - Auction Valuation Testing
+**Learning:** `calculateLotValuation` behavior branches heavily based on NPC stable personalities and internal logic, yet had zero dedicated test coverage. High risk area for economic imbalances or broken progression if accidentally changed, especially since AI trading depends on this exact math. We found that horse stats must be structured precisely on testing payloads to correctly resolve valuations in fallback formulas (`calculateNpcHorseValue`).
+**Action:** Add tests for complex valuation modifiers to ensure stable pricing baseline persists. Always initialize `stats` object correctly when using `createTestHorse` in economic evaluations.

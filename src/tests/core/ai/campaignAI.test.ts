@@ -6,7 +6,12 @@
 import { describe, it, expect } from "vitest";
 import { createCampaignAIState, detectContender } from "@/core/ai/campaignAI";
 import type { ContenderStatus } from "@/core/ai/campaignAI";
-import { getOptimalMajorRaceTarget, shouldTargetMajorRace, getPrepRaceStrategy, selectPrepRace } from "@/core/ai/campaignTargeting";
+import {
+  getOptimalMajorRaceTarget,
+  shouldTargetMajorRace,
+  getPrepRaceStrategy,
+  selectPrepRace,
+} from "@/core/ai/campaignTargeting";
 import {
   recordCampaignDecision,
   recordCampaignOutcome,
