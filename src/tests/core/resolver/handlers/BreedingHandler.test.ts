@@ -106,15 +106,15 @@ describe("BreedingHandler", () => {
 
     const pregnancy = {
       id: "preg-1",
-      sireId: "horse-2",
-      damId: "horse-1",
+      sireId: asHorseId("horse-2"),
+      damId: asHorseId("horse-1"),
       sireName: "Sire",
       damName: "Star",
       conceivedDay: 10,
       dueDay: 335,
       resolved: false,
       isPlayerOwned: true,
-    };
+    } as unknown as Pregnancy;
 
     const impact: PregnancyCreationImpact = {
       id: "imp-1",
