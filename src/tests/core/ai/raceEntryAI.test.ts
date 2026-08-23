@@ -10,6 +10,8 @@ import {
 } from "@/core/ai/raceEntryAI";
 import type { Horse, Race, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
+import { makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 import { RECENT_RACES_MAX_COUNT } from "@/constants";
 
 function createMockHorse(overrides: Partial<Horse> = {}): Horse {
@@ -30,7 +32,7 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
     },
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 },
-    stableId: "stable-1",
+    ownership: makeNpcOwned(asNpcStableId("stable-1")),
     ...overrides,
   });
 }
@@ -408,7 +410,7 @@ describe("generateMultiRaceStrategy", () => {
   it("filters upcoming races (day > currentDay, day <= currentDay + daysAhead, !resolved)", () => {
     const stable = createMockStable();
     const state = createRaceEntryAIState(stable);
-    const horse = createMockHorse({ stableId: "stable-1" });
+    const horse = createMockHorse({ ownership: makeNpcOwned(asNpcStableId("stable-1")) });
     const races = [
       createMockRace({ id: "past", day: 50, resolved: false }),
       createMockRace({ id: "future-1", day: 105, resolved: false }),
@@ -425,8 +427,14 @@ describe("generateMultiRaceStrategy", () => {
   it("only assigns horses where stableId matches stable.id", () => {
     const stable = createMockStable({ id: "stable-1" });
     const state = createRaceEntryAIState(stable);
-    const matchingHorse = createMockHorse({ id: "match", stableId: "stable-1" });
-    const nonMatchingHorse = createMockHorse({ id: "no-match", stableId: "stable-2" });
+    const matchingHorse = createMockHorse({
+      id: "match",
+      ownership: makeNpcOwned(asNpcStableId("stable-1")),
+    });
+    const nonMatchingHorse = createMockHorse({
+      id: "no-match",
+      ownership: makeNpcOwned(asNpcStableId("stable-2")),
+    });
     const race = createMockRace({ id: "race-1", day: 105 });
     const strategy = generateMultiRaceStrategy(
       state,
@@ -446,7 +454,7 @@ describe("generateMultiRaceStrategy", () => {
     const stable = createMockStable({ id: "stable-1" });
     const state = createRaceEntryAIState(stable);
     const horses = Array.from({ length: 5 }, (_, i) =>
-      createMockHorse({ id: `h-${i}`, stableId: "stable-1" }),
+      createMockHorse({ id: `h-${i}`, ownership: makeNpcOwned(asNpcStableId("stable-1")) }),
     );
     const race = createMockRace({ id: "race-1", day: 105 });
     const strategy = generateMultiRaceStrategy(state, stable, horses, [race], 100, 20);
@@ -466,7 +474,7 @@ describe("generateMultiRaceStrategy", () => {
   it("returns empty object when no horses match stableId", () => {
     const stable = createMockStable({ id: "stable-1" });
     const state = createRaceEntryAIState(stable);
-    const horse = createMockHorse({ stableId: "stable-2" });
+    const horse = createMockHorse({ ownership: makeNpcOwned(asNpcStableId("stable-2")) });
     const race = createMockRace({ id: "race-1", day: 105 });
     const strategy = generateMultiRaceStrategy(state, stable, [horse], [race], 100, 20);
     expect(strategy).toEqual({});
@@ -706,8 +714,14 @@ describe("generateMultiRaceStrategy — race selection optimization", () => {
   it("assigns horses to races maximizing total stable value", () => {
     const stable = createMockStable({ id: "stable-1" });
     const state = createRaceEntryAIState(stable);
-    const horse1 = createMockHorse({ id: "h1", stableId: "stable-1" });
-    const horse2 = createMockHorse({ id: "h2", stableId: "stable-1" });
+    const horse1 = createMockHorse({
+      id: "h1",
+      ownership: makeNpcOwned(asNpcStableId("stable-1")),
+    });
+    const horse2 = createMockHorse({
+      id: "h2",
+      ownership: makeNpcOwned(asNpcStableId("stable-1")),
+    });
 
     const race1 = createMockRace({ id: "r1", day: 101, purse: 50000, entries: [] });
     const race2 = createMockRace({ id: "r2", day: 102, purse: 100000, entries: [] });
@@ -729,7 +743,10 @@ describe("generateMultiRaceStrategy — race selection optimization", () => {
   it("does not assign the same horse to multiple races on the same day", () => {
     const stable = createMockStable({ id: "stable-1" });
     const state = createRaceEntryAIState(stable);
-    const horse1 = createMockHorse({ id: "h1", stableId: "stable-1" });
+    const horse1 = createMockHorse({
+      id: "h1",
+      ownership: makeNpcOwned(asNpcStableId("stable-1")),
+    });
 
     const race1 = createMockRace({ id: "r1", day: 101, entries: [] });
     const race2 = createMockRace({ id: "r2", day: 101, entries: [] });
@@ -747,7 +764,7 @@ describe("generateMultiRaceStrategy — race selection optimization", () => {
     const stable = createMockStable({ id: "stable-1" });
     const state = createRaceEntryAIState(stable);
     const horses = Array.from({ length: 5 }, (_, i) =>
-      createMockHorse({ id: `h${i}`, stableId: "stable-1" }),
+      createMockHorse({ id: `h${i}`, ownership: makeNpcOwned(asNpcStableId("stable-1")) }),
     );
 
     const race = createMockRace({ id: "r1", day: 101, fieldSize: 2, entries: [] });

@@ -76,7 +76,12 @@ export const raceResolutionPhase: PipelinePhase = {
           position,
           time,
         }));
-        updatedRaces[race.id] = { ...race, resolved: true, result };
+        updatedRaces[race.id] = {
+          ...race,
+          resolved: true,
+          result,
+          factorLedgers: liveIntent.factorLedgers,
+        };
 
         // Still generate impacts (prize money, form, etc.) using the live results
         const rng = rngForRace(race);
@@ -169,7 +174,7 @@ export const raceResolutionPhase: PipelinePhase = {
         : undefined;
 
       // Simulate race using service
-      const { result, runners, snapshots, paceSnapshots } = simulateRace(
+      const { result, runners, snapshots, paceSnapshots, factorLedgers } = simulateRace(
         race,
         horseMap,
         jockeyMap,
@@ -185,7 +190,7 @@ export const raceResolutionPhase: PipelinePhase = {
       const rng = rngForRace(race);
 
       // Update race in the updatedRaces Record
-      updatedRaces[race.id] = { ...race, resolved: true, result, snapshots };
+      updatedRaces[race.id] = { ...race, resolved: true, result, snapshots, factorLedgers };
 
       // Record outcomes for NPC AI
       if (npcAIManager) {

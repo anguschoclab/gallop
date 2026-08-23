@@ -8,16 +8,17 @@ import {
   regenerateNpcHorses,
   splitHorsesForPersistence,
   mergeHorses,
-  type NpcHorseSummary,
 } from "@/core/persistence/npcCompression";
 import type { Horse } from "@/core/horse/types";
 import type { Stable } from "@/core/stable/types";
+import { makeNpcOwned, makePlayerOwned, getStableId } from "@/core/horse/ownership";
+import { asNpcStableId, asStableId } from "@/core/types/branded";
 import { generateNpcHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { createRng, hashStr } from "@/core/common/rng";
 
 function makeTestStable(): Stable {
   return {
-    id: "stable-test-1",
+    id: asStableId("stable-test-1"),
     name: "Test Stables",
     owner: "Test Owner",
     tier: "mid",
@@ -61,15 +62,14 @@ function makePlayerHorse(): Horse {
   const horse = generateNpcHorse(
     {
       ...makeTestStable(),
-      id: "player-stable",
+      id: asStableId("player-stable"),
     },
     rng,
     undefined,
     undefined,
     { forcedAge: 4, forcedName: "PlayerHorse" },
   );
-  horse.stableId = undefined;
-  horse.owned = true;
+  horse.ownership = makePlayerOwned();
   return horse;
 }
 
@@ -126,7 +126,7 @@ describe("compressNpcHorses", () => {
     const stable = makeTestStable();
     const npcHorses = makeNpcHorses(stable, 1);
     // Change the horse's stableId to one not in the stables list
-    npcHorses[0].stableId = "nonexistent_stable";
+    npcHorses[0].ownership = makeNpcOwned(asNpcStableId("nonexistent_stable"));
     const horses: Record<string, Horse> = {};
     horses[npcHorses[0].id] = npcHorses[0];
 
@@ -170,7 +170,7 @@ describe("regenerateNpcHorses", () => {
       expect(regen!.name).toBe(orig.name);
       expect(regen!.age).toBe(orig.age);
       expect(regen!.gender).toBe(orig.gender);
-      expect(regen!.stableId).toBe(stable.id);
+      expect(getStableId(regen)).toBe(stable.id);
     }
   });
 
@@ -215,7 +215,7 @@ describe("regenerateNpcHorses", () => {
 
     const summaries = compressNpcHorses([stable], horses);
     // Corrupt one summary's stableId
-    summaries[0].stableId = "nonexistent_stable";
+    summaries[0].stableId = asNpcStableId("nonexistent_stable");
 
     const regenerated = regenerateNpcHorses(summaries, [stable]);
     // Only the one with valid stableId should be regenerated
@@ -287,7 +287,7 @@ describe("splitHorsesForPersistence", () => {
     const stable = makeTestStable();
     const npcHorses = makeNpcHorses(stable, 1);
     // Set stableId to one not in the stables list
-    npcHorses[0].stableId = "nonexistent_stable";
+    npcHorses[0].ownership = makeNpcOwned(asNpcStableId("nonexistent_stable"));
     const horses: Record<string, Horse> = {};
     horses[npcHorses[0].id] = npcHorses[0];
 

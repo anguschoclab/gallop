@@ -139,7 +139,8 @@ export type Race = {
   weather?: Weather;
   trackCondition?: TrackCondition;
   claiming?: { price: number };
-  sectionalSplits?: SectionalSplit[]; // Computed quarter-mile splits from snapshots
+  sectionalSplits?: SectionalSplit[];
+  factorLedgers?: Record<string, import("@/core/race/factorLedger").RunnerFactorLedger>;
 };
 
 // Sectional timing types

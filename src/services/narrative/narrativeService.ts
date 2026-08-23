@@ -1,6 +1,7 @@
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import { computePaceContext } from "@/core/race/engine/simulation";
 import type { Horse, Race, Stable } from "@/game/types";
+import { getStableId } from "@/core/horse/ownership";
 import type { Rng } from "@/core/common/rng";
 import type { NarrativeEvent, CommentaryLine } from "./types";
 import { generateCommentaryLine, generateExpertInsight } from "./commentaryGenerator";
@@ -424,7 +425,8 @@ export class NarrativeGenerator {
     const horse = this.getHorse(runner.horseId);
     if (!horse) return null;
 
-    const stable = horse.stableId ? (this.getStable(horse.stableId) ?? null) : null;
+    const stableId = getStableId(horse);
+    const stable = stableId ? (this.getStable(stableId) ?? null) : null;
     return generateExpertInsight(runner, horse, this.race, stable, this.rng);
   }
 
@@ -444,7 +446,8 @@ export class NarrativeGenerator {
     lengths?: string,
   ): CommentaryLine {
     const horse = runner ? this.getHorse(runner.horseId) : undefined;
-    const stable = horse?.stableId ? (this.getStable(horse.stableId) ?? null) : null;
+    const stableId = getStableId(horse);
+    const stable = stableId ? (this.getStable(stableId) ?? null) : null;
     const counter = { value: this.state.lineCounter };
     const line = generateCommentaryLine(
       type,

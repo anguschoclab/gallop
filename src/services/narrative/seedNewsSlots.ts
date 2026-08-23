@@ -8,6 +8,7 @@ import { createNewsItem } from "@/services/narrative/newsGenerator";
 import { calculateOverallRating } from "@/core/horse/stats";
 import type { NewsItem } from "@/services/narrative/newsTypes";
 import type { Race, Horse, Stable } from "@/game/types";
+import { isPlayerOwned, isNpcOwned } from "@/core/horse/ownership";
 import type { PlayerProfile } from "@/core/stable/types";
 import type { Rng } from "@/core/common/rng";
 
@@ -161,7 +162,7 @@ export function buildRivalIntros(
  * @returns Power rankings news item or null if no NPC horses
  */
 export function buildPowerRankings(horses: Horse[], day: number, rng: Rng): NewsItem | null {
-  const npcHorses = horses.filter((h) => !h.owned && h.stableId);
+  const npcHorses = horses.filter((h) => !isPlayerOwned(h) && isNpcOwned(h));
   if (npcHorses.length === 0) return null;
 
   const sorted = npcHorses
@@ -374,7 +375,7 @@ export function buildGradedPreview(
  * @returns Bloodline insight news item or null if no NPC horses
  */
 export function buildBloodlineInsight(horses: Horse[], day: number, rng: Rng): NewsItem | null {
-  const npcHorses = horses.filter((h) => !h.owned && h.stableId);
+  const npcHorses = horses.filter((h) => !isPlayerOwned(h) && isNpcOwned(h));
   if (npcHorses.length === 0) return null;
 
   const eliteHorses = npcHorses.filter((h) => calculateOverallRating(h) >= 80);

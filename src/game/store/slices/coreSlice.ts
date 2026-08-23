@@ -16,6 +16,7 @@
 
 import type { CoreState } from "@/game/store/state/coreState";
 import { createDefaultCoreState } from "@/game/store/state/coreState";
+import { makeUnowned } from "@/core/horse/ownership";
 import type { Horse, Race, PlayerProfile } from "@/game/types";
 import type { ActionResult } from "@/game/store";
 import type { AnyIntent } from "@/core/resolver/intents";
@@ -27,6 +28,7 @@ import type { StoreSet, StoreGet } from "../types";
 import { createRaceEntryActions } from "./raceEntryActions";
 import { createAdvanceDayActions } from "./advanceDayActions";
 import { isPlayerOwned } from "@/core/horse/ownership";
+import { asHorseId } from "@/core/types/branded";
 
 export type CoreSlice = CoreState & {
   enqueueIntent: (intent: AnyIntent) => void;
@@ -37,6 +39,7 @@ export type CoreSlice = CoreState & {
     raceId: string,
     result: { horseId: string; position: number; time: number }[],
     runners?: Array<{ horseId: string; owned?: boolean }>,
+    factorLedgers?: Record<string, import("@/core/race/factorLedger").RunnerFactorLedger>,
   ) => void;
   submitClaim: (raceId: string, horseId: string) => ActionResult;
   withdrawClaim: (raceId: string, horseId: string) => ActionResult;
@@ -125,7 +128,7 @@ export function createCoreSlice(
 
     resolveHorsePhenotype: (horseId) => {
       const s = get();
-      const horse = s.horses[horseId];
+      const horse = s.horses[asHorseId(horseId)];
       if (!horse) return;
       if (horse.phenotypeResolved !== false) return;
       const resolved = resolvePhenotype(horse);
@@ -171,7 +174,7 @@ export function createCoreSlice(
 
     quickSellHorse: (horseId) => {
       const s = get();
-      const horse = s.horses[horseId];
+      const horse = s.horses[asHorseId(horseId)];
       if (!horse) {
         return { ok: false, reason: "Horse not found" };
       }
@@ -201,7 +204,7 @@ export function createCoreSlice(
       const newAudit = [...(s.solvencyAuditLog ?? []), auditEntry].slice(-200);
       set({
         cash: newCash,
-        horses: { ...s.horses, [horseId]: { ...horse, owned: false } },
+        horses: { ...s.horses, [horseId]: { ...horse, ownership: makeUnowned() } },
         solvencyAuditLog: newAudit,
         consecutiveDaysInDebt: newCash >= 0 ? 0 : s.consecutiveDaysInDebt,
         solvencyTier: tier,

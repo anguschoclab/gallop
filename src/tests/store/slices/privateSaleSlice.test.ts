@@ -3,6 +3,8 @@ import { seedStore } from "@/test-utils/renderWithStore";
 import { useGame } from "@/game/store";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import type { GameState, PrivateSaleOffer, Horse, Stable } from "@/game/types";
+import { makeNpcOwned, makePlayerOwned, getStableId } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 const mkOffer = (overrides: Partial<PrivateSaleOffer> = {}): PrivateSaleOffer => ({
@@ -22,7 +24,7 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   createTestNpcHorse({
     id: "horse-1",
     name: "Thunder",
-    stableId: "stable-1",
+    ownership: makeNpcOwned(asNpcStableId("stable-1")),
     ...overrides,
   });
 
@@ -65,8 +67,8 @@ describe("privateSaleSlice", () => {
     const state = useGame.getState() as any;
     expect(state.cash).toBe(40000);
     const updatedHorse = state.horses["horse-1"];
-    expect(updatedHorse.owned).toBe(true);
-    expect(updatedHorse.stableId).toBeUndefined();
+    expect(updatedHorse.ownership?.type).toBe("player");
+    expect(getStableId(updatedHorse)).toBeNull();
     const offer = state.privateSaleOffers.find((o: PrivateSaleOffer) => o.id === "offer-1");
     expect(offer.status).toBe("accepted");
   });
@@ -179,7 +181,7 @@ describe("privateSaleSlice", () => {
   });
 
   it("proposePrivateSale with wrong stable — returns horse_not_in_stable", () => {
-    const horse = mkHorse({ stableId: "other-stable" });
+    const horse = mkHorse({ ownership: makeNpcOwned(asNpcStableId("other-stable")) });
     const stable = mkStable();
     seedStore({
       cash: 100000,

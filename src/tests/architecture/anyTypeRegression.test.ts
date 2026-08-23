@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { asNpcStableId } from "@/core/types/branded";
 
 /**
  * Regression tests for files using `: any` type annotations.
@@ -87,7 +88,7 @@ describe("`any` type regression: useDashboardData.ts entry filtering", () => {
       { horseId: "h2", ownership: { type: "player" } },
       { horseId: "h3", ownership: { type: "npc", stableId: asNpcStableId("npc2") } },
     ];
-    const hasOwned = entries.some((e: any) => e.owned);
+    const hasOwned = entries.some((e: any) => e.ownership?.type === "player");
     expect(hasOwned).toBe(true);
   });
 
@@ -95,8 +96,8 @@ describe("`any` type regression: useDashboardData.ts entry filtering", () => {
     const messages = [
       { id: "m1", day: 5, readAt: null, priority: "info" },
       { id: "m2", day: 10, readAt: null, priority: "urgent" },
-      { id: "m3", day: 3, readAt: "2024-01-01", priority: "normal" },
-      { id: "m4", day: 7, readAt: null, priority: "normal" },
+      { id: "m3", day: 3, readAt: "2024-01-01", priority: "info" },
+      { id: "m4", day: 7, readAt: null, priority: "action" },
     ];
     const filtered = messages
       .filter((m: any) => !m.readAt && m.priority !== "info")

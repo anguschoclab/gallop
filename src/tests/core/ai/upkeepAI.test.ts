@@ -10,6 +10,8 @@ import {
 } from "@/core/ai/upkeepAI";
 import type { Horse, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
+import { makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 
 function createMockHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -29,7 +31,7 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
     },
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 },
-    stableId: "stable-1",
+    ownership: makeNpcOwned(asNpcStableId("stable-1")),
     ...overrides,
   });
 }
@@ -68,8 +70,8 @@ describe("calculateMonthlyExpenseBudget", () => {
     const stable = createMockStable({ id: "stable-1", personality: "aggressive" });
     const state = createUpkeepAIState(stable);
     const horses = [
-      createMockHorse({ id: "h1", stableId: "stable-1" }),
-      createMockHorse({ id: "h2", stableId: "stable-1" }),
+      createMockHorse({ id: "h1", ownership: makeNpcOwned(asNpcStableId("stable-1")) }),
+      createMockHorse({ id: "h2", ownership: makeNpcOwned(asNpcStableId("stable-1")) }),
     ];
     const budget = calculateMonthlyExpenseBudget(state, stable, horses, 1);
     // 2 horses * 500 = 1000, * 1.3 (aggressive) = 1300
@@ -79,7 +81,7 @@ describe("calculateMonthlyExpenseBudget", () => {
   it("aggressive: spendingMultiplier = 1.3", () => {
     const stable = createMockStable({ id: "stable-1", personality: "aggressive" });
     const state = createUpkeepAIState(stable);
-    const horses = [createMockHorse({ stableId: "stable-1" })];
+    const horses = [createMockHorse({ ownership: makeNpcOwned(asNpcStableId("stable-1")) })];
     const budget = calculateMonthlyExpenseBudget(state, stable, horses, 1);
     expect(budget.totalBudget).toBe(650); // 500 * 1.3
   });
@@ -87,7 +89,7 @@ describe("calculateMonthlyExpenseBudget", () => {
   it("conservative: spendingMultiplier = 0.8", () => {
     const stable = createMockStable({ id: "stable-1", personality: "conservative" });
     const state = createUpkeepAIState(stable);
-    const horses = [createMockHorse({ stableId: "stable-1" })];
+    const horses = [createMockHorse({ ownership: makeNpcOwned(asNpcStableId("stable-1")) })];
     const budget = calculateMonthlyExpenseBudget(state, stable, horses, 1);
     expect(budget.totalBudget).toBe(400); // 500 * 0.8
   });
@@ -95,7 +97,7 @@ describe("calculateMonthlyExpenseBudget", () => {
   it("category budgets: feed=30%, veterinary=20%, training=25%, staff=15%, facilities=10%", () => {
     const stable = createMockStable({ id: "stable-1", personality: "aggressive" });
     const state = createUpkeepAIState(stable);
-    const horses = [createMockHorse({ stableId: "stable-1" })];
+    const horses = [createMockHorse({ ownership: makeNpcOwned(asNpcStableId("stable-1")) })];
     const budget = calculateMonthlyExpenseBudget(state, stable, horses, 1);
     // 1 horse * 500 = 500, * 1.3 (aggressive) = 650
     expect(budget.categoryBudgets.feed).toBe(650 * 0.3);
@@ -108,7 +110,7 @@ describe("calculateMonthlyExpenseBudget", () => {
   it("developer: categoryAdjustments multiplies veterinary *= 1.2", () => {
     const stable = createMockStable({ id: "stable-1", personality: "developer" });
     const state = createUpkeepAIState(stable);
-    const horses = [createMockHorse({ stableId: "stable-1" })];
+    const horses = [createMockHorse({ ownership: makeNpcOwned(asNpcStableId("stable-1")) })];
     const budget = calculateMonthlyExpenseBudget(state, stable, horses, 1);
     // base = 500 * 1.1 = 550, veterinary = 550 * 0.2 = 110, * 1.2 = 132
     expect(budget.categoryBudgets.veterinary).toBe(132);
@@ -117,7 +119,7 @@ describe("calculateMonthlyExpenseBudget", () => {
   it("win-now: categoryAdjustments multiplies training *= 1.3", () => {
     const stable = createMockStable({ id: "stable-1", personality: "win-now" });
     const state = createUpkeepAIState(stable);
-    const horses = [createMockHorse({ stableId: "stable-1" })];
+    const horses = [createMockHorse({ ownership: makeNpcOwned(asNpcStableId("stable-1")) })];
     const budget = calculateMonthlyExpenseBudget(state, stable, horses, 1);
     // base = 500 * 1.0 = 500, training = 500 * 0.25 = 125, * 1.3 = 162.5
     expect(budget.categoryBudgets.training).toBe(162.5);
@@ -126,7 +128,7 @@ describe("calculateMonthlyExpenseBudget", () => {
   it("reserveTarget = monthlyExpenses * targetReserveRatio", () => {
     const stable = createMockStable({ id: "stable-1", personality: "conservative" });
     const state = createUpkeepAIState(stable);
-    const horses = [createMockHorse({ stableId: "stable-1" })];
+    const horses = [createMockHorse({ ownership: makeNpcOwned(asNpcStableId("stable-1")) })];
     const budget = calculateMonthlyExpenseBudget(state, stable, horses, 1);
     // monthlyExpenses = 500, targetReserveRatio = 6
     expect(budget.reserveTarget).toBe(3000);
@@ -136,8 +138,8 @@ describe("calculateMonthlyExpenseBudget", () => {
     const stable = createMockStable({ id: "stable-1" });
     const state = createUpkeepAIState(stable);
     const horses = [
-      createMockHorse({ id: "h1", stableId: "stable-1" }),
-      createMockHorse({ id: "h2", stableId: "stable-2" }),
+      createMockHorse({ id: "h1", ownership: makeNpcOwned(asNpcStableId("stable-1")) }),
+      createMockHorse({ id: "h2", ownership: makeNpcOwned(asNpcStableId("stable-2")) }),
     ];
     const budget = calculateMonthlyExpenseBudget(state, stable, horses, 1);
     // Only 1 horse matches → 500 * 1.3 = 650
@@ -149,7 +151,7 @@ describe("shouldSpendOnCategory", () => {
   it("returns false when cash < reserveTarget", () => {
     const stable = createMockStable({ cash: 100, id: "stable-1", personality: "conservative" });
     const state = createUpkeepAIState(stable);
-    const horses = [createMockHorse({ stableId: "stable-1" })];
+    const horses = [createMockHorse({ ownership: makeNpcOwned(asNpcStableId("stable-1")) })];
     // 1 horse: monthlyExpenses = 500, reserveTarget = 500 * 6 = 3000, cash = 100 < 3000
     const result = shouldSpendOnCategory(state, "feed", 10, stable, horses, 1);
     expect(result).toBe(false);
@@ -158,7 +160,7 @@ describe("shouldSpendOnCategory", () => {
   it("returns true when amount within budget and propensity", () => {
     const stable = createMockStable({ cash: 1000000, id: "stable-1", personality: "aggressive" });
     const state = createUpkeepAIState(stable);
-    const horses = [createMockHorse({ stableId: "stable-1" })];
+    const horses = [createMockHorse({ ownership: makeNpcOwned(asNpcStableId("stable-1")) })];
     // 1 horse: totalBudget = 650, feed budget = 195, propensity = 0.8
     // budgetRatio = 100 / 195 ≈ 0.51 <= 0.8 → true
     const result = shouldSpendOnCategory(state, "feed", 100, stable, horses, 1);
@@ -168,7 +170,7 @@ describe("shouldSpendOnCategory", () => {
   it("returns false when amount exceeds category budget", () => {
     const stable = createMockStable({ cash: 1000000, id: "stable-1", personality: "aggressive" });
     const state = createUpkeepAIState(stable);
-    const horses = [createMockHorse({ stableId: "stable-1" })];
+    const horses = [createMockHorse({ ownership: makeNpcOwned(asNpcStableId("stable-1")) })];
     // feed budget = 195, propensity = 0.8, max amount = 195 * 0.8 = 156
     // amount = 200 → budgetRatio = 200/195 ≈ 1.03 > 0.8 → false
     const result = shouldSpendOnCategory(state, "feed", 200, stable, horses, 1);
@@ -178,7 +180,7 @@ describe("shouldSpendOnCategory", () => {
   it("win-now: categoryPropensity for training = 0.9", () => {
     const stable = createMockStable({ cash: 1000000, id: "stable-1", personality: "win-now" });
     const state = createUpkeepAIState(stable);
-    const horses = [createMockHorse({ stableId: "stable-1" })];
+    const horses = [createMockHorse({ ownership: makeNpcOwned(asNpcStableId("stable-1")) })];
     // 1 horse: totalBudget = 500, training = 125 * 1.3 = 162.5, propensity = 0.9
     // budgetRatio = 100 / 162.5 ≈ 0.615 <= 0.9 → true
     const result = shouldSpendOnCategory(state, "training", 100, stable, horses, 1);

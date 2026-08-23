@@ -6,6 +6,7 @@ import { createDefaultGameState } from "@/game/store/state";
 import { useGame } from "@/game/store";
 import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import type { Horse } from "@/game/types";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children }: any) => children,
@@ -26,7 +27,7 @@ describe("BredHorsesTab — age floor", () => {
     ) as unknown as Horse;
     horse.age = 3.9;
     horse.bredByPlayer = true;
-    horse.owned = true;
+    isPlayerOwned(horse) = true;
 
     renderWithStore(<BredHorsesTab />, {
       horses: { [horse.id]: horse },

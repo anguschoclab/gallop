@@ -9,6 +9,8 @@
  */
 
 import type { Horse, AuctionSale, AuctionLot } from "@/game/types";
+import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId, asHorseId, asPlayerOwnerId, asStableId } from "@/core/types/branded";
 import { horseMarketValue } from "@/core/horse/pricing";
 import { generateUUID } from "@/core/uuid";
 import type { InboxMessage } from "@/core/inbox/inboxTypes";
@@ -86,7 +88,7 @@ export function createAuctionSlice(
         day: s.day,
         priority: 100,
         type: "consignment",
-        horseId,
+        horseId: asHorseId(horseId),
         saleId,
         reservePrice: finalReserve,
       });
@@ -96,7 +98,7 @@ export function createAuctionSlice(
 
     withdrawConsignment: (horseId) => {
       const s = get();
-      const horse = s.horses[horseId];
+      const horse = s.horses[asHorseId(horseId)];
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.consignedSaleId) return { ok: false, reason: "Horse not consigned." };
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === horse.consignedSaleId);
@@ -110,7 +112,7 @@ export function createAuctionSlice(
         day: s.day,
         priority: 100,
         type: "consignment_withdrawal",
-        horseId,
+        horseId: asHorseId(horseId),
         saleId: horse.consignedSaleId,
       });
 
@@ -139,7 +141,7 @@ export function createAuctionSlice(
                         ...l,
                         bidHistory: [
                           ...(l.bidHistory || []),
-                          { stableId: "player", amount, tick: s.day },
+                          { stableId: asPlayerOwnerId("player"), amount, tick: s.day },
                         ],
                       }
                     : l,
@@ -183,7 +185,7 @@ export function createAuctionSlice(
             if (entityId) {
               // NPC stable cash change
               newNpcStables = newNpcStables.map((stable) =>
-                stable.id === entityId
+                stable.id === asStableId(entityId)
                   ? { ...stable, cash: Math.max(0, stable.cash + amount) }
                   : stable,
               );
@@ -201,8 +203,9 @@ export function createAuctionSlice(
                 ...newHorses,
                 [transferId]: {
                   ...newHorses[transferId],
-                  stableId: toStableId,
-                  owned: !toStableId,
+                  ownership: toStableId
+                    ? makeNpcOwned(asNpcStableId(toStableId))
+                    : makePlayerOwned(),
                 },
               };
             }

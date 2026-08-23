@@ -8,6 +8,7 @@ import { isMaleHorse, isFemaleHorse } from "@/core/horse/gender";
 import type { GameState, Horse, PrivateSaleOffer } from "@/game/types";
 import type { RaceEntry } from "@/core/race/types";
 import type { EntityLink } from "@/services/narrative/newsTypes";
+import { isPlayerOwned, getStableId } from "@/core/horse/ownership";
 
 export function getRivalryStatusLabel(f: number) {
   if (f >= 80) return "Heated Rival";
@@ -45,7 +46,7 @@ export function useNpcStableDetail(stableId: string) {
   const stable = getStableById(npcStables, stableId);
 
   const stableHorses = stable
-    ? Object.values(horses).filter((h: Horse) => h.stableId === stableId)
+    ? Object.values(horses).filter((h: Horse) => getStableId(h) === stableId)
     : [];
   const activeHorses = stableHorses.filter(
     (h: Horse) => !h.healthStatus || h.healthStatus === "healthy",
@@ -57,7 +58,7 @@ export function useNpcStableDetail(stableId: string) {
   const friction = stableAI?.friction ?? 0;
 
   const headToHead = useMemo(() => {
-    const ownedHorses = Object.values(horses).filter((h) => h.owned);
+    const ownedHorses = Object.values(horses).filter((h) => isPlayerOwned(h));
     const thirtyDaysAgo = day - 30;
     let wins = 0;
     let losses = 0;
@@ -67,7 +68,7 @@ export function useNpcStableDetail(stableId: string) {
         .forEach((raceResult: { raceId: string; position: number }) => {
           const race = races[raceResult.raceId];
           if (race && race.graded) {
-            const hadRivalEntry = race.entries.some((e: RaceEntry) => e.stableId === stableId);
+            const hadRivalEntry = race.entries.some((e: RaceEntry) => getStableId(e) === stableId);
             if (hadRivalEntry) {
               if (raceResult.position === 1) wins++;
               else losses++;

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Gavel, Tag, Scissors, Edit, DollarSign } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { AuctionSale, Horse } from "@/game/types";
+import { isPlayerOwned } from "@/core/horse/ownership";
 import { useGame } from "@/game/store";
 import { toast } from "sonner";
 
@@ -26,7 +27,7 @@ export function HorseManagementSection({
   const renameHorse = useGame((s) => s.renameHorse);
   const updateStudFee = useGame((s) => s.updateStudFee);
 
-  if (!horse.owned) return null;
+  if (!isPlayerOwned(horse)) return null;
 
   const handleGelding = () => {
     if (confirm(`Geld ${horse.name}? This cannot be undone.`)) {

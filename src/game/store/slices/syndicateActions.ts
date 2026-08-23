@@ -5,6 +5,8 @@
  */
 
 import { generateUUID } from "@/core/uuid";
+import { makePlayerOwned, makeNpcOwned, getStableId } from "@/core/horse/ownership";
+import { asNpcStableId, asHorseId, asPlayerOwnerId, asOwnerKey } from "@/core/types/branded";
 import type { ShareActivityFeedItem } from "@/core/breeding/types";
 import { findMajorityOwner } from "@/core/breeding/devolutionUtils";
 import type {
@@ -32,10 +34,12 @@ export function createSyndicateActions(
 > {
   function checkDevolution(syndicateId: string): void {
     const updatedSyndicate = get().syndicates?.[syndicateId];
-    const stallion = updatedSyndicate ? get().horses[updatedSyndicate.stallionId] : undefined;
+    const stallion = updatedSyndicate
+      ? get().horses[asHorseId(updatedSyndicate.stallionId)]
+      : undefined;
     if (!updatedSyndicate || !stallion) return;
 
-    const currentOwnerKey = stallion.stableId ?? "player";
+    const currentOwnerKey = getStableId(stallion) ?? "player";
     const devolutionResult = findMajorityOwner(
       updatedSyndicate.shareHolders,
       updatedSyndicate.totalShares,
@@ -51,8 +55,7 @@ export function createSyndicateActions(
         ...state.horses,
         [stallion.id]: {
           ...state.horses[stallion.id],
-          stableId: newStableId,
-          owned: !newStableId,
+          ownership: newStableId ? makeNpcOwned(asNpcStableId(newStableId)) : makePlayerOwned(),
         },
       },
       shareActivityFeed: [
@@ -142,7 +145,7 @@ export function createSyndicateActions(
       const syndicate = s.syndicates?.[syndicateId];
       if (!syndicate) return { ok: false, reason: "Syndicate not found." };
 
-      const playerShares = syndicate.shareHolders?.["player"] || 0;
+      const playerShares = syndicate.shareHolders?.[asPlayerOwnerId("player")] || 0;
       if (playerShares < shares) return { ok: false, reason: "You don't own enough shares." };
 
       const intent: ShareSaleIntent = {
@@ -167,7 +170,7 @@ export function createSyndicateActions(
       if (!syndicate) return { ok: false, reason: "Syndicate not found." };
       if (sharesOffered <= 0) return { ok: false, reason: "Must offer at least one share." };
 
-      const playerShares = syndicate.shareHolders["player"] ?? 0;
+      const playerShares = syndicate.shareHolders?.[asPlayerOwnerId("player")] ?? 0;
       if (playerShares < sharesOffered) {
         return { ok: false, reason: "You don't own that many shares to sell." };
       }
@@ -181,7 +184,7 @@ export function createSyndicateActions(
         id: investorId,
         syndicateId,
         name,
-        stableId: investorId,
+        stableId: asPlayerOwnerId(investorId),
         personality,
         shares: sharesOffered,
         investedCash: price,
@@ -198,8 +201,9 @@ export function createSyndicateActions(
             ...syndicate,
             shareHolders: {
               ...syndicate.shareHolders,
-              player: playerShares - sharesOffered,
-              [investorId]: (syndicate.shareHolders[investorId] ?? 0) + sharesOffered,
+              [asPlayerOwnerId("player")]: playerShares - sharesOffered,
+              [asOwnerKey(investorId)]:
+                (syndicate.shareHolders[asOwnerKey(investorId)] ?? 0) + sharesOffered,
             },
           },
         },
@@ -212,8 +216,8 @@ export function createSyndicateActions(
           {
             id: generateUUID(),
             syndicateId,
-            buyerStableId: investorId,
-            sellerStableId: "player",
+            buyerStableId: asOwnerKey(investorId),
+            sellerStableId: asPlayerOwnerId("player"),
             shares: sharesOffered,
             pricePerShare: syndicate.sharePrice,
             day: state.day,
@@ -226,8 +230,8 @@ export function createSyndicateActions(
             syndicateId,
             syndicateName: syndicate.stallionName,
             type: "investor_solicit" as const,
-            buyerStableId: investorId,
-            sellerStableId: "player",
+            buyerStableId: asOwnerKey(investorId),
+            sellerStableId: asPlayerOwnerId("player"),
             shares: sharesOffered,
             pricePerShare: syndicate.sharePrice,
             cashMoved: price,
@@ -263,8 +267,9 @@ export function createSyndicateActions(
       const nextInvestors = { ...(s.syndicateInvestors ?? {}) };
       delete nextInvestors[investorId];
       const nextHolders = { ...syndicate.shareHolders };
-      delete nextHolders[investorId];
-      nextHolders.player = (nextHolders.player ?? 0) + investor.shares;
+      delete nextHolders[asOwnerKey(investorId)];
+      nextHolders[asPlayerOwnerId("player")] =
+        (nextHolders[asPlayerOwnerId("player")] ?? 0) + investor.shares;
 
       set((state) => ({
         cash: state.cash - price,
@@ -278,8 +283,8 @@ export function createSyndicateActions(
           {
             id: generateUUID(),
             syndicateId: investor.syndicateId,
-            buyerStableId: "player",
-            sellerStableId: investorId,
+            buyerStableId: asPlayerOwnerId("player"),
+            sellerStableId: asOwnerKey(investorId),
             shares: investor.shares,
             pricePerShare: syndicate.sharePrice,
             day: state.day,
@@ -292,8 +297,8 @@ export function createSyndicateActions(
             syndicateId: investor.syndicateId,
             syndicateName: syndicate.stallionName,
             type: "investor_buyout" as const,
-            buyerStableId: "player",
-            sellerStableId: investorId,
+            buyerStableId: asPlayerOwnerId("player"),
+            sellerStableId: asOwnerKey(investorId),
             shares: investor.shares,
             pricePerShare: syndicate.sharePrice,
             cashMoved: price,

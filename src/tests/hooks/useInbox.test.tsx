@@ -46,18 +46,65 @@ describe("useInbox — filtering", () => {
     expect(result.current.filteredMessages.map((m) => m.id)).toEqual(["m1", "m3"]);
   });
 
-  it("filter 'action' returns only messages where priority is not 'info'", () => {
+  it("filter 'action' returns only messages where priority is not 'info' or 'low'", () => {
     const messages = [
       mkMsg("m1", { priority: "info" }),
       mkMsg("m2", { priority: "action" }),
       mkMsg("m3", { priority: "urgent" }),
+      mkMsg("m4", { priority: "low" as any }),
+      mkMsg("m5", { priority: "critical" as any }),
     ];
     seedStore({ ...createDefaultGameState(), inbox: messages });
 
     const { result } = renderHook(() => useInbox());
     act(() => result.current.setFilter("action"));
+    expect(result.current.filteredMessages).toHaveLength(3);
+    expect(result.current.filteredMessages.map((m) => m.id)).toEqual(["m2", "m3", "m5"]);
+  });
+
+  it("filter 'critical' returns only critical priority messages", () => {
+    const messages = [
+      mkMsg("m1", { priority: "info" }),
+      mkMsg("m2", { priority: "critical" as any }),
+      mkMsg("m3", { priority: "urgent" }),
+      mkMsg("m4", { priority: "critical" as any }),
+    ];
+    seedStore({ ...createDefaultGameState(), inbox: messages });
+
+    const { result } = renderHook(() => useInbox());
+    act(() => result.current.setFilter("critical" as any));
     expect(result.current.filteredMessages).toHaveLength(2);
-    expect(result.current.filteredMessages.map((m) => m.id)).toEqual(["m2", "m3"]);
+    expect(result.current.filteredMessages.map((m) => m.id)).toEqual(["m2", "m4"]);
+  });
+
+  it("filter 'urgent' returns only urgent priority messages", () => {
+    const messages = [
+      mkMsg("m1", { priority: "info" }),
+      mkMsg("m2", { priority: "urgent" }),
+      mkMsg("m3", { priority: "action" }),
+      mkMsg("m4", { priority: "urgent" }),
+    ];
+    seedStore({ ...createDefaultGameState(), inbox: messages });
+
+    const { result } = renderHook(() => useInbox());
+    act(() => result.current.setFilter("urgent" as any));
+    expect(result.current.filteredMessages).toHaveLength(2);
+    expect(result.current.filteredMessages.map((m) => m.id)).toEqual(["m2", "m4"]);
+  });
+
+  it("filter 'low' returns only low priority messages", () => {
+    const messages = [
+      mkMsg("m1", { priority: "info" }),
+      mkMsg("m2", { priority: "low" as any }),
+      mkMsg("m3", { priority: "action" }),
+      mkMsg("m4", { priority: "low" as any }),
+    ];
+    seedStore({ ...createDefaultGameState(), inbox: messages });
+
+    const { result } = renderHook(() => useInbox());
+    act(() => result.current.setFilter("low" as any));
+    expect(result.current.filteredMessages).toHaveLength(2);
+    expect(result.current.filteredMessages.map((m) => m.id)).toEqual(["m2", "m4"]);
   });
 
   it("default filter is 'all'", () => {
@@ -280,5 +327,15 @@ describe("getPriorityColor", () => {
   it("returns blue classes for 'info' (default)", () => {
     const cls = getPriorityColor("info");
     expect(cls).toContain("blue-500");
+  });
+
+  it("returns red-600 classes for 'critical'", () => {
+    const cls = getPriorityColor("critical" as any);
+    expect(cls).toContain("red-600");
+  });
+
+  it("returns blue-300 classes for 'low'", () => {
+    const cls = getPriorityColor("low" as any);
+    expect(cls).toContain("blue-300");
   });
 });

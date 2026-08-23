@@ -57,7 +57,11 @@ describe("ActiveProgramView — Set-based mare filtering", () => {
   });
 
   it("shows eligible mares (owned, mare/filly, age >= 3, not enrolled)", () => {
-    const mare1 = createTestMare({ id: "mare-1", name: "Thunder Belle", ownership: { type: "player" } });
+    const mare1 = createTestMare({
+      id: "mare-1",
+      name: "Thunder Belle",
+      ownership: { type: "player" },
+    });
     renderWithStore(<ActiveProgramView />, {
       activeBreedingProgram: mkProgram({ enrolledDamIds: [] }),
       horses: h2r([mare1]),
@@ -66,7 +70,11 @@ describe("ActiveProgramView — Set-based mare filtering", () => {
   });
 
   it("shows enrolled mares in the Enrolled Mares section", () => {
-    const mare2 = createTestMare({ id: "mare-2", name: "Lightning Grace", ownership: { type: "player" } });
+    const mare2 = createTestMare({
+      id: "mare-2",
+      name: "Lightning Grace",
+      ownership: { type: "player" },
+    });
     renderWithStore(<ActiveProgramView />, {
       activeBreedingProgram: mkProgram({ enrolledDamIds: ["mare-2"] }),
       horses: h2r([mare2]),
@@ -78,8 +86,16 @@ describe("ActiveProgramView — Set-based mare filtering", () => {
   });
 
   it("does not show colts as eligible mares", () => {
-    const colt = createTestColt({ id: "colt-1", name: "Should Not Appear", ownership: { type: "player" } });
-    const mare = createTestMare({ id: "mare-1", name: "Eligible Mare", ownership: { type: "player" } });
+    const colt = createTestColt({
+      id: "colt-1",
+      name: "Should Not Appear",
+      ownership: { type: "player" },
+    });
+    const mare = createTestMare({
+      id: "mare-1",
+      name: "Eligible Mare",
+      ownership: { type: "player" },
+    });
     renderWithStore(<ActiveProgramView />, {
       activeBreedingProgram: mkProgram({ enrolledDamIds: [] }),
       horses: h2r([colt, mare]),
@@ -91,8 +107,16 @@ describe("ActiveProgramView — Set-based mare filtering", () => {
   });
 
   it("does not show unowned horses as eligible", () => {
-    const unownedMare = createTestMare({ id: "mare-3", name: "Unowned Mare", ownership: { type: "unowned" } });
-    const ownedMare = createTestMare({ id: "mare-1", name: "Owned Mare", ownership: { type: "player" } });
+    const unownedMare = createTestMare({
+      id: "mare-3",
+      name: "Unowned Mare",
+      ownership: { type: "unowned" },
+    });
+    const ownedMare = createTestMare({
+      id: "mare-1",
+      name: "Owned Mare",
+      ownership: { type: "player" },
+    });
     renderWithStore(<ActiveProgramView />, {
       activeBreedingProgram: mkProgram({ enrolledDamIds: [] }),
       horses: h2r([unownedMare, ownedMare]),
@@ -132,7 +156,11 @@ describe("ActiveProgramView — cancellation dialog", () => {
 
   it("cancels the program and shows a toast when confirming the dialog", () => {
     const program = mkProgram({ id: "prog-cancel-confirm", enrolledDamIds: ["mare-1"] });
-    const mare = createTestMare({ id: "mare-1", name: "Enrolled Mare", ownership: { type: "player" } });
+    const mare = createTestMare({
+      id: "mare-1",
+      name: "Enrolled Mare",
+      ownership: { type: "player" },
+    });
     renderWithStore(<ActiveProgramView />, {
       activeBreedingProgram: program,
       breedingPrograms: [program],

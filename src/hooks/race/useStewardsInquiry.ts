@@ -4,7 +4,7 @@
  * Called after `resolveRaceWithImpacts` fires when the player is watching a race
  * in the UI. Rolls against `calculateInquiryProbability`, and if an inquiry is
  * triggered, pushes a resolved StewardsInquiry into the store so that
- * StewardsInquiryOverlay picks it up.
+ * StewardsDigestToast picks it up.
  *
  * The pipeline's stewardsPhase skips any race that has a player-entered horse,
  * so this hook is the sole path for player-race inquiries.

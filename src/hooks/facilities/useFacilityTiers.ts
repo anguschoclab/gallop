@@ -11,6 +11,8 @@ import {
   type FacilityType,
   type FacilityLevel,
 } from "@/core/facilities";
+import { canUpgradeFacility } from "@/core/reputation";
+import type { ReputationTier } from "@/core/reputation";
 
 const FACILITY_LEVELS: FacilityLevel[] = ["basic", "standard", "premium", "elite"];
 
@@ -36,17 +38,24 @@ export interface FacilityTierInfo {
   canAfford: boolean;
   rankVal: number;
   enabledWorkouts: string[];
+  canUpgradeByReputation: boolean;
+  requiredRepTier: ReputationTier | null;
 }
 
 export function useFacilityTiers(
   facility: { level: FacilityLevel; upgradeCost: number; maintenanceCost: number } | undefined,
   cash: number,
+  reputationTier: ReputationTier = "unknown",
 ): FacilityTierInfo {
   const currentLevelIndex = facility ? FACILITY_LEVELS.indexOf(facility.level) : -1;
   const maxLevel = currentLevelIndex >= FACILITY_LEVELS.length - 1;
   const upgradeCost = facility?.upgradeCost ?? 0;
   const canAfford = cash >= upgradeCost;
   const rankVal = facility ? getRankValue(facility.level) : 0;
+
+  const repGate = facility
+    ? canUpgradeFacility(facility.level, reputationTier)
+    : { allowed: true, requiredTier: reputationTier };
 
   return {
     currentLevelIndex,
@@ -55,6 +64,8 @@ export function useFacilityTiers(
     canAfford,
     rankVal,
     enabledWorkouts: [],
+    canUpgradeByReputation: repGate.allowed,
+    requiredRepTier: maxLevel ? null : repGate.requiredTier,
   };
 }
 

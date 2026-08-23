@@ -2,10 +2,13 @@ import { buildRaceField, rngForRace } from "@/services/race/raceSimulationServic
 import { runRaceToCompletion } from "@/core/race/engine/simulation";
 import { getCourseForRace } from "@/data/tracks";
 import type { Race, Horse, Jockey, Stable, RaceRunner } from "@/game/types";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { asHorseId, asJockeyId } from "@/core/types/branded";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { RaceSnapshot, PaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { DEFAULT_DT, defaultMaxTime } from "@/constants/raceEngineConstants";
+import type { RunnerFactorLedger } from "@/core/race/factorLedger";
 
 export interface RaceSimulationResult {
   raceId: string;
@@ -13,6 +16,7 @@ export interface RaceSimulationResult {
   runners: RaceRunner[];
   snapshots: RaceSnapshot[];
   paceSnapshots: PaceSnapshot[];
+  factorLedgers: Record<string, RunnerFactorLedger>;
 }
 
 /**
@@ -67,15 +71,15 @@ export function simulateRace(
   const course = getCourseForRace(race);
 
   // Default to recording snapshots only if a player-owned horse is in the field
-  const shouldRecord = recordSnapshots ?? runners.some((r) => r.owned);
+  const shouldRecord = recordSnapshots ?? runners.some((r) => r.isPlayer);
 
   // Use coarser timestep for non-player races to reduce simulation cost 4x.
   // Player races keep DEFAULT_DT (0.1) for accuracy and replay fidelity.
-  const hasPlayerHorse = runners.some((r) => r.owned);
+  const hasPlayerHorse = runners.some((r) => r.isPlayer);
   const dt = hasPlayerHorse ? DEFAULT_DT : 0.4;
   const maxTime = defaultMaxTime(race.distance);
 
-  const { result, snapshots, paceSnapshots } = runRaceToCompletion(
+  const { result, snapshots, paceSnapshots, factorLedgers } = runRaceToCompletion(
     runners,
     race.distance,
     rng,
@@ -101,12 +105,22 @@ export function simulateRace(
     raceId: race.id,
     result,
     runners: runners.map(
-      ({ horseId, name, silk, owned, jockey, gate, lane, runningStyle, jockeyInstructions }) => ({
+      ({
         horseId,
         name,
         silk,
-        owned,
-        jockeyId: jockey?.id || "ai",
+        isPlayer,
+        jockey,
+        gate,
+        lane,
+        runningStyle,
+        jockeyInstructions,
+      }) => ({
+        horseId: asHorseId(horseId),
+        name,
+        silk,
+        ownership: isPlayer ? makePlayerOwned() : makeUnowned(),
+        jockeyId: asJockeyId(jockey?.id || "ai"),
         jockeyName: jockey?.name || "AI Jockey",
         gate,
         lane,
@@ -124,5 +138,6 @@ export function simulateRace(
 
     snapshots,
     paceSnapshots,
+    factorLedgers,
   };
 }

@@ -99,7 +99,7 @@ export function useLeaderboardState(
 
   const sorted = useMemo(() => {
     const filtered = rows.filter(({ r, beyer }) => {
-      if (filter === "owned" && !r.owned) return false;
+      if (filter === "owned" && !r.isPlayer) return false;
       if (filter === "top5" && (positionRank.get(r.horseId) ?? FALLBACK_RANK) > TOP_N_FILTER)
         return false;
       if (minBeyer > 0 && (beyer ?? 0) < minBeyer) return false;

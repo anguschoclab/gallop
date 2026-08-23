@@ -29,7 +29,11 @@ export function generateJockeyFeeImpacts(
     phase: "raceResolution",
     logLevel: "conditional",
     type: "cash_change",
-    entityId: (playerOwned ? "player" : horse.ownership?.type === "npc" ? horse.ownership.stableId : "") as string,
+    entityId: (playerOwned
+      ? "player"
+      : horse.ownership?.type === "npc"
+        ? horse.ownership.stableId
+        : "") as string,
     amount: -ridingFee,
     reason: `Jockey fee: ${jockey.name}`,
   };

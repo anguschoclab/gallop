@@ -1,5 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGame } from "@/game/store";
+import { isPlayerOwned } from "@/core/horse/ownership";
+import { asPlayerOwnerId } from "@/core/types/branded";
 import { formatCurrency } from "@/core/common/formatting";
 import { Activity, Heart, Briefcase, Zap } from "lucide-react";
 
@@ -11,10 +13,10 @@ export function OperationsTicker() {
   const syndicates = useGame((s) => s.syndicates);
 
   const activeHorses = Object.values(horses).filter(
-    (h) => h.owned && h.lifecycleStatus === "active",
+    (h) => isPlayerOwned(h) && h.lifecycleStatus === "active",
   );
   const playerSyndicates = Object.values(syndicates).filter(
-    (s) => s.shareHolders["player"] !== undefined,
+    (s) => s.shareHolders[asPlayerOwnerId("player")] !== undefined,
   );
 
   return (

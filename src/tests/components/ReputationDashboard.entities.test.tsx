@@ -23,7 +23,11 @@ vi.mock("@tanstack/react-router", () => ({
 
 describe("ReputationDashboard — entity linking", () => {
   it("renders event description with NewsContent auto-detection for horse names", () => {
-    const horse = createTestHorse({ id: "h1", name: "Champion Horse", ownership: { type: "player" } });
+    const horse = createTestHorse({
+      id: "h1",
+      name: "Champion Horse",
+      ownership: { type: "player" },
+    });
     const reputation: ManagerReputation = {
       score: 500,
       totalWins: 10,

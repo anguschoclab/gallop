@@ -23,6 +23,7 @@ import type {
   StudCareer,
 } from "@/game/types";
 import { resolveFoaling } from "@/core/horse/horseFactory";
+import { getStableId } from "@/core/horse/ownership";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { formatCurrency } from "@/core/common/formatting";
@@ -121,8 +122,9 @@ export function resolvePregnancies(
       parentNameBlendingEnabled,
     };
 
-    if (dam?.stableId) {
-      const stable = stableMap.get(dam.stableId);
+    const damStableId = getStableId(dam);
+    if (damStableId) {
+      const stable = stableMap.get(damStableId);
       if (stable) {
         const regionalSystem = getRegionalSystemFromCountry(stable.country || "USA");
         namingContext.region = regionalSystem;

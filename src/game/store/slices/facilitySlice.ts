@@ -12,6 +12,8 @@ import type { PlayerFacilities } from "@/core/facilities";
 import { formatCurrency } from "@/core/common/formatting";
 import { generateUUID } from "@/core/uuid";
 import { facilityUpgradeCost } from "@/core/facilities";
+import { canUpgradeFacility } from "@/core/reputation";
+import { getReputationTier, formatReputationTier } from "@/core/reputation";
 import type { ActionResult } from "../types";
 import type { GameStateCreator } from "../types";
 
@@ -34,6 +36,16 @@ export const createFacilitySlice: GameStateCreator<FacilitySlice> = (set, get) =
 
     if (facility.level === "elite")
       return { ok: false, reason: "Facility already at maximum level." };
+
+    const repScore = s.reputation?.score ?? 0;
+    const repTier = getReputationTier(repScore);
+    const gate = canUpgradeFacility(facility.level, repTier);
+    if (!gate.allowed) {
+      return {
+        ok: false,
+        reason: `Reputation too low. Upgrade requires ${formatReputationTier(gate.requiredTier)} reputation.`,
+      };
+    }
 
     const cost = facilityUpgradeCost(facility.level);
     if (s.cash < cost)

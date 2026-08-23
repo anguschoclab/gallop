@@ -1,4 +1,5 @@
 import type { Horse, Race, Jockey, Stable } from "@/game/types";
+import { getStableId } from "@/core/horse/ownership";
 import type { PipelineContext } from "@/core/time/pipeline";
 import { stepRunner, computePaceContext } from "@/core/race/engine/simulation";
 import { buildRunner, getConditionsModifier, type Runner } from "@/core/race/engine/runnerBuilder";
@@ -81,7 +82,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   // 1. Prepare the full list of entry data (carry gate from pre-assigned draws)
   const entriesData: {
     horseId: string;
-    owned: boolean;
+    isPlayer: boolean;
     jockeyId?: string;
     weight?: number;
     gate?: number;
@@ -89,7 +90,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   for (const entry of race.entries) {
     entriesData.push({
       horseId: entry.horseId,
-      owned: entry.owned,
+      isPlayer: entry.ownership?.type === "player",
       jockeyId: entry.jockeyId,
       weight: entry.weight,
       gate: entry.gate,
@@ -104,7 +105,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
     const jk = generateJockey({ tier: tier as never, rng });
     fillerJockeys.push(jk);
     const weight = calculateAssignedWeight(aiHorse, race);
-    entriesData.push({ horseId: aiHorse.id, owned: false, jockeyId: jk.id, weight });
+    entriesData.push({ horseId: aiHorse.id, isPlayer: false, jockeyId: jk.id, weight });
   }
 
   // Empty-field guard: always return at least 1 runner so downstream
@@ -115,7 +116,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
     const jk = generateJockey({ tier: tier as never, rng });
     fillerJockeys.push(jk);
     const weight = calculateAssignedWeight(aiHorse, race);
-    entriesData.push({ horseId: aiHorse.id, owned: false, jockeyId: jk.id, weight });
+    entriesData.push({ horseId: aiHorse.id, isPlayer: false, jockeyId: jk.id, weight });
   }
 
   // 3. Assign gates: respect pre-assigned gates, shuffle the rest
@@ -177,10 +178,11 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
     if (horse) {
       const jockeyObj = entryData.jockeyId ? jockeyMap.get(entryData.jockeyId) : undefined;
       // Get stable for AI-driven decisions
-      const stableObj = horse.stableId ? stableMap.get(horse.stableId) : undefined;
+      const horseStableId = getStableId(horse);
+      const stableObj = horseStableId ? stableMap.get(horseStableId) : undefined;
 
       // Get staff for this stable - optimize with Map for role lookup
-      const stableId = horse.stableId ?? "";
+      const stableId = horseStableId ?? "";
       const staffForStable = hiredStaff.filter((s) => s.stableId === stableId);
       const staffRoleMap = new Map(staffForStable.map((s) => [s.role, s]));
 
@@ -195,7 +197,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
       runners.push(
         buildRunner(
           horse,
-          entryData.owned,
+          entryData.isPlayer,
           race.distance,
           surface ?? null,
           conditions,
@@ -254,7 +256,7 @@ function populateRivalHorseIds(
   // Build a map of stableId -> horseIds in this race
   const stableHorsesInRace = new Map<string, string[]>();
   for (const runner of runners) {
-    const stableId = runner.horse?.stableId;
+    const stableId = getStableId(runner.horse);
     if (stableId) {
       const list = stableHorsesInRace.get(stableId) ?? [];
       list.push(runner.horseId);
@@ -264,7 +266,7 @@ function populateRivalHorseIds(
 
   // For each runner, find rival horses from rival stables in this race
   for (const runner of runners) {
-    const stableId = runner.horse?.stableId;
+    const stableId = getStableId(runner.horse);
     if (!stableId) continue;
     const rivals = stableRivals.get(stableId);
     if (!rivals) continue;

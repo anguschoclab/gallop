@@ -1,4 +1,5 @@
 import type { Race, Horse, RaceRunner } from "@/game/types";
+import { isPlayerOwned } from "@/core/horse/ownership";
 import type { SeasonRecord, HallOfFameEntry, TrackRecord } from "@/core/history/historyTypes";
 import { generateUUID } from "@/core/uuid";
 import { getCareerStats } from "@/core/horse/stats";
@@ -50,7 +51,7 @@ export function recordRaceHistory(
     jockeyId: runner?.jockeyId || "unknown",
     jockeyName: runner?.jockeyName || "Unknown",
     grade: "G1",
-    isPlayerOwned: winnerHorse?.owned || false,
+    isPlayerOwned: isPlayerOwned(winnerHorse),
     gate: runner?.gate,
   };
 }

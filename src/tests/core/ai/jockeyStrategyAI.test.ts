@@ -579,11 +579,17 @@ describe("calculateOptimalTactics field-aware adjustments", () => {
     const horse = createMockHorse({ recoveryPoints: 80, runningStyle: "S" });
     const smallFieldRace = createMockRace({
       fieldSize: 6,
-      entries: Array.from({ length: 5 }, (_, i) => ({ horseId: `h${i}`, ownership: { type: "unowned" } })),
+      entries: Array.from({ length: 5 }, (_, i) => ({
+        horseId: `h${i}`,
+        ownership: { type: "unowned" },
+      })),
     });
     const largeFieldRace = createMockRace({
       fieldSize: 14,
-      entries: Array.from({ length: 13 }, (_, i) => ({ horseId: `h${i}`, ownership: { type: "unowned" } })),
+      entries: Array.from({ length: 13 }, (_, i) => ({
+        horseId: `h${i}`,
+        ownership: { type: "unowned" },
+      })),
     });
     const jockey = createMockJockey();
 
@@ -614,11 +620,17 @@ describe("calculateOptimalTactics field-aware adjustments", () => {
     const horse = createMockHorse({ recoveryPoints: 80, runningStyle: "E" });
     const smallFieldRace = createMockRace({
       fieldSize: 6,
-      entries: Array.from({ length: 5 }, (_, i) => ({ horseId: `h${i}`, ownership: { type: "unowned" } })),
+      entries: Array.from({ length: 5 }, (_, i) => ({
+        horseId: `h${i}`,
+        ownership: { type: "unowned" },
+      })),
     });
     const largeFieldRace = createMockRace({
       fieldSize: 16,
-      entries: Array.from({ length: 15 }, (_, i) => ({ horseId: `h${i}`, ownership: { type: "unowned" } })),
+      entries: Array.from({ length: 15 }, (_, i) => ({
+        horseId: `h${i}`,
+        ownership: { type: "unowned" },
+      })),
     });
     const jockey = createMockJockey();
 
@@ -750,7 +762,10 @@ describe("adjustForFieldComposition (standalone)", () => {
       horseMap.set(`h${i}`, createMockHorse({ id: `h${i}`, distanceAptitude: 0.3 }));
     }
     const race = createMockRace({
-      entries: Array.from({ length: 5 }, (_, i) => ({ horseId: `h${i}`, ownership: { type: "unowned" } })),
+      entries: Array.from({ length: 5 }, (_, i) => ({
+        horseId: `h${i}`,
+        ownership: { type: "unowned" },
+      })),
     });
     expect(adjustForFieldComposition("E", race, horseMap)).toBe("S");
   });
@@ -761,7 +776,10 @@ describe("adjustForFieldComposition (standalone)", () => {
       horseMap.set(`h${i}`, createMockHorse({ id: `h${i}`, distanceAptitude: 0.8 }));
     }
     const race = createMockRace({
-      entries: Array.from({ length: 5 }, (_, i) => ({ horseId: `h${i}`, ownership: { type: "unowned" } })),
+      entries: Array.from({ length: 5 }, (_, i) => ({
+        horseId: `h${i}`,
+        ownership: { type: "unowned" },
+      })),
     });
     expect(adjustForFieldComposition("S", race, horseMap)).toBe("E");
   });
@@ -773,7 +791,10 @@ describe("adjustForFieldComposition (standalone)", () => {
     horseMap.set("h2", createMockHorse({ id: "h2", distanceAptitude: 0.8 }));
     horseMap.set("h3", createMockHorse({ id: "h3", distanceAptitude: 0.5 }));
     const race = createMockRace({
-      entries: Array.from({ length: 4 }, (_, i) => ({ horseId: `h${i}`, ownership: { type: "unowned" } })),
+      entries: Array.from({ length: 4 }, (_, i) => ({
+        horseId: `h${i}`,
+        ownership: { type: "unowned" },
+      })),
     });
     expect(adjustForFieldComposition("P", race, horseMap)).toBe("P");
   });
@@ -930,7 +951,10 @@ describe("calculateOptimalTactics — trait awareness", () => {
     const horse = createMockHorse({ recoveryPoints: 80, runningStyle: "P" });
     const bigRace = createMockRace({
       fieldSize: 16,
-      entries: Array.from({ length: 15 }, (_, i) => ({ horseId: `h${i}`, ownership: { type: "unowned" } })),
+      entries: Array.from({ length: 15 }, (_, i) => ({
+        horseId: `h${i}`,
+        ownership: { type: "unowned" },
+      })),
     });
 
     const bigMatchTactics = calculateOptimalTactics(
@@ -1017,7 +1041,10 @@ describe("calculateJockeyAggressiveness — trait awareness", () => {
     const horse = createMockHorse();
     const bigRace = createMockRace({
       fieldSize: 16,
-      entries: Array.from({ length: 15 }, (_, i) => ({ horseId: `h${i}`, ownership: { type: "unowned" } })),
+      entries: Array.from({ length: 15 }, (_, i) => ({
+        horseId: `h${i}`,
+        ownership: { type: "unowned" },
+      })),
     });
     const stable = createMockStable();
 

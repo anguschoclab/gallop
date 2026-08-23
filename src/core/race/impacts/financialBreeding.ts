@@ -97,19 +97,20 @@ export function generateFinancialBreedingImpacts(
           : sire.stud.lifetimeG1Foals;
 
       const previousFee = sire.stud.standingFee;
-      const newFee = sire.ownership?.type === "npc"
-        ? recalcStandingFee(
-            {
-              ...sire,
-              stud: {
-                ...sire.stud,
-                lifetimeStakesFoals: newStakesFoals,
-                lifetimeG1Foals: newG1Foals,
+      const newFee =
+        sire.ownership?.type === "npc"
+          ? recalcStandingFee(
+              {
+                ...sire,
+                stud: {
+                  ...sire.stud,
+                  lifetimeStakesFoals: newStakesFoals,
+                  lifetimeG1Foals: newG1Foals,
+                },
               },
-            },
-            newDay,
-          )
-        : sire.stud.standingFee;
+              newDay,
+            )
+          : sire.stud.standingFee;
 
       impacts.push({
         id: generateUUID(rng),

@@ -25,7 +25,11 @@ vi.mock("@tanstack/react-router", () => ({
 // The route component uses useInbox which reads from the game store
 describe("Inbox — entity linking", () => {
   it("renders message body with NewsContent auto-detection for horse names", async () => {
-    const horse = createTestHorse({ id: "h1", name: "Thunder Strike", ownership: { type: "player" } });
+    const horse = createTestHorse({
+      id: "h1",
+      name: "Thunder Strike",
+      ownership: { type: "player" },
+    });
     seedStore({
       ...createDefaultGameState(),
       day: 55,
@@ -293,5 +297,55 @@ describe("Inbox — ceremony integration", () => {
 
     const { container } = render(createElement(InboxPage));
     expect(container.textContent).toContain("View Awards");
+  });
+});
+
+describe("Inbox — priority tier rendering", () => {
+  it("renders critical priority messages with destructive button variant", () => {
+    seedStore({
+      ...createDefaultGameState(),
+      day: 10,
+      inbox: [
+        {
+          id: "msg-critical",
+          day: 5,
+          title: "Career-ending Injury",
+          body: "Your horse has sustained a career-ending injury.",
+          category: "injury",
+          priority: "critical" as any,
+          readAt: undefined,
+          cta: {
+            label: "View Horse",
+            route: "stable.$horseId",
+            params: { horseId: "h1" },
+          },
+        },
+      ],
+    });
+
+    const { container } = render(createElement(InboxPage));
+    const destructiveButton = container.querySelector("button.bg-destructive");
+    expect(destructiveButton).not.toBeNull();
+  });
+
+  it("renders low priority messages without errors", () => {
+    seedStore({
+      ...createDefaultGameState(),
+      day: 10,
+      inbox: [
+        {
+          id: "msg-low",
+          day: 5,
+          title: "Moderate Injury",
+          body: "Your horse has a moderate injury. Recovery: 21 days.",
+          category: "injury",
+          priority: "low" as any,
+          readAt: undefined,
+        },
+      ],
+    });
+
+    const { container } = render(createElement(InboxPage));
+    expect(container.textContent).toContain("Moderate Injury");
   });
 });

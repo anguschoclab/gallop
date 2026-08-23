@@ -10,7 +10,7 @@ interface Props {
 }
 
 export function RaceBrowserCard({ race }: Props) {
-  const hasOwnedEntry = race.entries.some((e) => e.owned);
+  const hasOwnedEntry = race.entries.some((e) => e.ownership?.type === "player");
 
   return (
     <Card

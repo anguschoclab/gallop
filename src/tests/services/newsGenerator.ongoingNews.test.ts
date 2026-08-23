@@ -45,7 +45,11 @@ function createPlayerHorse(id = "player-horse", name = "Thunder Strike"): Horse 
 }
 
 function createNpcHorse(id = "npc-horse", name = "NPC Runner"): Horse {
-  return createTestHorse({ id, name, ownership: { type: "npc", stableId: asNpcStableId("npc-stable-1") } });
+  return createTestHorse({
+    id,
+    name,
+    ownership: { type: "npc", stableId: asNpcStableId("npc-stable-1") },
+  });
 }
 
 describe("generateWeeklyFlavorNews", () => {

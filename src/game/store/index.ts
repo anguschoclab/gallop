@@ -58,6 +58,8 @@ import type { StoreType, ActionResult, GameStateCreator } from "./types";
 import type { NewGameOptions } from "@/game/store/state";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
+import { formatInquiryType } from "@/core/stewards/stewardTypes";
+import { generateUUID } from "@/core/uuid";
 
 export type { StoreType, GameStateCreator } from "./types";
 
@@ -67,7 +69,7 @@ export type { StoreType, GameStateCreator } from "./types";
  * resets to defaults, keeping only fields that are always safe to carry over
  * (playerNominations, syndicateInvestors).
  */
-export const STORE_STATE_VERSION = 5;
+export const STORE_STATE_VERSION = 6;
 
 // List of state keys that should be persisted to storage.
 // NOTE: "horses" is handled specially by the storage adapter (split into
@@ -383,6 +385,22 @@ export const useGame = create<StoreType>()(
             stewardsInquiries: [...state.stewardsInquiries, inquiry],
             races,
             jockeys,
+            inbox: [
+              ...(state.inbox ?? []),
+              {
+                id: generateUUID(),
+                day: inquiry.day,
+                category: "stewards" as const,
+                priority: "urgent" as const,
+                title: `Stewards' Inquiry: ${race?.name ?? inquiry.raceId}`,
+                body: `${formatInquiryType(inquiry.type)} — ${inquiry.description}`,
+                cta: {
+                  label: "View Race",
+                  route: "race.$raceId",
+                  params: { raceId: inquiry.raceId },
+                },
+              },
+            ],
           };
         });
       },

@@ -174,7 +174,12 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // 6: Already-consigned horse
   // ---------------------------------------------------------------------------
   it("already-consigned horse returns error", () => {
-    const horse = createTestColt({ id: "h1", age: 3, ownership: { type: "player" }, consignedSaleId: "other-sale" });
+    const horse = createTestColt({
+      id: "h1",
+      age: 3,
+      ownership: { type: "player" },
+      consignedSaleId: "other-sale",
+    });
     seedStore([horse]);
 
     const result = useGame.getState().consignHorse("h1", "sale1");
@@ -222,7 +227,12 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // 10: Withdraw consignment enqueues withdrawal intent
   // ---------------------------------------------------------------------------
   it("withdrawConsignment enqueues consignment_withdrawal intent", () => {
-    const horse = createTestColt({ id: "h1", age: 3, ownership: { type: "player" }, consignedSaleId: "sale1" });
+    const horse = createTestColt({
+      id: "h1",
+      age: 3,
+      ownership: { type: "player" },
+      consignedSaleId: "sale1",
+    });
     seedStore([horse]);
 
     const result = useGame.getState().withdrawConsignment("h1");
@@ -359,8 +369,18 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // 16: High fan count produces higher reserve than fanCount 0
   // ---------------------------------------------------------------------------
   it("horseMarketValue with high fanCount produces higher reserve than with fanCount 0", () => {
-    const h0 = createTestColt({ id: "h-fan-0", age: 3, ownership: { type: "player" }, fanCount: 0 });
-    const hHigh = createTestColt({ id: "h-fan-high", age: 3, ownership: { type: "player" }, fanCount: 100000 });
+    const h0 = createTestColt({
+      id: "h-fan-0",
+      age: 3,
+      ownership: { type: "player" },
+      fanCount: 0,
+    });
+    const hHigh = createTestColt({
+      id: "h-fan-high",
+      age: 3,
+      ownership: { type: "player" },
+      fanCount: 100000,
+    });
 
     const val0 = horseMarketValue(h0, [h0]);
     const valHigh = horseMarketValue(hHigh, [hHigh]);
@@ -373,7 +393,12 @@ describe("auctionSlice consignHorse — valuation & reserve behavior", () => {
   // ---------------------------------------------------------------------------
   it("horseCareerValuation.current with high fanCount produces higher value", () => {
     const h0 = createTestColt({ id: "h-cv-0", age: 3, ownership: { type: "player" }, fanCount: 0 });
-    const hHigh = createTestColt({ id: "h-cv-high", age: 3, ownership: { type: "player" }, fanCount: 100000 });
+    const hHigh = createTestColt({
+      id: "h-cv-high",
+      age: 3,
+      ownership: { type: "player" },
+      fanCount: 100000,
+    });
 
     const cv0 = horseCareerValuation(h0, [h0]);
     const cvHigh = horseCareerValuation(hHigh, [hHigh]);

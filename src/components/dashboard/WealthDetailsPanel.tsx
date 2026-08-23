@@ -6,6 +6,7 @@ import { Link } from "@tanstack/react-router";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { formatCurrency } from "@/core/common/formatting";
 import { horseMarketValue } from "@/core/horse/pricing";
+import { isPlayerOwned, getStableId } from "@/core/horse/ownership";
 import { WEALTH_DETAILS_TOP_HORSES_LIMIT } from "@/constants";
 import { cn } from "@/lib/cn";
 import { ChevronDown } from "lucide-react";
@@ -23,7 +24,7 @@ export function WealthDetailsPanel({ stable, horses }: WealthDetailsPanelProps) 
   const topHorses = useMemo(() => {
     if (!stable) return [];
     const stableHorses = horses.filter((h) =>
-      stable.isPlayer ? h.owned : h.stableId === stable.stableId,
+      stable.isPlayer ? isPlayerOwned(h) : getStableId(h) === stable.stableId,
     );
     return stableHorses
       .map((h) => ({ horse: h, value: horseMarketValue(h, horses) }))

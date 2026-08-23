@@ -11,7 +11,7 @@ interface CalendarRaceItemProps {
 
 export function CalendarRaceItem({ race, region }: CalendarRaceItemProps) {
   const isSpecial = region.specialRaceKeys?.has(race.graded?.key ?? "");
-  const hasOwnedEntry = race.entries.some((e) => e.owned);
+  const hasOwnedEntry = race.entries.some((e) => e.ownership?.type === "player");
 
   return (
     <div

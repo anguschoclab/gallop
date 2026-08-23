@@ -11,6 +11,8 @@ import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { JARGON_DEFINITIONS } from "@/core/horse/jargon";
 import type { PlayerFacilities } from "@/core/facilities";
+import type { ReputationTier } from "@/core/reputation";
+import { formatReputationTier } from "@/core/reputation";
 
 interface FacilityCategoryProps {
   category: string;
@@ -19,6 +21,7 @@ interface FacilityCategoryProps {
   types: FacilityType[];
   facilities: PlayerFacilities;
   cash: number;
+  reputationTier: ReputationTier;
   onUpgrade: (type: FacilityType) => void;
 }
 
@@ -26,11 +29,14 @@ interface FacilityCardProps {
   type: FacilityType;
   facility: NonNullable<PlayerFacilities[FacilityType]>;
   cash: number;
+  reputationTier: ReputationTier;
   onUpgrade: (type: FacilityType) => void;
 }
 
-function FacilityCard({ type, facility, cash, onUpgrade }: FacilityCardProps) {
-  const { maxLevel, canAfford, rankVal } = useFacilityTiers(facility, cash);
+function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: FacilityCardProps) {
+  const { maxLevel, canAfford, rankVal, canUpgradeByReputation, requiredRepTier } =
+    useFacilityTiers(facility, cash, reputationTier);
+  const canUpgrade = canAfford && canUpgradeByReputation;
 
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none group hover:border-white/20 transition-all duration-300 relative overflow-hidden shadow-xl">
@@ -132,11 +138,11 @@ function FacilityCard({ type, facility, cash, onUpgrade }: FacilityCardProps) {
                   <TooltipTrigger asChild>
                     <Button
                       onClick={() => onUpgrade(type)}
-                      disabled={!canAfford}
-                      variant={canAfford ? "default" : "outline"}
+                      disabled={!canUpgrade}
+                      variant={canUpgrade ? "default" : "outline"}
                       className={cn(
                         "w-full h-10 uppercase text-[10px] font-black tracking-[0.2em] rounded-none transition-all",
-                        canAfford
+                        canUpgrade
                           ? "bg-gold hover:bg-gold-bright text-slate-950 shadow-lg"
                           : "border-white/5 text-cream/20 bg-transparent",
                       )}
@@ -155,6 +161,11 @@ function FacilityCard({ type, facility, cash, onUpgrade }: FacilityCardProps) {
                   Insufficient Capital Reserves
                 </p>
               )}
+              {!canUpgradeByReputation && requiredRepTier && (
+                <p className="text-center text-[8px] font-black uppercase text-amber-400/60 tracking-tighter">
+                  Requires {formatReputationTier(requiredRepTier)} Reputation
+                </p>
+              )}
             </div>
           )}
         </div>
@@ -170,6 +181,7 @@ export function FacilityCategory({
   types,
   facilities,
   cash,
+  reputationTier,
   onUpgrade,
 }: FacilityCategoryProps) {
   return (
@@ -189,6 +201,7 @@ export function FacilityCategory({
               type={type}
               facility={facility}
               cash={cash}
+              reputationTier={reputationTier}
               onUpgrade={onUpgrade}
             />
           );

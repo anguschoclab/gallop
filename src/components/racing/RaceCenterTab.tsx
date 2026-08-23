@@ -24,7 +24,7 @@ export function RaceCenterTab() {
     const ids = new Set<string>();
     for (const race of Object.values(races)) {
       for (const entry of race.entries) {
-        if (entry.owned) ids.add(entry.horseId);
+        if (entry.ownership?.type === "player") ids.add(entry.horseId);
       }
     }
     return ids;
@@ -33,7 +33,11 @@ export function RaceCenterTab() {
   const autoSelectFirst = useMemo(() => {
     if (selectedHorseId) return null;
     const firstEligible = horseList.find(
-      (h) => h.owned && h.lifecycleStatus === "active" && !h.consignedSaleId && !h.activeInjury,
+      (h) =>
+        h.ownership?.type === "player" &&
+        h.lifecycleStatus === "active" &&
+        !h.consignedSaleId &&
+        !h.activeInjury,
     );
     return firstEligible?.id ?? null;
   }, [horseList, selectedHorseId]);

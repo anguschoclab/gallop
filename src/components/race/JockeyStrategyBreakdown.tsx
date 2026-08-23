@@ -37,7 +37,7 @@ export const JockeyStrategyBreakdown = memo(function JockeyStrategyBreakdown({
     <div
       className={cn(
         "bg-black/30 border border-white/5 p-3 space-y-2",
-        runner.owned && "border-l-2 border-l-gold",
+        runner.isPlayer && "border-l-2 border-l-gold",
       )}
       data-testid="strategy-breakdown"
     >

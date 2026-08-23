@@ -10,6 +10,8 @@ import {
 } from "@/core/ai/syndicationAI";
 import type { Horse, Stable } from "@/game/types";
 import type { Syndicate } from "@/core/breeding/types";
+import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 
 function makeStallion(overrides: Partial<Horse> = {}): Horse {
   return {
@@ -91,7 +93,7 @@ describe("syndicationAI - calculateShareSale", () => {
   it("conservative NPC avoids devolution when owner", () => {
     // NPC owns 22/40, is current owner. Needs cash (triggers sale).
     // Threshold = 20. maxSellable = 22 - 20 - 1 = 1
-    const stallion = makeStallion({ stableId: "npc1" });
+    const stallion = makeStallion({ ownership: makeNpcOwned(asNpcStableId("npc1")) });
     const syndicate = makeSyndicate({ npc1: 22, player: 10 });
     // Cash < 100k triggers needsCash, but >= 50k so not cashCritical
     const stable = makeStable("npc1", "conservative", 80000);
@@ -102,7 +104,7 @@ describe("syndicationAI - calculateShareSale", () => {
   });
 
   it("conservative NPC sells freely when not owner", () => {
-    const stallion = makeStallion({ stableId: undefined }); // player-owned
+    const stallion = makeStallion({ ownership: makePlayerOwned() }); // player-owned
     const syndicate = makeSyndicate({ npc1: 10, player: 25 });
     // Cash < 100k triggers needsCash
     const stable = makeStable("npc1", "conservative", 80000);
@@ -113,7 +115,7 @@ describe("syndicationAI - calculateShareSale", () => {
   });
 
   it("aggressive NPC sells even if devolution", () => {
-    const stallion = makeStallion({ stableId: "npc1" });
+    const stallion = makeStallion({ ownership: makeNpcOwned(asNpcStableId("npc1")) });
     const syndicate = makeSyndicate({ npc1: 22, player: 10 });
     // Cash < 100k triggers needsCash, but >= 50k so not cashCritical
     const stable = makeStable("npc1", "aggressive", 80000);
@@ -124,7 +126,7 @@ describe("syndicationAI - calculateShareSale", () => {
   });
 
   it("conservative NPC forced to sell when cash-critical", () => {
-    const stallion = makeStallion({ stableId: "npc1" });
+    const stallion = makeStallion({ ownership: makeNpcOwned(asNpcStableId("npc1")) });
     const syndicate = makeSyndicate({ npc1: 22, player: 10 });
     // Cash < $50k is cashCritical — sell even if it causes devolution
     const stable = makeStable("npc1", "conservative", 30000);
@@ -135,7 +137,7 @@ describe("syndicationAI - calculateShareSale", () => {
   });
 
   it("returns 0 when no reason to sell", () => {
-    const stallion = makeStallion({ stableId: "npc1" });
+    const stallion = makeStallion({ ownership: makeNpcOwned(asNpcStableId("npc1")) });
     const syndicate = makeSyndicate({ npc1: 22, player: 10 });
     const stable = makeStable("npc1", "conservative", 500000);
 
@@ -151,7 +153,7 @@ describe("syndicationAI - calculateSharePurchase", () => {
     // 60 total shares, threshold = 30. Player 15, npc1 10, 35 unissued.
     // maxShares = floor(60 * 0.3) = 18. available = 18 - 10 = 8.
     // Player 15 <= 30, npc1 needs 15+1-10 = 6 shares. 6 <= 8, affordable.
-    const stallion = makeStallion({ stableId: undefined }); // player-owned
+    const stallion = makeStallion({ ownership: makePlayerOwned() }); // player-owned
     const syndicate = makeSyndicate({ player: 15, npc1: 10 }, 60, 10000);
     const stable = makeStable("npc1", "aggressive", 1000000);
 
@@ -164,7 +166,7 @@ describe("syndicationAI - calculateSharePurchase", () => {
     // 60 total shares. Owner has 35, npc1 has 5. 35 > 30, no devolution possible.
     // maxShares = 18, available = 13, affordable = 100, sharesToBuy = 13
     // 25% of 13 = 3
-    const stallion = makeStallion({ stableId: undefined });
+    const stallion = makeStallion({ ownership: makePlayerOwned() });
     const syndicate = makeSyndicate({ player: 35, npc1: 5 }, 60, 10000);
     const stable = makeStable("npc1", "aggressive", 1000000);
 
@@ -175,7 +177,7 @@ describe("syndicationAI - calculateSharePurchase", () => {
 
   it("prestige NPC attempts takeover for elite stallion (3+ G1 wins)", () => {
     const eliteStallion = makeStallion({
-      stableId: undefined,
+      ownership: makePlayerOwned(),
       raceHistory: [
         { raceId: "r1", raceName: "G1", position: 1, day: 100, grade: "G1" },
         { raceId: "r2", raceName: "G1", position: 1, day: 110, grade: "G1" },
@@ -191,7 +193,7 @@ describe("syndicationAI - calculateSharePurchase", () => {
   });
 
   it("prestige NPC does not attempt takeover for non-elite stallion", () => {
-    const stallion = makeStallion({ stableId: undefined }); // 1 G1 win
+    const stallion = makeStallion({ ownership: makePlayerOwned() }); // 1 G1 win
     // 60 shares, player 15, npc1 10. Takeover possible but stallion not elite enough.
     const syndicate = makeSyndicate({ player: 15, npc1: 10 }, 60, 10000);
     const stable = makeStable("npc1", "prestige", 1000000);
@@ -204,7 +206,7 @@ describe("syndicationAI - calculateSharePurchase", () => {
   });
 
   it("conservative NPC uses normal purchase logic", () => {
-    const stallion = makeStallion({ stableId: undefined });
+    const stallion = makeStallion({ ownership: makePlayerOwned() });
     // 60 shares, player 15, npc1 10. Takeover possible but conservative won't.
     const syndicate = makeSyndicate({ player: 15, npc1: 10 }, 60, 10000);
     const stable = makeStable("npc1", "conservative", 1000000);
@@ -217,7 +219,7 @@ describe("syndicationAI - calculateSharePurchase", () => {
   });
 
   it("respects cash limits for takeover", () => {
-    const stallion = makeStallion({ stableId: undefined });
+    const stallion = makeStallion({ ownership: makePlayerOwned() });
     // 60 shares, player 15, npc1 10. Takeover needs 6.
     // calculateSharePrice uses stallion value, not syndicate.sharePrice.
     // For 1 G1 win, $1M earnings: value ~610k, sharePrice ~10167.
@@ -232,7 +234,7 @@ describe("syndicationAI - calculateSharePurchase", () => {
   });
 
   it("returns 0 when already at max ownership", () => {
-    const stallion = makeStallion({ stableId: undefined });
+    const stallion = makeStallion({ ownership: makePlayerOwned() });
     // 40 shares, 30% cap = 12. npc1 has 12.
     const syndicate = makeSyndicate({ player: 10, npc1: 12 }, 40, 10000);
     const stable = makeStable("npc1", "aggressive", 1000000);
@@ -245,7 +247,7 @@ describe("syndicationAI - calculateSharePurchase", () => {
 describe("personality-driven syndicate creation with learning", () => {
   it("creates syndicate when base criteria met and no history", () => {
     const stable = makeStable("npc1", "aggressive", 500000);
-    const stallion = makeStallion({ stableId: "npc1" });
+    const stallion = makeStallion({ ownership: makeNpcOwned(asNpcStableId("npc1")) });
     const aiState = createSyndicationAIState(stable);
 
     const result = shouldCreateSyndicateWithLearning(aiState, stable, stallion, {});
@@ -254,7 +256,7 @@ describe("personality-driven syndicate creation with learning", () => {
 
   it("blocks creation when past success rate is low and history is long", () => {
     const stable = makeStable("npc1", "conservative", 500000);
-    const stallion = makeStallion({ stableId: "npc1" });
+    const stallion = makeStallion({ ownership: makeNpcOwned(asNpcStableId("npc1")) });
     let aiState = createSyndicationAIState(stable);
 
     for (let i = 0; i < 4; i++) {
@@ -279,7 +281,7 @@ describe("personality-driven syndicate creation with learning", () => {
 
   it("allows creation when success rate is high", () => {
     const stable = makeStable("npc1", "aggressive", 500000);
-    const stallion = makeStallion({ stableId: "npc1" });
+    const stallion = makeStallion({ ownership: makeNpcOwned(asNpcStableId("npc1")) });
     let aiState = createSyndicationAIState(stable);
 
     for (let i = 0; i < 5; i++) {
@@ -304,7 +306,7 @@ describe("personality-driven syndicate creation with learning", () => {
 
   it("blocks creation for low-confidence stable with mediocre success", () => {
     const stable = makeStable("npc1", "conservative", 500000);
-    const stallion = makeStallion({ stableId: "npc1" });
+    const stallion = makeStallion({ ownership: makeNpcOwned(asNpcStableId("npc1")) });
     let aiState = createSyndicationAIState(stable);
 
     // Record enough failures to push strategyConfidence below 0.4
@@ -340,7 +342,7 @@ describe("recordSyndicationOutcome — learning feedback loop", () => {
       aiState,
       {
         stallionId: "s1",
-        stableId: "npc1",
+        ownership: makeNpcOwned(asNpcStableId("npc1")),
         action: "create",
         shares: 20,
         value: 100000,

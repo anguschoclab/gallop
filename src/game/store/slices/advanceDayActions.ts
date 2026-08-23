@@ -12,6 +12,7 @@ import { clearLineageCache } from "@/core/breeding/lineage";
 import type { StoreSet, StoreGet, StoreType } from "../types";
 import type { CoreSlice } from "./coreSlice";
 import { isPlayerOwned } from "@/core/horse/ownership";
+import { asRaceId } from "@/core/types/branded";
 
 export function createAdvanceDayActions(
   set: StoreSet,
@@ -174,11 +175,15 @@ export function createAdvanceDayActions(
             console.info(
               `[advanceMultipleDays] Worker batch stopped early: ${daysAdvanced}/${n} days advanced, player race ${playerRaceId} on day ${finalDay}`,
             );
-            set({ pendingPlayerRaceId: playerRaceId });
+            set({
+              pendingPlayerRaceId: asRaceId(playerRaceId),
+              pendingAdvanceRemaining: n - daysAdvanced,
+            });
           } else {
             console.info(
               `[advanceMultipleDays] Worker batch completed: ${daysAdvanced}/${n} days advanced`,
             );
+            set({ pendingAdvanceRemaining: undefined });
           }
           return;
         } catch (error) {
@@ -207,13 +212,19 @@ export function createAdvanceDayActions(
 
           if (playerRaceDays.has(nextDay) && !headless) {
             const playerRace = Object.values(currentS.races).find(
-              (r: Race) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned),
+              (r: Race) =>
+                !r.resolved &&
+                r.day === nextDay &&
+                r.entries.some((e) => e.ownership?.type === "player"),
             );
             if (playerRace) {
               console.info(
                 `[advanceMultipleDays] Sync fallback stopped early: ${i}/${n} days advanced, player race ${playerRace.id} on day ${nextDay}`,
               );
-              set({ pendingPlayerRaceId: playerRace.id });
+              set({
+                pendingPlayerRaceId: playerRace.id,
+                pendingAdvanceRemaining: n - i,
+              });
               return;
             }
           }

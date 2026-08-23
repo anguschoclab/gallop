@@ -65,7 +65,7 @@ export function ClaimingRacePanel({
         <div className="space-y-1">
           {race.entries.map((entry) => {
             const entryHorse = horseMap.get(entry.horseId);
-            const isOwned = !!entry.owned;
+            const isOwned = entry.ownership?.type === "player";
             const playerClaimFiled = claims.some(
               (c) =>
                 c.raceId === race.id &&

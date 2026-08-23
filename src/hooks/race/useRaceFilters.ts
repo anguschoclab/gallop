@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import type { Race, Horse } from "@/game/types";
 import { getCountry } from "@/data/gradedRaces";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
+import { getStableId } from "@/core/horse/ownership";
 import { classifyDistanceBucket } from "@/core/horse/paceTendency";
 import { DEFAULT_FIELD_SIZE } from "@/constants";
 
@@ -57,7 +58,7 @@ export function useRaceFilters(
     openOnly,
   } = filters;
 
-  const ownedHorses = useMemo(() => horses.filter((h) => h.owned), [horses]);
+  const ownedHorses = useMemo(() => horses.filter((h) => h.ownership?.type === "player"), [horses]);
   const windowDays = timeWindow === "all" ? Infinity : Number(timeWindow);
   const emptySet = useMemo(() => new Set<string>(), []);
 
@@ -90,9 +91,9 @@ export function useRaceFilters(
         if (track !== "all" && r.graded?.track !== track) return false;
         if (trip !== "all" && classifyDistanceBucket(r.distance) !== trip) return false;
         if (stableId) {
-          if (!r.entries.some((e) => e.stableId === stableId)) return false;
+          if (!r.entries.some((e) => (getStableId(e) ?? undefined) === stableId)) return false;
         } else if (owned !== "all") {
-          const hasOwned = r.entries.some((e) => e.owned);
+          const hasOwned = r.entries.some((e) => e.ownership?.type === "player");
           if (owned === "owned" && !hasOwned) return false;
           if (owned === "not-owned" && hasOwned) return false;
         }

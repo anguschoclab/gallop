@@ -5,6 +5,7 @@ import { statGradeColor } from "@/core/common/uiTokens";
 import { getDisplayableStats, getScoutStatus } from "@/core/npc/scouting";
 import { isMaleHorse } from "@/core/horse/gender";
 import type { Horse } from "@/game/types";
+import { getStableId } from "@/core/horse/ownership";
 
 export function useHorseCard(horse: Horse, showScoutInfo = false) {
   const scoutReports = useGameSelector((s) => s.scoutReports);
@@ -16,9 +17,9 @@ export function useHorseCard(horse: Horse, showScoutInfo = false) {
   const ovr = calculateOverallRating(horse);
 
   const scoutStatus =
-    showScoutInfo && horse.stableId ? getScoutStatus(horse, scoutReports, day) : null;
+    showScoutInfo && getStableId(horse) ? getScoutStatus(horse, scoutReports, day) : null;
   const displayStats =
-    showScoutInfo && horse.stableId ? getDisplayableStats(horse, scoutReports, day) : null;
+    showScoutInfo && getStableId(horse) ? getDisplayableStats(horse, scoutReports, day) : null;
 
   const genderColor =
     horse.gender === "gelding"

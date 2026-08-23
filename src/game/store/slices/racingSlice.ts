@@ -25,6 +25,7 @@ import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { Transaction } from "@/core/transactions/transactionTypes";
 import { simulateRace, type RaceSimulationResult } from "@/services/race/raceSimulationExecutor";
+import { makePlayerOwned, makeUnowned, isPlayerOwned } from "@/core/horse/ownership";
 import { generateHorse } from "@/core/horse/horseFactory";
 import { createRng, hashStr } from "@/core/common/rng";
 import {
@@ -82,7 +83,7 @@ export function createRacingSlice(
       const s = get();
       const horse = s.horses[horseId];
       if (!horse) return;
-      if (!horse.owned) return;
+      if (!isPlayerOwned(horse)) return;
       if (s.pregnancies.some((p) => !p.resolved && p.damId === horseId)) return;
 
       // Check if horse has covering sickness or is recovering - prevent training
@@ -169,7 +170,7 @@ export function createRacingSlice(
       const s = get();
       const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "Horse not found." };
-      if (!horse.owned) return { ok: false, reason: "You do not own this horse." };
+      if (!isPlayerOwned(horse)) return { ok: false, reason: "You do not own this horse." };
 
       const trialCost = 250;
       if (s.cash < trialCost) {
@@ -190,7 +191,7 @@ export function createRacingSlice(
         opponent = generateHorse(
           {
             tier: horse.potential > 80 ? "elite" : horse.potential > 65 ? "mid" : "budget",
-            owned: false,
+            ownership: makeUnowned(),
           },
           rng,
         );
@@ -262,7 +263,7 @@ export function createRacingSlice(
         fieldSize: 2,
         entries: [
           { horseId: horse.id, owned: true, weight: 126 },
-          { horseId: opponent.id, owned: opponent.owned, weight: 126 },
+          { horseId: opponent.id, owned: isPlayerOwned(opponent), weight: 126 },
         ],
         resolved: false,
         trackId: "trial_track",
@@ -287,7 +288,7 @@ export function createRacingSlice(
       const s = get();
       const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "Horse not found." };
-      if (!horse.owned) return { ok: false, reason: "You do not own this horse." };
+      if (!isPlayerOwned(horse)) return { ok: false, reason: "You do not own this horse." };
       const arc = horse.developmentArc;
       if (!arc) return { ok: false, reason: "This horse has no development arc." };
       const milestone = arc.milestones.find((m) => m.key === milestoneKey);
@@ -357,7 +358,8 @@ export function createRacingSlice(
       const grade = getRaceGrade(race);
       if (!grade) return { ok: false, reason: "Race is not a graded stakes race." };
       const horse: Horse | undefined = s.horses[horseId];
-      if (!horse || !horse.owned) return { ok: false, reason: "You do not own this horse." };
+      if (!horse || !isPlayerOwned(horse))
+        return { ok: false, reason: "You do not own this horse." };
 
       const existing: NominationRecord[] = s.playerNominations;
       if (

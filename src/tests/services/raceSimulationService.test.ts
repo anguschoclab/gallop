@@ -72,13 +72,13 @@ describe("buildRaceField", () => {
     const { runners } = buildRaceField({ race, horses: [horse], jockeys: [] });
     const ownedRunner = runners.find((r) => r.horseId === "h1");
     expect(ownedRunner).toBeDefined();
-    expect(ownedRunner!.owned).toBe(true);
+    expect(ownedRunner!.isPlayer).toBe(true);
   });
 
   it("unfilled slots get owned=false AI runners", () => {
     const race = mkRace({ fieldSize: 4, entries: [] });
     const { runners } = buildRaceField({ race, horses: [], jockeys: [] });
-    expect(runners.every((r) => !r.owned)).toBe(true);
+    expect(runners.every((r) => !r.isPlayer)).toBe(true);
     expect(runners).toHaveLength(4);
   });
 

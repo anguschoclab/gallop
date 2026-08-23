@@ -6,6 +6,8 @@
 
 import type { MatingPlanEntry, SavedMatingPlan } from "@/game/store/state/breedingState";
 import { canBreed } from "@/core/breeding/eligibility";
+import { getStableId } from "@/core/horse/ownership";
+import { asPlayerOwnerId } from "@/core/types/branded";
 import { generateUUID } from "@/core/uuid";
 import type { BreedingIntent, AnyIntent } from "@/core/resolver/intents";
 import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE, MAX_BATCH_BREEDING } from "@/constants";
@@ -59,7 +61,7 @@ export function createBreedingBatchActions(
           continue;
         }
 
-        const isExternal = !!sire!.stableId;
+        const isExternal = !!getStableId(sire!);
         let studFee = 0;
         if (isExternal) {
           if (!sire!.stud?.atStud) {
@@ -91,7 +93,7 @@ export function createBreedingBatchActions(
           }
 
           const syndicate = s.syndicates?.[entry.sireId];
-          const playerShareCount = syndicate?.shareHolders?.["player"] || 0;
+          const playerShareCount = syndicate?.shareHolders?.[asPlayerOwnerId("player")] || 0;
           const totalShares = syndicate?.totalShares || 1;
           const playerSharePercentage = playerShareCount / totalShares;
           studFee = sire!.stud.standingFee * (1 - playerSharePercentage);
@@ -121,11 +123,11 @@ export function createBreedingBatchActions(
         if (!results[i].ok) continue;
         const entry = entries[i];
         const sire = s.horses[entry.sireId];
-        const isExternal = !!sire?.stableId;
+        const isExternal = !!getStableId(sire);
         let studFee = 0;
         if (isExternal && sire?.stud) {
           const syndicate = s.syndicates?.[entry.sireId];
-          const playerShareCount = syndicate?.shareHolders?.["player"] || 0;
+          const playerShareCount = syndicate?.shareHolders?.[asPlayerOwnerId("player")] || 0;
           const totalShares = syndicate?.totalShares || 1;
           const playerSharePercentage = playerShareCount / totalShares;
           studFee = sire.stud.standingFee * (1 - playerSharePercentage);

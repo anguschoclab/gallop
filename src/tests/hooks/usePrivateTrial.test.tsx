@@ -267,7 +267,9 @@ describe("usePrivateTrial", () => {
     });
 
     it("returns opponent horse name when matched", () => {
-      const horses = [makeHorse({ id: "h2", name: "Lightning", ownership: { type: "player" }, energy: 50 })];
+      const horses = [
+        makeHorse({ id: "h2", name: "Lightning", ownership: { type: "player" }, energy: 50 }),
+      ];
       const { result } = renderHook(() => usePrivateTrial(makeHorse({ id: "h1" }), horses, 10000));
       act(() => {
         result.current.setOpponentId("h2");
@@ -305,7 +307,9 @@ describe("usePrivateTrial", () => {
     });
 
     it("uses horse.name for player and opponentName for opponent", async () => {
-      const horses = [makeHorse({ id: "h2", name: "Lightning", ownership: { type: "player" }, energy: 50 })];
+      const horses = [
+        makeHorse({ id: "h2", name: "Lightning", ownership: { type: "player" }, energy: 50 }),
+      ];
       runPrivateTrialMock.mockReturnValue({
         ok: true,
         result: {

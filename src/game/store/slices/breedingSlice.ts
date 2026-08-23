@@ -29,6 +29,8 @@ import type {
   AnyIntent,
 } from "@/core/resolver/intents";
 import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/constants";
+import { asPlayerOwnerId, asHorseId } from "@/core/types/branded";
+import { getStableId } from "@/core/horse/ownership";
 import { requireOwned, requireHorse } from "../guards";
 import type { StoreSet, StoreGet } from "../types";
 import { createSyndicateActions, createBreedingBatchActions } from "./breedingActions";
@@ -101,8 +103,8 @@ export function createBreedingSlice(
 
     breed: (sireId, damId, liveFoalGuarantee = false) => {
       const s = get();
-      const sire = s.horses[sireId];
-      const dam = s.horses[damId];
+      const sire = s.horses[asHorseId(sireId)];
+      const dam = s.horses[asHorseId(damId)];
       const fail = (reason: string): { ok: false; reason: string } => {
         set({ log: [{ day: s.day, text: `Breeding: ${reason}` }, ...s.log].slice(0, 50) });
         return { ok: false, reason };
@@ -115,7 +117,7 @@ export function createBreedingSlice(
       // the player the stud fee (in addition to base breeding fee), credit
       // the stable, and increment the stallion's season-bookings counter.
       // If the stallion is syndicated, apply fee reduction based on player's share ownership.
-      const isExternal = !!sire!.stableId;
+      const isExternal = !!getStableId(sire!);
       let studFee = 0;
       if (isExternal) {
         if (!sire!.stud?.atStud) return fail(`${sire!.name} is not standing at stud.`);
@@ -128,7 +130,7 @@ export function createBreedingSlice(
 
         // Check if stallion is syndicated and apply fee reduction
         const syndicate = s.syndicates?.[sireId];
-        const playerShareCount = syndicate?.shareHolders?.["player"] || 0;
+        const playerShareCount = syndicate?.shareHolders?.[asPlayerOwnerId("player")] || 0;
         const totalShares = syndicate?.totalShares || 1;
         const playerSharePercentage = playerShareCount / totalShares;
 
@@ -165,8 +167,8 @@ export function createBreedingSlice(
         day: s.day,
         priority: 100,
         type: "breeding",
-        sireId,
-        damId,
+        sireId: asHorseId(sireId),
+        damId: asHorseId(damId),
         liveFoalGuarantee,
       };
 

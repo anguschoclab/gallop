@@ -45,7 +45,11 @@ describe("worldAssessmentPhase", () => {
 
   it("should update stable states with worldAssessment and financialDistress", () => {
     const stable = createTestStable({ id: "npc-1", cash: 100000, horses: ["horse-1"] });
-    const horse = createTestHorse({ id: "horse-1", stableId: "npc-1", ownership: { type: "unowned" } });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stableId: "npc-1",
+      ownership: { type: "unowned" },
+    });
     const aiManager = {
       stableStates: { "npc-1": {} },
       globalDay: 1,

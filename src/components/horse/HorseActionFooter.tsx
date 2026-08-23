@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import type { Horse } from "@/game/types";
+import { isPlayerOwned } from "@/core/horse/ownership";
 import { Eye, Calendar } from "lucide-react";
 
 interface HorseActionFooterProps {
@@ -12,7 +13,7 @@ export function HorseActionFooter({
   horse,
   onClickStopPropagation = true,
 }: HorseActionFooterProps) {
-  if (!horse.owned) return null;
+  if (!isPlayerOwned(horse)) return null;
 
   const stopProp = onClickStopPropagation
     ? (e: React.MouseEvent) => e.stopPropagation()

@@ -9,6 +9,7 @@
  */
 
 import type { Horse, PrivateSaleOffer, Claim, Race } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 import { generateUUID } from "@/core/uuid";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
@@ -91,7 +92,7 @@ export function createPrivateSaleSlice(
         const horse = s.horses[offer.horseId];
         if (!horse) return { ok: false, reason: "horse_not_found" };
 
-        const updatedHorse: Horse = { ...horse, owned: true, stableId: undefined };
+        const updatedHorse: Horse = { ...horse, ownership: makePlayerOwned() };
 
         const updatedOffers = s.privateSaleOffers.map((o: PrivateSaleOffer) =>
           o.id === offerId ? { ...o, status: "accepted" as const } : o,

@@ -177,6 +177,9 @@ export const stewardsPhase: PipelinePhase = {
           r.position = i + 1;
         });
 
+        const dqEntry = adjustedResults.find(
+          (r: { horseId: string }) => r.horseId === accusedHorseId,
+        );
         impacts.push({
           id: generateUUID(rng),
           intentId: "",
@@ -186,10 +189,7 @@ export const stewardsPhase: PipelinePhase = {
           type: "race_result_adjustment",
           raceId: race.id,
           originalResults,
-          adjustedResults: [
-            ...nonDq,
-            adjustedResults.find((r: { horseId: string }) => r.horseId === accusedHorseId)!,
-          ],
+          adjustedResults: dqEntry ? [...nonDq, dqEntry] : nonDq,
           reason: `DQ adjustment for ${accusedHorseId}`,
         } as RaceResultAdjustmentImpact);
       }

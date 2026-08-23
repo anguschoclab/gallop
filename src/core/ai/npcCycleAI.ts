@@ -143,6 +143,8 @@ export interface DifficultyState {
   playerWinRate: number;
   npcCompetenceMultiplier: number;
   lastAdjustmentDay: number;
+  playerWins: number;
+  playerEntries: number;
 }
 
 /**

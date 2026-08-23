@@ -10,7 +10,7 @@ import { useState, useMemo } from "react";
 import { useGame, type StoreType } from "@/game/store";
 import {
   DEFAULT_INBOX_FILTER,
-  ACTION_FILTER_EXCLUDED_PRIORITY,
+  ACTION_FILTER_EXCLUDED_PRIORITIES,
   type InboxFilter,
 } from "@/constants/inboxConstants";
 import { getCategoryIcon, getPriorityColor } from "@/core/inbox/inboxUtils";
@@ -34,8 +34,13 @@ export function useInbox() {
       inbox
         .filter((m) => {
           if (filter === "unread") return !m.readAt;
-          if (filter === "action") return m.priority !== ACTION_FILTER_EXCLUDED_PRIORITY;
+          if (filter === "action")
+            return !ACTION_FILTER_EXCLUDED_PRIORITIES.includes(m.priority as any);
           if (filter === "ai_activity") return m.category === "ai_activity";
+          if (filter === "critical") return m.priority === "critical";
+          if (filter === "urgent") return m.priority === "urgent";
+          if (filter === "low") return m.priority === "low";
+          if (filter === "info") return m.priority === "info";
           return true;
         })
         .sort((a, b) => {

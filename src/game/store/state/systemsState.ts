@@ -141,6 +141,8 @@ export interface SystemsState {
   pendingPlayerRaceId?: import("@/core/types/branded").RaceId;
   /** True while day advancement is in progress (for UI loading state) */
   isAdvancing?: boolean;
+  /** Remaining days to advance after a player race is resolved (auto-resume) */
+  pendingAdvanceRemaining?: number;
 
   // Global historical records (optional)
   /** Lifetime track records keyed by trackId_surface_distance */

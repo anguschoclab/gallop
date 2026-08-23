@@ -8,6 +8,7 @@ import { CalendarClock, Flag } from "lucide-react";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { CampaignAddPanel } from "@/components/scheduler/CampaignAddPanel";
 import { CampaignCard } from "@/components/scheduler/CampaignCard";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 export function SchedulerTab() {
   const day = useGame((s: GameState) => s.day);
@@ -19,7 +20,7 @@ export function SchedulerTab() {
   const dismissCampaignFlag = useGame((s) => s.dismissCampaignFlag);
 
   const { ownedHorses, horsesWithoutCampaign } = useMemo(() => {
-    const owned = Object.values(horses).filter((h: Horse) => h.owned);
+    const owned = Object.values(horses).filter((h: Horse) => isPlayerOwned(h));
     const campaignIds = new Set(campaigns.map((c: HorseCampaign) => c.horseId));
     const withoutCampaign = owned.filter((h: Horse) => !campaignIds.has(h.id));
     return { ownedHorses: owned, horsesWithoutCampaign: withoutCampaign };

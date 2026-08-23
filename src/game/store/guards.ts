@@ -4,10 +4,11 @@
  * This file provides guard functions for validating store actions, including
  * horse lookup and ownership verification.
  *
- * Dependencies: @/game/types (Horse)
+ * Dependencies: @/game/types (Horse), @/core/horse/ownership (isPlayerOwned, makePlayerOwned)
  * Related files: Used throughout store slices for validation
  */
 
+import { isPlayerOwned } from "@/core/horse/ownership";
 import type { Horse } from "@/game/types";
 
 /**
@@ -33,7 +34,7 @@ export function requireOwned(horse: Horse | undefined): { ok: false; reason: str
   if (!horse) {
     return { ok: false, reason: "Horse not found." };
   }
-  if (!horse.owned) {
+  if (!isPlayerOwned(horse)) {
     return { ok: false, reason: "You don't own this horse." };
   }
   return null;

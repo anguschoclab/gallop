@@ -13,6 +13,7 @@
 // Order 85 — after races are generated (60) but before state serialization (100).
 
 import { PHASE_ORDER_SCHEDULER } from "@/constants";
+import { makePlayerOwned } from "@/core/horse/ownership";
 import type { PipelineContext } from "../pipeline";
 import type { HorseCampaign } from "@/game/types";
 import {
@@ -119,7 +120,7 @@ export const schedulerPhase = {
 
           currentRaces.set(raceId, {
             ...race,
-            entries: [...race.entries, { horseId, owned: true, npc: false }],
+            entries: [...race.entries, { horseId, ownership: makePlayerOwned() }],
           });
           cashDelta -= race.entryFee;
           entryLogs.push({ day: newDay, text: `Auto-entered ${horse.name} in ${race.name}.` });

@@ -121,7 +121,8 @@ async function advanceDaysBatch(input: AdvanceDaysBatchInput): Promise<AdvanceDa
     // Check for player race (unless headless)
     if (!headless && playerRaceDays?.has(nextDay)) {
       const playerRace = Object.values(currentState.races).find(
-        (r) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned),
+        (r) =>
+          !r.resolved && r.day === nextDay && r.entries.some((e) => e.ownership?.type === "player"),
       );
       if (playerRace) {
         encounteredPlayerRace = true;

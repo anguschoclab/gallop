@@ -100,6 +100,44 @@ export function InboxPage() {
           Action Required
         </Button>
         <Button
+          variant={filter === "critical" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setFilter("critical")}
+        >
+          Critical
+          {inbox.some((m) => m.priority === "critical" && !m.readAt) && (
+            <Badge variant="destructive" className={UNREAD_BADGE_CLASSES}>
+              {inbox.filter((m) => m.priority === "critical" && !m.readAt).length}
+            </Badge>
+          )}
+        </Button>
+        <Button
+          variant={filter === "urgent" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setFilter("urgent")}
+        >
+          Urgent
+          {inbox.some((m) => m.priority === "urgent" && !m.readAt) && (
+            <Badge variant="destructive" className={UNREAD_BADGE_CLASSES}>
+              {inbox.filter((m) => m.priority === "urgent" && !m.readAt).length}
+            </Badge>
+          )}
+        </Button>
+        <Button
+          variant={filter === "low" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setFilter("low")}
+        >
+          Low
+        </Button>
+        <Button
+          variant={filter === "info" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setFilter("info")}
+        >
+          Info
+        </Button>
+        <Button
           variant={filter === "ai_activity" ? "default" : "outline"}
           size="sm"
           onClick={() => setFilter("ai_activity")}
@@ -131,6 +169,7 @@ export function InboxPage() {
                 "bg-t800 border-gold-muted/30 transition-all hover:border-gold/50 relative overflow-hidden",
                 !msg.readAt && "border-l-4 border-l-gold shadow-lg shadow-gold/5",
                 msg.priority === "urgent" && "border-l-4 border-l-red-500",
+                msg.priority === "critical" && "border-l-4 border-l-red-600",
               )}
             >
               <CardHeader className="pb-2">
@@ -203,7 +242,11 @@ export function InboxPage() {
                 )}
                 {msg.cta && (
                   <Button
-                    variant={msg.priority === "urgent" ? "destructive" : "default"}
+                    variant={
+                      msg.priority === "urgent" || msg.priority === "critical"
+                        ? "destructive"
+                        : "default"
+                    }
                     size="sm"
                     className="gap-2"
                     onClick={() => {

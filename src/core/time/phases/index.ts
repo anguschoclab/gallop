@@ -60,6 +60,7 @@ import { worldAssessmentPhase } from "./worldAssessmentPhase";
 import { diplomacyPhase } from "./diplomacyPhase";
 import { narrativePhase } from "./narrativePhase";
 import { economyPhase } from "./economyPhase";
+import { difficultyPhase } from "./difficultyPhase";
 
 /**
  * Shared array of all game pipeline phases in their correct order.
@@ -124,6 +125,8 @@ export const GAME_PIPELINE_PHASES = [
   raceResolutionPhase,
   // Foal development milestone alerts (order 71) — emits inbox messages only.
   foalDevelopmentPhase,
+  // Difficulty modulation (order 74, after stewards, before claim resolution)
+  difficultyPhase,
   // Stewards inquiry phase (after race resolution, before claim resolution)
   stewardsPhase,
   // Claim resolution (after raceResolution)

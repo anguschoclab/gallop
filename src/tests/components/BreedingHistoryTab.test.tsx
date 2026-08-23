@@ -59,7 +59,10 @@ describe("BreedingHistoryTab", () => {
         },
       ],
       localHorseMap: new Map([
-        ["f1", { id: "f1", name: "Baby Foal", sireId: "s1", damId: "d1", ownership: { type: "player" } }],
+        [
+          "f1",
+          { id: "f1", name: "Baby Foal", sireId: "s1", damId: "d1", ownership: { type: "player" } },
+        ],
         ["s1", { id: "s1", name: "Thunder" }],
         ["d1", { id: "d1", name: "Lightning" }],
       ]),
@@ -83,7 +86,16 @@ describe("BreedingHistoryTab", () => {
         },
       ],
       localHorseMap: new Map([
-        ["f1", { id: "f1", name: "Unnamed Foal", sireId: "s1", damId: "d1", ownership: { type: "player" } }],
+        [
+          "f1",
+          {
+            id: "f1",
+            name: "Unnamed Foal",
+            sireId: "s1",
+            damId: "d1",
+            ownership: { type: "player" },
+          },
+        ],
         ["s1", { id: "s1", name: "Thunder" }],
         ["d1", { id: "d1", name: "Lightning" }],
       ]),
@@ -127,7 +139,10 @@ describe("BreedingHistoryTab", () => {
         },
       ],
       localHorseMap: new Map([
-        ["f1", { id: "f1", name: "Baby Foal", sireId: "s1", damId: "d1", ownership: { type: "player" } }],
+        [
+          "f1",
+          { id: "f1", name: "Baby Foal", sireId: "s1", damId: "d1", ownership: { type: "player" } },
+        ],
         ["s1", { id: "s1", name: "Thunder" }],
         ["d1", { id: "d1", name: "Lightning" }],
       ]),

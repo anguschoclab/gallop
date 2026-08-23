@@ -368,7 +368,9 @@ describe("generateJockeyFeeImpacts", () => {
   it("player horse + jockey → negative cash_change + transaction", () => {
     const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
     const jockey = createTestJockey({ id: "j1" });
-    const race = makeOpenRace({ entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any] });
+    const race = makeOpenRace({
+      entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any],
+    });
     const impacts = generateRaceImpacts({
       race,
       result: [{ horseId: "h1", position: 3, time: 122 }],
@@ -390,7 +392,13 @@ describe("generateJockeyFeeImpacts", () => {
     const horse = createTestNpcHorse({ id: "h-npc", stableId: "stable-npc" });
     const jockey = createTestJockey({ id: "j1" });
     const race = makeOpenRace({
-      entries: [{ horseId: "h-npc", jockeyId: "j1", ownership: { type: "npc", stableId: asNpcStableId("stable-npc") } } as any],
+      entries: [
+        {
+          horseId: "h-npc",
+          jockeyId: "j1",
+          ownership: { type: "npc", stableId: asNpcStableId("stable-npc") },
+        } as any,
+      ],
     });
     const impacts = generateRaceImpacts({
       race,
@@ -568,7 +576,11 @@ describe("generateTrainerStatsImpact", () => {
 
 describe("generateJockeyAffinityImpact", () => {
   function runWithJockey(position: number, beyerHistory: any[] = [], time = 130) {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" }, raceHistory: beyerHistory });
+    const horse = createTestColt({
+      id: "h1",
+      ownership: { type: "player" },
+      raceHistory: beyerHistory,
+    });
     const jockey = createTestJockey({ id: "j1" });
     const race = makeOpenRace({
       entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any],

@@ -35,7 +35,8 @@ export function fillRaceWithFillerHorses(
 
   // Find eligible filler horses already in the system
   const eligibleFillerHorses = horses.filter(
-    (h) => h.ownership?.type === "npc" && !race.entries.some((e) => e.horseId === h.id) && h.energy > 40,
+    (h) =>
+      h.ownership?.type === "npc" && !race.entries.some((e) => e.horseId === h.id) && h.energy > 40,
   );
 
   // Use existing horses first

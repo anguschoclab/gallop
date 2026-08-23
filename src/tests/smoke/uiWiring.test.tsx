@@ -38,7 +38,7 @@ vi.mock("@tanstack/react-router", () => createRouterMock());
 import { renderWithStore, midGameSeed } from "@/test-utils/renderWithStore";
 import { useGame } from "@/game/store";
 import { createDefaultGameState } from "@/game/store/state";
-import { routeCases as cases } from "@/test-utils/routeDiscovery";
+import { componentRouteCases as cases } from "@/test-utils/routeDiscovery";
 
 beforeEach(() => {
   cleanup();

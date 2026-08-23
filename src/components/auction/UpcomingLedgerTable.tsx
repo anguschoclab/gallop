@@ -19,9 +19,14 @@ interface UpcomingSale {
 interface UpcomingLedgerTableProps {
   sales: UpcomingSale[];
   currentDay: number;
+  saleAccessMap?: Map<string, { allowed: boolean; requiredTier: string }>;
 }
 
-export function UpcomingLedgerTable({ sales, currentDay }: UpcomingLedgerTableProps) {
+export function UpcomingLedgerTable({
+  sales,
+  currentDay,
+  saleAccessMap,
+}: UpcomingLedgerTableProps) {
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-2 mb-2 px-1">
@@ -48,6 +53,8 @@ export function UpcomingLedgerTable({ sales, currentDay }: UpcomingLedgerTablePr
               const playerLots = sale.lots
                 ? sale.lots.filter((l) => !l.consignorStableId && !l.withdrawn)
                 : [];
+              const access = saleAccessMap?.get(sale.kind);
+              const isLocked = access && !access.allowed;
 
               return (
                 <tr
@@ -76,7 +83,11 @@ export function UpcomingLedgerTable({ sales, currentDay }: UpcomingLedgerTablePr
                     </Badge>
                   </td>
                   <td className="px-4 py-5 text-center">
-                    {isScheduled ? (
+                    {isLocked ? (
+                      <span className="text-[9px] font-black uppercase text-amber-400/60 tracking-widest">
+                        Locked
+                      </span>
+                    ) : isScheduled ? (
                       <span className="text-[9px] font-black uppercase text-cream/20 tracking-widest">
                         SCHEDULED
                       </span>
@@ -107,7 +118,21 @@ export function UpcomingLedgerTable({ sales, currentDay }: UpcomingLedgerTablePr
                     )}
                   </td>
                   <td className="px-6 py-5 text-right">
-                    {isScheduled ? (
+                    {isLocked ? (
+                      <div className="flex flex-col items-end gap-1">
+                        <Button
+                          disabled
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 px-4 text-[9px] font-black uppercase border border-amber-400/20 text-amber-400/40 rounded-none"
+                        >
+                          RESTRICTED
+                        </Button>
+                        <span className="text-[8px] font-mono text-amber-400/40 uppercase">
+                          Requires {access?.requiredTier}
+                        </span>
+                      </div>
+                    ) : isScheduled ? (
                       <Button
                         disabled
                         size="sm"

@@ -98,7 +98,7 @@ export function RaceControlBar({
               <SelectItem value="leader">Follow Leader</SelectItem>
               {runners.map((r, i) => (
                 <SelectItem key={r.horseId} value={r.horseId}>
-                  {r.owned ? "⭐ " : ""}
+                  {r.isPlayer ? "⭐ " : ""}
                   {i + 1}. {r.name}
                 </SelectItem>
               ))}

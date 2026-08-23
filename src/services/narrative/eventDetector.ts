@@ -1,5 +1,7 @@
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Race } from "@/game/types";
+import type { HorseOwnership } from "@/core/horse/ownership";
+import { getStableId } from "@/core/horse/ownership";
 import { METERS_PER_LENGTH } from "@/constants";
 import { NARRATIVE_THRESHOLDS } from "@/constants/narrativeThresholds";
 import type { NarrativeEvent, DetectedEvent } from "./types";
@@ -279,7 +281,7 @@ function isInTurn(pos: number, race: Race): boolean {
  */
 export function detectStableWatch(
   runner: Runner,
-  horsesMap: Map<string, { id: string; stableId?: string }>,
+  horsesMap: Map<string, { id: string; ownership: HorseOwnership }>,
   stablesMap: Map<string, { id: string; isMajor: boolean }>,
   simTime: number,
 ): DetectedEvent | null {
@@ -290,9 +292,9 @@ export function detectStableWatch(
     return null;
 
   const horse = horsesMap.get(runner.horseId);
-  if (!horse?.stableId) return null;
+  if (!getStableId(horse)) return null;
 
-  const stable = stablesMap.get(horse.stableId);
+  const stable = stablesMap.get(getStableId(horse)!);
   if (!stable?.isMajor) return null;
 
   return {

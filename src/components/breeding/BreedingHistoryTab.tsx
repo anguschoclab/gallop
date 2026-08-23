@@ -12,6 +12,7 @@ import {
   LeaderboardSkeleton,
 } from "@/components/leaderboard/LeaderboardPrimitives";
 import { useLeaderboardControls } from "@/hooks/leaderboard/useLeaderboardControls";
+import { isPlayerOwned } from "@/core/horse/ownership";
 import type { useBreedingPage } from "@/hooks/breeding/useBreedingPage";
 import type { Pregnancy } from "@/core/breeding/types";
 
@@ -73,7 +74,7 @@ export function BreedingHistoryTab({ pageData }: BreedingHistoryTabProps) {
         foalName: foal?.name ?? "(sold)",
         foalId: foal?.id ?? null,
         dueDay: p.dueDay,
-        isOwned: foal?.owned ?? false,
+        isOwned: foal ? isPlayerOwned(foal) : false,
         isUnnamed: foal?.name === "Unnamed Foal",
         raw: p,
       };

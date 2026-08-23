@@ -111,7 +111,11 @@ describe("foalDevelopmentPhase — inbox CTA emission", () => {
   });
 
   it("skips horses without a development arc", () => {
-    const horse = createTestHorse({ id: "h", ownership: { type: "player" }, developmentArc: undefined });
+    const horse = createTestHorse({
+      id: "h",
+      ownership: { type: "player" },
+      developmentArc: undefined,
+    });
     const ctx = makeContext({ horses: h2r([horse]) }, 18);
     const out = foalDevelopmentPhase.execute(ctx);
     expect(out.impacts).toHaveLength(0);
@@ -121,7 +125,11 @@ describe("foalDevelopmentPhase — inbox CTA emission", () => {
     const arc = createDefaultFoalDevelopmentArc(0);
     arc.milestones[0].status = "resolved";
     arc.milestones[0].resolvedChoiceKey = "bold_approach";
-    const horse = createTestHorse({ id: "foal-1", ownership: { type: "player" }, developmentArc: arc });
+    const horse = createTestHorse({
+      id: "foal-1",
+      ownership: { type: "player" },
+      developmentArc: arc,
+    });
     const ctx = makeContext({ horses: h2r([horse]) }, 18);
     const out = foalDevelopmentPhase.execute(ctx);
     expect(out.impacts).toHaveLength(0);

@@ -32,7 +32,7 @@ export function PostRaceAnalysis({
     horseId: r.horseId,
     name: r.name,
     silk: r.silk,
-    owned: r.owned,
+    owned: r.isPlayer,
   }));
 
   const hasSectionals = race.resolved && race.sectionalSplits && race.sectionalSplits.length > 0;
@@ -85,7 +85,7 @@ export function PostRaceAnalysis({
               </div>
             </>
           )}
-          {runners.some((r) => r.owned && r.finishTime !== null) && (
+          {runners.some((r) => r.isPlayer && r.finishTime !== null) && (
             <JockeyReportPanel
               runners={runners}
               ordered={[...runners].sort((a, b) => (a.finishTime ?? 999) - (b.finishTime ?? 999))}

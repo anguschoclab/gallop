@@ -196,7 +196,3 @@ export const analyticsEventSchema = z.object({
 });
 
 export const analyticsEventArraySchema = z.array(analyticsEventSchema);
-
-// ─── Dismissed stewards inquiries ────────────────────────────────────────────
-
-export const dismissedInquiriesSchema = z.array(z.string());

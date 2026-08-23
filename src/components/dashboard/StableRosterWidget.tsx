@@ -6,6 +6,7 @@ import { Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { overall, NumericValue, HorseBit } from "@/components/horse/HorseBits";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
+import { isPlayerOwned } from "@/core/horse/ownership";
 import { LayoutGrid, Users, Briefcase, ChevronRight } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -15,7 +16,7 @@ export function StableRosterWidget() {
   const hiredStaff = useGame((s) => s.hiredStaff);
 
   const activeHorses = Object.values(horses)
-    .filter((h) => h.owned && h.lifecycleStatus === "active")
+    .filter((h) => isPlayerOwned(h) && h.lifecycleStatus === "active")
     .map(ensurePhenotypeResolved);
   const topHorses = activeHorses
     .slice()

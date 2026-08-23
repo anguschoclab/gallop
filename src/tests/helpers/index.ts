@@ -15,3 +15,4 @@ export {
   createTestNpcHorse,
   createUnownedHorse,
 } from "./createTestHorse";
+export { runPipelineForDay, runPipelineForDays, type PerDayResult } from "./runPipeline";

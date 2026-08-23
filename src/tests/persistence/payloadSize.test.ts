@@ -16,10 +16,12 @@ import {
 } from "@/core/persistence/npcCompression";
 import type { Horse } from "@/core/horse/types";
 import type { Stable } from "@/core/stable/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
+import { asStableId } from "@/core/types/branded";
 
 function makeTestStable(id: string, tier: "elite" | "mid" | "budget" = "mid"): Stable {
   return {
-    id,
+    id: asStableId(id),
     name: `${id} Stables`,
     owner: "Owner",
     tier,
@@ -117,8 +119,7 @@ describe("Payload size reduction", () => {
         forcedAge: 3 + (i % 4),
         forcedName: `Player-${i}`,
       });
-      h.stableId = undefined;
-      h.owned = true;
+      h.ownership = makePlayerOwned();
       horses[h.id] = h;
     }
 

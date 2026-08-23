@@ -50,12 +50,16 @@ export function PlayerRacePrompt() {
   if (!race) return null;
 
   const enteredHorse = useMemo(() => {
-    const ownedEntry = race.entries.find((e) => e.owned);
+    const ownedEntry = race.entries.find((e) => e.ownership?.type === "player");
     return ownedEntry ? horses[ownedEntry.horseId] : undefined;
   }, [race, horses]);
 
   function clearPending() {
     useGame.setState({ pendingPlayerRaceId: undefined });
+  }
+
+  function stopHere() {
+    useGame.setState({ pendingPlayerRaceId: undefined, pendingAdvanceRemaining: undefined });
   }
 
   function goToRace() {
@@ -108,7 +112,7 @@ export function PlayerRacePrompt() {
       raceWeather?.windKph,
       raceWeather?.windDirectionDeg,
     );
-    resolveRaceWithImpacts(race!.id, result.result);
+    resolveRaceWithImpacts(race!.id, result.result, undefined, result.factorLedgers);
     clearPending();
   }
 
@@ -116,7 +120,7 @@ export function PlayerRacePrompt() {
     <Dialog
       open={!!pendingRaceId}
       onOpenChange={(open) => {
-        if (!open) clearPending();
+        if (!open) stopHere();
       }}
     >
       <DialogContent className="max-w-md">
@@ -176,7 +180,7 @@ export function PlayerRacePrompt() {
           <Button onClick={autoResolve} variant="secondary" className="flex-1">
             Auto-Resolve & Continue
           </Button>
-          <Button onClick={clearPending} variant="ghost" className="flex-1">
+          <Button onClick={stopHere} variant="ghost" className="flex-1">
             Stop Here
           </Button>
         </DialogFooter>

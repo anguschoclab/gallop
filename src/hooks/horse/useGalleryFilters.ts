@@ -9,6 +9,7 @@ import {
   getAllHorseTraitValues,
   type HorseTraitKey,
 } from "@/core/common/traitLabels";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 export const COAT_COLORS = [
   { value: "all", label: "All Coats" },
@@ -33,7 +34,7 @@ export function useGalleryFilters() {
   const horses = useMemo(
     () =>
       Object.values(allHorses)
-        .filter((h: Horse) => h.owned)
+        .filter((h: Horse) => isPlayerOwned(h))
         .map(ensurePhenotypeResolved),
     [allHorses],
   );

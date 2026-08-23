@@ -50,7 +50,13 @@ function createMockRunner(horseId: string, jockeyId?: string, jockeyName?: strin
 }
 
 const baseHorse = (overrides?: Partial<Horse>) =>
-  createTestHorse({ id: "winner-1", name: "Champ", silk: "#ff0000", ownership: { type: "player" }, ...overrides });
+  createTestHorse({
+    id: "winner-1",
+    name: "Champ",
+    silk: "#ff0000",
+    ownership: { type: "player" },
+    ...overrides,
+  });
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -299,7 +305,14 @@ describe("recordRaceHistory", () => {
     const record = recordRaceHistory(
       race,
       createMockResult("winner-1"),
-      [{ horseId: "winner-1", name: "Mock Horse", silk: "#000", ownership: { type: "player" } } as RaceRunner],
+      [
+        {
+          horseId: "winner-1",
+          name: "Mock Horse",
+          silk: "#000",
+          ownership: { type: "player" },
+        } as RaceRunner,
+      ],
       [baseHorse()],
       100,
       createTestRng("seed"),

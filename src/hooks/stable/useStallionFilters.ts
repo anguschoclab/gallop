@@ -3,6 +3,7 @@ import { shallow } from "zustand/shallow";
 import { useGameSelector } from "@/hooks/shared/useGameSelector";
 import { useGame } from "@/game/store";
 import type { Horse, Hemisphere, GameState } from "@/game/types";
+import { isPlayerOwned, getStableId } from "@/core/horse/ownership";
 
 export function useStallionFilters() {
   const horses = useGameSelector((s: GameState) => s.horses);
@@ -17,8 +18,10 @@ export function useStallionFilters() {
   const [selectedMareId, setSelectedMareId] = useState<string>("");
 
   const stallions = Object.values(horses).filter((h: Horse) => h.stud?.atStud);
-  const myStallions = stallions.filter((h: Horse) => h.owned);
-  const rosterStallions = stallions.filter((h: Horse) => !h.owned || h.stableId === undefined);
+  const myStallions = stallions.filter((h: Horse) => isPlayerOwned(h));
+  const rosterStallions = stallions.filter(
+    (h: Horse) => !isPlayerOwned(h) || getStableId(h) === undefined,
+  );
 
   const filtered = useMemo(
     () =>
@@ -32,7 +35,7 @@ export function useStallionFilters() {
     () =>
       Object.values(horses).filter(
         (h: Horse) =>
-          h.owned &&
+          isPlayerOwned(h) &&
           (h.gender === "mare" || h.gender === "filly") &&
           h.age >= 3 &&
           !pregnancies.some((p) => !p.resolved && p.damId === h.id),

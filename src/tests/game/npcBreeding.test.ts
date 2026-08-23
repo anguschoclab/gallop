@@ -17,6 +17,8 @@ import { runNpcBreeding } from "@/core/npc/breeding";
 import { createRng } from "@/core/common/rng";
 import type { GameState, Horse, HorseGender, Pregnancy } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
+import { makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
@@ -194,7 +196,7 @@ describe("runNpcBreeding", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-1",
+        ownership: makeNpcOwned(asNpcStableId("stable-1")),
         silk: "blue",
       },
     );
@@ -212,7 +214,7 @@ describe("runNpcBreeding", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-2",
+        ownership: makeNpcOwned(asNpcStableId("stable-2")),
         silk: "red",
         potential: 85,
         fame: 60,
@@ -276,7 +278,7 @@ describe("runNpcBreeding", () => {
       },
       {
         age: 2,
-        stableId: "stable-1",
+        ownership: makeNpcOwned(asNpcStableId("stable-1")),
         silk: "blue",
       },
     );
@@ -295,7 +297,7 @@ describe("runNpcBreeding", () => {
       },
       {
         age: 21,
-        stableId: "stable-1",
+        ownership: makeNpcOwned(asNpcStableId("stable-1")),
         silk: "blue",
       },
     );
@@ -313,7 +315,7 @@ describe("runNpcBreeding", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-2",
+        ownership: makeNpcOwned(asNpcStableId("stable-2")),
         silk: "red",
         potential: 85,
         fame: 60,
@@ -373,7 +375,7 @@ describe("runNpcBreeding", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-1",
+        ownership: makeNpcOwned(asNpcStableId("stable-1")),
         silk: "blue",
       },
     );
@@ -406,7 +408,7 @@ describe("runNpcBreeding", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-2",
+        ownership: makeNpcOwned(asNpcStableId("stable-2")),
         silk: "red",
         potential: 85,
         fame: 60,
@@ -466,7 +468,7 @@ describe("runNpcBreeding", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-1",
+        ownership: makeNpcOwned(asNpcStableId("stable-1")),
         silk: "blue",
       },
     );
@@ -484,7 +486,7 @@ describe("runNpcBreeding", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-2",
+        ownership: makeNpcOwned(asNpcStableId("stable-2")),
         silk: "red",
         potential: 85,
         fame: 60,
@@ -550,7 +552,7 @@ describe("runNpcBreeding", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-1",
+        ownership: makeNpcOwned(asNpcStableId("stable-1")),
         silk: "blue",
       },
     );
@@ -568,7 +570,7 @@ describe("runNpcBreeding", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-2",
+        ownership: makeNpcOwned(asNpcStableId("stable-2")),
         silk: "red",
         potential: 85,
         fame: 60,
@@ -632,7 +634,7 @@ describe("runNpcBreeding", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-1",
+        ownership: makeNpcOwned(asNpcStableId("stable-1")),
         silk: "blue",
       },
     );
@@ -650,7 +652,7 @@ describe("runNpcBreeding", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-2",
+        ownership: makeNpcOwned(asNpcStableId("stable-2")),
         silk: "red",
         potential: 85,
         fame: 60,
@@ -713,7 +715,7 @@ describe("runNpcBreeding", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-1",
+        ownership: makeNpcOwned(asNpcStableId("stable-1")),
         silk: "blue",
       },
     );
@@ -731,7 +733,7 @@ describe("runNpcBreeding", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-2",
+        ownership: makeNpcOwned(asNpcStableId("stable-2")),
         silk: "red",
         potential: 85,
         fame: 60,
@@ -798,7 +800,7 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
         temperament: 50,
         conformation: 50,
       },
-      { stableId: "stable-1", silk: "blue" },
+      { ownership: makeNpcOwned(asNpcStableId("stable-1")), silk: "blue" },
     );
 
     // Stallion that shares a parent with the mare (high COI)
@@ -815,7 +817,7 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-2",
+        ownership: makeNpcOwned(asNpcStableId("stable-2")),
         silk: "red",
         potential: 85,
         fame: 60,
@@ -878,7 +880,7 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
         temperament: 50,
         conformation: 50,
       },
-      { stableId: "stable-1", silk: "blue", sireId: "stallion-1", sireName: "Test Stallion" },
+      { ownership: makeNpcOwned(asNpcStableId("stable-1")), silk: "blue", sireId: "stallion-1", sireName: "Test Stallion" },
     );
 
     const stallion = mockHorse(
@@ -894,7 +896,7 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-2",
+        ownership: makeNpcOwned(asNpcStableId("stable-2")),
         silk: "red",
         potential: 85,
         fame: 60,
@@ -957,7 +959,7 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
         temperament: 50,
         conformation: 50,
       },
-      { stableId: "stable-1", silk: "blue", healthStatus: "covering_sickness" },
+      { ownership: makeNpcOwned(asNpcStableId("stable-1")), silk: "blue", healthStatus: "covering_sickness" },
     );
 
     const stallion = mockHorse(
@@ -973,7 +975,7 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-2",
+        ownership: makeNpcOwned(asNpcStableId("stable-2")),
         silk: "red",
         potential: 85,
         fame: 60,
@@ -1032,7 +1034,7 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
         temperament: 50,
         conformation: 50,
       },
-      { stableId: "stable-1", silk: "blue", lastFoaledDay: 95 },
+      { ownership: makeNpcOwned(asNpcStableId("stable-1")), silk: "blue", lastFoaledDay: 95 },
     );
 
     const stallion = mockHorse(
@@ -1048,7 +1050,7 @@ describe("runNpcBreeding — COI and eligibility checks", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-2",
+        ownership: makeNpcOwned(asNpcStableId("stable-2")),
         silk: "red",
         potential: 85,
         fame: 60,
@@ -1110,7 +1112,7 @@ describe("runNpcBreeding — all 8 personalities breed", () => {
         temperament: 50,
         conformation: 50,
       },
-      { stableId: "stable-1", silk: "blue" },
+      { ownership: makeNpcOwned(asNpcStableId("stable-1")), silk: "blue" },
     );
 
     const stallion = mockHorse(
@@ -1126,7 +1128,7 @@ describe("runNpcBreeding — all 8 personalities breed", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-2",
+        ownership: makeNpcOwned(asNpcStableId("stable-2")),
         silk: "red",
         potential: 85,
         fame: 60,
@@ -1211,7 +1213,7 @@ describe("runNpcBreeding — book size and hemisphere checks", () => {
         temperament: 50,
         conformation: 50,
       },
-      { stableId: "stable-1", silk: "blue" },
+      { ownership: makeNpcOwned(asNpcStableId("stable-1")), silk: "blue" },
     );
 
     const stallion = mockHorse(
@@ -1227,7 +1229,7 @@ describe("runNpcBreeding — book size and hemisphere checks", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-2",
+        ownership: makeNpcOwned(asNpcStableId("stable-2")),
         silk: "red",
         potential: 85,
         fame: 60,
@@ -1286,7 +1288,7 @@ describe("runNpcBreeding — book size and hemisphere checks", () => {
         temperament: 50,
         conformation: 50,
       },
-      { stableId: "stable-1", silk: "blue", hemisphere: "Northern" },
+      { ownership: makeNpcOwned(asNpcStableId("stable-1")), silk: "blue", hemisphere: "Northern" },
     );
 
     const stallion = mockHorse(
@@ -1302,7 +1304,7 @@ describe("runNpcBreeding — book size and hemisphere checks", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-2",
+        ownership: makeNpcOwned(asNpcStableId("stable-2")),
         silk: "red",
         potential: 85,
         fame: 60,

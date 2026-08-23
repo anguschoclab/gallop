@@ -22,7 +22,7 @@ export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
 
     const ownedRaceIds = new Set<string>();
     for (const r of upcoming) {
-      if (r.entries.some((e) => e.owned)) {
+      if (r.entries.some((e) => e.ownership?.type === "player")) {
         ownedRaceIds.add(r.id);
       }
     }
@@ -35,7 +35,9 @@ export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
       let topProj: { name: string; proj: number } | null = null;
 
       for (const r of ownedEntries) {
-        const ownedIds = r.entries.filter((e) => e.owned).map((e) => e.horseId);
+        const ownedIds = r.entries
+          .filter((e) => e.ownership?.type === "player")
+          .map((e) => e.horseId);
         for (const id of ownedIds) {
           const horse = horsesById.get(id);
           if (horse) {

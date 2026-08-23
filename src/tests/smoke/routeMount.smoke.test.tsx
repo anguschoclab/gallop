@@ -27,17 +27,21 @@ import { createRouterMock, NotFoundError } from "@/test-utils/routerMock";
 vi.mock("@tanstack/react-router", () => createRouterMock());
 
 import { renderWithStore, midGameSeed } from "@/test-utils/renderWithStore";
-import { routeCases as cases } from "@/test-utils/routeDiscovery";
+import { componentRouteCases, redirectRouteCases } from "@/test-utils/routeDiscovery";
 
 beforeEach(() => cleanup());
 afterEach(() => cleanup());
 
 describe("route mount smoke (real store)", () => {
-  it("discovers routes to test", () => {
-    expect(cases.length).toBeGreaterThan(20);
+  it("discovers 42 component routes", () => {
+    expect(componentRouteCases.length).toBe(42);
   });
 
-  it.each(cases)("$name mounts without throwing", ({ component }) => {
+  it("discovers 16 redirect-only routes", () => {
+    expect(redirectRouteCases.length).toBe(16);
+  });
+
+  it.each(componentRouteCases)("$name mounts without throwing", ({ component }) => {
     try {
       renderWithStore(createElement(component), midGameSeed());
     } catch (e) {
@@ -46,5 +50,28 @@ describe("route mount smoke (real store)", () => {
       if (e instanceof NotFoundError) return;
       throw e;
     }
+  });
+
+  it.each(redirectRouteCases)(
+    "$name redirect executes without unexpected error",
+    ({ beforeLoad }) => {
+      try {
+        beforeLoad();
+        // If beforeLoad doesn't throw, that's a failure — redirect routes must throw
+        throw new Error("beforeLoad did not throw (expected redirect or notFound)");
+      } catch (e) {
+        if (e instanceof NotFoundError) return;
+        // redirect() returns a plain object with a `to` property — verify it's a redirect
+        if (e instanceof Error) throw e;
+        const thrown = e as Record<string, unknown>;
+        if (typeof thrown.to === "string") return;
+        throw new Error(`beforeLoad threw unexpected value: ${JSON.stringify(e)}`);
+      }
+    },
+  );
+
+  it("__root.tsx module loads with Route export", async () => {
+    const mod = await import("@/routes/__root");
+    expect(mod.Route).toBeDefined();
   });
 });

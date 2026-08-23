@@ -45,7 +45,11 @@ describe("intentCollectionPhase", () => {
 
   it("should collect NPC intents from NPC intent generators", () => {
     const stable = createTestStable({ id: "npc-1", cash: 100000, horses: ["horse-1"] });
-    const horse = createTestHorse({ id: "horse-1", stableId: "npc-1", ownership: { type: "unowned" } });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stableId: "npc-1",
+      ownership: { type: "unowned" },
+    });
     const state = makeGameState({
       npcStables: [stable],
       horses: h2r([horse]),

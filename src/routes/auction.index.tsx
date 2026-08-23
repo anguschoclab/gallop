@@ -17,6 +17,9 @@ import { TransactionArchive } from "@/components/auction/TransactionArchive";
 import { LiveExchangeFloor } from "@/components/auction/LiveExchangeFloor";
 import { UpcomingLedgerTable } from "@/components/auction/UpcomingLedgerTable";
 import type { AuctionSale, Horse } from "@/game/types";
+import { canAccessSale, getReputationTier, formatReputationTier } from "@/core/reputation";
+import type { AuctionSaleKind } from "@/core/market/types";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 type SaleDisplay =
   | AuctionSale
@@ -38,6 +41,20 @@ function AuctionPage() {
   const auctions = useAuctions() as AuctionSale[];
   const horses = useGameWithShallow((s: GameState) => s.horses);
   const day = useGame((s: GameState) => s.day);
+  const reputationScore = useGame((s) => s.reputation?.score ?? 0);
+  const reputationTier = getReputationTier(reputationScore);
+
+  const saleAccessMap = useMemo(() => {
+    const map = new Map<string, { allowed: boolean; requiredTier: string }>();
+    for (const t of SALE_TRIGGERS) {
+      const access = canAccessSale(t.kind, reputationTier);
+      map.set(t.kind, {
+        allowed: access.allowed,
+        requiredTier: formatReputationTier(access.requiredTier),
+      });
+    }
+    return map;
+  }, [reputationTier]);
 
   const [consignOpen, setConsignOpen] = useState(false);
   const [consignTarget, setConsignTarget] = useState<{ horse: Horse; sale: AuctionSale } | null>(
@@ -94,10 +111,14 @@ function AuctionPage() {
     }
 
     return Object.values(horses)
-      .filter((h: Horse) => h.owned && !h.consignedSaleId)
+      .filter((h: Horse) => isPlayerOwned(h) && !h.consignedSaleId)
       .map((h: Horse) => ({ horse: h, sale: findEligibleSale(h) }))
-      .filter((p): p is { horse: Horse; sale: AuctionSale } => p.sale !== undefined);
-  }, [horses, activeUpcoming]);
+      .filter((p): p is { horse: Horse; sale: AuctionSale } => p.sale !== undefined)
+      .filter((p) => {
+        const access = canAccessSale(p.sale.kind as AuctionSaleKind, reputationTier);
+        return access.allowed;
+      });
+  }, [horses, activeUpcoming, reputationTier]);
 
   function openConsign(horse: Horse, sale: AuctionSale) {
     setConsignTarget({ horse, sale });
@@ -149,7 +170,7 @@ function AuctionPage() {
 
         <main className="lg:col-span-8 space-y-8">
           <LiveExchangeFloor sales={todaysSales} />
-          <UpcomingLedgerTable sales={allUpcoming} currentDay={day} />
+          <UpcomingLedgerTable sales={allUpcoming} currentDay={day} saleAccessMap={saleAccessMap} />
         </main>
       </div>
 

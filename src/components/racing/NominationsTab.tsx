@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { Flag, Trophy, Lock } from "lucide-react";
 import { NOMINATIONS_UPCOMING_LIMIT } from "@/constants";
 import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 const TIER_COLORS: Record<NominationTier, string> = {
   early: "bg-emerald-500/20 text-emerald-300 border-emerald-400/40",
@@ -50,7 +51,7 @@ export function NominationsTab() {
   const withdrawNomination = useGame((s: StoreType) => s.withdrawNomination);
 
   const playerHorses = useMemo(
-    () => Object.values(horses).filter((h) => h.owned && h.lifecycleStatus === "active"),
+    () => Object.values(horses).filter((h) => isPlayerOwned(h) && h.lifecycleStatus === "active"),
     [horses],
   );
 

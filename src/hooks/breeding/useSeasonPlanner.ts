@@ -8,6 +8,7 @@ import { getAvailableStallions } from "@/core/breeding/stallions";
 import { suggestBestSires, type SireSuggestion } from "@/core/breeding/sireSuggestions";
 import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/constants";
 import type { MatingPlanEntry } from "@/game/store/state/breedingState";
+import { isPlayerOwned, getStableId } from "@/core/horse/ownership";
 
 export function useSeasonPlanner() {
   const horses = useGameWithShallow((s: GameState) => s.horses || []);
@@ -27,7 +28,7 @@ export function useSeasonPlanner() {
   const eligibleMares = useMemo(() => {
     return horseList.filter(
       (h: Horse) =>
-        h.owned &&
+        isPlayerOwned(h) &&
         isFemaleHorse(h.gender) &&
         h.age >= 3 &&
         h.lifecycleStatus !== "deceased" &&
@@ -57,7 +58,7 @@ export function useSeasonPlanner() {
     (entry: MatingPlanEntry): number => {
       const sire = horses[entry.sireId];
       if (!sire) return 0;
-      const isExternal = !!sire.stableId;
+      const isExternal = !!getStableId(sire);
       if (!isExternal) return 0;
       const studFee = sire.stud?.standingFee ?? 0;
       return BREEDING_FEE + (entry.liveFoalGuarantee ? LIVE_FOAL_GUARANTEE_FEE : 0) + studFee;

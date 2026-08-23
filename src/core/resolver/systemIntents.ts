@@ -9,6 +9,7 @@ import type { FacilityLevel } from "@/core/facilities";
 import type { OutpostRegion } from "@/core/facilities/outpostTypes";
 import type { InsurancePolicyType } from "@/core/insurance/insuranceTypes";
 import type { InquiryType } from "@/core/stewards/stewardTypes";
+import type { RunnerFactorLedger } from "@/core/race/factorLedger";
 
 export interface UpkeepIntent extends Intent {
   type: "upkeep";
@@ -48,6 +49,7 @@ export interface RaceResolutionIntent extends Intent {
   type: "race_resolution";
   raceId: string;
   results: { horseId: string; position: number; time: number }[];
+  factorLedgers?: Record<string, RunnerFactorLedger>;
 }
 
 export interface ClaimingIntent extends Intent {

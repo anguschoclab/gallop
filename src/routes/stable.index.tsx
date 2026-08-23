@@ -18,6 +18,7 @@ import { overall } from "@/components/horse/HorseBits";
 import { Users, Clock, Heart, List, LayoutGrid } from "lucide-react";
 import { matchesTendency } from "@/core/horse/paceTendency";
 import { PaceTendencyFilter } from "@/components/horse/PaceTendencyFilter";
+import { isPlayerOwned, getStableId } from "@/core/horse/ownership";
 
 const stableSearchSchema = z.object({
   tab: fallback(z.enum(["roster", "rivals"]), "roster").default("roster"),
@@ -51,11 +52,11 @@ function StablePage() {
   const myHorses = useMemo(
     () =>
       Object.values(horses)
-        .filter((h) => h.owned)
+        .filter((h) => isPlayerOwned(h))
         .map(ensurePhenotypeResolved),
     [horses],
   );
-  const playerAwards = useMemo(() => awards.filter((a) => !a.stableId), [awards]);
+  const playerAwards = useMemo(() => awards.filter((a) => !getStableId(a)), [awards]);
 
   const counts = useMemo(() => {
     const active = myHorses.filter(
@@ -81,7 +82,7 @@ function StablePage() {
   const horseCountsByStable = useMemo(() => {
     const counts = new Map<string, number>();
     Object.values(horses).forEach((h) => {
-      if (h.stableId) counts.set(h.stableId, (counts.get(h.stableId) || 0) + 1);
+      if (getStableId(h)) counts.set(getStableId(h), (counts.get(getStableId(h)) || 0) + 1);
     });
     return counts;
   }, [horses]);

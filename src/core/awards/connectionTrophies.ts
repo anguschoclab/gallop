@@ -10,7 +10,9 @@
  */
 
 import type { GameState, Horse, Race } from "@/game/types";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import type { RaceEntry } from "@/core/race/types";
+import { asRaceId } from "@/core/types/branded";
+import { isPlayerOwned, getStableId } from "@/core/horse/ownership";
 
 export interface G1WinEntry {
   raceId?: string;
@@ -43,8 +45,8 @@ export function getG1WinsForJockey(state: GameState, jockeyId: string): G1WinEnt
   for (const horse of Object.values(state.horses || {})) {
     for (const r of horse.raceHistory || []) {
       if (!isWinningG1(r)) continue;
-      const race = r.raceId ? raceById[r.raceId] : undefined;
-      const entry = race?.entries?.find((e) => e.horseId === horse.id);
+      const race = r.raceId ? raceById[asRaceId(r.raceId)] : undefined;
+      const entry = race?.entries?.find((e: RaceEntry) => e.horseId === horse.id);
       if (entry?.jockeyId !== jockeyId) continue;
       out.push({
         raceId: r.raceId,
@@ -77,8 +79,8 @@ export function getG1WinsForStable(
   const out: G1WinEntry[] = [];
   const wantPlayer = !stableId;
   for (const horse of Object.values(state.horses || {})) {
-    const horseStable = (horse as Horse).stableId;
-    if (wantPlayer ? !isPlayerOwned(horse) : horseStable !== stableId) continue;
+    const horseStable = getStableId(horse as Horse);
+    if (wantPlayer ? !isPlayerOwned(horse) : (horseStable ?? undefined) !== stableId) continue;
     for (const r of horse.raceHistory || []) {
       if (!isWinningG1(r)) continue;
       out.push({

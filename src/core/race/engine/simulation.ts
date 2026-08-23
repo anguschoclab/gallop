@@ -40,6 +40,7 @@ import {
   getDraftingHorseId,
 } from "./jockeyEffects";
 import { calculateWindEffect } from "./windEffects";
+import type { FactorKey, RunnerFactorLedger } from "@/core/race/factorLedger";
 
 export { computePaceContext } from "./paceContext";
 export { calculateWindEffect } from "./windEffects";
@@ -173,6 +174,8 @@ export function stepRunner(
   staminaMul *= windStaminaMod;
 
   // Calculate target speed
+  const noiseValue = (rng.next() - 0.5) * 0.08 * r.noise;
+  const noiseMul = 1 + noiseValue;
   const targetSpeed =
     r.topSpeed *
     staminaMul *
@@ -185,7 +188,26 @@ export function stepRunner(
     seekMul *
     spurtMul *
     windSpeedMod *
-    (1 + (rng.next() - 0.5) * 0.08 * r.noise);
+    noiseMul;
+
+  // Record factor ledger for this tick
+  if (r.factorLedger) {
+    const factors: Record<FactorKey, number> = {
+      stamina: staminaMul,
+      style: styleMul,
+      draft: draftMul,
+      cover: coverMul,
+      turnSpeed: turnSpeedMul,
+      gradientSpeed: gradientSpeedMul,
+      gradientStamina: gradientStaminaMul,
+      traitSurface: traitSurfaceMul,
+      seek: seekMul,
+      spurt: spurtMul,
+      wind: windSpeedMod,
+      noise: noiseMul,
+    };
+    r.factorLedger.recordTick(progress, factors);
+  }
 
   // Update velocity towards target (deceleration is slower than acceleration)
   const diff = targetSpeed - r.velocity;
@@ -255,6 +277,7 @@ export function runRaceToCompletion(
   result: { horseId: string; position: number; time: number }[];
   snapshots: RaceSnapshot[];
   paceSnapshots: PaceSnapshot[];
+  factorLedgers: Record<string, RunnerFactorLedger>;
 } {
   let t = 0;
   const snapshots: RaceSnapshot[] = [];
@@ -362,5 +385,15 @@ export function runRaceToCompletion(
     time: r.time,
   }));
 
-  return { result, snapshots, paceSnapshots };
+  // Finalize factor ledgers
+  const factorLedgers: Record<string, RunnerFactorLedger> = {};
+  for (const r of runners) {
+    if (r.factorLedger) {
+      const finalized = r.factorLedger.finalize();
+      r.finalizedLedger = finalized;
+      factorLedgers[r.horseId] = finalized;
+    }
+  }
+
+  return { result, snapshots, paceSnapshots, factorLedgers };
 }

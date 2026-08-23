@@ -16,6 +16,8 @@ import { rollProceduralFamily } from "@/core/breeding/bruceLowe";
 import { resolveBloodline } from "@/core/breeding/populationGenetics";
 import { activeStallions2020s } from "@/data/pedigreeData";
 import { mapStallionToStable } from "@/core/stable/stableQueries";
+import { makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 
 /**
  * Generate famous active stallions from real-world pedigree data.
@@ -49,12 +51,12 @@ export function generateFamousStallions(stables: Stable[], rng: Rng): Horse[] {
       age,
       gender: "horse",
       hemisphere: data.hemisphere ?? "Northern",
-      owned: false,
+      ownership: makeNpcOwned(asNpcStableId("unowned")),
     });
 
     horse.sireName = data.sire || "Unknown";
     horse.damName = data.dam || "Unknown";
-    horse.stableId = stable.id;
+    horse.ownership = makeNpcOwned(asNpcStableId(stable.id as string));
     horse.bloodline = resolveBloodline(horse, new Map());
     horse.bruceLoweFamily = data.bruceLoweFamily ?? rollProceduralFamily(rng);
     horse.fame = Math.min(

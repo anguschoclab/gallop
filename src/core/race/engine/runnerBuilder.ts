@@ -47,6 +47,7 @@ import {
   deriveDefaultInstructions,
   DEFAULT_GATE,
 } from "./runnerTypes";
+import { FactorLedgerCollector } from "@/core/race/factorLedger";
 
 // Re-export shared types and utilities for backward compatibility
 export type { Runner, RunnerBonuses, ConditionsModifier, PaceContext } from "./runnerTypes";
@@ -368,7 +369,7 @@ export function buildRunner(
     name: h.name,
     silk: h.silk,
     coatColor: h.coatColor,
-    owned,
+    isPlayer: owned,
     position: 0,
     velocity: 0,
     finishTime: null,
@@ -412,5 +413,6 @@ export function buildRunner(
           ? 0
           : 0.5
         : 0.5,
+    factorLedger: new FactorLedgerCollector(),
   };
 }

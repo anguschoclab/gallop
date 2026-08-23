@@ -121,7 +121,7 @@ export function useInRunningSnapshots() {
           lane: r.lane,
           gate: r.gate,
           silk: r.silk,
-          owned: Boolean(r.owned),
+          owned: r.isPlayer,
           finishTime: r.finishTime,
           rank: rankMap.get(r.horseId) ?? 1,
           conditions,

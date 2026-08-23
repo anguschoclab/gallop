@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { useGame } from "@/game/store";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 import type { Race } from "@/game/types";
+import { asRaceId } from "@/core/types/branded";
 
 function makeInquiry(overrides: Partial<StewardsInquiry> = {}): StewardsInquiry {
   return {
@@ -46,7 +47,8 @@ describe("addStewardsInquiry", () => {
     // Reset store to a clean state with a race present
     useGame.setState({
       stewardsInquiries: [],
-      races: { "race-1": makeRace() },
+      inbox: [],
+      races: { [asRaceId("race-1")]: makeRace() },
       jockeys: [{ id: "jockey-1", name: "Test Jockey", suspendedUntil: undefined } as any],
       day: 1,
     });
@@ -62,7 +64,7 @@ describe("addStewardsInquiry", () => {
   it("attaches inquiry to race.inquiries (Bug 6)", () => {
     const inquiry = makeInquiry();
     useGame.getState().addStewardsInquiry(inquiry);
-    const race = useGame.getState().races["race-1"];
+    const race = useGame.getState().races[asRaceId("race-1")];
     expect(race.inquiries).toBeDefined();
     expect(race.inquiries).toHaveLength(1);
     expect(race.inquiries![0].id).toBe("inq-1");
@@ -77,5 +79,20 @@ describe("addStewardsInquiry", () => {
     useGame.getState().addStewardsInquiry(inquiry);
     const jockey = useGame.getState().jockeys?.find((j) => j.id === "jockey-1");
     expect(jockey?.suspendedUntil).toBe(6); // day 1 + 5 = 6
+  });
+
+  it("pushes an inbox message with category 'stewards'", () => {
+    const inquiry = makeInquiry();
+    useGame.getState().addStewardsInquiry(inquiry);
+    const inbox = useGame.getState().inbox;
+    expect(inbox).toHaveLength(1);
+    expect(inbox[0].category).toBe("stewards");
+  });
+
+  it("pushes an inbox message with priority 'urgent'", () => {
+    const inquiry = makeInquiry();
+    useGame.getState().addStewardsInquiry(inquiry);
+    const msg = useGame.getState().inbox[0];
+    expect(msg.priority).toBe("urgent");
   });
 });

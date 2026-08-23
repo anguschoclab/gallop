@@ -122,8 +122,13 @@ export function LiveRace() {
   // Wrap resolveRaceWithImpacts so the stewards inquiry hook fires after the
   // store resolves the race, giving the player a post-race inquiry notification.
   const resolveRaceWithImpacts = useCallback(
-    (raceId: string, result: { horseId: string; position: number; time: number }[]) => {
-      resolveRaceBase(raceId, result);
+    (
+      raceId: string,
+      result: { horseId: string; position: number; time: number }[],
+      runners?: Array<{ horseId: string; owned?: boolean }>,
+      factorLedgers?: Record<string, import("@/core/race/factorLedger").RunnerFactorLedger>,
+    ) => {
+      resolveRaceBase(raceId, result, runners, factorLedgers);
       if (race) triggerInquiry(race, result);
     },
     [resolveRaceBase, triggerInquiry, race],
@@ -235,7 +240,7 @@ export function LiveRace() {
     lastUpdatedAt,
   } = useLeaderboardState(runners, race, classBonus, calibratedPars ?? {}, tick);
 
-  const ownedRunnersTotal = runners.filter((r) => r.owned);
+  const ownedRunnersTotal = runners.filter((r) => r.isPlayer);
   const defaultFollowTarget = ownedRunnersTotal.length > 0 ? ownedRunnersTotal[0].horseId : null;
   const [followTarget, setFollowTarget] = useState<string | null>(defaultFollowTarget);
   const [hideUntilAllFinished, setHideUntilAllFinished] = useState(false);
@@ -297,7 +302,7 @@ export function LiveRace() {
             horseId: r.horseId,
             name: r.name,
             silk: r.silk,
-            owned: r.owned,
+            owned: r.isPlayer,
           }))}
           runnerOdds={runnerOdds}
           onStart={() => setPhase("live")}

@@ -16,6 +16,7 @@ import { isMaleHorse } from "@/core/horse/gender";
 import type { ImpactHandler, LookupMaps } from "./types";
 import { generateUUID } from "@/core/uuid";
 import { isPlayerOwned } from "@/core/horse/ownership";
+import { formatRecoveryDays } from "@/core/health/injuryDisplay";
 import type {
   HorseCreationImpact,
   HorseDeletionImpact,
@@ -153,18 +154,31 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       // Push to Inbox if player-owned
       if (isPlayerOwned(horse)) {
         if (!draft.inbox) draft.inbox = [];
+        const priority =
+          severity === "career-ending"
+            ? "critical"
+            : severity === "major"
+              ? "urgent"
+              : severity === "moderate"
+                ? "low"
+                : "info";
+        const shouldHaveCta = severity === "major" || severity === "career-ending";
         draft.inbox.push({
           id: generateUUID(),
           day: impact.day,
           category: "injury",
-          priority: "urgent",
+          priority,
           title: `Injury: ${horse.name}`,
-          body: `${horse.name} sustained a ${severity} ${injuryType} injury. Estimated recovery: ${recoveryDays} days.`,
-          cta: {
-            label: "View Horse",
-            route: "stable.$horseId",
-            params: { horseId: horse.id },
-          },
+          body: `${horse.name} sustained a ${severity} ${injuryType} injury. Estimated recovery: ${formatRecoveryDays(recoveryDays, severity)}.`,
+          ...(shouldHaveCta
+            ? {
+                cta: {
+                  label: "View Horse",
+                  route: "stable.$horseId",
+                  params: { horseId: horse.id },
+                },
+              }
+            : {}),
         });
       }
     }

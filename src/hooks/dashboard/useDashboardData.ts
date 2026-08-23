@@ -3,6 +3,8 @@ import { useGame, useGameWithShallow } from "@/game/store";
 import type { RaceEntry } from "@/core/race/types";
 import type { InboxMessage } from "@/core/inbox/inboxTypes";
 import type { Horse } from "@/core/horse/types";
+import { getStableId } from "@/core/horse/ownership";
+import { asRaceId } from "@/core/types/branded";
 import {
   ENERGY_LOW_THRESHOLD,
   DASHBOARD_UPCOMING_RACES_LIMIT,
@@ -32,7 +34,7 @@ export function useDashboardData() {
     const active: Horse[] = [];
     const lowEnergy: Horse[] = [];
     for (const h of Object.values(horses)) {
-      if (!h.owned) continue;
+      if (!(h.ownership?.type === "player")) continue;
       owned.push(h);
       if (h.lifecycleStatus !== "active") continue;
       active.push(h);
@@ -46,11 +48,13 @@ export function useDashboardData() {
     .sort((a, b) => a.day - b.day)
     .slice(0, DASHBOARD_UPCOMING_RACES_LIMIT);
 
-  const nextOwnedRace = upcoming.find((r) => r.entries.some((e: RaceEntry) => e.owned));
+  const nextOwnedRace = upcoming.find((r) =>
+    r.entries.some((e: RaceEntry) => e.ownership?.type === "player"),
+  );
   const activeAuctions = auctions?.filter((a) => !a.resolved) ?? [];
 
   const urgentMessages = (inbox || [])
-    .filter((m: InboxMessage) => !m.readAt && m.priority !== "info")
+    .filter((m: InboxMessage) => !m.readAt && m.priority !== "info" && m.priority !== "low")
     .sort((a: InboxMessage, b: InboxMessage) => b.day - a.day)
     .slice(0, DASHBOARD_URGENT_MESSAGES_LIMIT);
 
@@ -74,9 +78,11 @@ export function useDashboardData() {
         horse.raceHistory
           .filter((r: { day: number }) => r.day >= thirtyDaysAgo)
           .forEach((raceResult: { raceId: string; position: number }) => {
-            const race = raceMap[raceResult.raceId];
+            const race = raceMap[asRaceId(raceResult.raceId)];
             if (race) {
-              const hadRivalEntry = race.entries.some((e: RaceEntry) => e.stableId === stableId);
+              const hadRivalEntry = race.entries.some(
+                (e: RaceEntry) => (getStableId(e) ?? undefined) === stableId,
+              );
               if (hadRivalEntry) {
                 if (raceResult.position === 1) wins++;
                 else losses++;

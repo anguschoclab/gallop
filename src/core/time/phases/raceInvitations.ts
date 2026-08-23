@@ -22,6 +22,8 @@ import type { Race } from "@/core/race/types";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { generateUUID } from "@/core/uuid";
 import { getCurrentYear } from "@/core/race/schedule";
+import { isPlayerOwned } from "@/core/horse/ownership";
+import { canReceiveAtLargeInvite, getReputationTier } from "@/core/reputation";
 
 /**
  * Check if a horse has a Win-and-You're-In qualification for a specific race key.
@@ -91,9 +93,13 @@ export const raceInvitationsPhase: PipelinePhase = {
       }
 
       const raceKey = race.graded?.key;
+      const raceGrade = race.graded?.grade ?? "";
       const invited = new Set(race.invitedHorseIds ?? []);
       const autoInvites: string[] = [];
       const atLargeCandidates: { horseId: string; fame: number; distanceDiff: number }[] = [];
+
+      // Player reputation tier for at-large invite gating
+      const playerRepTier = getReputationTier(state.reputation?.score ?? 0);
 
       for (const horse of Object.values(state.horses)) {
         // Skip if already invited
@@ -108,9 +114,14 @@ export const raceInvitationsPhase: PipelinePhase = {
           continue;
         }
 
-        // At-large pool: distance filter
+        // At-large pool: distance filter + reputation gate for player-owned horses
         const distanceDiff = Math.abs(race.distance - horse.distanceAptitude);
         if (distanceDiff <= DISTANCE_INVITE_THRESHOLD) {
+          // Gate player-owned horses by reputation tier
+          if (isPlayerOwned(horse)) {
+            const gate = canReceiveAtLargeInvite(raceGrade, playerRepTier);
+            if (!gate.allowed) continue;
+          }
           atLargeCandidates.push({
             horseId: horse.id,
             fame: horse.fame,

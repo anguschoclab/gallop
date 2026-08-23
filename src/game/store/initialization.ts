@@ -16,6 +16,7 @@
 import type { GameState, Horse, Race } from "@/game/types";
 import type { NewGameOptions } from "@/game/store/state";
 import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
+import { makePlayerOwned } from "@/core/horse/ownership";
 import { generateRace, makeGradedRace } from "@/core/race/generation/raceGen";
 import { generateInitialJockeys } from "@/core/jockey/generator";
 import { generateAllStables } from "@/core/npc/stables";
@@ -41,15 +42,25 @@ import { getWorldSizeConfig, DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeC
  * jockeys, and facilities. Applies backstory upgrades to facilities if provided.
  *
  * @param options - Optional new game options including backstory and profile
+ * @param progressCallback - Optional callback invoked with (stage, total, name) during initialization
  * @returns Initial game state with all entities populated
  */
-export function createInitialState(options?: NewGameOptions): GameState {
+export function createInitialState(
+  options?: NewGameOptions,
+  progressCallback?: (stage: number, total: number, name: string) => void,
+): GameState {
   const profileSeed = options?.profile.stableName ?? "initial_setup";
   const setupRng = createRng(hashStr(profileSeed));
   const worldSize = options?.worldSize ?? DEFAULT_WORLD_SIZE;
   const worldConfig = getWorldSizeConfig(worldSize);
 
+  const TOTAL_STAGES = 8;
+  const progress = (stage: number, name: string) => {
+    progressCallback?.(stage, TOTAL_STAGES, name);
+  };
+
   // Generate player horses — backstory-driven if options provided, else default 2 starters
+  progress(1, "Player horses");
   const playerHorseSpecs = options?.backstory.horses ?? [{ tier: "starter" as const, count: 2 }];
   const playerSilkColor = options?.profile.silk.primary;
   const horses: Horse[] = [];
@@ -57,7 +68,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
   for (const spec of playerHorseSpecs) {
     for (let i = 0; i < spec.count; i++) {
       const h = ensurePhenotypeResolved(
-        generateHorse({ tier: spec.tier, owned: true }, setupRng, {
+        generateHorse({ tier: spec.tier, ownership: makePlayerOwned() }, setupRng, {
           existingNames: usedNames,
         }),
       );
@@ -67,6 +78,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     }
   }
 
+  progress(2, "Market horses");
   const market: Horse[] = Array.from({ length: 5 }, () => {
     const r = setupRng.next();
     const tier: "starter" | "budget" | "mid" | "elite" = r < 0.6 ? "budget" : "mid";
@@ -75,6 +87,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     return h;
   });
 
+  progress(3, "Race schedule");
   const races: Race[] = [];
   for (let d = 1; d <= 7; d++) {
     const dayRng = createRng(hashStr(`raceGen_${d}`));
@@ -98,7 +111,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     setupRng,
   );
 
-  // Generate NPC stables and horses
+  progress(4, "NPC stables & horses");
   const stableRng = createRng(hashStr("initial_stables"));
   const npcStables = generateAllStables(1, stableRng, worldConfig.stables);
   const npcHorseRng = createRng(hashStr("initial_npc_horses"));
@@ -116,12 +129,14 @@ export function createInitialState(options?: NewGameOptions): GameState {
   // Merge used names
   for (const name of npcUsedNames) usedNames.add(name);
 
+  progress(5, "Jockeys");
   // Generate initial jockeys
   const jockeyRng = createRng(hashStr("initial_jockeys"));
   const usedJockeyNames = new Set<string>();
   const jockeys = generateInitialJockeys(jockeyRng, worldConfig.jockeyCount, usedJockeyNames);
 
-  // Run initial NPC race entry to populate races
+  progress(6, "NPC race entry");
+  // Run initial NPC race entry
   const pregnantIds = new Set<string>();
   const entryRng = createRng(hashStr("initial_entry"));
   const racesWithEntries = runNpcRaceEntry(
@@ -135,7 +150,8 @@ export function createInitialState(options?: NewGameOptions): GameState {
     pregnantIds,
   );
 
-  // Facilities — start with all-basic default, then apply backstory upgrades
+  progress(7, "Facilities");
+  // Facilities
   const facilities = createDefaultPlayerFacilities(1);
   if (options) {
     for (const [type, level] of Object.entries(options.backstory.facilityUpgrades)) {
@@ -158,6 +174,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     ? `${options.profile.stableName} opens its doors. Welcome, ${options.profile.ownerName}.`
     : "Welcome to your stable. Train your horses and enter them in races.";
 
+  progress(8, "Gazette & AI");
   // Generate Day 1 Seed Gazette
   const gazetteRng = createRng(hashStr(`gazette_${profileSeed}`));
   const { news: seedNews, introStableIds } = seedGazetteNews(

@@ -8,7 +8,9 @@ describe("HorseHandler - Injury Handling", () => {
   it("should update horse health status when injured", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: h2r([{ id: "horse-1", name: "Star", healthStatus: "healthy" }] as unknown as Horse[]),
+      horses: h2r([
+        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: { type: "unowned" } },
+      ] as unknown as Horse[]),
     } as unknown as GameState;
 
     const impact: InjuryImpact = {
@@ -38,7 +40,9 @@ describe("HorseHandler - Injury Handling", () => {
   it("should mark horse as other_illness for career-ending injuries", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: h2r([{ id: "horse-1", name: "Star", healthStatus: "healthy" }] as unknown as Horse[]),
+      horses: h2r([
+        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: { type: "unowned" } },
+      ] as unknown as Horse[]),
     } as unknown as GameState;
 
     const impact: InjuryImpact = {
@@ -182,6 +186,165 @@ describe("HorseHandler - Injury Handling", () => {
     const horse = draft.horses["horse-1"];
     expect(horse.healthStatus).toBe("covering_sickness");
     expect(horse.healthStatusDay).toBe(5);
+  });
+
+  // ── Career-ending body text tests ──────────────────────────────────────────
+
+  it("should use 'Career-ending' in inbox body for career-ending injuries", () => {
+    const handler = new HorseHandler();
+    const state = {
+      horses: h2r([
+        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: { type: "player" } },
+      ] as unknown as Horse[]),
+      inbox: [],
+    } as unknown as GameState;
+
+    const impact: InjuryImpact = {
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "injury",
+      horseId: "horse-1",
+      severity: "career-ending",
+      injuryType: "Fractured sesamoid",
+      recoveryDays: 999,
+      reason: "Race injury",
+    };
+
+    const draft = JSON.parse(JSON.stringify(state));
+    handler.handle(draft, impact);
+
+    expect(draft.inbox).toHaveLength(1);
+    expect(draft.inbox[0].body).toContain("Career-ending");
+    expect(draft.inbox[0].body).not.toContain("999");
+  });
+
+  // ── Severity-to-priority mapping tests ─────────────────────────────────────
+
+  it("should assign priority 'info' for minor injuries", () => {
+    const handler = new HorseHandler();
+    const state = {
+      horses: h2r([
+        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: { type: "player" } },
+      ] as unknown as Horse[]),
+      inbox: [],
+    } as unknown as GameState;
+
+    const impact: InjuryImpact = {
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "injury",
+      horseId: "horse-1",
+      severity: "minor",
+      injuryType: "Soft tissue strain",
+      recoveryDays: 7,
+      reason: "Race injury",
+    };
+
+    const draft = JSON.parse(JSON.stringify(state));
+    handler.handle(draft, impact);
+
+    expect(draft.inbox).toHaveLength(1);
+    expect(draft.inbox[0].priority).toBe("info");
+    expect(draft.inbox[0].cta).toBeUndefined();
+  });
+
+  it("should assign priority 'low' for moderate injuries", () => {
+    const handler = new HorseHandler();
+    const state = {
+      horses: h2r([
+        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: { type: "player" } },
+      ] as unknown as Horse[]),
+      inbox: [],
+    } as unknown as GameState;
+
+    const impact: InjuryImpact = {
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "injury",
+      horseId: "horse-1",
+      severity: "moderate",
+      injuryType: "Tendon strain",
+      recoveryDays: 21,
+      reason: "Race injury",
+    };
+
+    const draft = JSON.parse(JSON.stringify(state));
+    handler.handle(draft, impact);
+
+    expect(draft.inbox).toHaveLength(1);
+    expect(draft.inbox[0].priority).toBe("low");
+    expect(draft.inbox[0].cta).toBeUndefined();
+  });
+
+  it("should assign priority 'urgent' for major injuries with CTA", () => {
+    const handler = new HorseHandler();
+    const state = {
+      horses: h2r([
+        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: { type: "player" } },
+      ] as unknown as Horse[]),
+      inbox: [],
+    } as unknown as GameState;
+
+    const impact: InjuryImpact = {
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "injury",
+      horseId: "horse-1",
+      severity: "major",
+      injuryType: "Tendon tear",
+      recoveryDays: 120,
+      reason: "Race injury",
+    };
+
+    const draft = JSON.parse(JSON.stringify(state));
+    handler.handle(draft, impact);
+
+    expect(draft.inbox).toHaveLength(1);
+    expect(draft.inbox[0].priority).toBe("urgent");
+    expect(draft.inbox[0].cta).toBeDefined();
+  });
+
+  it("should assign priority 'critical' for career-ending injuries with CTA", () => {
+    const handler = new HorseHandler();
+    const state = {
+      horses: h2r([
+        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: { type: "player" } },
+      ] as unknown as Horse[]),
+      inbox: [],
+    } as unknown as GameState;
+
+    const impact: InjuryImpact = {
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "injury",
+      horseId: "horse-1",
+      severity: "career-ending",
+      injuryType: "Fractured sesamoid",
+      recoveryDays: 999,
+      reason: "Race injury",
+    };
+
+    const draft = JSON.parse(JSON.stringify(state));
+    handler.handle(draft, impact);
+
+    expect(draft.inbox).toHaveLength(1);
+    expect(draft.inbox[0].priority).toBe("critical");
+    expect(draft.inbox[0].cta).toBeDefined();
   });
 });
 import type { Horse } from "@/game/types";

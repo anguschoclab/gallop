@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 import { AlertCircle, Bell, ChevronRight } from "lucide-react";
 import { NewsContent } from "@/components/narrative/NewsContent";
 import { interpolateCtaRoute } from "@/core/inbox/ctaRoute";
+import type { InboxPriority } from "@/core/inbox/inboxTypes";
 import {
   ICON_SIZE_SM,
   STRIP_PRIORITY_BG_CLASSES,
@@ -19,7 +20,7 @@ interface UrgentMessagesStripProps {
     id: string;
     title: string;
     body: string;
-    priority: string;
+    priority: InboxPriority;
     cta?: {
       route: string;
       params?: Record<string, string>;
@@ -59,7 +60,7 @@ export function UrgentMessagesStrip({ messages }: UrgentMessagesStripProps) {
                 STRIP_PRIORITY_BG_CLASSES[msg.priority] ?? STRIP_DEFAULT_BG_CLASS,
               )}
             >
-              {msg.priority === "urgent" ? (
+              {msg.priority === "urgent" || msg.priority === "critical" ? (
                 <AlertCircle className={ICON_SIZE_SM} />
               ) : (
                 <Bell className={ICON_SIZE_SM} />

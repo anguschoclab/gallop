@@ -221,7 +221,7 @@ export function RaceBroadcast({
                 horseId: r.horseId,
                 name: r.name,
                 silk: r.silk,
-                owned: r.owned,
+                owned: r.isPlayer,
               }))}
               trackType={race.surface}
             />

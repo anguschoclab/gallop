@@ -334,11 +334,11 @@ export function Track({
 
               <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center">
                 <span
-                  className={`text-[10px] whitespace-nowrap drop-shadow-md tabular-nums ${r.owned ? "font-bold text-broadcast-accent" : "text-foreground"}`}
+                  className={`text-[10px] whitespace-nowrap drop-shadow-md tabular-nums ${r.isPlayer ? "font-bold text-broadcast-accent" : "text-foreground"}`}
                 >
                   {r.name}
                 </span>
-                {r.owned && (
+                {r.isPlayer && (
                   <div className="text-[8px] font-black text-broadcast-accent uppercase tracking-tighter">
                     Owner
                   </div>

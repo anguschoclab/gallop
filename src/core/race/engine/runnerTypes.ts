@@ -12,6 +12,7 @@ import { clamp } from "@/core/common/math";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 import { DEFAULT_GATE } from "@/constants/gateConstants";
 import type { RunnerMood } from "@/core/race/runnerConditions";
+import type { FactorLedgerCollector, RunnerFactorLedger } from "@/core/race/factorLedger";
 
 export type RunnerBonuses = {
   farrier?: number;
@@ -58,6 +59,8 @@ export type Runner = {
   weather?: Weather;
   rivalHorseIds?: string[];
   railPreference?: number;
+  factorLedger?: FactorLedgerCollector;
+  finalizedLedger?: RunnerFactorLedger;
 };
 
 export type ConditionsModifier = {

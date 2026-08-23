@@ -12,6 +12,7 @@ import { MyStallionCard } from "@/components/breeding/MyStallionCard";
 import { StallionCard } from "@/components/breeding/StallionCard";
 import { calculateRecommendedStudFee } from "@/core/breeding/stallions";
 import type { Horse, Hemisphere } from "@/core/horse/types";
+import { getStableId } from "@/core/horse/ownership";
 
 export function StallionsTab() {
   const {
@@ -86,7 +87,7 @@ export function StallionsTab() {
             <StallionCard
               key={stallion.id}
               stallion={stallion}
-              stableName={stableNameFor(stallion.stableId)}
+              stableName={stableNameFor(getStableId(stallion))}
               day={day}
               mare={selectedMare}
               cash={cash}

@@ -5,10 +5,10 @@ import { useAwards } from "@/hooks/game/useSystemsState";
 import { useAutoSave } from "@/hooks/game/useAutoSave";
 import { PlayerRacePrompt } from "@/components/race/PlayerRacePrompt";
 import { AutoSimPanel } from "@/components/race/AutoSimPanel";
-import { StewardsInquiryOverlay } from "@/components/race/StewardsInquiryOverlay";
+import { StewardsDigestToast } from "@/components/stewards/StewardsDigestToast";
 import { AwardCeremony } from "./awards";
 import { SidebarNav } from "./SidebarNav";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSkipToNext } from "@/hooks/shared/useSkipToNext";
 import { useAwardCeremony } from "@/hooks/awards/useAwardCeremony";
 import { useUnreadCount } from "@/hooks/inbox/useInbox";
@@ -24,6 +24,26 @@ export function AppShell() {
   const advanceMultipleDays = useGame((s: StoreType) => s.advanceMultipleDays);
   const skipToNext = useSkipToNext();
   const isAdvancing = useGame((s: StoreType) => s.isAdvancing ?? false);
+  const pendingPlayerRaceId = useGame((s: StoreType) => s.pendingPlayerRaceId);
+  const pendingAdvanceRemaining = useGame((s: StoreType) => s.pendingAdvanceRemaining);
+  const autoResumeRef = useRef(false);
+
+  // Auto-resume batch advancement after player race is resolved
+  useEffect(() => {
+    if (
+      !pendingPlayerRaceId &&
+      pendingAdvanceRemaining !== undefined &&
+      pendingAdvanceRemaining > 0 &&
+      !isAdvancing &&
+      !autoResumeRef.current
+    ) {
+      autoResumeRef.current = true;
+      useGame.setState({ pendingAdvanceRemaining: undefined });
+      advanceMultipleDays(pendingAdvanceRemaining).finally(() => {
+        autoResumeRef.current = false;
+      });
+    }
+  }, [pendingPlayerRaceId, pendingAdvanceRemaining, isAdvancing, advanceMultipleDays]);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -74,7 +94,7 @@ export function AppShell() {
       </main>
       <PlayerRacePrompt />
       <AutoSimPanel open={autoSimOpen} onClose={() => setAutoSimOpen(false)} />
-      <StewardsInquiryOverlay />
+      <StewardsDigestToast />
       {isAdvancing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-t950/80 backdrop-blur-sm">
           <div className="text-center">

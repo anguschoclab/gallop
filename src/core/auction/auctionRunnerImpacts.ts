@@ -1,6 +1,7 @@
 import { generateUUID } from "@/core/uuid";
 import type { AuctionSale, AuctionLot, Horse } from "@/game/types";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
+import { asOwnerKey } from "@/core/types/branded";
 import { netProceeds } from "./engine";
 import type { LotState } from "./auctionRunnerTypes";
 
@@ -49,7 +50,7 @@ export function buildAuctionImpacts(
         phase,
         logLevel: "conditional",
         type: "cash_change",
-        entityId: winnerStableId,
+        entityId: asOwnerKey(winnerStableId),
         amount: -lot.hammerPrice,
         reason: "auction_purchase",
       });
@@ -89,7 +90,7 @@ export function buildAuctionImpacts(
         phase,
         logLevel: "always",
         type: "cash_change",
-        entityId: undefined as unknown as string,
+        entityId: asOwnerKey("player"),
         amount: -lot.hammerPrice,
         reason: "auction_purchase_player",
       });
@@ -104,7 +105,7 @@ export function buildAuctionImpacts(
         phase,
         logLevel: "conditional",
         type: "cash_change",
-        entityId: consignorStableId,
+        entityId: asOwnerKey(consignorStableId),
         amount: proceeds,
         reason: "auction_proceeds",
       });
@@ -142,7 +143,7 @@ export function buildAuctionImpacts(
         phase,
         logLevel: "always",
         type: "cash_change",
-        entityId: undefined as unknown as string,
+        entityId: asOwnerKey("player"),
         amount: proceeds,
         reason: "auction_proceeds_player",
       });

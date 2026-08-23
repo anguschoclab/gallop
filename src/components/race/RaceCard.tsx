@@ -18,7 +18,7 @@ interface RaceCardProps {
 }
 
 export function RaceCard({ race, onEnter }: RaceCardProps) {
-  const ownedCount = race.entries.filter((e) => e.owned).length;
+  const ownedCount = race.entries.filter((e) => e.ownership?.type === "player").length;
   const gradeLabel = race.graded?.grade;
   const gradeColorClass = gradeLabel ? gradeColor(gradeLabel) : "bg-muted text-muted-foreground";
   const isClaiming = !!race.claiming;

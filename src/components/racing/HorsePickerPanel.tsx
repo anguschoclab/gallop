@@ -3,6 +3,7 @@ import { calculateOverallRating } from "@/core/horse/stats";
 import { cn } from "@/lib/cn";
 import { CheckCircle2 } from "lucide-react";
 import { useMemo } from "react";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 interface HorsePickerPanelProps {
   horses: Horse[];
@@ -19,7 +20,8 @@ export function HorsePickerPanel({
 }: HorsePickerPanelProps) {
   const sorted = useMemo(() => {
     const eligible = horses.filter(
-      (h) => h.owned && h.lifecycleStatus === "active" && !h.consignedSaleId && !h.activeInjury,
+      (h) =>
+        isPlayerOwned(h) && h.lifecycleStatus === "active" && !h.consignedSaleId && !h.activeInjury,
     );
     return [...eligible].sort((a, b) => {
       const aEntered = enteredHorseIds.has(a.id) ? 1 : 0;

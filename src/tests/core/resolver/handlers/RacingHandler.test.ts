@@ -26,7 +26,9 @@ describe("RacingHandler", () => {
   it("race_entry adds entry to race", () => {
     const handler = new RacingHandler();
     const state = {
-      horses: h2r([{ id: "h1", name: "Star", stableId: "", ownership: { type: "player" } }] as unknown as Horse[]),
+      horses: h2r([
+        { id: "h1", name: "Star", stableId: "", ownership: { type: "player" } },
+      ] as unknown as Horse[]),
       races: r2r([{ id: "race-1", entries: [], entryFee: 1000 }] as unknown as Race[]),
     } as unknown as GameState;
 
@@ -90,7 +92,10 @@ describe("RacingHandler", () => {
     const state = {
       horses: {},
       races: r2r([
-        { id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } }] },
+        {
+          id: "race-1",
+          entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } }],
+        },
       ] as unknown as Race[]),
     } as unknown as GameState;
 
@@ -177,7 +182,10 @@ describe("RacingHandler", () => {
     const state = {
       horses: {},
       races: r2r([
-        { id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } }] },
+        {
+          id: "race-1",
+          entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } }],
+        },
       ] as unknown as Race[]),
     } as unknown as GameState;
 
@@ -438,7 +446,10 @@ describe("RacingHandler", () => {
     const state = {
       horses: {},
       races: r2r([
-        { id: "race-1", entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } }] },
+        {
+          id: "race-1",
+          entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } }],
+        },
       ] as unknown as Race[]),
     } as unknown as GameState;
 

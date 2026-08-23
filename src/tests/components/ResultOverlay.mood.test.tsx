@@ -60,8 +60,8 @@ vi.mock("@/components/ui/collapsible", () => ({
     ),
 }));
 
-vi.mock("@/core/race/jockeyFeedback", () => ({
-  generateJockeyFeedback: () => null,
+vi.mock("@/core/race/raceVerdict", () => ({
+  generateRaceVerdict: () => null,
 }));
 
 vi.mock("@/core/common/formatting", () => ({

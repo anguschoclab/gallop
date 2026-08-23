@@ -26,6 +26,7 @@ import {
 } from "@/core/awards/invitations";
 import { PHASE_ORDER_AWARD_INVITATIONS, DAYS_PER_YEAR } from "@/constants";
 import type { AnyImpact, InboxImpact } from "@/core/resolver/impacts/index";
+import type { InboxPriority } from "@/core/inbox/inboxTypes";
 
 const REGION_NAMES: Record<AwardRegion, string> = {
   north_america: "North America",
@@ -60,7 +61,7 @@ export const awardInvitationsPhase: PipelinePhase = {
             `RSVP deadline passed: ${inv.ceremonyName}`,
             `The RSVP window for the ${inv.ceremonyName} (${REGION_NAMES[inv.region]}) has closed without a response. Your stable is recorded as not attending.`,
             inv.id,
-            "normal",
+            "info",
           ),
         );
         logs.push({
@@ -187,7 +188,7 @@ function makeInbox(
   title: string,
   body: string,
   invitationId: string,
-  priority: "action" | "normal",
+  priority: InboxPriority,
 ): InboxImpact {
   return {
     id: generateUUID(),

@@ -52,7 +52,7 @@ export function JockeyReportPanel({
   className,
 }: JockeyReportPanelProps) {
   const ownedRunners = useMemo(
-    () => runners.filter((r) => r.owned && r.finishTime !== null),
+    () => runners.filter((r) => r.isPlayer && r.finishTime !== null),
     [runners],
   );
   const ownedRunnerMap = useMemo(() => {

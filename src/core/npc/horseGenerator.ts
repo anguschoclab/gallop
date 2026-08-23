@@ -35,6 +35,7 @@ import {
 } from "@/constants";
 import type { WorldSize } from "@/core/stable/worldSizeConfig";
 import { getWorldSizeConfig, DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";
+import { getStableId } from "@/core/horse/ownership";
 
 // ─── Stable horse generation ──────────────────────────────────────────────────
 
@@ -162,9 +163,9 @@ export function generateAllNpcHorses(
     for (const s of famousStallions) {
       usedNames.add(s.name.toLowerCase());
       famousStallionIds.add(s.id);
-      if (s.stableId) {
-        if (!stallionsByStable.has(s.stableId)) stallionsByStable.set(s.stableId, []);
-        stallionsByStable.get(s.stableId)!.push(s);
+      if (getStableId(s)) {
+        if (!stallionsByStable.has(getStableId(s))) stallionsByStable.set(getStableId(s), []);
+        stallionsByStable.get(getStableId(s))!.push(s);
       }
     }
   }

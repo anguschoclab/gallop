@@ -11,6 +11,8 @@ import {
   type FacilityType,
 } from "@/core/facilities";
 import { FACILITY_LEVELS } from "@/hooks/facilities/useFacilityTiers";
+import { getReputationTier } from "@/core/reputation";
+import type { ReputationTier } from "@/core/reputation";
 
 function TierLegend() {
   const tiers = FACILITY_LEVELS;
@@ -55,6 +57,8 @@ export function FacilitiesPanel() {
   const facilities = useGameWithShallow((s) => s.facilities);
   const cash = useGame((s) => s.cash);
   const upgradeFacility = useGame((s) => s.upgradeFacility);
+  const reputationScore = useGame((s) => s.reputation?.score ?? 0);
+  const reputationTier: ReputationTier = getReputationTier(reputationScore);
 
   if (!facilities) {
     return null;
@@ -127,6 +131,7 @@ export function FacilitiesPanel() {
           types={cat.types}
           facilities={facilities}
           cash={cash}
+          reputationTier={reputationTier}
           onUpgrade={handleUpgrade}
         />
       ))}

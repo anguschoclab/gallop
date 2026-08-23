@@ -33,7 +33,14 @@ import type { TripleCrownProgressImpact } from "../impacts/campaignImpacts";
 import type { LookupMaps } from "./types";
 import { awardTraitXp, checkTraitUnlock, checkTraitAtrophy } from "@/core/jockey/traitProgression";
 import type { JockeyTrait } from "@/core/jockey/types";
-import { isPlayerOwned, isNpcOwned, makePlayerOwned, makeNpcOwned, makeUnowned, type HorseOwnership } from "@/core/horse/ownership";
+import {
+  isPlayerOwned,
+  isNpcOwned,
+  makePlayerOwned,
+  makeNpcOwned,
+  makeUnowned,
+  type HorseOwnership,
+} from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 
 type ImpactHandlerFunction = (
@@ -228,9 +235,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { horseId, toStableId } = impact as ClaimingImpact;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
     if (horse) {
-      horse.ownership = toStableId
-        ? makeNpcOwned(asNpcStableId(toStableId))
-        : makePlayerOwned();
+      horse.ownership = toStableId ? makeNpcOwned(asNpcStableId(toStableId)) : makePlayerOwned();
     }
   },
 

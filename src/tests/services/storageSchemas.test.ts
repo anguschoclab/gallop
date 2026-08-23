@@ -10,7 +10,6 @@ import {
   raceProgressSchema,
   bookmarkArraySchema,
   analyticsEventArraySchema,
-  dismissedInquiriesSchema,
 } from "@/services/storage/schemas";
 import { createDefaultGameState } from "@/game/store/state";
 
@@ -333,21 +332,5 @@ describe("analyticsEventArraySchema", () => {
 
   it("accepts empty array", () => {
     expect(analyticsEventArraySchema.safeParse([]).success).toBe(true);
-  });
-});
-
-// ── dismissedInquiriesSchema ──────────────────────────────────────────────────
-
-describe("dismissedInquiriesSchema", () => {
-  it("accepts valid string array", () => {
-    expect(dismissedInquiriesSchema.safeParse(["id1", "id2"]).success).toBe(true);
-  });
-
-  it("rejects non-string element", () => {
-    expect(dismissedInquiriesSchema.safeParse(["id1", 123]).success).toBe(false);
-  });
-
-  it("accepts empty array", () => {
-    expect(dismissedInquiriesSchema.safeParse([]).success).toBe(true);
   });
 });

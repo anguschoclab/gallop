@@ -181,6 +181,8 @@ export function createRaceEntryActions(
     resolveRaceWithImpacts: (
       raceId: string,
       result: { horseId: string; position: number; time: number }[],
+      _runners?: Array<{ horseId: string; owned?: boolean }>,
+      factorLedgers?: Record<string, import("@/core/race/factorLedger").RunnerFactorLedger>,
     ) => {
       const s = get();
       enqueueIntent({
@@ -192,6 +194,7 @@ export function createRaceEntryActions(
         type: "race_resolution",
         raceId,
         results: result,
+        factorLedgers,
       });
     },
 

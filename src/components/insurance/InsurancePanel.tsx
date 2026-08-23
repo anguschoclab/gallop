@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Shield, X, DollarSign } from "lucide-react";
 import { useGame } from "@/game/store";
+import { isPlayerOwned } from "@/core/horse/ownership";
+import { asHorseId } from "@/core/types/branded";
 import { calculateDailyPremium } from "@/core/insurance/insuranceTypes";
 import { toast } from "sonner";
 
@@ -19,13 +21,13 @@ interface InsurancePanelProps {
 }
 
 export function InsurancePanel({ horseId }: InsurancePanelProps) {
-  const horse = useGame((s) => s.horses[horseId]);
+  const horse = useGame((s) => s.horses[asHorseId(horseId)]);
   const cash = useGame((s) => s.cash);
   const purchaseInsurance = useGame((s) => s.purchaseInsurance);
   const cancelInsurance = useGame((s) => s.cancelInsurance);
   const fileClaim = useGame((s) => s.fileClaim);
 
-  if (!horse || !horse.owned) return null;
+  if (!horse || !isPlayerOwned(horse)) return null;
 
   const policy = horse.insurancePolicy;
   const horseValue = horse.lifetimeEarnings * 2 || 10000;

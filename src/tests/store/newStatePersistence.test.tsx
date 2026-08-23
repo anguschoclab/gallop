@@ -12,7 +12,7 @@ import type { GameState } from "@/game/types";
 import type { NominationRecord } from "@/core/racing/nominationFees";
 import type { InvestorRecord } from "@/core/breeding/investorTypes";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
-import { StewardsInquiryOverlay } from "@/components/race/StewardsInquiryOverlay";
+import { StewardsDigestToast } from "@/components/stewards/StewardsDigestToast";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 // Persisted keys must mirror src/game/store/index.ts PERSISTED_KEYS.
@@ -110,10 +110,12 @@ describe("Persistence of nominations / investors / stewards inquiries", () => {
       useGame.setState(createDefaultGameState());
     });
 
-    it("StewardsInquiryOverlay opens for a rehydrated inquiry involving a player horse", () => {
+    it("StewardsDigestToast renders for a rehydrated inquiry involving a player horse", () => {
       const base = createDefaultGameState();
       const seededState: Partial<GameState> = {
-        horses: h2r([{ id: "horse-1", name: "Silver Comet", ownership: { type: "player" } } as any]),
+        horses: h2r([
+          { id: "horse-1", name: "Silver Comet", ownership: { type: "player" } } as any,
+        ]),
         playerNominations: [nomination],
         syndicateInvestors: { "synd-1": investor },
         stewardsInquiries: [inquiry],
@@ -125,9 +127,8 @@ describe("Persistence of nominations / investors / stewards inquiries", () => {
       useGame.setState({ ...base, ...(rehydrated as Partial<GameState>) });
 
       // UI reflects the rehydrated inquiry.
-      render(<StewardsInquiryOverlay />);
-      expect(screen.getByText("Stewards Inquiry")).toBeInTheDocument();
-      expect(screen.getByText("Silver Comet")).toBeInTheDocument();
+      render(<StewardsDigestToast />);
+      expect(screen.getByText("Stewards' Inquiry")).toBeInTheDocument();
       expect(screen.getByText(/Bumped rival in the stretch/i)).toBeInTheDocument();
 
       // Store state also carries the other two persisted fields.

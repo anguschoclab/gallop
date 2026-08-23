@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Activity, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { Horse } from "@/game/types";
+import { formatRecoveryDays } from "@/core/health/injuryDisplay";
 
 interface HorseConditionSectionProps {
   horse: Horse;
@@ -26,14 +27,17 @@ export function HorseConditionSection({ horse }: HorseConditionSectionProps) {
                   <AlertCircle className="h-3 w-3" /> Injury
                 </span>
                 <span className="font-mono text-[10px] text-destructive/60">
-                  Est. {horse.activeInjury.recoveryDays}d remaining
+                  Est.{" "}
+                  {formatRecoveryDays(horse.activeInjury.recoveryDays, horse.activeInjury.severity)}
                 </span>
               </div>
               <div className="text-sm font-bold text-cream uppercase tracking-tight">
                 {horse.activeInjury.type}
               </div>
               <p className="text-[10px] text-cream/40 italic mt-1 uppercase">
-                Immediate medical intervention required. Performance locked.
+                {horse.activeInjury.severity === "career-ending"
+                  ? "Career-ending injury. Racing prohibited."
+                  : "Immediate medical intervention required. Performance locked."}
               </p>
             </div>
           )}

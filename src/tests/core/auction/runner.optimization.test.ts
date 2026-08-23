@@ -6,6 +6,7 @@ import type { AuctionSale, AuctionLot, Horse, Stable } from "@/game/types";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { StaffRole } from "@/core/staff/staffTypes";
 import { createTestHorse } from "@/tests/helpers";
+import { getStableId } from "@/core/horse/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -295,7 +296,7 @@ describe("runner.optimization — engine personalityConsignmentPolicy", () => {
     // (the actual consign selection depends on personality strategy, but we can
     // verify that ineligible and other-stable horses are never in the result)
     for (const h of result.consign) {
-      expect(h.stableId).toBe("stable1");
+      expect(getStableId(h)).toBe("stable1");
       expect(h.age).toBeLessThanOrEqual(2);
     }
   });

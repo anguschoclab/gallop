@@ -11,6 +11,7 @@ import { SIMULATION_MAX_STEPS_PER_FRAME as MAX_STEPS_PER_FRAME } from "@/constan
 import { SPLIT_FRACTIONS } from "@/constants/raceBroadcastConstants";
 
 import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
+import type { RunnerFactorLedger } from "@/core/race/factorLedger";
 
 /**
  * Callback invoked once per non-silent simulation step.
@@ -128,7 +129,12 @@ export function useLiveRaceSimulation({
 }: {
   race: Race;
   runners: Runner[];
-  resolveRaceWithImpacts: (raceId: string, finishOrder: RaceResult[]) => void;
+  resolveRaceWithImpacts: (
+    raceId: string,
+    finishOrder: RaceResult[],
+    runners?: Array<{ horseId: string; owned?: boolean }>,
+    factorLedgers?: Record<string, RunnerFactorLedger>,
+  ) => void;
   narrativeRef: React.MutableRefObject<NarrativeGenerator | null>;
   messageQueue: React.MutableRefObject<CommentaryLine[]>;
   rngRef: React.MutableRefObject<Rng | null>;
@@ -263,7 +269,15 @@ export function useLiveRaceSimulation({
         raf = requestAnimationFrame(loop);
       } else {
         setFinished(true);
-        resolveRaceWithImpacts(race.id, finishOrderRef.current);
+        const factorLedgers: Record<string, RunnerFactorLedger> = {};
+        for (const r of runners) {
+          if (r.factorLedger) {
+            const finalized = r.factorLedger.finalize();
+            r.finalizedLedger = finalized;
+            factorLedgers[r.horseId] = finalized;
+          }
+        }
+        resolveRaceWithImpacts(race.id, finishOrderRef.current, undefined, factorLedgers);
       }
     };
 

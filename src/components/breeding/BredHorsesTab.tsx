@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Baby } from "lucide-react";
 import { useGameWithShallow } from "@/game/store";
+import { isPlayerOwned, getStableId } from "@/core/horse/ownership";
 import type { GameState, Horse, Stable } from "@/game/types";
 import { HorseNameLink } from "@/components/horse/HorseNameLink";
 import { NumericValue } from "@/components/horse/HorseBits";
@@ -36,13 +37,16 @@ export function BredHorsesTab() {
       .map((h) => {
         let ownerLabel = "Sold / Unknown";
         let ownerTone: Row["ownerTone"] = "retired";
-        if (!h.stableId && h.owned) {
+        if (isPlayerOwned(h)) {
           ownerLabel = "Your Stable";
           ownerTone = "player";
-        } else if (h.stableId) {
-          const s = stableMap.get(h.stableId);
-          ownerLabel = s?.name ?? "Rival Stable";
-          ownerTone = "npc";
+        } else {
+          const hStableId = getStableId(h);
+          if (hStableId) {
+            const s = stableMap.get(hStableId);
+            ownerLabel = s?.name ?? "Rival Stable";
+            ownerTone = "npc";
+          }
         }
         return { horse: h, ownerLabel, ownerTone };
       })

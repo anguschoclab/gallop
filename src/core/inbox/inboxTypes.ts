@@ -16,9 +16,10 @@ export type InboxCategory =
   | "retirement"
   | "hall_of_fame"
   | "standings"
-  | "ai_activity";
+  | "ai_activity"
+  | "stewards";
 
-export type InboxPriority = "info" | "action" | "urgent";
+export type InboxPriority = "info" | "low" | "action" | "urgent" | "critical";
 
 /**
  * A message in the player's inbox.

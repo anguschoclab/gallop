@@ -14,7 +14,8 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/component
 import type { RaceSnapshot, PaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { RaceRunner, SectionalSplit } from "@/core/race/types";
-import { generateJockeyFeedback } from "@/core/race/jockeyFeedback";
+import { generateRaceVerdict } from "@/core/race/raceVerdict";
+import type { RunnerFactorLedger } from "@/core/race/factorLedger";
 import { formatCurrency } from "@/core/common/formatting";
 import {
   PRIZE_SPLIT,
@@ -63,11 +64,18 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
 
   const npcAIManager = useGame((s) => s.npcAIManager);
 
+  const fieldLedgers = new Map<string, RunnerFactorLedger>();
+  for (const r of ordered) {
+    if (r.finalizedLedger) {
+      fieldLedgers.set(r.horseId, r.finalizedLedger);
+    }
+  }
+
   const tacticalRunners: RaceRunner[] = ordered.map((r) => ({
     horseId: r.horseId,
     name: r.name,
     silk: r.silk,
-    owned: r.owned,
+    owned: r.isPlayer,
     jockeyId: r.jockey?.id ?? "",
     jockeyName: r.jockeyName ?? r.jockey?.name ?? "",
     gate: r.gate,
@@ -137,7 +145,10 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
               <div className="divide-y divide-white/5">
                 {ordered.map((r, i) => {
                   const prize = i < prizeSplit.length ? Math.round(race.purse * prizeSplit[i]) : 0;
-                  const feedback = r.owned ? generateJockeyFeedback(r, i + 1, ordered) : null;
+                  const verdict =
+                    r.isPlayer && r.finalizedLedger
+                      ? generateRaceVerdict(r, i + 1, ordered, r.finalizedLedger, fieldLedgers)
+                      : null;
 
                   return (
                     <div
@@ -179,7 +190,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                               params={{ horseId: r.horseId }}
                               className={cn(
                                 "block font-bold uppercase tracking-tight truncate hover:text-gold transition-colors",
-                                r.owned ? "text-success" : "text-cream/80",
+                                r.isPlayer ? "text-success" : "text-cream/80",
                               )}
                             >
                               {r.name}
@@ -205,7 +216,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                             <span
                               className={cn(
                                 "font-mono font-black text-sm tabular-nums tracking-tighter",
-                                r.owned
+                                r.isPlayer
                                   ? "text-success shadow-[0_0_8px_rgba(34,197,94,0.2)]"
                                   : "text-cream/20",
                               )}
@@ -216,10 +227,45 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                         </div>
                       </div>
 
-                      {feedback && (
-                        <div className="mt-3 ml-10 p-2 bg-blue-500/5 border border-blue-500/10 text-[10px] text-blue-400/80 font-mono italic leading-relaxed uppercase tracking-tight">
-                          <span className="font-black not-italic text-blue-400 mr-2">LOG:</span>{" "}
-                          {feedback}
+                      {verdict && (
+                        <div className="mt-3 ml-10 p-3 bg-gold/5 border border-gold/10 space-y-2">
+                          <div className="text-[11px] font-black uppercase text-gold/80 tracking-tight">
+                            {verdict.headline}
+                          </div>
+                          {verdict.factors.length > 0 && (
+                            <div className="flex flex-wrap gap-x-3 gap-y-1">
+                              {verdict.factors.map((f) => (
+                                <span
+                                  key={f.key}
+                                  className={cn(
+                                    "text-[9px] font-mono uppercase tracking-tight",
+                                    f.impact === "positive"
+                                      ? "text-success/70"
+                                      : f.impact === "negative"
+                                        ? "text-red-400/70"
+                                        : "text-cream/40",
+                                  )}
+                                >
+                                  {f.label}{" "}
+                                  {f.impact === "positive"
+                                    ? "▲"
+                                    : f.impact === "negative"
+                                      ? "▼"
+                                      : "◆"}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                          {verdict.conditionsNote && (
+                            <div className="text-[9px] font-mono text-cream/30 italic">
+                              {verdict.conditionsNote}
+                            </div>
+                          )}
+                          {verdict.fieldComparison && (
+                            <div className="text-[9px] font-mono text-cream/30 italic">
+                              {verdict.fieldComparison}
+                            </div>
+                          )}
                         </div>
                       )}
 
@@ -323,7 +369,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                       horseId: r.horseId,
                       name: r.name,
                       silk: r.silk,
-                      owned: r.owned,
+                      owned: r.isPlayer,
                     }))}
                     distance={race.distance}
                   />
@@ -334,7 +380,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                         horseId: r.horseId,
                         name: r.name,
                         silk: r.silk,
-                        owned: r.owned,
+                        owned: r.isPlayer,
                       }))}
                       distance={race.distance ?? 0}
                     />
@@ -346,14 +392,14 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                         horseId: r.horseId,
                         name: r.name,
                         silk: r.silk,
-                        owned: r.owned,
+                        owned: r.isPlayer,
                       }))}
                     />
                   )}
                 </div>
               )}
 
-              {ordered.some((r) => r.owned && r.finishTime !== null) && (
+              {ordered.some((r) => r.isPlayer && r.finishTime !== null) && (
                 <div className="pt-4 border-t border-white/5">
                   <JockeyReportPanel
                     runners={ordered}
@@ -396,7 +442,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                           runners={ordered.map((r) => ({
                             horseId: r.horseId,
                             name: r.name,
-                            owned: r.owned,
+                            owned: r.isPlayer,
                             runningStyle: r.runningStyle,
                           }))}
                           distance={race.distance ?? 0}

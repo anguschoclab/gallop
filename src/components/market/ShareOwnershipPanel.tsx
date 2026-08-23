@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Crown, TrendingDown } from "lucide-react";
 import { simulateShareChange } from "@/core/breeding/devolutionUtils";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { isPlayerOwned, getStableId } from "@/core/horse/ownership";
 
 interface ShareOwnershipPanelProps {
   syndicate: Syndicate;
@@ -26,7 +26,7 @@ export function ShareOwnershipPanel({ syndicate, stallion, npcStables }: ShareOw
   }, [npcStables]);
 
   const currentOwnerKey =
-    stallion && isPlayerOwned(stallion) ? "player" : (stallion?.stableId ?? "player");
+    stallion && isPlayerOwned(stallion) ? "player" : (getStableId(stallion) ?? "player");
   const totalShares = syndicate.totalShares;
   const threshold = totalShares / 2;
 

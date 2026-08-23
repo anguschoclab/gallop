@@ -82,7 +82,11 @@ describe("/foal-development/$horseId route guard", () => {
   });
 
   it("redirects to /stable/$horseId when the horse has no development arc", () => {
-    const horse = createTestHorse({ id: "foal-1", ownership: { type: "player" }, developmentArc: undefined });
+    const horse = createTestHorse({
+      id: "foal-1",
+      ownership: { type: "player" },
+      developmentArc: undefined,
+    });
     seed([horse]);
     render(<FoalDevelopmentPage />);
 
@@ -104,7 +108,11 @@ describe("/foal-development/$horseId route guard", () => {
       m.resolvedChoiceKey = m.choices[0].key;
       m.resolvedOnDay = m.triggerDay + i;
     });
-    const horse = createTestHorse({ id: "foal-1", ownership: { type: "player" }, developmentArc: arc });
+    const horse = createTestHorse({
+      id: "foal-1",
+      ownership: { type: "player" },
+      developmentArc: arc,
+    });
     seed([horse], 60);
     render(<FoalDevelopmentPage />);
 

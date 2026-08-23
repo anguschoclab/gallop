@@ -47,7 +47,7 @@ export function LiveSplitsTable({
                 <td
                   className={cn(
                     "py-2 pr-3 font-bold truncate max-w-[120px]",
-                    r.owned ? "text-success" : "text-cream/80",
+                    r.isPlayer ? "text-success" : "text-cream/80",
                   )}
                 >
                   {r.name}

@@ -9,6 +9,8 @@ import { createRng } from "@/core/common/rng";
 import { createDefaultGameState } from "@/game/store/state";
 import type { GameState, Horse, HorseGender, Stable } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
+import { makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 // Helper to create minimal valid Horse objects for testing
@@ -45,7 +47,7 @@ describe("Breeding Lifecycle Integration", () => {
       },
       {
         age: 6,
-        stableId: "stable-1",
+        ownership: makeNpcOwned(asNpcStableId("stable-1")),
         silk: "red",
         potential: 85,
         fame: 60,
@@ -75,7 +77,7 @@ describe("Breeding Lifecycle Integration", () => {
         conformation: 50,
       },
       {
-        stableId: "stable-1",
+        ownership: makeNpcOwned(asNpcStableId("stable-1")),
         silk: "blue",
       },
     );
@@ -135,7 +137,7 @@ describe("Breeding Lifecycle Integration", () => {
       },
       {
         age: 6,
-        stableId: "stable-1",
+        ownership: makeNpcOwned(asNpcStableId("stable-1")),
         silk: "red",
         potential: 85,
         fame: 60,

@@ -121,7 +121,7 @@ export const Leaderboard = memo(function Leaderboard({
               <Link
                 to="/stable/$horseId"
                 params={{ horseId: r.horseId }}
-                className={`flex-1 truncate hover:underline ${r.owned ? "font-bold text-broadcast-accent" : ""}`}
+                className={`flex-1 truncate hover:underline ${r.isPlayer ? "font-bold text-broadcast-accent" : ""}`}
               >
                 {r.name}
               </Link>

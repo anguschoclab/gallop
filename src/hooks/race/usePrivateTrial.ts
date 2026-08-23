@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from "react";
 import { useGame, type StoreType } from "@/game/store";
 import type { Horse } from "@/game/types";
 import { generateRiderFeedback } from "@/core/horse/trialFeedback";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 export interface TrialResult {
   snapshots: Array<{
@@ -27,7 +28,7 @@ export function usePrivateTrial(horse: Horse, horses: Horse[], cash: number) {
   const runPrivateTrial = useGame((s: StoreType) => s.runPrivateTrial);
 
   const eligibleOpponents = useMemo(() => {
-    return horses.filter((h) => h.owned && h.energy >= 15 && h.id !== horse.id);
+    return horses.filter((h) => isPlayerOwned(h) && h.energy >= 15 && h.id !== horse.id);
   }, [horses, horse.id]);
 
   const opponentName = useMemo(() => {

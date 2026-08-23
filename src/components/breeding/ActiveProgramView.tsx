@@ -1,4 +1,6 @@
 import { useGame } from "@/game/store";
+import { isPlayerOwned } from "@/core/horse/ownership";
+import { asHorseId } from "@/core/types/branded";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -66,7 +68,7 @@ export function ActiveProgramView() {
 
   const eligibleMares = Object.values(horses).filter(
     (h) =>
-      h.owned &&
+      isPlayerOwned(h) &&
       (h.gender === "mare" || h.gender === "filly") &&
       h.age >= MIN_BREEDING_AGE &&
       !enrolledDamSet.has(h.id),
@@ -282,7 +284,7 @@ export function ActiveProgramView() {
                 .reverse()
                 .slice(0, MAX_HISTORY_ENTRIES_DISPLAY)
                 .map((entry, i) => {
-                  const horse = horses[entry.horseId];
+                  const horse = horses[asHorseId(entry.horseId)];
                   return (
                     <div
                       key={i}

@@ -226,8 +226,16 @@ describe("processClaims", () => {
       claimingPrice: 10000,
     };
 
-    const horse1 = createTestHorse({ id: "horse-1", stableId: "stable-1", ownership: { type: "unowned" } });
-    const horse2 = createTestHorse({ id: "horse-2", stableId: "stable-1", ownership: { type: "unowned" } });
+    const horse1 = createTestHorse({
+      id: "horse-1",
+      stableId: "stable-1",
+      ownership: { type: "unowned" },
+    });
+    const horse2 = createTestHorse({
+      id: "horse-2",
+      stableId: "stable-1",
+      ownership: { type: "unowned" },
+    });
 
     const claims: ClaimAttempt[] = [
       { claimantStableId: "stable-2", horseId: "horse-1", claimingPrice: 10000, successful: false },
@@ -256,7 +264,11 @@ describe("processClaims", () => {
       claimingPrice: 10000,
     };
 
-    const horse1 = createTestHorse({ id: "horse-1", stableId: "stable-1", ownership: { type: "unowned" } });
+    const horse1 = createTestHorse({
+      id: "horse-1",
+      stableId: "stable-1",
+      ownership: { type: "unowned" },
+    });
 
     const claims: ClaimAttempt[] = [
       { claimantStableId: "stable-2", horseId: "horse-1", claimingPrice: 10000, successful: false },

@@ -82,7 +82,9 @@ export function CircuitWidget() {
                     {r.distance}m · {r.raceClass}
                   </div>
                 </div>
-                {r.entries.some((e: { owned: boolean }) => e.owned) ? (
+                {r.entries.some(
+                  (e: { ownership?: { type: string } }) => e.ownership?.type === "player",
+                ) ? (
                   <Badge className="bg-success text-slate-950 text-[8px] h-4 font-black px-1 border-none shadow-[0_0_8px_rgba(34,197,94,0.3)]">
                     ENTERED
                   </Badge>

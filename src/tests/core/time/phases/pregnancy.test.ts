@@ -312,7 +312,11 @@ describe("buildNpcAIManagerUpdate", () => {
 describe("buildPregnancyImpacts", () => {
   it("emits reputation and inbox only for player-owned dams", () => {
     const sire = createTestHorse({ id: "sire-1", name: "Sire", gender: "horse" });
-    const playerDam = createTestMare({ id: "dam-1", name: "Player Dam", ownership: { type: "player" } });
+    const playerDam = createTestMare({
+      id: "dam-1",
+      name: "Player Dam",
+      ownership: { type: "player" },
+    });
     const npcDam = createTestMare({
       id: "dam-2",
       name: "NPC Dam",

@@ -24,3 +24,12 @@ export {
   calculateBreedingReputation,
   formatReputationTier,
 } from "./reputationTypes";
+
+export {
+  canUpgradeFacility,
+  canAccessSale,
+  canReceiveAtLargeInvite,
+  FACILITY_UPGRADE_TIER_REQ,
+  SALE_ACCESS_TIER_REQ,
+  INVITE_GRADE_TIER_REQ,
+} from "./reputationGating";

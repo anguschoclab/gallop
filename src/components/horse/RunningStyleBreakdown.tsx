@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Gauge, GitCompare, X } from "lucide-react";
 import type { Horse, RunningStyle } from "@/game/types";
+import { isPlayerOwned } from "@/core/horse/ownership";
 import { useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 import { derivePaceStyleLabel } from "@/core/race/sectionalAnalysis";
@@ -75,7 +76,7 @@ export function RunningStyleBreakdown({ horse }: RunningStyleBreakdownProps) {
   const compareOptions = useMemo(
     () =>
       allHorses
-        .filter((h) => h.owned && h.id !== horse.id && (h.raceHistory?.length ?? 0) > 0)
+        .filter((h) => isPlayerOwned(h) && h.id !== horse.id && (h.raceHistory?.length ?? 0) > 0)
         .sort((a, b) => a.name.localeCompare(b.name)),
     [allHorses, horse.id],
   );

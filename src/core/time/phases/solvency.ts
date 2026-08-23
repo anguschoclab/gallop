@@ -19,7 +19,8 @@ import {
   selectForcedSaleHorse,
 } from "@/core/financial/solvency";
 import { PHASE_ORDER_SOLVENCY } from "@/constants";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { isPlayerOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { asStableId } from "@/core/types/branded";
 
 const MAX_AUDIT_ENTRIES = 200;
 
@@ -149,7 +150,7 @@ export const solvencyPhase = {
         .filter((h) => isPlayerOwned(h))
         .map((h) => ({
           id: h.id,
-          owned: true,
+          ownership: makePlayerOwned(),
           age: h.age,
           value: horsePrice(h),
           name: h.name,
@@ -174,7 +175,7 @@ export const solvencyPhase = {
             type: "horse_transfer",
             horseId: pick.id,
             fromStableId: undefined,
-            toStableId: "creditors",
+            toStableId: asStableId("creditors"),
             price: salePrice,
             reason: "Distressed sale — creditors seized horse to cover debt",
           },
@@ -199,7 +200,7 @@ export const solvencyPhase = {
             message: {
               day: newDay,
               category: "system",
-              priority: "urgent",
+              priority: "critical",
               title: "Creditors seized a horse",
               body: `${pick.name} was sold at a distressed rate for $${salePrice.toLocaleString()} to cover overdue debt. Remaining deficit: $${deficitAfter.toLocaleString()}.`,
               cta: { label: "Review stable", route: "stable" },

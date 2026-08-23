@@ -71,11 +71,39 @@ describe("HorseConditionSection", () => {
     });
     renderWithStore(<HorseConditionSection horse={horse} />);
     expect(screen.getByText(/Tendon Strain/i)).toBeTruthy();
-    expect(screen.getByText(/14d remaining/i)).toBeTruthy();
+    expect(screen.getByText(/14 days/i)).toBeTruthy();
   });
 
   it("does not render injury section when no activeInjury", () => {
     const { container } = renderWithStore(<HorseConditionSection horse={createHorse()} />);
     expect(container.textContent).not.toContain("Injury");
+  });
+
+  it("displays 'Career-ending' instead of '999d remaining' for career-ending injuries", () => {
+    const horse = createHorse({
+      activeInjury: {
+        type: "Fractured sesamoid",
+        severity: "career-ending",
+        recoveryDays: 999,
+        onsetDay: 10,
+      },
+    });
+    renderWithStore(<HorseConditionSection horse={horse} />);
+    const matches = screen.getAllByText(/Career-ending/i);
+    expect(matches.length).toBeGreaterThanOrEqual(1);
+    expect(screen.queryByText(/999d remaining/i)).toBeNull();
+  });
+
+  it("shows 'Racing prohibited' text for career-ending injuries", () => {
+    const horse = createHorse({
+      activeInjury: {
+        type: "Fractured sesamoid",
+        severity: "career-ending",
+        recoveryDays: 999,
+        onsetDay: 10,
+      },
+    });
+    const { container } = renderWithStore(<HorseConditionSection horse={horse} />);
+    expect(container.textContent).toContain("Racing prohibited");
   });
 });

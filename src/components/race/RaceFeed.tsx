@@ -92,7 +92,7 @@ export function RaceFeed({
               <div
                 className={cn(
                   "absolute top-0 left-0 w-1 h-full transition-colors z-10",
-                  r.entries.some((e) => e.owned)
+                  r.entries.some((e) => e.ownership?.type === "player")
                     ? "bg-success"
                     : "bg-white/5 group-hover:bg-success/20",
                 )}
@@ -117,7 +117,7 @@ export function RaceFeed({
             </thead>
             <tbody className="divide-y divide-white/5">
               {races.map((r) => {
-                const isEntered = r.entries.some((e) => e.owned);
+                const isEntered = r.entries.some((e) => e.ownership?.type === "player");
                 const isClaiming = !!r.claiming;
 
                 return (

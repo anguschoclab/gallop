@@ -13,6 +13,7 @@ import { Trophy, Medal, Award, Clock } from "lucide-react";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/cn";
+import { isPlayerOwned } from "@/core/horse/ownership";
 import type { Race, RaceResult } from "@/core/race/types";
 
 export function RecapTab() {
@@ -147,7 +148,7 @@ export function RecapTab() {
                         horseId: r.horseId,
                         name: horse?.name || "Unknown",
                         silk: horse?.silk || "#000000",
-                        owned: horse?.owned || false,
+                        owned: horse ? isPlayerOwned(horse) : false,
                       };
                     })}
                     distance={race.distance}
@@ -166,7 +167,7 @@ export function RecapTab() {
                         horseId: r.horseId,
                         name: horse?.name || "Unknown",
                         silk: horse?.silk || "#000000",
-                        owned: horse?.owned || false,
+                        owned: horse ? isPlayerOwned(horse) : false,
                       };
                     })}
                     distance={race.distance}
@@ -180,7 +181,7 @@ export function RecapTab() {
                           horseId: r.horseId,
                           name: horse?.name || "Unknown",
                           silk: horse?.silk || "#000000",
-                          owned: horse?.owned || false,
+                          owned: horse ? isPlayerOwned(horse) : false,
                         };
                       })}
                       distance={race.distance}

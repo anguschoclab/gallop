@@ -7,6 +7,7 @@ import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { buildInstructions, type PresetId } from "@/components/race/TacticOptions";
 import { toast } from "sonner";
 import { formatCurrency } from "@/core/common/formatting";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 export function useRaceEntry(race: Race) {
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
@@ -58,7 +59,7 @@ export function useRaceEntry(race: Race) {
 
   const eligibleHorses = useMemo(() => {
     return horses
-      .filter((h) => h.owned)
+      .filter((h) => isPlayerOwned(h))
       .map((h: Horse) => ({
         horse: h,
         eligible: isHorseEligibleForRace(h, race, new Set(), day),

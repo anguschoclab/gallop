@@ -65,7 +65,9 @@ export function processInsurancePremiums(context: PipelineContext, impacts: AnyI
           phase: "managementResolution",
           logLevel: "always",
           type: "cash_change",
-          entityId: (horse.ownership?.type === "npc" ? horse.ownership.stableId : "player") as string,
+          entityId: (horse.ownership?.type === "npc"
+            ? horse.ownership.stableId
+            : "player") as string,
           amount: -premium,
           reason: `Insurance premium for ${horse.name}`,
         } as CashImpact);

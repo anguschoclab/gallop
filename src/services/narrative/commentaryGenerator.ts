@@ -1,5 +1,6 @@
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Horse, Race, Stable } from "@/game/types";
+import { getStableId } from "@/core/horse/ownership";
 import type { Rng } from "@/core/common/rng";
 import {
   BIOGRAPHICAL_TEMPLATES,
@@ -85,7 +86,7 @@ export function generateCommentaryLine(
   // even when no Horse record exists (e.g. auto-generated filler runners).
   if (context.runner) {
     const horse = context.horse;
-    const stable = horse?.stableId ? context.stable : null;
+    const stable = getStableId(horse) ? context.stable : null;
 
     // Add biographical template for surge/lead change
     if (

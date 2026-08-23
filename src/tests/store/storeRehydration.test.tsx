@@ -4,7 +4,7 @@
  * Covers:
  * 1. Version-key guard: incompatible stored data is discarded but playerNominations
  *    and syndicateInvestors survive a version mismatch.
- * 2. Empty localStorage: UI renders with empty state and no StewardsInquiryOverlay.
+ * 2. Empty localStorage: UI renders with empty state and no StewardsDigestToast.
  * 3. Navigation simulation: rehydrating state while "on" a syndicate or racing
  *    route yields the correct UI.
  * 4. Corrupted localStorage JSON: app falls back to defaults without crashing.
@@ -19,7 +19,7 @@ import type { GameState } from "@/game/types";
 import type { NominationRecord } from "@/core/racing/nominationFees";
 import type { InvestorRecord } from "@/core/breeding/investorTypes";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
-import { StewardsInquiryOverlay } from "@/components/race/StewardsInquiryOverlay";
+import { StewardsDigestToast } from "@/components/stewards/StewardsDigestToast";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import type { Horse } from "@/game/types";
 
@@ -109,7 +109,9 @@ describe("Version-key rehydration guard", () => {
       storeVersion: STORE_STATE_VERSION - 1, // incompatible
       day: 999,
       cash: 1,
-      horses: h2r([{ id: "stale-horse", name: "Old Timer", ownership: { type: "player" } }] as unknown as Horse[]),
+      horses: h2r([
+        { id: "stale-horse", name: "Old Timer", ownership: { type: "player" } },
+      ] as unknown as Horse[]),
       playerNominations: [nomination],
       syndicateInvestors: { "synd-v": investor },
     };
@@ -192,14 +194,14 @@ describe("Empty localStorage — UI renders with default empty state", () => {
     expect(s.syndicateInvestors ?? {}).toEqual({});
   });
 
-  it("StewardsInquiryOverlay is not rendered when stewardsInquiries is empty", () => {
+  it("StewardsDigestToast is not rendered when stewardsInquiries is empty", () => {
     useGame.setState({ ...createDefaultGameState(), stewardsInquiries: [] } as any);
-    const { container } = render(<StewardsInquiryOverlay />);
-    // Overlay renders nothing when there are no pending inquiries
+    const { container } = render(<StewardsDigestToast />);
+    // Toast renders nothing when there are no inquiries
     expect(container.firstChild).toBeNull();
   });
 
-  it("StewardsInquiryOverlay is not rendered even when there are inquiries for NPC horses only", () => {
+  it("StewardsDigestToast renders for NPC horse inquiries (non-blocking toast)", () => {
     useGame.setState({
       ...createDefaultGameState(),
       // No owned horses — inquiry is for an NPC horse
@@ -212,8 +214,8 @@ describe("Empty localStorage — UI renders with default empty state", () => {
       ],
     } as any);
 
-    const { container } = render(<StewardsInquiryOverlay />);
-    expect(container.firstChild).toBeNull();
+    render(<StewardsDigestToast />);
+    expect(screen.getByText("Stewards' Inquiry")).toBeTruthy();
   });
 });
 
@@ -249,7 +251,7 @@ describe("Navigation simulation — state survives route changes", () => {
     expect(restored.syndicateInvestors["synd-v"].name).toBe("Vera Hollis");
   });
 
-  it("StewardsInquiryOverlay is visible after reload while on /racing with an active inquiry", () => {
+  it("StewardsDigestToast is visible after reload while on /racing with an active inquiry", () => {
     // Simulate state present while watching a race with an active unacknowledged inquiry
     useGame.setState({
       ...createDefaultGameState(),
@@ -269,24 +271,8 @@ describe("Navigation simulation — state survives route changes", () => {
     // Rehydrate
     useGame.setState({ ...createDefaultGameState(), ...persisted } as any);
 
-    render(<StewardsInquiryOverlay />);
-    expect(screen.getByText("Stewards Inquiry")).toBeTruthy();
-    expect(screen.getByText("Midnight Comet")).toBeTruthy();
-  });
-
-  it("StewardsInquiryOverlay remains closed after reload on /syndicate/:id when dismissed key is set", () => {
-    // Mark the inquiry as already dismissed in localStorage
-    localStorage.setItem("stewards.inquiries.dismissed.v1", JSON.stringify(["inq-overlay"]));
-
-    useGame.setState({
-      ...createDefaultGameState(),
-      horses: h2r([playerHorse as any]),
-      stewardsInquiries: [inquiry],
-    } as any);
-
-    const { container } = render(<StewardsInquiryOverlay />);
-    // Dismissed inquiry → overlay should not be visible
-    expect(container.firstChild).toBeNull();
+    render(<StewardsDigestToast />);
+    expect(screen.getByText("Stewards' Inquiry")).toBeTruthy();
   });
 });
 

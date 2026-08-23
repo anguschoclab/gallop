@@ -14,7 +14,7 @@ interface RaceRowProps {
 }
 
 export function RaceRow({ race, onEnter }: RaceRowProps) {
-  const ownedCount = race.entries.filter((e) => e.owned).length;
+  const ownedCount = race.entries.filter((e) => e.ownership?.type === "player").length;
   const gradeLabel = race.graded?.grade;
   const gradeColorClass = gradeLabel ? gradeColor(gradeLabel) : "";
   const isClaiming = !!race.claiming;

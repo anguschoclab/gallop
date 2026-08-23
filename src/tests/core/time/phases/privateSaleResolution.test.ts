@@ -3,7 +3,8 @@ import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import type { GameState, PrivateSaleOffer, Horse, Stable } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
+import { makeNpcOwned, getStableId } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 const mkOffer = (overrides: Partial<PrivateSaleOffer> = {}): PrivateSaleOffer => ({
@@ -40,7 +41,7 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   createTestNpcHorse({
     id: "horse-1",
     name: "Thunder",
-    stableId: "stable-1",
+    ownership: makeNpcOwned(asNpcStableId("stable-1")),
     ...overrides,
   });
 
@@ -420,7 +421,7 @@ describe("privateSaleResolutionPhase", () => {
 
   it("horse already transferred (stableId mismatch) — offer declined", async () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
-    const horse = mkHorse({ stableId: "different-stable" });
+    const horse = mkHorse({ ownership: makeNpcOwned(asNpcStableId("different-stable")) });
     const ctx = createContext({
       horses: h2r([horse]),
       npcStables: [mkStable()],
