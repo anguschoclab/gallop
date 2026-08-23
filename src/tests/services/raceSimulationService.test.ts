@@ -63,22 +63,22 @@ describe("buildRaceField", () => {
     expect(runners).toHaveLength(8);
   });
 
-  it("entered owned horses appear with owned=true", () => {
+  it("entered isPlayer horses appear with isPlayer=true", () => {
     const horse = mkHorse({ id: "h1", ownership: { type: "player" } });
     const race = mkRace({
       fieldSize: 6,
       entries: [{ horseId: "h1", ownership: { type: "player" } }],
     });
     const { runners } = buildRaceField({ race, horses: [horse], jockeys: [] });
-    const ownedRunner = runners.find((r) => r.horseId === "h1");
-    expect(ownedRunner).toBeDefined();
-    expect(ownedRunner!.owned).toBe(true);
+    const isPlayerRunner = runners.find((r) => r.horseId === "h1");
+    expect(isPlayerRunner).toBeDefined();
+    expect(isPlayerRunner!.isPlayer).toBe(true);
   });
 
-  it("unfilled slots get owned=false AI runners", () => {
+  it("unfilled slots get isPlayer=false AI runners", () => {
     const race = mkRace({ fieldSize: 4, entries: [] });
     const { runners } = buildRaceField({ race, horses: [], jockeys: [] });
-    expect(runners.every((r) => !r.owned)).toBe(true);
+    expect(runners.every((r) => !r.isPlayer)).toBe(true);
     expect(runners).toHaveLength(4);
   });
 
