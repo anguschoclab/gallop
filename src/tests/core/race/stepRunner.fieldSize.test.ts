@@ -136,4 +136,16 @@ describe("stepRunner — fieldSize parameter", () => {
 
     expect(r1.velocity).not.toEqual(r2.velocity);
   });
+
+  it("does not crash when factorLedger is undefined (optional field)", () => {
+    const r = makeRunner({ position: 800, velocity: 15 });
+    expect(r.factorLedger).toBeUndefined();
+
+    const rng = createRng("no-ledger");
+    expect(() =>
+      stepRunner(r, 0.1, 50, 1600, rng, [r], undefined, undefined, 0, 1, undefined, undefined, 8),
+    ).not.toThrow();
+    expect(r.velocity).toBeGreaterThan(0);
+    expect(Number.isFinite(r.velocity)).toBe(true);
+  });
 });

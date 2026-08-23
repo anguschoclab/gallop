@@ -50,4 +50,52 @@ describe("schedulerPhase", () => {
     const result = schedulerPhase.execute(context);
     expect(result).toBe(context);
   });
+
+  it("schedulerPhase does not emit cash_change for entry fees", () => {
+    const horse = createTestHorse({ id: "horse-1", ownership: { type: "player" } });
+    const campaign = {
+      id: "camp-1",
+      horseId: "horse-1",
+      autoManaged: true,
+      slots: [
+        {
+          raceId: "race-1",
+          status: "planned",
+          dayTarget: 1,
+        },
+      ],
+      lastReviewedDay: 0,
+      confirmedAptitudes: {},
+      flags: {},
+    };
+    const state = makeGameState({
+      day: 1,
+      cash: 100000,
+      horses: h2r([horse]),
+      campaigns: [campaign as any],
+      races: {
+        "race-1": {
+          id: "race-1",
+          name: "Test Race",
+          day: 1,
+          distance: 2000,
+          raceClass: "Maiden",
+          entryFee: 500,
+          purse: 10000,
+          fieldSize: 8,
+          entries: [],
+          resolved: false,
+        },
+      } as any,
+    }) as GameState;
+    const context = makePipelineContext({ state, newDay: 1 }) as PipelineContext;
+
+    const result = schedulerPhase.execute(context);
+
+    const cashChangeImpacts = result.impacts.filter((i) => i.type === "cash_change");
+    expect(cashChangeImpacts).toHaveLength(0);
+
+    const raceEntryImpacts = result.impacts.filter((i) => i.type === "race_entry");
+    expect(raceEntryImpacts.length).toBeGreaterThan(0);
+  });
 });

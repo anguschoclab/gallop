@@ -628,4 +628,236 @@ describe("RacingHandler", () => {
     expect(handler.canHandle("jockey_affinity_gain")).toBe(true);
     expect(handler.canHandle("cash_change")).toBe(false);
   });
+
+  describe("race_entry entry fee deduction", () => {
+    it("race_entry deducts entry fee from player cash", () => {
+      const handler = new RacingHandler();
+      const state = {
+        cash: 5000,
+        transactions: [],
+        horses: h2r([
+          { id: "h1", name: "Star", ownership: { type: "player" } },
+        ] as unknown as Horse[]),
+        races: r2r([
+          { id: "race-1", name: "Test Race", entries: [], entryFee: 1000 },
+        ] as unknown as Race[]),
+      } as unknown as GameState;
+
+      const impact: RaceEntryImpact = {
+        id: "imp-1",
+        intentId: "",
+        day: 10,
+        phase: "raceEntryResolution",
+        logLevel: "always",
+        type: "race_entry",
+        raceId: "race-1",
+        horseId: "h1",
+        entryFee: 1000,
+        reason: "Entered race",
+      };
+
+      const draft = JSON.parse(JSON.stringify(state));
+      handler.handle(draft, impact);
+
+      expect(draft.cash).toBe(4000);
+    });
+
+    it("race_entry creates entry_fee transaction for player", () => {
+      const handler = new RacingHandler();
+      const state = {
+        cash: 5000,
+        transactions: [],
+        horses: h2r([
+          { id: "h1", name: "Star", ownership: { type: "player" } },
+        ] as unknown as Horse[]),
+        races: r2r([
+          { id: "race-1", name: "Test Race", entries: [], entryFee: 1000 },
+        ] as unknown as Race[]),
+      } as unknown as GameState;
+
+      const impact: RaceEntryImpact = {
+        id: "imp-1",
+        intentId: "",
+        day: 10,
+        phase: "raceEntryResolution",
+        logLevel: "always",
+        type: "race_entry",
+        raceId: "race-1",
+        horseId: "h1",
+        entryFee: 1000,
+        reason: "Entered race",
+      };
+
+      const draft = JSON.parse(JSON.stringify(state));
+      handler.handle(draft, impact);
+
+      expect(draft.transactions).toHaveLength(1);
+      expect(draft.transactions[0].type).toBe("expense");
+      expect(draft.transactions[0].subcategory).toBe("entry_fee");
+      expect(draft.transactions[0].amount).toBe(-1000);
+    });
+
+    it("race_entry deducts entry fee from NPC stable cash", () => {
+      const handler = new RacingHandler();
+      const state = {
+        cash: 5000,
+        transactions: [],
+        horses: h2r([
+          { id: "h1", name: "NPC Horse", ownership: { type: "npc", stableId: "s1" } },
+        ] as unknown as Horse[]),
+        races: r2r([
+          { id: "race-1", name: "Test Race", entries: [], entryFee: 1000 },
+        ] as unknown as Race[]),
+        npcStables: [{ id: "s1", name: "Stable 1", cash: 5000 }],
+      } as unknown as GameState;
+
+      const impact: RaceEntryImpact = {
+        id: "imp-1",
+        intentId: "",
+        day: 10,
+        phase: "raceEntryResolution",
+        logLevel: "always",
+        type: "race_entry",
+        raceId: "race-1",
+        horseId: "h1",
+        entryFee: 1000,
+        reason: "Entered race",
+      };
+
+      const draft = JSON.parse(JSON.stringify(state));
+      handler.handle(draft, impact);
+
+      expect(draft.npcStables[0].cash).toBe(4000);
+      expect(draft.transactions).toHaveLength(0);
+    });
+
+    it("race_entry does not deduct entry fee for unowned horse", () => {
+      const handler = new RacingHandler();
+      const state = {
+        cash: 5000,
+        transactions: [],
+        horses: h2r([
+          { id: "h1", name: "Wild", ownership: { type: "unowned" } },
+        ] as unknown as Horse[]),
+        races: r2r([
+          { id: "race-1", name: "Test Race", entries: [], entryFee: 1000 },
+        ] as unknown as Race[]),
+      } as unknown as GameState;
+
+      const impact: RaceEntryImpact = {
+        id: "imp-1",
+        intentId: "",
+        day: 10,
+        phase: "raceEntryResolution",
+        logLevel: "always",
+        type: "race_entry",
+        raceId: "race-1",
+        horseId: "h1",
+        entryFee: 1000,
+        reason: "Entered race",
+      };
+
+      const draft = JSON.parse(JSON.stringify(state));
+      handler.handle(draft, impact);
+
+      expect(draft.cash).toBe(5000);
+      expect(draft.transactions).toHaveLength(0);
+    });
+
+    it("race_entry with entryFee 0 does not deduct", () => {
+      const handler = new RacingHandler();
+      const state = {
+        cash: 5000,
+        transactions: [],
+        horses: h2r([
+          { id: "h1", name: "Star", ownership: { type: "player" } },
+        ] as unknown as Horse[]),
+        races: r2r([
+          { id: "race-1", name: "Free Race", entries: [], entryFee: 0 },
+        ] as unknown as Race[]),
+      } as unknown as GameState;
+
+      const impact: RaceEntryImpact = {
+        id: "imp-1",
+        intentId: "",
+        day: 10,
+        phase: "raceEntryResolution",
+        logLevel: "always",
+        type: "race_entry",
+        raceId: "race-1",
+        horseId: "h1",
+        entryFee: 0,
+        reason: "Entered race",
+      };
+
+      const draft = JSON.parse(JSON.stringify(state));
+      handler.handle(draft, impact);
+
+      expect(draft.cash).toBe(5000);
+      expect(draft.transactions).toHaveLength(0);
+    });
+
+    it("race_entry bump refunds NPC stable that paid entry fee", () => {
+      const handler = new RacingHandler();
+      const state = {
+        cash: 5000,
+        transactions: [],
+        horses: h2r([
+          {
+            id: "h-bumped",
+            name: "Bumped",
+            ownership: { type: "npc", stableId: "s1" },
+          },
+          {
+            id: "h-challenger",
+            name: "Challenger",
+            ownership: { type: "npc", stableId: "s2" },
+          },
+        ] as unknown as Horse[]),
+        races: r2r([
+          {
+            id: "race-1",
+            name: "Test Race",
+            entries: [
+              {
+                horseId: "h-bumped",
+                ownership: { type: "npc", stableId: "s1" },
+                jockeyId: "j1",
+              },
+            ],
+            entryFee: 1000,
+            fieldSize: 1,
+          },
+        ] as unknown as Race[]),
+        npcStables: [
+          { id: "s1", name: "Stable 1", cash: 3000 },
+          { id: "s2", name: "Stable 2", cash: 5000 },
+        ],
+      } as unknown as GameState;
+
+      const impact: RaceEntryImpact = {
+        id: "imp-1",
+        intentId: "",
+        day: 10,
+        phase: "raceEntryResolution",
+        logLevel: "always",
+        type: "race_entry",
+        raceId: "race-1",
+        horseId: "h-challenger",
+        bumpEntryHorseId: "h-bumped",
+        entryFee: 1000,
+        reason: "Bump entry",
+      };
+
+      const draft = JSON.parse(JSON.stringify(state));
+      handler.handle(draft, impact);
+
+      // Bumped stable gets refund (3000 + 1000 = 4000)
+      const bumpedStable = draft.npcStables.find((s: any) => s.id === "s1");
+      expect(bumpedStable.cash).toBe(4000);
+      // Challenger stable pays entry fee (5000 - 1000 = 4000)
+      const challengerStable = draft.npcStables.find((s: any) => s.id === "s2");
+      expect(challengerStable.cash).toBe(4000);
+    });
+  });
 });

@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { runRaceToCompletion } from "@/core/race/engine/simulation";
 import { createRng } from "@/core/common/rng";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
+import { FactorLedgerCollector } from "@/core/race/factorLedger";
 
 function makeRunner(overrides: Partial<Runner> = {}): Runner {
   return {
@@ -25,6 +26,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     ownership: { type: "unowned" },
     weight: 55,
     horse: {} as any,
+    factorLedger: new FactorLedgerCollector(),
     ...overrides,
   } as Runner;
 }
@@ -39,11 +41,22 @@ describe("time increment pattern — runRaceToCompletion vs useLiveRaceSimulatio
     ];
 
     const rng = createRng("time-test");
-    const { result } = runRaceToCompletion(runners, 100, rng, 0.1, 600, undefined, false);
+    const { result, factorLedgers } = runRaceToCompletion(
+      runners,
+      100,
+      rng,
+      0.1,
+      600,
+      undefined,
+      false,
+    );
 
     // With velocity 1000 and distance 100, the runner should finish in the first step.
     // t=0 initially, stepRunner receives t=0, overshoot interpolation gives tFinish ≈ 0.
     expect(result[0].time).toBeLessThan(0.1);
+    // factorLedgers should be present in the return
+    expect(factorLedgers).toBeDefined();
+    expect(factorLedgers["h1"]).toBeDefined();
   });
 
   it("runRaceToCompletion with dt=0.1 produces deterministic finish times", () => {
@@ -57,10 +70,29 @@ describe("time increment pattern — runRaceToCompletion vs useLiveRaceSimulatio
     const rng1 = createRng("time-det-1");
     const rng2 = createRng("time-det-1");
 
-    const { result: r1 } = runRaceToCompletion(runners1, 200, rng1, 0.1, 600, undefined, false);
-    const { result: r2 } = runRaceToCompletion(runners2, 200, rng2, 0.1, 600, undefined, false);
+    const { result: r1, factorLedgers: fl1 } = runRaceToCompletion(
+      runners1,
+      200,
+      rng1,
+      0.1,
+      600,
+      undefined,
+      false,
+    );
+    const { result: r2, factorLedgers: fl2 } = runRaceToCompletion(
+      runners2,
+      200,
+      rng2,
+      0.1,
+      600,
+      undefined,
+      false,
+    );
 
     expect(r1[0].time).toBe(r2[0].time);
+    // Ledgers should be populated for all runners
+    expect(fl1["h1"]).toBeDefined();
+    expect(fl2["h1"]).toBeDefined();
   });
 
   it("runRaceToCompletion with dt=0.05 produces different finish times than dt=0.1", () => {
@@ -76,11 +108,30 @@ describe("time increment pattern — runRaceToCompletion vs useLiveRaceSimulatio
     const rng1 = createRng("time-dt-test");
     const rng2 = createRng("time-dt-test");
 
-    const { result: r1 } = runRaceToCompletion(runners1, 200, rng1, 0.1, 600, undefined, false);
-    const { result: r2 } = runRaceToCompletion(runners2, 200, rng2, 0.05, 600, undefined, false);
+    const { result: r1, factorLedgers: fl1 } = runRaceToCompletion(
+      runners1,
+      200,
+      rng1,
+      0.1,
+      600,
+      undefined,
+      false,
+    );
+    const { result: r2, factorLedgers: fl2 } = runRaceToCompletion(
+      runners2,
+      200,
+      rng2,
+      0.05,
+      600,
+      undefined,
+      false,
+    );
 
     // Different dt should produce different finish times due to Euler integration
     // differences and different RNG call counts per tick.
     expect(r1[0].time).not.toBe(r2[0].time);
+    // Both should have factor ledgers
+    expect(fl1["h1"]).toBeDefined();
+    expect(fl2["h1"]).toBeDefined();
   });
 });

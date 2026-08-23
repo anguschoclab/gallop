@@ -23,7 +23,7 @@ import {
 } from "@/core/campaign/planner";
 import { runAutoEntries, reconcileSlotStatuses } from "@/core/campaign/autoEntry";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
-import type { RaceEntryImpact, CashImpact } from "@/core/resolver/impacts/index";
+import type { RaceEntryImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 
 export const schedulerPhase = {
@@ -141,20 +141,6 @@ export const schedulerPhase = {
       });
 
       updatedCampaigns[i] = { ...campaign, slots: result.updatedSlots };
-    }
-
-    if (cashDelta < 0) {
-      autoEntryImpacts.push({
-        id: generateUUID(),
-        intentId: "",
-        day: newDay,
-        phase: "scheduler",
-        logLevel: "conditional",
-        type: "cash_change",
-        entityId: "player",
-        amount: cashDelta,
-        reason: "Auto-campaign race entry fees",
-      } as CashImpact);
     }
 
     const updatedLogs = [...entryLogs, ...context.logs];

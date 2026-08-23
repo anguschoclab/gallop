@@ -161,6 +161,7 @@ export interface NpcAIManager {
   activeCartels?: Cartel[];
   narrativeArcs?: NarrativeArc[];
   difficultyModulator?: DifficultyState;
+  previousDifficultyMultiplier?: number;
 
   // Smart notifications collected during intent generation
   pendingNewsItems?: import("@/services/narrative/newsTypes").NewsItem[];

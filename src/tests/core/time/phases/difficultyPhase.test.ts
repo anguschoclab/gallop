@@ -232,7 +232,7 @@ describe("difficultyPhase", () => {
 
     const existing = {
       playerWinRate: 0,
-      npcCompetenceMultiplier: 1.25,
+      npcCompetenceMultiplier: 1.3,
       lastAdjustmentDay: 0,
       playerWins: 10,
       playerEntries: 10,
@@ -256,7 +256,7 @@ describe("difficultyPhase", () => {
 
     const existing = {
       playerWinRate: 0,
-      npcCompetenceMultiplier: 0.75,
+      npcCompetenceMultiplier: 0.7,
       lastAdjustmentDay: 0,
       playerWins: 0,
       playerEntries: 10,

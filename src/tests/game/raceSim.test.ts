@@ -126,6 +126,41 @@ describe("raceSim determinism", () => {
   });
 });
 
+describe("raceSim factorLedgers", () => {
+  it("runRaceToCompletion returns factorLedgers populated for all runners", () => {
+    const horses = mkField();
+    const conditions = getConditionsModifier({});
+    const runners = horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions));
+    const { factorLedgers } = runRaceToCompletion(runners, 1600, createRng(42));
+
+    expect(factorLedgers).toBeDefined();
+    for (const h of horses) {
+      expect(factorLedgers[h.id]).toBeDefined();
+      // Each ledger should have all 12 factor keys
+      expect(factorLedgers[h.id].stamina).toBeDefined();
+      expect(factorLedgers[h.id].noise).toBeDefined();
+      expect(factorLedgers[h.id].wind).toBeDefined();
+    }
+  });
+
+  it("factorLedgers have non-default raceAvg values after a full race", () => {
+    const horses = mkField();
+    const conditions = getConditionsModifier({});
+    const runners = horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions));
+    const { factorLedgers } = runRaceToCompletion(runners, 1600, createRng(42));
+
+    // At least one factor for at least one runner should deviate from 1.0
+    // after a real race (stamina fade, style effects, etc.)
+    let anyDeviation = false;
+    for (const h of horses) {
+      const ledger = factorLedgers[h.id];
+      if (Math.abs(ledger.stamina.raceAvg - 1) > 0.001) anyDeviation = true;
+      if (Math.abs(ledger.style.raceAvg - 1) > 0.001) anyDeviation = true;
+    }
+    expect(anyDeviation).toBe(true);
+  });
+});
+
 describe("raceSim conditions", () => {
   it("storm + heavy track produces slower winning time than fair conditions", () => {
     const horses = mkField();

@@ -16,6 +16,7 @@ import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { RaceRunner, SectionalSplit } from "@/core/race/types";
 import { generateRaceVerdict } from "@/core/race/raceVerdict";
 import type { RunnerFactorLedger } from "@/core/race/factorLedger";
+import { RaceVerdictBar } from "@/components/race/RaceVerdictBar";
 import { formatCurrency } from "@/core/common/formatting";
 import {
   PRIZE_SPLIT,
@@ -145,10 +146,9 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
               <div className="divide-y divide-white/5">
                 {ordered.map((r, i) => {
                   const prize = i < prizeSplit.length ? Math.round(race.purse * prizeSplit[i]) : 0;
-                  const verdict =
-                    r.isPlayer && r.finalizedLedger
-                      ? generateRaceVerdict(r, i + 1, ordered, r.finalizedLedger, fieldLedgers)
-                      : null;
+                  const verdict = r.finalizedLedger
+                    ? generateRaceVerdict(r, i + 1, ordered, r.finalizedLedger, fieldLedgers)
+                    : null;
 
                   return (
                     <div
@@ -227,47 +227,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                         </div>
                       </div>
 
-                      {verdict && (
-                        <div className="mt-3 ml-10 p-3 bg-gold/5 border border-gold/10 space-y-2">
-                          <div className="text-[11px] font-black uppercase text-gold/80 tracking-tight">
-                            {verdict.headline}
-                          </div>
-                          {verdict.factors.length > 0 && (
-                            <div className="flex flex-wrap gap-x-3 gap-y-1">
-                              {verdict.factors.map((f) => (
-                                <span
-                                  key={f.key}
-                                  className={cn(
-                                    "text-[9px] font-mono uppercase tracking-tight",
-                                    f.impact === "positive"
-                                      ? "text-success/70"
-                                      : f.impact === "negative"
-                                        ? "text-red-400/70"
-                                        : "text-cream/40",
-                                  )}
-                                >
-                                  {f.label}{" "}
-                                  {f.impact === "positive"
-                                    ? "▲"
-                                    : f.impact === "negative"
-                                      ? "▼"
-                                      : "◆"}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                          {verdict.conditionsNote && (
-                            <div className="text-[9px] font-mono text-cream/30 italic">
-                              {verdict.conditionsNote}
-                            </div>
-                          )}
-                          {verdict.fieldComparison && (
-                            <div className="text-[9px] font-mono text-cream/30 italic">
-                              {verdict.fieldComparison}
-                            </div>
-                          )}
-                        </div>
-                      )}
+                      {verdict && <RaceVerdictBar verdict={verdict} />}
 
                       {r.distanceMod !== undefined && r.distanceStaminaMul !== undefined && (
                         <Collapsible className="mt-2 ml-10">

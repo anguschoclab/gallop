@@ -9,15 +9,16 @@
  * Related files: ./index.ts (registers phase), ./raceResolution.ts (produces results)
  */
 
-import { PHASE_ORDER_DIFFICULTY } from "@/constants";
+import { PHASE_ORDER_DIFFICULTY, DIFFICULTY_ADJUSTMENT_PERIOD } from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import type { DifficultyState, NpcAIManager } from "@/core/ai/npcCycleAI";
 
-const DIFFICULTY_ADJUSTMENT_PERIOD = 30;
 const MIN_MULTIPLIER = 0.7;
 const MAX_MULTIPLIER = 1.3;
-const TARGET_WIN_RATE = 0.3;
+const HIGH_WIN_RATE = 0.35;
+const LOW_WIN_RATE = 0.15;
+const SMOOTH_FACTOR = 0.3;
 
 function createDefaultDifficulty(day: number): DifficultyState {
   return {
@@ -37,6 +38,7 @@ export const difficultyPhase: PipelinePhase = {
 
     let manager = state.npcAIManager as NpcAIManager | undefined;
     let dm: DifficultyState = manager?.difficultyModulator ?? createDefaultDifficulty(newDay);
+    const oldMultiplier = dm.npcCompetenceMultiplier;
 
     // Count player wins and entries from resolved races on this day
     let newWins = dm.playerWins ?? 0;
@@ -60,12 +62,19 @@ export const difficultyPhase: PipelinePhase = {
 
     // Check if it's time for a difficulty adjustment
     const daysSinceAdjustment = newDay - dm.lastAdjustmentDay;
-    if (daysSinceAdjustment >= DIFFICULTY_ADJUSTMENT_PERIOD && newEntries > 0) {
-      const winRate = newWins / newEntries;
-      // Adjustment: move competence inversely to player win rate deviation from target
-      const deviation = winRate - TARGET_WIN_RATE;
-      const adjustment = deviation * 0.5; // Scale factor
-      let newMultiplier = dm.npcCompetenceMultiplier + adjustment;
+    if (daysSinceAdjustment >= DIFFICULTY_ADJUSTMENT_PERIOD) {
+      const winRate = newEntries > 0 ? newWins / newEntries : 0;
+      // Target-based adjustment: pick target based on win rate band, then move toward it
+      let target: number;
+      if (winRate > HIGH_WIN_RATE) {
+        target = MAX_MULTIPLIER;
+      } else if (winRate < LOW_WIN_RATE) {
+        target = MIN_MULTIPLIER;
+      } else {
+        target = 1.0;
+      }
+      let newMultiplier =
+        dm.npcCompetenceMultiplier + (target - dm.npcCompetenceMultiplier) * SMOOTH_FACTOR;
       newMultiplier = Math.max(MIN_MULTIPLIER, Math.min(MAX_MULTIPLIER, newMultiplier));
 
       dm = {
@@ -87,6 +96,7 @@ export const difficultyPhase: PipelinePhase = {
     manager = {
       ...(manager ?? { stableStates: {}, globalDay: newDay, regionalKings: {} }),
       difficultyModulator: dm,
+      previousDifficultyMultiplier: oldMultiplier,
     };
 
     return {

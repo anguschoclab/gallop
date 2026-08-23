@@ -10,9 +10,16 @@ import { RivalIntelTab } from "@/components/analytics/RivalIntelTab";
 import { EconomicIndicators } from "@/components/analytics/EconomicIndicators";
 import { NpcAIStatusPanel } from "@/components/analytics/NpcAIStatusPanel";
 import { useTabParam } from "@/hooks/ui/useTabParam";
-import { BarChart3, Zap, DollarSign, Sprout, PawPrint, Swords } from "lucide-react";
+import { BarChart3, Zap, DollarSign, Sprout, PawPrint, Eye } from "lucide-react";
 
-const ANALYTICS_TABS = ["overview", "stable", "racing", "finance", "breeding", "rivals"] as const;
+const ANALYTICS_TABS = [
+  "overview",
+  "stable",
+  "racing",
+  "finance",
+  "breeding",
+  "rival_intel",
+] as const;
 
 export const Route = createFileRoute("/analytics/")({
   validateSearch: z.object({
@@ -61,9 +68,9 @@ function AnalyticsPage() {
             <Sprout className="h-4 w-4" />
             Breeding
           </TabsTrigger>
-          <TabsTrigger value="rivals" className="gap-2">
-            <Swords className="h-4 w-4" />
-            Rivals
+          <TabsTrigger value="rival_intel" className="gap-2">
+            <Eye className="h-4 w-4" />
+            Rival Intel
           </TabsTrigger>
         </TabsList>
 
@@ -89,7 +96,7 @@ function AnalyticsPage() {
           <AnalyticsBreedingTab />
         </TabsContent>
 
-        <TabsContent value="rivals" className="space-y-4">
+        <TabsContent value="rival_intel" className="space-y-4">
           <RivalIntelTab />
         </TabsContent>
       </Tabs>

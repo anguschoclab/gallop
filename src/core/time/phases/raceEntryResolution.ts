@@ -33,7 +33,7 @@ import { isPlayerOwned } from "@/core/horse/ownership";
  * Race Entry Resolution Phase (Order 15)
  * Resolves RaceEntryIntents into impacts:
  * - Race entry (adds horse to race.entries)
- * - Entry fee (cash already deducted when intent was enqueued)
+ * - Entry fee (deducted by RacingHandler when impact is applied)
  * - NPC Jockey assignment (automatically assigns jockeys to NPC entries)
  */
 export const raceEntryResolutionPhase: PipelinePhase = {

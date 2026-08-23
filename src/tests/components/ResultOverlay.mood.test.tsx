@@ -64,6 +64,10 @@ vi.mock("@/core/race/raceVerdict", () => ({
   generateRaceVerdict: () => null,
 }));
 
+vi.mock("@/components/race/RaceVerdictBar", () => ({
+  RaceVerdictBar: () => createElement("div", { "data-testid": "verdict-bar" }),
+}));
+
 vi.mock("@/core/common/formatting", () => ({
   formatCurrency: (n: number) => `$${n.toLocaleString()}`,
 }));

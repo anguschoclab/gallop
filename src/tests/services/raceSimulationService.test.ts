@@ -143,6 +143,36 @@ describe("simulateStep", () => {
     const { stillRunning } = simulateStep(runners, 0.01, 0, 1600, rng);
     expect(stillRunning).toBe(true);
   });
+
+  it("simulateStep accumulates ledger data on runners with factorLedger", () => {
+    const race = mkRace({ fieldSize: 2, distance: 1600 });
+    const { runners } = buildRaceField({ race, horses: [], jockeys: [] });
+    const rng = rngForRace(race);
+
+    // Runners built by buildRaceField should have factorLedger initialized
+    for (const r of runners) {
+      expect(r.factorLedger).toBeDefined();
+    }
+
+    // Perform a few steps
+    for (let i = 0; i < 5; i++) {
+      simulateStep(runners, 0.1, i * 0.1, 1600, rng);
+    }
+
+    // After stepping, the collector should have recorded ticks.
+    // We verify by finalizing and checking the ledger has non-default values.
+    for (const r of runners) {
+      if (r.factorLedger) {
+        const finalized = r.factorLedger.finalize();
+        // stamina factor should exist and have a raceAvg
+        expect(finalized.stamina).toBeDefined();
+        expect(finalized.stamina.raceAvg).toBeGreaterThan(0);
+        // noise factor should also exist
+        expect(finalized.noise).toBeDefined();
+        expect(finalized.noise.raceAvg).toBeGreaterThan(0);
+      }
+    }
+  });
 });
 
 describe("getRaceClassBonus", () => {

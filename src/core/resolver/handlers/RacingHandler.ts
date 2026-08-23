@@ -42,6 +42,7 @@ import {
   type HorseOwnership,
 } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
+import { createTransaction } from "@/core/transactions";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -51,7 +52,7 @@ type ImpactHandlerFunction = (
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   race_entry: (draft, impact, lookupMaps) => {
-    const { raceId, horseId, jockeyId, weight, jockeyInstructions, bumpEntryHorseId } =
+    const { raceId, horseId, jockeyId, weight, jockeyInstructions, bumpEntryHorseId, entryFee } =
       impact as RaceEntryImpact;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
@@ -80,6 +81,33 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         weight,
         jockeyInstructions,
       });
+
+      // Deduct entry fee from the appropriate owner
+      if (entryFee > 0) {
+        if (isPlayerOwned(horse)) {
+          draft.cash = (draft.cash ?? 0) - entryFee;
+          if (!draft.transactions) draft.transactions = [];
+          draft.transactions.push(
+            createTransaction(
+              "expense",
+              "entry_fee",
+              -entryFee,
+              `Entry fee for ${race.name}`,
+              impact.day,
+              draft.cash,
+              { horseId, raceId },
+            ),
+          );
+        } else if (horse.ownership.type === "npc") {
+          const stableId = horse.ownership.stableId;
+          const stable =
+            lookupMaps?.stableMap.get(stableId) ||
+            draft.npcStables.find((s) => s.id === stableId);
+          if (stable) {
+            stable.cash = Math.max(0, stable.cash - entryFee);
+          }
+        }
+      }
     }
   },
 

@@ -3,12 +3,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SilkDot } from "@/components/SilkDot";
 import { CONSIGNMENT_COMMISSION } from "@/constants";
-import { Package } from "lucide-react";
+import { Package, Lock } from "lucide-react";
 import type { Horse, AuctionSale } from "@/game/types";
 
 interface ConsignmentSidebarProps {
   consignablePairs: Array<{ horse: Horse; sale: AuctionSale }>;
   onConsign: (horse: Horse, sale: AuctionSale) => void;
+  saleAccessMap?: Map<string, { allowed: boolean; requiredTier: string }>;
 }
 
 function ageLabel(horse: Horse): string {
@@ -19,7 +20,11 @@ function ageLabel(horse: Horse): string {
   return `${Math.floor(horse.age)}YO`;
 }
 
-export function ConsignmentSidebar({ consignablePairs, onConsign }: ConsignmentSidebarProps) {
+export function ConsignmentSidebar({
+  consignablePairs,
+  onConsign,
+  saleAccessMap,
+}: ConsignmentSidebarProps) {
   return (
     <aside className="lg:col-span-4 space-y-8 lg:sticky lg:top-6">
       <section className="space-y-4">
@@ -42,37 +47,52 @@ export function ConsignmentSidebar({ consignablePairs, onConsign }: ConsignmentS
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y divide-white/5 max-h-[400px] overflow-y-auto custom-scrollbar">
-              {consignablePairs.map(({ horse, sale }, i) => (
-                <div key={horse.id} className="p-4 hover:bg-white/[0.02] transition-colors group">
-                  <div className="flex items-center justify-between gap-3 mb-2">
-                    <div className="flex items-center gap-2">
-                      <SilkDot color={horse.silk} size="sm" />
-                      <span className="font-bold text-cream uppercase tracking-tight text-xs group-hover:text-gold transition-colors">
-                        {horse.name}
-                      </span>
+              {consignablePairs.map(({ horse, sale }, i) => {
+                const access = saleAccessMap?.get(sale.kind);
+                const isLocked = access && !access.allowed;
+                return (
+                  <div key={horse.id} className="p-4 hover:bg-white/[0.02] transition-colors group">
+                    <div className="flex items-center justify-between gap-3 mb-2">
+                      <div className="flex items-center gap-2">
+                        <SilkDot color={horse.silk} size="sm" />
+                        <span className="font-bold text-cream uppercase tracking-tight text-xs group-hover:text-gold transition-colors">
+                          {horse.name}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {isLocked && (
+                          <Badge
+                            variant="outline"
+                            className="h-4 text-[8px] border-red-400/30 text-red-400/80 font-mono gap-0.5"
+                          >
+                            <Lock className="h-2 w-2" />
+                            {access!.requiredTier}
+                          </Badge>
+                        )}
+                        <Badge
+                          variant="outline"
+                          className="h-4 text-[8px] border-white/10 text-cream/40 font-mono"
+                        >
+                          D{sale.day}
+                        </Badge>
+                      </div>
                     </div>
-                    <Badge
-                      variant="outline"
-                      className="h-4 text-[8px] border-white/10 text-cream/40 font-mono"
-                    >
-                      D{sale.day}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="text-[9px] font-mono text-cream/20 uppercase tracking-tighter">
-                      {ageLabel(horse)} · {horse.gender}
+                    <div className="flex items-center justify-between">
+                      <div className="text-[9px] font-mono text-cream/20 uppercase tracking-tighter">
+                        {ageLabel(horse)} · {horse.gender}
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-6 px-2 text-[9px] font-black uppercase border border-gold/20 hover:bg-gold/10 text-gold"
+                        onClick={() => onConsign(horse, sale)}
+                      >
+                        CONSIGN
+                      </Button>
                     </div>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="h-6 px-2 text-[9px] font-black uppercase border border-gold/20 hover:bg-gold/10 text-gold"
-                      onClick={() => onConsign(horse, sale)}
-                    >
-                      CONSIGN
-                    </Button>
                   </div>
-                </div>
-              ))}
+                );
+              })}
               {consignablePairs.length === 0 && (
                 <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
                   No assets ready for deployment
