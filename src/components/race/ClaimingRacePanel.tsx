@@ -47,11 +47,12 @@ export function ClaimingRacePanel({
 }: ClaimingRacePanelProps) {
   const [pendingClaimHorseId, setPendingClaimHorseId] = useState<string | null>(null);
 
+  // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loops.
+  const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
+
   if (!race.claiming) return null;
 
   const price = race.claiming.price;
-  // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loops.
-  const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
 
   const pendingHorse = pendingClaimHorseId ? horseMap.get(pendingClaimHorseId) : null;
 

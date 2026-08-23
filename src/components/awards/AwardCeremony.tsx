@@ -31,6 +31,16 @@ export function AwardCeremony({ isOpen, onClose, ceremonies, onComplete }: Award
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
 
+  const playerAwards =
+    ceremonies.length > 0 ? ceremonies[currentIndex].awards.filter((a) => !a.stableId) : [];
+  const hasPlayerWins = playerAwards.length > 0;
+
+  useEffect(() => {
+    if (hasPlayerWins) {
+      setShowConfetti(true);
+    }
+  }, [currentIndex, hasPlayerWins]);
+
   if (ceremonies.length === 0) {
     return null;
   }
@@ -44,15 +54,6 @@ export function AwardCeremony({ isOpen, onClose, ceremonies, onComplete }: Award
   const regionName = REGION_AWARD_NAMES[region];
   const regionDisplay = REGION_DISPLAY_NAMES[region];
   const colors = REGION_COLORS[region];
-
-  const playerAwards = awards.filter((a) => !a.stableId);
-  const hasPlayerWins = playerAwards.length > 0;
-
-  useEffect(() => {
-    if (hasPlayerWins) {
-      setShowConfetti(true);
-    }
-  }, [currentIndex, hasPlayerWins]);
 
   const handleNext = () => {
     if (isLast) {

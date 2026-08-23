@@ -23,19 +23,17 @@ export function useHorseActions(horseId: string) {
     }
   }, [horse, horseId, resolveHorsePhenotype]);
 
-  if (!horse) {
-    return {
-      horse: null,
-      isConsigned: false,
-      canRetireToStud: false,
-      canRetireToPasture: false,
-      consignedSale: undefined,
-      eligibleSale: undefined,
-      day,
-    };
-  }
-
   const result = useMemo(() => {
+    if (!horse) {
+      return {
+        isConsigned: false,
+        canRetireToStud: false,
+        canRetireToPasture: false,
+        consignedSale: undefined,
+        eligibleSale: undefined,
+      };
+    }
+
     const isConsigned = !!horse.consignedSaleId;
 
     const canRetireToStud =
@@ -72,6 +70,18 @@ export function useHorseActions(horseId: string) {
       eligibleSale,
     };
   }, [horse, auctions]);
+
+  if (!horse) {
+    return {
+      horse: null,
+      isConsigned: false,
+      canRetireToStud: false,
+      canRetireToPasture: false,
+      consignedSale: undefined,
+      eligibleSale: undefined,
+      day,
+    };
+  }
 
   return {
     horse,

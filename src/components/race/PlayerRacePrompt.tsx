@@ -47,12 +47,14 @@ export function PlayerRacePrompt() {
     if (!buf || !buf.length) return undefined;
     return buf.find((w) => w.day === race?.day) ?? buf[buf.length - 1];
   });
-  if (!race) return null;
 
   const enteredHorse = useMemo(() => {
+    if (!race) return undefined;
     const ownedEntry = race.entries.find((e) => e.ownership?.type === "player");
     return ownedEntry ? horses[ownedEntry.horseId] : undefined;
   }, [race, horses]);
+
+  if (!race) return null;
 
   function clearPending() {
     useGame.setState({ pendingPlayerRaceId: undefined });

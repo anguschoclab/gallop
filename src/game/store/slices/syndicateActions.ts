@@ -20,6 +20,7 @@ import {
   generateInvestorName,
   buildDefaultExpectations,
 } from "@/core/breeding/investorTypes";
+import { createRng, hashStr } from "@/core/common/rng";
 import { requireOwned, requireHorse } from "../guards";
 import type { StoreSet, StoreGet } from "../types";
 import type { BreedingSlice } from "./breedingSlice";
@@ -175,8 +176,9 @@ export function createSyndicateActions(
         return { ok: false, reason: "You don't own that many shares to sell." };
       }
 
-      const personality = pickPersonality();
-      const name = generateInvestorName();
+      const rng = createRng(hashStr(`investor_${syndicateId}_${s.day}_${sharesOffered}`));
+      const personality = pickPersonality(rng.next);
+      const name = generateInvestorName(rng.next);
       const investorId = `inv-${generateUUID().slice(0, 8)}`;
       const price = syndicate.sharePrice * sharesOffered;
 

@@ -42,13 +42,6 @@ export default tseslint.config(
       "jsdoc/require-returns": "error",
     },
   },
-  // Exclude components (already handled in TSX rule)
-  {
-    files: ["src/components/**/*.tsx"],
-    rules: {
-      "react-hooks/rules-of-hooks": "off",
-    },
-  },
   // Exclude hooks and component utilities from JSDoc — internal implementation
   {
     files: ["src/hooks/**/*.ts", "src/components/**/*.ts"],
@@ -56,13 +49,6 @@ export default tseslint.config(
       "jsdoc/require-jsdoc": "off",
       "jsdoc/require-param": "off",
       "jsdoc/require-returns": "off",
-    },
-  },
-  // Exclude routes (routes often have conditional hook calls)
-  {
-    files: ["src/routes/**/*.tsx"],
-    rules: {
-      "react-hooks/rules-of-hooks": "off",
     },
   },
   {
@@ -114,7 +100,6 @@ export default tseslint.config(
     files: ["src/hooks/**/*.ts"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
-      "react-hooks/rules-of-hooks": "off",
     },
   },
   // Exclude services (services often use any for type assertions)
@@ -129,7 +114,6 @@ export default tseslint.config(
     files: ["src/components/**/*.ts"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
-      "react-hooks/rules-of-hooks": "off",
     },
   },
   // Exclude core (core often uses any for type assertions)

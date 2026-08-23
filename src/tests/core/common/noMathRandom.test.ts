@@ -61,7 +61,7 @@ describe("Math.random elimination from core modules", () => {
           continue;
         if (trimmed.startsWith("*")) continue;
         // Check for Math.random() usage
-        if (/\bMath\.random\s*\(/.test(line)) {
+        if (/\bMath\.random\b/.test(line)) {
           violations.push(`${relative}:${i + 1}: ${trimmed}`);
         }
       }

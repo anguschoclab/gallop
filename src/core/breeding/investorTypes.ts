@@ -92,14 +92,12 @@ function pick<T>(arr: T[], r: () => number): T {
   return arr[Math.floor(r() * arr.length)];
 }
 
-export function generateInvestorName(rng?: () => number): string {
-  const r = rng ?? Math.random;
-  return `${pick(FIRST_NAMES, r)} ${pick(LAST_NAMES, r)}`;
+export function generateInvestorName(rng: () => number): string {
+  return `${pick(FIRST_NAMES, rng)} ${pick(LAST_NAMES, rng)}`;
 }
 
-export function pickPersonality(rng?: () => number): InvestorPersonality {
-  const r = rng ?? Math.random;
-  const roll = r();
+export function pickPersonality(rng: () => number): InvestorPersonality {
+  const roll = rng();
   if (roll < 0.4) return "conservative";
   if (roll < 0.75) return "aggressive";
   return "speculator";

@@ -4,14 +4,15 @@ import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import type { GameState, PrivateSaleOffer, Horse, Stable } from "@/game/types";
 import { makeNpcOwned, getStableId } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { asNpcStableId, asHorseId, asStableId } from "@/core/types/branded";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import type { PipelineContext } from "@/core/time/pipeline";
 
 const mkOffer = (overrides: Partial<PrivateSaleOffer> = {}): PrivateSaleOffer => ({
   id: "offer-1",
-  horseId: "horse-1",
+  horseId: asHorseId("horse-1"),
   fromStableId: undefined,
-  toStableId: "stable-1",
+  toStableId: asStableId("stable-1"),
   amount: 50000,
   status: "pending",
   createdDay: 5,
@@ -39,7 +40,7 @@ const mkStable = (overrides: Partial<Stable> = {}): Stable =>
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   createTestNpcHorse({
-    id: "horse-1",
+    id: asHorseId("horse-1"),
     name: "Thunder",
     ownership: makeNpcOwned(asNpcStableId("stable-1")),
     ...overrides,
@@ -376,9 +377,12 @@ describe("privateSaleResolutionPhase", () => {
 
   it("log entries generated for each decision", async () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
-    const horse1 = mkHorse({ id: "horse-1", name: "Thunder" });
-    const horse2 = mkHorse({ id: "horse-2", name: "Lightning" });
-    const stable = mkStable({ personality: "aggressive", horses: ["horse-1", "horse-2"] });
+    const horse1 = mkHorse({ id: asHorseId("horse-1"), name: "Thunder" });
+    const horse2 = mkHorse({ id: asHorseId("horse-2"), name: "Lightning" });
+    const stable = mkStable({
+      personality: "aggressive",
+      horses: [asHorseId("horse-1"), asHorseId("horse-2")],
+    });
     const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
     const valuation = calculateNpcHorseValue(horse1, stable.tier);
 
@@ -386,8 +390,8 @@ describe("privateSaleResolutionPhase", () => {
       horses: h2r([horse1, horse2]),
       npcStables: [stable],
       privateSaleOffers: [
-        mkOffer({ id: "o1", horseId: "horse-1", amount: Math.round(valuation * 0.75) }),
-        mkOffer({ id: "o2", horseId: "horse-2", amount: Math.round(valuation * 0.4) }),
+        mkOffer({ id: "o1", horseId: asHorseId("horse-1"), amount: Math.round(valuation * 0.75) }),
+        mkOffer({ id: "o2", horseId: asHorseId("horse-2"), amount: Math.round(valuation * 0.4) }),
       ],
     });
     const result = mod.privateSaleResolutionPhase.execute(ctx);
@@ -402,7 +406,7 @@ describe("privateSaleResolutionPhase", () => {
     const ctx = createContext({
       horses: {},
       npcStables: [mkStable()],
-      privateSaleOffers: [mkOffer({ horseId: "nonexistent" })],
+      privateSaleOffers: [mkOffer({ horseId: asHorseId("nonexistent") })],
     });
     const result = mod.privateSaleResolutionPhase.execute(ctx);
     expect(result.state.privateSaleOffers![0].status).toBe("pending");
@@ -413,7 +417,7 @@ describe("privateSaleResolutionPhase", () => {
     const ctx = createContext({
       horses: h2r([mkHorse()]),
       npcStables: [],
-      privateSaleOffers: [mkOffer({ toStableId: "nonexistent" })],
+      privateSaleOffers: [mkOffer({ toStableId: asStableId("nonexistent") })],
     });
     const result = mod.privateSaleResolutionPhase.execute(ctx);
     expect(result.state.privateSaleOffers![0].status).toBe("pending");
@@ -425,7 +429,7 @@ describe("privateSaleResolutionPhase", () => {
     const ctx = createContext({
       horses: h2r([horse]),
       npcStables: [mkStable()],
-      privateSaleOffers: [mkOffer({ toStableId: "stable-1" })],
+      privateSaleOffers: [mkOffer({ toStableId: asStableId("stable-1") })],
     });
     const result = mod.privateSaleResolutionPhase.execute(ctx);
     expect(result.state.privateSaleOffers![0].status).toBe("declined");
@@ -433,9 +437,9 @@ describe("privateSaleResolutionPhase", () => {
 
   it("multiple pending offers for different horses — all processed independently", async () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
-    const horse1 = mkHorse({ id: "horse-1", name: "Thunder" });
-    const horse2 = mkHorse({ id: "horse-2", name: "Lightning" });
-    const stable = mkStable({ horses: ["horse-1", "horse-2"] });
+    const horse1 = mkHorse({ id: asHorseId("horse-1"), name: "Thunder" });
+    const horse2 = mkHorse({ id: asHorseId("horse-2"), name: "Lightning" });
+    const stable = mkStable({ horses: [asHorseId("horse-1"), asHorseId("horse-2")] });
     const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
     const valuation = calculateNpcHorseValue(horse1, stable.tier);
 
@@ -443,8 +447,8 @@ describe("privateSaleResolutionPhase", () => {
       horses: h2r([horse1, horse2]),
       npcStables: [stable],
       privateSaleOffers: [
-        mkOffer({ id: "o1", horseId: "horse-1", amount: Math.round(valuation * 0.75) }),
-        mkOffer({ id: "o2", horseId: "horse-2", amount: Math.round(valuation * 0.4) }),
+        mkOffer({ id: "o1", horseId: asHorseId("horse-1"), amount: Math.round(valuation * 0.75) }),
+        mkOffer({ id: "o2", horseId: asHorseId("horse-2"), amount: Math.round(valuation * 0.4) }),
       ],
     });
     const result = mod.privateSaleResolutionPhase.execute(ctx);

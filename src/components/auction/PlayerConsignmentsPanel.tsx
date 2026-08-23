@@ -30,11 +30,6 @@ export function PlayerConsignmentsPanel({
   horses,
   stables,
 }: PlayerConsignmentsPanelProps) {
-  if (playerConsignedLots.length === 0) return null;
-
-  const soldLots = playerConsignedLots.filter((l) => !l.passed && l.hammerPrice);
-  const totalNet = soldLots.reduce((sum, l) => sum + netProceeds(l.hammerPrice!), 0);
-
   // ⚡ Bolt Optimization:
   // Pre-calculate hash maps for O(1) lookups instead of running O(N) .find() inside the .map() loop.
   // Impact: Reduces rendering complexity of player consignments from O(N^2) to O(N),
@@ -45,6 +40,11 @@ export function PlayerConsignmentsPanel({
       stableMap: new Map(stables.map((s) => [s.id, s])),
     };
   }, [horses, stables]);
+
+  if (playerConsignedLots.length === 0) return null;
+
+  const soldLots = playerConsignedLots.filter((l) => !l.passed && l.hammerPrice);
+  const totalNet = soldLots.reduce((sum, l) => sum + netProceeds(l.hammerPrice!), 0);
 
   return (
     <div className="space-y-3">

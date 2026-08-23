@@ -30,8 +30,6 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
     setOfferHorse,
   } = pageData;
 
-  if (!stable) return null;
-
   // Pre-calculate hash map for O(1) active offer lookups instead of running O(N) .find() inside the map loop.
   // Reduces time complexity from O(Horses * Offers) to O(Horses + Offers).
   const activeOffersMap = useMemo(() => {
@@ -43,6 +41,8 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
     });
     return map;
   }, [privateSaleOffers]);
+
+  if (!stable) return null;
 
   return (
     <div className="space-y-6">

@@ -15,6 +15,17 @@ export function ImperialOutpostManager() {
   const [selectedOutpostId, setSelectedOutpostId] = useState<string | null>(null);
 
   const outposts = useGameWithShallow((s) => s.outposts ?? []);
+  const cash = useGame((s) => s.cash);
+
+  // Calculate used slots
+  const usedSlots = useMemo(() => {
+    if (outposts.length === 0) return 0;
+    const outpost =
+      outposts.find((o) => o.id === (selectedOutpostId || outposts[0].id)) || outposts[0];
+    return Object.entries(outpost.facilities).reduce((sum, [_, f]) => {
+      return sum + (OUTPOST_CONSTANTS.SLOT_FOOTPRINTS[f.type] || 1);
+    }, 0);
+  }, [outposts, selectedOutpostId]);
 
   if (outposts.length === 0) {
     return (
@@ -31,16 +42,6 @@ export function ImperialOutpostManager() {
 
   const selectedOutpost =
     outposts.find((o) => o.id === (selectedOutpostId || outposts[0].id)) || outposts[0];
-  const cash = useGame((s) => s.cash);
-
-  // Calculate used slots
-  const usedSlots = useMemo(
-    () =>
-      Object.entries(selectedOutpost.facilities).reduce((sum, [_, f]) => {
-        return sum + (OUTPOST_CONSTANTS.SLOT_FOOTPRINTS[f.type] || 1);
-      }, 0),
-    [selectedOutpost.facilities],
-  );
 
   return (
     <div className="space-y-6">
