@@ -7,6 +7,7 @@
 import { MAX_COMPARE_HORSES } from "@/constants";
 import { HorseCard } from "@/components/horse/HorseCard";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
 import type { Horse } from "@/game/types";
 
 type NavigateFn = (opts: {
@@ -36,12 +37,16 @@ export function StableRosterGallery({
         return (
           <div key={h.id} className="relative">
             <div className="absolute top-2 left-2 z-10 bg-slate-950/80 backdrop-blur rounded p-1">
-              <Checkbox
-                aria-label={`Select ${h.name} to compare`}
-                checked={isSelected}
-                disabled={disableCheck}
-                onCheckedChange={() => toggleSelect(h.id)}
-              />
+              <DisabledTooltipWrapper
+                reason={disableCheck ? `Compare limit (${MAX_COMPARE_HORSES}) reached` : undefined}
+              >
+                <Checkbox
+                  aria-label={`Select ${h.name} to compare`}
+                  checked={isSelected}
+                  disabled={disableCheck}
+                  onCheckedChange={() => toggleSelect(h.id)}
+                />
+              </DisabledTooltipWrapper>
             </div>
             <HorseCard
               horse={h}
