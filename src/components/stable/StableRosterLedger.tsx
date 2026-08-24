@@ -10,6 +10,7 @@ import { HorseBit, overall } from "@/components/horse/HorseBits";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { cn } from "@/lib/cn";
@@ -52,12 +53,18 @@ export function StableRosterLedger({ horses, selectedIds, toggleSelect }: Stable
                 )}
               >
                 <td className="px-3 py-4">
-                  <Checkbox
-                    aria-label={`Select ${h.name} to compare`}
-                    checked={isSelected}
-                    disabled={disableCheck}
-                    onCheckedChange={() => toggleSelect(h.id)}
-                  />
+                  <DisabledTooltipWrapper
+                    reason={
+                      disableCheck ? `Compare limit (${MAX_COMPARE_HORSES}) reached` : undefined
+                    }
+                  >
+                    <Checkbox
+                      aria-label={`Select ${h.name} to compare`}
+                      checked={isSelected}
+                      disabled={disableCheck}
+                      onCheckedChange={() => toggleSelect(h.id)}
+                    />
+                  </DisabledTooltipWrapper>
                 </td>
                 <td className="px-3 py-4 font-mono text-[10px] text-cream/20 tabular-nums">
                   {String(i + 1).padStart(2, "0")}
