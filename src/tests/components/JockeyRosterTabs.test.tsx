@@ -12,18 +12,18 @@ vi.mock("@tanstack/react-router", () => ({
   useSearch: () => ({}),
 }));
 
-import { JockeyRosterTabs } from "@/components/jockey/JockeyRosterTabs";
+import { JockeyRosterTabs, type JockeyRosterTabsProps } from "@/components/jockey/JockeyRosterTabs";
 import type { Jockey } from "@/core/jockey/types";
 import { createTestJockey } from "@/tests/helpers";
 import { asJockeyId } from "@/core/types/branded";
 
 function mkJockey(id: string, overrides: Partial<Jockey> = {}) {
-  return createTestJockey({ id: asJockeyId(id), name: `Jockey ${id}`, ...overrides });
+  return createTestJockey({ id: asJockeyId(id), name: `Jockey ${id}`, contractUntil: 100, ...overrides });
 }
 
-const defaultProps = {
+const defaultProps: JockeyRosterTabsProps = {
   myJockeys: [mkJockey("j1"), mkJockey("j2")],
-  market: [mkJockey("j3")],
+  market: [mkJockey("j3", { contractUntil: undefined })],
   filterList: (list: Jockey[]) => list,
   onRelease: vi.fn(),
   onHire: vi.fn(),

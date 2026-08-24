@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserCheck, Users } from "lucide-react";
 import type { Jockey } from "@/core/jockey/types";
 
-interface JockeyRosterTabsProps {
+export interface JockeyRosterTabsProps {
   myJockeys: Jockey[];
   market: Jockey[];
   filterList: (list: Jockey[]) => Jockey[];
