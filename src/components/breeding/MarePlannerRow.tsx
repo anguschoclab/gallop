@@ -80,6 +80,7 @@ export function MarePlannerRow({
             size="icon"
             className="h-7 w-7 shrink-0"
             onClick={() => onClear(mare.id)}
+            aria-label={`Clear assignment for ${mare.name}`}
           >
             <X className="h-3.5 w-3.5" />
           </Button>

@@ -1,0 +1,3 @@
+## 2024-03-05 - Added ARIA labels to icon-only buttons
+**Learning:** Found several icon-only buttons (like in Calendar and MarePlannerRow) missing `aria-label` attributes. This is a common pattern that reduces accessibility for screen reader users, who will just hear "button" without context.
+**Action:** Always verify that buttons containing only an icon (like Lucide React icons) have a descriptive `aria-label` attribute indicating their action.
