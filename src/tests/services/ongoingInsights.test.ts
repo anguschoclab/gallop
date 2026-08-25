@@ -169,7 +169,14 @@ describe("NarrativeGenerator — Ongoing Expert Insights", () => {
     gen.update([makeRunner({ name: "Lightning Bolt", jockeyName: "Frankie Dettori" })], 0.1);
 
     const lines = gen.update(
-      [makeRunner({ name: "Lightning Bolt", jockeyName: "Frankie Dettori", position: 800, velocity: 15 })],
+      [
+        makeRunner({
+          name: "Lightning Bolt",
+          jockeyName: "Frankie Dettori",
+          position: 800,
+          velocity: 15,
+        }),
+      ],
       30.0,
     );
     const midraceLines = lines.filter((l) => l.type === "MIDRACE_INSIGHT");

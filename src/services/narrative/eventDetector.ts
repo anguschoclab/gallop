@@ -331,7 +331,16 @@ export function detectJockeyEvents(
     const progress = runner.position / race.distance;
 
     for (const trait of jockey.traits) {
-      const traitEvent = checkJockeyTrait(trait, simTime, progress, trackCondition, course?.circumference, course?.straightLength, isGraded, jockey.careerStarts);
+      const traitEvent = checkJockeyTrait(
+        trait,
+        simTime,
+        progress,
+        trackCondition,
+        course?.circumference,
+        course?.straightLength,
+        isGraded,
+        jockey.careerStarts,
+      );
       if (traitEvent) {
         return { type: "JOCKEY_TRAIT", horseId: runner.horseId, data: { trait } };
       }
@@ -358,7 +367,9 @@ function checkJockeyTrait(
     case "closer_instinct":
       return progress > 0.7;
     case "mud_master":
-      return trackCondition === "soft" || trackCondition === "heavy" || trackCondition === "yielding";
+      return (
+        trackCondition === "soft" || trackCondition === "heavy" || trackCondition === "yielding"
+      );
     case "bullring_expert":
       return circumference !== undefined && circumference < 1600;
     case "long_straight_pro":

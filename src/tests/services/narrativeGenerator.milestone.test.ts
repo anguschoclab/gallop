@@ -298,16 +298,26 @@ describe("NarrativeGenerator — MILESTONE uses templates", () => {
 
     gen.update([makeRunner()], 0.1);
 
-    const allMilestoneTypes = ["MILESTONE_HALFWAY", "MILESTONE_FINAL_400", "MILESTONE_FINAL_200", "MILESTONE_FINAL_100", "MILESTONE"] as const;
+    const allMilestoneTypes = [
+      "MILESTONE_HALFWAY",
+      "MILESTONE_FINAL_400",
+      "MILESTONE_FINAL_200",
+      "MILESTONE_FINAL_100",
+      "MILESTONE",
+    ] as const;
 
     // First pass through halfway
     const lines1 = gen.update([makeRunner({ position: 800 })], 10.0);
-    const milestoneCount1 = lines1.filter((l) => allMilestoneTypes.includes(l.type as never)).length;
+    const milestoneCount1 = lines1.filter((l) =>
+      allMilestoneTypes.includes(l.type as never),
+    ).length;
     expect(milestoneCount1).toBe(1);
 
     // Second tick at same position — should not re-announce
     const lines2 = gen.update([makeRunner({ position: 810 })], 10.5);
-    const milestoneCount2 = lines2.filter((l) => allMilestoneTypes.includes(l.type as never)).length;
+    const milestoneCount2 = lines2.filter((l) =>
+      allMilestoneTypes.includes(l.type as never),
+    ).length;
     expect(milestoneCount2).toBe(0);
   });
 
@@ -323,7 +333,13 @@ describe("NarrativeGenerator — MILESTONE uses templates", () => {
     const runner = makeRunner({ position: 1200 });
     const lines = gen.update([runner], 20.0);
 
-    const allMilestoneTypes = ["MILESTONE_HALFWAY", "MILESTONE_FINAL_400", "MILESTONE_FINAL_200", "MILESTONE_FINAL_100", "MILESTONE"] as const;
+    const allMilestoneTypes = [
+      "MILESTONE_HALFWAY",
+      "MILESTONE_FINAL_400",
+      "MILESTONE_FINAL_200",
+      "MILESTONE_FINAL_100",
+      "MILESTONE",
+    ] as const;
     const milestoneLines = lines.filter((l) => allMilestoneTypes.includes(l.type as never));
     expect(milestoneLines.length).toBeGreaterThanOrEqual(1);
 
