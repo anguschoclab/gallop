@@ -84,59 +84,55 @@ export function calculateTacticalAdjustment(
     velocityMod -= (0.6 - staminaFactor) * 0.05 * skill;
   }
 
-  // 4. Competitive intelligence (rival awareness)
-  // When a rival horse is within 2 lengths (~6m), apply aggressiveness boost
-  // scaled by jockey pacing skill
+  // 4. Competitive intelligence & 5. Lane Management & Traffic
+  // Single loop combining rival detection + traffic counting.
+  // runners is sorted descending by position, so we can early-break
+  // when remaining runners are too far behind to matter.
   const rivalHorseIds = runner.rivalHorseIds;
-  if (rivalHorseIds && rivalHorseIds.length > 0) {
-    const rivalSet = new Set(rivalHorseIds);
-    const nearbyRival = runners.find(
-      (r) =>
-        r.horseId !== runner.horseId &&
-        rivalSet.has(r.horseId) &&
-        r.finishTime === null &&
-        Math.abs(r.position - runner.position) < 6,
-    );
-    if (nearbyRival) {
-      const pacingSkill = jockey.stats.pacing / 100;
-      velocityMod += 0.02 * pacingSkill;
+  const rivalSet = rivalHorseIds && rivalHorseIds.length > 0 ? new Set(rivalHorseIds) : null;
+  let nearbyRivalFound = false;
+  let horsesInFrontCount = 0;
+  let clusteredAheadCount = 0;
+
+  for (let i = 0; i < runners.length; i++) {
+    const r = runners[i];
+    // Early break: remaining runners are >6m behind — no rival or traffic match possible
+    if (r.position < runner.position - 6) break;
+
+    if (r.horseId === runner.horseId || r.finishTime !== null) continue;
+
+    const posDiff = r.position - runner.position;
+
+    // Check rival presence (within 6m in either direction)
+    if (!nearbyRivalFound && rivalSet && Math.abs(posDiff) < 6 && rivalSet.has(r.horseId)) {
+      nearbyRivalFound = true;
+    }
+
+    // Check traffic ahead (within 6m, same lane roughly)
+    if (posDiff > 0 && posDiff < 6 && Math.abs(r.lane - runner.lane) < 0.5) {
+      if (posDiff < 3) {
+        horsesInFrontCount++;
+      } else {
+        clusteredAheadCount++;
+      }
     }
   }
 
-  // 5. Lane Management & Traffic
-  // Check for traffic directly in front
-  const horsesInFront = runners.filter(
-    (r) =>
-      r.horseId !== runner.horseId &&
-      r.finishTime === null &&
-      r.position > runner.position &&
-      r.position - runner.position < 3 &&
-      Math.abs(r.lane - runner.lane) < 0.5,
-  );
+  // Apply rival aggressiveness boost
+  if (nearbyRivalFound) {
+    const pacingSkill = jockey.stats.pacing / 100;
+    velocityMod += 0.02 * pacingSkill;
+  }
 
-  if (horsesInFront.length > 0) {
+  // Apply lane switching logic
+  if (horsesInFrontCount > 0) {
     // Boxed in! Try to switch lanes if skilled
     if (skill > 0.4) {
       targetLane = findBestLane(runner, pace.laneDensity);
     }
-  }
-
-  // Enhanced: Traffic prediction — scan for 2-3 horses ahead within 6m in same lane
-  // If ≥2 horses clustered ahead, preemptively switch to findBestLane
-  // Low-skill jockeys (positioning < 40) don't predict
-  if (jockey.stats.positioning >= 40) {
-    const clusteredAhead = runners.filter(
-      (r) =>
-        r.horseId !== runner.horseId &&
-        r.finishTime === null &&
-        r.position > runner.position &&
-        r.position - runner.position < 6 &&
-        r.position - runner.position > 3 && // Beyond immediate traffic check
-        Math.abs(r.lane - runner.lane) < 0.5,
-    );
-    if (clusteredAhead.length >= 2 && horsesInFront.length === 0) {
-      targetLane = findBestLane(runner, pace.laneDensity);
-    }
+  } else if (jockey.stats.positioning >= 40 && clusteredAheadCount >= 2) {
+    // Traffic prediction: ≥2 horses clustered ahead within 6m (and none immediate)
+    targetLane = findBestLane(runner, pace.laneDensity);
   }
 
   // 6. Jockey Instruction Specifics
