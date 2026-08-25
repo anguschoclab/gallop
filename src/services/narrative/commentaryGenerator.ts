@@ -180,6 +180,24 @@ export function generateCommentaryLine(
     sub("{jockey}", jockeyName);
     sub("{jockeyArchetype}", context.runner.jockey?.archetype || "versatile");
 
+    // Replace race context placeholders
+    if (context.raceContext) {
+      sub("{year}", context.raceContext.defendingChampion?.year?.toString() || "");
+      sub("{recordTime}", context.raceContext.trackRecordTime?.toString() || "");
+      sub("{recordHolder}", context.raceContext.trackRecordHolder || "");
+      const horseId = context.runner?.horseId || "";
+      const prevPos = context.raceContext.previousFinishPositions?.[horseId];
+      sub("{prevPosition}", prevPos ? getOrdinal(prevPos) : "");
+      const visits = context.raceContext.horseCourseVisits?.[horseId];
+      sub("{visits}", visits?.toString() || "");
+    }
+
+    // Replace track / atmosphere placeholders
+    sub("{grade}", context.race.graded?.grade || "");
+    sub("{straightLength}", context.courseSpec?.straightLength?.toString() || "");
+    sub("{circumference}", context.courseSpec?.circumference?.toString() || "");
+    sub("{elevation}", context.track?.elevation?.toString() || "");
+
     // Replace rank placeholder
     if (context.lastRanks) {
       const rank = context.lastRanks.get(context.runner.horseId);
