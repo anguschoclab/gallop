@@ -26,6 +26,10 @@ export const MIDRACE_INSIGHT_CLOSER_TEMPLATES: string[] = [
   "{jockey} is playing the waiting game to perfection on {horse} — a closer's dream position.",
   "Halfway and {jockey} has {horse} tucked in — exactly how a closer wants it.",
   "This is {jockey}'s bread and butter — {horse} is primed for a late charge from here.",
+  "{horse} is saving every ounce of energy at halfway, just as {jockey} likes it.",
+  "The race is unfolding exactly to {jockey}'s plan for the closer {horse}.",
+  "At halfway, {horse} is out of the early speed battle, perfectly relaxed under {jockey}.",
+  "{jockey} knows {horse} needs holding up, and they are doing a superb job of it.",
 ];
 
 export const CLOSING_INSIGHT_TEMPLATES: string[] = [
