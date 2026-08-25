@@ -180,10 +180,26 @@ describe("Narrative Variety E2E — Full race simulation", () => {
       coatColor: "chestnut",
       gender: "filly",
     });
-    const horse3 = makeHorseEntity({ id: "h3", name: "Desert Wind", ownership: { type: "npc", stableId: "s1" } });
-    const horse4 = makeHorseEntity({ id: "h4", name: "Silver Arrow", ownership: { type: "npc", stableId: "s2" } });
-    const horse5 = makeHorseEntity({ id: "h5", name: "Falcon Crest", ownership: { type: "npc", stableId: "s1" } });
-    const horse6 = makeHorseEntity({ id: "h6", name: "Storm Chaser", ownership: { type: "npc", stableId: "s2" } });
+    const horse3 = makeHorseEntity({
+      id: "h3",
+      name: "Desert Wind",
+      ownership: { type: "npc", stableId: "s1" },
+    });
+    const horse4 = makeHorseEntity({
+      id: "h4",
+      name: "Silver Arrow",
+      ownership: { type: "npc", stableId: "s2" },
+    });
+    const horse5 = makeHorseEntity({
+      id: "h5",
+      name: "Falcon Crest",
+      ownership: { type: "npc", stableId: "s1" },
+    });
+    const horse6 = makeHorseEntity({
+      id: "h6",
+      name: "Storm Chaser",
+      ownership: { type: "npc", stableId: "s2" },
+    });
 
     const horses = [horse1, horse2, horse3, horse4, horse5, horse6];
     const stables = [stable1, stable2];
@@ -405,9 +421,7 @@ describe("Narrative Variety E2E — Full race simulation", () => {
       ),
     );
 
-    const milestoneTypes = allLines
-      .map((l) => l.type)
-      .filter((t) => t.startsWith("MILESTONE_"));
+    const milestoneTypes = allLines.map((l) => l.type).filter((t) => t.startsWith("MILESTONE_"));
 
     expect(milestoneTypes.length).toBeGreaterThan(0);
     expect(milestoneTypes.some((t) => t === "MILESTONE_HALFWAY")).toBe(true);
@@ -456,7 +470,12 @@ describe("Narrative Variety E2E — Full race simulation", () => {
     ];
 
     const lines = gen.update(baseRunners, 0.1);
-    const raceContextTypes = ["DEFENDING_CHAMPION", "TRACK_RECORD", "RETURNING_RUNNER", "COURSE_SPECIALIST"];
+    const raceContextTypes = [
+      "DEFENDING_CHAMPION",
+      "TRACK_RECORD",
+      "RETURNING_RUNNER",
+      "COURSE_SPECIALIST",
+    ];
     const contextLines = lines.filter((l) => raceContextTypes.includes(l.type));
     expect(contextLines.length).toBeGreaterThan(0);
   });
@@ -526,7 +545,13 @@ describe("Narrative Variety E2E — Full race simulation", () => {
       ),
     );
 
-    const jockeyTypes = ["JOCKEY_MOVE", "JOCKEY_TACTIC", "JOCKEY_MASTERY", "JOCKEY_APPRENTICE", "JOCKEY_TRAIT"];
+    const jockeyTypes = [
+      "JOCKEY_MOVE",
+      "JOCKEY_TACTIC",
+      "JOCKEY_MASTERY",
+      "JOCKEY_APPRENTICE",
+      "JOCKEY_TRAIT",
+    ];
     const jockeyLines = allLines.filter((l) => jockeyTypes.includes(l.type));
     expect(jockeyLines.length).toBeGreaterThan(0);
   });
@@ -548,10 +573,26 @@ describe("Narrative Variety E2E — Full race simulation", () => {
     const stable1 = makeStable({ id: "s1", name: "Godolphin", isMajor: true });
     const stable2 = makeStable({ id: "s2", name: "Coolmore", isMajor: true });
     const horses = [
-      makeHorseEntity({ id: "h1", name: "Thunder Strike", ownership: { type: "npc", stableId: "s1" } }),
-      makeHorseEntity({ id: "h2", name: "Midnight Runner", ownership: { type: "npc", stableId: "s2" } }),
-      makeHorseEntity({ id: "h3", name: "Desert Wind", ownership: { type: "npc", stableId: "s1" } }),
-      makeHorseEntity({ id: "h4", name: "Silver Arrow", ownership: { type: "npc", stableId: "s2" } }),
+      makeHorseEntity({
+        id: "h1",
+        name: "Thunder Strike",
+        ownership: { type: "npc", stableId: "s1" },
+      }),
+      makeHorseEntity({
+        id: "h2",
+        name: "Midnight Runner",
+        ownership: { type: "npc", stableId: "s2" },
+      }),
+      makeHorseEntity({
+        id: "h3",
+        name: "Desert Wind",
+        ownership: { type: "npc", stableId: "s1" },
+      }),
+      makeHorseEntity({
+        id: "h4",
+        name: "Silver Arrow",
+        ownership: { type: "npc", stableId: "s2" },
+      }),
     ];
     const gen = new NarrativeGenerator(race, horses, [stable1, stable2], rng, raceContext);
 
@@ -581,8 +622,12 @@ describe("Narrative Variety E2E — Full race simulation", () => {
     }
 
     const atmosphereTypes = [
-      "ATMOSPHERE", "ATMOSPHERE_LONG_STRAIGHT", "ATMOSPHERE_TIGHT_TURN",
-      "ATMOSPHERE_GRADED", "ATMOSPHERE_TRIPLE_CROWN", "ATMOSPHERE_ELEVATION",
+      "ATMOSPHERE",
+      "ATMOSPHERE_LONG_STRAIGHT",
+      "ATMOSPHERE_TIGHT_TURN",
+      "ATMOSPHERE_GRADED",
+      "ATMOSPHERE_TRIPLE_CROWN",
+      "ATMOSPHERE_ELEVATION",
     ];
     const atmosphereLines = allLines.filter((l) => atmosphereTypes.includes(l.type));
     expect(atmosphereLines.length).toBeGreaterThan(0);
