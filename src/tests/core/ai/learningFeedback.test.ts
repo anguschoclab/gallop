@@ -14,7 +14,11 @@ import {
   getAdaptiveThreshold,
 } from "@/core/ai/learningModule";
 import { createClaimingAIState } from "@/core/ai/claimingAITypes";
-import { recordClaimingDecision, recordClaimingOutcome, shouldClaimHorse } from "@/core/ai/claimingAIRecording";
+import {
+  recordClaimingDecision,
+  recordClaimingOutcome,
+  shouldClaimHorse,
+} from "@/core/ai/claimingAIRecording";
 import type { Stable, Horse } from "@/game/types";
 import type { Race } from "@/core/race/types";
 import { createTestStable, createTestHorse } from "@/tests/helpers";

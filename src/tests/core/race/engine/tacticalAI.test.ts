@@ -115,7 +115,7 @@ describe("tacticalAI", () => {
     // Lane 0 is dense, Lane 1 is current, Lane 2 is empty
     const pace = createMockPace({ laneDensity: [5, 2, 0, 1] });
 
-    const result = calculateTacticalAdjustment(runner, pace, [runner, blocker]);
+    const result = calculateTacticalAdjustment(runner, pace, [blocker, runner]);
 
     // Should move to lane index 2 (2 * 1.2 = 2.4)
     expect(result.targetLane).toBe(2.4);
@@ -263,7 +263,7 @@ describe("tacticalAI", () => {
       });
       const pace = createMockPace({ leaderPos: 110, progress: 0.5 });
 
-      const result = calculateTacticalAdjustment(runner, pace, [runner, rival]);
+      const result = calculateTacticalAdjustment(runner, pace, [rival, runner]);
 
       expect(result.velocityMod).toBeGreaterThan(1.0);
     });
@@ -286,7 +286,7 @@ describe("tacticalAI", () => {
       });
       const pace = createMockPace({ leaderPos: 130, progress: 0.5 });
 
-      const result = calculateTacticalAdjustment(runner, pace, [runner, rival]);
+      const result = calculateTacticalAdjustment(runner, pace, [rival, runner]);
 
       // No rival boost — velocityMod should be baseline (1.0 for P at normal pace)
       expect(result.velocityMod).toBe(1.0);
@@ -309,7 +309,7 @@ describe("tacticalAI", () => {
       });
       const pace = createMockPace({ leaderPos: 110, progress: 0.5 });
 
-      const result = calculateTacticalAdjustment(runner, pace, [runner, other]);
+      const result = calculateTacticalAdjustment(runner, pace, [other, runner]);
 
       expect(result.velocityMod).toBe(1.0);
     });
@@ -340,7 +340,7 @@ describe("tacticalAI", () => {
       });
       const pace = createMockPace({ laneDensity: [0, 2, 0, 0] });
 
-      const result = calculateTacticalAdjustment(runner, pace, [runner, blocker1, blocker2]);
+      const result = calculateTacticalAdjustment(runner, pace, [blocker2, blocker1, runner]);
 
       // Should switch to a less dense lane (lane index 2 = 2.4)
       expect(result.targetLane).not.toBe(runner.lane);
@@ -370,7 +370,7 @@ describe("tacticalAI", () => {
       });
       const pace = createMockPace({ laneDensity: [0, 2, 0, 0] });
 
-      const result = calculateTacticalAdjustment(runner, pace, [runner, blocker1, blocker2]);
+      const result = calculateTacticalAdjustment(runner, pace, [blocker2, blocker1, runner]);
 
       // Low-skill jockey should not predict — stays in current lane
       expect(result.targetLane).toBe(runner.lane);

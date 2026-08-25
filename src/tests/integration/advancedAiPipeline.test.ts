@@ -288,7 +288,9 @@ describe("Phase 7d: Performance profiling", () => {
       const sid = `s${i}`;
       stables.push(createMockStable({ id: sid, cash: 200000 }));
       for (let h = 0; h < 10; h++) {
-        horses.push(createMockHorse({ id: `${sid}-h${h}`, ownership: makeNpcOwned(asNpcStableId(sid)) }));
+        horses.push(
+          createMockHorse({ id: `${sid}-h${h}`, ownership: makeNpcOwned(asNpcStableId(sid)) }),
+        );
       }
     }
     const manager = createMockManager(stables.map((s) => s.id));
@@ -309,7 +311,9 @@ describe("Phase 7d: Performance profiling", () => {
       const sid = `s${i}`;
       stables.push(createMockStable({ id: sid, cash: 200000 }));
       for (let h = 0; h < 5; h++) {
-        horses.push(createMockHorse({ id: `${sid}-h${h}`, ownership: makeNpcOwned(asNpcStableId(sid)) }));
+        horses.push(
+          createMockHorse({ id: `${sid}-h${h}`, ownership: makeNpcOwned(asNpcStableId(sid)) }),
+        );
       }
     }
     const manager = createMockManager(stables.map((s) => s.id));
@@ -339,8 +343,18 @@ describe("Phase 7e: AI behavior diversity", () => {
       cash: 500000,
     });
     const horses = [
-      createMockHorse({ id: "h1", ownership: makeNpcOwned(asNpcStableId("agg")), energy: 90, form: 70 }),
-      createMockHorse({ id: "h2", ownership: makeNpcOwned(asNpcStableId("con")), energy: 90, form: 70 }),
+      createMockHorse({
+        id: "h1",
+        ownership: makeNpcOwned(asNpcStableId("agg")),
+        energy: 90,
+        form: 70,
+      }),
+      createMockHorse({
+        id: "h2",
+        ownership: makeNpcOwned(asNpcStableId("con")),
+        energy: 90,
+        form: 70,
+      }),
     ];
     const manager = createMockManager(["agg", "con"]);
     const state = createMockGameState([aggressiveStable, conservativeStable], horses);
@@ -415,7 +429,10 @@ describe("Phase 7e: Economic stability validation", () => {
   it("yearling price index stays within 50-200 bounds after updates", () => {
     let trend = createEconomicState();
     const stable = createMockStable({ id: "s1", cash: 1000000 });
-    const state = createMockGameState([stable], [createMockHorse({ ownership: makeNpcOwned(asNpcStableId("s1")) })]);
+    const state = createMockGameState(
+      [stable],
+      [createMockHorse({ ownership: makeNpcOwned(asNpcStableId("s1")) })],
+    );
 
     // Simulate 30 days of economic updates
     for (let day = 1; day <= 30; day++) {
@@ -441,7 +458,10 @@ describe("Phase 7e: Narrative coverage validation", () => {
     const manager = createMockManager(["s1"]);
     manager.stableStates["s1"].narrativeState = createNarrativeState();
 
-    const state = createMockGameState([stable], [createMockHorse({ ownership: makeNpcOwned(asNpcStableId("s1")) })]);
+    const state = createMockGameState(
+      [stable],
+      [createMockHorse({ ownership: makeNpcOwned(asNpcStableId("s1")) })],
+    );
     state.npcAIManager = manager;
 
     const updated = processNarrativeCycle(manager, [stable], 100);
