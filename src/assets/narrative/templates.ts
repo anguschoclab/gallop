@@ -20,6 +20,7 @@ import {
 } from "./raceContextTemplates";
 import {
   MIDRACE_INSIGHT_TEMPLATES,
+  MIDRACE_INSIGHT_CLOSER_TEMPLATES,
   CLOSING_INSIGHT_TEMPLATES,
   PACE_ANALYSIS_TEMPLATES,
 } from "./ongoingInsightTemplates";
@@ -59,6 +60,7 @@ export {
 } from "./raceContextTemplates";
 export {
   MIDRACE_INSIGHT_TEMPLATES,
+  MIDRACE_INSIGHT_CLOSER_TEMPLATES,
   CLOSING_INSIGHT_TEMPLATES,
   PACE_ANALYSIS_TEMPLATES,
 } from "./ongoingInsightTemplates";

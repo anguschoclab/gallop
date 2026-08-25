@@ -30,6 +30,13 @@ import {
   ATMOSPHERE_TRIPLE_CROWN_TEMPLATES,
   ATMOSPHERE_ELEVATION_TEMPLATES,
 } from "@/assets/narrative/atmosphereTemplates";
+import {
+  COMEBACK_NOTE_TEMPLATES,
+  REDEMPTION_NOTE_TEMPLATES,
+  CONFIRMATION_NOTE_TEMPLATES,
+  CALLBACK_CLAUSES,
+} from "@/assets/narrative/chainingTemplates";
+import { MIDRACE_INSIGHT_CLOSER_TEMPLATES } from "@/assets/narrative/ongoingInsightTemplates";
 import type { RaceContext } from "./types";
 import { CommentaryMemory } from "./commentaryMemory";
 
@@ -277,9 +284,18 @@ export class NarrativeGenerator {
       if (this.state.canAnnounce("LEAD_CHANGE", event.horseId!, simTime)) {
         const runner = runners.find((r) => r.horseId === event.horseId);
         if (runner) {
-          const line = this.createLine("LEAD_CHANGE", simTime, runner);
-          line.isHighImpact = true;
-          newLines.push(line);
+          if (
+            this.memory.canCallback(runner.horseId, "LEAD_CHANGE") &&
+            this.state.canAnnounce("CONFIRMATION_NOTE", runner.horseId, simTime, NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN) &&
+            this.rng.next() < 0.20
+          ) {
+            newLines.push(this.createLine("CONFIRMATION_NOTE", simTime, runner));
+            this.state.setCooldown("CONFIRMATION_NOTE", runner.horseId, simTime, NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN);
+          } else {
+            const line = this.createLine("LEAD_CHANGE", simTime, runner);
+            line.isHighImpact = true;
+            newLines.push(line);
+          }
           this.state.setCooldown(
             "LEAD_CHANGE",
             event.horseId!,
@@ -369,7 +385,12 @@ export class NarrativeGenerator {
             newLines.push(this.createLine("COMEBACK_NOTE", simTime, r));
             this.state.setCooldown("COMEBACK_NOTE", r.horseId, simTime, NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN);
           } else {
-            newLines.push(this.createLine("SURGE", simTime, r));
+            const line = this.createLine("SURGE", simTime, r);
+            if (this.memory.canCallback(r.horseId, "SURGE") && this.rng.next() < 0.20) {
+              const clause = CALLBACK_CLAUSES[Math.floor(this.rng.next() * CALLBACK_CLAUSES.length)];
+              line.text = `${clause}${line.text}`;
+            }
+            newLines.push(line);
           }
           this.state.setCooldown(
             "SURGE",
@@ -477,6 +498,15 @@ export class NarrativeGenerator {
           this.state.setCooldown("REDEMPTION_NOTE", line.horseId, simTime, NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN);
           continue;
         }
+      }
+      if (
+        line.type === "FLYING" &&
+        line.horseId &&
+        this.memory.canCallback(line.horseId, "FLYING") &&
+        this.rng.next() < 0.20
+      ) {
+        const clause = CALLBACK_CLAUSES[Math.floor(this.rng.next() * CALLBACK_CLAUSES.length)];
+        line.text = `${clause}${line.text}`;
       }
       newLines.push(line);
     }
@@ -603,7 +633,16 @@ export class NarrativeGenerator {
       )
     ) {
       const topRunner = sorted[Math.min(Math.floor(this.rng.next() * 5), sorted.length - 1)];
-      newLines.push(this.createLine("MIDRACE_INSIGHT", simTime, topRunner));
+      const isCloser = topRunner.jockey?.archetype === "closer";
+      newLines.push(
+        this.createLine(
+          "MIDRACE_INSIGHT",
+          simTime,
+          topRunner,
+          undefined,
+          isCloser ? MIDRACE_INSIGHT_CLOSER_TEMPLATES : undefined,
+        ),
+      );
       this.state.hasAnnouncedMidRaceInsight = true;
       this.state.setCooldown(
         "MIDRACE_INSIGHT",
@@ -687,6 +726,7 @@ export class NarrativeGenerator {
     timestamp: number,
     runner?: Runner,
     lengths?: string,
+    templateOverride?: string[],
   ): CommentaryLine {
     const horse = runner ? this.getHorse(runner.horseId) : undefined;
     const stableId = getStableId(horse);
@@ -707,6 +747,7 @@ export class NarrativeGenerator {
         courseSpec: this.courseSpec,
         track: this.track,
         raceContext: this.raceContext,
+        templateOverride,
       },
       counter,
     );

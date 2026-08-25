@@ -17,6 +17,17 @@ export const MIDRACE_INSIGHT_TEMPLATES: string[] = [
   "The halfway stage and {horse} is full of running — {jockey} is just waiting for the right moment.",
 ];
 
+export const MIDRACE_INSIGHT_CLOSER_TEMPLATES: string[] = [
+  "This is exactly the scenario {jockey} thrives in — a patient ride on {horse} paying off at halfway.",
+  "{jockey} is riding {horse} with trademark patience — biding their time as a closer should.",
+  "A classic closer's ride from {jockey} — {horse} is settled in the pack, waiting to pounce.",
+  "As a closer, {jockey} knows exactly what to do — {horse} is perfectly positioned for a late run.",
+  "The pace is setting up beautifully for {jockey} and {horse} — this is their ideal scenario at halfway.",
+  "{jockey} is playing the waiting game to perfection on {horse} — a closer's dream position.",
+  "Halfway and {jockey} has {horse} tucked in — exactly how a closer wants it.",
+  "This is {jockey}'s bread and butter — {horse} is primed for a late charge from here.",
+];
+
 export const CLOSING_INSIGHT_TEMPLATES: string[] = [
   "Inside the final 20% and {horse} is being asked for everything by {jockey} — this is crunch time.",
   "The business end of the race and {horse} is responding gamely for {jockey} — every stride matters now.",

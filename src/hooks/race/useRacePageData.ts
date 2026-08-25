@@ -1,7 +1,7 @@
 import { useRef, useMemo } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
-import type { GameState, Horse, Race } from "@/game/types";
+import type { GameState, Horse } from "@/game/types";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import {
   buildRaceField,
@@ -11,19 +11,22 @@ import {
 import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/core/odds";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { NarrativeGenerator } from "@/services/narrative/narrativeService";
-import type { RaceContext } from "@/services/narrative/types";
+import { buildRaceContext } from "@/services/narrative/raceContextBuilder";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 import { createRng, hashStr } from "@/core/common/rng";
+import { asRaceId, asHorseId } from "@/core/types/branded";
 import { NARRATIVE_RNG_XOR_MASK } from "@/constants/raceBroadcastConstants";
 
 export function useRacePageData(raceId: string) {
-  const race = useGameWithShallow((s: GameState) => s.races[raceId]);
+  const race = useGameWithShallow((s: GameState) => s.races[asRaceId(raceId)]);
   const horses = useGameWithShallow((s: GameState) => s.horses);
   const jockeys = useGameWithShallow((s: GameState) => s.jockeys ?? []);
   const stables = useGameWithShallow((s: GameState) => s.npcStables);
   const hiredStaff = useGameWithShallow((s: GameState) => s.hiredStaff);
   const npcAIManager = useGameWithShallow((s: GameState) => s.npcAIManager);
   const currentDay = useGameWithShallow((s: GameState) => s.day);
+  const seasonRecords = useGameWithShallow((s: GameState) => s.seasonRecords ?? []);
+  const trackRecords = useGameWithShallow((s: GameState) => s.trackRecords ?? {});
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
   const raceWeather = useGameWithShallow((s) => {
     if (!race) return undefined;
@@ -70,7 +73,13 @@ export function useRacePageData(raceId: string) {
             [...Object.values(horses), ...fillerHorses],
             stables,
             narrativeRng,
-            buildRaceContextFromHorses(race, [...Object.values(horses), ...fillerHorses]),
+            buildRaceContext(
+              race,
+              [...Object.values(horses), ...fillerHorses],
+              seasonRecords,
+              trackRecords,
+              Math.floor(currentDay / 365) + 1,
+            ),
           )
         : null;
     messageQueue.current = [];
@@ -82,7 +91,7 @@ export function useRacePageData(raceId: string) {
   const runnerOdds = useMemo(() => {
     const oddsMap = new Map<string, string>();
     for (const runner of runners) {
-      const horse = horses[runner.horseId];
+      const horse = horses[asHorseId(runner.horseId)];
       if (horse) {
         const probability = calculateWinProbability(
           horse.stats.speed,
@@ -114,32 +123,4 @@ export function useRacePageData(raceId: string) {
     calibratedPars,
     rngRef,
   };
-}
-
-function buildRaceContextFromHorses(race: Race, horses: Horse[]): RaceContext {
-  const context: RaceContext = {
-    previousFinishPositions: {},
-    horseCourseVisits: {},
-  };
-
-  const trackId = race.graded?.trackId || race.trackId;
-  const raceName = race.name;
-
-  for (const horse of horses) {
-    const prevFinish = horse.raceHistory?.find(
-      (entry: any) => entry.raceName === raceName || entry.raceId === race?.id,
-    );
-    if (prevFinish && prevFinish.position) {
-      context.previousFinishPositions[horse.id] = prevFinish.position;
-    }
-
-    if (horse.courseVisits && trackId) {
-      const visits = horse.courseVisits[trackId] || 0;
-      if (visits > 0) {
-        context.horseCourseVisits[horse.id] = visits;
-      }
-    }
-  }
-
-  return context;
 }

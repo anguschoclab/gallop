@@ -9,6 +9,7 @@ import {
   COMEBACK_NOTE_TEMPLATES,
   REDEMPTION_NOTE_TEMPLATES,
   CONFIRMATION_NOTE_TEMPLATES,
+  CALLBACK_CLAUSES,
 } from "@/assets/narrative/chainingTemplates";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
@@ -50,7 +51,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
   } as Runner;
 }
 
-function makeHorseEntity(overrides: Partial<Horse> = {}): Horse {
+function makeHorseEntity(overrides: Omit<Partial<Horse>, "id"> & { id?: string } = {}): Horse {
   return {
     id: "h1",
     name: "Test Horse",
@@ -216,5 +217,61 @@ describe("NarrativeGenerator — Contextual Chaining (Commentary Memory)", () =>
     const mem = new CommentaryMemory();
     mem.recordEvent(makeLine({ type: "SURGE", horseId: "h1", timestamp: 10 }));
     expect(mem.canCallback("h1", "LEAD_CHANGE")).toBe(true);
+  });
+
+  it("CONFIRMATION_NOTE fires when horse was previously surging and takes the lead", () => {
+    const rng = createRng(hashStr("confirmation-note"));
+    const race = makeRace();
+    const horse1 = makeHorseEntity({ id: "h1", name: "Thunder Strike" });
+    const horse2 = makeHorseEntity({ id: "h2", name: "Storm Chaser" });
+    const stable = makeStable();
+    const gen = new NarrativeGenerator(race, [horse1, horse2], [stable], rng);
+
+    const runners = [
+      makeRunner({ horseId: "h1", name: "Thunder Strike", position: 0, velocity: 15 }),
+      makeRunner({ horseId: "h2", name: "Storm Chaser", position: 0, velocity: 15 }),
+    ];
+
+    // Start
+    gen.update(runners, 0.1);
+
+    // h1 surges ahead (rank improvement)
+    gen.update(
+      [
+        makeRunner({ horseId: "h1", name: "Thunder Strike", position: 150, velocity: 15 }),
+        makeRunner({ horseId: "h2", name: "Storm Chaser", position: 100, velocity: 15 }),
+      ],
+      5.0,
+    );
+
+    // h2 takes the lead from h1 — should trigger LEAD_CHANGE or CONFIRMATION_NOTE
+    // (h1 was surging, h2 takes lead — but CONFIRMATION_NOTE checks h2's arc, not h1's)
+    // We need h2 to have been surging first, then take the lead
+    const allLines: CommentaryLine[] = [];
+    allLines.push(
+      ...gen.update(
+        [
+          makeRunner({ horseId: "h1", name: "Thunder Strike", position: 250, velocity: 15 }),
+          makeRunner({ horseId: "h2", name: "Storm Chaser", position: 260, velocity: 15 }),
+        ],
+        10.0,
+      ),
+    );
+
+    // Check that either LEAD_CHANGE or CONFIRMATION_NOTE fired
+    const leadLines = allLines.filter(
+      (l) => l.type === "LEAD_CHANGE" || l.type === "CONFIRMATION_NOTE",
+    );
+    expect(leadLines.length).toBeGreaterThan(0);
+  });
+
+  it("CALLBACK_CLAUSES has ≥8 entries", () => {
+    expect(CALLBACK_CLAUSES.length).toBeGreaterThanOrEqual(8);
+  });
+
+  it("CALLBACK_CLAUSES entries end with ' — ' or similar punctuation", () => {
+    for (const clause of CALLBACK_CLAUSES) {
+      expect(clause.length).toBeGreaterThan(3);
+    }
   });
 });

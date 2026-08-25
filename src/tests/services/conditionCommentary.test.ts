@@ -25,7 +25,7 @@ function makeRace(overrides: Partial<Race> = {}): Race {
   } as Race;
 }
 
-function makeHorseEntity(overrides: Partial<Horse> = {}): Horse {
+function makeHorseEntity(overrides: Omit<Partial<Horse>, "id"> & { id?: string } = {}): Horse {
   return {
     id: "h1",
     name: "Test Horse",

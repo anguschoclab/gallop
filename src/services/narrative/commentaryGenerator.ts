@@ -59,10 +59,11 @@ export function generateCommentaryLine(
       previousFinishPositions?: Record<string, number>;
       horseCourseVisits?: Record<string, number>;
     };
+    templateOverride?: string[];
   },
   lineCounter: { value: number },
 ): CommentaryLine {
-  const templates = TEMPLATES[type];
+  const templates = context.templateOverride ?? TEMPLATES[type];
   if (!templates || templates.length === 0) {
     return { id: `${type}-${lineCounter.value++}`, text: "", timestamp, type, horseId: context.runner?.horseId, receivedAt: Date.now() };
   }
