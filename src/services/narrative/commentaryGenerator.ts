@@ -11,6 +11,9 @@ import {
 import { NARRATIVE_THRESHOLDS } from "@/constants/narrativeThresholds";
 import type { NarrativeEvent, CommentaryLine } from "./types";
 export type { NarrativeEvent, CommentaryLine } from "./types";
+import { composeSentence } from "./sentenceComposer";
+import { generateProcedural } from "./proceduralGenerator";
+import { DYNAMIC_OPENERS, DYNAMIC_TRAILERS } from "@/assets/narrative/dynamicClauses";
 
 /**
  * Commentary Generation System
@@ -47,15 +50,56 @@ export function generateCommentaryLine(
     lengths?: string;
     hasAnnouncedBio?: Set<string>;
     lastRanks?: Map<string, number>;
+    courseSpec?: { straightLength?: number; circumference?: number };
+    track?: { elevation?: number };
+    raceContext?: {
+      defendingChampion?: { horseName: string; year: number };
+      trackRecordTime?: number;
+      trackRecordHolder?: string;
+      previousFinishPositions?: Record<string, number>;
+      horseCourseVisits?: Record<string, number>;
+    };
   },
   lineCounter: { value: number },
 ): CommentaryLine {
   const templates = TEMPLATES[type];
   if (!templates || templates.length === 0) {
-    return { id: "", text: "", timestamp: 0, type: "START" };
+    return { id: `${type}-${lineCounter.value++}`, text: "", timestamp, type, horseId: context.runner?.horseId, receivedAt: Date.now() };
   }
 
-  let text = templates[Math.floor(context.rng.next() * templates.length)];
+  let text: string;
+
+  // 7A: Composable sentence fragments — 30% chance for SURGE, FLYING, FADE
+  const composeTypes: NarrativeEvent[] = ["SURGE", "FLYING", "FADE"];
+  if (composeTypes.includes(type) && context.rng.next() < 0.30) {
+    const composed = composeSentence(type, context.rng);
+    text = composed || templates[Math.floor(context.rng.next() * templates.length)];
+  } else {
+    // 7B: Procedural generation — 15% chance for LEAD_CHANGE, STRETCH, FINISH
+    const proceduralTypes: NarrativeEvent[] = ["LEAD_CHANGE", "STRETCH", "FINISH"];
+    if (proceduralTypes.includes(type) && context.rng.next() < 0.15) {
+      const procedural = generateProcedural(type, context.rng);
+      text = procedural || templates[Math.floor(context.rng.next() * templates.length)];
+    } else {
+      text = templates[Math.floor(context.rng.next() * templates.length)];
+    }
+  }
+
+  // 7C: Hybrid dynamic clause injection — 10% chance to prepend opener / append trailer
+  // Skip for milestone and factual events to preserve exact template matching
+  const skipClauses: NarrativeEvent[] = [
+    "MILESTONE", "MILESTONE_HALFWAY", "MILESTONE_FINAL_400",
+    "MILESTONE_FINAL_200", "MILESTONE_FINAL_100",
+    "START", "FINISH", "WEATHER_COMMENT",
+  ];
+  if (!skipClauses.includes(type) && context.rng.next() < 0.10) {
+    const opener = DYNAMIC_OPENERS[Math.floor(context.rng.next() * DYNAMIC_OPENERS.length)];
+    text = `${opener} ${text}`;
+  }
+  if (!skipClauses.includes(type) && context.rng.next() < 0.10) {
+    const trailer = DYNAMIC_TRAILERS[Math.floor(context.rng.next() * DYNAMIC_TRAILERS.length)];
+    text = `${text} ${trailer}`;
+  }
 
   // Add prefixes for impactful events
   if (
@@ -77,6 +121,27 @@ export function generateCommentaryLine(
   sub("{weather}", context.race.weather || "clear");
   sub("{trackCondition}", context.race.trackCondition || "good");
   sub("{remaining}", (context.race.distance - (context.runner?.position || 0)).toFixed(0));
+  sub("{grade}", context.race.graded?.grade || "");
+  sub("{straightLength}", context.courseSpec?.straightLength?.toString() || "");
+  sub("{circumference}", context.courseSpec?.circumference?.toString() || "");
+  sub("{elevation}", context.track?.elevation?.toString() || "");
+
+  // Race context placeholders
+  if (context.raceContext) {
+    const rc = context.raceContext;
+    sub("{year}", rc.defendingChampion?.year?.toString() || "");
+    sub("{recordTime}", rc.trackRecordTime?.toFixed(1) || "");
+    sub("{recordHolder}", rc.trackRecordHolder || "");
+    const horseId = context.runner?.horseId || "";
+    sub("{prevPosition}", rc.previousFinishPositions?.[horseId]?.toString() || "");
+    sub("{visits}", rc.horseCourseVisits?.[horseId]?.toString() || "");
+  } else {
+    sub("{year}", "");
+    sub("{recordTime}", "");
+    sub("{recordHolder}", "");
+    sub("{prevPosition}", "");
+    sub("{visits}", "");
+  }
 
   if (context.lengths) {
     sub("{lengths}", context.lengths);
@@ -108,6 +173,11 @@ export function generateCommentaryLine(
     sub("{dam}", horse?.damName || "an unheralded mare");
     sub("{stable}", stable?.name || "Independent");
     sub("{family}", horse?.bruceLoweFamily?.toString() || "Unknown");
+
+    // Replace jockey placeholders
+    const jockeyName = context.runner.jockeyName || context.runner.jockey?.name || "the jockey";
+    sub("{jockey}", jockeyName);
+    sub("{jockeyArchetype}", context.runner.jockey?.archetype || "versatile");
 
     // Replace rank placeholder
     if (context.lastRanks) {

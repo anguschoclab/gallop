@@ -20,6 +20,9 @@ export class NarrativeState {
   hasAnnouncedStart = false;
   hasAnnouncedFinish = false;
   hasAnnouncedStretch = false;
+  hasAnnouncedMidRaceInsight = false;
+  hasAnnouncedClosingInsight = false;
+  lastPaceRating?: number;
   lastLeaderId: string | null = null;
   readonly activeConditions: Map<string, Set<RunnerConditionId>> = new Map();
   readonly peakVelocities: Map<string, number> = new Map();

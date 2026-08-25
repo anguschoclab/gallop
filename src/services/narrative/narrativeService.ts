@@ -15,11 +15,23 @@ import {
   detectFinish,
   detectStableWatch,
   detectAtmosphere,
+  detectJockeyEvents,
 } from "./eventDetector";
 import { NARRATIVE_THRESHOLDS } from "@/constants/narrativeThresholds";
 import { NarrativeState } from "./narrativeState";
 import { generateDynamicMilestones } from "./narrativeMilestones";
 import { checkConditionTransitions } from "./narrativeConditionChecks";
+import { JOCKEY_TRAIT_TEMPLATES } from "@/assets/narrative/jockeyTemplates";
+import { getCourseForRace, getTrackById, getTrackByName, type Track, type CourseSpecification } from "@/data/tracks";
+import {
+  ATMOSPHERE_LONG_STRAIGHT_TEMPLATES,
+  ATMOSPHERE_TIGHT_TURN_TEMPLATES,
+  ATMOSPHERE_GRADED_TEMPLATES,
+  ATMOSPHERE_TRIPLE_CROWN_TEMPLATES,
+  ATMOSPHERE_ELEVATION_TEMPLATES,
+} from "@/assets/narrative/atmosphereTemplates";
+import type { RaceContext } from "./types";
+import { CommentaryMemory } from "./commentaryMemory";
 
 /**
  * Orchestrates real-time race commentary generation.
@@ -34,6 +46,10 @@ export class NarrativeGenerator {
   private horsesMap: Map<string, Horse>;
   private stablesMap: Map<string, Stable>;
   private rng: Rng;
+  private track?: Track;
+  private courseSpec?: CourseSpecification;
+  private raceContext?: RaceContext;
+  private memory: CommentaryMemory;
 
   /**
    * Initialize the narrative generator for a specific race.
@@ -42,14 +58,22 @@ export class NarrativeGenerator {
    * @param horses - All horses participating in the race
    * @param stables - All stables involved in the race
    * @param rng - Random number generator for variety in commentary
+   * @param raceContext - Optional race context (defending champion, track record, etc.)
    */
-  constructor(race: Race, horses: Horse[], stables: Stable[], rng: Rng) {
+  constructor(race: Race, horses: Horse[], stables: Stable[], rng: Rng, raceContext?: RaceContext) {
     this.state = new NarrativeState();
     this.race = race;
     this.horses = horses;
     this.horsesMap = new Map(horses.map((h) => [h.id, h]));
     this.stablesMap = new Map(stables.map((s) => [s.id, s]));
     this.rng = rng;
+    this.raceContext = raceContext;
+    this.memory = new CommentaryMemory();
+    this.courseSpec = getCourseForRace(race);
+    const trackId = race.trackId || race.graded?.trackId;
+    const trackName = race.graded?.track;
+    if (trackId) this.track = getTrackById(trackId);
+    if (!this.track && trackName) this.track = getTrackByName(trackName);
   }
 
   /**
@@ -70,6 +94,7 @@ export class NarrativeGenerator {
     this.checkRaceStart(runners, simTime, newLines);
     this.checkMilestones(newLines, currentLeader.position, simTime, currentLeader);
     this.checkHotPace(runners, simTime, newLines);
+    this.checkOngoingInsights(runners, sorted, simTime, newLines);
     this.checkAtmosphere(simTime, newLines);
     this.checkGapAnnouncement(sorted, simTime, newLines);
     this.checkStableWatch(runners, simTime, newLines);
@@ -80,8 +105,12 @@ export class NarrativeGenerator {
     this.checkDrafting(runners, runnersMap, simTime, newLines);
     this.checkLaneWatch(runners, simTime, newLines);
     this.checkConditionTransitions(runners, simTime, newLines);
+    this.checkJockeyEvents(runners, simTime, newLines);
 
     this.state.push(...newLines);
+    for (const line of newLines) {
+      this.memory.recordEvent(line);
+    }
     return newLines;
   }
 
@@ -104,6 +133,42 @@ export class NarrativeGenerator {
       });
     }
     this.state.hasAnnouncedStart = true;
+
+    // Race context commentary (defending champion, returning runner, course specialist)
+    if (this.raceContext) {
+      this.checkRaceContext(runners, simTime, newLines);
+    }
+  }
+
+  private checkRaceContext(runners: Runner[], simTime: number, newLines: CommentaryLine[]) {
+    const rc = this.raceContext!;
+
+    // Defending champion
+    if (rc.defendingChampion) {
+      const champHorse = this.horses.find((h) => h.name === rc.defendingChampion!.horseName);
+      const champRunner = champHorse ? runners.find((r) => r.horseId === champHorse.id) : undefined;
+      if (champRunner) {
+        newLines.push(this.createLine("DEFENDING_CHAMPION", simTime, champRunner));
+      }
+    }
+
+    // Returning runner — pick first horse with a previous finish position
+    for (const runner of runners) {
+      const prevPos = rc.previousFinishPositions[runner.horseId];
+      if (prevPos) {
+        newLines.push(this.createLine("RETURNING_RUNNER", simTime, runner));
+        break;
+      }
+    }
+
+    // Course specialist — pick first horse with >= 3 course visits
+    for (const runner of runners) {
+      const visits = rc.horseCourseVisits[runner.horseId];
+      if (visits && visits >= 3) {
+        newLines.push(this.createLine("COURSE_SPECIALIST", simTime, runner));
+        break;
+      }
+    }
   }
 
   private checkAtmosphere(simTime: number, newLines: CommentaryLine[]) {
@@ -122,7 +187,22 @@ export class NarrativeGenerator {
         NARRATIVE_THRESHOLDS.ATMOSPHERE_COOLDOWN,
       )
     ) {
-      newLines.push(this.createLine("ATMOSPHERE", simTime));
+      let eventType: NarrativeEvent = "ATMOSPHERE";
+      // 30% chance to use general atmosphere even when specific category matches
+      if (this.rng.next() < 0.3) {
+        eventType = "ATMOSPHERE";
+      } else if (this.race.graded?.triplecrownKey) {
+        eventType = "ATMOSPHERE_TRIPLE_CROWN";
+      } else if (this.race.graded) {
+        eventType = "ATMOSPHERE_GRADED";
+      } else if (this.courseSpec && this.courseSpec.straightLength > 400) {
+        eventType = "ATMOSPHERE_LONG_STRAIGHT";
+      } else if (this.courseSpec && this.courseSpec.circumference < 1600) {
+        eventType = "ATMOSPHERE_TIGHT_TURN";
+      } else if (this.track?.elevation) {
+        eventType = "ATMOSPHERE_ELEVATION";
+      }
+      newLines.push(this.createLine(eventType, simTime));
       this.state.setCooldown(
         "ATMOSPHERE",
         "global",
@@ -225,6 +305,29 @@ export class NarrativeGenerator {
       line.isHighImpact = true;
       newLines.push(line);
       this.state.hasAnnouncedStretch = true;
+
+      // Track record check — if leader is on pace
+      if (this.raceContext?.trackRecordTime && simTime > 0) {
+        const projectedTime = (simTime / currentLeader.position) * this.race.distance;
+        if (projectedTime < this.raceContext.trackRecordTime) {
+          if (
+            this.state.canAnnounce(
+              "TRACK_RECORD",
+              "global",
+              simTime,
+              NARRATIVE_THRESHOLDS.ATMOSPHERE_COOLDOWN,
+            )
+          ) {
+            newLines.push(this.createLine("TRACK_RECORD", simTime, currentLeader));
+            this.state.setCooldown(
+              "TRACK_RECORD",
+              "global",
+              simTime,
+              NARRATIVE_THRESHOLDS.ATMOSPHERE_COOLDOWN,
+            );
+          }
+        }
+      }
     }
   }
 
@@ -258,7 +361,16 @@ export class NarrativeGenerator {
       );
       if (event) {
         if (event.type === "SURGE" && this.state.canAnnounce("SURGE", r.horseId, simTime)) {
-          newLines.push(this.createLine("SURGE", simTime, r));
+          if (
+            this.memory.canCallback(r.horseId, "SURGE") &&
+            this.state.canAnnounce("COMEBACK_NOTE", r.horseId, simTime, NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN) &&
+            this.rng.next() < 0.20
+          ) {
+            newLines.push(this.createLine("COMEBACK_NOTE", simTime, r));
+            this.state.setCooldown("COMEBACK_NOTE", r.horseId, simTime, NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN);
+          } else {
+            newLines.push(this.createLine("SURGE", simTime, r));
+          }
           this.state.setCooldown(
             "SURGE",
             r.horseId,
@@ -351,7 +463,60 @@ export class NarrativeGenerator {
       race: this.race,
       createLine: (type, timestamp, runner?) => this.createLine(type, timestamp, runner),
     });
-    newLines.push(...lines);
+    for (const line of lines) {
+      if (
+        line.type === "FLYING" &&
+        line.horseId &&
+        this.memory.canCallback(line.horseId, "FLYING") &&
+        this.state.canAnnounce("REDEMPTION_NOTE", line.horseId, simTime, NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN) &&
+        this.rng.next() < 0.20
+      ) {
+        const runner = runners.find((r) => r.horseId === line.horseId);
+        if (runner) {
+          newLines.push(this.createLine("REDEMPTION_NOTE", simTime, runner));
+          this.state.setCooldown("REDEMPTION_NOTE", line.horseId, simTime, NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN);
+          continue;
+        }
+      }
+      newLines.push(line);
+    }
+  }
+
+  private checkJockeyEvents(runners: Runner[], simTime: number, newLines: CommentaryLine[]) {
+    if (!this.state.hasAnnouncedStart || this.state.hasAnnouncedFinish) return;
+    for (const r of runners) {
+      const event = detectJockeyEvents(
+        r,
+        this.race,
+        simTime,
+        this.state.hasAnnouncedStart,
+        this.state.hasAnnouncedFinish,
+      );
+      if (!event) continue;
+
+      const cooldown =
+        event.type === "JOCKEY_MASTERY"
+          ? NARRATIVE_THRESHOLDS.JOCKEY_MASTERY_COOLDOWN
+          : event.type === "JOCKEY_APPRENTICE"
+            ? NARRATIVE_THRESHOLDS.JOCKEY_APPRENTICE_COOLDOWN
+            : NARRATIVE_THRESHOLDS.JOCKEY_EVENT_COOLDOWN;
+
+      if (this.state.canAnnounce(event.type, r.horseId, simTime, cooldown)) {
+        const line = this.createLine(event.type, simTime, r);
+        // For trait-based events, select the specific trait template
+        if (event.type === "JOCKEY_TRAIT" && event.data?.trait && r.jockey) {
+          const trait = event.data.trait as string;
+          const traitTemplates = JOCKEY_TRAIT_TEMPLATES[trait as keyof typeof JOCKEY_TRAIT_TEMPLATES];
+          if (traitTemplates && traitTemplates.length > 0) {
+            const tpl = traitTemplates[Math.floor(this.rng.next() * traitTemplates.length)];
+            line.text = this.substituteJockeyTemplate(tpl, r);
+          }
+        }
+        newLines.push(line);
+        this.state.setCooldown(event.type, r.horseId, simTime, cooldown);
+        break; // Only one jockey event per tick
+      }
+    }
   }
 
   /**
@@ -372,7 +537,7 @@ export class NarrativeGenerator {
 
     for (const m of milestones) {
       if (leaderPos >= m.pos && !this.state.announcedMilestones.has(m.id)) {
-        newLines.push(this.createLine("MILESTONE", simTime, leader));
+        newLines.push(this.createLine(m.eventType, simTime, leader));
         this.state.announcedMilestones.add(m.id);
       }
     }
@@ -413,6 +578,84 @@ export class NarrativeGenerator {
         );
       }
     }
+  }
+
+  private checkOngoingInsights(
+    runners: Runner[],
+    sorted: Runner[],
+    simTime: number,
+    newLines: CommentaryLine[],
+  ) {
+    if (!this.state.hasAnnouncedStart || this.state.hasAnnouncedFinish) return;
+
+    const pace = computePaceContext(runners, this.race.distance);
+    const progress = pace.progress;
+
+    // Mid-race insight at ~50% progress
+    if (
+      progress >= 0.5 &&
+      !this.state.hasAnnouncedMidRaceInsight &&
+      this.state.canAnnounce(
+        "MIDRACE_INSIGHT",
+        "global",
+        simTime,
+        NARRATIVE_THRESHOLDS.MIDRACE_INSIGHT_COOLDOWN,
+      )
+    ) {
+      const topRunner = sorted[Math.min(Math.floor(this.rng.next() * 5), sorted.length - 1)];
+      newLines.push(this.createLine("MIDRACE_INSIGHT", simTime, topRunner));
+      this.state.hasAnnouncedMidRaceInsight = true;
+      this.state.setCooldown(
+        "MIDRACE_INSIGHT",
+        "global",
+        simTime,
+        NARRATIVE_THRESHOLDS.MIDRACE_INSIGHT_COOLDOWN,
+      );
+    }
+
+    // Closing insight at ~80% progress
+    if (
+      progress >= 0.8 &&
+      !this.state.hasAnnouncedClosingInsight &&
+      this.state.canAnnounce(
+        "CLOSING_INSIGHT",
+        "global",
+        simTime,
+        NARRATIVE_THRESHOLDS.CLOSING_INSIGHT_COOLDOWN,
+      )
+    ) {
+      const topRunner = sorted[Math.min(Math.floor(this.rng.next() * 3), sorted.length - 1)];
+      newLines.push(this.createLine("CLOSING_INSIGHT", simTime, topRunner));
+      this.state.hasAnnouncedClosingInsight = true;
+      this.state.setCooldown(
+        "CLOSING_INSIGHT",
+        "global",
+        simTime,
+        NARRATIVE_THRESHOLDS.CLOSING_INSIGHT_COOLDOWN,
+      );
+    }
+
+    // Pace analysis when pace rating changes significantly
+    if (
+      this.state.lastPaceRating !== undefined &&
+      Math.abs(pace.paceRating - this.state.lastPaceRating) > 0.3 &&
+      this.state.canAnnounce(
+        "PACE_ANALYSIS",
+        "global",
+        simTime,
+        NARRATIVE_THRESHOLDS.PACE_ANALYSIS_COOLDOWN,
+      )
+    ) {
+      const topRunner = sorted[Math.min(Math.floor(this.rng.next() * 3), sorted.length - 1)];
+      newLines.push(this.createLine("PACE_ANALYSIS", simTime, topRunner));
+      this.state.setCooldown(
+        "PACE_ANALYSIS",
+        "global",
+        simTime,
+        NARRATIVE_THRESHOLDS.PACE_ANALYSIS_COOLDOWN,
+      );
+    }
+    this.state.lastPaceRating = pace.paceRating;
   }
 
   /**
@@ -461,11 +704,26 @@ export class NarrativeGenerator {
         lengths,
         hasAnnouncedBio: this.state.hasAnnouncedBio,
         lastRanks: this.state.lastRanks,
+        courseSpec: this.courseSpec,
+        track: this.track,
+        raceContext: this.raceContext,
       },
       counter,
     );
     this.state.lineCounter = counter.value;
     return line;
+  }
+
+  /**
+   * Substitute jockey-related placeholders in a trait template string.
+   */
+  private substituteJockeyTemplate(template: string, runner: Runner): string {
+    let text = template;
+    const jockeyName = runner.jockeyName || runner.jockey?.name || "the jockey";
+    text = text.split("{jockey}").join(jockeyName);
+    text = text.split("{horse}").join(runner.name);
+    text = text.split("{jockeyArchetype}").join(runner.jockey?.archetype || "versatile");
+    return text;
   }
 
   /**

@@ -1,4 +1,33 @@
 import type { NarrativeEvent } from "@/services/narrative/commentaryGenerator";
+import {
+  JOCKEY_MOVE_TEMPLATES,
+  JOCKEY_TACTIC_TEMPLATES,
+  JOCKEY_MASTERY_TEMPLATES,
+  JOCKEY_APPRENTICE_TEMPLATES,
+} from "./jockeyTemplates";
+import {
+  ATMOSPHERE_LONG_STRAIGHT_TEMPLATES,
+  ATMOSPHERE_TIGHT_TURN_TEMPLATES,
+  ATMOSPHERE_GRADED_TEMPLATES,
+  ATMOSPHERE_TRIPLE_CROWN_TEMPLATES,
+  ATMOSPHERE_ELEVATION_TEMPLATES,
+} from "./atmosphereTemplates";
+import {
+  DEFENDING_CHAMPION_TEMPLATES,
+  TRACK_RECORD_TEMPLATES,
+  RETURNING_RUNNER_TEMPLATES,
+  COURSE_SPECIALIST_TEMPLATES,
+} from "./raceContextTemplates";
+import {
+  MIDRACE_INSIGHT_TEMPLATES,
+  CLOSING_INSIGHT_TEMPLATES,
+  PACE_ANALYSIS_TEMPLATES,
+} from "./ongoingInsightTemplates";
+import {
+  COMEBACK_NOTE_TEMPLATES,
+  REDEMPTION_NOTE_TEMPLATES,
+  CONFIRMATION_NOTE_TEMPLATES,
+} from "./chainingTemplates";
 
 /**
  * Narrative commentary templates
@@ -8,6 +37,37 @@ import type { NarrativeEvent } from "@/services/narrative/commentaryGenerator";
 // Re-export biographical and expert insight templates for backward compatibility
 export { BIOGRAPHICAL_TEMPLATES, FRAGMENTS } from "./biographicalTemplates";
 export { EXPERT_INSIGHT_TEMPLATES } from "./expertInsightTemplates";
+export {
+  JOCKEY_MOVE_TEMPLATES,
+  JOCKEY_TACTIC_TEMPLATES,
+  JOCKEY_MASTERY_TEMPLATES,
+  JOCKEY_APPRENTICE_TEMPLATES,
+  JOCKEY_TRAIT_TEMPLATES,
+} from "./jockeyTemplates";
+export {
+  ATMOSPHERE_LONG_STRAIGHT_TEMPLATES,
+  ATMOSPHERE_TIGHT_TURN_TEMPLATES,
+  ATMOSPHERE_GRADED_TEMPLATES,
+  ATMOSPHERE_TRIPLE_CROWN_TEMPLATES,
+  ATMOSPHERE_ELEVATION_TEMPLATES,
+} from "./atmosphereTemplates";
+export {
+  DEFENDING_CHAMPION_TEMPLATES,
+  TRACK_RECORD_TEMPLATES,
+  RETURNING_RUNNER_TEMPLATES,
+  COURSE_SPECIALIST_TEMPLATES,
+} from "./raceContextTemplates";
+export {
+  MIDRACE_INSIGHT_TEMPLATES,
+  CLOSING_INSIGHT_TEMPLATES,
+  PACE_ANALYSIS_TEMPLATES,
+} from "./ongoingInsightTemplates";
+export {
+  COMEBACK_NOTE_TEMPLATES,
+  REDEMPTION_NOTE_TEMPLATES,
+  CONFIRMATION_NOTE_TEMPLATES,
+} from "./chainingTemplates";
+export { DYNAMIC_OPENERS, DYNAMIC_TRAILERS } from "./dynamicClauses";
 
 export const TEMPLATES: Record<NarrativeEvent, string[]> = {
   START: [
@@ -231,7 +291,99 @@ export const TEMPLATES: Record<NarrativeEvent, string[]> = {
     "It's time to get serious as they pass the halfway mark.",
     "With {remaining}m remaining, the tactics begin to unfold.",
   ],
+  MILESTONE_HALFWAY: [
+    "They've reached the halfway marker — the pace is genuine!",
+    "Passing the halfway point in the {raceName} now.",
+    "We're at the halfway stage — time for the tactical decisions to unfold.",
+    "The midpoint of the {raceName} is behind them, {remaining}m remains.",
+    "Halfway there! Only {remaining}m left to find a winner.",
+    "They've reached the midpoint of the journey in the {raceName}.",
+    "The crowd rises as they pass the halfway point in the {raceName}.",
+    "We're at the halfway marker — who's going to make the first move?",
+    "It's time to get serious as they pass the halfway mark.",
+    "The halfway point is behind them — {remaining}m to go.",
+    "They're at the halfway stage of the {raceName} — the real racing starts now.",
+    "Halfway through the {raceName} and the pace is honest.",
+    "They've hit the halfway marker — the tactics begin to unfold.",
+    "The midpoint of the race is upon us in the {raceName}.",
+    "Halfway done — {remaining}m stands between them and the finish.",
+    "They pass the halfway point with {remaining}m remaining in the {raceName}.",
+  ],
+  MILESTONE_FINAL_400: [
+    "Into the final 400m — the pressure is building!",
+    "Entering the final 400 meters of the {raceName}!",
+    "They're inside the final 400m — it's crunch time now.",
+    "The last 400m of the {raceName} — who wants it most?",
+    "Final quarter mile! The jockeys are getting serious.",
+    "They've hit the 400m marker — the race is about to get real.",
+    "Inside the final 400m of the {raceName} — positions are crucial now.",
+    "The business end is here — 400m to go and everything to play for.",
+    "They're approaching the final 400m — the pace is about to lift.",
+    "400 meters remain — it's time to put the cards on the table.",
+    "Into the final 400m of the {raceName} — the tension is palpable.",
+    "The 400m marker passes — the sprint for home begins here.",
+    "They're inside the last 400m — who's got the legs?",
+    "Final 400m of the {raceName} — the jockeys are reaching for the whip.",
+    "The pressure cooker of the final 400m is upon them.",
+    "400 meters from glory — the race is heating up in the {raceName}.",
+  ],
+  MILESTONE_FINAL_200: [
+    "Inside the final 200m — it's now or never!",
+    "200 meters to go in the {raceName} — who's finding the most?",
+    "They're inside the final 200m — every stride counts now.",
+    "The last 200m of the {raceName} — hearts are pounding!",
+    "Final 200m! It's a test of courage and stamina.",
+    "They've hit the 200m marker — the finish is in sight.",
+    "Inside the final 200 meters — the drama is building.",
+    "200m from the wire — who's got the finishing kick?",
+    "The final 200m of the {raceName} — this is where legends are made.",
+    "They're in the last 200m — the crowd is on its feet!",
+    "200 meters remain — it's a battle to the line.",
+    "Inside the final 200m of the {raceName} — positions are everything.",
+    "The 200m marker passes — it's a sprint to the finish now!",
+    "Final 200m — the jockeys are giving it everything.",
+    "They're inside the last 200 meters — the tension is unbearable.",
+    "200m from home in the {raceName} — who will prevail?",
+  ],
+  MILESTONE_FINAL_100: [
+    "They're inside the final 100! Who wants it more?",
+    "100 meters to go in the {raceName} — it's a nail-biter!",
+    "Inside the final 100m — every muscle is burning now.",
+    "The last 100m of the {raceName} — this is the moment of truth!",
+    "Final 100 meters! It's all on the line.",
+    "They've hit the 100m marker — the wire is within reach.",
+    "Inside the final 100m — the crowd is roaring!",
+    "100m to go — who's got the final burst of speed?",
+    "The last 100m of the {raceName} — it's a desperate drive to the line.",
+    "They're in the final 100 meters — this is what it all comes down to.",
+    "100m from the finish — the race is on a knife's edge.",
+    "Inside the final 100m of the {raceName} — hearts are in mouths!",
+    "The 100m marker passes — it's a photo finish in the making.",
+    "Final 100m — the jockeys are riding for their lives.",
+    "They're inside the last 100 meters — the finish line beckons.",
+    "100m from glory in the {raceName} — who will etch their name in history?",
+  ],
   EXPERT_INSIGHT: [],
+  JOCKEY_MOVE: JOCKEY_MOVE_TEMPLATES,
+  JOCKEY_TACTIC: JOCKEY_TACTIC_TEMPLATES,
+  JOCKEY_MASTERY: JOCKEY_MASTERY_TEMPLATES,
+  JOCKEY_APPRENTICE: JOCKEY_APPRENTICE_TEMPLATES,
+  JOCKEY_TRAIT: [], // Populated dynamically via JOCKEY_TRAIT_TEMPLATES
+  ATMOSPHERE_LONG_STRAIGHT: ATMOSPHERE_LONG_STRAIGHT_TEMPLATES,
+  ATMOSPHERE_TIGHT_TURN: ATMOSPHERE_TIGHT_TURN_TEMPLATES,
+  ATMOSPHERE_GRADED: ATMOSPHERE_GRADED_TEMPLATES,
+  ATMOSPHERE_TRIPLE_CROWN: ATMOSPHERE_TRIPLE_CROWN_TEMPLATES,
+  ATMOSPHERE_ELEVATION: ATMOSPHERE_ELEVATION_TEMPLATES,
+  DEFENDING_CHAMPION: DEFENDING_CHAMPION_TEMPLATES,
+  TRACK_RECORD: TRACK_RECORD_TEMPLATES,
+  RETURNING_RUNNER: RETURNING_RUNNER_TEMPLATES,
+  COURSE_SPECIALIST: COURSE_SPECIALIST_TEMPLATES,
+  MIDRACE_INSIGHT: MIDRACE_INSIGHT_TEMPLATES,
+  CLOSING_INSIGHT: CLOSING_INSIGHT_TEMPLATES,
+  PACE_ANALYSIS: PACE_ANALYSIS_TEMPLATES,
+  COMEBACK_NOTE: COMEBACK_NOTE_TEMPLATES,
+  REDEMPTION_NOTE: REDEMPTION_NOTE_TEMPLATES,
+  CONFIRMATION_NOTE: CONFIRMATION_NOTE_TEMPLATES,
   GAP_ANNOUNCEMENT: [
     "{horse} is leading by {lengths} lengths!",
     "{horse} has a {lengths} length advantage at the front.",

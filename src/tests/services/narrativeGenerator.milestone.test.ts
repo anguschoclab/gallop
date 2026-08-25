@@ -37,6 +37,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     distanceRun: 0,
     draftingHorseId: null,
     runningStyle: "EP",
+    jockeyName: "Test Jockey",
     ...overrides,
   } as Runner;
 }
@@ -115,7 +116,7 @@ function makeStable(overrides: Partial<Stable> = {}): Stable {
 }
 
 describe("NarrativeGenerator — MILESTONE uses templates", () => {
-  it("MILESTONE line text comes from TEMPLATES.MILESTONE (not hardcoded)", () => {
+  it("MILESTONE_HALFWAY fires at halfway point with specific event type", () => {
     const rng = createRng(hashStr("milestone-template-test"));
     const race = makeRace({ distance: 1600 });
     const horse = makeHorseEntity();
@@ -127,11 +128,11 @@ describe("NarrativeGenerator — MILESTONE uses templates", () => {
     const runner = makeRunner({ position: 800 });
     const lines = gen.update([runner], 10.0);
 
-    const milestoneLines = lines.filter((l) => l.type === "MILESTONE");
+    const milestoneLines = lines.filter((l) => l.type === "MILESTONE_HALFWAY");
     expect(milestoneLines.length).toBeGreaterThanOrEqual(1);
 
     const milestoneText = milestoneLines[0].text;
-    const isFromTemplate = TEMPLATES.MILESTONE.some((t) => {
+    const isFromTemplate = TEMPLATES.MILESTONE_HALFWAY.some((t) => {
       let expectedText = t.replace("{remaining}", (1600 - 800).toString());
       expectedText = expectedText.replace("{raceName}", "Test Race");
       return expectedText === milestoneText;
@@ -139,7 +140,7 @@ describe("NarrativeGenerator — MILESTONE uses templates", () => {
     expect(isFromTemplate).toBe(true);
   });
 
-  it("MILESTONE at final 400m produces different template text", () => {
+  it("MILESTONE_FINAL_400 fires at final 400m with specific event type", () => {
     const rng = createRng(hashStr("milestone-400-test"));
     const race = makeRace({ distance: 1600 });
     const horse = makeHorseEntity();
@@ -152,16 +153,101 @@ describe("NarrativeGenerator — MILESTONE uses templates", () => {
     const runner = makeRunner({ position: 1200 });
     const lines = gen.update([runner], 20.0);
 
-    const milestoneLines = lines.filter((l) => l.type === "MILESTONE");
+    const milestoneLines = lines.filter((l) => l.type === "MILESTONE_FINAL_400");
     expect(milestoneLines.length).toBeGreaterThanOrEqual(1);
 
     const milestoneText = milestoneLines[0].text;
-    const isFromTemplate = TEMPLATES.MILESTONE.some((t) => {
+    const isFromTemplate = TEMPLATES.MILESTONE_FINAL_400.some((t) => {
       let expectedText = t.replace("{remaining}", (1600 - 1200).toString());
       expectedText = expectedText.replace("{raceName}", "Test Race");
       return expectedText === milestoneText;
     });
     expect(isFromTemplate).toBe(true);
+  });
+
+  it("MILESTONE_FINAL_200 fires at final 200m with specific event type", () => {
+    const rng = createRng(hashStr("milestone-200-test"));
+    const race = makeRace({ distance: 1600 });
+    const horse = makeHorseEntity();
+    const stable = makeStable();
+    const gen = new NarrativeGenerator(race, [horse], [stable], rng);
+
+    gen.update([makeRunner()], 0.1);
+    gen.update([makeRunner({ position: 800 })], 10.0);
+    gen.update([makeRunner({ position: 1200 })], 20.0);
+
+    const runner = makeRunner({ position: 1400 });
+    const lines = gen.update([runner], 30.0);
+
+    const milestoneLines = lines.filter((l) => l.type === "MILESTONE_FINAL_200");
+    expect(milestoneLines.length).toBeGreaterThanOrEqual(1);
+
+    const milestoneText = milestoneLines[0].text;
+    const isFromTemplate = TEMPLATES.MILESTONE_FINAL_200.some((t) => {
+      let expectedText = t.replace("{remaining}", (1600 - 1400).toString());
+      expectedText = expectedText.replace("{raceName}", "Test Race");
+      return expectedText === milestoneText;
+    });
+    expect(isFromTemplate).toBe(true);
+  });
+
+  it("MILESTONE_FINAL_100 fires at final 100m with specific event type", () => {
+    const rng = createRng(hashStr("milestone-100-test"));
+    const race = makeRace({ distance: 1600 });
+    const horse = makeHorseEntity();
+    const stable = makeStable();
+    const gen = new NarrativeGenerator(race, [horse], [stable], rng);
+
+    gen.update([makeRunner()], 0.1);
+    gen.update([makeRunner({ position: 800 })], 10.0);
+    gen.update([makeRunner({ position: 1200 })], 20.0);
+    gen.update([makeRunner({ position: 1400 })], 30.0);
+
+    const runner = makeRunner({ position: 1500 });
+    const lines = gen.update([runner], 35.0);
+
+    const milestoneLines = lines.filter((l) => l.type === "MILESTONE_FINAL_100");
+    expect(milestoneLines.length).toBeGreaterThanOrEqual(1);
+
+    const milestoneText = milestoneLines[0].text;
+    const isFromTemplate = TEMPLATES.MILESTONE_FINAL_100.some((t) => {
+      let expectedText = t.replace("{remaining}", (1600 - 1500).toString());
+      expectedText = expectedText.replace("{raceName}", "Test Race");
+      return expectedText === milestoneText;
+    });
+    expect(isFromTemplate).toBe(true);
+  });
+
+  it("each specific milestone template array has ≥12 entries", () => {
+    expect(TEMPLATES.MILESTONE_HALFWAY.length).toBeGreaterThanOrEqual(12);
+    expect(TEMPLATES.MILESTONE_FINAL_400.length).toBeGreaterThanOrEqual(12);
+    expect(TEMPLATES.MILESTONE_FINAL_200.length).toBeGreaterThanOrEqual(12);
+    expect(TEMPLATES.MILESTONE_FINAL_100.length).toBeGreaterThanOrEqual(12);
+  });
+
+  it("specific milestone text comes from the correct sub-template array, not TEMPLATES.MILESTONE", () => {
+    const rng = createRng(hashStr("milestone-correct-array"));
+    const race = makeRace({ distance: 1600 });
+    const horse = makeHorseEntity();
+    const stable = makeStable();
+    const gen = new NarrativeGenerator(race, [horse], [stable], rng);
+
+    gen.update([makeRunner()], 0.1);
+
+    const runner = makeRunner({ position: 800 });
+    const lines = gen.update([runner], 10.0);
+
+    const halfwayLines = lines.filter((l) => l.type === "MILESTONE_HALFWAY");
+    expect(halfwayLines.length).toBeGreaterThanOrEqual(1);
+
+    for (const line of halfwayLines) {
+      const matchesHalfway = TEMPLATES.MILESTONE_HALFWAY.some((t) => {
+        let expected = t.replace("{remaining}", (1600 - 800).toString());
+        expected = expected.replace("{raceName}", "Test Race");
+        return expected === line.text;
+      });
+      expect(matchesHalfway).toBe(true);
+    }
   });
 
   it("MILESTONE does not produce hardcoded 'Passing the halfway point now.'", () => {
@@ -176,14 +262,25 @@ describe("NarrativeGenerator — MILESTONE uses templates", () => {
     const runner = makeRunner({ position: 800 });
     const lines = gen.update([runner], 10.0);
 
-    const milestoneLines = lines.filter((l) => l.type === "MILESTONE");
+    const milestoneLines = lines.filter(
+      (l) =>
+        l.type === "MILESTONE_HALFWAY" ||
+        l.type === "MILESTONE_FINAL_400" ||
+        l.type === "MILESTONE_FINAL_200" ||
+        l.type === "MILESTONE_FINAL_100" ||
+        l.type === "MILESTONE",
+    );
     expect(milestoneLines.length).toBeGreaterThanOrEqual(1);
 
-    // The old hardcoded text should not appear — text should come from templates
-    // Some templates do say "Passing the halfway point now." so we check that
-    // the text matches a template entry, not just the hardcoded string
     for (const line of milestoneLines) {
-      const matchesTemplate = TEMPLATES.MILESTONE.some((t) => {
+      const allMilestoneTemplates = [
+        ...TEMPLATES.MILESTONE_HALFWAY,
+        ...TEMPLATES.MILESTONE_FINAL_400,
+        ...TEMPLATES.MILESTONE_FINAL_200,
+        ...TEMPLATES.MILESTONE_FINAL_100,
+        ...TEMPLATES.MILESTONE,
+      ];
+      const matchesTemplate = allMilestoneTemplates.some((t) => {
         let expected = t.replace("{remaining}", (1600 - 800).toString());
         expected = expected.replace("{raceName}", "Test Race");
         return expected === line.text;
@@ -201,13 +298,17 @@ describe("NarrativeGenerator — MILESTONE uses templates", () => {
 
     gen.update([makeRunner()], 0.1);
 
+    const allMilestoneTypes = ["MILESTONE_HALFWAY", "MILESTONE_FINAL_400", "MILESTONE_FINAL_200", "MILESTONE_FINAL_100", "MILESTONE"] as const;
+
     // First pass through halfway
     const lines1 = gen.update([makeRunner({ position: 800 })], 10.0);
-    expect(lines1.filter((l) => l.type === "MILESTONE")).toHaveLength(1);
+    const milestoneCount1 = lines1.filter((l) => allMilestoneTypes.includes(l.type as never)).length;
+    expect(milestoneCount1).toBe(1);
 
     // Second tick at same position — should not re-announce
     const lines2 = gen.update([makeRunner({ position: 810 })], 10.5);
-    expect(lines2.filter((l) => l.type === "MILESTONE")).toHaveLength(0);
+    const milestoneCount2 = lines2.filter((l) => allMilestoneTypes.includes(l.type as never)).length;
+    expect(milestoneCount2).toBe(0);
   });
 
   it("{remaining} placeholder is replaced with actual distance remaining", () => {
@@ -222,11 +323,10 @@ describe("NarrativeGenerator — MILESTONE uses templates", () => {
     const runner = makeRunner({ position: 1200 });
     const lines = gen.update([runner], 20.0);
 
-    const milestoneLines = lines.filter((l) => l.type === "MILESTONE");
+    const allMilestoneTypes = ["MILESTONE_HALFWAY", "MILESTONE_FINAL_400", "MILESTONE_FINAL_200", "MILESTONE_FINAL_100", "MILESTONE"] as const;
+    const milestoneLines = lines.filter((l) => allMilestoneTypes.includes(l.type as never));
     expect(milestoneLines.length).toBeGreaterThanOrEqual(1);
 
-    // If the template used {remaining}, it should be replaced with 400
-    // If the template didn't use {remaining}, it should still be valid text
     for (const line of milestoneLines) {
       expect(line.text).not.toContain("{remaining}");
     }

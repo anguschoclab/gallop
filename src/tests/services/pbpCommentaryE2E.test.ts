@@ -52,6 +52,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     distanceRun: 0,
     draftingHorseId: null,
     runningStyle: "EP",
+    jockeyName: "Test Jockey",
     ...overrides,
   } as Runner;
 }

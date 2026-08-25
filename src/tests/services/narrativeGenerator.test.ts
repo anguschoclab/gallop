@@ -41,6 +41,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     distanceRun: 0,
     draftingHorseId: null,
     runningStyle: "EP",
+    jockeyName: "Test Jockey",
     ...overrides,
   } as Runner;
 }
@@ -152,7 +153,7 @@ describe("NarrativeGenerator", () => {
     expect(lines2.some((l) => l.type === "FINISH")).toBe(false);
   });
 
-  it("emits MILESTONE at halfway point", () => {
+  it("emits MILESTONE_HALFWAY at halfway point", () => {
     const rng = createRng(hashStr("test-seed"));
     const race = makeRace({ distance: 1600 });
     const horse = makeHorseEntity();
@@ -164,9 +165,9 @@ describe("NarrativeGenerator", () => {
     const runner = makeRunner({ position: 800 });
     const lines = gen.update([runner], 10.0);
 
-    expect(lines.some((l) => l.type === "MILESTONE")).toBe(true);
-    const milestoneText = lines.find((l) => l.type === "MILESTONE")!.text;
-    const isFromTemplate = TEMPLATES.MILESTONE.some((t) => {
+    expect(lines.some((l) => l.type === "MILESTONE_HALFWAY")).toBe(true);
+    const milestoneText = lines.find((l) => l.type === "MILESTONE_HALFWAY")!.text;
+    const isFromTemplate = TEMPLATES.MILESTONE_HALFWAY.some((t) => {
       let expected = t.replace("{remaining}", (1600 - 800).toString());
       expected = expected.replace("{raceName}", "Test Race");
       return expected === milestoneText;
@@ -291,8 +292,12 @@ describe("template variety (herald branches)", () => {
     expect(TEMPLATES.STABLE_WATCH.length).toBeGreaterThanOrEqual(16);
   });
 
-  it("MILESTONE templates contain at least 16 entries", () => {
+  it("MILESTONE templates contain at least 16 entries (including sub-arrays)", () => {
     expect(TEMPLATES.MILESTONE.length).toBeGreaterThanOrEqual(16);
+    expect(TEMPLATES.MILESTONE_HALFWAY.length).toBeGreaterThanOrEqual(12);
+    expect(TEMPLATES.MILESTONE_FINAL_400.length).toBeGreaterThanOrEqual(12);
+    expect(TEMPLATES.MILESTONE_FINAL_200.length).toBeGreaterThanOrEqual(12);
+    expect(TEMPLATES.MILESTONE_FINAL_100.length).toBeGreaterThanOrEqual(12);
   });
 
   it("LANE_WATCH templates contain at least 16 entries", () => {

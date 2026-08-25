@@ -4,6 +4,9 @@ import type { HorseOwnership } from "@/core/horse/ownership";
 import { getStableId } from "@/core/horse/ownership";
 import { METERS_PER_LENGTH } from "@/constants";
 import { NARRATIVE_THRESHOLDS } from "@/constants/narrativeThresholds";
+import { getJockeyTier } from "@/core/jockey/jockeyTier";
+import { getCourseForRace } from "@/data/tracks";
+import type { JockeyTrait } from "@/core/jockey/types";
 import type { NarrativeEvent, DetectedEvent } from "./types";
 
 /**
@@ -217,42 +220,6 @@ export function detectFinish(
 }
 
 /**
- * Detect milestone events (distance markers).
- *
- * @param leaderPosition - Position of the race leader
- * @param race - The current race
- * @param announcedMilestones - Set of already announced milestone IDs
- * @returns DetectedEvent for milestone, otherwise null
- */
-export function detectMilestones(
-  leaderPosition: number,
-  race: Race,
-  announcedMilestones: Set<number>,
-): DetectedEvent | null {
-  const milestones = [
-    { pos: race.distance * 0.5, id: 50, text: "Passing the halfway point now." },
-    { pos: race.distance - 400, id: 400, text: "Entering the final 400 meters!" },
-    { pos: race.distance - 200, id: 200, text: "Just 200 meters to the wire!" },
-    {
-      pos: race.distance - 100,
-      id: 100,
-      text: "They're inside the final 100! Who wants it more?",
-    },
-  ];
-
-  for (const m of milestones) {
-    if (leaderPosition >= m.pos && !announcedMilestones.has(m.id)) {
-      return {
-        type: "MILESTONE",
-        data: { id: m.id, text: m.text },
-      };
-    }
-  }
-
-  return null;
-}
-
-/**
  * Check if position is in a turn.
  * Basic oval assumption: 400m home straight, 400m turn, 400m back straight, 400m turn.
  *
@@ -323,4 +290,84 @@ export function detectAtmosphere(
   return {
     type: "ATMOSPHERE",
   };
+}
+
+/**
+ * Detect jockey-related commentary events based on jockey traits, tier, and race context.
+ *
+ * @param runner - The runner to check for jockey events
+ * @param race - The current race
+ * @param simTime - Current simulation time
+ * @param hasAnnouncedStart - Whether start has been announced
+ * @param hasAnnouncedFinish - Whether finish has been announced
+ * @returns DetectedEvent for jockey commentary, or null
+ */
+export function detectJockeyEvents(
+  runner: Runner,
+  race: Race,
+  simTime: number,
+  hasAnnouncedStart: boolean,
+  hasAnnouncedFinish: boolean,
+): DetectedEvent | null {
+  if (!hasAnnouncedStart || hasAnnouncedFinish) return null;
+  const jockey = runner.jockey;
+  if (!jockey && !runner.jockeyName) return null;
+
+  // Elite jockey mastery
+  if (jockey && getJockeyTier(jockey) === "elite") {
+    return { type: "JOCKEY_MASTERY", horseId: runner.horseId };
+  }
+
+  // Apprentice jockey
+  if (jockey?.isApprentice) {
+    return { type: "JOCKEY_APPRENTICE", horseId: runner.horseId };
+  }
+
+  // Trait-based detection
+  if (jockey?.traits && jockey.traits.length > 0) {
+    const course = getCourseForRace(race);
+    const trackCondition = race.trackCondition;
+    const isGraded = !!race.graded;
+    const progress = runner.position / race.distance;
+
+    for (const trait of jockey.traits) {
+      const traitEvent = checkJockeyTrait(trait, simTime, progress, trackCondition, course?.circumference, course?.straightLength, isGraded, jockey.careerStarts);
+      if (traitEvent) {
+        return { type: "JOCKEY_TRAIT", horseId: runner.horseId, data: { trait } };
+      }
+    }
+  }
+
+  // Generic jockey tactic commentary (fallback)
+  return { type: "JOCKEY_TACTIC", horseId: runner.horseId };
+}
+
+function checkJockeyTrait(
+  trait: JockeyTrait,
+  simTime: number,
+  progress: number,
+  trackCondition?: string,
+  circumference?: number,
+  straightLength?: number,
+  isGraded?: boolean,
+  careerStarts?: number,
+): boolean {
+  switch (trait) {
+    case "gate_master":
+      return simTime < 5;
+    case "closer_instinct":
+      return progress > 0.7;
+    case "mud_master":
+      return trackCondition === "soft" || trackCondition === "heavy" || trackCondition === "yielding";
+    case "bullring_expert":
+      return circumference !== undefined && circumference < 1600;
+    case "long_straight_pro":
+      return straightLength !== undefined && straightLength > 400;
+    case "big_match_temperament":
+      return isGraded === true;
+    case "veteran_poise":
+      return careerStarts !== undefined && careerStarts > 5000;
+    default:
+      return false;
+  }
 }

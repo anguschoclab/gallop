@@ -1,9 +1,11 @@
 import type { Race } from "@/game/types";
 import { NARRATIVE_THRESHOLDS } from "@/constants/narrativeThresholds";
+import type { NarrativeEvent } from "./types";
 
 export interface Milestone {
   pos: number;
   id: number;
+  eventType: NarrativeEvent;
 }
 
 /**
@@ -19,12 +21,14 @@ export function generateDynamicMilestones(race: Race): Milestone[] {
   milestones.push({
     pos: distance * NARRATIVE_THRESHOLDS.HALFWAY_POSITION,
     id: 50,
+    eventType: "MILESTONE_HALFWAY",
   });
 
   if (distance >= NARRATIVE_THRESHOLDS.MIN_DISTANCE_FOR_FINAL_400) {
     milestones.push({
       pos: distance - NARRATIVE_THRESHOLDS.MILESTONE_FINAL_400M,
       id: 400,
+      eventType: "MILESTONE_FINAL_400",
     });
   }
 
@@ -32,6 +36,7 @@ export function generateDynamicMilestones(race: Race): Milestone[] {
     milestones.push({
       pos: distance - NARRATIVE_THRESHOLDS.MILESTONE_FINAL_200M,
       id: 200,
+      eventType: "MILESTONE_FINAL_200",
     });
   }
 
@@ -39,6 +44,7 @@ export function generateDynamicMilestones(race: Race): Milestone[] {
     milestones.push({
       pos: distance - NARRATIVE_THRESHOLDS.MILESTONE_FINAL_100M,
       id: 100,
+      eventType: "MILESTONE_FINAL_100",
     });
   }
 

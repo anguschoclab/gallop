@@ -115,6 +115,7 @@ function makeRunnerWithHorse(horse: Horse, overrides: Partial<Runner> = {}): Run
     draftingHorseId: null,
     runningStyle: "EP",
     horse,
+    jockeyName: "Test Jockey",
     ...overrides,
   } as Runner;
 }
