@@ -224,7 +224,7 @@ export function createTestGelding(overrides?: Partial<Horse>): Horse {
 export function createTestHorses(count: number, baseOverrides?: Partial<Horse>): Horse[] {
   return Array.from({ length: count }, (_, i) =>
     createTestHorse({
-      id: asHorseId(String(i + 1)), // Use raw string, createTestHorse adds test-horse-
+      id: asHorseId(`test-horse-${i + 1}`),
       name: `Test Horse ${i + 1}`,
       ...baseOverrides,
     }),
