@@ -1,0 +1,3 @@
+## 2024-06-11 - [Type .includes() targets as readonly Unions]
+**Learning:** Checking a union-typed variable against a statically defined array (e.g., `["info", "low"] as const`) causes a TypeScript error in `.includes()` because the array is inferred as a tuple of specific string literals, not the broader union.
+**Action:** Instead of typing the array as `as const` and using `as any` at the call site (`array.includes(val as any)`), explicitly type the constant array as `readonly SpecificUnionType[]`. This allows `.includes()` to accept the union natively and completely removes the need for `any`.
