@@ -3,6 +3,7 @@ import { findInvitationQualifiers } from "@/core/awards/invitations";
 import { createTestHorse } from "@/tests/helpers";
 import type { Race } from "@/core/race/types";
 import type { RaceId } from "@/core/types/branded";
+import type { JockeyId } from "@/core/types/branded";
 
 describe("findInvitationQualifiers", () => {
   it("should return qualifiers for player horses with top-3 finishes in G1 races for the given region", () => {
@@ -63,7 +64,7 @@ describe("findInvitationQualifiers", () => {
       ownership: { type: "player" },
       raceHistory: [
         {
-          raceId: "na-g1",
+          raceId: "na-g1" as RaceId,
           raceName: "NA G1 Race",
           position: 1,
           day: 100,
@@ -74,11 +75,11 @@ describe("findInvitationQualifiers", () => {
           winTime: 120,
           entries: 10,
           purse: 1000000,
-          jockeyId: "j1",
+          jockeyId: "j1" as JockeyId,
           jockeyName: "J1",
         },
         {
-          raceId: "na-g1",
+          raceId: "na-g1" as RaceId,
           raceName: "NA G1 Race",
           position: 4,
           day: 150,
@@ -89,11 +90,11 @@ describe("findInvitationQualifiers", () => {
           winTime: 120,
           entries: 10,
           purse: 1000000,
-          jockeyId: "j1",
+          jockeyId: "j1" as JockeyId,
           jockeyName: "J1",
         },
         {
-          raceId: "eu-g1",
+          raceId: "eu-g1" as RaceId,
           raceName: "EU G1 Race",
           position: 2,
           day: 200,
@@ -104,11 +105,11 @@ describe("findInvitationQualifiers", () => {
           winTime: 120,
           entries: 10,
           purse: 1000000,
-          jockeyId: "j1",
+          jockeyId: "j1" as JockeyId,
           jockeyName: "J1",
         },
         {
-          raceId: "na-g2",
+          raceId: "na-g2" as RaceId,
           raceName: "NA G2 Race",
           position: 1,
           day: 250,
@@ -119,7 +120,7 @@ describe("findInvitationQualifiers", () => {
           winTime: 120,
           entries: 10,
           purse: 500000,
-          jockeyId: "j1",
+          jockeyId: "j1" as JockeyId,
           jockeyName: "J1",
         },
       ],
@@ -131,7 +132,7 @@ describe("findInvitationQualifiers", () => {
       ownership: { type: "npc", stableId: "npc-1" },
       raceHistory: [
         {
-          raceId: "na-g1",
+          raceId: "na-g1" as RaceId,
           raceName: "NA G1 Race",
           position: 1,
           day: 110,
@@ -142,7 +143,7 @@ describe("findInvitationQualifiers", () => {
           winTime: 120,
           entries: 10,
           purse: 1000000,
-          jockeyId: "j1",
+          jockeyId: "j1" as JockeyId,
           jockeyName: "J1",
         },
       ],
@@ -188,7 +189,7 @@ describe("findInvitationQualifiers", () => {
       ownership: { type: "player" },
       raceHistory: [
         {
-          raceId: "na-g1",
+          raceId: "na-g1" as RaceId,
           raceName: "NA G1 Race",
           position: 1,
           day: 400,
@@ -199,7 +200,7 @@ describe("findInvitationQualifiers", () => {
           winTime: 120,
           entries: 10,
           purse: 1000000,
-          jockeyId: "j1",
+          jockeyId: "j1" as JockeyId,
           jockeyName: "J1",
         },
       ],
