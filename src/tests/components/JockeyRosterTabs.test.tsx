@@ -18,7 +18,12 @@ import { createTestJockey } from "@/tests/helpers";
 import { asJockeyId } from "@/core/types/branded";
 
 function mkJockey(id: string, overrides: Partial<Jockey> = {}) {
-  return createTestJockey({ id: asJockeyId(id), name: `Jockey ${id}`, contractUntil: 100, ...overrides });
+  return createTestJockey({
+    id: asJockeyId(id),
+    name: `Jockey ${id}`,
+    contractUntil: 100,
+    ...overrides,
+  });
 }
 
 const defaultProps: JockeyRosterTabsProps = {

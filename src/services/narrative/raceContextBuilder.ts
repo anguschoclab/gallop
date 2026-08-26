@@ -29,9 +29,7 @@ export function buildRaceContext(
   const raceKey = race.graded?.key;
   const prevWinner = seasonRecords
     .filter(
-      (r) =>
-        r.year < currentYear &&
-        (r.raceName === raceName || (raceKey && r.raceId === raceKey)),
+      (r) => r.year < currentYear && (r.raceName === raceName || (raceKey && r.raceId === raceKey)),
     )
     .sort((a, b) => b.year - a.year)[0];
 
