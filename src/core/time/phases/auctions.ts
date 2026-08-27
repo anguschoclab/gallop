@@ -13,6 +13,7 @@ import type { PipelineContext } from "../pipeline";
 import type { AuctionSale } from "@/game/types";
 import { generateAuctionLots } from "@/core/auction/engine";
 import { SALE_TRIGGERS } from "@/core/auction/data";
+import { getAuctionHouse, housePrestigeMultiplier } from "@/core/prestige/auctionHouses";
 import { createAuctionRunner } from "@/core/auction/runner";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { generateUUID } from "@/core/uuid";
