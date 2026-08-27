@@ -110,7 +110,7 @@ export const auctionsPhase = {
             horseId: lot.horseId,
             saleId: newSale.id,
             consignorStableId: lot.consignorStableId,
-            reservePrice: Math.round(lot.reservePrice * priceMultiplier),
+            reservePrice: Math.round(lot.reservePrice * priceMultiplier * housePremium),
             breezeSeconds: lot.breezeSeconds,
             reason: "npc_consignment",
           });
