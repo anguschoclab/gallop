@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  computePremiumBuyout,
-  computeDiplomaticPressure,
-} from "@/core/horse/overrideNegotiation";
+import { computePremiumBuyout, computeDiplomaticPressure } from "@/core/horse/overrideNegotiation";
 import type { HorseAttachment, AttachmentTier } from "@/core/horse/attachment";
 
 function mkAttachment(tier: AttachmentTier, score: number): HorseAttachment {
@@ -69,8 +66,9 @@ describe("overrideNegotiation", () => {
 
     it("odds decrease with higher attachment tier (same friction)", () => {
       const friction = 0;
-      const odds = TIER_SCORES.map(({ tier, score }) =>
-        computeDiplomaticPressure(mkAttachment(tier, score), 50000, friction, 50).odds,
+      const odds = TIER_SCORES.map(
+        ({ tier, score }) =>
+          computeDiplomaticPressure(mkAttachment(tier, score), 50000, friction, 50).odds,
       );
       expect(odds[0]).toBeGreaterThan(odds[1]);
       expect(odds[1]).toBeGreaterThan(odds[2]);

@@ -34,6 +34,20 @@ import { DYNAMIC_OPENERS, DYNAMIC_TRAILERS } from "@/assets/narrative/dynamicCla
  * @param context.lengths - Optional gap distance string
  * @param context.hasAnnouncedBio - Set of horses with announced biographies
  * @param context.lastRanks - Map of previous field ranks
+ * @param context.courseSpec
+ * @param context.courseSpec.straightLength
+ * @param context.courseSpec.circumference
+ * @param context.track
+ * @param context.track.elevation
+ * @param context.raceContext
+ * @param context.raceContext.defendingChampion
+ * @param context.raceContext.defendingChampion.horseName
+ * @param context.raceContext.defendingChampion.year
+ * @param context.raceContext.trackRecordTime
+ * @param context.raceContext.trackRecordHolder
+ * @param context.raceContext.previousFinishPositions
+ * @param context.raceContext.horseCourseVisits
+ * @param context.templateOverride
  * @param lineCounter - Object wrapping unique ID counter
  * @param lineCounter.value - The current counter value
  * @returns Formatted CommentaryLine object
@@ -65,14 +79,21 @@ export function generateCommentaryLine(
 ): CommentaryLine {
   const templates = context.templateOverride ?? TEMPLATES[type];
   if (!templates || templates.length === 0) {
-    return { id: `${type}-${lineCounter.value++}`, text: "", timestamp, type, horseId: context.runner?.horseId, receivedAt: Date.now() };
+    return {
+      id: `${type}-${lineCounter.value++}`,
+      text: "",
+      timestamp,
+      type,
+      horseId: context.runner?.horseId,
+      receivedAt: Date.now(),
+    };
   }
 
   let text: string;
 
   // 7A: Composable sentence fragments — 30% chance for SURGE, FLYING, FADE
   const composeTypes: NarrativeEvent[] = ["SURGE", "FLYING", "FADE"];
-  if (composeTypes.includes(type) && context.rng.next() < 0.30) {
+  if (composeTypes.includes(type) && context.rng.next() < 0.3) {
     const composed = composeSentence(type, context.rng);
     text = composed || templates[Math.floor(context.rng.next() * templates.length)];
   } else {
@@ -89,15 +110,20 @@ export function generateCommentaryLine(
   // 7C: Hybrid dynamic clause injection — 10% chance to prepend opener / append trailer
   // Skip for milestone and factual events to preserve exact template matching
   const skipClauses: NarrativeEvent[] = [
-    "MILESTONE", "MILESTONE_HALFWAY", "MILESTONE_FINAL_400",
-    "MILESTONE_FINAL_200", "MILESTONE_FINAL_100",
-    "START", "FINISH", "WEATHER_COMMENT",
+    "MILESTONE",
+    "MILESTONE_HALFWAY",
+    "MILESTONE_FINAL_400",
+    "MILESTONE_FINAL_200",
+    "MILESTONE_FINAL_100",
+    "START",
+    "FINISH",
+    "WEATHER_COMMENT",
   ];
-  if (!skipClauses.includes(type) && context.rng.next() < 0.10) {
+  if (!skipClauses.includes(type) && context.rng.next() < 0.1) {
     const opener = DYNAMIC_OPENERS[Math.floor(context.rng.next() * DYNAMIC_OPENERS.length)];
     text = `${opener} ${text}`;
   }
-  if (!skipClauses.includes(type) && context.rng.next() < 0.10) {
+  if (!skipClauses.includes(type) && context.rng.next() < 0.1) {
     const trailer = DYNAMIC_TRAILERS[Math.floor(context.rng.next() * DYNAMIC_TRAILERS.length)];
     text = `${text} ${trailer}`;
   }

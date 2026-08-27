@@ -96,14 +96,14 @@ describe("Dynamic Sentence Generation", () => {
     for (let i = 0; i < total; i++) {
       const rng = createRng(hashStr(`dynamic-stats-${i}`));
       const roll = rng.next();
-      if (roll < 0.30) composeCount++;
+      if (roll < 0.3) composeCount++;
       // Separate rng for procedural check
       const rng2 = createRng(hashStr(`dynamic-stats-proc-${i}`));
       if (rng2.next() < 0.15) proceduralCount++;
     }
 
     // Should be roughly 30% and 15% — allow wide margin for RNG
-    expect(composeCount).toBeGreaterThan(total * 0.20);
+    expect(composeCount).toBeGreaterThan(total * 0.2);
     expect(proceduralCount).toBeGreaterThan(total * 0.08);
   });
 });

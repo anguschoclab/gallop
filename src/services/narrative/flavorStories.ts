@@ -99,6 +99,26 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   jockeys: [
     {
+      headline: "Prominent Jockey Changes Representation",
+      body: "One of the leading riders in the standings has surprisingly parted ways with their long-time agent, sparking speculation about a shift in their seasonal strategy.",
+      category: "flavor",
+    },
+    {
+      headline: "Rivalry Brews in the Jockeys' Room",
+      body: "Tensions were high after yesterday's feature race as two top riders exchanged heated words over a disputed inquiry, promising fireworks in their future matchups.",
+      category: "flavor",
+    },
+    {
+      headline: "Apprentice Loses the Bug",
+      body: "A popular young rider successfully guided their final mount home as an apprentice today, officially losing their weight allowance and joining the journeyman ranks.",
+      category: "flavor",
+    },
+    {
+      headline: "Veteran Jockey Announces Return",
+      body: "A fan-favorite rider who had briefly stepped away from the sport has announced their intention to return to the saddle for the upcoming stakes festival.",
+      category: "flavor",
+    },
+    {
       headline: "Jockey Colony Sees Influx of Talent",
       body: "Several promising young riders have transferred their tack to the local circuit, raising the level of competition in the jockeys' room.",
       category: "flavor",
@@ -257,6 +277,46 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   weather: [
+    {
+      headline: "Sudden Thunderstorm Scatters Paddock",
+      body: "A brief but intense squall forced horses and handlers to scramble for cover during the saddling process, leaving everyone soaked but unharmed.",
+      category: "flavor",
+    },
+    {
+      headline: "Unseasonable Warmth Changes Track Dynamics",
+      body: "An unexpected spike in afternoon temperatures has caused the main track to dry out significantly faster than anticipated, favoring front-running speed.",
+      category: "flavor",
+    },
+    {
+      headline: "Heavy Overcast Casts Gloom Over Card",
+      body: "Dense cloud cover has settled over the venue, forcing track management to turn on the grandstand and track lights much earlier than usual.",
+      category: "flavor",
+    },
+    {
+      headline: "Track Crews Battle Lingering Frost",
+      body: "A stubborn overnight freeze has maintenance workers working continuously with harrows to ensure the inside rail is safe for morning training.",
+      category: "flavor",
+    },
+    {
+      headline: "Sudden Wind Shift Alters Tactics",
+      body: "A dramatic change in wind direction has turned a tailwind in the stretch into a stiff headwind, prompting riders to reconsider their late moves.",
+      category: "flavor",
+    },
+    {
+      headline: "Light Drizzle Prompts Shoe Changes",
+      body: "Steady, misty rain has trainers rushing to the paddock blacksmith to swap out equipment, ensuring their runners have maximum grip on the slicking surface.",
+      category: "flavor",
+    },
+    {
+      headline: "Rainbow Over the Backstretch",
+      body: "Following a brief morning shower, a brilliant double rainbow appeared over the far turn, creating a picturesque moment for early-arriving fans and photographers.",
+      category: "flavor",
+    },
+    {
+      headline: "Humidity Tests Equine Stamina",
+      body: "Oppressive humidity has blanketed the region, leading stewards to mandate extra cooling stations and additional water buckets in the winner's circle.",
+      category: "flavor",
+    },
     {
       headline: "Weather Alert: Clear Skies Ahead",
       body: "The regional meteorological bureau predicts ideal racing conditions for the next several days, with fast dirt and firm turf expected across most tracks.",

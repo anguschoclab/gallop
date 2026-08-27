@@ -1,3 +1,3 @@
-## 2024-08-19 - Flavor Stories System Discovery
-**Learning:** `src/services/narrative/flavorStories.ts` contains simple, static flavor news (no dynamic template variables) separated into themes (`track`, `jockeys`, `breeding`, `weather`, `community`, `industry`). The tone is professional but colorful, simulating realistic backstretch chatter and industry news. There are currently only 42 stories total, leading to frequent repetition over a long career.
-**Action:** Add more variants to the existing `FLAVOR_STORIES` array across the different themes to quickly and safely add content depth without touching any game logic.
+## 2024-05-19 - Adding more variety to narrative flavor stories
+**Learning:** The `flavorStories.ts` and `seedNewsSlots.ts` files contain hardcoded string arrays for generating news items that add flavor to the world. `flavorStories.ts` categorizes them by theme (track, jockeys, breeding, weather, community, industry). Some categories have < 20 templates.
+**Action:** When acting as Herald, I will add more entries to these lists to increase variety without changing game logic.

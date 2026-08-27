@@ -103,12 +103,18 @@ const HOUSE_BY_KIND: Partial<Record<AuctionSaleKind, AuctionHouse>> = (() => {
   return map;
 })();
 
-/** Look up a house by id. */
+/**
+ * Look up a house by id.
+ * @param id
+ */
 export function getAuctionHouse(id?: string): AuctionHouse | undefined {
   return id ? AUCTION_HOUSE_BY_ID[id] : undefined;
 }
 
-/** The house that stages a given sale kind. */
+/**
+ * The house that stages a given sale kind.
+ * @param kind
+ */
 export function getHouseForSaleKind(kind: AuctionSaleKind): AuctionHouse | undefined {
   return HOUSE_BY_KIND[kind];
 }
@@ -116,6 +122,9 @@ export function getHouseForSaleKind(kind: AuctionSaleKind): AuctionHouse | undef
 /**
  * Resolve the house for a sale, preferring an explicit id and falling back to
  * the sale kind (keeps saves made before houses existed working).
+ * @param sale
+ * @param sale.houseId
+ * @param sale.kind
  */
 export function resolveSaleHouse(sale: {
   houseId?: string;
@@ -124,13 +133,20 @@ export function resolveSaleHouse(sale: {
   return getAuctionHouse(sale.houseId) ?? getHouseForSaleKind(sale.kind);
 }
 
-/** Multiplier on ring money (reserves, valuations) for a house's prestige. */
+/**
+ * Multiplier on ring money (reserves, valuations) for a house's prestige.
+ * @param house
+ */
 export function housePrestigeMultiplier(house?: AuctionHouse): number {
   if (!house) return 1;
   return prestigeMultiplier(house.prestige, 0.25);
 }
 
-/** Total commission rate charged by a house on top of the base rate. */
+/**
+ * Total commission rate charged by a house on top of the base rate.
+ * @param baseRate
+ * @param house
+ */
 export function houseCommissionRate(baseRate: number, house?: AuctionHouse): number {
   return baseRate + (house?.commissionSurcharge ?? 0);
 }

@@ -6,8 +6,19 @@ import { createTransaction } from "@/core/transactions";
 import type { Transaction, TransactionSubcategory } from "@/core/transactions/transactionTypes";
 
 vi.mock("@tanstack/react-router", () => ({
-  Link: ({ children, ...props }: { children?: ReactNode; to?: string; params?: Record<string, unknown> }) =>
-    createElement("a", { ...props, href: props.to, "data-params": JSON.stringify(props.params ?? {}) }, children),
+  Link: ({
+    children,
+    ...props
+  }: {
+    children?: ReactNode;
+    to?: string;
+    params?: Record<string, unknown>;
+  }) =>
+    createElement(
+      "a",
+      { ...props, href: props.to, "data-params": JSON.stringify(props.params ?? {}) },
+      children,
+    ),
 }));
 
 function mkTx(
@@ -48,7 +59,13 @@ describe("TransactionLedger", () => {
     });
 
     it("renders single entry-fee transaction as a single row (not grouped)", () => {
-      const tx = mkTx({ subcategory: "entry_fee", amount: -500, day: 10, raceId: "race-1", description: "Entry fee for Big Race" });
+      const tx = mkTx({
+        subcategory: "entry_fee",
+        amount: -500,
+        day: 10,
+        raceId: "race-1",
+        description: "Entry fee for Big Race",
+      });
       renderLedger([tx]);
       expect(screen.getByText("Entry fee for Big Race")).toBeInTheDocument();
       expect(screen.queryByText(/race entries/i)).not.toBeInTheDocument();
@@ -56,8 +73,20 @@ describe("TransactionLedger", () => {
 
     it("renders multiple same-day entry-fee transactions as a grouped row", () => {
       const txs = [
-        mkTx({ subcategory: "entry_fee", amount: -500, day: 10, raceId: "r1", description: "Entry fee for Race A" }),
-        mkTx({ subcategory: "entry_fee", amount: -300, day: 10, raceId: "r2", description: "Entry fee for Race B" }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -500,
+          day: 10,
+          raceId: "r1",
+          description: "Entry fee for Race A",
+        }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -300,
+          day: 10,
+          raceId: "r2",
+          description: "Entry fee for Race B",
+        }),
       ];
       renderLedger(txs);
       expect(screen.getByText(/2 race entries/i)).toBeInTheDocument();
@@ -65,8 +94,20 @@ describe("TransactionLedger", () => {
 
     it("expands and collapses grouped row on click", () => {
       const txs = [
-        mkTx({ subcategory: "entry_fee", amount: -500, day: 10, raceId: "r1", description: "Entry fee for Race A" }),
-        mkTx({ subcategory: "entry_fee", amount: -300, day: 10, raceId: "r2", description: "Entry fee for Race B" }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -500,
+          day: 10,
+          raceId: "r1",
+          description: "Entry fee for Race A",
+        }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -300,
+          day: 10,
+          raceId: "r2",
+          description: "Entry fee for Race B",
+        }),
       ];
       renderLedger(txs);
 
@@ -90,7 +131,12 @@ describe("TransactionLedger", () => {
     it("renders plain text when child transaction has no raceId", () => {
       const txs = [
         mkTx({ subcategory: "entry_fee", amount: -500, day: 10, description: "Entry fee no race" }),
-        mkTx({ subcategory: "entry_fee", amount: -300, day: 10, description: "Entry fee no race 2" }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -300,
+          day: 10,
+          description: "Entry fee no race 2",
+        }),
       ];
       renderLedger(txs);
       fireEvent.click(screen.getByText(/2 race entries/i));
@@ -104,8 +150,20 @@ describe("TransactionLedger", () => {
 
     it("renders a link when child transaction has raceId", () => {
       const txs = [
-        mkTx({ subcategory: "entry_fee", amount: -500, day: 10, raceId: "race-42", description: "Entry fee for Big Race" }),
-        mkTx({ subcategory: "entry_fee", amount: -300, day: 10, raceId: "race-99", description: "Entry fee for Small Race" }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -500,
+          day: 10,
+          raceId: "race-42",
+          description: "Entry fee for Big Race",
+        }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -300,
+          day: 10,
+          raceId: "race-99",
+          description: "Entry fee for Small Race",
+        }),
       ];
       renderLedger(txs);
       fireEvent.click(screen.getByText(/2 race entries/i));
@@ -118,9 +176,27 @@ describe("TransactionLedger", () => {
 
     it("renders links for each expanded child with raceId", () => {
       const txs = [
-        mkTx({ subcategory: "entry_fee", amount: -500, day: 10, raceId: "race-a", description: "Entry fee for A" }),
-        mkTx({ subcategory: "entry_fee", amount: -300, day: 10, raceId: "race-b", description: "Entry fee for B" }),
-        mkTx({ subcategory: "entry_fee", amount: -200, day: 10, raceId: "race-c", description: "Entry fee for C" }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -500,
+          day: 10,
+          raceId: "race-a",
+          description: "Entry fee for A",
+        }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -300,
+          day: 10,
+          raceId: "race-b",
+          description: "Entry fee for B",
+        }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -200,
+          day: 10,
+          raceId: "race-c",
+          description: "Entry fee for C",
+        }),
       ];
       renderLedger(txs);
       fireEvent.click(screen.getByText(/3 race entries/i));
@@ -136,8 +212,20 @@ describe("TransactionLedger", () => {
   describe("Daily Net Cash Flow", () => {
     it("shows net flow on grouped row when multiple transactions exist on that day", () => {
       const txs = [
-        mkTx({ subcategory: "entry_fee", amount: -500, day: 10, raceId: "r1", description: "Entry fee for A" }),
-        mkTx({ subcategory: "entry_fee", amount: -300, day: 10, raceId: "r2", description: "Entry fee for B" }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -500,
+          day: 10,
+          raceId: "r1",
+          description: "Entry fee for A",
+        }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -300,
+          day: 10,
+          raceId: "r2",
+          description: "Entry fee for B",
+        }),
         mkTx({ subcategory: "prize_money", amount: 2000, day: 10, description: "Prize money" }),
       ];
       renderLedger(txs);
@@ -148,8 +236,20 @@ describe("TransactionLedger", () => {
 
     it("shows positive net flow (green/success) when income exceeds expenses", () => {
       const txs = [
-        mkTx({ subcategory: "entry_fee", amount: -500, day: 10, raceId: "r1", description: "Entry fee for A" }),
-        mkTx({ subcategory: "entry_fee", amount: -300, day: 10, raceId: "r2", description: "Entry fee for B" }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -500,
+          day: 10,
+          raceId: "r1",
+          description: "Entry fee for A",
+        }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -300,
+          day: 10,
+          raceId: "r2",
+          description: "Entry fee for B",
+        }),
         mkTx({ subcategory: "prize_money", amount: 5000, day: 10, description: "Prize" }),
       ];
       renderLedger(txs);
@@ -159,8 +259,20 @@ describe("TransactionLedger", () => {
 
     it("shows negative net flow (red/destructive) when expenses exceed income", () => {
       const txs = [
-        mkTx({ subcategory: "entry_fee", amount: -500, day: 10, raceId: "r1", description: "Entry fee for A" }),
-        mkTx({ subcategory: "entry_fee", amount: -300, day: 10, raceId: "r2", description: "Entry fee for B" }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -500,
+          day: 10,
+          raceId: "r1",
+          description: "Entry fee for A",
+        }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -300,
+          day: 10,
+          raceId: "r2",
+          description: "Entry fee for B",
+        }),
         mkTx({ subcategory: "upkeep", amount: -200, day: 10, description: "Upkeep" }),
       ];
       renderLedger(txs);
@@ -171,8 +283,20 @@ describe("TransactionLedger", () => {
 
     it("shows zero net flow when day has only entry-fee expenses and no income", () => {
       const txs = [
-        mkTx({ subcategory: "entry_fee", amount: -500, day: 10, raceId: "r1", description: "Entry fee for A" }),
-        mkTx({ subcategory: "entry_fee", amount: -300, day: 10, raceId: "r2", description: "Entry fee for B" }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -500,
+          day: 10,
+          raceId: "r1",
+          description: "Entry fee for A",
+        }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -300,
+          day: 10,
+          raceId: "r2",
+          description: "Entry fee for B",
+        }),
       ];
       renderLedger(txs);
       // Net = -500 - 300 = -800 (still negative since only expenses)
@@ -184,8 +308,20 @@ describe("TransactionLedger", () => {
 
     it("net flow uses ALL transactions for the day, not just entry fees", () => {
       const txs = [
-        mkTx({ subcategory: "entry_fee", amount: -500, day: 10, raceId: "r1", description: "Entry fee for A" }),
-        mkTx({ subcategory: "entry_fee", amount: -300, day: 10, raceId: "r2", description: "Entry fee for B" }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -500,
+          day: 10,
+          raceId: "r1",
+          description: "Entry fee for A",
+        }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -300,
+          day: 10,
+          raceId: "r2",
+          description: "Entry fee for B",
+        }),
         mkTx({ subcategory: "prize_money", amount: 1000, day: 10, description: "Prize" }),
         mkTx({ subcategory: "upkeep", amount: -100, day: 10, description: "Upkeep" }),
       ];
@@ -196,9 +332,26 @@ describe("TransactionLedger", () => {
 
     it("net flow does not include transactions from other days", () => {
       const txs = [
-        mkTx({ subcategory: "entry_fee", amount: -500, day: 10, raceId: "r1", description: "Entry fee for A" }),
-        mkTx({ subcategory: "entry_fee", amount: -300, day: 10, raceId: "r2", description: "Entry fee for B" }),
-        mkTx({ subcategory: "prize_money", amount: 10000, day: 5, description: "Prize from other day" }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -500,
+          day: 10,
+          raceId: "r1",
+          description: "Entry fee for A",
+        }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -300,
+          day: 10,
+          raceId: "r2",
+          description: "Entry fee for B",
+        }),
+        mkTx({
+          subcategory: "prize_money",
+          amount: 10000,
+          day: 5,
+          description: "Prize from other day",
+        }),
       ];
       renderLedger(txs);
       // Net for day 10 = -500 - 300 = -800 (not 10000 - 800 = 9200)
@@ -213,8 +366,20 @@ describe("TransactionLedger", () => {
   describe("Subcategory Filter", () => {
     it("shows all transaction types by default", () => {
       const txs = [
-        mkTx({ subcategory: "entry_fee", amount: -500, day: 10, raceId: "r1", description: "Entry fee for A" }),
-        mkTx({ subcategory: "entry_fee", amount: -300, day: 10, raceId: "r2", description: "Entry fee for B" }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -500,
+          day: 10,
+          raceId: "r1",
+          description: "Entry fee for A",
+        }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -300,
+          day: 10,
+          raceId: "r2",
+          description: "Entry fee for B",
+        }),
         mkTx({ subcategory: "prize_money", amount: 1000, day: 11, description: "Prize won" }),
         mkTx({ subcategory: "upkeep", amount: -200, day: 12, description: "Upkeep cost" }),
       ];
@@ -226,8 +391,20 @@ describe("TransactionLedger", () => {
 
     it("filtering to 'Entry Fee' shows only entry_fee transactions", () => {
       const txs = [
-        mkTx({ subcategory: "entry_fee", amount: -500, day: 10, raceId: "r1", description: "Entry fee for A" }),
-        mkTx({ subcategory: "entry_fee", amount: -300, day: 10, raceId: "r2", description: "Entry fee for B" }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -500,
+          day: 10,
+          raceId: "r1",
+          description: "Entry fee for A",
+        }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -300,
+          day: 10,
+          raceId: "r2",
+          description: "Entry fee for B",
+        }),
         mkTx({ subcategory: "prize_money", amount: 1000, day: 11, description: "Prize money" }),
         mkTx({ subcategory: "upkeep", amount: -200, day: 12, description: "Daily upkeep" }),
       ];
@@ -248,8 +425,20 @@ describe("TransactionLedger", () => {
 
     it("filtering to 'Prize Money' shows only prize_money transactions", () => {
       const txs = [
-        mkTx({ subcategory: "entry_fee", amount: -500, day: 10, raceId: "r1", description: "Entry fee for A" }),
-        mkTx({ subcategory: "entry_fee", amount: -300, day: 10, raceId: "r2", description: "Entry fee for B" }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -500,
+          day: 10,
+          raceId: "r1",
+          description: "Entry fee for A",
+        }),
+        mkTx({
+          subcategory: "entry_fee",
+          amount: -300,
+          day: 10,
+          raceId: "r2",
+          description: "Entry fee for B",
+        }),
         mkTx({ subcategory: "prize_money", amount: 1000, day: 11, description: "Prize money won" }),
       ];
       renderLedger(txs);

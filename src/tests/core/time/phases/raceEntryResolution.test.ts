@@ -136,7 +136,6 @@ describe("raceEntryResolutionPhase", () => {
               {
                 horseId: "weak-npc",
                 ownership: makeNpcOwned(asNpcStableId("s-other")),
-                
               },
             ],
             resolved: false,
@@ -211,7 +210,6 @@ describe("raceEntryResolutionPhase", () => {
               {
                 horseId: "weak-npc",
                 ownership: makeNpcOwned(asNpcStableId("s-other")),
-                
               },
             ],
             resolved: false,
@@ -266,7 +264,7 @@ describe("raceEntryResolutionPhase", () => {
             entryFee: 200,
             purse: 10000,
             fieldSize: 1,
-            entries: [{ horseId: "player-horse", ownership: makePlayerOwned()}],
+            entries: [{ horseId: "player-horse", ownership: makePlayerOwned() }],
             resolved: false,
           },
         ]),
@@ -314,7 +312,6 @@ describe("raceEntryResolutionPhase", () => {
               {
                 horseId: "npc-weak",
                 ownership: makeNpcOwned(asNpcStableId("s-npc")),
-                
               },
             ],
             resolved: false,
@@ -364,7 +361,6 @@ describe("raceEntryResolutionPhase", () => {
               {
                 horseId: "npc-horse",
                 ownership: makeNpcOwned(asNpcStableId("s-npc")),
-                
               },
             ],
             resolved: false,
@@ -445,7 +441,10 @@ describe("raceEntryResolutionPhase", () => {
     });
 
     it("should handle NPC entry from non-existent stable gracefully", () => {
-      const npcHorse = createTestHorse({ id: "npc-horse", ownership: makeNpcOwned("s-nonexistent") });
+      const npcHorse = createTestHorse({
+        id: "npc-horse",
+        ownership: makeNpcOwned("s-nonexistent"),
+      });
       const state: GameState = {
         ...createTestState(),
         horses: h2r([npcHorse]),
@@ -555,7 +554,11 @@ describe("raceEntryResolutionPhase", () => {
 
   describe("chemistry-aware backup jockey selection", () => {
     it("selects free agent with affinity over higher-fame jockey when no retainer and no AI manager", () => {
-      const npcHorse = createTestHorse({ id: "npc-horse", ownership: makeNpcOwned("s-npc"), runningStyle: "P" });
+      const npcHorse = createTestHorse({
+        id: "npc-horse",
+        ownership: makeNpcOwned("s-npc"),
+        runningStyle: "P",
+      });
       const state: GameState = {
         ...createTestState(),
         horses: h2r([npcHorse]),

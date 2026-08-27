@@ -166,9 +166,9 @@ export function PrivateSaleOfferDialog({
             valuation={valuation}
             cash={cash}
             onOverride={(type) => {
-              const pendingOffer = useGame.getState().privateSaleOffers.find(
-                (o) => o.horseId === horse.id && o.status === "pending",
-              );
+              const pendingOffer = useGame
+                .getState()
+                .privateSaleOffers.find((o) => o.horseId === horse.id && o.status === "pending");
               if (pendingOffer) {
                 const result = requestOverride(pendingOffer.id, type);
                 if (result.ok) {
