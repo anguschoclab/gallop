@@ -54,7 +54,7 @@ describe("raceCancellationPhase", () => {
         id: "race-one-entry",
         day: 12,
         entryFee: 500,
-        entries: [{ horseId: "h1", ownership: makePlayerOwned()}],
+        entries: [{ horseId: "h1", ownership: makePlayerOwned() }],
       });
       const state = makeGameState({ day: 10, races: r2r([race]) }) as GameState;
       const context = makePipelineContext({ newDay: 10, state }) as PipelineContext;
@@ -73,8 +73,8 @@ describe("raceCancellationPhase", () => {
         id: "race-two-entries",
         day: 12,
         entries: [
-          { horseId: "h1", ownership: makePlayerOwned(), },
-          { horseId: "h2", ownership: makeNpcOwned(asNpcStableId("s1"))},
+          { horseId: "h1", ownership: makePlayerOwned() },
+          { horseId: "h2", ownership: makeNpcOwned(asNpcStableId("s1")) },
         ],
       });
       const state = makeGameState({ day: 10, races: r2r([race]) }) as GameState;
@@ -158,7 +158,7 @@ describe("raceCancellationPhase", () => {
       const race = makeRace({
         id: "race-player-entry",
         day: 12,
-        entries: [{ horseId: "h-player", ownership: makePlayerOwned()}],
+        entries: [{ horseId: "h-player", ownership: makePlayerOwned() }],
       });
       const horse = createTestHorse({ id: "h-player", ownership: makePlayerOwned() });
       const state = makeGameState({
@@ -185,7 +185,6 @@ describe("raceCancellationPhase", () => {
           {
             horseId: "h-npc",
             ownership: makeNpcOwned(asNpcStableId("s1")),
-            
           },
         ],
       });
@@ -206,7 +205,6 @@ describe("raceCancellationPhase", () => {
           {
             horseId: "h-npc",
             ownership: makeNpcOwned(asNpcStableId("s-npc")),
-            
           },
         ],
       });
@@ -306,8 +304,8 @@ describe("raceCancellationPhase", () => {
         id: "race-above",
         day: 12,
         entries: [
-          { horseId: "h1", ownership: makePlayerOwned(), },
-          { horseId: "h2", ownership: makeNpcOwned(asNpcStableId("s1"))},
+          { horseId: "h1", ownership: makePlayerOwned() },
+          { horseId: "h2", ownership: makeNpcOwned(asNpcStableId("s1")) },
         ],
       });
       const state = makeGameState({ day: 10, races: r2r([raceBelow, raceAbove]) }) as GameState;

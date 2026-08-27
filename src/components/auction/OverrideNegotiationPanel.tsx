@@ -100,8 +100,7 @@ export function OverrideNegotiationPanel({
                 <AlertDialogTitle>Apply diplomatic pressure for {horse.name}?</AlertDialogTitle>
                 <AlertDialogDescription>
                   Success chance: {Math.round(diplomatic.odds * 100)}%. If successful, you pay{" "}
-                  {formatCurrency(diplomatic.successCost)} and the horse is released.
-                  {" "}
+                  {formatCurrency(diplomatic.successCost)} and the horse is released.{" "}
                   {diplomatic.failurePenalty}
                 </AlertDialogDescription>
               </AlertDialogHeader>

@@ -50,9 +50,10 @@ function createLiveFoalScenario(
     id: "dam-1",
     name: "Test Dam",
     age: 3, // Younger mare for lower complication rate
-    ownership: (overrides.damOwned ?? true)
-      ? makePlayerOwned()
-      : makeNpcOwned(asNpcStableId("npc-dam-stable")),
+    ownership:
+      (overrides.damOwned ?? true)
+        ? makePlayerOwned()
+        : makeNpcOwned(asNpcStableId("npc-dam-stable")),
   });
 
   const pregnancy: Pregnancy = {

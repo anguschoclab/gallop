@@ -1,10 +1,5 @@
 import { Info } from "lucide-react";
-import {
-  Tooltip,
-  TooltipProvider,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import type { HorseAttachment } from "@/core/horse/attachment";
 
 interface AttachmentBreakdownProps {

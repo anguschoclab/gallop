@@ -155,7 +155,9 @@ describe("OverrideNegotiationPanel", () => {
       />,
     );
 
-    const premiumButton = screen.getAllByRole("button").find((b) => /Premium/i.test(b.textContent || ""));
+    const premiumButton = screen
+      .getAllByRole("button")
+      .find((b) => /Premium/i.test(b.textContent || ""));
     expect(premiumButton).toBeTruthy();
     fireEvent.click(premiumButton!);
 
@@ -179,7 +181,9 @@ describe("OverrideNegotiationPanel", () => {
       />,
     );
 
-    const diploButton = screen.getAllByRole("button").find((b) => /Diplomatic/i.test(b.textContent || ""));
+    const diploButton = screen
+      .getAllByRole("button")
+      .find((b) => /Diplomatic/i.test(b.textContent || ""));
     expect(diploButton).toBeTruthy();
     fireEvent.click(diploButton!);
 

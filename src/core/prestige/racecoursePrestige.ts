@@ -66,28 +66,41 @@ function scores(): CourseScores {
   return cache;
 }
 
-/** Prestige score (0-100) for a racecourse by track id. */
+/**
+ * Prestige score (0-100) for a racecourse by track id.
+ * @param trackId
+ */
 export function getRacecoursePrestige(trackId?: string): number {
   if (!trackId) return FLOOR;
   return scores().byTrackId.get(trackId) ?? FLOOR;
 }
 
-/** Prestige score (0-100) for a racecourse by display name. */
+/**
+ * Prestige score (0-100) for a racecourse by display name.
+ * @param trackName
+ */
 export function getRacecoursePrestigeByName(trackName?: string): number {
   if (!trackName) return FLOOR;
   return scores().byTrackName.get(trackName) ?? FLOOR;
 }
 
-/** Multiplier on fame/reputation earned at a racecourse. */
+/**
+ * Multiplier on fame/reputation earned at a racecourse.
+ * @param trackId
+ * @param trackName
+ */
 export function racecoursePrestigeMultiplier(trackId?: string, trackName?: string): number {
-  const score = trackId
-    ? getRacecoursePrestige(trackId)
-    : getRacecoursePrestigeByName(trackName);
+  const score = trackId ? getRacecoursePrestige(trackId) : getRacecoursePrestigeByName(trackName);
   return prestigeMultiplier(score, 0.2);
 }
 
 /** Courses ranked by prestige, highest first. */
-export function rankedRacecourses(): { id: string; name: string; country: string; prestige: number }[] {
+export function rankedRacecourses(): {
+  id: string;
+  name: string;
+  country: string;
+  prestige: number;
+}[] {
   return TRACKS.map((t) => ({
     id: t.id,
     name: t.name,

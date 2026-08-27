@@ -157,12 +157,15 @@ export const privateSaleResolutionPhase: PipelinePhase = {
         } else if (offer.overrideType === "diplomatic") {
           // Diplomatic pressure: RNG-based success/failure
           const attachment = evaluateHorseAttachment(horse, stable);
-          const friction =
-            updatedNpcAIManager?.stableStates?.[stableId]?.friction ?? 0;
+          const friction = updatedNpcAIManager?.stableStates?.[stableId]?.friction ?? 0;
           const reputationScore = state.reputation?.score ?? 0;
           const { odds, successCost, failurePenalty } = computeDiplomaticPressure(
             attachment,
-            attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", allHorsesArray, horseMap)),
+            attachmentAdjustedAsk(
+              horse,
+              stable,
+              calculateLotValuation(horse, stable, "racing_age", allHorsesArray, horseMap),
+            ),
             friction,
             reputationScore,
           );
@@ -246,7 +249,13 @@ export const privateSaleResolutionPhase: PipelinePhase = {
       }
 
       // ── Normal pending offer handling ──
-      const marketValue = calculateLotValuation(horse, stable, "racing_age", allHorsesArray, horseMap);
+      const marketValue = calculateLotValuation(
+        horse,
+        stable,
+        "racing_age",
+        allHorsesArray,
+        horseMap,
+      );
       const attachment = evaluateHorseAttachment(horse, stable);
       const valuation = attachmentAdjustedAsk(horse, stable, marketValue);
       const offerRatio = offer.amount / valuation;

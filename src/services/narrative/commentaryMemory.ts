@@ -8,7 +8,14 @@ export interface HorseNarrativeArc {
   lastSurgeSimTime?: number;
 }
 
-const STRUGGLE_EVENTS: NarrativeEvent[] = ["FADE", "FLAGGING", "IN_TROUBLE", "AILING", "BATTLING", "BOXED_IN"];
+const STRUGGLE_EVENTS: NarrativeEvent[] = [
+  "FADE",
+  "FLAGGING",
+  "IN_TROUBLE",
+  "AILING",
+  "BATTLING",
+  "BOXED_IN",
+];
 const SURGE_EVENTS: NarrativeEvent[] = ["SURGE", "FLYING", "LEAD_CHANGE"];
 
 export class CommentaryMemory {

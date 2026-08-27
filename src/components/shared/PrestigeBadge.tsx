@@ -24,12 +24,7 @@ interface PrestigeBadgeProps {
   className?: string;
 }
 
-export function PrestigeBadge({
-  score,
-  label,
-  showScore = true,
-  className,
-}: PrestigeBadgeProps) {
+export function PrestigeBadge({ score, label, showScore = true, className }: PrestigeBadgeProps) {
   const tier = getPrestigeTier(score);
   return (
     <Badge

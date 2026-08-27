@@ -176,7 +176,11 @@ describe("NarrativeGenerator — Jockey Commentary", () => {
     const race = makeRace();
     const horse = makeHorseEntity();
     const stable = makeStable();
-    const apprenticeJockey = makeJockey({ name: "Young Rider", isApprentice: true, tier: "budget" });
+    const apprenticeJockey = makeJockey({
+      name: "Young Rider",
+      isApprentice: true,
+      tier: "budget",
+    });
     const gen = new NarrativeGenerator(race, [horse], [stable], rng);
 
     gen.update([makeRunner()], 0.1);
@@ -206,7 +210,10 @@ describe("NarrativeGenerator — Jockey Commentary", () => {
     const gen = new NarrativeGenerator(race, [horse], [stable], rng);
 
     // First tick triggers START + JOCKEY_TACTIC (default runner, mid-tier no traits)
-    const startRunner = makeRunner({ jockey: makeJockey({ tier: "budget", traits: [] }), jockeyName: "Other Jockey" });
+    const startRunner = makeRunner({
+      jockey: makeJockey({ tier: "budget", traits: [] }),
+      jockeyName: "Other Jockey",
+    });
     gen.update([startRunner], 0.1);
 
     // Second tick with gate_master jockey — different horseId to avoid cooldown conflict
@@ -236,7 +243,10 @@ describe("NarrativeGenerator — Jockey Commentary", () => {
     const gen = new NarrativeGenerator(race, [horse], [stable], rng);
 
     // First tick with a different horse to avoid cooldown conflict
-    const startRunner = makeRunner({ jockey: makeJockey({ tier: "budget", traits: [] }), jockeyName: "Other Jockey" });
+    const startRunner = makeRunner({
+      jockey: makeJockey({ tier: "budget", traits: [] }),
+      jockeyName: "Other Jockey",
+    });
     gen.update([startRunner], 0.1);
 
     // Second tick with mud_master jockey on a different horse
@@ -281,7 +291,13 @@ describe("NarrativeGenerator — Jockey Commentary", () => {
     const runner = makeRunner({ position: 300 });
     const lines = gen.update([runner], 12.0);
 
-    const jockeyTypes = ["JOCKEY_MOVE", "JOCKEY_TACTIC", "JOCKEY_MASTERY", "JOCKEY_APPRENTICE", "JOCKEY_TRAIT"];
+    const jockeyTypes = [
+      "JOCKEY_MOVE",
+      "JOCKEY_TACTIC",
+      "JOCKEY_MASTERY",
+      "JOCKEY_APPRENTICE",
+      "JOCKEY_TRAIT",
+    ];
     const jockeyLines = lines.filter((l) => jockeyTypes.includes(l.type));
     for (const line of jockeyLines) {
       expect(line.text).not.toContain("{jockey}");
@@ -298,7 +314,13 @@ describe("NarrativeGenerator — Jockey Commentary", () => {
 
     // First tick fires START + JOCKEY_TACTIC
     const lines1 = gen.update([makeRunner()], 0.1);
-    const jockeyTypes = ["JOCKEY_MOVE", "JOCKEY_TACTIC", "JOCKEY_MASTERY", "JOCKEY_APPRENTICE", "JOCKEY_TRAIT"];
+    const jockeyTypes = [
+      "JOCKEY_MOVE",
+      "JOCKEY_TACTIC",
+      "JOCKEY_MASTERY",
+      "JOCKEY_APPRENTICE",
+      "JOCKEY_TRAIT",
+    ];
     const jockeyLines1 = lines1.filter((l) => jockeyTypes.includes(l.type));
     expect(jockeyLines1.length).toBeGreaterThanOrEqual(1);
 
@@ -323,7 +345,13 @@ describe("NarrativeGenerator — Jockey Commentary", () => {
 
     // Post-finish tick — should not produce jockey commentary
     const lines = gen.update([finishedRunner], 61.0);
-    const jockeyTypes = ["JOCKEY_MOVE", "JOCKEY_TACTIC", "JOCKEY_MASTERY", "JOCKEY_APPRENTICE", "JOCKEY_TRAIT"];
+    const jockeyTypes = [
+      "JOCKEY_MOVE",
+      "JOCKEY_TACTIC",
+      "JOCKEY_MASTERY",
+      "JOCKEY_APPRENTICE",
+      "JOCKEY_TRAIT",
+    ];
     const jockeyLines = lines.filter((l) => jockeyTypes.includes(l.type));
     expect(jockeyLines.length).toBe(0);
   });
@@ -338,9 +366,19 @@ describe("NarrativeGenerator — Jockey Commentary", () => {
     gen.update([makeRunner()], 0.1);
 
     // Runner with no jockey data
-    const runner = makeRunner({ jockey: undefined, jockeyName: undefined, position: 200 }) as Runner;
+    const runner = makeRunner({
+      jockey: undefined,
+      jockeyName: undefined,
+      position: 200,
+    }) as Runner;
     const lines = gen.update([runner], 8.0);
-    const jockeyTypes = ["JOCKEY_MOVE", "JOCKEY_TACTIC", "JOCKEY_MASTERY", "JOCKEY_APPRENTICE", "JOCKEY_TRAIT"];
+    const jockeyTypes = [
+      "JOCKEY_MOVE",
+      "JOCKEY_TACTIC",
+      "JOCKEY_MASTERY",
+      "JOCKEY_APPRENTICE",
+      "JOCKEY_TRAIT",
+    ];
     const jockeyLines = lines.filter((l) => jockeyTypes.includes(l.type));
     expect(jockeyLines.length).toBe(0);
   });
@@ -370,7 +408,9 @@ describe("NarrativeGenerator — Jockey Commentary", () => {
     ];
     for (const trait of expectedTraits) {
       expect(JOCKEY_TRAIT_TEMPLATES[trait as keyof typeof JOCKEY_TRAIT_TEMPLATES]).toBeDefined();
-      expect(JOCKEY_TRAIT_TEMPLATES[trait as keyof typeof JOCKEY_TRAIT_TEMPLATES].length).toBeGreaterThanOrEqual(3);
+      expect(
+        JOCKEY_TRAIT_TEMPLATES[trait as keyof typeof JOCKEY_TRAIT_TEMPLATES].length,
+      ).toBeGreaterThanOrEqual(3);
     }
   });
 });

@@ -18,7 +18,10 @@ export const PRESTIGE_TIER_LABELS: Record<PrestigeTier, string> = {
   world: "World Class",
 };
 
-/** Bucket a 0-100 prestige score into a tier. */
+/**
+ * Bucket a 0-100 prestige score into a tier.
+ * @param score
+ */
 export function getPrestigeTier(score: number): PrestigeTier {
   if (score >= 90) return "world";
   if (score >= 72) return "premier";

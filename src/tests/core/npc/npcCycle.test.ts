@@ -177,7 +177,12 @@ describe("Simulation Determinism", () => {
     ];
 
     const mockHorses: Horse[] = [
-      createTestHorse({ id: "horse-1", name: "Star Runner", fame: 50, ownership: makeNpcOwned(asNpcStableId("stable-1")) }),
+      createTestHorse({
+        id: "horse-1",
+        name: "Star Runner",
+        fame: 50,
+        ownership: makeNpcOwned(asNpcStableId("stable-1")),
+      }),
     ];
 
     const mockRaces: Race[] = [

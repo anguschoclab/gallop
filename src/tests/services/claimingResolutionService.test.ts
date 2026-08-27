@@ -555,9 +555,7 @@ describe("processClaimingResolution — race not resolved / no claimingPrice", (
   it("resolved: false → processClaims returns empty, all eligible claims become losing refunds", () => {
     const race = mkRace({
       resolved: false,
-      entries: [
-        { horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) },
-      ],
+      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
     });
     const intent = mkClaimingIntent({
       id: "c-1",
@@ -583,9 +581,7 @@ describe("processClaimingResolution — race not resolved / no claimingPrice", (
   it("claimingPrice: undefined → same behavior as not resolved", () => {
     const race = mkRace({
       claimingPrice: undefined,
-      entries: [
-        { horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) },
-      ],
+      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
     });
     const intent = mkClaimingIntent({
       id: "c-1",
@@ -608,9 +604,7 @@ describe("processClaimingResolution — race not resolved / no claimingPrice", (
 describe("processClaimingResolution — horse edge cases", () => {
   it("horse not in horses array → claim becomes losing refund", () => {
     const race = mkRace({
-      entries: [
-        { horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) },
-      ],
+      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
     });
     const intent = mkClaimingIntent({
       id: "c-1",
@@ -741,9 +735,7 @@ describe("processClaimingResolution — mixed scenarios", () => {
 describe("processClaimingResolution — impact structure validation", () => {
   it("all impacts have correct day, phase, and valid UUID id", () => {
     const race = mkRace({
-      entries: [
-        { horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) },
-      ],
+      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
     });
     const intent = mkClaimingIntent({
       id: "c-1",
@@ -854,9 +846,7 @@ describe("processClaimingResolution — claimingPrice: 0 edge case", () => {
   it("claimingPrice: 0 behaves like undefined (falsy) — no transfers, eligible becomes losing refund", () => {
     const race = mkRace({
       claimingPrice: 0 as any,
-      entries: [
-        { horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) },
-      ],
+      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
     });
     const intent = mkClaimingIntent({
       id: "c-1",
@@ -883,9 +873,7 @@ describe("processClaimingResolution — claimingPrice: 0 edge case", () => {
 describe("processClaimingResolution — log impact content", () => {
   it("eligible claim log impacts have correct fields", () => {
     const race = mkRace({
-      entries: [
-        { horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) },
-      ],
+      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
     });
     const intent = mkClaimingIntent({
       id: "c-1",
@@ -946,9 +934,7 @@ describe("processClaimingResolution — log impact content", () => {
 describe("processClaimingResolution — impact reason fields", () => {
   it("claiming impact reason contains 'Claimed for' and formatted currency", () => {
     const race = mkRace({
-      entries: [
-        { horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) },
-      ],
+      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
     });
     const intent = mkClaimingIntent({
       id: "c-1",
@@ -973,9 +959,7 @@ describe("processClaimingResolution — newDay vs race.day", () => {
   it("impacts use newDay parameter, not race.day", () => {
     const race = mkRace({
       day: 10,
-      entries: [
-        { horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) },
-      ],
+      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
     });
     const intent = mkClaimingIntent({
       id: "c-1",

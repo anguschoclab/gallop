@@ -737,9 +737,7 @@ describe("RacingHandler", () => {
       const state = {
         cash: 5000,
         transactions: [],
-        horses: h2r([
-          { id: "h1", name: "Wild", ownership: makeUnowned() },
-        ] as unknown as Horse[]),
+        horses: h2r([{ id: "h1", name: "Wild", ownership: makeUnowned() }] as unknown as Horse[]),
         races: r2r([
           { id: "race-1", name: "Test Race", entries: [], entryFee: 1000 },
         ] as unknown as Race[]),
