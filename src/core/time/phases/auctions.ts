@@ -93,7 +93,9 @@ export const auctionsPhase = {
         auctions.push(newSale);
         logs.push({
           day: newDay,
-          text: `Catalog opens for ${trigger.name} — sale on Day ${saleDay}.`,
+          text: house
+            ? `${house.name} opens the catalog for ${trigger.name} — sale on Day ${saleDay}.`
+            : `Catalog opens for ${trigger.name} — sale on Day ${saleDay}.`,
         });
 
         // Emit consignment impacts for each NPC lot
