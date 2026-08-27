@@ -51,7 +51,7 @@ export function OverrideNegotiationPanel({
       <div className="flex flex-wrap gap-2">
         {/* Premium Buyout */}
         {cash < premium.cost ? (
-          <DisabledTooltipWrapper text="Insufficient funds for premium buyout">
+          <DisabledTooltipWrapper reason="Insufficient funds for premium buyout">
             <Button size="sm" variant="outline" disabled>
               Premium · {formatCurrency(premium.cost)}
             </Button>
@@ -83,7 +83,7 @@ export function OverrideNegotiationPanel({
 
         {/* Diplomatic Pressure */}
         {cash < diplomatic.successCost ? (
-          <DisabledTooltipWrapper text="Insufficient funds for diplomatic pressure">
+          <DisabledTooltipWrapper reason="Insufficient funds for diplomatic pressure">
             <Button size="sm" variant="outline" disabled>
               Diplomatic · {Math.round(diplomatic.odds * 100)}% odds
             </Button>
