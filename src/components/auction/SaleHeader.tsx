@@ -81,9 +81,7 @@ export function SaleHeader({
             </>
           )}
         </div>
-        {house && (
-          <p className="mt-2 text-xs text-cream/40 max-w-xl italic">{house.blurb}</p>
-        )}
+        {house && <p className="mt-2 text-xs text-cream/40 max-w-xl italic">{house.blurb}</p>}
       </div>
 
       <div className="flex flex-col items-end gap-1">

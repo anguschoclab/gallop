@@ -74,6 +74,12 @@ function containsBannedPhrase(text: string): boolean {
   return BANNED_PHRASES.some((phrase) => lower.includes(phrase));
 }
 
+/**
+ * Generate procedural text
+ * @param eventType
+ * @param rng
+ * @returns generated string
+ */
 export function generateProcedural(eventType: string, rng: Rng): string {
   const grammarKey = EVENT_GRAMMAR_KEY[eventType];
   if (!grammarKey) return "";

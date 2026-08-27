@@ -62,18 +62,38 @@ function buildLedgerRows(items: Transaction[]): LedgerRow[] {
 }
 
 const ALL_SUBCATEGORIES: TransactionSubcategory[] = [
-  "prize_money", "claiming_sale", "auction_sale", "private_sale", "stud_fee", "other_income",
-  "upkeep", "training", "veterinary", "farrier", "transport", "insurance",
-  "entry_fee", "jockey_fee", "breeding_fee", "horse_purchase", "facility_maintenance", "other_expense",
-  "player_deposit", "player_withdrawal",
-  "correction", "refund", "penalty",
+  "prize_money",
+  "claiming_sale",
+  "auction_sale",
+  "private_sale",
+  "stud_fee",
+  "other_income",
+  "upkeep",
+  "training",
+  "veterinary",
+  "farrier",
+  "transport",
+  "insurance",
+  "entry_fee",
+  "jockey_fee",
+  "breeding_fee",
+  "horse_purchase",
+  "facility_maintenance",
+  "other_expense",
+  "player_deposit",
+  "player_withdrawal",
+  "correction",
+  "refund",
+  "penalty",
 ];
 
 type DatePreset = "7d" | "30d" | "allTime" | "custom";
 
 export function TransactionLedger({ transactions, day }: TransactionLedgerProps) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
-  const [selectedSubcategory, setSelectedSubcategory] = useState<TransactionSubcategory | "all">("all");
+  const [selectedSubcategory, setSelectedSubcategory] = useState<TransactionSubcategory | "all">(
+    "all",
+  );
   const [dayRange, setDayRange] = useState<{ start: number; end: number }>({ start: 1, end: day });
   const [datePreset, setDatePreset] = useState<DatePreset>("allTime");
 

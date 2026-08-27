@@ -40,7 +40,7 @@ export const RETURNING_RUNNER_TEMPLATES: string[] = [
   "{horse} returns to this race having finished {prevPosition} previously — can they improve?",
   "Last time {horse} ran in this race, they crossed the line in {prevPosition} — today they want more.",
   "{horse} has been here before — {prevPosition} last time, but today could be different.",
- "The experience of finishing {prevPosition} in this race last time drives {horse} today.",
+  "The experience of finishing {prevPosition} in this race last time drives {horse} today.",
   "{horse} is back — last time it was {prevPosition}, but today they're chasing victory.",
   "A familiar race for {horse} — they were {prevPosition} in this contest before.",
   "{horse} has unfinished business in this race after finishing {prevPosition} last time.",

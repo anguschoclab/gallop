@@ -104,7 +104,12 @@ export function calculateTacticalAdjustment(
     const posDiff = r.position - runner.position;
 
     // Check rival presence (within 6m in either direction)
-    if (!nearbyRivalFound && hasRivals && Math.abs(posDiff) < 6 && rivalHorseIds!.includes(r.horseId)) {
+    if (
+      !nearbyRivalFound &&
+      hasRivals &&
+      Math.abs(posDiff) < 6 &&
+      rivalHorseIds!.includes(r.horseId)
+    ) {
       nearbyRivalFound = true;
     }
 

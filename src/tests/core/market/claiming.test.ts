@@ -43,7 +43,11 @@ describe("Claiming Mechanics", () => {
         claimingPrice: 10000,
         name: "Test Race",
       });
-      const horse = createTestHorse({ id: "horse-1", ownership: makeNpcOwned("stable-1"), name: "Test Horse" });
+      const horse = createTestHorse({
+        id: "horse-1",
+        ownership: makeNpcOwned("stable-1"),
+        name: "Test Horse",
+      });
       const claim: ClaimAttempt = {
         claimantStableId: "stable-2",
         horseId: "horse-1",

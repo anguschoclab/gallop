@@ -435,7 +435,12 @@ describe("generateNpcIntents — empty state handling", () => {
 
   it("should handle missing npcAIManager gracefully", () => {
     const stable = createTestStable({ id: "npc-1", cash: 500000, isMajor: true });
-    const horse = createTestHorse({ id: "h1", ownership: makeNpcOwned("npc-1"), age: 3, energy: 80 });
+    const horse = createTestHorse({
+      id: "h1",
+      ownership: makeNpcOwned("npc-1"),
+      age: 3,
+      energy: 80,
+    });
     const state = makeState([horse], [stable]);
     delete (state as any).npcAIManager;
     const intents = generateNpcIntents(state, 1);

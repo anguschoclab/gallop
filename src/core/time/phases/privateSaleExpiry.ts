@@ -32,7 +32,10 @@ export const privateSaleExpiryPhase = {
     const updatedOffers = offers
       .map((o) => {
         // Expire pending/countered offers that have hit their expiry day
-        if ((o.status === "pending" || o.status === "countered" || o.status === "override_pending") && newDay >= o.expiresDay) {
+        if (
+          (o.status === "pending" || o.status === "countered" || o.status === "override_pending") &&
+          newDay >= o.expiresDay
+        ) {
           // Find horse name for the toast/log
           const horse = horseMap.get(o.horseId);
           const stable = o.toStableId ? stableMap.get(o.toStableId) : undefined;
