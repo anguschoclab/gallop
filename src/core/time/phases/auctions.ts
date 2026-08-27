@@ -13,6 +13,7 @@ import type { PipelineContext } from "../pipeline";
 import type { AuctionSale } from "@/game/types";
 import { generateAuctionLots } from "@/core/auction/engine";
 import { SALE_TRIGGERS } from "@/core/auction/data";
+import { getAuctionHouse, housePrestigeMultiplier } from "@/core/prestige/auctionHouses";
 import { createAuctionRunner } from "@/core/auction/runner";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { generateUUID } from "@/core/uuid";
@@ -69,6 +70,9 @@ export const auctionsPhase = {
           trigger.name,
           context.dailyRng,
         );
+        newSale.houseId = trigger.houseId;
+        const house = getAuctionHouse(trigger.houseId);
+        const housePremium = housePrestigeMultiplier(house);
         const freshHorses = horsesForGen.slice(beforeCount);
         for (const horse of freshHorses) {
           impacts.push({
@@ -90,7 +94,9 @@ export const auctionsPhase = {
         auctions.push(newSale);
         logs.push({
           day: newDay,
-          text: `Catalog opens for ${trigger.name} — sale on Day ${saleDay}.`,
+          text: house
+            ? `${house.name} opens the catalog for ${trigger.name} — sale on Day ${saleDay}.`
+            : `Catalog opens for ${trigger.name} — sale on Day ${saleDay}.`,
         });
 
         // Emit consignment impacts for each NPC lot
@@ -105,7 +111,7 @@ export const auctionsPhase = {
             horseId: lot.horseId,
             saleId: newSale.id,
             consignorStableId: lot.consignorStableId,
-            reservePrice: Math.round(lot.reservePrice * priceMultiplier),
+            reservePrice: Math.round(lot.reservePrice * priceMultiplier * housePremium),
             breezeSeconds: lot.breezeSeconds,
             reason: "npc_consignment",
           });

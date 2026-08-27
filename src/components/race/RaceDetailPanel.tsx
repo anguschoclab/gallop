@@ -7,6 +7,8 @@ import {
   formatAllRestrictions,
 } from "@/core/race/restrictions";
 import { formatCurrency } from "@/core/common/formatting";
+import { getRacecoursePrestigeByName } from "@/core/prestige";
+import { PrestigeBadge } from "@/components/shared/PrestigeBadge";
 
 interface RaceDetailPanelProps {
   race: {
@@ -79,7 +81,10 @@ export function RaceDetailPanel({ race }: RaceDetailPanelProps) {
               </div>
               <div>
                 <span className="text-cream-muted">Track</span>
-                <div className="font-semibold text-cream">{graded.track}</div>
+                <div className="font-semibold text-cream flex items-center gap-2">
+                  {graded.track}
+                  <PrestigeBadge score={getRacecoursePrestigeByName(graded.track)} />
+                </div>
               </div>
             </>
           )}
