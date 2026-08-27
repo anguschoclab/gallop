@@ -65,6 +65,8 @@ export type AuctionSale = {
   kind: AuctionSaleKind;
   lots: AuctionLot[];
   resolved: boolean;
+  /** Auction house staging this sale (see @/core/prestige/auctionHouses). */
+  houseId?: string;
 };
 
 export type PrivateSaleStatus = "pending" | "accepted" | "countered" | "declined" | "expired";
