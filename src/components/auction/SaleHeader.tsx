@@ -13,6 +13,8 @@ import { KIND_LABELS } from "@/core/auction/data";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { cn } from "@/lib/cn";
 import type { AuctionSale } from "@/game/types";
+import { resolveSaleHouse } from "@/core/prestige";
+import { PrestigeBadge } from "@/components/shared/PrestigeBadge";
 
 interface SaleHeaderProps {
   sale: AuctionSale;
