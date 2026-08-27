@@ -67,6 +67,15 @@ export function calculateFameGainsForRaces(races: Race[]): Map<string, number> {
           fameGain += FAME_BONUS_MEDIUM_PURSE;
         }
 
+        // Winning at a prestigious racecourse is worth more to a horse's profile.
+        if (fameGain > 0) {
+          const venuePrestige = racecoursePrestigeMultiplier(
+            race.trackId ?? race.graded?.trackId,
+            race.track ?? race.graded?.track,
+          );
+          fameGain = Math.max(1, Math.round(fameGain * venuePrestige));
+        }
+
         if (fameGain > 0) {
           const current = fameGains.get(result.horseId) || 0;
           fameGains.set(result.horseId, current + fameGain);
