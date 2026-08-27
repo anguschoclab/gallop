@@ -5,6 +5,8 @@ import { seedStore } from "@/test-utils/renderWithStore";
 import { createDefaultGameState } from "@/game/store/state";
 import { SeasonStandingsWidget } from "@/components/dashboard/SeasonStandingsWidget";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
+import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({
@@ -26,7 +28,7 @@ describe("SeasonStandingsWidget — entity linking", () => {
     const horse = createTestHorse({
       id: "h1",
       name: "Thunder",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [
         {
           raceId: "r1",
@@ -45,7 +47,7 @@ describe("SeasonStandingsWidget — entity linking", () => {
     const horse2 = createTestHorse({
       id: "h2",
       name: "Lightning",
-      ownership: { type: "npc", stableId: asNpcStableId("npc1") },
+      ownership: makeNpcOwned(asNpcStableId("npc1")),
       raceHistory: [
         {
           raceId: "r2",

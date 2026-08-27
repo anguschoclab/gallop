@@ -4,6 +4,7 @@ import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleG
 import { createTestHorse } from "@/tests/helpers";
 import type { GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 describe("schedulerPhase", () => {
   it("should return context unchanged when no campaigns exist", () => {
@@ -23,7 +24,7 @@ describe("schedulerPhase", () => {
   });
 
   it("should skip campaigns for non-owned horses", () => {
-    const horse = createTestHorse({ id: "horse-1", ownership: { type: "unowned" } });
+    const horse = createTestHorse({ id: "horse-1", ownership: makeUnowned() });
     const campaign = {
       id: "camp-1",
       horseId: "horse-1",
@@ -52,7 +53,7 @@ describe("schedulerPhase", () => {
   });
 
   it("schedulerPhase does not emit cash_change for entry fees", () => {
-    const horse = createTestHorse({ id: "horse-1", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "horse-1", ownership: makePlayerOwned() });
     const campaign = {
       id: "camp-1",
       horseId: "horse-1",
@@ -100,7 +101,7 @@ describe("schedulerPhase", () => {
   });
 
   it("schedulerPhase does not double-enter horse already entered via intentCollection", () => {
-    const horse = createTestHorse({ id: "horse-dup", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "horse-dup", ownership: makePlayerOwned() });
     const campaign = {
       id: "camp-dup",
       horseId: "horse-dup",
@@ -132,7 +133,7 @@ describe("schedulerPhase", () => {
           purse: 10000,
           fieldSize: 8,
           // Horse already entered — simulates intentCollection having processed first
-          entries: [{ horseId: "horse-dup", ownership: { type: "player" } }],
+          entries: [{ horseId: "horse-dup", ownership: makePlayerOwned() }],
           resolved: false,
         },
       } as any,

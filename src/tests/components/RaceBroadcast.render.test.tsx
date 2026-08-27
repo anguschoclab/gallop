@@ -108,6 +108,7 @@ vi.mock("@/lib/cn", () => ({
 
 // ── Import after mocks ────────────────────────────────────────────────────────
 import { RaceBroadcast } from "@/components/race/RaceBroadcast";
+import { makeUnowned } from "@/core/horse/ownership";
 
 // ── Test fixtures ─────────────────────────────────────────────────────────────
 
@@ -116,7 +117,7 @@ function makeRunner(overrides: Partial<Record<string, unknown>> = {}) {
     horseId: "h1",
     name: "Test Horse",
     silk: "#ff0000",
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
     position: 0,
     velocity: 15,
     finishTime: null,

@@ -32,6 +32,7 @@ vi.mock("@/components/race/ConditionTimeline", () => ({
 // ── Import after mocks ────────────────────────────────────────────────────────
 
 import { ConditionTimelinePanel } from "@/components/race/ConditionTimelinePanel";
+import { makeUnowned } from "@/core/horse/ownership";
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────
 
@@ -40,7 +41,7 @@ function makeRunner(overrides: Partial<Record<string, unknown>> = {}): Runner {
     horseId: "h1",
     name: "Test Horse",
     silk: "#ff0000",
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
     position: 100,
     velocity: 15,
     finishTime: null,

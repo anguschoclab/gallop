@@ -5,6 +5,7 @@ import { seedStore } from "@/test-utils/renderWithStore";
 import { createDefaultGameState } from "@/game/store/state";
 import { NewsFeedWidget } from "@/components/dashboard/NewsFeedWidget";
 import { createTestHorse } from "@/tests/helpers";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({
@@ -25,7 +26,7 @@ describe("NewsFeedWidget — entity linking", () => {
     const horse = createTestHorse({
       id: "h1",
       name: "Thunder Strike",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     seedStore({
       ...createDefaultGameState(),
@@ -41,7 +42,7 @@ describe("NewsFeedWidget — entity linking", () => {
   });
 
   it("renders multiple log entries with auto-detected entities", () => {
-    const horse = createTestHorse({ id: "h1", name: "Lightning", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "h1", name: "Lightning", ownership: makePlayerOwned() });
     seedStore({
       ...createDefaultGameState(),
       horses: { [horse.id]: horse },

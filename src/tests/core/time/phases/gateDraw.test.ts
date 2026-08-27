@@ -1,3 +1,4 @@
+import type { RaceEntry } from "@/core/race/types";
 /**
  * gateDraw.test.ts - Tests for the gate draw phase
  */
@@ -9,6 +10,7 @@ import type { PipelineContext } from "@/core/time/pipeline";
 import type { InboxImpact } from "@/core/resolver/impacts/inboxImpacts";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function makeHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse(overrides);
@@ -83,16 +85,16 @@ function makeContext(races: Race[], horses: Horse[], newDay: number): PipelineCo
   };
 }
 
-function makeEntries(count: number): { horseId: string; owned: boolean }[] {
+function makeEntries(count: number): RaceEntry[] {
   return Array.from({ length: count }, (_, i) => ({
     horseId: `h${i + 1}`,
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
   }));
 }
 
 function makeHorsesForEntries(count: number): Horse[] {
   return Array.from({ length: count }, (_, i) =>
-    makeHorse({ id: `h${i + 1}`, name: `Horse ${i + 1}`, ownership: { type: "player" } }),
+    makeHorse({ id: `h${i + 1}`, name: `Horse ${i + 1}`, ownership: makePlayerOwned() }),
   );
 }
 
@@ -264,12 +266,12 @@ describe("gateDrawPhase", () => {
     ];
     // Non-graded horses need different IDs
     const nonGradedHorses = Array.from({ length: 2 }, (_, i) =>
-      makeHorse({ id: `hg${i + 1}`, name: `NG Horse ${i + 1}`, ownership: { type: "player" } }),
+      makeHorse({ id: `hg${i + 1}`, name: `NG Horse ${i + 1}`, ownership: makePlayerOwned() }),
     );
     const allHorses = [...makeHorsesForEntries(3), ...nonGradedHorses];
     const nonGradedEntriesFixed = nonGradedHorses.map((h) => ({
       horseId: h.id,
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     }));
 
     const g1Race = makeG1Race({ id: "g1r", day: 100, entries: g1Entries });
@@ -318,9 +320,9 @@ describe("gateDrawPhase", () => {
   // 13. Partial gates: race with some entries already having gates — only assign to unassigned
   it("Partial gates: preserves existing gates, assigns only to unassigned entries", () => {
     const entries = [
-      { horseId: "h1", ownership: { type: "player" }, gate: 3 },
-      { horseId: "h2", ownership: { type: "player" }, gate: 1 },
-      { horseId: "h3", ownership: { type: "player" } }, // no gate
+      { horseId: "h1", ownership: makePlayerOwned(), gate: 3 },
+      { horseId: "h2", ownership: makePlayerOwned(), gate: 1 },
+      { horseId: "h3", ownership: makePlayerOwned() }, // no gate
     ];
     const horses = makeHorsesForEntries(3);
     const race = makeG1Race({ id: "r1", day: 100, entries });

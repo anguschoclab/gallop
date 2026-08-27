@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { deriveEligibleRaces, findFirstEligibleRace } from "@/hooks/race/useHorseEligibleRaces";
 import type { Horse, Race, Jockey } from "@/game/types";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -10,7 +11,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     age: 4,
     gender: "horse",
     energy: 100,
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     lifecycleStatus: "active",
     ...overrides,
   });
@@ -129,7 +130,7 @@ describe("deriveEligibleRaces", () => {
     const horse = mkHorse({ id: "h1" });
     const race = mkRace({
       day: baseDay + 3,
-      entries: [{ horseId: "h1", ownership: { type: "player" } }],
+      entries: [{ horseId: "h1", ownership: makePlayerOwned() }],
     });
     const result = deriveEligibleRaces(horse, [race], [], 100000, baseDay);
     // isHorseEligibleForRace returns false for already-entered, so this should be empty

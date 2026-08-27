@@ -1,3 +1,5 @@
+import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned } from "@/core/horse/ownership";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { rollForInjury } from "@/core/health/healthSystem";
 import type { InjuryWeatherContext } from "@/core/health/healthSystem";
@@ -21,7 +23,7 @@ describe("healthSystem - rollForInjury", () => {
 
     baseHorse = {
       id: "h1",
-      stableId: "s1",
+      ownership: makeNpcOwned(asNpcStableId("s1")),
       energy: 100,
       genotype: { health: { bleeder: [0, 0] } },
       ocdRisk: 0,
@@ -66,7 +68,7 @@ describe("healthSystem - rollForInjury", () => {
   it("factors in vet bonus reducing injury chance", () => {
     const staff = [
       {
-        stableId: "s1",
+        ownership: makeNpcOwned(asNpcStableId("s1")),
         role: "veterinarian",
         bonusValue: 0.5,
       },

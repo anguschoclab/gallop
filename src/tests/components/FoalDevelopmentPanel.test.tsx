@@ -27,12 +27,13 @@ vi.mock("@tanstack/react-router", () => ({
 
 import { FoalDevelopmentPanel } from "@/components/horse/FoalDevelopmentPanel";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function makeHorse(overrides: Partial<Horse> = {}) {
   return createTestHorse({
     id: "foal-1",
     name: "Test Foal",
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     developmentArc: createDefaultFoalDevelopmentArc(0),
     ...overrides,
   });

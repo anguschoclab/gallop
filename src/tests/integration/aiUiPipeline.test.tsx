@@ -24,6 +24,7 @@ import type { PersonalityAIState } from "@/core/ai/personalitySystem";
 import type { Stable } from "@/game/types";
 import type { RaceRunner } from "@/core/race/types";
 import type { NewsItem } from "@/services/narrative/newsTypes";
+import { makeUnowned } from "@/core/horse/ownership";
 
 function createMockPersonalityState(
   overrides: Partial<PersonalityAIState> = {},
@@ -194,7 +195,7 @@ describe("AI UI Pipeline Integration", () => {
         horseId: "h1",
         name: "Thunder",
         silk: "red",
-        ownership: { type: "unowned" },
+        ownership: makeUnowned(),
         jockeyId: "j1",
         jockeyName: "Mike",
         runningStyle: "S",
@@ -219,7 +220,7 @@ describe("AI UI Pipeline Integration", () => {
         horseId: "h1",
         name: "Thunder",
         silk: "red",
-        ownership: { type: "unowned" },
+        ownership: makeUnowned(),
         jockeyId: "j1",
         jockeyName: "Mike",
       },

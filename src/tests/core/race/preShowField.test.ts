@@ -2,9 +2,9 @@ import { describe, it, expect } from "vitest";
 import { buildPreShowField, type PreShowRunner } from "@/core/race/preShowField";
 
 const runners: PreShowRunner[] = [
-  { horseId: "a", name: "Long Shot", silk: "#111", ownership: { type: "unowned" } },
-  { horseId: "b", name: "Favourite", silk: "#222", ownership: { type: "player" } },
-  { horseId: "c", name: "Mid", silk: "#333", ownership: { type: "unowned" } },
+  { horseId: "a", name: "Long Shot", silk: "#111", owned: false },
+  { horseId: "b", name: "Favourite", silk: "#222", owned: true },
+  { horseId: "c", name: "Mid", silk: "#333", owned: false },
 ];
 
 const odds = new Map<string, string>([

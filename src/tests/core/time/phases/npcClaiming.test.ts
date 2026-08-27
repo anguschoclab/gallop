@@ -4,6 +4,7 @@ import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleG
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import type { GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 describe("npcClaimingPhase", () => {
   it("should return context unchanged when no claiming races today", () => {
@@ -17,15 +18,14 @@ describe("npcClaimingPhase", () => {
   it("should not claim own horses", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stableId: "npc-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const stable = createTestStable({ id: "npc-1", cash: 1000000, horses: ["horse-1"] });
     const race = {
       id: "race-1",
       name: "Claiming Race",
       day: 10,
-      entries: [{ horseId: "horse-1", ownership: { type: "unowned" }, npc: true }],
+      entries: [{ horseId: "horse-1", ownership: makeUnowned(), npc: true }],
       fieldSize: 10,
       resolved: false,
       trackId: "track-1",
@@ -56,15 +56,14 @@ describe("npcClaimingPhase", () => {
   it("should file claim when price <= valuation * 0.85 and stable has cash", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stableId: "player",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     const stable = createTestStable({ id: "npc-1", cash: 1000000, horses: [] });
     const race = {
       id: "race-1",
       name: "Claiming Race",
       day: 10,
-      entries: [{ horseId: "horse-1", ownership: { type: "player" }, npc: false }],
+      entries: [{ horseId: "horse-1", ownership: makePlayerOwned(), npc: false }],
       fieldSize: 10,
       resolved: false,
       trackId: "track-1",
@@ -90,8 +89,7 @@ describe("npcClaimingPhase", () => {
   it("should not file duplicate claims", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stableId: "player",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     const stable = createTestStable({ id: "npc-1", cash: 1000000, horses: [] });
     const existingClaim = {
@@ -106,7 +104,7 @@ describe("npcClaimingPhase", () => {
       id: "race-1",
       name: "Claiming Race",
       day: 10,
-      entries: [{ horseId: "horse-1", ownership: { type: "player" }, npc: false }],
+      entries: [{ horseId: "horse-1", ownership: makePlayerOwned(), npc: false }],
       fieldSize: 10,
       resolved: false,
       trackId: "track-1",

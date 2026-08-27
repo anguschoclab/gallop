@@ -6,6 +6,7 @@ import { createDefaultGameState } from "@/game/store/state";
 import { RecapTab } from "@/components/briefing/RecapTab";
 import { createTestHorse } from "@/tests/helpers";
 import type { Race } from "@/core/race/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({
@@ -23,7 +24,7 @@ vi.mock("@tanstack/react-router", () => ({
 
 describe("RecapTab — entity linking", () => {
   it("renders race name as a Link to /race/$raceId", () => {
-    const horse = createTestHorse({ id: "h1", name: "Winner", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "h1", name: "Winner", ownership: makePlayerOwned() });
     const race = {
       id: "r1",
       name: "Grand Stakes",
@@ -33,7 +34,7 @@ describe("RecapTab — entity linking", () => {
       entryFee: 0,
       purse: 50000,
       fieldSize: 1,
-      entries: [{ horseId: "h1", ownership: { type: "player" } }],
+      entries: [{ horseId: "h1", ownership: makePlayerOwned() }],
       resolved: true,
       result: [{ horseId: "h1", position: 1, time: 90 }],
       graded: { key: "g1", grade: "G1", track: "Aintree", surface: "Turf" },

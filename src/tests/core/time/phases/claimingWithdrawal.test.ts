@@ -10,6 +10,7 @@ import type { GameState, Race } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { AnyIntent, WithdrawFromClaimingIntent } from "@/core/resolver/intents";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 describe("claimingWithdrawalPhase", () => {
   const createTestState = (): GameState => makeGameState({ day: 10 }) as GameState;
@@ -27,7 +28,7 @@ describe("claimingWithdrawalPhase", () => {
     purse: 10000,
     minStat: 70,
     fieldSize: 8,
-    entries: [{ horseId: "horse-1", ownership: { type: "player" } } as any],
+    entries: [{ horseId: "horse-1", ownership: makePlayerOwned() } as any],
     resolved: false,
     claimingPrice: 10000,
     ...overrides,
@@ -99,11 +100,11 @@ describe("claimingWithdrawalPhase", () => {
       races: r2r([
         makeRace({
           id: "race-1",
-          entries: [{ horseId: "horse-1", ownership: { type: "player" } } as any],
+          entries: [{ horseId: "horse-1", ownership: makePlayerOwned() } as any],
         }),
         makeRace({
           id: "race-2",
-          entries: [{ horseId: "horse-2", ownership: { type: "player" } } as any],
+          entries: [{ horseId: "horse-2", ownership: makePlayerOwned() } as any],
         }),
       ]),
     };
@@ -127,7 +128,7 @@ describe("claimingWithdrawalPhase", () => {
           entries: [
             {
               horseId: "horse-1",
-              ownership: { type: "player" },
+              ownership: makePlayerOwned(),
               withdrawnFromClaiming: true,
             } as any,
           ],

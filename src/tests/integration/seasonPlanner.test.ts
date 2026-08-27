@@ -10,6 +10,7 @@ import { BREEDING_FEE } from "@/constants";
 import type { StoreGet } from "@/game/store/types";
 import type { Horse, StudCareer, GameState } from "@/game/types";
 import type { MatingPlanEntry } from "@/game/store/state/breedingState";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function mkStud(overrides: Partial<StudCareer> = {}): StudCareer {
   return {
@@ -51,16 +52,14 @@ describe("Season Planner Integration", () => {
       name: "Sire 1",
       hemisphere: "Northern",
       stud: mkStud({ standingFee: 5000 }),
-      stableId: "npc-stable-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const sire2 = createTestStallion({
       id: "sire2",
       name: "Sire 2",
       hemisphere: "Northern",
       stud: mkStud({ standingFee: 8000 }),
-      stableId: "npc-stable-2",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
 
     const { slice, enqueueIntent } = makeMockStore({
@@ -156,8 +155,7 @@ describe("Season Planner Integration", () => {
       name: "Sire 1",
       hemisphere: "Northern",
       stud: mkStud(),
-      stableId: "npc-stable-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
 
     const outOfSeasonDay = 200;
@@ -191,8 +189,7 @@ describe("Season Planner Integration", () => {
       name: "Sire 1",
       hemisphere: "Northern",
       stud: mkStud(),
-      stableId: "npc-stable-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
 
     const { slice, enqueueIntent } = makeMockStore({
@@ -237,8 +234,7 @@ describe("Season Planner Integration", () => {
       name: "Sire 1",
       hemisphere: "Northern",
       stud: mkStud(),
-      stableId: "npc-stable-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
 
     const canBreedResult = canBreed(sire, mare, breedingDay, []);
@@ -264,7 +260,7 @@ describe("Season Planner Integration", () => {
       name: "Owned Sire",
       hemisphere: "Northern",
       stud: mkStud({ standingFee: 5000 }),
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
 
     const suggestions = suggestBestSires(mare, [owned], breedingDay);

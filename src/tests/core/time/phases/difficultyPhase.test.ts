@@ -4,7 +4,7 @@ import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Horse, Race } from "@/game/types";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import { asHorseId, asNpcStableId } from "@/core/types/branded";
-import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
+import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 import type { DifficultyState } from "@/core/ai/npcCycleAI";
 
 function makeHorse(overrides: Omit<Partial<Horse>, "id"> & { id?: string } = {}): Horse {
@@ -89,7 +89,7 @@ describe("difficultyPhase", () => {
   });
 
   it("initializes difficultyModulator if missing", () => {
-    const playerHorse = makeHorse({ id: "h1", ownership: { type: "player" } });
+    const playerHorse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
     const race = makeRace({
       id: "r1",
       resolved: true,
@@ -109,8 +109,8 @@ describe("difficultyPhase", () => {
   });
 
   it("accumulates player wins and entries from resolved races", () => {
-    const playerHorse = makeHorse({ id: "h1", ownership: { type: "player" } });
-    const playerHorse2 = makeHorse({ id: "h2", ownership: { type: "player" } });
+    const playerHorse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
+    const playerHorse2 = makeHorse({ id: "h2", ownership: makePlayerOwned() });
     const npcHorse = makeHorse({
       id: "h3",
       ownership: makeNpcOwned(asNpcStableId("s1")),
@@ -162,7 +162,7 @@ describe("difficultyPhase", () => {
   });
 
   it("adjusts npcCompetenceMultiplier when player wins too much (after 30 days)", () => {
-    const playerHorse = makeHorse({ id: "h1", ownership: { type: "player" } });
+    const playerHorse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
 
     const race = makeRace({
       id: "r1",
@@ -194,7 +194,7 @@ describe("difficultyPhase", () => {
   });
 
   it("adjusts npcCompetenceMultiplier downward when player loses too much", () => {
-    const playerHorse = makeHorse({ id: "h1", ownership: { type: "player" } });
+    const playerHorse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
 
     const race = makeRace({
       id: "r1",
@@ -221,7 +221,7 @@ describe("difficultyPhase", () => {
   });
 
   it("clamps npcCompetenceMultiplier at 1.3 max", () => {
-    const playerHorse = makeHorse({ id: "h1", ownership: { type: "player" } });
+    const playerHorse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
     const race = makeRace({
       id: "r1",
       day: 31,
@@ -245,7 +245,7 @@ describe("difficultyPhase", () => {
   });
 
   it("clamps npcCompetenceMultiplier at 0.7 min", () => {
-    const playerHorse = makeHorse({ id: "h1", ownership: { type: "player" } });
+    const playerHorse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
     const race = makeRace({
       id: "r1",
       day: 31,
@@ -269,7 +269,7 @@ describe("difficultyPhase", () => {
   });
 
   it("does not adjust before 30 days have passed", () => {
-    const playerHorse = makeHorse({ id: "h1", ownership: { type: "player" } });
+    const playerHorse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
     const race = makeRace({
       id: "r1",
       day: 25,
@@ -319,12 +319,12 @@ describe("difficultyPhase", () => {
   });
 
   it("skips unresolved races", () => {
-    const playerHorse = makeHorse({ id: "h1", ownership: { type: "player" } });
+    const playerHorse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
     const race = makeRace({
       id: "r1",
       day: 30,
       resolved: false,
-      entries: [{ horseId: "h1" as any, ownership: { type: "player" } }],
+      entries: [{ horseId: "h1" as any, ownership: makePlayerOwned() }],
       result: undefined,
     });
 

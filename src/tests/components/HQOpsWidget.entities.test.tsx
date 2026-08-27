@@ -5,6 +5,7 @@ import { seedStore } from "@/test-utils/renderWithStore";
 import { createDefaultGameState } from "@/game/store/state";
 import { HQOpsWidget } from "@/components/dashboard/HQOpsWidget";
 import { createTestHorse } from "@/tests/helpers";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({
@@ -22,7 +23,7 @@ vi.mock("@tanstack/react-router", () => ({
 
 describe("HQOpsWidget — entity linking", () => {
   it("renders reputation event description with NewsContent auto-detection", () => {
-    const horse = createTestHorse({ id: "h1", name: "Star Runner", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "h1", name: "Star Runner", ownership: makePlayerOwned() });
     seedStore({
       ...createDefaultGameState(),
       day: 55,

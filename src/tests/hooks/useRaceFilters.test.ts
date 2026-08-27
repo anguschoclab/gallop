@@ -3,6 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { useRaceFilters, type RaceFilters } from "@/hooks/race/useRaceFilters";
 import { DEFAULT_FIELD_SIZE } from "@/constants";
 import type { Race, Horse } from "@/game/types";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 const defaultFilters: RaceFilters = {
   grade: "all",
@@ -31,7 +32,7 @@ function mkHorse(id: string, overrides: Partial<Horse> = {}): Horse {
   return {
     id,
     name: `Horse-${id}`,
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     age: 4,
     gender: "colt",
     lifecycleStatus: "active",
@@ -95,8 +96,8 @@ describe("useRaceFilters — basic filtering", () => {
 
   it("filters by owned entries", () => {
     const races = [
-      mkRace("r1", { entries: [{ horseId: "h1", ownership: { type: "player" } } as any] }),
-      mkRace("r2", { entries: [{ horseId: "h2", ownership: { type: "unowned" } } as any] }),
+      mkRace("r1", { entries: [{ horseId: "h1", ownership: makePlayerOwned() } as any] }),
+      mkRace("r2", { entries: [{ horseId: "h2", ownership: makeUnowned() } as any] }),
     ];
 
     const { result } = renderHook(() =>
@@ -111,7 +112,7 @@ describe("useRaceFilters — basic filtering", () => {
     const races = [
       mkRace("r1", { entries: [], fieldSize: DEFAULT_FIELD_SIZE }),
       mkRace("r2", {
-        entries: new Array(DEFAULT_FIELD_SIZE).fill({ ownership: { type: "unowned" } }),
+        entries: new Array(DEFAULT_FIELD_SIZE).fill({ ownership: makeUnowned() }),
         fieldSize: DEFAULT_FIELD_SIZE,
       }),
     ];

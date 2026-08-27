@@ -50,6 +50,7 @@ vi.mock("@tanstack/react-router", () => ({
 
 // Import AFTER the mock so createFileRoute uses the mocked implementation.
 import { Route } from "@/routes/foal-development.$horseId";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 const FoalDevelopmentPage = () => {
   const Component = Route.options.component!;
@@ -84,7 +85,7 @@ describe("/foal-development/$horseId route guard", () => {
   it("redirects to /stable/$horseId when the horse has no development arc", () => {
     const horse = createTestHorse({
       id: "foal-1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       developmentArc: undefined,
     });
     seed([horse]);
@@ -110,7 +111,7 @@ describe("/foal-development/$horseId route guard", () => {
     });
     const horse = createTestHorse({
       id: "foal-1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       developmentArc: arc,
     });
     seed([horse], 60);
@@ -128,7 +129,7 @@ describe("/foal-development/$horseId route guard", () => {
   it("renders read-only countdown when the next milestone has not triggered yet", () => {
     const horse = createTestHorse({
       id: "foal-1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
     seed([horse], 5); // breaking_in triggers at day 18.
@@ -145,7 +146,7 @@ describe("/foal-development/$horseId route guard", () => {
     const horse = createTestHorse({
       id: "foal-1",
       name: "Test Foal",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
     seed([horse], 18);

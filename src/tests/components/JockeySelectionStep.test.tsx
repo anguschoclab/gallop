@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { JockeySelectionStep } from "@/components/race/JockeySelectionStep";
 import type { Horse, Jockey } from "@/game/types";
 import type { JockeyStats } from "@/core/jockey/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@/components/jockey/JockeyCard", () => ({
   JockeyCard: () => <div data-testid="jockey-card" />,
@@ -62,7 +63,7 @@ function makeHorse(overrides?: Partial<Horse>): Horse {
     form: 0,
     potential: 75,
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     fame: 50,
     runningStyle: "E",
     healthStatus: "healthy",

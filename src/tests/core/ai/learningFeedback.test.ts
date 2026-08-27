@@ -22,6 +22,7 @@ import {
 import type { Stable, Horse } from "@/game/types";
 import type { Race } from "@/core/race/types";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {
   return createTestStable({
@@ -141,7 +142,7 @@ describe("Learning Feedback Infrastructure", () => {
 describe("Claiming Learning Feedback Loop", () => {
   it("recordClaimingDecision stores decision context", () => {
     const stable = createMockStable();
-    const horse = createMockHorse({ id: "target-horse", stableId: "npc-2" });
+    const horse = createMockHorse({ id: "target-horse", ownership: makeNpcOwned("npc-2") });
     const race = {
       id: "race-1",
       name: "Claiming Race",
@@ -158,7 +159,7 @@ describe("Claiming Learning Feedback Loop", () => {
 
   it("recordClaimingOutcome updates learning state after resolution", () => {
     const stable = createMockStable();
-    const horse = createMockHorse({ id: "target-horse", stableId: "npc-2" });
+    const horse = createMockHorse({ id: "target-horse", ownership: makeNpcOwned("npc-2") });
     const race = {
       id: "race-1",
       name: "Claiming Race",
@@ -181,7 +182,7 @@ describe("Claiming Learning Feedback Loop", () => {
     const stable = createMockStable();
     const horse = createMockHorse({
       id: "target-horse",
-      stableId: "npc-2",
+      ownership: makeNpcOwned("npc-2"),
       energy: 50,
       form: 40,
     });

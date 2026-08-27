@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
 import { GradeBreakdown } from "@/components/race/GradeBreakdown";
 import type { Race, Horse } from "@/game/types";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function mkHorse(id: string, speed: number, acceleration: number): Horse {
   return {
@@ -18,7 +19,7 @@ function mkRace(id: string, grade: string, horseId: string): Race {
     day: 10,
     resolved: false,
     graded: { grade, track: "Test", surface: "Turf" },
-    entries: [{ horseId, ownership: { type: "player" } }],
+    entries: [{ horseId, ownership: makePlayerOwned() }],
   } as unknown as Race;
 }
 
@@ -57,9 +58,9 @@ describe("GradeBreakdown — multi-grade owned entries", () => {
     const race = {
       ...mkRace("r1", "G1", "h1"),
       entries: [
-        { horseId: "h1", ownership: { type: "player" } },
-        { horseId: "h2", ownership: { type: "unowned" } },
-        { horseId: "h3", ownership: { type: "unowned" } },
+        { horseId: "h1", ownership: makePlayerOwned() },
+        { horseId: "h2", ownership: makeUnowned() },
+        { horseId: "h3", ownership: makeUnowned() },
       ],
     } as unknown as Race;
 

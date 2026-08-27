@@ -3,6 +3,7 @@ import { render, screen, within } from "@testing-library/react";
 import { CompareMetricTable } from "@/components/horse/CompareMetricTable";
 import type { Horse } from "@/game/types";
 import type { RowData } from "@/hooks/horse/useHorseCompareRows";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@/components/SilkDot", () => ({
   SilkDot: ({ color }: { color: string }) => <span data-testid="silk-dot" data-color={color} />,
@@ -29,7 +30,7 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     silk: "#ff0000",
     ...overrides,
   }) as unknown as Horse;

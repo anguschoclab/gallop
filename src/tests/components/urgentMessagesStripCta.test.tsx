@@ -41,6 +41,7 @@ import { renderWithStore } from "@/test-utils/renderWithStore";
 import { createTestHorse } from "@/tests/helpers";
 import { createDefaultFoalDevelopmentArc } from "@/core/horse/foalDevelopment";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 describe("Foal development inbox CTA → route → back navigation", () => {
   afterEach(() => {
@@ -55,7 +56,7 @@ describe("Foal development inbox CTA → route → back navigation", () => {
         id: "msg-1",
         title: "Test Foal: Breaking In",
         body: "Test Foal is ready for Breaking In.",
-        priority: "action",
+        priority: "action" as const,
         cta: {
           route: "/foal-development/$horseId",
           params: { horseId: "foal-1" },
@@ -77,7 +78,7 @@ describe("Foal development inbox CTA → route → back navigation", () => {
         id: "msg-2",
         title: "Second Foal: Early Workouts",
         body: "...",
-        priority: "action",
+        priority: "action" as const,
         cta: {
           route: "/foal-development/$horseId",
           params: { horseId: "abc-123" },
@@ -95,7 +96,7 @@ describe("Foal development inbox CTA → route → back navigation", () => {
     const horse = createTestHorse({
       id: "foal-1",
       name: "Test Foal",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
     const Comp = FoalDevelopmentRoute.options.component as React.ComponentType;
@@ -112,7 +113,7 @@ describe("Foal development inbox CTA → route → back navigation", () => {
     const horse = createTestHorse({
       id: "foal-1",
       name: "Test Foal",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
     const Comp = FoalDevelopmentRoute.options.component as React.ComponentType;

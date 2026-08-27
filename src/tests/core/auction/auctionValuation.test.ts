@@ -4,7 +4,7 @@ import { createTestHorse, createTestStable } from "@/tests/helpers";
 
 describe("calculateLotValuation", () => {
   it("applies personality multipliers correctly for aggressive vs conservative", () => {
-    const horse = createTestHorse({ id: "1", name: "Test Horse", gender: "stallion", age: 3 });
+    const horse = createTestHorse({ id: "1", name: "Test Horse", gender: "horse", age: 3 });
     const aggressiveStable = createTestStable({ id: "stable-1", personality: "aggressive" });
     const aggressiveVal = calculateLotValuation(horse, aggressiveStable, "racing_age");
 
@@ -49,14 +49,20 @@ describe("calculateLotValuation", () => {
 
   it("gives breeder valuation boost for broodmares and blue hens", () => {
     const breederStable = createTestStable({ id: "breeder", personality: "breeder" });
-    const stallion = createTestHorse({ id: "5", gender: "stallion", age: 5 });
+    const stallion = createTestHorse({ id: "5", gender: "horse", age: 5 });
     const normalMare = createTestHorse({ id: "6", gender: "mare", damName: "Some Dam", age: 5 });
     const blueHenMare = createTestHorse({
       id: "7",
       gender: "mare",
       damName: "Some Dam",
       age: 5,
-      blueHenStatus: { isBlueHen: true, status: "proven", points: 100 },
+      blueHenStatus: {
+        isBlueHen: true,
+        stakesWinnersProduced: 3,
+        group1WinnersProduced: 1,
+        blueHenScore: 100,
+        foalsProduced: 6,
+      },
     });
 
     const stallionVal = calculateLotValuation(stallion, breederStable, "broodmare");

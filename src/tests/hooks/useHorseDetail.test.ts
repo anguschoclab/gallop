@@ -5,6 +5,7 @@ import { useHorseDetail } from "@/hooks/horse/useHorseDetail";
 import { renderHook } from "@testing-library/react";
 import type { Horse } from "@/game/types";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 // Mock IntersectionObserver (used by useHorseDetail's scroll section tracking)
 class MockIntersectionObserver {
@@ -57,7 +58,7 @@ function makeHorse(id: string, name: string): Horse {
     heterozygosity: 0.5,
     raceHistory: [],
     fame: 0,
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 1, Dirt: 1, Synthetic: 1 },
     mudAptitude: 1,

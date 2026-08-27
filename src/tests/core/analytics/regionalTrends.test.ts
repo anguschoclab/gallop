@@ -3,6 +3,7 @@ import { computeRegionTrends, regionKeyForRace } from "@/core/analytics/regional
 import { isInWindow, weekBucket } from "@/core/analytics/timeWindow";
 import type { Race } from "@/core/race/types";
 import type { Horse } from "@/core/horse/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 const race = (id: string, track?: string, grade?: "G1") =>
   ({
@@ -23,7 +24,7 @@ const horse = (raceId: string, day: number, position: number, earned: number) =>
   ({
     id: "h1",
     name: "Tester",
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     raceHistory: [
       {
         raceId,

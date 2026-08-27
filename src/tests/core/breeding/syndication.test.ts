@@ -17,6 +17,7 @@ import { SyndicationHandler } from "@/core/resolver/handlers/SyndicationHandler"
 import { generateUUID } from "@/core/uuid";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import type { Horse } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 describe("SyndicationValidator", () => {
   let validator: SyndicationValidator;
@@ -38,7 +39,7 @@ describe("SyndicationValidator", () => {
             { raceId: "race1", raceName: "Kentucky Derby", position: 1, day: 100, grade: "G1" },
           ],
           stud: { atStud: true, standingFee: 50000, bookSize: 50, seasonBookings: 0 },
-          ownership: { type: "player" },
+          ownership: makePlayerOwned(),
           fame: 50,
           lifetimeEarnings: 1000000,
           careerStarts: 10,
@@ -318,7 +319,7 @@ describe("resolveSyndicationIntent", () => {
             { raceId: "race1", raceName: "Kentucky Derby", position: 1, day: 100, grade: "G1" },
           ],
           stud: { atStud: true, standingFee: 50000, bookSize: 50, seasonBookings: 0 },
-          ownership: { type: "player" },
+          ownership: makePlayerOwned(),
           fame: 50,
           lifetimeEarnings: 1000000,
           careerStarts: 10,
@@ -443,7 +444,7 @@ describe("SyndicationHandler", () => {
             { raceId: "race1", raceName: "Kentucky Derby", position: 1, day: 100, grade: "G1" },
           ],
           stud: { atStud: true, standingFee: 50000, bookSize: 50, seasonBookings: 0 },
-          ownership: { type: "player" },
+          ownership: makePlayerOwned(),
           fame: 50,
           lifetimeEarnings: 1000000,
           careerStarts: 10,

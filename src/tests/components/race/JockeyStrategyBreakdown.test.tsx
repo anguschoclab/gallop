@@ -3,13 +3,14 @@ import { render, screen } from "@testing-library/react";
 import { JockeyStrategyBreakdown } from "@/components/race/JockeyStrategyBreakdown";
 import { TacticalAnalysisPanel } from "@/components/race/TacticalAnalysisPanel";
 import type { RaceRunner } from "@/core/race/types";
+import { makeUnowned } from "@/core/horse/ownership";
 
 function createMockRunner(overrides: Partial<RaceRunner> = {}): RaceRunner {
   return {
     horseId: "h1",
     name: "Thunder Bolt",
     silk: "red",
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
     jockeyId: "j1",
     jockeyName: "Mike Smith",
     gate: 1,

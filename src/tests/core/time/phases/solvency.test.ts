@@ -5,6 +5,7 @@ import { createTestHorse, createUnownedHorse } from "@/tests/helpers";
 import type { GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 import { asHorseId } from "@/core/types/branded";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 describe("solvencyPhase", () => {
   it("should skip if runEnded is true", () => {
@@ -116,7 +117,7 @@ describe("solvencyPhase", () => {
   it("should NOT count unowned horse in insolvency horse count", () => {
     const playerHorse = createTestHorse({
       id: asHorseId("player-h1"),
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     const unowned = createUnownedHorse({ id: asHorseId("unowned-h1") });
     const state = makeGameState({

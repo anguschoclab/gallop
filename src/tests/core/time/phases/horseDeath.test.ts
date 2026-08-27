@@ -4,6 +4,7 @@ import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleG
 import { createTestHorse } from "@/tests/helpers";
 import type { GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 describe("horseDeathPhase", () => {
   it("should skip already deceased horses", () => {
@@ -53,7 +54,7 @@ describe("horseDeathPhase", () => {
       age: 25,
       name: "Insured Horse",
       lifecycleStatus: "retired",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       insurancePolicy: {
         type: "mortality_only",
         startDate: 1,
@@ -77,7 +78,7 @@ describe("horseDeathPhase", () => {
       age: 25,
       name: "Beloved Horse",
       lifecycleStatus: "retired",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     const state = makeGameState({ horses: h2r([horse]) }) as GameState;
     const context = makePipelineContext({ state, newDay: 100 }) as PipelineContext;

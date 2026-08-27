@@ -3,6 +3,7 @@ import { generateNpcIntents } from "@/core/npc/intentGenerators";
 import type { GameState, Stable, Horse, Race } from "@/game/types";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 let shouldThrowForStable1 = false;
 
@@ -85,7 +86,7 @@ describe("generateNpcIntents — training intents", () => {
     const stable = createTestStable({ id: "npc-1", cash: 500000, isMajor: true });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "npc-1",
+      ownership: makeNpcOwned("npc-1"),
       age: 3,
       energy: 80,
     });
@@ -101,7 +102,7 @@ describe("generateNpcIntents — training intents", () => {
     const stable = createTestStable({ id: "npc-1", cash: 500000, isMajor: true });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "npc-1",
+      ownership: makeNpcOwned("npc-1"),
       age: 3,
       energy: 5,
     });
@@ -115,7 +116,7 @@ describe("generateNpcIntents — training intents", () => {
     const stable = createTestStable({ id: "npc-1", cash: 500000, isMajor: true });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "npc-1",
+      ownership: makeNpcOwned("npc-1"),
       age: 5,
       gender: "mare",
       energy: 80,
@@ -132,7 +133,7 @@ describe("generateNpcIntents — training intents", () => {
     const stable = createTestStable({ id: "npc-1", cash: 500000, isMajor: true });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "npc-1",
+      ownership: makeNpcOwned("npc-1"),
       age: 3,
       energy: 80,
     });
@@ -160,7 +161,7 @@ describe("generateNpcIntents — race entry intents", () => {
     const stable = createTestStable({ id: "npc-1", cash: 500000, isMajor: true });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "npc-1",
+      ownership: makeNpcOwned("npc-1"),
       age: 3,
       energy: 80,
     });
@@ -174,7 +175,7 @@ describe("generateNpcIntents — race entry intents", () => {
     const stable = createTestStable({ id: "npc-1", cash: 500000, isMajor: true });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "npc-1",
+      ownership: makeNpcOwned("npc-1"),
       age: 3,
       energy: 80,
     });
@@ -201,7 +202,7 @@ describe("generateNpcIntents — race entry intents", () => {
     const stable = createTestStable({ id: "npc-1", cash: 500000, isMajor: true });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "npc-1",
+      ownership: makeNpcOwned("npc-1"),
       age: 3,
       energy: 80,
     });
@@ -241,7 +242,7 @@ describe("generateNpcIntents — gelding intents", () => {
     const stable = createTestStable({ id: "npc-1", cash: 500000, isMajor: true });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "npc-1",
+      ownership: makeNpcOwned("npc-1"),
       age: 3,
       gender: "mare",
       energy: 80,
@@ -258,7 +259,7 @@ describe("generateNpcIntents — gelding intents", () => {
     const stable = createTestStable({ id: "npc-1", cash: 500000, isMajor: true });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "npc-1",
+      ownership: makeNpcOwned("npc-1"),
       age: 3,
       gender: "colt",
       energy: 80,
@@ -346,7 +347,7 @@ describe("generateNpcIntents — withdrawal intents", () => {
     const stable = createTestStable({ id: "npc-1", cash: 500000, isMajor: true });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "npc-1",
+      ownership: makeNpcOwned("npc-1"),
       age: 3,
       energy: 80,
     });
@@ -372,13 +373,13 @@ describe("generateNpcIntents — withdrawal intents", () => {
     const stable2 = createTestStable({ id: "npc-2", cash: 500000, isMajor: true });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "npc-1",
+      ownership: makeNpcOwned("npc-1"),
       age: 3,
       energy: 80,
     });
     const otherHorse = createTestHorse({
       id: "h2",
-      stableId: "npc-2",
+      ownership: makeNpcOwned("npc-2"),
       age: 3,
       energy: 80,
     });
@@ -434,7 +435,7 @@ describe("generateNpcIntents — empty state handling", () => {
 
   it("should handle missing npcAIManager gracefully", () => {
     const stable = createTestStable({ id: "npc-1", cash: 500000, isMajor: true });
-    const horse = createTestHorse({ id: "h1", stableId: "npc-1", age: 3, energy: 80 });
+    const horse = createTestHorse({ id: "h1", ownership: makeNpcOwned("npc-1"), age: 3, energy: 80 });
     const state = makeState([horse], [stable]);
     delete (state as any).npcAIManager;
     const intents = generateNpcIntents(state, 1);

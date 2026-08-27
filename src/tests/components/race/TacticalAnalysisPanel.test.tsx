@@ -2,13 +2,14 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { TacticalAnalysisPanel } from "@/components/race/TacticalAnalysisPanel";
 import type { RaceRunner } from "@/core/race/types";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function createMockRunner(overrides: Partial<RaceRunner> = {}): RaceRunner {
   return {
     horseId: "h1",
     name: "Thunder Bolt",
     silk: "red",
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
     jockeyId: "j1",
     jockeyName: "Mike Smith",
     gate: 1,
@@ -75,7 +76,7 @@ describe("TacticalAnalysisPanel", () => {
   });
 
   it("highlights player-owned runners", () => {
-    const runners = [createMockRunner({ ownership: { type: "player" }, horseId: "h-owned" })];
+    const runners = [createMockRunner({ ownership: makePlayerOwned(), horseId: "h-owned" })];
     render(<TacticalAnalysisPanel runners={runners} />);
     const breakdown = screen.getByTestId("strategy-breakdown");
     expect(breakdown.className).toContain("border-l-gold");

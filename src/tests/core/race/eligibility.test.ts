@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { getMinimumAgeForHemisphere, isHorseEligibleForRace } from "@/core/race/eligibility";
 import type { Horse, Race } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -130,7 +131,7 @@ describe("isHorseEligibleForRace", () => {
 
   it("rejects if horse already entered", () => {
     const h = mkHorse({ id: "already" });
-    const r = mkRace({ entries: [{ horseId: "already", ownership: { type: "player" } }] });
+    const r = mkRace({ entries: [{ horseId: "already", ownership: makePlayerOwned() }] });
     expect(isHorseEligibleForRace(h, r, new Set())).toBe(false);
   });
 });

@@ -16,6 +16,7 @@ vi.mock("@/core/horse/pricing", () => ({
 
 import { calculateOverallRating } from "@/core/horse/stats";
 import { horseMarketValue } from "@/core/horse/pricing";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({
@@ -38,7 +39,7 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     silk: "#ff0000",
     ...overrides,
   }) as unknown as Horse;

@@ -4,10 +4,11 @@ import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleG
 import { createTestHorse } from "@/tests/helpers";
 import type { GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 describe("consignmentResolutionPhase", () => {
   it("should convert consignment intents to impacts", () => {
-    const horse = createTestHorse({ id: "horse-1", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "horse-1", ownership: makePlayerOwned() });
     const auction = {
       id: "sale-1",
       day: 10,
@@ -42,7 +43,7 @@ describe("consignmentResolutionPhase", () => {
   });
 
   it("should skip consignment for already-resolved auctions", () => {
-    const horse = createTestHorse({ id: "horse-1", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "horse-1", ownership: makePlayerOwned() });
     const auction = {
       id: "sale-1",
       day: 10,
@@ -78,7 +79,7 @@ describe("consignmentResolutionPhase", () => {
   it("should skip consignment for already-consigned horses", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       consignedSaleId: "other-sale",
     });
     const auction = {
@@ -116,7 +117,7 @@ describe("consignmentResolutionPhase", () => {
   it("should handle withdrawal intents", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       consignedSaleId: "sale-1",
     });
     const auction = {

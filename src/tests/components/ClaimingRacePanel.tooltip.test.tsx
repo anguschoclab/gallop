@@ -10,6 +10,8 @@ vi.mock("@tanstack/react-router", () => ({
 
 import { ClaimingRacePanel } from "@/components/race/ClaimingRacePanel";
 import type { Race, Horse, Claim } from "@/game/types";
+import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({
@@ -31,7 +33,7 @@ const mkRace = (overrides: Partial<Race> = {}): Race =>
     purse: 10000,
     minStat: 70,
     fieldSize: 8,
-    entries: [{ horseId: "h1", ownership: { type: "npc", stableId: asNpcStableId("s1") } }],
+    entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("s1")) }],
     resolved: false,
     claiming: { price: 5000 },
     ...overrides,

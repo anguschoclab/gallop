@@ -4,6 +4,7 @@ import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { HorseManagementSection } from "@/components/horse/HorseManagementSection";
 import type { Horse } from "@/game/types";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
@@ -30,7 +31,7 @@ function createHorse(overrides: Partial<Horse> = {}): Horse {
     },
     potential: 70,
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     healthStatus: "healthy",
     lifecycleStatus: "active",
     racingViable: true,
@@ -49,7 +50,7 @@ describe("HorseManagementSection", () => {
   it("returns null when horse is not owned", () => {
     const { container } = renderWithStore(
       <HorseManagementSection
-        horse={createHorse({ ownership: { type: "unowned" } })}
+        horse={createHorse({ ownership: makeUnowned() })}
         isConsigned={false}
         day={1}
       />,

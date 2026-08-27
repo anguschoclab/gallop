@@ -4,6 +4,7 @@ import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleG
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import type { GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
+import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 
 describe("stallionRetirementPhase", () => {
   it("should skip non-NPC horses", () => {
@@ -11,7 +12,7 @@ describe("stallionRetirementPhase", () => {
       id: "horse-1",
       age: 8,
       gender: "horse",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     const state = makeGameState({ horses: h2r([horse]) }) as GameState;
     const context = makePipelineContext({ state, newDay: 100 }) as PipelineContext;
@@ -25,7 +26,7 @@ describe("stallionRetirementPhase", () => {
       id: "horse-1",
       age: 8,
       gender: "mare",
-      stableId: "npc-1",
+      ownership: makeNpcOwned("npc-1"),
     });
     const stable = createTestStable({ id: "npc-1", cash: 100000, horses: [] });
     const state = makeGameState({
@@ -43,7 +44,7 @@ describe("stallionRetirementPhase", () => {
       id: "horse-1",
       age: 8,
       gender: "horse",
-      stableId: "npc-1",
+      ownership: makeNpcOwned("npc-1"),
       stud: {
         atStud: true,
         standingFee: 5000,
@@ -71,7 +72,7 @@ describe("stallionRetirementPhase", () => {
       id: "horse-1",
       age: 3,
       gender: "horse",
-      stableId: "npc-1",
+      ownership: makeNpcOwned("npc-1"),
     });
     const stable = createTestStable({ id: "npc-1", cash: 100000, horses: [] });
     const state = makeGameState({
@@ -89,7 +90,7 @@ describe("stallionRetirementPhase", () => {
       id: "horse-1",
       age: 6,
       gender: "horse",
-      stableId: "npc-1",
+      ownership: makeNpcOwned("npc-1"),
       name: "Old Stallion",
     });
     const stable = createTestStable({ id: "npc-1", cash: 100000, horses: [] });
@@ -110,7 +111,7 @@ describe("stallionRetirementPhase", () => {
       id: "horse-1",
       age: 6,
       gender: "horse",
-      stableId: "npc-1",
+      ownership: makeNpcOwned("npc-1"),
       name: "Logged Stallion",
     });
     const stable = createTestStable({ id: "npc-1", cash: 100000, horses: [] });

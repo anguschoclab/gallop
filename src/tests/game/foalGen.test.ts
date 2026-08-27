@@ -5,6 +5,7 @@ import { createTestGenotype } from "@/tests/helpers/createTestGenotype";
 import { resolveGeneticMarkers } from "@/core/genetics/phenotype";
 import type { Horse, Pregnancy } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -26,7 +27,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     genotype: overrides.genotype ?? createTestGenotype(),
     geneticMarkers: resolveGeneticMarkers(overrides.genotype ?? createTestGenotype()),
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     fame: 0,
     lifecycleStatus: "active" as const,
     ...overrides,

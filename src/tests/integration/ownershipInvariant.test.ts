@@ -3,7 +3,7 @@ import fc from "fast-check";
 import { runPipelineForDay } from "@/tests/helpers/runPipeline";
 import { makeGameState, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { isPlayerOwned, makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 import { asNpcStableId, asHorseId } from "@/core/types/branded";
 import { UPKEEP_PER_HORSE } from "@/constants";
 import type { GameState, Horse, Stable } from "@/game/types";
@@ -51,7 +51,7 @@ function buildPopulation(params: {
     createTestHorse({
       id: asHorseId(`player-horse-${i}`),
       name: `Player Horse ${i}`,
-      ownership: { type: "player" } as any,
+      ownership: makePlayerOwned() as any,
     }),
   );
 
@@ -60,7 +60,7 @@ function buildPopulation(params: {
     return createTestHorse({
       id: asHorseId(`npc-horse-${i}`),
       name: `NPC Horse ${i}`,
-      ownership: { type: "npc", stableId: asNpcStableId(sid) } as any,
+      ownership: makeNpcOwned(asNpcStableId(sid)) as any,
     });
   });
 
@@ -68,7 +68,7 @@ function buildPopulation(params: {
     createTestHorse({
       id: asHorseId(`unowned-horse-${i}`),
       name: `Unowned Horse ${i}`,
-      ownership: { type: "unowned" } as any,
+      ownership: makeUnowned() as any,
     }),
   );
 

@@ -55,6 +55,7 @@ vi.mock("@tanstack/react-router", () => ({
 // ── Import after mocks ─────────────────────────────────────────────────────────
 import { RaceCard } from "@/components/race/RaceCard";
 import type { Race } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 
@@ -241,7 +242,7 @@ describe("RaceCard — end-to-end integration with WeatherForecastStrip", () => 
     ];
 
     const raceWithOwned = makeRace({
-      entries: [{ horseId: "horse-1", ownership: { type: "player" }, jockeyId: null }] as any,
+      entries: [{ horseId: "horse-1", ownership: makePlayerOwned(), jockeyId: null }] as any,
     });
     const html = render(raceWithOwned);
 

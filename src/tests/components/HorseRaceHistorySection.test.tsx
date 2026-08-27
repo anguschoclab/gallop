@@ -3,6 +3,7 @@ import { screen } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { HorseRaceHistorySection } from "@/components/horse/HorseRaceHistorySection";
 import type { Horse } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("sonner", () => ({
   toast: { error: vi.fn(), info: vi.fn(), success: vi.fn() },
@@ -25,7 +26,7 @@ function createHorse(overrides: Partial<Horse> = {}): Horse {
     },
     potential: 70,
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     healthStatus: "healthy",
     lifecycleStatus: "active",
     racingViable: true,

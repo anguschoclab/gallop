@@ -4,6 +4,7 @@ import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import { createRng } from "@/core/common/rng";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function makeMinimalState(races: Record<string, any> = {}): GameState {
   return {
@@ -63,7 +64,7 @@ describe("race_resolution intent processing", () => {
       day: 11,
       resolved: false,
       cancelled: false,
-      entries: [{ horseId: "h1", ownership: { type: "player" } }],
+      entries: [{ horseId: "h1", ownership: makePlayerOwned() }],
       distance: 1600,
       purse: 50000,
       trackCondition: "Fast",
@@ -88,7 +89,7 @@ describe("race_resolution intent processing", () => {
       day: 11,
       resolved: false,
       cancelled: false,
-      entries: [{ horseId: "h1", ownership: { type: "player" } }],
+      entries: [{ horseId: "h1", ownership: makePlayerOwned() }],
       distance: 1600,
       purse: 50000,
       trackCondition: "Fast",

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { BreedingHistoryTab } from "@/components/breeding/BreedingHistoryTab";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@/components/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (
@@ -61,7 +62,7 @@ describe("BreedingHistoryTab", () => {
       localHorseMap: new Map([
         [
           "f1",
-          { id: "f1", name: "Baby Foal", sireId: "s1", damId: "d1", ownership: { type: "player" } },
+          { id: "f1", name: "Baby Foal", sireId: "s1", damId: "d1", ownership: makePlayerOwned() },
         ],
         ["s1", { id: "s1", name: "Thunder" }],
         ["d1", { id: "d1", name: "Lightning" }],
@@ -93,7 +94,7 @@ describe("BreedingHistoryTab", () => {
             name: "Unnamed Foal",
             sireId: "s1",
             damId: "d1",
-            ownership: { type: "player" },
+            ownership: makePlayerOwned(),
           },
         ],
         ["s1", { id: "s1", name: "Thunder" }],
@@ -141,7 +142,7 @@ describe("BreedingHistoryTab", () => {
       localHorseMap: new Map([
         [
           "f1",
-          { id: "f1", name: "Baby Foal", sireId: "s1", damId: "d1", ownership: { type: "player" } },
+          { id: "f1", name: "Baby Foal", sireId: "s1", damId: "d1", ownership: makePlayerOwned() },
         ],
         ["s1", { id: "s1", name: "Thunder" }],
         ["d1", { id: "d1", name: "Lightning" }],

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { deriveHorseGenetics } from "@/core/horse/genetics-readout";
 import type { Horse } from "@/core/horse/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function makeLocus(a: number, b: number): [number, number] {
   return [a, b];
@@ -97,7 +98,7 @@ function makeHorse(overrides: Partial<Horse> = {}): Horse {
     foalingEase: 1.4,
     heterozygosity: 0.5,
     fame: 0,
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 },
     mudAptitude: 1.0,

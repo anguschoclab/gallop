@@ -14,6 +14,7 @@ import {
 } from "@/core/ai/claimingAI";
 import type { Horse, Race, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function createMockHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -257,7 +258,7 @@ describe("shouldClaimHorse", () => {
   it("friction multiplier increases valueScore for player-owned with friction >= 50", () => {
     const stable = createMockStable({ cash: 1000000 });
     const state = createClaimingAIState(stable);
-    const playerHorse = createMockHorse({ ownership: { type: "player" } });
+    const playerHorse = createMockHorse({ ownership: makePlayerOwned() });
     const race = createMockRace({ claimingPrice: 50000 });
 
     const withoutFriction = shouldClaimHorse(state, playerHorse, race, stable, 1, 0);

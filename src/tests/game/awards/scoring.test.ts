@@ -11,6 +11,7 @@ import {
 import type { Horse, Race } from "@/game/types";
 import type { AwardRegion, RegionalAwardCategory } from "@/core/awards/types";
 import { createTestHorse } from "@/tests/helpers";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 describe("calculateAwardPoints", () => {
   it("should return 0 for races outside the award year", () => {
@@ -30,7 +31,7 @@ describe("calculateAwardPoints", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [
         {
@@ -93,7 +94,7 @@ describe("calculateAwardPoints", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [
         {
@@ -156,7 +157,7 @@ describe("calculateAwardPoints", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [
         {
@@ -221,7 +222,7 @@ describe("calculateAwardPoints", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [
         {
@@ -285,7 +286,7 @@ describe("calculateAwardPoints", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [],
     });
@@ -312,7 +313,7 @@ describe("calculateAwardPoints", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [
         {
@@ -378,7 +379,7 @@ describe("determineRegionalWinners", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [],
     });
@@ -407,7 +408,7 @@ describe("determineRegionalWinners", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [],
     });
@@ -436,7 +437,7 @@ describe("determineAllRegionalWinners", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [],
     });
@@ -462,7 +463,7 @@ describe("determineAllRegionalWinners", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [],
     });

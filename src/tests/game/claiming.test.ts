@@ -13,6 +13,7 @@ import {
 import { createRng } from "@/core/common/rng";
 import { createTestHorse } from "@/tests/helpers";
 import type { Horse, Race } from "@/game/types";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 describe("processClaims", () => {
   it("should return empty result when race is not a claiming race", () => {
@@ -97,9 +98,8 @@ describe("processClaims", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       fame: 50,
-      stableId: "stable-1",
       raceHistory: [],
     });
 
@@ -154,9 +154,8 @@ describe("processClaims", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       fame: 50,
-      stableId: "stable-1",
       raceHistory: [],
     });
 
@@ -228,13 +227,11 @@ describe("processClaims", () => {
 
     const horse1 = createTestHorse({
       id: "horse-1",
-      stableId: "stable-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const horse2 = createTestHorse({
       id: "horse-2",
-      stableId: "stable-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
 
     const claims: ClaimAttempt[] = [
@@ -266,8 +263,7 @@ describe("processClaims", () => {
 
     const horse1 = createTestHorse({
       id: "horse-1",
-      stableId: "stable-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
 
     const claims: ClaimAttempt[] = [
@@ -305,7 +301,7 @@ describe("isHorseEligibleForClaimingPrice", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [],
     });
@@ -332,7 +328,7 @@ describe("isHorseEligibleForClaimingPrice", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [],
     });
@@ -359,7 +355,7 @@ describe("isHorseEligibleForClaimingPrice", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [
         {
@@ -398,7 +394,7 @@ describe("isHorseEligibleForClaimingPrice", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [
         {
@@ -438,7 +434,7 @@ describe("getSuggestedClaimingPriceRange", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [],
     });
@@ -466,7 +462,7 @@ describe("getSuggestedClaimingPriceRange", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [],
     });
@@ -494,7 +490,7 @@ describe("getSuggestedClaimingPriceRange", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [],
     });

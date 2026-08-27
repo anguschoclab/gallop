@@ -3,6 +3,7 @@ import { getG1WinsForStable } from "@/core/awards/connectionTrophies";
 import { createTestHorse, createTestNpcHorse, createUnownedHorse } from "@/tests/helpers";
 import { h2r } from "@/tests/helpers/sampleGameState";
 import type { GameState } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 const G1_RACE = {
   raceId: "g1-test",
@@ -24,7 +25,7 @@ describe("getG1WinsForStable", () => {
     const playerHorse = createTestHorse({
       id: "player-h1",
       name: "Player Champion",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [G1_RACE],
     });
     const state = { horses: h2r([playerHorse]) } as Pick<GameState, "horses">;
@@ -51,7 +52,7 @@ describe("getG1WinsForStable", () => {
     const playerHorse = createTestHorse({
       id: "player-h1",
       name: "Player Champion",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [G1_RACE],
     });
     const unownedHorse = createUnownedHorse({

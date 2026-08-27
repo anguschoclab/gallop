@@ -1,3 +1,4 @@
+import { makePlayerOwned } from "@/core/horse/ownership";
 import { describe, it, expect } from "vitest";
 import { NarrativeGenerator } from "@/services/narrative/narrativeService";
 import { CommentaryMemory } from "@/services/narrative/commentaryMemory";
@@ -89,7 +90,7 @@ function makeHorseEntity(overrides: Omit<Partial<Horse>, "id"> & { id?: string }
     heterozygosity: 0.5,
     raceHistory: [],
     fame: 0,
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 1, Dirt: 1, Synthetic: 1 },
     mudAptitude: 1,

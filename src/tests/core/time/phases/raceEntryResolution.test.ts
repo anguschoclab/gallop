@@ -13,6 +13,8 @@ import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import type { RaceEntryImpact } from "@/core/resolver/impacts/raceImpacts";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import { createJockeyAIState } from "@/core/ai/jockeyAI";
+import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 
 describe("raceEntryResolutionPhase", () => {
   const createTestState = (): GameState =>
@@ -91,7 +93,7 @@ describe("raceEntryResolutionPhase", () => {
     it("generates a race_entry impact with bumpEntryHorseId when NPC challenger outclasses weakest entry", () => {
       const weakHorse = createTestHorse({
         id: "weak-npc",
-        stableId: "s-other",
+        ownership: makeNpcOwned("s-other"),
         stats: {
           speed: 50,
           stamina: 50,
@@ -103,7 +105,7 @@ describe("raceEntryResolutionPhase", () => {
       });
       const challenger = createTestHorse({
         id: "strong-challenger",
-        stableId: "s1",
+        ownership: makeNpcOwned("s1"),
         stats: {
           speed: 80,
           stamina: 80,
@@ -133,8 +135,8 @@ describe("raceEntryResolutionPhase", () => {
             entries: [
               {
                 horseId: "weak-npc",
-                ownership: { type: "npc", stableId: asNpcStableId("s-other") },
-                npc: true,
+                ownership: makeNpcOwned(asNpcStableId("s-other")),
+                
               },
             ],
             resolved: false,
@@ -166,7 +168,7 @@ describe("raceEntryResolutionPhase", () => {
     it("does NOT bump when challenger rating is within BUMP_RATING_MARGIN of weakest", () => {
       const weakHorse = createTestHorse({
         id: "weak-npc",
-        stableId: "s-other",
+        ownership: makeNpcOwned("s-other"),
         stats: {
           speed: 65,
           stamina: 65,
@@ -178,7 +180,7 @@ describe("raceEntryResolutionPhase", () => {
       });
       const challenger = createTestHorse({
         id: "challenger",
-        stableId: "s1",
+        ownership: makeNpcOwned("s1"),
         stats: {
           speed: 66,
           stamina: 66,
@@ -208,8 +210,8 @@ describe("raceEntryResolutionPhase", () => {
             entries: [
               {
                 horseId: "weak-npc",
-                ownership: { type: "npc", stableId: asNpcStableId("s-other") },
-                npc: true,
+                ownership: makeNpcOwned(asNpcStableId("s-other")),
+                
               },
             ],
             resolved: false,
@@ -237,10 +239,10 @@ describe("raceEntryResolutionPhase", () => {
     });
 
     it("does NOT bump a player-owned entry", () => {
-      const playerHorse = createTestHorse({ id: "player-horse", ownership: { type: "player" } });
+      const playerHorse = createTestHorse({ id: "player-horse", ownership: makePlayerOwned() });
       const challenger = createTestHorse({
         id: "strong-challenger",
-        stableId: "s1",
+        ownership: makeNpcOwned("s1"),
         stats: {
           speed: 90,
           stamina: 90,
@@ -264,7 +266,7 @@ describe("raceEntryResolutionPhase", () => {
             entryFee: 200,
             purse: 10000,
             fieldSize: 1,
-            entries: [{ horseId: "player-horse", ownership: { type: "player" }, npc: false }],
+            entries: [{ horseId: "player-horse", ownership: makePlayerOwned()}],
             resolved: false,
           },
         ]),
@@ -292,7 +294,7 @@ describe("raceEntryResolutionPhase", () => {
 
   describe("player bump passthrough", () => {
     it("processes a player intent with bumpEntryHorseId on a full race", () => {
-      const npcHorse = createTestHorse({ id: "npc-weak", stableId: "s-npc" });
+      const npcHorse = createTestHorse({ id: "npc-weak", ownership: makeNpcOwned("s-npc") });
       const playerHorse = createTestHorse({ id: "player-horse" });
       const state: GameState = {
         ...(makeGameState() as GameState),
@@ -311,8 +313,8 @@ describe("raceEntryResolutionPhase", () => {
             entries: [
               {
                 horseId: "npc-weak",
-                ownership: { type: "npc", stableId: asNpcStableId("s-npc") },
-                npc: true,
+                ownership: makeNpcOwned(asNpcStableId("s-npc")),
+                
               },
             ],
             resolved: false,
@@ -342,7 +344,7 @@ describe("raceEntryResolutionPhase", () => {
     });
 
     it("skips a player intent on a full race with no bumpEntryHorseId", () => {
-      const npcHorse = createTestHorse({ id: "npc-horse", stableId: "s-npc" });
+      const npcHorse = createTestHorse({ id: "npc-horse", ownership: makeNpcOwned("s-npc") });
       const playerHorse = createTestHorse({ id: "player-horse" });
       const state: GameState = {
         ...(makeGameState() as GameState),
@@ -361,8 +363,8 @@ describe("raceEntryResolutionPhase", () => {
             entries: [
               {
                 horseId: "npc-horse",
-                ownership: { type: "npc", stableId: asNpcStableId("s-npc") },
-                npc: true,
+                ownership: makeNpcOwned(asNpcStableId("s-npc")),
+                
               },
             ],
             resolved: false,
@@ -391,7 +393,7 @@ describe("raceEntryResolutionPhase", () => {
 
   describe("NPC jockey assignment via stableMap and jockeysByStableId", () => {
     it("should assign retained jockey for NPC entry", () => {
-      const npcHorse = createTestHorse({ id: "npc-horse", stableId: "s-npc" });
+      const npcHorse = createTestHorse({ id: "npc-horse", ownership: makeNpcOwned("s-npc") });
       const state: GameState = {
         ...createTestState(),
         horses: h2r([npcHorse]),
@@ -443,7 +445,7 @@ describe("raceEntryResolutionPhase", () => {
     });
 
     it("should handle NPC entry from non-existent stable gracefully", () => {
-      const npcHorse = createTestHorse({ id: "npc-horse", stableId: "s-nonexistent" });
+      const npcHorse = createTestHorse({ id: "npc-horse", ownership: makeNpcOwned("s-nonexistent") });
       const state: GameState = {
         ...createTestState(),
         horses: h2r([npcHorse]),
@@ -486,8 +488,8 @@ describe("raceEntryResolutionPhase", () => {
     });
 
     it("should process multiple NPC entries from different stables with retainers", () => {
-      const h1 = createTestHorse({ id: "npc-h1", stableId: "s-a" });
-      const h2 = createTestHorse({ id: "npc-h2", stableId: "s-b" });
+      const h1 = createTestHorse({ id: "npc-h1", ownership: makeNpcOwned("s-a") });
+      const h2 = createTestHorse({ id: "npc-h2", ownership: makeNpcOwned("s-b") });
       const state: GameState = {
         ...createTestState(),
         horses: h2r([h1, h2]),
@@ -553,7 +555,7 @@ describe("raceEntryResolutionPhase", () => {
 
   describe("chemistry-aware backup jockey selection", () => {
     it("selects free agent with affinity over higher-fame jockey when no retainer and no AI manager", () => {
-      const npcHorse = createTestHorse({ id: "npc-horse", stableId: "s-npc", runningStyle: "P" });
+      const npcHorse = createTestHorse({ id: "npc-horse", ownership: makeNpcOwned("s-npc"), runningStyle: "P" });
       const state: GameState = {
         ...createTestState(),
         horses: h2r([npcHorse]),
@@ -622,7 +624,7 @@ describe("raceEntryResolutionPhase", () => {
     it("NPC entry with Poor-compatibility retainer + zero affinity selects free agent with High compatibility", () => {
       const npcHorse = createTestHorse({
         id: "npc-horse",
-        stableId: "s-npc",
+        ownership: makeNpcOwned("s-npc"),
         runningStyle: "S",
       });
       const state: GameState = {
@@ -716,7 +718,7 @@ describe("raceEntryResolutionPhase", () => {
     it("NPC entry with High-affinity retainer keeps retainer", () => {
       const npcHorse = createTestHorse({
         id: "npc-horse",
-        stableId: "s-npc",
+        ownership: makeNpcOwned("s-npc"),
         runningStyle: "E",
       });
       const state: GameState = {
@@ -911,7 +913,7 @@ describe("raceEntryResolutionPhase", () => {
             distance: 2000,
             entryFee: 500,
             fieldSize: 8,
-            entries: [{ horseId: "horse-w", ownership: { type: "player" } }],
+            entries: [{ horseId: "horse-w", ownership: makePlayerOwned() }],
             resolved: false,
           } as any,
         ]),
@@ -977,7 +979,7 @@ describe("raceEntryResolutionPhase", () => {
             distance: 2000,
             entryFee: 500,
             fieldSize: 8,
-            entries: [{ horseId: "horse-w3", ownership: { type: "player" } }],
+            entries: [{ horseId: "horse-w3", ownership: makePlayerOwned() }],
             resolved: true,
           } as any,
         ]),

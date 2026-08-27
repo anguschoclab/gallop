@@ -10,6 +10,7 @@ import {
 import { createTestHorse, createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import { horsePrice } from "@/core/horse/pricing";
 import { asHorseId } from "@/core/types/branded";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 describe("deriveSolvencyState", () => {
   it("returns healthy for non-negative cash", () => {
@@ -52,10 +53,10 @@ describe("deriveSolvencyState", () => {
 describe("selectForcedSaleHorse", () => {
   it("returns the most valuable owned adult", () => {
     const horses: SellableHorse[] = [
-      { id: "a", ownership: { type: "player" }, age: 4, value: 20_000 },
-      { id: "b", ownership: { type: "player" }, age: 6, value: 55_000 },
-      { id: "c", ownership: { type: "unowned" }, age: 5, value: 90_000 },
-      { id: "d", ownership: { type: "player" }, age: 0, value: 80_000 },
+      { id: "a", ownership: makePlayerOwned(), age: 4, value: 20_000 },
+      { id: "b", ownership: makePlayerOwned(), age: 6, value: 55_000 },
+      { id: "c", ownership: makeUnowned(), age: 5, value: 90_000 },
+      { id: "d", ownership: makePlayerOwned(), age: 0, value: 80_000 },
     ];
     expect(selectForcedSaleHorse(horses)?.id).toBe("b");
   });
@@ -64,7 +65,7 @@ describe("selectForcedSaleHorse", () => {
     expect(selectForcedSaleHorse([])).toBeNull();
     expect(
       selectForcedSaleHorse([
-        { id: "x", ownership: { type: "unowned" }, age: 4, value: 10 },
+        { id: "x", ownership: makeUnowned(), age: 4, value: 10 },
       ] as SellableHorse[]),
     ).toBeNull();
   });

@@ -6,6 +6,7 @@ import { describe, it, expect } from "vitest";
 import { computePlayerRaceDays } from "@/core/time/advance";
 import { getCurrentYear } from "@/core/race/schedule";
 import type { Race } from "@/game/types";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 describe("computePlayerRaceDays", () => {
   it("should return empty set when no races have player entries", () => {
@@ -20,7 +21,7 @@ describe("computePlayerRaceDays", () => {
         purse: 10000,
         minStat: 70,
         fieldSize: 8,
-        entries: [{ horseId: "horse-1", ownership: { type: "unowned" }, npc: true }],
+        entries: [{ horseId: "horse-1", ownership: makeUnowned()}],
         resolved: false,
       },
     ];
@@ -41,7 +42,7 @@ describe("computePlayerRaceDays", () => {
         purse: 10000,
         minStat: 70,
         fieldSize: 8,
-        entries: [{ horseId: "horse-1", ownership: { type: "player" }, npc: false }],
+        entries: [{ horseId: "horse-1", ownership: makePlayerOwned()}],
         resolved: false,
       },
     ];
@@ -63,7 +64,7 @@ describe("computePlayerRaceDays", () => {
         purse: 10000,
         minStat: 70,
         fieldSize: 8,
-        entries: [{ horseId: "horse-1", ownership: { type: "player" }, npc: false }],
+        entries: [{ horseId: "horse-1", ownership: makePlayerOwned()}],
         resolved: false,
       },
       {
@@ -76,7 +77,7 @@ describe("computePlayerRaceDays", () => {
         purse: 10000,
         minStat: 70,
         fieldSize: 8,
-        entries: [{ horseId: "horse-2", ownership: { type: "player" }, npc: false }],
+        entries: [{ horseId: "horse-2", ownership: makePlayerOwned()}],
         resolved: false,
       },
       {
@@ -89,7 +90,7 @@ describe("computePlayerRaceDays", () => {
         purse: 10000,
         minStat: 70,
         fieldSize: 8,
-        entries: [{ horseId: "horse-3", ownership: { type: "player" }, npc: false }],
+        entries: [{ horseId: "horse-3", ownership: makePlayerOwned()}],
         resolved: false,
       },
     ];
@@ -113,7 +114,7 @@ describe("computePlayerRaceDays", () => {
         purse: 10000,
         minStat: 70,
         fieldSize: 8,
-        entries: [{ horseId: "horse-1", ownership: { type: "player" }, npc: false }],
+        entries: [{ horseId: "horse-1", ownership: makePlayerOwned()}],
         resolved: true,
       },
     ];
@@ -134,7 +135,7 @@ describe("computePlayerRaceDays", () => {
         purse: 10000,
         minStat: 70,
         fieldSize: 8,
-        entries: [{ horseId: "horse-1", ownership: { type: "player" }, npc: false }],
+        entries: [{ horseId: "horse-1", ownership: makePlayerOwned()}],
         resolved: false,
       },
       {
@@ -147,7 +148,7 @@ describe("computePlayerRaceDays", () => {
         purse: 10000,
         minStat: 70,
         fieldSize: 8,
-        entries: [{ horseId: "horse-2", ownership: { type: "player" }, npc: false }],
+        entries: [{ horseId: "horse-2", ownership: makePlayerOwned()}],
         resolved: false,
       },
     ];

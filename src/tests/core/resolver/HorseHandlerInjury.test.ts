@@ -9,7 +9,7 @@ describe("HorseHandler - Injury Handling", () => {
     const handler = new HorseHandler();
     const state = {
       horses: h2r([
-        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: { type: "unowned" } },
+        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: makeUnowned() },
       ] as unknown as Horse[]),
     } as unknown as GameState;
 
@@ -41,7 +41,7 @@ describe("HorseHandler - Injury Handling", () => {
     const handler = new HorseHandler();
     const state = {
       horses: h2r([
-        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: { type: "unowned" } },
+        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: makeUnowned() },
       ] as unknown as Horse[]),
     } as unknown as GameState;
 
@@ -194,7 +194,7 @@ describe("HorseHandler - Injury Handling", () => {
     const handler = new HorseHandler();
     const state = {
       horses: h2r([
-        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: { type: "player" } },
+        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: makePlayerOwned() },
       ] as unknown as Horse[]),
       inbox: [],
     } as unknown as GameState;
@@ -227,7 +227,7 @@ describe("HorseHandler - Injury Handling", () => {
     const handler = new HorseHandler();
     const state = {
       horses: h2r([
-        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: { type: "player" } },
+        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: makePlayerOwned() },
       ] as unknown as Horse[]),
       inbox: [],
     } as unknown as GameState;
@@ -258,7 +258,7 @@ describe("HorseHandler - Injury Handling", () => {
     const handler = new HorseHandler();
     const state = {
       horses: h2r([
-        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: { type: "player" } },
+        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: makePlayerOwned() },
       ] as unknown as Horse[]),
       inbox: [],
     } as unknown as GameState;
@@ -289,7 +289,7 @@ describe("HorseHandler - Injury Handling", () => {
     const handler = new HorseHandler();
     const state = {
       horses: h2r([
-        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: { type: "player" } },
+        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: makePlayerOwned() },
       ] as unknown as Horse[]),
       inbox: [],
     } as unknown as GameState;
@@ -320,7 +320,7 @@ describe("HorseHandler - Injury Handling", () => {
     const handler = new HorseHandler();
     const state = {
       horses: h2r([
-        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: { type: "player" } },
+        { id: "horse-1", name: "Star", healthStatus: "healthy", ownership: makePlayerOwned() },
       ] as unknown as Horse[]),
       inbox: [],
     } as unknown as GameState;
@@ -348,3 +348,4 @@ describe("HorseHandler - Injury Handling", () => {
   });
 });
 import type { Horse } from "@/game/types";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";

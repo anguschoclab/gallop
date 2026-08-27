@@ -13,6 +13,7 @@ import type { GameState, Stable, Horse, Race } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
 import { createRng, hashStr } from "@/core/common/rng";
+import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {
   return createTestStable({
@@ -40,7 +41,7 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
       temperament: 50,
       conformation: 50,
     },
-    stableId: "npc-1",
+    ownership: makeNpcOwned("npc-1"),
     ...overrides,
   });
 }
@@ -90,8 +91,8 @@ describe("assessWorldState", () => {
   });
 
   it("calculates player dominance from horse count and cash", () => {
-    const playerHorse = createMockHorse({ id: "player-horse", stableId: undefined });
-    const npcHorse = createMockHorse({ id: "npc-horse", stableId: "npc-1" });
+    const playerHorse = createMockHorse({ id: "player-horse", ownership: makeUnowned() });
+    const npcHorse = createMockHorse({ id: "npc-horse", ownership: makeNpcOwned("npc-1") });
     const state = createMockGameState({
       horses: { "player-horse": playerHorse, "npc-horse": npcHorse },
       cash: 500000,

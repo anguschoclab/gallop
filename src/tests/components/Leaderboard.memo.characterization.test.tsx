@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Leaderboard } from "@/components/race/Leaderboard";
+import { makeUnowned } from "@/core/horse/ownership";
 
 vi.mock("@/components/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (
@@ -43,7 +44,7 @@ const mockRunner = (overrides: any = {}) => ({
     horseId: "h1",
     name: "Thunder",
     silk: "#ff0000",
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
     finishTime: 72.5,
     ...overrides,
   },

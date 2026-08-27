@@ -160,9 +160,10 @@ export function generateAllNpcHorses(
     for (const s of famousStallions) {
       usedNames.add(s.name.toLowerCase());
       famousStallionIds.add(s.id);
-      if (getStableId(s)) {
-        if (!stallionsByStable.has(getStableId(s))) stallionsByStable.set(getStableId(s), []);
-        stallionsByStable.get(getStableId(s))!.push(s);
+      const sid = getStableId(s);
+      if (sid) {
+        if (!stallionsByStable.has(sid)) stallionsByStable.set(sid, []);
+        stallionsByStable.get(sid)!.push(s);
       }
     }
   }

@@ -19,6 +19,7 @@ import {
 } from "@/core/ai/syndicationAI";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import type { Horse, Stable } from "@/game/types";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 describe("identifyCostOptimizationOpportunities", () => {
   it("returns empty array for healthy roster", () => {
@@ -322,7 +323,7 @@ describe("shouldCreateSyndicateWithLearning", () => {
     });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "s1",
+      ownership: makeNpcOwned("s1"),
       stud: {
         atStud: true,
         standingFee: 50000,
@@ -346,7 +347,7 @@ describe("shouldCreateSyndicateWithLearning", () => {
     });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "s1",
+      ownership: makeNpcOwned("s1"),
       stud: {
         atStud: true,
         standingFee: 50000,

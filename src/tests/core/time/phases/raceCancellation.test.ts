@@ -17,6 +17,8 @@ import { runAutoEntries, reconcileSlotStatuses } from "@/core/campaign/autoEntry
 import { pruneOldRaces } from "@/game/store/helpers/market";
 import { archivingPhase } from "@/core/time/phases/archivingPhase";
 import type { RaceEntryIntent } from "@/core/resolver/intents";
+import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {
@@ -52,7 +54,7 @@ describe("raceCancellationPhase", () => {
         id: "race-one-entry",
         day: 12,
         entryFee: 500,
-        entries: [{ horseId: "h1", ownership: { type: "player" }, npc: false }],
+        entries: [{ horseId: "h1", ownership: makePlayerOwned()}],
       });
       const state = makeGameState({ day: 10, races: r2r([race]) }) as GameState;
       const context = makePipelineContext({ newDay: 10, state }) as PipelineContext;
@@ -71,8 +73,8 @@ describe("raceCancellationPhase", () => {
         id: "race-two-entries",
         day: 12,
         entries: [
-          { horseId: "h1", ownership: { type: "player" }, npc: false },
-          { horseId: "h2", ownership: { type: "npc", stableId: asNpcStableId("s1") }, npc: true },
+          { horseId: "h1", ownership: makePlayerOwned(), },
+          { horseId: "h2", ownership: makeNpcOwned(asNpcStableId("s1"))},
         ],
       });
       const state = makeGameState({ day: 10, races: r2r([race]) }) as GameState;
@@ -156,9 +158,9 @@ describe("raceCancellationPhase", () => {
       const race = makeRace({
         id: "race-player-entry",
         day: 12,
-        entries: [{ horseId: "h-player", ownership: { type: "player" }, npc: false }],
+        entries: [{ horseId: "h-player", ownership: makePlayerOwned()}],
       });
-      const horse = createTestHorse({ id: "h-player", ownership: { type: "player" } });
+      const horse = createTestHorse({ id: "h-player", ownership: makePlayerOwned() });
       const state = makeGameState({
         day: 10,
         races: r2r([race]),
@@ -182,8 +184,8 @@ describe("raceCancellationPhase", () => {
         entries: [
           {
             horseId: "h-npc",
-            ownership: { type: "npc", stableId: asNpcStableId("s1") },
-            npc: true,
+            ownership: makeNpcOwned(asNpcStableId("s1")),
+            
           },
         ],
       });
@@ -203,8 +205,8 @@ describe("raceCancellationPhase", () => {
         entries: [
           {
             horseId: "h-npc",
-            ownership: { type: "npc", stableId: asNpcStableId("s-npc") },
-            npc: true,
+            ownership: makeNpcOwned(asNpcStableId("s-npc")),
+            
           },
         ],
       });
@@ -304,8 +306,8 @@ describe("raceCancellationPhase", () => {
         id: "race-above",
         day: 12,
         entries: [
-          { horseId: "h1", ownership: { type: "player" }, npc: false },
-          { horseId: "h2", ownership: { type: "npc", stableId: asNpcStableId("s1") }, npc: true },
+          { horseId: "h1", ownership: makePlayerOwned(), },
+          { horseId: "h2", ownership: makeNpcOwned(asNpcStableId("s1"))},
         ],
       });
       const state = makeGameState({ day: 10, races: r2r([raceBelow, raceAbove]) }) as GameState;
@@ -407,7 +409,7 @@ describe("raceCancellationPhase", () => {
     });
 
     it("18. runNpcRaceEntry skips cancelled races", () => {
-      const horse = createTestHorse({ id: "h-npc", stableId: "s1" });
+      const horse = createTestHorse({ id: "h-npc", ownership: makeNpcOwned("s1") });
       const race = makeRace({
         id: "race-cancelled-npc",
         day: 12,
@@ -434,7 +436,7 @@ describe("raceCancellationPhase", () => {
     });
 
     it("19. runAutoEntries skips cancelled races — slot targeting cancelled race not entered", () => {
-      const horse = createTestHorse({ id: "h-auto", ownership: { type: "player" } });
+      const horse = createTestHorse({ id: "h-auto", ownership: makePlayerOwned() });
       const race = makeRace({
         id: "race-cancelled-auto",
         day: 12,

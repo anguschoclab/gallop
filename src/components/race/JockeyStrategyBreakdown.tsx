@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Gauge } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { RaceRunner } from "@/core/race/types";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 interface JockeyStrategyBreakdownProps {
   runner: RaceRunner;
@@ -37,7 +38,7 @@ export const JockeyStrategyBreakdown = memo(function JockeyStrategyBreakdown({
     <div
       className={cn(
         "bg-black/30 border border-white/5 p-3 space-y-2",
-        runner.isPlayer && "border-l-2 border-l-gold",
+        isPlayerOwned(runner) && "border-l-2 border-l-gold",
       )}
       data-testid="strategy-breakdown"
     >

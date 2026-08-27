@@ -6,7 +6,7 @@ import type { AuctionSale, AuctionLot, Horse, Stable } from "@/game/types";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { StaffRole } from "@/core/staff/staffTypes";
 import { createTestHorse } from "@/tests/helpers";
-import { getStableId } from "@/core/horse/ownership";
+import { getStableId, makeNpcOwned } from "@/core/horse/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -269,7 +269,7 @@ describe("runner.optimization — engine personalityConsignmentPolicy", () => {
       name: "Eligible",
       age: 1,
       gender: "colt",
-      stableId: "stable1",
+      ownership: makeNpcOwned("stable1"),
     });
     // Ineligible (wrong age for yearling sale)
     const ineligibleHorse = createTestHorse({
@@ -277,7 +277,7 @@ describe("runner.optimization — engine personalityConsignmentPolicy", () => {
       name: "Ineligible",
       age: 5,
       gender: "horse",
-      stableId: "stable1",
+      ownership: makeNpcOwned("stable1"),
     });
     // Eligible but owned by different stable
     const otherStableHorse = createTestHorse({
@@ -285,7 +285,7 @@ describe("runner.optimization — engine personalityConsignmentPolicy", () => {
       name: "Other Stable",
       age: 1,
       gender: "colt",
-      stableId: "stable2",
+      ownership: makeNpcOwned("stable2"),
     });
 
     const allHorses = [eligibleHorse, ineligibleHorse, otherStableHorse];

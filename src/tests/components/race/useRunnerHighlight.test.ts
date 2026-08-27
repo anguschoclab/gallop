@@ -3,9 +3,9 @@ import { renderHook, act } from "@testing-library/react";
 import { useRunnerHighlight } from "@/components/race/useRunnerHighlight";
 
 const runners = [
-  { horseId: "h1", ownership: { type: "player" } },
-  { horseId: "h2", ownership: { type: "unowned" } },
-  { horseId: "h3", ownership: { type: "player" } },
+  { horseId: "h1", owned: true },
+  { horseId: "h2", owned: false },
+  { horseId: "h3", owned: true },
 ];
 
 describe("useRunnerHighlight", () => {
@@ -50,7 +50,7 @@ describe("useRunnerHighlight", () => {
 
   it("anyHighlight is false when no pins and no hover", () => {
     const { result } = renderHook(() =>
-      useRunnerHighlight([{ horseId: "h1", ownership: { type: "unowned" } }]),
+      useRunnerHighlight([{ horseId: "h1", owned: false }]),
     );
     expect(result.current.anyHighlight).toBe(false);
   });
@@ -62,7 +62,7 @@ describe("useRunnerHighlight", () => {
 
   it("anyHighlight is true when hover is set but no pins", () => {
     const { result } = renderHook(() =>
-      useRunnerHighlight([{ horseId: "h1", ownership: { type: "unowned" } }]),
+      useRunnerHighlight([{ horseId: "h1", owned: false }]),
     );
     act(() => result.current.setHovered("h1"));
     expect(result.current.anyHighlight).toBe(true);

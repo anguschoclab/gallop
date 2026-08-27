@@ -10,13 +10,14 @@ import {
   calculateTransportCostForRace,
 } from "@/core/campaign/autoRegister";
 import type { Horse, Race, Jockey } from "@/game/types";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 // Helper to create a minimal mock horse
 function createMockHorse(overrides: Partial<Horse> = {}): Horse {
   return {
     id: `horse-${Math.random().toString(36).substr(2, 9)}`,
     name: "Test Horse",
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     lifecycleStatus: "active",
     energy: 100,
     age: 4,
@@ -87,7 +88,7 @@ describe("calculateAutoRegisterEntries", () => {
   });
 
   it("filters out non-owned horses", () => {
-    const horses = [createMockHorse({ ownership: { type: "unowned" } })];
+    const horses = [createMockHorse({ ownership: makeUnowned() })];
     const races: Race[] = [createMockRace()];
     const jockeys: Jockey[] = [createMockJockey()];
     const cash = 10000;
@@ -161,7 +162,7 @@ describe("calculateAutoRegisterEntries", () => {
   it("filters out already-entered horses", () => {
     const horse = createMockHorse();
     const race = createMockRace({
-      entries: [{ horseId: horse.id, ownership: { type: "player" }, weight: 126 }],
+      entries: [{ horseId: horse.id, ownership: makePlayerOwned(), weight: 126 }],
     });
     const horses = [horse];
     const races: Race[] = [race];

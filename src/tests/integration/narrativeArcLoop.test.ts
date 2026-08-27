@@ -18,6 +18,7 @@ import type { GameState, Stable, Horse, Race } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
 import { createRng } from "@/core/common/rng";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {
   return createTestStable({
@@ -45,7 +46,7 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
       temperament: 50,
       conformation: 50,
     },
-    stableId: "npc-1",
+    ownership: makeNpcOwned("npc-1"),
     careerWins: 0,
     ...overrides,
   });

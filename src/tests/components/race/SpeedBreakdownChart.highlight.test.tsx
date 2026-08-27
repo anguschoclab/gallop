@@ -45,9 +45,9 @@ vi.mock("@/lib/cn", () => ({
 }));
 
 const runners = [
-  { horseId: "h1", name: "Thunder", silk: "#ff0000", ownership: { type: "player" } },
-  { horseId: "h2", name: "Lightning", silk: "#00ff00", ownership: { type: "unowned" } },
-  { horseId: "h3", name: "Storm", silk: "#0000ff", ownership: { type: "unowned" } },
+  { horseId: "h1", name: "Thunder", silk: "#ff0000", owned: true },
+  { horseId: "h2", name: "Lightning", silk: "#00ff00", owned: false },
+  { horseId: "h3", name: "Storm", silk: "#0000ff", owned: false },
 ];
 
 const snapshots: RaceSnapshot[] = Array.from({ length: 10 }, (_, i) => ({

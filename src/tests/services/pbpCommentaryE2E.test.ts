@@ -1,3 +1,4 @@
+import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 import { describe, it, expect } from "vitest";
 import {
   generateCommentaryLine,
@@ -95,7 +96,7 @@ function makeHorseEntity(overrides: Partial<Horse> = {}): Horse {
     heterozygosity: 0.5,
     raceHistory: [],
     fame: 0,
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 1, Dirt: 1, Synthetic: 1 },
     mudAptitude: 1,
@@ -153,7 +154,7 @@ describe("PbP commentary E2E — Layer 1: per-template substitution", () => {
     sireName: "Galileo",
     damName: "Magic Wand",
     bruceLoweFamily: 1,
-    stableId: "s1",
+    ownership: makeNpcOwned("s1"),
   });
   const stable = makeStable({ id: "s1", name: "Godolphin" });
 
@@ -532,7 +533,7 @@ describe("PbP commentary E2E — Layer 2: multi-tick simulation", () => {
     const horse1 = makeHorseEntity({
       id: "h1",
       name: "Thunder Strike",
-      stableId: "s1",
+      ownership: makeNpcOwned("s1"),
       sireName: "Galileo",
       damName: "Magic Wand",
       coatColor: "bay",
@@ -543,7 +544,7 @@ describe("PbP commentary E2E — Layer 2: multi-tick simulation", () => {
     const horse2 = makeHorseEntity({
       id: "h2",
       name: "Midnight Runner",
-      stableId: "s2",
+      ownership: makeNpcOwned("s2"),
       sireName: "Dansili",
       damName: "Night Owl",
       coatColor: "chestnut",

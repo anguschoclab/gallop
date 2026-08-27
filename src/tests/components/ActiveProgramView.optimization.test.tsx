@@ -1,3 +1,4 @@
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 /**
  * Tests for ActiveProgramView Set-based filtering optimization (Bolt-1 branch).
  *
@@ -60,7 +61,7 @@ describe("ActiveProgramView — Set-based mare filtering", () => {
     const mare1 = createTestMare({
       id: "mare-1",
       name: "Thunder Belle",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     renderWithStore(<ActiveProgramView />, {
       activeBreedingProgram: mkProgram({ enrolledDamIds: [] }),
@@ -73,7 +74,7 @@ describe("ActiveProgramView — Set-based mare filtering", () => {
     const mare2 = createTestMare({
       id: "mare-2",
       name: "Lightning Grace",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     renderWithStore(<ActiveProgramView />, {
       activeBreedingProgram: mkProgram({ enrolledDamIds: ["mare-2"] }),
@@ -89,12 +90,12 @@ describe("ActiveProgramView — Set-based mare filtering", () => {
     const colt = createTestColt({
       id: "colt-1",
       name: "Should Not Appear",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     const mare = createTestMare({
       id: "mare-1",
       name: "Eligible Mare",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     renderWithStore(<ActiveProgramView />, {
       activeBreedingProgram: mkProgram({ enrolledDamIds: [] }),
@@ -110,12 +111,12 @@ describe("ActiveProgramView — Set-based mare filtering", () => {
     const unownedMare = createTestMare({
       id: "mare-3",
       name: "Unowned Mare",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const ownedMare = createTestMare({
       id: "mare-1",
       name: "Owned Mare",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     renderWithStore(<ActiveProgramView />, {
       activeBreedingProgram: mkProgram({ enrolledDamIds: [] }),
@@ -159,7 +160,7 @@ describe("ActiveProgramView — cancellation dialog", () => {
     const mare = createTestMare({
       id: "mare-1",
       name: "Enrolled Mare",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     renderWithStore(<ActiveProgramView />, {
       activeBreedingProgram: program,

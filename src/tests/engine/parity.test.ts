@@ -4,6 +4,7 @@ import { runRaceToCompletion } from "@/core/race/engine/simulation";
 import { buildRaceField, rngForRace } from "@/services/race/raceSimulationService";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { Race, Horse } from "@/game/types";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {
@@ -16,10 +17,10 @@ function makeRace(overrides: Partial<Race> = {}): Race {
     purse: 10000,
     fieldSize: 4,
     entries: [
-      { horseId: "h1", ownership: { type: "player" } },
-      { horseId: "h2", ownership: { type: "unowned" } },
-      { horseId: "h3", ownership: { type: "unowned" } },
-      { horseId: "h4", ownership: { type: "unowned" } },
+      { horseId: "h1", ownership: makePlayerOwned() },
+      { horseId: "h2", ownership: makeUnowned() },
+      { horseId: "h3", ownership: makeUnowned() },
+      { horseId: "h4", ownership: makeUnowned() },
     ],
     resolved: false,
     trackId: "test-track",

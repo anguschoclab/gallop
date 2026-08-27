@@ -3,6 +3,7 @@ import { suggestBestSires } from "@/core/breeding/sireSuggestions";
 import { createTestMare, createTestStallion } from "@/tests/helpers";
 import { BREEDING_FEE } from "@/constants";
 import type { Horse, StudCareer } from "@/game/types";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function mkStud(overrides: Partial<StudCareer> = {}): StudCareer {
   return {
@@ -160,8 +161,7 @@ describe("suggestBestSires", () => {
     const external = createTestStallion({
       id: "s-ext",
       stud: mkStud({ standingFee: 25000 }),
-      stableId: "npc-stable-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const results = suggestBestSires(mare, [external], day);
     expect(results).toHaveLength(1);
@@ -173,7 +173,7 @@ describe("suggestBestSires", () => {
     const owned = createTestStallion({
       id: "s-owned",
       stud: mkStud({ standingFee: 25000 }),
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     const results = suggestBestSires(mare, [owned], day);
     expect(results).toHaveLength(1);

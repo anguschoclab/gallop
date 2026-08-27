@@ -3,6 +3,7 @@ import { stewardsPhase } from "@/core/time/phases/stewardsPhase";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import type { Race, Horse } from "@/game/types";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function makeResolvedRace(overrides: Partial<Race> = {}): Race {
   return {
@@ -21,16 +22,16 @@ function makeResolvedRace(overrides: Partial<Race> = {}): Race {
       { horseId: "h3", position: 3, time: 97.0 },
     ],
     entries: [
-      { horseId: "h1", ownership: { type: "unowned" } },
-      { horseId: "h2", ownership: { type: "unowned" } },
-      { horseId: "h3", ownership: { type: "unowned" } },
+      { horseId: "h1", ownership: makeUnowned() },
+      { horseId: "h2", ownership: makeUnowned() },
+      { horseId: "h3", ownership: makeUnowned() },
     ],
     ...overrides,
   } as Race;
 }
 
 function makeOwned(id: string): Partial<Horse> {
-  return { id, ownership: { type: "player" }, name: `Horse ${id}` };
+  return { id, ownership: makePlayerOwned(), name: `Horse ${id}` };
 }
 
 describe("stewardsPhase — player-entry guard", () => {
@@ -39,9 +40,9 @@ describe("stewardsPhase — player-entry guard", () => {
     // The guard must fire BEFORE the roll so no inquiry is ever emitted.
     const race = makeResolvedRace({
       entries: [
-        { horseId: "player-horse", ownership: { type: "player" } } as any,
-        { horseId: "npc-h2", ownership: { type: "unowned" } } as any,
-        { horseId: "npc-h3", ownership: { type: "unowned" } } as any,
+        { horseId: "player-horse", ownership: makePlayerOwned() } as any,
+        { horseId: "npc-h2", ownership: makeUnowned() } as any,
+        { horseId: "npc-h3", ownership: makeUnowned() } as any,
       ],
       result: [
         { horseId: "player-horse", position: 1, time: 96.0 },
@@ -70,9 +71,9 @@ describe("stewardsPhase — player-entry guard", () => {
       const race = makeResolvedRace({
         id: `npc-race-${raceNum}`,
         entries: [
-          { horseId: `n${raceNum}-h1`, ownership: { type: "unowned" } } as any,
-          { horseId: `n${raceNum}-h2`, ownership: { type: "unowned" } } as any,
-          { horseId: `n${raceNum}-h3`, ownership: { type: "unowned" } } as any,
+          { horseId: `n${raceNum}-h1`, ownership: makeUnowned() } as any,
+          { horseId: `n${raceNum}-h2`, ownership: makeUnowned() } as any,
+          { horseId: `n${raceNum}-h3`, ownership: makeUnowned() } as any,
         ],
         result: [
           { horseId: `n${raceNum}-h1`, position: 1, time: 96.0 },
@@ -99,8 +100,8 @@ describe("stewardsPhase — player-entry guard", () => {
       id: "already-inquired",
       inquiries: [{ id: "existing", type: "interference" }] as any,
       entries: [
-        { horseId: "h1", ownership: { type: "unowned" } } as any,
-        { horseId: "h2", ownership: { type: "unowned" } } as any,
+        { horseId: "h1", ownership: makeUnowned() } as any,
+        { horseId: "h2", ownership: makeUnowned() } as any,
       ],
     });
 
@@ -134,9 +135,9 @@ describe("stewardsPhase — outcome coverage (Bug 1)", () => {
       const race = makeResolvedRace({
         id: `outcome-race-${raceNum}`,
         entries: [
-          { horseId: `h${raceNum}-1`, ownership: { type: "unowned" } } as any,
-          { horseId: `h${raceNum}-2`, ownership: { type: "unowned" } } as any,
-          { horseId: `h${raceNum}-3`, ownership: { type: "unowned" } } as any,
+          { horseId: `h${raceNum}-1`, ownership: makeUnowned() } as any,
+          { horseId: `h${raceNum}-2`, ownership: makeUnowned() } as any,
+          { horseId: `h${raceNum}-3`, ownership: makeUnowned() } as any,
         ],
         result: [
           { horseId: `h${raceNum}-1`, position: 1, time: 96.0 },
@@ -170,8 +171,8 @@ describe("stewardsPhase — outcome coverage (Bug 1)", () => {
       const race = makeResolvedRace({
         id: `susp-test-${raceNum}`,
         entries: [
-          { horseId: `h${raceNum}-1`, ownership: { type: "unowned" } } as any,
-          { horseId: `h${raceNum}-2`, ownership: { type: "unowned" } } as any,
+          { horseId: `h${raceNum}-1`, ownership: makeUnowned() } as any,
+          { horseId: `h${raceNum}-2`, ownership: makeUnowned() } as any,
         ],
         result: [
           { horseId: `h${raceNum}-1`, position: 1, time: 96.0 },
@@ -206,8 +207,8 @@ describe("stewardsPhase — stewards_resolution impact (Bug 7)", () => {
       const race = makeResolvedRace({
         id: `res-race-${raceNum}`,
         entries: [
-          { horseId: `h${raceNum}-1`, ownership: { type: "unowned" } } as any,
-          { horseId: `h${raceNum}-2`, ownership: { type: "unowned" } } as any,
+          { horseId: `h${raceNum}-1`, ownership: makeUnowned() } as any,
+          { horseId: `h${raceNum}-2`, ownership: makeUnowned() } as any,
         ],
         result: [
           { horseId: `h${raceNum}-1`, position: 1, time: 96.0 },

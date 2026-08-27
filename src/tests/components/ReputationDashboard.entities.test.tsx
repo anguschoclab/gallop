@@ -6,6 +6,7 @@ import { createDefaultGameState } from "@/game/store/state";
 import { ReputationDashboard } from "@/components/reputation/ReputationDashboard";
 import { createTestHorse } from "@/tests/helpers";
 import type { ManagerReputation } from "@/core/reputation/reputationTypes";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({
@@ -26,7 +27,7 @@ describe("ReputationDashboard — entity linking", () => {
     const horse = createTestHorse({
       id: "h1",
       name: "Champion Horse",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     const reputation: ManagerReputation = {
       score: 500,

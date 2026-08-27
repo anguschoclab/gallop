@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { buildRaceField } from "@/services/race/raceSimulationService";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { Race } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {
@@ -16,7 +17,7 @@ function makeRace(overrides: Partial<Race> = {}): Race {
     entries: [
       {
         horseId: "owned-1",
-        ownership: { type: "player" },
+        ownership: makePlayerOwned(),
         weight: 55,
       },
     ],

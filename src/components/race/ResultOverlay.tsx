@@ -29,6 +29,7 @@ import { cn } from "@/lib/cn";
 import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
 import { useGame } from "@/game/store";
 import { getStrategyInsights } from "@/core/ai/jockeyStrategyRecording";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 /**
  * Props for the ResultOverlay component.
@@ -76,7 +77,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
     horseId: r.horseId,
     name: r.name,
     silk: r.silk,
-    owned: r.isPlayer,
+    ownership: r.isPlayer ? makePlayerOwned() : makeUnowned(),
     jockeyId: r.jockey?.id ?? "",
     jockeyName: r.jockeyName ?? r.jockey?.name ?? "",
     gate: r.gate,

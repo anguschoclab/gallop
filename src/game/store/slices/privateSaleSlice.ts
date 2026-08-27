@@ -9,7 +9,7 @@
  */
 
 import type { Horse, PrivateSaleOffer, Claim, Race } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned, isPlayerOwned, getStableId } from "@/core/horse/ownership";
 import { generateUUID } from "@/core/uuid";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
@@ -56,7 +56,7 @@ export function createPrivateSaleSlice(
       const s = get();
       const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "horse_not_found" };
-      if (horse.stableId !== stableId) return { ok: false, reason: "horse_not_in_stable" };
+      if (getStableId(horse) !== stableId) return { ok: false, reason: "horse_not_in_stable" };
       if (s.cash < amount) return { ok: false, reason: "insufficient_funds" };
 
       const offer: PrivateSaleOffer = {
@@ -122,7 +122,7 @@ export function createPrivateSaleSlice(
       if (!race.claiming) return { ok: false, reason: "not_claiming_race" };
       const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "horse_not_found" };
-      if (!horse.owned) return { ok: false, reason: "not_owned" };
+      if (!isPlayerOwned(horse)) return { ok: false, reason: "not_owned" };
       if (s.day >= race.day) return { ok: false, reason: "entries_closed" };
 
       enqueueIntent({
@@ -165,7 +165,7 @@ export function createPrivateSaleSlice(
       const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "horse_not_found" };
       // Self-claim prohibited
-      if (horse.owned) return { ok: false, reason: "self_claim_prohibited" };
+      if (isPlayerOwned(horse)) return { ok: false, reason: "self_claim_prohibited" };
       if (s.cash < race.claiming.price) return { ok: false, reason: "insufficient_funds" };
       if (s.day >= race.day) return { ok: false, reason: "post_time_passed" };
 

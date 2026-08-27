@@ -16,6 +16,8 @@ import type { GameState, Pregnancy, Horse } from "@/game/types";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import type { AnyImpact } from "@/core/resolver/impacts";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function createLiveFoalScenario(
   overrides: {
@@ -29,7 +31,9 @@ function createLiveFoalScenario(
     name: "Test Sire",
     gender: "horse",
     age: 5,
-    ownership: { type: "npc", stableId: asNpcStableId(overrides) }.sireStableId,
+    ownership: overrides.sireStableId
+      ? makeNpcOwned(asNpcStableId(overrides.sireStableId))
+      : makeUnowned(),
     stud: {
       atStud: true,
       standingFee: 1000,
@@ -46,8 +50,9 @@ function createLiveFoalScenario(
     id: "dam-1",
     name: "Test Dam",
     age: 3, // Younger mare for lower complication rate
-    owned: overrides.damOwned ?? true,
-    stableId: overrides.damOwned ? undefined : "npc-dam-stable",
+    ownership: (overrides.damOwned ?? true)
+      ? makePlayerOwned()
+      : makeNpcOwned(asNpcStableId("npc-dam-stable")),
   });
 
   const pregnancy: Pregnancy = {
@@ -315,12 +320,12 @@ describe("buildPregnancyImpacts", () => {
     const playerDam = createTestMare({
       id: "dam-1",
       name: "Player Dam",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     const npcDam = createTestMare({
       id: "dam-2",
       name: "NPC Dam",
-      ownership: { type: "npc", stableId: asNpcStableId("npc-stable") },
+      ownership: makeNpcOwned(asNpcStableId("npc-stable")),
     });
 
     const playerPregnancy: Pregnancy = {

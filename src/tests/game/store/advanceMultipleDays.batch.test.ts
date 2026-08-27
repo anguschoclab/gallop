@@ -6,6 +6,7 @@ import type { GameState } from "@/game/types";
 import type { Race } from "@/game/types";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function runPipelineForDay(
   state: GameState,
@@ -77,13 +78,13 @@ describe("Worker batch advance", () => {
           purse: 10000,
           minStat: 70,
           fieldSize: 8,
-          entries: [{ horseId: "horse-1", ownership: { type: "player" }, npc: false }],
+          entries: [{ horseId: "horse-1", ownership: makePlayerOwned(), npc: false }],
           resolved: false,
         } as any,
       },
       horses: {
         "horse-1": {
-          ...createTestHorse({ id: "horse-1", name: "Test", ownership: { type: "player" } }),
+          ...createTestHorse({ id: "horse-1", name: "Test", ownership: makePlayerOwned() }),
           age: 3,
         },
       },
@@ -133,13 +134,13 @@ describe("Worker batch advance", () => {
           purse: 10000,
           minStat: 70,
           fieldSize: 8,
-          entries: [{ horseId: "horse-1", ownership: { type: "player" }, npc: false }],
+          entries: [{ horseId: "horse-1", ownership: makePlayerOwned(), npc: false }],
           resolved: false,
         } as any,
       },
       horses: {
         "horse-1": {
-          ...createTestHorse({ id: "horse-1", name: "Test", ownership: { type: "player" } }),
+          ...createTestHorse({ id: "horse-1", name: "Test", ownership: makePlayerOwned() }),
           age: 3,
         },
       },

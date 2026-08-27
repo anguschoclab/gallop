@@ -9,13 +9,14 @@ import { describe, it, expect } from "vitest";
 import { calculateTacticalAdjustment } from "@/core/race/engine/tacticalAI";
 import { getDynamicProfile } from "@/core/race/engine/runningStyleProfiles";
 import type { Runner, PaceContext } from "@/core/race/engine/runnerBuilder";
+import { makeUnowned } from "@/core/horse/ownership";
 
 function createMockRunner(overrides: Partial<Runner> = {}): Runner {
   return {
     horseId: "h1",
     name: "Test",
     silk: "red",
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
     position: 100,
     velocity: 15,
     lane: 1.2,

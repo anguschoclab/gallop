@@ -10,6 +10,8 @@ import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Stable } from "@/game/types";
 import type { CashImpact, TransactionImpact } from "@/core/resolver/impacts/financialImpacts";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 
 describe("upkeepPhase", () => {
   it("should emit cash_change and transaction impacts for player upkeep", () => {
@@ -23,7 +25,7 @@ describe("upkeepPhase", () => {
           age: 3,
           gender: "colt",
           hemisphere: "Northern",
-          ownership: { type: "player" },
+          ownership: makePlayerOwned(),
         }),
         createTestHorse({
           id: "horse-2",
@@ -31,7 +33,7 @@ describe("upkeepPhase", () => {
           age: 4,
           gender: "filly",
           hemisphere: "Northern",
-          ownership: { type: "player" },
+          ownership: makePlayerOwned(),
         }),
       ]),
     }) as GameState;
@@ -67,7 +69,7 @@ describe("upkeepPhase", () => {
           age: 3,
           gender: "colt",
           hemisphere: "Northern",
-          ownership: { type: "npc", stableId: asNpcStableId("npc-stable-1") },
+          ownership: makeNpcOwned(asNpcStableId("npc-stable-1")),
         }),
       ]),
       npcStables: [
@@ -105,7 +107,7 @@ describe("upkeepPhase", () => {
           age: 3,
           gender: "colt",
           hemisphere: "Northern",
-          ownership: { type: "npc", stableId: asNpcStableId("npc-stable-1") },
+          ownership: makeNpcOwned(asNpcStableId("npc-stable-1")),
         }),
         createTestHorse({
           id: "horse-2",
@@ -113,7 +115,7 @@ describe("upkeepPhase", () => {
           age: 4,
           gender: "filly",
           hemisphere: "Northern",
-          ownership: { type: "npc", stableId: asNpcStableId("npc-stable-2") },
+          ownership: makeNpcOwned(asNpcStableId("npc-stable-2")),
         }),
       ]),
       npcStables: [
@@ -196,7 +198,7 @@ describe("upkeepPhase", () => {
           age: 3,
           gender: "colt",
           hemisphere: "Northern",
-          ownership: { type: "player" },
+          ownership: makePlayerOwned(),
         }),
         createUnownedHorse({
           id: "unowned-horse",

@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { createInitialState } from "@/game/store/initialization";
 import { BACKSTORIES } from "@/core/common/backstories";
 import { UPKEEP_PER_HORSE } from "@/constants";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { isPlayerOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 import { calculateTotalMaintenance } from "@/core/facilities/facilityDefaults";
 import { runPipelineForDays } from "@/tests/helpers/runPipeline";
 import { makeGameState, h2r } from "@/tests/helpers/sampleGameState";
@@ -156,7 +156,7 @@ describe("Economy Invariant Tests", () => {
       const playerHorse = createTestHorse({
         id: "player-bought-horse" as any,
         name: "Bought Horse",
-        ownership: { type: "unowned" } as any,
+        ownership: makeUnowned() as any,
       });
 
       const horseMap = new Map<string, Horse>([[playerHorse.id, playerHorse]]);
@@ -205,7 +205,7 @@ describe("Economy Invariant Tests", () => {
       const playerHorse = createTestHorse({
         id: "player-sold-horse" as any,
         name: "Sold Horse",
-        ownership: { type: "player" } as any,
+        ownership: makePlayerOwned() as any,
       });
 
       const horseMap = new Map<string, Horse>([[playerHorse.id, playerHorse]]);

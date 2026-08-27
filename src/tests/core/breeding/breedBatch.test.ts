@@ -5,6 +5,7 @@ import { createTestMare, createTestStallion } from "@/tests/helpers";
 import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE, MAX_BATCH_BREEDING } from "@/constants";
 import type { Horse, StudCareer, Pregnancy } from "@/game/types";
 import type { MatingPlanEntry } from "@/game/store/state/breedingState";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function mkStud(overrides: Partial<StudCareer> = {}): StudCareer {
   return {
@@ -30,23 +31,21 @@ function makeMockState(overrides: Record<string, any> = {}) {
     name: "Sire 1",
     hemisphere: "Northern",
     stud: mkStud({ standingFee: 5000 }),
-    stableId: "npc-stable-1",
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
   });
   const sire2 = createTestStallion({
     id: "sire2",
     name: "Sire 2",
     hemisphere: "Northern",
     stud: mkStud({ standingFee: 8000 }),
-    stableId: "npc-stable-2",
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
   });
   const owned = createTestStallion({
     id: "sire-owned",
     name: "Owned Sire",
     hemisphere: "Northern",
     stud: mkStud({ standingFee: 5000 }),
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
   });
 
   return {

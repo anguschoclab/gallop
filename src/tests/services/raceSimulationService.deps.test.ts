@@ -5,6 +5,7 @@ import {
 } from "@/services/race/raceSimulationService";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
 import type { Race } from "@/core/race/types";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {
@@ -18,8 +19,8 @@ function makeRace(overrides: Partial<Race> = {}): Race {
     trackCondition: "Fast",
     surface: "Dirt",
     entries: [
-      { horseId: "h1", ownership: { type: "player" } },
-      { horseId: "h2", ownership: { type: "unowned" } },
+      { horseId: "h1", ownership: makePlayerOwned() },
+      { horseId: "h2", ownership: makeUnowned() },
     ],
     resolved: false,
     cancelled: false,

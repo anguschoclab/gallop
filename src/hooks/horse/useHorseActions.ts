@@ -2,6 +2,7 @@ import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import { isMaleHorse } from "@/core/horse/gender";
 import type { Horse, AuctionSale } from "@/game/types";
 import { useMemo, useEffect } from "react";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 /**
  * Hook to manage horse-specific management actions and eligibility.
@@ -37,13 +38,13 @@ export function useHorseActions(horseId: string) {
     const isConsigned = !!horse.consignedSaleId;
 
     const canRetireToStud =
-      horse.owned &&
+      isPlayerOwned(horse) &&
       isMaleHorse(horse.gender) &&
       horse.age >= 3 &&
       !horse.stud?.atStud &&
       !isConsigned;
 
-    const canRetireToPasture = horse.owned && horse.lifecycleStatus === "active" && !isConsigned;
+    const canRetireToPasture = isPlayerOwned(horse) && horse.lifecycleStatus === "active" && !isConsigned;
 
     const consignedSale = isConsigned
       ? auctions.find((a: AuctionSale) => a.id === horse.consignedSaleId)
@@ -51,7 +52,7 @@ export function useHorseActions(horseId: string) {
 
     // Find eligible upcoming sales to consign to
     const eligibleSale =
-      !isConsigned && horse.owned
+      !isConsigned && isPlayerOwned(horse)
         ? auctions.find((a: AuctionSale) => {
             if (a.resolved) return false;
             const ageMatch =

@@ -7,6 +7,7 @@ import type { CommentaryLine } from "@/services/narrative/types";
 import type { RaceContext } from "@/services/narrative/types";
 import { createRng, hashStr } from "@/core/common/rng";
 import { TEMPLATES } from "@/assets/narrative/templates";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {
@@ -110,7 +111,7 @@ function makeHorseEntity(overrides: Record<string, unknown> = {}): Horse {
     raceHistory: [],
     fame: 50,
     fanCount: 0,
-    ownership: { type: "npc", stableId: "s1" },
+    ownership: makeNpcOwned("s1"),
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 1, Dirt: 1, Synthetic: 1 },
     mudAptitude: 1,
@@ -169,21 +170,21 @@ describe("Narrative Variety E2E — Full race simulation", () => {
     const horse1 = makeHorseEntity({
       id: "h1",
       name: "Thunder Strike",
-      ownership: { type: "npc", stableId: "s1" },
+      ownership: makeNpcOwned("s1"),
       coatColor: "bay",
       gender: "colt",
     });
     const horse2 = makeHorseEntity({
       id: "h2",
       name: "Midnight Runner",
-      ownership: { type: "npc", stableId: "s2" },
+      ownership: makeNpcOwned("s2"),
       coatColor: "chestnut",
       gender: "filly",
     });
-    const horse3 = makeHorseEntity({ id: "h3", name: "Desert Wind", ownership: { type: "npc", stableId: "s1" } });
-    const horse4 = makeHorseEntity({ id: "h4", name: "Silver Arrow", ownership: { type: "npc", stableId: "s2" } });
-    const horse5 = makeHorseEntity({ id: "h5", name: "Falcon Crest", ownership: { type: "npc", stableId: "s1" } });
-    const horse6 = makeHorseEntity({ id: "h6", name: "Storm Chaser", ownership: { type: "npc", stableId: "s2" } });
+    const horse3 = makeHorseEntity({ id: "h3", name: "Desert Wind", ownership: makeNpcOwned("s1") });
+    const horse4 = makeHorseEntity({ id: "h4", name: "Silver Arrow", ownership: makeNpcOwned("s2") });
+    const horse5 = makeHorseEntity({ id: "h5", name: "Falcon Crest", ownership: makeNpcOwned("s1") });
+    const horse6 = makeHorseEntity({ id: "h6", name: "Storm Chaser", ownership: makeNpcOwned("s2") });
 
     const horses = [horse1, horse2, horse3, horse4, horse5, horse6];
     const stables = [stable1, stable2];
@@ -548,10 +549,10 @@ describe("Narrative Variety E2E — Full race simulation", () => {
     const stable1 = makeStable({ id: "s1", name: "Godolphin", isMajor: true });
     const stable2 = makeStable({ id: "s2", name: "Coolmore", isMajor: true });
     const horses = [
-      makeHorseEntity({ id: "h1", name: "Thunder Strike", ownership: { type: "npc", stableId: "s1" } }),
-      makeHorseEntity({ id: "h2", name: "Midnight Runner", ownership: { type: "npc", stableId: "s2" } }),
-      makeHorseEntity({ id: "h3", name: "Desert Wind", ownership: { type: "npc", stableId: "s1" } }),
-      makeHorseEntity({ id: "h4", name: "Silver Arrow", ownership: { type: "npc", stableId: "s2" } }),
+      makeHorseEntity({ id: "h1", name: "Thunder Strike", ownership: makeNpcOwned("s1") }),
+      makeHorseEntity({ id: "h2", name: "Midnight Runner", ownership: makeNpcOwned("s2") }),
+      makeHorseEntity({ id: "h3", name: "Desert Wind", ownership: makeNpcOwned("s1") }),
+      makeHorseEntity({ id: "h4", name: "Silver Arrow", ownership: makeNpcOwned("s2") }),
     ];
     const gen = new NarrativeGenerator(race, horses, [stable1, stable2], rng, raceContext);
 

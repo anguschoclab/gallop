@@ -6,6 +6,7 @@ import { generateUUID } from "@/core/uuid";
 import { requireOwned, requireHorse } from "../guards";
 import type { StoreSet, StoreGet } from "../types";
 import type { CoreSlice } from "./coreSlice";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 export function createRaceEntryActions(
   set: StoreSet,
@@ -142,7 +143,7 @@ export function createRaceEntryActions(
       const s = get();
       const horse = s.horses?.[horseId];
       if (!horse) return { ok: false, reason: "Horse not found." };
-      if (!horse.owned) return { ok: false, reason: "Horse not owned." };
+      if (!isPlayerOwned(horse)) return { ok: false, reason: "Horse not owned." };
       if (horse.insurancePolicy) return { ok: false, reason: "Horse already has insurance." };
 
       enqueueIntent({
@@ -204,7 +205,7 @@ export function createRaceEntryActions(
       if (!race) return { ok: false, reason: "Race not found." };
       const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "Horse not found." };
-      if (horse.owned) return { ok: false, reason: "Cannot claim your own horse." };
+      if (isPlayerOwned(horse)) return { ok: false, reason: "Cannot claim your own horse." };
 
       enqueueIntent({
         id: generateUUID(),

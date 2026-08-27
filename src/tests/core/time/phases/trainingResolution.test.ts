@@ -9,6 +9,7 @@ import type { TrainingIntent } from "@/core/resolver/intents";
 import type { EnergyImpact } from "@/core/resolver/impacts/horseImpacts";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import { AFFINITY_XP_PER_WORKOUT } from "@/constants";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 describe("trainingResolutionPhase", () => {
   const createTestState = (): GameState => ({
@@ -249,7 +250,7 @@ describe("trainingResolutionPhase — workout affinity", () => {
   it("training with contracted jockey produces jockey_affinity_gain impact", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stableId: "stable-1",
+      ownership: makeNpcOwned("stable-1"),
       energy: 80,
       trainability: 100.0,
     });
@@ -309,7 +310,7 @@ describe("trainingResolutionPhase — workout affinity", () => {
   it("speed workout with sprint_specialist jockey grants +5 bonus XP", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stableId: "stable-1",
+      ownership: makeNpcOwned("stable-1"),
       energy: 80,
       trainability: 100.0,
     });
@@ -347,7 +348,7 @@ describe("trainingResolutionPhase — workout affinity", () => {
   it("stamina workout with staying_specialist jockey grants +5 bonus XP", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stableId: "stable-1",
+      ownership: makeNpcOwned("stable-1"),
       energy: 80,
       trainability: 100.0,
     });
@@ -385,7 +386,7 @@ describe("trainingResolutionPhase — workout affinity", () => {
   it("rest workout produces no affinity impact", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stableId: "stable-1",
+      ownership: makeNpcOwned("stable-1"),
       energy: 80,
       trainability: 100.0,
     });

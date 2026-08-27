@@ -3,6 +3,7 @@ import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactor
 import { horsePrice, horsePriceWithPedigree } from "@/core/horse/pricing";
 import { makeGradedRace, generateRace } from "@/core/race/generation/raceGen";
 import type { GradedRace } from "@/data/gradedRaces";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 const STAT_RANGES: Record<string, [number, number]> = {
   starter: [20, 60],
@@ -30,12 +31,12 @@ describe("generateHorse", () => {
   }
 
   it("ownership matches opts.ownership (player)", () => {
-    const h = generateHorse({ ownership: { type: "player" } } as any);
+    const h = generateHorse({ ownership: makePlayerOwned() } as any);
     expect(h.ownership).toEqual({ type: "player" });
   });
 
   it("ownership matches opts.ownership (unowned)", () => {
-    const h = generateHorse({ ownership: { type: "unowned" } } as any);
+    const h = generateHorse({ ownership: makeUnowned() } as any);
     expect(h.ownership).toEqual({ type: "unowned" });
   });
 

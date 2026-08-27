@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
 import type { Horse } from "@/game/types";
+import { asNpcStableId } from "@/core/types/branded";
 import type { useNpcStableDetail } from "@/hooks/stable/useNpcStableDetail";
 
 vi.mock("@tanstack/react-router", () => ({
@@ -59,6 +60,7 @@ vi.mock("sonner", () => ({
 }));
 
 import { NpcStableRosterTab } from "@/components/stable/NpcStableRosterTab";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({
@@ -82,7 +84,7 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
-    ownership: { type: "npc", stableId: asNpcStableId("npc1") },
+    ownership: makeNpcOwned(asNpcStableId("npc1")),
     silk: { primary: "#ff0000", secondary: "#00ff00" } as any,
     ...overrides,
   }) as Horse;

@@ -1,3 +1,4 @@
+import { asNpcStableId } from "@/core/types/branded";
 /**
  * npcTrainingSelection.test.ts — Integration tests for NPC training selection.
  *
@@ -17,6 +18,7 @@ import { createTestStable } from "@/tests/helpers/createTestStable";
 import type { GameState } from "@/game/types";
 import type { TrainingIntent } from "@/core/resolver/intents";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
 
 const ADVANCED_TYPES = ["gallop", "swimming", "breeze", "gate_work", "bullet", "treadmill"];
 const BASIC_TYPES = ["speed", "stamina", "acceleration", "rest"];
@@ -29,8 +31,7 @@ function makeState(
   const stable = createTestStable({ id: stableId, tier: facilityTier });
   const horse = createTestHorse({
     id: `${stableId}-horse`,
-    stableId,
-    ownership: { type: "unowned" },
+    ownership: makeNpcOwned(asNpcStableId(stableId)),
     energy: 100,
     ...horseOverrides,
   });
@@ -67,8 +68,7 @@ describe("budget stable — never selects advanced or locked training", () => {
     const horses = Array.from({ length: 10 }, (_, i) =>
       createTestHorse({
         id: `budget-horse-${i}`,
-        stableId: "budget-stable",
-        ownership: { type: "unowned" },
+        ownership: makeUnowned(),
         energy: 100,
         stats: {
           speed: 40 + i * 5,
@@ -113,8 +113,7 @@ describe("mid stable — picks from mid available set, not premium/elite types",
     const horses = Array.from({ length: 10 }, (_, i) =>
       createTestHorse({
         id: `mid-horse-${i}`,
-        stableId: "mid-stable",
-        ownership: { type: "unowned" },
+        ownership: makeUnowned(),
         energy: 100,
       }),
     );
@@ -157,8 +156,7 @@ describe("elite stable — only picks from its full unlocked set", () => {
     const horses = Array.from({ length: 10 }, (_, i) =>
       createTestHorse({
         id: `elite-horse-${i}`,
-        stableId: "elite-stable",
-        ownership: { type: "unowned" },
+        ownership: makeUnowned(),
         energy: 100,
       }),
     );
@@ -195,8 +193,7 @@ describe("stable with no npcFacilities entry — falls back to basic types", () 
       horses: h2r([
         createTestHorse({
           id: "no-fac-horse",
-          stableId: "no-fac-stable",
-          ownership: { type: "unowned" },
+          ownership: makeUnowned(),
           energy: 100,
         }),
       ]),
@@ -241,14 +238,12 @@ describe("multiple stables in one state — each uses its own facility set", () 
       horses: h2r([
         createTestHorse({
           id: "b-horse",
-          stableId: "b-stable",
-          ownership: { type: "unowned" },
+          ownership: makeUnowned(),
           energy: 100,
         }),
         createTestHorse({
           id: "e-horse",
-          stableId: "e-stable",
-          ownership: { type: "unowned" },
+          ownership: makeUnowned(),
           energy: 100,
         }),
       ]),

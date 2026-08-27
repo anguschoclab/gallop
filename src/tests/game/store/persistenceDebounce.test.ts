@@ -121,6 +121,7 @@ vi.mock("@/game/store/storage", () => {
 import { persistenceEnabled, _resetPersistenceEnabled } from "@/game/store/storage";
 import { useGame } from "@/game/store";
 import { seedStore } from "@/test-utils/renderWithStore";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 describe("Persistence debouncing during advanceMultipleDays", () => {
   beforeEach(() => {
@@ -163,7 +164,7 @@ describe("Persistence debouncing during advanceMultipleDays", () => {
           purse: 10000,
           minStat: 70,
           fieldSize: 8,
-          entries: [{ horseId: "horse-1", ownership: { type: "player" }, npc: false }],
+          entries: [{ horseId: "horse-1", ownership: makePlayerOwned(), npc: false }],
           resolved: false,
         } as any,
       },
@@ -171,7 +172,7 @@ describe("Persistence debouncing during advanceMultipleDays", () => {
         "horse-1": {
           id: "horse-1",
           name: "Test",
-          ownership: { type: "player" },
+          ownership: makePlayerOwned(),
           age: 3,
           stats: { speed: 50, acceleration: 50, stamina: 50, temperament: 50 },
           form: 0,

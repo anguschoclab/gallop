@@ -262,8 +262,8 @@ export function createRacingSlice(
         purse: 0,
         fieldSize: 2,
         entries: [
-          { horseId: horse.id, owned: true, weight: 126 },
-          { horseId: opponent.id, owned: isPlayerOwned(opponent), weight: 126 },
+          { horseId: horse.id, ownership: makePlayerOwned(), weight: 126 },
+          { horseId: opponent.id, ownership: opponent.ownership, weight: 126 },
         ],
         resolved: false,
         trackId: "trial_track",

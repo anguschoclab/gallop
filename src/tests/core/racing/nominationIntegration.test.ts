@@ -21,6 +21,7 @@ import {
   NOMINATION_FEE_G3_LATE,
 } from "@/core/racing/nominationFees";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function makeGradedRace(
   id: string,
@@ -65,7 +66,7 @@ describe("nominateHorse — success cases", () => {
   beforeEach(() => setState({}));
 
   it("succeeds for G1 early tier with sufficient cash", () => {
-    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: makePlayerOwned() });
     const race = makeGradedRace("r1", 110, "G1");
     setState({ day: 10, cash: 100000, horses: h2r([horse]), races: r2r([race]) });
 
@@ -80,7 +81,7 @@ describe("nominateHorse — success cases", () => {
   });
 
   it("succeeds for G2 standard tier", () => {
-    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: makePlayerOwned() });
     const race = makeGradedRace("r1", 50, "G2");
     setState({ day: 10, cash: 100000, horses: h2r([horse]), races: r2r([race]) });
 
@@ -94,7 +95,7 @@ describe("nominateHorse — success cases", () => {
   });
 
   it("succeeds for G3 late tier", () => {
-    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: makePlayerOwned() });
     const race = makeGradedRace("r1", 20, "G3");
     setState({ day: 10, cash: 100000, horses: h2r([horse]), races: r2r([race]) });
 
@@ -112,7 +113,7 @@ describe("nominateHorse — failure cases", () => {
   beforeEach(() => setState({}));
 
   it("fails when race not found", () => {
-    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: makePlayerOwned() });
     setState({ horses: h2r([horse]), races: {} });
 
     const result = useGame.getState().nominateHorse("h1", "nonexistent");
@@ -121,7 +122,7 @@ describe("nominateHorse — failure cases", () => {
   });
 
   it("fails when race is not graded", () => {
-    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: makePlayerOwned() });
     const race = makeGradedRace("r1", 50, "G1", { graded: undefined });
     setState({ horses: h2r([horse]), races: r2r([race]) });
 
@@ -131,7 +132,7 @@ describe("nominateHorse — failure cases", () => {
   });
 
   it("fails when horse not owned", () => {
-    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: { type: "unowned" } });
+    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: makeUnowned() });
     const race = makeGradedRace("r1", 50, "G1");
     setState({ horses: h2r([horse]), races: r2r([race]) });
 
@@ -141,7 +142,7 @@ describe("nominateHorse — failure cases", () => {
   });
 
   it("fails on duplicate active nomination", () => {
-    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: makePlayerOwned() });
     const race = makeGradedRace("r1", 50, "G1");
     setState({
       day: 10,
@@ -170,7 +171,7 @@ describe("nominateHorse — failure cases", () => {
   });
 
   it("fails when race day has passed", () => {
-    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: makePlayerOwned() });
     const race = makeGradedRace("r1", 5, "G1");
     setState({ day: 10, cash: 100000, horses: h2r([horse]), races: r2r([race]) });
 
@@ -180,7 +181,7 @@ describe("nominateHorse — failure cases", () => {
   });
 
   it("fails for G1 late tier (null fee)", () => {
-    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: makePlayerOwned() });
     const race = makeGradedRace("r1", 20, "G1");
     setState({ day: 10, cash: 100000, horses: h2r([horse]), races: r2r([race]) });
 
@@ -190,7 +191,7 @@ describe("nominateHorse — failure cases", () => {
   });
 
   it("fails with insufficient cash", () => {
-    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: makePlayerOwned() });
     const race = makeGradedRace("r1", 110, "G1");
     setState({ day: 10, cash: 100, horses: h2r([horse]), races: r2r([race]) });
 
@@ -204,7 +205,7 @@ describe("nominateHorse — side effects", () => {
   beforeEach(() => setState({}));
 
   it("deducts correct fee from cash", () => {
-    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: makePlayerOwned() });
     const race = makeGradedRace("r1", 110, "G1");
     setState({ day: 10, cash: 100000, horses: h2r([horse]), races: r2r([race]) });
 
@@ -213,7 +214,7 @@ describe("nominateHorse — side effects", () => {
   });
 
   it("creates NominationRecord with correct fields", () => {
-    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "h1", name: "Runner", ownership: makePlayerOwned() });
     const race = makeGradedRace("r1", 110, "G2");
     setState({ day: 10, cash: 100000, horses: h2r([horse]), races: r2r([race]) });
 

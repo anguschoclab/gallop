@@ -2,13 +2,14 @@ import { describe, it, expect } from "vitest";
 import type { Race } from "@/game/types";
 import type { RaceEntry } from "@/core/race/types";
 import { asHorseId, asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 
 function makePlayerEntry(horseId: string): RaceEntry {
-  return { horseId: asHorseId(horseId), ownership: { type: "player" } };
+  return { horseId: asHorseId(horseId), ownership: makePlayerOwned() };
 }
 
 function makeNpcEntry(horseId: string): RaceEntry {
-  return { horseId: asHorseId(horseId), ownership: { type: "npc", stableId: asNpcStableId("s1") } };
+  return { horseId: asHorseId(horseId), ownership: makeNpcOwned(asNpcStableId("s1")) };
 }
 
 function makeRace(id: string, day: number, entries: RaceEntry[], resolved = false): Race {

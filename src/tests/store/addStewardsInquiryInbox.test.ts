@@ -3,6 +3,7 @@ import { useGame } from "@/game/store";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 import type { Race } from "@/game/types";
 import { asRaceId } from "@/core/types/branded";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function makeInquiry(overrides: Partial<StewardsInquiry> = {}): StewardsInquiry {
   return {
@@ -35,8 +36,8 @@ function makeRace(overrides: Partial<Race> = {}): Race {
       { horseId: "horse-B", position: 2, time: 96.5 },
     ],
     entries: [
-      { horseId: "horse-A", ownership: { type: "player" } } as any,
-      { horseId: "horse-B", ownership: { type: "unowned" } } as any,
+      { horseId: "horse-A", ownership: makePlayerOwned() } as any,
+      { horseId: "horse-B", ownership: makeUnowned() } as any,
     ],
     ...overrides,
   } as Race;

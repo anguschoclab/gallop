@@ -9,6 +9,7 @@ import {
 } from "@/core/race/beyer";
 import type { Horse } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
+import { makeUnowned } from "@/core/horse/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -28,7 +29,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     form: 0,
     potential: 80,
     raceHistory: [],
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
     fame: 0,
     lifecycleStatus: "active" as const,
     ...overrides,

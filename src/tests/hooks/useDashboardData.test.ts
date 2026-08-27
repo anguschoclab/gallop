@@ -5,12 +5,13 @@ import { useDashboardData } from "@/hooks/dashboard/useDashboardData";
 import { createDefaultGameState } from "@/game/store/state";
 import { ENERGY_LOW_THRESHOLD } from "@/constants";
 import type { Horse } from "@/core/horse/types";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function mkHorse(id: string, overrides: Partial<Horse> = {}): Horse {
   return {
     id,
     name: `Horse-${id}`,
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     lifecycleStatus: "active",
     energy: ENERGY_LOW_THRESHOLD + 10,
     raceHistory: [],
@@ -34,22 +35,22 @@ describe("useDashboardData — horse categorization", () => {
   it("correctly categorizes owned, active, and low-energy horses", () => {
     const horses: Record<string, Horse> = {
       h1: mkHorse("h1", {
-        ownership: { type: "player" },
+        ownership: makePlayerOwned(),
         lifecycleStatus: "active",
         energy: ENERGY_LOW_THRESHOLD + 10,
       }),
       h2: mkHorse("h2", {
-        ownership: { type: "player" },
+        ownership: makePlayerOwned(),
         lifecycleStatus: "active",
         energy: ENERGY_LOW_THRESHOLD - 10,
       }),
       h3: mkHorse("h3", {
-        ownership: { type: "player" },
+        ownership: makePlayerOwned(),
         lifecycleStatus: "retired",
         energy: ENERGY_LOW_THRESHOLD + 10,
       }),
       h4: mkHorse("h4", {
-        ownership: { type: "unowned" },
+        ownership: makeUnowned(),
         lifecycleStatus: "active",
         energy: ENERGY_LOW_THRESHOLD + 10,
       }),
@@ -76,17 +77,17 @@ describe("useDashboardData — horse categorization", () => {
   it("all owned, active, low-energy → all three arrays have same length", () => {
     const horses: Record<string, Horse> = {
       h1: mkHorse("h1", {
-        ownership: { type: "player" },
+        ownership: makePlayerOwned(),
         lifecycleStatus: "active",
         energy: ENERGY_LOW_THRESHOLD - 20,
       }),
       h2: mkHorse("h2", {
-        ownership: { type: "player" },
+        ownership: makePlayerOwned(),
         lifecycleStatus: "active",
         energy: ENERGY_LOW_THRESHOLD - 30,
       }),
       h3: mkHorse("h3", {
-        ownership: { type: "player" },
+        ownership: makePlayerOwned(),
         lifecycleStatus: "active",
         energy: ENERGY_LOW_THRESHOLD - 10,
       }),

@@ -15,6 +15,8 @@ import {
   AFFINITY_XP_POOR_RACE_PENALTY,
 } from "@/constants";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -332,7 +334,7 @@ describe("generatePrizeMoneyImpacts", () => {
   });
 
   it("player win → positive cash_change + transaction + reputation with positive delta", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const impacts = runSingle(horse, 1, makeGradedRace({ purse: 1_000_000 }));
     const cash = impacts.find(
       (i) => i.type === "cash_change" && (i as any).entityId === "player" && (i as any).amount > 0,
@@ -351,7 +353,7 @@ describe("generatePrizeMoneyImpacts", () => {
   });
 
   it("NPC horse win → no transaction impact, no reputation impact", () => {
-    const horse = createTestNpcHorse({ id: "h-npc", stableId: "stable-npc" });
+    const horse = createTestNpcHorse({ id: "h-npc", ownership: makeNpcOwned("stable-npc") });
     const impacts = runSingle(horse, 1, makeGradedRace({ purse: 1_000_000 }));
     const tx = impacts.find((i) => i.type === "transaction");
     expect(tx).toBeUndefined();
@@ -366,10 +368,10 @@ describe("generatePrizeMoneyImpacts", () => {
 
 describe("generateJockeyFeeImpacts", () => {
   it("player horse + jockey → negative cash_change + transaction", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({ id: "j1" });
     const race = makeOpenRace({
-      entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any],
+      entries: [{ horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() } as any],
     });
     const impacts = generateRaceImpacts({
       race,
@@ -389,14 +391,14 @@ describe("generateJockeyFeeImpacts", () => {
   });
 
   it("NPC horse + jockey → negative cash_change but NO transaction", () => {
-    const horse = createTestNpcHorse({ id: "h-npc", stableId: "stable-npc" });
+    const horse = createTestNpcHorse({ id: "h-npc", ownership: makeNpcOwned("stable-npc") });
     const jockey = createTestJockey({ id: "j1" });
     const race = makeOpenRace({
       entries: [
         {
           horseId: "h-npc",
           jockeyId: "j1",
-          ownership: { type: "npc", stableId: asNpcStableId("stable-npc") },
+          ownership: makeNpcOwned(asNpcStableId("stable-npc")),
         } as any,
       ],
     });
@@ -517,7 +519,7 @@ describe("generateTrainerStatsImpact", () => {
   });
 
   it("win → trainer_stats with fameDelta > 0", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const trainer = { id: "t1", name: "Trainer", role: "trainer", stableId: undefined } as any;
     const impacts = generateRaceImpacts({
       race: makeOpenRace(),
@@ -536,7 +538,7 @@ describe("generateTrainerStatsImpact", () => {
   });
 
   it("sprint race (≤1400m) → specialty sprinter", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const trainer = { id: "t1", name: "T", role: "trainer", stableId: undefined } as any;
     const impacts = generateRaceImpacts({
       race: makeOpenRace({ distance: 1200 }),
@@ -553,7 +555,7 @@ describe("generateTrainerStatsImpact", () => {
   });
 
   it("position > 10 → fameDelta -1", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const trainer = { id: "t1", name: "T", role: "trainer", stableId: undefined } as any;
     const impacts = generateRaceImpacts({
       race: makeOpenRace({ fieldSize: 20 }),
@@ -578,12 +580,12 @@ describe("generateJockeyAffinityImpact", () => {
   function runWithJockey(position: number, beyerHistory: any[] = [], time = 130) {
     const horse = createTestColt({
       id: "h1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: beyerHistory,
     });
     const jockey = createTestJockey({ id: "j1" });
     const race = makeOpenRace({
-      entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any],
+      entries: [{ horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() } as any],
     });
     return generateRaceImpacts({
       race,
@@ -727,13 +729,13 @@ describe("generateBreedingImpacts", () => {
 
 describe("generateRaceSummaryLog", () => {
   it("no log when all horses are NPC-owned", () => {
-    const horse = createTestNpcHorse({ id: "h-npc", stableId: "stable-npc" });
+    const horse = createTestNpcHorse({ id: "h-npc", ownership: makeNpcOwned("stable-npc") });
     const impacts = runSingle(horse, 1, makeOpenRace());
     expect(impacts.find((i) => i.type === "log")).toBeUndefined();
   });
 
   it("log emitted when player owns a horse in the race", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const impacts = runSingle(horse, 1, makeOpenRace({ purse: 50_000 }));
     const log = impacts.find((i) => i.type === "log") as any;
     expect(log).toBeDefined();
@@ -742,14 +744,14 @@ describe("generateRaceSummaryLog", () => {
   });
 
   it("prize amount is shown in the log text when nonzero", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const impacts = runSingle(horse, 1, makeOpenRace({ purse: 100_000 }));
     const log = impacts.find((i) => i.type === "log") as any;
     expect(log.text).toContain("won");
   });
 
   it("no prize text when horse finishes outside prize positions", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const impacts = runSingle(horse, 9, makeOpenRace({ purse: 100_000 }));
     const log = impacts.find((i) => i.type === "log") as any;
     if (log) {
@@ -764,15 +766,15 @@ describe("generateRaceSummaryLog", () => {
 
 describe("generateRaceImpacts — integration regression", () => {
   it("full G1 race with 2 owned horses + jockeys emits all expected impact types", () => {
-    const h1 = createTestColt({ id: "h1", ownership: { type: "player" } });
-    const h2 = createTestColt({ id: "h2", ownership: { type: "player" } });
+    const h1 = createTestColt({ id: "h1", ownership: makePlayerOwned() });
+    const h2 = createTestColt({ id: "h2", ownership: makePlayerOwned() });
     const j1 = createTestJockey({ id: "j1" });
     const j2 = createTestJockey({ id: "j2" });
     const race = makeGradedRace({
       purse: 1_000_000,
       entries: [
-        { horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any,
-        { horseId: "h2", jockeyId: "j2", ownership: { type: "player" } } as any,
+        { horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() } as any,
+        { horseId: "h2", jockeyId: "j2", ownership: makePlayerOwned() } as any,
       ],
     });
     const impacts = generateRaceImpacts({
@@ -806,7 +808,7 @@ describe("generateRaceImpacts — integration regression", () => {
   });
 
   it("open race with NPC horse, no jockey emits minimal impact set", () => {
-    const horse = createTestNpcHorse({ id: "h-npc", stableId: "stable-npc" });
+    const horse = createTestNpcHorse({ id: "h-npc", ownership: makeNpcOwned("stable-npc") });
     const impacts = runSingle(horse, 5, makeOpenRace());
 
     const types = new Set(impacts.map((i) => i.type));
@@ -881,10 +883,10 @@ describe("generateRaceImpacts — integration regression", () => {
   });
 
   it("jockey_stats careerStarts incremented by 1", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({ id: "j1", careerStarts: 50, careerWins: 10 });
     const race = makeOpenRace({
-      entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any],
+      entries: [{ horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() } as any],
     });
     const impacts = generateRaceImpacts({
       race,
@@ -903,10 +905,10 @@ describe("generateRaceImpacts — integration regression", () => {
   });
 
   it("jockey_stats fame +0.5 for 2nd place", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({ id: "j1", careerStarts: 50, careerWins: 10, fame: 50 });
     const race = makeGradedRace({
-      entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any],
+      entries: [{ horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() } as any],
     });
     const impacts = generateRaceImpacts({
       race,
@@ -923,10 +925,10 @@ describe("generateRaceImpacts — integration regression", () => {
   });
 
   it("jockey_stats fame capped at MAX_FAME", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({ id: "j1", careerStarts: 50, careerWins: 10, fame: 99 });
     const race = makeOpenRace({
-      entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any],
+      entries: [{ horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() } as any],
     });
     const impacts = generateRaceImpacts({
       race,
@@ -942,7 +944,7 @@ describe("generateRaceImpacts — integration regression", () => {
   });
 
   it("apprentice progression updated on win for apprentice jockey", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({
       id: "j1",
       isApprentice: true,
@@ -954,7 +956,7 @@ describe("generateRaceImpacts — integration regression", () => {
       } as any,
     });
     const race = makeOpenRace({
-      entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any],
+      entries: [{ horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() } as any],
     });
     const impacts = generateRaceImpacts({
       race,
@@ -972,10 +974,10 @@ describe("generateRaceImpacts — integration regression", () => {
   });
 
   it("no jockey_stats when position beyond prizeSplit length", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({ id: "j1" });
     const race = makeOpenRace({
-      entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any],
+      entries: [{ horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() } as any],
     });
     const impacts = generateRaceImpacts({
       race,
@@ -990,11 +992,11 @@ describe("generateRaceImpacts — integration regression", () => {
   });
 
   it("percentage jockey fee emitted for placed jockey", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({ id: "j1" });
     const race = makeGradedRace({
       purse: 1_000_000,
-      entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any],
+      entries: [{ horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() } as any],
     });
     const impacts = generateRaceImpacts({
       race,
@@ -1049,10 +1051,10 @@ describe("generateRaceImpacts — integration regression", () => {
 
 describe("jockey_stats stableAffinityDelta", () => {
   it("includes stableAffinityDelta of 5 when jockey wins", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({ id: "j1", careerStarts: 50, careerWins: 10 });
     const race = makeOpenRace({
-      entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any],
+      entries: [{ horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() } as any],
     });
     const impacts = generateRaceImpacts({
       race,
@@ -1069,13 +1071,13 @@ describe("jockey_stats stableAffinityDelta", () => {
   });
 
   it("includes stableAffinityDelta of 2 when jockey places (top 3)", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({ id: "j1", careerStarts: 50, careerWins: 10 });
     const race = makeOpenRace({
       entries: [
-        { horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any,
-        { horseId: "h2", jockeyId: "j2", ownership: { type: "unowned" } } as any,
-        { horseId: "h3", jockeyId: "j3", ownership: { type: "unowned" } } as any,
+        { horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() } as any,
+        { horseId: "h2", jockeyId: "j2", ownership: makeUnowned() } as any,
+        { horseId: "h3", jockeyId: "j3", ownership: makeUnowned() } as any,
       ],
     });
     const impacts = generateRaceImpacts({
@@ -1099,14 +1101,14 @@ describe("jockey_stats stableAffinityDelta", () => {
   });
 
   it("has no stableAffinityDelta for finishers outside top 3", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({ id: "j1", careerStarts: 50, careerWins: 10 });
     const race = makeOpenRace({
       entries: [
-        { horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any,
-        { horseId: "h2", jockeyId: "j2", ownership: { type: "unowned" } } as any,
-        { horseId: "h3", jockeyId: "j3", ownership: { type: "unowned" } } as any,
-        { horseId: "h4", jockeyId: "j4", ownership: { type: "unowned" } } as any,
+        { horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() } as any,
+        { horseId: "h2", jockeyId: "j2", ownership: makeUnowned() } as any,
+        { horseId: "h3", jockeyId: "j3", ownership: makeUnowned() } as any,
+        { horseId: "h4", jockeyId: "j4", ownership: makeUnowned() } as any,
       ],
     });
     const impacts = generateRaceImpacts({

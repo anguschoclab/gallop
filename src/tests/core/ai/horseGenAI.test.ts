@@ -14,6 +14,7 @@ import {
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import type { StablePersonality } from "@/core/stable/types";
 import type { Horse, Stable } from "@/game/types";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 const ALL_PERSONALITIES: StablePersonality[] = [
   "prestige",
@@ -128,7 +129,7 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
     },
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 },
-    stableId: "test-stable-id",
+    ownership: makeNpcOwned("test-stable-id"),
     ...overrides,
   });
 }

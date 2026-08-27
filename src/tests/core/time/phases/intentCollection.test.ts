@@ -4,6 +4,7 @@ import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleG
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import type { GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 describe("intentCollectionPhase", () => {
   it("should collect player pendingIntents into intents array", () => {
@@ -47,8 +48,7 @@ describe("intentCollectionPhase", () => {
     const stable = createTestStable({ id: "npc-1", cash: 100000, horses: ["horse-1"] });
     const horse = createTestHorse({
       id: "horse-1",
-      stableId: "npc-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const state = makeGameState({
       npcStables: [stable],
@@ -61,7 +61,7 @@ describe("intentCollectionPhase", () => {
   });
 
   it("should generate auto-campaign entries for planned slots on race day", () => {
-    const horse = createTestHorse({ id: "horse-1", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "horse-1", ownership: makePlayerOwned() });
     const race = {
       id: "race-1",
       name: "Test Race",
@@ -108,7 +108,7 @@ describe("intentCollectionPhase", () => {
   });
 
   it("should not generate auto-campaign entries for non-auto-managed campaigns", () => {
-    const horse = createTestHorse({ id: "horse-1", ownership: { type: "player" } });
+    const horse = createTestHorse({ id: "horse-1", ownership: makePlayerOwned() });
     const race = {
       id: "race-1",
       name: "Test Race",

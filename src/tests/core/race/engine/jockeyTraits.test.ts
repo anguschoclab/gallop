@@ -4,6 +4,7 @@ import type { Runner, PaceContext } from "@/core/race/engine/runnerBuilder";
 import type { Horse, Jockey } from "@/game/types";
 import { createRng } from "@/core/common/rng";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
+import { makeUnowned } from "@/core/horse/ownership";
 
 function mockHorse(id: string, style: string): Horse {
   return {
@@ -44,7 +45,7 @@ function makeRunner(
     horseId,
     name: `Horse ${horseId}`,
     silk: "#ff0000",
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
     position: 0,
     velocity: 15,
     finishTime: null,

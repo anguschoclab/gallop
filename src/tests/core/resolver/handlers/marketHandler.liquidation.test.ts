@@ -7,6 +7,7 @@ import { MarketHandler } from "@/core/resolver/handlers/MarketHandler";
 import type { GameState, Horse, AuctionSale } from "@/game/types";
 import type { AuctionResolutionImpact } from "@/core/resolver/impacts/miscImpacts";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function makeSale(overrides: Partial<AuctionSale> = {}): AuctionSale {
   return {
@@ -28,8 +29,7 @@ describe("MarketHandler auction_resolution", () => {
       name: "Horse 1",
       age: 3,
       gender: "colt",
-      stableId: "npc-stable-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       consignedSaleId: "sale-1",
     });
     const sale = makeSale({
@@ -80,7 +80,7 @@ describe("MarketHandler auction_resolution", () => {
       name: "Horse 1",
       age: 3,
       gender: "colt",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       consignedSaleId: "sale-1",
     });
     const sale = makeSale({
@@ -131,8 +131,7 @@ describe("MarketHandler auction_resolution", () => {
       name: "Horse 1",
       age: 3,
       gender: "colt",
-      stableId: "dissolved-stable",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       consignedSaleId: "sale-1",
     });
     const sale = makeSale({
@@ -183,8 +182,7 @@ describe("MarketHandler auction_resolution", () => {
       name: "Horse 1",
       age: 3,
       gender: "colt",
-      stableId: "existing-stable",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       consignedSaleId: "sale-1",
     });
     const sale = makeSale({
@@ -234,8 +232,7 @@ describe("MarketHandler auction_resolution", () => {
       name: "Horse 1",
       age: 3,
       gender: "colt",
-      stableId: "npc-stable-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const sale = makeSale({
       id: "sale-1",
@@ -343,8 +340,7 @@ describe("MarketHandler auction_resolution", () => {
       name: "Horse 1",
       age: 2,
       gender: "colt",
-      stableId: "npc-stable-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       consignedSaleId: "sale-1",
     });
     const sale = makeSale({

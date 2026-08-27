@@ -4,6 +4,7 @@ import { createRng } from "@/core/common/rng";
 import type { Horse } from "@/game/types";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 describe("Health System - Injury Rolls", () => {
   const mockHorse = createTestHorse({
@@ -16,7 +17,7 @@ describe("Health System - Injury Rolls", () => {
       },
     } as any,
     ocdRisk: 0,
-    stableId: "",
+    ownership: makeNpcOwned(""),
   });
 
   it("should rarely trigger injury for healthy horses", () => {
