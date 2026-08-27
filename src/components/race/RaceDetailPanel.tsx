@@ -7,6 +7,8 @@ import {
   formatAllRestrictions,
 } from "@/core/race/restrictions";
 import { formatCurrency } from "@/core/common/formatting";
+import { getRacecoursePrestigeByName } from "@/core/prestige";
+import { PrestigeBadge } from "@/components/shared/PrestigeBadge";
 
 interface RaceDetailPanelProps {
   race: {
