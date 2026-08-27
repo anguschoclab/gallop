@@ -13,6 +13,8 @@ import { KIND_LABELS } from "@/core/auction/data";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { cn } from "@/lib/cn";
 import type { AuctionSale } from "@/game/types";
+import { resolveSaleHouse } from "@/core/prestige";
+import { PrestigeBadge } from "@/components/shared/PrestigeBadge";
 
 interface SaleHeaderProps {
   sale: AuctionSale;
@@ -31,6 +33,7 @@ export function SaleHeader({
   cash,
   onBack,
 }: SaleHeaderProps) {
+  const house = resolveSaleHouse(sale);
   return (
     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gold/20 pb-6">
       <div>
@@ -55,7 +58,7 @@ export function SaleHeader({
             {isResolved ? "Resolved" : "Active"}
           </Badge>
         </div>
-        <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
+        <div className="flex flex-wrap items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
           <span>
             Market Class:{" "}
             <span className="text-gold-muted">{KIND_LABELS[sale.kind] ?? sale.kind}</span>
@@ -68,7 +71,19 @@ export function SaleHeader({
           <span>
             Season Day: <NumericValue value={sale.day} />
           </span>
+          {house && (
+            <>
+              <span className="w-1 h-1 rounded-full bg-white/20" />
+              <span>
+                House: <span className="text-gold-muted">{house.name}</span>
+              </span>
+              <PrestigeBadge score={house.prestige} />
+            </>
+          )}
         </div>
+        {house && (
+          <p className="mt-2 text-xs text-cream/40 max-w-xl italic">{house.blurb}</p>
+        )}
       </div>
 
       <div className="flex flex-col items-end gap-1">
