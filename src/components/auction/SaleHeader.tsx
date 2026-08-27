@@ -31,6 +31,7 @@ export function SaleHeader({
   cash,
   onBack,
 }: SaleHeaderProps) {
+  const house = resolveSaleHouse(sale);
   return (
     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gold/20 pb-6">
       <div>
