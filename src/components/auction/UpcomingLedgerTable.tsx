@@ -71,16 +71,20 @@ export function UpcomingLedgerTable({
                       </div>
                       <div className="text-[9px] font-mono text-cream/20 uppercase tracking-tighter">
                         D{String(sale.day).padStart(3, "0")} · {gameCalendarDate(sale.day)}
+                        {house && <> · {house.shortName}</>}
                       </div>
                     </div>
                   </td>
                   <td className="px-4 py-5">
-                    <Badge
-                      variant="outline"
-                      className="text-[8px] h-4 font-black uppercase tracking-tighter border-white/10 text-cream/40 rounded-none"
-                    >
-                      {KIND_LABELS[sale.kind as keyof typeof KIND_LABELS] ?? sale.kind}
-                    </Badge>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge
+                        variant="outline"
+                        className="text-[8px] h-4 font-black uppercase tracking-tighter border-white/10 text-cream/40 rounded-none"
+                      >
+                        {KIND_LABELS[sale.kind as keyof typeof KIND_LABELS] ?? sale.kind}
+                      </Badge>
+                      {house && <PrestigeBadge score={house.prestige} showScore={false} />}
+                    </div>
                   </td>
                   <td className="px-4 py-5 text-center">
                     {isLocked ? (
