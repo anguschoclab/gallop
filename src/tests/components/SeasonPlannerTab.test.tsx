@@ -1,6 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { SeasonPlannerTab } from "@/components/breeding/SeasonPlannerTab";
+import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@/components/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (
@@ -38,7 +40,7 @@ const mockMare = (id: string, name: string, overrides: any = {}) => ({
   hemisphere: "Northern",
   distanceAptitude: 1600,
   bruceLoweFamily: undefined,
-  ownership: { type: "player" },
+  ownership: makePlayerOwned(),
   lifecycleStatus: "active",
   ...overrides,
 });
@@ -49,7 +51,7 @@ const mockStallion = (id: string, name: string, overrides: any = {}) => ({
   gender: "horse",
   age: 8,
   hemisphere: "Northern",
-  ownership: { type: "npc", stableId: asNpcStableId("npc-stable-1") },
+  ownership: makeNpcOwned(asNpcStableId("npc-stable-1")),
   stud: {
     atStud: true,
     standingFee: 5000,

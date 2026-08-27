@@ -5,6 +5,7 @@ import { createRng, hashStr } from "@/core/common/rng";
 import type { Horse, HorseGender } from "@/game/types";
 import type { Genotype } from "@/core/genetics/types";
 import type { Locus } from "@/core/common/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 // Mock Horse generator
 function mockHorse(
@@ -31,7 +32,7 @@ function mockHorse(
     form: 0,
     potential: 100,
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 },
     injuryProneness: 0,

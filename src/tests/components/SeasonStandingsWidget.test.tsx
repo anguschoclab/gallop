@@ -5,6 +5,7 @@ import { seedStore } from "@/test-utils/renderWithStore";
 import { SeasonStandingsWidget } from "@/components/dashboard/SeasonStandingsWidget";
 import { createDefaultGameState } from "@/game/store/state";
 import type { GameState, Horse } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({
@@ -39,7 +40,7 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     ...overrides,
   }) as Horse;
 
@@ -80,7 +81,7 @@ describe("SeasonStandingsWidget", () => {
   it("renders standings rows when race history exists", () => {
     const h1 = mkHorse({
       id: "h1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [
         {
           raceId: "r1",
@@ -111,7 +112,7 @@ describe("SeasonStandingsWidget", () => {
   it("shows notification badge when inbox has standings messages", () => {
     const h1 = mkHorse({
       id: "h1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [
         {
           raceId: "r1",
@@ -148,7 +149,7 @@ describe("SeasonStandingsWidget", () => {
   it("clicking a row opens the stable details panel", () => {
     const h1 = mkHorse({
       id: "h1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [
         {
           raceId: "r1",
@@ -178,7 +179,7 @@ describe("SeasonStandingsWidget", () => {
   });
 
   it("shows recent awards with links to /awards/$category", () => {
-    const h1 = mkHorse({ id: "h1", ownership: { type: "player" } });
+    const h1 = mkHorse({ id: "h1", ownership: makePlayerOwned() });
     seedStore({
       ...createDefaultGameState(),
       day: 60,

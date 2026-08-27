@@ -1,3 +1,4 @@
+import { asNpcStableId } from "@/core/types/branded";
 /**
  * Integration tests for rivalry escalation news generation in npcCycle.
  *
@@ -11,6 +12,7 @@ import { createRng } from "@/core/common/rng";
 import type { Horse, Race, Stable, Jockey } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
+import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 
 const DAY = 100;
 const REGION = "North America (East)";
@@ -54,13 +56,13 @@ describe("npcCycle — rivalry escalation news (grudge match path)", () => {
     playerHorse = createTestHorse({
       id: "player-horse",
       name: "Lightning Bolt",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
 
     rivalHorse = createTestHorse({
       id: "rival-horse",
       name: "Dark Thunder",
-      ownership: { type: "npc", stableId: asNpcStableId("rival-stable") },
+      ownership: makeNpcOwned(asNpcStableId("rival-stable")),
     });
 
     race = {
@@ -73,10 +75,10 @@ describe("npcCycle — rivalry escalation news (grudge match path)", () => {
       purse: 50000,
       fieldSize: 8,
       entries: [
-        { horseId: "player-horse", ownership: { type: "player" } } as any,
+        { horseId: "player-horse", ownership: makePlayerOwned() } as any,
         {
           horseId: "rival-horse",
-          ownership: { type: "npc", stableId: asNpcStableId("rival-stable") },
+          ownership: makeNpcOwned(asNpcStableId("rival-stable")),
         } as any,
       ],
       resolved: true,
@@ -228,7 +230,7 @@ describe("npcCycle — rivalry escalation news (regional dominance path)", () =>
     playerHorse = createTestHorse({
       id: "player-horse",
       name: "Lightning Bolt",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
 
     race = {
@@ -240,7 +242,7 @@ describe("npcCycle — rivalry escalation news (regional dominance path)", () =>
       entryFee: 500,
       purse: 50000,
       fieldSize: 8,
-      entries: [{ horseId: "player-horse", ownership: { type: "player" } } as any],
+      entries: [{ horseId: "player-horse", ownership: makePlayerOwned() } as any],
       resolved: true,
       result: [{ horseId: "player-horse", position: 1, time: 120 }],
       graded: { grade: "G1", country: REGION },

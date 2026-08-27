@@ -1,3 +1,4 @@
+import { getStableId, makeUnowned } from "@/core/horse/ownership";
 /**
  * Integration tests for NPC bankruptcy lifecycle —
  * verifies the full flow from bankruptcy detection through replacement,
@@ -46,8 +47,7 @@ describe("NPC Bankruptcy Lifecycle (integration)", () => {
       name: "Soon To Be Liquidated",
       age: 3,
       gender: "colt",
-      stableId: "poor-stable",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const state = makeGameState({
       day: 10,
@@ -125,8 +125,7 @@ describe("NPC Bankruptcy Lifecycle (integration)", () => {
       name: "Syndicated Stallion",
       age: 8,
       gender: "horse",
-      stableId: "bankrupt-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       lifetimeEarnings: 5000000,
     });
     const syndicate = makeSyndicate({
@@ -199,8 +198,7 @@ describe("NPC Bankruptcy Lifecycle (integration)", () => {
       name: "Syndicated Stallion",
       age: 8,
       gender: "horse",
-      stableId: "bankrupt-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       lifetimeEarnings: 5000000,
     });
     const otherNpcStable = createTestStable({ id: "other-npc", cash: 100000, horses: [] });
@@ -229,7 +227,7 @@ describe("NPC Bankruptcy Lifecycle (integration)", () => {
     expect(updatedSyndicate.shareHolders["other-npc"]).toBe(15);
 
     const updatedStallion = (result.state as GameState).horses["stallion-1"];
-    expect(updatedStallion.stableId).toBe("other-npc");
+    expect(getStableId(updatedStallion)).toBe("other-npc");
   });
 
   it("multiple bankruptcies on same day each produce separate liquidation sales", () => {
@@ -240,16 +238,14 @@ describe("NPC Bankruptcy Lifecycle (integration)", () => {
       name: "H1",
       age: 3,
       gender: "colt",
-      stableId: "bankrupt-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const horse2 = createTestHorse({
       id: "h2",
       name: "H2",
       age: 5,
       gender: "mare",
-      stableId: "bankrupt-2",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const state = makeGameState({
       npcStables: [stable1, stable2],

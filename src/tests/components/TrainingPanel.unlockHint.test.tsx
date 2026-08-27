@@ -3,6 +3,7 @@ import { render } from "@testing-library/react";
 import { TrainingPanel } from "@/components/horse/TrainingPanel";
 import type { Horse, PlayerFacilities } from "@/game/types";
 import { createFacility } from "@/core/facilities";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function makeHorse(): Horse {
   return {
@@ -23,7 +24,7 @@ function makeHorse(): Horse {
     starts: 0,
     earnings: 0,
     retired: false,
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     breed: "thoroughbred" as any,
     coatColor: "bay" as any,
     markings: {} as any,

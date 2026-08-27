@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { calculateHeadToHeadOdds, runHeadToHeadSimulation } from "@/core/race/headToHead";
 import type { Horse } from "@/game/types";
 import { asHorseId } from "@/core/types/branded";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({
@@ -23,7 +24,7 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     ...overrides,
   }) as Horse;
 

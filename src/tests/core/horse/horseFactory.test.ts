@@ -4,6 +4,7 @@ import type { Horse, Pregnancy, GameState } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { h2r } from "@/tests/helpers/sampleGameState";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -23,7 +24,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     form: 0,
     potential: 90,
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     fame: 0,
     lifecycleStatus: "active" as const,
     ...overrides,

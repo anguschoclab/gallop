@@ -6,6 +6,7 @@ import {
 import { createTestHorse, createTestRng } from "@/tests/helpers";
 import { isValidUUID } from "@/core/uuid";
 import type { Race } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function createG1Race(): Race {
   return {
@@ -58,8 +59,7 @@ function createPlayerHorse(careerWins = 0): ReturnType<typeof createTestHorse> {
   return createTestHorse({
     id: "player-horse-1",
     name: "Thunder Strike",
-    ownership: { type: "player" },
-    stableId: undefined,
+    ownership: makePlayerOwned(),
     careerWins,
   });
 }

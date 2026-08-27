@@ -1,3 +1,4 @@
+import { makePlayerOwned } from "@/core/horse/ownership";
 /**
  * Tests for impact application (resolver core)
  */
@@ -370,7 +371,7 @@ describe("applyImpacts", () => {
         conformation: 50,
       },
       potential: 90,
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
 
     const state: GameState = {

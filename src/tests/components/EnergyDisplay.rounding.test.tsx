@@ -5,6 +5,7 @@ import { StableRosterView } from "@/components/stable/StableRosterView";
 import { HorseCardCompact } from "@/components/horse/HorseCardCompact";
 import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import type { Horse } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
@@ -24,7 +25,7 @@ vi.mock("@/hooks/horse/useHorseCard", () => ({
 describe("Energy display rounding", () => {
   it("HorseCardCompact shows rounded energy", () => {
     const horse = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", ownership: { type: "player" } }),
+      generateHorse({ tier: "starter", ownership: makePlayerOwned() }),
     ) as unknown as Horse;
     horse.energy = 84.7;
 
@@ -37,7 +38,7 @@ describe("Energy display rounding", () => {
 
   it("StableRosterView shows rounded energy", () => {
     const horse = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", ownership: { type: "player" } }),
+      generateHorse({ tier: "starter", ownership: makePlayerOwned() }),
     ) as unknown as Horse;
     horse.energy = 72.3;
     horse.lifecycleStatus = "active";

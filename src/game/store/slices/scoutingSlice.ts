@@ -14,6 +14,7 @@ import { formatCurrency } from "@/core/common/formatting";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import { isPlayerOwned } from "@/core/horse/ownership";
+import { getStableId } from "@/core/horse/ownership";
 
 export type ScoutingSlice = {
   /**
@@ -56,7 +57,7 @@ export function createScoutingSlice(
       if (isPlayerOwned(horse)) {
         return { success: false, cost: 0, message: "Cannot scout your own horses." };
       }
-      const stable = s.npcStables.find((st: Stable) => st.id === horse.stableId);
+      const stable = s.npcStables.find((st: Stable) => st.id === getStableId(horse));
       if (!stable) {
         return { success: false, cost: 0, message: "Stable not found." };
       }

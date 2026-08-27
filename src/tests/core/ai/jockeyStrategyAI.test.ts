@@ -19,6 +19,7 @@ import {
 import { recordRaceStrategy, getStrategyInsights } from "@/core/ai/jockeyStrategyRecording";
 import type { Jockey, Horse, Race, Stable } from "@/game/types";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 // Mock data setup
 function createMockJockey(overrides: Partial<Jockey> = {}): Jockey {
@@ -158,7 +159,7 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
     gelded: false,
     lifecycleStatus: "active",
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     runningStyle: "E",
     coatColor: "bay",
     markings: { socks: ["none", "none", "none", "none"] as any, face: "none" },
@@ -581,14 +582,14 @@ describe("calculateOptimalTactics field-aware adjustments", () => {
       fieldSize: 6,
       entries: Array.from({ length: 5 }, (_, i) => ({
         horseId: `h${i}`,
-        ownership: { type: "unowned" },
+        ownership: makeUnowned(),
       })),
     });
     const largeFieldRace = createMockRace({
       fieldSize: 14,
       entries: Array.from({ length: 13 }, (_, i) => ({
         horseId: `h${i}`,
-        ownership: { type: "unowned" },
+        ownership: makeUnowned(),
       })),
     });
     const jockey = createMockJockey();
@@ -622,14 +623,14 @@ describe("calculateOptimalTactics field-aware adjustments", () => {
       fieldSize: 6,
       entries: Array.from({ length: 5 }, (_, i) => ({
         horseId: `h${i}`,
-        ownership: { type: "unowned" },
+        ownership: makeUnowned(),
       })),
     });
     const largeFieldRace = createMockRace({
       fieldSize: 16,
       entries: Array.from({ length: 15 }, (_, i) => ({
         horseId: `h${i}`,
-        ownership: { type: "unowned" },
+        ownership: makeUnowned(),
       })),
     });
     const jockey = createMockJockey();
@@ -764,7 +765,7 @@ describe("adjustForFieldComposition (standalone)", () => {
     const race = createMockRace({
       entries: Array.from({ length: 5 }, (_, i) => ({
         horseId: `h${i}`,
-        ownership: { type: "unowned" },
+        ownership: makeUnowned(),
       })),
     });
     expect(adjustForFieldComposition("E", race, horseMap)).toBe("S");
@@ -778,7 +779,7 @@ describe("adjustForFieldComposition (standalone)", () => {
     const race = createMockRace({
       entries: Array.from({ length: 5 }, (_, i) => ({
         horseId: `h${i}`,
-        ownership: { type: "unowned" },
+        ownership: makeUnowned(),
       })),
     });
     expect(adjustForFieldComposition("S", race, horseMap)).toBe("E");
@@ -793,7 +794,7 @@ describe("adjustForFieldComposition (standalone)", () => {
     const race = createMockRace({
       entries: Array.from({ length: 4 }, (_, i) => ({
         horseId: `h${i}`,
-        ownership: { type: "unowned" },
+        ownership: makeUnowned(),
       })),
     });
     expect(adjustForFieldComposition("P", race, horseMap)).toBe("P");
@@ -953,7 +954,7 @@ describe("calculateOptimalTactics — trait awareness", () => {
       fieldSize: 16,
       entries: Array.from({ length: 15 }, (_, i) => ({
         horseId: `h${i}`,
-        ownership: { type: "unowned" },
+        ownership: makeUnowned(),
       })),
     });
 
@@ -1043,7 +1044,7 @@ describe("calculateJockeyAggressiveness — trait awareness", () => {
       fieldSize: 16,
       entries: Array.from({ length: 15 }, (_, i) => ({
         horseId: `h${i}`,
-        ownership: { type: "unowned" },
+        ownership: makeUnowned(),
       })),
     });
     const stable = createMockStable();

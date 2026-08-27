@@ -1,33 +1,21 @@
 import { describe, it, expect } from "vitest";
-import {
-  isPlayerOwned,
-  isNpcOwned,
-  isUnowned,
-  ownerKey,
-  getStableId,
-  makePlayerOwned,
-  makeNpcOwned,
-  makeUnowned,
-  ownershipFromStableId,
-  PLAYER_OWNER_ID,
-  type HorseOwnership,
-} from "@/core/horse/ownership";
+import { PLAYER_OWNER_ID, getStableId, isNpcOwned, isPlayerOwned, isUnowned, makeNpcOwned, makePlayerOwned, makeUnowned, ownerKey, ownershipFromStableId, type HorseOwnership } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 
 describe("ownership model", () => {
   describe("isPlayerOwned", () => {
     it("returns true for player ownership", () => {
-      expect(isPlayerOwned({ ownership: { type: "player" } })).toBe(true);
+      expect(isPlayerOwned({ ownership: makePlayerOwned() })).toBe(true);
     });
 
     it("returns false for npc ownership", () => {
-      expect(isPlayerOwned({ ownership: { type: "npc", stableId: asNpcStableId("s1") } })).toBe(
+      expect(isPlayerOwned({ ownership: makeNpcOwned(asNpcStableId("s1")) })).toBe(
         false,
       );
     });
 
     it("returns false for unowned", () => {
-      expect(isPlayerOwned({ ownership: { type: "unowned" } })).toBe(false);
+      expect(isPlayerOwned({ ownership: makeUnowned() })).toBe(false);
     });
 
     it("returns false for undefined", () => {
@@ -41,15 +29,15 @@ describe("ownership model", () => {
 
   describe("isNpcOwned", () => {
     it("returns true for npc ownership", () => {
-      expect(isNpcOwned({ ownership: { type: "npc", stableId: asNpcStableId("s1") } })).toBe(true);
+      expect(isNpcOwned({ ownership: makeNpcOwned(asNpcStableId("s1")) })).toBe(true);
     });
 
     it("returns false for player ownership", () => {
-      expect(isNpcOwned({ ownership: { type: "player" } })).toBe(false);
+      expect(isNpcOwned({ ownership: makePlayerOwned() })).toBe(false);
     });
 
     it("returns false for unowned", () => {
-      expect(isNpcOwned({ ownership: { type: "unowned" } })).toBe(false);
+      expect(isNpcOwned({ ownership: makeUnowned() })).toBe(false);
     });
 
     it("returns false for undefined", () => {
@@ -59,15 +47,15 @@ describe("ownership model", () => {
 
   describe("isUnowned", () => {
     it("returns true for unowned", () => {
-      expect(isUnowned({ ownership: { type: "unowned" } })).toBe(true);
+      expect(isUnowned({ ownership: makeUnowned() })).toBe(true);
     });
 
     it("returns false for player ownership", () => {
-      expect(isUnowned({ ownership: { type: "player" } })).toBe(false);
+      expect(isUnowned({ ownership: makePlayerOwned() })).toBe(false);
     });
 
     it("returns false for npc ownership", () => {
-      expect(isUnowned({ ownership: { type: "npc", stableId: asNpcStableId("s1") } })).toBe(false);
+      expect(isUnowned({ ownership: makeNpcOwned(asNpcStableId("s1")) })).toBe(false);
     });
 
     it("returns false for undefined", () => {
@@ -77,7 +65,7 @@ describe("ownership model", () => {
 
   describe("ownerKey", () => {
     it("returns PLAYER_OWNER_ID for player-owned horse", () => {
-      expect(ownerKey({ ownership: { type: "player" } })).toBe(PLAYER_OWNER_ID);
+      expect(ownerKey({ ownership: makePlayerOwned() })).toBe(PLAYER_OWNER_ID);
     });
 
     it("returns NpcStableId for npc-owned horse", () => {
@@ -86,7 +74,7 @@ describe("ownership model", () => {
     });
 
     it("returns null for unowned horse", () => {
-      expect(ownerKey({ ownership: { type: "unowned" } })).toBe(null);
+      expect(ownerKey({ ownership: makeUnowned() })).toBe(null);
     });
 
     it("returns null for undefined", () => {
@@ -105,11 +93,11 @@ describe("ownership model", () => {
     });
 
     it("returns null for player-owned horse", () => {
-      expect(getStableId({ ownership: { type: "player" } })).toBe(null);
+      expect(getStableId({ ownership: makePlayerOwned() })).toBe(null);
     });
 
     it("returns null for unowned horse", () => {
-      expect(getStableId({ ownership: { type: "unowned" } })).toBe(null);
+      expect(getStableId({ ownership: makeUnowned() })).toBe(null);
     });
 
     it("returns null for undefined", () => {

@@ -17,7 +17,7 @@ import { runNpcBreeding } from "@/core/npc/breeding";
 import { createRng } from "@/core/common/rng";
 import type { GameState, Horse, HorseGender, Pregnancy } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
 import { asHorseId, asNpcStableId } from "@/core/types/branded";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
@@ -50,7 +50,7 @@ function mockHorse(
     form: 0,
     potential: 75,
     raceHistory: [],
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
     fame: 50,
     careerStarts: 0,
     careerWins: 0,

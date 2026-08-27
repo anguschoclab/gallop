@@ -10,6 +10,7 @@ import { PrivateSaleCounterCard } from "@/components/auction/PrivateSaleCounterC
 import { overall } from "@/components/horse/HorseBits";
 import { calculateScoutCost } from "@/core/npc/scouting";
 import { formatCurrency } from "@/core/common/formatting";
+import { evaluateHorseAttachment } from "@/core/horse/attachment";
 import { toast } from "sonner";
 import type { Horse, PrivateSaleOffer } from "@/game/types";
 import type { useNpcStableDetail } from "@/hooks/stable/useNpcStableDetail";
@@ -55,6 +56,7 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
 
             const activeOffer = activeOffersMap.get(horse.id);
             const hasInAuction = !!horse.consignedSaleId;
+            const attachment = evaluateHorseAttachment(horse, stable);
 
             const handleScout = (e: MouseEvent) => {
               e.preventDefault();
@@ -76,6 +78,13 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
                     className="hover:border-blue-500/40"
                   />
                 </Link>
+
+                {attachment.tier !== "available" && (
+                  <p className="mt-2 text-[10px] uppercase tracking-widest text-cream-muted">
+                    {attachment.label} · asks ×{attachment.askMultiplier.toFixed(2)} of market
+                  </p>
+                )}
+
 
                 <div className="mt-2 flex flex-wrap gap-2 justify-end">
                   <DisabledTooltipWrapper

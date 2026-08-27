@@ -5,6 +5,7 @@ import { DAYS_PER_YEAR } from "@/constants";
 import { isValidUUID } from "@/core/uuid";
 import type { Race, Horse, RaceRunner } from "@/game/types";
 import type { TrackRecord } from "@/core/history/historyTypes";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 // ─── Shared fixtures ──────────────────────────────────────────────────────
 
@@ -43,7 +44,7 @@ function createMockRunner(horseId: string, jockeyId?: string, jockeyName?: strin
     horseId,
     name: "Mock Horse",
     silk: "#000",
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     jockeyId: jockeyId ?? "j-1",
     jockeyName: jockeyName ?? "Test Jockey",
   };
@@ -54,7 +55,7 @@ const baseHorse = (overrides?: Partial<Horse>) =>
     id: "winner-1",
     name: "Champ",
     silk: "#ff0000",
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     ...overrides,
   });
 
@@ -310,7 +311,7 @@ describe("recordRaceHistory", () => {
           horseId: "winner-1",
           name: "Mock Horse",
           silk: "#000",
-          ownership: { type: "player" },
+          ownership: makePlayerOwned(),
         } as RaceRunner,
       ],
       [baseHorse()],
@@ -360,7 +361,7 @@ describe("recordRaceHistory", () => {
 
   it("sets isPlayerOwned to false when horse is unowned", () => {
     const race = createMockRace();
-    const horse = baseHorse({ ownership: { type: "unowned" } });
+    const horse = baseHorse({ ownership: makeUnowned() });
     const record = recordRaceHistory(
       race,
       createMockResult("winner-1"),

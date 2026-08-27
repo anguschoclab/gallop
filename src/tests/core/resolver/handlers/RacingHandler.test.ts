@@ -21,13 +21,14 @@ import type {
 import type { TripleCrownProgressImpact } from "@/core/resolver/impacts/index";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import type { Race } from "@/game/types";
+import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 describe("RacingHandler", () => {
   it("race_entry adds entry to race", () => {
     const handler = new RacingHandler();
     const state = {
       horses: h2r([
-        { id: "h1", name: "Star", stableId: "", ownership: { type: "player" } },
+        { id: "h1", name: "Star", stableId: "", ownership: makePlayerOwned() },
       ] as unknown as Horse[]),
       races: r2r([{ id: "race-1", entries: [], entryFee: 1000 }] as unknown as Race[]),
     } as unknown as GameState;
@@ -60,7 +61,7 @@ describe("RacingHandler", () => {
     const handler = new RacingHandler();
     const state = {
       horses: h2r([
-        { id: "h-unowned", name: "Wild", ownership: { type: "unowned" } },
+        { id: "h-unowned", name: "Wild", ownership: makeUnowned() },
       ] as unknown as Horse[]),
       races: r2r([{ id: "race-1", entries: [], entryFee: 1000 }] as unknown as Race[]),
     } as unknown as GameState;
@@ -94,7 +95,7 @@ describe("RacingHandler", () => {
       races: r2r([
         {
           id: "race-1",
-          entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } }],
+          entries: [{ horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() }],
         },
       ] as unknown as Race[]),
     } as unknown as GameState;
@@ -184,7 +185,7 @@ describe("RacingHandler", () => {
       races: r2r([
         {
           id: "race-1",
-          entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } }],
+          entries: [{ horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() }],
         },
       ] as unknown as Race[]),
     } as unknown as GameState;
@@ -277,7 +278,7 @@ describe("RacingHandler", () => {
     const handler = new RacingHandler();
     const state = {
       horses: h2r([
-        { id: "h1", name: "Star", stableId: "stable-1", ownership: { type: "unowned" } },
+        { id: "h1", name: "Star", stableId: "stable-1", ownership: makeUnowned() },
       ] as unknown as Horse[]),
       races: {},
     } as unknown as GameState;
@@ -448,7 +449,7 @@ describe("RacingHandler", () => {
       races: r2r([
         {
           id: "race-1",
-          entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } }],
+          entries: [{ horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() }],
         },
       ] as unknown as Race[]),
     } as unknown as GameState;
@@ -636,7 +637,7 @@ describe("RacingHandler", () => {
         cash: 5000,
         transactions: [],
         horses: h2r([
-          { id: "h1", name: "Star", ownership: { type: "player" } },
+          { id: "h1", name: "Star", ownership: makePlayerOwned() },
         ] as unknown as Horse[]),
         races: r2r([
           { id: "race-1", name: "Test Race", entries: [], entryFee: 1000 },
@@ -668,7 +669,7 @@ describe("RacingHandler", () => {
         cash: 5000,
         transactions: [],
         horses: h2r([
-          { id: "h1", name: "Star", ownership: { type: "player" } },
+          { id: "h1", name: "Star", ownership: makePlayerOwned() },
         ] as unknown as Horse[]),
         races: r2r([
           { id: "race-1", name: "Test Race", entries: [], entryFee: 1000 },
@@ -703,7 +704,7 @@ describe("RacingHandler", () => {
         cash: 5000,
         transactions: [],
         horses: h2r([
-          { id: "h1", name: "NPC Horse", ownership: { type: "npc", stableId: "s1" } },
+          { id: "h1", name: "NPC Horse", ownership: makeNpcOwned("s1") },
         ] as unknown as Horse[]),
         races: r2r([
           { id: "race-1", name: "Test Race", entries: [], entryFee: 1000 },
@@ -737,7 +738,7 @@ describe("RacingHandler", () => {
         cash: 5000,
         transactions: [],
         horses: h2r([
-          { id: "h1", name: "Wild", ownership: { type: "unowned" } },
+          { id: "h1", name: "Wild", ownership: makeUnowned() },
         ] as unknown as Horse[]),
         races: r2r([
           { id: "race-1", name: "Test Race", entries: [], entryFee: 1000 },
@@ -770,7 +771,7 @@ describe("RacingHandler", () => {
         cash: 5000,
         transactions: [],
         horses: h2r([
-          { id: "h1", name: "Star", ownership: { type: "player" } },
+          { id: "h1", name: "Star", ownership: makePlayerOwned() },
         ] as unknown as Horse[]),
         races: r2r([
           { id: "race-1", name: "Free Race", entries: [], entryFee: 0 },
@@ -806,12 +807,12 @@ describe("RacingHandler", () => {
           {
             id: "h-bumped",
             name: "Bumped",
-            ownership: { type: "npc", stableId: "s1" },
+            ownership: makeNpcOwned("s1"),
           },
           {
             id: "h-challenger",
             name: "Challenger",
-            ownership: { type: "npc", stableId: "s2" },
+            ownership: makeNpcOwned("s2"),
           },
         ] as unknown as Horse[]),
         races: r2r([
@@ -821,7 +822,7 @@ describe("RacingHandler", () => {
             entries: [
               {
                 horseId: "h-bumped",
-                ownership: { type: "npc", stableId: "s1" },
+                ownership: makeNpcOwned("s1"),
                 jockeyId: "j1",
               },
             ],
@@ -866,13 +867,13 @@ describe("RacingHandler", () => {
         cash: 4000,
         transactions: [],
         horses: h2r([
-          { id: "h1", name: "Star", ownership: { type: "player" } },
+          { id: "h1", name: "Star", ownership: makePlayerOwned() },
         ] as unknown as Horse[]),
         races: r2r([
           {
             id: "race-1",
             name: "Test Race",
-            entries: [{ horseId: "h1", ownership: { type: "player" } }],
+            entries: [{ horseId: "h1", ownership: makePlayerOwned() }],
             entryFee: 1000,
           },
         ] as unknown as Race[]),
@@ -904,13 +905,13 @@ describe("RacingHandler", () => {
         cash: 5000,
         transactions: [],
         horses: h2r([
-          { id: "h1", name: "NPC Horse", ownership: { type: "npc", stableId: "s1" } },
+          { id: "h1", name: "NPC Horse", ownership: makeNpcOwned("s1") },
         ] as unknown as Horse[]),
         races: r2r([
           {
             id: "race-1",
             name: "Test Race",
-            entries: [{ horseId: "h1", ownership: { type: "npc", stableId: "s1" } }],
+            entries: [{ horseId: "h1", ownership: makeNpcOwned("s1") }],
             entryFee: 1000,
           },
         ] as unknown as Race[]),

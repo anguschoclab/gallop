@@ -4,13 +4,14 @@ import { createTestHorse, createTestJockey, createTestStable } from "@/tests/hel
 import type { Horse, Jockey, Race, Stable } from "@/game/types";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { createJockeyStrategyAIState } from "@/core/ai/jockeyStrategyAI";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
     id: "horse-1",
     name: "Test Horse",
     runningStyle: "E",
-    stableId: "stable-1",
+    ownership: makeNpcOwned("stable-1"),
     phenotypeResolved: true,
     stats: {
       speed: 80,

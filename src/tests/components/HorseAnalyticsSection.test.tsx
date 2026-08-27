@@ -4,6 +4,7 @@ import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { HorseAnalyticsSection } from "@/components/horse/HorseAnalyticsSection";
 import type { Horse } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
@@ -32,7 +33,7 @@ function createHorse(overrides: Partial<Horse> = {}): Horse {
     },
     potential: 70,
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     healthStatus: "healthy",
     lifecycleStatus: "active",
     racingViable: true,

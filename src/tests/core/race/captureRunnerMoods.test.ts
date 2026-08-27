@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { captureRunnerMoods } from "@/core/race/runnerConditions";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
+import { makeUnowned } from "@/core/horse/ownership";
 
 function horse(temperament = 50, injured = false) {
   return {
@@ -17,7 +18,7 @@ function runner(overrides: Partial<Runner> = {}): Runner {
     velocity: 16,
     finishTime: null,
     lane: 1,
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
     runningStyle: "P",
     topSpeed: 18,
     horse: horse(),

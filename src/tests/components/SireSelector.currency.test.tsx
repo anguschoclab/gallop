@@ -3,11 +3,12 @@ import { render } from "@testing-library/react";
 import { SireSelector } from "@/components/breeding/SireSelector";
 import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import type { Horse } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 describe("SireSelector — currency formatting", () => {
   it("does not show double $ for standing fee", () => {
     const stallion = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", ownership: { type: "player" } }),
+      generateHorse({ tier: "starter", ownership: makePlayerOwned() }),
     ) as unknown as Horse;
     stallion.stud = {
       atStud: true,

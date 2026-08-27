@@ -9,6 +9,7 @@ import { createTestStable } from "@/tests/helpers/createTestStable";
 import type { GameState, Horse, Stable } from "@/game/types";
 import { produce } from "immer";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 describe("NPC Gelding AI & Intent Generation", () => {
   it("should evaluate gelding eligibility based on stable personality and horse potential", () => {
@@ -120,7 +121,7 @@ describe("NPC Gelding AI & Intent Generation", () => {
       age: 3,
       potential: 75,
       gelded: false,
-      stableId: "stable-1",
+      ownership: makeNpcOwned("stable-1"),
     });
 
     const gameState: GameState = {

@@ -11,6 +11,7 @@ import type { Horse, Race, GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GradedRace } from "@/data/gradedRaces";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function makeHorse(overrides: Partial<Horse> = {}): Horse {
   return {
@@ -304,7 +305,7 @@ describe("raceInvitationsPhase", () => {
   it("sends invites for upcoming invite-only races", () => {
     const horse = makeHorse({
       id: "h1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       distanceAptitude: 1600,
       fame: 80,
     });
@@ -358,21 +359,21 @@ describe("raceInvitationsPhase", () => {
     const horseA = makeHorse({
       id: "h-a",
       name: "Thunder",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       distanceAptitude: 1600,
       fame: 80,
     });
     const horseB = makeHorse({
       id: "h-b",
       name: "Lightning",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       distanceAptitude: 1600,
       fame: 70,
     });
     const horseC = makeHorse({
       id: "h-c",
       name: "Storm",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       distanceAptitude: 1600,
       fame: 60,
     });
@@ -430,21 +431,21 @@ describe("raceInvitationsPhase", () => {
     const ownedA = makeHorse({
       id: "h-owned-a",
       name: "Thunder",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       distanceAptitude: 1600,
       fame: 80,
     });
     const ownedB = makeHorse({
       id: "h-owned-b",
       name: "Lightning",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       distanceAptitude: 1600,
       fame: 70,
     });
     const npcHorse = makeHorse({
       id: "h-npc",
       name: "Dark Horse",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       distanceAptitude: 1600,
       fame: 90,
     });
@@ -502,14 +503,14 @@ describe("raceInvitationsPhase", () => {
     const npcA = makeHorse({
       id: "h-npc-a",
       name: "Dark Horse",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       distanceAptitude: 1600,
       fame: 90,
     });
     const npcB = makeHorse({
       id: "h-npc-b",
       name: "Shadow",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       distanceAptitude: 1600,
       fame: 80,
     });
@@ -561,14 +562,14 @@ describe("raceInvitationsPhase", () => {
     const horseA = makeHorse({
       id: "h-a",
       name: "Thunder",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       distanceAptitude: 1600,
       fame: 80,
     });
     const horseB = makeHorse({
       id: "h-b",
       name: "Lightning",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       distanceAptitude: 1600,
       fame: 70,
     });
@@ -625,7 +626,7 @@ describe("raceInvitationsPhase", () => {
   it("deduplicates invites (does not re-invite already-invited horses)", () => {
     const horse = makeHorse({
       id: "h1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       distanceAptitude: 1600,
       fame: 80,
     });

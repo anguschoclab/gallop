@@ -6,7 +6,7 @@ import { createDefaultGameState } from "@/game/store/state";
 import { useGame } from "@/game/store";
 import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import type { Horse } from "@/game/types";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { isPlayerOwned, makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children }: any) => children,
@@ -23,11 +23,11 @@ describe("BredHorsesTab — age floor", () => {
 
   it("displays age with Math.floor for float age", () => {
     const horse = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", ownership: { type: "player" } }),
+      generateHorse({ tier: "starter", ownership: makePlayerOwned() }),
     ) as unknown as Horse;
     horse.age = 3.9;
     horse.bredByPlayer = true;
-    isPlayerOwned(horse) = true;
+    horse.ownership = makePlayerOwned();
 
     renderWithStore(<BredHorsesTab />, {
       horses: { [horse.id]: horse },

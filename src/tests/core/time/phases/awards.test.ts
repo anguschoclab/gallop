@@ -6,6 +6,7 @@ import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import { createDefaultGameState } from "@/game/store/state";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 describe("awardsPhase", () => {
   const createTestState = (): GameState => ({
@@ -114,7 +115,7 @@ describe("awardsPhase", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [
         {
@@ -192,7 +193,7 @@ describe("awardsPhase", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       raceHistory: [
         {
@@ -262,7 +263,7 @@ describe("awardsPhase", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       fanCount: 25000,
       raceHistory: [
@@ -335,7 +336,7 @@ describe("awardsPhase", () => {
       potential: 90,
       energy: 100,
       form: 0,
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       fame: 50,
       fanCount: 25000,
       raceHistory: [

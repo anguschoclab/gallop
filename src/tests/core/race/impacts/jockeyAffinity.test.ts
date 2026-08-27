@@ -4,6 +4,7 @@ import { AFFINITY_CONSTANTS } from "@/core/jockey/affinity";
 import { createTestJockey, createTestHorse } from "@/tests/helpers";
 import type { Jockey, JockeyTrait } from "@/core/jockey/types";
 import type { Horse, Race } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function mkJockey(overrides: Partial<Jockey> = {}): Jockey {
   return createTestJockey({ id: "j1", affinityMap: {}, ...overrides });
@@ -24,7 +25,7 @@ function mkRace(overrides: Partial<Race> = {}): Race {
     purse: 10000,
     minStat: 70,
     fieldSize: 8,
-    entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any],
+    entries: [{ horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() } as any],
     resolved: false,
     surface: "Turf",
     trackCondition: "good",

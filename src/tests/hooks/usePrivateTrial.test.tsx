@@ -14,12 +14,13 @@ import { usePrivateTrial } from "@/hooks/race/usePrivateTrial";
 import { useGame } from "@/game/store";
 import { generateRiderFeedback } from "@/core/horse/trialFeedback";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function makeHorse(overrides: any = {}): Horse {
   return {
     id: "h1",
     name: "Thunder",
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     energy: 50,
     ...overrides,
   } as unknown as Horse;
@@ -218,8 +219,8 @@ describe("usePrivateTrial", () => {
   describe("eligibleOpponents", () => {
     it("filters out non-owned horses", () => {
       const horses = [
-        makeHorse({ id: "h2", ownership: { type: "unowned" }, energy: 50 }),
-        makeHorse({ id: "h3", ownership: { type: "player" }, energy: 50 }),
+        makeHorse({ id: "h2", ownership: makeUnowned(), energy: 50 }),
+        makeHorse({ id: "h3", ownership: makePlayerOwned(), energy: 50 }),
       ];
       const { result } = renderHook(() => usePrivateTrial(makeHorse(), horses, 10000));
       expect(result.current.eligibleOpponents).toHaveLength(1);
@@ -228,8 +229,8 @@ describe("usePrivateTrial", () => {
 
     it("filters out horses with energy < 15", () => {
       const horses = [
-        makeHorse({ id: "h2", ownership: { type: "player" }, energy: 14 }),
-        makeHorse({ id: "h3", ownership: { type: "player" }, energy: 15 }),
+        makeHorse({ id: "h2", ownership: makePlayerOwned(), energy: 14 }),
+        makeHorse({ id: "h3", ownership: makePlayerOwned(), energy: 15 }),
       ];
       const { result } = renderHook(() => usePrivateTrial(makeHorse(), horses, 10000));
       expect(result.current.eligibleOpponents).toHaveLength(1);
@@ -238,8 +239,8 @@ describe("usePrivateTrial", () => {
 
     it("filters out the trial horse itself", () => {
       const horses = [
-        makeHorse({ id: "h1", ownership: { type: "player" }, energy: 50 }),
-        makeHorse({ id: "h2", ownership: { type: "player" }, energy: 50 }),
+        makeHorse({ id: "h1", ownership: makePlayerOwned(), energy: 50 }),
+        makeHorse({ id: "h2", ownership: makePlayerOwned(), energy: 50 }),
       ];
       const { result } = renderHook(() => usePrivateTrial(makeHorse({ id: "h1" }), horses, 10000));
       expect(result.current.eligibleOpponents).toHaveLength(1);
@@ -248,10 +249,10 @@ describe("usePrivateTrial", () => {
 
     it("includes owned horses with energy >= 15 that are not the trial horse", () => {
       const horses = [
-        makeHorse({ id: "h2", ownership: { type: "player" }, energy: 15 }),
-        makeHorse({ id: "h3", ownership: { type: "player" }, energy: 100 }),
-        makeHorse({ id: "h4", ownership: { type: "unowned" }, energy: 100 }),
-        makeHorse({ id: "h5", ownership: { type: "player" }, energy: 10 }),
+        makeHorse({ id: "h2", ownership: makePlayerOwned(), energy: 15 }),
+        makeHorse({ id: "h3", ownership: makePlayerOwned(), energy: 100 }),
+        makeHorse({ id: "h4", ownership: makeUnowned(), energy: 100 }),
+        makeHorse({ id: "h5", ownership: makePlayerOwned(), energy: 10 }),
       ];
       const { result } = renderHook(() => usePrivateTrial(makeHorse({ id: "h1" }), horses, 10000));
       expect(result.current.eligibleOpponents).toHaveLength(2);
@@ -268,7 +269,7 @@ describe("usePrivateTrial", () => {
 
     it("returns opponent horse name when matched", () => {
       const horses = [
-        makeHorse({ id: "h2", name: "Lightning", ownership: { type: "player" }, energy: 50 }),
+        makeHorse({ id: "h2", name: "Lightning", ownership: makePlayerOwned(), energy: 50 }),
       ];
       const { result } = renderHook(() => usePrivateTrial(makeHorse({ id: "h1" }), horses, 10000));
       act(() => {
@@ -308,7 +309,7 @@ describe("usePrivateTrial", () => {
 
     it("uses horse.name for player and opponentName for opponent", async () => {
       const horses = [
-        makeHorse({ id: "h2", name: "Lightning", ownership: { type: "player" }, energy: 50 }),
+        makeHorse({ id: "h2", name: "Lightning", ownership: makePlayerOwned(), energy: 50 }),
       ];
       runPrivateTrialMock.mockReturnValue({
         ok: true,

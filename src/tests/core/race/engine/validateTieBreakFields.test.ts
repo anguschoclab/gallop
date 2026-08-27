@@ -4,13 +4,14 @@ import {
   assertTieBreakFields,
 } from "@/core/race/engine/validateTieBreakFields";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
+import { makeUnowned } from "@/core/horse/ownership";
 
 function makeRunner(overrides: Partial<Runner> = {}): Runner {
   return {
     horseId: "h1",
     name: "Test Horse",
     silk: "#ff0000",
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
     position: 0,
     velocity: 15,
     finishTime: null,

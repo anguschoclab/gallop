@@ -4,6 +4,7 @@ import { useLeaderboardState } from "@/hooks/race/useLeaderboardState";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Race } from "@/core/race/types";
 import { DEFAULT_GATE } from "@/constants/gateConstants";
+import { makeUnowned } from "@/core/horse/ownership";
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
@@ -87,7 +88,7 @@ function runner(horseId: string, position: number, overrides: Partial<Runner> = 
     position,
     velocity: DEFAULT_VELOCITY,
     finishTime: null,
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
     lane: DEFAULT_LANE,
     gate: DEFAULT_GATE,
     ...overrides,

@@ -3,6 +3,7 @@ import { solvencyPhase } from "@/core/time/phases/solvency";
 import { SOLVENCY_THRESHOLDS } from "@/core/financial/solvency";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { AnyImpact, CashImpact } from "@/core/resolver/impacts/index";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 /**
  * Integration tests for the solvencyPhase — verifies day-over-day escalation
@@ -106,7 +107,7 @@ describe("solvencyPhase integration — day-by-day escalation", () => {
         age: 5,
         stats: baseStats,
         ratings: { current: 60 },
-        ownership: { type: "player" },
+        ownership: makePlayerOwned(),
       },
       valuable: {
         id: "valuable",
@@ -114,7 +115,7 @@ describe("solvencyPhase integration — day-by-day escalation", () => {
         age: 5,
         stats: { speed: 110, stamina: 110, acceleration: 110, temperament: 110 },
         ratings: { current: 110 },
-        ownership: { type: "player" },
+        ownership: makePlayerOwned(),
       },
     };
     const ctx = makeContext({
@@ -146,7 +147,7 @@ describe("solvencyPhase integration — day-by-day escalation", () => {
           name: "Last Runner",
           age: 4,
           ratings: { current: 80 },
-          ownership: { type: "player" },
+          ownership: makePlayerOwned(),
           raceHistory: [{ purseEarned: 12_000 }, { purseEarned: 3_000 }],
         },
       },

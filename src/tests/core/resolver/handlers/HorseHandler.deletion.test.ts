@@ -3,6 +3,7 @@ import { HorseHandler } from "@/core/resolver/handlers/HorseHandler";
 import type { GameState } from "@/game/store/state";
 import type { HorseDeletionImpact } from "@/core/resolver/impacts/horseImpacts";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function makeHorse(id: string, name: string): any {
   return {
@@ -21,7 +22,7 @@ function makeHorse(id: string, name: string): any {
     },
     potential: 70,
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     healthStatus: "healthy",
     lifecycleStatus: "active",
   };

@@ -3,6 +3,7 @@ import { render } from "@testing-library/react";
 import { PlayerConsignmentsPanel } from "@/components/auction/PlayerConsignmentsPanel";
 import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import type { Horse, AuctionLot, Stable } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children }: any) => children,
@@ -11,7 +12,7 @@ vi.mock("@tanstack/react-router", () => ({
 describe("Age display floor", () => {
   it("PlayerConsignmentsPanel uses Math.floor for age", () => {
     const horse = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", ownership: { type: "player" } }),
+      generateHorse({ tier: "starter", ownership: makePlayerOwned() }),
     ) as unknown as Horse;
     horse.age = 5;
 
@@ -41,7 +42,7 @@ describe("Age display floor", () => {
 
   it("PlayerConsignmentsPanel handles float age with Math.floor", () => {
     const horse = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", ownership: { type: "player" } }),
+      generateHorse({ tier: "starter", ownership: makePlayerOwned() }),
     ) as unknown as Horse;
     horse.age = 5.9;
 

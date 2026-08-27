@@ -1,3 +1,4 @@
+import { makeUnowned } from "@/core/horse/ownership";
 import { describe, it, expect } from "vitest";
 import {
   buildFieldContext,
@@ -27,7 +28,7 @@ function runner(overrides: Partial<Runner> = {}): Runner {
     velocity: 16,
     finishTime: null,
     lane: 1,
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
     runningStyle: "P",
     topSpeed: 18,
     horse: horse(),

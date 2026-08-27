@@ -11,6 +11,7 @@ import type { GameState } from "@/game/types";
 import type { BreedingIntent } from "@/core/resolver/intents";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 describe("breedingResolutionPhase", () => {
   const createTestState = (): GameState =>
@@ -28,7 +29,7 @@ describe("breedingResolutionPhase", () => {
       id: "sire-1",
       gender: "horse",
       age: 5,
-      stableId: "npc-stable-1",
+      ownership: makeNpcOwned("npc-stable-1"),
       stud: {
         atStud: true,
         standingFee: 1000,
@@ -84,7 +85,7 @@ describe("breedingResolutionPhase", () => {
       id: "sire-1",
       gender: "horse",
       age: 5,
-      stableId: "npc-stable-1",
+      ownership: makeNpcOwned("npc-stable-1"),
       stud: {
         atStud: true,
         standingFee: 1000,
@@ -160,7 +161,7 @@ describe("breedingResolutionPhase", () => {
       id: "sire-1",
       gender: "horse",
       age: 5,
-      stableId: "npc-stable-1",
+      ownership: makeNpcOwned("npc-stable-1"),
       stud: {
         atStud: true,
         standingFee: 1000,
@@ -222,7 +223,7 @@ describe("breedingResolutionPhase", () => {
       id: "sire-1",
       gender: "horse",
       age: 5,
-      stableId: "npc-stable-1",
+      ownership: makeNpcOwned("npc-stable-1"),
       stud: {
         atStud: true,
         standingFee: 1000,
@@ -238,7 +239,7 @@ describe("breedingResolutionPhase", () => {
       id: "sire-2",
       gender: "horse",
       age: 5,
-      stableId: "npc-stable-2",
+      ownership: makeNpcOwned("npc-stable-2"),
       stud: {
         atStud: true,
         standingFee: 1000,

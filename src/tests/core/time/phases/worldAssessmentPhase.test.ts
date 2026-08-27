@@ -4,6 +4,7 @@ import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleG
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import type { GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
+import { makeUnowned } from "@/core/horse/ownership";
 
 describe("worldAssessmentPhase", () => {
   it("should return context unchanged when no NPC stables", () => {
@@ -47,8 +48,7 @@ describe("worldAssessmentPhase", () => {
     const stable = createTestStable({ id: "npc-1", cash: 100000, horses: ["horse-1"] });
     const horse = createTestHorse({
       id: "horse-1",
-      stableId: "npc-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const aiManager = {
       stableStates: { "npc-1": {} },

@@ -5,6 +5,8 @@ import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { h2r } from "@/tests/helpers/sampleGameState";
 import { SOLVENCY_THRESHOLDS } from "@/core/financial/solvency";
 import { horsePrice } from "@/core/horse/pricing";
+import { asNpcStableId } from "@/core/types/branded";
+import { isPlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
 
 describe("payDownDebt action", () => {
   beforeEach(() => {
@@ -98,7 +100,7 @@ describe("quickSellHorse action", () => {
     });
     useGame.getState().quickSellHorse("h1");
     const soldHorse = useGame.getState().horses["h1"];
-    expect(soldHorse.owned).toBe(false);
+    expect(isPlayerOwned(soldHorse)).toBe(false);
   });
 
   it("records a voluntary_sale audit entry", () => {
@@ -118,7 +120,7 @@ describe("quickSellHorse action", () => {
       id: "npc1",
       name: "NPC Horse",
       age: 5,
-      ownership: { type: "npc", stableId: asNpcStableId("npc-stable") },
+      ownership: makeNpcOwned(asNpcStableId("npc-stable")),
     });
     seedStore({
       cash: -30_000,

@@ -18,6 +18,7 @@ vi.mock("@/core/horse/stats", () => ({
 }));
 
 import { useGalleryFilters } from "@/hooks/horse/useGalleryFilters";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 let mockState: any;
 
@@ -31,7 +32,7 @@ function mkHorse(id: string, overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
     id,
     name: `Horse ${id}`,
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     ...overrides,
   });
 }
@@ -195,8 +196,8 @@ describe("useGalleryFilters — trait filtering", () => {
 
   it("only owned horses are included", () => {
     mockState.horses = {
-      h1: mkHorse("h1", { ownership: { type: "player" } }),
-      h2: mkHorse("h2", { ownership: { type: "unowned" } }),
+      h1: mkHorse("h1", { ownership: makePlayerOwned() }),
+      h2: mkHorse("h2", { ownership: makeUnowned() }),
     };
     const { result } = renderHook(() => useGalleryFilters());
     expect(result.current.filteredHorses).toHaveLength(1);

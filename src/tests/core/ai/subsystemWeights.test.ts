@@ -23,6 +23,7 @@ import { createClaimingAIState } from "@/core/ai/claimingAITypes";
 import { shouldGeldHorse, createGeldingAIState } from "@/core/ai/geldingAI";
 import type { Stable, Horse } from "@/game/types";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {
   return createTestStable({
@@ -50,7 +51,7 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
       temperament: 50,
       conformation: 50,
     },
-    stableId: "npc-1",
+    ownership: makeNpcOwned("npc-1"),
     ...overrides,
   });
 }
@@ -112,7 +113,7 @@ describe("Subsystem Weight Application", () => {
       const stable = createMockStable({ personality: "trader", cash: 200000 });
       const horse = createMockHorse({
         id: "claim-target",
-        stableId: "npc-2",
+        ownership: makeNpcOwned("npc-2"),
         age: 4,
         energy: 50,
         form: 40,

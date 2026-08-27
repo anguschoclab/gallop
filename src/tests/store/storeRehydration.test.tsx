@@ -22,6 +22,7 @@ import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 import { StewardsDigestToast } from "@/components/stewards/StewardsDigestToast";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import type { Horse } from "@/game/types";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 // ── Fixtures ─────────────────────────────────────────────────────────────────
 
@@ -54,7 +55,7 @@ const investor: InvestorRecord = {
 const playerHorse: Partial<GameState["horses"][number]> = {
   id: "horse-overlay",
   name: "Midnight Comet",
-  ownership: { type: "player" },
+  ownership: makePlayerOwned(),
 } as any;
 
 const inquiry: StewardsInquiry = {
@@ -110,7 +111,7 @@ describe("Version-key rehydration guard", () => {
       day: 999,
       cash: 1,
       horses: h2r([
-        { id: "stale-horse", name: "Old Timer", ownership: { type: "player" } },
+        { id: "stale-horse", name: "Old Timer", ownership: makePlayerOwned() },
       ] as unknown as Horse[]),
       playerNominations: [nomination],
       syndicateInvestors: { "synd-v": investor },
@@ -205,7 +206,7 @@ describe("Empty localStorage — UI renders with default empty state", () => {
     useGame.setState({
       ...createDefaultGameState(),
       // No owned horses — inquiry is for an NPC horse
-      horses: h2r([{ id: "npc-horse", name: "Rival", ownership: { type: "unowned" } } as any]),
+      horses: h2r([{ id: "npc-horse", name: "Rival", ownership: makeUnowned() } as any]),
       stewardsInquiries: [
         {
           ...inquiry,

@@ -87,7 +87,7 @@ export function StallionsTab() {
             <StallionCard
               key={stallion.id}
               stallion={stallion}
-              stableName={stableNameFor(getStableId(stallion))}
+              stableName={stableNameFor(getStableId(stallion) ?? undefined)}
               day={day}
               mare={selectedMare}
               cash={cash}

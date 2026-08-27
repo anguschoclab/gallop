@@ -4,6 +4,7 @@ import { renderWithStore } from "@/test-utils/renderWithStore";
 import { AnalyticsOverviewTab } from "@/components/analytics/AnalyticsOverviewTab";
 import { h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse } from "@/tests/helpers";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 describe("AnalyticsOverviewTab", () => {
   afterEach(() => {
@@ -14,7 +15,7 @@ describe("AnalyticsOverviewTab", () => {
     const h1 = createTestHorse({
       id: "h1",
       name: "Thunder",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       lifecycleStatus: "active",
     });
     renderWithStore(<AnalyticsOverviewTab />, {

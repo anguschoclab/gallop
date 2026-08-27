@@ -4,6 +4,7 @@ import { buildRunner, getConditionsModifier } from "@/core/race/engine/runnerBui
 import { createRng } from "@/core/common/rng";
 import type { Horse, Jockey, JockeySilk } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 const mockRng = createRng(1);
 
@@ -27,7 +28,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     form: 0,
     potential: 90,
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     fame: 0,
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 },

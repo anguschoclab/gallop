@@ -5,6 +5,7 @@ import { isValidUUID } from "@/core/uuid";
 import type { NewsCategory, NewsImportance } from "@/services/narrative/newsTypes";
 import type { Race, Stable, Horse } from "@/game/types";
 import type { PlayerProfile } from "@/core/stable/types";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 const VALID_CATEGORIES: NewsCategory[] = ["racing", "market", "stable", "flavor", "milestone"];
 const VALID_IMPORTANCE: NewsImportance[] = ["high", "medium", "low"];
@@ -29,8 +30,7 @@ function buildTestNpcHorses(n: number): Horse[] {
     createTestHorse({
       id: `npc-horse-${i + 1}`,
       name: `NPC Horse ${i + 1}`,
-      ownership: { type: "unowned" },
-      stableId: `stable-${(i % 7) + 1}`,
+      ownership: makeUnowned(),
       age: 3 + (i % 5),
       fame: 80 - i * 3,
       stats: {
@@ -538,8 +538,7 @@ describe("seedGazetteNews", () => {
       const playerHorse = createTestHorse({
         id: "player-horse",
         name: "Player Horse",
-        ownership: { type: "player" },
-        stableId: undefined,
+        ownership: makePlayerOwned(),
         stats: {
           speed: 99,
           stamina: 99,

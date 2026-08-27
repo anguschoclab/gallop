@@ -14,6 +14,7 @@ import { createTestJockey } from "@/tests/helpers/createTestJockey";
 import { createTestRng } from "@/tests/helpers/createTestRng";
 import { RACE_ENERGY_IMPACT, MAX_FAME, GRADED_PRIZE_SPLIT } from "@/constants";
 import type { Race, Horse, Jockey } from "@/game/types";
+import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 
 function makeOpenRace(overrides: Partial<Race> = {}): Race {
   return {
@@ -317,7 +318,7 @@ describe("generatePerformanceCareerImpacts", () => {
 
 describe("generateFinancialBreedingImpacts", () => {
   it("emits cash_change for winning position (player horse)", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const race = makeOpenRace({ purse: 100_000 });
     const horseMap = new Map([["h1", horse]]);
     const impacts = generateFinancialBreedingImpacts(
@@ -338,7 +339,7 @@ describe("generateFinancialBreedingImpacts", () => {
   });
 
   it("emits transaction for player-owned horse", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const race = makeOpenRace({ purse: 100_000 });
     const horseMap = new Map([["h1", horse]]);
     const impacts = generateFinancialBreedingImpacts(
@@ -356,7 +357,7 @@ describe("generateFinancialBreedingImpacts", () => {
   });
 
   it("does not emit transaction for NPC horse", () => {
-    const horse = createTestNpcHorse({ id: "h1", stableId: "npc-stable" });
+    const horse = createTestNpcHorse({ id: "h1", ownership: makeNpcOwned("npc-stable") });
     const race = makeOpenRace({ purse: 100_000 });
     const horseMap = new Map([["h1", horse]]);
     const impacts = generateFinancialBreedingImpacts(
@@ -376,7 +377,7 @@ describe("generateFinancialBreedingImpacts", () => {
   });
 
   it("does not emit prize impacts for positions beyond split length", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const race = makeOpenRace({ purse: 100_000 });
     const horseMap = new Map([["h1", horse]]);
     const impacts = generateFinancialBreedingImpacts(
@@ -394,14 +395,14 @@ describe("generateFinancialBreedingImpacts", () => {
   });
 
   it("emits jockey_affinity_gain when jockey present", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({ id: "j1" });
     const race = makeOpenRace({
-      entries: [{ horseId: "h1", jockeyId: "j1", ownership: { type: "player" } } as any],
+      entries: [{ horseId: "h1", jockeyId: "j1", ownership: makePlayerOwned() } as any],
     });
     const horseMap = new Map([["h1", horse]]);
     const jockeyMap = new Map([["j1", jockey]]);
-    const entry = { horseId: "h1", ownership: { type: "player" }, jockeyId: "j1" };
+    const entry = { horseId: "h1", ownership: makePlayerOwned(), jockeyId: "j1" };
     const impacts = generateFinancialBreedingImpacts(
       horse,
       { horseId: "h1", position: 1, time: 120 },
@@ -417,7 +418,7 @@ describe("generateFinancialBreedingImpacts", () => {
   });
 
   it("does not emit jockey fee/affinity when no jockeyId in entry", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const race = makeOpenRace({ purse: 100_000 });
     const horseMap = new Map([["h1", horse]]);
     const impacts = generateFinancialBreedingImpacts(
@@ -441,11 +442,11 @@ describe("generateFinancialBreedingImpacts", () => {
 
 describe("generateJockeyStatsTrackingImpacts", () => {
   it("emits jockey_stats with careerStarts+1 and careerWins+1 on win", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({ id: "j1", careerStarts: 50, careerWins: 10, fame: 50 });
     const race = makeOpenRace();
     const jockeyMap = new Map([["j1", jockey]]);
-    const entry = { horseId: "h1", ownership: { type: "player" }, jockeyId: "j1" };
+    const entry = { horseId: "h1", ownership: makePlayerOwned(), jockeyId: "j1" };
     const impacts = generateJockeyStatsTrackingImpacts(
       horse,
       { horseId: "h1", position: 1, time: 120 },
@@ -462,11 +463,11 @@ describe("generateJockeyStatsTrackingImpacts", () => {
   });
 
   it("emits jockey_stats with careerStarts+1 and careerWins+0 on non-win", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({ id: "j1", careerStarts: 50, careerWins: 10, fame: 50 });
     const race = makeGradedRace();
     const jockeyMap = new Map([["j1", jockey]]);
-    const entry = { horseId: "h1", ownership: { type: "player" }, jockeyId: "j1" };
+    const entry = { horseId: "h1", ownership: makePlayerOwned(), jockeyId: "j1" };
     const impacts = generateJockeyStatsTrackingImpacts(
       horse,
       { horseId: "h1", position: 2, time: 121 },
@@ -483,11 +484,11 @@ describe("generateJockeyStatsTrackingImpacts", () => {
   });
 
   it("fame capped at MAX_FAME", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({ id: "j1", careerStarts: 50, careerWins: 10, fame: 99 });
     const race = makeOpenRace();
     const jockeyMap = new Map([["j1", jockey]]);
-    const entry = { horseId: "h1", ownership: { type: "player" }, jockeyId: "j1" };
+    const entry = { horseId: "h1", ownership: makePlayerOwned(), jockeyId: "j1" };
     const impacts = generateJockeyStatsTrackingImpacts(
       horse,
       { horseId: "h1", position: 1, time: 120 },
@@ -501,7 +502,7 @@ describe("generateJockeyStatsTrackingImpacts", () => {
   });
 
   it("apprentice progression updated on win for apprentice jockey", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({
       id: "j1",
       isApprentice: true,
@@ -514,7 +515,7 @@ describe("generateJockeyStatsTrackingImpacts", () => {
     });
     const race = makeOpenRace();
     const jockeyMap = new Map([["j1", jockey]]);
-    const entry = { horseId: "h1", ownership: { type: "player" }, jockeyId: "j1" };
+    const entry = { horseId: "h1", ownership: makePlayerOwned(), jockeyId: "j1" };
     const impacts = generateJockeyStatsTrackingImpacts(
       horse,
       { horseId: "h1", position: 1, time: 120 },
@@ -529,7 +530,7 @@ describe("generateJockeyStatsTrackingImpacts", () => {
   });
 
   it("no apprentice progression update on non-win", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({
       id: "j1",
       isApprentice: true,
@@ -542,7 +543,7 @@ describe("generateJockeyStatsTrackingImpacts", () => {
     });
     const race = makeOpenRace();
     const jockeyMap = new Map([["j1", jockey]]);
-    const entry = { horseId: "h1", ownership: { type: "player" }, jockeyId: "j1" };
+    const entry = { horseId: "h1", ownership: makePlayerOwned(), jockeyId: "j1" };
     const impacts = generateJockeyStatsTrackingImpacts(
       horse,
       { horseId: "h1", position: 2, time: 121 },
@@ -558,7 +559,7 @@ describe("generateJockeyStatsTrackingImpacts", () => {
   });
 
   it("no jockey_stats when no jockeyId in entry", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const race = makeOpenRace();
     const impacts = generateJockeyStatsTrackingImpacts(
       horse,
@@ -572,11 +573,11 @@ describe("generateJockeyStatsTrackingImpacts", () => {
   });
 
   it("no jockey_stats when position beyond prizeSplit length", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({ id: "j1" });
     const race = makeOpenRace();
     const jockeyMap = new Map([["j1", jockey]]);
-    const entry = { horseId: "h1", ownership: { type: "player" }, jockeyId: "j1" };
+    const entry = { horseId: "h1", ownership: makePlayerOwned(), jockeyId: "j1" };
     const impacts = generateJockeyStatsTrackingImpacts(
       horse,
       { horseId: "h1", position: 10, time: 140 },
@@ -589,11 +590,11 @@ describe("generateJockeyStatsTrackingImpacts", () => {
   });
 
   it("percentage fee emitted for placed jockey with non-zero winAmount", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({ id: "j1" });
     const race = makeGradedRace({ purse: 1_000_000 });
     const jockeyMap = new Map([["j1", jockey]]);
-    const entry = { horseId: "h1", ownership: { type: "player" }, jockeyId: "j1" };
+    const entry = { horseId: "h1", ownership: makePlayerOwned(), jockeyId: "j1" };
     const impacts = generateJockeyStatsTrackingImpacts(
       horse,
       { horseId: "h1", position: 1, time: 120 },
@@ -609,11 +610,11 @@ describe("generateJockeyStatsTrackingImpacts", () => {
   });
 
   it("no percentage fee when winAmount is 0 (position beyond split)", () => {
-    const horse = createTestColt({ id: "h1", ownership: { type: "player" } });
+    const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
     const jockey = createTestJockey({ id: "j1" });
     const race = makeOpenRace({ purse: 0 });
     const jockeyMap = new Map([["j1", jockey]]);
-    const entry = { horseId: "h1", ownership: { type: "player" }, jockeyId: "j1" };
+    const entry = { horseId: "h1", ownership: makePlayerOwned(), jockeyId: "j1" };
     const impacts = generateJockeyStatsTrackingImpacts(
       horse,
       { horseId: "h1", position: 1, time: 120 },

@@ -14,6 +14,7 @@ import type { InvestorRecord } from "@/core/breeding/investorTypes";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 import { StewardsDigestToast } from "@/components/stewards/StewardsDigestToast";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 // Persisted keys must mirror src/game/store/index.ts PERSISTED_KEYS.
 const PERSISTED_KEYS = [
@@ -114,7 +115,7 @@ describe("Persistence of nominations / investors / stewards inquiries", () => {
       const base = createDefaultGameState();
       const seededState: Partial<GameState> = {
         horses: h2r([
-          { id: "horse-1", name: "Silver Comet", ownership: { type: "player" } } as any,
+          { id: "horse-1", name: "Silver Comet", ownership: makePlayerOwned() } as any,
         ]),
         playerNominations: [nomination],
         syndicateInvestors: { "synd-1": investor },

@@ -9,6 +9,7 @@ import { createElement, type ReactNode } from "react";
 import { StableRosterView } from "@/components/stable/StableRosterView";
 import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { calculateOverallRating } from "@/core/horse/stats";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
@@ -17,7 +18,7 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 function buildResolvedPlayerHorse(name: string) {
-  return ensurePhenotypeResolved(generateHorse({ tier: "starter", ownership: { type: "player" } }));
+  return ensurePhenotypeResolved(generateHorse({ tier: "starter", ownership: makePlayerOwned() }));
 }
 
 describe("StableRosterView phenotype display", () => {

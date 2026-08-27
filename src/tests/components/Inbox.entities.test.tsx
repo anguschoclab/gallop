@@ -4,7 +4,8 @@ import { createElement, type ReactNode } from "react";
 import { seedStore } from "@/test-utils/renderWithStore";
 import { createDefaultGameState } from "@/game/store/state";
 import { createTestHorse } from "@/tests/helpers";
-import { InboxPage } from "@/routes/inbox";
+import InboxPage from "@/components/routes/InboxPage";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({
@@ -28,7 +29,7 @@ describe("Inbox — entity linking", () => {
     const horse = createTestHorse({
       id: "h1",
       name: "Thunder Strike",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     seedStore({
       ...createDefaultGameState(),

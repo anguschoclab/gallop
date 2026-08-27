@@ -1,3 +1,4 @@
+import { makePlayerOwned } from "@/core/horse/ownership";
 /**
  * Integration tests for the award ceremony invitation phase.
  *
@@ -58,7 +59,7 @@ function mkHorse(
   return createTestHorse({
     id,
     name: `Horse ${id}`,
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     raceHistory: [
       {
         raceId,

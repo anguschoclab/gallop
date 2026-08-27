@@ -12,6 +12,7 @@
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { calculateNpcHorseValue } from "@/core/horse/pricing";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
+import { attachmentAdjustedAsk, evaluateHorseAttachment } from "@/core/horse/attachment";
 import type { PrivateSaleOffer, Horse, Stable, StablePersonality } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import type { HorseTransferImpact, CashImpact } from "@/core/resolver/impacts";
@@ -96,7 +97,9 @@ export const privateSaleResolutionPhase: PipelinePhase = {
         continue;
       }
 
-      const valuation = calculateNpcHorseValue(horse, stable.tier);
+      const marketValue = calculateNpcHorseValue(horse, stable.tier);
+      const attachment = evaluateHorseAttachment(horse, stable);
+      const valuation = attachmentAdjustedAsk(horse, stable, marketValue);
       const offerRatio = offer.amount / valuation;
       const personality = stable.personality;
       const acceptThreshold = ACCEPT_THRESHOLDS[personality];
@@ -156,14 +159,20 @@ export const privateSaleResolutionPhase: PipelinePhase = {
 
         newLogs.push({
           day: newDay,
-          text: `${stable.name} countered your offer for ${horse.name} with $${counterAmount.toLocaleString()}.`,
+          text:
+            attachment.tier === "untouchable" || attachment.tier === "protected"
+              ? `${stable.name} regards ${horse.name} as ${attachment.label.toLowerCase()} and countered with $${counterAmount.toLocaleString()}.`
+              : `${stable.name} countered your offer for ${horse.name} with $${counterAmount.toLocaleString()}.`,
         });
       } else {
         updatedOffers.push({ ...offer, status: "declined" });
 
         newLogs.push({
           day: newDay,
-          text: `${stable.name} declined your offer for ${horse.name}.`,
+          text:
+            attachment.tier === "untouchable"
+              ? `${stable.name} will not part with ${horse.name} at anything close to that — offer declined.`
+              : `${stable.name} declined your offer for ${horse.name}.`,
         });
       }
     }

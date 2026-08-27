@@ -20,6 +20,7 @@ import {
 import { createTestStable, createTestHorse } from "@/tests/helpers";
 import type { Stable, Horse } from "@/game/types";
 import type { Syndicate } from "@/core/breeding/types";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 // ─── assessFinancialDistress ─────────────────────────────────────────────────
 
@@ -239,7 +240,7 @@ describe("shouldBlockSpending", () => {
 describe("calculateShareSale with distress", () => {
   const stallion: Horse = createTestHorse({
     id: "stallion-1",
-    stableId: "stable-1",
+    ownership: makeNpcOwned("stable-1"),
     stud: {
       atStud: true,
       standingFee: 50000,

@@ -3,6 +3,7 @@ import { runRaceToCompletion } from "@/core/race/engine/simulation";
 import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
 import { createRng } from "@/core/common/rng";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
+import { makeUnowned } from "@/core/horse/ownership";
 
 function makeRunner(overrides: Partial<Runner> = {}): Runner {
   return {
@@ -23,7 +24,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     runningStyle: "EP",
     draftingHorseId: null,
     silk: "",
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
     weight: 55,
     horse: {} as any,
     ...overrides,

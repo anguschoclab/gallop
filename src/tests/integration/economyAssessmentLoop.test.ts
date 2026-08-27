@@ -14,6 +14,7 @@ import { processEconomicCycle } from "@/core/ai/economyAITracking";
 import type { GameState, Stable, Horse } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {
   return createTestStable({
@@ -41,7 +42,7 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
       temperament: 50,
       conformation: 50,
     },
-    stableId: "npc-1",
+    ownership: makeNpcOwned("npc-1"),
     ...overrides,
   });
 }

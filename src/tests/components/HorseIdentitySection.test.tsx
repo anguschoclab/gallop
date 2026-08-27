@@ -3,6 +3,7 @@ import { screen } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { HorseIdentitySection } from "@/components/horse/HorseIdentitySection";
 import type { Horse } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function createHorse(overrides: Partial<Horse> = {}): Horse {
   return {
@@ -21,7 +22,7 @@ function createHorse(overrides: Partial<Horse> = {}): Horse {
     },
     potential: 70,
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     healthStatus: "healthy",
     lifecycleStatus: "active",
     racingViable: true,

@@ -6,6 +6,8 @@ import { createRng } from "@/core/common/rng";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { StaffRole } from "@/core/staff/staffTypes";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
+import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -78,9 +80,9 @@ describe("selectHorsesForRaceEntry", () => {
 
   it("returns at most 2 horses (MAX_HORSES_PER_STABLE_PER_RACE)", () => {
     const horses = [
-      mkHorse({ id: "h1", stableId: "s1" }),
-      mkHorse({ id: "h2", stableId: "s1" }),
-      mkHorse({ id: "h3", stableId: "s1" }),
+      mkHorse({ id: "h1", ownership: makeNpcOwned("s1") }),
+      mkHorse({ id: "h2", ownership: makeNpcOwned("s1") }),
+      mkHorse({ id: "h3", ownership: makeNpcOwned("s1") }),
     ];
     const horseMap = new Map(horses.map((h) => [h.id, h]));
     const stable = mkStable({ horses: ["h1", "h2", "h3"] });
@@ -89,7 +91,7 @@ describe("selectHorsesForRaceEntry", () => {
   });
 
   it("does not enter horses with energy < 50", () => {
-    const lowEnergy = mkHorse({ id: "h1", energy: 40, stableId: "s1" });
+    const lowEnergy = mkHorse({ id: "h1", energy: 40, ownership: makeNpcOwned("s1") });
     const horseMap = new Map([["h1", lowEnergy]]);
     const stable = mkStable({ horses: ["h1"] });
     const result = selectHorsesForRaceEntry(stable, horseMap, mkRace(), new Set());
@@ -97,7 +99,7 @@ describe("selectHorsesForRaceEntry", () => {
   });
 
   it("does not enter pregnant horses", () => {
-    const horse = mkHorse({ id: "h1", stableId: "s1", energy: 80 });
+    const horse = mkHorse({ id: "h1", ownership: makeNpcOwned("s1"), energy: 80 });
     const horseMap = new Map([["h1", horse]]);
     const stable = mkStable({ horses: ["h1"] });
     const result = selectHorsesForRaceEntry(stable, horseMap, mkRace(), new Set(["h1"]));
@@ -105,11 +107,11 @@ describe("selectHorsesForRaceEntry", () => {
   });
 
   it("does not enter horses already in race", () => {
-    const horse = mkHorse({ id: "h1", stableId: "s1", energy: 80 });
+    const horse = mkHorse({ id: "h1", ownership: makeNpcOwned("s1"), energy: 80 });
     const horseMap = new Map([["h1", horse]]);
     const race = mkRace({
       entries: [
-        { horseId: "h1", ownership: { type: "npc", stableId: asNpcStableId("s1") }, npc: true },
+        { horseId: "h1", ownership: makeNpcOwned(asNpcStableId("s1"))},
       ],
     });
     const stable = mkStable({ horses: ["h1"] });
@@ -122,7 +124,7 @@ describe("selectHorsesForRaceEntry", () => {
     // Higher stats should result in higher scores for the same race
     const highStatHorse = mkHorse({
       id: "h1",
-      stableId: "s1",
+      ownership: makeNpcOwned("s1"),
       energy: 80,
       stats: {
         speed: 85,
@@ -135,7 +137,7 @@ describe("selectHorsesForRaceEntry", () => {
     });
     const midStatHorse = mkHorse({
       id: "h2",
-      stableId: "s1",
+      ownership: makeNpcOwned("s1"),
       energy: 80,
       stats: {
         speed: 70,
@@ -148,7 +150,7 @@ describe("selectHorsesForRaceEntry", () => {
     });
     const lowStatHorse = mkHorse({
       id: "h3",
-      stableId: "s1",
+      ownership: makeNpcOwned("s1"),
       energy: 80,
       stats: {
         speed: 55,
@@ -175,9 +177,9 @@ describe("selectHorsesForRaceEntry", () => {
   });
 
   it("handles mixed eligibility - some horses eligible, some not", () => {
-    const eligibleHorse = mkHorse({ id: "h1", stableId: "s1", energy: 80 });
-    const ineligibleEnergy = mkHorse({ id: "h2", stableId: "s1", energy: 30 });
-    const ineligiblePregnant = mkHorse({ id: "h3", stableId: "s1", energy: 80 });
+    const eligibleHorse = mkHorse({ id: "h1", ownership: makeNpcOwned("s1"), energy: 80 });
+    const ineligibleEnergy = mkHorse({ id: "h2", ownership: makeNpcOwned("s1"), energy: 30 });
+    const ineligiblePregnant = mkHorse({ id: "h3", ownership: makeNpcOwned("s1"), energy: 80 });
 
     const horseMap = new Map([
       ["h1", eligibleHorse],
@@ -193,7 +195,7 @@ describe("selectHorsesForRaceEntry", () => {
   });
 
   it("skips horses not found in horseMap", () => {
-    const horse = mkHorse({ id: "h1", stableId: "s1", energy: 80 });
+    const horse = mkHorse({ id: "h1", ownership: makeNpcOwned("s1"), energy: 80 });
     const horseMap = new Map([["h1", horse]]);
     // Stable references a horse ID that doesn't exist in the map
     const stable = mkStable({ horses: ["h1", "h2", "h3"] });
@@ -206,9 +208,9 @@ describe("selectHorsesForRaceEntry", () => {
 
   it("returns empty array when all horses are ineligible", () => {
     const horses = [
-      mkHorse({ id: "h1", stableId: "s1", energy: 30 }),
-      mkHorse({ id: "h2", stableId: "s1", energy: 40 }),
-      mkHorse({ id: "h3", stableId: "s1", energy: 45 }),
+      mkHorse({ id: "h1", ownership: makeNpcOwned("s1"), energy: 30 }),
+      mkHorse({ id: "h2", ownership: makeNpcOwned("s1"), energy: 40 }),
+      mkHorse({ id: "h3", ownership: makeNpcOwned("s1"), energy: 45 }),
     ];
     const horseMap = new Map(horses.map((h) => [h.id, h]));
     const stable = mkStable({ horses: ["h1", "h2", "h3"] });
@@ -218,7 +220,7 @@ describe("selectHorsesForRaceEntry", () => {
 
   it("respects MAX_HORSES_PER_STABLE_PER_RACE even with more eligible horses", () => {
     const horses = Array.from({ length: 5 }, (_, i) =>
-      mkHorse({ id: `h${i}`, stableId: "s1", energy: 80 }),
+      mkHorse({ id: `h${i}`, ownership: makeNpcOwned("s1"), energy: 80 }),
     );
     const horseMap = new Map(horses.map((h) => [h.id, h]));
     const stable = mkStable({ horses: horses.map((h) => h.id) });
@@ -231,11 +233,11 @@ describe("selectHorsesForRaceEntry", () => {
   it("does not enter consigned horses", () => {
     const consignedHorse = mkHorse({
       id: "h1",
-      stableId: "s1",
+      ownership: makeNpcOwned("s1"),
       energy: 80,
       consignedSaleId: "sale-1",
     });
-    const normalHorse = mkHorse({ id: "h2", stableId: "s1", energy: 80 });
+    const normalHorse = mkHorse({ id: "h2", ownership: makeNpcOwned("s1"), energy: 80 });
 
     const horseMap = new Map([
       ["h1", consignedHorse],
@@ -250,8 +252,8 @@ describe("selectHorsesForRaceEntry", () => {
   });
 
   it("handles horses with very low form", () => {
-    const lowFormHorse = mkHorse({ id: "h1", stableId: "s1", energy: 80, form: -10 });
-    const normalFormHorse = mkHorse({ id: "h2", stableId: "s1", energy: 80, form: 5 });
+    const lowFormHorse = mkHorse({ id: "h1", ownership: makeNpcOwned("s1"), energy: 80, form: -10 });
+    const normalFormHorse = mkHorse({ id: "h2", ownership: makeNpcOwned("s1"), energy: 80, form: 5 });
 
     const horseMap = new Map([
       ["h1", lowFormHorse],
@@ -270,7 +272,7 @@ describe("runNpcRaceEntry", () => {
   it("does not modify races beyond currentDay + daysAhead", () => {
     const farRace = mkRace({ id: "far", day: 100 });
     const stables = [mkStable()];
-    const horses = [mkHorse({ id: "h1", stableId: "s1", energy: 80 })];
+    const horses = [mkHorse({ id: "h1", ownership: makeNpcOwned("s1"), energy: 80 })];
     const result = runNpcRaceEntry(stables, horses, [], [farRace], 1, createRng("test"), 3);
     expect(result.find((r) => r.id === "far")!.entries).toHaveLength(0);
   });
@@ -281,11 +283,11 @@ describe("runNpcRaceEntry", () => {
       day: 3,
       fieldSize: 1,
       entries: [
-        { horseId: "h99", ownership: { type: "npc", stableId: asNpcStableId("s99") }, npc: true },
+        { horseId: "h99", ownership: makeNpcOwned(asNpcStableId("s99"))},
       ],
     });
     const stables = [mkStable()];
-    const horses = [mkHorse({ id: "h1", stableId: "s1", energy: 80 })];
+    const horses = [mkHorse({ id: "h1", ownership: makeNpcOwned("s1"), energy: 80 })];
     const result = runNpcRaceEntry(stables, horses, [], [fullRace], 1, createRng("test"), 3);
     expect(result.find((r) => r.id === "full")!.entries).toHaveLength(1); // unchanged
   });
@@ -293,7 +295,7 @@ describe("runNpcRaceEntry", () => {
   it("skips resolved races", () => {
     const resolved = mkRace({ id: "res", day: 3, resolved: true });
     const stables = [mkStable()];
-    const horses = [mkHorse({ id: "h1", stableId: "s1" })];
+    const horses = [mkHorse({ id: "h1", ownership: makeNpcOwned("s1") })];
     const result = runNpcRaceEntry(stables, horses, [], [resolved], 1, createRng("test"), 3);
     expect(result.find((r) => r.id === "res")!.entries).toHaveLength(0);
   });
@@ -305,7 +307,7 @@ describe("runNpcRaceEntry", () => {
   });
 
   it("selects free agent with affinity over higher-fame jockey (chemistry-aware)", () => {
-    const horse = mkHorse({ id: "h1", stableId: "s1", energy: 80, runningStyle: "P" });
+    const horse = mkHorse({ id: "h1", ownership: makeNpcOwned("s1"), energy: 80, runningStyle: "P" });
     const race = mkRace({ id: "r1", day: 2, fieldSize: 10 });
     const stable = mkStable({ horses: ["h1"] });
 
@@ -343,10 +345,10 @@ describe("runNpcRaceEntry", () => {
 
 describe("fillRaceWithFillerHorses", () => {
   it("does not add already-entered horses", () => {
-    const horse = mkHorse({ id: "h1", stableId: "s1", ownership: { type: "unowned" }, energy: 80 });
+    const horse = mkHorse({ id: "h1", ownership: makeNpcOwned(asNpcStableId("s1")), energy: 80 });
     const race = mkRace({
       entries: [
-        { horseId: "h1", ownership: { type: "npc", stableId: asNpcStableId("s1") }, npc: true },
+        { horseId: "h1", ownership: makeNpcOwned(asNpcStableId("s1"))},
       ],
       fieldSize: 5,
     });
@@ -361,7 +363,7 @@ describe("fillRaceWithFillerHorses", () => {
 
   it("does not exceed fieldSize", () => {
     const horses = Array.from({ length: 20 }, (_, i) =>
-      mkHorse({ id: `h${i}`, stableId: "s1", ownership: { type: "unowned" }, energy: 80 }),
+      mkHorse({ id: `h${i}`, ownership: makeNpcOwned(asNpcStableId("s1")), energy: 80 }),
     );
     const race = mkRace({ fieldSize: 5, entries: [] });
     const { updatedRace } = fillRaceWithFillerHorses(race, [mkStable()], horses, 5);

@@ -20,6 +20,7 @@ import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import type { InboxImpact } from "@/core/resolver/impacts/index";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function makeContext(state: Partial<GameState>, newDay: number): PipelineContext {
   const fullState: GameState = {
@@ -54,7 +55,7 @@ describe("foalDevelopmentPhase — inbox CTA emission", () => {
     const horse = createTestHorse({
       id: "foal-1",
       name: "Test Foal",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
     const ctx = makeContext({ horses: h2r([horse]) }, 18); // breaking_in trigger.
@@ -76,7 +77,7 @@ describe("foalDevelopmentPhase — inbox CTA emission", () => {
   it("emits again on the early-workouts trigger day for the same horse", () => {
     const horse = createTestHorse({
       id: "foal-2",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
     const ctx = makeContext({ horses: h2r([horse]) }, 24);
@@ -91,7 +92,7 @@ describe("foalDevelopmentPhase — inbox CTA emission", () => {
   it("emits nothing on a non-trigger day", () => {
     const horse = createTestHorse({
       id: "foal-1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
     const ctx = makeContext({ horses: h2r([horse]) }, 17);
@@ -102,7 +103,7 @@ describe("foalDevelopmentPhase — inbox CTA emission", () => {
   it("skips NPC horses even on their trigger day", () => {
     const horse = createTestHorse({
       id: "npc-foal",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
     const ctx = makeContext({ horses: h2r([horse]) }, 18);
@@ -113,7 +114,7 @@ describe("foalDevelopmentPhase — inbox CTA emission", () => {
   it("skips horses without a development arc", () => {
     const horse = createTestHorse({
       id: "h",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       developmentArc: undefined,
     });
     const ctx = makeContext({ horses: h2r([horse]) }, 18);
@@ -127,7 +128,7 @@ describe("foalDevelopmentPhase — inbox CTA emission", () => {
     arc.milestones[0].resolvedChoiceKey = "bold_approach";
     const horse = createTestHorse({
       id: "foal-1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       developmentArc: arc,
     });
     const ctx = makeContext({ horses: h2r([horse]) }, 18);
@@ -138,12 +139,12 @@ describe("foalDevelopmentPhase — inbox CTA emission", () => {
   it("targets each horse independently with its own params", () => {
     const a = createTestHorse({
       id: "foal-A",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
     const b = createTestHorse({
       id: "foal-B",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       developmentArc: createDefaultFoalDevelopmentArc(0),
     });
     const ctx = makeContext({ horses: h2r([a, b]) }, 18);

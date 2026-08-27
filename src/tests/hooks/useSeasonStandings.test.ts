@@ -4,6 +4,8 @@ import { seedStore } from "@/test-utils/renderWithStore";
 import { useSeasonStandings } from "@/hooks/dashboard/useSeasonStandings";
 import { createDefaultGameState } from "@/game/store/state";
 import type { Horse } from "@/game/types";
+import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({
@@ -24,7 +26,7 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     ...overrides,
   }) as Horse;
 
@@ -40,7 +42,7 @@ describe("useSeasonStandings", () => {
   it("includes player stable with prize money from race history", () => {
     const h1 = mkHorse({
       id: "h1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [
         {
           raceId: "r1",
@@ -74,7 +76,7 @@ describe("useSeasonStandings", () => {
   it("excludes races outside the range window", () => {
     const h1 = mkHorse({
       id: "h1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [
         {
           raceId: "r1",
@@ -114,7 +116,7 @@ describe("useSeasonStandings", () => {
   it("includes NPC stables in standings", () => {
     const h1 = mkHorse({
       id: "h1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [
         {
           raceId: "r1",
@@ -132,7 +134,7 @@ describe("useSeasonStandings", () => {
     });
     const h2 = mkHorse({
       id: "h2",
-      ownership: { type: "npc", stableId: asNpcStableId("npc1") },
+      ownership: makeNpcOwned(asNpcStableId("npc1")),
       raceHistory: [
         {
           raceId: "r2",
@@ -164,7 +166,7 @@ describe("useSeasonStandings", () => {
   it("sorts standings by prize money descending", () => {
     const h1 = mkHorse({
       id: "h1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [
         {
           raceId: "r1",
@@ -182,7 +184,7 @@ describe("useSeasonStandings", () => {
     });
     const h2 = mkHorse({
       id: "h2",
-      ownership: { type: "npc", stableId: asNpcStableId("npc1") },
+      ownership: makeNpcOwned(asNpcStableId("npc1")),
       raceHistory: [
         {
           raceId: "r2",
@@ -213,7 +215,7 @@ describe("useSeasonStandings", () => {
   it("computes playerRank correctly", () => {
     const h1 = mkHorse({
       id: "h1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [
         {
           raceId: "r1",
@@ -231,7 +233,7 @@ describe("useSeasonStandings", () => {
     });
     const h2 = mkHorse({
       id: "h2",
-      ownership: { type: "npc", stableId: asNpcStableId("npc1") },
+      ownership: makeNpcOwned(asNpcStableId("npc1")),
       raceHistory: [
         {
           raceId: "r2",
@@ -261,7 +263,7 @@ describe("useSeasonStandings", () => {
   it("sparkline has length equal to rangeDays", () => {
     const h1 = mkHorse({
       id: "h1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [
         {
           raceId: "r1",
@@ -289,7 +291,7 @@ describe("useSeasonStandings", () => {
   it("updates when rangeDays changes", () => {
     const h1 = mkHorse({
       id: "h1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [
         {
           raceId: "r1",

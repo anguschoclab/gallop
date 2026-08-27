@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 
 /**
  * Regression tests for files using `: any` type annotations.
@@ -84,9 +85,9 @@ describe("`any` type regression: useBreedingPage.ts pregnancy filter", () => {
 describe("`any` type regression: useDashboardData.ts entry filtering", () => {
   it("finds owned entry in race entries", () => {
     const entries = [
-      { horseId: "h1", ownership: { type: "npc", stableId: asNpcStableId("npc1") } },
-      { horseId: "h2", ownership: { type: "player" } },
-      { horseId: "h3", ownership: { type: "npc", stableId: asNpcStableId("npc2") } },
+      { horseId: "h1", ownership: makeNpcOwned(asNpcStableId("npc1")) },
+      { horseId: "h2", ownership: makePlayerOwned() },
+      { horseId: "h3", ownership: makeNpcOwned(asNpcStableId("npc2")) },
     ];
     const hasOwned = entries.some((e: any) => e.ownership?.type === "player");
     expect(hasOwned).toBe(true);

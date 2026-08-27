@@ -19,6 +19,7 @@ import { createDefaultGameState } from "@/game/store/state";
 import { useGame } from "@/game/store";
 import type { GameState, Horse, Stable } from "@/game/types";
 import type { AnyIntent } from "@/core/resolver/intents";
+import { makeUnowned } from "@/core/horse/ownership";
 
 function buildContext(state: GameState, newDay: number = 1): PipelineContext {
   return {
@@ -212,8 +213,7 @@ describe("Phase 1.5 — NPC AI 7-day cycle", () => {
     const stable = createTestStable({ id: "npc-1", cash: 500000, isMajor: true });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "npc-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       age: 3,
       energy: 80,
     });
@@ -355,8 +355,7 @@ describe("Phase 1.5 — Multi-day advance (30 days)", () => {
     const stable = createTestStable({ id: "npc-1", cash: 1000000, isMajor: true });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "npc-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       age: 3,
       energy: 80,
     });

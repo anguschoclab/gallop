@@ -1,3 +1,5 @@
+import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
 import { describe, it, expect } from "vitest";
 import {
   runNpcCycle,
@@ -121,9 +123,8 @@ describe("runNpcCycle", () => {
       age: 3,
       gender: "colt",
       hemisphere: "Northern",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       fame: 50,
-      stableId: "stable-1",
     });
 
     const race: Race = {
@@ -176,7 +177,7 @@ describe("Simulation Determinism", () => {
     ];
 
     const mockHorses: Horse[] = [
-      createTestHorse({ id: "horse-1", name: "Star Runner", fame: 50, stableId: "stable-1" }),
+      createTestHorse({ id: "horse-1", name: "Star Runner", fame: 50, ownership: makeNpcOwned(asNpcStableId("stable-1")) }),
     ];
 
     const mockRaces: Race[] = [
@@ -186,7 +187,7 @@ describe("Simulation Determinism", () => {
         day: currentDay,
         resolved: true,
         result: [{ horseId: "horse-1", position: 1, time: 120 }],
-        entries: [{ horseId: "horse-1", stableId: "stable-1", ownership: { type: "unowned" } }],
+        entries: [{ horseId: "horse-1", ownership: makeNpcOwned(asNpcStableId("stable-1")) }],
         purse: 500000,
         graded: { grade: "G1" },
       } as Race,
@@ -271,14 +272,14 @@ describe("runNpcCycle fame calculations", () => {
       energy: 80,
       form: 60,
       fame: 0,
-      stableId: "npc-stable-1",
+      ownership: makeNpcOwned("npc-stable-1"),
       ...overrides,
     });
   }
 
   it("calculates fame changes for G1 win", () => {
     const stable = createMockStable();
-    const horse = createMockHorse({ id: "h1", stableId: "npc-stable-1" });
+    const horse = createMockHorse({ id: "h1", ownership: makeNpcOwned("npc-stable-1") });
     const race: Race = {
       id: "r1",
       name: "Test Race",
@@ -612,7 +613,7 @@ describe("runNpcCycle fan changes", () => {
     const stable = createMockStable();
     const horse = createTestHorse({
       id: "h1",
-      stableId: "npc-stable-1",
+      ownership: makeNpcOwned("npc-stable-1"),
       fame: 0,
       fanCount: 0,
     });
@@ -650,13 +651,13 @@ describe("runNpcCycle fan changes", () => {
     const stable = createMockStable();
     const horseG1 = createTestHorse({
       id: "h1",
-      stableId: "npc-stable-1",
+      ownership: makeNpcOwned("npc-stable-1"),
       fame: 0,
       fanCount: 0,
     });
     const horseG2 = createTestHorse({
       id: "h2",
-      stableId: "npc-stable-1",
+      ownership: makeNpcOwned("npc-stable-1"),
       fame: 0,
       fanCount: 0,
     });

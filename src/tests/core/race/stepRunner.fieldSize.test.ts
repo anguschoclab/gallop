@@ -3,6 +3,7 @@ import { stepRunner } from "@/core/race/engine/simulation";
 import { createRng } from "@/core/common/rng";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Jockey } from "@/core/jockey/types";
+import { makeUnowned } from "@/core/horse/ownership";
 
 function makeJockey(overrides: Partial<Jockey> = {}): Jockey {
   return {
@@ -45,7 +46,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     runningStyle: "EP",
     draftingHorseId: null,
     silk: "",
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
     weight: 55,
     horse: {} as any,
     jockey: makeJockey(),

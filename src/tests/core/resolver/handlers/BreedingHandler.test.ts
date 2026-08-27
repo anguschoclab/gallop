@@ -1,3 +1,4 @@
+import type { Pregnancy } from "@/core/breeding/types";
 import { describe, it, expect } from "vitest";
 import { BreedingHandler } from "@/core/resolver/handlers/BreedingHandler";
 import type { GameState } from "@/game/store/state";
@@ -316,3 +317,4 @@ describe("BreedingHandler", () => {
   });
 });
 import type { Horse } from "@/game/types";
+import { asHorseId } from "@/core/types/branded";

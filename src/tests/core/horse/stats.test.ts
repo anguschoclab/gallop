@@ -10,6 +10,7 @@ import {
 import { resolvePhenotype } from "@/core/horse/horseFactory";
 import type { Horse } from "@/game/types";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
+import { makeUnowned } from "@/core/horse/ownership";
 
 function mkHorse(
   speed: number,
@@ -27,7 +28,7 @@ function mkHorse(
     form: 0,
     potential,
     raceHistory: [],
-    ownership: { type: "unowned" },
+    ownership: makeUnowned(),
     fame: 0,
   });
 }

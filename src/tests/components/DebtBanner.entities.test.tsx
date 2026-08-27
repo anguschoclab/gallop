@@ -5,6 +5,7 @@ import { renderWithStore } from "@/test-utils/renderWithStore";
 import { createDefaultGameState } from "@/game/store/state";
 import { DebtBanner } from "@/components/dashboard/DebtBanner";
 import { createTestHorse } from "@/tests/helpers";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({
@@ -25,7 +26,7 @@ describe("DebtBanner — entity linking", () => {
     const horse = createTestHorse({
       id: "h1",
       name: "Seizure Target",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     renderWithStore(<DebtBanner />, {
       ...createDefaultGameState(),

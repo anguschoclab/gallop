@@ -16,12 +16,13 @@ vi.mock("sonner", () => ({
 
 import { toast } from "sonner";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   createTestNpcHorse({
     id: "h1",
     name: "Thunder",
-    stableId: "s1",
+    ownership: makeNpcOwned("s1"),
     ...overrides,
   });
 

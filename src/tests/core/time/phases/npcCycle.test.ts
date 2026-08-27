@@ -8,6 +8,7 @@ import { createTestStable, createTestHorse } from "@/tests/helpers";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Race } from "@/game/types";
+import { makeUnowned } from "@/core/horse/ownership";
 
 describe("npcCyclePhase", () => {
   it("should skip when no NPC stables", () => {
@@ -91,10 +92,9 @@ describe("npcCyclePhase", () => {
     });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "stable-1",
       fame: 0,
       fanCount: 0,
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const race: Race = {
       id: "r1",
@@ -139,11 +139,10 @@ describe("npcCyclePhase", () => {
     });
     const horse = createTestHorse({
       id: "h1",
-      stableId: "stable-1",
       fame: 10,
       fanCount: 50000,
       lastRaceDay: 8,
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
 
     const state: GameState = makeGameState({

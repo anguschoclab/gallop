@@ -15,7 +15,7 @@ import {
 } from "@/core/ai/raceEntryAIRecording";
 import type { Horse, Race, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 import { RECENT_RACES_MAX_COUNT } from "@/constants";
 
@@ -594,8 +594,8 @@ describe("competitor quality calculation", () => {
     });
     const toughRace = createMockRace({
       entries: [
-        { horseId: "comp-1", ownership: { type: "unowned" } },
-        { horseId: "comp-2", ownership: { type: "unowned" } },
+        { horseId: "comp-1", ownership: makeUnowned() },
+        { horseId: "comp-2", ownership: makeUnowned() },
       ],
     });
 
@@ -630,7 +630,7 @@ describe("competitor quality calculation", () => {
       },
     });
     const weakRace = createMockRace({
-      entries: [{ horseId: "weak-1", ownership: { type: "unowned" } }],
+      entries: [{ horseId: "weak-1", ownership: makeUnowned() }],
     });
 
     const horseMap = new Map<string, Horse>([

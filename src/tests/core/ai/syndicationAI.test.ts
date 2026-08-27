@@ -24,7 +24,7 @@ function makeStallion(overrides: Partial<Horse> = {}): Horse {
     potential: 80,
     raceHistory: [{ raceId: "r1", raceName: "G1", position: 1, day: 100, grade: "G1" }],
     stud: { atStud: true, standingFee: 50000, bookSize: 50, seasonBookings: 0 },
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     fame: 50,
     lifetimeEarnings: 1000000,
     careerStarts: 10,
@@ -342,7 +342,7 @@ describe("recordSyndicationOutcome — learning feedback loop", () => {
       aiState,
       {
         stallionId: "s1",
-        ownership: makeNpcOwned(asNpcStableId("npc1")),
+        stableId: "npc1",
         action: "create",
         shares: 20,
         value: 100000,

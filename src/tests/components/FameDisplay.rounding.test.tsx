@@ -4,6 +4,7 @@ import { HorseCardHeader } from "@/components/horse/HorseCardHeader";
 import { StallionCard } from "@/components/breeding/StallionCard";
 import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import type { Horse } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   useNavigate: () => () => {},
@@ -12,7 +13,7 @@ vi.mock("@tanstack/react-router", () => ({
 describe("Fame display rounding", () => {
   it("HorseCardHeader shows rounded fame", () => {
     const horse = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", ownership: { type: "player" } }),
+      generateHorse({ tier: "starter", ownership: makePlayerOwned() }),
     ) as unknown as Horse;
     horse.fame = 12.5;
 
@@ -25,7 +26,7 @@ describe("Fame display rounding", () => {
 
   it("StallionCard shows rounded fame", () => {
     const stallion = ensurePhenotypeResolved(
-      generateHorse({ tier: "starter", ownership: { type: "player" } }),
+      generateHorse({ tier: "starter", ownership: makePlayerOwned() }),
     ) as unknown as Horse;
     stallion.fame = 8.5;
     stallion.stud = {

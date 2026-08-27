@@ -8,6 +8,7 @@ import {
 import type { Horse, Race } from "@/game/types";
 import { createTestHorse, createTestJockeys } from "@/tests/helpers";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse(overrides);
@@ -64,10 +65,10 @@ describe("buildRaceField", () => {
   });
 
   it("entered owned horses appear with owned=true", () => {
-    const horse = mkHorse({ id: "h1", ownership: { type: "player" } });
+    const horse = mkHorse({ id: "h1", ownership: makePlayerOwned() });
     const race = mkRace({
       fieldSize: 6,
-      entries: [{ horseId: "h1", ownership: { type: "player" } }],
+      entries: [{ horseId: "h1", ownership: makePlayerOwned() }],
     });
     const { runners } = buildRaceField({ race, horses: [horse], jockeys: [] });
     const ownedRunner = runners.find((r) => r.horseId === "h1");

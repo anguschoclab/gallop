@@ -7,6 +7,8 @@ import {
 import { createTestHorse, createTestRng } from "@/tests/helpers";
 import { RACE_ENERGY_IMPACT } from "@/constants";
 import type { StaffMember } from "@/core/staff/staffTypes";
+import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 describe("energyFormFame impacts", () => {
   const testHorse = createTestHorse({ id: "horse1" });
@@ -47,7 +49,7 @@ describe("energyFormFame impacts", () => {
     it("should prevent form decrease if stable employs a groom", () => {
       const horseWithStable = {
         ...testHorse,
-        ownership: { type: "npc", stableId: asNpcStableId("stable1") },
+        ownership: makeNpcOwned(asNpcStableId("stable1")),
       };
       const impact = generateFormImpact(horseWithStable, 6, 10, [groomStaff], rng);
       // Groom prevents form dropping below 0

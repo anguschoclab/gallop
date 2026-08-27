@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { computeRegionDrilldown, type RegionKey } from "@/core/analytics/regionalTrends";
 import type { Race } from "@/core/race/types";
 import type { Horse } from "@/core/horse/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 const race = (id: string, track?: string, grade?: "G1" | "G2") =>
   ({
@@ -22,7 +23,7 @@ const horse = (raceId: string, day: number, position: number, earned: number, gr
   ({
     id: "h1",
     name: "Tester",
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     raceHistory: [
       {
         raceId,
@@ -69,7 +70,7 @@ describe("computeRegionDrilldown — g1Starts field", () => {
     const h = {
       id: "h1",
       name: "Tester",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [
         {
           raceId: "r1",
@@ -130,7 +131,7 @@ describe("rate metric calculations", () => {
     const h = {
       id: "h1",
       name: "Tester",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [
         {
           raceId: "r1",
@@ -185,7 +186,7 @@ describe("rate metric calculations", () => {
     const h = {
       id: "h1",
       name: "Tester",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [
         {
           raceId: "r1",
@@ -230,7 +231,7 @@ describe("rate metric calculations", () => {
     const h = {
       id: "h1",
       name: "Tester",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [
         {
           raceId: "r1",
@@ -277,7 +278,7 @@ describe("rate metric calculations", () => {
     const h = {
       id: "h1",
       name: "Tester",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       raceHistory: [
         {
           raceId: "r1",

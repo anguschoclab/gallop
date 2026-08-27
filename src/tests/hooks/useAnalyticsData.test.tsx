@@ -11,6 +11,7 @@ import type {
 import type { SireRanking, Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
 import type { SireAnalytics } from "@/core/breeding/sireAnalytics";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makePlayerOwned } from "@/core/horse/ownership";
 function mkSireAnalytics(stallionId: string): SireAnalytics {
   return {
     stallionId,
@@ -101,13 +102,13 @@ describe("useAnalyticsData", () => {
     const h1 = createTestHorse({
       id: "h1",
       name: "Horse 1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       lifecycleStatus: "active",
     });
     const h2 = createTestHorse({
       id: "h2",
       name: "Horse 2",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       lifecycleStatus: "active",
     });
     const transactions: Transaction[] = [
@@ -133,7 +134,7 @@ describe("useAnalyticsData", () => {
     const h1 = createTestHorse({
       id: "h1",
       name: "Horse 1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       lifecycleStatus: "active",
     });
     const { Probe, captured } = captureAnalyticsData();
@@ -151,13 +152,13 @@ describe("useAnalyticsData", () => {
     const h1 = createTestHorse({
       id: "h1",
       name: "Horse 1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       lifecycleStatus: "active",
     });
     const h2 = createTestHorse({
       id: "h2",
       name: "Horse 2",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       lifecycleStatus: "active",
     });
     const transactions: Transaction[] = [

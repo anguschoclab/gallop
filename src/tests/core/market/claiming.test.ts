@@ -25,6 +25,7 @@ function createTestRace(overrides?: Partial<Race>): Race {
   } as Race;
 }
 import { createTestRng } from "@/tests/helpers";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 describe("Claiming Mechanics", () => {
   describe("processClaims", () => {
@@ -42,7 +43,7 @@ describe("Claiming Mechanics", () => {
         claimingPrice: 10000,
         name: "Test Race",
       });
-      const horse = createTestHorse({ id: "horse-1", stableId: "stable-1", name: "Test Horse" });
+      const horse = createTestHorse({ id: "horse-1", ownership: makeNpcOwned("stable-1"), name: "Test Horse" });
       const claim: ClaimAttempt = {
         claimantStableId: "stable-2",
         horseId: "horse-1",
@@ -65,7 +66,7 @@ describe("Claiming Mechanics", () => {
 
     it("handles multiple claims for the same horse using RNG", () => {
       const race = createTestRace({ id: "race-1", resolved: true, claimingPrice: 10000 });
-      const horse = createTestHorse({ id: "horse-1", stableId: "stable-1" });
+      const horse = createTestHorse({ id: "horse-1", ownership: makeNpcOwned("stable-1") });
       const claims: ClaimAttempt[] = [
         {
           claimantStableId: "stable-2",

@@ -16,6 +16,7 @@ import type {
   HorseCreationImpact,
 } from "@/core/resolver/impacts/index";
 import { createRng } from "@/core/common/rng";
+import { getStableId, makeUnowned } from "@/core/horse/ownership";
 
 function makeSyndicate(overrides: Partial<Syndicate> = {}): Syndicate {
   return {
@@ -88,8 +89,7 @@ describe("npcBankruptcyPhase", () => {
       name: "Stallion 1",
       age: 8,
       gender: "horse",
-      stableId: "bankrupt-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       lifetimeEarnings: 5000000,
     });
     const syndicate = makeSyndicate({
@@ -120,8 +120,7 @@ describe("npcBankruptcyPhase", () => {
       name: "Stallion 1",
       age: 8,
       gender: "horse",
-      stableId: "bankrupt-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       lifetimeEarnings: 5000000,
     });
     const syndicate = makeSyndicate({
@@ -149,8 +148,7 @@ describe("npcBankruptcyPhase", () => {
       name: "Stallion 1",
       age: 8,
       gender: "horse",
-      stableId: "bankrupt-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       lifetimeEarnings: 5000000,
     });
     const syndicate = makeSyndicate({
@@ -177,8 +175,7 @@ describe("npcBankruptcyPhase", () => {
       name: "Stallion 1",
       age: 8,
       gender: "horse",
-      stableId: "bankrupt-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       lifetimeEarnings: 5000000,
     });
     const syndicate = makeSyndicate({
@@ -205,8 +202,7 @@ describe("npcBankruptcyPhase", () => {
       name: "Stallion 1",
       age: 8,
       gender: "horse",
-      stableId: "bankrupt-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       lifetimeEarnings: 5000000,
     });
     const syndicate = makeSyndicate({
@@ -235,8 +231,7 @@ describe("npcBankruptcyPhase", () => {
       name: "Horse 1",
       age: 3,
       gender: "colt",
-      stableId: "bankrupt-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const state = makeGameState({
       npcStables: [stable],
@@ -261,16 +256,14 @@ describe("npcBankruptcyPhase", () => {
       name: "Horse 1",
       age: 3,
       gender: "colt",
-      stableId: "bankrupt-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const horse2 = createTestHorse({
       id: "horse-2",
       name: "Horse 2",
       age: 5,
       gender: "mare",
-      stableId: "bankrupt-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const state = makeGameState({
       npcStables: [stable],
@@ -294,8 +287,7 @@ describe("npcBankruptcyPhase", () => {
       name: "Horse 1",
       age: 3,
       gender: "colt",
-      stableId: "bankrupt-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const state = makeGameState({
       npcStables: [stable],
@@ -369,8 +361,7 @@ describe("npcBankruptcyPhase", () => {
       name: "Horse 1",
       age: 3,
       gender: "colt",
-      stableId: "bankrupt-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
     });
     const state = makeGameState({
       npcStables: [stable],
@@ -489,8 +480,7 @@ describe("npcBankruptcyPhase", () => {
       name: "Stallion 1",
       age: 8,
       gender: "horse",
-      stableId: "bankrupt-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       lifetimeEarnings: 5000000,
     });
     // bankrupt-1 has 20 shares, other-npc has 15, player has 5
@@ -511,7 +501,7 @@ describe("npcBankruptcyPhase", () => {
     const result = npcBankruptcyPhase.execute(context);
 
     const updatedStallion = (result.state as GameState).horses["stallion-1"];
-    expect(updatedStallion.stableId).toBe("other-npc");
+    expect(getStableId(updatedStallion)).toBe("other-npc");
   });
 
   it("should not devolve if no majority holder remains after dissolution", () => {
@@ -521,8 +511,7 @@ describe("npcBankruptcyPhase", () => {
       name: "Stallion 1",
       age: 8,
       gender: "horse",
-      stableId: "bankrupt-1",
-      ownership: { type: "unowned" },
+      ownership: makeUnowned(),
       lifetimeEarnings: 5000000,
     });
     // bankrupt-1 has 40 shares, player has 0 (no player buyout needed).
@@ -541,9 +530,9 @@ describe("npcBankruptcyPhase", () => {
     const context = makePipelineContext({ state }) as PipelineContext;
     const result = npcBankruptcyPhase.execute(context);
 
-    // No majority — stallion.stableId stays as bankrupt-1 (will be updated when consigned/sold)
+    // No majority — getStableId(stallion) stays as bankrupt-1 (will be updated when consigned/sold)
     const updatedStallion = (result.state as GameState).horses["stallion-1"];
-    expect(updatedStallion.stableId).toBe("bankrupt-1");
+    expect(getStableId(updatedStallion)).toBe("bankrupt-1");
   });
 
   it("should respect worldSize: small when generating replacement stable horses", () => {

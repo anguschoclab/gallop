@@ -6,6 +6,7 @@ import {
 } from "@/core/analytics/regionalTrends";
 import type { Race } from "@/core/race/types";
 import type { Horse } from "@/core/horse/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 const race = (id: string, track?: string, grade?: "G1") =>
   ({
@@ -34,7 +35,7 @@ const horseWithSurface = (
   ({
     id: "h1",
     name: "Tester",
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     raceHistory: [
       {
         raceId,

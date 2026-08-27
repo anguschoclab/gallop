@@ -3,13 +3,14 @@ import { createRacingSlice } from "@/game/store/slices/racingSlice";
 import type { StoreGet } from "@/game/store/types";
 import { createDefaultFoalDevelopmentArc } from "@/core/horse/foalDevelopment";
 import type { Horse } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function makeMockState(horseOverrides: Partial<Horse> = {}) {
   const arc = createDefaultFoalDevelopmentArc(0);
   const horse: Horse = {
     id: "h1",
     name: "Foal",
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     age: 2,
     potential: 80,
     stats: {

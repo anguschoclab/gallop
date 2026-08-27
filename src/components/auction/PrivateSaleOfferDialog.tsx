@@ -12,6 +12,12 @@ import {
 import { toast } from "sonner";
 import { formatCurrency } from "@/core/common/formatting";
 import { calculateLotValuation } from "@/core/auction/engine";
+import { Badge } from "@/components/ui/badge";
+import {
+  evaluateHorseAttachment,
+  attachmentAdjustedAsk,
+  suggestedOfferTiers,
+} from "@/core/horse/attachment";
 import type { Horse, Stable } from "@/game/types";
 
 function getOfferErrorMessage(
@@ -67,6 +73,9 @@ export function PrivateSaleOfferDialog({
   const valuation = calculateLotValuation(horse, stable, "racing_age", allHorses);
   const fogLow = Math.round(valuation * 0.8);
   const fogHigh = Math.round(valuation * 1.2);
+  const attachment = evaluateHorseAttachment(horse, stable);
+  const ask = attachmentAdjustedAsk(horse, stable, valuation);
+  const tiers = suggestedOfferTiers(ask);
 
   const handleSubmitOffer = () => {
     const amount = Number(offerAmount.replace(/,/g, "").replace(/\$/g, ""));
@@ -100,12 +109,64 @@ export function PrivateSaleOfferDialog({
           <DialogTitle>Make an offer for {horse.name}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 pt-2">
+          <div className="rounded-md border border-border/60 p-3 space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <Badge variant={attachment.tier === "available" ? "secondary" : "outline"}>
+                {attachment.label}
+              </Badge>
+              <span className="text-xs text-cream-muted tabular-nums">
+                asking ×{attachment.askMultiplier.toFixed(2)} of market
+              </span>
+            </div>
+            <p className="text-xs text-cream-muted">{attachment.blurb}</p>
+            {attachment.signals.length > 0 && (
+              <ul className="text-xs text-cream-muted space-y-0.5">
+                {attachment.signals.slice(0, 4).map((s) => (
+                  <li key={s.label} className="flex justify-between gap-3">
+                    <span>{s.label}</span>
+                    <span className="tabular-nums">
+                      {s.points > 0 ? "+" : ""}
+                      {s.points}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
           <p className="text-sm text-cream-muted">
             Estimated market value:{" "}
             <span className="tabular-nums font-medium text-cream">
               ~{formatCurrency(fogLow)} – {formatCurrency(fogHigh)}
             </span>
+            <br />
+            Their likely ask:{" "}
+            <span className="tabular-nums font-medium text-cream">{formatCurrency(ask)}</span>
           </p>
+          <div className="space-y-1">
+            <p className="text-xs font-medium text-cream-muted">Quick offers</p>
+            <div className="flex flex-wrap gap-2">
+              {(
+                [
+                  ["Lowball", tiers.lowball],
+                  ["Fair", tiers.fair],
+                  ["Blow them away", tiers.generous],
+                ] as const
+              ).map(([label, amount]) => (
+                <Button
+                  key={label}
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setOfferAmount(formatCurrency(amount));
+                    setOfferError("");
+                  }}
+                >
+                  {label} · {formatCurrency(amount)}
+                </Button>
+              ))}
+            </div>
+          </div>
           <div className="space-y-1">
             <label htmlFor={offerId} className="text-sm font-medium">
               Your offer amount
@@ -128,6 +189,7 @@ export function PrivateSaleOfferDialog({
             {offerError && <p className="text-xs text-destructive">{offerError}</p>}
           </div>
         </div>
+
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>
             Cancel

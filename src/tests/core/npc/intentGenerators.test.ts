@@ -10,6 +10,7 @@ import { updateStableAIState } from "@/core/ai/npcCycleAI";
 import type { GameState, Stable } from "@/game/types";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
 
 // Define a mock instance variable to control throw behavior
 let shouldThrowForStable1 = false;
@@ -285,7 +286,7 @@ describe("generateNpcIntents diplomacy-aware claiming", () => {
           bloodline: "unknown",
           fiberBias: "average",
           fame: 0,
-          ownership: { type: "unowned" },
+          ownership: makeUnowned(),
           racingViable: true,
           lifecycleStatus: "active",
           courseVisits: {},
@@ -311,7 +312,7 @@ describe("generateNpcIntents diplomacy-aware claiming", () => {
           claimingPrice: 25000,
           purse: 30000,
           fieldSize: 8,
-          entries: [{ horseId: "horse-ally", stableId: "stable2", ownership: { type: "unowned" } }],
+          entries: [{ horseId: "horse-ally", stableId: "stable2", ownership: makeUnowned() }],
           resolved: false,
         },
       },
@@ -533,7 +534,7 @@ describe("generateNpcIntents auction consignment", () => {
       id: "horse-old",
       name: "Old Underperformer",
       age: 8,
-      stableId: "stable1",
+      ownership: makeNpcOwned("stable1"),
       energy: 50,
       form: 30,
       stats: {
@@ -585,7 +586,7 @@ describe("generateNpcIntents auction consignment", () => {
       id: "horse-old",
       name: "Old Underperformer",
       age: 8,
-      stableId: "stable1",
+      ownership: makeNpcOwned("stable1"),
       energy: 50,
       form: 30,
       stats: {

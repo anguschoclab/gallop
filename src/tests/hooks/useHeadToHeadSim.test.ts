@@ -26,6 +26,7 @@ import { useHeadToHeadSim } from "@/hooks/horse/useHeadToHeadSim";
 import { runHeadToHeadSimulation } from "@/core/race/headToHead";
 import { SIM_ITERATIONS } from "@/constants/uiConstants";
 import type { Horse } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 const mkHorse = (id: string): Horse =>
   ({
@@ -47,7 +48,7 @@ const mkHorse = (id: string): Horse =>
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
   }) as unknown as Horse;
 
 describe("useHeadToHeadSim", () => {

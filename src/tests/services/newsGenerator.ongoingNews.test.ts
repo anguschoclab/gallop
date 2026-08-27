@@ -6,6 +6,8 @@ import {
 import { createTestHorse, createTestRng } from "@/tests/helpers";
 import { isValidUUID } from "@/core/uuid";
 import type { Race, Horse } from "@/game/types";
+import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function createG1Race(overrides?: Partial<Race>): Race {
   return {
@@ -41,14 +43,14 @@ function createG3Race(): Race {
 }
 
 function createPlayerHorse(id = "player-horse", name = "Thunder Strike"): Horse {
-  return createTestHorse({ id, name, ownership: { type: "player" }, stableId: undefined });
+  return createTestHorse({ id, name, ownership: makePlayerOwned() });
 }
 
 function createNpcHorse(id = "npc-horse", name = "NPC Runner"): Horse {
   return createTestHorse({
     id,
     name,
-    ownership: { type: "npc", stableId: asNpcStableId("npc-stable-1") },
+    ownership: makeNpcOwned(asNpcStableId("npc-stable-1")),
   });
 }
 

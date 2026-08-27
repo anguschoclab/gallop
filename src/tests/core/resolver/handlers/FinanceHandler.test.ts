@@ -8,6 +8,7 @@ import type {
 } from "@/core/resolver/impacts/index";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import type { Horse } from "@/game/types";
+import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 describe("FinanceHandler", () => {
   it("cash_change with entityId='player' updates draft.cash", () => {
@@ -86,7 +87,7 @@ describe("FinanceHandler", () => {
     const state = {
       cash: 1000,
       horses: h2r([
-        { id: "horse-1", name: "Star", ownership: { type: "player" } },
+        { id: "horse-1", name: "Star", ownership: makePlayerOwned() },
       ] as unknown as Horse[]),
       npcStables: [],
     } as unknown as GameState;
@@ -115,7 +116,7 @@ describe("FinanceHandler", () => {
     const state = {
       cash: 1000,
       horses: h2r([
-        { id: "horse-1", name: "Star", ownership: { type: "unowned" } },
+        { id: "horse-1", name: "Star", ownership: makeUnowned() },
       ] as unknown as Horse[]),
       npcStables: [],
     } as unknown as GameState;

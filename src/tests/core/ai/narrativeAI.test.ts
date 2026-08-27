@@ -27,6 +27,7 @@ import type {
   NarrativeState,
 } from "@/core/ai/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
+import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {
   return createTestStable({
@@ -329,7 +330,7 @@ describe("detectRaceBeats", () => {
     return createTestHorse({
       id: "horse-1",
       name: "Test Horse",
-      stableId: "s1",
+      ownership: makeNpcOwned("s1"),
       stats: {
         speed: 70,
         stamina: 70,
@@ -345,7 +346,7 @@ describe("detectRaceBeats", () => {
 
   it("generates a beat for G1 wins by NPC-owned horses", () => {
     const manager = createManagerWithNarrative("s1");
-    const horse = createMockHorse({ id: "horse-1", stableId: "s1" });
+    const horse = createMockHorse({ id: "horse-1", ownership: makeNpcOwned("s1") });
     const race = createMockRace({
       graded: { key: "g1-test", grade: "G1", track: "Test", surface: "Dirt" },
     });
@@ -361,7 +362,7 @@ describe("detectRaceBeats", () => {
     const manager = createManagerWithNarrative("s1");
     const winner = createMockHorse({
       id: "winner",
-      stableId: "s1",
+      ownership: makeNpcOwned("s1"),
       stats: {
         speed: 40,
         stamina: 40,
@@ -373,7 +374,7 @@ describe("detectRaceBeats", () => {
     });
     const strong1 = createMockHorse({
       id: "strong1",
-      stableId: "player",
+      ownership: makeNpcOwned("player"),
       stats: {
         speed: 80,
         stamina: 80,
@@ -385,7 +386,7 @@ describe("detectRaceBeats", () => {
     });
     const strong2 = createMockHorse({
       id: "strong2",
-      stableId: "player",
+      ownership: makeNpcOwned("player"),
       stats: {
         speed: 75,
         stamina: 75,
@@ -397,7 +398,7 @@ describe("detectRaceBeats", () => {
     });
     const strong3 = createMockHorse({
       id: "strong3",
-      stableId: "player",
+      ownership: makeNpcOwned("player"),
       stats: {
         speed: 78,
         stamina: 78,
@@ -429,7 +430,7 @@ describe("detectRaceBeats", () => {
 
   it("does not generate beats for player-owned horses", () => {
     const manager = createManagerWithNarrative("s1");
-    const horse = createMockHorse({ id: "horse-1", stableId: undefined });
+    const horse = createMockHorse({ id: "horse-1", ownership: makeUnowned() });
     const race = createMockRace({
       graded: { key: "g1-test", grade: "G1", track: "Test", surface: "Dirt" },
     });
@@ -442,7 +443,7 @@ describe("detectRaceBeats", () => {
 
   it("does not generate beats for races with no results", () => {
     const manager = createManagerWithNarrative("s1");
-    const horse = createMockHorse({ id: "horse-1", stableId: "s1" });
+    const horse = createMockHorse({ id: "horse-1", ownership: makeNpcOwned("s1") });
     const race = createMockRace({ result: undefined });
     const horseMap = new Map([["horse-1", horse]]);
 
@@ -470,7 +471,7 @@ describe("detectDynastyBeats", () => {
     const manager = createManagerWithNarrative("s1");
     const winner = createTestHorse({
       id: "winner",
-      stableId: "s1",
+      ownership: makeNpcOwned("s1"),
       sireId: "sire-1",
       damId: "dam-1",
       raceHistory: [
@@ -486,7 +487,7 @@ describe("detectDynastyBeats", () => {
     // Create 2 more homebred graded winners to reach threshold of 3
     const h2 = createTestHorse({
       id: "h2",
-      stableId: "s1",
+      ownership: makeNpcOwned("s1"),
       sireId: "sire-2",
       damId: "dam-2",
       raceHistory: [
@@ -495,7 +496,7 @@ describe("detectDynastyBeats", () => {
     });
     const h3 = createTestHorse({
       id: "h3",
-      stableId: "s1",
+      ownership: makeNpcOwned("s1"),
       sireId: "sire-3",
       damId: "dam-3",
       raceHistory: [
@@ -518,7 +519,7 @@ describe("detectDynastyBeats", () => {
     const manager = createManagerWithNarrative("s1");
     const horse = createTestHorse({
       id: "horse-1",
-      stableId: "s1",
+      ownership: makeNpcOwned("s1"),
       sireId: "sire-1",
       damId: "dam-1",
     });
@@ -549,7 +550,7 @@ describe("detectComebackBeats", () => {
     const manager = createManagerWithNarrative("s1");
     const horse = createTestHorse({
       id: "horse-1",
-      stableId: "s1",
+      ownership: makeNpcOwned("s1"),
       age: 8,
       raceHistory: [
         { raceId: "r1", raceName: "Old Race", position: 3, day: 20, stableId: "s1" },
@@ -570,7 +571,7 @@ describe("detectComebackBeats", () => {
     const manager = createManagerWithNarrative("s1");
     const horse = createTestHorse({
       id: "horse-1",
-      stableId: "s1",
+      ownership: makeNpcOwned("s1"),
       age: 4,
       raceHistory: [
         { raceId: "r1", raceName: "Old Race", position: 3, day: 20, stableId: "s1" },

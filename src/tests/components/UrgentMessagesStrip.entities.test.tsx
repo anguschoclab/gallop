@@ -5,6 +5,7 @@ import { seedStore } from "@/test-utils/renderWithStore";
 import { createDefaultGameState } from "@/game/store/state";
 import { UrgentMessagesStrip } from "@/components/dashboard/UrgentMessagesStrip";
 import { createTestHorse } from "@/tests/helpers";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({
@@ -25,7 +26,7 @@ describe("UrgentMessagesStrip — entity linking", () => {
     const horse = createTestHorse({
       id: "h1",
       name: "Thunder Strike",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
     });
     seedStore({
       ...createDefaultGameState(),

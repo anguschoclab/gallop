@@ -81,7 +81,7 @@ describe("ShareOwnershipPanel", () => {
 
   it("marks current owner with Crown icon and Owner badge", () => {
     const syndicate = mkSyndicate({ shareHolders: { player: 6, npc1: 4 } });
-    const stallion = { id: "h1", stableId: "player" } as Horse;
+    const stallion = { id: "h1", ownership: { type: "player" } } as unknown as Horse;
 
     render(<ShareOwnershipPanel syndicate={syndicate} stallion={stallion} npcStables={[]} />);
 

@@ -7,7 +7,7 @@ function makeRunner(overrides: Partial<Runner> = {}): Runner {
     horseId: "h1",
     name: "Test",
     silk: "red",
-    ownership: { type: "unowned" },
+    isPlayer: false,
     position: 0,
     velocity: 16,
     finishTime: null,

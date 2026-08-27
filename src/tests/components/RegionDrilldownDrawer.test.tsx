@@ -54,6 +54,7 @@ vi.mock("@/components/charts", () => ({
 import { RegionDrilldownDrawer } from "@/components/dashboard/RegionDrilldownDrawer";
 import type { Horse } from "@/core/horse/types";
 import type { Race } from "@/core/race/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 const makeRace = (id: string, track = "Belmont Park"): Race =>
   ({
@@ -81,7 +82,7 @@ const makeHorse = (
   ({
     id,
     name: `Horse ${id}`,
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     raceHistory: [
       {
         raceId,

@@ -6,6 +6,7 @@ import { seedStore } from "@/test-utils/renderWithStore";
 import { createDefaultGameState } from "@/game/store/state";
 import { SeasonStandingsWidget } from "@/components/dashboard/SeasonStandingsWidget";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 async function clickTab(name: string) {
   const tab = screen.getByRole("tab", { name: new RegExp(name, "i") });
@@ -43,7 +44,7 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
   });
 
   it("clicking Wealth tab shows wealth table with Cash / Horse Assets / Total Wealth columns", async () => {
-    const h1 = createTestHorse({ id: "h1", ownership: { type: "player" }, name: "My Horse" });
+    const h1 = createTestHorse({ id: "h1", ownership: makePlayerOwned(), name: "My Horse" });
     seedStore({
       ...createDefaultGameState(),
       cash: 500000,
@@ -64,7 +65,7 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
   });
 
   it("Wealth tab renders player stable name", async () => {
-    const h1 = createTestHorse({ id: "h1", ownership: { type: "player" }, name: "My Horse" });
+    const h1 = createTestHorse({ id: "h1", ownership: makePlayerOwned(), name: "My Horse" });
     seedStore({
       ...createDefaultGameState(),
       cash: 500000,
@@ -96,7 +97,7 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
   });
 
   it("Wealth tab shows formatCurrency values in rows", async () => {
-    const h1 = createTestHorse({ id: "h1", ownership: { type: "player" }, name: "My Horse" });
+    const h1 = createTestHorse({ id: "h1", ownership: makePlayerOwned(), name: "My Horse" });
     seedStore({
       ...createDefaultGameState(),
       cash: 500000,
@@ -116,7 +117,7 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
   });
 
   it("clicking a wealth row opens the WealthDetailsPanel", async () => {
-    const h1 = createTestHorse({ id: "h1", ownership: { type: "player" }, name: "My Horse" });
+    const h1 = createTestHorse({ id: "h1", ownership: makePlayerOwned(), name: "My Horse" });
     seedStore({
       ...createDefaultGameState(),
       cash: 500000,
@@ -137,7 +138,7 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
   });
 
   it("Wealth tab does NOT show range buttons (7D/30D/90D)", async () => {
-    const h1 = createTestHorse({ id: "h1", ownership: { type: "player" }, name: "My Horse" });
+    const h1 = createTestHorse({ id: "h1", ownership: makePlayerOwned(), name: "My Horse" });
     seedStore({
       ...createDefaultGameState(),
       cash: 500000,
@@ -160,7 +161,7 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
   it("existing earnings tests still pass (backward compatibility)", () => {
     const h1 = createTestHorse({
       id: "h1",
-      ownership: { type: "player" },
+      ownership: makePlayerOwned(),
       name: "Thunder",
       raceHistory: [
         {
@@ -196,7 +197,7 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
   });
 
   it("rank badge shows earnings rank on earnings tab and wealth rank on wealth tab", async () => {
-    const h1 = createTestHorse({ id: "h1", ownership: { type: "player" }, name: "My Horse" });
+    const h1 = createTestHorse({ id: "h1", ownership: makePlayerOwned(), name: "My Horse" });
     const stable = createTestStable({ id: "npc1", name: "Rich Stable", cash: 10000000 });
     seedStore({
       ...createDefaultGameState(),

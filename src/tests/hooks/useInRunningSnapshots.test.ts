@@ -13,13 +13,14 @@ import { describe, it, expect } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useInRunningSnapshots } from "@/hooks/race/useInRunningSnapshots";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function createMockRunner(overrides: Partial<Runner> = {}): Runner {
   return {
     horseId: "h1",
     name: "Thunderbolt",
     silk: "#ff0000",
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     position: 400,
     velocity: 16.5,
     finishTime: null,

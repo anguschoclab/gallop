@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { CompareHeaderRow } from "@/components/horse/CompareHeaderRow";
 import type { Horse } from "@/game/types";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@/components/SilkDot", () => ({
   SilkDot: ({ color }: { color: string }) => <span data-testid="silk-dot" data-color={color} />,
@@ -28,7 +29,7 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
     distanceAptitude: 1600,
     raceHistory: [],
-    ownership: { type: "player" },
+    ownership: makePlayerOwned(),
     silk: "#ff0000",
     lifecycleStatus: "active",
     ...overrides,
