@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatProfitLoss } from "@/core/financial";
@@ -130,9 +130,8 @@ export function TransactionLedger({ transactions, recentTransactions }: Transact
 
                   const isOpen = !!expanded[row.key];
                   return (
-                    <>
+                    <Fragment key={row.key}>
                       <tr
-                        key={row.key}
                         className="group hover:bg-white/[0.02] transition-colors relative cursor-pointer"
                         onClick={() => setExpanded((prev) => ({ ...prev, [row.key]: !isOpen }))}
                       >
@@ -177,7 +176,7 @@ export function TransactionLedger({ transactions, recentTransactions }: Transact
                             </td>
                           </tr>
                         ))}
-                    </>
+                    </Fragment>
                   );
                 })}
               </tbody>
