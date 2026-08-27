@@ -7,6 +7,7 @@
  */
 
 import type { Horse, Race } from "@/game/types";
+import { racecoursePrestigeMultiplier } from "@/core/prestige/racecoursePrestige";
 import {
   FAME_GAIN_G1_WIN,
   FAME_GAIN_G2_WIN,
@@ -71,7 +72,7 @@ export function calculateFameGainsForRaces(races: Race[]): Map<string, number> {
         if (fameGain > 0) {
           const venuePrestige = racecoursePrestigeMultiplier(
             race.trackId ?? race.graded?.trackId,
-            race.track ?? race.graded?.track,
+            race.graded?.track,
           );
           fameGain = Math.max(1, Math.round(fameGain * venuePrestige));
         }
