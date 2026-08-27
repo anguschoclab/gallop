@@ -9,8 +9,17 @@
  */
 
 import type { AuctionSaleKind } from "@/game/types";
+import { getHouseForSaleKind } from "@/core/prestige/auctionHouses";
 
-export const SALE_TRIGGERS: { doy: number; kind: AuctionSaleKind; name: string }[] = [
+export type SaleTrigger = {
+  doy: number;
+  kind: AuctionSaleKind;
+  name: string;
+  /** Auction house staging the sale. */
+  houseId?: string;
+};
+
+const RAW_SALE_TRIGGERS: Omit<SaleTrigger, "houseId">[] = [
   { doy: 75, kind: "2yo_training", name: "Spring 2YO Breeze-Up Sale" },
   { doy: 90, kind: "weanling", name: "Spring Weanling Sale" },
   { doy: 105, kind: "yearling_south", name: "Southern Yearling Sale" },
@@ -20,6 +29,11 @@ export const SALE_TRIGGERS: { doy: number; kind: AuctionSaleKind; name: string }
   { doy: 290, kind: "weanling_south", name: "Southern Weanling Sale" },
   { doy: 335, kind: "broodmare", name: "Year-End Broodmare & Breeding Stock Sale" },
 ];
+
+export const SALE_TRIGGERS: SaleTrigger[] = RAW_SALE_TRIGGERS.map((t) => ({
+  ...t,
+  houseId: getHouseForSaleKind(t.kind)?.id,
+}));
 
 export const KIND_LABELS: Record<AuctionSaleKind, string> = {
   weanling: "Weanling Sale",
