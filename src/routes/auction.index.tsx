@@ -27,6 +27,7 @@ type SaleDisplay =
       id: string;
       name: string;
       kind: string;
+      houseId?: string;
       day: number;
       lots: Array<{ consignorStableId?: string; withdrawn?: boolean }>;
       resolved: false;
@@ -84,6 +85,7 @@ function AuctionPage() {
         id: `scheduled-${t.kind}`,
         name: t.name,
         kind: t.kind,
+        houseId: t.houseId,
         day: futureDay,
         lots: [],
         resolved: false,
