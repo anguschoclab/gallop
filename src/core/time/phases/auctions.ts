@@ -69,6 +69,9 @@ export const auctionsPhase = {
           trigger.name,
           context.dailyRng,
         );
+        newSale.houseId = trigger.houseId;
+        const house = getAuctionHouse(trigger.houseId);
+        const housePremium = housePrestigeMultiplier(house);
         const freshHorses = horsesForGen.slice(beforeCount);
         for (const horse of freshHorses) {
           impacts.push({
