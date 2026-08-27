@@ -5,6 +5,9 @@ import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { KIND_LABELS } from "@/core/auction/data";
 import { cn } from "@/lib/cn";
 import { CalendarIcon } from "lucide-react";
+import { resolveSaleHouse } from "@/core/prestige";
+import type { AuctionSaleKind } from "@/core/market/types";
+import { PrestigeBadge } from "@/components/shared/PrestigeBadge";
 
 interface UpcomingSale {
   id: string;
@@ -14,6 +17,7 @@ interface UpcomingSale {
   lots: Array<{ consignorStableId?: string; withdrawn?: boolean }>;
   resolved: boolean;
   isScheduled?: true;
+  houseId?: string;
 }
 
 interface UpcomingLedgerTableProps {
@@ -55,6 +59,10 @@ export function UpcomingLedgerTable({
                 : [];
               const access = saleAccessMap?.get(sale.kind);
               const isLocked = access && !access.allowed;
+              const house = resolveSaleHouse({
+                houseId: sale.houseId,
+                kind: sale.kind as AuctionSaleKind,
+              });
 
               return (
                 <tr
