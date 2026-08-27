@@ -67,7 +67,14 @@ export type AuctionSale = {
   resolved: boolean;
 };
 
-export type PrivateSaleStatus = "pending" | "accepted" | "countered" | "declined" | "expired";
+export type PrivateSaleStatus =
+  | "pending"
+  | "accepted"
+  | "countered"
+  | "declined"
+  | "expired"
+  | "override_pending"
+  | "override_failed";
 
 export type PrivateSaleOffer = {
   id: string;
@@ -79,6 +86,8 @@ export type PrivateSaleOffer = {
   status: PrivateSaleStatus;
   createdDay: number;
   expiresDay: number;
+  overrideType?: "premium" | "diplomatic";
+  overrideAmount?: number;
 };
 
 export type Claim = {

@@ -201,4 +201,79 @@ describe("PrivateSaleOfferDialog", () => {
     fireEvent.click(screen.getByRole("button", { name: /Submit Offer/i }));
     expect(screen.getByText(/Insufficient funds/i)).toBeTruthy();
   });
+
+  it("all attachment signals rendered (not just top 4)", () => {
+    const horse = mkHorse({
+      fame: 60,
+      potential: 90,
+      careerStarts: 10,
+      careerWins: 7,
+      lifetimeEarnings: 500_000,
+      fanCount: 1000,
+      isBlueHen: false,
+    });
+    renderWithStore(
+      <PrivateSaleOfferDialog
+        horse={horse}
+        stable={mkStable()}
+        isOpen={true}
+        onClose={vi.fn()}
+        cash={100000}
+        allHorses={[horse]}
+      />,
+    );
+    // With fame=60, potential=90, careerStarts=10, careerWins=7, lifetimeEarnings=500k, fanCount=1000
+    // we should get at least 5 signals: fame, elite potential, winning >50%, proven earner, large fan following
+    expect(screen.getByText(/Public profile/i)).toBeTruthy();
+    expect(screen.getByText(/Elite potential/i)).toBeTruthy();
+    expect(screen.getByText(/Winning better than/i)).toBeTruthy();
+    expect(screen.getByText(/Proven earner/i)).toBeTruthy();
+    expect(screen.getByText(/Large fan following/i)).toBeTruthy();
+  });
+
+  it("override panel appears for protected horse", () => {
+    const horse = mkHorse({
+      fame: 60,
+      potential: 90,
+      careerStarts: 10,
+      careerWins: 7,
+      lifetimeEarnings: 500_000,
+      fanCount: 1000,
+    });
+    renderWithStore(
+      <PrivateSaleOfferDialog
+        horse={horse}
+        stable={mkStable()}
+        isOpen={true}
+        onClose={vi.fn()}
+        cash={500000}
+        allHorses={[horse]}
+      />,
+    );
+    expect(screen.getByText(/Premium/i)).toBeTruthy();
+    expect(screen.getByText(/Diplomatic/i)).toBeTruthy();
+  });
+
+  it("override panel absent for available horse", () => {
+    const horse = mkHorse({
+      fame: 0,
+      potential: 50,
+      careerStarts: 0,
+      careerWins: 0,
+      lifetimeEarnings: 0,
+      fanCount: 0,
+    });
+    renderWithStore(
+      <PrivateSaleOfferDialog
+        horse={horse}
+        stable={mkStable()}
+        isOpen={true}
+        onClose={vi.fn()}
+        cash={500000}
+        allHorses={[horse]}
+      />,
+    );
+    expect(screen.queryByText(/Premium/i)).toBeNull();
+    expect(screen.queryByText(/Diplomatic/i)).toBeNull();
+  });
 });

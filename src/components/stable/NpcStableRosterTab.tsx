@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, Eye, HandCoins } from "lucide-react";
 import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
 
 import { HorseCard } from "@/components/horse/HorseCard";
@@ -36,7 +37,7 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
   const activeOffersMap = useMemo(() => {
     const map = new Map<string, PrivateSaleOffer>();
     privateSaleOffers.forEach((o: PrivateSaleOffer) => {
-      if (o.fromStableId === undefined && (o.status === "pending" || o.status === "countered")) {
+      if (o.fromStableId === undefined && (o.status === "pending" || o.status === "countered" || o.status === "override_pending")) {
         map.set(o.horseId, o);
       }
     });
@@ -80,9 +81,27 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
                 </Link>
 
                 {attachment.tier !== "available" && (
-                  <p className="mt-2 text-[10px] uppercase tracking-widest text-cream-muted">
-                    {attachment.label} · asks ×{attachment.askMultiplier.toFixed(2)} of market
-                  </p>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <p className="mt-2 text-[10px] uppercase tracking-widest text-cream-muted cursor-help">
+                          {attachment.label} · asks ×{attachment.askMultiplier.toFixed(2)} of market
+                        </p>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p className="font-medium mb-1">Score: {attachment.score}</p>
+                        <ul className="space-y-0.5">
+                          {attachment.signals.slice(0, 3).map((s) => (
+                            <li key={s.label} className="flex justify-between gap-2">
+                              <span>{s.label}</span>
+                              <span className="tabular-nums">{s.points > 0 ? "+" : ""}{s.points}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="mt-1 text-[10px] italic">Click Offer for full breakdown</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 )}
 
 

@@ -18,7 +18,6 @@ export function FinancialReport() {
     setSelectedPeriod,
     incomeBreakdown,
     expenseBreakdown,
-    recentTransactions,
     activePeriodData,
   } = useLedgerTransactions();
 
@@ -91,7 +90,7 @@ export function FinancialReport() {
         <OperatingCostsPanel items={expenseBreakdown} total={activePeriodData.expenses.total} />
       </div>
 
-      <TransactionLedger transactions={transactions} recentTransactions={recentTransactions} />
+      <TransactionLedger transactions={transactions} day={day} />
     </div>
   );
 }

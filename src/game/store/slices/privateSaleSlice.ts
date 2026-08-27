@@ -8,11 +8,14 @@
  * Related files: store/index.ts (uses this slice)
  */
 
-import type { Horse, PrivateSaleOffer, Claim, Race } from "@/game/types";
+import type { Horse, PrivateSaleOffer, Claim, Race, Stable } from "@/game/types";
 import { makePlayerOwned, isPlayerOwned, getStableId } from "@/core/horse/ownership";
 import { generateUUID } from "@/core/uuid";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
+import { evaluateHorseAttachment, attachmentAdjustedAsk } from "@/core/horse/attachment";
+import { calculateLotValuation } from "@/core/auction/engine";
+import { computePremiumBuyout, computeDiplomaticPressure } from "@/core/horse/overrideNegotiation";
 
 export type PrivateSaleSlice = {
   /** Proposes a private sale offer to an NPC stable for one of its horses */
@@ -23,6 +26,11 @@ export type PrivateSaleSlice = {
   ) => { ok: boolean; reason?: string };
   /** Responds to a counter-offer from an NPC stable (accept or decline) */
   respondToPrivateSale: (offerId: string, accept: boolean) => { ok: boolean; reason?: string };
+  /** Requests an override on a protected/untouchable horse (premium buyout or diplomatic pressure) */
+  requestOverride: (
+    offerId: string,
+    type: "premium" | "diplomatic",
+  ) => { ok: boolean; reason?: string };
   /** Enters a horse in a claiming race */
   enterClaimingRace: (raceId: string, horseId: string) => { ok: boolean; reason?: string };
   /** Withdraws a horse from a claiming race before the entry cutoff */
@@ -108,6 +116,76 @@ export function createPrivateSaleSlice(
       } else {
         const updatedOffers = s.privateSaleOffers.map((o: PrivateSaleOffer) =>
           o.id === offerId ? { ...o, status: "declined" as const } : o,
+        );
+
+        set({ privateSaleOffers: updatedOffers });
+        return { ok: true };
+      }
+    },
+
+    requestOverride: (offerId, type) => {
+      const s = get();
+      const offer: PrivateSaleOffer | undefined = s.privateSaleOffers.find(
+        (o: PrivateSaleOffer) => o.id === offerId,
+      );
+      if (!offer) return { ok: false, reason: "offer_not_found" };
+      if (offer.status !== "pending") return { ok: false, reason: "offer_not_actionable" };
+
+      const horse = s.horses[offer.horseId];
+      if (!horse) return { ok: false, reason: "horse_not_found" };
+
+      const stableId = offer.toStableId;
+      if (!stableId) return { ok: false, reason: "offer_not_actionable" };
+
+      const stable: Stable | undefined = (s.npcStables as Stable[]).find(
+        (st) => st.id === stableId,
+      );
+      if (!stable) return { ok: false, reason: "stable_not_found" };
+
+      const allHorses = Object.values(s.horses);
+      const valuation = calculateLotValuation(horse, stable, "racing_age", allHorses);
+      const attachment = evaluateHorseAttachment(horse, stable);
+      const ask = attachmentAdjustedAsk(horse, stable, valuation);
+
+      if (type === "premium") {
+        const { cost } = computePremiumBuyout(attachment, ask);
+        if (s.cash < cost) return { ok: false, reason: "insufficient_funds" };
+
+        const updatedHorse: Horse = { ...horse, ownership: makePlayerOwned() };
+        const updatedOffers = s.privateSaleOffers.map((o: PrivateSaleOffer) =>
+          o.id === offerId
+            ? { ...o, status: "accepted" as const, overrideType: "premium" as const, overrideAmount: cost }
+            : o,
+        );
+
+        set({
+          cash: s.cash - cost,
+          horses: { ...s.horses, [offer.horseId]: updatedHorse },
+          privateSaleOffers: updatedOffers,
+        });
+
+        return { ok: true };
+      } else {
+        // Diplomatic: set to override_pending, resolved next day
+        const friction =
+          (s as any).npcAIManager?.stableStates?.[stableId]?.friction ?? 0;
+        const reputationScore = (s as any).reputation?.score ?? 0;
+        const { successCost } = computeDiplomaticPressure(
+          attachment,
+          ask,
+          friction,
+          reputationScore,
+        );
+
+        const updatedOffers = s.privateSaleOffers.map((o: PrivateSaleOffer) =>
+          o.id === offerId
+            ? {
+                ...o,
+                status: "override_pending" as const,
+                overrideType: "diplomatic" as const,
+                overrideAmount: successCost,
+              }
+            : o,
         );
 
         set({ privateSaleOffers: updatedOffers });

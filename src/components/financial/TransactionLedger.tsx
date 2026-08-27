@@ -1,15 +1,26 @@
 import { Fragment, useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 import { formatProfitLoss } from "@/core/financial";
-import { formatTransactionSubcategory } from "@/core/transactions/transactionTypes";
+import {
+  formatTransactionSubcategory,
+  type TransactionSubcategory,
+} from "@/core/transactions/transactionTypes";
 import type { Transaction } from "@/core/transactions/transactionTypes";
 import { cn } from "@/lib/cn";
 import { ReceiptText, ArrowUpRight, ArrowDownLeft, ChevronRight, ChevronDown } from "lucide-react";
 
 interface TransactionLedgerProps {
   transactions: Transaction[];
-  recentTransactions: Transaction[];
+  day: number;
 }
 
 type LedgerRow =
@@ -50,9 +61,56 @@ function buildLedgerRows(items: Transaction[]): LedgerRow[] {
   );
 }
 
-export function TransactionLedger({ transactions, recentTransactions }: TransactionLedgerProps) {
-  const rows = useMemo(() => buildLedgerRows(recentTransactions), [recentTransactions]);
+const ALL_SUBCATEGORIES: TransactionSubcategory[] = [
+  "prize_money", "claiming_sale", "auction_sale", "private_sale", "stud_fee", "other_income",
+  "upkeep", "training", "veterinary", "farrier", "transport", "insurance",
+  "entry_fee", "jockey_fee", "breeding_fee", "horse_purchase", "facility_maintenance", "other_expense",
+  "player_deposit", "player_withdrawal",
+  "correction", "refund", "penalty",
+];
+
+type DatePreset = "7d" | "30d" | "allTime" | "custom";
+
+export function TransactionLedger({ transactions, day }: TransactionLedgerProps) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [selectedSubcategory, setSelectedSubcategory] = useState<TransactionSubcategory | "all">("all");
+  const [dayRange, setDayRange] = useState<{ start: number; end: number }>({ start: 1, end: day });
+  const [datePreset, setDatePreset] = useState<DatePreset>("allTime");
+
+  const filteredTransactions = useMemo(() => {
+    let result = transactions;
+    if (selectedSubcategory !== "all") {
+      result = result.filter((t) => t.subcategory === selectedSubcategory);
+    }
+    result = result.filter((t) => t.day >= dayRange.start && t.day <= dayRange.end);
+    return [...result].reverse().slice(0, 50);
+  }, [transactions, selectedSubcategory, dayRange]);
+
+  const rows = useMemo(() => buildLedgerRows(filteredTransactions), [filteredTransactions]);
+
+  const handlePreset = (preset: DatePreset) => {
+    setDatePreset(preset);
+    if (preset === "7d") {
+      setDayRange({ start: Math.max(1, day - 6), end: day });
+    } else if (preset === "30d") {
+      setDayRange({ start: Math.max(1, day - 29), end: day });
+    } else if (preset === "allTime") {
+      setDayRange({ start: 1, end: day });
+    }
+  };
+
+  const handleDayRangeChange = (field: "start" | "end", value: number) => {
+    setDatePreset("custom");
+    setDayRange((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const netFlowByDay = useMemo(() => {
+    const map = new Map<number, number>();
+    for (const t of transactions) {
+      map.set(t.day, (map.get(t.day) ?? 0) + t.amount);
+    }
+    return map;
+  }, [transactions]);
 
   return (
     <section className="space-y-4 pt-4">
@@ -73,11 +131,70 @@ export function TransactionLedger({ transactions, recentTransactions }: Transact
               variant="outline"
               className="border-white/10 text-cream/40 font-mono text-[9px] h-5 rounded-none"
             >
-              {transactions.length} RECS
+              {filteredTransactions.length} RECS
             </Badge>
           </div>
         </CardHeader>
         <CardContent className="p-0">
+          {/* Filter Bar */}
+          <div className="flex flex-wrap items-center gap-3 px-4 py-3 bg-black/20 border-b border-white/5">
+            <Select
+              value={selectedSubcategory}
+              onValueChange={(v) => setSelectedSubcategory(v as TransactionSubcategory | "all")}
+            >
+              <SelectTrigger
+                data-testid="subcategory-filter"
+                className="h-7 w-[140px] text-[9px] font-mono uppercase tracking-widest border-white/10 bg-black/40"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                {ALL_SUBCATEGORIES.map((sc) => (
+                  <SelectItem key={sc} value={sc}>
+                    {formatTransactionSubcategory(sc)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <div className="flex items-center gap-1">
+              {(["7d", "30d", "allTime"] as const).map((p) => (
+                <button
+                  key={p}
+                  data-testid={`date-preset-${p}`}
+                  onClick={() => handlePreset(p)}
+                  className={cn(
+                    "px-2 h-7 text-[9px] font-black uppercase tracking-widest border transition-colors",
+                    datePreset === p
+                      ? "bg-gold text-slate-950 border-gold"
+                      : "bg-black/40 text-cream/40 border-white/10 hover:border-gold/30",
+                  )}
+                >
+                  {p === "7d" ? "Last 7d" : p === "30d" ? "Last 30d" : "All Time"}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest text-cream/40">
+              <span>Day:</span>
+              <input
+                type="number"
+                data-testid="day-range-start"
+                value={dayRange.start}
+                onChange={(e) => handleDayRangeChange("start", Number(e.target.value))}
+                className="w-12 h-7 px-1 text-center font-mono text-[10px] bg-black/40 border border-white/10 text-cream/60 focus:outline-none focus:border-gold/30"
+              />
+              <span className="text-cream/20">→</span>
+              <input
+                type="number"
+                data-testid="day-range-end"
+                value={dayRange.end}
+                onChange={(e) => handleDayRangeChange("end", Number(e.target.value))}
+                className="w-12 h-7 px-1 text-center font-mono text-[10px] bg-black/40 border border-white/10 text-cream/60 focus:outline-none focus:border-gold/30"
+              />
+            </div>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead className="bg-black/20 border-b border-white/5">
@@ -157,6 +274,19 @@ export function TransactionLedger({ transactions, recentTransactions }: Transact
                               <ChevronRight className="w-3 h-3" />
                             )}
                             {row.children.length} race entries
+                            {(() => {
+                              const net = netFlowByDay.get(row.day) ?? 0;
+                              return (
+                                <span
+                                  className={cn(
+                                    "ml-2 font-mono text-[10px] tabular-nums",
+                                    net >= 0 ? "text-success" : "text-destructive",
+                                  )}
+                                >
+                                  Net: {formatProfitLoss(net)}
+                                </span>
+                              );
+                            })()}
                           </span>
                         </td>
                       </tr>
@@ -172,7 +302,17 @@ export function TransactionLedger({ transactions, recentTransactions }: Transact
                               {formatProfitLoss(t.amount)}
                             </td>
                             <td className="px-8 py-2 text-[10px] font-mono text-cream/30 uppercase italic truncate max-w-xs">
-                              {t.description}
+                              {t.raceId ? (
+                                <Link
+                                  to="/race/$raceId"
+                                  params={{ raceId: t.raceId }}
+                                  className="text-cream/30 hover:text-gold hover:underline"
+                                >
+                                  {t.description}
+                                </Link>
+                              ) : (
+                                t.description
+                              )}
                             </td>
                           </tr>
                         ))}
@@ -182,7 +322,7 @@ export function TransactionLedger({ transactions, recentTransactions }: Transact
               </tbody>
             </table>
           </div>
-          {transactions.length === 0 && (
+          {filteredTransactions.length === 0 && (
             <div className="py-20 text-center border-dashed border-white/5 opacity-40">
               <p className="font-mono text-xs uppercase tracking-widest">
                 No Fiscal Events Recorded

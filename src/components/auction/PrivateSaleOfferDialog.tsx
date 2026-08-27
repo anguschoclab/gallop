@@ -18,6 +18,8 @@ import {
   attachmentAdjustedAsk,
   suggestedOfferTiers,
 } from "@/core/horse/attachment";
+import { AttachmentBreakdown } from "@/components/auction/AttachmentBreakdown";
+import { OverrideNegotiationPanel } from "@/components/auction/OverrideNegotiationPanel";
 import type { Horse, Stable } from "@/game/types";
 
 function getOfferErrorMessage(
@@ -69,6 +71,7 @@ export function PrivateSaleOfferDialog({
   const [offerAmount, setOfferAmount] = useState("");
   const [offerError, setOfferError] = useState("");
   const proposePrivateSale = useGame((s) => s.proposePrivateSale);
+  const requestOverride = useGame((s) => s.requestOverride);
 
   const valuation = calculateLotValuation(horse, stable, "racing_age", allHorses);
   const fogLow = Math.round(valuation * 0.8);
@@ -119,19 +122,7 @@ export function PrivateSaleOfferDialog({
               </span>
             </div>
             <p className="text-xs text-cream-muted">{attachment.blurb}</p>
-            {attachment.signals.length > 0 && (
-              <ul className="text-xs text-cream-muted space-y-0.5">
-                {attachment.signals.slice(0, 4).map((s) => (
-                  <li key={s.label} className="flex justify-between gap-3">
-                    <span>{s.label}</span>
-                    <span className="tabular-nums">
-                      {s.points > 0 ? "+" : ""}
-                      {s.points}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <AttachmentBreakdown attachment={attachment} />
           </div>
           <p className="text-sm text-cream-muted">
             Estimated market value:{" "}
@@ -167,6 +158,30 @@ export function PrivateSaleOfferDialog({
               ))}
             </div>
           </div>
+          <OverrideNegotiationPanel
+            horse={horse}
+            stable={stable}
+            attachment={attachment}
+            ask={ask}
+            valuation={valuation}
+            cash={cash}
+            onOverride={(type) => {
+              const pendingOffer = useGame.getState().privateSaleOffers.find(
+                (o) => o.horseId === horse.id && o.status === "pending",
+              );
+              if (pendingOffer) {
+                const result = requestOverride(pendingOffer.id, type);
+                if (result.ok) {
+                  toast.success(`Override submitted for ${horse.name}.`);
+                  setOfferAmount("");
+                  setOfferError("");
+                  onClose();
+                } else {
+                  setOfferError(result.reason ?? "Override failed.");
+                }
+              }
+            }}
+          />
           <div className="space-y-1">
             <label htmlFor={offerId} className="text-sm font-medium">
               Your offer amount

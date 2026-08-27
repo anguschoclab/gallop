@@ -38,6 +38,7 @@ export function useNpcStableDetail(stableId: string) {
   const news = useGameWithShallow((s) => s.news ?? []);
   const scoutHorse = useGame((s) => s.scoutHorse);
   const respondToPrivateSale = useGame((s) => s.respondToPrivateSale);
+  const requestOverride = useGame((s) => s.requestOverride);
   const privateSaleOffers = useGameWithShallow((s: GameState) => s.privateSaleOffers ?? []);
   const npcAIManager = useGame((s) => s.npcAIManager);
 
@@ -106,6 +107,7 @@ export function useNpcStableDetail(stableId: string) {
     privateSaleOffers,
     scoutHorse,
     respondToPrivateSale,
+    requestOverride,
     offerHorse,
     setOfferHorse,
     horses,

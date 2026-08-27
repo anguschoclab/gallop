@@ -174,9 +174,10 @@ export function suggestedOfferTiers(ask: number): {
   generous: number;
 } {
   const round = (n: number) => Math.max(500, Math.round(n / 500) * 500);
+  const roundUp = (n: number) => Math.max(500, Math.ceil(n / 500) * 500);
   return {
     lowball: round(ask * 0.75),
-    fair: round(ask),
-    generous: round(ask * 1.15),
+    fair: roundUp(ask),
+    generous: round(ask * 1.35),
   };
 }

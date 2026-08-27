@@ -11,8 +11,11 @@
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { calculateNpcHorseValue } from "@/core/horse/pricing";
+import { calculateLotValuation } from "@/core/auction/engine";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { attachmentAdjustedAsk, evaluateHorseAttachment } from "@/core/horse/attachment";
+import { computeDiplomaticPressure } from "@/core/horse/overrideNegotiation";
+import { calculateFrictionChange } from "@/core/stable/rivalry";
 import type { PrivateSaleOffer, Horse, Stable, StablePersonality } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import type { HorseTransferImpact, CashImpact } from "@/core/resolver/impacts";
@@ -58,13 +61,15 @@ export const privateSaleResolutionPhase: PipelinePhase = {
     const offers: PrivateSaleOffer[] = state.privateSaleOffers ?? [];
     if (offers.length === 0) return context;
 
-    const { horseMap, stableMap } = context;
+    const { horseMap, stableMap, dailyRng } = context;
+    const allHorsesArray = Array.from(horseMap.values());
     const newLogs = [...logs];
     const newImpacts = [...impacts];
     const updatedOffers: PrivateSaleOffer[] = [];
+    let updatedNpcAIManager = state.npcAIManager;
 
     for (const offer of offers) {
-      if (offer.status !== "pending") {
+      if (offer.status !== "pending" && offer.status !== "override_pending") {
         updatedOffers.push(offer);
         continue;
       }
@@ -97,7 +102,151 @@ export const privateSaleResolutionPhase: PipelinePhase = {
         continue;
       }
 
-      const marketValue = calculateNpcHorseValue(horse, stable.tier);
+      // ── Override handling ──
+      if (offer.status === "override_pending") {
+        const overrideAmount = offer.overrideAmount ?? offer.amount;
+
+        if (offer.overrideType === "premium") {
+          // Premium buyout: always succeeds
+          updatedOffers.push({ ...offer, status: "accepted" });
+
+          const intentId = generateUUID();
+          newImpacts.push({
+            id: generateUUID(),
+            intentId,
+            day: newDay,
+            phase: "privateSaleResolution",
+            type: "horse_transfer",
+            horseId: offer.horseId,
+            fromStableId: stableId,
+            toStableId: undefined,
+            price: overrideAmount,
+            reason: "private_sale_override_premium",
+            logLevel: "always",
+          } as HorseTransferImpact);
+
+          newImpacts.push({
+            id: generateUUID(),
+            intentId,
+            day: newDay,
+            phase: "privateSaleResolution",
+            type: "cash_change",
+            entityId: "player",
+            amount: -overrideAmount,
+            reason: "private_sale_override_premium",
+            logLevel: "always",
+          } as CashImpact);
+
+          newImpacts.push({
+            id: generateUUID(),
+            intentId,
+            day: newDay,
+            phase: "privateSaleResolution",
+            type: "cash_change",
+            entityId: stableId,
+            amount: overrideAmount,
+            reason: "private_sale_override_premium",
+            logLevel: "always",
+          } as CashImpact);
+
+          newLogs.push({
+            day: newDay,
+            text: `${stable.name} accepted your premium buyout of $${overrideAmount.toLocaleString()} for ${horse.name}.`,
+          });
+          continue;
+        } else if (offer.overrideType === "diplomatic") {
+          // Diplomatic pressure: RNG-based success/failure
+          const attachment = evaluateHorseAttachment(horse, stable);
+          const friction =
+            updatedNpcAIManager?.stableStates?.[stableId]?.friction ?? 0;
+          const reputationScore = state.reputation?.score ?? 0;
+          const { odds, successCost, failurePenalty } = computeDiplomaticPressure(
+            attachment,
+            attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", allHorsesArray, horseMap)),
+            friction,
+            reputationScore,
+          );
+
+          const roll = dailyRng.next();
+
+          if (roll < odds) {
+            // Success
+            updatedOffers.push({ ...offer, status: "accepted" });
+
+            const intentId = generateUUID();
+            newImpacts.push({
+              id: generateUUID(),
+              intentId,
+              day: newDay,
+              phase: "privateSaleResolution",
+              type: "horse_transfer",
+              horseId: offer.horseId,
+              fromStableId: stableId,
+              toStableId: undefined,
+              price: overrideAmount,
+              reason: "private_sale_override_diplomatic_success",
+              logLevel: "always",
+            } as HorseTransferImpact);
+
+            newImpacts.push({
+              id: generateUUID(),
+              intentId,
+              day: newDay,
+              phase: "privateSaleResolution",
+              type: "cash_change",
+              entityId: "player",
+              amount: -overrideAmount,
+              reason: "private_sale_override_diplomatic",
+              logLevel: "always",
+            } as CashImpact);
+
+            newImpacts.push({
+              id: generateUUID(),
+              intentId,
+              day: newDay,
+              phase: "privateSaleResolution",
+              type: "cash_change",
+              entityId: stableId,
+              amount: overrideAmount,
+              reason: "private_sale_override_diplomatic",
+              logLevel: "always",
+            } as CashImpact);
+
+            newLogs.push({
+              day: newDay,
+              text: `Diplomatic pressure succeeded — ${stable.name} released ${horse.name} for $${overrideAmount.toLocaleString()}.`,
+            });
+          } else {
+            // Failure
+            updatedOffers.push({ ...offer, status: "override_failed" });
+
+            // Increase friction directly on npcAIManager
+            if (updatedNpcAIManager?.stableStates?.[stableId]) {
+              const currentFriction = updatedNpcAIManager.stableStates[stableId].friction;
+              const newFriction = calculateFrictionChange(currentFriction, 20);
+              updatedNpcAIManager = {
+                ...updatedNpcAIManager,
+                stableStates: {
+                  ...updatedNpcAIManager.stableStates,
+                  [stableId]: {
+                    ...updatedNpcAIManager.stableStates[stableId],
+                    friction: newFriction,
+                  },
+                },
+              };
+            }
+
+            newLogs.push({
+              day: newDay,
+              text: `Diplomatic pressure failed — ${stable.name} refused to release ${horse.name}. ${failurePenalty}`,
+            });
+          }
+          continue;
+        }
+      }
+
+      // ── Normal pending offer handling ──
+      const marketValue = calculateLotValuation(horse, stable, "racing_age", allHorsesArray, horseMap);
       const attachment = evaluateHorseAttachment(horse, stable);
       const valuation = attachmentAdjustedAsk(horse, stable, marketValue);
       const offerRatio = offer.amount / valuation;
@@ -182,6 +331,7 @@ export const privateSaleResolutionPhase: PipelinePhase = {
       state: {
         ...state,
         privateSaleOffers: updatedOffers,
+        npcAIManager: updatedNpcAIManager,
       },
       logs: newLogs,
       impacts: newImpacts,
