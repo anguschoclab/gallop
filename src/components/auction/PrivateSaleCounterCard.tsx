@@ -13,6 +13,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { formatCurrency } from "@/core/common/formatting";
+import { CashPressureBadge } from "@/components/stable/CashPressureBadge";
 import { toast } from "sonner";
 import type { Horse, Stable, PrivateSaleOffer } from "@/game/types";
 
@@ -124,6 +125,7 @@ export function PrivateSaleCounterCard({
             </p>
             <p className="text-xs text-cream-muted">Expires day {offer.expiresDay}</p>
           </div>
+          <CashPressureBadge stable={stable} />
         </div>
         <div className="flex gap-2">
           <Button
