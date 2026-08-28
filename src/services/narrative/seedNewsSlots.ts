@@ -162,7 +162,7 @@ export function buildRivalIntros(
  * @returns Power rankings news item or null if no NPC horses
  */
 export function buildPowerRankings(horses: Horse[], day: number, rng: Rng): NewsItem | null {
-  const npcHorses = horses.filter((h) => !isPlayerOwned(h) && isNpcOwned(h));
+  const npcHorses = horses.filter((h) => !isPlayerOwned(h));
   if (npcHorses.length === 0) return null;
 
   const sorted = npcHorses
@@ -375,7 +375,7 @@ export function buildGradedPreview(
  * @returns Bloodline insight news item or null if no NPC horses
  */
 export function buildBloodlineInsight(horses: Horse[], day: number, rng: Rng): NewsItem | null {
-  const npcHorses = horses.filter((h) => !isPlayerOwned(h) && isNpcOwned(h));
+  const npcHorses = horses.filter((h) => !isPlayerOwned(h));
   if (npcHorses.length === 0) return null;
 
   const eliteHorses = npcHorses.filter((h) => calculateOverallRating(h) >= 80);

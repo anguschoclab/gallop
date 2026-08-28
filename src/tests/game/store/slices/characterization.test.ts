@@ -5,7 +5,7 @@ import { createHorseAdminSlice } from "@/game/store/slices/horseAdminSlice";
 import { createAwardSlice } from "@/game/store/slices/awardSlice";
 import type { StoreType, StoreSet, StoreGet } from "@/game/store/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { makeUnowned } from "@/core/horse/ownership";
+import { makeUnowned, makePlayerOwned } from "@/core/horse/ownership";
 
 function createMockStore(partial: Partial<StoreType> = {}): {
   set: StoreSet;
@@ -197,7 +197,7 @@ describe("horseAdminSlice", () => {
   });
 
   it("updateStudFee should fail if horse not at stud", () => {
-    const horse = createTestHorse({ id: "h1", ownership: makeUnowned() });
+    const horse = createTestHorse({ id: "h1", ownership: makePlayerOwned() });
     mock = createMockStore({ horses: { h1: horse } });
     const slice = createHorseAdminSlice(mock.set, mock.get, mock.enqueueIntent);
     const result = slice.updateStudFee("h1", 5000);
@@ -206,7 +206,7 @@ describe("horseAdminSlice", () => {
   });
 
   it("updateStudFee should enqueue intent on success", () => {
-    const horse = createTestHorse({ id: "h1", stableId: undefined, stud: { atStud: true } } as any);
+    const horse = createTestHorse({ id: "h1", ownership: makePlayerOwned(), stud: { atStud: true } } as any);
     mock = createMockStore({ horses: { h1: horse } });
     const slice = createHorseAdminSlice(mock.set, mock.get, mock.enqueueIntent);
     const result = slice.updateStudFee("h1", 5000);
@@ -216,7 +216,7 @@ describe("horseAdminSlice", () => {
   });
 
   it("retireToStud should fail for female horses", () => {
-    const horse = createTestHorse({ id: "h1", ownership: makeUnowned(), gender: "mare" });
+    const horse = createTestHorse({ id: "h1", ownership: makePlayerOwned(), gender: "mare" });
     mock = createMockStore({ horses: { h1: horse } });
     const slice = createHorseAdminSlice(mock.set, mock.get, mock.enqueueIntent);
     const result = slice.retireToStud("h1");
@@ -225,7 +225,7 @@ describe("horseAdminSlice", () => {
   });
 
   it("retireToStud should fail for horses under 4", () => {
-    const horse = createTestHorse({ id: "h1", ownership: makeUnowned(), gender: "colt", age: 3 });
+    const horse = createTestHorse({ id: "h1", ownership: makePlayerOwned(), gender: "colt", age: 3 });
     mock = createMockStore({ horses: { h1: horse } });
     const slice = createHorseAdminSlice(mock.set, mock.get, mock.enqueueIntent);
     const result = slice.retireToStud("h1");
@@ -234,7 +234,7 @@ describe("horseAdminSlice", () => {
   });
 
   it("retireToStud should enqueue intent on success", () => {
-    const horse = createTestHorse({ id: "h1", ownership: makeUnowned(), gender: "horse", age: 5 });
+    const horse = createTestHorse({ id: "h1", ownership: makePlayerOwned(), gender: "horse", age: 5 });
     mock = createMockStore({ horses: { h1: horse } });
     const slice = createHorseAdminSlice(mock.set, mock.get, mock.enqueueIntent);
     const result = slice.retireToStud("h1");
@@ -244,7 +244,7 @@ describe("horseAdminSlice", () => {
   });
 
   it("geldingHorse should fail for mares", () => {
-    const horse = createTestHorse({ id: "h1", ownership: makeUnowned(), gender: "mare" });
+    const horse = createTestHorse({ id: "h1", ownership: makePlayerOwned(), gender: "mare" });
     mock = createMockStore({ horses: { h1: horse } });
     const slice = createHorseAdminSlice(mock.set, mock.get, mock.enqueueIntent);
     const result = slice.geldingHorse("h1");
@@ -253,7 +253,7 @@ describe("horseAdminSlice", () => {
   });
 
   it("geldingHorse should enqueue intent for colt", () => {
-    const horse = createTestHorse({ id: "h1", ownership: makeUnowned(), gender: "colt" });
+    const horse = createTestHorse({ id: "h1", ownership: makePlayerOwned(), gender: "colt" });
     mock = createMockStore({ horses: { h1: horse } });
     const slice = createHorseAdminSlice(mock.set, mock.get, mock.enqueueIntent);
     const result = slice.geldingHorse("h1");
@@ -263,7 +263,7 @@ describe("horseAdminSlice", () => {
   });
 
   it("renameHorse should fail for duplicate name", () => {
-    const horse = createTestHorse({ id: "h1", ownership: makeUnowned(), name: "OldName" });
+    const horse = createTestHorse({ id: "h1", ownership: makePlayerOwned(), name: "OldName" });
     mock = createMockStore({
       horses: { h1: horse },
       usedHorseNames: ["takenname"],
@@ -275,7 +275,7 @@ describe("horseAdminSlice", () => {
   });
 
   it("renameHorse should fail for reserved name", () => {
-    const horse = createTestHorse({ id: "h1", ownership: makeUnowned(), name: "OldName" });
+    const horse = createTestHorse({ id: "h1", ownership: makePlayerOwned(), name: "OldName" });
     mock = createMockStore({
       horses: { h1: horse },
       usedHorseNames: [],
@@ -289,7 +289,7 @@ describe("horseAdminSlice", () => {
   });
 
   it("renameHorse should enqueue intent on success", () => {
-    const horse = createTestHorse({ id: "h1", ownership: makeUnowned(), name: "OldName" });
+    const horse = createTestHorse({ id: "h1", ownership: makePlayerOwned(), name: "OldName" });
     mock = createMockStore({
       horses: { h1: horse },
       usedHorseNames: [],
