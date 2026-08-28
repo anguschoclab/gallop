@@ -124,6 +124,7 @@ export function PrivateSaleCounterCard({
             </p>
             <p className="text-xs text-cream-muted">Expires day {offer.expiresDay}</p>
           </div>
+          <CashPressureBadge stable={stable} />
         </div>
         <div className="flex gap-2">
           <Button

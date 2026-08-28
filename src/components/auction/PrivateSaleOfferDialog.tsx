@@ -19,6 +19,7 @@ import {
   suggestedOfferTiers,
 } from "@/core/horse/attachment";
 import { AttachmentBreakdown } from "@/components/auction/AttachmentBreakdown";
+import { CashPressureBadge } from "@/components/stable/CashPressureBadge";
 import { OverrideNegotiationPanel } from "@/components/auction/OverrideNegotiationPanel";
 import type { Horse, Stable } from "@/game/types";
 
@@ -124,6 +125,7 @@ export function PrivateSaleOfferDialog({
                 asking ×{attachment.askMultiplier.toFixed(2)} of market
               </span>
             </div>
+            <CashPressureBadge stable={stable} />
             <p className="text-xs text-cream-muted">{attachment.blurb}</p>
             <AttachmentBreakdown attachment={attachment} />
           </div>
