@@ -306,10 +306,16 @@ export const privateSaleResolutionPhase: PipelinePhase = {
 
         newLogs.push({
           day: newDay,
-          text: `${stable.name} accepted your offer of $${offer.amount.toLocaleString()} for ${horse.name}.`,
+          text:
+            cashPressure.pressure >= 0.5
+              ? `${stable.name}, short of cash, accepted your offer of $${offer.amount.toLocaleString()} for ${horse.name}.`
+              : `${stable.name} accepted your offer of $${offer.amount.toLocaleString()} for ${horse.name}.`,
         });
       } else if (offerRatio >= counterThreshold) {
-        const counterMultiplier = COUNTER_MULTIPLIERS[personality];
+        const counterMultiplier = applyCashPressureToThreshold(
+          COUNTER_MULTIPLIERS[personality],
+          cashPressure.pressure,
+        );
         const counterAmount = Math.round(valuation * counterMultiplier);
 
         updatedOffers.push({ ...offer, status: "countered", counterAmount });
