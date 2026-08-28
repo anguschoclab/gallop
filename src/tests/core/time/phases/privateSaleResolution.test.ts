@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
@@ -7,6 +7,11 @@ import { makeNpcOwned, getStableId } from "@/core/horse/ownership";
 import { asNpcStableId, asHorseId, asStableId } from "@/core/types/branded";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
+import {
+  setCashPressureTuningOverrides,
+  resetCashPressureTuningOverrides,
+} from "@/core/stable/cashPressureTuning";
+import { UPKEEP_PER_HORSE } from "@/constants/economicConstants";
 
 const mkOffer = (overrides: Partial<PrivateSaleOffer> = {}): PrivateSaleOffer => ({
   id: "offer-1",
@@ -673,5 +678,142 @@ describe("privateSaleResolutionPhase", () => {
     });
     const result900 = mod.privateSaleResolutionPhase.execute(ctx900);
     expect(result900.state.privateSaleOffers![0].status).toBe("countered");
+  });
+
+  // ── Cash-pressure counter-softening integration ───────────────────────────
+
+  describe("cash-pressure counter-softening", () => {
+    afterEach(() => resetCashPressureTuningOverrides());
+
+    it("same low offer declined when comfortable, accepted when desperate", async () => {
+      const mod = await import("@/core/time/phases/privateSaleResolution");
+      const { calculateLotValuation } = await import("@/core/auction/engine");
+      const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+
+      const horse = mkHorse();
+      const valuation = attachmentAdjustedAsk(
+        horse,
+        mkStable({ personality: "aggressive" }),
+        calculateLotValuation(horse, mkStable({ personality: "aggressive" }), "racing_age", [
+          horse,
+        ]),
+      );
+      // Offer at 0.6x valuation: above counter (0.5) but below accept (0.7) at 0% pressure.
+      const offerAmount = Math.round(valuation * 0.6);
+
+      // Comfortable: 120d runway → 0% pressure → countered
+      const comfortable = mkStable({
+        personality: "aggressive",
+        cash: 120 * 1 * UPKEEP_PER_HORSE,
+      });
+      const ctx0 = createContext({
+        horses: h2r([horse]),
+        npcStables: [comfortable],
+        privateSaleOffers: [mkOffer({ amount: offerAmount })],
+      });
+      const result0 = mod.privateSaleResolutionPhase.execute(ctx0);
+      expect(result0.state.privateSaleOffers![0].status).toBe("countered");
+
+      // Desperate: 20d runway → 100% pressure → softened accept = 0.525 → accepted
+      const desperate = mkStable({
+        personality: "aggressive",
+        cash: 20 * 1 * UPKEEP_PER_HORSE,
+      });
+      const ctx100 = createContext({
+        horses: h2r([horse]),
+        npcStables: [desperate],
+        privateSaleOffers: [mkOffer({ id: "o2", amount: offerAmount })],
+      });
+      const result100 = mod.privateSaleResolutionPhase.execute(ctx100);
+      expect(result100.state.privateSaleOffers![0].status).toBe("accepted");
+    });
+
+    it("accept log mentions 'short of cash' when pressure >= 0.5", async () => {
+      const mod = await import("@/core/time/phases/privateSaleResolution");
+      const { calculateLotValuation } = await import("@/core/auction/engine");
+      const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+
+      const horse = mkHorse();
+      const stable = mkStable({ personality: "aggressive" });
+      const valuation = attachmentAdjustedAsk(
+        horse,
+        stable,
+        calculateLotValuation(horse, stable, "racing_age", [horse]),
+      );
+      const offerAmount = Math.round(valuation * 0.8);
+
+      // Strained: 70d runway → 50% pressure → accept log should say "short of cash"
+      const strained = mkStable({
+        personality: "aggressive",
+        cash: 70 * 1 * UPKEEP_PER_HORSE,
+      });
+      const ctx = createContext({
+        horses: h2r([horse]),
+        npcStables: [strained],
+        privateSaleOffers: [mkOffer({ amount: offerAmount })],
+      });
+      const result = mod.privateSaleResolutionPhase.execute(ctx);
+      expect(result.state.privateSaleOffers![0].status).toBe("accepted");
+      const acceptLog = result.logs.find((l) => l.text.includes("accepted your offer"));
+      expect(acceptLog).toBeDefined();
+      expect(acceptLog!.text).toContain("short of cash");
+    });
+  });
+
+  // ── Decision trace log emission ────────────────────────────────────────────
+
+  describe("decision trace log", () => {
+    afterEach(() => resetCashPressureTuningOverrides());
+
+    it("emits a [trace] log entry when enableDecisionTrace is true", async () => {
+      const mod = await import("@/core/time/phases/privateSaleResolution");
+      const { calculateLotValuation } = await import("@/core/auction/engine");
+      const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+
+      const horse = mkHorse();
+      const stable = mkStable({ personality: "aggressive" });
+      const valuation = attachmentAdjustedAsk(
+        horse,
+        stable,
+        calculateLotValuation(horse, stable, "racing_age", [horse]),
+      );
+
+      setCashPressureTuningOverrides({ enableDecisionTrace: true });
+
+      const ctx = createContext({
+        horses: h2r([horse]),
+        npcStables: [stable],
+        privateSaleOffers: [mkOffer({ amount: Math.round(valuation * 0.75) })],
+      });
+      const result = mod.privateSaleResolutionPhase.execute(ctx);
+      const traceLogs = result.logs.filter((l) => l.text.startsWith("[trace]"));
+      expect(traceLogs).toHaveLength(1);
+      expect(traceLogs[0].text).toContain("Green Acres");
+      expect(traceLogs[0].text).toContain("Thunder");
+    });
+
+    it("does not emit [trace] log when enableDecisionTrace is false (default)", async () => {
+      const mod = await import("@/core/time/phases/privateSaleResolution");
+      const { calculateLotValuation } = await import("@/core/auction/engine");
+      const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+
+      const horse = mkHorse();
+      const stable = mkStable({ personality: "aggressive" });
+      const valuation = attachmentAdjustedAsk(
+        horse,
+        stable,
+        calculateLotValuation(horse, stable, "racing_age", [horse]),
+      );
+
+      // Default: enableDecisionTrace = false
+      const ctx = createContext({
+        horses: h2r([horse]),
+        npcStables: [stable],
+        privateSaleOffers: [mkOffer({ amount: Math.round(valuation * 0.75) })],
+      });
+      const result = mod.privateSaleResolutionPhase.execute(ctx);
+      const traceLogs = result.logs.filter((l) => l.text.startsWith("[trace]"));
+      expect(traceLogs).toHaveLength(0);
+    });
   });
 });

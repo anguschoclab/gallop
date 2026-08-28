@@ -52,6 +52,7 @@ function SyndicatePage() {
   );
 
   const counterofferForecast = useMemo(() => {
+    if (!syndicate) return null;
     const stallion = horses[asHorseId(syndicate.stallionId)];
     if (!stallion || !npcStables?.length) return null;
     const guides = npcStables.map((s) =>
@@ -160,8 +161,8 @@ function SyndicatePage() {
                 <span>
                   Best fit: {counterofferForecast.bestFitName} (up to{" "}
                   {counterofferForecast.bestFitMax} shares · stake after{" "}
-                  {counterofferForecast.bestFitStakeAfter} /{" "}
-                  {counterofferForecast.bestFitStakePct}%)
+                  {counterofferForecast.bestFitStakeAfter} / {counterofferForecast.bestFitStakePct}
+                  %)
                 </span>
               </div>
             </div>

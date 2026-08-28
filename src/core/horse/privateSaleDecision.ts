@@ -63,6 +63,7 @@ export interface PrivateSaleDecisionResult {
  * Compute the NPC's accept/counter/decline decision for a pending private sale
  * offer. Pure: no RNG, no side effects. Mirrors the normal-pending branch of
  * `privateSaleResolutionPhase`.
+ * @param input
  */
 export function computePrivateSaleDecision(
   input: PrivateSaleDecisionInput,
@@ -162,6 +163,7 @@ export interface PrivateSaleDecisionTrace {
  * thresholds, the offer comparison, and the final accept/counter/decline
  * result. Wraps `computePrivateSaleDecision` so the trace and the phase share
  * one source of truth.
+ * @param input
  */
 export function buildPrivateSaleDecisionTrace(
   input: PrivateSaleDecisionInput,
@@ -176,7 +178,7 @@ export function buildPrivateSaleDecisionTrace(
     personality: stable.personality as StablePersonality,
     cash: Math.max(0, stable.cash),
     horseCount,
-    dailyUpkeep: result.cashPressure.runwayDays > 0 ? Math.max(0, stable.cash) / result.cashPressure.runwayDays : 0,
+    dailyUpkeep: horseCount * UPKEEP_PER_HORSE,
     runwayDays: result.cashPressure.runwayDays,
     pressure: result.cashPressure.pressure,
     pressureLabel: result.cashPressure.label,
@@ -197,6 +199,7 @@ export function buildPrivateSaleDecisionTrace(
 /**
  * Format a decision trace as a single-line `[trace]` log string for dev/test
  * emission. Kept compact so it fits in the existing `{ day, text }` log entry.
+ * @param trace
  */
 export function formatPrivateSaleDecisionTrace(trace: PrivateSaleDecisionTrace): string {
   const counter =

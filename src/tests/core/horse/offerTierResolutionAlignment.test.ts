@@ -12,6 +12,7 @@ import {
   suggestedOfferTiers,
 } from "@/core/horse/attachment";
 import { privateSaleResolutionPhase } from "@/core/time/phases/privateSaleResolution";
+import { ACCEPT_THRESHOLDS } from "@/constants/privateSaleConstants";
 
 const ALL_PERSONALITIES: StablePersonality[] = [
   "aggressive",
@@ -23,17 +24,6 @@ const ALL_PERSONALITIES: StablePersonality[] = [
   "trader",
   "prestige",
 ];
-
-const ACCEPT_THRESHOLDS: Record<StablePersonality, number> = {
-  aggressive: 0.7,
-  conservative: 1.0,
-  developer: 0.9,
-  "win-now": 1.0,
-  specialist: 1.0,
-  breeder: 1.1,
-  trader: 0.8,
-  prestige: 1.3,
-};
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   createTestNpcHorse({

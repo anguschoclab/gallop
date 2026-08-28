@@ -133,11 +133,7 @@ export function evaluateSharePurchase(
 
   if (availableShares <= 0) return { ...base, outcome: "skip_stake_cap" };
   // Tiered-fallback OR gate: pass if any graded gate is satisfied
-  if (
-    g1Wins < appetite.minG1Wins &&
-    g2Wins < appetite.minG2Wins &&
-    g3Wins < appetite.minG3Wins
-  ) {
+  if (g1Wins < appetite.minG1Wins && g2Wins < appetite.minG2Wins && g3Wins < appetite.minG3Wins) {
     return { ...base, outcome: "skip_quality_gate" };
   }
 
@@ -207,6 +203,10 @@ export interface CounterofferGuidance {
  * Forecast how an NPC rival would respond to a player's offer of N syndicate
  * shares. This is a read-only projection — the actual solicit action picks a
  * random personality investor at execution time.
+ * @param npcStable
+ * @param syndicate
+ * @param stallion
+ * @param offeredShares
  */
 export function evaluateCounteroffer(
   npcStable: Stable,
@@ -218,7 +218,8 @@ export function evaluateCounteroffer(
   const maxAcceptable = Math.min(trace.availableShares, trace.maxAffordable);
   const minAcceptable = 1;
   const isBuyOutcome = trace.outcome === "buy" || trace.outcome === "buy_control";
-  const acceptable = isBuyOutcome && offeredShares >= minAcceptable && offeredShares <= maxAcceptable;
+  const acceptable =
+    isBuyOutcome && offeredShares >= minAcceptable && offeredShares <= maxAcceptable;
   const expectedStakeAfter = Math.min(
     trace.currentShares + Math.max(0, offeredShares),
     trace.maxShares,

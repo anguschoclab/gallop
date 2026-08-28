@@ -26,12 +26,7 @@ interface NpcSyndicateIntentPanelProps {
   offeredShares?: number;
 }
 
-function outcomeNote(
-  outcome: string,
-  minG1: number,
-  minG2: number,
-  minG3: number,
-): string | null {
+function outcomeNote(outcome: string, minG1: number, minG2: number, minG3: number): string | null {
   switch (outcome) {
     case "skip_quality_gate": {
       const gates = [
@@ -131,7 +126,8 @@ export function NpcSyndicateIntentPanel({
                   >
                     Offer {offeredShares} → accepts 1–{r.counteroffer.maxAcceptable} · stake after:{" "}
                     {r.counteroffer.expectedStakeAfter} (
-                    {Math.round(r.counteroffer.expectedStakePctAfter * 100)}%) · {r.counteroffer.note}
+                    {Math.round(r.counteroffer.expectedStakePctAfter * 100)}%) ·{" "}
+                    {r.counteroffer.note}
                   </div>
                 )}
                 {!r.counteroffer && r.note && (

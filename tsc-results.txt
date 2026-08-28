@@ -1,5 +1,9 @@
 # TypeScript Check Results
+<<<<<<< Updated upstream
 # Generated: 2026-08-28T10:21:38.710Z
+=======
+# Generated: 2026-08-28T10:35:56.111Z
+>>>>>>> Stashed changes
 # Command: bun x tsc --noEmit --pretty false
 # Errors: 0  Warnings: 0  Exit: 0
 

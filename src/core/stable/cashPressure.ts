@@ -34,6 +34,8 @@ export interface CashPressure {
  * Evaluate a stable's cash pressure from its cash balance relative to the
  * daily upkeep cost of its roster. The runway->pressure curve is shaped by
  * `pressureCurveExponent` (1 = linear).
+ * @param stable
+ * @param horseCount
  */
 export function evaluateCashPressure(stable: Stable, horseCount?: number): CashPressure {
   const tuning = getCashPressureTuning();
@@ -44,7 +46,10 @@ export function evaluateCashPressure(stable: Stable, horseCount?: number): CashP
 
   const span = tuning.comfortDays - tuning.crisisDays;
   const raw = span > 0 ? (tuning.comfortDays - runwayDays) / span : 0;
-  const pressure = Math.max(0, Math.min(1, Math.pow(Math.max(0, raw), tuning.pressureCurveExponent)));
+  const pressure = Math.max(
+    0,
+    Math.min(1, Math.pow(Math.max(0, raw), tuning.pressureCurveExponent)),
+  );
 
   const { desperate, strained, tight } = tuning.labelThresholds;
   const label: CashPressure["label"] =
@@ -65,6 +70,8 @@ export function evaluateCashPressure(stable: Stable, horseCount?: number): CashP
  * stable will take up to `maxThresholdDiscount` less than its personality would
  * normally demand. The pressure->discount curve is shaped by
  * `softeningCurveExponent` (1 = linear).
+ * @param threshold
+ * @param pressure
  */
 export function applyCashPressureToThreshold(threshold: number, pressure: number): number {
   const tuning = getCashPressureTuning();

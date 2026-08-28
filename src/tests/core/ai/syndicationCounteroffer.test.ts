@@ -72,12 +72,7 @@ describe("evaluateCounteroffer", () => {
     const syndicate = makeSyndicate({ shareHolders: { player: 20 } });
     const stallion = makeStallion(2);
     // aggressive, plenty of cash → maxAcceptable = min(availableShares, maxAffordable)
-    const guidance = evaluateCounteroffer(
-      stable("aggressive", 50_000_000),
-      syndicate,
-      stallion,
-      3,
-    );
+    const guidance = evaluateCounteroffer(stable("aggressive", 50_000_000), syndicate, stallion, 3);
     expect(guidance.acceptable).toBe(true);
     expect(guidance.minAcceptable).toBe(1);
     expect(guidance.maxAcceptable).toBeGreaterThan(0);
@@ -106,12 +101,7 @@ describe("evaluateCounteroffer", () => {
   it("rejects when the NPC is at its stake cap", () => {
     const syndicate = makeSyndicate({ shareHolders: { npc1: 40 } });
     const stallion = makeStallion(2);
-    const guidance = evaluateCounteroffer(
-      stable("aggressive", 50_000_000),
-      syndicate,
-      stallion,
-      5,
-    );
+    const guidance = evaluateCounteroffer(stable("aggressive", 50_000_000), syndicate, stallion, 5);
     expect(guidance.acceptable).toBe(false);
     expect(guidance.maxAcceptable).toBe(0);
     expect(guidance.note).toContain("cap");
@@ -120,12 +110,7 @@ describe("evaluateCounteroffer", () => {
   it("rejects when the NPC is quality-gated", () => {
     const syndicate = makeSyndicate({ shareHolders: { player: 20 } });
     const unproven = makeStallion(0);
-    const guidance = evaluateCounteroffer(
-      stable("specialist", 5_000_000),
-      syndicate,
-      unproven,
-      3,
-    );
+    const guidance = evaluateCounteroffer(stable("specialist", 5_000_000), syndicate, unproven, 3);
     expect(guidance.acceptable).toBe(false);
     expect(guidance.note).toContain("Holding off");
   });
@@ -133,12 +118,7 @@ describe("evaluateCounteroffer", () => {
   it("rejects a zero-share offer", () => {
     const syndicate = makeSyndicate({ shareHolders: { player: 20 } });
     const stallion = makeStallion(2);
-    const guidance = evaluateCounteroffer(
-      stable("aggressive", 50_000_000),
-      syndicate,
-      stallion,
-      0,
-    );
+    const guidance = evaluateCounteroffer(stable("aggressive", 50_000_000), syndicate, stallion, 0);
     expect(guidance.acceptable).toBe(false);
     expect(guidance.minAcceptable).toBe(1);
   });

@@ -102,10 +102,12 @@ function loadFileTuning(): CashPressureTuning {
 
 const FILE_TUNING = loadFileTuning();
 
-let runtimeTuning: Partial<CashPressureTuning> = {};
+let runtimeTuning: CashPressureTuningOverrides = {};
 
 /**
  * Effective tuning (file config merged with any runtime override; runtime wins).
+ * Partial `labelThresholds` overrides are merged field-by-field with the file
+ * defaults so callers can tweak individual label cutoffs.
  */
 export function getCashPressureTuning(): CashPressureTuning {
   const r = runtimeTuning;
@@ -116,16 +118,25 @@ export function getCashPressureTuning(): CashPressureTuning {
     maxThresholdDiscount: r.maxThresholdDiscount ?? file.maxThresholdDiscount,
     pressureCurveExponent: r.pressureCurveExponent ?? file.pressureCurveExponent,
     softeningCurveExponent: r.softeningCurveExponent ?? file.softeningCurveExponent,
-    labelThresholds: r.labelThresholds ?? file.labelThresholds,
+    labelThresholds: { ...file.labelThresholds, ...r.labelThresholds },
     enableDecisionTrace: r.enableDecisionTrace ?? file.enableDecisionTrace,
   };
 }
 
 /**
+ * Partial tuning overrides for runtime adjustment. `labelThresholds` accepts a
+ * partial object so callers can tweak individual label cutoffs.
+ */
+export type CashPressureTuningOverrides = Omit<Partial<CashPressureTuning>, "labelThresholds"> & {
+  labelThresholds?: Partial<CashPressureLabelThresholds>;
+};
+
+/**
  * Apply runtime overrides (merged into whatever is already set). Used by tests
  * and debug tooling; falls back to the JSON config for any field not supplied.
+ * @param overrides
  */
-export function setCashPressureTuningOverrides(overrides: Partial<CashPressureTuning>): void {
+export function setCashPressureTuningOverrides(overrides: CashPressureTuningOverrides): void {
   runtimeTuning = {
     ...runtimeTuning,
     ...overrides,

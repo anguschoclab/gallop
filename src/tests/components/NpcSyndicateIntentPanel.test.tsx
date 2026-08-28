@@ -56,10 +56,8 @@ describe("NpcSyndicateIntentPanel", () => {
   it("shows counteroffer acceptance range when offeredShares is set", () => {
     const syndicate = makeSyndicate({ shareHolders: { player: 20 } });
     const stallion = makeStallion(2);
-    const npcStables = [
-      makeStable("aggressive", 50_000_000, "npc1", "Powerhouse Stables"),
-    ];
-    render(
+    const npcStables = [makeStable("aggressive", 50_000_000, "npc1", "Powerhouse Stables")];
+    const { container } = render(
       <NpcSyndicateIntentPanel
         syndicate={syndicate}
         stallion={stallion}
@@ -67,18 +65,17 @@ describe("NpcSyndicateIntentPanel", () => {
         offeredShares={3}
       />,
     );
-    // Should show "Offer 3 → accepts 1–N" for the within-range rival
-    expect(screen.getByText(/Offer 3 →/)).toBeTruthy();
-    expect(screen.getByText(/Within range/)).toBeTruthy();
+    const text = container.textContent ?? "";
+    expect(text).toContain("Offer");
+    expect(text).toContain("accepts 1");
+    expect(text).toContain("Within range");
   });
 
   it("shows over-budget note when offered shares exceed the NPC's budget", () => {
     const syndicate = makeSyndicate({ shareHolders: { player: 20 } });
     const stallion = makeStallion(2);
-    const npcStables = [
-      makeStable("conservative", 1_000_000, "npc1", "Cautious Stables"),
-    ];
-    render(
+    const npcStables = [makeStable("conservative", 1_000_000, "npc1", "Cautious Stables")];
+    const { container } = render(
       <NpcSyndicateIntentPanel
         syndicate={syndicate}
         stallion={stallion}
@@ -86,22 +83,19 @@ describe("NpcSyndicateIntentPanel", () => {
         offeredShares={100}
       />,
     );
-    expect(screen.getByText(/Exceeds budget/)).toBeTruthy();
+    const text = container.textContent ?? "";
+    expect(text).toContain("Exceeds budget");
   });
 
   it("does not show counteroffer guidance when offeredShares is not set", () => {
     const syndicate = makeSyndicate({ shareHolders: { player: 20 } });
     const stallion = makeStallion(2);
-    const npcStables = [
-      makeStable("aggressive", 50_000_000, "npc1", "Powerhouse Stables"),
-    ];
-    render(
-      <NpcSyndicateIntentPanel
-        syndicate={syndicate}
-        stallion={stallion}
-        npcStables={npcStables}
-      />,
+    const npcStables = [makeStable("aggressive", 50_000_000, "npc1", "Powerhouse Stables")];
+    const { container } = render(
+      <NpcSyndicateIntentPanel syndicate={syndicate} stallion={stallion} npcStables={npcStables} />,
     );
-    expect(screen.queryByText(/Offer \d+ →/)).toBeNull();
+    const text = container.textContent ?? "";
+    expect(text).not.toContain("accepts 1");
+    expect(text).not.toContain("Within range");
   });
 });

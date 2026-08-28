@@ -56,6 +56,7 @@ import { Route as AwardsCategoryRouteImport } from './routes/awards.$category'
 import { Route as CalendarIndexRouteImport } from './routes/calendar.index'
 import { Route as CalendarRegionIdRouteImport } from './routes/calendar.$regionId'
 import { Route as CeremonyInvitationIdRouteImport } from './routes/ceremony.$invitationId'
+import { Route as DebugSyndicationTuningRouteImport } from './routes/debug.syndication-tuning'
 import { Route as FoalDevelopmentHorseIdRouteImport } from './routes/foal-development.$horseId'
 import { Route as JockeyJockeyIdRouteImport } from './routes/jockey.$jockeyId'
 import { Route as NpcStablesIndexRouteImport } from './routes/npc-stables.index'
@@ -303,6 +304,11 @@ const CeremonyInvitationIdRoute = CeremonyInvitationIdRouteImport.update({
   path: '/ceremony/$invitationId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DebugSyndicationTuningRoute = DebugSyndicationTuningRouteImport.update({
+  id: '/debug/syndication-tuning',
+  path: '/debug/syndication-tuning',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FoalDevelopmentHorseIdRoute = FoalDevelopmentHorseIdRouteImport.update({
   id: '/foal-development/$horseId',
   path: '/foal-development/$horseId',
@@ -403,6 +409,7 @@ export interface FileRoutesByFullPath {
   '/awards/$category': typeof AwardsCategoryRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/ceremony/$invitationId': typeof CeremonyInvitationIdRoute
+  '/debug/syndication-tuning': typeof DebugSyndicationTuningRoute
   '/foal-development/$horseId': typeof FoalDevelopmentHorseIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
@@ -456,6 +463,7 @@ export interface FileRoutesByTo {
   '/awards/$category': typeof AwardsCategoryRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/ceremony/$invitationId': typeof CeremonyInvitationIdRoute
+  '/debug/syndication-tuning': typeof DebugSyndicationTuningRoute
   '/foal-development/$horseId': typeof FoalDevelopmentHorseIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
@@ -517,6 +525,7 @@ export interface FileRoutesById {
   '/awards/$category': typeof AwardsCategoryRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/ceremony/$invitationId': typeof CeremonyInvitationIdRoute
+  '/debug/syndication-tuning': typeof DebugSyndicationTuningRoute
   '/foal-development/$horseId': typeof FoalDevelopmentHorseIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
@@ -579,6 +588,7 @@ export interface FileRouteTypes {
     | '/awards/$category'
     | '/calendar/$regionId'
     | '/ceremony/$invitationId'
+    | '/debug/syndication-tuning'
     | '/foal-development/$horseId'
     | '/jockey/$jockeyId'
     | '/npc-stables/$stableId'
@@ -632,6 +642,7 @@ export interface FileRouteTypes {
     | '/awards/$category'
     | '/calendar/$regionId'
     | '/ceremony/$invitationId'
+    | '/debug/syndication-tuning'
     | '/foal-development/$horseId'
     | '/jockey/$jockeyId'
     | '/npc-stables/$stableId'
@@ -692,6 +703,7 @@ export interface FileRouteTypes {
     | '/awards/$category'
     | '/calendar/$regionId'
     | '/ceremony/$invitationId'
+    | '/debug/syndication-tuning'
     | '/foal-development/$horseId'
     | '/jockey/$jockeyId'
     | '/npc-stables/$stableId'
@@ -746,6 +758,7 @@ export interface RootRouteChildren {
   StallionsRoute: typeof StallionsRoute
   StartRoute: typeof StartRoute
   CeremonyInvitationIdRoute: typeof CeremonyInvitationIdRoute
+  DebugSyndicationTuningRoute: typeof DebugSyndicationTuningRoute
   FoalDevelopmentHorseIdRoute: typeof FoalDevelopmentHorseIdRoute
   JockeyJockeyIdRoute: typeof JockeyJockeyIdRoute
   RaceRaceIdRoute: typeof RaceRaceIdRoute
@@ -1083,6 +1096,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CeremonyInvitationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/debug/syndication-tuning': {
+      id: '/debug/syndication-tuning'
+      path: '/debug/syndication-tuning'
+      fullPath: '/debug/syndication-tuning'
+      preLoaderRoute: typeof DebugSyndicationTuningRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/foal-development/$horseId': {
       id: '/foal-development/$horseId'
       path: '/foal-development/$horseId'
@@ -1311,6 +1331,7 @@ const rootRouteChildren: RootRouteChildren = {
   StallionsRoute: StallionsRoute,
   StartRoute: StartRoute,
   CeremonyInvitationIdRoute: CeremonyInvitationIdRoute,
+  DebugSyndicationTuningRoute: DebugSyndicationTuningRoute,
   FoalDevelopmentHorseIdRoute: FoalDevelopmentHorseIdRoute,
   JockeyJockeyIdRoute: JockeyJockeyIdRoute,
   RaceRaceIdRoute: RaceRaceIdRoute,

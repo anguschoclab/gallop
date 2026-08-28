@@ -201,10 +201,11 @@ export function getSyndicationQualityFileConfig(): SyndicationQualityConfig {
   return FILE_QUALITY_CONFIG;
 }
 
-/** Apply a runtime override of the quality config (replaces the file baseline). */
-export function setSyndicationQualityConfigOverride(
-  config: SyndicationQualityConfig,
-): void {
+/**
+ * Apply a runtime override of the quality config (replaces the file baseline).
+ * @param config
+ */
+export function setSyndicationQualityConfigOverride(config: SyndicationQualityConfig): void {
   runtimeQualityConfig = {
     weights: { ...config.weights },
     tiers: [...config.tiers].sort((a, b) => a.minScore - b.minScore),
