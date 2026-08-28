@@ -187,12 +187,16 @@ describe("share purchase decision", () => {
   it("respects tuning when sizing the stake", () => {
     const syndicate = makeSyndicate({ shareHolders: { player: 20, other: 12 } });
     const stallion = makeStallion(2);
-    const before = evaluateSharePurchase(stable("developer", 5_000_000), syndicate, stallion).shares;
+    const before = evaluateSharePurchase(stable("aggressive", 50_000_000), syndicate, stallion);
     setSyndicationTuningOverrides({
-      personalities: { developer: { buyFractionMultiplier: 0.1, cashFractionMultiplier: 0.1 } },
+      personalities: {
+        aggressive: { buyFractionMultiplier: 0.2, cashFractionMultiplier: 0.2, stakeCapMultiplier: 0.5 },
+      },
     });
-    const after = evaluateSharePurchase(stable("developer", 5_000_000), syndicate, stallion).shares;
-    expect(after).toBeLessThan(before);
+    const after = evaluateSharePurchase(stable("aggressive", 50_000_000), syndicate, stallion);
+    expect(after.maxAffordable).toBeLessThan(before.maxAffordable);
+    expect(after.maxShares).toBeLessThan(before.maxShares);
+    expect(after.shares).toBeLessThan(before.shares);
   });
 
   it("exposes a trace explaining personality, quality and cash inputs", () => {
