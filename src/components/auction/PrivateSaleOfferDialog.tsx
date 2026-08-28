@@ -125,7 +125,13 @@ export function PrivateSaleOfferDialog({
                 asking ×{attachment.askMultiplier.toFixed(2)} of market
               </span>
             </div>
-            <CashPressureBadge stable={stable} />
+            <CashPressureBadge
+              stable={stable}
+              ask={ask}
+              offerAmount={
+                Number(offerAmount.replace(/,/g, "").replace(/\$/g, "")) || undefined
+              }
+            />
             <p className="text-xs text-cream-muted">{attachment.blurb}</p>
             <AttachmentBreakdown attachment={attachment} />
           </div>

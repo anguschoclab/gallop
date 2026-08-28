@@ -12,17 +12,25 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { StableList } from "@/components/stable";
-import { useNpcStablesFilters } from "@/hooks/stable/useNpcStablesFilters";
+import {
+  useNpcStablesFilters,
+  CASH_PRESSURE_FILTERS,
+  NPC_STABLE_SORTS,
+} from "@/hooks/stable/useNpcStablesFilters";
 
 type NpcStablesSearch = {
   q: string;
   tier: string;
+  pressure: string;
+  sort: string;
 };
 
 export const Route = createFileRoute("/npc-stables/")({
   validateSearch: (search: Record<string, unknown>): NpcStablesSearch => ({
     q: (search.q as string) || "",
     tier: (search.tier as string) || "all",
+    pressure: (search.pressure as string) || "all",
+    sort: (search.sort as string) || "name",
   }),
   component: NpcStablesPage,
 });
@@ -74,7 +82,34 @@ function NpcStablesPage() {
               <SelectItem value="budget">Budget</SelectItem>
             </SelectContent>
           </Select>
-          {(search.q || search.tier !== "all") && (
+          <Select value={search.pressure} onValueChange={(v) => updateFilter("pressure", v)}>
+            <SelectTrigger className="h-9 w-44 text-sm" aria-label="Filter by cash pressure">
+              <SelectValue placeholder="Any cash pressure" />
+            </SelectTrigger>
+            <SelectContent>
+              {CASH_PRESSURE_FILTERS.map((o) => (
+                <SelectItem key={o.value} value={o.value}>
+                  {o.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={search.sort} onValueChange={(v) => updateFilter("sort", v)}>
+            <SelectTrigger className="h-9 w-52 text-sm" aria-label="Sort stables">
+              <SelectValue placeholder="Sort" />
+            </SelectTrigger>
+            <SelectContent>
+              {NPC_STABLE_SORTS.map((o) => (
+                <SelectItem key={o.value} value={o.value}>
+                  {o.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {(search.q ||
+            search.tier !== "all" ||
+            search.pressure !== "all" ||
+            search.sort !== "name") && (
             <Button
               variant="ghost"
               size="sm"

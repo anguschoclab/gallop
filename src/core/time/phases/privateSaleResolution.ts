@@ -17,43 +17,11 @@ import { attachmentAdjustedAsk, evaluateHorseAttachment } from "@/core/horse/att
 import { computeDiplomaticPressure } from "@/core/horse/overrideNegotiation";
 import { DIPLOMATIC_FAILURE_FRICTION_PENALTY } from "@/constants/privateSaleConstants";
 import { calculateFrictionChange } from "@/core/stable/rivalry";
-import { evaluateCashPressure, applyCashPressureToThreshold } from "@/core/stable/cashPressure";
-import type { PrivateSaleOffer, Horse, Stable, StablePersonality } from "@/game/types";
+import { evaluatePrivateSaleThresholds } from "@/core/stable/privateSaleThresholds";
+import { recordCashPressureDecision } from "@/core/stable/cashPressureLog";
+import type { PrivateSaleOffer, Horse, Stable } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import type { HorseTransferImpact, CashImpact } from "@/core/resolver/impacts";
-
-const ACCEPT_THRESHOLDS: Record<StablePersonality, number> = {
-  aggressive: 0.7,
-  conservative: 1.0,
-  developer: 0.9,
-  "win-now": 1.0,
-  specialist: 1.0,
-  breeder: 1.1,
-  trader: 0.8,
-  prestige: 1.3,
-};
-
-const COUNTER_THRESHOLDS: Record<StablePersonality, number> = {
-  aggressive: 0.5,
-  conservative: 0.8,
-  developer: 0.7,
-  "win-now": 0.8,
-  specialist: 0.8,
-  breeder: 0.9,
-  trader: 0.6,
-  prestige: 1.0,
-};
-
-const COUNTER_MULTIPLIERS: Record<StablePersonality, number> = {
-  aggressive: 1.1,
-  conservative: 1.2,
-  developer: 1.15,
-  "win-now": 1.2,
-  specialist: 1.2,
-  breeder: 1.25,
-  trader: 1.1,
-  prestige: 1.4,
-};
 
 export const privateSaleResolutionPhase: PipelinePhase = {
   name: "privateSaleResolution",
@@ -271,15 +239,34 @@ export const privateSaleResolutionPhase: PipelinePhase = {
       );
       const offerRatio = offer.amount / valuation;
       const personality = stable.personality;
-      const cashPressure = evaluateCashPressure(stable, stable.horses.length);
-      const acceptThreshold = applyCashPressureToThreshold(
-        ACCEPT_THRESHOLDS[personality],
-        cashPressure.pressure,
-      );
-      const counterThreshold = applyCashPressureToThreshold(
-        COUNTER_THRESHOLDS[personality],
-        cashPressure.pressure,
-      );
+      const thresholds = evaluatePrivateSaleThresholds(stable, {
+        ask: valuation,
+        offerAmount: offer.amount,
+        horseCount: stable.horses.length,
+      });
+      const cashPressure = thresholds.cashPressure;
+      const acceptThreshold = thresholds.acceptThreshold;
+      const counterThreshold = thresholds.counterThreshold;
+      const traceBase = {
+        day: newDay,
+        stableId: String(stableId),
+        stableName: stable.name,
+        personality,
+        horseName: horse.name,
+        cash: stable.cash,
+        runwayDays: cashPressure.runwayDays,
+        pressure: cashPressure.pressure,
+        meter: cashPressure.meter,
+        pressureLabel: cashPressure.label,
+        ask: valuation,
+        offerAmount: offer.amount,
+        offerRatio,
+        baseAcceptThreshold: thresholds.baseAcceptThreshold,
+        acceptThreshold,
+        counterThreshold,
+        shortfallAmount: thresholds.shortfallAmount ?? 0,
+        shortfallPercent: thresholds.shortfallPercent ?? 0,
+      };
 
       if (offerRatio >= acceptThreshold) {
         updatedOffers.push({ ...offer, status: "accepted" });
@@ -330,12 +317,9 @@ export const privateSaleResolutionPhase: PipelinePhase = {
               ? `${stable.name}, short of cash, accepted your offer of $${offer.amount.toLocaleString()} for ${horse.name}.`
               : `${stable.name} accepted your offer of $${offer.amount.toLocaleString()} for ${horse.name}.`,
         });
+        recordCashPressureDecision({ ...traceBase, outcome: "accepted" });
       } else if (offerRatio >= counterThreshold) {
-        const counterMultiplier = applyCashPressureToThreshold(
-          COUNTER_MULTIPLIERS[personality],
-          cashPressure.pressure,
-        );
-        const counterAmount = Math.round(valuation * counterMultiplier);
+        const counterAmount = thresholds.likelyCounterTerms ?? Math.round(valuation * thresholds.counterMultiplier);
 
         updatedOffers.push({ ...offer, status: "countered", counterAmount });
 
@@ -346,6 +330,8 @@ export const privateSaleResolutionPhase: PipelinePhase = {
               ? `${stable.name} regards ${horse.name} as ${attachment.label.toLowerCase()} and countered with $${counterAmount.toLocaleString()}.`
               : `${stable.name} countered your offer for ${horse.name} with $${counterAmount.toLocaleString()}.`,
         });
+
+        recordCashPressureDecision({ ...traceBase, outcome: "countered", counterAmount });
       } else {
         updatedOffers.push({ ...offer, status: "declined" });
 
@@ -356,6 +342,8 @@ export const privateSaleResolutionPhase: PipelinePhase = {
               ? `${stable.name} will not part with ${horse.name} at anything close to that — offer declined.`
               : `${stable.name} declined your offer for ${horse.name}.`,
         });
+
+        recordCashPressureDecision({ ...traceBase, outcome: "declined" });
       }
     }
 
