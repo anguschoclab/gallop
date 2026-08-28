@@ -7,12 +7,20 @@ import {
   getRacecoursePrestigeByName,
   AUCTION_HOUSES,
   resolveSaleHouse,
+  RACECOURSE_FLOOR_PRESTIGE,
+  RACECOURSE_PRESTIGE_SPREAD,
+  NEUTRAL_PRESTIGE_SCORE,
+  MAX_PRESTIGE_SCORE,
+  MIN_FAME_GAIN,
+  HOUSE_PRESTIGE_SPREAD,
 } from "@/core/prestige";
 import { netProceeds, commissionAmount } from "@/core/auction/engine";
-import { CONSIGNMENT_COMMISSION } from "@/constants";
+import { CONSIGNMENT_COMMISSION, FAME_GAIN_G1_WIN } from "@/constants";
 import { buildAuctionImpacts } from "@/core/auction/auctionRunnerImpacts";
 import type { LotState } from "@/core/auction/auctionRunnerTypes";
 import type { AuctionSale, Horse } from "@/game/types";
+
+const FLOOR_MUL = prestigeMultiplier(RACECOURSE_FLOOR_PRESTIGE, RACECOURSE_PRESTIGE_SPREAD);
 
 const crownhill = AUCTION_HOUSES.find((h) => h.id === "house-crownhill")!;
 const tattersleigh = AUCTION_HOUSES.find((h) => h.id === "house-tattersleigh")!;
@@ -84,12 +92,12 @@ describe("prestige scaling — reserve multiplier", () => {
 });
 
 describe("prestige scaling — fame multiplier", () => {
-  it("unknown course returns floor multiplier 0.856", () => {
-    expect(racecoursePrestigeMultiplier(undefined, "Nowhere Park")).toBeCloseTo(0.856, 10);
+  it("unknown course returns floor multiplier", () => {
+    expect(racecoursePrestigeMultiplier(undefined, "Nowhere Park")).toBeCloseTo(FLOOR_MUL, 10);
   });
 
-  it("no track info returns floor multiplier 0.856", () => {
-    expect(racecoursePrestigeMultiplier(undefined, undefined)).toBeCloseTo(0.856, 10);
+  it("no track info returns floor multiplier", () => {
+    expect(racecoursePrestigeMultiplier(undefined, undefined)).toBeCloseTo(FLOOR_MUL, 10);
   });
 
   it("top-ranked real course has multiplier > 1.0", () => {
@@ -102,49 +110,49 @@ describe("prestige scaling — fame multiplier", () => {
   });
 
   it("G1 win base fame 20 × 1.2 (score 100) = 24", () => {
-    const mul = prestigeMultiplier(100, 0.2);
-    expect(Math.max(1, Math.round(20 * mul))).toBe(24);
+    const mul = prestigeMultiplier(MAX_PRESTIGE_SCORE, RACECOURSE_PRESTIGE_SPREAD);
+    expect(Math.max(MIN_FAME_GAIN, Math.round(FAME_GAIN_G1_WIN * mul))).toBe(24);
   });
 
-  it("G1 win base fame 20 × 0.856 (floor) = 17", () => {
+  it("G1 win base fame 20 × floor multiplier = 17", () => {
     const mul = racecoursePrestigeMultiplier(undefined, "Unknown Track");
-    expect(Math.max(1, Math.round(20 * mul))).toBe(17);
+    expect(Math.max(MIN_FAME_GAIN, Math.round(FAME_GAIN_G1_WIN * mul))).toBe(17);
   });
 
-  it("fame gain of 1 × 0.856 floors to 1 (min 1 preserved)", () => {
+  it("fame gain of 1 × floor multiplier floors to min", () => {
     const mul = racecoursePrestigeMultiplier(undefined, "Unknown Track");
-    expect(Math.max(1, Math.round(1 * mul))).toBe(1);
+    expect(Math.max(MIN_FAME_GAIN, Math.round(MIN_FAME_GAIN * mul))).toBe(MIN_FAME_GAIN);
   });
 });
 
 describe("prestige scaling — cross-consistency", () => {
-  it("prestigeMultiplier(50, any spread) = 1.0", () => {
-    expect(prestigeMultiplier(50, 0.25)).toBe(1);
-    expect(prestigeMultiplier(50, 0.2)).toBe(1);
+  it(`prestigeMultiplier(${NEUTRAL_PRESTIGE_SCORE}, any spread) = 1.0`, () => {
+    expect(prestigeMultiplier(NEUTRAL_PRESTIGE_SCORE, HOUSE_PRESTIGE_SPREAD)).toBe(1);
+    expect(prestigeMultiplier(NEUTRAL_PRESTIGE_SCORE, RACECOURSE_PRESTIGE_SPREAD)).toBe(1);
   });
 
-  it("prestigeMultiplier(100, 0.25) = 1.25", () => {
-    expect(prestigeMultiplier(100, 0.25)).toBe(1.25);
+  it(`prestigeMultiplier(${MAX_PRESTIGE_SCORE}, ${HOUSE_PRESTIGE_SPREAD}) = ${1 + HOUSE_PRESTIGE_SPREAD}`, () => {
+    expect(prestigeMultiplier(MAX_PRESTIGE_SCORE, HOUSE_PRESTIGE_SPREAD)).toBe(1 + HOUSE_PRESTIGE_SPREAD);
   });
 
-  it("prestigeMultiplier(0, 0.25) = 0.75", () => {
-    expect(prestigeMultiplier(0, 0.25)).toBe(0.75);
+  it(`prestigeMultiplier(0, ${HOUSE_PRESTIGE_SPREAD}) = ${1 - HOUSE_PRESTIGE_SPREAD}`, () => {
+    expect(prestigeMultiplier(0, HOUSE_PRESTIGE_SPREAD)).toBe(1 - HOUSE_PRESTIGE_SPREAD);
   });
 
-  it("prestigeMultiplier(100, 0.2) = 1.2", () => {
-    expect(prestigeMultiplier(100, 0.2)).toBe(1.2);
+  it(`prestigeMultiplier(${MAX_PRESTIGE_SCORE}, ${RACECOURSE_PRESTIGE_SPREAD}) = ${1 + RACECOURSE_PRESTIGE_SPREAD}`, () => {
+    expect(prestigeMultiplier(MAX_PRESTIGE_SCORE, RACECOURSE_PRESTIGE_SPREAD)).toBe(1 + RACECOURSE_PRESTIGE_SPREAD);
   });
 
-  it("prestigeMultiplier(0, 0.2) = 0.8", () => {
-    expect(prestigeMultiplier(0, 0.2)).toBe(0.8);
+  it(`prestigeMultiplier(0, ${RACECOURSE_PRESTIGE_SPREAD}) = ${1 - RACECOURSE_PRESTIGE_SPREAD}`, () => {
+    expect(prestigeMultiplier(0, RACECOURSE_PRESTIGE_SPREAD)).toBe(1 - RACECOURSE_PRESTIGE_SPREAD);
   });
 
-  it("prestigeMultiplier clamps above 100", () => {
-    expect(prestigeMultiplier(150, 0.2)).toBe(1.2);
+  it("prestigeMultiplier clamps above max", () => {
+    expect(prestigeMultiplier(150, RACECOURSE_PRESTIGE_SPREAD)).toBe(1 + RACECOURSE_PRESTIGE_SPREAD);
   });
 
   it("prestigeMultiplier clamps below 0", () => {
-    expect(prestigeMultiplier(-10, 0.2)).toBe(0.8);
+    expect(prestigeMultiplier(-10, RACECOURSE_PRESTIGE_SPREAD)).toBe(1 - RACECOURSE_PRESTIGE_SPREAD);
   });
 });
 

@@ -28,6 +28,12 @@ import {
   FAN_GAIN_G1_WIN,
   FAN_GAIN_G2_WIN,
 } from "@/constants";
+import {
+  prestigeMultiplier,
+  RACECOURSE_FLOOR_PRESTIGE,
+  RACECOURSE_PRESTIGE_SPREAD,
+  MIN_FAME_GAIN,
+} from "@/core/prestige";
 
 describe("runNpcCycle", () => {
   it("should return unchanged horses and races when no NPC stables", () => {
@@ -277,6 +283,10 @@ describe("runNpcCycle fame calculations", () => {
     });
   }
 
+  // Races in these tests have no track info → floor prestige multiplier derived from constants.
+  const FLOOR_MUL = prestigeMultiplier(RACECOURSE_FLOOR_PRESTIGE, RACECOURSE_PRESTIGE_SPREAD);
+  const scaled = (base: number) => Math.max(MIN_FAME_GAIN, Math.round(base * FLOOR_MUL));
+
   it("calculates fame changes for G1 win", () => {
     const stable = createMockStable();
     const horse = createMockHorse({ id: "h1", ownership: makeNpcOwned("npc-stable-1") });
@@ -298,7 +308,7 @@ describe("runNpcCycle fame calculations", () => {
     const result = runNpcCycle([stable], [horse], [], [race], 100, rng);
     expect(result.fameChanges!.length).toBeGreaterThan(0);
     expect(result.fameChanges![0].horseId).toBe("h1");
-    expect(result.fameChanges![0].delta).toBe(FAME_GAIN_G1_WIN);
+    expect(result.fameChanges![0].delta).toBe(scaled(FAME_GAIN_G1_WIN));
   });
 
   it("calculates fame for G2 win", () => {
@@ -321,7 +331,7 @@ describe("runNpcCycle fame calculations", () => {
     const result = runNpcCycle([createMockStable()], [horse], [], [race], 100, rng);
     const fameChange = result.fameChanges!.find((f) => f.horseId === "h1");
     expect(fameChange).toBeDefined();
-    expect(fameChange!.delta).toBe(FAME_GAIN_G2_WIN);
+    expect(fameChange!.delta).toBe(scaled(FAME_GAIN_G2_WIN));
   });
 
   it("calculates fame for non-graded win", () => {
@@ -343,7 +353,7 @@ describe("runNpcCycle fame calculations", () => {
     const result = runNpcCycle([createMockStable()], [horse], [], [race], 100, rng);
     const fameChange = result.fameChanges!.find((f) => f.horseId === "h1");
     expect(fameChange).toBeDefined();
-    expect(fameChange!.delta).toBe(FAME_GAIN_OTHER_WIN);
+    expect(fameChange!.delta).toBe(scaled(FAME_GAIN_OTHER_WIN));
   });
 
   it("calculates fame for top 5 (position 4-5)", () => {
@@ -365,7 +375,7 @@ describe("runNpcCycle fame calculations", () => {
     const result = runNpcCycle([createMockStable()], [horse], [], [race], 100, rng);
     const fameChange = result.fameChanges!.find((f) => f.horseId === "h1");
     expect(fameChange).toBeDefined();
-    expect(fameChange!.delta).toBe(FAME_GAIN_TOP5);
+    expect(fameChange!.delta).toBe(scaled(FAME_GAIN_TOP5));
   });
 
   it("does not generate fame changes for unresolved races", () => {
@@ -454,11 +464,11 @@ describe("calculateFameGainsForRaces", () => {
     };
   }
 
-  // Tests use track "test" (unknown → floor prestige score 14, multiplier 0.856).
+  // Tests use track "test" (unknown → floor prestige score, multiplier derived from constants).
   // calculateFameGainsForRaces applies racecoursePrestigeMultiplier, so expected
-  // fame = Math.max(1, Math.round(baseFame * 0.856)).
-  const FLOOR_MUL = 0.856;
-  const scaled = (base: number) => Math.max(1, Math.round(base * FLOOR_MUL));
+  // fame = Math.max(MIN_FAME_GAIN, Math.round(baseFame * FLOOR_MUL)).
+  const FLOOR_MUL = prestigeMultiplier(RACECOURSE_FLOOR_PRESTIGE, RACECOURSE_PRESTIGE_SPREAD);
+  const scaled = (base: number) => Math.max(MIN_FAME_GAIN, Math.round(base * FLOOR_MUL));
 
   const g1 = { key: "g1", grade: "G1" as const, track: "test", surface: "Dirt" as const };
   const g2 = { key: "g2", grade: "G2" as const, track: "test", surface: "Dirt" as const };

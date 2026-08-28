@@ -12,6 +12,9 @@
 import type { AuctionSaleKind } from "@/core/market/types";
 import { prestigeMultiplier } from "./prestigeTypes";
 
+/** Spread for house prestige multiplier (0.25 = ±25% at extremes). */
+export const HOUSE_PRESTIGE_SPREAD = 0.25;
+
 export type AuctionHouse = {
   id: string;
   name: string;
@@ -127,7 +130,7 @@ export function resolveSaleHouse(sale: {
 /** Multiplier on ring money (reserves, valuations) for a house's prestige. */
 export function housePrestigeMultiplier(house?: AuctionHouse): number {
   if (!house) return 1;
-  return prestigeMultiplier(house.prestige, 0.25);
+  return prestigeMultiplier(house.prestige, HOUSE_PRESTIGE_SPREAD);
 }
 
 /** Total commission rate charged by a house on top of the base rate. */

@@ -1,0 +1,6 @@
+# TypeScript Check Results
+# Generated: 2026-08-28T08:37:11.089Z
+# Command: bunx tsc --noEmit --pretty false
+# Errors: 0  Warnings: 0  Exit: null
+
+No type errors or warnings.

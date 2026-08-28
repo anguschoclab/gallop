@@ -8,10 +8,22 @@ import {
   racecoursePrestigeMultiplier,
   getRacecoursePrestigeByName,
   getRacecoursePrestige,
+  NEUTRAL_PRESTIGE_SCORE,
+  MAX_PRESTIGE_SCORE,
+  MIN_FAME_GAIN,
+  HOUSE_PRESTIGE_SPREAD,
+  RACECOURSE_PRESTIGE_SPREAD,
 } from "@/core/prestige";
 import type { AuctionHouse } from "@/core/prestige";
 import { CONSIGNMENT_COMMISSION, FAME_GAIN_G1_WIN } from "@/constants";
 import { cn } from "@/lib/cn";
+
+/** Sample base reserve used in worked examples. */
+const SAMPLE_RESERVE_BASE = 50_000;
+/** Sample hammer price used in commission worked examples. */
+const SAMPLE_HAMMER_PRICE = 100_000;
+/** Tooltip open delay in milliseconds. */
+const TOOLTIP_DELAY_MS = 200;
 
 interface MetricRowProps {
   label: string;
@@ -48,21 +60,21 @@ export function SalePrestigeBreakdown({
 }: SalePrestigeBreakdownProps) {
   const reserveMul = housePrestigeMultiplier(house);
   const commissionRate = houseCommissionRate(CONSIGNMENT_COMMISSION, house);
-  const sampleBase = 50_000;
+  const sampleBase = SAMPLE_RESERVE_BASE;
   const sampleReserve = Math.round(sampleBase * reserveMul);
-  const sampleHammer = 100_000;
+  const sampleHammer = SAMPLE_HAMMER_PRICE;
   const sampleCommission = Math.round(sampleHammer * commissionRate);
   const sampleNet = sampleHammer - sampleCommission;
 
   if (variant === "compact") {
     return (
-      <TooltipProvider delayDuration={200}>
+      <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
         <div className={cn("flex flex-wrap items-center gap-3", className)}>
           <PrestigeBadge score={house.prestige} />
           <MetricRow
             label="Reserve"
             value={`${reserveMul.toFixed(2)}×`}
-            tooltip={`Multiplier = 1 + ((score − 50) / 50) × 0.25. Score 50 = neutral (1.0×). Applied to NPC consignment reserves when the sale is generated.`}
+            tooltip={`Multiplier = 1 + ((score − ${NEUTRAL_PRESTIGE_SCORE}) / ${NEUTRAL_PRESTIGE_SCORE}) × ${HOUSE_PRESTIGE_SPREAD}. Score ${NEUTRAL_PRESTIGE_SCORE} = neutral (1.0×). Applied to NPC consignment reserves when the sale is generated.`}
           />
           <MetricRow
             label="Commission"
@@ -75,7 +87,7 @@ export function SalePrestigeBreakdown({
   }
 
   return (
-    <TooltipProvider delayDuration={200}>
+    <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
       <Card className={cn("bg-t700 border-gold-muted/40", className)}>
         <CardContent className="p-4 space-y-3">
           <div className="flex items-center gap-2">
@@ -85,13 +97,13 @@ export function SalePrestigeBreakdown({
           <div className="space-y-2">
             <MetricRow
               label="Prestige Score"
-              value={`${house.prestige}/100`}
+              value={`${house.prestige}/${MAX_PRESTIGE_SCORE}`}
               tooltip="Each auction house has a fixed prestige score reflecting its market position — from Crownhill (94) down to Drover Yard (28)."
             />
             <MetricRow
               label="Reserve Multiplier"
               value={`${reserveMul.toFixed(2)}×`}
-              tooltip={`Multiplier = 1 + ((score − 50) / 50) × 0.25. Score 50 = neutral (1.0×). Applied to NPC consignment reserves when the sale is generated. Example: ${formatCurrency(sampleBase)} → ${formatCurrency(sampleReserve)}.`}
+              tooltip={`Multiplier = 1 + ((score − ${NEUTRAL_PRESTIGE_SCORE}) / ${NEUTRAL_PRESTIGE_SCORE}) × ${HOUSE_PRESTIGE_SPREAD}. Score ${NEUTRAL_PRESTIGE_SCORE} = neutral (1.0×). Applied to NPC consignment reserves when the sale is generated. Example: ${formatCurrency(sampleBase)} → ${formatCurrency(sampleReserve)}.`}
             />
             <MetricRow
               label="Commission Rate"
@@ -132,17 +144,17 @@ export function RacePrestigeBreakdown({
     : getRacecoursePrestigeByName(trackName);
   const fameMul = racecoursePrestigeMultiplier(trackId, trackName);
   const sampleBaseFame = FAME_GAIN_G1_WIN;
-  const sampleAdjustedFame = Math.max(1, Math.round(sampleBaseFame * fameMul));
+  const sampleAdjustedFame = Math.max(MIN_FAME_GAIN, Math.round(sampleBaseFame * fameMul));
 
   if (variant === "compact") {
     return (
-      <TooltipProvider delayDuration={200}>
+      <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
         <div className={cn("flex flex-wrap items-center gap-3", className)}>
           <PrestigeBadge score={score} />
           <MetricRow
             label="Fame"
             value={`${fameMul.toFixed(2)}×`}
-            tooltip={`Multiplier = 1 + ((score − 50) / 50) × 0.2. Score 50 = neutral (1.0×). Applied to fame gains from race results. A G1 win worth ${sampleBaseFame} base fame yields ${sampleAdjustedFame} at this venue.`}
+            tooltip={`Multiplier = 1 + ((score − ${NEUTRAL_PRESTIGE_SCORE}) / ${NEUTRAL_PRESTIGE_SCORE}) × ${RACECOURSE_PRESTIGE_SPREAD}. Score ${NEUTRAL_PRESTIGE_SCORE} = neutral (1.0×). Applied to fame gains from race results. A G1 win worth ${sampleBaseFame} base fame yields ${sampleAdjustedFame} at this venue.`}
           />
         </div>
       </TooltipProvider>
@@ -150,7 +162,7 @@ export function RacePrestigeBreakdown({
   }
 
   return (
-    <TooltipProvider delayDuration={200}>
+    <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
       <Card className={cn("bg-t700 border-gold-muted/40", className)}>
         <CardContent className="p-4 space-y-3">
           <div className="flex items-center gap-2">
@@ -162,13 +174,13 @@ export function RacePrestigeBreakdown({
           <div className="space-y-2">
             <MetricRow
               label="Prestige Score"
-              value={`${score}/100`}
+              value={`${score}/${MAX_PRESTIGE_SCORE}`}
               tooltip="Derived from graded stakes hosted: G1=100pts, G2=45pts, G3=20pts, plus purse/250k. Log-compressed and normalized to 0–100 with a floor of 14."
             />
             <MetricRow
               label="Fame Multiplier"
               value={`${fameMul.toFixed(2)}×`}
-              tooltip={`Multiplier = 1 + ((score − 50) / 50) × 0.2. Score 50 = neutral (1.0×). Applied to fame gains from race results.`}
+              tooltip={`Multiplier = 1 + ((score − ${NEUTRAL_PRESTIGE_SCORE}) / ${NEUTRAL_PRESTIGE_SCORE}) × ${RACECOURSE_PRESTIGE_SPREAD}. Score ${NEUTRAL_PRESTIGE_SCORE} = neutral (1.0×). Applied to fame gains from race results.`}
             />
           </div>
           <div className="border-t border-white/5 pt-2 space-y-1">

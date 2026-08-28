@@ -10,6 +10,9 @@ export {
   getPrestigeTier,
   formatPrestigeTier,
   prestigeMultiplier,
+  NEUTRAL_PRESTIGE_SCORE,
+  MAX_PRESTIGE_SCORE,
+  MIN_FAME_GAIN,
 } from "./prestigeTypes";
 
 export type { AuctionHouse } from "./auctionHouses";
@@ -21,6 +24,7 @@ export {
   resolveSaleHouse,
   housePrestigeMultiplier,
   houseCommissionRate,
+  HOUSE_PRESTIGE_SPREAD,
 } from "./auctionHouses";
 
 export {
@@ -28,4 +32,6 @@ export {
   getRacecoursePrestigeByName,
   racecoursePrestigeMultiplier,
   rankedRacecourses,
+  RACECOURSE_FLOOR_PRESTIGE,
+  RACECOURSE_PRESTIGE_SPREAD,
 } from "./racecoursePrestige";

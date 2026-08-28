@@ -17,7 +17,9 @@ import { prestigeMultiplier } from "./prestigeTypes";
 const GRADE_POINTS = { G1: 100, G2: 45, G3: 20 } as const;
 const PURSE_DIVISOR = 250_000;
 /** Baseline prestige for a course with no graded racing at all. */
-const FLOOR = 14;
+export const RACECOURSE_FLOOR_PRESTIGE = 14;
+/** Spread for racecourse prestige multiplier (0.2 = ±20% at extremes). */
+export const RACECOURSE_PRESTIGE_SPREAD = 0.2;
 
 type CourseScores = {
   byTrackId: Map<string, number>;
@@ -49,13 +51,13 @@ function build(): CourseScores {
 
   const byTrackId = new Map<string, number>();
   for (const [trackId, value] of curved) {
-    const normalized = max > 0 ? (value / max) * (100 - FLOOR) : 0;
-    byTrackId.set(trackId, Math.round(FLOOR + normalized));
+    const normalized = max > 0 ? (value / max) * (100 - RACECOURSE_FLOOR_PRESTIGE) : 0;
+    byTrackId.set(trackId, Math.round(RACECOURSE_FLOOR_PRESTIGE + normalized));
   }
 
   const byTrackName = new Map<string, number>();
   for (const track of TRACKS) {
-    byTrackName.set(track.name, byTrackId.get(track.id) ?? FLOOR);
+    byTrackName.set(track.name, byTrackId.get(track.id) ?? RACECOURSE_FLOOR_PRESTIGE);
   }
 
   return { byTrackId, byTrackName };
@@ -68,14 +70,14 @@ function scores(): CourseScores {
 
 /** Prestige score (0-100) for a racecourse by track id. */
 export function getRacecoursePrestige(trackId?: string): number {
-  if (!trackId) return FLOOR;
-  return scores().byTrackId.get(trackId) ?? FLOOR;
+  if (!trackId) return RACECOURSE_FLOOR_PRESTIGE;
+  return scores().byTrackId.get(trackId) ?? RACECOURSE_FLOOR_PRESTIGE;
 }
 
 /** Prestige score (0-100) for a racecourse by display name. */
 export function getRacecoursePrestigeByName(trackName?: string): number {
-  if (!trackName) return FLOOR;
-  return scores().byTrackName.get(trackName) ?? FLOOR;
+  if (!trackName) return RACECOURSE_FLOOR_PRESTIGE;
+  return scores().byTrackName.get(trackName) ?? RACECOURSE_FLOOR_PRESTIGE;
 }
 
 /** Multiplier on fame/reputation earned at a racecourse. */
@@ -83,7 +85,7 @@ export function racecoursePrestigeMultiplier(trackId?: string, trackName?: strin
   const score = trackId
     ? getRacecoursePrestige(trackId)
     : getRacecoursePrestigeByName(trackName);
-  return prestigeMultiplier(score, 0.2);
+  return prestigeMultiplier(score, RACECOURSE_PRESTIGE_SPREAD);
 }
 
 /** Courses ranked by prestige, highest first. */
