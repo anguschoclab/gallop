@@ -7,14 +7,17 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/core/common/formatting";
-import type { AuctionLot, Horse } from "@/game/types";
+import type { AuctionLot, Horse, AuctionSale } from "@/game/types";
+import { resolveSaleHouse } from "@/core/prestige";
+import { SalePrestigeBreakdown } from "@/components/shared/PrestigeBreakdownPanel";
 
 interface ResolvedSaleSummaryProps {
   activeLots: AuctionLot[];
   horseMap: Map<string, Horse>;
+  sale: AuctionSale;
 }
 
-export function ResolvedSaleSummary({ activeLots, horseMap }: ResolvedSaleSummaryProps) {
+export function ResolvedSaleSummary({ activeLots, horseMap, sale }: ResolvedSaleSummaryProps) {
   const { soldCount, passedCount } = activeLots.reduce(
     (acc, l) => {
       if (l.passed) acc.passedCount++;
@@ -75,6 +78,10 @@ export function ResolvedSaleSummary({ activeLots, horseMap }: ResolvedSaleSummar
             </div>
           )}
         </div>
+        {(() => {
+          const house = resolveSaleHouse(sale);
+          return house ? <SalePrestigeBreakdown house={house} className="mt-6" /> : null;
+        })()}
       </CardContent>
     </Card>
   );

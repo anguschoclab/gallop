@@ -5,7 +5,8 @@ import { HorsePortrait } from "@/components/horse/HorsePortrait";
 import { formatCurrency } from "@/core/common/formatting";
 import { netProceeds, commissionAmount } from "@/core/auction/engine";
 import { CONSIGNMENT_COMMISSION } from "@/constants";
-import type { AuctionLot, Horse, Stable } from "@/game/types";
+import { resolveSaleHouse, houseCommissionRate } from "@/core/prestige";
+import type { AuctionLot, Horse, Stable, AuctionSale } from "@/game/types";
 
 /**
  * Props for the PlayerConsignmentsPanel component.
@@ -17,6 +18,8 @@ interface PlayerConsignmentsPanelProps {
   horses: Horse[];
   /** List of all stables to look up buyer names. */
   stables: Stable[];
+  /** The auction sale, used to resolve the house for commission calculation. */
+  sale?: AuctionSale;
 }
 
 /**
@@ -29,6 +32,7 @@ export function PlayerConsignmentsPanel({
   playerConsignedLots,
   horses,
   stables,
+  sale,
 }: PlayerConsignmentsPanelProps) {
   // ⚡ Bolt Optimization:
   // Pre-calculate hash maps for O(1) lookups instead of running O(N) .find() inside the .map() loop.
@@ -41,10 +45,13 @@ export function PlayerConsignmentsPanel({
     };
   }, [horses, stables]);
 
+  const house = sale ? resolveSaleHouse(sale) : undefined;
+  const effectiveRate = houseCommissionRate(CONSIGNMENT_COMMISSION, house);
+
   if (playerConsignedLots.length === 0) return null;
 
   const soldLots = playerConsignedLots.filter((l) => !l.passed && l.hammerPrice);
-  const totalNet = soldLots.reduce((sum, l) => sum + netProceeds(l.hammerPrice!), 0);
+  const totalNet = soldLots.reduce((sum, l) => sum + netProceeds(l.hammerPrice!, house), 0);
 
   return (
     <div className="space-y-3">
@@ -97,16 +104,16 @@ export function PlayerConsignmentsPanel({
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-cream-muted">
-                            Commission ({Math.round(CONSIGNMENT_COMMISSION * 100)}%)
+                            Commission ({Math.round(effectiveRate * 100)}%)
                           </span>
                           <span className="tabular-nums text-destructive">
-                            −{formatCurrency(commissionAmount(lot.hammerPrice))}
+                            −{formatCurrency(commissionAmount(lot.hammerPrice, house))}
                           </span>
                         </div>
                         <div className="flex items-center justify-between font-semibold">
                           <span className="text-cream-muted">Net proceeds</span>
                           <span className="tabular-nums text-success">
-                            {formatCurrency(netProceeds(lot.hammerPrice))}
+                            {formatCurrency(netProceeds(lot.hammerPrice, house))}
                           </span>
                         </div>
                       </>
@@ -130,7 +137,7 @@ export function PlayerConsignmentsPanel({
           <strong className="text-cream">{soldLots.length}</strong>{" "}
           {soldLots.length === 1 ? "horse" : "horses"} sold · Total net proceeds:{" "}
           <strong className="text-cream">{formatCurrency(totalNet)}</strong> (after{" "}
-          {Math.round(CONSIGNMENT_COMMISSION * 100)}% commission)
+          {Math.round(effectiveRate * 100)}% commission)
         </p>
       )}
     </div>

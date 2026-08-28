@@ -4,6 +4,7 @@ import { SpeedBreakdownTable } from "@/components/race/SpeedBreakdownTable";
 import { SpeedBreakdownChart } from "@/components/race/SpeedBreakdownChart";
 import { JockeyReportPanel } from "@/components/race/JockeyReportPanel";
 import { LiveSplitsTable } from "@/components/race/LiveSplitsTable";
+import { RacePrestigeBreakdown } from "@/components/shared/PrestigeBreakdownPanel";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Horse } from "@/game/types";
 import type { Race } from "@/core/race/types";
@@ -39,6 +40,16 @@ export function PostRaceAnalysis({
 
   return (
     <div className="border border-white/10 bg-black/20 p-6 rounded-lg space-y-8">
+      <div>
+        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-3">
+          <span className="h-1 w-12 bg-broadcast-accent" />
+          Prestige Impact
+        </h3>
+        <RacePrestigeBreakdown
+          trackId={race.trackId ?? race.graded?.trackId}
+          trackName={race.graded?.track}
+        />
+      </div>
       {hasSectionals && (
         <>
           <div>

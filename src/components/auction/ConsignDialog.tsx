@@ -26,6 +26,7 @@ import { KIND_LABELS } from "@/core/auction/data";
 import { formatCurrency } from "@/core/common/formatting";
 import { horseMarketValue, horseCareerValuation } from "@/core/horse/pricing";
 import { CareerValuationBreakdown } from "@/components/horse/CareerValuationBreakdown";
+import { resolveSaleHouse, houseCommissionRate } from "@/core/prestige";
 import type { Horse, AuctionSale } from "@/game/types";
 
 type Props = {
@@ -45,8 +46,10 @@ export function ConsignDialog({ horse, sale, open, onOpenChange }: Props) {
   // Slider is a percentage of base value (50–100%), default 70%.
   const [reservePct, setReservePct] = useState(Math.round(DEFAULT_PLAYER_RESERVE_RATIO * 100));
   const reservePrice = Math.round(baseValue * (reservePct / 100));
-  const netAtReserve = netProceeds(reservePrice);
-  const netAtUpside = netProceeds(Math.round(reservePrice * 1.5));
+  const house = resolveSaleHouse(sale);
+  const effectiveCommissionRate = houseCommissionRate(CONSIGNMENT_COMMISSION, house);
+  const netAtReserve = netProceeds(reservePrice, house);
+  const netAtUpside = netProceeds(Math.round(reservePrice * 1.5), house);
   const commissionAtReserve = reservePrice - netAtReserve;
 
   const [error, setError] = useState<string | null>(null);
@@ -121,7 +124,7 @@ export function ConsignDialog({ horse, sale, open, onOpenChange }: Props) {
           <div className="rounded-lg border-l-4 border-l-warning bg-warning/5 p-3 space-y-1.5">
             <div className="flex items-center justify-between text-sm">
               <span className="font-medium">Sale-house commission</span>
-              <span className="tabular-nums">{Math.round(CONSIGNMENT_COMMISSION * 100)}%</span>
+              <span className="tabular-nums">{Math.round(effectiveCommissionRate * 100)}%</span>
             </div>
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>Commission at reserve</span>

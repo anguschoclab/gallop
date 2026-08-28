@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import { formatCurrency } from "@/core/common/formatting";
-import { commissionAmount } from "@/core/auction/engine";
+import { resolveSaleHouse } from "@/core/prestige";
+import { SalePrestigeBreakdown } from "@/components/shared/PrestigeBreakdownPanel";
 import type { useScoreboard } from "@/hooks/auction/useScoreboard";
 import type { AuctionSale } from "@/game/types";
 
@@ -77,6 +78,11 @@ export function AuctionSummary({ sale, scoreboard, onClose }: AuctionSummaryProp
             </div>
           )}
         </div>
+
+        {(() => {
+          const house = resolveSaleHouse(sale);
+          return house ? <SalePrestigeBreakdown house={house} variant="compact" /> : null;
+        })()}
 
         <Button
           size="lg"

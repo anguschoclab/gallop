@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import { netProceeds } from "@/core/auction/engine";
+import { resolveSaleHouse } from "@/core/prestige";
 
 /**
  * Pure-derived scoreboard — what the player has done so far in this sale.
@@ -14,6 +15,7 @@ export function useScoreboard(saleId: string) {
   return useMemo(() => {
     const sale = auctions?.find((a) => a.id === saleId);
     if (!sale) return null;
+    const house = resolveSaleHouse(sale);
     let won = 0;
     let sold = 0;
     let spent = 0;
@@ -35,7 +37,7 @@ export function useScoreboard(saleId: string) {
       }
       if (isPlayerSale) {
         sold++;
-        netReceived += netProceeds(lot.hammerPrice);
+        netReceived += netProceeds(lot.hammerPrice, house);
         if (!topSale || lot.hammerPrice > topSale.price) {
           topSale = { name: horse?.name ?? "Lot", price: lot.hammerPrice };
         }

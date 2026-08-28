@@ -3,6 +3,7 @@ import type { AuctionSale, AuctionLot, Horse } from "@/game/types";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { asOwnerKey } from "@/core/types/branded";
 import { netProceeds } from "./engine";
+import { resolveSaleHouse } from "@/core/prestige";
 import type { LotState } from "./auctionRunnerTypes";
 
 export function buildAuctionImpacts(
@@ -14,6 +15,7 @@ export function buildAuctionImpacts(
   phase: string,
 ): AnyImpact[] {
   const impacts: AnyImpact[] = [];
+  const house = resolveSaleHouse(sale);
 
   for (const state of lots) {
     const lot = state.lot;
@@ -96,7 +98,7 @@ export function buildAuctionImpacts(
       });
     }
 
-    const proceeds = netProceeds(lot.hammerPrice);
+    const proceeds = netProceeds(lot.hammerPrice, house);
     if (consignorStableId) {
       impacts.push({
         id: generateUUID(),

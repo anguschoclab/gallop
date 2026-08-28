@@ -15,6 +15,7 @@ import { cn } from "@/lib/cn";
 import type { AuctionSale } from "@/game/types";
 import { resolveSaleHouse } from "@/core/prestige";
 import { PrestigeBadge } from "@/components/shared/PrestigeBadge";
+import { SalePrestigeBreakdown } from "@/components/shared/PrestigeBreakdownPanel";
 
 interface SaleHeaderProps {
   sale: AuctionSale;
@@ -83,6 +84,9 @@ export function SaleHeader({
         </div>
         {house && (
           <p className="mt-2 text-xs text-cream/40 max-w-xl italic">{house.blurb}</p>
+        )}
+        {house && (
+          <SalePrestigeBreakdown house={house} variant="compact" className="mt-3" />
         )}
       </div>
 

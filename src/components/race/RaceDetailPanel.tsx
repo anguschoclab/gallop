@@ -9,6 +9,7 @@ import {
 import { formatCurrency } from "@/core/common/formatting";
 import { getRacecoursePrestigeByName } from "@/core/prestige";
 import { PrestigeBadge } from "@/components/shared/PrestigeBadge";
+import { RacePrestigeBreakdown } from "@/components/shared/PrestigeBreakdownPanel";
 
 interface RaceDetailPanelProps {
   race: {
@@ -85,6 +86,7 @@ export function RaceDetailPanel({ race }: RaceDetailPanelProps) {
                   {graded.track}
                   <PrestigeBadge score={getRacecoursePrestigeByName(graded.track)} />
                 </div>
+                <RacePrestigeBreakdown trackName={graded.track} variant="compact" className="mt-2" />
               </div>
             </>
           )}
