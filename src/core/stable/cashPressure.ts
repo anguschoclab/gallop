@@ -20,8 +20,12 @@ import { getCashPressureTuning } from "./cashPressureTuning";
 export interface CashPressure {
   /** 0 = comfortable, 1 = desperate for cash. */
   pressure: number;
+  /** Same signal as `pressure`, expressed 0-100 for display. */
+  meter: number;
   /** Estimated days of upkeep the current cash covers. */
   runwayDays: number;
+  /** Estimated daily upkeep cost of the roster. */
+  dailyUpkeep: number;
   /** Player-facing label. */
   label: "comfortable" | "tight" | "strained" | "desperate";
 }
@@ -52,8 +56,9 @@ export function evaluateCashPressure(stable: Stable, horseCount?: number): CashP
           ? "tight"
           : "comfortable";
 
-  return { pressure, runwayDays, label };
+  return { pressure, meter: Math.round(pressure * 100), runwayDays, dailyUpkeep, label };
 }
+
 
 /**
  * Discount an accept/counter threshold based on cash pressure. A desperate

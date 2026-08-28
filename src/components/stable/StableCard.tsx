@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { getReputationStars } from "@/core/stable/uiHelpers";
 import { stableTierColor } from "@/core/common/uiTokens";
+import { CashPressureBadge } from "./CashPressureBadge";
 import type { Stable } from "@/core/stable/types";
 
 const BOOKMARK_TOP_OFFSET = "top-2";
@@ -48,6 +49,9 @@ export function StableCard({ stable }: { stable: Stable }) {
               {stable.description ||
                 `${stable.owner}'s racing operation with ${stable.horses.length} horses.`}
             </p>
+            <div className="mb-3">
+              <CashPressureBadge stable={stable} />
+            </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-cream-muted">{stable.horses.length} horses</span>
               <span className="text-fame" title={`Reputation: ${stable.reputation}`}>
