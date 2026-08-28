@@ -30,7 +30,7 @@ function buildTestNpcHorses(n: number): Horse[] {
     createTestHorse({
       id: `npc-horse-${i + 1}`,
       name: `NPC Horse ${i + 1}`,
-      ownership: makeUnowned(),
+      ownership: { type: "npc", stableId: `stable-${(i % 7) + 1}` },
       age: 3 + (i % 5),
       fame: 80 - i * 3,
       stats: {

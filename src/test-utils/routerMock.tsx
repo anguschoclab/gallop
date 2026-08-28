@@ -52,5 +52,6 @@ export function createRouterMock() {
     createRootRoute: () => (options: unknown) => ({ options }),
     HeadContent: () => null,
     Scripts: () => null,
+    lazyRouteComponent: (loader: any) => loader,
   };
 }
