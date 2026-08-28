@@ -82,9 +82,9 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "aggressive" });
-    const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateNpcHorseValue(horse, stable.tier));
+    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
     const offerAmount = Math.round(valuation * 0.75);
 
     const ctx = createContext({
@@ -108,9 +108,9 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "aggressive" });
-    const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateNpcHorseValue(horse, stable.tier));
+    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
     const offerAmount = Math.round(valuation * 0.55);
 
     const ctx = createContext({
@@ -128,9 +128,9 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "aggressive" });
-    const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateNpcHorseValue(horse, stable.tier));
+    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
     const offerAmount = Math.round(valuation * 0.4);
 
     const ctx = createContext({
@@ -148,9 +148,9 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "conservative" });
-    const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateNpcHorseValue(horse, stable.tier));
+    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
     const offerAmount = Math.round(valuation * 1.05);
 
     const ctx = createContext({
@@ -166,9 +166,9 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "conservative" });
-    const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateNpcHorseValue(horse, stable.tier));
+    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
     const offerAmount = Math.round(valuation * 0.85);
 
     const ctx = createContext({
@@ -185,9 +185,9 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "conservative" });
-    const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateNpcHorseValue(horse, stable.tier));
+    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
     const offerAmount = Math.round(valuation * 0.5);
 
     const ctx = createContext({
@@ -203,9 +203,9 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "prestige" });
-    const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateNpcHorseValue(horse, stable.tier));
+    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
 
     const ctx1 = createContext({
       horses: h2r([horse]),
@@ -230,9 +230,9 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "breeder" });
-    const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateNpcHorseValue(horse, stable.tier));
+    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
 
     const ctx = createContext({
       horses: h2r([horse]),
@@ -248,9 +248,9 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "trader" });
-    const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateNpcHorseValue(horse, stable.tier));
+    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
 
     const ctx = createContext({
       horses: h2r([horse]),
@@ -266,9 +266,9 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "developer" });
-    const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateNpcHorseValue(horse, stable.tier));
+    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
 
     const ctx = createContext({
       horses: h2r([horse]),
@@ -284,9 +284,9 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "win-now" });
-    const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateNpcHorseValue(horse, stable.tier));
+    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
 
     const ctx = createContext({
       horses: h2r([horse]),
@@ -302,9 +302,9 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "specialist" });
-    const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateNpcHorseValue(horse, stable.tier));
+    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
 
     const ctx = createContext({
       horses: h2r([horse]),
@@ -340,9 +340,9 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "aggressive" });
-    const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateNpcHorseValue(horse, stable.tier));
+    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
     const offerAmount = Math.round(valuation * 0.75);
 
     const ctx = createContext({
@@ -375,9 +375,9 @@ describe("privateSaleResolutionPhase", () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "aggressive" });
-    const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateNpcHorseValue(horse, stable.tier));
+    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
     const offerAmount = Math.round(valuation * 0.55);
 
     const ctx = createContext({
@@ -397,9 +397,9 @@ describe("privateSaleResolutionPhase", () => {
       personality: "aggressive",
       horses: [asHorseId("horse-1"), asHorseId("horse-2")],
     });
-    const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse1, stable, calculateNpcHorseValue(horse1, stable.tier));
+    const valuation = attachmentAdjustedAsk(horse1, stable, calculateLotValuation(horse1, stable, "racing_age", [horse1, horse2]));
 
     const ctx = createContext({
       horses: h2r([horse1, horse2]),
@@ -455,9 +455,9 @@ describe("privateSaleResolutionPhase", () => {
     const horse1 = mkHorse({ id: asHorseId("horse-1"), name: "Thunder" });
     const horse2 = mkHorse({ id: asHorseId("horse-2"), name: "Lightning" });
     const stable = mkStable({ horses: [asHorseId("horse-1"), asHorseId("horse-2")] });
-    const { calculateNpcHorseValue } = await import("@/core/horse/pricing");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse1, stable, calculateNpcHorseValue(horse1, stable.tier));
+    const valuation = attachmentAdjustedAsk(horse1, stable, calculateLotValuation(horse1, stable, "racing_age", [horse1, horse2]));
 
     const ctx = createContext({
       horses: h2r([horse1, horse2]),
