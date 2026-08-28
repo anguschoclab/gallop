@@ -38,7 +38,6 @@ const result = spawnSync("bun", ["x", "tsc", "--noEmit", "--pretty", "false"], {
   encoding: "utf-8",
   // Combine stdout + stderr so we capture everything tsc emits.
   maxBuffer: 20 * 1024 * 1024,
-  shell: process.platform === "win32",
 });
 
 const rawOutput = [result.stdout ?? "", result.stderr ?? ""].join("").trim();
@@ -90,7 +89,7 @@ for (const e of errors) {
 const reportLines: string[] = [];
 reportLines.push(`# TypeScript Check Results`);
 reportLines.push(`# Generated: ${new Date().toISOString()}`);
-reportLines.push(`# Command: bunx tsc --noEmit --pretty false`);
+reportLines.push(`# Command: bun x tsc --noEmit --pretty false`);
 reportLines.push(`# Errors: ${errors.length}  Warnings: ${warnings.length}  Exit: ${result.status}`);
 reportLines.push("");
 
