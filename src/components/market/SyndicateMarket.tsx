@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/core/common/formatting";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
+import { NpcSyndicateIntentPanel } from "./NpcSyndicateIntentPanel";
 
 export function SyndicateMarket() {
   const syndicates = useGameWithShallow((s: StoreType) => s.syndicates || {});
@@ -15,6 +16,7 @@ export function SyndicateMarket() {
   const purchaseShares = useGame((s: StoreType) => s.purchaseShares);
   const sellShares = useGame((s: StoreType) => s.sellShares);
   const cash = useGame((s: StoreType) => s.cash);
+  const npcStables = useGameWithShallow((s: StoreType) => s.npcStables ?? []);
 
   // ⚡ Bolt Optimization:
   // Used O(1) horseMap lookup instead of O(N) horses.find() inside the map loop.
@@ -95,6 +97,14 @@ export function SyndicateMarket() {
               </Badge>
               {playerShares > 0 && <Badge variant="outline">{ownershipPercent.toFixed(0)}%</Badge>}
             </div>
+
+            <NpcSyndicateIntentPanel
+              syndicate={syndicate}
+              stallion={stallion}
+              npcStables={npcStables}
+              compact
+              limit={3}
+            />
 
             <div className="flex gap-2">
               {cash < syndicate.sharePrice ? (
