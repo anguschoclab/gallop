@@ -23,6 +23,7 @@ import {
   ACCEPT_THRESHOLDS,
   COUNTER_THRESHOLDS,
   COUNTER_MULTIPLIERS,
+  DECISION_TRACE_LOG_PREFIX,
 } from "@/constants/privateSaleConstants";
 import { UPKEEP_PER_HORSE } from "@/constants/economicConstants";
 
