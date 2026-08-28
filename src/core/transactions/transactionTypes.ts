@@ -169,7 +169,7 @@ export function calculateTotalExpenses(transactions: Transaction[]): number {
  * @returns Net cash flow amount
  */
 export function calculateNetCashFlow(transactions: Transaction[]): number {
-  return calculateTotalIncome(transactions) - calculateTotalExpenses(transactions);
+  return calculateTotalIncome(transactions) + calculateTotalExpenses(transactions);
 }
 
 /**

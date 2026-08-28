@@ -26,7 +26,6 @@ export interface LedgerData {
   setSelectedPeriod: (p: PeriodKey) => void;
   incomeBreakdown: LedgerTransaction[];
   expenseBreakdown: LedgerTransaction[];
-  recentTransactions: ReturnType<typeof useTransactions>;
   activePeriodData: ReturnType<typeof buildProfitLossReport>["currentMonth"];
   report: ReturnType<typeof buildProfitLossReport>;
 }
@@ -81,11 +80,6 @@ export function useLedgerTransactions(): LedgerData {
     [activePeriodData],
   );
 
-  const recentTransactions = useMemo(
-    () => [...transactions].reverse().slice(0, 50),
-    [transactions],
-  );
-
   return {
     transactions,
     cash,
@@ -94,7 +88,6 @@ export function useLedgerTransactions(): LedgerData {
     setSelectedPeriod,
     incomeBreakdown,
     expenseBreakdown,
-    recentTransactions,
     activePeriodData,
     report,
   };

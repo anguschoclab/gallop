@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createElement, type ReactNode } from "react";
-import { render, screen, fireEvent, within } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { TransactionLedger } from "@/components/financial/TransactionLedger";
 import { createTransaction } from "@/core/transactions";
 import type { Transaction, TransactionSubcategory } from "@/core/transactions/transactionTypes";
@@ -308,6 +308,26 @@ describe("TransactionLedger", () => {
       fireEvent.click(screen.getByText("All"));
       expect(screen.getByText("Daily upkeep")).toBeInTheDocument();
     });
+
+    it("grouped entry-fee rows disappear when filter excludes entry fees", () => {
+      const txs = [
+        mkTx({ subcategory: "entry_fee", amount: -500, day: 10, raceId: "r1", description: "Entry fee for A" }),
+        mkTx({ subcategory: "entry_fee", amount: -300, day: 10, raceId: "r2", description: "Entry fee for B" }),
+        mkTx({ subcategory: "prize_money", amount: 1000, day: 11, description: "Prize money" }),
+      ];
+      renderLedger(txs);
+
+      // Grouped row visible by default
+      expect(screen.getByText(/2 race entries/i)).toBeInTheDocument();
+
+      // Filter to Prize Money — entry fee group should disappear
+      const subcategorySelect = screen.getByTestId("subcategory-filter");
+      fireEvent.click(subcategorySelect);
+      fireEvent.click(screen.getByText("Prize Money"));
+
+      expect(screen.queryByText(/race entries/i)).not.toBeInTheDocument();
+      expect(screen.getByText("Prize money")).toBeInTheDocument();
+    });
   });
 
   // ── Date Range Filter ─────────────────────────────────────────────
@@ -445,6 +465,29 @@ describe("TransactionLedger", () => {
 
       expect(screen.getByText("2 RECS")).toBeInTheDocument();
       expect(screen.queryByText("3 RECS")).not.toBeInTheDocument();
+    });
+
+    it("changing subcategory resets to filtered set within current date range", () => {
+      const txs = [
+        mkTx({ subcategory: "prize_money", amount: 1000, day: 50, description: "Old prize" }),
+        mkTx({ subcategory: "upkeep", amount: -200, day: 98, description: "Recent upkeep" }),
+        mkTx({ subcategory: "prize_money", amount: 500, day: 99, description: "Recent prize" }),
+      ];
+      renderLedger(txs, 100);
+
+      // First apply date range filter to last 7 days
+      fireEvent.click(screen.getByTestId("date-preset-7d"));
+      expect(screen.getByText("2 RECS")).toBeInTheDocument();
+
+      // Then change subcategory to Prize Money — should only show 1 (Recent prize)
+      const subcategorySelect = screen.getByTestId("subcategory-filter");
+      fireEvent.click(subcategorySelect);
+      fireEvent.click(screen.getByText("Prize Money"));
+
+      expect(screen.getByText("1 RECS")).toBeInTheDocument();
+      expect(screen.getByText("Recent prize")).toBeInTheDocument();
+      expect(screen.queryByText("Recent upkeep")).not.toBeInTheDocument();
+      expect(screen.queryByText("Old prize")).not.toBeInTheDocument();
     });
   });
 });
