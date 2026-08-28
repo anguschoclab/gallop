@@ -70,6 +70,12 @@ const EVENT_VERB_KEY: Record<string, keyof typeof VERBS> = {
   FLYING: "fly",
 };
 
+/**
+ * Compose a dynamic sentence.
+ * @param eventType
+ * @param rng
+ * @returns The composed sentence
+ */
 export function composeSentence(eventType: string, rng: Rng): string {
   const verbKey = EVENT_VERB_KEY[eventType];
   if (!verbKey) return "";

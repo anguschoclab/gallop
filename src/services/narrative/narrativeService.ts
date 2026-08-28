@@ -798,6 +798,7 @@ export class NarrativeGenerator {
    * Substitute jockey-related placeholders in a trait template string.
    * @param template
    * @param runner
+   * @returns The substituted template string
    */
   private substituteJockeyTemplate(template: string, runner: Runner): string {
     let text = template;

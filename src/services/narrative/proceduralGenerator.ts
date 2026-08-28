@@ -74,6 +74,12 @@ function containsBannedPhrase(text: string): boolean {
   return BANNED_PHRASES.some((phrase) => lower.includes(phrase));
 }
 
+/**
+ * Generate a procedural narrative beat.
+ * @param eventType
+ * @param rng
+ * @returns The generated string
+ */
 export function generateProcedural(eventType: string, rng: Rng): string {
   const grammarKey = EVENT_GRAMMAR_KEY[eventType];
   if (!grammarKey) return "";
