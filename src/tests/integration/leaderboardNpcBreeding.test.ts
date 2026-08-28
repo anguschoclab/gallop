@@ -128,6 +128,7 @@ describe("leaderboardNpcBreeding integration", () => {
           name: "Top Sire",
           age: 10,
           gender: "colt",
+          ownership: { type: "unowned" },
           stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
           stud: {
             atStud: true,
@@ -158,6 +159,7 @@ describe("leaderboardNpcBreeding integration", () => {
           name: "Value Sire",
           age: 8,
           gender: "colt",
+          ownership: { type: "unowned" },
           stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
           stud: {
             atStud: true,
@@ -188,6 +190,7 @@ describe("leaderboardNpcBreeding integration", () => {
           name: "Test Mare",
           age: 5,
           gender: "mare",
+          ownership: { type: "npc", stableId: "stable1" },
           stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 },
           pedigree: {},
           raceHistory: [],

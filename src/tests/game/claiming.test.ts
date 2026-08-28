@@ -98,7 +98,7 @@ describe("processClaims", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: makeUnowned(),
+      ownership: { type: "npc", stableId: "stable-1" },
       fame: 50,
       raceHistory: [],
     });
@@ -154,7 +154,7 @@ describe("processClaims", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: makeUnowned(),
+      ownership: { type: "npc", stableId: "stable-1" },
       fame: 50,
       raceHistory: [],
     });
@@ -227,11 +227,11 @@ describe("processClaims", () => {
 
     const horse1 = createTestHorse({
       id: "horse-1",
-      ownership: makeUnowned(),
+      ownership: { type: "npc", stableId: "stable-1" },
     });
     const horse2 = createTestHorse({
       id: "horse-2",
-      ownership: makeUnowned(),
+      ownership: { type: "npc", stableId: "stable-2" },
     });
 
     const claims: ClaimAttempt[] = [
@@ -263,7 +263,7 @@ describe("processClaims", () => {
 
     const horse1 = createTestHorse({
       id: "horse-1",
-      ownership: makeUnowned(),
+      ownership: { type: "npc", stableId: "stable-1" },
     });
 
     const claims: ClaimAttempt[] = [
@@ -301,7 +301,7 @@ describe("isHorseEligibleForClaimingPrice", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: makePlayerOwned(),
+      ownership: { type: "npc", stableId: "stable-1" },
       fame: 50,
       raceHistory: [],
     });
@@ -328,7 +328,7 @@ describe("isHorseEligibleForClaimingPrice", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: makePlayerOwned(),
+      ownership: { type: "npc", stableId: "stable-2" },
       fame: 50,
       raceHistory: [],
     });
@@ -434,7 +434,7 @@ describe("getSuggestedClaimingPriceRange", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: makePlayerOwned(),
+      ownership: { type: "npc", stableId: "stable-1" },
       fame: 50,
       raceHistory: [],
     });

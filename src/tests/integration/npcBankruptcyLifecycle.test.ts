@@ -1,4 +1,5 @@
-import { getStableId, makeUnowned } from "@/core/horse/ownership";
+import { getStableId, makeUnowned, makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 /**
  * Integration tests for NPC bankruptcy lifecycle —
  * verifies the full flow from bankruptcy detection through replacement,
@@ -47,7 +48,7 @@ describe("NPC Bankruptcy Lifecycle (integration)", () => {
       name: "Soon To Be Liquidated",
       age: 3,
       gender: "colt",
-      ownership: makeUnowned(),
+      ownership: makeNpcOwned(asNpcStableId("poor-stable")),
     });
     const state = makeGameState({
       day: 10,
@@ -125,7 +126,7 @@ describe("NPC Bankruptcy Lifecycle (integration)", () => {
       name: "Syndicated Stallion",
       age: 8,
       gender: "horse",
-      ownership: makeUnowned(),
+      ownership: makeNpcOwned(asNpcStableId("bankrupt-1")),
       lifetimeEarnings: 5000000,
     });
     const syndicate = makeSyndicate({
@@ -198,7 +199,7 @@ describe("NPC Bankruptcy Lifecycle (integration)", () => {
       name: "Syndicated Stallion",
       age: 8,
       gender: "horse",
-      ownership: makeUnowned(),
+      ownership: makeNpcOwned(asNpcStableId("bankrupt-1")),
       lifetimeEarnings: 5000000,
     });
     const otherNpcStable = createTestStable({ id: "other-npc", cash: 100000, horses: [] });
@@ -238,14 +239,14 @@ describe("NPC Bankruptcy Lifecycle (integration)", () => {
       name: "H1",
       age: 3,
       gender: "colt",
-      ownership: makeUnowned(),
+      ownership: makeNpcOwned(asNpcStableId("bankrupt-1")),
     });
     const horse2 = createTestHorse({
       id: "h2",
       name: "H2",
       age: 5,
       gender: "mare",
-      ownership: makeUnowned(),
+      ownership: makeNpcOwned(asNpcStableId("bankrupt-2")),
     });
     const state = makeGameState({
       npcStables: [stable1, stable2],
