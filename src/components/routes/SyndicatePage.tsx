@@ -213,7 +213,15 @@ function SyndicatePage() {
         npcStables={npcStables}
       />
 
+      <NpcSyndicateIntentPanel
+        syndicate={syndicate}
+        stallion={horses[asHorseId(syndicate.stallionId)]}
+        npcStables={npcStables}
+        limit={6}
+      />
+
       <ShareActivityFeed syndicateId={syndicateId} />
+
 
       {syndicateTransactions.length > 0 && (
         <Card>
