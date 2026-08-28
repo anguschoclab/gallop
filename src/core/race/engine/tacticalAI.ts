@@ -89,7 +89,6 @@ export function calculateTacticalAdjustment(
   // runners is sorted descending by position, so we can early-break
   // when remaining runners are too far behind to matter.
   const rivalHorseIds = runner.rivalHorseIds;
-  const rivalSet = rivalHorseIds && rivalHorseIds.length > 0 ? new Set(rivalHorseIds) : null;
   let nearbyRivalFound = false;
   let horsesInFrontCount = 0;
   let clusteredAheadCount = 0;
@@ -104,7 +103,13 @@ export function calculateTacticalAdjustment(
     const posDiff = r.position - runner.position;
 
     // Check rival presence (within 6m in either direction)
-    if (!nearbyRivalFound && rivalSet && Math.abs(posDiff) < 6 && rivalSet.has(r.horseId)) {
+    // ⚡ Bolt: Use .includes() on small array to avoid allocating a new Set on every tick
+    if (
+      !nearbyRivalFound &&
+      rivalHorseIds &&
+      Math.abs(posDiff) < 6 &&
+      rivalHorseIds.includes(r.horseId)
+    ) {
       nearbyRivalFound = true;
     }
 
