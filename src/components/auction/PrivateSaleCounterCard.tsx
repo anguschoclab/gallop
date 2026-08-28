@@ -13,6 +13,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { formatCurrency } from "@/core/common/formatting";
+import { CashPressureBadge } from "@/components/stable/CashPressureBadge";
 import { toast } from "sonner";
 import type { Horse, Stable, PrivateSaleOffer } from "@/game/types";
 

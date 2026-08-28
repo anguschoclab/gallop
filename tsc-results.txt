@@ -1,6 +1,10 @@
 # TypeScript Check Results
-# Generated: 2026-08-28T09:53:35.446Z
+# Generated: 2026-08-28T10:03:46.200Z
 # Command: bun x tsc --noEmit --pretty false
-# Errors: 0  Warnings: 0  Exit: 0
+# Errors: 1  Warnings: 0  Exit: 2
 
-No type errors or warnings.
+## Errors
+
+### src/components/auction/PrivateSaleCounterCard.tsx (1)
+  127:12  TS2304  Cannot find name 'CashPressureBadge'.
+
