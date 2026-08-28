@@ -14,6 +14,7 @@ import { ArrowLeft, Users, DollarSign, TrendingUp, HandCoins } from "lucide-reac
 import { ShareOwnershipPanel } from "@/components/market/ShareOwnershipPanel";
 import { ShareActivityFeed } from "@/components/market/ShareActivityFeed";
 import { NpcSyndicateIntentPanel } from "@/components/market/NpcSyndicateIntentPanel";
+import { evaluateCounteroffer } from "@/core/ai/syndicationAIDecisions";
 import { asPlayerOwnerId, asHorseId } from "@/core/types/branded";
 
 function SyndicatePage() {
@@ -49,6 +50,28 @@ function SyndicatePage() {
         .reverse(),
     [allTransactions, syndicateId],
   );
+
+  const counterofferForecast = useMemo(() => {
+    const stallion = horses[asHorseId(syndicate.stallionId)];
+    if (!stallion || !npcStables?.length) return null;
+    const guides = npcStables.map((s) =>
+      evaluateCounteroffer(s, syndicate, stallion, sharesToOffer),
+    );
+    const accepting = guides.filter((g) => g.acceptable);
+    const bestFit = guides.reduce(
+      (best, g) => (g.maxAcceptable > best.maxAcceptable ? g : best),
+      guides[0],
+    );
+    return {
+      total: guides.length,
+      acceptingCount: accepting.length,
+      bestFitName:
+        npcStables.find((s) => String(s.id) === bestFit.stableId)?.name ?? bestFit.stableId,
+      bestFitMax: bestFit.maxAcceptable,
+      bestFitStakeAfter: bestFit.expectedStakeAfter,
+      bestFitStakePct: Math.round(bestFit.expectedStakePctAfter * 100),
+    };
+  }, [syndicate, horses, npcStables, sharesToOffer]);
 
   if (!syndicate) {
     return (
@@ -125,6 +148,24 @@ function SyndicatePage() {
               Solicit
             </Button>
           </div>
+          {counterofferForecast && counterofferForecast.total > 0 && (
+            <div className="rounded-md border border-cream/10 bg-broadcast-panel px-3 py-2 text-xs text-cream-muted">
+              <span className="text-cream">Counteroffer forecast</span> (investor is chosen at
+              random — this is a projection of rival interest):
+              <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
+                <span>
+                  {counterofferForecast.acceptingCount}/{counterofferForecast.total} rivals would
+                  accept {sharesToOffer} shares
+                </span>
+                <span>
+                  Best fit: {counterofferForecast.bestFitName} (up to{" "}
+                  {counterofferForecast.bestFitMax} shares · stake after{" "}
+                  {counterofferForecast.bestFitStakeAfter} /{" "}
+                  {counterofferForecast.bestFitStakePct}%)
+                </span>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -218,6 +259,7 @@ function SyndicatePage() {
         stallion={horses[asHorseId(syndicate.stallionId)]}
         npcStables={npcStables}
         limit={6}
+        offeredShares={sharesToOffer}
       />
 
       <ShareActivityFeed syndicateId={syndicateId} />

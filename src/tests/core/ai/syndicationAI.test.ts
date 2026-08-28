@@ -235,12 +235,30 @@ describe("syndicationAI - calculateSharePurchase", () => {
 
   it("returns 0 when already at max ownership", () => {
     const stallion = makeStallion({ ownership: makePlayerOwned() });
-    // 40 shares, 30% cap = 12. npc1 has 12.
-    const syndicate = makeSyndicate({ player: 10, npc1: 12 }, 40, 10000);
+    // 40 shares, aggressive 30% cap × qualityStakeScale 1.15 (1 G1 win, score 3) = 13.
+    // npc1 holds 13 → availableShares 0 → skip_stake_cap.
+    const syndicate = makeSyndicate({ player: 10, npc1: 13 }, 40, 10000);
     const stable = makeStable("npc1", "aggressive", 1000000);
 
     const result = calculateSharePurchase(stable, syndicate, stallion);
     expect(result).toBe(0);
+  });
+
+  it("passes the quality gate via G2 OR-fallback for a stallion with no G1 wins", () => {
+    // Stallion with 0 G1 but 3 G2 wins — specialist minG2Wins=3 → passes
+    const g2Stallion = makeStallion({
+      ownership: makePlayerOwned(),
+      raceHistory: [
+        { raceId: "g2a", raceName: "G2", position: 1, day: 100, grade: "G2" },
+        { raceId: "g2b", raceName: "G2", position: 1, day: 110, grade: "G2" },
+        { raceId: "g2c", raceName: "G2", position: 1, day: 120, grade: "G2" },
+      ],
+    });
+    const syndicate = makeSyndicate({ player: 30 }, 40, 10000);
+    const stable = makeStable("npc1", "specialist", 1000000);
+
+    const result = calculateSharePurchase(stable, syndicate, g2Stallion);
+    expect(result).toBeGreaterThan(0);
   });
 });
 

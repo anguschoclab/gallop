@@ -8,7 +8,7 @@
  */
 
 import type { StablePersonality } from "@/game/types";
-import { getSyndicationTuning } from "./syndicationTuning";
+import { getSyndicationTuning, getSyndicationQualityConfig } from "./syndicationTuning";
 
 export interface SyndicationAppetite {
   /** Max fraction of a syndicate's total shares this personality will hold. */
@@ -19,6 +19,10 @@ export interface SyndicationAppetite {
   cashFraction: number;
   /** Minimum G1 wins on the stallion before this personality buys in. */
   minG1Wins: number;
+  /** Minimum G2 wins (OR-fallback quality gate). */
+  minG2Wins: number;
+  /** Minimum G3 wins (OR-fallback quality gate). */
+  minG3Wins: number;
   /** Will chase a controlling stake to trigger ownership devolution. */
   chasesControl: boolean;
 }
@@ -29,6 +33,8 @@ export const SYNDICATION_APPETITE: Record<StablePersonality, SyndicationAppetite
     buyFraction: 0.45,
     cashFraction: 0.5,
     minG1Wins: 0,
+    minG2Wins: 0,
+    minG3Wins: 0,
     chasesControl: true,
   },
   trader: {
@@ -36,6 +42,8 @@ export const SYNDICATION_APPETITE: Record<StablePersonality, SyndicationAppetite
     buyFraction: 0.5,
     cashFraction: 0.45,
     minG1Wins: 0,
+    minG2Wins: 0,
+    minG3Wins: 0,
     chasesControl: true,
   },
   prestige: {
@@ -43,6 +51,8 @@ export const SYNDICATION_APPETITE: Record<StablePersonality, SyndicationAppetite
     buyFraction: 0.35,
     cashFraction: 0.4,
     minG1Wins: 1,
+    minG2Wins: 2,
+    minG3Wins: 0,
     chasesControl: true,
   },
   breeder: {
@@ -50,6 +60,8 @@ export const SYNDICATION_APPETITE: Record<StablePersonality, SyndicationAppetite
     buyFraction: 0.4,
     cashFraction: 0.35,
     minG1Wins: 0,
+    minG2Wins: 0,
+    minG3Wins: 0,
     chasesControl: false,
   },
   "win-now": {
@@ -57,6 +69,8 @@ export const SYNDICATION_APPETITE: Record<StablePersonality, SyndicationAppetite
     buyFraction: 0.3,
     cashFraction: 0.3,
     minG1Wins: 1,
+    minG2Wins: 1,
+    minG3Wins: 0,
     chasesControl: false,
   },
   specialist: {
@@ -64,6 +78,8 @@ export const SYNDICATION_APPETITE: Record<StablePersonality, SyndicationAppetite
     buyFraction: 0.25,
     cashFraction: 0.25,
     minG1Wins: 1,
+    minG2Wins: 2,
+    minG3Wins: 3,
     chasesControl: false,
   },
   developer: {
@@ -71,6 +87,8 @@ export const SYNDICATION_APPETITE: Record<StablePersonality, SyndicationAppetite
     buyFraction: 0.2,
     cashFraction: 0.2,
     minG1Wins: 0,
+    minG2Wins: 0,
+    minG3Wins: 0,
     chasesControl: false,
   },
   conservative: {
@@ -78,6 +96,8 @@ export const SYNDICATION_APPETITE: Record<StablePersonality, SyndicationAppetite
     buyFraction: 0.15,
     cashFraction: 0.15,
     minG1Wins: 0,
+    minG2Wins: 0,
+    minG3Wins: 0,
     chasesControl: false,
   },
 };
@@ -153,11 +173,55 @@ export function getSyndicationAppetite(personality: StablePersonality): Syndicat
     buyFraction: clamp01(base.buyFraction * (tuning.buyFractionMultiplier ?? 1)),
     cashFraction: clamp01(base.cashFraction * (tuning.cashFractionMultiplier ?? 1)),
     minG1Wins: Math.max(0, base.minG1Wins + (tuning.g1WinsOffset ?? 0)),
+    minG2Wins: Math.max(0, base.minG2Wins + (tuning.g2WinsOffset ?? 0)),
+    minG3Wins: Math.max(0, base.minG3Wins + (tuning.g3WinsOffset ?? 0)),
     chasesControl: tuning.chasesControl ?? base.chasesControl,
   };
 }
 
-function clamp01(value: number): number {
+export interface QualityStakeResult {
+  score: number;
+  tier: string;
+  scale: number;
+}
+
+/**
+ * Compute a weighted graded-win score and the resulting stake-tier scale.
+ * The scale is clamped to >= 0; the caller is responsible for clamping the
+ * scaled stake cap at 1.0 (100% of shares).
+ * @param g1Wins
+ * @param g2Wins
+ * @param g3Wins
+ */
+export function computeQualityStakeScale(
+  g1Wins: number,
+  g2Wins: number,
+  g3Wins: number,
+): QualityStakeResult {
+  const config = getSyndicationQualityConfig();
+  const score =
+    g1Wins * config.weights.g1 + g2Wins * config.weights.g2 + g3Wins * config.weights.g3;
+  const tiers = config.tiers;
+  let matched = tiers[0] ?? { minScore: 0, scale: 1 };
+  let tierLabel = "base";
+  for (const tier of tiers) {
+    if (score >= tier.minScore) {
+      matched = tier;
+      tierLabel =
+        tier.minScore === 0
+          ? "base"
+          : tier.minScore >= 10
+            ? "legendary"
+            : tier.minScore >= 6
+              ? "elite"
+              : "proven";
+    }
+  }
+  const scale = Number.isFinite(matched.scale) && matched.scale >= 0 ? matched.scale : 1;
+  return { score, tier: tierLabel, scale };
+}
+
+export function clamp01(value: number): number {
   if (!Number.isFinite(value) || value < 0) return 0;
   return Math.min(1, value);
 }

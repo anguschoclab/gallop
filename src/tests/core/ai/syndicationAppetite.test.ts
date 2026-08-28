@@ -15,7 +15,35 @@ import type { Syndicate } from "@/core/breeding/types";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { makePlayerOwned } from "@/core/horse/ownership";
 
-function makeStallion(g1Wins: number, overrides: Partial<Horse> = {}): Horse {
+type GradedWins = number | { g1?: number; g2?: number; g3?: number };
+
+function makeStallion(wins: GradedWins, overrides: Partial<Horse> = {}): Horse {
+  const g1 = typeof wins === "number" ? wins : (wins.g1 ?? 0);
+  const g2 = typeof wins === "number" ? 0 : (wins.g2 ?? 0);
+  const g3 = typeof wins === "number" ? 0 : (wins.g3 ?? 0);
+  const raceHistory = [
+    ...Array.from({ length: g1 }, (_, i) => ({
+      raceId: `g1-${i}`,
+      raceName: "Big One",
+      position: 1,
+      day: 100 + i,
+      grade: "G1",
+    })),
+    ...Array.from({ length: g2 }, (_, i) => ({
+      raceId: `g2-${i}`,
+      raceName: "G2 Stakes",
+      position: 1,
+      day: 200 + i,
+      grade: "G2",
+    })),
+    ...Array.from({ length: g3 }, (_, i) => ({
+      raceId: `g3-${i}`,
+      raceName: "G3 Stakes",
+      position: 1,
+      day: 300 + i,
+      grade: "G3",
+    })),
+  ];
   return {
     id: "stallion1",
     name: "Champ",
@@ -26,13 +54,7 @@ function makeStallion(g1Wins: number, overrides: Partial<Horse> = {}): Horse {
     lifetimeEarnings: 4_000_000,
     ownership: makePlayerOwned(),
     stud: { atStud: true, standingFee: 50000, bookSize: 50, seasonBookings: 20 },
-    raceHistory: Array.from({ length: g1Wins }, (_, i) => ({
-      raceId: `r${i}`,
-      raceName: "Big One",
-      position: 1,
-      day: 100 + i,
-      grade: "G1",
-    })),
+    raceHistory,
     ...overrides,
   } as unknown as Horse;
 }
@@ -73,6 +95,16 @@ describe("syndicationAppetite", () => {
     expect(getSyndicationAppetite("prestige").minG1Wins).toBeGreaterThan(0);
     expect(getSyndicationAppetite("specialist").minG1Wins).toBeGreaterThan(0);
     expect(getSyndicationAppetite("aggressive").minG1Wins).toBe(0);
+  });
+
+  it("exposes graded G2/G3 quality gates on quality-sensitive personalities", () => {
+    const prestige = getSyndicationAppetite("prestige");
+    const specialist = getSyndicationAppetite("specialist");
+    expect(prestige.minG2Wins).toBeGreaterThan(0);
+    expect(specialist.minG3Wins).toBeGreaterThan(0);
+    // Permissive personalities have zero graded gates across all grades
+    expect(getSyndicationAppetite("aggressive").minG2Wins).toBe(0);
+    expect(getSyndicationAppetite("aggressive").minG3Wins).toBe(0);
   });
 
   it("matches base table when no tuning overrides are set", () => {
@@ -128,6 +160,16 @@ describe("syndication tuning layer", () => {
     expect(tuned.chasesControl).toBe(false);
   });
 
+  it("shifts G2/G3 gates via g2WinsOffset/g3WinsOffset", () => {
+    const base = getBaseSyndicationAppetite("prestige");
+    setSyndicationTuningOverrides({
+      personalities: { prestige: { g2WinsOffset: 5, g3WinsOffset: 2 } },
+    });
+    const tuned = getSyndicationAppetite("prestige");
+    expect(tuned.minG2Wins).toBe(base.minG2Wins + 5);
+    expect(tuned.minG3Wins).toBe(base.minG3Wins + 2);
+  });
+
   it("resets back to the file baseline", () => {
     setSyndicationTuningOverrides({ global: { stakeCapMultiplier: 0 } });
     expect(getSyndicationAppetite("trader").stakeCapPct).toBe(0);
@@ -162,6 +204,67 @@ describe("share purchase decision", () => {
       makeStallion(2),
     );
     expect(proven.shares).toBeGreaterThan(0);
+  });
+
+  it("passes the quality gate via G2 OR-fallback when G1 wins are insufficient", () => {
+    const syndicate = makeSyndicate({ shareHolders: { player: 30 } });
+    // specialist: minG1Wins=1, minG2Wins=3, minG3Wins=3
+    // 0 G1 but 3 G2 → passes via OR-fallback
+    const g2Proven = makeStallion({ g1: 0, g2: 3, g3: 0 });
+    const trace = evaluateSharePurchase(stable("specialist", 5_000_000), syndicate, g2Proven);
+    expect(trace.outcome).not.toBe("skip_quality_gate");
+    expect(trace.shares).toBeGreaterThan(0);
+  });
+
+  it("passes the quality gate via G3 OR-fallback when G1 and G2 wins are insufficient", () => {
+    const syndicate = makeSyndicate({ shareHolders: { player: 30 } });
+    // specialist: minG3Wins=3; 0 G1, 0 G2, 3 G3 → passes
+    const g3Proven = makeStallion({ g1: 0, g2: 0, g3: 3 });
+    const trace = evaluateSharePurchase(stable("specialist", 5_000_000), syndicate, g3Proven);
+    expect(trace.outcome).not.toBe("skip_quality_gate");
+    expect(trace.shares).toBeGreaterThan(0);
+  });
+
+  it("scales maxShares by the graded quality tier", () => {
+    const syndicate = makeSyndicate({ shareHolders: { player: 20 } });
+    // 2 G1 wins → score 6 (weights g1=3) → tier minScore:6 → scale 1.3
+    const trace = evaluateSharePurchase(
+      stable("aggressive", 50_000_000),
+      syndicate,
+      makeStallion(2),
+    );
+    expect(trace.qualityStakeScale).toBe(1.3);
+    expect(trace.maxShares).toBe(
+      Math.floor(40 * trace.appetite.stakeCapPct * trace.qualityStakeScale),
+    );
+  });
+
+  it("clamps the scaled stake cap so maxShares never exceeds totalShares", () => {
+    const syndicate = makeSyndicate({ shareHolders: { player: 20 } });
+    // 5 G1 + 5 G2 + 5 G3 → score 30 → max tier scale 1.5
+    const trace = evaluateSharePurchase(
+      stable("aggressive", 50_000_000),
+      syndicate,
+      makeStallion({ g1: 5, g2: 5, g3: 5 }),
+    );
+    expect(trace.qualityStakeScale).toBe(1.5);
+    expect(trace.maxShares).toBeLessThanOrEqual(syndicate.totalShares);
+  });
+
+  it("exposes graded wins, gates, and quality tier in the trace", () => {
+    const syndicate = makeSyndicate({ shareHolders: { player: 20 } });
+    const trace = evaluateSharePurchase(
+      stable("prestige", 5_000_000),
+      syndicate,
+      makeStallion({ g1: 2, g2: 3, g3: 1 }),
+    );
+    expect(trace.g2Wins).toBe(3);
+    expect(trace.g3Wins).toBe(1);
+    expect(trace.minG2Wins).toBe(getSyndicationAppetite("prestige").minG2Wins);
+    expect(trace.minG3Wins).toBe(getSyndicationAppetite("prestige").minG3Wins);
+    expect(trace.qualityScore).toBeGreaterThan(0);
+    expect(typeof trace.qualityTier).toBe("string");
+    expect(trace.qualityStakeScale).toBeGreaterThan(0);
   });
 
   it("stops buying once the stake cap is reached", () => {
@@ -218,7 +321,9 @@ describe("share purchase decision", () => {
     expect(trace.personality).toBe("trader");
     expect(trace.g1Wins).toBe(2);
     expect(trace.budget).toBeCloseTo(2_000_000 * trace.appetite.cashFraction, 5);
-    expect(trace.maxShares).toBe(Math.floor(40 * trace.appetite.stakeCapPct));
+    expect(trace.maxShares).toBe(
+      Math.floor(40 * trace.appetite.stakeCapPct * trace.qualityStakeScale),
+    );
     expect(trace.maxAffordable).toBe(Math.floor(trace.budget / trace.sharePrice));
     expect(trace.shares).toBeGreaterThan(0);
   });

@@ -26,11 +26,21 @@ export interface SyndicatePurchaseTrace {
   sharePrice: number;
   totalShares: number;
   currentShares: number;
-  /** stakeCapPct × totalShares */
+  /** stakeCapPct × totalShares × qualityStakeScale (clamped at totalShares) */
   maxShares: number;
   availableShares: number;
   g1Wins: number;
+  g2Wins: number;
+  g3Wins: number;
   minG1Wins: number;
+  minG2Wins: number;
+  minG3Wins: number;
+  /** Weighted graded-win score driving the tier. */
+  qualityScore: number;
+  /** Tier label (base / proven / elite / legendary). */
+  qualityTier: string;
+  /** Stake-cap multiplier from the quality tier. */
+  qualityStakeScale: number;
   /** cash × cashFraction */
   budget: number;
   maxAffordable: number;
@@ -66,7 +76,7 @@ export function formatSyndicatePurchaseTrace(t: SyndicatePurchaseTrace): string 
     `[syndicate] ${t.stableId} (${t.personality}) → ${t.stallionId}`,
     `outcome=${t.outcome} shares=${t.shares}`,
     `stakeCap=${(t.appetite.stakeCapPct * 100).toFixed(0)}% (max ${t.maxShares}, held ${t.currentShares}, available ${t.availableShares})`,
-    `quality: G1 ${t.g1Wins}/${t.minG1Wins}`,
+    `quality: G1 ${t.g1Wins}/${t.minG1Wins} · G2 ${t.g2Wins}/${t.minG2Wins} · G3 ${t.g3Wins}/${t.minG3Wins} → score ${t.qualityScore} (${t.qualityTier}, ×${t.qualityStakeScale})`,
     `cash=${Math.round(t.cash)} × ${(t.appetite.cashFraction * 100).toFixed(0)}% = budget ${Math.round(t.budget)} @ ${Math.round(t.sharePrice)}/share → affordable ${t.maxAffordable}`,
     `buyFraction=${(t.appetite.buyFraction * 100).toFixed(0)}% of ${t.candidateShares}`,
     t.takeoverShares > 0 ? `control needs ${t.takeoverShares}` : "no control path",

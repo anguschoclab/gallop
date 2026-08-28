@@ -1,0 +1,10 @@
+{
+  "$comment": "Cash-pressure balancing knobs. Edit here to rebalance NPC willingness to accept lowball offers without touching code. pressureCurveExponent shapes runway->pressure; softeningCurveExponent shapes pressure->threshold discount. Both 1.0 = linear (default). enableDecisionTrace emits a [trace] log entry per NPC private sale offer decision (dev/test only).",
+  "comfortDays": 120,
+  "crisisDays": 20,
+  "maxThresholdDiscount": 0.25,
+  "pressureCurveExponent": 1.0,
+  "softeningCurveExponent": 1.0,
+  "labelThresholds": { "desperate": 0.75, "strained": 0.5, "tight": 0.25 },
+  "enableDecisionTrace": false
+}

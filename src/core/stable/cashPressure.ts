@@ -4,21 +4,18 @@
  * Estimates how financially squeezed an NPC stable is, so that cash-needing
  * stables become more willing to accept lowball private sale offers.
  *
- * Dependencies: @/game/types (Stable), @/constants/economicConstants (UPKEEP_PER_HORSE)
- * Related files: src/core/time/phases/privateSaleResolution.ts (consumer)
+ * All balancing knobs (runway thresholds, max softening, curve shape, label
+ * cutoffs) live in `src/data/cashPressureTuning.json` and are surfaced through
+ * `src/core/stable/cashPressureTuning.ts`. Edit the JSON to rebalance without
+ * touching code.
+ *
+ * Dependencies: @/game/types (Stable), @/constants/economicConstants (UPKEEP_PER_HORSE), ./cashPressureTuning (getCashPressureTuning)
+ * Related files: src/core/time/phases/privateSaleResolution.ts (consumer), src/core/horse/privateSaleDecision.ts (trace consumer)
  */
 
 import type { Stable } from "@/game/types";
 import { UPKEEP_PER_HORSE } from "@/constants/economicConstants";
-
-/** Days of upkeep runway at or above which a stable feels no cash pressure. */
-export const CASH_PRESSURE_COMFORT_DAYS = 120;
-
-/** Days of upkeep runway at or below which a stable is maximally desperate. */
-export const CASH_PRESSURE_CRISIS_DAYS = 20;
-
-/** Maximum discount applied to accept/counter thresholds at full pressure. */
-export const CASH_PRESSURE_MAX_THRESHOLD_DISCOUNT = 0.25;
+import { getCashPressureTuning } from "./cashPressureTuning";
 
 export interface CashPressure {
   /** 0 = comfortable, 1 = desperate for cash. */
@@ -31,30 +28,42 @@ export interface CashPressure {
 
 /**
  * Evaluate a stable's cash pressure from its cash balance relative to the
- * daily upkeep cost of its roster.
+ * daily upkeep cost of its roster. The runway->pressure curve is shaped by
+ * `pressureCurveExponent` (1 = linear).
  */
 export function evaluateCashPressure(stable: Stable, horseCount?: number): CashPressure {
+  const tuning = getCashPressureTuning();
   const horses = Math.max(1, horseCount ?? stable.horses.length);
   const dailyUpkeep = horses * UPKEEP_PER_HORSE;
   const cash = Math.max(0, stable.cash);
-  const runwayDays = dailyUpkeep > 0 ? cash / dailyUpkeep : CASH_PRESSURE_COMFORT_DAYS;
+  const runwayDays = dailyUpkeep > 0 ? cash / dailyUpkeep : tuning.comfortDays;
 
-  const span = CASH_PRESSURE_COMFORT_DAYS - CASH_PRESSURE_CRISIS_DAYS;
-  const raw = (CASH_PRESSURE_COMFORT_DAYS - runwayDays) / span;
-  const pressure = Math.max(0, Math.min(1, raw));
+  const span = tuning.comfortDays - tuning.crisisDays;
+  const raw = span > 0 ? (tuning.comfortDays - runwayDays) / span : 0;
+  const pressure = Math.max(0, Math.min(1, Math.pow(Math.max(0, raw), tuning.pressureCurveExponent)));
 
+  const { desperate, strained, tight } = tuning.labelThresholds;
   const label: CashPressure["label"] =
-    pressure >= 0.75 ? "desperate" : pressure >= 0.5 ? "strained" : pressure >= 0.25 ? "tight" : "comfortable";
+    pressure >= desperate
+      ? "desperate"
+      : pressure >= strained
+        ? "strained"
+        : pressure >= tight
+          ? "tight"
+          : "comfortable";
 
   return { pressure, runwayDays, label };
 }
 
 /**
  * Discount an accept/counter threshold based on cash pressure. A desperate
- * stable will take up to CASH_PRESSURE_MAX_THRESHOLD_DISCOUNT less than its
- * personality would normally demand.
+ * stable will take up to `maxThresholdDiscount` less than its personality would
+ * normally demand. The pressure->discount curve is shaped by
+ * `softeningCurveExponent` (1 = linear).
  */
 export function applyCashPressureToThreshold(threshold: number, pressure: number): number {
+  const tuning = getCashPressureTuning();
   const clamped = Math.max(0, Math.min(1, pressure));
-  return threshold * (1 - CASH_PRESSURE_MAX_THRESHOLD_DISCOUNT * clamped);
+  const shaped = Math.pow(clamped, tuning.softeningCurveExponent);
+  return threshold * (1 - tuning.maxThresholdDiscount * shaped);
 }

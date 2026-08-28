@@ -10,7 +10,7 @@ import {
 } from "./syndicationAI";
 import { findMajorityOwner } from "@/core/breeding/devolutionUtils";
 import { getCareerStats } from "@/core/horse/stats";
-import { getSyndicationAppetite } from "./syndicationAppetite";
+import { getSyndicationAppetite, computeQualityStakeScale } from "./syndicationAppetite";
 import { recordSyndicatePurchaseTrace, type SyndicatePurchaseTrace } from "./syndicationTrace";
 
 export function shouldCreateSyndicateWithLearning(
@@ -92,9 +92,15 @@ export function evaluateSharePurchase(
 
   const cash = npcStable.cash || 0;
   const currentShares = syndicate.shareHolders[npcStable.id] || 0;
-  const maxShares = Math.floor(syndicate.totalShares * appetite.stakeCapPct);
+  const careerStats = getCareerStats(stallion);
+  const g1Wins = careerStats.g1Wins;
+  const g2Wins = careerStats.g2Wins;
+  const g3Wins = careerStats.g3Wins;
+
+  const quality = computeQualityStakeScale(g1Wins, g2Wins, g3Wins);
+  const scaledCapPct = Math.min(1, appetite.stakeCapPct * quality.scale);
+  const maxShares = Math.floor(syndicate.totalShares * scaledCapPct);
   const availableShares = maxShares - currentShares;
-  const g1Wins = getCareerStats(stallion).g1Wins;
 
   const base: SyndicatePurchaseTrace = {
     stableId: String(npcStable.id),
@@ -109,7 +115,14 @@ export function evaluateSharePurchase(
     maxShares,
     availableShares: Math.max(0, availableShares),
     g1Wins,
+    g2Wins,
+    g3Wins,
     minG1Wins: appetite.minG1Wins,
+    minG2Wins: appetite.minG2Wins,
+    minG3Wins: appetite.minG3Wins,
+    qualityScore: quality.score,
+    qualityTier: quality.tier,
+    qualityStakeScale: quality.scale,
     budget: cash * appetite.cashFraction,
     maxAffordable: 0,
     candidateShares: 0,
@@ -119,7 +132,14 @@ export function evaluateSharePurchase(
   };
 
   if (availableShares <= 0) return { ...base, outcome: "skip_stake_cap" };
-  if (g1Wins < appetite.minG1Wins) return { ...base, outcome: "skip_quality_gate" };
+  // Tiered-fallback OR gate: pass if any graded gate is satisfied
+  if (
+    g1Wins < appetite.minG1Wins &&
+    g2Wins < appetite.minG2Wins &&
+    g3Wins < appetite.minG3Wins
+  ) {
+    return { ...base, outcome: "skip_quality_gate" };
+  }
 
   const sharePrice = calculateSharePrice(syndicate, stallion);
   if (sharePrice <= 0) return { ...base, sharePrice, outcome: "skip_price" };
@@ -159,6 +179,86 @@ export function calculateSharePurchase(
   const trace = evaluateSharePurchase(npcStable, syndicate, stallion);
   recordSyndicatePurchaseTrace(trace);
   return trace.shares;
+}
+
+export interface CounterofferGuidance {
+  stableId: string;
+  /** Shares the NPC currently holds. */
+  currentShares: number;
+  /** Scaled max shares the NPC is willing to hold. */
+  maxShares: number;
+  /** Minimum shares the NPC would accept (always 1). */
+  minAcceptable: number;
+  /** Maximum shares the NPC can absorb this turn (budget + cap limited). */
+  maxAcceptable: number;
+  /** Whether the offered share count falls within [minAcceptable, maxAcceptable]. */
+  acceptable: boolean;
+  /** Expected stake (shares) after the offer is absorbed. */
+  expectedStakeAfter: number;
+  /** Expected stake as a fraction of total shares after the offer. */
+  expectedStakePctAfter: number;
+  /** Human-readable fit note. */
+  note: string;
+  /** The underlying purchase trace. */
+  trace: SyndicatePurchaseTrace;
+}
+
+/**
+ * Forecast how an NPC rival would respond to a player's offer of N syndicate
+ * shares. This is a read-only projection — the actual solicit action picks a
+ * random personality investor at execution time.
+ */
+export function evaluateCounteroffer(
+  npcStable: Stable,
+  syndicate: Syndicate,
+  stallion: Horse,
+  offeredShares: number,
+): CounterofferGuidance {
+  const trace = evaluateSharePurchase(npcStable, syndicate, stallion);
+  const maxAcceptable = Math.min(trace.availableShares, trace.maxAffordable);
+  const minAcceptable = 1;
+  const isBuyOutcome = trace.outcome === "buy" || trace.outcome === "buy_control";
+  const acceptable = isBuyOutcome && offeredShares >= minAcceptable && offeredShares <= maxAcceptable;
+  const expectedStakeAfter = Math.min(
+    trace.currentShares + Math.max(0, offeredShares),
+    trace.maxShares,
+  );
+  const expectedStakePctAfter = trace.totalShares > 0 ? expectedStakeAfter / trace.totalShares : 0;
+
+  let note: string;
+  if (trace.outcome === "skip_quality_gate") {
+    const awaited = [
+      trace.minG1Wins > 0 ? `G1 ${trace.minG1Wins}` : null,
+      trace.minG2Wins > 0 ? `G2 ${trace.minG2Wins}` : null,
+      trace.minG3Wins > 0 ? `G3 ${trace.minG3Wins}` : null,
+    ]
+      .filter(Boolean)
+      .join(" or ");
+    note = `Holding off — wants ${awaited} wins`;
+  } else if (trace.outcome === "skip_stake_cap") {
+    note = "Past stake cap — won't buy more";
+  } else if (trace.outcome === "skip_unaffordable" || trace.outcome === "skip_price") {
+    note = "Priced out at current share price";
+  } else if (offeredShares < minAcceptable) {
+    note = "Must offer at least 1 share";
+  } else if (offeredShares > maxAcceptable) {
+    note = `Exceeds budget by ${offeredShares - maxAcceptable}`;
+  } else {
+    note = "Within range";
+  }
+
+  return {
+    stableId: trace.stableId,
+    currentShares: trace.currentShares,
+    maxShares: trace.maxShares,
+    minAcceptable,
+    maxAcceptable,
+    acceptable,
+    expectedStakeAfter,
+    expectedStakePctAfter,
+    note,
+    trace,
+  };
 }
 
 export function calculateShareSale(

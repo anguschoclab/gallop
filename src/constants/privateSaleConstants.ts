@@ -3,6 +3,61 @@
  */
 
 import type { ReputationTier } from "@/core/reputation/reputationTypes";
+import type { StablePersonality } from "@/game/types";
+
+// ── NPC accept / counter / counter-multiplier thresholds ──
+
+/**
+ * Offer ratio (offer / valuation) at or above which an NPC accepts. Lower
+ * values = more willing to sell. Cash pressure softens these downward.
+ */
+export const ACCEPT_THRESHOLDS: Record<StablePersonality, number> = {
+  aggressive: 0.7,
+  conservative: 1.0,
+  developer: 0.9,
+  "win-now": 1.0,
+  specialist: 1.0,
+  breeder: 1.1,
+  trader: 0.8,
+  prestige: 1.3,
+};
+
+/**
+ * Offer ratio at or above which an NPC counters (instead of declining). Cash
+ * pressure softens these downward.
+ */
+export const COUNTER_THRESHOLDS: Record<StablePersonality, number> = {
+  aggressive: 0.5,
+  conservative: 0.8,
+  developer: 0.7,
+  "win-now": 0.8,
+  specialist: 0.8,
+  breeder: 0.9,
+  trader: 0.6,
+  prestige: 1.0,
+};
+
+/**
+ * Multiplier on valuation used to compute the counter amount. Cash pressure
+ * softens these downward (a squeezed stable counters lower).
+ */
+export const COUNTER_MULTIPLIERS: Record<StablePersonality, number> = {
+  aggressive: 1.1,
+  conservative: 1.2,
+  developer: 1.15,
+  "win-now": 1.2,
+  specialist: 1.2,
+  breeder: 1.25,
+  trader: 1.1,
+  prestige: 1.4,
+};
+
+/**
+ * Cash-pressure level at or above which the accept log calls out that the
+ * stable is "short of cash". Kept here so the wording threshold is tunable
+ * alongside the rest of the private-sale constants.
+ */
+export const CASH_PRESSURE_SHORT_OF_CASH_LOG_THRESHOLD = 0.5;
 
 // ── Suggested offer tiers ──
 

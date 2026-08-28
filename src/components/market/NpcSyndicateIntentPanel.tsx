@@ -6,7 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { TOOLTIP_DELAY_MS } from "@/constants";
 import { Users } from "lucide-react";
-import { evaluateSharePurchase } from "@/core/ai/syndicationAIDecisions";
+import {
+  evaluateSharePurchase,
+  evaluateCounteroffer,
+  type CounterofferGuidance,
+} from "@/core/ai/syndicationAIDecisions";
 import { getSyndicateIntent, SYNDICATE_INTENT_META } from "@/core/ai/syndicationAppetite";
 import { formatSyndicatePurchaseTrace } from "@/core/ai/syndicationTrace";
 
@@ -18,12 +22,27 @@ interface NpcSyndicateIntentPanelProps {
   compact?: boolean;
   /** Max rows shown. */
   limit?: number;
+  /** Player's offered share count — when set, rows show counteroffer guidance. */
+  offeredShares?: number;
 }
 
-function outcomeNote(outcome: string, minG1: number): string | null {
+function outcomeNote(
+  outcome: string,
+  minG1: number,
+  minG2: number,
+  minG3: number,
+): string | null {
   switch (outcome) {
-    case "skip_quality_gate":
-      return `Waiting on proof — wants ${minG1}+ G1 win${minG1 === 1 ? "" : "s"}`;
+    case "skip_quality_gate": {
+      const gates = [
+        minG1 > 0 ? `${minG1}+ G1` : null,
+        minG2 > 0 ? `${minG2}+ G2` : null,
+        minG3 > 0 ? `${minG3}+ G3` : null,
+      ]
+        .filter(Boolean)
+        .join(" or ");
+      return `Waiting on proof — wants ${gates} wins`;
+    }
     case "skip_stake_cap":
       return "Stake cap reached — won't buy more";
     case "skip_unaffordable":
@@ -37,12 +56,18 @@ function outcomeNote(outcome: string, minG1: number): string | null {
   }
 }
 
+function counterofferTone(acceptable: boolean, maxAcceptable: number): string {
+  if (maxAcceptable <= 0) return "text-red-300";
+  return acceptable ? "text-emerald-300" : "text-amber-300";
+}
+
 export function NpcSyndicateIntentPanel({
   syndicate,
   stallion,
   npcStables,
   compact = false,
   limit = 4,
+  offeredShares,
 }: NpcSyndicateIntentPanelProps) {
   const rows = useMemo(() => {
     if (!stallion || !npcStables?.length) return [];
@@ -50,16 +75,21 @@ export function NpcSyndicateIntentPanel({
       .map((stable) => {
         const trace = evaluateSharePurchase(stable, syndicate, stallion);
         const intent = getSyndicateIntent(stable.personality);
+        const counteroffer: CounterofferGuidance | null =
+          offeredShares != null
+            ? evaluateCounteroffer(stable, syndicate, stallion, offeredShares)
+            : null;
         return {
           stableId: String(stable.id),
           name: stable.name,
           intent,
           meta: SYNDICATE_INTENT_META[intent],
           trace,
+          counteroffer,
           heldShares: syndicate.shareHolders[stable.id] ?? 0,
           expectedShares: trace.shares,
           targetPct: Math.round(trace.appetite.stakeCapPct * 100),
-          note: outcomeNote(trace.outcome, trace.minG1Wins),
+          note: outcomeNote(trace.outcome, trace.minG1Wins, trace.minG2Wins, trace.minG3Wins),
         };
       })
       .sort(
@@ -69,7 +99,7 @@ export function NpcSyndicateIntentPanel({
           b.targetPct - a.targetPct,
       )
       .slice(0, limit);
-  }, [syndicate, stallion, npcStables, limit]);
+  }, [syndicate, stallion, npcStables, limit, offeredShares]);
 
   if (rows.length === 0) return null;
 
@@ -95,7 +125,18 @@ export function NpcSyndicateIntentPanel({
                     {r.expectedShares > 0 ? `Wants ${r.expectedShares} now` : "Holding off"}
                   </span>
                 </div>
-                {r.note && <div className="mt-1 text-[11px] text-cream-muted/80">{r.note}</div>}
+                {r.counteroffer && (
+                  <div
+                    className={`mt-1 text-[11px] ${counterofferTone(r.counteroffer.acceptable, r.counteroffer.maxAcceptable)}`}
+                  >
+                    Offer {offeredShares} → accepts 1–{r.counteroffer.maxAcceptable} · stake after:{" "}
+                    {r.counteroffer.expectedStakeAfter} (
+                    {Math.round(r.counteroffer.expectedStakePctAfter * 100)}%) · {r.counteroffer.note}
+                  </div>
+                )}
+                {!r.counteroffer && r.note && (
+                  <div className="mt-1 text-[11px] text-cream-muted/80">{r.note}</div>
+                )}
               </div>
             </TooltipTrigger>
             <TooltipContent className="max-w-sm">
