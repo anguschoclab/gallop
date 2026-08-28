@@ -1,0 +1,62 @@
+{
+  "$comment": "Balancing knobs for NPC syndicate share appetite. Edit values here to rebalance without touching code. Multipliers scale the base appetite from src/core/ai/syndicationAppetite.ts; g1WinsOffset shifts the proven-quality gate.",
+  "global": {
+    "stakeCapMultiplier": 1,
+    "buyFractionMultiplier": 1,
+    "cashFractionMultiplier": 1,
+    "g1WinsOffset": 0
+  },
+  "personalities": {
+    "aggressive": {
+      "stakeCapMultiplier": 1,
+      "buyFractionMultiplier": 1,
+      "cashFractionMultiplier": 1,
+      "g1WinsOffset": 0,
+      "chasesControl": true
+    },
+    "trader": {
+      "stakeCapMultiplier": 1,
+      "buyFractionMultiplier": 1,
+      "cashFractionMultiplier": 1,
+      "g1WinsOffset": 0,
+      "chasesControl": true
+    },
+    "prestige": {
+      "stakeCapMultiplier": 1,
+      "buyFractionMultiplier": 1,
+      "cashFractionMultiplier": 1,
+      "g1WinsOffset": 0,
+      "chasesControl": true
+    },
+    "breeder": {
+      "stakeCapMultiplier": 1,
+      "buyFractionMultiplier": 1,
+      "cashFractionMultiplier": 1,
+      "g1WinsOffset": 0
+    },
+    "win-now": {
+      "stakeCapMultiplier": 1,
+      "buyFractionMultiplier": 1,
+      "cashFractionMultiplier": 1,
+      "g1WinsOffset": 0
+    },
+    "specialist": {
+      "stakeCapMultiplier": 1,
+      "buyFractionMultiplier": 1,
+      "cashFractionMultiplier": 1,
+      "g1WinsOffset": 0
+    },
+    "developer": {
+      "stakeCapMultiplier": 1,
+      "buyFractionMultiplier": 1,
+      "cashFractionMultiplier": 1,
+      "g1WinsOffset": 0
+    },
+    "conservative": {
+      "stakeCapMultiplier": 1,
+      "buyFractionMultiplier": 1,
+      "cashFractionMultiplier": 1,
+      "g1WinsOffset": 0
+    }
+  }
+}
