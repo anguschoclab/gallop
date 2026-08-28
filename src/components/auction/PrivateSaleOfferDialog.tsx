@@ -128,9 +128,7 @@ export function PrivateSaleOfferDialog({
             <CashPressureBadge
               stable={stable}
               ask={ask}
-              offerAmount={
-                Number(offerAmount.replace(/,/g, "").replace(/\$/g, "")) || undefined
-              }
+              offerAmount={Number(offerAmount.replace(/,/g, "").replace(/\$/g, "")) || undefined}
             />
             <p className="text-xs text-cream-muted">{attachment.blurb}</p>
             <AttachmentBreakdown attachment={attachment} />

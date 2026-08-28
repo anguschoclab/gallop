@@ -55,7 +55,10 @@ function tracingEnabled(): boolean {
   return import.meta.env?.DEV === true || import.meta.env?.MODE === "test";
 }
 
-/** Record a cash-pressure sale decision (no-op in production builds). */
+/**
+ * Record a cash-pressure sale decision (no-op in production builds).
+ * @param trace
+ */
 export function recordCashPressureDecision(trace: CashPressureDecisionTrace): void {
   if (!tracingEnabled()) return;
   traces.push(trace);
@@ -84,7 +87,10 @@ export function clearCashPressureTraces(): void {
   traces.length = 0;
 }
 
-/** Aggregate summary stats over the retained traces. */
+/**
+ * Aggregate summary stats over the retained traces.
+ * @param source
+ */
 export function summarizeCashPressureTraces(
   source: readonly CashPressureDecisionTrace[] = traces,
 ): CashPressureSummary {
@@ -92,7 +98,8 @@ export function summarizeCashPressureTraces(
   const accepted = source.filter((t) => t.outcome === "accepted");
   const countered = source.filter((t) => t.outcome === "countered");
   const declined = source.filter((t) => t.outcome === "declined");
-  const mean = (nums: number[]) => (nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : 0);
+  const mean = (nums: number[]) =>
+    nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : 0;
 
   return {
     total,

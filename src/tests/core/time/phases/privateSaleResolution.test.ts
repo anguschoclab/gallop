@@ -12,6 +12,7 @@ import {
   resetCashPressureTuningOverrides,
 } from "@/core/stable/cashPressureTuning";
 import { UPKEEP_PER_HORSE } from "@/constants/economicConstants";
+import { DECISION_TRACE_LOG_PREFIX } from "@/constants/privateSaleConstants";
 
 const mkOffer = (overrides: Partial<PrivateSaleOffer> = {}): PrivateSaleOffer => ({
   id: "offer-1",
@@ -786,7 +787,9 @@ describe("privateSaleResolutionPhase", () => {
         privateSaleOffers: [mkOffer({ amount: Math.round(valuation * 0.75) })],
       });
       const result = mod.privateSaleResolutionPhase.execute(ctx);
-      const traceLogs = result.logs.filter((l) => l.text.startsWith("[trace]"));
+      const traceLogs = result.logs.filter((l) =>
+        l.text.startsWith(DECISION_TRACE_LOG_PREFIX),
+      );
       expect(traceLogs).toHaveLength(1);
       expect(traceLogs[0].text).toContain("Green Acres");
       expect(traceLogs[0].text).toContain("Thunder");
@@ -812,7 +815,9 @@ describe("privateSaleResolutionPhase", () => {
         privateSaleOffers: [mkOffer({ amount: Math.round(valuation * 0.75) })],
       });
       const result = mod.privateSaleResolutionPhase.execute(ctx);
-      const traceLogs = result.logs.filter((l) => l.text.startsWith("[trace]"));
+      const traceLogs = result.logs.filter((l) =>
+        l.text.startsWith(DECISION_TRACE_LOG_PREFIX),
+      );
       expect(traceLogs).toHaveLength(0);
     });
   });

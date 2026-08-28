@@ -43,12 +43,7 @@ interface CashPressureBadgeProps {
  * and, when an ask/offer is supplied, the exact accept threshold and how far
  * below it the offer sits.
  */
-export function CashPressureBadge({
-  stable,
-  className,
-  ask,
-  offerAmount,
-}: CashPressureBadgeProps) {
+export function CashPressureBadge({ stable, className, ask, offerAmount }: CashPressureBadgeProps) {
   const thresholds = evaluatePrivateSaleThresholds(stable, { ask, offerAmount });
   const pressure = thresholds.cashPressure;
   const runwayDays = Math.round(pressure.runwayDays);
@@ -112,8 +107,8 @@ export function CashPressureBadge({
               ({formatCurrency(Math.round(pressure.dailyUpkeep))}/day)
             </li>
             <li>
-              Accept threshold:{" "}
-              <span className="tabular-nums text-cream">{acceptPct}%</span> of their ask
+              Accept threshold: <span className="tabular-nums text-cream">{acceptPct}%</span> of
+              their ask
               {acceptPct !== basePct && <> (down from {basePct}% under cash pressure)</>}
             </li>
             {thresholds.acceptAmount !== undefined && (

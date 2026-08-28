@@ -85,7 +85,11 @@ function MarketPage() {
           value="bloodstock"
           className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-8 focus-visible:outline-none"
         >
-          <Link to="/npc-stables" search={{ q: "", tier: "all", pressure: "all", sort: "name" }} className="block group">
+          <Link
+            to="/npc-stables"
+            search={{ q: "", tier: "all", pressure: "all", sort: "name" }}
+            className="block group"
+          >
             <Card className="bg-slate-900/40 border-white/5 rounded-none hover:border-success/40 transition-all duration-300 relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-1 h-full bg-success/20 group-hover:bg-success transition-colors" />
               <CardContent className="p-6 flex items-center justify-between">

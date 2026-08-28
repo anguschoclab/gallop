@@ -56,9 +56,7 @@ export function useNpcStablesFilters(search: NpcStablesSearch) {
     const sorted = [...matches];
     if (sort === "pressure-desc" || sort === "pressure-asc") {
       const dir = sort === "pressure-desc" ? -1 : 1;
-      sorted.sort(
-        (a, b) => dir * (evaluateCashPressure(a).meter - evaluateCashPressure(b).meter),
-      );
+      sorted.sort((a, b) => dir * (evaluateCashPressure(a).meter - evaluateCashPressure(b).meter));
     } else if (sort === "reputation") {
       sorted.sort((a, b) => b.reputation - a.reputation);
     } else {

@@ -64,7 +64,6 @@ export function evaluateCashPressure(stable: Stable, horseCount?: number): CashP
   return { pressure, meter: Math.round(pressure * 100), runwayDays, dailyUpkeep, label };
 }
 
-
 /**
  * Discount an accept/counter threshold based on cash pressure. A desperate
  * stable will take up to `maxThresholdDiscount` less than its personality would

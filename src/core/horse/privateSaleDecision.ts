@@ -208,7 +208,7 @@ export function formatPrivateSaleDecisionTrace(trace: PrivateSaleDecisionTrace):
       ? ` counter=$${trace.counterAmount.toLocaleString()}`
       : "";
   return (
-    `[trace] ${trace.stableName} (${trace.personality}) → ${trace.horseName}: ` +
+    `${DECISION_TRACE_LOG_PREFIX} ${trace.stableName} (${trace.personality}) → ${trace.horseName}: ` +
     `runway=${trace.runwayDays.toFixed(1)}d pressure=${trace.pressure.toFixed(2)} (${trace.pressureLabel}) ` +
     `accept≥${trace.softenedAcceptThreshold.toFixed(2)} counter≥${trace.softenedCounterThreshold.toFixed(2)} ` +
     `offer=$${trace.offerAmount.toLocaleString()} ask=$${trace.valuation.toLocaleString()} ` +

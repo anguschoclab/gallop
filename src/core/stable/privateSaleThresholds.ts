@@ -9,7 +9,11 @@
  */
 
 import type { Stable, StablePersonality } from "@/game/types";
-import { applyCashPressureToThreshold, evaluateCashPressure, type CashPressure } from "./cashPressure";
+import {
+  applyCashPressureToThreshold,
+  evaluateCashPressure,
+  type CashPressure,
+} from "./cashPressure";
 
 /** Offer/ask ratio at or above which a personality accepts outright. */
 export const ACCEPT_THRESHOLDS: Record<StablePersonality, number> = {
@@ -77,6 +81,11 @@ export interface PrivateSaleThresholds {
 /**
  * Compute the effective accept/counter thresholds for a stable, optionally
  * projecting an offer against them.
+ * @param stable
+ * @param options
+ * @param options.ask
+ * @param options.offerAmount
+ * @param options.horseCount
  */
 export function evaluatePrivateSaleThresholds(
   stable: Stable,
@@ -115,7 +124,11 @@ export function evaluatePrivateSaleThresholds(
       result.shortfallAmount = Math.max(0, Math.round(ask * acceptThreshold - offer));
       result.shortfallPercent = Math.max(0, (acceptThreshold - ratio) * 100);
       result.projectedOutcome =
-        ratio >= acceptThreshold ? "accepted" : ratio >= counterThreshold ? "countered" : "declined";
+        ratio >= acceptThreshold
+          ? "accepted"
+          : ratio >= counterThreshold
+            ? "countered"
+            : "declined";
     }
   }
 
