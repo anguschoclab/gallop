@@ -19,7 +19,7 @@ import { DIPLOMATIC_FAILURE_FRICTION_PENALTY } from "@/constants/privateSaleCons
 import { calculateFrictionChange } from "@/core/stable/rivalry";
 import { evaluatePrivateSaleThresholds } from "@/core/stable/privateSaleThresholds";
 import { recordCashPressureDecision } from "@/core/stable/cashPressureLog";
-import type { PrivateSaleOffer, Horse, Stable, StablePersonality } from "@/game/types";
+import type { PrivateSaleOffer, Horse, Stable } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import type { HorseTransferImpact, CashImpact } from "@/core/resolver/impacts";
 
