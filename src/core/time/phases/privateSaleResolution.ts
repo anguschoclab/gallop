@@ -252,8 +252,15 @@ export const privateSaleResolutionPhase: PipelinePhase = {
       const valuation = attachmentAdjustedAsk(horse, stable, marketValue, state.reputation?.score ?? 0);
       const offerRatio = offer.amount / valuation;
       const personality = stable.personality;
-      const acceptThreshold = ACCEPT_THRESHOLDS[personality];
-      const counterThreshold = COUNTER_THRESHOLDS[personality];
+      const cashPressure = evaluateCashPressure(stable, stable.horses.length);
+      const acceptThreshold = applyCashPressureToThreshold(
+        ACCEPT_THRESHOLDS[personality],
+        cashPressure.pressure,
+      );
+      const counterThreshold = applyCashPressureToThreshold(
+        COUNTER_THRESHOLDS[personality],
+        cashPressure.pressure,
+      );
 
       if (offerRatio >= acceptThreshold) {
         updatedOffers.push({ ...offer, status: "accepted" });
