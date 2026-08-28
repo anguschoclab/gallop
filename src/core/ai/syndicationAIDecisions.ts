@@ -10,6 +10,7 @@ import {
 } from "./syndicationAI";
 import { findMajorityOwner } from "@/core/breeding/devolutionUtils";
 import { getCareerStats } from "@/core/horse/stats";
+import { getSyndicationAppetite } from "./syndicationAppetite";
 
 export function shouldCreateSyndicateWithLearning(
   aiState: SyndicationAIState,
@@ -78,37 +79,41 @@ export function calculateSharePurchase(
   syndicate: Syndicate,
   stallion: Horse,
 ): number {
+  const personality = npcStable.personality;
+  const appetite = getSyndicationAppetite(personality);
+
   const cash = npcStable.cash || 0;
   const currentShares = syndicate.shareHolders[npcStable.id] || 0;
-  const maxShares = Math.floor(syndicate.totalShares * 0.3);
+  const maxShares = Math.floor(syndicate.totalShares * appetite.stakeCapPct);
   const availableShares = maxShares - currentShares;
 
   if (availableShares <= 0) return 0;
 
+  const g1Wins = getCareerStats(stallion).g1Wins;
+  if (g1Wins < appetite.minG1Wins) return 0;
+
   const sharePrice = calculateSharePrice(syndicate, stallion);
-  const maxAffordable = Math.floor(cash / sharePrice);
+  if (sharePrice <= 0) return 0;
+
+  const budget = cash * appetite.cashFraction;
+  const maxAffordable = Math.floor(budget / sharePrice);
   const sharesToBuy = Math.min(availableShares, maxAffordable);
 
   if (sharesToBuy < 1) return 0;
 
-  const personality = npcStable.personality;
-
   const takeoverShares = sharesToTriggerDevolution(syndicate, npcStable.id, availableShares);
 
-  if (takeoverShares > 0 && takeoverShares <= maxAffordable) {
+  if (appetite.chasesControl && takeoverShares > 0 && takeoverShares <= maxAffordable) {
     if (personality === "aggressive" || personality === "trader") {
       return takeoverShares;
     }
 
-    if (personality === "prestige") {
-      const g1Wins = getCareerStats(stallion).g1Wins;
-      if (g1Wins >= 3) {
-        return takeoverShares;
-      }
+    if (personality === "prestige" && g1Wins >= 3) {
+      return takeoverShares;
     }
   }
 
-  return Math.floor(sharesToBuy * 0.25);
+  return Math.max(1, Math.floor(sharesToBuy * appetite.buyFraction));
 }
 
 export function calculateShareSale(
