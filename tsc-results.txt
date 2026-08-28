@@ -1,6 +1,12 @@
 # TypeScript Check Results
-# Generated: 2026-08-28T10:05:25.035Z
+# Generated: 2026-08-28T10:20:47.474Z
 # Command: bun x tsc --noEmit --pretty false
-# Errors: 0  Warnings: 0  Exit: 0
+# Errors: 1  Warnings: 0  Exit: 2
 
-No type errors or warnings.
+## Errors
+
+### src/routes/market.tsx (1)
+  88:35  TS2322  Type '{ q: string; tier: string; }' is not assignable to type '{ q: string; tier: string; pressure: string; sort: string; } | ParamsReducerFn<RouterCore<Route<Register, any, "/", "/", string, "__root__", undefined, {}, {}, AnyContext, AnyContext, ... 6 more ..., undefined>, "never", false, RouterHistory, Record<...>>, "SEARCH", string, "/npc-stables">'.
+
+## Unparsed output
+    Type '{ q: string; tier: string; }' is missing the following properties from type '{ q: string; tier: string; pressure: string; sort: string; }': pressure, sort
