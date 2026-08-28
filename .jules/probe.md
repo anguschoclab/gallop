@@ -1,0 +1,3 @@
+## 2025-02-28 - Testing buildAuctionImpacts
+**Learning:** `buildAuctionImpacts` handles critical economic transactions (purchases, proceeds, horse transfers) and inbox messaging based on a highly complex conditional flow involving the buyer and consignor types. Testing this logic required precise mock construction of `LotState` and tracking of generated events based on empty strings `""` versus `undefined` for `consignorStableId` and `soldToStableId`.
+**Action:** Always maintain strict assertion sets for `cash_change` reasons (`auction_purchase`, `auction_proceeds`, `auction_purchase_player`, `auction_proceeds_player`) when testing financial impacts to ensure money routes correctly during different lot resolution states.
