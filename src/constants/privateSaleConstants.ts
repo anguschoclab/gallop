@@ -59,6 +59,14 @@ export const COUNTER_MULTIPLIERS: Record<StablePersonality, number> = {
  */
 export const CASH_PRESSURE_SHORT_OF_CASH_LOG_THRESHOLD = 0.5;
 
+/**
+ * Prefix prepended to dev/test decision-trace log entries emitted by the
+ * private sale resolution phase when `enableDecisionTrace` is true in the
+ * cash-pressure tuning JSON. Used as a filter signal so dev tooling/UI can
+ * hide these from the player-facing feed.
+ */
+export const DECISION_TRACE_LOG_PREFIX = "[trace]";
+
 // ── Suggested offer tiers ──
 
 /** Rounding increment for quick-offer amounts (nearest $500). */
