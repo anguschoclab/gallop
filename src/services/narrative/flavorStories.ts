@@ -12,6 +12,16 @@ export type FlavorStoryTheme =
 export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   track: [
     {
+      headline: "New Drainage System Installed",
+      body: "Track engineers have completed an overhaul of the inner dirt track's drainage system, promising fewer cancelled races during the rainy season.",
+      category: "flavor",
+    },
+    {
+      headline: "Grandstand Wi-Fi Upgraded",
+      body: "In a bid to attract a younger audience, management has completely overhauled the track's wireless network to ensure seamless streaming and wagering for all patrons.",
+      category: "flavor",
+    },
+    {
       headline: "Backstretch Beautification Project Underway",
       body: "Volunteers and track employees have teamed up to plant hundreds of new flowers around the paddock and walking rings, adding fresh color to the venue.",
       category: "flavor",
@@ -99,6 +109,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   jockeys: [
     {
+      headline: "Dietary Coach Becomes Paddock Fixture",
+      body: "Several leading jockeys have pooled resources to hire a specialized nutritionist, hoping to maintain their riding weight more healthily throughout the grueling season.",
+      category: "flavor",
+    },
+    {
+      headline: "Local Rider Wins Out-of-State Derby",
+      body: "The jockeys' room was celebrating today after one of their own shipped out to ride a massive longshot to victory in a prestigious regional derby.",
+      category: "flavor",
+    },
+    {
       headline: "Jockey Colony Sees Influx of Talent",
       body: "Several promising young riders have transferred their tack to the local circuit, raising the level of competition in the jockeys' room.",
       category: "flavor",
@@ -181,6 +201,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   breeding: [
     {
+      headline: "Stallion Syndicate Shares Skyrocket",
+      body: "Following a string of impressive debut winners by his first crop, shares in a highly touted first-season sire have doubled in value on the private market.",
+      category: "flavor",
+    },
+    {
+      headline: "Historic Breeding Farm Changes Hands",
+      body: "One of the region's oldest and most respected nurseries has been sold to an international conglomerate, ending three generations of family ownership.",
+      category: "flavor",
+    },
+    {
       headline: "Prominent Mare Delivers Healthy Twins",
       body: "In a rare and closely watched event, a multiple stakes-winning mare has safely delivered healthy twin foals, defying the usual odds in thoroughbred reproduction.",
       category: "flavor",
@@ -258,6 +288,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   weather: [
     {
+      headline: "Unseasonal Frost Delays Training",
+      body: "An unexpected overnight freeze left the main track frozen solid, forcing trainers to keep their runners walking in the shedrow until mid-morning.",
+      category: "flavor",
+    },
+    {
+      headline: "High Winds Buffet the Grandstand",
+      body: "Gale-force gusts have made for unpredictable racing today, with front-runners struggling mightily against a stiff headwind down the backstretch.",
+      category: "flavor",
+    },
+    {
       headline: "Weather Alert: Clear Skies Ahead",
       body: "The regional meteorological bureau predicts ideal racing conditions for the next several days, with fast dirt and firm turf expected across most tracks.",
       category: "flavor",
@@ -319,6 +359,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   community: [
+    {
+      headline: "Retired Champion Leads Local Parade",
+      body: "A beloved former Horse of the Year made a special appearance as the grand marshal of the town's annual summer parade, delighting fans of all ages.",
+      category: "flavor",
+    },
+    {
+      headline: "Backstretch Art Exhibit Opens",
+      body: "A local gallery is hosting an exhibition of watercolors painted entirely by a prominent hotwalker, capturing the quiet moments of morning training.",
+      category: "flavor",
+    },
     {
       headline: "Local School Hosts Field Trip at the Track",
       body: "Hundreds of elementary school students visited the track this morning, getting a behind-the-scenes look at the barns and learning about equine care from local trainers.",
@@ -411,6 +461,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   industry: [
+    {
+      headline: "Micro-Share Ownership Surges",
+      body: "Industry analysts are noting a massive spike in syndicates offering micro-shares, bringing thousands of new fans into the ownership ranks for a fraction of the traditional cost.",
+      category: "flavor",
+    },
+    {
+      headline: "Historical Horse Racing Machines Approved",
+      body: "The state legislature has officially passed a bill allowing historical racing machines at the track, ensuring a significant boost to purses for the upcoming year.",
+      category: "flavor",
+    },
     {
       headline: "New Season Projections",
       body: "Pundits are already weighing in on the upcoming stakes schedule, with many predicting a highly competitive year for the 3-year-old division.",
