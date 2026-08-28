@@ -37,3 +37,4 @@ export * from "./narrativeThresholds";
 export * from "./awardsConstants";
 export * from "./gateConstants";
 export * from "./financialDistressConstants";
+export * from "./privateSaleConstants";

@@ -15,6 +15,7 @@ import { calculateLotValuation } from "@/core/auction/engine";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { attachmentAdjustedAsk, evaluateHorseAttachment } from "@/core/horse/attachment";
 import { computeDiplomaticPressure } from "@/core/horse/overrideNegotiation";
+import { DIPLOMATIC_FAILURE_FRICTION_PENALTY } from "@/constants/privateSaleConstants";
 import { calculateFrictionChange } from "@/core/stable/rivalry";
 import type { PrivateSaleOffer, Horse, Stable, StablePersonality } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
@@ -223,7 +224,7 @@ export const privateSaleResolutionPhase: PipelinePhase = {
             // Increase friction directly on npcAIManager
             if (updatedNpcAIManager?.stableStates?.[stableId]) {
               const currentFriction = updatedNpcAIManager.stableStates[stableId].friction;
-              const newFriction = calculateFrictionChange(currentFriction, 20);
+              const newFriction = calculateFrictionChange(currentFriction, DIPLOMATIC_FAILURE_FRICTION_PENALTY);
               updatedNpcAIManager = {
                 ...updatedNpcAIManager,
                 stableStates: {
