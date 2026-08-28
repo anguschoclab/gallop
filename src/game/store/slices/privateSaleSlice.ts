@@ -145,7 +145,12 @@ export function createPrivateSaleSlice(
       const allHorses = Object.values(s.horses);
       const valuation = calculateLotValuation(horse, stable, "racing_age", allHorses);
       const attachment = evaluateHorseAttachment(horse, stable);
-      const ask = attachmentAdjustedAsk(horse, stable, valuation, (s as any).reputation?.score ?? 0);
+      const ask = attachmentAdjustedAsk(
+        horse,
+        stable,
+        valuation,
+        (s as any).reputation?.score ?? 0,
+      );
 
       if (type === "premium") {
         const { cost } = computePremiumBuyout(attachment, ask);
@@ -154,7 +159,12 @@ export function createPrivateSaleSlice(
         const updatedHorse: Horse = { ...horse, ownership: makePlayerOwned() };
         const updatedOffers = s.privateSaleOffers.map((o: PrivateSaleOffer) =>
           o.id === offerId
-            ? { ...o, status: "accepted" as const, overrideType: "premium" as const, overrideAmount: cost }
+            ? {
+                ...o,
+                status: "accepted" as const,
+                overrideType: "premium" as const,
+                overrideAmount: cost,
+              }
             : o,
         );
 
@@ -167,8 +177,7 @@ export function createPrivateSaleSlice(
         return { ok: true };
       } else {
         // Diplomatic: set to override_pending, resolved next day
-        const friction =
-          (s as any).npcAIManager?.stableStates?.[stableId]?.friction ?? 0;
+        const friction = (s as any).npcAIManager?.stableStates?.[stableId]?.friction ?? 0;
         const reputationScore = (s as any).reputation?.score ?? 0;
         const { successCost } = computeDiplomaticPressure(
           attachment,

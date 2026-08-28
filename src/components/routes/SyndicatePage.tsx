@@ -222,7 +222,6 @@ function SyndicatePage() {
 
       <ShareActivityFeed syndicateId={syndicateId} />
 
-
       {syndicateTransactions.length > 0 && (
         <Card>
           <CardHeader>

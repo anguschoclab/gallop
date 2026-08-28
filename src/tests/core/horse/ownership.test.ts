@@ -1,5 +1,17 @@
 import { describe, it, expect } from "vitest";
-import { PLAYER_OWNER_ID, getStableId, isNpcOwned, isPlayerOwned, isUnowned, makeNpcOwned, makePlayerOwned, makeUnowned, ownerKey, ownershipFromStableId, type HorseOwnership } from "@/core/horse/ownership";
+import {
+  PLAYER_OWNER_ID,
+  getStableId,
+  isNpcOwned,
+  isPlayerOwned,
+  isUnowned,
+  makeNpcOwned,
+  makePlayerOwned,
+  makeUnowned,
+  ownerKey,
+  ownershipFromStableId,
+  type HorseOwnership,
+} from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 
 describe("ownership model", () => {
@@ -9,9 +21,7 @@ describe("ownership model", () => {
     });
 
     it("returns false for npc ownership", () => {
-      expect(isPlayerOwned({ ownership: makeNpcOwned(asNpcStableId("s1")) })).toBe(
-        false,
-      );
+      expect(isPlayerOwned({ ownership: makeNpcOwned(asNpcStableId("s1")) })).toBe(false);
     });
 
     it("returns false for unowned", () => {

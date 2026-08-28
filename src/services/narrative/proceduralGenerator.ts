@@ -74,6 +74,12 @@ function containsBannedPhrase(text: string): boolean {
   return BANNED_PHRASES.some((phrase) => lower.includes(phrase));
 }
 
+/**
+ * Generate a procedural narrative sentence for a race event.
+ * @param eventType - The event type key to select a grammar template.
+ * @param rng - Random number generator for template selection.
+ * @returns A generated sentence string, or empty string if the event type is unknown.
+ */
 export function generateProcedural(eventType: string, rng: Rng): string {
   const grammarKey = EVENT_GRAMMAR_KEY[eventType];
   if (!grammarKey) return "";

@@ -57,7 +57,10 @@ function isTraceEnabled(): boolean {
 const recentTraces: SyndicatePurchaseTrace[] = [];
 const MAX_TRACES = 100;
 
-/** Human-readable one-line summary of how the stake was derived. */
+/**
+ * Human-readable one-line summary of how the stake was derived.
+ * @param t
+ */
 export function formatSyndicatePurchaseTrace(t: SyndicatePurchaseTrace): string {
   return [
     `[syndicate] ${t.stableId} (${t.personality}) → ${t.stallionId}`,

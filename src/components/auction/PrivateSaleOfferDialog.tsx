@@ -171,9 +171,9 @@ export function PrivateSaleOfferDialog({
             friction={friction}
             reputationScore={reputationScore}
             onOverride={(type) => {
-              const pendingOffer = useGame.getState().privateSaleOffers.find(
-                (o) => o.horseId === horse.id && o.status === "pending",
-              );
+              const pendingOffer = useGame
+                .getState()
+                .privateSaleOffers.find((o) => o.horseId === horse.id && o.status === "pending");
               if (pendingOffer) {
                 const result = requestOverride(pendingOffer.id, type);
                 if (result.ok) {

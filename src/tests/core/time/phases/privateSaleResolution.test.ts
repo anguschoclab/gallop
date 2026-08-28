@@ -84,7 +84,11 @@ describe("privateSaleResolutionPhase", () => {
     const stable = mkStable({ personality: "aggressive" });
     const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
+    const valuation = attachmentAdjustedAsk(
+      horse,
+      stable,
+      calculateLotValuation(horse, stable, "racing_age", [horse]),
+    );
     const offerAmount = Math.round(valuation * 0.75);
 
     const ctx = createContext({
@@ -110,7 +114,11 @@ describe("privateSaleResolutionPhase", () => {
     const stable = mkStable({ personality: "aggressive" });
     const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
+    const valuation = attachmentAdjustedAsk(
+      horse,
+      stable,
+      calculateLotValuation(horse, stable, "racing_age", [horse]),
+    );
     const offerAmount = Math.round(valuation * 0.55);
 
     const ctx = createContext({
@@ -130,7 +138,11 @@ describe("privateSaleResolutionPhase", () => {
     const stable = mkStable({ personality: "aggressive" });
     const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
+    const valuation = attachmentAdjustedAsk(
+      horse,
+      stable,
+      calculateLotValuation(horse, stable, "racing_age", [horse]),
+    );
     const offerAmount = Math.round(valuation * 0.4);
 
     const ctx = createContext({
@@ -150,7 +162,11 @@ describe("privateSaleResolutionPhase", () => {
     const stable = mkStable({ personality: "conservative" });
     const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
+    const valuation = attachmentAdjustedAsk(
+      horse,
+      stable,
+      calculateLotValuation(horse, stable, "racing_age", [horse]),
+    );
     const offerAmount = Math.round(valuation * 1.05);
 
     const ctx = createContext({
@@ -168,7 +184,11 @@ describe("privateSaleResolutionPhase", () => {
     const stable = mkStable({ personality: "conservative" });
     const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
+    const valuation = attachmentAdjustedAsk(
+      horse,
+      stable,
+      calculateLotValuation(horse, stable, "racing_age", [horse]),
+    );
     const offerAmount = Math.round(valuation * 0.85);
 
     const ctx = createContext({
@@ -187,7 +207,11 @@ describe("privateSaleResolutionPhase", () => {
     const stable = mkStable({ personality: "conservative" });
     const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
+    const valuation = attachmentAdjustedAsk(
+      horse,
+      stable,
+      calculateLotValuation(horse, stable, "racing_age", [horse]),
+    );
     const offerAmount = Math.round(valuation * 0.5);
 
     const ctx = createContext({
@@ -205,7 +229,11 @@ describe("privateSaleResolutionPhase", () => {
     const stable = mkStable({ personality: "prestige" });
     const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
+    const valuation = attachmentAdjustedAsk(
+      horse,
+      stable,
+      calculateLotValuation(horse, stable, "racing_age", [horse]),
+    );
 
     const ctx1 = createContext({
       horses: h2r([horse]),
@@ -232,7 +260,11 @@ describe("privateSaleResolutionPhase", () => {
     const stable = mkStable({ personality: "breeder" });
     const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
+    const valuation = attachmentAdjustedAsk(
+      horse,
+      stable,
+      calculateLotValuation(horse, stable, "racing_age", [horse]),
+    );
 
     const ctx = createContext({
       horses: h2r([horse]),
@@ -250,7 +282,11 @@ describe("privateSaleResolutionPhase", () => {
     const stable = mkStable({ personality: "trader" });
     const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
+    const valuation = attachmentAdjustedAsk(
+      horse,
+      stable,
+      calculateLotValuation(horse, stable, "racing_age", [horse]),
+    );
 
     const ctx = createContext({
       horses: h2r([horse]),
@@ -268,7 +304,11 @@ describe("privateSaleResolutionPhase", () => {
     const stable = mkStable({ personality: "developer" });
     const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
+    const valuation = attachmentAdjustedAsk(
+      horse,
+      stable,
+      calculateLotValuation(horse, stable, "racing_age", [horse]),
+    );
 
     const ctx = createContext({
       horses: h2r([horse]),
@@ -286,7 +326,11 @@ describe("privateSaleResolutionPhase", () => {
     const stable = mkStable({ personality: "win-now" });
     const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
+    const valuation = attachmentAdjustedAsk(
+      horse,
+      stable,
+      calculateLotValuation(horse, stable, "racing_age", [horse]),
+    );
 
     const ctx = createContext({
       horses: h2r([horse]),
@@ -304,7 +348,11 @@ describe("privateSaleResolutionPhase", () => {
     const stable = mkStable({ personality: "specialist" });
     const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
+    const valuation = attachmentAdjustedAsk(
+      horse,
+      stable,
+      calculateLotValuation(horse, stable, "racing_age", [horse]),
+    );
 
     const ctx = createContext({
       horses: h2r([horse]),
@@ -342,7 +390,11 @@ describe("privateSaleResolutionPhase", () => {
     const stable = mkStable({ personality: "aggressive" });
     const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
+    const valuation = attachmentAdjustedAsk(
+      horse,
+      stable,
+      calculateLotValuation(horse, stable, "racing_age", [horse]),
+    );
     const offerAmount = Math.round(valuation * 0.75);
 
     const ctx = createContext({
@@ -377,7 +429,11 @@ describe("privateSaleResolutionPhase", () => {
     const stable = mkStable({ personality: "aggressive" });
     const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", [horse]));
+    const valuation = attachmentAdjustedAsk(
+      horse,
+      stable,
+      calculateLotValuation(horse, stable, "racing_age", [horse]),
+    );
     const offerAmount = Math.round(valuation * 0.55);
 
     const ctx = createContext({
@@ -399,7 +455,11 @@ describe("privateSaleResolutionPhase", () => {
     });
     const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse1, stable, calculateLotValuation(horse1, stable, "racing_age", [horse1, horse2]));
+    const valuation = attachmentAdjustedAsk(
+      horse1,
+      stable,
+      calculateLotValuation(horse1, stable, "racing_age", [horse1, horse2]),
+    );
 
     const ctx = createContext({
       horses: h2r([horse1, horse2]),
@@ -457,7 +517,11 @@ describe("privateSaleResolutionPhase", () => {
     const stable = mkStable({ horses: [asHorseId("horse-1"), asHorseId("horse-2")] });
     const { calculateLotValuation } = await import("@/core/auction/engine");
     const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
-    const valuation = attachmentAdjustedAsk(horse1, stable, calculateLotValuation(horse1, stable, "racing_age", [horse1, horse2]));
+    const valuation = attachmentAdjustedAsk(
+      horse1,
+      stable,
+      calculateLotValuation(horse1, stable, "racing_age", [horse1, horse2]),
+    );
 
     const ctx = createContext({
       horses: h2r([horse1, horse2]),
@@ -478,7 +542,8 @@ describe("privateSaleResolutionPhase", () => {
   it("regional reputation raises ask for protected horse — offer accepted at rep=0 is countered at rep=300", async () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk, evaluateHorseAttachment } = await import("@/core/horse/attachment");
+    const { attachmentAdjustedAsk, evaluateHorseAttachment } =
+      await import("@/core/horse/attachment");
 
     // Horse with enough signals to reach "protected" tier (score >= 52)
     const horse = mkHorse({
@@ -525,7 +590,8 @@ describe("privateSaleResolutionPhase", () => {
   it("regional reputation does NOT affect valued horse — same outcome as rep=0", async () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk, evaluateHorseAttachment } = await import("@/core/horse/attachment");
+    const { attachmentAdjustedAsk, evaluateHorseAttachment } =
+      await import("@/core/horse/attachment");
 
     // Default test horse is "valued" (fame=30, potential=75 → score ~28)
     const horse = mkHorse();
@@ -562,7 +628,8 @@ describe("privateSaleResolutionPhase", () => {
   it("legendary reputation (score=900) raises ask even more for untouchable horse", async () => {
     const mod = await import("@/core/time/phases/privateSaleResolution");
     const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk, evaluateHorseAttachment } = await import("@/core/horse/attachment");
+    const { attachmentAdjustedAsk, evaluateHorseAttachment } =
+      await import("@/core/horse/attachment");
 
     // Horse with enough signals to reach "untouchable" tier (score >= 78)
     const horse = mkHorse({
@@ -583,7 +650,7 @@ describe("privateSaleResolutionPhase", () => {
     const askAtRep900 = attachmentAdjustedAsk(horse, stable, marketValue, 900);
 
     // Premium at legendary is 30%
-    expect(askAtRep900).toBe(Math.round(askAtRep0 * 1.30));
+    expect(askAtRep900).toBe(Math.round(askAtRep0 * 1.3));
 
     // Offer at 0.7x ask_0 → accepted at rep=0, but at rep=900 ratio ≈ 0.7/1.30 ≈ 0.54
     // For aggressive: 0.54 >= 0.5 (counter threshold) → countered

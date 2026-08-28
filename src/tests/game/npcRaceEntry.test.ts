@@ -109,9 +109,7 @@ describe("selectHorsesForRaceEntry", () => {
     const horse = mkHorse({ id: "h1", ownership: makeNpcOwned("s1"), energy: 80 });
     const horseMap = new Map([["h1", horse]]);
     const race = mkRace({
-      entries: [
-        { horseId: "h1", ownership: makeNpcOwned(asNpcStableId("s1"))},
-      ],
+      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("s1")) }],
     });
     const stable = mkStable({ horses: ["h1"] });
     const result = selectHorsesForRaceEntry(stable, horseMap, race, new Set());
@@ -251,8 +249,18 @@ describe("selectHorsesForRaceEntry", () => {
   });
 
   it("handles horses with very low form", () => {
-    const lowFormHorse = mkHorse({ id: "h1", ownership: makeNpcOwned("s1"), energy: 80, form: -10 });
-    const normalFormHorse = mkHorse({ id: "h2", ownership: makeNpcOwned("s1"), energy: 80, form: 5 });
+    const lowFormHorse = mkHorse({
+      id: "h1",
+      ownership: makeNpcOwned("s1"),
+      energy: 80,
+      form: -10,
+    });
+    const normalFormHorse = mkHorse({
+      id: "h2",
+      ownership: makeNpcOwned("s1"),
+      energy: 80,
+      form: 5,
+    });
 
     const horseMap = new Map([
       ["h1", lowFormHorse],
@@ -281,9 +289,7 @@ describe("runNpcRaceEntry", () => {
       id: "full",
       day: 3,
       fieldSize: 1,
-      entries: [
-        { horseId: "h99", ownership: makeNpcOwned(asNpcStableId("s99"))},
-      ],
+      entries: [{ horseId: "h99", ownership: makeNpcOwned(asNpcStableId("s99")) }],
     });
     const stables = [mkStable()];
     const horses = [mkHorse({ id: "h1", ownership: makeNpcOwned("s1"), energy: 80 })];
@@ -306,7 +312,12 @@ describe("runNpcRaceEntry", () => {
   });
 
   it("selects free agent with affinity over higher-fame jockey (chemistry-aware)", () => {
-    const horse = mkHorse({ id: "h1", ownership: makeNpcOwned("s1"), energy: 80, runningStyle: "P" });
+    const horse = mkHorse({
+      id: "h1",
+      ownership: makeNpcOwned("s1"),
+      energy: 80,
+      runningStyle: "P",
+    });
     const race = mkRace({ id: "r1", day: 2, fieldSize: 10 });
     const stable = mkStable({ horses: ["h1"] });
 
@@ -346,9 +357,7 @@ describe("fillRaceWithFillerHorses", () => {
   it("does not add already-entered horses", () => {
     const horse = mkHorse({ id: "h1", ownership: makeNpcOwned(asNpcStableId("s1")), energy: 80 });
     const race = mkRace({
-      entries: [
-        { horseId: "h1", ownership: makeNpcOwned(asNpcStableId("s1"))},
-      ],
+      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("s1")) }],
       fieldSize: 5,
     });
     const { updatedRace } = fillRaceWithFillerHorses(race, [mkStable()], [horse], 3);

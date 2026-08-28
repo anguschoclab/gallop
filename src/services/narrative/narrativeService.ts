@@ -22,7 +22,13 @@ import { NarrativeState } from "./narrativeState";
 import { generateDynamicMilestones } from "./narrativeMilestones";
 import { checkConditionTransitions } from "./narrativeConditionChecks";
 import { JOCKEY_TRAIT_TEMPLATES } from "@/assets/narrative/jockeyTemplates";
-import { getCourseForRace, getTrackById, getTrackByName, type Track, type CourseSpecification } from "@/data/tracks";
+import {
+  getCourseForRace,
+  getTrackById,
+  getTrackByName,
+  type Track,
+  type CourseSpecification,
+} from "@/data/tracks";
 import {
   ATMOSPHERE_LONG_STRAIGHT_TEMPLATES,
   ATMOSPHERE_TIGHT_TURN_TEMPLATES,
@@ -286,11 +292,21 @@ export class NarrativeGenerator {
         if (runner) {
           if (
             this.memory.canCallback(runner.horseId, "LEAD_CHANGE") &&
-            this.state.canAnnounce("CONFIRMATION_NOTE", runner.horseId, simTime, NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN) &&
-            this.rng.next() < 0.20
+            this.state.canAnnounce(
+              "CONFIRMATION_NOTE",
+              runner.horseId,
+              simTime,
+              NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN,
+            ) &&
+            this.rng.next() < 0.2
           ) {
             newLines.push(this.createLine("CONFIRMATION_NOTE", simTime, runner));
-            this.state.setCooldown("CONFIRMATION_NOTE", runner.horseId, simTime, NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN);
+            this.state.setCooldown(
+              "CONFIRMATION_NOTE",
+              runner.horseId,
+              simTime,
+              NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN,
+            );
           } else {
             const line = this.createLine("LEAD_CHANGE", simTime, runner);
             line.isHighImpact = true;
@@ -379,15 +395,26 @@ export class NarrativeGenerator {
         if (event.type === "SURGE" && this.state.canAnnounce("SURGE", r.horseId, simTime)) {
           if (
             this.memory.canCallback(r.horseId, "SURGE") &&
-            this.state.canAnnounce("COMEBACK_NOTE", r.horseId, simTime, NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN) &&
-            this.rng.next() < 0.20
+            this.state.canAnnounce(
+              "COMEBACK_NOTE",
+              r.horseId,
+              simTime,
+              NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN,
+            ) &&
+            this.rng.next() < 0.2
           ) {
             newLines.push(this.createLine("COMEBACK_NOTE", simTime, r));
-            this.state.setCooldown("COMEBACK_NOTE", r.horseId, simTime, NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN);
+            this.state.setCooldown(
+              "COMEBACK_NOTE",
+              r.horseId,
+              simTime,
+              NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN,
+            );
           } else {
             const line = this.createLine("SURGE", simTime, r);
-            if (this.memory.canCallback(r.horseId, "SURGE") && this.rng.next() < 0.20) {
-              const clause = CALLBACK_CLAUSES[Math.floor(this.rng.next() * CALLBACK_CLAUSES.length)];
+            if (this.memory.canCallback(r.horseId, "SURGE") && this.rng.next() < 0.2) {
+              const clause =
+                CALLBACK_CLAUSES[Math.floor(this.rng.next() * CALLBACK_CLAUSES.length)];
               line.text = `${clause}${line.text}`;
             }
             newLines.push(line);
@@ -489,13 +516,23 @@ export class NarrativeGenerator {
         line.type === "FLYING" &&
         line.horseId &&
         this.memory.canCallback(line.horseId, "FLYING") &&
-        this.state.canAnnounce("REDEMPTION_NOTE", line.horseId, simTime, NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN) &&
-        this.rng.next() < 0.20
+        this.state.canAnnounce(
+          "REDEMPTION_NOTE",
+          line.horseId,
+          simTime,
+          NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN,
+        ) &&
+        this.rng.next() < 0.2
       ) {
         const runner = runners.find((r) => r.horseId === line.horseId);
         if (runner) {
           newLines.push(this.createLine("REDEMPTION_NOTE", simTime, runner));
-          this.state.setCooldown("REDEMPTION_NOTE", line.horseId, simTime, NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN);
+          this.state.setCooldown(
+            "REDEMPTION_NOTE",
+            line.horseId,
+            simTime,
+            NARRATIVE_THRESHOLDS.CALLBACK_COOLDOWN,
+          );
           continue;
         }
       }
@@ -503,7 +540,7 @@ export class NarrativeGenerator {
         line.type === "FLYING" &&
         line.horseId &&
         this.memory.canCallback(line.horseId, "FLYING") &&
-        this.rng.next() < 0.20
+        this.rng.next() < 0.2
       ) {
         const clause = CALLBACK_CLAUSES[Math.floor(this.rng.next() * CALLBACK_CLAUSES.length)];
         line.text = `${clause}${line.text}`;
@@ -536,7 +573,8 @@ export class NarrativeGenerator {
         // For trait-based events, select the specific trait template
         if (event.type === "JOCKEY_TRAIT" && event.data?.trait && r.jockey) {
           const trait = event.data.trait as string;
-          const traitTemplates = JOCKEY_TRAIT_TEMPLATES[trait as keyof typeof JOCKEY_TRAIT_TEMPLATES];
+          const traitTemplates =
+            JOCKEY_TRAIT_TEMPLATES[trait as keyof typeof JOCKEY_TRAIT_TEMPLATES];
           if (traitTemplates && traitTemplates.length > 0) {
             const tpl = traitTemplates[Math.floor(this.rng.next() * traitTemplates.length)];
             line.text = this.substituteJockeyTemplate(tpl, r);
@@ -719,6 +757,7 @@ export class NarrativeGenerator {
    * @param timestamp - Current simulation time
    * @param runner - Optional runner involved in the event
    * @param lengths - Optional distance gap in lengths
+   * @param templateOverride
    * @returns Hydrated CommentaryLine object
    */
   private createLine(
@@ -757,6 +796,9 @@ export class NarrativeGenerator {
 
   /**
    * Substitute jockey-related placeholders in a trait template string.
+   * @param template - The template string with jockey/horse placeholders.
+   * @param runner - The runner whose jockey info fills the placeholders.
+   * @returns The template with all placeholders substituted.
    */
   private substituteJockeyTemplate(template: string, runner: Runner): string {
     let text = template;

@@ -37,7 +37,10 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
   const activeOffersMap = useMemo(() => {
     const map = new Map<string, PrivateSaleOffer>();
     privateSaleOffers.forEach((o: PrivateSaleOffer) => {
-      if (o.fromStableId === undefined && (o.status === "pending" || o.status === "countered" || o.status === "override_pending")) {
+      if (
+        o.fromStableId === undefined &&
+        (o.status === "pending" || o.status === "countered" || o.status === "override_pending")
+      ) {
         map.set(o.horseId, o);
       }
     });
@@ -94,7 +97,10 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
                           {attachment.signals.slice(0, 3).map((s) => (
                             <li key={s.label} className="flex justify-between gap-2">
                               <span>{s.label}</span>
-                              <span className="tabular-nums">{s.points > 0 ? "+" : ""}{s.points}</span>
+                              <span className="tabular-nums">
+                                {s.points > 0 ? "+" : ""}
+                                {s.points}
+                              </span>
                             </li>
                           ))}
                         </ul>
@@ -103,7 +109,6 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
                     </Tooltip>
                   </TooltipProvider>
                 )}
-
 
                 <div className="mt-2 flex flex-wrap gap-2 justify-end">
                   <DisabledTooltipWrapper

@@ -7,8 +7,17 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { execSync } from "node:child_process";
 
 const BINARY_EXT = new Set([
-  ".png", ".jpg", ".jpeg", ".gif", ".ico", ".lockb",
-  ".woff", ".woff2", ".ttf", ".eot", ".otf",
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".gif",
+  ".ico",
+  ".lockb",
+  ".woff",
+  ".woff2",
+  ".ttf",
+  ".eot",
+  ".otf",
 ]);
 
 const files = execSync("git ls-files", { encoding: "utf-8" })

@@ -44,7 +44,8 @@ export function useHorseActions(horseId: string) {
       !horse.stud?.atStud &&
       !isConsigned;
 
-    const canRetireToPasture = isPlayerOwned(horse) && horse.lifecycleStatus === "active" && !isConsigned;
+    const canRetireToPasture =
+      isPlayerOwned(horse) && horse.lifecycleStatus === "active" && !isConsigned;
 
     const consignedSale = isConsigned
       ? auctions.find((a: AuctionSale) => a.id === horse.consignedSaleId)

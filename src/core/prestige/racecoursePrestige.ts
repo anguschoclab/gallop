@@ -68,28 +68,41 @@ function scores(): CourseScores {
   return cache;
 }
 
-/** Prestige score (0-100) for a racecourse by track id. */
+/**
+ * Prestige score (0-100) for a racecourse by track id.
+ * @param trackId
+ */
 export function getRacecoursePrestige(trackId?: string): number {
   if (!trackId) return RACECOURSE_FLOOR_PRESTIGE;
   return scores().byTrackId.get(trackId) ?? RACECOURSE_FLOOR_PRESTIGE;
 }
 
-/** Prestige score (0-100) for a racecourse by display name. */
+/**
+ * Prestige score (0-100) for a racecourse by display name.
+ * @param trackName
+ */
 export function getRacecoursePrestigeByName(trackName?: string): number {
   if (!trackName) return RACECOURSE_FLOOR_PRESTIGE;
   return scores().byTrackName.get(trackName) ?? RACECOURSE_FLOOR_PRESTIGE;
 }
 
-/** Multiplier on fame/reputation earned at a racecourse. */
+/**
+ * Multiplier on fame/reputation earned at a racecourse.
+ * @param trackId
+ * @param trackName
+ */
 export function racecoursePrestigeMultiplier(trackId?: string, trackName?: string): number {
-  const score = trackId
-    ? getRacecoursePrestige(trackId)
-    : getRacecoursePrestigeByName(trackName);
+  const score = trackId ? getRacecoursePrestige(trackId) : getRacecoursePrestigeByName(trackName);
   return prestigeMultiplier(score, RACECOURSE_PRESTIGE_SPREAD);
 }
 
 /** Courses ranked by prestige, highest first. */
-export function rankedRacecourses(): { id: string; name: string; country: string; prestige: number }[] {
+export function rankedRacecourses(): {
+  id: string;
+  name: string;
+  country: string;
+  prestige: number;
+}[] {
   return TRACKS.map((t) => ({
     id: t.id,
     name: t.name,

@@ -158,12 +158,16 @@ export const privateSaleResolutionPhase: PipelinePhase = {
         } else if (offer.overrideType === "diplomatic") {
           // Diplomatic pressure: RNG-based success/failure
           const attachment = evaluateHorseAttachment(horse, stable);
-          const friction =
-            updatedNpcAIManager?.stableStates?.[stableId]?.friction ?? 0;
+          const friction = updatedNpcAIManager?.stableStates?.[stableId]?.friction ?? 0;
           const reputationScore = state.reputation?.score ?? 0;
           const { odds, successCost, failurePenalty } = computeDiplomaticPressure(
             attachment,
-            attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", allHorsesArray, horseMap), state.reputation?.score ?? 0),
+            attachmentAdjustedAsk(
+              horse,
+              stable,
+              calculateLotValuation(horse, stable, "racing_age", allHorsesArray, horseMap),
+              state.reputation?.score ?? 0,
+            ),
             friction,
             reputationScore,
           );
@@ -224,7 +228,10 @@ export const privateSaleResolutionPhase: PipelinePhase = {
             // Increase friction directly on npcAIManager
             if (updatedNpcAIManager?.stableStates?.[stableId]) {
               const currentFriction = updatedNpcAIManager.stableStates[stableId].friction;
-              const newFriction = calculateFrictionChange(currentFriction, DIPLOMATIC_FAILURE_FRICTION_PENALTY);
+              const newFriction = calculateFrictionChange(
+                currentFriction,
+                DIPLOMATIC_FAILURE_FRICTION_PENALTY,
+              );
               updatedNpcAIManager = {
                 ...updatedNpcAIManager,
                 stableStates: {
@@ -247,9 +254,20 @@ export const privateSaleResolutionPhase: PipelinePhase = {
       }
 
       // ── Normal pending offer handling ──
-      const marketValue = calculateLotValuation(horse, stable, "racing_age", allHorsesArray, horseMap);
+      const marketValue = calculateLotValuation(
+        horse,
+        stable,
+        "racing_age",
+        allHorsesArray,
+        horseMap,
+      );
       const attachment = evaluateHorseAttachment(horse, stable);
-      const valuation = attachmentAdjustedAsk(horse, stable, marketValue, state.reputation?.score ?? 0);
+      const valuation = attachmentAdjustedAsk(
+        horse,
+        stable,
+        marketValue,
+        state.reputation?.score ?? 0,
+      );
       const offerRatio = offer.amount / valuation;
       const personality = stable.personality;
       const acceptThreshold = ACCEPT_THRESHOLDS[personality];

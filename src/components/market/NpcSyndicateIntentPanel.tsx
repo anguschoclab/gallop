@@ -88,10 +88,8 @@ export function NpcSyndicateIntentPanel({
                 </div>
                 <div className="mt-1 flex items-center justify-between text-xs text-cream-muted">
                   <span>
-                    Target stake up to {r.targetPct}% ({Math.floor(
-                      (syndicate.totalShares * r.targetPct) / 100,
-                    )}{" "}
-                    shares)
+                    Target stake up to {r.targetPct}% (
+                    {Math.floor((syndicate.totalShares * r.targetPct) / 100)} shares)
                   </span>
                   <span className={r.expectedShares > 0 ? "text-gold" : ""}>
                     {r.expectedShares > 0 ? `Wants ${r.expectedShares} now` : "Holding off"}

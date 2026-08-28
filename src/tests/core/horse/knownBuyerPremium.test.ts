@@ -113,7 +113,7 @@ describe("knownBuyerPremiumMultiplier", () => {
   });
 
   it("returns 0.10 for protected tier when reputation score is 300 (regional)", () => {
-    expect(knownBuyerPremiumMultiplier("protected", 300)).toBe(0.10);
+    expect(knownBuyerPremiumMultiplier("protected", 300)).toBe(0.1);
   });
 
   it("returns 0.15 for protected tier when reputation score is 450 (national)", () => {
@@ -121,7 +121,7 @@ describe("knownBuyerPremiumMultiplier", () => {
   });
 
   it("returns 0.20 for untouchable tier when reputation score is 600 (international)", () => {
-    expect(knownBuyerPremiumMultiplier("untouchable", 600)).toBe(0.20);
+    expect(knownBuyerPremiumMultiplier("untouchable", 600)).toBe(0.2);
   });
 
   it("returns 0.25 for untouchable tier when reputation score is 750 (world_class)", () => {
@@ -129,7 +129,7 @@ describe("knownBuyerPremiumMultiplier", () => {
   });
 
   it("returns 0.30 for untouchable tier when reputation score is 900 (legendary)", () => {
-    expect(knownBuyerPremiumMultiplier("untouchable", 900)).toBe(0.30);
+    expect(knownBuyerPremiumMultiplier("untouchable", 900)).toBe(0.3);
   });
 
   it("premium increases monotonically with reputation tier for protected", () => {
@@ -187,7 +187,7 @@ describe("attachmentAdjustedAsk with reputation", () => {
     const askWithoutRep = attachmentAdjustedAsk(horse, stable, marketValue);
     const askWithRep = attachmentAdjustedAsk(horse, stable, marketValue, 300);
     expect(askWithRep).toBeGreaterThan(askWithoutRep);
-    expect(askWithRep).toBe(Math.round(askWithoutRep * 1.10));
+    expect(askWithRep).toBe(Math.round(askWithoutRep * 1.1));
   });
 
   it("ask is higher for untouchable horse when reputation is 900 (legendary)", () => {
@@ -197,7 +197,7 @@ describe("attachmentAdjustedAsk with reputation", () => {
     const askWithoutRep = attachmentAdjustedAsk(horse, stable, marketValue);
     const askWithRep = attachmentAdjustedAsk(horse, stable, marketValue, 900);
     expect(askWithRep).toBeGreaterThan(askWithoutRep);
-    expect(askWithRep).toBe(Math.round(askWithoutRep * 1.30));
+    expect(askWithRep).toBe(Math.round(askWithoutRep * 1.3));
   });
 
   it("ask unchanged for available horse even at reputation 900 (legendary)", () => {

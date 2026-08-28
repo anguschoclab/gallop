@@ -204,7 +204,9 @@ function AuctionSalePage() {
               </div>
             ) : null}
 
-            {isResolved && <ResolvedSaleSummary activeLots={activeLots} horseMap={horseMap} sale={sale} />}
+            {isResolved && (
+              <ResolvedSaleSummary activeLots={activeLots} horseMap={horseMap} sale={sale} />
+            )}
           </main>
         </div>
       )}

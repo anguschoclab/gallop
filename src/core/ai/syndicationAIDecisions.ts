@@ -11,11 +11,7 @@ import {
 import { findMajorityOwner } from "@/core/breeding/devolutionUtils";
 import { getCareerStats } from "@/core/horse/stats";
 import { getSyndicationAppetite } from "./syndicationAppetite";
-import {
-  recordSyndicatePurchaseTrace,
-  type SyndicatePurchaseTrace,
-} from "./syndicationTrace";
-
+import { recordSyndicatePurchaseTrace, type SyndicatePurchaseTrace } from "./syndicationTrace";
 
 export function shouldCreateSyndicateWithLearning(
   aiState: SyndicationAIState,
@@ -82,6 +78,9 @@ function sharesToTriggerDevolution(
 /**
  * Full trace of the NPC share-purchase decision: personality appetite,
  * proven quality gate, cash budget and the resulting stake.
+ * @param npcStable
+ * @param syndicate
+ * @param stallion
  */
 export function evaluateSharePurchase(
   npcStable: Stable,
@@ -161,7 +160,6 @@ export function calculateSharePurchase(
   recordSyndicatePurchaseTrace(trace);
   return trace.shares;
 }
-
 
 export function calculateShareSale(
   npcStable: Stable,

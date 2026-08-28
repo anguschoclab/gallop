@@ -132,7 +132,9 @@ describe("prestige scaling — cross-consistency", () => {
   });
 
   it(`prestigeMultiplier(${MAX_PRESTIGE_SCORE}, ${HOUSE_PRESTIGE_SPREAD}) = ${1 + HOUSE_PRESTIGE_SPREAD}`, () => {
-    expect(prestigeMultiplier(MAX_PRESTIGE_SCORE, HOUSE_PRESTIGE_SPREAD)).toBe(1 + HOUSE_PRESTIGE_SPREAD);
+    expect(prestigeMultiplier(MAX_PRESTIGE_SCORE, HOUSE_PRESTIGE_SPREAD)).toBe(
+      1 + HOUSE_PRESTIGE_SPREAD,
+    );
   });
 
   it(`prestigeMultiplier(0, ${HOUSE_PRESTIGE_SPREAD}) = ${1 - HOUSE_PRESTIGE_SPREAD}`, () => {
@@ -140,7 +142,9 @@ describe("prestige scaling — cross-consistency", () => {
   });
 
   it(`prestigeMultiplier(${MAX_PRESTIGE_SCORE}, ${RACECOURSE_PRESTIGE_SPREAD}) = ${1 + RACECOURSE_PRESTIGE_SPREAD}`, () => {
-    expect(prestigeMultiplier(MAX_PRESTIGE_SCORE, RACECOURSE_PRESTIGE_SPREAD)).toBe(1 + RACECOURSE_PRESTIGE_SPREAD);
+    expect(prestigeMultiplier(MAX_PRESTIGE_SCORE, RACECOURSE_PRESTIGE_SPREAD)).toBe(
+      1 + RACECOURSE_PRESTIGE_SPREAD,
+    );
   });
 
   it(`prestigeMultiplier(0, ${RACECOURSE_PRESTIGE_SPREAD}) = ${1 - RACECOURSE_PRESTIGE_SPREAD}`, () => {
@@ -148,11 +152,15 @@ describe("prestige scaling — cross-consistency", () => {
   });
 
   it("prestigeMultiplier clamps above max", () => {
-    expect(prestigeMultiplier(150, RACECOURSE_PRESTIGE_SPREAD)).toBe(1 + RACECOURSE_PRESTIGE_SPREAD);
+    expect(prestigeMultiplier(150, RACECOURSE_PRESTIGE_SPREAD)).toBe(
+      1 + RACECOURSE_PRESTIGE_SPREAD,
+    );
   });
 
   it("prestigeMultiplier clamps below 0", () => {
-    expect(prestigeMultiplier(-10, RACECOURSE_PRESTIGE_SPREAD)).toBe(1 - RACECOURSE_PRESTIGE_SPREAD);
+    expect(prestigeMultiplier(-10, RACECOURSE_PRESTIGE_SPREAD)).toBe(
+      1 - RACECOURSE_PRESTIGE_SPREAD,
+    );
   });
 });
 

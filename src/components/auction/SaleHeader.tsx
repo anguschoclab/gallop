@@ -82,12 +82,8 @@ export function SaleHeader({
             </>
           )}
         </div>
-        {house && (
-          <p className="mt-2 text-xs text-cream/40 max-w-xl italic">{house.blurb}</p>
-        )}
-        {house && (
-          <SalePrestigeBreakdown house={house} variant="compact" className="mt-3" />
-        )}
+        {house && <p className="mt-2 text-xs text-cream/40 max-w-xl italic">{house.blurb}</p>}
+        {house && <SalePrestigeBreakdown house={house} variant="compact" className="mt-3" />}
       </div>
 
       <div className="flex flex-col items-end gap-1">

@@ -10,7 +10,6 @@
 import type { StablePersonality } from "@/game/types";
 import { getSyndicationTuning } from "./syndicationTuning";
 
-
 export interface SyndicationAppetite {
   /** Max fraction of a syndicate's total shares this personality will hold. */
   stakeCapPct: number;
@@ -136,6 +135,7 @@ export function getSyndicateIntent(personality: StablePersonality): SyndicateInt
 
 /**
  * Base (untuned) appetite for a personality.
+ * @param personality
  */
 export function getBaseSyndicationAppetite(personality: StablePersonality): SyndicationAppetite {
   return SYNDICATION_APPETITE[personality] ?? FALLBACK_APPETITE;
@@ -143,6 +143,7 @@ export function getBaseSyndicationAppetite(personality: StablePersonality): Synd
 
 /**
  * Appetite after the configurable tuning layer is applied.
+ * @param personality
  */
 export function getSyndicationAppetite(personality: StablePersonality): SyndicationAppetite {
   const base = getBaseSyndicationAppetite(personality);
@@ -160,4 +161,3 @@ function clamp01(value: number): number {
   if (!Number.isFinite(value) || value < 0) return 0;
   return Math.min(1, value);
 }
-

@@ -56,11 +56,7 @@ const mkOverrideOffer = (overrides: Partial<PrivateSaleOffer> = {}): PrivateSale
   ...overrides,
 });
 
-const createContext = (
-  state: Partial<GameState>,
-  newDay = 10,
-  rng?: any,
-): PipelineContext =>
+const createContext = (state: Partial<GameState>, newDay = 10, rng?: any): PipelineContext =>
   createMockPipelineContext({
     state: { ...makeGameState(), ...state } as GameState,
     newDay,
@@ -182,8 +178,7 @@ describe("privateSaleOverrideResolution", () => {
       mockRng,
     );
     const result = privateSaleResolutionPhase.execute(ctx);
-    const updatedFriction =
-      result.state.npcAIManager?.stableStates?.["stable-1"]?.friction;
+    const updatedFriction = result.state.npcAIManager?.stableStates?.["stable-1"]?.friction;
     expect(updatedFriction).toBeGreaterThan(initialFriction);
   });
 
@@ -218,8 +213,7 @@ describe("privateSaleOverrideResolution", () => {
       mockRng,
     );
     const result = privateSaleResolutionPhase.execute(ctx);
-    const updatedFriction =
-      result.state.npcAIManager?.stableStates?.["stable-1"]?.friction;
+    const updatedFriction = result.state.npcAIManager?.stableStates?.["stable-1"]?.friction;
     expect(updatedFriction).toBeLessThanOrEqual(100);
   });
 

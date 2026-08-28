@@ -191,7 +191,7 @@ describe("privateSaleSlice requestOverride", () => {
     expect(rep300Amount).toBeGreaterThan(rep0Amount);
     // Premium is applied to ask before computePremiumBuyout multiplies it,
     // so the ratio is ~1.10 but may differ by ±1 due to rounding order.
-    expect(rep300Amount).toBeCloseTo(rep0Amount * 1.10, -1);
+    expect(rep300Amount).toBeCloseTo(rep0Amount * 1.1, -1);
   });
 
   it("requestOverride diplomatic with regional reputation — overrideAmount higher than rep=0", () => {
@@ -233,6 +233,6 @@ describe("privateSaleSlice requestOverride", () => {
     expect(rep300Amount).toBeGreaterThan(rep0Amount);
     // Premium is applied to ask before computeDiplomaticPressure multiplies it,
     // so the ratio is ~1.10 but may differ by ±1 due to rounding order.
-    expect(rep300Amount).toBeCloseTo(rep0Amount * 1.10, -1);
+    expect(rep300Amount).toBeCloseTo(rep0Amount * 1.1, -1);
   });
 });

@@ -70,7 +70,10 @@ const FILE_TUNING = loadFileTuning();
 
 let runtimeTuning: SyndicationTuning = { global: {}, personalities: {} };
 
-/** Merge order: file config, then any runtime override. */
+/**
+ * Merge order: file config, then any runtime override.
+ * @param {...any} entries
+ */
 function mergeEntries(...entries: SyndicationTuningEntry[]): SyndicationTuningEntry {
   const out: SyndicationTuningEntry = { ...NEUTRAL };
   for (const e of entries) {
@@ -89,6 +92,7 @@ function mergeEntries(...entries: SyndicationTuningEntry[]): SyndicationTuningEn
 /**
  * Effective tuning entry for a personality (file config × runtime overrides,
  * with global knobs folded in).
+ * @param personality
  */
 export function getSyndicationTuning(personality: StablePersonality): SyndicationTuningEntry {
   return mergeEntries(
@@ -99,7 +103,10 @@ export function getSyndicationTuning(personality: StablePersonality): Syndicatio
   );
 }
 
-/** Apply runtime overrides (merged into whatever is already set). */
+/**
+ * Apply runtime overrides (merged into whatever is already set).
+ * @param overrides
+ */
 export function setSyndicationTuningOverrides(overrides: Partial<SyndicationTuning>): void {
   runtimeTuning = {
     global: { ...runtimeTuning.global, ...(overrides.global ?? {}) },

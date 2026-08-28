@@ -70,6 +70,12 @@ const EVENT_VERB_KEY: Record<string, keyof typeof VERBS> = {
   FLYING: "fly",
 };
 
+/**
+ * Compose a narrative sentence for a race event from grammar fragments.
+ * @param eventType - The event type key to select verb/subject fragments.
+ * @param rng - Random number generator for fragment selection.
+ * @returns A composed sentence string, or empty string if the event type is unknown.
+ */
 export function composeSentence(eventType: string, rng: Rng): string {
   const verbKey = EVENT_VERB_KEY[eventType];
   if (!verbKey) return "";

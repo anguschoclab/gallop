@@ -11,7 +11,12 @@
  */
 
 import type { Horse, Stable } from "@/game/types";
-import { OFFER_ROUND_INCREMENT, LOWBALL_OFFER_MULTIPLIER, GENEROUS_OFFER_MULTIPLIER, KNOWN_BUYER_PREMIUM_BY_TIER } from "@/constants/privateSaleConstants";
+import {
+  OFFER_ROUND_INCREMENT,
+  LOWBALL_OFFER_MULTIPLIER,
+  GENEROUS_OFFER_MULTIPLIER,
+  KNOWN_BUYER_PREMIUM_BY_TIER,
+} from "@/constants/privateSaleConstants";
 import { getReputationTier } from "@/core/reputation/reputationTypes";
 
 export type AttachmentTier = "available" | "valued" | "protected" | "untouchable";
@@ -204,8 +209,10 @@ export function suggestedOfferTiers(ask: number): {
   fair: number;
   generous: number;
 } {
-  const round = (n: number) => Math.max(OFFER_ROUND_INCREMENT, Math.round(n / OFFER_ROUND_INCREMENT) * OFFER_ROUND_INCREMENT);
-  const roundUp = (n: number) => Math.max(OFFER_ROUND_INCREMENT, Math.ceil(n / OFFER_ROUND_INCREMENT) * OFFER_ROUND_INCREMENT);
+  const round = (n: number) =>
+    Math.max(OFFER_ROUND_INCREMENT, Math.round(n / OFFER_ROUND_INCREMENT) * OFFER_ROUND_INCREMENT);
+  const roundUp = (n: number) =>
+    Math.max(OFFER_ROUND_INCREMENT, Math.ceil(n / OFFER_ROUND_INCREMENT) * OFFER_ROUND_INCREMENT);
   return {
     lowball: round(ask * LOWBALL_OFFER_MULTIPLIER),
     fair: roundUp(ask),

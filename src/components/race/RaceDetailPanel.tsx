@@ -86,7 +86,11 @@ export function RaceDetailPanel({ race }: RaceDetailPanelProps) {
                   {graded.track}
                   <PrestigeBadge score={getRacecoursePrestigeByName(graded.track)} />
                 </div>
-                <RacePrestigeBreakdown trackName={graded.track} variant="compact" className="mt-2" />
+                <RacePrestigeBreakdown
+                  trackName={graded.track}
+                  variant="compact"
+                  className="mt-2"
+                />
               </div>
             </>
           )}

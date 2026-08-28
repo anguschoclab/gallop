@@ -40,9 +40,7 @@ function MetricRow({ label, value, tooltip }: MetricRowProps) {
           <span className="font-mono text-xs font-bold text-cream tabular-nums">{value}</span>
         </div>
       </TooltipTrigger>
-      <TooltipContent className="max-w-xs text-xs leading-relaxed">
-        {tooltip}
-      </TooltipContent>
+      <TooltipContent className="max-w-xs text-xs leading-relaxed">{tooltip}</TooltipContent>
     </Tooltip>
   );
 }
@@ -116,8 +114,13 @@ export function SalePrestigeBreakdown({
               Worked Example
             </div>
             <div className="text-xs text-cream-muted font-mono space-y-0.5">
-              <div>Reserve: {formatCurrency(sampleBase)} → {formatCurrency(sampleReserve)}</div>
-              <div>Hammer: {formatCurrency(sampleHammer)} → Commission {formatCurrency(sampleCommission)} → Net {formatCurrency(sampleNet)}</div>
+              <div>
+                Reserve: {formatCurrency(sampleBase)} → {formatCurrency(sampleReserve)}
+              </div>
+              <div>
+                Hammer: {formatCurrency(sampleHammer)} → Commission{" "}
+                {formatCurrency(sampleCommission)} → Net {formatCurrency(sampleNet)}
+              </div>
             </div>
           </div>
         </CardContent>
@@ -139,9 +142,7 @@ export function RacePrestigeBreakdown({
   variant = "full",
   className,
 }: RacePrestigeBreakdownProps) {
-  const score = trackId
-    ? getRacecoursePrestige(trackId)
-    : getRacecoursePrestigeByName(trackName);
+  const score = trackId ? getRacecoursePrestige(trackId) : getRacecoursePrestigeByName(trackName);
   const fameMul = racecoursePrestigeMultiplier(trackId, trackName);
   const sampleBaseFame = FAME_GAIN_G1_WIN;
   const sampleAdjustedFame = Math.max(MIN_FAME_GAIN, Math.round(sampleBaseFame * fameMul));
@@ -167,9 +168,7 @@ export function RacePrestigeBreakdown({
         <CardContent className="p-4 space-y-3">
           <div className="flex items-center gap-2">
             <PrestigeBadge score={score} />
-            <span className="text-xs text-cream-muted">
-              {trackName ?? "Course Prestige"}
-            </span>
+            <span className="text-xs text-cream-muted">{trackName ?? "Course Prestige"}</span>
           </div>
           <div className="space-y-2">
             <MetricRow

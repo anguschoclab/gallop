@@ -26,7 +26,14 @@ const horseMap = new Map<string, Horse>([
   ["h2", { id: "h2", name: "Another Horse" } as Horse],
 ]);
 
-const testSale = { id: "s1", name: "Test Sale", day: 1, kind: "yearling", lots: [], resolved: true } as unknown as AuctionSale;
+const testSale = {
+  id: "s1",
+  name: "Test Sale",
+  day: 1,
+  kind: "yearling",
+  lots: [],
+  resolved: true,
+} as unknown as AuctionSale;
 
 describe("ResolvedSaleSummary sold/passed counts", () => {
   afterEach(() => cleanup());

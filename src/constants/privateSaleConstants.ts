@@ -61,9 +61,9 @@ export const DIPLOMATIC_FAILURE_FRICTION_PENALTY = 20;
  * tier — the more famous the player, the higher the premium.
  */
 export const KNOWN_BUYER_PREMIUM_BY_TIER: Partial<Record<ReputationTier, number>> = {
-  regional: 0.10,
+  regional: 0.1,
   national: 0.15,
-  international: 0.20,
+  international: 0.2,
   world_class: 0.25,
-  legendary: 0.30,
+  legendary: 0.3,
 };

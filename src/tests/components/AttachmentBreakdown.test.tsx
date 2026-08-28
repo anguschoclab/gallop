@@ -3,9 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { AttachmentBreakdown } from "@/components/auction/AttachmentBreakdown";
 import type { HorseAttachment } from "@/core/horse/attachment";
 
-function mkAttachment(
-  overrides: Partial<HorseAttachment> = {},
-): HorseAttachment {
+function mkAttachment(overrides: Partial<HorseAttachment> = {}): HorseAttachment {
   return {
     score: 60,
     tier: "protected",

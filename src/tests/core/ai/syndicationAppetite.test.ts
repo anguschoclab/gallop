@@ -9,10 +9,7 @@ import {
   setSyndicationTuningOverrides,
   resetSyndicationTuningOverrides,
 } from "@/core/ai/syndicationTuning";
-import {
-  evaluateSharePurchase,
-  calculateSharePurchase,
-} from "@/core/ai/syndicationAIDecisions";
+import { evaluateSharePurchase, calculateSharePurchase } from "@/core/ai/syndicationAIDecisions";
 import type { Horse, Stable, StablePersonality } from "@/game/types";
 import type { Syndicate } from "@/core/breeding/types";
 import { createTestStable } from "@/tests/helpers/createTestStable";
@@ -159,13 +156,21 @@ describe("share purchase decision", () => {
     expect(trace.outcome).toBe("skip_quality_gate");
     expect(trace.shares).toBe(0);
 
-    const proven = evaluateSharePurchase(stable("specialist", 5_000_000), syndicate, makeStallion(2));
+    const proven = evaluateSharePurchase(
+      stable("specialist", 5_000_000),
+      syndicate,
+      makeStallion(2),
+    );
     expect(proven.shares).toBeGreaterThan(0);
   });
 
   it("stops buying once the stake cap is reached", () => {
     const syndicate = makeSyndicate({ shareHolders: { npc1: 40 } });
-    const trace = evaluateSharePurchase(stable("aggressive", 5_000_000), syndicate, makeStallion(2));
+    const trace = evaluateSharePurchase(
+      stable("aggressive", 5_000_000),
+      syndicate,
+      makeStallion(2),
+    );
     expect(trace.outcome).toBe("skip_stake_cap");
     expect(trace.shares).toBe(0);
   });
@@ -179,7 +184,11 @@ describe("share purchase decision", () => {
 
   it("chases a controlling stake for aggressive personalities", () => {
     const syndicate = makeSyndicate({ shareHolders: { rival: 6, npc1: 4 } });
-    const trace = evaluateSharePurchase(stable("aggressive", 50_000_000), syndicate, makeStallion(3));
+    const trace = evaluateSharePurchase(
+      stable("aggressive", 50_000_000),
+      syndicate,
+      makeStallion(3),
+    );
     expect(trace.outcome).toBe("buy_control");
     expect(trace.shares).toBe(3);
   });
@@ -190,7 +199,11 @@ describe("share purchase decision", () => {
     const before = evaluateSharePurchase(stable("aggressive", 50_000_000), syndicate, stallion);
     setSyndicationTuningOverrides({
       personalities: {
-        aggressive: { buyFractionMultiplier: 0.2, cashFractionMultiplier: 0.2, stakeCapMultiplier: 0.5 },
+        aggressive: {
+          buyFractionMultiplier: 0.2,
+          cashFractionMultiplier: 0.2,
+          stakeCapMultiplier: 0.5,
+        },
       },
     });
     const after = evaluateSharePurchase(stable("aggressive", 50_000_000), syndicate, stallion);

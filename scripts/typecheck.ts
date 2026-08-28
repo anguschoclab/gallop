@@ -90,7 +90,9 @@ const reportLines: string[] = [];
 reportLines.push(`# TypeScript Check Results`);
 reportLines.push(`# Generated: ${new Date().toISOString()}`);
 reportLines.push(`# Command: bun x tsc --noEmit --pretty false`);
-reportLines.push(`# Errors: ${errors.length}  Warnings: ${warnings.length}  Exit: ${result.status}`);
+reportLines.push(
+  `# Errors: ${errors.length}  Warnings: ${warnings.length}  Exit: ${result.status}`,
+);
 reportLines.push("");
 
 if (errors.length === 0 && warnings.length === 0) {
@@ -147,10 +149,5 @@ if (errors.length === 0 && warnings.length === 0) {
 
 // Propagate tsc's exit code. If we couldn't get the status (null), fall back
 // to checking whether we found errors — errors means non-zero, clean means 0.
-const exitCode =
-  result.status !== null
-    ? result.status
-    : errors.length > 0
-      ? 1
-      : 0;
+const exitCode = result.status !== null ? result.status : errors.length > 0 ? 1 : 0;
 process.exit(exitCode);

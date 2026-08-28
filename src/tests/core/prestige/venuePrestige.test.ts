@@ -1,9 +1,16 @@
 import { describe, it, expect } from "vitest";
-import { rankedRacecourses, getRacecoursePrestigeByName, getHouseForSaleKind, racecoursePrestigeMultiplier } from "@/core/prestige";
+import {
+  rankedRacecourses,
+  getRacecoursePrestigeByName,
+  getHouseForSaleKind,
+  racecoursePrestigeMultiplier,
+} from "@/core/prestige";
 
 describe("venue prestige", () => {
   it("ranks major courses above minor ones", () => {
-    const top = rankedRacecourses().slice(0, 5).map((t) => t.name);
+    const top = rankedRacecourses()
+      .slice(0, 5)
+      .map((t) => t.name);
     console.log(top, rankedRacecourses().slice(-3));
     expect(getRacecoursePrestigeByName(top[0])).toBeGreaterThan(70);
   });
