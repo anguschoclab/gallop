@@ -4,7 +4,11 @@ import type { Horse } from "@/game/types";
 import { h2r } from "@/tests/helpers/sampleGameState";
 
 function makeHorse(id: string, owned: boolean): Horse {
-  return { id, ownership: owned ? { type: "player" } : { type: "unowned" }, name: id } as unknown as Horse;
+  return {
+    id,
+    ownership: owned ? { type: "player" } : { type: "unowned" },
+    name: id,
+  } as unknown as Horse;
 }
 
 describe("requireHorse", () => {

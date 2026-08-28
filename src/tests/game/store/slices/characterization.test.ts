@@ -206,7 +206,11 @@ describe("horseAdminSlice", () => {
   });
 
   it("updateStudFee should enqueue intent on success", () => {
-    const horse = createTestHorse({ id: "h1", ownership: makePlayerOwned(), stud: { atStud: true } } as any);
+    const horse = createTestHorse({
+      id: "h1",
+      ownership: makePlayerOwned(),
+      stud: { atStud: true },
+    } as any);
     mock = createMockStore({ horses: { h1: horse } });
     const slice = createHorseAdminSlice(mock.set, mock.get, mock.enqueueIntent);
     const result = slice.updateStudFee("h1", 5000);
@@ -225,7 +229,12 @@ describe("horseAdminSlice", () => {
   });
 
   it("retireToStud should fail for horses under 4", () => {
-    const horse = createTestHorse({ id: "h1", ownership: makePlayerOwned(), gender: "colt", age: 3 });
+    const horse = createTestHorse({
+      id: "h1",
+      ownership: makePlayerOwned(),
+      gender: "colt",
+      age: 3,
+    });
     mock = createMockStore({ horses: { h1: horse } });
     const slice = createHorseAdminSlice(mock.set, mock.get, mock.enqueueIntent);
     const result = slice.retireToStud("h1");
@@ -234,7 +243,12 @@ describe("horseAdminSlice", () => {
   });
 
   it("retireToStud should enqueue intent on success", () => {
-    const horse = createTestHorse({ id: "h1", ownership: makePlayerOwned(), gender: "horse", age: 5 });
+    const horse = createTestHorse({
+      id: "h1",
+      ownership: makePlayerOwned(),
+      gender: "horse",
+      age: 5,
+    });
     mock = createMockStore({ horses: { h1: horse } });
     const slice = createHorseAdminSlice(mock.set, mock.get, mock.enqueueIntent);
     const result = slice.retireToStud("h1");
