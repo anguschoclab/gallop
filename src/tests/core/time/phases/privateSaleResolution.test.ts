@@ -787,9 +787,7 @@ describe("privateSaleResolutionPhase", () => {
         privateSaleOffers: [mkOffer({ amount: Math.round(valuation * 0.75) })],
       });
       const result = mod.privateSaleResolutionPhase.execute(ctx);
-      const traceLogs = result.logs.filter((l) =>
-        l.text.startsWith(DECISION_TRACE_LOG_PREFIX),
-      );
+      const traceLogs = result.logs.filter((l) => l.text.startsWith(DECISION_TRACE_LOG_PREFIX));
       expect(traceLogs).toHaveLength(1);
       expect(traceLogs[0].text).toContain("Green Acres");
       expect(traceLogs[0].text).toContain("Thunder");
@@ -815,9 +813,7 @@ describe("privateSaleResolutionPhase", () => {
         privateSaleOffers: [mkOffer({ amount: Math.round(valuation * 0.75) })],
       });
       const result = mod.privateSaleResolutionPhase.execute(ctx);
-      const traceLogs = result.logs.filter((l) =>
-        l.text.startsWith(DECISION_TRACE_LOG_PREFIX),
-      );
+      const traceLogs = result.logs.filter((l) => l.text.startsWith(DECISION_TRACE_LOG_PREFIX));
       expect(traceLogs).toHaveLength(0);
     });
   });

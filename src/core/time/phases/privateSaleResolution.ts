@@ -17,14 +17,8 @@ import { attachmentAdjustedAsk, evaluateHorseAttachment } from "@/core/horse/att
 import { computeDiplomaticPressure } from "@/core/horse/overrideNegotiation";
 import { DIPLOMATIC_FAILURE_FRICTION_PENALTY } from "@/constants/privateSaleConstants";
 import { calculateFrictionChange } from "@/core/stable/rivalry";
-<<<<<<< Updated upstream
-import { evaluatePrivateSaleThresholds } from "@/core/stable/privateSaleThresholds";
-import { recordCashPressureDecision } from "@/core/stable/cashPressureLog";
-import type { PrivateSaleOffer, Horse, Stable } from "@/game/types";
-import { generateUUID } from "@/core/uuid";
-import type { HorseTransferImpact, CashImpact } from "@/core/resolver/impacts";
-=======
 import { getCashPressureTuning } from "@/core/stable/cashPressureTuning";
+import { recordCashPressureDecision } from "@/core/stable/cashPressureLog";
 import {
   computePrivateSaleDecision,
   buildPrivateSaleDecisionTrace,
@@ -34,7 +28,6 @@ import type { PrivateSaleOffer } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import type { HorseTransferImpact, CashImpact } from "@/core/resolver/impacts";
 import { CASH_PRESSURE_SHORT_OF_CASH_LOG_THRESHOLD } from "@/constants/privateSaleConstants";
->>>>>>> Stashed changes
 
 export const privateSaleResolutionPhase: PipelinePhase = {
   name: "privateSaleResolution",
@@ -250,39 +243,6 @@ export const privateSaleResolutionPhase: PipelinePhase = {
         marketValue,
         state.reputation?.score ?? 0,
       );
-<<<<<<< Updated upstream
-      const offerRatio = offer.amount / valuation;
-      const personality = stable.personality;
-      const thresholds = evaluatePrivateSaleThresholds(stable, {
-        ask: valuation,
-        offerAmount: offer.amount,
-        horseCount: stable.horses.length,
-      });
-      const cashPressure = thresholds.cashPressure;
-      const acceptThreshold = thresholds.acceptThreshold;
-      const counterThreshold = thresholds.counterThreshold;
-      const traceBase = {
-        day: newDay,
-        stableId: String(stableId),
-        stableName: stable.name,
-        personality,
-        horseName: horse.name,
-        cash: stable.cash,
-        runwayDays: cashPressure.runwayDays,
-        pressure: cashPressure.pressure,
-        meter: cashPressure.meter,
-        pressureLabel: cashPressure.label,
-        ask: valuation,
-        offerAmount: offer.amount,
-        offerRatio,
-        baseAcceptThreshold: thresholds.baseAcceptThreshold,
-        acceptThreshold,
-        counterThreshold,
-        shortfallAmount: thresholds.shortfallAmount ?? 0,
-        shortfallPercent: thresholds.shortfallPercent ?? 0,
-      };
-=======
->>>>>>> Stashed changes
 
       const decision = computePrivateSaleDecision({
         stable,
@@ -292,6 +252,33 @@ export const privateSaleResolutionPhase: PipelinePhase = {
         attachment,
       });
       const { cashPressure } = decision;
+
+      const traceBase = {
+        day: newDay,
+        stableId: String(stableId),
+        stableName: stable.name,
+        personality: stable.personality,
+        horseName: horse.name,
+        cash: Math.max(0, stable.cash),
+        runwayDays: cashPressure.runwayDays,
+        pressure: cashPressure.pressure,
+        meter: cashPressure.meter,
+        pressureLabel: cashPressure.label,
+        ask: valuation,
+        offerAmount: offer.amount,
+        offerRatio: decision.offerRatio,
+        baseAcceptThreshold: decision.baseAcceptThreshold,
+        acceptThreshold: decision.softenedAcceptThreshold,
+        counterThreshold: decision.softenedCounterThreshold,
+        shortfallAmount: Math.max(
+          0,
+          Math.round(valuation * decision.softenedAcceptThreshold - offer.amount),
+        ),
+        shortfallPercent: Math.max(
+          0,
+          (decision.softenedAcceptThreshold - decision.offerRatio) * 100,
+        ),
+      };
 
       if (getCashPressureTuning().enableDecisionTrace) {
         newLogs.push({
@@ -351,14 +338,10 @@ export const privateSaleResolutionPhase: PipelinePhase = {
               ? `${stable.name}, short of cash, accepted your offer of $${offer.amount.toLocaleString()} for ${horse.name}.`
               : `${stable.name} accepted your offer of $${offer.amount.toLocaleString()} for ${horse.name}.`,
         });
-<<<<<<< Updated upstream
+
         recordCashPressureDecision({ ...traceBase, outcome: "accepted" });
-      } else if (offerRatio >= counterThreshold) {
-        const counterAmount = thresholds.likelyCounterTerms ?? Math.round(valuation * thresholds.counterMultiplier);
-=======
       } else if (decision.decision === "countered") {
         const counterAmount = decision.counterAmount!;
->>>>>>> Stashed changes
 
         updatedOffers.push({ ...offer, status: "countered", counterAmount });
 

@@ -13,7 +13,11 @@ import {
   type CashPressureTuningOverrides,
 } from "@/core/stable/cashPressureTuning";
 
-const NUMERIC_FIELDS: { key: keyof Omit<CashPressureTuning, "labelThresholds" | "enableDecisionTrace">; label: string; step: string }[] = [
+const NUMERIC_FIELDS: {
+  key: keyof Omit<CashPressureTuning, "labelThresholds" | "enableDecisionTrace">;
+  label: string;
+  step: string;
+}[] = [
   { key: "comfortDays", label: "comfortDays", step: "1" },
   { key: "crisisDays", label: "crisisDays", step: "1" },
   { key: "maxThresholdDiscount", label: "maxThresholdDiscount", step: "0.05" },
@@ -37,7 +41,10 @@ export function CashPressureTuningEditor() {
   const [values, setValues] = useState<CashPressureTuning>({ ...fileConfig });
   const [applied, setApplied] = useState(false);
 
-  function updateNumeric(key: keyof Omit<CashPressureTuning, "labelThresholds" | "enableDecisionTrace">, value: number) {
+  function updateNumeric(
+    key: keyof Omit<CashPressureTuning, "labelThresholds" | "enableDecisionTrace">,
+    value: number,
+  ) {
     setValues((v) => ({ ...v, [key]: value }));
     setApplied(false);
   }

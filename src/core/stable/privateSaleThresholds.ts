@@ -8,48 +8,21 @@
  * Related files: src/core/time/phases/privateSaleResolution.ts, src/components/stable/CashPressureBadge.tsx
  */
 
-import type { Stable, StablePersonality } from "@/game/types";
+import type { Stable } from "@/game/types";
 import {
   applyCashPressureToThreshold,
   evaluateCashPressure,
   type CashPressure,
 } from "./cashPressure";
+import {
+  ACCEPT_THRESHOLDS,
+  COUNTER_THRESHOLDS,
+  COUNTER_MULTIPLIERS,
+} from "@/constants/privateSaleConstants";
 
-/** Offer/ask ratio at or above which a personality accepts outright. */
-export const ACCEPT_THRESHOLDS: Record<StablePersonality, number> = {
-  aggressive: 0.7,
-  conservative: 1.0,
-  developer: 0.9,
-  "win-now": 1.0,
-  specialist: 1.0,
-  breeder: 1.1,
-  trader: 0.8,
-  prestige: 1.3,
-};
-
-/** Offer/ask ratio at or above which a personality counters rather than declines. */
-export const COUNTER_THRESHOLDS: Record<StablePersonality, number> = {
-  aggressive: 0.5,
-  conservative: 0.8,
-  developer: 0.7,
-  "win-now": 0.8,
-  specialist: 0.8,
-  breeder: 0.9,
-  trader: 0.6,
-  prestige: 1.0,
-};
-
-/** Multiplier on the ask used to build the counter amount. */
-export const COUNTER_MULTIPLIERS: Record<StablePersonality, number> = {
-  aggressive: 1.1,
-  conservative: 1.2,
-  developer: 1.15,
-  "win-now": 1.2,
-  specialist: 1.2,
-  breeder: 1.25,
-  trader: 1.1,
-  prestige: 1.4,
-};
+// Re-export for backward compatibility — the canonical source is now
+// `@/constants/privateSaleConstants`.
+export { ACCEPT_THRESHOLDS, COUNTER_THRESHOLDS, COUNTER_MULTIPLIERS };
 
 export interface PrivateSaleThresholds {
   /** Cash pressure evaluation for the stable. */
