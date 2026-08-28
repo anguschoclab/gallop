@@ -70,6 +70,8 @@ describe("OverrideNegotiationPanel", () => {
         ask={50000}
         valuation={40000}
         cash={200000}
+        friction={0}
+        reputationScore={50}
         onOverride={onOverride}
       />,
     );
@@ -87,6 +89,8 @@ describe("OverrideNegotiationPanel", () => {
         ask={50000}
         valuation={40000}
         cash={200000}
+        friction={0}
+        reputationScore={50}
         onOverride={onOverride}
       />,
     );
@@ -103,6 +107,8 @@ describe("OverrideNegotiationPanel", () => {
         ask={50000}
         valuation={40000}
         cash={200000}
+        friction={0}
+        reputationScore={50}
         onOverride={onOverride}
       />,
     );
@@ -119,6 +125,8 @@ describe("OverrideNegotiationPanel", () => {
         ask={50000}
         valuation={40000}
         cash={200000}
+        friction={0}
+        reputationScore={50}
         onOverride={onOverride}
       />,
     );
@@ -135,6 +143,8 @@ describe("OverrideNegotiationPanel", () => {
         ask={50000}
         valuation={40000}
         cash={200000}
+        friction={0}
+        reputationScore={50}
         onOverride={onOverride}
       />,
     );
@@ -151,6 +161,8 @@ describe("OverrideNegotiationPanel", () => {
         ask={50000}
         valuation={40000}
         cash={200000}
+        friction={0}
+        reputationScore={50}
         onOverride={onOverride}
       />,
     );
@@ -175,6 +187,8 @@ describe("OverrideNegotiationPanel", () => {
         ask={50000}
         valuation={40000}
         cash={200000}
+        friction={0}
+        reputationScore={50}
         onOverride={onOverride}
       />,
     );

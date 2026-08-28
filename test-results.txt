@@ -1,9 +1,0 @@
-﻿
-    at startTests [90m(file:///C:/Users/amauricia/Documents/GitHub/gallop/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1271:3[90m)[39m
-    at startTests [90m(file:///C:/Users/amauricia/Documents/GitHub/gallop/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1271:3[90m)[39m
-[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1m[7m Failed Tests 84 [27m[22mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[39m
-[2m Test Files [22m [1m[31m26 failed[39m[22m[2m | [22m[1m[32m682 passed[39m[22m[90m (708)[39m
-[2m      Tests [22m [1m[31m84 failed[39m[22m[2m | [22m[1m[32m7831 passed[39m[22m[90m (7915)[39m
-[2m   Duration [22m 1016.88s[2m (transform 135.16s, setup 1812.12s, collect 978.73s, tests 1792.01s, environment 5609.15s, prepare 321.02s)[22m
-
-

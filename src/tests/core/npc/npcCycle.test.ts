@@ -454,6 +454,12 @@ describe("calculateFameGainsForRaces", () => {
     };
   }
 
+  // Tests use track "test" (unknown → floor prestige score 14, multiplier 0.856).
+  // calculateFameGainsForRaces applies racecoursePrestigeMultiplier, so expected
+  // fame = Math.max(1, Math.round(baseFame * 0.856)).
+  const FLOOR_MUL = 0.856;
+  const scaled = (base: number) => Math.max(1, Math.round(base * FLOOR_MUL));
+
   const g1 = { key: "g1", grade: "G1" as const, track: "test", surface: "Dirt" as const };
   const g2 = { key: "g2", grade: "G2" as const, track: "test", surface: "Dirt" as const };
   const g3 = { key: "g3", grade: "G3" as const, track: "test", surface: "Dirt" as const };
@@ -465,43 +471,43 @@ describe("calculateFameGainsForRaces", () => {
   it("calculates fame for G1 win", () => {
     const race = createRaceWithResult({ graded: g1, result: result("h-1", 1) });
     const gains = calculateFameGainsForRaces([race]);
-    expect(gains.get("h-1")).toBe(FAME_GAIN_G1_WIN);
+    expect(gains.get("h-1")).toBe(scaled(FAME_GAIN_G1_WIN));
   });
 
   it("calculates fame for G2 win", () => {
     const race = createRaceWithResult({ graded: g2, result: result("h-1", 1) });
     const gains = calculateFameGainsForRaces([race]);
-    expect(gains.get("h-1")).toBe(FAME_GAIN_G2_WIN);
+    expect(gains.get("h-1")).toBe(scaled(FAME_GAIN_G2_WIN));
   });
 
   it("calculates fame for G3 win", () => {
     const race = createRaceWithResult({ graded: g3, result: result("h-1", 1) });
     const gains = calculateFameGainsForRaces([race]);
-    expect(gains.get("h-1")).toBe(FAME_GAIN_G3_WIN);
+    expect(gains.get("h-1")).toBe(scaled(FAME_GAIN_G3_WIN));
   });
 
   it("calculates fame for non-graded win", () => {
     const race = createRaceWithResult({ result: result("h-1", 1) });
     const gains = calculateFameGainsForRaces([race]);
-    expect(gains.get("h-1")).toBe(FAME_GAIN_OTHER_WIN);
+    expect(gains.get("h-1")).toBe(scaled(FAME_GAIN_OTHER_WIN));
   });
 
   it("calculates fame for top 3 in G1", () => {
     const race = createRaceWithResult({ graded: g1, result: result("h-1", 2) });
     const gains = calculateFameGainsForRaces([race]);
-    expect(gains.get("h-1")).toBe(FAME_GAIN_G1_TOP3);
+    expect(gains.get("h-1")).toBe(scaled(FAME_GAIN_G1_TOP3));
   });
 
   it("calculates fame for top 3 in G2", () => {
     const race = createRaceWithResult({ graded: g2, result: result("h-1", 3) });
     const gains = calculateFameGainsForRaces([race]);
-    expect(gains.get("h-1")).toBe(FAME_GAIN_G2_TOP3);
+    expect(gains.get("h-1")).toBe(scaled(FAME_GAIN_G2_TOP3));
   });
 
   it("calculates fame for top 5 (position 4-5)", () => {
     const race = createRaceWithResult({ result: result("h-1", 4) });
     const gains = calculateFameGainsForRaces([race]);
-    expect(gains.get("h-1")).toBe(FAME_GAIN_TOP5);
+    expect(gains.get("h-1")).toBe(scaled(FAME_GAIN_TOP5));
   });
 
   it("adds large purse bonus", () => {
@@ -511,7 +517,7 @@ describe("calculateFameGainsForRaces", () => {
       result: result("h-1", 1),
     });
     const gains = calculateFameGainsForRaces([race]);
-    expect(gains.get("h-1")).toBe(FAME_GAIN_G1_WIN + FAME_BONUS_LARGE_PURSE);
+    expect(gains.get("h-1")).toBe(scaled(FAME_GAIN_G1_WIN + FAME_BONUS_LARGE_PURSE));
   });
 
   it("adds medium purse bonus", () => {
@@ -521,7 +527,7 @@ describe("calculateFameGainsForRaces", () => {
       result: result("h-1", 1),
     });
     const gains = calculateFameGainsForRaces([race]);
-    expect(gains.get("h-1")).toBe(FAME_GAIN_G1_WIN + FAME_BONUS_MEDIUM_PURSE);
+    expect(gains.get("h-1")).toBe(scaled(FAME_GAIN_G1_WIN + FAME_BONUS_MEDIUM_PURSE));
   });
 
   it("no fame for position > 5", () => {
@@ -546,7 +552,7 @@ describe("calculateFameGainsForRaces", () => {
     const race1 = createRaceWithResult({ id: "r-1", graded: g1, result: result("h-1", 1) });
     const race2 = createRaceWithResult({ id: "r-2", graded: g2, result: result("h-1", 1) });
     const gains = calculateFameGainsForRaces([race1, race2]);
-    expect(gains.get("h-1")).toBe(FAME_GAIN_G1_WIN + FAME_GAIN_G2_WIN);
+    expect(gains.get("h-1")).toBe(scaled(FAME_GAIN_G1_WIN) + scaled(FAME_GAIN_G2_WIN));
   });
 
   it("handles empty races array", () => {

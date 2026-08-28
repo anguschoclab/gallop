@@ -34,30 +34,34 @@ import {
   AUCTION_AGGRESSIVE_BID_MIN_PERCENT,
   AUCTION_AGGRESSIVE_BID_VARIANCE,
 } from "@/constants";
+import type { AuctionHouse } from "@/core/prestige";
+import { houseCommissionRate } from "@/core/prestige";
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
-/** Compute net proceeds the player receives after commission. */
 /**
  * Calculate net proceeds from hammer price after commission.
  *
  * @param hammerPrice - The hammer price of the lot
+ * @param house - Optional auction house; when provided its commission surcharge is applied
  * @returns Net proceeds after consignment commission
  */
-export function netProceeds(hammerPrice: number): number {
-  return Math.round(hammerPrice * (1 - CONSIGNMENT_COMMISSION));
+export function netProceeds(hammerPrice: number, house?: AuctionHouse): number {
+  const rate = house ? houseCommissionRate(CONSIGNMENT_COMMISSION, house) : CONSIGNMENT_COMMISSION;
+  return Math.round(hammerPrice * (1 - rate));
 }
 
 /**
  * Compute the commission taken from a hammer price.
  *
  * @param hammerPrice - The hammer price of the lot
+ * @param house - Optional auction house; when provided its commission surcharge is applied
  * @returns Commission amount
  */
-export function commissionAmount(hammerPrice: number): number {
-  return hammerPrice - netProceeds(hammerPrice);
+export function commissionAmount(hammerPrice: number, house?: AuctionHouse): number {
+  return hammerPrice - netProceeds(hammerPrice, house);
 }
 
 // ---------------------------------------------------------------------------

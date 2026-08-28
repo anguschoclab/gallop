@@ -72,6 +72,8 @@ export function PrivateSaleOfferDialog({
   const [offerError, setOfferError] = useState("");
   const proposePrivateSale = useGame((s) => s.proposePrivateSale);
   const requestOverride = useGame((s) => s.requestOverride);
+  const npcAIManager = useGame((s) => s.npcAIManager);
+  const reputationScore = useGame((s) => s.reputation?.score ?? 0);
 
   const valuation = calculateLotValuation(horse, stable, "racing_age", allHorses);
   const fogLow = Math.round(valuation * 0.8);
@@ -79,6 +81,7 @@ export function PrivateSaleOfferDialog({
   const attachment = evaluateHorseAttachment(horse, stable);
   const ask = attachmentAdjustedAsk(horse, stable, valuation);
   const tiers = suggestedOfferTiers(ask);
+  const friction = npcAIManager?.stableStates?.[stable.id]?.friction ?? 0;
 
   const handleSubmitOffer = () => {
     const amount = Number(offerAmount.replace(/,/g, "").replace(/\$/g, ""));
@@ -165,6 +168,8 @@ export function PrivateSaleOfferDialog({
             ask={ask}
             valuation={valuation}
             cash={cash}
+            friction={friction}
+            reputationScore={reputationScore}
             onOverride={(type) => {
               const pendingOffer = useGame.getState().privateSaleOffers.find(
                 (o) => o.horseId === horse.id && o.status === "pending",

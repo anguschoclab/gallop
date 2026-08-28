@@ -9,6 +9,7 @@ import { makeGameState, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { buildAuctionImpacts } from "@/core/auction/auctionRunnerImpacts";
 import { netProceeds } from "@/core/auction/engine";
+import { resolveSaleHouse } from "@/core/prestige";
 import type { LotState } from "@/core/auction/auctionRunnerTypes";
 import type { GameState, AuctionSale, Horse } from "@/game/types";
 import type { NewGameOptions } from "@/game/store/state";
@@ -247,7 +248,7 @@ describe("Economy Invariant Tests", () => {
 
       expect(proceedsImpact).toBeDefined();
       expect(proceedsImpact!.entityId).toBe("player");
-      expect(proceedsImpact!.amount).toBe(netProceeds(80_000));
+      expect(proceedsImpact!.amount).toBe(netProceeds(80_000, resolveSaleHouse(sale)));
     });
   });
 });

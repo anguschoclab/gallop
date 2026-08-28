@@ -1,7 +1,0 @@
-﻿
-[31m   [31m├ù[31m horseAdminSlice[2m > [22mupdateStudFee should fail if horse not at stud[90m 16[2mms[22m[31m[39m
-[31m   [31m├ù[31m horseAdminSlice[2m > [22mretireToStud should fail for female horses[90m 2[2mms[22m[31m[39m
-[31m   [31m├ù[31m horseAdminSlice[2m > [22mretireToStud should fail for horses under 4[90m 2[2mms[22m[31m[39m
-[31m   [31m├ù[31m horseAdminSlice[2m > [22mgeldingHorse should fail for mares[90m 2[2mms[22m[31m[39m
-[31m   [31m├ù[31m horseAdminSlice[2m > [22mrenameHorse should fail for duplicate name[90m 2[2mms[22m[31m[39m
-[31m   [31m├ù[31m horseAdminSlice[2m > [22mrenameHorse should fail for reserved name[90m 1[2mms[22m[31m[39m

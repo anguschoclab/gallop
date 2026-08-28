@@ -23,6 +23,8 @@ interface OverrideNegotiationPanelProps {
   ask: number;
   valuation: number;
   cash: number;
+  friction: number;
+  reputationScore: number;
   onOverride: (type: "premium" | "diplomatic") => void;
 }
 
@@ -33,6 +35,8 @@ export function OverrideNegotiationPanel({
   ask,
   valuation,
   cash,
+  friction,
+  reputationScore,
   onOverride,
 }: OverrideNegotiationPanelProps) {
   if (attachment.tier !== "protected" && attachment.tier !== "untouchable") {
@@ -40,8 +44,6 @@ export function OverrideNegotiationPanel({
   }
 
   const premium = computePremiumBuyout(attachment, ask);
-  const friction = 0;
-  const reputationScore = 50;
   const diplomatic = computeDiplomaticPressure(attachment, ask, friction, reputationScore);
 
   return (
