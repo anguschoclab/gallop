@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { ArrowLeft, Users, DollarSign, TrendingUp, HandCoins } from "lucide-react";
 import { ShareOwnershipPanel } from "@/components/market/ShareOwnershipPanel";
 import { ShareActivityFeed } from "@/components/market/ShareActivityFeed";
+import { NpcSyndicateIntentPanel } from "@/components/market/NpcSyndicateIntentPanel";
 import { asPlayerOwnerId, asHorseId } from "@/core/types/branded";
 
 function SyndicatePage() {
@@ -212,7 +213,15 @@ function SyndicatePage() {
         npcStables={npcStables}
       />
 
+      <NpcSyndicateIntentPanel
+        syndicate={syndicate}
+        stallion={horses[asHorseId(syndicate.stallionId)]}
+        npcStables={npcStables}
+        limit={6}
+      />
+
       <ShareActivityFeed syndicateId={syndicateId} />
+
 
       {syndicateTransactions.length > 0 && (
         <Card>
