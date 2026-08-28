@@ -74,11 +74,15 @@ function sharesToTriggerDevolution(
   return needed;
 }
 
-export function calculateSharePurchase(
+/**
+ * Full trace of the NPC share-purchase decision: personality appetite,
+ * proven quality gate, cash budget and the resulting stake.
+ */
+export function evaluateSharePurchase(
   npcStable: Stable,
   syndicate: Syndicate,
   stallion: Horse,
-): number {
+): SyndicatePurchaseTrace {
   const personality = npcStable.personality;
   const appetite = getSyndicationAppetite(personality);
 
@@ -86,35 +90,73 @@ export function calculateSharePurchase(
   const currentShares = syndicate.shareHolders[npcStable.id] || 0;
   const maxShares = Math.floor(syndicate.totalShares * appetite.stakeCapPct);
   const availableShares = maxShares - currentShares;
-
-  if (availableShares <= 0) return 0;
-
   const g1Wins = getCareerStats(stallion).g1Wins;
-  if (g1Wins < appetite.minG1Wins) return 0;
+
+  const base: SyndicatePurchaseTrace = {
+    stableId: String(npcStable.id),
+    personality,
+    syndicateId: String(syndicate.id ?? syndicate.stallionId ?? ""),
+    stallionId: String(stallion.id),
+    appetite,
+    cash,
+    sharePrice: 0,
+    totalShares: syndicate.totalShares,
+    currentShares,
+    maxShares,
+    availableShares: Math.max(0, availableShares),
+    g1Wins,
+    minG1Wins: appetite.minG1Wins,
+    budget: cash * appetite.cashFraction,
+    maxAffordable: 0,
+    candidateShares: 0,
+    takeoverShares: 0,
+    outcome: "buy",
+    shares: 0,
+  };
+
+  if (availableShares <= 0) return { ...base, outcome: "skip_stake_cap" };
+  if (g1Wins < appetite.minG1Wins) return { ...base, outcome: "skip_quality_gate" };
 
   const sharePrice = calculateSharePrice(syndicate, stallion);
-  if (sharePrice <= 0) return 0;
+  if (sharePrice <= 0) return { ...base, sharePrice, outcome: "skip_price" };
 
   const budget = cash * appetite.cashFraction;
   const maxAffordable = Math.floor(budget / sharePrice);
-  const sharesToBuy = Math.min(availableShares, maxAffordable);
+  const candidateShares = Math.min(availableShares, maxAffordable);
+  const withCash = { ...base, sharePrice, budget, maxAffordable, candidateShares };
 
-  if (sharesToBuy < 1) return 0;
+  if (candidateShares < 1) return { ...withCash, outcome: "skip_unaffordable" };
 
   const takeoverShares = sharesToTriggerDevolution(syndicate, npcStable.id, availableShares);
+  const withTakeover = { ...withCash, takeoverShares };
 
   if (appetite.chasesControl && takeoverShares > 0 && takeoverShares <= maxAffordable) {
-    if (personality === "aggressive" || personality === "trader") {
-      return takeoverShares;
-    }
-
-    if (personality === "prestige" && g1Wins >= 3) {
-      return takeoverShares;
+    if (
+      personality === "aggressive" ||
+      personality === "trader" ||
+      (personality === "prestige" && g1Wins >= 3)
+    ) {
+      return { ...withTakeover, outcome: "buy_control", shares: takeoverShares };
     }
   }
 
-  return Math.max(1, Math.floor(sharesToBuy * appetite.buyFraction));
+  return {
+    ...withTakeover,
+    outcome: "buy",
+    shares: Math.max(1, Math.floor(candidateShares * appetite.buyFraction)),
+  };
 }
+
+export function calculateSharePurchase(
+  npcStable: Stable,
+  syndicate: Syndicate,
+  stallion: Horse,
+): number {
+  const trace = evaluateSharePurchase(npcStable, syndicate, stallion);
+  recordSyndicatePurchaseTrace(trace);
+  return trace.shares;
+}
+
 
 export function calculateShareSale(
   npcStable: Stable,
