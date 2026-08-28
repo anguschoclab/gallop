@@ -11,6 +11,11 @@ import {
 import { findMajorityOwner } from "@/core/breeding/devolutionUtils";
 import { getCareerStats } from "@/core/horse/stats";
 import { getSyndicationAppetite } from "./syndicationAppetite";
+import {
+  recordSyndicatePurchaseTrace,
+  type SyndicatePurchaseTrace,
+} from "./syndicationTrace";
+
 
 export function shouldCreateSyndicateWithLearning(
   aiState: SyndicationAIState,
