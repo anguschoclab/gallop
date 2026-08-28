@@ -17,6 +17,7 @@ import { attachmentAdjustedAsk, evaluateHorseAttachment } from "@/core/horse/att
 import { computeDiplomaticPressure } from "@/core/horse/overrideNegotiation";
 import { DIPLOMATIC_FAILURE_FRICTION_PENALTY } from "@/constants/privateSaleConstants";
 import { calculateFrictionChange } from "@/core/stable/rivalry";
+import { evaluateCashPressure, applyCashPressureToThreshold } from "@/core/stable/cashPressure";
 import type { PrivateSaleOffer, Horse, Stable, StablePersonality } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import type { HorseTransferImpact, CashImpact } from "@/core/resolver/impacts";
@@ -252,8 +253,15 @@ export const privateSaleResolutionPhase: PipelinePhase = {
       const valuation = attachmentAdjustedAsk(horse, stable, marketValue, state.reputation?.score ?? 0);
       const offerRatio = offer.amount / valuation;
       const personality = stable.personality;
-      const acceptThreshold = ACCEPT_THRESHOLDS[personality];
-      const counterThreshold = COUNTER_THRESHOLDS[personality];
+      const cashPressure = evaluateCashPressure(stable, stable.horses.length);
+      const acceptThreshold = applyCashPressureToThreshold(
+        ACCEPT_THRESHOLDS[personality],
+        cashPressure.pressure,
+      );
+      const counterThreshold = applyCashPressureToThreshold(
+        COUNTER_THRESHOLDS[personality],
+        cashPressure.pressure,
+      );
 
       if (offerRatio >= acceptThreshold) {
         updatedOffers.push({ ...offer, status: "accepted" });
@@ -299,10 +307,16 @@ export const privateSaleResolutionPhase: PipelinePhase = {
 
         newLogs.push({
           day: newDay,
-          text: `${stable.name} accepted your offer of $${offer.amount.toLocaleString()} for ${horse.name}.`,
+          text:
+            cashPressure.pressure >= 0.5
+              ? `${stable.name}, short of cash, accepted your offer of $${offer.amount.toLocaleString()} for ${horse.name}.`
+              : `${stable.name} accepted your offer of $${offer.amount.toLocaleString()} for ${horse.name}.`,
         });
       } else if (offerRatio >= counterThreshold) {
-        const counterMultiplier = COUNTER_MULTIPLIERS[personality];
+        const counterMultiplier = applyCashPressureToThreshold(
+          COUNTER_MULTIPLIERS[personality],
+          cashPressure.pressure,
+        );
         const counterAmount = Math.round(valuation * counterMultiplier);
 
         updatedOffers.push({ ...offer, status: "countered", counterAmount });
