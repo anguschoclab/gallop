@@ -163,7 +163,7 @@ export const privateSaleResolutionPhase: PipelinePhase = {
           const reputationScore = state.reputation?.score ?? 0;
           const { odds, successCost, failurePenalty } = computeDiplomaticPressure(
             attachment,
-            attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", allHorsesArray, horseMap)),
+            attachmentAdjustedAsk(horse, stable, calculateLotValuation(horse, stable, "racing_age", allHorsesArray, horseMap), state.reputation?.score ?? 0),
             friction,
             reputationScore,
           );
@@ -249,7 +249,7 @@ export const privateSaleResolutionPhase: PipelinePhase = {
       // ── Normal pending offer handling ──
       const marketValue = calculateLotValuation(horse, stable, "racing_age", allHorsesArray, horseMap);
       const attachment = evaluateHorseAttachment(horse, stable);
-      const valuation = attachmentAdjustedAsk(horse, stable, marketValue);
+      const valuation = attachmentAdjustedAsk(horse, stable, marketValue, state.reputation?.score ?? 0);
       const offerRatio = offer.amount / valuation;
       const personality = stable.personality;
       const acceptThreshold = ACCEPT_THRESHOLDS[personality];

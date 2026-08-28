@@ -472,4 +472,139 @@ describe("privateSaleResolutionPhase", () => {
     expect(offers[0].status).toBe("accepted");
     expect(offers[1].status).toBe("declined");
   });
+
+  // ── Known buyer premium integration tests ──────────────────────────────────
+
+  it("regional reputation raises ask for protected horse — offer accepted at rep=0 is countered at rep=300", async () => {
+    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
+    const { attachmentAdjustedAsk, evaluateHorseAttachment } = await import("@/core/horse/attachment");
+
+    // Horse with enough signals to reach "protected" tier (score >= 52)
+    const horse = mkHorse({
+      fame: 40,
+      potential: 82,
+      careerStarts: 10,
+      careerWins: 6,
+      lifetimeEarnings: 300_000,
+      fanCount: 800,
+    });
+    const stable = mkStable({ personality: "aggressive" });
+
+    // Sanity: confirm the horse is "protected"
+    const attachment = evaluateHorseAttachment(horse, stable);
+    expect(attachment.tier).toBe("protected");
+
+    const marketValue = calculateLotValuation(horse, stable, "racing_age", [horse]);
+    const askAtRep0 = attachmentAdjustedAsk(horse, stable, marketValue);
+    // Offer just above the accept threshold for aggressive (0.7x ask).
+    // Use ceil to avoid rounding-down below the threshold.
+    const offerAmount = Math.ceil(askAtRep0 * 0.7);
+
+    // At rep=0: ratio >= 0.7 → accepted
+    const ctx0 = createContext({
+      horses: h2r([horse]),
+      npcStables: [stable],
+      privateSaleOffers: [mkOffer({ amount: offerAmount })],
+      reputation: { score: 0, tier: "unknown" } as any,
+    });
+    const result0 = mod.privateSaleResolutionPhase.execute(ctx0);
+    expect(result0.state.privateSaleOffers![0].status).toBe("accepted");
+
+    // At rep=300 (regional): ask is 10% higher, ratio ≈ 0.7/1.10 ≈ 0.636 < 0.7 → countered
+    const ctx300 = createContext({
+      horses: h2r([horse]),
+      npcStables: [stable],
+      privateSaleOffers: [mkOffer({ id: "o2", amount: offerAmount })],
+      reputation: { score: 300, tier: "regional" } as any,
+    });
+    const result300 = mod.privateSaleResolutionPhase.execute(ctx300);
+    expect(result300.state.privateSaleOffers![0].status).toBe("countered");
+  });
+
+  it("regional reputation does NOT affect valued horse — same outcome as rep=0", async () => {
+    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
+    const { attachmentAdjustedAsk, evaluateHorseAttachment } = await import("@/core/horse/attachment");
+
+    // Default test horse is "valued" (fame=30, potential=75 → score ~28)
+    const horse = mkHorse();
+    const stable = mkStable({ personality: "aggressive" });
+
+    const attachment = evaluateHorseAttachment(horse, stable);
+    expect(attachment.tier).toBe("valued");
+
+    const marketValue = calculateLotValuation(horse, stable, "racing_age", [horse]);
+    const askAtRep0 = attachmentAdjustedAsk(horse, stable, marketValue);
+    const offerAmount = Math.ceil(askAtRep0 * 0.75);
+
+    // At rep=0: accepted (0.75 >= 0.7 for aggressive)
+    const ctx0 = createContext({
+      horses: h2r([horse]),
+      npcStables: [stable],
+      privateSaleOffers: [mkOffer({ amount: offerAmount })],
+      reputation: { score: 0, tier: "unknown" } as any,
+    });
+    const result0 = mod.privateSaleResolutionPhase.execute(ctx0);
+    expect(result0.state.privateSaleOffers![0].status).toBe("accepted");
+
+    // At rep=300 (regional): still accepted — premium doesn't apply to "valued" horses
+    const ctx300 = createContext({
+      horses: h2r([horse]),
+      npcStables: [stable],
+      privateSaleOffers: [mkOffer({ id: "o2", amount: offerAmount })],
+      reputation: { score: 300, tier: "regional" } as any,
+    });
+    const result300 = mod.privateSaleResolutionPhase.execute(ctx300);
+    expect(result300.state.privateSaleOffers![0].status).toBe("accepted");
+  });
+
+  it("legendary reputation (score=900) raises ask even more for untouchable horse", async () => {
+    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const { calculateLotValuation } = await import("@/core/auction/engine");
+    const { attachmentAdjustedAsk, evaluateHorseAttachment } = await import("@/core/horse/attachment");
+
+    // Horse with enough signals to reach "untouchable" tier (score >= 78)
+    const horse = mkHorse({
+      fame: 60,
+      potential: 90,
+      careerStarts: 10,
+      careerWins: 7,
+      lifetimeEarnings: 500_000,
+      fanCount: 1000,
+    });
+    const stable = mkStable({ personality: "aggressive" });
+
+    const attachment = evaluateHorseAttachment(horse, stable);
+    expect(attachment.tier).toBe("untouchable");
+
+    const marketValue = calculateLotValuation(horse, stable, "racing_age", [horse]);
+    const askAtRep0 = attachmentAdjustedAsk(horse, stable, marketValue);
+    const askAtRep900 = attachmentAdjustedAsk(horse, stable, marketValue, 900);
+
+    // Premium at legendary is 30%
+    expect(askAtRep900).toBe(Math.round(askAtRep0 * 1.30));
+
+    // Offer at 0.7x ask_0 → accepted at rep=0, but at rep=900 ratio ≈ 0.7/1.30 ≈ 0.54
+    // For aggressive: 0.54 >= 0.5 (counter threshold) → countered
+    const offerAmount = Math.ceil(askAtRep0 * 0.7);
+
+    const ctx0 = createContext({
+      horses: h2r([horse]),
+      npcStables: [stable],
+      privateSaleOffers: [mkOffer({ amount: offerAmount })],
+      reputation: { score: 0, tier: "unknown" } as any,
+    });
+    const result0 = mod.privateSaleResolutionPhase.execute(ctx0);
+    expect(result0.state.privateSaleOffers![0].status).toBe("accepted");
+
+    const ctx900 = createContext({
+      horses: h2r([horse]),
+      npcStables: [stable],
+      privateSaleOffers: [mkOffer({ id: "o2", amount: offerAmount })],
+      reputation: { score: 900, tier: "legendary" } as any,
+    });
+    const result900 = mod.privateSaleResolutionPhase.execute(ctx900);
+    expect(result900.state.privateSaleOffers![0].status).toBe("countered");
+  });
 });

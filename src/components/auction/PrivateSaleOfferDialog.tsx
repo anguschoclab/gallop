@@ -79,7 +79,7 @@ export function PrivateSaleOfferDialog({
   const fogLow = Math.round(valuation * 0.8);
   const fogHigh = Math.round(valuation * 1.2);
   const attachment = evaluateHorseAttachment(horse, stable);
-  const ask = attachmentAdjustedAsk(horse, stable, valuation);
+  const ask = attachmentAdjustedAsk(horse, stable, valuation, reputationScore);
   const tiers = suggestedOfferTiers(ask);
   const friction = npcAIManager?.stableStates?.[stable.id]?.friction ?? 0;
 

@@ -11,7 +11,8 @@
  */
 
 import type { Horse, Stable } from "@/game/types";
-import { OFFER_ROUND_INCREMENT, LOWBALL_OFFER_MULTIPLIER, GENEROUS_OFFER_MULTIPLIER } from "@/constants/privateSaleConstants";
+import { OFFER_ROUND_INCREMENT, LOWBALL_OFFER_MULTIPLIER, GENEROUS_OFFER_MULTIPLIER, KNOWN_BUYER_PREMIUM_BY_TIER } from "@/constants/privateSaleConstants";
+import { getReputationTier } from "@/core/reputation/reputationTypes";
 
 export type AttachmentTier = "available" | "valued" | "protected" | "untouchable";
 
@@ -155,14 +156,43 @@ export function evaluateHorseAttachment(horse: Horse, stable: Stable): HorseAtta
 }
 
 /**
+ * Premium fraction (0-1) applied when a known player tries to buy a
+ * protected/untouchable horse. Returns 0 for available/valued horses or when
+ * the player's reputation is below "regional".
+ * @param attachmentTier - The stable's attachment tier for the horse.
+ * @param reputationScore - The player's reputation score (0-1000).
+ */
+export function knownBuyerPremiumMultiplier(
+  attachmentTier: AttachmentTier,
+  reputationScore: number,
+): number {
+  if (attachmentTier !== "protected" && attachmentTier !== "untouchable") return 0;
+  const repTier = getReputationTier(reputationScore);
+  return KNOWN_BUYER_PREMIUM_BY_TIER[repTier] ?? 0;
+}
+
+/**
  * Converts a fair market valuation into the price the stable actually wants.
  * @param horse - The horse being coveted.
  * @param stable - The NPC stable that owns it.
  * @param marketValue - Fair market valuation of the horse.
+ * @param reputationScore - Optional player reputation score. When provided and
+ *   the player is "known" (regional+), a premium is applied to protected and
+ *   untouchable horses.
  */
-export function attachmentAdjustedAsk(horse: Horse, stable: Stable, marketValue: number): number {
-  const { askMultiplier } = evaluateHorseAttachment(horse, stable);
-  return Math.max(0, Math.round(marketValue * askMultiplier));
+export function attachmentAdjustedAsk(
+  horse: Horse,
+  stable: Stable,
+  marketValue: number,
+  reputationScore?: number,
+): number {
+  const { askMultiplier, tier } = evaluateHorseAttachment(horse, stable);
+  let ask = Math.max(0, Math.round(marketValue * askMultiplier));
+  if (reputationScore !== undefined) {
+    const premium = knownBuyerPremiumMultiplier(tier, reputationScore);
+    if (premium > 0) ask = Math.round(ask * (1 + premium));
+  }
+  return ask;
 }
 
 /**

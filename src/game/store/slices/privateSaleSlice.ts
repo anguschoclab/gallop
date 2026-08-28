@@ -145,7 +145,7 @@ export function createPrivateSaleSlice(
       const allHorses = Object.values(s.horses);
       const valuation = calculateLotValuation(horse, stable, "racing_age", allHorses);
       const attachment = evaluateHorseAttachment(horse, stable);
-      const ask = attachmentAdjustedAsk(horse, stable, valuation);
+      const ask = attachmentAdjustedAsk(horse, stable, valuation, (s as any).reputation?.score ?? 0);
 
       if (type === "premium") {
         const { cost } = computePremiumBuyout(attachment, ask);

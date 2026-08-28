@@ -2,6 +2,8 @@
  * Constants for NPC private sale offer tiers, override negotiation, and diplomatic pressure.
  */
 
+import type { ReputationTier } from "@/core/reputation/reputationTypes";
+
 // ── Suggested offer tiers ──
 
 /** Rounding increment for quick-offer amounts (nearest $500). */
@@ -49,3 +51,19 @@ export const DIPLOMATIC_SUCCESS_COST_MULTIPLIER = 1.1;
 
 /** Friction increase applied on diplomatic pressure failure. */
 export const DIPLOMATIC_FAILURE_FRICTION_PENALTY = 20;
+
+// ── Known buyer premium ──
+
+/**
+ * Premium fraction applied to protected/untouchable horses when the player is
+ * known in the racing world. AI stables charge more to part with their best
+ * horses to a competitor they recognize. Scales with the player's reputation
+ * tier — the more famous the player, the higher the premium.
+ */
+export const KNOWN_BUYER_PREMIUM_BY_TIER: Partial<Record<ReputationTier, number>> = {
+  regional: 0.10,
+  national: 0.15,
+  international: 0.20,
+  world_class: 0.25,
+  legendary: 0.30,
+};

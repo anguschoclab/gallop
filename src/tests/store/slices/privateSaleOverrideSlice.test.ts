@@ -148,4 +148,91 @@ describe("privateSaleSlice requestOverride", () => {
     expect(result.ok).toBe(false);
     expect(result.reason).toBe("offer_not_found");
   });
+
+  // ── Known buyer premium: requestOverride with non-zero reputation ──────────
+
+  it("requestOverride premium with regional reputation — overrideAmount higher than rep=0", () => {
+    // Use an untouchable horse so the premium applies
+    const horse = mkHorse({
+      fame: 60,
+      potential: 90,
+      careerStarts: 10,
+      careerWins: 7,
+      lifetimeEarnings: 500_000,
+      fanCount: 1000,
+    });
+    const stable = mkStable();
+
+    // First: requestOverride at rep=0 to get baseline overrideAmount
+    seedStore({
+      cash: 10_000_000,
+      horses: h2r([horse]),
+      npcStables: [stable],
+      privateSaleOffers: [mkPendingOffer()],
+    });
+    useGame.getState().requestOverride("offer-1", "premium");
+    const rep0Amount = (useGame.getState() as any).privateSaleOffers.find(
+      (o: PrivateSaleOffer) => o.id === "offer-1",
+    ).overrideAmount;
+
+    // Now: requestOverride at rep=300 (regional) — premium is 10%
+    seedStore({
+      cash: 10_000_000,
+      horses: h2r([horse]),
+      npcStables: [stable],
+      privateSaleOffers: [mkPendingOffer()],
+      reputation: { score: 300, tier: "regional" } as any,
+    });
+    useGame.getState().requestOverride("offer-1", "premium");
+    const rep300Amount = (useGame.getState() as any).privateSaleOffers.find(
+      (o: PrivateSaleOffer) => o.id === "offer-1",
+    ).overrideAmount;
+
+    expect(rep300Amount).toBeGreaterThan(rep0Amount);
+    // Premium is applied to ask before computePremiumBuyout multiplies it,
+    // so the ratio is ~1.10 but may differ by ±1 due to rounding order.
+    expect(rep300Amount).toBeCloseTo(rep0Amount * 1.10, -1);
+  });
+
+  it("requestOverride diplomatic with regional reputation — overrideAmount higher than rep=0", () => {
+    const horse = mkHorse({
+      fame: 60,
+      potential: 90,
+      careerStarts: 10,
+      careerWins: 7,
+      lifetimeEarnings: 500_000,
+      fanCount: 1000,
+    });
+    const stable = mkStable();
+
+    // Baseline at rep=0
+    seedStore({
+      cash: 10_000_000,
+      horses: h2r([horse]),
+      npcStables: [stable],
+      privateSaleOffers: [mkPendingOffer()],
+    });
+    useGame.getState().requestOverride("offer-1", "diplomatic");
+    const rep0Amount = (useGame.getState() as any).privateSaleOffers.find(
+      (o: PrivateSaleOffer) => o.id === "offer-1",
+    ).overrideAmount;
+
+    // At rep=300 (regional) — premium is 10%
+    seedStore({
+      cash: 10_000_000,
+      horses: h2r([horse]),
+      npcStables: [stable],
+      privateSaleOffers: [mkPendingOffer()],
+      reputation: { score: 300, tier: "regional" } as any,
+    });
+    useGame.getState().requestOverride("offer-1", "diplomatic");
+    const rep300Amount = (useGame.getState() as any).privateSaleOffers.find(
+      (o: PrivateSaleOffer) => o.id === "offer-1",
+    ).overrideAmount;
+
+    expect(rep300Amount).toBeGreaterThan(rep0Amount);
+    // Premium is applied to ask before computeDiplomaticPressure multiplies it,
+    // so the ratio is ~1.10 but may differ by ±1 due to rounding order.
+    expect(rep300Amount).toBeCloseTo(rep0Amount * 1.10, -1);
+  });
 });
