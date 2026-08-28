@@ -17,6 +17,7 @@ import { attachmentAdjustedAsk, evaluateHorseAttachment } from "@/core/horse/att
 import { computeDiplomaticPressure } from "@/core/horse/overrideNegotiation";
 import { DIPLOMATIC_FAILURE_FRICTION_PENALTY } from "@/constants/privateSaleConstants";
 import { calculateFrictionChange } from "@/core/stable/rivalry";
+import { evaluateCashPressure, applyCashPressureToThreshold } from "@/core/stable/cashPressure";
 import type { PrivateSaleOffer, Horse, Stable, StablePersonality } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import type { HorseTransferImpact, CashImpact } from "@/core/resolver/impacts";
