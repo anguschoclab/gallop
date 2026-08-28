@@ -1,0 +1,17 @@
+# Line-ending policy: LF everywhere, on checkout and in the repo.
+# This overrides per-contributor core.autocrlf settings so Windows,
+# macOS, and Linux all produce identical diffs.
+* text=auto eol=lf
+
+# Binary files — never normalize line endings or diff as text.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.lockb binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.otf binary
