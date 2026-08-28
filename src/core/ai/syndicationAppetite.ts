@@ -8,6 +8,8 @@
  */
 
 import type { StablePersonality } from "@/game/types";
+import { getSyndicationTuning } from "./syndicationTuning";
+
 
 export interface SyndicationAppetite {
   /** Max fraction of a syndicate's total shares this personality will hold. */
