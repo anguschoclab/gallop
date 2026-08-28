@@ -73,7 +73,7 @@ export function computePrivateSaleDecision(
   const personality = stable.personality as StablePersonality;
 
   const offerRatio = valuation > 0 ? offer.amount / valuation : 0;
-  const cashPressure = evaluateCashPressure(stable, stable.horses.length);
+  const cashPressure = evaluateCashPressure(stable, stable?.horses?.length ?? 0);
 
   const baseAcceptThreshold = ACCEPT_THRESHOLDS[personality];
   const baseCounterThreshold = COUNTER_THRESHOLDS[personality];
