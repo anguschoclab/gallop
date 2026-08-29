@@ -1,9 +1,11 @@
+import type { InboxPriority } from "@/core/inbox/inboxTypes";
+
 export type InboxFilter =
   "all" | "unread" | "action" | "ai_activity" | "critical" | "urgent" | "low" | "info";
 
 export const DEFAULT_INBOX_FILTER: InboxFilter = "all";
 
-export const ACTION_FILTER_EXCLUDED_PRIORITIES = ["info", "low"] as const;
+export const ACTION_FILTER_EXCLUDED_PRIORITIES: readonly InboxPriority[] = ["info", "low"];
 
 export const ICON_SIZE_SM = "h-4 w-4";
 

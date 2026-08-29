@@ -1,0 +1,3 @@
+## 2024-05-24 - [Remove redundant 'as any' casts]
+**Learning:** StoreType cleanly intersects CoreState and SystemsState, so optional properties like reputation and npcAIManager can be safely accessed without casting the store getter to any. Additionally, using readonly InboxPriority[] for constant arrays eliminates the need for 'as any' casts when calling .includes().
+**Action:** Always prefer native TypeScript optional chaining on the typed store state over 'as any' casting. Define constant arrays of union types explicitly rather than relying on 'as const' to improve type compatibility with .includes().
