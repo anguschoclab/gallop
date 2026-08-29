@@ -1,5 +1,6 @@
 import { Info } from "lucide-react";
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { TOOLTIP_DELAY_MS } from "@/constants";
 import type { HorseAttachment } from "@/core/horse/attachment";
 
 interface AttachmentBreakdownProps {
@@ -13,10 +14,14 @@ export function AttachmentBreakdown({ attachment }: AttachmentBreakdownProps) {
         <span className="text-xs font-medium text-cream">
           {attachment.label} · score {attachment.score}
         </span>
-        <TooltipProvider>
+        <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button type="button" className="text-cream-muted hover:text-cream">
+              <button
+                type="button"
+                className="text-cream-muted hover:text-cream"
+                aria-label="View score details"
+              >
                 <Info className="h-3.5 w-3.5" />
               </button>
             </TooltipTrigger>
