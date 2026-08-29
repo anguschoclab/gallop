@@ -96,6 +96,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "A popular beverage company has signed a lucrative deal to sponsor the paddock area, bringing new signage and promotional events to the daily card.",
       category: "flavor",
     },
+    {
+      headline: "Drone Cameras Introduce New Viewing Angles",
+      body: "The broadcasting team successfully debuted new racing drones today, giving fans an unprecedented, dynamic view of the horses as they round the far turn.",
+      category: "flavor",
+    },
+    {
+      headline: "Food Truck Festival on the Infield",
+      body: "A popular weekend event drew thousands of new fans to the infield, combining local gourmet food trucks with a full card of afternoon racing.",
+      category: "flavor",
+    },
   ],
   jockeys: [
     {
@@ -178,6 +188,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "Questions are swirling in the paddock as one of the track's leading riders endures a shocking 0-for-20 slump over the past two weeks.",
       category: "flavor",
     },
+    {
+      headline: "Jockey Agents Shuffle Rosters",
+      body: "Rumors are swirling after a prominent agent abruptly dropped two veteran riders to take on a highly touted apprentice from overseas.",
+      category: "flavor",
+    },
+    {
+      headline: "Retired Champion Jockey Joins Booth",
+      body: "A fan-favorite retired rider made their debut as a guest analyst today, offering incredible insights into race tactics from a jockey's perspective.",
+      category: "flavor",
+    },
   ],
   breeding: [
     {
@@ -255,6 +275,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "The fall mixed sale concluded with surprisingly strong returns, driven largely by intense bidding wars over a handful of deeply pedigreed mares in foal to top stallions.",
       category: "flavor",
     },
+    {
+      headline: "AI Software Aids Pedigree Analysts",
+      body: "Bloodstock agencies are increasingly utilizing new machine learning algorithms to uncover hidden nicking patterns in historic thoroughbred pedigrees.",
+      category: "flavor",
+    },
+    {
+      headline: "Rare Coat Color Found in Weanling",
+      body: "A local farm has drawn media attention after a mare gave birth to a striking roan colt with unusual, prominent white markings.",
+      category: "flavor",
+    },
   ],
   weather: [
     {
@@ -315,6 +345,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "Perfect Conditions Forecast for Stakes Weekend",
       body: "Meteorologists are predicting crisp, clear weather with low humidity for the upcoming festival, promising a fast dirt track and firm going on the turf.",
+      category: "flavor",
+    },
+    {
+      headline: "Vibrant Rainbow Over the Backstretch",
+      body: "Following a brief afternoon shower, a stunning double rainbow stretched across the track, creating a perfect photo opportunity for fans on the apron.",
+      category: "flavor",
+    },
+    {
+      headline: "Lightning Forces Minor Delay",
+      body: "Track stewards temporarily halted the race card after lightning strikes were detected nearby, but action quickly resumed once the storm cell passed.",
       category: "flavor",
     },
   ],
@@ -407,6 +447,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "Local School Visits Backstretch",
       body: "A group of elementary school students enjoyed a guided tour of the stables this morning, feeding peppermints to the horses and learning about the daily life of a thoroughbred.",
+      category: "flavor",
+    },
+    {
+      headline: "Charity Fun Run on the Dirt Track",
+      body: "Hundreds of locals laced up their sneakers early Sunday morning to run a 5K on the main dirt track, raising significant funds for equine aftercare.",
+      category: "flavor",
+    },
+    {
+      headline: "Famous Actor Spotted in Paddock",
+      body: "Paparazzi swarmed the saddling enclosure today when a prominent Hollywood star was seen admiring a horse they recently acquired a minority share in.",
       category: "flavor",
     },
   ],
@@ -505,6 +555,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "New Veterinary Research Published",
       body: "A leading equine clinic has published a groundbreaking study on soft tissue recovery, offering trainers new insights into managing minor aches and pains in their runners.",
+      category: "flavor",
+    },
+    {
+      headline: "New Equine Insurance Provider Enters Market",
+      body: "Owners are welcoming a new, specialized equine insurance firm that promises more competitive premiums for high-value thoroughbreds.",
+      category: "flavor",
+    },
+    {
+      headline: "Documentary Crew Films on Backstretch",
+      body: "A popular streaming service has embedded a film crew at the track, capturing the grit and glamour of daily life for an upcoming docuseries.",
       category: "flavor",
     },
   ],
