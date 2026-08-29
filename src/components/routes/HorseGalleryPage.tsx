@@ -128,9 +128,9 @@ function HorseGalleryPage() {
             <p className="text-cream-muted">
               {horses.length === 0
                 ? "No horses in your stable yet. Visit the market or auction to acquire stock."
-                : "No horses match the selected coat filter."}
+                : "No horses match the selected filters."}
             </p>
-            {horses.length === 0 && (
+            {horses.length === 0 ? (
               <div className="flex gap-2 justify-center mt-4">
                 <Link to="/market">
                   <Button>Go to Market</Button>
@@ -138,6 +138,20 @@ function HorseGalleryPage() {
                 <Link to="/auction">
                   <Button variant="outline">View Auctions</Button>
                 </Link>
+              </div>
+            ) : (
+              <div className="flex justify-center mt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setCoatFilter("all");
+                    setSearch("");
+                    setTraitCategory("all");
+                    setTraitFilter("all");
+                  }}
+                >
+                  Clear Filters
+                </Button>
               </div>
             )}
           </CardContent>
