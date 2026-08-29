@@ -199,6 +199,7 @@ describe("leaderboardNpcBreeding integration", () => {
           hemisphere: "Northern",
           distanceAptitude: 1600,
           stableId: "stable1",
+          ownership: { type: "npc", stableId: "stable1" },
           silk: "#0000FF",
           genotype: { speed: 0.6, stamina: 0.6, acceleration: 0.6, consistency: 0.6 },
           energy: 100,

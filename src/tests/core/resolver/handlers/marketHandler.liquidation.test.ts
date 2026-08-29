@@ -1,3 +1,5 @@
+import { makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 /**
  * Tests for MarketHandler auction_resolution — liquidation and consignedSaleId clearing
  */
@@ -29,7 +31,7 @@ describe("MarketHandler auction_resolution", () => {
       name: "Horse 1",
       age: 3,
       gender: "colt",
-      ownership: makeUnowned(),
+      ownership: makeNpcOwned(asNpcStableId("existing-stable")),
       consignedSaleId: "sale-1",
     });
     const sale = makeSale({
@@ -131,7 +133,7 @@ describe("MarketHandler auction_resolution", () => {
       name: "Horse 1",
       age: 3,
       gender: "colt",
-      ownership: makeUnowned(),
+      ownership: makeNpcOwned(asNpcStableId("existing-stable")),
       consignedSaleId: "sale-1",
     });
     const sale = makeSale({
@@ -182,7 +184,7 @@ describe("MarketHandler auction_resolution", () => {
       name: "Horse 1",
       age: 3,
       gender: "colt",
-      ownership: makeUnowned(),
+      ownership: makeNpcOwned(asNpcStableId("existing-stable")),
       consignedSaleId: "sale-1",
     });
     const sale = makeSale({
@@ -222,7 +224,8 @@ describe("MarketHandler auction_resolution", () => {
     handler.handle(draft, impact);
 
     expect(draft.horses["horse-1"].consignedSaleId).toBeUndefined();
-    expect(draft.horses["horse-1"].stableId).toBe("existing-stable");
+    expect(draft.horses["horse-1"].ownership.type).toBe("npc");
+    expect(draft.horses["horse-1"].ownership.stableId).toBe("existing-stable");
   });
 
   it("should update lot fields (hammerPrice, soldToStableId, passed)", () => {
@@ -232,7 +235,7 @@ describe("MarketHandler auction_resolution", () => {
       name: "Horse 1",
       age: 3,
       gender: "colt",
-      ownership: makeUnowned(),
+      ownership: makeNpcOwned(asNpcStableId("existing-stable")),
     });
     const sale = makeSale({
       id: "sale-1",
@@ -340,7 +343,7 @@ describe("MarketHandler auction_resolution", () => {
       name: "Horse 1",
       age: 2,
       gender: "colt",
-      ownership: makeUnowned(),
+      ownership: makeNpcOwned(asNpcStableId("existing-stable")),
       consignedSaleId: "sale-1",
     });
     const sale = makeSale({

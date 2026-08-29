@@ -68,7 +68,7 @@ describe("budget stable — never selects advanced or locked training", () => {
     const horses = Array.from({ length: 10 }, (_, i) =>
       createTestHorse({
         id: `budget-horse-${i}`,
-        ownership: makeUnowned(),
+        ownership: makeNpcOwned(asNpcStableId("budget-1")),
         energy: 100,
         stats: {
           speed: 40 + i * 5,
@@ -86,7 +86,7 @@ describe("budget stable — never selects advanced or locked training", () => {
       horses,
     } as unknown as GameState;
 
-    const intents = trainingIntentsFrom(multiState);
+    const intents = trainingIntentsFrom(state);
     expect(intents.length).toBeGreaterThan(0);
     for (const intent of intents) {
       expect(ADVANCED_TYPES).not.toContain(intent.trainingType);
@@ -113,21 +113,21 @@ describe("mid stable — picks from mid available set, not premium/elite types",
     const horses = Array.from({ length: 10 }, (_, i) =>
       createTestHorse({
         id: `mid-horse-${i}`,
-        ownership: makeUnowned(),
+        ownership: makeNpcOwned(asNpcStableId("mid-1")),
         energy: 100,
       }),
     );
 
     const state = {
       horses,
-      npcStables: [createTestStable({ id: "mid-stable", tier: "mid" })],
+      npcStables: [createTestStable({ id: "mid-1", tier: "mid" })],
       pregnancies: [],
       races: {},
-      npcFacilities: { "mid-stable": createNPCFacilities("mid", 1) },
+      npcFacilities: { "mid-1": createNPCFacilities("mid", 1) },
       npcAIManager: { stableStates: {} },
     } as unknown as GameState;
 
-    const available = getAvailableTrainingTypes(state.npcFacilities!["mid-stable"]!);
+    const available = getAvailableTrainingTypes(state.npcFacilities!["mid-1"]!);
     for (const t of LOCKED_FOR_MID) {
       expect(available).not.toContain(t);
     }
@@ -156,21 +156,21 @@ describe("elite stable — only picks from its full unlocked set", () => {
     const horses = Array.from({ length: 10 }, (_, i) =>
       createTestHorse({
         id: `elite-horse-${i}`,
-        ownership: makeUnowned(),
+        ownership: makeNpcOwned(asNpcStableId("elite-1")),
         energy: 100,
       }),
     );
 
     const state = {
       horses,
-      npcStables: [createTestStable({ id: "elite-stable", tier: "elite" })],
+      npcStables: [createTestStable({ id: "elite-1", tier: "elite" })],
       pregnancies: [],
       races: {},
-      npcFacilities: { "elite-stable": createNPCFacilities("elite", 1) },
+      npcFacilities: { "elite-1": createNPCFacilities("elite", 1) },
       npcAIManager: { stableStates: {} },
     } as unknown as GameState;
 
-    const available = getAvailableTrainingTypes(state.npcFacilities!["elite-stable"]!);
+    const available = getAvailableTrainingTypes(state.npcFacilities!["elite-1"]!);
 
     // Elite NPC barn is "premium" so breeze and gate_work are unlocked;
     // bullet requires an "elite" barn which NPC stables don't have.
@@ -193,7 +193,7 @@ describe("stable with no npcFacilities entry — falls back to basic types", () 
       horses: h2r([
         createTestHorse({
           id: "no-fac-horse",
-          ownership: makeUnowned(),
+          ownership: makeNpcOwned(asNpcStableId("budget-1")),
           energy: 100,
         }),
       ]),
@@ -238,24 +238,24 @@ describe("multiple stables in one state — each uses its own facility set", () 
       horses: h2r([
         createTestHorse({
           id: "b-horse",
-          ownership: makeUnowned(),
+          ownership: makeNpcOwned(asNpcStableId("budget-multi")),
           energy: 100,
         }),
         createTestHorse({
           id: "e-horse",
-          ownership: makeUnowned(),
+          ownership: makeNpcOwned(asNpcStableId("elite-multi")),
           energy: 100,
         }),
       ]),
       npcStables: [
-        createTestStable({ id: "b-stable", tier: "budget" }),
-        createTestStable({ id: "e-stable", tier: "elite" }),
+        createTestStable({ id: "budget-multi", tier: "budget" }),
+        createTestStable({ id: "elite-multi", tier: "elite" }),
       ],
       pregnancies: [],
       races: {},
       npcFacilities: {
-        "b-stable": budgetFacilities,
-        "e-stable": eliteFacilities,
+        "budget-multi": budgetFacilities,
+        "elite-multi": eliteFacilities,
       },
       npcAIManager: { stableStates: {} },
     } as unknown as GameState;

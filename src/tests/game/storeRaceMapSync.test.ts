@@ -120,7 +120,7 @@ describe("races Record sync through store actions", () => {
     useGame.setState({
       day: 1,
       races: r2r([dueRace]),
-      horses: h2r([{ id: "h1" } as any]),
+      horses: h2r([{ id: "h1", ownership: { type: "unowned" } } as any]),
     });
 
     await useGame.getState().advanceDay();
