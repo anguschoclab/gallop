@@ -39,7 +39,7 @@ export interface CashPressure {
  */
 export function evaluateCashPressure(stable: Stable, horseCount?: number): CashPressure {
   const tuning = getCashPressureTuning();
-  const horses = Math.max(1, horseCount ?? stable.horses.length);
+  const horses = Math.max(1, horseCount ?? (stable.horses?.length ?? 0));
   const dailyUpkeep = horses * UPKEEP_PER_HORSE;
   const cash = Math.max(0, stable.cash);
   const runwayDays = dailyUpkeep > 0 ? cash / dailyUpkeep : tuning.comfortDays;
