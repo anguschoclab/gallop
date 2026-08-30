@@ -59,7 +59,7 @@ export function compressNpcHorses(
 
   for (const horse of Object.values(horses)) {
     // Only compress NPC horses
-    if (horse.ownership.type !== "npc") continue;
+    if (horse.ownership?.type !== "npc") continue;
     const stable = stableMap.get(horse.ownership.stableId);
     if (!stable) continue;
 
@@ -171,7 +171,7 @@ export function splitHorsesForPersistence(
   const stableIds = new Set(stables.map((s) => s.id));
 
   for (const [id, horse] of Object.entries(horses)) {
-    if (horse.ownership.type === "npc" && stableIds.has(horse.ownership.stableId)) {
+    if (horse.ownership?.type === "npc" && stableIds.has(horse.ownership.stableId)) {
       // NPC horse - skip, will be summarized
       continue;
     }

@@ -107,6 +107,7 @@ function makeMockHorse(id: string, owned: boolean, stableId?: string): any {
     heterozygosity: 50,
     fame: 0,
     owned,
+    ownership: owned ? { type: "player" } : { type: "npc", stableId },
     stableId,
     distanceAptitude: 50,
     surfaceAptitude: { Turf: 50, Dirt: 50, Synthetic: 50 },

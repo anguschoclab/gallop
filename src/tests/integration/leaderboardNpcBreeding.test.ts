@@ -1,4 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
+import { makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 import type { Horse, Stable, GameState } from "@/game/types";
 import { runNpcBreeding } from "@/core/npc/breeding";
 import { createRng } from "@/core/common/rng";
@@ -198,7 +200,7 @@ describe("leaderboardNpcBreeding integration", () => {
           fame: 30,
           hemisphere: "Northern",
           distanceAptitude: 1600,
-          stableId: "stable1",
+          ownership: makeNpcOwned(asNpcStableId("stable1")),
           silk: "#0000FF",
           genotype: { speed: 0.6, stamina: 0.6, acceleration: 0.6, consistency: 0.6 },
           energy: 100,

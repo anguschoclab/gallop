@@ -1,3 +1,4 @@
+import { asNpcStableId } from "@/core/types/branded";
 /**
  * Tests for claiming race mechanics
  */
@@ -13,7 +14,7 @@ import {
 import { createRng } from "@/core/common/rng";
 import { createTestHorse } from "@/tests/helpers";
 import type { Horse, Race } from "@/game/types";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
 
 describe("processClaims", () => {
   it("should return empty result when race is not a claiming race", () => {
@@ -98,7 +99,7 @@ describe("processClaims", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: makeUnowned(),
+      ownership: makeNpcOwned(asNpcStableId("stable-1")),
       fame: 50,
       raceHistory: [],
     });
@@ -154,7 +155,7 @@ describe("processClaims", () => {
       energy: 100,
       form: 0,
       silk: "blue",
-      ownership: makeUnowned(),
+      ownership: makeNpcOwned(asNpcStableId("stable-1")),
       fame: 50,
       raceHistory: [],
     });
@@ -227,11 +228,11 @@ describe("processClaims", () => {
 
     const horse1 = createTestHorse({
       id: "horse-1",
-      ownership: makeUnowned(),
+      ownership: makeNpcOwned(asNpcStableId("stable-1")),
     });
     const horse2 = createTestHorse({
       id: "horse-2",
-      ownership: makeUnowned(),
+      ownership: makeNpcOwned(asNpcStableId("stable-1")),
     });
 
     const claims: ClaimAttempt[] = [
@@ -263,7 +264,7 @@ describe("processClaims", () => {
 
     const horse1 = createTestHorse({
       id: "horse-1",
-      ownership: makeUnowned(),
+      ownership: makeNpcOwned(asNpcStableId("stable-1")),
     });
 
     const claims: ClaimAttempt[] = [
