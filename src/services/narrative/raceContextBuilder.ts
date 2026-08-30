@@ -1,3 +1,4 @@
+import type { HorseRaceHistoryEntry } from "@/core/horse/types";
 import type { Race, Horse } from "@/game/types";
 import type { SeasonRecord, TrackRecord } from "@/core/history/historyTypes";
 import type { RaceContext } from "./types";
@@ -57,7 +58,7 @@ export function buildRaceContext(
   for (const horse of horses) {
     // Previous finish positions in this race (from raceHistory)
     const prevFinish = horse.raceHistory?.find(
-      (entry: any) => entry.raceName === raceName || entry.raceId === race?.id,
+      (entry: HorseRaceHistoryEntry) => entry.raceName === raceName || entry.raceId === race?.id,
     );
     if (prevFinish && prevFinish.position) {
       context.previousFinishPositions[horse.id] = prevFinish.position;
