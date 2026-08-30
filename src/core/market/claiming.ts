@@ -94,7 +94,12 @@ export function processClaims(
     // Create transfer
     const transfer: HorseTransfer = {
       horseId,
-      fromStableId: horse.ownership.stableId,
+      fromStableId:
+        horse.ownership.type === "npc"
+          ? horse.ownership.stableId
+          : horse.ownership.type === "player"
+            ? "player"
+            : "",
       toStableId: winningClaim.claimantStableId,
       price: race.claimingPrice,
       raceId: race.id,
