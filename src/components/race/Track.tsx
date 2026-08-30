@@ -166,6 +166,8 @@ export function Track({
   captureRunnerMoods(runners, peakVelocityRef.current, distance);
 
   const trackOffset = -(cameraPos % TRACK_BG_TILE_WIDTH);
+  // Hoisted outside the map loop to prevent O(N^2) calculations on every frame.
+  const fieldContext = buildFieldContext(runners);
 
   return (
     <div
@@ -247,7 +249,7 @@ export function Track({
           r.finishTime === null
             ? deriveRunnerConditions(
                 r,
-                buildFieldContext(runners),
+                fieldContext,
                 { peakVelocity: peakVelocityRef.current.get(r.horseId) ?? 0 },
                 distance,
               )
