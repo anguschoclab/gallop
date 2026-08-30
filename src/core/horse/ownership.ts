@@ -31,14 +31,14 @@ export const PLAYER_OWNER_ID: PlayerOwnerId = asPlayerOwnerId(PLAYER_OWNER_ID_VA
  * @param horse - The horse (or undefined/null) to check.
  */
 export function isPlayerOwned(horse: { ownership: HorseOwnership } | undefined | null): boolean {
-  return horse?.ownership.type === "player";
+  return horse?.ownership?.type === "player";
 }
 
 /** True when an NPC stable owns this horse.
  * @param horse - The horse (or undefined/null) to check.
  */
 export function isNpcOwned(horse: { ownership: HorseOwnership } | undefined | null): boolean {
-  return horse?.ownership.type === "npc";
+  return horse?.ownership?.type === "npc";
 }
 
 /** True when nobody owns this horse (world/market stock, unassigned foals).

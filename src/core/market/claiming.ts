@@ -82,7 +82,7 @@ export function processClaims(
   // Process each horse's claims
   for (const [horseId, horseClaims] of claimsByHorse) {
     const horse = horseMap.get(horseId);
-    if (!horse || horse.ownership?.type !== "npc") continue;
+    if (!horse) continue;
 
     if (horseClaims.length === 0) continue;
 
