@@ -12,6 +12,16 @@ export type FlavorStoryTheme =
 export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   track: [
     {
+      headline: "New Track Announcer Debuts",
+      body: "The grandstand was treated to a fresh voice this afternoon as the newly hired track announcer called their very first race with distinct flair.",
+      category: "flavor",
+    },
+    {
+      headline: "Tractor Malfunction Halts Works",
+      body: "Morning training came to a brief standstill when the main water truck broke down at the top of the stretch, creating a minor traffic jam of eager thoroughbreds.",
+      category: "flavor",
+    },
+    {
       headline: "Backstretch Beautification Project Underway",
       body: "Volunteers and track employees have teamed up to plant hundreds of new flowers around the paddock and walking rings, adding fresh color to the venue.",
       category: "flavor",
@@ -99,6 +109,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   jockeys: [
     {
+      headline: "Weight Issues Plague Jockeys' Room",
+      body: "Several riders were seen hitting the hot box hard this morning, struggling to make weight for the early allowance races after a long holiday weekend.",
+      category: "flavor",
+    },
+    {
+      headline: "Rivalry Brews Between Top Riders",
+      body: "A fierce stretch duel has spilled over into the jockeys' room, with two leading riders exchanging heated words after a tight finish.",
+      category: "flavor",
+    },
+    {
       headline: "Jockey Colony Sees Influx of Talent",
       body: "Several promising young riders have transferred their tack to the local circuit, raising the level of competition in the jockeys' room.",
       category: "flavor",
@@ -180,6 +200,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   breeding: [
+    {
+      headline: "Stallion Retires to Stud Duty",
+      body: "Following a decorated career on the track, a popular fan-favorite has officially shipped out to the breeding shed to begin his highly anticipated second career.",
+      category: "flavor",
+    },
+    {
+      headline: "Sales Topper Disappoints in Debut",
+      body: "Whispers are flying across the backstretch after a seven-figure yearling purchase finished well up the track in their highly publicized debut.",
+      category: "flavor",
+    },
     {
       headline: "Prominent Mare Delivers Healthy Twins",
       body: "In a rare and closely watched event, a multiple stakes-winning mare has safely delivered healthy twin foals, defying the usual odds in thoroughbred reproduction.",
@@ -320,6 +350,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   community: [
     {
+      headline: "Trainer Celebrates 500th Winner",
+      body: "A popular local trainer reached a major milestone today, surrounded by staff and owners in the winner's circle after saddling their 500th career victor.",
+      category: "flavor",
+    },
+    {
+      headline: "Track Outrider Praised for Quick Thinking",
+      body: "A disaster was narrowly avoided during morning works when an alert outrider swiftly corralled a loose horse before it could run off the track.",
+      category: "flavor",
+    },
+    {
       headline: "Local School Hosts Field Trip at the Track",
       body: "Hundreds of elementary school students visited the track this morning, getting a behind-the-scenes look at the barns and learning about equine care from local trainers.",
       category: "flavor",
@@ -411,6 +451,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   industry: [
+    {
+      headline: "Syndicate Models Gain Traction",
+      body: "Micro-share ownership syndicates are seeing a massive surge in popularity, bringing a new wave of loud, enthusiastic owners to the paddock.",
+      category: "flavor",
+    },
+    {
+      headline: "Wagering Handle Shows Growth",
+      body: "Track officials are celebrating a strong start to the season, with the all-sources wagering handle showing a double-digit percentage increase over last year.",
+      category: "flavor",
+    },
     {
       headline: "New Season Projections",
       body: "Pundits are already weighing in on the upcoming stakes schedule, with many predicting a highly competitive year for the 3-year-old division.",
