@@ -32,7 +32,7 @@ vi.mock("@/game/store", () => ({
             winsAgainstPlayer: 3,
             regionalPrestige: { "North Region": 80 },
             strategicDirectives: [
-              { id: "d1", priority: "high" as const, action: "acquire_stallion" },
+              { id: "d1", priority: "high" as const, type: "acquire_stallion" },
             ],
             npcRelationships: {
               s2: {
@@ -48,8 +48,8 @@ vi.mock("@/game/store", () => ({
               dramaticPotential: 0.7,
             },
             worldAssessment: {
-              playerStrength: 0.6,
-              topThreats: [{ stableId: "s2", threatLevel: 0.8 }],
+              playerDominance: 0.6,
+
               opportunities: [{ type: "auction", value: 50000 }],
             },
             financialDistress: {
@@ -144,6 +144,6 @@ describe("RivalIntelTab", () => {
   it("displays world assessment section", () => {
     render(<RivalIntelTab />);
     expect(screen.getByText(/World Assessment/i)).toBeDefined();
-    expect(screen.getByText(/player strength/i)).toBeDefined();
+    expect(screen.getByText(/player dominance/i)).toBeDefined();
   });
 });
