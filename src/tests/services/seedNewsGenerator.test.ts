@@ -2,13 +2,19 @@ import { describe, it, expect } from "vitest";
 import { seedGazetteNews } from "@/services/narrative/seedNewsGenerator";
 import { createTestHorse, createTestStable, createTestRng } from "@/tests/helpers";
 import { isValidUUID } from "@/core/uuid";
-import type { NewsCategory, NewsImportance } from "@/services/narrative/newsTypes";
+import type { NewsCategory, NewsImportance, EntityLink } from "@/services/narrative/newsTypes";
 import type { Race, Stable, Horse } from "@/game/types";
 import type { PlayerProfile } from "@/core/stable/types";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 const VALID_CATEGORIES: NewsCategory[] = ["racing", "market", "stable", "flavor", "milestone"];
 const VALID_IMPORTANCE: NewsImportance[] = ["high", "medium", "low"];
+
+function entityLinkTypeMap(links?: EntityLink[]): Map<string, string> {
+  const map = new Map<string, string>();
+  if (links) for (const el of links) map.set(el.type, el.id);
+  return map;
+}
 
 function buildTestStables(n: number): Stable[] {
   return Array.from({ length: n }, (_, i) =>
@@ -393,7 +399,7 @@ describe("seedGazetteNews", () => {
       );
       const introStableIdsFromNews = result.news
         .filter((n) => n.category === "stable" && n.importance === "low")
-        .map((n) => n.entityLinks?.find((el) => el.type === "stable")?.id)
+        .map((n) => entityLinkTypeMap(n.entityLinks).get("stable"))
         .sort();
       expect(result.introStableIds.sort()).toEqual(introStableIdsFromNews);
     });
