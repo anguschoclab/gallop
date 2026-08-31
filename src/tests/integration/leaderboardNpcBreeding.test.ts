@@ -4,6 +4,8 @@ import { runNpcBreeding } from "@/core/npc/breeding";
 import { createRng } from "@/core/common/rng";
 import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 
 describe("leaderboardNpcBreeding integration", () => {
   let state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day" | "sireLeaderboards">;
@@ -128,6 +130,7 @@ describe("leaderboardNpcBreeding integration", () => {
           name: "Top Sire",
           age: 10,
           gender: "colt",
+          ownership: makeNpcOwned(asNpcStableId("sire-stable")),
           stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
           stud: {
             atStud: true,
@@ -158,6 +161,7 @@ describe("leaderboardNpcBreeding integration", () => {
           name: "Value Sire",
           age: 8,
           gender: "colt",
+          ownership: makeNpcOwned(asNpcStableId("sire-stable")),
           stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
           stud: {
             atStud: true,
@@ -188,6 +192,7 @@ describe("leaderboardNpcBreeding integration", () => {
           name: "Test Mare",
           age: 5,
           gender: "mare",
+          ownership: makeNpcOwned(asNpcStableId("stable1")),
           stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 },
           pedigree: {},
           raceHistory: [],
@@ -198,7 +203,6 @@ describe("leaderboardNpcBreeding integration", () => {
           fame: 30,
           hemisphere: "Northern",
           distanceAptitude: 1600,
-          stableId: "stable1",
           silk: "#0000FF",
           genotype: { speed: 0.6, stamina: 0.6, acceleration: 0.6, consistency: 0.6 },
           energy: 100,

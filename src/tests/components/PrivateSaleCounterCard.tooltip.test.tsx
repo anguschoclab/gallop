@@ -28,6 +28,8 @@ const mkStable = (overrides: Partial<Stable> = {}): Stable =>
   ({
     id: "s1",
     name: "Rival Stable",
+    cash: 100000,
+    horses: [],
     ...overrides,
   }) as Stable;
 

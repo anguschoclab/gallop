@@ -1,4 +1,5 @@
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 /**
  * Integration tests for the award ceremony invitation phase.
  *
@@ -166,7 +167,7 @@ describe("awardInvitationsPhase (integration)", () => {
 
   it("ignores NPC-owned horses", () => {
     const npcHorse = mkHorse("h-npc", "race-eu", 1, 200, "G1", {
-      stableId: "npc-1",
+      ownership: makeNpcOwned(asNpcStableId("npc-1")),
     } as Partial<Horse>);
     const result = awardInvitationsPhase.execute(
       mkContext(EUROPE_CEREMONY_DOY - CEREMONY_INVITE_LEAD_DAYS, [npcHorse], [euroRace]),

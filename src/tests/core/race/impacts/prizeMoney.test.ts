@@ -3,7 +3,7 @@ import { generatePrizeMoneyImpacts } from "@/core/race/impacts/prizeMoney";
 import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/constants";
 import type { Race, Horse } from "@/game/types";
 import { asNpcStableId, asHorseId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 describe("prizeMoney", () => {
   const baseHorse: Horse = {
@@ -104,7 +104,7 @@ describe("prizeMoney", () => {
     it("pays nothing for unowned world stock (no owner, no stableId)", () => {
       const worldHorse = {
         ...baseHorse,
-        ownership: makeNpcOwned(asNpcStableId("unowned")),
+        ownership: makeUnowned(),
       } as unknown as Horse;
       const impacts = generatePrizeMoneyImpacts(worldHorse, 1, baseRace, 1, rng);
       expect(impacts).toBeNull();

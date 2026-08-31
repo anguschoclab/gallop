@@ -9,6 +9,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 
 vi.mock("@/services/storage/storageAdapter", () => ({
   STORAGE_KEYS: {
@@ -68,6 +70,11 @@ function makeMockHorse(id: string, owned: boolean, stableId?: string): any {
     gender: "colt",
     hemisphere: "northern",
     silk: "red",
+    ownership: owned
+      ? makePlayerOwned()
+      : stableId
+        ? makeNpcOwned(asNpcStableId(stableId))
+        : makeUnowned(),
     stats: {
       speed: 50,
       stamina: 50,
@@ -106,8 +113,6 @@ function makeMockHorse(id: string, owned: boolean, stableId?: string): any {
     foalingEase: 50,
     heterozygosity: 50,
     fame: 0,
-    owned,
-    stableId,
     distanceAptitude: 50,
     surfaceAptitude: { Turf: 50, Dirt: 50, Synthetic: 50 },
     mudAptitude: 50,

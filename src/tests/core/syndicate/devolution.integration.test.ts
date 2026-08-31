@@ -184,15 +184,15 @@ describe("Syndicate Devolution Integration", () => {
 
     // NPC-A buys 1 -> npcA 16, player 15. 15 <= 25, npcA 16 > 15 -> transfer to npcA
     handler.handle(draft, makePurchaseImpact("syn-s1", "npcA", 1));
-    expect(draft.horses["s1"].stableId).toBe("npcA");
+    expect(draft.horses["s1"].ownership).toEqual({ type: "npc", stableId: "npcA" });
 
     // NPC-A sells 6 -> npcA 10, player 15. npcA is owner. 10 <= 25, player 15 > 10 -> transfer to player
     handler.handle(draft, makeSaleImpact("syn-s1", "npcA", 6));
-    expect(draft.horses["s1"].stableId).toBeUndefined(); // Back to player
+    expect(draft.horses["s1"].ownership).toEqual({ type: "player" }); // Back to player
 
     // Player sells 5 -> player 10, npcA 10, npcB 10. Player is owner. 10 <= 25, nobody > 10 -> no transfer
     handler.handle(draft, makeSaleImpact("syn-s1", "player", 5));
-    expect(draft.horses["s1"].stableId).toBeUndefined(); // Still player (3-way tie)
+    expect(draft.horses["s1"].ownership).toEqual({ type: "player" }); // Still player (3-way tie)
 
     // Verify 2 devolution events
     const devolutionFeeds = draft.shareActivityFeed.filter((f: any) => f.type === "devolution");
@@ -213,19 +213,19 @@ describe("Syndicate Devolution Integration", () => {
 
     // NPC-A buys 6 -> npcA 21, player 20. 20 <= 25, npcA 21 > 20 -> transfer to npcA (devolution #1)
     handler.handle(draft, makePurchaseImpact("syn-s1", "npcA", 6));
-    expect(draft.horses["s1"].stableId).toBe("npcA");
+    expect(draft.horses["s1"].ownership).toEqual({ type: "npc", stableId: "npcA" });
 
     // NPC-A sells 10 -> npcA 11, player 20. npcA is owner. 11 <= 25, player 20 > 11 -> transfer to player (devolution #2)
     handler.handle(draft, makeSaleImpact("syn-s1", "npcA", 10));
-    expect(draft.horses["s1"].stableId).toBeUndefined(); // Back to player
+    expect(draft.horses["s1"].ownership).toEqual({ type: "player" }); // Back to player
 
     // NPC-B buys 14 -> npcB 19, player 20. player is owner. 20 <= 25, npcB 19 < 20 -> no transfer
     handler.handle(draft, makePurchaseImpact("syn-s1", "npcB", 14));
-    expect(draft.horses["s1"].stableId).toBeUndefined(); // Still player
+    expect(draft.horses["s1"].ownership).toEqual({ type: "player" }); // Still player
 
     // Player sells 5 -> player 15, npcB 19. player is owner. 15 <= 25, npcB 19 > 15 -> transfer to npcB (devolution #3)
     handler.handle(draft, makeSaleImpact("syn-s1", "player", 5));
-    expect(draft.horses["s1"].stableId).toBe("npcB");
+    expect(draft.horses["s1"].ownership).toEqual({ type: "npc", stableId: "npcB" });
 
     // Verify 3 devolution events
     const devolutionFeeds = draft.shareActivityFeed.filter((f: any) => f.type === "devolution");

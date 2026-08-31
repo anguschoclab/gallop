@@ -1,4 +1,4 @@
-import { createElement, type ReactNode } from "react";
+import { createElement, type ReactNode, type ComponentType } from "react";
 
 export const MOCK_PARAMS: Record<string, string> = {
   raceId: "mock-race-id",
@@ -52,5 +52,8 @@ export function createRouterMock() {
     createRootRoute: () => (options: unknown) => ({ options }),
     HeadContent: () => null,
     Scripts: () => null,
+    lazyRouteComponent: (): ComponentType<any> => {
+      return (() => null) as ComponentType<any>;
+    },
   };
 }

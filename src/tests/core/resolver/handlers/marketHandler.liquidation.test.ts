@@ -7,7 +7,8 @@ import { MarketHandler } from "@/core/resolver/handlers/MarketHandler";
 import type { GameState, Horse, AuctionSale } from "@/game/types";
 import type { AuctionResolutionImpact } from "@/core/resolver/impacts/miscImpacts";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 
 function makeSale(overrides: Partial<AuctionSale> = {}): AuctionSale {
   return {
@@ -182,7 +183,7 @@ describe("MarketHandler auction_resolution", () => {
       name: "Horse 1",
       age: 3,
       gender: "colt",
-      ownership: makeUnowned(),
+      ownership: makeNpcOwned(asNpcStableId("existing-stable")),
       consignedSaleId: "sale-1",
     });
     const sale = makeSale({
@@ -222,7 +223,7 @@ describe("MarketHandler auction_resolution", () => {
     handler.handle(draft, impact);
 
     expect(draft.horses["horse-1"].consignedSaleId).toBeUndefined();
-    expect(draft.horses["horse-1"].stableId).toBe("existing-stable");
+    expect(draft.horses["horse-1"].ownership).toEqual({ type: "npc", stableId: "existing-stable" });
   });
 
   it("should update lot fields (hammerPrice, soldToStableId, passed)", () => {

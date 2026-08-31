@@ -68,7 +68,7 @@ describe("budget stable — never selects advanced or locked training", () => {
     const horses = Array.from({ length: 10 }, (_, i) =>
       createTestHorse({
         id: `budget-horse-${i}`,
-        ownership: makeUnowned(),
+        ownership: makeNpcOwned(asNpcStableId("budget-stable")),
         energy: 100,
         stats: {
           speed: 40 + i * 5,
@@ -113,7 +113,7 @@ describe("mid stable — picks from mid available set, not premium/elite types",
     const horses = Array.from({ length: 10 }, (_, i) =>
       createTestHorse({
         id: `mid-horse-${i}`,
-        ownership: makeUnowned(),
+        ownership: makeNpcOwned(asNpcStableId("mid-stable")),
         energy: 100,
       }),
     );
@@ -156,7 +156,7 @@ describe("elite stable — only picks from its full unlocked set", () => {
     const horses = Array.from({ length: 10 }, (_, i) =>
       createTestHorse({
         id: `elite-horse-${i}`,
-        ownership: makeUnowned(),
+        ownership: makeNpcOwned(asNpcStableId("elite-stable")),
         energy: 100,
       }),
     );
@@ -193,7 +193,7 @@ describe("stable with no npcFacilities entry — falls back to basic types", () 
       horses: h2r([
         createTestHorse({
           id: "no-fac-horse",
-          ownership: makeUnowned(),
+          ownership: makeNpcOwned(asNpcStableId("no-fac-stable")),
           energy: 100,
         }),
       ]),
@@ -238,12 +238,12 @@ describe("multiple stables in one state — each uses its own facility set", () 
       horses: h2r([
         createTestHorse({
           id: "b-horse",
-          ownership: makeUnowned(),
+          ownership: makeNpcOwned(asNpcStableId("b-stable")),
           energy: 100,
         }),
         createTestHorse({
           id: "e-horse",
-          ownership: makeUnowned(),
+          ownership: makeNpcOwned(asNpcStableId("e-stable")),
           energy: 100,
         }),
       ]),

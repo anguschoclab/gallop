@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { createInitialState } from "@/game/store/initialization";
 import type { NewGameOptions } from "@/game/store/state";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 const mockProfile = {
   stableName: "Alignment Test Stable",
@@ -141,7 +142,7 @@ describe("worker output matches main-thread output shape", () => {
 
   it("both resolve player horse phenotypes (ensurePhenotypeResolved)", () => {
     const horses = Object.values(mainState.horses ?? {});
-    const playerHorses = horses.filter((h: any) => h.owned);
+    const playerHorses = horses.filter((h: any) => isPlayerOwned(h));
     expect(playerHorses.length).toBeGreaterThan(0);
     for (const h of playerHorses) {
       expect((h as any).phenotypeResolved).not.toBe(false);
