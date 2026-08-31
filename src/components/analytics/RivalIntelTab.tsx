@@ -14,7 +14,7 @@ import {
   Target,
   AlertTriangle,
 } from "lucide-react";
-import type { NpcAIManager, DifficultyState } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager, DifficultyState, StableAIState } from "@/core/ai/npcCycleAI";
 import type { DistressLevel } from "@/core/ai/financialDistressAI";
 import { EconomicIndicators } from "@/components/analytics/EconomicIndicators";
 import { StorylinesTab } from "@/components/briefing/StorylinesTab";
@@ -191,7 +191,7 @@ function NpcDistressMonitorPanel({
   stableStates,
   stableMap,
 }: {
-  stableStates: Record<string, any>;
+  stableStates: Record<string, StableAIState>;
   stableMap: Map<string, Stable>;
 }) {
   const distressed = Object.entries(stableStates)
@@ -239,7 +239,7 @@ function NpcDistressMonitorPanel({
               <div className="text-[10px] text-cream/30 font-mono">
                 Days of cash: {d.daysOfCash?.toFixed(0) ?? "—"}
               </div>
-              {d.recommendedActions?.length > 0 && (
+              {d.recommendedActions && d.recommendedActions.length > 0 && (
                 <div className="text-[10px] text-cream/30 font-mono">
                   Actions: {d.recommendedActions.join(", ")}
                 </div>
@@ -252,7 +252,7 @@ function NpcDistressMonitorPanel({
   );
 }
 
-function WorldAssessmentPanel({ stableStates }: { stableStates: Record<string, any> }) {
+function WorldAssessmentPanel({ stableStates }: { stableStates: Record<string, StableAIState> }) {
   const assessments = Object.entries(stableStates)
     .filter(([, s]) => s.worldAssessment)
     .map(([id, s]) => ({ id, ...s.worldAssessment }));
@@ -273,18 +273,12 @@ function WorldAssessmentPanel({ stableStates }: { stableStates: Record<string, a
             <div key={a.id} className="space-y-1 text-xs">
               <div className="flex justify-between">
                 <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
-                  player strength
+                  player dominance
                 </span>
                 <span className="text-cream font-mono">
-                  {((a.playerStrength ?? 0) * 100).toFixed(0)}%
+                  {((a.playerDominance ?? 0) * 100).toFixed(0)}%
                 </span>
               </div>
-              {a.topThreats?.length > 0 && (
-                <div className="text-[10px] text-cream/30 font-mono">
-                  Top threat: {a.topThreats[0].stableId} (
-                  {((a.topThreats[0].threatLevel ?? 0) * 100).toFixed(0)}%)
-                </div>
-              )}
             </div>
           ))
         )}
@@ -293,10 +287,14 @@ function WorldAssessmentPanel({ stableStates }: { stableStates: Record<string, a
   );
 }
 
-function StrategicDirectivesPanel({ stableStates }: { stableStates: Record<string, any> }) {
+function StrategicDirectivesPanel({
+  stableStates,
+}: {
+  stableStates: Record<string, StableAIState>;
+}) {
   const directives = Object.entries(stableStates)
-    .filter(([, s]) => s.strategicDirectives?.length > 0)
-    .flatMap(([id, s]) => s.strategicDirectives.map((d: any) => ({ stableId: id, ...d })));
+    .filter(([, s]) => s.strategicDirectives && s.strategicDirectives.length > 0)
+    .flatMap(([id, s]) => s.strategicDirectives!.map((d) => ({ stableId: id, ...d })));
 
   return (
     <Card className="border-gold/20 bg-slate-900/40">
@@ -312,7 +310,7 @@ function StrategicDirectivesPanel({ stableStates }: { stableStates: Record<strin
         ) : (
           directives.map((d, i) => (
             <div key={i} className="flex items-center justify-between text-xs">
-              <span className="text-cream font-mono">{d.action}</span>
+              <span className="text-cream font-mono">{d.type}</span>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] text-cream/30 font-mono">{d.stableId}</span>
                 <Badge variant="outline" className="text-[9px] border-white/10 text-cream/40">
@@ -331,14 +329,14 @@ function NpcRelationshipsPanel({
   stableStates,
   stableMap,
 }: {
-  stableStates: Record<string, any>;
+  stableStates: Record<string, StableAIState>;
   stableMap: Map<string, Stable>;
 }) {
   const stableIds = Object.keys(stableStates).filter((id) => stableMap.has(id));
   const relationships = Object.entries(stableStates)
     .filter(([, s]) => s.npcRelationships)
     .flatMap(([id, s]) =>
-      Object.entries(s.npcRelationships).map(([targetId, rel]: [string, any]) => ({
+      Object.entries(s.npcRelationships || {}).map(([targetId, rel]) => ({
         from: id,
         to: targetId,
         ...rel,
@@ -442,7 +440,7 @@ function NpcStableIntelPanel({
   stableStates,
   stableMap,
 }: {
-  stableStates: Record<string, any>;
+  stableStates: Record<string, StableAIState>;
   stableMap: Map<string, Stable>;
 }) {
   const entries = Object.entries(stableStates);
