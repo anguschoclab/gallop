@@ -27,7 +27,7 @@ import {
   makeUnowned,
   type HorseOwnership,
 } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { asNpcStableId, asHorseId } from "@/core/types/branded";
 
 import { hashStr, nondeterministicRng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
@@ -237,7 +237,7 @@ export function createHorseFromDNA(
   } = {},
 ): Horse {
   // Consume rng slots for identity fields to preserve caller's RNG sequence
-  const id = generateUUID(rng);
+  const id = asHorseId(generateUUID(rng));
   const silk = randomSilk(rng);
   const potential = POTENTIAL_MIN + Math.floor(rng.next() * (POTENTIAL_MAX - POTENTIAL_MIN));
   // Consume the appearance-seed slot so downstream rng calls stay aligned

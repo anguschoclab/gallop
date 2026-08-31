@@ -19,6 +19,7 @@ import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS, PHASE_ORDER_JOCKEY_PHASE } 
 import { generateUUID } from "@/core/uuid";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { JockeyContractImpact } from "@/core/resolver/impacts/index";
+import { asNpcStableId } from "@/core/types/branded";
 
 /**
  * Phase: Jockey Management
@@ -142,7 +143,7 @@ export const jockeyPhase = {
                 phase: "jockey",
                 logLevel: "conditional",
                 type: "cash_change",
-                entityId: stable.id,
+                entityId: asNpcStableId(stable.id),
                 amount: -signOnBonus,
                 reason: `Sign-on bonus for jockey ${chosen.name}`,
               });

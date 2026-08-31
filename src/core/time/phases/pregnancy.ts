@@ -28,6 +28,7 @@ import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { recordBreedingOutcome } from "@/core/ai/breedingRecording";
 import { calculateOverallRating } from "@/core/horse/stats";
+import { asPlayerOwnerId, asHorseId } from "@/core/types/branded";
 
 /**
  * Build the updated NPC AI manager from foaling outcomes.
@@ -182,7 +183,7 @@ export function buildPregnancyImpacts(
       phase: "pregnancy",
       logLevel: "conditional",
       type: "cash_change",
-      entityId: "player",
+      entityId: asPlayerOwnerId("player"),
       amount: cashAdjustment,
       reason: "Live Foal Guarantee refund",
     };
@@ -203,7 +204,7 @@ function buildMareFoalingImpacts(
     phase: "pregnancy",
     logLevel: "conditional",
     type: "mare_foaling_update",
-    horseId: update.horseId,
+    horseId: asHorseId(update.horseId),
     lastFoaledDay: update.lastFoaledDay,
     foalsProduced: update.foalsProduced,
     blueHenStatus: update.blueHenStatus,
@@ -222,7 +223,7 @@ function buildStudCareerImpacts(
     phase: "pregnancy",
     logLevel: "conditional",
     type: "stud_career",
-    horseId: update.horseId,
+    horseId: asHorseId(update.horseId),
     studCareer: update.studCareer,
     reason: `Sire ${update.horseId} recorded a new foal`,
   }));

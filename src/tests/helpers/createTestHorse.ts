@@ -57,10 +57,11 @@ function createTestHorseMarkings(): HorseMarkings {
  * @param overrides - Optional horse properties to override defaults
  * @returns Complete Horse object
  */
-export function createTestHorse(overrides?: Partial<Horse>): Horse {
+export function createTestHorse(overrides?: Omit<Partial<Horse>, "id"> & { id?: string }): Horse {
+  const { id, ...rest } = overrides ?? {};
   return {
     // Basic properties
-    id: asHorseId("test-horse-1"),
+    id: asHorseId(id ?? "test-horse-1"),
     name: "Test Horse",
     age: 3,
     gender: "colt" as HorseGender,
@@ -94,7 +95,7 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
     foalsProduced: undefined,
     lastFoaledDay: undefined,
     pedigree: {
-      name: overrides?.name ?? "Test Horse",
+      name: rest.name ?? "Test Horse",
       generation: 0,
       sireName: "Test Sire",
       damName: "Test Dam",
@@ -163,8 +164,8 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
     birthDay: 1,
     courseVisits: {},
 
-    // Apply any overrides
-    ...overrides,
+    // Apply remaining overrides
+    ...rest,
   };
 }
 

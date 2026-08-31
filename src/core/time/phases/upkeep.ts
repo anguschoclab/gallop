@@ -17,6 +17,7 @@ import { generateFlavorNews, generateWeeklyFlavorNews } from "@/services/narrati
 import { generateUUID } from "@/core/uuid";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { CashImpact, TransactionImpact, NewsImpact } from "@/core/resolver/impacts/index";
+import { asNpcStableId } from "@/core/types/branded";
 import { calculateMonthlyExpenseBudget, createUpkeepAIState } from "@/core/ai/upkeepAI";
 import {
   recordBudgetDecision,
@@ -220,10 +221,10 @@ export const upkeepPhase = {
           phase: "upkeep",
           logLevel: "conditional",
           type: "cash_change",
-          entityId: stable.id,
+          entityId: asNpcStableId(stable.id),
           amount: -actualCost,
           reason: "Daily NPC upkeep",
-        } as CashImpact);
+        });
       }
     }
 

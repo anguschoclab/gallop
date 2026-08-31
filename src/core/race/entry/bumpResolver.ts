@@ -6,6 +6,7 @@
  */
 
 import type { Horse, RaceEntry } from "@/game/types";
+import type { HorseId } from "@/core/types/branded";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { BUMP_RATING_MARGIN } from "@/constants";
 
@@ -21,7 +22,7 @@ import { BUMP_RATING_MARGIN } from "@/constants";
 export function findBumpableEntryIndex(
   entries: RaceEntry[],
   challenger: Horse,
-  horseLookup: (id: string) => Horse | undefined,
+  horseLookup: (id: HorseId) => Horse | undefined,
 ): number {
   const challengerRating = calculateOverallRating(challenger);
   let weakestIdx = -1;

@@ -62,7 +62,7 @@ function createMockStable(overrides: Partial<Stable> = {}): Stable {
 
 function createMockRace(overrides: Partial<Race> = {}): Race {
   return {
-    id: "race-1",
+    id: asRaceId("race-1"),
     name: "Test Race",
     day: 100,
     distance: 1600,
