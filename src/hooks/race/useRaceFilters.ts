@@ -121,16 +121,18 @@ export function useRaceFilters(
   ]);
 
   const filterOptions = useMemo(() => {
-    const gradedRaces = races.filter((r: Race) => r.graded);
-    const uniqueCountries = Array.from(
-      new Set(gradedRaces.map((r: Race) => getCountry(r.graded!.track))),
-    )
-      .filter(Boolean)
-      .sort() as string[];
-
-    const uniqueTracks = Array.from(new Set(gradedRaces.map((r: Race) => r.graded!.track))).sort();
-
-    return { countries: uniqueCountries, tracks: uniqueTracks };
+    const countrySet = new Set<string>();
+    const trackSet = new Set<string>();
+    for (const r of races) {
+      if (!r.graded) continue;
+      trackSet.add(r.graded.track);
+      const c = getCountry(r.graded.track);
+      if (c) countrySet.add(c);
+    }
+    return {
+      countries: Array.from(countrySet).sort(),
+      tracks: Array.from(trackSet).sort(),
+    };
   }, [races]);
 
   return {

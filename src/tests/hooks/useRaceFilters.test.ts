@@ -171,3 +171,98 @@ describe("useRaceFilters — eligibleOnly filter", () => {
     expect(result.current.filteredRaces.length).toBeGreaterThan(0);
   });
 });
+
+describe("useRaceFilters — filter options (countries & tracks)", () => {
+  function mkGraded(id: string, track: string): Race {
+    return mkRace(id, {
+      graded: { key: `${id}-key`, grade: "G1", track, surface: "Turf" } as any,
+    });
+  }
+
+  it("returns empty countries and tracks for empty races array", () => {
+    const { result } = renderHook(() => useRaceFilters([], 1, defaultFilters));
+
+    expect(result.current.countries).toEqual([]);
+    expect(result.current.tracks).toEqual([]);
+  });
+
+  it("returns empty countries and tracks when no races are graded", () => {
+    const races = [mkRace("r1"), mkRace("r2")];
+
+    const { result } = renderHook(() => useRaceFilters(races, 1, defaultFilters));
+
+    expect(result.current.countries).toEqual([]);
+    expect(result.current.tracks).toEqual([]);
+  });
+
+  it("extracts single country and track from one graded race", () => {
+    const races = [mkGraded("r1", "Churchill Downs")];
+
+    const { result } = renderHook(() => useRaceFilters(races, 1, defaultFilters));
+
+    expect(result.current.tracks).toEqual(["Churchill Downs"]);
+    expect(result.current.countries).toEqual(["USA"]);
+  });
+
+  it("deduplicates tracks and countries for same track", () => {
+    const races = [mkGraded("r1", "Churchill Downs"), mkGraded("r2", "Churchill Downs")];
+
+    const { result } = renderHook(() => useRaceFilters(races, 1, defaultFilters));
+
+    expect(result.current.tracks).toEqual(["Churchill Downs"]);
+    expect(result.current.countries).toEqual(["USA"]);
+  });
+
+  it("deduplicates countries across different tracks in same country", () => {
+    const races = [
+      mkGraded("r1", "Churchill Downs"),
+      mkGraded("r2", "Santa Anita"),
+      mkGraded("r3", "Keeneland"),
+    ];
+
+    const { result } = renderHook(() => useRaceFilters(races, 1, defaultFilters));
+
+    expect(result.current.tracks).toEqual(["Churchill Downs", "Keeneland", "Santa Anita"]);
+    expect(result.current.countries).toEqual(["USA"]);
+  });
+
+  it("extracts multiple countries and tracks from different countries", () => {
+    const races = [
+      mkGraded("r1", "Churchill Downs"),
+      mkGraded("r2", "Ascot"),
+      mkGraded("r3", "Tokyo"),
+    ];
+
+    const { result } = renderHook(() => useRaceFilters(races, 1, defaultFilters));
+
+    expect(result.current.tracks).toEqual(["Ascot", "Churchill Downs", "Tokyo"]);
+    expect(result.current.countries).toEqual(["Great Britain", "Japan", "USA"]);
+  });
+
+  it("ignores ungraded races when building filter options", () => {
+    const races = [
+      mkGraded("r1", "Churchill Downs"),
+      mkRace("r2"),
+      mkGraded("r3", "Ascot"),
+      mkRace("r4"),
+    ];
+
+    const { result } = renderHook(() => useRaceFilters(races, 1, defaultFilters));
+
+    expect(result.current.tracks).toEqual(["Ascot", "Churchill Downs"]);
+    expect(result.current.countries).toEqual(["Great Britain", "USA"]);
+  });
+
+  it("sorts countries and tracks alphabetically", () => {
+    const races = [
+      mkGraded("r1", "Tokyo"),
+      mkGraded("r2", "Churchill Downs"),
+      mkGraded("r3", "Ascot"),
+    ];
+
+    const { result } = renderHook(() => useRaceFilters(races, 1, defaultFilters));
+
+    expect(result.current.tracks).toEqual(["Ascot", "Churchill Downs", "Tokyo"]);
+    expect(result.current.countries).toEqual(["Great Britain", "Japan", "USA"]);
+  });
+});

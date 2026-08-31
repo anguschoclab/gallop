@@ -1,21 +1,13 @@
 import { useMemo } from "react";
-import { useGame, useGameWithShallow } from "@/game/store";
+import { useGameWithShallow } from "@/game/store";
 import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/core/odds";
+import { calculateClassBonus } from "@/core/common/classBonus";
 import type { Race } from "@/game/types";
 
 export function useRaceCardOdds(race: Race) {
   const horses = useGameWithShallow((s) => s.horses);
 
-  const classBonus = useGame((s) => {
-    if (race.graded?.grade) {
-      const grade = race.graded.grade;
-      if (grade === "G1") return 15;
-      if (grade === "G2") return 10;
-      if (grade === "G3") return 5;
-      if (grade === "Listed") return 3;
-    }
-    return 0;
-  });
+  const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
 
   const favoriteOdds = useMemo(() => {
     let bestOdds = "N/A";
