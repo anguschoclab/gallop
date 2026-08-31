@@ -19,6 +19,7 @@ export function generateTrainerStatsImpact(
   hiredStaff: StaffMember[],
   newDay: number,
   rng?: Rng,
+  getId?: () => string,
 ): TrainerStatsImpact | null {
   const playerOwned = isPlayerOwned(horse);
   const assignedTrainer = hiredStaff.find(
@@ -54,7 +55,7 @@ export function generateTrainerStatsImpact(
   }
 
   return {
-    id: generateUUID(rng),
+    id: getId ? getId() : generateUUID(rng),
     intentId: "",
     day: newDay,
     phase: "raceResolution",

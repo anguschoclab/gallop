@@ -18,6 +18,7 @@ export function generateRaceSummaryLog(
   horseMap: Map<string, Horse>,
   newDay: number,
   rng?: Rng,
+  getId?: () => string,
 ): LogImpact | null {
   if (ownedResults.length === 0) return null;
 
@@ -37,7 +38,7 @@ export function generateRaceSummaryLog(
   }, 0);
 
   return {
-    id: generateUUID(rng),
+    id: getId ? getId() : generateUUID(rng),
     intentId: "",
     day: newDay,
     phase: "raceResolution",

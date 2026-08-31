@@ -47,8 +47,6 @@ describe("ownership transitions", () => {
       const horse = makeHorse(makeNpcOwned(asNpcStableId("npc-1")));
       expect(isNpcOwned(horse)).toBe(true);
 
-      // Simulate MarketHandler consignor dissolution
-      // BUG FIX: was incorrectly setting owned=true, now sets unowned
       horse.ownership = makeUnowned();
       expect(isUnowned(horse)).toBe(true);
       expect(isPlayerOwned(horse)).toBe(false);

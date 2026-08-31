@@ -29,6 +29,7 @@ export function generateBeyerAndRecoveryImpacts(
   calibratedPars: Record<number, number>,
   newDay: number,
   rng?: Rng,
+  getId?: () => string,
 ): { beyerImpact: BeyerImpact; recoveryImpact: RecoveryImpact } {
   const beyer = beyerFigure({
     distance: race.distance,
@@ -49,7 +50,7 @@ export function generateBeyerAndRecoveryImpacts(
 
   return {
     beyerImpact: {
-      id: generateUUID(rng),
+      id: getId ? getId() : generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",
@@ -61,7 +62,7 @@ export function generateBeyerAndRecoveryImpacts(
       reason: "Race performance",
     } as BeyerImpact,
     recoveryImpact: {
-      id: generateUUID(rng),
+      id: getId ? getId() : generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",

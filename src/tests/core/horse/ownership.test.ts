@@ -175,9 +175,6 @@ describe("ownership model", () => {
 
   describe("MarketHandler bug regression", () => {
     it("a dissolved consignor should result in unowned, NOT player-owned", () => {
-      // This tests the bug where MarketHandler set horse.stableId = undefined; horse.owned = true
-      // which incorrectly marked consignor-dissolved horses as player-owned.
-      // The fix: horse.ownership = makeUnowned()
       const ownership = makeUnowned();
       expect(ownership.type).toBe("unowned");
       expect(isPlayerOwned({ ownership })).toBe(false);

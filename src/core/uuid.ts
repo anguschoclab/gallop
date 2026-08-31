@@ -18,32 +18,70 @@ import type { Rng } from "./common/types";
  * @param rng - Optional random number generator for deterministic generation
  * @returns UUID v4 string
  */
+const HEX_CHARS = "0123456789abcdef";
+
 export function generateUUID(rng?: Rng): string {
   if (rng) {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    let chars = "";
+    for (let i = 0; i < 31; i++) {
       const r = (rng.next() * 16) | 0;
-      const v = c === "x" ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
+      if (i === 15) {
+        chars += HEX_CHARS[(r & 0x3) | 0x8];
+      } else {
+        chars += HEX_CHARS[r];
+      }
+    }
+    return (
+      chars.slice(0, 8) +
+      "-" +
+      chars.slice(8, 12) +
+      "-4" +
+      chars.slice(12, 15) +
+      "-" +
+      chars.slice(15, 19) +
+      "-" +
+      chars.slice(19, 31)
+    );
   }
 
-  // Use native crypto.randomUUID if available (better randomness)
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
     return crypto.randomUUID();
   }
 
   if (typeof crypto !== "undefined" && crypto.getRandomValues) {
-    // Fallback to manual UUID v4 generation using secure random values
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-      const bytes = new Uint8Array(1);
-      crypto.getRandomValues(bytes);
-      const r = bytes[0] % 16;
-      const v = c === "x" ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
+    const bytes = new Uint8Array(31);
+    crypto.getRandomValues(bytes);
+    let chars = "";
+    for (let i = 0; i < 31; i++) {
+      const r = bytes[i] % 16;
+      if (i === 15) {
+        chars += HEX_CHARS[(r & 0x3) | 0x8];
+      } else {
+        chars += HEX_CHARS[r];
+      }
+    }
+    return (
+      chars.slice(0, 8) +
+      "-" +
+      chars.slice(8, 12) +
+      "-4" +
+      chars.slice(12, 15) +
+      "-" +
+      chars.slice(15, 19) +
+      "-" +
+      chars.slice(19, 31)
+    );
   }
 
   throw new Error("Secure random number generation is not available.");
+}
+
+export function generateUUIDBulk(rng: Rng | undefined, count: number): string[] {
+  const result: string[] = [];
+  for (let i = 0; i < count; i++) {
+    result.push(generateUUID(rng));
+  }
+  return result;
 }
 
 /**

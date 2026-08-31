@@ -18,12 +18,13 @@ export function generateJockeyFeeImpacts(
   horseId: string,
   raceId: string,
   rng?: Rng,
+  getId?: () => string,
 ): { cashImpact: CashImpact; transactionImpact?: TransactionImpact } {
   const ridingFee = jockey.ridingFee || BASE_JOCKEY_RIDING_FEE;
   const playerOwned = isPlayerOwned(horse);
 
   const cashImpact: CashImpact = {
-    id: generateUUID(rng),
+    id: getId ? getId() : generateUUID(rng),
     intentId: "",
     day: newDay,
     phase: "raceResolution",
@@ -42,7 +43,7 @@ export function generateJockeyFeeImpacts(
 
   if (playerOwned) {
     transactionImpact = {
-      id: generateUUID(rng),
+      id: getId ? getId() : generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",
@@ -66,12 +67,13 @@ export function generatePercentageJockeyFeeImpacts(
   owned: boolean,
   stableId?: string,
   rng?: Rng,
+  getId?: () => string,
 ): CashImpact | null {
   const jockeyFee = Math.round(winAmount * JOCKEY_FEE_PERCENTAGE);
   if (jockeyFee <= 0) return null;
 
   return {
-    id: generateUUID(rng),
+    id: getId ? getId() : generateUUID(rng),
     intentId: "",
     day: newDay,
     phase: "raceResolution",

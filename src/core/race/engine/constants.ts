@@ -65,10 +65,10 @@ export const PACE_PRESSURE_STAMINA_PENALTY = 0.08;
 export const BLEEDER_DISTANCE_THRESHOLD = 1600;
 export const BLEEDER_PROGRESS_THRESHOLD = 0.7;
 
-/** Per-second bleeder hazard rate (was 0.5 per tick at dt=0.1). */
-export const BLEEDER_RISK_PER_SEC = 5.0; // 0.5 / 0.1 = 5.0 per second
-/** Per-second roarer hazard rate (was 0.3 per tick at dt=0.1). */
-export const ROANER_RISK_PER_SEC = 3.0; // 0.3 / 0.1 = 3.0 per second
+/** Per-second bleeder hazard rate. */
+export const BLEEDER_RISK_PER_SEC = 5.0;
+/** Per-second roarer hazard rate. */
+export const ROANER_RISK_PER_SEC = 3.0;
 
 export const BLEEDER_STAMINA_PENALTY = 0.2;
 export const ROANER_SPEED_THRESHOLD = 0.95;

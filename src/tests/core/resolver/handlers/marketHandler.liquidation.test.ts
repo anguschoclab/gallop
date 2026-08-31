@@ -382,8 +382,6 @@ describe("MarketHandler auction_resolution", () => {
 
     handler.handle(draft, impact);
 
-    // Pre-fix bug: NPC consignments never cleared consignedSaleId.
-    // Post-fix: ALL lots clear consignedSaleId.
     expect(draft.horses["horse-1"].consignedSaleId).toBeUndefined();
   });
 });

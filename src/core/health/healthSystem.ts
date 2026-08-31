@@ -122,6 +122,7 @@ export function computeWeatherInjuryMultiplier(ctx: InjuryWeatherContext | undef
  * @param day - Current game day
  * @param hiredStaff - Optional list of hired staff for bonuses
  * @param weatherCtx - Optional weather/track context that amplifies risk
+ * @param getId - Optional UUID provider callback for deterministic ID generation
  * @returns Injury impact if injury occurred, null otherwise
  *
  * @example
@@ -133,6 +134,7 @@ export function rollForInjury(
   day: number,
   hiredStaff: StaffMember[] = [],
   weatherCtx?: InjuryWeatherContext,
+  getId?: () => string,
 ): InjuryImpact | null {
   // Get vet bonus
   const vet = hiredStaff.find(
@@ -195,7 +197,7 @@ export function rollForInjury(
     }
 
     return {
-      id: generateUUID(),
+      id: getId ? getId() : generateUUID(rng),
       intentId: "", // Generated during resolution
       day,
       phase: "raceResolution",

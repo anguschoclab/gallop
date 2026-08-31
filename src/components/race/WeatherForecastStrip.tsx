@@ -28,8 +28,8 @@ interface Props {
 }
 
 // Stable fallback reference. Returning an inline `?? []` / `[]` from the
-// selector mints a new array every render, so Zustand's useSyncExternalStore
-// snapshot never compares equal and triggers an infinite re-render loop.
+// selector mints a new array every render, causing Zustand's useSyncExternalStore
+// snapshot to never compare equal. Use this constant instead.
 const EMPTY_FORECAST: WeatherState[] = [];
 
 export function WeatherForecastStrip({ trackId, trackCondition }: Props) {

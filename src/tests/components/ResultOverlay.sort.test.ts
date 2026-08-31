@@ -37,7 +37,6 @@ describe("ResultOverlay — tie-breaking", () => {
       makeRunner({ horseId: "mmm", finishTime: 90.0, gate: 2 }),
     ];
 
-    // This is the sort that ResultOverlay should use after the fix
     const ordered = [...runners].sort(compareFinishOrder);
 
     expect(ordered.map((r) => r.horseId)).toEqual(["aaa", "mmm", "zzz"]);
@@ -65,10 +64,8 @@ describe("ResultOverlay — tie-breaking", () => {
       makeRunner({ horseId: "d", finishTime: 89.0, gate: 4 }),
     ];
 
-    // ResultOverlay sort (after fix)
     const overlayOrder = [...runners].sort(compareFinishOrder).map((r) => r.horseId);
 
-    // runRaceToCompletion sort (after fix) — same comparator on finishTime/gate/horseId
     const completionOrder = [...runners]
       .map((r) => ({ finishTime: r.finishTime, gate: r.gate, horseId: r.horseId }))
       .sort(compareFinishOrder)

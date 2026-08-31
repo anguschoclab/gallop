@@ -62,6 +62,8 @@ export interface GenerateRaceImpactsProps {
   syndicates?: Record<string, import("@/core/breeding/types").Syndicate>;
   /** Per-horse career arc states for narrative tracking */
   narrativeArcs?: Record<string, CareerArcState>;
+  /** Optional UUID provider callback for deterministic bulk ID generation */
+  getId?: () => string;
 }
 
 /**
@@ -91,6 +93,7 @@ export interface GenerateRaceImpactsProps {
  * @param props.raceWeatherState
  * @param props.syndicates
  * @param props.narrativeArcs
+ * @param props.getId - Optional UUID provider callback for deterministic bulk ID generation
  * @returns Array of impacts to be applied to the game state by the resolver
  */
 export function generateRaceImpacts({
@@ -108,6 +111,7 @@ export function generateRaceImpacts({
   raceWeatherState,
   syndicates,
   narrativeArcs,
+  getId,
 }: GenerateRaceImpactsProps): AnyImpact[] {
   try {
     const impacts: AnyImpact[] = [];
@@ -138,7 +142,7 @@ export function generateRaceImpacts({
 
     // 1. Record the overall race result
     impacts.push({
-      id: generateUUID(rng),
+      id: getId ? getId() : generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",
@@ -169,7 +173,7 @@ export function generateRaceImpacts({
 
       // Health & injury (energy, injury roll, insurance payout)
       impacts.push(
-        ...generateHealthInjuryImpacts(horse, newDay, hiredStaff, injuryWeatherCtx, rng),
+        ...generateHealthInjuryImpacts(horse, newDay, hiredStaff, injuryWeatherCtx, rng, getId),
       );
 
       // Performance & career (form, fame, beyer, recovery, pattern jump, race history, TC, trainer)
@@ -186,6 +190,7 @@ export function generateRaceImpacts({
         hiredStaff,
         rng,
         entry,
+        getId,
       );
       impacts.push(...perfImpacts);
 
@@ -202,12 +207,13 @@ export function generateRaceImpacts({
           beyerValue,
           newDay,
           rng,
+          getId,
         ),
       );
 
       // Jockey stats & tracking (career stats, apprentice progression, percentage fees)
       impacts.push(
-        ...generateJockeyStatsTrackingImpacts(horse, r, race, entry, jockeyMap, newDay, rng),
+        ...generateJockeyStatsTrackingImpacts(horse, r, race, entry, jockeyMap, newDay, rng, getId),
       );
     }
 
@@ -215,7 +221,7 @@ export function generateRaceImpacts({
     if (result.length > 0) {
       const winner = result[0];
       impacts.push({
-        id: generateUUID(rng),
+        id: getId ? getId() : generateUUID(rng),
         intentId: "",
         day: newDay,
         phase: "raceResolution",
@@ -232,7 +238,7 @@ export function generateRaceImpacts({
       const h = horseMap.get(r.horseId);
       return h && isPlayerOwned(h);
     });
-    const summaryLog = generateRaceSummaryLog(ownedHorses, race, horseMap, newDay, rng);
+    const summaryLog = generateRaceSummaryLog(ownedHorses, race, horseMap, newDay, rng, getId);
     if (summaryLog) {
       impacts.push(summaryLog);
     }
@@ -242,7 +248,7 @@ export function generateRaceImpacts({
       const newsItem = generateRaceNews(race, result, Array.from(horseMap.values()), newDay, rng);
       if (newsItem) {
         impacts.push({
-          id: generateUUID(rng),
+          id: getId ? getId() : generateUUID(rng),
           intentId: "",
           day: newDay,
           phase: "raceResolution",
@@ -262,7 +268,7 @@ export function generateRaceImpacts({
       );
       if (spotlightNews) {
         impacts.push({
-          id: generateUUID(rng),
+          id: getId ? getId() : generateUUID(rng),
           intentId: "",
           day: newDay,
           phase: "raceResolution",
@@ -280,7 +286,7 @@ export function generateRaceImpacts({
         const followUpNews = generateFollowUpRaceNews(race, horse, r.position, newDay, rng);
         if (followUpNews) {
           impacts.push({
-            id: generateUUID(rng),
+            id: getId ? getId() : generateUUID(rng),
             intentId: "",
             day: newDay,
             phase: "raceResolution",
@@ -306,7 +312,7 @@ export function generateRaceImpacts({
         );
         if (arcNews) {
           impacts.push({
-            id: generateUUID(rng),
+            id: getId ? getId() : generateUUID(rng),
             intentId: "",
             day: newDay,
             phase: "raceResolution",
@@ -317,7 +323,7 @@ export function generateRaceImpacts({
         }
         if (newArcState !== arcState) {
           impacts.push({
-            id: generateUUID(rng),
+            id: getId ? getId() : generateUUID(rng),
             intentId: "",
             day: newDay,
             phase: "raceResolution",

@@ -29,14 +29,15 @@ export function generatePerformanceCareerImpacts(
   hiredStaff: StaffMember[],
   rng?: Rng,
   raceEntry?: RaceEntry,
+  getId?: () => string,
 ): { impacts: AnyImpact[]; beyerValue: number } {
   const impacts: AnyImpact[] = [];
 
   // Form change
-  impacts.push(generateFormImpact(horse, r.position, newDay, hiredStaff, rng));
+  impacts.push(generateFormImpact(horse, r.position, newDay, hiredStaff, rng, getId));
 
   // Fame change
-  const fameImpact = generateFameImpact(horse, r.position, newDay, rng);
+  const fameImpact = generateFameImpact(horse, r.position, newDay, rng, getId);
   if (fameImpact) {
     impacts.push(fameImpact);
   }
@@ -51,13 +52,14 @@ export function generatePerformanceCareerImpacts(
     calibratedPars,
     newDay,
     rng,
+    getId,
   );
   impacts.push(beyerImpact, recoveryImpact);
 
   const beyerValue = beyerImpact.beyer;
 
   // Pattern jump detection — inbox notification for Graded races
-  const patternJumpImpact = generatePatternJumpImpact(horse, beyerValue, race, newDay, rng);
+  const patternJumpImpact = generatePatternJumpImpact(horse, beyerValue, race, newDay, rng, getId);
   if (patternJumpImpact) {
     impacts.push(patternJumpImpact);
   }
@@ -80,6 +82,7 @@ export function generatePerformanceCareerImpacts(
     runner,
     rng,
     raceEntry,
+    getId,
   );
   historyImpact.raceHistoryEntry.fieldSize = resultLength;
   historyImpact.raceHistoryEntry.pacePositions = pacePositions;
@@ -96,7 +99,7 @@ export function generatePerformanceCareerImpacts(
   if (Math.abs(aptDelta) >= 1) {
     const scaling = computeDistanceScaling(currentApt, race.distance);
     impacts.push({
-      id: generateUUID(rng),
+      id: getId ? getId() : generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",
@@ -116,7 +119,7 @@ export function generatePerformanceCareerImpacts(
   }
 
   // Triple Crown progress
-  const tcImpact = generateTripleCrownProgressImpact(horse, r.position, race, newDay, rng);
+  const tcImpact = generateTripleCrownProgressImpact(horse, r.position, race, newDay, rng, getId);
   if (tcImpact) {
     impacts.push(tcImpact);
   }
@@ -129,6 +132,7 @@ export function generatePerformanceCareerImpacts(
     hiredStaff,
     newDay,
     rng,
+    getId,
   );
   if (trainerImpact) {
     impacts.push(trainerImpact);

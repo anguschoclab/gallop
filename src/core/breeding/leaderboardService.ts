@@ -22,7 +22,7 @@ export function computeAllLeaderboards(
 ): Record<LeaderboardType, Leaderboard> {
   const stallions = horses.filter((h) => h.stud?.atStud);
 
-  // Pre-index horses by sire (Bug 1 fix: use pedigree.sireId, not h.sireId)
+  // Pre-index horses by sire using pedigree.sireId
   const horsesBySire = new Map<string, Horse[]>();
   for (const h of horses) {
     const sireId = h.pedigree?.sireId;
@@ -62,7 +62,7 @@ export function computeAllLeaderboards(
   // First pass: Calculate basic metrics, AEI, and accumulate surface/distance stats
   for (const s of stallions) {
     const allFoals = horsesBySire.get(s.id) || [];
-    // Bug 2 fix: filter to racing-age runners only (matches getRunnersBy semantics)
+    // Filter to racing-age runners only (matches getRunnersBy semantics)
     const runners = allFoals.filter((h) => h.age >= 2 && h.raceHistory.length > 0);
 
     const totalProgenyEarnings = runners.reduce((sum, f) => {

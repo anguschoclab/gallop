@@ -19,6 +19,7 @@ export function generateJockeyAffinityImpact(
   beyerValue: number,
   newDay: number,
   rng?: Rng,
+  getId?: () => string,
 ): JockeyAffinityImpact {
   let xpGain = AFFINITY_CONSTANTS.XP_PER_RACE;
 
@@ -38,7 +39,7 @@ export function generateJockeyAffinityImpact(
   xpGain = Math.round(xpGain * calculateTraitAffinitySynergy(jockey, horse));
 
   return {
-    id: generateUUID(rng),
+    id: getId ? getId() : generateUUID(rng),
     intentId: "",
     day: newDay,
     phase: "raceResolution",
@@ -57,6 +58,7 @@ export function generateWorkoutAffinityImpact(
   trainingType: string,
   newDay: number,
   rng?: Rng,
+  getId?: () => string,
 ): JockeyAffinityImpact {
   let xpGain = AFFINITY_CONSTANTS.XP_PER_WORKOUT;
 
@@ -66,7 +68,7 @@ export function generateWorkoutAffinityImpact(
   if (traits.includes("gate_master") && trainingType === "gate_work") xpGain += 5;
 
   return {
-    id: generateUUID(rng),
+    id: getId ? getId() : generateUUID(rng),
     intentId: "",
     day: newDay,
     phase: "trainingResolution",

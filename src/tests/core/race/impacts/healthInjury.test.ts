@@ -42,7 +42,7 @@ describe("healthInjury", () => {
       rng,
     );
 
-    expect(generateEnergyImpact).toHaveBeenCalledWith("horse1", newDay, rng);
+    expect(generateEnergyImpact).toHaveBeenCalledWith("horse1", newDay, rng, undefined);
     expect(impacts).toHaveLength(1);
     expect(impacts[0].type).toBe("energy_change");
   });

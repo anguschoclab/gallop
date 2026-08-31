@@ -58,7 +58,7 @@ describe("optimized generateUUID with rng", () => {
     }
   });
 
-  it("consumes exactly 32 rng.next() calls per UUID", () => {
+  it("consumes exactly 31 rng.next() calls per UUID", () => {
     let callCount = 0;
     const trackingRng: Rng = {
       next: () => {
@@ -73,7 +73,7 @@ describe("optimized generateUUID with rng", () => {
 
     callCount = 0;
     generateUUID(trackingRng);
-    expect(callCount).toBe(32);
+    expect(callCount).toBe(31);
   });
 });
 

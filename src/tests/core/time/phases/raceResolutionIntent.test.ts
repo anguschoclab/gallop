@@ -81,9 +81,6 @@ describe("race_resolution intent processing", () => {
   });
 
   it("race_resolution intent provides results that should be used instead of re-simulating", () => {
-    // This test verifies the DESIRED behavior after the fix:
-    // When a race_resolution intent exists for a race, the phase should
-    // use the intent's results instead of re-simulating.
     const race = {
       id: "r1",
       day: 11,
@@ -117,7 +114,6 @@ describe("race_resolution intent processing", () => {
     const result = raceResolutionPhase.execute(ctx);
     const updatedRace = (result.state as any).races["r1"];
 
-    // After the fix: the race should be resolved with the intent's results
     expect(updatedRace.resolved).toBe(true);
     expect(updatedRace.result[0].horseId).toBe("h1");
     expect(updatedRace.result[0].time).toBe(85.5);

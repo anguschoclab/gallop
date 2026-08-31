@@ -41,8 +41,6 @@ describe("recordFinish — same-tick ordering", () => {
     recordFinish(r1, finishOrder);
     recordFinish(r2, finishOrder);
 
-    // After the fix, finishOrder should be sorted by finishTime
-    // h2 (90.3) should be position 1, h1 (90.5) should be position 2
     expect(finishOrder[0].horseId).toBe("h2");
     expect(finishOrder[0].position).toBe(1);
     expect(finishOrder[1].horseId).toBe("h1");

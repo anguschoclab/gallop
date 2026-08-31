@@ -23,6 +23,7 @@ export function generateRaceHistoryImpact(
   runner?: { horseId: string; gate?: number; lane?: number },
   rng?: Rng,
   raceEntry?: { jockeyId?: string; ownership?: HorseOwnership },
+  getId?: () => string,
 ): RaceHistoryImpact {
   let winAndYouInQualified = undefined;
   if (position === 1 && race.graded?.winAndYouInTarget) {
@@ -39,7 +40,7 @@ export function generateRaceHistoryImpact(
     position - 1 < prizeSplit.length ? Math.round(race.purse * prizeSplit[position - 1]) : 0;
 
   return {
-    id: generateUUID(rng),
+    id: getId ? getId() : generateUUID(rng),
     intentId: "",
     day: newDay,
     phase: "raceResolution",
@@ -80,6 +81,7 @@ export function generateTripleCrownProgressImpact(
   race: Race,
   newDay: number,
   rng?: Rng,
+  getId?: () => string,
 ): TripleCrownProgressImpact | null {
   if (position === 1 && race.graded?.triplecrownKey) {
     const currentYear = getCurrentYear(newDay);
@@ -103,7 +105,7 @@ export function generateTripleCrownProgressImpact(
     const won = legs.every((leg) => leg.position === 1);
 
     return {
-      id: generateUUID(rng),
+      id: getId ? getId() : generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",

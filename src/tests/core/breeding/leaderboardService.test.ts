@@ -155,8 +155,7 @@ describe("leaderboardService", () => {
     }
   }
 
-  // ─── Test 1: sireId bug fix ───
-  it("fixes h.sireId bug — AEI is non-zero when runners have earnings", () => {
+  it("AEI is non-zero when runners have earnings", () => {
     horses.push(
       makeStallion({
         id: "sire1",

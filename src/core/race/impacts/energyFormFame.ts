@@ -12,9 +12,14 @@ import { RACE_ENERGY_IMPACT } from "@/constants";
 import type { Horse } from "@/game/types";
 import { isPlayerOwned } from "@/core/horse/ownership";
 
-export function generateEnergyImpact(horseId: string, newDay: number, rng?: Rng): EnergyImpact {
+export function generateEnergyImpact(
+  horseId: string,
+  newDay: number,
+  rng?: Rng,
+  getId?: () => string,
+): EnergyImpact {
   return {
-    id: generateUUID(rng),
+    id: getId ? getId() : generateUUID(rng),
     intentId: "",
     day: newDay,
     phase: "raceResolution",
@@ -32,6 +37,7 @@ export function generateFormImpact(
   newDay: number,
   hiredStaff: StaffMember[],
   rng?: Rng,
+  getId?: () => string,
 ): FormImpact {
   const playerOwned = isPlayerOwned(horse);
   const groom = hiredStaff.find(
@@ -47,7 +53,7 @@ export function generateFormImpact(
   const formDelta = baseFormDelta < 0 && groom ? 0 : baseFormDelta;
 
   return {
-    id: generateUUID(rng),
+    id: getId ? getId() : generateUUID(rng),
     intentId: "",
     day: newDay,
     phase: "raceResolution",
@@ -64,11 +70,12 @@ export function generateFameImpact(
   position: number,
   newDay: number,
   rng?: Rng,
+  getId?: () => string,
 ): FameImpact | null {
   const fameDelta = position === 1 ? 2 : position <= 3 ? 0.5 : 0;
   if (fameDelta > 0) {
     return {
-      id: generateUUID(rng),
+      id: getId ? getId() : generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",

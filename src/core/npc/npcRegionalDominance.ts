@@ -192,6 +192,34 @@ export function processRegionalDominance(
       ) {
         const hasPlayerEntry = race.entries.some((e) => e.ownership?.type === "player");
         if (hasPlayerEntry) {
+          // Pre-build player horse IDs (invariant across all rivals)
+          const playerHorseIds = new Set(
+            race.entries.filter((e) => e.ownership?.type === "player").map((e) => e.horseId),
+          );
+
+          // Pre-build NPC stable → horse IDs map (single pass over entries)
+          const npcHorseIdsByStable = new Map<string, Set<string>>();
+          for (const e of race.entries) {
+            if (e.ownership?.type === "npc") {
+              const sid = e.ownership.stableId;
+              let set = npcHorseIdsByStable.get(sid);
+              if (!set) {
+                set = new Set();
+                npcHorseIdsByStable.set(sid, set);
+              }
+              set.add(e.horseId);
+            }
+          }
+
+          // Pre-calculate player best position and horse ID (invariant across all rivals)
+          const playerResults = race.result.filter((r) => playerHorseIds.has(r.horseId));
+          const playerBestPos =
+            playerResults.length > 0 ? Math.min(...playerResults.map((r) => r.position)) : Infinity;
+          const playerHorseId = playerResults.find((r) => r.position === playerBestPos)?.horseId;
+
+          // Early exit: no valid player horse to match against
+          if (!playerHorseId) continue;
+
           const rivalStablesInRace = new Set(
             race.entries
               .map((e) => (e.ownership?.type === "npc" ? e.ownership.stableId : null))
@@ -205,30 +233,15 @@ export function processRegionalDominance(
               const rivalStable = stableMap.get(rivalStableId);
               if (!rivalStable) continue;
 
-              const playerHorseIds = new Set(
-                race.entries.filter((e) => e.ownership?.type === "player").map((e) => e.horseId),
-              );
-              const rivalHorseIds = new Set(
-                race.entries
-                  .filter(
-                    (e) => e.ownership?.type === "npc" && e.ownership.stableId === rivalStableId,
-                  )
-                  .map((e) => e.horseId),
-              );
+              const rivalHorseIds = npcHorseIdsByStable.get(rivalStableId);
+              if (!rivalHorseIds || rivalHorseIds.size === 0) continue;
 
-              const playerBestPos = Math.min(
-                ...race.result!.filter((r) => playerHorseIds.has(r.horseId)).map((r) => r.position),
-              );
-              const rivalBestPos = Math.min(
-                ...race.result!.filter((r) => rivalHorseIds.has(r.horseId)).map((r) => r.position),
-              );
-
-              const playerHorseId = race.result!.find(
-                (r) => r.position === playerBestPos && playerHorseIds.has(r.horseId),
-              )?.horseId;
-              const rivalHorseId = race.result!.find(
-                (r) => r.position === rivalBestPos && rivalHorseIds.has(r.horseId),
-              )?.horseId;
+              const rivalResults = race.result.filter((r) => rivalHorseIds.has(r.horseId));
+              const rivalBestPos =
+                rivalResults.length > 0
+                  ? Math.min(...rivalResults.map((r) => r.position))
+                  : Infinity;
+              const rivalHorseId = rivalResults.find((r) => r.position === rivalBestPos)?.horseId;
 
               if (playerHorseId && rivalHorseId) {
                 const playerHorse = horseMap.get(playerHorseId);

@@ -1,12 +1,12 @@
 /**
- * WeatherForecastStrip.loop.test.tsx — Regression test for an infinite
- * re-render loop.
+ * WeatherForecastStrip.loop.test.tsx — Regression test for store subscription
+ * stability.
  *
  * Unlike the snapshot test (which fully mocks `useGame` and uses
  * renderToStaticMarkup), this test wires the component to a REAL Zustand store
  * so that Zustand's `useSyncExternalStore` is actually exercised. That is the
  * only setup that surfaces the "getSnapshot should be cached / Maximum update
- * depth exceeded" loop caused by a selector returning a fresh array each render.
+ * depth exceeded" issue when a selector returns a fresh array each render.
  */
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { createElement, type ReactNode } from "react";
@@ -14,7 +14,7 @@ import { render, cleanup } from "@testing-library/react";
 import { create } from "zustand";
 
 // A real Zustand store whose `weather.forecast` has NO entry for the track we
-// render — this is the case that triggered the bug (the `?? []` fallback fires).
+// render — this exercises the `?? []` fallback path.
 const useRealStore = create(() => ({
   weather: {
     forecast: {} as Record<string, unknown[]>,

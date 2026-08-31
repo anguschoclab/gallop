@@ -12,7 +12,6 @@ interface StaffSupportPanelProps {
 
 /**
  * Component to display active staff bonuses for a stable.
- * This fixes a hooks-in-JSX violation by extracting the useGame call.
  *
  * EXTRACTED FROM: src/routes/stable.$horseId.tsx
  */

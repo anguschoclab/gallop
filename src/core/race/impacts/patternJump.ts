@@ -16,6 +16,7 @@ export function generatePatternJumpImpact(
   race: Race,
   newDay: number,
   rng?: Rng,
+  getId?: () => string,
 ): InboxImpact | null {
   if (!race.graded) return null;
 
@@ -37,7 +38,7 @@ export function generatePatternJumpImpact(
     : " This horse is on a sharp upward trajectory.";
 
   return {
-    id: generateUUID(rng),
+    id: getId ? getId() : generateUUID(rng),
     intentId: "",
     day: newDay,
     phase: "raceResolution",

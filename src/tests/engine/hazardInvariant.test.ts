@@ -54,8 +54,6 @@ describe("hazard model dt-invariance", () => {
     const avg10 = times10.reduce((a, b) => a + b, 0) / times10.length;
 
     // With dt-invariant hazards, average times should be within ~5%.
-    // Before the fix, dt=1.0 would produce near-certain bleeder events
-    // and dramatically slower times.
     const diff = Math.abs(avg01 - avg10) / Math.max(avg01, avg10);
     expect(diff).toBeLessThan(0.05);
   });

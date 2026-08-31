@@ -238,10 +238,6 @@ describe("computeWealthStandings", () => {
     expect(result.standings.find((e) => e.stableId === "npc2")).toBeTruthy();
   });
 
-  // ─── Characterization test: deceased horses should be excluded ───────────────
-  // This test documents the bug where deceased horses (lifecycleStatus: "deceased")
-  // are still counted in horseCount and horseAssets. After the fix, this test should
-  // pass. Before the fix, it will fail.
   it("excludes deceased horses from wealth standings", () => {
     const hAlive = createTestHorse({
       id: "h-alive",
@@ -323,7 +319,6 @@ describe("computeWealthStandings", () => {
     const playerBoth = resultBoth.standings.find((e) => e.isPlayer)!;
     const playerAliveOnly = resultAliveOnly.standings.find((e) => e.isPlayer)!;
 
-    // After fix: horseAssets should be the same (deceased horse excluded)
     expect(playerBoth.horseAssets).toBe(playerAliveOnly.horseAssets);
   });
 

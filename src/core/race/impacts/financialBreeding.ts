@@ -26,11 +26,12 @@ export function generateFinancialBreedingImpacts(
   beyerValue: number,
   newDay: number,
   rng?: Rng,
+  getId?: () => string,
 ): AnyImpact[] {
   const impacts: AnyImpact[] = [];
 
   // Prize money distribution
-  const prizeImpacts = generatePrizeMoneyImpacts(horse, r.position, race, newDay, rng);
+  const prizeImpacts = generatePrizeMoneyImpacts(horse, r.position, race, newDay, rng, getId);
   if (prizeImpacts) {
     if (prizeImpacts.cashImpact) impacts.push(prizeImpacts.cashImpact);
     if (prizeImpacts.transactionImpact) impacts.push(prizeImpacts.transactionImpact);
@@ -48,13 +49,23 @@ export function generateFinancialBreedingImpacts(
         horse.id,
         race.id,
         rng,
+        getId,
       );
       impacts.push(jockeyFeeImpacts.cashImpact);
       if (jockeyFeeImpacts.transactionImpact) impacts.push(jockeyFeeImpacts.transactionImpact);
 
       // Affinity XP gain / penalty
       impacts.push(
-        generateJockeyAffinityImpact(horse, jockey, r.position, race, beyerValue, newDay, rng),
+        generateJockeyAffinityImpact(
+          horse,
+          jockey,
+          r.position,
+          race,
+          beyerValue,
+          newDay,
+          rng,
+          getId,
+        ),
       );
     }
   }
@@ -67,7 +78,7 @@ export function generateFinancialBreedingImpacts(
     const dam = horse.pedigree?.damId ? horseMap.get(horse.pedigree.damId) : undefined;
     if (dam) {
       impacts.push({
-        id: generateUUID(rng),
+        id: getId ? getId() : generateUUID(rng),
         intentId: "",
         day: newDay,
         phase: "raceResolution",
@@ -113,7 +124,7 @@ export function generateFinancialBreedingImpacts(
           : sire.stud.standingFee;
 
       impacts.push({
-        id: generateUUID(rng),
+        id: getId ? getId() : generateUUID(rng),
         intentId: "",
         day: newDay,
         phase: "raceResolution",
@@ -135,7 +146,7 @@ export function generateFinancialBreedingImpacts(
         const satisfactionDelta = race.graded?.grade === "G1" ? 15 : race.graded ? 8 : 5;
         for (const stableId of Object.keys(syndicate.shareHolders)) {
           impacts.push({
-            id: generateUUID(rng),
+            id: getId ? getId() : generateUUID(rng),
             intentId: "",
             day: newDay,
             phase: "raceResolution",

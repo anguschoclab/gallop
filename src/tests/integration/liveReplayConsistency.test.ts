@@ -104,7 +104,7 @@ describe("live vs replay consistency", () => {
     expect(sortable.map((s) => s.horseId)).toEqual(expected.map((s) => s.horseId));
   });
 
-  it("same race with different dt produces different results (demonstrates the bug)", () => {
+  it("same race with different dt produces different results (known limitation)", () => {
     const race = makeRace();
     const horses = [
       createTestHorse({ id: "h1", name: "Horse 1" }),
@@ -138,7 +138,7 @@ describe("live vs replay consistency", () => {
       false,
     );
 
-    // With different dt, results should differ (demonstrating the bug)
+    // With different dt, results differ due to numerical integration step size
     const times1 = r1.map((r) => r.time);
     const times2 = r2.map((r) => r.time);
     expect(times1).not.toEqual(times2);

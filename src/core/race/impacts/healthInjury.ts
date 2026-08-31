@@ -22,15 +22,16 @@ export function generateHealthInjuryImpacts(
   hiredStaff: StaffMember[],
   injuryWeatherCtx: InjuryWeatherContext,
   rng?: Rng,
+  getId?: () => string,
 ): AnyImpact[] {
   const impacts: AnyImpact[] = [];
 
   // Energy expenditure
-  impacts.push(generateEnergyImpact(horse.id, newDay, rng));
+  impacts.push(generateEnergyImpact(horse.id, newDay, rng, getId));
 
   // Health: Roll for potential injuries
   if (rng) {
-    const injury = rollForInjury(rng, horse, newDay, hiredStaff, injuryWeatherCtx);
+    const injury = rollForInjury(rng, horse, newDay, hiredStaff, injuryWeatherCtx, getId);
     if (injury) {
       impacts.push(injury);
       // Insurance payout for career-ending injuries
@@ -41,7 +42,7 @@ export function generateHealthInjuryImpacts(
           const payout = Math.round(horseValue * coveragePercent);
           if (payout > 0) {
             impacts.push({
-              id: generateUUID(rng),
+              id: getId ? getId() : generateUUID(rng),
               intentId: "",
               day: newDay,
               phase: "raceResolution",

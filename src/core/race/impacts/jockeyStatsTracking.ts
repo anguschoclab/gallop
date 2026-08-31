@@ -21,6 +21,7 @@ export function generateJockeyStatsTrackingImpacts(
   jockeyMap: Map<string, Jockey>,
   newDay: number,
   rng?: Rng,
+  getId?: () => string,
 ): AnyImpact[] {
   const impacts: AnyImpact[] = [];
 
@@ -83,7 +84,7 @@ export function generateJockeyStatsTrackingImpacts(
       }
 
       impacts.push({
-        id: generateUUID(rng),
+        id: getId ? getId() : generateUUID(rng),
         intentId: "",
         day: newDay,
         phase: "raceResolution",
@@ -106,6 +107,7 @@ export function generateJockeyStatsTrackingImpacts(
         raceEntry.ownership?.type === "player" || false,
         raceEntry.ownership?.type === "npc" ? raceEntry.ownership.stableId : undefined,
         rng,
+        getId,
       );
       if (percentageFeeImpact) {
         impacts.push(percentageFeeImpact);

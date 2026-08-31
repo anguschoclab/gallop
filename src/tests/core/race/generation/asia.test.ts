@@ -38,8 +38,8 @@ function generateManyAsianRaces(count: number): { raceClass: string; minStat?: n
   return results;
 }
 
-describe("Asian race generator minStat fix", () => {
-  it("Asian Maiden race has no minStat (after fix)", () => {
+describe("Asian race generator minStat", () => {
+  it("Asian Maiden race has no minStat", () => {
     const results = generateManyAsianRaces(100);
     const maidens = results.filter((r) => r.raceClass === "Maiden");
     expect(maidens.length).toBeGreaterThan(0);
@@ -57,9 +57,9 @@ describe("Asian race generator minStat fix", () => {
     }
   });
 
-  it("Asian MaidenClaiming race has no minStat (after fix)", () => {
+  it("Asian MaidenClaiming race has no minStat", () => {
     // MaidenClaiming is not in Asia distribution, so we need to test the logic
-    // by checking that the fix applies to all maiden-type classes
+    // by checking that maiden-type classes have no minStat
     const results = generateManyAsianRaces(200);
     const maidenClaimings = results.filter((r) => r.raceClass === "MaidenClaiming");
     // MaidenClaiming may not appear in Asia distribution, so just verify if any exist

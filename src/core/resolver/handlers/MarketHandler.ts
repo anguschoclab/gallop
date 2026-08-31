@@ -85,9 +85,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         lot.passed = passed;
         if (bidHistory) lot.bidHistory = bidHistory;
 
-        // Clear consignedSaleId for ALL lots, not just player consignments.
-        // This fixes a pre-existing bug where NPC consigned horses remained
-        // locked out of racing/training after auction resolution.
+        // Clear consignedSaleId for all lots.
         const horse = lookupMaps?.horseMap.get(lot.horseId) || draft.horses[lot.horseId];
         if (horse) {
           horse.consignedSaleId = undefined;

@@ -24,6 +24,7 @@ export function generatePrizeMoneyImpacts(
   race: Race,
   newDay: number,
   rng?: Rng,
+  getId?: () => string,
 ): {
   cashImpact?: CashImpact;
   transactionImpact?: TransactionImpact;
@@ -49,7 +50,7 @@ export function generatePrizeMoneyImpacts(
   // Cash and transaction impacts only for in-prize-split positions
   if (inPrizeSplit && prize > 0 && hasOwner) {
     cashImpact = {
-      id: generateUUID(rng),
+      id: getId ? getId() : generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",
@@ -64,7 +65,7 @@ export function generatePrizeMoneyImpacts(
 
     if (playerOwned) {
       transactionImpact = {
-        id: generateUUID(rng),
+        id: getId ? getId() : generateUUID(rng),
         intentId: "",
         day: newDay,
         phase: "raceResolution",
@@ -85,7 +86,7 @@ export function generatePrizeMoneyImpacts(
     if (position === 1 && inPrizeSplit) {
       const repGain = calculateRaceWinReputation(race.graded?.grade, race.purse);
       reputationImpact = {
-        id: generateUUID(rng),
+        id: getId ? getId() : generateUUID(rng),
         intentId: "",
         day: newDay,
         phase: "raceResolution",
@@ -116,7 +117,7 @@ export function generatePrizeMoneyImpacts(
 
       if (repLoss < 0) {
         reputationImpact = {
-          id: generateUUID(rng),
+          id: getId ? getId() : generateUUID(rng),
           intentId: "",
           day: newDay,
           phase: "raceResolution",
