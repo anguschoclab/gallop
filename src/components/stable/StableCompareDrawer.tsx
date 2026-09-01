@@ -4,7 +4,7 @@
  * Loads full Stable objects for the selected compare IDs from the game store,
  * renders them in a StableCompareTable, and provides a clear button.
  *
- * Dependencies: @/components/ui/drawer (Drawer, DrawerContent, ...), @/game/store (useNpcStables), @/hooks/stable/useCompareStables (useCompareStables), ./StableCompareTable (StableCompareTable)
+ * Dependencies: @/components/ui/drawer (Drawer, DrawerContent, ...), @/hooks/game/useSystemsState (useNpcStables), @/hooks/stable/useCompareStables (useCompareStables), ./StableCompareTable (StableCompareTable)
  * Related files: ./StableCompareBar.tsx (opens this drawer)
  */
 

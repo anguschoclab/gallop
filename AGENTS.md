@@ -39,3 +39,8 @@ bun run typecheck:errors
 - The test suite is large but fast. Stderr from `saveManager` error-path tests is expected, not a failure.
 - `bun run build` validates auto-generated `routeTree.gen.ts` — run it after adding/removing routes.
 - For render-loop bugs (Zustand selector returning fresh references), see the `verify-gallop` skill.
+- **Adding a pipeline phase beyond the current max order**: You must update FOUR places or the phase will silently never execute:
+  1. `src/constants/pipelineConstants.ts` — add a `PHASE_ORDER_*` constant with the new order value.
+  2. `src/workers/pipelineStages.ts` — extend the `STAGE_RANGES` `max` for the relevant stage (or add a new stage). Without this, the phase falls outside all stage ranges and is dropped from both the worker and `runPipelineForDay`.
+  3. `src/core/time/phases/index.ts` — import and register the phase in `GAME_PIPELINE_PHASES`.
+  4. Update test assertions: `src/tests/orphanScan.test.ts` (exact phase count), `src/tests/core/time/phases/phaseOrder.uniqueness.test.ts` (max order range), `src/tests/workers/engineWorker.stages.test.ts` (stage boundary), and `src/tests/smoke/routeMount.smoke.test.tsx` (if a new route file was also added).
