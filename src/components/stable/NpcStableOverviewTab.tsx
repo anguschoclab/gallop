@@ -6,6 +6,7 @@ import { NumericValue } from "@/components/horse/HorseBits";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { cn } from "@/lib/cn";
 import { NpcStableCharts } from "@/components/stable/NpcStableCharts";
+import { CashPressureTrend } from "@/components/stable/CashPressureTrend";
 import { getRivalryStatusLabel, getRivalryBadgeColor } from "@/hooks/stable/useNpcStableDetail";
 import type { useNpcStableDetail } from "@/hooks/stable/useNpcStableDetail";
 import type { NewsItem } from "@/services/narrative/newsTypes";
@@ -84,6 +85,15 @@ export function NpcStableOverviewTab({ stableId, pageData }: NpcStableOverviewTa
               <div className="text-xl font-bold font-mono text-pink-400">{fillies.length}</div>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl">
+        <CardContent className="p-6">
+          <h3 className="text-sm font-bold uppercase tracking-widest text-cream/60 mb-4">
+            Cash Pressure — Last 90 Days
+          </h3>
+          <CashPressureTrend stableId={stableId} variant="detail" />
         </CardContent>
       </Card>
 

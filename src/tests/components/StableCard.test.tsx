@@ -1,9 +1,29 @@
-import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
-import type { Stable } from "@/game/types";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { render, screen, cleanup, fireEvent } from "@testing-library/react";
+import type { Stable, PrivateSaleOffer } from "@/game/types";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
+}));
+
+const mockState: Record<string, any> = {
+  privateSaleOffers: [] as PrivateSaleOffer[],
+  horses: {},
+  reputation: { score: 0 },
+  cashPressureHistory: {},
+};
+
+vi.mock("@/game/store", () => ({
+  useGame: (selector: (s: any) => any) => selector(mockState),
+  useGameWithShallow: (selector: (s: any) => any) => selector(mockState),
+}));
+
+vi.mock("@/hooks/stable/useCompareStables", () => ({
+  useCompareStables: () => ({
+    ids: [],
+    toggle: vi.fn(),
+    has: (id: string) => false,
+  }),
 }));
 
 import { StableCard } from "@/components/stable/StableCard";
@@ -27,6 +47,18 @@ const mkStable = (overrides: Partial<Stable> = {}): Stable =>
   }) as Stable;
 
 describe("StableCard", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockState.privateSaleOffers = [];
+    mockState.horses = {};
+    mockState.reputation = { score: 0 };
+    mockState.cashPressureHistory = {};
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
   it("renders stable name and country", () => {
     render(<StableCard stable={mkStable({ name: "Alpha Stables", country: "Ireland" })} />);
     expect(screen.getByText("Alpha Stables")).toBeInTheDocument();
@@ -66,5 +98,17 @@ describe("StableCard", () => {
     const link = container.querySelector('a[to*="/npc-stables/"]');
     expect(link).toBeTruthy();
     expect(link!.getAttribute("to")).toBe("/npc-stables/$stableId");
+  });
+
+  it("renders recommended max offer line with ratio text", () => {
+    render(<StableCard stable={mkStable({ cash: 10_000_000 })} />);
+    // aggressive base accept = 0.7 → 70%
+    expect(screen.getByText(/70%/)).toBeInTheDocument();
+  });
+
+  it("renders a compare toggle button", () => {
+    render(<StableCard stable={mkStable()} />);
+    const toggle = screen.getByRole("button", { name: /compare/i });
+    expect(toggle).toBeInTheDocument();
   });
 });

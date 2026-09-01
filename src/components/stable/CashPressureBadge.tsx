@@ -5,6 +5,7 @@ import { cn } from "@/lib/cn";
 import { formatCurrency } from "@/core/common/formatting";
 import { type CashPressure } from "@/core/stable/cashPressure";
 import { evaluatePrivateSaleThresholds } from "@/core/stable/privateSaleThresholds";
+import { CashPressureMeter } from "./CashPressureMeter";
 import type { Stable } from "@/game/types";
 
 const LABEL_STYLES: Record<CashPressure["label"], string> = {
@@ -12,13 +13,6 @@ const LABEL_STYLES: Record<CashPressure["label"], string> = {
   tight: "text-amber-300 border-amber-400/40 bg-amber-400/10",
   strained: "text-orange-300 border-orange-400/40 bg-orange-400/10",
   desperate: "text-red-300 border-red-400/40 bg-red-400/10",
-};
-
-const METER_STYLES: Record<CashPressure["label"], string> = {
-  comfortable: "bg-cream-muted",
-  tight: "bg-amber-400",
-  strained: "bg-orange-400",
-  desperate: "bg-red-400",
 };
 
 const LABEL_COPY: Record<CashPressure["label"], string> = {
@@ -78,15 +72,7 @@ export function CashPressureBadge({ stable, className, ask, offerAmount }: CashP
               <Wallet className="h-3 w-3" aria-hidden />
               {LABEL_COPY[pressure.label]}
             </Badge>
-            <span className="inline-flex items-center gap-1.5" aria-hidden>
-              <span className="h-1.5 w-14 overflow-hidden rounded-full bg-border/60">
-                <span
-                  className={cn("block h-full rounded-full", METER_STYLES[pressure.label])}
-                  style={{ width: `${pressure.meter}%` }}
-                />
-              </span>
-              <span className="text-xs tabular-nums text-cream-muted">{pressure.meter}</span>
-            </span>
+            <CashPressureMeter meter={pressure.meter} label={pressure.label} />
           </span>
         </TooltipTrigger>
         <TooltipContent

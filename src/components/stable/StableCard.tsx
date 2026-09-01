@@ -1,19 +1,71 @@
+import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { GitCompare } from "lucide-react";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { getReputationStars } from "@/core/stable/uiHelpers";
 import { stableTierColor } from "@/core/common/uiTokens";
 import { CashPressureBadge } from "./CashPressureBadge";
-import type { Stable } from "@/core/stable/types";
+import { RecommendedMaxOfferLine } from "./RecommendedMaxOfferLine";
+import { CashPressureTrend } from "./CashPressureTrend";
+import { useCompareStables } from "@/hooks/stable/useCompareStables";
+import { useGame, useGameWithShallow } from "@/game/store";
+import { findPendingOfferForStable } from "@/core/stable/pendingOfferForStable";
+import { calculateLotValuation } from "@/core/auction/engine";
+import { evaluateHorseAttachment, attachmentAdjustedAsk } from "@/core/horse/attachment";
+import type { Stable, PrivateSaleOffer, Horse } from "@/game/types";
 
 const BOOKMARK_TOP_OFFSET = "top-2";
 const BOOKMARK_RIGHT_OFFSET = "right-2";
 const COLOR_SWATCH_SIZE = "w-8 h-8";
 
+const EMPTY_OFFERS: PrivateSaleOffer[] = [];
+
 export function StableCard({ stable }: { stable: Stable }) {
+  const privateSaleOffers = useGameWithShallow((s) => s.privateSaleOffers ?? EMPTY_OFFERS);
+  const horses = useGame((s) => s.horses);
+  const reputationScore = useGame((s) => s.reputation?.score ?? 0);
+  const compare = useCompareStables();
+  const isSelected = compare.has(stable.id);
+
+  // Compute the pending offer + ask for this stable (gated — only when there's
+  // a pending offer, which is rare). Object.values(horses) is expensive so it
+  // stays inside this memo.
+  const pendingOfferData = useMemo(() => {
+    const pending = findPendingOfferForStable(privateSaleOffers, stable.id);
+    if (!pending) return null;
+
+    const horse = horses[pending.horseId];
+    if (!horse) return { pending, ask: undefined as number | undefined };
+
+    const allHorsesArray = Object.values(horses);
+    const marketValue = calculateLotValuation(horse, stable, "racing_age", allHorsesArray);
+    const ask = attachmentAdjustedAsk(horse, stable, marketValue, reputationScore);
+    return { pending, ask };
+  }, [privateSaleOffers, stable, horses, reputationScore]);
+
+  const handleCompareClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    compare.toggle(stable.id);
+  };
+
   return (
     <div className="relative h-full">
+      <div className={`absolute ${BOOKMARK_TOP_OFFSET} right-10 z-10`}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={handleCompareClick}
+          aria-label="Compare"
+          title={isSelected ? "Remove from comparison" : "Add to comparison"}
+        >
+          <GitCompare className={`h-4 w-4 ${isSelected ? "text-gold" : "text-cream-muted"}`} />
+        </Button>
+      </div>
       <div className={`absolute ${BOOKMARK_TOP_OFFSET} ${BOOKMARK_RIGHT_OFFSET} z-10`}>
         <BookmarkButton
           type="stable"
@@ -52,8 +104,16 @@ export function StableCard({ stable }: { stable: Stable }) {
             <div className="mb-3">
               <CashPressureBadge stable={stable} />
             </div>
+            <div className="mb-3">
+              <RecommendedMaxOfferLine
+                stable={stable}
+                ask={pendingOfferData?.ask}
+                offerAmount={pendingOfferData?.pending.amount}
+              />
+            </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-cream-muted">{stable.horses.length} horses</span>
+              <CashPressureTrend stableId={stable.id} variant="card" />
               <span className="text-fame" title={`Reputation: ${stable.reputation}`}>
                 {getReputationStars(stable.reputation)}
               </span>

@@ -167,6 +167,8 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "savedMatingPlans" as keyof GameState,
   // World size selection for entity count regulation
   "worldSize" as keyof GameState,
+  // Cash-pressure history snapshots (last 90 days per stable)
+  "cashPressureHistory" as keyof GameState,
 ];
 
 /**

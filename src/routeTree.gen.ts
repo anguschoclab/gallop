@@ -61,6 +61,7 @@ import { Route as FoalDevelopmentHorseIdRouteImport } from './routes/foal-develo
 import { Route as JockeyJockeyIdRouteImport } from './routes/jockey.$jockeyId'
 import { Route as NpcStablesIndexRouteImport } from './routes/npc-stables.index'
 import { Route as NpcStablesStableIdRouteImport } from './routes/npc-stables.$stableId'
+import { Route as NpcStablesCompareRouteImport } from './routes/npc-stables.compare'
 import { Route as RaceRaceIdRouteImport } from './routes/race.$raceId'
 import { Route as SireWatchIndexRouteImport } from './routes/sire-watch.index'
 import { Route as SireWatchStallionIdRouteImport } from './routes/sire-watch.$stallionId'
@@ -329,6 +330,11 @@ const NpcStablesStableIdRoute = NpcStablesStableIdRouteImport.update({
   path: '/$stableId',
   getParentRoute: () => NpcStablesRoute,
 } as any)
+const NpcStablesCompareRoute = NpcStablesCompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
+  getParentRoute: () => NpcStablesRoute,
+} as any)
 const RaceRaceIdRoute = RaceRaceIdRouteImport.update({
   id: '/race/$raceId',
   path: '/race/$raceId',
@@ -413,6 +419,7 @@ export interface FileRoutesByFullPath {
   '/foal-development/$horseId': typeof FoalDevelopmentHorseIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
+  '/npc-stables/compare': typeof NpcStablesCompareRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
@@ -467,6 +474,7 @@ export interface FileRoutesByTo {
   '/foal-development/$horseId': typeof FoalDevelopmentHorseIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
+  '/npc-stables/compare': typeof NpcStablesCompareRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
@@ -529,6 +537,7 @@ export interface FileRoutesById {
   '/foal-development/$horseId': typeof FoalDevelopmentHorseIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
+  '/npc-stables/compare': typeof NpcStablesCompareRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
@@ -592,6 +601,7 @@ export interface FileRouteTypes {
     | '/foal-development/$horseId'
     | '/jockey/$jockeyId'
     | '/npc-stables/$stableId'
+    | '/npc-stables/compare'
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
@@ -646,6 +656,7 @@ export interface FileRouteTypes {
     | '/foal-development/$horseId'
     | '/jockey/$jockeyId'
     | '/npc-stables/$stableId'
+    | '/npc-stables/compare'
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
@@ -707,6 +718,7 @@ export interface FileRouteTypes {
     | '/foal-development/$horseId'
     | '/jockey/$jockeyId'
     | '/npc-stables/$stableId'
+    | '/npc-stables/compare'
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
@@ -1131,6 +1143,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NpcStablesStableIdRouteImport
       parentRoute: typeof NpcStablesRoute
     }
+    '/npc-stables/compare': {
+      id: '/npc-stables/compare'
+      path: '/compare'
+      fullPath: '/npc-stables/compare'
+      preLoaderRoute: typeof NpcStablesCompareRouteImport
+      parentRoute: typeof NpcStablesRoute
+    }
     '/race/$raceId': {
       id: '/race/$raceId'
       path: '/race/$raceId'
@@ -1245,11 +1264,13 @@ const CalendarRouteWithChildren = CalendarRoute._addFileChildren(
 
 interface NpcStablesRouteChildren {
   NpcStablesStableIdRoute: typeof NpcStablesStableIdRoute
+  NpcStablesCompareRoute: typeof NpcStablesCompareRoute
   NpcStablesIndexRoute: typeof NpcStablesIndexRoute
 }
 
 const NpcStablesRouteChildren: NpcStablesRouteChildren = {
   NpcStablesStableIdRoute: NpcStablesStableIdRoute,
+  NpcStablesCompareRoute: NpcStablesCompareRoute,
   NpcStablesIndexRoute: NpcStablesIndexRoute,
 }
 

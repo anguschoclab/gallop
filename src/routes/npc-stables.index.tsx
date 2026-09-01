@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { StableList } from "@/components/stable";
+import { StableCompareBar } from "@/components/stable/StableCompareBar";
 import {
   useNpcStablesFilters,
   CASH_PRESSURE_FILTERS,
@@ -185,6 +186,8 @@ function NpcStablesPage() {
           </p>
         </div>
       )}
+
+      <StableCompareBar />
     </div>
   );
 }

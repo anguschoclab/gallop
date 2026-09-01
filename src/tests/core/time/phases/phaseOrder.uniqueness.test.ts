@@ -8,10 +8,10 @@ describe("Phase order uniqueness", () => {
     expect(orders.length).toBe(uniqueOrders.size);
   });
 
-  it("T45: all phase orders are within range 1-200", () => {
+  it("T45: all phase orders are within range 1-201", () => {
     for (const phase of GAME_PIPELINE_PHASES) {
       expect(phase.order).toBeGreaterThanOrEqual(1);
-      expect(phase.order).toBeLessThanOrEqual(200);
+      expect(phase.order).toBeLessThanOrEqual(201);
     }
   });
 
@@ -26,5 +26,11 @@ describe("Phase order uniqueness", () => {
     const phase = GAME_PIPELINE_PHASES.find((p) => p.name === "raceCancellation");
     expect(phase).toBeDefined();
     expect(phase!.order).toBe(88);
+  });
+
+  it("T48: cashPressureHistory phase exists with order 201", () => {
+    const phase = GAME_PIPELINE_PHASES.find((p) => p.name === "cashPressureHistory");
+    expect(phase).toBeDefined();
+    expect(phase!.order).toBe(201);
   });
 });

@@ -43,6 +43,7 @@ import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 import type { Outpost } from "@/core/facilities/outpostTypes";
 import type { WeatherState } from "@/core/weather/weatherTypes";
 import type { CareerArcState } from "@/services/narrative/careerArcGenerator";
+import type { CashPressureHistory } from "@/core/stable/cashPressureHistory";
 import { createFacility, createDefaultPlayerFacilities } from "@/core/facilities/facilityDefaults";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import { getReputationTier } from "@/core/reputation";
@@ -63,6 +64,8 @@ export interface SystemsState {
   npcStables: Stable[];
   /** NPC AI state manager for learning and personality-driven decisions */
   npcAIManager?: NpcAIManager;
+  /** Per-stable cash-pressure snapshot history (last 90 days) for trend UI */
+  cashPressureHistory?: CashPressureHistory;
 
   // Breeding programs system
   /** Breeding programs for stables targeting specific archetypes */
