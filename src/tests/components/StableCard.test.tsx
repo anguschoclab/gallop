@@ -119,7 +119,7 @@ describe("StableCard", () => {
 
   it("renders a compare toggle button", () => {
     render(<StableCard stable={mkStable()} />);
-    const toggle = screen.getByRole("button", { name: /compare/i });
+    const toggle = screen.getByRole("button", { name: /add to comparison/i });
     expect(toggle).toBeInTheDocument();
   });
 
@@ -165,7 +165,7 @@ describe("StableCard", () => {
   it("compare toggle calls useCompareStables.toggle and does not navigate", () => {
     mockToggle.mockClear();
     const { container } = render(<StableCard stable={mkStable({ id: "s1" })} />);
-    const toggleBtn = screen.getByRole("button", { name: /compare/i });
+    const toggleBtn = screen.getByRole("button", { name: /add to comparison/i });
     fireEvent.click(toggleBtn);
     expect(mockToggle).toHaveBeenCalledWith("s1");
     // The link should not have been clicked — verify the href is still the

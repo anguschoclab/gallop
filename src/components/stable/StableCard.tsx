@@ -3,6 +3,8 @@ import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TOOLTIP_DELAY_MS } from "@/constants/uiConstants";
 import { GitCompare } from "lucide-react";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { getReputationStars } from "@/core/stable/uiHelpers";
@@ -55,16 +57,26 @@ export function StableCard({ stable }: { stable: Stable }) {
   return (
     <div className="relative h-full">
       <div className={`absolute ${BOOKMARK_TOP_OFFSET} right-10 z-10`}>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7"
-          onClick={handleCompareClick}
-          aria-label="Compare"
-          title={isSelected ? "Remove from comparison" : "Add to comparison"}
-        >
-          <GitCompare className={`h-4 w-4 ${isSelected ? "text-gold" : "text-cream-muted"}`} />
-        </Button>
+        <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={handleCompareClick}
+                aria-label={isSelected ? "Remove from comparison" : "Add to comparison"}
+              >
+                <GitCompare
+                  className={`h-4 w-4 ${isSelected ? "text-gold" : "text-cream-muted"}`}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {isSelected ? "Remove from comparison" : "Add to comparison"}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       <div className={`absolute ${BOOKMARK_TOP_OFFSET} ${BOOKMARK_RIGHT_OFFSET} z-10`}>
         <BookmarkButton
