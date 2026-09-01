@@ -24,8 +24,8 @@ vi.mock("@/components/ui/sonner", () => ({
 vi.mock("@/game/store", () => ({
   rehydrateStore: vi.fn(),
   useGame: vi.fn(() => null),
-  initEngineWorker: vi.fn(),
-  initInitializationWorker: vi.fn(),
+  initEngineWorker: vi.fn(() => Promise.resolve()),
+  initInitializationWorker: vi.fn(() => Promise.resolve()),
 }));
 
 vi.mock("@/game/store/storage", () => ({
