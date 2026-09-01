@@ -344,6 +344,7 @@ export function generateAuctionLots(
   // Every major stable gets a chance to consign — per-personality policy
   // decides what (if anything) they actually list.
   const consignors = stables.filter((s) => s.isMajor);
+  const horsesDict = Object.fromEntries(allHorses.map((h) => [h.id, h]));
 
   for (const stable of consignors) {
     const policy = personalityConsignmentPolicy(stable, kind, allHorses, rng);
@@ -351,7 +352,7 @@ export function generateAuctionLots(
     for (let horse of policy.consign) {
       horse = ensurePhenotypeResolved(horse);
       const pedigreeMul = pedigreeMultiplier(horse, {
-        horses: Object.fromEntries(allHorses.map((h) => [h.id, h])),
+        horses: horsesDict,
       });
       const baseValue = calculateNpcHorseValue(horse, stable.tier) * pedigreeMul;
       const breezeSeconds = kind === "2yo_training" ? generateBreezeSeconds(horse, rng) : undefined;
@@ -378,8 +379,9 @@ export function generateAuctionLots(
       if (!isLotEligible(freshHorse, kind)) continue;
       const resolvedFresh = ensurePhenotypeResolved(freshHorse);
       allHorses.push(resolvedFresh);
+      horsesDict[resolvedFresh.id] = resolvedFresh;
       const pedigreeMul = pedigreeMultiplier(resolvedFresh, {
-        horses: Object.fromEntries(allHorses.map((h) => [h.id, h])),
+        horses: horsesDict,
       });
       const baseValue = calculateNpcHorseValue(resolvedFresh, stable.tier) * pedigreeMul;
       const breezeSeconds =
