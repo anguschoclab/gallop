@@ -12,6 +12,21 @@ export type FlavorStoryTheme =
 export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   track: [
     {
+      headline: "Track Surface Renovations Announced",
+      body: "Management confirmed plans to strip and rebuild the main dirt track base layer at the end of the meet to improve drainage.",
+      category: "flavor",
+    },
+    {
+      headline: "New Timing System Installed",
+      body: "The track has upgraded to a state-of-the-art laser timing system, promising more accurate fractional times for afternoon racing.",
+      category: "flavor",
+    },
+    {
+      headline: "Infield Concert Series a Hit",
+      body: "The newly introduced summer concert series in the track infield is drawing a younger demographic to the weekend racing cards.",
+      category: "flavor",
+    },
+    {
       headline: "Backstretch Beautification Project Underway",
       body: "Volunteers and track employees have teamed up to plant hundreds of new flowers around the paddock and walking rings, adding fresh color to the venue.",
       category: "flavor",
@@ -99,6 +114,21 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   jockeys: [
     {
+      headline: "Jockey Fined for Weigh-In Infraction",
+      body: "The stewards handed down a hefty fine to a prominent rider today after returning to scale two pounds overweight following a narrow victory.",
+      category: "flavor",
+    },
+    {
+      headline: "Freelance Rider Turning Heads",
+      body: "Operating without an agent, a young freelance jockey is steadily picking up mounts for smaller barns and making the most of every opportunity.",
+      category: "flavor",
+    },
+    {
+      headline: "Jockeys' Room Renovations Underway",
+      body: "Crews have begun updating the jockeys' quarters with new sauna facilities and video review rooms to help riders study race replays.",
+      category: "flavor",
+    },
+    {
       headline: "Jockey Colony Sees Influx of Talent",
       body: "Several promising young riders have transferred their tack to the local circuit, raising the level of competition in the jockeys' room.",
       category: "flavor",
@@ -181,6 +211,21 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   breeding: [
     {
+      headline: "Rare White Foal Born at Local Farm",
+      body: "A nearby breeding operation welcomed a remarkably rare all-white foal overnight, immediately becoming a social media sensation.",
+      category: "flavor",
+    },
+    {
+      headline: "Pinhookers Busy at Weanling Sale",
+      body: "Professional pinhookers were highly active at today's weanling sale, aggressively securing young prospects to resell as yearlings next season.",
+      category: "flavor",
+    },
+    {
+      headline: "Stallion Syndicate Dissolved",
+      body: "Following fertility issues, the syndicate managing a highly anticipated first-season sire has been dissolved, sending shockwaves through the breeding community.",
+      category: "flavor",
+    },
+    {
       headline: "Prominent Mare Delivers Healthy Twins",
       body: "In a rare and closely watched event, a multiple stakes-winning mare has safely delivered healthy twin foals, defying the usual odds in thoroughbred reproduction.",
       category: "flavor",
@@ -258,6 +303,21 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   weather: [
     {
+      headline: "Unseasonal Humidity Drains Runners",
+      body: "A sudden spike in humidity is visibly testing the endurance of the horses in the paddock, leading to several surprisingly slow finish times.",
+      category: "flavor",
+    },
+    {
+      headline: "Brisk Winds Favor Front-Runners",
+      body: "A strong tailwind down the backstretch seems to be aiding early speed horses today, making it difficult for closers to make up ground.",
+      category: "flavor",
+    },
+    {
+      headline: "Lightning Delays Afternoon Card",
+      body: "A passing thunderstorm forced a 45-minute delay and a temporary clearing of the grandstand, but racing is expected to resume shortly on a sealed track.",
+      category: "flavor",
+    },
+    {
       headline: "Weather Alert: Clear Skies Ahead",
       body: "The regional meteorological bureau predicts ideal racing conditions for the next several days, with fast dirt and firm turf expected across most tracks.",
       category: "flavor",
@@ -319,6 +379,21 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   community: [
+    {
+      headline: "Racing Superfan Attends 50th Consecutive Derby",
+      body: "Track officials presented a commemorative plaque to a local enthusiast who hasn't missed the region's signature race since the 1970s.",
+      category: "flavor",
+    },
+    {
+      headline: "Pony Club Exhibition Between Races",
+      body: "The local pony club put on a spirited exhibition race down the stretch, drawing cheers from the crowd as the next generation of riders showed their skills.",
+      category: "flavor",
+    },
+    {
+      headline: "Retired Champion Paraded for Fans",
+      body: "A beloved former track star was paraded in the walking ring this afternoon, looking fit and happy in their second career as a stable pony.",
+      category: "flavor",
+    },
     {
       headline: "Local School Hosts Field Trip at the Track",
       body: "Hundreds of elementary school students visited the track this morning, getting a behind-the-scenes look at the barns and learning about equine care from local trainers.",
@@ -411,6 +486,21 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   industry: [
+    {
+      headline: "New Whip Restrictions Proposed",
+      body: "The national regulatory board is circulating a draft proposal that would further limit the number of times a jockey can use the riding crop during a race.",
+      category: "flavor",
+    },
+    {
+      headline: "Major Syndicate Suspends Operations",
+      body: "Citing economic headwinds, a large ownership group has announced they will not be purchasing yearlings this season and will slowly liquidate their current stock.",
+      category: "flavor",
+    },
+    {
+      headline: "Racing Commission Approves Drone Broadcasts",
+      body: "In a bid to modernize the viewer experience, the regulatory body has approved the use of low-flying drones to capture dynamic racing footage for the simulcast feed.",
+      category: "flavor",
+    },
     {
       headline: "New Season Projections",
       body: "Pundits are already weighing in on the upcoming stakes schedule, with many predicting a highly competitive year for the 3-year-old division.",
