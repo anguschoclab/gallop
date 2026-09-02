@@ -48,10 +48,7 @@ function AlmanacPage() {
   const seasonRecords = useGameWithShallow((s) => s.seasonRecords ?? EMPTY_ARRAY) as SeasonRecord[];
 
   const records = useMemo(() => Object.values(trackRecords), [trackRecords]);
-  const honours = useMemo(
-    () => [...seasonRecords].sort((a, b) => b.day - a.day),
-    [seasonRecords],
-  );
+  const honours = useMemo(() => [...seasonRecords].sort((a, b) => b.day - a.day), [seasonRecords]);
 
   return (
     <div className="space-y-6">
@@ -66,9 +63,7 @@ function AlmanacPage() {
 
       <Tabs
         value={tab ?? "records"}
-        onValueChange={(v) =>
-          navigate({ search: { tab: v as (typeof ALMANAC_TABS)[number] } })
-        }
+        onValueChange={(v) => navigate({ search: { tab: v as (typeof ALMANAC_TABS)[number] } })}
         className="space-y-4"
       >
         <TabsList>

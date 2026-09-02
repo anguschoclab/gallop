@@ -189,7 +189,6 @@ export function checkTrackRecordAndHof(
     }
   }
 
-
   if (race.graded?.grade === "G1") {
     const historyRecord = recordRaceHistory(race, result, runners, horseMap, newDay);
     if (historyRecord) {

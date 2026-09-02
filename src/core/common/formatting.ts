@@ -49,12 +49,20 @@ export function formatClockTime(seconds: number, decimals: 1 | 2 = 2, dropMinute
   return `${mins}:${secStr}`;
 }
 
-/** Seconds per kilometre for a run of `distance` metres in `seconds`. */
+/**
+ * Seconds per kilometre for a run of `distance` metres in `seconds`.
+ * @param seconds
+ * @param distance
+ */
 export function pacePerKm(seconds: number, distance: number): number {
   return distance > 0 ? (seconds / distance) * 1000 : NaN;
 }
 
-/** Seconds per mile for a run of `distance` metres in `seconds`. */
+/**
+ * Seconds per mile for a run of `distance` metres in `seconds`.
+ * @param seconds
+ * @param distance
+ */
 export function pacePerMile(seconds: number, distance: number): number {
   return distance > 0 ? (seconds / distance) * METRES_PER_MILE : NaN;
 }

@@ -73,7 +73,12 @@ export function RecordAlmanac({ records }: { records: TrackRecord[] }) {
                 </Badge>
               </button>
               {buckets.map((b) => (
-                <button key={b} type="button" onClick={() => setBucket(b)} aria-pressed={bucket === b}>
+                <button
+                  key={b}
+                  type="button"
+                  onClick={() => setBucket(b)}
+                  aria-pressed={bucket === b}
+                >
                   <Badge variant={bucket === b ? "default" : "outline"} className="text-xs">
                     {b}
                   </Badge>

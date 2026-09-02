@@ -99,9 +99,6 @@ export function TrackRecordsTable({ records }: { records: TrackRecord[] }) {
           valueLabel="Time"
         />
       ))}
-
-
-
     </LeaderboardShell>
   );
 }

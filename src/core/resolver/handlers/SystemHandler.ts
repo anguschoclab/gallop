@@ -203,7 +203,6 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     draft.trackRecords[trackRecordKey(record)] = record;
   },
 
-
   name_reservation: (draft, impact) => {
     const { name, deceasedOnDay } = impact as NameReservationImpact;
     // Add to reserved names list (25-year reservation)

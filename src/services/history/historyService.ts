@@ -149,7 +149,11 @@ export function checkTrackRecord(
   return null;
 }
 
-/** Age bucket used for age-restricted record keeping. */
+/**
+ * Age bucket used for age-restricted record keeping.
+ * @param age
+ * @returns age bucket string
+ */
 export function ageBucket(age: number): string | null {
   const rounded = Math.floor(age);
   if (rounded < 2) return null;
@@ -157,7 +161,11 @@ export function ageBucket(age: number): string | null {
   return `${rounded}yo`;
 }
 
-/** Gender bucket used for record keeping. */
+/**
+ * Gender bucket used for record keeping.
+ * @param gender
+ * @returns gender bucket string
+ */
 export function genderBucket(gender: string | undefined): string | null {
   if (!gender) return null;
   if (gender === "filly" || gender === "mare") return "Female";
@@ -171,6 +179,10 @@ export function genderBucket(gender: string | undefined): string | null {
  *
  * @param race - The completed race.
  * @param winner - Winning horse identity plus age/gender for category bucketing.
+ * @param winner.id
+ * @param winner.name
+ * @param winner.age
+ * @param winner.gender
  * @param time - Winning time in seconds.
  * @param day - Current simulation day.
  * @param existingRecords - Current map of records keyed by trackRecordKey().
@@ -208,8 +220,7 @@ export function checkTrackRecords(
   if (ageValue) candidates.push({ ...base, categoryKind: "age", categoryValue: ageValue });
 
   const genderValue = genderBucket(winner.gender);
-  if (genderValue)
-    candidates.push({ ...base, categoryKind: "gender", categoryValue: genderValue });
+  if (genderValue) candidates.push({ ...base, categoryKind: "gender", categoryValue: genderValue });
 
   const grade = race.graded?.grade;
   if (grade) candidates.push({ ...base, categoryKind: "grade", categoryValue: grade });
@@ -227,4 +238,3 @@ export function checkTrackRecords(
     return !existing || time < existing.time;
   });
 }
-
