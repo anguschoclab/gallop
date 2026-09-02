@@ -43,6 +43,9 @@ export interface HallOfFameEntry {
   };
 }
 
+/** Dimension a track record is segmented by. */
+export type RecordCategoryKind = "overall" | "age" | "gender" | "grade" | "condition";
+
 export interface TrackRecord {
   trackId: string;
   trackName: string;
@@ -53,7 +56,30 @@ export interface TrackRecord {
   horseName: string;
   day: number;
   year: number;
+  /** Which dimension this record belongs to. Legacy records without it are "overall". */
+  categoryKind?: RecordCategoryKind;
+  /** Bucket inside the dimension, e.g. "3yo", "Female", "G1", "fast". */
+  categoryValue?: string;
+  /** Race that produced the record (informational). */
+  raceId?: string;
+  raceName?: string;
 }
+
+/** Stable storage key for a track record, unique per track/surface/distance/category. */
+export function trackRecordKey(record: TrackRecord): string {
+  const kind = record.categoryKind ?? "overall";
+  const suffix = kind === "overall" ? "overall" : `${kind}:${record.categoryValue ?? ""}`;
+  return `${record.trackId}_${record.surface}_${record.distance}_${suffix}`;
+}
+
+/** Human label for a record's category. */
+export function recordCategoryLabel(record: TrackRecord): string {
+  const kind = record.categoryKind ?? "overall";
+  if (kind === "overall") return "Overall";
+  if (kind === "condition") return `Going: ${record.categoryValue}`;
+  return record.categoryValue ?? "Overall";
+}
+
 
 export interface FounderRecord {
   horseId: string;

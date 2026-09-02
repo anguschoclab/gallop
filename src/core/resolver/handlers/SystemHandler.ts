@@ -41,6 +41,7 @@ import type {
 import { distanceBucket } from "@/core/race/beyer";
 import { getReputationTier, createReputationEvent, type ReputationSource } from "@/core/reputation";
 import { addReservedName } from "@/core/horse/naming/reservedNames";
+import { trackRecordKey } from "@/core/history/historyTypes";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -194,9 +195,14 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   track_record: (draft, impact) => {
     const { record } = impact as TrackRecordImpact;
     if (!draft.trackRecords) draft.trackRecords = {};
-    const key = `${record.trackId}_${record.surface}_${record.distance}`;
-    draft.trackRecords[key] = record;
+    const kind = record.categoryKind ?? "overall";
+    if (kind === "overall") {
+      // Drop the legacy un-suffixed key so a track/distance shows one overall record.
+      delete draft.trackRecords[`${record.trackId}_${record.surface}_${record.distance}`];
+    }
+    draft.trackRecords[trackRecordKey(record)] = record;
   },
+
 
   name_reservation: (draft, impact) => {
     const { name, deceasedOnDay } = impact as NameReservationImpact;

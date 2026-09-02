@@ -18,7 +18,7 @@ import { recordRaceStrategy } from "@/core/ai/jockeyStrategyRecording";
 import {
   recordRaceHistory,
   checkHallOfFameInduction,
-  checkTrackRecord,
+  checkTrackRecords,
 } from "@/services/history/historyService";
 import { processClaimingResolution } from "@/services/auction/claimingResolutionService";
 import { generateUUID } from "@/core/uuid";
@@ -160,27 +160,35 @@ export function checkTrackRecordAndHof(
   const winnerHorse = winnerResult ? horseMap.get(winnerResult.horseId) : null;
 
   if (winnerResult && winnerHorse) {
-    const trackRecord = checkTrackRecord(
+    const newRecords = checkTrackRecords(
       race,
-      winnerResult.horseId,
-      winnerHorse.name,
+      {
+        id: winnerResult.horseId,
+        name: winnerHorse.name,
+        age: winnerHorse.age,
+        gender: winnerHorse.gender,
+      },
       winnerResult.time,
       newDay,
       trackRecords,
     );
-    if (trackRecord) {
+    for (const trackRecord of newRecords) {
       impacts.push({
         id: generateUUID(),
         intentId: race.id,
         day: newDay,
         phase: "raceResolution",
-        logLevel: "always",
+        logLevel: trackRecord.categoryKind === "overall" ? "always" : "conditional",
         type: "track_record",
         record: trackRecord,
-        reason: "New track record set!",
+        reason:
+          trackRecord.categoryKind === "overall"
+            ? "New track record set!"
+            : `New ${trackRecord.categoryValue} track record set!`,
       } as TrackRecordImpact);
     }
   }
+
 
   if (race.graded?.grade === "G1") {
     const historyRecord = recordRaceHistory(race, result, runners, horseMap, newDay);

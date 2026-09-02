@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AlmanacRouteImport } from './routes/almanac'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AuctionRouteImport } from './routes/auction'
 import { Route as AwardsRouteImport } from './routes/awards'
@@ -73,6 +74,11 @@ import { Route as SyndicateSyndicateIdRouteImport } from './routes/syndicate.$sy
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AlmanacRoute = AlmanacRouteImport.update({
+  id: '/almanac',
+  path: '/almanac',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnalyticsRoute = AnalyticsRouteImport.update({
@@ -373,6 +379,7 @@ const SyndicateSyndicateIdRoute = SyndicateSyndicateIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/almanac': typeof AlmanacRoute
   '/analytics': typeof AnalyticsRouteWithChildren
   '/auction': typeof AuctionRouteWithChildren
   '/awards': typeof AwardsRouteWithChildren
@@ -435,6 +442,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/almanac': typeof AlmanacRoute
   '/bookmarks': typeof BookmarksRoute
   '/breeding': typeof BreedingRoute
   '/briefing': typeof BriefingRoute
@@ -491,6 +499,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/almanac': typeof AlmanacRoute
   '/analytics': typeof AnalyticsRouteWithChildren
   '/auction': typeof AuctionRouteWithChildren
   '/awards': typeof AwardsRouteWithChildren
@@ -555,6 +564,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/almanac'
     | '/analytics'
     | '/auction'
     | '/awards'
@@ -617,6 +627,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/almanac'
     | '/bookmarks'
     | '/breeding'
     | '/briefing'
@@ -672,6 +683,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/almanac'
     | '/analytics'
     | '/auction'
     | '/awards'
@@ -735,6 +747,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AlmanacRoute: typeof AlmanacRoute
   AnalyticsRoute: typeof AnalyticsRouteWithChildren
   AuctionRoute: typeof AuctionRouteWithChildren
   AwardsRoute: typeof AwardsRouteWithChildren
@@ -784,6 +797,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/almanac': {
+      id: '/almanac'
+      path: '/almanac'
+      fullPath: '/almanac'
+      preLoaderRoute: typeof AlmanacRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/analytics': {
@@ -1317,6 +1337,7 @@ const StaffRouteWithChildren = StaffRoute._addFileChildren(StaffRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AlmanacRoute: AlmanacRoute,
   AnalyticsRoute: AnalyticsRouteWithChildren,
   AuctionRoute: AuctionRouteWithChildren,
   AwardsRoute: AwardsRouteWithChildren,

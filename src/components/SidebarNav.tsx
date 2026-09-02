@@ -29,6 +29,7 @@ import {
   Bell,
   Newspaper,
   RotateCcw,
+  BookOpen,
 } from "lucide-react";
 
 import { formatCurrency } from "@/core/common/formatting";
@@ -72,6 +73,8 @@ const navSections: { label: string; items: NavItem[] }[] = [
       { to: "/racing", label: "Racing", icon: Calendar, exact: false },
       { to: "/calendar", label: "Calendar", icon: Calendar, exact: false },
       { to: "/records", label: "Records", icon: BarChart3, exact: false },
+      { to: "/almanac", label: "Almanac", icon: BookOpen, exact: false },
+
       { to: "/market", label: "Market", icon: Store, exact: false },
       { to: "/auction", label: "Auctions", icon: Gavel, exact: false },
       { to: "/npc-stables", label: "Stables", icon: Map, exact: false },
