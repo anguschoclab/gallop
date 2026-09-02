@@ -75,12 +75,17 @@ export function ScoutingInsightsPanel() {
   const rows = useMemo<InsightRow[]>(() => {
     const pooled = allHorses.filter((h) => {
       if (h.lifecycleStatus === "deceased") return false;
+      // Pedigree ancestors are stored as horses too; keep the plot to runners.
+      if ((h.age ?? 0) > 30) return false;
       if (pool === "mine") return isPlayerOwned(h);
       if (pool === "npc") return isNpcOwned(h);
       if (pool === "market") return !isNpcOwned(h) && !isPlayerOwned(h);
       return true;
     });
-    return pooled.map((h) => {
+    return pooled.map((raw) => {
+      // World horses are created with a deferred phenotype (stats all zero
+      // until resolved), so resolve before reading any stat-based metric.
+      const h = ensurePhenotypeResolved(raw);
       const ownerId = h.ownership.type === "npc" ? h.ownership.stableId : null;
       const ownerLabel = isPlayerOwned(h)
         ? "My stable"
@@ -90,6 +95,7 @@ export function ScoutingInsightsPanel() {
       return buildInsightRow(h, allHorses, ownerLabel, ownerId);
     });
   }, [allHorses, pool, stableNames]);
+
 
   const visibleRows = useMemo(
     () => (onlySelected ? rows.filter((r) => selectedIds.includes(r.id)) : rows),
