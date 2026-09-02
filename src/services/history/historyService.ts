@@ -152,6 +152,7 @@ export function checkTrackRecord(
 /**
  * Age bucket used for age-restricted record keeping.
  * @param age
+ * @returns The age bucket string or null
  */
 export function ageBucket(age: number): string | null {
   const rounded = Math.floor(age);
@@ -163,6 +164,7 @@ export function ageBucket(age: number): string | null {
 /**
  * Gender bucket used for record keeping.
  * @param gender
+ * @returns The gender bucket string or null
  */
 export function genderBucket(gender: string | undefined): string | null {
   if (!gender) return null;
