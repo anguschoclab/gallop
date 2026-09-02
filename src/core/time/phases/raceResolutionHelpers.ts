@@ -178,7 +178,7 @@ export function checkTrackRecordAndHof(
         intentId: race.id,
         day: newDay,
         phase: "raceResolution",
-        logLevel: trackRecord.categoryKind === "overall" ? "always" : "verbose",
+        logLevel: trackRecord.categoryKind === "overall" ? "always" : "conditional",
         type: "track_record",
         record: trackRecord,
         reason:
