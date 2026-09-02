@@ -1,6 +1,7 @@
 import type { Race, Horse, RaceRunner } from "@/game/types";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import type { SeasonRecord, HallOfFameEntry, TrackRecord } from "@/core/history/historyTypes";
+import { trackRecordKey } from "@/core/history/historyTypes";
 import { generateUUID } from "@/core/uuid";
 import { getCareerStats } from "@/core/horse/stats";
 import { DAYS_PER_YEAR } from "@/constants";
