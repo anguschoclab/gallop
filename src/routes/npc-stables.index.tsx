@@ -1,6 +1,6 @@
 // NPC Stables Directory - Browse rival stables and their horses
 import { createFileRoute } from "@tanstack/react-router";
-import { Trophy, TrendingUp, Users, Building2, Search, X } from "lucide-react";
+import { Trophy, TrendingUp, Users, Building2, Search, X, BarChart3 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,6 +11,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScoutingInsightsPanel } from "@/components/insights/ScoutingInsightsPanel";
 import { StableList } from "@/components/stable";
 import { StableCompareBar } from "@/components/stable/StableCompareBar";
 import {
@@ -143,51 +145,71 @@ function NpcStablesPage() {
         </span>
       </div>
 
-      {filteredStables.length === 0 ? (
-        <Card className="border-dashed border-gold-muted">
-          <CardContent className="p-12 text-center text-cream-muted font-[family-name:var(--font-body)]">
-            <Building2 className="h-12 w-12 mx-auto mb-4 opacity-20" />
-            <p>No stables match your current filters.</p>
-            <Button variant="link" className="text-gold mt-2" onClick={clearFilters}>
-              Clear all filters
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <>
-          <StableList
-            title="Elite Stables"
-            icon={<Trophy className="w-5 h-5 text-gold" />}
-            stables={eliteStables}
-          />
-          <StableList
-            title="Mid-Tier Stables"
-            icon={<TrendingUp className="w-5 h-5 text-gold" />}
-            stables={midStables}
-          />
-          <StableList
-            title="Budget Stables"
-            icon={<Users className="w-5 h-5 text-gold" />}
-            stables={budgetStables}
-          />
-        </>
-      )}
+      <Tabs defaultValue="directory" className="space-y-6">
+        <TabsList className="bg-slate-900/40 h-10 gap-2">
+          <TabsTrigger value="directory" className="gap-2 text-xs uppercase tracking-widest px-5">
+            <Building2 className="w-3.5 h-3.5" />
+            Directory
+          </TabsTrigger>
+          <TabsTrigger value="insights" className="gap-2 text-xs uppercase tracking-widest px-5">
+            <BarChart3 className="w-3.5 h-3.5" />
+            Insights
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Regional Operations (Filler) - Collapsible */}
-      {fillerCount > 0 && (
-        <div className="mt-8 pt-6 border-t">
-          <h2 className="text-lg font-semibold text-cream-muted flex items-center gap-2">
-            <Building2 className="w-5 h-5" />
-            {fillerCount} Regional Operations
-          </h2>
-          <p className="text-sm text-cream-muted mt-1">
-            Smaller regional stables with limited strings. These operations may not appear in major
-            races but provide depth to the racing ecosystem.
-          </p>
-        </div>
-      )}
+        <TabsContent value="directory" className="space-y-8 mt-0 focus-visible:outline-none">
+          {filteredStables.length === 0 ? (
+            <Card className="border-dashed border-gold-muted">
+              <CardContent className="p-12 text-center text-cream-muted font-[family-name:var(--font-body)]">
+                <Building2 className="h-12 w-12 mx-auto mb-4 opacity-20" />
+                <p>No stables match your current filters.</p>
+                <Button variant="link" className="text-gold mt-2" onClick={clearFilters}>
+                  Clear all filters
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              <StableList
+                title="Elite Stables"
+                icon={<Trophy className="w-5 h-5 text-gold" />}
+                stables={eliteStables}
+              />
+              <StableList
+                title="Mid-Tier Stables"
+                icon={<TrendingUp className="w-5 h-5 text-gold" />}
+                stables={midStables}
+              />
+              <StableList
+                title="Budget Stables"
+                icon={<Users className="w-5 h-5 text-gold" />}
+                stables={budgetStables}
+              />
+            </>
+          )}
 
-      <StableCompareBar />
+          {/* Regional Operations (Filler) - Collapsible */}
+          {fillerCount > 0 && (
+            <div className="mt-8 pt-6 border-t">
+              <h2 className="text-lg font-semibold text-cream-muted flex items-center gap-2">
+                <Building2 className="w-5 h-5" />
+                {fillerCount} Regional Operations
+              </h2>
+              <p className="text-sm text-cream-muted mt-1">
+                Smaller regional stables with limited strings. These operations may not appear in
+                major races but provide depth to the racing ecosystem.
+              </p>
+            </div>
+          )}
+
+          <StableCompareBar />
+        </TabsContent>
+
+        <TabsContent value="insights" className="mt-0 focus-visible:outline-none">
+          <ScoutingInsightsPanel />
+        </TabsContent>
+      </Tabs>
     </div>
+
   );
 }
