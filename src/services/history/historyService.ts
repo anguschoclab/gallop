@@ -125,7 +125,8 @@ export function checkTrackRecord(
   if (!trackId || !surface) return null;
 
   const key = `${trackId}_${surface}_${distance}`;
-  const existing = existingRecords[key];
+  const legacy = existingRecords[key];
+  const existing = legacy ?? existingRecords[`${key}_overall`];
 
   if (!existing || time < existing.time) {
     return {
@@ -138,8 +139,91 @@ export function checkTrackRecord(
       horseName: winnerName,
       day,
       year: Math.floor((day - 1) / DAYS_PER_YEAR) + 1,
+      categoryKind: "overall",
+      raceId: race.id,
+      raceName: race.name,
     };
   }
 
   return null;
 }
+
+/** Age bucket used for age-restricted record keeping. */
+export function ageBucket(age: number): string | null {
+  const rounded = Math.floor(age);
+  if (rounded < 2) return null;
+  if (rounded >= 5) return "5yo+";
+  return `${rounded}yo`;
+}
+
+/** Gender bucket used for record keeping. */
+export function genderBucket(gender: string | undefined): string | null {
+  if (!gender) return null;
+  if (gender === "filly" || gender === "mare") return "Female";
+  if (gender === "colt" || gender === "horse" || gender === "gelding") return "Male";
+  return null;
+}
+
+/**
+ * Determines every category record (overall, age, gender, grade, going) broken by
+ * a winning time at a given track/surface/distance combination.
+ *
+ * @param race - The completed race.
+ * @param winner - Winning horse identity plus age/gender for category bucketing.
+ * @param time - Winning time in seconds.
+ * @param day - Current simulation day.
+ * @param existingRecords - Current map of records keyed by trackRecordKey().
+ * @returns All new records that beat (or establish) their category best.
+ */
+export function checkTrackRecords(
+  race: Race,
+  winner: { id: string; name: string; age?: number; gender?: string },
+  time: number,
+  day: number,
+  existingRecords: Record<string, TrackRecord> = {},
+): TrackRecord[] {
+  const trackId = race.trackId || race.graded?.trackId;
+  const surface = race.surface || race.graded?.surface;
+  const distance = race.distance;
+  if (!trackId || !surface) return [];
+
+  const base: Omit<TrackRecord, "categoryKind" | "categoryValue"> = {
+    trackId,
+    trackName: race.graded?.track || "Unknown Track",
+    surface,
+    distance,
+    time,
+    horseId: winner.id,
+    horseName: winner.name,
+    day,
+    year: Math.floor((day - 1) / DAYS_PER_YEAR) + 1,
+    raceId: race.id,
+    raceName: race.name,
+  };
+
+  const candidates: TrackRecord[] = [{ ...base, categoryKind: "overall" }];
+
+  const ageValue = winner.age !== undefined ? ageBucket(winner.age) : null;
+  if (ageValue) candidates.push({ ...base, categoryKind: "age", categoryValue: ageValue });
+
+  const genderValue = genderBucket(winner.gender);
+  if (genderValue)
+    candidates.push({ ...base, categoryKind: "gender", categoryValue: genderValue });
+
+  const grade = race.graded?.grade;
+  if (grade) candidates.push({ ...base, categoryKind: "grade", categoryValue: grade });
+
+  if (race.trackCondition)
+    candidates.push({ ...base, categoryKind: "condition", categoryValue: race.trackCondition });
+
+  return candidates.filter((candidate) => {
+    const key = trackRecordKey(candidate);
+    let existing = existingRecords[key];
+    if (!existing && candidate.categoryKind === "overall") {
+      // Legacy records were stored without a category suffix.
+      existing = existingRecords[`${trackId}_${surface}_${distance}`];
+    }
+    return !existing || time < existing.time;
+  });
+}
+
