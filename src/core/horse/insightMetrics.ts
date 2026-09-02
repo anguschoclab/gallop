@@ -58,20 +58,26 @@ export const INSIGHT_METRICS: InsightMetric[] = [
   { key: "fame", label: "Fame", short: "Fame", format: int },
   { key: "form", label: "Form", short: "Form", format: one },
   { key: "value", label: "Market value", short: "Value", format: (v) => formatCurrency(v) },
-  { key: "earnings", label: "Lifetime earnings", short: "Earnings", format: (v) => formatCurrency(v) },
+  {
+    key: "earnings",
+    label: "Lifetime earnings",
+    short: "Earnings",
+    format: (v) => formatCurrency(v),
+  },
   { key: "starts", label: "Career starts", short: "Starts", format: int },
   { key: "wins", label: "Career wins", short: "Wins", format: int },
   { key: "winRate", label: "Win rate", short: "Win %", format: pct },
   { key: "distanceAptitude", label: "Distance aptitude", short: "Dist apt", format: int },
 ];
 
-export const INSIGHT_METRIC_BY_KEY: Record<InsightMetricKey, InsightMetric> = INSIGHT_METRICS.reduce(
-  (acc, m) => {
-    acc[m.key] = m;
-    return acc;
-  },
-  {} as Record<InsightMetricKey, InsightMetric>,
-);
+export const INSIGHT_METRIC_BY_KEY: Record<InsightMetricKey, InsightMetric> =
+  INSIGHT_METRICS.reduce(
+    (acc, m) => {
+      acc[m.key] = m;
+      return acc;
+    },
+    {} as Record<InsightMetricKey, InsightMetric>,
+  );
 
 /** A horse flattened into plottable numbers plus display metadata. */
 export interface InsightRow {
@@ -129,7 +135,11 @@ export function buildInsightRow(
   };
 }
 
-/** Min/max of a metric across rows, widened when all values are identical. */
+/**
+ * Min/max of a metric across rows, widened when all values are identical.
+ * @param rows
+ * @param key
+ */
 export function metricExtent(rows: InsightRow[], key: InsightMetricKey): [number, number] {
   if (rows.length === 0) return [0, 1];
   let min = Infinity;
