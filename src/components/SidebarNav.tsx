@@ -29,6 +29,7 @@ import {
   Bell,
   Newspaper,
   RotateCcw,
+  BookOpen,
 } from "lucide-react";
 
 import { formatCurrency } from "@/core/common/formatting";
