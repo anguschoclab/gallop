@@ -30,6 +30,8 @@ import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 import type { Horse } from "@/core/horse/types";
 import { isNpcOwned, isPlayerOwned } from "@/core/horse/ownership";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
+
 import {
   INSIGHT_METRICS,
   INSIGHT_METRIC_BY_KEY,
