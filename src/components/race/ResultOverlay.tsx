@@ -207,10 +207,13 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                         </div>
 
                         <div className="col-span-2 text-right">
-                          <span className="font-mono text-xs text-cream/20 tabular-nums">
-                            {r.finishTime?.toFixed(2)}s
-                          </span>
+                          <RaceTimeDisplay
+                            seconds={r.finishTime}
+                            distance={race.distance}
+                            className="font-mono text-xs text-cream/60"
+                          />
                         </div>
+
 
                         <div className="col-span-3 text-right">
                           {prize > 0 && (
