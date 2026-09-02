@@ -210,6 +210,5 @@ function NpcStablesPage() {
         </TabsContent>
       </Tabs>
     </div>
-
   );
 }

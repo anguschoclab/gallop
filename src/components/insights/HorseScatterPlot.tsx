@@ -8,11 +8,7 @@
 
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu";
+import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from "@/components/ui/context-menu";
 import {
   INSIGHT_METRIC_BY_KEY,
   metricExtent,

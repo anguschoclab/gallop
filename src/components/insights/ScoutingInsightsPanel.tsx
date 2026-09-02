@@ -98,7 +98,6 @@ export function ScoutingInsightsPanel() {
     });
   }, [allHorses, pool, stableNames]);
 
-
   const visibleRows = useMemo(
     () => (onlySelected ? rows.filter((r) => selectedIds.includes(r.id)) : rows),
     [rows, onlySelected, selectedIds],
@@ -207,10 +206,13 @@ export function ScoutingInsightsPanel() {
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Select value={pool} onValueChange={(v) => {
+              <Select
+                value={pool}
+                onValueChange={(v) => {
                   setSelectedIds([]);
                   setPool(v as PoolKey);
-                }}>
+                }}
+              >
                 <SelectTrigger className="h-9 w-40 text-xs" aria-label="Horse pool">
                   <SelectValue />
                 </SelectTrigger>
@@ -286,10 +288,20 @@ export function ScoutingInsightsPanel() {
                 Selection · {selectedRows.length} horses
               </h3>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" className="h-8 text-xs" onClick={bookmarkSelected}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 text-xs"
+                  onClick={bookmarkSelected}
+                >
                   Bookmark all
                 </Button>
-                <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => setSelectedIds([])}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 text-xs"
+                  onClick={() => setSelectedIds([])}
+                >
                   Clear
                 </Button>
               </div>
