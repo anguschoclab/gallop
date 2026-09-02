@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Timer } from "lucide-react";
-import { formatTime } from "@/core/common/formatting";
+import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
 import {
   LeaderboardControlsBar,
   LeaderboardEmpty,
@@ -86,10 +86,14 @@ export function TrackRecordsTable({ records }: { records: TrackRecord[] }) {
               {record.surface}
             </Badge>
           }
-          value={formatTime(record.time)}
+          value={
+            <RaceTimeDisplay seconds={record.time} distance={record.distance} className="text-sm" />
+          }
           valueLabel="Time"
         />
       ))}
+
+
     </LeaderboardShell>
   );
 }
