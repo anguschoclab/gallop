@@ -77,14 +77,21 @@ export function TrackRecordsTable({ records }: { records: TrackRecord[] }) {
       />
       {processed.map((record, index: number) => (
         <LeaderboardRow
-          key={`${record.trackId}_${record.surface}_${record.distance}`}
+          key={`${record.trackId}_${record.surface}_${record.distance}_${record.categoryKind ?? "overall"}_${record.categoryValue ?? ""}`}
           rank={index + 1}
           name={record.trackName}
           meta={`${record.distance}m · ${record.horseName} · Year ${record.year}`}
           badges={
-            <Badge variant="outline" className={`text-xs ${surfaceColor(record.surface)}`}>
-              {record.surface}
-            </Badge>
+            <div className="flex items-center gap-1">
+              <Badge variant="outline" className={`text-xs ${surfaceColor(record.surface)}`}>
+                {record.surface}
+              </Badge>
+              {record.categoryKind && record.categoryKind !== "overall" && (
+                <Badge variant="secondary" className="text-xs">
+                  {recordCategoryLabel(record)}
+                </Badge>
+              )}
+            </div>
           }
           value={
             <RaceTimeDisplay seconds={record.time} distance={record.distance} className="text-sm" />
@@ -92,6 +99,7 @@ export function TrackRecordsTable({ records }: { records: TrackRecord[] }) {
           valueLabel="Time"
         />
       ))}
+
 
 
     </LeaderboardShell>
