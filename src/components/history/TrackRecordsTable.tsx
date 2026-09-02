@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Timer } from "lucide-react";
-import { formatTime } from "@/core/common/formatting";
+import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
 import {
   LeaderboardControlsBar,
   LeaderboardEmpty,
