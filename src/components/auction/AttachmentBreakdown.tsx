@@ -16,7 +16,11 @@ export function AttachmentBreakdown({ attachment }: AttachmentBreakdownProps) {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button type="button" aria-label="View scoring details" className="text-cream-muted hover:text-cream">
+              <button
+                type="button"
+                aria-label="View scoring details"
+                className="text-cream-muted hover:text-cream"
+              >
                 <Info className="h-3.5 w-3.5" />
               </button>
             </TooltipTrigger>
