@@ -9,6 +9,8 @@ import { getReputationStars } from "@/core/stable/uiHelpers";
 import { stableTierColor } from "@/core/common/uiTokens";
 import { CashPressureBadge } from "./CashPressureBadge";
 import { RecommendedMaxOfferLine } from "./RecommendedMaxOfferLine";
+import { TOOLTIP_DELAY_MS } from "@/constants";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CashPressureTrend } from "./CashPressureTrend";
 import { useCompareStables } from "@/hooks/stable/useCompareStables";
 import { useGame, useGameWithShallow } from "@/game/store";
@@ -55,16 +57,26 @@ export function StableCard({ stable }: { stable: Stable }) {
   return (
     <div className="relative h-full">
       <div className={`absolute ${BOOKMARK_TOP_OFFSET} right-10 z-10`}>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7"
-          onClick={handleCompareClick}
-          aria-label="Compare"
-          title={isSelected ? "Remove from comparison" : "Add to comparison"}
-        >
-          <GitCompare className={`h-4 w-4 ${isSelected ? "text-gold" : "text-cream-muted"}`} />
-        </Button>
+        <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={handleCompareClick}
+                aria-label="Compare"
+              >
+                <GitCompare
+                  className={`h-4 w-4 ${isSelected ? "text-gold" : "text-cream-muted"}`}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {isSelected ? "Remove from comparison" : "Add to comparison"}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       <div className={`absolute ${BOOKMARK_TOP_OFFSET} ${BOOKMARK_RIGHT_OFFSET} z-10`}>
         <BookmarkButton
@@ -114,9 +126,16 @@ export function StableCard({ stable }: { stable: Stable }) {
             <div className="flex items-center justify-between text-sm">
               <span className="text-cream-muted">{stable.horses.length} horses</span>
               <CashPressureTrend stableId={stable.id} variant="card" />
-              <span className="text-fame" title={`Reputation: ${stable.reputation}`}>
-                {getReputationStars(stable.reputation)}
-              </span>
+              <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="text-fame" tabIndex={0}>
+                      {getReputationStars(stable.reputation)}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>Reputation: {stable.reputation}</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </CardContent>
         </Card>

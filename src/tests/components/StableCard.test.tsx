@@ -100,8 +100,8 @@ describe("StableCard", () => {
 
   it("renders reputation stars via getReputationStars", () => {
     render(<StableCard stable={mkStable({ reputation: 80 })} />);
-    const repSpan = screen.getByTitle("Reputation: 80");
-    expect(repSpan.textContent).toBe("★★★★☆");
+    const repSpan = screen.getByText("★★★★☆");
+    expect(repSpan).toBeInTheDocument();
   });
 
   it("link targets /npc-stables/$stableId route", () => {
