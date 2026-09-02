@@ -18,7 +18,7 @@ import { recordRaceStrategy } from "@/core/ai/jockeyStrategyRecording";
 import {
   recordRaceHistory,
   checkHallOfFameInduction,
-  checkTrackRecord,
+  checkTrackRecords,
 } from "@/services/history/historyService";
 import { processClaimingResolution } from "@/services/auction/claimingResolutionService";
 import { generateUUID } from "@/core/uuid";
