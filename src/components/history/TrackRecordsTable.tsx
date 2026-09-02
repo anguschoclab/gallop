@@ -84,10 +84,15 @@ export function TrackRecordsTable({ records }: { records: TrackRecord[] }) {
           badges={
             <Badge variant="outline" className={`text-xs ${surfaceColor(record.surface)}`}>
               {record.surface}
+            </Badge>
+          }
           value={
             <RaceTimeDisplay seconds={record.time} distance={record.distance} className="text-sm" />
           }
           valueLabel="Time"
+        />
+      ))}
+
 
     </LeaderboardShell>
   );
