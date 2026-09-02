@@ -17,7 +17,9 @@ import type { RaceRunner, SectionalSplit } from "@/core/race/types";
 import { generateRaceVerdict } from "@/core/race/raceVerdict";
 import type { RunnerFactorLedger } from "@/core/race/factorLedger";
 import { RaceVerdictBar } from "@/components/race/RaceVerdictBar";
+import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
 import { formatCurrency } from "@/core/common/formatting";
+
 import {
   PRIZE_SPLIT,
   GRADED_PRIZE_SPLIT,
