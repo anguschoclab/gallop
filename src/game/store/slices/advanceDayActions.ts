@@ -47,7 +47,15 @@ export function createAdvanceDayActions(
 
     clearLineageCache();
     set(update as Partial<StoreType>);
+
+    // Standing scouting assignments dispatch scouts for the new day.
+    try {
+      (get() as StoreType).runScoutingAssignments?.();
+    } catch {
+      // Assignment execution must never block day advancement.
+    }
   };
+
 
   return {
     advanceDay: async (progressCallback?: (stage: number, total: number, name: string) => void) => {
