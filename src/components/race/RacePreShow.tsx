@@ -36,7 +36,10 @@ interface RacePreShowProps {
  */
 export function RacePreShow({ race, runners, runnerOdds, onStart }: RacePreShowProps) {
   const allRaces = useGameWithShallow((s: GameState) => s.races ?? []);
-  const bestPace = useMemo(() => bestPerMileByHorse(allRaces), [allRaces]);
+  const bestPace = useMemo(
+    () => bestPerMileByHorse(Array.isArray(allRaces) ? allRaces : Object.values(allRaces ?? {})),
+    [allRaces],
+  );
   const field = buildPreShowField(runners, runnerOdds);
   const gradeLabel = race.graded?.grade ? `${race.graded.grade} Stakes` : "Race";
   const ownedRunner = runners.find((r) => r.owned);

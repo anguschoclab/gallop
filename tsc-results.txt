@@ -1,12 +1,6 @@
 # TypeScript Check Results
-# Generated: 2026-09-03T08:57:00.470Z
+# Generated: 2026-09-03T08:58:02.734Z
 # Command: bun x tsc --noEmit --pretty false
-# Errors: 1  Warnings: 0  Exit: 2
+# Errors: 0  Warnings: 0  Exit: 0
 
-## Errors
-
-### src/components/race/RacePreShow.tsx (1)
-  39:53  TS2345  Argument of type 'Record<string, Race>' is not assignable to parameter of type 'Race[]'.
-
-## Unparsed output
-    Type 'Record<string, Race>' is missing the following properties from type 'Race[]': length, pop, push, concat, and 29 more.
+No type errors or warnings.
