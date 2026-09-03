@@ -1,13 +1,16 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Globe2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
+import { HorseBenchmarkDialog } from "@/components/history/HorseBenchmarkDialog";
 import { compareToRealWorld } from "@/core/history/almanacInsights";
 import type { TrackRecord } from "@/core/history/historyTypes";
 
 export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
   const comparisons = useMemo(() => compareToRealWorld(records), [records]);
+  const [selected, setSelected] = useState<{ id: string; name: string } | null>(null);
+
 
   return (
     <div className="space-y-3">
@@ -16,7 +19,9 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
           <Globe2 className="h-4 w-4 shrink-0 text-primary" />
           <p>
             Curated real-world benchmark times, matched to the closest overall record in your world
-            at the same surface and a comparable trip. Reference only — these never affect your game.
+            at the same surface and a comparable trip. Click a horse to see how it compares against
+            every benchmark. Reference only — these never affect your game.
+
           </p>
         </CardContent>
       </Card>
@@ -50,9 +55,20 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
                 <div className="space-y-1 border-t border-white/5 pt-2">
                   <div className="flex items-center justify-between gap-2 text-xs">
                     <span className="truncate text-cream-muted">
-                      Your world: <span className="text-cream">{gameRecord.horseName}</span> ·{" "}
-                      {gameRecord.trackName} {gameRecord.distance}m
+                      Your world:{" "}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setSelected({ id: gameRecord.horseId, name: gameRecord.horseName })
+                        }
+                        className="text-cream underline decoration-dotted underline-offset-2 hover:text-gold focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-sm"
+                        aria-label={`Compare ${gameRecord.horseName} against reference times`}
+                      >
+                        {gameRecord.horseName}
+                      </button>{" "}
+                      · {gameRecord.trackName} {gameRecord.distance}m
                     </span>
+
                     <RaceTimeDisplay
                       seconds={gameRecord.time}
                       distance={gameRecord.distance}
@@ -80,6 +96,16 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
           </Card>
         ))}
       </div>
+
+      {selected && (
+        <HorseBenchmarkDialog
+          horseId={selected.id}
+          horseName={selected.name}
+          open={!!selected}
+          onOpenChange={(o) => !o && setSelected(null)}
+        />
+      )}
     </div>
   );
+
 }
