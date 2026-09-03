@@ -1,0 +1,15 @@
+import { generateAllStables } from "@/core/npc/stables";
+import { generateAllNpcHorses } from "@/core/npc/horseGenerator";
+import { generateFamousStallions } from "@/data/famousStallions";
+import { createRng, hashStr } from "@/core/common/rng";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
+import { buildInsightRow } from "@/core/horse/insightMetrics";
+const rng = createRng(hashStr("x"));
+const stables = generateAllStables(1, rng);
+const fs = generateFamousStallions(stables, rng);
+const { horses } = generateAllNpcHorses(stables, rng, undefined, 1, fs);
+const resolved = horses.map(ensurePhenotypeResolved);
+const rows = resolved.slice(0, 5).map((h) => buildInsightRow(h, resolved, "npc", null));
+for (const r of rows) console.log(r.name, JSON.stringify(r.metrics));
+const zero = rows.filter(r=>r.metrics.overall===0).length;
+console.log("zeroOverall", resolved.filter(h=>h.stats.speed===0).length, "/", resolved.length);
