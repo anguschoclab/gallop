@@ -17,6 +17,7 @@ import { LegacyAwardsWidget } from "@/components/dashboard/LegacyAwardsWidget";
 import { SeasonStandingsWidget } from "@/components/dashboard/SeasonStandingsWidget";
 import { RegionalTrendsWidget } from "@/components/dashboard/RegionalTrendsWidget";
 import { ReputationDashboard } from "@/components/reputation/ReputationDashboard";
+import { PlayerPrestigePanel } from "@/components/prestige/PlayerPrestigePanel";
 import { ApprenticeTracker } from "@/components/apprentice/ApprenticeTracker";
 import { NextActionBanner } from "@/components/dashboard/NextActionBanner";
 import { DebtBanner } from "@/components/dashboard/DebtBanner";
@@ -133,6 +134,7 @@ function Dashboard() {
         <StableRosterWidget />
         <CircuitWidget />
         <ReputationDashboard />
+        <PlayerPrestigePanel />
         <ApprenticeTracker />
       </div>
 
