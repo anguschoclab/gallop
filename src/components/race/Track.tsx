@@ -167,6 +167,10 @@ export function Track({
 
   const trackOffset = -(cameraPos % TRACK_BG_TILE_WIDTH);
 
+  // Performance: Hoist expensive context building outside the runner mapping loop
+  // to avoid O(N^2) recalculations on every frame render.
+  const fieldContext = buildFieldContext(runners);
+
   return (
     <div
       className="relative rounded-lg border border-white/10 shadow-2xl"
@@ -247,7 +251,7 @@ export function Track({
           r.finishTime === null
             ? deriveRunnerConditions(
                 r,
-                buildFieldContext(runners),
+                fieldContext,
                 { peakVelocity: peakVelocityRef.current.get(r.horseId) ?? 0 },
                 distance,
               )
