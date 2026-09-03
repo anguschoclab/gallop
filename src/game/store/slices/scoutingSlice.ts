@@ -114,5 +114,87 @@ export function createScoutingSlice(
     setScoutReports: (reports) => {
       set({ scoutReports: reports });
     },
+
+    addScoutingAssignment: (name, thresholds) => {
+      const s = get();
+      const assignment = createScoutingAssignment(
+        generateUUID(),
+        name || "New assignment",
+        s.day,
+        thresholds ?? createDefaultScoutingThresholds(),
+      );
+      set({ scoutingAssignments: [...(s.scoutingAssignments ?? []), assignment] });
+      return assignment;
+    },
+
+    updateScoutingAssignment: (id, patch) => {
+      const s = get();
+      set({
+        scoutingAssignments: (s.scoutingAssignments ?? []).map((a) =>
+          a.id === id ? { ...a, ...patch, id: a.id } : a,
+        ),
+      });
+    },
+
+    removeScoutingAssignment: (id) => {
+      const s = get();
+      set({ scoutingAssignments: (s.scoutingAssignments ?? []).filter((a) => a.id !== id) });
+    },
+
+    runScoutingAssignments: () => {
+      const s = get();
+      const assignments = (s.scoutingAssignments ?? []).filter((a) => a.enabled);
+      if (assignments.length === 0) return { dispatched: 0, spent: 0 };
+
+      const allHorses = Object.values(s.horses) as Horse[];
+      const stableById = new Map((s.npcStables ?? []).map((st: Stable) => [st.id, st]));
+      const lastReportDay = new Map<string, number>();
+      for (const r of s.scoutReports ?? []) {
+        const prev = lastReportDay.get(r.horseId);
+        if (prev === undefined || r.day > prev) lastReportDay.set(r.horseId, r.day);
+      }
+
+      const candidates: ScoutingCandidate[] = [];
+      for (const raw of allHorses) {
+        if (raw.lifecycleStatus === "deceased") continue;
+        if (!isNpcOwned(raw) || isPlayerOwned(raw)) continue;
+        const stable = stableById.get(getStableId(raw) ?? "");
+        if (!stable) continue;
+        const horse = ensurePhenotypeResolved(raw);
+        if ((horse.age ?? 0) > 30) continue;
+        const scoutedDay = lastReportDay.get(horse.id) ?? horse.lastScoutedDay;
+        candidates.push({
+          row: buildInsightRow(horse, allHorses, stable.name, stable.id),
+          cost: calculateScoutCost(horse, stable),
+          daysSinceScouted: scoutedDay === undefined ? null : s.day - scoutedDay,
+        });
+      }
+
+      const already = new Set<string>();
+      let dispatched = 0;
+      let spent = 0;
+      const updated = (s.scoutingAssignments ?? []).map((a) => {
+        if (!a.enabled) return a;
+        const pool = candidates.filter((c) => !already.has(c.row.id));
+        const plan = planScoutingRun(pool, a, s.cash - spent);
+        for (const horseId of plan.targets) {
+          const res = get().scoutHorse(horseId);
+          if (!res.success) continue;
+          already.add(horseId);
+          dispatched += 1;
+          spent += res.cost;
+        }
+        return {
+          ...a,
+          lastRunDay: s.day,
+          totalScouted: a.totalScouted + plan.targets.length,
+          totalSpent: a.totalSpent + plan.estimatedCost,
+        };
+      });
+
+      set({ scoutingAssignments: updated });
+      return { dispatched, spent };
+    },
   };
 }
+
