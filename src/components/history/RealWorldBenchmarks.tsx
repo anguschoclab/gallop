@@ -19,7 +19,9 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
           <Globe2 className="h-4 w-4 shrink-0 text-primary" />
           <p>
             Curated real-world benchmark times, matched to the closest overall record in your world
-            at the same surface and a comparable trip. Reference only — these never affect your game.
+            at the same surface and a comparable trip. Click a horse to see how it compares against
+            every benchmark. Reference only — these never affect your game.
+
           </p>
         </CardContent>
       </Card>
