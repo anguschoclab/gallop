@@ -144,7 +144,7 @@ export function buildHouseCatalogue(args: {
   let guard = 0;
   while (picked.length < count && guard < count * 20) {
     guard += 1;
-    const idx = Math.floor(rng() * pool.length);
+    const idx = rng.int(0, pool.length - 1);
     if (used.has(idx)) continue;
     used.add(idx);
     picked.push(pool[idx]);
