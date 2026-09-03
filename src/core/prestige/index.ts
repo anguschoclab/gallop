@@ -35,3 +35,10 @@ export {
   RACECOURSE_FLOOR_PRESTIGE,
   RACECOURSE_PRESTIGE_SPREAD,
 } from "./racecoursePrestige";
+
+export type {
+  PlayerPrestigeStanding,
+  PrestigeLadderEntry,
+  PrestigeEntityKind,
+} from "./playerPrestige";
+export { playerPrestigeScore, playerPrestigeStanding, prestigeLadder } from "./playerPrestige";
