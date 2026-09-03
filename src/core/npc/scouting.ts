@@ -15,6 +15,7 @@ import type { Horse, HorseStats, ScoutReport, Stable, Rng } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { FAME_LOW_THRESHOLD } from "@/constants";
 import { resolveCoatColor } from "@/core/genetics/phenotype";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 
 // Scouting costs
 const SCOUT_COST_BASE = 500;
@@ -152,12 +153,15 @@ function generateScoutNotes(horse: Horse, accuracy: number): string {
  * @returns Scout result with success status, report, cost, and message
  */
 export function scoutHorse(
-  horse: Horse,
+  rawHorse: Horse,
   stable: Stable,
   day: number,
   playerCash: number,
   rng: Rng,
 ): { success: boolean; report?: ScoutReport; cost: number; message: string } {
+  // NPC horses are stored with a deferred phenotype (stats all zero). Resolve
+  // first so the report reveals real ratings instead of zeroes.
+  const horse = ensurePhenotypeResolved(rawHorse);
   const cost = calculateScoutCost(horse, stable);
 
   // Check if player can afford
@@ -269,7 +273,7 @@ export function scoutHorse(
  * @returns Object with displayable stats, confidence level, and overall estimate
  */
 export function getDisplayableStats(
-  horse: Horse,
+  rawHorse: Horse,
   scoutReports: ScoutReport[],
   currentDay: number,
 ): {
@@ -277,6 +281,7 @@ export function getDisplayableStats(
   confidence: "full" | "high" | "medium" | "low" | "unknown";
   overallEstimate?: number;
 } {
+  const horse = ensurePhenotypeResolved(rawHorse);
   // Check for recent scout report (within last 30 days)
   const recentReport = scoutReports
     .filter((r) => r.horseId === horse.id && currentDay - r.day <= 30)
@@ -382,10 +387,11 @@ export function getScoutStatus(
  * @returns Intel summary string
  */
 export function getIntelSummary(
-  horse: Horse,
+  rawHorse: Horse,
   scoutReports: ScoutReport[],
   currentDay: number,
 ): string {
+  const horse = ensurePhenotypeResolved(rawHorse);
   const { stats, confidence, overallEstimate } = getDisplayableStats(
     horse,
     scoutReports,
