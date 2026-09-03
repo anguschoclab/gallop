@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Activity, ArrowLeftRight, BarChart3, Tag } from "lucide-react";
+import { ArrowLeftRight, BarChart3, Tag } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import {
   tradeSeries,
 } from "@/core/market/exchange";
 import { HorseOrderBook } from "@/components/market/HorseOrderBook";
+import { TradeTape } from "@/components/market/TradeTape";
 
 export function ExchangePanel() {
   const day = useGame((s: GameState) => s.day);
@@ -65,7 +66,6 @@ export function ExchangePanel() {
     () => exchange.asks.filter((a) => a.sellerId !== "player").sort((a, b) => a.price - b.price),
     [exchange.asks],
   );
-  const tape = useMemo(() => [...exchange.trades].reverse().slice(0, 12), [exchange.trades]);
 
   const selectedBook = books.find((b) => b.horseId === selected) ?? books[0];
   const suggestion = listHorseId
@@ -251,7 +251,11 @@ export function ExchangePanel() {
                     <span className="min-w-0">
                       <span className="block truncate text-cream">{horse?.name ?? a.horseId}</span>
                       <span className="text-[10px] text-cream-muted">
-                        {a.sellerName} · fair {formatCurrency(a.fairValue)}
+                        {a.sellerName}
+                        {a.intent ? ` · ${a.intent}` : ""}
+                        {a.pressureMeter !== undefined ? ` · cash pressure ${a.pressureMeter}` : ""}
+                        {" · fair "}
+                        {formatCurrency(a.fairValue)}
                         {book?.bestBid !== undefined
                           ? ` · best bid ${formatCurrency(book.bestBid)}`
                           : ""}
@@ -283,27 +287,8 @@ export function ExchangePanel() {
         </Card>
 
         <Card className="border-white/5 bg-slate-900/40">
-          <CardContent className="p-4 space-y-2">
-            <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-cream-muted">
-              <Activity className="h-3.5 w-3.5 text-primary" />
-              Trade Tape
-            </h3>
-            {tape.length === 0 ? (
-              <p className="text-xs text-cream-muted">No trades settled yet.</p>
-            ) : (
-              tape.map((t) => (
-                <div
-                  key={t.id}
-                  className="flex items-center justify-between gap-2 rounded border border-white/5 bg-slate-950/50 px-3 py-1.5 text-xs"
-                >
-                  <span className="min-w-0 truncate text-cream">{t.horseName}</span>
-                  <span className="truncate text-[10px] text-cream-muted">
-                    {t.sellerName} → {t.buyerName} · D{t.day}
-                  </span>
-                  <span className="tabular-nums text-cream shrink-0">{formatCurrency(t.price)}</span>
-                </div>
-              ))
-            )}
+          <CardContent className="p-4">
+            <TradeTape trades={exchange.trades} day={day} />
           </CardContent>
         </Card>
       </div>

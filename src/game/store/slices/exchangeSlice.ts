@@ -16,8 +16,10 @@ import { isPlayerOwned, makeNpcOwned, makePlayerOwned } from "@/core/horse/owner
 import {
   createDefaultExchangeState,
   exchangeCommission,
+  
   generateNpcBook,
   netProceeds,
+  resolveNpcExchangeTrades,
   pruneExchange,
   suggestAskPrice,
   EXCHANGE_ORDER_TTL_DAYS,
@@ -65,12 +67,59 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
         npcStables: s.npcStables ?? [],
         existing: pruned,
       });
+      const refreshed: ExchangeState = {
+        ...pruned,
+        asks: [...pruned.asks.filter((a) => a.sellerId === PLAYER_ID), ...asks],
+        bids,
+        lastRefreshDay: s.day,
+      };
+
+      // NPC-vs-NPC trading: cross the book so the tape stays live even when the
+      // player does nothing.
+      const npcStables = s.npcStables ?? [];
+      const settlement = resolveNpcExchangeTrades({
+        day: s.day,
+        state: refreshed,
+        horses,
+        npcStables,
+        commission: (price) => exchangeCommission(price),
+      });
+
+      if (settlement.trades.length === 0) {
+        set({ exchange: refreshed });
+        return;
+      }
+
+      const nextHorses = { ...s.horses };
+      for (const change of settlement.ownershipChanges) {
+        const horse = nextHorses[change.horseId] as Horse | undefined;
+        if (!horse) continue;
+        nextHorses[change.horseId] = {
+          ...horse,
+          ownership: makeNpcOwned(asNpcStableId(change.buyerStableId)),
+        };
+      }
+
+      const filledAsks = new Set(settlement.filledAskIds);
+      const filledBids = new Set(settlement.filledBidIds);
+      const tradedHorses = new Set(settlement.trades.map((t) => t.horseId));
+
       set({
+        horses: nextHorses,
+        npcStables: npcStables.map((st) =>
+          settlement.cashDeltas[st.id] !== undefined
+            ? { ...st, cash: st.cash + settlement.cashDeltas[st.id] }
+            : st,
+        ),
         exchange: {
-          ...pruned,
-          asks: [...pruned.asks.filter((a) => a.sellerId === PLAYER_ID), ...asks],
-          bids,
-          lastRefreshDay: s.day,
+          ...refreshed,
+          asks: refreshed.asks.filter(
+            (a) => !filledAsks.has(a.id) && !(a.sellerId !== PLAYER_ID && tradedHorses.has(a.horseId)),
+          ),
+          bids: refreshed.bids.filter(
+            (b) => !filledBids.has(b.id) && !tradedHorses.has(b.horseId),
+          ),
+          trades: [...refreshed.trades, ...settlement.trades],
         },
       });
     },

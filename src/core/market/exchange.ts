@@ -20,6 +20,7 @@ import { horseMarketValue } from "@/core/horse/pricing";
 import { isNpcOwned, isPlayerOwned } from "@/core/horse/ownership";
 import { createRng } from "@/core/common/rng";
 import { prestigeMultiplier } from "@/core/prestige/prestigeTypes";
+import { npcAskPrice, npcBidQuote, sellerStance, type ExchangeIntent } from "./exchangeAI";
 
 /** Base commission rate charged by the exchange on the sale proceeds. */
 export const EXCHANGE_BASE_COMMISSION = 0.04;
@@ -43,6 +44,12 @@ export type ExchangeAsk = {
   fairValue: number;
   createdDay: number;
   expiresDay: number;
+  /** What the selling stable is trying to achieve (trading-AI signal). */
+  intent?: ExchangeIntent;
+  /** Seller's cash-pressure meter 0-100 at listing time. */
+  pressureMeter?: number;
+  /** Lowest price the seller's AI will accept from a standing bid. */
+  acceptFloor?: number;
 };
 
 export type ExchangeBid = {
@@ -56,6 +63,10 @@ export type ExchangeBid = {
   expiresDay: number;
   /** Why this stable wants the horse — surfaced in the UI. */
   rationale: string;
+  /** Bidder's trading posture (trading-AI signal). */
+  intent?: ExchangeIntent;
+  /** 0-1 measure of how badly the bidder wants the horse. */
+  conviction?: number;
 };
 
 export type ExchangeTrade = {
@@ -100,51 +111,24 @@ export function netProceeds(price: number, prestige = EXCHANGE_PRESTIGE): number
   return price - exchangeCommission(price, prestige);
 }
 
-/** Personality appetite multipliers applied to NPC bid prices. */
-const PERSONALITY_BID_BIAS: Record<StablePersonality, number> = {
-  aggressive: 1.12,
-  "win-now": 1.1,
-  prestige: 1.08,
-  trader: 1.02,
-  breeder: 1.0,
-  developer: 0.96,
-  specialist: 0.95,
-  conservative: 0.9,
-};
-
-const PERSONALITY_RATIONALE: Record<StablePersonality, string> = {
-  aggressive: "Buying up runners regardless of price",
-  "win-now": "Chasing immediate black type",
-  prestige: "Wants a marquee name in the yard",
-  trader: "Sees a flip margin at this level",
-  breeder: "Targeting future broodmare/stallion stock",
-  developer: "Patient money on a young project",
-  specialist: "Fits a narrow surface/trip programme",
-  conservative: "Will only buy under fair value",
-};
-
-/**
- * Deterministic NPC bid price for a horse from a given stable on a given day.
- *
- * @param horse - Horse being bid on
- * @param stable - Bidding stable
- * @param day - Current game day
- * @param fairValue - Reference market value
- */
-export function npcBidPrice(horse: Horse, stable: Stable, day: number, fairValue: number): number {
-  const rng = createRng(`exch:${horse.id}:${stable.id}:${day}`);
-  const bias = PERSONALITY_BID_BIAS[stable.personality] ?? 1;
-  const noise = rng.range(0.82, 1.06);
-  const prestigePull = 1 + ((stable.reputation ?? 50) - 50) / 500;
-  const raw = fairValue * bias * noise * prestigePull;
-  // Never bid beyond a prudent slice of the stable's cash.
-  const capped = Math.min(raw, stable.cash * 0.35);
-  return Math.max(0, Math.round(capped / 50) * 50);
-}
+export {
+  npcBidPrice,
+  npcBidQuote,
+  npcAskPrice,
+  sellerStance,
+  resolveNpcExchangeTrades,
+  PERSONALITY_BID_BIAS,
+  type BidQuote,
+  type SellerStance,
+  type ExchangeIntent,
+  type NpcSettlement,
+} from "./exchangeAI";
 
 /**
  * Regenerate the NPC side of the book: bids against every listed horse, plus
- * NPC asks for horses their owners are willing to move on.
+ * NPC asks for horses their owners are willing to move on. Listing counts,
+ * markups and bid sizes all come from the trading AI (personality + cash
+ * pressure + prestige).
  *
  * @param args.day - Current day
  * @param args.horses - All horses in the world
@@ -164,15 +148,16 @@ export function generateNpcBook(args: {
 
   const playerAsks = existing.asks.filter((a) => a.sellerId === "player" && a.expiresDay >= day);
 
-  // --- NPC asks: each stable lists a small, deterministic slice of its string.
+  // --- NPC asks: each stable lists a slice of its string sized by its stance.
   const npcAsks: ExchangeAsk[] = [];
   for (const stable of npcStables) {
     const owned = horseList.filter(
       (h) => isNpcOwned(h) && h.ownership.type === "npc" && h.ownership.stableId === stable.id,
     );
     if (owned.length === 0) continue;
+    const stance = sellerStance(stable, owned.length);
     const rng = createRng(`exchAsk:${stable.id}:${day}`);
-    const listCount = Math.min(owned.length, stable.personality === "trader" ? 3 : 2);
+    const listCount = Math.min(owned.length, stance.listCount);
     const sorted = [...owned].sort((a, b) => a.id.localeCompare(b.id));
     for (let i = 0; i < listCount; i++) {
       const horse = sorted[Math.floor(rng.next() * sorted.length)];
@@ -180,16 +165,18 @@ export function generateNpcBook(args: {
       if (npcAsks.some((a) => a.horseId === horse.id)) continue;
       const fairValue = horseMarketValue(horse, horseList);
       if (fairValue <= 0) continue;
-      const markup = stable.personality === "trader" ? rng.range(1.05, 1.3) : rng.range(1.1, 1.45);
       npcAsks.push({
         id: `ask-${stable.id}-${horse.id}-${day}`,
         horseId: horse.id,
         sellerId: stable.id,
         sellerName: stable.name,
-        price: Math.round((fairValue * markup) / 50) * 50,
+        price: npcAskPrice(stance, fairValue, `${horse.id}:${day}`),
         fairValue: Math.round(fairValue),
         createdDay: day,
         expiresDay: day + EXCHANGE_ORDER_TTL_DAYS,
+        intent: stance.intent,
+        pressureMeter: stance.pressure.meter,
+        acceptFloor: Math.round(fairValue * stance.acceptFloor),
       });
     }
   }
@@ -212,23 +199,26 @@ export function generateNpcBook(args: {
       const stable = pool[Math.floor(rng.next() * pool.length)];
       if (!stable || seen.has(stable.id)) continue;
       seen.add(stable.id);
-      const price = npcBidPrice(horse, stable, day, fairValue);
-      if (price <= 0) continue;
+      const quote = npcBidQuote(horse, stable, day, fairValue);
+      if (quote.price <= 0) continue;
       bids.push({
         id: `bid-${stable.id}-${horse.id}-${day}`,
         horseId: horse.id,
         bidderId: stable.id,
         bidderName: stable.name,
-        price,
+        price: quote.price,
         createdDay: day,
         expiresDay: day + EXCHANGE_ORDER_TTL_DAYS,
-        rationale: PERSONALITY_RATIONALE[stable.personality] ?? "Adding to the string",
+        rationale: quote.rationale,
+        intent: quote.intent,
+        conviction: Number(quote.conviction.toFixed(2)),
       });
     }
   }
 
   return { asks: npcAsks, bids: bids.sort((a, b) => b.price - a.price) };
 }
+
 
 export type OrderBookLevel = { price: number; count: number };
 
