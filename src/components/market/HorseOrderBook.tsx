@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/core/common/formatting";
 import { netProceeds, type HorseOrderBook as Book } from "@/core/market/exchange";
 import { sellerStandingBidFactor } from "@/core/market/exchangeAI";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
+import { formatYard, resolveStableYard } from "@/core/stable/stableYard";
 
 export function HorseOrderBook({
   book,
@@ -24,6 +25,13 @@ export function HorseOrderBook({
     1,
   );
   const reputationScore = useGame((s) => s.reputation?.score ?? 0);
+  const npcStables = useGameWithShallow((s) => s.npcStables ?? []);
+  const yardLabel = (sellerId: string) => {
+    const stable = npcStables.find((st) => st.id === sellerId);
+    if (!stable) return undefined;
+    const yard = resolveStableYard(stable);
+    return `${formatYard(yard)} · ${yard.boxes} boxes · ${stable.owner}`;
+  };
   const standing = book.isPlayerOwned ? sellerStandingBidFactor(reputationScore) : undefined;
 
   return (
@@ -83,7 +91,7 @@ export function HorseOrderBook({
                 />
                 <span
                   className="relative min-w-0 truncate text-cream-muted"
-                  title={a.standingNote ?? undefined}
+                  title={[yardLabel(a.sellerId), a.standingNote].filter(Boolean).join(" — ") || undefined}
                 >
                   {a.sellerName}
                   {a.sellerTier && (

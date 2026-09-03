@@ -17,6 +17,8 @@ import {
   suggestAskPrice,
   tradeSeries,
 } from "@/core/market/exchange";
+import { buildStableRosters, rosterSummary } from "@/core/stable/stableRoster";
+import { formatYard, resolveStableYard } from "@/core/stable/stableYard";
 import { HorseOrderBook } from "@/components/market/HorseOrderBook";
 import { TradeTape } from "@/components/market/TradeTape";
 
@@ -39,7 +41,25 @@ export function ExchangePanel() {
     refreshExchange();
   }, [refreshExchange, day]);
 
+  const npcStables = useGameWithShallow((s: GameState) => s.npcStables ?? []);
   const horseList = useMemo(() => Object.values(horses) as Horse[], [horses]);
+
+  // Seller identity: which yard a listing comes out of and what else is in it.
+  const rosters = useMemo(() => buildStableRosters(horseList), [horseList]);
+  const sellerInfo = useMemo(() => {
+    const map = new Map<string, { yard: string; boxes: number; roster: string; count: number }>();
+    for (const st of npcStables) {
+      const yard = resolveStableYard(st);
+      const roster = rosters.get(st.id) ?? [];
+      map.set(st.id, {
+        yard: formatYard(yard),
+        boxes: yard.boxes,
+        roster: rosterSummary(roster),
+        count: roster.length,
+      });
+    }
+    return map;
+  }, [npcStables, rosters]);
   const books = useMemo(() => buildOrderBooks(exchange, horseList, day), [exchange, horseList, day]);
   const depth = useMemo(() => buildMarketDepth(books, exchange, day), [books, exchange, day]);
   const series = useMemo(() => tradeSeries(exchange, day), [exchange, day]);
@@ -260,6 +280,14 @@ export function ExchangePanel() {
                           ? ` · best bid ${formatCurrency(book.bestBid)}`
                           : ""}
                       </span>
+                      {sellerInfo.get(a.sellerId) && (
+                        <span
+                          className="block truncate text-[10px] text-cream-muted/70"
+                          title={`${sellerInfo.get(a.sellerId)?.boxes} boxes · ${sellerInfo.get(a.sellerId)?.count} horses owned`}
+                        >
+                          {sellerInfo.get(a.sellerId)?.yard} · {sellerInfo.get(a.sellerId)?.roster}
+                        </span>
+                      )}
                     </span>
                     <span className="flex items-center gap-2">
                       <Badge

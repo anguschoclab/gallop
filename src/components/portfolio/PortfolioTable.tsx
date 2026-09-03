@@ -1,4 +1,5 @@
-import { ArrowDown, ArrowUp, Crown } from "lucide-react";
+import { Fragment, useState } from "react";
+import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, Crown, Home } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -12,6 +13,7 @@ import {
 import { formatCurrency } from "@/core/common/formatting";
 import { PRESTIGE_TIER_LABELS } from "@/core/prestige/prestigeTypes";
 import type { PortfolioSortKey, StablePortfolio } from "@/core/stable/portfolio";
+import { formatYard } from "@/core/stable/stableYard";
 
 const COLUMNS: { key: PortfolioSortKey; label: string; numeric: boolean }[] = [
   { key: "name", label: "Stable", numeric: false },
@@ -35,6 +37,7 @@ export function PortfolioTable({
   sortDir: "asc" | "desc";
   onSort: (key: PortfolioSortKey) => void;
 }) {
+  const [expanded, setExpanded] = useState<string | null>(null);
   if (rows.length === 0) {
     return (
       <div className="rounded-md border border-white/5 bg-slate-900/40 p-8 text-center text-sm text-cream-muted">
@@ -48,6 +51,7 @@ export function PortfolioTable({
       <Table>
         <TableHeader>
           <TableRow className="border-white/5">
+            <TableHead className="w-8" aria-label="Expand roster" />
             {COLUMNS.map((c) => (
               <TableHead
                 key={c.key}
@@ -77,10 +81,25 @@ export function PortfolioTable({
         </TableHeader>
         <TableBody>
           {rows.map((r) => (
+            <Fragment key={r.id}>
             <TableRow
-              key={r.id}
               className={`border-white/5 ${r.isPlayer ? "bg-primary/5" : ""}`}
             >
+              <TableCell className="w-8 align-top">
+                <button
+                  type="button"
+                  onClick={() => setExpanded(expanded === r.id ? null : r.id)}
+                  aria-expanded={expanded === r.id}
+                  aria-label={`${expanded === r.id ? "Hide" : "Show"} ${r.name} roster`}
+                  className="text-cream-muted transition-colors hover:text-cream"
+                >
+                  {expanded === r.id ? (
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  ) : (
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  )}
+                </button>
+              </TableCell>
               <TableCell className="min-w-[200px]">
                 <div className="flex items-center gap-2">
                   {r.isPlayer && <Crown className="h-3.5 w-3.5 text-gold shrink-0" />}
@@ -106,6 +125,12 @@ export function PortfolioTable({
                   {r.country ? ` · ${r.country}` : ""}
                   {r.topHorseName ? ` · Top: ${r.topHorseName}` : ""}
                 </p>
+                {r.yard && (
+                  <p className="flex items-center gap-1 text-[10px] text-cream-muted/70 truncate">
+                    <Home className="h-3 w-3 shrink-0" />
+                    {formatYard(r.yard)} · {r.yard.boxes} boxes
+                  </p>
+                )}
               </TableCell>
               <TableCell className="text-right tabular-nums text-cream">
                 {formatCurrency(r.cash)}
@@ -138,6 +163,49 @@ export function PortfolioTable({
                 {formatCurrency(r.netWorth)}
               </TableCell>
             </TableRow>
+            {expanded === r.id && (
+              <TableRow className="border-white/5 bg-slate-950/40">
+                <TableCell colSpan={COLUMNS.length + 1} className="p-4">
+                  <div className="mb-2 text-[10px] font-black uppercase tracking-widest text-cream-muted">
+                    {r.yard ? `${r.yard.name} — ${r.yard.town}` : "Roster"}
+                  </div>
+                  {r.roster.length === 0 ? (
+                    <p className="text-xs text-cream-muted">No horses in this yard.</p>
+                  ) : (
+                    <div className="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
+                      {r.roster.slice(0, 12).map((h) => (
+                        <Link
+                          key={h.id}
+                          to="/stable/$horseId"
+                          params={{ horseId: h.id }}
+                          className="flex items-center justify-between gap-2 rounded border border-white/5 bg-slate-900/60 px-2 py-1.5 text-xs transition-colors hover:border-primary/40"
+                        >
+                          <span className="min-w-0 truncate text-cream">
+                            {h.name}
+                            <span className="ml-1 text-[10px] text-cream-muted">
+                              {h.age}yo {h.gender}
+                              {h.retired ? " · retired" : ""}
+                            </span>
+                          </span>
+                          <span className="shrink-0 text-right text-[10px] text-cream-muted">
+                            <span className="block tabular-nums text-cream">
+                              {formatCurrency(h.value)}
+                            </span>
+                            {h.starts > 0 ? `${h.wins}/${h.starts}` : "unraced"}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                  {r.roster.length > 12 && (
+                    <p className="mt-2 text-[10px] text-cream-muted">
+                      +{r.roster.length - 12} more in the yard
+                    </p>
+                  )}
+                </TableCell>
+              </TableRow>
+            )}
+            </Fragment>
           ))}
         </TableBody>
       </Table>
