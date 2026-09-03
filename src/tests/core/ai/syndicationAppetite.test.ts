@@ -328,3 +328,25 @@ describe("share purchase decision", () => {
     expect(trace.shares).toBeGreaterThan(0);
   });
 });
+
+describe("tuned balance targets", () => {
+  it("lets aggressive stables chase control without draining cash", () => {
+    const agg = getSyndicationAppetite("aggressive");
+    const base = getBaseSyndicationAppetite("aggressive");
+    expect(agg.chasesControl).toBe(true);
+    expect(agg.stakeCapPct).toBeGreaterThan(base.stakeCapPct);
+    expect(agg.buyFraction).toBeGreaterThan(base.buyFraction);
+    // Bigger target stake, but a smaller slice of cash per purchase.
+    expect(agg.cashFraction).toBeLessThan(base.cashFraction);
+  });
+
+  it("gates conservative stables to proven G1 horses only", () => {
+    const con = getSyndicationAppetite("conservative");
+    expect(con.minG1Wins).toBeGreaterThanOrEqual(1);
+    // G2/G3 OR-fallbacks are pushed out of reach so a G1 win is required.
+    expect(con.minG2Wins).toBeGreaterThan(5);
+    expect(con.minG3Wins).toBeGreaterThan(5);
+    expect(con.chasesControl).toBe(false);
+    expect(con.cashFraction).toBeLessThan(getSyndicationAppetite("aggressive").cashFraction);
+  });
+});
