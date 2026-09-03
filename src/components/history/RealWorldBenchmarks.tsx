@@ -96,6 +96,16 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
           </Card>
         ))}
       </div>
+
+      {selected && (
+        <HorseBenchmarkDialog
+          horseId={selected.id}
+          horseName={selected.name}
+          open={!!selected}
+          onOpenChange={(o) => !o && setSelected(null)}
+        />
+      )}
     </div>
   );
+
 }
