@@ -12,7 +12,15 @@
 import type { Horse } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import { asNpcStableId } from "@/core/types/branded";
-import { isPlayerOwned, makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import {
+  getStableId,
+  isPlayerOwned,
+  makeNpcOwned,
+  makePlayerOwned,
+  makeUnowned,
+} from "@/core/horse/ownership";
+import { getAuctionHouse } from "@/core/prestige/auctionHouses";
+import { houseQuote } from "@/core/market/houseQuotes";
 import {
   createDefaultExchangeState,
   exchangeCommission,
@@ -40,6 +48,10 @@ export type ExchangeSlice = {
   acceptExchangeBid: (bidId: string) => ActionResult;
   /** Buy an NPC-listed horse at its ask price. */
   buyFromExchange: (askId: string) => ActionResult;
+  /** Sell a player horse through an auction house at that house's quote. */
+  sellHorseToAuctionHouse: (horseId: string, houseId: string) => ActionResult;
+  /** Buy a horse from an auction house catalogue at that house's buy price. */
+  buyHorseFromAuctionHouse: (horseId: string, houseId: string) => ActionResult;
 };
 
 const PLAYER_ID = "player";
