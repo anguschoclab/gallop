@@ -71,6 +71,16 @@ export function ScoutingInsightsPanel() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [onlySelected, setOnlySelected] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
+  const [thresholdsOpen, setThresholdsOpen] = useState(false);
+  const [thresholdsOn, setThresholdsOn] = useState(false);
+  const [thresholds, setThresholds] = useState<ScoutingThresholds>(() => ({
+    ...createDefaultScoutingThresholds(),
+    freshness: "any",
+  }));
+  const day = useGame((s) => s.day);
+  const scoutReports = useGameWithShallow((s: GameState) => s.scoutReports ?? []);
+  const addAssignment = useGame((s) => s.addScoutingAssignment);
+
 
   const allHorses = useMemo<Horse[]>(
     () => (Array.isArray(horses) ? horses : Object.values(horses ?? {})) as Horse[],
