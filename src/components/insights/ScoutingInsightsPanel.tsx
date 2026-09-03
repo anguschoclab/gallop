@@ -291,6 +291,78 @@ export function ScoutingInsightsPanel() {
             </div>
           </div>
 
+          <div className="border border-white/5 bg-slate-950/40">
+            <div className="flex flex-wrap items-center gap-2 p-3">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-8 text-xs"
+                onClick={() => setThresholdsOpen((v) => !v)}
+              >
+                <SlidersHorizontal className="mr-1.5 h-3 w-3" />
+                {thresholdsOpen ? "Hide scouting thresholds" : "Scouting thresholds"}
+              </Button>
+              <Badge
+                variant="outline"
+                className={
+                  thresholdsOn
+                    ? "border-gold/50 text-gold cursor-pointer"
+                    : "border-white/10 text-cream/40 cursor-pointer"
+                }
+                onClick={() => setThresholdsOn((v) => !v)}
+              >
+                {thresholdsOn ? `Thresholds on · ${rows.length} match` : "Thresholds off"}
+              </Badge>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 text-xs"
+                disabled={!thresholdsOn || rows.length === 0}
+                onClick={() => setSelectedIds(rows.map((r) => r.id))}
+              >
+                Select matching ({rows.length})
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 text-xs"
+                onClick={() => {
+                  const created = addAssignment?.(
+                    `Threshold order ${new Date().toLocaleTimeString()}`,
+                    { ...thresholds, pool: pool === "mine" ? "npc" : pool },
+                  );
+                  if (created) toast.success(`Saved standing assignment "${created.name}"`);
+                }}
+              >
+                Save as standing assignment
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-8 text-xs text-cream/50"
+                onClick={() =>
+                  setThresholds({ ...createDefaultScoutingThresholds(), freshness: "any" })
+                }
+              >
+                Reset
+              </Button>
+            </div>
+            {thresholdsOpen && (
+              <div className="border-t border-white/5 p-3">
+                <ScoutingThresholdControls
+                  value={thresholds}
+                  onChange={(next) => {
+                    setThresholds(next);
+                    setThresholdsOn(true);
+                  }}
+                  showPool={false}
+                />
+              </div>
+            )}
+          </div>
+
+
+
           <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-cream/40">
             <span>Plotted: {visibleRows.length}</span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
