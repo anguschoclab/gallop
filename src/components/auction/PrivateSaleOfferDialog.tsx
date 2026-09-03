@@ -16,8 +16,10 @@ import { Badge } from "@/components/ui/badge";
 import {
   evaluateHorseAttachment,
   attachmentAdjustedAsk,
+  knownBuyerPremiumMultiplier,
   suggestedOfferTiers,
 } from "@/core/horse/attachment";
+import { getReputationTier, formatReputationTier } from "@/core/reputation/reputationTypes";
 import { AttachmentBreakdown } from "@/components/auction/AttachmentBreakdown";
 import { CashPressureBadge } from "@/components/stable/CashPressureBadge";
 import { OverrideNegotiationPanel } from "@/components/auction/OverrideNegotiationPanel";
@@ -82,6 +84,8 @@ export function PrivateSaleOfferDialog({
   const attachment = evaluateHorseAttachment(horse, stable);
   const ask = attachmentAdjustedAsk(horse, stable, valuation, reputationScore);
   const tiers = suggestedOfferTiers(ask);
+  const knownBuyerPremium = knownBuyerPremiumMultiplier(attachment.tier, reputationScore);
+  const premiumOverMarket = valuation > 0 ? ask / valuation - 1 : 0;
   const friction = npcAIManager?.stableStates?.[stable.id]?.friction ?? 0;
 
   const handleSubmitOffer = () => {
@@ -131,6 +135,21 @@ export function PrivateSaleOfferDialog({
               offerAmount={Number(offerAmount.replace(/,/g, "").replace(/\$/g, "")) || undefined}
             />
             <p className="text-xs text-cream-muted">{attachment.blurb}</p>
+            {premiumOverMarket > 0.08 && (
+              <p className="rounded border border-amber-400/40 bg-amber-400/10 px-2 py-1 text-xs text-amber-300">
+                They want ~{Math.round(premiumOverMarket * 100)}% above market value (+
+                {formatCurrency(Math.max(0, ask - valuation))}) — {attachment.label.toLowerCase()}{" "}
+                horse
+                {knownBuyerPremium > 0 && (
+                  <>
+                    {" "}
+                    plus a +{Math.round(knownBuyerPremium * 100)}% known-buyer premium because
+                    you're a {formatReputationTier(getReputationTier(reputationScore))} name
+                  </>
+                )}
+                .
+              </p>
+            )}
             <AttachmentBreakdown attachment={attachment} />
           </div>
           <p className="text-sm text-cream-muted">

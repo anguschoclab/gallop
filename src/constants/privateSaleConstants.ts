@@ -130,3 +130,20 @@ export const KNOWN_BUYER_PREMIUM_BY_TIER: Partial<Record<ReputationTier, number>
   world_class: 0.25,
   legendary: 0.3,
 };
+
+// ── Seller standing discount (NPC bids on the player's horses) ──
+
+/**
+ * Multiplier applied to NPC bids when buying a horse from the player, based on
+ * the player's reputation tier. Unknown stables get lowballed; legendary ones
+ * command a premium. 1.0 = fair market treatment.
+ */
+export const SELLER_STANDING_BID_FACTOR_BY_TIER: Record<ReputationTier, number> = {
+  unknown: 0.8,
+  local: 0.88,
+  regional: 0.94,
+  national: 1.0,
+  international: 1.03,
+  world_class: 1.06,
+  legendary: 1.1,
+};

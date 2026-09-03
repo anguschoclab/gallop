@@ -66,6 +66,7 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
         horses,
         npcStables: s.npcStables ?? [],
         existing: pruned,
+        playerReputation: s.reputation?.score ?? 0,
       });
       const refreshed: ExchangeState = {
         ...pruned,
