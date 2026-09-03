@@ -180,7 +180,11 @@ export function genderBucket(gender: string | undefined): string | null {
  * a winning time at a given track/surface/distance combination.
  *
  * @param race - The completed race.
- * @param winner - Winning horse identity plus age/gender for category bucketing.
+ * @param winner - The winning horse summary (id, name, age, gender).
+ * @param winner.id - Stable id of the winning horse.
+ * @param winner.name - Display name of the winning horse.
+ * @param winner.age - Optional age of the winner, for age-category bucketing.
+ * @param winner.gender - Optional gender of the winner, for gender bucketing.
  * @param time - Winning time in seconds.
  * @param day - Current simulation day.
  * @param existingRecords - Current map of records keyed by trackRecordKey().

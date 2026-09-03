@@ -110,7 +110,16 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
    * the player's cash, transfer horse ownership, adjust NPC cash, update
    * reputation, and append a log entry. Shared by all four trade actions.
    *
-   * @param args - Trade settlement arguments
+   * @param args - Trade settlement arguments (see nested params below).
+   * @param args.trade - The completed exchange trade to record on the tape.
+   * @param args.horse - The horse whose ownership is being transferred.
+   * @param args.newOwnership - The ownership record to apply to the horse.
+   * @param args.playerCashDelta - Cash delta applied to the player's balance.
+   * @param args.reputationRole - Whether the player is the buyer or seller.
+   * @param args.reputationPrice - Price used for reputation impact calculation.
+   * @param args.counterpartyName - Name of the NPC counterparty in the trade.
+   * @param args.logText - Log entry text appended to the journal.
+   * @param args.npcCashDeltas - Optional per-stable cash deltas for NPC balances.
    */
   const settleTrade = (args: {
     trade: ExchangeTrade;
