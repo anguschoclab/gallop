@@ -11,7 +11,7 @@
 import { describe, it, expect } from "vitest";
 import { createInitialState } from "@/game/store/initialization";
 import { getDisplayableStats, getVisibleStats } from "@/core/npc/scouting";
-import { ensurePhenotypeResolved } from "@/core/horse/phenotype";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { buildRunner } from "@/core/race/engine/runnerBuilder";
 import { runRaceToCompletion } from "@/core/race/engine/simulation";
 import { bestPerMileByHorse } from "@/core/race/bestPace";
@@ -72,7 +72,7 @@ describe("race preview times match the run", () => {
     const distance = 1600;
     const rng = createRng(4242);
     const runners = field.map((horse, i) =>
-      buildRunner(horse, i + 1, distance, "Turf", "Good", rng),
+      buildRunner(horse, false, distance, "Turf", { speedMul: 1, staminaDrainMul: 1 }, i + 1),
     );
     const { result } = runRaceToCompletion(runners, distance, rng);
 
