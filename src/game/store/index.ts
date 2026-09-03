@@ -95,6 +95,8 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "npcStables",
   "npcAIManager",
   "scoutReports",
+  "scoutingAssignments" as keyof GameState,
+
   "auctions",
   "jockeys",
   "awards",
