@@ -1,6 +1,6 @@
 // NPC Stables Directory - Browse rival stables and their horses
 import { createFileRoute } from "@tanstack/react-router";
-import { Trophy, TrendingUp, Users, Building2, Search, X, BarChart3 } from "lucide-react";
+import { Trophy, TrendingUp, Users, Building2, Search, X, BarChart3, ClipboardList } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScoutingInsightsPanel } from "@/components/insights/ScoutingInsightsPanel";
+import { ScoutingAssignmentsPanel } from "@/components/insights/ScoutingAssignmentsPanel";
 import { StableList } from "@/components/stable";
 import { StableCompareBar } from "@/components/stable/StableCompareBar";
 import {
@@ -155,6 +156,10 @@ function NpcStablesPage() {
             <BarChart3 className="w-3.5 h-3.5" />
             Insights
           </TabsTrigger>
+          <TabsTrigger value="assignments" className="gap-2 text-xs uppercase tracking-widest px-5">
+            <ClipboardList className="w-3.5 h-3.5" />
+            Assignments
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="directory" className="space-y-8 mt-0 focus-visible:outline-none">
@@ -207,6 +212,10 @@ function NpcStablesPage() {
 
         <TabsContent value="insights" className="mt-0 focus-visible:outline-none">
           <ScoutingInsightsPanel />
+        </TabsContent>
+
+        <TabsContent value="assignments" className="mt-0 focus-visible:outline-none">
+          <ScoutingAssignmentsPanel />
         </TabsContent>
       </Tabs>
     </div>

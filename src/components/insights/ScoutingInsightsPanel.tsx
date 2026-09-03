@@ -26,12 +26,18 @@ import {
 } from "@/components/ui/context-menu";
 import { HorseScatterPlot } from "./HorseScatterPlot";
 import { InsightsCompareDialog } from "./InsightsCompareDialog";
+import { ScoutingThresholdControls } from "./ScoutingThresholdControls";
 import { useBookmarks } from "@/hooks/shared/useBookmarks";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 import type { Horse } from "@/core/horse/types";
 import { isNpcOwned, isPlayerOwned } from "@/core/horse/ownership";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
+import {
+  createDefaultScoutingThresholds,
+  matchesScoutingThresholds,
+  type ScoutingThresholds,
+} from "@/core/npc/scoutingThresholds";
 
 import {
   INSIGHT_METRICS,
@@ -40,7 +46,8 @@ import {
   type InsightMetricKey,
   type InsightRow,
 } from "@/core/horse/insightMetrics";
-import { BarChart3, Bookmark, Columns3, Copy, Eye, Filter, Search, X } from "lucide-react";
+import { BarChart3, Bookmark, Columns3, Copy, Eye, Filter, Search, SlidersHorizontal, X } from "lucide-react";
+
 
 type PoolKey = "npc" | "market" | "all" | "mine";
 
@@ -64,6 +71,16 @@ export function ScoutingInsightsPanel() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [onlySelected, setOnlySelected] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
+  const [thresholdsOpen, setThresholdsOpen] = useState(false);
+  const [thresholdsOn, setThresholdsOn] = useState(false);
+  const [thresholds, setThresholds] = useState<ScoutingThresholds>(() => ({
+    ...createDefaultScoutingThresholds(),
+    freshness: "any",
+  }));
+  const day = useGame((s) => s.day);
+  const scoutReports = useGameWithShallow((s: GameState) => s.scoutReports ?? []);
+  const addAssignment = useGame((s) => s.addScoutingAssignment);
+
 
   const allHorses = useMemo<Horse[]>(
     () => (Array.isArray(horses) ? horses : Object.values(horses ?? {})) as Horse[],
@@ -76,7 +93,7 @@ export function ScoutingInsightsPanel() {
     return map;
   }, [npcStables]);
 
-  const rows = useMemo<InsightRow[]>(() => {
+  const allRows = useMemo<InsightRow[]>(() => {
     const pooled = allHorses.filter((h) => {
       if (h.lifecycleStatus === "deceased") return false;
       // Pedigree ancestors are stored as horses too; keep the plot to runners.
@@ -100,11 +117,31 @@ export function ScoutingInsightsPanel() {
     });
   }, [allHorses, pool, stableNames]);
 
+  /** Most recent report day per horse, for the "stale report" threshold. */
+  const lastScoutDay = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const r of scoutReports) {
+      const prev = map.get(r.horseId);
+      if (prev === undefined || r.day > prev) map.set(r.horseId, r.day);
+    }
+    return map;
+  }, [scoutReports]);
+
+  const rows = useMemo<InsightRow[]>(() => {
+    if (!thresholdsOn) return allRows;
+    return allRows.filter((r) => {
+      const scoutedDay = lastScoutDay.get(r.id);
+      return matchesScoutingThresholds(r, thresholds, {
+        daysSinceScouted: scoutedDay === undefined ? null : day - scoutedDay,
+      });
+    });
+  }, [allRows, thresholdsOn, thresholds, lastScoutDay, day]);
 
   const visibleRows = useMemo(
     () => (onlySelected ? rows.filter((r) => selectedIds.includes(r.id)) : rows),
     [rows, onlySelected, selectedIds],
   );
+
 
   const selectedRows = useMemo(
     () => rows.filter((r) => selectedIds.includes(r.id)),
@@ -253,6 +290,78 @@ export function ScoutingInsightsPanel() {
               </Select>
             </div>
           </div>
+
+          <div className="border border-white/5 bg-slate-950/40">
+            <div className="flex flex-wrap items-center gap-2 p-3">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-8 text-xs"
+                onClick={() => setThresholdsOpen((v) => !v)}
+              >
+                <SlidersHorizontal className="mr-1.5 h-3 w-3" />
+                {thresholdsOpen ? "Hide scouting thresholds" : "Scouting thresholds"}
+              </Button>
+              <Badge
+                variant="outline"
+                className={
+                  thresholdsOn
+                    ? "border-gold/50 text-gold cursor-pointer"
+                    : "border-white/10 text-cream/40 cursor-pointer"
+                }
+                onClick={() => setThresholdsOn((v) => !v)}
+              >
+                {thresholdsOn ? `Thresholds on · ${rows.length} match` : "Thresholds off"}
+              </Badge>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 text-xs"
+                disabled={!thresholdsOn || rows.length === 0}
+                onClick={() => setSelectedIds(rows.map((r) => r.id))}
+              >
+                Select matching ({rows.length})
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 text-xs"
+                onClick={() => {
+                  const created = addAssignment?.(
+                    `Threshold order ${new Date().toLocaleTimeString()}`,
+                    { ...thresholds, pool: pool === "mine" ? "npc" : pool },
+                  );
+                  if (created) toast.success(`Saved standing assignment "${created.name}"`);
+                }}
+              >
+                Save as standing assignment
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-8 text-xs text-cream/50"
+                onClick={() =>
+                  setThresholds({ ...createDefaultScoutingThresholds(), freshness: "any" })
+                }
+              >
+                Reset
+              </Button>
+            </div>
+            {thresholdsOpen && (
+              <div className="border-t border-white/5 p-3">
+                <ScoutingThresholdControls
+                  value={thresholds}
+                  onChange={(next) => {
+                    setThresholds(next);
+                    setThresholdsOn(true);
+                  }}
+                  showPool={false}
+                />
+              </div>
+            )}
+          </div>
+
+
 
           <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-cream/40">
             <span>Plotted: {visibleRows.length}</span>

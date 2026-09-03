@@ -214,6 +214,8 @@ export function createInitialState(
     npcStables: updatedStables,
     npcAIManager,
     scoutReports: [],
+    scoutingAssignments: [],
+
     exchange: createDefaultExchangeState(),
     auctions: [],
     jockeys,
