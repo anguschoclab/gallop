@@ -147,7 +147,9 @@ export function ScoutingAssignmentsPanel() {
                       min={1}
                       value={a.maxPerDay}
                       onChange={(e) =>
-                        updateAssignment?.(a.id, { maxPerDay: Math.max(1, Number(e.target.value) || 1) })
+                        updateAssignment?.(a.id, {
+                          maxPerDay: Math.max(1, Number(e.target.value) || 1),
+                        })
                       }
                       className="h-8 w-20 text-xs"
                       aria-label="Max scouts per day"
@@ -193,7 +195,11 @@ export function ScoutingAssignmentsPanel() {
 
                 <div className="flex flex-wrap gap-1.5 px-3 pb-3">
                   {describeScoutingThresholds(a.thresholds).map((chip) => (
-                    <Badge key={chip} variant="outline" className="border-white/10 text-[10px] text-cream/60">
+                    <Badge
+                      key={chip}
+                      variant="outline"
+                      className="border-white/10 text-[10px] text-cream/60"
+                    >
                       {chip}
                     </Badge>
                   ))}
@@ -201,7 +207,9 @@ export function ScoutingAssignmentsPanel() {
                     {a.totalScouted} scouted · {formatCurrency(a.totalSpent)}
                   </Badge>
                   <Badge variant="outline" className="border-white/10 text-[10px] text-cream/40">
-                    {a.lastRunDay === null ? "Never run" : `Last run day ${a.lastRunDay} (today ${day})`}
+                    {a.lastRunDay === null
+                      ? "Never run"
+                      : `Last run day ${a.lastRunDay} (today ${day})`}
                   </Badge>
                 </div>
 

@@ -80,7 +80,11 @@ const TOWNS_BY_COUNTRY: Record<string, string[]> = {
 
 const DEFAULT_TOWNS = ["Fairhaven", "Kingsmere", "Rosedale", "Aldermoor", "Highvale"];
 
-/** Stable, deterministic 32-bit hash of a string. */
+/**
+ * Stable, deterministic 32-bit hash of a string.
+ *
+ * @param input - String to hash
+ */
 function hash(input: string): number {
   let h = 2166136261;
   for (let i = 0; i < input.length; i++) {
@@ -94,7 +98,12 @@ function pick<T>(items: readonly T[], seed: number): T {
   return items[seed % items.length] as T;
 }
 
-/** Box capacity band per stable tier. */
+/**
+ * Box capacity band per stable tier.
+ *
+ * @param tier - Stable tier
+ * @param seed - Deterministic seed
+ */
 function boxesForTier(tier: Stable["tier"], seed: number): number {
   const bands: Record<string, [number, number]> = {
     elite: [90, 180],

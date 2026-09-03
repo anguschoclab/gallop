@@ -107,17 +107,31 @@ export function createDefaultExchangeState(): ExchangeState {
   return { asks: [], bids: [], trades: [], lastRefreshDay: 0 };
 }
 
-/** Commission rate after prestige scaling (higher prestige, higher fee). */
+/**
+ * Commission rate after prestige scaling (higher prestige, higher fee).
+ *
+ * @param prestige - Prestige score
+ */
 export function exchangeCommissionRate(prestige = EXCHANGE_PRESTIGE): number {
   return EXCHANGE_BASE_COMMISSION * prestigeMultiplier(prestige, 0.3);
 }
 
-/** Commission charged on a trade price. */
+/**
+ * Commission charged on a trade price.
+ *
+ * @param price - Trade price
+ * @param prestige - Prestige score
+ */
 export function exchangeCommission(price: number, prestige = EXCHANGE_PRESTIGE): number {
   return Math.round(price * exchangeCommissionRate(prestige));
 }
 
-/** Net proceeds a seller receives after commission. */
+/**
+ * Net proceeds a seller receives after commission.
+ *
+ * @param price - Trade price
+ * @param prestige - Prestige score
+ */
 export function netProceeds(price: number, prestige = EXCHANGE_PRESTIGE): number {
   return price - exchangeCommission(price, prestige);
 }
@@ -141,10 +155,12 @@ export {
  * markups and bid sizes all come from the trading AI (personality + cash
  * pressure + prestige).
  *
+ * @param args - World slices needed for the NPC book generation
  * @param args.day - Current day
  * @param args.horses - All horses in the world
  * @param args.npcStables - NPC stables
  * @param args.existing - Current exchange state (player asks are preserved)
+ * @param args.playerReputation - Player reputation score (0-1000); scales NPC bids on player listings
  * @returns New asks/bids for the NPC side
  */
 export function generateNpcBook(args: {
@@ -243,7 +259,6 @@ export function generateNpcBook(args: {
 
   return { asks: npcAsks, bids: bids.sort((a, b) => b.price - a.price) };
 }
-
 
 export type OrderBookLevel = { price: number; count: number };
 
@@ -399,7 +414,13 @@ export function buildMarketDepth(
   };
 }
 
-/** Daily traded volume/turnover series for charting. */
+/**
+ * Daily traded volume/turnover series for charting.
+ *
+ * @param state - Exchange state
+ * @param day - Current day
+ * @param windowDays - Length of the window (default 30)
+ */
 export function tradeSeries(
   state: ExchangeState,
   day: number,
@@ -408,7 +429,12 @@ export function tradeSeries(
   return dailyTradeSeries(state.trades, day, windowDays);
 }
 
-/** Remove expired orders. */
+/**
+ * Remove expired orders.
+ *
+ * @param state - Exchange state
+ * @param day - Current day
+ */
 export function pruneExchange(state: ExchangeState, day: number): ExchangeState {
   return {
     ...state,
@@ -418,7 +444,12 @@ export function pruneExchange(state: ExchangeState, day: number): ExchangeState 
   };
 }
 
-/** Suggested listing price band for a horse the player owns. */
+/**
+ * Suggested listing price band for a horse the player owns.
+ *
+ * @param horse - Horse to price
+ * @param allHorses - All horses in the world (valuation context)
+ */
 export function suggestAskPrice(
   horse: Horse,
   allHorses: Horse[],

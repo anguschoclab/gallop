@@ -122,7 +122,12 @@ const PERSONALITY_INTENT: Record<StablePersonality, ExchangeIntent> = {
   conservative: "opportunistic",
 };
 
-/** Reputation 0-100 mapped to a gentle price multiplier around 1. */
+/**
+ * Reputation 0-100 mapped to a gentle price multiplier around 1.
+ *
+ * @param reputation - Reputation score 0-100
+ * @param strength - Multiplier strength
+ */
 function prestigePull(reputation: number, strength = 1): number {
   return 1 + (((reputation ?? 50) - 50) / 500) * strength;
 }
@@ -275,12 +280,25 @@ export function npcBidQuote(
     rationale,
     bidderTier: bidderTierMeta.label,
     standingSensitivity: bidderTierMeta.standingSensitivity,
-    intent: pressure.pressure >= 0.5 ? "raising cash" : (PERSONALITY_INTENT[stable.personality] ?? "opportunistic"),
-    conviction: Math.max(0, Math.min(1, (price / Math.max(1, fairValue)) * (1 - pressure.pressure * 0.4))),
+    intent:
+      pressure.pressure >= 0.5
+        ? "raising cash"
+        : (PERSONALITY_INTENT[stable.personality] ?? "opportunistic"),
+    conviction: Math.max(
+      0,
+      Math.min(1, (price / Math.max(1, fairValue)) * (1 - pressure.pressure * 0.4)),
+    ),
   };
 }
 
-/** Backwards-compatible price-only helper. */
+/**
+ * Backwards-compatible price-only helper.
+ *
+ * @param horse - Horse being bid on
+ * @param stable - Bidding stable
+ * @param day - Current game day
+ * @param fairValue - Reference market value
+ */
 export function npcBidPrice(horse: Horse, stable: Stable, day: number, fairValue: number): number {
   return npcBidQuote(horse, stable, day, fairValue).price;
 }
@@ -301,12 +319,14 @@ export type NpcSettlement = {
  * accept floor, the trade settles and lands on the live trade tape. Player
  * orders are never touched.
  *
+ * @param args - World slices needed for NPC trade resolution
  * @param args.day - Current day
  * @param args.state - Live exchange state
  * @param args.horses - All horses in the world
  * @param args.npcStables - NPC stables
  * @param args.commission - Commission function for the exchange
  * @param args.maxTrades - Cap on crossings per day
+ * @param args.makeId - Optional custom trade id generator
  */
 export function resolveNpcExchangeTrades(args: {
   day: number;

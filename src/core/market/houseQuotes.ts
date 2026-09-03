@@ -101,7 +101,12 @@ export function houseQuotes(
     .sort((a, b) => b.sellPrice - a.sellPrice);
 }
 
-/** Which houses will take a horse of a given age. */
+/**
+ * Which houses will take a horse of a given age.
+ *
+ * @param house - Auction house
+ * @param horse - Horse to check
+ */
 function houseTakesHorse(house: AuctionHouse, horse: Horse): boolean {
   const age = horse.age ?? 0;
   return house.kinds.some((kind) => {
@@ -133,6 +138,7 @@ export type HouseListing = HouseQuote & { horse: Horse };
  * The deterministic set of lots a house has on its board today. Stable for a
  * given (day, house) pair so the board doesn't churn between renders.
  *
+ * @param args - World slices needed for the catalogue
  * @param args.day - Current day
  * @param args.house - Auction house
  * @param args.horses - All horses in the world

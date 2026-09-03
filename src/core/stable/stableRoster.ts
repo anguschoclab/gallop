@@ -31,7 +31,11 @@ export type RosterEntry = {
   retired: boolean;
 };
 
-/** Owner key a horse belongs to, or null when unowned. */
+/**
+ * Owner key a horse belongs to, or null when unowned.
+ *
+ * @param horse - Horse to resolve an owner key for
+ */
 function ownerKey(horse: Horse): string | null {
   if (isPlayerOwned(horse)) return "player";
   return horse.ownership.type === "npc" ? (horse.ownership.stableId as string) : null;

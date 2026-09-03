@@ -216,7 +216,6 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                           />
                         </div>
 
-
                         <div className="col-span-3 text-right">
                           {prize > 0 && (
                             <span

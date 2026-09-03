@@ -47,8 +47,17 @@ import {
   type InsightMetricKey,
   type InsightRow,
 } from "@/core/horse/insightMetrics";
-import { BarChart3, Bookmark, Columns3, Copy, Eye, Filter, Search, SlidersHorizontal, X } from "lucide-react";
-
+import {
+  BarChart3,
+  Bookmark,
+  Columns3,
+  Copy,
+  Eye,
+  Filter,
+  Search,
+  SlidersHorizontal,
+  X,
+} from "lucide-react";
 
 type PoolKey = "npc" | "market" | "all" | "mine";
 
@@ -81,7 +90,6 @@ export function ScoutingInsightsPanel() {
   const day = useGame((s) => s.day);
   const scoutReports = useGameWithShallow((s: GameState) => s.scoutReports ?? []);
   const addAssignment = useGame((s) => s.addScoutingAssignment);
-
 
   const allHorses = useMemo<Horse[]>(
     () => (Array.isArray(horses) ? horses : Object.values(horses ?? {})) as Horse[],
@@ -135,7 +143,6 @@ export function ScoutingInsightsPanel() {
     () => (onlySelected ? rows.filter((r) => selectedIds.includes(r.id)) : rows),
     [rows, onlySelected, selectedIds],
   );
-
 
   const selectedRows = useMemo(
     () => rows.filter((r) => selectedIds.includes(r.id)),
@@ -243,10 +250,13 @@ export function ScoutingInsightsPanel() {
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Select value={pool} onValueChange={(v) => {
+              <Select
+                value={pool}
+                onValueChange={(v) => {
                   setSelectedIds([]);
                   setPool(v as PoolKey);
-                }}>
+                }}
+              >
                 <SelectTrigger className="h-9 w-40 text-xs" aria-label="Horse pool">
                   <SelectValue />
                 </SelectTrigger>
@@ -355,8 +365,6 @@ export function ScoutingInsightsPanel() {
             )}
           </div>
 
-
-
           <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-cream/40">
             <span>Plotted: {visibleRows.length}</span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
@@ -403,10 +411,20 @@ export function ScoutingInsightsPanel() {
                 >
                   <Columns3 className="mr-1.5 h-3 w-3" /> Compare ({selectedRows.length})
                 </Button>
-                <Button size="sm" variant="outline" className="h-8 text-xs" onClick={bookmarkSelected}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 text-xs"
+                  onClick={bookmarkSelected}
+                >
                   Bookmark all
                 </Button>
-                <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => setSelectedIds([])}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 text-xs"
+                  onClick={() => setSelectedIds([])}
+                >
                   Clear
                 </Button>
               </div>

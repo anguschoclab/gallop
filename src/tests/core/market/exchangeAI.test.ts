@@ -46,9 +46,7 @@ describe("exchange trading AI", () => {
     const humble = sellerStance(makeStable({ id: "a", reputation: 20 }));
     const grand = sellerStance(makeStable({ id: "b", reputation: 95 }));
     expect(grand.markup).toBeGreaterThan(humble.markup);
-    expect(npcAskPrice(grand, 100_000, "x:1")).toBeGreaterThan(
-      npcAskPrice(humble, 100_000, "x:1"),
-    );
+    expect(npcAskPrice(grand, 100_000, "x:1")).toBeGreaterThan(npcAskPrice(humble, 100_000, "x:1"));
   });
 
   it("bids higher for aggressive personalities and lower under cash pressure", () => {

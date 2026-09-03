@@ -269,9 +269,7 @@ export function AuctionHouseDesk() {
                 <span className="text-cream/40 truncate max-w-[220px]">
                   {t.sellerName} → {t.buyerName}
                 </span>
-                <span className="tabular-nums font-bold text-cream">
-                  {formatCurrency(t.price)}
-                </span>
+                <span className="tabular-nums font-bold text-cream">{formatCurrency(t.price)}</span>
               </div>
             ))}
           </div>

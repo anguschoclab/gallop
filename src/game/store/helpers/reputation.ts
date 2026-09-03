@@ -10,11 +10,7 @@
  *   src/game/store/slices/syndicateActions.ts
  */
 
-import {
-  getReputationTier,
-  type ManagerReputation,
-  type ReputationEvent,
-} from "@/core/reputation";
+import { getReputationTier, type ManagerReputation, type ReputationEvent } from "@/core/reputation";
 
 /** Maximum number of reputation events retained. */
 export const MAX_REPUTATION_EVENTS = 200;

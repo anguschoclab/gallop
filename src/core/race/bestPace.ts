@@ -37,6 +37,8 @@ export type RaceRun = {
  * seconds per mile. Skips races with no results, zero distance, or invalid
  * times. Shared by `bestPerMileByHorse` and the benchmark dialog's
  * `runsForHorse` so both iterate race results identically.
+ *
+ * @param races - All races to scan
  */
 export function iterateRaceRuns(races: Race[]): RaceRun[] {
   const runs: RaceRun[] = [];

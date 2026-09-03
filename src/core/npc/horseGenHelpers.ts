@@ -71,4 +71,3 @@ export function calculateStartingFame(tier: StableTier, age: number, rng: Rng): 
     tier === "elite" ? rand(10, 26, rng) : tier === "mid" ? rand(4, 14, rng) : rand(0, 8, rng);
   return Math.min(100, base + Math.max(0, age - 2) * 2);
 }
-

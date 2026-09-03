@@ -1,7 +1,15 @@
 import { useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { BookOpen, CalendarRange, Globe2, History, Landmark, ScrollText, Timer } from "lucide-react";
+import {
+  BookOpen,
+  CalendarRange,
+  Globe2,
+  History,
+  Landmark,
+  ScrollText,
+  Timer,
+} from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,7 +32,6 @@ const ALMANAC_TABS = [
 ] as const;
 const EMPTY_OBJECT = {} as Record<string, never>;
 const EMPTY_ARRAY: SeasonRecord[] = [];
-
 
 export const Route = createFileRoute("/almanac")({
   validateSearch: z.object({
@@ -60,10 +67,7 @@ function AlmanacPage() {
   const seasonRecords = useGameWithShallow((s) => s.seasonRecords ?? EMPTY_ARRAY) as SeasonRecord[];
 
   const records = useMemo(() => Object.values(trackRecords), [trackRecords]);
-  const honours = useMemo(
-    () => [...seasonRecords].sort((a, b) => b.day - a.day),
-    [seasonRecords],
-  );
+  const honours = useMemo(() => [...seasonRecords].sort((a, b) => b.day - a.day), [seasonRecords]);
 
   return (
     <div className="space-y-6">
@@ -78,9 +82,7 @@ function AlmanacPage() {
 
       <Tabs
         value={tab ?? "records"}
-        onValueChange={(v) =>
-          navigate({ search: { tab: v as (typeof ALMANAC_TABS)[number] } })
-        }
+        onValueChange={(v) => navigate({ search: { tab: v as (typeof ALMANAC_TABS)[number] } })}
         className="space-y-4"
       >
         <TabsList className="flex-wrap h-auto">
@@ -129,7 +131,6 @@ function AlmanacPage() {
         <TabsContent value="real-world">
           <RealWorldBenchmarks records={records} />
         </TabsContent>
-
 
         <TabsContent value="roll-of-honour" className="space-y-2">
           {honours.length === 0 ? (

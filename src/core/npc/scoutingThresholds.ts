@@ -85,9 +85,30 @@ export interface ThresholdFieldDef {
 }
 
 export const THRESHOLD_FIELDS: ThresholdFieldDef[] = [
-  { key: "minOverall", label: "Min overall rating", metric: "overall", bound: "min", step: 1, max: 100 },
-  { key: "maxOverall", label: "Max overall rating", metric: "overall", bound: "max", step: 1, max: 100 },
-  { key: "minPotential", label: "Min potential", metric: "potential", bound: "min", step: 1, max: 100 },
+  {
+    key: "minOverall",
+    label: "Min overall rating",
+    metric: "overall",
+    bound: "min",
+    step: 1,
+    max: 100,
+  },
+  {
+    key: "maxOverall",
+    label: "Max overall rating",
+    metric: "overall",
+    bound: "max",
+    step: 1,
+    max: 100,
+  },
+  {
+    key: "minPotential",
+    label: "Min potential",
+    metric: "potential",
+    bound: "min",
+    step: 1,
+    max: 100,
+  },
   { key: "minSpeed", label: "Min speed", metric: "speed", bound: "min", step: 1, max: 100 },
   { key: "minStamina", label: "Min stamina", metric: "stamina", bound: "min", step: 1, max: 100 },
   { key: "minAge", label: "Min age", metric: "age", bound: "min", step: 1, max: 25 },
@@ -95,11 +116,46 @@ export const THRESHOLD_FIELDS: ThresholdFieldDef[] = [
   { key: "minFame", label: "Min fame", metric: "fame", bound: "min", step: 1, max: 100 },
   { key: "maxFame", label: "Max fame", metric: "fame", bound: "max", step: 1, max: 100 },
   { key: "minForm", label: "Min form", metric: "form", bound: "min", step: 1, max: 10 },
-  { key: "minStarts", label: "Min career starts", metric: "starts", bound: "min", step: 1, max: 60 },
-  { key: "maxStarts", label: "Max career starts", metric: "starts", bound: "max", step: 1, max: 60 },
-  { key: "minWinRate", label: "Min win rate %", metric: "winRate", bound: "min", step: 5, max: 100 },
-  { key: "minValue", label: "Min market value", metric: "value", bound: "min", step: 5000, max: 5_000_000 },
-  { key: "maxValue", label: "Max market value", metric: "value", bound: "max", step: 5000, max: 5_000_000 },
+  {
+    key: "minStarts",
+    label: "Min career starts",
+    metric: "starts",
+    bound: "min",
+    step: 1,
+    max: 60,
+  },
+  {
+    key: "maxStarts",
+    label: "Max career starts",
+    metric: "starts",
+    bound: "max",
+    step: 1,
+    max: 60,
+  },
+  {
+    key: "minWinRate",
+    label: "Min win rate %",
+    metric: "winRate",
+    bound: "min",
+    step: 5,
+    max: 100,
+  },
+  {
+    key: "minValue",
+    label: "Min market value",
+    metric: "value",
+    bound: "min",
+    step: 5000,
+    max: 5_000_000,
+  },
+  {
+    key: "maxValue",
+    label: "Max market value",
+    metric: "value",
+    bound: "max",
+    step: 5000,
+    max: 5_000_000,
+  },
 ];
 
 const FEMALE: string[] = ["filly", "mare"];
@@ -155,7 +211,11 @@ export function matchesScoutingThresholds(
   return true;
 }
 
-/** Human-readable summary chips for a threshold set. */
+/**
+ * Human-readable summary chips for a threshold set.
+ *
+ * @param t - Threshold set
+ */
 export function describeScoutingThresholds(t: ScoutingThresholds): string[] {
   const out: string[] = [];
   for (const f of THRESHOLD_FIELDS) {
@@ -171,11 +231,7 @@ export function describeScoutingThresholds(t: ScoutingThresholds): string[] {
 
 /** Ordering used when the budget cannot cover every match. */
 export type ScoutingPriority =
-  | "highestOverall"
-  | "highestPotential"
-  | "cheapest"
-  | "lowestFame"
-  | "youngest";
+  "highestOverall" | "highestPotential" | "cheapest" | "lowestFame" | "youngest";
 
 export const SCOUTING_PRIORITIES: { value: ScoutingPriority; label: string }[] = [
   { value: "highestOverall", label: "Highest rating first" },

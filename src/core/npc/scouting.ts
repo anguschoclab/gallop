@@ -145,7 +145,7 @@ function generateScoutNotes(horse: Horse, accuracy: number): string {
  * Returns a ScoutReport with revealed stats based on accuracy. Higher accuracy
  * reveals more stats with less error. Includes genetic insight at high accuracy.
  *
- * @param horse - Horse to scout
+ * @param rawHorse - Horse to scout (may carry a deferred phenotype)
  * @param stable - Stable owning the horse
  * @param day - Current game day
  * @param playerCash - Player's available cash
@@ -267,7 +267,7 @@ export function scoutHorse(
  * what stats are visible and their confidence level. Provides overall estimate if not
  * fully known.
  *
- * @param horse - Horse to check
+ * @param rawHorse - Horse to check (may carry a deferred phenotype)
  * @param scoutReports - Array of scout reports
  * @param currentDay - Current game day
  * @returns Object with displayable stats, confidence level, and overall estimate
@@ -381,7 +381,7 @@ export function getScoutStatus(
  *
  * Returns a human-readable summary of what is known about the horse.
  *
- * @param horse - Horse to check
+ * @param rawHorse - Horse to check (may carry a deferred phenotype)
  * @param scoutReports - Array of scout reports
  * @param currentDay - Current game day
  * @returns Intel summary string

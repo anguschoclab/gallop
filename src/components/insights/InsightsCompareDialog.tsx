@@ -53,8 +53,7 @@ export function InsightsCompareDialog({
       INSIGHT_METRICS.map((metric) => {
         const values = rows.map((r) => r.metrics[metric.key]);
         const higherIsBetter = !LOWER_IS_BETTER.has(metric.key);
-        const avg =
-          values.length === 0 ? 0 : values.reduce((sum, v) => sum + v, 0) / values.length;
+        const avg = values.length === 0 ? 0 : values.reduce((sum, v) => sum + v, 0) / values.length;
         const spread = values.length === 0 ? 0 : Math.max(...values) - Math.min(...values);
         return {
           metric,

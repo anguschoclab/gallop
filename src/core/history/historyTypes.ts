@@ -65,21 +65,28 @@ export interface TrackRecord {
   raceName?: string;
 }
 
-/** Stable storage key for a track record, unique per track/surface/distance/category. */
+/**
+ * Stable storage key for a track record, unique per track/surface/distance/category.
+ *
+ * @param record - Track record
+ */
 export function trackRecordKey(record: TrackRecord): string {
   const kind = record.categoryKind ?? "overall";
   const suffix = kind === "overall" ? "overall" : `${kind}:${record.categoryValue ?? ""}`;
   return `${record.trackId}_${record.surface}_${record.distance}_${suffix}`;
 }
 
-/** Human label for a record's category. */
+/**
+ * Human label for a record's category.
+ *
+ * @param record - Track record
+ */
 export function recordCategoryLabel(record: TrackRecord): string {
   const kind = record.categoryKind ?? "overall";
   if (kind === "overall") return "Overall";
   if (kind === "condition") return `Going: ${record.categoryValue}`;
   return record.categoryValue ?? "Overall";
 }
-
 
 export interface FounderRecord {
   horseId: string;

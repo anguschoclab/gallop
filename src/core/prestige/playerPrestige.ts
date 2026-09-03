@@ -86,7 +86,10 @@ function venueField(): Omit<PrestigeLadderEntry, "rank">[] {
  * @param reputationScore - Manager reputation score (0-1000)
  * @param playerName - Stable name shown on the ladder
  */
-export function prestigeLadder(reputationScore: number, playerName = "Your stable"): PrestigeLadderEntry[] {
+export function prestigeLadder(
+  reputationScore: number,
+  playerName = "Your stable",
+): PrestigeLadderEntry[] {
   const player = {
     id: "player",
     name: playerName,

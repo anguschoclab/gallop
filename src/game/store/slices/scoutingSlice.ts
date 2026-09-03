@@ -53,7 +53,6 @@ export type ScoutingSlice = {
   runScoutingAssignments: () => { dispatched: number; spent: number };
 };
 
-
 /**
  * Create the scouting state slice with horse evaluation actions.
  *
@@ -194,4 +193,3 @@ export function createScoutingSlice(
     },
   };
 }
-

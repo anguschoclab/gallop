@@ -12,12 +12,22 @@
 import type { SeasonRecord, TrackRecord } from "./historyTypes";
 import { REAL_WORLD_RECORDS, type RealWorldRecord } from "@/data/realWorldRecords";
 
-/** Metres per second for a record. */
+/**
+ * Metres per second for a record.
+ *
+ * @param r - Record with distance and time
+ * @param r.distance - Distance in metres
+ * @param r.time - Time in seconds
+ */
 export function recordSpeed(r: { distance: number; time: number }): number {
   return r.time > 0 ? r.distance / r.time : 0;
 }
 
-/** Decade label for a game year, e.g. 1 -> "Years 1-10". */
+/**
+ * Decade label for a game year, e.g. 1 -> "Years 1-10".
+ *
+ * @param year - Game year
+ */
 export function decadeOf(year: number): number {
   return Math.floor((Math.max(1, year) - 1) / 10);
 }
@@ -98,7 +108,9 @@ export function buildTrackMilestones(
     });
   }
 
-  return out.sort((a, b) => b.recordCount - a.recordCount || a.trackName.localeCompare(b.trackName));
+  return out.sort(
+    (a, b) => b.recordCount - a.recordCount || a.trackName.localeCompare(b.trackName),
+  );
 }
 
 export type DecadeLeader = {
@@ -145,6 +157,8 @@ export function buildDecadeLeaders(records: TrackRecord[], topN = 5): DecadeLead
 /**
  * Tally how many records each horse holds. Shared by `buildTrackMilestones`
  * (multi-record holders) and `buildDecadeLeaders` (prolific holders).
+ *
+ * @param records - All standing track records
  */
 function tallyRecordHolders(
   records: TrackRecord[],
@@ -226,10 +240,7 @@ export type BenchmarkComparison = {
  * @param records - Standing track records
  * @param tolerance - Allowed distance difference in metres (default 120)
  */
-export function compareToRealWorld(
-  records: TrackRecord[],
-  tolerance = 120,
-): BenchmarkComparison[] {
+export function compareToRealWorld(records: TrackRecord[], tolerance = 120): BenchmarkComparison[] {
   return REAL_WORLD_RECORDS.map((benchmark) => {
     const candidates = records.filter(
       (r) =>

@@ -11,7 +11,6 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
   const comparisons = useMemo(() => compareToRealWorld(records), [records]);
   const [selected, setSelected] = useState<{ id: string; name: string } | null>(null);
 
-
   return (
     <div className="space-y-3">
       <Card className="border-white/5 bg-slate-900/40">
@@ -21,7 +20,6 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
             Curated real-world benchmark times, matched to the closest overall record in your world
             at the same surface and a comparable trip. Click a horse to see how it compares against
             every benchmark. Reference only — these never affect your game.
-
           </p>
         </CardContent>
       </Card>
@@ -107,5 +105,4 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
       )}
     </div>
   );
-
 }

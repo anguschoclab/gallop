@@ -9,7 +9,11 @@ import {
 } from "@/core/npc/scoutingThresholds";
 import type { InsightRow, InsightMetricKey } from "@/core/horse/insightMetrics";
 
-function row(id: string, overrides: Partial<Record<InsightMetricKey, number>> = {}, extra: Partial<InsightRow> = {}): InsightRow {
+function row(
+  id: string,
+  overrides: Partial<Record<InsightMetricKey, number>> = {},
+  extra: Partial<InsightRow> = {},
+): InsightRow {
   const base: Record<InsightMetricKey, number> = {
     overall: 60,
     speed: 60,
@@ -58,7 +62,11 @@ describe("matchesScoutingThresholds", () => {
   });
 
   it("filters by gender bucket", () => {
-    const t = { ...createDefaultScoutingThresholds(), freshness: "any" as const, gender: "female" as const };
+    const t = {
+      ...createDefaultScoutingThresholds(),
+      freshness: "any" as const,
+      gender: "female" as const,
+    };
     expect(matchesScoutingThresholds(row("a", {}, { gender: "mare" }), t)).toBe(true);
     expect(matchesScoutingThresholds(row("b", {}, { gender: "gelding" }), t)).toBe(false);
   });
@@ -78,9 +86,17 @@ describe("matchesScoutingThresholds", () => {
   });
 
   it("rejects horses above the max fee", () => {
-    const t = { ...createDefaultScoutingThresholds(), freshness: "any" as const, maxCostPerHorse: 500 };
-    expect(matchesScoutingThresholds(row("a"), t, { daysSinceScouted: null, cost: 900 })).toBe(false);
-    expect(matchesScoutingThresholds(row("b"), t, { daysSinceScouted: null, cost: 400 })).toBe(true);
+    const t = {
+      ...createDefaultScoutingThresholds(),
+      freshness: "any" as const,
+      maxCostPerHorse: 500,
+    };
+    expect(matchesScoutingThresholds(row("a"), t, { daysSinceScouted: null, cost: 900 })).toBe(
+      false,
+    );
+    expect(matchesScoutingThresholds(row("b"), t, { daysSinceScouted: null, cost: 400 })).toBe(
+      true,
+    );
   });
 
   it("describes active thresholds", () => {

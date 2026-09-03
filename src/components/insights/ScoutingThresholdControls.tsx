@@ -15,10 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  THRESHOLD_FIELDS,
-  type ScoutingThresholds,
-} from "@/core/npc/scoutingThresholds";
+import { THRESHOLD_FIELDS, type ScoutingThresholds } from "@/core/npc/scoutingThresholds";
 
 interface Props {
   value: ScoutingThresholds;
@@ -50,7 +47,9 @@ export function ScoutingThresholdControls({ value, onChange, showPool = true }: 
           className="h-8 text-xs"
           value={v ?? ""}
           onChange={(e) =>
-            patch({ [key]: e.target.value === "" ? null : Number(e.target.value) } as Partial<ScoutingThresholds>)
+            patch({
+              [key]: e.target.value === "" ? null : Number(e.target.value),
+            } as Partial<ScoutingThresholds>)
           }
         />
       </div>
@@ -65,7 +64,10 @@ export function ScoutingThresholdControls({ value, onChange, showPool = true }: 
             <Label className="font-mono text-[9px] uppercase tracking-widest text-cream/40">
               Pool
             </Label>
-            <Select value={value.pool} onValueChange={(v) => patch({ pool: v as ScoutingThresholds["pool"] })}>
+            <Select
+              value={value.pool}
+              onValueChange={(v) => patch({ pool: v as ScoutingThresholds["pool"] })}
+            >
               <SelectTrigger className="h-8 text-xs" aria-label="Scouting pool">
                 <SelectValue />
               </SelectTrigger>
@@ -120,8 +122,7 @@ export function ScoutingThresholdControls({ value, onChange, showPool = true }: 
           </Select>
         </div>
 
-        {value.freshness === "stale" &&
-          numberField("staleAfterDays", "Stale after (days)", 1, 365)}
+        {value.freshness === "stale" && numberField("staleAfterDays", "Stale after (days)", 1, 365)}
       </div>
     </div>
   );

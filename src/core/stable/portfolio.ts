@@ -111,7 +111,15 @@ function classify(bucket: Bucket) {
     careerWins += h.careerWins ?? 0;
   }
 
-  return { activeHorses, retiredHorses, broodmares, stallions, youngstock, lifetimeEarnings, careerWins };
+  return {
+    activeHorses,
+    retiredHorses,
+    broodmares,
+    stallions,
+    youngstock,
+    lifetimeEarnings,
+    careerWins,
+  };
 }
 
 /**
@@ -273,7 +281,11 @@ export function sortPortfolios(
   return dir === "desc" ? sorted.reverse() : sorted;
 }
 
-/** Aggregate totals across the whole league for context rows. */
+/**
+ * Aggregate totals across the whole league for context rows.
+ *
+ * @param rows - Portfolio rows to aggregate
+ */
 export function portfolioTotals(rows: StablePortfolio[]) {
   return rows.reduce(
     (acc, r) => ({

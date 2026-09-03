@@ -26,7 +26,13 @@ const TIER_MARKS: { at: number; label: string }[] = [...PRESTIGE_TIER_BOUNDARIES
   .sort((a, b) => a.min - b.min)
   .map((b) => ({ at: b.min, label: PRESTIGE_TIER_LABELS[b.tier] }));
 
-function NeighbourRow({ entry, direction }: { entry?: PrestigeLadderEntry; direction: "above" | "below" }) {
+function NeighbourRow({
+  entry,
+  direction,
+}: {
+  entry?: PrestigeLadderEntry;
+  direction: "above" | "below";
+}) {
   if (!entry) return null;
   const Icon = entry.kind === "auction_house" ? Landmark : Flag;
   return (

@@ -24,7 +24,6 @@ import { houseQuote } from "@/core/market/houseQuotes";
 import {
   createDefaultExchangeState,
   exchangeCommission,
-  
   generateNpcBook,
   netProceeds,
   resolveNpcExchangeTrades,
@@ -75,6 +74,7 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
   /**
    * Reputation record after a market trade the player was part of.
    *
+   * @param args - Trade arguments
    * @param args.role - Which side the player was on
    * @param args.horse - Horse traded
    * @param args.price - Trade price
@@ -109,6 +109,8 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
    * Apply a completed trade to the store: record the trade on the tape, update
    * the player's cash, transfer horse ownership, adjust NPC cash, update
    * reputation, and append a log entry. Shared by all four trade actions.
+   *
+   * @param args - Trade settlement arguments
    */
   const settleTrade = (args: {
     trade: ExchangeTrade;
@@ -209,11 +211,10 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
         exchange: {
           ...refreshed,
           asks: refreshed.asks.filter(
-            (a) => !filledAsks.has(a.id) && !(a.sellerId !== PLAYER_ID && tradedHorses.has(a.horseId)),
+            (a) =>
+              !filledAsks.has(a.id) && !(a.sellerId !== PLAYER_ID && tradedHorses.has(a.horseId)),
           ),
-          bids: refreshed.bids.filter(
-            (b) => !filledBids.has(b.id) && !tradedHorses.has(b.horseId),
-          ),
+          bids: refreshed.bids.filter((b) => !filledBids.has(b.id) && !tradedHorses.has(b.horseId)),
           trades: [...refreshed.trades, ...settlement.trades],
         },
       });
@@ -368,7 +369,12 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
       const house = getAuctionHouse(houseId);
       if (!house) return { ok: false, reason: "Auction house not found" };
 
-      const quote = houseQuote(horse, Object.values(s.horses) as Horse[], house, s.reputation?.score ?? 0);
+      const quote = houseQuote(
+        horse,
+        Object.values(s.horses) as Horse[],
+        house,
+        s.reputation?.score ?? 0,
+      );
       const trade: ExchangeTrade = {
         id: generateUUID(),
         horseId: horse.id,
@@ -406,7 +412,12 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
       const house = getAuctionHouse(houseId);
       if (!house) return { ok: false, reason: "Auction house not found" };
 
-      const quote = houseQuote(horse, Object.values(s.horses) as Horse[], house, s.reputation?.score ?? 0);
+      const quote = houseQuote(
+        horse,
+        Object.values(s.horses) as Horse[],
+        house,
+        s.reputation?.score ?? 0,
+      );
       if (s.cash < quote.buyPrice) return { ok: false, reason: "Insufficient funds" };
 
       const sellerStableId = getStableId(horse);
@@ -443,4 +454,3 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
     },
   };
 }
-

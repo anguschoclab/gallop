@@ -149,7 +149,12 @@ export function checkTrackRecord(
   return null;
 }
 
-/** Age bucket used for age-restricted record keeping. */
+/**
+ * Age bucket used for age-restricted record keeping.
+ *
+ * @param age - Age in years
+ * @returns Age bucket label, or null when too young
+ */
 export function ageBucket(age: number): string | null {
   const rounded = Math.floor(age);
   if (rounded < 2) return null;
@@ -157,7 +162,12 @@ export function ageBucket(age: number): string | null {
   return `${rounded}yo`;
 }
 
-/** Gender bucket used for record keeping. */
+/**
+ * Gender bucket used for record keeping.
+ *
+ * @param gender - Gender string to bucket
+ * @returns Gender bucket label, or null when unrecognized
+ */
 export function genderBucket(gender: string | undefined): string | null {
   if (!gender) return null;
   if (gender === "filly" || gender === "mare") return "Female";
@@ -208,8 +218,7 @@ export function checkTrackRecords(
   if (ageValue) candidates.push({ ...base, categoryKind: "age", categoryValue: ageValue });
 
   const genderValue = genderBucket(winner.gender);
-  if (genderValue)
-    candidates.push({ ...base, categoryKind: "gender", categoryValue: genderValue });
+  if (genderValue) candidates.push({ ...base, categoryKind: "gender", categoryValue: genderValue });
 
   const grade = race.graded?.grade;
   if (grade) candidates.push({ ...base, categoryKind: "grade", categoryValue: grade });
@@ -227,4 +236,3 @@ export function checkTrackRecords(
     return !existing || time < existing.time;
   });
 }
-

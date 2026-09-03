@@ -64,8 +64,6 @@ export function createAdvanceDayActions(
     }
   };
 
-
-
   return {
     advanceDay: async (progressCallback?: (stage: number, total: number, name: string) => void) => {
       const s = get();

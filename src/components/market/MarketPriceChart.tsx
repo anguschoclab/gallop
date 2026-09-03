@@ -21,7 +21,10 @@ interface MarketPriceChartProps {
 }
 
 export function MarketPriceChart({ trades, day, windowDays = 30 }: MarketPriceChartProps) {
-  const series = useMemo(() => housePriceSeries(trades, day, windowDays), [trades, day, windowDays]);
+  const series = useMemo(
+    () => housePriceSeries(trades, day, windowDays),
+    [trades, day, windowDays],
+  );
 
   const priced = series.filter((s) => s.avgPrice > 0);
   const first = priced[0]?.avgPrice ?? 0;
@@ -51,11 +54,7 @@ export function MarketPriceChart({ trades, day, windowDays = 30 }: MarketPriceCh
                     up ? "text-success border-success/40" : "text-destructive border-destructive/40"
                   }`}
                 >
-                  {up ? (
-                    <TrendingUp className="h-3 w-3" />
-                  ) : (
-                    <TrendingDown className="h-3 w-3" />
-                  )}
+                  {up ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                   {up ? "+" : ""}
                   {changePct.toFixed(1)}%
                 </Badge>
@@ -98,9 +97,7 @@ export function MarketPriceChart({ trades, day, windowDays = 30 }: MarketPriceCh
                 Daily volume
               </div>
               <MiniBar
-                rows={series
-                  .slice(-8)
-                  .map((s) => ({ label: `Day ${s.day}`, value: s.volume }))}
+                rows={series.slice(-8).map((s) => ({ label: `Day ${s.day}`, value: s.volume }))}
               />
             </div>
           </>

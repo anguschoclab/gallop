@@ -1,6 +1,15 @@
 // NPC Stables Directory - Browse rival stables and their horses
 import { createFileRoute } from "@tanstack/react-router";
-import { Trophy, TrendingUp, Users, Building2, Search, X, BarChart3, ClipboardList } from "lucide-react";
+import {
+  Trophy,
+  TrendingUp,
+  Users,
+  Building2,
+  Search,
+  X,
+  BarChart3,
+  ClipboardList,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -219,6 +228,5 @@ function NpcStablesPage() {
         </TabsContent>
       </Tabs>
     </div>
-
   );
 }

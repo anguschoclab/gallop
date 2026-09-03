@@ -27,12 +27,7 @@ import { SELLER_STANDING_BID_FACTOR_BY_TIER } from "@/constants/privateSaleConst
 import type { Stable } from "./types";
 
 /** Named reputation band for an NPC stable (from its 0-100 reputation). */
-export type StableReputationTier =
-  | "backyard"
-  | "provincial"
-  | "established"
-  | "classic"
-  | "elite";
+export type StableReputationTier = "backyard" | "provincial" | "established" | "classic" | "elite";
 
 export type StableReputationTierMeta = {
   tier: StableReputationTier;
@@ -108,15 +103,21 @@ export const STABLE_REPUTATION_TIERS: StableReputationTierMeta[] = [
   },
 ];
 
-/** Tier band for a raw 0-100 stable reputation. */
+/**
+ * Tier band for a raw 0-100 stable reputation.
+ *
+ * @param reputation - Raw 0-100 stable reputation
+ */
 export function getStableReputationTier(reputation: number): StableReputationTier {
   const rep = Number.isFinite(reputation) ? reputation : 50;
-  return (
-    STABLE_REPUTATION_TIERS.find((t) => rep >= t.minReputation)?.tier ?? "backyard"
-  );
+  return STABLE_REPUTATION_TIERS.find((t) => rep >= t.minReputation)?.tier ?? "backyard";
 }
 
-/** Full tier metadata for a raw 0-100 stable reputation. */
+/**
+ * Full tier metadata for a raw 0-100 stable reputation.
+ *
+ * @param reputation - Raw 0-100 stable reputation
+ */
 export function getStableReputationTierMeta(reputation: number): StableReputationTierMeta {
   const tier = getStableReputationTier(reputation);
   return (
@@ -125,7 +126,11 @@ export function getStableReputationTierMeta(reputation: number): StableReputatio
   );
 }
 
-/** Tier metadata for a stable object. */
+/**
+ * Tier metadata for a stable object.
+ *
+ * @param stable - Stable to resolve tier metadata for
+ */
 export function stableTierMeta(stable: Pick<Stable, "reputation">): StableReputationTierMeta {
   return getStableReputationTierMeta(stable.reputation);
 }
@@ -177,6 +182,9 @@ function pct(factor: number): number {
  * tier metadata, player reputation tier, the flat bid-table factor, and the
  * player's tier label. The two reaction functions then apply their own
  * factor formula and note text on top of this.
+ *
+ * @param stableReputation - Stable reputation 0-100
+ * @param playerReputationScore - Player reputation score 0-1000
  */
 function standingReactionSetup(stableReputation: number, playerReputationScore: number) {
   const meta = getStableReputationTierMeta(stableReputation);
@@ -235,10 +243,12 @@ export function stableStandingAskReaction(
   stableReputation: number,
   playerReputationScore: number,
 ): StandingReaction {
-  const { meta, playerTier, baseFactor: baseBid, playerTierLabel } = standingReactionSetup(
-    stableReputation,
-    playerReputationScore,
-  );
+  const {
+    meta,
+    playerTier,
+    baseFactor: baseBid,
+    playerTierLabel,
+  } = standingReactionSetup(stableReputation, playerReputationScore);
   // Invert: standing below "national" (factor < 1) means the buyer is quoted up.
   const rawSwing = (1 - baseBid) * meta.askSensitivity;
   const swing = Math.max(-meta.maxAskPremium, Math.min(meta.maxAskPremium, rawSwing));

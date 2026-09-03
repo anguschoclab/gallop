@@ -19,11 +19,7 @@ export function HorseOrderBook({
   onAcceptBid: (bidId: string) => void;
   onCancelAsk: (askId: string) => void;
 }) {
-  const maxSize = Math.max(
-    ...book.asks.map((a) => a.price),
-    ...book.bids.map((b) => b.price),
-    1,
-  );
+  const maxSize = Math.max(...book.asks.map((a) => a.price), ...book.bids.map((b) => b.price), 1);
   const reputationScore = useGame((s) => s.reputation?.score ?? 0);
   const npcStables = useGameWithShallow((s) => s.npcStables ?? []);
   const yardLabel = (sellerId: string) => {
@@ -38,7 +34,8 @@ export function HorseOrderBook({
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-3 text-xs">
         <span className="text-cream-muted">
-          Fair value <span className="text-cream tabular-nums">{formatCurrency(book.fairValue)}</span>
+          Fair value{" "}
+          <span className="text-cream tabular-nums">{formatCurrency(book.fairValue)}</span>
         </span>
         <span className="text-cream-muted">
           Mid <span className="text-cream tabular-nums">{formatCurrency(book.mid)}</span>
@@ -91,7 +88,9 @@ export function HorseOrderBook({
                 />
                 <span
                   className="relative min-w-0 truncate text-cream-muted"
-                  title={[yardLabel(a.sellerId), a.standingNote].filter(Boolean).join(" — ") || undefined}
+                  title={
+                    [yardLabel(a.sellerId), a.standingNote].filter(Boolean).join(" — ") || undefined
+                  }
                 >
                   {a.sellerName}
                   {a.sellerTier && (

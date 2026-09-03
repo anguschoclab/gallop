@@ -75,9 +75,7 @@ export function AlmanacMilestones({
               )}
 
               <div className="grid grid-cols-2 gap-2 text-[11px] text-cream-muted">
-                <span>
-                  First record: Year {m.earliest?.year ?? "—"}
-                </span>
+                <span>First record: Year {m.earliest?.year ?? "—"}</span>
                 <span>Latest record: Year {m.latest?.year ?? "—"}</span>
               </div>
 

@@ -26,6 +26,7 @@ export type DailyTradePoint = {
  * @param carryAvg - When true, empty days inherit the last known avgPrice
  *   instead of reporting 0 (auction-house behaviour). Default false (exchange
  *   behaviour).
+ * @param carryAvg.carryAvg - Whether to carry the last known avgPrice forward
  */
 export function dailyTradeSeries(
   trades: { day: number; price: number }[],
