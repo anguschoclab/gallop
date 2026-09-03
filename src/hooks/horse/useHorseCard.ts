@@ -6,8 +6,12 @@ import { getDisplayableStats, getScoutStatus } from "@/core/npc/scouting";
 import { isMaleHorse } from "@/core/horse/gender";
 import type { Horse } from "@/game/types";
 import { getStableId } from "@/core/horse/ownership";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 
-export function useHorseCard(horse: Horse, showScoutInfo = false) {
+export function useHorseCard(rawHorse: Horse, showScoutInfo = false) {
+  // World/NPC horses are stored with a deferred phenotype; resolve so the card
+  // never renders zeroed ratings.
+  const horse = ensurePhenotypeResolved(rawHorse);
   const scoutReports = useGameSelector((s) => s.scoutReports);
   const day = useGameSelector((s) => s.day);
   const simpleHorseCards = useGameSelector(
