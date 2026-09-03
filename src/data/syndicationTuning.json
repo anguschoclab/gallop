@@ -1,5 +1,5 @@
 {
-  "$comment": "Balancing knobs for NPC syndicate share appetite. Edit values here to rebalance without touching code. Multipliers scale the base appetite from src/core/ai/syndicationAppetite.ts; g1WinsOffset/g2WinsOffset/g3WinsOffset shift the graded proven-quality gates. qualityTiers and qualityWeights control tier-based stake scaling from graded wins.",
+  "$comment": "Balancing knobs for NPC syndicate share appetite. Edit values here to rebalance without touching code. Multipliers scale the base appetite from src/core/ai/syndicationAppetite.ts; g1WinsOffset/g2WinsOffset/g3WinsOffset shift the graded proven-quality gates (the gate is an OR: a personality is blocked only when it misses ALL THREE minimums, so raising g2/g3 offsets is how you force a G1-only gate). qualityTiers and qualityWeights control tier-based stake scaling from graded wins.",
   "global": {
     "stakeCapMultiplier": 1,
     "buyFractionMultiplier": 1,
@@ -14,34 +14,46 @@
     "g3": 1
   },
   "qualityTiers": [
-    { "minScore": 0, "scale": 1.0 },
-    { "minScore": 3, "scale": 1.15 },
-    { "minScore": 6, "scale": 1.3 },
-    { "minScore": 10, "scale": 1.5 }
+    {
+      "minScore": 0,
+      "scale": 1.0
+    },
+    {
+      "minScore": 3,
+      "scale": 1.15
+    },
+    {
+      "minScore": 6,
+      "scale": 1.3
+    },
+    {
+      "minScore": 10,
+      "scale": 1.5
+    }
   ],
   "personalities": {
     "aggressive": {
-      "stakeCapMultiplier": 1,
-      "buyFractionMultiplier": 1,
-      "cashFractionMultiplier": 1,
+      "stakeCapMultiplier": 1.6,
+      "buyFractionMultiplier": 1.3,
+      "cashFractionMultiplier": 0.6,
       "g1WinsOffset": 0,
       "g2WinsOffset": 0,
       "g3WinsOffset": 0,
       "chasesControl": true
     },
     "trader": {
-      "stakeCapMultiplier": 1,
-      "buyFractionMultiplier": 1,
-      "cashFractionMultiplier": 1,
+      "stakeCapMultiplier": 1.35,
+      "buyFractionMultiplier": 1.2,
+      "cashFractionMultiplier": 0.7,
       "g1WinsOffset": 0,
       "g2WinsOffset": 0,
       "g3WinsOffset": 0,
       "chasesControl": true
     },
     "prestige": {
-      "stakeCapMultiplier": 1,
-      "buyFractionMultiplier": 1,
-      "cashFractionMultiplier": 1,
+      "stakeCapMultiplier": 1.3,
+      "buyFractionMultiplier": 1.1,
+      "cashFractionMultiplier": 0.75,
       "g1WinsOffset": 0,
       "g2WinsOffset": 0,
       "g3WinsOffset": 0,
@@ -74,18 +86,18 @@
     "developer": {
       "stakeCapMultiplier": 1,
       "buyFractionMultiplier": 1,
-      "cashFractionMultiplier": 1,
-      "g1WinsOffset": 0,
-      "g2WinsOffset": 0,
-      "g3WinsOffset": 0
+      "cashFractionMultiplier": 0.85,
+      "g1WinsOffset": 1,
+      "g2WinsOffset": 9,
+      "g3WinsOffset": 9
     },
     "conservative": {
-      "stakeCapMultiplier": 1,
-      "buyFractionMultiplier": 1,
-      "cashFractionMultiplier": 1,
-      "g1WinsOffset": 0,
-      "g2WinsOffset": 0,
-      "g3WinsOffset": 0
+      "stakeCapMultiplier": 0.8,
+      "buyFractionMultiplier": 0.8,
+      "cashFractionMultiplier": 0.7,
+      "g1WinsOffset": 1,
+      "g2WinsOffset": 9,
+      "g3WinsOffset": 9
     }
   }
 }

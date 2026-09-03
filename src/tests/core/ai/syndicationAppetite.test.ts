@@ -107,8 +107,8 @@ describe("syndicationAppetite", () => {
     expect(getSyndicationAppetite("aggressive").minG3Wins).toBe(0);
   });
 
-  it("matches base table when no tuning overrides are set", () => {
-    expect(getSyndicationAppetite("trader")).toEqual(getBaseSyndicationAppetite("trader"));
+  it("matches base table for personalities the tuning file leaves at 1×", () => {
+    expect(getSyndicationAppetite("breeder")).toEqual(getBaseSyndicationAppetite("breeder"));
   });
 
   it("maps personalities to a player-facing intent with metadata", () => {
@@ -121,7 +121,7 @@ describe("syndicationAppetite", () => {
 
 describe("syndication tuning layer", () => {
   it("applies personality multipliers", () => {
-    const base = getBaseSyndicationAppetite("conservative");
+    const base = getSyndicationAppetite("conservative");
     setSyndicationTuningOverrides({
       personalities: { conservative: { stakeCapMultiplier: 2, buyFractionMultiplier: 2 } },
     });
@@ -131,7 +131,7 @@ describe("syndication tuning layer", () => {
   });
 
   it("applies global multipliers on top of personality ones", () => {
-    const base = getBaseSyndicationAppetite("developer");
+    const base = getSyndicationAppetite("developer");
     setSyndicationTuningOverrides({
       global: { cashFractionMultiplier: 0.5 },
       personalities: { developer: { cashFractionMultiplier: 0.5 } },
@@ -326,5 +326,27 @@ describe("share purchase decision", () => {
     );
     expect(trace.maxAffordable).toBe(Math.floor(trace.budget / trace.sharePrice));
     expect(trace.shares).toBeGreaterThan(0);
+  });
+});
+
+describe("tuned balance targets", () => {
+  it("lets aggressive stables chase control without draining cash", () => {
+    const agg = getSyndicationAppetite("aggressive");
+    const base = getBaseSyndicationAppetite("aggressive");
+    expect(agg.chasesControl).toBe(true);
+    expect(agg.stakeCapPct).toBeGreaterThan(base.stakeCapPct);
+    expect(agg.buyFraction).toBeGreaterThan(base.buyFraction);
+    // Bigger target stake, but a smaller slice of cash per purchase.
+    expect(agg.cashFraction).toBeLessThan(base.cashFraction);
+  });
+
+  it("gates conservative stables to proven G1 horses only", () => {
+    const con = getSyndicationAppetite("conservative");
+    expect(con.minG1Wins).toBeGreaterThanOrEqual(1);
+    // G2/G3 OR-fallbacks are pushed out of reach so a G1 win is required.
+    expect(con.minG2Wins).toBeGreaterThan(5);
+    expect(con.minG3Wins).toBeGreaterThan(5);
+    expect(con.chasesControl).toBe(false);
+    expect(con.cashFraction).toBeLessThan(getSyndicationAppetite("aggressive").cashFraction);
   });
 });
