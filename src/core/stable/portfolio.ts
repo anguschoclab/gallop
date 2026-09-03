@@ -18,6 +18,9 @@ import { horseMarketValue } from "@/core/horse/pricing";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import { getPrestigeTier, type PrestigeTier } from "@/core/prestige/prestigeTypes";
+import { resolveStableYard, type StableYard } from "@/core/stable/stableYard";
+import type { RosterEntry } from "@/core/stable/stableRoster";
+import { calculateOverallRating } from "@/core/horse/stats";
 
 /** Keys that historically identified the player inside syndicate shareholder maps. */
 const PLAYER_SYNDICATE_KEYS = ["player", "__player__"];
@@ -31,6 +34,10 @@ export type StablePortfolio = {
   tier: Stable["tier"] | "player";
   personality: Stable["personality"] | "player";
   country?: string;
+  /** Named training yard (NPC stables only). */
+  yard?: StableYard;
+  /** Horses in the yard, most valuable first. */
+  roster: RosterEntry[];
   /** Liquid cash on hand. */
   cash: number;
   /** Live (non-deceased) horses owned. */
@@ -74,12 +81,13 @@ type BuildArgs = {
 
 type Bucket = {
   horses: Horse[];
+  roster: RosterEntry[];
   value: number;
   top?: { name: string; value: number };
 };
 
 function emptyBucket(): Bucket {
-  return { horses: [], value: 0 };
+  return { horses: [], roster: [], value: 0 };
 }
 
 function classify(bucket: Bucket) {
@@ -136,6 +144,17 @@ export function buildStablePortfolios(args: BuildArgs): StablePortfolio[] {
     const h = ensurePhenotypeResolved(raw);
     const value = horseMarketValue(h, allForPedigree);
     bucket.horses.push(h);
+    bucket.roster.push({
+      id: h.id,
+      name: h.name,
+      age: h.age,
+      gender: h.gender,
+      rating: Math.round(calculateOverallRating(h)),
+      value: Math.round(value),
+      starts: h.careerStarts ?? 0,
+      wins: h.careerWins ?? 0,
+      retired: h.lifecycleStatus === "retired",
+    });
 
     bucket.value += value;
     if (!bucket.top || value > bucket.top.value) bucket.top = { name: h.name, value };
@@ -170,6 +189,7 @@ export function buildStablePortfolios(args: BuildArgs): StablePortfolio[] {
     tier: StablePortfolio["tier"],
     personality: StablePortfolio["personality"],
     country?: string,
+    yard?: StableYard,
   ): StablePortfolio => {
     const bucket = buckets.get(id) ?? emptyBucket();
     const counts = classify(bucket);
@@ -183,6 +203,8 @@ export function buildStablePortfolios(args: BuildArgs): StablePortfolio[] {
       tier,
       personality,
       country,
+      ...(yard ? { yard } : {}),
+      roster: [...bucket.roster].sort((a, b) => b.value - a.value),
       cash: Math.round(cash),
       horseCount: bucket.horses.length,
       ...counts,
@@ -215,7 +237,18 @@ export function buildStablePortfolios(args: BuildArgs): StablePortfolio[] {
 
   for (const s of npcStables) {
     rows.push(
-      makeRow(s.id, s.name, s.owner, s.cash, s.reputation ?? 0, false, s.tier, s.personality, s.country),
+      makeRow(
+        s.id,
+        s.name,
+        s.owner,
+        s.cash,
+        s.reputation ?? 0,
+        false,
+        s.tier,
+        s.personality,
+        s.country,
+        resolveStableYard(s),
+      ),
     );
   }
 
