@@ -28,6 +28,7 @@ import { GRADED_RACES } from "@/data/gradedRaces";
 import { createDefaultPlayerFacilities, createFacility } from "@/core/facilities";
 import type { FacilityLevel } from "@/core/facilities";
 import { STARTING_CASH, MAIDEN_GUARANTEE_START_DAY, MAIDEN_GUARANTEE_END_DAY } from "@/constants";
+import { createDefaultExchangeState } from "@/core/market/exchange";
 import { seedGazetteNews } from "@/services/narrative/seedNewsGenerator";
 import { createStableAIState } from "@/core/ai/npcCycleAI";
 import { generateUpcomingScheduledRaces } from "@/game/store/helpers/market";
@@ -213,6 +214,7 @@ export function createInitialState(
     npcStables: updatedStables,
     npcAIManager,
     scoutReports: [],
+    exchange: createDefaultExchangeState(),
     auctions: [],
     jockeys,
     awards: [],

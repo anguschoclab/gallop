@@ -1,12 +1,6 @@
 # TypeScript Check Results
-# Generated: 2026-09-03T07:39:13.214Z
+# Generated: 2026-09-03T07:40:22.391Z
 # Command: bun x tsc --noEmit --pretty false
-# Errors: 1  Warnings: 0  Exit: 2
+# Errors: 0  Warnings: 0  Exit: 0
 
-## Errors
-
-### src/game/store/initialization.ts (1)
-  203:3  TS2322  Type '{ day: number; cash: number; horses: { [k: string]: Horse; }; market: Horse[]; races: { [k: string]: Race; }; trainingUsed: {}; playerNominations: never[]; log: { day: number; text: string; }[]; ... 42 more ...; worldSize: WorldSize; }' is not assignable to type 'GameState'.
-
-## Unparsed output
-    Property 'exchange' is missing in type '{ day: number; cash: number; horses: { [k: string]: Horse; }; market: Horse[]; races: { [k: string]: Race; }; trainingUsed: {}; playerNominations: never[]; log: { day: number; text: string; }[]; ... 42 more ...; worldSize: WorldSize; }' but required in type 'MarketState'.
+No type errors or warnings.
