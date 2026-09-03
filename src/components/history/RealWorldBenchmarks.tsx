@@ -1,13 +1,16 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Globe2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
+import { HorseBenchmarkDialog } from "@/components/history/HorseBenchmarkDialog";
 import { compareToRealWorld } from "@/core/history/almanacInsights";
 import type { TrackRecord } from "@/core/history/historyTypes";
 
 export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
   const comparisons = useMemo(() => compareToRealWorld(records), [records]);
+  const [selected, setSelected] = useState<{ id: string; name: string } | null>(null);
+
 
   return (
     <div className="space-y-3">
