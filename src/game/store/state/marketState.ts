@@ -14,6 +14,8 @@
 
 import type { Horse } from "@/core/horse/types";
 import type { AuctionSale, ScoutReport, PrivateSaleOffer, Claim } from "@/core/market/types";
+import type { ExchangeState } from "@/core/market/exchange";
+import { createDefaultExchangeState } from "@/core/market/exchange";
 
 /**
  * Market-related state for trading, auctions, and scouting.
@@ -30,6 +32,8 @@ export interface MarketState {
   privateSaleOffers: PrivateSaleOffer[];
   /** Claims filed against horses in claiming races */
   claims: Claim[];
+  /** Bloodstock exchange order book: asks, bids and completed trades */
+  exchange: ExchangeState;
 }
 
 /**
@@ -44,5 +48,6 @@ export function createDefaultMarketState(): MarketState {
     scoutReports: [],
     privateSaleOffers: [],
     claims: [],
+    exchange: createDefaultExchangeState(),
   };
 }

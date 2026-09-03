@@ -8,14 +8,17 @@ import { NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/core/common/formatting";
 import { SyndicateMarket } from "@/components/market/SyndicateMarket";
 import { BloodstockGrid } from "@/components/market/BloodstockGrid";
-import { Store, ChevronRight, TrendingUp, Zap, Target } from "lucide-react";
+import { Store, ChevronRight, TrendingUp, Zap, Target, ArrowLeftRight } from "lucide-react";
+import { ExchangePanel } from "@/components/market/ExchangePanel";
 
 export const Route = createFileRoute("/market")({
   component: MarketPage,
 });
 
 function MarketPage() {
-  const [activeTab, setActiveTab] = useState<"bloodstock" | "syndicate">("bloodstock");
+  const [activeTab, setActiveTab] = useState<"bloodstock" | "exchange" | "syndicate">(
+    "bloodstock",
+  );
   const market = useGameWithShallow((s: GameState) => s.market);
   const cash = useGame((s: GameState) => s.cash);
   const buyHorse = useGame((s) => s.buyHorse);
@@ -59,7 +62,7 @@ function MarketPage() {
 
       <Tabs
         value={activeTab}
-        onValueChange={(v) => setActiveTab(v as "bloodstock" | "syndicate")}
+        onValueChange={(v) => setActiveTab(v as "bloodstock" | "exchange" | "syndicate")}
         className="space-y-6"
       >
         <div className="flex items-center justify-between bg-slate-900/40 p-1 border border-white/5 rounded-lg">
@@ -70,6 +73,13 @@ function MarketPage() {
             >
               <Zap className="w-3.5 h-3.5" />
               Direct Bloodstock
+            </TabsTrigger>
+            <TabsTrigger
+              value="exchange"
+              className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-primary data-[state=active]:text-slate-950 h-full px-6 transition-all"
+            >
+              <ArrowLeftRight className="w-3.5 h-3.5" />
+              Exchange
             </TabsTrigger>
             <TabsTrigger
               value="syndicate"
@@ -112,6 +122,13 @@ function MarketPage() {
           </Link>
 
           <BloodstockGrid market={market} cash={cash} buyHorse={buyHorse} />
+        </TabsContent>
+
+        <TabsContent
+          value="exchange"
+          className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300 focus-visible:outline-none"
+        >
+          <ExchangePanel />
         </TabsContent>
 
         <TabsContent
