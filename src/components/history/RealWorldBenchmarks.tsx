@@ -55,9 +55,20 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
                 <div className="space-y-1 border-t border-white/5 pt-2">
                   <div className="flex items-center justify-between gap-2 text-xs">
                     <span className="truncate text-cream-muted">
-                      Your world: <span className="text-cream">{gameRecord.horseName}</span> ·{" "}
-                      {gameRecord.trackName} {gameRecord.distance}m
+                      Your world:{" "}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setSelected({ id: gameRecord.horseId, name: gameRecord.horseName })
+                        }
+                        className="text-cream underline decoration-dotted underline-offset-2 hover:text-gold focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-sm"
+                        aria-label={`Compare ${gameRecord.horseName} against reference times`}
+                      >
+                        {gameRecord.horseName}
+                      </button>{" "}
+                      · {gameRecord.trackName} {gameRecord.distance}m
                     </span>
+
                     <RaceTimeDisplay
                       seconds={gameRecord.time}
                       distance={gameRecord.distance}
