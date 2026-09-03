@@ -70,6 +70,7 @@ vi.mock("@/components/race/RaceVerdictBar", () => ({
 
 vi.mock("@/core/common/formatting", () => ({
   formatCurrency: (n: number) => `$${n.toLocaleString()}`,
+  buildRaceTimeViews: (seconds: number) => [{ key: "primary", value: seconds.toString() }],
 }));
 
 vi.mock("@/constants", async (importOriginal) => {
