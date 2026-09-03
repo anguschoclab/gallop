@@ -31,6 +31,10 @@ function SyndicatePage() {
   const buyout = useGame((s: StoreType) => s.buyoutInvestor);
   const horses = useGameWithShallow((s: GameState) => s.horses);
   const npcStables = useGameWithShallow((s: GameState) => s.npcStables ?? []);
+  const stableById = useMemo(
+    () => new Map((npcStables ?? []).map((s) => [String(s.id), s])),
+    [npcStables],
+  );
   const allTransactions = useGameWithShallow(
     (s: GameState) => s.shareTransactions ?? [],
   ) as ShareTransaction[];
@@ -278,13 +282,11 @@ function SyndicatePage() {
                 const buyerName =
                   (tx.buyerStableId as string) === "player"
                     ? "You"
-                    : (npcStables.find((s) => (s.id as string) === (tx.buyerStableId as string))
-                        ?.name ?? tx.buyerStableId);
+                    : (stableById.get(String(tx.buyerStableId))?.name ?? tx.buyerStableId);
                 const sellerName =
                   (tx.sellerStableId as string) === "player"
                     ? "You"
-                    : (npcStables.find((s) => (s.id as string) === (tx.sellerStableId as string))
-                        ?.name ?? tx.sellerStableId);
+                    : (stableById.get(String(tx.sellerStableId))?.name ?? tx.sellerStableId);
                 return (
                   <div
                     key={tx.id}

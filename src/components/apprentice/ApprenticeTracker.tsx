@@ -101,7 +101,7 @@ export function ApprenticeTracker() {
 
               <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/5">
                 <div className="text-center">
-                  <div className="text-[8px] text-cream/40 uppercase tracking-widest font-black">
+                  <div className="text-[8px] text-cream/40 uppercase tracking-wide font-black">
                     Career Wins
                   </div>
                   <div className="text-sm font-mono font-black text-cream">
@@ -109,7 +109,7 @@ export function ApprenticeTracker() {
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-[8px] text-cream/40 uppercase tracking-widest font-black">
+                  <div className="text-[8px] text-cream/40 uppercase tracking-wide font-black">
                     Allowance
                   </div>
                   <div className="text-sm font-mono font-black text-gold">
@@ -117,7 +117,7 @@ export function ApprenticeTracker() {
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-[8px] text-cream/40 uppercase tracking-widest font-black">
+                  <div className="text-[8px] text-cream/40 uppercase tracking-wide font-black">
                     Contract
                   </div>
                   <div className="text-sm font-mono font-black text-cream">
@@ -129,7 +129,7 @@ export function ApprenticeTracker() {
               {status === "apprentice" && winsUntilGraduation > 0 && (
                 <div className="pt-2 border-t border-white/5">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] text-cream/40 uppercase tracking-widest font-black flex items-center gap-1">
+                    <span className="text-[9px] text-cream/40 uppercase tracking-wide font-black flex items-center gap-1">
                       <TrendingUp className="h-2.5 w-2.5" /> Graduation
                     </span>
                     <span className="text-[10px] font-mono text-blue-400">
@@ -150,7 +150,7 @@ export function ApprenticeTracker() {
               {status === "journeyman" && (
                 <div className="pt-2 border-t border-white/5">
                   <div className="flex items-center justify-between">
-                    <span className="text-[9px] text-cream/40 uppercase tracking-widest font-black flex items-center gap-1">
+                    <span className="text-[9px] text-cream/40 uppercase tracking-wide font-black flex items-center gap-1">
                       <Award className="h-2.5 w-2.5" /> Senior Track
                     </span>
                     <span className="text-[10px] font-mono text-green-400">

@@ -115,7 +115,7 @@ function JockeyPage() {
 
             {(jockey.traits?.length ?? 0) > 0 && (
               <div className="space-y-2">
-                <h3 className="text-[10px] font-black uppercase text-cream/40 tracking-widest">
+                <h3 className="text-[10px] font-black uppercase text-cream/40 tracking-wide">
                   Active Traits
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -134,7 +134,7 @@ function JockeyPage() {
 
             {jockey.traitProgression && (
               <div className="space-y-3">
-                <h3 className="text-[10px] font-black uppercase text-cream/40 tracking-widest">
+                <h3 className="text-[10px] font-black uppercase text-cream/40 tracking-wide">
                   Progression
                 </h3>
                 {Object.entries(jockey.traitProgression.xp).map(([traitKey, xp]) => {
@@ -160,7 +160,7 @@ function JockeyPage() {
                         />
                       </div>
                       {!isUnlocked && xp < TRAIT_XP_MAINTENANCE_THRESHOLD && (
-                        <div className="text-[8px] text-destructive/40 uppercase tracking-widest">
+                        <div className="text-[8px] text-destructive/40 uppercase tracking-wide">
                           Atrophy Risk
                         </div>
                       )}

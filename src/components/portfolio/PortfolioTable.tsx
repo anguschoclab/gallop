@@ -63,7 +63,7 @@ export function PortfolioTable({
                 <button
                   type="button"
                   onClick={() => onSort(c.key)}
-                  className={`inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest transition-colors hover:text-cream ${
+                  className={`inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide transition-colors hover:text-cream ${
                     sortKey === c.key ? "text-cream" : "text-cream-muted"
                   } ${c.numeric ? "justify-end w-full" : ""}`}
                 >
@@ -164,7 +164,7 @@ export function PortfolioTable({
               {expanded === r.id && (
                 <TableRow className="border-white/5 bg-slate-950/40">
                   <TableCell colSpan={COLUMNS.length + 1} className="p-4">
-                    <div className="mb-2 text-[10px] font-black uppercase tracking-widest text-cream-muted">
+                    <div className="mb-2 text-[10px] font-black uppercase tracking-wide text-cream-muted">
                       {r.yard ? `${r.yard.name} — ${r.yard.town}` : "Roster"}
                     </div>
                     {r.roster.length === 0 ? (

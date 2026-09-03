@@ -118,19 +118,19 @@ export function JockeyCard({
                 <Badge
                   variant="outline"
                   className={cn(
-                    "text-[9px] font-black uppercase tracking-widest h-4 px-1.5 rounded-none",
+                    "text-[9px] font-black uppercase tracking-wide h-4 px-1.5 rounded-none",
                     archetypeColors[jockey.archetype],
                   )}
                 >
                   {jockey.archetype.replace("_", " ")}
                 </Badge>
                 {jockey.isApprentice && (
-                  <Badge className="bg-amber-600 text-cream text-[9px] font-black uppercase tracking-widest h-4 px-1.5 rounded-none border-none">
+                  <Badge className="bg-amber-600 text-cream text-[9px] font-black uppercase tracking-wide h-4 px-1.5 rounded-none border-none">
                     Apprentice {claim > 0 ? `(-${claim} lbs)` : ""}
                   </Badge>
                 )}
                 {isRetained && (
-                  <Badge className="bg-blue-500 text-slate-950 text-[9px] font-black uppercase tracking-widest h-4 px-1.5 rounded-none">
+                  <Badge className="bg-blue-500 text-slate-950 text-[9px] font-black uppercase tracking-wide h-4 px-1.5 rounded-none">
                     Signed
                   </Badge>
                 )}
@@ -138,7 +138,7 @@ export function JockeyCard({
             </div>
           </div>
           <div className="text-right">
-            <div className="text-[8px] font-black uppercase text-blue-400/40 tracking-widest leading-none mb-1">
+            <div className="text-[8px] font-black uppercase text-blue-400/40 tracking-wide leading-none mb-1">
               Mount Fee
             </div>
             <div className="text-lg font-black font-mono text-gold tabular-nums tracking-tighter">
@@ -150,7 +150,7 @@ export function JockeyCard({
 
       <CardContent className="p-0 flex-1 flex flex-col">
         {/* Personnel Bio Strip */}
-        <div className="flex items-center justify-between px-5 py-2 bg-white/[0.02] border-b border-white/5 text-[9px] font-mono uppercase tracking-widest text-cream/40">
+        <div className="flex items-center justify-between px-5 py-2 bg-white/[0.02] border-b border-white/5 text-[9px] font-mono uppercase tracking-wide text-cream/40">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
               <Calendar className="h-3 w-3 opacity-40" /> Age: {jockey.age}
@@ -172,7 +172,7 @@ export function JockeyCard({
             <div className="bg-gold/10 border border-gold/20 p-3 flex gap-3 items-start rounded-sm">
               <Lightbulb className="h-4 w-4 text-gold mt-0.5 shrink-0" />
               <div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-gold/80 mb-0.5">
+                <div className="text-[10px] font-black uppercase tracking-wide text-gold/80 mb-0.5">
                   Tipster Insight: {insight.label}
                 </div>
                 <div className="text-sm font-bold text-cream">{insight.value}</div>
@@ -183,7 +183,7 @@ export function JockeyCard({
 
           {(jockey.traits?.length ?? 0) > 0 && (
             <div className="space-y-2">
-              <div className="flex items-center gap-1.5 text-[8px] font-black uppercase text-cream/20 tracking-widest">
+              <div className="flex items-center gap-1.5 text-[8px] font-black uppercase text-cream/20 tracking-wide">
                 <Sparkles className="h-3 w-3 text-gold/40" />
                 Traits
               </div>
@@ -203,12 +203,12 @@ export function JockeyCard({
 
           <div className="flex items-center justify-between bg-black/40 p-2 rounded-sm border border-white/5">
             <div className="flex items-center gap-2">
-              <span className="text-[8px] font-black uppercase text-cream/20 tracking-widest">
+              <span className="text-[8px] font-black uppercase text-cream/20 tracking-wide">
                 Licensed
               </span>
               <span
                 className={cn(
-                  "text-[9px] font-mono font-bold tracking-widest uppercase flex items-center gap-1.5",
+                  "text-[9px] font-mono font-bold tracking-wide uppercase flex items-center gap-1.5",
                   jockey.isApprentice ? "text-amber-500/60" : "text-success/60",
                 )}
               >
@@ -220,7 +220,7 @@ export function JockeyCard({
               params={{ jockeyId: jockey.id }}
               onClick={(e) => e.stopPropagation()}
             >
-              <span className="text-[8px] font-black text-blue-400/60 hover:text-blue-400 uppercase tracking-widest flex items-center gap-1">
+              <span className="text-[8px] font-black text-blue-400/60 hover:text-blue-400 uppercase tracking-wide flex items-center gap-1">
                 VIEW BIO <ChevronRight className="h-2.5 w-2.5" />
               </span>
             </Link>
@@ -234,7 +234,7 @@ export function JockeyCard({
                 e.stopPropagation();
                 onAction(jockey);
               }}
-              className="w-full h-9 bg-blue-500 hover:bg-blue-400 text-slate-950 font-black uppercase tracking-widest text-[10px] rounded-none shadow-lg"
+              className="w-full h-9 bg-blue-500 hover:bg-blue-400 text-slate-950 font-black uppercase tracking-wide text-[10px] rounded-none shadow-lg"
             >
               <DollarSign className="h-3 w-3 mr-2" />
               {actionLabel || "Hire"}

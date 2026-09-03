@@ -67,7 +67,7 @@ export function DebtBanner() {
               {display.label}
             </p>
             {display.showGraceBadge && (
-              <span className="text-[10px] uppercase tracking-widest opacity-75 font-mono">
+              <span className="text-[10px] uppercase tracking-wide opacity-75 font-mono">
                 {display.daysUntilForcedSale}d grace remaining
               </span>
             )}
@@ -109,7 +109,7 @@ export function DebtBanner() {
           {/* Seizure Preview */}
           {seizure && (
             <div className="col-span-2 md:col-span-4 mt-1 p-2 rounded border border-red-500/30 bg-red-950/20">
-              <p className="text-[10px] uppercase tracking-widest opacity-60 mb-1 font-mono">
+              <p className="text-[10px] uppercase tracking-wide opacity-60 mb-1 font-mono">
                 Seizure preview
               </p>
               <div className="flex flex-wrap gap-4 font-mono">
@@ -140,7 +140,7 @@ export function DebtBanner() {
             <div>
               <label
                 htmlFor={payDownId}
-                className="text-[10px] uppercase tracking-widest opacity-60 font-mono block mb-0.5"
+                className="text-[10px] uppercase tracking-wide opacity-60 font-mono block mb-0.5"
               >
                 Pay down debt
               </label>
@@ -175,7 +175,7 @@ export function DebtBanner() {
 
           {recentAudit.length > 0 && (
             <div className="col-span-2 md:col-span-4 mt-1">
-              <p className="text-[10px] uppercase tracking-widest opacity-60 mb-1 font-mono">
+              <p className="text-[10px] uppercase tracking-wide opacity-60 mb-1 font-mono">
                 Recent solvency events
               </p>
               <ul className="space-y-0.5 font-mono">
@@ -207,9 +207,7 @@ export function DebtBanner() {
 function DetailCell({ label, value, wide }: { label: string; value: string; wide?: boolean }) {
   return (
     <div className={cn(wide && "col-span-2 md:col-span-4")}>
-      <div className="text-[9px] uppercase tracking-widest opacity-60 font-mono mb-0.5">
-        {label}
-      </div>
+      <div className="text-[9px] uppercase tracking-wide opacity-60 font-mono mb-0.5">{label}</div>
       <div className="font-mono tabular-nums">{value}</div>
     </div>
   );

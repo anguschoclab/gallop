@@ -122,7 +122,7 @@ function BookmarksPage() {
     <div className="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-4">
         <div>
-          <p className="text-[10px] uppercase font-black tracking-[0.25em] text-cream/30">Saved</p>
+          <p className="text-[10px] uppercase font-black tracking-wide text-cream/30">Saved</p>
           <h1 className="text-4xl font-black font-[family-name=var(--font-display)] text-cream uppercase tracking-tight flex items-center gap-3">
             <BookmarkIcon className="h-7 w-7 text-gold" />
             Bookmarks
@@ -134,7 +134,7 @@ function BookmarksPage() {
             variant="outline"
             size="sm"
             onClick={clear}
-            className="gap-2 text-[10px] uppercase tracking-widest"
+            className="gap-2 text-[10px] uppercase tracking-wide"
           >
             <Trash2 className="h-3 w-3" /> Clear all
           </Button>
@@ -166,7 +166,7 @@ function BookmarksPage() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value as BookmarkEntityType | "all")}
-              className="h-9 bg-slate-950/40 border border-white/10 text-cream text-xs font-mono uppercase tracking-widest px-3"
+              className="h-9 bg-slate-950/40 border border-white/10 text-cream text-xs font-mono uppercase tracking-wide px-3"
               aria-label="Filter by type"
             >
               {TYPE_FILTERS.map((t) => (
@@ -178,7 +178,7 @@ function BookmarksPage() {
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
-              className="h-9 bg-slate-950/40 border border-white/10 text-cream text-xs font-mono uppercase tracking-widest px-3"
+              className="h-9 bg-slate-950/40 border border-white/10 text-cream text-xs font-mono uppercase tracking-wide px-3"
               aria-label="Sort by"
             >
               {SORTS.map((s) => (
@@ -192,7 +192,7 @@ function BookmarksPage() {
           {/* Tag filter row */}
           {allTags.length > 0 && (
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] uppercase font-black tracking-widest text-cream/30 flex items-center gap-1">
+              <span className="text-[10px] uppercase font-black tracking-wide text-cream/30 flex items-center gap-1">
                 <TagIcon className="h-3 w-3" /> Tags
               </span>
               {allTags.map((tag) => {
@@ -203,7 +203,7 @@ function BookmarksPage() {
                     type="button"
                     onClick={() => toggleTagFilter(tag)}
                     className={cn(
-                      "h-6 px-2 text-[10px] font-mono uppercase tracking-widest border transition-colors",
+                      "h-6 px-2 text-[10px] font-mono uppercase tracking-wide border transition-colors",
                       active
                         ? "border-gold/60 bg-gold/10 text-gold"
                         : "border-white/10 text-cream/50 hover:border-gold/30 hover:text-cream",
@@ -217,7 +217,7 @@ function BookmarksPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTags([])}
-                  className="text-[10px] uppercase font-black tracking-widest text-cream/40 hover:text-destructive flex items-center gap-1"
+                  className="text-[10px] uppercase font-black tracking-wide text-cream/40 hover:text-destructive flex items-center gap-1"
                 >
                   <X className="h-3 w-3" /> Clear
                 </button>
@@ -300,7 +300,7 @@ function BookmarkCard({
           search={href.search as Record<string, unknown>}
           className="block flex-1 min-w-0"
         >
-          <div className="text-[9px] uppercase font-black tracking-widest text-gold/70">
+          <div className="text-[9px] uppercase font-black tracking-wide text-gold/70">
             {TYPE_LABELS[bookmark.type]}
           </div>
           <div className="text-sm font-bold text-cream truncate">{bookmark.label}</div>
@@ -328,7 +328,7 @@ function BookmarkCard({
           {(bookmark.tags ?? []).map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center gap-1 h-5 px-1.5 text-[10px] font-mono uppercase tracking-widest border border-gold/40 text-gold bg-gold/5"
+              className="inline-flex items-center gap-1 h-5 px-1.5 text-[10px] font-mono uppercase tracking-wide border border-gold/40 text-gold bg-gold/5"
             >
               {tag}
               <button
@@ -342,7 +342,7 @@ function BookmarkCard({
             </span>
           ))}
           {(bookmark.tags ?? []).length === 0 && (
-            <span className="text-[10px] uppercase font-mono tracking-widest text-cream/20">
+            <span className="text-[10px] uppercase font-mono tracking-wide text-cream/20">
               No tags
             </span>
           )}

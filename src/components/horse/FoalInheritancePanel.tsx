@@ -26,26 +26,18 @@ export function FoalInheritancePanel({
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none border-l-4 border-l-gold">
       <CardHeader className="pb-2 border-b border-white/5">
-        <CardTitle className="text-[10px] font-black uppercase tracking-widest text-cream/40 flex items-center gap-2">
+        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
           <Baby className="h-3.5 w-3.5 text-gold" />
           What {foal.name} Inherited
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">
         <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-x-4 gap-y-2 text-sm items-center">
-          <span className="text-[10px] uppercase tracking-widest text-cream/30">Stat</span>
-          <span className="text-[10px] uppercase tracking-widest text-cream/30 text-right">
-            Sire
-          </span>
-          <span className="text-[10px] uppercase tracking-widest text-cream/30 text-right">
-            Foal
-          </span>
-          <span className="text-[10px] uppercase tracking-widest text-cream/30 text-right">
-            Dam
-          </span>
-          <span className="text-[10px] uppercase tracking-widest text-cream/30 text-right">
-            Lean
-          </span>
+          <span className="text-[10px] uppercase tracking-wide text-cream/30">Stat</span>
+          <span className="text-[10px] uppercase tracking-wide text-cream/30 text-right">Sire</span>
+          <span className="text-[10px] uppercase tracking-wide text-cream/30 text-right">Foal</span>
+          <span className="text-[10px] uppercase tracking-wide text-cream/30 text-right">Dam</span>
+          <span className="text-[10px] uppercase tracking-wide text-cream/30 text-right">Lean</span>
           {rows.map((r) => (
             <FoalRow {...r} key={r.key} />
           ))}

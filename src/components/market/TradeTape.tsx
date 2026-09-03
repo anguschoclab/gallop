@@ -29,7 +29,7 @@ export function TradeTape({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-cream-muted">
+        <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream-muted">
           <Activity className="h-3.5 w-3.5 text-primary" />
           Trade Tape
         </h3>

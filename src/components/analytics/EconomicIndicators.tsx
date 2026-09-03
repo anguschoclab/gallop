@@ -77,7 +77,7 @@ export function EconomicIndicators() {
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex items-center justify-between text-xs">
-          <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+          <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
             Stud Fee Trend
           </span>
           <span className="font-mono text-cream/80 text-[10px] flex items-center gap-1">
@@ -92,7 +92,7 @@ export function EconomicIndicators() {
           </span>
         </div>
         <div className="flex items-center justify-between text-xs">
-          <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+          <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
             Yearling Price Index
           </span>
           <span className="font-mono text-cream/80 text-[10px]">
@@ -100,7 +100,7 @@ export function EconomicIndicators() {
           </span>
         </div>
         <div className="flex items-center justify-between text-xs">
-          <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+          <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
             Claiming Market Activity
           </span>
           <span className="font-mono text-cream/80 text-[10px]">
@@ -110,7 +110,7 @@ export function EconomicIndicators() {
 
         <div className="pt-2 border-t border-white/5 space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-cream/40 uppercase tracking-widest text-[9px] font-black">
+            <span className="text-cream/40 uppercase tracking-wide text-[9px] font-black">
               Market Phase
             </span>
             <Badge
@@ -134,7 +134,7 @@ export function EconomicIndicators() {
 
         {economicHistory && economicHistory.length > 1 && (
           <div className="pt-2 border-t border-white/5">
-            <div className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-cream/30 mb-1">
+            <div className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wide text-cream/30 mb-1">
               <Activity className="h-3 w-3" /> Yearling Index History
             </div>
             <div className="flex items-end gap-px h-8">

@@ -10,7 +10,7 @@ export function NewsFeedWidget() {
   return (
     <Card className="lg:col-span-8 border-gold-muted bg-slate-900/40 border-t-2 border-t-gold/40">
       <CardHeader className="py-3 border-b border-white/5 flex flex-row items-center justify-between bg-black/20">
-        <CardTitle className="text-[10px] font-bold uppercase tracking-[0.4em] text-cream-muted">
+        <CardTitle className="text-[10px] font-bold uppercase tracking-wide text-cream-muted">
           News Feed
         </CardTitle>
         <Activity className="h-3 w-3 text-cream-muted/40 animate-pulse" />

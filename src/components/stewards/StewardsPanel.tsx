@@ -113,7 +113,7 @@ export function StewardsPanel({ horseId }: StewardsPanelProps) {
             {inquiry.outcome && (
               <div className="pt-2 border-t border-white/5 space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-[9px] text-cream/40 uppercase tracking-widest font-black">
+                  <span className="text-[9px] text-cream/40 uppercase tracking-wide font-black">
                     Outcome
                   </span>
                   <span
@@ -127,7 +127,7 @@ export function StewardsPanel({ horseId }: StewardsPanelProps) {
                 </div>
                 {inquiry.fineAmount && (
                   <div className="flex items-center justify-between">
-                    <span className="text-[9px] text-cream/40 uppercase tracking-widest font-black flex items-center gap-1">
+                    <span className="text-[9px] text-cream/40 uppercase tracking-wide font-black flex items-center gap-1">
                       <DollarSign className="h-2.5 w-2.5" /> Fine
                     </span>
                     <span className="text-[10px] font-mono text-gold">
@@ -137,7 +137,7 @@ export function StewardsPanel({ horseId }: StewardsPanelProps) {
                 )}
                 {inquiry.suspensionDays && (
                   <div className="flex items-center justify-between">
-                    <span className="text-[9px] text-cream/40 uppercase tracking-widest font-black">
+                    <span className="text-[9px] text-cream/40 uppercase tracking-wide font-black">
                       Suspension
                     </span>
                     <span className="text-[10px] font-mono text-cream">

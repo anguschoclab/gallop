@@ -58,7 +58,7 @@ export function LotDetailPanel({
             <h2 className="text-4xl font-black text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-gold transition-colors">
               {horse.name}
             </h2>
-            <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-cream/40">
+            <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-wide text-cream/40">
               <span>
                 {genderSymbol(horse.gender)} {horse.gender}
               </span>
@@ -85,24 +85,24 @@ export function LotDetailPanel({
           {lot.passed && (
             <Badge
               variant="secondary"
-              className="rounded-none font-black text-[10px] tracking-widest h-8 px-4 bg-destructive/10 text-destructive border-destructive/20 uppercase"
+              className="rounded-none font-black text-[10px] tracking-wide h-8 px-4 bg-destructive/10 text-destructive border-destructive/20 uppercase"
             >
               Reserve not met
             </Badge>
           )}
           {!lot.passed && !isResolved && isPlayerLeading && (
-            <Badge className="bg-success text-slate-950 rounded-none font-black text-[10px] tracking-widest h-8 px-4 animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.3)]">
+            <Badge className="bg-success text-slate-950 rounded-none font-black text-[10px] tracking-wide h-8 px-4 animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.3)]">
               Leading Bidder
             </Badge>
           )}
           {!lot.passed && lot.soldToStableId && isResolved && (
             <div className="text-right">
-              <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest mb-1">
+              <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide mb-1">
                 Acquired_By
               </div>
               <Badge
                 variant="outline"
-                className="border-gold/30 text-gold font-black text-[9px] uppercase tracking-widest h-6 rounded-none px-3 bg-gold/5"
+                className="border-gold/30 text-gold font-black text-[9px] uppercase tracking-wide h-6 rounded-none px-3 bg-gold/5"
               >
                 {consignor?.name?.toUpperCase() ?? "Unknown"}
               </Badge>
@@ -127,7 +127,7 @@ export function LotDetailPanel({
               />
               <div className="absolute bottom-4 left-4 bg-black/80 border border-white/10 px-2 py-1 flex items-center gap-2 shadow-xl">
                 <ShieldCheck className="h-3 w-3 text-gold/40" />
-                <span className="text-[8px] font-mono text-gold-muted/60 uppercase tracking-widest">
+                <span className="text-[8px] font-mono text-gold-muted/60 uppercase tracking-wide">
                   Confirmed
                 </span>
               </div>
@@ -136,7 +136,7 @@ export function LotDetailPanel({
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-1 px-1">
                 <TrendingUp className="h-3.5 w-3.5 text-pink-500/60" />
-                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40">
+                <h3 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
                   Pedigree Analysis
                 </h3>
               </div>
@@ -144,7 +144,7 @@ export function LotDetailPanel({
                 <CardContent className="p-4 space-y-3">
                   <div className="flex items-start gap-4">
                     <div className="space-y-0.5 flex-1">
-                      <div className="text-[8px] font-black uppercase text-pink-500/40 tracking-widest">
+                      <div className="text-[8px] font-black uppercase text-pink-500/40 tracking-wide">
                         Sire Line
                       </div>
                       <div className="text-xs font-bold text-cream uppercase">
@@ -152,7 +152,7 @@ export function LotDetailPanel({
                       </div>
                     </div>
                     <div className="space-y-0.5 flex-1 border-l border-white/5 pl-4">
-                      <div className="text-[8px] font-black uppercase text-pink-500/40 tracking-widest">
+                      <div className="text-[8px] font-black uppercase text-pink-500/40 tracking-wide">
                         Dam Line
                       </div>
                       <div className="text-xs font-bold text-cream uppercase">
@@ -162,7 +162,7 @@ export function LotDetailPanel({
                   </div>
                   {horse.bruceLoweFamily && (
                     <div className="pt-2 border-t border-white/5">
-                      <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">
+                      <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide">
                         Bruce Lowe Family
                       </div>
                       <div className="text-xs font-mono font-bold text-pink-400">
@@ -180,7 +180,7 @@ export function LotDetailPanel({
             <section className="space-y-4">
               <div className="flex items-center gap-2 mb-1 px-1">
                 <FileText className="h-3.5 w-3.5 text-gold/60" />
-                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40">
+                <h3 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
                   Technical Specifications
                 </h3>
               </div>
@@ -224,7 +224,7 @@ export function LotDetailPanel({
               {displayStats && (
                 <div className="pt-4 border-t border-white/5 space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="text-[8px] font-black uppercase text-gold/40 tracking-widest">
+                    <div className="text-[8px] font-black uppercase text-gold/40 tracking-wide">
                       Scouting Report
                     </div>
                     {displayOverallEstimate && (

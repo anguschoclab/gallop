@@ -49,7 +49,7 @@ export function FinancialDistressIndicator({ distress }: FinancialDistressIndica
       <CardHeader className="bg-black/20 border-b border-white/5">
         <CardTitle
           className={cn(
-            "text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2",
+            "text-[10px] font-black uppercase tracking-wide flex items-center gap-2",
             config.color,
           )}
         >
@@ -58,12 +58,12 @@ export function FinancialDistressIndicator({ distress }: FinancialDistressIndica
       </CardHeader>
       <CardContent className="p-4 space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-[9px] font-black uppercase tracking-widest text-cream/40">
+          <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
             Distress Level
           </span>
           <Badge
             className={cn(
-              "rounded-none text-[9px] font-black uppercase tracking-widest border",
+              "rounded-none text-[9px] font-black uppercase tracking-wide border",
               distress.level === "critical"
                 ? "bg-red-400/10 text-red-400 border-red-400/30"
                 : distress.level === "emergency"
@@ -75,7 +75,7 @@ export function FinancialDistressIndicator({ distress }: FinancialDistressIndica
           </Badge>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-[9px] font-black uppercase tracking-widest text-cream/40">
+          <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
             Days of Cash
           </span>
           <span className={cn("font-mono text-xs font-bold", config.color)}>
@@ -84,7 +84,7 @@ export function FinancialDistressIndicator({ distress }: FinancialDistressIndica
         </div>
         {distress.recommendedActions.length > 0 && (
           <div className="pt-2 border-t border-white/5 space-y-1">
-            <div className="text-[9px] font-black uppercase tracking-widest text-cream/30">
+            <div className="text-[9px] font-black uppercase tracking-wide text-cream/30">
               Recommended Actions
             </div>
             {distress.recommendedActions.map((action) => (

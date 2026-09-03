@@ -87,7 +87,7 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <p className="mt-2 text-[10px] uppercase tracking-widest text-cream-muted cursor-help">
+                        <p className="mt-2 text-[10px] uppercase tracking-wide text-cream-muted cursor-help">
                           {attachment.label} · asks ×{attachment.askMultiplier.toFixed(2)} of market
                         </p>
                       </TooltipTrigger>
@@ -130,7 +130,7 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
                       }}
                       disabled={!!activeOffer || hasInAuction}
                       className={cn(
-                        "h-7 px-3 text-[9px] font-black uppercase tracking-widest border-white/10 hover:bg-gold/10 hover:text-gold hover:border-gold/30 rounded-none bg-slate-950/80 backdrop-blur-sm text-cream/60",
+                        "h-7 px-3 text-[9px] font-black uppercase tracking-wide border-white/10 hover:bg-gold/10 hover:text-gold hover:border-gold/30 rounded-none bg-slate-950/80 backdrop-blur-sm text-cream/60",
                         (!!activeOffer || hasInAuction) && "pointer-events-none",
                       )}
                     >
@@ -148,7 +148,7 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
                         onClick={handleScout}
                         disabled={cash < scoutCost}
                         className={cn(
-                          "h-7 px-3 text-[9px] font-black uppercase tracking-widest border-white/10 hover:bg-blue-400/10 hover:text-blue-400 hover:border-blue-400/30 rounded-none bg-slate-950/80 backdrop-blur-sm text-cream/60",
+                          "h-7 px-3 text-[9px] font-black uppercase tracking-wide border-white/10 hover:bg-blue-400/10 hover:text-blue-400 hover:border-blue-400/30 rounded-none bg-slate-950/80 backdrop-blur-sm text-cream/60",
                           cash < scoutCost && "pointer-events-none",
                         )}
                       >

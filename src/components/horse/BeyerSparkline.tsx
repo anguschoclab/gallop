@@ -25,9 +25,9 @@ export function BeyerSparkline({ data, className }: BeyerSparklineProps) {
           <Line
             type="step"
             dataKey="beyer"
-            stroke="#d4af37"
+            stroke="var(--gold)"
             strokeWidth={1.5}
-            dot={{ r: 1.5, fill: "#020617", stroke: "#d4af37" }}
+            dot={{ r: 1.5, fill: "var(--background)", stroke: "var(--gold)" }}
             isAnimationActive={false}
           />
         </LineChart>

@@ -71,7 +71,7 @@ export function HorseCardCompact({
                 <AlertCircle className="h-3 w-3 text-destructive animate-pulse shrink-0" />
               )}
             </div>
-            <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-cream/40">
+            <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-wide text-cream/40">
               <span className={genderColor}>{genderSymbol(horse.gender)}</span>
               <span>Age: {Math.floor(horse.age)}</span>
               <span className="w-1 h-1 bg-white/20 rounded-full" />

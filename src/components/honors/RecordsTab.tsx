@@ -45,13 +45,13 @@ export function RecordsTab() {
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-3">
             <RefreshCw className="h-4 w-4 text-gold/60" />
-            <h3 className="text-xs font-black uppercase tracking-widest text-cream/40">
+            <h3 className="text-xs font-black uppercase tracking-wide text-cream/40">
               Data Freshness
             </h3>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs">
             <div>
-              <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+              <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
                 Leaderboards
               </span>
               <p className="text-cream font-mono">
@@ -59,7 +59,7 @@ export function RecordsTab() {
               </p>
             </div>
             <div>
-              <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+              <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
                 Top Ten Rank
               </span>
               <p className="text-cream font-mono">
@@ -67,7 +67,7 @@ export function RecordsTab() {
               </p>
             </div>
             <div>
-              <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+              <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
                 Industry Earnings
               </span>
               <p className="text-cream font-mono">
@@ -77,7 +77,7 @@ export function RecordsTab() {
               </p>
             </div>
             <div>
-              <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+              <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
                 Founder Update
               </span>
               <p className="text-cream font-mono">
@@ -85,7 +85,7 @@ export function RecordsTab() {
               </p>
             </div>
             <div>
-              <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+              <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
                 Last Awards
               </span>
               <p className="text-cream font-mono">
@@ -98,18 +98,15 @@ export function RecordsTab() {
 
       <Tabs defaultValue="earnings" className="w-full">
         <TabsList className="grid w-full max-w-2xl grid-cols-3 bg-muted/50 p-1 mb-8">
-          <TabsTrigger
-            value="earnings"
-            className="uppercase font-black text-[10px] tracking-widest"
-          >
+          <TabsTrigger value="earnings" className="uppercase font-black text-[10px] tracking-wide">
             <DollarSign size={14} className="mr-2" />
             Top Earnings
           </TabsTrigger>
-          <TabsTrigger value="beyer" className="uppercase font-black text-[10px] tracking-widest">
+          <TabsTrigger value="beyer" className="uppercase font-black text-[10px] tracking-wide">
             <Zap size={14} className="mr-2" />
             Highest Beyers
           </TabsTrigger>
-          <TabsTrigger value="tracks" className="uppercase font-black text-[10px] tracking-widest">
+          <TabsTrigger value="tracks" className="uppercase font-black text-[10px] tracking-wide">
             <Timer size={14} className="mr-2" />
             Track Records
           </TabsTrigger>

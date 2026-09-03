@@ -81,7 +81,7 @@ export function KeyRivalsWidget({ rivals, calculateHeadToHead }: KeyRivalsWidget
                   )}
                   {rival.recentEncounters && rival.recentEncounters.length > 0 && (
                     <div className="space-y-0.5 pt-1 border-t border-white/5">
-                      <div className="text-[8px] font-black uppercase tracking-widest text-cream/20">
+                      <div className="text-[8px] font-black uppercase tracking-wide text-cream/20">
                         Recent
                       </div>
                       {rival.recentEncounters.slice(-2).map((enc, idx) => (

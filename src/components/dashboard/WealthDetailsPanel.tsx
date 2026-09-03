@@ -67,7 +67,7 @@ export function WealthDetailsPanel({ stable, horses }: WealthDetailsPanelProps) 
           <CardContent className="pt-2 space-y-3">
             <div className="grid grid-cols-3 gap-2 text-xs">
               <div className="rounded border border-white/5 p-2">
-                <div className="text-[9px] uppercase tracking-widest font-mono text-cream/40">
+                <div className="text-[9px] uppercase tracking-wide font-mono text-cream/40">
                   Cash
                 </div>
                 <div className="font-mono tabular-nums text-cream font-bold mt-0.5">
@@ -75,7 +75,7 @@ export function WealthDetailsPanel({ stable, horses }: WealthDetailsPanelProps) 
                 </div>
               </div>
               <div className="rounded border border-white/5 p-2">
-                <div className="text-[9px] uppercase tracking-widest font-mono text-cream/40">
+                <div className="text-[9px] uppercase tracking-wide font-mono text-cream/40">
                   Horse Assets
                 </div>
                 <div className="font-mono tabular-nums text-cream font-bold mt-0.5">
@@ -83,7 +83,7 @@ export function WealthDetailsPanel({ stable, horses }: WealthDetailsPanelProps) 
                 </div>
               </div>
               <div className="rounded border border-white/5 p-2">
-                <div className="text-[9px] uppercase tracking-widest font-mono text-cream/40">
+                <div className="text-[9px] uppercase tracking-wide font-mono text-cream/40">
                   Horses
                 </div>
                 <div className="font-mono tabular-nums text-cream font-bold mt-0.5">
@@ -94,7 +94,7 @@ export function WealthDetailsPanel({ stable, horses }: WealthDetailsPanelProps) 
 
             {topHorses.length > 0 && (
               <div>
-                <div className="text-[9px] uppercase tracking-widest font-mono text-cream/40 mb-1">
+                <div className="text-[9px] uppercase tracking-wide font-mono text-cream/40 mb-1">
                   Horse Breakdown
                 </div>
                 <div className="space-y-1">

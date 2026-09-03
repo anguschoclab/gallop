@@ -116,7 +116,7 @@ export function ActiveProgramView() {
                 </AlertDialogTrigger>
                 <AlertDialogContent className="bg-slate-950 border-destructive/30 rounded-none">
                   <AlertDialogHeader>
-                    <AlertDialogTitle className="text-destructive uppercase font-black tracking-widest">
+                    <AlertDialogTitle className="text-destructive uppercase font-black tracking-wide">
                       {CANCEL_DIALOG_TITLE}
                     </AlertDialogTitle>
                     <AlertDialogDescription className="text-cream/60 font-mono text-xs uppercase tracking-tighter">
@@ -126,13 +126,13 @@ export function ActiveProgramView() {
                   <AlertDialogFooter>
                     <AlertDialogCancel
                       onClick={handleDialogCancel}
-                      className="rounded-none font-black text-[10px] uppercase tracking-widest border-white/10 hover:bg-white/5"
+                      className="rounded-none font-black text-[10px] uppercase tracking-wide border-white/10 hover:bg-white/5"
                     >
                       {CANCEL_DIALOG_KEEP}
                     </AlertDialogCancel>
                     <AlertDialogAction
                       onClick={handleConfirm}
-                      className="bg-destructive text-white hover:bg-destructive/90 rounded-none font-black text-[10px] uppercase tracking-widest"
+                      className="bg-destructive text-white hover:bg-destructive/90 rounded-none font-black text-[10px] uppercase tracking-wide"
                     >
                       {CANCEL_DIALOG_CONFIRM}
                     </AlertDialogAction>

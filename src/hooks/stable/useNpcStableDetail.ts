@@ -70,19 +70,28 @@ export function useNpcStableDetail(stableId: string) {
   const headToHead = useMemo(() => {
     const ownedHorses = Object.values(horses).filter((h) => isPlayerOwned(h));
     const thirtyDaysAgo = day - 30;
+    // Pre-index graded race entries by stableId for O(1) lookups.
+    const gradedRaceStables = new Map<string, Set<string>>();
+    for (const raceId in races) {
+      const race = races[raceId];
+      if (!race.graded) continue;
+      const stableSet = new Set<string>();
+      for (const e of race.entries) {
+        const sid = getStableId(e);
+        if (sid) stableSet.add(sid);
+      }
+      gradedRaceStables.set(raceId, stableSet);
+    }
     let wins = 0;
     let losses = 0;
     ownedHorses.forEach((horse) => {
       horse.raceHistory
         .filter((r: { day: number }) => r.day >= thirtyDaysAgo)
         .forEach((raceResult: { raceId: string; position: number }) => {
-          const race = races[raceResult.raceId];
-          if (race && race.graded) {
-            const hadRivalEntry = race.entries.some((e: RaceEntry) => getStableId(e) === stableId);
-            if (hadRivalEntry) {
-              if (raceResult.position === 1) wins++;
-              else losses++;
-            }
+          const stableSet = gradedRaceStables.get(raceResult.raceId);
+          if (stableSet && stableSet.has(stableId)) {
+            if (raceResult.position === 1) wins++;
+            else losses++;
           }
         });
     });

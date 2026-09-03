@@ -56,7 +56,7 @@ export function FoalDevelopmentPanel({ horse }: Props) {
       </div>
       <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-gold">
         <CardHeader className="pb-2 border-b border-white/5">
-          <CardTitle className="text-[10px] font-black uppercase tracking-widest text-cream/40">
+          <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40">
             Development Arc
           </CardTitle>
         </CardHeader>
@@ -89,7 +89,7 @@ export function FoalDevelopmentPanel({ horse }: Props) {
                 <Link
                   to="/foal-development/$horseId"
                   params={{ horseId: horse.id }}
-                  className="inline-block text-gold uppercase font-mono text-[10px] tracking-widest hover:underline"
+                  className="inline-block text-gold uppercase font-mono text-[10px] tracking-wide hover:underline"
                 >
                   Resolve Milestone →
                 </Link>

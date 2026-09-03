@@ -47,7 +47,7 @@ export function PrivateTrialResults({
               stat.isPlayer ? "border-gold/30 bg-gold/5" : "border-white/5 bg-black/20",
             )}
           >
-            <div className="text-[10px] font-black uppercase tracking-widest text-cream/40 leading-none mb-1">
+            <div className="text-[10px] font-black uppercase tracking-wide text-cream/40 leading-none mb-1">
               Finish Position: {stat.position}
             </div>
             <div className="text-sm font-black uppercase text-cream truncate">{stat.name}</div>
@@ -91,7 +91,7 @@ export function PrivateTrialResults({
               />
               <ChartTooltip
                 contentStyle={{
-                  background: "#020617",
+                  background: "var(--background)",
                   border: "1px solid rgba(212,175,55,0.3)",
                   borderRadius: 0,
                   padding: "8px 12px",
@@ -108,14 +108,14 @@ export function PrivateTrialResults({
               <Line
                 type="monotone"
                 dataKey={horse.name}
-                stroke="#d4af37"
+                stroke="var(--gold)"
                 strokeWidth={2}
                 dot={false}
               />
               <Line
                 type="monotone"
                 dataKey={opponentName}
-                stroke="#60a5fa"
+                stroke="var(--info)"
                 strokeWidth={2}
                 dot={false}
               />
@@ -126,7 +126,7 @@ export function PrivateTrialResults({
 
       {/* Rider feedback */}
       <div className="bg-black/20 border border-white/5 p-4 rounded-none">
-        <div className="text-[10px] font-black uppercase tracking-widest text-gold mb-2">
+        <div className="text-[10px] font-black uppercase tracking-wide text-gold mb-2">
           Rider Feedback
         </div>
         <p className="text-xs font-mono italic text-cream/90">{feedback}</p>
@@ -134,7 +134,7 @@ export function PrivateTrialResults({
 
       <Button
         onClick={onReset}
-        className="w-full bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-widest text-xs h-10 rounded-none shadow-lg"
+        className="w-full bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-wide text-xs h-10 rounded-none shadow-lg"
       >
         Configure New Trial
       </Button>

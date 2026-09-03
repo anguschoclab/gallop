@@ -48,7 +48,7 @@ export function StaffTeamList({
       <section className="space-y-6">
         <div className="flex items-center gap-3 px-1 border-b border-white/5 pb-2">
           <ShieldCheck className="h-4 w-4 text-blue-400" />
-          <h3 className="text-xs font-black uppercase tracking-[0.4em] text-cream/60">Our Team</h3>
+          <h3 className="text-xs font-black uppercase tracking-wide text-cream/60">Our Team</h3>
         </div>
         <div className="p-20 text-center border-2 border-dashed border-white/5 bg-black/10">
           <Briefcase className="h-16 w-16 mx-auto mb-6 text-cream/5" />
@@ -67,7 +67,7 @@ export function StaffTeamList({
     <section className="space-y-6">
       <div className="flex items-center gap-3 px-1 border-b border-white/5 pb-2">
         <ShieldCheck className="h-4 w-4 text-blue-400" />
-        <h3 className="text-xs font-black uppercase tracking-[0.4em] text-cream/60">Our Team</h3>
+        <h3 className="text-xs font-black uppercase tracking-wide text-cream/60">Our Team</h3>
       </div>
 
       <div className="grid grid-cols-1 gap-4">
@@ -119,13 +119,13 @@ export function StaffTeamList({
                         >
                           {(STAFF_TIER_LABELS as Record<string, string>)[member.tier].toUpperCase()}
                         </Badge>
-                        <span className="text-[9px] font-mono text-gold-muted font-bold uppercase tracking-widest">
+                        <span className="text-[9px] font-mono text-gold-muted font-bold uppercase tracking-wide">
                           {(STAFF_ROLE_LABELS as Record<string, string>)[member.role].toUpperCase()}
                         </span>
                       </div>
                     </div>
                     <div className="text-right space-y-1">
-                      <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest leading-none">
+                      <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide leading-none">
                         Day Rate
                       </div>
                       <div className="text-sm font-black font-mono text-destructive tracking-tighter">
@@ -150,7 +150,7 @@ export function StaffTeamList({
                   {showHonors && (
                     <div className="flex items-center gap-2 pt-2 border-t border-white/5">
                       <Trophy className="h-3 w-3 text-gold" />
-                      <span className="text-[9px] font-black uppercase tracking-widest text-cream/40">
+                      <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
                         Honors
                       </span>
                       <div className="flex items-center gap-1.5 font-mono text-[9px] tabular-nums">
@@ -179,7 +179,7 @@ export function StaffTeamList({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 px-3 text-[9px] font-black uppercase border border-white/5 text-destructive hover:bg-destructive/10 rounded-none tracking-widest"
+                      className="h-7 px-3 text-[9px] font-black uppercase border border-white/5 text-destructive hover:bg-destructive/10 rounded-none tracking-wide"
                       onClick={() => onFire(member)}
                     >
                       Release

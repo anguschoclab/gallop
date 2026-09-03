@@ -63,7 +63,7 @@ export function StepWorldSize({ worldSize, setWorldSize }: StepWorldSizeProps) {
                   <p className="text-sm text-cream-muted mt-1">{desc.blurb}</p>
                 </div>
                 {isSelected && (
-                  <span className="text-gold text-xs uppercase tracking-widest">Selected</span>
+                  <span className="text-gold text-xs uppercase tracking-wide">Selected</span>
                 )}
               </div>
               <dl className="mt-3 grid grid-cols-3 gap-2 text-xs tabular-nums text-cream-muted">

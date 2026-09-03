@@ -59,7 +59,7 @@ export function RaceTimeDisplay({
         </TooltipTrigger>
         <TooltipContent side="top" className="w-56">
           <div className="space-y-1">
-            <div className="text-[10px] uppercase tracking-widest opacity-60">{distance}m</div>
+            <div className="text-[10px] uppercase tracking-wide opacity-60">{distance}m</div>
             {views.map((v) => (
               <div key={v.key} className="flex items-center justify-between gap-3 text-xs">
                 <span className="opacity-70">{v.label}</span>

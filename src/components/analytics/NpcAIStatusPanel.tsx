@@ -15,7 +15,7 @@ export function NpcAIStatusPanel() {
       <CardHeader className="border-b border-gold/10">
         <CardTitle className="text-sm font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
           <Activity size={16} />
-          NPC AI Status
+          NPC Status
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-4">
@@ -23,13 +23,13 @@ export function NpcAIStatusPanel() {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <TrendingUp size={14} className="text-gold" />
-              <h4 className="text-xs font-black uppercase tracking-widest text-gold">
+              <h4 className="text-xs font-black uppercase tracking-wide text-gold">
                 Difficulty Modulator
               </h4>
             </div>
             <div className="grid grid-cols-3 gap-3 text-xs">
               <div>
-                <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+                <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
                   Player Win Rate
                 </span>
                 <p className="text-cream font-mono">
@@ -37,7 +37,7 @@ export function NpcAIStatusPanel() {
                 </p>
               </div>
               <div>
-                <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+                <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
                   NPC Competence
                 </span>
                 <p className="text-cream font-mono">
@@ -45,7 +45,7 @@ export function NpcAIStatusPanel() {
                 </p>
               </div>
               <div>
-                <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+                <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
                   Last Adjusted
                 </span>
                 <p className="text-cream font-mono">Day {difficultyModulator.lastAdjustmentDay}</p>
@@ -58,7 +58,7 @@ export function NpcAIStatusPanel() {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <Users size={14} className="text-gold" />
-              <h4 className="text-xs font-black uppercase tracking-widest text-gold">
+              <h4 className="text-xs font-black uppercase tracking-wide text-gold">
                 Active Cartels ({activeCartels.length})
               </h4>
             </div>

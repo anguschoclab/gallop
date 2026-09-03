@@ -25,7 +25,7 @@ export function HorseStatsPanel({
     <div className="p-5 flex-1 space-y-6">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-3">
-          <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest flex items-center gap-1">
+          <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide flex items-center gap-1">
             <ShieldCheck className="h-3 w-3" /> Core Stats
           </div>
           {isAdvanced ? (
@@ -66,7 +66,7 @@ export function HorseStatsPanel({
         </div>
 
         <div className="space-y-3 pl-4 border-l border-white/5 flex flex-col">
-          <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest flex items-center gap-1">
+          <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide flex items-center gap-1">
             <Activity className="h-3 w-3" /> Race Form
           </div>
 
@@ -108,7 +108,7 @@ export function HorseStatsPanel({
 
       <div className="flex items-center justify-between bg-black/40 p-2 rounded-sm border border-white/5">
         <div className="flex items-center gap-2">
-          <span className="text-[8px] font-black uppercase text-cream/30 tracking-widest">
+          <span className="text-[8px] font-black uppercase text-cream/30 tracking-wide">
             <JargonTooltip term="OVR">OVR</JargonTooltip>
           </span>
           <span
@@ -118,7 +118,7 @@ export function HorseStatsPanel({
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[8px] font-black uppercase text-cream/30 tracking-widest">
+          <span className="text-[8px] font-black uppercase text-cream/30 tracking-wide">
             POTENTIAL
           </span>
           <span className="text-sm font-mono font-black text-gold-muted">{horse.potential}</span>

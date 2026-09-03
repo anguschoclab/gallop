@@ -60,13 +60,13 @@ export function StartScreen() {
       <header className="relative z-10 flex items-center justify-between px-8 py-6">
         <div className="flex items-center gap-3">
           <div className="h-2 w-2 rounded-full bg-gold shadow-[0_0_12px_rgba(212,175,55,0.8)]" />
-          <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-cream-muted">
+          <span className="text-[10px] font-mono uppercase tracking-wide text-cream-muted">
             Stable Manager · Est. 2026
           </span>
         </div>
         <Link
           to="/settings"
-          className="text-[10px] font-mono uppercase tracking-[0.2em] text-cream-muted hover:text-gold transition-colors"
+          className="text-[10px] font-mono uppercase tracking-wide text-cream-muted hover:text-gold transition-colors"
         >
           Settings
         </Link>
@@ -74,7 +74,7 @@ export function StartScreen() {
 
       {/* Main content */}
       <main className="relative z-10 flex min-h-[calc(100vh-88px)] flex-col justify-center px-8 md:px-16 lg:px-24 max-w-3xl">
-        <p className="text-[11px] font-mono uppercase tracking-[0.3em] text-gold mb-4 animate-fade-in">
+        <p className="text-[11px] font-mono uppercase tracking-wide text-gold mb-4 animate-fade-in">
           Welcome to the paddock
         </p>
         <h1 className="font-[family-name:var(--font-display)] text-7xl md:text-8xl lg:text-9xl font-bold leading-[0.9] tracking-tight text-cream mb-6 animate-fade-in">
@@ -119,13 +119,13 @@ export function StartScreen() {
         {/* Save snapshot */}
         {hasSave && (
           <div className="mt-12 pt-6 border-t border-cream/10 max-w-md animate-fade-in">
-            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-cream-muted mb-3">
+            <p className="text-[10px] font-mono uppercase tracking-wide text-cream-muted mb-3">
               Last Save
             </p>
             <div className="grid grid-cols-3 gap-6">
               <div>
                 <div className="text-2xl font-bold text-cream tabular-nums">{day}</div>
-                <div className="text-[9px] font-mono uppercase tracking-widest text-cream-muted mt-1">
+                <div className="text-[9px] font-mono uppercase tracking-wide text-cream-muted mt-1">
                   Day
                 </div>
               </div>
@@ -133,7 +133,7 @@ export function StartScreen() {
                 <div className="text-2xl font-bold text-cream tabular-nums">
                   {Object.keys(horses).length}
                 </div>
-                <div className="text-[9px] font-mono uppercase tracking-widest text-cream-muted mt-1">
+                <div className="text-[9px] font-mono uppercase tracking-wide text-cream-muted mt-1">
                   Horses
                 </div>
               </div>
@@ -141,7 +141,7 @@ export function StartScreen() {
                 <div className="text-2xl font-bold text-gold truncate">
                   {playerProfile?.stableName ?? "—"}
                 </div>
-                <div className="text-[9px] font-mono uppercase tracking-widest text-cream-muted mt-1">
+                <div className="text-[9px] font-mono uppercase tracking-wide text-cream-muted mt-1">
                   Stable
                 </div>
               </div>

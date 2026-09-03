@@ -42,17 +42,13 @@ export function SaveLoadDialog({ open, onOpenChange, initialTab = "save" }: Save
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-gold-bright uppercase tracking-[0.2em] font-[family-name:var(--font-display)] text-sm font-bold">
                 <Database className="h-4 w-4" />
-                Stability Archive
+                Save & Load
               </div>
               <DialogTitle className="text-3xl font-[family-name:var(--font-display)] text-cream">
-                Stable Ledgers
+                Saved Games
               </DialogTitle>
             </div>
-            <div className="text-right font-mono text-[10px] text-gold/40 uppercase leading-tight">
-              Vault Status: Secure
-              <br />
-              Auth: System Admin
-            </div>
+            <div className="text-right font-mono text-[10px] text-gold/40 uppercase leading-tight"></div>
           </div>
         </div>
 
@@ -65,15 +61,15 @@ export function SaveLoadDialog({ open, onOpenChange, initialTab = "save" }: Save
             <TabsList className="h-10 bg-transparent gap-8 p-0">
               <TabsTrigger
                 value="save"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-gold data-[state=active]:text-gold text-cream-muted uppercase tracking-widest text-xs font-bold transition-all p-0 h-full"
+                className="rounded-none border-b-2 border-transparent data-[state=active]:border-gold data-[state=active]:text-gold text-cream-muted uppercase tracking-wide text-xs font-bold transition-all p-0 h-full"
               >
-                Snapshot Current
+                Save
               </TabsTrigger>
               <TabsTrigger
                 value="load"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-gold data-[state=active]:text-gold text-cream-muted uppercase tracking-widest text-xs font-bold transition-all p-0 h-full"
+                className="rounded-none border-b-2 border-transparent data-[state=active]:border-gold data-[state=active]:text-gold text-cream-muted uppercase tracking-wide text-xs font-bold transition-all p-0 h-full"
               >
-                Recall Entry
+                Load
               </TabsTrigger>
             </TabsList>
           </div>
@@ -107,14 +103,13 @@ export function SaveLoadDialog({ open, onOpenChange, initialTab = "save" }: Save
         <div className="p-4 bg-slate-900/80 border-t border-gold/20 flex items-center justify-between">
           <div className="flex items-center gap-2 text-[10px] font-mono text-success/60 uppercase">
             <ShieldCheck className="h-3 w-3" />
-            Encryption: Active (AES-256)
           </div>
           <Button
             variant="ghost"
             onClick={() => onOpenChange(false)}
-            className="text-gold/60 hover:text-gold hover:bg-gold/5 font-mono text-xs uppercase tracking-widest"
+            className="text-gold/60 hover:text-gold hover:bg-gold/5 font-mono text-xs uppercase tracking-wide"
           >
-            Terminal.Close()
+            Close
           </Button>
         </div>
       </DialogContent>

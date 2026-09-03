@@ -75,16 +75,14 @@ export function JockeyFilterPanel({
       <section className="space-y-4">
         <div className="flex items-center gap-2 mb-2 px-1">
           <Filter className="h-3.5 w-3.5 text-blue-400/60" />
-          <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-cream/40">
-            Filters
-          </h2>
+          <h2 className="text-[10px] font-black uppercase tracking-wide text-cream/40">Filters</h2>
         </div>
         <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-2 border-l-blue-400/40">
           <CardContent className="p-5 space-y-5">
             <div className="space-y-1.5">
               <label
                 htmlFor={searchId}
-                className="text-[9px] uppercase font-black text-blue-400/40 tracking-widest px-1"
+                className="text-[9px] uppercase font-black text-blue-400/40 tracking-wide px-1"
               >
                 Name
               </label>
@@ -131,7 +129,7 @@ export function JockeyFilterPanel({
             <Button
               variant="ghost"
               size="sm"
-              className="w-full h-8 text-[9px] font-black uppercase tracking-[0.2em] text-cream/10 hover:text-cream/30 border border-dashed border-white/5 mt-2"
+              className="w-full h-8 text-[9px] font-black uppercase tracking-wide text-cream/10 hover:text-cream/30 border border-dashed border-white/5 mt-2"
               onClick={onReset}
             >
               Reset Filters
@@ -141,7 +139,7 @@ export function JockeyFilterPanel({
       </section>
 
       <div className="p-4 bg-black/40 border border-white/5 text-center">
-        <div className="text-[8px] font-black uppercase text-blue-400/40 tracking-[0.2em] mb-2 px-1">
+        <div className="text-[8px] font-black uppercase text-blue-400/40 tracking-wide mb-2 px-1">
           Rider Standards
         </div>
         <p className="text-[8px] font-mono text-cream/20 uppercase leading-relaxed italic">

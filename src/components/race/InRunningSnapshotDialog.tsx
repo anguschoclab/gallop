@@ -181,7 +181,7 @@ export function InRunningSnapshotDialog({
             {/* Field Table (Rankings & Badges at Snapshot) */}
             <div className="lg:col-span-7 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-widest text-cream-muted">
+                <span className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
                   Field at Snapshot ({sortedRunners.length} Runners)
                 </span>
                 <span className="text-[9px] text-muted-foreground">Click runner to inspect</span>

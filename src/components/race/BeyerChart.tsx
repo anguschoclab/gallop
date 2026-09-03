@@ -29,7 +29,7 @@ export function BeyerChart({ history }: { history: Entry[] }) {
   if (data.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-10 bg-black/20 border border-white/5">
-        <p className="text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+        <p className="text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
           Zero Velocity Data Logged
         </p>
       </div>
@@ -45,19 +45,19 @@ export function BeyerChart({ history }: { history: Entry[] }) {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-6">
         <div className="space-y-0.5">
-          <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">
+          <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide">
             Avg Beyer
           </div>
           <div className="text-sm font-mono font-bold text-cream tabular-nums">{avg}</div>
         </div>
         <div className="space-y-0.5 border-l border-white/5 pl-6">
-          <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">
+          <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide">
             Best Beyer
           </div>
           <div className="text-sm font-mono font-bold text-fame tabular-nums">{best}</div>
         </div>
         <div className="space-y-0.5 border-l border-white/5 pl-6">
-          <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">
+          <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide">
             Last Run
           </div>
           <div className="text-sm font-mono font-bold text-gold tabular-nums">
@@ -93,7 +93,7 @@ export function BeyerChart({ history }: { history: Entry[] }) {
             <ReferenceLine y={avg} stroke="rgba(245,245,220,0.2)" strokeDasharray="3 3" />
             <Tooltip
               contentStyle={{
-                background: "#020617", // slate-950
+                background: "var(--background)", // slate-950
                 border: "1px solid rgba(212,175,55,0.3)", // gold/30
                 borderRadius: 0,
                 padding: "8px 12px",
@@ -116,10 +116,10 @@ export function BeyerChart({ history }: { history: Entry[] }) {
             <Line
               type="step"
               dataKey="beyer"
-              stroke="#d4af37" // Gold
+              stroke="var(--gold)" // Gold
               strokeWidth={2}
-              dot={{ r: 3, fill: "#020617", stroke: "#d4af37", strokeWidth: 2 }}
-              activeDot={{ r: 5, fill: "#d4af37", stroke: "#fff", strokeWidth: 1 }}
+              dot={{ r: 3, fill: "var(--background)", stroke: "var(--gold)", strokeWidth: 2 }}
+              activeDot={{ r: 5, fill: "var(--gold)", stroke: "var(--foreground)", strokeWidth: 1 }}
               animationDuration={800}
             />
           </LineChart>

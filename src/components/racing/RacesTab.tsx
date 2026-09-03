@@ -97,14 +97,14 @@ export function RacesTab() {
     <div className="space-y-6 pb-20 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-success/20 pb-6">
         <div>
-          <div className="flex items-center gap-2 text-success uppercase tracking-[0.2em] font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
+          <div className="flex items-center gap-2 text-success uppercase tracking-wide font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
             <Globe className="h-3.5 w-3.5" />
-            Global Racing Circuit
+            Race Schedule
           </div>
           <h2 className="text-3xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
             Race Schedule
           </h2>
-          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
+          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-cream/40">
             <span>
               Races Listed: <NumericValue value={filteredRaces.length} />
             </span>

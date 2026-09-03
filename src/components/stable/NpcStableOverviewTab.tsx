@@ -53,7 +53,7 @@ export function NpcStableOverviewTab({ stableId, pageData }: NpcStableOverviewTa
               {PERSONALITY_CONFIG[stable.personality]?.description}
             </span>
             {stable.preferredDistance && (
-              <Badge className="text-[9px] bg-black/40 text-cream/60 border border-white/5 rounded-none px-2 font-black tracking-widest uppercase">
+              <Badge className="text-[9px] bg-black/40 text-cream/60 border border-white/5 rounded-none px-2 font-black tracking-wide uppercase">
                 SPEC: {stable.preferredDistance}m {stable.preferredSurface}
               </Badge>
             )}
@@ -61,25 +61,25 @@ export function NpcStableOverviewTab({ stableId, pageData }: NpcStableOverviewTa
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-white/5">
             <div className="bg-black/20 p-3 border border-white/5 text-center">
-              <div className="text-[9px] font-black uppercase text-cream/30 tracking-widest mb-1">
+              <div className="text-[9px] font-black uppercase text-cream/30 tracking-wide mb-1">
                 Total Horses
               </div>
               <div className="text-xl font-bold font-mono text-cream">{stableHorses.length}</div>
             </div>
             <div className="bg-black/20 p-3 border border-white/5 text-center">
-              <div className="text-[9px] font-black uppercase text-cream/30 tracking-widest mb-1">
+              <div className="text-[9px] font-black uppercase text-cream/30 tracking-wide mb-1">
                 Active
               </div>
               <div className="text-xl font-bold font-mono text-success">{activeHorses.length}</div>
             </div>
             <div className="bg-black/20 p-3 border border-white/5 text-center">
-              <div className="text-[9px] font-black uppercase text-cream/30 tracking-widest mb-1">
+              <div className="text-[9px] font-black uppercase text-cream/30 tracking-wide mb-1">
                 Colts/Horses
               </div>
               <div className="text-xl font-bold font-mono text-blue-400">{colts.length}</div>
             </div>
             <div className="bg-black/20 p-3 border border-white/5 text-center">
-              <div className="text-[9px] font-black uppercase text-cream/30 tracking-widest mb-1">
+              <div className="text-[9px] font-black uppercase text-cream/30 tracking-wide mb-1">
                 Fillies/Mares
               </div>
               <div className="text-xl font-bold font-mono text-pink-400">{fillies.length}</div>

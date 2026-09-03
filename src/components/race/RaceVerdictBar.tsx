@@ -39,7 +39,7 @@ export function RaceVerdictBar({ verdict }: RaceVerdictBarProps) {
 
       {remainingFactors.length > 0 && (
         <Collapsible>
-          <CollapsibleTrigger className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-widest text-gold/40 hover:text-gold transition-colors">
+          <CollapsibleTrigger className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-wide text-gold/40 hover:text-gold transition-colors">
             <ChevronDown className="h-2.5 w-2.5" />
             Full Analysis
           </CollapsibleTrigger>

@@ -49,14 +49,14 @@ export function JockeyRoster() {
       {/* Registry Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-blue-500/20 pb-6">
         <div>
-          <div className="flex items-center gap-2 text-blue-400 uppercase tracking-[0.2em] font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
+          <div className="flex items-center gap-2 text-blue-400 uppercase tracking-wide font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
             <Briefcase className="h-3.5 w-3.5" />
             Jockey Market
           </div>
           <h1 className="text-4xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
             Jockeys
           </h1>
-          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
+          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-cream/40">
             <span>
               Signed: <NumericValue value={myJockeys.length} />
             </span>
@@ -73,7 +73,7 @@ export function JockeyRoster() {
         <div className="flex gap-2">
           <Badge
             variant="outline"
-            className="border-blue-500/30 text-blue-400 bg-blue-500/5 font-mono text-[10px] uppercase tracking-widest px-3 py-1 h-8 rounded-none"
+            className="border-blue-500/30 text-blue-400 bg-blue-500/5 font-mono text-[10px] uppercase tracking-wide px-3 py-1 h-8 rounded-none"
           >
             Licence: Active
           </Badge>

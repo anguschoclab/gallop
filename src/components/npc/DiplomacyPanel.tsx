@@ -59,7 +59,7 @@ export function DiplomacyPanel({ stableId }: DiplomacyPanelProps) {
                     )}
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+                    <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                       Trust
                     </span>
                     <span
@@ -149,7 +149,7 @@ const EVENT_COLORS: Record<DiplomaticEvent["type"], string> = {
 function DiplomacyTimeline({ events }: { events: DiplomaticEvent[] }) {
   return (
     <div className="space-y-1 pt-1 border-t border-white/5">
-      <div className="text-[8px] font-black uppercase tracking-widest text-cream/30">
+      <div className="text-[8px] font-black uppercase tracking-wide text-cream/30">
         Recent Events
       </div>
       {events.map((event, i) => (

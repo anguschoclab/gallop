@@ -58,7 +58,7 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
                     <h3 className="text-xl font-black text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-success transition-colors truncate">
                       {h.name}
                     </h3>
-                    <div className="flex items-center gap-3 font-mono text-[9px] uppercase tracking-widest text-cream/30">
+                    <div className="flex items-center gap-3 font-mono text-[9px] uppercase tracking-wide text-cream/30">
                       <span>Age: {Math.floor(h.age)}</span>
                       <span className="w-1 h-1 rounded-full bg-white/10" />
                       <span>OVR: {ovr}</span>
@@ -66,7 +66,7 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[8px] font-black uppercase text-success/40 tracking-widest leading-none mb-1">
+                  <div className="text-[8px] font-black uppercase text-success/40 tracking-wide leading-none mb-1">
                     Price
                   </div>
                   <div
@@ -90,7 +90,7 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
                   e.stopPropagation();
                   setExpandedId(expandedId === h.id ? null : h.id);
                 }}
-                className="flex items-center justify-between w-full text-[10px] font-black uppercase tracking-widest text-cream/40 hover:text-cream/70 transition-colors"
+                className="flex items-center justify-between w-full text-[10px] font-black uppercase tracking-wide text-cream/40 hover:text-cream/70 transition-colors"
               >
                 <span>Valuation</span>
                 {expandedId === h.id ? (
@@ -118,7 +118,7 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
                       <Button
                         disabled
                         className={cn(
-                          "w-full h-10 uppercase text-[10px] font-black tracking-[0.2em] rounded-none transition-all pointer-events-none",
+                          "w-full h-10 uppercase text-[10px] font-black tracking-wide rounded-none transition-all pointer-events-none",
                           "border-white/5 text-cream/20 bg-transparent",
                         )}
                       >
@@ -135,7 +135,7 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
                     buyHorse(h.id);
                   }}
                   className={cn(
-                    "w-full h-10 uppercase text-[10px] font-black tracking-[0.2em] rounded-none transition-all",
+                    "w-full h-10 uppercase text-[10px] font-black tracking-wide rounded-none transition-all",
                     "bg-success hover:bg-success-dark text-slate-950 shadow-lg",
                   )}
                 >

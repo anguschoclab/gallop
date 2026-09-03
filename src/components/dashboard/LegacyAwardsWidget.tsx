@@ -17,7 +17,7 @@ export function LegacyAwardsWidget() {
         <Trophy className="h-32 w-32 rotate-12" />
       </div>
       <CardHeader className="py-3 border-b border-white/5 bg-black/20 relative z-10">
-        <CardTitle className="text-[10px] font-bold uppercase tracking-[0.4em] text-cream-muted">
+        <CardTitle className="text-[10px] font-bold uppercase tracking-wide text-cream-muted">
           Legacy & Awards
         </CardTitle>
       </CardHeader>
@@ -25,7 +25,7 @@ export function LegacyAwardsWidget() {
         <div className="space-y-6">
           <div className="flex items-center justify-around px-2">
             <div className="text-center space-y-1 group cursor-default">
-              <div className="text-[9px] text-cream-muted uppercase font-bold tracking-widest opacity-60">
+              <div className="text-[9px] text-cream-muted uppercase font-bold tracking-wide opacity-60">
                 G1 Victories
               </div>
               <div className="text-3xl font-bold text-fame font-mono leading-none tracking-tighter group-hover:scale-110 transition-transform">
@@ -34,7 +34,7 @@ export function LegacyAwardsWidget() {
             </div>
             <div className="h-10 w-[1px] bg-white/10" />
             <div className="text-center space-y-1 group cursor-default">
-              <div className="text-[9px] text-cream-muted uppercase font-bold tracking-widest opacity-60">
+              <div className="text-[9px] text-cream-muted uppercase font-bold tracking-wide opacity-60">
                 Stable Awards
               </div>
               <div className="text-3xl font-bold text-gold font-mono leading-none tracking-tighter group-hover:scale-110 transition-transform">
@@ -48,18 +48,15 @@ export function LegacyAwardsWidget() {
               <div className="absolute top-0 left-0 w-full h-0.5 bg-gold/20 group-hover:bg-gold/50 transition-colors" />
               <Trophy className="h-10 w-10 text-gold mx-auto drop-shadow-[0_0_12px_rgba(212,175,55,0.4)] group-hover:rotate-6 transition-transform" />
               <div>
-                <div className="text-xs font-black uppercase tracking-[0.2em] text-gold pt-1">
-                  Hall of Records
-                </div>
-                <div className="text-[9px] text-gold-muted/60 uppercase tracking-widest mt-1">
-                  Verified Historical Archive
+                <div className="text-xs font-black uppercase tracking-wide text-gold pt-1">
+                  Awards
                 </div>
               </div>
               <Link
                 to="/records"
                 className="inline-flex items-center gap-1 text-[10px] text-cream/40 group-hover:text-gold transition-colors font-bold uppercase tracking-tighter border-t border-white/5 pt-2 w-full justify-center"
               >
-                Secure Access <ChevronRight className="h-3 w-3" />
+                View Records <ChevronRight className="h-3 w-3" />
               </Link>
             </div>
 
@@ -69,7 +66,7 @@ export function LegacyAwardsWidget() {
                 params={{ category: recentAward.category }}
                 className="block p-3 rounded-lg border border-gold/20 bg-gold/5 hover:bg-gold/10 hover:border-gold/40 transition-all"
               >
-                <div className="text-[9px] text-gold-muted/80 uppercase font-bold tracking-widest mb-1">
+                <div className="text-[9px] text-gold-muted/80 uppercase font-bold tracking-wide mb-1">
                   Most Recent Award · Y{recentAward.year}
                 </div>
                 <div className="text-sm font-bold text-gold mb-1">
@@ -84,7 +81,7 @@ export function LegacyAwardsWidget() {
             <div className="text-center">
               <Link
                 to="/awards"
-                className="text-[10px] font-bold text-cream-muted hover:text-gold uppercase tracking-[0.2em] transition-colors"
+                className="text-[10px] font-bold text-cream-muted hover:text-gold uppercase tracking-wide transition-colors"
               >
                 View Full Trophy Case
               </Link>

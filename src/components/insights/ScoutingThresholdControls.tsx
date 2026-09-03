@@ -33,7 +33,7 @@ export function ScoutingThresholdControls({ value, onChange, showPool = true }: 
       <div key={String(key)} className="space-y-1">
         <Label
           htmlFor={`threshold-${String(key)}`}
-          className="font-mono text-[9px] uppercase tracking-widest text-cream/40"
+          className="font-mono text-[9px] uppercase tracking-wide text-cream/40"
         >
           {label}
         </Label>
@@ -61,7 +61,7 @@ export function ScoutingThresholdControls({ value, onChange, showPool = true }: 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
         {showPool && (
           <div className="space-y-1">
-            <Label className="font-mono text-[9px] uppercase tracking-widest text-cream/40">
+            <Label className="font-mono text-[9px] uppercase tracking-wide text-cream/40">
               Pool
             </Label>
             <Select
@@ -85,7 +85,7 @@ export function ScoutingThresholdControls({ value, onChange, showPool = true }: 
         {numberField("maxCostPerHorse", "Max fee per horse", 100, 100000)}
 
         <div className="space-y-1">
-          <Label className="font-mono text-[9px] uppercase tracking-widest text-cream/40">
+          <Label className="font-mono text-[9px] uppercase tracking-wide text-cream/40">
             Gender
           </Label>
           <Select
@@ -104,7 +104,7 @@ export function ScoutingThresholdControls({ value, onChange, showPool = true }: 
         </div>
 
         <div className="space-y-1">
-          <Label className="font-mono text-[9px] uppercase tracking-widest text-cream/40">
+          <Label className="font-mono text-[9px] uppercase tracking-wide text-cream/40">
             Report status
           </Label>
           <Select

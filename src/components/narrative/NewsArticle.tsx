@@ -26,14 +26,14 @@ export function NewsArticle({ item }: NewsArticleProps) {
         <div className="flex items-center gap-2">
           <Badge
             className={cn(
-              "rounded-none font-black text-[9px] tracking-widest uppercase h-5 px-2",
+              "rounded-none font-black text-[9px] tracking-wide uppercase h-5 px-2",
               isHigh ? "bg-gold text-slate-950" : "bg-slate-800 text-cream/60",
             )}
           >
             {item.category}
           </Badge>
           {item.partNumber && item.totalParts && item.totalParts > 1 && (
-            <Badge className="rounded-none font-black text-[9px] tracking-widest uppercase h-5 px-2 bg-gold/30 text-gold-bright border border-gold/20">
+            <Badge className="rounded-none font-black text-[9px] tracking-wide uppercase h-5 px-2 bg-gold/30 text-gold-bright border border-gold/20">
               Part {item.partNumber}/{item.totalParts}
             </Badge>
           )}
@@ -61,12 +61,12 @@ export function NewsArticle({ item }: NewsArticleProps) {
         </div>
 
         <div className="pt-4 flex justify-between items-center border-t border-white/5">
-          <div className="text-[9px] font-black uppercase text-cream/20 tracking-widest">
+          <div className="text-[9px] font-black uppercase text-cream/20 tracking-wide">
             Source: Internal Frequency 1.09
           </div>
           <Link
             to="/gazette"
-            className="text-[10px] font-black text-gold/40 hover:text-gold transition-colors uppercase tracking-widest flex items-center gap-1 group/link"
+            className="text-[10px] font-black text-gold/40 hover:text-gold transition-colors uppercase tracking-wide flex items-center gap-1 group/link"
           >
             Latest News{" "}
             <ChevronRight className="h-3 w-3 group-hover/link:translate-x-0.5 transition-transform" />

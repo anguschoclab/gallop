@@ -44,7 +44,7 @@ export function RaceFilterPanel({
       <section className="space-y-4">
         <div className="flex items-center gap-2 mb-2 px-1">
           <Filter className="h-3.5 w-3.5 text-success/60" />
-          <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-cream/40">
+          <h2 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
             Race Filters
           </h2>
         </div>
@@ -53,7 +53,7 @@ export function RaceFilterPanel({
             <div className="space-y-1.5">
               <label
                 htmlFor={searchId}
-                className="text-[9px] uppercase font-black text-success/40 tracking-widest px-1"
+                className="text-[9px] uppercase font-black text-success/40 tracking-wide px-1"
               >
                 Race Name
               </label>
@@ -72,14 +72,14 @@ export function RaceFilterPanel({
             <div className="space-y-1.5">
               <label
                 htmlFor={gradeId}
-                className="text-[9px] uppercase font-black text-success/40 tracking-widest px-1"
+                className="text-[9px] uppercase font-black text-success/40 tracking-wide px-1"
               >
                 Grade
               </label>
               <Select value={grade} onValueChange={onGradeChange}>
                 <SelectTrigger
                   id={gradeId}
-                  className="h-9 bg-slate-950/60 border-white/5 text-[10px] font-bold uppercase rounded-none tracking-widest"
+                  className="h-9 bg-slate-950/60 border-white/5 text-[10px] font-bold uppercase rounded-none tracking-wide"
                 >
                   <SelectValue placeholder="All Grades" />
                 </SelectTrigger>
@@ -97,14 +97,14 @@ export function RaceFilterPanel({
             <div className="space-y-1.5">
               <label
                 htmlFor={regionId}
-                className="text-[9px] uppercase font-black text-success/40 tracking-widest px-1"
+                className="text-[9px] uppercase font-black text-success/40 tracking-wide px-1"
               >
                 Region
               </label>
               <Select value={country} onValueChange={onCountryChange}>
                 <SelectTrigger
                   id={regionId}
-                  className="h-9 bg-slate-950/60 border-white/5 text-[10px] font-bold uppercase rounded-none tracking-widest"
+                  className="h-9 bg-slate-950/60 border-white/5 text-[10px] font-bold uppercase rounded-none tracking-wide"
                 >
                   <SelectValue placeholder="All Regions" />
                 </SelectTrigger>
@@ -120,7 +120,7 @@ export function RaceFilterPanel({
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[9px] uppercase font-black text-success/40 tracking-widest px-1">
+              <label className="text-[9px] uppercase font-black text-success/40 tracking-wide px-1">
                 My Entries
               </label>
               <div className="grid grid-cols-1 gap-1">
@@ -128,7 +128,7 @@ export function RaceFilterPanel({
                   <button
                     key={o}
                     onClick={() => onOwnedChange(o)}
-                    className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-left transition-all border-l-2 ${
+                    className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wide text-left transition-all border-l-2 ${
                       owned === o
                         ? "bg-white/5 border-success text-success"
                         : "border-transparent text-cream/20 hover:text-cream/40"
@@ -143,7 +143,7 @@ export function RaceFilterPanel({
             <Button
               variant="ghost"
               size="sm"
-              className="w-full h-8 text-[9px] font-black uppercase tracking-[0.2em] text-cream/10 hover:text-cream/30 border border-dashed border-white/5 mt-2"
+              className="w-full h-8 text-[9px] font-black uppercase tracking-wide text-cream/10 hover:text-cream/30 border border-dashed border-white/5 mt-2"
               onClick={onReset}
             >
               Reset Filters

@@ -28,7 +28,7 @@ export function LiveSplitsTable({
       </h3>
       <table className="w-full text-xs font-mono">
         <thead>
-          <tr className="border-b border-white/10 text-cream/30 uppercase tracking-widest text-[9px]">
+          <tr className="border-b border-white/10 text-cream/30 uppercase tracking-wide text-[9px]">
             <th className="text-left pb-2 pr-3">Horse</th>
             {SPLIT_LABELS.map((label) => (
               <th key={label} className="text-right pb-2 px-2">

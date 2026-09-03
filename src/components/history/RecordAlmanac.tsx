@@ -53,7 +53,7 @@ export function RecordAlmanac({ records }: { records: TrackRecord[] }) {
                   setBucket(null);
                 }}
                 aria-pressed={kind === d.kind}
-                className={`rounded-md px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                className={`rounded-md px-3 py-1.5 text-[10px] font-black uppercase tracking-wide transition-colors ${
                   kind === d.kind
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted/50 text-cream-muted hover:text-cream"

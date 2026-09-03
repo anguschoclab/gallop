@@ -22,7 +22,7 @@ export function GradedStatsChart({ data }: GradedStatsChartProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 px-1">
-        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gold-muted/60">
+        <div className="text-[10px] font-black uppercase tracking-wide text-gold-muted/60">
           Graded Race Record
         </div>
       </div>
@@ -51,7 +51,7 @@ export function GradedStatsChart({ data }: GradedStatsChartProps) {
             <Tooltip
               cursor={{ fill: "rgba(255,255,255,0.02)" }}
               contentStyle={{
-                background: "#020617",
+                background: "var(--background)",
                 border: "1px solid rgba(212,175,55,0.3)",
                 borderRadius: 0,
                 padding: "8px 12px",
@@ -87,7 +87,7 @@ export function GradedStatsChart({ data }: GradedStatsChartProps) {
               }}
             />
             <Bar dataKey="runs" fill="rgba(245,245,220,0.1)" name="RUNS" radius={0} barSize={20} />
-            <Bar dataKey="wins" fill="#d4af37" name="WINS" radius={0} barSize={20} />
+            <Bar dataKey="wins" fill="var(--gold)" name="WINS" radius={0} barSize={20} />
             <Bar
               dataKey="places"
               fill="rgba(34,197,94,0.6)"

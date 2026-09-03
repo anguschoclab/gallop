@@ -19,8 +19,8 @@ export function AIPersonalityCard({ stableAI }: AIPersonalityCardProps) {
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-purple-400">
       <CardHeader className="bg-black/20 border-b border-white/5">
-        <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40 flex items-center gap-2">
-          <Brain className="h-3 w-3 text-purple-400" /> AI Personality Profile
+        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
+          <Brain className="h-3 w-3 text-purple-400" /> Personality
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-4">
@@ -63,7 +63,7 @@ export function AIPersonalityCard({ stableAI }: AIPersonalityCardProps) {
         </div>
 
         <div className="space-y-1 pt-2 border-t border-white/5">
-          <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-cream/30">
+          <div className="flex justify-between text-[10px] font-mono uppercase tracking-wide text-cream/30">
             <span>Strategy Confidence</span>
             <span className="text-cream/60">{Math.round(p.strategyConfidence * 100)}%</span>
           </div>
@@ -86,7 +86,7 @@ export function AIPersonalityCard({ stableAI }: AIPersonalityCardProps) {
 function StatRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div className="flex items-center justify-between bg-black/20 p-2 border border-white/5">
-      <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-cream/30">
+      <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wide text-cream/30">
         {icon} {label}
       </span>
       <span className="font-mono text-xs text-cream tabular-nums">{value}</span>
@@ -109,7 +109,7 @@ function BudgetAllocationView({
 
   return (
     <div className="space-y-2 pt-2 border-t border-white/5">
-      <div className="text-[9px] font-black uppercase tracking-widest text-cream/30">
+      <div className="text-[9px] font-black uppercase tracking-wide text-cream/30">
         Budget Allocation
       </div>
       <div className="text-xs font-mono text-cream/60">Total: {formatCurrency(budget.total)}</div>
@@ -154,7 +154,7 @@ function LearningInsightsView({ stableAI }: { stableAI: StableAIState }) {
 
   return (
     <div className="space-y-2 pt-2 border-t border-white/5">
-      <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-cream/30">
+      <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wide text-cream/30">
         <BookOpen className="h-3 w-3 text-cyan-400" /> Learning Insights
       </div>
       <div className="grid grid-cols-2 gap-3">
@@ -181,7 +181,7 @@ function LearningInsightsView({ stableAI }: { stableAI: StableAIState }) {
       </div>
       {insights.totalRaces > 0 && (
         <div className="space-y-1">
-          <div className="text-[9px] font-mono uppercase tracking-widest text-cream/30">
+          <div className="text-[9px] font-mono uppercase tracking-wide text-cream/30">
             Style Usage
           </div>
           <div className="flex gap-2">

@@ -157,15 +157,15 @@ function NpcStablesPage() {
 
       <Tabs defaultValue="directory" className="space-y-6">
         <TabsList className="bg-slate-900/40 h-10 gap-2">
-          <TabsTrigger value="directory" className="gap-2 text-xs uppercase tracking-widest px-5">
+          <TabsTrigger value="directory" className="gap-2 text-xs uppercase tracking-wide px-5">
             <Building2 className="w-3.5 h-3.5" />
             Directory
           </TabsTrigger>
-          <TabsTrigger value="insights" className="gap-2 text-xs uppercase tracking-widest px-5">
+          <TabsTrigger value="insights" className="gap-2 text-xs uppercase tracking-wide px-5">
             <BarChart3 className="w-3.5 h-3.5" />
             Insights
           </TabsTrigger>
-          <TabsTrigger value="assignments" className="gap-2 text-xs uppercase tracking-widest px-5">
+          <TabsTrigger value="assignments" className="gap-2 text-xs uppercase tracking-wide px-5">
             <ClipboardList className="w-3.5 h-3.5" />
             Assignments
           </TabsTrigger>

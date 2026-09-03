@@ -59,7 +59,7 @@ export function AnalyticsOverviewTab() {
             Stable performance at a glance — drill into any tile for detail.
           </p>
         </div>
-        <div className="text-[10px] font-mono uppercase tracking-widest text-cream/40">
+        <div className="text-[10px] font-mono uppercase tracking-wide text-cream/40">
           Day {d.day}
         </div>
       </header>

@@ -56,7 +56,7 @@ export function RosterFilterBar({ status, counts, onStatusChange }: RosterFilter
             aria-pressed={status === key}
             onClick={() => onStatusChange(key)}
             className={cn(
-              "px-4 py-2 flex items-center gap-3 border font-mono text-[10px] uppercase font-bold tracking-widest transition-all",
+              "px-4 py-2 flex items-center gap-3 border font-mono text-[10px] uppercase font-bold tracking-wide transition-all",
               status === key
                 ? "bg-white/5 border-gold text-gold shadow-[0_0_15px_rgba(212,175,55,0.1)]"
                 : "border-white/5 text-cream/40 hover:text-cream hover:bg-white/[0.02]",

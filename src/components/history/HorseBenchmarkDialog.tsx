@@ -110,7 +110,7 @@ export function HorseBenchmarkDialog({
             <div className="rounded border border-white/5 overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-white/10 text-[10px] uppercase tracking-widest font-mono text-cream/50">
+                  <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide font-mono text-cream/50">
                     <th className="px-3 py-2 text-left">Benchmark</th>
                     <th className="px-3 py-2 text-right">Their / mi</th>
                     <th className="px-3 py-2 text-right">{horseName} / mi</th>

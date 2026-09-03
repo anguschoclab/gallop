@@ -97,6 +97,24 @@
   --color-cream-muted: var(--cream-muted);
   --color-cream-faint: var(--cream-faint);
   --color-emerald-accent: var(--emerald-accent);
+
+  /* Newspaper / Gazette utilities */
+  --color-parchment: var(--parchment);
+  --color-newspaper-ink: var(--newspaper-ink);
+  --color-newspaper-headline: var(--newspaper-headline);
+  --color-newspaper-divider: var(--newspaper-divider);
+  --color-newspaper-body: var(--newspaper-body);
+
+  /* Cash pressure status utilities */
+  --color-status-comfortable: var(--status-comfortable);
+  --color-status-strained: var(--status-strained);
+
+  /* Broadcast track surface utilities */
+  --color-broadcast-turf: var(--broadcast-turf);
+  --color-broadcast-dirt: var(--broadcast-dirt);
+
+  /* Silver utility */
+  --color-silver: var(--silver);
 }
 
 :root {
@@ -141,6 +159,24 @@
   --cream-faint: oklch(0.92 0.03 85 / 0.06);
   --emerald-accent: oklch(0.7 0.18 155);
   --sw: 248px;
+
+  /* Newspaper / Gazette palette */
+  --parchment: oklch(0.94 0.01 85);
+  --newspaper-ink: oklch(0.25 0.01 85);
+  --newspaper-headline: oklch(0.15 0.01 85);
+  --newspaper-divider: oklch(0.83 0.01 85);
+  --newspaper-body: oklch(0.35 0.01 85);
+
+  /* Cash pressure status tiers */
+  --status-comfortable: oklch(0.72 0.01 260);
+  --status-strained: oklch(0.68 0.17 55);
+
+  /* Broadcast track surface colors */
+  --broadcast-turf: oklch(0.45 0.12 145);
+  --broadcast-dirt: oklch(0.45 0.08 50);
+
+  /* Silver token (for eligibility/medal colors) */
+  --silver: oklch(0.72 0.01 260);
 }
 
 .dark {

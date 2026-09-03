@@ -30,16 +30,16 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
           <div className="flex items-center gap-3">
             <Badge
               variant="outline"
-              className="border-gold/30 text-gold-muted font-mono text-[9px] uppercase tracking-[0.2em] h-5 rounded-none px-2 bg-gold/5"
+              className="border-gold/30 text-gold-muted font-mono text-[9px] uppercase tracking-wide h-5 rounded-none px-2 bg-gold/5"
             >
-              IDENT: {horse.id.substring(0, 8).toUpperCase()}
+              ID: {horse.id.substring(0, 8).toUpperCase()}
             </Badge>
             {horse.activeInjury && (
               <Badge
                 variant="destructive"
-                className="font-black text-[9px] uppercase tracking-widest h-5 rounded-none animate-pulse"
+                className="font-black text-[9px] uppercase tracking-wide h-5 rounded-none animate-pulse"
               >
-                Critical
+                {horse.activeInjury.severity}
               </Badge>
             )}
           </div>
@@ -57,7 +57,7 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
           </div>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2">
             <div className="space-y-0.5">
-              <span className="block text-[9px] uppercase font-black tracking-widest text-cream/20 leading-none">
+              <span className="block text-[9px] uppercase font-black tracking-wide text-cream/20 leading-none">
                 Vitals
               </span>
               <span className="text-xs font-mono text-cream/60">
@@ -65,7 +65,7 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
               </span>
             </div>
             <div className="space-y-0.5">
-              <span className="block text-[9px] uppercase font-black tracking-widest text-cream/20 leading-none">
+              <span className="block text-[9px] uppercase font-black tracking-wide text-cream/20 leading-none">
                 Pedigree Family
               </span>
               <span className="text-xs font-mono text-cream/60">
@@ -73,7 +73,7 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
               </span>
             </div>
             <div className="space-y-0.5">
-              <span className="block text-[9px] uppercase font-black tracking-widest text-cream/20 leading-none">
+              <span className="block text-[9px] uppercase font-black tracking-wide text-cream/20 leading-none">
                 Active Status
               </span>
               <span

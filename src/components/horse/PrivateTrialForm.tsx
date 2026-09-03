@@ -125,7 +125,7 @@ export function PrivateTrialForm({
       <Button
         onClick={onStart}
         disabled={loading}
-        className="w-full bg-blue-500 hover:bg-blue-400 text-slate-950 font-black uppercase tracking-widest text-xs h-10 rounded-none shadow-lg"
+        className="w-full bg-blue-500 hover:bg-blue-400 text-slate-950 font-black uppercase tracking-wide text-xs h-10 rounded-none shadow-lg"
       >
         {loading ? "Simulating Trial..." : "Simulate Trial"}
       </Button>

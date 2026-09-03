@@ -57,7 +57,7 @@ export function DecadeLeaders({ records }: { records: TrackRecord[] }) {
 
             {d.prolific.length > 0 && (
               <div className="flex flex-wrap items-center gap-1.5 border-t border-white/5 pt-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-cream-muted">
+                <span className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
                   Most records
                 </span>
                 {d.prolific.map((h) => (

@@ -59,7 +59,7 @@ export function PrivateTrialDialog({ horse, horses, cash }: PrivateTrialDialogPr
     <Button
       disabled={isDisabled}
       className={cn(
-        "w-full bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-widest text-xs h-10 rounded-none shadow-lg mt-2",
+        "w-full bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-wide text-xs h-10 rounded-none shadow-lg mt-2",
         isDisabled && "pointer-events-none",
       )}
     >

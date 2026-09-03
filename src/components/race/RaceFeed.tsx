@@ -50,7 +50,7 @@ export function RaceFeed({
     <main className="space-y-6">
       {/* View Toggle Header */}
       <div className="flex items-center justify-between bg-slate-900/40 p-2 border border-white/5 rounded-lg">
-        <div className="flex items-center gap-4 px-4 font-mono text-[10px] uppercase font-black tracking-widest text-cream/40">
+        <div className="flex items-center gap-4 px-4 font-mono text-[10px] uppercase font-black tracking-wide text-cream/40">
           <Target className="h-3.5 w-3.5 text-success/40" />
           <span>
             <NumericValue value={races.length} /> Races Found
@@ -62,7 +62,7 @@ export function RaceFeed({
             variant="ghost"
             size="sm"
             className={cn(
-              "h-8 px-3 gap-2 uppercase text-[10px] font-black tracking-widest rounded",
+              "h-8 px-3 gap-2 uppercase text-[10px] font-black tracking-wide rounded",
               viewMode === "list" ? "bg-white/10 text-success" : "text-cream/40",
             )}
             onClick={() => onViewModeChange("list")}
@@ -74,7 +74,7 @@ export function RaceFeed({
             variant="ghost"
             size="sm"
             className={cn(
-              "h-8 px-3 gap-2 uppercase text-[10px] font-black tracking-widest rounded",
+              "h-8 px-3 gap-2 uppercase text-[10px] font-black tracking-wide rounded",
               viewMode === "grid" ? "bg-white/10 text-success" : "text-cream/40",
             )}
             onClick={() => onViewModeChange("grid")}
@@ -105,7 +105,7 @@ export function RaceFeed({
         <div className="border border-white/5 bg-slate-900/20 shadow-2xl overflow-hidden">
           <table className="w-full text-left border-collapse">
             <thead className="bg-black/40 border-b border-white/10">
-              <tr className="font-mono text-[9px] uppercase tracking-[0.2em] text-success/60">
+              <tr className="font-mono text-[9px] uppercase tracking-wide text-success/60">
                 <th className="px-6 py-3 font-black w-1">Day</th>
                 <th className="px-4 py-3 font-black">Race</th>
                 <th className="px-4 py-3 font-black">Track</th>
@@ -180,14 +180,14 @@ export function RaceFeed({
                       </td>
                       <td className="px-6 py-4 text-right">
                         {isEntered ? (
-                          <Badge className="bg-success text-slate-950 text-[9px] font-black tracking-widest h-6 rounded-none animate-pulse px-3 shadow-[0_0_10px_rgba(34,197,94,0.3)]">
+                          <Badge className="bg-success text-slate-950 text-[9px] font-black tracking-wide h-6 rounded-none animate-pulse px-3 shadow-[0_0_10px_rgba(34,197,94,0.3)]">
                             ENTERED
                           </Badge>
                         ) : (
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 px-3 font-black text-[9px] uppercase tracking-widest text-cream/40 border border-white/5 hover:border-success/40 hover:text-success hover:bg-success/5 rounded-none"
+                            className="h-7 px-3 font-black text-[9px] uppercase tracking-wide text-cream/40 border border-white/5 hover:border-success/40 hover:text-success hover:bg-success/5 rounded-none"
                             onClick={() => onEnterRace(r)}
                           >
                             ENTER RACE

@@ -72,9 +72,14 @@ function AuctionPage() {
     [activeUpcoming, day],
   );
 
+  const activeUpcomingByKind = useMemo(
+    () => new Map(activeUpcoming.map((a) => [a.kind, a])),
+    [activeUpcoming],
+  );
+
   const allUpcoming: SaleDisplay[] = useMemo(() => {
     return SALE_TRIGGERS.map((t) => {
-      const actual = activeUpcoming.find((a) => a.kind === t.kind);
+      const actual = activeUpcomingByKind.get(t.kind);
       if (actual) return actual;
 
       const currentDoy = dayOfYear(day);
@@ -92,7 +97,7 @@ function AuctionPage() {
         isScheduled: true,
       };
     }).sort((a, b) => a.day - b.day);
-  }, [activeUpcoming, day]);
+  }, [activeUpcomingByKind, day]);
 
   const past = useMemo(
     () =>
@@ -108,8 +113,15 @@ function AuctionPage() {
   // instead of inline mapping where O(N*M) calculation happens on every render.
   // Impact: Reduces main-thread blocking when rendering or interacting with components on the page.
   const consignablePairs = useMemo(() => {
+    const salesByKind = new Map<string, AuctionSale>();
+    for (const sale of activeUpcoming) {
+      if (!salesByKind.has(sale.kind)) salesByKind.set(sale.kind, sale);
+    }
     function findEligibleSale(horse: Horse): AuctionSale | undefined {
-      return activeUpcoming.find((sale) => isLotEligible(horse, sale.kind));
+      for (const [, sale] of salesByKind) {
+        if (isLotEligible(horse, sale.kind)) return sale;
+      }
+      return undefined;
     }
 
     return Object.values(horses)
@@ -132,14 +144,14 @@ function AuctionPage() {
       {/* Auction Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gold/20 pb-6">
         <div>
-          <div className="flex items-center gap-2 text-gold-bright uppercase tracking-[0.2em] font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
+          <div className="flex items-center gap-2 text-gold-bright uppercase tracking-wide font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
             <Gavel className="h-3.5 w-3.5" />
             Public Sales
           </div>
           <h1 className="text-4xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
             The Auction Block
           </h1>
-          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
+          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-cream/40">
             <span>
               Active Windows: <NumericValue value={activeUpcoming.length} />
             </span>
@@ -157,7 +169,7 @@ function AuctionPage() {
         <div className="flex gap-2">
           <Badge
             variant="outline"
-            className="border-gold/30 text-gold-muted bg-gold/5 font-mono text-[10px] uppercase tracking-widest px-3 py-1 h-8 rounded-none"
+            className="border-gold/30 text-gold-muted bg-gold/5 font-mono text-[10px] uppercase tracking-wide px-3 py-1 h-8 rounded-none"
           >
             Buyer Access
           </Badge>

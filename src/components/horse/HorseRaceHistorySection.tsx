@@ -52,7 +52,7 @@ export function HorseRaceHistorySection({
       <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-gold">
         <CardContent className="p-0">
           {displayed.length === 0 ? (
-            <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+            <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
               No race records on file.
             </div>
           ) : (

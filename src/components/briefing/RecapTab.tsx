@@ -136,7 +136,7 @@ export function RecapTab() {
                 <div className="pt-3 border-t border-white/10 space-y-4">
                   <div className="flex items-center gap-2">
                     <Clock className="h-3 w-3 text-gold/60" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-cream/40">
+                    <span className="text-[10px] font-black uppercase tracking-wide text-cream/40">
                       Pace / Position Graph
                     </span>
                   </div>
@@ -155,7 +155,7 @@ export function RecapTab() {
                   />
                   <div className="flex items-center gap-2 pt-2">
                     <Clock className="h-3 w-3 text-gold/60" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-cream/40">
+                    <span className="text-[10px] font-black uppercase tracking-wide text-cream/40">
                       Sectional Splits
                     </span>
                   </div>

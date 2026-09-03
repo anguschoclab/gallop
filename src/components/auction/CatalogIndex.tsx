@@ -57,7 +57,7 @@ export function CatalogIndex({
         <section className="space-y-4">
           <div className="flex items-center gap-2 mb-2 px-1">
             <Search className="h-3.5 w-3.5 text-gold/60" />
-            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-cream/40">
+            <h2 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
               Catalog Search
             </h2>
           </div>
@@ -86,7 +86,7 @@ export function CatalogIndex({
       <section className="space-y-4">
         <div className="flex items-center gap-2 mb-2 px-1">
           <History className="h-3.5 w-3.5 text-cream/30" />
-          <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-cream/40">
+          <h2 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
             Catalog Index
           </h2>
         </div>
@@ -138,7 +138,7 @@ export function CatalogIndex({
                       </div>
                     )}
                     {lot.passed && (
-                      <span className="text-[8px] font-black uppercase text-destructive/60 tracking-widest leading-none">
+                      <span className="text-[8px] font-black uppercase text-destructive/60 tracking-wide leading-none">
                         PASSED
                       </span>
                     )}

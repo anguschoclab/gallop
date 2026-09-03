@@ -39,7 +39,7 @@ export function HorseLineageSection({
 
           {progenyPregnancies.length > 0 && (
             <div className="space-y-2 pt-4 border-t border-white/5">
-              <div className="text-[10px] font-black uppercase text-blue-400/40 tracking-widest">
+              <div className="text-[10px] font-black uppercase text-blue-400/40 tracking-wide">
                 Progeny
               </div>
               <div className="space-y-1">
@@ -91,7 +91,7 @@ export function HorseLineageSection({
 
           {reBreedingPregnancies.length > 0 && (
             <div className="space-y-2 pt-4 border-t border-white/5">
-              <div className="text-[10px] font-black uppercase text-blue-400/40 tracking-widest">
+              <div className="text-[10px] font-black uppercase text-blue-400/40 tracking-wide">
                 Re-Breeding History
               </div>
               <div className="space-y-1">

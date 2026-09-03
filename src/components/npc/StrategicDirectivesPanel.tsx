@@ -13,13 +13,13 @@ export function StrategicDirectivesPanel({ directives }: StrategicDirectivesPane
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
       <CardHeader className="bg-black/20 border-b border-white/5">
-        <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40 flex items-center gap-2">
+        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
           <ListOrdered className="h-3 w-3 text-blue-400" /> Strategic Directives
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         {sorted.length === 0 ? (
-          <div className="p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+          <div className="p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
             No active directives
           </div>
         ) : (
@@ -36,7 +36,7 @@ export function StrategicDirectivesPanel({ directives }: StrategicDirectivesPane
                   </span>
                   <Badge
                     variant="outline"
-                    className="border-white/10 text-cream/60 rounded-none font-mono text-[9px] uppercase tracking-widest"
+                    className="border-white/10 text-cream/60 rounded-none font-mono text-[9px] uppercase tracking-wide"
                   >
                     {d.type.replace(/_/g, " ")}
                   </Badge>

@@ -19,7 +19,7 @@ function TierLegend() {
 
   return (
     <div className="bg-black/40 border border-white/5 p-4">
-      <div className="text-[8px] font-black uppercase text-cream/20 tracking-[0.3em] mb-3">
+      <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide mb-3">
         Tier Reference
       </div>
       <div className="grid grid-cols-4 gap-2">
@@ -29,7 +29,7 @@ function TierLegend() {
           const upgradeCost = FACILITY_UPGRADE_COSTS[level];
           return (
             <div key={level} className="border border-white/5 p-2 space-y-1">
-              <div className="text-[9px] font-black uppercase text-gold tracking-widest">
+              <div className="text-[9px] font-black uppercase text-gold tracking-wide">
                 {FACILITY_TIER_LABELS[level]}
               </div>
               <div className="text-[8px] font-mono text-cream/60 tabular-nums">
@@ -111,7 +111,7 @@ export function FacilitiesPanel() {
           </p>
         </div>
         <div className="relative z-10 text-right">
-          <div className="text-[10px] font-mono text-gold-muted/60 uppercase font-black tracking-widest mb-1">
+          <div className="text-[10px] font-mono text-gold-muted/60 uppercase font-black tracking-wide mb-1">
             Cash on Hand
           </div>
           <div className="text-3xl font-black font-mono text-success tabular-nums leading-none tracking-tighter">

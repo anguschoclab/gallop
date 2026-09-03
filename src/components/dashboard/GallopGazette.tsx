@@ -28,15 +28,15 @@ export function GallopGazette() {
   const news = useGame((s) => s.news);
 
   return (
-    <Card className="border-gold bg-[#f4f1ea] text-[#2c2c2c] overflow-hidden shadow-2xl ring-1 ring-gold/20 group">
-      <CardHeader className="py-3 px-6 border-b-2 border-double border-[#2c2c2c] flex flex-row items-center justify-between bg-[#ece8df]">
+    <Card className="border-gold bg-parchment text-newspaper-ink overflow-hidden shadow-2xl ring-1 ring-gold/20 group">
+      <CardHeader className="py-3 px-6 border-b-2 border-double border-newspaper-ink flex flex-row items-center justify-between bg-[#ece8df]">
         <div className="flex items-center gap-3">
           <Newspaper className="h-5 w-5 animate-in fade-in slide-in-from-left duration-500" />
           <CardTitle className="text-2xl font-black uppercase tracking-tighter font-[family-name:var(--font-display)] pt-1">
             The Gallop Gazette
           </CardTitle>
         </div>
-        <div className="text-[10px] font-black uppercase tracking-widest border-l border-[#2c2c2c] pl-3 h-full tabular-nums">
+        <div className="text-[10px] font-black uppercase tracking-wide border-l border-newspaper-ink pl-3 h-full tabular-nums">
           Edition {day}
         </div>
       </CardHeader>
@@ -59,34 +59,34 @@ export function GallopGazette() {
                   className={cn(
                     "space-y-2",
                     i === 0 &&
-                      "md:after:content-[''] md:after:absolute md:after:left-1/2 md:after:top-0 md:after:bottom-0 md:after:w-[1px] md:after:bg-[#d3d3d3] md:pr-4",
+                      "md:after:content-[''] md:after:absolute md:after:left-1/2 md:after:top-0 md:after:bottom-0 md:after:w-[1px] md:after:bg-newspaper-divider md:pr-4",
                   )}
                 >
-                  <Badge className="bg-[#2c2c2c] text-white rounded-none text-[9px] font-bold h-4 px-1.5 uppercase tracking-widest">
+                  <Badge className="bg-newspaper-ink text-white rounded-none text-[9px] font-bold h-4 px-1.5 uppercase tracking-wide">
                     {item.category}
                   </Badge>
                   {item.partNumber && item.totalParts && item.totalParts > 1 && (
-                    <Badge className="bg-gold/80 text-[#2c2c2c] rounded-none text-[9px] font-bold h-4 px-1.5 uppercase tracking-widest">
+                    <Badge className="bg-gold/80 text-newspaper-ink rounded-none text-[9px] font-bold h-4 px-1.5 uppercase tracking-wide">
                       Part {item.partNumber}/{item.totalParts}
                     </Badge>
                   )}
                   <h3
                     className={cn(
-                      "font-extrabold leading-[1.05] tracking-tighter text-[#1a1a1a] font-[family-name:var(--font-display)] group-hover:text-gold-dark transition-colors",
+                      "font-extrabold leading-[1.05] tracking-tighter text-newspaper-headline font-[family-name:var(--font-display)] group-hover:text-gold-dark transition-colors",
                       item.importance === "high" ? "text-2xl" : "text-xl",
                     )}
                   >
                     <NewsContent
                       text={item.headline}
                       links={item.entityLinks}
-                      linkClassName="text-[#1a1a1a] hover:text-gold-dark border-b border-dotted border-[#1a1a1a]/40"
+                      linkClassName="text-newspaper-headline hover:text-gold-dark border-b border-dotted border-newspaper-headline/40"
                     />
                   </h3>
-                  <p className="text-sm line-clamp-3 leading-relaxed opacity-90 font-serif italic text-[#333]">
+                  <p className="text-sm line-clamp-3 leading-relaxed opacity-90 font-serif italic text-newspaper-body">
                     <NewsContent
                       text={item.body}
                       links={item.entityLinks}
-                      linkClassName="text-[#333] hover:text-gold-dark border-b border-dotted border-[#333]/40"
+                      linkClassName="text-newspaper-body hover:text-gold-dark border-b border-dotted border-newspaper-body/40"
                     />
                   </p>
                 </div>
@@ -97,10 +97,7 @@ export function GallopGazette() {
             </div>
           )}
         </div>
-        <div className="mt-6 pt-3 border-t border-[#d3d3d3] flex justify-between items-center">
-          <div className="text-[10px] uppercase font-bold tracking-widest opacity-60">
-            Global Racing Network • AP Wire
-          </div>
+        <div className="mt-6 pt-3 border-t border-newspaper-divider flex justify-between items-center">
           <Link
             to="/gazette"
             className="text-xs font-black uppercase hover:underline flex items-center gap-1 group/link"

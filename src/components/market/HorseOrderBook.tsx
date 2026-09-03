@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/core/common/formatting";
@@ -22,8 +23,9 @@ export function HorseOrderBook({
   const maxSize = Math.max(...book.asks.map((a) => a.price), ...book.bids.map((b) => b.price), 1);
   const reputationScore = useGame((s) => s.reputation?.score ?? 0);
   const npcStables = useGameWithShallow((s) => s.npcStables ?? []);
+  const stableById = useMemo(() => new Map(npcStables.map((st) => [st.id, st])), [npcStables]);
   const yardLabel = (sellerId: string) => {
-    const stable = npcStables.find((st) => st.id === sellerId);
+    const stable = stableById.get(sellerId);
     if (!stable) return undefined;
     const yard = resolveStableYard(stable);
     return `${formatYard(yard)} · ${yard.boxes} boxes · ${stable.owner}`;
@@ -70,7 +72,7 @@ export function HorseOrderBook({
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-1.5">
-          <h4 className="text-[10px] font-black uppercase tracking-widest text-cream-muted">
+          <h4 className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
             Asks (sellers)
           </h4>
           {book.asks.length === 0 ? (
@@ -122,7 +124,7 @@ export function HorseOrderBook({
         </div>
 
         <div className="space-y-1.5">
-          <h4 className="text-[10px] font-black uppercase tracking-widest text-cream-muted">
+          <h4 className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
             Bids (buyers)
           </h4>
           {book.bids.length === 0 ? (

@@ -29,7 +29,7 @@ function getProgressLabel(progress: number): string {
 export function PaceMap({ snapshots, runners }: PaceMapProps) {
   if (snapshots.length === 0) {
     return (
-      <div className="py-4 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+      <div className="py-4 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
         No pace data available for this race.
       </div>
     );
@@ -39,7 +39,7 @@ export function PaceMap({ snapshots, runners }: PaceMapProps) {
 
   return (
     <div className="space-y-2">
-      <div className="text-[10px] font-black uppercase text-cyan-400/60 tracking-[0.2em]">
+      <div className="text-[10px] font-black uppercase text-cyan-400/60 tracking-wide">
         Pace Map
       </div>
       <div className="grid grid-cols-3 gap-2">
@@ -49,7 +49,7 @@ export function PaceMap({ snapshots, runners }: PaceMapProps) {
 
           return (
             <div key={snap.progress} className="bg-black/30 border border-white/5 p-2 space-y-1">
-              <div className="text-[9px] font-black uppercase tracking-widest text-cream/40">
+              <div className="text-[9px] font-black uppercase tracking-wide text-cream/40">
                 {getProgressLabel(snap.progress)}
               </div>
               <div className={cn("text-sm font-black tabular-nums", color)}>{label}</div>

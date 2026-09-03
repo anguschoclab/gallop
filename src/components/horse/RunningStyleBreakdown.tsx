@@ -108,7 +108,7 @@ export function RunningStyleBreakdown({ horse }: RunningStyleBreakdownProps) {
               size="sm"
               variant="ghost"
               onClick={() => setCompareId(null)}
-              className="h-7 px-2 text-[10px] font-black uppercase tracking-widest text-cream/50 hover:text-gold"
+              className="h-7 px-2 text-[10px] font-black uppercase tracking-wide text-cream/50 hover:text-gold"
             >
               <X className="h-3 w-3 mr-1" /> Exit Compare
             </Button>
@@ -191,7 +191,7 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
     >
       <CardContent className="p-5 space-y-5">
         <div className="flex items-baseline justify-between gap-2">
-          <div className="text-[10px] font-black uppercase text-cream/30 tracking-widest">
+          <div className="text-[10px] font-black uppercase text-cream/30 tracking-wide">
             {horse.name}
           </div>
           <div className="text-[9px] font-mono uppercase text-cream/30 tabular-nums">
@@ -203,7 +203,7 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
         {/* Declared vs observed */}
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-black/30 border border-white/5 p-3">
-            <div className="text-[9px] font-black uppercase text-cream/30 tracking-widest mb-1">
+            <div className="text-[9px] font-black uppercase text-cream/30 tracking-wide mb-1">
               Declared
             </div>
             <div className="flex items-baseline gap-2">
@@ -215,7 +215,7 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
             <p className="text-[10px] text-cream/40 mt-1 leading-snug">{declaredMeta.blurb}</p>
           </div>
           <div className="bg-black/30 border border-white/5 p-3">
-            <div className="text-[9px] font-black uppercase text-cream/30 tracking-widest mb-1">
+            <div className="text-[9px] font-black uppercase text-cream/30 tracking-wide mb-1">
               Observed
             </div>
             {observed ? (
@@ -239,7 +239,7 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
         {/* Overall tendency bars */}
         {overall.sample > 0 && (
           <div className="space-y-2">
-            <div className="text-[10px] font-black uppercase text-cream/30 tracking-widest">
+            <div className="text-[10px] font-black uppercase text-cream/30 tracking-wide">
               First-Call Tendency · Win Rate by Position
             </div>
             {TENDENCY_ORDER.map((t) => {
@@ -278,7 +278,7 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
 
         {/* Trip drilldown */}
         <div className="space-y-2 pt-3 border-t border-white/5">
-          <div className="text-[10px] font-black uppercase text-cream/30 tracking-widest">
+          <div className="text-[10px] font-black uppercase text-cream/30 tracking-wide">
             By Trip · Sample Size & Tendency
           </div>
           <div className="overflow-hidden border border-white/5">
@@ -328,7 +328,7 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
               </tbody>
             </table>
           </div>
-          <p className="text-[9px] font-mono text-cream/30 uppercase tracking-widest">
+          <p className="text-[9px] font-mono text-cream/30 uppercase tracking-wide">
             Sample sizes &lt; 3 should be read with caution.
           </p>
         </div>

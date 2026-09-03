@@ -193,7 +193,7 @@ export function ScoutingInsightsPanel() {
 
   const contextMenuItems = (
     <>
-      <ContextMenuLabel className="font-mono text-[10px] uppercase tracking-widest">
+      <ContextMenuLabel className="font-mono text-[10px] uppercase tracking-wide">
         {selectedRows.length} selected
       </ContextMenuLabel>
       <ContextMenuSeparator />
@@ -241,7 +241,7 @@ export function ScoutingInsightsPanel() {
         <CardContent className="p-5 space-y-4">
           <div className="flex flex-wrap items-end gap-3 justify-between">
             <div>
-              <div className="flex items-center gap-2 text-gold uppercase tracking-[0.2em] font-mono text-[10px] font-bold">
+              <div className="flex items-center gap-2 text-gold uppercase tracking-wide font-mono text-[10px] font-bold">
                 <BarChart3 className="h-3.5 w-3.5" />
                 Bloodstock Insights
               </div>
@@ -365,7 +365,7 @@ export function ScoutingInsightsPanel() {
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-cream/40">
+          <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-wide text-cream/40">
             <span>Plotted: {visibleRows.length}</span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
             <span className="text-gold">Selected: {selectedRows.length}</span>
@@ -429,7 +429,7 @@ export function ScoutingInsightsPanel() {
                 </Button>
               </div>
             </div>
-            <div className="flex gap-6 font-mono text-[10px] uppercase tracking-widest text-cream/50">
+            <div className="flex gap-6 font-mono text-[10px] uppercase tracking-wide text-cream/50">
               <span>
                 Avg {xMetric.short}: {xMetric.format(average(xKey, selectedRows))}
               </span>
@@ -440,7 +440,7 @@ export function ScoutingInsightsPanel() {
             <div className="max-h-72 overflow-auto border border-white/5">
               <table className="w-full text-xs">
                 <thead className="bg-slate-950/60 sticky top-0">
-                  <tr className="text-left font-mono text-[9px] uppercase tracking-widest text-cream/40">
+                  <tr className="text-left font-mono text-[9px] uppercase tracking-wide text-cream/40">
                     <th className="p-2">Horse</th>
                     <th className="p-2">Owner</th>
                     <th className="p-2 text-right">{xMetric.short}</th>

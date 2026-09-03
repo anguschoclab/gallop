@@ -12,7 +12,7 @@ export function PaceProfileSummary({ horse }: PaceProfileSummaryProps) {
 
   if (racesWithPace.length === 0) {
     return (
-      <div className="text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+      <div className="text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
         No pace data available
       </div>
     );
@@ -45,7 +45,7 @@ export function PaceProfileSummary({ horse }: PaceProfileSummaryProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <div className="text-[10px] font-black uppercase text-cream/20 tracking-widest">
+            <div className="text-[10px] font-black uppercase text-cream/20 tracking-wide">
               Analytical Running Style
             </div>
             <div className="text-xs font-black text-gold uppercase tracking-tight">
@@ -78,7 +78,7 @@ export function PaceProfileSummary({ horse }: PaceProfileSummaryProps) {
         </div>
 
         <div className="space-y-4">
-          <div className="text-[10px] font-black uppercase text-cream/20 tracking-widest">
+          <div className="text-[10px] font-black uppercase text-cream/20 tracking-wide">
             Familiarity Analytics
           </div>
           <div className="space-y-2">

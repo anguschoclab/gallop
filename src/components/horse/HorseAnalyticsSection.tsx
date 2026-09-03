@@ -26,7 +26,7 @@ export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyti
         <CardContent className="p-6 space-y-6">
           <div className="flex items-center gap-4 mb-2">
             <div className="bg-black/40 px-3 py-1.5 border border-white/5">
-              <div className="text-[9px] font-black uppercase text-cream/20 tracking-widest mb-0.5">
+              <div className="text-[9px] font-black uppercase text-cream/20 tracking-wide mb-0.5">
                 Form Multiplier
               </div>
               <div className="font-mono text-sm font-bold text-gold">
@@ -39,7 +39,7 @@ export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyti
             <div className="bg-gold/10 border border-gold/20 p-3 flex gap-3 items-start rounded-sm mb-4">
               <Lightbulb className="h-4 w-4 text-gold mt-0.5 shrink-0" />
               <div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-gold/80 mb-0.5">
+                <div className="text-[10px] font-black uppercase tracking-wide text-gold/80 mb-0.5">
                   Tipster Insight: {insight.label}
                 </div>
                 <div className="text-sm font-bold text-cream">{insight.value}</div>
@@ -51,7 +51,7 @@ export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyti
           <BeyerChart history={horse.raceHistory ?? []} />
 
           <div className="pt-4 border-t border-white/5 space-y-2">
-            <div className="text-[10px] font-black uppercase text-fame/40 tracking-widest">
+            <div className="text-[10px] font-black uppercase text-fame/40 tracking-wide">
               Career Charts
             </div>
             <HorseCareerCharts horse={horse} />
@@ -59,7 +59,7 @@ export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyti
 
           {(horse.raceHistory ?? []).some((h) => h.pacePositions && h.pacePositions.length > 0) && (
             <div className="pt-4 border-t border-white/5 space-y-2">
-              <div className="text-[10px] font-black uppercase text-fame/40 tracking-widest">
+              <div className="text-[10px] font-black uppercase text-fame/40 tracking-wide">
                 Pace Profile
               </div>
               <PaceProfileSummary horse={horse} />
@@ -68,7 +68,7 @@ export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyti
 
           {(horse.raceHistory ?? []).length > 0 && (
             <div className="pt-4 border-t border-white/5 space-y-2">
-              <div className="text-[10px] font-black uppercase text-fame/40 tracking-widest">
+              <div className="text-[10px] font-black uppercase text-fame/40 tracking-wide">
                 Distance Aptitude Drift
               </div>
               <DistanceAptitudeDrift horse={horse} />

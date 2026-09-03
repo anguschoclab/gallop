@@ -31,7 +31,7 @@ export function AuctionSummary({ sale, scoreboard, onClose }: AuctionSummaryProp
         <div className="relative z-10">
           <Trophy className="h-12 w-12 mx-auto text-warning drop-shadow-[0_0_15px_rgba(255,193,7,0.3)] mb-2" />
           <CardTitle className="text-3xl font-black tracking-tight">{sale.name}</CardTitle>
-          <p className="text-muted-foreground font-medium uppercase tracking-widest text-[10px] mt-1">
+          <p className="text-muted-foreground font-medium uppercase tracking-wide text-[10px] mt-1">
             Sale Concluded
           </p>
         </div>
@@ -53,7 +53,7 @@ export function AuctionSummary({ sale, scoreboard, onClose }: AuctionSummaryProp
           {sb.topAcquisition && (
             <div className="rounded-2xl border border-success/20 bg-success/5 p-5 flex items-center justify-between shadow-sm">
               <div>
-                <p className="text-[10px] uppercase font-bold text-success/70 tracking-widest mb-1">
+                <p className="text-[10px] uppercase font-bold text-success/70 tracking-wide mb-1">
                   Top acquisition
                 </p>
                 <p className="font-bold text-lg">{sb.topAcquisition.name}</p>
@@ -67,7 +67,7 @@ export function AuctionSummary({ sale, scoreboard, onClose }: AuctionSummaryProp
           {sb.topSale && (
             <div className="rounded-2xl border border-warning/20 bg-warning/5 p-5 flex items-center justify-between shadow-sm">
               <div>
-                <p className="text-[10px] uppercase font-bold text-warning/70 tracking-widest mb-1">
+                <p className="text-[10px] uppercase font-bold text-warning/70 tracking-wide mb-1">
                   Best sale
                 </p>
                 <p className="font-bold text-lg">{sb.topSale.name}</p>
@@ -99,7 +99,7 @@ export function AuctionSummary({ sale, scoreboard, onClose }: AuctionSummaryProp
 function SummaryStat({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
     <div className="rounded-2xl border border-border/50 bg-muted/20 p-5 shadow-sm transition-all hover:bg-muted/30">
-      <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest mb-1">
+      <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wide mb-1">
         {label}
       </p>
       <p className="text-2xl font-black tabular-nums text-foreground">{value}</p>

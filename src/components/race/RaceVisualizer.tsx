@@ -38,6 +38,8 @@ const C = {
   HORSE_RADIUS: 12,
   MAX_LANES: 8,
   Y_OFFSET: 100,
+  // Canvas fillStyle does not support CSS var() — these hex values mirror
+  // --broadcast-turf and --broadcast-dirt tokens in styles.css.
   TRACK_COLOR_TURF: "#2d5a27",
   TRACK_COLOR_DIRT: "#8b4513",
   LANE_COLOR: "rgba(255, 255, 255, 0.3)",

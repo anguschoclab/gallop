@@ -17,10 +17,10 @@ import { cn } from "@/lib/cn";
 import type { CashPressure } from "@/core/stable/cashPressure";
 
 const LABEL_COLORS: Record<CashPressure["label"], string> = {
-  comfortable: "#9ca3af",
-  tight: "#fbbf24",
-  strained: "#fb923c",
-  desperate: "#f87171",
+  comfortable: "var(--status-comfortable)",
+  tight: "var(--warning)",
+  strained: "var(--status-strained)",
+  desperate: "var(--destructive)",
 };
 
 interface CashPressureTrendProps {
@@ -74,7 +74,7 @@ export function CashPressureTrend({ stableId, variant, className }: CashPressure
           <span>Runway</span>
           <span className="tabular-nums text-cream">{Math.round(latest.runwayDays)} days</span>
         </div>
-        <Sparkline data={runwayData} color="#60a5fa" height={48} variant="area" />
+        <Sparkline data={runwayData} color="var(--info)" height={48} variant="area" />
       </div>
     </div>
   );

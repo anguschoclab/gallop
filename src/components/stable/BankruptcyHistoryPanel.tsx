@@ -38,7 +38,7 @@ export const BankruptcyHistoryPanel = memo(function BankruptcyHistoryPanel({
   return (
     <Card className="bg-slate-950/50 border-white/5 rounded-none shadow-xl border-l-4 border-l-red-500/40">
       <CardHeader className="bg-black/20 border-b border-white/5">
-        <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40 flex items-center gap-2">
+        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
           <Skull className="h-3 w-3 text-red-400" /> Dissolved Stables
         </CardTitle>
       </CardHeader>
@@ -69,7 +69,7 @@ export const BankruptcyHistoryPanel = memo(function BankruptcyHistoryPanel({
                     <Link
                       to="/npc-stables/$stableId"
                       params={{ stableId: stableLink.id }}
-                      className="text-[9px] font-mono text-blue-400/60 hover:text-blue-400 uppercase tracking-widest"
+                      className="text-[9px] font-mono text-blue-400/60 hover:text-blue-400 uppercase tracking-wide"
                     >
                       View Records →
                     </Link>

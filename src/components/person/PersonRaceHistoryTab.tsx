@@ -146,7 +146,7 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
         </CardHeader>
         <CardContent className="p-0">
           {filteredRows.length === 0 ? (
-            <div className="p-12 text-center text-[10px] font-mono text-cream/30 uppercase tracking-widest italic">
+            <div className="p-12 text-center text-[10px] font-mono text-cream/30 uppercase tracking-wide italic">
               No race records on file.
             </div>
           ) : (
@@ -217,7 +217,7 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
 function StatBox({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="border border-white/5 bg-slate-900/40 p-3 text-center">
-      <div className="text-[9px] font-mono uppercase tracking-widest text-cream/40">{label}</div>
+      <div className="text-[9px] font-mono uppercase tracking-wide text-cream/40">{label}</div>
       <div className="text-lg font-black text-cream mt-1">{value}</div>
     </div>
   );

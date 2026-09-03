@@ -34,14 +34,14 @@ export function ResolvedSaleSummary({ activeLots, horseMap, sale }: ResolvedSale
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-t-2 border-t-gold/40">
       <CardHeader className="bg-black/20 border-b border-white/5">
-        <CardTitle className="text-[10px] font-black uppercase tracking-[0.4em] text-gold-muted/60">
+        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-gold-muted/60">
           Sale Exchange Summary
         </CardTitle>
       </CardHeader>
       <CardContent className="p-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="space-y-1">
-            <div className="text-[9px] font-black uppercase text-cream/20 tracking-widest">
+            <div className="text-[9px] font-black uppercase text-cream/20 tracking-wide">
               Total Lots
             </div>
             <div className="text-xl font-black font-mono text-cream tabular-nums">
@@ -49,7 +49,7 @@ export function ResolvedSaleSummary({ activeLots, horseMap, sale }: ResolvedSale
             </div>
           </div>
           <div className="space-y-1">
-            <div className="text-[9px] font-black uppercase text-cream/20 tracking-widest">
+            <div className="text-[9px] font-black uppercase text-cream/20 tracking-wide">
               Lots Sold
             </div>
             <div className="text-xl font-black font-mono text-success tabular-nums">
@@ -57,7 +57,7 @@ export function ResolvedSaleSummary({ activeLots, horseMap, sale }: ResolvedSale
             </div>
           </div>
           <div className="space-y-1">
-            <div className="text-[9px] font-black uppercase text-cream/20 tracking-widest">
+            <div className="text-[9px] font-black uppercase text-cream/20 tracking-wide">
               Reserve Passed
             </div>
             <div className="text-xl font-black font-mono text-destructive/60 tabular-nums">
@@ -66,7 +66,7 @@ export function ResolvedSaleSummary({ activeLots, horseMap, sale }: ResolvedSale
           </div>
           {topLot && (
             <div className="space-y-1">
-              <div className="text-[9px] font-black uppercase text-gold/40 tracking-widest">
+              <div className="text-[9px] font-black uppercase text-gold/40 tracking-wide">
                 Top Valuation
               </div>
               <div className="text-xl font-black font-mono text-gold-bright tabular-nums">

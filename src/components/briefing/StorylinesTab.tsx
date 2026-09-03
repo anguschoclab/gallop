@@ -62,7 +62,7 @@ export function StorylinesTab() {
         </h2>
         <Badge
           variant="outline"
-          className="border-gold/30 text-gold-muted bg-gold/5 font-mono text-[10px] uppercase tracking-widest ml-auto"
+          className="border-gold/30 text-gold-muted bg-gold/5 font-mono text-[10px] uppercase tracking-wide ml-auto"
         >
           {arcsByStable.length} Stables
         </Badge>
@@ -87,7 +87,7 @@ export function StorylinesTab() {
                     dramaticPotential > 0.7 ? "text-gold-bright" : "text-cream/20",
                   )}
                 />
-                <span className="text-[10px] font-mono uppercase tracking-widest text-cream/40">
+                <span className="text-[10px] font-mono uppercase tracking-wide text-cream/40">
                   Drama: {Math.round(dramaticPotential * 100)}%
                 </span>
               </div>
@@ -95,7 +95,7 @@ export function StorylinesTab() {
 
             {arcs.length > 0 && (
               <div className="space-y-2">
-                <div className="text-[10px] font-black uppercase tracking-widest text-gold/40">
+                <div className="text-[10px] font-black uppercase tracking-wide text-gold/40">
                   Active Arcs
                 </div>
                 {arcs.map((arc, i) => (
@@ -108,7 +108,7 @@ export function StorylinesTab() {
                       <div className="flex items-center gap-2">
                         <Badge
                           variant="outline"
-                          className="text-[8px] h-3.5 px-1 font-black uppercase border-gold/20 text-gold-muted rounded-none tracking-widest"
+                          className="text-[8px] h-3.5 px-1 font-black uppercase border-gold/20 text-gold-muted rounded-none tracking-wide"
                         >
                           {arc.type.replace(/_/g, " ")}
                         </Badge>
@@ -129,7 +129,7 @@ export function StorylinesTab() {
 
             {beats.length > 0 && (
               <div className="space-y-2">
-                <div className="text-[10px] font-black uppercase tracking-widest text-cream/30">
+                <div className="text-[10px] font-black uppercase tracking-wide text-cream/30">
                   Recent Story Beats
                 </div>
                 <div className="divide-y divide-white/5">
@@ -182,7 +182,7 @@ export function StorylinesTab() {
               </h3>
               <Badge
                 variant="outline"
-                className="border-green-400/20 text-green-400/60 font-mono text-[9px] uppercase tracking-widest"
+                className="border-green-400/20 text-green-400/60 font-mono text-[9px] uppercase tracking-wide"
               >
                 {completedArcs.length}
               </Badge>

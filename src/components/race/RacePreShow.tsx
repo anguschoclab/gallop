@@ -67,7 +67,7 @@ export function RacePreShow({ race, runners, runnerOdds, onStart }: RacePreShowP
 
         {/* The field, as a betting card */}
         <div className="border border-white/10 bg-black/20 rounded-lg overflow-hidden">
-          <div className="grid grid-cols-[40px_1fr_90px_80px] gap-3 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground border-b border-white/10">
+          <div className="grid grid-cols-[40px_1fr_90px_80px] gap-3 px-4 py-2 text-[10px] font-black uppercase tracking-wide text-muted-foreground border-b border-white/10">
             <span>Silk</span>
             <span>Runner</span>
             <span className="text-right">Best / mi</span>

@@ -35,7 +35,7 @@ export function HorseGeneticsSection({ horse }: { horse: Horse }) {
       </div>
       <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-gold">
         <CardHeader className="pb-2 border-b border-white/5">
-          <CardTitle className="text-[10px] font-black uppercase tracking-widest text-cream/40">
+          <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40">
             Inherited Profile
           </CardTitle>
         </CardHeader>
@@ -101,7 +101,7 @@ export function HorseGeneticsSection({ horse }: { horse: Horse }) {
 
           {/* Health risks */}
           <div className="pt-2 border-t border-white/5">
-            <div className="text-[10px] font-black uppercase text-gold/40 tracking-widest mb-2">
+            <div className="text-[10px] font-black uppercase text-gold/40 tracking-wide mb-2">
               Health Risk
             </div>
             <div className="flex flex-wrap gap-2">

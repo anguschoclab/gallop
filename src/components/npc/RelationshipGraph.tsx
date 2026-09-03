@@ -26,11 +26,11 @@ export const RelationshipGraph = memo(function RelationshipGraph({
     return (
       <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl">
         <CardHeader className="bg-black/20 border-b border-white/5">
-          <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40 flex items-center gap-2">
+          <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
             <Network className="h-3 w-3 text-blue-400" /> Relationship Graph
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+        <CardContent className="p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
           No diplomatic relationships established yet.
         </CardContent>
       </Card>
@@ -42,7 +42,7 @@ export const RelationshipGraph = memo(function RelationshipGraph({
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-indigo-400">
       <CardHeader className="bg-black/20 border-b border-white/5">
-        <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40 flex items-center gap-2">
+        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
           <Network className="h-3 w-3 text-indigo-400" /> Relationship Graph
         </CardTitle>
       </CardHeader>
@@ -79,7 +79,7 @@ export const RelationshipGraph = memo(function RelationshipGraph({
               </div>
 
               <div className="flex items-center justify-between text-xs">
-                <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+                <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                   Trust
                 </span>
                 <span
@@ -105,7 +105,7 @@ export const RelationshipGraph = memo(function RelationshipGraph({
 
               {rel.history.length > 0 && (
                 <div className="space-y-1 pt-1 border-t border-white/5">
-                  <div className="text-[9px] font-black uppercase tracking-widest text-cream/30">
+                  <div className="text-[9px] font-black uppercase tracking-wide text-cream/30">
                     Diplomatic Timeline
                   </div>
                   {rel.history.slice(-3).map((event, idx) => (
@@ -129,12 +129,12 @@ export const RelationshipGraph = memo(function RelationshipGraph({
 
         {stableCartels.length > 0 && (
           <div className="pt-2 border-t border-white/5 space-y-1">
-            <div className="text-[9px] font-black uppercase tracking-widest text-cream/30">
+            <div className="text-[9px] font-black uppercase tracking-wide text-cream/30">
               Cartel Membership
             </div>
             {stableCartels.map((cartel) => (
               <div key={cartel.id} className="flex items-center gap-2 text-[10px] text-cream/50">
-                <Badge className="bg-gold/10 text-gold border border-gold/30 text-[8px] uppercase tracking-widest">
+                <Badge className="bg-gold/10 text-gold border border-gold/30 text-[8px] uppercase tracking-wide">
                   {cartel.type} cartel
                 </Badge>
                 <span className="font-mono">{cartel.memberStableIds.length} members</span>

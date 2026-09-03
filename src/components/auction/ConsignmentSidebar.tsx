@@ -30,14 +30,14 @@ export function ConsignmentSidebar({
       <section className="space-y-4">
         <div className="flex items-center gap-2 mb-2 px-1">
           <Package className="h-3.5 w-3.5 text-gold/60" />
-          <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-cream/40">
+          <h2 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
             Consign to Sale
           </h2>
         </div>
         <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-2 border-l-gold/40">
           <CardHeader className="pb-2 border-b border-white/5 bg-black/20">
             <div className="flex justify-between items-center">
-              <CardTitle className="text-[9px] font-black uppercase tracking-widest text-cream/40">
+              <CardTitle className="text-[9px] font-black uppercase tracking-wide text-cream/40">
                 Eligible Horses
               </CardTitle>
               <span className="text-[9px] font-mono text-gold-bright font-black uppercase">
@@ -94,7 +94,7 @@ export function ConsignmentSidebar({
                 );
               })}
               {consignablePairs.length === 0 && (
-                <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+                <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
                   No assets ready for deployment
                 </div>
               )}

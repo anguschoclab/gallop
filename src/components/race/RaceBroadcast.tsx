@@ -256,7 +256,7 @@ export function RaceBroadcast({
                   data-analysis-trigger="true"
                   className="w-full flex items-center justify-between border border-white/10 bg-black/30 hover:bg-black/40 transition-colors px-4 py-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-broadcast-accent"
                 >
-                  <span className="text-xs font-black uppercase tracking-widest text-cream">
+                  <span className="text-xs font-black uppercase tracking-wide text-cream">
                     Post-race analysis
                   </span>
                   <ChevronDown

@@ -31,9 +31,7 @@ vi.mock("@/game/store", () => ({
             friction: -45,
             winsAgainstPlayer: 3,
             regionalPrestige: { "North Region": 80 },
-            strategicDirectives: [
-              { id: "d1", priority: "high" as const, action: "acquire_stallion" },
-            ],
+            strategicDirectives: [{ type: "expansion" as const, priority: 1, weight: 0.8 }],
             npcRelationships: {
               s2: {
                 trust: 30,
@@ -131,7 +129,7 @@ describe("RivalIntelTab", () => {
   it("displays strategic directives for NPC stables", () => {
     render(<RivalIntelTab />);
     expect(screen.getAllByText(/Strategic Directives/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/acquire_stallion/i)).toBeDefined();
+    expect(screen.getByText(/expansion/i)).toBeDefined();
   });
 
   it("displays NPC relationships section with trust heatmap", () => {

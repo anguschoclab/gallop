@@ -42,7 +42,7 @@ export function ParentStatsPanel({ sire, dam }: ParentStatsPanelProps) {
         )[0];
         return (
           <div key={role} className="bg-black/20 border border-white/5 p-3 space-y-1">
-            <div className="text-[9px] font-black uppercase tracking-widest text-cream/30 mb-2">
+            <div className="text-[9px] font-black uppercase tracking-wide text-cream/30 mb-2">
               {h.name} · {role}
             </div>
             <div className="text-[10px] font-mono space-y-0.5">

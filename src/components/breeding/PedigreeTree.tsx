@@ -107,7 +107,7 @@ export function PedigreeTree({
               key={g}
               onClick={() => setGenerations(g)}
               className={cn(
-                "px-2 py-0.5 text-[9px] font-black uppercase tracking-widest rounded-sm transition-colors",
+                "px-2 py-0.5 text-[9px] font-black uppercase tracking-wide rounded-sm transition-colors",
                 generations === g
                   ? "bg-gold/20 text-gold border border-gold/40"
                   : "text-cream/30 hover:text-cream/60 border border-white/5",

@@ -73,7 +73,7 @@ function HorseDetail() {
         <div className="sticky top-6 space-y-6">
           <button
             onClick={() => router.navigate({ to: "/stable" })}
-            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-cream/30 hover:text-gold transition-colors mb-8"
+            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream/30 hover:text-gold transition-colors mb-8"
           >
             <ArrowLeft className="h-3 w-3" /> Back to Stable
           </button>
@@ -87,7 +87,7 @@ function HorseDetail() {
                   data-section-id={s.id}
                   onClick={detail.handleScrollToSection}
                   className={cn(
-                    "w-full flex items-center gap-3 px-3 py-2 text-[10px] font-black uppercase tracking-widest border-l-2 transition-all",
+                    "w-full flex items-center gap-3 px-3 py-2 text-[10px] font-black uppercase tracking-wide border-l-2 transition-all",
                     detail.activeSection === s.id
                       ? "border-gold text-gold bg-gold/5"
                       : "border-transparent text-cream/20 hover:text-cream/60 hover:bg-white/[0.02]",
@@ -169,7 +169,7 @@ function HorseDetail() {
               <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-gold">
                 <CardHeader className="pb-2 border-b border-white/5">
                   <div className="flex justify-between items-center">
-                    <CardTitle className="text-[10px] font-black uppercase tracking-widest text-cream/40">
+                    <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40">
                       Training Schedule
                     </CardTitle>
                     <span className="text-[10px] font-mono text-gold-bright font-black uppercase">

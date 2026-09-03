@@ -53,7 +53,7 @@ export function StableRosterWidget() {
       </CardHeader>
       <CardContent className="pt-4 flex-1 flex flex-col justify-between space-y-4">
         <div className="space-y-3">
-          <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-400/60 mb-2 px-1 flex justify-between">
+          <div className="text-[10px] font-bold uppercase tracking-wide text-blue-400/60 mb-2 px-1 flex justify-between">
             <span>Top Stable Stars</span>
             <span>OVR</span>
           </div>
@@ -82,7 +82,7 @@ export function StableRosterWidget() {
           </div>
 
           <div className="pt-2 space-y-2">
-            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-400/60 mb-1 px-1 flex justify-between items-center">
+            <div className="text-[10px] font-bold uppercase tracking-wide text-blue-400/60 mb-1 px-1 flex justify-between items-center">
               <span>Personnel Brief</span>
               <Link to="/jockeys" className="text-[9px] hover:text-blue-400 underline">
                 Roster
@@ -112,7 +112,7 @@ export function StableRosterWidget() {
           <Link to="/horse-gallery" className="w-full">
             <Button
               variant="outline"
-              className="w-full h-8 text-[10px] uppercase font-bold tracking-widest border-blue-400/20 hover:bg-blue-400/10 text-blue-400/70"
+              className="w-full h-8 text-[10px] uppercase font-bold tracking-wide border-blue-400/20 hover:bg-blue-400/10 text-blue-400/70"
             >
               Horse Gallery
             </Button>
@@ -120,7 +120,7 @@ export function StableRosterWidget() {
           <Link to="/breeding" className="w-full">
             <Button
               variant="outline"
-              className="w-full h-8 text-[10px] uppercase font-bold tracking-widest border-pink-400/20 hover:bg-pink-400/10 text-pink-400/70"
+              className="w-full h-8 text-[10px] uppercase font-bold tracking-wide border-pink-400/20 hover:bg-pink-400/10 text-pink-400/70"
             >
               Breeding Ops
             </Button>

@@ -28,14 +28,14 @@ export function JockeyRosterTabs({
           <TabsList className="bg-transparent h-10 gap-2">
             <TabsTrigger
               value="my"
-              className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-6 transition-all"
+              className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-6 transition-all"
             >
               <UserCheck className="w-3.5 h-3.5" />
               My Jockeys
             </TabsTrigger>
             <TabsTrigger
               value="market"
-              className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-gold data-[state=active]:text-slate-950 h-full px-6 transition-all"
+              className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-gold data-[state=active]:text-slate-950 h-full px-6 transition-all"
             >
               <Users className="w-3.5 h-3.5" />
               Available

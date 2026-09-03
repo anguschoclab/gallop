@@ -94,7 +94,7 @@ export function JockeyReportPanel({
     <section className={cn("border border-gold/20 bg-black/30 p-5 space-y-4", className)}>
       <header className="flex flex-wrap items-end justify-between gap-3 border-b border-white/5 pb-3">
         <div>
-          <div className="text-[10px] uppercase font-black tracking-[0.3em] text-gold/50">
+          <div className="text-[10px] uppercase font-black tracking-wide text-gold/50">
             Stable Intelligence
           </div>
           <h3 className="text-lg font-black text-cream uppercase tracking-tight font-[family-name:var(--font-display)]">
@@ -107,7 +107,7 @@ export function JockeyReportPanel({
         <div className="flex items-center gap-3">
           <div
             className={cn(
-              "px-3 py-1.5 border font-mono text-[10px] uppercase tracking-widest flex items-center gap-2",
+              "px-3 py-1.5 border font-mono text-[10px] uppercase tracking-wide flex items-center gap-2",
               jockeyGradeColorClass(active.averageGrade),
             )}
           >
@@ -130,7 +130,7 @@ export function JockeyReportPanel({
                 type="button"
                 onClick={() => setSelectedId(r.horseId)}
                 className={cn(
-                  "flex items-center gap-2 px-3 h-8 border text-[10px] uppercase tracking-widest font-mono transition-colors",
+                  "flex items-center gap-2 px-3 h-8 border text-[10px] uppercase tracking-wide font-mono transition-colors",
                   isActive
                     ? "border-gold/60 bg-gold/10 text-gold"
                     : "border-white/10 text-cream/50 hover:border-gold/30 hover:text-cream",
@@ -146,7 +146,7 @@ export function JockeyReportPanel({
       )}
 
       {/* Header strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono uppercase tracking-widest">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono uppercase tracking-wide">
         <Stat label="Horse" value={active.horseName} />
         <Stat
           label="Rider"
@@ -181,17 +181,17 @@ export function JockeyReportPanel({
                 <div className="flex items-center gap-2 min-w-0">
                   <Icon className="h-3.5 w-3.5 text-cream/40 shrink-0" />
                   <div className="min-w-0">
-                    <div className="text-[11px] font-black uppercase tracking-widest text-cream truncate">
+                    <div className="text-[11px] font-black uppercase tracking-wide text-cream truncate">
                       {facet.label}
                     </div>
-                    <div className="text-[9px] font-mono uppercase tracking-widest text-cream/30 truncate">
+                    <div className="text-[9px] font-mono uppercase tracking-wide text-cream/30 truncate">
                       {facet.description}
                     </div>
                   </div>
                 </div>
                 <span
                   className={cn(
-                    "shrink-0 px-2 py-0.5 border font-mono text-[10px] uppercase tracking-widest font-black tabular-nums",
+                    "shrink-0 px-2 py-0.5 border font-mono text-[10px] uppercase tracking-wide font-black tabular-nums",
                     jockeyGradeColorClass(facet.grade),
                   )}
                   title={`${facet.score.toFixed(0)} / 100`}
@@ -231,7 +231,7 @@ export function JockeyReportPanel({
 function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="border border-white/5 bg-slate-950/40 px-3 py-2">
-      <div className="text-[9px] uppercase tracking-widest text-cream/30 font-mono">{label}</div>
+      <div className="text-[9px] uppercase tracking-wide text-cream/30 font-mono">{label}</div>
       <div className="text-xs font-bold text-cream truncate">{value}</div>
     </div>
   );

@@ -28,7 +28,7 @@ export function StableRosterLedger({ horses, selectedIds, toggleSelect }: Stable
     <div className="border border-white/5 bg-slate-900/20 overflow-x-auto shadow-2xl">
       <table className="w-full text-left border-collapse">
         <thead className="bg-black/40 border-b border-white/10">
-          <tr className="font-mono text-[10px] uppercase tracking-[0.2em] text-gold-muted/60">
+          <tr className="font-mono text-[10px] uppercase tracking-wide text-gold-muted/60">
             <th className="px-3 py-3 font-black w-1"></th>
             <th className="px-3 py-3 font-black w-1">#</th>
             <th className="px-4 py-3 font-black">Horse</th>

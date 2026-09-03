@@ -63,7 +63,7 @@ export function StaffNegotiationDialog({ staff, isOpen, onClose }: StaffNegotiat
         </DialogHeader>
 
         <div className="space-y-5 pt-1">
-          <div className="flex items-center gap-3 text-[10px] font-mono uppercase text-cream/40 tracking-widest">
+          <div className="flex items-center gap-3 text-[10px] font-mono uppercase text-cream/40 tracking-wide">
             <span className="px-2 py-0.5 border border-white/10 bg-white/5">{tierLabel}</span>
             <span>{roleLabel}</span>
             <span className="text-gold">Fame {staff.fame}</span>
@@ -74,7 +74,7 @@ export function StaffNegotiationDialog({ staff, isOpen, onClose }: StaffNegotiat
           </div>
 
           <div className="space-y-2">
-            <div className="flex justify-between text-[10px] font-mono uppercase text-cream/40 tracking-widest">
+            <div className="flex justify-between text-[10px] font-mono uppercase text-cream/40 tracking-wide">
               <span>
                 Asking:{" "}
                 <span className="text-cream font-bold tabular-nums">
@@ -88,7 +88,7 @@ export function StaffNegotiationDialog({ staff, isOpen, onClose }: StaffNegotiat
             </div>
 
             {patience > 0 && (
-              <div className="text-[9px] font-mono uppercase text-cream/30 tracking-widest">
+              <div className="text-[9px] font-mono uppercase text-cream/30 tracking-wide">
                 Patience:{" "}
                 {roundsLeft === 0 ? (
                   <span className="text-destructive">Final warning</span>
@@ -103,7 +103,7 @@ export function StaffNegotiationDialog({ staff, isOpen, onClose }: StaffNegotiat
             <div className="space-y-1">
               <label
                 htmlFor={offerInputId}
-                className="text-[10px] font-black uppercase text-cream/50 tracking-widest"
+                className="text-[10px] font-black uppercase text-cream/50 tracking-wide"
               >
                 Your offer (per day)
               </label>
@@ -130,13 +130,13 @@ export function StaffNegotiationDialog({ staff, isOpen, onClose }: StaffNegotiat
         <DialogFooter className="gap-2">
           <Button
             variant="ghost"
-            className="rounded-none border border-white/10 text-cream/50 hover:text-cream text-[10px] uppercase tracking-widest"
+            className="rounded-none border border-white/10 text-cream/50 hover:text-cream text-[10px] uppercase tracking-wide"
             onClick={handleClose}
           >
             Walk Away
           </Button>
           <Button
-            className="rounded-none bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-[0.2em] text-[10px]"
+            className="rounded-none bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-wide text-[10px]"
             onClick={handleSubmit}
           >
             Make Offer

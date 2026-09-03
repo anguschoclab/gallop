@@ -65,6 +65,11 @@ export function ExchangePanel() {
     () => buildOrderBooks(exchange, horseList, day),
     [exchange, horseList, day],
   );
+  const bookByHorseId = useMemo(() => new Map(books.map((b) => [b.horseId, b])), [books]);
+  const playerAskHorseIds = useMemo(
+    () => new Set(exchange.asks.filter((a) => a.sellerId === "player").map((a) => a.horseId)),
+    [exchange.asks],
+  );
   const depth = useMemo(() => buildMarketDepth(books, exchange, day), [books, exchange, day]);
   const series = useMemo(() => tradeSeries(exchange, day), [exchange, day]);
 
@@ -76,10 +81,10 @@ export function ExchangePanel() {
             isPlayerOwned(h) &&
             h.lifecycleStatus !== "deceased" &&
             !h.consignedSaleId &&
-            !exchange.asks.some((a) => a.horseId === h.id && a.sellerId === "player"),
+            !playerAskHorseIds.has(h.id),
         )
         .sort((a, b) => a.name.localeCompare(b.name)),
-    [horseList, exchange.asks],
+    [horseList, playerAskHorseIds],
   );
 
   const myListings = useMemo(
@@ -91,7 +96,7 @@ export function ExchangePanel() {
     [exchange.asks],
   );
 
-  const selectedBook = books.find((b) => b.horseId === selected) ?? books[0];
+  const selectedBook = (selected ? bookByHorseId.get(selected) : undefined) ?? books[0];
   const suggestion = listHorseId
     ? suggestAskPrice(horses[listHorseId] as Horse, horseList)
     : undefined;
@@ -135,7 +140,7 @@ export function ExchangePanel() {
 
       <Card className="border-white/5 bg-slate-900/40">
         <CardContent className="p-4 space-y-3">
-          <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-cream-muted">
+          <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream-muted">
             <BarChart3 className="h-3.5 w-3.5 text-primary" />
             Market Depth by Price Band
           </h3>
@@ -149,7 +154,7 @@ export function ExchangePanel() {
             />
           </div>
           <div className="space-y-1 border-t border-white/5 pt-3">
-            <h4 className="text-[10px] font-black uppercase tracking-widest text-cream-muted">
+            <h4 className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
               Daily traded volume (30d)
             </h4>
             <div className="flex h-12 items-end gap-0.5">
@@ -168,7 +173,7 @@ export function ExchangePanel() {
 
       <Card className="border-white/5 bg-slate-900/40">
         <CardContent className="p-4 space-y-3">
-          <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-cream-muted">
+          <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream-muted">
             <Tag className="h-3.5 w-3.5 text-primary" />
             List a Horse
           </h3>
@@ -221,11 +226,11 @@ export function ExchangePanel() {
 
           {myListings.length > 0 && (
             <div className="space-y-1.5 border-t border-white/5 pt-3">
-              <h4 className="text-[10px] font-black uppercase tracking-widest text-cream-muted">
+              <h4 className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
                 Your listings
               </h4>
               {myListings.map((a) => {
-                const book = books.find((b) => b.horseId === a.horseId);
+                const book = bookByHorseId.get(a.horseId);
                 return (
                   <div
                     key={a.id}
@@ -267,16 +272,16 @@ export function ExchangePanel() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card className="border-white/5 bg-slate-900/40">
           <CardContent className="p-4 space-y-2">
-            <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-cream-muted">
+            <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream-muted">
               <ArrowLeftRight className="h-3.5 w-3.5 text-primary" />
-              Live Listings
+              Listings
             </h3>
             {npcListings.length === 0 ? (
               <p className="text-xs text-cream-muted">No stables are offering horses right now.</p>
             ) : (
               npcListings.slice(0, 15).map((a) => {
                 const horse = horses[a.horseId] as Horse | undefined;
-                const book = books.find((b) => b.horseId === a.horseId);
+                const book = bookByHorseId.get(a.horseId);
                 return (
                   <div
                     key={a.id}
@@ -388,7 +393,7 @@ function DepthColumn({
 }) {
   return (
     <div className="space-y-1">
-      <h4 className="text-[10px] font-black uppercase tracking-widest text-cream-muted">{title}</h4>
+      <h4 className="text-[10px] font-black uppercase tracking-wide text-cream-muted">{title}</h4>
       {levels.length === 0 ? (
         <p className="text-xs text-cream-muted">No orders.</p>
       ) : (

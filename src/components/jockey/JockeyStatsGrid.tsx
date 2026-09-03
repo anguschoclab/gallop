@@ -29,7 +29,7 @@ export function JockeyStatsGrid({ jockey }: JockeyStatsGridProps) {
       <div className="space-y-4">
         <div className="grid grid-cols-1 gap-2">
           <div className="bg-black/20 p-2 border border-white/5">
-            <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-blue-400/40 mb-1">
+            <div className="flex justify-between text-[9px] font-black uppercase tracking-wide text-blue-400/40 mb-1">
               <span>Strike Rate</span>
               <span className="font-mono text-cream/80">{winRate.toFixed(1)}%</span>
             </div>
@@ -38,7 +38,7 @@ export function JockeyStatsGrid({ jockey }: JockeyStatsGridProps) {
             </div>
           </div>
           <div className="bg-black/20 p-2 border border-white/5">
-            <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-blue-400/40 mb-1">
+            <div className="flex justify-between text-[9px] font-black uppercase tracking-wide text-blue-400/40 mb-1">
               <span>Experience</span>
               <span className="font-mono text-cream/80">{jockey.careerStarts} RUNS</span>
             </div>
@@ -67,11 +67,11 @@ export function JockeyStatsGrid({ jockey }: JockeyStatsGridProps) {
             />
             <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
             <Radar
-              name="SKILL_SPEC"
+              name="Skills"
               dataKey="value"
-              stroke="#60a5fa"
+              stroke="var(--info)"
               strokeWidth={1.5}
-              fill="#60a5fa"
+              fill="var(--info)"
               fillOpacity={0.2}
             />
           </RadarChart>

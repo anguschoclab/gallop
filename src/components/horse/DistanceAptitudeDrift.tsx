@@ -65,7 +65,7 @@ export function DistanceAptitudeDrift({ horse }: DistanceAptitudeDriftProps) {
   if (driftData.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-6 bg-black/20 border border-white/5">
-        <p className="text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+        <p className="text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
           No aptitude drift data
         </p>
       </div>
@@ -108,7 +108,7 @@ export function DistanceAptitudeDrift({ horse }: DistanceAptitudeDriftProps) {
             />
             <Tooltip
               contentStyle={{
-                background: "#020617",
+                background: "var(--background)",
                 border: "1px solid rgba(212,175,55,0.3)",
                 borderRadius: 0,
                 padding: "6px 10px",
@@ -131,10 +131,10 @@ export function DistanceAptitudeDrift({ horse }: DistanceAptitudeDriftProps) {
             <Line
               type="step"
               dataKey="aptitude"
-              stroke="#d4af37"
+              stroke="var(--gold)"
               strokeWidth={2}
-              dot={{ r: 2.5, fill: "#020617", stroke: "#d4af37", strokeWidth: 2 }}
-              activeDot={{ r: 4, fill: "#d4af37", stroke: "#fff", strokeWidth: 1 }}
+              dot={{ r: 2.5, fill: "var(--background)", stroke: "var(--gold)", strokeWidth: 2 }}
+              activeDot={{ r: 4, fill: "var(--gold)", stroke: "var(--foreground)", strokeWidth: 1 }}
               animationDuration={600}
             />
           </LineChart>

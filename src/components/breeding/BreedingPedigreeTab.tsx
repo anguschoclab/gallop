@@ -21,7 +21,7 @@ export function BreedingPedigreeTab({ pageData }: BreedingPedigreeTabProps) {
           {sire && dam ? (
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <div className="text-[10px] text-cream/40 mb-2 font-mono uppercase tracking-widest">
+                <div className="text-[10px] text-cream/40 mb-2 font-mono uppercase tracking-wide">
                   {sire.name} · Sire · Preferred{" "}
                   <span className="text-cream tabular-nums">
                     {sire.distanceAptitude ? `${Math.round(sire.distanceAptitude)}m` : "—"}
@@ -34,7 +34,7 @@ export function BreedingPedigreeTab({ pageData }: BreedingPedigreeTabProps) {
                 />
               </div>
               <div>
-                <div className="text-[10px] text-cream/40 mb-2 font-mono uppercase tracking-widest">
+                <div className="text-[10px] text-cream/40 mb-2 font-mono uppercase tracking-wide">
                   {dam.name} · Dam · Preferred{" "}
                   <span className="text-cream tabular-nums">
                     {dam.distanceAptitude ? `${Math.round(dam.distanceAptitude)}m` : "—"}
@@ -68,7 +68,7 @@ export function BreedingPedigreeTab({ pageData }: BreedingPedigreeTabProps) {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="bg-black/40 border-b border-white/5">
-                  <tr className="text-[10px] uppercase tracking-widest text-cream/40 font-black">
+                  <tr className="text-[10px] uppercase tracking-wide text-cream/40 font-black">
                     <th className="px-4 py-2 text-left">Day</th>
                     <th className="px-4 py-2 text-left">Event</th>
                   </tr>

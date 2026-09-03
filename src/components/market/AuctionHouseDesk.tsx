@@ -83,7 +83,7 @@ export function AuctionHouseDesk() {
                 : "border-white/5 bg-slate-900/40 hover:border-white/20"
             }`}
           >
-            <div className="text-[11px] font-bold uppercase tracking-widest text-cream">
+            <div className="text-[11px] font-bold uppercase tracking-wide text-cream">
               {h.shortName}
             </div>
             <div className="text-[9px] font-mono uppercase tracking-wider text-cream/40">
@@ -114,7 +114,7 @@ export function AuctionHouseDesk() {
             </h2>
           </div>
           <p className="text-[11px] font-mono text-cream/50">{house.blurb}</p>
-          <div className="flex flex-wrap gap-3 pt-2 text-[10px] font-mono uppercase tracking-widest text-cream/40">
+          <div className="flex flex-wrap gap-3 pt-2 text-[10px] font-mono uppercase tracking-wide text-cream/40">
             <span>
               Prestige <span className="text-cream">{house.prestige}</span>
             </span>
@@ -135,12 +135,12 @@ export function AuctionHouseDesk() {
 
       {/* Buy board */}
       <section className="space-y-3">
-        <h3 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-cream/70">
+        <h3 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wide text-cream/70">
           <ShoppingCart className="h-3.5 w-3.5 text-primary" />
           On offer at {house.shortName}
         </h3>
         {catalogue.length === 0 ? (
-          <p className="text-[11px] font-mono uppercase tracking-widest text-cream/30">
+          <p className="text-[11px] font-mono uppercase tracking-wide text-cream/30">
             No lots on the board today.
           </p>
         ) : (
@@ -160,7 +160,7 @@ export function AuctionHouseDesk() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[9px] font-mono uppercase tracking-widest text-cream/30">
+                  <div className="text-[9px] font-mono uppercase tracking-wide text-cream/30">
                     Hammer
                   </div>
                   <div className="font-mono tabular-nums text-cream/80">
@@ -168,7 +168,7 @@ export function AuctionHouseDesk() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[9px] font-mono uppercase tracking-widest text-cream/30">
+                  <div className="text-[9px] font-mono uppercase tracking-wide text-cream/30">
                     You pay
                   </div>
                   <div className="font-mono tabular-nums font-bold text-cream">
@@ -190,12 +190,12 @@ export function AuctionHouseDesk() {
 
       {/* Sell board */}
       <section className="space-y-3">
-        <h3 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-cream/70">
+        <h3 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wide text-cream/70">
           <Tag className="h-3.5 w-3.5 text-success" />
           Sell through {house.shortName}
         </h3>
         {myHorses.length === 0 ? (
-          <p className="text-[11px] font-mono uppercase tracking-widest text-cream/30">
+          <p className="text-[11px] font-mono uppercase tracking-wide text-cream/30">
             You have no horses available to sell.
           </p>
         ) : (
@@ -215,7 +215,7 @@ export function AuctionHouseDesk() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[9px] font-mono uppercase tracking-widest text-cream/30">
+                  <div className="text-[9px] font-mono uppercase tracking-wide text-cream/30">
                     Commission
                   </div>
                   <div className="font-mono tabular-nums text-cream/60">
@@ -223,7 +223,7 @@ export function AuctionHouseDesk() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[9px] font-mono uppercase tracking-widest text-cream/30">
+                  <div className="text-[9px] font-mono uppercase tracking-wide text-cream/30">
                     You net
                   </div>
                   <div className="font-mono tabular-nums font-bold text-success">
@@ -245,12 +245,12 @@ export function AuctionHouseDesk() {
 
       {/* Trade history */}
       <section className="space-y-3">
-        <h3 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-cream/70">
+        <h3 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wide text-cream/70">
           <History className="h-3.5 w-3.5 text-cream/40" />
           Trade history
         </h3>
         {trades.length === 0 ? (
-          <p className="text-[11px] font-mono uppercase tracking-widest text-cream/30">
+          <p className="text-[11px] font-mono uppercase tracking-wide text-cream/30">
             No trades settled yet.
           </p>
         ) : (

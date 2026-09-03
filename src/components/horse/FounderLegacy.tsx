@@ -24,7 +24,7 @@ export function FounderLegacy({ horseId }: FounderLegacyProps) {
       <CardContent className="p-6 space-y-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">
+            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">
               Influence Score
             </p>
             <div className="text-2xl font-black italic text-gold tabular-nums">
@@ -32,7 +32,7 @@ export function FounderLegacy({ horseId }: FounderLegacyProps) {
             </div>
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">
+            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">
               Descendants
             </p>
             <div className="text-2xl font-black italic text-gold tabular-nums">
@@ -40,7 +40,7 @@ export function FounderLegacy({ horseId }: FounderLegacyProps) {
             </div>
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">
+            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">
               Stakes Winners
             </p>
             <div className="text-2xl font-black italic text-gold tabular-nums text-primary">
@@ -48,7 +48,7 @@ export function FounderLegacy({ horseId }: FounderLegacyProps) {
             </div>
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">
+            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">
               G1 Winners
             </p>
             <div className="text-2xl font-black italic text-gold tabular-nums text-fame">
@@ -63,7 +63,7 @@ export function FounderLegacy({ horseId }: FounderLegacyProps) {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <TrendingUp size={14} className="text-gold" />
-              <h4 className="text-xs font-black uppercase tracking-widest text-gold">
+              <h4 className="text-xs font-black uppercase tracking-wide text-gold">
                 Dynastic Impact
               </h4>
             </div>

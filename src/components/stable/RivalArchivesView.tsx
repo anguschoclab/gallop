@@ -62,14 +62,14 @@ export function RivalArchivesView({
           value={rivalTier}
           onValueChange={(v) => navigate({ search: (p) => ({ ...p, rivalTier: v }) })}
         >
-          <SelectTrigger className="h-10 w-40 bg-slate-950/50 border-white/10 text-xs font-bold uppercase tracking-widest">
+          <SelectTrigger className="h-10 w-40 bg-slate-950/50 border-white/10 text-xs font-bold uppercase tracking-wide">
             <SelectValue placeholder="Entity Tier" />
           </SelectTrigger>
           <SelectContent className="bg-slate-950 border-white/10">
             <SelectItem value="all">All Tiers</SelectItem>
             <SelectItem value="elite">Elite Class</SelectItem>
-            <SelectItem value="mid">Mid-Tier Ops</SelectItem>
-            <SelectItem value="budget">Budget Sector</SelectItem>
+            <SelectItem value="mid">Mid-Tier</SelectItem>
+            <SelectItem value="budget">Budget</SelectItem>
           </SelectContent>
         </Select>
         {(rivalQ || rivalTier !== "all") && (
@@ -77,7 +77,7 @@ export function RivalArchivesView({
             variant="ghost"
             size="sm"
             onClick={() => navigate({ search: (p) => ({ ...p, rivalQ: "", rivalTier: "all" }) })}
-            className="h-10 gap-2 text-cream/40 hover:text-cream uppercase text-[10px] font-black tracking-widest"
+            className="h-10 gap-2 text-cream/40 hover:text-cream uppercase text-[10px] font-black tracking-wide"
           >
             <X className="w-3.5 h-3.5" />
             Reset
@@ -163,7 +163,7 @@ export function RivalArchivesView({
 
                   <div className="space-y-3">
                     <div className="flex justify-between items-center bg-black/40 p-2 rounded border border-white/5">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-cream/40 flex items-center gap-1.5">
+                      <span className="text-[9px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-1.5">
                         <Flame
                           className={cn(
                             "h-3 w-3",
@@ -201,7 +201,7 @@ export function RivalArchivesView({
 
                     {alliances.length > 0 && (
                       <div className="space-y-1.5 pt-1">
-                        <div className="text-[9px] font-black uppercase tracking-widest text-cream/40 flex items-center gap-1">
+                        <div className="text-[9px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-1">
                           <Handshake className="h-3 w-3" />
                           Alliances
                         </div>
@@ -212,7 +212,7 @@ export function RivalArchivesView({
                               <span
                                 key={a.stableId}
                                 className={cn(
-                                  "text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 border rounded-none",
+                                  "text-[8px] font-bold uppercase tracking-wide px-1.5 py-0.5 border rounded-none",
                                   a.type === "economic_cartel"
                                     ? "border-amber-500/30 text-amber-400/70 bg-amber-500/5"
                                     : a.type === "racing_coalition"
@@ -233,7 +233,7 @@ export function RivalArchivesView({
 
                     {activeArcs.length > 0 && (
                       <div className="space-y-1.5 pt-1">
-                        <div className="text-[9px] font-black uppercase tracking-widest text-cream/40 flex items-center gap-1">
+                        <div className="text-[9px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-1">
                           <BookOpen className="h-3 w-3" />
                           Active Storylines
                         </div>

@@ -30,7 +30,7 @@ function EpiloguePage() {
   return (
     <div className="max-w-3xl mx-auto py-16 px-6 space-y-10 animate-fade-in">
       <header className="border-b border-gold/20 pb-6 text-center space-y-2">
-        <p className="text-[10px] uppercase tracking-[0.4em] text-gold-bright font-mono">
+        <p className="text-[10px] uppercase tracking-wide text-gold-bright font-mono">
           Final Chapter
         </p>
         <h1 className="text-5xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
@@ -47,7 +47,7 @@ function EpiloguePage() {
       </section>
 
       <section className="border border-white/5 rounded-lg bg-slate-950/60 p-6 space-y-3">
-        <h2 className="text-xs uppercase tracking-widest text-gold-bright font-mono">
+        <h2 className="text-xs uppercase tracking-wide text-gold-bright font-mono">
           Legacy epitaph
         </h2>
         <p className="text-cream leading-relaxed">
@@ -62,7 +62,7 @@ function EpiloguePage() {
 
       {snapshot.lastSeizure && (
         <section className="border border-red-900/40 rounded-lg bg-red-950/20 p-6 space-y-3">
-          <h2 className="text-xs uppercase tracking-widest text-red-300 font-mono">
+          <h2 className="text-xs uppercase tracking-wide text-red-300 font-mono">
             Final creditor action
           </h2>
           <p className="text-cream leading-relaxed">
@@ -90,7 +90,7 @@ function EpiloguePage() {
 
       {solvencyLog && solvencyLog.length > 0 && (
         <section className="border border-white/5 rounded-lg bg-slate-950/60 p-6 space-y-3">
-          <h2 className="text-xs uppercase tracking-widest text-gold-bright font-mono">
+          <h2 className="text-xs uppercase tracking-wide text-gold-bright font-mono">
             Solvency Audit Trail
           </h2>
           <div className="space-y-1 max-h-48 overflow-y-auto">
@@ -114,7 +114,7 @@ function EpiloguePage() {
       <footer className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
         <Link
           to="/start"
-          className="inline-flex items-center px-6 py-3 bg-gold text-slate-950 font-bold rounded uppercase tracking-widest text-xs hover:bg-gold-bright transition-colors"
+          className="inline-flex items-center px-6 py-3 bg-gold text-slate-950 font-bold rounded uppercase tracking-wide text-xs hover:bg-gold-bright transition-colors"
         >
           Begin a new stable
         </Link>
@@ -132,7 +132,7 @@ function EpiloguePage() {
 function StatCell({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="border border-white/5 bg-slate-950/40 p-4 text-center">
-      <div className="text-[9px] uppercase tracking-widest text-cream-muted/60 font-mono mb-1">
+      <div className="text-[9px] uppercase tracking-wide text-cream-muted/60 font-mono mb-1">
         {label}
       </div>
       <div className="text-xl font-bold text-cream font-mono tabular-nums">{value}</div>

@@ -193,14 +193,14 @@ export function HorseScatterPlot({
               x={M.left + plotW / 2}
               y={H - 8}
               textAnchor="middle"
-              className="fill-cream/60 font-mono text-[10px] uppercase tracking-widest"
+              className="fill-cream/60 font-mono text-[10px] uppercase tracking-wide"
             >
               {xMetric.label}
             </text>
             <text
               transform={`translate(14 ${M.top + plotH / 2}) rotate(-90)`}
               textAnchor="middle"
-              className="fill-cream/60 font-mono text-[10px] uppercase tracking-widest"
+              className="fill-cream/60 font-mono text-[10px] uppercase tracking-wide"
             >
               {yMetric.label}
             </text>

@@ -29,7 +29,7 @@ export function StableRosterCompareBar({
 
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 bg-slate-900 border border-gold/30 shadow-2xl rounded-lg px-4 py-3 animate-in slide-in-from-bottom-4 duration-200 max-w-[95vw] flex-wrap">
-      <span className="font-mono text-[10px] uppercase tracking-widest text-cream/60 whitespace-nowrap">
+      <span className="font-mono text-[10px] uppercase tracking-wide text-cream/60 whitespace-nowrap">
         {selectedIds.length}/{MAX_COMPARE_HORSES} selected
       </span>
       <div className="flex items-center gap-1.5">
@@ -93,7 +93,7 @@ export function StableRosterCompareBar({
               >
                 <Button
                   size="sm"
-                  className="gap-2 bg-gold text-slate-950 hover:bg-gold/90 font-bold uppercase text-[10px] tracking-widest pointer-events-none"
+                  className="gap-2 bg-gold text-slate-950 hover:bg-gold/90 font-bold uppercase text-[10px] tracking-wide pointer-events-none"
                   disabled
                 >
                   <GitCompare className="h-3.5 w-3.5" />
@@ -107,7 +107,7 @@ export function StableRosterCompareBar({
       ) : (
         <Button
           size="sm"
-          className="gap-2 bg-gold text-slate-950 hover:bg-gold/90 font-bold uppercase text-[10px] tracking-widest"
+          className="gap-2 bg-gold text-slate-950 hover:bg-gold/90 font-bold uppercase text-[10px] tracking-wide"
           onClick={onCompare}
         >
           <GitCompare className="h-3.5 w-3.5" />

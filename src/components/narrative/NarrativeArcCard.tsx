@@ -44,7 +44,7 @@ export const NarrativeArcCard = memo(function NarrativeArcCard({
             <StatusIcon className={cn("h-3.5 w-3.5", config.color)} />
             <Badge
               variant="outline"
-              className="text-[8px] h-3.5 px-1 font-black uppercase border-gold/20 text-gold-muted rounded-none tracking-widest"
+              className="text-[8px] h-3.5 px-1 font-black uppercase border-gold/20 text-gold-muted rounded-none tracking-wide"
             >
               {arc.type.replace(/_/g, " ")}
             </Badge>
@@ -52,13 +52,13 @@ export const NarrativeArcCard = memo(function NarrativeArcCard({
           </div>
           <div className="flex items-center gap-1.5">
             {isRivalry && (
-              <Badge className="bg-destructive/10 text-destructive border border-destructive/30 text-[8px] uppercase tracking-widest">
+              <Badge className="bg-destructive/10 text-destructive border border-destructive/30 text-[8px] uppercase tracking-wide">
                 Rivalry Watch
               </Badge>
             )}
             <Badge
               className={cn(
-                "text-[8px] uppercase tracking-widest border",
+                "text-[8px] uppercase tracking-wide border",
                 arc.status === "climax"
                   ? "bg-destructive/10 text-destructive border-destructive/30"
                   : arc.status === "resolution"

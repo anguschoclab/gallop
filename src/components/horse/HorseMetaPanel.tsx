@@ -63,7 +63,7 @@ export function HorseMetaPanel({ horse, isAdvanced, onToggleView }: HorseMetaPan
 
       {(horse.sireName || horse.damName) && (
         <div className="pt-3 border-t border-white/5 space-y-1">
-          <div className="text-[8px] font-black uppercase text-pink-500/40 tracking-widest">
+          <div className="text-[8px] font-black uppercase text-pink-500/40 tracking-wide">
             Genetic Lineage
           </div>
           <div className="flex items-center gap-2 text-[10px] font-mono text-cream/60 uppercase truncate">
@@ -77,7 +77,7 @@ export function HorseMetaPanel({ horse, isAdvanced, onToggleView }: HorseMetaPan
       <div className="flex justify-end">
         <button
           onClick={onToggleView}
-          className="text-[9px] font-mono uppercase tracking-widest text-cream/20 hover:text-cream/60 transition-colors"
+          className="text-[9px] font-mono uppercase tracking-wide text-cream/20 hover:text-cream/60 transition-colors"
         >
           {isAdvanced ? "Simple view" : "Advanced metrics"}
         </button>

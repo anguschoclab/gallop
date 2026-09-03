@@ -63,7 +63,7 @@ export function LeaderboardEmpty({
 }: LeaderboardEmptyProps) {
   return (
     <Card className="bg-card border-white/5">
-      <CardContent className="py-12 text-center text-muted-foreground uppercase font-black text-xs tracking-widest">
+      <CardContent className="py-12 text-center text-muted-foreground uppercase font-black text-xs tracking-wide">
         {message}
       </CardContent>
     </Card>
@@ -115,7 +115,7 @@ export function LeaderboardRow({
       </div>
       <div className="text-right shrink-0">
         <p className="text-lg sm:text-xl font-black tabular-nums text-cream">{value}</p>
-        <p className="text-[10px] text-cream-muted uppercase tracking-widest">{valueLabel}</p>
+        <p className="text-[10px] text-cream-muted uppercase tracking-wide">{valueLabel}</p>
       </div>
     </div>
   );
@@ -191,7 +191,7 @@ export function LeaderboardError({
     <Card className="bg-card border-white/5">
       <CardContent className="py-12 flex flex-col items-center gap-4 text-center">
         <AlertCircle className="h-10 w-10 text-destructive" />
-        <p className="text-muted-foreground uppercase font-black text-xs tracking-widest">
+        <p className="text-muted-foreground uppercase font-black text-xs tracking-wide">
           {message}
         </p>
         {onRetry && (

@@ -33,7 +33,7 @@ export function LotBidsPanel({ bidHistory, stables, isLoading }: LotBidsPanelPro
       <header className="flex items-center justify-between px-4 py-3 border-b border-white/5">
         <h3
           id="lot-bids-heading"
-          className="font-mono text-[10px] uppercase tracking-[0.3em] text-cream/60"
+          className="font-mono text-[10px] uppercase tracking-wide text-cream/60"
         >
           Bid Ledger
         </h3>
@@ -112,7 +112,7 @@ function BidEmptyState() {
         <Inbox className="h-10 w-10 text-cream/20" aria-hidden />
         <Gavel className="h-5 w-5 text-gold/60 absolute -bottom-1 -right-1" aria-hidden />
       </div>
-      <p className="font-bold text-cream/70 uppercase tracking-[0.25em] text-xs font-[family-name:var(--font-display)]">
+      <p className="font-bold text-cream/70 uppercase tracking-wide text-xs font-[family-name:var(--font-display)]">
         No bids yet
       </p>
       <p className="text-[11px] text-cream/40 max-w-xs leading-relaxed">

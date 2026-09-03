@@ -21,19 +21,19 @@ export function NpcStableInfoSidebar({ stableId, pageData, navigate }: NpcStable
     <aside className="space-y-6 lg:sticky lg:top-6 lg:self-start">
       <Card className="bg-slate-900/60 border-white/5 rounded-none shadow-2xl">
         <CardHeader className="pb-3 border-b border-white/5 bg-black/40">
-          <CardTitle className="text-[9px] font-black uppercase tracking-[0.2em] text-cream/40">
+          <CardTitle className="text-[9px] font-black uppercase tracking-wide text-cream/40">
             Entity Brief
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="divide-y divide-white/5">
             <div className="flex justify-between items-center p-4">
-              <span className="text-[9px] font-black uppercase tracking-widest text-cream/30">
+              <span className="text-[9px] font-black uppercase tracking-wide text-cream/30">
                 Tier
               </span>
               <Badge
                 className={cn(
-                  "rounded-none h-4 px-1.5 text-[8px] font-black uppercase tracking-widest",
+                  "rounded-none h-4 px-1.5 text-[8px] font-black uppercase tracking-wide",
                   stable.tier === "elite"
                     ? "bg-fame text-slate-950"
                     : stable.tier === "mid"
@@ -45,7 +45,7 @@ export function NpcStableInfoSidebar({ stableId, pageData, navigate }: NpcStable
               </Badge>
             </div>
             <div className="flex justify-between items-center p-4">
-              <span className="text-[9px] font-black uppercase tracking-widest text-cream/30">
+              <span className="text-[9px] font-black uppercase tracking-wide text-cream/30">
                 Relation
               </span>
               <span
@@ -68,7 +68,7 @@ export function NpcStableInfoSidebar({ stableId, pageData, navigate }: NpcStable
               </span>
             </div>
             <div className="flex justify-between items-center p-4">
-              <span className="text-[9px] font-black uppercase tracking-widest text-cream/30">
+              <span className="text-[9px] font-black uppercase tracking-wide text-cream/30">
                 Reputation
               </span>
               <span className="text-fame flex gap-0.5">
@@ -89,7 +89,7 @@ export function NpcStableInfoSidebar({ stableId, pageData, navigate }: NpcStable
 
       <Card className="bg-slate-900/60 border-white/5 rounded-none shadow-2xl">
         <CardHeader className="pb-3 border-b border-white/5 bg-black/40">
-          <CardTitle className="text-[9px] font-black uppercase tracking-[0.2em] text-cream/40">
+          <CardTitle className="text-[9px] font-black uppercase tracking-wide text-cream/40">
             Quick Access
           </CardTitle>
         </CardHeader>
@@ -99,7 +99,7 @@ export function NpcStableInfoSidebar({ stableId, pageData, navigate }: NpcStable
               onClick={() => navigate({ search: { tab: "roster" } })}
               className="w-full flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors group"
             >
-              <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-cream/40 group-hover:text-blue-400">
+              <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream/40 group-hover:text-blue-400">
                 <ListChecks className="h-3 w-3" /> Horse Roster
               </span>
               <span className="font-mono text-[10px] text-cream/20">{stableHorses.length}</span>
@@ -108,7 +108,7 @@ export function NpcStableInfoSidebar({ stableId, pageData, navigate }: NpcStable
               onClick={() => navigate({ search: { tab: "staff" } })}
               className="w-full flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors group"
             >
-              <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-cream/40 group-hover:text-blue-400">
+              <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream/40 group-hover:text-blue-400">
                 <Users className="h-3 w-3" /> Personnel
               </span>
             </button>
@@ -116,7 +116,7 @@ export function NpcStableInfoSidebar({ stableId, pageData, navigate }: NpcStable
               onClick={() => navigate({ search: { tab: "history" } })}
               className="w-full flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors group"
             >
-              <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-cream/40 group-hover:text-blue-400">
+              <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream/40 group-hover:text-blue-400">
                 <History className="h-3 w-3" /> Records
               </span>
             </button>
@@ -133,7 +133,7 @@ export function NpcStableInfoSidebar({ stableId, pageData, navigate }: NpcStable
               }}
               className="w-full flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors group"
             >
-              <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-cream/40 group-hover:text-gold">
+              <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream/40 group-hover:text-gold">
                 <CalendarDays className="h-3 w-3" /> Schedule
               </span>
             </Link>

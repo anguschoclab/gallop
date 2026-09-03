@@ -113,7 +113,7 @@ export function SeasonStandingsWidget() {
         </div>
         <Badge
           variant="outline"
-          className="border-gold/30 text-gold-muted bg-gold/5 font-mono tracking-widest text-[10px] uppercase h-5"
+          className="border-gold/30 text-gold-muted bg-gold/5 font-mono tracking-wide text-[10px] uppercase h-5"
         >
           You: #{displayRank || "—"}
         </Badge>
@@ -172,7 +172,7 @@ export function SeasonStandingsWidget() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="font-mono text-[9px] uppercase tracking-[0.2em] text-cream/40 border-b border-white/5">
+                      <tr className="font-mono text-[9px] uppercase tracking-wide text-cream/40 border-b border-white/5">
                         <th className="py-2 px-2 w-8 text-right">#</th>
                         <th className="py-2 px-2 text-left">Stable</th>
                         <th className="py-2 px-2 text-right">
@@ -263,7 +263,7 @@ export function SeasonStandingsWidget() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="font-mono text-[9px] uppercase tracking-[0.2em] text-cream/40 border-b border-white/5">
+                    <tr className="font-mono text-[9px] uppercase tracking-wide text-cream/40 border-b border-white/5">
                       <th className="py-2 px-2 w-8 text-right">#</th>
                       <th className="py-2 px-2 text-left">Stable</th>
                       <th className="py-2 px-2 text-right">Cash</th>
@@ -385,7 +385,7 @@ export function SeasonStandingsWidget() {
             <div className="mt-3 pt-3 border-t border-white/5">
               <div className="flex items-center gap-2 mb-2">
                 <Award className="h-3 w-3 text-gold" />
-                <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-cream/40">
+                <span className="text-[9px] font-mono uppercase tracking-wide text-cream/40">
                   Recent Awards
                 </span>
               </div>

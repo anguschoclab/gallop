@@ -15,7 +15,7 @@ export function CompareMetricTable({ horses, rows }: CompareMetricTableProps) {
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-white/10">
-            <th className="px-2 py-1.5 sm:px-3 sm:py-2 text-[11px] uppercase tracking-widest font-mono text-cream/50 w-28 sm:w-40 text-left">
+            <th className="px-2 py-1.5 sm:px-3 sm:py-2 text-[11px] uppercase tracking-wide font-mono text-cream/50 w-28 sm:w-40 text-left">
               Metric
             </th>
             {horses.map((h) => (
@@ -38,7 +38,7 @@ export function CompareMetricTable({ horses, rows }: CompareMetricTableProps) {
                 : -1;
             return (
               <tr key={row.label} className="hover:bg-white/[0.02]">
-                <td className="px-2 py-1.5 sm:px-3 sm:py-2 text-[11px] uppercase tracking-widest font-mono text-cream/50 w-28 sm:w-40">
+                <td className="px-2 py-1.5 sm:px-3 sm:py-2 text-[11px] uppercase tracking-wide font-mono text-cream/50 w-28 sm:w-40">
                   {row.label}
                 </td>
                 {row.values.map((v, i) => (

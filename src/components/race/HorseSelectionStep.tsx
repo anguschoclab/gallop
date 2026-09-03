@@ -85,7 +85,7 @@ export function HorseSelectionStep({
           />
         ))}
         {eligibleHorses.length === 0 && (
-          <div className="p-6 text-center text-xs font-mono uppercase tracking-widest text-cream/30 border border-white/5 bg-black/20">
+          <div className="p-6 text-center text-xs font-mono uppercase tracking-wide text-cream/30 border border-white/5 bg-black/20">
             No horses match this pace style for the race's trip.
           </div>
         )}

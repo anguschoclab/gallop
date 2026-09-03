@@ -23,7 +23,7 @@ export function HorseConditionSection({ horse }: HorseConditionSectionProps) {
             <div className="p-4 bg-destructive/10 border border-destructive/20 relative overflow-hidden group transition-all">
               <div className="absolute top-0 left-0 w-1 h-full bg-destructive" />
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-black uppercase text-destructive tracking-widest flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase text-destructive tracking-wide flex items-center gap-2">
                   <AlertCircle className="h-3 w-3" /> Injury
                 </span>
                 <span className="font-mono text-[10px] text-destructive/60">
@@ -68,7 +68,7 @@ export function HorseConditionSection({ horse }: HorseConditionSectionProps) {
           </div>
 
           <div className="space-y-3">
-            <div className="text-[10px] font-black uppercase text-blue-400/40 tracking-widest px-1">
+            <div className="text-[10px] font-black uppercase text-blue-400/40 tracking-wide px-1">
               Genetic Vulnerabilities
             </div>
             <div className="space-y-1.5">

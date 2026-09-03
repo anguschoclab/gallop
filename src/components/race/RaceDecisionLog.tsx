@@ -147,13 +147,13 @@ export const RaceDecisionLog = memo(function RaceDecisionLog({
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-purple-400">
       <CardHeader className="bg-black/20 border-b border-white/5">
-        <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40 flex items-center gap-2">
-          <GitBranch className="h-3 w-3 text-purple-400" /> AI Decision Log
+        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
+          <GitBranch className="h-3 w-3 text-purple-400" /> Race Decisions
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         {displayEvents.length === 0 ? (
-          <div className="p-6 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+          <div className="p-6 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
             No significant tactical decisions detected in this race.
           </div>
         ) : (

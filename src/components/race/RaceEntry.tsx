@@ -153,7 +153,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
             <Button
               variant="ghost"
               onClick={() => setStep((s) => (s - 1) as 1 | 2 | 3 | 4 | 5)}
-              className="uppercase font-black tracking-widest text-[10px]"
+              className="uppercase font-black tracking-wide text-[10px]"
             >
               Back
             </Button>
@@ -171,7 +171,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                   setStep((s) => Math.min(s + 1, 5) as 1 | 2 | 3 | 4 | 5);
                 }
               }}
-              className="uppercase font-black tracking-widest text-[10px]"
+              className="uppercase font-black tracking-wide text-[10px]"
             >
               {step === 4 && !race.claimingPrice ? "Confirm Entry" : "Next Step"}
               <ChevronRight size={14} className="ml-1" />
@@ -190,7 +190,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                         (wantToClaim ? race.claimingPrice! : 0))
                   : true
               }
-              className="uppercase font-black tracking-widest text-[10px] bg-primary text-primary-foreground px-8"
+              className="uppercase font-black tracking-wide text-[10px] bg-primary text-primary-foreground px-8"
             >
               Confirm Entry
             </Button>

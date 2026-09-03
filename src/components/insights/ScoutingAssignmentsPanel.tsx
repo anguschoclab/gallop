@@ -69,7 +69,7 @@ export function ScoutingAssignmentsPanel() {
         <CardContent className="p-5 space-y-4">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <div className="flex items-center gap-2 text-gold uppercase tracking-[0.2em] font-mono text-[10px] font-bold">
+              <div className="flex items-center gap-2 text-gold uppercase tracking-wide font-mono text-[10px] font-bold">
                 <ClipboardList className="h-3.5 w-3.5" />
                 Scouting Assignments
               </div>
@@ -123,7 +123,7 @@ export function ScoutingAssignmentsPanel() {
                     aria-label="Assignment name"
                   />
                   <div className="flex items-center gap-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-widest text-cream/40">
+                    <Label className="font-mono text-[9px] uppercase tracking-wide text-cream/40">
                       Daily budget
                     </Label>
                     <Input
@@ -139,7 +139,7 @@ export function ScoutingAssignmentsPanel() {
                     />
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-widest text-cream/40">
+                    <Label className="font-mono text-[9px] uppercase tracking-wide text-cream/40">
                       Max / day
                     </Label>
                     <Input

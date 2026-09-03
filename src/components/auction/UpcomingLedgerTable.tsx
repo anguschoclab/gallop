@@ -35,14 +35,14 @@ export function UpcomingLedgerTable({
     <section className="space-y-4">
       <div className="flex items-center gap-2 mb-2 px-1">
         <CalendarIcon className="h-3.5 w-3.5 text-cream/40" />
-        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-cream/40">
+        <h2 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
           Upcoming Exchange Windows
         </h2>
       </div>
       <div className="border border-white/5 bg-slate-900/20 shadow-2xl overflow-hidden">
         <table className="w-full text-left border-collapse">
           <thead className="bg-black/40 border-b border-white/10">
-            <tr className="font-mono text-[9px] uppercase tracking-[0.2em] text-gold-muted/60">
+            <tr className="font-mono text-[9px] uppercase tracking-wide text-gold-muted/60">
               <th className="px-6 py-4 font-black">Window Designation</th>
               <th className="px-4 py-4 font-black">Category</th>
               <th className="px-4 py-4 font-black text-center">Status</th>
@@ -96,19 +96,19 @@ export function UpcomingLedgerTable({
                   </td>
                   <td className="px-4 py-5 text-center">
                     {isLocked ? (
-                      <span className="text-[9px] font-black uppercase text-amber-400/60 tracking-widest">
+                      <span className="text-[9px] font-black uppercase text-amber-400/60 tracking-wide">
                         Locked
                       </span>
                     ) : isScheduled ? (
-                      <span className="text-[9px] font-black uppercase text-cream/20 tracking-widest">
+                      <span className="text-[9px] font-black uppercase text-cream/20 tracking-wide">
                         SCHEDULED
                       </span>
                     ) : daysAway === 0 ? (
-                      <span className="text-[9px] font-black uppercase text-success tracking-widest animate-pulse">
+                      <span className="text-[9px] font-black uppercase text-success tracking-wide animate-pulse">
                         Live Now
                       </span>
                     ) : (
-                      <span className="text-[9px] font-black uppercase text-gold/40 tracking-widest text-center">
+                      <span className="text-[9px] font-black uppercase text-gold/40 tracking-wide text-center">
                         Accepting lots
                       </span>
                     )}
@@ -123,7 +123,7 @@ export function UpcomingLedgerTable({
                         </span>
                         {playerLots.length > 0 && (
                           <span className="text-[8px] text-success font-black uppercase">
-                            INC_{playerLots.length}_ASSET
+                            +{playerLots.length} of yours
                           </span>
                         )}
                       </div>

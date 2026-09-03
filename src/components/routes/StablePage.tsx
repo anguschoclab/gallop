@@ -96,16 +96,16 @@ function StablePage() {
       {/* Stable Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gold/20 pb-6">
         <div>
-          <div className="flex items-center gap-2 text-gold-bright uppercase tracking-[0.2em] font-[family-name=var(--font-display)] text-xs font-bold mb-1 opacity-60">
+          <div className="flex items-center gap-2 text-gold-bright uppercase tracking-wide font-[family-name=var(--font-display)] text-xs font-bold mb-1 opacity-60">
             <Users className="h-3 w-3" />
             Stability Division
           </div>
           <h1 className="text-4xl font-bold tracking-tight text-cream font-[family-name=var(--font-display)]">
             Our Horses
           </h1>
-          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
+          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-cream/40">
             <span>
-              Live Count: <NumericValue value={counts.active} />
+              Active: <NumericValue value={counts.active} />
             </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
             <span>
@@ -124,7 +124,7 @@ function StablePage() {
             <Button
               variant="outline"
               size="sm"
-              className="gap-2 border-gold/20 hover:bg-gold/10 text-gold-muted font-bold uppercase text-[10px] tracking-widest"
+              className="gap-2 border-gold/20 hover:bg-gold/10 text-gold-muted font-bold uppercase text-[10px] tracking-wide"
             >
               <Clock className="h-3.5 w-3.5" />
               Campaign Logs
@@ -134,7 +134,7 @@ function StablePage() {
             <Button
               variant="outline"
               size="sm"
-              className="gap-2 border-pink-500/20 hover:bg-pink-500/10 text-pink-400 font-bold uppercase text-[10px] tracking-widest"
+              className="gap-2 border-pink-500/20 hover:bg-pink-500/10 text-pink-400 font-bold uppercase text-[10px] tracking-wide"
             >
               <Heart className="h-3.5 w-3.5" />
               Sire Watch
@@ -154,13 +154,13 @@ function StablePage() {
           <TabsList className="bg-transparent h-9">
             <TabsTrigger
               value="roster"
-              className="gap-2 uppercase text-[10px] font-black tracking-widest data-[state=active]:bg-gold data-[state=active]:text-slate-950 h-full px-6"
+              className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-gold data-[state=active]:text-slate-950 h-full px-6"
             >
               All Horses
             </TabsTrigger>
             <TabsTrigger
               value="rivals"
-              className="gap-2 uppercase text-[10px] font-black tracking-widest data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-6"
+              className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-6"
             >
               Rival Archives
             </TabsTrigger>

@@ -35,7 +35,6 @@ bun run typecheck:errors
 
 ## Known Gotchas
 
-- `tsc-errors.txt` in the repo root is a stale artifact from a prior failed `tsc` invocation — ignore it; use `bun run typecheck:errors` instead.
 - The test suite is large but fast. Stderr from `saveManager` error-path tests is expected, not a failure.
 - `bun run build` validates auto-generated `routeTree.gen.ts` — run it after adding/removing routes.
 - For render-loop bugs (Zustand selector returning fresh references), see the `verify-gallop` skill.

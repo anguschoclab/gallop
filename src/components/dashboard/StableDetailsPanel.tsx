@@ -47,7 +47,7 @@ export function StableDetailsPanel({ stable }: { stable: StandingEntry | null })
           <CardContent className="pt-2 space-y-3">
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="rounded border border-white/5 p-2">
-                <div className="text-[9px] uppercase tracking-widest font-mono text-cream/40">
+                <div className="text-[9px] uppercase tracking-wide font-mono text-cream/40">
                   Range Earnings
                 </div>
                 <div className="font-mono tabular-nums text-cream font-bold mt-0.5">
@@ -57,7 +57,7 @@ export function StableDetailsPanel({ stable }: { stable: StandingEntry | null })
               {!stable.isPlayer && (
                 <>
                   <div className="rounded border border-white/5 p-2">
-                    <div className="text-[9px] uppercase tracking-widest font-mono text-cream/40">
+                    <div className="text-[9px] uppercase tracking-wide font-mono text-cream/40">
                       Prestige
                     </div>
                     <div className="font-mono tabular-nums text-cream font-bold mt-0.5">
@@ -65,7 +65,7 @@ export function StableDetailsPanel({ stable }: { stable: StandingEntry | null })
                     </div>
                   </div>
                   <div className="rounded border border-white/5 p-2">
-                    <div className="text-[9px] uppercase tracking-widest font-mono text-cream/40">
+                    <div className="text-[9px] uppercase tracking-wide font-mono text-cream/40">
                       Wins vs You
                     </div>
                     <div className="font-mono tabular-nums text-destructive font-bold mt-0.5">
@@ -78,7 +78,7 @@ export function StableDetailsPanel({ stable }: { stable: StandingEntry | null })
 
             {stable.recentResults.length > 0 && (
               <div>
-                <div className="text-[9px] uppercase tracking-widest font-mono text-cream/40 mb-1">
+                <div className="text-[9px] uppercase tracking-wide font-mono text-cream/40 mb-1">
                   Recent Results
                 </div>
                 <div className="space-y-1">

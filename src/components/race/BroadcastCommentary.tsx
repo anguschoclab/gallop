@@ -28,11 +28,8 @@ export function BroadcastCommentary({ commentary, lastUpdatedAt }: BroadcastComm
             <Mic2 className="h-4 w-4 text-broadcast-accent" />
           </div>
           <div className="flex flex-col">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground leading-tight">
-              Live Commentary
-            </span>
-            <span className="text-[8px] text-muted-foreground uppercase tracking-widest font-medium">
-              Race Broadcast Service
+            <span className="text-[10px] font-black uppercase tracking-wide text-foreground leading-tight">
+              Commentary
             </span>
           </div>
         </div>
@@ -93,7 +90,7 @@ export function BroadcastCommentary({ commentary, lastUpdatedAt }: BroadcastComm
         {commentary.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center gap-2 opacity-20">
             <Mic2 className="h-6 w-6" />
-            <p className="text-[10px] font-bold uppercase tracking-[0.3em]">System Initializing</p>
+            <p className="text-[10px] font-bold uppercase tracking-wide">No commentary yet</p>
           </div>
         )}
       </div>

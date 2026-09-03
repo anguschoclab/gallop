@@ -42,7 +42,7 @@ export function CareerArcPanel({ horseId }: CareerArcPanelProps) {
             <StageIcon size={20} />
           </div>
           <div>
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">
+            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">
               Current Stage
             </p>
             <p className={`text-lg font-black italic ${config.color}`}>{config.label}</p>
@@ -53,7 +53,7 @@ export function CareerArcPanel({ horseId }: CareerArcPanelProps) {
 
         <div className="grid grid-cols-3 gap-4">
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">
+            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">
               Rising Star Day
             </p>
             <div className="text-xl font-black italic text-gold-bright tabular-nums">
@@ -61,7 +61,7 @@ export function CareerArcPanel({ horseId }: CareerArcPanelProps) {
             </div>
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">
+            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">
               Contender Day
             </p>
             <div className="text-xl font-black italic text-gold tabular-nums">
@@ -69,7 +69,7 @@ export function CareerArcPanel({ horseId }: CareerArcPanelProps) {
             </div>
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">
+            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">
               Champion Day
             </p>
             <div className="text-xl font-black italic text-fame tabular-nums">
@@ -79,7 +79,7 @@ export function CareerArcPanel({ horseId }: CareerArcPanelProps) {
         </div>
 
         <div className="flex justify-between text-sm border-b border-gold/10 pb-2">
-          <span className="text-gold/60 uppercase text-[10px] font-black tracking-widest">
+          <span className="text-gold/60 uppercase text-[10px] font-black tracking-wide">
             Consecutive Losses
           </span>
           <span className="font-bold tabular-nums text-cream">{arcState.consecutiveLosses}</span>

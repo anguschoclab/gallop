@@ -37,7 +37,7 @@ export function HorseCardHeader({ horse, genderColor }: HorseCardHeaderProps) {
                 {horse.name}
               </span>
             </div>
-            <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-cream/40 flex-wrap">
+            <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-wide text-cream/40 flex-wrap">
               <span className="flex items-center gap-1">
                 <Calendar className="h-3 w-3" /> Age: {Math.floor(horse.age)}
               </span>
@@ -72,7 +72,7 @@ export function HorseCardHeader({ horse, genderColor }: HorseCardHeaderProps) {
             <Badge
               variant="outline"
               className={cn(
-                "rounded-none text-[8px] font-black tracking-widest uppercase h-4 px-1",
+                "rounded-none text-[8px] font-black tracking-wide uppercase h-4 px-1",
                 horse.lifecycleStatus === "retired"
                   ? "border-gold text-gold bg-gold/5"
                   : "border-destructive text-destructive bg-destructive/5",
@@ -84,7 +84,7 @@ export function HorseCardHeader({ horse, genderColor }: HorseCardHeaderProps) {
           {horse.healthStatus && horse.healthStatus !== "healthy" && (
             <Badge
               variant="destructive"
-              className="rounded-none text-[8px] font-black tracking-widest uppercase h-4 px-1 animate-pulse"
+              className="rounded-none text-[8px] font-black tracking-wide uppercase h-4 px-1 animate-pulse"
             >
               {horse.healthStatus === "recovering" ? "Recovering" : "Unwell"}
             </Badge>

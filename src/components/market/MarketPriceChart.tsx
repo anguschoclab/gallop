@@ -39,7 +39,7 @@ export function MarketPriceChart({ trades, day, windowDays = 30 }: MarketPriceCh
       <CardContent className="p-5 space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-cream/40">
+            <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-cream/40">
               <Activity className="h-3 w-3 text-primary" />
               Bloodstock Price Index — last {windowDays} days
             </div>
@@ -63,13 +63,13 @@ export function MarketPriceChart({ trades, day, windowDays = 30 }: MarketPriceCh
           </div>
           <div className="flex gap-6 text-right">
             <div>
-              <div className="text-[10px] font-mono uppercase tracking-widest text-cream/30">
+              <div className="text-[10px] font-mono uppercase tracking-wide text-cream/30">
                 Trades
               </div>
               <div className="font-mono font-bold tabular-nums text-cream">{totalVolume}</div>
             </div>
             <div>
-              <div className="text-[10px] font-mono uppercase tracking-widest text-cream/30">
+              <div className="text-[10px] font-mono uppercase tracking-wide text-cream/30">
                 Turnover
               </div>
               <div className="font-mono font-bold tabular-nums text-cream">
@@ -80,7 +80,7 @@ export function MarketPriceChart({ trades, day, windowDays = 30 }: MarketPriceCh
         </div>
 
         {priced.length === 0 ? (
-          <div className="h-[180px] flex items-center justify-center text-[11px] font-mono uppercase tracking-widest text-cream/30">
+          <div className="h-[180px] flex items-center justify-center text-[11px] font-mono uppercase tracking-wide text-cream/30">
             No trades settled yet — the index starts once horses change hands.
           </div>
         ) : (
@@ -93,7 +93,7 @@ export function MarketPriceChart({ trades, day, windowDays = 30 }: MarketPriceCh
               xFormat={(x) => `D${x}`}
             />
             <div className="space-y-1">
-              <div className="text-[10px] font-mono uppercase tracking-widest text-cream/30">
+              <div className="text-[10px] font-mono uppercase tracking-wide text-cream/30">
                 Daily volume
               </div>
               <MiniBar

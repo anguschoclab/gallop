@@ -8,7 +8,7 @@ export function AuctionLoadingState() {
     <div role="status" aria-live="polite" className="p-12 space-y-6 animate-fade-in">
       <div className="flex items-center gap-3 text-cream/60">
         <Loader2 className="h-5 w-5 animate-spin text-gold" aria-hidden />
-        <p className="font-mono text-xs uppercase tracking-[0.3em]">Loading sale catalog…</p>
+        <p className="font-mono text-xs uppercase tracking-wide">Loading sale catalog…</p>
       </div>
 
       {/* Skeleton header */}
@@ -58,7 +58,7 @@ export function AuctionErrorState({
     >
       <AlertTriangle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" aria-hidden />
       <div className="flex-1 min-w-0">
-        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-red-300/80">
+        <p className="font-mono text-[10px] uppercase tracking-wide text-red-300/80">
           Action Failed
         </p>
         <p className="text-sm text-cream/90 mt-1 break-words">{message}</p>
@@ -66,7 +66,7 @@ export function AuctionErrorState({
           <button
             type="button"
             onClick={onRetry}
-            className="mt-3 inline-flex items-center gap-1.5 border border-gold/40 bg-gold/10 px-3 py-1.5 rounded text-gold uppercase font-mono text-[10px] tracking-widest hover:bg-gold/20 transition-colors"
+            className="mt-3 inline-flex items-center gap-1.5 border border-gold/40 bg-gold/10 px-3 py-1.5 rounded text-gold uppercase font-mono text-[10px] tracking-wide hover:bg-gold/20 transition-colors"
           >
             {retryLabel}
           </button>

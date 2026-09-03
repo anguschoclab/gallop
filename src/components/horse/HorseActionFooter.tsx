@@ -29,7 +29,7 @@ export function HorseActionFooter({
       >
         <Button
           variant="outline"
-          className="w-full h-8 text-[9px] font-black uppercase tracking-widest border-white/10 hover:bg-gold/10 hover:text-gold hover:border-gold/30 rounded-none text-cream/60"
+          className="w-full h-8 text-[9px] font-black uppercase tracking-wide border-white/10 hover:bg-gold/10 hover:text-gold hover:border-gold/30 rounded-none text-cream/60"
         >
           <Eye className="h-3 w-3 mr-1.5" /> Dossier
         </Button>
@@ -37,7 +37,7 @@ export function HorseActionFooter({
       <Link to="/scheduler" className="flex-1" onClick={stopProp}>
         <Button
           variant="outline"
-          className="w-full h-8 text-[9px] font-black uppercase tracking-widest border-white/10 hover:bg-blue-400/10 hover:text-blue-400 hover:border-blue-400/30 rounded-none text-cream/60"
+          className="w-full h-8 text-[9px] font-black uppercase tracking-wide border-white/10 hover:bg-blue-400/10 hover:text-blue-400 hover:border-blue-400/30 rounded-none text-cream/60"
         >
           <Calendar className="h-3 w-3 mr-1.5" /> Deploy
         </Button>

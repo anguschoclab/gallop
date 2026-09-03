@@ -113,7 +113,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
       <div className="bg-slate-900 border-2 border-gold/20 shadow-[0_0_50px_rgba(0,0,0,0.8)] max-w-3xl w-full overflow-hidden flex flex-col max-h-[90vh]">
         <div className="p-6 bg-black/40 border-b border-white/5 flex items-center justify-between">
           <div className="space-y-1">
-            <div className="text-[10px] font-black uppercase text-gold/40 tracking-[0.3em]">
+            <div className="text-[10px] font-black uppercase text-gold/40 tracking-wide">
               Official Resolution
             </div>
             <h2 className="text-2xl font-black text-cream uppercase tracking-tight font-[family-name:var(--font-display)]">
@@ -126,19 +126,19 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
         <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4">
           {showWaiting ? (
             <div className="flex flex-col items-center justify-center py-12 gap-4 text-center">
-              <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-gold/40">
+              <div className="font-mono text-[10px] uppercase tracking-wide text-gold/40">
                 Awaiting Runners
               </div>
               <div className="text-4xl font-black text-cream tabular-nums">
                 {finishedCount} / {runners.length}
               </div>
-              <div className="text-xs text-cream/40 font-mono uppercase tracking-widest">
+              <div className="text-xs text-cream/40 font-mono uppercase tracking-wide">
                 horses finished
               </div>
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-12 px-4 py-2 border-b border-white/5 font-mono text-[9px] uppercase font-black text-cream/20 tracking-widest">
+              <div className="grid grid-cols-12 px-4 py-2 border-b border-white/5 font-mono text-[9px] uppercase font-black text-cream/20 tracking-wide">
                 <div className="col-span-1">P</div>
                 <div className="col-span-1">Gate</div>
                 <div className="col-span-5">Horse / Jockey</div>
@@ -236,7 +236,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
 
                       {r.distanceMod !== undefined && r.distanceStaminaMul !== undefined && (
                         <Collapsible className="mt-2 ml-10">
-                          <CollapsibleTrigger className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-widest text-gold/40 hover:text-gold transition-colors">
+                          <CollapsibleTrigger className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-wide text-gold/40 hover:text-gold transition-colors">
                             <ChevronDown className="h-2.5 w-2.5" />
                             Distance Scaling
                           </CollapsibleTrigger>
@@ -295,7 +295,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
 
                       {r.finalMood && (
                         <Collapsible className="mt-2 ml-10">
-                          <CollapsibleTrigger className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-widest text-gold/40 hover:text-gold transition-colors">
+                          <CollapsibleTrigger className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-wide text-gold/40 hover:text-gold transition-colors">
                             <ChevronDown className="h-2.5 w-2.5" />
                             Mood Breakdown
                           </CollapsibleTrigger>
@@ -325,7 +325,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
 
               {race.sectionalSplits && race.sectionalSplits.length > 0 && (
                 <div className="pt-4 border-t border-white/5 space-y-3">
-                  <div className="text-[10px] font-black uppercase text-gold/40 tracking-[0.3em]">
+                  <div className="text-[10px] font-black uppercase text-gold/40 tracking-wide">
                     Pace / Position Graph
                   </div>
                   <PaceGraph
@@ -377,7 +377,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
               {hasTacticalData && (
                 <div className="pt-4 border-t border-white/5">
                   <Collapsible defaultOpen={false}>
-                    <CollapsibleTrigger className="flex items-center gap-1 text-[10px] font-black uppercase text-cyan-400/60 tracking-[0.2em] hover:text-cyan-400 transition-colors">
+                    <CollapsibleTrigger className="flex items-center gap-1 text-[10px] font-black uppercase text-cyan-400/60 tracking-wide hover:text-cyan-400 transition-colors">
                       <ChevronDown className="h-3 w-3" />
                       Tactical Analysis
                     </CollapsibleTrigger>
@@ -396,7 +396,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
               {race.snapshots && race.snapshots.length > 0 && allFinished && (
                 <div className="pt-4 border-t border-white/5">
                   <Collapsible defaultOpen={false}>
-                    <CollapsibleTrigger className="flex items-center gap-1 text-[10px] font-black uppercase text-purple-400/60 tracking-[0.2em] hover:text-purple-400 transition-colors">
+                    <CollapsibleTrigger className="flex items-center gap-1 text-[10px] font-black uppercase text-purple-400/60 tracking-wide hover:text-purple-400 transition-colors">
                       <ChevronDown className="h-3 w-3" />
                       AI Decision Log
                     </CollapsibleTrigger>
@@ -424,7 +424,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
         <div className="p-6 bg-black/40 border-t border-white/5">
           <Button
             onClick={onClose}
-            className="w-full h-12 bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-widest text-xs rounded-none shadow-lg"
+            className="w-full h-12 bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-wide text-xs rounded-none shadow-lg"
           >
             Dismiss Records
           </Button>

@@ -49,7 +49,7 @@ function NpcStableDetailPage() {
         <Link
           to="/stable"
           search={{ tab: "rivals" }}
-          className="text-blue-400 uppercase font-mono text-xs tracking-widest hover:underline"
+          className="text-blue-400 uppercase font-mono text-xs tracking-wide hover:underline"
         >
           All Stables
         </Link>
@@ -66,7 +66,7 @@ function NpcStableDetailPage() {
         <div>
           <button
             onClick={() => navigate({ to: "/stable", search: { tab: "rivals" } })}
-            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-cream/30 hover:text-blue-400 transition-colors mb-4"
+            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream/30 hover:text-blue-400 transition-colors mb-4"
           >
             <ArrowLeft className="h-3 w-3" /> Stables
           </button>
@@ -79,7 +79,7 @@ function NpcStableDetailPage() {
               {stable.name}
             </h1>
           </div>
-          <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-cream/40">
+          <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-wide text-cream/40">
             <span>
               <Globe className="h-3 w-3 inline mr-1" />
               {stable.country}
@@ -101,7 +101,7 @@ function NpcStableDetailPage() {
             subtitle={`${stable.country} · ${stable.personality}`}
             variant="full"
           />
-          <div className="text-[10px] font-mono text-cream/20 uppercase tracking-widest">
+          <div className="text-[10px] font-mono text-cream/20 uppercase tracking-wide">
             Liquid Capital
           </div>
           <div className="text-2xl font-black font-mono text-success tabular-nums tracking-tighter">
@@ -126,33 +126,33 @@ function NpcStableDetailPage() {
               <TabsList className="bg-transparent h-10 gap-2">
                 <TabsTrigger
                   value="overview"
-                  className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all"
+                  className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all"
                 >
                   Overview
                 </TabsTrigger>
                 <TabsTrigger
                   value="roster"
-                  className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all"
+                  className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all"
                 >
                   Roster
                 </TabsTrigger>
                 <TabsTrigger
                   value="staff"
-                  className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all"
+                  className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all"
                 >
                   Staff
                 </TabsTrigger>
                 <TabsTrigger
                   value="history"
-                  className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all"
+                  className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all"
                 >
                   History
                 </TabsTrigger>
                 <TabsTrigger
                   value="ai-profile"
-                  className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all"
+                  className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all"
                 >
-                  AI Profile
+                  Personality
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -171,7 +171,7 @@ function NpcStableDetailPage() {
             <TabsContent value="staff" className="mt-0 animate-in fade-in duration-300">
               <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
                 <CardHeader className="bg-black/20 border-b border-white/5">
-                  <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40">
+                  <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40">
                     Retained Personnel
                   </CardTitle>
                 </CardHeader>
@@ -182,7 +182,7 @@ function NpcStableDetailPage() {
                         key={role}
                         className="flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors"
                       >
-                        <span className="text-[9px] font-black uppercase tracking-widest text-cream/40 flex items-center gap-2">
+                        <span className="text-[9px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
                           <Briefcase className="h-3 w-3" /> {role.replace(/_/g, " ")}
                         </span>
                         <span className="text-xs font-bold text-cream uppercase text-right">
@@ -191,7 +191,7 @@ function NpcStableDetailPage() {
                       </div>
                     ))}
                     {(!stable.staff || Object.keys(stable.staff).length === 0) && (
-                      <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+                      <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
                         No personnel records found.
                       </div>
                     )}
@@ -219,8 +219,8 @@ function NpcStableDetailPage() {
                 </>
               ) : (
                 <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl">
-                  <CardContent className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
-                    No AI data available for this stable.
+                  <CardContent className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
+                    No data yet.
                   </CardContent>
                 </Card>
               )}
@@ -229,14 +229,14 @@ function NpcStableDetailPage() {
             <TabsContent value="history" className="mt-0 animate-in fade-in duration-300">
               <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
                 <CardHeader className="bg-black/20 border-b border-white/5">
-                  <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40">
+                  <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40">
                     Entity Records
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="divide-y divide-white/5">
                     <div className="flex justify-between p-4">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-cream/40">
+                      <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
                         Established
                       </span>
                       <span className="font-mono text-xs text-cream tabular-nums">
@@ -244,7 +244,7 @@ function NpcStableDetailPage() {
                       </span>
                     </div>
                     <div className="flex justify-between p-4">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-cream/40">
+                      <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
                         Reputation
                       </span>
                       <span className="font-mono text-xs text-fame tabular-nums">
@@ -252,7 +252,7 @@ function NpcStableDetailPage() {
                       </span>
                     </div>
                     <div className="flex justify-between p-4">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-cream/40">
+                      <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
                         Cash on Hand
                       </span>
                       <span className="font-mono text-xs text-success tabular-nums">

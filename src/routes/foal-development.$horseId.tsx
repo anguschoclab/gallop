@@ -22,7 +22,7 @@ function FoalDevelopmentPage() {
     return (
       <div className="p-12 text-center space-y-4">
         <h1 className="text-4xl font-black text-cream">Horse not found</h1>
-        <Link to="/stable" className="text-gold uppercase font-mono text-xs tracking-widest">
+        <Link to="/stable" className="text-gold uppercase font-mono text-xs tracking-wide">
           Back to Stable
         </Link>
       </div>
@@ -61,21 +61,19 @@ function FoalDevelopmentPage() {
         <Link
           to="/stable/$horseId"
           params={{ horseId: horse.id }}
-          className="text-gold uppercase font-mono text-[10px] tracking-widest hover:underline"
+          className="text-gold uppercase font-mono text-[10px] tracking-wide hover:underline"
         >
           View Horse
         </Link>
       </div>
 
       <header className="space-y-1">
-        <div className="flex items-center gap-2 text-gold uppercase font-mono text-[10px] tracking-[0.3em]">
+        <div className="flex items-center gap-2 text-gold uppercase font-mono text-[10px] tracking-wide">
           <Sprout className="h-3 w-3" /> Pre-Race Preparation
         </div>
         <h1 className="text-4xl font-black text-cream">{horse.name}</h1>
         {isReadOnly && (
-          <p className="text-xs text-cream/50 font-mono uppercase tracking-widest">
-            Read-only view
-          </p>
+          <p className="text-xs text-cream/50 font-mono uppercase tracking-wide">Read-only view</p>
         )}
       </header>
 
@@ -149,7 +147,7 @@ function FoalDevelopmentPage() {
       {resolved.length > 0 && (
         <Card className="bg-slate-900/40 border-white/5">
           <CardHeader className="border-b border-white/5 pb-2">
-            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-cream/40">
+            <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40">
               Resolved Milestones
             </CardTitle>
           </CardHeader>
@@ -159,7 +157,7 @@ function FoalDevelopmentPage() {
               return (
                 <div key={m.key} className="flex items-center gap-2 text-sm">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                  <span className="text-cream/40 uppercase tracking-widest font-mono text-[10px]">
+                  <span className="text-cream/40 uppercase tracking-wide font-mono text-[10px]">
                     {m.label}
                   </span>
                   <span className="text-cream">{chosen?.label ?? m.resolvedChoiceKey}</span>

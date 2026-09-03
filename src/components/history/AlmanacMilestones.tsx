@@ -50,7 +50,7 @@ export function AlmanacMilestones({
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <h3 className="font-semibold text-cream">{m.trackName}</h3>
-                  <p className="text-[10px] uppercase tracking-widest text-cream-muted">
+                  <p className="text-[10px] uppercase tracking-wide text-cream-muted">
                     {m.surfaces.join(" · ")} · {m.distances.length} trips
                   </p>
                 </div>

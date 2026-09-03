@@ -127,7 +127,7 @@ function PortfolioPage() {
   return (
     <div className="space-y-6">
       <div>
-        <div className="flex items-center gap-2 text-primary uppercase tracking-[0.2em] text-xs font-bold opacity-70">
+        <div className="flex items-center gap-2 text-primary uppercase tracking-wide text-xs font-bold opacity-70">
           <Briefcase className="h-3.5 w-3.5" />
           Holdings
         </div>

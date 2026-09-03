@@ -61,7 +61,7 @@ export function CareerProjectionSection({ horse, horses }: CareerProjectionSecti
 
           {/* Input factors */}
           <div className="pt-4 border-t border-white/5 space-y-3">
-            <div className="text-[10px] font-black uppercase text-gold/40 tracking-widest">
+            <div className="text-[10px] font-black uppercase text-gold/40 tracking-wide">
               Key Input Factors
             </div>
             <div className="grid grid-cols-2 gap-x-4 gap-y-2">
@@ -76,7 +76,7 @@ export function CareerProjectionSection({ horse, horses }: CareerProjectionSecti
 
           {/* Explanatory text */}
           <div className="pt-4 border-t border-white/5 space-y-2">
-            <div className="text-[10px] font-black uppercase text-gold/40 tracking-widest">
+            <div className="text-[10px] font-black uppercase text-gold/40 tracking-wide">
               How the Model Works
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">

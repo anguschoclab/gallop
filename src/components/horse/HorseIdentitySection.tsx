@@ -33,7 +33,7 @@ export function HorseIdentitySection({ horse, peakingStatus }: HorseIdentitySect
           </div>
 
           <div className="pt-4 border-t border-white/5 space-y-3">
-            <div className="text-[10px] font-black uppercase text-gold/40 tracking-widest px-1">
+            <div className="text-[10px] font-black uppercase text-gold/40 tracking-wide px-1">
               Training Bias
               <div className="flex flex-wrap gap-2">
                 <Badge

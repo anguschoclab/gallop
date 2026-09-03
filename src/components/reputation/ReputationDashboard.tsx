@@ -68,7 +68,7 @@ export function ReputationDashboard() {
         {/* Score Overview */}
         <div className="bg-black/40 border border-white/5 p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-black uppercase text-cream/40 tracking-widest">
+            <span className="text-[10px] font-black uppercase text-cream/40 tracking-wide">
               Reputation Score
             </span>
             <span className="text-2xl font-mono font-black text-purple-400">
@@ -83,13 +83,13 @@ export function ReputationDashboard() {
           </div>
           <div className="grid grid-cols-3 gap-2 text-center">
             <div>
-              <div className="text-[9px] text-cream/40 uppercase tracking-widest font-black">
+              <div className="text-[9px] text-cream/40 uppercase tracking-wide font-black">
                 Total Wins
               </div>
               <div className="text-sm font-mono font-black text-cream">{reputation.totalWins}</div>
             </div>
             <div>
-              <div className="text-[9px] text-cream/40 uppercase tracking-widest font-black">
+              <div className="text-[9px] text-cream/40 uppercase tracking-wide font-black">
                 G1 Wins
               </div>
               <div className="text-sm font-mono font-black text-gold">
@@ -97,7 +97,7 @@ export function ReputationDashboard() {
               </div>
             </div>
             <div>
-              <div className="text-[9px] text-cream/40 uppercase tracking-widest font-black">
+              <div className="text-[9px] text-cream/40 uppercase tracking-wide font-black">
                 Years Active
               </div>
               <div className="text-sm font-mono font-black text-cream">
@@ -109,7 +109,7 @@ export function ReputationDashboard() {
 
         {/* Graded Wins Breakdown */}
         <div className="bg-black/40 border border-white/5 p-3 space-y-2">
-          <div className="text-[9px] font-black uppercase text-cream/40 tracking-widest">
+          <div className="text-[9px] font-black uppercase text-cream/40 tracking-wide">
             Graded Stakes Wins
           </div>
           <div className="grid grid-cols-4 gap-2 text-center">
@@ -143,7 +143,7 @@ export function ReputationDashboard() {
         {/* Recent Events */}
         {recentEvents.length > 0 && (
           <div className="space-y-2">
-            <div className="text-[9px] font-black uppercase text-cream/40 tracking-widest">
+            <div className="text-[9px] font-black uppercase text-cream/40 tracking-wide">
               Recent Activity (30 Days)
             </div>
             <div className="space-y-1 max-h-48 overflow-y-auto">

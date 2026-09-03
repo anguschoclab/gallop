@@ -69,6 +69,22 @@ export function useDashboardData() {
 
   const raceMap = races;
 
+  // Pre-index race entries by stableId for O(1) head-to-head lookups.
+  // Keyed by raceId, value is a Map<stableId, true> for fast membership check.
+  const raceStableIndex = useMemo(() => {
+    const index = new Map<string, Map<string, boolean>>();
+    for (const raceId in raceMap) {
+      const race = raceMap[raceId];
+      const stableSet = new Map<string, boolean>();
+      for (const e of race.entries) {
+        const sid = getStableId(e);
+        if (sid) stableSet.set(sid, true);
+      }
+      index.set(raceId, stableSet);
+    }
+    return index;
+  }, [raceMap]);
+
   const calculateHeadToHead = useCallback(
     (stableId: string) => {
       const thirtyDaysAgo = day - HEAD_TO_HEAD_LOOKBACK_DAYS;
@@ -78,21 +94,17 @@ export function useDashboardData() {
         horse.raceHistory
           .filter((r: { day: number }) => r.day >= thirtyDaysAgo)
           .forEach((raceResult: { raceId: string; position: number }) => {
-            const race = raceMap[asRaceId(raceResult.raceId)];
-            if (race) {
-              const hadRivalEntry = race.entries.some(
-                (e: RaceEntry) => (getStableId(e) ?? undefined) === stableId,
-              );
-              if (hadRivalEntry) {
-                if (raceResult.position === 1) wins++;
-                else losses++;
-              }
+            const raceId = raceResult.raceId;
+            const stableSet = raceStableIndex.get(raceId);
+            if (stableSet && stableSet.has(stableId)) {
+              if (raceResult.position === 1) wins++;
+              else losses++;
             }
           });
       });
       return { wins, losses };
     },
-    [day, ownedHorses, raceMap],
+    [day, ownedHorses, raceStableIndex],
   );
 
   return {

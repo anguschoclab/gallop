@@ -86,7 +86,7 @@ function AuctionSalePage() {
         />
         <button
           onClick={() => navigate({ to: "/auction" })}
-          className="text-gold uppercase font-mono text-xs tracking-widest hover:underline"
+          className="text-gold uppercase font-mono text-xs tracking-wide hover:underline"
         >
           ← Return to Exchange
         </button>

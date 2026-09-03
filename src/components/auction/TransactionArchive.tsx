@@ -14,7 +14,7 @@ export function TransactionArchive({ pastSales }: TransactionArchiveProps) {
     <section className="space-y-4">
       <div className="flex items-center gap-2 mb-2 px-1">
         <HardDrive className="h-3.5 w-3.5 text-cream/30" />
-        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-cream/40">
+        <h2 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
           Transaction Archive
         </h2>
       </div>
@@ -35,7 +35,7 @@ export function TransactionArchive({ pastSales }: TransactionArchiveProps) {
                   <span className="text-[10px] font-bold text-cream/60 group-hover:text-cream transition-colors uppercase truncate max-w-[140px]">
                     {sale.name}
                   </span>
-                  <span className="text-[9px] font-mono text-cream/20 uppercase">RESOLVED</span>
+                  <span className="text-[9px] font-mono text-cream/20 uppercase">Completed</span>
                 </div>
                 {topLot && (
                   <div className="flex justify-between items-center text-[9px] font-mono text-cream/40">

@@ -22,15 +22,15 @@ export function OperationsTicker() {
   return (
     <Card className="border-gold-muted bg-slate-900/60 backdrop-blur-xl shadow-inner border-l-4 border-l-gold">
       <CardHeader className="pb-2 border-b border-white/5 bg-black/20">
-        <CardTitle className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold-muted flex items-center gap-2">
+        <CardTitle className="text-[10px] font-bold uppercase tracking-wide text-gold-muted flex items-center gap-2">
           <Activity className="h-3 w-3" />
-          Operations Ticker
+          Stable Overview
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-4 space-y-5">
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-black/40 p-3 border border-white/5 rounded shadow-sm">
-            <div className="text-[9px] text-cream-muted uppercase font-bold tracking-widest mb-1 opacity-60">
+            <div className="text-[9px] text-cream-muted uppercase font-bold tracking-wide mb-1 opacity-60">
               Liquidity
             </div>
             <div className="text-xl font-bold text-success font-mono tabular-nums leading-none tracking-tighter">
@@ -38,7 +38,7 @@ export function OperationsTicker() {
             </div>
           </div>
           <div className="bg-black/40 p-3 border border-white/5 rounded shadow-sm">
-            <div className="text-[9px] text-cream-muted uppercase font-bold tracking-widest mb-1 opacity-60">
+            <div className="text-[9px] text-cream-muted uppercase font-bold tracking-wide mb-1 opacity-60">
               Roster
             </div>
             <div className="text-xl font-bold text-cream font-mono leading-none tracking-tighter flex items-baseline gap-1">
@@ -49,9 +49,9 @@ export function OperationsTicker() {
         </div>
 
         <div className="space-y-3">
-          <div className="flex justify-between text-[10px] uppercase font-black tracking-widest text-gold-muted/40 px-1">
-            <span>Infrastructure Readiness</span>
-            <span>Load</span>
+          <div className="flex justify-between text-[10px] uppercase font-black tracking-wide text-gold-muted/40 px-1">
+            <span>Stable Capacity</span>
+            <span>Usage</span>
           </div>
           <div className="space-y-3">
             <div className="space-y-1.5">

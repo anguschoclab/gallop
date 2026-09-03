@@ -93,9 +93,7 @@ export function RegionalTrendsWidget({ routeMode = false }: WidgetProps) {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Globe2 className="h-4 w-4 text-fame" />
-          <h2 className="text-sm font-black uppercase tracking-[0.3em] text-cream">
-            Regional Trends
-          </h2>
+          <h2 className="text-sm font-black uppercase tracking-wide text-cream">Regional Trends</h2>
         </div>
         <div className="flex items-center gap-2">
           <TimeWindowSelect />

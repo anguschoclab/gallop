@@ -39,9 +39,9 @@ export function HorseStatsRadar({ horse }: HorseStatsRadarProps) {
           <Radar
             name="Stat Profile"
             dataKey="value"
-            stroke="#d4af37" // Gold
+            stroke="var(--gold)" // Gold
             strokeWidth={2}
-            fill="#d4af37"
+            fill="var(--gold)"
             fillOpacity={0.3}
             animationDuration={1000}
           />

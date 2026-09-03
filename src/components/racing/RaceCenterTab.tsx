@@ -68,7 +68,7 @@ export function RaceCenterTab() {
   return (
     <div className="space-y-6 pb-20 animate-fade-in">
       <div className="border-b border-success/20 pb-4">
-        <div className="flex items-center gap-2 text-success uppercase tracking-[0.2em] font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
+        <div className="flex items-center gap-2 text-success uppercase tracking-wide font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
           <Flag className="h-3.5 w-3.5" />
           Race Center
         </div>

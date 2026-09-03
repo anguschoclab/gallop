@@ -23,23 +23,19 @@ export function ReplayPlayer({ raceId }: ReplayPlayerProps) {
       <CardContent className="p-6 space-y-4">
         <div className="grid grid-cols-3 gap-4">
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">
-              Race Day
-            </p>
+            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">Race Day</p>
             <div className="text-xl font-black italic text-gold-bright tabular-nums">
               {replay.day}
             </div>
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">
-              Distance
-            </p>
+            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">Distance</p>
             <div className="text-xl font-black italic text-gold tabular-nums">
               {replay.distance.toLocaleString()}m
             </div>
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">
+            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">
               Checkpoints
             </p>
             <div className="text-xl font-black italic text-gold tabular-nums">
@@ -53,7 +49,7 @@ export function ReplayPlayer({ raceId }: ReplayPlayerProps) {
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <Clock size={14} className="text-gold" />
-            <h4 className="text-xs font-black uppercase tracking-widest text-gold">
+            <h4 className="text-xs font-black uppercase tracking-wide text-gold">
               Final Positions
             </h4>
           </div>

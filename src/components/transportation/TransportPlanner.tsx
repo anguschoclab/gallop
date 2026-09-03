@@ -129,7 +129,7 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
 
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                     Route
                   </span>
                   <span className="font-mono text-cream/80 text-[10px]">
@@ -137,7 +137,7 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                     Mode
                   </span>
                   <span className="font-mono text-cream/80 text-[10px]">
@@ -145,7 +145,7 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                     Cost
                   </span>
                   <span className="font-mono text-gold text-[10px]">
@@ -153,7 +153,7 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                     Duration
                   </span>
                   <span className="font-mono text-cream/80 text-[10px]">
@@ -161,7 +161,7 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                     Arrival
                   </span>
                   <span
@@ -181,7 +181,7 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
                   onClick={() => handleCancel(transport.id)}
                   variant="outline"
                   size="sm"
-                  className="w-full border-red-400/30 text-red-400 hover:bg-red-400/10 font-black uppercase tracking-widest text-[10px]"
+                  className="w-full border-red-400/30 text-red-400 hover:bg-red-400/10 font-black uppercase tracking-wide text-[10px]"
                 >
                   <X className="h-3 w-3 mr-1" /> Cancel
                 </Button>

@@ -66,7 +66,7 @@ export function ClaimingStep({
               alert(`Withdrawal failed: ${res.reason}`);
             }
           }}
-          className="w-full uppercase font-black tracking-widest text-[10px]"
+          className="w-full uppercase font-black tracking-wide text-[10px]"
         >
           Withdraw Horse from Claiming
         </Button>

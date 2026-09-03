@@ -42,7 +42,7 @@ export function ConsignmentWithdrawal({
     <Card className="bg-slate-900/40 border-destructive/20 rounded-none shadow-xl border-t-2 border-t-destructive/40">
       <CardContent className="p-6 flex items-center justify-between gap-6">
         <div className="space-y-1">
-          <div className="text-xs font-black text-destructive uppercase tracking-widest flex items-center gap-2">
+          <div className="text-xs font-black text-destructive uppercase tracking-wide flex items-center gap-2">
             <Info className="h-3 w-3" /> Withdrawal protocol active
           </div>
           <p className="text-[10px] font-mono text-cream/30 uppercase tracking-tighter">
@@ -54,7 +54,7 @@ export function ConsignmentWithdrawal({
             <AlertDialogTrigger asChild>
               <Button
                 variant="destructive"
-                className="h-10 px-6 font-black uppercase text-[10px] tracking-widest rounded-none"
+                className="h-10 px-6 font-black uppercase text-[10px] tracking-wide rounded-none"
               >
                 Withdraw
               </Button>
@@ -70,11 +70,11 @@ export function ConsignmentWithdrawal({
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel className="rounded-none font-black text-[10px] uppercase tracking-widest border-white/10 hover:bg-white/5">
+                <AlertDialogCancel className="rounded-none font-black text-[10px] uppercase tracking-wide border-white/10 hover:bg-white/5">
                   Cancel
                 </AlertDialogCancel>
                 <AlertDialogAction
-                  className="bg-destructive text-white hover:bg-destructive/90 rounded-none font-black text-[10px] uppercase tracking-widest"
+                  className="bg-destructive text-white hover:bg-destructive/90 rounded-none font-black text-[10px] uppercase tracking-wide"
                   onClick={onWithdraw}
                 >
                   Confirm
@@ -86,7 +86,7 @@ export function ConsignmentWithdrawal({
           <Button
             disabled
             variant="destructive"
-            className="h-10 px-6 font-black uppercase text-[10px] tracking-widest rounded-none opacity-20"
+            className="h-10 px-6 font-black uppercase text-[10px] tracking-wide rounded-none opacity-20"
           >
             Withdrawal closed
           </Button>

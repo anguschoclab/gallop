@@ -41,14 +41,14 @@ export function HeadToHeadSection({ horses }: { horses: Horse[] }) {
 
   return (
     <div className="border-t border-white/10 pt-4" data-testid="head-to-head-section">
-      <h4 className="text-[11px] uppercase tracking-widest font-mono text-cream/50 mb-3">
+      <h4 className="text-[11px] uppercase tracking-wide font-mono text-cream/50 mb-3">
         Head-to-Head Projection
       </h4>
 
       {/* Selectors */}
       <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4">
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] uppercase tracking-widest font-mono text-cream/40">
+          <span className="text-[10px] uppercase tracking-wide font-mono text-cream/40">
             Distance
           </span>
           <select
@@ -67,7 +67,7 @@ export function HeadToHeadSection({ horses }: { horses: Horse[] }) {
           </select>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] uppercase tracking-widest font-mono text-cream/40">
+          <span className="text-[10px] uppercase tracking-wide font-mono text-cream/40">
             Surface
           </span>
           <div className="flex gap-1">
@@ -140,7 +140,7 @@ export function HeadToHeadSection({ horses }: { horses: Horse[] }) {
           variant="outline"
           onClick={() => runSim(horses, distance, surface)}
           disabled={simRunning}
-          className="h-7 text-[10px] uppercase tracking-widest font-mono"
+          className="h-7 text-[10px] uppercase tracking-wide font-mono"
         >
           {simRunning ? "Running..." : `Run Simulation (${SIM_ITERATIONS}×)`}
         </Button>

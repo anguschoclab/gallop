@@ -22,7 +22,7 @@ export function StatCard({
   return (
     <Card className="border-white/5 bg-slate-900/40">
       <CardContent className="p-4">
-        <p className="text-[10px] font-black uppercase tracking-widest text-cream-muted">{label}</p>
+        <p className="text-[10px] font-black uppercase tracking-wide text-cream-muted">{label}</p>
         <p
           className={`font-bold tabular-nums text-cream ${
             size === "xl" ? "text-xl" : size === "lg" ? "text-lg" : "text-base"

@@ -110,7 +110,7 @@ export function SalePrestigeBreakdown({
             />
           </div>
           <div className="border-t border-white/5 pt-2 space-y-1">
-            <div className="text-[10px] font-mono uppercase tracking-widest text-cream/30">
+            <div className="text-[10px] font-mono uppercase tracking-wide text-cream/30">
               Worked Example
             </div>
             <div className="text-xs text-cream-muted font-mono space-y-0.5">
@@ -183,7 +183,7 @@ export function RacePrestigeBreakdown({
             />
           </div>
           <div className="border-t border-white/5 pt-2 space-y-1">
-            <div className="text-[10px] font-mono uppercase tracking-widest text-cream/30">
+            <div className="text-[10px] font-mono uppercase tracking-wide text-cream/30">
               Worked Example
             </div>
             <div className="text-xs text-cream-muted font-mono">

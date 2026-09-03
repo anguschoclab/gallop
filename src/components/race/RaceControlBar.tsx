@@ -134,7 +134,7 @@ export function RaceControlBar({
                   aria-label="Snapshot in-running conditions"
                 >
                   <Camera className="h-3.5 w-3.5 text-broadcast-accent" />
-                  <span className="text-[11px] font-black uppercase tracking-widest">Snapshot</span>
+                  <span className="text-[11px] font-black uppercase tracking-wide">Snapshot</span>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -153,7 +153,7 @@ export function RaceControlBar({
             aria-label={`Inspect ${snapshotCount} captured snapshot${snapshotCount > 1 ? "s" : ""}`}
           >
             <Camera className="h-3.5 w-3.5" />
-            <span className="text-[11px] font-black uppercase tracking-widest">
+            <span className="text-[11px] font-black uppercase tracking-wide">
               Snapshots ({snapshotCount})
             </span>
           </Button>
@@ -168,7 +168,7 @@ export function RaceControlBar({
             aria-label={paused ? "Resume race" : "Pause race"}
           >
             {paused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
-            <span className="text-[11px] font-black uppercase tracking-widest">
+            <span className="text-[11px] font-black uppercase tracking-wide">
               {paused ? "Resume" : "Pause"}
             </span>
           </Button>

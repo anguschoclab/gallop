@@ -50,7 +50,7 @@ export function HQOpsWidget() {
       </CardHeader>
       <CardContent className="pt-4 flex-1 flex flex-col justify-between space-y-4">
         <div className="space-y-3">
-          <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold-muted/60 mb-2 px-1 flex justify-between">
+          <div className="text-[10px] font-bold uppercase tracking-wide text-gold-muted/60 mb-2 px-1 flex justify-between">
             <span>Facility Health</span>
             <span>Rank</span>
           </div>
@@ -74,7 +74,7 @@ export function HQOpsWidget() {
           </div>
 
           <div className="pt-2">
-            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold-muted/60 mb-2 px-1">
+            <div className="text-[10px] font-bold uppercase tracking-wide text-gold-muted/60 mb-2 px-1">
               Reputation Ledger
             </div>
             <div className="space-y-1.5">
@@ -106,7 +106,7 @@ export function HQOpsWidget() {
           <Link to="/facilities" className="w-full">
             <Button
               variant="outline"
-              className="w-full h-8 text-[10px] uppercase font-bold tracking-widest border-gold/20 hover:bg-gold/10 text-gold-muted"
+              className="w-full h-8 text-[10px] uppercase font-bold tracking-wide border-gold/20 hover:bg-gold/10 text-gold-muted"
             >
               Manage Horses
             </Button>
@@ -114,7 +114,7 @@ export function HQOpsWidget() {
           <Link to="/settings" className="w-full">
             <Button
               variant="outline"
-              className="w-full h-8 text-[10px] uppercase font-bold tracking-widest border-white/10 hover:bg-white/5 text-cream/40"
+              className="w-full h-8 text-[10px] uppercase font-bold tracking-wide border-white/10 hover:bg-white/5 text-cream/40"
             >
               Configuration
             </Button>

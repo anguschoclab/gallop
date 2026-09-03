@@ -86,7 +86,7 @@ export function NextActionBanner({ action, onDismiss }: NextActionBannerProps) {
           <Icon className="h-5 w-5" />
         </div>
         <div className="flex-1 min-w-0" aria-live="polite">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gold/80 font-[family-name:var(--font-mono)]">
+          <p className="text-[10px] font-black uppercase tracking-wide text-gold/80 font-[family-name:var(--font-mono)]">
             Next up
           </p>
           <p className="text-lg font-bold text-cream font-[family-name:var(--font-display)] truncate">

@@ -39,7 +39,7 @@ export function BookmarkButton({
           toggle({ type, id, label, subtitle });
         }}
         className={cn(
-          "h-7 gap-1.5 text-[10px] uppercase tracking-widest font-mono rounded-none",
+          "h-7 gap-1.5 text-[10px] uppercase tracking-wide font-mono rounded-none",
           active && "border-gold/50 text-gold",
           className,
         )}

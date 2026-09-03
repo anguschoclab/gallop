@@ -84,13 +84,13 @@ export function HorseManagementSection({
               </div>
               <div className="bg-black/40 border border-white/5 p-3 space-y-1">
                 <div className="flex justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                     Sale
                   </span>
                   <span className="font-mono text-cream">{consignedSale.name}</span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                     Day
                   </span>
                   <span className="font-mono text-cream">{consignedSale.day}</span>
@@ -112,13 +112,13 @@ export function HorseManagementSection({
               </div>
               <div className="bg-black/40 border border-white/5 p-3 space-y-1">
                 <div className="flex justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                     Sale
                   </span>
                   <span className="font-mono text-cream">{eligibleSale.name}</span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                     Day
                   </span>
                   <span className="font-mono text-cream">{eligibleSale.day}</span>
@@ -131,13 +131,13 @@ export function HorseManagementSection({
 
           <div className="pt-4 border-t border-white/5 space-y-1">
             <div className="flex justify-between text-xs">
-              <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+              <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                 Career Starts
               </span>
               <span className="font-mono text-cream">{horse.raceHistory?.length ?? 0}</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+              <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                 Career Earnings
               </span>
               <span className="font-mono text-success">
@@ -148,7 +148,7 @@ export function HorseManagementSection({
 
           {/* Management Actions */}
           <div className="pt-4 border-t border-white/5 space-y-2">
-            <div className="text-[9px] font-black uppercase tracking-widest text-cream/40 mb-2">
+            <div className="text-[9px] font-black uppercase tracking-wide text-cream/40 mb-2">
               Management Actions
             </div>
             <div className="grid grid-cols-2 gap-2">

@@ -44,9 +44,16 @@ src/tests/e2e/fixtures/*.json
 
 # Bot config artifacts (Jules, etc.)
 .jules/
+.lovable/
+.gemini/
+.windsurf/
 
 # Auto-generated route tree
 src/routeTree.gen.ts
 
 # Audit working document
 audit-findings.md
+
+# macOS Finder duplicate files
+* 2.ts
+* 2.tsx

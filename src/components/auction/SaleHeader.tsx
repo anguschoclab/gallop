@@ -40,7 +40,7 @@ export function SaleHeader({
       <div>
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-cream/30 hover:text-gold transition-colors mb-4"
+          className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream/30 hover:text-gold transition-colors mb-4"
         >
           <ArrowLeft className="h-3 w-3" /> Exchange Overview
         </button>
@@ -50,7 +50,7 @@ export function SaleHeader({
           </h1>
           <Badge
             className={cn(
-              "rounded-none font-black text-[10px] tracking-widest px-3 h-6",
+              "rounded-none font-black text-[10px] tracking-wide px-3 h-6",
               isResolved
                 ? "bg-slate-800 text-cream/40"
                 : "bg-gold text-slate-950 shadow-[0_0_15px_rgba(212,175,55,0.3)]",
@@ -59,7 +59,7 @@ export function SaleHeader({
             {isResolved ? "Resolved" : "Active"}
           </Badge>
         </div>
-        <div className="flex flex-wrap items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
+        <div className="flex flex-wrap items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-cream/40">
           <span>
             Market Class:{" "}
             <span className="text-gold-muted">{KIND_LABELS[sale.kind] ?? sale.kind}</span>
@@ -87,7 +87,7 @@ export function SaleHeader({
       </div>
 
       <div className="flex flex-col items-end gap-1">
-        <div className="text-[10px] font-mono text-cream/20 uppercase tracking-widest">
+        <div className="text-[10px] font-mono text-cream/20 uppercase tracking-wide">
           Available Capital
         </div>
         <div className="text-2xl font-black font-mono text-success tabular-nums tracking-tighter">

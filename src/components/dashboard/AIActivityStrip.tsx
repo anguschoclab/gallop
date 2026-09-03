@@ -18,13 +18,13 @@ export function AIActivityStrip({ news }: AIActivityStripProps) {
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-emerald-400">
       <CardHeader className="bg-black/20 border-b border-white/5">
-        <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40 flex items-center gap-2">
-          <Activity className="h-3 w-3 text-emerald-400" /> AI Activity
+        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
+          <Activity className="h-3 w-3 text-emerald-400" /> Recent Activity
         </CardTitle>
       </CardHeader>
       <CardContent className="p-3">
         {display.length === 0 ? (
-          <div className="py-6 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+          <div className="py-6 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
             No recent AI activity to report.
           </div>
         ) : (
@@ -61,7 +61,7 @@ export function AIActivityStrip({ news }: AIActivityStripProps) {
             ))}
             <Link
               to="/gazette"
-              className="flex items-center justify-end gap-1 text-[9px] font-mono uppercase tracking-widest text-emerald-400/60 hover:text-emerald-400 transition-colors pt-1"
+              className="flex items-center justify-end gap-1 text-[9px] font-mono uppercase tracking-wide text-emerald-400/60 hover:text-emerald-400 transition-colors pt-1"
             >
               View All <ArrowRight className="h-2.5 w-2.5" />
             </Link>

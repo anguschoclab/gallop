@@ -136,13 +136,13 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
     <section className="space-y-4 pt-4">
       <div className="flex items-center gap-2 mb-2 px-1">
         <ReceiptText className="h-3.5 w-3.5 text-gold-muted/60" />
-        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-cream/40">
-          System Audit Ledger
+        <h2 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+          Transaction Ledger
         </h2>
       </div>
       <Card className="bg-slate-900/20 border-white/5 rounded-none shadow-2xl overflow-hidden">
         <CardHeader className="bg-black/40 py-3 border-b border-white/10 flex flex-row items-center justify-between">
-          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gold-muted/60 px-4">
+          <div className="text-[10px] font-black uppercase tracking-wide text-gold-muted/60 px-4">
             Cash Movement Log
           </div>
           <div className="flex items-center gap-4 px-4">
@@ -164,7 +164,7 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
             >
               <SelectTrigger
                 data-testid="subcategory-filter"
-                className="h-7 w-[140px] text-[9px] font-mono uppercase tracking-widest border-white/10 bg-black/40"
+                className="h-7 w-[140px] text-[9px] font-mono uppercase tracking-wide border-white/10 bg-black/40"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -185,7 +185,7 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
                   data-testid={`date-preset-${p}`}
                   onClick={() => handlePreset(p)}
                   className={cn(
-                    "px-2 h-7 text-[9px] font-black uppercase tracking-widest border transition-colors",
+                    "px-2 h-7 text-[9px] font-black uppercase tracking-wide border transition-colors",
                     datePreset === p
                       ? "bg-gold text-slate-950 border-gold"
                       : "bg-black/40 text-cream/40 border-white/10 hover:border-gold/30",
@@ -196,7 +196,7 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
               ))}
             </div>
 
-            <div className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest text-cream/40">
+            <div className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-wide text-cream/40">
               <span>Day:</span>
               <input
                 type="number"
@@ -218,10 +218,10 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead className="bg-black/20 border-b border-white/5">
-                <tr className="font-mono text-[9px] uppercase tracking-[0.2em] text-cream/30">
+                <tr className="font-mono text-[9px] uppercase tracking-wide text-cream/30">
                   <th className="px-8 py-3 font-black w-1">Day</th>
                   <th className="px-4 py-3 font-black w-1">Date</th>
-                  <th className="px-4 py-3 font-black">Sector</th>
+                  <th className="px-4 py-3 font-black">Category</th>
                   <th className="px-4 py-3 font-black text-right">Amount</th>
                   <th className="px-8 py-3 font-black">Transaction Detail</th>
                 </tr>
@@ -246,7 +246,7 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
                           )}
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-[9px] font-black uppercase text-cream/40 tracking-widest px-1.5 py-0.5 border border-white/5 bg-black/40 rounded-sm">
+                          <span className="text-[9px] font-black uppercase text-cream/40 tracking-wide px-1.5 py-0.5 border border-white/5 bg-black/40 rounded-sm">
                             {formatTransactionSubcategory(t.subcategory).toUpperCase()}
                           </span>
                         </td>
@@ -279,7 +279,7 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
                           <ArrowDownLeft className="w-3.5 h-3.5 text-destructive/60" />
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-[9px] font-black uppercase text-cream/40 tracking-widest px-1.5 py-0.5 border border-white/5 bg-black/40 rounded-sm">
+                          <span className="text-[9px] font-black uppercase text-cream/40 tracking-wide px-1.5 py-0.5 border border-white/5 bg-black/40 rounded-sm">
                             ENTRY FEES
                           </span>
                         </td>
@@ -344,14 +344,12 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
           </div>
           {filteredTransactions.length === 0 && (
             <div className="py-20 text-center border-dashed border-white/5 opacity-40">
-              <p className="font-mono text-xs uppercase tracking-widest">
-                No Fiscal Events Recorded
-              </p>
+              <p className="font-mono text-xs uppercase tracking-wide">No transactions</p>
             </div>
           )}
-          <div className="p-4 bg-black/40 border-t border-white/5 flex items-center justify-between text-[9px] font-mono text-cream/20 uppercase tracking-widest">
-            <span>Audit Trail</span>
-            <span>End of Ledger</span>
+          <div className="p-4 bg-black/40 border-t border-white/5 flex items-center justify-between text-[9px] font-mono text-cream/20 uppercase tracking-wide">
+            <span>Transaction History</span>
+            <span>End of list</span>
           </div>
         </CardContent>
       </Card>

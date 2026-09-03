@@ -184,7 +184,7 @@ export function PaceGraph({ splits, runners, distance, className }: PaceGraphPro
 
         {/* Legend */}
         <div className="border border-white/5 bg-black/20 overflow-hidden flex flex-col">
-          <div className="px-3 py-2 border-b border-white/5 font-mono text-[9px] uppercase tracking-widest text-cream/40">
+          <div className="px-3 py-2 border-b border-white/5 font-mono text-[9px] uppercase tracking-wide text-cream/40">
             Runners ({finishOrder.length})
           </div>
           <ul className="overflow-y-auto custom-scrollbar max-h-64 divide-y divide-white/5">
@@ -229,7 +229,7 @@ export function PaceGraph({ splits, runners, distance, className }: PaceGraphPro
               );
             })}
           </ul>
-          <div className="px-3 py-2 border-t border-white/5 font-mono text-[9px] uppercase tracking-widest text-cream/30">
+          <div className="px-3 py-2 border-t border-white/5 font-mono text-[9px] uppercase tracking-wide text-cream/30">
             Tap a runner to pin
           </div>
         </div>

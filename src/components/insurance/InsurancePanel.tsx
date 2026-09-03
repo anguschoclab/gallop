@@ -76,7 +76,7 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
           <div className="space-y-3">
             <div className="bg-black/40 border border-white/5 p-3 space-y-2">
               <div className="flex justify-between text-xs">
-                <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+                <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                   Type
                 </span>
                 <span className="font-mono text-cream capitalize">
@@ -84,13 +84,13 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
                 </span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+                <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                   Daily Premium
                 </span>
                 <span className="font-mono text-gold">{formatCurrency(policy.premiumPerDay)}</span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+                <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                   Coverage
                 </span>
                 <span className="font-mono text-cream">
@@ -98,7 +98,7 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
                 </span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-cream/40 uppercase tracking-widest text-[10px] font-black">
+                <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
                   Active Since
                 </span>
                 <span className="font-mono text-cream">Day {policy.activeSinceDay}</span>
@@ -108,7 +108,7 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
             {horse.healthStatus !== "healthy" && (
               <Button
                 onClick={handleFileClaim}
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-black uppercase tracking-widest text-xs"
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-black uppercase tracking-wide text-xs"
               >
                 <DollarSign className="h-3 w-3 mr-1" /> File Claim
               </Button>
@@ -117,7 +117,7 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
             <Button
               onClick={handleCancel}
               variant="outline"
-              className="w-full border-red-400/30 text-red-400 hover:bg-red-400/10 font-black uppercase tracking-widest text-xs"
+              className="w-full border-red-400/30 text-red-400 hover:bg-red-400/10 font-black uppercase tracking-wide text-xs"
             >
               <X className="h-3 w-3 mr-1" /> Cancel Policy
             </Button>
@@ -131,7 +131,7 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
               <Button
                 onClick={() => handlePurchase("injury_only")}
                 variant="outline"
-                className="border-white/10 hover:bg-white/5 font-black uppercase tracking-widest text-xs justify-between"
+                className="border-white/10 hover:bg-white/5 font-black uppercase tracking-wide text-xs justify-between"
                 disabled={cash < calculateDailyPremium("injury_only", horseValue)}
               >
                 <span>Injury Only</span>
@@ -142,7 +142,7 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
               <Button
                 onClick={() => handlePurchase("mortality_only")}
                 variant="outline"
-                className="border-white/10 hover:bg-white/5 font-black uppercase tracking-widest text-xs justify-between"
+                className="border-white/10 hover:bg-white/5 font-black uppercase tracking-wide text-xs justify-between"
                 disabled={cash < calculateDailyPremium("mortality_only", horseValue)}
               >
                 <span>Mortality Only</span>
@@ -153,7 +153,7 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
               <Button
                 onClick={() => handlePurchase("comprehensive")}
                 variant="outline"
-                className="border-white/10 hover:bg-white/5 font-black uppercase tracking-widest text-xs justify-between"
+                className="border-white/10 hover:bg-white/5 font-black uppercase tracking-wide text-xs justify-between"
                 disabled={cash < calculateDailyPremium("comprehensive", horseValue)}
               >
                 <span>Comprehensive</span>

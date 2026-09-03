@@ -166,7 +166,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
           <h1 className="text-4xl font-black tracking-tighter uppercase italic text-primary drop-shadow-sm">
             {sale.name}
           </h1>
-          <p className="text-muted-foreground font-bold tracking-widest text-xs uppercase flex items-center gap-2">
+          <p className="text-muted-foreground font-bold tracking-wide text-xs uppercase flex items-center gap-2">
             <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
             Live Auction Stream · Day {day}
           </p>
@@ -188,7 +188,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
             )}
           >
             {bannerFlash && (
-              <div className="absolute top-0 left-0 w-full bg-success text-success-foreground py-2 text-center text-xs font-black tracking-[0.2em] uppercase z-20 animate-in slide-in-from-top duration-300">
+              <div className="absolute top-0 left-0 w-full bg-success text-success-foreground py-2 text-center text-xs font-black tracking-wide uppercase z-20 animate-in slide-in-from-top duration-300">
                 You are leading the bid!
               </div>
             )}
@@ -206,7 +206,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
 
             {/* Price Overlay */}
             <div className="absolute top-8 right-8 text-right bg-background/80 backdrop-blur-md p-6 rounded-3xl border border-border/50 shadow-xl min-w-[200px]">
-              <div className="text-[10px] uppercase font-bold text-muted-foreground mb-1 tracking-widest">
+              <div className="text-[10px] uppercase font-bold text-muted-foreground mb-1 tracking-wide">
                 Current Bid
               </div>
               <div
@@ -261,10 +261,10 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
             <div className="space-y-4">
               <div className="flex items-center justify-between px-2">
                 <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground">
-                  Active Bidders
+                  Bidders
                 </h3>
                 <span className="text-[10px] font-bold text-muted-foreground/50">
-                  {stables.filter((s) => s.isMajor).length} MAJOR STABLES
+                  {stables.filter((s) => s.isMajor).length} Major Stables
                 </span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -286,7 +286,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
             {/* Chant Log */}
             <div className="space-y-4">
               <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground px-2">
-                Auctioneer
+                Caller
               </h3>
               <AuctioneerChant lines={chantLines} />
             </div>

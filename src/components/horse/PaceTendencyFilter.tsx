@@ -55,7 +55,7 @@ export function PaceTendencyFilter({
         className,
       )}
     >
-      <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest text-cream/40 pr-1">
+      <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wide text-cream/40 pr-1">
         <Gauge className="h-3 w-3 text-gold/60" />
         Pace
       </div>
@@ -108,7 +108,7 @@ export function PaceTendencyFilter({
       )}
 
       {lockTrip && (
-        <span className="text-[10px] font-mono uppercase tracking-widest text-cream/30">
+        <span className="text-[10px] font-mono uppercase tracking-wide text-cream/30">
           · scoped to this race's trip & surface
         </span>
       )}

@@ -54,7 +54,7 @@ export const PedigreeNodeCard = memo(function PedigreeNodeCard({
         </div>
 
         <div className="flex items-center justify-between gap-1 mt-auto">
-          <div className="flex items-center gap-1.5 text-[8px] font-mono text-cream/40 uppercase tracking-widest">
+          <div className="flex items-center gap-1.5 text-[8px] font-mono text-cream/40 uppercase tracking-wide">
             {data.gender && (
               <span
                 className={cn(

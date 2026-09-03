@@ -31,7 +31,7 @@ export function PrestigeBadge({ score, label, showScore = true, className }: Pre
       variant="outline"
       title={`Prestige ${score}/100 — ${PRESTIGE_TIER_LABELS[tier]}`}
       className={cn(
-        "rounded-none border font-mono text-[10px] font-black uppercase tracking-widest px-2 h-5 gap-1.5",
+        "rounded-none border font-mono text-[10px] font-black uppercase tracking-wide px-2 h-5 gap-1.5",
         TIER_CLASSES[tier],
         className,
       )}

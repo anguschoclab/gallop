@@ -49,7 +49,7 @@ export function RecruitmentPool({
     <section className="space-y-6">
       <div className="flex items-center gap-3 px-1 border-b border-white/5 pb-2">
         <UserPlus className="h-4 w-4 text-gold" />
-        <h3 className="text-xs font-black uppercase tracking-[0.4em] text-cream/60">
+        <h3 className="text-xs font-black uppercase tracking-wide text-cream/60">
           Available to Hire
         </h3>
       </div>
@@ -76,13 +76,13 @@ export function RecruitmentPool({
                     >
                       {(STAFF_TIER_LABELS as Record<string, string>)[staff.tier].toUpperCase()}
                     </Badge>
-                    <span className="text-[9px] font-mono text-cream/40 font-bold uppercase tracking-widest">
+                    <span className="text-[9px] font-mono text-cream/40 font-bold uppercase tracking-wide">
                       {(STAFF_ROLE_LABELS as Record<string, string>)[staff.role].toUpperCase()}
                     </span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest mb-1">
+                  <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide mb-1">
                     Weekly Cost
                   </div>
                   <div className="text-lg font-black font-mono text-success tabular-nums tracking-tighter">
@@ -94,7 +94,7 @@ export function RecruitmentPool({
 
               <div className="grid grid-cols-2 gap-4 mb-5 bg-black/20 p-3 border border-white/5">
                 <div className="space-y-1">
-                  <div className="text-[8px] font-black uppercase text-gold/40 tracking-widest flex items-center gap-1.5">
+                  <div className="text-[8px] font-black uppercase text-gold/40 tracking-wide flex items-center gap-1.5">
                     <Zap className="h-2.5 w-2.5" /> Speciality
                   </div>
                   <div className="text-sm font-black font-mono text-gold-bright">
@@ -102,7 +102,7 @@ export function RecruitmentPool({
                   </div>
                 </div>
                 <div className="space-y-1 border-l border-white/5 pl-4">
-                  <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest flex items-center gap-1.5">
+                  <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide flex items-center gap-1.5">
                     <Activity className="h-2.5 w-2.5" /> Status
                   </div>
                   <div className="text-[10px] font-mono text-cream/60 uppercase">Active</div>
@@ -127,7 +127,7 @@ export function RecruitmentPool({
                 day,
               ) ? (
                 <div
-                  className="w-full h-10 flex items-center justify-center gap-2 border border-destructive/20 bg-destructive/5 text-destructive/60 text-[9px] font-mono uppercase tracking-widest"
+                  className="w-full h-10 flex items-center justify-center gap-2 border border-destructive/20 bg-destructive/5 text-destructive/60 text-[9px] font-mono uppercase tracking-wide"
                   title={`Offended — willing to talk again in ${offendedDaysRemaining(staff as unknown as import("@/core/staff/staffTypes").StaffMember, day)} day(s)`}
                 >
                   Not interested ·{" "}
@@ -140,7 +140,7 @@ export function RecruitmentPool({
               ) : (
                 <Button
                   size="sm"
-                  className="w-full h-10 bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-[0.2em] rounded-none text-[10px] shadow-lg"
+                  className="w-full h-10 bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-wide rounded-none text-[10px] shadow-lg"
                   onClick={() => onNegotiate(staff.id)}
                 >
                   Negotiate
@@ -152,7 +152,7 @@ export function RecruitmentPool({
 
         {filtered.length === 0 && (
           <div className="p-12 text-center border border-dashed border-white/10 bg-black/10">
-            <p className="text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+            <p className="text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
               Recruitment cycle currently saturated. Check next frequency.
             </p>
           </div>
@@ -162,13 +162,13 @@ export function RecruitmentPool({
       <div className="bg-gold/5 border-2 border-double border-gold/10 p-5 space-y-3">
         <div className="flex items-center gap-2">
           <Info className="h-3 w-3 text-gold/60" />
-          <span className="text-[9px] font-black uppercase text-gold tracking-widest">
-            Procurement Notice
+          <span className="text-[9px] font-black uppercase text-gold tracking-wide">
+            Recruitment
           </span>
         </div>
         <p className="text-[9px] font-mono text-cream/40 uppercase leading-relaxed italic">
-          Staff salary is deducted daily from liquid assets. Ensure stable revenue before
-          decommissioning budget sectors for elite personnel.
+          Staff salary is deducted daily from liquid assets. Ensure stable revenue before fire
+          lower-tier staff before hiring elite personnel.
         </p>
       </div>
     </section>

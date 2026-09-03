@@ -84,7 +84,7 @@ export function InsightsCompareDialog({
         ) : (
           <div className="space-y-4">
             <div className="flex items-center justify-between gap-3 flex-wrap">
-              <p className="text-[11px] font-mono uppercase tracking-widest text-cream/40">
+              <p className="text-[11px] font-mono uppercase tracking-wide text-cream/40">
                 Leader in each metric is highlighted · group average in the last column
               </p>
               <Button
@@ -100,7 +100,7 @@ export function InsightsCompareDialog({
             <div className="overflow-x-auto border border-white/5">
               <table className="w-full text-xs">
                 <thead className="bg-slate-950/60 sticky top-0 z-10">
-                  <tr className="text-left font-mono text-[9px] uppercase tracking-widest text-cream/40">
+                  <tr className="text-left font-mono text-[9px] uppercase tracking-wide text-cream/40">
                     <th className="p-2 min-w-28">Metric</th>
                     {rows.map((r) => (
                       <th key={r.id} className="p-2 min-w-32">
@@ -144,7 +144,7 @@ export function InsightsCompareDialog({
                 <tbody>
                   {visibleMetricRows.map(({ metric, values, avg, leader }) => (
                     <tr key={metric.key} className="border-t border-white/5 hover:bg-white/[0.03]">
-                      <td className="p-2 font-mono text-[10px] uppercase tracking-widest text-cream/50">
+                      <td className="p-2 font-mono text-[10px] uppercase tracking-wide text-cream/50">
                         {metric.label}
                       </td>
                       {values.map((v, i) => (

@@ -122,7 +122,7 @@ function ConditionTimeline({
       className={cn("rounded-lg border border-white/10 bg-black/30 px-3 py-2 space-y-2", className)}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[10px] font-black uppercase tracking-widest text-cream-muted">
+        <span className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
           Condition timeline{horseName ? ` · ${horseName}` : ""}
         </span>
         <div className="flex items-center gap-2">

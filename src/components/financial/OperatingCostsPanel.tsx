@@ -17,14 +17,14 @@ export function OperatingCostsPanel({ items, total }: OperatingCostsPanelProps) 
     <section className="space-y-4">
       <div className="flex items-center gap-2 mb-2 px-1">
         <TrendingDown className="h-3.5 w-3.5 text-destructive/60" />
-        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-cream/40">
+        <h2 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
           Operating Costs
         </h2>
       </div>
       <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl">
         <CardContent className="p-6">
           {items.length === 0 ? (
-            <div className="py-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+            <div className="py-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
               Zero expense data in current window
             </div>
           ) : (

@@ -15,14 +15,14 @@ export const Gazette: React.FC = () => {
       {/* Gazette Header - Industrial Command Style */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gold/20 pb-6">
         <div>
-          <div className="flex items-center gap-2 text-gold-bright uppercase tracking-[0.2em] font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
+          <div className="flex items-center gap-2 text-gold-bright uppercase tracking-wide font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
             <Newspaper className="h-3.5 w-3.5" />
             Global Information Network
           </div>
           <h1 className="text-4xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
             The Gallop Gazette
           </h1>
-          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
+          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-cream/40">
             <span>Established Year 1</span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
             <span>
@@ -38,7 +38,7 @@ export const Gazette: React.FC = () => {
         <div className="flex gap-2">
           <Badge
             variant="outline"
-            className="border-gold/30 text-gold-muted bg-gold/5 font-mono text-[10px] uppercase tracking-widest px-3 py-1 h-8 rounded-none"
+            className="border-gold/30 text-gold-muted bg-gold/5 font-mono text-[10px] uppercase tracking-wide px-3 py-1 h-8 rounded-none"
           >
             PRICE: TWO_PENCE
           </Badge>
@@ -53,7 +53,7 @@ export const Gazette: React.FC = () => {
           ) : (
             <div className="p-32 text-center border-2 border-dashed border-white/5 bg-black/10">
               <Archive className="h-16 w-16 mx-auto mb-6 text-cream/5" />
-              <p className="font-bold text-cream/40 uppercase tracking-[0.3em] font-[family-name:var(--font-display)]">
+              <p className="font-bold text-cream/40 uppercase tracking-wide font-[family-name:var(--font-display)]">
                 Quiet Day at the Tracks
               </p>
               <p className="text-[10px] font-mono text-cream/10 uppercase mt-2">
@@ -66,8 +66,8 @@ export const Gazette: React.FC = () => {
         {/* Sidebar - Local Snippets & Classifieds */}
         <aside className="lg:col-span-4 space-y-8 lg:sticky lg:top-6">
           <section className="space-y-4">
-            <div className="flex items-center gap-2 mb-2 px-1 text-gold/60 uppercase tracking-[0.3em] font-black text-[10px]">
-              Sector Briefs
+            <div className="flex items-center gap-2 mb-2 px-1 text-gold/60 uppercase tracking-wide font-black text-[10px]">
+              Racing News
             </div>
             <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-2 border-l-gold/40">
               <CardContent className="p-0">
@@ -82,12 +82,12 @@ export const Gazette: React.FC = () => {
                           <div className="flex items-center gap-1">
                             <Badge
                               variant="outline"
-                              className="text-[8px] h-3.5 px-1 font-black uppercase border-white/10 text-cream/30 rounded-none tracking-widest"
+                              className="text-[8px] h-3.5 px-1 font-black uppercase border-white/10 text-cream/30 rounded-none tracking-wide"
                             >
                               {item.category}
                             </Badge>
                             {item.partNumber && item.totalParts && item.totalParts > 1 && (
-                              <Badge className="text-[8px] h-3.5 px-1 font-black uppercase bg-gold/20 text-gold/60 rounded-none tracking-widest">
+                              <Badge className="text-[8px] h-3.5 px-1 font-black uppercase bg-gold/20 text-gold/60 rounded-none tracking-wide">
                                 P{item.partNumber}/{item.totalParts}
                               </Badge>
                             )}
@@ -105,7 +105,7 @@ export const Gazette: React.FC = () => {
                       </div>
                     ))
                   ) : (
-                    <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+                    <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
                       Stable conditions across all regional tracks.
                     </div>
                   )}
@@ -118,12 +118,12 @@ export const Gazette: React.FC = () => {
             <div className="absolute top-0 right-0 p-4 opacity-[0.03] pointer-events-none">
               <ShieldCheck className="h-24 w-24 -rotate-12" />
             </div>
-            <h3 className="text-xs font-black uppercase tracking-[0.4em] text-gold border-b border-gold/20 pb-2">
+            <h3 className="text-xs font-black uppercase tracking-wide text-gold border-b border-gold/20 pb-2">
               Classifieds
             </h3>
             <div className="space-y-3 relative z-10">
               <div className="p-3 bg-black/40 border border-white/5 space-y-1">
-                <div className="text-[8px] font-black text-gold/40 uppercase tracking-widest">
+                <div className="text-[8px] font-black text-gold/40 uppercase tracking-wide">
                   Real Estate
                 </div>
                 <p className="text-[10px] text-cream/60 leading-tight italic uppercase">
@@ -131,7 +131,7 @@ export const Gazette: React.FC = () => {
                 </p>
               </div>
               <div className="p-3 bg-black/40 border border-white/5 space-y-1">
-                <div className="text-[8px] font-black text-gold/40 uppercase tracking-widest">
+                <div className="text-[8px] font-black text-gold/40 uppercase tracking-wide">
                   Personnel
                 </div>
                 <p className="text-[10px] text-cream/60 leading-tight italic uppercase">

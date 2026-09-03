@@ -52,8 +52,8 @@ export function FinancialChart({ transactions, day, period }: FinancialChartProp
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 px-1">
-        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gold-muted/60">
-          Fiscal Flow Analysis
+        <div className="text-[10px] font-black uppercase tracking-wide text-gold-muted/60">
+          Income & Expenses
         </div>
       </div>
 
@@ -67,12 +67,12 @@ export function FinancialChart({ transactions, day, period }: FinancialChartProp
           <AreaChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
             <defs>
               <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                <stop offset="5%" stopColor="var(--success)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="var(--success)" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                <stop offset="5%" stopColor="var(--destructive)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="var(--destructive)" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="2 2" stroke="rgba(255,255,255,0.05)" vertical={false} />
@@ -92,7 +92,7 @@ export function FinancialChart({ transactions, day, period }: FinancialChartProp
             />
             <Tooltip
               contentStyle={{
-                background: "#020617",
+                background: "var(--background)",
                 border: "1px solid rgba(212,175,55,0.3)",
                 borderRadius: 0,
                 padding: "8px 12px",
@@ -131,8 +131,8 @@ export function FinancialChart({ transactions, day, period }: FinancialChartProp
             <Area
               type="stepAfter"
               dataKey="income"
-              name="Revenue"
-              stroke="#22c55e"
+              name="Income"
+              stroke="var(--success)"
               fillOpacity={1}
               fill="url(#colorIncome)"
               strokeWidth={2}
@@ -141,7 +141,7 @@ export function FinancialChart({ transactions, day, period }: FinancialChartProp
               type="stepAfter"
               dataKey="expenses"
               name="Outflow"
-              stroke="#ef4444"
+              stroke="var(--destructive)"
               fillOpacity={1}
               fill="url(#colorExpenses)"
               strokeWidth={2}

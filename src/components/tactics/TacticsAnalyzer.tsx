@@ -91,7 +91,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
       <CardContent className="space-y-4">
         {/* Riding Style */}
         <div className="space-y-2">
-          <div className="text-[9px] font-black uppercase text-cream/40 tracking-widest">
+          <div className="text-[9px] font-black uppercase text-cream/40 tracking-wide">
             Riding Style
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -123,7 +123,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
 
         {/* Early Position */}
         <div className="space-y-2">
-          <div className="text-[9px] font-black uppercase text-cream/40 tracking-widest">
+          <div className="text-[9px] font-black uppercase text-cream/40 tracking-wide">
             Early Position
           </div>
           <div className="grid grid-cols-4 gap-1">
@@ -151,7 +151,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
 
         {/* Move Timing */}
         <div className="space-y-2">
-          <div className="text-[9px] font-black uppercase text-cream/40 tracking-widest">
+          <div className="text-[9px] font-black uppercase text-cream/40 tracking-wide">
             Move Timing
           </div>
           <div className="grid grid-cols-3 gap-1">
@@ -180,7 +180,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
         {/* Aggressiveness */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <div className="text-[9px] font-black uppercase text-cream/40 tracking-widest">
+            <div className="text-[9px] font-black uppercase text-cream/40 tracking-wide">
               Aggressiveness
             </div>
             <span className="text-[10px] font-mono text-cyan-400">
@@ -219,7 +219,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
         {/* Save Button */}
         <Button
           onClick={handleSave}
-          className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-black uppercase tracking-widest text-xs"
+          className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-black uppercase tracking-wide text-xs"
         >
           {saved ? "Saved!" : "Save Tactics"}
         </Button>

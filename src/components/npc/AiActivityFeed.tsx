@@ -17,13 +17,13 @@ export function AiActivityFeed({ news, filterActive }: AiActivityFeedProps) {
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-emerald-400">
       <CardHeader className="bg-black/20 border-b border-white/5">
-        <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40 flex items-center gap-2">
-          <Activity className="h-3 w-3 text-emerald-400" /> AI Activity Feed
+        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
+          <Activity className="h-3 w-3 text-emerald-400" /> Activity Feed
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         {filtered.length === 0 ? (
-          <div className="p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+          <div className="p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
             No recent AI activity to report.
           </div>
         ) : (
@@ -33,7 +33,7 @@ export function AiActivityFeed({ news, filterActive }: AiActivityFeedProps) {
                 <div className="flex items-center justify-between">
                   <Badge
                     variant="outline"
-                    className="text-[8px] font-black uppercase tracking-widest border-white/10 text-cream/40 rounded-none"
+                    className="text-[8px] font-black uppercase tracking-wide border-white/10 text-cream/40 rounded-none"
                   >
                     {item.category}
                   </Badge>

@@ -30,30 +30,22 @@ function MarketPage() {
       {/* Market Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-success/20 pb-6">
         <div>
-          <div className="flex items-center gap-2 text-success uppercase tracking-[0.2em] font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
+          <div className="flex items-center gap-2 text-success uppercase tracking-wide font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
             <Store className="h-3.5 w-3.5" />
             Horse Market
           </div>
           <h1 className="text-4xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
             The Horse Market
           </h1>
-          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
+          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-cream/40">
             <span>
               Available Units: <NumericValue value={market.length} />
-            </span>
-            <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span>
-              Market Class: <span className="text-success-dark">Private Sale</span>
-            </span>
-            <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span>
-              Exchange: <span className="text-success font-black">OPEN</span>
             </span>
           </div>
         </div>
 
         <div className="flex flex-col items-end gap-1">
-          <div className="text-[10px] font-mono text-cream/20 uppercase tracking-widest">
+          <div className="text-[10px] font-mono text-cream/20 uppercase tracking-wide">
             Available Capital
           </div>
           <div className="text-2xl font-black font-mono text-success tabular-nums tracking-tighter">
@@ -71,28 +63,28 @@ function MarketPage() {
           <TabsList className="bg-transparent h-10 gap-2">
             <TabsTrigger
               value="bloodstock"
-              className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-success data-[state=active]:text-slate-950 h-full px-6 transition-all"
+              className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-success data-[state=active]:text-slate-950 h-full px-6 transition-all"
             >
               <Zap className="w-3.5 h-3.5" />
               Direct Bloodstock
             </TabsTrigger>
             <TabsTrigger
               value="houses"
-              className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-warning data-[state=active]:text-slate-950 h-full px-6 transition-all"
+              className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-warning data-[state=active]:text-slate-950 h-full px-6 transition-all"
             >
               <Gavel className="w-3.5 h-3.5" />
               Auction Houses
             </TabsTrigger>
             <TabsTrigger
               value="exchange"
-              className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-primary data-[state=active]:text-slate-950 h-full px-6 transition-all"
+              className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-primary data-[state=active]:text-slate-950 h-full px-6 transition-all"
             >
               <ArrowLeftRight className="w-3.5 h-3.5" />
               Exchange
             </TabsTrigger>
             <TabsTrigger
               value="syndicate"
-              className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-6 transition-all"
+              className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-6 transition-all"
             >
               <TrendingUp className="w-3.5 h-3.5" />
               Fractional Syndicates

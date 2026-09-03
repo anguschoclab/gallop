@@ -63,7 +63,7 @@ function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: Facil
           <Badge
             variant="outline"
             className={cn(
-              "text-[8px] font-black uppercase tracking-widest h-5 rounded-none px-2",
+              "text-[8px] font-black uppercase tracking-wide h-5 rounded-none px-2",
               rankVal === 4 ? "border-gold text-gold bg-gold/5" : "border-white/10 text-cream/40",
             )}
           >
@@ -77,7 +77,7 @@ function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: Facil
       <CardContent className="p-5 space-y-5">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1">
-            <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">
+            <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide">
               Maintenance
             </div>
             <div className="text-xs font-mono font-bold text-cream/60 tabular-nums">
@@ -87,7 +87,7 @@ function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: Facil
           </div>
           {!maxLevel && (
             <div className="space-y-1 text-right">
-              <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">
+              <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide">
                 Upgrade Cost
               </div>
               <div
@@ -104,7 +104,7 @@ function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: Facil
 
         {FACILITY_ENABLED_WORKOUTS[type] && FACILITY_ENABLED_WORKOUTS[type].length > 0 && (
           <div className="space-y-2">
-            <div className="text-[8px] font-black uppercase text-cream/20 tracking-[0.2em] flex items-center gap-1.5 px-1">
+            <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide flex items-center gap-1.5 px-1">
               <HardDrive className="h-2.5 w-2.5 opacity-40" />
               <JargonTooltip term="Regimens Unlocked" className="no-underline decoration-none">
                 Regimens Unlocked
@@ -127,7 +127,7 @@ function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: Facil
           {maxLevel ? (
             <div className="flex items-center justify-center gap-2 p-2 bg-success/5 border border-success/20">
               <Check className="h-3 w-3 text-success" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-success">
+              <span className="text-[10px] font-black uppercase tracking-wide text-success">
                 Optimal Performance
               </span>
             </div>
@@ -141,7 +141,7 @@ function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: Facil
                       disabled={!canUpgrade}
                       variant={canUpgrade ? "default" : "outline"}
                       className={cn(
-                        "w-full h-10 uppercase text-[10px] font-black tracking-[0.2em] rounded-none transition-all",
+                        "w-full h-10 uppercase text-[10px] font-black tracking-wide rounded-none transition-all",
                         canUpgrade
                           ? "bg-gold hover:bg-gold-bright text-slate-950 shadow-lg"
                           : "border-white/5 text-cream/20 bg-transparent",
@@ -188,7 +188,7 @@ export function FacilityCategory({
     <section className="space-y-6">
       <div className="flex items-center gap-3 px-1 border-b border-white/5 pb-2">
         <Icon className={cn("h-4 w-4", color)} />
-        <h3 className="text-xs font-black uppercase tracking-[0.4em] text-cream/60">{category}</h3>
+        <h3 className="text-xs font-black uppercase tracking-wide text-cream/60">{category}</h3>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

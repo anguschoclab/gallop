@@ -49,7 +49,7 @@ export const JockeyStrategyBreakdown = memo(function JockeyStrategyBreakdown({
 
       <div className="grid grid-cols-2 gap-2">
         <div className="flex items-center justify-between">
-          <span className="text-[9px] font-black uppercase tracking-widest text-cream/30">
+          <span className="text-[9px] font-black uppercase tracking-wide text-cream/30">
             Running Style
           </span>
           <Badge
@@ -61,7 +61,7 @@ export const JockeyStrategyBreakdown = memo(function JockeyStrategyBreakdown({
         </div>
         {instructions?.ridingStyle && (
           <div className="flex items-center justify-between">
-            <span className="text-[9px] font-black uppercase tracking-widest text-cream/30">
+            <span className="text-[9px] font-black uppercase tracking-wide text-cream/30">
               Riding Style
             </span>
             <span className="text-[9px] font-mono text-cream/60">{instructions.ridingStyle}</span>
@@ -73,7 +73,7 @@ export const JockeyStrategyBreakdown = memo(function JockeyStrategyBreakdown({
         <>
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-cream/30">
+              <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wide text-cream/30">
                 <Gauge className="h-3 w-3" /> Aggressiveness
               </span>
               <span className="font-mono text-[9px] text-cream/60">

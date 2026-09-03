@@ -77,7 +77,7 @@ export function PlayerPrestigePanel() {
         {/* Meter */}
         <div className="bg-black/40 border border-white/5 p-4 space-y-3">
           <div className="flex items-end justify-between">
-            <span className="text-[10px] font-black uppercase tracking-widest text-cream/40">
+            <span className="text-[10px] font-black uppercase tracking-wide text-cream/40">
               Prestige score
             </span>
             <span className="text-2xl font-mono font-black text-warning">
@@ -108,7 +108,7 @@ export function PlayerPrestigePanel() {
             ))}
           </div>
 
-          <div className="flex justify-between text-[9px] font-mono uppercase tracking-widest text-cream/30">
+          <div className="flex justify-between text-[9px] font-mono uppercase tracking-wide text-cream/30">
             <span>Provincial</span>
             <span>World class</span>
           </div>
@@ -117,7 +117,7 @@ export function PlayerPrestigePanel() {
         {/* Ranks */}
         <div className="grid grid-cols-3 gap-2">
           <div className="border border-white/5 bg-black/30 p-2">
-            <div className="text-[9px] font-mono uppercase tracking-widest text-cream/40">
+            <div className="text-[9px] font-mono uppercase tracking-wide text-cream/40">
               Overall
             </div>
             <div className="font-mono text-sm text-cream">
@@ -129,7 +129,7 @@ export function PlayerPrestigePanel() {
             </div>
           </div>
           <div className="border border-white/5 bg-black/30 p-2">
-            <div className="text-[9px] font-mono uppercase tracking-widest text-cream/40">
+            <div className="text-[9px] font-mono uppercase tracking-wide text-cream/40">
               vs Houses
             </div>
             <div className="font-mono text-sm text-cream">
@@ -139,7 +139,7 @@ export function PlayerPrestigePanel() {
             <div className="text-[9px] font-mono text-cream/40">Auction rings</div>
           </div>
           <div className="border border-white/5 bg-black/30 p-2">
-            <div className="text-[9px] font-mono uppercase tracking-widest text-cream/40">
+            <div className="text-[9px] font-mono uppercase tracking-wide text-cream/40">
               vs Courses
             </div>
             <div className="font-mono text-sm text-cream">
