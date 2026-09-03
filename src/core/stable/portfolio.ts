@@ -15,6 +15,7 @@ import type { Horse } from "@/core/horse/types";
 import type { Stable } from "@/core/stable/types";
 import type { Syndicate } from "@/core/breeding/types";
 import { horseMarketValue } from "@/core/horse/pricing";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import { getPrestigeTier, type PrestigeTier } from "@/core/prestige/prestigeTypes";
 
