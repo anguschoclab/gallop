@@ -1,5 +1,6 @@
 import { useRef, useMemo } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
+import { useCalibratedPars } from "@/hooks/game/useRacingState";
 import { shallow } from "zustand/shallow";
 import type { GameState, Horse } from "@/game/types";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
@@ -107,7 +108,7 @@ export function useRacePageData(raceId: string) {
     return oddsMap;
   }, [runners, horses, classBonus]);
 
-  const calibratedPars = useGameWithShallow((s: GameState) => s.calibratedPars);
+  const calibratedPars = useCalibratedPars();
 
   return {
     race,

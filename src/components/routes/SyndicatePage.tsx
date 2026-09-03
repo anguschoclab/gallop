@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { ArrowLeft, Users, DollarSign, TrendingUp, HandCoins } from "lucide-react";
 import { ShareOwnershipPanel } from "@/components/market/ShareOwnershipPanel";
+import { BackLink } from "@/components/charts/BackLink";
 import { ShareActivityFeed } from "@/components/market/ShareActivityFeed";
 import { NpcSyndicateIntentPanel } from "@/components/market/NpcSyndicateIntentPanel";
 import { evaluateCounteroffer } from "@/core/ai/syndicationAIDecisions";
@@ -81,9 +82,7 @@ function SyndicatePage() {
   if (!syndicate) {
     return (
       <div className="p-6 text-cream">
-        <Button variant="ghost" onClick={() => navigate({ to: "/breeding" })}>
-          <ArrowLeft className="h-4 w-4 mr-1" /> Back
-        </Button>
+        <BackLink to="/breeding" label="Back" />
         <div className="mt-4">Syndicate not found.</div>
       </div>
     );

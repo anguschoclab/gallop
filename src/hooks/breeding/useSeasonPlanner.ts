@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
+import { usePregnancies } from "@/hooks/game/useBreedingState";
 import type { GameState, Horse } from "@/game/types";
 import type { Pregnancy } from "@/core/breeding/types";
 import { inBreedingSeason, nextBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
@@ -12,7 +13,7 @@ import { isPlayerOwned, getStableId } from "@/core/horse/ownership";
 
 export function useSeasonPlanner() {
   const horses = useGameWithShallow((s: GameState) => s.horses || []);
-  const pregnancies = useGameWithShallow((s: GameState) => s.pregnancies || []);
+  const pregnancies = usePregnancies();
   const savedMatingPlans = useGameWithShallow((s: GameState) => s.savedMatingPlans || []);
   const day = useGame((s: GameState) => s.day);
   const cash = useGame((s: GameState) => s.cash);

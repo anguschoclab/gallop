@@ -62,6 +62,7 @@ import { narrativePhase } from "./narrativePhase";
 import { economyPhase } from "./economyPhase";
 import { difficultyPhase } from "./difficultyPhase";
 import { cashPressureHistoryPhase } from "./cashPressureHistoryPhase";
+import { eventTriggersPhase } from "./eventTriggersPhase";
 
 /**
  * Shared array of all game pipeline phases in their correct order.
@@ -144,4 +145,6 @@ export const GAME_PIPELINE_PHASES = [
   impactApplicationPhase,
   // Cash-pressure history snapshot (order 201 — after impacts applied, captures end-of-day cash)
   cashPressureHistoryPhase,
+  // Event registry triggers (order 202 — after all state is finalized, observes end-of-day state)
+  eventTriggersPhase,
 ].sort((a, b) => a.order - b.order);

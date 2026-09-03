@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGame } from "@/game/store";
+import { usePregnancies } from "@/hooks/game/useBreedingState";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import { asPlayerOwnerId } from "@/core/types/branded";
 import { formatCurrency } from "@/core/common/formatting";
@@ -8,7 +9,7 @@ import { Activity, Heart, Briefcase, Zap } from "lucide-react";
 export function OperationsTicker() {
   const cash = useGame((s) => s.cash);
   const horses = useGame((s) => s.horses);
-  const pregnancies = useGame((s) => s.pregnancies);
+  const pregnancies = usePregnancies();
   const hiredStaff = useGame((s) => s.hiredStaff);
   const syndicates = useGame((s) => s.syndicates);
 

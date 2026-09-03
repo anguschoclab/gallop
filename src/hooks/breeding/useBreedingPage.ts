@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
+import { usePregnancies } from "@/hooks/game/useBreedingState";
 import type { GameState, Horse } from "@/game/types";
 import type { Pregnancy } from "@/core/breeding/types";
 import { inBreedingSeason, nextBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
@@ -11,7 +12,7 @@ import { getAncestorIds } from "@/core/breeding/pedigreeGraph";
 
 export function useBreedingPage() {
   const horses = useGameWithShallow((s: GameState) => s.horses || []);
-  const pregnancies = useGameWithShallow((s: GameState) => s.pregnancies || []);
+  const pregnancies = usePregnancies();
   const log = useGameWithShallow((s: GameState) => s.log || []);
   const day = useGame((s: GameState) => s.day);
   const cash = useGame((s: GameState) => s.cash);

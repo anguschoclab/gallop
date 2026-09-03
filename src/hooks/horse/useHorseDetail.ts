@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, type MouseEvent } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
+import { usePregnancies } from "@/hooks/game/useBreedingState";
 import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/storage/storageAdapter";
 import { getAffinityLevel, calculateTheHandBonus } from "@/core/jockey/affinity";
 import { getPeakingBeyerMultiplier } from "@/core/health/banister";
@@ -19,7 +20,7 @@ export function useHorseDetail(horseId: string) {
   const retireToStud = useGame((s) => s.retireToStud);
   const retireToPasture = useGame((s) => s.retireToPasture);
   const facilities = useGameWithShallow((s) => s.facilities);
-  const pregnancies = useGameWithShallow((s) => s.pregnancies);
+  const pregnancies = usePregnancies();
   const pregnancy = pregnancies?.find((p: Pregnancy) => !p.resolved && p.damId === horseId);
 
   const progenyPregnancies = useMemo(() => {

@@ -16,6 +16,7 @@ import {
   type AwardCeremonyInvitation,
 } from "@/core/awards/invitations";
 import { CeremonyRsvpControls } from "@/components/awards/CeremonyRsvpControls";
+import { BackLink } from "@/components/charts/BackLink";
 import { InvitationAuditLog } from "@/components/awards/InvitationAuditLog";
 
 export const Route = createFileRoute("/ceremony/$invitationId")({
@@ -74,14 +75,12 @@ function CeremonyPage() {
 
   return (
     <div className="container mx-auto p-6 max-w-3xl space-y-6">
-      <Link
+      <BackLink
         to="/honors"
-        search={{ tab: "awards" as const }}
-        className="inline-flex items-center gap-2 text-sm text-cream-muted hover:text-gold"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to Awards
-      </Link>
+        label="Back to Awards"
+        search={{ tab: "awards" }}
+        className="text-sm text-cream-muted hover:text-gold gap-2"
+      />
 
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">

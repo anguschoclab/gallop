@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { shallow } from "zustand/shallow";
 import { useGameSelector } from "@/hooks/shared/useGameSelector";
 import { useGame } from "@/game/store";
+import { usePregnancies } from "@/hooks/game/useBreedingState";
 import type { Horse, Hemisphere, GameState } from "@/game/types";
 import { isPlayerOwned, getStableId } from "@/core/horse/ownership";
 
@@ -12,7 +13,7 @@ export function useStallionFilters() {
   const cash = useGame((s: GameState) => s.cash);
   const breed = useGame((s) => s.breed);
   const updateStudFee = useGame((s) => s.updateStudFee);
-  const pregnancies = useGameSelector((s: GameState) => s.pregnancies);
+  const pregnancies = usePregnancies();
 
   const [hemisphere, setHemisphere] = useState<Hemisphere | "all">("all");
   const [selectedMareId, setSelectedMareId] = useState<string>("");

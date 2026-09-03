@@ -17,6 +17,7 @@ import { HorseAnalyticsSection } from "@/components/horse/HorseAnalyticsSection"
 import { RunningStyleBreakdown } from "@/components/horse/RunningStyleBreakdown";
 import { HorseManagementSection } from "@/components/horse/HorseManagementSection";
 import { HorseLineageSection } from "@/components/horse/HorseLineageSection";
+import { BreedingTimeline } from "@/components/breeding/BreedingTimeline";
 import { HorseRaceHistorySection } from "@/components/horse/HorseRaceHistorySection";
 import { HorseGeneticsSection } from "@/components/horse/HorseGeneticsSection";
 import { CareerProjectionSection } from "@/components/horse/CareerProjectionSection";
@@ -24,6 +25,7 @@ import { FoalInheritancePanel } from "@/components/horse/FoalInheritancePanel";
 import { InsurancePanel } from "@/components/insurance/InsurancePanel";
 import { StewardsPanel } from "@/components/stewards/StewardsPanel";
 import { TransportPlanner } from "@/components/transportation/TransportPlanner";
+import { BackLink } from "@/components/charts/BackLink";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { useHorseActions } from "@/hooks/horse/useHorseActions";
 import { useHorseDetail } from "@/hooks/horse/useHorseDetail";
@@ -71,12 +73,11 @@ function HorseDetail() {
       {/* Sticky Navigation Sidebar */}
       <aside className="hidden xl:block w-48 shrink-0">
         <div className="sticky top-6 space-y-6">
-          <button
-            onClick={() => router.navigate({ to: "/stable" })}
-            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream/30 hover:text-gold transition-colors mb-8"
-          >
-            <ArrowLeft className="h-3 w-3" /> Back to Stable
-          </button>
+          <BackLink
+            to="/stable"
+            label="Back to Stable"
+            className="text-[10px] font-black text-cream/30 hover:text-gold mb-8 gap-2"
+          />
 
           <nav className="space-y-1">
             {detail.sections.map((s) => {
@@ -210,6 +211,8 @@ function HorseDetail() {
               reBreedingPregnancies={detail.reBreedingPregnancies}
               localHorseMap={detail.localHorseMap}
             />
+
+            <BreedingTimeline horseId={horseId} />
 
             {(horse.sireId || horse.damId) && (
               <FoalInheritancePanel

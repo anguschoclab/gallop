@@ -18,6 +18,7 @@ import { RelationshipGraph } from "@/components/npc/RelationshipGraph";
 import { AIPersonalityCard } from "@/components/npc/AIPersonalityCard";
 import { StrategicDirectivesPanel } from "@/components/npc/StrategicDirectivesPanel";
 import { FinancialDistressIndicator } from "@/components/npc/FinancialDistressIndicator";
+import { BackLink } from "@/components/charts/BackLink";
 
 function NpcStableDetailPage() {
   const { stableId } = useParams({ from: "/npc-stables/$stableId" });
@@ -64,12 +65,12 @@ function NpcStableDetailPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-blue-500/20 pb-6">
         <div>
-          <button
-            onClick={() => navigate({ to: "/stable", search: { tab: "rivals" } })}
-            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream/30 hover:text-blue-400 transition-colors mb-4"
-          >
-            <ArrowLeft className="h-3 w-3" /> Stables
-          </button>
+          <BackLink
+            to="/stable"
+            label="Stables"
+            search={{ tab: "rivals" }}
+            className="text-[10px] font-black text-cream/30 hover:text-blue-400 mb-4 gap-2"
+          />
           <div className="flex items-center gap-4 mb-2">
             <div
               className="w-10 h-10 rounded-sm rotate-45 border border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.5)] shrink-0"

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
+import { usePregnancies } from "@/hooks/game/useBreedingState";
 import type { GameState, Pregnancy, Horse } from "@/game/types";
 
 export interface BroodmareEntry {
@@ -13,7 +14,7 @@ export interface BroodmareEntry {
 
 export function useBroodmareData() {
   const horses = useGameWithShallow((s: GameState) => s.horses);
-  const pregnancies = useGameWithShallow((s: GameState) => s.pregnancies);
+  const pregnancies = usePregnancies();
   const day = useGame((s: GameState) => s.day);
   const log = useGameWithShallow((s: GameState) => s.log);
 
