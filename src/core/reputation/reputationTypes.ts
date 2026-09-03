@@ -61,6 +61,9 @@ export interface ManagerReputation {
   yearsActive: number;
 }
 
+/** Top of the manager reputation scale. */
+export const MAX_REPUTATION_SCORE = 1000;
+
 /**
  * Calculate reputation tier from score.
  *
