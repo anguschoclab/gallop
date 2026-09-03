@@ -15,6 +15,7 @@ import type { Horse } from "@/core/horse/types";
 import type { Stable } from "@/core/stable/types";
 import type { Syndicate } from "@/core/breeding/types";
 import { horseMarketValue } from "@/core/horse/pricing";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import { getPrestigeTier, type PrestigeTier } from "@/core/prestige/prestigeTypes";
 
@@ -122,17 +123,20 @@ export function buildStablePortfolios(args: BuildArgs): StablePortfolio[] {
   buckets.set("player", emptyBucket());
   for (const s of npcStables) buckets.set(s.id, emptyBucket());
 
-  for (const h of live) {
-    const key = isPlayerOwned(h)
+  for (const raw of live) {
+    const key = isPlayerOwned(raw)
       ? "player"
-      : h.ownership.type === "npc"
-        ? (h.ownership.stableId as string)
+      : raw.ownership.type === "npc"
+        ? (raw.ownership.stableId as string)
         : null;
     if (!key) continue;
     const bucket = buckets.get(key);
     if (!bucket) continue;
+    // NPC horses carry a deferred phenotype; resolve so valuations are real.
+    const h = ensurePhenotypeResolved(raw);
     const value = horseMarketValue(h, allForPedigree);
     bucket.horses.push(h);
+
     bucket.value += value;
     if (!bucket.top || value > bucket.top.value) bucket.top = { name: h.name, value };
   }

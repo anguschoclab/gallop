@@ -9,6 +9,7 @@ import type { GameState, Horse, PrivateSaleOffer } from "@/game/types";
 import type { RaceEntry } from "@/core/race/types";
 import type { EntityLink } from "@/services/narrative/newsTypes";
 import { isPlayerOwned, getStableId } from "@/core/horse/ownership";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 
 export function getRivalryStatusLabel(f: number) {
   if (f >= 80) return "Heated Rival";
@@ -46,9 +47,17 @@ export function useNpcStableDetail(stableId: string) {
 
   const stable = getStableById(npcStables, stableId);
 
-  const stableHorses = stable
-    ? Object.values(horses).filter((h: Horse) => getStableId(h) === stableId)
-    : [];
+  // NPC horses live in the store with a deferred phenotype (stats/ratings all
+  // zero until resolved), so resolve before anything reads their numbers.
+  const stableHorses = useMemo(
+    () =>
+      stable
+        ? Object.values(horses)
+            .filter((h: Horse) => getStableId(h) === stableId)
+            .map(ensurePhenotypeResolved)
+        : [],
+    [horses, stable, stableId],
+  );
   const activeHorses = stableHorses.filter(
     (h: Horse) => !h.healthStatus || h.healthStatus === "healthy",
   );
