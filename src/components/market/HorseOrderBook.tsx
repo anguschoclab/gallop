@@ -101,8 +101,20 @@ export function HorseOrderBook({
                   style={{ width: `${(b.price / maxSize) * 100}%` }}
                   aria-hidden
                 />
-                <span className="relative min-w-0 truncate text-cream-muted" title={b.rationale}>
+                <span
+                  className="relative min-w-0 truncate text-cream-muted"
+                  title={`${b.rationale}${b.intent ? ` · ${b.intent}` : ""}${
+                    b.conviction !== undefined
+                      ? ` · conviction ${Math.round(b.conviction * 100)}%`
+                      : ""
+                  }`}
+                >
                   {b.bidderName}
+                  {b.intent && (
+                    <span className="ml-1 text-[9px] uppercase tracking-wide text-cream-muted/70">
+                      {b.intent}
+                    </span>
+                  )}
                 </span>
                 <span className="relative flex items-center gap-2">
                   <span className="tabular-nums text-cream">{formatCurrency(b.price)}</span>
