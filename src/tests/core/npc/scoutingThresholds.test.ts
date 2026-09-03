@@ -109,8 +109,9 @@ describe("planScoutingRun", () => {
     const a = { ...createScoutingAssignment("1", "test", 1), maxPerDay: 5, dailyBudget: 1000 };
     const plan = planScoutingRun(candidates, a, 100000);
     expect(plan.estimatedCost).toBeLessThanOrEqual(1000);
-    expect(plan.targets).toEqual(["a"]);
-    expect(plan.skippedForBudget).toBe(2);
+    // fills with the next affordable candidate once the leader is booked
+    expect(plan.targets).toEqual(["a", "c"]);
+    expect(plan.skippedForBudget).toBe(1);
   });
 
   it("never spends more than available cash", () => {
