@@ -38,6 +38,9 @@ export type Stable = {
   colors: { primary: string; secondary: string };
   description?: string;
   country?: string;
+  /** Named training yard the stable operates from. */
+  yard?: import("./stableYard").StableYard;
+
   personality: StablePersonality;
   preferredDistance?: number;
   preferredSurface?: "Turf" | "Dirt" | "Synthetic";
