@@ -1,6 +1,12 @@
 # TypeScript Check Results
-# Generated: 2026-09-03T12:04:45.783Z
+# Generated: 2026-09-03T13:00:35.819Z
 # Command: bun x tsc --noEmit --pretty false
-# Errors: 0  Warnings: 0  Exit: 0
+# Errors: 1  Warnings: 0  Exit: 2
 
-No type errors or warnings.
+## Errors
+
+### src/game/store/initialization.ts (1)
+  204:3  TS2322  Type '{ day: number; cash: number; horses: { [k: string]: Horse; }; market: Horse[]; races: { [k: string]: Race; }; trainingUsed: {}; playerNominations: never[]; log: { day: number; text: string; }[]; ... 43 more ...; worldSize: WorldSize; }' is not assignable to type 'GameState'.
+
+## Unparsed output
+    Property 'scoutingAssignments' is missing in type '{ day: number; cash: number; horses: { [k: string]: Horse; }; market: Horse[]; races: { [k: string]: Race; }; trainingUsed: {}; playerNominations: never[]; log: { day: number; text: string; }[]; ... 43 more ...; worldSize: WorldSize; }' but required in type 'MarketState'.
