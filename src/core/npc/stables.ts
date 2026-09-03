@@ -20,6 +20,7 @@ import { shuffleAndPick } from "@/core/stable/stableSelection";
 import { generateFillerStable, generateStableFromTemplate } from "@/core/stable/stableGeneration";
 import { ORIGINAL_ARCHETYPES, TRIPLE_CROWN_ARCHETYPES } from "@/core/breeding/archetypes";
 import { ELITE_POOL, MID_POOL, BUDGET_POOL } from "@/core/stable/stablePoolData";
+import { resolveStableYard } from "@/core/stable/stableYard";
 
 /**
  * Generates all NPC stables for the game world, including both named template-based stables and procedural filler stables.
@@ -58,6 +59,11 @@ export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG
   // Create filler stables
   for (let i = 0; i < config.filler.count; i++) {
     stables.push(generateFillerStable(day, rng));
+  }
+
+  // Every stable trains from a named yard.
+  for (const stable of stables) {
+    stable.yard = resolveStableYard(stable);
   }
 
   // Assign breeding archetypes based on tier/personality
