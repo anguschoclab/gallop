@@ -16,6 +16,7 @@ import type { Horse } from "@/core/horse/types";
 import type { AuctionSale, ScoutReport, PrivateSaleOffer, Claim } from "@/core/market/types";
 import type { ExchangeState } from "@/core/market/exchange";
 import { createDefaultExchangeState } from "@/core/market/exchange";
+import type { ScoutingAssignment } from "@/core/npc/scoutingThresholds";
 
 /**
  * Market-related state for trading, auctions, and scouting.
@@ -28,6 +29,8 @@ export interface MarketState {
   auctions?: AuctionSale[];
   /** Scouting reports on NPC stables */
   scoutReports: ScoutReport[];
+  /** Standing scouting assignments that run automatically each day */
+  scoutingAssignments: ScoutingAssignment[];
   /** Private sale offers between player and NPC stables */
   privateSaleOffers: PrivateSaleOffer[];
   /** Claims filed against horses in claiming races */
@@ -46,8 +49,10 @@ export function createDefaultMarketState(): MarketState {
     market: [],
     auctions: [],
     scoutReports: [],
+    scoutingAssignments: [],
     privateSaleOffers: [],
     claims: [],
     exchange: createDefaultExchangeState(),
   };
 }
+
