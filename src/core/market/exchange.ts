@@ -21,6 +21,7 @@ import { isNpcOwned, isPlayerOwned } from "@/core/horse/ownership";
 import { createRng } from "@/core/common/rng";
 import { prestigeMultiplier } from "@/core/prestige/prestigeTypes";
 import { npcAskPrice, npcBidQuote, sellerStance, type ExchangeIntent } from "./exchangeAI";
+import { stableStandingAskReaction } from "@/core/stable/stableReputationTier";
 
 /** Base commission rate charged by the exchange on the sale proceeds. */
 export const EXCHANGE_BASE_COMMISSION = 0.04;
@@ -50,6 +51,10 @@ export type ExchangeAsk = {
   pressureMeter?: number;
   /** Lowest price the seller's AI will accept from a standing bid. */
   acceptFloor?: number;
+  /** Seller stable's own reputation tier (backyard … elite). */
+  sellerTier?: string;
+  /** Why the quoted price reflects the player's standing with this yard. */
+  standingNote?: string;
 };
 
 export type ExchangeBid = {
@@ -67,6 +72,8 @@ export type ExchangeBid = {
   intent?: ExchangeIntent;
   /** 0-1 measure of how badly the bidder wants the horse. */
   conviction?: number;
+  /** Bidding stable's own reputation tier (backyard … elite). */
+  bidderTier?: string;
 };
 
 export type ExchangeTrade = {
@@ -172,13 +179,18 @@ export function generateNpcBook(args: {
         horseId: horse.id,
         sellerId: stable.id,
         sellerName: stable.name,
-        price: npcAskPrice(stance, fairValue, `${horse.id}:${day}`),
+        price: npcAskPrice(stance, fairValue, `${horse.id}:${day}`, playerReputation),
         fairValue: Math.round(fairValue),
         createdDay: day,
         expiresDay: day + EXCHANGE_ORDER_TTL_DAYS,
         intent: stance.intent,
         pressureMeter: stance.pressure.meter,
         acceptFloor: Math.round(fairValue * stance.acceptFloor),
+        sellerTier: stance.reputationTierLabel,
+        standingNote:
+          playerReputation !== undefined
+            ? stableStandingAskReaction(stance.reputation, playerReputation).note
+            : undefined,
       });
     }
   }
@@ -220,6 +232,7 @@ export function generateNpcBook(args: {
         rationale: quote.rationale,
         intent: quote.intent,
         conviction: Number(quote.conviction.toFixed(2)),
+        bidderTier: quote.bidderTier,
       });
     }
   }

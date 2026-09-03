@@ -58,6 +58,10 @@ export type BidQuote = {
   price: number;
   rationale: string;
   intent: ExchangeIntent;
+  /** Bidding stable's own reputation tier label. */
+  bidderTier: string;
+  /** How much this stable's tier weights the seller's standing (0 = not at all). */
+  standingSensitivity: number;
   /** 0-1 signal of how badly the bidder wants the horse. */
   conviction: number;
 };
@@ -283,6 +287,8 @@ export function npcBidQuote(
   return {
     price,
     rationale,
+    bidderTier: getStableReputationTierMeta(stable.reputation).label,
+    standingSensitivity: getStableReputationTierMeta(stable.reputation).standingSensitivity,
     intent: pressure.pressure >= 0.5 ? "raising cash" : (PERSONALITY_INTENT[stable.personality] ?? "opportunistic"),
     conviction: Math.max(0, Math.min(1, (price / Math.max(1, fairValue)) * (1 - pressure.pressure * 0.4))),
   };
