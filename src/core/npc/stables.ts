@@ -16,6 +16,7 @@
 import type { Stable } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
 import { STABLE_CONFIG } from "@/core/stable/stableConfig";
+import type { WorldSizeStableConfig } from "@/core/stable/worldSizeConfig";
 import { shuffleAndPick } from "@/core/stable/stableSelection";
 import { generateFillerStable, generateStableFromTemplate } from "@/core/stable/stableGeneration";
 import { ORIGINAL_ARCHETYPES, TRIPLE_CROWN_ARCHETYPES } from "@/core/breeding/archetypes";
@@ -32,7 +33,11 @@ import { resolveStableYard } from "@/core/stable/stableYard";
  * @param {Object} [config=STABLE_CONFIG] - Configuration determining the number and quality of stables to generate.
  * @returns {Stable[]} An array of fully generated Stable objects.
  */
-export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG): Stable[] {
+export function generateAllStables(
+  day: number,
+  rng: Rng,
+  config: WorldSizeStableConfig = STABLE_CONFIG,
+): Stable[] {
   const stables: Stable[] = [];
 
   // Select and create elite stables from pool
@@ -59,7 +64,7 @@ export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG
 
   // Regional named yards: real names, personalities and prestige tiers spread
   // across mid/budget so trading is not dominated by a few big operations.
-  const secondaryConfig = (config as typeof STABLE_CONFIG).secondary;
+  const secondaryConfig = config.secondary;
   if (secondaryConfig) {
     const selectedSecondary = shuffleAndPick(SECONDARY_POOL, secondaryConfig.count, rng);
     selectedSecondary.forEach((template, index) => {
