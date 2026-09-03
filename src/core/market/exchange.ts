@@ -32,6 +32,9 @@ export const EXCHANGE_ORDER_TTL_DAYS = 14;
 /** Maximum simultaneous NPC bids per listed horse. */
 export const MAX_BIDS_PER_HORSE = 4;
 
+/** Cap on simultaneous listings from any one stable, so the book stays diverse. */
+export const MAX_ASKS_PER_SELLER = 3;
+
 export type ExchangeSide = "ask" | "bid";
 
 export type ExchangeAsk = {
@@ -166,7 +169,7 @@ export function generateNpcBook(args: {
     if (owned.length === 0) continue;
     const stance = sellerStance(stable, owned.length);
     const rng = createRng(`exchAsk:${stable.id}:${day}`);
-    const listCount = Math.min(owned.length, stance.listCount);
+    const listCount = Math.min(owned.length, stance.listCount, MAX_ASKS_PER_SELLER);
     const sorted = [...owned].sort((a, b) => a.id.localeCompare(b.id));
     for (let i = 0; i < listCount; i++) {
       const horse = sorted[Math.floor(rng.next() * sorted.length)];
