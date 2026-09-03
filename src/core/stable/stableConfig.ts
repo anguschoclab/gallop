@@ -200,8 +200,18 @@ export const PERSONALITY_CONFIG: Record<
  * Updated to accommodate expanded stallion roster (~522 stallions) and larger stable pools
  */
 export const STABLE_CONFIG = {
-  elite: { count: 7, reputationRange: [90, 98] as [number, number] },
-  mid: { count: 15, reputationRange: [70, 86] as [number, number] },
-  budget: { count: 6, reputationRange: [50, 65] as [number, number] },
-  filler: { count: 100 },
+  elite: { count: 12, reputationRange: [90, 98] as [number, number] },
+  mid: { count: 26, reputationRange: [70, 86] as [number, number] },
+  budget: { count: 10, reputationRange: [50, 65] as [number, number] },
+  /**
+   * Regional named yards drawn from SECONDARY_POOL. Split across mid/budget
+   * tiers so the world has many credible trading partners, not a few giants.
+   */
+  secondary: {
+    count: 32,
+    midShare: 0.4,
+    midReputationRange: [62, 78] as [number, number],
+    budgetReputationRange: [42, 62] as [number, number],
+  },
+  filler: { count: 80 },
 };

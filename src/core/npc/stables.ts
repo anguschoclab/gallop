@@ -20,6 +20,7 @@ import { shuffleAndPick } from "@/core/stable/stableSelection";
 import { generateFillerStable, generateStableFromTemplate } from "@/core/stable/stableGeneration";
 import { ORIGINAL_ARCHETYPES, TRIPLE_CROWN_ARCHETYPES } from "@/core/breeding/archetypes";
 import { ELITE_POOL, MID_POOL, BUDGET_POOL } from "@/core/stable/stablePoolData";
+import { SECONDARY_POOL } from "@/core/stable/secondaryStablePool";
 import { resolveStableYard } from "@/core/stable/stableYard";
 
 /**
@@ -54,6 +55,25 @@ export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG
     stables.push(
       generateStableFromTemplate(template, "budget", config.budget.reputationRange, day, rng),
     );
+  }
+
+  // Regional named yards: real names, personalities and prestige tiers spread
+  // across mid/budget so trading is not dominated by a few big operations.
+  const secondaryConfig = (config as typeof STABLE_CONFIG).secondary;
+  if (secondaryConfig) {
+    const selectedSecondary = shuffleAndPick(SECONDARY_POOL, secondaryConfig.count, rng);
+    selectedSecondary.forEach((template, index) => {
+      const isMid = index < Math.round(selectedSecondary.length * secondaryConfig.midShare);
+      stables.push(
+        generateStableFromTemplate(
+          template,
+          isMid ? "mid" : "budget",
+          isMid ? secondaryConfig.midReputationRange : secondaryConfig.budgetReputationRange,
+          day,
+          rng,
+        ),
+      );
+    });
   }
 
   // Create filler stables
