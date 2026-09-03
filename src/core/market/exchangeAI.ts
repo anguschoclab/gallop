@@ -23,6 +23,8 @@ import type { Horse } from "@/core/horse/types";
 import type { Stable, StablePersonality } from "@/core/stable/types";
 import { createRng } from "@/core/common/rng";
 import { evaluateCashPressure, type CashPressure } from "@/core/stable/cashPressure";
+import { getReputationTier, formatReputationTier } from "@/core/reputation/reputationTypes";
+import { SELLER_STANDING_BID_FACTOR_BY_TIER } from "@/constants/privateSaleConstants";
 import type { ExchangeAsk, ExchangeBid, ExchangeState, ExchangeTrade } from "./exchange";
 
 /** How a stable is behaving on the exchange right now. */
@@ -112,6 +114,23 @@ function prestigePull(reputation: number, strength = 1): number {
 }
 
 /**
+ * Multiplier NPCs apply to bids on the player's horses based on the player's
+ * standing (reputation score 0-1000). Unknown sellers get lowballed; famous
+ * sellers command respect. Returns the factor and a display label.
+ * @param reputationScore - Player reputation score (0-1000)
+ */
+export function sellerStandingBidFactor(reputationScore: number): {
+  factor: number;
+  tierLabel: string;
+} {
+  const tier = getReputationTier(reputationScore);
+  return {
+    factor: SELLER_STANDING_BID_FACTOR_BY_TIER[tier] ?? 1,
+    tierLabel: formatReputationTier(tier),
+  };
+}
+
+/**
  * Work out how a stable is positioned as a seller today.
  *
  * @param stable - The NPC stable
@@ -164,12 +183,16 @@ export function npcAskPrice(stance: SellerStance, fairValue: number, seed: strin
  * @param stable - Bidding stable
  * @param day - Current game day
  * @param fairValue - Reference market value
+ * @param sellerReputation - When the seller is the player, their reputation
+ *   score (0-1000). Low standing attracts lowball bids; high standing commands
+ *   a premium.
  */
 export function npcBidQuote(
   horse: Horse,
   stable: Stable,
   day: number,
   fairValue: number,
+  sellerReputation?: number,
 ): BidQuote {
   const rng = createRng(`exch:${horse.id}:${stable.id}:${day}`);
   const pressure = evaluateCashPressure(stable);
@@ -178,17 +201,29 @@ export function npcBidQuote(
 
   // Squeezed buyers pull their horns in hard.
   const pressureDamp = 1 - pressure.pressure * 0.55;
-  const raw = fairValue * bias * noise * prestigePull(stable.reputation) * pressureDamp;
+  let raw = fairValue * bias * noise * prestigePull(stable.reputation) * pressureDamp;
+
+  // Buying from the player: scale by the player's standing in the racing world.
+  const standing =
+    sellerReputation !== undefined ? sellerStandingBidFactor(sellerReputation) : undefined;
+  if (standing) raw *= standing.factor;
 
   // Cash discipline tightens as the runway shortens.
   const cashSlice = 0.35 * (1 - pressure.pressure * 0.7);
   const capped = Math.min(raw, stable.cash * cashSlice);
   const price = Math.max(0, Math.round(capped / 50) * 50);
 
-  const rationale =
+  let rationale =
     pressure.pressure >= 0.5
       ? `Short of cash (${pressure.label}) — bargain hunting only`
       : (PERSONALITY_RATIONALE[stable.personality] ?? "Adding to the string");
+  if (standing && standing.factor < 1) {
+    rationale += ` · Seller is ${standing.tierLabel} — bidding ${Math.round(
+      (1 - standing.factor) * 100,
+    )}% under`;
+  } else if (standing && standing.factor > 1) {
+    rationale += ` · Respects the seller's ${standing.tierLabel} standing`;
+  }
 
   return {
     price,

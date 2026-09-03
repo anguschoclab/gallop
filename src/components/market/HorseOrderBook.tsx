@@ -2,6 +2,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/core/common/formatting";
 import { netProceeds, type HorseOrderBook as Book } from "@/core/market/exchange";
+import { sellerStandingBidFactor } from "@/core/market/exchangeAI";
+import { useGame } from "@/game/store";
 
 export function HorseOrderBook({
   book,
@@ -21,6 +23,8 @@ export function HorseOrderBook({
     ...book.bids.map((b) => b.price),
     1,
   );
+  const reputationScore = useGame((s) => s.reputation?.score ?? 0);
+  const standing = book.isPlayerOwned ? sellerStandingBidFactor(reputationScore) : undefined;
 
   return (
     <div className="space-y-3">
@@ -39,6 +43,22 @@ export function HorseOrderBook({
         {book.lastTrade !== undefined && (
           <Badge variant="outline" className="text-[10px]">
             Last traded {formatCurrency(book.lastTrade)}
+          </Badge>
+        )}
+        {standing && standing.factor !== 1 && (
+          <Badge
+            variant="outline"
+            className={
+              standing.factor < 1
+                ? "border-amber-400/40 bg-amber-400/10 text-[10px] text-amber-300"
+                : "border-success/40 bg-success/10 text-[10px] text-success"
+            }
+            title="NPC bidders adjust their offers for your horses based on your reputation in the racing world."
+          >
+            Your {standing.tierLabel} standing: bids{" "}
+            {standing.factor < 1
+              ? `${Math.round((1 - standing.factor) * 100)}% under`
+              : `+${Math.round((standing.factor - 1) * 100)}%`}
           </Badge>
         )}
       </div>

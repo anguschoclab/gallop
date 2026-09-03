@@ -141,8 +141,10 @@ export function generateNpcBook(args: {
   horses: Horse[];
   npcStables: Stable[];
   existing: ExchangeState;
+  /** Player reputation score (0-1000); scales NPC bids on player listings. */
+  playerReputation?: number;
 }): { asks: ExchangeAsk[]; bids: ExchangeBid[] } {
-  const { day, horses, npcStables, existing } = args;
+  const { day, horses, npcStables, existing, playerReputation } = args;
   const horseList = horses.filter((h) => h.lifecycleStatus !== "deceased");
   const byId = new Map(horseList.map((h) => [h.id, h]));
 
@@ -199,7 +201,13 @@ export function generateNpcBook(args: {
       const stable = pool[Math.floor(rng.next() * pool.length)];
       if (!stable || seen.has(stable.id)) continue;
       seen.add(stable.id);
-      const quote = npcBidQuote(horse, stable, day, fairValue);
+      const quote = npcBidQuote(
+        horse,
+        stable,
+        day,
+        fairValue,
+        ask.sellerId === "player" ? playerReputation : undefined,
+      );
       if (quote.price <= 0) continue;
       bids.push({
         id: `bid-${stable.id}-${horse.id}-${day}`,
