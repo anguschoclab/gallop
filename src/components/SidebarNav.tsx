@@ -30,6 +30,7 @@ import {
   Newspaper,
   RotateCcw,
   BookOpen,
+  Briefcase,
 } from "lucide-react";
 
 import { formatCurrency } from "@/core/common/formatting";
@@ -76,7 +77,10 @@ const navSections: { label: string; items: NavItem[] }[] = [
       { to: "/almanac", label: "Almanac", icon: BookOpen, exact: false },
 
       { to: "/market", label: "Market", icon: Store, exact: false },
+      { to: "/portfolio", label: "Portfolio", icon: Briefcase, exact: false },
       { to: "/auction", label: "Auctions", icon: Gavel, exact: false },
+
+
       { to: "/npc-stables", label: "Stables", icon: Map, exact: false },
     ],
   },

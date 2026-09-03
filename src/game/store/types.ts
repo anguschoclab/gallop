@@ -16,6 +16,7 @@ import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { RacingSlice } from "./slices/racingSlice";
 import type { MarketSlice } from "./slices/marketSlice";
+import type { ExchangeSlice } from "./slices/exchangeSlice";
 import type { ScoutingSlice } from "./slices/scoutingSlice";
 import type { AuctionSlice } from "./slices/auctionSlice";
 import type { PrivateSaleSlice } from "./slices/privateSaleSlice";
@@ -47,6 +48,7 @@ export type StoreType = CoreState &
   SystemsState &
   RacingSlice &
   MarketSlice &
+  ExchangeSlice &
   ScoutingSlice &
   AuctionSlice &
   PrivateSaleSlice &

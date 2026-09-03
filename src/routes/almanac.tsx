@@ -1,18 +1,30 @@
 import { useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { BookOpen, ScrollText, Timer } from "lucide-react";
+import { BookOpen, CalendarRange, Globe2, History, Landmark, ScrollText, Timer } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useGameWithShallow } from "@/game/store";
 import { RecordAlmanac } from "@/components/history/RecordAlmanac";
+import { AlmanacMilestones } from "@/components/history/AlmanacMilestones";
+import { DecadeLeaders } from "@/components/history/DecadeLeaders";
+import { TrackHistoryTimeline } from "@/components/history/TrackHistoryTimeline";
+import { RealWorldBenchmarks } from "@/components/history/RealWorldBenchmarks";
 import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
 import type { SeasonRecord, TrackRecord } from "@/core/history/historyTypes";
 
-const ALMANAC_TABS = ["records", "roll-of-honour"] as const;
+const ALMANAC_TABS = [
+  "records",
+  "milestones",
+  "decades",
+  "timeline",
+  "real-world",
+  "roll-of-honour",
+] as const;
 const EMPTY_OBJECT = {} as Record<string, never>;
 const EMPTY_ARRAY: SeasonRecord[] = [];
+
 
 export const Route = createFileRoute("/almanac")({
   validateSearch: z.object({
@@ -71,10 +83,26 @@ function AlmanacPage() {
         }
         className="space-y-4"
       >
-        <TabsList>
+        <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="records" className="gap-2">
             <Timer className="h-4 w-4" />
             Track Records
+          </TabsTrigger>
+          <TabsTrigger value="milestones" className="gap-2">
+            <Landmark className="h-4 w-4" />
+            Milestones
+          </TabsTrigger>
+          <TabsTrigger value="decades" className="gap-2">
+            <CalendarRange className="h-4 w-4" />
+            By Decade
+          </TabsTrigger>
+          <TabsTrigger value="timeline" className="gap-2">
+            <History className="h-4 w-4" />
+            Track History
+          </TabsTrigger>
+          <TabsTrigger value="real-world" className="gap-2">
+            <Globe2 className="h-4 w-4" />
+            Real-World
           </TabsTrigger>
           <TabsTrigger value="roll-of-honour" className="gap-2">
             <ScrollText className="h-4 w-4" />
@@ -85,6 +113,23 @@ function AlmanacPage() {
         <TabsContent value="records">
           <RecordAlmanac records={records} />
         </TabsContent>
+
+        <TabsContent value="milestones">
+          <AlmanacMilestones records={records} seasons={honours} />
+        </TabsContent>
+
+        <TabsContent value="decades">
+          <DecadeLeaders records={records} />
+        </TabsContent>
+
+        <TabsContent value="timeline">
+          <TrackHistoryTimeline records={records} seasons={honours} />
+        </TabsContent>
+
+        <TabsContent value="real-world">
+          <RealWorldBenchmarks records={records} />
+        </TabsContent>
+
 
         <TabsContent value="roll-of-honour" className="space-y-2">
           {honours.length === 0 ? (
