@@ -25,6 +25,7 @@ import {
   ContextMenuSeparator,
 } from "@/components/ui/context-menu";
 import { HorseScatterPlot } from "./HorseScatterPlot";
+import { InsightsCompareDialog } from "./InsightsCompareDialog";
 import { useBookmarks } from "@/hooks/shared/useBookmarks";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
@@ -39,7 +40,7 @@ import {
   type InsightMetricKey,
   type InsightRow,
 } from "@/core/horse/insightMetrics";
-import { BarChart3, Bookmark, Copy, Eye, Filter, Search, X } from "lucide-react";
+import { BarChart3, Bookmark, Columns3, Copy, Eye, Filter, Search, X } from "lucide-react";
 
 type PoolKey = "npc" | "market" | "all" | "mine";
 
@@ -62,6 +63,7 @@ export function ScoutingInsightsPanel() {
   const [yKey, setYKey] = useState<InsightMetricKey>("overall");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [onlySelected, setOnlySelected] = useState(false);
+  const [compareOpen, setCompareOpen] = useState(false);
 
   const allHorses = useMemo<Horse[]>(
     () => (Array.isArray(horses) ? horses : Object.values(horses ?? {})) as Horse[],
@@ -171,6 +173,9 @@ export function ScoutingInsightsPanel() {
       </ContextMenuItem>
       <ContextMenuItem disabled={selectedRows.length === 0} onSelect={bookmarkSelected}>
         <Bookmark className="mr-2 h-3.5 w-3.5" /> Bookmark selected
+      </ContextMenuItem>
+      <ContextMenuItem disabled={selectedRows.length < 2} onSelect={() => setCompareOpen(true)}>
+        <Columns3 className="mr-2 h-3.5 w-3.5" /> Compare selected
       </ContextMenuItem>
       <ContextMenuItem disabled={selectedRows.length === 0} onSelect={copyNames}>
         <Copy className="mr-2 h-3.5 w-3.5" /> Copy names
@@ -286,6 +291,15 @@ export function ScoutingInsightsPanel() {
                 Selection · {selectedRows.length} horses
               </h3>
               <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 text-xs"
+                  disabled={selectedRows.length < 2}
+                  onClick={() => setCompareOpen(true)}
+                >
+                  <Columns3 className="mr-1.5 h-3 w-3" /> Compare ({selectedRows.length})
+                </Button>
                 <Button size="sm" variant="outline" className="h-8 text-xs" onClick={bookmarkSelected}>
                   Bookmark all
                 </Button>
@@ -344,6 +358,13 @@ export function ScoutingInsightsPanel() {
           </CardContent>
         </Card>
       )}
+
+      <InsightsCompareDialog
+        rows={selectedRows}
+        open={compareOpen}
+        onOpenChange={setCompareOpen}
+        onRemove={(id) => setSelectedIds((prev) => prev.filter((x) => x !== id))}
+      />
     </div>
   );
 }
