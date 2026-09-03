@@ -280,5 +280,102 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
       });
       return { ok: true };
     },
+
+    sellHorseToAuctionHouse: (horseId, houseId) => {
+      const s = get();
+      const horse = s.horses[horseId] as Horse | undefined;
+      if (!horse) return { ok: false, reason: "Horse not found" };
+      if (!isPlayerOwned(horse)) return { ok: false, reason: "You do not own this horse" };
+      if (horse.consignedSaleId)
+        return { ok: false, reason: "Horse is already consigned to an auction" };
+      if (horse.lifecycleStatus === "deceased")
+        return { ok: false, reason: "Horse is no longer with us" };
+      const house = getAuctionHouse(houseId);
+      if (!house) return { ok: false, reason: "Auction house not found" };
+
+      const quote = houseQuote(horse, Object.values(s.horses) as Horse[], house);
+      const exchange = readExchange();
+      const trade: ExchangeTrade = {
+        id: generateUUID(),
+        horseId: horse.id,
+        horseName: horse.name,
+        price: quote.hammerEstimate,
+        commission: quote.commission,
+        buyerId: house.id,
+        buyerName: house.name,
+        sellerId: PLAYER_ID,
+        sellerName: s.playerProfile?.stableName ?? "My Stable",
+        day: s.day,
+        initiatedBy: "bid",
+      };
+
+      set({
+        cash: s.cash + quote.sellPrice,
+        horses: { ...s.horses, [horse.id]: { ...horse, ownership: makeUnowned() } },
+        exchange: pushTrade(exchange, trade),
+        log: [
+          ...s.log,
+          {
+            day: s.day,
+            text: `${horse.name} sold through ${house.shortName} for ${quote.hammerEstimate} (net ${quote.sellPrice}).`,
+          },
+        ],
+      });
+      return { ok: true };
+    },
+
+    buyHorseFromAuctionHouse: (horseId, houseId) => {
+      const s = get();
+      const horse = s.horses[horseId] as Horse | undefined;
+      if (!horse) return { ok: false, reason: "Horse not found" };
+      if (isPlayerOwned(horse)) return { ok: false, reason: "You already own this horse" };
+      if (horse.lifecycleStatus === "deceased")
+        return { ok: false, reason: "Horse is no longer with us" };
+      const house = getAuctionHouse(houseId);
+      if (!house) return { ok: false, reason: "Auction house not found" };
+
+      const quote = houseQuote(horse, Object.values(s.horses) as Horse[], house);
+      if (s.cash < quote.buyPrice) return { ok: false, reason: "Insufficient funds" };
+
+      const sellerStableId = getStableId(horse);
+      const seller = sellerStableId
+        ? (s.npcStables ?? []).find((st) => st.id === sellerStableId)
+        : undefined;
+
+      const exchange = readExchange();
+      const trade: ExchangeTrade = {
+        id: generateUUID(),
+        horseId: horse.id,
+        horseName: horse.name,
+        price: quote.hammerEstimate,
+        commission: quote.commission,
+        buyerId: PLAYER_ID,
+        buyerName: s.playerProfile?.stableName ?? "My Stable",
+        sellerId: seller?.id ?? house.id,
+        sellerName: seller?.name ?? house.name,
+        day: s.day,
+        initiatedBy: "ask",
+      };
+
+      set({
+        cash: s.cash - quote.buyPrice,
+        horses: { ...s.horses, [horse.id]: { ...horse, ownership: makePlayerOwned() } },
+        npcStables: seller
+          ? (s.npcStables ?? []).map((st) =>
+              st.id === seller.id ? { ...st, cash: st.cash + quote.sellPrice } : st,
+            )
+          : s.npcStables,
+        exchange: pushTrade(exchange, trade),
+        log: [
+          ...s.log,
+          {
+            day: s.day,
+            text: `Bought ${horse.name} at ${house.shortName} for ${quote.buyPrice} (hammer ${quote.hammerEstimate}).`,
+          },
+        ],
+      });
+      return { ok: true };
+    },
   };
 }
+
