@@ -6,6 +6,13 @@ export interface WorldSizeStableConfig {
   elite: { count: number; reputationRange: [number, number] };
   mid: { count: number; reputationRange: [number, number] };
   budget: { count: number; reputationRange: [number, number] };
+  /** Regional named yards split across mid/budget tiers. */
+  secondary?: {
+    count: number;
+    midShare: number;
+    midReputationRange: [number, number];
+    budgetReputationRange: [number, number];
+  };
   filler: { count: number };
 }
 
@@ -29,6 +36,12 @@ export const WORLD_SIZE_CONFIGS: Record<WorldSize, WorldSizeConfig> = {
       elite: { count: 3, reputationRange: [90, 98] },
       mid: { count: 5, reputationRange: [70, 86] },
       budget: { count: 2, reputationRange: [50, 65] },
+      secondary: {
+        count: 10,
+        midShare: 0.4,
+        midReputationRange: [62, 78],
+        budgetReputationRange: [42, 62],
+      },
       filler: { count: 15 },
     },
     horseCounts: {
@@ -42,9 +55,15 @@ export const WORLD_SIZE_CONFIGS: Record<WorldSize, WorldSizeConfig> = {
   },
   medium: {
     stables: {
-      elite: { count: 5, reputationRange: [90, 98] },
-      mid: { count: 10, reputationRange: [70, 86] },
-      budget: { count: 4, reputationRange: [50, 65] },
+      elite: { count: 8, reputationRange: [90, 98] },
+      mid: { count: 18, reputationRange: [70, 86] },
+      budget: { count: 8, reputationRange: [50, 65] },
+      secondary: {
+        count: 20,
+        midShare: 0.4,
+        midReputationRange: [62, 78],
+        budgetReputationRange: [42, 62],
+      },
       filler: { count: 50 },
     },
     horseCounts: {
@@ -58,10 +77,16 @@ export const WORLD_SIZE_CONFIGS: Record<WorldSize, WorldSizeConfig> = {
   },
   large: {
     stables: {
-      elite: { count: 7, reputationRange: [90, 98] },
-      mid: { count: 15, reputationRange: [70, 86] },
-      budget: { count: 6, reputationRange: [50, 65] },
-      filler: { count: 100 },
+      elite: { count: 12, reputationRange: [90, 98] },
+      mid: { count: 26, reputationRange: [70, 86] },
+      budget: { count: 10, reputationRange: [50, 65] },
+      secondary: {
+        count: 32,
+        midShare: 0.4,
+        midReputationRange: [62, 78],
+        budgetReputationRange: [42, 62],
+      },
+      filler: { count: 80 },
     },
     horseCounts: {
       elite: [30, 40],

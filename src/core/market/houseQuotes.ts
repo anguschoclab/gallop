@@ -158,13 +158,23 @@ export function buildHouseCatalogue(args: {
   const picked: Horse[] = [];
   const used = new Set<number>();
   const count = Math.min(size, pool.length);
+  // Soft cap per consignor so one big yard cannot fill a house board.
+  const perStable = new Map<string, number>();
+  const consignorOf = (h: Horse): string =>
+    h.ownership.type === "npc" ? (h.ownership.stableId ?? "unassigned") : "unassigned";
+  const MAX_LOTS_PER_STABLE = 2;
   let guard = 0;
-  while (picked.length < count && guard < count * 20) {
+  while (picked.length < count && guard < count * 40) {
     guard += 1;
     const idx = rng.int(0, pool.length - 1);
     if (used.has(idx)) continue;
+    const horse = pool[idx];
+    const consignor = consignorOf(horse);
+    const lots = perStable.get(consignor) ?? 0;
+    if (lots >= MAX_LOTS_PER_STABLE) continue;
     used.add(idx);
-    picked.push(pool[idx]);
+    perStable.set(consignor, lots + 1);
+    picked.push(horse);
   }
 
   return picked
