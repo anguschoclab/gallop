@@ -25,6 +25,13 @@ import { createRng } from "@/core/common/rng";
 import { evaluateCashPressure, type CashPressure } from "@/core/stable/cashPressure";
 import { getReputationTier, formatReputationTier } from "@/core/reputation/reputationTypes";
 import { SELLER_STANDING_BID_FACTOR_BY_TIER } from "@/constants/privateSaleConstants";
+import {
+  getStableReputationTierMeta,
+  stableStandingAskReaction,
+  stableStandingBidReaction,
+  type StableReputationTier,
+  type StandingReaction,
+} from "@/core/stable/stableReputationTier";
 import type { ExchangeAsk, ExchangeBid, ExchangeState, ExchangeTrade } from "./exchange";
 
 /** How a stable is behaving on the exchange right now. */
@@ -40,6 +47,11 @@ export type SellerStance = {
   acceptFloor: number;
   pressure: CashPressure;
   intent: ExchangeIntent;
+  /** The stable's own reputation tier (drives how it reacts to your standing). */
+  reputationTier: StableReputationTier;
+  reputationTierLabel: string;
+  /** Raw 0-100 stable reputation behind the tier. */
+  reputation: number;
 };
 
 export type BidQuote = {
@@ -158,20 +170,56 @@ export function sellerStance(stable: Stable, horseCount?: number): SellerStance 
       ? "raising cash"
       : (PERSONALITY_INTENT[stable.personality] ?? "opportunistic");
 
-  return { stableId: stable.id, listCount, markup: Math.max(0.85, markup), acceptFloor, pressure, intent };
+  const tierMeta = getStableReputationTierMeta(stable.reputation);
+
+  return {
+    stableId: stable.id,
+    listCount,
+    markup: Math.max(0.85, markup),
+    acceptFloor,
+    pressure,
+    intent,
+    reputationTier: tierMeta.tier,
+    reputationTierLabel: tierMeta.label,
+    reputation: stable.reputation ?? 50,
+  };
 }
 
 /**
- * Ask price an NPC stable posts for one of its horses.
+ * Ask price an NPC stable posts for one of its horses. When the player's
+ * reputation is supplied, the stable's own reputation tier decides how much it
+ * cares: elite yards quote unknown managers up, backyard yards barely blink.
  *
  * @param stance - Seller stance for the owning stable
  * @param fairValue - Reference market value
  * @param seed - Deterministic seed (horse + day)
+ * @param buyerReputation - Player reputation score 0-1000 (optional)
  */
-export function npcAskPrice(stance: SellerStance, fairValue: number, seed: string): number {
+export function npcAskPrice(
+  stance: SellerStance,
+  fairValue: number,
+  seed: string,
+  buyerReputation?: number,
+): number {
   const rng = createRng(`exchAskPrice:${seed}`);
   const noise = rng.range(0.96, 1.08);
-  return Math.max(50, Math.round((fairValue * stance.markup * noise) / 50) * 50);
+  const standing =
+    buyerReputation !== undefined
+      ? stableStandingAskReaction(stance.reputation, buyerReputation).factor
+      : 1;
+  return Math.max(50, Math.round((fairValue * stance.markup * noise * standing) / 50) * 50);
+}
+
+/**
+ * The ask-side standing reaction for a stance, for display alongside a listing.
+ * @param stance - Seller stance
+ * @param buyerReputation - Player reputation score 0-1000
+ */
+export function askStandingReaction(
+  stance: SellerStance,
+  buyerReputation: number,
+): StandingReaction {
+  return stableStandingAskReaction(stance.reputation, buyerReputation);
 }
 
 /**
@@ -203,9 +251,12 @@ export function npcBidQuote(
   const pressureDamp = 1 - pressure.pressure * 0.55;
   let raw = fairValue * bias * noise * prestigePull(stable.reputation) * pressureDamp;
 
-  // Buying from the player: scale by the player's standing in the racing world.
+  // Buying from the player: scale by the player's standing in the racing world,
+  // weighted by how much a stable of this reputation tier cares about standing.
   const standing =
-    sellerReputation !== undefined ? sellerStandingBidFactor(sellerReputation) : undefined;
+    sellerReputation !== undefined
+      ? stableStandingBidReaction(stable.reputation, sellerReputation)
+      : undefined;
   if (standing) raw *= standing.factor;
 
   // Cash discipline tightens as the runway shortens.
@@ -217,12 +268,16 @@ export function npcBidQuote(
     pressure.pressure >= 0.5
       ? `Short of cash (${pressure.label}) — bargain hunting only`
       : (PERSONALITY_RATIONALE[stable.personality] ?? "Adding to the string");
-  if (standing && standing.factor < 1) {
-    rationale += ` · Seller is ${standing.tierLabel} — bidding ${Math.round(
+  if (standing && standing.factor < 0.999) {
+    rationale += ` · ${standing.stableTierLabel} yard, seller is ${standing.playerTierLabel} — bidding ${Math.round(
       (1 - standing.factor) * 100,
     )}% under`;
-  } else if (standing && standing.factor > 1) {
-    rationale += ` · Respects the seller's ${standing.tierLabel} standing`;
+  } else if (standing && standing.factor > 1.001) {
+    rationale += ` · ${standing.stableTierLabel} yard respects your ${standing.playerTierLabel} standing (+${Math.round(
+      (standing.factor - 1) * 100,
+    )}%)`;
+  } else if (standing) {
+    rationale += ` · ${standing.stableTierLabel} yard, standing barely matters here`;
   }
 
   return {
