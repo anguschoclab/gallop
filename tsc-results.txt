@@ -1,6 +1,12 @@
 # TypeScript Check Results
-# Generated: 2026-09-03T11:02:16.342Z
+# Generated: 2026-09-03T11:29:19.622Z
 # Command: bun x tsc --noEmit --pretty false
-# Errors: 0  Warnings: 0  Exit: 0
+# Errors: 1  Warnings: 0  Exit: 2
 
-No type errors or warnings.
+## Errors
+
+### src/core/market/houseQuotes.ts (1)
+  147:28  TS2349  This expression is not callable.
+
+## Unparsed output
+    Type 'Rng' has no call signatures.
