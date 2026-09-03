@@ -13,7 +13,7 @@ import type { StableId } from "@/core/types/branded";
 
 function makeStable(overrides: Partial<Stable> & { id: string }): Stable {
   return {
-    id: overrides.id as unknown as StableId,
+    name: overrides.name ?? `Stable ${overrides.id}`,
     name: overrides.name ?? `Stable ${overrides.id}`,
     owner: "Owner",
     tier: "mid",
