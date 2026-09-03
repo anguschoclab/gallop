@@ -68,9 +68,13 @@ vi.mock("@/components/race/RaceVerdictBar", () => ({
   RaceVerdictBar: () => createElement("div", { "data-testid": "verdict-bar" }),
 }));
 
-vi.mock("@/core/common/formatting", () => ({
-  formatCurrency: (n: number) => `$${n.toLocaleString()}`,
-}));
+vi.mock("@/core/common/formatting", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/core/common/formatting")>();
+  return {
+    ...actual,
+    formatCurrency: (n: number) => `$${n.toLocaleString()}`,
+  };
+});
 
 vi.mock("@/constants", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/constants")>();

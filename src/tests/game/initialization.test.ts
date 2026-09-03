@@ -141,19 +141,19 @@ describe("createInitialState race generation for starter eligibility", () => {
 });
 
 describe("createInitialState world size entity counts", () => {
-  it("produces ~25 NPC stables with worldSize: small", () => {
+  it("produces ~35 NPC stables with worldSize: small", () => {
     const state = createInitialState({ ...mockOptions, worldSize: "small" });
-    expect(state.npcStables.length).toBe(25);
+    expect(state.npcStables.length).toBe(35);
   });
 
-  it("produces ~69 NPC stables with worldSize: medium", () => {
+  it("produces ~104 NPC stables with worldSize: medium", () => {
     const state = createInitialState({ ...mockOptions, worldSize: "medium" });
-    expect(state.npcStables.length).toBe(69);
+    expect(state.npcStables.length).toBe(104);
   });
 
-  it("produces 128 NPC stables with worldSize: large", () => {
+  it("produces 160 NPC stables with worldSize: large", () => {
     const state = createInitialState({ ...mockOptions, worldSize: "large" });
-    expect(state.npcStables.length).toBe(128);
+    expect(state.npcStables.length).toBe(160);
   });
 
   it("produces fewer NPC horses with small than large", () => {
@@ -176,7 +176,7 @@ describe("createInitialState world size entity counts", () => {
 
   it("defaults to large behavior without worldSize option", () => {
     const state = createInitialState(mockOptions);
-    expect(state.npcStables.length).toBe(128);
+    expect(state.npcStables.length).toBe(160);
     expect(state.worldSize).toBe("large");
   });
 });
