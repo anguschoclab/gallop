@@ -24,7 +24,7 @@ const STAT_KEYS = ["speed", "stamina", "acceleration", "consistency"] as const;
 
 describe("scouting every NPC stable reveals real stats", () => {
   const state = createInitialState();
-  const npcHorses = state.horses.filter(isNpcOwned).map(ensurePhenotypeResolved);
+  const npcHorses = Object.values(state.horses).filter(isNpcOwned).map(ensurePhenotypeResolved);
 
   it("covers every NPC stable in the generated world", () => {
     expect(state.npcStables.length).toBeGreaterThan(40);
@@ -62,7 +62,7 @@ describe("scouting every NPC stable reveals real stats", () => {
 describe("race preview times match the run", () => {
   it("derives consistent per-km / per-mile / drop-minute views from the finish time", () => {
     const state = createInitialState();
-    const field = state.horses
+    const field = Object.values(state.horses)
       .filter(isNpcOwned)
       .map(ensurePhenotypeResolved)
       .filter((h) => h.lifecycleStatus !== "deceased")
@@ -93,11 +93,12 @@ describe("race preview times match the run", () => {
     }
 
     // The preview's "best per mile" figure reproduces the same run.
+    const allRaces = Object.values(state.races) as (typeof state.races)[keyof typeof state.races][];
     const race = {
-      ...state.races[0],
+      ...(allRaces[0] as Record<string, unknown>),
       distance,
       result: result.map((r) => ({ ...r })),
-    } as (typeof state.races)[number];
+    } as Parameters<typeof bestPerMileByHorse>[0][number];
     const best = bestPerMileByHorse([race]);
     const winner = sorted[0];
     const bestForWinner = best.get(winner.horseId);
