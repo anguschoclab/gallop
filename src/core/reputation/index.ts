@@ -26,6 +26,15 @@ export {
 } from "./reputationTypes";
 
 export {
+  priceWeight,
+  daysSincePlayerAcquired,
+  marketTradeReputation,
+  syndicationStakeReputation,
+  CHURN_WINDOW_DAYS,
+} from "./commerceReputation";
+export type { MarketTradeReputationArgs, SyndicationReputationArgs } from "./commerceReputation";
+
+export {
   canUpgradeFacility,
   canAccessSale,
   canReceiveAtLargeInvite,

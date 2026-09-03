@@ -20,6 +20,7 @@ import { isPlayerOwned } from "@/core/horse/ownership";
 import { createDefaultExchangeState } from "@/core/market/exchange";
 import { AUCTION_HOUSES } from "@/core/prestige/auctionHouses";
 import { buildHouseCatalogue, houseQuote } from "@/core/market/houseQuotes";
+import { sellerStandingBidFactor } from "@/core/market/exchangeAI";
 import { MarketPriceChart } from "./MarketPriceChart";
 
 export function AuctionHouseDesk() {
@@ -27,6 +28,7 @@ export function AuctionHouseDesk() {
   const cash = useGame((s: GameState) => s.cash);
   const horses = useGameWithShallow((s: GameState) => s.horses);
   const exchange = useGameWithShallow((s: GameState) => s.exchange ?? createDefaultExchangeState());
+  const reputationScore = useGame((s: GameState) => s.reputation?.score ?? 0);
   const sellHorseToAuctionHouse = useGame((s) => s.sellHorseToAuctionHouse);
   const buyHorseFromAuctionHouse = useGame((s) => s.buyHorseFromAuctionHouse);
 
@@ -44,10 +46,12 @@ export function AuctionHouseDesk() {
     () =>
       horseList
         .filter((h) => isPlayerOwned(h) && h.lifecycleStatus !== "deceased" && !h.consignedSaleId)
-        .map((h) => ({ horse: h, quote: houseQuote(h, horseList, house) }))
+        .map((h) => ({ horse: h, quote: houseQuote(h, horseList, house, reputationScore) }))
         .sort((a, b) => b.quote.sellPrice - a.quote.sellPrice),
-    [horseList, house],
+    [horseList, house, reputationScore],
   );
+
+  const standing = useMemo(() => sellerStandingBidFactor(reputationScore), [reputationScore]);
 
   const trades = useMemo(() => [...exchange.trades].reverse().slice(0, 25), [exchange.trades]);
 
@@ -82,6 +86,18 @@ export function AuctionHouseDesk() {
             <div className="text-[11px] font-bold uppercase tracking-widest text-cream">
               {h.shortName}
             </div>
+
+      {/* How your standing is read at the desk */}
+      <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-cream/50">
+        <span>Your standing</span>
+        <Badge variant="outline" className="text-[9px]">
+          {standing.tierLabel}
+        </Badge>
+        <span>
+          Net proceeds {standing.factor >= 1 ? "+" : ""}
+          {Math.round((standing.factor - 1) * 100)}% · buying and selling well lifts it
+        </span>
+      </div>
             <div className="text-[9px] font-mono uppercase tracking-wider text-cream/40">
               {h.country} · Prestige {h.prestige}
             </div>

@@ -21,7 +21,12 @@ export type ReputationSource =
   | "longevity"
   | "consistency"
   | "rivalry_win"
-  | "rivalry_loss";
+  | "rivalry_loss"
+  | "market_purchase"
+  | "market_sale"
+  | "trade_churn"
+  | "syndication_stake"
+  | "syndication_exit";
 
 /**
  * Individual reputation change event

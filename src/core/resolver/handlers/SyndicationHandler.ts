@@ -17,6 +17,8 @@ import { generateUUID } from "@/core/uuid";
 import { findMajorityOwner } from "@/core/breeding/devolutionUtils";
 import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId, asHorseId, asStableId } from "@/core/types/branded";
+import { syndicationStakeReputation } from "@/core/reputation/commerceReputation";
+import { applyReputationEvents } from "@/game/store/helpers/reputation";
 import type {
   SyndicateCreationImpact,
   ShareTransactionImpact,
@@ -107,6 +109,21 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
           stable.cash = (stable.cash || 0) + cashDelta;
         }
       }
+    }
+
+    // Underwriting (or selling down) a syndicate stake moves the player's
+    // standing in the industry.
+    if ((stableId as string) === "player") {
+      draft.reputation = applyReputationEvents(draft.reputation, [
+        syndicationStakeReputation({
+          direction: shares > 0 ? "buy" : "sell",
+          shares: Math.abs(shares),
+          totalShares: syndicate.totalShares,
+          pricePerShare,
+          syndicateName: syndicate.stallionName,
+          day: impact.day,
+        }),
+      ]);
     }
 
     // Record transaction with buyer/seller fields
