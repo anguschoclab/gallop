@@ -25,6 +25,7 @@ import {
   type AuctionHouse,
 } from "@/core/prestige/auctionHouses";
 import { EXCHANGE_BASE_COMMISSION } from "./exchange";
+import { sellerStandingBidFactor } from "./exchangeAI";
 
 export type HouseQuote = {
   house: AuctionHouse;
@@ -38,6 +39,10 @@ export type HouseQuote = {
   sellPrice: number;
   commissionRate: number;
   commission: number;
+  /** Multiplier the house applies to the player's net, from their standing. */
+  standingFactor: number;
+  /** Reputation tier label behind standingFactor. */
+  standingLabel: string;
 };
 
 /** How many lots a house has on its board on any given day. */
@@ -49,20 +54,30 @@ export const HOUSE_CATALOGUE_SIZE = 6;
  * @param horse - Horse being quoted
  * @param allHorses - World horses (valuation context)
  * @param house - Auction house doing the quoting
+ * @param playerReputation - Player reputation score (0-1000); better standing
+ *   earns a better net when selling through the house
  */
-export function houseQuote(horse: Horse, allHorses: Horse[], house: AuctionHouse): HouseQuote {
+export function houseQuote(
+  horse: Horse,
+  allHorses: Horse[],
+  house: AuctionHouse,
+  playerReputation = 0,
+): HouseQuote {
   const fairValue = Math.round(horseMarketValue(horse, allHorses));
   const hammerEstimate = Math.max(500, Math.round(fairValue * housePrestigeMultiplier(house)));
   const commissionRate = houseCommissionRate(EXCHANGE_BASE_COMMISSION, house);
   const commission = Math.round(hammerEstimate * commissionRate);
+  const standing = sellerStandingBidFactor(playerReputation);
   return {
     house,
     fairValue,
     hammerEstimate,
     buyPrice: hammerEstimate + commission,
-    sellPrice: hammerEstimate - commission,
+    sellPrice: Math.round((hammerEstimate - commission) * standing.factor),
     commissionRate,
     commission,
+    standingFactor: standing.factor,
+    standingLabel: standing.tierLabel,
   };
 }
 
@@ -72,14 +87,16 @@ export function houseQuote(horse: Horse, allHorses: Horse[], house: AuctionHouse
  * @param horse - Horse being quoted
  * @param allHorses - World horses (valuation context)
  * @param houses - Houses to quote (defaults to the full roster)
+ * @param playerReputation - Player reputation score (0-1000)
  */
 export function houseQuotes(
   horse: Horse,
   allHorses: Horse[],
   houses: AuctionHouse[] = AUCTION_HOUSES,
+  playerReputation = 0,
 ): HouseQuote[] {
   return houses
-    .map((house) => houseQuote(horse, allHorses, house))
+    .map((house) => houseQuote(horse, allHorses, house, playerReputation))
     .sort((a, b) => b.sellPrice - a.sellPrice);
 }
 

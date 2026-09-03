@@ -34,6 +34,12 @@ import {
   type ExchangeState,
   type ExchangeTrade,
 } from "@/core/market/exchange";
+import {
+  daysSincePlayerAcquired,
+  marketTradeReputation,
+} from "@/core/reputation/commerceReputation";
+import { horseMarketValue } from "@/core/horse/pricing";
+import { applyReputationEvents } from "../helpers/reputation";
 import type { StoreSet, StoreGet } from "../types";
 import type { ActionResult } from "../types";
 
@@ -65,6 +71,39 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
     bids: state.bids.filter((b) => b.horseId !== trade.horseId),
     trades: [...state.trades, trade],
   });
+
+  /**
+   * Reputation record after a market trade the player was part of.
+   *
+   * @param args.role - Which side the player was on
+   * @param args.horse - Horse traded
+   * @param args.price - Trade price
+   * @param args.counterpartyName - Other party's name
+   */
+  const reputationAfterTrade = (args: {
+    role: "buyer" | "seller";
+    horse: Horse;
+    price: number;
+    counterpartyName: string;
+  }) => {
+    const s = get();
+    const allHorses = Object.values(s.horses) as Horse[];
+    const daysOwned =
+      args.role === "seller"
+        ? daysSincePlayerAcquired(readExchange().trades, args.horse.id, s.day)
+        : undefined;
+    const event = marketTradeReputation({
+      role: args.role,
+      price: args.price,
+      fairValue: Math.round(horseMarketValue(args.horse, allHorses)),
+      horseName: args.horse.name,
+      horseId: args.horse.id,
+      counterpartyName: args.counterpartyName,
+      day: s.day,
+      daysOwned,
+    });
+    return applyReputationEvents(s.reputation, [event]);
+  };
 
   return {
     refreshExchange: () => {
@@ -222,7 +261,15 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
         initiatedBy: "bid",
       };
 
+      const reputation = reputationAfterTrade({
+        role: "seller",
+        horse,
+        price: bid.price,
+        counterpartyName: buyer.name,
+      });
+
       set({
+        reputation,
         cash: s.cash + proceeds,
         horses: {
           ...s.horses,
@@ -270,7 +317,15 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
         initiatedBy: "ask",
       };
 
+      const reputation = reputationAfterTrade({
+        role: "buyer",
+        horse,
+        price: ask.price,
+        counterpartyName: ask.sellerName,
+      });
+
       set({
+        reputation,
         cash: s.cash - ask.price,
         horses: {
           ...s.horses,
@@ -305,7 +360,7 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
       const house = getAuctionHouse(houseId);
       if (!house) return { ok: false, reason: "Auction house not found" };
 
-      const quote = houseQuote(horse, Object.values(s.horses) as Horse[], house);
+      const quote = houseQuote(horse, Object.values(s.horses) as Horse[], house, s.reputation?.score ?? 0);
       const exchange = readExchange();
       const trade: ExchangeTrade = {
         id: generateUUID(),
@@ -321,7 +376,15 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
         initiatedBy: "bid",
       };
 
+      const reputation = reputationAfterTrade({
+        role: "seller",
+        horse,
+        price: quote.hammerEstimate,
+        counterpartyName: house.name,
+      });
+
       set({
+        reputation,
         cash: s.cash + quote.sellPrice,
         horses: { ...s.horses, [horse.id]: { ...horse, ownership: makeUnowned() } },
         exchange: pushTrade(exchange, trade),
@@ -346,7 +409,7 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
       const house = getAuctionHouse(houseId);
       if (!house) return { ok: false, reason: "Auction house not found" };
 
-      const quote = houseQuote(horse, Object.values(s.horses) as Horse[], house);
+      const quote = houseQuote(horse, Object.values(s.horses) as Horse[], house, s.reputation?.score ?? 0);
       if (s.cash < quote.buyPrice) return { ok: false, reason: "Insufficient funds" };
 
       const sellerStableId = getStableId(horse);
@@ -369,7 +432,15 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
         initiatedBy: "ask",
       };
 
+      const reputation = reputationAfterTrade({
+        role: "buyer",
+        horse,
+        price: quote.buyPrice,
+        counterpartyName: house.name,
+      });
+
       set({
+        reputation,
         cash: s.cash - quote.buyPrice,
         horses: { ...s.horses, [horse.id]: { ...horse, ownership: makePlayerOwned() } },
         npcStables: seller
