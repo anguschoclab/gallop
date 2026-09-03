@@ -164,15 +164,15 @@ describe("syndicationAI - calculateSharePurchase", () => {
 
   it("aggressive NPC buys normally when takeover impossible", () => {
     // 60 total shares. Owner has 35, npc1 has 5. 35 > 30, no devolution possible.
-    // maxShares = 18, available = 13, affordable = 100, sharesToBuy = 13
-    // 25% of 13 = 3
+    // Aggressive stake cap is tuned up, so the buy sits between 1 share and
+    // whatever the remaining unheld shares allow.
     const stallion = makeStallion({ ownership: makePlayerOwned() });
     const syndicate = makeSyndicate({ player: 35, npc1: 5 }, 60, 10000);
     const stable = makeStable("npc1", "aggressive", 1000000);
 
     const result = calculateSharePurchase(stable, syndicate, stallion);
     expect(result).toBeGreaterThanOrEqual(1);
-    expect(result).toBeLessThanOrEqual(13);
+    expect(result).toBeLessThanOrEqual(20);
   });
 
   it("prestige NPC attempts takeover for elite stallion (3+ G1 wins)", () => {
@@ -235,9 +235,9 @@ describe("syndicationAI - calculateSharePurchase", () => {
 
   it("returns 0 when already at max ownership", () => {
     const stallion = makeStallion({ ownership: makePlayerOwned() });
-    // 40 shares, aggressive 30% cap × qualityStakeScale 1.15 (1 G1 win, score 3) = 13.
-    // npc1 holds 13 → availableShares 0 → skip_stake_cap.
-    const syndicate = makeSyndicate({ player: 10, npc1: 13 }, 40, 10000);
+    // 40 shares, tuned aggressive cap (30% × 1.6) × qualityStakeScale 1.15 = 22.
+    // npc1 holds 22 → availableShares 0 → skip_stake_cap.
+    const syndicate = makeSyndicate({ player: 10, npc1: 22 }, 40, 10000);
     const stable = makeStable("npc1", "aggressive", 1000000);
 
     const result = calculateSharePurchase(stable, syndicate, stallion);

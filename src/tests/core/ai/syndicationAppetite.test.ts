@@ -107,8 +107,8 @@ describe("syndicationAppetite", () => {
     expect(getSyndicationAppetite("aggressive").minG3Wins).toBe(0);
   });
 
-  it("matches base table when no tuning overrides are set", () => {
-    expect(getSyndicationAppetite("trader")).toEqual(getBaseSyndicationAppetite("trader"));
+  it("matches base table for personalities the tuning file leaves at 1×", () => {
+    expect(getSyndicationAppetite("breeder")).toEqual(getBaseSyndicationAppetite("breeder"));
   });
 
   it("maps personalities to a player-facing intent with metadata", () => {
@@ -121,7 +121,7 @@ describe("syndicationAppetite", () => {
 
 describe("syndication tuning layer", () => {
   it("applies personality multipliers", () => {
-    const base = getBaseSyndicationAppetite("conservative");
+    const base = getSyndicationAppetite("conservative");
     setSyndicationTuningOverrides({
       personalities: { conservative: { stakeCapMultiplier: 2, buyFractionMultiplier: 2 } },
     });
@@ -131,7 +131,7 @@ describe("syndication tuning layer", () => {
   });
 
   it("applies global multipliers on top of personality ones", () => {
-    const base = getBaseSyndicationAppetite("developer");
+    const base = getSyndicationAppetite("developer");
     setSyndicationTuningOverrides({
       global: { cashFractionMultiplier: 0.5 },
       personalities: { developer: { cashFractionMultiplier: 0.5 } },
