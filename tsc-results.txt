@@ -1,6 +1,12 @@
 # TypeScript Check Results
-# Generated: 2026-09-03T13:15:14.160Z
+# Generated: 2026-09-03T13:19:28.320Z
 # Command: bun x tsc --noEmit --pretty false
-# Errors: 0  Warnings: 0  Exit: 0
+# Errors: 1  Warnings: 0  Exit: 2
 
-No type errors or warnings.
+## Errors
+
+### src/game/store/initialization.ts (1)
+  117:55  TS2345  Argument of type 'WorldSizeStableConfig' is not assignable to parameter of type '{ elite: { count: number; reputationRange: [number, number]; }; mid: { count: number; reputationRange: [number, number]; }; budget: { count: number; reputationRange: [number, number]; }; secondary: { ...; }; filler: { ...; }; }'.
+
+## Unparsed output
+    Property 'secondary' is missing in type 'WorldSizeStableConfig' but required in type '{ elite: { count: number; reputationRange: [number, number]; }; mid: { count: number; reputationRange: [number, number]; }; budget: { count: number; reputationRange: [number, number]; }; secondary: { ...; }; filler: { ...; }; }'.
