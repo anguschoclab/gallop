@@ -26,12 +26,18 @@ import {
 } from "@/components/ui/context-menu";
 import { HorseScatterPlot } from "./HorseScatterPlot";
 import { InsightsCompareDialog } from "./InsightsCompareDialog";
+import { ScoutingThresholdControls } from "./ScoutingThresholdControls";
 import { useBookmarks } from "@/hooks/shared/useBookmarks";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 import type { Horse } from "@/core/horse/types";
 import { isNpcOwned, isPlayerOwned } from "@/core/horse/ownership";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
+import {
+  createDefaultScoutingThresholds,
+  matchesScoutingThresholds,
+  type ScoutingThresholds,
+} from "@/core/npc/scoutingThresholds";
 
 import {
   INSIGHT_METRICS,
@@ -40,7 +46,8 @@ import {
   type InsightMetricKey,
   type InsightRow,
 } from "@/core/horse/insightMetrics";
-import { BarChart3, Bookmark, Columns3, Copy, Eye, Filter, Search, X } from "lucide-react";
+import { BarChart3, Bookmark, Columns3, Copy, Eye, Filter, Search, SlidersHorizontal, X } from "lucide-react";
+
 
 type PoolKey = "npc" | "market" | "all" | "mine";
 
