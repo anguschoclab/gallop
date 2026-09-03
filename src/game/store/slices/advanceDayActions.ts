@@ -54,7 +54,16 @@ export function createAdvanceDayActions(
     } catch {
       // Assignment execution must never block day advancement.
     }
+
+    // Rival stables post fresh asks/bids and settle NPC-vs-NPC trades daily,
+    // whether or not the player has the Exchange open.
+    try {
+      (get() as StoreType).refreshExchange?.();
+    } catch {
+      // Exchange refresh must never block day advancement.
+    }
   };
+
 
 
   return {
