@@ -57,6 +57,9 @@ export function getAgeFromCategory(cat: AgeCategory, rng: Rng): number {
  * Calculate starting fame for an NPC horse.
  *
  * Calculates base fame based on stable tier, then adds age-based bonus.
+ * Starting fame is deliberately low so the world begins largely unscouted:
+ * only a handful of veteran elite runners clear the partial-visibility
+ * threshold, everyone else has to be scouted before their stats are readable.
  *
  * @param tier - Stable tier
  * @param age - Horse age
@@ -65,6 +68,7 @@ export function getAgeFromCategory(cat: AgeCategory, rng: Rng): number {
  */
 export function calculateStartingFame(tier: StableTier, age: number, rng: Rng): number {
   const base =
-    tier === "elite" ? rand(20, 40, rng) : tier === "mid" ? rand(10, 25, rng) : rand(0, 15, rng);
-  return Math.min(100, base + (age - 2) * 3);
+    tier === "elite" ? rand(10, 26, rng) : tier === "mid" ? rand(4, 14, rng) : rand(0, 8, rng);
+  return Math.min(100, base + Math.max(0, age - 2) * 2);
 }
+
