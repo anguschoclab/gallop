@@ -1,9 +1,14 @@
+import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SilkDot } from "@/components/SilkDot";
 import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
 import { TacticsAnalyzer } from "@/components/tactics/TacticsAnalyzer";
 import { buildPreShowField } from "@/core/race/preShowField";
+import { bestPerMileByHorse } from "@/core/race/bestPace";
+import { formatClockTime } from "@/core/common/formatting";
+import { useGameWithShallow } from "@/game/store";
+import type { GameState } from "@/game/types";
 import { Flag, Play } from "lucide-react";
 import type { TrackCondition } from "@/game/types";
 
@@ -30,6 +35,8 @@ interface RacePreShowProps {
  * The live simulation is gated until the player presses Start.
  */
 export function RacePreShow({ race, runners, runnerOdds, onStart }: RacePreShowProps) {
+  const allRaces = useGameWithShallow((s: GameState) => s.races ?? []);
+  const bestPace = useMemo(() => bestPerMileByHorse(allRaces), [allRaces]);
   const field = buildPreShowField(runners, runnerOdds);
   const gradeLabel = race.graded?.grade ? `${race.graded.grade} Stakes` : "Race";
   const ownedRunner = runners.find((r) => r.owned);
@@ -57,15 +64,16 @@ export function RacePreShow({ race, runners, runnerOdds, onStart }: RacePreShowP
 
         {/* The field, as a betting card */}
         <div className="border border-white/10 bg-black/20 rounded-lg overflow-hidden">
-          <div className="grid grid-cols-[40px_1fr_80px] gap-3 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground border-b border-white/10">
+          <div className="grid grid-cols-[40px_1fr_90px_80px] gap-3 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground border-b border-white/10">
             <span>Silk</span>
             <span>Runner</span>
+            <span className="text-right">Best / mi</span>
             <span className="text-right">M/L</span>
           </div>
           {field.map((r) => (
             <div
               key={r.horseId}
-              className="grid grid-cols-[40px_1fr_80px] gap-3 px-4 py-2.5 items-center border-b border-white/5 last:border-b-0"
+              className="grid grid-cols-[40px_1fr_90px_80px] gap-3 px-4 py-2.5 items-center border-b border-white/5 last:border-b-0"
             >
               <SilkDot color={r.silk} size="md" />
               <div className="flex items-center gap-2 min-w-0">
@@ -81,6 +89,21 @@ export function RacePreShow({ race, runners, runnerOdds, onStart }: RacePreShowP
                   </Badge>
                 )}
               </div>
+              {(() => {
+                const best = bestPace.get(r.horseId);
+                return (
+                  <span
+                    className="text-right font-mono tabular-nums text-cream-muted text-xs"
+                    title={
+                      best
+                        ? `Best per-mile pace: ${formatClockTime(best.perMile)} · ${formatClockTime(best.seconds)} over ${best.distance}m in ${best.raceName}`
+                        : "No recorded times yet"
+                    }
+                  >
+                    {best ? formatClockTime(best.perMile, 2, true) : "—"}
+                  </span>
+                );
+              })()}
               <span className="text-right font-mono text-cream tabular-nums">{r.oddsLabel}</span>
             </div>
           ))}
