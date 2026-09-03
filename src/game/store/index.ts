@@ -170,6 +170,9 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "worldSize" as keyof GameState,
   // Cash-pressure history snapshots (last 90 days per stable)
   "cashPressureHistory" as keyof GameState,
+  // Bloodstock exchange: open orders, trade tape and price history
+  "exchange" as keyof GameState,
+
 ];
 
 /**
