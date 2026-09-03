@@ -86,7 +86,7 @@ export const WORLD_SIZE_CONFIGS: Record<WorldSize, WorldSizeConfig> = {
         midReputationRange: [62, 78],
         budgetReputationRange: [42, 62],
       },
-      filler: { count: 100 },
+      filler: { count: 80 },
     },
     horseCounts: {
       elite: [30, 40],
