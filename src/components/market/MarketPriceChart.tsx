@@ -88,7 +88,7 @@ export function MarketPriceChart({ trades, day, windowDays = 30 }: MarketPriceCh
           <>
             <AreaTrend
               data={series.map((s) => ({ x: s.day, y: s.avgPrice }))}
-              color={up ? chartColors.success ?? chartColors.primary : chartColors.primary}
+              color={up ? chartColors.primary : chartColors.negative}
               height={180}
               yFormat={(n) => formatCurrency(n)}
               xFormat={(x) => `D${x}`}
@@ -98,8 +98,9 @@ export function MarketPriceChart({ trades, day, windowDays = 30 }: MarketPriceCh
                 Daily volume
               </div>
               <MiniBar
-                data={series.map((s) => ({ label: `D${s.day}`, value: s.volume }))}
-                height={40}
+                rows={series
+                  .slice(-8)
+                  .map((s) => ({ label: `Day ${s.day}`, value: s.volume }))}
               />
             </div>
           </>
