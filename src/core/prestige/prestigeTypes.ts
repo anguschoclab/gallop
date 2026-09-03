@@ -26,15 +26,24 @@ export const PRESTIGE_TIER_LABELS: Record<PrestigeTier, string> = {
 };
 
 /**
+ * Prestige tier boundaries in descending order. Each entry is the inclusive
+ * lower bound for its tier. The single source of truth for `getPrestigeTier`
+ * and the prestige meter ticks in the UI.
+ */
+export const PRESTIGE_TIER_BOUNDARIES: { tier: PrestigeTier; min: number }[] = [
+  { tier: "world", min: 90 },
+  { tier: "premier", min: 72 },
+  { tier: "national", min: 52 },
+  { tier: "regional", min: 30 },
+  { tier: "provincial", min: 0 },
+];
+
+/**
  * Bucket a 0-100 prestige score into a tier.
  * @param score
  */
 export function getPrestigeTier(score: number): PrestigeTier {
-  if (score >= 90) return "world";
-  if (score >= 72) return "premier";
-  if (score >= 52) return "national";
-  if (score >= 30) return "regional";
-  return "provincial";
+  return PRESTIGE_TIER_BOUNDARIES.find((b) => score >= b.min)?.tier ?? "provincial";
 }
 
 export function formatPrestigeTier(score: number): string {

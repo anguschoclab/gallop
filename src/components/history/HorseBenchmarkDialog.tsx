@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
 import { REAL_WORLD_RECORDS } from "@/data/realWorldRecords";
 import { pacePerMile } from "@/core/common/formatting";
+import { iterateRaceRuns } from "@/core/race/bestPace";
 import { useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 import type { Race } from "@/core/race/types";
@@ -25,22 +26,16 @@ interface HorseRun {
 
 /** Every resolved run this horse recorded, normalised to seconds per mile. */
 function runsForHorse(races: Race[], horseId: string): HorseRun[] {
-  const runs: HorseRun[] = [];
-  for (const race of races) {
-    if (!race?.result?.length || !(race.distance > 0)) continue;
-    const res = race.result.find((r) => r.horseId === horseId);
-    if (!res || !Number.isFinite(res.time) || res.time <= 0) continue;
-    const perMile = pacePerMile(res.time, race.distance);
-    if (!Number.isFinite(perMile)) continue;
-    runs.push({
-      seconds: res.time,
-      perMile,
-      distance: race.distance,
-      surface: race.surface,
-      raceName: race.name,
-    });
-  }
-  return runs.sort((a, b) => a.perMile - b.perMile);
+  return iterateRaceRuns(races)
+    .filter((r) => r.horseId === horseId)
+    .map((r) => ({
+      seconds: r.seconds,
+      perMile: r.perMile,
+      distance: r.distance,
+      surface: r.surface,
+      raceName: r.raceName,
+    }))
+    .sort((a, b) => a.perMile - b.perMile);
 }
 
 /**

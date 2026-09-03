@@ -86,6 +86,12 @@ export function AuctionHouseDesk() {
             <div className="text-[11px] font-bold uppercase tracking-widest text-cream">
               {h.shortName}
             </div>
+            <div className="text-[9px] font-mono uppercase tracking-wider text-cream/40">
+              {h.country} · Prestige {h.prestige}
+            </div>
+          </button>
+        ))}
+      </div>
 
       {/* How your standing is read at the desk */}
       <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-cream/50">
@@ -97,12 +103,6 @@ export function AuctionHouseDesk() {
           Net proceeds {standing.factor >= 1 ? "+" : ""}
           {Math.round((standing.factor - 1) * 100)}% · buying and selling well lifts it
         </span>
-      </div>
-            <div className="text-[9px] font-mono uppercase tracking-wider text-cream/40">
-              {h.country} · Prestige {h.prestige}
-            </div>
-          </button>
-        ))}
       </div>
 
       <Card className="bg-warning/5 border-warning/20 rounded-none">

@@ -19,8 +19,7 @@ import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import { getPrestigeTier, type PrestigeTier } from "@/core/prestige/prestigeTypes";
 import { resolveStableYard, type StableYard } from "@/core/stable/stableYard";
-import type { RosterEntry } from "@/core/stable/stableRoster";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { toRosterEntry, type RosterEntry } from "@/core/stable/stableRoster";
 
 /** Keys that historically identified the player inside syndicate shareholder maps. */
 const PLAYER_SYNDICATE_KEYS = ["player", "__player__"];
@@ -144,17 +143,7 @@ export function buildStablePortfolios(args: BuildArgs): StablePortfolio[] {
     const h = ensurePhenotypeResolved(raw);
     const value = horseMarketValue(h, allForPedigree);
     bucket.horses.push(h);
-    bucket.roster.push({
-      id: h.id,
-      name: h.name,
-      age: h.age,
-      gender: h.gender,
-      rating: Math.round(calculateOverallRating(h)),
-      value: Math.round(value),
-      starts: h.careerStarts ?? 0,
-      wins: h.careerWins ?? 0,
-      retired: h.lifecycleStatus === "retired",
-    });
+    bucket.roster.push(toRosterEntry(raw, allForPedigree));
 
     bucket.value += value;
     if (!bucket.top || value > bucket.top.value) bucket.top = { name: h.name, value };

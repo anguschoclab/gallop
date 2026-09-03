@@ -9,6 +9,7 @@
  */
 
 import type { StablePersonality } from "@/game/types";
+import { getStableConfig, DEFAULT_WORLD_SIZE } from "./worldSizeConfig";
 
 /**
  * Personality configurations affecting AI behavior
@@ -195,23 +196,9 @@ export const PERSONALITY_CONFIG: Record<
 };
 
 /**
- * Configuration for stable generation
- * Adjust these to change how many named stables spawn per tier
- * Updated to accommodate expanded stallion roster (~522 stallions) and larger stable pools
+ * Configuration for stable generation. Derived from the large world-size
+ * config so there is a single source of truth for stable counts and
+ * reputation ranges. Adjust the values in `worldSizeConfig.ts` to change
+ * how many named stables spawn per tier.
  */
-export const STABLE_CONFIG = {
-  elite: { count: 12, reputationRange: [90, 98] as [number, number] },
-  mid: { count: 26, reputationRange: [70, 86] as [number, number] },
-  budget: { count: 10, reputationRange: [50, 65] as [number, number] },
-  /**
-   * Regional named yards drawn from SECONDARY_POOL. Split across mid/budget
-   * tiers so the world has many credible trading partners, not a few giants.
-   */
-  secondary: {
-    count: 32,
-    midShare: 0.4,
-    midReputationRange: [62, 78] as [number, number],
-    budgetReputationRange: [42, 62] as [number, number],
-  },
-  filler: { count: 80 },
-};
+export const STABLE_CONFIG = getStableConfig(DEFAULT_WORLD_SIZE);

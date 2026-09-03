@@ -105,6 +105,49 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
     return applyReputationEvents(s.reputation, [event]);
   };
 
+  /**
+   * Apply a completed trade to the store: record the trade on the tape, update
+   * the player's cash, transfer horse ownership, adjust NPC cash, update
+   * reputation, and append a log entry. Shared by all four trade actions.
+   */
+  const settleTrade = (args: {
+    trade: ExchangeTrade;
+    horse: Horse;
+    newOwnership: Horse["ownership"];
+    playerCashDelta: number;
+    reputationRole: "buyer" | "seller";
+    reputationPrice: number;
+    counterpartyName: string;
+    logText: string;
+    npcCashDeltas?: { stableId: string; delta: number }[];
+  }) => {
+    const s = get();
+    const exchange = readExchange();
+    const reputation = reputationAfterTrade({
+      role: args.reputationRole,
+      horse: args.horse,
+      price: args.reputationPrice,
+      counterpartyName: args.counterpartyName,
+    });
+    const npcDeltas = new Map(args.npcCashDeltas?.map((d) => [d.stableId, d.delta]));
+    set({
+      reputation,
+      cash: s.cash + args.playerCashDelta,
+      horses: {
+        ...s.horses,
+        [args.horse.id]: { ...args.horse, ownership: args.newOwnership },
+      },
+      npcStables:
+        npcDeltas.size > 0
+          ? (s.npcStables ?? []).map((st) =>
+              npcDeltas.has(st.id) ? { ...st, cash: st.cash + (npcDeltas.get(st.id) ?? 0) } : st,
+            )
+          : s.npcStables,
+      exchange: pushTrade(exchange, args.trade),
+      log: [...s.log, { day: s.day, text: args.logText }],
+    });
+  };
+
   return {
     refreshExchange: () => {
       const s = get();
@@ -244,15 +287,13 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
       if (!buyer) return { ok: false, reason: "Buyer is no longer active" };
       if (buyer.cash < bid.price) return { ok: false, reason: "Buyer can no longer fund the bid" };
 
-      const commission = exchangeCommission(bid.price);
       const proceeds = netProceeds(bid.price);
-
       const trade: ExchangeTrade = {
         id: generateUUID(),
         horseId: horse.id,
         horseName: horse.name,
         price: bid.price,
-        commission,
+        commission: exchangeCommission(bid.price),
         buyerId: buyer.id,
         buyerName: buyer.name,
         sellerId: PLAYER_ID,
@@ -261,31 +302,16 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
         initiatedBy: "bid",
       };
 
-      const reputation = reputationAfterTrade({
-        role: "seller",
+      settleTrade({
+        trade,
         horse,
-        price: bid.price,
+        newOwnership: makeNpcOwned(asNpcStableId(buyer.id)),
+        playerCashDelta: proceeds,
+        reputationRole: "seller",
+        reputationPrice: bid.price,
         counterpartyName: buyer.name,
-      });
-
-      set({
-        reputation,
-        cash: s.cash + proceeds,
-        horses: {
-          ...s.horses,
-          [horse.id]: { ...horse, ownership: makeNpcOwned(asNpcStableId(buyer.id)) },
-        },
-        npcStables: (s.npcStables ?? []).map((st) =>
-          st.id === buyer.id ? { ...st, cash: st.cash - bid.price } : st,
-        ),
-        exchange: pushTrade(exchange, trade),
-        log: [
-          ...s.log,
-          {
-            day: s.day,
-            text: `Sold ${horse.name} to ${buyer.name} on the exchange for ${bid.price} (net ${proceeds}).`,
-          },
-        ],
+        logText: `Sold ${horse.name} to ${buyer.name} on the exchange for ${bid.price} (net ${proceeds}).`,
+        npcCashDeltas: [{ stableId: buyer.id, delta: -bid.price }],
       });
       return { ok: true };
     },
@@ -302,7 +328,6 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
 
       const seller = (s.npcStables ?? []).find((st) => st.id === ask.sellerId);
       const proceeds = netProceeds(ask.price);
-
       const trade: ExchangeTrade = {
         id: generateUUID(),
         horseId: horse.id,
@@ -317,33 +342,16 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
         initiatedBy: "ask",
       };
 
-      const reputation = reputationAfterTrade({
-        role: "buyer",
+      settleTrade({
+        trade,
         horse,
-        price: ask.price,
+        newOwnership: makePlayerOwned(),
+        playerCashDelta: -ask.price,
+        reputationRole: "buyer",
+        reputationPrice: ask.price,
         counterpartyName: ask.sellerName,
-      });
-
-      set({
-        reputation,
-        cash: s.cash - ask.price,
-        horses: {
-          ...s.horses,
-          [horse.id]: { ...horse, ownership: makePlayerOwned() },
-        },
-        npcStables: seller
-          ? (s.npcStables ?? []).map((st) =>
-              st.id === seller.id ? { ...st, cash: st.cash + proceeds } : st,
-            )
-          : s.npcStables,
-        exchange: pushTrade(exchange, trade),
-        log: [
-          ...s.log,
-          {
-            day: s.day,
-            text: `Bought ${horse.name} from ${ask.sellerName} on the exchange for ${ask.price}.`,
-          },
-        ],
+        logText: `Bought ${horse.name} from ${ask.sellerName} on the exchange for ${ask.price}.`,
+        npcCashDeltas: seller ? [{ stableId: seller.id, delta: proceeds }] : undefined,
       });
       return { ok: true };
     },
@@ -361,7 +369,6 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
       if (!house) return { ok: false, reason: "Auction house not found" };
 
       const quote = houseQuote(horse, Object.values(s.horses) as Horse[], house, s.reputation?.score ?? 0);
-      const exchange = readExchange();
       const trade: ExchangeTrade = {
         id: generateUUID(),
         horseId: horse.id,
@@ -376,25 +383,15 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
         initiatedBy: "bid",
       };
 
-      const reputation = reputationAfterTrade({
-        role: "seller",
+      settleTrade({
+        trade,
         horse,
-        price: quote.hammerEstimate,
+        newOwnership: makeUnowned(),
+        playerCashDelta: quote.sellPrice,
+        reputationRole: "seller",
+        reputationPrice: quote.hammerEstimate,
         counterpartyName: house.name,
-      });
-
-      set({
-        reputation,
-        cash: s.cash + quote.sellPrice,
-        horses: { ...s.horses, [horse.id]: { ...horse, ownership: makeUnowned() } },
-        exchange: pushTrade(exchange, trade),
-        log: [
-          ...s.log,
-          {
-            day: s.day,
-            text: `${horse.name} sold through ${house.shortName} for ${quote.hammerEstimate} (net ${quote.sellPrice}).`,
-          },
-        ],
+        logText: `${horse.name} sold through ${house.shortName} for ${quote.hammerEstimate} (net ${quote.sellPrice}).`,
       });
       return { ok: true };
     },
@@ -417,7 +414,6 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
         ? (s.npcStables ?? []).find((st) => st.id === sellerStableId)
         : undefined;
 
-      const exchange = readExchange();
       const trade: ExchangeTrade = {
         id: generateUUID(),
         horseId: horse.id,
@@ -432,30 +428,16 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
         initiatedBy: "ask",
       };
 
-      const reputation = reputationAfterTrade({
-        role: "buyer",
+      settleTrade({
+        trade,
         horse,
-        price: quote.buyPrice,
+        newOwnership: makePlayerOwned(),
+        playerCashDelta: -quote.buyPrice,
+        reputationRole: "buyer",
+        reputationPrice: quote.buyPrice,
         counterpartyName: house.name,
-      });
-
-      set({
-        reputation,
-        cash: s.cash - quote.buyPrice,
-        horses: { ...s.horses, [horse.id]: { ...horse, ownership: makePlayerOwned() } },
-        npcStables: seller
-          ? (s.npcStables ?? []).map((st) =>
-              st.id === seller.id ? { ...st, cash: st.cash + quote.sellPrice } : st,
-            )
-          : s.npcStables,
-        exchange: pushTrade(exchange, trade),
-        log: [
-          ...s.log,
-          {
-            day: s.day,
-            text: `Bought ${horse.name} at ${house.shortName} for ${quote.buyPrice} (hammer ${quote.hammerEstimate}).`,
-          },
-        ],
+        logText: `Bought ${horse.name} at ${house.shortName} for ${quote.buyPrice} (hammer ${quote.hammerEstimate}).`,
+        npcCashDeltas: seller ? [{ stableId: seller.id, delta: quote.sellPrice }] : undefined,
       });
       return { ok: true };
     },

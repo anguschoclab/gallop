@@ -21,6 +21,7 @@ import { buildStableRosters, rosterSummary } from "@/core/stable/stableRoster";
 import { formatYard, resolveStableYard } from "@/core/stable/stableYard";
 import { HorseOrderBook } from "@/components/market/HorseOrderBook";
 import { TradeTape } from "@/components/market/TradeTape";
+import { StatCard } from "@/components/common/StatCard";
 
 export function ExchangePanel() {
   const day = useGame((s: GameState) => s.day);
@@ -60,7 +61,10 @@ export function ExchangePanel() {
     }
     return map;
   }, [npcStables, rosters]);
-  const books = useMemo(() => buildOrderBooks(exchange, horseList, day), [exchange, horseList, day]);
+  const books = useMemo(
+    () => buildOrderBooks(exchange, horseList, day),
+    [exchange, horseList, day],
+  );
   const depth = useMemo(() => buildMarketDepth(books, exchange, day), [books, exchange, day]);
   const series = useMemo(() => tradeSeries(exchange, day), [exchange, day]);
 
@@ -107,18 +111,22 @@ export function ExchangePanel() {
   return (
     <div className="space-y-6">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Price Index" value={formatCurrency(depth.priceIndex)} sub={`${books.length} horses quoted`} />
-        <Stat
+        <StatCard
+          label="Price Index"
+          value={formatCurrency(depth.priceIndex)}
+          sub={`${books.length} horses quoted`}
+        />
+        <StatCard
           label="30d Volume"
           value={`${depth.volume30d} trades`}
           sub={`${formatCurrency(depth.turnover30d)} turnover`}
         />
-        <Stat
+        <StatCard
           label="Open Orders"
           value={`${depth.openAsks} asks / ${depth.openBids} bids`}
           sub={`Median spread ${formatCurrency(depth.medianSpread)}`}
         />
-        <Stat
+        <StatCard
           label="Commission"
           value={`${(exchangeCommissionRate() * 100).toFixed(2)}%`}
           sub="Charged on sale proceeds"
@@ -133,7 +141,12 @@ export function ExchangePanel() {
           </h3>
           <div className="grid gap-4 md:grid-cols-2">
             <DepthColumn title="Bid depth" levels={depth.bidLevels} max={maxDepth} tone="success" />
-            <DepthColumn title="Ask depth" levels={depth.askLevels} max={maxDepth} tone="destructive" />
+            <DepthColumn
+              title="Ask depth"
+              levels={depth.askLevels}
+              max={maxDepth}
+              tone="destructive"
+            />
           </div>
           <div className="space-y-1 border-t border-white/5 pt-3">
             <h4 className="text-[10px] font-black uppercase tracking-widest text-cream-muted">
@@ -200,8 +213,8 @@ export function ExchangePanel() {
             </Button>
             {suggestion && (
               <span className="text-[11px] text-cream-muted">
-                Fair {formatCurrency(suggestion.fairValue)} · band{" "}
-                {formatCurrency(suggestion.low)}–{formatCurrency(suggestion.high)}
+                Fair {formatCurrency(suggestion.fairValue)} · band {formatCurrency(suggestion.low)}–
+                {formatCurrency(suggestion.high)}
               </span>
             )}
           </div>
@@ -223,7 +236,8 @@ export function ExchangePanel() {
                     </span>
                     <span className="flex items-center gap-3 text-cream-muted">
                       <span>
-                        Ask <span className="tabular-nums text-cream">{formatCurrency(a.price)}</span>
+                        Ask{" "}
+                        <span className="tabular-nums text-cream">{formatCurrency(a.price)}</span>
                       </span>
                       <span>
                         Best bid{" "}
@@ -280,14 +294,18 @@ export function ExchangePanel() {
                           ? ` · best bid ${formatCurrency(book.bestBid)}`
                           : ""}
                       </span>
-                      {sellerInfo.get(a.sellerId) && (
-                        <span
-                          className="block truncate text-[10px] text-cream-muted/70"
-                          title={`${sellerInfo.get(a.sellerId)?.boxes} boxes · ${sellerInfo.get(a.sellerId)?.count} horses owned`}
-                        >
-                          {sellerInfo.get(a.sellerId)?.yard} · {sellerInfo.get(a.sellerId)?.roster}
-                        </span>
-                      )}
+                      {(() => {
+                        const info = sellerInfo.get(a.sellerId);
+                        if (!info) return null;
+                        return (
+                          <span
+                            className="block truncate text-[10px] text-cream-muted/70"
+                            title={`${info.boxes} boxes · ${info.count} horses owned`}
+                          >
+                            {info.yard} · {info.roster}
+                          </span>
+                        );
+                      })()}
                     </span>
                     <span className="flex items-center gap-2">
                       <Badge
@@ -302,7 +320,9 @@ export function ExchangePanel() {
                       <Button
                         size="sm"
                         disabled={cash < a.price}
-                        onClick={() => run(buyFromExchange(a.id), `Bought ${horse?.name ?? "horse"}`)}
+                        onClick={() =>
+                          run(buyFromExchange(a.id), `Bought ${horse?.name ?? "horse"}`)
+                        }
                       >
                         Buy
                       </Button>
@@ -352,18 +372,6 @@ export function ExchangePanel() {
         </Card>
       )}
     </div>
-  );
-}
-
-function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {
-  return (
-    <Card className="border-white/5 bg-slate-900/40">
-      <CardContent className="p-4">
-        <p className="text-[10px] font-black uppercase tracking-widest text-cream-muted">{label}</p>
-        <p className="text-lg font-bold tabular-nums text-cream">{value}</p>
-        <p className="text-[10px] text-cream-muted mt-0.5">{sub}</p>
-      </CardContent>
-    </Card>
   );
 }
 

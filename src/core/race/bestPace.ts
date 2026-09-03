@@ -21,6 +21,46 @@ export interface BestPace {
   day: number;
 }
 
+/** A single resolved run, flattened out of a race result. */
+export type RaceRun = {
+  horseId: string;
+  seconds: number;
+  perMile: number;
+  distance: number;
+  surface: Race["surface"];
+  raceName: string;
+  day: number;
+};
+
+/**
+ * Flatten all resolved runs across races into a single list, normalised to
+ * seconds per mile. Skips races with no results, zero distance, or invalid
+ * times. Shared by `bestPerMileByHorse` and the benchmark dialog's
+ * `runsForHorse` so both iterate race results identically.
+ */
+export function iterateRaceRuns(races: Race[]): RaceRun[] {
+  const runs: RaceRun[] = [];
+  for (const race of races) {
+    if (!race.result || race.result.length === 0) continue;
+    if (!(race.distance > 0)) continue;
+    for (const res of race.result) {
+      if (!Number.isFinite(res.time) || res.time <= 0) continue;
+      const perMile = pacePerMile(res.time, race.distance);
+      if (!Number.isFinite(perMile)) continue;
+      runs.push({
+        horseId: res.horseId,
+        seconds: res.time,
+        perMile,
+        distance: race.distance,
+        surface: race.surface,
+        raceName: race.name,
+        day: race.day,
+      });
+    }
+  }
+  return runs;
+}
+
 /**
  * Best (lowest) per-mile pace recorded by each horse across resolved races.
  *
@@ -29,23 +69,16 @@ export interface BestPace {
  */
 export function bestPerMileByHorse(races: Race[]): Map<string, BestPace> {
   const best = new Map<string, BestPace>();
-  for (const race of races) {
-    if (!race.result || race.result.length === 0) continue;
-    if (!(race.distance > 0)) continue;
-    for (const res of race.result) {
-      if (!Number.isFinite(res.time) || res.time <= 0) continue;
-      const perMile = pacePerMile(res.time, race.distance);
-      if (!Number.isFinite(perMile)) continue;
-      const current = best.get(res.horseId);
-      if (!current || perMile < current.perMile) {
-        best.set(res.horseId, {
-          seconds: res.time,
-          perMile,
-          distance: race.distance,
-          raceName: race.name,
-          day: race.day,
-        });
-      }
+  for (const run of iterateRaceRuns(races)) {
+    const current = best.get(run.horseId);
+    if (!current || run.perMile < current.perMile) {
+      best.set(run.horseId, {
+        seconds: run.seconds,
+        perMile: run.perMile,
+        distance: run.distance,
+        raceName: run.raceName,
+        day: run.day,
+      });
     }
   }
   return best;

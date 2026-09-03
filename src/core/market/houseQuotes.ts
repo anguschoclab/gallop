@@ -26,6 +26,7 @@ import {
 } from "@/core/prestige/auctionHouses";
 import { EXCHANGE_BASE_COMMISSION } from "./exchange";
 import { sellerStandingBidFactor } from "./exchangeAI";
+import { dailyTradeSeries } from "./tradeSeries";
 
 export type HouseQuote = {
   house: AuctionHouse;
@@ -195,14 +196,5 @@ export function housePriceSeries(
   day: number,
   windowDays = 30,
 ): { day: number; avgPrice: number; volume: number; turnover: number }[] {
-  const out: { day: number; avgPrice: number; volume: number; turnover: number }[] = [];
-  let carry = 0;
-  for (let d = Math.max(1, day - windowDays + 1); d <= day; d++) {
-    const dayTrades = trades.filter((t) => t.day === d);
-    const turnover = dayTrades.reduce((sum, t) => sum + t.price, 0);
-    const avg = dayTrades.length > 0 ? Math.round(turnover / dayTrades.length) : carry;
-    carry = avg;
-    out.push({ day: d, avgPrice: avg, volume: dayTrades.length, turnover });
-  }
-  return out;
+  return dailyTradeSeries(trades, day, windowDays, { carryAvg: true });
 }

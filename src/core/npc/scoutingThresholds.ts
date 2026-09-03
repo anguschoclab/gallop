@@ -305,3 +305,22 @@ export function planScoutingRun(
     skippedForBudget: matched.length - targets.length,
   };
 }
+
+/**
+ * Build a map of horse id to the day of its most recent scout report.
+ * Shared by the scouting slice (skip already-scouted horses) and the Insights
+ * panel (stale-report filtering).
+ *
+ * @param reports - Scout reports to scan
+ * @returns Map of horse id to the latest report day
+ */
+export function lastScoutDayByHorse(
+  reports: { horseId: string; day: number }[],
+): Map<string, number> {
+  const map = new Map<string, number>();
+  for (const r of reports) {
+    const prev = map.get(r.horseId);
+    if (prev === undefined || r.day > prev) map.set(r.horseId, r.day);
+  }
+  return map;
+}

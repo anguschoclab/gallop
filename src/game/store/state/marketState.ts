@@ -55,4 +55,3 @@ export function createDefaultMarketState(): MarketState {
     exchange: createDefaultExchangeState(),
   };
 }
-

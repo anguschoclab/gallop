@@ -56,15 +56,10 @@ describe("WORLD_SIZE_CONFIGS", () => {
     expect(total).toBeGreaterThanOrEqual(25);
   });
 
-  it("Large config matches current STABLE_CONFIG values exactly", () => {
-    const large = WORLD_SIZE_CONFIGS.large;
-    expect(large.stables.elite.count).toBe(STABLE_CONFIG.elite.count);
-    expect(large.stables.elite.reputationRange).toEqual(STABLE_CONFIG.elite.reputationRange);
-    expect(large.stables.mid.count).toBe(STABLE_CONFIG.mid.count);
-    expect(large.stables.mid.reputationRange).toEqual(STABLE_CONFIG.mid.reputationRange);
-    expect(large.stables.budget.count).toBe(STABLE_CONFIG.budget.count);
-    expect(large.stables.budget.reputationRange).toEqual(STABLE_CONFIG.budget.reputationRange);
-    expect(large.stables.filler.count).toBe(STABLE_CONFIG.filler.count);
+  it("STABLE_CONFIG is derived from the large world-size config (reference equality)", () => {
+    // After M3, STABLE_CONFIG = getStableConfig(DEFAULT_WORLD_SIZE).
+    // This test confirms the derivation rather than field-by-field drift.
+    expect(STABLE_CONFIG).toBe(WORLD_SIZE_CONFIGS.large.stables);
   });
 
   it("all elite/mid/budget counts are <= pool sizes (18/34/10)", () => {

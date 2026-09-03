@@ -10,6 +10,7 @@ import { SyndicateMarket } from "@/components/market/SyndicateMarket";
 import { BloodstockGrid } from "@/components/market/BloodstockGrid";
 import { Store, ChevronRight, TrendingUp, Zap, Target, ArrowLeftRight, Gavel } from "lucide-react";
 import { ExchangePanel } from "@/components/market/ExchangePanel";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AuctionHouseDesk } from "@/components/market/AuctionHouseDesk";
 
 type MarketTab = "houses" | "bloodstock" | "exchange" | "syndicate";
@@ -172,5 +173,3 @@ function MarketPage() {
     </div>
   );
 }
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";

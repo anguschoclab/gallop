@@ -19,14 +19,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#1f4e79", secondary: "#f2c14e" },
     description: "Limestone-country yard with a knack for tough middle-distance sorts.",
     country: "IRE",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Kellermann Gestüt",
@@ -35,14 +27,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#2e2e38", secondary: "#c0392b" },
     description: "Disciplined German operation breeding for stamina and soundness.",
     country: "GER",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Brackenhill Stud",
@@ -51,14 +35,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#37613c", secondary: "#e8e2d0" },
     description: "Yorkshire hill yard famed for hardy staying types.",
     country: "GBR",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Marisol Racing",
@@ -67,14 +43,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#7b2d43", secondary: "#f7e7ce" },
     description: "Chantilly-based string with a fondness for soft-ground milers.",
     country: "FRA",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Coolagh Bloodstock",
@@ -83,14 +51,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#0b6e4f", secondary: "#ffd166" },
     description: "Trading yard that pinhooks yearlings across two hemispheres.",
     country: "IRE",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Ridgeway Farms",
@@ -99,14 +59,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#14213d", secondary: "#fca311" },
     description: "Kentucky family farm built on patient two-year-old education.",
     country: "USA",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Sable Creek Racing",
@@ -115,14 +67,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#3d348b", secondary: "#f7b801" },
     description: "Dirt-oriented barn chasing allowance-to-stakes progressions.",
     country: "USA",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Nakagawa Racing",
@@ -131,14 +75,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#8d0801", secondary: "#ffffff" },
     description: "Ritto operation with precise, data-led training regimes.",
     country: "JPN",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Higashiyama Farm",
@@ -147,14 +83,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#1b3a4b", secondary: "#f2e9e4" },
     description: "Hokkaido nursery producing tough turf performers.",
     country: "JPN",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Barrowfield Lodge",
@@ -163,14 +91,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#4a5859", secondary: "#f4d35e" },
     description: "Traditional lodge that never sells a horse cheaply.",
     country: "IRE",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Whitmore & Sons",
@@ -179,14 +99,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#5c374c", secondary: "#dcd6f7" },
     description: "Old-school Newmarket family firm with deep owner ties.",
     country: "GBR",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Silvergate Stables",
@@ -195,14 +107,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#2a4494", secondary: "#c7d3ff" },
     description: "Ambitious newcomer buying aggressively at the breeze-ups.",
     country: "GBR",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Alto Pampas",
@@ -211,14 +115,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#0f5257", secondary: "#f6ae2d" },
     description: "Argentine yard exporting hardy dirt milers.",
     country: "ARG",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Estancia del Sol",
@@ -227,14 +123,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#b23a48", secondary: "#fcb9b2" },
     description: "Sun-baked estancia with a strong broodmare band.",
     country: "ARG",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Karoo Thoroughbreds",
@@ -243,14 +131,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#6a4c93", secondary: "#ffca3a" },
     description: "Cape operation known for sprinting speed.",
     country: "RSA",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Yarra Bend Racing",
@@ -259,14 +139,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#1982c4", secondary: "#8ac926" },
     description: "Victorian yard aimed squarely at spring carnivals.",
     country: "AUS",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Wattle Ridge Farm",
@@ -275,14 +147,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#43aa8b", secondary: "#f9c74f" },
     description: "Country property developing staying types on the cheap.",
     country: "AUS",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Southern Star Lodge",
@@ -291,14 +155,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#264653", secondary: "#e9c46a" },
     description: "New Zealand lodge selling tried horses across the Tasman.",
     country: "NZL",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Falconridge Stable",
@@ -307,14 +163,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#3a015c", secondary: "#ffd6ff" },
     description: "Provincial French yard punching above its prize-money weight.",
     country: "FRA",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Montclair Racing",
@@ -323,14 +171,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#22223b", secondary: "#c9ada7" },
     description: "Deauville-based string with a taste for black type.",
     country: "FRA",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Dunmore Bay Stud",
@@ -339,14 +179,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#006d77", secondary: "#ffddd2" },
     description: "Coastal stud combining nursery and racing arms.",
     country: "IRE",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Cedarcroft Farm",
@@ -355,14 +187,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#432818", secondary: "#ffe6a7" },
     description: "Maryland farm running a steady claiming operation.",
     country: "USA",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Blue Ash Racing",
@@ -371,14 +195,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#264a99", secondary: "#a2d2ff" },
     description: "Midwestern barn that flips horses quickly for profit.",
     country: "USA",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Northgate Equine",
@@ -387,14 +203,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#1d3557", secondary: "#a8dadc" },
     description: "Northern yard specialising in all-weather handicappers.",
     country: "GBR",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Verdant Hill Stables",
@@ -403,14 +211,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#386641", secondary: "#a7c957" },
     description: "Patient outfit that rarely runs a horse before it is ready.",
     country: "GBR",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Rivermeade Racing",
@@ -419,14 +219,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#3c096c", secondary: "#e0aaff" },
     description: "Buys stores and sells on once they show ability.",
     country: "IRE",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Steinbach Rennstall",
@@ -435,14 +227,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#354f52", secondary: "#cad2c5" },
     description: "Cologne stable with a strong classic-trial record.",
     country: "GER",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Villa Ferrante",
@@ -451,14 +235,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#780000", secondary: "#fdf0d5" },
     description: "Italian yard with a long Group-race tradition.",
     country: "ITA",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Costa Bianca",
@@ -467,14 +243,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#457b9d", secondary: "#f1faee" },
     description: "Coastal Italian operation focused on sprint handicaps.",
     country: "ITA",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Kalmar Stuteri",
@@ -483,14 +251,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#0353a4", secondary: "#ffd60a" },
     description: "Scandinavian stud thriving on winter dirt racing.",
     country: "SWE",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Fjordlys Racing",
@@ -499,14 +259,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#1b4965", secondary: "#bee9e8" },
     description: "Small Nordic string with excellent horse welfare standards.",
     country: "NOR",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Al Rukban Stables",
@@ -515,14 +267,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#5f0f40", secondary: "#fb8b24" },
     description: "Gulf operation with deep pockets and quick trigger fingers.",
     country: "UAE",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Desert Wind Racing",
@@ -531,14 +275,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#0f4c5c", secondary: "#e36414" },
     description: "Dubai carnival specialists who buy proven form.",
     country: "UAE",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Maple Ridge Farm",
@@ -547,14 +283,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#9a031e", secondary: "#fff1e6" },
     description: "Ontario farm producing durable synthetic-track types.",
     country: "CAN",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Prairie Gold Racing",
@@ -563,14 +291,6 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#5f7470", secondary: "#f5cb5c" },
     description: "Modest western barn with a strong claiming eye.",
     country: "CAN",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
   {
     name: "Hollowfield Yard",
@@ -579,13 +299,5 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
     colors: { primary: "#6b705c", secondary: "#ffe8d6" },
     description: "Rural yard that quietly turns out consistent winners.",
     country: "GBR",
-    staff: {
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-      trainer: null,
-    },
-    outposts: [],
   },
 ];

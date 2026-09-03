@@ -14,6 +14,8 @@ import {
   type PortfolioSortKey,
 } from "@/core/stable/portfolio";
 import { getPrestigeTier } from "@/core/prestige/prestigeTypes";
+import { StatCard } from "@/components/common/StatCard";
+import { PillToggleGroup } from "@/components/common/PillToggleGroup";
 import { PortfolioTable } from "@/components/portfolio/PortfolioTable";
 
 const SORT_KEYS = [
@@ -100,13 +102,15 @@ function PortfolioPage() {
     });
   }, [rows, q, tier, prestige]);
 
-  const sorted = useMemo(() => sortPortfolios(filtered, sortKey, sortDir), [filtered, sortKey, sortDir]);
+  const sorted = useMemo(
+    () => sortPortfolios(filtered, sortKey, sortDir),
+    [filtered, sortKey, sortDir],
+  );
   const totals = useMemo(() => portfolioTotals(filtered), [filtered]);
   const playerRow = rows.find((r) => r.isPlayer);
-  const playerRank =
-    playerRow
-      ? sortPortfolios(rows, "netWorth", "desc").findIndex((r) => r.isPlayer) + 1
-      : 0;
+  const playerRank = playerRow
+    ? sortPortfolios(rows, "netWorth", "desc").findIndex((r) => r.isPlayer) + 1
+    : 0;
 
   function setSearch(patch: Record<string, unknown>) {
     navigate({ search: (prev) => ({ ...prev, ...patch }) });
@@ -136,10 +140,30 @@ function PortfolioPage() {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <SummaryCard label="Your Net Worth" value={formatCurrency(playerRow?.netWorth ?? 0)} sub={`Rank #${playerRank} of ${rows.length}`} />
-        <SummaryCard label="League Cash" value={formatCurrency(totals.cash)} sub={`${filtered.length} stables shown`} />
-        <SummaryCard label="League Bloodstock" value={formatCurrency(totals.horseValue)} sub={`${totals.horseCount} horses`} />
-        <SummaryCard label="Syndicate Capital" value={formatCurrency(totals.syndicateValue)} sub="Shares held at current price" />
+        <StatCard
+          label="Your Net Worth"
+          value={formatCurrency(playerRow?.netWorth ?? 0)}
+          sub={`Rank #${playerRank} of ${rows.length}`}
+          size="xl"
+        />
+        <StatCard
+          label="League Cash"
+          value={formatCurrency(totals.cash)}
+          sub={`${filtered.length} stables shown`}
+          size="xl"
+        />
+        <StatCard
+          label="League Bloodstock"
+          value={formatCurrency(totals.horseValue)}
+          sub={`${totals.horseCount} horses`}
+          size="xl"
+        />
+        <StatCard
+          label="Syndicate Capital"
+          value={formatCurrency(totals.syndicateValue)}
+          sub="Shares held at current price"
+          size="xl"
+        />
       </div>
 
       <Card className="border-white/5 bg-slate-900/40">
@@ -154,15 +178,15 @@ function PortfolioPage() {
               className="pl-8"
             />
           </div>
-          <FilterGroup
+          <PillToggleGroup
             label="Tier"
-            options={TIERS}
+            options={TIERS.map((t) => ({ value: t, label: t }))}
             value={tier}
             onChange={(v) => setSearch({ tier: v })}
           />
-          <FilterGroup
+          <PillToggleGroup
             label="Prestige"
-            options={PRESTIGE_FILTERS}
+            options={PRESTIGE_FILTERS.map((p) => ({ value: p, label: p }))}
             value={prestige}
             onChange={(v) => setSearch({ prestige: v })}
           />
@@ -170,55 +194,6 @@ function PortfolioPage() {
       </Card>
 
       <PortfolioTable rows={sorted} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
-    </div>
-  );
-}
-
-function SummaryCard({ label, value, sub }: { label: string; value: string; sub: string }) {
-  return (
-    <Card className="border-white/5 bg-slate-900/40">
-      <CardContent className="p-4">
-        <p className="text-[10px] font-black uppercase tracking-widest text-cream-muted">{label}</p>
-        <p className="text-xl font-bold tabular-nums text-cream">{value}</p>
-        <p className="text-[10px] text-cream-muted mt-0.5">{sub}</p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function FilterGroup<T extends string>({
-  label,
-  options,
-  value,
-  onChange,
-}: {
-  label: string;
-  options: readonly T[];
-  value: T;
-  onChange: (v: T) => void;
-}) {
-  return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-[10px] font-black uppercase tracking-widest text-cream-muted">
-        {label}
-      </span>
-      <div className="flex flex-wrap gap-1">
-        {options.map((o) => (
-          <button
-            key={o}
-            type="button"
-            onClick={() => onChange(o)}
-            aria-pressed={value === o}
-            className={`rounded px-2 py-1 text-[10px] font-black uppercase tracking-widest transition-colors ${
-              value === o
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted/50 text-cream-muted hover:text-cream"
-            }`}
-          >
-            {o}
-          </button>
-        ))}
-      </div>
     </div>
   );
 }

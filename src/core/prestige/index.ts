@@ -7,6 +7,7 @@
 export type { PrestigeTier } from "./prestigeTypes";
 export {
   PRESTIGE_TIER_LABELS,
+  PRESTIGE_TIER_BOUNDARIES,
   getPrestigeTier,
   formatPrestigeTier,
   prestigeMultiplier,

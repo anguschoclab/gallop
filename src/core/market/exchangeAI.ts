@@ -23,14 +23,12 @@ import type { Horse } from "@/core/horse/types";
 import type { Stable, StablePersonality } from "@/core/stable/types";
 import { createRng } from "@/core/common/rng";
 import { evaluateCashPressure, type CashPressure } from "@/core/stable/cashPressure";
-import { getReputationTier, formatReputationTier } from "@/core/reputation/reputationTypes";
-import { SELLER_STANDING_BID_FACTOR_BY_TIER } from "@/constants/privateSaleConstants";
 import {
   getStableReputationTierMeta,
+  sellerStandingFactor,
   stableStandingAskReaction,
   stableStandingBidReaction,
   type StableReputationTier,
-  type StandingReaction,
 } from "@/core/stable/stableReputationTier";
 import type { ExchangeAsk, ExchangeBid, ExchangeState, ExchangeTrade } from "./exchange";
 
@@ -133,17 +131,16 @@ function prestigePull(reputation: number, strength = 1): number {
  * Multiplier NPCs apply to bids on the player's horses based on the player's
  * standing (reputation score 0-1000). Unknown sellers get lowballed; famous
  * sellers command respect. Returns the factor and a display label.
+ *
+ * Delegates to the canonical `sellerStandingFactor` in stableReputationTier.ts.
  * @param reputationScore - Player reputation score (0-1000)
  */
 export function sellerStandingBidFactor(reputationScore: number): {
   factor: number;
   tierLabel: string;
 } {
-  const tier = getReputationTier(reputationScore);
-  return {
-    factor: SELLER_STANDING_BID_FACTOR_BY_TIER[tier] ?? 1,
-    tierLabel: formatReputationTier(tier),
-  };
+  const { factor, tierLabel } = sellerStandingFactor(reputationScore);
+  return { factor, tierLabel };
 }
 
 /**
@@ -215,18 +212,6 @@ export function npcAskPrice(
 }
 
 /**
- * The ask-side standing reaction for a stance, for display alongside a listing.
- * @param stance - Seller stance
- * @param buyerReputation - Player reputation score 0-1000
- */
-export function askStandingReaction(
-  stance: SellerStance,
-  buyerReputation: number,
-): StandingReaction {
-  return stableStandingAskReaction(stance.reputation, buyerReputation);
-}
-
-/**
  * Bid an NPC stable is willing to post for a horse, with the reasoning that
  * produced it. Cash-pressured stables bid less (or not at all); reputable
  * stables stretch a little further.
@@ -284,11 +269,12 @@ export function npcBidQuote(
     rationale += ` · ${standing.stableTierLabel} yard, standing barely matters here`;
   }
 
+  const bidderTierMeta = getStableReputationTierMeta(stable.reputation);
   return {
     price,
     rationale,
-    bidderTier: getStableReputationTierMeta(stable.reputation).label,
-    standingSensitivity: getStableReputationTierMeta(stable.reputation).standingSensitivity,
+    bidderTier: bidderTierMeta.label,
+    standingSensitivity: bidderTierMeta.standingSensitivity,
     intent: pressure.pressure >= 0.5 ? "raising cash" : (PERSONALITY_INTENT[stable.personality] ?? "opportunistic"),
     conviction: Math.max(0, Math.min(1, (price / Math.max(1, fairValue)) * (1 - pressure.pressure * 0.4))),
   };

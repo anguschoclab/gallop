@@ -129,3 +129,23 @@ describe("planScoutingRun", () => {
     expect(plan.targets).toEqual(["a"]);
   });
 });
+
+describe("lastScoutDayByHorse", () => {
+  it("returns an empty map for no reports", async () => {
+    const { lastScoutDayByHorse } = await import("@/core/npc/scoutingThresholds");
+    expect(lastScoutDayByHorse([]).size).toBe(0);
+  });
+
+  it("keeps the latest report day per horse", async () => {
+    const { lastScoutDayByHorse } = await import("@/core/npc/scoutingThresholds");
+    const reports = [
+      { horseId: "h1", day: 5 } as any,
+      { horseId: "h1", day: 20 } as any,
+      { horseId: "h1", day: 10 } as any,
+      { horseId: "h2", day: 15 } as any,
+    ];
+    const map = lastScoutDayByHorse(reports);
+    expect(map.get("h1")).toBe(20);
+    expect(map.get("h2")).toBe(15);
+  });
+});

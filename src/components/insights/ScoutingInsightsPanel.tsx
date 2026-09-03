@@ -35,6 +35,7 @@ import { isNpcOwned, isPlayerOwned } from "@/core/horse/ownership";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import {
   createDefaultScoutingThresholds,
+  lastScoutDayByHorse,
   matchesScoutingThresholds,
   type ScoutingThresholds,
 } from "@/core/npc/scoutingThresholds";
@@ -118,14 +119,7 @@ export function ScoutingInsightsPanel() {
   }, [allHorses, pool, stableNames]);
 
   /** Most recent report day per horse, for the "stale report" threshold. */
-  const lastScoutDay = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const r of scoutReports) {
-      const prev = map.get(r.horseId);
-      if (prev === undefined || r.day > prev) map.set(r.horseId, r.day);
-    }
-    return map;
-  }, [scoutReports]);
+  const lastScoutDay = useMemo(() => lastScoutDayByHorse(scoutReports), [scoutReports]);
 
   const rows = useMemo<InsightRow[]>(() => {
     if (!thresholdsOn) return allRows;

@@ -12,6 +12,7 @@ import { calculateScoutCost } from "@/core/npc/scouting";
 import {
   createScoutingAssignment,
   createDefaultScoutingThresholds,
+  lastScoutDayByHorse,
   planScoutingRun,
   type ScoutingAssignment,
   type ScoutingCandidate,
@@ -148,11 +149,7 @@ export function createScoutingSlice(
 
       const allHorses = Object.values(s.horses) as Horse[];
       const stableById = new Map((s.npcStables ?? []).map((st: Stable) => [st.id, st]));
-      const lastReportDay = new Map<string, number>();
-      for (const r of s.scoutReports ?? []) {
-        const prev = lastReportDay.get(r.horseId);
-        if (prev === undefined || r.day > prev) lastReportDay.set(r.horseId, r.day);
-      }
+      const lastReportDay = lastScoutDayByHorse(s.scoutReports ?? []);
 
       const candidates: ScoutingCandidate[] = [];
       for (const raw of allHorses) {

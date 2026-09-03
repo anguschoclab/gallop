@@ -130,6 +130,27 @@ export function stableTierMeta(stable: Pick<Stable, "reputation">): StableReputa
   return getStableReputationTierMeta(stable.reputation);
 }
 
+/**
+ * The flat, stable-agnostic factor NPCs apply to bids on the player's horses,
+ * based solely on the player's reputation tier. Unknown sellers get lowballed;
+ * legendary ones command a premium. This is the canonical source —
+ * `exchangeAI.sellerStandingBidFactor` delegates here.
+ *
+ * @param reputationScore - Player reputation score (0-1000)
+ */
+export function sellerStandingFactor(reputationScore: number): {
+  factor: number;
+  tier: ReputationTier;
+  tierLabel: string;
+} {
+  const tier = getReputationTier(reputationScore);
+  return {
+    factor: SELLER_STANDING_BID_FACTOR_BY_TIER[tier] ?? 1,
+    tier,
+    tierLabel: formatReputationTier(tier),
+  };
+}
+
 export type StandingReaction = {
   /** Price multiplier to apply. */
   factor: number;
@@ -152,6 +173,20 @@ function pct(factor: number): number {
 }
 
 /**
+ * Shared setup for both bid and ask standing reactions: resolves the stable
+ * tier metadata, player reputation tier, the flat bid-table factor, and the
+ * player's tier label. The two reaction functions then apply their own
+ * factor formula and note text on top of this.
+ */
+function standingReactionSetup(stableReputation: number, playerReputationScore: number) {
+  const meta = getStableReputationTierMeta(stableReputation);
+  const playerTier = getReputationTier(playerReputationScore);
+  const baseFactor = SELLER_STANDING_BID_FACTOR_BY_TIER[playerTier] ?? 1;
+  const playerTierLabel = formatReputationTier(playerTier);
+  return { meta, playerTier, baseFactor, playerTierLabel };
+}
+
+/**
  * How much an NPC stable adjusts a *bid* on the player's horse, given the
  * player's standing and the stable's own tier.
  *
@@ -162,11 +197,11 @@ export function stableStandingBidReaction(
   stableReputation: number,
   playerReputationScore: number,
 ): StandingReaction {
-  const meta = getStableReputationTierMeta(stableReputation);
-  const playerTier = getReputationTier(playerReputationScore);
-  const baseFactor = SELLER_STANDING_BID_FACTOR_BY_TIER[playerTier] ?? 1;
+  const { meta, playerTier, baseFactor, playerTierLabel } = standingReactionSetup(
+    stableReputation,
+    playerReputationScore,
+  );
   const factor = 1 + (baseFactor - 1) * meta.standingSensitivity;
-  const playerTierLabel = formatReputationTier(playerTier);
 
   const note =
     factor < 0.999
@@ -200,14 +235,14 @@ export function stableStandingAskReaction(
   stableReputation: number,
   playerReputationScore: number,
 ): StandingReaction {
-  const meta = getStableReputationTierMeta(stableReputation);
-  const playerTier = getReputationTier(playerReputationScore);
-  const baseBid = SELLER_STANDING_BID_FACTOR_BY_TIER[playerTier] ?? 1;
+  const { meta, playerTier, baseFactor: baseBid, playerTierLabel } = standingReactionSetup(
+    stableReputation,
+    playerReputationScore,
+  );
   // Invert: standing below "national" (factor < 1) means the buyer is quoted up.
   const rawSwing = (1 - baseBid) * meta.askSensitivity;
   const swing = Math.max(-meta.maxAskPremium, Math.min(meta.maxAskPremium, rawSwing));
   const factor = 1 + swing;
-  const playerTierLabel = formatReputationTier(playerTier);
 
   const note =
     factor > 1.001

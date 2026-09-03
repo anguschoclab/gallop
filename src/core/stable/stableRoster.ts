@@ -38,6 +38,29 @@ function ownerKey(horse: Horse): string | null {
 }
 
 /**
+ * Build a single roster entry from a horse, using the full horses array for
+ * market-value context. Shared by `buildStableRosters` and the portfolio
+ * derivation so both produce identical `RosterEntry` shapes.
+ *
+ * @param raw - Horse to describe (phenotype resolved internally)
+ * @param allHorses - All horses in the world (for market-value context)
+ */
+export function toRosterEntry(raw: Horse, allHorses: Horse[]): RosterEntry {
+  const h = ensurePhenotypeResolved(raw);
+  return {
+    id: h.id,
+    name: h.name,
+    age: h.age,
+    gender: h.gender,
+    rating: Math.round(calculateOverallRating(h)),
+    value: Math.round(horseMarketValue(h, allHorses)),
+    starts: h.careerStarts ?? 0,
+    wins: h.careerWins ?? 0,
+    retired: h.lifecycleStatus === "retired",
+  };
+}
+
+/**
  * Build rosters for every stable keyed by stable id ("player" for the player).
  *
  * @param horses - All horses in the world
@@ -50,18 +73,7 @@ export function buildStableRosters(horses: Horse[]): Map<string, RosterEntry[]> 
   for (const raw of live) {
     const key = ownerKey(raw);
     if (!key) continue;
-    const h = ensurePhenotypeResolved(raw);
-    const entry: RosterEntry = {
-      id: h.id,
-      name: h.name,
-      age: h.age,
-      gender: h.gender,
-      rating: Math.round(calculateOverallRating(h)),
-      value: Math.round(horseMarketValue(h, horses)),
-      starts: h.careerStarts ?? 0,
-      wins: h.careerWins ?? 0,
-      retired: h.lifecycleStatus === "retired",
-    };
+    const entry = toRosterEntry(raw, horses);
     const list = rosters.get(key);
     if (list) list.push(entry);
     else rosters.set(key, [entry]);

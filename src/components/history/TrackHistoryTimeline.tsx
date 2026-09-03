@@ -3,6 +3,7 @@ import { History, Timer, Trophy } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buildTrackTimeline } from "@/core/history/almanacInsights";
+import { PillToggleGroup } from "@/components/common/PillToggleGroup";
 import type { SeasonRecord, TrackRecord } from "@/core/history/historyTypes";
 
 export function TrackHistoryTimeline({
@@ -21,41 +22,22 @@ export function TrackHistoryTimeline({
   }, [records]);
 
   const events = useMemo(
-    () => buildTrackTimeline(records, seasons, trackId === "all" ? undefined : trackId).slice(0, 120),
+    () =>
+      buildTrackTimeline(records, seasons, trackId === "all" ? undefined : trackId).slice(0, 120),
     [records, seasons, trackId],
   );
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap gap-1.5">
-        <button
-          type="button"
-          onClick={() => setTrackId("all")}
-          aria-pressed={trackId === "all"}
-          className={`rounded px-2.5 py-1 text-[10px] font-black uppercase tracking-widest transition-colors ${
-            trackId === "all"
-              ? "bg-primary text-primary-foreground"
-              : "bg-muted/50 text-cream-muted hover:text-cream"
-          }`}
-        >
-          All tracks
-        </button>
-        {tracks.map(([id, name]) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => setTrackId(id)}
-            aria-pressed={trackId === id}
-            className={`rounded px-2.5 py-1 text-[10px] font-black uppercase tracking-widest transition-colors ${
-              trackId === id
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted/50 text-cream-muted hover:text-cream"
-            }`}
-          >
-            {name}
-          </button>
-        ))}
-      </div>
+      <PillToggleGroup
+        options={[
+          { value: "all", label: "All tracks" },
+          ...tracks.map(([id, name]) => ({ value: id, label: name })),
+        ]}
+        value={trackId}
+        onChange={setTrackId}
+        ariaLabel="Track filter"
+      />
 
       {events.length === 0 ? (
         <Card className="border-white/5 bg-slate-900/40">

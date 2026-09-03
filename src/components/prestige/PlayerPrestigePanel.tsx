@@ -15,17 +15,16 @@ import type { GameState } from "@/game/types";
 import {
   playerPrestigeStanding,
   PRESTIGE_TIER_LABELS,
+  PRESTIGE_TIER_BOUNDARIES,
   type PrestigeLadderEntry,
 } from "@/core/prestige";
 import { cn } from "@/lib/cn";
 
-/** Tier band boundaries used to draw ticks on the meter. */
-const TIER_MARKS: { at: number; label: string }[] = [
-  { at: 30, label: "Regional" },
-  { at: 52, label: "National" },
-  { at: 72, label: "Premier" },
-  { at: 90, label: "World" },
-];
+/** Tier band boundaries used to draw ticks on the meter (ascending, excluding provincial at 0). */
+const TIER_MARKS: { at: number; label: string }[] = [...PRESTIGE_TIER_BOUNDARIES]
+  .filter((b) => b.min > 0)
+  .sort((a, b) => a.min - b.min)
+  .map((b) => ({ at: b.min, label: PRESTIGE_TIER_LABELS[b.tier] }));
 
 function NeighbourRow({ entry, direction }: { entry?: PrestigeLadderEntry; direction: "above" | "below" }) {
   if (!entry) return null;

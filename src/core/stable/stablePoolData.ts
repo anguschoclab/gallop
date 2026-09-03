@@ -11,7 +11,9 @@
 
 import type { Stable } from "@/game/types";
 
-// Base stable info without generated fields
+// Base stable info without generated fields.
+// `staff` and `outposts` are optional because generateStableFromTemplate
+// always overwrites them with fresh empty values.
 export type StablePoolEntry = Omit<
   Stable,
   | "id"
@@ -23,7 +25,12 @@ export type StablePoolEntry = Omit<
   | "personality"
   | "preferredDistance"
   | "preferredSurface"
->;
+  | "staff"
+  | "outposts"
+> & {
+  staff?: Stable["staff"];
+  outposts?: Stable["outposts"];
+};
 
 // Re-export pool arrays for backward compatibility
 export { ELITE_POOL } from "./eliteStablePool";

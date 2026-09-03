@@ -67,15 +67,12 @@ export function buildTrackMilestones(
   const out: TrackMilestones[] = [];
   for (const [trackId, list] of byTrack) {
     const trackName = list[0]?.trackName ?? trackId;
-    const holders = new Map<string, { horseId: string; horseName: string; count: number }>();
+    const holders = tallyRecordHolders(list);
     let fastest: TrackRecord | undefined;
     let latest: TrackRecord | undefined;
     let earliest: TrackRecord | undefined;
 
     for (const r of list) {
-      const prev = holders.get(r.horseId);
-      if (prev) prev.count += 1;
-      else holders.set(r.horseId, { horseId: r.horseId, horseName: r.horseName, count: 1 });
       if (!fastest || recordSpeed(r) > recordSpeed(fastest)) fastest = r;
       if (!latest || r.day > latest.day) latest = r;
       if (!earliest || r.day < earliest.day) earliest = r;
@@ -131,12 +128,7 @@ export function buildDecadeLeaders(records: TrackRecord[], topN = 5): DecadeLead
 
   return Array.from(byDecade.entries())
     .map(([decade, list]) => {
-      const holders = new Map<string, { horseId: string; horseName: string; count: number }>();
-      for (const r of list) {
-        const prev = holders.get(r.horseId);
-        if (prev) prev.count += 1;
-        else holders.set(r.horseId, { horseId: r.horseId, horseName: r.horseName, count: 1 });
-      }
+      const holders = tallyRecordHolders(list);
       return {
         decade,
         label: decadeLabel(decade),
@@ -148,6 +140,22 @@ export function buildDecadeLeaders(records: TrackRecord[], topN = 5): DecadeLead
       };
     })
     .sort((a, b) => b.decade - a.decade);
+}
+
+/**
+ * Tally how many records each horse holds. Shared by `buildTrackMilestones`
+ * (multi-record holders) and `buildDecadeLeaders` (prolific holders).
+ */
+function tallyRecordHolders(
+  records: TrackRecord[],
+): Map<string, { horseId: string; horseName: string; count: number }> {
+  const holders = new Map<string, { horseId: string; horseName: string; count: number }>();
+  for (const r of records) {
+    const prev = holders.get(r.horseId);
+    if (prev) prev.count += 1;
+    else holders.set(r.horseId, { horseId: r.horseId, horseName: r.horseName, count: 1 });
+  }
+  return holders;
 }
 
 export type TimelineEvent = {

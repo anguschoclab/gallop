@@ -95,7 +95,7 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "npcStables",
   "npcAIManager",
   "scoutReports",
-  "scoutingAssignments" as keyof GameState,
+  "scoutingAssignments",
 
   "auctions",
   "jockeys",
@@ -173,7 +173,7 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   // Cash-pressure history snapshots (last 90 days per stable)
   "cashPressureHistory" as keyof GameState,
   // Bloodstock exchange: open orders, trade tape and price history
-  "exchange" as keyof GameState,
+  "exchange",
 
 ];
 

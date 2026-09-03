@@ -22,6 +22,7 @@ import { createRng } from "@/core/common/rng";
 import { prestigeMultiplier } from "@/core/prestige/prestigeTypes";
 import { npcAskPrice, npcBidQuote, sellerStance, type ExchangeIntent } from "./exchangeAI";
 import { stableStandingAskReaction } from "@/core/stable/stableReputationTier";
+import { dailyTradeSeries } from "./tradeSeries";
 
 /** Base commission rate charged by the exchange on the sale proceeds. */
 export const EXCHANGE_BASE_COMMISSION = 0.04;
@@ -404,18 +405,7 @@ export function tradeSeries(
   day: number,
   windowDays = 30,
 ): { day: number; volume: number; turnover: number; avgPrice: number }[] {
-  const out: { day: number; volume: number; turnover: number; avgPrice: number }[] = [];
-  for (let d = Math.max(1, day - windowDays + 1); d <= day; d++) {
-    const trades = state.trades.filter((t) => t.day === d);
-    const turnover = trades.reduce((sum, t) => sum + t.price, 0);
-    out.push({
-      day: d,
-      volume: trades.length,
-      turnover,
-      avgPrice: trades.length > 0 ? Math.round(turnover / trades.length) : 0,
-    });
-  }
-  return out;
+  return dailyTradeSeries(state.trades, day, windowDays);
 }
 
 /** Remove expired orders. */
