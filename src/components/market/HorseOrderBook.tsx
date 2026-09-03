@@ -81,7 +81,17 @@ export function HorseOrderBook({
                   style={{ width: `${(a.price / maxSize) * 100}%` }}
                   aria-hidden
                 />
-                <span className="relative truncate text-cream-muted">{a.sellerName}</span>
+                <span
+                  className="relative min-w-0 truncate text-cream-muted"
+                  title={a.standingNote ?? undefined}
+                >
+                  {a.sellerName}
+                  {a.sellerTier && (
+                    <span className="ml-1 text-[9px] uppercase tracking-wide text-gold/60">
+                      {a.sellerTier}
+                    </span>
+                  )}
+                </span>
                 <span className="relative flex items-center gap-2">
                   <span className="tabular-nums text-cream">{formatCurrency(a.price)}</span>
                   {a.sellerId === "player" ? (
@@ -123,13 +133,18 @@ export function HorseOrderBook({
                 />
                 <span
                   className="relative min-w-0 truncate text-cream-muted"
-                  title={`${b.rationale}${b.intent ? ` · ${b.intent}` : ""}${
+                  title={`${b.rationale}${b.bidderTier ? ` · ${b.bidderTier} yard` : ""}${b.intent ? ` · ${b.intent}` : ""}${
                     b.conviction !== undefined
                       ? ` · conviction ${Math.round(b.conviction * 100)}%`
                       : ""
                   }`}
                 >
                   {b.bidderName}
+                  {b.bidderTier && (
+                    <span className="ml-1 text-[9px] uppercase tracking-wide text-gold/60">
+                      {b.bidderTier}
+                    </span>
+                  )}
                   {b.intent && (
                     <span className="ml-1 text-[9px] uppercase tracking-wide text-cream-muted/70">
                       {b.intent}
