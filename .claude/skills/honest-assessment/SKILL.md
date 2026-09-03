@@ -99,7 +99,7 @@ Order improvements by what actually matters, not by what's fun:
   prior fixes (or new breakage) move the priorities.
 - **Trusting the README/tests/types** — they describe intent, not current truth.
 
-## Worked example (abbreviated, real)
+## Worked example (abbreviated, from a different project — illustrative only)
 
 > **What's better:** the Command Center is now legible and honest — real derived
 > market position, no fabricated "SECTOR ALPHA-1" chrome. Credit where due.
