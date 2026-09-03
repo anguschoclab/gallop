@@ -176,7 +176,7 @@ export function PortfolioTable({
                       {r.roster.slice(0, 12).map((h) => (
                         <Link
                           key={h.id}
-                          to="/horse/$horseId"
+                          to="/stable/$horseId"
                           params={{ horseId: h.id }}
                           className="flex items-center justify-between gap-2 rounded border border-white/5 bg-slate-900/60 px-2 py-1.5 text-xs transition-colors hover:border-primary/40"
                         >
