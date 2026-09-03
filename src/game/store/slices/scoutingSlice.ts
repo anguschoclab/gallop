@@ -9,11 +9,21 @@
 
 import type { Horse, ScoutReport, Stable } from "@/game/types";
 import { calculateScoutCost } from "@/core/npc/scouting";
+import {
+  createScoutingAssignment,
+  createDefaultScoutingThresholds,
+  planScoutingRun,
+  type ScoutingAssignment,
+  type ScoutingCandidate,
+  type ScoutingThresholds,
+} from "@/core/npc/scoutingThresholds";
+import { buildInsightRow } from "@/core/horse/insightMetrics";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { generateUUID } from "@/core/uuid";
 import { formatCurrency } from "@/core/common/formatting";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { isPlayerOwned, isNpcOwned } from "@/core/horse/ownership";
 import { getStableId } from "@/core/horse/ownership";
 
 export type ScoutingSlice = {
@@ -29,7 +39,19 @@ export type ScoutingSlice = {
   };
   /** Sets the collection of active scout reports */
   setScoutReports: (reports: ScoutReport[]) => void;
+  /** Creates a standing scouting assignment from a threshold set */
+  addScoutingAssignment: (name: string, thresholds?: ScoutingThresholds) => ScoutingAssignment;
+  /** Patches an existing assignment */
+  updateScoutingAssignment: (id: string, patch: Partial<ScoutingAssignment>) => void;
+  /** Deletes an assignment */
+  removeScoutingAssignment: (id: string) => void;
+  /**
+   * Runs every enabled assignment for the current day, dispatching scouts
+   * within each assignment's daily budget and per-day cap.
+   */
+  runScoutingAssignments: () => { dispatched: number; spent: number };
 };
+
 
 /**
  * Create the scouting state slice with horse evaluation actions.
