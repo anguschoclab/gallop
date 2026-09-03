@@ -15,6 +15,7 @@ import type { Horse } from "@/core/horse/types";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import { horseMarketValue } from "@/core/horse/pricing";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
+import { calculateOverallRating } from "@/core/horse/stats";
 
 export type RosterEntry = {
   id: string;
@@ -55,7 +56,7 @@ export function buildStableRosters(horses: Horse[]): Map<string, RosterEntry[]> 
       name: h.name,
       age: h.age,
       gender: h.gender,
-      rating: Math.round(h.rating ?? 0),
+      rating: Math.round(calculateOverallRating(h)),
       value: Math.round(horseMarketValue(h, horses)),
       starts: h.careerStarts ?? 0,
       wins: h.careerWins ?? 0,
