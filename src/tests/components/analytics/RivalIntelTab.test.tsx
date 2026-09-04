@@ -31,7 +31,9 @@ vi.mock("@/game/store", () => ({
             friction: -45,
             winsAgainstPlayer: 3,
             regionalPrestige: { "North Region": 80 },
-            strategicDirectives: [{ type: "expansion" as const, priority: 1, weight: 0.8 }],
+            strategicDirectives: [
+              { id: "d1", priority: "high" as const, type: "acquire_stallion" },
+            ],
             npcRelationships: {
               s2: {
                 trust: 30,
@@ -46,8 +48,8 @@ vi.mock("@/game/store", () => ({
               dramaticPotential: 0.7,
             },
             worldAssessment: {
-              playerStrength: 0.6,
-              topThreats: [{ stableId: "s2", threatLevel: 0.8 }],
+              playerDominance: 0.6,
+
               opportunities: [{ type: "auction", value: 50000 }],
             },
             financialDistress: {
@@ -129,7 +131,7 @@ describe("RivalIntelTab", () => {
   it("displays strategic directives for NPC stables", () => {
     render(<RivalIntelTab />);
     expect(screen.getAllByText(/Strategic Directives/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/expansion/i)).toBeDefined();
+    expect(screen.getByText(/acquire_stallion/i)).toBeDefined();
   });
 
   it("displays NPC relationships section with trust heatmap", () => {
@@ -142,6 +144,6 @@ describe("RivalIntelTab", () => {
   it("displays world assessment section", () => {
     render(<RivalIntelTab />);
     expect(screen.getByText(/World Assessment/i)).toBeDefined();
-    expect(screen.getByText(/player strength/i)).toBeDefined();
+    expect(screen.getByText(/player dominance/i)).toBeDefined();
   });
 });
