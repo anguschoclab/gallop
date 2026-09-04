@@ -1,0 +1,3 @@
+## 2025-03-04 - Test object instantiation factories string mutation
+**Learning:** Utilities like `createTestHorse` and `createTestStable` automatically prefix their assigned `id` values with `test-horse-` and `test-stable-`, respectively. A naive `.toBe(stable.id)` assertion comparing IDs between injected and actual game state will fail if one uses the raw string instead of the object property.
+**Action:** When evaluating expected values derived from factories, rely on the returned object's `.id` property (e.g. `expect(result.id).toBe(horse.id)`) rather than assuming the original `id` string passed during instantiation remains untransformed.
