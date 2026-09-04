@@ -141,7 +141,7 @@ export function generateNpcIntents(
         const directiveNews = generateDirectiveChangeNews(stable, oldDirectives, directives, day);
         if (directiveNews) {
           if (!aiManager.pendingNewsItems) aiManager.pendingNewsItems = [];
-          aiManager.pendingNewsItems.push(directiveNews);
+          aiManager.pendingNewsItems = [...aiManager.pendingNewsItems, directiveNews];
         }
 
         const budget = allocateBudget(stable, directives);

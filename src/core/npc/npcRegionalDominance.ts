@@ -151,16 +151,25 @@ export function processRegionalDominance(
             if (currentKingId === "player") {
               stableAI.winsAgainstPlayer++;
               if (stableAI.winsAgainstPlayer >= RIVALRY_CONSTANTS.DOMINANCE.UNSEAT_WIN_STREAK) {
-                updatedAiManager.regionalKings[region] = winningStableId;
+                updatedAiManager.regionalKings = {
+                  ...updatedAiManager.regionalKings,
+                  [region]: winningStableId,
+                };
                 stableAI.winsAgainstPlayer = 0;
 
                 const news = generateRegionLostNews(region, stable, currentDay, rng);
                 if (news) newsItems.push(news);
               }
             } else {
-              updatedAiManager.regionalKings[region] = winningStableId;
+              updatedAiManager.regionalKings = {
+                ...updatedAiManager.regionalKings,
+                [region]: winningStableId,
+              };
             }
-            stableAI.regionalPrestige[region] = (stableAI.regionalPrestige[region] || 0) + 1;
+            stableAI.regionalPrestige = {
+              ...stableAI.regionalPrestige,
+              [region]: (stableAI.regionalPrestige[region] || 0) + 1,
+            };
             updatedAiManager.stableStates[stable.id] = stableAI;
 
             if (currentKingId === "player") {
