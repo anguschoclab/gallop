@@ -119,6 +119,7 @@ const BUDGET_CAPS: Record<Stable["personality"], number> = {
  * @param horseMap - Map of horse IDs to horses
  * @param npcAIManager - Optional AI manager for advanced bidding logic
  * @param currentDay - Current game day
+ * @param house - Optional auction house for prestige multiplier
  * @returns Bid amount or null if should not bid
  */
 export function calculateNpcBid(
