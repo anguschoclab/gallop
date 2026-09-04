@@ -35,7 +35,7 @@ import {
   AUCTION_AGGRESSIVE_BID_VARIANCE,
 } from "@/constants";
 import type { AuctionHouse } from "@/core/prestige";
-import { houseCommissionRate } from "@/core/prestige";
+import { houseCommissionRate, housePrestigeMultiplier } from "@/core/prestige";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -131,6 +131,7 @@ export function calculateNpcBid(
   horseMap?: Map<string, Horse>,
   npcAIManager?: NpcAIManager,
   currentDay?: number,
+  house?: AuctionHouse,
 ): number | null {
   // Use AI-driven bidding if AI manager is available
   if (npcAIManager && currentDay !== undefined) {
@@ -181,7 +182,8 @@ export function calculateNpcBid(
   }
 
   // Fall back to original logic if AI not available
-  const ceiling = calculateLotValuation(horse, stable, saleKind, allHorses, horseMap);
+  const baseCeiling = calculateLotValuation(horse, stable, saleKind, allHorses, horseMap);
+  const ceiling = baseCeiling * housePrestigeMultiplier(house);
 
   if (ceiling <= 0) return null;
 
