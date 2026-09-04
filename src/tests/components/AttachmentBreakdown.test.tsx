@@ -51,4 +51,15 @@ describe("AttachmentBreakdown", () => {
     const tooltipTrigger = container.querySelector("button[type='button']");
     expect(tooltipTrigger).toBeTruthy();
   });
+
+  it("has aria-label on the info button for screen reader accessibility (#378)", () => {
+    const attachment = mkAttachment();
+    const { container } = render(<AttachmentBreakdown attachment={attachment} />);
+
+    // The info button should have an aria-label for screen readers
+    const button = container.querySelector("button[type='button']");
+    expect(button).toBeTruthy();
+    expect(button?.getAttribute("aria-label")).toBeTruthy();
+    expect(button?.getAttribute("aria-label")?.length).toBeGreaterThan(0);
+  });
 });
