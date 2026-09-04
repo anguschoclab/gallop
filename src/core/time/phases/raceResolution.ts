@@ -81,6 +81,7 @@ export const raceResolutionPhase: PipelinePhase = {
           resolved: true,
           result,
           factorLedgers: liveIntent.factorLedgers,
+          snapshots: liveIntent.snapshots ?? [],
         };
 
         // Still generate impacts (prize money, form, etc.) using the live results

@@ -9,7 +9,7 @@
  * Related files: src/routes/npc-stables.tsx (parent layout)
  */
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,18 @@ export function NpcStablesCompare() {
   const [filter, setFilter] = useState("");
 
   const filtered = majorStables.filter((s) => s.name.toLowerCase().includes(filter.toLowerCase()));
+
+  // ⚡ Bolt Optimization:
+  // Pre-calculate hash map for O(1) stable lookups instead of running O(N)
+  // .find() inside the .map() loop.
+  const stableMap = useMemo(() => new Map(majorStables.map((s) => [s.id, s])), [majorStables]);
+  const selectedStables = useMemo(
+    () =>
+      compare.ids
+        .map((id) => stableMap.get(id))
+        .filter((s): s is NonNullable<typeof s> => s !== undefined),
+    [compare.ids, stableMap],
+  );
 
   return (
     <div className="space-y-6">
@@ -90,11 +102,7 @@ export function NpcStablesCompare() {
             <CardTitle className="text-lg">Comparison ({compare.ids.length})</CardTitle>
           </CardHeader>
           <CardContent>
-            <StableCompareTable
-              stables={compare.ids
-                .map((id) => majorStables.find((s) => s.id === id))
-                .filter((s): s is NonNullable<typeof s> => s !== undefined)}
-            />
+            <StableCompareTable stables={selectedStables} />
           </CardContent>
         </Card>
       )}

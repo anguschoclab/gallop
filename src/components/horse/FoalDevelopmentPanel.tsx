@@ -7,11 +7,12 @@
  * plus a compact history of any milestones that have already been resolved.
  */
 
+import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sprout, AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import type { Horse } from "@/core/horse/types";
-import type { MilestoneStatDelta } from "@/core/horse/foalDevelopment";
+import type { MilestoneStatDelta, MilestoneChoice } from "@/core/horse/foalDevelopment";
 import { useGame } from "@/game/store";
 
 interface Props {
@@ -39,6 +40,23 @@ function StatDeltaList({ delta }: { delta: MilestoneStatDelta }) {
 export function FoalDevelopmentPanel({ horse }: Props) {
   const arc = horse.developmentArc;
   const currentDay = useGame((s) => s.day);
+
+  // ⚡ Bolt Optimization:
+  // Pre-calculate hash map for O(1) chosen-choice lookups instead of running
+  // O(N) .find() inside the .map() render loop. Called unconditionally (before
+  // the early return) to satisfy react-hooks/rules-of-hooks.
+  const chosenByMilestoneKey = useMemo(() => {
+    const map = new Map<string, MilestoneChoice | undefined>();
+    if (!arc) return map;
+    for (const m of arc.milestones.filter((r) => r.status === "resolved")) {
+      map.set(
+        m.key,
+        m.choices.find((c) => c.key === m.resolvedChoiceKey),
+      );
+    }
+    return map;
+  }, [arc]);
+
   if (!arc) return null;
 
   const openMilestones = arc.milestones.filter((m) => m.status === "pending");
@@ -116,7 +134,7 @@ export function FoalDevelopmentPanel({ horse }: Props) {
           {resolvedMilestones.length > 0 && (
             <ul className="space-y-1 text-xs text-cream/70 pt-2 border-t border-white/5">
               {resolvedMilestones.map((m) => {
-                const chosen = m.choices.find((c) => c.key === m.resolvedChoiceKey);
+                const chosen = chosenByMilestoneKey.get(m.key);
                 return (
                   <li key={m.key} className="flex items-center gap-2">
                     <CheckCircle2 className="h-3 w-3 text-emerald-400" />

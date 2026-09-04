@@ -50,6 +50,7 @@ export interface RaceResolutionIntent extends Intent {
   raceId: string;
   results: { horseId: string; position: number; time: number }[];
   factorLedgers?: Record<string, RunnerFactorLedger>;
+  snapshots?: import("@/core/race/engine/raceSnapshotTypes").RaceSnapshot[];
 }
 
 export interface ClaimingIntent extends Intent {

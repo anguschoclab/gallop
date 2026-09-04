@@ -184,6 +184,7 @@ export function createRaceEntryActions(
       result: { horseId: string; position: number; time: number }[],
       _runners?: Array<{ horseId: string; owned?: boolean }>,
       factorLedgers?: Record<string, import("@/core/race/factorLedger").RunnerFactorLedger>,
+      snapshots?: import("@/core/race/engine/raceSnapshotTypes").RaceSnapshot[],
     ) => {
       const s = get();
       enqueueIntent({
@@ -196,6 +197,7 @@ export function createRaceEntryActions(
         raceId,
         results: result,
         factorLedgers,
+        snapshots,
       });
     },
 

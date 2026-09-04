@@ -8,6 +8,7 @@
  * Related files: ./StableCompareBar.tsx (opens this drawer)
  */
 
+import { useMemo } from "react";
 import {
   Drawer,
   DrawerContent,
@@ -33,9 +34,15 @@ export function StableCompareDrawer({ open, onOpenChange }: StableCompareDrawerP
   const ids = useCompareStables((s) => s.ids);
   const clear = useCompareStables((s) => s.clear);
   const allStables = useNpcStables();
-  const selectedStables = ids
-    .map((id) => allStables.find((s) => s.id === id))
-    .filter((s): s is NonNullable<typeof s> => s !== undefined);
+  // ⚡ Bolt Optimization:
+  // Pre-calculate hash map for O(1) stable lookups instead of running O(N)
+  // .find() inside the .map() loop.
+  const stableMap = useMemo(() => new Map(allStables.map((s) => [s.id, s])), [allStables]);
+  const selectedStables = useMemo(
+    () =>
+      ids.map((id) => stableMap.get(id)).filter((s): s is NonNullable<typeof s> => s !== undefined),
+    [ids, stableMap],
+  );
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>

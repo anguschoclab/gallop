@@ -289,12 +289,13 @@ export function RaceBroadcast({
             </div>
           )}
 
-          {phase === "review" && (() => {
-            const playerRunner = sorted.find((s) => s.r.isPlayer);
-            const playerBeyer = playerRunner?.beyer;
-            if (playerBeyer === null || playerBeyer === undefined) return null;
-            return <BeyerExplainer beyerScore={playerBeyer} />;
-          })()}
+          {phase === "review" &&
+            (() => {
+              const playerRunner = sorted.find((s) => s.r.isPlayer);
+              const playerBeyer = playerRunner?.beyer;
+              if (playerBeyer === null || playerBeyer === undefined) return null;
+              return <BeyerExplainer beyerScore={playerBeyer} />;
+            })()}
         </div>
         <Leaderboard
           sorted={sorted}

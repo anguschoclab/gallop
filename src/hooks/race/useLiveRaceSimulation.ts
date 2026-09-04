@@ -12,6 +12,7 @@ import { SPLIT_FRACTIONS } from "@/constants/raceBroadcastConstants";
 
 import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
 import type { RunnerFactorLedger } from "@/core/race/factorLedger";
+import type { RaceSnapshot, HorseSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 
 /**
  * Callback invoked once per non-silent simulation step.
@@ -134,6 +135,7 @@ export function useLiveRaceSimulation({
     finishOrder: RaceResult[],
     runners?: Array<{ horseId: string; owned?: boolean }>,
     factorLedgers?: Record<string, RunnerFactorLedger>,
+    snapshots?: RaceSnapshot[],
   ) => void;
   narrativeRef: React.MutableRefObject<NarrativeGenerator | null>;
   messageQueue: React.MutableRefObject<CommentaryLine[]>;
@@ -160,6 +162,9 @@ export function useLiveRaceSimulation({
   const pausedRef = useRef(paused);
   // splitCrossings[horseId] = [t_at_25%, t_at_50%, t_at_75%, t_at_finish]
   const splitCrossingsRef = useRef<Map<string, number[]>>(new Map());
+  // Live race snapshots — captured periodically for replay playback
+  const snapshotsRef = useRef<RaceSnapshot[]>([]);
+  let snapshotTickCounter = 0;
 
   // Sync refs with state
   useEffect(() => {
@@ -232,6 +237,23 @@ export function useLiveRaceSimulation({
         }
       }
       simTimeRef.current += FIXED_DT;
+
+      // Capture a snapshot every ~10 ticks for replay playback
+      snapshotTickCounter++;
+      if (snapshotTickCounter >= 10) {
+        snapshotTickCounter = 0;
+        const horseSnapshots: HorseSnapshot[] = runners.map((r) => ({
+          horseId: r.horseId,
+          position: r.position,
+          lane: r.lane,
+          velocity: r.velocity,
+        }));
+        snapshotsRef.current.push({
+          t: simTimeRef.current,
+          horses: horseSnapshots,
+        });
+      }
+
       return stillRunning;
     };
 
@@ -277,7 +299,13 @@ export function useLiveRaceSimulation({
             factorLedgers[r.horseId] = finalized;
           }
         }
-        resolveRaceWithImpacts(race.id, finishOrderRef.current, undefined, factorLedgers);
+        resolveRaceWithImpacts(
+          race.id,
+          finishOrderRef.current,
+          undefined,
+          factorLedgers,
+          snapshotsRef.current,
+        );
       }
     };
 

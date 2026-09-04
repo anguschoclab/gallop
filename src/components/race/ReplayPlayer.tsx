@@ -1,16 +1,18 @@
-import { useGameWithShallow } from "@/game/store";
+import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Play, Clock, MapPin } from "lucide-react";
-import type { RaceReplay } from "@/core/replays/replayTypes";
 
 interface ReplayPlayerProps {
   raceId: string;
 }
 
 export function ReplayPlayer({ raceId }: ReplayPlayerProps) {
-  const replay = useGameWithShallow((s) => s.replays?.find((r: RaceReplay) => r.raceId === raceId));
+  const race = useGame((s) => s.races?.[raceId]);
 
-  if (!replay) return null;
+  if (!race || !race.resolved || !race.snapshots || race.snapshots.length === 0) return null;
+
+  const snapshots = race.snapshots;
+  const result = race.result ?? [];
 
   return (
     <Card className="border-gold/30 bg-slate-900/40 overflow-hidden">
@@ -25,21 +27,19 @@ export function ReplayPlayer({ raceId }: ReplayPlayerProps) {
           <div className="space-y-1">
             <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">Race Day</p>
             <div className="text-xl font-black italic text-gold-bright tabular-nums">
-              {replay.day}
+              {race.day}
             </div>
           </div>
           <div className="space-y-1">
             <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">Distance</p>
             <div className="text-xl font-black italic text-gold tabular-nums">
-              {replay.distance.toLocaleString()}m
+              {race.distance.toLocaleString()}m
             </div>
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">
-              Checkpoints
-            </p>
+            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">Snapshots</p>
             <div className="text-xl font-black italic text-gold tabular-nums">
-              {replay.checkpoints.length}
+              {snapshots.length}
             </div>
           </div>
         </div>
@@ -54,7 +54,8 @@ export function ReplayPlayer({ raceId }: ReplayPlayerProps) {
             </h4>
           </div>
           <div className="space-y-1">
-            {replay.finalPositions
+            {result
+              .slice()
               .sort((a, b) => a.position - b.position)
               .map((pos) => (
                 <div
@@ -72,7 +73,7 @@ export function ReplayPlayer({ raceId }: ReplayPlayerProps) {
 
         <div className="flex items-center gap-2 text-[10px] text-gold/40 italic">
           <MapPin size={12} />
-          <span>Track: {replay.trackId}</span>
+          <span>Track: {race.trackId ?? race.graded?.trackId ?? "Unknown"}</span>
         </div>
       </CardContent>
     </Card>

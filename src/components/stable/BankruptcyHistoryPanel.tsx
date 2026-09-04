@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Building2, Skull } from "lucide-react";
 import { cn } from "@/lib/cn";
-import type { NewsItem } from "@/services/narrative/newsTypes";
+import type { NewsItem, EntityLink } from "@/services/narrative/newsTypes";
 
 interface BankruptcyHistoryPanelProps {
   news: NewsItem[];
@@ -33,6 +33,20 @@ export const BankruptcyHistoryPanel = memo(function BankruptcyHistoryPanel({
     [news, maxItems],
   );
 
+  // ⚡ Bolt Optimization:
+  // Pre-calculate hash map for O(1) stable-link lookups instead of running
+  // O(N) .find() inside the .map() render loop.
+  const stableLinkByEventId = useMemo(() => {
+    const map = new Map<string, EntityLink | undefined>();
+    for (const event of bankruptcyEvents) {
+      map.set(
+        event.id,
+        event.entityLinks?.find((l) => l.type === "stable"),
+      );
+    }
+    return map;
+  }, [bankruptcyEvents]);
+
   if (bankruptcyEvents.length === 0) return null;
 
   return (
@@ -45,7 +59,7 @@ export const BankruptcyHistoryPanel = memo(function BankruptcyHistoryPanel({
       <CardContent className="p-0">
         <div className="divide-y divide-white/5">
           {bankruptcyEvents.map((event) => {
-            const stableLink = event.entityLinks?.find((l) => l.type === "stable");
+            const stableLink = stableLinkByEventId.get(event.id);
             return (
               <div
                 key={event.id}

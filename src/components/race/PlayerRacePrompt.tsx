@@ -114,7 +114,7 @@ export function PlayerRacePrompt() {
       raceWeather?.windKph,
       raceWeather?.windDirectionDeg,
     );
-    resolveRaceWithImpacts(race!.id, result.result, undefined, result.factorLedgers);
+    resolveRaceWithImpacts(race!.id, result.result, undefined, result.factorLedgers, result.snapshots);
     clearPending();
   }
 

@@ -101,8 +101,9 @@ function LiveRace() {
       result: { horseId: string; position: number; time: number }[],
       runners?: Array<{ horseId: string; owned?: boolean }>,
       factorLedgers?: Record<string, import("@/core/race/factorLedger").RunnerFactorLedger>,
+      snapshots?: import("@/core/race/engine/raceSnapshotTypes").RaceSnapshot[],
     ) => {
-      resolveRaceBase(raceId, result, runners, factorLedgers);
+      resolveRaceBase(raceId, result, runners, factorLedgers, snapshots);
       if (race) triggerInquiry(race, result);
     },
     [resolveRaceBase, triggerInquiry, race],
