@@ -12,6 +12,31 @@ export type FlavorStoryTheme =
 export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   track: [
     {
+      headline: "Local Turf Course Earns Praise",
+      body: "Following extensive off-season renovations, visiting jockeys have universally praised the condition and bounce of the newly laid turf course.",
+      category: "flavor",
+    },
+    {
+      headline: "Grandstand Roof Repairs Completed Ahead of Schedule",
+      body: "Track officials are breathing a sigh of relief as major structural repairs to the historic grandstand roof wrapped up just in time for the spring meet.",
+      category: "flavor",
+    },
+    {
+      headline: "Track Implements New Drainage System",
+      body: "A multi-million dollar investment in a state-of-the-art subsurface drainage system promises to significantly reduce the number of off-the-turf races this season.",
+      category: "flavor",
+    },
+    {
+      headline: "Vintage Winner's Circle Restored",
+      body: "A local historical society has successfully completed the restoration of the track's original 1920s winner's circle, returning a touch of classic elegance to the venue.",
+      category: "flavor",
+    },
+    {
+      headline: "Paddock Expansion Project Announced",
+      body: "To accommodate growing crowds and provide better viewing angles for fans, management has unveiled plans to significantly expand the saddling paddock area next year.",
+      category: "flavor",
+    },
+    {
       headline: "Backstretch Beautification Project Underway",
       body: "Volunteers and track employees have teamed up to plant hundreds of new flowers around the paddock and walking rings, adding fresh color to the venue.",
       category: "flavor",
@@ -99,6 +124,31 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   jockeys: [
     {
+      headline: "Journeyman Jockey Hits 2000 Wins",
+      body: "A popular local rider reached a major career milestone yesterday, steering a longshot to victory to notch their 2000th career win to a massive ovation.",
+      category: "flavor",
+    },
+    {
+      headline: "Apprentice Rider Making Waves",
+      body: "A bug boy fresh out of jockey school has taken the colony by storm, riding three winners on Saturday's card and catching the eye of major stables.",
+      category: "flavor",
+    },
+    {
+      headline: "Jockey Colony Welcomes International Talent",
+      body: "The jockey room has a new face this week as a highly touted rider from overseas has shifted their tack locally for the remainder of the season.",
+      category: "flavor",
+    },
+    {
+      headline: "Veteran Rider Announces Final Season",
+      body: "One of the most respected names in the irons has confirmed this will be their farewell tour, prompting tributes from trainers and fellow riders alike.",
+      category: "flavor",
+    },
+    {
+      headline: "Rider Suspended for Careless Riding",
+      body: "The stewards have handed down a stiff three-day suspension to a leading jockey following an inquiry into interference during yesterday's feature race.",
+      category: "flavor",
+    },
+    {
       headline: "Jockey Colony Sees Influx of Talent",
       body: "Several promising young riders have transferred their tack to the local circuit, raising the level of competition in the jockeys' room.",
       category: "flavor",
@@ -181,6 +231,31 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   breeding: [
     {
+      headline: "First Foals from Champion Sire Turn Heads",
+      body: "The first crop of yearlings by a recently retired Horse of the Year are hitting the sales grounds, and bloodstock agents are raving about their conformation and scope.",
+      category: "flavor",
+    },
+    {
+      headline: "Historic Farm Changes Hands",
+      body: "One of the region's oldest and most prestigious breeding operations has been quietly acquired by an international conglomerate looking to expand its footprint.",
+      category: "flavor",
+    },
+    {
+      headline: "Demand Surges for Speed Sire Lines",
+      body: "Early sales results indicate a massive shift in buyer preference, with precocious, speed-oriented pedigrees commanding massive premiums over stamina lines.",
+      category: "flavor",
+    },
+    {
+      headline: "Broodmare of the Year Announced",
+      body: "A remarkable mare whose progeny captured three Grade 1 races this season has been overwhelmingly voted Broodmare of the Year by the breeders' association.",
+      category: "flavor",
+    },
+    {
+      headline: "Syndicate Forms Around Promising Two-Year-Old",
+      body: "Before he's even completed his juvenile campaign, a high-profile ownership group has already secured the future breeding rights to an undefeated sensation.",
+      category: "flavor",
+    },
+    {
       headline: "Prominent Mare Delivers Healthy Twins",
       body: "In a rare and closely watched event, a multiple stakes-winning mare has safely delivered healthy twin foals, defying the usual odds in thoroughbred reproduction.",
       category: "flavor",
@@ -258,6 +333,31 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   weather: [
     {
+      headline: "Unseasonal Heat Wave Tests Horses",
+      body: "Soaring temperatures have forced trainers to adjust their morning routines, sending horses out before dawn to beat the oppressive midday heat.",
+      category: "flavor",
+    },
+    {
+      headline: "Fog Delays Morning Works",
+      body: "A thick blanket of fog settled over the track this morning, bringing workouts to a grinding halt as clockers were completely unable to see the backstretch.",
+      category: "flavor",
+    },
+    {
+      headline: "Rain Prompts Slew of Scratches",
+      body: "A sudden and severe downpour has turned the main track sloppy, leading to a wave of scratches as trainers opt to save their runners for a dry day.",
+      category: "flavor",
+    },
+    {
+      headline: "High Winds Wreak Havoc in the Paddock",
+      body: "Blustery conditions made saddling a nightmare today, with several highly strung horses getting visibly upset by the flapping flags and howling wind.",
+      category: "flavor",
+    },
+    {
+      headline: "Perfect Autumn Weather Boosts Attendance",
+      body: "Crisp air and clear blue skies provided the perfect backdrop for a spectacular weekend of racing, drawing one of the largest on-track crowds of the season.",
+      category: "flavor",
+    },
+    {
       headline: "Weather Alert: Clear Skies Ahead",
       body: "The regional meteorological bureau predicts ideal racing conditions for the next several days, with fast dirt and firm turf expected across most tracks.",
       category: "flavor",
@@ -319,6 +419,31 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   community: [
+    {
+      headline: "Retired Champion Parades for Fans",
+      body: "A fan-favorite gelding returned to the track for a special retirement parade between races, looking fit and happy as the crowd roared their appreciation.",
+      category: "flavor",
+    },
+    {
+      headline: "Local Artist Unveils Paddock Mural",
+      body: "A stunning new mural depicting legendary local horses in full stride was officially unveiled in the walking ring, drawing admiration from horsemen and fans.",
+      category: "flavor",
+    },
+    {
+      headline: "Backstretch Clinic Receives Major Donation",
+      body: "An anonymous benefactor has donated a significant sum to the backstretch medical clinic, ensuring vital healthcare services remain available to track workers.",
+      category: "flavor",
+    },
+    {
+      headline: "Trainer Hosts Open House for Fans",
+      body: "In a bid to increase transparency and fan engagement, a prominent trainer opened their barn doors to the public for a morning of coffee, donuts, and horse petting.",
+      category: "flavor",
+    },
+    {
+      headline: "Tack Shop Celebrates 25 Years",
+      body: "The iconic tack shop located just outside the track gates celebrated a quarter-century in business today, offering discounts and sharing stories of legendary customers.",
+      category: "flavor",
+    },
     {
       headline: "Local School Hosts Field Trip at the Track",
       body: "Hundreds of elementary school students visited the track this morning, getting a behind-the-scenes look at the barns and learning about equine care from local trainers.",
@@ -411,6 +536,31 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   industry: [
+    {
+      headline: "New Whip Restrictions Face Pushback",
+      body: "The jockey guild has filed a formal grievance regarding the newly implemented restrictions on crop usage, arguing the rules are vague and compromise safety.",
+      category: "flavor",
+    },
+    {
+      headline: "Fractional Ownership Group Secures Major Sponsor",
+      body: "A popular micro-share ownership syndicate has announced a lucrative partnership with a lifestyle brand, bringing mainstream corporate money into the sport.",
+      category: "flavor",
+    },
+    {
+      headline: "Racing Commission Investigates Medication Positive",
+      body: "Rumors are swirling after the commission confirmed an ongoing investigation into a post-race positive test from a prominent runner, though no names have been released.",
+      category: "flavor",
+    },
+    {
+      headline: "Track Handle Hits Record High",
+      body: "Buoyed by massive field sizes and competitive racing, the total wagering handle for the weekend festival shattered previous records, pleasing management and horsemen.",
+      category: "flavor",
+    },
+    {
+      headline: "New Veterinary Protocols Mandated",
+      body: "In a sweeping move to improve equine welfare, the regulatory board has mandated more rigorous pre-race veterinary inspections for all graded stakes entries.",
+      category: "flavor",
+    },
     {
       headline: "New Season Projections",
       body: "Pundits are already weighing in on the upcoming stakes schedule, with many predicting a highly competitive year for the 3-year-old division.",
