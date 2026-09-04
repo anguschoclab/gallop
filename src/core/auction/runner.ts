@@ -34,6 +34,7 @@ import type {
 } from "./auctionRunnerTypes";
 import { nextBidAmount } from "./auctionRunnerTypes";
 import { buildAuctionImpacts } from "./auctionRunnerImpacts";
+import { resolveSaleHouse } from "@/core/prestige";
 
 export type {
   ChantPhase,
@@ -68,6 +69,7 @@ export function createAuctionRunner(
   const { liveMode = false, npcAIManager, currentDay, onAutoRaise } = options;
 
   const horseMap = new Map(horses.map((h) => [h.id, h]));
+  const saleHouse = resolveSaleHouse(sale);
 
   // Proxy bid cap — cleared per lot and on cancel.
   let playerMaxBid: number | undefined = undefined;
@@ -129,6 +131,7 @@ export function createAuctionRunner(
         horseMap,
         npcAIManager,
         currentDay,
+        saleHouse,
       );
       if (bid !== null && bid > state.currentBid) {
         state.currentBid = bid;

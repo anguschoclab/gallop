@@ -35,7 +35,7 @@ import {
   AUCTION_AGGRESSIVE_BID_VARIANCE,
 } from "@/constants";
 import type { AuctionHouse } from "@/core/prestige";
-import { houseCommissionRate } from "@/core/prestige";
+import { houseCommissionRate, housePrestigeMultiplier } from "@/core/prestige";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -131,7 +131,11 @@ export function calculateNpcBid(
   horseMap?: Map<string, Horse>,
   npcAIManager?: NpcAIManager,
   currentDay?: number,
+  house?: AuctionHouse,
 ): number | null {
+  // Prestige of the staging house lifts (or softens) the whole bidding bench.
+  const uplift = housePrestigeMultiplier(house);
+
   // Use AI-driven bidding if AI manager is available
   if (npcAIManager && currentDay !== undefined) {
     const aiState = npcAIManager.stableStates[stable.id];
@@ -164,14 +168,8 @@ export function calculateNpcBid(
 
       // Calculate max bid using AI with friction consideration
       const friction = aiState.friction ?? 0;
-      const maxBid = calculateMaxBid(
-        aiState.auctionAI,
-        horse,
-        tempLot,
-        stable,
-        currentDay,
-        friction,
-      );
+      const maxBid =
+        calculateMaxBid(aiState.auctionAI, horse, tempLot, stable, currentDay, friction) * uplift;
 
       const nextBid = Math.ceil((currentBid * 1.05 + 200) / 100) * 100;
       if (nextBid > maxBid) return null;
@@ -181,7 +179,7 @@ export function calculateNpcBid(
   }
 
   // Fall back to original logic if AI not available
-  const ceiling = calculateLotValuation(horse, stable, saleKind, allHorses, horseMap);
+  const ceiling = calculateLotValuation(horse, stable, saleKind, allHorses, horseMap) * uplift;
 
   if (ceiling <= 0) return null;
 
@@ -190,6 +188,7 @@ export function calculateNpcBid(
 
   const nextBid = Math.ceil((currentBid * 1.05 + 200) / 100) * 100;
   if (nextBid > maxBid) return null;
+
 
   // Aggressive/prestige personalities bid near ceiling immediately
   if (stable.personality === "aggressive" || stable.personality === "prestige") {
