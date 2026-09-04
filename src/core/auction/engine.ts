@@ -35,7 +35,7 @@ import {
   AUCTION_AGGRESSIVE_BID_VARIANCE,
 } from "@/constants";
 import type { AuctionHouse } from "@/core/prestige";
-import { houseCommissionRate } from "@/core/prestige";
+import { houseCommissionRate, housePrestigeMultiplier } from "@/core/prestige";
 
 // ---------------------------------------------------------------------------
 // Constants
