@@ -1,4 +1,5 @@
-import type { Race, Horse, HorseRaceHistoryEntry } from "@/game/types";
+import type { HorseRaceHistoryEntry } from "@/core/horse/types";
+import type { Race, Horse } from "@/game/types";
 import type { SeasonRecord, TrackRecord } from "@/core/history/historyTypes";
 import type { RaceContext } from "./types";
 

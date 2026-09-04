@@ -2,10 +2,9 @@ import { describe, it, expect } from "vitest";
 import { requireHorse, requireOwned } from "@/game/store/guards";
 import type { Horse } from "@/game/types";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function makeHorse(id: string, owned: boolean): Horse {
-  return { id, ownership: owned ? makePlayerOwned() : makeUnowned(), name: id } as unknown as Horse;
+  return { id, ownership: { type: owned ? "player" : "npc" }, name: id } as unknown as Horse;
 }
 
 describe("requireHorse", () => {
