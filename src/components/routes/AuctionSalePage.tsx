@@ -172,6 +172,7 @@ function AuctionSalePage() {
                     onSetMaxBid={handleMaxBid}
                     onBuyNow={handleBuyNow}
                     message={message}
+                    house={saleHouse}
                   />
                 )}
 

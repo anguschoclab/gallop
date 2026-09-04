@@ -15,6 +15,8 @@ import { MaxBidPanel } from "./sub/MaxBidPanel";
 import { cn } from "@/lib/cn";
 import type { AuctionLot } from "@/game/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { PrestigeBadge } from "@/components/shared/PrestigeBadge";
+import { housePrestigeMultiplier, type AuctionHouse } from "@/core/prestige";
 
 interface BiddingPanelProps {
   currentLot: AuctionLot;
@@ -29,6 +31,8 @@ interface BiddingPanelProps {
   onSetMaxBid: (max: number | undefined) => void;
   onBuyNow: () => { ok: boolean; reason?: string };
   message: string;
+  /** Staging house — its prestige lifts or softens rival bidding. */
+  house?: AuctionHouse;
 }
 
 export function BiddingPanel({
@@ -44,8 +48,13 @@ export function BiddingPanel({
   onSetMaxBid,
   onBuyNow,
   message,
+  house,
 }: BiddingPanelProps) {
   if (currentLot.passed) return null;
+
+  const upliftPct = house ? Math.round((housePrestigeMultiplier(house) - 1) * 100) : 0;
+  const reserve = currentLot.reservePrice ?? 0;
+  const reserveMet = reserve <= 0 || currentPrice >= reserve;
 
   return (
     <section className="space-y-4 pt-4">
@@ -71,6 +80,48 @@ export function BiddingPanel({
               +{formatCurrency(nextBid - currentPrice)}
             </div>
           </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 border-b border-white/5 pb-4 font-mono text-[9px] uppercase tracking-wide text-cream/40">
+          {house && (
+            <>
+              <span className="text-cream/30">
+                Ring: <span className="text-gold-muted">{house.shortName}</span>
+              </span>
+              <PrestigeBadge score={house.prestige} />
+              <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span
+                      tabIndex={0}
+                      className={cn(
+                        "font-black tabular-nums",
+                        upliftPct > 0
+                          ? "text-success"
+                          : upliftPct < 0
+                            ? "text-destructive"
+                            : "text-cream/40",
+                      )}
+                    >
+                      Bench {upliftPct > 0 ? "+" : ""}
+                      {upliftPct}%
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Prestige {house.prestige}/100 shifts rival bidding ceilings by{" "}
+                    {upliftPct > 0 ? "+" : ""}
+                    {upliftPct}%. Expect {upliftPct >= 0 ? "stronger" : "softer"} competition here.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </>
+          )}
+          <span
+            className={cn("font-black", reserveMet ? "text-success" : "text-gold-muted")}
+            aria-label={reserveMet ? "Reserve met" : "Reserve not yet met"}
+          >
+            {reserve <= 0 ? "No reserve" : reserveMet ? "Reserve met" : "Reserve not met"}
+          </span>
         </div>
 
         <div className="space-y-4">
