@@ -53,7 +53,7 @@ describe("HorseDetailHeader", () => {
     expect(screen.getByText("75%")).toBeTruthy();
   });
 
-  it("shows Critical badge when activeInjury is present", () => {
+  it("shows injury severity badge when activeInjury is present", () => {
     const horse = createHorse({
       activeInjury: {
         type: "Fracture",
@@ -63,10 +63,10 @@ describe("HorseDetailHeader", () => {
       },
     });
     renderWithStore(<HorseDetailHeader horse={horse} ovr={85} />);
-    expect(screen.getByText("Critical")).toBeTruthy();
+    expect(screen.getByText("major")).toBeTruthy();
   });
 
-  it("shows Critical badge for career-ending injury (no regression)", () => {
+  it("shows injury severity badge for career-ending injury (no regression)", () => {
     const horse = createHorse({
       activeInjury: {
         type: "Tendon",
@@ -76,12 +76,13 @@ describe("HorseDetailHeader", () => {
       },
     });
     renderWithStore(<HorseDetailHeader horse={horse} ovr={85} />);
-    expect(screen.getByText("Critical")).toBeTruthy();
+    expect(screen.getByText("career-ending")).toBeTruthy();
   });
 
-  it("does not show Critical badge when no activeInjury", () => {
+  it("does not show injury severity badge when no activeInjury", () => {
     const { container } = renderWithStore(<HorseDetailHeader horse={createHorse()} ovr={85} />);
-    expect(container.textContent).not.toContain("Critical");
+    expect(container.textContent).not.toContain("major");
+    expect(container.textContent).not.toContain("career-ending");
   });
 
   it("displays IDENT badge with truncated id", () => {

@@ -193,12 +193,11 @@ describe("BroadcastCommentary - Content and Visual Elements", () => {
     vi.useRealTimers();
   });
 
-  it("renders 'System Initializing' state when commentary is empty", () => {
+  it("renders empty state when commentary is empty", () => {
     render(<BroadcastCommentary commentary={[]} lastUpdatedAt={BASE_TIME} />);
 
-    expect(screen.getByText("Live Commentary")).toBeInTheDocument();
-    expect(screen.getByText("Race Broadcast Service")).toBeInTheDocument();
-    expect(screen.getByText("System Initializing")).toBeInTheDocument();
+    expect(screen.getByText("Commentary")).toBeInTheDocument();
+    expect(screen.getByText("No commentary yet")).toBeInTheDocument();
   });
 
   it("renders commentary lines up to the visible limit (last 8 lines)", () => {

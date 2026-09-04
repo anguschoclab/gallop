@@ -53,9 +53,9 @@ describe("TransactionLedger", () => {
   // ── Existing behavior regression ──────────────────────────────────
 
   describe("Existing behavior regression", () => {
-    it("shows 'No Fiscal Events Recorded' when transactions is empty", () => {
+    it("shows 'No transactions' when transactions is empty", () => {
       renderLedger([]);
-      expect(screen.getByText("No Fiscal Events Recorded")).toBeInTheDocument();
+      expect(screen.getByText("No transactions")).toBeInTheDocument();
     });
 
     it("renders single entry-fee transaction as a single row (not grouped)", () => {
@@ -476,7 +476,7 @@ describe("TransactionLedger", () => {
       fireEvent.click(subcategorySelect);
       fireEvent.click(screen.getByText("Veterinary"));
 
-      expect(screen.getByText("No Fiscal Events Recorded")).toBeInTheDocument();
+      expect(screen.getByText("No transactions")).toBeInTheDocument();
     });
 
     it("resetting to 'All' shows all transactions again", () => {

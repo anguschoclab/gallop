@@ -627,7 +627,7 @@ describe("processClaimingResolution — horse edge cases", () => {
     expect(refundImpacts.length).toBeGreaterThanOrEqual(1);
   });
 
-  it("horse with stableId: undefined → claim becomes losing refund", () => {
+  it("horse with stableId: undefined → claim processed with empty fromStableId", () => {
     const race = mkRace({
       entries: [{ horseId: "h1", ownership: makeUnowned() }],
     });
@@ -644,8 +644,12 @@ describe("processClaimingResolution — horse edge cases", () => {
       newDay: DAY,
       rng: createTestRng("no-stable"),
     });
+    // After #361 behavioral change, unowned horses are still processed
+    // (the old guard that skipped non-NPC horses was removed)
     const claimingImpacts = result.impacts.filter((i) => i.type === "claiming");
-    expect(claimingImpacts).toHaveLength(0);
+    expect(claimingImpacts).toHaveLength(1);
+    // fromStableId should be empty string for unowned horses
+    expect((claimingImpacts[0] as any).fromStableId).toBe("");
   });
 });
 

@@ -56,9 +56,9 @@ describe("RaceDecisionLog", () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it("renders header with decision log title", () => {
+  it("renders header with race decisions title", () => {
     render(<RaceDecisionLog snapshots={createMockSnapshots()} runners={runners} distance={1600} />);
-    expect(screen.getByText(/decision log/i)).toBeInTheDocument();
+    expect(screen.getByText(/race decisions/i)).toBeInTheDocument();
   });
 
   it("detects lane change events", () => {
