@@ -41,7 +41,7 @@ function makeOptions(backstoryId: string): NewGameOptions {
 
 const CASH_CEILING_MULTIPLIER = 3;
 const CASH_CEILING_FLAT = 5_000_000;
-const CASH_FLOOR = -150_000;
+const CASH_FLOOR = -200_000;
 const MAX_DAILY_DELTA = 10_000_000;
 const RUN_DAYS = 90;
 
