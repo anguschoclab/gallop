@@ -35,7 +35,7 @@ import {
   AUCTION_AGGRESSIVE_BID_VARIANCE,
 } from "@/constants";
 import type { AuctionHouse } from "@/core/prestige";
-import { houseCommissionRate, housePrestigeMultiplier } from "@/core/prestige";
+import { houseCommissionRate } from "@/core/prestige";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -131,11 +131,7 @@ export function calculateNpcBid(
   horseMap?: Map<string, Horse>,
   npcAIManager?: NpcAIManager,
   currentDay?: number,
-  house?: AuctionHouse,
 ): number | null {
-  // Prestige of the staging house lifts (or softens) the whole bidding bench.
-  const uplift = housePrestigeMultiplier(house);
-
   // Use AI-driven bidding if AI manager is available
   if (npcAIManager && currentDay !== undefined) {
     const aiState = npcAIManager.stableStates[stable.id];
@@ -168,8 +164,14 @@ export function calculateNpcBid(
 
       // Calculate max bid using AI with friction consideration
       const friction = aiState.friction ?? 0;
-      const maxBid =
-        calculateMaxBid(aiState.auctionAI, horse, tempLot, stable, currentDay, friction) * uplift;
+      const maxBid = calculateMaxBid(
+        aiState.auctionAI,
+        horse,
+        tempLot,
+        stable,
+        currentDay,
+        friction,
+      );
 
       const nextBid = Math.ceil((currentBid * 1.05 + 200) / 100) * 100;
       if (nextBid > maxBid) return null;
@@ -179,7 +181,7 @@ export function calculateNpcBid(
   }
 
   // Fall back to original logic if AI not available
-  const ceiling = calculateLotValuation(horse, stable, saleKind, allHorses, horseMap) * uplift;
+  const ceiling = calculateLotValuation(horse, stable, saleKind, allHorses, horseMap);
 
   if (ceiling <= 0) return null;
 
@@ -188,7 +190,6 @@ export function calculateNpcBid(
 
   const nextBid = Math.ceil((currentBid * 1.05 + 200) / 100) * 100;
   if (nextBid > maxBid) return null;
-
 
   // Aggressive/prestige personalities bid near ceiling immediately
   if (stable.personality === "aggressive" || stable.personality === "prestige") {
@@ -343,6 +344,7 @@ export function generateAuctionLots(
   // Every major stable gets a chance to consign — per-personality policy
   // decides what (if anything) they actually list.
   const consignors = stables.filter((s) => s.isMajor);
+  const horsesDict = Object.fromEntries(allHorses.map((h) => [h.id, h]));
 
   for (const stable of consignors) {
     const policy = personalityConsignmentPolicy(stable, kind, allHorses, rng);
@@ -350,7 +352,7 @@ export function generateAuctionLots(
     for (let horse of policy.consign) {
       horse = ensurePhenotypeResolved(horse);
       const pedigreeMul = pedigreeMultiplier(horse, {
-        horses: Object.fromEntries(allHorses.map((h) => [h.id, h])),
+        horses: horsesDict,
       });
       const baseValue = calculateNpcHorseValue(horse, stable.tier) * pedigreeMul;
       const breezeSeconds = kind === "2yo_training" ? generateBreezeSeconds(horse, rng) : undefined;
@@ -377,8 +379,9 @@ export function generateAuctionLots(
       if (!isLotEligible(freshHorse, kind)) continue;
       const resolvedFresh = ensurePhenotypeResolved(freshHorse);
       allHorses.push(resolvedFresh);
+      horsesDict[resolvedFresh.id] = resolvedFresh;
       const pedigreeMul = pedigreeMultiplier(resolvedFresh, {
-        horses: Object.fromEntries(allHorses.map((h) => [h.id, h])),
+        horses: horsesDict,
       });
       const baseValue = calculateNpcHorseValue(resolvedFresh, stable.tier) * pedigreeMul;
       const breezeSeconds =
