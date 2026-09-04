@@ -2,6 +2,7 @@ import type { Horse, Stable, AuctionSale, AuctionLot } from "@/game/types";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { createRng, hashStr } from "@/core/common/rng";
 import { calculateNpcBid } from "./engine";
+import { resolveSaleHouse } from "@/core/prestige";
 
 export type ResolvedSale = {
   lots: AuctionLot[];
@@ -18,6 +19,7 @@ export function resolveAuctionSale(
 
   const bidderStables = stables.filter((s) => s.isMajor);
   const horseMap = new Map(allHorses.map((h) => [h.id, h]));
+  const house = resolveSaleHouse(sale);
 
   for (const lot of sale.lots) {
     if (lot.withdrawn) {
@@ -49,7 +51,18 @@ export function resolveAuctionSale(
       for (const stable of eligibleBidders) {
         if (stable.id === currentWinner) continue;
         const rng = createRng(hashStr(lot.id + stable.id + String(currentBid)));
-        const bid = calculateNpcBid(stable, horse, currentBid, sale.kind, rng, allHorses, horseMap);
+        const bid = calculateNpcBid(
+          stable,
+          horse,
+          currentBid,
+          sale.kind,
+          rng,
+          allHorses,
+          horseMap,
+          undefined,
+          undefined,
+          house,
+        );
 
         if (bid !== null && bid > currentBid) {
           currentBid = bid;
