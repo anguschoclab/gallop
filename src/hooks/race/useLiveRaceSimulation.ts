@@ -164,7 +164,7 @@ export function useLiveRaceSimulation({
   const splitCrossingsRef = useRef<Map<string, number[]>>(new Map());
   // Live race snapshots — captured periodically for replay playback
   const snapshotsRef = useRef<RaceSnapshot[]>([]);
-  let snapshotTickCounter = 0;
+  const snapshotTickCounterRef = useRef(0);
 
   // Sync refs with state
   useEffect(() => {
@@ -239,9 +239,9 @@ export function useLiveRaceSimulation({
       simTimeRef.current += FIXED_DT;
 
       // Capture a snapshot every ~10 ticks for replay playback
-      snapshotTickCounter++;
-      if (snapshotTickCounter >= 10) {
-        snapshotTickCounter = 0;
+      snapshotTickCounterRef.current++;
+      if (snapshotTickCounterRef.current >= 10) {
+        snapshotTickCounterRef.current = 0;
         const horseSnapshots: HorseSnapshot[] = runners.map((r) => ({
           horseId: r.horseId,
           position: r.position,
