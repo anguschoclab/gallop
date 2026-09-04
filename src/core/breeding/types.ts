@@ -94,3 +94,10 @@ export interface Syndicate {
   shareholderSatisfaction?: Record<import("@/core/types/branded").OwnerKey, number>; // stableId -> satisfaction (0-100)
   lastSatisfactionUpdate?: number; // day of last update
 }
+
+export interface DosageMetrics {
+  pedigree: PedigreeNode[];
+  dosageProfile: DosageProfile;
+  dosageIndex: number;
+  centerOfDistribution: number;
+}

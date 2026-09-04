@@ -8,7 +8,7 @@
  * Related files: breedingCompatibility.ts (uses dosage metrics), pedigreeData.ts (provides chef-de-race data)
  */
 
-import type { DosageProfile, PedigreeNode } from "@/core/breeding/types";
+import type { DosageProfile, PedigreeNode, DosageMetrics } from "@/core/breeding/types";
 import type { AptitudinalGroup, PedigreeHorse } from "@/data/pedigreeData";
 import { findHorseByName } from "@/data/pedigreeData";
 
@@ -141,14 +141,14 @@ export function generatePedigree(sireName?: string): PedigreeNode[] {
   return pedigree;
 }
 
-const DOSAGE_CACHE = new Map<string, any>();
+const DOSAGE_CACHE = new Map<string, DosageMetrics>();
 
 /**
  * Calculate all dosage metrics for a horse
  * @param sireName - Name of the sire
  * @returns Object containing dosageProfile, dosageIndex, and centerOfDistribution
  */
-export function calculateDosageMetrics(sireName?: string) {
+export function calculateDosageMetrics(sireName?: string): DosageMetrics {
   if (!sireName) {
     return {
       pedigree: [],
