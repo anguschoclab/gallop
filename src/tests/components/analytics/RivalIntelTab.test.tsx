@@ -146,4 +146,18 @@ describe("RivalIntelTab", () => {
     expect(screen.getByText(/World Assessment/i)).toBeDefined();
     expect(screen.getByText(/player dominance/i)).toBeDefined();
   });
+
+  it("displays playerDominance value (not playerStrength) — #366 bug fix", () => {
+    // Bug fix: component was using a.playerStrength (undefined → 0%)
+    // instead of a.playerDominance (0.6 → 60%)
+    render(<RivalIntelTab />);
+    expect(screen.getByText("60%")).toBeDefined();
+  });
+
+  it("displays directive type (not action) — #366 bug fix", () => {
+    // Bug fix: component was using d.action (undefined) instead of d.type
+    // The mock has type: "acquire_stallion" which should render
+    render(<RivalIntelTab />);
+    expect(screen.getByText(/acquire_stallion/i)).toBeDefined();
+  });
 });
