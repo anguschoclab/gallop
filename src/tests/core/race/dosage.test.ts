@@ -6,6 +6,7 @@ import {
   calculateDosageMetrics,
   interpretDosageIndex,
 } from "@/core/race/dosage";
+import type { DosageMetrics } from "@/core/breeding/types";
 import * as pedigreeData from "@/data/pedigreeData";
 
 describe("Dosage Calculations", () => {
@@ -115,6 +116,18 @@ describe("Dosage Calculations", () => {
       expect(result.pedigree).toEqual([]);
       expect(result.dosageIndex).toBe(1.0);
       expect(result.dosageProfile.brilliant).toBe(0);
+    });
+  });
+
+  describe("DosageMetrics type", () => {
+    it("should export DosageMetrics interface and calculateDosageMetrics should return it", () => {
+      // This test validates that the DosageMetrics interface exists and
+      // calculateDosageMetrics returns a value conforming to it.
+      const result: DosageMetrics = calculateDosageMetrics(undefined);
+      expect(result.pedigree).toEqual([]);
+      expect(result.dosageProfile).toBeDefined();
+      expect(typeof result.dosageIndex).toBe("number");
+      expect(typeof result.centerOfDistribution).toBe("number");
     });
   });
 
