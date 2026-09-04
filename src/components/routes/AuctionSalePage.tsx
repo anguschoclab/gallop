@@ -13,6 +13,7 @@ import { useAuctionSaleFilters } from "@/hooks/auction/useAuctionSaleFilters";
 import { useAuctionSaleData } from "@/hooks/auction/useAuctionSaleData";
 import { useStoreHydration } from "@/hooks/shared/useStoreHydration";
 import { useDismissedAuctionErrors } from "@/hooks/auction/useDismissedAuctionErrors";
+import { resolveSaleHouse } from "@/core/prestige";
 
 function AuctionSalePage() {
   const { saleId } = useParams({ from: "/auction/$saleId" });
@@ -93,6 +94,8 @@ function AuctionSalePage() {
       </div>
     );
   }
+
+  const saleHouse = resolveSaleHouse(sale);
 
   return (
     <div className="space-y-6 pb-20 animate-fade-in">
