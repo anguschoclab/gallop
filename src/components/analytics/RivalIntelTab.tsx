@@ -15,7 +15,6 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import type { NpcAIManager, DifficultyState, StableAIState } from "@/core/ai/npcCycleAI";
-import type { StrategicDirective } from "@/core/ai/strategicCoordinator";
 import type { DistressLevel } from "@/core/ai/financialDistressAI";
 import { EconomicIndicators } from "@/components/analytics/EconomicIndicators";
 import { StorylinesTab } from "@/components/briefing/StorylinesTab";
@@ -30,7 +29,7 @@ export function RivalIntelTab() {
     return (
       <div className="space-y-6">
         <header>
-          <h2 className="font-display text-2xl text-cream">Rivals</h2>
+          <h2 className="font-display text-2xl text-cream">Rival Intelligence</h2>
           <p className="text-cream-muted mt-1 text-sm">No AI intelligence data available yet.</p>
         </header>
       </div>
@@ -44,7 +43,11 @@ export function RivalIntelTab() {
   return (
     <div className="space-y-6">
       <header>
-        <h2 className="font-display text-2xl text-cream">Rivals</h2>
+        <h2 className="font-display text-2xl text-cream">Rival Intelligence</h2>
+        <p className="text-cream-muted mt-1 text-sm">
+          AI subsystem telemetry — difficulty, economy, diplomacy, narratives, and strategic
+          directives.
+        </p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -93,7 +96,7 @@ function DifficultyPanel({
   return (
     <Card className="border-gold/20 bg-slate-900/40">
       <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-wide flex items-center gap-2 text-gold">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
           <TrendingUp size={14} />
           Difficulty Modulator
         </CardTitle>
@@ -101,13 +104,13 @@ function DifficultyPanel({
       <CardContent className="p-4 space-y-3">
         <div className="grid grid-cols-2 gap-3 text-xs">
           <div>
-            <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
+            <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
               Player Win Rate
             </span>
             <p className="text-cream font-mono">{(dm.playerWinRate * 100).toFixed(1)}%</p>
           </div>
           <div>
-            <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
+            <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
               NPC Competence
             </span>
             <p className="text-cream font-mono flex items-center gap-1">
@@ -115,13 +118,13 @@ function DifficultyPanel({
             </p>
           </div>
           <div>
-            <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
+            <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
               Player Wins
             </span>
             <p className="text-cream font-mono">{dm.playerWins}</p>
           </div>
           <div>
-            <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
+            <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
               Player Entries
             </span>
             <p className="text-cream font-mono">{dm.playerEntries}</p>
@@ -145,7 +148,7 @@ function CartelsPanel({
   return (
     <Card className="border-gold/20 bg-slate-900/40">
       <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-wide flex items-center gap-2 text-gold">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
           <Swords size={14} />
           Active Cartels
         </CardTitle>
@@ -169,7 +172,7 @@ function CartelsPanel({
                       key={sid}
                       to="/npc-stables/$stableId"
                       params={{ stableId: sid }}
-                      className="text-[9px] font-mono text-blue-400/60 hover:text-blue-400 uppercase tracking-wide"
+                      className="text-[9px] font-mono text-blue-400/60 hover:text-blue-400 uppercase tracking-widest"
                     >
                       {stableMap.get(sid)?.name ?? sid}
                     </Link>
@@ -188,7 +191,7 @@ function NpcDistressMonitorPanel({
   stableStates,
   stableMap,
 }: {
-  stableStates: Record<string, any>;
+  stableStates: Record<string, StableAIState>;
   stableMap: Map<string, Stable>;
 }) {
   const distressed = Object.entries(stableStates)
@@ -205,7 +208,7 @@ function NpcDistressMonitorPanel({
   return (
     <Card className="border-gold/20 bg-slate-900/40">
       <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-wide flex items-center gap-2 text-gold">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
           <AlertTriangle size={14} />
           NPC Distress Monitor
         </CardTitle>
@@ -236,7 +239,7 @@ function NpcDistressMonitorPanel({
               <div className="text-[10px] text-cream/30 font-mono">
                 Days of cash: {d.daysOfCash?.toFixed(0) ?? "—"}
               </div>
-              {d.recommendedActions?.length > 0 && (
+              {d.recommendedActions && d.recommendedActions.length > 0 && (
                 <div className="text-[10px] text-cream/30 font-mono">
                   Actions: {d.recommendedActions.join(", ")}
                 </div>
@@ -249,7 +252,7 @@ function NpcDistressMonitorPanel({
   );
 }
 
-function WorldAssessmentPanel({ stableStates }: { stableStates: Record<string, any> }) {
+function WorldAssessmentPanel({ stableStates }: { stableStates: Record<string, StableAIState> }) {
   const assessments = Object.entries(stableStates)
     .filter(([, s]) => s.worldAssessment)
     .map(([id, s]) => ({ id, ...s.worldAssessment }));
@@ -257,7 +260,7 @@ function WorldAssessmentPanel({ stableStates }: { stableStates: Record<string, a
   return (
     <Card className="border-gold/20 bg-slate-900/40">
       <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-wide flex items-center gap-2 text-gold">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
           <Globe size={14} />
           World Assessment
         </CardTitle>
@@ -269,19 +272,13 @@ function WorldAssessmentPanel({ stableStates }: { stableStates: Record<string, a
           assessments.map((a) => (
             <div key={a.id} className="space-y-1 text-xs">
               <div className="flex justify-between">
-                <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
-                  player strength
+                <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+                  player dominance
                 </span>
                 <span className="text-cream font-mono">
-                  {((a.playerStrength ?? 0) * 100).toFixed(0)}%
+                  {((a.playerDominance ?? 0) * 100).toFixed(0)}%
                 </span>
               </div>
-              {a.topThreats?.length > 0 && (
-                <div className="text-[10px] text-cream/30 font-mono">
-                  Top threat: {a.topThreats[0].stableId} (
-                  {((a.topThreats[0].threatLevel ?? 0) * 100).toFixed(0)}%)
-                </div>
-              )}
             </div>
           ))
         )}
@@ -296,15 +293,13 @@ function StrategicDirectivesPanel({
   stableStates: Record<string, StableAIState>;
 }) {
   const directives = Object.entries(stableStates)
-    .filter(([, s]) => (s.strategicDirectives?.length ?? 0) > 0)
-    .flatMap(([id, s]) =>
-      (s.strategicDirectives ?? []).map((d: StrategicDirective) => ({ stableId: id, ...d })),
-    );
+    .filter(([, s]) => s.strategicDirectives && s.strategicDirectives.length > 0)
+    .flatMap(([id, s]) => s.strategicDirectives!.map((d) => ({ stableId: id, ...d })));
 
   return (
     <Card className="border-gold/20 bg-slate-900/40">
       <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-wide flex items-center gap-2 text-gold">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
           <Target size={14} />
           Strategic Directives
         </CardTitle>
@@ -334,14 +329,14 @@ function NpcRelationshipsPanel({
   stableStates,
   stableMap,
 }: {
-  stableStates: Record<string, any>;
+  stableStates: Record<string, StableAIState>;
   stableMap: Map<string, Stable>;
 }) {
   const stableIds = Object.keys(stableStates).filter((id) => stableMap.has(id));
   const relationships = Object.entries(stableStates)
     .filter(([, s]) => s.npcRelationships)
     .flatMap(([id, s]) =>
-      Object.entries(s.npcRelationships).map(([targetId, rel]: [string, any]) => ({
+      Object.entries(s.npcRelationships || {}).map(([targetId, rel]) => ({
         from: id,
         to: targetId,
         ...rel,
@@ -363,7 +358,7 @@ function NpcRelationshipsPanel({
   return (
     <Card className="border-gold/20 bg-slate-900/40">
       <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-wide flex items-center gap-2 text-gold">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
           <Users size={14} />
           NPC Relationships
         </CardTitle>
@@ -445,7 +440,7 @@ function NpcStableIntelPanel({
   stableStates,
   stableMap,
 }: {
-  stableStates: Record<string, any>;
+  stableStates: Record<string, StableAIState>;
   stableMap: Map<string, Stable>;
 }) {
   const entries = Object.entries(stableStates);
@@ -453,7 +448,7 @@ function NpcStableIntelPanel({
   return (
     <Card className="border-gold/20 bg-slate-900/40">
       <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-wide flex items-center gap-2 text-gold">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
           <Activity size={14} />
           NPC Stable Intelligence
         </CardTitle>

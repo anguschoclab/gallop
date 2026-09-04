@@ -125,8 +125,8 @@ export function RootComponent() {
       });
 
     // Initialize workers early so they're ready when the user advances days
-    initEngineWorker().catch(() => {});
-    initInitializationWorker().catch(() => {});
+    initEngineWorker()?.catch(() => {});
+    initInitializationWorker()?.catch(() => {});
   }, []);
 
   useEffect(() => {
