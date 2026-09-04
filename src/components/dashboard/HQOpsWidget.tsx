@@ -58,7 +58,7 @@ export function HQOpsWidget() {
             {facilities &&
               Object.entries(facilities)
                 .slice(0, 3)
-                .map(([key, f]: [string, any]) => (
+                .map(([key, f]) => (
                   <div
                     key={key}
                     className="flex items-center justify-between text-xs bg-black/20 p-2 border border-white/5 rounded hover:bg-black/40 transition-colors"
@@ -67,7 +67,14 @@ export function HQOpsWidget() {
                       {FACILITY_NAMES[key as FacilityType] ?? key}
                     </span>
                     <Badge className="bg-gold-subtle text-gold text-[10px] h-4 font-bold border border-gold/20">
-                      LVL {f?.rank ?? 1}
+                      LVL{" "}
+                      {f?.level === "elite"
+                        ? 4
+                        : f?.level === "premium"
+                          ? 3
+                          : f?.level === "standard"
+                            ? 2
+                            : 1}
                     </Badge>
                   </div>
                 ))}
