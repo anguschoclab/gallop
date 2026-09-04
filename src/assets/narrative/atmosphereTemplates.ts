@@ -52,6 +52,10 @@ export const ATMOSPHERE_TRIPLE_CROWN_TEMPLATES: string[] = [
   "The road to the Triple Crown runs through {trackName} — and the tension is real.",
   "A Triple Crown race at {trackName} — every jockey knows what's at stake.",
   "Triple Crown dreams are on the line at {trackName} in this prestigious contest.",
+  "The grandstands at {trackName} are packed for this Triple Crown showdown.",
+  "You can feel the anticipation building for this Triple Crown test at {trackName}.",
+  "All eyes are on {trackName} as the Triple Crown drama unfolds.",
+  "It takes a true champion to win a Triple Crown race here at {trackName}.",
 ];
 
 export const ATMOSPHERE_ELEVATION_TEMPLATES: string[] = [
@@ -63,4 +67,8 @@ export const ATMOSPHERE_ELEVATION_TEMPLATES: string[] = [
   "At {elevation}m, {trackName} is one of the highest tracks in racing — a true test.",
   "The elevation at {trackName} — {elevation}m — makes this a race like no other.",
   "Thin air, thick competition — {elevation}m up at {trackName}.",
+  "Breathing gets harder at {elevation}m, making {trackName} a gruelling test.",
+  "The {elevation}m altitude at {trackName} will surely separate the contenders from the pretenders.",
+  "Racing in the clouds at {trackName} — the {elevation}m elevation demands peak fitness.",
+  "It's not just the distance, it's the {elevation}m elevation at {trackName} that breaks hearts.",
 ];
