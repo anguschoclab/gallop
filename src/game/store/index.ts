@@ -39,6 +39,7 @@ import { createInboxSlice } from "./slices/inboxSlice";
 import { createStaffSlice } from "./slices/staffSlice";
 import { createInsuranceSlice } from "./slices/insuranceSlice";
 import { createTransportSlice, type TransportSlice } from "./slices/transportSlice";
+import { createTutorialSlice, type TutorialSlice } from "./slices/tutorialSlice";
 import {
   createIdbStorage,
   hydrationComplete,
@@ -131,6 +132,8 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "inbox" as keyof GameState,
   // Stewards inquiry system
   "stewardsInquiries" as keyof GameState,
+  // Tutorial / guided first-session coach
+  "tutorial" as keyof GameState,
   // Stakes nomination system
   "playerNominations" as keyof GameState,
   // Player-facing syndication investors
@@ -361,6 +364,9 @@ export const useGame = create<StoreType>()(
 
       // Transport slice
       ...createTransportSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Tutorial slice (guided first-session coach)
+      ...createTutorialSlice(set, get),
 
       // Stewards inquiry action — used by the useStewardsInquiry hook after
       // the player watches a race complete in the UI.

@@ -34,6 +34,7 @@ import { createStableAIState } from "@/core/ai/npcCycleAI";
 import { generateUpcomingScheduledRaces } from "@/game/store/helpers/market";
 import { ensureMaidenRaces } from "@/core/race/maidenGuarantee";
 import { getWorldSizeConfig, DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";
+import { createDefaultTutorialState } from "@/core/tutorial/tutorialTypes";
 
 /**
  * Creates the initial game state for a new game.
@@ -267,5 +268,6 @@ export function createInitialState(
     stewardsInquiries: [],
     savedMatingPlans: [],
     worldSize,
+    tutorial: createDefaultTutorialState(),
   };
 }

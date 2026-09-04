@@ -44,6 +44,8 @@ import type { Outpost } from "@/core/facilities/outpostTypes";
 import type { WeatherState } from "@/core/weather/weatherTypes";
 import type { CareerArcState } from "@/services/narrative/careerArcGenerator";
 import type { CashPressureHistory } from "@/core/stable/cashPressureHistory";
+import type { TutorialState } from "@/core/tutorial/tutorialTypes";
+import { createDefaultTutorialState } from "@/core/tutorial/tutorialTypes";
 import { createFacility, createDefaultPlayerFacilities } from "@/core/facilities/facilityDefaults";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import { getReputationTier } from "@/core/reputation";
@@ -172,6 +174,10 @@ export interface SystemsState {
   /** Active and resolved stewards inquiries */
   stewardsInquiries: StewardsInquiry[];
 
+  // Tutorial / guided first-session coach
+  /** Tutorial state tracking the 5-beat onboarding sequence */
+  tutorial?: TutorialState;
+
   // Staff system
   /** Pool of staff available for hire */
   staffPool: StaffMember[];
@@ -290,6 +296,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
       hiredStaff: [],
       outposts: [],
       weather: { byTrack: {}, forecast: {} },
+      tutorial: createDefaultTutorialState(),
     };
   }
 
@@ -330,5 +337,6 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     hiredStaff: [],
     outposts: [],
     weather: { byTrack: {}, forecast: {} },
+    tutorial: createDefaultTutorialState(),
   };
 }

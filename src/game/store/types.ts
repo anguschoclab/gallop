@@ -35,6 +35,7 @@ import type { InboxSlice } from "./slices/inboxSlice";
 import type { StaffSlice } from "./slices/staffSlice";
 import type { InsuranceSlice } from "./slices/insuranceSlice";
 import type { TransportSlice } from "./slices/transportSlice";
+import type { TutorialSlice } from "./slices/tutorialSlice";
 
 /**
  * Standard action result type for store actions
@@ -66,7 +67,8 @@ export type StoreType = CoreState &
   InboxSlice &
   StaffSlice &
   InsuranceSlice &
-  TransportSlice & {
+  TransportSlice &
+  TutorialSlice & {
     storeVersion: number;
     startNewGame: (
       options: NewGameOptions,

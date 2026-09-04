@@ -20,6 +20,7 @@ import { ReputationDashboard } from "@/components/reputation/ReputationDashboard
 import { PlayerPrestigePanel } from "@/components/prestige/PlayerPrestigePanel";
 import { ApprenticeTracker } from "@/components/apprentice/ApprenticeTracker";
 import { NextActionBanner } from "@/components/dashboard/NextActionBanner";
+import { TutorialNextActionBanner } from "@/components/tutorial/TutorialNextActionBanner";
 import { DebtBanner } from "@/components/dashboard/DebtBanner";
 import { deriveNextAction } from "@/core/dashboard/nextAction";
 import { useNextActionBanner } from "@/hooks/dashboard/useNextActionBanner";
@@ -107,7 +108,7 @@ function Dashboard() {
           </button>
         </div>
       ) : (
-        <NextActionBanner action={nextAction} onDismiss={dismiss} />
+        <TutorialNextActionBanner fallbackAction={nextAction} />
       )}
 
       {/* Solvency status */}

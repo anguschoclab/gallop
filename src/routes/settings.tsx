@@ -10,6 +10,7 @@ import { NotificationSettingsCard } from "@/components/settings/NotificationSett
 import { AudioSettingsCard } from "@/components/settings/AudioSettingsCard";
 import { DataManagementCard } from "@/components/settings/DataManagementCard";
 import { GlossaryPanel } from "@/components/settings/GlossaryPanel";
+import { TutorialSettingsCard } from "@/components/settings/TutorialSettingsCard";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -72,6 +73,7 @@ function SettingsPage() {
           }}
         />
         <GlossaryPanel />
+        <TutorialSettingsCard />
       </div>
 
       <SaveLoadDialog

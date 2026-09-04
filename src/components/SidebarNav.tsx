@@ -31,6 +31,9 @@ import {
   RotateCcw,
   BookOpen,
   Briefcase,
+  Scale,
+  Activity,
+  Film,
 } from "lucide-react";
 
 import { formatCurrency } from "@/core/common/formatting";
@@ -63,6 +66,9 @@ const navSections: { label: string; items: NavItem[] }[] = [
       { to: "/staff", label: "Staff", icon: Users, exact: false },
       { to: "/jockeys", label: "Jockeys", icon: User, exact: false },
       { to: "/facilities", label: "Facilities", icon: Building2, exact: false },
+      { to: "/vet", label: "Vet Report", icon: Activity, exact: false },
+      { to: "/stewards", label: "Stewards", icon: Scale, exact: false },
+      { to: "/replays", label: "Replays", icon: Film, exact: false },
       { to: "/honors", label: "Honors", icon: Award, exact: false },
       { to: "/hall-of-fame", label: "Hall of Fame", icon: Trophy, exact: false },
       { to: "/awards", label: "Awards", icon: Award, exact: false },
