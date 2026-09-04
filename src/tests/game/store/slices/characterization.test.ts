@@ -5,7 +5,7 @@ import { createHorseAdminSlice } from "@/game/store/slices/horseAdminSlice";
 import { createAwardSlice } from "@/game/store/slices/awardSlice";
 import type { StoreType, StoreSet, StoreGet } from "@/game/store/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makeUnowned, makePlayerOwned } from "@/core/horse/ownership";
 
 function createMockStore(partial: Partial<StoreType> = {}): {
   set: StoreSet;
