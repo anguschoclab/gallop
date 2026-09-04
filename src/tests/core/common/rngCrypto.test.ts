@@ -31,16 +31,16 @@ describe("nondeterministicRng — crypto entropy", () => {
     expect(rng.next()).toBeLessThan(1);
   });
 
-  it("falls back to Math.random when crypto unavailable", () => {
+  it("throws when crypto unavailable", () => {
     Object.defineProperty(globalThis, "crypto", {
       value: undefined,
       writable: true,
       configurable: true,
     });
 
-    const rng = nondeterministicRng();
-    expect(rng.next()).toBeGreaterThanOrEqual(0);
-    expect(rng.next()).toBeLessThan(1);
+    expect(() => nondeterministicRng()).toThrow(
+      "Secure random number generation is not available.",
+    );
   });
 
   it("produces valid Rng interface (next, int, range, pick, gauss)", () => {

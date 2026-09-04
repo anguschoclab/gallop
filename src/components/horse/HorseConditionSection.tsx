@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Activity, AlertCircle } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/cn";
 import type { Horse } from "@/game/types";
 import { formatRecoveryDays } from "@/core/health/injuryDisplay";
@@ -16,6 +17,12 @@ export function HorseConditionSection({ horse }: HorseConditionSectionProps) {
         <h2 className="text-sm font-black uppercase tracking-[0.3em] text-cream">
           Condition Report
         </h2>
+        <Link
+          to="/vet"
+          className="ml-auto text-[10px] font-mono uppercase tracking-wide text-cream-muted hover:text-cream underline"
+        >
+          View All in Vet Report
+        </Link>
       </div>
       <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
         <CardContent className="p-6 space-y-6">

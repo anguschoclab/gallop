@@ -62,6 +62,13 @@ export function createAdvanceDayActions(
     } catch {
       // Exchange refresh must never block day advancement.
     }
+
+    // Tutorial beat 4: player advanced the day
+    try {
+      (get() as StoreType).completeTutorialBeat?.(4);
+    } catch {
+      // Tutorial completion must never block day advancement.
+    }
   };
 
   return {

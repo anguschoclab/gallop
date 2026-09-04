@@ -195,4 +195,23 @@ describe("FoalDevelopmentPanel", () => {
       expect(screen.getByText(/Day 118 \(in 2d\)/)).toBeTruthy();
     });
   });
+
+  it("falls back to resolvedChoiceKey string when the choice no longer exists", () => {
+    const arc = createDefaultFoalDevelopmentArc(0);
+    arc.milestones[0].status = "resolved";
+    arc.milestones[0].resolvedChoiceKey = "nonexistent_key";
+    arc.milestones[0].resolvedOnDay = 18;
+    arc.milestones[1].status = "resolved";
+    arc.milestones[1].resolvedChoiceKey = "sprint_focus";
+    arc.milestones[1].resolvedOnDay = 24;
+    const horse = makeHorse({ developmentArc: arc });
+
+    renderWithStore(<FoalDevelopmentPanel horse={horse} />, {
+      horses: h2r([horse]),
+      day: 30,
+    } as any);
+    // Falls back to the raw key string since the choice isn't found.
+    expect(screen.getByText("nonexistent_key")).toBeTruthy();
+    expect(screen.getByText("Sprint Focus")).toBeTruthy();
+  });
 });

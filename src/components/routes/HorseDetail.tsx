@@ -1,5 +1,5 @@
 import { Link, notFound, useParams, useRouter } from "@tanstack/react-router";
-import { type ComponentType } from "react";
+import { type ComponentType, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HorseAwardsPanel } from "@/components/awards";
@@ -30,6 +30,7 @@ import { calculateOverallRating } from "@/core/horse/stats";
 import { useHorseActions } from "@/hooks/horse/useHorseActions";
 import { useHorseDetail } from "@/hooks/horse/useHorseDetail";
 import { useHorses } from "@/hooks/game/useCoreState";
+import { useGame } from "@/game/store";
 import {
   ArrowLeft,
   Zap,
@@ -50,6 +51,12 @@ function HorseDetail() {
 
   const detail = useHorseDetail(horseId);
   const horses = useHorses();
+  const completeTutorialBeat = useGame((s) => s.completeTutorialBeat);
+
+  // Tutorial beat 0: player visited a horse's page
+  useEffect(() => {
+    completeTutorialBeat(0);
+  }, [completeTutorialBeat]);
 
   if (!horse) throw notFound();
 

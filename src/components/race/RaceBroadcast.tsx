@@ -1,4 +1,4 @@
-import { type MutableRefObject, type RefObject } from "react";
+import { type MutableRefObject, type RefObject, useEffect } from "react";
 import { cn } from "@/lib/cn";
 import { getSkyBackground } from "@/components/race/raceVisualHelpers";
 import { BroadcastCommentary } from "@/components/race/BroadcastCommentary";
@@ -12,12 +12,14 @@ import { RaceFieldDialog } from "@/components/race/RaceFieldDialog";
 import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { PostRaceAnalysis } from "@/components/race/PostRaceAnalysis";
+import { BeyerExplainer } from "@/components/tutorial/BeyerExplainer";
 import { InRunningSnapshotDialog } from "@/components/race/InRunningSnapshotDialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Horse, Race } from "@/game/types";
+import { useGame } from "@/game/store";
 import type { RacePhase } from "@/hooks/race/useRacePhase";
 import type { InRunningSnapshot } from "@/hooks/race/useInRunningSnapshots";
 
@@ -153,6 +155,14 @@ export function RaceBroadcast({
 
   const skyBg = getSkyBackground(race.weather);
   const showReplay = phase === "review" && race.resolved && !!race.snapshots?.length;
+  const completeTutorialBeat = useGame((s) => s.completeTutorialBeat);
+
+  // Tutorial beat 2: player watched a race run (entered review phase)
+  useEffect(() => {
+    if (phase === "review") {
+      completeTutorialBeat(2);
+    }
+  }, [phase, completeTutorialBeat]);
 
   // Condition timeline follows the camera target, falling back to the subject horse.
   const timelineHorseId = followTarget ?? subjectHorseId ?? null;
@@ -278,6 +288,13 @@ export function RaceBroadcast({
               </Collapsible>
             </div>
           )}
+
+          {phase === "review" && (() => {
+            const playerRunner = sorted.find((s) => s.r.isPlayer);
+            const playerBeyer = playerRunner?.beyer;
+            if (playerBeyer === null || playerBeyer === undefined) return null;
+            return <BeyerExplainer beyerScore={playerBeyer} />;
+          })()}
         </div>
         <Leaderboard
           sorted={sorted}

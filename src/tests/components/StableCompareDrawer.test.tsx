@@ -62,4 +62,12 @@ describe("StableCompareDrawer", () => {
     fireEvent.click(clearBtn);
     expect(useCompareStables.getState().ids).toEqual([]);
   });
+
+  it("skips selected ids that no longer exist (e.g. dissolved via bankruptcy)", () => {
+    useCompareStables.getState().add("s1");
+    useCompareStables.getState().add("s-dissolved"); // not in mocked allStables
+    render(<StableCompareDrawer open={true} onOpenChange={() => {}} />);
+    // Only s1 exists; the dissolved id is filtered out by NonNullable.
+    expect(screen.getByTestId("compare-table").textContent).toContain("1 stables");
+  });
 });

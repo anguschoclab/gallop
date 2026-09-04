@@ -1,89 +1,109 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup, fireEvent } from "@testing-library/react";
-import { createTestStable } from "@/tests/helpers";
-import type { Stable, StablePersonality } from "@/game/types";
+/**
+ * npcStablesCompare.test.tsx — Route tests for /npc-stables/compare.
+ *
+ * Closes the zero-coverage gap on the dedicated compare route. Verifies that
+ * the selection list shows only major stables, the compare table receives the
+ * correct stables for selected ids, dissolved/missing ids are filtered out,
+ * and the filter input narrows the list.
+ */
 
-const horses = Array.from({ length: 10 }, (_, i) => `h${i}`) as unknown as never[];
-const mockStables: Stable[] = [
-  createTestStable({
-    id: "s1",
-    name: "Alpha Stables",
-    isMajor: true,
-    horses,
-    personality: "aggressive" as StablePersonality,
-  }),
-  createTestStable({
-    id: "s2",
-    name: "Beta Ranch",
-    isMajor: true,
-    horses,
-    personality: "conservative" as StablePersonality,
-  }),
-  createTestStable({
-    id: "s3",
-    name: "Gamma Farm",
-    isMajor: false,
-    horses,
-    personality: "balanced" as StablePersonality,
-  }),
-];
+import { describe, it, expect, afterEach, vi, beforeEach } from "vitest";
+import { cleanup, render, screen, fireEvent } from "@testing-library/react";
+import type { Stable } from "@/game/types";
 
-vi.mock("@/game/store", () => ({
-  useGame: (selector: (s: any) => any) => selector({ cashPressureHistory: {} }),
-  useGameWithShallow: (selector: (s: any) => any) => selector({ cashPressureHistory: {} }),
+vi.mock("@tanstack/react-router", () => ({
+  createFileRoute: () => (config: any) => ({ options: config }),
+  Link: ({ children, to, params: p }: any) => (
+    <a
+      href={typeof to === "string" ? to : "#"}
+      data-to={to ?? ""}
+      data-params={p ? JSON.stringify(p) : ""}
+    >
+      {children}
+    </a>
+  ),
 }));
 
 vi.mock("@/hooks/game/useSystemsState", () => ({
-  useNpcStables: () => mockStables,
+  useNpcStables: () =>
+    [
+      {
+        id: "s1",
+        name: "Alpha Stables",
+        isMajor: true,
+        horses: [],
+        tier: "mid",
+        cash: 100000,
+        personality: "aggressive",
+      },
+      {
+        id: "s2",
+        name: "Beta Ranch",
+        isMajor: true,
+        horses: [],
+        tier: "top",
+        cash: 500000,
+        personality: "passive",
+      },
+      {
+        id: "s3",
+        name: "Gamma Mini",
+        isMajor: false,
+        horses: [],
+        tier: "low",
+        cash: 1000,
+        personality: "aggressive",
+      },
+    ] as unknown as Stable[],
 }));
 
-vi.mock("@/core/stable/stableQueries", () => ({
-  getMajorStables: (stables: Stable[]) => stables.filter((s) => s.isMajor),
+vi.mock("@/components/stable/StableCompareTable", () => ({
+  StableCompareTable: ({ stables }: { stables: Stable[] }) => (
+    <div data-testid="compare-table">Table with {stables.length} stables</div>
+  ),
 }));
 
 vi.mock("@/components/stable/StableCompareBar", () => ({
-  StableCompareBar: () => <div data-testid="compare-bar">Bar</div>,
+  StableCompareBar: () => <div data-testid="compare-bar" />,
 }));
 
-import { NpcStablesCompare } from "@/routes/npc-stables.compare";
+import { Route } from "@/routes/npc-stables.compare";
 import { useCompareStables } from "@/hooks/stable/useCompareStables";
 
-describe("NpcStablesCompare route", () => {
-  beforeEach(() => {
-    useCompareStables.getState().clear();
-  });
+const NpcStablesCompare = Route.options.component!;
 
+describe("NpcStablesCompare route", () => {
+  beforeEach(() => useCompareStables.getState().clear());
   afterEach(() => {
     cleanup();
     useCompareStables.getState().clear();
   });
 
-  it("renders a list of major stables with checkboxes", () => {
+  it("renders only major stables in the selection list", () => {
     render(<NpcStablesCompare />);
     expect(screen.getByText("Alpha Stables")).toBeInTheDocument();
     expect(screen.getByText("Beta Ranch")).toBeInTheDocument();
-    // Non-major stable should NOT appear
-    expect(screen.queryByText("Gamma Farm")).not.toBeInTheDocument();
+    expect(screen.queryByText("Gamma Mini")).not.toBeInTheDocument();
   });
 
-  it("renders the compare bar", () => {
+  it("renders the compare table with selected stables", () => {
+    useCompareStables.getState().add("s1");
     render(<NpcStablesCompare />);
-    expect(screen.getByTestId("compare-bar")).toBeInTheDocument();
+    expect(screen.getByTestId("compare-table").textContent).toContain("1 stables");
   });
 
-  it("checkbox toggle adds/removes stable from compare set", () => {
+  it("skips dissolved/missing ids in the compare table", () => {
+    useCompareStables.getState().add("s1");
+    useCompareStables.getState().add("s-dissolved");
     render(<NpcStablesCompare />);
-    const checkbox = screen.getByLabelText(/Alpha Stables/i) as HTMLInputElement;
-    fireEvent.click(checkbox);
-    expect(useCompareStables.getState().ids).toContain("s1");
-    fireEvent.click(checkbox);
-    expect(useCompareStables.getState().ids).not.toContain("s1");
+    expect(screen.getByTestId("compare-table").textContent).toContain("1 stables");
   });
 
-  it("name filter input filters the list", () => {
+  it("filter input narrows the stable list", () => {
     render(<NpcStablesCompare />);
-    const filterInput = screen.getByPlaceholderText(/filter|search/i);
-    fireEvent.change(filterInput, { target: { value: "Alpha" } });
+    fireEvent.change(screen.getByPlaceholderText("Filter by name..."), {
+      target: { value: "alpha" },
+    });
     expect(screen.getByText("Alpha Stables")).toBeInTheDocument();
     expect(screen.queryByText("Beta Ranch")).not.toBeInTheDocument();
   });

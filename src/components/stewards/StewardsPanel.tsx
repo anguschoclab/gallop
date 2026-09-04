@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, CheckCircle, XCircle, DollarSign, Clock } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import {
   formatInquiryType,
@@ -80,6 +81,12 @@ export function StewardsPanel({ horseId }: StewardsPanelProps) {
             {inquiries.length}
           </Badge>
         </div>
+        <Link
+          to="/stewards"
+          className="text-[10px] font-mono uppercase tracking-wide text-cream-muted hover:text-cream underline"
+        >
+          View All in Stewards Log
+        </Link>
       </CardHeader>
       <CardContent className="space-y-3">
         {inquiries.map((inquiry) => (

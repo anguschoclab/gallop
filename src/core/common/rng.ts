@@ -104,6 +104,7 @@ export function hashStr(s: string): number {
  * (e.g. ad-hoc market refresh). Keep these rare — explicit seeds are better.
  *
  * @returns RNG interface with random seed
+ * @throws Error if `crypto.getRandomValues` is unavailable (no secure RNG).
  */
 export function nondeterministicRng(): Rng {
   let seed: number;
@@ -112,7 +113,7 @@ export function nondeterministicRng(): Rng {
     crypto.getRandomValues(bytes);
     seed = ((bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3]) >>> 0;
   } else {
-    seed = (Math.random() * 0xffffffff) >>> 0;
+    throw new Error("Secure random number generation is not available.");
   }
   return createRng(seed);
 }

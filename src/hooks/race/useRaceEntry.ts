@@ -27,6 +27,7 @@ export function useRaceEntry(race: Race) {
   const submitClaim = useGame((s) => s.submitClaim);
   const withdrawRace = useGame((s) => s.withdrawRace);
   const withdrawClaim = useGame((s) => s.withdrawClaim);
+  const completeTutorialBeat = useGame((s) => s.completeTutorialBeat);
   const cash = useGame((s) => s.cash);
   const day = useGame((s) => s.day);
   const raceWeather = useGame((s) => {
@@ -77,6 +78,8 @@ export function useRaceEntry(race: Race) {
         ? enterClaimingRace(race.id, selectedHorseId)
         : enterRace(race.id, selectedHorseId);
       if (res.ok) {
+        // Tutorial beat 1: player entered their first race
+        completeTutorialBeat(1);
         assignJockey(race.id, selectedHorseId, selectedJockeyId);
         const instructions = buildInstructions(
           {
