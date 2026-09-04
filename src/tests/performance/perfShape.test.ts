@@ -6,7 +6,8 @@ import { makeUnowned } from "@/core/horse/ownership";
 import { calculateNpcBid } from "@/core/auction/engine";
 import { createRng } from "@/core/common/rng";
 import { AUCTION_HOUSES } from "@/core/prestige/auctionHouses";
-import type { Horse, Stable } from "@/core/auction/types";
+import type { Horse } from "@/core/horse/types";
+import type { Stable } from "@/core/stable/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 
 describe("perf-shape: tacticalAI uses Array.includes not Set allocation (#364)", () => {
@@ -48,6 +49,7 @@ describe("perf-shape: tacticalAI uses Array.includes not Set allocation (#364)",
     leadGroupCount: 1,
     pacePressure: 1.0,
     progress: 0.5,
+    laneDensity: [0, 0, 0, 0, 0],
     paceRating: 1.0,
     ...overrides,
   });
@@ -141,7 +143,18 @@ describe("perf-shape: auction engine hoists horsesDict outside consignor loop (#
 
     // Should not throw — the function accepts 10 args including house
     expect(() => {
-      calculateNpcBid(stable, horse, 999_999_999, "yearling", rng, [], undefined, undefined, 1, house);
+      calculateNpcBid(
+        stable,
+        horse,
+        999_999_999,
+        "yearling",
+        rng,
+        [],
+        undefined,
+        undefined,
+        1,
+        house,
+      );
     }).not.toThrow();
   });
 

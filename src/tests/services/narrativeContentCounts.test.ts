@@ -7,12 +7,17 @@ import {
   ATMOSPHERE_TRIPLE_CROWN_TEMPLATES,
   ATMOSPHERE_ELEVATION_TEMPLATES,
 } from "@/assets/narrative/atmosphereTemplates";
-import { JOCKEY_TRAIT_TEMPLATES, JOCKEY_MOVE_TEMPLATES, JOCKEY_TACTIC_TEMPLATES } from "@/assets/narrative/jockeyTemplates";
+import {
+  JOCKEY_TRAIT_TEMPLATES,
+  JOCKEY_MOVE_TEMPLATES,
+  JOCKEY_TACTIC_TEMPLATES,
+} from "@/assets/narrative/jockeyTemplates";
 
 describe("content counts: flavor stories (#379)", () => {
-  it("has at least 120 flavor stories total", () => {
-    // #379 added 30 stories, bringing the total from ~98 to 127
-    expect(ALL_FLAVOR_STORIES.length).toBeGreaterThanOrEqual(120);
+  it("has at least 180 flavor stories total", () => {
+    // #379 added 30 stories (98→128), then reconciliation ported 64 unique
+    // stories from closed PRs #367/#365/#356/#354/#349 (128→192)
+    expect(ALL_FLAVOR_STORIES.length).toBeGreaterThanOrEqual(180);
   });
 
   it("has stories across all themes", () => {

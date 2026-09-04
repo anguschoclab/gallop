@@ -121,6 +121,31 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "A popular beverage company has signed a lucrative deal to sponsor the paddock area, bringing new signage and promotional events to the daily card.",
       category: "flavor",
     },
+    {
+      headline: "Track Surface Renovations Announced",
+      body: "Management confirmed plans to strip and rebuild the main dirt track base layer at the end of the meet to improve drainage.",
+      category: "flavor",
+    },
+    {
+      headline: "New Timing System Installed",
+      body: "The track has upgraded to a state-of-the-art laser timing system, promising more accurate fractional times for afternoon racing.",
+      category: "flavor",
+    },
+    {
+      headline: "Infield Concert Series a Hit",
+      body: "The newly introduced summer concert series in the track infield is drawing a younger demographic to the weekend racing cards.",
+      category: "flavor",
+    },
+    {
+      headline: "New Drainage System Installed",
+      body: "Track engineers have completed an overhaul of the inner dirt track's drainage system, promising fewer cancelled races during the rainy season.",
+      category: "flavor",
+    },
+    {
+      headline: "Grandstand Wi-Fi Upgraded",
+      body: "In a bid to attract a younger audience, management has completely overhauled the track's wireless network to ensure seamless streaming and wagering for all patrons.",
+      category: "flavor",
+    },
   ],
   jockeys: [
     {
@@ -228,6 +253,71 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "Questions are swirling in the paddock as one of the track's leading riders endures a shocking 0-for-20 slump over the past two weeks.",
       category: "flavor",
     },
+    {
+      headline: "Jockey Fined for Weigh-In Infraction",
+      body: "The stewards handed down a hefty fine to a prominent rider today after returning to scale two pounds overweight following a narrow victory.",
+      category: "flavor",
+    },
+    {
+      headline: "Freelance Rider Turning Heads",
+      body: "Operating without an agent, a young freelance jockey is steadily picking up mounts for smaller barns and making the most of every opportunity.",
+      category: "flavor",
+    },
+    {
+      headline: "Jockeys' Room Renovations Underway",
+      body: "Crews have begun updating the jockeys' quarters with new sauna facilities and video review rooms to help riders study race replays.",
+      category: "flavor",
+    },
+    {
+      headline: "Weight Issues Plague Jockeys' Room",
+      body: "Several riders were seen hitting the hot box hard this morning, struggling to make weight for the early allowance races after a long holiday weekend.",
+      category: "flavor",
+    },
+    {
+      headline: "Rivalry Brews Between Top Riders",
+      body: "A fierce stretch duel has spilled over into the jockeys' room, with two leading riders exchanging heated words after a tight finish.",
+      category: "flavor",
+    },
+    {
+      headline: "Prominent Jockey Changes Representation",
+      body: "One of the leading riders in the standings has surprisingly parted ways with their long-time agent, sparking speculation about a shift in their seasonal strategy.",
+      category: "flavor",
+    },
+    {
+      headline: "Rivalry Brews in the Jockeys' Room",
+      body: "Tensions were high after yesterday's feature race as two top riders exchanged heated words over a disputed inquiry, promising fireworks in their future matchups.",
+      category: "flavor",
+    },
+    {
+      headline: "Apprentice Loses the Bug",
+      body: "A popular young rider successfully guided their final mount home as an apprentice today, officially losing their weight allowance and joining the journeyman ranks.",
+      category: "flavor",
+    },
+    {
+      headline: "Veteran Jockey Announces Return",
+      body: "A fan-favorite rider who had briefly stepped away from the sport has announced their intention to return to the saddle for the upcoming stakes festival.",
+      category: "flavor",
+    },
+    {
+      headline: "Dietary Coach Becomes Paddock Fixture",
+      body: "Several leading jockeys have pooled resources to hire a specialized nutritionist, hoping to maintain their riding weight more healthily throughout the grueling season.",
+      category: "flavor",
+    },
+    {
+      headline: "Local Rider Wins Out-of-State Derby",
+      body: "The jockeys' room was celebrating today after one of their own shipped out to ride a massive longshot to victory in a prestigious regional derby.",
+      category: "flavor",
+    },
+    {
+      headline: "Jockey Agents Shuffle Rosters",
+      body: "Rumors are swirling after a prominent agent abruptly dropped two veteran riders to take on a highly touted apprentice from overseas.",
+      category: "flavor",
+    },
+    {
+      headline: "Retired Champion Jockey Joins Booth",
+      body: "A fan-favorite retired rider made their debut as a guest analyst today, offering incredible insights into race tactics from a jockey's perspective.",
+      category: "flavor",
+    },
   ],
   breeding: [
     {
@@ -330,6 +420,51 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "The fall mixed sale concluded with surprisingly strong returns, driven largely by intense bidding wars over a handful of deeply pedigreed mares in foal to top stallions.",
       category: "flavor",
     },
+    {
+      headline: "Rare White Foal Born at Local Farm",
+      body: "A nearby breeding operation welcomed a remarkably rare all-white foal overnight, immediately becoming a social media sensation.",
+      category: "flavor",
+    },
+    {
+      headline: "Pinhookers Busy at Weanling Sale",
+      body: "Professional pinhookers were highly active at today's weanling sale, aggressively securing young prospects to resell as yearlings next season.",
+      category: "flavor",
+    },
+    {
+      headline: "Stallion Syndicate Dissolved",
+      body: "Following fertility issues, the syndicate managing a highly anticipated first-season sire has been dissolved, sending shockwaves through the breeding community.",
+      category: "flavor",
+    },
+    {
+      headline: "Stallion Retires to Stud Duty",
+      body: "Following a decorated career on the track, a popular fan-favorite has officially shipped out to the breeding shed to begin his highly anticipated second career.",
+      category: "flavor",
+    },
+    {
+      headline: "Sales Topper Disappoints in Debut",
+      body: "Whispers are flying across the backstretch after a seven-figure yearling purchase finished well up the track in their highly publicized debut.",
+      category: "flavor",
+    },
+    {
+      headline: "Rare Coat Color Found in Weanling",
+      body: "A local farm has drawn media attention after a mare gave birth to a striking roan colt with unusual, prominent white markings.",
+      category: "flavor",
+    },
+    {
+      headline: "AI Software Aids Pedigree Analysts",
+      body: "Bloodstock agencies are increasingly utilizing new machine learning algorithms to uncover hidden nicking patterns in historic thoroughbred pedigrees.",
+      category: "flavor",
+    },
+    {
+      headline: "Historic Breeding Farm Changes Hands",
+      body: "One of the region's oldest and most respected nurseries has been sold to an international conglomerate, ending three generations of family ownership.",
+      category: "flavor",
+    },
+    {
+      headline: "Stallion Syndicate Shares Skyrocket",
+      body: "Following a string of impressive debut winners by his first crop, shares in a highly touted first-season sire have doubled in value on the private market.",
+      category: "flavor",
+    },
   ],
   weather: [
     {
@@ -415,6 +550,81 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "Perfect Conditions Forecast for Stakes Weekend",
       body: "Meteorologists are predicting crisp, clear weather with low humidity for the upcoming festival, promising a fast dirt track and firm going on the turf.",
+      category: "flavor",
+    },
+    {
+      headline: "Unseasonal Humidity Drains Runners",
+      body: "A sudden spike in humidity is visibly testing the endurance of the horses in the paddock, leading to several surprisingly slow finish times.",
+      category: "flavor",
+    },
+    {
+      headline: "Brisk Winds Favor Front-Runners",
+      body: "A strong tailwind down the backstretch seems to be aiding early speed horses today, making it difficult for closers to make up ground.",
+      category: "flavor",
+    },
+    {
+      headline: "Lightning Delays Afternoon Card",
+      body: "A passing thunderstorm forced a 45-minute delay and a temporary clearing of the grandstand, but racing is expected to resume shortly on a sealed track.",
+      category: "flavor",
+    },
+    {
+      headline: "Sudden Thunderstorm Scatters Paddock",
+      body: "A brief but intense squall forced horses and handlers to scramble for cover during the saddling process, leaving everyone soaked but unharmed.",
+      category: "flavor",
+    },
+    {
+      headline: "Unseasonable Warmth Changes Track Dynamics",
+      body: "An unexpected spike in afternoon temperatures has caused the main track to dry out significantly faster than anticipated, favoring front-running speed.",
+      category: "flavor",
+    },
+    {
+      headline: "Heavy Overcast Casts Gloom Over Card",
+      body: "Dense cloud cover has settled over the venue, forcing track management to turn on the grandstand and track lights much earlier than usual.",
+      category: "flavor",
+    },
+    {
+      headline: "Track Crews Battle Lingering Frost",
+      body: "A stubborn overnight freeze has maintenance workers working continuously with harrows to ensure the inside rail is safe for morning training.",
+      category: "flavor",
+    },
+    {
+      headline: "Sudden Wind Shift Alters Tactics",
+      body: "A dramatic change in wind direction has turned a tailwind in the stretch into a stiff headwind, prompting riders to reconsider their late moves.",
+      category: "flavor",
+    },
+    {
+      headline: "Light Drizzle Prompts Shoe Changes",
+      body: "Steady, misty rain has trainers rushing to the paddock blacksmith to swap out equipment, ensuring their runners have maximum grip on the slicking surface.",
+      category: "flavor",
+    },
+    {
+      headline: "Rainbow Over the Backstretch",
+      body: "Following a brief morning shower, a brilliant double rainbow appeared over the far turn, creating a picturesque moment for early-arriving fans and photographers.",
+      category: "flavor",
+    },
+    {
+      headline: "Humidity Tests Equine Stamina",
+      body: "Oppressive humidity has blanketed the region, leading stewards to mandate extra cooling stations and additional water buckets in the winner's circle.",
+      category: "flavor",
+    },
+    {
+      headline: "Vibrant Rainbow Over the Backstretch",
+      body: "Following a brief afternoon shower, a stunning double rainbow stretched across the track, creating a perfect photo opportunity for fans on the apron.",
+      category: "flavor",
+    },
+    {
+      headline: "Lightning Forces Minor Delay",
+      body: "Track stewards temporarily halted the race card after lightning strikes were detected nearby, but action quickly resumed once the storm cell passed.",
+      category: "flavor",
+    },
+    {
+      headline: "Unseasonal Frost Delays Training",
+      body: "An unexpected overnight freeze left the main track frozen solid, forcing trainers to keep their runners walking in the shedrow until mid-morning.",
+      category: "flavor",
+    },
+    {
+      headline: "High Winds Buffet the Grandstand",
+      body: "Gale-force gusts have made for unpredictable racing today, with front-runners struggling mightily against a stiff headwind down the backstretch.",
       category: "flavor",
     },
   ],
@@ -532,6 +742,51 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "Local School Visits Backstretch",
       body: "A group of elementary school students enjoyed a guided tour of the stables this morning, feeding peppermints to the horses and learning about the daily life of a thoroughbred.",
+      category: "flavor",
+    },
+    {
+      headline: "Racing Superfan Attends 50th Consecutive Derby",
+      body: "Track officials presented a commemorative plaque to a local enthusiast who hasn't missed the region's signature race since the 1970s.",
+      category: "flavor",
+    },
+    {
+      headline: "Pony Club Exhibition Between Races",
+      body: "The local pony club put on a spirited exhibition race down the stretch, drawing cheers from the crowd as the next generation of riders showed their skills.",
+      category: "flavor",
+    },
+    {
+      headline: "Retired Champion Paraded for Fans",
+      body: "A beloved former track star was paraded in the walking ring this afternoon, looking fit and happy in their second career as a stable pony.",
+      category: "flavor",
+    },
+    {
+      headline: "Food Truck Festival on the Infield",
+      body: "A popular weekend event drew thousands of new fans to the infield, combining local gourmet food trucks with a full card of afternoon racing.",
+      category: "flavor",
+    },
+    {
+      headline: "Famous Actor Spotted in Paddock",
+      body: "Paparazzi swarmed the saddling enclosure today when a prominent Hollywood star was seen admiring a horse they recently acquired a minority share in.",
+      category: "flavor",
+    },
+    {
+      headline: "Charity Fun Run on the Dirt Track",
+      body: "Hundreds of locals laced up their sneakers early Sunday morning to run a 5K on the main dirt track, raising significant funds for equine aftercare.",
+      category: "flavor",
+    },
+    {
+      headline: "Documentary Crew Films on Backstretch",
+      body: "A popular streaming service has embedded a film crew at the track, capturing the grit and glamour of daily life for an upcoming docuseries.",
+      category: "flavor",
+    },
+    {
+      headline: "Retired Champion Leads Local Parade",
+      body: "A beloved former Horse of the Year made a special appearance as the grand marshal of the town's annual summer parade, delighting fans of all ages.",
+      category: "flavor",
+    },
+    {
+      headline: "Backstretch Art Exhibit Opens",
+      body: "A local gallery is hosting an exhibition of watercolors painted entirely by a prominent hotwalker, capturing the quiet moments of morning training.",
       category: "flavor",
     },
   ],
@@ -655,6 +910,71 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "New Veterinary Research Published",
       body: "A leading equine clinic has published a groundbreaking study on soft tissue recovery, offering trainers new insights into managing minor aches and pains in their runners.",
+      category: "flavor",
+    },
+    {
+      headline: "New Whip Restrictions Proposed",
+      body: "The national regulatory board is circulating a draft proposal that would further limit the number of times a jockey can use the riding crop during a race.",
+      category: "flavor",
+    },
+    {
+      headline: "Major Syndicate Suspends Operations",
+      body: "A major ownership syndicate has abruptly suspended all new acquisitions pending an internal audit, citing concerns over rising veterinary costs.",
+      category: "flavor",
+    },
+    {
+      headline: "Racing Commission Approves Drone Broadcasts",
+      body: "The racing commission has greenlit the use of racing drones for live broadcast coverage, promising fans a thrilling new perspective on the action.",
+      category: "flavor",
+    },
+    {
+      headline: "New Track Announcer Debuts",
+      body: "The grandstand was treated to a fresh voice this afternoon as the newly hired track announcer called their very first race with distinct flair.",
+      category: "flavor",
+    },
+    {
+      headline: "Tractor Malfunction Halts Works",
+      body: "Morning training came to a brief standstill when the main water truck broke down at the top of the stretch, creating a minor traffic jam of eager thoroughbreds.",
+      category: "flavor",
+    },
+    {
+      headline: "Trainer Celebrates 500th Winner",
+      body: "A popular local trainer reached a major milestone today, surrounded by staff and owners in the winner's circle after saddling their 500th career victor.",
+      category: "flavor",
+    },
+    {
+      headline: "Track Outrider Praised for Quick Thinking",
+      body: "A disaster was narrowly avoided during morning works when an alert outrider swiftly corralled a loose horse before it could run off the track.",
+      category: "flavor",
+    },
+    {
+      headline: "Syndicate Models Gain Traction",
+      body: "Micro-share ownership syndicates are seeing a massive surge in popularity, bringing a new wave of loud, enthusiastic owners to the paddock.",
+      category: "flavor",
+    },
+    {
+      headline: "Wagering Handle Shows Growth",
+      body: "Track officials are celebrating a strong start to the season, with the all-sources wagering handle showing a double-digit percentage increase over last year.",
+      category: "flavor",
+    },
+    {
+      headline: "Drone Cameras Introduce New Viewing Angles",
+      body: "The broadcasting team successfully debuted new racing drones today, giving fans an unprecedented, dynamic view of the horses as they round the far turn.",
+      category: "flavor",
+    },
+    {
+      headline: "New Equine Insurance Provider Enters Market",
+      body: "Owners are welcoming a new, specialized equine insurance firm that promises more competitive premiums for high-value thoroughbreds.",
+      category: "flavor",
+    },
+    {
+      headline: "Micro-Share Ownership Surges",
+      body: "Industry analysts are noting a massive spike in syndicates offering micro-shares, bringing thousands of new fans into the ownership ranks for a fraction of the traditional cost.",
+      category: "flavor",
+    },
+    {
+      headline: "Historical Horse Racing Machines Approved",
+      body: "The state legislature has officially passed a bill allowing historical racing machines at the track, ensuring a significant boost to purses for the upcoming year.",
       category: "flavor",
     },
   ],
