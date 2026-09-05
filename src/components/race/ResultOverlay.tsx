@@ -41,7 +41,8 @@ interface ResultOverlayProps {
   race: {
     name: string;
     purse: number;
-    graded?: unknown;
+    graded?: { track?: string; trackId?: string } | undefined;
+    trackId?: string;
     sectionalSplits?: SectionalSplit[];
     distance?: number;
     snapshots?: RaceSnapshot[];
