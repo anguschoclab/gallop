@@ -297,7 +297,7 @@ export function playerTradeNotifications(args: {
     out.push({
       kind: "fillable",
       key,
-      horseName: ask.horseName ?? ask.horseId,
+      horseName: ask.horseId,
       askPrice: ask.price,
       bidPrice: best.price,
       bidderName: best.bidderName,
