@@ -34,12 +34,18 @@ export type PlayerBiddingRecord = {
   outcome: "won" | "outbid" | "passed" | "open";
 };
 
-/** True when a bid record belongs to the player (no NPC stable id, or "player"). */
+/**
+ * True when a bid record belongs to the player (no NPC stable id, or "player").
+ * @param bid
+ */
 export function isPlayerBid(bid: AuctionBidRecord): boolean {
   return bid.stableId === undefined || bid.stableId === "player";
 }
 
-/** All player bid amounts on a lot, in tick order. */
+/**
+ * All player bid amounts on a lot, in tick order.
+ * @param lot
+ */
 export function playerBidsForLot(lot: AuctionLot): number[] {
   return (lot.bidHistory ?? [])
     .filter(isPlayerBid)
@@ -106,7 +112,10 @@ export function mergeBiddingHistory(
   return [...byId.values()].sort((a, b) => b.day - a.day || a.horseName.localeCompare(b.horseName));
 }
 
-/** Aggregate summary of the player's auction record. */
+/**
+ * Aggregate summary of the player's auction record.
+ * @param history
+ */
 export function biddingHistorySummary(history: readonly PlayerBiddingRecord[]): {
   lots: number;
   won: number;
