@@ -123,6 +123,15 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
             <h2 className="text-2xl font-black text-cream uppercase tracking-tight font-[family-name:var(--font-display)]">
               {race.name}
             </h2>
+            {venueUpliftPct !== 0 && (
+              <div
+                className="font-mono text-[10px] uppercase tracking-wide text-cream/40"
+                title="Payouts are scaled by the prestige of the racecourse staging this race."
+              >
+                Course prestige {venueUpliftPct > 0 ? "+" : ""}
+                {venueUpliftPct}% on earnings
+              </div>
+            )}
           </div>
           <Trophy className="h-8 w-8 text-gold opacity-20" />
         </div>
