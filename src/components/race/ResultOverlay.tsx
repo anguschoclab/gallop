@@ -32,6 +32,7 @@ import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
 import { useGame } from "@/game/store";
 import { getStrategyInsights } from "@/core/ai/jockeyStrategyRecording";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { venuePayoutMultiplier } from "@/core/race/venuePayout";
 
 /**
  * Props for the ResultOverlay component.
@@ -41,7 +42,8 @@ interface ResultOverlayProps {
   race: {
     name: string;
     purse: number;
-    graded?: unknown;
+    graded?: { track?: string; trackId?: string } | undefined;
+    trackId?: string;
     sectionalSplits?: SectionalSplit[];
     distance?: number;
     snapshots?: RaceSnapshot[];
@@ -61,6 +63,8 @@ interface ResultOverlayProps {
  */
 export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOverlayProps) {
   const prizeSplit = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
+  const venueMultiplier = venuePayoutMultiplier(race);
+  const venueUpliftPct = Math.round((venueMultiplier - 1) * 100);
   const ordered = [...runners].sort(compareFinishOrder);
   const finishedCount = runners.filter((r) => r.finishTime !== null).length;
   const allFinished = finishedCount === runners.length;
@@ -119,6 +123,15 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
             <h2 className="text-2xl font-black text-cream uppercase tracking-tight font-[family-name:var(--font-display)]">
               {race.name}
             </h2>
+            {venueUpliftPct !== 0 && (
+              <div
+                className="font-mono text-[10px] uppercase tracking-wide text-cream/40"
+                title="Payouts are scaled by the prestige of the racecourse staging this race."
+              >
+                Course prestige {venueUpliftPct > 0 ? "+" : ""}
+                {venueUpliftPct}% on earnings
+              </div>
+            )}
           </div>
           <Trophy className="h-8 w-8 text-gold opacity-20" />
         </div>
@@ -148,7 +161,10 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
 
               <div className="divide-y divide-white/5">
                 {ordered.map((r, i) => {
-                  const prize = i < prizeSplit.length ? Math.round(race.purse * prizeSplit[i]) : 0;
+                  const prize =
+                    i < prizeSplit.length
+                      ? Math.round(Math.round(race.purse * prizeSplit[i]) * venueMultiplier)
+                      : 0;
                   const verdict = r.finalizedLedger
                     ? generateRaceVerdict(r, i + 1, ordered, r.finalizedLedger, fieldLedgers)
                     : null;

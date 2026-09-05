@@ -20,6 +20,7 @@ import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { AnyImpact } from "@/core/resolver/impacts";
 import { requireHorse, requireOwned } from "../guards";
+import { buildBiddingRecord, mergeBiddingHistory } from "@/core/auction/biddingHistory";
 
 export type AuctionSlice = {
   /** Consigns a horse to an upcoming auction sale */
@@ -129,8 +130,25 @@ export function createAuctionSlice(
       if (lot.withdrawn || lot.passed) return { ok: false, reason: "Lot not available." };
       if (s.cash < amount) return { ok: false, reason: "Insufficient funds." };
 
+      const bookLot: AuctionLot = {
+        ...lot,
+        bidHistory: [
+          ...(lot.bidHistory || []),
+          { stableId: asPlayerOwnerId("player"), amount, tick: s.day },
+        ],
+      };
+      const bookRecord = buildBiddingRecord(
+        sale,
+        bookLot,
+        s.horses[bookLot.horseId]?.name ?? "Unknown",
+        s.day,
+      );
+
       set({
         cash: s.cash - amount,
+        playerBiddingHistory: bookRecord
+          ? mergeBiddingHistory(s.playerBiddingHistory ?? [], [bookRecord])
+          : (s.playerBiddingHistory ?? []),
         auctions: (s.auctions ?? []).map((a: AuctionSale) =>
           a.id === saleId
             ? {
@@ -231,7 +249,19 @@ export function createAuctionSlice(
       // 📊 Expected Impact: O(1) lookup reduces time complexity for resolving auction sales with large numbers of lots.
       const finalLotsMap = new Map(finalLots.map((fl) => [fl.id, fl]));
 
+      // Record every lot the player bid on, with its final hammer outcome.
+      const biddingRecords = finalLots
+        .map((fl) => {
+          const original = sale.lots.find((l: AuctionLot) => l.id === fl.id);
+          const merged: AuctionLot = { ...(original ?? fl), ...fl };
+          const horseName =
+            newHorses[merged.horseId]?.name ?? s.horses[merged.horseId]?.name ?? "Unknown";
+          return buildBiddingRecord(sale, merged, horseName, s.day);
+        })
+        .filter((r): r is NonNullable<typeof r> => r !== null);
+
       set({
+        playerBiddingHistory: mergeBiddingHistory(s.playerBiddingHistory ?? [], biddingRecords),
         cash: newCash,
         npcStables: newNpcStables,
         horses: newHorses,

@@ -217,6 +217,8 @@ export function createInitialState(
     scoutReports: [],
     scoutingAssignments: [],
     exchange: createDefaultExchangeState(),
+    playerBiddingHistory: [],
+    autoSyndicateEnabled: false,
     auctions: [],
     jockeys,
     awards: [],
