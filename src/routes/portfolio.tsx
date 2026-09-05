@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { Briefcase, Search } from "lucide-react";
+import { Briefcase, Search, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useGame, useGameWithShallow } from "@/game/store";
@@ -17,6 +17,12 @@ import { getPrestigeTier } from "@/core/prestige/prestigeTypes";
 import { StatCard } from "@/components/common/StatCard";
 import { PillToggleGroup } from "@/components/common/PillToggleGroup";
 import { PortfolioTable } from "@/components/portfolio/PortfolioTable";
+import { BiddingHistoryTable } from "@/components/portfolio/BiddingHistoryTable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const SORT_KEYS = [
   "name",
@@ -39,6 +45,7 @@ export const Route = createFileRoute("/portfolio")({
     prestige: z.enum(PRESTIGE_FILTERS).optional(),
     sort: z.enum(SORT_KEYS).optional(),
     dir: z.enum(["asc", "desc"]).optional(),
+    tab: z.enum(["holdings", "bidding"]).optional(),
   }),
   head: () => ({
     meta: [
@@ -75,6 +82,11 @@ function PortfolioPage() {
   const cash = useGame((s: GameState) => s.cash);
   const playerProfile = useGameWithShallow((s: GameState) => s.playerProfile);
   const reputationScore = useGame((s: GameState) => s.reputation?.score ?? 0);
+  const biddingHistory = useGameWithShallow((s: GameState) => s.playerBiddingHistory ?? []);
+  const autoSyndicateEnabled = useGame((s: GameState) => s.autoSyndicateEnabled ?? false);
+  const setAutoSyndicateEnabled = useGame((s: GameState) => s.setAutoSyndicateEnabled);
+  const runAutoSyndicate = useGame((s: GameState) => s.runAutoSyndicate);
+  const tab = search.tab ?? "holdings";
 
   const rows = useMemo(
     () =>
@@ -193,7 +205,57 @@ function PortfolioPage() {
         </CardContent>
       </Card>
 
-      <PortfolioTable rows={sorted} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+      <Card className="border-white/5 bg-slate-900/40">
+        <CardContent className="p-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <div>
+              <Label htmlFor="auto-syndicate" className="text-cream">
+                Auto-syndicate my top horses
+              </Label>
+              <p className="text-xs text-cream-muted">
+                Each day, open syndicates on your best Grade 1 winners and sell spare shares while
+                keeping control.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const result = runAutoSyndicate?.();
+                toast.success(
+                  result && (result.created || result.solicited)
+                    ? `Opened ${result.created} syndicate(s), sold shares in ${result.solicited}, raising ${formatCurrency(result.raised)}.`
+                    : "Nothing to syndicate right now.",
+                );
+              }}
+            >
+              Run now
+            </Button>
+            <Switch
+              id="auto-syndicate"
+              checked={autoSyndicateEnabled}
+              onCheckedChange={(v) => setAutoSyndicateEnabled?.(v)}
+              aria-label="Auto-syndicate my top horses each day"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Tabs value={tab} onValueChange={(v) => setSearch({ tab: v })}>
+        <TabsList>
+          <TabsTrigger value="holdings">Holdings</TabsTrigger>
+          <TabsTrigger value="bidding">Bidding History</TabsTrigger>
+        </TabsList>
+        <TabsContent value="holdings" className="mt-4">
+          <PortfolioTable rows={sorted} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+        </TabsContent>
+        <TabsContent value="bidding" className="mt-4">
+          <BiddingHistoryTable history={biddingHistory} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

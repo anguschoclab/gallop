@@ -1,6 +1,17 @@
 # TypeScript Check Results
-# Generated: 2026-09-04T19:41:21.019Z
+# Generated: 2026-09-05T19:10:55.258Z
 # Command: bun x tsc --noEmit --pretty false
-# Errors: 0  Warnings: 0  Exit: 0
+# Errors: 4  Warnings: 0  Exit: 2
 
-No type errors or warnings.
+## Errors
+
+### src/game/store/initialization.ts (1)
+  205:3  TS2322  Type '{ day: number; cash: number; horses: { [k: string]: Horse; }; market: Horse[]; races: { [k: string]: Race; }; trainingUsed: {}; playerNominations: never[]; log: { day: number; text: string; }[]; ... 45 more ...; tutorial: TutorialState; }' is not assignable to type 'GameState'.
+
+### src/routes/portfolio.tsx (3)
+  86:60  TS2339  Property 'autoSyndicateEnabled' does not exist on type 'GameState'.
+  87:63  TS2339  Property 'setAutoSyndicateEnabled' does not exist on type 'GameState'.
+  88:56  TS2339  Property 'runAutoSyndicate' does not exist on type 'GameState'.
+
+## Unparsed output
+    Property 'playerBiddingHistory' is missing in type '{ day: number; cash: number; horses: { [k: string]: Horse; }; market: Horse[]; races: { [k: string]: Race; }; trainingUsed: {}; playerNominations: never[]; log: { day: number; text: string; }[]; ... 45 more ...; tutorial: TutorialState; }' but required in type 'MarketState'.
