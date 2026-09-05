@@ -16,6 +16,7 @@ import { calculateRaceWinReputation, calculateRaceLossReputation } from "@/core/
 import type { Race, Horse } from "@/game/types";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import { getPrizeSplitForRace } from "../utils";
+import { applyVenuePayout } from "../venuePayout";
 import { asOwnerKey } from "@/core/types/branded";
 
 export function generatePrizeMoneyImpacts(
