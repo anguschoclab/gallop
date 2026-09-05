@@ -39,7 +39,7 @@ function g1Wins(horse: Horse): number {
 function isEligibleStallion(horse: Horse): boolean {
   return (
     isPlayerOwned(horse) &&
-    horse.sex === "colt" &&
+    (horse.gender === "colt" || horse.gender === "horse") &&
     horse.lifecycleStatus !== "deceased" &&
     g1Wins(horse) > 0
   );
@@ -61,7 +61,7 @@ export function createAutoSyndicateSlice(set: StoreSet, get: StoreGet): AutoSynd
       const horses = Object.values(s.horses) as Horse[];
       const eligible = horses
         .filter(isEligibleStallion)
-        .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+        .sort((a, b) => horseMarketValue(b, horses) - horseMarketValue(a, horses));
 
       // 1. Open syndicates on the top-rated stallions that don't have one yet.
       for (const horse of eligible) {
@@ -84,7 +84,7 @@ export function createAutoSyndicateSlice(set: StoreSet, get: StoreGet): AutoSynd
         const spare = playerShares - floor;
         if (spare <= 0) continue;
         const offer = Math.min(spare, Math.max(1, Math.round(total * 0.05)));
-        const result = store.solicitInvestor?.(syndicate.id ?? syndicate.stallionId, offer);
+        const result = store.solicitInvestor?.(syndicate.id, offer);
         if (result?.ok) solicited += 1;
       }
 
