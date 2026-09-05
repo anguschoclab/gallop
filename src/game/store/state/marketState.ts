@@ -40,6 +40,8 @@ export interface MarketState {
   exchange: ExchangeState;
   /** Every auction lot the player bid on, with bids and final hammer price */
   playerBiddingHistory: PlayerBiddingRecord[];
+  /** Whether top stallions are syndicated automatically each day */
+  autoSyndicateEnabled: boolean;
 }
 
 /**
@@ -57,5 +59,6 @@ export function createDefaultMarketState(): MarketState {
     claims: [],
     exchange: createDefaultExchangeState(),
     playerBiddingHistory: [],
+    autoSyndicateEnabled: false,
   };
 }

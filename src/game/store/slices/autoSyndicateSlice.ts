@@ -24,8 +24,6 @@ export const AUTO_SYNDICATE_TOTAL_SHARES = 40;
 export const AUTO_SYNDICATE_PER_DAY = 2;
 
 export type AutoSyndicateSlice = {
-  /** Whether syndication runs automatically each day. */
-  autoSyndicateEnabled: boolean;
   /** Turn daily automatic syndication on or off. */
   setAutoSyndicateEnabled: (enabled: boolean) => void;
   /** Run one pass of automatic syndication. Returns what it did. */
@@ -47,8 +45,6 @@ function isEligibleStallion(horse: Horse): boolean {
 
 export function createAutoSyndicateSlice(set: StoreSet, get: StoreGet): AutoSyndicateSlice {
   return {
-    autoSyndicateEnabled: false,
-
     setAutoSyndicateEnabled: (enabled) => set({ autoSyndicateEnabled: enabled }),
 
     runAutoSyndicate: () => {

@@ -84,8 +84,8 @@ function PortfolioPage() {
   const reputationScore = useGame((s: GameState) => s.reputation?.score ?? 0);
   const biddingHistory = useGameWithShallow((s: GameState) => s.playerBiddingHistory ?? []);
   const autoSyndicateEnabled = useGame((s: GameState) => s.autoSyndicateEnabled ?? false);
-  const setAutoSyndicateEnabled = useGame((s: GameState) => s.setAutoSyndicateEnabled);
-  const runAutoSyndicate = useGame((s: GameState) => s.runAutoSyndicate);
+  const setAutoSyndicateEnabled = useGame((s) => s.setAutoSyndicateEnabled);
+  const runAutoSyndicate = useGame((s) => s.runAutoSyndicate);
   const tab = search.tab ?? "holdings";
 
   const rows = useMemo(
