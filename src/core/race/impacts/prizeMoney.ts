@@ -33,7 +33,9 @@ export function generatePrizeMoneyImpacts(
 } | null {
   const prizeSplit = getPrizeSplitForRace(race);
   const inPrizeSplit = position - 1 < prizeSplit.length;
-  const prize = inPrizeSplit ? Math.round(race.purse * prizeSplit[position - 1]) : 0;
+  const prize = inPrizeSplit
+    ? applyVenuePayout(Math.round(race.purse * prizeSplit[position - 1]), race)
+    : 0;
 
   // If no prize and not eligible for reputation loss, return null
   if (prize <= 0 && !race.graded && position === 1) return null;
