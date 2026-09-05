@@ -152,7 +152,10 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
 
               <div className="divide-y divide-white/5">
                 {ordered.map((r, i) => {
-                  const prize = i < prizeSplit.length ? Math.round(race.purse * prizeSplit[i]) : 0;
+                  const prize =
+                    i < prizeSplit.length
+                      ? Math.round(Math.round(race.purse * prizeSplit[i]) * venueMultiplier)
+                      : 0;
                   const verdict = r.finalizedLedger
                     ? generateRaceVerdict(r, i + 1, ordered, r.finalizedLedger, fieldLedgers)
                     : null;
