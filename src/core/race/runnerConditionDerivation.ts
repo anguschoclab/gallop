@@ -73,16 +73,9 @@ export function buildFieldContext(runners: Runner[]): FieldContext {
 function nearestRival(r: Runner, field: FieldContext): { gap: number; rival: Runner | null } {
   let gap = Infinity;
   let rival: Runner | null = null;
-  for (let i = 0; i < field.sortedLive.length; i++) {
-    const other = field.sortedLive[i];
+  for (const other of field.sortedLive) {
     if (other.horseId === r.horseId) continue;
-
-    const ahead = other.position - r.position;
-    // Early exit: field is sorted by position ascending.
-    // If this horse is further ahead than our current best gap, all subsequent horses will be even further ahead.
-    if (ahead > gap) break;
-
-    const d = Math.abs(ahead);
+    const d = Math.abs(other.position - r.position);
     if (d < gap) {
       gap = d;
       rival = other;
@@ -97,24 +90,15 @@ function nearestRival(r: Runner, field: FieldContext): { gap: number; rival: Run
  * @param field - Aggregate field context.
  */
 function isBlocked(r: Runner, field: FieldContext): boolean {
-  for (let i = 0; i < field.sortedLive.length; i++) {
-    const other = field.sortedLive[i];
-    if (other.horseId === r.horseId) continue;
-
+  return field.sortedLive.some((other) => {
+    if (other.horseId === r.horseId) return false;
     const ahead = other.position - r.position;
-
-    // Horse is behind us or not far enough ahead
-    if (ahead <= BLOCKED_MIN_AHEAD) continue;
-
-    // Early exit: field is sorted by position ascending.
-    // If this horse is too far ahead, all subsequent horses will also be too far ahead.
-    if (ahead >= BLOCKED_MAX_AHEAD) break;
-
-    if (Math.abs(other.lane - r.lane) < BLOCKED_MAX_LANE_DIFF) {
-      return true;
-    }
-  }
-  return false;
+    return (
+      ahead > BLOCKED_MIN_AHEAD &&
+      ahead < BLOCKED_MAX_AHEAD &&
+      Math.abs(other.lane - r.lane) < BLOCKED_MAX_LANE_DIFF
+    );
+  });
 }
 
 /**
