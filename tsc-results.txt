@@ -1,12 +1,6 @@
 # TypeScript Check Results
-# Generated: 2026-09-05T19:12:24.530Z
+# Generated: 2026-09-05T19:13:50.656Z
 # Command: bun x tsc --noEmit --pretty false
-# Errors: 1  Warnings: 0  Exit: 2
+# Errors: 0  Warnings: 0  Exit: 0
 
-## Errors
-
-### src/game/store/initialization.ts (1)
-  205:3  TS2322  Type '{ day: number; cash: number; horses: { [k: string]: Horse; }; market: Horse[]; races: { [k: string]: Race; }; trainingUsed: {}; playerNominations: never[]; log: { day: number; text: string; }[]; ... 45 more ...; tutorial: TutorialState; }' is not assignable to type 'GameState'.
-
-## Unparsed output
-    Type '{ day: number; cash: number; horses: { [k: string]: Horse; }; market: Horse[]; races: { [k: string]: Race; }; trainingUsed: {}; playerNominations: never[]; log: { day: number; text: string; }[]; ... 45 more ...; tutorial: TutorialState; }' is missing the following properties from type 'MarketState': playerBiddingHistory, autoSyndicateEnabled
+No type errors or warnings.
