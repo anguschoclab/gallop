@@ -17,6 +17,7 @@ import type { AuctionSale, ScoutReport, PrivateSaleOffer, Claim } from "@/core/m
 import type { ExchangeState } from "@/core/market/exchange";
 import { createDefaultExchangeState } from "@/core/market/exchange";
 import type { ScoutingAssignment } from "@/core/npc/scoutingThresholds";
+import type { PlayerBiddingRecord } from "@/core/auction/biddingHistory";
 
 /**
  * Market-related state for trading, auctions, and scouting.
@@ -37,6 +38,8 @@ export interface MarketState {
   claims: Claim[];
   /** Bloodstock exchange order book: asks, bids and completed trades */
   exchange: ExchangeState;
+  /** Every auction lot the player bid on, with bids and final hammer price */
+  playerBiddingHistory: PlayerBiddingRecord[];
 }
 
 /**
@@ -53,5 +56,6 @@ export function createDefaultMarketState(): MarketState {
     privateSaleOffers: [],
     claims: [],
     exchange: createDefaultExchangeState(),
+    playerBiddingHistory: [],
   };
 }

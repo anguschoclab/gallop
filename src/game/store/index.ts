@@ -177,6 +177,8 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "cashPressureHistory" as keyof GameState,
   // Bloodstock exchange: open orders, trade tape and price history
   "exchange",
+  // Player auction bidding history
+  "playerBiddingHistory" as keyof GameState,
 ];
 
 /**
