@@ -330,9 +330,12 @@ export function createAuctionRunner(
       return sale.lots.map((orig) => {
         if (orig.withdrawn) return orig;
         const state = stateMap.get(orig.id);
-        return state ? state.lot : orig;
+        // Bid history lives on the runner's lot state; fold it back onto the lot
+        // so player bids survive the commit into game state.
+        return state ? { ...state.lot, bidHistory: [...state.bidHistory] } : orig;
       });
     },
+
     log: () => log,
     finalImpacts,
     setPlayerMaxBid: (cap: number | undefined) => {
