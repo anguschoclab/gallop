@@ -32,6 +32,7 @@ import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
 import { useGame } from "@/game/store";
 import { getStrategyInsights } from "@/core/ai/jockeyStrategyRecording";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { venuePayoutMultiplier } from "@/core/race/venuePayout";
 
 /**
  * Props for the ResultOverlay component.
