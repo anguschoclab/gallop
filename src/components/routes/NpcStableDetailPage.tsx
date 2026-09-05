@@ -12,6 +12,7 @@ import { useGame } from "@/game/store";
 import { useNpcStableDetail } from "@/hooks/stable/useNpcStableDetail";
 import { NpcStableOverviewTab } from "@/components/stable/NpcStableOverviewTab";
 import { NpcStableRosterTab } from "@/components/stable/NpcStableRosterTab";
+import { NpcStableTradingTab } from "@/components/stable/NpcStableTradingTab";
 import { NpcStableInfoSidebar } from "@/components/stable/NpcStableInfoSidebar";
 import { DiplomacyPanel } from "@/components/npc/DiplomacyPanel";
 import { RelationshipGraph } from "@/components/npc/RelationshipGraph";
@@ -118,7 +119,9 @@ function NpcStableDetailPage() {
             value={tab}
             onValueChange={(v) =>
               navigate({
-                search: { tab: v as "overview" | "roster" | "history" | "ai-profile" },
+                search: {
+                  tab: v as "overview" | "roster" | "staff" | "trading" | "history" | "ai-profile",
+                },
               })
             }
             className="space-y-6"
@@ -144,6 +147,12 @@ function NpcStableDetailPage() {
                   Staff
                 </TabsTrigger>
                 <TabsTrigger
+                  value="trading"
+                  className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all"
+                >
+                  Trading
+                </TabsTrigger>
+                <TabsTrigger
                   value="history"
                   className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all"
                 >
@@ -167,6 +176,10 @@ function NpcStableDetailPage() {
 
             <TabsContent value="roster" className="mt-0 space-y-6 animate-in fade-in duration-300">
               <NpcStableRosterTab pageData={pageData} />
+            </TabsContent>
+
+            <TabsContent value="trading" className="mt-0 animate-in fade-in duration-300">
+              <NpcStableTradingTab stableId={stableId} />
             </TabsContent>
 
             <TabsContent value="staff" className="mt-0 animate-in fade-in duration-300">
