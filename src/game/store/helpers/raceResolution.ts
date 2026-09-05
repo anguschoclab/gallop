@@ -15,6 +15,7 @@
 
 import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/constants";
 import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
+import { applyVenuePayout, type VenueLike } from "@/core/race/venuePayout";
 
 export type RankedResult = { horseId: string; position: number; time: number; dnf: boolean };
 
