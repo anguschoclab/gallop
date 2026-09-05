@@ -24,24 +24,27 @@ export type RankedResult = { horseId: string; position: number; time: number; dn
  * @param purse - Total prize purse for the race
  * @param finisherCount - Number of horses that finished the race
  * @param isGraded - Whether the race is graded (uses GRADED_PRIZE_SPLIT)
+ * @param venue - Optional race/venue used to scale payouts by racecourse prestige
  * @returns Array of prize amounts for each finishing position
  */
 export function computePayoutSplits(
   purse: number,
   finisherCount: number,
   isGraded?: boolean,
+  venue?: VenueLike | null,
 ): number[] {
   const split = isGraded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
+  const effectivePurse = venue ? applyVenuePayout(purse, venue) : purse;
   const splits: number[] = [];
   let runningPaid = 0;
   for (let i = 0; i < Math.min(split.length, finisherCount); i++) {
-    const pay = Math.round(purse * split[i]);
+    const pay = Math.round(effectivePurse * split[i]);
     splits.push(pay);
     runningPaid += pay;
   }
   // Route any unpaid remainder to the last paid finisher
-  if (splits.length > 0 && runningPaid < purse && finisherCount >= split.length) {
-    splits[splits.length - 1] += purse - runningPaid;
+  if (splits.length > 0 && runningPaid < effectivePurse && finisherCount >= split.length) {
+    splits[splits.length - 1] += effectivePurse - runningPaid;
   }
   return splits;
 }
