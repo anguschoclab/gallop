@@ -62,6 +62,8 @@ interface ResultOverlayProps {
  */
 export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOverlayProps) {
   const prizeSplit = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
+  const venueMultiplier = venuePayoutMultiplier(race);
+  const venueUpliftPct = Math.round((venueMultiplier - 1) * 100);
   const ordered = [...runners].sort(compareFinishOrder);
   const finishedCount = runners.filter((r) => r.finishTime !== null).length;
   const allFinished = finishedCount === runners.length;
