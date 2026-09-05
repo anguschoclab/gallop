@@ -55,6 +55,15 @@ export function createAdvanceDayActions(
       // Assignment execution must never block day advancement.
     }
 
+    // Automatic syndication of the player's top stallions, when enabled.
+    try {
+      if ((get() as StoreType).autoSyndicateEnabled) {
+        (get() as StoreType).runAutoSyndicate?.();
+      }
+    } catch {
+      // Auto-syndication must never block day advancement.
+    }
+
     // Rival stables post fresh asks/bids and settle NPC-vs-NPC trades daily,
     // whether or not the player has the Exchange open.
     try {

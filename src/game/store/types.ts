@@ -36,6 +36,7 @@ import type { StaffSlice } from "./slices/staffSlice";
 import type { InsuranceSlice } from "./slices/insuranceSlice";
 import type { TransportSlice } from "./slices/transportSlice";
 import type { TutorialSlice } from "./slices/tutorialSlice";
+import type { AutoSyndicateSlice } from "./slices/autoSyndicateSlice";
 
 /**
  * Standard action result type for store actions
@@ -68,7 +69,8 @@ export type StoreType = CoreState &
   StaffSlice &
   InsuranceSlice &
   TransportSlice &
-  TutorialSlice & {
+  TutorialSlice &
+  AutoSyndicateSlice & {
     storeVersion: number;
     startNewGame: (
       options: NewGameOptions,

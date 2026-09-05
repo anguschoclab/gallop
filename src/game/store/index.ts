@@ -40,6 +40,7 @@ import { createStaffSlice } from "./slices/staffSlice";
 import { createInsuranceSlice } from "./slices/insuranceSlice";
 import { createTransportSlice, type TransportSlice } from "./slices/transportSlice";
 import { createTutorialSlice, type TutorialSlice } from "./slices/tutorialSlice";
+import { createAutoSyndicateSlice } from "./slices/autoSyndicateSlice";
 import {
   createIdbStorage,
   hydrationComplete,
@@ -179,6 +180,8 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "exchange",
   // Player auction bidding history
   "playerBiddingHistory" as keyof GameState,
+  // Auto-syndicate preference
+  "autoSyndicateEnabled" as keyof GameState,
 ];
 
 /**
@@ -369,6 +372,9 @@ export const useGame = create<StoreType>()(
 
       // Tutorial slice (guided first-session coach)
       ...createTutorialSlice(set, get),
+
+      // Automatic daily syndication of top stallions
+      ...createAutoSyndicateSlice(set, get),
 
       // Stewards inquiry action — used by the useStewardsInquiry hook after
       // the player watches a race complete in the UI.
