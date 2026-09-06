@@ -20,6 +20,7 @@ import {
   realWorldMovePct,
   realWorldSeries,
 } from "@/data/realWorldMarketIndices";
+import { TRACK_BY_ID } from "@/data/tracks";
 
 export { REAL_WORLD_BLEND_WEIGHT };
 
@@ -160,7 +161,12 @@ export function segmentPriceIndex(args: {
   const previous = avg(previousTrades);
   const simMovePct = previous > 0 && current > 0 ? ((current - previous) / previous) * 100 : 0;
 
-  const scopeValue = scope.kind === "market" ? undefined : scope.value;
+  const scopeValue =
+    scope.kind === "market"
+      ? undefined
+      : scope.kind === "track"
+        ? (TRACK_BY_ID[scope.value]?.name ?? scope.value)
+        : scope.value;
   const series = realWorldSeries(scope.kind, scopeValue);
   const realMove = series ? realWorldMovePct({ kind: scope.kind, value: scopeValue, day, windowDays }) : 0;
   const weight = series ? Math.min(1, Math.max(0, args.realWorldWeight ?? 0)) : 0;
