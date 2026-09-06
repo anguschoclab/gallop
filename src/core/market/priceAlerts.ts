@@ -15,6 +15,13 @@
  */
 
 import type { ExchangeAsk, ExchangeBid, ExchangeTrade } from "./exchange";
+import {
+  REAL_WORLD_BLEND_WEIGHT,
+  realWorldMovePct,
+  realWorldSeries,
+} from "@/data/realWorldMarketIndices";
+
+export { REAL_WORLD_BLEND_WEIGHT };
 
 /** Which slice of the market an alert watches. */
 export type PriceAlertScope =
