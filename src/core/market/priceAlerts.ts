@@ -15,6 +15,14 @@
  */
 
 import type { ExchangeAsk, ExchangeBid, ExchangeTrade } from "./exchange";
+import {
+  REAL_WORLD_BLEND_WEIGHT,
+  realWorldMovePct,
+  realWorldSeries,
+} from "@/data/realWorldMarketIndices";
+import { TRACK_BY_ID } from "@/data/tracks";
+
+export { REAL_WORLD_BLEND_WEIGHT };
 
 /** Which slice of the market an alert watches. */
 export type PriceAlertScope =
@@ -98,8 +106,17 @@ export type SegmentIndex = {
   current: number;
   /** Average trade price over the window immediately before it. */
   previous: number;
-  /** Signed percentage change from previous to current (0 when no baseline). */
+  /** Signed percentage change used for alerts (in-game move blended with the
+   * real-world reference index when a weight is supplied). */
   movePct: number;
+  /** Signed percentage change measured purely from in-game trades. */
+  simMovePct: number;
+  /** Signed percentage change of the real-world reference index. */
+  realWorldMovePct: number;
+  /** Weight the real-world reference carried in `movePct` (0-1). */
+  realWorldWeight: number;
+  /** Label of the real-world series used, when one exists. */
+  realWorldLabel?: string;
   /** Trades in the current window. */
   sampleSize: number;
   /** Trades in the previous window. */
@@ -108,7 +125,8 @@ export type SegmentIndex = {
 
 /**
  * Price index of a market segment: average traded price this window versus the
- * window before it.
+ * window before it, optionally blended with the real-world reference index for
+ * that segment so alerts track real market trends.
  *
  * @param args - Inputs
  * @param args.trades - Exchange trade tape
@@ -116,6 +134,7 @@ export type SegmentIndex = {
  * @param args.scope - Segment to measure
  * @param args.day - Current day (window ends here, inclusive)
  * @param args.windowDays - Window length in days
+ * @param args.realWorldWeight - Weight (0-1) given to the real-world reference
  */
 export function segmentPriceIndex(args: {
   trades: ExchangeTrade[];
@@ -123,6 +142,7 @@ export function segmentPriceIndex(args: {
   scope: PriceAlertScope;
   day: number;
   windowDays?: number;
+  realWorldWeight?: number;
 }): SegmentIndex {
   const { trades, horses, scope, day } = args;
   const windowDays = Math.max(1, args.windowDays ?? DEFAULT_ALERT_WINDOW_DAYS);
@@ -139,12 +159,27 @@ export function segmentPriceIndex(args: {
 
   const current = avg(currentTrades);
   const previous = avg(previousTrades);
-  const movePct = previous > 0 && current > 0 ? ((current - previous) / previous) * 100 : 0;
+  const simMovePct = previous > 0 && current > 0 ? ((current - previous) / previous) * 100 : 0;
+
+  const scopeValue =
+    scope.kind === "market"
+      ? undefined
+      : scope.kind === "track"
+        ? (TRACK_BY_ID[scope.value]?.name ?? scope.value)
+        : scope.value;
+  const series = realWorldSeries(scope.kind, scopeValue);
+  const realMove = series ? realWorldMovePct({ kind: scope.kind, value: scopeValue, day, windowDays }) : 0;
+  const weight = series ? Math.min(1, Math.max(0, args.realWorldWeight ?? 0)) : 0;
+  const movePct = simMovePct * (1 - weight) + realMove * weight;
 
   return {
     current,
     previous,
     movePct,
+    simMovePct,
+    realWorldMovePct: realMove,
+    realWorldWeight: weight,
+    realWorldLabel: series?.label,
     sampleSize: currentTrades.length,
     baselineSize: previousTrades.length,
   };
@@ -155,6 +190,12 @@ export type PriceAlertTrigger = {
   scope: PriceAlertScope;
   day: number;
   movePct: number;
+  /** In-game-only component of the move. */
+  simMovePct: number;
+  /** Real-world reference component of the move. */
+  realWorldMovePct: number;
+  /** Real-world series label, when one was blended in. */
+  realWorldLabel?: string;
   current: number;
   previous: number;
   sampleSize: number;
@@ -169,14 +210,17 @@ export type PriceAlertTrigger = {
  * @param args.trades - Exchange trade tape
  * @param args.horses - Horses referenced by the tape
  * @param args.day - Current day
+ * @param args.realWorldWeight - Weight given to the real-world reference index
  */
 export function evaluatePriceAlerts(args: {
   alerts: PriceAlert[];
   trades: ExchangeTrade[];
   horses: AlertHorse[];
   day: number;
+  realWorldWeight?: number;
 }): PriceAlertTrigger[] {
   const { alerts, trades, horses, day } = args;
+  const realWorldWeight = args.realWorldWeight ?? REAL_WORLD_BLEND_WEIGHT;
   const out: PriceAlertTrigger[] = [];
   for (const alert of alerts) {
     if (!alert.enabled) continue;
@@ -191,6 +235,7 @@ export function evaluatePriceAlerts(args: {
       scope: alert.scope,
       day,
       windowDays: alert.windowDays,
+      realWorldWeight,
     });
     if (index.sampleSize === 0 || index.baselineSize === 0) continue;
     const move = index.movePct;
@@ -202,6 +247,9 @@ export function evaluatePriceAlerts(args: {
       scope: alert.scope,
       day,
       movePct: move,
+      simMovePct: index.simMovePct,
+      realWorldMovePct: index.realWorldMovePct,
+      realWorldLabel: index.realWorldLabel,
       current: index.current,
       previous: index.previous,
       sampleSize: index.sampleSize,
