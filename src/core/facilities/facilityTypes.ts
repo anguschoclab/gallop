@@ -33,7 +33,9 @@ export type FacilityType =
   | "transport" // Travel cost reduction, logistics efficiency
   | "spa" // Post-race recovery, form regeneration
   | "nutrition_lab" // Feed quality, growth optimization
-  | "rehab_center"; // Extended injury recovery options
+  | "rehab_center" // Extended injury recovery options
+  | "jockey_academy" // Apprentice jockey training & progression
+  | "museum"; // Historical legacy & prestige exhibition
 
 /**
  * Individual facility data
@@ -97,6 +99,8 @@ export const FACILITY_NAMES: Record<FacilityType, string> = {
   spa: "Equine Spa & Wellness",
   nutrition_lab: "Nutrition Laboratory",
   rehab_center: "Rehabilitation Center",
+  jockey_academy: "Jockey Academy",
+  museum: "Racing Heritage Museum",
 };
 
 /**
@@ -113,6 +117,8 @@ export const FACILITY_DESCRIPTIONS: Record<FacilityType, string> = {
   spa: "Post-race recovery facilities. Improves form regeneration between races.",
   nutrition_lab: "Custom feed formulations optimize growth and conditioning.",
   rehab_center: "Advanced therapy for serious injuries. Extended recovery options.",
+  jockey_academy: "Dedicated training ground for apprentice jockeys, accelerating skill progression.",
+  museum: "Exhibits trophies, silks, and legendary bloodlines, amplifying stable prestige and public esteem.",
 };
 
 /**
@@ -129,6 +135,8 @@ export const FACILITY_ENABLED_WORKOUTS: Record<FacilityType, string[]> = {
   spa: [],
   nutrition_lab: [],
   rehab_center: [],
+  jockey_academy: [],
+  museum: [],
 };
 
 export const FACILITY_TIER_LABELS: Record<FacilityLevel, string> = {

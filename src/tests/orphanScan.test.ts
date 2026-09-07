@@ -580,3 +580,34 @@ describe("Orphan Scan: Confirmed Wired Fields (Validation Baseline)", () => {
     });
   }
 });
+
+// ─── Extended Audit: Dormant Systems & Intent Symmetry ─────────────────────────
+
+describe("Orphan Scan: Dormant AI Functions", () => {
+  it("shouldWithdrawForTrackCondition has callers in production code", () => {
+    const callerFiles = allCoreTsFiles
+      .filter((f) => !f.includes("withdrawalAI.ts") && !f.includes(".test."))
+      .filter((f) => readFileSafe(f).includes("shouldWithdrawForTrackCondition"));
+    expect(callerFiles.length).toBeGreaterThan(0);
+  });
+});
+
+describe("Orphan Scan: Facility Type Parity", () => {
+  it("FacilityType includes imperial facilities (jockey_academy, museum)", () => {
+    const facilityTypesText = readFileSafe(join(srcRoot, "core", "facilities", "facilityTypes.ts"));
+    expect(facilityTypesText.includes('"jockey_academy"')).toBe(true);
+    expect(facilityTypesText.includes('"museum"')).toBe(true);
+  });
+});
+
+describe("Orphan Scan: NPC Insurance Intents", () => {
+  it("NPC AI generates insurance_purchase intents", () => {
+    const intentGenFiles = allCoreTsFiles.filter(
+      (f) => f.includes(sep + "npc" + sep) && !f.includes(".test."),
+    );
+    const hasInsurance = intentGenFiles.some((f) =>
+      readFileSafe(f).includes('type: "insurance_purchase"'),
+    );
+    expect(hasInsurance).toBe(true);
+  });
+});

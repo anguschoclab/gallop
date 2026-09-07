@@ -1,2 +1,5 @@
 [install]
 saveTextLockfile = false
+
+[test]
+preload = ["@happy-dom/global-registrator/register"]

@@ -31,7 +31,70 @@ export const stewardsPhase: PipelinePhase = {
     const { state, newDay } = context;
     const impacts: AnyImpact[] = [];
 
-    // Find races that were resolved today
+    // 1. Process explicit StewardsInquiryIntent instances (objections / protests)
+    const inquiryIntents = (context.intents || []).filter(
+      (i): i is import("@/core/resolver/systemIntents").StewardsInquiryIntent =>
+        i.type === "stewards_inquiry",
+    );
+
+    const processedRaceIds = new Set<string>();
+
+    for (const intent of inquiryIntents) {
+      const race = state.races[intent.raceId];
+      if (!race) continue;
+      processedRaceIds.add(race.id);
+
+      const accusedEntry = race.entries?.find((e: { horseId: string }) => e.horseId === intent.accusedHorseId);
+      const accusedJockeyId = accusedEntry?.jockeyId;
+
+      const outcomes: InquiryOutcome[] = [
+        "no_action",
+        "warning",
+        "fine",
+        "disqualification",
+        "suspension",
+      ];
+      const outcome = outcomes[Math.floor(context.dailyRng.next() * outcomes.length)];
+
+      const resolvedInquiry = {
+        id: generateUUID(context.dailyRng),
+        raceId: race.id,
+        day: newDay,
+        type: intent.inquiryType,
+        status: "resolved" as const,
+        accusedHorseId: intent.accusedHorseId,
+        accusedJockeyId,
+        reportingHorseId: intent.reportingHorseId,
+        description: intent.description || "Steward inquiry lodged",
+        outcome,
+        resolvedDay: newDay,
+      };
+
+      impacts.push({
+        id: generateUUID(context.dailyRng),
+        intentId: intent.id,
+        day: newDay,
+        phase: "stewards",
+        logLevel: "always",
+        type: "stewards_inquiry",
+        inquiry: resolvedInquiry,
+        reason: resolvedInquiry.description,
+      } as StewardsInquiryImpact);
+
+      impacts.push({
+        id: generateUUID(context.dailyRng),
+        intentId: intent.id,
+        day: newDay,
+        phase: "stewards",
+        logLevel: "always",
+        type: "stewards_resolution",
+        inquiryId: resolvedInquiry.id,
+        outcome,
+        reason: `Outcome: ${outcome}`,
+      } as StewardsResolutionImpact);
+    }
+
+    // 2. Find races that were resolved today for simulation-driven routine inquiries
     const resolvedRaces = Object.values(state.races).filter(
       (r) => r.resolved && r.result && r.result.length > 0,
     );
@@ -46,14 +109,16 @@ export const stewardsPhase: PipelinePhase = {
     );
 
     for (const race of resolvedRaces) {
+      if (processedRaceIds.has(race.id)) continue;
       // Skip if race already has inquiries
       if (race.inquiries && race.inquiries.length > 0) continue;
 
-      // Skip races with a player-entered horse — the UI hook handles those.
+      // Skip races with a player-entered horse ONLY if the interactive UI viewer is active.
+      // In headless / auto-advance mode, the pipeline evaluates player races so inquiries aren't dropped.
       const hasPlayerEntry = race.entries.some((e: { horseId: string }) =>
         playerHorseIds.has(e.horseId),
       );
-      if (hasPlayerEntry) continue;
+      if (hasPlayerEntry && context.isInteractiveRaceView) continue;
 
       const horseIds = race.entries.map((e: { horseId: string }) => e.horseId);
       if (horseIds.length < 2) continue;
@@ -197,7 +262,7 @@ export const stewardsPhase: PipelinePhase = {
 
     return {
       ...context,
-      impacts: [...context.impacts, ...impacts],
+      impacts: [...(context.impacts ?? []), ...impacts],
     };
   },
 };

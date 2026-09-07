@@ -39,6 +39,8 @@ export interface PipelineContext {
   worldAssessment?: WorldAssessment;
   /** Cached economic trend from economyPhase (order 48) */
   economicTrend?: EconomicTrend;
+  /** True when the player is watching the live interactive race viewer */
+  isInteractiveRaceView?: boolean;
 }
 
 export interface PipelinePhase {

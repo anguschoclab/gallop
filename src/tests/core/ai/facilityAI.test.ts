@@ -43,6 +43,8 @@ function makeFacilities(overrides: Partial<PlayerFacilities> = {}): PlayerFacili
     spa: undefined,
     nutrition_lab: undefined,
     rehab_center: undefined,
+    jockey_academy: undefined,
+    museum: undefined,
   };
   return { ...base, ...overrides };
 }
@@ -135,6 +137,8 @@ describe("selectFacilityToUpgrade", () => {
       spa: undefined,
       nutrition_lab: undefined,
       rehab_center: undefined,
+      jockey_academy: undefined,
+      museum: undefined,
     };
     const result = selectFacilityToUpgrade(state, emptyFacilities, stable, 1);
     expect(result).toBeNull();

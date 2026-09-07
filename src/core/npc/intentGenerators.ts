@@ -43,6 +43,7 @@ import {
   generateNpcFacilityUpgradeIntents,
   generateNpcOutpostIntents,
 } from "./intents/facilityIntents";
+import { generateNpcInsuranceIntents } from "./intents/insuranceIntents";
 
 /**
  * Generate all NPC intents for the day.
@@ -263,8 +264,19 @@ export function generateNpcIntents(
 
       // Facility upgrade intents: upgrade facilities when budget allows
       intents.push(
-        ...generateNpcFacilityUpgradeIntents(stable, stableAI, day, state.npcFacilities),
+        ...generateNpcFacilityUpgradeIntents(
+          stable,
+          stableAI,
+          day,
+          state.npcFacilities,
+          weights?.facility,
+        ),
       );
+
+      // Insurance intents: conservative and wealthy stables insure star horses
+      if (distressLevel === "healthy") {
+        intents.push(...generateNpcInsuranceIntents(state, stable, stableAI, day, ownedHorses));
+      }
 
       // Outpost creation intents: NPCs with sufficient cash build outposts for regional expansion
       intents.push(...generateNpcOutpostIntents(stable, stableAI, day));

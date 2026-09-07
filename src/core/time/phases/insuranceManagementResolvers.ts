@@ -24,6 +24,7 @@ export function resolveInsuranceIntent(
       const typedIntent = intent as InsuranceClaimIntent;
       const horse = horseMap.get(typedIntent.horseId);
       if (horse && horse.insurancePolicy && horse.insurancePolicy.type !== "none") {
+        const entityId = horse.ownership?.type === "npc" ? horse.ownership.stableId : "player";
         impacts.push({
           id: generateUUID(dailyRng),
           intentId: intent.id,
@@ -34,6 +35,7 @@ export function resolveInsuranceIntent(
           horseId: typedIntent.horseId,
           amount: typedIntent.payout,
           reason: `Insurance claim payout for ${horse.name}`,
+          entityId,
         } as InsurancePayoutImpact);
       }
       return true;

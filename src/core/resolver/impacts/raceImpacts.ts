@@ -128,6 +128,7 @@ export interface InsurancePayoutImpact extends Impact {
   horseId: HorseId;
   amount: number;
   reason: string;
+  entityId?: string;
 }
 
 // Stewards inquiry impact

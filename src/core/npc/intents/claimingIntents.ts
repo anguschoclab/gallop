@@ -1,4 +1,8 @@
-import type { ClaimingIntent, WithdrawFromClaimingIntent } from "@/core/resolver/intents";
+import type {
+  ClaimingIntent,
+  WithdrawFromClaimingIntent,
+  RaceWithdrawalIntent,
+} from "@/core/resolver/intents";
 import type { GameState, Horse, Race, Stable } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import { isHorseEligibleForClaimingPrice } from "@/core/market/claiming";
@@ -6,6 +10,7 @@ import { createClaimingAIState } from "@/core/ai/claimingAITypes";
 import { shouldClaimHorse, recordClaimingDecision } from "@/core/ai/claimingAIRecording";
 import { createWithdrawalAIState } from "@/core/ai/withdrawalAITypes";
 import { shouldWithdrawHorse, recordWithdrawalDecision } from "@/core/ai/withdrawalAIRecording";
+import { shouldWithdrawForTrackCondition } from "@/core/ai/withdrawalAI";
 import type { StableAIState } from "@/core/ai/npcCycleAI";
 
 export function generateNpcClaimingIntents(
@@ -90,8 +95,8 @@ export function generateNpcWithdrawalIntents(
   ownedHorses: Horse[],
   upcomingRaces: Race[],
   horseMap: Map<string, Horse>,
-): WithdrawFromClaimingIntent[] {
-  const intents: WithdrawFromClaimingIntent[] = [];
+): (WithdrawFromClaimingIntent | RaceWithdrawalIntent)[] {
+  const intents: (WithdrawFromClaimingIntent | RaceWithdrawalIntent)[] = [];
 
   let withdrawalAI =
     stableAI?.withdrawalAI ||
@@ -100,44 +105,77 @@ export function generateNpcWithdrawalIntents(
       : createWithdrawalAIState(stable));
 
   for (const race of upcomingRaces) {
-    if (!race.claimingPrice) continue;
+    // 1. Claiming race risk assessment
+    if (race.claimingPrice) {
+      for (const entry of race.entries) {
+        if (entry.ownership?.type !== "npc" || entry.ownership.stableId !== stable.id) continue;
 
-    for (const entry of race.entries) {
-      if (entry.ownership?.type !== "npc" || entry.ownership.stableId !== stable.id) continue;
+        const horse = horseMap.get(entry.horseId);
+        if (!horse) continue;
 
-      const horse = horseMap.get(entry.horseId);
-      if (!horse) continue;
-
-      const { shouldWithdraw, reason } = shouldWithdrawHorse(
-        withdrawalAI,
-        horse,
-        race,
-        stable,
-        day,
-      );
-
-      if (shouldWithdraw) {
-        withdrawalAI = recordWithdrawalDecision(
+        const { shouldWithdraw, reason } = shouldWithdrawHorse(
           withdrawalAI,
           horse,
           race,
           stable,
-          true,
-          reason || "risk_assessment",
           day,
         );
 
-        intents.push({
-          id: generateUUID(),
-          entityId: horse.id,
-          source: "npc",
-          sourceId: stable.id,
-          day,
-          priority: 70,
-          type: "withdraw_from_claiming",
-          raceId: race.id,
-          horseId: horse.id,
-        });
+        if (shouldWithdraw) {
+          withdrawalAI = recordWithdrawalDecision(
+            withdrawalAI,
+            horse,
+            race,
+            stable,
+            true,
+            reason || "risk_assessment",
+            day,
+          );
+
+          intents.push({
+            id: generateUUID(),
+            entityId: horse.id,
+            source: "npc",
+            sourceId: stable.id,
+            day,
+            priority: 70,
+            type: "withdraw_from_claiming",
+            raceId: race.id,
+            horseId: horse.id,
+          });
+        }
+      }
+    }
+
+    // 2. Weather & track condition scratching (mud/off-track risk)
+    const isWet =
+      race.trackCondition === "soft" ||
+      race.trackCondition === "heavy" ||
+      (race.trackCondition as string) === "muddy" ||
+      (race.trackCondition as string) === "sloppy";
+    if (isWet && race.trackCondition) {
+      for (const entry of race.entries) {
+        if (entry.ownership?.type !== "npc" || entry.ownership.stableId !== stable.id) continue;
+
+        const horse = horseMap.get(entry.horseId);
+        if (!horse) continue;
+
+        // Skip if already scratched from claiming
+        if (intents.some((i) => i.raceId === race.id && i.horseId === horse.id)) continue;
+
+        if (shouldWithdrawForTrackCondition(horse, race.trackCondition)) {
+          intents.push({
+            id: generateUUID(),
+            entityId: horse.id,
+            source: "npc",
+            sourceId: stable.id,
+            day,
+            priority: 75,
+            type: "race_withdrawal",
+            raceId: race.id,
+            horseId: horse.id,
+          });
+        }
       }
     }
   }

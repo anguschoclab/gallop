@@ -22,6 +22,14 @@ export interface JockeyContractImpact extends Impact {
   stableAffinity?: number;
   isApprentice?: boolean;
   loyalty?: number;
+  bonus?: number;
+  reason: string;
+}
+
+// Jockey release impact
+export interface JockeyReleaseImpact extends Impact {
+  type: "jockey_release";
+  jockeyId: JockeyId;
   reason: string;
 }
 
@@ -69,4 +77,5 @@ export type JockeyImpact =
   | JockeyAssignmentImpact
   | JockeySilkImpact
   | JockeyStatsImpact
-  | JockeyAffinityImpact;
+  | JockeyAffinityImpact
+  | JockeyReleaseImpact;

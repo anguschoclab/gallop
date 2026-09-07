@@ -280,8 +280,15 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   insurance_payout: (draft, impact) => {
-    const { amount } = impact as InsurancePayoutImpact;
-    draft.cash += amount;
+    const { amount, entityId } = impact as InsurancePayoutImpact;
+    if (entityId && entityId !== "player") {
+      const npcStable = draft.npcStables?.find((s) => s.id === entityId);
+      if (npcStable) {
+        npcStable.cash += amount;
+      }
+    } else {
+      draft.cash += amount;
+    }
   },
 
   stewards_inquiry: (draft, impact, lookupMaps) => {

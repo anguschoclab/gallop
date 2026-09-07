@@ -6,12 +6,13 @@
  */
 
 import type { Horse } from "@/game/types";
+import type { TrackCondition } from "@/core/race/types";
 
 // ─── Track Condition Aware Withdrawal ────────────────────────────────────────
 
 export function shouldWithdrawForTrackCondition(
   horse: Horse,
-  trackCondition: "fast" | "good" | "muddy" | "sloppy",
+  trackCondition: TrackCondition | "muddy" | "sloppy",
 ): boolean {
   if (trackCondition === "fast" || trackCondition === "good") return false;
 

@@ -153,8 +153,11 @@ export function generateNpcFacilityUpgradeIntents(
   stableAI: StableAIState | undefined,
   day: number,
   npcFacilities?: Record<string, PlayerFacilities>,
+  facilityWeight = DEFAULT_SUBSYSTEM_WEIGHT,
 ): FacilityUpgradeIntent[] {
   const intents: FacilityUpgradeIntent[] = [];
+
+  if (facilityWeight <= 0) return intents;
 
   const facilitiesBudget = stableAI?.budgetAllocation?.facilities;
   if (facilitiesBudget === undefined || facilitiesBudget <= 0) return intents;

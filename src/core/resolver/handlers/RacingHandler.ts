@@ -24,6 +24,7 @@ import type {
 } from "../impacts/raceImpacts";
 import type {
   JockeyContractImpact,
+  JockeyReleaseImpact,
   JockeyAssignmentImpact,
   JockeySilkImpact,
   JockeyStatsImpact,
@@ -168,6 +169,16 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
           startDate: draft.day,
         };
       }
+    }
+  },
+
+  jockey_release: (draft, impact, lookupMaps) => {
+    const { jockeyId } = impact as JockeyReleaseImpact;
+    const jockey =
+      lookupMaps?.jockeyMap.get(jockeyId) || draft.jockeys?.find((j) => j.id === jockeyId);
+    if (jockey) {
+      jockey.stableId = undefined;
+      jockey.contractUntil = undefined;
     }
   },
 
@@ -344,6 +355,7 @@ export class RacingHandler implements ImpactHandler {
       "race_withdrawal",
       "race_result",
       "jockey_contract",
+      "jockey_release",
       "jockey_assignment",
       "jockey_silk",
       "jockey_stats",

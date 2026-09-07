@@ -10,7 +10,7 @@
 import { createInitialState } from "../src/game/store/initialization";
 import { useGame } from "../src/game/store";
 import type { Horse } from "../src/core/horse/types";
-import { DAYS_PER_YEAR } from "../src/game/constants/gameConstants";
+import { DAYS_PER_YEAR } from "../src/constants";
 
 // Suppress worker warnings
 const originalWarn = console.warn;

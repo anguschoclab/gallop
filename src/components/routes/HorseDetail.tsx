@@ -1,4 +1,4 @@
-import { Link, notFound, useParams, useRouter } from "@tanstack/react-router";
+import { Link, notFound, useParams } from "@tanstack/react-router";
 import { type ComponentType, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,9 +43,19 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 
-function HorseDetail() {
-  const { horseId } = useParams({ from: "/stable/$horseId" });
-  const router = useRouter();
+export interface HorseDetailProps {
+  horseId?: string;
+}
+
+export function HorseDetail({ horseId: propHorseId }: HorseDetailProps = {}) {
+  let paramHorseId: string | undefined;
+  try {
+    const params = useParams({ from: "/stable/$horseId" });
+    paramHorseId = params?.horseId;
+  } catch {
+    // Outside TanStack router context (e.g. testing or embedded usage)
+  }
+  const horseId = propHorseId ?? paramHorseId ?? "";
   const { horse, isConsigned, canRetireToStud, consignedSale, eligibleSale, day } =
     useHorseActions(horseId);
 
