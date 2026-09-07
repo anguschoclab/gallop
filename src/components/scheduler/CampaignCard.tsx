@@ -72,6 +72,13 @@ export function CampaignCard({
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Link
+              to="/strategy/$horseId"
+              params={{ horseId: campaign.horseId }}
+              className="text-[11px] px-2.5 py-1 rounded border border-gold/30 hover:border-gold text-cream hover:text-gold transition-colors font-mono uppercase tracking-wider"
+            >
+              Strategy Page
+            </Link>
             {activeFlags.length > 0 && (
               <Badge variant="destructive" className="gap-1 text-xs">
                 <Flag className="h-3 w-3" />

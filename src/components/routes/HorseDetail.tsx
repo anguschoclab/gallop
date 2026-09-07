@@ -113,6 +113,13 @@ function HorseDetail() {
               Actions
             </div>
             <div className="px-3 space-y-2">
+              <Link
+                to="/strategy/$horseId"
+                params={{ horseId: horse.id }}
+                className="w-full inline-flex items-center justify-center h-8 text-[9px] font-black uppercase tracking-wider rounded-md border border-amber-400/30 hover:bg-amber-400/10 text-amber-400 transition-colors"
+              >
+                Campaign Strategy
+              </Link>
               {isG1Winner && horse.stud?.atStud && !detail.isSyndicated && (
                 <Button
                   variant="outline"

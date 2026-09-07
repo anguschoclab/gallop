@@ -38,6 +38,17 @@ export function getPrestigeTierBadgeClass(tier: PrestigeTier): string {
 }
 
 /**
+ * Calculates the prestige score for a specific venue by name or ID.
+ */
+export function calculateVenuePrestige(trackName?: string, trackId?: string): number {
+  let score = trackName ? getRacecoursePrestigeByName(trackName) : RACECOURSE_FLOOR_PRESTIGE;
+  if (score === RACECOURSE_FLOOR_PRESTIGE && trackId) {
+    score = getRacecoursePrestige(trackId);
+  }
+  return score;
+}
+
+/**
  * Calculates the average prestige of racecourse venues across planned campaign slots.
  */
 export function calculateAverageCampaignPrestige(
@@ -53,10 +64,8 @@ export function calculateAverageCampaignPrestige(
     if (!slot.raceId) continue;
     const race = getRace(slot.raceId);
     if (!race) continue;
-    let score = race.track ? getRacecoursePrestigeByName(race.track) : RACECOURSE_FLOOR_PRESTIGE;
-    if (score === RACECOURSE_FLOOR_PRESTIGE && race.trackId) {
-      score = getRacecoursePrestige(race.trackId);
-    }
+    const trackName = race.graded?.track || (race as { track?: string }).track;
+    const score = calculateVenuePrestige(trackName, race.trackId);
     totalScore += score;
     counted++;
   }

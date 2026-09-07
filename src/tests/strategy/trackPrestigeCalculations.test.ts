@@ -38,7 +38,7 @@ describe("Track Prestige Calculations & Strategy Helpers", () => {
           name: "Saratoga Derby",
           track: "Saratoga",
           trackId: "saratoga",
-        } as Race,
+        } as unknown as Race,
       ],
       [
         "r2",
@@ -47,7 +47,7 @@ describe("Track Prestige Calculations & Strategy Helpers", () => {
           name: "Kentucky Derby",
           track: "Churchill Downs",
           trackId: "churchill_downs",
-        } as Race,
+        } as unknown as Race,
       ],
       [
         "r3",
@@ -55,7 +55,7 @@ describe("Track Prestige Calculations & Strategy Helpers", () => {
           id: "r3",
           name: "County Fair Stakes",
           track: "Unknown Fairgrounds",
-        } as Race,
+        } as unknown as Race,
       ],
     ]);
 

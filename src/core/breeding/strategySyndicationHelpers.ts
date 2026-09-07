@@ -42,7 +42,7 @@ export interface InvestorAppetiteReport {
  */
 export function calculateSyndicationBreakdown(
   horse: Horse,
-  allHorses: Horse[],
+  allHorses: Horse[] = [],
 ): SyndicationBreakdown {
   const valuation = horseCareerValuation(horse, allHorses);
   const totalValuation = Math.max(100000, valuation.breeding);

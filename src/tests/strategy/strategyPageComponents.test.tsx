@@ -87,7 +87,7 @@ const sampleRaces: Race[] = [
     graded: { key: "whitney", name: "Whitney Stakes", grade: "G1", track: "Saratoga", distance: 1800, surface: "Dirt", purse: 1000000, dayOfYear: 120 } as any,
     resolved: false,
     cancelled: false,
-  } as Race,
+  } as unknown as Race,
 ];
 
 describe("Strategy Page UI Components", () => {

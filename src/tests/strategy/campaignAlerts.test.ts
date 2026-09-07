@@ -36,7 +36,7 @@ describe("Campaign Alerts: Field Full Bumping & Injury Notifications", () => {
       ],
       resolved: false,
       cancelled: false,
-    } as Race;
+    } as unknown as Race;
 
     const campaign: HorseCampaign = {
       horseId: horse.id,
@@ -72,12 +72,14 @@ describe("Campaign Alerts: Field Full Bumping & Injury Notifications", () => {
     const context: PipelineContext = {
       state: dummyState,
       newDay: 98,
+      previousDay: 97,
       horseMap: new Map([[horse.id, horse]]),
       raceMap: new Map([[fullRace.id, fullRace]]),
       stableMap: new Map(),
       jockeyMap: new Map(),
       intents: [],
       impacts: [],
+      impactLog: [],
       logs: [],
       dailyRng: createRng(12345),
     };
@@ -163,7 +165,7 @@ describe("Campaign Alerts: Field Full Bumping & Injury Notifications", () => {
       ],
       resolved: false,
       cancelled: false,
-    } as Race;
+    } as unknown as Race;
 
     const entryIntent: RaceEntryIntent = {
       id: "intent-entry-full",
@@ -195,6 +197,7 @@ describe("Campaign Alerts: Field Full Bumping & Injury Notifications", () => {
     const context: PipelineContext = {
       state: dummyState,
       newDay: 50,
+      previousDay: 49,
       horseMap: new Map([
         [weakHorse.id, weakHorse],
         [strongNpc1.id, strongNpc1],
@@ -205,6 +208,7 @@ describe("Campaign Alerts: Field Full Bumping & Injury Notifications", () => {
       jockeyMap: new Map(),
       intents: [entryIntent],
       impacts: [],
+      impactLog: [],
       logs: [],
       dailyRng: createRng(12345),
     };

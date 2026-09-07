@@ -284,7 +284,7 @@ export function createCampaignSlice(
         autoManaged: campaign.autoManaged,
       });
       set({
-        campaigns: s.campaigns.map((c) =>
+        campaigns: (s.campaigns ?? []).map((c) =>
           c.horseId === horseId ? { ...c, targetRaceKey } : c,
         ),
       });

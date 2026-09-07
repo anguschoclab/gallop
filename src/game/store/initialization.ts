@@ -217,6 +217,8 @@ export function createInitialState(
     scoutReports: [],
     scoutingAssignments: [],
     exchange: createDefaultExchangeState(),
+    priceAlerts: [],
+    notifiedTradeKeys: [],
     playerBiddingHistory: [],
     autoSyndicateEnabled: false,
     auctions: [],

@@ -5,7 +5,8 @@ import { createCampaignSlice } from "@/game/store/slices/campaignSlice";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { AutoManageToggleIntent, CampaignCreationIntent } from "@/core/resolver/campaignIntents";
 import type { AutoManageToggleImpact, CampaignCreationImpact } from "@/core/resolver/impacts/campaignImpacts";
-import type { GameState, HorseCampaign, AnyImpact } from "@/game/types";
+import type { AnyImpact } from "@/core/resolver/impacts";
+import type { GameState, HorseCampaign } from "@/game/types";
 import { asHorseId } from "@/core/types/branded";
 import { createRng } from "@/core/common/rng";
 
@@ -25,12 +26,14 @@ describe("Campaign Management & Resolver Integration", () => {
     const context: PipelineContext = {
       state: {} as any,
       newDay: 10,
+      previousDay: 9,
       horseMap: new Map(),
       raceMap: new Map(),
       stableMap: new Map(),
       jockeyMap: new Map(),
       intents: [intent],
       impacts: [],
+      impactLog: [],
       logs: [],
       dailyRng: createRng(1),
     };
