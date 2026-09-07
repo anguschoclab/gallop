@@ -26,6 +26,8 @@ export type CampaignRaceSlot = {
   constraintDistance?: number;
   constraintSurface?: "Turf" | "Dirt" | "Synthetic";
   constraintGradeMin?: "G1" | "G2" | "G3" | "Stakes" | "Allowance";
+  trackPrestige?: number;
+  fieldStatus?: string;
   notes?: string;
   status: "planned" | "entered" | "completed" | "skipped" | "cancelled";
 };
@@ -38,7 +40,8 @@ export type CampaignFlag = {
     | "health_issue"
     | "class_mismatch"
     | "upgrade_available"
-    | "trait_confirmed";
+    | "trait_confirmed"
+    | "field_full";
   message: string;
   dismissed: boolean;
   suggestion?: Partial<CampaignRaceSlot>;

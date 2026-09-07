@@ -104,8 +104,15 @@ export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
       entered.push({ raceId: race.id, raceName: race.name, slotIndex: idx });
       return { ...slot, raceId: race.id, status: "entered" as const };
     } else {
-      skipped.push({ slotIndex: idx, reason: !result.ok ? result.reason : "Unknown error" });
-      return slot;
+      const reason = !result.ok ? result.reason : "Unknown error";
+      const isFull = reason.toLowerCase().includes("full");
+      skipped.push({ slotIndex: idx, reason });
+      return {
+        ...slot,
+        raceId: race.id,
+        notes: isFull ? "Bumped: Field full" : slot.notes,
+        fieldStatus: isFull ? "full" : slot.fieldStatus,
+      };
     }
   });
 

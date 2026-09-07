@@ -11,6 +11,7 @@ import type {
   CampaignFlagDismissalIntent,
   CampaignCreationIntent,
   CampaignDeletionIntent,
+  AutoManageToggleIntent,
 } from "@/core/resolver/intents";
 import type {
   AnyImpact,
@@ -18,6 +19,7 @@ import type {
   CampaignFlagDismissalImpact,
   CampaignCreationImpact,
   CampaignDeletionImpact,
+  AutoManageToggleImpact,
 } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 
@@ -74,6 +76,8 @@ export function resolveCampaignIntent(
         horseId: typedIntent.horseId,
         goalType: typedIntent.goalType,
         targetRaceKey: typedIntent.targetRaceKey,
+        slots: typedIntent.slots,
+        autoManaged: typedIntent.autoManaged,
         reason: "Campaign created",
       } as CampaignCreationImpact);
       return true;
@@ -91,6 +95,22 @@ export function resolveCampaignIntent(
         horseId: typedIntent.horseId,
         reason: "Campaign deleted",
       } as CampaignDeletionImpact);
+      return true;
+    }
+
+    case "auto_manage_toggle": {
+      const typedIntent = intent as AutoManageToggleIntent;
+      impacts.push({
+        id: generateUUID(dailyRng),
+        intentId: intent.id,
+        day: newDay,
+        phase: "managementResolution",
+        logLevel: "always",
+        type: "auto_manage_toggle",
+        horseId: typedIntent.horseId,
+        autoManaged: typedIntent.autoManaged,
+        reason: "Auto-manage toggled",
+      } as AutoManageToggleImpact);
       return true;
     }
 

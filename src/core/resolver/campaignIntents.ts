@@ -5,6 +5,7 @@
  */
 
 import type { Intent } from "./intentTypes";
+import type { CampaignRaceSlot } from "@/core/calendar/campaignTypes";
 
 export interface CampaignSlotIntent extends Intent {
   type: "campaign_slot";
@@ -34,8 +35,16 @@ export interface CampaignCreationIntent extends Intent {
   type: "campaign_creation";
   horseId: string;
   goalType:
-    "chase_g1" | "chase_g2" | "chase_g3" | "maximize_earnings" | "develop_maiden" | "free_run";
+    | "chase_g1"
+    | "chase_g2"
+    | "chase_g3"
+    | "chase_major_race"
+    | "maximize_earnings"
+    | "develop_maiden"
+    | "free_run";
   targetRaceKey?: string;
+  slots?: CampaignRaceSlot[];
+  autoManaged?: boolean;
 }
 
 export interface CampaignDeletionIntent extends Intent {

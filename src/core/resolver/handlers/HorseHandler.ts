@@ -119,6 +119,34 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     if (horse && horse.healthStatus === "healthy") {
       horse.healthStatus = status;
       horse.healthStatusDay = impact.day;
+
+      if (status === "recovering") {
+        const campaign = draft.campaigns?.find((c) => c.horseId === horse.id);
+        if (campaign) {
+          campaign.flags.push({
+            day: impact.day,
+            type: "health_issue",
+            message: `${horse.name} is recovering from a health issue (${impact.reason || "training injury"}). Review upcoming entries.`,
+            dismissed: false,
+          });
+        }
+        if (isPlayerOwned(horse)) {
+          if (!draft.inbox) draft.inbox = [];
+          draft.inbox.push({
+            id: generateUUID(),
+            day: impact.day,
+            category: "injury",
+            priority: "urgent",
+            title: `Health Alert: ${horse.name}`,
+            body: `${horse.name} condition changed to recovering: ${impact.reason || "Health issue detected"}.`,
+            cta: {
+              label: "Review Strategy",
+              route: "strategy.$horseId",
+              params: { horseId: horse.id },
+            },
+          });
+        }
+      }
     }
   },
   pasture_retirement: (draft, impact, horse) => {
@@ -151,6 +179,17 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         onsetDay: impact.day,
       };
 
+      // Flag campaign if horse has an active campaign
+      const campaign = draft.campaigns?.find((c) => c.horseId === horse.id);
+      if (campaign) {
+        campaign.flags.push({
+          day: impact.day,
+          type: "health_issue",
+          message: `${horse.name} sustained a ${severity} ${injuryType} injury. Estimated recovery: ${formatRecoveryDays(recoveryDays, severity)}. Planned races may need rescheduling.`,
+          dismissed: false,
+        });
+      }
+
       // Push to Inbox if player-owned
       if (isPlayerOwned(horse)) {
         if (!draft.inbox) draft.inbox = [];
@@ -162,7 +201,6 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
               : severity === "moderate"
                 ? "low"
                 : "info";
-        const shouldHaveCta = severity === "major" || severity === "career-ending";
         draft.inbox.push({
           id: generateUUID(),
           day: impact.day,
@@ -170,15 +208,16 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
           priority,
           title: `Injury: ${horse.name}`,
           body: `${horse.name} sustained a ${severity} ${injuryType} injury. Estimated recovery: ${formatRecoveryDays(recoveryDays, severity)}.`,
-          ...(shouldHaveCta
-            ? {
-                cta: {
-                  label: "View Horse",
-                  route: "stable.$horseId",
-                  params: { horseId: horse.id },
-                },
-              }
-            : {}),
+          cta: {
+            label: "Review Strategy",
+            route: "strategy.$horseId",
+            params: { horseId: horse.id },
+          },
+          secondaryCta: {
+            label: "View Horse",
+            route: "stable.$horseId",
+            params: { horseId: horse.id },
+          },
         });
       }
     }

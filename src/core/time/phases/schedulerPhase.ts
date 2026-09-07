@@ -22,8 +22,8 @@ import {
   updateCampaignAptitudes,
 } from "@/core/campaign/planner";
 import { runAutoEntries, reconcileSlotStatuses } from "@/core/campaign/autoEntry";
-import type { AnyImpact } from "@/core/resolver/impacts/index";
-import type { RaceEntryImpact } from "@/core/resolver/impacts/index";
+import type { AnyImpact, RaceEntryImpact } from "@/core/resolver/impacts/index";
+import type { InboxImpact } from "@/core/resolver/impacts/inboxImpacts";
 import { generateUUID } from "@/core/uuid";
 
 export const schedulerPhase = {
@@ -153,7 +153,52 @@ export const schedulerPhase = {
         },
       });
 
-      updatedCampaigns[i] = { ...campaign, slots: result.updatedSlots };
+      const updatedFlags = [...campaign.flags];
+      for (const skipped of result.skipped) {
+        if (skipped.reason.toLowerCase().includes("full")) {
+          const slot = campaign.slots[skipped.slotIndex];
+          const race = slot?.raceId ? currentRaces.get(slot.raceId) : undefined;
+          const raceName = race?.name ?? "Scheduled Race";
+          autoEntryImpacts.push({
+            id: generateUUID(),
+            intentId: "",
+            day: newDay,
+            phase: "scheduler",
+            logLevel: "always",
+            type: "inbox_message",
+            message: {
+              day: newDay,
+              category: "race",
+              priority: "urgent",
+              title: `Bumped: ${horse.name} (Field Full)`,
+              body: `${horse.name} was bumped from ${raceName} (Day ${slot?.dayTarget ?? newDay}) because the field reached maximum capacity (${race?.fieldSize ?? 12}/${race?.fieldSize ?? 12}). Review campaign strategy to select an alternative race.`,
+              cta: {
+                label: "Review Strategy",
+                route: "strategy.$horseId",
+                params: { horseId: horse.id },
+              },
+            },
+          } as InboxImpact);
+
+          updatedFlags.push({
+            day: newDay,
+            type: "field_full",
+            message: `Bumped from ${raceName} on Day ${slot?.dayTarget ?? newDay} — field full. Alternative race needed.`,
+            dismissed: false,
+          });
+
+          entryLogs.push({
+            day: newDay,
+            text: `Bumped ${horse.name} from ${raceName} (field full).`,
+          });
+        }
+      }
+
+      updatedCampaigns[i] = {
+        ...campaign,
+        slots: result.updatedSlots,
+        flags: updatedFlags,
+      };
     }
 
     const updatedLogs = [...entryLogs, ...context.logs];

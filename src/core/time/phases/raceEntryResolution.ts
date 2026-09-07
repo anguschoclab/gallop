@@ -21,6 +21,7 @@ import type {
   RaceWithdrawalImpact,
   CashImpact,
 } from "@/core/resolver/impacts/index";
+import type { InboxImpact } from "@/core/resolver/impacts/inboxImpacts";
 import { createTransportRequest } from "@/core/transportation";
 import { createTransaction } from "@/core/transactions";
 import { generateUUID } from "@/core/uuid";
@@ -145,6 +146,28 @@ export const raceEntryResolutionPhase: PipelinePhase = {
           raceMap.set(race.id, updatedRace);
           race = updatedRace;
         } else {
+          if (intent.source === "player") {
+            impacts.push({
+              id: generateUUID(),
+              intentId: intent.id,
+              day: newDay,
+              phase: "raceEntryResolution",
+              logLevel: "always",
+              type: "inbox_message",
+              message: {
+                day: newDay,
+                category: "race",
+                priority: "urgent",
+                title: `Entry Failed: ${horse.name} (Race Full)`,
+                body: `${horse.name} could not enter ${race.name} because the field is full (${race.fieldSize}/${race.fieldSize}) and the horse is not rated high enough to bump an existing entry.`,
+                cta: {
+                  label: "Review Strategy",
+                  route: "strategy.$horseId",
+                  params: { horseId: horse.id },
+                },
+              },
+            } as InboxImpact);
+          }
           continue; // full race, no bump applicable
         }
       }

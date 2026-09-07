@@ -104,24 +104,37 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   campaign_creation: (draft, impact, lookupMaps) => {
-    const { horseId, goalType, targetRaceKey } = impact as CampaignCreationImpact;
+    const { horseId, goalType, targetRaceKey, slots, autoManaged } =
+      impact as CampaignCreationImpact;
     if (!draft.campaigns) draft.campaigns = [];
-    const newCampaign = {
-      horseId,
-      goalType,
-      targetRaceKey,
-      slots: [],
-      flags: [],
-      autoManaged: false,
-      confirmedAptitudes: {
-        surfaceStarts: { Turf: 0, Dirt: 0, Synthetic: 0 },
-        distanceBandStarts: { sprint: 0, mile: 0, intermediate: 0, staying: 0 },
-      },
-      createdDay: impact.day,
-      lastReviewedDay: impact.day,
-    };
-    draft.campaigns.push(newCampaign);
-    if (lookupMaps) lookupMaps.campaignMap.set(horseId, newCampaign);
+    const campaignMap =
+      lookupMaps?.campaignMap || new Map(draft.campaigns?.map((c) => [c.horseId, c]) || []);
+    const existing = campaignMap.get(horseId);
+
+    if (existing) {
+      existing.goalType = goalType;
+      existing.targetRaceKey = targetRaceKey;
+      if (slots !== undefined) existing.slots = slots;
+      if (autoManaged !== undefined) existing.autoManaged = autoManaged;
+      existing.lastReviewedDay = impact.day;
+    } else {
+      const newCampaign = {
+        horseId,
+        goalType,
+        targetRaceKey,
+        slots: slots ?? [],
+        flags: [],
+        autoManaged: autoManaged ?? false,
+        confirmedAptitudes: {
+          surfaceStarts: { Turf: 0, Dirt: 0, Synthetic: 0 },
+          distanceBandStarts: { sprint: 0, mile: 0, intermediate: 0, staying: 0 },
+        },
+        createdDay: impact.day,
+        lastReviewedDay: impact.day,
+      };
+      draft.campaigns.push(newCampaign);
+      if (lookupMaps) lookupMaps.campaignMap.set(horseId, newCampaign);
+    }
   },
 
   campaign_deletion: (draft, impact, lookupMaps) => {
