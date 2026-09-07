@@ -72,6 +72,13 @@ export function createAdvanceDayActions(
       // Exchange refresh must never block day advancement.
     }
 
+    // Market price alerts and trade notifications for the new day.
+    try {
+      (get() as StoreType).evaluateMarketAlerts?.();
+    } catch {
+      // Alert evaluation must never block day advancement.
+    }
+
     // Tutorial beat 4: player advanced the day
     try {
       (get() as StoreType).completeTutorialBeat?.(4);

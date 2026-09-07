@@ -17,6 +17,7 @@ import type { AnyIntent } from "@/core/resolver/intents";
 import type { RacingSlice } from "./slices/racingSlice";
 import type { MarketSlice } from "./slices/marketSlice";
 import type { ExchangeSlice } from "./slices/exchangeSlice";
+import type { PriceAlertSlice } from "./slices/priceAlertSlice";
 import type { ScoutingSlice } from "./slices/scoutingSlice";
 import type { AuctionSlice } from "./slices/auctionSlice";
 import type { PrivateSaleSlice } from "./slices/privateSaleSlice";
@@ -51,6 +52,7 @@ export type StoreType = CoreState &
   RacingSlice &
   MarketSlice &
   ExchangeSlice &
+  PriceAlertSlice &
   ScoutingSlice &
   AuctionSlice &
   PrivateSaleSlice &

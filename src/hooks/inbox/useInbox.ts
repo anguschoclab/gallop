@@ -36,6 +36,7 @@ export function useInbox() {
           if (filter === "unread") return !m.readAt;
           if (filter === "action") return !ACTION_FILTER_EXCLUDED_PRIORITIES.includes(m.priority);
           if (filter === "ai_activity") return m.category === "ai_activity";
+          if (filter === "market") return m.category === "market";
           if (filter === "critical") return m.priority === "critical";
           if (filter === "urgent") return m.priority === "urgent";
           if (filter === "low") return m.priority === "low";
