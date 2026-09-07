@@ -10,7 +10,11 @@
  */
 
 import type { SeasonRecord, TrackRecord } from "./historyTypes";
-import { REAL_WORLD_RECORDS, type RealWorldRecord } from "@/data/realWorldRecords";
+import {
+  REAL_WORLD_RECORDS,
+  ALL_REAL_WORLD_BENCHMARKS,
+  type RealWorldRecord,
+} from "@/data/realWorldRecords";
 import { pacePerMile } from "@/core/common/formatting";
 import { iterateRaceRuns } from "@/core/race/bestPace";
 import type { Race } from "@/core/race/types";
@@ -233,33 +237,59 @@ export type BenchmarkComparison = {
   benchmark: RealWorldRecord;
   /** Closest in-game record at the same surface within the distance tolerance. */
   gameRecord?: TrackRecord;
+  /** True when the in-game record was set at the exact same track as the real-world benchmark. */
+  isExactTrackMatch?: boolean;
   /** Positive means the in-game record is faster than the benchmark pace. */
   speedDeltaPct?: number;
 };
 
 /**
- * Match curated real-world records against the closest in-game record.
+ * Match real-world benchmark records against in-game records.
  *
- * @param records - Standing track records
+ * For official track records, prioritizes records set at the exact matching course.
+ * If no in-game record exists at that course, falls back to the closest in-game
+ * performance at the same surface and distance across the game world.
+ *
+ * @param records - Standing track records in the game
  * @param tolerance - Allowed distance difference in metres (default 120)
+ * @param benchmarks - Reference real-world benchmark dataset (defaults to ALL_REAL_WORLD_BENCHMARKS)
  */
-export function compareToRealWorld(records: TrackRecord[], tolerance = 120): BenchmarkComparison[] {
-  return REAL_WORLD_RECORDS.map((benchmark) => {
-    const candidates = records.filter(
+export function compareToRealWorld(
+  records: TrackRecord[],
+  tolerance = 120,
+  benchmarks: RealWorldRecord[] = ALL_REAL_WORLD_BENCHMARKS,
+): BenchmarkComparison[] {
+  return benchmarks.map((benchmark) => {
+    // 1. Prioritize candidate records at the exact matching racecourse
+    const exactTrackCandidates = records.filter(
+      (r) =>
+        (r.categoryKind ?? "overall") === "overall" &&
+        r.surface === benchmark.surface &&
+        r.trackName.toLowerCase() === benchmark.track.toLowerCase() &&
+        Math.abs(r.distance - benchmark.distanceMeters) <= tolerance,
+    );
+
+    // 2. Cross-world candidates matching surface and distance tolerance
+    const generalCandidates = records.filter(
       (r) =>
         (r.categoryKind ?? "overall") === "overall" &&
         r.surface === benchmark.surface &&
         Math.abs(r.distance - benchmark.distanceMeters) <= tolerance,
     );
+
+    const isExact = exactTrackCandidates.length > 0;
+    const candidates = isExact ? exactTrackCandidates : generalCandidates;
+
     let best: TrackRecord | undefined;
     for (const c of candidates) {
       if (!best || recordSpeed(c) > recordSpeed(best)) best = c;
     }
-    if (!best) return { benchmark };
+    if (!best) return { benchmark, isExactTrackMatch: false };
     const benchmarkSpeed = benchmark.distanceMeters / benchmark.seconds;
     return {
       benchmark,
       gameRecord: best,
+      isExactTrackMatch: isExact,
       speedDeltaPct: ((recordSpeed(best) - benchmarkSpeed) / benchmarkSpeed) * 100,
     };
   });

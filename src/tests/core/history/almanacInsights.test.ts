@@ -16,6 +16,11 @@ import {
   runsForHorse,
   computeHorseBenchmarkStanding,
 } from "@/core/history/almanacInsights";
+import {
+  getTripCategory,
+  getRealWorldRecords,
+  type RealWorldRecord,
+} from "@/data/realWorldRecords";
 import type { TrackRecord, SeasonRecord } from "@/core/history/historyTypes";
 
 function mkRecord(
@@ -416,8 +421,9 @@ describe("computeHorseBenchmarkStanding", () => {
 
   it("handles exact pace ties and weights them in percentile calculations", () => {
     // Custom benchmark with known pace
-    const customBenchmark = {
+    const customBenchmark: RealWorldRecord = {
       id: "rw-test",
+      source: "curated",
       horse: "Legend",
       track: "Test Track",
       country: "USA",
@@ -447,3 +453,103 @@ describe("computeHorseBenchmarkStanding", () => {
     expect(standing.percentile).toBe(50);
   });
 });
+
+describe("compareToRealWorld with exact track matching", () => {
+  const benchmarkChurchill: RealWorldRecord = {
+    id: "rw-churchill-derby",
+    horse: "Secretariat",
+    track: "Churchill Downs",
+    country: "USA",
+    race: "Kentucky Derby",
+    surface: "Dirt",
+    distanceMeters: 2012,
+    seconds: 119.4,
+    year: 1973,
+    note: "Derby record",
+    source: "track_record",
+  };
+
+  it("sets isExactTrackMatch to true when in-game record is at the matching track", () => {
+    const records = [
+      mkRecord({
+        trackId: "cd-1",
+        trackName: "Churchill Downs",
+        horseId: "h-cd",
+        horseName: "Churchill Champ",
+        surface: "Dirt",
+        distance: 2012,
+        time: 119.0,
+      }),
+      mkRecord({
+        trackId: "bp-1",
+        trackName: "Belmont Park",
+        horseId: "h-bp",
+        horseName: "Belmont Beast",
+        surface: "Dirt",
+        distance: 2012,
+        time: 117.0, // faster time, but at different track
+      }),
+    ];
+
+    const comparisons = compareToRealWorld(records, 120, [benchmarkChurchill]);
+    expect(comparisons).toHaveLength(1);
+    const comp = comparisons[0];
+    expect(comp.gameRecord).toBeDefined();
+    expect(comp.gameRecord?.trackName).toBe("Churchill Downs");
+    expect(comp.gameRecord?.horseName).toBe("Churchill Champ");
+    expect(comp.isExactTrackMatch).toBe(true);
+    expect(comp.speedDeltaPct).toBeGreaterThan(0);
+  });
+
+  it("sets isExactTrackMatch to false and falls back when no record exists at the benchmark track", () => {
+    const records = [
+      mkRecord({
+        trackId: "bp-1",
+        trackName: "Belmont Park",
+        horseId: "h-bp",
+        horseName: "Belmont Beast",
+        surface: "Dirt",
+        distance: 2012,
+        time: 120.0,
+      }),
+    ];
+
+    const comparisons = compareToRealWorld(records, 120, [benchmarkChurchill]);
+    expect(comparisons).toHaveLength(1);
+    const comp = comparisons[0];
+    expect(comp.gameRecord).toBeDefined();
+    expect(comp.gameRecord?.trackName).toBe("Belmont Park");
+    expect(comp.isExactTrackMatch).toBe(false);
+  });
+});
+
+describe("getTripCategory", () => {
+  it("categorizes distances into sprint, mile, route, and staying", () => {
+    expect(getTripCategory(1000)).toBe("sprint");
+    expect(getTripCategory(1200)).toBe("sprint");
+    expect(getTripCategory(1308)).toBe("sprint");
+    expect(getTripCategory(1400)).toBe("mile");
+    expect(getTripCategory(1600)).toBe("mile");
+    expect(getTripCategory(1710)).toBe("mile");
+    expect(getTripCategory(1800)).toBe("route");
+    expect(getTripCategory(2000)).toBe("route");
+    expect(getTripCategory(2200)).toBe("route");
+    expect(getTripCategory(2400)).toBe("staying");
+    expect(getTripCategory(3200)).toBe("staying");
+  });
+});
+
+describe("getRealWorldRecords", () => {
+  it("filters records by source or returns all", () => {
+    const all = getRealWorldRecords("all");
+    const curated = getRealWorldRecords("curated");
+    const trackRecords = getRealWorldRecords("track_record");
+
+    expect(curated.length).toBeGreaterThan(0);
+    expect(curated.every((r) => r.source === "curated")).toBe(true);
+    expect(trackRecords.length).toBeGreaterThan(0);
+    expect(trackRecords.every((r) => r.source === "track_record")).toBe(true);
+    expect(all.length).toBe(curated.length + trackRecords.length);
+  });
+});
+
