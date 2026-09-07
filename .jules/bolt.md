@@ -1,0 +1,3 @@
+## 2024-05-18 - Optimize array iterations on sorted arrays
+**Learning:** Array iteration methods like `.some()` or manual `for` loops that iterate over an entire array can be optimized by exploiting the pre-sorted nature of the data structure (like `field.sortedLive`). However, be wary of using strict reference lookups like `indexOf()` in environments using immutable state, proxies, or clones, as this will fail silently. Use identifier matching instead (e.g., `findIndex`).
+**Action:** Convert O(N) operations to O(1) or small constants by checking only adjacent neighbors or breaking early, which is critical in 60fps React render loops. Always verify if lookups rely on strict equality vs logical equality.
