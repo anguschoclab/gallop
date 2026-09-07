@@ -18,6 +18,7 @@ import type { ExchangeState } from "@/core/market/exchange";
 import { createDefaultExchangeState } from "@/core/market/exchange";
 import type { ScoutingAssignment } from "@/core/npc/scoutingThresholds";
 import type { PlayerBiddingRecord } from "@/core/auction/biddingHistory";
+import type { PriceAlert } from "@/core/market/priceAlerts";
 
 /**
  * Market-related state for trading, auctions, and scouting.
@@ -42,6 +43,10 @@ export interface MarketState {
   playerBiddingHistory: PlayerBiddingRecord[];
   /** Whether top stallions are syndicated automatically each day */
   autoSyndicateEnabled: boolean;
+  /** Player-configured market price alerts */
+  priceAlerts: PriceAlert[];
+  /** Trade-notification keys already pushed to the inbox (de-duplication) */
+  notifiedTradeKeys: string[];
 }
 
 /**
@@ -60,5 +65,7 @@ export function createDefaultMarketState(): MarketState {
     exchange: createDefaultExchangeState(),
     playerBiddingHistory: [],
     autoSyndicateEnabled: false,
+    priceAlerts: [],
+    notifiedTradeKeys: [],
   };
 }

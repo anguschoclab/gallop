@@ -21,6 +21,7 @@ import type { GameState } from "@/game/types";
 import { createRacingSlice, type RacingSlice } from "./slices/racingSlice";
 import { createMarketSlice, type MarketSlice } from "./slices/marketSlice";
 import { createExchangeSlice } from "./slices/exchangeSlice";
+import { createPriceAlertSlice } from "./slices/priceAlertSlice";
 import { createScoutingSlice } from "./slices/scoutingSlice";
 import { createAuctionSlice } from "./slices/auctionSlice";
 import { createPrivateSaleSlice } from "./slices/privateSaleSlice";
@@ -182,6 +183,9 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "playerBiddingHistory" as keyof GameState,
   // Auto-syndicate preference
   "autoSyndicateEnabled" as keyof GameState,
+  // Market price alerts and pushed trade-notification keys
+  "priceAlerts" as keyof GameState,
+  "notifiedTradeKeys" as keyof GameState,
 ];
 
 /**
@@ -318,6 +322,7 @@ export const useGame = create<StoreType>()(
 
       // Exchange slice
       ...createExchangeSlice(set, get),
+      ...createPriceAlertSlice(set, get),
 
       // Scouting slice
       ...createScoutingSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
