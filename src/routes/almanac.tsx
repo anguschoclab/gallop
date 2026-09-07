@@ -7,6 +7,7 @@ import {
   Globe2,
   History,
   Landmark,
+  Newspaper,
   ScrollText,
   Timer,
 } from "lucide-react";
@@ -14,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useGameWithShallow } from "@/game/store";
+import { AlmanacNewsFeed } from "@/components/history/AlmanacNewsFeed";
 import { RecordAlmanac } from "@/components/history/RecordAlmanac";
 import { AlmanacMilestones } from "@/components/history/AlmanacMilestones";
 import { DecadeLeaders } from "@/components/history/DecadeLeaders";
@@ -23,6 +25,7 @@ import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
 import type { SeasonRecord, TrackRecord } from "@/core/history/historyTypes";
 
 const ALMANAC_TABS = [
+  "news",
   "records",
   "milestones",
   "decades",
@@ -39,16 +42,17 @@ export const Route = createFileRoute("/almanac")({
   }),
   head: () => ({
     meta: [
-      { title: "Almanac — Track Records & Roll of Honour" },
+      { title: "Almanac — News Feed, Track Records & Roll of Honour" },
       {
         name: "description",
         content:
-          "Browse all-time track records by age, gender, grade and going, plus the Grade 1 roll of honour.",
+          "Browse historical news feed, horse transfers, all-time track records by category, and the Grade 1 roll of honour.",
       },
-      { property: "og:title", content: "Almanac — Track Records & Roll of Honour" },
+      { property: "og:title", content: "Almanac — News Feed, Track Records & Roll of Honour" },
       {
         property: "og:description",
-        content: "All-time track records by category and every Grade 1 winner in your world.",
+        content:
+          "All-time track events, horse transfers, stable news timeline, and every Grade 1 winner in your world.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -76,7 +80,7 @@ function AlmanacPage() {
           Almanac
         </h1>
         <p className="text-cream-muted font-[family-name:var(--font-body)]">
-          Track records by age, gender, grade and going — plus every Grade 1 result
+          Track records, world news feed, transfer timeline, and the Grade 1 roll of honour
         </p>
       </div>
 
@@ -86,6 +90,10 @@ function AlmanacPage() {
         className="space-y-4"
       >
         <TabsList className="flex-wrap h-auto">
+          <TabsTrigger value="news" className="gap-2">
+            <Newspaper className="h-4 w-4" />
+            News Feed
+          </TabsTrigger>
           <TabsTrigger value="records" className="gap-2">
             <Timer className="h-4 w-4" />
             Track Records
@@ -111,6 +119,10 @@ function AlmanacPage() {
             Roll of Honour
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="news">
+          <AlmanacNewsFeed />
+        </TabsContent>
 
         <TabsContent value="records">
           <RecordAlmanac records={records} />

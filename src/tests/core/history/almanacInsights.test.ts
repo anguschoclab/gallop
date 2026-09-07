@@ -13,6 +13,8 @@ import {
   buildDecadeLeaders,
   buildTrackTimeline,
   compareToRealWorld,
+  runsForHorse,
+  computeHorseBenchmarkStanding,
 } from "@/core/history/almanacInsights";
 import type { TrackRecord, SeasonRecord } from "@/core/history/historyTypes";
 
@@ -251,5 +253,197 @@ describe("compareToRealWorld", () => {
     const belmont = comparisons.find((c) => c.benchmark.id === "rw-secretariat-belmont");
     // 2400/140 ≈ 17.14 m/s vs 2414/144 ≈ 16.76 m/s → positive delta
     expect(belmont?.speedDeltaPct).toBeGreaterThan(0);
+  });
+});
+
+describe("runsForHorse", () => {
+  it("returns an empty array when no races exist", () => {
+    expect(runsForHorse([], "h1")).toEqual([]);
+  });
+
+  it("extracts and normalizes runs for the specified horse, sorted by perMile ascending", () => {
+    const races = [
+      {
+        id: "r1",
+        name: "Sprint Cup",
+        day: 1,
+        distance: 1200,
+        surface: "Turf" as const,
+        result: [
+          { horseId: "h1", time: 72, position: 1 },
+          { horseId: "h2", time: 75, position: 2 },
+        ],
+      },
+      {
+        id: "r2",
+        name: "Classic Mile",
+        day: 10,
+        distance: 1600,
+        surface: "Turf" as const,
+        result: [{ horseId: "h1", time: 90, position: 1 }],
+      },
+    ] as any;
+
+    const runs = runsForHorse(races, "h1");
+    expect(runs).toHaveLength(2);
+    // 1600m in 90s is 90 / (1600 / 1609.344) ≈ 90.52 s/mi
+    // 1200m in 72s is 72 / (1200 / 1609.344) ≈ 96.56 s/mi
+    // Ascending order means 1600m run (faster per-mile) is first
+    expect(runs[0].raceName).toBe("Classic Mile");
+    expect(runs[0].perMile).toBeLessThan(runs[1].perMile);
+    expect(runs[1].raceName).toBe("Sprint Cup");
+  });
+});
+
+describe("computeHorseBenchmarkStanding", () => {
+  it("returns baseline empty standing when horse has no runs", () => {
+    const standing = computeHorseBenchmarkStanding([]);
+    expect(standing.totalBenchmarks).toBe(15);
+    expect(standing.outpacedCount).toBe(0);
+    expect(standing.trailingCount).toBe(0);
+    expect(standing.tiedCount).toBe(0);
+    expect(standing.rank).toBe(16);
+    expect(standing.fieldSize).toBe(16);
+    expect(standing.percentile).toBe(0);
+    expect(standing.averageDeltaPct).toBe(0);
+    expect(standing.tier.label).toBe("Developing");
+    expect(standing.rows).toHaveLength(0);
+  });
+
+  it("evaluates a dominant horse that outpaces all 15 real-world benchmarks", () => {
+    // Ultra-fast 1200m turf run: 50s for 1200m (~67 s/mi) outpaces every benchmark
+    const runs = [
+      {
+        seconds: 50,
+        perMile: 67,
+        distance: 1200,
+        surface: "Turf" as const,
+        raceName: "Super Sprint",
+      },
+      {
+        seconds: 60,
+        perMile: 70,
+        distance: 1600,
+        surface: "Dirt" as const,
+        raceName: "Super Dirt Mile",
+      },
+    ];
+
+    const standing = computeHorseBenchmarkStanding(runs);
+    expect(standing.totalBenchmarks).toBe(15);
+    expect(standing.outpacedCount).toBe(15);
+    expect(standing.trailingCount).toBe(0);
+    expect(standing.rank).toBe(1);
+    expect(standing.fieldSize).toBe(16);
+    expect(standing.percentile).toBe(100);
+    expect(standing.topPercentile).toBeLessThanOrEqual(7);
+    expect(standing.tier.label).toBe("Legendary Pace");
+    expect(standing.averageDeltaPct).toBeGreaterThan(0);
+    expect(standing.rows).toHaveLength(15);
+    expect(standing.surfaceBreakdown.Turf.outpaced).toBe(9);
+    expect(standing.surfaceBreakdown.Turf.total).toBe(9);
+    expect(standing.surfaceBreakdown.Dirt.outpaced).toBe(6);
+    expect(standing.surfaceBreakdown.Dirt.total).toBe(6);
+  });
+
+  it("evaluates an underperforming horse that trails all 15 real-world benchmarks", () => {
+    // Very slow run: 250s per mile
+    const runs = [
+      {
+        seconds: 250,
+        perMile: 250,
+        distance: 1600,
+        surface: "Turf" as const,
+        raceName: "Slow Jog",
+      },
+    ];
+
+    const standing = computeHorseBenchmarkStanding(runs);
+    expect(standing.totalBenchmarks).toBe(15);
+    expect(standing.outpacedCount).toBe(0);
+    expect(standing.trailingCount).toBe(15);
+    expect(standing.rank).toBe(16);
+    expect(standing.percentile).toBe(0);
+    expect(standing.tier.label).toBe("Developing");
+    expect(standing.averageDeltaPct).toBeLessThan(0);
+  });
+
+  it("assigns matchup ranks 1 to 15 ordered by delta percentage descending", () => {
+    const runs = [
+      {
+        seconds: 95,
+        perMile: 95,
+        distance: 1600,
+        surface: "Turf" as const,
+        raceName: "Average Run",
+      },
+    ];
+
+    const standing = computeHorseBenchmarkStanding(runs);
+    expect(standing.rows).toHaveLength(15);
+
+    // Check that rows are ordered with rank from 1 to 15
+    const ranks = standing.rows.map((r) => r.rank);
+    expect(ranks).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+
+    // Check that deltas are strictly descending (or equal)
+    for (let i = 0; i < standing.rows.length - 1; i++) {
+      expect(standing.rows[i].deltaPct!).toBeGreaterThanOrEqual(standing.rows[i + 1].deltaPct!);
+    }
+  });
+
+  it("accurately distinguishes exact distance/surface matches from career best fallback", () => {
+    // Horse only ran 1200m Turf
+    const runs = [
+      {
+        seconds: 70,
+        perMile: 93.88,
+        distance: 1200,
+        surface: "Turf" as const,
+        raceName: "Sprint",
+      },
+    ];
+
+    const standing = computeHorseBenchmarkStanding(runs);
+    // Black Caviar is 1200m Turf -> exact match
+    const blackCaviar = standing.rows.find((r) => r.benchmark.id === "rw-black-caviar");
+    expect(blackCaviar?.exact).toBe(true);
+
+    // Secretariat Belmont is 2414m Dirt -> fallback match
+    const secretariat = standing.rows.find((r) => r.benchmark.id === "rw-secretariat-belmont");
+    expect(secretariat?.exact).toBe(false);
+  });
+
+  it("handles exact pace ties and weights them in percentile calculations", () => {
+    // Custom benchmark with known pace
+    const customBenchmark = {
+      id: "rw-test",
+      horse: "Legend",
+      track: "Test Track",
+      country: "USA",
+      race: "Test Cup",
+      surface: "Turf" as const,
+      distanceMeters: 1600,
+      seconds: 96,
+      year: 2020,
+      note: "Test record",
+    };
+
+    const runs = [
+      {
+        seconds: 96,
+        perMile: 96 / (1600 / 1609.344),
+        distance: 1600,
+        surface: "Turf" as const,
+        raceName: "Tied Race",
+      },
+    ];
+
+    const standing = computeHorseBenchmarkStanding(runs, [customBenchmark]);
+    expect(standing.totalBenchmarks).toBe(1);
+    expect(standing.tiedCount).toBe(1);
+    expect(standing.outpacedCount).toBe(0);
+    // 0 + 1 * 0.5 = 0.5 / 1 * 100 = 50th percentile
+    expect(standing.percentile).toBe(50);
   });
 });
