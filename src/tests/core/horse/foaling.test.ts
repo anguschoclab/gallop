@@ -45,9 +45,12 @@ describe("resolveFoaling", () => {
       id: "pregnancy-1",
       damId: dam.id,
       sireId: sire.id,
-      dueDate: 100,
-      conceptionDate: 1,
+      sireName: sire.name,
+      damName: dam.name,
+      dueDay: 100,
+      conceivedDay: 1,
       isPlayerOwned: true,
+      resolved: false,
     };
 
     const result = resolveFoaling(pregnancy, sire, dam);
@@ -72,9 +75,12 @@ describe("resolveFoaling", () => {
       id: "pregnancy-2",
       damId: dam.id,
       sireId: sire.id,
-      dueDate: 100,
-      conceptionDate: 1,
+      sireName: sire.name,
+      damName: dam.name,
+      dueDay: 100,
+      conceivedDay: 1,
       isPlayerOwned: true,
+      resolved: false,
     };
 
     const result = resolveFoaling(pregnancy, sire, dam);
@@ -98,9 +104,12 @@ describe("resolveFoaling", () => {
       id: "pregnancy-3",
       damId: dam.id,
       sireId: sire.id,
-      dueDate: 100,
-      conceptionDate: 1,
+      sireName: sire.name,
+      damName: dam.name,
+      dueDay: 100,
+      conceivedDay: 1,
       isPlayerOwned: true,
+      resolved: false,
     };
 
     const result = resolveFoaling(pregnancy, sire, dam);
@@ -127,9 +136,12 @@ describe("resolveFoaling", () => {
       id: "pregnancy-4",
       damId: dam.id,
       sireId: sire.id,
-      dueDate: 100,
-      conceptionDate: 1,
+      sireName: sire.name,
+      damName: dam.name,
+      dueDay: 100,
+      conceivedDay: 1,
       isPlayerOwned: true,
+      resolved: false,
     };
 
     const result = resolveFoaling(pregnancy, sire, dam);
@@ -151,9 +163,12 @@ describe("resolveFoaling", () => {
       id: "pregnancy-twin",
       damId: dam.id,
       sireId: sire.id,
-      dueDate: 100,
-      conceptionDate: 1,
+      sireName: sire.name,
+      damName: dam.name,
+      dueDay: 100,
+      conceivedDay: 1,
       isPlayerOwned: true,
+      resolved: false,
     };
 
     const result = resolveFoaling(pregnancy, sire, dam);
@@ -167,16 +182,19 @@ describe("resolveFoaling", () => {
     const dam = createTestHorse({ id: "dam-nogen", age: 5 });
     const sire = createTestHorse({ id: "sire-nogen", age: 6 });
 
-    // Intentionally delete genotype which createTestHorse might add
-    delete dam.genotype;
+    // Intentionally override genotype reference to undefined to trigger error
+    (dam as any).genotype = undefined;
 
     const pregnancy: Pregnancy = {
       id: "pregnancy-5",
       damId: dam.id,
       sireId: sire.id,
-      dueDate: 100,
-      conceptionDate: 1,
+      sireName: sire.name,
+      damName: dam.name,
+      dueDay: 100,
+      conceivedDay: 1,
       isPlayerOwned: true,
+      resolved: false,
     };
 
     expect(() => resolveFoaling(pregnancy, sire, dam)).toThrow(/missing genotype/);
