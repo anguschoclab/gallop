@@ -1,0 +1,3 @@
+## 2024-06-11 - Testing foaling resolution and deterministic complications
+**Learning:** `resolveFoaling` uses a deterministically seeded RNG internally, making it challenging to reliably hit specific complication branch paths (like lethal recessives or twin reductions) by passing normal mock dependencies. Mocking the `rng` module directly in vitest was necessary to inject strict probability sequences.
+**Action:** When testing deeply RNG-dependent generation functions, mock the random util entirely and return a controlled deterministic sequence if the function instantiates its own `Rng` internally rather than accepting it as an argument.
