@@ -1,0 +1,3 @@
+## $(date +%Y-%m-%d) - Replace native title with Tooltip for icon-only button
+**Learning:** Native `title` attributes on icon-only buttons do not consistently provide reliable screen reader labels compared to `aria-label` paired with our custom `<Tooltip>` implementation. Screen readers handle `title` differently, and it breaks custom styling patterns.
+**Action:** Always wrap icon-only buttons in `<TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>`, `<Tooltip>`, `<TooltipTrigger asChild>`, and `<TooltipContent>`, while simultaneously adding an explicit `aria-label` directly to the trigger `<Button>` or `<button>` element to ensure both visual consistency and robust accessibility.
