@@ -24,6 +24,9 @@ describe("generateNpcInsuranceIntents", () => {
         grade: "G1",
       },
     ],
+    age: 3,
+    fame: 100,
+    fanCount: 100,
     healthStatus: "healthy",
     conformation: 90,
     stats: {
@@ -50,6 +53,9 @@ describe("generateNpcInsuranceIntents", () => {
         grade: "G2",
       },
     ],
+    age: 3,
+    fame: 100,
+    fanCount: 100,
     healthStatus: "injured",
     insurancePolicy: {
       type: "injury_only",
