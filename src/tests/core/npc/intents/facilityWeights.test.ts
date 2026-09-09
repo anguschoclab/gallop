@@ -22,25 +22,13 @@ describe("generateNpcFacilityUpgradeIntents with facilityWeight", () => {
   };
 
   it("generates upgrade intent when facility weight is positive", () => {
-    const intents = generateNpcFacilityUpgradeIntents(
-      stable,
-      stableAI,
-      10,
-      npcFacilities,
-      1.0,
-    );
+    const intents = generateNpcFacilityUpgradeIntents(stable, stableAI, 10, npcFacilities, 1.0);
     expect(intents.length).toBeGreaterThan(0);
     expect(intents[0].type).toBe("facility_upgrade");
   });
 
   it("suppresses upgrade intents when facility weight is 0", () => {
-    const intents = generateNpcFacilityUpgradeIntents(
-      stable,
-      stableAI,
-      10,
-      npcFacilities,
-      0,
-    );
+    const intents = generateNpcFacilityUpgradeIntents(stable, stableAI, 10, npcFacilities, 0);
     expect(intents.length).toBe(0);
   });
 });

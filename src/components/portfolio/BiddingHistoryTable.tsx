@@ -20,10 +20,7 @@ import { StatCard } from "@/components/common/StatCard";
 import { PillToggleGroup } from "@/components/common/PillToggleGroup";
 import { formatCurrency } from "@/core/common/formatting";
 import { getAuctionHouse } from "@/core/prestige";
-import {
-  biddingHistorySummary,
-  type PlayerBiddingRecord,
-} from "@/core/auction/biddingHistory";
+import { biddingHistorySummary, type PlayerBiddingRecord } from "@/core/auction/biddingHistory";
 
 const OUTCOMES = ["all", "won", "outbid", "passed"] as const;
 type OutcomeFilter = (typeof OUTCOMES)[number];
@@ -47,8 +44,8 @@ export function BiddingHistoryTable({ history }: { history: PlayerBiddingRecord[
   if (history.length === 0) {
     return (
       <div className="rounded-md border border-white/5 bg-slate-900/40 p-8 text-center text-sm text-cream-muted">
-        You haven&apos;t bid at auction yet. Bids placed in the sale ring or in the book will show up
-        here with the hammer price.
+        You haven&apos;t bid at auction yet. Bids placed in the sale ring or in the book will show
+        up here with the hammer price.
       </div>
     );
   }
@@ -56,13 +53,21 @@ export function BiddingHistoryTable({ history }: { history: PlayerBiddingRecord[
   return (
     <div className="space-y-4">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Lots Contested" value={String(summary.lots)} sub={`${summary.outbid} outbid`} />
+        <StatCard
+          label="Lots Contested"
+          value={String(summary.lots)}
+          sub={`${summary.outbid} outbid`}
+        />
         <StatCard
           label="Lots Won"
           value={String(summary.won)}
           sub={`${Math.round(summary.winRate * 100)}% success`}
         />
-        <StatCard label="Total Spend" value={formatCurrency(summary.spend)} sub="Hammer prices paid" />
+        <StatCard
+          label="Total Spend"
+          value={formatCurrency(summary.spend)}
+          sub="Hammer prices paid"
+        />
         <StatCard
           label="Average Hammer"
           value={formatCurrency(summary.averageHammer)}

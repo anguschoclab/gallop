@@ -1,6 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { RacingHandler } from "@/core/resolver/handlers/RacingHandler";
-import type { JockeyContractImpact, JockeyReleaseImpact } from "@/core/resolver/impacts/jockeyImpacts";
+import type {
+  JockeyContractImpact,
+  JockeyReleaseImpact,
+} from "@/core/resolver/impacts/jockeyImpacts";
 import type { GameState } from "@/game/types";
 import { createDefaultGameState } from "@/game/store/state";
 

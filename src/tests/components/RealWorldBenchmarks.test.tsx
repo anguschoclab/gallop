@@ -12,8 +12,7 @@ vi.mock("@/components/history/HorseBenchmarkDialog", () => ({
     horseName: string;
     open: boolean;
     onOpenChange: (open: boolean) => void;
-  }) =>
-    open ? <div data-testid="horse-benchmark-dialog">Dialog for {horseName}</div> : null,
+  }) => (open ? <div data-testid="horse-benchmark-dialog">Dialog for {horseName}</div> : null),
 }));
 
 function mkRecord(overrides: Partial<TrackRecord> = {}): TrackRecord {

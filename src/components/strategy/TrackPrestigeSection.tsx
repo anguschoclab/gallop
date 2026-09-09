@@ -80,7 +80,9 @@ export function TrackPrestigeSection({ slots, getRace }: TrackPrestigeSectionPro
               Fame & Valuation Boost
             </span>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black text-purple-400 font-mono">×{fameMultiplier}</span>
+              <span className="text-3xl font-black text-purple-400 font-mono">
+                ×{fameMultiplier}
+              </span>
               <span className="text-xs text-emerald-400 font-mono flex items-center gap-0.5">
                 <TrendingUp className="w-3 h-3" /> +{Math.round((avgPrestige / 100) * 20)}%
               </span>
@@ -95,7 +97,9 @@ export function TrackPrestigeSection({ slots, getRace }: TrackPrestigeSectionPro
               Venues Represented
             </span>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black text-gold font-mono">{campaignTracks.length || 0}</span>
+              <span className="text-3xl font-black text-gold font-mono">
+                {campaignTracks.length || 0}
+              </span>
               <span className="text-xs text-cream-muted font-mono">tracks planned</span>
             </div>
             <p className="text-[11px] text-cream-muted">
@@ -125,7 +129,10 @@ export function TrackPrestigeSection({ slots, getRace }: TrackPrestigeSectionPro
                       </div>
                     </div>
                   </div>
-                  <Badge variant="outline" className={`${getPrestigeTierBadgeClass(t.tier)} font-mono text-xs`}>
+                  <Badge
+                    variant="outline"
+                    className={`${getPrestigeTierBadgeClass(t.tier)} font-mono text-xs`}
+                  >
                     {t.score} pts
                   </Badge>
                 </div>

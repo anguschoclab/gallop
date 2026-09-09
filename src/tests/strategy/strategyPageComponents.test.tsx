@@ -32,9 +32,7 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
       conformation: 72,
       consistency: 75,
     },
-    raceHistory: [
-      { raceId: "r1", raceName: "Derby Prep", grade: "G2", position: 1, day: 80 },
-    ],
+    raceHistory: [{ raceId: "r1", raceName: "Derby Prep", grade: "G2", position: 1, day: 80 }],
     ...overrides,
   }) as Horse;
 
@@ -84,7 +82,16 @@ const sampleRaces: Race[] = [
     entries: [],
     entryFee: 1000,
     purse: 1000000,
-    graded: { key: "whitney", name: "Whitney Stakes", grade: "G1", track: "Saratoga", distance: 1800, surface: "Dirt", purse: 1000000, dayOfYear: 120 } as any,
+    graded: {
+      key: "whitney",
+      name: "Whitney Stakes",
+      grade: "G1",
+      track: "Saratoga",
+      distance: 1800,
+      surface: "Dirt",
+      purse: 1000000,
+      dayOfYear: 120,
+    } as any,
     resolved: false,
     cancelled: false,
   } as unknown as Race,
@@ -96,13 +103,7 @@ describe("Strategy Page UI Components", () => {
     const campaign = mkCampaign();
     const onToggleAuto = vi.fn();
 
-    render(
-      <StrategyHeader
-        horse={horse}
-        campaign={campaign}
-        onToggleAutoManaged={onToggleAuto}
-      />,
-    );
+    render(<StrategyHeader horse={horse} campaign={campaign} onToggleAutoManaged={onToggleAuto} />);
 
     expect(screen.getByText("Apex Comet")).toBeDefined();
     expect(screen.getByText(/Auto-Managed/i)).toBeDefined();
@@ -131,12 +132,7 @@ describe("Strategy Page UI Components", () => {
     const campaign = mkCampaign();
     const raceMap = new Map([["r-target", sampleRaces[0]]]);
 
-    render(
-      <TrackPrestigeSection
-        slots={campaign.slots}
-        getRace={(id) => raceMap.get(id)}
-      />,
-    );
+    render(<TrackPrestigeSection slots={campaign.slots} getRace={(id) => raceMap.get(id)} />);
 
     expect(screen.getByText(/Track Prestige Intelligence/i)).toBeDefined();
     expect(screen.getByText(/Average Campaign Prestige/i)).toBeDefined();
@@ -183,12 +179,7 @@ describe("Strategy Page UI Components", () => {
     const campaign = mkCampaign();
     const onDismiss = vi.fn();
 
-    render(
-      <CampaignAlertsFeed
-        flags={campaign.flags}
-        onDismissFlag={onDismiss}
-      />,
-    );
+    render(<CampaignAlertsFeed flags={campaign.flags} onDismissFlag={onDismiss} />);
 
     expect(screen.getByText(/Campaign Alerts & Feed/i)).toBeDefined();
     expect(screen.getByText(/Bumped from Saratoga Cup/i)).toBeDefined();
