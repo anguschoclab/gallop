@@ -54,7 +54,9 @@ function StrategyPage() {
     return (
       <div className="p-12 text-center space-y-4">
         <h1 className="text-3xl font-black text-cream">Horse Not Found</h1>
-        <p className="text-muted-foreground text-sm">No horse found with ID: {horseId}</p>
+        <p className="text-muted-foreground text-sm">
+          No horse found with ID: {horseId}
+        </p>
         <Link
           to="/stable"
           className="inline-flex items-center gap-1.5 text-xs uppercase font-mono tracking-wider text-amber-400 hover:underline"
@@ -136,7 +138,11 @@ function StrategyPage() {
       </div>
 
       {/* Horse Strategy Header */}
-      <StrategyHeader horse={horse} campaign={campaign} onToggleAutoManaged={handleToggleAuto} />
+      <StrategyHeader
+        horse={horse}
+        campaign={campaign}
+        onToggleAutoManaged={handleToggleAuto}
+      />
 
       {/* Uninitialized Campaign Empty State */}
       {!campaign ? (
@@ -149,8 +155,8 @@ function StrategyPage() {
               No Campaign Strategy Active for {horse.name}
             </CardTitle>
             <p className="text-sm text-muted-foreground max-w-md mx-auto">
-              Construct a targeted racing campaign with prep chains, track prestige targets, and
-              40-share commercial syndication horizons.
+              Construct a targeted racing campaign with prep chains, track prestige targets,
+              and 40-share commercial syndication horizons.
             </p>
           </CardHeader>
           <CardContent className="flex justify-center gap-3">
@@ -161,7 +167,10 @@ function StrategyPage() {
               <Sparkles className="w-4 h-4" />
               Generate Grade 1 Campaign
             </Button>
-            <Button variant="outline" onClick={() => handleCreateInitialCampaign("free_run")}>
+            <Button
+              variant="outline"
+              onClick={() => handleCreateInitialCampaign("free_run")}
+            >
               Start Custom Manual Plan
             </Button>
           </CardContent>
@@ -184,7 +193,10 @@ function StrategyPage() {
           />
 
           {/* Track Prestige Intelligence */}
-          <TrackPrestigeSection slots={campaign.slots} getRace={getRace} />
+          <TrackPrestigeSection
+            slots={campaign.slots}
+            getRace={getRace}
+          />
 
           {/* Live Annual Timeline */}
           <LiveAnnualTimeline

@@ -146,7 +146,9 @@ export function createCampaignSlice(
       });
       set({
         campaigns: (s.campaigns ?? []).map((c) =>
-          c.horseId === horseId ? { ...c, flags: c.flags.filter((_, i) => i !== flagIndex) } : c,
+          c.horseId === horseId
+            ? { ...c, flags: c.flags.filter((_, i) => i !== flagIndex) }
+            : c,
         ),
       });
     },
@@ -257,7 +259,9 @@ export function createCampaignSlice(
       });
       if (s.campaigns) {
         set({
-          campaigns: s.campaigns.map((c) => (c.horseId === horseId ? { ...c, autoManaged } : c)),
+          campaigns: s.campaigns.map((c) =>
+            c.horseId === horseId ? { ...c, autoManaged } : c,
+          ),
         });
       }
     },

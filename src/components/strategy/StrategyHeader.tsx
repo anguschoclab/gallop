@@ -13,7 +13,11 @@ interface StrategyHeaderProps {
   onToggleAutoManaged: (autoManaged: boolean) => void;
 }
 
-export function StrategyHeader({ horse, campaign, onToggleAutoManaged }: StrategyHeaderProps) {
+export function StrategyHeader({
+  horse,
+  campaign,
+  onToggleAutoManaged,
+}: StrategyHeaderProps) {
   const ovr = calculateOverallRating(horse);
   const autoManaged = campaign?.autoManaged ?? false;
   const healthStatus = horse.healthStatus ?? "healthy";
@@ -40,10 +44,7 @@ export function StrategyHeader({ horse, campaign, onToggleAutoManaged }: Strateg
                 <h1 className="text-2xl md:text-3xl font-black text-cream font-[family-name:var(--font-display)] tracking-tight">
                   {horse.name}
                 </h1>
-                <Badge
-                  variant="outline"
-                  className="text-xs uppercase border-gold/40 text-gold-bright font-mono"
-                >
+                <Badge variant="outline" className="text-xs uppercase border-gold/40 text-gold-bright font-mono">
                   {horse.age}yo {horse.gender}
                 </Badge>
                 <Badge
@@ -53,11 +54,7 @@ export function StrategyHeader({ horse, campaign, onToggleAutoManaged }: Strateg
                     isHealthy && "border-emerald-500/40 text-emerald-400 bg-emerald-500/10",
                   )}
                 >
-                  {isHealthy ? (
-                    <Activity className="w-3 h-3" />
-                  ) : (
-                    <ShieldAlert className="w-3 h-3" />
-                  )}
+                  {isHealthy ? <Activity className="w-3 h-3" /> : <ShieldAlert className="w-3 h-3" />}
                   {healthStatus}
                 </Badge>
               </div>
@@ -65,23 +62,11 @@ export function StrategyHeader({ horse, campaign, onToggleAutoManaged }: Strateg
               <div className="flex items-center gap-4 text-xs text-cream-muted font-mono">
                 <div className="flex items-center gap-1.5">
                   <Heart className="w-3.5 h-3.5 text-rose-400" />
-                  <span>
-                    Energy: <span className="font-bold text-cream">{horse.energy}%</span>
-                  </span>
+                  <span>Energy: <span className="font-bold text-cream">{horse.energy}%</span></span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>
-                    Form:{" "}
-                    <span
-                      className={cn(
-                        "font-bold",
-                        (horse.form ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400",
-                      )}
-                    >
-                      {horse.form > 0 ? `+${horse.form}` : horse.form}
-                    </span>
-                  </span>
+                  <span>Form: <span className={cn("font-bold", (horse.form ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400")}>{horse.form > 0 ? `+${horse.form}` : horse.form}</span></span>
                 </div>
                 <div>
                   Fame: <span className="font-bold text-cream">{horse.fame ?? 0}</span>
@@ -93,10 +78,7 @@ export function StrategyHeader({ horse, campaign, onToggleAutoManaged }: Strateg
           {/* Auto-Manage Control */}
           <div className="flex items-center gap-4 bg-slate-950/60 p-4 rounded-xl border border-white/5 md:self-center">
             <div className="space-y-0.5 text-right">
-              <Label
-                htmlFor="auto-manage-toggle"
-                className="text-sm font-bold text-cream cursor-pointer"
-              >
+              <Label htmlFor="auto-manage-toggle" className="text-sm font-bold text-cream cursor-pointer">
                 Auto-Managed Campaign
               </Label>
               <p className="text-[11px] text-cream-muted">

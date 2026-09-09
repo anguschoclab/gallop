@@ -117,10 +117,8 @@ export const FACILITY_DESCRIPTIONS: Record<FacilityType, string> = {
   spa: "Post-race recovery facilities. Improves form regeneration between races.",
   nutrition_lab: "Custom feed formulations optimize growth and conditioning.",
   rehab_center: "Advanced therapy for serious injuries. Extended recovery options.",
-  jockey_academy:
-    "Dedicated training ground for apprentice jockeys, accelerating skill progression.",
-  museum:
-    "Exhibits trophies, silks, and legendary bloodlines, amplifying stable prestige and public esteem.",
+  jockey_academy: "Dedicated training ground for apprentice jockeys, accelerating skill progression.",
+  museum: "Exhibits trophies, silks, and legendary bloodlines, amplifying stable prestige and public esteem.",
 };
 
 /**

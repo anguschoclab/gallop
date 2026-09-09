@@ -26,7 +26,9 @@ export { REAL_WORLD_BLEND_WEIGHT };
 
 /** Which slice of the market an alert watches. */
 export type PriceAlertScope =
-  { kind: "market" } | { kind: "grade"; value: string } | { kind: "track"; value: string };
+  | { kind: "market" }
+  | { kind: "grade"; value: string }
+  | { kind: "track"; value: string };
 
 /** Which direction of move should fire the alert. */
 export type PriceAlertDirection = "up" | "down" | "either";
@@ -166,9 +168,7 @@ export function segmentPriceIndex(args: {
         ? (TRACK_BY_ID[scope.value]?.name ?? scope.value)
         : scope.value;
   const series = realWorldSeries(scope.kind, scopeValue);
-  const realMove = series
-    ? realWorldMovePct({ kind: scope.kind, value: scopeValue, day, windowDays })
-    : 0;
+  const realMove = series ? realWorldMovePct({ kind: scope.kind, value: scopeValue, day, windowDays }) : 0;
   const weight = series ? Math.min(1, Math.max(0, args.realWorldWeight ?? 0)) : 0;
   const movePct = simMovePct * (1 - weight) + realMove * weight;
 

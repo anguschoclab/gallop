@@ -1,9 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { createFacility, calculateTotalMaintenance } from "@/core/facilities/facilityDefaults";
-import {
-  FACILITY_UPGRADE_COSTS,
-  FACILITY_MAINTENANCE_COSTS,
-} from "@/core/facilities/facilityTypes";
+import { FACILITY_UPGRADE_COSTS, FACILITY_MAINTENANCE_COSTS } from "@/core/facilities/facilityTypes";
 import type { PlayerFacilities } from "@/core/facilities/facilityTypes";
 
 describe("Imperial Outpost Facilities (jockey_academy, museum)", () => {
@@ -29,6 +26,9 @@ describe("Imperial Outpost Facilities (jockey_academy, museum)", () => {
     } as any;
 
     const total = calculateTotalMaintenance(facilities);
-    expect(total).toBe(FACILITY_MAINTENANCE_COSTS.basic + FACILITY_MAINTENANCE_COSTS.standard * 2);
+    expect(total).toBe(
+      FACILITY_MAINTENANCE_COSTS.basic +
+        FACILITY_MAINTENANCE_COSTS.standard * 2,
+    );
   });
 });

@@ -89,12 +89,12 @@ export function evaluateSyndicationEligibility(horse: Horse): SyndicationEligibi
       isEligible: false,
       g1Wins: 0,
       shortfall: 1,
-      reason:
-        "Broodmare — commercial progeny and auction sales model applies instead of stud syndication.",
+      reason: "Broodmare — commercial progeny and auction sales model applies instead of stud syndication.",
     };
   }
 
-  const g1Wins = horse.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1).length ?? 0;
+  const g1Wins =
+    horse.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1).length ?? 0;
 
   if (g1Wins >= 1 || horse.stud?.atStud) {
     return {
@@ -116,7 +116,8 @@ export function evaluateSyndicationEligibility(horse: Horse): SyndicationEligibi
  * Evaluates NPC investor appetite across stable personality archetypes.
  */
 export function evaluateInvestorAppetite(horse: Horse): InvestorAppetiteReport {
-  const g1Wins = horse.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1).length ?? 0;
+  const g1Wins =
+    horse.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1).length ?? 0;
   const stakesWins =
     horse.raceHistory?.filter(
       (r) => (r.grade === "G1" || r.grade === "G2" || r.grade === "G3") && r.position === 1,

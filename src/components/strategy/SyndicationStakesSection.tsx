@@ -104,7 +104,9 @@ export function SyndicationStakesSection({
             <div className="text-lg font-bold text-blue-400">
               {formatCurrency(breakdown.liquidCapitalProceeds)}
             </div>
-            <div className="text-[11px] text-muted-foreground">20 shares syndicated (50%)</div>
+            <div className="text-[11px] text-muted-foreground">
+              20 shares syndicated (50%)
+            </div>
           </div>
 
           <div className="bg-muted/30 border border-border/40 rounded-lg p-3">
@@ -168,8 +170,8 @@ export function SyndicationStakesSection({
               <div>
                 <span className="font-semibold text-foreground">Retained Breeding Rights:</span>
                 <p className="text-muted-foreground text-[11px] mt-0.5">
-                  Provides 20 annual complimentary covers for your home broodmare band or re-sale on
-                  secondary market.
+                  Provides 20 annual complimentary covers for your home broodmare band or
+                  re-sale on secondary market.
                 </p>
               </div>
             </div>
@@ -191,15 +193,16 @@ export function SyndicationStakesSection({
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <Trophy className="w-4 h-4 text-amber-400" />
-              <span className="text-sm font-medium text-foreground">Commercial Stallion Gate</span>
+              <span className="text-sm font-medium text-foreground">
+                Commercial Stallion Gate
+              </span>
               {eligibility.g1Wins >= 1 ? (
                 <span className="text-xs text-emerald-400 flex items-center gap-1 font-semibold">
                   <CheckCircle2 className="w-3.5 h-3.5" /> G1 Winner Unlocked
                 </span>
               ) : (
                 <span className="text-xs text-muted-foreground flex items-center gap-1">
-                  <XCircle className="w-3.5 h-3.5 text-rose-400" /> Must win a Grade 1 race to
-                  syndicate
+                  <XCircle className="w-3.5 h-3.5 text-rose-400" /> Must win a Grade 1 race to syndicate
                 </span>
               )}
             </div>
@@ -250,7 +253,9 @@ export function SyndicationStakesSection({
                         {investor.interest}
                       </Badge>
                     </div>
-                    <p className="text-[11px] text-muted-foreground mt-1">{investor.criteria}</p>
+                    <p className="text-[11px] text-muted-foreground mt-1">
+                      {investor.criteria}
+                    </p>
                   </div>
                 </div>
               );

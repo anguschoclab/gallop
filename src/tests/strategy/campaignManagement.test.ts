@@ -3,14 +3,8 @@ import { resolveCampaignIntent } from "@/core/time/phases/campaignManagementReso
 import { SystemHandler } from "@/core/resolver/handlers/SystemHandler";
 import { createCampaignSlice } from "@/game/store/slices/campaignSlice";
 import type { PipelineContext } from "@/core/time/pipeline";
-import type {
-  AutoManageToggleIntent,
-  CampaignCreationIntent,
-} from "@/core/resolver/campaignIntents";
-import type {
-  AutoManageToggleImpact,
-  CampaignCreationImpact,
-} from "@/core/resolver/impacts/campaignImpacts";
+import type { AutoManageToggleIntent, CampaignCreationIntent } from "@/core/resolver/campaignIntents";
+import type { AutoManageToggleImpact, CampaignCreationImpact } from "@/core/resolver/impacts/campaignImpacts";
 import type { AnyImpact } from "@/core/resolver/impacts";
 import type { GameState, HorseCampaign } from "@/game/types";
 import { asHorseId } from "@/core/types/branded";

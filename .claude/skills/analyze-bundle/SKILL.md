@@ -24,7 +24,6 @@ ls -lhS .output/public/_build/*.js 2>/dev/null | head -20
 ```
 
 Look for:
-
 - Chunks larger than ~500KB (candidates for code splitting)
 - Duplicate dependencies bundled into multiple chunks
 - Large vendor chunks that could be tree-shaken

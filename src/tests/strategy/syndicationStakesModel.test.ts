@@ -72,7 +72,9 @@ describe("Syndication Stakes Model & Commercial Projections", () => {
       name: "Fast Castrate",
       gender: "gelding",
       gelded: true,
-      raceHistory: [{ raceId: "r1", raceName: "Gold Cup", grade: "G1", position: 1, day: 100 }],
+      raceHistory: [
+        { raceId: "r1", raceName: "Gold Cup", grade: "G1", position: 1, day: 100 },
+      ],
     });
     const geldingEval = evaluateSyndicationEligibility(gelding);
     expect(geldingEval.isEligible).toBe(false);
@@ -83,7 +85,9 @@ describe("Syndication Stakes Model & Commercial Projections", () => {
       id: asHorseId("mare-1"),
       name: "Queen of Turf",
       gender: "filly",
-      raceHistory: [{ raceId: "r1", raceName: "Oaks", grade: "G1", position: 1, day: 100 }],
+      raceHistory: [
+        { raceId: "r1", raceName: "Oaks", grade: "G1", position: 1, day: 100 },
+      ],
     });
     const mareEval = evaluateSyndicationEligibility(mare);
     expect(mareEval.isEligible).toBe(false);

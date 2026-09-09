@@ -13,10 +13,10 @@
 
 ### `src/core/analytics/regionalConstants.ts` vs `src/constants/regionalConstants.ts`
 
-| File                                      | Status                                                                                                                                        | Importers |
-| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| `src/constants/regionalConstants.ts`      | **Canonical** — actively imported by `regionalTrends.ts`, `EntityDetailPanel.tsx`, `RegionDrilldownDrawer.tsx`, `regionalMetrics.ts`, + tests | 6+        |
-| `src/core/analytics/regionalConstants.ts` | **Stale duplicate** — zero importers                                                                                                          | 0         |
+| File | Status | Importers |
+| ------ | -------- | ----------- |
+| `src/constants/regionalConstants.ts` | **Canonical** — actively imported by `regionalTrends.ts`, `EntityDetailPanel.tsx`, `RegionDrilldownDrawer.tsx`, `regionalMetrics.ts`, + tests | 6+ |
+| `src/core/analytics/regionalConstants.ts` | **Stale duplicate** — zero importers | 0 |
 
 **Action:** Delete `src/core/analytics/regionalConstants.ts`. The canonical version at `src/constants/regionalConstants.ts` is the one all code imports.
 
@@ -28,8 +28,8 @@
 
 ## Prior audit items — status
 
-| Prior audit claim                                     | Status                                               |
-| ----------------------------------------------------- | ---------------------------------------------------- |
-| `BidInput.tsx` AND `sub/BidInputPanel.tsx` duplicate  | ❌ RESOLVED — only `sub/BidInputPanel.tsx` exists    |
-| `MaxBidInput.tsx` AND `sub/MaxBidPanel.tsx` duplicate | ❌ RESOLVED — only `sub/MaxBidPanel.tsx` exists      |
-| `breedingImpacts.ts` dedup target for mason branch    | Needs verification — check if both files still exist |
+| Prior audit claim | Status |
+| ------------------- | -------- |
+| `BidInput.tsx` AND `sub/BidInputPanel.tsx` duplicate | ❌ RESOLVED — only `sub/BidInputPanel.tsx` exists |
+| `MaxBidInput.tsx` AND `sub/MaxBidPanel.tsx` duplicate | ❌ RESOLVED — only `sub/MaxBidPanel.tsx` exists |
+| `breedingImpacts.ts` dedup target for mason branch | Needs verification — check if both files still exist |

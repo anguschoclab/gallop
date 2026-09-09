@@ -72,8 +72,7 @@ export function generateNpcInsuranceIntents(
         (horse as any).currentGrade === "G2" ||
         (horse as any).currentGrade === "G3";
       const rating = horse.stats?.speed ?? (horse as any).racing?.speed ?? 0;
-      const isValuable =
-        isGraded || rating >= 75 || (horse.racingViable && (horse.lifetimeEarnings ?? 0) > 30000);
+      const isValuable = isGraded || rating >= 75 || (horse.racingViable && (horse.lifetimeEarnings ?? 0) > 30000);
 
       if (isValuable) {
         const policyType: InsurancePolicyType =

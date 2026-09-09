@@ -44,9 +44,7 @@ export const stewardsPhase: PipelinePhase = {
       if (!race) continue;
       processedRaceIds.add(race.id);
 
-      const accusedEntry = race.entries?.find(
-        (e: { horseId: string }) => e.horseId === intent.accusedHorseId,
-      );
+      const accusedEntry = race.entries?.find((e: { horseId: string }) => e.horseId === intent.accusedHorseId);
       const accusedJockeyId = accusedEntry?.jockeyId;
 
       const outcomes: InquiryOutcome[] = [

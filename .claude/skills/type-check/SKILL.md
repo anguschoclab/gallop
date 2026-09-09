@@ -22,7 +22,6 @@ bun run typecheck:errors
 ```
 
 Runs `scripts/typecheck.ts`, which:
-
 - Executes `bunx tsc --noEmit --pretty false` (cross-platform, no global tsc needed)
 - Parses every error/warning into `file:line:col  TSxxxx  message` format
 - Writes a full grouped-by-file report to `tsc-results.txt`

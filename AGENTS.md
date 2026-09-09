@@ -8,14 +8,14 @@
 
 ## Verification Commands
 
-| What                        | Command                    | Notes                                                                                                                                               |
-| --------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| What | Command | Notes |
+|------|---------|-------|
 | **Type check (structured)** | `bun run typecheck:errors` | Runs `scripts/typecheck.ts`. Parses errors into `file:line:col TSxxxx message`, writes `tsc-results.txt`, prints summary. **Preferred for agents.** |
-| Type check (raw)            | `bun run typecheck`        | Runs `tsc --noEmit` directly.                                                                                                                       |
-| Lint                        | `bun run lint`             | ESLint. `react-hooks`/`react-refresh` warnings are pre-existing.                                                                                    |
-| Unit tests (all)            | `bun run test`             | ~8500 vitest tests, ~6min.                                                                                                                          |
-| Single test file            | `bunx vitest run <path>`   | Iterate on one file.                                                                                                                                |
-| Full verify                 | `bash scripts/verify.sh`   | typecheck + lint + tests. Requires bash.                                                                                                            |
+| Type check (raw) | `bun run typecheck` | Runs `tsc --noEmit` directly. |
+| Lint | `bun run lint` | ESLint. `react-hooks`/`react-refresh` warnings are pre-existing. |
+| Unit tests (all) | `bun run test` | ~8500 vitest tests, ~6min. |
+| Single test file | `bunx vitest run <path>` | Iterate on one file. |
+| Full verify | `bash scripts/verify.sh` | typecheck + lint + tests. Requires bash. |
 
 ## TypeScript Error Checking for Agents
 

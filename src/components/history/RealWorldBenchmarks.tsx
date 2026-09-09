@@ -120,7 +120,9 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
 
         <div className="border border-white/5 bg-slate-900/60 p-2.5 rounded-lg flex flex-col justify-between">
           <div className="text-[10px] font-mono uppercase tracking-wide text-cream/50">Tracks</div>
-          <div className="font-mono text-xl font-bold text-cream my-0.5">{kpis.distinctTracks}</div>
+          <div className="font-mono text-xl font-bold text-cream my-0.5">
+            {kpis.distinctTracks}
+          </div>
           <div className="text-[10px] font-mono text-cream/40">Official racecourses</div>
         </div>
 

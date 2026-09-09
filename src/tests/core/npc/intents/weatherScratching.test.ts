@@ -46,7 +46,9 @@ describe("NPC Weather & Track Condition Scratching", () => {
     trackCondition: "fast",
     surface: "dirt",
     day: 20,
-    entries: [{ horseId: "horse-low-mud", ownership: { type: "npc", stableId: "stable-1" } }],
+    entries: [
+      { horseId: "horse-low-mud", ownership: { type: "npc", stableId: "stable-1" } },
+    ],
   } as any;
 
   it("scratches low-mud-aptitude horses from muddy non-claiming races", () => {

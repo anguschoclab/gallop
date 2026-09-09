@@ -230,7 +230,9 @@ export function LiveAnnualTimeline({
                 <div
                   key={`${slot.dayTarget}-${slot.raceId || "unassigned"}`}
                   className={`absolute top-1 bottom-1 w-2.5 rounded-sm z-10 -ml-1 border ${
-                    isTarget ? "bg-amber-400 border-amber-300" : "bg-blue-400 border-blue-300"
+                    isTarget
+                      ? "bg-amber-400 border-amber-300"
+                      : "bg-blue-400 border-blue-300"
                   }`}
                   style={{ left: `${pct}%` }}
                   title={`${isTarget ? "Target" : "Prep"}: Day ${slotDay} ${
@@ -264,7 +266,9 @@ export function LiveAnnualTimeline({
               const restDays = prevDay !== undefined ? slotDay - prevDay : null;
 
               const trackName = race ? getRaceTrackName(race) : "Track";
-              const prestigeScore = race ? calculateVenuePrestige(trackName, race.trackId) : 50;
+              const prestigeScore = race
+                ? calculateVenuePrestige(trackName, race.trackId)
+                : 50;
               const prestigeTier = getPrestigeTier(prestigeScore);
 
               return (
@@ -278,8 +282,8 @@ export function LiveAnnualTimeline({
                           restDays < 14
                             ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
                             : restDays < 21
-                              ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
-                              : "bg-muted/40 text-muted-foreground border-border/40"
+                            ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                            : "bg-muted/40 text-muted-foreground border-border/40"
                         }`}
                       >
                         <Clock className="w-3 h-3" />
@@ -298,8 +302,8 @@ export function LiveAnnualTimeline({
                       isPast
                         ? "bg-muted/10 border-border/30 opacity-70"
                         : slot.role === "target"
-                          ? "bg-amber-500/5 border-amber-500/30 shadow-sm"
-                          : "bg-muted/20 border-border/40 hover:border-border/80"
+                        ? "bg-amber-500/5 border-amber-500/30 shadow-sm"
+                        : "bg-muted/20 border-border/40 hover:border-border/80"
                     }`}
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">

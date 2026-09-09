@@ -28,7 +28,6 @@ bunx vitest run src/tests/<subdir>
 ```
 
 Examples:
-
 ```bash
 bunx vitest run src/tests/integration/
 bunx vitest run src/tests/smoke/
@@ -42,7 +41,6 @@ bunx vitest run <pattern>
 ```
 
 Examples:
-
 ```bash
 bunx vitest run src/tests/core/time/phases/phaseOrder.uniqueness.test.ts
 bunx vitest run src/tests/components/analytics

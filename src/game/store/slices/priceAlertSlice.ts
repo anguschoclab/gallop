@@ -130,7 +130,9 @@ export function createPriceAlertSlice(set: StoreSet, get: StoreGet): PriceAlertS
         inbox: [...newMessages, ...(s.inbox ?? [])].slice(0, MAX_INBOX),
         priceAlerts: configured.map((a) => {
           const trigger = triggeredById.get(a.id);
-          return trigger ? { ...a, lastTriggeredDay: s.day, lastMovePct: trigger.movePct } : a;
+          return trigger
+            ? { ...a, lastTriggeredDay: s.day, lastMovePct: trigger.movePct }
+            : a;
         }),
         notifiedTradeKeys: [
           ...notifications.map((n) => n.key),
