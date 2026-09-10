@@ -109,8 +109,8 @@ export function calculateTransportDuration(distance: number, mode: TransportMode
  * @returns Selected TransportMode
  */
 export function getTransportModeForDistance(distance: number): TransportMode {
-  if (distance >= 200 && distance <= 5000) return "air";
-  if (distance >= 50 && distance <= 2000) return "rail";
+  if (distance >= 200) return "air";
+  if (distance >= 50) return "rail";
   return "road";
 }
 

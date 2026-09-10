@@ -173,7 +173,7 @@ export function calculateNpcBid(
         stable,
         currentDay,
         friction,
-      );
+      ) * housePrestigeMultiplier(house);
 
       const nextBid = Math.ceil((currentBid * 1.05 + 200) / 100) * 100;
       if (nextBid > maxBid) return null;
@@ -203,7 +203,9 @@ export function calculateNpcBid(
       ),
       maxBid,
     );
-    return aggressiveBid > currentBid ? Math.ceil(aggressiveBid / 100) * 100 : nextBid;
+    if (aggressiveBid <= currentBid) return nextBid;
+    const rounded = Math.ceil(aggressiveBid / 100) * 100;
+    return Math.min(rounded, maxBid);
   }
 
   // Conservative stops at 80% of valuation
@@ -344,10 +346,13 @@ export function generateAuctionLots(
   const eligibleAges = ELIGIBLE_AGES_BY_KIND[kind];
   const lots: AuctionLot[] = [];
 
+  // Copy to avoid mutating the caller's array when adding fresh horses
+  const allHorsesCopy = [...allHorses];
+
   // Every major stable gets a chance to consign — per-personality policy
   // decides what (if anything) they actually list.
   const consignors = stables.filter((s) => s.isMajor);
-  const horsesDict = Object.fromEntries(allHorses.map((h) => [h.id, h]));
+  const horsesDict = Object.fromEntries(allHorsesCopy.map((h) => [h.id, h]));
 
   for (const stable of consignors) {
     const policy = personalityConsignmentPolicy(stable, kind, allHorses, rng);
@@ -381,7 +386,7 @@ export function generateAuctionLots(
       // Re-check eligibility after generation (e.g. broodmare wants only mares).
       if (!isLotEligible(freshHorse, kind)) continue;
       const resolvedFresh = ensurePhenotypeResolved(freshHorse);
-      allHorses.push(resolvedFresh);
+      allHorsesCopy.push(resolvedFresh);
       horsesDict[resolvedFresh.id] = resolvedFresh;
       const pedigreeMul = pedigreeMultiplier(resolvedFresh, {
         horses: horsesDict,

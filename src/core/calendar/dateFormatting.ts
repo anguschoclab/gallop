@@ -57,7 +57,7 @@ const MONTH_NAMES_SHORT = [
  */
 export function getMonthName(dayOfYear: number): string {
   for (let i = 0; i < CUMULATIVE_DAYS.length; i++) {
-    if (dayOfYear < CUMULATIVE_DAYS[i + 1]) {
+    if (dayOfYear <= CUMULATIVE_DAYS[i + 1]) {
       return MONTH_NAMES_FULL[i];
     }
   }
@@ -75,8 +75,8 @@ export function getMonthName(dayOfYear: number): string {
  */
 export function formatDate(dayOfYear: number): string {
   for (let i = 0; i < CUMULATIVE_DAYS.length; i++) {
-    if (dayOfYear < CUMULATIVE_DAYS[i + 1]) {
-      const day = dayOfYear - CUMULATIVE_DAYS[i] + 1;
+    if (dayOfYear <= CUMULATIVE_DAYS[i + 1]) {
+      const day = dayOfYear - CUMULATIVE_DAYS[i];
       return `${MONTH_NAMES_SHORT[i]} ${day}`;
     }
   }

@@ -116,7 +116,7 @@ export function generateAllStables(
         ...ORIGINAL_ARCHETYPES,
         ...TRIPLE_CROWN_ARCHETYPES.filter((a) => a.id !== "triple-crown-specialist"),
       ];
-      stable.breedingArchetype = rng.pick(midTierArchetypes).id;
+      stable.breedingArchetype = midTierArchetypes.length > 0 ? rng.pick(midTierArchetypes).id : undefined;
     }
     // Budget/starter tier: no archetype (undefined)
   }

@@ -114,7 +114,7 @@ export const schedulerPhase = {
       const campaign = updatedCampaigns[i];
       if (!campaign.autoManaged) continue;
       const horse = horseMap.get(campaign.horseId);
-      if (!horse) continue;
+      if (!horse || horse.ownership?.type !== "player") continue;
 
       const result = runAutoEntries({
         horse,
@@ -153,7 +153,7 @@ export const schedulerPhase = {
         },
       });
 
-      const updatedFlags = [...campaign.flags];
+      const updatedFlags = [...(campaign.flags ?? [])];
       for (const skipped of result.skipped) {
         if (skipped.reason.toLowerCase().includes("full")) {
           const slot = campaign.slots[skipped.slotIndex];

@@ -1,6 +1,18 @@
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Gavel, Tag, Scissors, Edit, DollarSign } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { AuctionSale, Horse } from "@/game/types";
@@ -26,17 +38,17 @@ export function HorseManagementSection({
   const geldingHorse = useGame((s) => s.geldingHorse);
   const renameHorse = useGame((s) => s.renameHorse);
   const updateStudFee = useGame((s) => s.updateStudFee);
+  const [geldDialogOpen, setGeldDialogOpen] = useState(false);
 
   if (!isPlayerOwned(horse)) return null;
 
   const handleGelding = () => {
-    if (confirm(`Geld ${horse.name}? This cannot be undone.`)) {
-      const result = geldingHorse(horse.id);
-      if (result.ok) {
-        toast.success("Horse gelded successfully", { duration: 3000 });
-      } else {
-        toast.error(result.reason, { duration: 3000 });
-      }
+    const result = geldingHorse(horse.id);
+    setGeldDialogOpen(false);
+    if (result.ok) {
+      toast.success("Horse gelded successfully", { duration: 3000 });
+    } else {
+      toast.error(result.reason, { duration: 3000 });
     }
   };
 
@@ -161,14 +173,29 @@ export function HorseManagementSection({
                 <Edit className="h-3 w-3 mr-1" /> Rename
               </Button>
               {horse.gender === "colt" && !horse.gelded && (
-                <Button
-                  onClick={handleGelding}
-                  variant="outline"
-                  size="sm"
-                  className="h-8 text-[9px] font-black uppercase border-red-400/30 hover:bg-red-400/10 text-red-400"
-                >
-                  <Scissors className="h-3 w-3 mr-1" /> Geld
-                </Button>
+                <AlertDialog open={geldDialogOpen} onOpenChange={setGeldDialogOpen}>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 text-[9px] font-black uppercase border-red-400/30 hover:bg-red-400/10 text-red-400"
+                    >
+                      <Scissors className="h-3 w-3 mr-1" /> Geld
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Geld {horse.name}?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will permanently geld the horse. This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleGelding}>Geld</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
               {horse.stud?.atStud && (
                 <Button
