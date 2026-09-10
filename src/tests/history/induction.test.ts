@@ -58,4 +58,54 @@ describe("Hall of Fame Induction", () => {
     expect(entry?.pedigree.sireName).toBe("Bold Ruler");
     expect(entry?.silk).toBe("#ff0000");
   });
+
+  it("achievements contains both strings when both criteria met", () => {
+    const horse = {
+      ...baseHorse,
+      lifetimeEarnings: 2000000,
+      raceHistory: [
+        { grade: "G1", position: 1, day: 10 },
+        { grade: "G1", position: 1, day: 20 },
+        { grade: "G1", position: 1, day: 30 },
+      ],
+    } as Horse;
+
+    const entry = checkHallOfFameInduction(horse, 100);
+    expect(entry).not.toBeNull();
+    expect(entry!.achievements).toHaveLength(2);
+    expect(entry!.achievements).toContain("3 Grade 1 Victories");
+    expect(entry!.achievements).toContain("$2.0M in Lifetime Earnings");
+  });
+
+  it("achievements contains only one string when only earnings criterion met", () => {
+    const horse = {
+      ...baseHorse,
+      lifetimeEarnings: 1500000,
+      raceHistory: [],
+    } as Horse;
+
+    const entry = checkHallOfFameInduction(horse, 100);
+    expect(entry).not.toBeNull();
+    expect(entry!.achievements).toHaveLength(1);
+    expect(entry!.achievements).toContain("$1.5M in Lifetime Earnings");
+    expect(entry!.achievements).not.toContain(/Grade 1 Victories/);
+  });
+
+  it("achievements contains only one string when only G1 wins criterion met", () => {
+    const horse = {
+      ...baseHorse,
+      lifetimeEarnings: 0,
+      raceHistory: [
+        { grade: "G1", position: 1, day: 10 },
+        { grade: "G1", position: 1, day: 20 },
+        { grade: "G1", position: 1, day: 30 },
+      ],
+    } as Horse;
+
+    const entry = checkHallOfFameInduction(horse, 100);
+    expect(entry).not.toBeNull();
+    expect(entry!.achievements).toHaveLength(1);
+    expect(entry!.achievements).toContain("3 Grade 1 Victories");
+    expect(entry!.achievements).not.toContain(/Lifetime Earnings/);
+  });
 });

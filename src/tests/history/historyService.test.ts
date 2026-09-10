@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { recordRaceHistory, checkTrackRecord } from "@/services/history/historyService";
+import {
+  recordRaceHistory,
+  checkTrackRecord,
+  checkTrackRecords,
+  ageBucket,
+  genderBucket,
+} from "@/services/history/historyService";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
 import { DAYS_PER_YEAR } from "@/constants";
 import { isValidUUID } from "@/core/uuid";
@@ -764,5 +770,370 @@ describe("checkTrackRecord", () => {
     const record = checkTrackRecord(race, "winner-1", "Champ", 100, 100);
     expect(record).not.toBeNull();
     expect(record!.surface).toBe(surface);
+  });
+});
+
+// ─── ageBucket ────────────────────────────────────────────────────────────
+
+describe("ageBucket", () => {
+  it("returns null for age 0", () => {
+    expect(ageBucket(0)).toBeNull();
+  });
+
+  it("returns null for age 1", () => {
+    expect(ageBucket(1)).toBeNull();
+  });
+
+  it("returns null for age below 2 (fractional)", () => {
+    expect(ageBucket(1.9)).toBeNull();
+  });
+
+  it("returns '2yo' for age 2", () => {
+    expect(ageBucket(2)).toBe("2yo");
+  });
+
+  it("returns '3yo' for age 3", () => {
+    expect(ageBucket(3)).toBe("3yo");
+  });
+
+  it("returns '4yo' for age 4", () => {
+    expect(ageBucket(4)).toBe("4yo");
+  });
+
+  it("returns '5yo+' for age 5", () => {
+    expect(ageBucket(5)).toBe("5yo+");
+  });
+
+  it("returns '5yo+' for ages above 5", () => {
+    expect(ageBucket(6)).toBe("5yo+");
+    expect(ageBucket(10)).toBe("5yo+");
+  });
+
+  it("floors fractional ages", () => {
+    expect(ageBucket(2.9)).toBe("2yo");
+    expect(ageBucket(4.99)).toBe("4yo");
+  });
+
+  it("returns null for negative ages", () => {
+    expect(ageBucket(-1)).toBeNull();
+  });
+});
+
+// ─── genderBucket ─────────────────────────────────────────────────────────
+
+describe("genderBucket", () => {
+  it("returns 'Female' for 'filly'", () => {
+    expect(genderBucket("filly")).toBe("Female");
+  });
+
+  it("returns 'Female' for 'mare'", () => {
+    expect(genderBucket("mare")).toBe("Female");
+  });
+
+  it("returns 'Male' for 'colt'", () => {
+    expect(genderBucket("colt")).toBe("Male");
+  });
+
+  it("returns 'Male' for 'horse'", () => {
+    expect(genderBucket("horse")).toBe("Male");
+  });
+
+  it("returns 'Male' for 'gelding'", () => {
+    expect(genderBucket("gelding")).toBe("Male");
+  });
+
+  it("returns null for undefined", () => {
+    expect(genderBucket(undefined)).toBeNull();
+  });
+
+  it("returns null for empty string", () => {
+    expect(genderBucket("")).toBeNull();
+  });
+
+  it("returns null for unrecognized gender", () => {
+    expect(genderBucket("stallion")).toBeNull();
+  });
+});
+
+// ─── checkTrackRecords ────────────────────────────────────────────────────
+
+describe("checkTrackRecords", () => {
+  // ── Guard tests ──
+
+  it("returns empty array when trackId missing", () => {
+    const race = createMockRace({ graded: undefined, trackId: undefined });
+    const records = checkTrackRecords(race, { id: "w", name: "Champ" }, 100, 100);
+    expect(records).toEqual([]);
+  });
+
+  it("returns empty array when surface missing", () => {
+    const race = createMockRace({
+      graded: undefined,
+      trackId: "test-track",
+      surface: undefined,
+    });
+    const records = checkTrackRecords(race, { id: "w", name: "Champ" }, 100, 100);
+    expect(records).toEqual([]);
+  });
+
+  // ── Candidate generation ──
+
+  it("returns only overall when no age/gender/grade/condition", () => {
+    const race = createMockRace({ trackCondition: undefined });
+    race.graded = { key: "k", track: "Test Track", trackId: "test-track", surface: "Dirt" } as any;
+    const records = checkTrackRecords(
+      race,
+      { id: "w", name: "Champ", age: 1, gender: undefined },
+      100,
+      100,
+    );
+    expect(records).toHaveLength(1);
+    expect(records[0].categoryKind).toBe("overall");
+  });
+
+  it("returns 5 records when all categories apply", () => {
+    const race = createMockRace({ trackCondition: "fast" });
+    const records = checkTrackRecords(
+      race,
+      { id: "w", name: "Champ", age: 3, gender: "colt" },
+      100,
+      100,
+    );
+    expect(records).toHaveLength(5);
+    const kinds = records.map((r) => r.categoryKind);
+    expect(kinds).toContain("overall");
+    expect(kinds).toContain("age");
+    expect(kinds).toContain("gender");
+    expect(kinds).toContain("grade");
+    expect(kinds).toContain("condition");
+  });
+
+  it("returns 3 records (overall, age, gender) when no grade and no trackCondition", () => {
+    const race = createMockRace({ trackCondition: undefined });
+    // Remove grade from race
+    race.graded = { key: "k", track: "Test Track", trackId: "test-track", surface: "Dirt" } as any;
+    const records = checkTrackRecords(
+      race,
+      { id: "w", name: "Champ", age: 3, gender: "colt" },
+      100,
+      100,
+    );
+    expect(records).toHaveLength(3);
+    const kinds = records.map((r) => r.categoryKind);
+    expect(kinds).toContain("overall");
+    expect(kinds).toContain("age");
+    expect(kinds).toContain("gender");
+  });
+
+  it("returns only overall when age < 2 and no gender/grade/condition", () => {
+    const race = createMockRace({ trackCondition: undefined });
+    race.graded = { key: "k", track: "Test Track", trackId: "test-track", surface: "Dirt" } as any;
+    const records = checkTrackRecords(
+      race,
+      { id: "w", name: "Champ", age: 1, gender: undefined },
+      100,
+      100,
+    );
+    expect(records).toHaveLength(1);
+    expect(records[0].categoryKind).toBe("overall");
+  });
+
+  // ── Time comparison ──
+
+  it("filters out candidates that don't beat existing records", () => {
+    const race = createMockRace();
+    const existing: Record<string, TrackRecord> = {
+      "test-track_Dirt_1600_overall": {
+        trackId: "test-track",
+        trackName: "Test Track",
+        surface: "Dirt",
+        distance: 1600,
+        time: 90,
+        horseId: "old",
+        horseName: "Old",
+        day: 50,
+        year: 1,
+        categoryKind: "overall",
+      },
+      "test-track_Dirt_1600_grade:G1": {
+        trackId: "test-track",
+        trackName: "Test Track",
+        surface: "Dirt",
+        distance: 1600,
+        time: 90,
+        horseId: "old",
+        horseName: "Old",
+        day: 50,
+        year: 1,
+        categoryKind: "grade",
+        categoryValue: "G1",
+      },
+    };
+    const records = checkTrackRecords(
+      race,
+      { id: "w", name: "Champ", age: 3, gender: "colt" },
+      100,
+      100,
+      existing,
+    );
+    // Overall and grade filtered out (100 > 90), but age/gender have no existing records
+    const kinds = records.map((r) => r.categoryKind);
+    expect(kinds).not.toContain("overall");
+    expect(kinds).not.toContain("grade");
+    expect(kinds).toContain("age");
+    expect(kinds).toContain("gender");
+  });
+
+  it("returns candidate when existing time is slower", () => {
+    const race = createMockRace({ trackCondition: undefined });
+    race.graded = { key: "k", track: "Test Track", trackId: "test-track", surface: "Dirt" } as any;
+    const existing: Record<string, TrackRecord> = {
+      "test-track_Dirt_1600_overall": {
+        trackId: "test-track",
+        trackName: "Test Track",
+        surface: "Dirt",
+        distance: 1600,
+        time: 120,
+        horseId: "old",
+        horseName: "Old",
+        day: 50,
+        year: 1,
+        categoryKind: "overall",
+      },
+    };
+    const records = checkTrackRecords(race, { id: "w", name: "Champ" }, 100, 100, existing);
+    expect(records).toHaveLength(1);
+    expect(records[0].time).toBe(100);
+    expect(records[0].horseId).toBe("w");
+  });
+
+  it("excludes candidate when time equals existing (strict less-than)", () => {
+    const race = createMockRace({ trackCondition: undefined });
+    race.graded = { key: "k", track: "Test Track", trackId: "test-track", surface: "Dirt" } as any;
+    const existing: Record<string, TrackRecord> = {
+      "test-track_Dirt_1600_overall": {
+        trackId: "test-track",
+        trackName: "Test Track",
+        surface: "Dirt",
+        distance: 1600,
+        time: 100,
+        horseId: "old",
+        horseName: "Old",
+        day: 50,
+        year: 1,
+        categoryKind: "overall",
+      },
+    };
+    const records = checkTrackRecords(race, { id: "w", name: "Champ" }, 100, 100, existing);
+    expect(records).toHaveLength(0);
+  });
+
+  // ── Legacy key fallback ──
+
+  it("falls back to legacy un-suffixed key for overall category", () => {
+    const race = createMockRace({ trackCondition: undefined });
+    race.graded = { key: "k", track: "Test Track", trackId: "test-track", surface: "Dirt" } as any;
+    const existing: Record<string, TrackRecord> = {
+      "test-track_Dirt_1600": {
+        trackId: "test-track",
+        trackName: "Test Track",
+        surface: "Dirt",
+        distance: 1600,
+        time: 90,
+        horseId: "old",
+        horseName: "Old",
+        day: 50,
+        year: 1,
+      },
+    };
+    const records = checkTrackRecords(race, { id: "w", name: "Champ" }, 100, 100, existing);
+    // Legacy key found, existing time 90 < new time 100 → overall excluded
+    expect(records).toHaveLength(0);
+  });
+
+  it("does NOT fall back to legacy key for non-overall categories", () => {
+    const race = createMockRace({ trackCondition: undefined });
+    race.graded = { key: "k", track: "Test Track", trackId: "test-track", surface: "Dirt" } as any;
+    const existing: Record<string, TrackRecord> = {
+      "test-track_Dirt_1600": {
+        trackId: "test-track",
+        trackName: "Test Track",
+        surface: "Dirt",
+        distance: 1600,
+        time: 90,
+        horseId: "old",
+        horseName: "Old",
+        day: 50,
+        year: 1,
+      },
+    };
+    const records = checkTrackRecords(
+      race,
+      { id: "w", name: "Champ", age: 3, gender: "colt" },
+      100,
+      100,
+      existing,
+    );
+    // Overall excluded (legacy fallback found, 90 < 100 → excluded)
+    // Age/gender have no existing records → included
+    const kinds = records.map((r) => r.categoryKind);
+    expect(kinds).not.toContain("overall");
+    expect(kinds).toContain("age");
+    expect(kinds).toContain("gender");
+  });
+
+  // ── Field mapping ──
+
+  it("verifies field mapping on returned records", () => {
+    const race = createMockRace({
+      id: "race-xyz",
+      name: "Big Race",
+      day: 200,
+      distance: 1800,
+      trackCondition: "fast",
+    });
+    const records = checkTrackRecords(
+      race,
+      { id: "winner-1", name: "Champ", age: 4, gender: "mare" },
+      95.5,
+      200,
+    );
+    const overall = records.find((r) => r.categoryKind === "overall")!;
+    expect(overall.trackId).toBe("test-track");
+    expect(overall.trackName).toBe("Test Track");
+    expect(overall.surface).toBe("Dirt");
+    expect(overall.distance).toBe(1800);
+    expect(overall.time).toBe(95.5);
+    expect(overall.horseId).toBe("winner-1");
+    expect(overall.horseName).toBe("Champ");
+    expect(overall.day).toBe(200);
+    expect(overall.raceId).toBe("race-xyz");
+    expect(overall.raceName).toBe("Big Race");
+
+    const ageRecord = records.find((r) => r.categoryKind === "age")!;
+    expect(ageRecord.categoryValue).toBe("4yo");
+
+    const genderRecord = records.find((r) => r.categoryKind === "gender")!;
+    expect(genderRecord.categoryValue).toBe("Female");
+
+    const conditionRecord = records.find((r) => r.categoryKind === "condition")!;
+    expect(conditionRecord.categoryValue).toBe("fast");
+  });
+
+  it("uses race.trackId and race.surface (top-level priority over graded)", () => {
+    const race = createMockRace({
+      trackId: "top-level-track",
+      surface: "Turf",
+      graded: {
+        key: "k",
+        grade: "G1",
+        track: "Graded Track",
+        trackId: "graded-track",
+        surface: "Dirt",
+      },
+    });
+    const records = checkTrackRecords(race, { id: "w", name: "Champ" }, 100, 100);
+    expect(records[0].trackId).toBe("top-level-track");
+    expect(records[0].surface).toBe("Turf");
   });
 });

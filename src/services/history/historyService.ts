@@ -75,15 +75,17 @@ export function checkHallOfFameInduction(horse: Horse, day: number): HallOfFameE
   const isInducted = g1Wins >= 3 || earnings >= 1000000;
 
   if (isInducted) {
+    const achievements: string[] = [];
+    if (g1Wins >= 3) achievements.push(`${g1Wins} Grade 1 Victories`);
+    if (earnings >= 1000000)
+      achievements.push(`$${(earnings / 1000000).toFixed(1)}M in Lifetime Earnings`);
+
     return {
       horseId: horse.id,
       name: horse.name,
       inductionDay: day,
       inductionYear: Math.floor((day - 1) / DAYS_PER_YEAR) + 1,
-      achievements: [
-        g1Wins >= 3 ? `${g1Wins} Grade 1 Victories` : "",
-        earnings >= 1000000 ? `$${(earnings / 1000000).toFixed(1)}M in Lifetime Earnings` : "",
-      ].filter(Boolean),
+      achievements,
       lifetimeEarnings: earnings,
       lifetimeStarts: Math.max(horse.careerStarts || 0, stats.starts),
       lifetimeWins: Math.max(horse.careerWins || 0, stats.wins),
@@ -230,13 +232,17 @@ export function checkTrackRecords(
   if (race.trackCondition)
     candidates.push({ ...base, categoryKind: "condition", categoryValue: race.trackCondition });
 
-  return candidates.filter((candidate) => {
-    const key = trackRecordKey(candidate);
-    let existing = existingRecords[key];
-    if (!existing && candidate.categoryKind === "overall") {
-      // Legacy records were stored without a category suffix.
-      existing = existingRecords[`${trackId}_${surface}_${distance}`];
-    }
-    return !existing || time < existing.time;
-  });
+  const legacyKey = `${trackId}_${surface}_${distance}`;
+  const keyed = candidates.map((record) => ({ record, key: trackRecordKey(record) }));
+
+  return keyed
+    .filter(({ record, key }) => {
+      let existing = existingRecords[key];
+      if (!existing && record.categoryKind === "overall") {
+        // Legacy records were stored without a category suffix.
+        existing = existingRecords[legacyKey];
+      }
+      return !existing || time < existing.time;
+    })
+    .map(({ record }) => record);
 }
