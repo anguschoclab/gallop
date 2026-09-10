@@ -60,7 +60,7 @@ All 16 PRs remain open on GitHub. Their changes have been selectively integrated
 
 ## Bug Register Verdicts (33 bugs)
 
-### Fixed (30 bugs)
+### Fixed (31 bugs)
 
 #### CRITICAL (2 fixed)
 
@@ -96,6 +96,7 @@ All 16 PRs remain open on GitHub. Their changes have been selectively integrated
 | BUG-030 | `raceImpactHelpers.test.ts` | Removed `trackId` to isolate prize money calculation from venue multiplier |
 | BUG-031 | `HorseManagementSection.tsx:33` | Replaced native `confirm()` with AlertDialog |
 | BUG-033 | `campaignSlice.ts:132-154` | SystemHandler `campaign_flag_dismissal` is now a no-op (store already removes flag) |
+| BUG-034 | `solvency.ts:36-44` | Solvency phase now uses projected post-impact cash (state.cash + pending player cash_change impacts) for tier determination, interest, and insolvency snapshot. FinanceHandler skips player cash changes when runEnded is true. Fixes pre-existing economyInvariant test failure. |
 
 #### LOW (10 fixed)
 
@@ -146,9 +147,8 @@ All 16 PRs remain open on GitHub. Their changes have been selectively integrated
 
 ### Identified but Deferred
 
-1. **`economyInvariant.test.ts`** — 1 pre-existing failure ($40 cash floor overshoot in 90-day inheritor simulation). Confirmed pre-existing by stash test. Not caused by consolidation changes. Requires deeper economy simulation analysis.
-2. **`as any` casts in test files** — 1,389 occurrences across test files. These are mostly legitimate test helpers (`createTestHorse(...) as Horse`). Not worth refactoring as they don't affect production code.
-3. **Remote PR branches** — All 16 PR branches remain on GitHub. The user should close/merge them based on this verdict.
+1. **`as any` casts in test files** — 1,389 occurrences across test files. These are mostly legitimate test helpers (`createTestHorse(...) as Horse`). Not worth refactoring as they don't affect production code.
+2. **Remote PR branches** — All 16 PR branches remain on GitHub. The user should close/merge them based on this verdict.
 
 ---
 
@@ -158,10 +158,10 @@ All 16 PRs remain open on GitHub. Their changes have been selectively integrated
 |-------|--------|---------|
 | TypeScript | **PASS** | 0 errors, 0 warnings |
 | ESLint | **PASS** | 0 errors, 0 warnings |
-| Tests | **PASS*** | 8,790 passed, 1 skipped, 1 pre-existing failure |
+| Tests | **PASS** | 8,790 passed, 1 skipped, 0 failures |
 | Build | **PASS** | Clean build, no errors |
 
-*The single pre-existing test failure (`economyInvariant.test.ts`) was confirmed to exist before any consolidation changes by running the test on a stashed working tree.
+*The single pre-existing test failure (`economyInvariant.test.ts`) was fixed as BUG-034 — the solvency phase now uses projected post-impact cash for tier determination, and the FinanceHandler skips player cash changes when runEnded is true.
 
 ---
 
@@ -185,5 +185,4 @@ All changes are on `consolidation/integration` branch. Key commits:
 2. **Close PRs #382, #384, #385, #389, #390, #391, #393, #394** — Fully integrated. Can be closed.
 3. **Close PRs #383, #386, #388, #395, #396, #397** — Partially integrated. Close with comment noting which parts were kept.
 4. **Close PRs #387, #392** — Rejected. Close with comment explaining why.
-5. **Investigate `economyInvariant.test.ts`** — The $40 cash floor overshoot is a pre-existing economy simulation issue worth investigating separately.
-6. **Keep `tsc-results.txt` in `.gitignore`** — It's a build artifact, not source code.
+5. **Keep `tsc-results.txt` in `.gitignore`** — It's a build artifact, not source code.
