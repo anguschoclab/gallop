@@ -305,6 +305,7 @@ export type TradeNotification =
  * @param args.day - Current day
  * @param args.notifiedKeys - Keys already notified (skipped)
  * @param args.playerId - Player order id (defaults to "player")
+ * @param args.horses - Optional horse map for name lookup
  */
 export function playerTradeNotifications(args: {
   trades: ExchangeTrade[];
@@ -313,10 +314,12 @@ export function playerTradeNotifications(args: {
   day: number;
   notifiedKeys?: string[];
   playerId?: string;
+  horses?: Map<string, { name: string }>;
 }): TradeNotification[] {
   const { trades, asks, bids, day } = args;
   const playerId = args.playerId ?? "player";
   const seen = new Set(args.notifiedKeys ?? []);
+  const horseMap = args.horses ?? new Map<string, { name: string }>();
   const out: TradeNotification[] = [];
 
   for (const trade of trades) {
@@ -347,7 +350,7 @@ export function playerTradeNotifications(args: {
     out.push({
       kind: "fillable",
       key,
-      horseName: (ask as { horseName?: string }).horseName ?? ask.horseId,
+      horseName: horseMap.get(ask.horseId)?.name ?? ask.horseId,
       askPrice: ask.price,
       bidPrice: best.price,
       bidderName: best.bidderName,
