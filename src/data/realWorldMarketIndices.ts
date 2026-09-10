@@ -306,6 +306,7 @@ export const REAL_WORLD_BLEND_WEIGHT = 0.35;
  *
  * @param kind - Scope kind: whole market, a grade bucket or a track
  * @param value - Grade name or track name for scoped lookups
+ * @returns The matching real-world index series, or undefined if none exists
  */
 export function realWorldSeries(
   kind: "market" | "grade" | "track",
@@ -324,6 +325,7 @@ export function realWorldSeries(
  *
  * @param series - Reference series
  * @param day - Simulation day (can be fractional)
+ * @returns The interpolated index value at the given day
  */
 export function seriesValueAtDay(series: RealWorldIndexSeries, day: number): number {
   const years = REAL_WORLD_INDEX_YEARS;
@@ -346,6 +348,7 @@ export function seriesValueAtDay(series: RealWorldIndexSeries, day: number): num
  * @param args.value - Grade or track name
  * @param args.day - Current simulation day
  * @param args.windowDays - Window length in days
+ * @returns The percentage move over the window, or 0 if no series exists
  */
 export function realWorldMovePct(args: {
   kind: "market" | "grade" | "track";

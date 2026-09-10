@@ -7,7 +7,7 @@
  */
 
 import { useMemo, useState } from "react";
-import { useGame, type StoreType } from "@/game/store";
+import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import type { Horse } from "@/game/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,8 +44,8 @@ const money = (v: number) => `$${Math.round(v).toLocaleString("en-US")}`;
 
 export function PriceAlertsPanel() {
   const day = useGame((s: StoreType) => s.day);
-  const alerts = useGame((s: StoreType) => s.priceAlerts ?? []);
-  const exchange = useGame((s: StoreType) => s.exchange ?? createDefaultExchangeState());
+  const alerts = useGameWithShallow((s: StoreType) => s.priceAlerts ?? []);
+  const exchange = useGameWithShallow((s: StoreType) => s.exchange ?? createDefaultExchangeState());
   const horses = useGame((s: StoreType) => s.horses);
   const addAlert = useGame((s: StoreType) => s.addPriceAlert);
   const removeAlert = useGame((s: StoreType) => s.removePriceAlert);

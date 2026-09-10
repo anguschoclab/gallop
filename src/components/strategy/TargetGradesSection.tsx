@@ -82,12 +82,9 @@ export function TargetGradesSection({
   const confirmedSurf = campaign?.confirmedAptitudes?.surfaceConfirmed ?? "Dirt";
   const confirmedBand = campaign?.confirmedAptitudes?.distanceBandConfirmed ?? "mile";
 
-  const g1Wins =
-    horse.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1).length ?? 0;
-  const g2Wins =
-    horse.raceHistory?.filter((r) => r.grade === "G2" && r.position === 1).length ?? 0;
-  const g3Wins =
-    horse.raceHistory?.filter((r) => r.grade === "G3" && r.position === 1).length ?? 0;
+  const g1Wins = horse.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1).length ?? 0;
+  const g2Wins = horse.raceHistory?.filter((r) => r.grade === "G2" && r.position === 1).length ?? 0;
+  const g3Wins = horse.raceHistory?.filter((r) => r.grade === "G3" && r.position === 1).length ?? 0;
 
   const handleApplyGoal = () => {
     onSetGoal(selectedGoal, selectedGoal === "chase_major_race" ? selectedTargetKey : undefined);
@@ -111,13 +108,22 @@ export function TargetGradesSection({
             </CardTitle>
           </div>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-[10px] font-mono border-amber-400/30 text-amber-400">
+            <Badge
+              variant="outline"
+              className="text-[10px] font-mono border-amber-400/30 text-amber-400"
+            >
               G1: {g1Wins}
             </Badge>
-            <Badge variant="outline" className="text-[10px] font-mono border-blue-400/30 text-blue-400">
+            <Badge
+              variant="outline"
+              className="text-[10px] font-mono border-blue-400/30 text-blue-400"
+            >
               G2: {g2Wins}
             </Badge>
-            <Badge variant="outline" className="text-[10px] font-mono border-cyan-400/30 text-cyan-400">
+            <Badge
+              variant="outline"
+              className="text-[10px] font-mono border-cyan-400/30 text-cyan-400"
+            >
               G3: {g3Wins}
             </Badge>
           </div>
@@ -173,8 +179,13 @@ export function TargetGradesSection({
               </SelectTrigger>
               <SelectContent className="bg-slate-900 border-white/10 text-cream max-h-64">
                 {GRADED_RACES.map((race) => (
-                  <SelectItem key={race.key} value={race.key} className="focus:bg-gold/20 focus:text-gold font-mono text-xs">
-                    <span className="font-bold text-cream">{race.name}</span> ({race.grade} · {race.surface} · {race.distance}m · Day {race.dayOfYear})
+                  <SelectItem
+                    key={race.key}
+                    value={race.key}
+                    className="focus:bg-gold/20 focus:text-gold font-mono text-xs"
+                  >
+                    <span className="font-bold text-cream">{race.name}</span> ({race.grade} ·{" "}
+                    {race.surface} · {race.distance}m · Day {race.dayOfYear})
                   </SelectItem>
                 ))}
               </SelectContent>

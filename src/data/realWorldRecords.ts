@@ -1491,6 +1491,8 @@ export const ALL_REAL_WORLD_BENCHMARKS: RealWorldRecord[] = [
 
 /**
  * Filter real-world records by source type ("all", "curated", or "track_record").
+ * @param source - The source type to filter by
+ * @returns Filtered array of real-world records
  */
 export function getRealWorldRecords(
   source: "all" | RealWorldRecordSource = "all",
@@ -1502,6 +1504,8 @@ export function getRealWorldRecords(
 
 /**
  * Categorize a race trip distance into sprint, mile, route, or staying.
+ * @param distanceMeters - The race distance in meters
+ * @returns The distance category label
  */
 export function getTripCategory(distanceMeters: number): TripCategory {
   if (distanceMeters < 1400) return "sprint";

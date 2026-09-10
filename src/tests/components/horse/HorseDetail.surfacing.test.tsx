@@ -50,14 +50,11 @@ describe("HorseDetail surfacing", () => {
   });
 
   it("renders horse detail with insurance and strategy links", () => {
-    const { container } = renderWithStore(
-      <HorseDetail horseId="horse-test-detail" />,
-      {
-        horses: {
-          "horse-test-detail": testHorse,
-        },
+    const { container } = renderWithStore(<HorseDetail horseId="horse-test-detail" />, {
+      horses: {
+        "horse-test-detail": testHorse,
       },
-    );
+    });
 
     expect(container).toBeDefined();
     expect(screen.getAllByText(/Thunder Bolt/i).length).toBeGreaterThan(0);
