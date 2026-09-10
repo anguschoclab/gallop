@@ -15,14 +15,27 @@ describe("generateNpcInsuranceIntents", () => {
     id: "horse-star",
     name: "Golden Hope",
     ownership: { type: "npc", stableId: "stable-rich" },
-    currentGrade: "G1",
+    raceHistory: [
+      {
+        raceId: "race-1",
+        raceName: "Derby",
+        day: 1,
+        position: 1,
+        grade: "G1",
+      },
+    ],
+    age: 3,
+    fame: 100,
+    fanCount: 100,
     healthStatus: "healthy",
-    conformation: "excellent",
-    racing: {
+    conformation: 90,
+    stats: {
       speed: 95,
       stamina: 90,
       acceleration: 92,
-      grit: 88,
+      consistency: 88,
+      conformation: 90,
+      temperament: 90,
     },
     insurancePolicy: undefined,
   } as any;
@@ -31,7 +44,18 @@ describe("generateNpcInsuranceIntents", () => {
     id: "horse-injured",
     name: "Hurting Hero",
     ownership: { type: "npc", stableId: "stable-rich" },
-    currentGrade: "G2",
+    raceHistory: [
+      {
+        raceId: "race-2",
+        raceName: "Oaks",
+        day: 1,
+        position: 1,
+        grade: "G2",
+      },
+    ],
+    age: 3,
+    fame: 100,
+    fanCount: 100,
     healthStatus: "injured",
     insurancePolicy: {
       type: "injury_only",
