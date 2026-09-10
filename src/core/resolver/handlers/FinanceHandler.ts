@@ -38,6 +38,9 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         stable.cash = stable.cash + amount;
       }
     } else {
+      // Once insolvent, the run is over — don't apply further player cash
+      // changes (the snapshot already captured the final balance).
+      if (draft.runEnded) return;
       // Player cash may go negative — the solvency phase escalates from
       // warning → forced sale → insolvent based on the deficit.
       draft.cash = draft.cash + amount;
