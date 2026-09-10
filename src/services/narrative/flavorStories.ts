@@ -12,6 +12,31 @@ export type FlavorStoryTheme =
 export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   track: [
     {
+      headline: "Inside Rail Develops Severe Bias",
+      body: "Clockers are advising bettors to take note: a sudden and distinct speed bias has developed on the inside rail, heavily favoring front-runners drawn well.",
+      category: "flavor",
+    },
+    {
+      headline: "Clocker Controversy Dominates Backstretch",
+      body: "A dispute has erupted over an official workout time for a major stakes contender, with the stable insisting the clockers missed the start of the breeze.",
+      category: "flavor",
+    },
+    {
+      headline: "Grounds Crew Hailed as Heroes",
+      body: "Track superintendents are receiving universal praise after working overnight to completely salvage a track surface that looked unraceable after yesterday's deluge.",
+      category: "flavor",
+    },
+    {
+      headline: "Lucky Hot Dog Stand Draws a Crowd",
+      body: "Superstition has taken over the grandstand as fans flock to a specific concession stand on the apron, convinced that eating there guarantees a winning ticket.",
+      category: "flavor",
+    },
+    {
+      headline: "Stray Cat Becomes Unofficial Mascot",
+      body: "A tortoiseshell cat has taken up residence in the winner's circle, steadfastly refusing to move during post-race photos and charming the entire racing community.",
+      category: "flavor",
+    },
+    {
       headline: "Local Turf Course Earns Praise",
       body: "Following extensive off-season renovations, visiting jockeys have universally praised the condition and bounce of the newly laid turf course.",
       category: "flavor",
@@ -148,6 +173,31 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   jockeys: [
+    {
+      headline: "Rivalry Brews in the Jockey Room",
+      body: "Tensions are reportedly high between two leading riders following a tight finish yesterday, with neither jockey willing to concede an inch in their pursuit of the title.",
+      category: "flavor",
+    },
+    {
+      headline: "Visiting Rider Steals the Show",
+      body: "An out-of-town jockey shipped in for the feature race and put on an absolute masterclass, perfectly judging the pace to pull off a stunning upset.",
+      category: "flavor",
+    },
+    {
+      headline: "Sauna Struggles for Top Weight Rider",
+      body: "A prominent jockey had to spend extra hours in the hot box this morning to make weight for the feature, highlighting the grueling physical demands of the profession.",
+      category: "flavor",
+    },
+    {
+      headline: "Tactical Masterclass Earns Plaudits",
+      body: "Trainers are raving about a brilliant, ground-saving ride by a veteran jockey who somehow threaded the needle through a wall of horses to win the feature.",
+      category: "flavor",
+    },
+    {
+      headline: "Emotional Post-Race Interview Goes Viral",
+      body: "A journeyman rider brought fans to tears in the winner's circle, dedicating a long-awaited stakes victory to their family after years of struggling on the circuit.",
+      category: "flavor",
+    },
     {
       headline: "Journeyman Jockey Hits 2000 Wins",
       body: "A popular local rider reached a major career milestone yesterday, steering a longshot to victory to notch their 2000th career win to a massive ovation.",
