@@ -111,14 +111,27 @@ export function applyJockeyEffects(
 }
 
 export function applyBlockingEffect(r: Runner, sortedField?: Runner[]): void {
-  const blockingHorse = (sortedField || []).find(
-    (other) =>
-      other.horseId !== r.horseId &&
-      other.finishTime === null &&
-      other.position - r.position >= MIN_BLOCK_GAP &&
-      other.position - r.position < 1.5 &&
-      Math.abs(other.lane - r.lane) < 0.4,
-  );
+  if (!sortedField) return;
+
+  let blockingHorse: Runner | undefined;
+  for (let i = 0; i < sortedField.length; i++) {
+    const other = sortedField[i];
+    if (other.horseId === r.horseId) continue;
+    if (other.finishTime !== null) continue;
+
+    const gap = other.position - r.position;
+
+    // Since sortedField is ordered by position descending,
+    // once the gap drops below MIN_BLOCK_GAP, all subsequent horses
+    // will also be closer than MIN_BLOCK_GAP (or behind).
+    if (gap < MIN_BLOCK_GAP) break;
+
+    if (gap < 1.5 && Math.abs(other.lane - r.lane) < 0.4) {
+      blockingHorse = other;
+      break;
+    }
+  }
+
   if (blockingHorse) {
     r.velocity = Math.min(r.velocity, blockingHorse.velocity * 0.98);
   }
