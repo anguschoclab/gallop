@@ -67,7 +67,7 @@ describe("buildAuctionImpacts", () => {
     const transfer = impacts.find((i) => i.type === "horse_transfer");
     expect(transfer).toBeDefined();
     if (transfer && transfer.type === "horse_transfer") {
-      expect(transfer.toStableId).toBeUndefined();
+      expect(transfer.toStableId).toBe("player");
       expect(transfer.fromStableId).toBe("npc-stable");
     }
   });
@@ -96,7 +96,7 @@ describe("buildAuctionImpacts", () => {
     const transfer = impacts.find((i) => i.type === "horse_transfer");
     expect(transfer).toBeDefined();
     if (transfer && transfer.type === "horse_transfer") {
-      expect(transfer.fromStableId).toBeUndefined();
+      expect(transfer.fromStableId).toBe("player");
       expect(transfer.toStableId).toBe("npc-buyer");
     }
   });

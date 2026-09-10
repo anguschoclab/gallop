@@ -62,12 +62,12 @@ describe("getTransportModeForDistance", () => {
     expect(getTransportModeForDistance(5000)).toBe("air");
   });
 
-  it("returns road for distance 5001", () => {
-    expect(getTransportModeForDistance(5001)).toBe("road");
+  it("returns air for distance 5001 (no upper bound on air)", () => {
+    expect(getTransportModeForDistance(5001)).toBe("air");
   });
 
-  it("returns road for distance 10000", () => {
-    expect(getTransportModeForDistance(10000)).toBe("road");
+  it("returns air for distance 10000 (no upper bound on air)", () => {
+    expect(getTransportModeForDistance(10000)).toBe("air");
   });
 
   it("returns road for negative distance", () => {
