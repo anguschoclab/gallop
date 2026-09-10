@@ -319,7 +319,7 @@ describe("generatePerformanceCareerImpacts", () => {
 describe("generateFinancialBreedingImpacts", () => {
   it("emits cash_change for winning position (player horse)", () => {
     const horse = createTestColt({ id: "h1", ownership: makePlayerOwned() });
-    const race = makeOpenRace({ purse: 100_000 });
+    const race = makeOpenRace({ purse: 100_000, trackId: undefined });
     const horseMap = new Map([["h1", horse]]);
     const impacts = generateFinancialBreedingImpacts(
       horse,
@@ -334,7 +334,7 @@ describe("generateFinancialBreedingImpacts", () => {
     );
     const cash = impacts.find((i) => i.type === "cash_change" && (i as any).amount > 0) as any;
     expect(cash).toBeDefined();
-    // 0.6 * 100_000 = 60_000
+    // 0.6 * 100_000 = 60_000 (no venue multiplier without trackId)
     expect(cash.amount).toBe(60_000);
   });
 

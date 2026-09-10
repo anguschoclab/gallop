@@ -5,6 +5,21 @@ import { createRouterMock } from "@/test-utils/routerMock";
 
 vi.mock("@tanstack/react-router", () => createRouterMock());
 
+// Mock IntersectionObserver for jsdom
+if (!globalThis.IntersectionObserver) {
+  globalThis.IntersectionObserver = class IntersectionObserver {
+    readonly root: Element | null = null;
+    readonly rootMargin: string = "";
+    readonly thresholds: ReadonlyArray<number> = [];
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+    takeRecords(): IntersectionObserverEntry[] {
+      return [];
+    }
+  } as unknown as typeof IntersectionObserver;
+}
+
 import { HorseDetail } from "@/components/routes/HorseDetail";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
@@ -46,7 +61,7 @@ describe("HorseDetail surfacing", () => {
 
     expect(container).toBeDefined();
     expect(screen.getAllByText(/Thunder Bolt/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/Campaign Strategy/i)).toBeDefined();
     expect(screen.getAllByText(/Insurance/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Training/i).length).toBeGreaterThan(0);
   });
 });

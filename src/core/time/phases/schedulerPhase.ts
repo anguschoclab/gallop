@@ -153,7 +153,7 @@ export const schedulerPhase = {
         },
       });
 
-      const updatedFlags = [...(campaign.flags ?? [])];
+      const updatedFlags = [...(Array.isArray(campaign.flags) ? campaign.flags : [])];
       for (const skipped of result.skipped) {
         if (skipped.reason.toLowerCase().includes("full")) {
           const slot = campaign.slots[skipped.slotIndex];

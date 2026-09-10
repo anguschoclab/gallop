@@ -1,4 +1,3 @@
-import "@happy-dom/global-registrator/register";
 import "@/tests/setup";
 
 import { describe, it, expect, beforeEach } from "vitest";

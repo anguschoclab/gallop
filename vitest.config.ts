@@ -35,6 +35,8 @@ function testSourceRedirectPlugin(): Plugin {
 
       // Resolve the specifier relative to the source root instead
       const resolved = path.resolve(sourceRoot, source);
+      // Only redirect if the resolved path is still within src/
+      if (!resolved.startsWith(srcRoot)) return null;
       return resolved;
     },
   };
