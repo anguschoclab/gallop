@@ -1,6 +1,6 @@
 import { Link, useRouter } from "@tanstack/react-router";
 
-export function DefaultErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+export function DefaultErrorComponent({ error, reset }: { error: any; reset: () => void }) {
   const router = useRouter();
 
   return (
