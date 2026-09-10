@@ -46,6 +46,7 @@ export function ReplaysLibrary() {
         <input
           type="text"
           placeholder="Filter by horse ID"
+          aria-label="Filter by horse ID"
           value={horseFilter}
           onChange={(e) => setHorseFilter(e.target.value)}
           className="px-3 py-1 text-sm bg-slate-900/40 border border-white/5 text-cream placeholder:text-cream-muted"
@@ -54,6 +55,9 @@ export function ReplaysLibrary() {
           {(["all", "win", "place", "show"] as const).map((rf) => (
             <button
               key={rf}
+              type="button"
+              aria-pressed={resultFilter === rf}
+              aria-label={`Filter by ${rf}`}
               onClick={() => setResultFilter(rf)}
               className={cn(
                 "px-3 py-1 text-xs font-bold uppercase tracking-wide border transition-colors",
