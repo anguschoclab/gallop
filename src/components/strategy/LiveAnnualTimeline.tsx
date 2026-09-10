@@ -20,6 +20,13 @@ import {
   getPrestigeTierBadgeClass,
 } from "@/core/prestige/strategyPrestigeHelpers";
 import { getTrackById } from "@/data/tracks";
+import { TOOLTIP_DELAY_MS } from "@/constants";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { CampaignRaceSlot } from "@/core/calendar/campaignTypes";
 import type { Race } from "@/game/types";
 
@@ -322,15 +329,22 @@ export function LiveAnnualTimeline({
                           Day {slotDay} (±{slot.dayWindow}d window)
                         </span>
                         {onRemoveSlot && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-7 w-7 text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10"
-                            onClick={() => onRemoveSlot(origIndex)}
-                            title="Remove slot"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </Button>
+                          <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-7 w-7 text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10"
+                                  onClick={() => onRemoveSlot(origIndex)}
+                                  aria-label="Remove slot"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Remove slot</TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         )}
                       </div>
                     </div>
