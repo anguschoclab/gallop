@@ -54,8 +54,19 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 
-function HorseDetail() {
-  const { horseId } = useParams({ from: "/stable/$horseId" });
+export interface HorseDetailProps {
+  horseId?: string;
+}
+
+export function HorseDetail({ horseId: propHorseId }: HorseDetailProps = {}) {
+  let paramHorseId: string | undefined;
+  try {
+    const params = useParams({ from: "/stable/$horseId" });
+    paramHorseId = params?.horseId;
+  } catch {
+    // Outside TanStack router context (e.g. testing or embedded usage)
+  }
+  const horseId = propHorseId ?? paramHorseId ?? "";
   const router = useRouter();
   const { horse, isConsigned, canRetireToStud, consignedSale, eligibleSale, day } =
     useHorseActions(horseId);
