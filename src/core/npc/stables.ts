@@ -121,5 +121,15 @@ export function generateAllStables(
     // Budget/starter tier: no archetype (undefined)
   }
 
+  // Pre-sort elite stables by reputation so downstream consumers (e.g. seed gazette
+  // rival intros) receive a reputation-ordered elite group without re-sorting.
+  // Done after archetype assignment to preserve rng.pick determinism.
+  const eliteCount = stables.filter((s) => s.tier === "elite").length;
+  if (eliteCount > 1) {
+    const eliteSlice = stables.splice(0, eliteCount);
+    eliteSlice.sort((a, b) => b.reputation - a.reputation);
+    stables.unshift(...eliteSlice);
+  }
+
   return stables;
 }

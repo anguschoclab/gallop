@@ -8,9 +8,16 @@ import { createNewsItem } from "@/services/narrative/newsGenerator";
 import { calculateOverallRating } from "@/core/horse/stats";
 import type { NewsItem } from "@/services/narrative/newsTypes";
 import type { Race, Horse, Stable } from "@/game/types";
-import { isPlayerOwned, isNpcOwned } from "@/core/horse/ownership";
 import type { PlayerProfile } from "@/core/stable/types";
 import type { Rng } from "@/core/common/rng";
+import {
+  getEliteMajorStables,
+  getNpcHorsesByRating,
+  getNpcHorses,
+  getG1RacesByDay,
+  getGradedRacesByDay,
+  getVeteransByFame,
+} from "./newsSelectors";
 
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -91,9 +98,7 @@ export function buildRivalIntros(
   day: number,
   rng: Rng,
 ): { news: NewsItem; stableId: string }[] {
-  const eliteMajor = stables
-    .filter((s) => s.tier === "elite" && s.isMajor)
-    .sort((a, b) => b.reputation - a.reputation);
+  const eliteMajor = getEliteMajorStables(stables);
 
   const results: { news: NewsItem; stableId: string }[] = [];
 
@@ -162,12 +167,8 @@ export function buildRivalIntros(
  * @returns Power rankings news item or null if no NPC horses
  */
 export function buildPowerRankings(horses: Horse[], day: number, rng: Rng): NewsItem | null {
-  const npcHorses = horses.filter((h) => !isPlayerOwned(h) && isNpcOwned(h));
-  if (npcHorses.length === 0) return null;
-
-  const sorted = npcHorses
-    .map((h) => ({ horse: h, rating: calculateOverallRating(h) }))
-    .sort((a, b) => b.rating - a.rating);
+  const sorted = getNpcHorsesByRating(horses);
+  if (sorted.length === 0) return null;
 
   const top5 = sorted.slice(0, 5);
 
@@ -235,7 +236,7 @@ export function buildPowerRankings(horses: Horse[], day: number, rng: Rng): News
  * @returns G1 spotlight news item or null if no G1 races
  */
 export function buildG1Spotlight(races: Race[], day: number, rng: Rng): NewsItem | null {
-  const g1Races = races.filter((r) => r.graded?.grade === "G1").sort((a, b) => a.day - b.day);
+  const g1Races = getG1RacesByDay(races);
 
   if (g1Races.length === 0) return null;
 
@@ -303,16 +304,12 @@ export function buildGradedPreview(
   day: number,
   rng: Rng,
 ): NewsItem | null {
-  const gradedAfterG1 = races.filter((r) => r.graded && r.day > g1Day);
+  const gradedAfterG1 = getGradedRacesByDay(races).filter((r) => r.day > g1Day);
 
   if (gradedAfterG1.length === 0) return null;
 
-  const g2Races = gradedAfterG1
-    .filter((r) => r.graded?.grade === "G2")
-    .sort((a, b) => a.day - b.day);
-  const g3Races = gradedAfterG1
-    .filter((r) => r.graded?.grade === "G3")
-    .sort((a, b) => a.day - b.day);
+  const g2Races = gradedAfterG1.filter((r) => r.graded?.grade === "G2");
+  const g3Races = gradedAfterG1.filter((r) => r.graded?.grade === "G3");
 
   const previewRace = g2Races[0] ?? g3Races[0];
   if (!previewRace) return null;
@@ -375,7 +372,7 @@ export function buildGradedPreview(
  * @returns Bloodline insight news item or null if no NPC horses
  */
 export function buildBloodlineInsight(horses: Horse[], day: number, rng: Rng): NewsItem | null {
-  const npcHorses = horses.filter((h) => !isPlayerOwned(h) && isNpcOwned(h));
+  const npcHorses = getNpcHorses(horses);
   if (npcHorses.length === 0) return null;
 
   const eliteHorses = npcHorses.filter((h) => calculateOverallRating(h) >= 80);
@@ -448,10 +445,9 @@ export function buildBloodlineInsight(horses: Horse[], day: number, rng: Rng): N
  * @returns Veteran champion news item or null if no veterans
  */
 export function buildVeteranChampion(horses: Horse[], day: number, rng: Rng): NewsItem | null {
-  const veterans = horses.filter((h) => h.age >= 6);
-  if (veterans.length === 0) return null;
+  const sorted = getVeteransByFame(horses);
+  if (sorted.length === 0) return null;
 
-  const sorted = veterans.sort((a, b) => b.fame - a.fame);
   const champion = sorted[0];
 
   const headlines = [
