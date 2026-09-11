@@ -159,8 +159,8 @@ export function buildAuctionImpacts(
       logLevel: "always",
       type: "horse_transfer",
       horseId: lot.horseId,
-      fromStableId: consignorStableId,
-      toStableId: winnerStableId,
+      fromStableId: asOwnerKey(consignorStableId ?? "player"),
+      toStableId: asOwnerKey(winnerStableId ?? "player"),
       price: lot.hammerPrice,
       reason: "auction_transfer",
     });
@@ -169,7 +169,7 @@ export function buildAuctionImpacts(
   for (const entry of lots) {
     const lot = entry.lot;
     if (!lot.passed) continue;
-    if (lot.consignorStableId === "") {
+    if (!lot.consignorStableId) {
       const horse = horseMap.get(lot.horseId);
       const horseName = horse?.name || "Unknown Horse";
 

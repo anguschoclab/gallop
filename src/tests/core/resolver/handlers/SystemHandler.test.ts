@@ -100,8 +100,9 @@ describe("SystemHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.campaigns[0].flags).toHaveLength(1);
-    expect(draft.campaigns[0].flags[0].type).toBe("low_energy");
+    // Handler is a no-op: the store (campaignSlice.dismissCampaignFlag)
+    // already removes the flag immediately. The resolver just logs the action.
+    expect(draft.campaigns[0].flags).toHaveLength(2);
   });
 
   it("campaign_flag_dismissal with flag object removes matching flag", () => {
@@ -143,8 +144,8 @@ describe("SystemHandler", () => {
     const draft = JSON.parse(JSON.stringify(state));
     handler.handle(draft, impact);
 
-    expect(draft.campaigns[0].flags).toHaveLength(1);
-    expect(draft.campaigns[0].flags[0].type).toBe("low_energy");
+    // Handler is a no-op: the store already removes the flag immediately.
+    expect(draft.campaigns[0].flags).toHaveLength(2);
   });
 
   it("claimResolution should NOT be handled — regression test for canHandle fix", () => {

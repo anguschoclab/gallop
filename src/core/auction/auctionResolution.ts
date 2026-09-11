@@ -72,9 +72,10 @@ export function resolveAuctionSale(
       }
     }
 
-    if (currentBid < lot.reservePrice || currentWinner === undefined) {
+    if (currentBid < lot.reservePrice || (currentWinner === undefined && currentBid === 0)) {
+      const hadBids = currentBid > 0;
       updatedLots.push({ ...lot, passed: true, hammerPrice: undefined, soldToStableId: undefined });
-      log.push(`${horse.name} — passed (reserve not met)`);
+      log.push(`${horse.name} — passed (${hadBids ? "reserve not met" : "no bids"})`);
     } else {
       updatedLots.push({
         ...lot,

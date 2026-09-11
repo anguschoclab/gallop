@@ -160,7 +160,8 @@ export function generateCommentaryLine(
     sub("{recordTime}", rc.trackRecordTime?.toFixed(1) || "");
     sub("{recordHolder}", rc.trackRecordHolder || "");
     const horseId = context.runner?.horseId || "";
-    sub("{prevPosition}", rc.previousFinishPositions?.[horseId]?.toString() || "");
+    const prevPos = rc.previousFinishPositions?.[horseId];
+    sub("{prevPosition}", prevPos ? getOrdinal(prevPos) : "");
     sub("{visits}", rc.horseCourseVisits?.[horseId]?.toString() || "");
   } else {
     sub("{year}", "");
@@ -205,18 +206,6 @@ export function generateCommentaryLine(
     const jockeyName = context.runner.jockeyName || context.runner.jockey?.name || "the jockey";
     sub("{jockey}", jockeyName);
     sub("{jockeyArchetype}", context.runner.jockey?.archetype || "versatile");
-
-    // Replace race context placeholders
-    if (context.raceContext) {
-      sub("{year}", context.raceContext.defendingChampion?.year?.toString() || "");
-      sub("{recordTime}", context.raceContext.trackRecordTime?.toString() || "");
-      sub("{recordHolder}", context.raceContext.trackRecordHolder || "");
-      const horseId = context.runner?.horseId || "";
-      const prevPos = context.raceContext.previousFinishPositions?.[horseId];
-      sub("{prevPosition}", prevPos ? getOrdinal(prevPos) : "");
-      const visits = context.raceContext.horseCourseVisits?.[horseId];
-      sub("{visits}", visits?.toString() || "");
-    }
 
     // Replace track / atmosphere placeholders
     sub("{grade}", context.race.graded?.grade || "");

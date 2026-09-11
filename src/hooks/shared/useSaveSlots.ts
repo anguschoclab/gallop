@@ -66,6 +66,7 @@ export function useSaveSlots(initialTab: "save" | "load") {
         await loadSlot(slotId);
       } catch (error) {
         console.error("Recall failed:", error);
+      } finally {
         setIsLoading(false);
       }
     },

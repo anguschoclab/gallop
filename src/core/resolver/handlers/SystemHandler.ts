@@ -17,7 +17,6 @@ import type { HallOfFameInductionImpact, SeasonHistoryImpact } from "../impacts/
 import type {
   CampaignSlotImpact,
   CampaignFlagImpact,
-  CampaignFlagDismissalImpact,
   CampaignCreationImpact,
   CampaignDeletionImpact,
   AutoManageToggleImpact,
@@ -88,19 +87,13 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 
   campaign_flag_dismissal: (draft, impact, lookupMaps) => {
-    const { horseId, flag, flagIndex } = impact as CampaignFlagDismissalImpact;
-    const campaignMap =
-      lookupMaps?.campaignMap || new Map(draft.campaigns?.map((c) => [c.horseId, c]) || []);
-    const campaign = campaignMap.get(horseId);
-    if (campaign) {
-      if (flagIndex !== undefined) {
-        campaign.flags = campaign.flags.filter((_, i) => i !== flagIndex);
-      } else if (flag) {
-        campaign.flags = campaign.flags.filter(
-          (f) => f.type !== flag.type || f.day !== flag.day || f.message !== flag.message,
-        );
-      }
-    }
+    // The store (campaignSlice.dismissCampaignFlag) already removes the flag
+    // from state immediately for UI responsiveness. The resolver handler is
+    // a no-op to avoid removing a different flag at the now-stale index.
+    // The impact is still logged for audit trail purposes.
+    void draft;
+    void impact;
+    void lookupMaps;
   },
 
   campaign_creation: (draft, impact, lookupMaps) => {

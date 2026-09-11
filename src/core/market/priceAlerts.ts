@@ -26,9 +26,7 @@ export { REAL_WORLD_BLEND_WEIGHT };
 
 /** Which slice of the market an alert watches. */
 export type PriceAlertScope =
-  | { kind: "market" }
-  | { kind: "grade"; value: string }
-  | { kind: "track"; value: string };
+  { kind: "market" } | { kind: "grade"; value: string } | { kind: "track"; value: string };
 
 /** Which direction of move should fire the alert. */
 export type PriceAlertDirection = "up" | "down" | "either";
@@ -66,19 +64,29 @@ export type AlertHorse = {
   courseVisits?: Record<string, number>;
 };
 
-/** Human label for an alert scope. */
+/**
+ * Human label for an alert scope.
+ * @param scope
+ * @param trackName
+ */
 export function scopeLabel(scope: PriceAlertScope, trackName?: (id: string) => string): string {
   if (scope.kind === "market") return "Whole market";
   if (scope.kind === "grade") return `${scope.value} horses`;
   return trackName ? trackName(scope.value) : scope.value;
 }
 
-/** Stable key for a scope, used for de-duplication. */
+/**
+ * Stable key for a scope, used for de-duplication.
+ * @param scope
+ */
 export function scopeKey(scope: PriceAlertScope): string {
   return scope.kind === "market" ? "market" : `${scope.kind}:${scope.value}`;
 }
 
-/** Best grade bucket a horse has contested (G1 beats G2 beats …). */
+/**
+ * Best grade bucket a horse has contested (G1 beats G2 beats …).
+ * @param horse
+ */
 export function horseGradeSegment(horse: AlertHorse): string {
   for (const grade of GRADE_SEGMENTS) {
     if (grade === "Ungraded") break;
@@ -87,7 +95,10 @@ export function horseGradeSegment(horse: AlertHorse): string {
   return "Ungraded";
 }
 
-/** The track a horse is most associated with (most visits), if any. */
+/**
+ * The track a horse is most associated with (most visits), if any.
+ * @param horse
+ */
 export function horseTrackSegment(horse: AlertHorse): string | undefined {
   const entries = Object.entries(horse.courseVisits ?? {});
   if (entries.length === 0) return undefined;
@@ -168,7 +179,9 @@ export function segmentPriceIndex(args: {
         ? (TRACK_BY_ID[scope.value]?.name ?? scope.value)
         : scope.value;
   const series = realWorldSeries(scope.kind, scopeValue);
-  const realMove = series ? realWorldMovePct({ kind: scope.kind, value: scopeValue, day, windowDays }) : 0;
+  const realMove = series
+    ? realWorldMovePct({ kind: scope.kind, value: scopeValue, day, windowDays })
+    : 0;
   const weight = series ? Math.min(1, Math.max(0, args.realWorldWeight ?? 0)) : 0;
   const movePct = simMovePct * (1 - weight) + realMove * weight;
 
@@ -292,6 +305,7 @@ export type TradeNotification =
  * @param args.day - Current day
  * @param args.notifiedKeys - Keys already notified (skipped)
  * @param args.playerId - Player order id (defaults to "player")
+ * @param args.horses - Optional horse map for name lookup
  */
 export function playerTradeNotifications(args: {
   trades: ExchangeTrade[];
@@ -300,10 +314,12 @@ export function playerTradeNotifications(args: {
   day: number;
   notifiedKeys?: string[];
   playerId?: string;
+  horses?: Map<string, { name: string }>;
 }): TradeNotification[] {
   const { trades, asks, bids, day } = args;
   const playerId = args.playerId ?? "player";
   const seen = new Set(args.notifiedKeys ?? []);
+  const horseMap = args.horses ?? new Map<string, { name: string }>();
   const out: TradeNotification[] = [];
 
   for (const trade of trades) {
@@ -334,7 +350,7 @@ export function playerTradeNotifications(args: {
     out.push({
       kind: "fillable",
       key,
-      horseName: (ask as { horseName?: string }).horseName ?? ask.horseId,
+      horseName: horseMap.get(ask.horseId)?.name ?? ask.horseId,
       askPrice: ask.price,
       bidPrice: best.price,
       bidderName: best.bidderName,

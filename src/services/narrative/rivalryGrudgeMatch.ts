@@ -145,7 +145,7 @@ export function generateGrudgeMatchNews(
         `Despite high expectations, ${playerHorse.name} fell flat against ${rivalHorse.name}, giving the rival camp plenty of ammunition for their post-race celebrations.`,
         `It was a humbling experience for ${playerHorse.name}, who was soundly beaten by ${rivalHorse.name} in a race the stable had circled on the calendar.`,
         `${rivalHorse.name} flipped the script today, delivering an unexpected and demoralizing defeat to ${playerHorse.name} in front of a packed grandstand.`,
-        `The stable is left searching for answers after ${rivalHorse.name} exposed unexpected weaknesses in ${playerHorse.name} during today is grudge match.`,
+        `The stable is left searching for answers after ${rivalHorse.name} exposed unexpected weaknesses in ${playerHorse.name} during today's grudge match.`,
       ];
 
   if (arcContext) {

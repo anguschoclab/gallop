@@ -30,26 +30,35 @@ export const solvencyPhase = {
   name: "solvency",
   order: PHASE_ORDER_SOLVENCY,
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, newDay, logs } = context;
+    const { state, newDay, logs, impacts: pendingImpacts } = context;
     if (state.runEnded) return context;
+
+    // Solvency runs BEFORE impactApplication (order 200), so state.cash is
+    // yesterday's settled cash. To catch same-day insolvency (e.g. a single
+    // day's upkeep pushing cash from -90k to -200k), compute the projected
+    // post-impact cash by summing all pending player cash_change impacts.
+    const pendingPlayerCashDelta = pendingImpacts
+      .filter((imp): imp is CashImpact => imp.type === "cash_change" && imp.entityId === "player")
+      .reduce((sum, imp) => sum + imp.amount, 0);
+    const projectedCash = state.cash + pendingPlayerCashDelta;
 
     const startCash = state.cash;
     const prevDays = state.consecutiveDaysInDebt ?? 0;
     const prevTier = state.solvencyTier ?? "healthy";
-    const consecutiveDaysInDebt = startCash < 0 ? prevDays + 1 : 0;
+    const consecutiveDaysInDebt = projectedCash < 0 ? prevDays + 1 : 0;
 
     const solvency = deriveSolvencyState({
-      cash: startCash,
+      cash: projectedCash,
       consecutiveDaysInDebt,
     });
     const impacts: AnyImpact[] = [];
     const newLogs: { day: number; text: string }[] = [];
     const auditAdditions: AuditEntry[] = [];
 
-    let runningCash = startCash;
+    let runningCash = projectedCash;
 
     // 1. Daily interest on any debt.
-    const interest = computeDailyInterest(startCash);
+    const interest = computeDailyInterest(projectedCash);
     if (interest > 0) {
       impacts.push({
         id: generateUUID(),
@@ -60,7 +69,7 @@ export const solvencyPhase = {
         type: "cash_change",
         entityId: "player",
         amount: -interest,
-        reason: `Daily interest on outstanding debt ($${Math.abs(startCash).toLocaleString()})`,
+        reason: `Daily interest on outstanding debt ($${Math.abs(projectedCash).toLocaleString()})`,
       } as CashImpact);
       auditAdditions.push({
         day: newDay,
@@ -88,7 +97,7 @@ export const solvencyPhase = {
           category: "system",
           priority: "action",
           title: "Cash reserves depleted",
-          body: `Your account is $${Math.abs(startCash).toLocaleString()} in the red. Interest accrues daily. Sell a horse or claim purses within ${SOLVENCY_THRESHOLDS.forcedSaleDays} days to avoid a forced sale.`,
+          body: `Your account is $${Math.abs(projectedCash).toLocaleString()} in the red. Interest accrues daily. Sell a horse or claim purses within ${SOLVENCY_THRESHOLDS.forcedSaleDays} days to avoid a forced sale.`,
           cta: { label: "Open finances", route: "financial-report" },
         },
       } as InboxImpact);
@@ -107,7 +116,7 @@ export const solvencyPhase = {
     const imminentWarningDays = state.userSettings?.gameplay?.imminentForcedSaleWarningDays ?? 2;
     if (
       solvency.tier === "warning" &&
-      startCash <= SOLVENCY_THRESHOLDS.forcedSaleCash &&
+      projectedCash <= SOLVENCY_THRESHOLDS.forcedSaleCash &&
       consecutiveDaysInDebt === SOLVENCY_THRESHOLDS.forcedSaleDays - imminentWarningDays
     ) {
       impacts.push({
@@ -260,17 +269,17 @@ export const solvencyPhase = {
         runEnded: true,
         runEndSnapshot: {
           day: newDay,
-          cash: startCash,
+          cash: projectedCash,
           horsesOwned: playerHorses.length,
           lifetimeEarnings,
           reputationTier: state.reputation?.tier ?? "unknown",
-          causeOfDeath: `Cash fell to $${startCash.toLocaleString()}, past the insolvency floor.`,
+          causeOfDeath: `Cash fell to $${projectedCash.toLocaleString()}, past the insolvency floor.`,
           lastSeizure: seizureRecord ?? state.runEndSnapshot?.lastSeizure ?? undefined,
         },
       };
       newLogs.push({
         day: newDay,
-        text: `💀 Stable declared insolvent at $${startCash.toLocaleString()}. Run over.`,
+        text: `💀 Stable declared insolvent at $${projectedCash.toLocaleString()}. Run over.`,
       });
     }
 

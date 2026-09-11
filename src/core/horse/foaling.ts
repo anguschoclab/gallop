@@ -73,7 +73,10 @@ export function resolveFoaling(
   }
 
   // --- Complication Checks ---
-  const ageRisk = Math.max(0, (dam.age - FOALING_AGE_RISK_THRESHOLD) * FOALING_AGE_RISK_MULTIPLIER);
+  const ageRisk = Math.min(
+    Math.max(0, (dam.age - FOALING_AGE_RISK_THRESHOLD) * FOALING_AGE_RISK_MULTIPLIER),
+    1 - FOALING_BASE_COMPLICATION_RATE,
+  );
   const baseRoll = rng.next();
   if (baseRoll < FOALING_BASE_COMPLICATION_RATE + ageRisk) {
     const types = ["stillborn", "unable to stand", "early loss", "mid loss"];
@@ -154,28 +157,34 @@ export function resolveFoaling(
 
     const modifiers = computeGenomeModifiers(coi, ahc);
     foal.genomeModifiers = modifiers;
-
-    if (foal.stats) {
-      foal.stats.consistency = Math.max(
-        1,
-        Math.round(foal.stats.consistency * modifiers.depressionPenalty),
-      );
-    }
-    if (foal.recoveryRate !== undefined) {
-      foal.recoveryRate = Math.min(2.0, foal.recoveryRate + modifiers.vigorBonus);
-    }
-    if (foal.trainability !== undefined) {
-      foal.trainability = Math.min(2.0, foal.trainability + modifiers.vigorBonus);
-    }
-    if (foal.peakAge !== undefined) {
-      foal.peakAge = Math.round(foal.peakAge + modifiers.longevityBonus);
-    }
   } else {
     foal.ancestralHistoryCoefficient = 0;
     foal.genomeModifiers = computeGenomeModifiers(coi, 0);
   }
 
+  // Resolve phenotype first, then apply inbreeding modifiers on top
+  // (resolvePhenotype recomputes stats from genotype, which would wipe
+  // any modifiers applied before it)
   const resolvedFoal = resolvePhenotype(foal);
+
+  if (state && resolvedFoal.genomeModifiers) {
+    const modifiers = resolvedFoal.genomeModifiers;
+    if (resolvedFoal.stats) {
+      resolvedFoal.stats.consistency = Math.max(
+        1,
+        Math.round(resolvedFoal.stats.consistency * modifiers.depressionPenalty),
+      );
+    }
+    if (resolvedFoal.recoveryRate !== undefined) {
+      resolvedFoal.recoveryRate = Math.min(2.0, resolvedFoal.recoveryRate + modifiers.vigorBonus);
+    }
+    if (resolvedFoal.trainability !== undefined) {
+      resolvedFoal.trainability = Math.min(2.0, resolvedFoal.trainability + modifiers.vigorBonus);
+    }
+    if (resolvedFoal.peakAge !== undefined) {
+      resolvedFoal.peakAge = Math.round(resolvedFoal.peakAge + modifiers.longevityBonus);
+    }
+  }
 
   return { kind: "live", foal: resolvedFoal };
 }

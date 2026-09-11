@@ -85,9 +85,10 @@ const CONSIGNMENT_STRATEGIES: Record<
         return true;
       if (ctx.stable.preferredSurface) {
         const apts = h.surfaceAptitude;
-        const best = (Object.entries(apts) as [keyof typeof apts, number][]).sort(
-          (a, b) => b[1] - a[1],
-        )[0];
+        if (!apts) return true;
+        const entries = Object.entries(apts) as [keyof typeof apts, number][];
+        if (entries.length === 0) return true;
+        const best = entries.sort((a, b) => b[1] - a[1])[0];
         if (best[0] !== ctx.stable.preferredSurface) return true;
       }
       return false;

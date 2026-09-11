@@ -1,6 +1,17 @@
-import { Link, notFound, useParams } from "@tanstack/react-router";
+import { Link, notFound, useParams, useRouter } from "@tanstack/react-router";
 import { type ComponentType, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HorseAwardsPanel } from "@/components/awards";
 import { FounderLegacy } from "@/components/horse/FounderLegacy";
@@ -56,6 +67,7 @@ export function HorseDetail({ horseId: propHorseId }: HorseDetailProps = {}) {
     // Outside TanStack router context (e.g. testing or embedded usage)
   }
   const horseId = propHorseId ?? paramHorseId ?? "";
+  const router = useRouter();
   const { horse, isConsigned, canRetireToStud, consignedSale, eligibleSale, day } =
     useHorseActions(horseId);
 
@@ -123,13 +135,6 @@ export function HorseDetail({ horseId: propHorseId }: HorseDetailProps = {}) {
               Actions
             </div>
             <div className="px-3 space-y-2">
-              <Link
-                to="/strategy/$horseId"
-                params={{ horseId: horse.id }}
-                className="w-full inline-flex items-center justify-center h-8 text-[9px] font-black uppercase tracking-wider rounded-md border border-amber-400/30 hover:bg-amber-400/10 text-amber-400 transition-colors"
-              >
-                Campaign Strategy
-              </Link>
               {isG1Winner && horse.stud?.atStud && !detail.isSyndicated && (
                 <Button
                   variant="outline"
@@ -141,18 +146,32 @@ export function HorseDetail({ horseId: propHorseId }: HorseDetailProps = {}) {
                 </Button>
               )}
               {canRetireToStud && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full h-8 text-[9px] font-black uppercase border-gold/20 hover:bg-gold/10 text-gold-bright"
-                  onClick={() => {
-                    if (confirm(`Retire ${horse.name} to stud? This cannot be undone.`)) {
-                      detail.retireToStud(horse.id);
-                    }
-                  }}
-                >
-                  Retire to Stud
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full h-8 text-[9px] font-black uppercase border-gold/20 hover:bg-gold/10 text-gold-bright"
+                    >
+                      Retire to Stud
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Retire {horse.name} to stud?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will retire the horse from active racing permanently. This action
+                        cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => detail.retireToStud(horse.id)}>
+                        Retire to Stud
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
             </div>
           </div>

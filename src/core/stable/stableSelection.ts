@@ -23,7 +23,12 @@ import { PERSONALITY_WEIGHTS } from "@/data/personalityTraits";
  * @returns Random subset of the array
  */
 export function shuffleAndPick<T>(array: T[], count: number, rng: Rng): T[] {
-  const shuffled = [...array].sort(() => rng.next() - 0.5);
+  // Fisher-Yates shuffle for unbiased random permutation
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(rng.next() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
   return shuffled.slice(0, Math.min(count, shuffled.length));
 }
 

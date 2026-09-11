@@ -73,14 +73,28 @@ export function buildFieldContext(runners: Runner[]): FieldContext {
 function nearestRival(r: Runner, field: FieldContext): { gap: number; rival: Runner | null } {
   let gap = Infinity;
   let rival: Runner | null = null;
-  for (const other of field.sortedLive) {
-    if (other.horseId === r.horseId) continue;
+
+  const rIdx = field.sortedLive.findIndex((other) => other.horseId === r.horseId);
+  if (rIdx === -1) return { gap, rival };
+
+  if (rIdx > 0) {
+    const other = field.sortedLive[rIdx - 1];
     const d = Math.abs(other.position - r.position);
     if (d < gap) {
       gap = d;
       rival = other;
     }
   }
+
+  if (rIdx < field.sortedLive.length - 1) {
+    const other = field.sortedLive[rIdx + 1];
+    const d = Math.abs(other.position - r.position);
+    if (d < gap) {
+      gap = d;
+      rival = other;
+    }
+  }
+
   return { gap, rival };
 }
 
@@ -90,15 +104,21 @@ function nearestRival(r: Runner, field: FieldContext): { gap: number; rival: Run
  * @param field - Aggregate field context.
  */
 function isBlocked(r: Runner, field: FieldContext): boolean {
-  return field.sortedLive.some((other) => {
-    if (other.horseId === r.horseId) return false;
+  const rIdx = field.sortedLive.findIndex((other) => other.horseId === r.horseId);
+  if (rIdx === -1) return false;
+
+  // field.sortedLive is strictly sorted by position ascending
+  for (let i = rIdx + 1; i < field.sortedLive.length; i++) {
+    const other = field.sortedLive[i];
     const ahead = other.position - r.position;
-    return (
-      ahead > BLOCKED_MIN_AHEAD &&
-      ahead < BLOCKED_MAX_AHEAD &&
-      Math.abs(other.lane - r.lane) < BLOCKED_MAX_LANE_DIFF
-    );
-  });
+
+    if (ahead >= BLOCKED_MAX_AHEAD) break;
+
+    if (ahead > BLOCKED_MIN_AHEAD && Math.abs(other.lane - r.lane) < BLOCKED_MAX_LANE_DIFF) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**

@@ -39,7 +39,8 @@ export const DEFAULT_MARKET_STRATEGY: MarketStrategy = {
   targetSyndicationStakePct: 25,
 };
 
-export type StrategySource = { kind: "exchange" } | { kind: "house"; houseId: string; houseName: string };
+export type StrategySource =
+  { kind: "exchange" } | { kind: "house"; houseId: string; houseName: string };
 
 export type StrategyCandidate = {
   horseId: string;
@@ -77,7 +78,10 @@ export type StrategyRun = {
 
 const clamp = (v: number, lo = 0, hi = 100) => Math.min(hi, Math.max(lo, v));
 
-/** Grade rank, best first, used for "better than target" credit. */
+/**
+ * Grade rank, best first, used for "better than target" credit.
+ * @param grade
+ */
 function gradeRank(grade: string): number {
   const idx = GRADE_SEGMENTS.indexOf(grade as (typeof GRADE_SEGMENTS)[number]);
   return idx === -1 ? GRADE_SEGMENTS.length : idx;
@@ -144,7 +148,8 @@ export function scoreCandidate(args: {
   let prestigeScore = 0;
   if (trackPrestige >= strategy.minTrackPrestige) {
     prestigeScore = 25;
-    if (trackName) reasons.push(`Campaigns at ${trackName} (prestige ${Math.round(trackPrestige)})`);
+    if (trackName)
+      reasons.push(`Campaigns at ${trackName} (prestige ${Math.round(trackPrestige)})`);
   } else {
     prestigeScore = clamp((trackPrestige / Math.max(1, strategy.minTrackPrestige)) * 25, 0, 25);
     warnings.push(

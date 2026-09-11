@@ -13,6 +13,7 @@ export type PrestigeTier = "Cathedral" | "Premier" | "Metropolitan" | "Circuit";
 
 /**
  * Returns the prestige tier classification for a 0-100 score.
+ * @param score
  */
 export function getPrestigeTier(score: number): PrestigeTier {
   if (score >= 90) return "Cathedral";
@@ -23,6 +24,7 @@ export function getPrestigeTier(score: number): PrestigeTier {
 
 /**
  * Returns Tailwind badge color classes for a prestige tier.
+ * @param tier
  */
 export function getPrestigeTierBadgeClass(tier: PrestigeTier): string {
   switch (tier) {
@@ -39,6 +41,8 @@ export function getPrestigeTierBadgeClass(tier: PrestigeTier): string {
 
 /**
  * Calculates the prestige score for a specific venue by name or ID.
+ * @param trackName
+ * @param trackId
  */
 export function calculateVenuePrestige(trackName?: string, trackId?: string): number {
   let score = trackName ? getRacecoursePrestigeByName(trackName) : RACECOURSE_FLOOR_PRESTIGE;
@@ -50,6 +54,8 @@ export function calculateVenuePrestige(trackName?: string, trackId?: string): nu
 
 /**
  * Calculates the average prestige of racecourse venues across planned campaign slots.
+ * @param slots
+ * @param getRace
  */
 export function calculateAverageCampaignPrestige(
   slots: CampaignRaceSlot[],

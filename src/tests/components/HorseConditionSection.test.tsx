@@ -1,9 +1,12 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { screen } from "@testing-library/react";
+import { createRouterMock } from "@/test-utils/routerMock";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { HorseConditionSection } from "@/components/horse/HorseConditionSection";
 import type { Horse } from "@/game/types";
 import { makePlayerOwned } from "@/core/horse/ownership";
+
+vi.mock("@tanstack/react-router", () => createRouterMock());
 
 function createHorse(overrides: Partial<Horse> = {}): Horse {
   return {

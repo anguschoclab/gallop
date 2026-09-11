@@ -18,7 +18,10 @@ export type NewInboxMessage = Omit<InboxMessage, "id" | "readAt">;
 const pct = (value: number) => `${value >= 0 ? "+" : ""}${value.toFixed(1)}%`;
 const money = (value: number) => `$${Math.round(value).toLocaleString("en-US")}`;
 
-/** Readable name for a track id, falling back to the id itself. */
+/**
+ * Readable name for a track id, falling back to the id itself.
+ * @param id
+ */
 function trackName(id: string): string {
   return TRACK_BY_ID[id]?.name ?? id;
 }

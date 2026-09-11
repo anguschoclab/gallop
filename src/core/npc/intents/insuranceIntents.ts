@@ -67,12 +67,12 @@ export function generateNpcInsuranceIntents(
 
     // 2. Process insurance purchases for high-value uninsured horses
     if (!horse.insurancePolicy && isWealthy && isRiskAverse) {
-      const isGraded =
-        (horse as any).currentGrade === "G1" ||
-        (horse as any).currentGrade === "G2" ||
-        (horse as any).currentGrade === "G3";
-      const rating = horse.stats?.speed ?? (horse as any).racing?.speed ?? 0;
-      const isValuable = isGraded || rating >= 75 || (horse.racingViable && (horse.lifetimeEarnings ?? 0) > 30000);
+      const isGraded = horse.raceHistory?.some(
+        (r) => r.position === 1 && (r.grade === "G1" || r.grade === "G2" || r.grade === "G3"),
+      );
+      const rating = horse.stats?.speed ?? 0;
+      const isValuable =
+        isGraded || rating >= 75 || (horse.racingViable && (horse.lifetimeEarnings ?? 0) > 30000);
 
       if (isValuable) {
         const policyType: InsurancePolicyType =

@@ -168,8 +168,7 @@ export function scanIntentCoverage(srcRoot: string): IntentCoverageReport {
     const pattern = `type: "${type}"`;
     const isPlayer = playerContent.includes(pattern) || playerContent.includes(`type: '${type}'`);
     const isNpc = npcContent.includes(pattern) || npcContent.includes(`type: '${type}'`);
-    const isHandled =
-      handlerContent.includes(`"${type}"`) || handlerContent.includes(`'${type}'`);
+    const isHandled = handlerContent.includes(`"${type}"`) || handlerContent.includes(`'${type}'`);
 
     if (isPlayer) playerGenerated.push(type);
     else orphanedFromPlayer.push(type);
@@ -243,15 +242,12 @@ export function scanFacilityTypeParity(srcRoot: string): FacilityParityReport {
   const facilityTypes = Array.from(facilityTypeMatches.matchAll(/"([^"]+)"/g)).map((m) => m[1]);
 
   // Extract keys from SLOT_FOOTPRINTS
-  const slotFootprintsMatch =
-    outpostTypesContent.match(/SLOT_FOOTPRINTS:\s*{([^}]+)}/s)?.[1] || "";
-  const outpostFootprints = Array.from(
-    slotFootprintsMatch.matchAll(/([a-z_]+)\s*:/g),
-  ).map((m) => m[1]);
-
-  const missingFromFacilityTypes = outpostFootprints.filter(
-    (fp) => !facilityTypes.includes(fp),
+  const slotFootprintsMatch = outpostTypesContent.match(/SLOT_FOOTPRINTS:\s*{([^}]+)}/s)?.[1] || "";
+  const outpostFootprints = Array.from(slotFootprintsMatch.matchAll(/([a-z_]+)\s*:/g)).map(
+    (m) => m[1],
   );
+
+  const missingFromFacilityTypes = outpostFootprints.filter((fp) => !facilityTypes.includes(fp));
 
   return {
     facilityTypes,
@@ -268,9 +264,7 @@ export function runOrphanAudit(projectRoot: string): OrphanAuditResult {
 
   const summary: OrphanAuditSummary = {
     totalIntents: intents.allIntents.length,
-    npcCoveragePercent: Math.round(
-      (intents.npcGenerated.length / intents.allIntents.length) * 100,
-    ),
+    npcCoveragePercent: Math.round((intents.npcGenerated.length / intents.allIntents.length) * 100),
     handledPercent: Math.round((intents.handled.length / intents.allIntents.length) * 100),
     dormantAiCount: dormantAi.dormantFunctions.length,
     missingFacilityCount: facilityParity.missingFromFacilityTypes.length,
@@ -294,22 +288,34 @@ if (import.meta.main) {
   console.log("=======================================================\n");
 
   console.log(`[1] INTENT MATRIX COVERAGE (${result.summary.totalIntents} intent types)`);
-  console.log(`    - Handled by Resolvers: ${result.intents.handled.length}/${result.summary.totalIntents} (${result.summary.handledPercent}%)`);
-  console.log(`    - NPC AI Emitted:      ${result.intents.npcGenerated.length}/${result.summary.totalIntents} (${result.summary.npcCoveragePercent}%)`);
-  console.log(`    - Player UI Emitted:   ${result.intents.playerGenerated.length}/${result.summary.totalIntents}`);
+  console.log(
+    `    - Handled by Resolvers: ${result.intents.handled.length}/${result.summary.totalIntents} (${result.summary.handledPercent}%)`,
+  );
+  console.log(
+    `    - NPC AI Emitted:      ${result.intents.npcGenerated.length}/${result.summary.totalIntents} (${result.summary.npcCoveragePercent}%)`,
+  );
+  console.log(
+    `    - Player UI Emitted:   ${result.intents.playerGenerated.length}/${result.summary.totalIntents}`,
+  );
   if (result.intents.orphanedFromNpc.length > 0) {
     console.log(`    ⚠️  Missing from NPC AI:`, result.intents.orphanedFromNpc);
   }
 
   console.log(`\n[2] DORMANT AI LOGIC`);
-  console.log(`    - Dormant functions (tested only, 0 production callers):`, result.dormantAi.dormantFunctions);
+  console.log(
+    `    - Dormant functions (tested only, 0 production callers):`,
+    result.dormantAi.dormantFunctions,
+  );
   console.log(`    - Active functions:`, result.dormantAi.activeFunctions);
 
   console.log(`\n[3] FACILITY TYPE PARITY`);
   console.log(`    - Defined FacilityTypes:`, result.facilityParity.facilityTypes);
   console.log(`    - Outpost Footprints:    `, result.facilityParity.outpostFootprints);
   if (result.facilityParity.missingFromFacilityTypes.length > 0) {
-    console.log(`    ⚠️  In footprints but missing from FacilityType:`, result.facilityParity.missingFromFacilityTypes);
+    console.log(
+      `    ⚠️  In footprints but missing from FacilityType:`,
+      result.facilityParity.missingFromFacilityTypes,
+    );
   }
 
   console.log("\n=======================================================\n");

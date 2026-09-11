@@ -208,16 +208,20 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
           priority,
           title: `Injury: ${horse.name}`,
           body: `${horse.name} sustained a ${severity} ${injuryType} injury. Estimated recovery: ${formatRecoveryDays(recoveryDays, severity)}.`,
-          cta: {
-            label: "Review Strategy",
-            route: "strategy.$horseId",
-            params: { horseId: horse.id },
-          },
-          secondaryCta: {
-            label: "View Horse",
-            route: "stable.$horseId",
-            params: { horseId: horse.id },
-          },
+          ...(severity === "major" || severity === "career-ending"
+            ? {
+                cta: {
+                  label: "Review Strategy",
+                  route: "strategy.$horseId",
+                  params: { horseId: horse.id },
+                },
+                secondaryCta: {
+                  label: "View Horse",
+                  route: "stable.$horseId",
+                  params: { horseId: horse.id },
+                },
+              }
+            : {}),
         });
       }
     }

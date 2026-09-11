@@ -50,7 +50,6 @@ function developerValuation(ctx: ValuationContext): number {
       : 1.0 - AUCTION_RACING_AGE_DISCOUNT;
   if (ctx.is2yoTraining) mod *= 0.9;
   if (ctx.isBroodmare) mod *= 1.1;
-  if (ctx.isRacingAge) mod *= 1.0 - AUCTION_RACING_AGE_DISCOUNT;
   return mod;
 }
 
@@ -63,9 +62,9 @@ function winNowValuation(ctx: ValuationContext): number {
 }
 
 function specialistValuation(ctx: ValuationContext): number {
-  const distanceMatch =
-    ctx.stable.preferredDistance !== undefined &&
-    Math.abs((ctx.stable.preferredDistance ?? 1600) - 1600) < 400;
+  const stableDist = ctx.stable.preferredDistance ?? 1600;
+  const horseDist = ctx.horse.distanceAptitude ?? 1600;
+  const distanceMatch = Math.abs(horseDist - stableDist) < 400;
   return distanceMatch ? 1.5 : 0.5;
 }
 
