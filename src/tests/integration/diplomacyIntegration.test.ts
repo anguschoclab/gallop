@@ -10,8 +10,8 @@ import {
   formAlliance,
   breakAlliance,
   updateTrust,
-  processDiplomaticInteractions,
-  processClaimingFriction,
+  resolveDiplomaticInteractions,
+  applyClaimingFriction,
 } from "@/core/ai/diplomacyAI";
 import type { Stable } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
@@ -125,7 +125,7 @@ describe("Diplomacy Integration: trust dynamics over 30 days", () => {
     expect(lowTrust.stableStates["s1"].npcRelationships?.["s2"]?.trust).toBe(-100);
   });
 
-  it("processDiplomaticInteractions forms alliances when trust is high enough", () => {
+  it("resolveDiplomaticInteractions forms alliances when trust is high enough", () => {
     const stables = [
       createMockStable({ id: "s1", personality: "aggressive" }),
       createMockStable({ id: "s2", personality: "conservative" }),
@@ -137,14 +137,14 @@ describe("Diplomacy Integration: trust dynamics over 30 days", () => {
     // Boost trust to trigger alliance formation
     manager = updateTrust(manager, "s1", "s2", 80);
 
-    const result = processDiplomaticInteractions(manager, stables, 10);
+    const result = resolveDiplomaticInteractions(manager, stables, 10);
 
     // s1 and s2 should have formed an alliance
     const s1Rel = result.stableStates["s1"].npcRelationships?.["s2"];
     expect(s1Rel?.allianceType).not.toBeNull();
   });
 
-  it("processDiplomaticInteractions breaks alliances when trust drops", () => {
+  it("resolveDiplomaticInteractions breaks alliances when trust drops", () => {
     const stables = [
       createMockStable({ id: "s1", personality: "aggressive" }),
       createMockStable({ id: "s2", personality: "conservative" }),
@@ -154,7 +154,7 @@ describe("Diplomacy Integration: trust dynamics over 30 days", () => {
     manager = formAlliance(manager, "s1", "s2", "racing_coalition", 5);
     manager = updateTrust(manager, "s1", "s2", -90); // Trust now at -90
 
-    const result = processDiplomaticInteractions(manager, stables, 10);
+    const result = resolveDiplomaticInteractions(manager, stables, 10);
 
     const s1Rel = result.stableStates["s1"].npcRelationships?.["s2"];
     expect(s1Rel?.allianceType).toBeNull();
@@ -162,12 +162,12 @@ describe("Diplomacy Integration: trust dynamics over 30 days", () => {
 });
 
 describe("Diplomacy Integration: claiming friction cascades", () => {
-  it("processClaimingFriction reduces trust between claimant and previous owner", () => {
+  it("applyClaimingFriction reduces trust between claimant and previous owner", () => {
     const stables = [createMockStable({ id: "s1" }), createMockStable({ id: "s2" })];
     let manager = createMockManager(["s1", "s2"]);
     manager = initializeRelationships(manager, stables);
 
-    const result = processClaimingFriction(manager, "s1", "s2");
+    const result = applyClaimingFriction(manager, "s1", "s2");
 
     const s1Rel = result.stableStates["s1"].npcRelationships?.["s2"];
     expect(s1Rel!.trust).toBeLessThan(0);

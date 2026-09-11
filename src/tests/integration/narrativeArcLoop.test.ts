@@ -12,7 +12,7 @@ import {
   checkCareerArcTrigger,
   type CareerArcState,
 } from "@/services/narrative/careerArcGenerator";
-import { processNarrativeCycle } from "@/core/ai/narrativeAI";
+import { runNarrativeCycle } from "@/core/ai/narrativeAI";
 import { createStableAIState } from "@/core/ai/npcCycleAI";
 import type { GameState, Stable, Horse, Race } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
@@ -143,14 +143,14 @@ describe("Career Arc Narrative System", () => {
 });
 
 describe("NPC Narrative Arc System", () => {
-  it("processNarrativeCycle updates stable narrative states", () => {
+  it("runNarrativeCycle updates stable narrative states", () => {
     const stables = [
       createMockStable({ id: "npc-1", personality: "aggressive" }),
       createMockStable({ id: "npc-2", personality: "conservative" }),
     ];
     const manager = createMockManagerWithStables(stables);
 
-    const updated = processNarrativeCycle(manager, stables, 100);
+    const updated = runNarrativeCycle(manager, stables, 100);
 
     // Narrative states should be initialized or updated
     expect(updated.stableStates["npc-1"]).toBeDefined();
@@ -161,7 +161,7 @@ describe("NPC Narrative Arc System", () => {
     const stables = [createMockStable({ id: "npc-1", personality: "aggressive" })];
     const manager = createMockManagerWithStables(stables);
 
-    const updated = processNarrativeCycle(manager, stables, 100);
+    const updated = runNarrativeCycle(manager, stables, 100);
 
     const stableAI = updated.stableStates["npc-1"];
     expect(stableAI?.narrativeState).toBeDefined();
@@ -174,9 +174,9 @@ describe("NPC Narrative Arc System", () => {
     const manager = createMockManagerWithStables(stables);
 
     // Run once to generate arcs
-    const firstPass = processNarrativeCycle(manager, stables, 100);
+    const firstPass = runNarrativeCycle(manager, stables, 100);
     // Run again to potentially resolve arcs
-    const updated = processNarrativeCycle(firstPass, stables, 200);
+    const updated = runNarrativeCycle(firstPass, stables, 200);
 
     const stableAI = updated.stableStates["npc-1"];
     // Narrative state should exist with both active and resolved arrays
@@ -196,7 +196,7 @@ describe("NPC Narrative Arc System", () => {
     manager.stableStates["npc-1"].friction = 75;
     manager.stableStates["npc-2"].friction = 20;
 
-    const updated = processNarrativeCycle(manager, stables, 100);
+    const updated = runNarrativeCycle(manager, stables, 100);
 
     // npc-1 has high friction (rivalry watch candidate)
     expect(updated.stableStates["npc-1"]?.friction).toBeGreaterThanOrEqual(60);
@@ -215,7 +215,7 @@ describe("NPC Narrative Arc System", () => {
       dramaticPotential: 0.85,
     };
 
-    const updated = processNarrativeCycle(manager, stables, 100);
+    const updated = runNarrativeCycle(manager, stables, 100);
     const narrative = updated.stableStates["npc-1"].narrativeState!;
 
     expect(narrative.activeArcs.length).toBeGreaterThan(0);
@@ -238,7 +238,7 @@ describe("NPC Narrative Arc System", () => {
     manager.stableStates["npc-rival"].friction = 75;
     manager.stableStates["npc-friendly"].friction = 20;
 
-    const updated = processNarrativeCycle(manager, stables, 100);
+    const updated = runNarrativeCycle(manager, stables, 100);
 
     // Rival stable (friction > 60) should be flagged for rivalry watch
     const rivalFriction = updated.stableStates["npc-rival"]?.friction ?? 0;

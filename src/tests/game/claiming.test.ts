@@ -4,7 +4,7 @@
 
 import { describe, it, expect } from "vitest";
 import {
-  processClaims,
+  resolveClaims,
   isHorseEligibleForClaimingPrice,
   getSuggestedClaimingPriceRange,
   validateClaimingRace,
@@ -15,7 +15,7 @@ import { createTestHorse } from "@/tests/helpers";
 import type { Horse, Race } from "@/game/types";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
-describe("processClaims", () => {
+describe("resolveClaims", () => {
   it("should return empty result when race is not a claiming race", () => {
     const race: Race = {
       id: "race-1",
@@ -35,7 +35,7 @@ describe("processClaims", () => {
     const horses: Horse[] = [];
     const currentDay = 10;
 
-    const result = processClaims(race, claims, horses, currentDay, createRng("test"));
+    const result = resolveClaims(race, claims, horses, currentDay, createRng("test"));
     expect(result.transfers).toEqual([]);
     expect(result.logs).toEqual([]);
   });
@@ -60,7 +60,7 @@ describe("processClaims", () => {
     const horses: Horse[] = [];
     const currentDay = 10;
 
-    const result = processClaims(race, claims, horses, currentDay, createRng("test"));
+    const result = resolveClaims(race, claims, horses, currentDay, createRng("test"));
     expect(result.transfers).toEqual([]);
     expect(result.logs).toEqual([]);
   });
@@ -112,7 +112,7 @@ describe("processClaims", () => {
       },
     ];
 
-    const result = processClaims(race, claims, [horse], 10, createRng("test"));
+    const result = resolveClaims(race, claims, [horse], 10, createRng("test"));
     expect(result.transfers.length).toBe(1);
     expect(result.transfers[0].horseId).toBe("horse-1");
     expect(result.transfers[0].fromStableId).toBe("stable-1");
@@ -174,7 +174,7 @@ describe("processClaims", () => {
       },
     ];
 
-    const result = processClaims(race, claims, [horse], 10, createRng("test"));
+    const result = resolveClaims(race, claims, [horse], 10, createRng("test"));
     expect(result.transfers.length).toBe(1);
     expect(result.logs.length).toBe(2); // One winner, one loser
   });
@@ -204,7 +204,7 @@ describe("processClaims", () => {
       },
     ];
 
-    const result = processClaims(race, claims, [], 10, createRng("test"));
+    const result = resolveClaims(race, claims, [], 10, createRng("test"));
     expect(result.transfers).toEqual([]);
     expect(result.logs).toEqual([]);
   });
@@ -239,7 +239,7 @@ describe("processClaims", () => {
       { claimantStableId: "stable-3", horseId: "horse-2", claimingPrice: 10000, successful: false },
     ];
 
-    const result = processClaims(race, claims, [horse1, horse2], 10, createRng("test"));
+    const result = resolveClaims(race, claims, [horse1, horse2], 10, createRng("test"));
     expect(result.transfers).toHaveLength(2);
     expect(result.transfers[0].horseId).toBe("horse-1");
     expect(result.transfers[1].horseId).toBe("horse-2");
@@ -276,7 +276,7 @@ describe("processClaims", () => {
       },
     ];
 
-    const result = processClaims(race, claims, [horse1], 10, createRng("test"));
+    const result = resolveClaims(race, claims, [horse1], 10, createRng("test"));
     expect(result.transfers).toHaveLength(1);
     expect(result.transfers[0].horseId).toBe("horse-1");
   });

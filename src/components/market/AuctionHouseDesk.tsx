@@ -13,14 +13,17 @@ import { Gavel, History, ShoppingCart, Tag } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatCurrency } from "@/core/common/formatting";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState, Horse } from "@/game/types";
-import { isPlayerOwned } from "@/core/horse/ownership";
-import { createDefaultExchangeState } from "@/core/market/exchange";
-import { AUCTION_HOUSES } from "@/core/prestige/auctionHouses";
-import { buildHouseCatalogue, houseQuote } from "@/core/market/houseQuotes";
-import { sellerStandingBidFactor } from "@/core/market/exchangeAI";
+import {
+  AUCTION_HOUSES,
+  createDefaultExchangeState,
+  formatCurrency,
+  getHouseCatalogue,
+  getHouseQuote,
+  getSellerStandingBidFactor,
+  isPlayerOwned,
+} from "@/services/market/auctionHouseService";
 import { MarketPriceChart } from "./MarketPriceChart";
 
 export function AuctionHouseDesk() {
@@ -38,7 +41,7 @@ export function AuctionHouseDesk() {
   const horseList = useMemo(() => Object.values(horses) as Horse[], [horses]);
 
   const catalogue = useMemo(
-    () => buildHouseCatalogue({ day, house, horses: horseList }),
+    () => getHouseCatalogue({ day, house, horses: horseList }),
     [day, house, horseList],
   );
 
@@ -46,12 +49,12 @@ export function AuctionHouseDesk() {
     () =>
       horseList
         .filter((h) => isPlayerOwned(h) && h.lifecycleStatus !== "deceased" && !h.consignedSaleId)
-        .map((h) => ({ horse: h, quote: houseQuote(h, horseList, house, reputationScore) }))
+        .map((h) => ({ horse: h, quote: getHouseQuote(h, horseList, house, reputationScore) }))
         .sort((a, b) => b.quote.sellPrice - a.quote.sellPrice),
     [horseList, house, reputationScore],
   );
 
-  const standing = useMemo(() => sellerStandingBidFactor(reputationScore), [reputationScore]);
+  const standing = useMemo(() => getSellerStandingBidFactor(reputationScore), [reputationScore]);
 
   const trades = useMemo(() => [...exchange.trades].reverse().slice(0, 25), [exchange.trades]);
 

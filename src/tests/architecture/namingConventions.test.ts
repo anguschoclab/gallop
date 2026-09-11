@@ -79,3 +79,25 @@ describe("file naming conventions", () => {
     expect(newViolations).toEqual([]);
   });
 });
+
+describe("vague token audit", () => {
+  const coreFiles = collectFiles(join(SRC_ROOT, "core"));
+
+  it("no exported function in src/core is named process*", () => {
+    const processFuncs: string[] = [];
+    for (const file of coreFiles) {
+      const content = readFileSync(file, "utf-8");
+      const matches = content.matchAll(/export\s+(?:async\s+)?function\s+(process\w*)/g);
+      for (const m of matches) {
+        const rel = relative(SRC_ROOT, file);
+        processFuncs.push(`${rel}: ${m[1]}`);
+      }
+      const constMatches = content.matchAll(/export\s+const\s+(process\w*)\s*=/g);
+      for (const m of constMatches) {
+        const rel = relative(SRC_ROOT, file);
+        processFuncs.push(`${rel}: ${m[1]}`);
+      }
+    }
+    expect(processFuncs).toEqual([]);
+  });
+});

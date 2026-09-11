@@ -28,7 +28,7 @@ import type { PlayerFacilities } from "@/core/facilities/facilityTypes";
  * @param currentDay - Current game day.
  * @returns Cash change entry if an upgrade was performed, otherwise null.
  */
-export function processNpcFacilityUpgrade(
+export function applyNpcFacilityUpgrade(
   stable: Stable,
   stableAIState: StableAIState,
   facilities: PlayerFacilities,

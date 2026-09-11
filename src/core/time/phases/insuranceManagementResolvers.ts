@@ -54,7 +54,7 @@ export function resolveInsuranceIntent(
   }
 }
 
-export function processInsurancePremiums(context: PipelineContext, impacts: AnyImpact[]): void {
+export function applyInsurancePremiums(context: PipelineContext, impacts: AnyImpact[]): void {
   const { state, newDay, dailyRng } = context;
   for (const horse of Object.values(state.horses)) {
     if (horse.insurancePolicy) {

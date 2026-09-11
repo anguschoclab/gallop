@@ -4,7 +4,7 @@
  * This file provides the main NPC cycle orchestration that coordinates
  * NPC training, race entry, horse fame updates, and AI state management.
  *
- * Dependencies: @/game/types (Horse, Race, Stable, Jockey), @/core/common/rng (Rng), @/core/ai/npcCycleAI (NpcAIManager, getOrCreateStableAIState, updateStableAIState, pruneAllLearningData), ./npcFame (calculateFameGainsForRaces), ./npcRegionalDominance (processRegionalDominance, applyFrictionDecay), ./npcFacilityUpgrades (processNpcFacilityUpgrade), @/core/horse/fans (calculateFanGainsForRaces)
+ * Dependencies: @/game/types (Horse, Race, Stable, Jockey), @/core/common/rng (Rng), @/core/ai/npcCycleAI (NpcAIManager, getOrCreateStableAIState, updateStableAIState, pruneAllLearningData), ./npcFame (calculateFameGainsForRaces), ./npcRegionalDominance (resolveRegionalDominance, applyFrictionDecay), ./npcFacilityUpgrades (applyNpcFacilityUpgrade), @/core/horse/fans (calculateFanGainsForRaces)
  * Related files: intentGenerators.ts (provides intent generation)
  */
 
@@ -21,8 +21,8 @@ import type { PlayerFacilities } from "@/core/facilities/facilityTypes";
 import type { NewsItem } from "@/core/narrative/newsTypes";
 import { calculateFanGainsForRaces } from "@/core/horse/fans";
 import { calculateFameGainsForRaces } from "./npcFame";
-import { processRegionalDominance, applyFrictionDecay } from "./npcRegionalDominance";
-import { processNpcFacilityUpgrade } from "./npcFacilityUpgrades";
+import { resolveRegionalDominance, applyFrictionDecay } from "./npcRegionalDominance";
+import { applyNpcFacilityUpgrade } from "./npcFacilityUpgrades";
 
 // Re-export fame functions for backward compatibility
 export { calculateFameGainsForRaces, applyFameGainsToHorses } from "./npcFame";
@@ -137,7 +137,7 @@ export function runNpcCycle(
     };
 
     // Regional dominance & friction decay
-    const dominanceResult = processRegionalDominance(
+    const dominanceResult = resolveRegionalDominance(
       yesterdayRaces,
       horses,
       npcStables,
@@ -163,7 +163,7 @@ export function runNpcCycle(
 
         // AI-driven facility upgrades
         if (updatedNpcFacilities && updatedNpcFacilities[stable.id]) {
-          const cashChange = processNpcFacilityUpgrade(
+          const cashChange = applyNpcFacilityUpgrade(
             stable,
             stableAIState,
             updatedNpcFacilities[stable.id],

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { processClaimingResolution } from "@/services/auction/claimingResolutionService";
+import { resolveClaimingResolution } from "@/services/auction/claimingResolutionService";
 import { createTestRng, createTestHorse } from "@/tests/helpers";
 import { isValidUUID } from "@/core/uuid";
 import type { Race, Horse } from "@/game/types";
@@ -51,10 +51,10 @@ function mkClaimedHorse(id: string, stableId?: string): Horse {
   });
 }
 
-describe("processClaimingResolution — empty / early return", () => {
+describe("resolveClaimingResolution — empty / early return", () => {
   it("empty claimIntents returns empty impacts", () => {
     const race = mkRace();
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: [],
       horses: [],
@@ -67,7 +67,7 @@ describe("processClaimingResolution — empty / early return", () => {
   it("claims for horses not in race.entries are silently dropped", () => {
     const race = mkRace({ entries: [] });
     const intent = mkClaimingIntent({ horseId: "h-orphan" });
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: [intent],
       horses: [mkClaimedHorse("h-orphan", "stable-old")],
@@ -78,7 +78,7 @@ describe("processClaimingResolution — empty / early return", () => {
   });
 });
 
-describe("processClaimingResolution — withdrawn claims", () => {
+describe("resolveClaimingResolution — withdrawn claims", () => {
   it("single withdrawn claim produces cash_change refund + log impact", () => {
     const race = mkRace({
       entries: [
@@ -95,7 +95,7 @@ describe("processClaimingResolution — withdrawn claims", () => {
       claimantStableId: "stable-buyer",
       claimingPrice: 25000,
     });
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: [intent],
       horses: [mkClaimedHorse("h1", "stable-old")],
@@ -128,7 +128,7 @@ describe("processClaimingResolution — withdrawn claims", () => {
       mkClaimingIntent({ id: "w-1", horseId: "h1", claimantStableId: "s-a", claimingPrice: 25000 }),
       mkClaimingIntent({ id: "w-2", horseId: "h2", claimantStableId: "s-b", claimingPrice: 25000 }),
     ];
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: intents,
       horses: [mkClaimedHorse("h1", "s-old"), mkClaimedHorse("h2", "s-old")],
@@ -154,7 +154,7 @@ describe("processClaimingResolution — withdrawn claims", () => {
       claimantStableId: undefined,
       claimingPrice: 25000,
     });
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: [intent],
       horses: [mkClaimedHorse("h1", "s-old")],
@@ -165,7 +165,7 @@ describe("processClaimingResolution — withdrawn claims", () => {
   });
 });
 
-describe("processClaimingResolution — eligible claims (single claimant)", () => {
+describe("resolveClaimingResolution — eligible claims (single claimant)", () => {
   const eligibleRace = mkRace({
     entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
   });
@@ -178,7 +178,7 @@ describe("processClaimingResolution — eligible claims (single claimant)", () =
   const eligibleHorses = [mkClaimedHorse("h1", "stable-old")];
 
   it("single eligible claim produces 4 impacts: claiming + payment + proceeds + log", () => {
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race: eligibleRace,
       claimIntents: [eligibleIntent],
       horses: eligibleHorses,
@@ -193,7 +193,7 @@ describe("processClaimingResolution — eligible claims (single claimant)", () =
   });
 
   it("claiming impact has correct fields", () => {
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race: eligibleRace,
       claimIntents: [eligibleIntent],
       horses: eligibleHorses,
@@ -210,7 +210,7 @@ describe("processClaimingResolution — eligible claims (single claimant)", () =
   });
 
   it("cash_change payment is negative claimingPrice from buyer stable", () => {
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race: eligibleRace,
       claimIntents: [eligibleIntent],
       horses: eligibleHorses,
@@ -225,7 +225,7 @@ describe("processClaimingResolution — eligible claims (single claimant)", () =
   });
 
   it("cash_change proceeds is positive claimingPrice to old stable", () => {
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race: eligibleRace,
       claimIntents: [eligibleIntent],
       horses: eligibleHorses,
@@ -240,7 +240,7 @@ describe("processClaimingResolution — eligible claims (single claimant)", () =
   });
 });
 
-describe("processClaimingResolution — multiple claimants same horse", () => {
+describe("resolveClaimingResolution — multiple claimants same horse", () => {
   const multiRace = mkRace({
     entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
   });
@@ -261,7 +261,7 @@ describe("processClaimingResolution — multiple claimants same horse", () => {
         claimingPrice: 25000,
       }),
     ];
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race: multiRace,
       claimIntents: intents,
       horses: multiHorses,
@@ -287,7 +287,7 @@ describe("processClaimingResolution — multiple claimants same horse", () => {
         claimingPrice: 25000,
       }),
     ];
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race: multiRace,
       claimIntents: intents,
       horses: multiHorses,
@@ -316,14 +316,14 @@ describe("processClaimingResolution — multiple claimants same horse", () => {
         claimingPrice: 25000,
       }),
     ];
-    const r1 = processClaimingResolution({
+    const r1 = resolveClaimingResolution({
       race: multiRace,
       claimIntents: intents,
       horses: multiHorses,
       newDay: DAY,
       rng: createTestRng("det-1"),
     });
-    const r2 = processClaimingResolution({
+    const r2 = resolveClaimingResolution({
       race: multiRace,
       claimIntents: intents,
       horses: multiHorses,
@@ -348,7 +348,7 @@ describe("processClaimingResolution — multiple claimants same horse", () => {
         claimingPrice: 25000,
       }),
     ];
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race: multiRace,
       claimIntents: intents,
       horses: multiHorses,
@@ -381,7 +381,7 @@ describe("processClaimingResolution — multiple claimants same horse", () => {
         claimingPrice: 25000,
       }),
     ];
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race: multiRace,
       claimIntents: intents,
       horses: multiHorses,
@@ -410,7 +410,7 @@ describe("processClaimingResolution — multiple claimants same horse", () => {
         claimingPrice: 25000,
       }),
     ];
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race: multiRace,
       claimIntents: intents,
       horses: multiHorses,
@@ -449,7 +449,7 @@ describe("processClaimingResolution — multiple claimants same horse", () => {
         claimingPrice: 25000,
       }),
     ];
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race: multiRace,
       claimIntents: intents,
       horses: multiHorses,
@@ -477,7 +477,7 @@ describe("processClaimingResolution — multiple claimants same horse", () => {
         claimingPrice: 25000,
       }),
     ];
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race: multiRace,
       claimIntents: intents,
       horses: multiHorses,
@@ -509,7 +509,7 @@ describe("processClaimingResolution — multiple claimants same horse", () => {
         claimingPrice: 25000,
       }),
     ];
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race: multiRace,
       claimIntents: intents,
       horses: multiHorses,
@@ -537,7 +537,7 @@ describe("processClaimingResolution — multiple claimants same horse", () => {
         claimingPrice: 25000,
       }),
     ];
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race: multiRace,
       claimIntents: intents,
       horses: multiHorses,
@@ -551,8 +551,8 @@ describe("processClaimingResolution — multiple claimants same horse", () => {
   });
 });
 
-describe("processClaimingResolution — race not resolved / no claimingPrice", () => {
-  it("resolved: false → processClaims returns empty, all eligible claims become losing refunds", () => {
+describe("resolveClaimingResolution — race not resolved / no claimingPrice", () => {
+  it("resolved: false → resolveClaims returns empty, all eligible claims become losing refunds", () => {
     const race = mkRace({
       resolved: false,
       entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
@@ -563,7 +563,7 @@ describe("processClaimingResolution — race not resolved / no claimingPrice", (
       claimantStableId: "stable-buyer",
       claimingPrice: 25000,
     });
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: [intent],
       horses: [mkClaimedHorse("h1", "stable-old")],
@@ -589,7 +589,7 @@ describe("processClaimingResolution — race not resolved / no claimingPrice", (
       claimantStableId: "stable-buyer",
       claimingPrice: 25000,
     });
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: [intent],
       horses: [mkClaimedHorse("h1", "stable-old")],
@@ -601,7 +601,7 @@ describe("processClaimingResolution — race not resolved / no claimingPrice", (
   });
 });
 
-describe("processClaimingResolution — horse edge cases", () => {
+describe("resolveClaimingResolution — horse edge cases", () => {
   it("horse not in horses array → claim becomes losing refund", () => {
     const race = mkRace({
       entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
@@ -612,7 +612,7 @@ describe("processClaimingResolution — horse edge cases", () => {
       claimantStableId: "stable-buyer",
       claimingPrice: 25000,
     });
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: [intent],
       horses: [],
@@ -637,7 +637,7 @@ describe("processClaimingResolution — horse edge cases", () => {
       claimantStableId: "stable-buyer",
       claimingPrice: 25000,
     });
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: [intent],
       horses: [mkClaimedHorse("h1", undefined)],
@@ -653,7 +653,7 @@ describe("processClaimingResolution — horse edge cases", () => {
   });
 });
 
-describe("processClaimingResolution — mixed scenarios", () => {
+describe("resolveClaimingResolution — mixed scenarios", () => {
   it("1 withdrawn + 1 eligible (different horses) produces both refund and transfer impacts", () => {
     const race = mkRace({
       entries: [
@@ -679,7 +679,7 @@ describe("processClaimingResolution — mixed scenarios", () => {
         claimingPrice: 25000,
       }),
     ];
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: intents,
       horses: [mkClaimedHorse("h-w", "s-old-w"), mkClaimedHorse("h-e", "s-old-e")],
@@ -719,7 +719,7 @@ describe("processClaimingResolution — mixed scenarios", () => {
         claimingPrice: 25000,
       }),
     ];
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: intents,
       horses: [mkClaimedHorse("h-w", "s-old-w"), mkClaimedHorse("h-e", "s-old-e")],
@@ -736,7 +736,7 @@ describe("processClaimingResolution — mixed scenarios", () => {
   });
 });
 
-describe("processClaimingResolution — impact structure validation", () => {
+describe("resolveClaimingResolution — impact structure validation", () => {
   it("all impacts have correct day, phase, and valid UUID id", () => {
     const race = mkRace({
       entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
@@ -747,7 +747,7 @@ describe("processClaimingResolution — impact structure validation", () => {
       claimantStableId: "stable-buyer",
       claimingPrice: 25000,
     });
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: [intent],
       horses: [mkClaimedHorse("h1", "stable-old")],
@@ -786,7 +786,7 @@ describe("processClaimingResolution — impact structure validation", () => {
         claimingPrice: 25000,
       }),
     ];
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: intents,
       horses: [mkClaimedHorse("h-w", "s-old-w"), mkClaimedHorse("h-e", "s-old-e")],
@@ -798,7 +798,7 @@ describe("processClaimingResolution — impact structure validation", () => {
   });
 });
 
-describe("processClaimingResolution — multiple eligible claims for different horses", () => {
+describe("resolveClaimingResolution — multiple eligible claims for different horses", () => {
   it("2 horses × 1 claimant each: 2 claiming transfers, 2 payments, 2 proceeds, logs", () => {
     const race = mkRace({
       entries: [
@@ -820,7 +820,7 @@ describe("processClaimingResolution — multiple eligible claims for different h
         claimingPrice: 25000,
       }),
     ];
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: intents,
       horses: [mkClaimedHorse("h1", "s-old-1"), mkClaimedHorse("h2", "s-old-2")],
@@ -846,7 +846,7 @@ describe("processClaimingResolution — multiple eligible claims for different h
   });
 });
 
-describe("processClaimingResolution — claimingPrice: 0 edge case", () => {
+describe("resolveClaimingResolution — claimingPrice: 0 edge case", () => {
   it("claimingPrice: 0 behaves like undefined (falsy) — no transfers, eligible becomes losing refund", () => {
     const race = mkRace({
       claimingPrice: 0 as any,
@@ -858,7 +858,7 @@ describe("processClaimingResolution — claimingPrice: 0 edge case", () => {
       claimantStableId: "stable-buyer",
       claimingPrice: 25000,
     });
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: [intent],
       horses: [mkClaimedHorse("h1", "stable-old")],
@@ -874,7 +874,7 @@ describe("processClaimingResolution — claimingPrice: 0 edge case", () => {
   });
 });
 
-describe("processClaimingResolution — log impact content", () => {
+describe("resolveClaimingResolution — log impact content", () => {
   it("eligible claim log impacts have correct fields", () => {
     const race = mkRace({
       entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
@@ -885,7 +885,7 @@ describe("processClaimingResolution — log impact content", () => {
       claimantStableId: "stable-buyer",
       claimingPrice: 25000,
     });
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: [intent],
       horses: [mkClaimedHorse("h1", "stable-old")],
@@ -920,7 +920,7 @@ describe("processClaimingResolution — log impact content", () => {
       claimantStableId: "s-buyer",
       claimingPrice: 25000,
     });
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: [intent],
       horses: [mkClaimedHorse("h1", "s-old")],
@@ -935,7 +935,7 @@ describe("processClaimingResolution — log impact content", () => {
   });
 });
 
-describe("processClaimingResolution — impact reason fields", () => {
+describe("resolveClaimingResolution — impact reason fields", () => {
   it("claiming impact reason contains 'Claimed for' and formatted currency", () => {
     const race = mkRace({
       entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
@@ -946,7 +946,7 @@ describe("processClaimingResolution — impact reason fields", () => {
       claimantStableId: "stable-buyer",
       claimingPrice: 25000,
     });
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: [intent],
       horses: [mkClaimedHorse("h1", "stable-old")],
@@ -959,7 +959,7 @@ describe("processClaimingResolution — impact reason fields", () => {
   });
 });
 
-describe("processClaimingResolution — newDay vs race.day", () => {
+describe("resolveClaimingResolution — newDay vs race.day", () => {
   it("impacts use newDay parameter, not race.day", () => {
     const race = mkRace({
       day: 10,
@@ -972,7 +972,7 @@ describe("processClaimingResolution — newDay vs race.day", () => {
       claimingPrice: 25000,
     });
     const NEW_DAY = 999;
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: [intent],
       horses: [mkClaimedHorse("h1", "stable-old")],
@@ -985,7 +985,7 @@ describe("processClaimingResolution — newDay vs race.day", () => {
   });
 });
 
-describe("processClaimingResolution — 2 horses × 2 claimants each", () => {
+describe("resolveClaimingResolution — 2 horses × 2 claimants each", () => {
   it("4 intents across 2 horses: 2 transfers, 2 loser refunds, 2 payments, 2 proceeds", () => {
     const race = mkRace({
       entries: [
@@ -1019,7 +1019,7 @@ describe("processClaimingResolution — 2 horses × 2 claimants each", () => {
         claimingPrice: 25000,
       }),
     ];
-    const result = processClaimingResolution({
+    const result = resolveClaimingResolution({
       race,
       claimIntents: intents,
       horses: [mkClaimedHorse("h1", "s-old-1"), mkClaimedHorse("h2", "s-old-2")],

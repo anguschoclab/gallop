@@ -18,6 +18,7 @@ import type { AnyIntent } from "@/core/resolver/intents";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { ImpactLogEntry } from "@/core/resolver/resolver";
 import type { WorldAssessment, EconomicTrend } from "@/core/ai/strategicCoordinator";
+import type { PipelinePorts } from "@/core/time/pipelinePorts";
 
 export interface PipelineContext {
   previousDay: number;
@@ -41,6 +42,8 @@ export interface PipelineContext {
   economicTrend?: EconomicTrend;
   /** True when the player is watching the live interactive race viewer */
   isInteractiveRaceView?: boolean;
+  /** Injected port interfaces for testability and decoupling. When absent, phases use direct core imports. */
+  ports?: PipelinePorts;
 }
 
 export interface PipelinePhase {

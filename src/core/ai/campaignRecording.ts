@@ -1,9 +1,9 @@
 import type { Horse, Stable } from "@/game/types";
 import type { GradedRace } from "@/data/gradedRaces";
 import { recordPersonalityOutcome } from "./personalitySystem";
-import { GRADED_RACES_BY_KEY } from "@/data/gradedRaces";
 import type { CampaignAIState, CampaignDecision, ContenderStatus } from "./campaignAI";
 import { trimHistory } from "./learningModule";
+import { selectPrepRace } from "./campaignTargeting";
 
 export function recordCampaignDecision(
   aiState: CampaignAIState,
@@ -155,7 +155,7 @@ export function coordinateMultiHorsePrep(
 
   for (const { horseId, status } of sorted) {
     const available = upcomingRaces.filter((r) => !usedRaceKeys.has(r.key));
-    const prepRace = selectPrepRaceForCoordination(status, targetRaceKey, available, currentDay);
+    const prepRace = selectPrepRace(status, targetRaceKey, available, currentDay);
     if (prepRace) {
       usedRaceKeys.add(prepRace);
     }
@@ -163,57 +163,4 @@ export function coordinateMultiHorsePrep(
   }
 
   return assignments;
-}
-
-function selectPrepRaceForCoordination(
-  contender: ContenderStatus,
-  targetRaceKey: string,
-  upcomingRaces: GradedRace[],
-  currentDayOfYear: number,
-): string | null {
-  const targetRace = GRADED_RACES_BY_KEY.get(targetRaceKey);
-  if (!targetRace || upcomingRaces.length === 0) return null;
-
-  let bestRace: GradedRace | null = null;
-  let bestScore = -1;
-
-  for (const race of upcomingRaces) {
-    if (race.key === targetRaceKey) continue;
-
-    const dayDiff = race.dayOfYear - currentDayOfYear;
-    if (dayDiff < 7 || dayDiff > 42) continue;
-
-    let score = 50;
-
-    const distanceDiff = Math.abs(race.distance - targetRace.distance);
-    if (distanceDiff <= 100) {
-      score += 20;
-    } else if (distanceDiff <= 200) {
-      score += 10;
-    }
-
-    if (race.surface === targetRace.surface) {
-      score += 15;
-    }
-
-    const weeksToTarget = (targetRace.dayOfYear - race.dayOfYear) / 7;
-    if (weeksToTarget >= 2 && weeksToTarget <= 4) {
-      score += 15;
-    } else if (weeksToTarget >= 1 && weeksToTarget <= 6) {
-      score += 5;
-    }
-
-    if (race.grade === "G3") {
-      score += 10;
-    } else if (race.grade === "G2") {
-      score += 5;
-    }
-
-    if (score > bestScore) {
-      bestScore = score;
-      bestRace = race;
-    }
-  }
-
-  return bestRace?.key ?? null;
 }

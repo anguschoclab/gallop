@@ -17,7 +17,7 @@ import { createEconomicState, updateEconomicTrends } from "./economyAIState";
  * @param day - Current game day
  * @returns Updated manager with new globalEconomicState
  */
-export function processEconomicCycle(
+export function runEconomicCycle(
   manager: NpcAIManager,
   state: GameState,
   day: number,

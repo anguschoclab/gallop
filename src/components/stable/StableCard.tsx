@@ -5,8 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { GitCompare } from "lucide-react";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
-import { getReputationStars } from "@/core/stable/uiHelpers";
-import { stableTierColor } from "@/core/common/uiTokens";
 import { CashPressureBadge } from "./CashPressureBadge";
 import { RecommendedMaxOfferLine } from "./RecommendedMaxOfferLine";
 import { TOOLTIP_DELAY_MS } from "@/constants";
@@ -14,9 +12,14 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { CashPressureTrend } from "./CashPressureTrend";
 import { useCompareStables } from "@/hooks/stable/useCompareStables";
 import { useGame, useGameWithShallow } from "@/game/store";
-import { findPendingOfferForStable } from "@/core/stable/pendingOfferForStable";
-import { calculateLotValuation } from "@/core/auction/engine";
-import { evaluateHorseAttachment, attachmentAdjustedAsk } from "@/core/horse/attachment";
+import {
+  attachmentAdjustedAsk,
+  calculateLotValuation,
+  evaluateHorseAttachment,
+  findPendingOfferForStable,
+  getReputationStars,
+  stableTierColor,
+} from "@/services/stable/stableCardService";
 import type { Stable, PrivateSaleOffer, Horse } from "@/game/types";
 
 const BOOKMARK_TOP_OFFSET = "top-2";

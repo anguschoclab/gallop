@@ -1,0 +1,2325 @@
+{
+  "duplicates": [
+    {
+      "firstFile": {
+        "end": 219,
+        "endLoc": {
+          "column": 1,
+          "line": 219,
+          "position": 6067
+        },
+        "name": "ai/campaignRecording.ts",
+        "start": 168,
+        "startLoc": {
+          "column": 38,
+          "line": 168,
+          "position": 4815
+        }
+      },
+      "format": "typescript",
+      "fragment": "function selectPrepRaceForCoordination(\n  contender: ContenderStatus,\n  targetRaceKey: string,\n  upcomingRaces: GradedRace[],\n  currentDayOfYear: number,\n): string | null {\n  const targetRace = GRADED_RACES_BY_KEY.get(targetRaceKey);\n  if (!targetRace || upcomingRaces.length === 0) return null;\n\n  let bestRace: GradedRace | null = null;\n  let bestScore = -1;\n\n  for (const race of upcomingRaces) {\n    if (race.key === targetRaceKey) continue;\n\n    const dayDiff = race.dayOfYear - currentDayOfYear;\n    if (dayDiff < 7 || dayDiff > 42) continue;\n\n    let score = 50;\n\n    const distanceDiff = Math.abs(race.distance - targetRace.distance);\n    if (distanceDiff <= 100) {\n      score += 20;\n    } else if (distanceDiff <= 200) {\n      score += 10;\n    }\n\n    if (race.surface === targetRace.surface) {\n      score += 15;\n    }\n\n    const weeksToTarget = (targetRace.dayOfYear - race.dayOfYear) / 7;\n    if (weeksToTarget >= 2 && weeksToTarget <= 4) {\n      score += 15;\n    } else if (weeksToTarget >= 1 && weeksToTarget <= 6) {\n      score += 5;\n    }\n\n    if (race.grade === \"G3\") {\n      score += 10;\n    } else if (race.grade === \"G2\") {\n      score += 5;\n    }\n\n    if (score > bestScore) {\n      bestScore = score;\n      bestRace = race;\n    }\n  }\n\n  return bestRace?.key ?? null;\n}",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 52,
+      "secondFile": {
+        "end": 296,
+        "endLoc": {
+          "column": 1,
+          "line": 296,
+          "position": 9236
+        },
+        "name": "ai/campaignTargeting.ts",
+        "start": 245,
+        "startLoc": {
+          "column": 30,
+          "line": 245,
+          "position": 7984
+        }
+      },
+      "tokens": 267
+    },
+    {
+      "firstFile": {
+        "end": 143,
+        "endLoc": {
+          "column": 16,
+          "line": 143,
+          "position": 4622
+        },
+        "name": "ai/campaignTargeting.ts",
+        "start": 129,
+        "startLoc": {
+          "column": 41,
+          "line": 129,
+          "position": 4222
+        }
+      },
+      "format": "typescript",
+      "fragment": "    const daysSinceLastRace = currentDay - horse.lastRaceDay;\n    const beyerHistory = horse.raceHistory\n      .filter((r) => r.beyer !== undefined)\n      .map((r) => r.beyer!);\n    const avgBeyer =\n      beyerHistory.length > 0\n        ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length\n        : 80;\n\n    if (horse.lastBeyer > avgBeyer + 15 && daysSinceLastRace < 28) {\n      bounceRisk = true;\n    }\n  }\n\n  if (bounceRisk && stable.personality !== \"aggressive\" && stable.personality !== \"win-now\") {",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 15,
+      "secondFile": {
+        "end": 191,
+        "endLoc": {
+          "column": 16,
+          "line": 191,
+          "position": 6229
+        },
+        "name": "ai/jockeyStrategyAI.ts",
+        "start": 175,
+        "startLoc": {
+          "column": 39,
+          "line": 175,
+          "position": 5690
+        }
+      },
+      "tokens": 93
+    },
+    {
+      "firstFile": {
+        "end": 169,
+        "endLoc": {
+          "column": 28,
+          "line": 169,
+          "position": 5499
+        },
+        "name": "ai/campaignTargeting.ts",
+        "start": 158,
+        "startLoc": {
+          "column": 24,
+          "line": 158,
+          "position": 5179
+        }
+      },
+      "format": "typescript",
+      "fragment": "    \"campaign_targeting\",\n    contextKey,\n    baseThreshold,\n    aiState.personalityState.adaptationSpeed,\n  );\n\n  const config = aiState.personalityState;\n  let threshold = adaptiveThreshold;\n\n  if (config.personality === \"aggressive\") threshold -= 10;\n  if (config.personality === \"conservative\") threshold += 10;\n  if (config.personality === \"prestige\" && (race.triplecrownKey || race.bcKey === \"breeders-cup\")) {",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 12,
+      "secondFile": {
+        "end": 190,
+        "endLoc": {
+          "column": 28,
+          "line": 190,
+          "position": 6928
+        },
+        "name": "ai/facilityAI.ts",
+        "start": 178,
+        "startLoc": {
+          "column": 22,
+          "line": 178,
+          "position": 6564
+        }
+      },
+      "tokens": 55
+    },
+    {
+      "firstFile": {
+        "end": 161,
+        "endLoc": {
+          "column": 22,
+          "line": 161,
+          "position": 5467
+        },
+        "name": "ai/diplomacyAI.ts",
+        "start": 146,
+        "startLoc": {
+          "column": 77,
+          "line": 146,
+          "position": 5089
+        }
+      },
+      "format": "typescript",
+      "fragment": "    description: `${allianceType} formed between ${stableId1} and ${stableId2}`,\n  };\n\n  for (const [s1, s2] of [\n    [stableId1, stableId2],\n    [stableId2, stableId1],\n  ] as const) {\n    const state = updatedStates[s1];\n    if (!state?.npcRelationships?.[s2]) continue;\n    updatedStates[s1] = {\n      ...state,\n      npcRelationships: {\n        ...state.npcRelationships,\n        [s2]: {\n          ...state.npcRelationships[s2],\n          allianceType,",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 16,
+      "secondFile": {
+        "end": 210,
+        "endLoc": {
+          "column": 22,
+          "line": 210,
+          "position": 6758
+        },
+        "name": "ai/diplomacyAI.ts",
+        "start": 195,
+        "startLoc": {
+          "column": 43,
+          "line": 195,
+          "position": 6380
+        }
+      },
+      "tokens": 83
+    },
+    {
+      "firstFile": {
+        "end": 86,
+        "endLoc": {
+          "column": 1,
+          "line": 86,
+          "position": 3057
+        },
+        "name": "ai/financialDistressAI.ts",
+        "start": 70,
+        "startLoc": {
+          "column": 73,
+          "line": 70,
+          "position": 2622
+        }
+      },
+      "format": "typescript",
+      "fragment": "  if (daysOfCash === Infinity || daysOfCash >= DISTRESS_CAUTION_THRESHOLD) {\n    return { level: \"healthy\", daysOfCash, recommendedActions: [] };\n  }\n\n  let level: DistressLevel;\n  if (daysOfCash < DISTRESS_CRITICAL_THRESHOLD) {\n    level = \"critical\";\n  } else if (daysOfCash < DISTRESS_EMERGENCY_THRESHOLD) {\n    level = \"emergency\";\n  } else {\n    level = \"caution\";\n  }\n\n  const recommendedActions = getRecommendedActions(level, stable.personality);\n\n  return { level, daysOfCash, recommendedActions };\n}",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 17,
+      "secondFile": {
+        "end": 166,
+        "endLoc": {
+          "column": 1,
+          "line": 166,
+          "position": 5730
+        },
+        "name": "ai/financialDistressAI.ts",
+        "start": 150,
+        "startLoc": {
+          "column": 59,
+          "line": 150,
+          "position": 5295
+        }
+      },
+      "tokens": 76
+    },
+    {
+      "firstFile": {
+        "end": 124,
+        "endLoc": {
+          "column": 4,
+          "line": 124,
+          "position": 3742
+        },
+        "name": "ai/horseGenAI.ts",
+        "start": 113,
+        "startLoc": {
+          "column": 26,
+          "line": 113,
+          "position": 3472
+        }
+      },
+      "format": "typescript",
+      "fragment": "    targetQualityLevel: 65,\n    ageDistribution: (target) => ({\n      2: target * 0.25,\n      3: target * 0.25,\n      4: target * 0.25,\n      5: target * 0.15,\n      6: target * 0.1,\n    }),\n    agePriorityBonus: () => 0,\n    qualityPriorityBonus: () => 0,\n    generationThreshold: () => 30,\n  },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 12,
+      "secondFile": {
+        "end": 138,
+        "endLoc": {
+          "column": 4,
+          "line": 138,
+          "position": 4080
+        },
+        "name": "ai/horseGenAI.ts",
+        "start": 127,
+        "startLoc": {
+          "column": 26,
+          "line": 127,
+          "position": 3810
+        }
+      },
+      "tokens": 65
+    },
+    {
+      "firstFile": {
+        "end": 138,
+        "endLoc": {
+          "column": 4,
+          "line": 138,
+          "position": 4080
+        },
+        "name": "ai/horseGenAI.ts",
+        "start": 125,
+        "startLoc": {
+          "column": 11,
+          "line": 125,
+          "position": 3754
+        }
+      },
+      "format": "typescript",
+      "fragment": "  developer: {\n    targetHorseCount: 10,\n    targetQualityLevel: 60,\n    ageDistribution: (target) => ({\n      2: target * 0.25,\n      3: target * 0.25,\n      4: target * 0.25,\n      5: target * 0.15,\n      6: target * 0.1,\n    }),\n    agePriorityBonus: () => 0,\n    qualityPriorityBonus: () => 0,\n    generationThreshold: () => 30,\n  },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 14,
+      "secondFile": {
+        "end": 152,
+        "endLoc": {
+          "column": 4,
+          "line": 152,
+          "position": 4415
+        },
+        "name": "ai/horseGenAI.ts",
+        "start": 139,
+        "startLoc": {
+          "column": 8,
+          "line": 139,
+          "position": 4089
+        }
+      },
+      "tokens": 74
+    },
+    {
+      "firstFile": {
+        "end": 138,
+        "endLoc": {
+          "column": 4,
+          "line": 138,
+          "position": 4080
+        },
+        "name": "ai/horseGenAI.ts",
+        "start": 125,
+        "startLoc": {
+          "column": 11,
+          "line": 125,
+          "position": 3754
+        }
+      },
+      "format": "typescript",
+      "fragment": "  developer: {\n    targetHorseCount: 10,\n    targetQualityLevel: 60,\n    ageDistribution: (target) => ({\n      2: target * 0.25,\n      3: target * 0.25,\n      4: target * 0.25,\n      5: target * 0.15,\n      6: target * 0.1,\n    }),\n    agePriorityBonus: () => 0,\n    qualityPriorityBonus: () => 0,\n    generationThreshold: () => 30,\n  },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 14,
+      "secondFile": {
+        "end": 166,
+        "endLoc": {
+          "column": 4,
+          "line": 166,
+          "position": 4754
+        },
+        "name": "ai/horseGenAI.ts",
+        "start": 153,
+        "startLoc": {
+          "column": 12,
+          "line": 153,
+          "position": 4428
+        }
+      },
+      "tokens": 74
+    },
+    {
+      "firstFile": {
+        "end": 138,
+        "endLoc": {
+          "column": 4,
+          "line": 138,
+          "position": 4080
+        },
+        "name": "ai/horseGenAI.ts",
+        "start": 125,
+        "startLoc": {
+          "column": 11,
+          "line": 125,
+          "position": 3754
+        }
+      },
+      "format": "typescript",
+      "fragment": "  developer: {\n    targetHorseCount: 10,\n    targetQualityLevel: 60,\n    ageDistribution: (target) => ({\n      2: target * 0.25,\n      3: target * 0.25,\n      4: target * 0.25,\n      5: target * 0.15,\n      6: target * 0.1,\n    }),\n    agePriorityBonus: () => 0,\n    qualityPriorityBonus: () => 0,\n    generationThreshold: () => 30,\n  },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 14,
+      "secondFile": {
+        "end": 180,
+        "endLoc": {
+          "column": 4,
+          "line": 180,
+          "position": 5090
+        },
+        "name": "ai/horseGenAI.ts",
+        "start": 167,
+        "startLoc": {
+          "column": 9,
+          "line": 167,
+          "position": 4764
+        }
+      },
+      "tokens": 74
+    },
+    {
+      "firstFile": {
+        "end": 192,
+        "endLoc": {
+          "column": 8,
+          "line": 192,
+          "position": 6241
+        },
+        "name": "ai/jockeyStrategyAI.ts",
+        "start": 169,
+        "startLoc": {
+          "column": 5,
+          "line": 169,
+          "position": 5503
+        }
+      },
+      "format": "typescript",
+      "fragment": "    };\n  }\n\n  // Dynamic Form: Assess bounce risk and adjust tactics\n  let bounceRisk = false;\n  if (horse.lastBeyer && horse.lastRaceDay && race.day) {\n    const daysSinceLastRace = race.day - horse.lastRaceDay;\n    const beyerHistory = horse.raceHistory\n      .filter((r) => r.beyer !== undefined)\n      .map((r) => r.beyer!);\n    const avgBeyer =\n      beyerHistory.length > 0\n        ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length\n        : 80;\n\n    // Bounce condition: lastBeyer > avgBeyer + 15 and raced within 28 days\n    if (horse.lastBeyer > avgBeyer + 15 && daysSinceLastRace < 28) {\n      bounceRisk = true;\n    }\n  }\n\n  // If bounce risk is detected, use more conservative tactics\n  if (bounceRisk) {\n    if (horse.runningStyle === \"E\") {",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 24,
+      "secondFile": {
+        "end": 78,
+        "endLoc": {
+          "column": 8,
+          "line": 78,
+          "position": 2300
+        },
+        "name": "ai/jockeyStyleSelection.ts",
+        "start": 58,
+        "startLoc": {
+          "column": 34,
+          "line": 58,
+          "position": 1758
+        }
+      },
+      "tokens": 125
+    },
+    {
+      "firstFile": {
+        "end": 41,
+        "endLoc": {
+          "column": 20,
+          "line": 41,
+          "position": 1162
+        },
+        "name": "ai/narrativeBeatDetection.ts",
+        "start": 26,
+        "startLoc": {
+          "column": 31,
+          "line": 26,
+          "position": 757
+        }
+      },
+      "format": "typescript",
+      "fragment": "export function detectRaceBeats(\n  manager: NpcAIManager,\n  resolvedRaces: Race[],\n  horseMap: Map<string, Horse>,\n  day: number,\n): NpcAIManager {\n  let result = manager;\n\n  for (const race of resolvedRaces) {\n    if (!race.result || race.result.length === 0) continue;\n\n    const winner = race.result.find((r) => r.position === 1);\n    if (!winner) continue;\n\n    const winnerHorse = horseMap.get(winner.horseId);\n    if (!winnerHorse) continue;",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 16,
+      "secondFile": {
+        "end": 183,
+        "endLoc": {
+          "column": 20,
+          "line": 183,
+          "position": 6077
+        },
+        "name": "ai/narrativeBeatDetection.ts",
+        "start": 168,
+        "startLoc": {
+          "column": 35,
+          "line": 168,
+          "position": 5672
+        }
+      },
+      "tokens": 101
+    },
+    {
+      "firstFile": {
+        "end": 76,
+        "endLoc": {
+          "column": 16,
+          "line": 76,
+          "position": 2115
+        },
+        "name": "auction/auctionRunnerImpacts.ts",
+        "start": 61,
+        "startLoc": {
+          "column": 38,
+          "line": 61,
+          "position": 1742
+        }
+      },
+      "format": "typescript",
+      "fragment": "    if (!winnerStableId && !liveMode) {\n      const horse = horseMap.get(lot.horseId);\n      const horseName = horse?.name || \"Unknown Horse\";\n\n      impacts.push({\n        id: generateUUID(),\n        intentId: \"\",\n        day,\n        phase,\n        logLevel: \"always\",\n        type: \"inbox_message\",\n        message: {\n          day,\n          category: \"auction\",\n          priority: \"info\",\n          title: `Auction Won: ${horseName}`,",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 16,
+      "secondFile": {
+        "end": 129,
+        "endLoc": {
+          "column": 16,
+          "line": 129,
+          "position": 3502
+        },
+        "name": "auction/auctionRunnerImpacts.ts",
+        "start": 114,
+        "startLoc": {
+          "column": 11,
+          "line": 114,
+          "position": 3129
+        }
+      },
+      "tokens": 64
+    },
+    {
+      "firstFile": {
+        "end": 76,
+        "endLoc": {
+          "column": 16,
+          "line": 76,
+          "position": 2115
+        },
+        "name": "auction/auctionRunnerImpacts.ts",
+        "start": 61,
+        "startLoc": {
+          "column": 36,
+          "line": 61,
+          "position": 1740
+        }
+      },
+      "format": "typescript",
+      "fragment": "    if (!winnerStableId && !liveMode) {\n      const horse = horseMap.get(lot.horseId);\n      const horseName = horse?.name || \"Unknown Horse\";\n\n      impacts.push({\n        id: generateUUID(),\n        intentId: \"\",\n        day,\n        phase,\n        logLevel: \"always\",\n        type: \"inbox_message\",\n        message: {\n          day,\n          category: \"auction\",\n          priority: \"info\",\n          title: `Auction Won: ${horseName}`,",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 16,
+      "secondFile": {
+        "end": 187,
+        "endLoc": {
+          "column": 16,
+          "line": 187,
+          "position": 5013
+        },
+        "name": "auction/auctionRunnerImpacts.ts",
+        "start": 172,
+        "startLoc": {
+          "column": 30,
+          "line": 172,
+          "position": 4638
+        }
+      },
+      "tokens": 65
+    },
+    {
+      "firstFile": {
+        "end": 60,
+        "endLoc": {
+          "column": 23,
+          "line": 60,
+          "position": 2112
+        },
+        "name": "awards/connectionTrophies.ts",
+        "start": 50,
+        "startLoc": {
+          "column": 38,
+          "line": 50,
+          "position": 1818
+        }
+      },
+      "format": "typescript",
+      "fragment": "      if (entry?.jockeyId !== jockeyId) continue;\n      out.push({\n        raceId: r.raceId,\n        raceName: r.raceName,\n        raceDay: r.day,\n        grade: r.grade as \"G1\" | \"G2\" | \"G3\",\n        horseId: horse.id,\n        horseName: horse.name,\n        distance: r.distance,\n        surface: r.surface,\n        beyer: r.beyer,",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 11,
+      "secondFile": {
+        "end": 95,
+        "endLoc": {
+          "column": 23,
+          "line": 95,
+          "position": 3202
+        },
+        "name": "awards/connectionTrophies.ts",
+        "start": 85,
+        "startLoc": {
+          "column": 25,
+          "line": 85,
+          "position": 2908
+        }
+      },
+      "tokens": 68
+    },
+    {
+      "firstFile": {
+        "end": 395,
+        "endLoc": {
+          "column": 2,
+          "line": 395,
+          "position": 11951
+        },
+        "name": "awards/types.ts",
+        "start": 369,
+        "startLoc": {
+          "column": 48,
+          "line": 369,
+          "position": 10774
+        }
+      },
+      "format": "typescript",
+      "fragment": "  champion_steeplechase: \"Champion Steeplechase\",\n  // Europe\n  champion_2yo_colt: \"Best 2-year-old colt\",\n  champion_2yo_filly: \"Best 2-year-old filly\",\n  champion_3yo_colt: \"Best 3-year-old colt\",\n  champion_3yo_filly: \"Best 3-year-old filly\",\n  champion_older_horse: \"Best horse aged 4+ (combined gender)\",\n  champion_sprinter_eu: \"Best sprinter (up to 1300m)\",\n  champion_stayer: \"Best stayer (2400m+)\",\n  award_of_merit: \"Special recognition for exceptional achievement\",\n  // Asia-Pacific\n  champion_2yo: \"Best 2-year-old (combined gender)\",\n  champion_3yo: \"Best 3-year-old (combined gender)\",\n  champion_sprinter_apac: \"Best sprinter\",\n  champion_middle_distance: \"Best middle distance horse (1400-2000m)\",\n  champion_filly_or_mare: \"Best filly or mare (all ages combined)\",\n  champion_international: \"Best performer in races outside home country\",\n  champion_trainer: \"Outstanding trainer of the year\",\n  // South America\n  potrillo_del_ano: \"Best 2-year-old colt\",\n  potranca_del_ano: \"Best 2-year-old filly\",\n  campeon_3yo_macho: \"Best 3-year-old colt\",\n  campeona_3yo_hembras: \"Best 3-year-old filly\",\n  campeon_mayor: \"Best horse aged 4+\",\n  campeon_velocidad: \"Best sprinter\",\n  campeon_fondo: \"Best stayer\",\n};",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 27,
+      "secondFile": {
+        "end": 440,
+        "endLoc": {
+          "column": 2,
+          "line": 440,
+          "position": 14303
+        },
+        "name": "awards/types.ts",
+        "start": 415,
+        "startLoc": {
+          "column": 52,
+          "line": 415,
+          "position": 13145
+        }
+      },
+      "tokens": 91
+    },
+    {
+      "firstFile": {
+        "end": 46,
+        "endLoc": {
+          "column": 9,
+          "line": 46,
+          "position": 1911
+        },
+        "name": "breeding/damsireLeaderboard.ts",
+        "start": 36,
+        "startLoc": {
+          "column": 53,
+          "line": 36,
+          "position": 1669
+        }
+      },
+      "format": "typescript",
+      "fragment": "  const grandfoalsByDamsire = new Map<string, Horse[]>();\n\n  for (const h of horses) {\n    const damId = h.pedigree?.damId;\n    if (!damId) continue;\n    const dam = horseMap.get(damId);\n    if (!dam) continue;\n    const damsireId = dam.pedigree?.sireId;\n    if (!damsireId) continue;\n\n    if (!grandfoalsByDamsire.has(damsireId)) grandfoalsByDamsire.set(damsireId, []);",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 11,
+      "secondFile": {
+        "end": 60,
+        "endLoc": {
+          "column": 9,
+          "line": 60,
+          "position": 2385
+        },
+        "name": "breeding/damsireLeaderboard.ts",
+        "start": 51,
+        "startLoc": {
+          "column": 56,
+          "line": 51,
+          "position": 2144
+        }
+      },
+      "tokens": 64
+    },
+    {
+      "firstFile": {
+        "end": 74,
+        "endLoc": {
+          "column": 5,
+          "line": 74,
+          "position": 2639
+        },
+        "name": "breeding/progenyLeaderboards.ts",
+        "start": 61,
+        "startLoc": {
+          "column": 64,
+          "line": 61,
+          "position": 2288
+        }
+      },
+      "format": "typescript",
+      "fragment": "      value: Math.max(...h.raceHistory.map((r) => r.beyer || 0)),\n      metrics: (() => {\n        const stats = getCareerStats(h);\n        return {\n          age: h.age,\n          starts: stats.starts,\n          wins: stats.wins,\n          earnings: stats.earnings,\n          bestBeyer: Math.max(...h.raceHistory.map((r) => r.beyer || 0)),\n          gradeWins: stats.gradedWins,\n        };\n      })(),\n    }))\n    .filter((h) => h.value > 0)",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 14,
+      "secondFile": {
+        "end": 117,
+        "endLoc": {
+          "column": 5,
+          "line": 117,
+          "position": 3887
+        },
+        "name": "breeding/progenyLeaderboards.ts",
+        "start": 104,
+        "startLoc": {
+          "column": 31,
+          "line": 104,
+          "position": 3536
+        }
+      },
+      "tokens": 84
+    },
+    {
+      "firstFile": {
+        "end": 80,
+        "endLoc": {
+          "column": 9,
+          "line": 80,
+          "position": 2809
+        },
+        "name": "breeding/progenyLeaderboards.ts",
+        "start": 61,
+        "startLoc": {
+          "column": 64,
+          "line": 61,
+          "position": 2288
+        }
+      },
+      "format": "typescript",
+      "fragment": "      value: Math.max(...h.raceHistory.map((r) => r.beyer || 0)),\n      metrics: (() => {\n        const stats = getCareerStats(h);\n        return {\n          age: h.age,\n          starts: stats.starts,\n          wins: stats.wins,\n          earnings: stats.earnings,\n          bestBeyer: Math.max(...h.raceHistory.map((r) => r.beyer || 0)),\n          gradeWins: stats.gradedWins,\n        };\n      })(),\n    }))\n    .filter((h) => h.value > 0)\n    .sort((a, b) => b.value - a.value)\n    .slice(0, 50)\n    .map((h, i) => ({ ...h, rank: i + 1 })) as ProgenyRanking[];\n\n  return {\n    type: \"beyer\",",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 20,
+      "secondFile": {
+        "end": 165,
+        "endLoc": {
+          "column": 9,
+          "line": 165,
+          "position": 5296
+        },
+        "name": "breeding/progenyLeaderboards.ts",
+        "start": 146,
+        "startLoc": {
+          "column": 41,
+          "line": 146,
+          "position": 4775
+        }
+      },
+      "tokens": 151
+    },
+    {
+      "firstFile": {
+        "end": 58,
+        "endLoc": {
+          "column": 5,
+          "line": 58,
+          "position": 2049
+        },
+        "name": "history/lineageCrawler.ts",
+        "start": 47,
+        "startLoc": {
+          "column": 29,
+          "line": 47,
+          "position": 1643
+        }
+      },
+      "format": "typescript",
+      "fragment": "    for (const h of allHorses) {\n      if (h.pedigree?.sireId) {\n        const children = parentToChildren.get(h.pedigree.sireId) || [];\n        children.push(h.id);\n        parentToChildren.set(h.pedigree.sireId, children);\n      }\n      if (h.pedigree?.damId) {\n        const children = parentToChildren.get(h.pedigree.damId) || [];\n        children.push(h.id);\n        parentToChildren.set(h.pedigree.damId, children);\n      }\n    }",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 12,
+      "secondFile": {
+        "end": 78,
+        "endLoc": {
+          "column": 7,
+          "line": 78,
+          "position": 3310
+        },
+        "name": "time/phases/leaderboardPhase.ts",
+        "start": 67,
+        "startLoc": {
+          "column": 33,
+          "line": 67,
+          "position": 2882
+        }
+      },
+      "tokens": 101
+    },
+    {
+      "firstFile": {
+        "end": 138,
+        "endLoc": {
+          "column": 6,
+          "line": 138,
+          "position": 3818
+        },
+        "name": "horse/types.ts",
+        "start": 128,
+        "startLoc": {
+          "column": 20,
+          "line": 128,
+          "position": 3448
+        }
+      },
+      "format": "typescript",
+      "fragment": "  raceClass?: string;\n  gate?: number;\n  lane?: number;\n  winAndYouInQualified?: { year: number; raceId: string; raceKey: string };\n  pacePositions?: number[]; // Position at each quarter (1-indexed)\n  courseVisitCount?: number; // Visit count at time of race\n  jockeyId?: JockeyId; // Jockey that rode the horse in this race\n  stableId?: StableId; // Owner stable at time of race\n}\n\nexport type Horse = {",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 11,
+      "secondFile": {
+        "end": 77,
+        "endLoc": {
+          "column": 4,
+          "line": 77,
+          "position": 2537
+        },
+        "name": "resolver/impacts/raceImpacts.ts",
+        "start": 69,
+        "startLoc": {
+          "column": 25,
+          "line": 69,
+          "position": 2233
+        }
+      },
+      "tokens": 51
+    },
+    {
+      "firstFile": {
+        "end": 165,
+        "endLoc": {
+          "column": 1,
+          "line": 165,
+          "position": 8146
+        },
+        "name": "narrative/careerArcGenerator.ts",
+        "start": 151,
+        "startLoc": {
+          "column": 166,
+          "line": 151,
+          "position": 7881
+        }
+      },
+      "format": "typescript",
+      "fragment": "    `The hype train for ${horse.name} has officially left the station. This rising star continues to clear every hurdle placed in front of them with impressive ease.`,\n  );\n\n  return createNewsItem(\n    {\n      day,\n      category: \"flavor\",\n      importance: \"medium\",\n      headline: rng.pick(headlines),\n      body: rng.pick(bodies),\n      entityLinks: [{ type: \"horse\", id: horse.id, name: horse.name }],\n    },\n    rng,\n  );\n}",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 15,
+      "secondFile": {
+        "end": 373,
+        "endLoc": {
+          "column": 1,
+          "line": 373,
+          "position": 24006
+        },
+        "name": "narrative/careerArcGenerator.ts",
+        "start": 359,
+        "startLoc": {
+          "column": 150,
+          "line": 359,
+          "position": 23741
+        }
+      },
+      "tokens": 64
+    },
+    {
+      "firstFile": {
+        "end": 238,
+        "endLoc": {
+          "column": 8,
+          "line": 238,
+          "position": 13398
+        },
+        "name": "narrative/careerArcGenerator.ts",
+        "start": 219,
+        "startLoc": {
+          "column": 176,
+          "line": 219,
+          "position": 13052
+        }
+      },
+      "format": "typescript",
+      "fragment": "    `The transition from rising star to proven contender is officially complete. ${horse.name}'s victory in the ${raceName} (${grade}) is a testament to their growing ability.`,\n  );\n\n  return createNewsItem(\n    {\n      day,\n      category: \"racing\",\n      importance: \"high\",\n      headline: rng.pick(headlines),\n      body: rng.pick(bodies),\n      entityLinks: [\n        { type: \"horse\", id: horse.id, name: horse.name },\n        { type: \"race\", id: race.id, name: race.name },\n      ],\n    },\n    rng,\n  );\n}\n\nfunction generateChampionNews(horse: Horse, race: Race, day: number, rng: Rng): NewsItem {",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 20,
+      "secondFile": {
+        "end": 309,
+        "endLoc": {
+          "column": 8,
+          "line": 309,
+          "position": 18818
+        },
+        "name": "narrative/careerArcGenerator.ts",
+        "start": 290,
+        "startLoc": {
+          "column": 150,
+          "line": 290,
+          "position": 18472
+        }
+      },
+      "tokens": 84
+    },
+    {
+      "firstFile": {
+        "end": 236,
+        "endLoc": {
+          "column": 1,
+          "line": 236,
+          "position": 13388
+        },
+        "name": "narrative/careerArcGenerator.ts",
+        "start": 226,
+        "startLoc": {
+          "column": 24,
+          "line": 226,
+          "position": 13152
+        }
+      },
+      "format": "typescript",
+      "fragment": "      importance: \"high\",\n      headline: rng.pick(headlines),\n      body: rng.pick(bodies),\n      entityLinks: [\n        { type: \"horse\", id: horse.id, name: horse.name },\n        { type: \"race\", id: race.id, name: race.name },\n      ],\n    },\n    rng,\n  );\n}",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 11,
+      "secondFile": {
+        "end": 175,
+        "endLoc": {
+          "column": 1,
+          "line": 175,
+          "position": 11637
+        },
+        "name": "narrative/newsSpotlight.ts",
+        "start": 165,
+        "startLoc": {
+          "column": 26,
+          "line": 165,
+          "position": 11401
+        }
+      },
+      "tokens": 67
+    },
+    {
+      "firstFile": {
+        "end": 228,
+        "endLoc": {
+          "column": 15,
+          "line": 228,
+          "position": 11453
+        },
+        "name": "narrative/newsGenerator.ts",
+        "start": 207,
+        "startLoc": {
+          "column": 16,
+          "line": 207,
+          "position": 10873
+        }
+      },
+      "format": "typescript",
+      "fragment": "      importance,\n      headline,\n      body,\n      entityLinks: [\n        { type: \"horse\", id: winner.id, name: winner.name },\n        { type: \"race\", id: race.id, name: race.name },\n      ],\n    },\n    rng,\n  );\n}\n\n/**\n * Generates a news item for a high-value horse transaction in the market.\n *\n * @param {Horse} horse - The horse that was sold.\n * @param {number} price - The final sale price.\n * @param {number} day - The current simulation day.\n * @param {Rng} rng - Seeded random number generator.\n * @returns {NewsItem} A news item summarizing the market transaction.\n */\nexport function generateMarketNews(horse: Horse, price: number, day: number, rng: Rng): NewsItem {",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 22,
+      "secondFile": {
+        "end": 111,
+        "endLoc": {
+          "column": 15,
+          "line": 111,
+          "position": 6956
+        },
+        "name": "narrative/newsSpotlight.ts",
+        "start": 88,
+        "startLoc": {
+          "column": 24,
+          "line": 88,
+          "position": 6302
+        }
+      },
+      "tokens": 55
+    },
+    {
+      "firstFile": {
+        "end": 52,
+        "endLoc": {
+          "column": 15,
+          "line": 52,
+          "position": 1398
+        },
+        "name": "narrative/rivalryGrudgeMatch.ts",
+        "start": 10,
+        "startLoc": {
+          "column": 69,
+          "line": 10,
+          "position": 348
+        }
+      },
+      "format": "typescript",
+      "fragment": "import type { CareerArcState } from \"@/core/narrative/careerArcTypes\";\n\n/**\n * Build a rivalry news item from headline/body arrays with deterministic RNG selection.\n * @param headlines\n * @param bodies\n * @param fields\n * @param fields.day\n * @param fields.category\n * @param fields.importance\n * @param fields.entityLinks\n * @param rng\n * @returns A constructed NewsItem with deterministic headline/body selection.\n */\nfunction buildRivalryNews(\n  headlines: string[],\n  bodies: string[],\n  fields: {\n    day: number;\n    category: NewsCategory;\n    importance: NewsImportance;\n    entityLinks: EntityLink[];\n  },\n  rng: Rng,\n): NewsItem {\n  return createNewsItem({ ...fields, headline: rng.pick(headlines), body: rng.pick(bodies) }, rng);\n}\n\n/**\n * Generate news for a grudge match result between the player and a rival.\n * @param race\n * @param playerHorse\n * @param rivalHorse\n * @param playerWon\n * @param currentDay\n * @param rng\n * @param rivalStable\n * @param arcContext\n * @param arcContext.horseName\n * @param arcContext.arcStage\n * @returns A NewsItem describing the grudge match outcome.\n */\nexport function generateGrudgeMatchNews(",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 43,
+      "secondFile": {
+        "end": 59,
+        "endLoc": {
+          "column": 15,
+          "line": 59,
+          "position": 2090
+        },
+        "name": "narrative/rivalryNewsGenerator.ts",
+        "start": 21,
+        "startLoc": {
+          "column": 62,
+          "line": 21,
+          "position": 822
+        }
+      },
+      "tokens": 79
+    },
+    {
+      "firstFile": {
+        "end": 247,
+        "endLoc": {
+          "column": 46,
+          "line": 247,
+          "position": 14848
+        },
+        "name": "narrative/rivalryGrudgeMatch.ts",
+        "start": 200,
+        "startLoc": {
+          "column": 6,
+          "line": 200,
+          "position": 13289
+        }
+      },
+      "format": "typescript",
+      "fragment": "      ],\n    },\n    rng,\n  );\n}\n\n/**\n * Generate a stable intro news item for retroactive introductions.\n * @param stable\n * @param day\n * @param rng\n * @returns A NewsItem introducing the stable.\n */\nexport function generateStableIntroNews(stable: Stable, day: number, rng: Rng): NewsItem {\n  const country = stable.country ?? \"parts unknown\";\n  const description = stable.description ?? \"a stable with a reputation that precedes it\";\n  const tier = stable.tier ?? \"mid\";\n\n  const headlines = [\n    `Who Is ${stable.name}?`,\n    `Stable Profile: ${stable.name}`,\n    `Getting to Know ${stable.name}`,\n    `Inside ${stable.name}`,\n    `Meet the Competition: ${stable.name}`,\n    `Stable Spotlight: ${stable.name}`,\n    `${stable.name}: A Closer Look`,\n    `Introducing ${stable.name}`,\n    `The ${country} Connection: ${stable.name}`,\n    `Focus On: ${stable.name}`,\n    `Unmasking ${stable.name}`,\n    `The Rise of ${stable.name}`,\n    `${stable.name} Steps Into the Light`,\n    `Profiling the ${tier} Tier Contender: ${stable.name}`,\n  ];\n\n  headlines.push(\n    `An Introduction to ${stable.name}`,\n    `Behind the Gates at ${stable.name}`,\n    `Scouting Report: ${stable.name}`,\n    `The Story Behind ${stable.name}`,\n    `${stable.name} Breaks Cover`,\n    `What You Need to Know About ${stable.name}`,\n    `Meeting the ${tier} Tier Challenge: ${stable.name}`,\n    `The Ascendance of ${stable.name}`,\n    `Under the Microscope: ${stable.name}`,\n    `Who is Behind ${stable.name}?`,\n    `A Primer on ${stable.name}`,\n    `Tracking the Progress of ${stable.name}`,",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 48,
+      "secondFile": {
+        "end": 377,
+        "endLoc": {
+          "column": 46,
+          "line": 377,
+          "position": 22260
+        },
+        "name": "narrative/rivalryNewsGenerator.ts",
+        "start": 328,
+        "startLoc": {
+          "column": 72,
+          "line": 328,
+          "position": 20538
+        }
+      },
+      "tokens": 227
+    },
+    {
+      "firstFile": {
+        "end": 279,
+        "endLoc": {
+          "column": 185,
+          "line": 279,
+          "position": 19370
+        },
+        "name": "narrative/rivalryGrudgeMatch.ts",
+        "start": 247,
+        "startLoc": {
+          "column": 32,
+          "line": 247,
+          "position": 14834
+        }
+      },
+      "format": "typescript",
+      "fragment": "    `Tracking the Progress of ${stable.name}`,\n  );\n\n  const bodies = [\n    `The foundation laid by ${stable.owner} in ${country} is bearing fruit. ${stable.name} has proven they belong in the ${tier} tier conversation. ${description}`,\n    `It takes a lot to stand out in the ${tier} tier, but ${stable.name} is doing just that. Hailing from ${country}, ${stable.owner}'s strategy is paying off. ${description}`,\n    `More and more insiders are talking about ${stable.name}. From their base in ${country}, ${stable.owner} is putting together a very interesting ${tier} tier campaign. ${description}`,\n    `The ambitions of ${stable.name} are clear. The ${country}-based yard, steered by ${stable.owner}, is not here to make up numbers in the ${tier} tier. ${description}`,\n    `You can't ignore the momentum behind ${stable.name}. The ${country} operation, built by ${stable.owner}, is a ${tier} tier force on the rise. ${description}`,\n    `What ${stable.owner} has accomplished with ${stable.name} in ${country} is noteworthy. They're a ${tier} tier stable that commands attention. ${description}`,\n    `Based in ${country}, ${stable.name} is operated by ${stable.owner}. ${description} As a ${tier} tier operation, they're a name worth remembering.`,\n    `${stable.name}, led by ${stable.owner}, hails from ${country}. ${description} Their ${tier} tier status marks them as a serious player in the racing world.`,\n    `From ${country} comes ${stable.name}, the brainchild of ${stable.owner}. ${description} This ${tier} tier stable is one to watch.`,\n    `${stable.owner}'s ${stable.name} is a name that commands respect in ${country}. ${description} As a ${tier} tier operation, they mean business.`,\n    `Operating out of ${country}, ${stable.name} under ${stable.owner} has built a growing reputation. ${description} Their ${tier} tier standing speaks for itself.`,\n    `${stable.name} — ${stable.owner}'s pride and joy from ${country}. ${description} A ${tier} tier stable with ambitions to match.`,\n    `The story of ${stable.name} is one of ambition and grit. Founded by ${stable.owner} in ${country}, ${description} Their ${tier} tier status cements their place among the racing elite.`,\n    `In the competitive world of ${country} racing, ${stable.name} stands tall. ${stable.owner}'s operation is defined by ${description} A ${tier} tier stable through and through.`,\n    `Racing fans in ${country} are well acquainted with ${stable.name}. Guided by ${stable.owner}, ${description} This ${tier} tier yard is stepping up its campaign.`,\n    `A deeper dive into ${stable.name} reveals a meticulously run organization. ${stable.owner} has established a strong presence in ${country}. ${description} They compete at the ${tier} tier level.`,\n    `The paddock chatter often turns to ${stable.name}. Originating from ${country} and managed by ${stable.owner}, ${description} They are proving to be a formidable ${tier} tier outfit.`,\n    `Expectations are high for ${stable.name}. The ${country} based operation, overseen by ${stable.owner}, is gaining traction. ${description} As a ${tier} tier stable, they are not to be underestimated.`,\n    `Stepping into the spotlight is ${stable.name}. ${stable.owner} has assembled an impressive string of runners in ${country}. ${description} Their ${tier} tier classification is well-earned.`,\n    `The ${tier} tier ranks are heating up with the emergence of ${stable.name}. Representing ${country} under ${stable.owner}'s guidance, ${description} They are making their intentions clear.`,\n  ];\n\n  bodies.push(\n    `With a strong base in ${country}, ${stable.name} continues to impress. Owner ${stable.owner} has ensured this ${tier} tier outfit is highly respected. ${description}`,\n    `Racing fans are keeping a close eye on ${stable.name}. Established in ${country} by ${stable.owner}, they have solidified their ${tier} tier status. ${description}`,\n    `If you have not heard of ${stable.name} yet, you will soon. ${stable.owner} has built a ${tier} tier contender out of ${country}. ${description}`,\n    `The buzz around ${country} continues to center on ${stable.name}. Guided by ${stable.owner}, this ${tier} tier operation is making waves. ${description}`,\n    `${stable.name} represents the best of ${country} racing culture. With ${stable.owner} at the helm, this ${tier} tier stable is turning heads. ${description}`,\n    `A closer look at ${stable.name} reveals a meticulously run ${tier} tier stable. Operating out of ${country}, ${stable.owner} has crafted an organization defined by ${description}`,",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 33,
+      "secondFile": {
+        "end": 414,
+        "endLoc": {
+          "column": 185,
+          "line": 414,
+          "position": 27053
+        },
+        "name": "narrative/rivalryNewsGenerator.ts",
+        "start": 382,
+        "startLoc": {
+          "column": 44,
+          "line": 382,
+          "position": 22517
+        }
+      },
+      "tokens": 433
+    },
+    {
+      "firstFile": {
+        "end": 293,
+        "endLoc": {
+          "column": 1,
+          "line": 293,
+          "position": 19596
+        },
+        "name": "narrative/rivalryGrudgeMatch.ts",
+        "start": 279,
+        "startLoc": {
+          "column": 171,
+          "line": 279,
+          "position": 19356
+        }
+      },
+      "format": "typescript",
+      "fragment": "    `A closer look at ${stable.name} reveals a meticulously run ${tier} tier stable. Operating out of ${country}, ${stable.owner} has crafted an organization defined by ${description}`,\n  );\n\n  return buildRivalryNews(\n    headlines,\n    bodies,\n    {\n      day,\n      category: \"stable\",\n      importance: \"low\",\n      entityLinks: [{ type: \"stable\", id: stable.id, name: stable.name }],\n    },\n    rng,\n  );\n}",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 15,
+      "secondFile": {
+        "end": 433,
+        "endLoc": {
+          "column": 1,
+          "line": 433,
+          "position": 28176
+        },
+        "name": "narrative/rivalryNewsGenerator.ts",
+        "start": 419,
+        "startLoc": {
+          "column": 164,
+          "line": 419,
+          "position": 27936
+        }
+      },
+      "tokens": 52
+    },
+    {
+      "firstFile": {
+        "end": 53,
+        "endLoc": {
+          "column": 1,
+          "line": 53,
+          "position": 2086
+        },
+        "name": "npc/npcRegionalDominance.ts",
+        "start": 34,
+        "startLoc": {
+          "column": 40,
+          "line": 34,
+          "position": 1462
+        }
+      },
+      "format": "typescript",
+      "fragment": "export function applyAllyFrictionCascade(\n  aiManager: NpcAIManager,\n  sourceStableId: string,\n  frictionGain: number,\n  _region: string,\n): void {\n  const sourceState = aiManager.stableStates[sourceStableId];\n  if (!sourceState?.npcRelationships) return;\n\n  const allyFrictionGain = Math.floor(frictionGain * 0.4);\n\n  for (const [otherStableId, rel] of Object.entries(sourceState.npcRelationships)) {\n    if (rel.allianceType && rel.allianceType !== \"non_aggression_pact\") {\n      const allyState = aiManager.stableStates[otherStableId];\n      if (allyState) {\n        allyState.friction = Math.min(100, allyState.friction + allyFrictionGain);\n      }\n    }\n  }\n}",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 20,
+      "secondFile": {
+        "end": 193,
+        "endLoc": {
+          "column": 1,
+          "line": 193,
+          "position": 6162
+        },
+        "name": "npc/regionalDominanceHelpers.ts",
+        "start": 175,
+        "startLoc": {
+          "column": 41,
+          "line": 175,
+          "position": 5539
+        }
+      },
+      "tokens": 120
+    },
+    {
+      "firstFile": {
+        "end": 337,
+        "endLoc": {
+          "column": 14,
+          "line": 337,
+          "position": 12694
+        },
+        "name": "race/engine/simulation.ts",
+        "start": 325,
+        "startLoc": {
+          "column": 4,
+          "line": 325,
+          "position": 12308
+        }
+      },
+      "format": "typescript",
+      "fragment": "    const sortedField = [...runners].sort((a, b) => b.position - a.position);\n\n    // Compute rank-from-front once per tick to avoid O(n²) filter+findIndex\n    const rankMap = new Map<string, number>();\n    let aliveRank = 0;\n    for (const o of sortedField) {\n      if (o.finishTime === null) {\n        rankMap.set(o.horseId, aliveRank);\n        aliveRank++;\n      }\n    }\n\n    for (const r of runners) {",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 13,
+      "secondFile": {
+        "end": 325,
+        "endLoc": {
+          "column": 12,
+          "line": 325,
+          "position": 11675
+        },
+        "name": "race/raceSimulationService.ts",
+        "start": 313,
+        "startLoc": {
+          "column": 2,
+          "line": 313,
+          "position": 11315
+        }
+      },
+      "tokens": 79
+    },
+    {
+      "firstFile": {
+        "end": 85,
+        "endLoc": {
+          "column": 13,
+          "line": 85,
+          "position": 2487
+        },
+        "name": "race/generation/asia.ts",
+        "start": 68,
+        "startLoc": {
+          "column": 19,
+          "line": 68,
+          "position": 2197
+        }
+      },
+      "format": "typescript",
+      "fragment": "  const distance = rand(cfg.dist[0] / 100, cfg.dist[1] / 100, rng) * 100;\n\n  const name = generateRaceName({\n    track,\n    raceClass,\n    usedNames,\n    surface: selectedSurface,\n    distance,\n    rng,\n  });\n\n  return {\n    id: generateUUID(rng),\n    name,\n    day,\n    distance,\n    raceClass,\n    entryFee: Math.round(cfg.entry * ASIA_ENTRY_FEE_MULTIPLIER),",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 18,
+      "secondFile": {
+        "end": 89,
+        "endLoc": {
+          "column": 13,
+          "line": 89,
+          "position": 2727
+        },
+        "name": "race/generation/australia.ts",
+        "start": 72,
+        "startLoc": {
+          "column": 6,
+          "line": 72,
+          "position": 2437
+        }
+      },
+      "tokens": 67
+    },
+    {
+      "firstFile": {
+        "end": 86,
+        "endLoc": {
+          "column": 15,
+          "line": 86,
+          "position": 2554
+        },
+        "name": "race/generation/asia.ts",
+        "start": 68,
+        "startLoc": {
+          "column": 36,
+          "line": 68,
+          "position": 2214
+        }
+      },
+      "format": "typescript",
+      "fragment": "  const distance = rand(cfg.dist[0] / 100, cfg.dist[1] / 100, rng) * 100;\n\n  const name = generateRaceName({\n    track,\n    raceClass,\n    usedNames,\n    surface: selectedSurface,\n    distance,\n    rng,\n  });\n\n  return {\n    id: generateUUID(rng),\n    name,\n    day,\n    distance,\n    raceClass,\n    entryFee: Math.round(cfg.entry * ASIA_ENTRY_FEE_MULTIPLIER),\n    purse: Math.round(cfg.purse * ASIA_PURSE_MULTIPLIER), // Asian racing (Japan/HK/UAE) has much higher purses",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 19,
+      "secondFile": {
+        "end": 87,
+        "endLoc": {
+          "column": 33,
+          "line": 87,
+          "position": 2532
+        },
+        "name": "race/generation/europe.ts",
+        "start": 69,
+        "startLoc": {
+          "column": 52,
+          "line": 69,
+          "position": 2214
+        }
+      },
+      "tokens": 73
+    },
+    {
+      "firstFile": {
+        "end": 107,
+        "endLoc": {
+          "column": 15,
+          "line": 107,
+          "position": 3406
+        },
+        "name": "race/generation/asia.ts",
+        "start": 88,
+        "startLoc": {
+          "column": 60,
+          "line": 88,
+          "position": 2861
+        }
+      },
+      "format": "typescript",
+      "fragment": "    fieldSize: rand(ASIA_FIELD_SIZE_MIN, ASIA_FIELD_SIZE_MAX, rng),\n    entries: [],\n    resolved: false,\n    weather: randomWeather(rng),\n    trackCondition: randomTrackConditionWithClimateBias(rng, \"temperate\", \"turf\"),\n    trackId: track.id,\n    surface: selectedSurface,\n    isHandicap: raceClass === \"Handicap\",\n  };\n}\n\n/**\n * Generate a full Asian race card (multiple races)\n * @param track - Track to generate races for\n * @param day - Current game day\n * @param numRaces - Number of races to generate\n * @param rng - Random number generator\n * @returns Array of generated races\n */\nexport function generateAsianRaceCard(",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 20,
+      "secondFile": {
+        "end": 111,
+        "endLoc": {
+          "column": 15,
+          "line": 111,
+          "position": 3477
+        },
+        "name": "race/generation/australia.ts",
+        "start": 92,
+        "startLoc": {
+          "column": 70,
+          "line": 92,
+          "position": 2898
+        }
+      },
+      "tokens": 52
+    },
+    {
+      "firstFile": {
+        "end": 123,
+        "endLoc": {
+          "column": 28,
+          "line": 123,
+          "position": 5018
+        },
+        "name": "race/generation/northAmerica.ts",
+        "start": 111,
+        "startLoc": {
+          "column": 53,
+          "line": 111,
+          "position": 4528
+        }
+      },
+      "format": "typescript",
+      "fragment": "  const trackQuality = getTrackQuality(track.country);\n\n  // Select surface if not specified\n  const trackSurfaces = track.courses.map((c) => c.surface) as (\"Turf\" | \"Dirt\" | \"Synthetic\")[];\n  const selectedSurface = surface || rng.pick(trackSurfaces.length > 0 ? trackSurfaces : [\"Dirt\"]);\n\n  // Calculate distance\n  const distance = rand(cfg.dist[0] / 100, cfg.dist[1] / 100, rng) * 100;\n\n  // Determine claiming price for claiming races (needed for naming)\n  let claimingPrice: ClaimingPrice | undefined;\n  if (\n    raceClass === \"Claiming\" ||",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 13,
+      "secondFile": {
+        "end": 71,
+        "endLoc": {
+          "column": 30,
+          "line": 71,
+          "position": 2396
+        },
+        "name": "race/generation/southAmerica.ts",
+        "start": 63,
+        "startLoc": {
+          "column": 37,
+          "line": 63,
+          "position": 2041
+        }
+      },
+      "tokens": 91
+    },
+    {
+      "firstFile": {
+        "end": 164,
+        "endLoc": {
+          "column": 20,
+          "line": 164,
+          "position": 6139
+        },
+        "name": "race/generation/northAmerica.ts",
+        "start": 147,
+        "startLoc": {
+          "column": 16,
+          "line": 147,
+          "position": 5848
+        }
+      },
+      "format": "typescript",
+      "fragment": "    winCondition,\n    usedNames,\n    surface: selectedSurface,\n    distance,\n    rng,\n  });\n\n  // Build race object\n  const race: Race = {\n    id: generateUUID(rng),\n    name,\n    day,\n    distance,\n    raceClass,\n    entryFee: cfg.entry,\n    purse: cfg.purse,\n    minStat: cfg.minStat,\n    fieldSize: rand(NA_FIELD_SIZE_MIN, NA_FIELD_SIZE_MAX, rng),",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 18,
+      "secondFile": {
+        "end": 94,
+        "endLoc": {
+          "column": 20,
+          "line": 94,
+          "position": 2800
+        },
+        "name": "race/generation/southAmerica.ts",
+        "start": 78,
+        "startLoc": {
+          "column": 17,
+          "line": 78,
+          "position": 2532
+        }
+      },
+      "tokens": 57
+    },
+    {
+      "firstFile": {
+        "end": 107,
+        "endLoc": {
+          "column": 4,
+          "line": 107,
+          "position": 4062
+        },
+        "name": "race/raceSimulationService.ts",
+        "start": 96,
+        "startLoc": {
+          "column": 44,
+          "line": 96,
+          "position": 3580
+        }
+      },
+      "format": "typescript",
+      "fragment": "  while (entriesData.length < race.fieldSize) {\n    const aiHorse = generateHorse({ tier: tier as never }, rng);\n    fillerHorses.push(aiHorse);\n    const jk = generateJockey({ tier: tier as never, rng });\n    fillerJockeys.push(jk);\n    const weight = calculateAssignedWeight(aiHorse, race);\n    entriesData.push({ horseId: aiHorse.id, isPlayer: false, jockeyId: jk.id, weight });\n  }\n\n  // Empty-field guard: always return at least 1 runner so downstream\n  // simulation doesn't have to handle a completely empty field.\n  if (entriesData.length === 0) {",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 12,
+      "secondFile": {
+        "end": 117,
+        "endLoc": {
+          "column": 7,
+          "line": 117,
+          "position": 4505
+        },
+        "name": "race/raceSimulationService.ts",
+        "start": 107,
+        "startLoc": {
+          "column": 30,
+          "line": 107,
+          "position": 4088
+        }
+      },
+      "tokens": 84
+    },
+    {
+      "firstFile": {
+        "end": 25,
+        "endLoc": {
+          "column": 5,
+          "line": 25,
+          "position": 757
+        },
+        "name": "resolver/campaignIntents.ts",
+        "start": 10,
+        "startLoc": {
+          "column": 51,
+          "line": 10,
+          "position": 285
+        }
+      },
+      "format": "typescript",
+      "fragment": "export interface CampaignSlotIntent extends Intent {\n  type: \"campaign_slot\";\n  horseId: string;\n  slotIndex: number;\n  slot: Partial<{\n    dayTarget: number;\n    dayWindow: number;\n    raceId: string;\n    raceKey: string;\n    role: \"target\" | \"prep\" | \"comeback\";\n    constraintDistance?: number;\n    constraintSurface?: \"Turf\" | \"Dirt\" | \"Synthetic\";\n    constraintGradeMin?: \"G1\" | \"G2\" | \"G3\" | \"Stakes\" | \"Allowance\";\n    notes?: string;\n    status: \"planned\" | \"entered\" | \"completed\" | \"skipped\" | \"cancelled\";\n  }>;",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 16,
+      "secondFile": {
+        "end": 30,
+        "endLoc": {
+          "column": 5,
+          "line": 30,
+          "position": 1076
+        },
+        "name": "resolver/impacts/campaignImpacts.ts",
+        "start": 15,
+        "startLoc": {
+          "column": 51,
+          "line": 15,
+          "position": 604
+        }
+      },
+      "tokens": 89
+    },
+    {
+      "firstFile": {
+        "end": 102,
+        "endLoc": {
+          "column": 1,
+          "line": 102,
+          "position": 3501
+        },
+        "name": "resolver/handlers/BreedingHandler.ts",
+        "start": 92,
+        "startLoc": {
+          "column": 23,
+          "line": 92,
+          "position": 3256
+        }
+      },
+      "format": "typescript",
+      "fragment": "      \"update_stud_fee\",\n    ].includes(type);\n  }\n\n  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {\n    const handler = IMPACT_HANDLERS[impact.type];\n    if (handler) {\n      handler(draft, impact, lookupMaps);\n    }\n  }\n}",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 11,
+      "secondFile": {
+        "end": 377,
+        "endLoc": {
+          "column": 1,
+          "line": 377,
+          "position": 13556
+        },
+        "name": "resolver/handlers/RacingHandler.ts",
+        "start": 367,
+        "startLoc": {
+          "column": 28,
+          "line": 367,
+          "position": 13311
+        }
+      },
+      "tokens": 57
+    },
+    {
+      "firstFile": {
+        "end": 102,
+        "endLoc": {
+          "column": 1,
+          "line": 102,
+          "position": 3501
+        },
+        "name": "resolver/handlers/BreedingHandler.ts",
+        "start": 92,
+        "startLoc": {
+          "column": 23,
+          "line": 92,
+          "position": 3256
+        }
+      },
+      "format": "typescript",
+      "fragment": "      \"update_stud_fee\",\n    ].includes(type);\n  }\n\n  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {\n    const handler = IMPACT_HANDLERS[impact.type];\n    if (handler) {\n      handler(draft, impact, lookupMaps);\n    }\n  }\n}",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 11,
+      "secondFile": {
+        "end": 288,
+        "endLoc": {
+          "column": 1,
+          "line": 288,
+          "position": 10188
+        },
+        "name": "resolver/handlers/SyndicationHandler.ts",
+        "start": 278,
+        "startLoc": {
+          "column": 30,
+          "line": 278,
+          "position": 9943
+        }
+      },
+      "tokens": 57
+    },
+    {
+      "firstFile": {
+        "end": 102,
+        "endLoc": {
+          "column": 1,
+          "line": 102,
+          "position": 3501
+        },
+        "name": "resolver/handlers/BreedingHandler.ts",
+        "start": 92,
+        "startLoc": {
+          "column": 23,
+          "line": 92,
+          "position": 3256
+        }
+      },
+      "format": "typescript",
+      "fragment": "      \"update_stud_fee\",\n    ].includes(type);\n  }\n\n  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {\n    const handler = IMPACT_HANDLERS[impact.type];\n    if (handler) {\n      handler(draft, impact, lookupMaps);\n    }\n  }\n}",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 11,
+      "secondFile": {
+        "end": 353,
+        "endLoc": {
+          "column": 1,
+          "line": 353,
+          "position": 12566
+        },
+        "name": "resolver/handlers/SystemHandler.ts",
+        "start": 343,
+        "startLoc": {
+          "column": 27,
+          "line": 343,
+          "position": 12321
+        }
+      },
+      "tokens": 57
+    },
+    {
+      "firstFile": {
+        "end": 76,
+        "endLoc": {
+          "column": 27,
+          "line": 76,
+          "position": 3140
+        },
+        "name": "time/phases/claimResolution.ts",
+        "start": 66,
+        "startLoc": {
+          "column": 4,
+          "line": 66,
+          "position": 2715
+        }
+      },
+      "format": "typescript",
+      "fragment": "    for (const [key, horseClaims] of grouped) {\n      if (horseClaims.length === 0) continue;\n      const [raceId, horseId] = key.split(\":\");\n\n      // Deterministic random selection using raceId + horseId seed\n      const seed = hashStr(raceId + horseId);\n      const winnerIdx = seed % horseClaims.length;\n      const winnerClaim = horseClaims[winnerIdx];\n\n      const horse = horseMap.get(horseId);\n      if (!horse) continue;",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 11,
+      "secondFile": {
+        "end": 208,
+        "endLoc": {
+          "column": 29,
+          "line": 208,
+          "position": 7770
+        },
+        "name": "time/phases/claimResolution.ts",
+        "start": 201,
+        "startLoc": {
+          "column": 6,
+          "line": 201,
+          "position": 7401
+        }
+      },
+      "tokens": 80
+    },
+    {
+      "firstFile": {
+        "end": 35,
+        "endLoc": {
+          "column": 6,
+          "line": 35,
+          "position": 1492
+        },
+        "name": "time/phases/diplomacyPhase.ts",
+        "start": 25,
+        "startLoc": {
+          "column": 34,
+          "line": 25,
+          "position": 1215
+        }
+      },
+      "format": "typescript",
+      "fragment": "    const { state, newDay, intents, worldAssessment } = context;\n\n    if (state.npcStables.length === 0) {\n      return context;\n    }\n\n    let aiManager: NpcAIManager = (state as { npcAIManager?: NpcAIManager }).npcAIManager || {\n      stableStates: {},\n      globalDay: newDay,\n      regionalKings: {},\n    };",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 11,
+      "secondFile": {
+        "end": 31,
+        "endLoc": {
+          "column": 6,
+          "line": 31,
+          "position": 1110
+        },
+        "name": "time/phases/economyPhase.ts",
+        "start": 21,
+        "startLoc": {
+          "column": 25,
+          "line": 21,
+          "position": 833
+        }
+      },
+      "tokens": 56
+    },
+    {
+      "firstFile": {
+        "end": 33,
+        "endLoc": {
+          "column": 15,
+          "line": 33,
+          "position": 1127
+        },
+        "name": "time/phases/economyPhase.ts",
+        "start": 19,
+        "startLoc": {
+          "column": 28,
+          "line": 19,
+          "position": 746
+        }
+      },
+      "format": "typescript",
+      "fragment": "  order: PHASE_ORDER_ECONOMY,\n  execute: (context: PipelineContext): PipelineContext => {\n    const { state, newDay, worldAssessment } = context;\n\n    if (state.npcStables.length === 0) {\n      return context;\n    }\n\n    let aiManager: NpcAIManager = (state as { npcAIManager?: NpcAIManager }).npcAIManager || {\n      stableStates: {},\n      globalDay: newDay,\n      regionalKings: {},\n    };\n\n    aiManager = processEconomicCycle(aiManager, state, newDay);",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 15,
+      "secondFile": {
+        "end": 37,
+        "endLoc": {
+          "column": 15,
+          "line": 37,
+          "position": 1392
+        },
+        "name": "time/phases/narrativePhase.ts",
+        "start": 22,
+        "startLoc": {
+          "column": 30,
+          "line": 22,
+          "position": 970
+        }
+      },
+      "tokens": 75
+    },
+    {
+      "firstFile": {
+        "end": 92,
+        "endLoc": {
+          "column": 17,
+          "line": 92,
+          "position": 2715
+        },
+        "name": "time/phases/facilityManagementResolvers.ts",
+        "start": 82,
+        "startLoc": {
+          "column": 81,
+          "line": 82,
+          "position": 2398
+        }
+      },
+      "format": "typescript",
+      "fragment": "        const cashEntityId = typedIntent.source === \"npc\" ? typedIntent.stableId : \"player\";\n        impacts.push({\n          id: generateUUID(dailyRng),\n          intentId: intent.id,\n          day: newDay,\n          phase: \"managementResolution\",\n          logLevel: \"always\",\n          type: \"cash_change\",\n          entityId: cashEntityId,\n          amount: -typedIntent.cost,\n          reason: `Outpost ${typedIntent.action}`,",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 11,
+      "secondFile": {
+        "end": 127,
+        "endLoc": {
+          "column": 17,
+          "line": 127,
+          "position": 3864
+        },
+        "name": "time/phases/facilityManagementResolvers.ts",
+        "start": 117,
+        "startLoc": {
+          "column": 79,
+          "line": 117,
+          "position": 3547
+        }
+      },
+      "tokens": 50
+    },
+    {
+      "firstFile": {
+        "end": 70,
+        "endLoc": {
+          "column": 31,
+          "line": 70,
+          "position": 2589
+        },
+        "name": "time/phases/horseDeath.ts",
+        "start": 59,
+        "startLoc": {
+          "column": 31,
+          "line": 59,
+          "position": 2232
+        }
+      },
+      "format": "typescript",
+      "fragment": "        const cause = \"old age\";\n        impacts.push({\n          id: generateUUID(),\n          intentId: \"\",\n          day: newDay,\n          phase: \"horseDeath\",\n          logLevel: horse.ownership?.type === \"player\" ? \"always\" : \"conditional\",\n          type: \"horse_death\",\n          horseId: horse.id,\n          cause,\n          deceasedOnDay: newDay,\n          reason: `${horse.name} has passed away from ${cause} at age ${age}.`,",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 12,
+      "secondFile": {
+        "end": 139,
+        "endLoc": {
+          "column": 33,
+          "line": 139,
+          "position": 5172
+        },
+        "name": "time/phases/horseDeath.ts",
+        "start": 128,
+        "startLoc": {
+          "column": 47,
+          "line": 128,
+          "position": 4793
+        }
+      },
+      "tokens": 60
+    },
+    {
+      "firstFile": {
+        "end": 81,
+        "endLoc": {
+          "column": 36,
+          "line": 81,
+          "position": 2955
+        },
+        "name": "time/phases/horseDeath.ts",
+        "start": 70,
+        "startLoc": {
+          "column": 75,
+          "line": 70,
+          "position": 2633
+        }
+      },
+      "format": "typescript",
+      "fragment": "          reason: `${horse.name} has passed away from ${cause} at age ${age}.`,\n        } as HorseDeathImpact);\n\n        if (horse.ownership?.type === \"player\") {\n          impacts.push({\n            id: generateUUID(),\n            intentId: \"\",\n            day: newDay,\n            phase: \"horseDeath\",\n            logLevel: \"always\",\n            type: \"log\",\n            text: `💔 ${horse.name} has passed away from ${cause} at age ${age}.`,",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 12,
+      "secondFile": {
+        "end": 150,
+        "endLoc": {
+          "column": 38,
+          "line": 150,
+          "position": 5540
+        },
+        "name": "time/phases/horseDeath.ts",
+        "start": 139,
+        "startLoc": {
+          "column": 59,
+          "line": 139,
+          "position": 5198
+        }
+      },
+      "tokens": 55
+    },
+    {
+      "firstFile": {
+        "end": 103,
+        "endLoc": {
+          "column": 61,
+          "line": 103,
+          "position": 3913
+        },
+        "name": "time/phases/horseDeath.ts",
+        "start": 90,
+        "startLoc": {
+          "column": 44,
+          "line": 90,
+          "position": 3351
+        }
+      },
+      "format": "typescript",
+      "fragment": "            INSURANCE_CONFIG.COVERAGE[policy.type as keyof typeof INSURANCE_CONFIG.COVERAGE];\n          const horseValue = calculateBaseHorseValue(horse, \"mid\");\n          const payout = Math.round(horseValue * coveragePercent);\n          if (payout > 0) {\n            impacts.push({\n              id: generateUUID(),\n              intentId: \"\",\n              day: newDay,\n              phase: \"horseDeath\",\n              logLevel: \"always\",\n              type: \"insurance_payout\",\n              horseId: horse.id,\n              amount: payout,\n              reason: `Insurance payout for ${horse.name} (${policy.type})`,",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 14,
+      "secondFile": {
+        "end": 177,
+        "endLoc": {
+          "column": 63,
+          "line": 177,
+          "position": 6625
+        },
+        "name": "time/phases/horseDeath.ts",
+        "start": 163,
+        "startLoc": {
+          "column": 29,
+          "line": 163,
+          "position": 6022
+        }
+      },
+      "tokens": 87
+    },
+    {
+      "firstFile": {
+        "end": 119,
+        "endLoc": {
+          "column": 36,
+          "line": 119,
+          "position": 4416
+        },
+        "name": "time/phases/horseDeath.ts",
+        "start": 103,
+        "startLoc": {
+          "column": 67,
+          "line": 103,
+          "position": 3919
+        }
+      },
+      "format": "typescript",
+      "fragment": "              reason: `Insurance payout for ${horse.name} (${policy.type})`,\n            } as InsurancePayoutImpact);\n          }\n        }\n\n        // Reserve the name for 25 years\n        impacts.push({\n          id: generateUUID(),\n          intentId: \"\",\n          day: newDay,\n          phase: \"horseDeath\",\n          logLevel: \"never\",\n          type: \"name_reservation\",\n          name: horse.name,\n          deceasedOnDay: newDay,\n          reason: `Name ${horse.name} reserved for 25 years after death from ${cause}.`,\n        } as NameReservationImpact);",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 17,
+      "secondFile": {
+        "end": 193,
+        "endLoc": {
+          "column": 38,
+          "line": 193,
+          "position": 7165
+        },
+        "name": "time/phases/horseDeath.ts",
+        "start": 177,
+        "startLoc": {
+          "column": 76,
+          "line": 177,
+          "position": 6638
+        }
+      },
+      "tokens": 67
+    },
+    {
+      "firstFile": {
+        "end": 81,
+        "endLoc": {
+          "column": 14,
+          "line": 81,
+          "position": 3635
+        },
+        "name": "time/phases/jockeyPhase.ts",
+        "start": 70,
+        "startLoc": {
+          "column": 17,
+          "line": 70,
+          "position": 3100
+        }
+      },
+      "format": "typescript",
+      "fragment": "          } else if (npcAIManager) {\n            // NPC jockey contract expired - use AI to determine if should retain\n            npcAIManager = {\n              ...npcAIManager,\n              stableStates: Object.fromEntries(\n                Object.entries(npcAIManager.stableStates).map(([id, s]) => [id, { ...s }]),\n              ),\n            };\n            const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);\n            const jockeyAI = stableAI.jockeyAI || (stableAI.jockeyAI = createJockeyAIState(stable));\n\n            if (!shouldRetainJockey(jockeyAI, j, stable, newDay)) {",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 12,
+      "secondFile": {
+        "end": 120,
+        "endLoc": {
+          "column": 18,
+          "line": 120,
+          "position": 5313
+        },
+        "name": "time/phases/jockeyPhase.ts",
+        "start": 111,
+        "startLoc": {
+          "column": 10,
+          "line": 111,
+          "position": 4857
+        }
+      },
+      "tokens": 80
+    },
+    {
+      "firstFile": {
+        "end": 100,
+        "endLoc": {
+          "column": 19,
+          "line": 100,
+          "position": 3994
+        },
+        "name": "time/phases/privateSaleResolution.ts",
+        "start": 85,
+        "startLoc": {
+          "column": 44,
+          "line": 85,
+          "position": 3489
+        }
+      },
+      "format": "typescript",
+      "fragment": "        if (offer.overrideType === \"premium\") {\n          // Premium buyout: always succeeds\n          updatedOffers.push({ ...offer, status: \"accepted\" });\n\n          const intentId = generateUUID();\n          newImpacts.push({\n            id: generateUUID(),\n            intentId,\n            day: newDay,\n            phase: \"privateSaleResolution\",\n            type: \"horse_transfer\",\n            horseId: offer.horseId,\n            fromStableId: stableId,\n            toStableId: undefined,\n            price: overrideAmount,\n            reason: \"private_sale_override_premium\",",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 16,
+      "secondFile": {
+        "end": 167,
+        "endLoc": {
+          "column": 21,
+          "line": 167,
+          "position": 6354
+        },
+        "name": "time/phases/privateSaleResolution.ts",
+        "start": 152,
+        "startLoc": {
+          "column": 25,
+          "line": 152,
+          "position": 5845
+        }
+      },
+      "tokens": 68
+    },
+    {
+      "firstFile": {
+        "end": 99,
+        "endLoc": {
+          "column": 18,
+          "line": 99,
+          "position": 3958
+        },
+        "name": "time/phases/privateSaleResolution.ts",
+        "start": 85,
+        "startLoc": {
+          "column": 44,
+          "line": 85,
+          "position": 3489
+        }
+      },
+      "format": "typescript",
+      "fragment": "        if (offer.overrideType === \"premium\") {\n          // Premium buyout: always succeeds\n          updatedOffers.push({ ...offer, status: \"accepted\" });\n\n          const intentId = generateUUID();\n          newImpacts.push({\n            id: generateUUID(),\n            intentId,\n            day: newDay,\n            phase: \"privateSaleResolution\",\n            type: \"horse_transfer\",\n            horseId: offer.horseId,\n            fromStableId: stableId,\n            toStableId: undefined,\n            price: overrideAmount,",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 15,
+      "secondFile": {
+        "end": 305,
+        "endLoc": {
+          "column": 16,
+          "line": 305,
+          "position": 10858
+        },
+        "name": "time/phases/privateSaleResolution.ts",
+        "start": 292,
+        "startLoc": {
+          "column": 42,
+          "line": 292,
+          "position": 10458
+        }
+      },
+      "tokens": 64
+    },
+    {
+      "firstFile": {
+        "end": 168,
+        "endLoc": {
+          "column": 9,
+          "line": 168,
+          "position": 6448
+        },
+        "name": "time/phases/raceResolution.ts",
+        "start": 145,
+        "startLoc": {
+          "column": 23,
+          "line": 145,
+          "position": 5766
+        }
+      },
+      "format": "typescript",
+      "fragment": "          impactRunners,\n          horseMap,\n          newDay,\n          state.trackRecords || {},\n          hallOfFameIds,\n          context.ports,\n        );\n        impacts.push(...trackRecordAndHofImpacts);\n\n        // Claiming resolution\n        if (race.claimingPrice) {\n          const claimIntents = context.intents.filter(\n            (i): i is ClaimingIntent => i.type === \"claiming\" && i.raceId === race.id,\n          );\n          const claimingImpacts = processClaimingForRace(\n            race,\n            claimIntents,\n            Object.values(state.horses),\n            newDay,\n            rng,\n            context.ports,\n          );\n          impacts.push(...claimingImpacts);\n        }",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 24,
+      "secondFile": {
+        "end": 263,
+        "endLoc": {
+          "column": 7,
+          "line": 263,
+          "position": 9206
+        },
+        "name": "time/phases/raceResolution.ts",
+        "start": 240,
+        "startLoc": {
+          "column": 15,
+          "line": 240,
+          "position": 8541
+        }
+      },
+      "tokens": 105
+    },
+    {
+      "firstFile": {
+        "end": 111,
+        "endLoc": {
+          "column": 15,
+          "line": 111,
+          "position": 4243
+        },
+        "name": "time/phases/solvency.ts",
+        "start": 100,
+        "startLoc": {
+          "column": 217,
+          "line": 100,
+          "position": 3931
+        }
+      },
+      "format": "typescript",
+      "fragment": "          body: `Your account is $${Math.abs(projectedCash).toLocaleString()} in the red. Interest accrues daily. Sell a horse or claim purses within ${SOLVENCY_THRESHOLDS.forcedSaleDays} days to avoid a forced sale.`,\n          cta: { label: \"Open finances\", route: \"financial-report\" },\n        },\n      } as InboxImpact);\n      auditAdditions.push({\n        day: newDay,\n        tier: solvency.tier,\n        cashBefore: runningCash,\n        cashAfter: runningCash,\n        delta: 0,\n        kind: \"escalation\",\n        detail: \"Entered warning tier — grace period started\",",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 12,
+      "secondFile": {
+        "end": 145,
+        "endLoc": {
+          "column": 15,
+          "line": 145,
+          "position": 5530
+        },
+        "name": "time/phases/solvency.ts",
+        "start": 134,
+        "startLoc": {
+          "column": 207,
+          "line": 134,
+          "position": 5218
+        }
+      },
+      "tokens": 53
+    },
+    {
+      "firstFile": {
+        "end": 45,
+        "endLoc": {
+          "column": 3,
+          "line": 45,
+          "position": 1168
+        },
+        "name": "uuid.ts",
+        "start": 27,
+        "startLoc": {
+          "column": 37,
+          "line": 27,
+          "position": 832
+        }
+      },
+      "format": "typescript",
+      "fragment": "      const r = (rng.next() * 16) | 0;\n      if (i === 15) {\n        chars += HEX_CHARS[(r & 0x3) | 0x8];\n      } else {\n        chars += HEX_CHARS[r];\n      }\n    }\n    return (\n      chars.slice(0, 8) +\n      \"-\" +\n      chars.slice(8, 12) +\n      \"-4\" +\n      chars.slice(12, 15) +\n      \"-\" +\n      chars.slice(15, 19) +\n      \"-\" +\n      chars.slice(19, 31)\n    );\n  }",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 19,
+      "secondFile": {
+        "end": 74,
+        "endLoc": {
+          "column": 3,
+          "line": 74,
+          "position": 1825
+        },
+        "name": "uuid.ts",
+        "start": 56,
+        "startLoc": {
+          "column": 29,
+          "line": 56,
+          "position": 1489
+        }
+      },
+      "tokens": 90
+    },
+    {
+      "firstFile": {
+        "end": 132,
+        "endLoc": {
+          "column": 11,
+          "line": 132,
+          "position": 5208
+        },
+        "name": "index.ts",
+        "start": 101,
+        "startLoc": {
+          "column": 23,
+          "line": 101,
+          "position": 4659
+        }
+      },
+      "format": "typescript",
+      "fragment": "  \"scoutingAssignments\",\n\n  \"auctions\",\n  \"jockeys\",\n  \"awards\",\n  \"campaigns\",\n  \"expenses\",\n  \"transactions\",\n  \"replays\",\n  \"reputation\",\n  \"transports\",\n  \"userSettings\",\n  \"facilities\",\n  \"npcFacilities\",\n  \"playerProfile\",\n  \"privateSaleOffers\",\n  \"claims\",\n  \"breedingPrograms\",\n  \"usedHorseNames\",\n  \"usedJockeyNames\",\n  \"reservedHorseNames\",\n  \"seasonRecords\",\n  \"hallOfFame\",\n  \"trackRecords\",\n  \"horseLeaderboards\",\n  \"founders\",\n  \"lastFounderUpdateDay\",\n  \"syndicates\",\n  \"staffPool\",\n  \"hiredStaff\",\n  // Phase 3 — dynamic weather sim per track\n  \"weather\" as keyof GameState,",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 32,
+      "secondFile": {
+        "end": 122,
+        "endLoc": {
+          "column": 11,
+          "line": 122,
+          "position": 3501
+        },
+        "name": "storage.ts",
+        "start": 93,
+        "startLoc": {
+          "column": 16,
+          "line": 93,
+          "position": 3000
+        }
+      },
+      "tokens": 58
+    },
+    {
+      "firstFile": {
+        "end": 48,
+        "endLoc": {
+          "column": 4,
+          "line": 48,
+          "position": 1802
+        },
+        "name": "slices/awardSlice.ts",
+        "start": 33,
+        "startLoc": {
+          "column": 35,
+          "line": 33,
+          "position": 1286
+        }
+      },
+      "format": "typescript",
+      "fragment": "        if (inv.id !== invitationId) return inv;\n        const from = inv.rsvp ?? \"pending\";\n        if (from === status) return inv;\n        return appendInvitationAudit(\n          { ...inv, rsvp: status, respondedDay: state.day },\n          {\n            day: state.day,\n            kind: \"rsvp_change\",\n            from,\n            to: status,\n            note: `RSVP changed from ${RSVP_LABELS[from]} to ${RSVP_LABELS[status]}${state.day > getRsvpDeadlineDay(inv) ? \" (after the deadline)\" : \"\"}.`,\n          },\n        );\n      }),\n    }));\n  },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 16,
+      "secondFile": {
+        "end": 70,
+        "endLoc": {
+          "column": 4,
+          "line": 70,
+          "position": 2596
+        },
+        "name": "slices/awardSlice.ts",
+        "start": 55,
+        "startLoc": {
+          "column": 30,
+          "line": 55,
+          "position": 2080
+        }
+      },
+      "tokens": 97
+    },
+    {
+      "firstFile": {
+        "end": 166,
+        "endLoc": {
+          "column": 14,
+          "line": 166,
+          "position": 6225
+        },
+        "name": "slices/coreSlice.ts",
+        "start": 156,
+        "startLoc": {
+          "column": 37,
+          "line": 156,
+          "position": 5899
+        }
+      },
+      "format": "typescript",
+      "fragment": "      const newCash = s.cash + amount;\n      const tier = deriveSolvencyState({\n        cash: newCash,\n        consecutiveDaysInDebt: s.consecutiveDaysInDebt ?? 0,\n      }).tier;\n      const auditEntry = {\n        day: s.day,\n        tier: tier as \"healthy\" | \"warning\" | \"forced_sale\" | \"insolvent\",\n        cashBefore,\n        cashAfter: newCash,\n        delta: amount,",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 11,
+      "secondFile": {
+        "end": 205,
+        "endLoc": {
+          "column": 14,
+          "line": 205,
+          "position": 7580
+        },
+        "name": "slices/coreSlice.ts",
+        "start": 195,
+        "startLoc": {
+          "column": 40,
+          "line": 195,
+          "position": 7254
+        }
+      },
+      "tokens": 54
+    },
+    {
+      "firstFile": {
+        "end": 349,
+        "endLoc": {
+          "column": 8,
+          "line": 349,
+          "position": 13217
+        },
+        "name": "slices/exchangeSlice.ts",
+        "start": 338,
+        "startLoc": {
+          "column": 79,
+          "line": 338,
+          "position": 12828
+        }
+      },
+      "format": "typescript",
+      "fragment": "        return { ok: false, reason: \"Horse is already consigned to an auction\" };\n      if (horse.lifecycleStatus === \"deceased\")\n        return { ok: false, reason: \"Horse is no longer with us\" };\n      const house = getAuctionHouse(houseId);\n      if (!house) return { ok: false, reason: \"Auction house not found\" };\n\n      const quote = houseQuote(\n        horse,\n        Object.values(s.horses) as Horse[],\n        house,\n        s.reputation?.score ?? 0,\n      );",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 12,
+      "secondFile": {
+        "end": 392,
+        "endLoc": {
+          "column": 8,
+          "line": 392,
+          "position": 14720
+        },
+        "name": "slices/exchangeSlice.ts",
+        "start": 381,
+        "startLoc": {
+          "column": 89,
+          "line": 381,
+          "position": 14331
+        }
+      },
+      "tokens": 77
+    },
+    {
+      "firstFile": {
+        "end": 123,
+        "endLoc": {
+          "column": 3,
+          "line": 123,
+          "position": 4601
+        },
+        "name": "state/coreState.ts",
+        "start": 108,
+        "startLoc": {
+          "column": 195,
+          "line": 108,
+          "position": 4353
+        }
+      },
+      "format": "typescript",
+      "fragment": "          body: `The local racing community is abuzz as ${profile.ownerName} officially registers ${profile.stableName}. \"We're here to make history,\" the new owner stated at the morning trials.`,\n        },\n      ],\n      inbox: [],\n      seasonRecords: [],\n      hallOfFame: [],\n      archive: {\n        horses: [],\n        races: [],\n        pregnancies: [],\n        news: [],\n      },\n      transactions: [],\n      expenses: [],\n    };\n  }",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 16,
+      "secondFile": {
+        "end": 154,
+        "endLoc": {
+          "column": 1,
+          "line": 154,
+          "position": 5312
+        },
+        "name": "state/coreState.ts",
+        "start": 139,
+        "startLoc": {
+          "column": 96,
+          "line": 139,
+          "position": 5094
+        }
+      },
+      "tokens": 58
+    },
+    {
+      "firstFile": {
+        "end": 301,
+        "endLoc": {
+          "column": 3,
+          "line": 301,
+          "position": 12440
+        },
+        "name": "state/systemsState.ts",
+        "start": 287,
+        "startLoc": {
+          "column": 28,
+          "line": 287,
+          "position": 12088
+        }
+      },
+      "format": "typescript",
+      "fragment": "      playerProfile: profile,\n      trackRecords: {},\n      horseLeaderboards: {},\n      founders: {},\n      usedHorseNames: [],\n      usedJockeyNames: [],\n      reservedHorseNames: [],\n      stewardsInquiries: [],\n      staffPool: [],\n      hiredStaff: [],\n      outposts: [],\n      weather: { byTrack: {}, forecast: {} },\n      tutorial: createDefaultTutorialState(),\n    };\n  }",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 15,
+      "secondFile": {
+        "end": 342,
+        "endLoc": {
+          "column": 1,
+          "line": 342,
+          "position": 13412
+        },
+        "name": "state/systemsState.ts",
+        "start": 328,
+        "startLoc": {
+          "column": 18,
+          "line": 328,
+          "position": 13088
+        }
+      },
+      "tokens": 74
+    }
+  ],
+  "statistics": {
+    "detectionDate": "2026-09-11T02:18:18.789Z",
+    "formats": {
+      "tsx": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 56,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 1,
+        "tokens": 245
+      },
+      "typescript": {
+        "clones": 60,
+        "duplicatedLines": 976,
+        "duplicatedTokens": 5178,
+        "lines": 92464,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 1.0555459422045337,
+        "percentageTokens": 1.2297242738737026,
+        "sources": 573,
+        "tokens": 421070
+      }
+    },
+    "total": {
+      "clones": 60,
+      "duplicatedLines": 976,
+      "duplicatedTokens": 5178,
+      "lines": 92520,
+      "newClones": 0,
+      "newDuplicatedLines": 0,
+      "percentage": 1.054907047124946,
+      "percentageTokens": 1.229009173658664,
+      "sources": 574,
+      "tokens": 421315
+    }
+  }
+}

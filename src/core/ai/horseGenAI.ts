@@ -65,7 +65,26 @@ interface HorseGenStrategy {
 
 /**
  * Registry of horse generation strategies indexed by stable personality.
+ * @param target
  */
+const BALANCED_AGE_DISTRIBUTION = (target: number) => ({
+  2: target * 0.25,
+  3: target * 0.25,
+  4: target * 0.25,
+  5: target * 0.15,
+  6: target * 0.1,
+});
+
+/** Shared strategy for personalities with balanced rosters and no priority bonuses. */
+const BALANCED_STRATEGY: HorseGenStrategy = {
+  targetHorseCount: 10,
+  targetQualityLevel: 60,
+  ageDistribution: BALANCED_AGE_DISTRIBUTION,
+  agePriorityBonus: () => 0,
+  qualityPriorityBonus: () => 0,
+  generationThreshold: () => 30,
+};
+
 const HORSE_GEN_STRATEGIES: Record<Stable["personality"], HorseGenStrategy> = {
   prestige: {
     targetHorseCount: 15,
@@ -111,73 +130,15 @@ const HORSE_GEN_STRATEGIES: Record<Stable["personality"], HorseGenStrategy> = {
   aggressive: {
     targetHorseCount: 10,
     targetQualityLevel: 65,
-    ageDistribution: (target) => ({
-      2: target * 0.25,
-      3: target * 0.25,
-      4: target * 0.25,
-      5: target * 0.15,
-      6: target * 0.1,
-    }),
+    ageDistribution: BALANCED_AGE_DISTRIBUTION,
     agePriorityBonus: () => 0,
     qualityPriorityBonus: () => 0,
     generationThreshold: () => 30,
   },
-  developer: {
-    targetHorseCount: 10,
-    targetQualityLevel: 60,
-    ageDistribution: (target) => ({
-      2: target * 0.25,
-      3: target * 0.25,
-      4: target * 0.25,
-      5: target * 0.15,
-      6: target * 0.1,
-    }),
-    agePriorityBonus: () => 0,
-    qualityPriorityBonus: () => 0,
-    generationThreshold: () => 30,
-  },
-  trader: {
-    targetHorseCount: 10,
-    targetQualityLevel: 60,
-    ageDistribution: (target) => ({
-      2: target * 0.25,
-      3: target * 0.25,
-      4: target * 0.25,
-      5: target * 0.15,
-      6: target * 0.1,
-    }),
-    agePriorityBonus: () => 0,
-    qualityPriorityBonus: () => 0,
-    generationThreshold: () => 30,
-  },
-  specialist: {
-    targetHorseCount: 10,
-    targetQualityLevel: 60,
-    ageDistribution: (target) => ({
-      2: target * 0.25,
-      3: target * 0.25,
-      4: target * 0.25,
-      5: target * 0.15,
-      6: target * 0.1,
-    }),
-    agePriorityBonus: () => 0,
-    qualityPriorityBonus: () => 0,
-    generationThreshold: () => 30,
-  },
-  breeder: {
-    targetHorseCount: 10,
-    targetQualityLevel: 60,
-    ageDistribution: (target) => ({
-      2: target * 0.25,
-      3: target * 0.25,
-      4: target * 0.25,
-      5: target * 0.15,
-      6: target * 0.1,
-    }),
-    agePriorityBonus: () => 0,
-    qualityPriorityBonus: () => 0,
-    generationThreshold: () => 30,
-  },
+  developer: { ...BALANCED_STRATEGY },
+  trader: { ...BALANCED_STRATEGY },
+  specialist: { ...BALANCED_STRATEGY },
+  breeder: { ...BALANCED_STRATEGY },
 };
 
 /**

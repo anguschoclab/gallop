@@ -114,7 +114,7 @@ describe("Phase 13: Performance benchmarks", () => {
 
   it("economicHistory pruning caps at 365 entries", () => {
     // This is a structural test verifying the pruning logic exists
-    // The actual pruning is in economyAI.ts processEconomicCycle
+    // The actual pruning is in economyAI.ts runEconomicCycle
     const history = Array.from({ length: 400 }, (_, i) => ({
       studFeeTrend: i * 0.01,
       yearlingPriceIndex: 100 + i,

@@ -7,18 +7,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState, Horse } from "@/game/types";
-import { formatCurrency } from "@/core/common/formatting";
-import { isPlayerOwned } from "@/core/horse/ownership";
 import {
   buildMarketDepth,
   buildOrderBooks,
+  buildStableRosters,
   createDefaultExchangeState,
   exchangeCommissionRate,
+  formatCurrency,
+  formatYard,
+  isPlayerOwned,
+  resolveStableYard,
+  rosterSummary,
   suggestAskPrice,
   tradeSeries,
-} from "@/core/market/exchange";
-import { buildStableRosters, rosterSummary } from "@/core/stable/stableRoster";
-import { formatYard, resolveStableYard } from "@/core/stable/stableYard";
+} from "@/services/market/exchangePanelService";
 import { HorseOrderBook } from "@/components/market/HorseOrderBook";
 import { TradeTape } from "@/components/market/TradeTape";
 import { StatCard } from "@/components/common/StatCard";

@@ -11,9 +11,9 @@ import {
   generateStrategicDirectives,
   allocateBudget,
 } from "@/core/ai/strategicCoordinator";
-import { processDiplomaticInteractions, initializeRelationships } from "@/core/ai/diplomacyAI";
-import { processNarrativeCycle, createNarrativeState } from "@/core/ai/narrativeAI";
-import { processEconomicCycle } from "@/core/ai/economyAITracking";
+import { resolveDiplomaticInteractions, initializeRelationships } from "@/core/ai/diplomacyAI";
+import { runNarrativeCycle, createNarrativeState } from "@/core/ai/narrativeAI";
+import { runEconomicCycle } from "@/core/ai/economyAITracking";
 import { createEconomicState, calculateStudFeeAdjustment } from "@/core/ai/economyAIState";
 import type { GameState, Stable, Horse } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
@@ -141,7 +141,7 @@ describe("Pipeline integration: strategic coordinator → intent generation", ()
 });
 
 describe("Pipeline integration: diplomacy → NPC relationships", () => {
-  it("initializeRelationships + processDiplomaticInteractions creates neutral relationships", () => {
+  it("initializeRelationships + resolveDiplomaticInteractions creates neutral relationships", () => {
     const stables = [
       createMockStable({ id: "s1", personality: "aggressive" }),
       createMockStable({ id: "s2", personality: "aggressive" }),
@@ -152,12 +152,12 @@ describe("Pipeline integration: diplomacy → NPC relationships", () => {
     expect(initialized.stableStates["s1"].npcRelationships).toBeDefined();
     expect(initialized.stableStates["s2"].npcRelationships).toBeDefined();
 
-    const processed = processDiplomaticInteractions(initialized, stables, 100);
+    const processed = resolveDiplomaticInteractions(initialized, stables, 100);
     // With neutral trust (0), no alliances should form
     expect(processed.stableStates["s1"].npcRelationships!["s2"].allianceType).toBeNull();
   });
 
-  it("high trust leads to alliance formation through processDiplomaticInteractions", () => {
+  it("high trust leads to alliance formation through resolveDiplomaticInteractions", () => {
     const stables = [
       createMockStable({ id: "s1", personality: "breeder" }),
       createMockStable({ id: "s2", personality: "breeder" }),
@@ -169,14 +169,14 @@ describe("Pipeline integration: diplomacy → NPC relationships", () => {
     initialized.stableStates["s1"].npcRelationships!["s2"].trust = 65;
     initialized.stableStates["s2"].npcRelationships!["s1"].trust = 65;
 
-    const processed = processDiplomaticInteractions(initialized, stables, 100);
+    const processed = resolveDiplomaticInteractions(initialized, stables, 100);
     expect(processed.stableStates["s1"].npcRelationships!["s2"].allianceType).not.toBeNull();
     expect(processed.stableStates["s2"].npcRelationships!["s1"].allianceType).not.toBeNull();
   });
 });
 
 describe("Pipeline integration: narrative → story arcs", () => {
-  it("processNarrativeCycle generates arcs when dramatic potential is high", () => {
+  it("runNarrativeCycle generates arcs when dramatic potential is high", () => {
     const stable = createMockStable({ id: "s1", personality: "aggressive" });
     const manager = createMockManager(["s1"]);
     manager.stableStates["s1"].narrativeState = {
@@ -185,22 +185,22 @@ describe("Pipeline integration: narrative → story arcs", () => {
       dramaticPotential: 0.85,
     };
 
-    const result = processNarrativeCycle(manager, [stable], 100);
+    const result = runNarrativeCycle(manager, [stable], 100);
     expect(result.stableStates["s1"].narrativeState!.activeArcs.length).toBeGreaterThan(0);
   });
 
-  it("processNarrativeCycle increases dramatic potential over time", () => {
+  it("runNarrativeCycle increases dramatic potential over time", () => {
     const stable = createMockStable({ id: "s1" });
     const manager = createMockManager(["s1"]);
     manager.stableStates["s1"].narrativeState = createNarrativeState();
 
-    const result = processNarrativeCycle(manager, [stable], 100);
+    const result = runNarrativeCycle(manager, [stable], 100);
     expect(result.stableStates["s1"].narrativeState!.dramaticPotential).toBeGreaterThan(0);
   });
 });
 
 describe("Pipeline integration: economy → global economic state", () => {
-  it("processEconomicCycle sets globalEconomicState on manager", () => {
+  it("runEconomicCycle sets globalEconomicState on manager", () => {
     const stables = [
       createMockStable({ id: "s1", cash: 300000 }),
       createMockStable({ id: "s2", cash: 200000 }),
@@ -208,12 +208,12 @@ describe("Pipeline integration: economy → global economic state", () => {
     const manager = createMockManager(["s1", "s2"]);
     const state = createMockGameState(stables, []);
 
-    const result = processEconomicCycle(manager, state, 100);
+    const result = runEconomicCycle(manager, state, 100);
     expect(result.globalEconomicState).toBeDefined();
     expect(typeof result.globalEconomicState?.yearlingPriceIndex).toBe("number");
   });
 
-  it("processEconomicCycle evolves from previous state", () => {
+  it("runEconomicCycle evolves from previous state", () => {
     const stables = [createMockStable({ id: "s1", cash: 500000 })];
     const manager = createMockManager(["s1"]);
     manager.globalEconomicState = {
@@ -223,7 +223,7 @@ describe("Pipeline integration: economy → global economic state", () => {
     };
     const state = createMockGameState(stables, []);
 
-    const result = processEconomicCycle(manager, state, 100);
+    const result = runEconomicCycle(manager, state, 100);
     expect(result.globalEconomicState).toBeDefined();
     // The index should have evolved (not stayed at 110)
     expect(result.globalEconomicState!.yearlingPriceIndex).not.toBe(110);
@@ -443,7 +443,7 @@ describe("Phase 7e: Economic stability validation", () => {
         globalEconomicState: trend,
       };
       state.npcAIManager = manager;
-      const updated = processEconomicCycle(manager, state, day);
+      const updated = runEconomicCycle(manager, state, day);
       trend = updated.globalEconomicState!;
     }
 
@@ -464,7 +464,7 @@ describe("Phase 7e: Narrative coverage validation", () => {
     );
     state.npcAIManager = manager;
 
-    const updated = processNarrativeCycle(manager, [stable], 100);
+    const updated = runNarrativeCycle(manager, [stable], 100);
     expect(updated.stableStates["s1"].narrativeState).toBeDefined();
   });
 });
@@ -521,7 +521,7 @@ describe("Phase 12: Strategic directives appear in UI-accessible state", () => {
 });
 
 describe("Phase 12: Narrative beats generate news items", () => {
-  it("processNarrativeCycle produces story beats that can surface as news", () => {
+  it("runNarrativeCycle produces story beats that can surface as news", () => {
     const stable = createMockStable({ id: "s1", personality: "aggressive" });
     const manager = createMockManager(["s1"]);
     manager.stableStates["s1"].narrativeState = {
@@ -530,7 +530,7 @@ describe("Phase 12: Narrative beats generate news items", () => {
       dramaticPotential: 0.9,
     };
 
-    const result = processNarrativeCycle(manager, [stable], 100);
+    const result = runNarrativeCycle(manager, [stable], 100);
     const narrative = result.stableStates["s1"].narrativeState!;
 
     // With high dramatic potential, arcs should be generated
@@ -545,7 +545,7 @@ describe("Phase 12: Narrative beats generate news items", () => {
 });
 
 describe("Phase 12: Diplomatic events surface in state", () => {
-  it("processDiplomaticInteractions creates relationship entries visible to UI", () => {
+  it("resolveDiplomaticInteractions creates relationship entries visible to UI", () => {
     const stables = [
       createMockStable({ id: "s1", personality: "aggressive" }),
       createMockStable({ id: "s2", personality: "breeder" }),
@@ -553,7 +553,7 @@ describe("Phase 12: Diplomatic events surface in state", () => {
     const manager = createMockManager(["s1", "s2"]);
 
     const initialized = initializeRelationships(manager, stables);
-    const processed = processDiplomaticInteractions(initialized, stables, 100);
+    const processed = resolveDiplomaticInteractions(initialized, stables, 100);
 
     // Each stable should have relationship data accessible for UI
     const s1Relationships = processed.stableStates["s1"].npcRelationships;

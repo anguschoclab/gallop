@@ -5,7 +5,7 @@
  * Provides trust dynamics, alliance formation/breaking, and cartel coordination.
  *
  * Dependencies: @/game/types (Stable, GameState), ./npcCycleAI (NpcAIManager, StableAIState, NpcRelationship, AllianceType, Cartel, DiplomaticEvent)
- * Related files: strategicCoordinator.ts (uses diplomacy state), npcCycle.ts (calls processDiplomaticInteractions)
+ * Related files: strategicCoordinator.ts (uses diplomacy state), npcCycle.ts (calls resolveDiplomaticInteractions)
  */
 
 import type { Stable } from "@/game/types";
@@ -357,7 +357,7 @@ export function formCartel(
  * @param day - Current game day
  * @returns Updated manager with processed diplomacy
  */
-export function processDiplomaticInteractions(
+export function resolveDiplomaticInteractions(
   manager: NpcAIManager,
   stables: Stable[],
   day: number,
@@ -407,7 +407,7 @@ export function processDiplomaticInteractions(
  * @param previousOwnerId - Stable ID of the horse's previous owner
  * @returns Updated manager with adjusted trust
  */
-export function processClaimingFriction(
+export function applyClaimingFriction(
   manager: NpcAIManager,
   claimantId: string,
   previousOwnerId: string,

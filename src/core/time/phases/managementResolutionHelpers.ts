@@ -15,10 +15,10 @@ import { resolveJockeyIntent } from "./jockeyManagementResolvers";
 import { resolveFacilityIntent } from "./facilityManagementResolvers";
 import { resolveHorseIntent } from "./horseManagementResolvers";
 import { resolveCampaignIntent } from "./campaignManagementResolvers";
-import { resolveInsuranceIntent, processInsurancePremiums } from "./insuranceManagementResolvers";
+import { resolveInsuranceIntent, applyInsurancePremiums } from "./insuranceManagementResolvers";
 
-// Re-export processInsurancePremiums for backward compatibility
-export { processInsurancePremiums } from "./insuranceManagementResolvers";
+// Re-export applyInsurancePremiums for backward compatibility
+export { applyInsurancePremiums } from "./insuranceManagementResolvers";
 
 /**
  * Resolve a single management intent into impacts.

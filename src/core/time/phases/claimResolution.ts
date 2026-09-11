@@ -17,7 +17,7 @@ import { PHASE_ORDER_CLAIM_RESOLUTION } from "@/constants";
 import { formatCurrency } from "@/core/common/formatting";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { HorseTransferImpact, CashImpact } from "@/core/resolver/impacts/index";
-import { processClaimingFriction } from "@/core/ai/diplomacyAI";
+import { applyClaimingFriction } from "@/core/ai/diplomacyAI";
 import { trackClaimingActivity } from "@/core/ai/economyAITracking";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
@@ -212,7 +212,7 @@ export const claimResolutionPhase = {
           horse.ownership?.type === "npc" ? horse.ownership.stableId : undefined;
         // Only process friction for NPC-to-NPC claims
         if (winnerClaim.claimantStableId && originalStableId) {
-          updatedNpcAIManager = processClaimingFriction(
+          updatedNpcAIManager = applyClaimingFriction(
             updatedNpcAIManager,
             winnerClaim.claimantStableId,
             originalStableId,

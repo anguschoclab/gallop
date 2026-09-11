@@ -2,7 +2,7 @@ import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { LogImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import type { ClaimingIntent } from "@/core/resolver/intents";
-import { processClaims, type ClaimAttempt } from "@/core/market/claiming";
+import { resolveClaims, type ClaimAttempt } from "@/core/market/claiming";
 import type { Rng } from "@/core/common/rng";
 import type { Race, Horse } from "@/game/types";
 import {
@@ -33,7 +33,7 @@ export interface ProcessClaimingProps {
  * @param props.rng
  * @returns Object containing all generated Impacts
  */
-export function processClaimingResolution({
+export function resolveClaimingResolution({
   race,
   claimIntents,
   horses,
@@ -72,7 +72,7 @@ export function processClaimingResolution({
     const intentMap = new Map(
       eligibleClaims.map((i) => [`${i.horseId}:${i.claimantStableId || ""}`, i]),
     );
-    const { transfers, logs: claimLogs } = processClaims(race, claimAttempts, horses, newDay, rng);
+    const { transfers, logs: claimLogs } = resolveClaims(race, claimAttempts, horses, newDay, rng);
 
     impacts.push(...generateClaimTransferImpacts(transfers, race, intentMap, newDay, rng));
 

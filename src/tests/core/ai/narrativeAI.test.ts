@@ -10,7 +10,7 @@ import {
   evaluateNarrativeOpportunity,
   generateStoryArc,
   generateStoryBeat,
-  processNarrativeCycle,
+  runNarrativeCycle,
   getActiveArcs,
   resolveArc,
   detectRaceBeats,
@@ -174,11 +174,11 @@ describe("generateStoryBeat", () => {
   });
 });
 
-describe("processNarrativeCycle", () => {
+describe("runNarrativeCycle", () => {
   it("initializes narrativeState for stables that don't have it", () => {
     const manager = createMockManager();
     const stables = [createMockStable({ id: "s1" })];
-    const result = processNarrativeCycle(manager, stables, 100);
+    const result = runNarrativeCycle(manager, stables, 100);
     expect(result.stableStates["s1"].narrativeState).toBeDefined();
     expect(result.stableStates["s1"].narrativeState!.activeArcs).toEqual([]);
     expect(result.stableStates["s1"].narrativeState!.dramaticPotential).toBe(0);
@@ -188,7 +188,7 @@ describe("processNarrativeCycle", () => {
     const manager = createMockManager(["s1"]);
     manager.stableStates["s1"].narrativeState = createNarrativeState();
     const stables = [createMockStable({ id: "s1" })];
-    const result = processNarrativeCycle(manager, stables, 100);
+    const result = runNarrativeCycle(manager, stables, 100);
     expect(result.stableStates["s1"].narrativeState!.dramaticPotential).toBeGreaterThan(0);
   });
 
@@ -200,7 +200,7 @@ describe("processNarrativeCycle", () => {
       dramaticPotential: 0.85,
     };
     const stables = [createMockStable({ id: "s1", personality: "aggressive" })];
-    const result = processNarrativeCycle(manager, stables, 100);
+    const result = runNarrativeCycle(manager, stables, 100);
     expect(result.stableStates["s1"].narrativeState!.activeArcs.length).toBeGreaterThan(0);
   });
 
@@ -220,7 +220,7 @@ describe("processNarrativeCycle", () => {
       dramaticPotential: 0.5,
     };
     const stables = [createMockStable({ id: "s1" })];
-    const result = processNarrativeCycle(manager, stables, 100);
+    const result = runNarrativeCycle(manager, stables, 100);
     const updatedArc = result.stableStates["s1"].narrativeState!.activeArcs[0];
     expect(updatedArc.status).not.toBe("setup");
   });

@@ -4,25 +4,23 @@
  * Extracted from npcCycle.ts for modularity.
  *
  * Dependencies: @/game/types (Horse, Race, Stable), @/core/ai/npcCycleAI (NpcAIManager, getOrCreateStableAIState), @/core/stable/rivalry (RIVALRY_CONSTANTS), @/core/narrative/rivalryNewsGenerator, @/core/uuid, @/core/common/rng
+ * Related files: src/core/npc/regionalDominanceHelpers.ts (extracted helpers)
  */
 
 import type { Horse, Race, Stable } from "@/game/types";
 import type { ReputationEvent } from "@/core/reputation/reputationTypes";
 import type { Rng } from "@/core/common/rng";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
-import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";
-import { generateUUID } from "@/core/uuid";
 import type { NewsItem } from "@/core/narrative/newsTypes";
-import { isPlayerOwned } from "@/core/horse/ownership";
-import { asStableId } from "@/core/types/branded";
 import {
-  generateRivalryEmergenceNews,
-  generateGrudgeMatchNews,
-  generateRegionLostNews,
-  generateRivalryEscalationNews,
-  generateStableIntroNews,
-} from "@/core/narrative/rivalryNewsGenerator";
+  resolveWinningStableId,
+  handlePlayerUnseatsNpcKing,
+  handleNpcWinsRegion,
+  buildRaceEntryMaps,
+  findBestResult,
+  resolveGrudgeMatch,
+} from "@/core/npc/regionalDominanceHelpers";
 
 /**
  * Apply ally friction cascades — when an NPC gains friction against the player,
@@ -55,6 +53,87 @@ export function applyAllyFrictionCascade(
 }
 
 /**
+ * Process grudge matches for a single race — head-to-head rivalry news and friction updates.
+ * Extracted from resolveRegionalDominance for clarity.
+ * @param race
+ * @param horseMap
+ * @param stableMap
+ * @param aiManager
+ * @param currentDay
+ * @param rng
+ */
+function resolveGrudgeMatchesForRace(
+  race: Race,
+  horseMap: Map<string, Horse>,
+  stableMap: Map<string, Stable>,
+  aiManager: NpcAIManager,
+  currentDay: number,
+  rng: Rng,
+): { newsItems: NewsItem[]; reputationEvents: ReputationEvent[] } {
+  const newsItems: NewsItem[] = [];
+  const reputationEvents: ReputationEvent[] = [];
+
+  if (!race.graded || !["G1", "G2", "G3"].includes(race.graded.grade)) {
+    return { newsItems, reputationEvents };
+  }
+
+  const hasPlayerEntry = race.entries.some((e) => e.ownership?.type === "player");
+  if (!hasPlayerEntry) return { newsItems, reputationEvents };
+
+  const { playerHorseIds, npcHorseIdsByStable } = buildRaceEntryMaps(race);
+  const playerBest = findBestResult(race, playerHorseIds);
+  if (!playerBest) return { newsItems, reputationEvents };
+
+  const rivalStablesInRace = new Set(
+    race.entries
+      .map((e) => (e.ownership?.type === "npc" ? e.ownership.stableId : null))
+      .filter((id): id is NonNullable<typeof id> => id != null),
+  );
+
+  for (const rivalStableId of rivalStablesInRace) {
+    const rivalAI = aiManager.stableStates[rivalStableId];
+    if (!rivalAI || rivalAI.friction < 50) continue;
+
+    const rivalStable = stableMap.get(rivalStableId);
+    if (!rivalStable) continue;
+
+    const rivalHorseIds = npcHorseIdsByStable.get(rivalStableId);
+    if (!rivalHorseIds || rivalHorseIds.size === 0) continue;
+
+    const rivalBest = findBestResult(race, rivalHorseIds);
+    if (!rivalBest) continue;
+
+    const playerHorse = horseMap.get(playerBest.horseId);
+    const rivalHorse = horseMap.get(rivalBest.horseId);
+    if (!playerHorse || !rivalHorse) continue;
+
+    const playerWon = playerBest.position < rivalBest.position;
+    const result = resolveGrudgeMatch(
+      race,
+      playerHorse,
+      rivalHorse,
+      playerWon,
+      rivalStable,
+      rivalAI,
+      currentDay,
+      rng,
+    );
+    newsItems.push(...result.newsItems);
+    reputationEvents.push(...result.reputationEvents);
+
+    applyAllyFrictionCascade(
+      aiManager,
+      rivalStableId,
+      playerWon ? 10 : 15,
+      race.graded?.country || "",
+    );
+    aiManager.stableStates[rivalStableId] = { ...rivalAI };
+  }
+
+  return { newsItems, reputationEvents };
+}
+
+/**
  * Process regional dominance updates based on race winners.
  * Updates the AI manager with new regional kings and friction values.
  * Also detects rivalry milestones and generates news items.
@@ -67,7 +146,7 @@ export function applyAllyFrictionCascade(
  * @param rng - Random number generator.
  * @returns Updated AI manager with new regional kings and friction values, plus generated news items.
  */
-export function processRegionalDominance(
+export function resolveRegionalDominance(
   races: Race[],
   horses: Horse[],
   npcStables: Stable[],
@@ -95,225 +174,55 @@ export function processRegionalDominance(
       const currentKingId = updatedAiManager.regionalKings[region];
 
       const winningHorse = horseMap.get(winner.horseId);
-      if (!winningHorse) continue;
-      const winningStableId = isPlayerOwned(winningHorse)
-        ? "player"
-        : winningHorse.ownership?.type === "npc"
-          ? winningHorse.ownership.stableId
-          : null;
+      const winningStableId = resolveWinningStableId(winningHorse);
       if (!winningStableId) continue;
 
+      // Regional king update
       if (winningStableId === currentKingId) {
         if (currentKingId !== "player") {
           const kingAI = updatedAiManager.stableStates[currentKingId];
           if (kingAI) kingAI.winsAgainstPlayer = 0;
         }
+      } else if (winningStableId === "player") {
+        if (currentKingId && currentKingId !== "player") {
+          const escNews = handlePlayerUnseatsNpcKing(
+            updatedAiManager,
+            currentKingId,
+            region,
+            race,
+            currentDay,
+            rng,
+            stableMap,
+          );
+          newsItems.push(...escNews);
+        } else if (!currentKingId) {
+          updatedAiManager.regionalKings[region] = "player";
+        }
       } else {
-        if (winningStableId === "player") {
-          if (currentKingId && currentKingId !== "player") {
-            const kingAI = updatedAiManager.stableStates[currentKingId];
-            if (kingAI) {
-              const oldFriction = kingAI.friction;
-              kingAI.friction = Math.min(
-                100,
-                kingAI.friction + RIVALRY_CONSTANTS.FRICTION.WIN_GRADED_RACE_OVER_NPC,
-              );
-
-              if (oldFriction < 80 && kingAI.friction >= 80) {
-                const kingStable = stableMap.get(asStableId(currentKingId));
-                if (kingStable) {
-                  const escNews = generateRivalryEscalationNews(
-                    kingStable,
-                    oldFriction,
-                    kingAI.friction,
-                    currentDay,
-                    rng,
-                  );
-                  if (escNews) newsItems.push(escNews);
-                }
-              }
-
-              if (!kingAI.winsAgainstPlayer) kingAI.winsAgainstPlayer = 0;
-            }
-
-            if (race.graded && race.graded.grade === "G1") {
-              updatedAiManager.regionalKings[region] = "player";
-            }
-          } else if (!currentKingId) {
-            updatedAiManager.regionalKings[region] = "player";
-          }
-        } else {
-          const stable = stableMap.get(winningStableId);
-          if (stable) {
-            const stableAI = getOrCreateStableAIState(updatedAiManager, stable, currentDay);
-            const oldFriction = stableAI.friction;
-
-            if (currentKingId === "player") {
-              stableAI.winsAgainstPlayer++;
-              if (stableAI.winsAgainstPlayer >= RIVALRY_CONSTANTS.DOMINANCE.UNSEAT_WIN_STREAK) {
-                updatedAiManager.regionalKings = {
-                  ...updatedAiManager.regionalKings,
-                  [region]: winningStableId,
-                };
-                stableAI.winsAgainstPlayer = 0;
-
-                const news = generateRegionLostNews(region, stable, currentDay, rng);
-                if (news) newsItems.push(news);
-              }
-            } else {
-              updatedAiManager.regionalKings = {
-                ...updatedAiManager.regionalKings,
-                [region]: winningStableId,
-              };
-            }
-            stableAI.regionalPrestige = {
-              ...stableAI.regionalPrestige,
-              [region]: (stableAI.regionalPrestige[region] || 0) + 1,
-            };
-            updatedAiManager.stableStates[stable.id] = stableAI;
-
-            if (currentKingId === "player") {
-              applyAllyFrictionCascade(updatedAiManager, stable.id, 5, region);
-            }
-
-            if (oldFriction < 60 && stableAI.friction >= 60 && !stableAI.rivalryAnnouncedDay) {
-              if (!stableAI.introPublishedDay) {
-                const introNews = generateStableIntroNews(stable, currentDay, rng);
-                if (introNews) {
-                  newsItems.push(introNews);
-                  stableAI.introPublishedDay = currentDay;
-                }
-              }
-              const news = generateRivalryEmergenceNews(stable, stableAI.friction, currentDay, rng);
-              if (news) {
-                newsItems.push(news);
-                stableAI.rivalryAnnouncedDay = currentDay;
-              }
-            }
-          }
-        }
+        const npcNews = handleNpcWinsRegion(
+          updatedAiManager,
+          winningStableId,
+          currentKingId,
+          region,
+          race,
+          currentDay,
+          rng,
+          stableMap,
+        );
+        newsItems.push(...npcNews);
       }
 
-      // Grudge Match Logic
-      if (
-        race.graded &&
-        (race.graded.grade === "G1" || race.graded.grade === "G2" || race.graded.grade === "G3")
-      ) {
-        const hasPlayerEntry = race.entries.some((e) => e.ownership?.type === "player");
-        if (hasPlayerEntry) {
-          // Pre-build player horse IDs (invariant across all rivals)
-          const playerHorseIds = new Set(
-            race.entries.filter((e) => e.ownership?.type === "player").map((e) => e.horseId),
-          );
-
-          // Pre-build NPC stable → horse IDs map (single pass over entries)
-          const npcHorseIdsByStable = new Map<string, Set<string>>();
-          for (const e of race.entries) {
-            if (e.ownership?.type === "npc") {
-              const sid = e.ownership.stableId;
-              let set = npcHorseIdsByStable.get(sid);
-              if (!set) {
-                set = new Set();
-                npcHorseIdsByStable.set(sid, set);
-              }
-              set.add(e.horseId);
-            }
-          }
-
-          // Pre-calculate player best position and horse ID (invariant across all rivals)
-          const playerResults = race.result.filter((r) => playerHorseIds.has(r.horseId));
-          const playerBestPos =
-            playerResults.length > 0 ? Math.min(...playerResults.map((r) => r.position)) : Infinity;
-          const playerHorseId = playerResults.find((r) => r.position === playerBestPos)?.horseId;
-
-          // Early exit: no valid player horse to match against
-          if (!playerHorseId) continue;
-
-          const rivalStablesInRace = new Set(
-            race.entries
-              .map((e) => (e.ownership?.type === "npc" ? e.ownership.stableId : null))
-              .filter((id): id is NonNullable<typeof id> => id != null),
-          );
-
-          for (const rivalStableId of rivalStablesInRace) {
-            if (!rivalStableId) continue;
-            const rivalAI = updatedAiManager.stableStates[rivalStableId];
-            if (rivalAI && rivalAI.friction >= 50) {
-              const rivalStable = stableMap.get(rivalStableId);
-              if (!rivalStable) continue;
-
-              const rivalHorseIds = npcHorseIdsByStable.get(rivalStableId);
-              if (!rivalHorseIds || rivalHorseIds.size === 0) continue;
-
-              const rivalResults = race.result.filter((r) => rivalHorseIds.has(r.horseId));
-              const rivalBestPos =
-                rivalResults.length > 0
-                  ? Math.min(...rivalResults.map((r) => r.position))
-                  : Infinity;
-              const rivalHorseId = rivalResults.find((r) => r.position === rivalBestPos)?.horseId;
-
-              if (playerHorseId && rivalHorseId) {
-                const playerHorse = horseMap.get(playerHorseId);
-                const rivalHorse = horseMap.get(rivalHorseId);
-
-                if (playerHorse && rivalHorse) {
-                  const playerWon = playerBestPos < rivalBestPos;
-                  const news = generateGrudgeMatchNews(
-                    race,
-                    playerHorse,
-                    rivalHorse,
-                    playerWon,
-                    currentDay,
-                    rng,
-                    rivalStable,
-                  );
-                  if (news) newsItems.push(news);
-
-                  reputationEvents.push({
-                    id: generateUUID(rng),
-                    day: currentDay,
-                    source: playerWon ? "rivalry_win" : "rivalry_loss",
-                    amount: playerWon ? 15 : -10,
-                    description: playerWon
-                      ? `Defeated rival ${rivalStable.name} in a ${race.graded.grade} grudge match!`
-                      : `Lost to rival ${rivalStable.name} in a ${race.graded.grade} grudge match.`,
-                    horseId: playerHorse.id,
-                    raceId: race.id,
-                  });
-
-                  const preFriction = rivalAI.friction;
-
-                  if (playerWon) {
-                    rivalAI.friction = Math.min(100, rivalAI.friction + 10);
-                  } else {
-                    const rivalWinGain = 15;
-                    rivalAI.friction = Math.min(100, rivalAI.friction + rivalWinGain);
-                    applyAllyFrictionCascade(
-                      updatedAiManager,
-                      rivalStableId!,
-                      rivalWinGain,
-                      region,
-                    );
-                  }
-
-                  if (preFriction < 80 && rivalAI.friction >= 80) {
-                    const escNews = generateRivalryEscalationNews(
-                      rivalStable,
-                      preFriction,
-                      rivalAI.friction,
-                      currentDay,
-                      rng,
-                    );
-                    if (escNews) newsItems.push(escNews);
-                  }
-
-                  updatedAiManager.stableStates[rivalStableId!] = { ...rivalAI };
-                }
-              }
-            }
-          }
-        }
-      }
+      // Grudge match processing
+      const grudgeResult = resolveGrudgeMatchesForRace(
+        race,
+        horseMap,
+        stableMap,
+        updatedAiManager,
+        currentDay,
+        rng,
+      );
+      newsItems.push(...grudgeResult.newsItems);
+      reputationEvents.push(...grudgeResult.reputationEvents);
     }
 
     return { aiManager: updatedAiManager, newsItems, reputationEvents };

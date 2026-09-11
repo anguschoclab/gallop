@@ -4,7 +4,7 @@
  * This file provides the race resolution phase that simulates unresolved races
  * and generates all race resolution impacts.
  *
- * Dependencies: ../pipeline (PipelineContext), @/core/race/raceResolution (resolveRaces), @/constants (PHASE_ORDER_RACE_RESOLUTION), @/core/resolver/impacts/index (AnyImpact), @/core/race/rngForRace (rngForRace), @/game/types (Race), @/core/resolver/intents (ClaimingIntent), @/core/race/raceSimulationExecutor (simulateRace), @/core/race/raceImpactGenerator (generateRaceImpacts), @/core/auction/claimingResolutionService (processClaimingResolution), @/core/history/historyService (recordRaceHistory, checkHallOfFameInduction), @/core/uuid (generateUUID), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/ai/raceEntryAI (recordRaceEntryOutcome), @/core/ai/jockeyAI (recordJockeyOutcome), @/core/ai/campaignAI (recordCampaignOutcome)
+ * Dependencies: ../pipeline (PipelineContext), @/core/race/raceResolution (resolveRaces), @/constants (PHASE_ORDER_RACE_RESOLUTION), @/core/resolver/impacts/index (AnyImpact), @/core/race/rngForRace (rngForRace), @/game/types (Race), @/core/resolver/intents (ClaimingIntent), @/core/race/raceSimulationExecutor (simulateRace), @/core/race/raceImpactGenerator (generateRaceImpacts), @/core/auction/claimingResolutionService (resolveClaimingResolution), @/core/history/historyService (recordRaceHistory, checkHallOfFameInduction), @/core/uuid (generateUUID), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/ai/raceEntryAI (recordRaceEntryOutcome), @/core/ai/jockeyAI (recordJockeyOutcome), @/core/ai/campaignAI (recordCampaignOutcome)
  * Related files: ../pipeline.ts (uses phase)
  */
 
@@ -15,12 +15,11 @@ import { rngForRace } from "@/core/race/rngForRace";
 import type { Race } from "@/game/types";
 import type { WeatherState } from "@/core/weather/weatherTypes";
 import type { ClaimingIntent, RaceResolutionIntent } from "@/core/resolver/intents";
-import { simulateRace } from "@/core/race/raceSimulationExecutor";
-import { generateRaceImpacts } from "@/core/race/raceImpactGenerator";
+import { resolveRacePort } from "@/core/time/pipelinePorts";
 import {
   recordNpcAiOutcomes,
   checkTrackRecordAndHof,
-  processClaimingForRace,
+  resolveClaimingForRace,
 } from "./raceResolutionHelpers";
 
 /**
@@ -34,6 +33,9 @@ export const raceResolutionPhase: PipelinePhase = {
     !!context.skipRaceResolution || Object.keys(context.state.horses).length === 0,
   execute: (context: PipelineContext): PipelineContext => {
     const { intents, state, newDay } = context;
+    // Resolve ports — use injected implementations if available, else core defaults
+    const simulateRace = resolveRacePort(context.ports, "simulate");
+    const generateRaceImpacts = resolveRacePort(context.ports, "generateImpacts");
     const impacts: AnyImpact[] = [];
     const updatedRaces: Record<string, Race> = { ...state.races };
     const overdueRaces = Object.values(state.races).filter(
@@ -145,6 +147,7 @@ export const raceResolutionPhase: PipelinePhase = {
           newDay,
           state.trackRecords || {},
           hallOfFameIds,
+          context.ports,
         );
         impacts.push(...trackRecordAndHofImpacts);
 
@@ -153,12 +156,13 @@ export const raceResolutionPhase: PipelinePhase = {
           const claimIntents = context.intents.filter(
             (i): i is ClaimingIntent => i.type === "claiming" && i.raceId === race.id,
           );
-          const claimingImpacts = processClaimingForRace(
+          const claimingImpacts = resolveClaimingForRace(
             race,
             claimIntents,
             Object.values(state.horses),
             newDay,
             rng,
+            context.ports,
           );
           impacts.push(...claimingImpacts);
         }
@@ -238,6 +242,7 @@ export const raceResolutionPhase: PipelinePhase = {
         newDay,
         state.trackRecords || {},
         hallOfFameIds,
+        context.ports,
       );
       impacts.push(...trackRecordAndHofImpacts);
 
@@ -246,12 +251,13 @@ export const raceResolutionPhase: PipelinePhase = {
         const claimIntents = context.intents.filter(
           (i): i is ClaimingIntent => i.type === "claiming" && i.raceId === race.id,
         );
-        const claimingImpacts = processClaimingForRace(
+        const claimingImpacts = resolveClaimingForRace(
           race,
           claimIntents,
           Object.values(state.horses),
           newDay,
           rng,
+          context.ports,
         );
         impacts.push(...claimingImpacts);
       }

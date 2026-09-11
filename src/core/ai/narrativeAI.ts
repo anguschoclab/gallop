@@ -5,7 +5,7 @@
  * that surface as news items and add dramatic depth to the game world.
  *
  * Dependencies: @/game/types (Stable, GameState), ./npcCycleAI (NpcAIManager, StableAIState, NarrativeState, NarrativeArc, StoryBeat)
- * Related files: strategicCoordinator.ts (provides world assessment), npcCycle.ts (calls processNarrativeCycle)
+ * Related files: strategicCoordinator.ts (provides world assessment), npcCycle.ts (calls runNarrativeCycle)
  */
 
 import type { Stable } from "@/game/types";
@@ -124,7 +124,7 @@ export function generateStoryBeat(
  * @param day - Current game day
  * @returns Updated manager with processed narratives
  */
-export function processNarrativeCycle(
+export function runNarrativeCycle(
   manager: NpcAIManager,
   stables: Stable[],
   day: number,

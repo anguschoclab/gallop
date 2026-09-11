@@ -13,7 +13,7 @@ import { isPlayerOwned } from "@/core/horse/ownership";
 import { createExpense } from "@/core/expenses";
 import { createTransaction } from "@/core/transactions";
 import { calculateTotalMaintenance } from "@/core/facilities";
-import { generateFlavorNews, generateWeeklyFlavorNews } from "@/core/narrative/newsGenerator";
+import { resolveNarrativePort } from "@/core/time/pipelinePorts";
 import { generateUUID } from "@/core/uuid";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { CashImpact, TransactionImpact, NewsImpact } from "@/core/resolver/impacts/index";
@@ -49,6 +49,9 @@ export const upkeepPhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay, dailyRng } = context;
     const impacts: AnyImpact[] = [];
+    // Resolve narrative ports — use injected implementations if available
+    const generateFlavor = resolveNarrativePort(context.ports, "generateFlavor");
+    const generateWeeklyFlavor = resolveNarrativePort(context.ports, "generateWeeklyFlavor");
 
     const playerHorses = Object.values(state.horses).filter(
       (h) => isPlayerOwned(h) && (!h.lifecycleStatus || h.lifecycleStatus === "active"),
@@ -247,7 +250,7 @@ export const upkeepPhase = {
                 phase: "upkeep",
                 logLevel: "always",
                 type: "news_item",
-                newsItem: generateFlavorNews(newDay, dailyRng),
+                newsItem: generateFlavor(newDay, dailyRng),
               } as NewsImpact,
             ]
           : []),
@@ -260,7 +263,7 @@ export const upkeepPhase = {
                 phase: "upkeep",
                 logLevel: "always",
                 type: "news_item",
-                newsItem: generateWeeklyFlavorNews(Object.values(state.horses), newDay, dailyRng),
+                newsItem: generateWeeklyFlavor(Object.values(state.horses), newDay, dailyRng),
               } as NewsImpact,
             ]
           : []),

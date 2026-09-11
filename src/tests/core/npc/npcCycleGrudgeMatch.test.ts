@@ -17,7 +17,7 @@ interface MockRace {
   result: MockResult[];
 }
 
-function processGrudgeMatch(race: MockRace, rivalStableId: string) {
+function resolveGrudgeMatch(race: MockRace, rivalStableId: string) {
   const playerHorseIds = new Set(
     race.entries.filter((e) => e.ownership?.type === "player").map((e) => e.horseId),
   );
@@ -67,7 +67,7 @@ describe("npcCycle — Set-based grudge match lookup", () => {
         { horseId: "r1", position: 1, time: 118 },
       ],
     );
-    const result = processGrudgeMatch(race, "rival1");
+    const result = resolveGrudgeMatch(race, "rival1");
     expect(result.playerBestPos).toBe(3);
   });
 
@@ -82,7 +82,7 @@ describe("npcCycle — Set-based grudge match lookup", () => {
         { horseId: "r1", position: 1, time: 118 },
       ],
     );
-    const result = processGrudgeMatch(race, "rival1");
+    const result = resolveGrudgeMatch(race, "rival1");
     expect(result.rivalBestPos).toBe(1);
   });
 
@@ -97,7 +97,7 @@ describe("npcCycle — Set-based grudge match lookup", () => {
         { horseId: "r1", position: 1, time: 118 },
       ],
     );
-    const result = processGrudgeMatch(race, "rival1");
+    const result = resolveGrudgeMatch(race, "rival1");
     expect(result.hasMatch).toBe(true);
   });
 
@@ -106,7 +106,7 @@ describe("npcCycle — Set-based grudge match lookup", () => {
       [{ horseId: "r1", ownership: makeNpcOwned("rival1") }],
       [{ horseId: "r1", position: 1, time: 118 }],
     );
-    const result = processGrudgeMatch(race, "rival1");
+    const result = resolveGrudgeMatch(race, "rival1");
     expect(result.hasMatch).toBe(false);
   });
 
@@ -115,7 +115,7 @@ describe("npcCycle — Set-based grudge match lookup", () => {
       [{ horseId: "p1", ownership: makePlayerOwned() }],
       [{ horseId: "p1", position: 1, time: 118 }],
     );
-    const result = processGrudgeMatch(race, "rival1");
+    const result = resolveGrudgeMatch(race, "rival1");
     expect(result.hasMatch).toBe(false);
   });
 
@@ -134,7 +134,7 @@ describe("npcCycle — Set-based grudge match lookup", () => {
         { horseId: "r2", position: 3, time: 121 },
       ],
     );
-    const result = processGrudgeMatch(race, "rival1");
+    const result = resolveGrudgeMatch(race, "rival1");
     expect(result.playerBestPos).toBe(2);
     expect(result.rivalBestPos).toBe(1);
     expect(result.playerHorseId).toBe("p2");

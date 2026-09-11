@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { initializeRelationships, processDiplomaticInteractions } from "@/core/ai/diplomacyAI";
+import { initializeRelationships, resolveDiplomaticInteractions } from "@/core/ai/diplomacyAI";
 import { generateNpcIntents } from "@/core/npc/intentGenerators";
 import { createStableAIState } from "@/core/ai/npcCycleAI";
 import type { GameState, Stable, Horse } from "@/game/types";
@@ -102,7 +102,7 @@ describe("Diplomacy Loop", () => {
     expect(stable2AI?.npcRelationships?.["npc-1"]).toBeDefined();
   });
 
-  it("processDiplomaticInteractions updates trust values over time", () => {
+  it("resolveDiplomaticInteractions updates trust values over time", () => {
     const stables = [
       createMockStable({ id: "npc-1" }),
       createMockStable({ id: "npc-2", personality: "conservative" }),
@@ -111,7 +111,7 @@ describe("Diplomacy Loop", () => {
     const initialized = initializeRelationships(manager, stables);
 
     const beforeTrust = initialized.stableStates["npc-1"]?.npcRelationships?.["npc-2"]?.trust;
-    const afterManager = processDiplomaticInteractions(initialized, stables, 100);
+    const afterManager = resolveDiplomaticInteractions(initialized, stables, 100);
     const afterTrust = afterManager.stableStates["npc-1"]?.npcRelationships?.["npc-2"]?.trust;
 
     expect(typeof beforeTrust).toBe("number");
@@ -149,7 +149,7 @@ describe("Diplomacy Loop", () => {
     ];
     const manager = createMockManagerWithStables(stables);
     const initialized = initializeRelationships(manager, stables);
-    const processed = processDiplomaticInteractions(initialized, stables, 100);
+    const processed = resolveDiplomaticInteractions(initialized, stables, 100);
 
     // Verify relationships are still present after processing
     expect(processed.stableStates["npc-1"]?.npcRelationships).toBeDefined();

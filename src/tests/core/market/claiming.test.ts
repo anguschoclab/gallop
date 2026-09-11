@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
-  processClaims,
+  resolveClaims,
   isHorseEligibleForClaimingPrice,
   getSuggestedClaimingPriceRange,
   validateClaimingRace,
@@ -28,10 +28,10 @@ import { createTestRng } from "@/tests/helpers";
 import { makeNpcOwned } from "@/core/horse/ownership";
 
 describe("Claiming Mechanics", () => {
-  describe("processClaims", () => {
+  describe("resolveClaims", () => {
     it("returns empty arrays if race has no claiming price or is not resolved", () => {
       const race = createTestRace({ id: "race-1", resolved: true, claimingPrice: undefined });
-      const { transfers, logs } = processClaims(race, [], [], 1);
+      const { transfers, logs } = resolveClaims(race, [], [], 1);
       expect(transfers).toHaveLength(0);
       expect(logs).toHaveLength(0);
     });
@@ -55,7 +55,7 @@ describe("Claiming Mechanics", () => {
         successful: false, // Initial state doesn't matter
       };
 
-      const { transfers, logs } = processClaims(race, [claim], [horse], 1);
+      const { transfers, logs } = resolveClaims(race, [claim], [horse], 1);
       expect(transfers).toHaveLength(1);
       expect(transfers[0]).toMatchObject({
         horseId: "horse-1",
@@ -87,7 +87,7 @@ describe("Claiming Mechanics", () => {
       ];
 
       const rng = createTestRng("1"); // Ensure deterministic selection
-      const { transfers } = processClaims(race, claims, [horse], 1, rng);
+      const { transfers } = resolveClaims(race, claims, [horse], 1, rng);
       expect(transfers).toHaveLength(1);
       expect(transfers[0].toStableId).toBeDefined();
     });

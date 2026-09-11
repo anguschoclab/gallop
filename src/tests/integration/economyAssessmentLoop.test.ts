@@ -10,7 +10,7 @@
 
 import { describe, it, expect } from "vitest";
 import { assessWorldState } from "@/core/ai/strategicCoordinator";
-import { processEconomicCycle } from "@/core/ai/economyAITracking";
+import { runEconomicCycle } from "@/core/ai/economyAITracking";
 import type { GameState, Stable, Horse } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
@@ -79,11 +79,11 @@ function createMockGameState(overrides: Partial<GameState> = {}): GameState {
 }
 
 describe("Economy → Assessment Loop", () => {
-  it("processEconomicCycle updates globalEconomicState on aiManager", () => {
+  it("runEconomicCycle updates globalEconomicState on aiManager", () => {
     const manager = createMockManager();
     const state = createMockGameState({ npcAIManager: manager });
 
-    const updatedManager = processEconomicCycle(manager, state, 100);
+    const updatedManager = runEconomicCycle(manager, state, 100);
 
     expect(updatedManager.globalEconomicState).toBeDefined();
     expect(updatedManager.globalEconomicState?.studFeeTrend).toBeDefined();
@@ -91,19 +91,19 @@ describe("Economy → Assessment Loop", () => {
     expect(updatedManager.globalEconomicState?.claimingMarketActivity).toBeDefined();
   });
 
-  it("assessWorldState reads globalEconomicState set by processEconomicCycle", () => {
+  it("assessWorldState reads globalEconomicState set by runEconomicCycle", () => {
     const manager = createMockManager();
     const state = createMockGameState({ npcAIManager: manager });
 
     // Run economic cycle first
-    const updatedManager = processEconomicCycle(manager, state, 100);
+    const updatedManager = runEconomicCycle(manager, state, 100);
     expect(updatedManager.globalEconomicState).toBeDefined();
 
     // Now assess world state — should use the economic data from the manager
     const updatedState = { ...state, npcAIManager: updatedManager };
     const assessment = assessWorldState(updatedState, updatedManager);
 
-    // The economic trends in the assessment should match what processEconomicCycle produced
+    // The economic trends in the assessment should match what runEconomicCycle produced
     expect(assessment.economicTrends.studFeeTrend).toBe(
       updatedManager.globalEconomicState!.studFeeTrend,
     );
@@ -120,7 +120,7 @@ describe("Economy → Assessment Loop", () => {
     const state = createMockGameState({ npcAIManager: manager });
 
     // Run economic cycle
-    const updatedManager = processEconomicCycle(manager, state, 100);
+    const updatedManager = runEconomicCycle(manager, state, 100);
 
     // Assess world state with updated economic data
     const updatedState = { ...state, npcAIManager: updatedManager };
@@ -143,7 +143,7 @@ describe("Economy → Assessment Loop", () => {
     expect(beforeAssessment.economicTrends.yearlingPriceIndex).toBe(100);
 
     // After economic cycle: assessment should use real data
-    const updatedManager = processEconomicCycle(manager, state, 100);
+    const updatedManager = runEconomicCycle(manager, state, 100);
     const updatedState = { ...state, npcAIManager: updatedManager };
     const afterAssessment = assessWorldState(updatedState, updatedManager);
 

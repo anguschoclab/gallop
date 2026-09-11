@@ -5,7 +5,7 @@
  * alliance formation/dissolution, and cartel evaluation.
  * Runs after npcCyclePhase (order 80) so it has fresh AI state.
  *
- * Dependencies: ../pipeline (PipelineContext), @/core/ai/diplomacyAI (processDiplomaticInteractions, initializeRelationships), @/core/ai/npcCycleAI (NpcAIManager)
+ * Dependencies: ../pipeline (PipelineContext), @/core/ai/diplomacyAI (resolveDiplomaticInteractions, initializeRelationships), @/core/ai/npcCycleAI (NpcAIManager)
  * Related files: ../pipeline.ts (uses phase), index.ts (aggregates phase)
  */
 
@@ -13,7 +13,7 @@ import type { PipelineContext } from "../pipeline";
 import type { AnyImpact } from "@/core/resolver/impacts";
 import type { DiplomaticImpact, CartelImpact } from "@/core/resolver/impacts/miscImpacts";
 import type { DiplomaticActionIntent, CartelActionIntent } from "@/core/resolver/intents";
-import { processDiplomaticInteractions, initializeRelationships } from "@/core/ai/diplomacyAI";
+import { resolveDiplomaticInteractions, initializeRelationships } from "@/core/ai/diplomacyAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { PHASE_ORDER_DIPLOMACY } from "@/constants";
 import { generateUUID } from "@/core/uuid";
@@ -43,7 +43,7 @@ export const diplomacyPhase = {
     }
 
     // Process diplomatic interactions for this cycle
-    aiManager = processDiplomaticInteractions(aiManager, state.npcStables, newDay);
+    aiManager = resolveDiplomaticInteractions(aiManager, state.npcStables, newDay);
 
     // Use worldAssessment: high player dominance increases NPC cooperation urgency
     const cooperationBoost = worldAssessment

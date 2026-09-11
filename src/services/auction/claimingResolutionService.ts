@@ -8,6 +8,6 @@
  */
 
 export {
-  processClaimingResolution,
+  resolveClaimingResolution,
   type ProcessClaimingProps,
 } from "@/core/auction/claimingResolutionService";

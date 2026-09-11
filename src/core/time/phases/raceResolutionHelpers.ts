@@ -15,13 +15,9 @@ import { recordRaceEntryOutcome } from "@/core/ai/raceEntryAIRecording";
 import { recordJockeyOutcome } from "@/core/ai/jockeyAIRetention";
 import { recordCampaignOutcome } from "@/core/ai/campaignRecording";
 import { recordRaceStrategy } from "@/core/ai/jockeyStrategyRecording";
-import {
-  recordRaceHistory,
-  checkHallOfFameInduction,
-  checkTrackRecords,
-} from "@/core/history/historyService";
-import { processClaimingResolution } from "@/core/auction/claimingResolutionService";
 import { generateUUID } from "@/core/uuid";
+import type { PipelinePorts } from "@/core/time/pipelinePorts";
+import { resolveRacePort } from "@/core/time/pipelinePorts";
 
 interface RaceResult {
   horseId: string;
@@ -143,6 +139,7 @@ export function recordNpcAiOutcomes(
  * @param newDay - Current simulation day.
  * @param trackRecords - Existing track records.
  * @param hallOfFameIds - Set of horse IDs already in Hall of Fame.
+ * @param ports
  * @returns Array of impacts generated.
  */
 export function checkTrackRecordAndHof(
@@ -153,14 +150,18 @@ export function checkTrackRecordAndHof(
   newDay: number,
   trackRecords: Record<string, TrackRecord>,
   hallOfFameIds: Set<string>,
+  ports?: PipelinePorts,
 ): AnyImpact[] {
   const impacts: AnyImpact[] = [];
+  const checkTrackRecordsFn = resolveRacePort(ports, "checkTrackRecords");
+  const recordRaceHistoryFn = resolveRacePort(ports, "recordRaceHistory");
+  const checkHallOfFameFn = resolveRacePort(ports, "checkHallOfFame");
 
   const winnerResult = result.find((r) => r.position === 1);
   const winnerHorse = winnerResult ? horseMap.get(winnerResult.horseId) : null;
 
   if (winnerResult && winnerHorse) {
-    const newRecords = checkTrackRecords(
+    const newRecords = checkTrackRecordsFn(
       race,
       {
         id: winnerResult.horseId,
@@ -190,7 +191,7 @@ export function checkTrackRecordAndHof(
   }
 
   if (race.graded?.grade === "G1") {
-    const historyRecord = recordRaceHistory(race, result, runners, horseMap, newDay);
+    const historyRecord = recordRaceHistoryFn(race, result, runners, horseMap, newDay);
     if (historyRecord) {
       impacts.push({
         id: generateUUID(),
@@ -216,7 +217,7 @@ export function checkTrackRecordAndHof(
           { raceId: race.id, raceName: race.name, grade: "G1", position: 1, day: newDay },
         ],
       };
-      const hofEntry = checkHallOfFameInduction(tempHorse, newDay);
+      const hofEntry = checkHallOfFameFn(tempHorse, newDay);
       if (hofEntry && !hallOfFameIds.has(winner.id)) {
         impacts.push({
           id: generateUUID(),
@@ -243,18 +244,21 @@ export function checkTrackRecordAndHof(
  * @param horses - All horses in game state.
  * @param newDay - Current simulation day.
  * @param rng - Seeded RNG.
+ * @param ports
  * @returns Array of claiming impacts.
  */
-export function processClaimingForRace(
+export function resolveClaimingForRace(
   race: Race,
   intents: ClaimingIntent[],
   horses: Horse[],
   newDay: number,
   rng: Rng,
+  ports?: PipelinePorts,
 ): AnyImpact[] {
   if (!race.claimingPrice || intents.length === 0) return [];
 
-  const { impacts: claimingImpacts } = processClaimingResolution({
+  const resolveClaimingFn = resolveRacePort(ports, "resolveClaiming");
+  const { impacts: claimingImpacts } = resolveClaimingFn({
     race,
     claimIntents: intents,
     horses,

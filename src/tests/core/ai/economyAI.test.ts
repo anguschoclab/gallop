@@ -13,7 +13,7 @@ import {
   getEconomicSignal,
 } from "@/core/ai/economyAIState";
 import {
-  processEconomicCycle,
+  runEconomicCycle,
   trackClaimingActivity,
   trackAuctionPrices,
   trackBreedingVolume,
@@ -223,7 +223,7 @@ describe("getEconomicSignal", () => {
   });
 });
 
-describe("processEconomicCycle", () => {
+describe("runEconomicCycle", () => {
   it("sets globalEconomicState on manager", () => {
     const manager = createMockManager();
     const mockState = {
@@ -233,7 +233,7 @@ describe("processEconomicCycle", () => {
       npcStables: [createMockStable({ id: "s1" })],
       day: 100,
     } as unknown as GameState;
-    const result = processEconomicCycle(manager, mockState, 100);
+    const result = runEconomicCycle(manager, mockState, 100);
     expect(result.globalEconomicState).toBeDefined();
     expect(typeof result.globalEconomicState?.yearlingPriceIndex).toBe("number");
   });
@@ -252,7 +252,7 @@ describe("processEconomicCycle", () => {
       npcStables: [createMockStable({ id: "s1", cash: 300000 })],
       day: 100,
     } as unknown as GameState;
-    const result = processEconomicCycle(manager, mockState, 100);
+    const result = runEconomicCycle(manager, mockState, 100);
     expect(result.globalEconomicState).toBeDefined();
     // Should have evolved from the previous state
     expect(result.globalEconomicState).not.toEqual(manager.globalEconomicState);

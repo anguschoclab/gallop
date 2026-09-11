@@ -5,12 +5,12 @@
  * and produces news items for the Gallop Gazette.
  * Runs after season standings (order 195) so seasonal results inform narratives.
  *
- * Dependencies: ../pipeline (PipelineContext), @/core/ai/narrativeAI (processNarrativeCycle), @/core/ai/npcCycleAI (NpcAIManager)
+ * Dependencies: ../pipeline (PipelineContext), @/core/ai/narrativeAI (runNarrativeCycle), @/core/ai/npcCycleAI (NpcAIManager)
  * Related files: ../pipeline.ts (uses phase), index.ts (aggregates phase)
  */
 
 import type { PipelineContext } from "../pipeline";
-import { processNarrativeCycle, detectRaceBeats } from "@/core/ai/narrativeAI";
+import { runNarrativeCycle, detectRaceBeats } from "@/core/ai/narrativeAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { PHASE_ORDER_NARRATIVE } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
@@ -34,7 +34,7 @@ export const narrativePhase = {
     };
 
     // Process narrative arc progression
-    aiManager = processNarrativeCycle(aiManager, state.npcStables, newDay);
+    aiManager = runNarrativeCycle(aiManager, state.npcStables, newDay);
 
     // Use worldAssessment: high player dominance accelerates NPC narrative arcs
     if (worldAssessment && worldAssessment.playerDominance > 0.6) {

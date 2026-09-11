@@ -50,7 +50,7 @@ export type ClaimAttempt = {
  * @param rng - Optional random number generator
  * @returns Object with transfers array and logs array
  */
-export function processClaims(
+export function resolveClaims(
   race: Race,
   claims: ClaimAttempt[],
   horses: Horse[],

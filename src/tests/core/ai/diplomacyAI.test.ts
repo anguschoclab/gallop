@@ -13,8 +13,8 @@ import {
   updateTrust,
   evaluateCartelFormation,
   formCartel,
-  processDiplomaticInteractions,
-  processClaimingFriction,
+  resolveDiplomaticInteractions,
+  applyClaimingFriction,
 } from "@/core/ai/diplomacyAI";
 import type { Stable, GameState } from "@/game/types";
 import type { NpcAIManager, StableAIState, NpcRelationship } from "@/core/ai/npcCycleAI";
@@ -313,11 +313,11 @@ describe("formCartel", () => {
   });
 });
 
-describe("processDiplomaticInteractions", () => {
+describe("resolveDiplomaticInteractions", () => {
   it("returns manager unchanged when no relationships exist", () => {
     const manager = createMockManager(["s1"]);
     const stables = [createMockStable({ id: "s1" })];
-    const result = processDiplomaticInteractions(manager, stables, 100);
+    const result = resolveDiplomaticInteractions(manager, stables, 100);
     expect(result).toEqual(manager);
   });
 
@@ -333,7 +333,7 @@ describe("processDiplomaticInteractions", () => {
       createMockStable({ id: "s1", personality: "breeder" }),
       createMockStable({ id: "s2", personality: "breeder" }),
     ];
-    const result = processDiplomaticInteractions(manager, stables, 100);
+    const result = resolveDiplomaticInteractions(manager, stables, 100);
     expect(result.stableStates["s1"].npcRelationships!["s2"].allianceType).not.toBeNull();
   });
 
@@ -346,12 +346,12 @@ describe("processDiplomaticInteractions", () => {
       s1: { trust: -20, allianceType: "breeding_partnership", allianceSinceDay: 50, history: [] },
     };
     const stables = [createMockStable({ id: "s1" }), createMockStable({ id: "s2" })];
-    const result = processDiplomaticInteractions(manager, stables, 100);
+    const result = resolveDiplomaticInteractions(manager, stables, 100);
     expect(result.stableStates["s1"].npcRelationships!["s2"].allianceType).toBeNull();
   });
 });
 
-describe("processClaimingFriction", () => {
+describe("applyClaimingFriction", () => {
   it("reduces trust when an NPC claims a horse from another NPC", () => {
     const manager = createMockManager(["s1", "s2"]);
     manager.stableStates["s1"].npcRelationships = {
@@ -361,7 +361,7 @@ describe("processClaimingFriction", () => {
       s1: { trust: 50, allianceType: null, history: [] },
     };
 
-    const result = processClaimingFriction(manager, "s1", "s2");
+    const result = applyClaimingFriction(manager, "s1", "s2");
     expect(result.stableStates["s1"].npcRelationships!["s2"].trust).toBeLessThan(50);
   });
 
@@ -374,7 +374,7 @@ describe("processClaimingFriction", () => {
       s1: { trust: 60, allianceType: "breeding_partnership", allianceSinceDay: 10, history: [] },
     };
 
-    const result = processClaimingFriction(manager, "s1", "s2");
+    const result = applyClaimingFriction(manager, "s1", "s2");
     const trustAfter = result.stableStates["s1"].npcRelationships!["s2"].trust;
     // Alliance betrayal should cause -30 trust
     expect(trustAfter).toBe(30);
@@ -384,7 +384,7 @@ describe("processClaimingFriction", () => {
     const manager = createMockManager(["s1"]);
     manager.stableStates["s1"].npcRelationships = {};
 
-    const result = processClaimingFriction(manager, "s1", "s1");
+    const result = applyClaimingFriction(manager, "s1", "s1");
     expect(result).toEqual(manager);
   });
 
@@ -392,7 +392,7 @@ describe("processClaimingFriction", () => {
     const manager = createMockManager(["s1", "s2"]);
     // No relationships initialized
 
-    const result = processClaimingFriction(manager, "s1", "s2");
+    const result = applyClaimingFriction(manager, "s1", "s2");
     expect(result).toEqual(manager);
   });
 });

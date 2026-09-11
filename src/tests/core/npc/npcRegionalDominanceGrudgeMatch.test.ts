@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { processRegionalDominance } from "@/core/npc/npcRegionalDominance";
+import { resolveRegionalDominance } from "@/core/npc/npcRegionalDominance";
 import { createRng } from "@/core/common/rng";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
@@ -57,7 +57,7 @@ function makeGradedRace(
   } as Race;
 }
 
-describe("processRegionalDominance — grudge match logic", () => {
+describe("resolveRegionalDominance — grudge match logic", () => {
   let rivalStable1: Stable;
   let rivalStable2: Stable;
   let playerHorse: Horse;
@@ -109,7 +109,7 @@ describe("processRegionalDominance — grudge match logic", () => {
       "rival-1": makeBaseAIState("rival-1", 60),
     });
 
-    const result = processRegionalDominance(
+    const result = resolveRegionalDominance(
       [race],
       [playerHorse, rivalHorse1],
       [rivalStable1],
@@ -142,7 +142,7 @@ describe("processRegionalDominance — grudge match logic", () => {
       "rival-1": makeBaseAIState("rival-1", 60),
     });
 
-    const result = processRegionalDominance(
+    const result = resolveRegionalDominance(
       [race],
       [playerHorse, rivalHorse1],
       [rivalStable1],
@@ -178,7 +178,7 @@ describe("processRegionalDominance — grudge match logic", () => {
       "rival-2": makeBaseAIState("rival-2", 50),
     });
 
-    const result = processRegionalDominance(
+    const result = resolveRegionalDominance(
       [race],
       [playerHorse, rivalHorse1, rivalHorse2],
       [rivalStable1, rivalStable2],
@@ -212,7 +212,7 @@ describe("processRegionalDominance — grudge match logic", () => {
       "rival-1": makeBaseAIState("rival-1", 49),
     });
 
-    const result = processRegionalDominance(
+    const result = resolveRegionalDominance(
       [race],
       [playerHorse, rivalHorse1],
       [rivalStable1],
@@ -243,7 +243,7 @@ describe("processRegionalDominance — grudge match logic", () => {
       "rival-1": makeBaseAIState("rival-1", 60),
     });
 
-    const result = processRegionalDominance(
+    const result = resolveRegionalDominance(
       [race],
       [playerHorse, rivalHorse1],
       [rivalStable1],
@@ -282,7 +282,7 @@ describe("processRegionalDominance — grudge match logic", () => {
       "rival-1": makeBaseAIState("rival-1", 60),
     });
 
-    const result = processRegionalDominance(
+    const result = resolveRegionalDominance(
       [race],
       [playerHorse, playerHorse2, rivalHorse1],
       [rivalStable1],
@@ -322,7 +322,7 @@ describe("processRegionalDominance — grudge match logic", () => {
       "rival-1": makeBaseAIState("rival-1", 60),
     });
 
-    const result = processRegionalDominance(
+    const result = resolveRegionalDominance(
       [race],
       [playerHorse, rivalHorse1, rivalHorse1b],
       [rivalStable1],
@@ -355,7 +355,7 @@ describe("processRegionalDominance — grudge match logic", () => {
       "rival-1": makeBaseAIState("rival-1", 60),
     });
 
-    const result = processRegionalDominance(
+    const result = resolveRegionalDominance(
       [race],
       [playerHorse, rivalHorse1],
       [rivalStable1],
@@ -386,7 +386,7 @@ describe("processRegionalDominance — grudge match logic", () => {
       "rival-1": makeBaseAIState("rival-1", 75),
     });
 
-    const result = processRegionalDominance(
+    const result = resolveRegionalDominance(
       [race],
       [playerHorse, rivalHorse1],
       [rivalStable1],
