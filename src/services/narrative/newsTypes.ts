@@ -1,31 +1,15 @@
 /**
- * narrative/newsTypes.ts - News types
+ * narrative/newsTypes.ts - Re-export from @/core/narrative/newsTypes
  *
- * This file provides types for news items including categories, importance levels,
- * entity links, and news item structure.
+ * The canonical type definitions now live in core. This re-export keeps
+ * existing service importers working.
  *
- * Dependencies: None
- * Related files: None
+ * @deprecated Import from @/core/narrative/newsTypes instead.
  */
 
-export type NewsCategory = "racing" | "market" | "stable" | "flavor" | "milestone";
-export type NewsImportance = "high" | "medium" | "low";
-
-export interface EntityLink {
-  type: "horse" | "jockey" | "stable" | "race";
-  id: string;
-  name: string;
-}
-
-export interface NewsItem {
-  id: string;
-  day: number;
-  category: NewsCategory;
-  importance: NewsImportance;
-  headline: string;
-  body: string;
-  entityLinks?: EntityLink[];
-  arcId?: string;
-  partNumber?: number;
-  totalParts?: number;
-}
+export type {
+  NewsCategory,
+  NewsImportance,
+  EntityLink,
+  NewsItem,
+} from "@/core/narrative/newsTypes";

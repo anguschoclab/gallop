@@ -24,6 +24,7 @@ import {
   type PriceAlertScope,
 } from "@/core/market/priceAlerts";
 import { priceAlertMessage, tradeNotificationMessage } from "@/core/market/priceAlertMessages";
+import { DEFAULT_MARKET_STRATEGY, type MarketStrategy } from "@/core/market/strategy";
 import type { StoreSet, StoreGet } from "../types";
 
 /** How many notified trade keys are retained for de-duplication. */
@@ -47,6 +48,8 @@ export type PriceAlertSlice = {
   updatePriceAlert: (id: string, patch: Partial<Omit<PriceAlert, "id">>) => void;
   /** Evaluate alerts and player trade activity for the current day. */
   evaluateMarketAlerts: () => void;
+  /** Patch the player's market buying-strategy settings. */
+  updateMarketStrategy: (patch: Partial<MarketStrategy>) => void;
 };
 
 /**
@@ -137,6 +140,15 @@ export function createPriceAlertSlice(set: StoreSet, get: StoreGet): PriceAlertS
           ...notifications.map((n) => n.key),
           ...(s.notifiedTradeKeys ?? []),
         ].slice(0, MAX_NOTIFIED_KEYS),
+      });
+    },
+
+    updateMarketStrategy: (patch) => {
+      set({
+        marketStrategy: {
+          ...(get().marketStrategy ?? DEFAULT_MARKET_STRATEGY),
+          ...patch,
+        },
       });
     },
   };

@@ -2,11 +2,11 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import type { FileRouteTypes } from "@/routeTree.gen";
 import { ChevronRight, GraduationCap, X } from "lucide-react";
 import { useCallback } from "react";
-import type { NextAction } from "@/core/dashboard/nextAction";
+import type { NextAction } from "@/services/dashboard/nextActionService";
 import { useGame } from "@/game/store";
-import { deriveTutorialStep, tutorialStepToAction } from "@/core/tutorial/deriveTutorialStep";
+import { deriveTutorialStep, tutorialStepToAction } from "@/services/tutorial/tutorialService";
 import { NextActionBanner } from "@/components/dashboard/NextActionBanner";
-import { trackEvent } from "@/core/analytics/tracker";
+import { trackEvent } from "@/services/analytics/tracker";
 
 export interface TutorialNextActionBannerProps {
   fallbackAction: NextAction;

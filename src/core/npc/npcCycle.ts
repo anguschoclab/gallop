@@ -18,7 +18,7 @@ import {
   pruneAllLearningData,
 } from "@/core/ai/npcCycleAI";
 import type { PlayerFacilities } from "@/core/facilities/facilityTypes";
-import type { NewsItem } from "@/services/narrative/newsTypes";
+import type { NewsItem } from "@/core/narrative/newsTypes";
 import { calculateFanGainsForRaces } from "@/core/horse/fans";
 import { calculateFameGainsForRaces } from "./npcFame";
 import { processRegionalDominance, applyFrictionDecay } from "./npcRegionalDominance";

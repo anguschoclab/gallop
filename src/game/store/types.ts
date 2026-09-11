@@ -41,8 +41,9 @@ import type { AutoSyndicateSlice } from "./slices/autoSyndicateSlice";
 
 /**
  * Standard action result type for store actions
+ * @deprecated Import from @/core/common/result instead.
  */
-export type ActionResult = { ok: true } | { ok: false; reason: string };
+export type { ActionResult } from "@/core/common/result";
 
 /**
  * Composed store type combining all slices

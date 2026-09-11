@@ -18,7 +18,7 @@ import { findMajorityOwner } from "@/core/breeding/devolutionUtils";
 import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId, asHorseId, asStableId } from "@/core/types/branded";
 import { syndicationStakeReputation } from "@/core/reputation/commerceReputation";
-import { applyReputationEvents } from "@/game/store/helpers/reputation";
+import { applyReputationEvents } from "@/core/reputation/reputationEvents";
 import type {
   SyndicateCreationImpact,
   ShareTransactionImpact,

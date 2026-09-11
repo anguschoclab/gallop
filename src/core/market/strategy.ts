@@ -10,7 +10,7 @@
  *
  * Dependencies: ./exchange, ./houseQuotes, ./priceAlerts,
  *   @/core/prestige/racecoursePrestige, @/data/tracks
- * Related files: src/routes/strategy.tsx
+ * Related files: src/components/market/MarketStrategyPanel.tsx, src/routes/market.tsx
  */
 
 import type { Horse } from "@/core/horse/types";

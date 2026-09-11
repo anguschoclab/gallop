@@ -6,12 +6,12 @@
  */
 
 import type { Horse } from "@/core/horse/types";
-import { calculateGeneticCompatibility } from "@/services/breeding/genotypeMatching";
-import { calculateFounderEffect } from "@/services/breeding/inbreedingCalculator";
+import { calculateGeneticCompatibility } from "@/core/breeding/genotypeMatching";
+import { calculateFounderEffect } from "@/core/breeding/inbreedingCalculator";
 import {
   calculateConformationCompatibility,
   calculateTemperamentCompatibility,
-} from "@/services/breeding/traitCompatibility";
+} from "@/core/breeding/traitCompatibility";
 import { computeProspectiveCoi } from "@/core/breeding/populationGenetics";
 import type { BreedingCompatibilityResult } from "@/core/breeding/breedingAffinityData";
 

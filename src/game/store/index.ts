@@ -73,7 +73,7 @@ export type { StoreType, GameStateCreator } from "./types";
  * resets to defaults, keeping only fields that are always safe to carry over
  * (playerNominations, syndicateInvestors).
  */
-export const STORE_STATE_VERSION = 7;
+export const STORE_STATE_VERSION = 8;
 
 // List of state keys that should be persisted to storage.
 // NOTE: "horses" is handled specially by the storage adapter (split into
@@ -186,6 +186,8 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   // Market price alerts and pushed trade-notification keys
   "priceAlerts" as keyof GameState,
   "notifiedTradeKeys" as keyof GameState,
+  // Player's market buying-strategy settings
+  "marketStrategy" as keyof GameState,
 ];
 
 /**

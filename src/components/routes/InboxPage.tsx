@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, CheckCheck, Trash2, Pin, Bell, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useInbox } from "@/hooks/inbox/useInbox";
-import { interpolateCtaRoute } from "@/core/inbox/ctaRoute";
+import { interpolateCtaRoute } from "@/services/inbox/ctaRouteService";
 import { TOOLTIP_DELAY_MS } from "@/constants/uiConstants";
 import {
   UNREAD_BADGE_CLASSES,
@@ -144,6 +144,18 @@ function InboxPage() {
               className={cn("ml-2", "bg-emerald-500/20 text-emerald-400 border-emerald-500/30")}
             >
               {inbox.filter((m) => m.category === "ai_activity" && !m.readAt).length}
+            </Badge>
+          )}
+        </Button>
+        <Button
+          variant={filter === "market" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setFilter("market")}
+        >
+          Market
+          {inbox.some((m) => m.category === "market" && !m.readAt) && (
+            <Badge className={cn("ml-2", "bg-amber-500/20 text-amber-400 border-amber-500/30")}>
+              {inbox.filter((m) => m.category === "market" && !m.readAt).length}
             </Badge>
           )}
         </Button>

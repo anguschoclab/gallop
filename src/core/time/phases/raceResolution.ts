@@ -4,19 +4,19 @@
  * This file provides the race resolution phase that simulates unresolved races
  * and generates all race resolution impacts.
  *
- * Dependencies: ../pipeline (PipelineContext), @/core/race/raceResolution (resolveRaces), @/game/constants (PHASE_ORDER_RACE_RESOLUTION), @/core/resolver/impacts/index (AnyImpact), @/services/raceSimulationService (rngForRace), @/game/types (Race), @/core/resolver/intents (ClaimingIntent), @/services/raceSimulationExecutor (simulateRace), @/services/raceImpactGenerator (generateRaceImpacts), @/services/claimingResolutionService (processClaimingResolution), @/services/historyService (recordRaceHistory, checkHallOfFameInduction), @/game/uuid (generateUUID), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/ai/raceEntryAI (recordRaceEntryOutcome), @/core/ai/jockeyAI (recordJockeyOutcome), @/core/ai/campaignAI (recordCampaignOutcome)
+ * Dependencies: ../pipeline (PipelineContext), @/core/race/raceResolution (resolveRaces), @/constants (PHASE_ORDER_RACE_RESOLUTION), @/core/resolver/impacts/index (AnyImpact), @/core/race/rngForRace (rngForRace), @/game/types (Race), @/core/resolver/intents (ClaimingIntent), @/core/race/raceSimulationExecutor (simulateRace), @/core/race/raceImpactGenerator (generateRaceImpacts), @/core/auction/claimingResolutionService (processClaimingResolution), @/core/history/historyService (recordRaceHistory, checkHallOfFameInduction), @/core/uuid (generateUUID), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/ai/raceEntryAI (recordRaceEntryOutcome), @/core/ai/jockeyAI (recordJockeyOutcome), @/core/ai/campaignAI (recordCampaignOutcome)
  * Related files: ../pipeline.ts (uses phase)
  */
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { PHASE_ORDER_RACE_RESOLUTION, RACE_HISTORY_UNGRADED_RETENTION_DAYS } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
-import { rngForRace } from "@/services/race/raceSimulationService";
+import { rngForRace } from "@/core/race/rngForRace";
 import type { Race } from "@/game/types";
 import type { WeatherState } from "@/core/weather/weatherTypes";
 import type { ClaimingIntent, RaceResolutionIntent } from "@/core/resolver/intents";
-import { simulateRace } from "@/services/race/raceSimulationExecutor";
-import { generateRaceImpacts } from "@/services/race/raceImpactGenerator";
+import { simulateRace } from "@/core/race/raceSimulationExecutor";
+import { generateRaceImpacts } from "@/core/race/raceImpactGenerator";
 import {
   recordNpcAiOutcomes,
   checkTrackRecordAndHof,

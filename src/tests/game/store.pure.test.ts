@@ -8,9 +8,9 @@ import {
   refreshMarket,
   generateUpcomingScheduledRaces,
   pruneOldRaces,
-} from "@/game/store/helpers/market";
-import { resolvePregnancies } from "@/game/store/helpers/pregnancy";
-import { maybeRecalibratePars } from "@/game/store/helpers/beyer";
+} from "@/core/market/marketRefresh";
+import { resolvePregnancies } from "@/core/breeding/pregnancy";
+import { maybeRecalibratePars } from "@/core/race/beyerPars";
 import type { Horse, Race, Pregnancy } from "@/game/types";
 import { generateHorse } from "@/core/horse/horseFactory";
 import { generateRace } from "@/core/race/generation/raceGen";

@@ -1,0 +1,2707 @@
+{
+  "generatedAt": "2026-09-11T01:38:31.724Z",
+  "coreViolations": [],
+  "servicesViolations": [],
+  "componentViolations": [
+    {
+      "file": "components/stable/NpcStableCharts.tsx",
+      "specifier": "@/core/horse/stats",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/StableCard.tsx",
+      "specifier": "@/core/stable/uiHelpers",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/StableCard.tsx",
+      "specifier": "@/core/common/uiTokens",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/StableCard.tsx",
+      "specifier": "@/core/stable/pendingOfferForStable",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/StableCard.tsx",
+      "specifier": "@/core/auction/engine",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/StableCard.tsx",
+      "specifier": "@/core/horse/attachment",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/NpcStableRosterTab.tsx",
+      "specifier": "@/core/npc/scouting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/NpcStableRosterTab.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/NpcStableRosterTab.tsx",
+      "specifier": "@/core/horse/attachment",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/RecommendedMaxOfferLine.tsx",
+      "specifier": "@/core/stable/recommendedMaxOffer",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/RecommendedMaxOfferLine.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/CashPressureMeter.tsx",
+      "specifier": "@/core/stable/cashPressure",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/AutoRegisterSummary.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/AutoRegisterSummary.tsx",
+      "specifier": "@/core/campaign/autoRegister",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/StableList.tsx",
+      "specifier": "@/core/stable/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/StableCompareTable.tsx",
+      "specifier": "@/core/stable/recommendedMaxOffer",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/StableCompareTable.tsx",
+      "specifier": "@/core/stable/cashPressure",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/StableCompareTable.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/NpcStableInfoSidebar.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/CashPressureTrend.tsx",
+      "specifier": "@/core/stable/cashPressure",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/AutoRegisterEntriesTable.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/AutoRegisterEntriesTable.tsx",
+      "specifier": "@/core/campaign/autoRegister",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/StableRosterView.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/RivalArchivesView.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/RivalArchivesView.tsx",
+      "specifier": "@/core/ai/npcCycleAI",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/NpcStableOverviewTab.tsx",
+      "specifier": "@/core/stable/stableConfig",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/CashPressureBadge.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/CashPressureBadge.tsx",
+      "specifier": "@/core/stable/cashPressure",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/CashPressureBadge.tsx",
+      "specifier": "@/core/stable/privateSaleThresholds",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/NpcStableTradingTab.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stable/NpcStableTradingTab.tsx",
+      "specifier": "@/core/market/exchange",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/insights/ScoutingThresholdControls.tsx",
+      "specifier": "@/core/npc/scoutingThresholds",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/insights/HorseScatterPlot.tsx",
+      "specifier": "@/core/horse/insightMetrics",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/insights/ScoutingInsightsPanel.tsx",
+      "specifier": "@/core/horse/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/insights/ScoutingInsightsPanel.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/insights/ScoutingInsightsPanel.tsx",
+      "specifier": "@/core/horse/horseFactory",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/insights/ScoutingInsightsPanel.tsx",
+      "specifier": "@/core/npc/scoutingThresholds",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/insights/ScoutingInsightsPanel.tsx",
+      "specifier": "@/core/horse/insightMetrics",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/insights/ScoutingAssignmentsPanel.tsx",
+      "specifier": "@/core/npc/scoutingThresholds",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/insights/ScoutingAssignmentsPanel.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/insights/InsightsCompareDialog.tsx",
+      "specifier": "@/core/horse/insightMetrics",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/ui/JargonTooltip.tsx",
+      "specifier": "@/core/horse/jargon",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/settings/LedgerEntry.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/settings/GlossaryPanel.tsx",
+      "specifier": "@/core/horse/jargon",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/transportation/TransportPlanner.tsx",
+      "specifier": "@/core/transportation/transportationTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/apprentice/ApprenticeTracker.tsx",
+      "specifier": "@/core/apprentice/apprenticeTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/CatalogIndex.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/AttachmentBreakdown.tsx",
+      "specifier": "@/core/horse/attachment",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/UpcomingLedgerTable.tsx",
+      "specifier": "@/core/calendar/dateFormatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/UpcomingLedgerTable.tsx",
+      "specifier": "@/core/auction/data",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/UpcomingLedgerTable.tsx",
+      "specifier": "@/core/prestige",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/UpcomingLedgerTable.tsx",
+      "specifier": "@/core/market/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/BidHistoryPanel.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/TransactionArchive.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/LotDetailPanel.tsx",
+      "specifier": "@/core/horse/gender",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/LotDetailPanel.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/SaleHeader.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/SaleHeader.tsx",
+      "specifier": "@/core/auction/data",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/SaleHeader.tsx",
+      "specifier": "@/core/prestige",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/PlayerConsignmentsPanel.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/PlayerConsignmentsPanel.tsx",
+      "specifier": "@/core/auction/engine",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/PlayerConsignmentsPanel.tsx",
+      "specifier": "@/core/prestige",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/BuyNowDialog.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/ConsignDialog.tsx",
+      "specifier": "@/core/auction/engine",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/ConsignDialog.tsx",
+      "specifier": "@/core/auction/data",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/ConsignDialog.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/ConsignDialog.tsx",
+      "specifier": "@/core/horse/pricing",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/ConsignDialog.tsx",
+      "specifier": "@/core/prestige",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/WinOverlay.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/sub/AuctionControls.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/sub/AuctionControls.tsx",
+      "specifier": "@/core/auction/runner",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/sub/AuctionRing.tsx",
+      "specifier": "@/core/horse/gender",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/sub/AuctionRing.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/sub/AuctionRing.tsx",
+      "specifier": "@/core/auction/runner",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/sub/MaxBidPanel.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/sub/BidInputPanel.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/sub/AuctionSummary.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/sub/AuctionSummary.tsx",
+      "specifier": "@/core/prestige",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/sub/AuctionScoreboard.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/PrivateSaleCounterCard.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/AuctionTheater.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/AuctionTheater.tsx",
+      "specifier": "@/core/npc/scouting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/AuctionTheater.tsx",
+      "specifier": "@/core/auction/runner",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/ResolvedSaleSummary.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/ResolvedSaleSummary.tsx",
+      "specifier": "@/core/prestige",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/LotBidsPanel.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/OverrideNegotiationPanel.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/OverrideNegotiationPanel.tsx",
+      "specifier": "@/core/horse/overrideNegotiation",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/OverrideNegotiationPanel.tsx",
+      "specifier": "@/core/horse/attachment",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/BiddingPanel.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/BiddingPanel.tsx",
+      "specifier": "@/core/prestige",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/LiveExchangeFloor.tsx",
+      "specifier": "@/core/auction/data",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/PrivateSaleOfferDialog.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/PrivateSaleOfferDialog.tsx",
+      "specifier": "@/core/auction/engine",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/PrivateSaleOfferDialog.tsx",
+      "specifier": "@/core/horse/attachment",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/auction/PrivateSaleOfferDialog.tsx",
+      "specifier": "@/core/reputation/reputationTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/prestige/PlayerPrestigePanel.tsx",
+      "specifier": "@/core/prestige",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/tutorial/TutorialNextActionBanner.tsx",
+      "specifier": "@/core/dashboard/nextAction",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/tutorial/TutorialNextActionBanner.tsx",
+      "specifier": "@/core/tutorial/deriveTutorialStep",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/calendar/MonthView.tsx",
+      "specifier": "@/core/calendar/dateFormatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/calendar/MonthView.tsx",
+      "specifier": "@/core/calendar/regions",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/calendar/CalendarRaceItem.tsx",
+      "specifier": "@/core/common/uiTokens",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/calendar/CalendarRaceItem.tsx",
+      "specifier": "@/core/calendar/regions",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/calendar/TrackView.tsx",
+      "specifier": "@/core/calendar/regions",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/honors/RecordsTab.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/honors/RecordsTab.tsx",
+      "specifier": "@/core/history/historyTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/honors/RecordsTab.tsx",
+      "specifier": "@/core/breeding/leaderboardTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/honors/HallOfFameTab.tsx",
+      "specifier": "@/core/history/historyTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/honors/AwardsTab.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/financial/RevenueAnalysisPanel.tsx",
+      "specifier": "@/core/financial",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/financial/OperatingCostsPanel.tsx",
+      "specifier": "@/core/financial",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/financial/TransactionLedger.tsx",
+      "specifier": "@/core/financial",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/financial/TransactionLedger.tsx",
+      "specifier": "@/core/transactions/transactionTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/financial/TransactionLedger.tsx",
+      "specifier": "@/core/transactions/transactionTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/financial/FinancialSummaryCards.tsx",
+      "specifier": "@/core/financial",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/person/PersonFormCharts.tsx",
+      "specifier": "@/core/analytics/timeWindow",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/person/PersonFormCharts.tsx",
+      "specifier": "@/core/horse/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/person/PersonRaceHistoryTab.tsx",
+      "specifier": "@/core/common/uiTokens",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/person/PersonRaceHistoryTab.tsx",
+      "specifier": "@/core/common/ordinal",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/tactics/TacticsAnalyzer.tsx",
+      "specifier": "@/core/tactics/tacticsTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/racing/NominationsTab.tsx",
+      "specifier": "@/core/race/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/racing/NominationsTab.tsx",
+      "specifier": "@/core/horse/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/racing/NominationsTab.tsx",
+      "specifier": "@/core/racing/nominationFees",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/racing/NominationsTab.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/racing/HorsePickerPanel.tsx",
+      "specifier": "@/core/horse/stats",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/racing/HorsePickerPanel.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/racing/EligibleRaceList.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/racing/EligibleRaceList.tsx",
+      "specifier": "@/core/calendar/dateFormatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/racing/CalendarTab.tsx",
+      "specifier": "@/core/calendar/regions",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/racing/SchedulerTab.tsx",
+      "specifier": "@/core/calendar/dateFormatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/racing/SchedulerTab.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/health/VetReport.tsx",
+      "specifier": "@/core/health/injuryDisplay",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/reputation/ReputationDashboard.tsx",
+      "specifier": "@/core/reputation/reputationTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/reputation/ReputationDashboard.tsx",
+      "specifier": "@/core/common/uiTokens",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/RegionSwitcher.tsx",
+      "specifier": "@/core/calendar/regions",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/BreedingHistoryTab.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/BreedingHistoryTab.tsx",
+      "specifier": "@/core/breeding/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/SireSelector.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/BroodmaresTab.tsx",
+      "specifier": "@/core/breeding/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/PlanSummaryBar.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/StallionsTab.tsx",
+      "specifier": "@/core/breeding/stallions",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/StallionsTab.tsx",
+      "specifier": "@/core/horse/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/StallionsTab.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/PedigreeNodeCard.tsx",
+      "specifier": "@/core/horse/uiHelpers",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/PedigreeNodeCard.tsx",
+      "specifier": "@/core/horse/gender",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/PedigreeNodeCard.tsx",
+      "specifier": "@/core/breeding/pedigreeGraph",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/BredHorsesTab.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/ArchetypeCard.tsx",
+      "specifier": "@/core/breeding/archetypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/ActiveProgramView.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/ActiveProgramView.tsx",
+      "specifier": "@/core/types/branded",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/ActiveProgramView.tsx",
+      "specifier": "@/core/breeding/archetypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/ActiveProgramView.tsx",
+      "specifier": "@/core/breeding/programs",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/ActiveProgramView.tsx",
+      "specifier": "@/core/horse/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/ArchetypePicker.tsx",
+      "specifier": "@/core/breeding/archetypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/BlueHenLeaderboardTab.tsx",
+      "specifier": "@/core/breeding/leaderboardTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/StallionCard.tsx",
+      "specifier": "@/core/breeding/stallions",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/StallionCard.tsx",
+      "specifier": "@/core/calendar/breedingCalendar",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/FoalNamingDialog.tsx",
+      "specifier": "@/core/horse/naming/nameGenerator",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/FoalNamingDialog.tsx",
+      "specifier": "@/core/horse/naming/jockeyClubRules",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/FoalNamingDialog.tsx",
+      "specifier": "@/core/common/rng",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/FoalNamingDialog.tsx",
+      "specifier": "@/core/horse/gender",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/BreedingShedTab.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/SireWatchTab.tsx",
+      "specifier": "@/core/breeding/sireAnalytics",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/DamsireLeaderboardTab.tsx",
+      "specifier": "@/core/breeding/leaderboardTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/SireLeaderboardsTab.tsx",
+      "specifier": "@/core/breeding/leaderboardTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/MarePlannerRow.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/MarePlannerRow.tsx",
+      "specifier": "@/core/breeding/sireSuggestions",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/PedigreeTree.tsx",
+      "specifier": "@/core/breeding/pedigreeGraph",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/PedigreeTree.tsx",
+      "specifier": "@/core/breeding/populationGenetics",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/breeding/PedigreeTree.tsx",
+      "specifier": "@/core/breeding/pedigreeGraph",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/jockey/JockeyAvatar.stories.tsx",
+      "specifier": "@/core/types/branded",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/jockey/JockeyRosterTabs.tsx",
+      "specifier": "@/core/jockey/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/jockey/JockeyFilterPanel.tsx",
+      "specifier": "@/core/common/traitLabels",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/jockey/JockeyFilterPanel.tsx",
+      "specifier": "@/core/jockey/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/jockey/JockeyStandingsTable.tsx",
+      "specifier": "@/core/jockey/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/jockey/JockeyStandingsTable.tsx",
+      "specifier": "@/core/jockey/jockeyTier",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/jockey/JockeyRoster.tsx",
+      "specifier": "@/core/jockey/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/jockey/JockeyRoster.tsx",
+      "specifier": "@/core/jockey/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/jockey/JockeyCard.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/jockey/JockeyCard.tsx",
+      "specifier": "@/core/common/traitLabels",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/jockey/JockeyCard.tsx",
+      "specifier": "@/core/jockey/insights",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/scheduler/CampaignSlotList.tsx",
+      "specifier": "@/core/calendar/dateFormatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/narrative/NarrativeArcCard.tsx",
+      "specifier": "@/core/ai/npcCycleAI",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/shared/PrestigeBreakdownPanel.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/shared/PrestigeBreakdownPanel.tsx",
+      "specifier": "@/core/prestige",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/shared/PrestigeBreakdownPanel.tsx",
+      "specifier": "@/core/prestige",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/shared/PrestigeBadge.tsx",
+      "specifier": "@/core/prestige",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/StableDetailsPanel.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/StableDetailsPanel.tsx",
+      "specifier": "@/core/standings/computeStandings",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/EntityDetailPanel.tsx",
+      "specifier": "@/core/analytics/timeWindow",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/EntityDetailPanel.tsx",
+      "specifier": "@/core/analytics/regionalTrends",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/RegionDrilldownDrawer.tsx",
+      "specifier": "@/core/analytics/regionalTrends",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/RegionDrilldownDrawer.tsx",
+      "specifier": "@/core/analytics/timeWindow",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/RegionDrilldownDrawer.tsx",
+      "specifier": "@/core/horse/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/RegionDrilldownDrawer.tsx",
+      "specifier": "@/core/race/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/NextActionBanner.tsx",
+      "specifier": "@/core/dashboard/nextAction",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/regionalMetrics.ts",
+      "specifier": "@/core/analytics/regionalTrends",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/regionalMetrics.ts",
+      "specifier": "@/core/analytics/timeWindow",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/regionalMetrics.ts",
+      "specifier": "@/core/horse/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/regionalMetrics.ts",
+      "specifier": "@/core/race/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/SeasonStandingsWidget.tsx",
+      "specifier": "@/core/standings/buildStandingsRows",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/SeasonStandingsWidget.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/SeasonStandingsWidget.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/StableRosterWidget.tsx",
+      "specifier": "@/core/horse/horseFactory",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/StableRosterWidget.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/HQOpsWidget.tsx",
+      "specifier": "@/core/facilities",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/DebtBanner.tsx",
+      "specifier": "@/core/financial/solvency",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/DebtBanner.tsx",
+      "specifier": "@/core/financial",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/CircuitWidget.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/LegacyAwardsWidget.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/WealthDetailsPanel.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/WealthDetailsPanel.tsx",
+      "specifier": "@/core/horse/pricing",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/WealthDetailsPanel.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/WealthDetailsPanel.tsx",
+      "specifier": "@/core/standings/computeWealthStandings",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/OperationsTicker.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/OperationsTicker.tsx",
+      "specifier": "@/core/types/branded",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/OperationsTicker.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/RegionalTrendsWidget.tsx",
+      "specifier": "@/core/analytics/timeWindow",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/RegionalTrendsWidget.tsx",
+      "specifier": "@/core/analytics/regionalTrends",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/RegionDrilldownComponents.tsx",
+      "specifier": "@/core/analytics/timeWindow",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/RegionDrilldownComponents.tsx",
+      "specifier": "@/core/analytics/regionalTrends",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/RegionDrilldownComponents.tsx",
+      "specifier": "@/core/analytics/timeWindow",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/UrgentMessagesStrip.tsx",
+      "specifier": "@/core/inbox/ctaRoute",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/dashboard/UrgentMessagesStrip.tsx",
+      "specifier": "@/core/inbox/inboxTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/briefing/StorylinesTab.tsx",
+      "specifier": "@/core/ai/npcCycleAI",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/briefing/RecapTab.tsx",
+      "specifier": "@/core/race/beyer",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/briefing/RecapTab.tsx",
+      "specifier": "@/core/common/uiTokens",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/briefing/RecapTab.tsx",
+      "specifier": "@/core/common/classBonus",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/briefing/RecapTab.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/briefing/RecapTab.tsx",
+      "specifier": "@/core/race/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/FinancialChart.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/SidebarNav.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/SidebarNav.tsx",
+      "specifier": "@/core/calendar/dateFormatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/TrackRecordsTable.tsx",
+      "specifier": "@/core/history/historyTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/RealWorldBenchmarks.tsx",
+      "specifier": "@/core/history/almanacInsights",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/RealWorldBenchmarks.tsx",
+      "specifier": "@/core/history/historyTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/HorseBenchmarkDialog.tsx",
+      "specifier": "@/core/history/almanacInsights",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/HorseBenchmarkDialog.tsx",
+      "specifier": "@/core/race/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/RecordAlmanac.tsx",
+      "specifier": "@/core/history/historyTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/DecadeLeaders.tsx",
+      "specifier": "@/core/history/almanacInsights",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/DecadeLeaders.tsx",
+      "specifier": "@/core/history/historyTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/AlmanacNewsFeed.tsx",
+      "specifier": "@/core/history/almanacNewsFeed",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/AlmanacNewsFeed.tsx",
+      "specifier": "@/core/history/historyTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/AlmanacNewsFeed.tsx",
+      "specifier": "@/core/transactions/transactionTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/AlmanacNewsFeed.tsx",
+      "specifier": "@/core/horse/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/TrackHistoryTimeline.tsx",
+      "specifier": "@/core/history/almanacInsights",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/TrackHistoryTimeline.tsx",
+      "specifier": "@/core/history/historyTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/LeaderboardTable.tsx",
+      "specifier": "@/core/breeding/leaderboardTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/AlmanacMilestones.tsx",
+      "specifier": "@/core/history/almanacInsights",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/history/AlmanacMilestones.tsx",
+      "specifier": "@/core/history/historyTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/raceVisualHelpers.ts",
+      "specifier": "@/core/race/engine/runnerBuilder",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/raceVisualHelpers.ts",
+      "specifier": "@/core/race/beyer",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/JockeyStrategyBreakdown.tsx",
+      "specifier": "@/core/race/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/JockeyStrategyBreakdown.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ResultOverlay.tsx",
+      "specifier": "@/core/race/engine/raceSnapshotTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ResultOverlay.tsx",
+      "specifier": "@/core/race/engine/runnerBuilder",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ResultOverlay.tsx",
+      "specifier": "@/core/race/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ResultOverlay.tsx",
+      "specifier": "@/core/race/raceVerdict",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ResultOverlay.tsx",
+      "specifier": "@/core/race/factorLedger",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ResultOverlay.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ResultOverlay.tsx",
+      "specifier": "@/core/race/engine/compareFinishOrder",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ResultOverlay.tsx",
+      "specifier": "@/core/ai/jockeyStrategyRecording",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ResultOverlay.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ResultOverlay.tsx",
+      "specifier": "@/core/race/venuePayout",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ReviewStep.tsx",
+      "specifier": "@/core/race/transportCost",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ReviewStep.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ReviewStep.tsx",
+      "specifier": "@/core/tactics/tacticsTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/Leaderboard.tsx",
+      "specifier": "@/core/race/engine/runnerBuilder",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RunnerConditionBadges.tsx",
+      "specifier": "@/core/race/runnerConditions",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RunnerMoodFace.tsx",
+      "specifier": "@/core/race/runnerConditions",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ConditionTimelinePanel.tsx",
+      "specifier": "@/core/race/engine/runnerBuilder",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/SpeedBreakdownTable.tsx",
+      "specifier": "@/core/race/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/TacticOptions.ts",
+      "specifier": "@/core/tactics/tacticsTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/Track.tsx",
+      "specifier": "@/core/race/engine/runnerBuilder",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/Track.tsx",
+      "specifier": "@/core/race/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/Track.tsx",
+      "specifier": "@/core/race/runnerConditions",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/TacticalAnalysisPanel.tsx",
+      "specifier": "@/core/race/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/HorseSelectionStep.tsx",
+      "specifier": "@/core/race/eligibility",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/HorseSelectionStep.tsx",
+      "specifier": "@/core/horse/paceTendency",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/PaceGraph.tsx",
+      "specifier": "@/core/race/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ClaimingRacePanel.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/PlayerRacePrompt.tsx",
+      "specifier": "@/core/calendar/dateFormatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/PlayerRacePrompt.tsx",
+      "specifier": "@/core/race/engine/simulation",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/PlayerRacePrompt.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RaceDecisionLog.tsx",
+      "specifier": "@/core/race/engine/raceSnapshotTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RaceFieldDialog.tsx",
+      "specifier": "@/core/race/engine/runnerBuilder",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/InRunningSnapshotDialog.tsx",
+      "specifier": "@/core/race/runnerConditions",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/AutoSimPanel.tsx",
+      "specifier": "@/core/calendar/dateFormatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RaceControlBar.tsx",
+      "specifier": "@/core/race/engine/runnerBuilder",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/SectionalTimingTable.tsx",
+      "specifier": "@/core/race/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RaceTimeDisplay.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RaceBroadcast.tsx",
+      "specifier": "@/core/race/engine/runnerBuilder",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RaceEntry.tsx",
+      "specifier": "@/core/race/transportCost",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/PostRaceAnalysis.tsx",
+      "specifier": "@/core/race/engine/runnerBuilder",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/PostRaceAnalysis.tsx",
+      "specifier": "@/core/race/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ClaimingStep.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ConditionTimeline.tsx",
+      "specifier": "@/core/race/runnerConditions",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/PaceMap.tsx",
+      "specifier": "@/core/race/engine/raceSnapshotTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/BeyerChart.tsx",
+      "specifier": "@/core/common/ordinal",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/PaceProfileSummary.tsx",
+      "specifier": "@/core/race/sectionalAnalysis",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/SpeedBreakdownChart.tsx",
+      "specifier": "@/core/race/engine/raceSnapshotTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RaceCard.tsx",
+      "specifier": "@/core/common/uiTokens",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RaceCard.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/JockeyReportPanel.tsx",
+      "specifier": "@/core/race/jockeyReport",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/JockeyReportPanel.tsx",
+      "specifier": "@/core/race/engine/runnerBuilder",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/JockeyReportPanel.tsx",
+      "specifier": "@/core/race/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RaceFeed.tsx",
+      "specifier": "@/core/financial",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/LiveSplitsTable.tsx",
+      "specifier": "@/core/race/engine/runnerBuilder",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/GradeBreakdown.tsx",
+      "specifier": "@/core/common/uiTokens",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RaceVisualizer.tsx",
+      "specifier": "@/core/race/engine/raceSnapshotTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/EligibleHorseRow.tsx",
+      "specifier": "@/core/horse/stats",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RaceVerdictBar.tsx",
+      "specifier": "@/core/race/raceVerdict",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/JockeySelectionStep.tsx",
+      "specifier": "@/core/jockey/compatibility",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RaceBrowserCard.tsx",
+      "specifier": "@/core/common/uiTokens",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ObjectionModal.tsx",
+      "specifier": "@/core/resolver/systemIntents",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ObjectionModal.tsx",
+      "specifier": "@/core/stewards/stewardTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ObjectionModal.tsx",
+      "specifier": "@/core/stewards/stewardTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/ObjectionModal.tsx",
+      "specifier": "@/core/uuid",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/WeatherForecastStrip.tsx",
+      "specifier": "@/core/weather",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RacePreShow.tsx",
+      "specifier": "@/core/race/preShowField",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RacePreShow.tsx",
+      "specifier": "@/core/race/bestPace",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/RacePreShow.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/race/raceUtils.ts",
+      "specifier": "@/core/race/beyer",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/portfolio/BiddingHistoryTable.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/portfolio/BiddingHistoryTable.tsx",
+      "specifier": "@/core/prestige",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/portfolio/BiddingHistoryTable.tsx",
+      "specifier": "@/core/auction/biddingHistory",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/portfolio/PortfolioTable.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/portfolio/PortfolioTable.tsx",
+      "specifier": "@/core/prestige/prestigeTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/portfolio/PortfolioTable.tsx",
+      "specifier": "@/core/stable/portfolio",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/portfolio/PortfolioTable.tsx",
+      "specifier": "@/core/stable/stableYard",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/CeremonyInvitations.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/CeremonyInvitations.tsx",
+      "specifier": "@/core/awards/invitations",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/TrophyCompactView.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/TrophyCompactView.tsx",
+      "specifier": "@/core/common/countryFlag",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/TrophyCompactView.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/AwardIcon.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/AwardIcon.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/BulkRsvpControls.tsx",
+      "specifier": "@/core/awards/invitations",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/BulkRsvpControls.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/TrophyCase.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/CeremonyRsvpControls.tsx",
+      "specifier": "@/core/awards/invitations",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/awardUtils.ts",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/AwardCeremony.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/AwardCeremony.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/InvitationAuditLog.tsx",
+      "specifier": "@/core/awards/invitations",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/AwardsGrid.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/AwardsGrid.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/AwardsGrid.tsx",
+      "specifier": "@/core/common/countryFlag",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/TrophyWallView.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/TrophyWallView.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/InvitationHistoryPanel.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/InvitationHistoryPanel.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/InvitationHistoryPanel.tsx",
+      "specifier": "@/core/awards/invitations",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/AwardBadge.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/AwardBadge.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/HorseAwardsPanel.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/HorseAwardsPanel.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/HorseAwardsPanel.tsx",
+      "specifier": "@/core/common/countryFlag",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/TrophyFullView.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/TrophyFullView.tsx",
+      "specifier": "@/core/awards/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/CeremonyRsvpStatusIndicator.tsx",
+      "specifier": "@/core/awards/invitations",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/CeremonyTimeline.tsx",
+      "specifier": "@/core/awards/invitations",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/G1WinnerHistory.tsx",
+      "specifier": "@/core/history/historyTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/awards/G1TrophyList.tsx",
+      "specifier": "@/core/awards/connectionTrophies",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/MarketStrategyPanel.tsx",
+      "specifier": "@/core/market/priceAlerts",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/MarketStrategyPanel.tsx",
+      "specifier": "@/core/market/exchange",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/MarketStrategyPanel.tsx",
+      "specifier": "@/core/market/strategy",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/ShareOwnershipPanel.tsx",
+      "specifier": "@/core/breeding/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/ShareOwnershipPanel.tsx",
+      "specifier": "@/core/breeding/devolutionUtils",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/ShareOwnershipPanel.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/PriceAlertsPanel.tsx",
+      "specifier": "@/core/market/priceAlerts",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/PriceAlertsPanel.tsx",
+      "specifier": "@/core/market/exchange",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/HorseOrderBook.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/HorseOrderBook.tsx",
+      "specifier": "@/core/market/exchange",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/HorseOrderBook.tsx",
+      "specifier": "@/core/market/exchangeAI",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/HorseOrderBook.tsx",
+      "specifier": "@/core/stable/stableYard",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/BloodstockGrid.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/BloodstockGrid.tsx",
+      "specifier": "@/core/horse/pricing",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/TradeTape.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/TradeTape.tsx",
+      "specifier": "@/core/market/exchange",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/SyndicateDialog.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/MarketPriceChart.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/MarketPriceChart.tsx",
+      "specifier": "@/core/market/houseQuotes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/MarketPriceChart.tsx",
+      "specifier": "@/core/market/exchange",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/AuctionHouseDesk.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/AuctionHouseDesk.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/AuctionHouseDesk.tsx",
+      "specifier": "@/core/market/exchange",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/AuctionHouseDesk.tsx",
+      "specifier": "@/core/prestige/auctionHouses",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/AuctionHouseDesk.tsx",
+      "specifier": "@/core/market/houseQuotes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/AuctionHouseDesk.tsx",
+      "specifier": "@/core/market/exchangeAI",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/SyndicateMarket.tsx",
+      "specifier": "@/core/breeding/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/SyndicateMarket.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/NpcSyndicateIntentPanel.tsx",
+      "specifier": "@/core/breeding/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/NpcSyndicateIntentPanel.tsx",
+      "specifier": "@/core/ai/syndicationAIDecisions",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/NpcSyndicateIntentPanel.tsx",
+      "specifier": "@/core/ai/syndicationAppetite",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/NpcSyndicateIntentPanel.tsx",
+      "specifier": "@/core/ai/syndicationTrace",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/ShareActivityFeed.tsx",
+      "specifier": "@/core/breeding/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/ShareActivityFeed.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/ExchangePanel.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/ExchangePanel.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/ExchangePanel.tsx",
+      "specifier": "@/core/market/exchange",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/ExchangePanel.tsx",
+      "specifier": "@/core/stable/stableRoster",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/market/ExchangePanel.tsx",
+      "specifier": "@/core/stable/stableYard",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/staff/RecruitmentPool.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/staff/RecruitmentPool.tsx",
+      "specifier": "@/core/staff/staffConfig",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/staff/RecruitmentPool.tsx",
+      "specifier": "@/core/staff/staffNegotiation",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/staff/RecruitmentPool.tsx",
+      "specifier": "@/core/common/traitLabels",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/staff/StaffNegotiationDialog.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/staff/StaffNegotiationDialog.tsx",
+      "specifier": "@/core/staff/staffConfig",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/staff/StaffNegotiationDialog.tsx",
+      "specifier": "@/core/staff/staffNegotiation",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/staff/StaffNegotiationDialog.tsx",
+      "specifier": "@/core/staff/staffTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/staff/StaffTeamList.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/staff/StaffTeamList.tsx",
+      "specifier": "@/core/staff/staffConfig",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/staff/StaffTeamList.tsx",
+      "specifier": "@/core/common/traitLabels",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/NewGameWizard/steps/StepWorldSize.tsx",
+      "specifier": "@/core/stable/worldSizeConfig",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/NewGameWizard/steps/StepWorldSize.tsx",
+      "specifier": "@/core/stable/worldSizeConfig",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/NewGameWizard/steps/StepReview.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/NewGameWizard/steps/StepReview.tsx",
+      "specifier": "@/core/facilities",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/NewGameWizard/steps/StepReview.tsx",
+      "specifier": "@/core/common/backstories",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/NewGameWizard/steps/StepReview.tsx",
+      "specifier": "@/core/stable/worldSizeConfig",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/NewGameWizard/steps/StepReview.tsx",
+      "specifier": "@/core/stable/worldSizeConfig",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/NewGameWizard/steps/StepIdentity.tsx",
+      "specifier": "@/core/stable/stableGeneration",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/NewGameWizard/steps/StepBackstory.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/NewGameWizard/steps/StepBackstory.tsx",
+      "specifier": "@/core/common/backstories",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/NewGameWizard/steps/StepSilks.tsx",
+      "specifier": "@/core/jockey/generator",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/NewGameWizard/steps/helpers.tsx",
+      "specifier": "@/core/common/rng",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/NewGameWizard/steps/helpers.tsx",
+      "specifier": "@/core/common/backstories",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/NewGameWizard/steps/helpers.tsx",
+      "specifier": "@/core/uuid",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HeadSvg.tsx",
+      "specifier": "@/core/horse/proceduralPortrait",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/FounderLegacy.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/FoalInheritancePanel.tsx",
+      "specifier": "@/core/horse/foal-inheritance",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/FoalInheritancePanel.tsx",
+      "specifier": "@/core/horse/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseCardFull.tsx",
+      "specifier": "@/core/horse/uiHelpers",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseCareerCharts.tsx",
+      "specifier": "@/core/analytics/timeWindow",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/FullBodySvg.tsx",
+      "specifier": "@/core/horse/proceduralPortrait",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/CareerProjectionSection.tsx",
+      "specifier": "@/core/horse/pricing",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/CareerProjectionSection.tsx",
+      "specifier": "@/core/horse/stats",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/CareerProjectionSection.tsx",
+      "specifier": "@/core/breeding/pedigreePricing",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/CareerProjectionSection.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/RaceHistoryGroup.tsx",
+      "specifier": "@/core/common/uiTokens",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/RaceHistoryGroup.tsx",
+      "specifier": "@/core/common/ordinal",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/RaceHistoryGroup.tsx",
+      "specifier": "@/core/common/countryFlag",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseCardScout.tsx",
+      "specifier": "@/core/horse/grading",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseCardScout.tsx",
+      "specifier": "@/core/horse/gender",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseCardScout.tsx",
+      "specifier": "@/core/horse/uiHelpers",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseStatsPanel.tsx",
+      "specifier": "@/core/horse/grading",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseManagementSection.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseAnalyticsSection.tsx",
+      "specifier": "@/core/horse/insights",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HeadToHeadSection.tsx",
+      "specifier": "@/core/race/headToHead",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseLineageSection.tsx",
+      "specifier": "@/core/horse/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseLineageSection.tsx",
+      "specifier": "@/core/breeding/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/FoalDevelopmentPanel.tsx",
+      "specifier": "@/core/horse/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/FoalDevelopmentPanel.tsx",
+      "specifier": "@/core/horse/foalDevelopment",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/PaceTendencyFilter.tsx",
+      "specifier": "@/core/horse/paceTendency",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/StaffSupportPanel.tsx",
+      "specifier": "@/core/staff/staffTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/DistanceAptitudeDrift.tsx",
+      "specifier": "@/core/horse/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseActionFooter.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseConditionSection.tsx",
+      "specifier": "@/core/health/injuryDisplay",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/ProceduralHorsePortrait.tsx",
+      "specifier": "@/core/horse/proceduralPortrait",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseMetaPanel.tsx",
+      "specifier": "@/core/horse/grading",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseBits.tsx",
+      "specifier": "@/core/horse/stats",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseBits.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseGeneticsSection.tsx",
+      "specifier": "@/core/horse/genetics-readout",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseGeneticsSection.tsx",
+      "specifier": "@/core/horse/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseCardHeader.tsx",
+      "specifier": "@/core/horse/uiHelpers",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseCardHeader.tsx",
+      "specifier": "@/core/horse/gender",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseCardCompact.tsx",
+      "specifier": "@/core/horse/grading",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseCardCompact.tsx",
+      "specifier": "@/core/horse/gender",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/HorseCardCompact.tsx",
+      "specifier": "@/core/horse/uiHelpers",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/TrainingPanel.tsx",
+      "specifier": "@/core/training/trainingTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/TrainingPanel.tsx",
+      "specifier": "@/core/facilities",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/TrainingPanel.tsx",
+      "specifier": "@/core/facilities/facilityTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/TrainingPanel.tsx",
+      "specifier": "@/core/resolver/intents",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/GradedHistoryPanel.tsx",
+      "specifier": "@/core/common/uiTokens",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/GradedHistoryPanel.tsx",
+      "specifier": "@/core/common/countryFlag",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/RunningStyleBreakdown.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/RunningStyleBreakdown.tsx",
+      "specifier": "@/core/race/sectionalAnalysis",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/RunningStyleBreakdown.tsx",
+      "specifier": "@/core/horse/paceTendency",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/CareerValuationBreakdown.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/horse/CareerValuationBreakdown.tsx",
+      "specifier": "@/core/horse/pricing",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stewards/StewardsLog.tsx",
+      "specifier": "@/core/stewards/stewardTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/stewards/StewardsPanel.tsx",
+      "specifier": "@/core/stewards/stewardTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/insurance/InsurancePanel.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/insurance/InsurancePanel.tsx",
+      "specifier": "@/core/types/branded",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/insurance/InsurancePanel.tsx",
+      "specifier": "@/core/insurance/insuranceTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/InboxPage.tsx",
+      "specifier": "@/core/inbox/ctaRoute",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/SyndicatePage.tsx",
+      "specifier": "@/core/breeding/types",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/SyndicatePage.tsx",
+      "specifier": "@/core/breeding/investorTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/SyndicatePage.tsx",
+      "specifier": "@/core/breeding/investorTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/SyndicatePage.tsx",
+      "specifier": "@/core/ai/syndicationAIDecisions",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/SyndicatePage.tsx",
+      "specifier": "@/core/types/branded",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/HorseDetail.tsx",
+      "specifier": "@/core/horse/stats",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/HorseGalleryPage.tsx",
+      "specifier": "@/core/horse/stats",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/HorseGalleryPage.tsx",
+      "specifier": "@/core/horse/horseFactory",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/HorseGalleryPage.tsx",
+      "specifier": "@/core/common/traitLabels",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/AuctionSalePage.tsx",
+      "specifier": "@/core/prestige",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/NpcStableDetailPage.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/StaffDetailPage.tsx",
+      "specifier": "@/core/staff/staffConfig",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/StaffDetailPage.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/StaffDetailPage.tsx",
+      "specifier": "@/core/staff/staffTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/StablePage.tsx",
+      "specifier": "@/core/horse/horseFactory",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/StablePage.tsx",
+      "specifier": "@/core/horse/paceTendency",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/routes/StablePage.tsx",
+      "specifier": "@/core/horse/ownership",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/npc/FinancialDistressIndicator.tsx",
+      "specifier": "@/core/ai/financialDistressAI",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/npc/AIPersonalityCard.tsx",
+      "specifier": "@/core/ai/npcCycleAI",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/npc/AIPersonalityCard.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/npc/AIPersonalityCard.tsx",
+      "specifier": "@/core/ai/jockeyStrategyRecording",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/npc/AIPersonalityCard.tsx",
+      "specifier": "@/core/ai/learningModule",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/npc/DiplomacyPanel.tsx",
+      "specifier": "@/core/ai/npcCycleAI",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/npc/StrategicDirectivesPanel.tsx",
+      "specifier": "@/core/ai/strategicCoordinator",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/npc/RelationshipGraph.tsx",
+      "specifier": "@/core/ai/npcCycleAI",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/facilities/FacilitiesPanel.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/facilities/FacilitiesPanel.tsx",
+      "specifier": "@/core/facilities",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/facilities/FacilitiesPanel.tsx",
+      "specifier": "@/core/reputation",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/facilities/FacilitiesPanel.tsx",
+      "specifier": "@/core/reputation",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/facilities/ImperialOutpostManager.tsx",
+      "specifier": "@/core/facilities/outpostTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/facilities/ImperialOutpostManager.tsx",
+      "specifier": "@/core/facilities/facilityTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/facilities/ImperialOutpostManager.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/facilities/FacilityCategory.tsx",
+      "specifier": "@/core/facilities",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/facilities/FacilityCategory.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/facilities/FacilityCategory.tsx",
+      "specifier": "@/core/horse/jargon",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/facilities/FacilityCategory.tsx",
+      "specifier": "@/core/facilities",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/facilities/FacilityCategory.tsx",
+      "specifier": "@/core/reputation",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/facilities/FacilityCategory.tsx",
+      "specifier": "@/core/reputation",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/ReputationBadge.tsx",
+      "specifier": "@/core/reputation",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/ReputationBadge.tsx",
+      "specifier": "@/core/common/uiTokens",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/analytics/RivalIntelTab.tsx",
+      "specifier": "@/core/ai/npcCycleAI",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/analytics/RivalIntelTab.tsx",
+      "specifier": "@/core/ai/financialDistressAI",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/analytics/TimeWindowSelect.tsx",
+      "specifier": "@/core/analytics/timeWindow",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/analytics/EconomicIndicators.tsx",
+      "specifier": "@/core/ai/economyAIState",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/analytics/EconomicIndicators.tsx",
+      "specifier": "@/core/ai/strategicCoordinator",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/debug/CashPressureTuningEditor.tsx",
+      "specifier": "@/core/stable/cashPressureTuning",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/strategy/CampaignAlertsFeed.tsx",
+      "specifier": "@/core/calendar/campaignTypes",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/strategy/SyndicationStakesSection.tsx",
+      "specifier": "@/core/breeding/strategySyndicationHelpers",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/strategy/SyndicationStakesSection.tsx",
+      "specifier": "@/core/common/formatting",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/strategy/StrategyHeader.tsx",
+      "specifier": "@/core/horse/stats",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/strategy/TrackPrestigeSection.tsx",
+      "specifier": "@/core/prestige/strategyPrestigeHelpers",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/strategy/TrackPrestigeSection.tsx",
+      "specifier": "@/core/prestige/racecoursePrestige",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/strategy/LiveAnnualTimeline.tsx",
+      "specifier": "@/core/prestige/strategyPrestigeHelpers",
+      "rule": "components→core"
+    },
+    {
+      "file": "components/strategy/LiveAnnualTimeline.tsx",
+      "specifier": "@/core/calendar/campaignTypes",
+      "rule": "components→core"
+    }
+  ]
+}

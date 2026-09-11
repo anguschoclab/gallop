@@ -4,14 +4,14 @@
  * This file provides the pregnancy resolution phase that resolves pregnancies
  * and produces impacts for foaling events, NPC AI learning, and player reputation.
  *
- * Dependencies: ../pipeline (PipelineContext), @/game/types (Horse, Pregnancy), @/game/store/helpers/pregnancy (PregnancyResult, resolvePregnancies), @/core/resolver/impacts (AnyImpact, CashImpact, HorseCreationImpact, InboxImpact, ReputationImpact, MareFoalingUpdateImpact, StudCareerImpact), @/core/reputation (createReputationEvent, calculateBreedingReputation), @/core/ai/npcCycleAI (NpcAIManager, getOrCreateStableAIState), @/core/ai/breedingAI (recordBreedingOutcome), @/core/horse/stats (calculateOverallRating), @/core/uuid (generateUUID)
+ * Dependencies: ../pipeline (PipelineContext), @/game/types (Horse, Pregnancy), @/core/breeding/pregnancy (PregnancyResult, resolvePregnancies), @/core/resolver/impacts (AnyImpact, CashImpact, HorseCreationImpact, InboxImpact, ReputationImpact, MareFoalingUpdateImpact, StudCareerImpact), @/core/reputation (createReputationEvent, calculateBreedingReputation), @/core/ai/npcCycleAI (NpcAIManager, getOrCreateStableAIState), @/core/ai/breedingAI (recordBreedingOutcome), @/core/horse/stats (calculateOverallRating), @/core/uuid (generateUUID)
  * Related files: ../pipeline.ts (uses phase), @/core/resolver/handlers/* (applies impacts)
  */
 
 import { PHASE_ORDER_PREGNANCY } from "@/constants";
 import type { PipelineContext } from "../pipeline";
 import type { Horse, Pregnancy, Stable } from "@/game/types";
-import { type PregnancyResult, resolvePregnancies } from "@/game/store/helpers/pregnancy";
+import { type PregnancyResult, resolvePregnancies } from "@/core/breeding/pregnancy";
 import type {
   AnyImpact,
   CashImpact,

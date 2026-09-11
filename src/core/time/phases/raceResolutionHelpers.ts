@@ -19,8 +19,8 @@ import {
   recordRaceHistory,
   checkHallOfFameInduction,
   checkTrackRecords,
-} from "@/services/history/historyService";
-import { processClaimingResolution } from "@/services/auction/claimingResolutionService";
+} from "@/core/history/historyService";
+import { processClaimingResolution } from "@/core/auction/claimingResolutionService";
 import { generateUUID } from "@/core/uuid";
 
 interface RaceResult {

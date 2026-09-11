@@ -19,6 +19,8 @@ import { createDefaultExchangeState } from "@/core/market/exchange";
 import type { ScoutingAssignment } from "@/core/npc/scoutingThresholds";
 import type { PlayerBiddingRecord } from "@/core/auction/biddingHistory";
 import type { PriceAlert } from "@/core/market/priceAlerts";
+import type { MarketStrategy } from "@/core/market/strategy";
+import { DEFAULT_MARKET_STRATEGY } from "@/core/market/strategy";
 
 /**
  * Market-related state for trading, auctions, and scouting.
@@ -47,6 +49,8 @@ export interface MarketState {
   priceAlerts: PriceAlert[];
   /** Trade-notification keys already pushed to the inbox (de-duplication) */
   notifiedTradeKeys: string[];
+  /** Player's market buying-strategy settings (grades, prestige, price, stake) */
+  marketStrategy: MarketStrategy;
 }
 
 /**
@@ -67,5 +71,6 @@ export function createDefaultMarketState(): MarketState {
     autoSyndicateEnabled: false,
     priceAlerts: [],
     notifiedTradeKeys: [],
+    marketStrategy: { ...DEFAULT_MARKET_STRATEGY },
   };
 }

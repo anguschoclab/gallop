@@ -31,7 +31,7 @@ import { recordLearningOutcome } from "@/core/ai/learningModule";
 import { getTrackCountry as getTrackCountryByName } from "@/data/gradedRaces";
 import { getTrackCountryById as getTrackCountryByIdFn } from "@/core/weather/trackClimate";
 import { generateUpcomingRaces as generateUpcomingRacesSchedule } from "@/core/race/schedule";
-import { generateUpcomingScheduledRaces as generateUpcomingRacesMarket } from "@/game/store/helpers/market";
+import { generateUpcomingScheduledRaces as generateUpcomingRacesMarket } from "@/core/market/marketRefresh";
 
 // B.2 — connectionTrophies: duplicate file deleted, canonical in @/core/awards
 import * as connectionTrophiesAwards from "@/core/awards/connectionTrophies";

@@ -9,6 +9,11 @@ export interface AnalyticsEvent {
   timestamp: number;
 }
 
+/**
+ * Track an analytics event by appending it to the persisted queue.
+ * @param event - Event name.
+ * @param properties - Optional event properties.
+ */
 export function trackEvent(event: string, properties?: Record<string, unknown>): void {
   const entry: AnalyticsEvent = { event, properties, timestamp: Date.now() };
   const queue = loadQueue();
@@ -17,6 +22,10 @@ export function trackEvent(event: string, properties?: Record<string, unknown>):
   saveQueue(queue);
 }
 
+/**
+ * Flush all queued analytics events and return them.
+ * @returns All queued events (the queue is cleared after this call).
+ */
 export function flushEvents(): AnalyticsEvent[] {
   const queue = loadQueue();
   saveQueue([]);

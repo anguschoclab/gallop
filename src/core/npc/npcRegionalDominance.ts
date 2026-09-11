@@ -3,7 +3,7 @@
  *
  * Extracted from npcCycle.ts for modularity.
  *
- * Dependencies: @/game/types (Horse, Race, Stable), @/core/ai/npcCycleAI (NpcAIManager, getOrCreateStableAIState), @/core/stable/rivalry (RIVALRY_CONSTANTS), @/services/narrative/rivalryNewsGenerator, @/core/uuid, @/core/common/rng
+ * Dependencies: @/game/types (Horse, Race, Stable), @/core/ai/npcCycleAI (NpcAIManager, getOrCreateStableAIState), @/core/stable/rivalry (RIVALRY_CONSTANTS), @/core/narrative/rivalryNewsGenerator, @/core/uuid, @/core/common/rng
  */
 
 import type { Horse, Race, Stable } from "@/game/types";
@@ -13,7 +13,7 @@ import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";
 import { generateUUID } from "@/core/uuid";
-import type { NewsItem } from "@/services/narrative/newsTypes";
+import type { NewsItem } from "@/core/narrative/newsTypes";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import { asStableId } from "@/core/types/branded";
 import {
@@ -22,7 +22,7 @@ import {
   generateRegionLostNews,
   generateRivalryEscalationNews,
   generateStableIntroNews,
-} from "@/services/narrative/rivalryNewsGenerator";
+} from "@/core/narrative/rivalryNewsGenerator";
 
 /**
  * Apply ally friction cascades — when an NPC gains friction against the player,

@@ -17,7 +17,7 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { Race } from "@/core/race/types";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { InboxImpact } from "@/core/resolver/impacts/inboxImpacts";
-import { rngForRace } from "@/services/race/raceSimulationService";
+import { rngForRace } from "@/core/race/rngForRace";
 import { generateUUID } from "@/core/uuid";
 
 /**

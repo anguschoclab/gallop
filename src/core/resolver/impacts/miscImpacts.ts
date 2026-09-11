@@ -12,10 +12,10 @@
 import type { Impact } from "./base";
 import type { ScoutReport } from "@/game/types";
 import type { ReputationSource } from "@/core/reputation";
-import type { NewsItem } from "@/services/narrative/newsTypes";
+import type { NewsItem } from "@/core/narrative/newsTypes";
 import type { FacilityLevel } from "@/core/facilities";
 import type { TrackRecord } from "../../history/historyTypes";
-import type { CareerArcState } from "@/services/narrative/careerArcGenerator";
+import type { CareerArcState } from "@/core/narrative/careerArcTypes";
 import type { HorseId, OwnerKey, StableId } from "@/core/types/branded";
 
 // News impact

@@ -238,5 +238,68 @@ export default tseslint.config(
       ],
     },
   },
+  // ── Layering guardrails (warn initially; baseline tracked in
+  //    layering-violations.baseline.json — count can only go down) ──────
+  // core may NOT import from game/store, services, components, hooks
+  {
+    files: ["src/core/**/*.ts"],
+    ignores: ["src/core/**/*.test.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "warn",
+        {
+          selector: "ImportDeclaration[source.type='Literal'][source.value=/^@\\/game\\/store/]",
+          message:
+            "Layering violation: core must not import from @/game/store. Move the pure logic down into core, or inject via a port interface.",
+        },
+        {
+          selector: "ImportDeclaration[source.type='Literal'][source.value=/^@\\/services/]",
+          message:
+            "Layering violation: core must not import from @/services. Invert the dependency via a port interface injected at the composition root.",
+        },
+        {
+          selector: "ImportDeclaration[source.type='Literal'][source.value=/^@\\/components/]",
+          message: "Layering violation: core must not import from @/components.",
+        },
+        {
+          selector: "ImportDeclaration[source.type='Literal'][source.value=/^@\\/hooks/]",
+          message: "Layering violation: core must not import from @/hooks.",
+        },
+      ],
+    },
+  },
+  // services may NOT import from components, hooks
+  {
+    files: ["src/services/**/*.ts"],
+    ignores: ["src/services/**/*.test.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "warn",
+        {
+          selector: "ImportDeclaration[source.type='Literal'][source.value=/^@\\/components/]",
+          message: "Layering violation: services must not import from @/components.",
+        },
+        {
+          selector: "ImportDeclaration[source.type='Literal'][source.value=/^@\\/hooks/]",
+          message: "Layering violation: services must not import from @/hooks.",
+        },
+      ],
+    },
+  },
+  // components may NOT import from core directly (route through services/hooks)
+  {
+    files: ["src/components/**/*.ts", "src/components/**/*.tsx"],
+    ignores: ["src/components/**/*.test.ts", "src/components/**/*.test.tsx"],
+    rules: {
+      "no-restricted-syntax": [
+        "warn",
+        {
+          selector: "ImportDeclaration[source.type='Literal'][source.value=/^@\\/core/]",
+          message:
+            "Layering violation: components must not import from @/core directly. Route through a service or hook.",
+        },
+      ],
+    },
+  },
   eslintPluginPrettier,
 );

@@ -4,13 +4,13 @@
  * This file provides the market refresh phase that refreshes the horse market
  * and handles NPC AI-driven purchases.
  *
- * Dependencies: ../pipeline (PipelineContext), @/game/store/helpers/market (refreshMarket), @/game/rng (createRng, hashStr), @/core/ai/marketAI (shouldPurchaseHorse, calculateMaxPurchasePrice, createMarketAIState, recordMarketPurchase), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/staff/staffGenerator (generateStaffPool)
+ * Dependencies: ../pipeline (PipelineContext), @/core/market/marketRefresh (refreshMarket), @/core/common/rng (createRng, hashStr), @/core/ai/marketAI (shouldPurchaseHorse, calculateMaxPurchasePrice, createMarketAIState, recordMarketPurchase), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/staff/staffGenerator (generateStaffPool)
  * Related files: ../pipeline.ts (uses phase)
  */
 
 import { PHASE_ORDER_MARKET } from "@/constants";
 import type { PipelineContext } from "../pipeline";
-import { refreshMarket } from "@/game/store/helpers/market";
+import { refreshMarket } from "@/core/market/marketRefresh";
 import { calculateRaceRating } from "@/core/horse/stats";
 import { createRng, hashStr } from "@/core/common/rng";
 import { shouldPurchaseHorse, calculateMaxPurchasePrice } from "@/core/ai/marketAIValue";

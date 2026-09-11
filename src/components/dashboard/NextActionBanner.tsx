@@ -11,8 +11,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useRef, useEffect, useCallback } from "react";
-import type { NextAction, NextActionKind } from "@/core/dashboard/nextAction";
-import { trackEvent } from "@/core/analytics/tracker";
+import type { NextAction, NextActionKind } from "@/services/dashboard/nextActionService";
+import { trackEvent } from "@/services/analytics/tracker";
 
 const ICONS: Record<NextActionKind, LucideIcon> = {
   inbox: Bell,

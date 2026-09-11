@@ -1,0 +1,433 @@
+/**
+ * rivalryNewsGenerator.ts - Deterministic news generation for stable rivalries.
+ *
+ * This service provides functions for generating news items related to
+ * rivalry milestones, including emergence, escalation, grudge matches,
+ * and regional dominance changes. All generation is seeded to ensure
+ * simulation reproducibility.
+ *
+ * Dependencies: @/core/uuid, @/core/narrative/newsTypes, @/game/types, @/game/rng
+ */
+import { createNewsItem } from "@/core/narrative/newsGenerator";
+import type {
+  NewsItem,
+  NewsCategory,
+  NewsImportance,
+  EntityLink,
+} from "@/core/narrative/newsTypes";
+import type { Stable } from "@/game/types";
+import type { Rng } from "@/core/common/rng";
+import type { CareerArcState } from "@/core/narrative/careerArcTypes";
+export { generateGrudgeMatchNews } from "./rivalryGrudgeMatch";
+
+/**
+ * Build a rivalry news item from headline/body arrays with deterministic RNG selection.
+ *
+ * @param headlines - Array of possible headline strings
+ * @param bodies - Array of possible body strings
+ * @param fields - Common NewsItem fields (day, category, importance, entityLinks)
+ * @param fields.day
+ * @param fields.category
+ * @param fields.importance
+ * @param fields.entityLinks
+ * @param rng - Seeded RNG for deterministic selection and ID generation
+ * @returns A complete NewsItem
+ */
+function buildRivalryNews(
+  headlines: string[],
+  bodies: string[],
+  fields: {
+    day: number;
+    category: NewsCategory;
+    importance: NewsImportance;
+    entityLinks: EntityLink[];
+  },
+  rng: Rng,
+): NewsItem {
+  return createNewsItem({ ...fields, headline: rng.pick(headlines), body: rng.pick(bodies) }, rng);
+}
+
+/**
+ * Generate news when a rivalry emerges (friction crosses 60 threshold).
+ *
+ * @param stable - The rival stable that is emerging
+ * @param friction - The current friction value being evaluated
+ * @param currentDay - The current game day for the news timestamp
+ * @param rng - Seeded RNG for deterministic flavor text selection and ID generation
+ * @returns A NewsItem if the rivalry meets the threshold, otherwise null
+ */
+export function generateRivalryEmergenceNews(
+  stable: Stable,
+  friction: number,
+  currentDay: number,
+  rng: Rng,
+): NewsItem | null {
+  if (friction < 60) return null;
+
+  const headlines = [
+    `Rivalry Emerges: Tensions Rise with ${stable.name}`,
+    `${stable.name} Declares Rivalry`,
+    `New Challenger: ${stable.name} Seeks Supremacy`,
+    `Lines Drawn: ${stable.name} Issues a Warning`,
+    `${stable.name} Throws Down the Gauntlet`,
+    `Brewing Storm: ${stable.name} Steps Up`,
+    `Target Acquired: ${stable.name} Takes Aim`,
+    `${stable.name} Makes Their Move`,
+    `The Rivalry Begins: ${stable.name} Looks to Topple the Hierarchy`,
+    `A Rivalry is Born: ${stable.name} Sounds the Alarm`,
+    `Shots Fired: ${stable.name} Demands Respect`,
+    `Under Pressure: ${stable.name} Enters the Fray`,
+    `A New Adversary: ${stable.name} Emerges from the Pack`,
+    `Staking Their Claim: ${stable.name} Challenges the Status Quo`,
+  ];
+
+  headlines.push(
+    `No Backing Down: ${stable.name} Makes Their Case`,
+    `${stable.name} Seeks to Disrupt the Order`,
+    `The Chase Is On: ${stable.name} is Coming`,
+    `Plotting a Takeover: ${stable.name} Prepares for Battle`,
+    `${stable.name} Prepares to Upset the Apple Cart`,
+    `Eyes on the Prize: ${stable.name} Ready to Strike`,
+  );
+
+  const bodies = [
+    `The racing community is buzzing as ${stable.name} has emerged as a formidable rival. Sources close to the stable indicate they're prepared to do whatever it takes to claim victory.`,
+    `A new chapter in racing rivalry has begun. ${stable.name} has made their intentions clear, and the competition is about to heat up.`,
+    `Tensions are running high as ${stable.name} steps up to challenge for dominance. This rivalry is one to watch.`,
+    `Whispers in the paddock have turned to outright declarations. ${stable.name} has set their sights on taking you down.`,
+    `The gloves are off. ${stable.name} is making moves that suggest they see you as their primary obstacle to the top.`,
+    `It's no longer just business for ${stable.name}. They're targeting your runners specifically, signaling the start of a bitter feud.`,
+    `In a surprising development, ${stable.name} has begun actively shadowing your stable's entries, ensuring their top runners are present in your key races.`,
+    `The paddock chatter has focused heavily on ${stable.name} this week. They're making no secret of their ambition to unseat you as the top syndicate.`,
+    `${stable.name} has officially entered the conversation. Insiders suggest they've completely retooled their strategy to counter your stable's success.`,
+    `A palpable shift in paddock dynamics is underway. Representatives from ${stable.name} have been particularly vocal about their intent to challenge your reign.`,
+    `It appears ${stable.name} has decided that friendly competition is no longer enough. They're openly aiming to disrupt your campaign at every turn.`,
+    `Word on the backside is that ${stable.name} is building a war chest specifically to outbid and outrace your operation in the coming months.`,
+    `${stable.name} has clearly marked you as their primary target. Their recent string of entries suggests a calculated plan to contest your dominance.`,
+    `The competitive landscape has shifted as ${stable.name} steps into the role of primary antagonist. The rest of the season promises serious fireworks.`,
+  ];
+
+  bodies.push(
+    `Speculation is rife that ${stable.name} has spent the off-season completely revamping their string. They are making it obvious that they consider you their primary benchmark.`,
+    `${stable.name} has begun throwing their weight around in the entry box, intentionally cross-entering against your top prospects.`,
+    `A quiet confidence radiates from the ${stable.name} barn this week. They believe they have the firepower to finally challenge your position at the top.`,
+    `Tensions rose this morning when representatives from ${stable.name} made pointed comments about your recent performances. The gauntlet has been firmly thrown down.`,
+    `It appears ${stable.name} is no longer content to play second fiddle. They are actively adjusting their campaign to go head-to-head with your best horses.`,
+    `The racing press is having a field day with the emerging rivalry. ${stable.name} seems happy to play the antagonist if it means knocking you off your pedestal.`,
+  );
+
+  return buildRivalryNews(
+    headlines,
+    bodies,
+    {
+      day: currentDay,
+      category: "stable",
+      importance: "medium",
+      entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
+    },
+    rng,
+  );
+}
+
+/* === generateGrudgeMatchNews and generateStableIntroNews extracted to rivalryGrudgeMatch.ts === */
+
+/**
+ * Generate news when the player loses regional dominance to a rival stable.
+ *
+ * @param region - The name of the region where power has shifted
+ * @param rivalStable - The rival stable that has seized the regional crown
+ * @param currentDay - The current game day for the news timestamp
+ * @param rng - Seeded RNG for deterministic flavor text selection and ID generation
+ * @returns A NewsItem detailing the shift in regional power
+ */
+export function generateRegionLostNews(
+  region: string,
+  rivalStable: Stable,
+  currentDay: number,
+  rng: Rng,
+): NewsItem | null {
+  const headlines = [
+    `Regional King Dethroned in ${region}`,
+    `${rivalStable.name} Seizes Control of ${region}`,
+    `Power Shift: ${region} Under New Management`,
+    `${region} Falls to ${rivalStable.name}`,
+    `New Era in ${region}: ${rivalStable.name} Takes the Crown`,
+    `${rivalStable.name} Claims the Throne in ${region}`,
+    `A New Sovereign: ${rivalStable.name} Rules ${region}`,
+    `${region} Dynasty Ends: ${rivalStable.name} Takes Over`,
+    `Tides Turn in ${region}: ${rivalStable.name} Assumes Control`,
+    `The Guard Changes in ${region} to ${rivalStable.name}`,
+    `Reign Interrupted: ${rivalStable.name} Conquers ${region}`,
+    `${region}'s Top Spot Seized by ${rivalStable.name}`,
+    `Usurped! ${rivalStable.name} Now Dominates ${region}`,
+    `End of an Era: ${rivalStable.name} is the New ${region} King`,
+  ];
+
+  headlines.push(
+    `The King is Dead: ${rivalStable.name} Reigns in ${region}`,
+    `${rivalStable.name} Successfully Ousts the ${region} Elite`,
+    `Regional Shakeup: ${rivalStable.name} Takes the Helm`,
+    `A Hostile Takeover in ${region} by ${rivalStable.name}`,
+    `${rivalStable.name} establishes Supremacy in ${region}`,
+    `The New Boss in ${region}: ${rivalStable.name}`,
+    `${region} Capitulates to ${rivalStable.name}`,
+    `No Contest: ${rivalStable.name} Captures ${region}`,
+    `The Surrender of ${region} to ${rivalStable.name}`,
+    `${rivalStable.name} Plants Their Flag in ${region}`,
+    `Unstoppable: ${rivalStable.name} Claims ${region}`,
+  );
+
+  const bodies = [
+    `In a stunning development, ${rivalStable.name} has unseated the previous regional king in ${region}. The balance of power in the region has shifted dramatically.`,
+    `${rivalStable.name} has emerged as the new dominant force in ${region}, ending the reign of the previous regional king. This marks a significant power shift.`,
+    `The racing landscape in ${region} has changed as ${rivalStable.name} takes control as the new regional king. Competition in the region is about to intensify.`,
+    `Years of dominance have been upended as ${rivalStable.name} officially takes the reins in ${region}. Local syndicates are already rethinking their strategies.`,
+    `The crown is heavy, but ${rivalStable.name} seems ready to wear it after forcefully seizing control of ${region}'s competitive circuit.`,
+    `It's a tough day for the old guard. ${rivalStable.name} has marched into ${region} and completely rewritten the local hierarchy.`,
+    `The long-standing hierarchy in ${region} has finally cracked. ${rivalStable.name} has proven too strong, officially claiming the title of regional powerhouse.`,
+    `Local racing fans are still processing the shakeup. ${rivalStable.name} has systematically dismantled the competition to become the new undeniable king of ${region}.`,
+    `What seemed like an unshakeable grip on ${region} has slipped. ${rivalStable.name} has swooped in, accumulating the wins necessary to take the regional crown.`,
+    `The writing has been on the wall for weeks, but it's now official: ${rivalStable.name} rules ${region}. The former kings have been relegated to challengers.`,
+    `A seismic shift in the local racing economy today, as ${rivalStable.name} was formally recognized as the supreme stable operating within ${region}.`,
+    `Rival syndicates in ${region} will now have to answer to ${rivalStable.name}, who have forcefully evicted the previous leaders from the top of the regional standings.`,
+    `The takeover of ${region} by ${rivalStable.name} is complete. They've outmaneuvered the old establishment to usher in a new era of dominance.`,
+    `${rivalStable.name} threw everything they had into conquering ${region}, and the gamble paid off. The former regional king has been emphatically dethroned.`,
+  ];
+
+  bodies.push(
+    `The unthinkable has happened in ${region}. ${rivalStable.name} has systematically picked apart the competition to establish themselves as the undisputed regional power.`,
+    `Many thought the old guard in ${region} was untouchable, but ${rivalStable.name} proved them wrong with a ruthless, calculated campaign to take the crown.`,
+    `There is a new sheriff in town. ${rivalStable.name} has forced a changing of the guard in ${region}, leaving the former leaders scrambling for answers.`,
+    `${rivalStable.name} did not just sneak into the top spot in ${region}; they kicked the door down and demanded the crown.`,
+    `The coronation is complete. After weeks of relentless pressure, ${rivalStable.name} is officially recognized as the premier stable operating out of ${region}.`,
+    `Local dominance requires both deep pockets and exceptional horseflesh. ${rivalStable.name} has demonstrated they possess both, seizing control of ${region}.`,
+    `Any doubts about the ambitions of ${rivalStable.name} have been put to rest. They have thoroughly conquered ${region}, leaving rivals in their wake.`,
+    `It was a methodical dismantling of the existing hierarchy. ${rivalStable.name} has emerged as the true power broker in ${region}.`,
+    `The local circuit will never be the same. ${rivalStable.name} has instituted a new regime in ${region}, taking the crown with authority.`,
+    `They came, they saw, they conquered. ${rivalStable.name} has officially locked down ${region}, ending the tenure of the previous king.`,
+    `A masterclass in strategic campaigning has paid off for ${rivalStable.name}, who now look down on the rest of ${region} from the top spot.`,
+  );
+
+  return buildRivalryNews(
+    headlines,
+    bodies,
+    {
+      day: currentDay,
+      category: "stable",
+      importance: "high",
+      entityLinks: [{ type: "stable", id: rivalStable.id, name: rivalStable.name }],
+    },
+    rng,
+  );
+}
+
+/**
+ * Generate news when rivalry escalates to heated status (friction crosses 80 threshold).
+ *
+ * @param stable - The rival stable involved in the escalation
+ * @param oldFriction - The friction value prior to the latest increase
+ * @param newFriction - The newly updated friction value
+ * @param currentDay - The current game day for the news timestamp
+ * @param rng - Seeded RNG for deterministic flavor text selection and ID generation
+ * @param arcContext
+ * @param arcContext.horseName
+ * @param arcContext.arcStage
+ * @returns A NewsItem if the escalation meets the threshold, otherwise null
+ */
+export function generateRivalryEscalationNews(
+  stable: Stable,
+  oldFriction: number,
+  newFriction: number,
+  currentDay: number,
+  rng: Rng,
+  arcContext?: { horseName: string; arcStage: CareerArcState["stage"] },
+): NewsItem | null {
+  if (newFriction < 80 || oldFriction >= 80) return null;
+
+  const headlines = [
+    `Rivalry Escalates: Tensions Boil Over with ${stable.name}`,
+    `Heated Rivalry: ${stable.name} Takes It to the Next Level`,
+    `No Love Lost: ${stable.name} Intensifies Rivalry`,
+    `Boiling Point: The Feud with ${stable.name} Worsens`,
+    `Hostilities Increase Between You and ${stable.name}`,
+    `War of Words: ${stable.name} Escalates the Feud`,
+    `Breaking Point: Hostility Peaks with ${stable.name}`,
+    `Outright Warfare: The ${stable.name} Feud Deepens`,
+    `Friction Hits Critical Mass with ${stable.name}`,
+    `Gloves Off: ${stable.name} Ignites a Bitter War`,
+    `The Animosity Grows: ${stable.name} Refuses to Back Down`,
+    `A Toxic Rivalry: Things Get Ugly with ${stable.name}`,
+    `Blood Feud: ${stable.name} Crosses the Line`,
+    `Bad Blood: ${stable.name} Strains Relations to the Limit`,
+  ];
+
+  headlines.push(
+    `Boiling Over: ${stable.name} Feud Reaches Danger Zone`,
+    `Out of Control: The Conflict with ${stable.name} Worsens`,
+    `Total War Declared by ${stable.name}`,
+    `The Feud Escalates: ${stable.name} Plays Hardball`,
+    `No Quarter Given: ${stable.name} Ramps Up the Aggression`,
+    `${stable.name} Takes the Rivalry to New Heights`,
+  );
+
+  const bodies = [
+    `The rivalry with ${stable.name} has escalated to dangerous levels. Both sides are digging in, and observers predict this will only get worse before it gets better.`,
+    `What was once competitive rivalry has become heated. ${stable.name} has taken aggressive actions that have raised tensions significantly.`,
+    `The situation with ${stable.name} has deteriorated. This is no longer friendly competition - this is a heated rivalry with real consequences.`,
+    `Recent comments to the press from ${stable.name} have thrown gasoline on the fire. This feud is rapidly spiraling out of control.`,
+    `It's getting personal. The actions of ${stable.name} have crossed a line, turning this sporting rivalry into a bitter, all-out war.`,
+    `Trackside officials are reportedly monitoring the situation as animosity with ${stable.name} reaches an unprecedented high this week.`,
+    `Any pretense of sportsmanship has vanished. The feud with ${stable.name} has turned remarkably sour, with both sides exchanging thinly veiled threats in the press.`,
+    `The paddock was buzzing this morning after a heated exchange between representatives from your stable and ${stable.name}. The rivalry has never been more intense.`,
+    `Industry insiders are shocked by how quickly the relationship with ${stable.name} has deteriorated. This is fast becoming one of the most toxic feuds in recent memory.`,
+    `Attempts to cool tensions have utterly failed. ${stable.name} appears entirely committed to a scorched-earth policy against your racing operation.`,
+    `The friction with ${stable.name} has officially hit critical mass. Associates are being warned to keep their distance as the bad blood threatens to spill over.`,
+    `It's open warfare on the track now. ${stable.name} has essentially declared that their primary goal for the season is to ensure your stable's failure.`,
+    `The feud has escalated beyond simple competition. ${stable.name} is making aggressive, calculated moves intended to directly damage your stable's reputation and success.`,
+    `Whatever mutual respect once existed is gone. ${stable.name} has ramped up hostilities, ensuring that every time your horses meet, it will be an absolute battle.`,
+  ];
+
+  bodies.push(
+    `Officials have reportedly stepped in to remind both camps of their obligations following a particularly ugly confrontation with ${stable.name} at the track this morning.`,
+    `The rivalry has transcended mere competition. ${stable.name} is engaging in aggressive claiming and entry tactics designed solely to frustrate your operation.`,
+    `There is genuine animosity radiating from the ${stable.name} camp. They have made it abundantly clear that they consider destroying your season a personal crusade.`,
+    `Veterans on the backstretch are comparing the hostility between you and ${stable.name} to some of the most infamous, bitter feuds in racing history.`,
+    `It is a toxic environment whenever your horses face ${stable.name}. The rival stable is utilizing every dirty trick in the book to try and secure a psychological advantage.`,
+    `The feud has become the main talking point of the season. ${stable.name} seems perfectly willing to sacrifice their own win percentage if it means dragging you down with them.`,
+  );
+
+  // Arc-aware body variants: inject career arc context when available
+  if (arcContext) {
+    const { horseName, arcStage } = arcContext;
+    if (arcStage === "champion_or_bust") {
+      bodies.push(
+        `The feud with ${stable.name} has reached a boiling point, and ${horseName} — fighting to cement a championship legacy — finds itself in the crosshairs. Every race against this rival now carries the weight of a career.`,
+        `As ${horseName} chases championship glory, ${stable.name} has made it their mission to play the spoiler. The escalation is personal, and the stakes couldn't be higher.`,
+        `${horseName}'s championship bid is under direct threat. ${stable.name} has escalated hostilities to a level that suggests they'd rather deny your horse glory than win for themselves.`,
+      );
+    } else if (arcStage === "contender") {
+      bodies.push(
+        `With ${horseName} rising as a genuine contender, ${stable.name} has turned up the heat. The rivalry is no longer just about pride — it's about who gets to contend at the highest level.`,
+        `${horseName}'s ascent has clearly rattled ${stable.name}, who have escalated their attacks. The contender's momentum is being directly challenged by a rival with nothing to lose.`,
+      );
+    } else if (arcStage === "rising_star") {
+      bodies.push(
+        `The rising star ${horseName} has become a particular target of ${stable.name}'s escalation. The rival stable seems determined to snuff out the momentum before it becomes unstoppable.`,
+        `${stable.name} has singled out rising star ${horseName} as the focal point of their escalated hostilities. It's a calculated move — take out the brightest light before it shines too bright.`,
+      );
+    }
+  }
+
+  return buildRivalryNews(
+    headlines,
+    bodies,
+    {
+      day: currentDay,
+      category: "stable",
+      importance: "high",
+      entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
+    },
+    rng,
+  );
+}
+
+/**
+ * Generate a stable intro news item. Used for retroactive introductions
+ * when a rivalry emerges and the stable was never previously introduced.
+ *
+ * @param stable - The stable to introduce
+ * @param day - Current simulation day
+ * @param rng - Seeded RNG for deterministic selection
+ * @returns A stable intro NewsItem
+ */
+export function generateStableIntroNews(stable: Stable, day: number, rng: Rng): NewsItem {
+  const country = stable.country ?? "parts unknown";
+  const description = stable.description ?? "a stable with a reputation that precedes it";
+  const tier = stable.tier ?? "mid";
+
+  const headlines = [
+    `Who Is ${stable.name}?`,
+    `Stable Profile: ${stable.name}`,
+    `Getting to Know ${stable.name}`,
+    `Inside ${stable.name}`,
+    `Meet the Competition: ${stable.name}`,
+    `Stable Spotlight: ${stable.name}`,
+    `${stable.name}: A Closer Look`,
+    `Introducing ${stable.name}`,
+    `The ${country} Connection: ${stable.name}`,
+    `Focus On: ${stable.name}`,
+    `Unmasking ${stable.name}`,
+    `The Rise of ${stable.name}`,
+    `${stable.name} Steps Into the Light`,
+    `Profiling the ${tier} Tier Contender: ${stable.name}`,
+  ];
+
+  headlines.push(
+    `An Introduction to ${stable.name}`,
+    `Behind the Gates at ${stable.name}`,
+    `Scouting Report: ${stable.name}`,
+    `The Story Behind ${stable.name}`,
+    `${stable.name} Breaks Cover`,
+    `What You Need to Know About ${stable.name}`,
+    `Meeting the ${tier} Tier Challenge: ${stable.name}`,
+    `The Ascendance of ${stable.name}`,
+    `Under the Microscope: ${stable.name}`,
+    `Who is Behind ${stable.name}?`,
+    `A Primer on ${stable.name}`,
+    `Tracking the Progress of ${stable.name}`,
+    `The Global Footprint of ${stable.name}`,
+    `Charting the Course: ${stable.name} in ${country}`,
+    `${stable.owner}'s Vision: The ${stable.name} Story`,
+    `Welcome to the ${tier} Tier: ${stable.name}`,
+    `Making Waves: The ${country} Base of ${stable.name}`,
+  );
+
+  const bodies = [
+    `The foundation laid by ${stable.owner} in ${country} is bearing fruit. ${stable.name} has proven they belong in the ${tier} tier conversation. ${description}`,
+    `It takes a lot to stand out in the ${tier} tier, but ${stable.name} is doing just that. Hailing from ${country}, ${stable.owner}'s strategy is paying off. ${description}`,
+    `More and more insiders are talking about ${stable.name}. From their base in ${country}, ${stable.owner} is putting together a very interesting ${tier} tier campaign. ${description}`,
+    `The ambitions of ${stable.name} are clear. The ${country}-based yard, steered by ${stable.owner}, is not here to make up numbers in the ${tier} tier. ${description}`,
+    `You can't ignore the momentum behind ${stable.name}. The ${country} operation, built by ${stable.owner}, is a ${tier} tier force on the rise. ${description}`,
+    `What ${stable.owner} has accomplished with ${stable.name} in ${country} is noteworthy. They're a ${tier} tier stable that commands attention. ${description}`,
+    `Based in ${country}, ${stable.name} is operated by ${stable.owner}. ${description} As a ${tier} tier operation, they're a name worth remembering.`,
+    `${stable.name}, led by ${stable.owner}, hails from ${country}. ${description} Their ${tier} tier status marks them as a serious player in the racing world.`,
+    `From ${country} comes ${stable.name}, the brainchild of ${stable.owner}. ${description} This ${tier} tier stable is one to watch.`,
+    `${stable.owner}'s ${stable.name} is a name that commands respect in ${country}. ${description} As a ${tier} tier operation, they mean business.`,
+    `Operating out of ${country}, ${stable.name} under ${stable.owner} has built a growing reputation. ${description} Their ${tier} tier standing speaks for itself.`,
+    `${stable.name} — ${stable.owner}'s pride and joy from ${country}. ${description} A ${tier} tier stable with ambitions to match.`,
+    `The story of ${stable.name} is one of ambition and grit. Founded by ${stable.owner} in ${country}, ${description} Their ${tier} tier status cements their place among the racing elite.`,
+    `In the competitive world of ${country} racing, ${stable.name} stands tall. ${stable.owner}'s operation is defined by ${description} A ${tier} tier stable through and through.`,
+    `Racing fans in ${country} are well acquainted with ${stable.name}. Guided by ${stable.owner}, ${description} This ${tier} tier yard is stepping up its campaign.`,
+    `A deeper dive into ${stable.name} reveals a meticulously run organization. ${stable.owner} has established a strong presence in ${country}. ${description} They compete at the ${tier} tier level.`,
+    `The paddock chatter often turns to ${stable.name}. Originating from ${country} and managed by ${stable.owner}, ${description} They are proving to be a formidable ${tier} tier outfit.`,
+    `Expectations are high for ${stable.name}. The ${country} based operation, overseen by ${stable.owner}, is gaining traction. ${description} As a ${tier} tier stable, they are not to be underestimated.`,
+    `Stepping into the spotlight is ${stable.name}. ${stable.owner} has assembled an impressive string of runners in ${country}. ${description} Their ${tier} tier classification is well-earned.`,
+    `The ${tier} tier ranks are heating up with the emergence of ${stable.name}. Representing ${country} under ${stable.owner}'s guidance, ${description} They are making their intentions clear.`,
+  ];
+
+  bodies.push(
+    `With a strong base in ${country}, ${stable.name} continues to impress. Owner ${stable.owner} has ensured this ${tier} tier outfit is highly respected. ${description}`,
+    `Racing fans are keeping a close eye on ${stable.name}. Established in ${country} by ${stable.owner}, they have solidified their ${tier} tier status. ${description}`,
+    `If you have not heard of ${stable.name} yet, you will soon. ${stable.owner} has built a ${tier} tier contender out of ${country}. ${description}`,
+    `The buzz around ${country} continues to center on ${stable.name}. Guided by ${stable.owner}, this ${tier} tier operation is making waves. ${description}`,
+    `${stable.name} represents the best of ${country} racing culture. With ${stable.owner} at the helm, this ${tier} tier stable is turning heads. ${description}`,
+    `A closer look at ${stable.name} reveals a meticulously run ${tier} tier stable. Operating out of ${country}, ${stable.owner} has crafted an organization defined by ${description}`,
+    `You can see the ${country} influence in how ${stable.owner} manages ${stable.name}. They're not just another ${tier} tier competitor. ${description}`,
+    `Quietly building momentum, ${stable.name} is a stable to watch. ${stable.owner} has positioned their ${country} operation perfectly for ${tier} tier success. ${description}`,
+    `The word on the backstretch is that ${stable.name} is preparing a major push. Their ${tier} tier stable, overseen by ${stable.owner} in ${country}, is turning heads. ${description}`,
+    `Consistency is the hallmark of ${stable.name}. This ${country} outfit, under the careful direction of ${stable.owner}, has firmly established its ${tier} tier credentials. ${description}`,
+    `A visit to ${country} reveals why ${stable.name} is so successful. ${stable.owner} runs a tight ship, making this ${tier} tier stable a formidable opponent. ${description}`,
+  );
+
+  return buildRivalryNews(
+    headlines,
+    bodies,
+    {
+      day,
+      category: "stable",
+      importance: "low",
+      entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
+    },
+    rng,
+  );
+}

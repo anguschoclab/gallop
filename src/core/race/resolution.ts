@@ -1,0 +1,81 @@
+/**
+ * resolution.ts - Race result processing helpers
+ *
+ * Pure business logic for race result processing, including
+ * prize money payout splits, result sanitization, and ranking with tie-breaking.
+ *
+ * Dependencies: @/constants (PRIZE_SPLIT, GRADED_PRIZE_SPLIT),
+ *   @/core/race/engine/compareFinishOrder (compareFinishOrder),
+ *   @/core/race/venuePayout (applyVenuePayout, VenueLike)
+ * Related files: src/game/store/slices/coreSlice.ts (uses race resolution helpers)
+ */
+
+import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/constants";
+import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
+import { applyVenuePayout, type VenueLike } from "@/core/race/venuePayout";
+
+export type RankedResult = { horseId: string; position: number; time: number; dnf: boolean };
+
+/**
+ * Computes prize money payout splits for a race
+ * @param purse - Total prize purse for the race
+ * @param finisherCount - Number of horses that finished the race
+ * @param isGraded - Whether the race is graded (uses GRADED_PRIZE_SPLIT)
+ * @param venue - Optional race/venue used to scale payouts by racecourse prestige
+ * @returns Array of prize amounts for each finishing position
+ */
+export function computePayoutSplits(
+  purse: number,
+  finisherCount: number,
+  isGraded?: boolean,
+  venue?: VenueLike | null,
+): number[] {
+  const split = isGraded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
+  const effectivePurse = venue ? applyVenuePayout(purse, venue) : purse;
+  const splits: number[] = [];
+  let runningPaid = 0;
+  for (let i = 0; i < Math.min(split.length, finisherCount); i++) {
+    const pay = Math.round(effectivePurse * split[i]);
+    splits.push(pay);
+    runningPaid += pay;
+  }
+  // Route any unpaid remainder to the last paid finisher
+  if (splits.length > 0 && runningPaid < effectivePurse && finisherCount >= split.length) {
+    splits[splits.length - 1] += effectivePurse - runningPaid;
+  }
+  return splits;
+}
+
+/**
+ * Sanitizes and ranks race results, handling ties and DNFs
+ * @param rawResult - Raw race results with horse IDs and times
+ * @param _raceId - Race ID (unused, kept for API compatibility)
+ * @returns Object containing ranked results, finishers only, and DNFs only
+ */
+export function sanitizeAndRankResults(
+  rawResult: { horseId: string; time: number }[],
+  _raceId: string,
+): { ranked: RankedResult[]; finishers: RankedResult[]; dnfs: RankedResult[] } {
+  const enriched = rawResult.map((r) => ({ ...r, dnf: !Number.isFinite(r.time) || r.time <= 0 }));
+  const finishersRaw = enriched.filter((r) => !r.dnf).sort((a, b) => compareFinishOrder(a, b));
+  const finishers = finishersRaw.map((r, idx) => ({ ...r, position: idx + 1 }));
+  const dnfs = enriched
+    .filter((r) => r.dnf)
+    .map((r, idx) => ({ ...r, position: finishersRaw.length + idx + 1 }));
+  const ranked = [...finishers, ...dnfs];
+  return { ranked, finishers, dnfs };
+}
+
+/**
+ * Detects if a race had a photo finish (finishers within 0.05 seconds)
+ * @param finishers - Array of ranked finisher results
+ * @returns True if any two consecutive finishers are within 0.05 seconds
+ */
+export function detectPhotoFinish(finishers: RankedResult[]): boolean {
+  for (let i = 1; i < finishers.length; i++) {
+    if (Math.abs(finishers[i].time - finishers[i - 1].time) < 0.05) {
+      return true;
+    }
+  }
+  return false;
+}

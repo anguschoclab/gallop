@@ -8,12 +8,23 @@ import { NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/core/common/formatting";
 import { SyndicateMarket } from "@/components/market/SyndicateMarket";
 import { BloodstockGrid } from "@/components/market/BloodstockGrid";
-import { Store, ChevronRight, TrendingUp, Zap, Target, ArrowLeftRight, Gavel } from "lucide-react";
+import {
+  Store,
+  ChevronRight,
+  TrendingUp,
+  Zap,
+  Target,
+  ArrowLeftRight,
+  Gavel,
+  Bell,
+} from "lucide-react";
 import { ExchangePanel } from "@/components/market/ExchangePanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AuctionHouseDesk } from "@/components/market/AuctionHouseDesk";
+import { PriceAlertsPanel } from "@/components/market/PriceAlertsPanel";
+import { MarketStrategyPanel } from "@/components/market/MarketStrategyPanel";
 
-type MarketTab = "houses" | "bloodstock" | "exchange" | "syndicate";
+type MarketTab = "houses" | "bloodstock" | "exchange" | "syndicate" | "alerts" | "strategy";
 
 export const Route = createFileRoute("/market")({
   component: MarketPage,
@@ -89,6 +100,20 @@ function MarketPage() {
               <TrendingUp className="w-3.5 h-3.5" />
               Fractional Syndicates
             </TabsTrigger>
+            <TabsTrigger
+              value="alerts"
+              className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-amber-500 data-[state=active]:text-slate-950 h-full px-6 transition-all"
+            >
+              <Bell className="w-3.5 h-3.5" />
+              Alerts
+            </TabsTrigger>
+            <TabsTrigger
+              value="strategy"
+              className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-primary data-[state=active]:text-slate-950 h-full px-6 transition-all"
+            >
+              <Target className="w-3.5 h-3.5" />
+              Strategy
+            </TabsTrigger>
           </TabsList>
         </div>
 
@@ -160,6 +185,20 @@ function MarketPage() {
             </div>
             <SyndicateMarket />
           </div>
+        </TabsContent>
+
+        <TabsContent
+          value="alerts"
+          className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300 focus-visible:outline-none"
+        >
+          <PriceAlertsPanel />
+        </TabsContent>
+
+        <TabsContent
+          value="strategy"
+          className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300 focus-visible:outline-none"
+        >
+          <MarketStrategyPanel />
         </TabsContent>
       </Tabs>
     </div>

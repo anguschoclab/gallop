@@ -140,6 +140,14 @@ const META_KEYS: (keyof GameState)[] = [
   "industryEarningsUpdatedDay",
   "narrativeArcs",
   "worldSize",
+  // Market fields — were missing from META_KEYS, causing silent data loss on save
+  "exchange",
+  "scoutingAssignments",
+  "autoSyndicateEnabled",
+  "playerBiddingHistory",
+  "priceAlerts",
+  "notifiedTradeKeys",
+  "marketStrategy",
 ];
 
 export async function saveGameStateToIDB(state: GameState): Promise<void> {

@@ -5,7 +5,7 @@
  * intent modules: trainingIntents, raceEntryIntents, claimingIntents,
  * breedingIntents, diplomaticIntents, facilityIntents.
  *
- * Dependencies: @/core/resolver/intents, @/game/types, @/core/ai/npcCycleAI, @/core/ai/strategicCoordinator, @/services/narrative/directiveNewsGenerator
+ * Dependencies: @/core/resolver/intents, @/game/types, @/core/ai/npcCycleAI, @/core/ai/strategicCoordinator, @/core/narrative/directiveNewsGenerator
  * Related files: npcCycle.ts (uses intents), intents/*.ts (extracted generators)
  */
 
@@ -24,7 +24,7 @@ import {
   coordinateSubsystems,
   type WorldAssessment,
 } from "@/core/ai/strategicCoordinator";
-import { generateDirectiveChangeNews } from "@/services/narrative/directiveNewsGenerator";
+import { generateDirectiveChangeNews } from "@/core/narrative/directiveNewsGenerator";
 import { generateNpcTrainingIntents } from "./intents/trainingIntents";
 import { generateNpcRaceEntryIntents } from "./intents/raceEntryIntents";
 import {

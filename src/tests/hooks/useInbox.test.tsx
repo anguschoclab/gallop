@@ -136,6 +136,48 @@ describe("useInbox — filtering", () => {
   });
 });
 
+describe("useInbox — market filter", () => {
+  beforeEach(() => {
+    seedStore();
+  });
+
+  it("filter 'market' returns only messages with category 'market'", () => {
+    const messages = [
+      mkMsg("m1", { category: "market" as any }),
+      mkMsg("m2", { category: "system" as any }),
+      mkMsg("m3", { category: "market" as any }),
+    ];
+    seedStore({ ...createDefaultGameState(), inbox: messages });
+
+    const { result } = renderHook(() => useInbox());
+    act(() => result.current.setFilter("market" as any));
+    expect(result.current.filteredMessages).toHaveLength(2);
+    expect(result.current.filteredMessages.map((m) => m.id)).toEqual(["m1", "m3"]);
+  });
+
+  it("filter 'market' excludes non-market messages", () => {
+    const messages = [
+      mkMsg("m1", { category: "race" as any }),
+      mkMsg("m2", { category: "auction" as any }),
+      mkMsg("m3", { category: "market" as any }),
+    ];
+    seedStore({ ...createDefaultGameState(), inbox: messages });
+
+    const { result } = renderHook(() => useInbox());
+    act(() => result.current.setFilter("market" as any));
+    expect(result.current.filteredMessages).toHaveLength(1);
+    expect(result.current.filteredMessages[0].id).toBe("m3");
+  });
+
+  it("setFilter('market') updates the filter state", () => {
+    seedStore({ ...createDefaultGameState(), inbox: [mkMsg("m1")] });
+
+    const { result } = renderHook(() => useInbox());
+    act(() => result.current.setFilter("market" as any));
+    expect(result.current.filter).toBe("market");
+  });
+});
+
 describe("useInbox — sorting", () => {
   beforeEach(() => {
     seedStore();

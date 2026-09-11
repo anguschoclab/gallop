@@ -4,7 +4,7 @@
  * This file provides the upkeep phase where player pays $50/horse/day and NPC stables
  * pay the same on their own roster to close asymmetric drain.
  *
- * Dependencies: ../pipeline (PipelineContext), @/core/expenses (createExpense), @/core/transactions (createTransaction), @/core/facilities (calculateTotalMaintenance), @/services/newsGenerator (generateFlavorNews), @/game/uuid (generateUUID), @/core/resolver/impacts/index (AnyImpact), @/core/ai/upkeepAI (calculateMonthlyExpenseBudget, shouldConserveCash, createUpkeepAIState, recordBudgetDecision, updateReserveState), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/game/constants (UPKEEP_PER_HORSE)
+ * Dependencies: ../pipeline (PipelineContext), @/core/expenses (createExpense), @/core/transactions (createTransaction), @/core/facilities (calculateTotalMaintenance), @/core/narrative/newsGenerator (generateFlavorNews), @/core/uuid (generateUUID), @/core/resolver/impacts/index (AnyImpact), @/core/ai/upkeepAI (calculateMonthlyExpenseBudget, shouldConserveCash, createUpkeepAIState, recordBudgetDecision, updateReserveState), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/constants (UPKEEP_PER_HORSE)
  * Related files: ../pipeline.ts (uses phase)
  */
 
@@ -13,7 +13,7 @@ import { isPlayerOwned } from "@/core/horse/ownership";
 import { createExpense } from "@/core/expenses";
 import { createTransaction } from "@/core/transactions";
 import { calculateTotalMaintenance } from "@/core/facilities";
-import { generateFlavorNews, generateWeeklyFlavorNews } from "@/services/narrative/newsGenerator";
+import { generateFlavorNews, generateWeeklyFlavorNews } from "@/core/narrative/newsGenerator";
 import { generateUUID } from "@/core/uuid";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { CashImpact, TransactionImpact, NewsImpact } from "@/core/resolver/impacts/index";

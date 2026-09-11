@@ -38,7 +38,7 @@ import {
   marketTradeReputation,
 } from "@/core/reputation/commerceReputation";
 import { horseMarketValue } from "@/core/horse/pricing";
-import { applyReputationEvents } from "../helpers/reputation";
+import { applyReputationEvents } from "@/core/reputation/reputationEvents";
 import type { StoreSet, StoreGet } from "../types";
 import type { ActionResult } from "../types";
 

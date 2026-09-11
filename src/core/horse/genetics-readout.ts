@@ -21,7 +21,7 @@ import { calculateDosageMetrics, interpretDosageIndex } from "@/core/race/dosage
 import {
   calculateFounderEffect,
   checkDirectInbreeding,
-} from "@/services/breeding/inbreedingCalculator";
+} from "@/core/breeding/inbreedingCalculator";
 import { getBruceLoweRole } from "@/core/breeding/bruceLowe";
 
 export type TraitRating = "excellent" | "good" | "fair" | "poor";

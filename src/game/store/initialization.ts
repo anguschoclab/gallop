@@ -29,9 +29,10 @@ import { createDefaultPlayerFacilities, createFacility } from "@/core/facilities
 import type { FacilityLevel } from "@/core/facilities";
 import { STARTING_CASH, MAIDEN_GUARANTEE_START_DAY, MAIDEN_GUARANTEE_END_DAY } from "@/constants";
 import { createDefaultExchangeState } from "@/core/market/exchange";
+import { DEFAULT_MARKET_STRATEGY } from "@/core/market/strategy";
 import { seedGazetteNews } from "@/services/narrative/seedNewsGenerator";
 import { createStableAIState } from "@/core/ai/npcCycleAI";
-import { generateUpcomingScheduledRaces } from "@/game/store/helpers/market";
+import { generateUpcomingScheduledRaces } from "@/core/market/marketRefresh";
 import { ensureMaidenRaces } from "@/core/race/maidenGuarantee";
 import { getWorldSizeConfig, DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";
 import { createDefaultTutorialState } from "@/core/tutorial/tutorialTypes";
@@ -225,6 +226,7 @@ export function createInitialState(
     jockeys,
     awards: [],
     facilities,
+    marketStrategy: { ...DEFAULT_MARKET_STRATEGY },
     reputation: {
       score: reputationScore,
       events: [],

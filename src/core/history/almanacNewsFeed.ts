@@ -8,7 +8,7 @@
 
 import { gameCalendarDate, gameYearNumber, relativeDayLabel } from "@/core/calendar/dateFormatting";
 import { formatCurrency, formatTime } from "@/core/common/formatting";
-import type { NewsItem, EntityLink } from "@/services/narrative/newsTypes";
+import type { NewsItem, EntityLink } from "@/core/narrative/newsTypes";
 import type { TrackRecord, SeasonRecord } from "@/core/history/historyTypes";
 import type { Transaction } from "@/core/transactions/transactionTypes";
 import type { Horse } from "@/core/horse/types";

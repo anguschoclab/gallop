@@ -102,6 +102,75 @@ const SCORING_CONSTANTS = {
   AGE_ALLOWANCE_LBS: 2,
 } as const;
 
+// Graded race bonus base by grade — replaces the if/else-if chain
+const GRADED_BONUS_BASE: Record<string, number> = {
+  G1: SCORING_CONSTANTS.G1_BONUS_BASE,
+  G2: SCORING_CONSTANTS.G2_BONUS_BASE,
+  G3: SCORING_CONSTANTS.G3_BONUS_BASE,
+};
+
+// Distance fit bonus tiers — ordered from most-specific (perfect) to least-specific (ok).
+// The first tier whose threshold >= distDiff wins; if none match, the bad penalty applies.
+const DISTANCE_FIT_TIERS: ReadonlyArray<{ threshold: number; bonus: number }> = [
+  {
+    threshold: SCORING_CONSTANTS.DIST_PERFECT_THRESHOLD,
+    bonus: SCORING_CONSTANTS.DIST_PERFECT_BONUS,
+  },
+  { threshold: SCORING_CONSTANTS.DIST_GOOD_THRESHOLD, bonus: SCORING_CONSTANTS.DIST_GOOD_BONUS },
+  { threshold: SCORING_CONSTANTS.DIST_OK_THRESHOLD, bonus: SCORING_CONSTANTS.DIST_OK_BONUS },
+];
+
+// Surface fit bonus tiers — ordered from most-specific (excellent) to least-specific (good).
+// The first tier whose threshold <= apt wins; if none match, the bad penalty applies.
+const SURFACE_FIT_TIERS: ReadonlyArray<{ threshold: number; bonus: number }> = [
+  {
+    threshold: SCORING_CONSTANTS.SURFACE_EXCELLENT_THRESHOLD,
+    bonus: SCORING_CONSTANTS.SURFACE_EXCELLENT_BONUS,
+  },
+  {
+    threshold: SCORING_CONSTANTS.SURFACE_GOOD_THRESHOLD,
+    bonus: SCORING_CONSTANTS.SURFACE_GOOD_BONUS,
+  },
+];
+
+/**
+ * Pick the first tier whose threshold passes for an "at-least" comparison
+ * (aptitude >= threshold). Returns the fallback bonus if no tier matches.
+ * @param value - The value to compare against tier thresholds.
+ * @param tiers - Ordered list of tier thresholds and bonuses.
+ * @param fallback - The bonus to return if no tier matches.
+ * @returns The matched tier bonus or the fallback.
+ */
+function pickAtLeastTier(
+  value: number,
+  tiers: ReadonlyArray<{ threshold: number; bonus: number }>,
+  fallback: number,
+): number {
+  for (const tier of tiers) {
+    if (value >= tier.threshold) return tier.bonus;
+  }
+  return fallback;
+}
+
+/**
+ * Pick the first tier whose threshold passes for an "at-most" comparison
+ * (distance diff <= threshold). Returns the fallback bonus if no tier matches.
+ * @param value - The value to compare against tier thresholds.
+ * @param tiers - Ordered list of tier thresholds and bonuses.
+ * @param fallback - The bonus to return if no tier matches.
+ * @returns The matched tier bonus or the fallback.
+ */
+function pickAtMostTier(
+  value: number,
+  tiers: ReadonlyArray<{ threshold: number; bonus: number }>,
+  fallback: number,
+): number {
+  for (const tier of tiers) {
+    if (value <= tier.threshold) return tier.bonus;
+  }
+  return fallback;
+}
+
 /**
  * Calculate horse's suitability score for a race.
  *
@@ -139,23 +208,13 @@ export function calculateRaceSuitability(horse: Horse, race: Race, stable: Stabl
 
   // Distance fit - use horse's personal aptitude
   const distDiff = Math.abs(race.distance - horse.distanceAptitude);
-  if (distDiff <= SCORING_CONSTANTS.DIST_PERFECT_THRESHOLD)
-    score += SCORING_CONSTANTS.DIST_PERFECT_BONUS;
-  else if (distDiff <= SCORING_CONSTANTS.DIST_GOOD_THRESHOLD)
-    score += SCORING_CONSTANTS.DIST_GOOD_BONUS;
-  else if (distDiff <= SCORING_CONSTANTS.DIST_OK_THRESHOLD)
-    score += SCORING_CONSTANTS.DIST_OK_BONUS;
-  else score += SCORING_CONSTANTS.DIST_BAD_PENALTY;
+  score += pickAtMostTier(distDiff, DISTANCE_FIT_TIERS, SCORING_CONSTANTS.DIST_BAD_PENALTY);
 
   // Surface fit - use horse's personal aptitude
   const surface = race.surface || race.graded?.surface;
   if (surface) {
     const apt = horse.surfaceAptitude[surface] ?? SCORING_CONSTANTS.SURFACE_GOOD_THRESHOLD;
-    if (apt >= SCORING_CONSTANTS.SURFACE_EXCELLENT_THRESHOLD)
-      score += SCORING_CONSTANTS.SURFACE_EXCELLENT_BONUS;
-    else if (apt >= SCORING_CONSTANTS.SURFACE_GOOD_THRESHOLD)
-      score += SCORING_CONSTANTS.SURFACE_GOOD_BONUS;
-    else score += SCORING_CONSTANTS.SURFACE_BAD_PENALTY;
+    score += pickAtLeastTier(apt, SURFACE_FIT_TIERS, SCORING_CONSTANTS.SURFACE_BAD_PENALTY);
   }
 
   // Track geometry match
@@ -215,18 +274,10 @@ export function calculateRaceSuitability(horse: Horse, race: Race, stable: Stabl
   }
 
   // Graded race bonus - heavily modified by personality
-  if (race.graded?.grade === "G1") {
-    score +=
-      SCORING_CONSTANTS.G1_BONUS_BASE +
-      personality.gradedRaceBonus * SCORING_CONSTANTS.GRADED_BONUS_MULTIPLIER;
-  } else if (race.graded?.grade === "G2") {
-    score +=
-      SCORING_CONSTANTS.G2_BONUS_BASE +
-      personality.gradedRaceBonus * SCORING_CONSTANTS.GRADED_BONUS_MULTIPLIER;
-  } else if (race.graded?.grade === "G3") {
-    score +=
-      SCORING_CONSTANTS.G3_BONUS_BASE +
-      personality.gradedRaceBonus * SCORING_CONSTANTS.GRADED_BONUS_MULTIPLIER;
+  const grade = race.graded?.grade;
+  if (grade) {
+    const base = GRADED_BONUS_BASE[grade] ?? SCORING_CONSTANTS.OTHER_BONUS_BASE;
+    score += base + personality.gradedRaceBonus * SCORING_CONSTANTS.GRADED_BONUS_MULTIPLIER;
   }
 
   // Claiming race logic - trader personality loves claiming races

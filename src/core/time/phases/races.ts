@@ -4,14 +4,14 @@
  * This file provides the race generation and pruning phase that pre-populates
  * graded stakes on year transition and generates upcoming track races daily.
  *
- * Dependencies: ../pipeline (PipelineContext), @/game/store/helpers/market (generateUpcomingRaces, pruneOldRaces), @/game/raceSchedule (generateAnnualCalendar, getCurrentYear)
+ * Dependencies: ../pipeline (PipelineContext), @/core/market/marketRefresh (generateUpcomingRaces, pruneOldRaces), @/core/race/schedule (generateAnnualCalendar, getCurrentYear)
  * Related files: ../pipeline.ts (uses phase)
  */
 
 import { PHASE_ORDER_RACES } from "@/constants";
 import type { PipelineContext } from "../pipeline";
 import type { Race } from "@/core/race/types";
-import { generateUpcomingScheduledRaces, pruneOldRaces } from "@/game/store/helpers/market";
+import { generateUpcomingScheduledRaces, pruneOldRaces } from "@/core/market/marketRefresh";
 import { generateAnnualCalendar, getCurrentYear } from "@/core/race/schedule";
 import { generateUUID } from "@/core/uuid";
 import type { AnyImpact, InboxImpact } from "@/core/resolver/impacts/index";

@@ -67,6 +67,108 @@ export function createCampaignAIState(stable: Stable): CampaignAIState {
 }
 
 /**
+ * A contender-series detector. Each detector checks whether a horse qualifies
+ * for a specific series (Triple Crown, Breeders Cup, Dubai World Cup, Other G1)
+ * and returns the matching target race keys plus a confidence contribution.
+ */
+type ContenderDetector = (input: {
+  horse: Horse;
+  horseRating: number;
+  avgStat: number;
+  targetSeriesKeys: string[];
+}) => {
+  targetRaces: string[];
+  confidence: number;
+  contenderSeriesUpdates?: Record<string, { targetRaces: string[]; confidence: number }>;
+};
+
+/**
+ * Check if a horse's distance aptitude falls within ±300m of a race's distance.
+ * @param horse - The horse to check.
+ * @param raceDistance - The race distance in meters.
+ * @returns True if the horse's aptitude is within ±300m of the race distance.
+ */
+function distanceAptitudeMatches(horse: Horse, raceDistance: number): boolean {
+  return horse.distanceAptitude > raceDistance - 300 && horse.distanceAptitude < raceDistance + 300;
+}
+
+// Triple Crown contender criteria — only 3yos with avg stat > 70
+const detectTripleCrown: ContenderDetector = ({ horse, avgStat, targetSeriesKeys }) => {
+  if (horse.age !== 3 || avgStat <= 70) return { targetRaces: [], confidence: 0 };
+  const tcRaces = Array.from(GRADED_RACES_BY_TRIPLECROWN_KEY.values()).flat();
+  const targetRaces: string[] = [];
+  let confidence = 0;
+  const contenderSeriesUpdates: Record<string, { targetRaces: string[]; confidence: number }> = {};
+  for (const race of tcRaces) {
+    if (targetSeriesKeys.length > 0 && !targetSeriesKeys.includes(race.triplecrownKey || "")) {
+      continue;
+    }
+    if (distanceAptitudeMatches(horse, race.distance)) {
+      targetRaces.push(race.key);
+      confidence += 0.2;
+      const tcKey = race.triplecrownKey || "";
+      if (!contenderSeriesUpdates[tcKey]) {
+        contenderSeriesUpdates[tcKey] = { targetRaces: [], confidence: 0 };
+      }
+      contenderSeriesUpdates[tcKey].targetRaces.push(race.key);
+      contenderSeriesUpdates[tcKey].confidence += 0.2;
+    }
+  }
+  return { targetRaces, confidence, contenderSeriesUpdates };
+};
+
+// Breeders Cup contender criteria — 3yo+ with rating > 65
+const detectBreedersCup: ContenderDetector = ({ horse, horseRating }) => {
+  if (horse.age < 3 || horseRating <= 65) return { targetRaces: [], confidence: 0 };
+  const bcRaces = GRADED_RACES_BY_BC_KEY.get("breeders-cup") ?? [];
+  const targetRaces: string[] = [];
+  let confidence = 0;
+  for (const race of bcRaces) {
+    if (distanceAptitudeMatches(horse, race.distance)) {
+      targetRaces.push(race.key);
+      confidence += 0.15;
+    }
+  }
+  return { targetRaces, confidence };
+};
+
+// Dubai World Cup contender criteria — 4yo+ with rating > 75
+const detectDubaiWorldCup: ContenderDetector = ({ horse, horseRating }) => {
+  if (horse.age < 4 || horseRating <= 75) return { targetRaces: [], confidence: 0 };
+  const dwcRace = GRADED_RACES_BY_KEY.get("dubai-world-cup");
+  if (!dwcRace || !distanceAptitudeMatches(horse, dwcRace.distance)) {
+    return { targetRaces: [], confidence: 0 };
+  }
+  return { targetRaces: [dwcRace.key], confidence: 0.25 };
+};
+
+// Other G1 races with $1M+ purses — rating > 70
+const detectOtherMajorG1: ContenderDetector = ({ horse, horseRating }) => {
+  if (horseRating <= 70) return { targetRaces: [], confidence: 0 };
+  const majorG1Races = GRADED_RACES.filter(
+    (r) =>
+      r.grade === "G1" && r.purse >= 1000000 && !r.triplecrownKey && r.bcKey !== "breeders-cup",
+  );
+  const targetRaces: string[] = [];
+  let confidence = 0;
+  for (const race of majorG1Races) {
+    if (distanceAptitudeMatches(horse, race.distance)) {
+      targetRaces.push(race.key);
+      confidence += 0.1;
+    }
+  }
+  return { targetRaces, confidence };
+};
+
+// Registry of contender detectors in priority order
+const CONTENDER_DETECTORS: readonly ContenderDetector[] = [
+  detectTripleCrown,
+  detectBreedersCup,
+  detectDubaiWorldCup,
+  detectOtherMajorG1,
+];
+
+/**
  * Detect if a horse is a contender for major races.
  *
  * Evaluates horses for Triple Crown, Breeders Cup, Dubai World Cup,
@@ -106,24 +208,16 @@ export function detectContender(
     ? getTripleCrownKeysForArchetype(stable.breedingArchetype)
     : [];
 
-  // Triple Crown contender criteria - evaluate all series or target series if specified
-  if (horse.age === 3 && avgStat > 70) {
-    const tcRaces = Array.from(GRADED_RACES_BY_TRIPLECROWN_KEY.values()).flat();
-    for (const race of tcRaces) {
-      // If stable has breeding archetype, only evaluate matching series
-      if (targetSeriesKeys.length > 0 && !targetSeriesKeys.includes(race.triplecrownKey || "")) {
-        continue;
-      }
+  const detectorInput = { horse, horseRating, avgStat, targetSeriesKeys };
 
-      if (
-        horse.distanceAptitude > race.distance - 300 &&
-        horse.distanceAptitude < race.distance + 300
-      ) {
-        targetRaces.push(race.key);
-        confidence += 0.2;
+  for (const detector of CONTENDER_DETECTORS) {
+    const result = detector(detectorInput);
+    targetRaces.push(...result.targetRaces);
+    confidence += result.confidence;
 
-        // Track per-series contender status
-        const tcKey = race.triplecrownKey || "";
+    // Triple Crown detector returns per-series updates to fold into contenderSeries
+    if (result.contenderSeriesUpdates) {
+      for (const [tcKey, update] of Object.entries(result.contenderSeriesUpdates)) {
         if (!contenderSeries[tcKey]) {
           contenderSeries[tcKey] = {
             isContender: false,
@@ -132,44 +226,33 @@ export function detectContender(
             lastAssessmentDay: currentDay,
           };
         }
-        contenderSeries[tcKey].targetRaces.push(race.key);
-        contenderSeries[tcKey].confidence += 0.2;
+        contenderSeries[tcKey].targetRaces.push(...update.targetRaces);
+        contenderSeries[tcKey].confidence += update.confidence;
       }
-    }
-
-    // Mark series as contender if they have enough target races
-    for (const tcKey in contenderSeries) {
-      if (contenderSeries[tcKey].targetRaces.length >= 2) {
-        contenderSeries[tcKey].isContender = true;
-        contenderSeries[tcKey].confidence = Math.min(1, contenderSeries[tcKey].confidence + 0.3);
-      }
-    }
-
-    if (targetRaces.length >= 2) {
-      isContender = true;
-      confidence = Math.min(1, confidence + 0.3);
     }
   }
 
-  // Breeders Cup contender criteria
-  if (horse.age >= 3 && horseRating > 65) {
-    const bcRaces = GRADED_RACES_BY_BC_KEY.get("breeders-cup") ?? [];
-    for (const race of bcRaces) {
-      if (
-        horse.distanceAptitude > race.distance - 300 &&
-        horse.distanceAptitude < race.distance + 300
-      ) {
-        targetRaces.push(race.key);
-        confidence += 0.15;
-      }
-    }
-    if (targetRaces.length >= 1 && horseRating > 75) {
-      isContender = true;
-      confidence = Math.min(1, confidence + 0.2);
+  // Mark series as contender if they have enough target races
+  for (const tcKey in contenderSeries) {
+    if (contenderSeries[tcKey].targetRaces.length >= 2) {
+      contenderSeries[tcKey].isContender = true;
+      contenderSeries[tcKey].confidence = Math.min(1, contenderSeries[tcKey].confidence + 0.3);
     }
   }
 
-  // Dubai World Cup contender criteria
+  // Triple Crown: contender if 2+ target races
+  if (horse.age === 3 && avgStat > 70 && targetRaces.length >= 2) {
+    isContender = true;
+    confidence = Math.min(1, confidence + 0.3);
+  }
+
+  // Breeders Cup: contender if 1+ target race and rating > 75
+  if (horse.age >= 3 && horseRating > 65 && targetRaces.length >= 1 && horseRating > 75) {
+    isContender = true;
+    confidence = Math.min(1, confidence + 0.2);
+  }
+
+  // Dubai World Cup: contender if matched
   if (horse.age >= 4 && horseRating > 75) {
     const dwcRace = GRADED_RACES_BY_KEY.get("dubai-world-cup");
     if (
@@ -177,31 +260,15 @@ export function detectContender(
       horse.distanceAptitude > dwcRace.distance - 300 &&
       horse.distanceAptitude < dwcRace.distance + 300
     ) {
-      targetRaces.push(dwcRace.key);
       isContender = true;
       confidence = Math.min(1, confidence + 0.25);
     }
   }
 
-  // Other G1 races with $1M+ purses
-  if (horseRating > 70) {
-    const majorG1Races = GRADED_RACES.filter(
-      (r) =>
-        r.grade === "G1" && r.purse >= 1000000 && !r.triplecrownKey && r.bcKey !== "breeders-cup",
-    );
-    for (const race of majorG1Races) {
-      if (
-        horse.distanceAptitude > race.distance - 300 &&
-        horse.distanceAptitude < race.distance + 300
-      ) {
-        targetRaces.push(race.key);
-        confidence += 0.1;
-      }
-    }
-    if (targetRaces.length >= 1 && horseRating > 80) {
-      isContender = true;
-      confidence = Math.min(1, confidence + 0.15);
-    }
+  // Other G1: contender if 1+ target race and rating > 80
+  if (horseRating > 70 && targetRaces.length >= 1 && horseRating > 80) {
+    isContender = true;
+    confidence = Math.min(1, confidence + 0.15);
   }
 
   const status: ContenderStatus = {

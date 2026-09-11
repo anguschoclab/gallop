@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { venuePayoutMultiplier, applyVenuePayout } from "@/core/race/venuePayout";
-import { computePayoutSplits } from "@/game/store/helpers/raceResolution";
+import { computePayoutSplits } from "@/core/race/resolution";
 import { generatePrizeMoneyImpacts } from "@/core/race/impacts/prizeMoney";
 import { rankedRacecourses } from "@/core/prestige";
 import { PRIZE_SPLIT } from "@/constants";

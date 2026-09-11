@@ -25,9 +25,7 @@ import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { Transaction } from "@/core/transactions/transactionTypes";
 import { simulateRace, type RaceSimulationResult } from "@/services/race/raceSimulationExecutor";
-import { makePlayerOwned, makeUnowned, isPlayerOwned } from "@/core/horse/ownership";
-import { generateHorse } from "@/core/horse/horseFactory";
-import { createRng, hashStr } from "@/core/common/rng";
+import { isPlayerOwned } from "@/core/horse/ownership";
 import {
   calculateNominationFee,
   getNominationTier,
@@ -35,6 +33,13 @@ import {
   type NominationRecord,
   type NominationStatus,
 } from "@/core/racing/nominationFees";
+import {
+  validateTrialHorse,
+  buildPacemaker,
+  validateStablemate,
+  buildTrialRace,
+  applyTrialCosts,
+} from "@/core/race/privateTrialHelpers";
 
 const TRAINING_SLOTS_PER_DAY = 2;
 
@@ -169,110 +174,42 @@ export function createRacingSlice(
     runPrivateTrial: (horseId, opponentId, distance, surface) => {
       const s = get();
       const horse = s.horses[horseId];
-      if (!horse) return { ok: false, reason: "Horse not found." };
-      if (!isPlayerOwned(horse)) return { ok: false, reason: "You do not own this horse." };
-
-      const trialCost = 250;
-      if (s.cash < trialCost) {
-        return { ok: false, reason: `Insufficient cash. Private trial costs $${trialCost}.` };
-      }
-
-      if (horse.energy < 20) {
-        return {
-          ok: false,
-          reason: "Horse is too fatigued to run a trial (needs at least 20 energy).",
-        };
-      }
+      const validationError = validateTrialHorse(horse, s.cash);
+      if (validationError) return { ok: false, reason: validationError };
 
       let opponent: Horse;
       let stablemate: Horse | undefined = undefined;
       if (opponentId === "pacemaker") {
-        const rng = createRng(hashStr(`pacemaker_${horseId}_${s.day}`));
-        opponent = generateHorse(
-          {
-            tier: horse.potential > 80 ? "elite" : horse.potential > 65 ? "mid" : "budget",
-            ownership: makeUnowned(),
-          },
-          rng,
-        );
-        opponent.name = "Pacemaker";
-        opponent.id = "pacemaker_" + generateUUID();
+        opponent = buildPacemaker(horse!, s.day);
       } else {
         stablemate = s.horses[opponentId];
-        if (!stablemate) return { ok: false, reason: "Stablemate not found." };
-        if (stablemate.energy < 15) {
-          return {
-            ok: false,
-            reason: "Stablemate is too fatigued to run a trial (needs at least 15 energy).",
-          };
-        }
-        opponent = stablemate;
+        const stablemateResult = validateStablemate(stablemate);
+        if (!stablemateResult.ok) return { ok: false, reason: stablemateResult.reason };
+        opponent = stablemateResult.horse;
       }
 
-      // Charge cash & energy
-      set((state) => {
-        const newHorses = { ...state.horses };
-        if (newHorses[horseId]) {
-          newHorses[horseId] = {
-            ...newHorses[horseId],
-            energy: Math.max(0, newHorses[horseId].energy - 20),
-          };
-        }
-        if (stablemate && newHorses[stablemate.id]) {
-          newHorses[stablemate.id] = {
-            ...newHorses[stablemate.id],
-            energy: Math.max(0, newHorses[stablemate.id].energy - 15),
-          };
-        }
+      // Charge cash & energy, append log + transaction
+      set((state) => ({
+        ...applyTrialCosts(
+          state.horses,
+          horseId,
+          stablemate,
+          state.cash,
+          state.day,
+          state.log || [],
+          state.transactions || [],
+          horse!.name,
+          distance,
+          surface,
+          opponent.name,
+        ),
+      }));
 
-        // Add a log entry for the trial
-        const logEntry = {
-          day: state.day,
-          text: `Ran a private trial with ${horse.name} over ${distance}m (${surface}) vs ${opponent.name}.`,
-        };
-
-        // Add a transaction for the trial expense
-        const transaction: Transaction = {
-          id: generateUUID(),
-          day: state.day,
-          type: "expense",
-          subcategory: "other_expense",
-          amount: -trialCost,
-          description: `Private trial: ${horse.name}`,
-          balanceAfter: state.cash - trialCost,
-          recurring: false,
-        };
-
-        return {
-          cash: state.cash - trialCost,
-          horses: newHorses,
-          log: [logEntry, ...(state.log || [])].slice(0, 50),
-          transactions: [transaction, ...(state.transactions || [])],
-        };
-      });
-
-      // Construct trial race
-      const trialRace: Race = {
-        id: "trial_" + generateUUID(),
-        name: "Private Trial",
-        day: s.day,
-        distance,
-        raceClass: "Allowance",
-        entryFee: 0,
-        purse: 0,
-        fieldSize: 2,
-        entries: [
-          { horseId: horse.id, ownership: makePlayerOwned(), weight: 126 },
-          { horseId: opponent.id, ownership: opponent.ownership, weight: 126 },
-        ],
-        resolved: false,
-        trackId: "trial_track",
-        surface,
-      };
-
+      // Construct and run the trial race
+      const trialRace = buildTrialRace(horse!, opponent, distance, surface, s.day);
       const result = simulateRace(
         trialRace,
-        [horse, opponent],
+        [horse!, opponent],
         s.jockeys || [],
         s.hiredStaff || [],
         s.npcStables || [],

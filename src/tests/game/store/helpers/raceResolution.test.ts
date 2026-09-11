@@ -4,7 +4,7 @@ import {
   sanitizeAndRankResults,
   detectPhotoFinish,
   type RankedResult,
-} from "@/game/store/helpers/raceResolution";
+} from "@/core/race/resolution";
 import { PRIZE_SPLIT } from "@/constants";
 
 // ---------------------------------------------------------------------------

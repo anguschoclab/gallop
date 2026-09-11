@@ -14,7 +14,7 @@ import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
 import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution";
 import { runNpcRaceEntry } from "@/core/npc/raceEntry";
 import { runAutoEntries, reconcileSlotStatuses } from "@/core/campaign/autoEntry";
-import { pruneOldRaces } from "@/game/store/helpers/market";
+import { pruneOldRaces } from "@/core/market/marketRefresh";
 import { archivingPhase } from "@/core/time/phases/archivingPhase";
 import type { RaceEntryIntent } from "@/core/resolver/intents";
 import { asNpcStableId } from "@/core/types/branded";
