@@ -11,15 +11,8 @@ import {
 } from "@/components/race/TacticalAnalysisPanel";
 import { RaceDecisionLog } from "@/components/race/RaceDecisionLog";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
-import type { RaceSnapshot, PaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import type { RaceRunner, SectionalSplit } from "@/core/race/types";
-import { generateRaceVerdict } from "@/core/race/raceVerdict";
-import type { RunnerFactorLedger } from "@/core/race/factorLedger";
 import { RaceVerdictBar } from "@/components/race/RaceVerdictBar";
 import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
-import { formatCurrency } from "@/core/common/formatting";
-
 import {
   PRIZE_SPLIT,
   GRADED_PRIZE_SPLIT,
@@ -28,11 +21,22 @@ import {
 } from "@/constants";
 import { Trophy, ChevronRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
 import { useGame } from "@/game/store";
-import { getStrategyInsights } from "@/core/ai/jockeyStrategyRecording";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
-import { venuePayoutMultiplier } from "@/core/race/venuePayout";
+import {
+  generateRaceVerdict,
+  compareFinishOrder,
+  getStrategyInsights,
+  makePlayerOwned,
+  makeUnowned,
+  venuePayoutMultiplier,
+  formatCurrency,
+  type RaceSnapshot,
+  type PaceSnapshot,
+  type Runner,
+  type RaceRunner,
+  type SectionalSplit,
+  type RunnerFactorLedger,
+} from "@/services/race/raceResultService";
 
 /**
  * Props for the ResultOverlay component.

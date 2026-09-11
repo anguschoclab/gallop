@@ -40,6 +40,7 @@ import {
   buildTrialRace,
   applyTrialCosts,
 } from "@/core/race/privateTrialHelpers";
+import { prependLogEntry, prependLogEntries } from "@/core/common/logHelpers";
 
 const TRAINING_SLOTS_PER_DAY = 2;
 
@@ -94,13 +95,11 @@ export function createRacingSlice(
       // Check if horse has covering sickness or is recovering - prevent training
       if (horse.healthStatus === "covering_sickness" || horse.healthStatus === "recovering") {
         set({
-          log: [
-            {
-              day: s.day,
-              text: `Training blocked: ${horse.name} is ${horse.healthStatus === "covering_sickness" ? "sick with covering sickness (dourine)" : "recovering from illness"}. Horse cannot be trained while recovering.`,
-            },
-            ...s.log,
-          ].slice(0, 50),
+          log: prependLogEntry(
+            s.log,
+            s.day,
+            `Training blocked: ${horse.name} is ${horse.healthStatus === "covering_sickness" ? "sick with covering sickness (dourine)" : "recovering from illness"}. Horse cannot be trained while recovering.`,
+          ),
         });
         return;
       }
@@ -118,13 +117,11 @@ export function createRacingSlice(
         const available = getAvailableTrainingTypes(s.facilities);
         if (!available.includes(kind)) {
           set({
-            log: [
-              {
-                day: s.day,
-                text: `Training blocked: ${kind} is not available at your current facility level. Upgrade your barn or build the required facility.`,
-              },
-              ...s.log,
-            ].slice(0, 50),
+            log: prependLogEntry(
+              s.log,
+              s.day,
+              `Training blocked: ${kind} is not available at your current facility level. Upgrade your barn or build the required facility.`,
+            ),
           });
           return;
         }
@@ -281,7 +278,7 @@ export function createRacingSlice(
 
         return {
           horses: newHorses,
-          log: [logEntry, ...(state.log || [])].slice(0, 50),
+          log: prependLogEntries(state.log || [], [logEntry]),
         };
       });
 
@@ -311,13 +308,11 @@ export function createRacingSlice(
       const fee = calculateNominationFee(grade, tier);
       if (fee === null) {
         set({
-          log: [
-            {
-              day: s.day,
-              text: `Late nominations for ${grade} races are not accepted.`,
-            },
-            ...s.log,
-          ].slice(0, 50),
+          log: prependLogEntry(
+            s.log,
+            s.day,
+            `Late nominations for ${grade} races are not accepted.`,
+          ),
         });
         return { ok: false, reason: `Late ${grade} nominations are closed.` };
       }
@@ -341,13 +336,11 @@ export function createRacingSlice(
       set({
         cash: s.cash - fee,
         playerNominations: [...existing, nomination],
-        log: [
-          {
-            day: s.day,
-            text: `Nominated ${horse.name} for ${race.name} — ${tier} tier, fee $${fee.toLocaleString()}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+        log: prependLogEntry(
+          s.log,
+          s.day,
+          `Nominated ${horse.name} for ${race.name} — ${tier} tier, fee $${fee.toLocaleString()}.`,
+        ),
       });
       return { ok: true };
     },
@@ -357,10 +350,7 @@ export function createRacingSlice(
         playerNominations: state.playerNominations.map((n) =>
           n.id === nominationId ? { ...n, status: "scratched" as NominationStatus } : n,
         ),
-        log: [
-          { day: state.day, text: `Nomination withdrawn (fee non-refundable).` },
-          ...state.log,
-        ].slice(0, 50),
+        log: prependLogEntry(state.log, state.day, `Nomination withdrawn (fee non-refundable).`),
       }));
     },
   };

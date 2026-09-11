@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-11T01:38:31.724Z",
+  "generatedAt": "2026-09-11T01:55:54.166Z",
   "coreViolations": [],
   "servicesViolations": [],
   "componentViolations": [
@@ -489,16 +489,6 @@
       "rule": "components→core"
     },
     {
-      "file": "components/tutorial/TutorialNextActionBanner.tsx",
-      "specifier": "@/core/dashboard/nextAction",
-      "rule": "components→core"
-    },
-    {
-      "file": "components/tutorial/TutorialNextActionBanner.tsx",
-      "specifier": "@/core/tutorial/deriveTutorialStep",
-      "rule": "components→core"
-    },
-    {
       "file": "components/calendar/MonthView.tsx",
       "specifier": "@/core/calendar/dateFormatting",
       "rule": "components→core"
@@ -979,11 +969,6 @@
       "rule": "components→core"
     },
     {
-      "file": "components/dashboard/NextActionBanner.tsx",
-      "specifier": "@/core/dashboard/nextAction",
-      "rule": "components→core"
-    },
-    {
       "file": "components/dashboard/regionalMetrics.ts",
       "specifier": "@/core/analytics/regionalTrends",
       "rule": "components→core"
@@ -1271,56 +1256,6 @@
     {
       "file": "components/race/JockeyStrategyBreakdown.tsx",
       "specifier": "@/core/horse/ownership",
-      "rule": "components→core"
-    },
-    {
-      "file": "components/race/ResultOverlay.tsx",
-      "specifier": "@/core/race/engine/raceSnapshotTypes",
-      "rule": "components→core"
-    },
-    {
-      "file": "components/race/ResultOverlay.tsx",
-      "specifier": "@/core/race/engine/runnerBuilder",
-      "rule": "components→core"
-    },
-    {
-      "file": "components/race/ResultOverlay.tsx",
-      "specifier": "@/core/race/types",
-      "rule": "components→core"
-    },
-    {
-      "file": "components/race/ResultOverlay.tsx",
-      "specifier": "@/core/race/raceVerdict",
-      "rule": "components→core"
-    },
-    {
-      "file": "components/race/ResultOverlay.tsx",
-      "specifier": "@/core/race/factorLedger",
-      "rule": "components→core"
-    },
-    {
-      "file": "components/race/ResultOverlay.tsx",
-      "specifier": "@/core/common/formatting",
-      "rule": "components→core"
-    },
-    {
-      "file": "components/race/ResultOverlay.tsx",
-      "specifier": "@/core/race/engine/compareFinishOrder",
-      "rule": "components→core"
-    },
-    {
-      "file": "components/race/ResultOverlay.tsx",
-      "specifier": "@/core/ai/jockeyStrategyRecording",
-      "rule": "components→core"
-    },
-    {
-      "file": "components/race/ResultOverlay.tsx",
-      "specifier": "@/core/horse/ownership",
-      "rule": "components→core"
-    },
-    {
-      "file": "components/race/ResultOverlay.tsx",
-      "specifier": "@/core/race/venuePayout",
       "rule": "components→core"
     },
     {
@@ -1821,21 +1756,6 @@
     {
       "file": "components/awards/G1TrophyList.tsx",
       "specifier": "@/core/awards/connectionTrophies",
-      "rule": "components→core"
-    },
-    {
-      "file": "components/market/MarketStrategyPanel.tsx",
-      "specifier": "@/core/market/priceAlerts",
-      "rule": "components→core"
-    },
-    {
-      "file": "components/market/MarketStrategyPanel.tsx",
-      "specifier": "@/core/market/exchange",
-      "rule": "components→core"
-    },
-    {
-      "file": "components/market/MarketStrategyPanel.tsx",
-      "specifier": "@/core/market/strategy",
       "rule": "components→core"
     },
     {
@@ -2426,11 +2346,6 @@
     {
       "file": "components/insurance/InsurancePanel.tsx",
       "specifier": "@/core/insurance/insuranceTypes",
-      "rule": "components→core"
-    },
-    {
-      "file": "components/routes/InboxPage.tsx",
-      "specifier": "@/core/inbox/ctaRoute",
       "rule": "components→core"
     },
     {
