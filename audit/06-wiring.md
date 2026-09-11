@@ -32,8 +32,8 @@ Routes present as files but with stale/missing routeTree entries:
 
 ## Summary
 
-| Area | Status | Action |
-| ------ | -------- | -------- |
-| Store slices | ✅ All composed | None |
-| Routes | ⚠️ Stale routeTree | Regenerate via `bun run build` (Phase B) |
-| Hooks/services | TBD | Depends on Phase A2 dead-code results |
+| Area           | Status             | Action                                   |
+| -------------- | ------------------ | ---------------------------------------- |
+| Store slices   | ✅ All composed    | None                                     |
+| Routes         | ⚠️ Stale routeTree | Regenerate via `bun run build` (Phase B) |
+| Hooks/services | TBD                | Depends on Phase A2 dead-code results    |

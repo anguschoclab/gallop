@@ -12,13 +12,13 @@
 
 ### 2. Stale root artifacts (all tracked)
 
-| File | Status | Action |
-| ------ | -------- | -------- |
-| `tsc-errors.txt` | Tracked, stale (AGENTS.md says "ignore it") | `git rm` |
-| `tsc-results2.txt` | Tracked, empty (0 bytes) | `git rm` |
-| `tsc-results3.txt` | Tracked, empty (0 bytes) | `git rm` |
-| `full-test-results.txt` | Tracked, 140KB stale test output | `git rm` |
-| `test-results.txt` | Tracked, 109 bytes stale | `git rm` |
+| File                    | Status                                      | Action   |
+| ----------------------- | ------------------------------------------- | -------- |
+| `tsc-errors.txt`        | Tracked, stale (AGENTS.md says "ignore it") | `git rm` |
+| `tsc-results2.txt`      | Tracked, empty (0 bytes)                    | `git rm` |
+| `tsc-results3.txt`      | Tracked, empty (0 bytes)                    | `git rm` |
+| `full-test-results.txt` | Tracked, 140KB stale test output            | `git rm` |
+| `test-results.txt`      | Tracked, 109 bytes stale                    | `git rm` |
 
 **Note:** `tsc-results.txt` is NOT stale — it's the output of `bun run typecheck:errors` and is overwritten each run. Keep it (or add to .gitignore if desired, but it's referenced by the typecheck workflow).
 

@@ -5,6 +5,7 @@
 ## AGENTS.md cross-check: `calculateNetCashFlow`
 
 **CONFIRMED CORRECT** — `src/core/transactions/transactionTypes.ts:171-173` subtracts expenses:
+
 ```ts
 export function calculateNetCashFlow(transactions: Transaction[]): number {
   return calculateTotalIncome(transactions) - calculateTotalExpenses(transactions);
@@ -13,25 +14,29 @@ export function calculateNetCashFlow(transactions: Transaction[]): number {
 
 ## Cross-cutting checks
 
-| Pattern | Hits |
-|---------|------|
-| `as any` | 0 |
-| `as unknown as` | 0 |
-| `console.*` | 0 |
-| TODO/FIXME | 0 |
+| Pattern         | Hits |
+| --------------- | ---- |
+| `as any`        | 0    |
+| `as unknown as` | 0    |
+| `console.*`     | 0    |
+| TODO/FIXME      | 0    |
 
 ## Files requiring action
 
 ### FIX: `src/core/transportation/transportationTypes.ts:111-115`
+
 `getTransportModeForDistance` has a gap: distances > 5,000 miles fall through to `road` (should select `air`):
+
 ```ts
 if (distance >= 200 && distance <= 5000) return "air";
 if (distance >= 50 && distance <= 2000) return "rail";
 return "road";
 ```
+
 Fix: change `distance <= 5000` to `distance > 200` for air, or add explicit handling for >5000.
 
 ### REFACTOR: `src/core/prestige/strategyPrestigeHelpers.ts`
+
 - l.12: `PrestigeTier` redefined locally, shadows `prestigeTypes.ts` version — confusing.
 - l.67: `race as { track?: string }` structural cast — hides real `Race` shape.
 
@@ -48,4 +53,5 @@ Fix: change `distance <= 5000` to `distance > 200` for air, or add explicit hand
 - `src/core/reputation/reputationTypes.ts:147-176` — `calculateRaceLossReputation` no input validation for `position > fieldSize`
 
 ## PR #386 note
+
 The `expenseTypes.test.ts` file from PR #386 was NOT found in the working tree (on main). It only exists on the PR branch. This is expected — it's a new test file the PR adds.

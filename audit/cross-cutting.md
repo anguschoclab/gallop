@@ -2,12 +2,12 @@
 
 ## `as any` casts
 
-| Location | Count | Notes |
-|----------|-------|-------|
-| `src/tests/` | 1,711 | Overwhelmingly in test files for mocking. Expected but could be tightened. |
-| `src/core/` | 4 | All in `src/core/npc/intents/insuranceIntents.ts:71-74` — accesses `(horse as any).currentGrade` and `(horse as any).racing?.speed` (non-existent properties). **PR #393 fixes these.** |
-| `src/components/` | 0 | Clean. |
-| **Total** | **1,715** | Production code is nearly `any`-free; tests are the bulk. |
+| Location          | Count     | Notes                                                                                                                                                                                   |
+| ----------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/tests/`      | 1,711     | Overwhelmingly in test files for mocking. Expected but could be tightened.                                                                                                              |
+| `src/core/`       | 4         | All in `src/core/npc/intents/insuranceIntents.ts:71-74` — accesses `(horse as any).currentGrade` and `(horse as any).racing?.speed` (non-existent properties). **PR #393 fixes these.** |
+| `src/components/` | 0         | Clean.                                                                                                                                                                                  |
+| **Total**         | **1,715** | Production code is nearly `any`-free; tests are the bulk.                                                                                                                               |
 
 ## `as unknown as` double-casts
 
@@ -24,6 +24,7 @@
 ## Native `confirm()` calls (Groom PR pattern)
 
 2 occurrences in `src/components/`:
+
 1. `src/components/routes/HorseDetail.tsx:149` — `confirm(\`Retire ${horse.name} to stud?...\`)` — **PR #385 fixes this** (replaces with AlertDialog).
 2. `src/components/horse/HorseManagementSection.tsx:33` — `confirm(\`Geld ${horse.name}?...\`)` — **NOT covered by any PR.** Additional fix needed in Phase 4.
 
