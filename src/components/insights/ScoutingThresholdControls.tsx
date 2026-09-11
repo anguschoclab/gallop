@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { THRESHOLD_FIELDS, type ScoutingThresholds } from "@/core/npc/scoutingThresholds";
+import { THRESHOLD_FIELDS, type ScoutingThresholds } from "@/services/scouting/scoutingFacade";
 
 interface Props {
   value: ScoutingThresholds;

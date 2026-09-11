@@ -22,7 +22,7 @@ import { AuctioneerChant } from "./sub/AuctioneerChant";
 import { AuctionScoreboard } from "./sub/AuctionScoreboard";
 import { AuctionSummary } from "./sub/AuctionSummary";
 import { AuctionErrorState } from "./AuctionStates";
-import { getDisplayableStats } from "@/core/npc/scouting";
+import { getDisplayableStats } from "@/services/npc/npcFacade";
 import { Sparkles, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";

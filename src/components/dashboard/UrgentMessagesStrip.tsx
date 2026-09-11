@@ -5,8 +5,8 @@ import { useGame } from "@/game/store";
 import { cn } from "@/lib/cn";
 import { AlertCircle, Bell, ChevronRight } from "lucide-react";
 import { NewsContent } from "@/components/narrative/NewsContent";
-import { interpolateCtaRoute } from "@/core/inbox/ctaRoute";
-import type { InboxPriority } from "@/core/inbox/inboxTypes";
+import { interpolateCtaRoute } from "@/services/inbox/inboxFacade";
+import type { InboxPriority } from "@/services/inbox/inboxFacade";
 import {
   ICON_SIZE_SM,
   STRIP_PRIORITY_BG_CLASSES,

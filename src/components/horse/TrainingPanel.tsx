@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
 import { TRAINING_COST } from "@/constants";
-import { BASIC_TRAINING_TYPES, ADVANCED_WORKOUTS } from "@/core/training/trainingTypes";
+import { BASIC_TRAINING_TYPES, ADVANCED_WORKOUTS } from "@/services/training/trainingFacade";
 import { TRAINING_FACILITY_REQUIREMENTS } from "@/constants/workoutConstants";
 import { getAvailableTrainingTypes } from "@/services/facilities/facilitiesFacade";
 import { FACILITY_NAMES, facilityLevelToTierLabel } from "@/services/facilities/facilitiesFacade";
 import type { Horse, PlayerFacilities } from "@/game/types";
-import type { TrainingIntent } from "@/core/resolver/intents";
+import type { TrainingIntent } from "@/services/resolver/resolverFacade";
 import { useCallback, memo, useMemo } from "react";
 import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
 import { cn } from "@/lib/cn";

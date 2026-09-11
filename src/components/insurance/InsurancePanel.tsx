@@ -4,8 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Shield, X, DollarSign } from "lucide-react";
 import { useGame } from "@/game/store";
 import { isPlayerOwned } from "@/services/horse/horseFacade";
-import { asHorseId } from "@/core/types/branded";
-import { calculateDailyPremium } from "@/core/insurance/insuranceTypes";
+import { asHorseId } from "@/services/common/commonFacade";
+import { calculateDailyPremium } from "@/services/insurance/insuranceFacade";
 import { toast } from "sonner";
 
 const formatCurrency = (amount: number): string => {

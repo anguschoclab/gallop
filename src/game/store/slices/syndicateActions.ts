@@ -15,16 +15,18 @@ import type {
   ShareSaleIntent,
   AnyIntent,
 } from "@/core/resolver/intents";
-import {
-  pickPersonality,
-  generateInvestorName,
-  buildDefaultExpectations,
-} from "@/core/breeding/investorTypes";
-import { createRng, hashStr } from "@/core/common/rng";
 import { buildSolicitedInvestor } from "@/core/market/syndicateInvestorActions";
 import { requireOwned, requireHorse } from "../guards";
 import type { StoreSet, StoreGet } from "../types";
 import type { BreedingSlice } from "./breedingSlice";
+import {
+  validateSyndicateCreation,
+  validateSharePurchase,
+  validateShareSale,
+  computeBuyoutPrice,
+  buildBuyoutLogText,
+  buildDevolutionLogText,
+} from "@/core/breeding/syndicateActions";
 
 export function createSyndicateActions(
   set: StoreSet,
@@ -79,7 +81,7 @@ export function createSyndicateActions(
       log: [
         {
           day: get().day,
-          text: `Syndicate: ${stallion.name} ownership transferred to ${topHolder === "player" ? "your stable" : topHolder} (majority shareholder).`,
+          text: buildDevolutionLogText(stallion.name, topHolder),
         },
         ...get().log,
       ].slice(0, 50),
@@ -90,16 +92,14 @@ export function createSyndicateActions(
     createSyndicate: (stallionId, totalShares, sharePrice, initialShareholders) => {
       const s = get();
       const stallion = requireHorse(s.horses, stallionId);
-      if (!stallion) return { ok: false, reason: "Stallion not found." };
       const ownershipGuard = requireOwned(stallion);
       if (ownershipGuard) return ownershipGuard;
 
-      const g1Wins =
-        stallion.raceHistory?.filter((r) => r.grade === "G1" && r.position === 1).length || 0;
-      if (g1Wins === 0) return { ok: false, reason: "Stallion must be a G1 winner to syndicate." };
-
-      if (s.syndicates?.[stallionId])
-        return { ok: false, reason: "Stallion is already syndicated." };
+      const validation = validateSyndicateCreation({
+        stallion: stallion ?? undefined,
+        existingSyndicate: s.syndicates?.[stallionId],
+      });
+      if (!validation.ok) return { ok: false, reason: validation.reason! };
 
       const intent: SyndicateCreationIntent = {
         id: generateUUID(),
@@ -121,10 +121,13 @@ export function createSyndicateActions(
     purchaseShares: (syndicateId, shares, pricePerShare) => {
       const s = get();
       const syndicate = s.syndicates?.[syndicateId];
-      if (!syndicate) return { ok: false, reason: "Syndicate not found." };
-
-      const totalCost = shares * pricePerShare;
-      if (s.cash < totalCost) return { ok: false, reason: "Insufficient cash to purchase shares." };
+      const validation = validateSharePurchase({
+        syndicateExists: !!syndicate,
+        cash: s.cash,
+        shares,
+        pricePerShare,
+      });
+      if (!validation.ok) return { ok: false, reason: validation.reason! };
 
       const intent: SharePurchaseIntent = {
         id: generateUUID(),
@@ -145,10 +148,13 @@ export function createSyndicateActions(
     sellShares: (syndicateId, shares, pricePerShare) => {
       const s = get();
       const syndicate = s.syndicates?.[syndicateId];
-      if (!syndicate) return { ok: false, reason: "Syndicate not found." };
-
-      const playerShares = syndicate.shareHolders?.[asPlayerOwnerId("player")] || 0;
-      if (playerShares < shares) return { ok: false, reason: "You don't own enough shares." };
+      const playerShares = syndicate?.shareHolders?.[asPlayerOwnerId("player")] || 0;
+      const validation = validateShareSale({
+        syndicateExists: !!syndicate,
+        playerShares,
+        shares,
+      });
+      if (!validation.ok) return { ok: false, reason: validation.reason! };
 
       const intent: ShareSaleIntent = {
         id: generateUUID(),
@@ -219,8 +225,11 @@ export function createSyndicateActions(
       const syndicate = s.syndicates?.[investor.syndicateId];
       if (!syndicate) return { ok: false, reason: "Syndicate not found." };
 
-      const satisfactionFactor = 0.8 + investor.satisfaction / 100;
-      const price = Math.round(syndicate.sharePrice * investor.shares * satisfactionFactor);
+      const { price } = computeBuyoutPrice({
+        sharePrice: syndicate.sharePrice,
+        investorShares: investor.shares,
+        investorSatisfaction: investor.satisfaction,
+      });
       if ((s.cash ?? 0) < price) {
         return { ok: false, reason: `Insufficient cash. Buyout costs $${price.toLocaleString()}.` };
       }
@@ -269,7 +278,7 @@ export function createSyndicateActions(
         log: [
           {
             day: state.day,
-            text: `Bought out ${investor.name} for $${price.toLocaleString()} (${investor.shares} shares).`,
+            text: buildBuyoutLogText(investor.name, price, investor.shares),
           },
           ...state.log,
         ].slice(0, 50),

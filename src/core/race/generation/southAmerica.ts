@@ -36,9 +36,9 @@ const SA_CLAIMING_PRICES: ClaimingPrice[] = [2000, 4000, 6000, 8000, 12000, 1500
 function selectSARaceClass(rng: Rng): RaceClass {
   const r = rng.next();
   let cumulative = 0;
-  for (const item of SA_RACE_DISTRIBUTION) {
-    cumulative += item.probability;
-    if (r < cumulative) return item.class;
+  for (const distribution of SA_RACE_DISTRIBUTION) {
+    cumulative += distribution.probability;
+    if (r < cumulative) return distribution.class;
   }
   return "Maiden";
 }

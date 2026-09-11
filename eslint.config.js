@@ -292,7 +292,7 @@ export default tseslint.config(
     ignores: ["src/components/**/*.test.ts", "src/components/**/*.test.tsx"],
     rules: {
       "no-restricted-syntax": [
-        "warn",
+        "error",
         {
           selector: "ImportDeclaration[source.type='Literal'][source.value=/^@\\/core/]",
           message:

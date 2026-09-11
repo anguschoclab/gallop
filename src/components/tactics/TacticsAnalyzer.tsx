@@ -15,7 +15,7 @@ import {
   type RidingStyle,
   type EarlyPosition,
   type MoveTiming,
-} from "@/core/tactics/tacticsTypes";
+} from "@/services/tactics/tacticsFacade";
 import { cn } from "@/lib/cn";
 import { useState } from "react";
 import { toast } from "sonner";

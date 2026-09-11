@@ -33,7 +33,7 @@ export type RunnerFactorLedger = Record<FactorKey, FactorEntry>;
 export const FACTOR_META: Record<FactorKey, { label: string; description: string }> = {
   stamina: { label: "Stamina Fade", description: "Energy depletion over the race distance" },
   style: { label: "Running Style", description: "Pace shape suitability for this horse" },
-  draft: { label: "Drafting", description: "Aerodynamic benefit from horses ahead" },
+  draft: { label: "Drafting", description: "Energy conservation from drafting (speed-neutral)" },
   cover: { label: "Cover", description: "Energy conservation from traffic cover" },
   turnSpeed: { label: "Cornering", description: "Speed loss through turns" },
   gradientSpeed: { label: "Gradient (Speed)", description: "Uphill/downhill speed effect" },

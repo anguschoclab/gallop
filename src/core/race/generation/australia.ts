@@ -36,9 +36,9 @@ const AUSTRALIA_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] =
 function selectAustraliaRaceClass(rng: Rng): RaceClass {
   const r = rng.next();
   let cumulative = 0;
-  for (const item of AUSTRALIA_RACE_DISTRIBUTION) {
-    cumulative += item.probability;
-    if (r < cumulative) return item.class;
+  for (const distribution of AUSTRALIA_RACE_DISTRIBUTION) {
+    cumulative += distribution.probability;
+    if (r < cumulative) return distribution.class;
   }
   return "Handicap";
 }

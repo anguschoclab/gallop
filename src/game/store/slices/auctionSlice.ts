@@ -9,12 +9,8 @@
  */
 
 import type { Horse, AuctionSale, AuctionLot } from "@/game/types";
-import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId, asHorseId, asPlayerOwnerId, asStableId } from "@/core/types/branded";
-import { horseMarketValue } from "@/core/horse/pricing";
+import { asHorseId, asPlayerOwnerId } from "@/core/types/branded";
 import { generateUUID } from "@/core/uuid";
-import type { InboxMessage } from "@/core/inbox/inboxTypes";
-import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/constants";
 import { formatCurrency } from "@/core/common/formatting";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
@@ -22,6 +18,14 @@ import type { AnyImpact } from "@/core/resolver/impacts";
 import { requireHorse, requireOwned } from "../guards";
 import { buildBiddingRecord, mergeBiddingHistory } from "@/core/auction/biddingHistory";
 import { applyAuctionImpacts } from "@/core/auction/auctionImpactActions";
+import {
+  validateConsignment,
+  validateWithdrawal,
+  validateBookBid,
+  validateBuyNow,
+  buildBookBidLogText,
+  buildAuctionResolutionLogText,
+} from "@/core/auction/auctionActions";
 
 export type AuctionSlice = {
   /** Consigns a horse to an upcoming auction sale */
@@ -76,12 +80,14 @@ export function createAuctionSlice(
       const ownershipGuard = requireOwned(horse);
       if (ownershipGuard) return ownershipGuard;
 
-      if (horse!.consignedSaleId) return { ok: false, reason: "Already consigned to a sale." };
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === saleId);
-      if (!sale) return { ok: false, reason: "Sale not found." };
-      if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
-      const baseValue = horseMarketValue(horse!, Object.values(s.horses));
-      const finalReserve = Math.round(reservePrice ?? baseValue * DEFAULT_PLAYER_RESERVE_RATIO);
+      const validation = validateConsignment({
+        horse: horse!,
+        sale,
+        allHorses: Object.values(s.horses),
+        reservePrice,
+      });
+      if (!validation.ok) return { ok: false, reason: validation.reason! };
 
       enqueueIntent({
         id: generateUUID(),
@@ -92,7 +98,7 @@ export function createAuctionSlice(
         type: "consignment",
         horseId: asHorseId(horseId),
         saleId,
-        reservePrice: finalReserve,
+        reservePrice: validation.reservePrice!,
       });
 
       return { ok: true };
@@ -101,11 +107,9 @@ export function createAuctionSlice(
     withdrawConsignment: (horseId) => {
       const s = get();
       const horse = s.horses[asHorseId(horseId)];
-      if (!horse) return { ok: false, reason: "Horse not found." };
-      if (!horse.consignedSaleId) return { ok: false, reason: "Horse not consigned." };
-      const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === horse.consignedSaleId);
-      if (!sale) return { ok: false, reason: "Sale not found." };
-      if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
+      const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === horse?.consignedSaleId);
+      const validation = validateWithdrawal({ horse, sale });
+      if (!validation.ok) return { ok: false, reason: validation.reason! };
 
       enqueueIntent({
         id: generateUUID(),
@@ -115,7 +119,7 @@ export function createAuctionSlice(
         priority: 100,
         type: "consignment_withdrawal",
         horseId: asHorseId(horseId),
-        saleId: horse.consignedSaleId,
+        saleId: horse!.consignedSaleId!,
       });
 
       return { ok: true };
@@ -124,22 +128,19 @@ export function createAuctionSlice(
     placeBookBid: (saleId, lotId, amount) => {
       const s = get();
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === saleId);
-      if (!sale) return { ok: false, reason: "Sale not found." };
-      if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
-      const lot = sale.lots.find((l: AuctionLot) => l.id === lotId);
-      if (!lot) return { ok: false, reason: "Lot not found." };
-      if (lot.withdrawn || lot.passed) return { ok: false, reason: "Lot not available." };
-      if (s.cash < amount) return { ok: false, reason: "Insufficient funds." };
+      const lot = sale?.lots.find((l: AuctionLot) => l.id === lotId);
+      const validation = validateBookBid({ sale, lot, cash: s.cash, amount });
+      if (!validation.ok) return { ok: false, reason: validation.reason! };
 
       const bookLot: AuctionLot = {
-        ...lot,
+        ...lot!,
         bidHistory: [
-          ...(lot.bidHistory || []),
+          ...(lot!.bidHistory || []),
           { stableId: asPlayerOwnerId("player"), amount, tick: s.day },
         ],
       };
       const bookRecord = buildBiddingRecord(
-        sale,
+        sale!,
         bookLot,
         s.horses[bookLot.horseId]?.name ?? "Unknown",
         s.day,
@@ -171,7 +172,7 @@ export function createAuctionSlice(
         log: [
           {
             day: s.day,
-            text: `Book bid of ${formatCurrency(amount)} placed on lot ${lotId} in ${sale.name}.`,
+            text: buildBookBidLogText(amount, lotId, sale!.name),
           },
           ...s.log,
         ].slice(0, 50),
@@ -238,7 +239,7 @@ export function createAuctionSlice(
         log: [
           {
             day: s.day,
-            text: `Auction ${sale.name} resolved.`,
+            text: buildAuctionResolutionLogText(sale.name),
           },
           ...s.log,
         ].slice(0, 50),
@@ -249,26 +250,19 @@ export function createAuctionSlice(
     buyNow: (saleId, lotId) => {
       const s = get();
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === saleId);
-      if (!sale) return { ok: false, reason: "sale_not_found" };
-      if (sale.resolved) return { ok: false, reason: "sale_resolved" };
-      if (sale.kind === "broodmare") return { ok: false, reason: "buy_now_unavailable" };
-      const lot = sale.lots.find((l: AuctionLot) => l.id === lotId);
-      if (!lot) return { ok: false, reason: "lot_not_found" };
-      if (lot.buyNowPrice === undefined) return { ok: false, reason: "buy_now_unavailable" };
-      const buyNowPrice: number = lot.buyNowPrice;
-      if (s.cash < buyNowPrice) return { ok: false, reason: "insufficient_funds" };
-      if (lot.withdrawn || lot.passed || lot.hammerPrice !== undefined)
-        return { ok: false, reason: "lot_not_available" };
+      const lot = sale?.lots.find((l: AuctionLot) => l.id === lotId);
+      const validation = validateBuyNow({ sale, lot, cash: s.cash });
+      if (!validation.ok) return { ok: false, reason: validation.reason! };
 
       enqueueIntent({
         id: generateUUID(),
-        entityId: lot.horseId,
+        entityId: lot!.horseId,
         source: "player",
         day: s.day,
         priority: 100,
         type: "purchase",
-        horseId: lot.horseId,
-        price: buyNowPrice,
+        horseId: lot!.horseId,
+        price: validation.buyNowPrice!,
       });
 
       return { ok: true };

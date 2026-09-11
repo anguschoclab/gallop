@@ -113,8 +113,8 @@ export function groupBy<T, K extends string | number>(
  */
 export function countBy<T extends string | number>(arr: T[]): Record<T, number> {
   return arr.reduce(
-    (acc, item) => {
-      acc[item] = (acc[item] || 0) + 1;
+    (acc, value) => {
+      acc[value] = (acc[value] || 0) + 1;
       return acc;
     },
     {} as Record<T, number>,

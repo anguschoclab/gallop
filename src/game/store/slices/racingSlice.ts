@@ -19,20 +19,12 @@ import type { RacingState } from "@/game/store/state/racingState";
 import { createDefaultRacingState } from "@/game/store/state/racingState";
 import type { TrainingIntent } from "@/core/resolver/intents";
 import { generateUUID } from "@/core/uuid";
-import { TRAINING_COST } from "@/constants";
 import { getAvailableTrainingTypes } from "@/core/facilities";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
-import type { Transaction } from "@/core/transactions/transactionTypes";
 import { simulateRace, type RaceSimulationResult } from "@/services/race/raceSimulationExecutor";
 import { isPlayerOwned } from "@/core/horse/ownership";
-import {
-  calculateNominationFee,
-  getNominationTier,
-  getRaceGrade,
-  type NominationRecord,
-  type NominationStatus,
-} from "@/core/racing/nominationFees";
+import type { NominationRecord, NominationStatus } from "@/core/racing/nominationFees";
 import {
   validateTrialHorse,
   buildPacemaker,
@@ -46,8 +38,13 @@ import {
   applyMilestoneChoice,
   buildMilestoneLogText,
 } from "@/core/race/foalMilestoneActions";
-
-const TRAINING_SLOTS_PER_DAY = 2;
+import { validateTraining, TRAINING_SLOTS_PER_DAY } from "@/core/race/trainingActions";
+import {
+  validateNomination,
+  buildNominationRecord,
+  buildNominationLogText,
+  buildLateNominationLogText,
+} from "@/core/racing/nominationActions";
 
 export type RacingSlice = RacingState & {
   trainHorse: (horseId: string, kind: TrainingIntent["trainingType"]) => void;
@@ -93,44 +90,29 @@ export function createRacingSlice(
     trainHorse: (horseId, kind) => {
       const s = get();
       const horse = s.horses[horseId];
-      if (!horse) return;
-      if (!isPlayerOwned(horse)) return;
-      if (s.pregnancies.some((p) => !p.resolved && p.damId === horseId)) return;
+      const isPregnant = s.pregnancies.some((p) => !p.resolved && p.damId === horseId);
+      const availableTrainingTypes = s.facilities ? getAvailableTrainingTypes(s.facilities) : [];
 
-      // Check if horse has covering sickness or is recovering - prevent training
-      if (horse.healthStatus === "covering_sickness" || horse.healthStatus === "recovering") {
-        set({
-          log: prependLogEntry(
-            s.log,
-            s.day,
-            `Training blocked: ${horse.name} is ${horse.healthStatus === "covering_sickness" ? "sick with covering sickness (dourine)" : "recovering from illness"}. Horse cannot be trained while recovering.`,
-          ),
-        });
+      const validation = validateTraining({
+        horse,
+        horseId,
+        isPregnant,
+        trainingUsedToday: s.trainingUsed[horseId] || 0,
+        cash: s.cash,
+        availableTrainingTypes,
+        requestedTrainingType: kind,
+      });
+
+      if (!validation.ok) {
+        if (validation.reason) {
+          set({
+            log: prependLogEntry(s.log, s.day, validation.reason),
+          });
+        }
         return;
       }
 
       const usedToday = s.trainingUsed[horseId] || 0;
-      if (usedToday >= TRAINING_SLOTS_PER_DAY) return;
-      if (horse.energy < 10) return;
-
-      const isRest = kind === "rest";
-      if (!isRest && s.cash < TRAINING_COST) return;
-      if (!isRest && horse.energy < 15) return;
-
-      // Facility gate: reject if training type not unlocked
-      if (s.facilities) {
-        const available = getAvailableTrainingTypes(s.facilities);
-        if (!available.includes(kind)) {
-          set({
-            log: prependLogEntry(
-              s.log,
-              s.day,
-              `Training blocked: ${kind} is not available at your current facility level. Upgrade your barn or build the required facility.`,
-            ),
-          });
-          return;
-        }
-      }
 
       // Enqueue TrainingIntent for next day advance
       const intent: TrainingIntent = {
@@ -255,58 +237,41 @@ export function createRacingSlice(
     nominateHorse: (horseId: string, raceId: string) => {
       const s = get();
       const race: Race | undefined = s.races[raceId];
-      if (!race) return { ok: false, reason: "Race not found." };
-      const grade = getRaceGrade(race);
-      if (!grade) return { ok: false, reason: "Race is not a graded stakes race." };
       const horse: Horse | undefined = s.horses[horseId];
-      if (!horse || !isPlayerOwned(horse))
-        return { ok: false, reason: "You do not own this horse." };
 
-      const existing: NominationRecord[] = s.playerNominations;
-      if (
-        existing.some((n) => n.horseId === horseId && n.raceId === raceId && n.status === "active")
-      ) {
-        return { ok: false, reason: "Horse already nominated for this race." };
+      const validation = validateNomination({
+        race,
+        horse,
+        existingNominations: s.playerNominations,
+        currentDay: s.day,
+        cash: s.cash ?? 0,
+      });
+
+      if (!validation.ok) {
+        if (validation.reason?.includes("Late") && validation.grade) {
+          set({
+            log: prependLogEntry(s.log, s.day, buildLateNominationLogText(validation.grade)),
+          });
+        }
+        return { ok: false, reason: validation.reason };
       }
 
-      const daysUntilRace = race.day - s.day;
-      if (daysUntilRace < 0) return { ok: false, reason: "Nominations closed — race has passed." };
-      const tier = getNominationTier(daysUntilRace);
-      const fee = calculateNominationFee(grade, tier);
-      if (fee === null) {
-        set({
-          log: prependLogEntry(
-            s.log,
-            s.day,
-            `Late nominations for ${grade} races are not accepted.`,
-          ),
-        });
-        return { ok: false, reason: `Late ${grade} nominations are closed.` };
-      }
-      if ((s.cash ?? 0) < fee) {
-        return { ok: false, reason: `Insufficient cash. Fee is $${fee.toLocaleString()}.` };
-      }
-
-      const nomination: NominationRecord = {
-        id: `nom-${horseId}-${raceId}-${s.day}-${generateUUID().slice(0, 6)}`,
+      const nomination = buildNominationRecord(
         horseId,
-        raceId,
-        raceName: race.name,
-        raceDay: race.day,
-        grade,
-        tier,
-        feePaid: fee,
-        nominatedDay: s.day,
-        status: "active",
-      };
+        race!,
+        validation.grade!,
+        validation.tier!,
+        validation.fee!,
+        s.day,
+      );
 
       set({
-        cash: s.cash - fee,
-        playerNominations: [...existing, nomination],
+        cash: s.cash - validation.fee!,
+        playerNominations: [...s.playerNominations, nomination],
         log: prependLogEntry(
           s.log,
           s.day,
-          `Nominated ${horse.name} for ${race.name} — ${tier} tier, fee $${fee.toLocaleString()}.`,
+          buildNominationLogText(horse!.name, race!.name, validation.tier!, validation.fee!),
         ),
       });
       return { ok: true };

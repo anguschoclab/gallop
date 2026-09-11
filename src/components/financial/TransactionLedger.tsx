@@ -13,8 +13,8 @@ import { formatProfitLoss } from "@/services/financial/financialFacade";
 import {
   formatTransactionSubcategory,
   type TransactionSubcategory,
-} from "@/core/transactions/transactionTypes";
-import type { Transaction } from "@/core/transactions/transactionTypes";
+  type Transaction,
+} from "@/services/transactions/transactionsFacade";
 import { cn } from "@/lib/cn";
 import { ReceiptText, ArrowUpRight, ArrowDownLeft, ChevronRight, ChevronDown } from "lucide-react";
 

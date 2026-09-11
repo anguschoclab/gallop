@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createRng, hashStr } from "@/services/common/commonFacade";
 import type { Backstory } from "@/services/common/commonFacade";
-import { generateUUID } from "@/core/uuid";
+import { generateUUID } from "@/services/common/commonFacade";
 
 export function makeWizardRng(seed: string) {
   return createRng(hashStr(`wizard_${seed}_${Date.now()}_${generateUUID()}`));

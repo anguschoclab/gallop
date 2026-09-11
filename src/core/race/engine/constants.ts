@@ -32,8 +32,8 @@ export const MAX_FORM_ENERGY_MUL = 1.25;
 
 // --- Drafting constants ---
 export const DRAFT_DISTANCE = 3;
-export const DRAFT_SPEED_BONUS = 1.015;
-export const DRAFT_STAMINA_PRESERVE = 0.5;
+export const DRAFT_SPEED_BONUS = 1.015; // Kept for reference; speed bonus is now neutralized
+export const DRAFT_STAMINA_PRESERVE = 0.6; // Strengthened from 0.5 to compensate for removed speed bonus
 
 // --- Track geometry constants ---
 export const LANE_WIDTH = 1.2;
@@ -59,8 +59,8 @@ export const BULLRING_TRAIT_BONUS = 0.2;
 export const MAX_TURN_PENALTY = 0.4;
 
 // --- Stamina constants ---
-export const STAMINA_FADE_START = 0.6;
-export const STAMINA_FADE_DURATION = 0.4;
+export const STAMINA_FADE_START = 0.55; // Lowered from 0.6 — fade begins slightly earlier
+export const STAMINA_FADE_DURATION = 0.45; // Lengthened from 0.4 — fade is slightly more gradual
 export const PACE_PRESSURE_STAMINA_PENALTY = 0.08;
 export const BLEEDER_DISTANCE_THRESHOLD = 1600;
 export const BLEEDER_PROGRESS_THRESHOLD = 0.7;
@@ -191,3 +191,35 @@ export const LANE_DENSITY_BUCKETS = 12;
 
 /** Lane width (metres) per lane density bucket. */
 export const LANE_BUCKET_WIDTH = 1.2;
+
+// --- Pace pressure: EP weighting ---
+/** Early-pressers (EP) contribute to pace pressure at half the weight of front-runners (E). */
+export const EP_PACE_PRESSURE_WEIGHT = 0.5;
+
+// --- Noise: fatigue scaling and negative bias ---
+/** Bias applied to rng draw: (rng.next() - NOISE_BIAS) shifts noise toward negative outcomes. */
+export const NOISE_BIAS = 0.53;
+/** Scale factor for fatigue-driven noise amplification: fatigueAmp = 1 + max(0, 1 - staminaMul) * NOISE_FATIGUE_SCALE. */
+export const NOISE_FATIGUE_SCALE = 1.5;
+
+// --- Blocking: boxed-in model ---
+/** Lane gap threshold for considering a horse "in a nearby lane" for blocking detection. */
+export const BLOCKED_LANE_GAP = 0.4;
+/** Velocity penalty per lane-unit of lateral escape movement (applied when escaping a block). */
+export const ESCAPE_VELOCITY_PENALTY = 0.05;
+/** Maximum longitudinal gap (metres) ahead of a runner to consider for blocking. */
+export const BLOCKING_RANGE_AHEAD = 1.5;
+/** Maximum longitudinal gap (metres) behind a runner to consider for adjacent-lane (boxed-in) detection. */
+export const BLOCKING_RANGE_BEHIND = 1.0;
+/** Lane position below which a horse is considered on the rail (no inside escape). */
+export const RAIL_LANE_THRESHOLD = 0.3;
+/** Velocity cap factor when boxed in: velocity = min(velocity, blocker.velocity * BOXED_IN_VELOCITY_CAP). */
+export const BOXED_IN_VELOCITY_CAP = 0.98;
+/** Maximum jockey skill value (used for normalising positioning skill to 0–1). */
+export const JOCKEY_SKILL_MAX = 100;
+/** Maximum fraction by which positioning skill reduces the escape velocity penalty. */
+export const POSITIONING_SKILL_MAX_REDUCTION = 0.5;
+
+// --- Noise ---
+/** Base amplitude for per-tick performance noise (applied before fatigue scaling). */
+export const NOISE_BASE_AMPLITUDE = 0.08;

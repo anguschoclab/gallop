@@ -41,27 +41,14 @@ function createMockRunner(overrides: Partial<Runner> = {}): Runner {
 
 describe("draftingAI", () => {
   describe("calculateStyleAwareDraftMultiplier", () => {
-    it("returns base DRAFT_SPEED_BONUS when drafting for mid-pack styles", () => {
-      const runner = createMockRunner({ runningStyle: "P", draftingHorseId: "h2" });
-      const mul = calculateStyleAwareDraftMultiplier(runner, 0.3);
-      expect(mul).toBeGreaterThan(1.0);
-      expect(mul).toBeCloseTo(1.015, 2);
-    });
-
-    it("gives closers (S) a larger draft bonus", () => {
-      const closer = createMockRunner({ runningStyle: "S", draftingHorseId: "h2" });
-      const presser = createMockRunner({ runningStyle: "P", draftingHorseId: "h2" });
-      const closerMul = calculateStyleAwareDraftMultiplier(closer, 0.3);
-      const presserMul = calculateStyleAwareDraftMultiplier(presser, 0.3);
-      expect(closerMul).toBeGreaterThan(presserMul);
-    });
-
-    it("gives front-runners (E) a smaller draft bonus", () => {
-      const frontrunner = createMockRunner({ runningStyle: "E", draftingHorseId: "h2" });
-      const presser = createMockRunner({ runningStyle: "P", draftingHorseId: "h2" });
-      const frMul = calculateStyleAwareDraftMultiplier(frontrunner, 0.3);
-      const pMul = calculateStyleAwareDraftMultiplier(presser, 0.3);
-      expect(frMul).toBeLessThan(pMul);
+    // Drafting is speed-neutral: it saves energy (stamina preserve in staminaFade),
+    // it does NOT make a horse faster than its own top speed.
+    it("returns 1.0 for all styles when drafting (speed-neutral)", () => {
+      for (const style of ["E", "EP", "P", "S"] as const) {
+        const runner = createMockRunner({ runningStyle: style, draftingHorseId: "h2" });
+        const mul = calculateStyleAwareDraftMultiplier(runner, 0.3);
+        expect(mul).toBe(1.0);
+      }
     });
 
     it("returns 1.0 when not drafting", () => {
@@ -70,11 +57,10 @@ describe("draftingAI", () => {
       expect(mul).toBe(1.0);
     });
 
-    it("reduces draft bonus in late race (progress > 0.85)", () => {
+    it("returns 1.0 in late race (progress > 0.85) when drafting", () => {
       const runner = createMockRunner({ runningStyle: "P", draftingHorseId: "h2" });
-      const earlyMul = calculateStyleAwareDraftMultiplier(runner, 0.3);
-      const lateMul = calculateStyleAwareDraftMultiplier(runner, 0.9);
-      expect(lateMul).toBeLessThan(earlyMul);
+      const mul = calculateStyleAwareDraftMultiplier(runner, 0.9);
+      expect(mul).toBe(1.0);
     });
   });
 

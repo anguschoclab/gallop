@@ -29,7 +29,7 @@ import {
   describeScoutingThresholds,
   type ScoutingAssignment,
   type ScoutingPriority,
-} from "@/core/npc/scoutingThresholds";
+} from "@/services/scouting/scoutingFacade";
 import { formatCurrency } from "@/lib/formatting";
 import { ClipboardList, Play, Plus, Trash2 } from "lucide-react";
 

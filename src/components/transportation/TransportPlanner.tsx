@@ -7,7 +7,7 @@ import { useGame, useGameWithShallow } from "@/game/store";
 import {
   formatTransportMode,
   type TransportRequest,
-} from "@/core/transportation/transportationTypes";
+} from "@/services/transportation/transportationFacade";
 import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 

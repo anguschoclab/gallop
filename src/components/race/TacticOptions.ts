@@ -1,4 +1,4 @@
-import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+import type { JockeyInstructions } from "@/services/tactics/tacticsFacade";
 import { AGGRESSIVENESS_DEFAULT } from "@/constants";
 
 export interface InstructionPreset {

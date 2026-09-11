@@ -8,10 +8,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { Race, Horse } from "@/game/types";
-import type { StewardsInquiryIntent } from "@/core/resolver/systemIntents";
-import type { InquiryType } from "@/core/stewards/stewardTypes";
-import { formatInquiryType } from "@/core/stewards/stewardTypes";
-import { generateUUID } from "@/core/uuid";
+import type { StewardsInquiryIntent } from "@/services/resolver/resolverFacade";
+import { formatInquiryType, type InquiryType } from "@/services/stewards/stewardsFacade";
+import { generateUUID } from "@/services/common/commonFacade";
 
 export interface ObjectionModalProps {
   isOpen: boolean;

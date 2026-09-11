@@ -56,10 +56,10 @@ const NA_CLAIMING_PRICES: ClaimingPrice[] = [
 function selectNARaceClass(rng: Rng): RaceClass {
   const r = rng.next();
   let cumulative = 0;
-  for (const item of NA_RACE_DISTRIBUTION) {
-    cumulative += item.probability;
+  for (const distribution of NA_RACE_DISTRIBUTION) {
+    cumulative += distribution.probability;
     if (r < cumulative) {
-      return item.class;
+      return distribution.class;
     }
   }
   return "MaidenClaiming"; // Fallback

@@ -31,8 +31,8 @@ export function calculateOptimalRunningStyle(
       if (style === geneticStyle) continue;
       const contextKey = buildStrategyContextKey(race, style);
       const key = `jockey_strategy:${contextKey}`;
-      const data = aiState.learningState.successRates[key];
-      if (data && data.total >= 5 && data.rate > 0.65) {
+      const rateEntry = aiState.learningState.successRates[key];
+      if (rateEntry && rateEntry.total >= 5 && rateEntry.rate > 0.65) {
         return style;
       }
     }

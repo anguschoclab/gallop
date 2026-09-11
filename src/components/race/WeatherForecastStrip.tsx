@@ -9,7 +9,7 @@ import { Sun, Cloud, CloudDrizzle, CloudRain, CloudLightning, Snowflake, Wind } 
 import { Badge } from "@/components/ui/badge";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { useGame } from "@/game/store";
-import type { SimWeatherPattern, WeatherState } from "@/core/weather";
+import type { SimWeatherPattern, WeatherState } from "@/services/weather/weatherFacade";
 import type { TrackCondition } from "@/game/types";
 import { WEATHER_FORECAST_STRIP_DAYS } from "@/constants";
 

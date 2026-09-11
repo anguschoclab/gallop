@@ -26,7 +26,12 @@ import {
   SPURT_BUILDUP_END_M,
   SPURT_BUILDUP_PEAK,
 } from "./runningStyleProfiles";
-import { DECEL_FACTOR } from "@/constants/raceEngineConstants";
+import {
+  DECEL_FACTOR,
+  NOISE_BIAS,
+  NOISE_FATIGUE_SCALE,
+  NOISE_BASE_AMPLITUDE,
+} from "@/constants/raceEngineConstants";
 import { computePaceContext } from "./paceContext";
 import { calculateTargetLane, updateLanePosition } from "./lateralMovement";
 import { getSectionAndProgress } from "./trackGeometry";
@@ -37,6 +42,7 @@ import {
   calculateDraftMultiplier,
   applyJockeyEffects,
   applyBlockingEffect,
+  detectBlocking,
   getDraftingHorseId,
 } from "./jockeyEffects";
 import { calculateWindEffect } from "./windEffects";
@@ -83,6 +89,10 @@ export function stepRunner(
 
   // Optimize drafting lookup using sortedField
   r.draftingHorseId = sortedField ? getDraftingHorseId(r, sortedField) : null;
+
+  // Detect blocking state BEFORE lane-seeking so calculateTargetLane
+  // can respond to blocked/boxed-in conditions.
+  detectBlocking(r, sortedField);
 
   // Calculate and update lane position
   const targetLane = calculateTargetLane(r, progress, sortedField, pace);
@@ -174,7 +184,12 @@ export function stepRunner(
   staminaMul *= windStaminaMod;
 
   // Calculate target speed
-  const noiseValue = (rng.next() - 0.5) * 0.08 * r.noise;
+  // Calculate target speed with fatigue-scaled, negatively-biased noise.
+  // Noise amplitude grows with fatigue (1 - staminaMul), and is biased
+  // toward negative outcomes so tired horses fade rather than surge.
+  // Exactly one rng.next() call per runner per tick (determinism preserved).
+  const fatigueAmp = 1 + Math.max(0, 1 - staminaMul) * NOISE_FATIGUE_SCALE;
+  const noiseValue = (rng.next() - NOISE_BIAS) * NOISE_BASE_AMPLITUDE * r.noise * fatigueAmp;
   const noiseMul = 1 + noiseValue;
   const targetSpeed =
     r.topSpeed *

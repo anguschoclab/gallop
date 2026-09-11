@@ -6,7 +6,7 @@ import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { getTransportCostForRace } from "@/services/race/raceFacade";
 import type { Horse, Jockey, Race } from "@/game/types";
 import { formatCurrency } from "@/services/race/raceFacade";
-import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+import type { JockeyInstructions } from "@/services/tactics/tacticsFacade";
 
 interface Props {
   race: Race;

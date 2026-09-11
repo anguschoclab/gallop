@@ -86,5 +86,12 @@ export function calculateStaminaMultiplier(
     staminaMul *= EARLY_SPEED_STAMINA_PENALTY;
   }
 
+  // Apply jockey pacing stamina bonus (stored by applyJockeyEffects in the
+  // previous tick). This fixes a pre-existing bug where the bonus was computed
+  // but assigned to a local variable that was never used again.
+  if (r.jockeyStaminaBonus && r.jockeyStaminaBonus > 0) {
+    staminaMul *= 1 + r.jockeyStaminaBonus;
+  }
+
   return staminaMul;
 }

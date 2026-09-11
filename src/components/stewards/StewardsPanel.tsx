@@ -7,7 +7,7 @@ import {
   formatInquiryType,
   formatInquiryOutcome,
   type StewardsInquiry,
-} from "@/core/stewards/stewardTypes";
+} from "@/services/stewards/stewardsFacade";
 import { cn } from "@/lib/cn";
 
 interface StewardsPanelProps {

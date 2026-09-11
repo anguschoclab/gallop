@@ -19,6 +19,15 @@ import {
   LATE_KICK_VIGOR_MULTIPLIER,
   LATE_KICK_TOP_SPEED_MULTIPLIER,
   MIN_BLOCK_GAP,
+  BLOCKED_LANE_GAP,
+  ESCAPE_VELOCITY_PENALTY,
+  LANE_WIDTH,
+  BLOCKING_RANGE_AHEAD,
+  BLOCKING_RANGE_BEHIND,
+  RAIL_LANE_THRESHOLD,
+  BOXED_IN_VELOCITY_CAP,
+  JOCKEY_SKILL_MAX,
+  POSITIONING_SKILL_MAX_REDUCTION,
 } from "@/constants/raceEngineConstants";
 
 export function calculateDraftMultiplier(r: Runner, progress: number): number {
@@ -71,7 +80,13 @@ export function applyJockeyEffects(
       (arch === "finisher" && r.runningStyle === "P");
 
     if (isMatched && progress > MATCHED_ARCHETYPE_PROGRESS_THRESHOLD) {
-      updatedStaminaMul *= 1 + (stats.pacing / 100) * PACING_STAMINA_BONUS_FACTOR;
+      const pacingBonus = (stats.pacing / 100) * PACING_STAMINA_BONUS_FACTOR;
+      updatedStaminaMul *= 1 + pacingBonus;
+      // Store on runner so calculateStaminaMultiplier can apply it next tick.
+      // Previously this bonus was computed but lost (local variable never reused).
+      r.jockeyStaminaBonus = pacingBonus;
+    } else {
+      r.jockeyStaminaBonus = 0;
     }
 
     if (
@@ -110,10 +125,25 @@ export function applyJockeyEffects(
   return { finalDs, staminaMul: updatedStaminaMul };
 }
 
-export function applyBlockingEffect(r: Runner, sortedField?: Runner[]): void {
+/**
+ * Detect blocking state for a runner: whether a blocker is ahead and whether
+ * the runner is boxed in (no escape lane available). Must be called BEFORE
+ * lane-seeking so calculateTargetLane can respond to blocked state.
+ *
+ * Sets r.blockedAhead and r.boxedIn.
+ * @param r
+ * @param sortedField
+ */
+export function detectBlocking(r: Runner, sortedField?: Runner[]): void {
+  r.blockedAhead = false;
+  r.boxedIn = false;
+
   if (!sortedField) return;
 
-  let blockingHorse: Runner | undefined;
+  let blockerAhead: Runner | undefined;
+  let insideBlocked = false;
+  let outsideBlocked = false;
+
   for (let i = 0; i < sortedField.length; i++) {
     const other = sortedField[i];
     if (other.horseId === r.horseId) continue;
@@ -121,19 +151,91 @@ export function applyBlockingEffect(r: Runner, sortedField?: Runner[]): void {
 
     const gap = other.position - r.position;
 
-    // Since sortedField is ordered by position descending,
-    // once the gap drops below MIN_BLOCK_GAP, all subsequent horses
-    // will also be closer than MIN_BLOCK_GAP (or behind).
+    // sortedField is ordered by position descending.
+    // Skip horses too far ahead (beyond blocking range).
+    if (gap >= BLOCKING_RANGE_AHEAD) continue;
+    // Stop when horses are well behind (not relevant for blocking).
+    if (gap < -BLOCKING_RANGE_BEHIND) break;
+
+    // Check for blocker ahead — only at the original threshold (gap >= MIN_BLOCK_GAP).
+    // This matches the old applyBlockingEffect's break condition.
+    if (!blockerAhead && gap >= MIN_BLOCK_GAP && Math.abs(other.lane - r.lane) < BLOCKED_LANE_GAP) {
+      blockerAhead = other;
+    }
+
+    // Check adjacent-lane blockers (for boxed-in detection).
+    // These can be closer than MIN_BLOCK_GAP (horses alongside).
+    // Adjacent lanes are LANE_WIDTH apart; use LANE_WIDTH + margin as threshold.
+    const laneDelta = other.lane - r.lane;
+    const absLaneDelta = Math.abs(laneDelta);
+    if (laneDelta < 0 && absLaneDelta < LANE_WIDTH + BLOCKED_LANE_GAP) {
+      insideBlocked = true;
+    }
+    if (laneDelta > 0 && absLaneDelta < LANE_WIDTH + BLOCKED_LANE_GAP) {
+      outsideBlocked = true;
+    }
+  }
+
+  if (blockerAhead) {
+    r.blockedAhead = true;
+    // Boxed in if both adjacent lanes are blocked, OR if on the rail
+    // (lane ~0, no inside lane) and outside is blocked.
+    const onRail = r.lane < RAIL_LANE_THRESHOLD;
+    if (onRail) {
+      r.boxedIn = outsideBlocked;
+    } else {
+      r.boxedIn = insideBlocked && outsideBlocked;
+    }
+  }
+}
+
+/**
+ * Apply blocking velocity effects based on pre-computed blockedAhead/boxedIn
+ * flags (set by detectBlocking). Called AFTER velocity update.
+ *
+ * - Boxed in: velocity capped to blocker's velocity * 0.98 (hard cap, no escape).
+ * - Blocked but not boxed AND faster than blocker: escape velocity penalty
+ *   (smaller, scales with jockey positioning skill).
+ * - Blocked but slower than blocker: no effect (not being held back).
+ * - Not blocked: no effect.
+ * @param r
+ * @param sortedField
+ */
+export function applyBlockingEffect(r: Runner, sortedField?: Runner[]): void {
+  if (!sortedField) return;
+  if (!r.blockedAhead) return;
+
+  // Find the blocking horse ahead (same threshold as detectBlocking)
+  let blockingHorse: Runner | undefined;
+  for (let i = 0; i < sortedField.length; i++) {
+    const other = sortedField[i];
+    if (other.horseId === r.horseId) continue;
+    if (other.finishTime !== null) continue;
+
+    const gap = other.position - r.position;
+    // Match original threshold: only consider blockers at gap >= MIN_BLOCK_GAP.
     if (gap < MIN_BLOCK_GAP) break;
 
-    if (gap < 1.5 && Math.abs(other.lane - r.lane) < 0.4) {
+    if (gap < BLOCKING_RANGE_AHEAD && Math.abs(other.lane - r.lane) < BLOCKED_LANE_GAP) {
       blockingHorse = other;
       break;
     }
   }
 
-  if (blockingHorse) {
-    r.velocity = Math.min(r.velocity, blockingHorse.velocity * 0.98);
+  if (!blockingHorse) return;
+
+  if (r.boxedIn) {
+    // Genuinely trapped — hard cap to blocker's pace
+    r.velocity = Math.min(r.velocity, blockingHorse.velocity * BOXED_IN_VELOCITY_CAP);
+  } else if (r.velocity > blockingHorse.velocity) {
+    // Only apply escape penalty when actually being held back (faster than blocker).
+    // The penalty scales with the lateral distance sought (escaping wider costs more)
+    // and is reduced by jockey positioning skill.
+    const positioningSkill = r.jockey?.stats.positioning ?? 50;
+    const skillReduction = (positioningSkill / JOCKEY_SKILL_MAX) * POSITIONING_SKILL_MAX_REDUCTION;
+    const laneDelta = r.escapeLaneDelta ?? 0;
+    const penalty = ESCAPE_VELOCITY_PENALTY * Math.max(laneDelta, 0.5) * (1 - skillReduction);
+    r.velocity *= 1 - penalty;
   }
 }
 

@@ -9,7 +9,7 @@ import {
   formatApprenticeStatus,
   formatWeightAllowance,
   type ApprenticeStatus,
-} from "@/core/apprentice/apprenticeTypes";
+} from "@/services/apprentice/apprenticeFacade";
 import { cn } from "@/lib/cn";
 
 export function ApprenticeTracker() {

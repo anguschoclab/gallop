@@ -10,7 +10,7 @@ import {
   getRaceGrade,
   type NominationRecord,
   type NominationTier,
-} from "@/core/racing/nominationFees";
+} from "@/services/racing/racingFacade";
 import { Button } from "@/components/ui/button";
 import {
   Select,

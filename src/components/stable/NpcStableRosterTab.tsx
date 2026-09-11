@@ -9,7 +9,7 @@ import { cn } from "@/lib/cn";
 import { HorseCard } from "@/components/horse/HorseCard";
 import { PrivateSaleCounterCard } from "@/components/auction/PrivateSaleCounterCard";
 import { overall } from "@/components/horse/HorseBits";
-import { calculateScoutCost } from "@/core/npc/scouting";
+import { calculateScoutCost } from "@/services/npc/npcFacade";
 import { formatCurrency } from "@/lib/formatting";
 import { evaluateHorseAttachment } from "@/services/horse/horseFacade";
 import { toast } from "sonner";

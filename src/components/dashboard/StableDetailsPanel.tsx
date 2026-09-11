@@ -7,7 +7,7 @@ import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/cn";
 import { ChevronDown, Trophy } from "lucide-react";
 import { useState } from "react";
-import type { StandingEntry } from "@/core/standings/computeStandings";
+import type { StandingEntry } from "@/services/standings/standingsFacade";
 
 export function StableDetailsPanel({ stable }: { stable: StandingEntry | null }) {
   const [open, setOpen] = useState(true);

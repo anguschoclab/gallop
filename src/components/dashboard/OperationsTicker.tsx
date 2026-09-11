@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGame } from "@/game/store";
 import { usePregnancies } from "@/hooks/game/useBreedingState";
 import { isPlayerOwned } from "@/services/horse/horseFacade";
-import { asPlayerOwnerId } from "@/core/types/branded";
+import { asPlayerOwnerId } from "@/services/common/commonFacade";
 import { formatCurrency } from "@/lib/formatting";
 import { Activity, Heart, Briefcase, Zap } from "lucide-react";
 

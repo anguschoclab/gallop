@@ -161,8 +161,8 @@ export function getSuccessRate(
   contextKey: string,
 ): number {
   const key = `${decisionType}:${contextKey}`;
-  const data = state.successRates[key];
-  return data?.rate ?? 0.5; // Default to 50% if no data
+  const rateEntry = state.successRates[key];
+  return rateEntry?.rate ?? 0.5; // Default to 50% if no rateEntry
 }
 
 /**
@@ -237,11 +237,11 @@ export function pruneOldOutcomes(state: LearningState, cutoffDay: number): Learn
   }
 
   for (const key in grouped) {
-    const data = grouped[key];
+    const groupedEntry = grouped[key];
     newSuccessRates[key] = {
-      successes: data.successes,
-      total: data.total,
-      rate: data.successes / data.total,
+      successes: groupedEntry.successes,
+      total: groupedEntry.total,
+      rate: groupedEntry.successes / groupedEntry.total,
     };
   }
 

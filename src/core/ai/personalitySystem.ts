@@ -169,10 +169,10 @@ export function recordPersonalityOutcome(
     learningState: newLearningState,
   };
 
-  // Adapt strategy if success rate is low and enough data collected
-  const data = newLearningState.successRates[`${decisionType}:${contextKey}`];
+  // Adapt strategy if success rate is low and enough rateEntry collected
+  const rateEntry = newLearningState.successRates[`${decisionType}:${contextKey}`];
   const threshold = 0.5 - newState.conservatism * 0.2;
-  if (data && data.total >= 5 && successRate < threshold) {
+  if (rateEntry && rateEntry.total >= 5 && successRate < threshold) {
     const config = PERSONALITY_CONFIG[newState.personality];
     const confidenceChange = (1 - successRate) * config.adaptationSpeed;
     const newConfidence = Math.max(0.1, newState.strategyConfidence - confidenceChange);

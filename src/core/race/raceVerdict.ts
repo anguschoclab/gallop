@@ -106,7 +106,7 @@ function generateFactorNote(
       return `Running style clashed with the pace shape (${pct}%).`;
     case "draft":
       if (impact === "positive") {
-        return `Saved energy drafting behind the lead group (+${absPct}%).`;
+        return `Conserved energy drafting behind the lead group (+${absPct}%).`;
       }
       return `No drafting benefit available (${pct}%).`;
     case "cover":
@@ -180,7 +180,7 @@ function generateHeadline(
       return "Won with a perfectly judged ride — pace shape suited to a tee.";
     }
     if (key === "draft" && impact === "positive") {
-      return "Drafted masterfully, saved energy for the winning move.";
+      return "Drafted masterfully, conserved energy for the winning move.";
     }
     return "Scored with a professional, well-managed performance.";
   }
@@ -209,6 +209,9 @@ function generateHeadline(
   }
 
   // Mid-pack
+  if (key === "cover" && impact === "positive") {
+    return "Ran evenly with good cover, lacked the class to challenge.";
+  }
   if (key === "draft" && impact === "positive") {
     return "Ran evenly with good cover, lacked the class to challenge.";
   }

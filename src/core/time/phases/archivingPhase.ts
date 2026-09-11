@@ -68,11 +68,11 @@ export const archivingPhase: PipelinePhase = {
     const NEWS_ARCHIVE_DAYS = 60;
 
     if (state.news) {
-      for (const item of state.news) {
-        if (newDay - item.day > NEWS_ARCHIVE_DAYS) {
-          archivedNews.push(item);
+      for (const newsEntry of state.news) {
+        if (newDay - newsEntry.day > NEWS_ARCHIVE_DAYS) {
+          archivedNews.push(newsEntry);
         } else {
-          activeNews.push(item);
+          activeNews.push(newsEntry);
         }
       }
     }

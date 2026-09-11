@@ -128,15 +128,17 @@ describe("generateRaceVerdict", () => {
       expect(verdict.headline).toMatch(/fade|stamina|distance/i);
     });
 
-    it("mid-pack + good draft → cover headline", () => {
+    it("mid-pack + good cover → cover headline", () => {
       const runner = makeRunner({ finishTime: 91 });
       const ordered = makeFieldRunners(6);
       const ledger = makeLedger({
-        draft: makeFactorEntry(1.04, { peakProgress: 0.5, peakValue: 1.08 }),
+        draft: makeFactorEntry(1.0), // drafting is now speed-neutral
         cover: makeFactorEntry(1.03),
       });
       const verdict = generateRaceVerdict(runner, 4, ordered, ledger);
-      expect(verdict.headline).toMatch(/cover|draft|evenly/i);
+      // With draft neutral, cover is the top factor. The verdict should
+      // mention cover or a mid-pack finish.
+      expect(verdict.headline).toMatch(/cover|mid-pack|evenly/i);
     });
 
     it("tail + bad wind → conditions headline", () => {

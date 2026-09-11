@@ -23,6 +23,9 @@ export function calculateTargetLane(
   pace?: PaceContext,
 ): number {
   let targetLane = 0;
+  // Default: no lateral escape sought
+  r.escapeLaneDelta = 0;
+
   if (r.runningStyle === "S" && progress < STALKER_PROGRESS_THRESHOLD) targetLane = 1;
 
   if (r.jockeyInstructions?.ridingStyle === "front_runner") targetLane = 0;
@@ -50,29 +53,49 @@ export function calculateTargetLane(
       if (r.position < pace.leaderPos - LANE_POSITION_GAP_THRESHOLD) targetLane = 1;
     }
 
-    for (const other of sortedField) {
-      if (other.horseId === r.horseId) continue;
-      const gap = other.position - r.position;
-      if (gap <= 0) break;
-      if (gap >= POSITION_GAP_THRESHOLD) continue;
+    // When blocked ahead and not boxed in, actively seek an escape lane
+    // using the pre-computed flags from detectBlocking. This is the primary
+    // escape mechanism — the horse steers toward the less-dense adjacent lane.
+    if (r.blockedAhead && !r.boxedIn) {
+      const insideDensity = laneIdx > 0 ? (pace.laneDensity[laneIdx - 1] ?? 0) : Infinity;
+      const outsideDensity = pace.laneDensity[laneIdx + 1] ?? 0;
+      if (laneIdx > 0 && insideDensity + INSIDE_OVERTAKE_DENSITY_ADVANTAGE <= outsideDensity) {
+        targetLane = laneIdx - 1;
+      } else {
+        targetLane = Math.min(10, laneIdx + 1);
+      }
+      // Record the lateral escape distance (in lane-widths) for applyBlockingEffect.
+      r.escapeLaneDelta = Math.abs(targetLane - laneIdx);
+    } else {
+      // Fall back to existing per-horse blocking detection for non-flagged scenarios
+      for (const other of sortedField) {
+        if (other.horseId === r.horseId) continue;
+        const gap = other.position - r.position;
+        if (gap <= 0) break;
+        if (gap >= POSITION_GAP_THRESHOLD) continue;
 
-      const laneGap = Math.abs(other.lane - r.lane);
-      if (laneGap < LANE_GAP_THRESHOLD && gap >= MIN_BLOCK_GAP) {
-        const insideDensity = laneIdx > 0 ? (pace.laneDensity[laneIdx - 1] ?? 0) : Infinity;
-        const outsideDensity = pace.laneDensity[laneIdx + 1] ?? 0;
-        if (laneIdx > 0 && insideDensity + INSIDE_OVERTAKE_DENSITY_ADVANTAGE <= outsideDensity) {
-          targetLane = laneIdx - 1;
-        } else {
-          targetLane = Math.min(10, laneIdx + 1);
+        const laneGap = Math.abs(other.lane - r.lane);
+        if (laneGap < LANE_GAP_THRESHOLD && gap >= MIN_BLOCK_GAP) {
+          const insideDensity = laneIdx > 0 ? (pace.laneDensity[laneIdx - 1] ?? 0) : Infinity;
+          const outsideDensity = pace.laneDensity[laneIdx + 1] ?? 0;
+          if (laneIdx > 0 && insideDensity + INSIDE_OVERTAKE_DENSITY_ADVANTAGE <= outsideDensity) {
+            targetLane = laneIdx - 1;
+          } else {
+            targetLane = Math.min(10, laneIdx + 1);
+          }
+          break;
         }
-        break;
       }
     }
   }
 
-  const railLane = calculateRailSavingLane(r, progress);
-  if (railLane !== r.lane) {
-    targetLane = Math.floor(railLane / LANE_WIDTH);
+  // When boxed in, the horse is trapped — don't override with rail-saving
+  // (the horse can't move laterally anyway).
+  if (!r.boxedIn) {
+    const railLane = calculateRailSavingLane(r, progress);
+    if (railLane !== r.lane) {
+      targetLane = Math.floor(railLane / LANE_WIDTH);
+    }
   }
 
   return targetLane;

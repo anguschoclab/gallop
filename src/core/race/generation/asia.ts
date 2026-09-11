@@ -36,9 +36,9 @@ const ASIA_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
 function selectAsiaRaceClass(rng: Rng): RaceClass {
   const r = rng.next();
   let cumulative = 0;
-  for (const item of ASIA_RACE_DISTRIBUTION) {
-    cumulative += item.probability;
-    if (r < cumulative) return item.class;
+  for (const distribution of ASIA_RACE_DISTRIBUTION) {
+    cumulative += distribution.probability;
+    if (r < cumulative) return distribution.class;
   }
   return "Allowance";
 }

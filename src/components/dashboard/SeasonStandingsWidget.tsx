@@ -9,7 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useSeasonStandings } from "@/hooks/dashboard/useSeasonStandings";
 import { useWealthStandings } from "@/hooks/dashboard/useWealthStandings";
 import { useStandingsMessages } from "@/hooks/dashboard/useStandingsMessages";
-import { buildStandingsRows } from "@/core/standings/buildStandingsRows";
+import { buildStandingsRows } from "@/services/standings/standingsFacade";
 import { StableDetailsPanel } from "@/components/dashboard/StableDetailsPanel";
 import { WealthDetailsPanel } from "@/components/dashboard/WealthDetailsPanel";
 import { formatCurrency } from "@/lib/formatting";

@@ -23,7 +23,7 @@ import {
   type AlmanacFeedItem,
 } from "@/services/history/historyFacade";
 import type { TrackRecord, SeasonRecord } from "@/services/history/historyFacade";
-import type { Transaction } from "@/core/transactions/transactionTypes";
+import type { Transaction } from "@/services/transactions/transactionsFacade";
 import type { Horse } from "@/services/horse/horseFacade";
 import type { NewsItem } from "@/services/narrative/newsTypes";
 import { cn } from "@/lib/cn";

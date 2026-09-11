@@ -3,7 +3,7 @@ import { Activity, AlertCircle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/cn";
 import type { Horse } from "@/game/types";
-import { formatRecoveryDays } from "@/core/health/injuryDisplay";
+import { formatRecoveryDays } from "@/services/health/healthFacade";
 
 interface HorseConditionSectionProps {
   horse: Horse;

@@ -10,54 +10,36 @@
  */
 
 import type { Runner } from "./runnerBuilder";
-import { DRAFT_DISTANCE, DRAFT_SPEED_BONUS, LATE_KICK_PROGRESS_THRESHOLD } from "./constants";
+import { DRAFT_DISTANCE } from "./constants";
 
 /**
  * Style-specific draft bonus multipliers.
- * Closers and pressers benefit more from drafting (energy saving),
- * front-runners benefit less (they're usually in front).
+ *
+ * Drafting is now speed-neutral: it conserves energy (via DRAFT_STAMINA_PRESERVE
+ * in staminaFade.ts) rather than providing a free speed bonus. The style-specific
+ * bonuses below are kept for reference but no longer affect velocity.
  */
 const STYLE_DRAFT_BONUS: Record<string, number> = {
-  S: 1.025, // Closers get the biggest draft bonus
-  P: 1.015, // Stalkers get standard bonus
-  EP: 1.01, // Early-pressers get slightly less
-  E: 1.005, // Front-runners rarely draft, minimal bonus
+  S: 1.0, // Closers — speed-neutral (energy saved via stamina preserve)
+  P: 1.0, // Stalkers — speed-neutral
+  EP: 1.0, // Early-pressers — speed-neutral
+  E: 1.0, // Front-runners — speed-neutral
 };
 
 /**
  * Calculate style-aware draft multiplier for a runner.
  *
- * Applies a running-style-scaled speed bonus when drafting,
- * which fades in the late race (progress > 0.85).
+ * Drafting is speed-neutral: always returns 1.0. The stamina benefit of
+ * drafting is handled separately in staminaFade.ts via DRAFT_STAMINA_PRESERVE.
  *
  * @param r - The runner to calculate draft for
  * @param progress - Current race progress (0-1)
- * @returns Draft multiplier
+ * @returns Draft multiplier (always 1.0)
  */
 export function calculateStyleAwareDraftMultiplier(r: Runner, progress: number): number {
-  if (!r.draftingHorseId) return 1.0;
-
-  // No draft bonus in late kick phase
-  if (progress >= LATE_KICK_PROGRESS_THRESHOLD) {
-    return 1.0;
-  }
-
-  const styleBonus = STYLE_DRAFT_BONUS[r.runningStyle] ?? DRAFT_SPEED_BONUS;
-  let draftMul = styleBonus;
-
-  // Front-runner rail bonus when drafting
-  if (r.jockeyInstructions?.ridingStyle === "front_runner") {
-    draftMul *= 1.005;
-  }
-
-  // Fade draft bonus as we approach late kick
-  if (progress > 0.7) {
-    const fadePhase =
-      (LATE_KICK_PROGRESS_THRESHOLD - progress) / (LATE_KICK_PROGRESS_THRESHOLD - 0.7);
-    draftMul = 1 + (draftMul - 1) * fadePhase;
-  }
-
-  return draftMul;
+  // Drafting is speed-neutral — energy conservation only.
+  // The stamina preserve benefit is applied in staminaFade.ts.
+  return 1.0;
 }
 
 /**

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { runRaceToCompletion, computePaceContext } from "@/core/race/engine/simulation";
 import { calculateTacticalAdjustment } from "@/core/race/engine/tacticalAI";
+import { applyBlockingEffect, detectBlocking } from "@/core/race/engine/jockeyEffects";
 import type { Horse, Jockey } from "@/game/types";
 import type { Runner, PaceContext } from "@/core/race/engine/runnerBuilder";
 
@@ -37,7 +38,8 @@ describe("Advanced AI Tactics", () => {
     }) as any;
 
   it("should apply traffic penalties when horses are blocked", () => {
-    // Two horses in the same lane, one directly behind the other
+    // Two horses in the same lane, one directly behind the other.
+    // Gap must be >= MIN_BLOCK_GAP (0.8) for blocking to trigger.
     const runners = [
       {
         horseId: "H1",
@@ -51,7 +53,7 @@ describe("Advanced AI Tactics", () => {
       },
       {
         horseId: "H2",
-        position: 9.5,
+        position: 9.0, // gap = 1.0 >= MIN_BLOCK_GAP
         velocity: 18,
         lane: 0,
         runningStyle: "P",
@@ -61,24 +63,16 @@ describe("Advanced AI Tactics", () => {
       },
     ] as any;
 
-    // Run one step (0.1s)
-    const dt = 0.1;
-    const pace = computePaceContext(runners, 1000);
-
-    // Manual step simulation for H2
-    // Expected: H2 velocity should be capped by H1
-    const blockingHorse = runners[0];
+    // Call detectBlocking then applyBlockingEffect (sortedField = leader first)
+    const sortedField = [...runners].sort((a: any, b: any) => b.position - a.position);
     const r2 = runners[1];
+    detectBlocking(r2, sortedField);
+    applyBlockingEffect(r2, sortedField);
 
-    if (
-      blockingHorse.position > r2.position &&
-      blockingHorse.position - r2.position < 1.5 &&
-      Math.abs(blockingHorse.lane - r2.lane) < 0.4
-    ) {
-      r2.velocity = Math.min(r2.velocity, blockingHorse.velocity * 0.98);
-    }
-
-    expect(r2.velocity).toBeLessThan(16);
+    // H2 is blocked by H1 (same lane, within 1.5m). On the rail (lane 0),
+    // H2 is boxed in (no inside lane to escape to).
+    // Velocity should be reduced.
+    expect(r2.velocity).toBeLessThan(18);
   });
 
   it("should identify hot pace and adjust closers", () => {

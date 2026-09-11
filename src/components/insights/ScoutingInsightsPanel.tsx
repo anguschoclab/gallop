@@ -38,7 +38,7 @@ import {
   lastScoutDayByHorse,
   matchesScoutingThresholds,
   type ScoutingThresholds,
-} from "@/core/npc/scoutingThresholds";
+} from "@/services/scouting/scoutingFacade";
 
 import {
   INSIGHT_METRICS,

@@ -136,11 +136,11 @@ export function getBreedingInsights(
   }
 
   const topSires = Object.entries(sireMap)
-    .map(([sireId, data]) => ({
+    .map(([sireId, sireRecord]) => ({
       sireId,
-      sireName: data.name,
-      successRate: data.count > 0 ? data.successes / data.count : 0,
-      count: data.count,
+      sireName: sireRecord.name,
+      successRate: sireRecord.count > 0 ? sireRecord.successes / sireRecord.count : 0,
+      count: sireRecord.count,
     }))
     .sort((a, b) => b.successRate - a.successRate)
     .slice(0, 5);

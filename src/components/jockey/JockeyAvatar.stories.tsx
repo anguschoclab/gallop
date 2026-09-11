@@ -5,7 +5,7 @@ import {
   JOCKEY_AVATAR_ASPECT,
   type JockeyAvatarSize,
 } from "./JockeyAvatar";
-import { asJockeyId } from "@/core/types/branded";
+import { asJockeyId } from "@/services/common/commonFacade";
 
 const stubJockey = {
   id: asJockeyId("test-jockey-1"),

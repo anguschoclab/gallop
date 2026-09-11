@@ -8,7 +8,7 @@ import {
   formatInquiryType,
   formatInquiryOutcome,
   type InquiryOutcome,
-} from "@/core/stewards/stewardTypes";
+} from "@/services/stewards/stewardsFacade";
 import { cn } from "@/lib/cn";
 
 const OUTCOME_FILTERS: (InquiryOutcome | "all")[] = [

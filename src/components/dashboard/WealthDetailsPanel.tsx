@@ -10,7 +10,7 @@ import { isPlayerOwned, getStableId } from "@/services/horse/horseFacade";
 import { WEALTH_DETAILS_TOP_HORSES_LIMIT } from "@/constants";
 import { cn } from "@/lib/cn";
 import { ChevronDown } from "lucide-react";
-import type { WealthStandingEntry } from "@/core/standings/computeWealthStandings";
+import type { WealthStandingEntry } from "@/services/standings/standingsFacade";
 import type { Horse } from "@/game/types";
 
 interface WealthDetailsPanelProps {

@@ -117,11 +117,11 @@ class UUIDRegistry {
   /**
    * Import UUIDs into the registry from an exported state.
    *
-   * @param data - Object containing UUIDs and their entity types
+   * @param entries - Object containing UUIDs and their entity types
    * @throws Error if any UUID is already registered
    */
-  import(data: Record<string, string>): void {
-    for (const [uuid, entityType] of Object.entries(data)) {
+  import(entries: Record<string, string>): void {
+    for (const [uuid, entityType] of Object.entries(entries)) {
       this.register(uuid, entityType);
     }
   }

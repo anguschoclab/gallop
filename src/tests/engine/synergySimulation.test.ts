@@ -28,8 +28,8 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
 const SURFACE = "Turf" as const;
 const CONDITIONS = { speedMul: 1, staminaDrainMul: 1 };
 
-describe("Affinity speed bonus in runnerBuilder", () => {
-  it("runner with Soulmates affinity gets ~4.5% higher topSpeed than zero-affinity", () => {
+describe("Affinity acceleration bonus in runnerBuilder", () => {
+  it("runner with Soulmates affinity gets ~4.5% higher accel than zero-affinity", () => {
     const horse = mkHorse({ id: "h1" });
 
     const zeroAffinityJockey = mkJockey({ id: "j-zero", affinityMap: {}, stableAffinity: 0 });
@@ -42,13 +42,13 @@ describe("Affinity speed bonus in runnerBuilder", () => {
     const zeroRunner = buildRunner(horse, true, 1600, SURFACE, CONDITIONS, 1, zeroAffinityJockey);
     const soulRunner = buildRunner(horse, true, 1600, SURFACE, CONDITIONS, 1, soulmateJockey);
 
-    // affinityBonus at Soulmates = 0.15, speed multiplier = 1 + 0.15 * 0.3 = 1.045
+    // affinityBonus at Soulmates = 0.15, accel multiplier = 1 + 0.15 * 0.3 = 1.045
     const expectedRatio = 1 + AFFINITY_CONSTANTS.BONUS.soulmates * 0.3;
-    expect(soulRunner.topSpeed).toBeGreaterThan(zeroRunner.topSpeed);
-    expect(soulRunner.topSpeed / zeroRunner.topSpeed).toBeCloseTo(expectedRatio, 1);
+    expect(soulRunner.accel).toBeGreaterThan(zeroRunner.accel);
+    expect(soulRunner.accel / zeroRunner.accel).toBeCloseTo(expectedRatio, 1);
   });
 
-  it("runner with Trusted affinity gets smaller speed bonus", () => {
+  it("runner with Trusted affinity gets smaller accel bonus", () => {
     const horse = mkHorse({ id: "h1" });
 
     const zeroAffinityJockey = mkJockey({ id: "j-zero", affinityMap: {}, stableAffinity: 0 });
@@ -61,12 +61,12 @@ describe("Affinity speed bonus in runnerBuilder", () => {
     const zeroRunner = buildRunner(horse, true, 1600, SURFACE, CONDITIONS, 1, zeroAffinityJockey);
     const trustedRunner = buildRunner(horse, true, 1600, SURFACE, CONDITIONS, 1, trustedJockey);
 
-    // Trusted bonus = 0.05, speed multiplier = 1 + 0.05 * 0.3 = 1.015
-    expect(trustedRunner.topSpeed).toBeGreaterThan(zeroRunner.topSpeed);
-    expect(trustedRunner.topSpeed / zeroRunner.topSpeed).toBeCloseTo(1.015, 1);
+    // Trusted bonus = 0.05, accel multiplier = 1 + 0.05 * 0.3 = 1.015
+    expect(trustedRunner.accel).toBeGreaterThan(zeroRunner.accel);
+    expect(trustedRunner.accel / zeroRunner.accel).toBeCloseTo(1.015, 1);
   });
 
-  it("runner with zero affinity gets same topSpeed as before (no regression)", () => {
+  it("runner with zero affinity gets same topSpeed and accel as before (no regression)", () => {
     const horse = mkHorse({ id: "h1" });
     const jockey = mkJockey({ id: "j-zero", affinityMap: {}, stableAffinity: 0 });
 
@@ -74,6 +74,7 @@ describe("Affinity speed bonus in runnerBuilder", () => {
 
     expect(runner.affinityBonus).toBe(0);
     expect(runner.topSpeed).toBeGreaterThan(0);
+    expect(runner.accel).toBeGreaterThan(0);
   });
 });
 

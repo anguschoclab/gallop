@@ -61,6 +61,17 @@ export type Runner = {
   railPreference?: number;
   factorLedger?: FactorLedgerCollector;
   finalizedLedger?: RunnerFactorLedger;
+  /** Set when a blocker is detected ahead within MIN_BLOCK_GAP in a nearby lane. */
+  blockedAhead?: boolean;
+  /** Set when blocked ahead AND both adjacent lanes are blocked or rail (no escape). */
+  boxedIn?: boolean;
+  /** Lateral escape distance sought (in lane-widths) when blocked but not boxed in.
+   *  Set by calculateTargetLane, consumed by applyBlockingEffect to scale the escape penalty. */
+  escapeLaneDelta?: number;
+  /** Jockey stamina bonus fraction (e.g., 0.02 for a 2% bonus). Set by
+   *  applyJockeyEffects when a matched-archetype pacing bonus applies.
+   *  Consumed by calculateStaminaMultiplier in the next tick. */
+  jockeyStaminaBonus?: number;
 };
 
 export type ConditionsModifier = {

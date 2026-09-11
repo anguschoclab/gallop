@@ -83,3 +83,19 @@ These vague names must be replaced with domain-specific terms:
 - `components` → `services`, `hooks`, `game/types`
 - Lower layers must never import from higher layers.
 - `@/data` immutability is enforced by `dataImmutability.test.ts`.
+
+## Component Deduplication Decisions
+
+### AuctionControls vs BiddingPanel (PR 8 audit)
+
+**Decision: Keep separate.** These two components compose the same sub-components
+(`BidInputPanel`, `MaxBidPanel`) but serve different routes with different control surfaces:
+
+- `AuctionControls` (theater view): pause/resume/pass/skip controls, bid error toast,
+  computes `nextBidAmount` internally.
+- `BiddingPanel` (sale page view): `BuyNowDialog`, house prestige badge, reserve status,
+  message display, takes `nextBid` as a prop.
+
+Unifying into a single `BidConsole` with a `mode` prop would add more conditional
+complexity than the duplication it removes. The shared logic is already extracted
+into `BidInputPanel`/`MaxBidPanel` sub-components.
