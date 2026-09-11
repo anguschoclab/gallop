@@ -12,6 +12,7 @@ interface LiveSplitsTableProps {
 }
 
 const SPLIT_LABELS = ["¼", "½", "¾", "Fin"] as const;
+const MARKER_FRACTIONS = [0.25, 0.5, 0.75, 1.0];
 
 export function LiveSplitsTable({
   runners,
@@ -41,7 +42,6 @@ export function LiveSplitsTable({
           {runners.map((r) => {
             const horse = localHorseMap.get(r.horseId);
             const crossings = liveSplits.get(r.horseId) ?? [];
-            const markerFractions = [0.25, 0.5, 0.75, 1.0];
             return (
               <tr key={r.horseId} className="hover:bg-white/[0.02]">
                 <td
@@ -52,7 +52,7 @@ export function LiveSplitsTable({
                 >
                   {r.name}
                 </td>
-                {markerFractions.map((frac, mi) => {
+                {MARKER_FRACTIONS.map((frac, mi) => {
                   const elapsed = crossings[mi];
                   const target = horse
                     ? getTargetSplitTime(horse, distance, frac, calibratedPars ?? {})
