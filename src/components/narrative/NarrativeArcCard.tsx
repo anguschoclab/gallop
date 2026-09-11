@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Flame, BookOpen, CheckCircle, Sparkles } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { NewsContent } from "@/components/narrative/NewsContent";
-import type { NarrativeArc } from "@/core/ai/npcCycleAI";
+import type { NarrativeArc } from "@/services/ai/aiFacade";
 
 interface NarrativeArcCardProps {
   arc: NarrativeArc;

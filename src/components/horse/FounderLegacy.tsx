@@ -2,7 +2,7 @@ import { useGame, useGameWithShallow } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Users, TrendingUp, DollarSign } from "lucide-react";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 
 interface FounderLegacyProps {
   horseId: string;

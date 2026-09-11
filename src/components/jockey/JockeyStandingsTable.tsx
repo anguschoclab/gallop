@@ -6,8 +6,12 @@ import {
   LeaderboardShell,
 } from "@/components/leaderboard/LeaderboardPrimitives";
 import { useLeaderboardControls } from "@/hooks/leaderboard/useLeaderboardControls";
-import type { Jockey } from "@/core/jockey/types";
-import { getJockeyTier, JOCKEY_TIER_ORDER, JOCKEY_TIER_LABELS } from "@/core/jockey/jockeyTier";
+import type { Jockey } from "@/services/jockey/jockeyFacade";
+import {
+  getJockeyTier,
+  JOCKEY_TIER_ORDER,
+  JOCKEY_TIER_LABELS,
+} from "@/services/jockey/jockeyFacade";
 import { ARCHETYPES } from "@/data/jockeys";
 import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";

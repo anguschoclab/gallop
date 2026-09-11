@@ -1,4 +1,4 @@
-import type { SectionalSplit } from "@/core/race/types";
+import type { SectionalSplit } from "@/services/race/raceFacade";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/cn";
 import { useMemo } from "react";

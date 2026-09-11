@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateOverallRating } from "@/services/horse/horseFacade";
 import type { Horse, HorseCampaign } from "@/game/types";
 import { Activity, ShieldAlert, Sparkles, Heart } from "lucide-react";
 import { cn } from "@/lib/cn";

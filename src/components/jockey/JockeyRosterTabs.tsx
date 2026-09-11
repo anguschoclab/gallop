@@ -2,7 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { JockeyCard } from "./JockeyCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserCheck, Users } from "lucide-react";
-import type { Jockey } from "@/core/jockey/types";
+import type { Jockey } from "@/services/jockey/jockeyFacade";
 
 export interface JockeyRosterTabsProps {
   myJockeys: Jockey[];

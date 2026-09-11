@@ -1,8 +1,8 @@
 import { Badge } from "@/components/ui/badge";
-import { gradeColor } from "@/core/common/uiTokens";
-import { getOrdinalSuffix } from "@/core/common/ordinal";
+import { gradeColor } from "@/services/common/commonFacade";
+import { getOrdinalSuffix } from "@/services/common/commonFacade";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import { getCountryFlag } from "@/core/common/countryFlag";
+import { getCountryFlag } from "@/services/common/commonFacade";
 
 interface GradedHistoryEntry {
   raceId?: string;

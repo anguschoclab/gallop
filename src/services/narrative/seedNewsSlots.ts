@@ -13,7 +13,6 @@ import type { Rng } from "@/core/common/rng";
 import {
   getEliteMajorStables,
   getNpcHorsesByRating,
-  getNpcHorses,
   getG1RacesByDay,
   getGradedRacesByDay,
   getVeteransByFame,
@@ -308,8 +307,13 @@ export function buildGradedPreview(
 
   if (gradedAfterG1.length === 0) return null;
 
-  const g2Races = gradedAfterG1.filter((r) => r.graded?.grade === "G2");
-  const g3Races = gradedAfterG1.filter((r) => r.graded?.grade === "G3");
+  const g2Races: Race[] = [];
+  const g3Races: Race[] = [];
+  for (const r of gradedAfterG1) {
+    const grade = r.graded?.grade;
+    if (grade === "G2") g2Races.push(r);
+    else if (grade === "G3") g3Races.push(r);
+  }
 
   const previewRace = g2Races[0] ?? g3Races[0];
   if (!previewRace) return null;
@@ -366,17 +370,16 @@ export function buildGradedPreview(
 /**
  * Build bloodline insight news item analyzing the most prevalent bloodline.
  *
- * @param horses - All horses in the game
+ * @param horses - NPC-owned horses (pre-filtered by caller — `seedGazetteNews` passes NPC-only horses)
  * @param day - Current game day
  * @param rng - Seeded random number generator
  * @returns Bloodline insight news item or null if no NPC horses
  */
 export function buildBloodlineInsight(horses: Horse[], day: number, rng: Rng): NewsItem | null {
-  const npcHorses = getNpcHorses(horses);
-  if (npcHorses.length === 0) return null;
+  if (horses.length === 0) return null;
 
-  const eliteHorses = npcHorses.filter((h) => calculateOverallRating(h) >= 80);
-  const pool = eliteHorses.length > 0 ? eliteHorses : npcHorses;
+  const eliteHorses = horses.filter((h) => calculateOverallRating(h) >= 80);
+  const pool = eliteHorses.length > 0 ? eliteHorses : horses;
 
   const bloodlineCounts: Record<string, number> = {};
   for (const h of pool) {

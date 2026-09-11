@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ListOrdered } from "lucide-react";
-import type { StrategicDirective } from "@/core/ai/strategicCoordinator";
+import type { StrategicDirective } from "@/services/ai/aiFacade";
 
 interface StrategicDirectivesPanelProps {
   directives?: StrategicDirective[];

@@ -4,13 +4,13 @@ import {
   getSpriteUrl,
   isAnimatedSprite,
 } from "@/components/race/raceVisualHelpers";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import type { Weather } from "@/core/race/types";
+import type { Runner } from "@/services/race/raceFacade";
+import type { Weather } from "@/services/race/raceFacade";
 import {
   buildFieldContext,
   deriveRunnerConditions,
   captureRunnerMoods,
-} from "@/core/race/runnerConditions";
+} from "@/services/race/raceFacade";
 import { RunnerConditionBadges } from "./RunnerConditionBadges";
 import { RunnerMoodFace } from "./RunnerMoodFace";
 import { HorseSprite } from "./HorseSprite";

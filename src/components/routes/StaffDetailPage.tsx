@@ -6,11 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PersonRaceHistoryTab } from "@/components/person/PersonRaceHistoryTab";
-import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/core/staff/staffConfig";
-import { formatCurrency } from "@/core/common/formatting";
+import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/services/staff/staffFacade";
+import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/cn";
 import { ChevronLeft, User, History, Briefcase, Trophy } from "lucide-react";
-import type { StaffMember } from "@/core/staff/staffTypes";
+import type { StaffMember } from "@/services/staff/staffFacade";
 
 function StaffDetailPage() {
   const { staffId } = useParams({ from: "/staff/$staffId" });

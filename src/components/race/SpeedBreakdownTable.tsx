@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/cn";
-import type { SectionalSplit, SectionalEntry } from "@/core/race/types";
+import type { SectionalSplit, SectionalEntry } from "@/services/race/raceFacade";
 
 interface SpeedBreakdownRunner {
   horseId: string;

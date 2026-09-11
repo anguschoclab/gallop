@@ -5,7 +5,7 @@ import {
   isCeremonyHeld,
   isRsvpDeadlinePassed,
   type AwardCeremonyInvitation,
-} from "@/core/awards/invitations";
+} from "@/services/awards/awardsFacade";
 
 type Phase = "pending" | "locked" | "counted";
 

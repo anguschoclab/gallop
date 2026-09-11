@@ -6,8 +6,8 @@ import {
   getReputationTier,
   formatReputationTier,
   type ManagerReputation,
-} from "@/core/reputation/reputationTypes";
-import { reputationColor } from "@/core/common/uiTokens";
+} from "@/services/reputation/reputationFacade";
+import { reputationColor } from "@/services/common/commonFacade";
 import { cn } from "@/lib/cn";
 import { NewsContent } from "@/components/narrative/NewsContent";
 

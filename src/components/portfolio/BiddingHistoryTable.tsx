@@ -18,9 +18,9 @@ import {
 } from "@/components/ui/table";
 import { StatCard } from "@/components/common/StatCard";
 import { PillToggleGroup } from "@/components/common/PillToggleGroup";
-import { formatCurrency } from "@/core/common/formatting";
-import { getAuctionHouse } from "@/core/prestige";
-import { biddingHistorySummary, type PlayerBiddingRecord } from "@/core/auction/biddingHistory";
+import { formatCurrency } from "@/lib/formatting";
+import { getAuctionHouse } from "@/services/prestige/prestigeFacade";
+import { biddingHistorySummary, type PlayerBiddingRecord } from "@/services/auction/auctionFacade";
 
 const OUTCOMES = ["all", "won", "outbid", "passed"] as const;
 type OutcomeFilter = (typeof OUTCOMES)[number];

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/cn";
-import { ALL_ARCHETYPES } from "@/core/breeding/archetypes";
+import { ALL_ARCHETYPES } from "@/services/breeding/breedingFacade";
 import { ArchetypeCard } from "./ArchetypeCard";
 import { toast } from "sonner";
 import { Target } from "lucide-react";

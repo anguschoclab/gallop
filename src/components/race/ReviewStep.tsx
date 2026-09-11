@@ -3,9 +3,9 @@ import { ChevronRight, Truck, AlertTriangle } from "lucide-react";
 import { HorsePortrait } from "@/components/horse/HorsePortrait";
 import { JockeyAvatar } from "@/components/jockey/JockeyAvatar";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import { getTransportCostForRace } from "@/core/race/transportCost";
+import { getTransportCostForRace } from "@/services/race/raceFacade";
 import type { Horse, Jockey, Race } from "@/game/types";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/services/race/raceFacade";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 
 interface Props {

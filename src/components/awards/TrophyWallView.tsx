@@ -3,8 +3,8 @@ import { REGION_COLOR_CLASSES } from "@/assets/awards";
 import { cn } from "@/lib/cn";
 import { Link } from "@tanstack/react-router";
 import { Trophy, Star } from "lucide-react";
-import type { RegionalAward } from "@/core/awards/types";
-import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
+import type { RegionalAward } from "@/services/awards/awardsFacade";
+import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/services/awards/awardsFacade";
 
 interface TrophyWallViewProps {
   awards: RegionalAward[];

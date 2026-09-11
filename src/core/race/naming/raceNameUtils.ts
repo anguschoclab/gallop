@@ -5,7 +5,7 @@
  */
 
 import type { RaceClass, ClaimingPrice, WinCondition, RegionalSystem } from "@/game/types";
-import type { Track } from "@/data/tracks";
+import type { Track } from "@/core/data/tracksAccessor";
 
 export interface RaceNameParams {
   track: Track;

@@ -8,10 +8,10 @@ import {
 } from "@/components/charts";
 import { cn } from "@/lib/cn";
 import { ArrowUpDown } from "lucide-react";
-import { timeWindowLabel } from "@/core/analytics/timeWindow";
-import type { DrilldownEntity, RegionRunRow } from "@/core/analytics/regionalTrends";
+import { timeWindowLabel } from "@/services/analytics/analyticsFacade";
+import type { DrilldownEntity, RegionRunRow } from "@/services/analytics/analyticsFacade";
 import type { EntityKind, Lookups } from "@/constants/regionalConstants";
-import type { TimeWindowWeeks } from "@/core/analytics/timeWindow";
+import type { TimeWindowWeeks } from "@/services/analytics/analyticsFacade";
 import { EntityDetailPanel } from "./EntityDetailPanel";
 import { type MetricDef, weeklySeries } from "./regionalMetrics";
 

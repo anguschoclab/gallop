@@ -17,7 +17,7 @@ import {
   type DistanceBucket,
   type SurfaceFilter,
   type TendencyFilter,
-} from "@/core/horse/paceTendency";
+} from "@/services/horse/horseFacade";
 
 const TENDENCIES: { value: TendencyFilter; label: string; short: string }[] = [
   { value: "any", label: "All Styles", short: "All" },

@@ -1,5 +1,5 @@
 import type { Horse } from "@/game/types";
-import { derivePaceStyleLabel } from "@/core/race/sectionalAnalysis";
+import { derivePaceStyleLabel } from "@/services/race/raceFacade";
 
 interface PaceProfileSummaryProps {
   horse: Horse;

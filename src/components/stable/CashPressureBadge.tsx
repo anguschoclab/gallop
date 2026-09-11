@@ -2,9 +2,9 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Wallet } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { formatCurrency } from "@/core/common/formatting";
-import { type CashPressure } from "@/core/stable/cashPressure";
-import { evaluatePrivateSaleThresholds } from "@/core/stable/privateSaleThresholds";
+import { formatCurrency } from "@/lib/formatting";
+import { type CashPressure } from "@/services/stable/stableFacade";
+import { evaluatePrivateSaleThresholds } from "@/services/stable/stableFacade";
 import { CashPressureMeter } from "./CashPressureMeter";
 import type { Stable } from "@/game/types";
 

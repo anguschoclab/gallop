@@ -2,10 +2,10 @@ import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { HorsePortrait } from "@/components/horse/HorsePortrait";
-import { formatCurrency } from "@/core/common/formatting";
-import { netProceeds, commissionAmount } from "@/core/auction/engine";
+import { formatCurrency } from "@/lib/formatting";
+import { netProceeds, commissionAmount } from "@/services/auction/auctionFacade";
 import { CONSIGNMENT_COMMISSION } from "@/constants";
-import { resolveSaleHouse, houseCommissionRate } from "@/core/prestige";
+import { resolveSaleHouse, houseCommissionRate } from "@/services/prestige/prestigeFacade";
 import type { AuctionLot, Horse, Stable, AuctionSale } from "@/game/types";
 
 /**

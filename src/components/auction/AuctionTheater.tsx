@@ -10,7 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { useGame } from "@/game/store";
 import { useRouter, useNavigate } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import { useScoreboard } from "@/hooks/auction/useScoreboard";
 import { BidHistoryPanel } from "./BidHistoryPanel";
 import { WinOverlay } from "./WinOverlay";
@@ -26,7 +26,7 @@ import { getDisplayableStats } from "@/core/npc/scouting";
 import { Sparkles, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
-import { nextBidAmount } from "@/core/auction/runner";
+import { nextBidAmount } from "@/services/auction/auctionFacade";
 import type { BidInputPanelHandle } from "./sub/BidInputPanel";
 
 interface AuctionTheaterProps {

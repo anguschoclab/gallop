@@ -10,11 +10,11 @@ import {
 import dagre from "@dagrejs/dagre";
 import "@xyflow/react/dist/style.css";
 import { useGame } from "@/game/store";
-import { buildPedigreeGraph, NODE_WIDTH, NODE_HEIGHT } from "@/core/breeding/pedigreeGraph";
-import { classifyCoi } from "@/core/breeding/populationGenetics";
+import { buildPedigreeGraph, NODE_WIDTH, NODE_HEIGHT } from "@/services/breeding/breedingFacade";
+import { classifyCoi } from "@/services/breeding/breedingFacade";
 import { PedigreeNodeCard } from "./PedigreeNodeCard";
 import { cn } from "@/lib/cn";
-import type { PedigreeFlowNode, PedigreeEdge } from "@/core/breeding/pedigreeGraph";
+import type { PedigreeFlowNode, PedigreeEdge } from "@/services/breeding/breedingFacade";
 
 const nodeTypes: NodeTypes = {
   horse: PedigreeNodeCard as unknown as ComponentType<NodeProps<PedigreeFlowNode>>,

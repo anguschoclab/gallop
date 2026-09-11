@@ -21,7 +21,7 @@ import type {
   ConfirmedAptitudes,
   Stable,
 } from "@/game/types";
-import { GRADED_RACES_BY_KEY } from "@/data/gradedRaces";
+import { GRADED_RACES_BY_KEY } from "@/core/data/gradedRacesAccessor";
 import { getCurrentYear } from "@/core/race/schedule";
 import { detectContender, createCampaignAIState } from "@/core/ai/campaignAI";
 import { getOptimalMajorRaceTarget, getPrepRaceStrategy } from "@/core/ai/campaignTargeting";

@@ -1,7 +1,7 @@
 import { useGame } from "@/game/store";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles } from "lucide-react";
-import type { MareRanking, BlueHenLeaderboard } from "@/core/breeding/leaderboardTypes";
+import type { MareRanking, BlueHenLeaderboard } from "@/services/breeding/breedingFacade";
 import {
   LeaderboardControlsBar,
   LeaderboardEmpty,

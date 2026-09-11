@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { Stable } from "@/core/stable/types";
+import type { Stable } from "@/services/stable/stableFacade";
 import { StableCard } from "./StableCard";
 
 const DEFAULT_SECTION_CLASS = "mb-8";

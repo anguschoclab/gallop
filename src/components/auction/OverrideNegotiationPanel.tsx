@@ -11,9 +11,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
-import { formatCurrency } from "@/core/common/formatting";
-import { computePremiumBuyout, computeDiplomaticPressure } from "@/core/horse/overrideNegotiation";
-import { evaluateHorseAttachment, attachmentAdjustedAsk } from "@/core/horse/attachment";
+import { formatCurrency } from "@/lib/formatting";
+import { computePremiumBuyout, computeDiplomaticPressure } from "@/services/horse/horseFacade";
+import { evaluateHorseAttachment, attachmentAdjustedAsk } from "@/services/horse/horseFacade";
 import type { Horse, Stable } from "@/game/types";
 
 interface OverrideNegotiationPanelProps {

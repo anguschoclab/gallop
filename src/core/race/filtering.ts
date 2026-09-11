@@ -9,7 +9,7 @@
  */
 
 import type { Race } from "@/game/types";
-import { GRADED_RACES_BY_TRIPLECROWN_KEY } from "@/data/gradedRaces";
+import { GRADED_RACES_BY_TRIPLECROWN_KEY } from "@/core/data/gradedRacesAccessor";
 
 /**
  * Pure race filtering logic

@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import React from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { cn } from "@/lib/cn";
-import type { Cartel, DiplomaticEvent } from "@/core/ai/npcCycleAI";
+import type { Cartel, DiplomaticEvent } from "@/services/ai/aiFacade";
 
 interface DiplomacyPanelProps {
   stableId: string;

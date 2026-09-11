@@ -5,9 +5,9 @@ import { SpeedBreakdownChart } from "@/components/race/SpeedBreakdownChart";
 import { JockeyReportPanel } from "@/components/race/JockeyReportPanel";
 import { LiveSplitsTable } from "@/components/race/LiveSplitsTable";
 import { RacePrestigeBreakdown } from "@/components/shared/PrestigeBreakdownPanel";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
+import type { Runner } from "@/services/race/raceFacade";
 import type { Horse } from "@/game/types";
-import type { Race } from "@/core/race/types";
+import type { Race } from "@/services/race/raceFacade";
 
 interface PostRaceAnalysisProps {
   race: Race;

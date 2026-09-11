@@ -8,7 +8,7 @@ import {
   CartesianGrid,
   ReferenceLine,
 } from "recharts";
-import { getOrdinalSuffix } from "@/core/common/ordinal";
+import { getOrdinalSuffix } from "@/services/common/commonFacade";
 import { BEYER_CHART_HISTORY_LIMIT } from "@/constants";
 
 type Entry = { raceName: string; day: number; beyer?: number; position: number };

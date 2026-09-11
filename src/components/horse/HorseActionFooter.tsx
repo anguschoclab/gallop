@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import type { Horse } from "@/game/types";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { isPlayerOwned } from "@/services/horse/horseFacade";
 import { Eye, Calendar } from "lucide-react";
 
 interface HorseActionFooterProps {

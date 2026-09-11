@@ -10,16 +10,16 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { formatCurrency } from "@/core/common/formatting";
-import { calculateLotValuation } from "@/core/auction/engine";
+import { formatCurrency } from "@/lib/formatting";
+import { calculateLotValuation } from "@/services/auction/auctionFacade";
 import { Badge } from "@/components/ui/badge";
 import {
   evaluateHorseAttachment,
   attachmentAdjustedAsk,
   knownBuyerPremiumMultiplier,
   suggestedOfferTiers,
-} from "@/core/horse/attachment";
-import { getReputationTier, formatReputationTier } from "@/core/reputation/reputationTypes";
+} from "@/services/horse/horseFacade";
+import { getReputationTier, formatReputationTier } from "@/services/reputation/reputationFacade";
 import { AttachmentBreakdown } from "@/components/auction/AttachmentBreakdown";
 import { CashPressureBadge } from "@/components/stable/CashPressureBadge";
 import { OverrideNegotiationPanel } from "@/components/auction/OverrideNegotiationPanel";

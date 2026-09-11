@@ -9,10 +9,10 @@ import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
-import { createDefaultExchangeState } from "@/core/market/exchange";
+import { createDefaultExchangeState } from "@/services/market/marketFacade";
 
 const CARD = "bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4";
 const HEAD = "text-[10px] font-black uppercase tracking-wide text-cream/40";

@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import type { GameState } from "@/game/types";
-import type { Race } from "@/core/race/types";
-import type { Horse } from "@/core/horse/types";
+import type { Race } from "@/services/race/raceFacade";
+import type { Horse } from "@/services/horse/horseFacade";
 import { Link } from "@tanstack/react-router";
 import {
   calculateNominationFee,
@@ -25,7 +25,7 @@ import { toast } from "sonner";
 import { Flag, Trophy, Lock } from "lucide-react";
 import { NOMINATIONS_UPCOMING_LIMIT } from "@/constants";
 import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { isPlayerOwned } from "@/services/horse/horseFacade";
 
 const TIER_COLORS: Record<NominationTier, string> = {
   early: "bg-emerald-500/20 text-emerald-300 border-emerald-400/40",

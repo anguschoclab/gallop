@@ -9,8 +9,8 @@
  * Related files: ./StableCard.tsx (consumer)
  */
 
-import { recommendedMaxOffer } from "@/core/stable/recommendedMaxOffer";
-import { formatCurrency } from "@/core/common/formatting";
+import { recommendedMaxOffer } from "@/services/stable/stableFacade";
+import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/cn";
 import type { Stable } from "@/game/types";
 

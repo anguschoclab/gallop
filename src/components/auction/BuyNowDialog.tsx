@@ -11,7 +11,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Zap } from "lucide-react";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 

@@ -11,7 +11,7 @@ import {
   X,
   ExternalLink,
 } from "lucide-react";
-import type { CampaignFlag } from "@/core/calendar/campaignTypes";
+import type { CampaignFlag } from "@/services/calendar/calendarFacade";
 
 interface CampaignAlertsFeedProps {
   flags?: CampaignFlag[];

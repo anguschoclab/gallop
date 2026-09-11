@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
-import { formatCurrency } from "@/core/financial";
+import { formatCurrency } from "@/services/financial/financialFacade";
 
 export const Route = createFileRoute("/epilogue")({
   component: EpiloguePage,

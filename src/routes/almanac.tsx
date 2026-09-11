@@ -22,7 +22,7 @@ import { DecadeLeaders } from "@/components/history/DecadeLeaders";
 import { TrackHistoryTimeline } from "@/components/history/TrackHistoryTimeline";
 import { RealWorldBenchmarks } from "@/components/history/RealWorldBenchmarks";
 import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
-import type { SeasonRecord, TrackRecord } from "@/core/history/historyTypes";
+import type { SeasonRecord, TrackRecord } from "@/services/history/historyFacade";
 
 const ALMANAC_TABS = [
   "news",

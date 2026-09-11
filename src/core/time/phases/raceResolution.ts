@@ -16,11 +16,8 @@ import type { Race } from "@/game/types";
 import type { WeatherState } from "@/core/weather/weatherTypes";
 import type { ClaimingIntent, RaceResolutionIntent } from "@/core/resolver/intents";
 import { resolveRacePort } from "@/core/time/pipelinePorts";
-import {
-  recordNpcAiOutcomes,
-  checkTrackRecordAndHof,
-  resolveClaimingForRace,
-} from "./raceResolutionHelpers";
+import { recordNpcAiOutcomes } from "./raceResolutionHelpers";
+import { generatePostRaceImpacts } from "./postRaceImpacts";
 
 /**
  * Race Resolution Phase (Order 70)
@@ -138,34 +135,24 @@ export const raceResolutionPhase: PipelinePhase = {
           );
         }
 
-        // Track record, G1 history & Hall of Fame
-        const trackRecordAndHofImpacts = checkTrackRecordAndHof(
+        // Track record, G1 history & Hall of Fame + claiming resolution
+        const claimIntents = context.intents.filter(
+          (i): i is ClaimingIntent => i.type === "claiming" && i.raceId === race.id,
+        );
+        const postImpacts = generatePostRaceImpacts(
           race,
-          result,
           impactRunners,
           horseMap,
           newDay,
           state.trackRecords || {},
           hallOfFameIds,
+          claimIntents,
+          Object.values(state.horses),
+          rng,
           context.ports,
+          result,
         );
-        impacts.push(...trackRecordAndHofImpacts);
-
-        // Claiming resolution
-        if (race.claimingPrice) {
-          const claimIntents = context.intents.filter(
-            (i): i is ClaimingIntent => i.type === "claiming" && i.raceId === race.id,
-          );
-          const claimingImpacts = resolveClaimingForRace(
-            race,
-            claimIntents,
-            Object.values(state.horses),
-            newDay,
-            rng,
-            context.ports,
-          );
-          impacts.push(...claimingImpacts);
-        }
+        impacts.push(...postImpacts);
         continue;
       }
 
@@ -233,34 +220,24 @@ export const raceResolutionPhase: PipelinePhase = {
         impacts.push(impact);
       }
 
-      // --- Historical Records & Hall of Fame ---
-      const trackRecordAndHofImpacts = checkTrackRecordAndHof(
+      // --- Historical Records & Hall of Fame + claiming resolution ---
+      const claimIntents = context.intents.filter(
+        (i): i is ClaimingIntent => i.type === "claiming" && i.raceId === race.id,
+      );
+      const postImpacts = generatePostRaceImpacts(
         race,
-        result,
         runners,
         horseMap,
         newDay,
         state.trackRecords || {},
         hallOfFameIds,
+        claimIntents,
+        Object.values(state.horses),
+        rng,
         context.ports,
+        result,
       );
-      impacts.push(...trackRecordAndHofImpacts);
-
-      // Claiming resolution (if race is claiming race)
-      if (race.claimingPrice) {
-        const claimIntents = context.intents.filter(
-          (i): i is ClaimingIntent => i.type === "claiming" && i.raceId === race.id,
-        );
-        const claimingImpacts = resolveClaimingForRace(
-          race,
-          claimIntents,
-          Object.values(state.horses),
-          newDay,
-          rng,
-          context.ports,
-        );
-        impacts.push(...claimingImpacts);
-      }
+      impacts.push(...postImpacts);
     }
 
     // Cleanup

@@ -7,11 +7,11 @@ import { TOOLTIP_DELAY_MS } from "@/constants";
 
 import type { Ref } from "react";
 import { Button } from "@/components/ui/button";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import { Gavel, Pause, Play, FastForward, X } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { nextBidAmount } from "@/core/auction/runner";
+import { nextBidAmount } from "@/services/auction/auctionFacade";
 import { AuctionErrorState } from "@/components/auction/AuctionStates";
 import { BidInputPanel, type BidInputPanelHandle } from "./BidInputPanel";
 import { MaxBidPanel } from "./MaxBidPanel";

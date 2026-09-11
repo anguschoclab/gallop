@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search, BookOpen } from "lucide-react";
-import { JARGON_DEFINITIONS } from "@/core/horse/jargon";
+import { JARGON_DEFINITIONS } from "@/services/horse/horseFacade";
 
 export function GlossaryPanel() {
   const [searchQuery, setSearchQuery] = useState("");

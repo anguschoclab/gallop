@@ -10,7 +10,7 @@
  */
 
 import type { Horse, GameState, Pedigree } from "@/game/types";
-import { findHorseByName } from "@/data/pedigreeData";
+import { findHorseByName } from "@/core/data/pedigreeAccessor";
 import { cachedCoi, cachedBloodline } from "@/core/genetics/genotypeCache";
 
 // ============================================================================

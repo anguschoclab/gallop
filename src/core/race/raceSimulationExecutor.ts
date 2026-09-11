@@ -1,6 +1,6 @@
 import { buildRaceField, rngForRace } from "@/core/race/raceSimulationService";
 import { runRaceToCompletion } from "@/core/race/engine/simulation";
-import { getCourseForRace } from "@/data/tracks";
+import { getCourseForRace } from "@/core/data/tracksAccessor";
 import type { Race, Horse, Jockey, Stable, RaceRunner } from "@/game/types";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 import { asHorseId, asJockeyId } from "@/core/types/branded";

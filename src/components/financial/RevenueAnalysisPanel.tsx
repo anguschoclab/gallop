@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { formatCurrency } from "@/core/financial";
+import { formatCurrency } from "@/services/financial/financialFacade";
 import { TrendingUp } from "lucide-react";
 
 interface RevenueItem {

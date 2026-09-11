@@ -16,7 +16,7 @@ import {
 import { Gavel, Tag, Scissors, Edit, DollarSign } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { AuctionSale, Horse } from "@/game/types";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { isPlayerOwned } from "@/services/horse/horseFacade";
 import { useGame } from "@/game/store";
 import { toast } from "sonner";
 

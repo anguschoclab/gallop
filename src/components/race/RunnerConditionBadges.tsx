@@ -4,7 +4,7 @@
  */
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
-import type { ConditionTone, RunnerCondition } from "@/core/race/runnerConditions";
+import type { ConditionTone, RunnerCondition } from "@/services/race/raceFacade";
 
 const TONE_CLASSES: Record<ConditionTone, string> = {
   positive: "bg-success/85 text-success-foreground",

@@ -5,7 +5,7 @@ import { BreedingCompatibilityCard } from "@/components/breeding/BreedingCompati
 import { SireSelector } from "./SireSelector";
 import { DamSelector } from "./DamSelector";
 import { ParentStatsPanel } from "./ParentStatsPanel";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/services/breeding/breedingFacade";
 import { toast } from "sonner";
 import type { useBreedingPage } from "@/hooks/breeding/useBreedingPage";
 

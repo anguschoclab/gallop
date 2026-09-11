@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useGame } from "@/game/store";
-import type { StaffMember, StaffRole } from "@/core/staff/staffTypes";
+import type { StaffMember, StaffRole } from "@/services/staff/staffFacade";
 
 /**
  * Props for the StaffSupportPanel component.

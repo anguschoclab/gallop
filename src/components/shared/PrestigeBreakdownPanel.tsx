@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { PrestigeBadge } from "@/components/shared/PrestigeBadge";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import {
   housePrestigeMultiplier,
   houseCommissionRate,
@@ -13,8 +13,8 @@ import {
   MIN_FAME_GAIN,
   HOUSE_PRESTIGE_SPREAD,
   RACECOURSE_PRESTIGE_SPREAD,
-} from "@/core/prestige";
-import type { AuctionHouse } from "@/core/prestige";
+} from "@/services/prestige/prestigeFacade";
+import type { AuctionHouse } from "@/services/prestige/prestigeFacade";
 import { CONSIGNMENT_COMMISSION, FAME_GAIN_G1_WIN } from "@/constants";
 import { cn } from "@/lib/cn";
 

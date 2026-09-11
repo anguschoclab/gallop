@@ -3,7 +3,7 @@
  * Every instance reads/writes the same global window (see useTimeWindow), so
  * changing it on one chart set re-scopes them all.
  */
-import { TIME_WINDOW_OPTIONS } from "@/core/analytics/timeWindow";
+import { TIME_WINDOW_OPTIONS } from "@/services/analytics/analyticsFacade";
 import { useTimeWindow } from "@/hooks/analytics/useTimeWindow";
 import { cn } from "@/lib/cn";
 

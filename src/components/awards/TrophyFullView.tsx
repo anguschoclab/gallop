@@ -11,13 +11,13 @@ import {
 } from "@/components/ui/select";
 import { AwardsGrid } from "./AwardsGrid";
 import { groupByRegion } from "./awardUtils";
-import type { AwardRegion, RegionalAward } from "@/core/awards/types";
+import type { AwardRegion, RegionalAward } from "@/services/awards/awardsFacade";
 import {
   REGION_AWARD_NAMES,
   REGION_DISPLAY_NAMES,
   AWARD_REGION_ORDER,
   AWARD_CATEGORY_ORDER,
-} from "@/core/awards/types";
+} from "@/services/awards/awardsFacade";
 import { Trophy, Medal, Star } from "lucide-react";
 
 type TrophySortKey = "year" | "category" | "region";

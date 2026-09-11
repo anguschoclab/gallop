@@ -6,7 +6,7 @@ import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
 import { ClaimingRacePanel } from "@/components/race/ClaimingRacePanel";
 import { RaceCard } from "@/components/race/RaceCard";
 import { NumericValue } from "@/components/horse/HorseBits";
-import { formatCurrency } from "@/core/financial";
+import { formatCurrency } from "@/services/financial/financialFacade";
 import { cn } from "@/lib/cn";
 import type { Race, Claim, Horse } from "@/game/types";
 import { List, LayoutGrid, Target, MapPin, Globe } from "lucide-react";

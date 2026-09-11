@@ -14,7 +14,7 @@ import {
   metricExtent,
   type InsightMetricKey,
   type InsightRow,
-} from "@/core/horse/insightMetrics";
+} from "@/services/horse/horseFacade";
 import { cn } from "@/lib/cn";
 
 const W = 820;

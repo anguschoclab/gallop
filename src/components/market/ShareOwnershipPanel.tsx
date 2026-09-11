@@ -1,11 +1,11 @@
 import { useMemo } from "react";
-import type { Syndicate } from "@/core/breeding/types";
+import type { Syndicate } from "@/services/breeding/breedingFacade";
 import type { Horse, Stable } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Crown, TrendingDown } from "lucide-react";
-import { simulateShareChange } from "@/core/breeding/devolutionUtils";
-import { isPlayerOwned, getStableId } from "@/core/horse/ownership";
+import { simulateShareChange } from "@/services/breeding/breedingFacade";
+import { isPlayerOwned, getStableId } from "@/services/horse/horseFacade";
 
 interface ShareOwnershipPanelProps {
   syndicate: Syndicate;

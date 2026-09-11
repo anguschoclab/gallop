@@ -5,7 +5,7 @@
  */
 
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/services/breeding/breedingFacade";
 import type { Horse } from "@/game/types";
 
 interface SireSelectorProps {

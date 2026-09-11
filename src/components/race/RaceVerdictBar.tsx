@@ -1,7 +1,7 @@
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
-import type { RaceVerdict } from "@/core/race/raceVerdict";
+import type { RaceVerdict } from "@/services/race/raceFacade";
 
 interface RaceVerdictBarProps {
   verdict: RaceVerdict;

@@ -6,7 +6,7 @@ import { Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { cn } from "@/lib/cn";
 import { Building2, ChevronRight } from "lucide-react";
-import { FACILITY_NAMES, type FacilityType } from "@/core/facilities";
+import { FACILITY_NAMES, type FacilityType } from "@/services/facilities/facilitiesFacade";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { NewsContent } from "@/components/narrative/NewsContent";
 

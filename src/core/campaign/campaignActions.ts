@@ -155,3 +155,123 @@ export function buildAutoCampaign(args: {
     lastReviewedDay: args.currentDay,
   };
 }
+
+/**
+ * Update a single campaign slot by horseId and slotIndex.
+ * Pure: returns a new campaigns array, does not mutate the input.
+ * @param campaigns - Current campaigns array.
+ * @param horseId - The horse ID whose campaign to update.
+ * @param slotIndex - The slot index to update.
+ * @param patch - Partial patch to apply to the slot.
+ */
+export function updateCampaignSlotInList(
+  campaigns: HorseCampaign[] | undefined,
+  horseId: string,
+  slotIndex: number,
+  patch: Partial<HorseCampaign["slots"][number]>,
+): HorseCampaign[] | undefined {
+  if (!campaigns) return campaigns;
+  const campaign = campaigns.find((c) => c.horseId === horseId);
+  if (!campaign || !campaign.slots[slotIndex]) return campaigns;
+  const updatedSlots = [...campaign.slots];
+  updatedSlots[slotIndex] = { ...updatedSlots[slotIndex], ...patch };
+  return campaigns.map((c) => (c.horseId === horseId ? { ...c, slots: updatedSlots } : c));
+}
+
+/**
+ * Remove a flag from a campaign by horseId and flagIndex.
+ * Pure: returns a new campaigns array, does not mutate the input.
+ * @param campaigns - Current campaigns array.
+ * @param horseId - The horse ID whose campaign to update.
+ * @param flagIndex - The flag index to remove.
+ */
+export function dismissCampaignFlagInList(
+  campaigns: HorseCampaign[] | undefined,
+  horseId: string,
+  flagIndex: number,
+): HorseCampaign[] | undefined {
+  if (!campaigns) return campaigns;
+  return campaigns.map((c) =>
+    c.horseId === horseId ? { ...c, flags: c.flags.filter((_, i) => i !== flagIndex) } : c,
+  );
+}
+
+/**
+ * Remove a campaign from the list by horseId.
+ * Pure: returns a new campaigns array, does not mutate the input.
+ * @param campaigns - Current campaigns array.
+ * @param horseId - The horse ID whose campaign to remove.
+ */
+export function removeCampaignFromList(
+  campaigns: HorseCampaign[] | undefined,
+  horseId: string,
+): HorseCampaign[] | undefined {
+  if (!campaigns) return campaigns;
+  return campaigns.filter((c) => c.horseId !== horseId);
+}
+
+/**
+ * Toggle the autoManaged flag on a campaign by horseId.
+ * Pure: returns a new campaigns array, does not mutate the input.
+ * @param campaigns - Current campaigns array.
+ * @param horseId - The horse ID whose campaign to update.
+ * @param autoManaged - The new autoManaged value.
+ */
+export function toggleAutoManagedInList(
+  campaigns: HorseCampaign[] | undefined,
+  horseId: string,
+  autoManaged: boolean,
+): HorseCampaign[] | undefined {
+  if (!campaigns) return campaigns;
+  return campaigns.map((c) => (c.horseId === horseId ? { ...c, autoManaged } : c));
+}
+
+/**
+ * Set the target race key on a campaign by horseId.
+ * Pure: returns a new campaigns array, does not mutate the input.
+ * @param campaigns - Current campaigns array.
+ * @param horseId - The horse ID whose campaign to update.
+ * @param targetRaceKey - The new target race key.
+ */
+export function setCampaignTargetRaceInList(
+  campaigns: HorseCampaign[] | undefined,
+  horseId: string,
+  targetRaceKey?: string,
+): HorseCampaign[] | undefined {
+  if (!campaigns) return campaigns;
+  return campaigns.map((c) => (c.horseId === horseId ? { ...c, targetRaceKey } : c));
+}
+
+/**
+ * Add a slot to a campaign by horseId.
+ * Pure: returns a new campaigns array, does not mutate the input.
+ * @param campaigns - Current campaigns array.
+ * @param horseId - The horse ID whose campaign to update.
+ * @param slot - The slot to add.
+ */
+export function addCampaignSlotInList(
+  campaigns: HorseCampaign[] | undefined,
+  horseId: string,
+  slot: CampaignRaceSlot,
+): HorseCampaign[] | undefined {
+  if (!campaigns) return campaigns;
+  return campaigns.map((c) => (c.horseId === horseId ? { ...c, slots: [...c.slots, slot] } : c));
+}
+
+/**
+ * Remove a slot from a campaign by horseId and slotIndex.
+ * Pure: returns a new campaigns array, does not mutate the input.
+ * @param campaigns - Current campaigns array.
+ * @param horseId - The horse ID whose campaign to update.
+ * @param slotIndex - The slot index to remove.
+ */
+export function removeCampaignSlotInList(
+  campaigns: HorseCampaign[] | undefined,
+  horseId: string,
+  slotIndex: number,
+): HorseCampaign[] | undefined {
+  if (!campaigns) return campaigns;
+  return campaigns.map((c) =>
+    c.horseId === horseId ? { ...c, slots: c.slots.filter((_, i) => i !== slotIndex) } : c,
+  );
+}

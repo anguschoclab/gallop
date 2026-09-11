@@ -2,11 +2,11 @@ import { Link } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/core/common/formatting";
-import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/core/staff/staffConfig";
-import { isOffended, offendedDaysRemaining } from "@/core/staff/staffNegotiation";
+import { formatCurrency } from "@/lib/formatting";
+import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/services/staff/staffFacade";
+import { isOffended, offendedDaysRemaining } from "@/services/staff/staffFacade";
 import { UserPlus, Zap, Activity, Info } from "lucide-react";
-import { formatStaffTrait } from "@/core/common/traitLabels";
+import { formatStaffTrait } from "@/services/common/commonFacade";
 
 interface PoolMember {
   id: string;

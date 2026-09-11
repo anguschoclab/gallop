@@ -6,14 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import {
   buildStablePortfolios,
   portfolioTotals,
   sortPortfolios,
   type PortfolioSortKey,
-} from "@/core/stable/portfolio";
-import { getPrestigeTier } from "@/core/prestige/prestigeTypes";
+} from "@/services/stable/stableFacade";
+import { getPrestigeTier } from "@/services/prestige/prestigeFacade";
 import { StatCard } from "@/components/common/StatCard";
 import { PillToggleGroup } from "@/components/common/PillToggleGroup";
 import { PortfolioTable } from "@/components/portfolio/PortfolioTable";

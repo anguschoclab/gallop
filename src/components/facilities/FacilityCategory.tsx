@@ -2,17 +2,21 @@ import { TOOLTIP_DELAY_MS } from "@/constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FACILITY_ENABLED_WORKOUTS, FACILITY_NAMES, type FacilityType } from "@/core/facilities";
+import {
+  FACILITY_ENABLED_WORKOUTS,
+  FACILITY_NAMES,
+  type FacilityType,
+} from "@/services/facilities/facilitiesFacade";
 import { ArrowUp, Check, HardDrive } from "lucide-react";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/cn";
 import { useFacilityTiers } from "@/hooks/facilities/useFacilityTiers";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { JARGON_DEFINITIONS } from "@/core/horse/jargon";
-import type { PlayerFacilities } from "@/core/facilities";
-import type { ReputationTier } from "@/core/reputation";
-import { formatReputationTier } from "@/core/reputation";
+import { JARGON_DEFINITIONS } from "@/services/horse/horseFacade";
+import type { PlayerFacilities } from "@/services/facilities/facilitiesFacade";
+import type { ReputationTier } from "@/services/reputation/reputationFacade";
+import { formatReputationTier } from "@/services/reputation/reputationFacade";
 
 interface FacilityCategoryProps {
   category: string;

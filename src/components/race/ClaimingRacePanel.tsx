@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { AlertTriangle } from "lucide-react";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/services/race/raceFacade";
 import {
   AlertDialog,
   AlertDialogAction,

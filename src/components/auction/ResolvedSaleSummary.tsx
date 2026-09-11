@@ -6,9 +6,9 @@
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import type { AuctionLot, Horse, AuctionSale } from "@/game/types";
-import { resolveSaleHouse } from "@/core/prestige";
+import { resolveSaleHouse } from "@/services/prestige/prestigeFacade";
 import { SalePrestigeBreakdown } from "@/components/shared/PrestigeBreakdownPanel";
 
 interface ResolvedSaleSummaryProps {

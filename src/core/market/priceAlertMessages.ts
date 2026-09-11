@@ -10,7 +10,7 @@
  */
 
 import type { InboxMessage } from "@/core/inbox/inboxTypes";
-import { TRACK_BY_ID } from "@/data/tracks";
+import { TRACK_BY_ID } from "@/core/data/tracksAccessor";
 import { scopeLabel, type PriceAlertTrigger, type TradeNotification } from "./priceAlerts";
 
 export type NewInboxMessage = Omit<InboxMessage, "id" | "readAt">;

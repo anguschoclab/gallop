@@ -10,10 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatCurrency } from "@/core/common/formatting";
-import { PRESTIGE_TIER_LABELS } from "@/core/prestige/prestigeTypes";
-import type { PortfolioSortKey, StablePortfolio } from "@/core/stable/portfolio";
-import { formatYard } from "@/core/stable/stableYard";
+import { formatCurrency } from "@/lib/formatting";
+import { PRESTIGE_TIER_LABELS } from "@/services/prestige/prestigeFacade";
+import type { PortfolioSortKey, StablePortfolio } from "@/services/stable/stableFacade";
+import { formatYard } from "@/services/stable/stableFacade";
 
 const COLUMNS: { key: PortfolioSortKey; label: string; numeric: boolean }[] = [
   { key: "name", label: "Stable", numeric: false },

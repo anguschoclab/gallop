@@ -2,8 +2,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { isStallionAvailable } from "@/core/breeding/stallions";
-import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
+import { isStallionAvailable } from "@/services/breeding/breedingFacade";
+import { inBreedingSeason } from "@/services/breeding/breedingFacade";
 import type { Horse } from "@/game/types";
 
 interface StallionCardProps {

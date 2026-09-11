@@ -23,14 +23,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { History, Trophy, ScrollText } from "lucide-react";
-import { REGION_AWARD_NAMES, CATEGORY_DISPLAY_NAMES, type AwardRegion } from "@/core/awards/types";
-import type { RegionalAward } from "@/core/awards/types";
+import {
+  REGION_AWARD_NAMES,
+  CATEGORY_DISPLAY_NAMES,
+  type AwardRegion,
+} from "@/services/awards/awardsFacade";
+import type { RegionalAward } from "@/services/awards/awardsFacade";
 import {
   didAttend,
   getInvitationOutcome,
   isCeremonyHeld,
   type AwardCeremonyInvitation,
-} from "@/core/awards/invitations";
+} from "@/services/awards/awardsFacade";
 import { CeremonyRsvpBadge } from "./CeremonyRsvpControls";
 import { InvitationAuditList } from "./InvitationAuditLog";
 

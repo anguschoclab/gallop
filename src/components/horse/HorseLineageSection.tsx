@@ -3,8 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { GitBranch } from "lucide-react";
 import { PedigreeTree } from "@/components/breeding/PedigreeTree";
 import { Link } from "@tanstack/react-router";
-import type { Horse } from "@/core/horse/types";
-import type { Pregnancy } from "@/core/breeding/types";
+import type { Horse } from "@/services/horse/horseFacade";
+import type { Pregnancy } from "@/services/breeding/breedingFacade";
 
 interface HorseLineageSectionProps {
   horse: Horse;

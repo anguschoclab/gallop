@@ -7,7 +7,7 @@ import {
   LeaderboardEmpty,
   LeaderboardSkeleton,
 } from "@/components/leaderboard/LeaderboardPrimitives";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
+import type { Runner } from "@/services/race/raceFacade";
 import {
   BEYER_SLIDER_MIN,
   BEYER_SLIDER_MAX,

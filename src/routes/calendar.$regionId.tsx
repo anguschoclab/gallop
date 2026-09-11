@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { type Grade } from "@/data/gradedRaces";
-import { getRegion, isValidRegion } from "@/core/calendar/regions";
+import { getRegion, isValidRegion } from "@/services/calendar/calendarFacade";
 import { MonthView } from "@/components/calendar/MonthView";
 import { TrackView } from "@/components/calendar/TrackView";
 import { RegionSwitcher } from "@/components/RegionSwitcher";

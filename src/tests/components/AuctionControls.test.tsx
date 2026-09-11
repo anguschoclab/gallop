@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { AuctionControls } from "@/components/auction/sub/AuctionControls";
 
-vi.mock("@/core/auction/runner", () => ({
+vi.mock("@/services/auction/auctionFacade", () => ({
   nextBidAmount: (current: number) => Math.ceil(current * 1.1),
 }));
 

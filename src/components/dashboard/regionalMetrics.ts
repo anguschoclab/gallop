@@ -10,15 +10,15 @@ import {
   type DrilldownEntity,
   type RegionKey,
   type RegionRunRow,
-} from "@/core/analytics/regionalTrends";
-import { weekBucket, type TimeWindowWeeks } from "@/core/analytics/timeWindow";
+} from "@/services/analytics/analyticsFacade";
+import { weekBucket, type TimeWindowWeeks } from "@/services/analytics/analyticsFacade";
 import type { EntityKind, Lookups } from "@/constants/regionalConstants";
 import {
   POSITION_WIN as WIN_POSITION,
   TOP_FINISH_POSITION as TOP3_POSITION,
 } from "@/constants/raceSimulationConstants";
-import type { Horse } from "@/core/horse/types";
-import type { Race } from "@/core/race/types";
+import type { Horse } from "@/services/horse/horseFacade";
+import type { Race } from "@/services/race/raceFacade";
 
 export interface MetricDef {
   key: string;

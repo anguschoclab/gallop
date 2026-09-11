@@ -2,8 +2,8 @@ import { TOOLTIP_DELAY_MS } from "@/constants";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useGame } from "@/game/store";
-import { formatReputationTier, getReputationTier } from "@/core/reputation";
-import { reputationColor } from "@/core/common/uiTokens";
+import { formatReputationTier, getReputationTier } from "@/services/reputation/reputationFacade";
+import { reputationColor } from "@/services/common/commonFacade";
 import { Trophy } from "lucide-react";
 import { cn } from "@/lib/cn";
 

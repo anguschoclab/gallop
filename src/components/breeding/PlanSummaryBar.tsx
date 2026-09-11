@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Check, Save, FolderOpen, Trash2, Sparkles, Eraser } from "lucide-react";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/services/breeding/breedingFacade";
 import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { TOOLTIP_DELAY_MS } from "@/constants/uiConstants";

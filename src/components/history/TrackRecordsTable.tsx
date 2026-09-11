@@ -8,7 +8,7 @@ import {
   LeaderboardShell,
 } from "@/components/leaderboard/LeaderboardPrimitives";
 import { useLeaderboardControls } from "@/hooks/leaderboard/useLeaderboardControls";
-import { recordCategoryLabel, type TrackRecord } from "@/core/history/historyTypes";
+import { recordCategoryLabel, type TrackRecord } from "@/services/history/historyFacade";
 
 const SORT_OPTIONS = [
   { value: "track", label: "Track Name" },

@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, TrendingDown, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/cn";
-import type { FinancialDistressState, DistressLevel } from "@/core/ai/financialDistressAI";
+import type { FinancialDistressState, DistressLevel } from "@/services/ai/aiFacade";
 
 interface FinancialDistressIndicatorProps {
   distress?: FinancialDistressState;

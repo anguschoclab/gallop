@@ -1,13 +1,13 @@
 import { useGame } from "@/game/store";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { isPlayerOwned } from "@/services/breeding/breedingFacade";
 import { asHorseId } from "@/core/types/branded";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useMemo } from "react";
 import { cn } from "@/lib/cn";
-import { ALL_ARCHETYPES } from "@/core/breeding/archetypes";
-import { calculateGeneticDistance } from "@/core/breeding/programs";
+import { ALL_ARCHETYPES } from "@/services/breeding/breedingFacade";
+import { calculateGeneticDistance } from "@/services/breeding/breedingFacade";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -24,7 +24,7 @@ import { DistanceBadge } from "./DistanceBadge";
 import { archetypeMeta } from "./ArchetypeMeta";
 import { useCancelBreedingProgram } from "./useCancelBreedingProgram";
 import { TrendingDown, CheckCircle2, Circle, Plus, X, Dna, Award } from "lucide-react";
-import type { Horse } from "@/core/horse/types";
+import type { Horse } from "@/services/horse/horseFacade";
 import {
   CANCEL_DIALOG_TITLE,
   CANCEL_DIALOG_DESCRIPTION,

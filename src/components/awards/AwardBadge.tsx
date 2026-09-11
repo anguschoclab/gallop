@@ -2,13 +2,17 @@ import { Badge } from "@/components/ui/badge";
 import { AwardIcon } from "./AwardIcon";
 import { cn } from "@/lib/cn";
 import { Link } from "@tanstack/react-router";
-import type { AwardRegion, RegionalAwardCategory, RegionalAward } from "@/core/awards/types";
+import type {
+  AwardRegion,
+  RegionalAwardCategory,
+  RegionalAward,
+} from "@/services/awards/awardsFacade";
 import { REGION_COLOR_CLASSES, getRegionColor } from "@/assets/awards";
 import {
   CATEGORY_DISPLAY_NAMES,
   CATEGORY_DESCRIPTIONS,
   REGION_AWARD_NAMES,
-} from "@/core/awards/types";
+} from "@/services/awards/awardsFacade";
 import { AWARD_BADGE_INLINE_MAX_WIDTH } from "@/constants/awardsConstants";
 
 interface AwardBadgeProps {

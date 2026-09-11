@@ -1,5 +1,5 @@
 import type { Horse, Stable } from "@/game/types";
-import type { GradedRace } from "@/data/gradedRaces";
+import type { GradedRace } from "@/core/data/gradedRacesAccessor";
 import { recordPersonalityOutcome } from "./personalitySystem";
 import type { CampaignAIState, CampaignDecision, ContenderStatus } from "./campaignAI";
 import { trimHistory } from "./learningModule";

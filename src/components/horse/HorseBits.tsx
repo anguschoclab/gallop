@@ -1,7 +1,7 @@
 import type { Horse } from "@/game/types";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateOverallRating } from "@/services/horse/horseFacade";
 import { cn } from "@/lib/cn";
 import { SilkDot } from "@/components/SilkDot";
 
@@ -90,7 +90,7 @@ export function overall(h: Horse) {
   return calculateOverallRating(h);
 }
 
-import { formatCurrency, formatTime } from "@/core/common/formatting";
+import { formatCurrency, formatTime } from "@/lib/formatting";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export { formatCurrency, formatTime };

@@ -30,7 +30,7 @@ import {
   type ScoutingAssignment,
   type ScoutingPriority,
 } from "@/core/npc/scoutingThresholds";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import { ClipboardList, Play, Plus, Trash2 } from "lucide-react";
 
 export function ScoutingAssignmentsPanel() {

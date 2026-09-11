@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Shield, X, DollarSign } from "lucide-react";
 import { useGame } from "@/game/store";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { isPlayerOwned } from "@/services/horse/horseFacade";
 import { asHorseId } from "@/core/types/branded";
 import { calculateDailyPremium } from "@/core/insurance/insuranceTypes";
 import { toast } from "sonner";

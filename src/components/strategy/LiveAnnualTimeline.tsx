@@ -16,13 +16,13 @@ import {
 } from "lucide-react";
 import {
   calculateVenuePrestige,
-  getPrestigeTier,
+  getStrategyPrestigeTier,
   getPrestigeTierBadgeClass,
-} from "@/core/prestige/strategyPrestigeHelpers";
+} from "@/services/prestige/prestigeFacade";
 import { getTrackById } from "@/data/tracks";
 import { TOOLTIP_DELAY_MS } from "@/constants";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import type { CampaignRaceSlot } from "@/core/calendar/campaignTypes";
+import type { CampaignRaceSlot } from "@/services/calendar/calendarFacade";
 import type { Race } from "@/game/types";
 
 function getRaceTrackName(race: Race): string {
@@ -267,7 +267,7 @@ export function LiveAnnualTimeline({
 
               const trackName = race ? getRaceTrackName(race) : "Track";
               const prestigeScore = race ? calculateVenuePrestige(trackName, race.trackId) : 50;
-              const prestigeTier = getPrestigeTier(prestigeScore);
+              const prestigeTier = getStrategyPrestigeTier(prestigeScore);
 
               return (
                 <div key={`${slot.dayTarget}-${slot.raceId || index}`} className="space-y-2">

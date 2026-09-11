@@ -2,7 +2,7 @@ import {
   AUDIT_KIND_LABELS,
   type AwardCeremonyInvitation,
   type InvitationAuditKind,
-} from "@/core/awards/invitations";
+} from "@/services/awards/awardsFacade";
 
 const ACCENT_KINDS: InvitationAuditKind[] = ["reminder_sent", "rsvp_change"];
 

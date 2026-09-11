@@ -11,8 +11,8 @@ import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sprout, AlertCircle, CheckCircle2, Clock } from "lucide-react";
-import type { Horse } from "@/core/horse/types";
-import type { MilestoneStatDelta, MilestoneChoice } from "@/core/horse/foalDevelopment";
+import type { Horse } from "@/services/horse/horseFacade";
+import type { MilestoneStatDelta, MilestoneChoice } from "@/services/horse/horseFacade";
 import { useGame } from "@/game/store";
 
 interface Props {

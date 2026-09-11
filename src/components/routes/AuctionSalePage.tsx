@@ -13,7 +13,7 @@ import { useAuctionSaleFilters } from "@/hooks/auction/useAuctionSaleFilters";
 import { useAuctionSaleData } from "@/hooks/auction/useAuctionSaleData";
 import { useStoreHydration } from "@/hooks/shared/useStoreHydration";
 import { useDismissedAuctionErrors } from "@/hooks/auction/useDismissedAuctionErrors";
-import { resolveSaleHouse } from "@/core/prestige";
+import { resolveSaleHouse } from "@/services/prestige/prestigeFacade";
 
 function AuctionSalePage() {
   const { saleId } = useParams({ from: "/auction/$saleId" });

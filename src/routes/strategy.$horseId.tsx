@@ -12,7 +12,7 @@ import { SyndicationStakesSection } from "@/components/strategy/SyndicationStake
 import { CampaignAlertsFeed } from "@/components/strategy/CampaignAlertsFeed";
 import { SyndicateDialog } from "@/components/market/SyndicateDialog";
 import { toast } from "sonner";
-import type { CampaignGoalType, CampaignRaceSlot } from "@/core/calendar/campaignTypes";
+import type { CampaignGoalType, CampaignRaceSlot } from "@/services/calendar/calendarFacade";
 import type { Race } from "@/game/types";
 
 export const Route = createFileRoute("/strategy/$horseId")({

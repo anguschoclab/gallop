@@ -2,9 +2,9 @@ import { Badge } from "@/components/ui/badge";
 import { AwardBadge } from "./AwardBadge";
 import { Trophy } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import type { RegionalAward } from "@/core/awards/types";
-import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
-import { getRegionFlag, getRegionCountryLabel } from "@/core/common/countryFlag";
+import type { RegionalAward } from "@/services/awards/awardsFacade";
+import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/services/awards/awardsFacade";
+import { getRegionFlag, getRegionCountryLabel } from "@/services/common/commonFacade";
 import { AWARD_COMPACT_THRESHOLD } from "@/constants/awardsConstants";
 
 interface AwardsGridProps {

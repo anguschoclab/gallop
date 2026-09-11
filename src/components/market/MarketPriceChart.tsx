@@ -9,9 +9,9 @@ import { useMemo } from "react";
 import { AreaTrend, MiniBar, chartColors } from "@/components/charts";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/core/common/formatting";
-import { housePriceSeries } from "@/core/market/houseQuotes";
-import type { ExchangeTrade } from "@/core/market/exchange";
+import { formatCurrency } from "@/lib/formatting";
+import { housePriceSeries } from "@/services/market/marketFacade";
+import type { ExchangeTrade } from "@/services/market/marketFacade";
 import { Activity, TrendingDown, TrendingUp } from "lucide-react";
 
 interface MarketPriceChartProps {

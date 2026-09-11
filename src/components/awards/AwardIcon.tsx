@@ -1,6 +1,6 @@
 import { getAwardSvg } from "@/assets/awards";
-import type { AwardRegion, RegionalAwardCategory } from "@/core/awards/types";
-import { CATEGORY_DISPLAY_NAMES, REGION_AWARD_NAMES } from "@/core/awards/types";
+import type { AwardRegion, RegionalAwardCategory } from "@/services/awards/awardsFacade";
+import { CATEGORY_DISPLAY_NAMES, REGION_AWARD_NAMES } from "@/services/awards/awardsFacade";
 import { cn } from "@/lib/cn";
 
 interface AwardIconProps {

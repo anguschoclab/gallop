@@ -10,8 +10,8 @@
  * Related files: src/core/npc/npcFame.ts (fame scaling by venue prestige)
  */
 
-import { GRADED_RACES } from "@/data/gradedRaces";
-import { TRACKS, TRACK_BY_NAME } from "@/data/tracks";
+import { GRADED_RACES } from "@/core/data/gradedRacesAccessor";
+import { TRACKS, TRACK_BY_NAME } from "@/core/data/tracksAccessor";
 import { prestigeMultiplier } from "./prestigeTypes";
 
 const GRADE_POINTS = { G1: 100, G2: 45, G3: 20 } as const;

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Crosshair } from "lucide-react";
-import type { RaceRunner } from "@/core/race/types";
+import type { RaceRunner } from "@/services/race/raceFacade";
 import { JockeyStrategyBreakdown } from "./JockeyStrategyBreakdown";
 import { JockeyLearningInsights } from "./JockeyLearningInsights";
 

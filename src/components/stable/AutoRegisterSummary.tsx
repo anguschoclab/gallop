@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import type { AutoRegisterResult } from "@/core/campaign/autoRegister";
 
 interface Props {

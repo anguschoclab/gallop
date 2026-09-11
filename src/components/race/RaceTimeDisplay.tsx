@@ -1,5 +1,5 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { buildRaceTimeViews, formatClockTime } from "@/core/common/formatting";
+import { buildRaceTimeViews, formatClockTime } from "@/services/race/raceFacade";
 import { cn } from "@/lib/cn";
 
 interface RaceTimeDisplayProps {

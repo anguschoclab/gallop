@@ -10,7 +10,7 @@
 
 import { expectedBeyer } from "@/core/race/beyer";
 import { calculateClassBonus } from "@/core/common/classBonus";
-import { getCourseForRace } from "@/data/tracks";
+import { getCourseForRace } from "@/core/data/tracksAccessor";
 import type { Horse, Race } from "@/game/types";
 
 /**

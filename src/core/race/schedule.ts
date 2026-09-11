@@ -12,12 +12,12 @@
 // This uses regional-specific generators for authentic race patterns
 
 import type { Race } from "./types";
-import type { Track, TrackSchedule } from "@/data/tracks";
+import type { Track, TrackSchedule } from "@/core/data/tracksAccessor";
 import type { Rng } from "@/core/common/types";
 import { createRng, hashStr } from "@/core/common/rng";
-import { getTrackById } from "@/data/tracks";
+import { getTrackById } from "@/core/data/tracksAccessor";
 import { generateRace, makeGradedRace } from "./generation/raceGen";
-import { GRADED_RACES, GRADED_RACES_BY_DAY_OF_YEAR } from "@/data/gradedRaces";
+import { GRADED_RACES, GRADED_RACES_BY_DAY_OF_YEAR } from "@/core/data/gradedRacesAccessor";
 import { generateNorthAmericanRaceCard } from "./generation/northAmerica";
 import { generateEuropeanRaceCard } from "./generation/europe";
 import { generateAustralianRaceCard } from "./generation/australia";

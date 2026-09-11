@@ -1,4 +1,4 @@
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 
 interface WinOverlayProps {
   horseName: string;

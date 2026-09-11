@@ -10,7 +10,7 @@ import { StableRosterGallery } from "./StableRosterGallery";
 import { StableRosterCompareBar } from "./StableRosterCompareBar";
 import { cn } from "@/lib/cn";
 import type { Horse } from "@/game/types";
-import type { RegionalAward } from "@/core/awards/types";
+import type { RegionalAward } from "@/services/awards/awardsFacade";
 import { Search } from "lucide-react";
 
 type NavigateFn = (opts: {

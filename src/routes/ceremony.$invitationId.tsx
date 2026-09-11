@@ -8,13 +8,13 @@ import {
   REGION_AWARD_NAMES,
   CATEGORY_DISPLAY_NAMES,
   CATEGORY_DESCRIPTIONS,
-} from "@/core/awards/types";
-import { formatDate, dayOfYear } from "@/core/calendar/dateFormatting";
+} from "@/services/awards/awardsFacade";
+import { formatDate, dayOfYear } from "@/services/calendar/calendarFacade";
 import {
   getInvitationOutcome,
   isCeremonyHeld,
   type AwardCeremonyInvitation,
-} from "@/core/awards/invitations";
+} from "@/services/awards/awardsFacade";
 import { CeremonyRsvpControls } from "@/components/awards/CeremonyRsvpControls";
 import { BackLink } from "@/components/charts/BackLink";
 import { InvitationAuditLog } from "@/components/awards/InvitationAuditLog";

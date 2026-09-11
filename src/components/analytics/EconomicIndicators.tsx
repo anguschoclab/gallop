@@ -2,9 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Minus, Activity } from "lucide-react";
 import { useGame } from "@/game/store";
-import { getEconomicSignal } from "@/core/ai/economyAIState";
+import { getEconomicSignal } from "@/services/ai/aiFacade";
 import { cn } from "@/lib/cn";
-import type { EconomicTrend } from "@/core/ai/strategicCoordinator";
+import type { EconomicTrend } from "@/services/ai/aiFacade";
 
 function getSignalExplanation(signal: "bull" | "bear" | "stable"): string {
   switch (signal) {

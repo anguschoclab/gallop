@@ -9,11 +9,11 @@
  * Related files: ./StableCompareDrawer.tsx (consumer), src/routes/npc-stables.compare.tsx (consumer)
  */
 
-import { recommendedMaxOffer } from "@/core/stable/recommendedMaxOffer";
-import { evaluateCashPressure } from "@/core/stable/cashPressure";
+import { recommendedMaxOffer } from "@/services/stable/stableFacade";
+import { evaluateCashPressure } from "@/services/stable/stableFacade";
 import { CashPressureMeter } from "./CashPressureMeter";
 import { CashPressureTrend } from "./CashPressureTrend";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import type { Stable } from "@/game/types";
 
 interface StableCompareTableProps {

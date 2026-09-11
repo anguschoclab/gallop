@@ -9,7 +9,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import { formatProfitLoss } from "@/core/financial";
+import { formatProfitLoss } from "@/services/financial/financialFacade";
 import {
   formatTransactionSubcategory,
   type TransactionSubcategory,

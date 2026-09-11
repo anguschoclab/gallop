@@ -5,10 +5,10 @@ import type { GameState, Horse, HorseCampaign } from "@/game/types";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { CalendarClock, Flag } from "lucide-react";
-import { gameCalendarDate } from "@/core/calendar/dateFormatting";
+import { gameCalendarDate } from "@/services/calendar/calendarFacade";
 import { CampaignAddPanel } from "@/components/scheduler/CampaignAddPanel";
 import { CampaignCard } from "@/components/scheduler/CampaignCard";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { isPlayerOwned } from "@/services/horse/horseFacade";
 
 export function SchedulerTab() {
   const day = useGame((s: GameState) => s.day);

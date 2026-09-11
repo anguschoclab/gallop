@@ -20,12 +20,12 @@ import {
   type DrilldownEntity,
   type RegionKey,
   type RegionRunRow,
-} from "@/core/analytics/regionalTrends";
+} from "@/services/analytics/analyticsFacade";
 import {
   TIME_WINDOW_OPTIONS,
   timeWindowLabel,
   type TimeWindowWeeks,
-} from "@/core/analytics/timeWindow";
+} from "@/services/analytics/analyticsFacade";
 import {
   ALL_SURFACES,
   DEFAULT_WEEKS_A,
@@ -37,8 +37,8 @@ import {
   type Lookups,
   type MetricMode,
 } from "@/constants/regionalConstants";
-import type { Horse } from "@/core/horse/types";
-import type { Race } from "@/core/race/types";
+import type { Horse } from "@/services/horse/horseFacade";
+import type { Race } from "@/services/race/raceFacade";
 import { METRICS_RAW, METRICS_RATE, type MetricDef } from "./regionalMetrics";
 import { EntityTable, CompareCards } from "./RegionDrilldownComponents";
 

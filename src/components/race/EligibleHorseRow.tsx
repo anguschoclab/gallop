@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HorsePortraitBadge } from "@/components/horse/HorsePortrait";
 import { Check } from "lucide-react";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateOverallRating } from "@/services/horse/horseFacade";
 import { getTrackById } from "@/data/tracks";
 import type { Horse, Race } from "@/game/types";
 import { toast } from "sonner";

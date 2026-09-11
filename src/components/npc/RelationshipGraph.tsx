@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Network, Handshake, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/cn";
-import type { NpcRelationship, Cartel } from "@/core/ai/npcCycleAI";
+import type { NpcRelationship, Cartel } from "@/services/ai/aiFacade";
 import type { Stable } from "@/game/types";
 
 interface RelationshipGraphProps {

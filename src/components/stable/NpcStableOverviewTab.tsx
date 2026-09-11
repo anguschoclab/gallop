@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Brain, Trophy } from "lucide-react";
 import { TrophyCase } from "@/components/awards";
 import { NumericValue } from "@/components/horse/HorseBits";
-import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
+import { PERSONALITY_CONFIG } from "@/services/stable/stableFacade";
 import { cn } from "@/lib/cn";
 import { NpcStableCharts } from "@/components/stable/NpcStableCharts";
 import { CashPressureTrend } from "@/components/stable/CashPressureTrend";

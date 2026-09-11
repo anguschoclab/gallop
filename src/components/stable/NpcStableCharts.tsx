@@ -5,7 +5,7 @@
 import { useMemo } from "react";
 import { ChartCard, MiniBar, StackedRatioBar } from "@/components/charts";
 import { chartColors, formatCurrencyCompact } from "@/components/charts";
-import { getCareerStats } from "@/core/horse/stats";
+import { getCareerStats } from "@/services/horse/horseFacade";
 import type { Horse } from "@/game/types";
 
 interface NpcStableChartsProps {

@@ -2,10 +2,10 @@ import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingUp } from "lucide-react";
 import { CareerValuationBreakdown } from "@/components/horse/CareerValuationBreakdown";
-import { horseCareerValuation } from "@/core/horse/pricing";
-import { calculateOverallRating, getCareerStats } from "@/core/horse/stats";
-import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
-import { formatCurrency } from "@/core/common/formatting";
+import { horseCareerValuation } from "@/services/horse/horseFacade";
+import { calculateOverallRating, getCareerStats } from "@/services/horse/horseFacade";
+import { pedigreeMultiplier } from "@/services/breeding/breedingFacade";
+import { formatCurrency } from "@/lib/formatting";
 import type { Horse } from "@/game/types";
 
 interface CareerProjectionSectionProps {

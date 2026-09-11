@@ -1,4 +1,4 @@
-import type { PaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import type { PaceSnapshot } from "@/services/race/raceFacade";
 import { cn } from "@/lib/cn";
 
 interface PaceMapRunner {

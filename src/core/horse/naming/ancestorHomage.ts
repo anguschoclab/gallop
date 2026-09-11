@@ -11,7 +11,7 @@
 
 import type { Rng } from "@/core/common/rng";
 import { NAME_MIN_WORD_LENGTH } from "@/constants";
-import { findHorseByName } from "@/data/pedigreeData";
+import { findHorseByName } from "@/core/data/pedigreeAccessor";
 import { ABSTRACT_TERMS, RACING_SPIRIT_NOUNS, RACING_SPIRIT_ADJECTIVES } from "./nameDatabase";
 
 /**

@@ -14,7 +14,7 @@
 // par time for the distance, with grade/race-class adding a small uplift.
 // Output is clamped 30..125 (Beyer "Big Figs" rarely exceed 120).
 import type { Horse } from "@/core/horse/types";
-import type { CourseSpecification } from "@/data/tracks";
+import type { CourseSpecification } from "@/core/data/tracksAccessor";
 import {
   BEYER_MIN,
   BEYER_MAX,

@@ -1,4 +1,4 @@
-import { isHorseEligibleForRace } from "@/core/race/eligibility";
+import { isHorseEligibleForRace } from "@/services/race/raceFacade";
 import type { Horse, Race } from "@/game/types";
 import { EligibleHorseRow } from "./EligibleHorseRow";
 import { PaceTendencyFilter } from "@/components/horse/PaceTendencyFilter";
@@ -6,7 +6,7 @@ import {
   classifyDistanceBucket,
   matchesTendency,
   type TendencyFilter,
-} from "@/core/horse/paceTendency";
+} from "@/services/horse/horseFacade";
 import { useMemo, useState } from "react";
 
 interface Props {

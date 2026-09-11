@@ -17,7 +17,7 @@
  * Pure logic only - no store access, no mutation of inputs.
  *
  * Dependencies: ./reputationTypes
- * Related files: src/game/store/helpers/reputation.ts,
+ * Related files: src/core/reputation/reputationEvents.ts,
  *   src/game/store/slices/exchangeSlice.ts
  */
 

@@ -12,10 +12,10 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw, Check, AlertCircle } from "lucide-react";
 import { useGallopStore } from "@/game/store";
-import { generateProceduralHorseName } from "@/core/horse/naming/nameGenerator";
-import { validateHorseName } from "@/core/horse/naming/jockeyClubRules";
-import { createRng } from "@/core/common/rng";
-import { genderLabel } from "@/core/horse/gender";
+import { generateProceduralHorseName } from "@/services/breeding/breedingFacade";
+import { validateHorseName } from "@/services/breeding/breedingFacade";
+import { createRng } from "@/services/breeding/breedingFacade";
+import { genderLabel } from "@/services/breeding/breedingFacade";
 
 interface FoalNamingDialogProps {
   foalId: string;

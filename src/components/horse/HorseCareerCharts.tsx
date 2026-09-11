@@ -9,7 +9,7 @@ import { chartColors, formatCurrencyCompact, formatDay } from "@/components/char
 import type { Horse } from "@/game/types";
 import { TimeWindowSelect } from "@/components/analytics/TimeWindowSelect";
 import { useTimeWindow } from "@/hooks/analytics/useTimeWindow";
-import { filterByWindow, timeWindowLabel } from "@/core/analytics/timeWindow";
+import { filterByWindow, timeWindowLabel } from "@/services/analytics/analyticsFacade";
 import { useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 

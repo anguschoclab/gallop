@@ -15,7 +15,7 @@ import {
   AUDIT_KIND_LABELS,
   type AwardCeremonyInvitation,
   type InvitationAuditKind,
-} from "@/core/awards/invitations";
+} from "@/services/awards/awardsFacade";
 
 const KIND_CLASSES: Record<InvitationAuditKind, string> = {
   invited: "border-gold-muted text-cream-muted",

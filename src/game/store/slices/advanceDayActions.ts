@@ -13,6 +13,7 @@ import type { StoreSet, StoreGet, StoreType } from "../types";
 import type { CoreSlice } from "./coreSlice";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import { asRaceId } from "@/core/types/branded";
+import { filterHorsesForNewYear, calculatePlayerUpkeep } from "@/core/time/advanceDayHelpers";
 
 export function createAdvanceDayActions(
   set: StoreSet,
@@ -92,29 +93,9 @@ export function createAdvanceDayActions(
       const s = get();
       set({ isAdvancing: true });
       const newDay = s.day + 1;
-      const currentYear = getCurrentYear(newDay);
-      const previousYear = getCurrentYear(s.day);
 
-      let horses = s.horses;
-      if (currentYear > previousYear) {
-        horses = Object.fromEntries(
-          Object.values(s.horses).map((h: Horse) => {
-            if (h.winAndYouInQualified) {
-              return [
-                h.id,
-                {
-                  ...h,
-                  winAndYouInQualified: h.winAndYouInQualified.filter((q) => q.year >= currentYear),
-                },
-              ];
-            }
-            return [h.id, h];
-          }),
-        );
-      }
-
-      const playerHorseCount = Object.values(horses).filter((h: Horse) => isPlayerOwned(h)).length;
-      const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
+      const horses = filterHorsesForNewYear(s.horses, newDay, s.day);
+      const playerUpkeep = calculatePlayerUpkeep(horses);
 
       try {
         const engineWorker = getEngineWorker();

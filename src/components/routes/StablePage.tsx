@@ -11,12 +11,12 @@ import { Button } from "@/components/ui/button";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { cn } from "@/lib/cn";
 import { useGame, useGameWithShallow } from "@/game/store";
-import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
+import { ensurePhenotypeResolved } from "@/services/horse/horseFacade";
 import { overall } from "@/components/horse/HorseBits";
 import { Users, Clock, Heart, List, LayoutGrid } from "lucide-react";
-import { matchesTendency } from "@/core/horse/paceTendency";
+import { matchesTendency } from "@/services/horse/horseFacade";
 import { PaceTendencyFilter } from "@/components/horse/PaceTendencyFilter";
-import { isPlayerOwned, getStableId } from "@/core/horse/ownership";
+import { isPlayerOwned, getStableId } from "@/services/horse/horseFacade";
 
 type StableSearch = {
   tab: "roster" | "rivals";

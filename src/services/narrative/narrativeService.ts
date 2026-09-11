@@ -104,20 +104,20 @@ export class NarrativeGenerator {
     const currentLeader = sorted[0];
 
     // Event priority order is significant; do not reorder.
-    this.checkRaceStart(runners, simTime, newLines);
+    this.checkRaceStart(runners, runnersMap, simTime, newLines);
     this.checkMilestones(newLines, currentLeader.position, simTime, currentLeader);
     this.checkHotPace(runners, simTime, newLines);
     this.checkOngoingInsights(runners, sorted, simTime, newLines);
     this.checkAtmosphere(simTime, newLines);
     this.checkGapAnnouncement(sorted, simTime, newLines);
     this.checkStableWatch(runners, simTime, newLines);
-    this.checkLeadChange(runners, simTime, newLines);
+    this.checkLeadChange(runners, runnersMap, simTime, newLines);
     this.checkStretchRun(currentLeader, simTime, newLines);
     this.checkFinish(currentLeader, simTime, newLines);
     this.checkIndividualEvents(runners, ranks, simTime, newLines);
     this.checkDrafting(runners, runnersMap, simTime, newLines);
     this.checkLaneWatch(runners, simTime, newLines);
-    this.checkConditionTransitions(runners, simTime, newLines);
+    this.checkConditionTransitions(runners, runnersMap, simTime, newLines);
     this.checkJockeyEvents(runners, simTime, newLines);
 
     this.state.push(...newLines);
@@ -127,7 +127,12 @@ export class NarrativeGenerator {
     return newLines;
   }
 
-  private checkRaceStart(runners: Runner[], simTime: number, newLines: CommentaryLine[]) {
+  private checkRaceStart(
+    runners: Runner[],
+    runnersMap: Map<string, Runner>,
+    simTime: number,
+    newLines: CommentaryLine[],
+  ) {
     if (simTime <= 0 || this.state.hasAnnouncedStart) return;
     newLines.push(this.createLine("START", simTime));
     if (this.race.weather || this.race.trackCondition) {
@@ -149,17 +154,22 @@ export class NarrativeGenerator {
 
     // Race context commentary (defending champion, returning runner, course specialist)
     if (this.raceContext) {
-      this.checkRaceContext(runners, simTime, newLines);
+      this.checkRaceContext(runners, runnersMap, simTime, newLines);
     }
   }
 
-  private checkRaceContext(runners: Runner[], simTime: number, newLines: CommentaryLine[]) {
+  private checkRaceContext(
+    runners: Runner[],
+    runnersMap: Map<string, Runner>,
+    simTime: number,
+    newLines: CommentaryLine[],
+  ) {
     const rc = this.raceContext!;
 
     // Defending champion
     if (rc.defendingChampion) {
       const champHorse = this.horses.find((h) => h.name === rc.defendingChampion!.horseName);
-      const champRunner = champHorse ? runners.find((r) => r.horseId === champHorse.id) : undefined;
+      const champRunner = champHorse ? runnersMap.get(champHorse.id) : undefined;
       if (champRunner) {
         newLines.push(this.createLine("DEFENDING_CHAMPION", simTime, champRunner));
       }
@@ -279,7 +289,12 @@ export class NarrativeGenerator {
     }
   }
 
-  private checkLeadChange(runners: Runner[], simTime: number, newLines: CommentaryLine[]) {
+  private checkLeadChange(
+    runners: Runner[],
+    runnersMap: Map<string, Runner>,
+    simTime: number,
+    newLines: CommentaryLine[],
+  ) {
     const event = detectLeadChange(
       runners,
       this.state.lastLeaderId,
@@ -288,7 +303,7 @@ export class NarrativeGenerator {
     );
     if (event) {
       if (this.state.canAnnounce("LEAD_CHANGE", event.horseId!, simTime)) {
-        const runner = runners.find((r) => r.horseId === event.horseId);
+        const runner = runnersMap.get(event.horseId!);
         if (runner) {
           if (
             this.memory.canCallback(runner.horseId, "LEAD_CHANGE") &&
@@ -502,6 +517,7 @@ export class NarrativeGenerator {
 
   private checkConditionTransitions(
     runners: Runner[],
+    runnersMap: Map<string, Runner>,
     simTime: number,
     newLines: CommentaryLine[],
   ) {
@@ -524,7 +540,7 @@ export class NarrativeGenerator {
         ) &&
         this.rng.next() < 0.2
       ) {
-        const runner = runners.find((r) => r.horseId === line.horseId);
+        const runner = runnersMap.get(line.horseId!);
         if (runner) {
           newLines.push(this.createLine("REDEMPTION_NOTE", simTime, runner));
           this.state.setCooldown(

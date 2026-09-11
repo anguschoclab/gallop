@@ -1,7 +1,7 @@
 import { Info } from "lucide-react";
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { TOOLTIP_DELAY_MS } from "@/constants";
-import type { HorseAttachment } from "@/core/horse/attachment";
+import type { HorseAttachment } from "@/services/horse/horseFacade";
 
 interface AttachmentBreakdownProps {
   attachment: HorseAttachment;

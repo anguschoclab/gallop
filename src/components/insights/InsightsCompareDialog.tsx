@@ -15,7 +15,7 @@ import {
   INSIGHT_METRICS,
   type InsightMetricKey,
   type InsightRow,
-} from "@/core/horse/insightMetrics";
+} from "@/services/horse/horseFacade";
 
 /** Metrics where a lower value is the better outcome. */
 const LOWER_IS_BETTER: ReadonlySet<InsightMetricKey> = new Set<InsightMetricKey>(["age"]);

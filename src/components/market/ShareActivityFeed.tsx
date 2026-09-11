@@ -2,11 +2,11 @@ import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { useGameWithShallow, useGame } from "@/game/store";
 import type { GameState } from "@/game/types";
-import type { ShareActivityFeedItem } from "@/core/breeding/types";
+import type { ShareActivityFeedItem } from "@/services/breeding/breedingFacade";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, TrendingUp, TrendingDown, Crown, HandCoins, DollarSign } from "lucide-react";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import { SHARE_ACTIVITY_FEED_LIMIT } from "@/constants";
 
 interface ShareActivityFeedProps {

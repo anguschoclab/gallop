@@ -4,7 +4,7 @@ import {
   getOrDeriveAppearance,
   isFeminine,
   hashSeed,
-} from "@/core/horse/proceduralPortrait";
+} from "@/services/horse/horseFacade";
 import { useMemo, forwardRef } from "react";
 import { HeadSvg } from "./HeadSvg";
 import { FullBodySvg } from "./FullBodySvg";

@@ -1,5 +1,5 @@
-import { formatCurrency } from "@/core/common/formatting";
-import type { HorseCareerValuation } from "@/core/horse/pricing";
+import { formatCurrency } from "@/lib/formatting";
+import type { HorseCareerValuation } from "@/services/horse/horseFacade";
 import { cn } from "@/lib/cn";
 
 interface CareerValuationBreakdownProps {

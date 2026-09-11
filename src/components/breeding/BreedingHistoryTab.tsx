@@ -12,9 +12,9 @@ import {
   LeaderboardSkeleton,
 } from "@/components/leaderboard/LeaderboardPrimitives";
 import { useLeaderboardControls } from "@/hooks/leaderboard/useLeaderboardControls";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { isPlayerOwned } from "@/services/breeding/breedingFacade";
 import type { useBreedingPage } from "@/hooks/breeding/useBreedingPage";
-import type { Pregnancy } from "@/core/breeding/types";
+import type { Pregnancy } from "@/services/breeding/breedingFacade";
 
 interface BreedingHistoryTabProps {
   pageData: ReturnType<typeof useBreedingPage>;

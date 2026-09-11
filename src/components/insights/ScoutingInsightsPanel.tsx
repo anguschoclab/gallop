@@ -30,9 +30,9 @@ import { ScoutingThresholdControls } from "./ScoutingThresholdControls";
 import { useBookmarks } from "@/hooks/shared/useBookmarks";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
-import type { Horse } from "@/core/horse/types";
-import { isNpcOwned, isPlayerOwned } from "@/core/horse/ownership";
-import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
+import type { Horse } from "@/services/horse/horseFacade";
+import { isNpcOwned, isPlayerOwned } from "@/services/horse/horseFacade";
+import { ensurePhenotypeResolved } from "@/services/horse/horseFacade";
 import {
   createDefaultScoutingThresholds,
   lastScoutDayByHorse,
@@ -46,7 +46,7 @@ import {
   buildInsightRow,
   type InsightMetricKey,
   type InsightRow,
-} from "@/core/horse/insightMetrics";
+} from "@/services/horse/horseFacade";
 import {
   BarChart3,
   Bookmark,

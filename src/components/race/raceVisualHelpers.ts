@@ -1,6 +1,6 @@
 import type { Weather } from "@/game/types";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import { beyerFigure } from "@/core/race/beyer";
+import type { Runner } from "@/services/race/raceFacade";
+import { beyerFigure } from "@/services/race/raceFacade";
 import trackTurf from "@/assets/track-turf.png";
 import trackDirt from "@/assets/track-dirt.png";
 import trackSynthetic from "@/assets/track-synthetic.png";

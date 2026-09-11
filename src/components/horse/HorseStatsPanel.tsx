@@ -1,7 +1,7 @@
 import { StatBar } from "@/components/horse/HorseBits";
 import { BeyerSparkline } from "@/components/horse/BeyerSparkline";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import { scoutGrade } from "@/core/horse/grading";
+import { scoutGrade } from "@/services/horse/horseFacade";
 import { cn } from "@/lib/cn";
 import type { Horse } from "@/game/types";
 import { ShieldCheck, Activity } from "lucide-react";

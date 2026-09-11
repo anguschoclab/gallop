@@ -37,6 +37,11 @@ import {
   computeReputationAfterTrade,
   applyTradeToExchange,
   buildSettleTradePatch,
+  validateListHorse,
+  validateAcceptBid,
+  validateBuyAsk,
+  buildBidAcceptTrade,
+  buildAskBuyTrade,
 } from "@/core/market/exchangeActions";
 import type { StoreSet, StoreGet } from "../types";
 import type { ActionResult } from "../types";
@@ -195,20 +200,14 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
     listHorseOnExchange: (horseId, price) => {
       const s = get();
       const horse = s.horses[horseId] as Horse | undefined;
-      if (!horse) return { ok: false, reason: "Horse not found" };
-      if (!isPlayerOwned(horse)) return { ok: false, reason: "You do not own this horse" };
-      if (horse.consignedSaleId)
-        return { ok: false, reason: "Horse is already consigned to an auction" };
-      if (horse.lifecycleStatus === "deceased")
-        return { ok: false, reason: "Horse is no longer with us" };
-      if (!Number.isFinite(price) || price <= 0)
-        return { ok: false, reason: "Ask price must be positive" };
-
       const exchange = readExchange();
-      if (exchange.asks.some((a) => a.horseId === horseId && a.sellerId === PLAYER_ID))
-        return { ok: false, reason: "Horse is already listed" };
+      const existingAsk = exchange.asks.some(
+        (a) => a.horseId === horseId && a.sellerId === PLAYER_ID,
+      );
+      const error = validateListHorse(horse, price, existingAsk);
+      if (error) return { ok: false, reason: error };
 
-      const { fairValue } = suggestAskPrice(horse, Object.values(s.horses) as Horse[]);
+      const { fairValue } = suggestAskPrice(horse!, Object.values(s.horses) as Horse[]);
 
       set({
         exchange: {
@@ -229,7 +228,7 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
         },
         log: [
           ...s.log,
-          { day: s.day, text: `${horse.name} listed on the exchange at ${Math.round(price)}.` },
+          { day: s.day, text: `${horse!.name} listed on the exchange at ${Math.round(price)}.` },
         ],
       });
       return { ok: true };
@@ -253,38 +252,31 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
       const bid = exchange.bids.find((b) => b.id === bidId);
       if (!bid) return { ok: false, reason: "Bid no longer available" };
       const horse = s.horses[bid.horseId] as Horse | undefined;
-      if (!horse) return { ok: false, reason: "Horse not found" };
-      if (!isPlayerOwned(horse)) return { ok: false, reason: "You do not own this horse" };
-
       const buyer = (s.npcStables ?? []).find((st) => st.id === bid.bidderId);
-      if (!buyer) return { ok: false, reason: "Buyer is no longer active" };
-      if (buyer.cash < bid.price) return { ok: false, reason: "Buyer can no longer fund the bid" };
+      const error = validateAcceptBid(horse, buyer, bid.price);
+      if (error) return { ok: false, reason: error };
 
       const proceeds = netProceeds(bid.price);
-      const trade: ExchangeTrade = {
-        id: generateUUID(),
-        horseId: horse.id,
-        horseName: horse.name,
-        price: bid.price,
-        commission: exchangeCommission(bid.price),
-        buyerId: buyer.id,
-        buyerName: buyer.name,
-        sellerId: PLAYER_ID,
-        sellerName: s.playerProfile?.stableName ?? "My Stable",
-        day: s.day,
-        initiatedBy: "bid",
-      };
+      const trade = buildBidAcceptTrade(
+        horse!,
+        bid.price,
+        buyer!.id,
+        buyer!.name,
+        s.playerProfile?.stableName ?? "My Stable",
+        s.day,
+        generateUUID(),
+      );
 
       settleTrade({
         trade,
-        horse,
-        newOwnership: makeNpcOwned(asNpcStableId(buyer.id)),
+        horse: horse!,
+        newOwnership: makeNpcOwned(asNpcStableId(buyer!.id)),
         playerCashDelta: proceeds,
         reputationRole: "seller",
         reputationPrice: bid.price,
-        counterpartyName: buyer.name,
-        logText: `Sold ${horse.name} to ${buyer.name} on the exchange for ${bid.price} (net ${proceeds}).`,
-        npcCashDeltas: [{ stableId: buyer.id, delta: -bid.price }],
+        counterpartyName: buyer!.name,
+        logText: `Sold ${horse!.name} to ${buyer!.name} on the exchange for ${bid.price} (net ${proceeds}).`,
+        npcCashDeltas: [{ stableId: buyer!.id, delta: -bid.price }],
       });
       return { ok: true };
     },
@@ -294,36 +286,31 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
       const exchange = readExchange();
       const ask = exchange.asks.find((a) => a.id === askId);
       if (!ask) return { ok: false, reason: "Listing no longer available" };
-      if (ask.sellerId === PLAYER_ID) return { ok: false, reason: "This is your own listing" };
       const horse = s.horses[ask.horseId] as Horse | undefined;
-      if (!horse) return { ok: false, reason: "Horse not found" };
-      if (s.cash < ask.price) return { ok: false, reason: "Insufficient funds" };
+      const error = validateBuyAsk(horse, ask.sellerId, s.cash, ask.price);
+      if (error) return { ok: false, reason: error };
 
       const seller = (s.npcStables ?? []).find((st) => st.id === ask.sellerId);
       const proceeds = netProceeds(ask.price);
-      const trade: ExchangeTrade = {
-        id: generateUUID(),
-        horseId: horse.id,
-        horseName: horse.name,
-        price: ask.price,
-        commission: exchangeCommission(ask.price),
-        buyerId: PLAYER_ID,
-        buyerName: s.playerProfile?.stableName ?? "My Stable",
-        sellerId: ask.sellerId,
-        sellerName: ask.sellerName,
-        day: s.day,
-        initiatedBy: "ask",
-      };
+      const trade = buildAskBuyTrade(
+        horse!,
+        ask.price,
+        ask.sellerId,
+        ask.sellerName,
+        s.playerProfile?.stableName ?? "My Stable",
+        s.day,
+        generateUUID(),
+      );
 
       settleTrade({
         trade,
-        horse,
+        horse: horse!,
         newOwnership: makePlayerOwned(),
         playerCashDelta: -ask.price,
         reputationRole: "buyer",
         reputationPrice: ask.price,
         counterpartyName: ask.sellerName,
-        logText: `Bought ${horse.name} from ${ask.sellerName} on the exchange for ${ask.price}.`,
+        logText: `Bought ${horse!.name} from ${ask.sellerName} on the exchange for ${ask.price}.`,
         npcCashDeltas: seller ? [{ stableId: seller.id, delta: proceeds }] : undefined,
       });
       return { ok: true };

@@ -100,4 +100,76 @@ describe("vague token audit", () => {
     }
     expect(processFuncs).toEqual([]);
   });
+
+  it("standalone 'data' variable/parameter count in src/core is under 20", () => {
+    const dataHits: string[] = [];
+    // Match standalone `data` as a variable or parameter name, not compound names.
+    // Excludes: horseData, raceData, @/data, dataPorts, .data, metadata, etc.
+    const patterns = [
+      /\bconst\s+data\b\s*=/g,
+      /\blet\s+data\b\s*=/g,
+      /\bdata\s*:\s*[A-Z]/g, // parameter: data: SomeType
+      /\bdata\s*:\s*Record/g,
+      /\bdata\s*:\s*Partial/g,
+      /\bdata\s*:\s*Readonly/g,
+      /\bdata\s*:\s*\{/g,
+    ];
+    for (const file of coreFiles) {
+      const content = readFileSync(file, "utf-8");
+      for (const pattern of patterns) {
+        for (const m of content.matchAll(pattern)) {
+          const rel = relative(SRC_ROOT, file);
+          dataHits.push(`${rel}: ${m[0].trim()}`);
+        }
+      }
+    }
+    if (dataHits.length >= 20) {
+      console.error(`data token count: ${dataHits.length} (target < 20)\n${dataHits.join("\n")}`);
+    }
+    expect(dataHits.length).toBeLessThan(20);
+  });
+
+  it("standalone 'info' variable/parameter count in src/core is under 5", () => {
+    const infoHits: string[] = [];
+    const patterns = [
+      /\bconst\s+info\b\s*=/g,
+      /\blet\s+info\b\s*=/g,
+      /\binfo\s*:\s*[A-Z]/g, // parameter: info: SomeType
+    ];
+    for (const file of coreFiles) {
+      const content = readFileSync(file, "utf-8");
+      for (const pattern of patterns) {
+        for (const m of content.matchAll(pattern)) {
+          const rel = relative(SRC_ROOT, file);
+          infoHits.push(`${rel}: ${m[0].trim()}`);
+        }
+      }
+    }
+    if (infoHits.length >= 5) {
+      console.error(`info token count: ${infoHits.length} (target < 5)\n${infoHits.join("\n")}`);
+    }
+    expect(infoHits.length).toBeLessThan(5);
+  });
+
+  it("standalone 'item' variable/parameter count in src/core is under 5", () => {
+    const itemHits: string[] = [];
+    const patterns = [
+      /\bconst\s+item\b\s*=/g,
+      /\blet\s+item\b\s*=/g,
+      /\bitem\s*:\s*[A-Z]/g, // parameter: item: SomeType
+    ];
+    for (const file of coreFiles) {
+      const content = readFileSync(file, "utf-8");
+      for (const pattern of patterns) {
+        for (const m of content.matchAll(pattern)) {
+          const rel = relative(SRC_ROOT, file);
+          itemHits.push(`${rel}: ${m[0].trim()}`);
+        }
+      }
+    }
+    if (itemHits.length >= 5) {
+      console.error(`item token count: ${itemHits.length} (target < 5)\n${itemHits.join("\n")}`);
+    }
+    expect(itemHits.length).toBeLessThan(5);
+  });
 });

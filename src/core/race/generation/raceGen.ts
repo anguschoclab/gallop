@@ -12,7 +12,7 @@
 import type { Race, RaceClass } from "../types";
 import type { Rng } from "@/core/common/rng";
 import { nondeterministicRng } from "@/core/common/rng";
-import type { GradedRace } from "@/data/gradedRaces";
+import type { GradedRace } from "@/core/data/gradedRacesAccessor";
 import { generateUUID } from "@/core/uuid";
 import { rand, randomWeather } from "@/core/common/random";
 import { randomTrackConditionWithClimateBias } from "@/core/race/trackConditions";

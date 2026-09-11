@@ -3,7 +3,7 @@ import { TrophyWallView } from "./TrophyWallView";
 import { TrophyFullView } from "./TrophyFullView";
 import { groupByRegion } from "./awardUtils";
 import { cn } from "@/lib/cn";
-import type { AwardRegion, RegionalAward } from "@/core/awards/types";
+import type { AwardRegion, RegionalAward } from "@/services/awards/awardsFacade";
 
 interface TrophyCaseProps {
   awards: RegionalAward[];

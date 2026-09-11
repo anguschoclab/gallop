@@ -1,5 +1,5 @@
 import { Trash2, Clock, ChevronRight } from "lucide-react";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/cn";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import type { SaveSlotMetadata } from "@/services/storage/saveManager";

@@ -33,8 +33,8 @@ import {
   type AlertHorse,
   type PriceAlertDirection,
   type PriceAlertScope,
-} from "@/core/market/priceAlerts";
-import { createDefaultExchangeState } from "@/core/market/exchange";
+} from "@/services/market/marketFacade";
+import { createDefaultExchangeState } from "@/services/market/marketFacade";
 
 type ScopeKind = "market" | "grade" | "track";
 

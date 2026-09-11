@@ -8,10 +8,10 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { formatCurrency } from "@/core/common/formatting";
-import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/core/staff/staffConfig";
-import { PATIENCE_BY_TIER } from "@/core/staff/staffNegotiation";
-import type { StaffMember } from "@/core/staff/staffTypes";
+import { formatCurrency } from "@/lib/formatting";
+import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/services/staff/staffFacade";
+import { PATIENCE_BY_TIER } from "@/services/staff/staffFacade";
+import type { StaffMember } from "@/services/staff/staffFacade";
 import { useStaffNegotiation } from "@/hooks/staff/useStaffNegotiation";
 
 interface StaffNegotiationDialogProps {

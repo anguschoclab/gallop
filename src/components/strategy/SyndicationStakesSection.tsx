@@ -2,8 +2,8 @@ import {
   calculateSyndicationBreakdown,
   evaluateSyndicationEligibility,
   evaluateInvestorAppetite,
-} from "@/core/breeding/strategySyndicationHelpers";
-import { formatCurrency } from "@/core/common/formatting";
+} from "@/services/breeding/breedingFacade";
+import { formatCurrency } from "@/lib/formatting";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

@@ -1,5 +1,5 @@
 import type { AppearanceDNA, HorseMarkings } from "@/game/types";
-import type { getPalette } from "@/core/horse/proceduralPortrait";
+import type { getPalette } from "@/services/horse/horseFacade";
 import { cn } from "@/lib/cn";
 import { forwardRef } from "react";
 

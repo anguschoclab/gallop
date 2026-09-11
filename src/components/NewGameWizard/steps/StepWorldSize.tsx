@@ -1,5 +1,5 @@
-import type { WorldSize } from "@/core/stable/worldSizeConfig";
-import { WORLD_SIZE_CONFIGS } from "@/core/stable/worldSizeConfig";
+import type { WorldSize } from "@/services/stable/stableFacade";
+import { WORLD_SIZE_CONFIGS } from "@/services/stable/stableFacade";
 
 interface StepWorldSizeProps {
   worldSize: WorldSize;

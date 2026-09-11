@@ -21,10 +21,10 @@ import {
   filterAlmanacNewsFeed,
   type AlmanacFeedCategory,
   type AlmanacFeedItem,
-} from "@/core/history/almanacNewsFeed";
-import type { TrackRecord, SeasonRecord } from "@/core/history/historyTypes";
+} from "@/services/history/historyFacade";
+import type { TrackRecord, SeasonRecord } from "@/services/history/historyFacade";
 import type { Transaction } from "@/core/transactions/transactionTypes";
-import type { Horse } from "@/core/horse/types";
+import type { Horse } from "@/services/horse/horseFacade";
 import type { NewsItem } from "@/services/narrative/newsTypes";
 import { cn } from "@/lib/cn";
 

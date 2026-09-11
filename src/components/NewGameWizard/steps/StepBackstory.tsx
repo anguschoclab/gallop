@@ -1,6 +1,6 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { formatCurrency } from "@/core/common/formatting";
-import { BACKSTORIES } from "@/core/common/backstories";
+import { formatCurrency } from "@/lib/formatting";
+import { BACKSTORIES } from "@/services/common/commonFacade";
 import type { BackstoryId } from "@/game/types";
 import { TOTAL_HORSES, FACILITY_UPGRADE_COUNT } from "./helpers";
 

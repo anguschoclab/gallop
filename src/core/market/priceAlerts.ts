@@ -20,7 +20,7 @@ import {
   realWorldMovePct,
   realWorldSeries,
 } from "@/data/realWorldMarketIndices";
-import { TRACK_BY_ID } from "@/data/tracks";
+import { TRACK_BY_ID } from "@/core/data/tracksAccessor";
 
 export { REAL_WORLD_BLEND_WEIGHT };
 

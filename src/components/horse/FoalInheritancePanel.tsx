@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Baby, ArrowUp } from "lucide-react";
-import { deriveFoalInheritance } from "@/core/horse/foal-inheritance";
-import type { Horse } from "@/core/horse/types";
+import { deriveFoalInheritance } from "@/services/horse/horseFacade";
+import type { Horse } from "@/services/horse/horseFacade";
 import { cn } from "@/lib/cn";
 
 const LEAN_LABEL: Record<string, string> = {

@@ -2,18 +2,18 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { formatCurrency } from "@/core/common/formatting";
-import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/core/staff/staffConfig";
+import { formatCurrency } from "@/lib/formatting";
+import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/services/staff/staffFacade";
 import { Users, Search, Filter } from "lucide-react";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { useMemo, useState } from "react";
-import { getG1WinsForStable, countByGrade } from "@/core/awards/connectionTrophies";
+import { getG1WinsForStable, countByGrade } from "@/services/awards/awardsFacade";
 import { generateUUID } from "@/core/uuid";
-import type { StaffRole, StaffTier } from "@/core/staff/staffTypes";
+import type { StaffRole, StaffTier } from "@/services/staff/staffFacade";
 import { StaffNegotiationDialog } from "@/components/staff/StaffNegotiationDialog";
 import { StaffTeamList } from "@/components/staff/StaffTeamList";
 import { RecruitmentPool } from "@/components/staff/RecruitmentPool";
-import { STAFF_TRAIT_OPTIONS } from "@/core/common/traitLabels";
+import { STAFF_TRAIT_OPTIONS } from "@/services/common/commonFacade";
 import {
   Select,
   SelectContent,

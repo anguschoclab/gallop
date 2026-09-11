@@ -12,7 +12,7 @@ import { useStandingsMessages } from "@/hooks/dashboard/useStandingsMessages";
 import { buildStandingsRows } from "@/core/standings/buildStandingsRows";
 import { StableDetailsPanel } from "@/components/dashboard/StableDetailsPanel";
 import { WealthDetailsPanel } from "@/components/dashboard/WealthDetailsPanel";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/cn";
 import { Trophy, Bell, Coins, Award } from "lucide-react";
 import { useGameWithShallow } from "@/game/store";
@@ -31,7 +31,7 @@ import {
   WEALTH_TAB_VALUE,
   EARNINGS_TAB_VALUE,
 } from "@/constants";
-import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
+import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/services/awards/awardsFacade";
 
 const RANGES = [
   { label: "7D", days: STANDINGS_RANGE_SHORT_DAYS },

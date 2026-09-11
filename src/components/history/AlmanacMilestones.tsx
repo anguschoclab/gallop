@@ -3,8 +3,8 @@ import { Landmark, Trophy, Gauge } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
-import { buildTrackMilestones } from "@/core/history/almanacInsights";
-import type { SeasonRecord, TrackRecord } from "@/core/history/historyTypes";
+import { buildTrackMilestones } from "@/services/history/historyFacade";
+import type { SeasonRecord, TrackRecord } from "@/services/history/historyFacade";
 
 export function AlmanacMilestones({
   records,

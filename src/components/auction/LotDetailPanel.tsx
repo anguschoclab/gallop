@@ -10,8 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { FileText, TrendingUp, ShieldCheck } from "lucide-react";
 import { HorsePortrait } from "@/components/horse/HorsePortrait";
-import { genderSymbol } from "@/core/horse/gender";
-import { formatCurrency } from "@/core/common/formatting";
+import { genderSymbol } from "@/services/horse/horseFacade";
+import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/cn";
 import type { AuctionLot, Horse, Stable } from "@/game/types";
 

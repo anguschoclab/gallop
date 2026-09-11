@@ -14,7 +14,7 @@
  */
 
 import type { Horse } from "@/core/horse/types";
-import { TRACK_BY_ID } from "@/data/tracks";
+import { TRACK_BY_ID } from "@/core/data/tracksAccessor";
 import { getRacecoursePrestige } from "@/core/prestige/racecoursePrestige";
 import { AUCTION_HOUSES } from "@/core/prestige/auctionHouses";
 import { buildHouseCatalogue } from "./houseQuotes";

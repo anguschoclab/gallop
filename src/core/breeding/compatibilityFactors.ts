@@ -8,7 +8,7 @@
 
 import type { Horse } from "@/core/horse/types";
 import { calculateDosageMetrics } from "@/core/race/dosage";
-import { findHorseByName, type PedigreeHorse } from "@/data/pedigreeData";
+import { findHorseByName, type PedigreeHorse } from "@/core/data/pedigreeAccessor";
 import { NICKING_AFFINITIES, CROSS_FAMILY_AFFINITIES } from "@/core/breeding/breedingAffinityData";
 import { getCareerStats } from "@/core/horse/stats";
 

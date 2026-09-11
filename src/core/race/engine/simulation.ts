@@ -10,7 +10,7 @@
  * Related files: runnerBuilder.ts, tacticalAI.ts, draftingAI.ts
  */
 
-import type { CourseSpecification } from "@/data/tracks";
+import type { CourseSpecification } from "@/core/data/tracksAccessor";
 import type { Rng } from "@/core/common/types";
 import { clamp } from "@/core/common/math";
 import { compareFinishOrder } from "./compareFinishOrder";

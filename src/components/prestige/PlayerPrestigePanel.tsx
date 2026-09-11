@@ -17,7 +17,7 @@ import {
   PRESTIGE_TIER_LABELS,
   PRESTIGE_TIER_BOUNDARIES,
   type PrestigeLadderEntry,
-} from "@/core/prestige";
+} from "@/services/prestige/prestigeFacade";
 import { cn } from "@/lib/cn";
 
 /** Tier band boundaries used to draw ticks on the meter (ascending, excluding provincial at 0). */

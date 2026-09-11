@@ -2,7 +2,7 @@ import { useGame } from "@/game/store";
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import type { NarrativeArc, StoryBeat } from "@/core/ai/npcCycleAI";
+import type { NarrativeArc, StoryBeat } from "@/services/ai/aiFacade";
 import type { Stable } from "@/game/types";
 import { BookOpen, Sparkles, TrendingUp, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/cn";

@@ -10,8 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { HorsePortrait } from "@/components/horse/HorsePortrait";
-import { calculateOverallRating } from "@/core/horse/stats";
-import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
+import { calculateOverallRating } from "@/services/horse/horseFacade";
+import { ensurePhenotypeResolved } from "@/services/horse/horseFacade";
 import { Zap, TrendingUp, Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useGalleryFilters, COAT_COLORS } from "@/hooks/horse/useGalleryFilters";
@@ -19,7 +19,7 @@ import {
   HORSE_TRAIT_CATEGORY_OPTIONS,
   HORSE_TRAIT_OPTIONS,
   type HorseTraitKey,
-} from "@/core/common/traitLabels";
+} from "@/services/common/commonFacade";
 
 function HorseGalleryPage() {
   const {

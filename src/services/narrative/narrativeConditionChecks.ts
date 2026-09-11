@@ -69,9 +69,10 @@ export function checkConditionTransitions(
 
     const nonAilingNew = newIds.filter((id) => id !== "ailing");
     if (nonAilingNew.length > 0) {
+      const conditionsById = new Map(conditions.map((c) => [c.id, c]));
       const sorted = nonAilingNew.sort((a, b) => {
-        const aCond = conditions.find((c) => c.id === a)!;
-        const bCond = conditions.find((c) => c.id === b)!;
+        const aCond = conditionsById.get(a)!;
+        const bCond = conditionsById.get(b)!;
         if (aCond.emphatic !== bCond.emphatic) return aCond.emphatic ? -1 : 1;
         return TONE_PRIORITY[aCond.tone] - TONE_PRIORITY[bCond.tone];
       });

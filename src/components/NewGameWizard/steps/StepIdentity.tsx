@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dice5 } from "lucide-react";
-import { randomStableName, randomOwnerName } from "@/core/stable/stableGeneration";
+import { randomStableName, randomOwnerName } from "@/services/stable/stableFacade";
 import { makeWizardRng } from "./helpers";
 
 interface StepIdentityProps {

@@ -2,8 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dna } from "lucide-react";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import { deriveHorseGenetics } from "@/core/horse/genetics-readout";
-import type { Horse } from "@/core/horse/types";
+import { deriveHorseGenetics } from "@/services/horse/horseFacade";
+import type { Horse } from "@/services/horse/horseFacade";
 import { cn } from "@/lib/cn";
 
 const RISK_STYLES: Record<string, string> = {

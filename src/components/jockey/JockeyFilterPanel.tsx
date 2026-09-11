@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { JockeyArchetype, JockeySilkPattern } from "@/game/types";
 import { FilterSelect } from "./FilterSelect";
 import { Search, Filter } from "lucide-react";
-import { JOCKEY_TRAIT_OPTIONS } from "@/core/common/traitLabels";
-import type { JockeyTrait } from "@/core/jockey/types";
+import { JOCKEY_TRAIT_OPTIONS } from "@/services/common/commonFacade";
+import type { JockeyTrait } from "@/services/jockey/jockeyFacade";
 
 interface JockeyFilterPanelProps {
   search: string;

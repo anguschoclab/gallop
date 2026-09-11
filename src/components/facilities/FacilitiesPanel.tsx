@@ -1,7 +1,7 @@
 import { useGame, useGameWithShallow } from "@/game/store";
 import { FacilityCategory } from "./FacilityCategory";
 import { Dumbbell, ShieldCheck, Activity, Package } from "lucide-react";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import {
   FACILITY_BONUSES,
   FACILITY_MAINTENANCE_COSTS,
@@ -9,10 +9,10 @@ import {
   FACILITY_TIER_LABELS,
   type FacilityLevel,
   type FacilityType,
-} from "@/core/facilities";
+} from "@/services/facilities/facilitiesFacade";
 import { FACILITY_LEVELS } from "@/hooks/facilities/useFacilityTiers";
-import { getReputationTier } from "@/core/reputation";
-import type { ReputationTier } from "@/core/reputation";
+import { getReputationTier } from "@/services/reputation/reputationFacade";
+import type { ReputationTier } from "@/services/reputation/reputationFacade";
 
 function TierLegend() {
   const tiers = FACILITY_LEVELS;

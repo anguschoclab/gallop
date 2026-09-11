@@ -6,15 +6,15 @@ import { BeyerBadge } from "@/components/race/BeyerBadge";
 import { SectionalTimingTable } from "@/components/race/SectionalTimingTable";
 import { PaceGraph } from "@/components/race/PaceGraph";
 import { SpeedBreakdownChart } from "@/components/race/SpeedBreakdownChart";
-import { calculateBeyerForResult } from "@/core/race/beyer";
-import { gradeColor } from "@/core/common/uiTokens";
-import { calculateClassBonus } from "@/core/common/classBonus";
+import { calculateBeyerForResult } from "@/services/race/raceFacade";
+import { gradeColor } from "@/services/common/commonFacade";
+import { calculateClassBonus } from "@/services/common/commonFacade";
 import { Trophy, Medal, Award, Clock } from "lucide-react";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/cn";
-import { isPlayerOwned } from "@/core/horse/ownership";
-import type { Race, RaceResult } from "@/core/race/types";
+import { isPlayerOwned } from "@/services/horse/horseFacade";
+import type { Race, RaceResult } from "@/services/race/raceFacade";
 
 export function RecapTab() {
   const { localHorseMap, recentGradedRaces, calibratedPars } = useRecapData();

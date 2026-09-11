@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { SilkDot } from "@/components/SilkDot";
 import { NumericValue } from "@/components/horse/HorseBits";
-import { calculateHeadToHeadOdds } from "@/core/race/headToHead";
+import { calculateHeadToHeadOdds } from "@/services/race/raceFacade";
 import { useHeadToHeadSim } from "@/hooks/horse/useHeadToHeadSim";
 import { cn } from "@/lib/cn";
 import { SIM_ITERATIONS, DEFAULT_SIM_DISTANCE } from "@/constants/uiConstants";

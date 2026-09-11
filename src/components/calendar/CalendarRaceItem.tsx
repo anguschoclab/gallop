@@ -1,8 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
-import { gradeColor } from "@/core/common/uiTokens";
+import { gradeColor } from "@/services/common/commonFacade";
 import type { Race } from "@/game/types";
-import type { RegionConfig } from "@/core/calendar/regions";
+import type { RegionConfig } from "@/services/calendar/calendarFacade";
 
 interface CalendarRaceItemProps {
   race: Race;

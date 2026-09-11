@@ -5,9 +5,9 @@ import { useAuctions } from "@/hooks/game/useMarketState";
 import type { GameState } from "@/game/types";
 import { useState, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
-import { dayOfYear } from "@/core/calendar/dateFormatting";
-import { SALE_TRIGGERS } from "@/core/auction/data";
-import { isLotEligible } from "@/core/auction/engine";
+import { dayOfYear } from "@/services/calendar/calendarFacade";
+import { SALE_TRIGGERS } from "@/services/auction/auctionFacade";
+import { isLotEligible } from "@/services/auction/auctionFacade";
 import { CONSIGNMENT_COMMISSION } from "@/constants";
 import { Gavel } from "lucide-react";
 import { NumericValue } from "@/components/horse/HorseBits";
@@ -17,9 +17,13 @@ import { TransactionArchive } from "@/components/auction/TransactionArchive";
 import { LiveExchangeFloor } from "@/components/auction/LiveExchangeFloor";
 import { UpcomingLedgerTable } from "@/components/auction/UpcomingLedgerTable";
 import type { AuctionSale, Horse } from "@/game/types";
-import { canAccessSale, getReputationTier, formatReputationTier } from "@/core/reputation";
-import type { AuctionSaleKind } from "@/core/market/types";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import {
+  canAccessSale,
+  getReputationTier,
+  formatReputationTier,
+} from "@/services/reputation/reputationFacade";
+import type { AuctionSaleKind } from "@/services/market/marketFacade";
+import { isPlayerOwned } from "@/services/horse/horseFacade";
 
 type SaleDisplay =
   | AuctionSale

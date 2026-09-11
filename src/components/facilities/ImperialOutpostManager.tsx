@@ -4,11 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useGame, useGameWithShallow } from "@/game/store";
-import { OUTPOST_CONSTANTS } from "@/core/facilities/outpostTypes";
-import { FACILITY_NAMES, facilityLevelToTierLabel } from "@/core/facilities/facilityTypes";
+import { OUTPOST_CONSTANTS } from "@/services/facilities/facilitiesFacade";
+import { FACILITY_NAMES, facilityLevelToTierLabel } from "@/services/facilities/facilitiesFacade";
 import { MapPin, Users, Globe, Hammer, ArrowRightLeft } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function ImperialOutpostManager() {

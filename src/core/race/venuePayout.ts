@@ -5,7 +5,7 @@
  * a win at a marquee course pays more than the same purse at a country track.
  *
  * Dependencies: @/core/prestige (racecoursePrestigeMultiplier)
- * Related files: src/core/race/impacts/prizeMoney.ts, src/game/store/helpers/raceResolution.ts
+ * Related files: src/core/race/impacts/prizeMoney.ts, src/core/race/resolution.ts
  */
 
 import { racecoursePrestigeMultiplier } from "@/core/prestige";

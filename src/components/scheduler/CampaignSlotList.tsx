@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
-import { gameCalendarDate } from "@/core/calendar/dateFormatting";
+import { gameCalendarDate } from "@/services/calendar/calendarFacade";
 import { ChevronRight } from "lucide-react";
 import type { CampaignRaceSlot, Race } from "@/game/types";
 

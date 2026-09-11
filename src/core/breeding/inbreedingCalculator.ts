@@ -1,4 +1,4 @@
-import { findHorseByName, type PedigreeHorse } from "@/data/pedigreeData";
+import { findHorseByName, type PedigreeHorse } from "@/core/data/pedigreeAccessor";
 import {
   DEFAULT_GENETIC_DIVERSITY,
   INBREEDING_EXPECTED_MAX_ANCESTORS,

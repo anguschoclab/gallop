@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { gradeColor } from "@/core/common/uiTokens";
+import { gradeColor } from "@/services/race/raceFacade";
 import { RACE_GRADES } from "@/constants";
 import type { Race, Horse } from "@/game/types";
 

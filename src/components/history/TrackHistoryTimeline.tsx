@@ -2,9 +2,9 @@ import { useMemo, useState } from "react";
 import { History, Timer, Trophy } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { buildTrackTimeline } from "@/core/history/almanacInsights";
+import { buildTrackTimeline } from "@/services/history/historyFacade";
 import { PillToggleGroup } from "@/components/common/PillToggleGroup";
-import type { SeasonRecord, TrackRecord } from "@/core/history/historyTypes";
+import type { SeasonRecord, TrackRecord } from "@/services/history/historyFacade";
 
 export function TrackHistoryTimeline({
   records,

@@ -8,8 +8,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
-import { formatCurrency } from "@/core/common/formatting";
-import { resolveSaleHouse } from "@/core/prestige";
+import { formatCurrency } from "@/lib/formatting";
+import { resolveSaleHouse } from "@/services/prestige/prestigeFacade";
 import { SalePrestigeBreakdown } from "@/components/shared/PrestigeBreakdownPanel";
 import type { useScoreboard } from "@/hooks/auction/useScoreboard";
 import type { AuctionSale } from "@/game/types";

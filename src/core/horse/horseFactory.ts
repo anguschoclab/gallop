@@ -82,7 +82,7 @@ import { shouldRetireAtStartup, defaultStudParams } from "@/core/breeding/stalli
 import { shouldGenerateHorseOfAge, createHorseGenAIState } from "@/core/ai/horseGenAI";
 import { recordHorseGeneration } from "@/core/ai/horseGenAIRecording";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
-import { activeStallions2020s, type PedigreeHorse } from "@/data/pedigreeData";
+import { activeStallions2020s, type PedigreeHorse } from "@/core/data/pedigreeAccessor";
 import { clamp } from "@/core/common/math";
 import {
   POTENTIAL_MIN,

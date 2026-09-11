@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { AreaTrend, formatCurrencyCompact } from "@/components/charts";
-import { weekBucket, type TimeWindowWeeks } from "@/core/analytics/timeWindow";
-import type { RegionRunRow } from "@/core/analytics/regionalTrends";
+import { weekBucket, type TimeWindowWeeks } from "@/services/analytics/analyticsFacade";
+import type { RegionRunRow } from "@/services/analytics/analyticsFacade";
 import {
   FALLBACK_WEEK_BUCKETS,
   type EntityKind,

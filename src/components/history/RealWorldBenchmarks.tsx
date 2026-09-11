@@ -5,13 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
 import { HorseBenchmarkDialog } from "@/components/history/HorseBenchmarkDialog";
-import { compareToRealWorld, type BenchmarkComparison } from "@/core/history/almanacInsights";
+import { compareToRealWorld, type BenchmarkComparison } from "@/services/history/historyFacade";
 import {
   type RealWorldRecordSource,
   type TripCategory,
   getTripCategory,
 } from "@/data/realWorldRecords";
-import type { TrackRecord } from "@/core/history/historyTypes";
+import type { TrackRecord } from "@/services/history/historyFacade";
 import { cn } from "@/lib/cn";
 
 type MatchFilter = "all" | "outpaced" | "matched" | "uncontested";

@@ -3,8 +3,8 @@ import { CalendarRange } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
-import { buildDecadeLeaders, recordSpeed } from "@/core/history/almanacInsights";
-import type { TrackRecord } from "@/core/history/historyTypes";
+import { buildDecadeLeaders, recordSpeed } from "@/services/history/historyFacade";
+import type { TrackRecord } from "@/services/history/historyFacade";
 
 export function DecadeLeaders({ records }: { records: TrackRecord[] }) {
   const decades = useMemo(() => buildDecadeLeaders(records), [records]);

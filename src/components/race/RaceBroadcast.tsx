@@ -17,7 +17,7 @@ import { InRunningSnapshotDialog } from "@/components/race/InRunningSnapshotDial
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
+import type { Runner } from "@/services/race/raceFacade";
 import type { Horse, Race } from "@/game/types";
 import { useGame } from "@/game/store";
 import type { RacePhase } from "@/hooks/race/useRacePhase";

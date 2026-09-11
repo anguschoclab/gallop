@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrackRecordsTable } from "@/components/history/TrackRecordsTable";
-import type { RecordCategoryKind, TrackRecord } from "@/core/history/historyTypes";
+import type { RecordCategoryKind, TrackRecord } from "@/services/history/historyFacade";
 
 const DIMENSIONS: { kind: RecordCategoryKind; label: string; blurb: string }[] = [
   { kind: "overall", label: "Overall", blurb: "Fastest time at each track, surface and trip" },

@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarRaceItem } from "./CalendarRaceItem";
 import type { Race } from "@/game/types";
-import type { RegionConfig } from "@/core/calendar/regions";
+import type { RegionConfig } from "@/services/calendar/calendarFacade";
 
 interface TrackViewProps {
   races: Race[];

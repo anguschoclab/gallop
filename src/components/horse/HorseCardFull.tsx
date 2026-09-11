@@ -5,7 +5,7 @@ import { HorseCardHeader } from "./HorseCardHeader";
 import { HorseStatsPanel } from "./HorseStatsPanel";
 import { HorseMetaPanel } from "./HorseMetaPanel";
 import { HorseActionFooter } from "./HorseActionFooter";
-import { getInjuryColor, getInjuryLabel } from "@/core/horse/uiHelpers";
+import { getInjuryColor, getInjuryLabel } from "@/services/horse/horseFacade";
 import { cn } from "@/lib/cn";
 import type { useHorseCard } from "@/hooks/horse/useHorseCard";
 import { useGame } from "@/game/store";

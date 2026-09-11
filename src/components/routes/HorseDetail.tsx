@@ -37,7 +37,7 @@ import { InsurancePanel } from "@/components/insurance/InsurancePanel";
 import { StewardsPanel } from "@/components/stewards/StewardsPanel";
 import { TransportPlanner } from "@/components/transportation/TransportPlanner";
 import { BackLink } from "@/components/charts/BackLink";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateOverallRating } from "@/services/horse/horseFacade";
 import { useHorseActions } from "@/hooks/horse/useHorseActions";
 import { useHorseDetail } from "@/hooks/horse/useHorseDetail";
 import { useHorses } from "@/hooks/game/useCoreState";

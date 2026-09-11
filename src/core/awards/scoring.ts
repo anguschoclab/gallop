@@ -21,7 +21,7 @@ import {
   ASIA_PACIFIC_CATEGORIES,
   SOUTH_AMERICAN_CATEGORIES,
 } from "./types";
-import { getTrackContinent, type Continent } from "@/data/gradedRaces";
+import { getTrackContinent, type Continent } from "@/core/data/gradedRacesAccessor";
 import { DAYS_PER_YEAR } from "@/constants";
 import { SIRE_GENDERS, DAM_GENDERS } from "@/core/horse/gender";
 import { isPlayerOwned } from "@/core/horse/ownership";

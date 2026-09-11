@@ -5,8 +5,8 @@ import { CeremonyRsvpStatusIndicator } from "./CeremonyRsvpStatusIndicator";
 import { BulkRsvpControls } from "./BulkRsvpControls";
 import { Badge } from "@/components/ui/badge";
 import { MailOpen, CalendarClock } from "lucide-react";
-import { REGION_AWARD_NAMES } from "@/core/awards/types";
-import type { AwardCeremonyInvitation } from "@/core/awards/invitations";
+import { REGION_AWARD_NAMES } from "@/services/awards/awardsFacade";
+import type { AwardCeremonyInvitation } from "@/services/awards/awardsFacade";
 
 const ORDINAL = ["", "1st", "2nd", "3rd"];
 

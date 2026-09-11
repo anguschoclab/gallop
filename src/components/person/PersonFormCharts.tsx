@@ -8,10 +8,10 @@ import { ChartCard, MiniBar, Sparkline, StackedRatioBar, AreaTrend } from "@/com
 import { chartColors, formatCurrencyCompact, formatDay } from "@/components/charts";
 import { TimeWindowSelect } from "@/components/analytics/TimeWindowSelect";
 import { useTimeWindow } from "@/hooks/analytics/useTimeWindow";
-import { filterByWindow, timeWindowLabel } from "@/core/analytics/timeWindow";
+import { filterByWindow, timeWindowLabel } from "@/services/analytics/analyticsFacade";
 import { useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
-import type { HorseRaceHistoryEntry } from "@/core/horse/types";
+import type { HorseRaceHistoryEntry } from "@/services/horse/horseFacade";
 
 interface PersonFormChartsProps {
   entries: HorseRaceHistoryEntry[];

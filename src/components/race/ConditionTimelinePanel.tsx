@@ -7,7 +7,7 @@
 import { memo, useMemo, type MutableRefObject } from "react";
 import { MemoizedConditionTimeline } from "@/components/race/ConditionTimeline";
 import { useConditionTimeline } from "@/hooks/race/useConditionTimeline";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
+import type { Runner } from "@/services/race/raceFacade";
 
 interface ConditionTimelinePanelProps {
   runners: Runner[];

@@ -5,8 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { overall, NumericValue, HorseBit } from "@/components/horse/HorseBits";
-import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { ensurePhenotypeResolved } from "@/services/horse/horseFacade";
+import { isPlayerOwned } from "@/services/horse/horseFacade";
 import { LayoutGrid, Users, Briefcase, ChevronRight } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 

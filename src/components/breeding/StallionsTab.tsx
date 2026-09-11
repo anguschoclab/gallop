@@ -10,9 +10,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useStallionFilters } from "@/hooks/stable/useStallionFilters";
 import { MyStallionCard } from "@/components/breeding/MyStallionCard";
 import { StallionCard } from "@/components/breeding/StallionCard";
-import { calculateRecommendedStudFee } from "@/core/breeding/stallions";
-import type { Horse, Hemisphere } from "@/core/horse/types";
-import { getStableId } from "@/core/horse/ownership";
+import { calculateRecommendedStudFee } from "@/services/breeding/breedingFacade";
+import type { Horse, Hemisphere } from "@/services/horse/horseFacade";
+import { getStableId } from "@/services/breeding/breedingFacade";
 
 export function StallionsTab() {
   const {

@@ -7,10 +7,10 @@ import {
   runsForHorse,
   computeHorseBenchmarkStanding,
   type BenchmarkMatchupRow,
-} from "@/core/history/almanacInsights";
+} from "@/services/history/historyFacade";
 import { useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
-import type { Race } from "@/core/race/types";
+import type { Race } from "@/services/race/raceFacade";
 import { cn } from "@/lib/cn";
 
 interface HorseBenchmarkDialogProps {

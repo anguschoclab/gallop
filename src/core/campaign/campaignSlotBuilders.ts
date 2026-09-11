@@ -13,8 +13,8 @@ import type {
   CampaignRaceSlot,
   ConfirmedAptitudes,
 } from "@/game/types";
-import { GRADED_RACES_BY_KEY } from "@/data/gradedRaces";
-import type { GradedRace } from "@/data/gradedRaces";
+import { GRADED_RACES_BY_KEY } from "@/core/data/gradedRacesAccessor";
+import type { GradedRace } from "@/core/data/gradedRacesAccessor";
 
 // ── Distance band helpers ────────────────────────────────────────────────────
 

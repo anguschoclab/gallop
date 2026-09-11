@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { type RegionConfig, REGION_LIST } from "@/core/calendar/regions";
+import { type RegionConfig, REGION_LIST } from "@/services/calendar/calendarFacade";
 
 interface RegionSwitcherProps {
   currentRegion: RegionConfig;

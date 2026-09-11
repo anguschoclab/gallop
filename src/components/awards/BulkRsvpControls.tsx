@@ -8,8 +8,8 @@ import {
   getRsvpDeadlineDay,
   isCeremonyHeld,
   type AwardCeremonyInvitation,
-} from "@/core/awards/invitations";
-import { REGION_AWARD_NAMES } from "@/core/awards/types";
+} from "@/services/awards/awardsFacade";
+import { REGION_AWARD_NAMES } from "@/services/awards/awardsFacade";
 
 export function BulkRsvpControls() {
   const day = useGameWithShallow((s: StoreType) => s.day);

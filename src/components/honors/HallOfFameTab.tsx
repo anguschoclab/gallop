@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import type { GameState, Horse } from "@/game/types";
-import type { HallOfFameEntry } from "@/core/history/historyTypes";
+import type { HallOfFameEntry } from "@/services/history/historyFacade";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Medal, DollarSign } from "lucide-react";

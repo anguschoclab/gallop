@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Baby } from "lucide-react";
 import { useGameWithShallow } from "@/game/store";
-import { isPlayerOwned, getStableId } from "@/core/horse/ownership";
+import { isPlayerOwned, getStableId } from "@/services/breeding/breedingFacade";
 import type { GameState, Horse, Stable } from "@/game/types";
 import { HorseNameLink } from "@/components/horse/HorseNameLink";
 import { NumericValue } from "@/components/horse/HorseBits";

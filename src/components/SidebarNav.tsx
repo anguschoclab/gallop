@@ -36,8 +36,8 @@ import {
   Film,
 } from "lucide-react";
 
-import { formatCurrency } from "@/core/common/formatting";
-import { gameCalendarDate } from "@/core/calendar/dateFormatting";
+import { formatCurrency } from "@/lib/formatting";
+import { gameCalendarDate } from "@/services/calendar/calendarFacade";
 import { DAYS_PER_WEEK, DAYS_PER_MONTH, TOOLTIP_DELAY_MS, SIDEBAR_WIDTH_PX } from "@/constants";
 import { NavSection, type NavItem, clearAllSidebarStorage } from "./NavSection";
 import { useState } from "react";

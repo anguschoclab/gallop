@@ -3,8 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Gauge } from "lucide-react";
 import { cn } from "@/lib/cn";
-import type { RaceRunner } from "@/core/race/types";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import type { RaceRunner } from "@/services/race/raceFacade";
+import { isPlayerOwned } from "@/services/horse/horseFacade";
 
 interface JockeyStrategyBreakdownProps {
   runner: RaceRunner;

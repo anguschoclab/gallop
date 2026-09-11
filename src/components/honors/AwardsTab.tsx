@@ -8,7 +8,11 @@ import {
 } from "@/components/awards";
 import { Badge } from "@/components/ui/badge";
 import { useAwardsData } from "@/hooks/awards/useAwardsData";
-import { REGION_AWARD_NAMES, REGIONAL_CONFIGS, CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
+import {
+  REGION_AWARD_NAMES,
+  REGIONAL_CONFIGS,
+  CATEGORY_DESCRIPTIONS,
+} from "@/services/awards/awardsFacade";
 import { REGION_COLOR_CLASSES } from "@/assets/awards";
 import { Trophy, Calendar, Star } from "lucide-react";
 

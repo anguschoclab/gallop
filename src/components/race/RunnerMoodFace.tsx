@@ -4,7 +4,7 @@
  */
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
-import type { RunnerMood } from "@/core/race/runnerConditions";
+import type { RunnerMood } from "@/services/race/raceFacade";
 import {
   MOOD_TOOLTIP_DELAY_MS,
   MOOD_FACE_DEFAULT_SIZE,

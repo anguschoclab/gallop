@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Brain, TrendingUp, Target, Lightbulb, Gauge, BookOpen } from "lucide-react";
-import type { StableAIState } from "@/core/ai/npcCycleAI";
-import { formatCurrency } from "@/core/common/formatting";
-import { getStrategyInsights } from "@/core/ai/jockeyStrategyRecording";
-import { getSuccessRate } from "@/core/ai/learningModule";
+import type { StableAIState } from "@/services/ai/aiFacade";
+import { formatCurrency } from "@/lib/formatting";
+import { getStrategyInsights } from "@/services/ai/aiFacade";
+import { getSuccessRate } from "@/services/ai/aiFacade";
 
 interface AIPersonalityCardProps {
   stableAI: StableAIState;

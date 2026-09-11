@@ -14,7 +14,7 @@ import { useCashPressureHistory } from "@/hooks/stable/useCashPressureHistory";
 import { MiniSparkline } from "./MiniSparkline";
 import { Sparkline } from "@/components/charts/Sparkline";
 import { cn } from "@/lib/cn";
-import type { CashPressure } from "@/core/stable/cashPressure";
+import type { CashPressure } from "@/services/stable/stableFacade";
 
 const LABEL_COLORS: Record<CashPressure["label"], string> = {
   comfortable: "var(--status-comfortable)",

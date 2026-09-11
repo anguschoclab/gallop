@@ -6,9 +6,9 @@ import {
   generateJockeyReport,
   jockeyGradeColorClass,
   type JockeyReport,
-} from "@/core/race/jockeyReport";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import type { SectionalSplit } from "@/core/race/types";
+} from "@/services/race/raceFacade";
+import type { Runner } from "@/services/race/raceFacade";
+import type { SectionalSplit } from "@/services/race/raceFacade";
 import {
   Flag,
   Gauge,

@@ -12,7 +12,7 @@
 import type { Horse } from "@/core/horse/types";
 import type { Race } from "@/core/race/types";
 import type { AwardRegion } from "./types";
-import { getTrackContinent, type Continent } from "@/data/gradedRaces";
+import { getTrackContinent, type Continent } from "@/core/data/gradedRacesAccessor";
 import { DAYS_PER_YEAR } from "@/constants";
 
 const CONTINENT_TO_REGION: Record<Continent, AwardRegion> = {

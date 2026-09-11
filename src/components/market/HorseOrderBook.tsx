@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatCurrency } from "@/core/common/formatting";
-import { netProceeds, type HorseOrderBook as Book } from "@/core/market/exchange";
-import { sellerStandingBidFactor } from "@/core/market/exchangeAI";
+import { formatCurrency } from "@/lib/formatting";
+import { netProceeds, type HorseOrderBook as Book } from "@/services/market/marketFacade";
+import { sellerStandingBidFactor } from "@/services/market/marketFacade";
 import { useGame, useGameWithShallow } from "@/game/store";
-import { formatYard, resolveStableYard } from "@/core/stable/stableYard";
+import { formatYard, resolveStableYard } from "@/services/stable/stableFacade";
 
 export function HorseOrderBook({
   book,

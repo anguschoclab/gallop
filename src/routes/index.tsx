@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useDashboardData } from "@/hooks/dashboard/useDashboardData";
-import { gameCalendarDate } from "@/core/calendar/dateFormatting";
+import { gameCalendarDate } from "@/services/calendar/calendarFacade";
 import { Badge } from "@/components/ui/badge";
 import { ReputationBadge } from "@/components/ReputationBadge";
 import { Zap, AlertCircle, Gavel } from "lucide-react";

@@ -41,6 +41,11 @@ import {
   applyTrialCosts,
 } from "@/core/race/privateTrialHelpers";
 import { prependLogEntry, prependLogEntries } from "@/core/common/logHelpers";
+import {
+  validateMilestoneResolution,
+  applyMilestoneChoice,
+  buildMilestoneLogText,
+} from "@/core/race/foalMilestoneActions";
 
 const TRAINING_SLOTS_PER_DAY = 2;
 
@@ -221,63 +226,25 @@ export function createRacingSlice(
     resolveFoalMilestone: (horseId, milestoneKey, choiceKey) => {
       const s = get();
       const horse = s.horses[horseId];
-      if (!horse) return { ok: false, reason: "Horse not found." };
-      if (!isPlayerOwned(horse)) return { ok: false, reason: "You do not own this horse." };
-      const arc = horse.developmentArc;
-      if (!arc) return { ok: false, reason: "This horse has no development arc." };
-      const milestone = arc.milestones.find((m) => m.key === milestoneKey);
-      if (!milestone) return { ok: false, reason: "Milestone not found." };
-      if (milestone.status !== "pending") {
-        return { ok: false, reason: "Milestone already resolved." };
-      }
-      const choice = milestone.choices.find((c) => c.key === choiceKey);
-      if (!choice) return { ok: false, reason: "Choice not found." };
+      const validationError = validateMilestoneResolution(horse, milestoneKey, choiceKey);
+      if (validationError) return { ok: false, reason: validationError };
+
+      const milestone = horse!.developmentArc!.milestones.find((m) => m.key === milestoneKey)!;
+      const choice = milestone.choices.find((c) => c.key === choiceKey)!;
 
       set((state) => {
-        const newHorses = { ...state.horses };
-        const h = newHorses[horseId];
-        if (h) {
-          const currentArc = h.developmentArc;
-          if (currentArc) {
-            const targetMilestone = currentArc.milestones.find((m) => m.key === milestoneKey);
-            if (targetMilestone && targetMilestone.status === "pending") {
-              const nextStats = { ...h.stats };
-              for (const [stat, delta] of Object.entries(choice.delta) as [
-                keyof typeof nextStats,
-                number,
-              ][]) {
-                if (typeof delta !== "number") continue;
-                const current = nextStats[stat] ?? 0;
-                nextStats[stat] = Math.round(Math.max(0, Math.min(100, current + delta)));
-              }
-
-              const nextMilestones = currentArc.milestones.map((m) =>
-                m.key === milestoneKey
-                  ? {
-                      ...m,
-                      status: "resolved" as const,
-                      resolvedChoiceKey: choiceKey,
-                      resolvedOnDay: state.day,
-                    }
-                  : m,
-              );
-
-              newHorses[horseId] = {
-                ...h,
-                stats: nextStats,
-                developmentArc: { milestones: nextMilestones },
-              };
-            }
-          }
-        }
-
+        const h = state.horses[horseId];
+        if (!h || !h.developmentArc) return {};
+        const { nextStats, nextArc } = applyMilestoneChoice(h, milestoneKey, choice, state.day);
         const logEntry = {
           day: state.day,
-          text: `${horse.name}: ${milestone.label} — chose "${choice.label}".`,
+          text: buildMilestoneLogText(h.name, milestone.label, choice.label),
         };
-
         return {
-          horses: newHorses,
+          horses: {
+            ...state.horses,
+            [horseId]: { ...h, stats: nextStats, developmentArc: nextArc },
+          },
           log: prependLogEntries(state.log || [], [logEntry]),
         };
       });

@@ -13,7 +13,7 @@
 // Graded races can be handicaps in NA
 
 import type { Race, RaceClass, ClaimingPrice } from "../types";
-import type { Track } from "@/data/tracks";
+import type { Track } from "@/core/data/tracksAccessor";
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { randomWeather, rand } from "@/core/common/random";

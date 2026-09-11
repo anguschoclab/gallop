@@ -4,7 +4,7 @@ import { BeyerChart } from "@/components/race/BeyerChart";
 import { PaceProfileSummary } from "@/components/race/PaceProfileSummary";
 import { DistanceAptitudeDrift } from "@/components/horse/DistanceAptitudeDrift";
 import { HorseCareerCharts } from "@/components/horse/HorseCareerCharts";
-import { getHorseInsight } from "@/core/horse/insights";
+import { getHorseInsight } from "@/services/horse/horseFacade";
 import type { Horse } from "@/game/types";
 
 interface HorseAnalyticsSectionProps {

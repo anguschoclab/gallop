@@ -3,10 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import {
   calculateAverageCampaignPrestige,
   calculateVenuePrestige,
-  getPrestigeTier,
+  getStrategyPrestigeTier,
   getPrestigeTierBadgeClass,
-} from "@/core/prestige/strategyPrestigeHelpers";
-import { racecoursePrestigeMultiplier } from "@/core/prestige/racecoursePrestige";
+} from "@/services/prestige/prestigeFacade";
+import { racecoursePrestigeMultiplier } from "@/services/prestige/prestigeFacade";
 import { getTrackById } from "@/data/tracks";
 import type { CampaignRaceSlot, Race } from "@/game/types";
 import { Building2, Award, TrendingUp, Landmark } from "lucide-react";
@@ -18,7 +18,7 @@ interface TrackPrestigeSectionProps {
 
 export function TrackPrestigeSection({ slots, getRace }: TrackPrestigeSectionProps) {
   const avgPrestige = calculateAverageCampaignPrestige(slots, getRace);
-  const tier = getPrestigeTier(avgPrestige);
+  const tier = getStrategyPrestigeTier(avgPrestige);
   const tierBadgeClass = getPrestigeTierBadgeClass(tier);
   const fameMultiplier = (1 + (avgPrestige / 100) * 0.2).toFixed(2);
 
@@ -34,7 +34,7 @@ export function TrackPrestigeSection({ slots, getRace }: TrackPrestigeSectionPro
         acc.set(trackName, {
           name: trackName,
           score,
-          tier: getPrestigeTier(score),
+          tier: getStrategyPrestigeTier(score),
           multiplier: racecoursePrestigeMultiplier(r.trackId, trackName),
         });
       }

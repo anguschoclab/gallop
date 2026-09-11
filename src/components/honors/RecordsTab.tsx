@@ -3,9 +3,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LeaderboardTable } from "@/components/history/LeaderboardTable";
 import { TrackRecordsTable } from "@/components/history/TrackRecordsTable";
 import { DollarSign, Zap, Timer, RefreshCw } from "lucide-react";
-import { formatCurrency } from "@/core/common/formatting";
-import type { TrackRecord } from "@/core/history/historyTypes";
-import type { ProgenyLeaderboard } from "@/core/breeding/leaderboardTypes";
+import { formatCurrency } from "@/lib/formatting";
+import type { TrackRecord } from "@/services/history/historyFacade";
+import type { ProgenyLeaderboard } from "@/services/breeding/breedingFacade";
 import { Card, CardContent } from "@/components/ui/card";
 
 const EMPTY_OBJECT = {} as Record<string, never>;

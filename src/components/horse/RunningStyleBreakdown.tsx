@@ -16,10 +16,10 @@ import {
 } from "@/components/ui/select";
 import { Gauge, GitCompare, X } from "lucide-react";
 import type { Horse, RunningStyle } from "@/game/types";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { isPlayerOwned } from "@/services/horse/horseFacade";
 import { useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
-import { derivePaceStyleLabel } from "@/core/race/sectionalAnalysis";
+import { derivePaceStyleLabel } from "@/services/race/raceFacade";
 import {
   classifyTendency,
   classifyDistanceBucket as distanceBucket,
@@ -28,7 +28,7 @@ import {
   type DistanceBucket,
   type SurfaceFilter,
   type Tendency,
-} from "@/core/horse/paceTendency";
+} from "@/services/horse/horseFacade";
 import { cn } from "@/lib/cn";
 
 interface RunningStyleBreakdownProps {

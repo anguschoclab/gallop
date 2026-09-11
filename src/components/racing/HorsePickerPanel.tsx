@@ -1,9 +1,9 @@
 import type { Horse } from "@/game/types";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateOverallRating } from "@/services/horse/horseFacade";
 import { cn } from "@/lib/cn";
 import { CheckCircle2 } from "lucide-react";
 import { useMemo } from "react";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { isPlayerOwned } from "@/services/horse/horseFacade";
 
 interface HorsePickerPanelProps {
   horses: Horse[];

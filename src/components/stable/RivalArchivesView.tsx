@@ -11,9 +11,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/cn";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import type { Stable } from "@/game/types";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager } from "@/services/ai/aiFacade";
 import { Search, X, ExternalLink, Flame, Handshake, BookOpen } from "lucide-react";
 import { BankruptcyHistoryPanel } from "./BankruptcyHistoryPanel";
 import type { NewsItem } from "@/services/narrative/newsTypes";

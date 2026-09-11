@@ -2,9 +2,9 @@ import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import type { GameState } from "@/game/types";
-import type { Syndicate, ShareTransaction } from "@/core/breeding/types";
-import type { InvestorRecord } from "@/core/breeding/investorTypes";
-import { INVESTOR_PERSONALITY_META } from "@/core/breeding/investorTypes";
+import type { Syndicate, ShareTransaction } from "@/services/breeding/breedingFacade";
+import type { InvestorRecord } from "@/services/breeding/breedingFacade";
+import { INVESTOR_PERSONALITY_META } from "@/services/breeding/breedingFacade";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,7 @@ import { ShareOwnershipPanel } from "@/components/market/ShareOwnershipPanel";
 import { BackLink } from "@/components/charts/BackLink";
 import { ShareActivityFeed } from "@/components/market/ShareActivityFeed";
 import { NpcSyndicateIntentPanel } from "@/components/market/NpcSyndicateIntentPanel";
-import { evaluateCounteroffer } from "@/core/ai/syndicationAIDecisions";
+import { evaluateCounteroffer } from "@/services/ai/aiFacade";
 import { asPlayerOwnerId, asHorseId } from "@/core/types/branded";
 
 function SyndicatePage() {

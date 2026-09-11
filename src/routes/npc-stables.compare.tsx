@@ -14,7 +14,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useNpcStables } from "@/hooks/game/useSystemsState";
-import { getMajorStables } from "@/core/stable/stableQueries";
+import { getMajorStables } from "@/services/stable/stableFacade";
 import { useCompareStables } from "@/hooks/stable/useCompareStables";
 import { StableCompareTable } from "@/components/stable/StableCompareTable";
 import { StableCompareBar } from "@/components/stable/StableCompareBar";

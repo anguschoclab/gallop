@@ -1,5 +1,5 @@
 import type { Horse } from "@/game/types";
-import { parTime } from "@/core/race/beyer";
+import { parTime } from "@/services/race/raceFacade";
 import { BEYER_BASE, BEYER_FORMULA_SCALE } from "@/constants";
 
 /**

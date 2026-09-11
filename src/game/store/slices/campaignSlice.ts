@@ -23,6 +23,13 @@ import {
   upsertCampaign,
   buildAutoCampaignSlots,
   buildAutoCampaign,
+  updateCampaignSlotInList,
+  dismissCampaignFlagInList,
+  removeCampaignFromList,
+  toggleAutoManagedInList,
+  setCampaignTargetRaceInList,
+  addCampaignSlotInList,
+  removeCampaignSlotInList,
 } from "@/core/campaign/campaignActions";
 
 import type { StoreSet, StoreGet } from "../types";
@@ -103,46 +110,26 @@ export function createCampaignSlice(
           slot: patch,
         }),
       );
-      if (s.campaigns) {
-        const campaign = s.campaigns.find((c) => c.horseId === horseId);
-        if (campaign && campaign.slots[slotIndex]) {
-          const updatedSlots = [...campaign.slots];
-          updatedSlots[slotIndex] = { ...updatedSlots[slotIndex], ...patch };
-          set({
-            campaigns: s.campaigns.map((c) =>
-              c.horseId === horseId ? { ...c, slots: updatedSlots } : c,
-            ),
-          });
-        }
-      }
+      set({ campaigns: updateCampaignSlotInList(s.campaigns, horseId, slotIndex, patch) });
     },
 
     dismissCampaignFlag: (horseId: string, flagIndex: number) => {
       const s = get();
       const campaign = s.campaigns?.find((c: HorseCampaign) => c.horseId === horseId);
       if (!campaign) return;
-
       enqueueIntent(
         buildCampaignIntent({ horseId, day: s.day }, "campaign_flag_dismissal", {
           horseId,
           flagIndex,
         }),
       );
-      set({
-        campaigns: (s.campaigns ?? []).map((c) =>
-          c.horseId === horseId ? { ...c, flags: c.flags.filter((_, i) => i !== flagIndex) } : c,
-        ),
-      });
+      set({ campaigns: dismissCampaignFlagInList(s.campaigns, horseId, flagIndex) });
     },
 
     deleteCampaign: (horseId: string) => {
       const s = get();
       enqueueIntent(buildCampaignIntent({ horseId, day: s.day }, "campaign_deletion", { horseId }));
-      if (s.campaigns) {
-        set({
-          campaigns: s.campaigns.filter((c) => c.horseId !== horseId),
-        });
-      }
+      set({ campaigns: removeCampaignFromList(s.campaigns, horseId) });
     },
 
     generateAutoCampaign: (horseId: string, goalType: CampaignGoalType, targetRaceKey?: string) => {
@@ -191,11 +178,7 @@ export function createCampaignSlice(
           autoManaged,
         }),
       );
-      if (s.campaigns) {
-        set({
-          campaigns: s.campaigns.map((c) => (c.horseId === horseId ? { ...c, autoManaged } : c)),
-        });
-      }
+      set({ campaigns: toggleAutoManagedInList(s.campaigns, horseId, autoManaged) });
     },
 
     setCampaignTargetRace: (horseId: string, targetRaceKey?: string) => {
@@ -211,11 +194,7 @@ export function createCampaignSlice(
           autoManaged: campaign.autoManaged,
         }),
       );
-      set({
-        campaigns: (s.campaigns ?? []).map((c) =>
-          c.horseId === horseId ? { ...c, targetRaceKey } : c,
-        ),
-      });
+      set({ campaigns: setCampaignTargetRaceInList(s.campaigns, horseId, targetRaceKey) });
     },
 
     addCampaignSlot: (horseId: string, slot: CampaignRaceSlot) => {
@@ -229,25 +208,14 @@ export function createCampaignSlice(
           slot,
         }),
       );
-      if (s.campaigns && campaign) {
-        set({
-          campaigns: s.campaigns.map((c) =>
-            c.horseId === horseId ? { ...c, slots: [...c.slots, slot] } : c,
-          ),
-        });
-      }
+      set({ campaigns: addCampaignSlotInList(s.campaigns, horseId, slot) });
     },
 
     removeCampaignSlot: (horseId: string, slotIndex: number) => {
       const s = get();
       const campaign = s.campaigns?.find((c) => c.horseId === horseId);
       if (!campaign) return;
-      const updatedSlots = campaign.slots.filter((_, i) => i !== slotIndex);
-      set({
-        campaigns: (s.campaigns ?? []).map((c) =>
-          c.horseId === horseId ? { ...c, slots: updatedSlots } : c,
-        ),
-      });
+      set({ campaigns: removeCampaignSlotInList(s.campaigns, horseId, slotIndex) });
     },
 
     setCampaigns: (campaigns) => {

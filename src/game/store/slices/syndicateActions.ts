@@ -21,6 +21,7 @@ import {
   buildDefaultExpectations,
 } from "@/core/breeding/investorTypes";
 import { createRng, hashStr } from "@/core/common/rng";
+import { buildSolicitedInvestor } from "@/core/market/syndicateInvestorActions";
 import { requireOwned, requireHorse } from "../guards";
 import type { StoreSet, StoreGet } from "../types";
 import type { BreedingSlice } from "./breedingSlice";
@@ -176,81 +177,39 @@ export function createSyndicateActions(
         return { ok: false, reason: "You don't own that many shares to sell." };
       }
 
-      const rng = createRng(hashStr(`investor_${syndicateId}_${s.day}_${sharesOffered}`));
-      const personality = pickPersonality(rng.next);
-      const name = generateInvestorName(rng.next);
-      const investorId = `inv-${generateUUID().slice(0, 8)}`;
-      const price = syndicate.sharePrice * sharesOffered;
-
-      const investor = {
-        id: investorId,
+      const result = buildSolicitedInvestor({
         syndicateId,
-        name,
-        stableId: asPlayerOwnerId(investorId),
-        personality,
-        shares: sharesOffered,
-        investedCash: price,
-        joinedDay: s.day,
-        satisfaction: 70,
-        expectations: buildDefaultExpectations(personality, sharesOffered, syndicate.sharePrice),
-      };
+        sharesOffered,
+        sharePrice: syndicate.sharePrice,
+        stallionName: syndicate.stallionName,
+        currentDay: s.day,
+        playerShares,
+        shareHolders: syndicate.shareHolders,
+      });
 
       set((state) => ({
-        cash: state.cash + price,
+        cash: state.cash + result.price,
         syndicates: {
           ...state.syndicates,
           [syndicateId]: {
             ...syndicate,
-            shareHolders: {
-              ...syndicate.shareHolders,
-              [asPlayerOwnerId("player")]: playerShares - sharesOffered,
-              [asOwnerKey(investorId)]:
-                (syndicate.shareHolders[asOwnerKey(investorId)] ?? 0) + sharesOffered,
-            },
+            shareHolders: result.nextShareHolders,
           },
         },
         syndicateInvestors: {
           ...(state.syndicateInvestors ?? {}),
-          [investorId]: investor,
+          [result.investor.id]: result.investor,
         },
-        shareTransactions: [
-          ...(state.shareTransactions ?? []),
-          {
-            id: generateUUID(),
-            syndicateId,
-            buyerStableId: asOwnerKey(investorId),
-            sellerStableId: asPlayerOwnerId("player"),
-            shares: sharesOffered,
-            pricePerShare: syndicate.sharePrice,
-            day: state.day,
-          },
-        ],
+        shareTransactions: [...(state.shareTransactions ?? []), result.transaction],
         shareActivityFeed: [
           ...((state.shareActivityFeed ?? []) as ShareActivityFeedItem[]),
-          {
-            id: generateUUID(),
-            syndicateId,
-            syndicateName: syndicate.stallionName,
-            type: "investor_solicit" as const,
-            buyerStableId: asOwnerKey(investorId),
-            sellerStableId: asPlayerOwnerId("player"),
-            shares: sharesOffered,
-            pricePerShare: syndicate.sharePrice,
-            cashMoved: price,
-            day: state.day,
-          },
+          result.activityFeedItem,
         ].slice(-200),
-        log: [
-          {
-            day: state.day,
-            text: `${name} (${personality}) invested $${price.toLocaleString()} for ${sharesOffered} shares of ${syndicate.stallionName}.`,
-          },
-          ...state.log,
-        ].slice(0, 50),
+        log: [{ day: state.day, text: result.logText }, ...state.log].slice(0, 50),
       }));
 
       checkDevolution(syndicateId);
-      return { ok: true, investorId };
+      return { ok: true, investorId: result.investor.id };
     },
 
     buyoutInvestor: (investorId: string) => {

@@ -10,7 +10,7 @@ import {
   REGION_AWARD_NAMES,
   type AwardRegion,
   type RegionalAwardCategory,
-} from "@/core/awards/types";
+} from "@/services/awards/awardsFacade";
 import { BackLink } from "@/components/charts/BackLink";
 
 const ALL_CATEGORIES = new Set<string>(Object.keys(CATEGORY_DISPLAY_NAMES));

@@ -61,6 +61,8 @@ These vague names must be replaced with domain-specific terms:
 | Vague Name                       | Preferred Replacement                          |
 | -------------------------------- | ---------------------------------------------- |
 | `data` (as a variable)           | `<domain>Data` (e.g., `raceData`, `horseData`) |
+| `info` (as a variable)           | `insight`, `summary`, `record`, `profile`      |
+| `item` (as a variable)           | `lot`, `entry`, `listing`, `trade`, `newsItem` |
 | `temp` / `tmp`                   | `<purpose>Value` (e.g., `pendingScore`)        |
 | `util` / `utils` (as a filename) | `<feature>Helpers` (e.g., `logHelpers`)        |
 | `process` (as a function)        | `<verb><Noun>` (e.g., `resolvePregnancies`)    |

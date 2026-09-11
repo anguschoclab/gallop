@@ -8,7 +8,7 @@ import {
   LeaderboardSkeleton,
 } from "@/components/leaderboard/LeaderboardPrimitives";
 import { useLeaderboardControls } from "@/hooks/leaderboard/useLeaderboardControls";
-import type { ProgenyLeaderboard, ProgenyRanking } from "@/core/breeding/leaderboardTypes";
+import type { ProgenyLeaderboard, ProgenyRanking } from "@/services/breeding/breedingFacade";
 
 interface LeaderboardTableProps {
   leaderboard: ProgenyLeaderboard | undefined;

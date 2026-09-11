@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
-import { JARGON_DEFINITIONS } from "@/core/horse/jargon";
+import { JARGON_DEFINITIONS } from "@/services/horse/horseFacade";
 
 interface JargonTooltipProps {
   term: keyof typeof JARGON_DEFINITIONS | string;

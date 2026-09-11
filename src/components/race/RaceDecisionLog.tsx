@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { GitBranch, Zap, Wind } from "lucide-react";
 import { cn } from "@/lib/cn";
-import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import type { RaceSnapshot } from "@/services/race/raceFacade";
 
 export interface RaceDecisionRunner {
   horseId: string;

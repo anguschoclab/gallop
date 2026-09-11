@@ -9,12 +9,12 @@ import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PersonRaceHistoryTab } from "@/components/person/PersonRaceHistoryTab";
 import { ChevronLeft, User, History, Sparkles } from "lucide-react";
-import { formatJockeyTrait } from "@/core/common/traitLabels";
-import type { JockeyTrait } from "@/core/jockey/types";
+import { formatJockeyTrait } from "@/services/common/commonFacade";
+import type { JockeyTrait } from "@/services/jockey/jockeyFacade";
 import {
   TRAIT_XP_UNLOCK_THRESHOLD,
   TRAIT_XP_MAINTENANCE_THRESHOLD,
-} from "@/core/jockey/traitProgression";
+} from "@/services/jockey/jockeyFacade";
 
 export const Route = createFileRoute("/jockey/$jockeyId")({
   component: JockeyPage,

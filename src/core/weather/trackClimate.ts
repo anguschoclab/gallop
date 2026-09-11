@@ -8,7 +8,7 @@
 import type { ClimateZone } from "@/core/race/trackConditionData";
 import type { KoppenCode } from "./koppenTypes";
 import { getTrackKoppen } from "./trackKoppenMappings";
-import { TRACK_BY_ID } from "@/data/tracks";
+import { TRACK_BY_ID } from "@/core/data/tracksAccessor";
 
 const KOPPEN_TO_CLIMATE: Record<KoppenCode, ClimateZone> = {
   Cfb: "temperate",

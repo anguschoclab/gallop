@@ -1,15 +1,15 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import {
   facilityLevelToTierLabel,
   FACILITY_NAMES,
   type FacilityLevel,
   type FacilityType,
-} from "@/core/facilities";
+} from "@/services/facilities/facilitiesFacade";
 import type { JockeySilk } from "@/game/types";
-import type { Backstory } from "@/core/common/backstories";
-import type { WorldSize } from "@/core/stable/worldSizeConfig";
-import { WORLD_SIZE_CONFIGS } from "@/core/stable/worldSizeConfig";
+import type { Backstory } from "@/services/common/commonFacade";
+import type { WorldSize } from "@/services/stable/stableFacade";
+import { WORLD_SIZE_CONFIGS } from "@/services/stable/stableFacade";
 import { SilkPreview } from "../SilkPreview";
 
 interface StepReviewProps {

@@ -6,8 +6,8 @@ import {
   SOLVENCY_THRESHOLDS,
   computeDebtBannerDisplay,
   previewSeizure,
-} from "@/core/financial/solvency";
-import { formatCurrency } from "@/core/financial";
+} from "@/services/financial/financialFacade";
+import { formatCurrency } from "@/services/financial/financialFacade";
 import { cn } from "@/lib/cn";
 
 const EMPTY_AUDIT: never[] = [];

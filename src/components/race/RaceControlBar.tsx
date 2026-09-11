@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Camera, Pause, Play, Thermometer, Wind } from "lucide-react";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
+import type { Runner } from "@/services/race/raceFacade";
 import type { Race } from "@/game/types";
 import { getWeatherDisplay } from "@/components/race/raceVisualHelpers";
 

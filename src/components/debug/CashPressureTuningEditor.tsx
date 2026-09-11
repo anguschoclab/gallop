@@ -11,7 +11,7 @@ import {
   resetCashPressureTuningOverrides,
   type CashPressureTuning,
   type CashPressureTuningOverrides,
-} from "@/core/stable/cashPressureTuning";
+} from "@/services/stable/stableFacade";
 
 const NUMERIC_FIELDS: {
   key: keyof Omit<CashPressureTuning, "labelThresholds" | "enableDecisionTrace">;

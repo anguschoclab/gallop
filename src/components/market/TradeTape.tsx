@@ -11,8 +11,8 @@
 
 import { Activity, ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/core/common/formatting";
-import type { ExchangeTrade } from "@/core/market/exchange";
+import { formatCurrency } from "@/lib/formatting";
+import type { ExchangeTrade } from "@/services/market/marketFacade";
 
 export function TradeTape({
   trades,

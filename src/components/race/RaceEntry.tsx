@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import type { Race } from "@/game/types";
 import { ChevronRight } from "lucide-react";
-import { getTransportCostForRace } from "@/core/race/transportCost";
+import { getTransportCostForRace } from "@/services/race/raceFacade";
 import { HorseSelectionStep } from "./HorseSelectionStep";
 import { JockeySelectionStep } from "./JockeySelectionStep";
 import { TacticsSelectionStep } from "./TacticsSelectionStep";

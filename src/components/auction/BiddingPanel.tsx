@@ -8,7 +8,7 @@ import { TOOLTIP_DELAY_MS } from "@/constants";
 
 import { Button } from "@/components/ui/button";
 import { Gavel, Activity } from "lucide-react";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import { BuyNowDialog } from "./BuyNowDialog";
 import { BidInputPanel } from "./sub/BidInputPanel";
 import { MaxBidPanel } from "./sub/MaxBidPanel";
@@ -16,7 +16,7 @@ import { cn } from "@/lib/cn";
 import type { AuctionLot } from "@/game/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { PrestigeBadge } from "@/components/shared/PrestigeBadge";
-import { housePrestigeMultiplier, type AuctionHouse } from "@/core/prestige";
+import { housePrestigeMultiplier, type AuctionHouse } from "@/services/prestige/prestigeFacade";
 
 interface BiddingPanelProps {
   currentLot: AuctionLot;

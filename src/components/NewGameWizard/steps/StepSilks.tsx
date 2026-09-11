@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Dice5 } from "lucide-react";
-import { generateSilk } from "@/core/jockey/generator";
+import { generateSilk } from "@/services/jockey/jockeyFacade";
 import { SILK_PALETTE, SILK_PATTERNS } from "@/data/jockeys";
 import type { JockeySilk, JockeySilkPattern } from "@/game/types";
 import { SilkPreview } from "../SilkPreview";

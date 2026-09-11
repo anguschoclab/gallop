@@ -18,11 +18,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useNavigate } from "@tanstack/react-router";
-import { gameCalendarDate } from "@/core/calendar/dateFormatting";
+import { gameCalendarDate } from "@/services/race/raceFacade";
 import { buildRaceField, rngForRace } from "@/services/race/raceSimulationService";
-import { runRaceToCompletion } from "@/core/race/engine/simulation";
+import { runRaceToCompletion } from "@/services/race/raceFacade";
 import { getCourseForRace } from "@/data/tracks";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/services/race/raceFacade";
 import { useMemo, useState } from "react";
 import { INSTRUCTION_PRESETS, buildInstructions, type PresetId } from "./TacticOptions";
 import { AGGRESSIVENESS_DEFAULT } from "@/constants";

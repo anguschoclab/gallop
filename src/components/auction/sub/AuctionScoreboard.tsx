@@ -4,7 +4,7 @@
  * Displays player cash, lots remaining, and acquisition/sale totals.
  */
 
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import type { useScoreboard } from "@/hooks/auction/useScoreboard";
 
 interface AuctionScoreboardProps {

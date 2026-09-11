@@ -1,12 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { gameCalendarDate } from "@/core/calendar/dateFormatting";
-import { KIND_LABELS } from "@/core/auction/data";
+import { gameCalendarDate } from "@/services/calendar/calendarFacade";
+import { KIND_LABELS } from "@/services/auction/auctionFacade";
 import { cn } from "@/lib/cn";
 import { CalendarIcon } from "lucide-react";
-import { resolveSaleHouse } from "@/core/prestige";
-import type { AuctionSaleKind } from "@/core/market/types";
+import { resolveSaleHouse } from "@/services/prestige/prestigeFacade";
+import type { AuctionSaleKind } from "@/services/market/marketFacade";
 import { PrestigeBadge } from "@/components/shared/PrestigeBadge";
 
 interface UpcomingSale {

@@ -8,12 +8,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { formatCurrency } from "@/core/common/formatting";
-import { KIND_LABELS } from "@/core/auction/data";
+import { formatCurrency } from "@/lib/formatting";
+import { KIND_LABELS } from "@/services/auction/auctionFacade";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { cn } from "@/lib/cn";
 import type { AuctionSale } from "@/game/types";
-import { resolveSaleHouse } from "@/core/prestige";
+import { resolveSaleHouse } from "@/services/prestige/prestigeFacade";
 import { PrestigeBadge } from "@/components/shared/PrestigeBadge";
 import { SalePrestigeBreakdown } from "@/components/shared/PrestigeBreakdownPanel";
 

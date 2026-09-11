@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Sprout, CheckCircle2, Clock } from "lucide-react";
 import { useGame } from "@/game/store";
 import { toast } from "sonner";
-import type { MilestoneChoice } from "@/core/horse/foalDevelopment";
+import type { MilestoneChoice } from "@/services/horse/horseFacade";
 
 export const Route = createFileRoute("/foal-development/$horseId")({
   component: FoalDevelopmentPage,

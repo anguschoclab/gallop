@@ -1,6 +1,6 @@
 import type { Horse, Jockey } from "@/game/types";
 import { JockeyCard } from "@/components/jockey/JockeyCard";
-import { getCompatibility } from "@/core/jockey/compatibility";
+import { getCompatibility } from "@/services/race/raceFacade";
 
 function getTraitSynergyLabel(horse: Horse, jockey: Jockey): string | null {
   const traits = jockey.traits ?? [];

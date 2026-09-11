@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ChevronRight } from "lucide-react";
-import { REGION_LIST } from "@/core/calendar/regions";
+import { REGION_LIST } from "@/services/calendar/calendarFacade";
 
 export function CalendarTab() {
   return (

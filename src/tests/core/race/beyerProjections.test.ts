@@ -4,7 +4,7 @@ import { createTestHorse } from "@/tests/helpers";
 import type { Race } from "@/core/race/types";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { expectedBeyer } from "@/core/race/beyer";
-import { getCourseForRace } from "@/data/tracks";
+import { getCourseForRace } from "@/core/data/tracksAccessor";
 
 vi.mock("@/core/common/classBonus", () => ({
   calculateClassBonus: vi.fn(() => 5),
@@ -14,7 +14,7 @@ vi.mock("@/core/race/beyer", () => ({
   expectedBeyer: vi.fn(() => 100),
 }));
 
-vi.mock("@/data/tracks", () => ({
+vi.mock("@/core/data/tracksAccessor", () => ({
   getCourseForRace: vi.fn(() => ({ name: "Mock Track" })),
 }));
 

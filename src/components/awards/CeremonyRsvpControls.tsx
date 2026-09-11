@@ -25,7 +25,7 @@ import {
   isRsvpDeadlinePassed,
   type AwardCeremonyInvitation,
   type CeremonyRsvpStatus,
-} from "@/core/awards/invitations";
+} from "@/services/awards/awardsFacade";
 
 const STATUS_CLASSES: Record<CeremonyRsvpStatus, string> = {
   pending: "border-gold-muted text-cream-muted",

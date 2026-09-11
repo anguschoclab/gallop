@@ -7,8 +7,8 @@ import { useMemo, useState } from "react";
 import { JockeyArchetype, JockeySilkPattern } from "@/game/types";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { Briefcase } from "lucide-react";
-import type { Jockey } from "@/core/jockey/types";
-import type { JockeyTrait } from "@/core/jockey/types";
+import type { Jockey } from "@/services/jockey/jockeyFacade";
+import type { JockeyTrait } from "@/services/jockey/jockeyFacade";
 
 export function JockeyRoster() {
   const jockeys = useGameWithShallow((s) => s.jockeys);

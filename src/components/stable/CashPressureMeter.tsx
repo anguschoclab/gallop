@@ -9,7 +9,7 @@
  */
 
 import { cn } from "@/lib/cn";
-import type { CashPressure } from "@/core/stable/cashPressure";
+import type { CashPressure } from "@/services/stable/stableFacade";
 
 const METER_STYLES: Record<CashPressure["label"], string> = {
   comfortable: "bg-cream-muted",

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { Syndicate } from "@/core/breeding/types";
+import type { Syndicate } from "@/services/breeding/breedingFacade";
 import type { Horse, Stable } from "@/game/types";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,9 +10,9 @@ import {
   evaluateSharePurchase,
   evaluateCounteroffer,
   type CounterofferGuidance,
-} from "@/core/ai/syndicationAIDecisions";
-import { getSyndicateIntent, SYNDICATE_INTENT_META } from "@/core/ai/syndicationAppetite";
-import { formatSyndicatePurchaseTrace } from "@/core/ai/syndicationTrace";
+} from "@/services/ai/aiFacade";
+import { getSyndicateIntent, SYNDICATE_INTENT_META } from "@/services/ai/aiFacade";
+import { formatSyndicatePurchaseTrace } from "@/services/ai/aiFacade";
 
 interface NpcSyndicateIntentPanelProps {
   syndicate: Syndicate;

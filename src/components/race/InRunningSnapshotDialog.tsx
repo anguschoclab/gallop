@@ -22,7 +22,7 @@ import type {
   InRunningSnapshot,
   InRunningRunnerSnapshot,
 } from "@/hooks/race/useInRunningSnapshots";
-import type { ConditionTone } from "@/core/race/runnerConditions";
+import type { ConditionTone } from "@/services/race/raceFacade";
 
 const TONE_BORDER_CLASSES: Record<ConditionTone, string> = {
   positive: "border-success/40 bg-success/10 text-success-foreground",

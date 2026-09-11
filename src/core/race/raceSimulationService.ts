@@ -3,7 +3,7 @@ import { getStableId } from "@/core/horse/ownership";
 import type { PipelineContext } from "@/core/time/pipeline";
 import { stepRunner, computePaceContext } from "@/core/race/engine/simulation";
 import { buildRunner, getConditionsModifier, type Runner } from "@/core/race/engine/runnerBuilder";
-import type { CourseSpecification } from "@/data/tracks";
+import type { CourseSpecification } from "@/core/data/tracksAccessor";
 import { generateHorse } from "@/core/horse/horseFactory";
 import { generateJockey } from "@/core/jockey/generator";
 import { calculateClassBonus } from "@/core/common/classBonus";
@@ -161,6 +161,15 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
         : new Map();
   const fillerMap = new Map(fillerHorses.map((h) => [h.id, h]));
 
+  // Pre-group staff by stableId for O(1) lookup inside the runner loop
+  const staffByStable = new Map<string, StaffMember[]>();
+  for (const s of hiredStaff) {
+    const key = s.stableId ?? "";
+    const list = staffByStable.get(key) ?? [];
+    list.push(s);
+    staffByStable.set(key, list);
+  }
+
   const runners: Runner[] = [];
   for (let i = 0; i < allWithGates.length; i++) {
     const entryData = allWithGates[i];
@@ -177,7 +186,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
 
       // Get staff for this stable - optimize with Map for role lookup
       const stableId = horseStableId ?? "";
-      const staffForStable = hiredStaff.filter((s) => s.stableId === stableId);
+      const staffForStable = staffByStable.get(stableId) ?? [];
       const staffRoleMap = new Map(staffForStable.map((s) => [s.role, s]));
 
       const farrier = staffRoleMap.get("farrier");
@@ -269,7 +278,9 @@ function populateRivalHorseIds(
     for (const rivalStableId of rivals) {
       const horsesInRace = stableHorsesInRace.get(rivalStableId);
       if (horsesInRace) {
-        rivalHorseIds.push(...horsesInRace.filter((id) => id !== runner.horseId));
+        for (const id of horsesInRace) {
+          if (id !== runner.horseId) rivalHorseIds.push(id);
+        }
       }
     }
     if (rivalHorseIds.length > 0) {

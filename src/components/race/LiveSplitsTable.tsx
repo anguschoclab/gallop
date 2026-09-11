@@ -1,5 +1,5 @@
 import { cn } from "@/lib/cn";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
+import type { Runner } from "@/services/race/raceFacade";
 import type { Horse } from "@/game/types";
 import { formatSplitTime, getTargetSplitTime } from "./raceUtils";
 

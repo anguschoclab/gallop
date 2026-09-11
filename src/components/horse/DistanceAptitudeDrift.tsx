@@ -9,7 +9,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { cn } from "@/lib/cn";
-import type { Horse } from "@/core/horse/types";
+import type { Horse } from "@/services/horse/horseFacade";
 
 type RaceHistoryEntry = Horse["raceHistory"][number];
 

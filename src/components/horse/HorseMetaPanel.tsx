@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { scoutGrade } from "@/core/horse/grading";
+import { scoutGrade } from "@/services/horse/horseFacade";
 import { formatFanCount } from "@/components/horse/fanFormat";
 import type { Horse } from "@/game/types";
 

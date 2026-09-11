@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useGame } from "@/game/store";
-import type { SeasonRecord } from "@/core/history/historyTypes";
+import type { SeasonRecord } from "@/services/history/historyFacade";
 import {
   Accordion,
   AccordionItem,

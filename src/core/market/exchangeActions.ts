@@ -17,6 +17,138 @@ import {
 } from "@/core/reputation/commerceReputation";
 import { applyReputationEvents } from "@/core/reputation/reputationEvents";
 import type { ExchangeState, ExchangeTrade } from "@/core/market/exchange";
+import { isPlayerOwned } from "@/core/horse/ownership";
+import { exchangeCommission, netProceeds } from "@/core/market/exchange";
+
+/**
+ * Validate that a horse can be listed on the exchange.
+ * Pure: returns an error reason string or null if valid.
+ * @param horse - The horse to validate.
+ * @param price - The ask price.
+ * @param existingAsk - Whether an ask already exists for this horse.
+ */
+export function validateListHorse(
+  horse: Horse | undefined,
+  price: number,
+  existingAsk: boolean,
+): string | null {
+  if (!horse) return "Horse not found";
+  if (!isPlayerOwned(horse)) return "You do not own this horse";
+  if (horse.consignedSaleId) return "Horse is already consigned to an auction";
+  if (horse.lifecycleStatus === "deceased") return "Horse is no longer with us";
+  if (!Number.isFinite(price) || price <= 0) return "Ask price must be positive";
+  if (existingAsk) return "Horse is already listed";
+  return null;
+}
+
+/**
+ * Validate that a bid can be accepted by the player.
+ * Pure: returns an error reason string or null if valid.
+ * @param horse - The horse being sold.
+ * @param buyer - The NPC buyer.
+ * @param bidPrice - The bid price.
+ */
+export function validateAcceptBid(
+  horse: Horse | undefined,
+  buyer: Stable | undefined,
+  bidPrice: number,
+): string | null {
+  if (!horse) return "Horse not found";
+  if (!isPlayerOwned(horse)) return "You do not own this horse";
+  if (!buyer) return "Buyer is no longer active";
+  if (buyer.cash < bidPrice) return "Buyer can no longer fund the bid";
+  return null;
+}
+
+/**
+ * Validate that an ask can be bought by the player.
+ * Pure: returns an error reason string or null if valid.
+ * @param horse - The horse being bought.
+ * @param sellerId - The seller's stable ID.
+ * @param playerCash - The player's current cash.
+ * @param askPrice - The ask price.
+ */
+export function validateBuyAsk(
+  horse: Horse | undefined,
+  sellerId: string,
+  playerCash: number,
+  askPrice: number,
+): string | null {
+  if (!horse) return "Horse not found";
+  if (sellerId === "player") return "This is your own listing";
+  if (playerCash < askPrice) return "Insufficient funds";
+  return null;
+}
+
+/**
+ * Build an ExchangeTrade object for a bid acceptance (player sells to NPC).
+ * Pure: returns the trade object.
+ * @param horse - The horse being sold.
+ * @param bidPrice - The accepted bid price.
+ * @param buyerId - The buyer's stable ID.
+ * @param buyerName - The buyer's display name.
+ * @param sellerName - The seller's display name.
+ * @param currentDay - The current game day.
+ * @param tradeId - Unique trade ID.
+ */
+export function buildBidAcceptTrade(
+  horse: Horse,
+  bidPrice: number,
+  buyerId: string,
+  buyerName: string,
+  sellerName: string,
+  currentDay: number,
+  tradeId: string,
+): ExchangeTrade {
+  return {
+    id: tradeId,
+    horseId: horse.id,
+    horseName: horse.name,
+    price: bidPrice,
+    commission: exchangeCommission(bidPrice),
+    buyerId,
+    buyerName,
+    sellerId: "player",
+    sellerName,
+    day: currentDay,
+    initiatedBy: "bid",
+  };
+}
+
+/**
+ * Build an ExchangeTrade object for an ask purchase (player buys from NPC).
+ * Pure: returns the trade object.
+ * @param horse - The horse being bought.
+ * @param askPrice - The ask price.
+ * @param sellerId - The seller's stable ID.
+ * @param sellerName - The seller's display name.
+ * @param buyerName - The buyer's display name.
+ * @param currentDay - The current game day.
+ * @param tradeId - Unique trade ID.
+ */
+export function buildAskBuyTrade(
+  horse: Horse,
+  askPrice: number,
+  sellerId: string,
+  sellerName: string,
+  buyerName: string,
+  currentDay: number,
+  tradeId: string,
+): ExchangeTrade {
+  return {
+    id: tradeId,
+    horseId: horse.id,
+    horseName: horse.name,
+    price: askPrice,
+    commission: exchangeCommission(askPrice),
+    buyerId: "player",
+    buyerName,
+    sellerId,
+    sellerName,
+    day: currentDay,
+    initiatedBy: "ask",
+  };
+}
 
 /**
  * Compute the reputation state after a market trade.

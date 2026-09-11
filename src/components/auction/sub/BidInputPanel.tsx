@@ -7,7 +7,7 @@
 import { forwardRef, useImperativeHandle, useRef, useState, useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 
 export type BidInputPanelHandle = {
   focusAndScroll: (prefillAmount?: number) => void;

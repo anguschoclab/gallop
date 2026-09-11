@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency, formatProfitLoss } from "@/core/financial";
+import { formatCurrency, formatProfitLoss } from "@/services/financial/financialFacade";
 import { cn } from "@/lib/cn";
 import { Wallet, TrendingUp, TrendingDown, Activity } from "lucide-react";
 

@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { ArrowLeft, Globe, Briefcase } from "lucide-react";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { NumericValue } from "@/components/horse/HorseBits";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PrivateSaleOfferDialog } from "@/components/auction/PrivateSaleOfferDialog";

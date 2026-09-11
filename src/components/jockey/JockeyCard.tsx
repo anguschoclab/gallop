@@ -17,12 +17,12 @@ import { JockeyAvatar } from "./JockeyAvatar";
 import { JockeyStatsGrid } from "./JockeyStatsGrid";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { useMemo } from "react";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/lib/formatting";
 import { Link } from "@tanstack/react-router";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { cn } from "@/lib/cn";
-import { formatJockeyTrait } from "@/core/common/traitLabels";
-import { getJockeyInsight } from "@/core/jockey/insights";
+import { formatJockeyTrait } from "@/services/common/commonFacade";
+import { getJockeyInsight } from "@/services/jockey/jockeyFacade";
 import { Lightbulb } from "lucide-react";
 
 interface JockeyCardProps {

@@ -20,13 +20,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
-import { netProceeds } from "@/core/auction/engine";
+import { netProceeds } from "@/services/auction/auctionFacade";
 import { CONSIGNMENT_COMMISSION, DEFAULT_PLAYER_RESERVE_RATIO } from "@/constants";
-import { KIND_LABELS } from "@/core/auction/data";
-import { formatCurrency } from "@/core/common/formatting";
-import { horseMarketValue, horseCareerValuation } from "@/core/horse/pricing";
+import { KIND_LABELS } from "@/services/auction/auctionFacade";
+import { formatCurrency } from "@/lib/formatting";
+import { horseMarketValue, horseCareerValuation } from "@/services/horse/horseFacade";
 import { CareerValuationBreakdown } from "@/components/horse/CareerValuationBreakdown";
-import { resolveSaleHouse, houseCommissionRate } from "@/core/prestige";
+import { resolveSaleHouse, houseCommissionRate } from "@/services/prestige/prestigeFacade";
 import type { Horse, AuctionSale } from "@/game/types";
 
 type Props = {

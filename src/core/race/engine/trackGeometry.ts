@@ -1,4 +1,4 @@
-import type { CourseSpecification, TrackSection } from "@/data/tracks";
+import type { CourseSpecification, TrackSection } from "@/core/data/tracksAccessor";
 
 export function getTrackSection(
   pos: number,

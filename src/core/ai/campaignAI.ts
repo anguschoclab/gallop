@@ -17,7 +17,7 @@ import {
   GRADED_RACES_BY_KEY,
   GRADED_RACES_BY_TRIPLECROWN_KEY,
   GRADED_RACES_BY_BC_KEY,
-} from "@/data/gradedRaces";
+} from "@/core/data/gradedRacesAccessor";
 import { calculateOverallRating, calculateRaceRating } from "@/core/horse/stats";
 import { getTripleCrownKeysForArchetype } from "@/core/breeding/archetypes";
 
@@ -168,6 +168,50 @@ const CONTENDER_DETECTORS: readonly ContenderDetector[] = [
   detectOtherMajorG1,
 ];
 
+/** Input for a final contender classification rule. */
+interface ClassificationInput {
+  horse: Horse;
+  horseRating: number;
+  avgStat: number;
+  targetRaces: string[];
+}
+
+/** A final contender classification rule. */
+interface ContenderClassificationRule {
+  (input: ClassificationInput): { matches: boolean; confidenceBoost: number };
+}
+
+// Final classification rules — replace the if/else-if chain with a registry.
+const CONTENDER_CLASSIFICATION_RULES: readonly ContenderClassificationRule[] = [
+  // Triple Crown: contender if 2+ target races
+  ({ horse, avgStat, targetRaces }) =>
+    horse.age === 3 && avgStat > 70 && targetRaces.length >= 2
+      ? { matches: true, confidenceBoost: 0.3 }
+      : { matches: false, confidenceBoost: 0 },
+  // Breeders Cup: contender if 1+ target race and rating > 75
+  ({ horse, horseRating, targetRaces }) =>
+    horse.age >= 3 && horseRating > 65 && targetRaces.length >= 1 && horseRating > 75
+      ? { matches: true, confidenceBoost: 0.2 }
+      : { matches: false, confidenceBoost: 0 },
+  // Dubai World Cup: contender if matched
+  ({ horse, horseRating }) => {
+    if (horse.age < 4 || horseRating <= 75) return { matches: false, confidenceBoost: 0 };
+    const dwcRace = GRADED_RACES_BY_KEY.get("dubai-world-cup");
+    if (
+      dwcRace &&
+      horse.distanceAptitude > dwcRace.distance - 300 &&
+      horse.distanceAptitude < dwcRace.distance + 300
+    )
+      return { matches: true, confidenceBoost: 0.25 };
+    return { matches: false, confidenceBoost: 0 };
+  },
+  // Other G1: contender if 1+ target race and rating > 80
+  ({ horseRating, targetRaces }) =>
+    horseRating > 70 && targetRaces.length >= 1 && horseRating > 80
+      ? { matches: true, confidenceBoost: 0.15 }
+      : { matches: false, confidenceBoost: 0 },
+];
+
 /**
  * Detect if a horse is a contender for major races.
  *
@@ -240,35 +284,13 @@ export function detectContender(
     }
   }
 
-  // Triple Crown: contender if 2+ target races
-  if (horse.age === 3 && avgStat > 70 && targetRaces.length >= 2) {
-    isContender = true;
-    confidence = Math.min(1, confidence + 0.3);
-  }
-
-  // Breeders Cup: contender if 1+ target race and rating > 75
-  if (horse.age >= 3 && horseRating > 65 && targetRaces.length >= 1 && horseRating > 75) {
-    isContender = true;
-    confidence = Math.min(1, confidence + 0.2);
-  }
-
-  // Dubai World Cup: contender if matched
-  if (horse.age >= 4 && horseRating > 75) {
-    const dwcRace = GRADED_RACES_BY_KEY.get("dubai-world-cup");
-    if (
-      dwcRace &&
-      horse.distanceAptitude > dwcRace.distance - 300 &&
-      horse.distanceAptitude < dwcRace.distance + 300
-    ) {
+  // Apply final contender classification rules from the registry.
+  for (const rule of CONTENDER_CLASSIFICATION_RULES) {
+    const result = rule({ horse, horseRating, avgStat, targetRaces });
+    if (result.matches) {
       isContender = true;
-      confidence = Math.min(1, confidence + 0.25);
+      confidence = Math.min(1, confidence + result.confidenceBoost);
     }
-  }
-
-  // Other G1: contender if 1+ target race and rating > 80
-  if (horseRating > 70 && targetRaces.length >= 1 && horseRating > 80) {
-    isContender = true;
-    confidence = Math.min(1, confidence + 0.15);
   }
 
   const status: ContenderStatus = {

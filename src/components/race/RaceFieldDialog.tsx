@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { HorseCard } from "@/components/horse/HorseCard";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
+import type { Runner } from "@/services/race/raceFacade";
 import type { Horse } from "@/game/types";
 
 interface RaceFieldDialogProps {

@@ -1,4 +1,4 @@
-import type { CourseSpecification } from "@/data/tracks";
+import type { CourseSpecification } from "@/core/data/tracksAccessor";
 import type { Runner } from "./runnerBuilder";
 import { getTrackSection } from "./trackGeometry";
 import {

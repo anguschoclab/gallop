@@ -6,13 +6,13 @@ import { AwardIcon } from "./AwardIcon";
 import { AwardBadge } from "./AwardBadge";
 import { cn } from "@/lib/cn";
 import { Link } from "@tanstack/react-router";
-import type { AwardRegion, RegionalAward } from "@/core/awards/types";
+import type { AwardRegion, RegionalAward } from "@/services/awards/awardsFacade";
 import {
   REGION_AWARD_NAMES,
   REGION_DISPLAY_NAMES,
   CATEGORY_DISPLAY_NAMES,
   CATEGORY_DESCRIPTIONS,
-} from "@/core/awards/types";
+} from "@/services/awards/awardsFacade";
 import { REGION_COLORS } from "@/assets/awards";
 import { Trophy, ChevronRight, Star, Sparkles } from "lucide-react";
 import {

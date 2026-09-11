@@ -10,12 +10,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Star, X } from "lucide-react";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/services/breeding/breedingFacade";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { TOOLTIP_DELAY_MS } from "@/constants/uiConstants";
 import type { Horse } from "@/game/types";
 import type { MatingPlanEntry } from "@/game/store/state/breedingState";
-import type { SireSuggestion } from "@/core/breeding/sireSuggestions";
+import type { SireSuggestion } from "@/services/breeding/breedingFacade";
 
 interface MarePlannerRowProps {
   mare: Horse;

@@ -7,7 +7,7 @@ import { memo, useMemo, useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
 import { LiveFreshnessBadge } from "@/components/race/LiveFreshnessBadge";
-import type { ConditionTone } from "@/core/race/runnerConditions";
+import type { ConditionTone } from "@/services/race/raceFacade";
 import type { ConditionSegment } from "@/hooks/race/useConditionTimeline";
 import { Filter, Check } from "lucide-react";
 

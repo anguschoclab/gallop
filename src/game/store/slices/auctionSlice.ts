@@ -21,6 +21,7 @@ import type { AnyIntent } from "@/core/resolver/intents";
 import type { AnyImpact } from "@/core/resolver/impacts";
 import { requireHorse, requireOwned } from "../guards";
 import { buildBiddingRecord, mergeBiddingHistory } from "@/core/auction/biddingHistory";
+import { applyAuctionImpacts } from "@/core/auction/auctionImpactActions";
 
 export type AuctionSlice = {
   /** Consigns a horse to an upcoming auction sale */
@@ -191,59 +192,14 @@ export function createAuctionSlice(
       if (!sale) return { ok: false, reason: "Sale not found." };
 
       // Apply auction impacts directly (live Theater path, outside pipeline)
-      let newCash = s.cash;
-      let newNpcStables = [...s.npcStables];
-      let newHorses: Record<string, import("@/game/types").Horse> = { ...s.horses };
-      let newInbox = [...s.inbox];
-
-      for (const impact of impacts ?? []) {
-        switch (impact.type) {
-          case "cash_change": {
-            const { entityId, amount } = impact;
-            if (entityId) {
-              // NPC stable cash change
-              newNpcStables = newNpcStables.map((stable) =>
-                stable.id === asStableId(entityId)
-                  ? { ...stable, cash: Math.max(0, stable.cash + amount) }
-                  : stable,
-              );
-            } else {
-              // Player cash change (offline path only; live path debits via debitForLiveBid)
-              newCash = Math.max(0, newCash + amount);
-            }
-            break;
-          }
-
-          case "horse_transfer": {
-            const { horseId: transferId, toStableId } = impact;
-            if (newHorses[transferId]) {
-              newHorses = {
-                ...newHorses,
-                [transferId]: {
-                  ...newHorses[transferId],
-                  ownership: toStableId
-                    ? makeNpcOwned(asNpcStableId(toStableId))
-                    : makePlayerOwned(),
-                },
-              };
-            }
-            break;
-          }
-
-          case "inbox_message": {
-            const { message } = impact;
-            if (message) {
-              const fullMessage: InboxMessage = {
-                ...message,
-                id: generateUUID(),
-                readAt: undefined,
-              };
-              newInbox = [fullMessage, ...newInbox].slice(0, 100);
-            }
-            break;
-          }
-        }
-      }
+      const acc = {
+        cash: s.cash,
+        npcStables: [...s.npcStables],
+        horses: { ...s.horses } as Record<string, Horse>,
+        inbox: [...s.inbox],
+      };
+      applyAuctionImpacts(acc, impacts ?? []);
+      const { cash: newCash, npcStables: newNpcStables, horses: newHorses, inbox: newInbox } = acc;
 
       // ⚡ Bolt Optimization: Replaced O(N*M) nested array loop with O(N) hash map lookup.
       // 📊 Expected Impact: O(1) lookup reduces time complexity for resolving auction sales with large numbers of lots.

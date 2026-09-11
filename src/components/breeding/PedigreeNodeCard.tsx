@@ -2,10 +2,10 @@ import { memo } from "react";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 import { useNavigate } from "@tanstack/react-router";
 import { SilkDot } from "@/components/SilkDot";
-import { getCoatColor } from "@/core/horse/uiHelpers";
+import { getCoatColor } from "@/services/breeding/breedingFacade";
 import { cn } from "@/lib/cn";
-import { genderSymbol } from "@/core/horse/gender";
-import type { PedigreeFlowNode } from "@/core/breeding/pedigreeGraph";
+import { genderSymbol } from "@/services/breeding/breedingFacade";
+import type { PedigreeFlowNode } from "@/services/breeding/breedingFacade";
 
 export const PedigreeNodeCard = memo(function PedigreeNodeCard({
   data,

@@ -8,7 +8,7 @@ import type { RaceHistoryImpact, TripleCrownProgressImpact } from "@/core/resolv
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { getCurrentYear } from "@/core/race/schedule";
-import { GRADED_RACES_BY_TRIPLECROWN_KEY } from "@/data/gradedRaces";
+import { GRADED_RACES_BY_TRIPLECROWN_KEY } from "@/core/data/gradedRacesAccessor";
 import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/constants";
 import type { Race, Horse } from "@/game/types";
 import type { HorseOwnership } from "@/core/horse/ownership";
