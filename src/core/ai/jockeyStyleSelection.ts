@@ -3,6 +3,12 @@ import { calculateUtilityScore } from "./personalitySystem";
 import { getSuccessRate } from "./learningModule";
 import { buildStrategyContextKey } from "./strategyContextKey";
 import type { JockeyStrategyAIState } from "./jockeyStrategyAI";
+import {
+  LEARNING_MIN_DATA_POINTS,
+  JOCKEY_STYLE_LEARNING_RATE_THRESHOLD,
+  DEFAULT_SUCCESS_RATE,
+  JOCKEY_ADAPTIVE_BONUS_SCALE,
+} from "@/constants/aiConstants";
 
 export function calculateOptimalRunningStyle(
   aiState: JockeyStrategyAIState,
@@ -32,7 +38,11 @@ export function calculateOptimalRunningStyle(
       const contextKey = buildStrategyContextKey(race, style);
       const key = `jockey_strategy:${contextKey}`;
       const rateEntry = aiState.learningState.successRates[key];
-      if (rateEntry && rateEntry.total >= 5 && rateEntry.rate > 0.65) {
+      if (
+        rateEntry &&
+        rateEntry.total >= LEARNING_MIN_DATA_POINTS &&
+        rateEntry.rate > JOCKEY_STYLE_LEARNING_RATE_THRESHOLD
+      ) {
         return style;
       }
     }
@@ -123,7 +133,7 @@ function calculateStyleScore(
 
   const contextKey = buildStrategyContextKey(race, style);
   const successRate = getSuccessRate(aiState.learningState, "jockey_strategy", contextKey);
-  const adaptiveBonus = (successRate - 0.5) * 15;
+  const adaptiveBonus = (successRate - DEFAULT_SUCCESS_RATE) * JOCKEY_ADAPTIVE_BONUS_SCALE;
   score += adaptiveBonus;
 
   const traits = jockey.traits ?? [];

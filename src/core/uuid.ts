@@ -10,6 +10,9 @@
 
 import type { Rng } from "./common/types";
 
+/** Length of the UUID prefix used when building short human-readable entity IDs. */
+export const UUID_PREFIX_LENGTH = 6;
+
 /**
  * Generate a proper UUID v4.
  *

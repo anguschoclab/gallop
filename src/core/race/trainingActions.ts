@@ -7,7 +7,11 @@
 
 import type { Horse } from "@/game/types";
 import { isPlayerOwned } from "@/core/horse/ownership";
-import { TRAINING_COST } from "@/constants";
+import {
+  TRAINING_COST,
+  TRAINING_MIN_ENERGY_ATTEMPT,
+  TRAINING_MIN_ENERGY_THRESHOLD,
+} from "@/constants/workoutConstants";
 
 export const TRAINING_SLOTS_PER_DAY = 2;
 
@@ -56,11 +60,11 @@ export function validateTraining(input: TrainingValidationInput): TrainingValida
   }
 
   if (trainingUsedToday >= TRAINING_SLOTS_PER_DAY) return { ok: false };
-  if (horse.energy < 10) return { ok: false };
+  if (horse.energy < TRAINING_MIN_ENERGY_ATTEMPT) return { ok: false };
 
   const isRest = requestedTrainingType === "rest";
   if (!isRest && cash < TRAINING_COST) return { ok: false };
-  if (!isRest && horse.energy < 15) return { ok: false };
+  if (!isRest && horse.energy < TRAINING_MIN_ENERGY_THRESHOLD) return { ok: false };
 
   if (
     availableTrainingTypes.length > 0 &&

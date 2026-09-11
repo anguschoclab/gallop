@@ -8,7 +8,7 @@
 
 import type { Horse, Race } from "@/game/types";
 import { isPlayerOwned } from "@/core/horse/ownership";
-import { generateUUID } from "@/core/uuid";
+import { generateUUID, UUID_PREFIX_LENGTH } from "@/core/uuid";
 import {
   calculateNominationFee,
   getNominationTier,
@@ -94,7 +94,7 @@ export function buildNominationRecord(
   currentDay: number,
 ): NominationRecord {
   return {
-    id: `nom-${horseId}-${race.id}-${currentDay}-${generateUUID().slice(0, 6)}`,
+    id: `nom-${horseId}-${race.id}-${currentDay}-${generateUUID().slice(0, UUID_PREFIX_LENGTH)}`,
     horseId,
     raceId: race.id,
     raceName: race.name,

@@ -8,6 +8,10 @@
 
 import type { Horse } from "@/game/types";
 import { getStableId } from "@/core/horse/ownership";
+import {
+  SYNDICATE_BUYOUT_BASE_SATISFACTION_FACTOR,
+  SYNDICATE_MAX_SATISFACTION,
+} from "@/constants/breedingConstants";
 
 export interface SyndicateCreationValidationInput {
   stallion: Horse | undefined;
@@ -117,7 +121,8 @@ export interface BuyoutComputationResult {
  */
 export function computeBuyoutPrice(input: BuyoutComputationInput): BuyoutComputationResult {
   const { sharePrice, investorShares, investorSatisfaction } = input;
-  const satisfactionFactor = 0.8 + investorSatisfaction / 100;
+  const satisfactionFactor =
+    SYNDICATE_BUYOUT_BASE_SATISFACTION_FACTOR + investorSatisfaction / SYNDICATE_MAX_SATISFACTION;
   const price = Math.round(sharePrice * investorShares * satisfactionFactor);
   return { price };
 }

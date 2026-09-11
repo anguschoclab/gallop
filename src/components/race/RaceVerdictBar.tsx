@@ -8,8 +8,19 @@ interface RaceVerdictBarProps {
 }
 
 export function RaceVerdictBar({ verdict }: RaceVerdictBarProps) {
-  const topFactors = verdict.factors.slice(0, 2);
-  const remainingFactors = verdict.factors.slice(2);
+  // Prioritise positive/negative factors in the top-2 display.
+  // Neutral factors (◆) are demoted to the "Full Analysis" section.
+  const impactful = verdict.factors.filter((f) => f.impact !== "neutral");
+  const topFactors = impactful.slice(0, 2);
+  // If there aren't enough impactful factors, fill from neutral ones.
+  if (topFactors.length < 2) {
+    const neutralFill = verdict.factors.filter((f) => f.impact === "neutral");
+    while (topFactors.length < 2 && neutralFill.length > 0) {
+      topFactors.push(neutralFill.shift()!);
+    }
+  }
+  const shownKeys = new Set(topFactors.map((f) => f.key));
+  const remainingFactors = verdict.factors.filter((f) => !shownKeys.has(f.key));
 
   return (
     <div className="mt-3 ml-10 p-3 bg-gold/5 border border-gold/10 space-y-2">

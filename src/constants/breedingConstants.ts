@@ -112,3 +112,9 @@ export const MILESTONE_DESC_EXCELLENT = "Achieve genetic distance below 0.2";
 // Breeding program UI display limits
 export const MAX_ELIGIBLE_MARES_DISPLAY = 5;
 export const MAX_HISTORY_ENTRIES_DISPLAY = 6;
+
+// Syndicate buyout computation
+/** Base satisfaction factor (investor at 0% satisfaction still costs 80% of share value). */
+export const SYNDICATE_BUYOUT_BASE_SATISFACTION_FACTOR = 0.8;
+/** Maximum investor satisfaction value (used to normalize satisfaction to 0–1 bonus range). */
+export const SYNDICATE_MAX_SATISFACTION = 100;

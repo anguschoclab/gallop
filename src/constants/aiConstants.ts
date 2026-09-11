@@ -40,3 +40,42 @@ export const FACILITY_UPGRADE_BASE_THRESHOLD = 50;
 export const CONSIGNMENT_INTENT_PRIORITY = 40;
 
 export const DIFFICULTY_ADJUSTMENT_PERIOD = 30;
+
+// --- AI Learning Module ---
+
+/** Default success rate when no learning data is available (50%). */
+export const DEFAULT_SUCCESS_RATE = 0.5;
+/** Minimum data points before learning overrides take effect. */
+export const LEARNING_MIN_DATA_POINTS = 5;
+/** Number of top sires to surface in breeding AI summaries. */
+export const TOP_SIRES_COUNT = 5;
+
+// --- Jockey Style Selection ---
+
+/** Success rate threshold for jockey style learning override (65%). */
+export const JOCKEY_STYLE_LEARNING_RATE_THRESHOLD = 0.65;
+/** Scale factor for adaptive bonus based on learned success rate. */
+export const JOCKEY_ADAPTIVE_BONUS_SCALE = 15;
+
+// --- Personality System ---
+
+/** Initial strategy confidence for a new personality AI state. */
+export const DEFAULT_STRATEGY_CONFIDENCE = 0.5;
+/** Floor for strategy confidence after adaptation penalties. */
+export const STRATEGY_CONFIDENCE_FLOOR = 0.1;
+/** Confidence below which a strategy switch is triggered. */
+export const STRATEGY_SWITCH_THRESHOLD = 0.3;
+/** Confidence reset value after a strategy switch. */
+export const STRATEGY_SWITCH_RESET_CONFIDENCE = 0.6;
+/** Factor by which conservatism lowers the adaptation threshold. */
+export const CONSERVATISM_THRESHOLD_FACTOR = 0.2;
+/** Factor by which innovation boosts novelty scores. */
+export const INNOVATION_BOOST_FACTOR = 0.5;
+/** Competitor success rate above which conservative avoidance kicks in. */
+export const COMPETITOR_SUCCESS_HIGH_THRESHOLD = 0.7;
+/** Competitor success rate below which innovation competition kicks in. */
+export const COMPETITOR_SUCCESS_LOW_THRESHOLD = 0.3;
+/** Factor by which conservatism reduces modifier when competitors succeed. */
+export const CONSERVATISM_AVOID_FACTOR = 0.3;
+/** Factor by which innovation increases modifier when competitors fail. */
+export const INNOVATION_COMPETE_FACTOR = 0.2;

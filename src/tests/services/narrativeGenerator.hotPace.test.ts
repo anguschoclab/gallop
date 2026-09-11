@@ -129,8 +129,8 @@ describe("NarrativeGenerator — HOT_PACE detection", () => {
     const stable = makeStable();
     const gen = new NarrativeGenerator(race, [horse], [stable], rng);
 
-    // First tick to announce start
-    gen.update([makeRunner({ velocity: HOT_VELOCITY })], 0.1);
+    // First tick to announce start (normal velocity to avoid premature HOT_PACE)
+    gen.update([makeRunner({ velocity: NORMAL_VELOCITY })], 0.1);
 
     // Second tick with hot pace
     const lines = gen.update([makeRunner({ velocity: HOT_VELOCITY, position: 50 })], 1.0);
@@ -159,7 +159,8 @@ describe("NarrativeGenerator — HOT_PACE detection", () => {
     const stable = makeStable();
     const gen = new NarrativeGenerator(race, [horse], [stable], rng);
 
-    gen.update([makeRunner({ velocity: HOT_VELOCITY })], 0.1);
+    // First tick to announce start (normal velocity to avoid premature HOT_PACE)
+    gen.update([makeRunner({ velocity: NORMAL_VELOCITY })], 0.1);
 
     // First hot pace emission
     const lines1 = gen.update([makeRunner({ velocity: HOT_VELOCITY, position: 50 })], 1.0);

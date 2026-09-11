@@ -108,7 +108,7 @@ function generateFactorNote(
       if (impact === "positive") {
         return `Conserved energy drafting behind the lead group (+${absPct}%).`;
       }
-      return `No drafting benefit available (${pct}%).`;
+      return `Speed-neutral drafting — energy saved via stamina preservation (${pct}% speed).`;
     case "cover":
       if (impact === "positive") {
         return `Benefited from traffic cover, conserving energy (+${absPct}%).`;
@@ -294,12 +294,19 @@ export function generateRaceVerdict(
     return { key, magnitude, entry };
   }).sort((a, b) => b.magnitude - a.magnitude);
 
+  // Exclude truly flat factors (magnitude ~0) from selection — they add no
+  // information to the verdict. After drafting was made speed-neutral, the
+  // draft factor always has magnitude ~0; including it would show an
+  // uninformative "Speed-neutral drafting (0%)" entry in every race.
+  const FLAT_FACTOR_THRESHOLD = 0.001;
+  const informative = ranked.filter((r) => r.magnitude > FLAT_FACTOR_THRESHOLD);
+
   // Take top factors (those with meaningful deviation first, then fill to min)
-  const significant = ranked.filter((r) => r.magnitude > IMPACT_THRESHOLD);
+  const significant = informative.filter((r) => r.magnitude > IMPACT_THRESHOLD);
   const selected =
     significant.length >= MIN_FACTORS
       ? significant.slice(0, MAX_FACTORS)
-      : ranked.slice(0, MAX_FACTORS);
+      : informative.slice(0, MAX_FACTORS);
 
   const factors: VerdictFactor[] = selected.map(({ key, entry }) => {
     const impact = classifyImpact(entry.raceAvg);
@@ -319,8 +326,8 @@ export function generateRaceVerdict(
     };
   });
 
-  // Generate headline from top factor
-  const topKey = ranked[0]?.key ?? "stamina";
+  // Generate headline from top informative factor (skip flat factors)
+  const topKey = informative[0]?.key ?? ranked[0]?.key ?? "stamina";
   const topEntry = ledger[topKey];
   const topImpact = classifyImpact(topEntry.raceAvg);
   const headline = generateHeadline(position, fieldSize, {

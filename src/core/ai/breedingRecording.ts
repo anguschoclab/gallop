@@ -2,6 +2,7 @@ import type { Stable } from "@/game/types";
 import { recordPersonalityOutcome } from "./personalitySystem";
 import type { BreedingAIState, BreedingDecision } from "./breedingAI";
 import { trimHistory } from "./learningModule";
+import { DEFAULT_SUCCESS_RATE, TOP_SIRES_COUNT } from "@/constants/aiConstants";
 
 export function recordBreedingDecision(
   aiState: BreedingAIState,
@@ -115,7 +116,7 @@ export function getBreedingInsights(
   const stableHistory = aiState.breedingHistory.filter((d) => d.stableId === stableId && d.outcome);
   const totalDecisions = stableHistory.length;
   const successes = stableHistory.filter((d) => d.outcome?.success).length;
-  const successRate = totalDecisions > 0 ? successes / totalDecisions : 0.5;
+  const successRate = totalDecisions > 0 ? successes / totalDecisions : DEFAULT_SUCCESS_RATE;
   const avgFoalRating =
     totalDecisions > 0
       ? stableHistory.reduce((sum, d) => sum + (d.outcome?.foalRating || 0), 0) / totalDecisions
@@ -143,7 +144,7 @@ export function getBreedingInsights(
       count: sireRecord.count,
     }))
     .sort((a, b) => b.successRate - a.successRate)
-    .slice(0, 5);
+    .slice(0, TOP_SIRES_COUNT);
 
   return {
     totalDecisions,

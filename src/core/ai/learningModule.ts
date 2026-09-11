@@ -13,6 +13,8 @@
  * Tracks outcomes, patterns, and success rates for AI decision-making
  */
 
+import { DEFAULT_SUCCESS_RATE } from "@/constants/aiConstants";
+
 export interface LearningOutcome {
   decisionType: string;
   contextKey: string;
@@ -136,7 +138,7 @@ function updatePatterns(
   success: boolean,
 ): Record<string, number> {
   const patternKey = `${decisionType}:${contextKey}`; // Use full context key
-  const existing = patterns[patternKey] ?? 0.5;
+  const existing = patterns[patternKey] ?? DEFAULT_SUCCESS_RATE;
   const weight = success ? 0.1 : -0.05;
   return {
     ...patterns,
@@ -162,7 +164,7 @@ export function getSuccessRate(
 ): number {
   const key = `${decisionType}:${contextKey}`;
   const rateEntry = state.successRates[key];
-  return rateEntry?.rate ?? 0.5; // Default to 50% if no rateEntry
+  return rateEntry?.rate ?? DEFAULT_SUCCESS_RATE; // Default to 50% if no rateEntry
 }
 
 /**
@@ -182,7 +184,7 @@ export function getPatternScore(
   context: string,
 ): number {
   const patternKey = `${decisionType}:${context}`;
-  return state.patterns[patternKey] ?? 0.5;
+  return state.patterns[patternKey] ?? DEFAULT_SUCCESS_RATE;
 }
 
 /**
@@ -205,7 +207,7 @@ export function getAdaptiveThreshold(
   adaptationSpeed: number,
 ): number {
   const successRate = getSuccessRate(state, decisionType, contextKey);
-  const adjustment = (successRate - 0.5) * adaptationSpeed * baseThreshold;
+  const adjustment = (successRate - DEFAULT_SUCCESS_RATE) * adaptationSpeed * baseThreshold;
   return Math.max(0, baseThreshold - adjustment);
 }
 
@@ -274,7 +276,7 @@ export function getLearningInsights(
   const relevantOutcomes = state.outcomes.filter((o) => o.decisionType === decisionType);
   const totalDecisions = relevantOutcomes.length;
   const successes = relevantOutcomes.filter((o) => o.success).length;
-  const successRate = totalDecisions > 0 ? successes / totalDecisions : 0.5;
+  const successRate = totalDecisions > 0 ? successes / totalDecisions : DEFAULT_SUCCESS_RATE;
   const avgValue =
     totalDecisions > 0 ? relevantOutcomes.reduce((sum, o) => sum + o.value, 0) / totalDecisions : 0;
 

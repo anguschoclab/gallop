@@ -17,6 +17,19 @@ import {
   getSuccessRate,
   type LearningState,
 } from "./learningModule";
+import {
+  DEFAULT_STRATEGY_CONFIDENCE,
+  STRATEGY_CONFIDENCE_FLOOR,
+  STRATEGY_SWITCH_THRESHOLD,
+  STRATEGY_SWITCH_RESET_CONFIDENCE,
+  CONSERVATISM_THRESHOLD_FACTOR,
+  INNOVATION_BOOST_FACTOR,
+  COMPETITOR_SUCCESS_HIGH_THRESHOLD,
+  COMPETITOR_SUCCESS_LOW_THRESHOLD,
+  CONSERVATISM_AVOID_FACTOR,
+  INNOVATION_COMPETE_FACTOR,
+  LEARNING_MIN_DATA_POINTS,
+} from "@/constants/aiConstants";
 
 /**
  * Hybrid AI Personality System
@@ -63,7 +76,7 @@ export function getPersonalityAIState(personality: StablePersonality): Personali
     innovation: config.innovation,
     learningState: createLearningState(),
     currentStrategy: "default",
-    strategyConfidence: 0.5,
+    strategyConfidence: DEFAULT_STRATEGY_CONFIDENCE,
     lastStrategyChangeDay: 0,
   };
 }
@@ -116,13 +129,16 @@ export function calculateUtilityScore(
   }
 
   // Apply conservatism modifier (reduces score for unfamiliar strategies)
-  if (aiState.currentStrategy !== "default" && aiState.strategyConfidence < 0.5) {
+  if (
+    aiState.currentStrategy !== "default" &&
+    aiState.strategyConfidence < DEFAULT_STRATEGY_CONFIDENCE
+  ) {
     score *= config.conservatism;
   }
 
   // Apply innovation modifier (boosts score for novel approaches)
   if (decisionType === "novel") {
-    score *= 1 + config.innovation * 0.5;
+    score *= 1 + config.innovation * INNOVATION_BOOST_FACTOR;
   }
 
   return Math.max(0, Math.min(1, score));
@@ -171,15 +187,19 @@ export function recordPersonalityOutcome(
 
   // Adapt strategy if success rate is low and enough rateEntry collected
   const rateEntry = newLearningState.successRates[`${decisionType}:${contextKey}`];
-  const threshold = 0.5 - newState.conservatism * 0.2;
-  if (rateEntry && rateEntry.total >= 5 && successRate < threshold) {
+  const threshold =
+    DEFAULT_STRATEGY_CONFIDENCE - newState.conservatism * CONSERVATISM_THRESHOLD_FACTOR;
+  if (rateEntry && rateEntry.total >= LEARNING_MIN_DATA_POINTS && successRate < threshold) {
     const config = PERSONALITY_CONFIG[newState.personality];
     const confidenceChange = (1 - successRate) * config.adaptationSpeed;
-    const newConfidence = Math.max(0.1, newState.strategyConfidence - confidenceChange);
-    const shouldSwitch = newConfidence < 0.3;
+    const newConfidence = Math.max(
+      STRATEGY_CONFIDENCE_FLOOR,
+      newState.strategyConfidence - confidenceChange,
+    );
+    const shouldSwitch = newConfidence < STRATEGY_SWITCH_THRESHOLD;
     newState = {
       ...newState,
-      strategyConfidence: shouldSwitch ? 0.6 : newConfidence,
+      strategyConfidence: shouldSwitch ? STRATEGY_SWITCH_RESET_CONFIDENCE : newConfidence,
       currentStrategy: shouldSwitch
         ? STRATEGY_ALTERNATIVES[newState.currentStrategy] || "default"
         : newState.currentStrategy,
@@ -274,13 +294,16 @@ export function getCompetitiveModifier(
 
     // If competitors are succeeding, conservative personalities may avoid
     // Innovative personalities may try to compete
-    if (competitorSuccessRate > 0.7) {
-      modifier *= 1 - config.conservatism * 0.3 + config.innovation * 0.2;
+    if (competitorSuccessRate > COMPETITOR_SUCCESS_HIGH_THRESHOLD) {
+      modifier *=
+        1 -
+        config.conservatism * CONSERVATISM_AVOID_FACTOR +
+        config.innovation * INNOVATION_COMPETE_FACTOR;
     }
 
     // If competitors are failing, may be opportunity
-    if (competitorSuccessRate < 0.3) {
-      modifier *= 1 + config.innovation * 0.2;
+    if (competitorSuccessRate < COMPETITOR_SUCCESS_LOW_THRESHOLD) {
+      modifier *= 1 + config.innovation * INNOVATION_COMPETE_FACTOR;
     }
   }
 

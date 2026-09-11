@@ -32,6 +32,8 @@ export const TRAINING_ENERGY_MAP: Record<string, number> = {
 
 export const TRAINING_ENERGY_REST = 30;
 export const TRAINING_MIN_ENERGY_THRESHOLD = 15;
+/** Absolute minimum energy to attempt any training action (including rest). */
+export const TRAINING_MIN_ENERGY_ATTEMPT = 10;
 
 export const WORKOUT_INTENSITIES: Record<string, number> = {
   rest: 0,
