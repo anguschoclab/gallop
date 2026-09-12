@@ -16,7 +16,7 @@ import type { HorseId, JockeyId, RaceId } from "@/core/types/branded";
 import type { HorseOwnership } from "@/core/horse/ownership";
 
 // Re-export RaceClass for use in race generation modules
-export { RaceClass };
+export type { RaceClass };
 
 export type ClaimingPrice =
   | 2000
