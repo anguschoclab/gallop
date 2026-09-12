@@ -19,11 +19,11 @@ jobs:
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
+      - name: Build
+        run: bun run build
       - name: Typecheck
-        run: bunx tsc --noEmit
+        run: bun x tsc --noEmit
       - name: Lint
         run: bun run lint
       - name: Tests
         run: bun run test
-      - name: Build
-        run: bun run build
