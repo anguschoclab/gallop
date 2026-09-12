@@ -6,7 +6,7 @@ import { createTestHorse } from "@/tests/helpers";
 function mkRace(
   id: string,
   track: string,
-  surface: "dirt" | "turf",
+  surface: "Dirt" | "Turf" | "Synthetic",
   distance: number,
   day: number = 100,
   grade: string = "G1",
@@ -37,7 +37,7 @@ function mkHorse(
   id: string,
   age: number,
   gender: "colt" | "filly" | "mare" | "horse",
-  raceParams: { id: string; surface: "dirt" | "turf"; distance: number },
+  raceParams: { id: string; surface: "Dirt" | "Turf" | "Synthetic"; distance: number },
 ): { horse: Horse; raceMap: Map<string, Race> } {
   const race = mkRace(raceParams.id, "Churchill Downs", raceParams.surface, raceParams.distance);
   const raceMap = new Map([[race.id, race]]);
@@ -70,7 +70,7 @@ describe("calculateAwardPoints - Eligibility Rules", () => {
   it("horse_of_the_year applies to any age, gender, surface, and distance", () => {
     const { horse, raceMap } = mkHorse("h1", 2, "filly", {
       id: "r1",
-      surface: "turf",
+      surface: "Turf",
       distance: 1000,
     });
     const points = calculateAwardPoints(horse, 1, "north_america", "horse_of_the_year", raceMap);
@@ -80,7 +80,7 @@ describe("calculateAwardPoints - Eligibility Rules", () => {
   it("age and gender restrictions work for 2yo colt", () => {
     const { horse, raceMap } = mkHorse("h1", 2, "colt", {
       id: "r1",
-      surface: "dirt",
+      surface: "Dirt",
       distance: 1600,
     });
     expect(
@@ -93,12 +93,12 @@ describe("calculateAwardPoints - Eligibility Rules", () => {
   it("surface restrictions work for dirt vs turf", () => {
     const { horse: dirtHorse, raceMap: dirtMap } = mkHorse("h1", 4, "horse", {
       id: "r1",
-      surface: "dirt",
+      surface: "Dirt",
       distance: 2000,
     });
     const { horse: turfHorse, raceMap: turfMap } = mkHorse("h2", 4, "horse", {
       id: "r2",
-      surface: "turf",
+      surface: "Turf",
       distance: 2000,
     });
 
@@ -120,17 +120,17 @@ describe("calculateAwardPoints - Eligibility Rules", () => {
   it("distance restrictions work for sprint, middle, and stayer", () => {
     const { horse: sprinter, raceMap: sprintMap } = mkHorse("h1", 3, "colt", {
       id: "r1",
-      surface: "dirt",
+      surface: "Dirt",
       distance: 1200,
     });
     const { horse: middle, raceMap: middleMap } = mkHorse("h2", 3, "colt", {
       id: "r2",
-      surface: "dirt",
+      surface: "Dirt",
       distance: 1800,
     });
     const { horse: stayer, raceMap: stayerMap } = mkHorse("h3", 3, "colt", {
       id: "r3",
-      surface: "dirt",
+      surface: "Dirt",
       distance: 2400,
     });
 
@@ -162,7 +162,7 @@ describe("calculateAwardPoints - Eligibility Rules", () => {
   it("never awards points for special non-horse categories", () => {
     const { horse, raceMap } = mkHorse("h1", 3, "colt", {
       id: "r1",
-      surface: "dirt",
+      surface: "Dirt",
       distance: 2000,
     });
 
