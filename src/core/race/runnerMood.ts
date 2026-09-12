@@ -203,13 +203,15 @@ export function deriveRunnerMood(
  * @param runners - All runners in the race.
  * @param peakVelocities - Map of horseId to peak velocity seen so far.
  * @param distance - Race distance in metres.
+ * @param prebuiltField - Optional pre-computed FieldContext for optimization.
  */
 export function captureRunnerMoods(
   runners: Runner[],
   peakVelocities: Map<string, number>,
   distance: number,
+  prebuiltField?: FieldContext,
 ): void {
-  const field = buildFieldContext(runners);
+  const field = prebuiltField ?? buildFieldContext(runners);
   for (const r of runners) {
     if (r.finishTime !== null) continue;
     const history = { peakVelocity: peakVelocities.get(r.horseId) ?? 0 };
