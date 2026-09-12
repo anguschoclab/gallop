@@ -1,0 +1,3 @@
+## 2024-09-12 - Remove deprecated race simulation services
+**Learning:** Found deprecated wrapper files under `src/services/race/` (`raceImpactGenerator.ts`, `raceSimulationExecutor.ts`, `raceSimulationService.ts`) that were merely re-exporting modules that had already been moved to `src/core/race/`. These thin service wrappers were marked as `@deprecated` and the consumers had mostly migrated except for some tests and components that I fixed.
+**Action:** The facade pattern should be implemented directly via `src/services/race/raceFacade.ts` rather than keeping individual deprecated 1-to-1 mappings. I consolidated exports into the facade and removed the duplicated proxy files to clean the layer hierarchy.

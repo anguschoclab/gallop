@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { generateRaceImpacts } from "@/services/race/raceImpactGenerator";
+import { generateRaceImpacts } from "@/core/race/raceImpactGenerator";
 import { isValidUUID } from "@/core/uuid";
 import { UUIDProvider } from "@/core/uuidProvider";
 import { createRng } from "@/core/common/rng";

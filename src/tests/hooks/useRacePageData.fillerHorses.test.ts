@@ -20,7 +20,7 @@ vi.mock("@/services/narrative/narrativeService", () => ({
   }),
 }));
 
-vi.mock("@/services/race/raceSimulationService", () => ({
+vi.mock("@/core/race/raceSimulationService", () => ({
   buildRaceField: vi.fn(),
   rngForRace: vi.fn(() => ({ next: () => 0 })),
 }));
@@ -113,7 +113,7 @@ const RUNNERS: Runner[] = [
 // ─── Imports (after mocks) ───────────────────────────────────────────────────
 
 import { useRacePageData } from "@/hooks/race/useRacePageData";
-import { buildRaceField } from "@/services/race/raceSimulationService";
+import { buildRaceField } from "@/core/race/raceSimulationService";
 import { NarrativeGenerator } from "@/services/narrative/narrativeService";
 
 // ─── Tests ───────────────────────────────────────────────────────────────────

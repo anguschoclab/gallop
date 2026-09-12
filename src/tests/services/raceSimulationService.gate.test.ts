@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { buildRaceField } from "@/services/race/raceSimulationService";
+import { buildRaceField } from "@/core/race/raceSimulationService";
 import type { Horse, Race, RaceEntry } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { makePlayerOwned } from "@/core/horse/ownership";

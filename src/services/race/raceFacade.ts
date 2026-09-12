@@ -62,3 +62,6 @@ export {
 } from "@/core/common/uiTokens";
 export { formatDate, getMonthName, gameCalendarDate } from "@/core/calendar/dateFormatting";
 export { getCompatibility } from "@/core/jockey/compatibility";
+export * from "@/core/race/raceSimulationService";
+export * from "@/core/race/raceImpactGenerator";
+export * from "@/core/race/raceSimulationExecutor";

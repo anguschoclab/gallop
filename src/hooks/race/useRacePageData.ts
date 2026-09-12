@@ -8,7 +8,7 @@ import {
   buildRaceField,
   rngForRace,
   type RaceSimulationDependencies,
-} from "@/services/race/raceSimulationService";
+} from "@/services/race/raceFacade";
 import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/core/odds";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { NarrativeGenerator } from "@/services/narrative/narrativeService";
