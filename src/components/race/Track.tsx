@@ -163,13 +163,13 @@ export function Track({
     if (r.velocity > prev) peakVelocityRef.current.set(r.horseId, r.velocity);
   }
 
-  captureRunnerMoods(runners, peakVelocityRef.current, distance);
-
-  const trackOffset = -(cameraPos % TRACK_BG_TILE_WIDTH);
-
   // Performance: Hoist expensive context building outside the runner mapping loop
   // to avoid O(N^2) recalculations on every frame render.
   const fieldContext = buildFieldContext(runners);
+
+  captureRunnerMoods(runners, peakVelocityRef.current, distance, fieldContext);
+
+  const trackOffset = -(cameraPos % TRACK_BG_TILE_WIDTH);
 
   return (
     <div
