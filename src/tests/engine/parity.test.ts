@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { simulateRace } from "@/services/race/raceSimulationExecutor";
+import { simulateRace } from "@/core/race/raceSimulationExecutor";
 import { runRaceToCompletion } from "@/core/race/engine/simulation";
-import { buildRaceField, rngForRace } from "@/services/race/raceSimulationService";
+import { buildRaceField, rngForRace } from "@/core/race/raceSimulationService";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { Race, Horse } from "@/game/types";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";

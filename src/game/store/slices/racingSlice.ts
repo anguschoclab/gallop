@@ -22,7 +22,7 @@ import { generateUUID } from "@/core/uuid";
 import { getAvailableTrainingTypes } from "@/core/facilities";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
-import { simulateRace, type RaceSimulationResult } from "@/services/race/raceSimulationExecutor";
+import { simulateRace, type RaceSimulationResult } from "@/services/race/raceFacade";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import type { NominationRecord, NominationStatus } from "@/core/racing/nominationFees";
 import {
