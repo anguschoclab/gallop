@@ -19,6 +19,8 @@ jobs:
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
+      - name: Generate Routes
+        run: bun x @tanstack/router-cli generate
       - name: Typecheck
         run: bunx tsc --noEmit
       - name: Lint
