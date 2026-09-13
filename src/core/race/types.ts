@@ -8,7 +8,7 @@
  * Related files: Used throughout the race module and game state
  */
 
-import { RaceClass } from "./sharedTypes";
+import type { RaceClass } from "./sharedTypes";
 import type { RaceSnapshot, PaceSnapshot } from "./engine/raceSnapshotTypes";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
@@ -16,7 +16,7 @@ import type { HorseId, JockeyId, RaceId } from "@/core/types/branded";
 import type { HorseOwnership } from "@/core/horse/ownership";
 
 // Re-export RaceClass for use in race generation modules
-export { RaceClass };
+export type { RaceClass };
 
 export type ClaimingPrice =
   | 2000
