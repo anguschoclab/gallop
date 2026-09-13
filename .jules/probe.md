@@ -1,0 +1,3 @@
+## 2025-03-05 - Testing Pure Breeding Math (inbreedingCalculator.ts)
+**Learning:** Found an untested core breeding module (`inbreedingCalculator.ts`). It handles foundation effects and direct inbreeding edge cases. The function `calculateFounderEffect` relies on `findHorseByName` from `@/core/data/pedigreeAccessor`, which makes it very easy to isolate and mock using `vi.mock` for deterministic deep pedigree graph testing.
+**Action:** When testing pure breeding/pedigree math, always mock the `pedigreeAccessor` (or use the provided `pedigreeAccessors` registry if applicable) to inject a controlled graph. This prevents tests from being coupled to actual changing game data and allows triggering rare branches (like severe foundation effects) reliably.
