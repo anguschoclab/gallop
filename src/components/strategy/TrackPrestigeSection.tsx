@@ -5,6 +5,7 @@ import {
   calculateVenuePrestige,
   getStrategyPrestigeTier,
   getPrestigeTierBadgeClass,
+  type StrategyPrestigeTier,
 } from "@/services/prestige/prestigeFacade";
 import { racecoursePrestigeMultiplier } from "@/services/prestige/prestigeFacade";
 import { getTrackById } from "@/data/tracks";
@@ -39,7 +40,7 @@ export function TrackPrestigeSection({ slots, getRace }: TrackPrestigeSectionPro
         });
       }
       return acc;
-    }, new Map<string, { name: string; score: number; tier: any; multiplier: number }>());
+    }, new Map<string, { name: string; score: number; tier: StrategyPrestigeTier; multiplier: number }>());
 
   const campaignTracks = Array.from(trackEntries.values());
 

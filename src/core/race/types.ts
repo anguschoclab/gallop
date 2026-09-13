@@ -8,7 +8,7 @@
  * Related files: Used throughout the race module and game state
  */
 
-import { RaceClass } from "./sharedTypes";
+import type { RaceClass } from "./sharedTypes";
 import type { RaceSnapshot, PaceSnapshot } from "./engine/raceSnapshotTypes";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
