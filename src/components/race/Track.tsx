@@ -10,6 +10,7 @@ import {
   buildFieldContext,
   deriveRunnerConditions,
   captureRunnerMoods,
+  type RunnerCondition,
 } from "@/services/race/raceFacade";
 import { RunnerConditionBadges } from "./RunnerConditionBadges";
 import { RunnerMoodFace } from "./RunnerMoodFace";
@@ -163,13 +164,30 @@ export function Track({
     if (r.velocity > prev) peakVelocityRef.current.set(r.horseId, r.velocity);
   }
 
-  captureRunnerMoods(runners, peakVelocityRef.current, distance);
-
   const trackOffset = -(cameraPos % TRACK_BG_TILE_WIDTH);
 
   // Performance: Hoist expensive context building outside the runner mapping loop
   // to avoid O(N^2) recalculations on every frame render.
   const fieldContext = buildFieldContext(runners);
+
+  // Precompute conditions to avoid duplicating derivation in captureRunnerMoods and the mapping loop
+  const runnerConditions = new Map<string, RunnerCondition[]>();
+  for (const r of runners) {
+    if (r.finishTime === null) {
+      runnerConditions.set(
+        r.horseId,
+        deriveRunnerConditions(
+          r,
+          fieldContext,
+          { peakVelocity: peakVelocityRef.current.get(r.horseId) ?? 0 },
+          distance,
+        ),
+      );
+    }
+  }
+
+  // Pass pre-computed fieldContext and conditions to prevent duplicate allocations
+  captureRunnerMoods(runners, peakVelocityRef.current, distance, fieldContext, runnerConditions);
 
   return (
     <div
@@ -247,15 +265,7 @@ export function Track({
         const finishRank =
           r.finishTime !== null ? finishRankMapRef.current.get(r.horseId) : undefined;
 
-        const conditions =
-          r.finishTime === null
-            ? deriveRunnerConditions(
-                r,
-                fieldContext,
-                { peakVelocity: peakVelocityRef.current.get(r.horseId) ?? 0 },
-                distance,
-              )
-            : [];
+        const conditions = runnerConditions.get(r.horseId) ?? [];
 
         return (
           <div

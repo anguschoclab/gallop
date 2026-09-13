@@ -9,6 +9,7 @@
 export * from "@/core/race/types";
 export * from "@/core/race/engine/runnerBuilder";
 export * from "@/core/race/runnerConditions";
+export type { RunnerCondition } from "@/core/race/runnerConditionTypes";
 // raceSnapshotTypes re-exported explicitly to avoid SectionalSplit conflict with types
 export type {
   HorseSnapshot,
