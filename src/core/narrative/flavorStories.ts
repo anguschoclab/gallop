@@ -515,6 +515,26 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "Following a string of impressive debut winners by his first crop, shares in a highly touted first-season sire have doubled in value on the private market.",
       category: "flavor",
     },
+    {
+      headline: "Rare Coat Color Commands Premium",
+      body: "A stunning palomino yearling sparked an intense bidding war at today's mixed sale, proving that a flashy coat can sometimes overshadow a modest pedigree.",
+      category: "flavor",
+    },
+    {
+      headline: "Local Breeding Operation Expands",
+      body: "A prominent regional syndicate has announced the acquisition of several neighboring parcels of land to accommodate their rapidly growing broodmare band.",
+      category: "flavor",
+    },
+    {
+      headline: "Outcross Pedigree Proves Popular",
+      body: "Breeders seeking to inject fresh blood into established families are flocking to a newly imported stallion featuring a completely unique sire line.",
+      category: "flavor",
+    },
+    {
+      headline: "Veteran Stallion Pensioned",
+      body: "A beloved sire responsible for multiple classic winners over the past two decades has been officially pensioned and will enjoy his twilight years at a premier retirement facility.",
+      category: "flavor",
+    },
   ],
   weather: [
     {
