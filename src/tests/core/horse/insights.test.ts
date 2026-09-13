@@ -671,3 +671,73 @@ describe("Distance Versatility insights", () => {
     expect(insight?.label).not.toBe("Distance Versatility");
   });
 });
+
+describe("Tipster: Gate Affinity insights", () => {
+  it("detects Rail Skimmer when inside avg >= outside avg + 8", () => {
+    const horse = {
+      raceHistory: [
+        // Inside starts (gates 1-3)
+        { position: 1, day: 1, gate: 1, fieldSize: 10, beyer: 90 },
+        { position: 2, day: 2, gate: 2, fieldSize: 10, beyer: 88 },
+        { position: 1, day: 3, gate: 3, fieldSize: 10, beyer: 92 }, // avg inside = 90
+        // Outside starts (gates >= 8)
+        { position: 5, day: 4, gate: 9, fieldSize: 10, beyer: 80 },
+        { position: 4, day: 5, gate: 10, fieldSize: 10, beyer: 78 },
+        { position: 5, day: 6, gate: 8, fieldSize: 10, beyer: 82 }, // avg outside = 80
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Rail Skimmer");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("detects Free Running when outside avg >= inside avg + 8", () => {
+    const horse = {
+      raceHistory: [
+        // Inside starts (gates 1-3)
+        { position: 5, day: 1, gate: 1, fieldSize: 10, beyer: 80 },
+        { position: 4, day: 2, gate: 2, fieldSize: 10, beyer: 78 },
+        { position: 5, day: 3, gate: 3, fieldSize: 10, beyer: 82 }, // avg inside = 80
+        // Outside starts (gates >= 8)
+        { position: 1, day: 4, gate: 9, fieldSize: 10, beyer: 90 },
+        { position: 2, day: 5, gate: 10, fieldSize: 10, beyer: 88 },
+        { position: 1, day: 6, gate: 8, fieldSize: 10, beyer: 92 }, // avg outside = 90
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Free Running");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("does not detect Gate Affinity when differences are small", () => {
+    const horse = {
+      raceHistory: [
+        { position: 3, day: 1, gate: 1, fieldSize: 10, beyer: 85 },
+        { position: 3, day: 2, gate: 2, fieldSize: 10, beyer: 84 },
+        { position: 3, day: 3, gate: 3, fieldSize: 10, beyer: 86 }, // avg inside = 85
+        { position: 3, day: 4, gate: 9, fieldSize: 10, beyer: 82 },
+        { position: 3, day: 5, gate: 10, fieldSize: 10, beyer: 84 },
+        { position: 3, day: 6, gate: 8, fieldSize: 10, beyer: 83 }, // avg outside = 83
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight?.label).not.toBe("Rail Skimmer");
+    expect(insight?.label).not.toBe("Free Running");
+  });
+
+  it("does not detect Gate Affinity without enough starts in both buckets", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1, gate: 1, fieldSize: 10, beyer: 90 },
+        { position: 2, day: 2, gate: 2, fieldSize: 10, beyer: 88 },
+        { position: 1, day: 3, gate: 3, fieldSize: 10, beyer: 92 }, // 3 inside
+        { position: 5, day: 4, gate: 9, fieldSize: 10, beyer: 80 },
+        { position: 4, day: 5, gate: 10, fieldSize: 10, beyer: 78 }, // only 2 outside
+      ],
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight?.label).not.toBe("Rail Skimmer");
+  });
+});

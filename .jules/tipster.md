@@ -1,0 +1,3 @@
+## 2023-10-27 - Gate Affinity Insights
+**Learning:** Horse race histories contain start-level data (`gate` and `fieldSize`) that allow discovering patterns about draw preferences. This can be aggregated to build actionable insights like "Rail Skimmer" (excels from inside draws in large fields) or "Free Running" (excels from outside draws in large fields).
+**Action:** Used the existing `insightDetectors` structure to write a pure function deriving this insight without storing any new state. Always verify that bucket sizes (e.g., minimum 3 starts inside and outside) are robust enough before generating trends.
