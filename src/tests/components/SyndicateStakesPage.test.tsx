@@ -48,6 +48,7 @@ const mockStakes: PlayerSyndicateStake[] = [
     reputationImpactStatus: "positive",
     reputationImpactLabel: "Prestige Boost",
     reputationImpactDescription:
+      "Exceptional progeny and 85% partner satisfaction elevates bloodstock prestige",
     recentEvents: [
       {
         id: "evt-1",
@@ -162,7 +163,7 @@ describe("SyndicateStakesPage", () => {
     expect(
       screen.getByText("Underwrote 25% of the Northern Dancer syndicate."),
     ).toBeInTheDocument();
-    expect(screen.getByText("+14 pts")).toBeInTheDocument();
+    expect(screen.getAllByText("+14 pts").length).toBeGreaterThanOrEqual(2);
 
     fireEvent.click(toggleButton);
     expect(
