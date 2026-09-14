@@ -465,6 +465,52 @@ export const detectDistanceVersatility: InsightDetector = (horse) => {
   return null;
 };
 
+// 4. Check for Gate/Draw Preference
+export const detectGateAffinity: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  let insideStarts = 0;
+  let insideBeyerTotal = 0;
+  let outsideStarts = 0;
+  let outsideBeyerTotal = 0;
+
+  for (const race of history) {
+    if (typeof race.gate === "number" && typeof race.beyer === "number" && race.fieldSize && race.fieldSize >= 7) {
+      if (race.gate <= 3) {
+        insideStarts++;
+        insideBeyerTotal += race.beyer;
+      } else if (race.gate >= race.fieldSize - 2) {
+        outsideStarts++;
+        outsideBeyerTotal += race.beyer;
+      }
+    }
+  }
+
+  if (insideStarts >= 3 && outsideStarts >= 3) {
+    const insideAvg = insideBeyerTotal / insideStarts;
+    const outsideAvg = outsideBeyerTotal / outsideStarts;
+
+    if (insideAvg >= outsideAvg + 8) {
+      return {
+        label: "Rail Skimmer",
+        value: "Inside Draw Preference",
+        context: `Averages a ${Math.round(insideAvg)} Beyer from inside gates (1-3) vs ${Math.round(outsideAvg)} from the outside`,
+        type: "positive",
+      };
+    }
+
+    if (outsideAvg >= insideAvg + 8) {
+      return {
+        label: "Free Running",
+        value: "Outside Draw Preference",
+        context: `Averages a ${Math.round(outsideAvg)} Beyer from outside gates vs ${Math.round(insideAvg)} when drawn inside`,
+        type: "positive",
+      };
+    }
+  }
+
+  return null;
+};
+
 /**
  * Registry of all insight detectors in priority order.
  * The coordinator (getHorseInsight) iterates this array and returns
@@ -487,4 +533,5 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectDistanceSpecialist,
   detectSurfaceAffinity,
   detectDistanceVersatility,
+  detectGateAffinity,
 ];
