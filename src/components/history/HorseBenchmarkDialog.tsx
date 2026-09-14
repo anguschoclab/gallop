@@ -443,8 +443,38 @@ export function HorseBenchmarkDialog({
                             </Badge>
                           )}
                         </td>
+                        {compareStanding && (
+                          <td className="px-3 py-2 text-right">
+                            {h2hPct === undefined ? (
+                              <span className="text-cream-muted">—</span>
+                            ) : (
+                              <Badge
+                                variant="outline"
+                                className={cn(
+                                  "text-[10px] font-mono",
+                                  h2hPct > 0
+                                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                                    : h2hPct < 0
+                                      ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                                      : "bg-amber-500/10 text-amber-400 border-amber-500/30",
+                                )}
+                                title={
+                                  h2hPct > 0
+                                    ? `${horseName} faster per mile than ${compareName}`
+                                    : h2hPct < 0
+                                      ? `${compareName} faster per mile than ${horseName}`
+                                      : "Identical pace"
+                                }
+                              >
+                                {h2hPct >= 0 ? "+" : ""}
+                                {h2hPct.toFixed(2)}%
+                              </Badge>
+                            )}
+                          </td>
+                        )}
                       </tr>
-                    ),
+                      );
+                    },
                   )}
                 </tbody>
               </table>
