@@ -217,6 +217,58 @@ export function HorseBenchmarkDialog({
               />
             </div>
 
+            {/* Second-horse comparison selector */}
+            <div className="flex flex-wrap items-center gap-2 rounded border border-white/10 bg-slate-900/40 px-3 py-2 text-xs">
+              <label
+                htmlFor="benchmark-compare-select"
+                className="text-cream-muted font-mono uppercase text-[10px] tracking-wide"
+              >
+                Compare with
+              </label>
+              <select
+                id="benchmark-compare-select"
+                value={compareId}
+                onChange={(e) => setCompareId(e.target.value)}
+                className="rounded border border-white/10 bg-slate-900 px-2 py-1 text-xs text-cream"
+              >
+                <option value="">— None —</option>
+                {compareOptions.map((h) => (
+                  <option key={h.id} value={h.id}>
+                    {h.name}
+                  </option>
+                ))}
+              </select>
+              {compareId && compareRuns.length === 0 && (
+                <span className="text-cream-muted italic">
+                  {compareName} has no recorded times yet.
+                </span>
+              )}
+              {compareStanding && (
+                <span className="ml-auto font-mono text-[10px] text-cream/60">
+                  Avg pace delta · {horseName}:{" "}
+                  <span
+                    className={standing.averageDeltaPct >= 0 ? "text-emerald-400" : "text-rose-400"}
+                  >
+                    {standing.averageDeltaPct >= 0 ? "+" : ""}
+                    {standing.averageDeltaPct.toFixed(2)}%
+                  </span>{" "}
+                  vs {compareName}:{" "}
+                  <span
+                    className={
+                      compareStanding.averageDeltaPct >= 0 ? "text-emerald-400" : "text-rose-400"
+                    }
+                  >
+                    {compareStanding.averageDeltaPct >= 0 ? "+" : ""}
+                    {compareStanding.averageDeltaPct.toFixed(2)}%
+                  </span>{" "}
+                  ·{" "}
+                  {standing.averageDeltaPct >= compareStanding.averageDeltaPct
+                    ? `${horseName} leads`
+                    : `${compareName} leads`}
+                </span>
+              )}
+            </div>
+
             {/* Filters & Sorting Controls */}
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-1">
               <div className="flex items-center gap-1.5">
