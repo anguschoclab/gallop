@@ -34,6 +34,11 @@ describe("resolveClaimingResolution", () => {
         horseId: "h1",
         claimantStableId: "stable1",
         claimingPrice: 10000,
+        raceId: "r1",
+        entityId: "stable1",
+        source: "player",
+        day: 10,
+        priority: 1,
       },
     ];
 
@@ -69,6 +74,11 @@ describe("resolveClaimingResolution", () => {
         horseId: "h1",
         claimantStableId: "stable1",
         claimingPrice: 10000,
+        raceId: "r1",
+        entityId: "stable1",
+        source: "player",
+        day: 10,
+        priority: 1,
       },
       {
         id: "intent2",
@@ -76,6 +86,11 @@ describe("resolveClaimingResolution", () => {
         horseId: "h1",
         claimantStableId: "stable2",
         claimingPrice: 10000,
+        raceId: "r1",
+        entityId: "stable2",
+        source: "player",
+        day: 10,
+        priority: 1,
       },
     ];
 
