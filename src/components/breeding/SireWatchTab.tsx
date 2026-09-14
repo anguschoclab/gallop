@@ -58,7 +58,9 @@ export function SireWatchTab() {
 
   const stallions = Object.values(horses).filter((h) => h.stud?.atStud);
   const horseList = Object.values(horses);
-  const sireAnalytics = stallions.map((s) => getSireAnalytics(s, horseList, industryMeanEarnings));
+  const sireAnalytics = stallions.map((s) =>
+    getSireAnalytics(s, horseList, industryMeanEarnings, horses),
+  );
 
   const { sortValue, setSortValue, filterValue, setFilterValue, processed } =
     useLeaderboardControls<SireAnalyticsWithId>({
