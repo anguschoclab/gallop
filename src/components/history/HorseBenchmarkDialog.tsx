@@ -39,6 +39,7 @@ export function HorseBenchmarkDialog({
   const horsesRecord = useGameWithShallow((s: GameState) => s.horses ?? {});
   const [sortBy, setSortBy] = useState<SortOption>("rank");
   const [surfaceFilter, setSurfaceFilter] = useState<SurfaceFilter>("all");
+  const [tripFilter, setTripFilter] = useState<TripFilter>("all");
   const [compareId, setCompareId] = useState<string>("");
 
   const raceList = useMemo(
@@ -79,6 +80,9 @@ export function HorseBenchmarkDialog({
     let list: BenchmarkMatchupRow[] = standing.rows;
     if (surfaceFilter !== "all") {
       list = list.filter((r) => r.benchmark.surface === surfaceFilter);
+    }
+    if (tripFilter !== "all") {
+      list = list.filter((r) => getTripCategory(r.benchmark.distanceMeters) === tripFilter);
     }
     if (sortBy === "curated") {
       return [...list].sort((a, b) => {
