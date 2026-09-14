@@ -35,16 +35,44 @@ export function HorseBenchmarkDialog({
   onOpenChange,
 }: HorseBenchmarkDialogProps) {
   const allRaces = useGameWithShallow((s: GameState) => s.races ?? []);
+  const horsesRecord = useGameWithShallow((s: GameState) => s.horses ?? {});
   const [sortBy, setSortBy] = useState<SortOption>("rank");
   const [surfaceFilter, setSurfaceFilter] = useState<SurfaceFilter>("all");
+  const [compareId, setCompareId] = useState<string>("");
 
-  const runs = useMemo(() => {
-    const list = Array.isArray(allRaces) ? allRaces : Object.values(allRaces ?? {});
-    return runsForHorse(list as Race[], horseId);
-  }, [allRaces, horseId]);
+  const raceList = useMemo(
+    () => (Array.isArray(allRaces) ? allRaces : Object.values(allRaces ?? {})) as Race[],
+    [allRaces],
+  );
+
+  const runs = useMemo(() => runsForHorse(raceList, horseId), [raceList, horseId]);
 
   const standing = useMemo(() => computeHorseBenchmarkStanding(runs), [runs]);
   const best = runs[0];
+
+  const compareHorse = compareId ? horsesRecord[compareId] : undefined;
+  const compareName = compareHorse?.name ?? "";
+  const compareRuns = useMemo(
+    () => (compareId ? runsForHorse(raceList, compareId) : []),
+    [raceList, compareId],
+  );
+  const compareStanding = useMemo(
+    () => (compareRuns.length > 0 ? computeHorseBenchmarkStanding(compareRuns) : null),
+    [compareRuns],
+  );
+  const compareRowsByBenchmark = useMemo(() => {
+    const map = new Map<string, BenchmarkMatchupRow>();
+    for (const row of compareStanding?.rows ?? []) map.set(row.benchmark.id, row);
+    return map;
+  }, [compareStanding]);
+
+  const compareOptions = useMemo(
+    () =>
+      Object.values(horsesRecord)
+        .filter((h) => h.id !== horseId)
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    [horsesRecord, horseId],
+  );
 
   const displayedRows = useMemo(() => {
     let list: BenchmarkMatchupRow[] = standing.rows;
@@ -189,6 +217,58 @@ export function HorseBenchmarkDialog({
               />
             </div>
 
+            {/* Second-horse comparison selector */}
+            <div className="flex flex-wrap items-center gap-2 rounded border border-white/10 bg-slate-900/40 px-3 py-2 text-xs">
+              <label
+                htmlFor="benchmark-compare-select"
+                className="text-cream-muted font-mono uppercase text-[10px] tracking-wide"
+              >
+                Compare with
+              </label>
+              <select
+                id="benchmark-compare-select"
+                value={compareId}
+                onChange={(e) => setCompareId(e.target.value)}
+                className="rounded border border-white/10 bg-slate-900 px-2 py-1 text-xs text-cream"
+              >
+                <option value="">— None —</option>
+                {compareOptions.map((h) => (
+                  <option key={h.id} value={h.id}>
+                    {h.name}
+                  </option>
+                ))}
+              </select>
+              {compareId && compareRuns.length === 0 && (
+                <span className="text-cream-muted italic">
+                  {compareName} has no recorded times yet.
+                </span>
+              )}
+              {compareStanding && (
+                <span className="ml-auto font-mono text-[10px] text-cream/60">
+                  Avg pace delta · {horseName}:{" "}
+                  <span
+                    className={standing.averageDeltaPct >= 0 ? "text-emerald-400" : "text-rose-400"}
+                  >
+                    {standing.averageDeltaPct >= 0 ? "+" : ""}
+                    {standing.averageDeltaPct.toFixed(2)}%
+                  </span>{" "}
+                  vs {compareName}:{" "}
+                  <span
+                    className={
+                      compareStanding.averageDeltaPct >= 0 ? "text-emerald-400" : "text-rose-400"
+                    }
+                  >
+                    {compareStanding.averageDeltaPct >= 0 ? "+" : ""}
+                    {compareStanding.averageDeltaPct.toFixed(2)}%
+                  </span>{" "}
+                  ·{" "}
+                  {standing.averageDeltaPct >= compareStanding.averageDeltaPct
+                    ? `${horseName} leads`
+                    : `${compareName} leads`}
+                </span>
+              )}
+            </div>
+
             {/* Filters & Sorting Controls */}
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-1">
               <div className="flex items-center gap-1.5">
@@ -244,13 +324,25 @@ export function HorseBenchmarkDialog({
                     <th className="px-3 py-2 text-left">Benchmark</th>
                     <th className="px-3 py-2 text-right">Their / mi</th>
                     <th className="px-3 py-2 text-right">{horseName} / mi</th>
+                    {compareStanding && (
+                      <th className="px-3 py-2 text-right">{compareName} / mi</th>
+                    )}
                     <th className="px-2 py-2 text-center">Standing</th>
                     <th className="px-3 py-2 text-right">Delta</th>
+                    {compareStanding && (
+                      <th className="px-3 py-2 text-right">Head-to-head</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {displayedRows.map(
-                    ({ benchmark, benchmarkPerMile, match, exact, deltaPct, rank }) => (
+                    ({ benchmark, benchmarkPerMile, match, exact, deltaPct, rank }) => {
+                      const cmp = compareRowsByBenchmark.get(benchmark.id);
+                      const h2hPct =
+                        match && cmp?.match
+                          ? ((cmp.match.perMile - match.perMile) / cmp.match.perMile) * 100
+                          : undefined;
+                      return (
                       <tr key={benchmark.id} className="hover:bg-white/[0.02]">
                         <td className="px-2 py-2 text-center font-mono text-[10px] text-cream/40">
                           #{rank}
@@ -286,6 +378,27 @@ export function HorseBenchmarkDialog({
                             <span className="text-cream-muted">—</span>
                           )}
                         </td>
+                        {compareStanding && (
+                          <td className="px-3 py-2 text-right">
+                            {cmp?.match ? (
+                              <div className="space-y-0.5">
+                                <RaceTimeDisplay
+                                  seconds={cmp.match.seconds}
+                                  distance={cmp.match.distance}
+                                  primary="perMile"
+                                  className="text-xs"
+                                />
+                                <div className="text-[10px] text-cream-muted">
+                                  {cmp.exact
+                                    ? `${cmp.match.distance}m`
+                                    : `best run · ${cmp.match.distance}m`}
+                                </div>
+                              </div>
+                            ) : (
+                              <span className="text-cream-muted">—</span>
+                            )}
+                          </td>
+                        )}
                         <td className="px-2 py-2 text-center">
                           {deltaPct === undefined ? (
                             <span className="text-cream-muted">—</span>
@@ -330,8 +443,38 @@ export function HorseBenchmarkDialog({
                             </Badge>
                           )}
                         </td>
+                        {compareStanding && (
+                          <td className="px-3 py-2 text-right">
+                            {h2hPct === undefined ? (
+                              <span className="text-cream-muted">—</span>
+                            ) : (
+                              <Badge
+                                variant="outline"
+                                className={cn(
+                                  "text-[10px] font-mono",
+                                  h2hPct > 0
+                                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                                    : h2hPct < 0
+                                      ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                                      : "bg-amber-500/10 text-amber-400 border-amber-500/30",
+                                )}
+                                title={
+                                  h2hPct > 0
+                                    ? `${horseName} faster per mile than ${compareName}`
+                                    : h2hPct < 0
+                                      ? `${compareName} faster per mile than ${horseName}`
+                                      : "Identical pace"
+                                }
+                              >
+                                {h2hPct >= 0 ? "+" : ""}
+                                {h2hPct.toFixed(2)}%
+                              </Badge>
+                            )}
+                          </td>
+                        )}
                       </tr>
-                    ),
+                      );
+                    },
                   )}
                 </tbody>
               </table>
