@@ -11,6 +11,7 @@ import {
   buildStablePortfolios,
   portfolioTotals,
   sortPortfolios,
+  derivePlayerRaceWins,
   type PortfolioSortKey,
 } from "@/services/stable/stableFacade";
 import { getPrestigeTier } from "@/services/prestige/prestigeFacade";
@@ -18,6 +19,7 @@ import { StatCard } from "@/components/common/StatCard";
 import { PillToggleGroup } from "@/components/common/PillToggleGroup";
 import { PortfolioTable } from "@/components/portfolio/PortfolioTable";
 import { BiddingHistoryTable } from "@/components/portfolio/BiddingHistoryTable";
+import { RaceWinsTable } from "@/components/portfolio/RaceWinsTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -45,7 +47,7 @@ export const Route = createFileRoute("/portfolio")({
     prestige: z.enum(PRESTIGE_FILTERS).optional(),
     sort: z.enum(SORT_KEYS).optional(),
     dir: z.enum(["asc", "desc"]).optional(),
-    tab: z.enum(["holdings", "bidding"]).optional(),
+    tab: z.enum(["holdings", "bidding", "wins"]).optional(),
   }),
   head: () => ({
     meta: [
@@ -83,10 +85,25 @@ function PortfolioPage() {
   const playerProfile = useGameWithShallow((s: GameState) => s.playerProfile);
   const reputationScore = useGame((s: GameState) => s.reputation?.score ?? 0);
   const biddingHistory = useGameWithShallow((s: GameState) => s.playerBiddingHistory ?? []);
+  const archivedHorses = useGameWithShallow((s: GameState) => s.archive?.horses ?? []);
+  const races = useGameWithShallow((s: GameState) => s.races ?? {});
+  const transactions = useGameWithShallow((s: GameState) => s.transactions ?? []);
+  const jockeys = useGameWithShallow((s: GameState) => s.jockeys ?? []);
   const autoSyndicateEnabled = useGame((s: GameState) => s.autoSyndicateEnabled ?? false);
   const setAutoSyndicateEnabled = useGame((s) => s.setAutoSyndicateEnabled);
   const runAutoSyndicate = useGame((s) => s.runAutoSyndicate);
   const tab = search.tab ?? "holdings";
+
+  const raceWins = useMemo(
+    () =>
+      derivePlayerRaceWins({
+        horses: [...Object.values(horses), ...archivedHorses],
+        races,
+        transactions,
+        jockeys,
+      }),
+    [horses, archivedHorses, races, transactions, jockeys],
+  );
 
   const rows = useMemo(
     () =>
@@ -125,7 +142,7 @@ function PortfolioPage() {
     : 0;
 
   function setSearch(patch: Record<string, unknown>) {
-    navigate({ search: (prev) => ({ ...prev, ...patch }) });
+    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }) });
   }
 
   function handleSort(key: PortfolioSortKey) {
@@ -178,82 +195,86 @@ function PortfolioPage() {
         />
       </div>
 
-      <Card className="border-white/5 bg-slate-900/40">
-        <CardContent className="p-4 flex flex-wrap items-center gap-3">
-          <div className="relative min-w-[200px] flex-1">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream-muted" />
-            <Input
-              value={q}
-              onChange={(e) => setSearch({ q: e.target.value })}
-              placeholder="Search stable or owner"
-              aria-label="Search stables"
-              className="pl-8"
-            />
-          </div>
-          <PillToggleGroup
-            label="Tier"
-            options={TIERS.map((t) => ({ value: t, label: t }))}
-            value={tier}
-            onChange={(v) => setSearch({ tier: v })}
-          />
-          <PillToggleGroup
-            label="Prestige"
-            options={PRESTIGE_FILTERS.map((p) => ({ value: p, label: p }))}
-            value={prestige}
-            onChange={(v) => setSearch({ prestige: v })}
-          />
-        </CardContent>
-      </Card>
-
-      <Card className="border-white/5 bg-slate-900/40">
-        <CardContent className="p-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <Sparkles className="h-4 w-4 text-primary" />
-            <div>
-              <Label htmlFor="auto-syndicate" className="text-cream">
-                Auto-syndicate my top horses
-              </Label>
-              <p className="text-xs text-cream-muted">
-                Each day, open syndicates on your best Grade 1 winners and sell spare shares while
-                keeping control.
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                const result = runAutoSyndicate?.();
-                toast.success(
-                  result && (result.created || result.solicited)
-                    ? `Opened ${result.created} syndicate(s), sold shares in ${result.solicited}, raising ${formatCurrency(result.raised)}.`
-                    : "Nothing to syndicate right now.",
-                );
-              }}
-            >
-              Run now
-            </Button>
-            <Switch
-              id="auto-syndicate"
-              checked={autoSyndicateEnabled}
-              onCheckedChange={(v) => setAutoSyndicateEnabled?.(v)}
-              aria-label="Auto-syndicate my top horses each day"
-            />
-          </div>
-        </CardContent>
-      </Card>
-
       <Tabs value={tab} onValueChange={(v) => setSearch({ tab: v })}>
         <TabsList>
           <TabsTrigger value="holdings">Holdings</TabsTrigger>
           <TabsTrigger value="bidding">Bidding History</TabsTrigger>
+          <TabsTrigger value="wins">Race Wins</TabsTrigger>
         </TabsList>
-        <TabsContent value="holdings" className="mt-4">
+        <TabsContent value="holdings" className="mt-4 space-y-4">
+          <Card className="border-white/5 bg-slate-900/40">
+            <CardContent className="p-4 flex flex-wrap items-center gap-3">
+              <div className="relative min-w-[200px] flex-1">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream-muted" />
+                <Input
+                  value={q}
+                  onChange={(e) => setSearch({ q: e.target.value })}
+                  placeholder="Search stable or owner"
+                  aria-label="Search stables"
+                  className="pl-8"
+                />
+              </div>
+              <PillToggleGroup
+                label="Tier"
+                options={TIERS.map((t) => ({ value: t, label: t }))}
+                value={tier}
+                onChange={(v) => setSearch({ tier: v })}
+              />
+              <PillToggleGroup
+                label="Prestige"
+                options={PRESTIGE_FILTERS.map((p) => ({ value: p, label: p }))}
+                value={prestige}
+                onChange={(v) => setSearch({ prestige: v })}
+              />
+            </CardContent>
+          </Card>
+
+          <Card className="border-white/5 bg-slate-900/40">
+            <CardContent className="p-4 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <div>
+                  <Label htmlFor="auto-syndicate" className="text-cream">
+                    Auto-syndicate my top horses
+                  </Label>
+                  <p className="text-xs text-cream-muted">
+                    Each day, open syndicates on your best Grade 1 winners and sell spare shares
+                    while keeping control.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const result = runAutoSyndicate?.();
+                    toast.success(
+                      result && (result.created || result.solicited)
+                        ? `Opened ${result.created} syndicate(s), sold shares in ${result.solicited}, raising ${formatCurrency(result.raised)}.`
+                        : "Nothing to syndicate right now.",
+                    );
+                  }}
+                >
+                  Run now
+                </Button>
+                <Switch
+                  id="auto-syndicate"
+                  checked={autoSyndicateEnabled}
+                  onCheckedChange={(v) => setAutoSyndicateEnabled?.(v)}
+                  aria-label="Auto-syndicate my top horses each day"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
           <PortfolioTable rows={sorted} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
         </TabsContent>
         <TabsContent value="bidding" className="mt-4">
           <BiddingHistoryTable history={biddingHistory} />
+        </TabsContent>
+        <TabsContent value="wins" className="mt-4">
+          <RaceWinsTable wins={raceWins} />
         </TabsContent>
       </Tabs>
     </div>

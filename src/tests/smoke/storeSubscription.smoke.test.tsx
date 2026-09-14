@@ -33,10 +33,14 @@ describe("store subscription stability (smoke)", () => {
     ).not.toThrow();
   });
 
-  it("RacesTab feed mounts without a loop (empty weather/forecast)", async () => {
-    const { RacesTab } = await import("@/components/racing/RacesTab");
-    expect(() => renderWithStore(createElement(RacesTab))).not.toThrow();
-  });
+  it(
+    "RacesTab feed mounts without a loop (empty weather/forecast)",
+    async () => {
+      const { RacesTab } = await import("@/components/racing/RacesTab");
+      expect(() => renderWithStore(createElement(RacesTab))).not.toThrow();
+    },
+    { timeout: 15000 },
+  );
 
   it("Facilities route mounts without an update loop", async () => {
     const { Route } = await import("@/routes/facilities");

@@ -53,7 +53,7 @@ function findNamingViolations(files: string[]): string[] {
 }
 
 describe("file naming conventions", () => {
-  const files = collectFiles(SRC_ROOT).map((f) => relative(SRC_ROOT, f));
+  const files = collectFiles(SRC_ROOT).map((f) => relative(SRC_ROOT, f).replace(/\\/g, "/"));
 
   it("source files use camelCase (no kebab-case, no PascalCase) — baseline-gated", () => {
     const violations = findNamingViolations(files);

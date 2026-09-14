@@ -156,6 +156,9 @@ export function PortfolioTable({
                 </TableCell>
                 <TableCell className="text-right tabular-nums text-cream-muted">
                   {formatCurrency(r.lifetimeEarnings)}
+                  <span className="block text-[10px] text-cream-muted">
+                    {r.careerWins} win{r.careerWins === 1 ? "" : "s"}
+                  </span>
                 </TableCell>
                 <TableCell className="text-right tabular-nums font-semibold text-cream">
                   {formatCurrency(r.netWorth)}

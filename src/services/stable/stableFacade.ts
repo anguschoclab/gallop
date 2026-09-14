@@ -23,3 +23,4 @@ export * from "@/core/stable/stableConfig";
 export * from "@/core/stable/stableQueries";
 export * from "@/core/stable/types";
 export * from "@/core/stable/stableReputationTier";
+export * from "@/core/stable/raceWins";

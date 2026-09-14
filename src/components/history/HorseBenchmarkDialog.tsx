@@ -362,9 +362,7 @@ export function HorseBenchmarkDialog({
                     )}
                     <th className="px-2 py-2 text-center">Standing</th>
                     <th className="px-3 py-2 text-right">Delta</th>
-                    {compareStanding && (
-                      <th className="px-3 py-2 text-right">Head-to-head</th>
-                    )}
+                    {compareStanding && <th className="px-3 py-2 text-right">Head-to-head</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
@@ -376,136 +374,136 @@ export function HorseBenchmarkDialog({
                           ? ((cmp.match.perMile - match.perMile) / cmp.match.perMile) * 100
                           : undefined;
                       return (
-                      <tr key={benchmark.id} className="hover:bg-white/[0.02]">
-                        <td className="px-2 py-2 text-center font-mono text-[10px] text-cream/40">
-                          #{rank}
-                        </td>
-                        <td className="px-3 py-2">
-                          <div className="text-cream">{benchmark.horse}</div>
-                          <div className="text-[10px] text-cream-muted">
-                            {benchmark.race} · {benchmark.distanceMeters}m {benchmark.surface}
-                          </div>
-                        </td>
-                        <td className="px-3 py-2 text-right">
-                          <RaceTimeDisplay
-                            seconds={benchmark.seconds}
-                            distance={benchmark.distanceMeters}
-                            primary="perMile"
-                            className="text-xs"
-                          />
-                        </td>
-                        <td className="px-3 py-2 text-right">
-                          {match ? (
-                            <div className="space-y-0.5">
-                              <RaceTimeDisplay
-                                seconds={match.seconds}
-                                distance={match.distance}
-                                primary="perMile"
-                                className="text-xs"
-                              />
-                              <div className="text-[10px] text-cream-muted">
-                                {exact ? `${match.distance}m` : `best run · ${match.distance}m`}
-                              </div>
+                        <tr key={benchmark.id} className="hover:bg-white/[0.02]">
+                          <td className="px-2 py-2 text-center font-mono text-[10px] text-cream/40">
+                            #{rank}
+                          </td>
+                          <td className="px-3 py-2">
+                            <div className="text-cream">{benchmark.horse}</div>
+                            <div className="text-[10px] text-cream-muted">
+                              {benchmark.race} · {benchmark.distanceMeters}m {benchmark.surface}
                             </div>
-                          ) : (
-                            <span className="text-cream-muted">—</span>
-                          )}
-                        </td>
-                        {compareStanding && (
+                          </td>
                           <td className="px-3 py-2 text-right">
-                            {cmp?.match ? (
+                            <RaceTimeDisplay
+                              seconds={benchmark.seconds}
+                              distance={benchmark.distanceMeters}
+                              primary="perMile"
+                              className="text-xs"
+                            />
+                          </td>
+                          <td className="px-3 py-2 text-right">
+                            {match ? (
                               <div className="space-y-0.5">
                                 <RaceTimeDisplay
-                                  seconds={cmp.match.seconds}
-                                  distance={cmp.match.distance}
+                                  seconds={match.seconds}
+                                  distance={match.distance}
                                   primary="perMile"
                                   className="text-xs"
                                 />
                                 <div className="text-[10px] text-cream-muted">
-                                  {cmp.exact
-                                    ? `${cmp.match.distance}m`
-                                    : `best run · ${cmp.match.distance}m`}
+                                  {exact ? `${match.distance}m` : `best run · ${match.distance}m`}
                                 </div>
                               </div>
                             ) : (
                               <span className="text-cream-muted">—</span>
                             )}
                           </td>
-                        )}
-                        <td className="px-2 py-2 text-center">
-                          {deltaPct === undefined ? (
-                            <span className="text-cream-muted">—</span>
-                          ) : deltaPct > 0 ? (
-                            <Badge
-                              variant="outline"
-                              className="text-[9px] bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                            >
-                              Ahead
-                            </Badge>
-                          ) : deltaPct < 0 ? (
-                            <Badge
-                              variant="outline"
-                              className="text-[9px] bg-rose-500/10 text-rose-400 border-rose-500/30"
-                            >
-                              Behind
-                            </Badge>
-                          ) : (
-                            <Badge
-                              variant="outline"
-                              className="text-[9px] bg-amber-500/10 text-amber-400 border-amber-500/30"
-                            >
-                              Tied
-                            </Badge>
-                          )}
-                        </td>
-                        <td className="px-3 py-2 text-right">
-                          {deltaPct === undefined ? (
-                            <span className="text-cream-muted">—</span>
-                          ) : (
-                            <Badge
-                              variant={deltaPct >= 0 ? "default" : "secondary"}
-                              className={cn(
-                                "text-[10px] font-mono",
-                                deltaPct >= 0
-                                  ? "bg-emerald-600 text-white"
-                                  : "bg-slate-800 text-cream-muted",
+                          {compareStanding && (
+                            <td className="px-3 py-2 text-right">
+                              {cmp?.match ? (
+                                <div className="space-y-0.5">
+                                  <RaceTimeDisplay
+                                    seconds={cmp.match.seconds}
+                                    distance={cmp.match.distance}
+                                    primary="perMile"
+                                    className="text-xs"
+                                  />
+                                  <div className="text-[10px] text-cream-muted">
+                                    {cmp.exact
+                                      ? `${cmp.match.distance}m`
+                                      : `best run · ${cmp.match.distance}m`}
+                                  </div>
+                                </div>
+                              ) : (
+                                <span className="text-cream-muted">—</span>
                               )}
-                            >
-                              {deltaPct >= 0 ? "+" : ""}
-                              {deltaPct.toFixed(2)}%
-                            </Badge>
+                            </td>
                           )}
-                        </td>
-                        {compareStanding && (
-                          <td className="px-3 py-2 text-right">
-                            {h2hPct === undefined ? (
+                          <td className="px-2 py-2 text-center">
+                            {deltaPct === undefined ? (
                               <span className="text-cream-muted">—</span>
+                            ) : deltaPct > 0 ? (
+                              <Badge
+                                variant="outline"
+                                className="text-[9px] bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                              >
+                                Ahead
+                              </Badge>
+                            ) : deltaPct < 0 ? (
+                              <Badge
+                                variant="outline"
+                                className="text-[9px] bg-rose-500/10 text-rose-400 border-rose-500/30"
+                              >
+                                Behind
+                              </Badge>
                             ) : (
                               <Badge
                                 variant="outline"
-                                className={cn(
-                                  "text-[10px] font-mono",
-                                  h2hPct > 0
-                                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                                    : h2hPct < 0
-                                      ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
-                                      : "bg-amber-500/10 text-amber-400 border-amber-500/30",
-                                )}
-                                title={
-                                  h2hPct > 0
-                                    ? `${horseName} faster per mile than ${compareName}`
-                                    : h2hPct < 0
-                                      ? `${compareName} faster per mile than ${horseName}`
-                                      : "Identical pace"
-                                }
+                                className="text-[9px] bg-amber-500/10 text-amber-400 border-amber-500/30"
                               >
-                                {h2hPct >= 0 ? "+" : ""}
-                                {h2hPct.toFixed(2)}%
+                                Tied
                               </Badge>
                             )}
                           </td>
-                        )}
-                      </tr>
+                          <td className="px-3 py-2 text-right">
+                            {deltaPct === undefined ? (
+                              <span className="text-cream-muted">—</span>
+                            ) : (
+                              <Badge
+                                variant={deltaPct >= 0 ? "default" : "secondary"}
+                                className={cn(
+                                  "text-[10px] font-mono",
+                                  deltaPct >= 0
+                                    ? "bg-emerald-600 text-white"
+                                    : "bg-slate-800 text-cream-muted",
+                                )}
+                              >
+                                {deltaPct >= 0 ? "+" : ""}
+                                {deltaPct.toFixed(2)}%
+                              </Badge>
+                            )}
+                          </td>
+                          {compareStanding && (
+                            <td className="px-3 py-2 text-right">
+                              {h2hPct === undefined ? (
+                                <span className="text-cream-muted">—</span>
+                              ) : (
+                                <Badge
+                                  variant="outline"
+                                  className={cn(
+                                    "text-[10px] font-mono",
+                                    h2hPct > 0
+                                      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                                      : h2hPct < 0
+                                        ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                                        : "bg-amber-500/10 text-amber-400 border-amber-500/30",
+                                  )}
+                                  title={
+                                    h2hPct > 0
+                                      ? `${horseName} faster per mile than ${compareName}`
+                                      : h2hPct < 0
+                                        ? `${compareName} faster per mile than ${horseName}`
+                                        : "Identical pace"
+                                  }
+                                >
+                                  {h2hPct >= 0 ? "+" : ""}
+                                  {h2hPct.toFixed(2)}%
+                                </Badge>
+                              )}
+                            </td>
+                          )}
+                        </tr>
                       );
                     },
                   )}
