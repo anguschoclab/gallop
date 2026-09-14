@@ -157,9 +157,11 @@ export function SyndicateStakesPage({ stakes: propsStakes }: SyndicateStakesPage
             <Info className="h-3.5 w-3.5 mr-1 text-purple-400" />
             {showGuide ? "Hide Guide" : "Reputation Guide"}
           </Button>
-          <Button asChild size="sm" variant="outline" className="border-white/10 text-cream">
-            <Link to="/portfolio">Portfolio</Link>
-          </Button>
+          <Link to="/portfolio">
+            <Button size="sm" variant="outline" className="border-white/10 text-cream">
+              Portfolio
+            </Button>
+          </Link>
         </div>
       </div>
 
@@ -168,22 +170,22 @@ export function SyndicateStakesPage({ stakes: propsStakes }: SyndicateStakesPage
         <StatCard
           label="Stakes Owned"
           value={`${summary.totalStakesCount} ${summary.totalStakesCount === 1 ? "Syndicate" : "Syndicates"}`}
-          sublabel={`${summary.totalSharesOwned} total shares`}
+          sub={`${summary.totalSharesOwned} total shares`}
         />
         <StatCard
           label="Total Stake Value"
           value={formatCurrency(summary.totalStakeValue)}
-          sublabel="Current holdings value"
+          sub="Current holdings value"
         />
         <StatCard
           label="Lifetime Dividends"
           value={formatCurrency(summary.totalDividendsEarned)}
-          sublabel="Player earnings share"
+          sub="Player earnings share"
         />
         <StatCard
           label="Partner Sentiment"
           value={`${summary.averagePartnerSatisfaction}%`}
-          sublabel={
+          sub={
             summary.averagePartnerSatisfaction >= 70
               ? "Esteemed Standing"
               : summary.averagePartnerSatisfaction >= 40
@@ -194,7 +196,7 @@ export function SyndicateStakesPage({ stakes: propsStakes }: SyndicateStakesPage
         <StatCard
           label="Net Reputation"
           value={`${summary.netReputationPoints >= 0 ? "+" : ""}${summary.netReputationPoints} pts`}
-          sublabel={`${summary.positiveCount} boosting · ${summary.dragCount} drag`}
+          sub={`${summary.positiveCount} boosting · ${summary.dragCount} drag`}
         />
       </div>
 
@@ -256,12 +258,16 @@ export function SyndicateStakesPage({ stakes: propsStakes }: SyndicateStakesPage
             reputation in the bloodstock industry.
           </p>
           <div className="flex justify-center gap-3 pt-2">
-            <Button asChild size="sm" className="bg-purple-600 hover:bg-purple-500 text-white">
-              <Link to="/market">Explore Market</Link>
-            </Button>
-            <Button asChild variant="outline" size="sm" className="border-white/10 text-cream">
-              <Link to="/breeding">Breeding Hub</Link>
-            </Button>
+            <Link to="/market">
+              <Button size="sm" className="bg-purple-600 hover:bg-purple-500 text-white">
+                Explore Market
+              </Button>
+            </Link>
+            <Link to="/breeding">
+              <Button variant="outline" size="sm" className="border-white/10 text-cream">
+                Breeding Hub
+              </Button>
+            </Link>
           </div>
         </Card>
       ) : (
@@ -495,16 +501,15 @@ export function SyndicateStakesPage({ stakes: propsStakes }: SyndicateStakesPage
 
                           {/* Actions */}
                           <TableCell className="py-3 text-right">
-                            <Button
-                              asChild
-                              size="sm"
-                              variant="ghost"
-                              className="text-xs text-cream hover:text-purple-300"
-                            >
-                              <Link to="/syndicate/$syndicateId" params={{ syndicateId: stake.id }}>
+                            <Link to="/syndicate/$syndicateId" params={{ syndicateId: stake.id }}>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="text-xs text-cream hover:text-purple-300"
+                              >
                                 Manage
-                              </Link>
-                            </Button>
+                              </Button>
+                            </Link>
                           </TableCell>
                         </TableRow>
                       );
