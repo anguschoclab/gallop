@@ -82,13 +82,57 @@ export function generateDirectiveChangeNews(
 
   const entityLinks: EntityLink[] = [{ type: "stable", id: stable.id, name: stable.name }];
 
+  const headlines = isDistressShift
+    ? [
+        `Trouble at ${stable.name}: Financial Distress`,
+        `${stable.name} Faces Financial Difficulties`,
+        `Mounting Debts: ${stable.name} in Distress`,
+        `Financial Woes Hit ${stable.name}`,
+        `Alarm Bells Ringing for ${stable.name}`,
+        `Economic Crisis at ${stable.name}`,
+        `${stable.name} Forced into Financial Distress`,
+        `Budget Shortfalls Threaten ${stable.name}`,
+      ]
+    : [
+        `${stable.name} Shifts Strategy: ${newLabel}`,
+        `New Direction for ${stable.name}: ${newLabel}`,
+        `${stable.name} Pivots to ${newLabel}`,
+        `Strategic Realignment at ${stable.name}`,
+        `${stable.name} Abandons ${oldLabel} for ${newLabel}`,
+        `Inside the Reorganization at ${stable.name}`,
+        `A Change of Course: ${stable.name} Eyes ${newLabel}`,
+        `${stable.name} Management Announces ${newLabel}`,
+      ];
+
+  const bodies = isDistressShift
+    ? [
+        `${stable.name} has abandoned their ${oldLabel.toLowerCase()} approach and is now ${description}. The stable's racing operations may face severe cuts.`,
+        `Rumors of cash flow issues at ${stable.name} have been confirmed. Moving away from ${oldLabel.toLowerCase()}, they are now ${description}.`,
+        `It's a tough time for ${stable.name}. Their previous focus on ${oldLabel.toLowerCase()} has crumbled, and the operation is currently ${description}.`,
+        `The financial reality has caught up with ${stable.name}. Forced to scrap their ${oldLabel.toLowerCase()} strategy, the stable is ${description}.`,
+        `Insiders report that ${stable.name} is in crisis management mode. No longer pursuing ${oldLabel.toLowerCase()}, they are instead ${description}.`,
+        `The money has dried up at ${stable.name}. Management is stepping away from ${oldLabel.toLowerCase()} as the stable is ${description}.`,
+        `Things are looking bleak for ${stable.name}, who are ${description} after their ${oldLabel.toLowerCase()} plans failed to pan out.`,
+        `${stable.name} is pulling the emergency brake. Shedding their ${oldLabel.toLowerCase()} directives, the operation is simply ${description}.`,
+      ]
+    : [
+        `${stable.name} has pivoted from ${oldLabel.toLowerCase()} to ${newLabel.toLowerCase()}, ${description}. The stable's racing operations may be affected by this strategic realignment.`,
+        `In a major strategic shift, ${stable.name} is leaving behind its ${oldLabel.toLowerCase()} approach. Insiders confirm they are now ${description}, which is expected to shape their immediate plans.`,
+        `Sources close to ${stable.name} report a change in philosophy. The operation is moving away from ${oldLabel.toLowerCase()} and is instead ${description}.`,
+        `The era of ${oldLabel.toLowerCase()} at ${stable.name} appears to be over. Management has directed a new focus on ${newLabel.toLowerCase()}, ${description}.`,
+        `${stable.name} is restructuring its priorities. Abandoning their recent ${oldLabel.toLowerCase()} focus, the stable is now ${description}.`,
+        `Competitors take note: ${stable.name} has officially changed tactics. By stepping away from ${oldLabel.toLowerCase()} and ${description}, the stable is charting a new course.`,
+        `A noticeable shift is underway at ${stable.name}. The focus on ${oldLabel.toLowerCase()} has been replaced by ${newLabel.toLowerCase()}, with the team now ${description}.`,
+        `Following internal reviews, ${stable.name} is taking a new path. They are ${description}, leaving their previous ${oldLabel.toLowerCase()} strategy in the rearview mirror.`,
+      ];
+
   return {
     id: generateUUID(rng),
     day: currentDay,
     category: "stable",
     importance,
-    headline: `${stable.name} Shifts Strategy: ${newLabel}`,
-    body: `${stable.name} has pivoted from ${oldLabel.toLowerCase()} to ${newLabel.toLowerCase()}, ${description}. The stable's racing operations may be affected by this strategic realignment.`,
+    headline: rng.pick(headlines),
+    body: rng.pick(bodies),
     entityLinks,
   };
 }
