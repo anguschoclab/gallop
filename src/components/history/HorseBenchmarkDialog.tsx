@@ -378,6 +378,27 @@ export function HorseBenchmarkDialog({
                             <span className="text-cream-muted">—</span>
                           )}
                         </td>
+                        {compareStanding && (
+                          <td className="px-3 py-2 text-right">
+                            {cmp?.match ? (
+                              <div className="space-y-0.5">
+                                <RaceTimeDisplay
+                                  seconds={cmp.match.seconds}
+                                  distance={cmp.match.distance}
+                                  primary="perMile"
+                                  className="text-xs"
+                                />
+                                <div className="text-[10px] text-cream-muted">
+                                  {cmp.exact
+                                    ? `${cmp.match.distance}m`
+                                    : `best run · ${cmp.match.distance}m`}
+                                </div>
+                              </div>
+                            ) : (
+                              <span className="text-cream-muted">—</span>
+                            )}
+                          </td>
+                        )}
                         <td className="px-2 py-2 text-center">
                           {deltaPct === undefined ? (
                             <span className="text-cream-muted">—</span>
