@@ -143,4 +143,30 @@ describe("SyndicateStakesPage", () => {
     expect(screen.queryByText("Northern Dancer")).not.toBeInTheDocument();
     expect(screen.getByText("Cold Frost")).toBeInTheDocument();
   });
+
+  it("expands and collapses historical reputation event log drawer", () => {
+    render(<SyndicateStakesPage stakes={mockStakes} />);
+
+    expect(
+      screen.queryByText(/historical reputation events · northern dancer/i),
+    ).not.toBeInTheDocument();
+
+    const toggleButton = screen.getByRole("button", {
+      name: /view reputation events for northern dancer/i,
+    });
+    fireEvent.click(toggleButton);
+
+    expect(
+      screen.getByText(/historical reputation events · northern dancer/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Underwrote 25% of the Northern Dancer syndicate."),
+    ).toBeInTheDocument();
+    expect(screen.getByText("+14 pts")).toBeInTheDocument();
+
+    fireEvent.click(toggleButton);
+    expect(
+      screen.queryByText(/historical reputation events · northern dancer/i),
+    ).not.toBeInTheDocument();
+  });
 });
