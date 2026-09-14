@@ -44,7 +44,7 @@ function findNamingViolations(files: string[]): string[] {
   return violations.sort();
 }
 
-const files = collectFiles(SRC_ROOT).map((f) => relative(SRC_ROOT, f));
+const files = collectFiles(SRC_ROOT).map((f) => relative(SRC_ROOT, f).replace(/\\/g, "/"));
 const violations = findNamingViolations(files);
 
 writeFileSync(BASELINE_PATH, JSON.stringify(violations, null, 2) + "\n");

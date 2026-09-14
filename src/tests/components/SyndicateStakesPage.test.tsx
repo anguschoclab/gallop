@@ -48,8 +48,15 @@ const mockStakes: PlayerSyndicateStake[] = [
     reputationImpactStatus: "positive",
     reputationImpactLabel: "Prestige Boost",
     reputationImpactDescription:
-      "Exceptional progeny and 85% partner satisfaction elevates bloodstock prestige",
-    recentEvents: [],
+    recentEvents: [
+      {
+        id: "evt-1",
+        day: 50,
+        source: "syndication_stake",
+        amount: 14,
+        description: "Underwrote 25% of the Northern Dancer syndicate.",
+      },
+    ],
   },
   {
     id: "syn-2",

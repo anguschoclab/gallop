@@ -25,6 +25,7 @@
   "routes/sire-watch.$stallionId.tsx: kebab-case not allowed; use camelCase",
   "routes/sire-watch.index.tsx: kebab-case not allowed; use camelCase",
   "routes/sire-watch.tsx: kebab-case not allowed; use camelCase",
+  "routes/syndicate-stakes.tsx: kebab-case not allowed; use camelCase",
   "tests/components/BookmarksFilter.test.ts: PascalCase not allowed for non-component files; use camelCase",
   "tests/components/HorseBits.test.ts: PascalCase not allowed for non-component files; use camelCase",
   "tests/components/JockeyAvatar.test.ts: PascalCase not allowed for non-component files; use camelCase",

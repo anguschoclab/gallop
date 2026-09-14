@@ -62,7 +62,7 @@ function BreedingPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">
             Breeding & Bloodstock
@@ -71,21 +71,29 @@ function BreedingPage() {
             Manage your matings and track gestation for the next generation.
           </p>
         </div>
-        <Badge
-          className={cn(
-            "font-[family-name:var(--font-mono)] tabular-nums",
-            seasonOpen ? "bg-success text-t950" : "bg-t700 text-cream",
-          )}
-        >
-          <Calendar className="h-3 w-3 mr-1" />
-          {seasonOpen ? (
-            "Season Open"
-          ) : (
-            <>
-              Opens Day <NumericValue value={nextSeasonStart} />
-            </>
-          )}
-        </Badge>
+        <div className="flex items-center gap-3">
+          <Link to="/syndicate-stakes">
+            <Button size="sm" variant="outline" className="border-white/10 text-cream">
+              <Sparkles className="h-3.5 w-3.5 mr-1 text-purple-400" />
+              Syndicate Stakes
+            </Button>
+          </Link>
+          <Badge
+            className={cn(
+              "font-[family-name:var(--font-mono)] tabular-nums",
+              seasonOpen ? "bg-success text-t950" : "bg-t700 text-cream",
+            )}
+          >
+            <Calendar className="h-3 w-3 mr-1" />
+            {seasonOpen ? (
+              "Season Open"
+            ) : (
+              <>
+                Opens Day <NumericValue value={nextSeasonStart} />
+              </>
+            )}
+          </Badge>
+        </div>
       </div>
 
       <Tabs

@@ -41,6 +41,7 @@ import {
 import { StatCard } from "@/components/common/StatCard";
 import { PillToggleGroup } from "@/components/common/PillToggleGroup";
 import { formatCurrency } from "@/lib/formatting";
+import { cn } from "@/lib/cn";
 import {
   derivePlayerSyndicateStakes,
   calculateSyndicateStakesSummary,
@@ -55,9 +56,10 @@ type SortDir = "asc" | "desc";
 
 interface SyndicateStakesPageProps {
   stakes?: PlayerSyndicateStake[];
+  className?: string;
 }
 
-export function SyndicateStakesPage({ stakes: propsStakes }: SyndicateStakesPageProps) {
+export function SyndicateStakesPage({ stakes: propsStakes, className }: SyndicateStakesPageProps) {
   const storeSyndicates = useGameWithShallow((s: GameState) => s.syndicates ?? {});
   const storeHorses = useGameWithShallow((s: GameState) => s.horses);
   const storeReputation = useGame((s: GameState) => s.reputation);
@@ -133,7 +135,7 @@ export function SyndicateStakesPage({ stakes: propsStakes }: SyndicateStakesPage
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className={cn("space-y-6 p-6", className)}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -384,137 +386,208 @@ export function SyndicateStakesPage({ stakes: propsStakes }: SyndicateStakesPage
                             ? "text-amber-300 border-amber-400/30 bg-amber-950/20"
                             : "text-rose-300 border-rose-400/30 bg-rose-950/20";
 
+                      const isExpanded = expandedStakeId === stake.id;
+
                       return (
-                        <TableRow
-                          key={stake.id}
-                          className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
-                        >
-                          {/* Stallion Identity */}
-                          <TableCell className="py-3">
-                            <div className="space-y-0.5">
-                              <Link
-                                to="/syndicate/$syndicateId"
-                                params={{ syndicateId: stake.id }}
-                                className="font-bold text-cream hover:text-purple-300 transition-colors flex items-center gap-1.5"
-                              >
-                                {stake.stallionName}
-                                <ExternalLink className="h-3 w-3 opacity-60" />
-                              </Link>
-                              <div className="flex items-center gap-2 text-[10px] text-cream-muted">
-                                <span>Age {stake.stallionAge}</span>
-                                <span>·</span>
-                                <span>Fee {formatCurrency(stake.studFee)}</span>
-                                {stake.feeGrowth !== 0 && (
-                                  <span
-                                    className={`font-mono text-[9px] ${
-                                      stake.feeGrowth > 0 ? "text-emerald-400" : "text-rose-400"
-                                    }`}
-                                  >
-                                    ({stake.feeGrowth > 0 ? "+" : ""}
-                                    {formatCurrency(stake.feeGrowth)})
-                                  </span>
+                        <Fragment key={stake.id}>
+                          <TableRow className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                            {/* Stallion Identity */}
+                            <TableCell className="py-3">
+                              <div className="space-y-0.5">
+                                <Link
+                                  to="/syndicate/$syndicateId"
+                                  params={{ syndicateId: stake.id }}
+                                  className="font-bold text-cream hover:text-purple-300 transition-colors flex items-center gap-1.5"
+                                >
+                                  {stake.stallionName}
+                                  <ExternalLink className="h-3 w-3 opacity-60" />
+                                </Link>
+                                <div className="flex items-center gap-2 text-[10px] text-cream-muted">
+                                  <span>Age {stake.stallionAge}</span>
+                                  <span>·</span>
+                                  <span>Fee {formatCurrency(stake.studFee)}</span>
+                                  {stake.feeGrowth !== 0 && (
+                                    <span
+                                      className={`font-mono text-[9px] ${
+                                        stake.feeGrowth > 0 ? "text-emerald-400" : "text-rose-400"
+                                      }`}
+                                    >
+                                      ({stake.feeGrowth > 0 ? "+" : ""}
+                                      {formatCurrency(stake.feeGrowth)})
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </TableCell>
+
+                            {/* Holding / Shares */}
+                            <TableCell className="py-3">
+                              <div className="space-y-1">
+                                <div className="font-mono text-xs font-semibold text-cream">
+                                  {stake.shares}/{stake.totalShares} ({stake.equityPct}%)
+                                </div>
+                                <div className="w-24 bg-white/10 rounded-full h-1.5 overflow-hidden">
+                                  <div
+                                    className="bg-purple-500 h-1.5 rounded-full"
+                                    style={{ width: `${Math.min(100, stake.equityPct)}%` }}
+                                  />
+                                </div>
+                              </div>
+                            </TableCell>
+
+                            {/* Valuation & Dividends */}
+                            <TableCell className="py-3 font-mono">
+                              <div className="text-xs font-bold text-cream">
+                                {formatCurrency(stake.stakeValue)}
+                              </div>
+                              <div className="text-[10px] text-cream-muted">
+                                Yield: {formatCurrency(stake.playerEarningsShare)}
+                              </div>
+                            </TableCell>
+
+                            {/* Progeny Performance */}
+                            <TableCell className="py-3">
+                              <div className="flex items-center gap-1.5 text-xs">
+                                <Badge
+                                  variant="outline"
+                                  className="text-[10px] border-amber-400/30 text-amber-300"
+                                >
+                                  {stake.lifetimeG1Foals} G1
+                                </Badge>
+                                <Badge
+                                  variant="outline"
+                                  className="text-[10px] border-white/10 text-cream/60"
+                                >
+                                  {stake.lifetimeStakesFoals} Stakes
+                                </Badge>
+                              </div>
+                            </TableCell>
+
+                            {/* Partner Sentiment */}
+                            <TableCell className="py-3">
+                              <div className="space-y-1">
+                                <Badge variant="outline" className={`text-[10px] ${satBadgeColor}`}>
+                                  {stake.averageSatisfaction}% Avg Sat
+                                </Badge>
+                                {stake.investorCount > 0 && (
+                                  <div className="text-[9px] text-cream-muted flex items-center gap-1">
+                                    <Users className="h-2.5 w-2.5" />
+                                    {stake.investorCount} investor
+                                    {stake.investorCount === 1 ? "" : "s"}
+                                    {stake.investorAverageSatisfaction != null &&
+                                      ` (${stake.investorAverageSatisfaction}%)`}
+                                  </div>
                                 )}
                               </div>
-                            </div>
-                          </TableCell>
+                            </TableCell>
 
-                          {/* Holding / Shares */}
-                          <TableCell className="py-3">
-                            <div className="space-y-1">
-                              <div className="font-mono text-xs font-semibold text-cream">
-                                {stake.shares}/{stake.totalShares} ({stake.equityPct}%)
-                              </div>
-                              <div className="w-24 bg-white/10 rounded-full h-1.5 overflow-hidden">
-                                <div
-                                  className="bg-purple-500 h-1.5 rounded-full"
-                                  style={{ width: `${Math.min(100, stake.equityPct)}%` }}
-                                />
-                              </div>
-                            </div>
-                          </TableCell>
-
-                          {/* Valuation & Dividends */}
-                          <TableCell className="py-3 font-mono">
-                            <div className="text-xs font-bold text-cream">
-                              {formatCurrency(stake.stakeValue)}
-                            </div>
-                            <div className="text-[10px] text-cream-muted">
-                              Yield: {formatCurrency(stake.playerEarningsShare)}
-                            </div>
-                          </TableCell>
-
-                          {/* Progeny Performance */}
-                          <TableCell className="py-3">
-                            <div className="flex items-center gap-1.5 text-xs">
-                              <Badge
-                                variant="outline"
-                                className="text-[10px] border-amber-400/30 text-amber-300"
-                              >
-                                {stake.lifetimeG1Foals} G1
-                              </Badge>
-                              <Badge
-                                variant="outline"
-                                className="text-[10px] border-white/10 text-cream/60"
-                              >
-                                {stake.lifetimeStakesFoals} Stakes
-                              </Badge>
-                            </div>
-                          </TableCell>
-
-                          {/* Partner Sentiment */}
-                          <TableCell className="py-3">
-                            <div className="space-y-1">
-                              <Badge variant="outline" className={`text-[10px] ${satBadgeColor}`}>
-                                {stake.averageSatisfaction}% Avg Sat
-                              </Badge>
-                              {stake.investorCount > 0 && (
-                                <div className="text-[9px] text-cream-muted flex items-center gap-1">
-                                  <Users className="h-2.5 w-2.5" />
-                                  {stake.investorCount} investor
-                                  {stake.investorCount === 1 ? "" : "s"}
-                                  {stake.investorAverageSatisfaction != null &&
-                                    ` (${stake.investorAverageSatisfaction}%)`}
+                            {/* Reputation Impact */}
+                            <TableCell className="py-3 max-w-xs">
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <Badge variant="outline" className={`text-[10px] ${impactColor}`}>
+                                    {stake.reputationImpactStatus === "positive" ? (
+                                      <ShieldCheck className="h-2.5 w-2.5 mr-1" />
+                                    ) : stake.reputationImpactStatus === "negative" ? (
+                                      <ShieldAlert className="h-2.5 w-2.5 mr-1" />
+                                    ) : null}
+                                    {stake.reputationImpactLabel}
+                                  </Badge>
+                                  <span className="font-mono text-[10px] text-cream/70 font-semibold">
+                                    {stake.reputationPointsTotal >= 0 ? "+" : ""}
+                                    {stake.reputationPointsTotal} pts
+                                  </span>
+                                  {stake.recentEvents.length > 0 && (
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() =>
+                                        setExpandedStakeId((curr) =>
+                                          curr === stake.id ? null : stake.id,
+                                        )
+                                      }
+                                      className="h-5 px-1.5 text-[9px] text-purple-300 hover:text-purple-200 hover:bg-purple-950/40"
+                                      aria-label={`${isExpanded ? "Hide" : "View"} reputation events for ${stake.stallionName}`}
+                                    >
+                                      {isExpanded ? (
+                                        <>
+                                          Hide Log <ChevronUp className="h-2.5 w-2.5 ml-1" />
+                                        </>
+                                      ) : (
+                                        <>
+                                          {stake.recentEvents.length}{" "}
+                                          {stake.recentEvents.length === 1 ? "Event" : "Events"}
+                                          <ChevronDown className="h-2.5 w-2.5 ml-1" />
+                                        </>
+                                      )}
+                                    </Button>
+                                  )}
                                 </div>
-                              )}
-                            </div>
-                          </TableCell>
-
-                          {/* Reputation Impact */}
-                          <TableCell className="py-3 max-w-xs">
-                            <div className="space-y-1">
-                              <div className="flex items-center gap-1.5">
-                                <Badge variant="outline" className={`text-[10px] ${impactColor}`}>
-                                  {stake.reputationImpactStatus === "positive" ? (
-                                    <ShieldCheck className="h-2.5 w-2.5 mr-1" />
-                                  ) : stake.reputationImpactStatus === "negative" ? (
-                                    <ShieldAlert className="h-2.5 w-2.5 mr-1" />
-                                  ) : null}
-                                  {stake.reputationImpactLabel}
-                                </Badge>
-                                <span className="font-mono text-[10px] text-cream/70 font-semibold">
-                                  {stake.reputationPointsTotal >= 0 ? "+" : ""}
-                                  {stake.reputationPointsTotal} pts
-                                </span>
+                                <p className="text-[10px] text-cream-muted leading-tight line-clamp-2">
+                                  {stake.reputationImpactDescription}
+                                </p>
                               </div>
-                              <p className="text-[10px] text-cream-muted leading-tight line-clamp-2">
-                                {stake.reputationImpactDescription}
-                              </p>
-                            </div>
-                          </TableCell>
+                            </TableCell>
 
-                          {/* Actions */}
-                          <TableCell className="py-3 text-right">
-                            <Link to="/syndicate/$syndicateId" params={{ syndicateId: stake.id }}>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="text-xs text-cream hover:text-purple-300"
-                              >
-                                Manage
-                              </Button>
-                            </Link>
-                          </TableCell>
-                        </TableRow>
+                            {/* Actions */}
+                            <TableCell className="py-3 text-right">
+                              <Link to="/syndicate/$syndicateId" params={{ syndicateId: stake.id }}>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="text-xs text-cream hover:text-purple-300"
+                                >
+                                  Manage
+                                </Button>
+                              </Link>
+                            </TableCell>
+                          </TableRow>
+
+                          {/* Expandable Historical Reputation Event Log */}
+                          {isExpanded && (
+                            <TableRow className="bg-purple-950/20 border-b border-purple-500/20">
+                              <TableCell colSpan={7} className="py-3 px-6">
+                                <div className="space-y-2">
+                                  <div className="text-[10px] font-black uppercase text-cream/70 tracking-wider flex items-center justify-between">
+                                    <div className="flex items-center gap-1.5">
+                                      <Award className="h-3.5 w-3.5 text-purple-400" />
+                                      Historical Reputation Events · {stake.stallionName}
+                                    </div>
+                                    <span className="font-mono text-[9px] text-purple-300">
+                                      Net: {stake.reputationPointsTotal >= 0 ? "+" : ""}
+                                      {stake.reputationPointsTotal} pts
+                                    </span>
+                                  </div>
+                                  <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                                    {stake.recentEvents.map((event) => (
+                                      <div
+                                        key={event.id}
+                                        className="bg-black/40 border border-white/5 p-2 flex items-center justify-between gap-3 text-xs"
+                                      >
+                                        <div className="flex items-center gap-2.5 min-w-0">
+                                          <span className="font-mono text-[9px] text-cream/40 shrink-0">
+                                            Day {event.day}
+                                          </span>
+                                          <span className="text-[11px] text-cream/90 truncate">
+                                            {event.description}
+                                          </span>
+                                        </div>
+                                        <span
+                                          className={`font-mono font-black text-xs shrink-0 ${
+                                            event.amount > 0 ? "text-emerald-400" : "text-rose-400"
+                                          }`}
+                                        >
+                                          {event.amount > 0 ? `+${event.amount}` : event.amount} pts
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </Fragment>
                       );
                     })
                   )}

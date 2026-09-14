@@ -20,6 +20,7 @@ import { PillToggleGroup } from "@/components/common/PillToggleGroup";
 import { PortfolioTable } from "@/components/portfolio/PortfolioTable";
 import { BiddingHistoryTable } from "@/components/portfolio/BiddingHistoryTable";
 import { RaceWinsTable } from "@/components/portfolio/RaceWinsTable";
+import { SyndicateStakesPage } from "@/components/syndicates/SyndicateStakesPage";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -47,7 +48,7 @@ export const Route = createFileRoute("/portfolio")({
     prestige: z.enum(PRESTIGE_FILTERS).optional(),
     sort: z.enum(SORT_KEYS).optional(),
     dir: z.enum(["asc", "desc"]).optional(),
-    tab: z.enum(["holdings", "bidding", "wins"]).optional(),
+    tab: z.enum(["holdings", "bidding", "wins", "syndicates"]).optional(),
   }),
   head: () => ({
     meta: [
@@ -208,6 +209,7 @@ function PortfolioPage() {
       <Tabs value={tab} onValueChange={(v) => setSearch({ tab: v })}>
         <TabsList>
           <TabsTrigger value="holdings">Holdings</TabsTrigger>
+          <TabsTrigger value="syndicates">Syndicate Stakes</TabsTrigger>
           <TabsTrigger value="bidding">Bidding History</TabsTrigger>
           <TabsTrigger value="wins">Race Wins</TabsTrigger>
         </TabsList>
@@ -279,6 +281,9 @@ function PortfolioPage() {
           </Card>
 
           <PortfolioTable rows={sorted} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+        </TabsContent>
+        <TabsContent value="syndicates" className="mt-4">
+          <SyndicateStakesPage />
         </TabsContent>
         <TabsContent value="bidding" className="mt-4">
           <BiddingHistoryTable history={biddingHistory} />

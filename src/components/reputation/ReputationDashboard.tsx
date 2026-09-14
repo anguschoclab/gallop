@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, TrendingUp, TrendingDown, Award, Star } from "lucide-react";
+import { Trophy, TrendingUp, TrendingDown, Award, Star, Sparkles } from "lucide-react";
 import { useGame } from "@/game/store";
 import {
   getReputationTier,
@@ -33,6 +33,10 @@ export function ReputationDashboard() {
       case "breeding_success":
       case "stallion_quality":
         return <Star className="h-3 w-3" />;
+      case "syndication_stake":
+        return <Sparkles className="h-3 w-3" />;
+      case "syndication_exit":
+        return <Award className="h-3 w-3" />;
       case "rivalry_win":
         return <TrendingUp className="h-3 w-3" />;
       case "rivalry_loss":
@@ -43,10 +47,15 @@ export function ReputationDashboard() {
   };
 
   const getSourceColor = (source: string) => {
-    if (source.includes("win") || source === "breeding_success" || source === "stallion_quality") {
+    if (
+      source.includes("win") ||
+      source === "breeding_success" ||
+      source === "stallion_quality" ||
+      source === "syndication_stake"
+    ) {
       return "text-green-400";
     }
-    if (source.includes("loss")) {
+    if (source.includes("loss") || source === "syndication_exit") {
       return "text-red-400";
     }
     return "text-cream/60";
