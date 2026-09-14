@@ -96,7 +96,7 @@ export function HorseBenchmarkDialog({
     }
     // Default: rank (best delta advantage first)
     return [...list].sort((a, b) => a.rank - b.rank);
-  }, [standing.rows, surfaceFilter, sortBy]);
+  }, [standing.rows, surfaceFilter, tripFilter, sortBy]);
 
   const tierBadgeClass = useMemo(() => {
     switch (standing.tier.variant) {
@@ -276,7 +276,8 @@ export function HorseBenchmarkDialog({
 
             {/* Filters & Sorting Controls */}
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-1">
-              <div className="flex items-center gap-1.5">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[10px] font-mono text-cream-muted">Surface:</span>
                 {(["all", "Turf", "Dirt"] as const).map((s) => (
                   <button
                     key={s}
@@ -290,6 +291,33 @@ export function HorseBenchmarkDialog({
                     )}
                   >
                     {s === "all" ? `All (${standing.totalBenchmarks})` : s}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[10px] font-mono text-cream-muted">Trip:</span>
+                {(
+                  [
+                    { id: "all", label: "All" },
+                    { id: "sprint", label: "Sprint" },
+                    { id: "mile", label: "Mile" },
+                    { id: "route", label: "Route" },
+                    { id: "staying", label: "Staying" },
+                  ] as const
+                ).map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setTripFilter(t.id)}
+                    className={cn(
+                      "px-2 py-0.5 rounded text-[10px] font-mono uppercase transition-colors",
+                      tripFilter === t.id
+                        ? "bg-primary text-primary-foreground font-bold"
+                        : "bg-white/5 text-cream-muted hover:text-cream",
+                    )}
+                  >
+                    {t.label}
                   </button>
                 ))}
               </div>
