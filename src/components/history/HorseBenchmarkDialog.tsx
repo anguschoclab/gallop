@@ -324,13 +324,19 @@ export function HorseBenchmarkDialog({
                     <th className="px-3 py-2 text-left">Benchmark</th>
                     <th className="px-3 py-2 text-right">Their / mi</th>
                     <th className="px-3 py-2 text-right">{horseName} / mi</th>
+                    {compareStanding && (
+                      <th className="px-3 py-2 text-right">{compareName} / mi</th>
+                    )}
                     <th className="px-2 py-2 text-center">Standing</th>
                     <th className="px-3 py-2 text-right">Delta</th>
+                    {compareStanding && (
+                      <th className="px-3 py-2 text-right">Head-to-head</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {displayedRows.map(
-                    ({ benchmark, benchmarkPerMile, match, exact, deltaPct, rank }) => (
+                    ({ benchmark, benchmarkPerMile, match, exact, deltaPct, rank }) => {
                       <tr key={benchmark.id} className="hover:bg-white/[0.02]">
                         <td className="px-2 py-2 text-center font-mono text-[10px] text-cream/40">
                           #{rank}
