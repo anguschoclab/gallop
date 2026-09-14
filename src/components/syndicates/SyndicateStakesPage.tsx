@@ -6,7 +6,7 @@
  * shareholder sentiment, and the precise impact on bloodstock reputation.
  */
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   Sparkles,
@@ -21,6 +21,8 @@ import {
   Award,
   ArrowUpDown,
   Info,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
@@ -76,6 +78,7 @@ export function SyndicateStakesPage({ stakes: propsStakes }: SyndicateStakesPage
   const [sortKey, setSortKey] = useState<SortKey>("value");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [showGuide, setShowGuide] = useState(true);
+  const [expandedStakeId, setExpandedStakeId] = useState<string | null>(null);
 
   const summary = useMemo(() => calculateSyndicateStakesSummary(allStakes), [allStakes]);
 
