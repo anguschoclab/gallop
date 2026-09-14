@@ -52,6 +52,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       category: "flavor",
     },
     {
+      headline: "Lost Horseshoe Mystery Solved",
+      body: "A groom stumbled upon a rusted, historic horseshoe while raking the walking ring this morning, sparking debates over which legendary runner it might have belonged to.",
+      category: "flavor",
+    },
+    {
+      headline: "Infield Flowers Bloom Early",
+      body: "A burst of unseasonably warm weather has the infield gardens looking spectacular ahead of schedule, providing a vibrant backdrop for the upcoming weekend of racing.",
+      category: "flavor",
+    },
+    {
       headline: "Vintage Winner's Circle Restored",
       body: "A local historical society has successfully completed the restoration of the track's original 1920s winner's circle, returning a touch of classic elegance to the venue.",
       category: "flavor",
@@ -515,6 +525,26 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
       body: "Following a string of impressive debut winners by his first crop, shares in a highly touted first-season sire have doubled in value on the private market.",
       category: "flavor",
     },
+    {
+      headline: "Rare Coat Color Commands Premium",
+      body: "A stunning palomino yearling sparked an intense bidding war at today's mixed sale, proving that a flashy coat can sometimes overshadow a modest pedigree.",
+      category: "flavor",
+    },
+    {
+      headline: "Local Breeding Operation Expands",
+      body: "A prominent regional syndicate has announced the acquisition of several neighboring parcels of land to accommodate their rapidly growing broodmare band.",
+      category: "flavor",
+    },
+    {
+      headline: "Outcross Pedigree Proves Popular",
+      body: "Breeders seeking to inject fresh blood into established families are flocking to a newly imported stallion featuring a completely unique sire line.",
+      category: "flavor",
+    },
+    {
+      headline: "Veteran Stallion Pensioned",
+      body: "A beloved sire responsible for multiple classic winners over the past two decades has been officially pensioned and will enjoy his twilight years at a premier retirement facility.",
+      category: "flavor",
+    },
   ],
   weather: [
     {
@@ -565,6 +595,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "Unexpected Cold Snap Shivers Backstretch",
       body: "Plummeting temperatures overnight have trainers scrambling for extra blankets, while morning workouts have been delayed until the track surface properly thaws.",
+      category: "flavor",
+    },
+    {
+      headline: "Gusting Crosswinds Challenge Front Runners",
+      body: "Brisk crosswinds sweeping across the far turn are making it tough for pacesetters today, leading to several unexpected deep-closing victories.",
+      category: "flavor",
+    },
+    {
+      headline: "Sun Glare Temporarily Blinds Stretch Runners",
+      body: "The late afternoon sun dropping just behind the grandstand is causing intense glare heading into the final furlong, forcing jockeys to use extra caution.",
       category: "flavor",
     },
     {
@@ -727,6 +767,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     {
       headline: "Famed Announcer Announces Retirement",
       body: "After three decades of calling the races, the beloved voice of the local track has confirmed this season will be their last in the booth.",
+      category: "flavor",
+    },
+    {
+      headline: "Local Baker Creates Derby-Themed Treats",
+      body: "A popular bakery near the track gates sold out entirely this morning after unveiling a stunning lineup of thoroughbred-themed pastries and cakes.",
+      category: "flavor",
+    },
+    {
+      headline: "Amateur Photographer Captures Stunning Photo Finish",
+      body: "A long-time railbird with a telephoto lens snagged an incredible, perfectly timed photo of yesterday's dead heat, earning widespread praise from the official track media team.",
       category: "flavor",
     },
     {

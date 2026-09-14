@@ -41,55 +41,125 @@ function addConditionalRaceFlavor(
   headlines: string[],
   bodies: string[],
 ): void {
+  // Weather Conditions
   if (race.weather === "rainy") {
     bodies.push(
       `Despite the pouring rain, ${winner.name} sloshed through the mud to claim a spectacular victory in the ${race.name}.`,
-    );
-    bodies.push(
       `The wet conditions couldn't slow down ${winner.name}, who splashed home to win the ${race.name}.`,
+      `Raindrops and flying mud were no match for ${winner.name} in a gritty ${race.name} performance.`,
+      `Visibility was poor in the driving rain, but ${winner.name} saw the finish line perfectly.`,
+      `A sloppy track and steady downpour played right into the hooves of ${winner.name} today.`,
+      `Braving the nasty weather, ${winner.name} proved to be a magnificent mudder in the ${race.name}.`,
+      `The umbrellas were out in force, and so was ${winner.name}, swimming past rivals for a hard-fought win.`,
+    );
+  } else if (race.weather === "sunny") {
+    bodies.push(
+      `Under bright blue skies, ${winner.name} delivered a picture-perfect run to capture the ${race.name}.`,
+      `The sun was shining and so was ${winner.name}, blazing a trail to victory in today's feature.`,
+      `A beautiful sunny afternoon was the perfect backdrop for ${winner.name}'s flawless performance.`,
+      `Fans soaked up the sun and cheered wildly as ${winner.name} dominated the ${race.name}.`,
+      `Not a cloud in the sky, and not a doubt on the track: ${winner.name} was simply unbeatable today.`,
+    );
+  } else if (race.weather === "cloudy") {
+    bodies.push(
+      `Under an overcast sky, ${winner.name} brought a flash of brilliance to win the ${race.name}.`,
+      `The gloomy weather did nothing to dampen the spirits of ${winner.name}'s connections after a thrilling win.`,
+      `Despite the threat of rain hanging in the grey clouds, the ${race.name} went off without a hitch, won by ${winner.name}.`,
+      `On a cool, cloudy afternoon, ${winner.name} turned up the heat with a sensational stretch run.`,
+    );
+  } else if (race.weather === "sunset") {
+    bodies.push(
+      `As the sun dipped below the grandstand, ${winner.name} shone brightest to take the ${race.name}.`,
+      `Bathed in the golden hour light, ${winner.name} looked magnificent striding to victory.`,
+      `The twilight shadows stretched across the track as ${winner.name} secured a beautiful sunset victory.`,
+      `A stunning sunset provided a majestic backdrop for ${winner.name}'s commanding win in the ${race.name}.`,
+    );
+  } else if (race.weather === "night") {
+    bodies.push(
+      `Under the track lights, ${winner.name} looked like an absolute superstar winning the ${race.name}.`,
+      `Racing under the stars, ${winner.name} illuminated the track with a breathtaking burst of speed.`,
+      `The night air was electric as ${winner.name} powered home to secure a floodlit victory.`,
+      `Friday night under the lights belongs to ${winner.name} after a spectacular performance in the ${race.name}.`,
     );
   }
 
+  // Track Conditions
   if (race.trackCondition === "fast") {
     bodies.push(
       `Taking full advantage of the fast track, ${winner.name} flew down the stretch to capture the ${race.name}.`,
+      `The firm, fast surface suited ${winner.name} perfectly, allowing for a blistering final furlong.`,
+      `Riding the speed bias of a lightning-fast track, ${winner.name} could not be caught today.`,
+      `Clockers were left shaking their heads after ${winner.name} scorched the fast dirt in the ${race.name}.`,
+      `${winner.name} loved the firm going, skipping over the ground to record a remarkably swift time.`,
+      `It was a track built for speed today, and ${winner.name} proved to be the fastest of them all.`,
     );
   } else if (race.trackCondition === "heavy" || race.trackCondition === "soft") {
     bodies.push(
       `The tiring ${race.trackCondition} ground proved no issue for ${winner.name}, who showed immense stamina to win the ${race.name}.`,
+      `It was a true slog over the ${race.trackCondition} going, but ${winner.name} dug deep to outlast the competition.`,
+      `While others floundered on the ${race.trackCondition} surface, ${winner.name} found excellent traction to power home.`,
+      `Winning on a ${race.trackCondition} track requires serious heart, something ${winner.name} displayed in spades today.`,
+      `The holding ${race.trackCondition} ground made it a test of survival, and ${winner.name} was the last horse standing.`,
+      `Stamina was the name of the game on this ${race.trackCondition} track, and ${winner.name} had plenty in reserve.`,
     );
   }
 
+  // Distance
   if (race.distance >= NEWS_LONG_DISTANCE_THRESHOLD) {
     bodies.push(
       `In a true test of stamina over ${race.distance}m, ${winner.name} outstayed the competition to win the ${race.name}.`,
+      `The grueling ${race.distance}m distance was exactly what ${winner.name} needed to grind down the field.`,
+      `It takes a special kind of stayer to conquer ${race.distance}m, and ${winner.name} fits the bill perfectly.`,
+      `Pacing was everything in this ${race.distance}m marathon, and ${winner.name} received an absolutely brilliant ride.`,
+      `As the early leaders faded over the ${race.distance}m trip, ${winner.name} just kept rolling relentlessly to the wire.`,
+      `${winner.name}'s bottomless lungs were on full display, galloping relentlessly through the ${race.distance}m marathon.`,
     );
   } else if (race.distance <= NEWS_SPRINT_DISTANCE_THRESHOLD) {
     bodies.push(
       `Showing blinding speed in this ${race.distance}m sprint, ${winner.name} proved too quick for the field in the ${race.name}.`,
+      `From the moment the gates crashed open, ${winner.name} was shot out of a cannon in this ${race.distance}m dash.`,
+      `There was no time to breathe in this furious ${race.distance}m sprint, and ${winner.name} never looked back.`,
+      `Blink and you missed it: ${winner.name} blitzed the competition in a fiercely run ${race.distance}m sprint.`,
+      `Raw, unadulterated speed was the key to ${winner.name}'s dominant performance over ${race.distance}m today.`,
+      `${winner.name} proved to be a pure speedball, zipping through the ${race.distance}m distance in a flash.`,
     );
   }
 
+  // Margins
   if (race.result && race.result.length > 1) {
     const winnerRes = race.result.find((r) => r.position === 1);
     const secondRes = race.result.find((r) => r.position === 2);
     if (winnerRes && secondRes) {
       const margin = secondRes.time - winnerRes.time;
       if (margin > NEWS_DOMINANT_MARGIN_SECONDS) {
-        headlines.push(`${winner.name} Destroys the Field in the ${race.name}!`);
+        headlines.push(
+          `${winner.name} Destroys the Field in the ${race.name}!`,
+          `Total Annihilation: ${winner.name} Romps in ${race.name}`,
+          `A League of Their Own: ${winner.name} Dominates ${race.name}`,
+          `${winner.name} Wins by a Mile in the ${race.name}`,
+        );
         bodies.push(
           `It was an absolute romp! ${winner.name} destroyed the field by a massive margin to take the ${race.name}.`,
-        );
-        bodies.push(
           `Nobody else was even in the same zip code as ${winner.name} today. A truly dominant, wide-margin victory in the ${race.name}.`,
+          `The track announcer was running out of breath describing the daylight between ${winner.name} and the rest of the runners.`,
+          `You could have driven a truck through the gap between ${winner.name} and the runner-up in today's ${race.name}.`,
+          `A breathtaking show of superiority. ${winner.name} toyed with the opposition before drawing away by a street.`,
+          `It wasn't a race, it was a procession. ${winner.name} was in a completely different class today.`,
         );
       } else if (margin < PHOTO_FINISH_THRESHOLD_SECONDS) {
-        headlines.push(`Nail-Biter: ${winner.name} Edges Out Rivals in the ${race.name}`);
-        bodies.push(
-          `In a thrilling photo finish, ${winner.name} just managed to stick their nose in front to steal the ${race.name}.`,
+        headlines.push(
+          `Nail-Biter: ${winner.name} Edges Out Rivals in the ${race.name}`,
+          `Photo Finish Drama: ${winner.name} Takes the ${race.name}`,
+          `By a Whisker! ${winner.name} Survives ${race.name} Thriller`,
+          `Down to the Wire: ${winner.name} Wins the ${race.name}`,
         );
         bodies.push(
+          `In a thrilling photo finish, ${winner.name} just managed to stick their nose in front to steal the ${race.name}.`,
           `Fans were on the edge of their seats as ${winner.name} narrowly held on in a desperately close finish to the ${race.name}.`,
+          `The judges needed several minutes to separate them, but ${winner.name} got the bob of the head in a classic ${race.name}.`,
+          `It was a blanket finish, but ${winner.name} dug deepest in the final strides to secure a heart-stopping victory.`,
+          `A bobbing head was the only difference at the wire, as ${winner.name} bravely held off a vicious late challenge.`,
+          `The crowd held its collective breath as the runners hit the line together, with ${winner.name} ultimately prevailing in a thriller.`,
         );
       }
     }
