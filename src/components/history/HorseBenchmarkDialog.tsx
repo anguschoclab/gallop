@@ -337,6 +337,12 @@ export function HorseBenchmarkDialog({
                 <tbody className="divide-y divide-white/5">
                   {displayedRows.map(
                     ({ benchmark, benchmarkPerMile, match, exact, deltaPct, rank }) => {
+                      const cmp = compareRowsByBenchmark.get(benchmark.id);
+                      const h2hPct =
+                        match && cmp?.match
+                          ? ((cmp.match.perMile - match.perMile) / cmp.match.perMile) * 100
+                          : undefined;
+                      return (
                       <tr key={benchmark.id} className="hover:bg-white/[0.02]">
                         <td className="px-2 py-2 text-center font-mono text-[10px] text-cream/40">
                           #{rank}
