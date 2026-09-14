@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
-import { REAL_WORLD_RECORDS } from "@/data/realWorldRecords";
+import { REAL_WORLD_RECORDS, getTripCategory, type TripCategory } from "@/data/realWorldRecords";
 import {
   runsForHorse,
   computeHorseBenchmarkStanding,
@@ -22,6 +22,7 @@ interface HorseBenchmarkDialogProps {
 
 type SortOption = "rank" | "curated" | "distance";
 type SurfaceFilter = "all" | "Turf" | "Dirt";
+type TripFilter = "all" | TripCategory;
 
 /**
  * Compares one horse's recorded times against the curated real-world benchmark
