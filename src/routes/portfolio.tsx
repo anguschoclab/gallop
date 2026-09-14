@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { z } from "zod";
 import { Briefcase, Search, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -155,17 +155,27 @@ function PortfolioPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <div className="flex items-center gap-2 text-primary uppercase tracking-wide text-xs font-bold opacity-70">
-          <Briefcase className="h-3.5 w-3.5" />
-          Holdings
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 text-primary uppercase tracking-wide text-xs font-bold opacity-70">
+            <Briefcase className="h-3.5 w-3.5" />
+            Holdings
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+            Portfolio
+          </h1>
+          <p className="text-cream-muted font-[family-name:var(--font-body)]">
+            Cash, bloodstock, syndicate stakes and prestige for every stable in the world
+          </p>
         </div>
-        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
-          Portfolio
-        </h1>
-        <p className="text-cream-muted font-[family-name:var(--font-body)]">
-          Cash, bloodstock, syndicate stakes and prestige for every stable in the world
-        </p>
+        <div>
+          <Link to="/syndicate-stakes">
+            <Button size="sm" variant="outline" className="border-white/10 text-cream">
+              <Sparkles className="h-3.5 w-3.5 mr-1 text-purple-400" />
+              Syndicate Stakes
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

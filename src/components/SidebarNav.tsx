@@ -34,6 +34,7 @@ import {
   Scale,
   Activity,
   Film,
+  Sparkles,
 } from "lucide-react";
 
 import { formatCurrency } from "@/lib/formatting";
@@ -63,6 +64,7 @@ const navSections: { label: string; items: NavItem[] }[] = [
       { to: "/horse-gallery", label: "Horses", icon: LayoutGrid, exact: false },
       { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
       { to: "/broodmares", label: "Broodmares", icon: Heart, exact: false },
+      { to: "/syndicate-stakes", label: "Syndicate Stakes", icon: Sparkles, exact: false },
       { to: "/staff", label: "Staff", icon: Users, exact: false },
       { to: "/jockeys", label: "Jockeys", icon: User, exact: false },
       { to: "/facilities", label: "Facilities", icon: Building2, exact: false },

@@ -8,7 +8,7 @@ import {
   getSpeedModifier,
   getStaminaDrainModifier,
   getTurfRailPosition,
-  isMaintenanceApplicable
+  isMaintenanceApplicable,
 } from "@/core/race/trackConditions";
 import { createRng } from "@/core/common/rng";
 

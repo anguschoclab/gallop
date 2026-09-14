@@ -474,7 +474,12 @@ export const detectGateAffinity: InsightDetector = (horse) => {
   let outsideBeyerTotal = 0;
 
   for (const race of history) {
-    if (typeof race.gate === "number" && typeof race.beyer === "number" && race.fieldSize && race.fieldSize >= 7) {
+    if (
+      typeof race.gate === "number" &&
+      typeof race.beyer === "number" &&
+      race.fieldSize &&
+      race.fieldSize >= 7
+    ) {
       if (race.gate <= 3) {
         insideStarts++;
         insideBeyerTotal += race.beyer;
