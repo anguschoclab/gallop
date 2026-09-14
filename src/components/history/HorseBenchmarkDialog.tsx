@@ -35,16 +35,44 @@ export function HorseBenchmarkDialog({
   onOpenChange,
 }: HorseBenchmarkDialogProps) {
   const allRaces = useGameWithShallow((s: GameState) => s.races ?? []);
+  const horsesRecord = useGameWithShallow((s: GameState) => s.horses ?? {});
   const [sortBy, setSortBy] = useState<SortOption>("rank");
   const [surfaceFilter, setSurfaceFilter] = useState<SurfaceFilter>("all");
+  const [compareId, setCompareId] = useState<string>("");
 
-  const runs = useMemo(() => {
-    const list = Array.isArray(allRaces) ? allRaces : Object.values(allRaces ?? {});
-    return runsForHorse(list as Race[], horseId);
-  }, [allRaces, horseId]);
+  const raceList = useMemo(
+    () => (Array.isArray(allRaces) ? allRaces : Object.values(allRaces ?? {})) as Race[],
+    [allRaces],
+  );
+
+  const runs = useMemo(() => runsForHorse(raceList, horseId), [raceList, horseId]);
 
   const standing = useMemo(() => computeHorseBenchmarkStanding(runs), [runs]);
   const best = runs[0];
+
+  const compareHorse = compareId ? horsesRecord[compareId] : undefined;
+  const compareName = compareHorse?.name ?? "";
+  const compareRuns = useMemo(
+    () => (compareId ? runsForHorse(raceList, compareId) : []),
+    [raceList, compareId],
+  );
+  const compareStanding = useMemo(
+    () => (compareRuns.length > 0 ? computeHorseBenchmarkStanding(compareRuns) : null),
+    [compareRuns],
+  );
+  const compareRowsByBenchmark = useMemo(() => {
+    const map = new Map<string, BenchmarkMatchupRow>();
+    for (const row of compareStanding?.rows ?? []) map.set(row.benchmark.id, row);
+    return map;
+  }, [compareStanding]);
+
+  const compareOptions = useMemo(
+    () =>
+      Object.values(horsesRecord)
+        .filter((h) => h.id !== horseId)
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    [horsesRecord, horseId],
+  );
 
   const displayedRows = useMemo(() => {
     let list: BenchmarkMatchupRow[] = standing.rows;
