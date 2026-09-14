@@ -4,7 +4,7 @@ import {
   buildRaceField,
   rngForRace,
   type RaceSimulationDependencies,
-} from "@/services/race/raceSimulationService";
+} from "@/core/race/raceSimulationService";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
 import { DEFAULT_DT, defaultMaxTime } from "@/constants/raceEngineConstants";
 import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";

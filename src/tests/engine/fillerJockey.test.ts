@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildRaceField } from "@/services/race/raceSimulationService";
+import { buildRaceField } from "@/core/race/raceSimulationService";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { Race } from "@/game/types";
 import { makePlayerOwned } from "@/core/horse/ownership";

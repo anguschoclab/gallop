@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { useNavigate } from "@tanstack/react-router";
 import { gameCalendarDate } from "@/services/race/raceFacade";
-import { buildRaceField, rngForRace } from "@/services/race/raceSimulationService";
+import { buildRaceField, rngForRace } from "@/services/race/raceFacade";
 import { runRaceToCompletion } from "@/services/race/raceFacade";
 import { getCourseForRace } from "@/data/tracks";
 import { formatCurrency } from "@/services/race/raceFacade";

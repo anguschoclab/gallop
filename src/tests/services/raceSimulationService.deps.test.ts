@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  buildRaceField,
-  type RaceSimulationDependencies,
-} from "@/services/race/raceSimulationService";
+import { buildRaceField, type RaceSimulationDependencies } from "@/core/race/raceSimulationService";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
 import type { Race } from "@/core/race/types";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";

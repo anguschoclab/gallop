@@ -7,7 +7,7 @@ import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import { makePlayerOwned } from "@/core/horse/ownership";
 
 // Mock simulateRace to return a G1 win
-vi.mock("@/services/race/raceSimulationExecutor", () => ({
+vi.mock("@/core/race/raceSimulationExecutor", () => ({
   simulateRace: vi.fn((race) => ({
     result: [{ horseId: "winner-1", position: 1, time: 100.5 }],
     runners: [

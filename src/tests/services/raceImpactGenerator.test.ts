@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateRaceImpacts } from "@/services/race/raceImpactGenerator";
+import { generateRaceImpacts } from "@/core/race/raceImpactGenerator";
 import {
   createTestColt,
   createTestMare,
