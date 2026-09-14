@@ -40,7 +40,7 @@ function SireProfilePage() {
     );
   }
 
-  const analytics = getSireAnalytics(stallion, Object.values(horses), industryMeanEarnings);
+  const analytics = getSireAnalytics(stallion, Object.values(horses), industryMeanEarnings, horses);
 
   const getClassificationColor = (classification: SireClassification) => {
     switch (classification) {
