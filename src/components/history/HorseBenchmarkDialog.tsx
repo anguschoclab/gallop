@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
-import { REAL_WORLD_RECORDS } from "@/data/realWorldRecords";
+import { REAL_WORLD_RECORDS, getTripCategory, type TripCategory } from "@/data/realWorldRecords";
 import {
   runsForHorse,
   computeHorseBenchmarkStanding,
@@ -22,6 +22,7 @@ interface HorseBenchmarkDialogProps {
 
 type SortOption = "rank" | "curated" | "distance";
 type SurfaceFilter = "all" | "Turf" | "Dirt";
+type TripFilter = "all" | TripCategory;
 
 /**
  * Compares one horse's recorded times against the curated real-world benchmark
@@ -38,6 +39,7 @@ export function HorseBenchmarkDialog({
   const horsesRecord = useGameWithShallow((s: GameState) => s.horses ?? {});
   const [sortBy, setSortBy] = useState<SortOption>("rank");
   const [surfaceFilter, setSurfaceFilter] = useState<SurfaceFilter>("all");
+  const [tripFilter, setTripFilter] = useState<TripFilter>("all");
   const [compareId, setCompareId] = useState<string>("");
 
   const raceList = useMemo(
@@ -79,6 +81,9 @@ export function HorseBenchmarkDialog({
     if (surfaceFilter !== "all") {
       list = list.filter((r) => r.benchmark.surface === surfaceFilter);
     }
+    if (tripFilter !== "all") {
+      list = list.filter((r) => getTripCategory(r.benchmark.distanceMeters) === tripFilter);
+    }
     if (sortBy === "curated") {
       return [...list].sort((a, b) => {
         const ia = REAL_WORLD_RECORDS.findIndex((x) => x.id === a.benchmark.id);
@@ -91,7 +96,7 @@ export function HorseBenchmarkDialog({
     }
     // Default: rank (best delta advantage first)
     return [...list].sort((a, b) => a.rank - b.rank);
-  }, [standing.rows, surfaceFilter, sortBy]);
+  }, [standing.rows, surfaceFilter, tripFilter, sortBy]);
 
   const tierBadgeClass = useMemo(() => {
     switch (standing.tier.variant) {
@@ -271,7 +276,8 @@ export function HorseBenchmarkDialog({
 
             {/* Filters & Sorting Controls */}
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-1">
-              <div className="flex items-center gap-1.5">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[10px] font-mono text-cream-muted">Surface:</span>
                 {(["all", "Turf", "Dirt"] as const).map((s) => (
                   <button
                     key={s}
@@ -285,6 +291,33 @@ export function HorseBenchmarkDialog({
                     )}
                   >
                     {s === "all" ? `All (${standing.totalBenchmarks})` : s}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[10px] font-mono text-cream-muted">Trip:</span>
+                {(
+                  [
+                    { id: "all", label: "All" },
+                    { id: "sprint", label: "Sprint" },
+                    { id: "mile", label: "Mile" },
+                    { id: "route", label: "Route" },
+                    { id: "staying", label: "Staying" },
+                  ] as const
+                ).map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setTripFilter(t.id)}
+                    className={cn(
+                      "px-2 py-0.5 rounded text-[10px] font-mono uppercase transition-colors",
+                      tripFilter === t.id
+                        ? "bg-primary text-primary-foreground font-bold"
+                        : "bg-white/5 text-cream-muted hover:text-cream",
+                    )}
+                  >
+                    {t.label}
                   </button>
                 ))}
               </div>
