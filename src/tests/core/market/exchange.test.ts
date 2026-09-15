@@ -2,7 +2,12 @@ import { describe, it, expect } from "vitest";
 import { buildOrderBooks, buildMarketDepth } from "@/core/market/exchange";
 import { generateHorse } from "@/core/horse/horseFactory";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
-import type { ExchangeState, ExchangeAsk, ExchangeBid, ExchangeTrade } from "@/core/market/exchange";
+import type {
+  ExchangeState,
+  ExchangeAsk,
+  ExchangeBid,
+  ExchangeTrade,
+} from "@/core/market/exchange";
 
 describe("buildOrderBooks", () => {
   it("builds a book for a horse with live asks and bids", () => {
@@ -11,17 +16,66 @@ describe("buildOrderBooks", () => {
     horse.name = "Test Horse";
 
     const asks: ExchangeAsk[] = [
-      { id: "a1", horseId: "h1", sellerId: "player", sellerName: "Player", price: 10000, fairValue: 12000, createdDay: 1, expiresDay: 40, intent: "raising cash", pressureMeter: 0, acceptFloor: 8000, sellerTier: "Local" },
-      { id: "a2", horseId: "h1", sellerId: "npc1", sellerName: "NPC", price: 11000, fairValue: 12000, createdDay: 1, expiresDay: 40, intent: "raising cash", pressureMeter: 0, acceptFloor: 8000, sellerTier: "Local" },
+      {
+        id: "a1",
+        horseId: "h1",
+        sellerId: "player",
+        sellerName: "Player",
+        price: 10000,
+        fairValue: 12000,
+        createdDay: 1,
+        expiresDay: 40,
+        intent: "raising cash",
+        pressureMeter: 0,
+        acceptFloor: 8000,
+        sellerTier: "Local",
+      },
+      {
+        id: "a2",
+        horseId: "h1",
+        sellerId: "npc1",
+        sellerName: "NPC",
+        price: 11000,
+        fairValue: 12000,
+        createdDay: 1,
+        expiresDay: 40,
+        intent: "raising cash",
+        pressureMeter: 0,
+        acceptFloor: 8000,
+        sellerTier: "Local",
+      },
     ];
 
     const bids: ExchangeBid[] = [
-      { id: "b1", horseId: "h1", bidderId: "npc2", bidderName: "NPC 2", price: 9000, createdDay: 2, expiresDay: 40, intent: "opportunistic", conviction: 0.5, bidderTier: "Local", rationale: "" },
-      { id: "b2", horseId: "h1", bidderId: "npc3", bidderName: "NPC 3", price: 9500, createdDay: 2, expiresDay: 40, intent: "opportunistic", conviction: 0.5, bidderTier: "Local", rationale: "" },
+      {
+        id: "b1",
+        horseId: "h1",
+        bidderId: "npc2",
+        bidderName: "NPC 2",
+        price: 9000,
+        createdDay: 2,
+        expiresDay: 40,
+        intent: "opportunistic",
+        conviction: 0.5,
+        bidderTier: "Local",
+        rationale: "",
+      },
+      {
+        id: "b2",
+        horseId: "h1",
+        bidderId: "npc3",
+        bidderName: "NPC 3",
+        price: 9500,
+        createdDay: 2,
+        expiresDay: 40,
+        intent: "opportunistic",
+        conviction: 0.5,
+        bidderTier: "Local",
+        rationale: "",
+      },
     ];
 
-    const state: ExchangeState = { asks, bids, lastRefreshDay: 1,
-      trades: [] };
+    const state: ExchangeState = { asks, bids, lastRefreshDay: 1, trades: [] };
     const books = buildOrderBooks(state, [horse], 5);
 
     expect(books).toHaveLength(1);
@@ -48,11 +102,23 @@ describe("buildOrderBooks", () => {
     horse.id = "h1";
 
     const asks: ExchangeAsk[] = [
-      { id: "a1", horseId: "h1", sellerId: "player", sellerName: "Player", price: 10000, fairValue: 12000, createdDay: 1, expiresDay: 5, intent: "raising cash", pressureMeter: 0, acceptFloor: 8000, sellerTier: "Local" },
+      {
+        id: "a1",
+        horseId: "h1",
+        sellerId: "player",
+        sellerName: "Player",
+        price: 10000,
+        fairValue: 12000,
+        createdDay: 1,
+        expiresDay: 5,
+        intent: "raising cash",
+        pressureMeter: 0,
+        acceptFloor: 8000,
+        sellerTier: "Local",
+      },
     ];
 
-    const state: ExchangeState = { asks, bids: [], lastRefreshDay: 1,
-      trades: [] };
+    const state: ExchangeState = { asks, bids: [], lastRefreshDay: 1, trades: [] };
     // Current day is 6, so ask has expired
     const books = buildOrderBooks(state, [horse], 6);
 
@@ -65,11 +131,23 @@ describe("buildOrderBooks", () => {
     horse.lifecycleStatus = "deceased";
 
     const asks: ExchangeAsk[] = [
-      { id: "a1", horseId: "h1", sellerId: "player", sellerName: "Player", price: 10000, fairValue: 12000, createdDay: 1, expiresDay: 40, intent: "raising cash", pressureMeter: 0, acceptFloor: 8000, sellerTier: "Local" },
+      {
+        id: "a1",
+        horseId: "h1",
+        sellerId: "player",
+        sellerName: "Player",
+        price: 10000,
+        fairValue: 12000,
+        createdDay: 1,
+        expiresDay: 40,
+        intent: "raising cash",
+        pressureMeter: 0,
+        acceptFloor: 8000,
+        sellerTier: "Local",
+      },
     ];
 
-    const state: ExchangeState = { asks, bids: [], lastRefreshDay: 1,
-      trades: [] };
+    const state: ExchangeState = { asks, bids: [], lastRefreshDay: 1, trades: [] };
     const books = buildOrderBooks(state, [horse], 5);
 
     expect(books).toHaveLength(0);
@@ -85,17 +163,79 @@ describe("buildMarketDepth", () => {
 
     const state: ExchangeState = {
       asks: [
-        { id: "a1", horseId: "h1", sellerId: "player", sellerName: "Player", price: 12000, fairValue: 12000, createdDay: 1, expiresDay: 40, intent: "raising cash", pressureMeter: 0, acceptFloor: 8000, sellerTier: "Local" },
-        { id: "a2", horseId: "h2", sellerId: "npc1", sellerName: "NPC 1", price: 4000, fairValue: 5000, createdDay: 1, expiresDay: 40, intent: "raising cash", pressureMeter: 0, acceptFloor: 3000, sellerTier: "Local" },
+        {
+          id: "a1",
+          horseId: "h1",
+          sellerId: "player",
+          sellerName: "Player",
+          price: 12000,
+          fairValue: 12000,
+          createdDay: 1,
+          expiresDay: 40,
+          intent: "raising cash",
+          pressureMeter: 0,
+          acceptFloor: 8000,
+          sellerTier: "Local",
+        },
+        {
+          id: "a2",
+          horseId: "h2",
+          sellerId: "npc1",
+          sellerName: "NPC 1",
+          price: 4000,
+          fairValue: 5000,
+          createdDay: 1,
+          expiresDay: 40,
+          intent: "raising cash",
+          pressureMeter: 0,
+          acceptFloor: 3000,
+          sellerTier: "Local",
+        },
       ],
       bids: [
-        { id: "b1", horseId: "h1", bidderId: "npc2", bidderName: "NPC 2", price: 10000, createdDay: 2, expiresDay: 40, intent: "opportunistic", conviction: 0.5, bidderTier: "Local", rationale: "" },
+        {
+          id: "b1",
+          horseId: "h1",
+          bidderId: "npc2",
+          bidderName: "NPC 2",
+          price: 10000,
+          createdDay: 2,
+          expiresDay: 40,
+          intent: "opportunistic",
+          conviction: 0.5,
+          bidderTier: "Local",
+          rationale: "",
+        },
       ],
       lastRefreshDay: 1,
       trades: [
-        { id: "t1", horseId: "h1", buyerId: "npc2", buyerName: "NPC 2", sellerId: "player", sellerName: "Player", price: 11000, day: 25, horseName: "Test", commission: 100, initiatedBy: "bid" },
-        { id: "t2", horseId: "h2", buyerId: "npc1", buyerName: "NPC 1", sellerId: "npc3", sellerName: "NPC 3", price: 4500, day: 2, horseName: "Test 2", commission: 100, initiatedBy: "ask" }, // > 30 days ago, day 35
-      ]
+        {
+          id: "t1",
+          horseId: "h1",
+          buyerId: "npc2",
+          buyerName: "NPC 2",
+          sellerId: "player",
+          sellerName: "Player",
+          price: 11000,
+          day: 25,
+          horseName: "Test",
+          commission: 100,
+          initiatedBy: "bid",
+        },
+        {
+          id: "t2",
+          horseId: "h2",
+          buyerId: "npc1",
+          buyerName: "NPC 1",
+          sellerId: "npc3",
+          sellerName: "NPC 3",
+          price: 4500,
+          day: 2,
+          horseName: "Test 2",
+          commission: 100,
+          initiatedBy: "ask",
+        }, // > 30 days ago, day 35
+      ],
     };
 
     const books = buildOrderBooks(state, [horse1, horse2], 35);
