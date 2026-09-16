@@ -1,0 +1,3 @@
+## 2024-03-20 - Uncovered untested logic in `resolveBloodline` recursion
+**Learning:** `resolveBloodline` handles both recursion up the in-game state (`horseMap`) and down the curated foundation database (`findHorseByName`), but test coverage was entirely missing, meaning regressions in name chain traversal would silently break bloodline affinity clustering.
+**Action:** Implemented a new, isolated test file (`populationGenetics.resolveBloodline.test.ts`) that systematically verifies each fallback step (cache -> direct name -> sireName -> game state recursion -> bounds check) independently, preventing silent coupling issues.
