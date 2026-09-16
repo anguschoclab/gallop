@@ -20,6 +20,7 @@ import { PillToggleGroup } from "@/components/common/PillToggleGroup";
 import { PortfolioTable } from "@/components/portfolio/PortfolioTable";
 import { BiddingHistoryTable } from "@/components/portfolio/BiddingHistoryTable";
 import { RaceWinsTable } from "@/components/portfolio/RaceWinsTable";
+import { RaceWinsDashboard } from "@/components/portfolio/RaceWinsDashboard";
 import { SyndicateStakesPage } from "@/components/syndicates/SyndicateStakesPage";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
@@ -212,6 +213,7 @@ function PortfolioPage() {
           <TabsTrigger value="syndicates">Syndicate Stakes</TabsTrigger>
           <TabsTrigger value="bidding">Bidding History</TabsTrigger>
           <TabsTrigger value="wins">Race Wins</TabsTrigger>
+          <TabsTrigger value="wins-dashboard">Wins Dashboard</TabsTrigger>
         </TabsList>
         <TabsContent value="holdings" className="mt-4 space-y-4">
           <Card className="border-white/5 bg-slate-900/40">
@@ -290,6 +292,9 @@ function PortfolioPage() {
         </TabsContent>
         <TabsContent value="wins" className="mt-4">
           <RaceWinsTable wins={raceWins} />
+        </TabsContent>
+        <TabsContent value="wins-dashboard" className="mt-4">
+          <RaceWinsDashboard wins={raceWins} />
         </TabsContent>
       </Tabs>
     </div>
