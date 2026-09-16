@@ -12,6 +12,11 @@ export type FlavorStoryTheme =
 export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   track: [
     {
+      headline: "Track Mascot Cat Goes Missing",
+      body: "Panic briefly swept the backstretch this morning when the beloved resident stable cat was nowhere to be found, only to be discovered asleep in a feed bin.",
+      category: "flavor",
+    },
+    {
       headline: "Inside Rail Develops Severe Bias",
       body: "Clockers are advising bettors to take note: a sudden and distinct speed bias has developed on the inside rail, heavily favoring front-runners drawn well.",
       category: "flavor",
