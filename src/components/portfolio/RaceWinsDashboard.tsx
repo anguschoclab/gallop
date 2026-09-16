@@ -66,7 +66,12 @@ export function RaceWinsDashboard({ wins }: { wins: PlayerRaceWinRecord[] }) {
   return (
     <div className="space-y-4">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Races Won" value={summary.totalWins.toLocaleString()} size="xl" />
+        <StatCard
+          label="Races Won"
+          value={summary.totalWins.toLocaleString()}
+          sub="Career victories"
+          size="xl"
+        />
         <StatCard
           label="Racing Earnings"
           value={formatCurrency(summary.totalEarnings)}
