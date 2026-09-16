@@ -292,6 +292,9 @@ function PortfolioPage() {
         <TabsContent value="wins" className="mt-4">
           <RaceWinsTable wins={raceWins} />
         </TabsContent>
+        <TabsContent value="wins-dashboard" className="mt-4">
+          <RaceWinsDashboard wins={raceWins} />
+        </TabsContent>
       </Tabs>
     </div>
   );
