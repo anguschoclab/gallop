@@ -78,8 +78,18 @@ export function RaceWinsDashboard({ wins }: { wins: PlayerRaceWinRecord[] }) {
           sub={`${summary.gradedWins} graded wins`}
           size="xl"
         />
-        <StatCard label="Best Payout" value={formatCurrency(summary.topPayout)} size="xl" />
-        <StatCard label="Average Payout" value={formatCurrency(summary.averagePayout)} size="xl" />
+        <StatCard
+          label="Best Payout"
+          value={formatCurrency(summary.topPayout)}
+          sub="Single race"
+          size="xl"
+        />
+        <StatCard
+          label="Average Payout"
+          value={formatCurrency(summary.averagePayout)}
+          sub="Per win"
+          size="xl"
+        />
       </div>
 
       <ChartCard
