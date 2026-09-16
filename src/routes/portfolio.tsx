@@ -20,6 +20,7 @@ import { PillToggleGroup } from "@/components/common/PillToggleGroup";
 import { PortfolioTable } from "@/components/portfolio/PortfolioTable";
 import { BiddingHistoryTable } from "@/components/portfolio/BiddingHistoryTable";
 import { RaceWinsTable } from "@/components/portfolio/RaceWinsTable";
+import { RaceWinsDashboard } from "@/components/portfolio/RaceWinsDashboard";
 import { SyndicateStakesPage } from "@/components/syndicates/SyndicateStakesPage";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
