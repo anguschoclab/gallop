@@ -14,7 +14,7 @@ describe("populationGenetics - resolveBloodline", () => {
 
   it("returns Unaffiliated for a horse with no known bloodline and no pedigree", () => {
     const horse = createTestHorse({ id: "h1", name: "Random Horse" });
-    // @ts-ignore force undefined bloodline for test
+
     horse.bloodline = undefined;
     horseMap.set("h1", horse);
 
@@ -32,7 +32,7 @@ describe("populationGenetics - resolveBloodline", () => {
 
   it("detects bloodline directly from horse name matching KNOWN_BLOODLINES", () => {
     const horse = createTestHorse({ id: "h1", name: "Northern Dancer" });
-    // @ts-ignore force undefined bloodline for test
+
     horse.bloodline = undefined;
     horseMap.set("h1", horse);
 
@@ -42,7 +42,7 @@ describe("populationGenetics - resolveBloodline", () => {
 
   it("detects bloodline from horse's sireName matching KNOWN_BLOODLINES", () => {
     const horse = createTestHorse({ id: "h1", name: "Random Foal", sireName: "Mr. Prospector" });
-    // @ts-ignore force undefined bloodline for test
+
     horse.bloodline = undefined;
     horseMap.set("h1", horse);
 
@@ -52,13 +52,21 @@ describe("populationGenetics - resolveBloodline", () => {
 
   it("walks up the sire line in-game pedigree to find a known bloodline", () => {
     const grandsire = createTestHorse({ id: "gs1", name: "Galileo" });
-    // @ts-ignore force undefined bloodline for test
+
     grandsire.bloodline = undefined;
-    const sire = createTestHorse({ id: "s1", name: "Sire", pedigree: { generation: 1, name: "Sire", sireId: "gs1", damId: "" } as any });
-    // @ts-ignore force undefined bloodline for test
+    const sire = createTestHorse({
+      id: "s1",
+      name: "Sire",
+      pedigree: { generation: 1, name: "Sire", sireId: "gs1", damId: "" } as any,
+    });
+
     sire.bloodline = undefined;
-    const foal = createTestHorse({ id: "f1", name: "Foal", pedigree: { generation: 2, name: "Foal", sireId: "s1", damId: "" } as any });
-    // @ts-ignore force undefined bloodline for test
+    const foal = createTestHorse({
+      id: "f1",
+      name: "Foal",
+      pedigree: { generation: 2, name: "Foal", sireId: "s1", damId: "" } as any,
+    });
+
     foal.bloodline = undefined;
 
     horseMap.set("gs1", grandsire);
@@ -70,22 +78,42 @@ describe("populationGenetics - resolveBloodline", () => {
   });
 
   it("returns Unaffiliated if max depth (6) is exceeded without finding a match", () => {
-     let currentSireId = "sire_6";
-     // @ts-ignore force undefined bloodline for test
-     horseMap.set(currentSireId, createTestHorse({ id: currentSireId, name: "Unknown Sire 6", bloodline: undefined }));
+    let currentSireId = "sire_6";
 
-     for (let i = 5; i >= 1; i--) {
-        const nextSireId = `sire_${i}`;
-        // @ts-ignore force undefined bloodline for test
-        horseMap.set(nextSireId, createTestHorse({ id: nextSireId, name: `Unknown Sire ${i}`, bloodline: undefined, pedigree: { generation: i, name: `Unknown Sire ${i}`, sireId: currentSireId, damId: "" } as any }));
-        currentSireId = nextSireId;
-     }
+    horseMap.set(
+      currentSireId,
+      createTestHorse({ id: currentSireId, name: "Unknown Sire 6", bloodline: undefined }),
+    );
 
-     // @ts-ignore force undefined bloodline for test
-     const foal = createTestHorse({ id: "foal", name: "Foal", bloodline: undefined, pedigree: { generation: 6, name: "Foal", sireId: currentSireId, damId: "" } as any });
-     horseMap.set("foal", foal);
+    for (let i = 5; i >= 1; i--) {
+      const nextSireId = `sire_${i}`;
 
-     const result = resolveBloodline(foal, horseMap);
-     expect(result).toBe("Unaffiliated");
+      horseMap.set(
+        nextSireId,
+        createTestHorse({
+          id: nextSireId,
+          name: `Unknown Sire ${i}`,
+          bloodline: undefined,
+          pedigree: {
+            generation: i,
+            name: `Unknown Sire ${i}`,
+            sireId: currentSireId,
+            damId: "",
+          } as any,
+        }),
+      );
+      currentSireId = nextSireId;
+    }
+
+    const foal = createTestHorse({
+      id: "foal",
+      name: "Foal",
+      bloodline: undefined,
+      pedigree: { generation: 6, name: "Foal", sireId: currentSireId, damId: "" } as any,
+    });
+    horseMap.set("foal", foal);
+
+    const result = resolveBloodline(foal, horseMap);
+    expect(result).toBe("Unaffiliated");
   });
 });
