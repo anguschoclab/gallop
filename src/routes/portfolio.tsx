@@ -212,6 +212,7 @@ function PortfolioPage() {
           <TabsTrigger value="syndicates">Syndicate Stakes</TabsTrigger>
           <TabsTrigger value="bidding">Bidding History</TabsTrigger>
           <TabsTrigger value="wins">Race Wins</TabsTrigger>
+          <TabsTrigger value="wins-dashboard">Wins Dashboard</TabsTrigger>
         </TabsList>
         <TabsContent value="holdings" className="mt-4 space-y-4">
           <Card className="border-white/5 bg-slate-900/40">
