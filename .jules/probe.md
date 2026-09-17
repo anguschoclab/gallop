@@ -1,0 +1,3 @@
+## 2025-02-14 - Dead Code in Track Geometry Scoring
+**Learning:** The `calculateTrackGeometryScore` function in `src/core/race/trackGeometry.ts` contains unreachable branches. It hardcodes `straight` to either 400 or 350, but checks for `straight > 450` and `straight < 350`. This causes track geometry scoring to silently return 0 for all horses in all races, effectively disabling this heuristic for AI entries.
+**Action:** When adding tests for simplified heuristic scoring functions, always check if hardcoded defaults conflict with the conditionals, as they can inadvertently disable the entire scoring logic. This should be flagged for refactoring.
