@@ -1,0 +1,3 @@
+## 2024-03-20 - Use Alert Dialog for Destructive Actions
+**Learning:** For actions that destroy user progress (like deleting a current game/stable), using a standard `<Dialog>` provides insufficient friction. Replacing it with an `<AlertDialog>` enforces strict focus trapping, provides better semantic roles for screen readers (`role="alertdialog"`), and visually requires explicit confirmation or cancellation, reducing accidental data loss.
+**Action:** When implementing destructive confirmations that cannot be undone, consistently use the Radix/shadcn `AlertDialog` component instead of `Dialog`.
