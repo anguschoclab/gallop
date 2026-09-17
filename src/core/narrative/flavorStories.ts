@@ -12,6 +12,21 @@ export type FlavorStoryTheme =
 export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   track: [
     {
+      headline: "Fox Spotted on the Turf Course",
+      body: "A bold red fox trotted out onto the turf course during morning workouts, bringing training to a brief halt before darting back into the infield brush.",
+      category: "flavor",
+    },
+    {
+      headline: "Track Announcer Sidelined",
+      body: "The regular caller is out with laryngitis today, forcing the track to bring in a colorful, fast-talking backup announcer at the last minute.",
+      category: "flavor",
+    },
+    {
+      headline: "Lost Bet Ticket Mystery",
+      body: "A seemingly discarded winning ticket worth thousands was turned into track security by an honest fan, sparking a frantic search for the rightful owner.",
+      category: "flavor",
+    },
+    {
       headline: "Inside Rail Develops Severe Bias",
       body: "Clockers are advising bettors to take note: a sudden and distinct speed bias has developed on the inside rail, heavily favoring front-runners drawn well.",
       category: "flavor",
@@ -183,6 +198,21 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   jockeys: [
+    {
+      headline: "Apprentice Rider Survives Scary Spill",
+      body: "The grandstand breathed a collective sigh of relief as a young rider walked away completely unscathed from a dramatic incident at the top of the stretch.",
+      category: "flavor",
+    },
+    {
+      headline: "Jockey Valet Celebrates Milestone",
+      body: "A beloved jockeys' room valet was honored today for saddling their 10,000th mount, a quiet achievement that earned a standing ovation from the colony.",
+      category: "flavor",
+    },
+    {
+      headline: "Unorthodox Riding Style Sparks Debate",
+      body: "A newly arrived overseas jockey has the backstretch buzzing over their incredibly low, aerodynamic posture, which seems to be yielding surprising results.",
+      category: "flavor",
+    },
     {
       headline: "Rivalry Brews in the Jockey Room",
       body: "Tensions are reportedly high between two leading riders following a tight finish yesterday, with neither jockey willing to concede an inch in their pursuit of the title.",
@@ -720,6 +750,21 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   community: [
     {
+      headline: "Local Pub Sponsors Allowance Race",
+      body: "A beloved watering hole just outside the track gates has stepped up to sponsor today's feature, bringing a massive, rowdy cheering section to the apron.",
+      category: "flavor",
+    },
+    {
+      headline: "Track Photographer Retires",
+      body: "The familiar face stationed at the finish line is finally hanging up their camera, taking with them an incredible archive of racing history spanning four decades.",
+      category: "flavor",
+    },
+    {
+      headline: "Bugler Takes Requests",
+      body: "The track bugler entertained early arrivals by taking requests in the paddock, offering a jazzy rendition of the classic 'Call to the Post'.",
+      category: "flavor",
+    },
+    {
       headline: "Retired Champion Parades for Fans",
       body: "A fan-favorite gelding returned to the track for a special retirement parade between races, looking fit and happy as the crowd roared their appreciation.",
       category: "flavor",
@@ -891,6 +936,21 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   industry: [
+    {
+      headline: "Bloodstock Agencies Announce Merger",
+      body: "Two of the region's largest bloodstock firms have joined forces, promising to bring unprecedented buying power to the upcoming yearling sales.",
+      category: "flavor",
+    },
+    {
+      headline: "Equine Transport Fleet Upgraded",
+      body: "To keep up with growing seasonal demand, a major equine logistics company has unveiled a new fleet of ultra-modern, climate-controlled horse vans.",
+      category: "flavor",
+    },
+    {
+      headline: "Racing Podcast Sparks Controversy",
+      body: "A popular weekly racing podcast went viral after its hosts boldly criticized the tactical decisions of several leading trainers, prompting fiery responses.",
+      category: "flavor",
+    },
     {
       headline: "New Whip Restrictions Face Pushback",
       body: "The jockey guild has filed a formal grievance regarding the newly implemented restrictions on crop usage, arguing the rules are vague and compromise safety.",
