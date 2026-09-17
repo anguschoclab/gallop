@@ -2,6 +2,8 @@ import { getAwardSvg } from "@/assets/awards";
 import type { AwardRegion, RegionalAwardCategory } from "@/services/awards/awardsFacade";
 import { CATEGORY_DISPLAY_NAMES, REGION_AWARD_NAMES } from "@/services/awards/awardsFacade";
 import { cn } from "@/lib/cn";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TOOLTIP_DELAY_MS } from "@/constants";
 
 interface AwardIconProps {
   region: AwardRegion;
@@ -33,7 +35,7 @@ export function AwardIcon({
   const { Icon, color } = getAwardSvg(region, category);
   const config = SIZE_CONFIG[size];
 
-  return (
+  const content = (
     <div
       className={cn(
         "inline-flex items-center justify-center",
@@ -43,10 +45,22 @@ export function AwardIcon({
         className,
       )}
       style={{ color }}
-      title={showTooltip ? getTooltipText(region, category, year) : undefined}
     >
       <Icon width={config.width} height={config.height} />
     </div>
+  );
+
+  if (!showTooltip) return content;
+
+  return (
+    <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {content}
+        </TooltipTrigger>
+        <TooltipContent>{getTooltipText(region, category, year)}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
