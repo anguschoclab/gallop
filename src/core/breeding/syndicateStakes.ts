@@ -18,7 +18,7 @@ import type { Syndicate } from "@/core/breeding/types";
 import type { Horse } from "@/game/types";
 import type { ManagerReputation, ReputationEvent } from "@/core/reputation";
 import type { InvestorRecord } from "@/core/breeding/investorTypes";
-import { asPlayerOwnerId, asHorseId } from "@/core/types/branded";
+import { asPlayerOwnerId, asHorseId, asOwnerKey } from "@/core/types/branded";
 
 export interface PlayerSyndicateStake {
   id: string; // syndicateId
@@ -145,7 +145,7 @@ export function derivePlayerSyndicateStakes(
 
   for (const syn of Object.values(syndicates || {})) {
     const shares =
-      syn.shareHolders?.[playerKey] ?? (syn.shareHolders as any)?.[playerStableId] ?? 0;
+      syn.shareHolders?.[playerKey] ?? syn.shareHolders?.[asOwnerKey(playerStableId)] ?? 0;
     if (shares <= 0) continue;
 
     const totalShares = Math.max(1, syn.totalShares || 40);
@@ -169,9 +169,11 @@ export function derivePlayerSyndicateStakes(
     let playerSatisfaction = 50;
 
     if (satRecord && Object.keys(satRecord).length > 0) {
-      const scores = Object.values(satRecord);
-      averageSatisfaction = Math.round(scores.reduce((sum, val) => sum + val, 0) / scores.length);
-      playerSatisfaction = satRecord[playerKey] ?? (satRecord as any)[playerStableId] ?? 50;
+      const scores = Object.values(satRecord) as number[];
+      averageSatisfaction = Math.round(
+        scores.reduce((sum: number, val: number) => sum + val, 0) / scores.length,
+      );
+      playerSatisfaction = satRecord[playerKey] ?? satRecord[asOwnerKey(playerStableId)] ?? 50;
     }
 
     // Investor sentiment
