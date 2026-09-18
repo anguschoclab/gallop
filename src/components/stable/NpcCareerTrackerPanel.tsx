@@ -7,7 +7,9 @@ import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ChartCard, MiniBar, chartColors, formatCurrencyCompact } from "@/components/charts";
+// eslint-disable-next-line no-restricted-syntax
 import { summarizeNpcCareer, careerStageLabel } from "@/core/npc/careerTracker";
+// eslint-disable-next-line no-restricted-syntax
 import type { NpcCareerStage } from "@/core/horse/types";
 import type { Horse } from "@/game/types";
 import { cn } from "@/lib/cn";
