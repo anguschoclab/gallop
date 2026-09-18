@@ -133,7 +133,28 @@ export interface HorseRaceHistoryEntry {
   courseVisitCount?: number; // Visit count at time of race
   jockeyId?: JockeyId; // Jockey that rode the horse in this race
   stableId?: StableId; // Owner stable at time of race
+  /** True when this start was simulated off-screen by the NPC career tracker. */
+  offscreen?: boolean;
 }
+
+/** Stage of a horse's racing life, used by the NPC career tracker. */
+export type NpcCareerStage =
+  | "unraced"
+  | "juvenile"
+  | "rising"
+  | "prime"
+  | "declining"
+  | "veteran"
+  | "retired";
+
+/** Off-screen career bookkeeping for NPC horses. */
+export type NpcCareerProgress = {
+  lastOffscreenDay: number;
+  offscreenStarts: number;
+  offscreenWins: number;
+  offscreenEarnings: number;
+  stage: NpcCareerStage;
+};
 
 export type Horse = {
   id: HorseId;
@@ -237,4 +258,7 @@ export type Horse = {
 
   /** Foal-to-racehorse development arc; set on birth via resolveFoaling. */
   developmentArc?: import("./foalDevelopment").FoalDevelopmentArc;
+
+  /** Off-screen career progress (NPC horses only). */
+  careerTracker?: NpcCareerProgress;
 };

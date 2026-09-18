@@ -58,6 +58,7 @@ import { foalDevelopmentPhase } from "./foalDevelopmentPhase";
 import { solvencyPhase } from "./solvency";
 import { worldAssessmentPhase } from "./worldAssessmentPhase";
 import { diplomacyPhase } from "./diplomacyPhase";
+import { npcCareerTrackerPhase } from "./npcCareerTrackerPhase";
 import { narrativePhase } from "./narrativePhase";
 import { economyPhase } from "./economyPhase";
 import { difficultyPhase } from "./difficultyPhase";
@@ -102,6 +103,8 @@ export const GAME_PIPELINE_PHASES = [
   npcCyclePhase,
   // Diplomacy AI (order 81, after NPC cycle)
   diplomacyPhase,
+  // NPC off-screen career progression (order 82, after diplomacy)
+  npcCareerTrackerPhase,
   stallionRetirementPhase,
   pastureRetirementPhase,
   hallOfFamePhase,
