@@ -258,4 +258,7 @@ export type Horse = {
 
   /** Foal-to-racehorse development arc; set on birth via resolveFoaling. */
   developmentArc?: import("./foalDevelopment").FoalDevelopmentArc;
+
+  /** Off-screen career progress (NPC horses only). */
+  careerTracker?: NpcCareerProgress;
 };
