@@ -31,7 +31,10 @@ const DISTANCE_BUCKETS: { label: string; max: number }[] = [
   { label: "Staying (2800m+)", max: Infinity },
 ];
 
-/** Returns the distance-bucket label for a race distance in metres. */
+/**
+ * Returns the distance-bucket label for a race distance in metres.
+ * @param distance The race distance.
+ */
 export function distanceBucketLabel(distance?: number): string {
   if (!distance || distance <= 0) return "Unknown";
   return DISTANCE_BUCKETS.find((b) => distance < b.max)?.label ?? "Unknown";
@@ -64,17 +67,26 @@ function group(
     .sort((a, b) => b.earnings - a.earnings || b.wins - a.wins);
 }
 
-/** Earnings and wins grouped by racecourse. */
+/**
+ * Earnings and wins grouped by racecourse.
+ * @param wins The win records.
+ */
 export function winsByCourse(wins: PlayerRaceWinRecord[]): WinGroup[] {
   return group(wins, (w) => w.track?.trim() || "Unknown course");
 }
 
-/** Earnings and wins grouped by grade (graded races first, then ungraded). */
+/**
+ * Earnings and wins grouped by grade (graded races first, then ungraded).
+ * @param wins The win records.
+ */
 export function winsByGrade(wins: PlayerRaceWinRecord[]): WinGroup[] {
   return group(wins, (w) => w.grade?.trim() || w.raceClass?.trim() || "Ungraded");
 }
 
-/** Earnings and wins grouped by distance bucket. */
+/**
+ * Earnings and wins grouped by distance bucket.
+ * @param wins The win records.
+ */
 export function winsByDistance(wins: PlayerRaceWinRecord[]): WinGroup[] {
   const order = [...DISTANCE_BUCKETS.map((b) => b.label), "Unknown"];
   return group(wins, (w) => distanceBucketLabel(w.distance)).sort(
@@ -82,7 +94,10 @@ export function winsByDistance(wins: PlayerRaceWinRecord[]): WinGroup[] {
   );
 }
 
-/** Cumulative racing earnings over time, oldest day first. */
+/**
+ * Cumulative racing earnings over time, oldest day first.
+ * @param wins The win records.
+ */
 export function cumulativeEarnings(wins: PlayerRaceWinRecord[]): EarningsPoint[] {
   const byDay = new Map<number, number>();
   for (const w of wins) byDay.set(w.day, (byDay.get(w.day) ?? 0) + w.payout);

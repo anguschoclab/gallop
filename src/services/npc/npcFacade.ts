@@ -4,3 +4,4 @@
  */
 
 export { getDisplayableStats, calculateScoutCost } from "@/core/npc/scouting";
+export * from "@/core/npc/careerTracker";
