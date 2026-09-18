@@ -25,8 +25,8 @@ describe("calculateGeneticCompatibility", () => {
         geneticDiversity: 0.8,
         leopardComplex: "recessive",
         csnbRisk: "low",
-        lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false } as any
-      }
+        lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false } as any,
+      },
     });
     const dam = createTestHorse({
       geneticMarkers: {
@@ -36,8 +36,8 @@ describe("calculateGeneticCompatibility", () => {
         geneticDiversity: 0.8,
         leopardComplex: "recessive",
         csnbRisk: "low",
-        lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false } as any
-      }
+        lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false } as any,
+      },
     });
 
     const result = calculateGeneticCompatibility(sire, dam);
@@ -49,14 +49,16 @@ describe("calculateGeneticCompatibility", () => {
 
   it("warns about Leopard complex homozygous risk", () => {
     const sire = createTestHorse({
-      geneticMarkers: { leopardComplex: "dominant" } as any
+      geneticMarkers: { leopardComplex: "dominant" } as any,
     });
     const dam = createTestHorse({
-      geneticMarkers: { leopardComplex: "dominant" } as any
+      geneticMarkers: { leopardComplex: "dominant" } as any,
     });
 
     const result = calculateGeneticCompatibility(sire, dam);
-    expect(result.warning).toContain("Both parents homozygous for Leopard complex - high CSNB risk in foal");
+    expect(result.warning).toContain(
+      "Both parents homozygous for Leopard complex - high CSNB risk in foal",
+    );
   });
 
   it("warns about covering sickness transmission", () => {
@@ -64,34 +66,40 @@ describe("calculateGeneticCompatibility", () => {
     const dam = createTestHorse();
 
     const result = calculateGeneticCompatibility(sire, dam);
-    expect(result.warning).toContain("High risk of covering sickness (dourine) transmission - sexually transmitted disease with 50%+ mortality");
+    expect(result.warning).toContain(
+      "High risk of covering sickness (dourine) transmission - sexually transmitted disease with 50%+ mortality",
+    );
   });
 
   it("combines multiple warnings correctly", () => {
     const sire = createTestHorse({
       healthStatus: "covering_sickness",
-      geneticMarkers: { leopardComplex: "dominant" } as any
+      geneticMarkers: { leopardComplex: "dominant" } as any,
     });
     const dam = createTestHorse({
       healthStatus: "covering_sickness",
-      geneticMarkers: { leopardComplex: "dominant" } as any
+      geneticMarkers: { leopardComplex: "dominant" } as any,
     });
 
     const result = calculateGeneticCompatibility(sire, dam);
-    expect(result.warning).toContain("Both parents homozygous for Leopard complex - high CSNB risk in foal");
-    expect(result.warning).toContain("High risk of covering sickness (dourine) transmission - sexually transmitted disease with 50%+ mortality");
+    expect(result.warning).toContain(
+      "Both parents homozygous for Leopard complex - high CSNB risk in foal",
+    );
+    expect(result.warning).toContain(
+      "High risk of covering sickness (dourine) transmission - sexually transmitted disease with 50%+ mortality",
+    );
   });
 
   it("handles missing genetic markers gracefully", () => {
-     const sire = createTestHorse();
-     delete sire.geneticMarkers;
-     const dam = createTestHorse();
-     delete dam.geneticMarkers;
+    const sire = createTestHorse();
+    delete sire.geneticMarkers;
+    const dam = createTestHorse();
+    delete dam.geneticMarkers;
 
-     const result = calculateGeneticCompatibility(sire, dam);
-     // uses defaults of 'good' (0.75), diversity DEFAULT_GENETIC_DIVERSITY (0.75) from mock
-     // (0.75 + 0.75 + 0.75 + 0.75) * 0.25 = 0.75
-     expect(result.score).toBe(0.75);
-     expect(result.description).toBe("Good genetic compatibility");
+    const result = calculateGeneticCompatibility(sire, dam);
+    // uses defaults of 'good' (0.75), diversity DEFAULT_GENETIC_DIVERSITY (0.75) from mock
+    // (0.75 + 0.75 + 0.75 + 0.75) * 0.25 = 0.75
+    expect(result.score).toBe(0.75);
+    expect(result.description).toBe("Good genetic compatibility");
   });
 });

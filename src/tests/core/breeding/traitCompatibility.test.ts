@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { calculateConformationCompatibility, calculateTemperamentCompatibility } from "@/core/breeding/traitCompatibility";
+import {
+  calculateConformationCompatibility,
+  calculateTemperamentCompatibility,
+} from "@/core/breeding/traitCompatibility";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
 describe("traitCompatibility", () => {
