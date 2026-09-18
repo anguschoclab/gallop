@@ -1,5 +1,6 @@
 import { useAnalyticsData } from "@/hooks/analytics/useAnalyticsData";
 import { ChartCard, MiniBar, chartColors } from "@/components/charts";
+import { Lightbulb } from "lucide-react";
 
 export function AnalyticsRacingTab() {
   const d = useAnalyticsData();
@@ -38,6 +39,45 @@ export function AnalyticsRacingTab() {
           Beyer distribution, surface splits, and overall finishing pattern.
         </p>
       </header>
+
+      {d.stableTrends && (d.stableTrends.bestSurface || d.stableTrends.bestDistance) && (
+        <div className="mb-6 bg-gold/10 border border-gold/20 p-4 flex gap-4 items-start rounded-sm">
+          <Lightbulb className="h-5 w-5 text-gold mt-0.5 shrink-0" />
+          <div className="space-y-3">
+            <div>
+              <div className="text-[10px] font-black uppercase tracking-wide text-gold/80 mb-0.5">
+                Tipster Insight: Stable Performance
+              </div>
+              <div className="text-sm text-cream-muted leading-relaxed">
+                {d.stableTrends.bestSurface && (
+                  <p>
+                    Your stable excels on{" "}
+                    <strong className="text-cream">{d.stableTrends.bestSurface.surface}</strong>,
+                    boasting a{" "}
+                    <strong className="text-cream">
+                      {(d.stableTrends.bestSurface.winRate * 100).toFixed(1)}%
+                    </strong>{" "}
+                    win rate over {d.stableTrends.bestSurface.starts} starts.
+                  </p>
+                )}
+                {d.stableTrends.bestDistance && (
+                  <p>
+                    You are most dominant in{" "}
+                    <strong className="text-cream">
+                      {d.stableTrends.bestDistance.distanceCategory}
+                    </strong>{" "}
+                    races, with a{" "}
+                    <strong className="text-cream">
+                      {(d.stableTrends.bestDistance.winRate * 100).toFixed(1)}%
+                    </strong>{" "}
+                    win rate across {d.stableTrends.bestDistance.starts} starts.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <ChartCard
