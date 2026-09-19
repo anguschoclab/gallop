@@ -1,0 +1,3 @@
+## 2024-05-15 - Career Earnings Milestone Insight
+**Learning:** Found that `Horse` directly tracks `lifetimeEarnings` but doesn't have an easily calculable economic insight like ROI without digging into transactions, so focusing on milestone proximity is much cleaner, testable, and immediately actionable for players trying to reach a goal before retiring.
+**Action:** When adding insights based on financial data, prioritize properties directly tracked on the domain model (like `lifetimeEarnings` on `Horse`) over attempting to reconstruct history from complex transaction logs to keep the derivation pure and performant.

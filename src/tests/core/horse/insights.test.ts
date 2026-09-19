@@ -34,6 +34,34 @@ describe("getHorseInsight", () => {
     expect(getHorseInsight(horse)).toBeNull();
   });
 
+  it("detects Earnings Milestone when approaching 1M", () => {
+    const horse = {
+      raceHistory: [
+        { day: 1, beyer: 70 },
+        { day: 2, beyer: 75 },
+        { day: 3, beyer: 75 },
+      ],
+      lifetimeEarnings: 975000, // $25k away from 1M
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.label).toBe("Milestone Watch");
+    expect(insight?.value).toBe("Approaching $1M");
+    expect(insight?.context).toBe("Just $25,000 away from reaching $1,000,000 in career earnings");
+  });
+
+  it("does not detect Earnings Milestone when passed 1M", () => {
+    const horse = {
+      raceHistory: [
+        { day: 1, beyer: 70 },
+        { day: 2, beyer: 75 },
+        { day: 3, beyer: 75 },
+      ],
+      lifetimeEarnings: 1050000,
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.label).not.toBe("Milestone Watch");
+  });
+
   it("detects win streaks", () => {
     const horse = {
       raceHistory: [
