@@ -149,7 +149,13 @@ export function offscreenStartInterval(stage: NpcCareerStage, tier: StableTier =
   return Math.round(base * tierMul);
 }
 
-/** Day of the horse's most recent start, off-screen or real. Null when unraced. */
+/**
+ * Day of the horse.s most recent start, off-screen or real. Null when unraced.
+ *
+ * @param horse - The horse
+ * @returns The day
+ */
+
 export function lastStartDay(horse: Horse): number | null {
   const history = horse.raceHistory ?? [];
   if (history.length === 0) return horse.careerTracker?.lastOffscreenDay ?? null;
@@ -159,8 +165,13 @@ export function lastStartDay(horse: Horse): number | null {
   const latest = Math.max(max, tracked);
   return Number.isFinite(latest) ? latest : null;
 }
+/**
+ * Day of the horse.s most recent player-visible (non off-screen) start.
+ *
+ * @param horse - The horse
+ * @returns The day
+ */
 
-/** Day of the horse's most recent player-visible (non off-screen) start. */
 function lastRealStartDay(horse: Horse): number | null {
   let max = -Infinity;
   for (const e of horse.raceHistory ?? []) if (!e.offscreen && e.day > max) max = e.day;
@@ -349,7 +360,13 @@ export function summarizeNpcCareer(horse: Horse, day: number): NpcCareerSummary 
   };
 }
 
-/** Human label for a career stage. */
+/**
+ * Human label for a career stage.
+ *
+ * @param stage - The career stage
+ * @returns The human-readable label
+ */
+
 export function careerStageLabel(stage: NpcCareerStage): string {
   switch (stage) {
     case "unraced":
