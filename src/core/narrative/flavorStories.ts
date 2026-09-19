@@ -184,6 +184,41 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   jockeys: [
     {
+      headline: "Local Jockey Debuts Signature Silks",
+      body: "A popular journeyman jockey turned heads in the paddock today by debuting a flashy new set of custom silks, sparking conversations about personal branding among riders.",
+      category: "flavor",
+    },
+    {
+      headline: "Veteran Rider Hosts Clinic",
+      body: "An esteemed retired jockey returned to the track this morning to host a specialized riding clinic, drawing eager apprentices hoping to learn the secrets of a perfect turf ride.",
+      category: "flavor",
+    },
+    {
+      headline: "Apprentice Mistakes Finish Line",
+      body: "A collective groan went up from the grandstand as a young apprentice jockey misjudged the finish line, standing up in the irons a sixteenth of a pole too early and costing their mount the win.",
+      category: "flavor",
+    },
+    {
+      headline: "Jockey's Charity Drive a Massive Success",
+      body: "The local jockey colony has rallied together to raise record-breaking funds for a local children's hospital, culminating in a well-attended trackside gala.",
+      category: "flavor",
+    },
+    {
+      headline: "Equipment Malfunction Avoided by Quick Thinking",
+      body: "A seasoned rider is drawing praise for their quick thinking after a snapped stirrup leather during the post parade forced them to improvise a repair right before the gates opened.",
+      category: "flavor",
+    },
+    {
+      headline: "Dietary Debate Splits Jockey Room",
+      body: "A heated argument has erupted in the jockey quarters over the merits of a new specialized diet, with some riders claiming it boosts stamina and others finding it impossible to stick to.",
+      category: "flavor",
+    },
+    {
+      headline: "New Agent Shakes Up Mount Assignments",
+      body: "A highly aggressive new jockey agent has entered the local circuit, successfully poaching several high-profile mounts and causing significant friction among established agents.",
+      category: "flavor",
+    },
+    {
       headline: "Rivalry Brews in the Jockey Room",
       body: "Tensions are reportedly high between two leading riders following a tight finish yesterday, with neither jockey willing to concede an inch in their pursuit of the title.",
       category: "flavor",
