@@ -31,6 +31,8 @@ export interface FieldContext {
   liveCount: number;
   /** Live runners sorted by position, ascending. */
   sortedLive: Runner[];
+  /** Rank of each live runner by position (index in sortedLive). O(1) lookup. */
+  liveRank: Map<string, number>;
   /** Rank of each live runner by velocity (1 = fastest). Ties broken by horseId for determinism. */
   velocityRank: Map<string, number>;
 }
