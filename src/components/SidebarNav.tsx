@@ -1,13 +1,15 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 import {
   Home,
   Trophy,
@@ -299,25 +301,28 @@ export function SidebarNav({
         >
           Start new game
         </Button>
-        <Dialog open={newGameDialogOpen} onOpenChange={setNewGameDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Start New Game</DialogTitle>
-              <DialogDescription>
+        <AlertDialog open={newGameDialogOpen} onOpenChange={setNewGameDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Start New Game</AlertDialogTitle>
+              <AlertDialogDescription>
                 This will delete your current game progress and start a new one. This action cannot
                 be undone.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button variant="ghost" onClick={() => setNewGameDialogOpen(false)}>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setNewGameDialogOpen(false)}>
                 Cancel
-              </Button>
-              <Button variant="destructive" onClick={onStartNewGame}>
+              </AlertDialogCancel>
+              <AlertDialogAction
+                className={buttonVariants({ variant: "destructive" })}
+                onClick={onStartNewGame}
+              >
                 Start new game
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </aside>
   );
