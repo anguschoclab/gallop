@@ -3,4 +3,5 @@
  * Routes component imports away from direct @/core/npc access.
  */
 
+export { summarizeNpcCareer, careerStageLabel } from "@/core/npc/careerTracker";
 export { getDisplayableStats, calculateScoutCost } from "@/core/npc/scouting";
