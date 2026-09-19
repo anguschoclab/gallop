@@ -137,6 +137,11 @@ function addConditionalRaceFlavor(
           `Total Annihilation: ${winner.name} Romps in ${race.name}`,
           `A League of Their Own: ${winner.name} Dominates ${race.name}`,
           `${winner.name} Wins by a Mile in the ${race.name}`,
+          `No Contest: ${winner.name} Runs Away With ${race.name}`,
+          `${winner.name} Stages an Exhibition in ${race.name}`,
+          `Total Domination by ${winner.name} in ${race.name}`,
+          `${winner.name} Untouchable in ${race.name} Romp`,
+          `A Masterclass in Speed: ${winner.name} Takes ${race.name}`,
         );
         bodies.push(
           `It was an absolute romp! ${winner.name} destroyed the field by a massive margin to take the ${race.name}.`,
@@ -145,6 +150,10 @@ function addConditionalRaceFlavor(
           `You could have driven a truck through the gap between ${winner.name} and the runner-up in today's ${race.name}.`,
           `A breathtaking show of superiority. ${winner.name} toyed with the opposition before drawing away by a street.`,
           `It wasn't a race, it was a procession. ${winner.name} was in a completely different class today.`,
+          `Spectators could hardly believe their eyes as ${winner.name} powered clear, putting on an absolute clinic in the ${race.name}.`,
+          `The jockey had time to pose for the cameras before the wire as ${winner.name} coasted to an incredibly easy victory.`,
+          `It was men against boys out there. ${winner.name} demolished the field and proved they are operating on another level entirely.`,
+          `They may as well have handed out the trophy at the top of the stretch. ${winner.name} was simply untouchable today.`,
         );
       } else if (margin < PHOTO_FINISH_THRESHOLD_SECONDS) {
         headlines.push(
@@ -152,6 +161,10 @@ function addConditionalRaceFlavor(
           `Photo Finish Drama: ${winner.name} Takes the ${race.name}`,
           `By a Whisker! ${winner.name} Survives ${race.name} Thriller`,
           `Down to the Wire: ${winner.name} Wins the ${race.name}`,
+          `Inches Decide It: ${winner.name} Takes the ${race.name}`,
+          `A Race for the Ages: ${winner.name} Prevails in Epic Finish`,
+          `Too Close to Call: ${winner.name} Given the Nod in ${race.name}`,
+          `Heartbreak for Rivals as ${winner.name} Noses Out a Win`,
         );
         bodies.push(
           `In a thrilling photo finish, ${winner.name} just managed to stick their nose in front to steal the ${race.name}.`,
@@ -160,6 +173,10 @@ function addConditionalRaceFlavor(
           `It was a blanket finish, but ${winner.name} dug deepest in the final strides to secure a heart-stopping victory.`,
           `A bobbing head was the only difference at the wire, as ${winner.name} bravely held off a vicious late challenge.`,
           `The crowd held its collective breath as the runners hit the line together, with ${winner.name} ultimately prevailing in a thriller.`,
+          `You couldn't slide a piece of paper between them at the line, but ${winner.name} was judged the winner of this epic duel.`,
+          `The grandstand erupted as the final strides became a dead heat, with ${winner.name} just managing to find the wire first.`,
+          `It was a race that had everything, climaxing in a frantic lunge for the line that saw ${winner.name} snatch victory from the jaws of defeat.`,
+          `Both sets of connections were sweating on the official print, which ultimately confirmed ${winner.name} had held on for a famous win.`,
         );
       }
     }
