@@ -4,3 +4,6 @@
  */
 
 export { getDisplayableStats, calculateScoutCost } from "@/core/npc/scouting";
+
+export { summarizeNpcCareer, careerStageLabel } from "@/core/npc/careerTracker";
+export type { NpcCareerStage } from "@/core/horse/types";

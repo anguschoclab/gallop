@@ -7,8 +7,11 @@ import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ChartCard, MiniBar, chartColors, formatCurrencyCompact } from "@/components/charts";
-import { summarizeNpcCareer, careerStageLabel } from "@/core/npc/careerTracker";
-import type { NpcCareerStage } from "@/core/horse/types";
+import {
+  summarizeNpcCareer,
+  careerStageLabel,
+  type NpcCareerStage,
+} from "@/services/npc/npcFacade";
 import type { Horse } from "@/game/types";
 import { cn } from "@/lib/cn";
 
