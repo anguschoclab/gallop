@@ -232,6 +232,16 @@ export function generateRaceNews(
     `${winner.name} Stamps Authority on the ${race.name}.`,
     `A Deserved ${race.name} Win for ${winner.name}.`,
     `${winner.name} Too Strong for ${race.name} Field.`,
+    `Pure Magic from ${winner.name} in the ${race.name}.`,
+    `The ${race.name} is Conquered by ${winner.name}.`,
+    `${winner.name} Dazzles the Competition at ${race.name}.`,
+    `A Masterful Ride Secures ${race.name} for ${winner.name}.`,
+    `${winner.name} Delivers on the Big Stage in ${race.name}.`,
+    `The Spotlight Shines on ${winner.name} at ${race.name}.`,
+    `${winner.name} Rises to the Occasion in the ${race.name}.`,
+    `An Unforgettable ${race.name} Win for ${winner.name}.`,
+    `Supreme Performance by ${winner.name} to take ${race.name}.`,
+    `${winner.name} Showcases Immense Talent in ${race.name}.`,
   ];
 
   const bodies = [
@@ -263,6 +273,16 @@ export function generateRaceNews(
     `Nobody could lay a glove on ${winner.name}, who romped home to win the ${race.name} in fine style.`,
     `A brilliant tactical ride allowed ${winner.name} to find the gaps and secure the ${race.name}.`,
     `${winner.name} made it look easy in the ${race.name}, pulling clear for an emphatic victory.`,
+    `Displaying an incredible burst of speed, ${winner.name} seized control of the ${race.name} when it mattered most.`,
+    `The training staff's confidence was fully justified as ${winner.name} executed a flawless race in the ${race.name}.`,
+    `It was a textbook run by ${winner.name}, stalking the pace before pouncing to secure a stylish win in the ${race.name}.`,
+    `Racing fans will be talking about this one for a while; ${winner.name} was simply sensational taking the ${race.name}.`,
+    `Every move was timed to perfection, allowing ${winner.name} to glide past the leaders and claim the ${race.name}.`,
+    `Overcoming a difficult trip, ${winner.name} showed incredible grit to find the winner's circle in the ${race.name}.`,
+    `The competition brought their best, but it wasn't enough to stop ${winner.name} from a commanding ${race.name} triumph.`,
+    `A wave of applause rolled through the grandstand as ${winner.name} delivered a masterclass in the ${race.name}.`,
+    `Putting all the pieces together on race day, ${winner.name} stamped their name in the history books with this ${race.name} win.`,
+    `They came, they saw, they conquered. ${winner.name} left no doubts about their superiority in today's ${race.name}.`,
   ];
 
   addConditionalRaceFlavor(race, winner, headlines, bodies);
