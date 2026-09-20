@@ -139,13 +139,7 @@ export interface HorseRaceHistoryEntry {
 
 /** Stage of a horse's racing life, used by the NPC career tracker. */
 export type NpcCareerStage =
-  | "unraced"
-  | "juvenile"
-  | "rising"
-  | "prime"
-  | "declining"
-  | "veteran"
-  | "retired";
+  "unraced" | "juvenile" | "rising" | "prime" | "declining" | "veteran" | "retired";
 
 /** Off-screen career bookkeeping for NPC horses. */
 export type NpcCareerProgress = {
