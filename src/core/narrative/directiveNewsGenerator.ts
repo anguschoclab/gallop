@@ -82,13 +82,31 @@ export function generateDirectiveChangeNews(
 
   const entityLinks: EntityLink[] = [{ type: "stable", id: stable.id, name: stable.name }];
 
+  const headlines = [
+    `${stable.name} Shifts Strategy: ${newLabel}`,
+    `Strategic Pivot: ${stable.name} Focuses on ${newLabel}`,
+    `New Direction for ${stable.name}: ${newLabel}`,
+    `${stable.name} Realigns Priorities to ${newLabel}`,
+    `Change of Course: ${stable.name} Adopts ${newLabel} Strategy`,
+    `A New Era: ${stable.name} Commits to ${newLabel}`,
+  ];
+
+  const bodies = [
+    `${stable.name} has pivoted from ${oldLabel.toLowerCase()} to ${newLabel.toLowerCase()}, ${description}. The stable's racing operations may be affected by this strategic realignment.`,
+    `In a notable strategic shift, ${stable.name} is moving away from ${oldLabel.toLowerCase()}. The stable is now ${description}, signaling a new era for their operations.`,
+    `Industry insiders are reacting to news that ${stable.name} has abandoned its ${oldLabel.toLowerCase()} strategy. Moving forward, the stable is ${description}.`,
+    `A major realignment is underway at ${stable.name}. Transitioning from ${oldLabel.toLowerCase()}, the outfit is now ${description}.`,
+    `Reflecting a change in priorities, ${stable.name} has transitioned from ${oldLabel.toLowerCase()} to ${newLabel.toLowerCase()}. They are now officially ${description}.`,
+    `The backstretch is buzzing with rumors as ${stable.name} shifts focus from ${oldLabel.toLowerCase()} to ${newLabel.toLowerCase()}, ${description}.`,
+  ];
+
   return {
     id: generateUUID(rng),
     day: currentDay,
     category: "stable",
     importance,
-    headline: `${stable.name} Shifts Strategy: ${newLabel}`,
-    body: `${stable.name} has pivoted from ${oldLabel.toLowerCase()} to ${newLabel.toLowerCase()}, ${description}. The stable's racing operations may be affected by this strategic realignment.`,
+    headline: rng.pick(headlines),
+    body: rng.pick(bodies),
     entityLinks,
   };
 }
