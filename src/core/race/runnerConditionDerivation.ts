@@ -55,13 +55,18 @@ export function buildFieldContext(runners: Runner[]): FieldContext {
   [...moving]
     .sort((a, b) => b.velocity - a.velocity || a.horseId.localeCompare(b.horseId))
     .forEach((r, i) => velocityRank.set(r.horseId, i + 1));
+  const sortedLive = [...live].sort((a, b) => a.position - b.position);
+  const liveRank = new Map<string, number>();
+  sortedLive.forEach((r, i) => liveRank.set(r.horseId, i));
+
   return {
     meanVelocity,
     fastestVelocity,
     leaderPos,
     liveCount: live.length,
-    sortedLive: [...live].sort((a, b) => a.position - b.position),
+    sortedLive,
     velocityRank,
+    liveRank,
   };
 }
 
@@ -74,7 +79,7 @@ function nearestRival(r: Runner, field: FieldContext): { gap: number; rival: Run
   let gap = Infinity;
   let rival: Runner | null = null;
 
-  const rIdx = field.sortedLive.findIndex((other) => other.horseId === r.horseId);
+  const rIdx = field.liveRank.get(r.horseId) ?? -1;
   if (rIdx === -1) return { gap, rival };
 
   if (rIdx > 0) {
@@ -104,7 +109,7 @@ function nearestRival(r: Runner, field: FieldContext): { gap: number; rival: Run
  * @param field - Aggregate field context.
  */
 function isBlocked(r: Runner, field: FieldContext): boolean {
-  const rIdx = field.sortedLive.findIndex((other) => other.horseId === r.horseId);
+  const rIdx = field.liveRank.get(r.horseId) ?? -1;
   if (rIdx === -1) return false;
 
   // field.sortedLive is strictly sorted by position ascending
