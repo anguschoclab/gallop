@@ -59,6 +59,7 @@ import { solvencyPhase } from "./solvency";
 import { worldAssessmentPhase } from "./worldAssessmentPhase";
 import { diplomacyPhase } from "./diplomacyPhase";
 import { npcCareerTrackerPhase } from "./npcCareerTrackerPhase";
+import { npcMilestoneAlertsPhase } from "./npcMilestoneAlertsPhase";
 import { narrativePhase } from "./narrativePhase";
 import { economyPhase } from "./economyPhase";
 import { difficultyPhase } from "./difficultyPhase";
@@ -105,6 +106,8 @@ export const GAME_PIPELINE_PHASES = [
   diplomacyPhase,
   // NPC off-screen career progression (order 82, after diplomacy)
   npcCareerTrackerPhase,
+  // Rival-horse milestone alerts (order 83, after career tracker)
+  npcMilestoneAlertsPhase,
   stallionRetirementPhase,
   pastureRetirementPhase,
   hallOfFamePhase,
