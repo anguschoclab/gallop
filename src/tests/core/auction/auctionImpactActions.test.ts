@@ -5,15 +5,24 @@ import {
 } from "@/core/auction/auctionImpactActions";
 import type { Stable, Horse } from "@/game/types";
 import type { InboxMessage } from "@/core/inbox/inboxTypes";
-import { asStableId, asHorseId, asNpcStableId } from "@/core/types/branded";
+import { asStableId, asHorseId, asNpcStableId, asOwnerKey } from "@/core/types/branded";
 import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
 
 vi.mock("@/core/uuid", () => ({
   generateUUID: vi.fn(() => "mocked-uuid"),
 }));
 
+/** Shared base fields required by every Impact. */
+const baseImpact = {
+  id: "impact-1",
+  intentId: "intent-1",
+  day: 1,
+  phase: "auction",
+  logLevel: "never" as const,
+};
+
 describe("applyAuctionImpacts", () => {
-  it("applies cash_change to player (no entityId) and prevents negative cash", () => {
+  it("applies cash_change to player (empty entityId) and prevents negative cash", () => {
     const acc: AuctionImpactAccumulator = {
       cash: 100,
       npcStables: [],
@@ -21,10 +30,20 @@ describe("applyAuctionImpacts", () => {
       inbox: [],
     };
 
-    applyAuctionImpacts(acc, [{ type: "cash_change", amount: 50, trigger: "auction" }]);
+    applyAuctionImpacts(acc, [
+      { ...baseImpact, type: "cash_change", entityId: asOwnerKey(""), amount: 50, reason: "test" },
+    ]);
     expect(acc.cash).toBe(150);
 
-    applyAuctionImpacts(acc, [{ type: "cash_change", amount: -200, trigger: "auction" }]);
+    applyAuctionImpacts(acc, [
+      {
+        ...baseImpact,
+        type: "cash_change",
+        entityId: asOwnerKey(""),
+        amount: -200,
+        reason: "test",
+      },
+    ]);
     expect(acc.cash).toBe(0);
   });
 
@@ -37,12 +56,24 @@ describe("applyAuctionImpacts", () => {
     };
 
     applyAuctionImpacts(acc, [
-      { type: "cash_change", entityId: "npc1", amount: 50, trigger: "auction" },
+      {
+        ...baseImpact,
+        type: "cash_change",
+        entityId: asOwnerKey("npc1"),
+        amount: 50,
+        reason: "test",
+      },
     ]);
     expect(acc.npcStables[0].cash).toBe(150);
 
     applyAuctionImpacts(acc, [
-      { type: "cash_change", entityId: "npc1", amount: -200, trigger: "auction" },
+      {
+        ...baseImpact,
+        type: "cash_change",
+        entityId: asOwnerKey("npc1"),
+        amount: -200,
+        reason: "test",
+      },
     ]);
     expect(acc.npcStables[0].cash).toBe(0);
   });
@@ -56,7 +87,9 @@ describe("applyAuctionImpacts", () => {
       inbox: [],
     };
 
-    applyAuctionImpacts(acc, [{ type: "horse_transfer", horseId: "h1", trigger: "auction" }]);
+    applyAuctionImpacts(acc, [
+      { ...baseImpact, type: "horse_transfer", horseId: asHorseId("h1"), price: 0, reason: "test" },
+    ]);
     expect(acc.horses.h1.ownership.type).toBe("player");
   });
 
@@ -70,7 +103,14 @@ describe("applyAuctionImpacts", () => {
     };
 
     applyAuctionImpacts(acc, [
-      { type: "horse_transfer", horseId: "h1", toStableId: "npc2", trigger: "auction" },
+      {
+        ...baseImpact,
+        type: "horse_transfer",
+        horseId: asHorseId("h1"),
+        toStableId: asStableId("npc2"),
+        price: 0,
+        reason: "test",
+      },
     ]);
     expect(acc.horses.h1.ownership.type).toBe("npc");
     if (acc.horses.h1.ownership.type === "npc") {
@@ -96,12 +136,15 @@ describe("applyAuctionImpacts", () => {
 
     applyAuctionImpacts(acc, [
       {
+        ...baseImpact,
         type: "inbox_message",
-        message: { title: "New Message", body: "...", category: "info", date: 1 } as Omit<
-          InboxMessage,
-          "id"
-        >,
-        trigger: "auction",
+        message: {
+          day: 1,
+          category: "auction",
+          priority: "info",
+          title: "New Message",
+          body: "...",
+        },
       },
     ]);
 

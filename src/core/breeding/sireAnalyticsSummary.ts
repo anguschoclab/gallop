@@ -22,21 +22,24 @@ import {
  * @param stallion - The stallion horse
  * @param allHorses - All horses in the game state
  * @param industryMeanEarnings - Industry mean earnings for comparison
+ * @param horsesDict - Optional precomputed dictionary of all horses
  * @returns SireAnalytics object with all metrics
  */
 export function getSireAnalytics(
   stallion: Horse,
   allHorses: Horse[],
   industryMeanEarnings: number,
+  horsesDict?: Record<string, Horse>,
 ): SireAnalytics {
+  const dict = horsesDict ?? Object.fromEntries(allHorses.map((h) => [h.id, h]));
   return {
     stallionId: stallion.id,
     stallionName: stallion.name,
-    aei: calculateAei(stallion, allHorses, industryMeanEarnings),
-    ci: calculateCi(stallion, allHorses, industryMeanEarnings),
-    classification: classifySire(stallion, allHorses, industryMeanEarnings),
-    surfaceBias: getSireSurfaceBias(stallion, allHorses),
-    distancePreference: getSireDistancePreference(stallion, allHorses),
+    aei: calculateAei(stallion, allHorses, industryMeanEarnings, dict),
+    ci: calculateCi(stallion, allHorses, industryMeanEarnings, dict),
+    classification: classifySire(stallion, allHorses, industryMeanEarnings, dict),
+    surfaceBias: getSireSurfaceBias(stallion, allHorses, dict),
+    distancePreference: getSireDistancePreference(stallion, allHorses, dict),
     progenyWinPercentage: calculateProgenyWinPercentage(stallion),
     lifetimeFoals: stallion.stud?.lifetimeFoals || 0,
     lifetimeStakesFoals: stallion.stud?.lifetimeStakesFoals || 0,
@@ -50,12 +53,17 @@ export function getSireAnalytics(
  *
  * @param stallion - The stallion horse
  * @param allHorses - All horses in the game state
+ * @param horsesDict - Optional precomputed dictionary of all horses
  * @returns Crop tier classification
  */
-export function classifyStallion(stallion: Horse, allHorses: Horse[]): CropTier {
+export function classifyStallion(
+  stallion: Horse,
+  allHorses: Horse[],
+  horsesDict?: Record<string, Horse>,
+): CropTier {
   if (!stallion.stud?.atStud) return "unproven";
   const foals = getFoalsBy(
-    { horses: Object.fromEntries(allHorses.map((h) => [h.id, h])) },
+    { horses: horsesDict ?? Object.fromEntries(allHorses.map((h) => [h.id, h])) },
     stallion.id,
   );
   if (foals.length === 0) return "unproven";
@@ -75,15 +83,18 @@ export function classifyStallion(stallion: Horse, allHorses: Horse[]): CropTier 
  * @param stallion - The stallion horse
  * @param allHorses - All horses in the game state
  * @param industryMeanEarnings - Industry mean earnings for comparison
+ * @param horsesDict - Optional precomputed dictionary of all horses
  * @returns Narrative string for display
  */
 export function generateSireNarrative(
   stallion: Horse,
   allHorses: Horse[],
   industryMeanEarnings: number,
+  horsesDict?: Record<string, Horse>,
 ): string {
-  const a = getSireAnalytics(stallion, allHorses, industryMeanEarnings);
-  const tier = classifyStallion(stallion, allHorses);
+  const dict = horsesDict ?? Object.fromEntries(allHorses.map((h) => [h.id, h]));
+  const a = getSireAnalytics(stallion, allHorses, industryMeanEarnings, dict);
+  const tier = classifyStallion(stallion, allHorses, dict);
   const fee = a.standingFee;
   const stakesFoals = a.lifetimeStakesFoals;
   const g1Foals = a.lifetimeG1Foals;

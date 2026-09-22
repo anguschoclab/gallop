@@ -15,7 +15,7 @@ describe("populationGenetics - resolveBloodline", () => {
   it("returns Unaffiliated for a horse with no known bloodline and no pedigree", () => {
     const horse = createTestHorse({ id: "h1", name: "Random Horse" });
 
-    horse.bloodline = undefined;
+    horse.bloodline = "";
     horseMap.set("h1", horse);
 
     const result = resolveBloodline(horse, horseMap);
@@ -33,7 +33,7 @@ describe("populationGenetics - resolveBloodline", () => {
   it("detects bloodline directly from horse name matching KNOWN_BLOODLINES", () => {
     const horse = createTestHorse({ id: "h1", name: "Northern Dancer" });
 
-    horse.bloodline = undefined;
+    horse.bloodline = "";
     horseMap.set("h1", horse);
 
     const result = resolveBloodline(horse, horseMap);
@@ -43,7 +43,7 @@ describe("populationGenetics - resolveBloodline", () => {
   it("detects bloodline from horse's sireName matching KNOWN_BLOODLINES", () => {
     const horse = createTestHorse({ id: "h1", name: "Random Foal", sireName: "Mr. Prospector" });
 
-    horse.bloodline = undefined;
+    horse.bloodline = "";
     horseMap.set("h1", horse);
 
     const result = resolveBloodline(horse, horseMap);
@@ -53,21 +53,21 @@ describe("populationGenetics - resolveBloodline", () => {
   it("walks up the sire line in-game pedigree to find a known bloodline", () => {
     const grandsire = createTestHorse({ id: "gs1", name: "Galileo" });
 
-    grandsire.bloodline = undefined;
+    grandsire.bloodline = "";
     const sire = createTestHorse({
       id: "s1",
       name: "Sire",
       pedigree: { generation: 1, name: "Sire", sireId: "gs1", damId: "" } as any,
     });
 
-    sire.bloodline = undefined;
+    sire.bloodline = "";
     const foal = createTestHorse({
       id: "f1",
       name: "Foal",
       pedigree: { generation: 2, name: "Foal", sireId: "s1", damId: "" } as any,
     });
 
-    foal.bloodline = undefined;
+    foal.bloodline = "";
 
     horseMap.set("gs1", grandsire);
     horseMap.set("s1", sire);
@@ -82,7 +82,7 @@ describe("populationGenetics - resolveBloodline", () => {
 
     horseMap.set(
       currentSireId,
-      createTestHorse({ id: currentSireId, name: "Unknown Sire 6", bloodline: undefined }),
+      createTestHorse({ id: currentSireId, name: "Unknown Sire 6", bloodline: "" }),
     );
 
     for (let i = 5; i >= 1; i--) {
@@ -93,7 +93,7 @@ describe("populationGenetics - resolveBloodline", () => {
         createTestHorse({
           id: nextSireId,
           name: `Unknown Sire ${i}`,
-          bloodline: undefined,
+          bloodline: "",
           pedigree: {
             generation: i,
             name: `Unknown Sire ${i}`,
@@ -108,7 +108,7 @@ describe("populationGenetics - resolveBloodline", () => {
     const foal = createTestHorse({
       id: "foal",
       name: "Foal",
-      bloodline: undefined,
+      bloodline: "",
       pedigree: { generation: 6, name: "Foal", sireId: currentSireId, damId: "" } as any,
     });
     horseMap.set("foal", foal);

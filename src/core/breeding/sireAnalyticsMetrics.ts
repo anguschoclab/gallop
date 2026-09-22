@@ -17,17 +17,19 @@ import type { SireClassification, SurfaceBias, DistancePreference } from "./sire
  * @param stallion - The stallion horse
  * @param allHorses - All horses in the game state
  * @param industryMeanEarnings - Industry mean earnings for comparison
+ * @param horsesDict - Optional precomputed dictionary of all horses
  * @returns AEI value
  */
 export function calculateAei(
   stallion: Horse,
   allHorses: Horse[],
   industryMeanEarnings: number,
+  horsesDict?: Record<string, Horse>,
 ): number {
   if (!stallion.stud || !stallion.stud.lifetimeFoals) return 0;
 
   const runners = getRunnersBy(
-    { horses: Object.fromEntries(allHorses.map((h) => [h.id, h])) },
+    { horses: horsesDict ?? Object.fromEntries(allHorses.map((h) => [h.id, h])) },
     stallion.id,
   );
 
@@ -48,19 +50,22 @@ export function calculateAei(
  * @param stallion - The stallion horse
  * @param allHorses - All horses in the game state
  * @param industryMeanEarnings - Industry mean earnings for comparison
+ * @param horsesDict - Optional precomputed dictionary of all horses
  * @returns CI value
  */
 export function calculateCi(
   stallion: Horse,
   allHorses: Horse[],
   industryMeanEarnings: number,
+  horsesDict?: Record<string, Horse>,
 ): number {
   if (!stallion.stud || !stallion.stud.lifetimeFoals) return 0;
 
-  const aei = calculateAei(stallion, allHorses, industryMeanEarnings);
+  const dict = horsesDict ?? Object.fromEntries(allHorses.map((h) => [h.id, h]));
+  const aei = calculateAei(stallion, allHorses, industryMeanEarnings, dict);
   const allSires = allHorses.filter((h) => h.stud?.atStud);
   const averageAei =
-    allSires.reduce((sum, s) => sum + calculateAei(s, allHorses, industryMeanEarnings), 0) /
+    allSires.reduce((sum, s) => sum + calculateAei(s, allHorses, industryMeanEarnings, dict), 0) /
     allSires.length;
 
   if (averageAei === 0) return 0;
@@ -75,17 +80,20 @@ export function calculateCi(
  * @param stallion - The stallion horse
  * @param allHorses - All horses in the game state
  * @param industryMeanEarnings - Industry mean earnings for comparison
+ * @param horsesDict - Optional precomputed dictionary of all horses
  * @returns Sire classification tier
  */
 export function classifySire(
   stallion: Horse,
   allHorses: Horse[],
   industryMeanEarnings: number,
+  horsesDict?: Record<string, Horse>,
 ): SireClassification {
   if (!stallion.stud || stallion.stud.lifetimeFoals < 5) return "unproven";
 
-  const aei = calculateAei(stallion, allHorses, industryMeanEarnings);
-  const ci = calculateCi(stallion, allHorses, industryMeanEarnings);
+  const dict = horsesDict ?? Object.fromEntries(allHorses.map((h) => [h.id, h]));
+  const aei = calculateAei(stallion, allHorses, industryMeanEarnings, dict);
+  const ci = calculateCi(stallion, allHorses, industryMeanEarnings, dict);
 
   if (aei > 2.0 && ci > 1.0) return "elite";
   if (aei > 1.5 && ci > 0.8) return "premium";
@@ -100,11 +108,16 @@ export function classifySire(
  *
  * @param stallion - The stallion horse
  * @param allHorses - All horses in the game state
+ * @param horsesDict - Optional precomputed dictionary of all horses
  * @returns Surface bias classification
  */
-export function getSireSurfaceBias(stallion: Horse, allHorses: Horse[]): SurfaceBias {
+export function getSireSurfaceBias(
+  stallion: Horse,
+  allHorses: Horse[],
+  horsesDict?: Record<string, Horse>,
+): SurfaceBias {
   const runners = getRunnersBy(
-    { horses: Object.fromEntries(allHorses.map((h) => [h.id, h])) },
+    { horses: horsesDict ?? Object.fromEntries(allHorses.map((h) => [h.id, h])) },
     stallion.id,
   );
   if (runners.length < 5) {
@@ -150,11 +163,16 @@ export function getSireSurfaceBias(stallion: Horse, allHorses: Horse[]): Surface
  *
  * @param stallion - The stallion horse
  * @param allHorses - All horses in the game state
+ * @param horsesDict - Optional precomputed dictionary of all horses
  * @returns Distance preference classification
  */
-export function getSireDistancePreference(stallion: Horse, allHorses: Horse[]): DistancePreference {
+export function getSireDistancePreference(
+  stallion: Horse,
+  allHorses: Horse[],
+  horsesDict?: Record<string, Horse>,
+): DistancePreference {
   const runners = getRunnersBy(
-    { horses: Object.fromEntries(allHorses.map((h) => [h.id, h])) },
+    { horses: horsesDict ?? Object.fromEntries(allHorses.map((h) => [h.id, h])) },
     stallion.id,
   );
   if (runners.length < 5) return "versatile";

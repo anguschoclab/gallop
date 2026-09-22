@@ -127,10 +127,10 @@ describe("perf-shape: buildFieldContext is hoisted outside runner map in Track (
     // this test is expected to fail until that lands.
     const liveRank = (ctx as { liveRank?: Map<string, number> }).liveRank;
     expect(liveRank).toBeInstanceOf(Map);
-    // h4 finished → excluded from liveRank; h2 leads, then h3, then h1
-    expect(liveRank!.get("h2")).toBe(0);
+    // sortedLive is ascending by position; h4 finished → excluded from liveRank
+    expect(liveRank!.get("h1")).toBe(0);
     expect(liveRank!.get("h3")).toBe(1);
-    expect(liveRank!.get("h1")).toBe(2);
+    expect(liveRank!.get("h2")).toBe(2);
     expect(liveRank!.has("h4")).toBe(false);
     expect(ctx.sortedLive[liveRank!.get("h1")!].horseId).toBe("h1");
   });

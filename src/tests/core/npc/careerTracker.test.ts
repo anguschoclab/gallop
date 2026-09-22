@@ -111,7 +111,14 @@ describe("npc career tracker", () => {
       age: 4,
       raceHistory: [
         { raceId: "r1", raceName: "Real Race", position: 1, purseEarned: 10000, day: 50 },
-        { raceId: "r2", raceName: "Sim Race", position: 2, purseEarned: 5000, day: 80, offscreen: true },
+        {
+          raceId: "r2",
+          raceName: "Sim Race",
+          position: 2,
+          purseEarned: 5000,
+          day: 80,
+          offscreen: true,
+        },
       ],
       careerTracker: {
         lastOffscreenDay: 80,

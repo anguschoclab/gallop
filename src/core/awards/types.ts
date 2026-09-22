@@ -12,7 +12,16 @@
 // Regional Awards System - Types and Constants
 // Based on real-world horse racing awards: Eclipse (USA), Cartier (Europe), Australian, Sovereign (Canada), JRA (Japan)
 
+import type { Continent } from "@/core/data/gradedRacesAccessor";
+
 export type AwardRegion = "north_america" | "europe" | "asia_pacific" | "south_america";
+
+export const CONTINENT_TO_REGION: Record<Continent, AwardRegion> = {
+  north_america: "north_america",
+  europe: "europe",
+  asia_pacific: "asia_pacific",
+  south_america: "south_america",
+};
 
 // North American Categories (Eclipse Awards style)
 export type NorthAmericanCategory =

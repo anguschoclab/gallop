@@ -20,19 +20,12 @@ import {
   EUROPEAN_CATEGORIES,
   ASIA_PACIFIC_CATEGORIES,
   SOUTH_AMERICAN_CATEGORIES,
+  CONTINENT_TO_REGION,
 } from "./types";
-import { getTrackContinent, type Continent } from "@/core/data/gradedRacesAccessor";
+import { getTrackContinent } from "@/core/data/gradedRacesAccessor";
 import { DAYS_PER_YEAR } from "@/constants";
 import { SIRE_GENDERS, DAM_GENDERS } from "@/core/horse/gender";
 import { isPlayerOwned } from "@/core/horse/ownership";
-
-// Map continent to award region
-const CONTINENT_TO_REGION: Record<Continent, AwardRegion> = {
-  north_america: "north_america",
-  europe: "europe",
-  asia_pacific: "asia_pacific",
-  south_america: "south_america",
-};
 
 // Get eligible categories for a region
 function getCategoriesForRegion(region: AwardRegion): readonly RegionalAwardCategory[] {

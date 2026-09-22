@@ -16,11 +16,7 @@ import { careerStage } from "./careerTracker";
 import { formatCurrency } from "@/core/common/formatting";
 
 export type RivalMilestoneKind =
-  | "debut"
-  | "breakthrough_win"
-  | "earnings"
-  | "peak_transition"
-  | "retirement";
+  "debut" | "breakthrough_win" | "earnings" | "peak_transition" | "retirement";
 
 export interface RivalMilestone {
   /** Stable key used to avoid re-announcing the same milestone. */
@@ -113,9 +109,7 @@ export function detectRivalMilestones(horse: Horse, announced: string[] = []): R
     push({
       key: `stage_${stage}`,
       kind: "peak_transition",
-      title: entering
-        ? `${horse.name} enters peak form`
-        : `${horse.name} is past its peak years`,
+      title: entering ? `${horse.name} enters peak form` : `${horse.name} is past its peak years`,
       body: entering
         ? `At ${Math.floor(horse.age)}, ${horse.name} has reached the prime of its career and should campaign hard this season.`
         : `${horse.name} is ${Math.floor(horse.age)} and beginning to decline — its best form may now be behind it.`,
